@@ -1,0 +1,56 @@
+This file describes the steps conducted for the creation of the NATriuM project under eclipse:
+
+   R E Q U I R E D   R E S O U R C E S
+0) Install resources (via apt-get, synaptic, or manually)
+    0.0) All boost libraries (sudo apt-get install libboost-all-dev)
+    0.1) Install cmake download and untar tarball from cmake homepage; follow instructions
+         (Version 2.8.8 required!)
+         (Version on ubuntu software center is too old)
+    0.2) If not installed, install valgrind (e.g. sudo apt-get install valgrind)
+    0.3) PETSc
+        0.3.1) download and untar tarball from petsc homepage
+        0.3.2) access petsc directory
+        0.3.3) ./configure --with-cc=mpicc --with-fc=mpif90 --download-f-blas-lapack 
+                --download-openmpi --download-superlu_dist --download-mumps --download-hypre 
+                --download-parmetis --download-metis --download-scalapack
+        0.3.4) make PETSC_DIR=/host/Dissertation/petsc-3.4.2 PETSC_ARCH=arch-linux2-c-debug all
+        0.3.5) make PETSC_DIR=/host/Dissertation/petsc-3.4.2 PETSC_ARCH=arch-linux2-c-debug test   
+    0.4) deal.ii
+        0.4.1) download and untar tarball from deal.ii homepage
+        0.4.2) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=/path/install/dir -DDEAL_II_WITH_PETSC=ON -DDEAL_II_WITH_MPI=ON ../deal.II
+        0.4.3) make install
+         
+
+
+1) New Project -> c++ project
+
+
+   M A K E   I T   P O S S I B L E   T O   I N C L U D E   F I L E S  F R O M   T H E   L I B R A R Y
+2) Include external ressources: Project -> Properties -> C/C++ Build -> Settings -> Cross G++ Compiler
+   2.1) Add deal.ii includes directory to Includes (e.g. /home/kraemer/Dissertation/deal.II/include)
+   2.2) Add base and bundled subdirectories separately
+   2.3) Add boost to Includes (e.g. /usr/include/boost) -> ATTENTION: Deal uses boost 1.49; Local installation is 1.48
+   
+   
+    M A K E   T H E   L I N K E R   A B L E   T O   F I N D   T H E   L I B R A R I E S   
+3) Add libraries: Project -> Properties -> C/C++ Build -> Settings -> Cross G++ Linker
+   3.1) Add deal.ii lib directory to Libraries -> Library search path (e.g. /home/kraemer/Dissertation/deal.II/lib)
+   3.2) Add the library deal_II to Libraries -> Libraries (Simply add "deal_II") 
+       (note: This refers to the file libdeal_II.so in deal.II/lib -> pre- and postfix are omitted)
+   3.3) Add the library z to Libraries -> Libraries (this is the standard compression library which is used by deal.ii)
+   3.4) Add the boost libraries boost_unit_test_framework-mt, and boost_system; No Library path required 
+   
+
+    M A K E   T H E   E X E C U T A B L E   A B L E   T O   F I N D   T H E   L I B R A R I E S   
+4) Edit LD_LIBRARY_PATH
+   4.1) Set environment variable LD_LIBRARY_PATH (in ~/.bashrc or in Run->Run Configurations->Environment)
+        to deal.ii's lib directory (e.g. LD_LIBRARY_PATH=(irgendwelche_pfade):/home/kraemer/Dissertation/deal.II/lib/)
+   4.2) Make sure /usr/lib is in the LD_LIBRARY_PATH
+   4.3) Don't forget to "source ~/.bashrc" thereafter
+   
+   
+5) Additional settings
+   5.1) Switch to old c++ namings by adding -std=c++0x to the compile flags
+        Otherwise there may be problems with the boost libraries.
+        
+   
