@@ -1,0 +1,88 @@
+\hypertarget{classnatrium_1_1D2Q9IncompressibleModel}{\section{natrium\-:\-:\-D2\-Q9\-Incompressible\-Model \-Class \-Reference}
+\label{classnatrium_1_1D2Q9IncompressibleModel}\index{natrium\-::\-D2\-Q9\-Incompressible\-Model@{natrium\-::\-D2\-Q9\-Incompressible\-Model}}
+}
+
+
+\-D2\-Q9 model description for incompressible flow.  
+
+
+
+
+{\ttfamily \#include $<$\-D2\-Q9\-Incompressible\-Model.\-h$>$}
+
+\-Inheritance diagram for natrium\-:\-:\-D2\-Q9\-Incompressible\-Model\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classnatrium_1_1D2Q9IncompressibleModel}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1D2Q9IncompressibleModel_a50cce01cb87eb811013079d73c4baaf0}{\hyperlink{classnatrium_1_1D2Q9IncompressibleModel_a50cce01cb87eb811013079d73c4baaf0}{\-D2\-Q9\-Incompressible\-Model} ()}\label{classnatrium_1_1D2Q9IncompressibleModel_a50cce01cb87eb811013079d73c4baaf0}
+
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+virtual \hyperlink{classnatrium_1_1D2Q9IncompressibleModel_a6e757941f7ca2c5a6148893147211724}{$\sim$\-D2\-Q9\-Incompressible\-Model} ()
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+virtual float\-\_\-t \hyperlink{classnatrium_1_1D2Q9IncompressibleModel_a437bce6e0d6f35ca3ff2df4bbe650043}{get\-Equilibrium\-Distribution} (size\-\_\-t i, const numeric\-\_\-vector \&u, const float\-\_\-t rho=1) const 
+\begin{DoxyCompactList}\small\item\em function for the calculation of the equilibrium distribution in the incompressible \-D2\-Q9 model \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-D2\-Q9 model description for incompressible flow. 
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classnatrium_1_1D2Q9IncompressibleModel_a6e757941f7ca2c5a6148893147211724}{\index{natrium\-::\-D2\-Q9\-Incompressible\-Model@{natrium\-::\-D2\-Q9\-Incompressible\-Model}!$\sim$\-D2\-Q9\-Incompressible\-Model@{$\sim$\-D2\-Q9\-Incompressible\-Model}}
+\index{$\sim$\-D2\-Q9\-Incompressible\-Model@{$\sim$\-D2\-Q9\-Incompressible\-Model}!natrium::D2Q9IncompressibleModel@{natrium\-::\-D2\-Q9\-Incompressible\-Model}}
+\subsubsection[{$\sim$\-D2\-Q9\-Incompressible\-Model}]{\setlength{\rightskip}{0pt plus 5cm}{\bf natrium\-::\-D2\-Q9\-Incompressible\-Model\-::$\sim$\-D2\-Q9\-Incompressible\-Model} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classnatrium_1_1D2Q9IncompressibleModel_a6e757941f7ca2c5a6148893147211724}
+
+
+destructor 
+
+constructor 
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classnatrium_1_1D2Q9IncompressibleModel_a437bce6e0d6f35ca3ff2df4bbe650043}{\index{natrium\-::\-D2\-Q9\-Incompressible\-Model@{natrium\-::\-D2\-Q9\-Incompressible\-Model}!get\-Equilibrium\-Distribution@{get\-Equilibrium\-Distribution}}
+\index{get\-Equilibrium\-Distribution@{get\-Equilibrium\-Distribution}!natrium::D2Q9IncompressibleModel@{natrium\-::\-D2\-Q9\-Incompressible\-Model}}
+\subsubsection[{get\-Equilibrium\-Distribution}]{\setlength{\rightskip}{0pt plus 5cm}float\-\_\-t {\bf natrium\-::\-D2\-Q9\-Incompressible\-Model\-::get\-Equilibrium\-Distribution} (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{i, }
+\item[{const numeric\-\_\-vector \&}]{u, }
+\item[{const float\-\_\-t}]{rho = {\ttfamily 1}}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classnatrium_1_1D2Q9IncompressibleModel_a437bce6e0d6f35ca3ff2df4bbe650043}
+
+
+function for the calculation of the equilibrium distribution in the incompressible \-D2\-Q9 model 
+
+destructor
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em i} & index of the direction \\
+\hline
+{\em u} & macroscopic velocity \\
+\hline
+{\em rho} & macroscopic density \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+value of the equilibrium distribution 
+\end{DoxyReturn}
+\begin{DoxyNote}{\-Note}
+\-The calculation can surely be done more efficiently by passing different arguments, e.\-g. u$\ast$u or u/(c$^\wedge$2)
+\end{DoxyNote}
+get\-Equilibrium\-Distribution 
+
+\-Implements \hyperlink{classnatrium_1_1BoltzmannModel_ac5615f43cd5c03c881734d4826ce31be}{natrium\-::\-Boltzmann\-Model}.
+
+
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/boltzmannmodels/\-D2\-Q9\-Incompressible\-Model.\-h\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/boltzmannmodels/\-D2\-Q9\-Incompressible\-Model.\-cpp\end{DoxyCompactItemize}

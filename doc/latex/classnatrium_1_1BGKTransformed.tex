@@ -1,0 +1,80 @@
+\hypertarget{classnatrium_1_1BGKTransformed}{\section{natrium\-:\-:\-B\-G\-K\-Transformed \-Class \-Reference}
+\label{classnatrium_1_1BGKTransformed}\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}}
+}
+
+
+\-Description of the \-B\-G\-K model for the transformed particle distributions, as described in \-Global data which is used by \-Min and \-Lee (2011)\-: \-A spectral-\/element discontinuous \-Galerkin lattice \-Boltzmann method for nearly incompressible flows, \-J\-C\-P 230 pp. 245-\/259.  
+
+
+
+
+{\ttfamily \#include $<$\-B\-G\-K\-Transformed.\-h$>$}
+
+\-Inheritance diagram for natrium\-:\-:\-B\-G\-K\-Transformed\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classnatrium_1_1BGKTransformed}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1BGKTransformed_adb6cc9b3a10e88f5d1e938cf8d2d9582}{\-B\-G\-K\-Transformed} (float\-\_\-t relaxation\-Parameter, boost\-::shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{\-Boltzmann\-Model} $>$ boltzmann\-Model)
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGKTransformed_a554c68facfbd2b126f24504f215eb193}{virtual \hyperlink{classnatrium_1_1BGKTransformed_a554c68facfbd2b126f24504f215eb193}{$\sim$\-B\-G\-K\-Transformed} ()}\label{classnatrium_1_1BGKTransformed_a554c68facfbd2b126f24504f215eb193}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1BGKTransformed_a6ad393c3fde6ccc10e1de644dd7767e9}{collide} (vector$<$ float\-\_\-t $>$ \&distributions) const 
+\begin{DoxyCompactList}\small\item\em function for collision \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Description of the \-B\-G\-K model for the transformed particle distributions, as described in \-Global data which is used by \-Min and \-Lee (2011)\-: \-A spectral-\/element discontinuous \-Galerkin lattice \-Boltzmann method for nearly incompressible flows, \-J\-C\-P 230 pp. 245-\/259. 
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classnatrium_1_1BGKTransformed_adb6cc9b3a10e88f5d1e938cf8d2d9582}{\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}!\-B\-G\-K\-Transformed@{\-B\-G\-K\-Transformed}}
+\index{\-B\-G\-K\-Transformed@{\-B\-G\-K\-Transformed}!natrium::BGKTransformed@{natrium\-::\-B\-G\-K\-Transformed}}
+\subsubsection[{\-B\-G\-K\-Transformed}]{\setlength{\rightskip}{0pt plus 5cm}{\bf natrium\-::\-B\-G\-K\-Transformed\-::\-B\-G\-K\-Transformed} (
+\begin{DoxyParamCaption}
+\item[{float\-\_\-t}]{relaxation\-Parameter, }
+\item[{boost\-::shared\-\_\-ptr$<$ {\bf \-Boltzmann\-Model} $>$}]{boltzmann\-Model}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1BGKTransformed_adb6cc9b3a10e88f5d1e938cf8d2d9582}
+
+
+constructor 
+
+
+\begin{DoxyParams}[1]{\-Parameters}
+\mbox{\tt in}  & {\em relaxation\-Parameter} & relaxation parameter tau \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classnatrium_1_1BGKTransformed_a6ad393c3fde6ccc10e1de644dd7767e9}{\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}!collide@{collide}}
+\index{collide@{collide}!natrium::BGKTransformed@{natrium\-::\-B\-G\-K\-Transformed}}
+\subsubsection[{collide}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf natrium\-::\-B\-G\-K\-Transformed\-::collide} (
+\begin{DoxyParamCaption}
+\item[{vector$<$ float\-\_\-t $>$ \&}]{distributions}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classnatrium_1_1BGKTransformed_a6ad393c3fde6ccc10e1de644dd7767e9}
+
+
+function for collision 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em in/out\mbox{]}} & distributions the particle distribution functions \\
+\hline
+\end{DoxyParams}
+
+
+\-Implements \hyperlink{classnatrium_1_1CollisionModel_aa4f3dd379940af2d80509dd6f5e23c62}{natrium\-::\-Collision\-Model}.
+
+
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/collisionmodels/\hyperlink{BGKTransformed_8h}{\-B\-G\-K\-Transformed.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/collisionmodels/\hyperlink{BGKTransformed_8cpp}{\-B\-G\-K\-Transformed.\-cpp}\end{DoxyCompactItemize}

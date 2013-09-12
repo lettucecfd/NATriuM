@@ -1,0 +1,99 @@
+\hypertarget{classnatrium_1_1CollisionModel}{\section{natrium\-:\-:\-Collision\-Model \-Class \-Reference}
+\label{classnatrium_1_1CollisionModel}\index{natrium\-::\-Collision\-Model@{natrium\-::\-Collision\-Model}}
+}
+
+
+\-Abstract class for the description of collision schemes.  
+
+
+
+
+{\ttfamily \#include $<$\-Collision\-Model.\-h$>$}
+
+\-Inheritance diagram for natrium\-:\-:\-Collision\-Model\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classnatrium_1_1CollisionModel}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1CollisionModel_aa44e7a2a1549818868887fa722df3dad}{\-Collision\-Model} (float\-\_\-t relaxation\-Parameter, boost\-::shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{\-Boltzmann\-Model} $>$ boltzmann\-Model)
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CollisionModel_a2b1fb83814227db3b99d4d68a6657d52}{virtual \hyperlink{classnatrium_1_1CollisionModel_a2b1fb83814227db3b99d4d68a6657d52}{$\sim$\-Collision\-Model} ()}\label{classnatrium_1_1CollisionModel_a2b1fb83814227db3b99d4d68a6657d52}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1CollisionModel_aa4f3dd379940af2d80509dd6f5e23c62}{collide} (vector$<$ float\-\_\-t $>$ \&distributions) const =0
+\begin{DoxyCompactList}\small\item\em virtual function for collision \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CollisionModel_a5cc2769b78912deab3705fee63514c2a}{float\-\_\-t \hyperlink{classnatrium_1_1CollisionModel_a5cc2769b78912deab3705fee63514c2a}{get\-Relaxation\-Parameter} () const }\label{classnatrium_1_1CollisionModel_a5cc2769b78912deab3705fee63514c2a}
+
+\begin{DoxyCompactList}\small\item\em get relaxation parameter \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Protected \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1CollisionModel_a174b5a4c9a0ced236d1b522095f0b312}{float\-\_\-t \hyperlink{classnatrium_1_1CollisionModel_a174b5a4c9a0ced236d1b522095f0b312}{m\-\_\-relaxation\-Parameter}}\label{classnatrium_1_1CollisionModel_a174b5a4c9a0ced236d1b522095f0b312}
+
+\begin{DoxyCompactList}\small\item\em relaxation parameter \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CollisionModel_a0c77cb3544948bb6d289ea8d47076012}{const boost\-::shared\-\_\-ptr\*
+$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{\-Boltzmann\-Model} $>$ \hyperlink{classnatrium_1_1CollisionModel_a0c77cb3544948bb6d289ea8d47076012}{m\-\_\-boltzmann\-Model}}\label{classnatrium_1_1CollisionModel_a0c77cb3544948bb6d289ea8d47076012}
+
+\begin{DoxyCompactList}\small\item\em \-Boltzmann model (e.\-g. \-D2\-Q9\-Incompressible) \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CollisionModel_ad6dcd37d98c4a462286f41240a918b59}{size\-\_\-t \hyperlink{classnatrium_1_1CollisionModel_ad6dcd37d98c4a462286f41240a918b59}{m\-\_\-d}}\label{classnatrium_1_1CollisionModel_ad6dcd37d98c4a462286f41240a918b59}
+
+\begin{DoxyCompactList}\small\item\em \-D (dimension) \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CollisionModel_a10c7648ea88f85687342044456003924}{float\-\_\-t \hyperlink{classnatrium_1_1CollisionModel_a10c7648ea88f85687342044456003924}{m\-\_\-q}}\label{classnatrium_1_1CollisionModel_a10c7648ea88f85687342044456003924}
+
+\begin{DoxyCompactList}\small\item\em \-Q (number of directions) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Abstract class for the description of collision schemes. 
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classnatrium_1_1CollisionModel_aa44e7a2a1549818868887fa722df3dad}{\index{natrium\-::\-Collision\-Model@{natrium\-::\-Collision\-Model}!\-Collision\-Model@{\-Collision\-Model}}
+\index{\-Collision\-Model@{\-Collision\-Model}!natrium::CollisionModel@{natrium\-::\-Collision\-Model}}
+\subsubsection[{\-Collision\-Model}]{\setlength{\rightskip}{0pt plus 5cm}{\bf natrium\-::\-Collision\-Model\-::\-Collision\-Model} (
+\begin{DoxyParamCaption}
+\item[{float\-\_\-t}]{relaxation\-Parameter, }
+\item[{boost\-::shared\-\_\-ptr$<$ {\bf \-Boltzmann\-Model} $>$}]{boltzmann\-Model}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1CollisionModel_aa44e7a2a1549818868887fa722df3dad}
+
+
+constructor 
+
+
+\begin{DoxyParams}[1]{\-Parameters}
+\mbox{\tt in}  & {\em relaxation\-Parameter} & relaxation parameter tau \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classnatrium_1_1CollisionModel_aa4f3dd379940af2d80509dd6f5e23c62}{\index{natrium\-::\-Collision\-Model@{natrium\-::\-Collision\-Model}!collide@{collide}}
+\index{collide@{collide}!natrium::CollisionModel@{natrium\-::\-Collision\-Model}}
+\subsubsection[{collide}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf natrium\-::\-Collision\-Model\-::collide} (
+\begin{DoxyParamCaption}
+\item[{vector$<$ float\-\_\-t $>$ \&}]{distributions}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classnatrium_1_1CollisionModel_aa4f3dd379940af2d80509dd6f5e23c62}
+
+
+virtual function for collision 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em in/out\mbox{]}} & distributions the particle distribution functions \\
+\hline
+\end{DoxyParams}
+
+
+\-Implemented in \hyperlink{classnatrium_1_1BGKTransformed_a6ad393c3fde6ccc10e1de644dd7767e9}{natrium\-::\-B\-G\-K\-Transformed}.
+
+
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/collisionmodels/\hyperlink{CollisionModel_8h}{\-Collision\-Model.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/collisionmodels/\hyperlink{CollisionModel_8cpp}{\-Collision\-Model.\-cpp}\end{DoxyCompactItemize}

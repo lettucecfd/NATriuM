@@ -1,0 +1,321 @@
+\hypertarget{classnatrium_1_1BoltzmannModel}{\section{natrium\-:\-:\-Boltzmann\-Model \-Class \-Reference}
+\label{classnatrium_1_1BoltzmannModel}\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}}
+}
+
+
+\-Abstract class for the description of a boltzmann model, e.\-g. \-D2\-Q9.  
+
+
+
+
+{\ttfamily \#include $<$\-Boltzmann\-Model.\-h$>$}
+
+\-Inheritance diagram for natrium\-:\-:\-Boltzmann\-Model\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classnatrium_1_1BoltzmannModel}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1BoltzmannModel_a0547ee3c88330d7a2ac44ad3ece8d560}{\-Boltzmann\-Model} (size\-\_\-t d, size\-\_\-t q, const vector$<$ numeric\-\_\-vector $>$ \&directions, const vector$<$ float\-\_\-t $>$ \&weights, \-Stencil\-Type stencil\-Type)
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BoltzmannModel_ac2e3dabcbe15c1e37ff09ec1c53dafa5}{virtual \hyperlink{classnatrium_1_1BoltzmannModel_ac2e3dabcbe15c1e37ff09ec1c53dafa5}{$\sim$\-Boltzmann\-Model} ()}\label{classnatrium_1_1BoltzmannModel_ac2e3dabcbe15c1e37ff09ec1c53dafa5}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+const vector$<$ numeric\-\_\-vector $>$ \& \hyperlink{classnatrium_1_1BoltzmannModel_aeabed4142acd04a57ba41ca26dfbe666}{get\-Directions} () const 
+\begin{DoxyCompactList}\small\item\em get a reference to the vector of directions \end{DoxyCompactList}\item 
+const numeric\-\_\-vector \& \hyperlink{classnatrium_1_1BoltzmannModel_a0b258b2c7cc4cba5ac666a06ca2a8f49}{get\-Direction} (size\-\_\-t i) const 
+\begin{DoxyCompactList}\small\item\em get the i-\/th direction \end{DoxyCompactList}\item 
+size\-\_\-t \hyperlink{classnatrium_1_1BoltzmannModel_ae7cfcd108a085d3215cdc8c00e826107}{get\-Q} () const 
+\begin{DoxyCompactList}\small\item\em get q, the number of directions in the \-Dd\-Qq-\/stencil \end{DoxyCompactList}\item 
+size\-\_\-t \hyperlink{classnatrium_1_1BoltzmannModel_a8d16745a0dab65cb0324d6b076e53d15}{get\-D} () const 
+\begin{DoxyCompactList}\small\item\em get d, the dimension of the \-Dd\-Qq-\/stencil \end{DoxyCompactList}\item 
+const vector$<$ float\-\_\-t $>$ \& \hyperlink{classnatrium_1_1BoltzmannModel_a3158e70071707c169486d87d26727f3c}{get\-Weights} () const 
+\begin{DoxyCompactList}\small\item\em get the weights of the equilibrium distributions \end{DoxyCompactList}\item 
+float\-\_\-t \hyperlink{classnatrium_1_1BoltzmannModel_aae549c1f5dd48a92fc9e174afc5de1a5}{get\-Weight} (size\-\_\-t i) const 
+\begin{DoxyCompactList}\small\item\em get the weight belonging to a certain direction \end{DoxyCompactList}\item 
+const \-Stencil\-Type \hyperlink{classnatrium_1_1BoltzmannModel_ac95c2547a37e380d8d7b3de3c0f8a4c2}{get\-Stencil\-Type} () const 
+\begin{DoxyCompactList}\small\item\em get stencil type \end{DoxyCompactList}\item 
+float\-\_\-t \hyperlink{classnatrium_1_1BoltzmannModel_adf8901da899eef5d11b0cbf80200ee32}{calculate\-Density} (const vector$<$ float\-\_\-t $>$ \&distributions) const 
+\begin{DoxyCompactList}\small\item\em calculate macroscopic density \end{DoxyCompactList}\item 
+numeric\-\_\-vector \hyperlink{classnatrium_1_1BoltzmannModel_a2c7e3465bb3541e420f15a7970533047}{calculate\-Velocity} (const vector$<$ float\-\_\-t $>$ \&distributions) const 
+\begin{DoxyCompactList}\small\item\em calculate macroscopic velocity \end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1BoltzmannModel_a3d5a504ad3dc0b3847c5db412b1988b8}{calculate\-Velocity} (const vector$<$ float\-\_\-t $>$ \&distributions, const float\-\_\-t rho, numeric\-\_\-vector \&u) const 
+\begin{DoxyCompactList}\small\item\em calculate macroscopic velocity; saves the double calculation of the density \end{DoxyCompactList}\item 
+virtual float\-\_\-t \hyperlink{classnatrium_1_1BoltzmannModel_ac5615f43cd5c03c881734d4826ce31be}{get\-Equilibrium\-Distribution} (size\-\_\-t i, const numeric\-\_\-vector \&u, const float\-\_\-t rho=1) const =0
+\begin{DoxyCompactList}\small\item\em virtual function for the calculation of the equilibrium distribution \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1BoltzmannModel_aab8d824211e65a394536333c5537b325}{get\-Equilibrium\-Distributions} (vector$<$ float\-\_\-t $>$ \&feq, const numeric\-\_\-vector \&u, const float\-\_\-t rho=1) const 
+\begin{DoxyCompactList}\small\item\em function for the calculation of all equilibrium distributions \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Abstract class for the description of a boltzmann model, e.\-g. \-D2\-Q9. 
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classnatrium_1_1BoltzmannModel_a0547ee3c88330d7a2ac44ad3ece8d560}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!\-Boltzmann\-Model@{\-Boltzmann\-Model}}
+\index{\-Boltzmann\-Model@{\-Boltzmann\-Model}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{\-Boltzmann\-Model}]{\setlength{\rightskip}{0pt plus 5cm}{\bf natrium\-::\-Boltzmann\-Model\-::\-Boltzmann\-Model} (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{d, }
+\item[{size\-\_\-t}]{q, }
+\item[{const vector$<$ numeric\-\_\-vector $>$ \&}]{directions, }
+\item[{const vector$<$ float\-\_\-t $>$ \&}]{weights, }
+\item[{\-Stencil\-Type}]{stencil\-Type}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1BoltzmannModel_a0547ee3c88330d7a2ac44ad3ece8d560}
+
+
+constructor 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em d} & dimension \\
+\hline
+{\em q} & number of directions \\
+\hline
+{\em directions} & the directions of the stencil \\
+\hline
+{\em weights} & the weights of the equilibrium distribution \\
+\hline
+{\em stencil\-Type} & type of the stencil (e.\-g. \-D2\-Q9) \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classnatrium_1_1BoltzmannModel_adf8901da899eef5d11b0cbf80200ee32}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!calculate\-Density@{calculate\-Density}}
+\index{calculate\-Density@{calculate\-Density}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{calculate\-Density}]{\setlength{\rightskip}{0pt plus 5cm}float\-\_\-t {\bf natrium\-::\-Boltzmann\-Model\-::calculate\-Density} (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ float\-\_\-t $>$ \&}]{distributions}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_adf8901da899eef5d11b0cbf80200ee32}
+
+
+calculate macroscopic density 
+
+
+\begin{DoxyParams}[1]{\-Parameters}
+\mbox{\tt in}  & {\em distributions} & particle distribution functions at a given point \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+macroscopic density (sum of all distributions) 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1BoltzmannModel_a2c7e3465bb3541e420f15a7970533047}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!calculate\-Velocity@{calculate\-Velocity}}
+\index{calculate\-Velocity@{calculate\-Velocity}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{calculate\-Velocity}]{\setlength{\rightskip}{0pt plus 5cm}numeric\-\_\-vector {\bf natrium\-::\-Boltzmann\-Model\-::calculate\-Velocity} (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ float\-\_\-t $>$ \&}]{distributions}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_a2c7e3465bb3541e420f15a7970533047}
+
+
+calculate macroscopic velocity 
+
+
+\begin{DoxyParams}[1]{\-Parameters}
+\mbox{\tt in}  & {\em distributions} & particle distribution functions at a given point \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+macroscopic velocity 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1BoltzmannModel_a3d5a504ad3dc0b3847c5db412b1988b8}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!calculate\-Velocity@{calculate\-Velocity}}
+\index{calculate\-Velocity@{calculate\-Velocity}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{calculate\-Velocity}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf natrium\-::\-Boltzmann\-Model\-::calculate\-Velocity} (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ float\-\_\-t $>$ \&}]{distributions, }
+\item[{const float\-\_\-t}]{rho, }
+\item[{numeric\-\_\-vector \&}]{u}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_a3d5a504ad3dc0b3847c5db412b1988b8}
+
+
+calculate macroscopic velocity; saves the double calculation of the density 
+
+\begin{DoxyNote}{\-Note}
+more efficient 
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{\-Parameters}
+\mbox{\tt in}  & {\em distributions} & particle distribution functions at a given point \\
+\hline
+\mbox{\tt in}  & {\em rho} & macroscopic density \\
+\hline
+\mbox{\tt out}  & {\em u} & macroscopic velocity \\
+\hline
+\end{DoxyParams}
+\hypertarget{classnatrium_1_1BoltzmannModel_a8d16745a0dab65cb0324d6b076e53d15}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-D@{get\-D}}
+\index{get\-D@{get\-D}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-D}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t {\bf natrium\-::\-Boltzmann\-Model\-::get\-D} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_a8d16745a0dab65cb0324d6b076e53d15}
+
+
+get d, the dimension of the \-Dd\-Qq-\/stencil 
+
+\begin{DoxyReturn}{\-Returns}
+d 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1BoltzmannModel_a0b258b2c7cc4cba5ac666a06ca2a8f49}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-Direction@{get\-Direction}}
+\index{get\-Direction@{get\-Direction}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-Direction}]{\setlength{\rightskip}{0pt plus 5cm}const numeric\-\_\-vector\& {\bf natrium\-::\-Boltzmann\-Model\-::get\-Direction} (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{i}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_a0b258b2c7cc4cba5ac666a06ca2a8f49}
+
+
+get the i-\/th direction 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em i} & index i \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+a reference to the i-\/th direction of the \-Dd\-Qq-\/stencil 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1BoltzmannModel_aeabed4142acd04a57ba41ca26dfbe666}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-Directions@{get\-Directions}}
+\index{get\-Directions@{get\-Directions}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-Directions}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$numeric\-\_\-vector$>$\& {\bf natrium\-::\-Boltzmann\-Model\-::get\-Directions} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_aeabed4142acd04a57ba41ca26dfbe666}
+
+
+get a reference to the vector of directions 
+
+\begin{DoxyReturn}{\-Returns}
+a ublas\-\_\-vector, which contains the directions of the \-Dd\-Qq-\/stencil as ublas\-\_\-vectors 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1BoltzmannModel_ac5615f43cd5c03c881734d4826ce31be}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-Equilibrium\-Distribution@{get\-Equilibrium\-Distribution}}
+\index{get\-Equilibrium\-Distribution@{get\-Equilibrium\-Distribution}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-Equilibrium\-Distribution}]{\setlength{\rightskip}{0pt plus 5cm}virtual float\-\_\-t {\bf natrium\-::\-Boltzmann\-Model\-::get\-Equilibrium\-Distribution} (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{i, }
+\item[{const numeric\-\_\-vector \&}]{u, }
+\item[{const float\-\_\-t}]{rho = {\ttfamily 1}}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_ac5615f43cd5c03c881734d4826ce31be}
+
+
+virtual function for the calculation of the equilibrium distribution 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em i} & index of the direction \\
+\hline
+{\em u} & macroscopic velocity \\
+\hline
+{\em rho} & macroscopic density \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+value of the equilibrium distribution 
+\end{DoxyReturn}
+\begin{DoxyNote}{\-Note}
+\-The calculation can surely be done more efficiently by passing different arguments, e.\-g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+
+
+\-Implemented in \hyperlink{classnatrium_1_1D2Q9IncompressibleModel_a437bce6e0d6f35ca3ff2df4bbe650043}{natrium\-::\-D2\-Q9\-Incompressible\-Model}.
+
+\hypertarget{classnatrium_1_1BoltzmannModel_aab8d824211e65a394536333c5537b325}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-Equilibrium\-Distributions@{get\-Equilibrium\-Distributions}}
+\index{get\-Equilibrium\-Distributions@{get\-Equilibrium\-Distributions}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-Equilibrium\-Distributions}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf natrium\-::\-Boltzmann\-Model\-::get\-Equilibrium\-Distributions} (
+\begin{DoxyParamCaption}
+\item[{vector$<$ float\-\_\-t $>$ \&}]{feq, }
+\item[{const numeric\-\_\-vector \&}]{u, }
+\item[{const float\-\_\-t}]{rho = {\ttfamily 1}}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_aab8d824211e65a394536333c5537b325}
+
+
+function for the calculation of all equilibrium distributions 
+
+
+\begin{DoxyParams}[1]{\-Parameters}
+\mbox{\tt out}  & {\em feq} & vector of all equality distributions, must have size \-Q \\
+\hline
+\mbox{\tt in}  & {\em u} & macroscopic velocity \\
+\hline
+\mbox{\tt in}  & {\em rho} & macroscopic density \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{\-Note}
+\-The calculation can surely be done more efficiently by passing different arguments, e.\-g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+\hypertarget{classnatrium_1_1BoltzmannModel_ae7cfcd108a085d3215cdc8c00e826107}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-Q@{get\-Q}}
+\index{get\-Q@{get\-Q}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-Q}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t {\bf natrium\-::\-Boltzmann\-Model\-::get\-Q} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_ae7cfcd108a085d3215cdc8c00e826107}
+
+
+get q, the number of directions in the \-Dd\-Qq-\/stencil 
+
+\begin{DoxyReturn}{\-Returns}
+q 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1BoltzmannModel_ac95c2547a37e380d8d7b3de3c0f8a4c2}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-Stencil\-Type@{get\-Stencil\-Type}}
+\index{get\-Stencil\-Type@{get\-Stencil\-Type}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-Stencil\-Type}]{\setlength{\rightskip}{0pt plus 5cm}const \-Stencil\-Type {\bf natrium\-::\-Boltzmann\-Model\-::get\-Stencil\-Type} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_ac95c2547a37e380d8d7b3de3c0f8a4c2}
+
+
+get stencil type 
+
+\begin{DoxyReturn}{\-Returns}
+stencil type, e.\-g. \-D2\-Q9 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1BoltzmannModel_aae549c1f5dd48a92fc9e174afc5de1a5}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-Weight@{get\-Weight}}
+\index{get\-Weight@{get\-Weight}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-Weight}]{\setlength{\rightskip}{0pt plus 5cm}float\-\_\-t {\bf natrium\-::\-Boltzmann\-Model\-::get\-Weight} (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{i}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_aae549c1f5dd48a92fc9e174afc5de1a5}
+
+
+get the weight belonging to a certain direction 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em i} & index i of the direction (1 $<$= i $<$= q) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+the i-\/th weight 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1BoltzmannModel_a3158e70071707c169486d87d26727f3c}{\index{natrium\-::\-Boltzmann\-Model@{natrium\-::\-Boltzmann\-Model}!get\-Weights@{get\-Weights}}
+\index{get\-Weights@{get\-Weights}!natrium::BoltzmannModel@{natrium\-::\-Boltzmann\-Model}}
+\subsubsection[{get\-Weights}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$float\-\_\-t$>$\& {\bf natrium\-::\-Boltzmann\-Model\-::get\-Weights} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1BoltzmannModel_a3158e70071707c169486d87d26727f3c}
+
+
+get the weights of the equilibrium distributions 
+
+\begin{DoxyReturn}{\-Returns}
+a reference to the vector of weights 
+\end{DoxyReturn}
+
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/boltzmannmodels/\hyperlink{BoltzmannModel_8h}{\-Boltzmann\-Model.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/boltzmannmodels/\hyperlink{BoltzmannModel_8cpp}{\-Boltzmann\-Model.\-cpp}\end{DoxyCompactItemize}
