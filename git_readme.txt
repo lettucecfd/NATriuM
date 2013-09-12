@@ -39,6 +39,8 @@ SET UP SERVER
    e.g. git remote add origin akraem3m@wr0.wr.inf.h-brs.de:/scratch/akraemer/NATriuM.git
  - Push the files to repository (git push -u origin master)
 
+4) Make project "shared" in eclipse
+ - Right click on project -> Team -> Make shared -> ...
 
 /////////////////////////////////
 // WORKING WITH GIT REPOSITORY //
