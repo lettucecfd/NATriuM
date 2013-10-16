@@ -10,19 +10,30 @@ This file describes the steps conducted for the creation of the NATriuM project 
     0.3) PETSc
         0.3.1) download and untar tarball from petsc homepage
         0.3.2) access petsc directory
-        0.3.3) ./configure --with-cc=mpicc --with-fc=mpif90 --download-f-blas-lapack 
-                --download-openmpi --download-superlu_dist --download-mumps --download-hypre 
-                --download-parmetis --download-metis --download-scalapack
-        0.3.4) make PETSC_DIR=/host/Dissertation/petsc-3.4.2 PETSC_ARCH=arch-linux2-c-debug all
-        0.3.5) make PETSC_DIR=/host/Dissertation/petsc-3.4.2 PETSC_ARCH=arch-linux2-c-debug test   
+        0.3.3) set environment variables PETSC_DIR, PETSC_ARCH in ~/.bashrc, e.g.
+               export PETSC_DIR=/home/kraemer/Dissertation/petsc-3.4.2
+               export PETSC_ARCH=ubuntu_lenovo (can be an arbitrary name for your installation)
+        0.3.3) ./config/configure.py --with-shared-libraries=1 --with-x=0 --with-mpi=1 --download-hypre=1
+        0.3.4) make
+        0.3.5) make test   
     0.4) deal.ii
         0.4.1) download and untar tarball from deal.ii homepage
         0.4.2) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=/path/install/dir -DDEAL_II_WITH_PETSC=ON -DDEAL_II_WITH_MPI=ON ../deal.II
         0.4.3) make install
+        0.4.4) set environment variable DEAL_II_DIR to deal path
          
 
 
 1) New Project -> c++ project
+
+
+
+
+
+
+
+
+
 
 
    M A K E   I T   P O S S I B L E   T O   I N C L U D E   F I L E S  F R O M   T H E   L I B R A R Y
@@ -49,7 +60,7 @@ This file describes the steps conducted for the creation of the NATriuM project 
    4.3) Don't forget to "source ~/.bashrc" thereafter
    
    
-5) Additional settings
+5) Additional settings in Project Properties
    5.1) Switch to old c++ namings by adding -std=c++0x to the compile flags
         Otherwise there may be problems with the boost libraries.
         

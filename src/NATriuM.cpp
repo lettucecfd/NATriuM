@@ -15,12 +15,12 @@
 #include "solver/CFDSolver.h"
 
 using dealii::Triangulation;
-using natrium::D2Q9Incompressible;
+using natrium::D2Q9IncompressibleModel;
 using natrium::CFDSolver;
 using namespace std;
 
 
-size_t main() {
+int main() {
 
 	cout << "Starting NATriuM." << endl;
 
@@ -39,4 +39,5 @@ size_t main() {
 
 	cout << "NATriuM terminated." << endl;
 
+	return 0;
 }
