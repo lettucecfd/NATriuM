@@ -23,6 +23,27 @@ This file describes the steps conducted for the creation of the NATriuM project 
         0.4.4) set environment variable DEAL_II_DIR to deal path
          
 
+HOW I MANAGED TO CREATE THE CMAKE NATRIUM PROJECT:
+A.1) got to NATriuM root directory
+     cd ~/eclipse_workspace/NATriuM
+A.2) copy CMakeLists.txt from step-17 tutorial to NATriuM folder
+A.3) automatically create .project and .cproject file for eclipse
+     cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug .
+A.4) Start eclipse
+A.5) edit CMakeLists.txt:
+     insert a line at the beginning:
+                set(CMAKE_AUTOMOC ON)
+     Change the target name
+                SET(TARGET "natrium-Debug/NATriuM")
+     List all source files under
+                SET(TARGET_SRC
+A.5.1) Make folder natrium-Debug
+A.6) Disable eclipse Auto-build (Project->Build automatically 'off')
+A.7) [only if NATriuM is not yet on the left] File->Import->Existing Projects into Workspace->...
+A.8) Click Run 
+A.9) [if Run fails] Run->Run configurations...->new (natrium-Debug/NATriuM)
+
+
 
 1) New Project -> c++ project
 
