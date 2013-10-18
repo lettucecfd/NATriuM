@@ -11,6 +11,9 @@ set(    COLLISIONMODELS_TEST
 set(    BENCHMARKS_TEST
         benchmarks/CouetteFlow2D_test.cpp
         )        
+set(    UTILITIES_TEST
+        utilities/BasicNames_test.cpp
+        )      
 
 
 
@@ -21,6 +24,7 @@ set(    TESTS
         ${BENCHMARKS_TEST}
         ${BOLTZMANNMODELS_TEST}
         ${COLLISIONMODELS_TEST}
+        ${UTILITIES_TEST}
         
         
 )

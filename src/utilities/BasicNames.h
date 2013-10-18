@@ -24,8 +24,14 @@ typedef double float_t;
 /// vector for numeric operations
 typedef dealii::Vector<float_t> numeric_vector;
 
-/// vector which can be distributed over different cores
-typedef numeric_vector distributed_vector;
+#undef WITH_PETSC
+#ifdef WITH_PETSC
+	/// vector which can be distributed over different cores
+	typedef dealii::PETScWrappers::MPI::Vector distributed_vector;
+#else
+	/// vector which can be distributed over different cores
+	typedef dealii::Vector<float_t> distributed_vector;
+#endif
 
 /// matrix for numeric operations
 typedef dealii::FullMatrix<float_t> numeric_matrix;
