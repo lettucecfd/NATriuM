@@ -1,0 +1,5 @@
+The following build options can be used with natrium
+
+
+WITH_PETSC          use PETSc MPI Parallelization (default: off)
+                    Attention: When using PETSc, make sure that multithreading is switched off
