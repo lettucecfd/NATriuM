@@ -26,32 +26,57 @@ This file describes the steps conducted for the creation of the NATriuM project 
 HOW I MANAGED TO CREATE THE CMAKE NATRIUM PROJECT:
 A.1) got to NATriuM root directory
      cd ~/eclipse_workspace/NATriuM
-A.2) copy CMakeLists.txt from step-17 tutorial to NATriuM folder
+A.2) copy CMakeLists.txt from step-17 tutorial to NATriuM folder (and change it drastically ;) )
 A.3) automatically create .project and .cproject file for eclipse
-     cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug .
+     mkdir bin
+     cd bin
+     cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug .. -B.
 A.4) Start eclipse
-A.5) edit CMakeLists.txt:
-     insert a line at the beginning:
-                set(CMAKE_AUTOMOC ON)
-     Change the target name
-                SET(TARGET "natrium-Debug/NATriuM")
-     List all source files under
-                SET(TARGET_SRC
-A.5.1) Make folder natrium-Debug
 A.6) Disable eclipse Auto-build (Project->Build automatically 'off')
 A.7) [only if NATriuM is not yet on the left] File->Import->Existing Projects into Workspace->...
 A.8) Click Run 
-A.9) [if Run fails] Run->Run configurations...->new (natrium-Debug/NATriuM)
+A.9a) [if Run fails] Run->Run configurations...->new (bin/test/NATriuM_UnitTest_exe)
+A.9b)                Run->Run configurations...->new (bin/NATriuM_exe)
+A.10) Define an external tool calling cmake
+      Run -> External tools -> External tool configurations
+      New (+)
+      name: NATriuM CMake
+      location: /usr/local/bin/cmake
+      working directory: ${workspace_loc:/NATriuM}/bin
+      arguments: "Eclipse CDT4 - Unix Makefiles" .. -B.
+      Environment->Add: DEAL_II_DIR /path/to/dealii
+A.11) [If Build fails] define an external tool calling make
+      New (+)
+      name: NATriuM Make (Build)
+      location: /usr/bin/make
+      working directory: ${workspace_loc:/NATriuM}/bin
+      arguments: 
+      
+
+Toolchain (How to compile and run NATriuM):
+-> External Tool Button -> NATriuM CMake
+-> External Tool Button -> NATriuM Make
+-> Either Run 
 
 
 
-1) New Project -> c++ project
+WHEN CHANGING ANY CMAKELISTS FILE
+... you have to rebuild your cmake by typing
+mkdir ~/eclipse_workspace/NATriuM/bin; cd ~/eclipse_workspace/NATriuM/bin; cmake "Eclipse CDT4 - Unix Makefiles" ../ -B.;
+or (alternatively)
+run the external tool NATriuM CMake (see A.10)
+
+Creates an out-of-source build in bin directory.
+the option -B. sets the cmake project's Binary directory to .
+../ navigates to the folder containing the root CMakeList.txt
 
 
 
 
-
-
+###                             ###
+#      D E P R E C A T E D:       #
+###                             ###
+(in the current version of the code this is all done by cmake files CMakeLists.txt)
 
 
 

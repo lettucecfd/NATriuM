@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "../../boltzmannmodels/D2Q9IncompressibleModel.h"
+#include "boltzmannmodels/D2Q9IncompressibleModel.h"
 
 #include <iostream>
 #include <math.h>
@@ -13,7 +13,7 @@
 
 #include "boost/test/unit_test.hpp"
 
-#include "../../utilities/BasicNames.h"
+#include "utilities/BasicNames.h"
 
 using std::cout;
 using std::endl;

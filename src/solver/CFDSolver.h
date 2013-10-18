@@ -17,6 +17,8 @@
 #include "../collisionmodels/CollisionModel.h"
 #include "../timeintegration/TimeIntegrator.h"
 
+using boost::shared_ptr;
+
 namespace natrium {
 
 /** @short The central class for the CFD simulation based on the DBE.
@@ -30,19 +32,19 @@ template<int dim> class CFDSolver {
 private:
 
 	/// global streaming data
-	boost::shared_ptr<StreamingData<dim> > streamingData;
+	shared_ptr<StreamingData<dim> > streamingData;
 
 	/// description of the CFD problem (boundraries, initial values, etc.)
-	boost::shared_ptr<ProblemDescription<dim> > problemDescription;
+	shared_ptr<ProblemDescription<dim> > problemDescription;
 
 	/// DdQq Boltzmann model (e.g. D2Q9)
-	boost::shared_ptr<BoltzmannModel> boltzmannModel;
+	shared_ptr<BoltzmannModel> boltzmannModel;
 
 	/// Description of the collision algorithm
-	boost::shared_ptr<CollisionModel> collisionModel;
+	shared_ptr<CollisionModel> collisionModel;
 
 	/// Time Integrator for the solution of the ODE, which stems from the space discretization
-	boost::shared_ptr<TimeIntegrator> timeIntegrator;
+	shared_ptr<TimeIntegrator> timeIntegrator;
 
 
 public:

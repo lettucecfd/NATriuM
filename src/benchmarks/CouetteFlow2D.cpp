@@ -9,7 +9,9 @@
 
 namespace natrium {
 
-CouetteFlow2D::CouetteFlow2D() {
+
+CouetteFlow2D::CouetteFlow2D(float_t viscosity):
+	SimpleProblemDescription2D(make_grid(), viscosity){
 }
 
 CouetteFlow2D::~CouetteFlow2D() {

@@ -5,16 +5,16 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "../../collisionmodels/BGKTransformed.h"
+#include "collisionmodels/BGKTransformed.h"
 
 #include "boost/test/unit_test.hpp"
 #include "boost/shared_ptr.hpp"
 #include "boost/make_shared.hpp"
 
-#include "../../boltzmannmodels/D2Q9IncompressibleModel.h"
-#include "../../boltzmannmodels/BoltzmannModel.h"
+#include "boltzmannmodels/D2Q9IncompressibleModel.h"
+#include "boltzmannmodels/BoltzmannModel.h"
 
-#include "../../utilities/BasicNames.h"
+#include "utilities/BasicNames.h"
 
 using std::cout;
 using std::endl;
