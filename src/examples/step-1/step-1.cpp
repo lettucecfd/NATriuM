@@ -12,7 +12,7 @@
 
 using namespace natrium;
 
-
+// Main function
 int main() {
 
 	cout << "Starting NATriuM step-1..." << endl;
