@@ -57,13 +57,13 @@ shared_ptr<vector<BoundaryDescription<1> > > CouetteFlow2D::makeBoundaries(
 		double topPlateVelocity) {
 
 	// make boundary description
-	shared_ptr<vector<BoundaryDescription<1> > > boundaries = make_shared<
-			vector<BoundaryDescription<1> > >();
+	// shared_ptr<vector<BoundaryDescription<1> > > boundaries = make_shared<
+	//		vector<BoundaryDescription<1> > >();
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
 
-	return boundaries;
+	//return boundaries;
 }
 
 } /* namespace natrium */

@@ -40,8 +40,21 @@ This file describes the steps conducted for the creation of the NATriuM project 
 
 BY FULLY SEPERATING SRC AND BIN (IN SIBLING DIRECTORIES) THE CMAKE-TO-ECLIPSE PROCEDURE
 COULD BE FURTHER SIMPLIFIED 
-         
+ 1) cd bin
+ 2) cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
+    (just so you know: -B. sets cmake's binary dir to .)
+ 3) Launch eclipse
+ 4) File->Import->General->Existing Projects Into Workspace->Select root directory
+ 5) IMPORTANT: Select the cmake   b i n   directory (e.g. NATriuM/bin)
+    This will automatically set the build and run options in eclipse
+    Eclipse will automatically detect that it is a git repository
+ 6) Build project 
+    (At least when having verbosity option on): CMake parses the include directories (das ist genial ;) )
+    This will keep the error parser from underlining everything ;)
+ All source files are accessible and changable via [Source directory] in the project tree
 
+         
+- DEPRECATED -
 HOW I MANAGED TO CREATE THE CMAKE NATRIUM PROJECT:
 A.1) got to NATriuM root directory
      cd ~/eclipse_workspace/NATriuM
