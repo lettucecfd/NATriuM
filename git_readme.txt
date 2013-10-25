@@ -69,13 +69,23 @@ SET UP SERVER
  - Create .gitignore-file in Project folder to specify files and directories that will not be synced
    Use wildcards; or whole directories 
 
- 
- 
+
 
 /////////////////////////////////
 // WORKING WITH GIT REPOSITORY //
 /////////////////////////////////
 
-ADD USER
+4) Make git repository clone
+ - install git (sudo apt-get install git)
+ - cd <folder where you want to have your git>
+ - git clone akraem3m@wr0.wr.inf.h-brs.de:git/NATriuM.git 
+ 
+5) Push to server
+ - go to directory
+ - git push <server (remote) name> <branch name>
+   e.g. git push origin master
 
+6) Pull from server
+ - goto directory
+ - git pull
 

@@ -8,17 +8,41 @@
 #ifndef BOUNDARYDESCRIPTION_H_
 #define BOUNDARYDESCRIPTION_H_
 
-# include "../utilities/BasicNames.h"
+#include "deal.II/grid/tria.h"
+#include "deal.II/dofs/dof_handler.h"
+
+#include "../utilities/BasicNames.h"
 
 namespace natrium {
 
+/**
+ * @short  Abstract class for the description of boundaries.
+ *         Base class of PeriodicBoundary, InflowBoundary, etc.
+ * @tparam dim The dimension of the boundary is the dimension of the domain -1 (
+ * 	       e.g. 2-dim meshes have 1-dim boundary)
+ */
 template<size_t dim> class BoundaryDescription {
 
 public:
-	BoundaryDescription();
-	virtual ~BoundaryDescription();
-};
 
+	/// constructor
+	BoundaryDescription();
+
+	/// destructor
+	virtual ~BoundaryDescription();
+
+	/**
+	 * @short Apply boundaries to the degrees of freedom.
+	 *        This is the central function of the boundary description classes,
+	 *        which is purely virtual (=0) in this abstract class.
+	 *
+	 * @param triangulation A triangulation object (the mesh)
+	 * @param doFHandler The doFHandler associated with the mesh
+	 */
+	virtual void applyBoundaryValues(
+			shared_ptr<dealii::Triangulation<dim + 1> > triangulation,
+			shared_ptr<dealii::DoFHandler<dim + 1> > doFHandler) = 0;
+};
 
 template<size_t dim>
 inline natrium::BoundaryDescription<dim>::BoundaryDescription() {

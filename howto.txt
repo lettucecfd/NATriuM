@@ -24,6 +24,19 @@ This file describes the steps conducted for the creation of the NATriuM project 
         0.4.2) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=/path/install/dir -DDEAL_II_WITH_PETSC=ON -DDEAL_II_WITH_MPI=ON ../deal.II
         0.4.3) make install
         0.4.4) set environment variable DEAL_II_DIR to deal path
+        
+ 1) Install Eclipse
+    1.1) get tar at eclipse web page -> Downloads -> Eclipse bundle for c++ developers (or similar)
+    1.2) move tar to /opt
+    1.3) untar (no installation needed)
+    1.4) (sudo) create a file "eclipse" in /usr/local/bin -> (sudo) open in text editor
+    1.5) write the following lines (if not the eclipse main menu is not going to work)
+            #!/bin/sh
+            UBUNTU_MENUPROXY= /opt/eclipse/eclipse
+    1.6) close
+    1.7) sudo chmod +x 
+    1.8) Launch eclipse by typing "eclipse" in a terminal
+    
          
 
 HOW I MANAGED TO CREATE THE CMAKE NATRIUM PROJECT:
