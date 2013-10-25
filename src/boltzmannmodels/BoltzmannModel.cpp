@@ -7,12 +7,13 @@
 
 #include "BoltzmannModel.h"
 
+
 namespace natrium {
 
 
 BoltzmannModel::BoltzmannModel(size_t d, size_t q,
 		 const vector<numeric_vector>& directions,
-		 const vector<float_t>& weights, StencilType stencilType) :
+		 const vector<double>& weights, StencilType stencilType) :
 		m_d(d), m_q(q), m_directions(directions), m_weights(weights), m_stencilType(stencilType) {
 
 	// Test if the data is consistent
@@ -29,8 +30,8 @@ BoltzmannModel::BoltzmannModel(size_t d, size_t q,
 BoltzmannModel::~BoltzmannModel() {
 }
 
-void BoltzmannModel::getEquilibriumDistributions(vector<float_t>& feq,
-		const numeric_vector& u, const float_t rho) const {
+void BoltzmannModel::getEquilibriumDistributions(vector<double>& feq,
+		const numeric_vector& u, const double rho) const {
 
 	assert(feq.size() == m_q);
 

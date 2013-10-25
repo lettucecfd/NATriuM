@@ -7,12 +7,11 @@
 
 #include "ProblemDescription.h"
 
+using dealii::Triangulation;
+
 namespace natrium {
 
-template<int dim> ProblemDescription<dim>::ProblemDescription(
-		shared_ptr<Triangulation<2> > triangulation, float_t viscosity):
-			m_triangulation(triangulation),
-			m_viscosity(viscosity){
-}
+
+
 
 } /* namespace natrium */

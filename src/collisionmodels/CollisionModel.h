@@ -24,7 +24,7 @@ class CollisionModel {
 protected:
 
 	/// relaxation parameter
-	float_t m_relaxationParameter;
+	double m_relaxationParameter;
 
 	/// Boltzmann model (e.g. D2Q9Incompressible)
 	const boost::shared_ptr<BoltzmannModel> m_boltzmannModel;
@@ -33,7 +33,7 @@ protected:
 	size_t m_d;
 
 	/// Q (number of directions)
-	float_t m_q;
+	double m_q;
 
 public:
 
@@ -41,7 +41,7 @@ public:
 	 * @short constructor
 	 * @param[in] relaxationParameter relaxation parameter tau
 	 */
-	CollisionModel(float_t relaxationParameter, boost::shared_ptr<BoltzmannModel> boltzmannModel);
+	CollisionModel(double relaxationParameter, boost::shared_ptr<BoltzmannModel> boltzmannModel);
 
 	/// destructor
 	virtual ~CollisionModel();
@@ -50,10 +50,10 @@ public:
 	 * @short virtual function for collision
 	 * @param[in/out] distributions the particle distribution functions
 	 */
-	virtual void collide(vector<float_t>& distributions) const = 0;
+	virtual void collide(vector<double>& distributions) const = 0;
 
 	/// get relaxation parameter
-	float_t getRelaxationParameter() const {
+	double getRelaxationParameter() const {
 		return m_relaxationParameter;
 	}
 

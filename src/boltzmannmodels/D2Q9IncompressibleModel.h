@@ -38,8 +38,8 @@ public:
 	 *  @note The calculation can surely be done more efficiently by passing different arguments,
 	 *        e.g. u*u or u/(c^2)
 	 */
-	virtual float_t getEquilibriumDistribution(size_t i, const numeric_vector& u,
-			const float_t rho = 1) const;
+	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
+			const double rho = 1) const;
 
 
 	// TODO getEquilibriumDistributions implementation -> more efficient

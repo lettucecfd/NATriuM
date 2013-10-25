@@ -6,7 +6,10 @@ This file describes the steps conducted for the creation of the NATriuM project 
     0.1) Install cmake download and untar tarball from cmake homepage; follow instructions
          (Version 2.8.8 required!)
          (Version on ubuntu software center is too old)
+         tar -xzvf cmake....tgz; cd cmake...; ./bootstrap; make; make install;
     0.2) If not installed, install valgrind (e.g. sudo apt-get install valgrind)
+         If not installed, install blas/lapack
+         If not installed, install gfortran
     0.3) PETSc
         0.3.1) download and untar tarball from petsc homepage
         0.3.2) access petsc directory
@@ -45,6 +48,7 @@ A.10) Define an external tool calling cmake
       working directory: ${workspace_loc:/NATriuM}/bin
       arguments: "Eclipse CDT4 - Unix Makefiles" .. -B.
       Environment->Add: DEAL_II_DIR /path/to/dealii
+      (just so you know: -B. specifies the working directory as cmake PROJECT_BINARY_DIR)
 A.11) [If Build fails] define an external tool calling make
       New (+)
       name: NATriuM Make (Build)

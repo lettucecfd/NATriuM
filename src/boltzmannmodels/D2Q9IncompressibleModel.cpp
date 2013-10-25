@@ -25,14 +25,14 @@ D2Q9IncompressibleModel::~D2Q9IncompressibleModel() {
 
 
 /// getEquilibriumDistribution
-float_t D2Q9IncompressibleModel::getEquilibriumDistribution(size_t i,
-		const numeric_vector& u, const float_t rho) const {
+double D2Q9IncompressibleModel::getEquilibriumDistribution(size_t i,
+		const numeric_vector& u, const double rho) const {
 	// TODO efficient implementation of equilibrium distribution (for whole vector of equilibrium distributions)
 	// TODO efficient implementation of scalar product between vectors and 'unit vectors' like (-1,-1); case i=...
 	// TODO save 1./(speedOfSoundSquare) in private variable
 	// TODO /= 2 by bitshift
 	// TODO (..)-Term in (9.19) -> calculate only once and save in private variable
-	//vector_expression<float_t>::inner_prod_prec(u,u);
+	//vector_expression<double>::inner_prod_prec(u,u);
 	assert(i < Q);
 	assert(rho > 0);
 	assert(i >= 0);
@@ -44,7 +44,7 @@ float_t D2Q9IncompressibleModel::getEquilibriumDistribution(size_t i,
 		return prefactor * (1 + uSquareTerm);
 	}
 	double mixedTerm = Math::scalar_product(u,getDirection(i))/speedOfSoundSquare;
-	return prefactor * (1 + mixedTerm * (1 + Math::by_two(mixedTerm)) + uSquareTerm);
+	return prefactor * (1 + mixedTerm * (1 + 0.5*(mixedTerm)) + uSquareTerm);
 
 }/// getEquilibriumDistribution
 

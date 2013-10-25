@@ -12,12 +12,6 @@
 
 #include "../utilities/BasicNames.h"
 
-// enable + operator for filling vectors
-#include "boost/assign/std/vector.hpp"
-
-// enable + operator for filling vectors
-using namespace boost::assign;
-
 namespace natrium {
 
 /** @short D2Q9 Model
@@ -34,7 +28,7 @@ private:
 	/** @short function to create the vector of weights
 	 *  @return the vector of weights
 	 */
-	vector<float_t> makeWeights();
+	vector<double> makeWeights();
 
 public:
 
@@ -45,10 +39,10 @@ public:
 	static const size_t Q;
 
 	/// speed of sound
-	static const float_t speedOfSound;
+	static const double speedOfSound;
 
 	/// (speed of sound)^2
-	static const float_t speedOfSoundSquare;
+	static const double speedOfSoundSquare;
 
 	/// constructor
 	D2Q9Model();

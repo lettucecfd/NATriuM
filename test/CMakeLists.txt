@@ -7,10 +7,7 @@ set(    BOLTZMANNMODELS_TEST
         )
 set(    COLLISIONMODELS_TEST
         collisionmodels/BGKTransformed_test.cpp
-        )        
-set(    BENCHMARKS_TEST
-        benchmarks/CouetteFlow2D_test.cpp
-        )        
+        )            
 set(    UTILITIES_TEST
         utilities/BasicNames_test.cpp
         )      
@@ -21,7 +18,6 @@ set(    UTILITIES_TEST
 # define which directories to test
 #
 set(    TESTS
-        ${BENCHMARKS_TEST}
         ${BOLTZMANNMODELS_TEST}
         ${COLLISIONMODELS_TEST}
         ${UTILITIES_TEST}

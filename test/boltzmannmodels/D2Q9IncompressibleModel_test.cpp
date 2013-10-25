@@ -7,7 +7,6 @@
 
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
 
-#include <iostream>
 #include <math.h>
 #include <exception>
 
@@ -15,9 +14,6 @@
 
 #include "utilities/BasicNames.h"
 
-using std::cout;
-using std::endl;
-using std::vector;
 using std::exception;
 
 namespace natrium {
@@ -76,13 +72,13 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelGetter_test) {
 	BOOST_CHECK_EQUAL(dqmodel.getWeight(6),1./36.);
 	BOOST_CHECK_EQUAL(dqmodel.getWeight(7),1./36.);
 	BOOST_CHECK_EQUAL(dqmodel.getWeight(8),1./36.);
-	vector<float_t> weightsArray(9, 1./36.);
+	vector<double> weightsArray(9, 1./36.);
 	weightsArray.at(0) = 4./9.;
 	weightsArray.at(1) = 1./9.;
 	weightsArray.at(2) = 1./9.;
 	weightsArray.at(3) = 1./9.;
 	weightsArray.at(4) = 1./9.;
-	const vector<float_t> gotWeights(dqmodel.getWeights());
+	const vector<double> gotWeights(dqmodel.getWeights());
 	BOOST_CHECK_EQUAL_COLLECTIONS(gotWeights.begin(), gotWeights.end(),
 			weightsArray.begin(), weightsArray.end());
 
@@ -155,13 +151,13 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_test) {
 	// Notice: This text can be applied to different stencils (independent of D and Q)
 
 
-	const float_t TOLERANCE = 1e-14;
+	const double TOLERANCE = 1e-14;
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	D2Q9IncompressibleModel dqmodel;
 
 	// Define macroscopic entities
-	float_t macroscopicDensity = 1.45;
+	double macroscopicDensity = 1.45;
 	numeric_vector macroscopicVelocity(dqmodel.D);
 	macroscopicVelocity(0) = 2.3;
 	macroscopicVelocity(1) = -1.14;
@@ -170,13 +166,13 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_test) {
 	}
 
 	// calculate equilibrium distributions
-	vector<float_t> eqDistributions(dqmodel.Q);
+	vector<double> eqDistributions(dqmodel.Q);
 	for (size_t i = 0; i < dqmodel.Q; i++) {
 		eqDistributions.at(i) = dqmodel.getEquilibriumDistribution(i, macroscopicVelocity, macroscopicDensity);
 	}
 
 	// test first order moment (=density)
-	float_t moment1 = 0.0;
+	double moment1 = 0.0;
 	for (size_t i = 0; i < dqmodel.Q; i++) {
 		moment1 += eqDistributions.at(i);
 	}
@@ -205,7 +201,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_test) {
 		}
 	}
 	numeric_matrix expectedImpulsTensor(dqmodel.D, dqmodel.D);
-	float_t pressure = moment1 * dqmodel.speedOfSoundSquare;
+	double pressure = moment1 * dqmodel.speedOfSoundSquare;
 	for (size_t i = 0; i < dqmodel.D; i++) {
 		for (size_t j = 0; j < dqmodel.D; j++) {
 			expectedImpulsTensor(i,j) = macroscopicVelocity(i) * macroscopicVelocity(j) * macroscopicDensity;
@@ -229,7 +225,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	D2Q9IncompressibleModel dqmodel;
 
 	// Define macroscopic entities
-	float_t macroscopicDensity = 1.45;
+	double macroscopicDensity = 1.45;
 	numeric_vector macroscopicVelocity(dqmodel.D);
 	macroscopicVelocity(0) = 2.3;
 	macroscopicVelocity(1) = -1.14;
@@ -238,7 +234,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	}
 
 	// test equilibrium distributions
-	vector<float_t> feq(dqmodel.Q);
+	vector<double> feq(dqmodel.Q);
 	dqmodel.getEquilibriumDistributions(feq, macroscopicVelocity, macroscopicDensity);
 	for (size_t i = 0; i < dqmodel.Q; i++){
 		BOOST_CHECK_SMALL(feq.at(i) - dqmodel.getEquilibriumDistribution(i, macroscopicVelocity, macroscopicDensity), 1e-30);
@@ -253,13 +249,13 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMacroscopicEntities_test) {
 	D2Q9IncompressibleModel dqmodel;
 
 	// initialize distributions with arbitrary components
-	vector<float_t> f(dqmodel.getQ());
+	vector<double> f(dqmodel.getQ());
 	for (size_t i = 0; i < dqmodel.getQ(); i++){
 		f.at(i) = 0.5 + abs(sin(i));
 	}
 
 	// calculate macroscopic entities
-	float_t rho = dqmodel.calculateDensity(f);
+	double rho = dqmodel.calculateDensity(f);
 	numeric_vector u1 = dqmodel.calculateVelocity(f);
 	numeric_vector u2(dqmodel.getD());
 	dqmodel.calculateVelocity(f, rho, u2);
@@ -270,7 +266,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMacroscopicEntities_test) {
 	}
 
 	// re-calculate and compare density
-	float_t density = 0.0;
+	double density = 0.0;
 	for (size_t i = 0; i < dqmodel.getQ(); i++){
 		density += f.at(i);
 	}

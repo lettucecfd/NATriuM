@@ -8,17 +8,12 @@
 #include "collisionmodels/BGKTransformed.h"
 
 #include "boost/test/unit_test.hpp"
-#include "boost/shared_ptr.hpp"
-#include "boost/make_shared.hpp"
 
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
 #include "boltzmannmodels/BoltzmannModel.h"
 
 #include "utilities/BasicNames.h"
 
-using std::cout;
-using std::endl;
-using std::vector;
 
 namespace natrium {
 
@@ -30,7 +25,7 @@ BOOST_AUTO_TEST_CASE(BGKTransformedConstruction_test) {
 
 	// create Boltzmann model and set relaxation parameter
 	boost::shared_ptr<BoltzmannModel> dqmodel = boost::make_shared<D2Q9IncompressibleModel>();
-	float_t tau = 0.9;
+	double tau = 0.9;
 
 	BOOST_CHECK_NO_THROW(BGKTransformed bgkCollision(tau, dqmodel));
 
@@ -43,7 +38,7 @@ BOOST_AUTO_TEST_CASE(BGKTransformedGetter_test) {
 
 	// create collision model
 	boost::shared_ptr<BoltzmannModel> dqmodel = boost::make_shared<D2Q9IncompressibleModel>();
-	float_t tau = 0.9;
+	double tau = 0.9;
 	BGKTransformed bgkCollision(tau, dqmodel);
 
 	// get relaxation parameter
@@ -58,21 +53,21 @@ BOOST_AUTO_TEST_CASE(BGKTransformedCollisionInvariants_test) {
 
 	// create collision model
 	boost::shared_ptr<BoltzmannModel> dqmodel = boost::make_shared<D2Q9IncompressibleModel>();
-	float_t tau = 0.9;
+	double tau = 0.9;
 	BGKTransformed bgkCollision(tau, dqmodel);
 
 	// initialize distributions with arbitrary components
-	vector<float_t> f(dqmodel->getQ());
+	vector<double> f(dqmodel->getQ());
 	for (size_t i = 0; i < dqmodel->getQ(); i++){
 		f.at(i) = 1.5 + sin(1.5*i)+0.001+i/(i+1);
 	}
 
 	// calculate macroscopic entities before and after collision
-	float_t rhoBefore = dqmodel->calculateDensity(f);
+	double rhoBefore = dqmodel->calculateDensity(f);
 	numeric_vector uBefore = dqmodel->calculateVelocity(f);
-	vector<float_t> fBefore(f);
+	vector<double> fBefore(f);
 	bgkCollision.collide(f);
-	float_t rhoAfter = dqmodel->calculateDensity(f);
+	double rhoAfter = dqmodel->calculateDensity(f);
 	numeric_vector uAfter = dqmodel->calculateVelocity(f);
 
 	// Check that f was changed
@@ -86,11 +81,11 @@ BOOST_AUTO_TEST_CASE(BGKTransformedCollisionInvariants_test) {
 	BOOST_CHECK_SMALL(rhoBefore*uBefore(1)- rhoAfter*uAfter(1), 1e-15);
 
 	// Check collision invariance of equality distribution
-	float_t prescribedDensity = 0.8;
+	double prescribedDensity = 0.8;
 	numeric_vector prescribedVelocity(dqmodel->getD());
-	vector<float_t> feq(dqmodel->getQ());
+	vector<double> feq(dqmodel->getQ());
 	dqmodel->getEquilibriumDistributions(feq, prescribedVelocity, prescribedDensity);
-	vector<float_t> feqAfterCollision(feq);
+	vector<double> feqAfterCollision(feq);
 	bgkCollision.collide(feqAfterCollision);
 	for (size_t i = 0; i < dqmodel->getQ(); i++){
 		BOOST_CHECK_SMALL(feq.at(i) - feqAfterCollision.at(i), 1e-15);

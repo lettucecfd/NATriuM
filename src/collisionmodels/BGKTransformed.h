@@ -25,7 +25,7 @@ class BGKTransformed: public CollisionModel {
 private:
 
 	/// prefactor of the collision (- 1/(tau + 0.5))
-	float_t m_prefactor;
+	double m_prefactor;
 
 public:
 
@@ -33,7 +33,7 @@ public:
 	 * @short constructor
 	 * @param[in] relaxationParameter relaxation parameter tau
 	 */
-	BGKTransformed(float_t relaxationParameter, boost::shared_ptr<BoltzmannModel> boltzmannModel);
+	BGKTransformed(double relaxationParameter, boost::shared_ptr<BoltzmannModel> boltzmannModel);
 
 
 	/// destructor
@@ -43,7 +43,7 @@ public:
 	 * @short function for collision
 	 * @param[in/out] distributions the particle distribution functions
 	 */
-	virtual void collide(vector<float_t>& distributions) const;
+	virtual void collide(vector<double>& distributions) const;
 
 };
 

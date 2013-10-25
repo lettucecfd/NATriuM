@@ -6,18 +6,15 @@
 // Description : Numerics and Algorithms for Tribology
 //============================================================================
 
-#include <iostream>
-#include <vector>
-
 #include "deal.II/grid/tria.h"
 
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
 #include "solver/CFDSolver.h"
 
+#include "utilities/BasicNames.h"
+
+using namespace natrium;
 using dealii::Triangulation;
-using natrium::D2Q9IncompressibleModel;
-using natrium::CFDSolver;
-using namespace std;
 
 
 int main() {
@@ -26,7 +23,7 @@ int main() {
 
 	//Triangulation<2> tri;
 
-	vector<natrium::float_t> v(2,0.0);
+	vector<double> v(2,0.0);
 	D2Q9IncompressibleModel boltzmannModel;
 
 
@@ -34,7 +31,7 @@ int main() {
 
 
 
-	//float_t rho = 1;
+	//double rho = 1;
 	//cout << boltzmannModel->getEquilibriumDistribution(0,v,rho) << endl;
 
 	cout << "NATriuM terminated." << endl;

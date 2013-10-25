@@ -10,7 +10,7 @@
 namespace natrium {
 
 /// constructor
-BGKTransformed::BGKTransformed(float_t relaxationParameter,
+BGKTransformed::BGKTransformed(double relaxationParameter,
 		boost::shared_ptr<BoltzmannModel> boltzmannModel):
 		CollisionModel(relaxationParameter, boltzmannModel),
 		m_prefactor(-1./(relaxationParameter + 0.5)){
@@ -23,18 +23,18 @@ BGKTransformed::~BGKTransformed() {
 
 
 // collide
-void BGKTransformed::collide(vector<float_t>& distributions) const {
+void BGKTransformed::collide(vector<double>& distributions) const {
 
 	// assert
 	assert(distributions.size() == m_q);
 
 	// calculate macroscopic entities
-	float_t rho = m_boltzmannModel->calculateDensity(distributions);
+	double rho = m_boltzmannModel->calculateDensity(distributions);
 	numeric_vector u(m_d);
 	m_boltzmannModel->calculateVelocity(distributions, rho, u);
 
 	// calculate equilibrium distribution (feq)
-	vector<float_t> feq(m_q);
+	vector<double> feq(m_q);
 	m_boltzmannModel->getEquilibriumDistributions(feq, u, rho);
 
 	// update distribution

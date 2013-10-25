@@ -8,14 +8,11 @@
 #ifndef SIMPLEPROBLEMDESCRIPTION2D_H_
 #define SIMPLEPROBLEMDESCRIPTION2D_H_
 
-#include "boost/shared_ptr.hpp"
-
 #include "deal.II/grid/tria.h"
 
 #include "../problemdescription/ProblemDescription.h"
 #include "../utilities/BasicNames.h"
 
-using boost::shared_ptr;
 using dealii::Triangulation;
 
 namespace natrium {
@@ -27,7 +24,7 @@ class SimpleProblemDescription2D: public ProblemDescription<2> {
 public:
 
 	/// constructor
-	SimpleProblemDescription2D(shared_ptr<Triangulation<2> > triangulation, float_t viscosity);
+	SimpleProblemDescription2D(shared_ptr<Triangulation<2> > triangulation, double viscosity);
 
 	/// destructor
 	virtual ~SimpleProblemDescription2D();

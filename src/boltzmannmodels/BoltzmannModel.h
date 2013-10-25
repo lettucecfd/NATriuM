@@ -12,8 +12,6 @@
 
 #include "../utilities/BasicNames.h"
 
-using std::vector;
-
 namespace natrium {
 
 /**
@@ -42,7 +40,7 @@ private:
 	const vector<numeric_vector> m_directions;
 
 	/// weights
-	const vector<float_t> m_weights;
+	const vector<double> m_weights;
 
 	/// DdQq type (id)
 	const StencilType m_stencilType;
@@ -61,7 +59,7 @@ public:
 	 *  @param stencilType type of the stencil (e.g. D2Q9)
 	 */
 	BoltzmannModel(size_t d, size_t q, const vector<numeric_vector>& directions,
-			const vector<float_t>& weights, StencilType stencilType);
+			const vector<double>& weights, StencilType stencilType);
 
 	/// destructor
 	virtual ~BoltzmannModel();
@@ -105,7 +103,7 @@ public:
 	/** @short get the weights of the equilibrium distributions
 	 *  @return a reference to the vector of weights
 	 */
-	const vector<float_t>& getWeights() const {
+	const vector<double>& getWeights() const {
 		return m_weights;
 	}
 
@@ -113,7 +111,7 @@ public:
 	 *  @param i index i of the direction (1 <= i <= q)
 	 *  @return the i-th weight
 	 */
-	float_t getWeight(size_t i) const {
+	double getWeight(size_t i) const {
 		assert(i < m_q);
 		return m_weights.at(i);
 	}
@@ -135,10 +133,10 @@ public:
 	 * @param[in] distributions particle distribution functions at a given point
 	 * @return macroscopic density (sum of all distributions)
 	 */
-	float_t calculateDensity(const vector<float_t>& distributions) const {
+	double calculateDensity(const vector<double>& distributions) const {
 
 		// calculate macroscopic density (rho)
-		float_t rho = 0.0;
+		double rho = 0.0;
 		for (size_t i = 0; i < m_q; i++){
 			rho += distributions.at(i);
 		}
@@ -151,7 +149,7 @@ public:
 	 * @param[in] distributions particle distribution functions at a given point
 	 * @return macroscopic velocity
 	 */
-	numeric_vector calculateVelocity(const vector<float_t>& distributions) const {
+	numeric_vector calculateVelocity(const vector<double>& distributions) const {
 
 		numeric_vector u(m_d);
 		for (size_t i = 0; i < m_q; i++){
@@ -169,7 +167,7 @@ public:
 	 * @param[in] rho macroscopic density
 	 * @param[out] u macroscopic velocity
 	 */
-	void calculateVelocity(const vector<float_t>& distributions, const float_t rho, numeric_vector& u) const {
+	void calculateVelocity(const vector<double>& distributions, const double rho, numeric_vector& u) const {
 
 		// assert
 		assert(u.size() == m_d);
@@ -196,8 +194,8 @@ public:
 	 *  @note The calculation can surely be done more efficiently by passing different arguments,
 	 *        e.g. u*u or u/(c^2)
 	 */
-	virtual float_t getEquilibriumDistribution(size_t i, const numeric_vector& u,
-			const float_t rho = 1) const = 0;
+	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
+			const double rho = 1) const = 0;
 
 
 	/** @short function for the calculation of all equilibrium distributions
@@ -207,8 +205,8 @@ public:
 	 *  @note The calculation can surely be done more efficiently by passing different arguments,
 	 *        e.g. u*u or u/(c^2)
 	 */
-	virtual void getEquilibriumDistributions(vector<float_t>& feq, const numeric_vector& u,
-			const float_t rho = 1) const;
+	virtual void getEquilibriumDistributions(vector<double>& feq, const numeric_vector& u,
+			const double rho = 1) const;
 
 
 };

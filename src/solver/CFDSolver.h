@@ -9,15 +9,12 @@
 #define CFDSOLVER_H_
 
 
-#include "boost/shared_ptr.hpp"
-
 #include "../streamingdata/StreamingData.h"
 #include "../problemdescription/ProblemDescription.h"
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../collisionmodels/CollisionModel.h"
 #include "../timeintegration/TimeIntegrator.h"
-
-using boost::shared_ptr;
+#include "../utilities/BasicNames.h"
 
 namespace natrium {
 

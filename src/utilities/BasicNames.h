@@ -8,33 +8,51 @@
 #ifndef UBLASTYPEDEFS_H_
 #define UBLASTYPEDEFS_H_
 
+#include <vector>
+#include <iostream>
+
+#include "boost/shared_ptr.hpp"
+#include "boost/make_shared.hpp"
+
 #include "deal.II/numerics/vector_tools.h"
 
+#include "deal.II/lac/sparse_matrix.h"
 #include "deal.II/lac/petsc_vector.h"
 #include "deal.II/lac/petsc_parallel_vector.h"
 
 namespace natrium {
 
-/// size type
-typedef unsigned int size_t;
+/// The following names will be used throughout natrium
+/// by #includeing BasicNames.h they can are used by default
+using std::vector;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::size_t;
 
-/// floating point number
-typedef double float_t;
+using boost::shared_ptr;
+using boost::make_shared;
+
 
 /// vector for numeric operations
-typedef dealii::Vector<float_t> numeric_vector;
+typedef dealii::Vector<double> numeric_vector;
+
+/// matrix for numeric operations
+typedef dealii::FullMatrix<double> numeric_matrix;
+
+/// sparse matrix
+typedef dealii::SparseMatrix<double> sparse_matrix;
 
 #undef WITH_PETSC
 #ifdef WITH_PETSC
 	/// vector which can be distributed over different cores
 	typedef dealii::PETScWrappers::MPI::Vector distributed_vector;
+	typedef dealii::PETScWrappers::MPI::SparseMatrix distributed_sparse_matrix;
 #else
 	/// vector which can be distributed over different cores
-	typedef dealii::Vector<float_t> distributed_vector;
+	typedef numeric_vector distributed_vector;
+	typedef sparse_matrix distributed_sparse_matrix;
 #endif
-
-/// matrix for numeric operations
-typedef dealii::FullMatrix<float_t> numeric_matrix;
 
 /// class which contains basic math functions
 class Math {
@@ -42,18 +60,18 @@ class Math {
 public:
 
 	/// scalar product
-	static float_t scalar_product(const numeric_vector& x,
+	static double scalar_product(const numeric_vector& x,
 			const numeric_vector& y) {
 		return x * y;
 	}
 
 	/// scale existing vector
-	static void scale_vector(float_t a, numeric_vector& x) {
+	static void scale_vector(double a, numeric_vector& x) {
 		x *= a;
 	}
 
 	/// scalar times vector
-	static numeric_vector scalar_vector(float_t a, const numeric_vector& x) {
+	static numeric_vector scalar_vector(double a, const numeric_vector& x) {
 		numeric_vector y(x);
 		y *= a;
 		return y;
@@ -65,13 +83,8 @@ public:
 	}
 
 	// 2-norm
-	static float_t euclidean_norm(numeric_vector& x) {
+	static double euclidean_norm(numeric_vector& x) {
 		return x.l2_norm();
-	}
-
-	// divide float by two
-	static float_t by_two(float_t a) {
-		return a / 2.;
 	}
 
 };

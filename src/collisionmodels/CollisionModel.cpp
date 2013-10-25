@@ -10,7 +10,7 @@
 namespace natrium {
 
 // constructor
-CollisionModel::CollisionModel(float_t relaxationParameter,
+CollisionModel::CollisionModel(double relaxationParameter,
 		const boost::shared_ptr<BoltzmannModel> boltzmannModel) :
 		m_relaxationParameter(relaxationParameter),
 		m_boltzmannModel(boltzmannModel),

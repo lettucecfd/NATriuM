@@ -38,10 +38,11 @@ find_package( Boost
               REQUIRED
               )
 #
-# descend into subdirectories (build natrium library in src and unit tests in test)
+# descend into subdirectories (build natrium library in src and unit tests in test as well as examples)
 #
 add_subdirectory( src )
 add_subdirectory( test )
+add_subdirectory( examples )
 
 
 #

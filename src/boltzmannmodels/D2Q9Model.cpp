@@ -9,7 +9,11 @@
 
 #include <math.h>
 
-using std::vector;
+// enable + operator for filling vectors
+#include "boost/assign/std/vector.hpp"
+
+// enable + operator for filling vectors
+using namespace boost::assign;
 
 namespace natrium {
 
@@ -20,13 +24,13 @@ namespace natrium {
 
 // assign speed of sound
 // has to be done outside the class, because function calls are not allowed in initialization of statics
-const float_t D2Q9Model::speedOfSound = pow(3, -0.5);
+const double D2Q9Model::speedOfSound = pow(3, -0.5);
 /// D
 const size_t D2Q9Model::D = 2;
 /// Q
 const size_t D2Q9Model::Q = 9;
 /// (speed of sound)^2
-const float_t D2Q9Model::speedOfSoundSquare = 1. / 3.;
+const double D2Q9Model::speedOfSoundSquare = 1. / 3.;
 
 /// constructor
 D2Q9Model::D2Q9Model():
@@ -40,8 +44,8 @@ D2Q9Model::~D2Q9Model() {
 
 
 // make weights
-vector<float_t> D2Q9Model::makeWeights()  {
-	vector<float_t> result;
+vector<double> D2Q9Model::makeWeights()  {
+	vector<double> result;
 	result += 4./9., 1./9., 1./9., 1./9., 1./9.,
 			1./36., 1./36., 1./36., 1./36.;
 	return result;
@@ -50,7 +54,7 @@ vector<float_t> D2Q9Model::makeWeights()  {
 
 /// make directions
 vector<numeric_vector> D2Q9Model::makeDirections() {
-	const float_t directionsArray[][2] = { { 0.0, 0.0 }, { 1.0, 0.0 }, { 0.0,
+	const double directionsArray[][2] = { { 0.0, 0.0 }, { 1.0, 0.0 }, { 0.0,
 			1.0 }, { -1.0, 0.0 }, { 0.0, -1.0 }, { 1.0, 1.0 },
 			{ -1.0, 1.0 }, { -1.0, -1.0 }, { 1.0, -1.0 } };
 	vector<numeric_vector> result;

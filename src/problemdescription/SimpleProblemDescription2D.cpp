@@ -9,7 +9,7 @@
 
 namespace natrium {
 
-SimpleProblemDescription2D::SimpleProblemDescription2D(shared_ptr<Triangulation<2> > triangulation, float_t viscosity):
+SimpleProblemDescription2D::SimpleProblemDescription2D(shared_ptr<Triangulation<2> > triangulation, double viscosity):
 	ProblemDescription(triangulation, viscosity){
 }
 
