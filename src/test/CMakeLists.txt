@@ -50,8 +50,8 @@ deal_ii_setup_target( ${TEST_TARGET} )
 #
 # link natrium library to executable
 #           
-include_directories( ${PROJECT_SOURCE_DIR}/src
-                     ${PROJECT_BINARY_DIR}/src
+include_directories( ${PROJECT_SOURCE_DIR}/natrium
+                     ${PROJECT_BINARY_DIR}/natrium
                      /usr/include/boost
                      )
 

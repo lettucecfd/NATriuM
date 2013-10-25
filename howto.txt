@@ -37,6 +37,9 @@ This file describes the steps conducted for the creation of the NATriuM project 
     1.7) sudo chmod +x 
     1.8) Launch eclipse by typing "eclipse" in a terminal
     
+
+BY FULLY SEPERATING SRC AND BIN (IN SIBLING DIRECTORIES) THE CMAKE-TO-ECLIPSE PROCEDURE
+COULD BE FURTHER SIMPLIFIED 
          
 
 HOW I MANAGED TO CREATE THE CMAKE NATRIUM PROJECT:

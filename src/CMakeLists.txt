@@ -1,44 +1,95 @@
-
- 
 #
-# Store all library files in environment variable SRC_FILES
-#
+# CMake File for NATriuM test
+#    
 
-file(   GLOB_RECURSE
-        SRC_FILES
-        benchmarks/*
-        boltzmannmodels/*
-        collisionmodels/*
-        problemdescription/*
-        solver/*
-        streamingdata/*
-        timeintegration/*
-        utilites/*
+
+#
+# It is good practise to specify a version requirement:
+#
+cmake_minimum_required( VERSION 2.8.8 )
+
+#
+# Find deal library
+#
+find_package(   deal.II 8.0 REQUIRED
+                HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
+)
+
+#
+# Initialize Deal variables (has to be called before "project")
+#
+DEAL_II_INITIALIZE_CACHED_VARIABLES() 
+
+#
+# PROJECT has to be called after DEAL_II_INITIALIZE_CACHED_VARIABLES
+# otherwise CMake will have already set the compiler and compiler
+# flags.
+#
+project( NATriuM )
+
+#
+# include boost
+#
+find_package( Boost
+              COMPONENTS
+              system
+              filesystem
+              unit_test_framework
+              REQUIRED
+              )
+#
+# descend into subdirectories (build natrium library in src and unit tests in test as well as examples)
+#
+add_subdirectory( natrium )
+add_subdirectory( test )
+add_subdirectory( examples )
+
+
+#
+# set variable NATRIUM_TARGET (only used in this file)
+#
+set(    NATRIUM_TARGET 
+        #${PROJECT_BINARY_DIR}/NATriuM_exe
+        NATriuM_exe
         )
- 
- 
- 
-#
-# Create natrium library
-#
-add_library( natrium ${SRC_FILES} )
 
 
 
 #
-# Make library
+# Specify a target:
 #
-DEAL_II_SETUP_TARGET ( natrium )
+add_executable( ${NATRIUM_TARGET} 
+                natrium/NATriuM.cpp
+                )
+
+#
+# make executable
+#
+deal_ii_setup_target( ${NATRIUM_TARGET} )     
+         
+                
+#
+# link natrium library to executable
+#           
+include_directories( "${PROJECT_BINARY_DIR}/natrium" )
+target_link_libraries(  ${NATRIUM_TARGET}
+                        natrium
+                        )
+                       
 
 
 #
-# Include src directory (to avoid ../../)
+# (Optional)
+# If you wish to have a "run" target for make, specify one:
 #
-include_directories( ${PROJECT_SOURCE_DIR}/src )
+ADD_CUSTOM_TARGET(  run
+                    COMMAND ${NATRIUM_TARGET} 
+                    COMMENT "Run ${NATRIUM_TARGET}  with ${CMAKE_BUILD_TYPE} configuration"
+)
+ADD_CUSTOM_TARGET(  test
+                    COMMAND bin/test/NATriuM_UnitTest_exe 
+                    COMMENT "Run UnitTests  with ${CMAKE_BUILD_TYPE} configuration"
+)
 
-#
-# copy natrium library to lib/ folder when typing 'make install'
-#
-install (TARGETS natrium DESTINATION ${PROJECT_BINARY_DIR}/lib)
-                        
-               
+
+  
