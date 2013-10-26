@@ -36,12 +36,9 @@ public:
 	 *        This is the central function of the boundary description classes,
 	 *        which is purely virtual (=0) in this abstract class.
 	 *
-	 * @param triangulation A triangulation object (the mesh)
 	 * @param doFHandler The doFHandler associated with the mesh
 	 */
-	virtual void applyBoundaryValues(
-			shared_ptr<dealii::Triangulation<dim + 1> > triangulation,
-			shared_ptr<dealii::DoFHandler<dim + 1> > doFHandler) = 0;
+	virtual void applyBoundaryValues(shared_ptr<dealii::DoFHandler<dim + 1> > doFHandler) = 0;
 };
 
 template<size_t dim>

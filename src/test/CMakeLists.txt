@@ -8,6 +8,9 @@ set(    BOLTZMANNMODELS_TEST
 set(    COLLISIONMODELS_TEST
         collisionmodels/BGKTransformed_test.cpp
         )            
+set(    PROBLEMDESCRIPTION_TEST
+        problemdescription/PeriodicBoundary1D_test.cpp
+        )        
 set(    UTILITIES_TEST
         utilities/BasicNames_test.cpp
         )      
@@ -20,6 +23,7 @@ set(    UTILITIES_TEST
 set(    TESTS
         ${BOLTZMANNMODELS_TEST}
         ${COLLISIONMODELS_TEST}
+        ${PROBLEMDESCRIPTION_TEST}
         ${UTILITIES_TEST}
         
         

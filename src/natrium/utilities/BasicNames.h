@@ -82,10 +82,16 @@ public:
 		x += y;
 	}
 
+	// subtract vectors
+	static void subtract_vector(numeric_vector& x, const numeric_vector& y) {
+		x -= y;
+	}
+
 	// 2-norm
 	static double euclidean_norm(numeric_vector& x) {
 		return x.l2_norm();
 	}
+
 
 };
 

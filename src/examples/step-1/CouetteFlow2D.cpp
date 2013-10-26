@@ -42,10 +42,10 @@ shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid() {
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell = unitSquare->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // bottom
-	cell->face(1)->set_all_boundary_indicators(1);  //
-	cell->face(2)->set_all_boundary_indicators(2);
-	cell->face(3)->set_all_boundary_indicators(3);
+	cell->face(0)->set_all_boundary_indicators(0);  // left
+	cell->face(1)->set_all_boundary_indicators(1);  // right
+	cell->face(2)->set_all_boundary_indicators(2);  // top
+	cell->face(3)->set_all_boundary_indicators(3);  // bottom
 
 	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
 	unitSquare->refine_global(3);
