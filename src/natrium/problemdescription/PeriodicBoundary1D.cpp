@@ -158,6 +158,7 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 			if (currentFace->boundary_indicator() == boundaryIndicator1) {
 				for (size_t i = 0;
 						i < dealii::GeometryInfo<2>::vertices_per_face; i++) {
+					// TODO Iterate over non-vertex DOFs
 					double key = 1000. * currentFace->vertex(i)[0]
 							+ currentFace->vertex(i)[1];
 					pointsAtBoundary1.insert(
@@ -168,6 +169,7 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 					for (size_t i = 0;
 							i < dealii::GeometryInfo<2>::vertices_per_face;
 							i++) {
+						// TODO Iterate over non-vertex DOFs
 						double key = 1000. * currentFace->vertex(i)[0]
 								+ currentFace->vertex(i)[1];
 						pointsAtBoundary2.insert(
@@ -202,7 +204,7 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 	}
 	for (element = ++pointsAtBoundary2.begin();
 			element != --pointsAtBoundary2.end(); ++element) {
-		// check if the vertex is really on  line
+		// check if the vertex is really on line
 		dealii::Point<2> line = endLine2 - beginLine2;
 		dealii::Point<2> toPoint = element->second - beginLine2;
 		if (not Math::is_angle_small(line, toPoint)) {
@@ -232,6 +234,7 @@ void PeriodicBoundary1D::applyBoundaryValues(
 			if (currentFace->boundary_indicator() == m_boundaryIndicator1) {
 				for (size_t i = 0;
 						i < dealii::GeometryInfo<2>::vertices_per_face; i++) {
+					// TODO Iterate over non-vertex DOFs
 					double distance = m_beginLine1.distance(
 							currentFace->vertex(i));
 					doFsAtBoundary1.insert(
