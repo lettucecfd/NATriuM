@@ -11,6 +11,8 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 
+#include "problemdescription/PeriodicBoundary1D.h"
+
 using dealii::GridGenerator;
 
 namespace natrium {
@@ -20,7 +22,7 @@ CouetteFlow2D::CouetteFlow2D(double relaxationParameter,
 		ProblemDescription<2>(makeGrid(), relaxationParameter) {
 
 	/// apply boundary values
-	// setBoundaries(makeBoundaries(topPlateVelocity));
+	setBoundaries(makeBoundaries(topPlateVelocity));
 
 	/// set initial velocities to zero
 	/// The numeric_vector is a dealii::Vector; The size-constructor applies the default value (0.0) to all components.
@@ -53,17 +55,18 @@ shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid() {
 	return unitSquare;
 }
 
-shared_ptr<vector<BoundaryDescription<1> > > CouetteFlow2D::makeBoundaries(
+shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 		double topPlateVelocity) {
 
 	// make boundary description
-	// shared_ptr<vector<BoundaryDescription<1> > > boundaries = make_shared<
-	//		vector<BoundaryDescription<1> > >();
+	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+			BoundaryCollection<2> >();
+	boundaries->addBoundary(make_shared<PeriodicBoundary1D>(0,1,getTriangulation()));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
 
-	//return boundaries;
+	return boundaries;
 }
 
 } /* namespace natrium */

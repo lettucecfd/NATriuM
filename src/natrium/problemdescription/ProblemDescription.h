@@ -11,7 +11,7 @@
 
 #include "deal.II/grid/tria.h"
 
-#include "BoundaryDescription.h"
+#include "BoundaryCollection.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
@@ -27,13 +27,13 @@ private:
 	shared_ptr<dealii::Triangulation<dim> > m_triangulation;
 
 	/// boundary description
-	shared_ptr<BoundaryDescription<dim - 1> > m_boundaries;
+	shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
 	/// initial densities
 	shared_ptr<distributed_vector> m_initialDensities;
 
 	/// initial velocities
-	shared_ptr<vector<distributed_vector> > m_initialVelocities;
+	shared_ptr<vector<shared_ptr<distributed_vector> > > m_initialVelocities;
 
 	/// relaxation parameter
 	double m_relaxationParameter;
@@ -56,10 +56,6 @@ public:
 	// GETTER     // SETTER        //
 	/////////////////////////////////
 
-	const shared_ptr<vector<BoundaryDescription<dim - 1> > >& getBoundaries() const {
-		return m_boundaries;
-	}
-
 	const shared_ptr<distributed_vector>& getInitialDensities() const {
 		return m_initialDensities;
 	}
@@ -76,11 +72,8 @@ public:
 		return m_triangulation;
 	}
 
-	/** @short set boundaries
-	 */
-	void setBoundaries(
-			shared_ptr<vector<BoundaryDescription<dim - 1> > > boundaries) {
-		m_boundaries = boundaries;
+	const shared_ptr<BoundaryCollection<dim> >& getBoundaries() const {
+		return m_boundaries;
 	}
 
 	/** @short set initial density
@@ -119,6 +112,9 @@ public:
 		m_triangulation = triangulation;
 	}
 
+	void setBoundaries(const shared_ptr<BoundaryCollection<dim> >& boundaries) {
+		m_boundaries = boundaries;
+	}
 };
 /* class ProblemDescription */
 

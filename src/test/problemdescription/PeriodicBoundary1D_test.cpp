@@ -18,6 +18,7 @@ namespace natrium {
 
 BOOST_AUTO_TEST_SUITE(PeriodicBoundary1D_test)
 
+		/* DEPRECATED CONSTRUCTOR
 BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ConstructionByPoints_test) {
 
 	cout << "PeriodicBoundary1D_ConstructionByPoints_test..." << endl;
@@ -55,6 +56,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ConstructionByPoints_test) {
 	cout << "done." << endl;
 
 }
+*/
 
 BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ConstructionByBoundaryIndicator_test) {
 

@@ -11,8 +11,12 @@
 #include <vector>
 #include <iostream>
 
+#include <math.h>
+
 #include "boost/shared_ptr.hpp"
 #include "boost/make_shared.hpp"
+
+#include "deal.II/base/point.h"
 
 #include "deal.II/numerics/vector_tools.h"
 
@@ -21,6 +25,8 @@
 #include "deal.II/lac/petsc_parallel_vector.h"
 
 namespace natrium {
+
+const double PI = 3.141592653589793238462;
 
 /// The following names will be used throughout natrium
 /// by #includeing BasicNames.h they can are used by default
@@ -33,7 +39,6 @@ using std::size_t;
 using boost::shared_ptr;
 using boost::make_shared;
 
-
 /// vector for numeric operations
 typedef dealii::Vector<double> numeric_vector;
 
@@ -45,13 +50,13 @@ typedef dealii::SparseMatrix<double> sparse_matrix;
 
 #undef WITH_PETSC
 #ifdef WITH_PETSC
-	/// vector which can be distributed over different cores
-	typedef dealii::PETScWrappers::MPI::Vector distributed_vector;
-	typedef dealii::PETScWrappers::MPI::SparseMatrix distributed_sparse_matrix;
+/// vector which can be distributed over different cores
+typedef dealii::PETScWrappers::MPI::Vector distributed_vector;
+typedef dealii::PETScWrappers::MPI::SparseMatrix distributed_sparse_matrix;
 #else
-	/// vector which can be distributed over different cores
-	typedef numeric_vector distributed_vector;
-	typedef sparse_matrix distributed_sparse_matrix;
+/// vector which can be distributed over different cores
+typedef numeric_vector distributed_vector;
+typedef sparse_matrix distributed_sparse_matrix;
 #endif
 
 /// class which contains basic math functions
@@ -92,10 +97,22 @@ public:
 		return x.l2_norm();
 	}
 
+	// check if the angle between to 2d vectors is small
+	// The formula stems from the cosine theorem: <a,b> / (|a| |b|) = cos( angle(a,b) ).
+	// Asserting abs[ <a,b> / (|a| |b|) ] > 0.99 is equivalent to:    angle(a,b) < 8 degrees.
+	static bool is_angle_small(dealii::Point<2> vector1,
+			dealii::Point<2> vector2, double thresholdDegrees = 0.0) {
+		if (thresholdDegrees == 0.0) {
+			return (vector1 * vector2 / (vector1.norm() * vector2.norm()) > 0.99);
+		} else {
+			return (vector1 * vector2 / (vector1.norm() * vector2.norm())
+					> cos(thresholdDegrees / PI * 180));
+		}
 
-};
+	}
+}; /* Math */
 
-}
+} /* namespace natrium */
 
 /*
  // Copyright (C) 2006 Garth N. Wells.

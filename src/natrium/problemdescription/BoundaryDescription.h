@@ -10,6 +10,7 @@
 
 #include "deal.II/grid/tria.h"
 #include "deal.II/dofs/dof_handler.h"
+#include "deal.II/lac/constraint_matrix.h"
 
 #include "../utilities/BasicNames.h"
 
@@ -37,8 +38,11 @@ public:
 	 *        which is purely virtual (=0) in this abstract class.
 	 *
 	 * @param doFHandler The doFHandler associated with the mesh
+	 * @param constraintMatrix matrix to which constraints are stored
 	 */
-	virtual void applyBoundaryValues(shared_ptr<dealii::DoFHandler<dim + 1> > doFHandler) = 0;
+	virtual void applyBoundaryValues(
+			const shared_ptr<dealii::DoFHandler<2> > doFHandler,
+			shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const = 0;
 };
 
 template<size_t dim>

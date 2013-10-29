@@ -45,7 +45,7 @@ private:
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<vector<BoundaryDescription<1> > > makeBoundaries(double topPlateVelocity);
+	shared_ptr<BoundaryCollection<2> > makeBoundaries(double topPlateVelocity);
 
 };
 
