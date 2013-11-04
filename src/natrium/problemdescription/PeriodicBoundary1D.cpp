@@ -222,24 +222,28 @@ void PeriodicBoundary1D::applyBoundaryValues(
 		shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const {
 
 	// Make iterators over active faces
-	dealii::DoFHandler<2>::active_face_iterator currentFace =
+	dealii::DoFHandler<2>::active_cell_iterator currentCell =
 			doFHandler->begin_active();
+	size_t doFsPerCell = doFHandler->get_fe().dofs_per_cell;
 
 	// Sort dofs at boundary 1 with regard to their distance to beginLine1
 	std::map<double, size_t, own_double_less> doFsAtBoundary1;
 
 	// iterate over all active faces and store doFs of boundary 1 in list
-	for (; currentFace != doFHandler->end(); ++currentFace) {
-		if (currentFace->at_boundary()) {
-			if (currentFace->boundary_indicator() == m_boundaryIndicator1) {
-				for (size_t i = 0;
-						i < dealii::GeometryInfo<2>::vertices_per_face; i++) {
-					// TODO Iterate over non-vertex DOFs
-					double distance = m_beginLine1.distance(
-							currentFace->vertex(i));
-					doFsAtBoundary1.insert(
-							std::make_pair(distance,
-									currentFace->vertex_dof_index(i, 0)));
+	for (; currentCell != doFHandler->end(); ++currentCell) {
+		if (currentCell->at_boundary()) {
+			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell; i++) {
+				if (currentCell->boundary_indicator() == m_boundaryIndicator1) {
+					for (size_t j = 0;
+							j < dealii::GeometryInfo<2>::vertices_per_face;
+							j++) {
+						// TODO Iterate over non-vertex DOFs
+						double distance = m_beginLine1.distance(
+								currentCell->vertex(j));
+						doFsAtBoundary1.insert(
+								std::make_pair(distance,
+										currentCell->vertex_dof_index(j, 0)));
+					}
 				}
 			}
 		}
@@ -294,7 +298,7 @@ void PeriodicBoundary1D::applyBoundaryValues(
 										/ (biggerKey - smallerKey));
 						element++;
 						// erase element from list
-						assert (element->second > 1e49);
+						assert(element->second > 1e49);
 						doFsAtBoundary1.erase(element);
 					}
 				}
