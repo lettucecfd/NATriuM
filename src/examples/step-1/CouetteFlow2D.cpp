@@ -62,6 +62,7 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
 			BoundaryCollection<2> >();
 	boundaries->addBoundary(make_shared<PeriodicBoundary1D>(0,1,getTriangulation()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary1D>(2,3,getTriangulation()));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();

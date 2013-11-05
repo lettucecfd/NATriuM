@@ -34,7 +34,7 @@ const double D2Q9Model::speedOfSoundSquare = 1. / 3.;
 
 /// constructor
 D2Q9Model::D2Q9Model():
-		BoltzmannModel(2, 9, makeDirections(), makeWeights(), D2Q9){
+		BoltzmannModel(2, 9, makeDirections(), makeWeights(), Stencil_D2Q9){
 } //constructor
 
 

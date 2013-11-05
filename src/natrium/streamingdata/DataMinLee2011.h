@@ -30,17 +30,17 @@ template <size_t dim> class DataMinLee2011: public  StreamingData<dim>{
 
 private:
 
-	/// dealii::DoFHandler to distribute the degrees of freedom over the Triangulation
-	dealii::DoFHandler<dim> m_doFHandler;
-
-	/// dealii::FEValues object to get function values and derivatives at node points
-	shared_ptr<dealii::FEValues<dim,dim> > m_feValues;
-
 	/// Triangulation
 	shared_ptr<dealii::Triangulation<dim> > m_tria;
 
 	/// Finite Element function on one cell
-	dealii::FE_Q<dim> m_fe;
+	shared_ptr<dealii::FE_Q<dim> > m_fe;
+
+	/// dealii::DoFHandler to distribute the degrees of freedom over the Triangulation
+	shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
+
+	/// dealii::FEValues object to get function values and derivatives at node points
+	shared_ptr<dealii::FEValues<dim,dim> > m_feValues;
 
 	/// Sparsity Pattern of the sparse matrix
 	dealii::SparsityPattern m_sparsityPattern;

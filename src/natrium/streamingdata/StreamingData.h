@@ -19,7 +19,7 @@ namespace natrium {
  *  @tparam dim The dimension of the flow (2 or 3).
  *  @tparam Q The number of directions of the finite difference stencil (e.g. D2Q9)
  */
-template <int dim> class StreamingData {
+template <size_t dim> class StreamingData {
 
 public:
 	/// particle distribution functions

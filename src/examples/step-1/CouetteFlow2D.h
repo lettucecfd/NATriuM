@@ -23,7 +23,7 @@ namespace natrium {
  *  8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).
  *  @note The analytic solution is obtained by a formula stated in Min and Lee (2011).
  */
-class CouetteFlow2D: ProblemDescription<2> {
+class CouetteFlow2D: public ProblemDescription<2> {
 public:
 
 	/// constructor

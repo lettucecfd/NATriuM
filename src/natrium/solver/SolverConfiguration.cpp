@@ -9,10 +9,4 @@
 
 namespace natrium {
 
-SolverConfiguration::SolverConfiguration() {
-}
-
-SolverConfiguration::~SolverConfiguration() {
-}
-
 } /* namespace natrium */
