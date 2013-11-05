@@ -12,6 +12,7 @@
 #include "deal.II/base/point.h"
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/lac/constraint_matrix.h"
+#include "deal.II/fe/fe_q.h"
 
 #include "utilities/BasicNames.h"
 
@@ -124,6 +125,9 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ApplyBoundary_test) {
 	/////////////////
 	// SANITY TEST //
 	/////////////////
+	const size_t numberOfRefinementSteps = 3;
+	const size_t n_q_points = 2;
+
 	/// create triangulation
 	shared_ptr<dealii::Triangulation<2> > triangulation = make_shared<
 			dealii::Triangulation<2> >();
@@ -132,20 +136,30 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ApplyBoundary_test) {
 	triangulation->begin_active(0)->face(1)->set_boundary_indicator(1); //right
 	triangulation->begin_active(0)->face(2)->set_boundary_indicator(2); //top
 	triangulation->begin_active(0)->face(3)->set_boundary_indicator(3); //bottom
-	triangulation->refine_global(3);
+	triangulation->refine_global(numberOfRefinementSteps);
 
-	// create dof handler and constraint matrix
+	// create finite element, dof handler and constraint matrix
+	shared_ptr<dealii::FE_Q<2> > fe = make_shared<dealii::FE_Q<2> >(n_q_points);
 	shared_ptr<dealii::DoFHandler<2> > doFHandler = make_shared<
 			dealii::DoFHandler<2> >(*triangulation);
 	shared_ptr<dealii::ConstraintMatrix> constraintMatrix = make_shared<
 			dealii::ConstraintMatrix>();
 	constraintMatrix->clear();
 
-	// make periodic boundaries
+	// distribute degrees of freedom
+	doFHandler->distribute_dofs(*fe);
+
+
+	// make periodic boundaries object
 	PeriodicBoundary1D periodicLeftRight(0, 1, triangulation);
+	PeriodicBoundary1D periodicTopBottom(2, 3, triangulation);
 
 	// Apply boundary values
 	periodicLeftRight.applyBoundaryValues(doFHandler, constraintMatrix);
+	BOOST_CHECK(constraintMatrix->n_constraints() == std::pow(2,numberOfRefinementSteps)*(n_q_points)+1);
+	periodicTopBottom.applyBoundaryValues(doFHandler, constraintMatrix);
+	BOOST_CHECK(constraintMatrix->n_constraints() == 2*std::pow(2,numberOfRefinementSteps)*(n_q_points)+1);
+	//constraintMatrix->print(cout);
 
 	// Finalize constraint Matrix
 	constraintMatrix->close();

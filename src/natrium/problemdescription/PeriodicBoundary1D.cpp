@@ -12,6 +12,7 @@
 
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/geometry_info.h"
+#include "deal.II/dofs/dof_tools.h"
 
 #include "../utilities/BasicNames.h"
 
@@ -158,7 +159,6 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 			if (currentFace->boundary_indicator() == boundaryIndicator1) {
 				for (size_t i = 0;
 						i < dealii::GeometryInfo<2>::vertices_per_face; i++) {
-					// TODO Iterate over non-vertex DOFs
 					double key = 1000. * currentFace->vertex(i)[0]
 							+ currentFace->vertex(i)[1];
 					pointsAtBoundary1.insert(
@@ -169,7 +169,6 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 					for (size_t i = 0;
 							i < dealii::GeometryInfo<2>::vertices_per_face;
 							i++) {
-						// TODO Iterate over non-vertex DOFs
 						double key = 1000. * currentFace->vertex(i)[0]
 								+ currentFace->vertex(i)[1];
 						pointsAtBoundary2.insert(
@@ -221,91 +220,119 @@ void PeriodicBoundary1D::applyBoundaryValues(
 		const shared_ptr<dealii::DoFHandler<2> > doFHandler,
 		shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const {
 
-	// Make iterators over active faces
-	dealii::DoFHandler<2>::active_cell_iterator currentCell =
-			doFHandler->begin_active();
-	size_t doFsPerCell = doFHandler->get_fe().dofs_per_cell;
-
-	// Sort dofs at boundary 1 with regard to their distance to beginLine1
-	std::map<double, size_t, own_double_less> doFsAtBoundary1;
-
-	// iterate over all active faces and store doFs of boundary 1 in list
-	for (; currentCell != doFHandler->end(); ++currentCell) {
-		if (currentCell->at_boundary()) {
-			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell; i++) {
-				if (currentCell->boundary_indicator() == m_boundaryIndicator1) {
-					for (size_t j = 0;
-							j < dealii::GeometryInfo<2>::vertices_per_face;
-							j++) {
-						// TODO Iterate over non-vertex DOFs
-						double distance = m_beginLine1.distance(
-								currentCell->vertex(j));
-						doFsAtBoundary1.insert(
-								std::make_pair(distance,
-										currentCell->vertex_dof_index(j, 0)));
-					}
-				}
-			}
-		}
+	// check direction of the constraint
+	size_t direction;
+	if (std::fabs((m_beginLine1 - m_endLine1)[0]) < 1e-3) {
+		direction = 0;
+	} else if (std::fabs((m_beginLine1 - m_endLine1)[1]) < 1e-3) {
+		direction = 1;
+	} else {
+		throw PeriodicBoundaryNotPossible(
+				"The current implementation of periodic boundary conditions does only support boundaries parallel to the x- or y-axis.");
 	}
 
-	// iterate over all active faces and apply periodic boundary constraints to boundary 2
-	std::map<double, size_t>::iterator element;
-	for (; currentFace != doFHandler->end(); ++currentFace) {
-		if (currentFace->at_boundary()) {
-			if (currentFace->boundary_indicator() == m_boundaryIndicator2) {
-				for (size_t i = 0;
-						i < dealii::GeometryInfo<2>::vertices_per_face; i++) {
-					double distance = m_beginLine2.distance(
-							currentFace->vertex(i));
-
-					// get the respective dofs at boundary 1
-					// if key is already in map, element becomes the element with this key;
-					// and no insert takes place.
-					// if not: new element is inserted. Element points to new element
-					bool isKeyAlreadyInMap(false);
-					std::make_pair(element, isKeyAlreadyInMap) =
-							doFsAtBoundary1.insert(
-									std::make_pair(distance, 1e50));
-					if (isKeyAlreadyInMap) {
-						// add entry to constraint matrix which connects the doF with the respective
-						// doF at the other periodic interface
-						constraintMatrix->add_line(
-								currentFace->vertex_dof_index(i, 0));
-						constraintMatrix->add_entry(
-								currentFace->vertex_dof_index(i, 0),
-								element->second, 1.0);
-					} else {
-						// add entries to the constraint matrix which apply a linear mapping to the doF
-						// with the respective neighbors on the other periodic interface
-						double thisKey = element->first;
-						double smallerKey = (element--)->first;
-						double biggerKey = ((element++)++)->first;
-						constraintMatrix->add_line(
-								currentFace->vertex_dof_index(i, 0));
-						// element is now on this+1
-						constraintMatrix->add_entry(
-								currentFace->vertex_dof_index(i, 0),
-								element->second,
-								(thisKey - smallerKey)
-										/ (biggerKey - smallerKey));
-						((element--)--);
-						// element is now on this -1
-						constraintMatrix->add_entry(
-								currentFace->vertex_dof_index(i, 0),
-								element->second,
-								(biggerKey - thisKey)
-										/ (biggerKey - smallerKey));
-						element++;
-						// erase element from list
-						assert(element->second > 1e49);
-						doFsAtBoundary1.erase(element);
-					}
-				}
-			}
-		}
+	try {
+		// Note: For DoFHandler objects that are built on a parallel::distributed::Triangulation object
+		// parallel::distributed::Triangulation::add_periodicity has to be called before.
+		dealii::DoFTools::make_periodicity_constraints(*doFHandler,
+				m_boundaryIndicator1, m_boundaryIndicator2, direction,
+				*constraintMatrix);
+	} catch (std::exception& e) {
+		throw PeriodicBoundaryNotPossible(
+				"Error in dealii::DoFTools::make_periodicity_constraints");
 	}
 
+
+	/*
+	 // Make iterators over active faces
+	 dealii::DoFHandler<2>::active_cell_iterator currentCell =
+	 doFHandler->begin_active();
+	 size_t doFsPerCell = doFHandler->get_fe().dofs_per_cell;
+
+	 // Sort dofs at boundary 1 with regard to their distance to beginLine1
+	 std::map<double, size_t, own_double_less> doFsAtBoundary1;
+
+	 // iterate over all active faces and store doFs of boundary 1 in list
+	 for (; currentCell != doFHandler->end(); ++currentCell) {
+	 if (currentCell->at_boundary()) {
+	 feValues->reinit(currentCell);
+	 for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell; i++) {
+	 if (currentCell->face(i)->boundary_indicator() == m_boundaryIndicator1) {
+
+	 for (size_t j = 0;
+	 j < feValues->dofs_per_face;
+	 j++) {
+	 durre
+	 feValues->get_quadrature_points()
+	 // TODO Iterate over non-vertex DOFs
+	 double distance = m_beginLine1.distance(
+	 currentCell->vertex(j));
+	 doFsAtBoundary1.insert(
+	 std::make_pair(distance,
+	 currentCell->vertex_dof_index(j, 0)));
+	 }
+	 }
+	 }
+	 }
+	 }
+
+	 // iterate over all active faces and apply periodic boundary constraints to boundary 2
+	 std::map<double, size_t>::iterator element;
+	 for (; currentFace != doFHandler->end(); ++currentFace) {
+	 if (currentFace->at_boundary()) {
+	 if (currentFace->boundary_indicator() == m_boundaryIndicator2) {
+	 for (size_t i = 0;
+	 i < dealii::GeometryInfo<2>::vertices_per_face; i++) {
+	 double distance = m_beginLine2.distance(
+	 currentFace->vertex(i));
+
+	 // get the respective dofs at boundary 1
+	 // if key is already in map, element becomes the element with this key;
+	 // and no insert takes place.
+	 // if not: new element is inserted. Element points to new element
+	 bool isKeyAlreadyInMap(false);
+	 std::make_pair(element, isKeyAlreadyInMap) =
+	 doFsAtBoundary1.insert(
+	 std::make_pair(distance, 1e50));
+	 if (isKeyAlreadyInMap) {
+	 // add entry to constraint matrix which connects the doF with the respective
+	 // doF at the other periodic interface
+	 constraintMatrix->add_line(
+	 currentFace->vertex_dof_index(i, 0));
+	 constraintMatrix->add_entry(
+	 currentFace->vertex_dof_index(i, 0),
+	 element->second, 1.0);
+	 } else {
+	 // add entries to the constraint matrix which apply a linear mapping to the doF
+	 // with the respective neighbors on the other periodic interface
+	 double thisKey = element->first;
+	 double smallerKey = (element--)->first;
+	 double biggerKey = ((element++)++)->first;
+	 constraintMatrix->add_line(
+	 currentFace->vertex_dof_index(i, 0));
+	 // element is now on this+1
+	 constraintMatrix->add_entry(
+	 currentFace->vertex_dof_index(i, 0),
+	 element->second,
+	 (thisKey - smallerKey)
+	 / (biggerKey - smallerKey));
+	 ((element--)--);
+	 // element is now on this -1
+	 constraintMatrix->add_entry(
+	 currentFace->vertex_dof_index(i, 0),
+	 element->second,
+	 (biggerKey - thisKey)
+	 / (biggerKey - smallerKey));
+	 element++;
+	 // erase element from list
+	 assert(element->second > 1e49);
+	 doFsAtBoundary1.erase(element);
+	 }
+	 }
+	 }
+	 }
+	 }
+	 */
 } /* applyBoundaryValues */
 
 } /* namespace natrium */

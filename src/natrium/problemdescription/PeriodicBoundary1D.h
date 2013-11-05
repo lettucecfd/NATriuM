@@ -146,6 +146,9 @@ public:
 	 * @note  If the discretization of the two opposite boundaries do not fit together,
 	 *        a linear mapping is applied: x_i = w_j * x_j + w_k * x_k,
 	 *        where x_j and x_k are the "neighboring" dofs at the opposite boundary.
+	 *        NO! Linear mapping is not supported, yet!
+	 *        The high-level function dofTools::make_periodicity_constraints() does not
+	 *        support this.
 	 *
 	 * @param doFHandler The doFHandler associated with the mesh
 	 * @param constraintMatrix matrix to which constraints are stored
