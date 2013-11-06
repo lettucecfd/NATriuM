@@ -8,10 +8,18 @@
 #ifndef PERIODICBOUNDARY1D_H_
 #define PERIODICBOUNDARY1D_H_
 
-#include "exception"
-#include "string"
+#include <exception>
+#include <string>
+#include <functional>
+#include <map>
+#include <sstream>
+
+#include <boost/unordered_map.hpp>
+#include <boost/functional/hash.hpp>
 
 #include "deal.II/base/point.h"
+#include "deal.II/grid/tria_accessor.h"
+#include "deal.II/grid/cell_id.h"
 
 #include "BoundaryDescription.h"
 
@@ -36,6 +44,25 @@ public:
 	}
 	virtual ~PeriodicBoundaryNotPossible() throw () {
 	}
+};
+
+/**
+ * @short Hash function for dealii::CellID
+ *
+ * @note A hash function returns a unique integer for each CellID element.
+ *       This has to be done via string hash for CellID, because CellID
+ *       does not have any public component except "==" and "<<".
+ *
+ */
+struct hash_cellID : public std::unary_function<dealii::CellId,size_t> {
+  const size_t operator() (const dealii::CellId& cellID) const {
+	  // convert cellID to string
+	  std::stringstream stream;
+	  stream << cellID;
+	  // hash string
+	  boost::hash<std::string> string_hash;
+	  return string_hash(stream.str());
+  }
 };
 
 /**
@@ -66,6 +93,10 @@ private:
 	/// triangulation object
 	shared_ptr<dealii::Triangulation<2> > m_triangulation;
 
+	/// Container for all cells that belong to this boundary
+	/// stored as <cellID, (accessor to opposite cell, boundary face at opposite cell) > /
+	boost::unordered_map<dealii::CellId, std::pair<dealii::TriaIterator<dealii::CellAccessor<2> >, size_t>, hash_cellID> m_cells;
+
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
 	 *        If they are anti-parallel, begin and end vector of the second are swapped.
@@ -93,6 +124,11 @@ private:
 			shared_ptr<dealii::Triangulation<2> > triangulation,
 			dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
 			dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2);
+
+	/**
+	 * @short create the map m_cells which stores the cells adjacent to the periodic boundary
+	 */
+	void createMap();
 
 public:
 
@@ -142,6 +178,9 @@ public:
 	 *        This is the central function of the boundary description classes.
 	 *        Periodic boundaries are put into practice by introducing constraints
 	 *        x_i = x_j which force two (opposite) degrees of freedom to coincide.
+	 *        In other words, degrees of freedom are eliminated.
+	 *        NOTE: ELIMINATING DEGREES OF FREEDOM IS NOT POSSIBLE FOR DISCONTINUOUS GALERKIN METHODS.
+	 *        When using DG methods, use PeriodicBoundary1D::getAdjacentCellAtPeriodicBoundary
 	 *
 	 * @note  If the discretization of the two opposite boundaries do not fit together,
 	 *        a linear mapping is applied: x_i = w_j * x_j + w_k * x_k,
@@ -157,10 +196,41 @@ public:
 			const shared_ptr<dealii::DoFHandler<2> > doFHandler,
 			shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const;
 
+	/**
+	 * @short get the respective neighbor cell on the other side of a periodic boundary
+	 *
+	 * @param[in] cellID a cell ID
+	 * @param[out] neighborCell the desired neighbor cell
+	 *
+	 * @return local face number of the neighbor cell
+	 */
+	size_t getOppositeCellAtPeriodicBoundary(dealii::CellId cellID,
+			dealii::TriaIterator<dealii::CellAccessor<2> >& neighborCell);
+
+	/**
+	 * @short test if a given face belongs to this boundary
+	 * @param[in] cellID unique ID of the cell
+	 * @param[in] faceBoundaryIndicator the boundary indicator of the face
+	 *
+	 */
+	bool isFaceInBoundary(dealii::CellId cellID, size_t faceBoundaryIndicator) {
+		// first condition: cell map has a key <cellID>
+		if (m_cells.count(cellID) == 0) {
+			return false;
+		}
+		// second condition: the face has the right boundary indicator
+		if (faceBoundaryIndicator == m_boundaryIndicator1) {
+			return true;
+		}
+		if (faceBoundaryIndicator == m_boundaryIndicator2) {
+			return true;
+		}
+		return false;
+	}
+
 	/////////////////////////////////
 	// GETTER     // SETTER        //
 	/////////////////////////////////
-
 	const dealii::Point<2>& getBeginLine1() const {
 		return m_beginLine1;
 	}

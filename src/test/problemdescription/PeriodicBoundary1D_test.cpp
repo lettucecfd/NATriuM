@@ -11,6 +11,8 @@
 
 #include "deal.II/base/point.h"
 #include "deal.II/grid/grid_generator.h"
+#include "deal.II/grid/tria_iterator.h"
+#include "deal.II/grid/tria_accessor.h"
 #include "deal.II/lac/constraint_matrix.h"
 #include "deal.II/fe/fe_q.h"
 
@@ -167,6 +169,53 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ApplyBoundary_test) {
 	cout << "done." << endl;
 
 } /* PeriodicBoundary1D_ApplyBoundary_test */
+
+BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_forDisconitnuousGalerkin_test) {
+
+	cout << "PeriodicBoundary1D_forDisconitnuousGalerkin_test..." << endl;
+
+	/////////////////
+	// SANITY TEST //
+	/////////////////
+	const size_t numberOfRefinementSteps = 2;
+
+	/// create triangulation
+	shared_ptr<dealii::Triangulation<2> > triangulation = make_shared<
+			dealii::Triangulation<2> >();
+	dealii::GridGenerator::hyper_cube(*triangulation, 0.0, 1.0);
+	triangulation->begin_active(0)->face(0)->set_boundary_indicator(0); //left
+	triangulation->begin_active(0)->face(1)->set_boundary_indicator(1); //right
+	triangulation->begin_active(0)->face(2)->set_boundary_indicator(2); //top
+	triangulation->begin_active(0)->face(3)->set_boundary_indicator(3); //bottom
+	triangulation->refine_global(numberOfRefinementSteps);
+
+	// make periodic boundaries object
+	PeriodicBoundary1D periodicLeftRight(0, 1, triangulation);
+	PeriodicBoundary1D periodicTopBottom(2, 3, triangulation);
+
+	// check function isFaceInBoundary (only left face can be in boundary)
+	// TODO is begin not the left upper corner??? doesnt seem so -> first check fails;
+	BOOST_CHECK( periodicLeftRight.isFaceInBoundary(triangulation->begin_active()->id(), triangulation->begin_active(0)->face(0)->index()) );
+	BOOST_CHECK(not periodicLeftRight.isFaceInBoundary(triangulation->begin_active()->id(), triangulation->begin_active(0)->face(1)->index()) );
+	BOOST_CHECK(not periodicLeftRight.isFaceInBoundary(triangulation->begin_active()->id(), triangulation->begin_active(0)->face(2)->index()) );
+	BOOST_CHECK(not periodicLeftRight.isFaceInBoundary(triangulation->begin_active()->id(), triangulation->begin_active(0)->face(3)->index()) );
+
+	// check if the opposite cells are really the opposite ones
+	dealii::Triangulation<2>::active_cell_iterator it;
+	size_t faceIndex = periodicLeftRight.getOppositeCellAtPeriodicBoundary(triangulation->begin_active()->id(),it);
+	size_t faceIndex2 = periodicTopBottom.getOppositeCellAtPeriodicBoundary(triangulation->begin_active()->id(),it);
+
+	BOOST_CHECK(faceIndex == 1);
+	BOOST_CHECK(faceIndex2 == 3);
+
+	// TODO Check if cells are correct
+
+
+	// TODO make wasserdichten Test.
+
+	cout << "done." << endl;
+} /*PeriodicBoundary1D_forDisconitnuousGalerkin_test*/
+
 
 BOOST_AUTO_TEST_SUITE_END() /* PeriodicBoundary1D_test */
 

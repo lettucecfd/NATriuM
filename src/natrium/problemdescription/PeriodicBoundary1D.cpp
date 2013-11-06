@@ -7,7 +7,6 @@
 
 #include "PeriodicBoundary1D.h"
 
-#include <map>
 #include <iterator>
 
 #include "deal.II/grid/tria_iterator.h"
@@ -89,6 +88,9 @@ PeriodicBoundary1D::PeriodicBoundary1D(size_t boundaryIndicator1,
 	// else throw PeriodicBoundaryNotPossible
 	checkInterfacePositions();
 
+	// create the map which stores the opposite cells of each boundary cell, respectively
+	createMap();
+
 } /* Constructor 2 */
 
 PeriodicBoundary1D::~PeriodicBoundary1D() {
@@ -140,10 +142,10 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2) {
 
 	// Make iterators over active faces
-	dealii::Triangulation<2>::active_face_iterator currentFace =
-			triangulation->begin_active_face();
-	dealii::Triangulation<2>::active_face_iterator lastFace =
-			triangulation->end_face();
+	dealii::Triangulation<2>::active_cell_iterator currentCell =
+			triangulation->begin_active();
+	dealii::Triangulation<2>::active_cell_iterator lastCell =
+			triangulation->end();
 
 	// Make containers for all vertices at the boundary
 	// maps are by default sorted by key;
@@ -154,26 +156,34 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 	std::map<double, dealii::Point<2>, own_double_less> pointsAtBoundary2;
 
 	// iterate over all active faces and store coordinates of vertices in list
-	for (; currentFace != lastFace; ++currentFace) {
-		if (currentFace->at_boundary()) {
-			if (currentFace->boundary_indicator() == boundaryIndicator1) {
-				for (size_t i = 0;
-						i < dealii::GeometryInfo<2>::vertices_per_face; i++) {
-					double key = 1000. * currentFace->vertex(i)[0]
-							+ currentFace->vertex(i)[1];
-					pointsAtBoundary1.insert(
-							std::make_pair(key, currentFace->vertex(i)));
-				}
-			} else {
-				if (currentFace->boundary_indicator() == boundaryIndicator2) {
-					for (size_t i = 0;
-							i < dealii::GeometryInfo<2>::vertices_per_face;
-							i++) {
-						double key = 1000. * currentFace->vertex(i)[0]
-								+ currentFace->vertex(i)[1];
-						pointsAtBoundary2.insert(
-								std::make_pair(key, currentFace->vertex(i)));
-
+	for (; currentCell != lastCell; ++currentCell) {
+		if (currentCell->at_boundary()) {
+			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
+					i++) {
+				if (currentCell->face(i)->boundary_indicator()
+						== boundaryIndicator1) {
+					for (size_t j = 0;
+							j < dealii::GeometryInfo<2>::vertices_per_face;
+							j++) {
+						double key = 1000. * currentCell->face(i)->vertex(j)[0]
+								+ currentCell->face(i)->vertex(j)[1];
+						pointsAtBoundary1.insert(
+								std::make_pair(key,
+										currentCell->face(i)->vertex(j)));
+					}
+				} else {
+					if (currentCell->face(i)->boundary_indicator()
+							== boundaryIndicator2) {
+						for (size_t j = 0;
+								j < dealii::GeometryInfo<2>::vertices_per_face;
+								j++) {
+							double key = 1000.
+									* currentCell->face(i)->vertex(j)[0]
+									+ currentCell->face(i)->vertex(j)[1];
+							pointsAtBoundary2.insert(
+									std::make_pair(key,
+											currentCell->face(i)->vertex(j)));
+						}
 					}
 				}
 			}
@@ -214,13 +224,74 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 		}
 	}
 
-} /* getInterfacePositionsByBoundaryIndicator */
+}/* getInterfacePositionsByBoundaryIndicator */
+
+void PeriodicBoundary1D::createMap() {
+
+	// Make iterators over active faces
+	dealii::Triangulation<2>::active_cell_iterator currentCell =
+			m_triangulation->begin_active();
+	dealii::Triangulation<2>::active_cell_iterator lastCell =
+			m_triangulation->end();
+
+	// The key of these cells is the distance from the begin point of the respective line.
+	// The second element of the value pair is the local face id of the face which belongs to the boundary.
+	std::map<double,
+			std::pair<dealii::Triangulation<2>::active_cell_iterator, size_t> > cellsAtBoundary1;
+	std::map<double,
+			std::pair<dealii::Triangulation<2>::active_cell_iterator, size_t> > cellsAtBoundary2;
+
+	// iterate over all active cells and sort them
+	for (; currentCell != lastCell; ++currentCell) {
+		if (currentCell->at_boundary()) {
+			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
+					i++) {
+				if (currentCell->face(i)->boundary_indicator()
+						== m_boundaryIndicator1) {
+					double key = currentCell->center().distance(m_beginLine1);
+					cellsAtBoundary1.insert(
+							std::make_pair(key,
+									std::make_pair(currentCell, dealii::GeometryInfo<2>::opposite_face[i])));
+				}
+				if (currentCell->face(i)->boundary_indicator()
+						== m_boundaryIndicator2) {
+					double key = currentCell->center().distance(m_beginLine2);
+					cellsAtBoundary2.insert(
+							std::make_pair(key,
+									std::make_pair(currentCell, dealii::GeometryInfo<2>::opposite_face[i])));
+				}
+			}
+		}
+	}
+
+	// make sure that both boundaries have the same number of adjacent cells
+	if (cellsAtBoundary1.size() != cellsAtBoundary2.size()) {
+		throw PeriodicBoundaryNotPossible(
+				"The boundaries do not have the same number of adjacent cells.");
+	}
+
+	// store the cell ids and their respective opposite cell in map
+	std::map<double,
+			std::pair<dealii::Triangulation<2>::active_cell_iterator, size_t> >::iterator atBoundary1 =
+			cellsAtBoundary1.begin();
+	std::map<double,
+			std::pair<dealii::Triangulation<2>::active_cell_iterator, size_t> >::iterator atBoundary2 =
+			cellsAtBoundary2.begin();
+	for (; atBoundary1 != --cellsAtBoundary1.end(); atBoundary1++) {
+		dealii::CellId ID1 = atBoundary1->second.first->id();
+		m_cells.insert(std::make_pair(ID1, atBoundary1->second));
+		dealii::CellId ID2 = atBoundary2->second.first->id();
+		m_cells.insert(std::make_pair(ID2, atBoundary2->second));
+		atBoundary2++;
+	}
+
+} /* createMap */
 
 void PeriodicBoundary1D::applyBoundaryValues(
 		const shared_ptr<dealii::DoFHandler<2> > doFHandler,
 		shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const {
 
-	// check direction of the constraint
+// check direction of the constraint
 	size_t direction;
 	if (std::fabs((m_beginLine1 - m_endLine1)[0]) < 1e-3) {
 		direction = 0;
@@ -232,8 +303,8 @@ void PeriodicBoundary1D::applyBoundaryValues(
 	}
 
 	try {
-		// Note: For DoFHandler objects that are built on a parallel::distributed::Triangulation object
-		// parallel::distributed::Triangulation::add_periodicity has to be called before.
+// Note: For DoFHandler objects that are built on a parallel::distributed::Triangulation object
+// parallel::distributed::Triangulation::add_periodicity has to be called before.
 		dealii::DoFTools::make_periodicity_constraints(*doFHandler,
 				m_boundaryIndicator1, m_boundaryIndicator2, direction,
 				*constraintMatrix);
@@ -241,7 +312,6 @@ void PeriodicBoundary1D::applyBoundaryValues(
 		throw PeriodicBoundaryNotPossible(
 				"Error in dealii::DoFTools::make_periodicity_constraints");
 	}
-
 
 	/*
 	 // Make iterators over active faces
@@ -334,5 +404,19 @@ void PeriodicBoundary1D::applyBoundaryValues(
 	 }
 	 */
 } /* applyBoundaryValues */
+
+size_t PeriodicBoundary1D::getOppositeCellAtPeriodicBoundary(
+		dealii::CellId cellID,
+		dealii::TriaIterator<dealii::CellAccessor<2> >& neighborCell) {
+
+// assert that the given cell is at the boundary
+	if (m_cells.count(cellID) == 0) {
+		throw PeriodicBoundaryNotPossible(
+				"The cellID does not belong to a cell at the boundary.");
+	}
+
+	neighborCell = m_cells[cellID].first;
+	return m_cells[cellID].second;
+}
 
 } /* namespace natrium */
