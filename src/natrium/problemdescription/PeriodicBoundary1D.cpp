@@ -279,9 +279,9 @@ void PeriodicBoundary1D::createMap() {
 			cellsAtBoundary2.begin();
 	for (; atBoundary1 != --cellsAtBoundary1.end(); atBoundary1++) {
 		dealii::CellId ID1 = atBoundary1->second.first->id();
-		m_cells.insert(std::make_pair(ID1, atBoundary1->second));
+		m_cells.insert(std::make_pair(ID1, atBoundary2->second));
 		dealii::CellId ID2 = atBoundary2->second.first->id();
-		m_cells.insert(std::make_pair(ID2, atBoundary2->second));
+		m_cells.insert(std::make_pair(ID2, atBoundary1->second));
 		atBoundary2++;
 	}
 

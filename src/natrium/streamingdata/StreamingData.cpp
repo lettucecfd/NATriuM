@@ -17,4 +17,7 @@ template<int dim> StreamingData<dim>::StreamingData() {
 template<int dim> StreamingData<dim>::~StreamingData() {
 }
 */
+
+
+
 } /* namespace natrium */

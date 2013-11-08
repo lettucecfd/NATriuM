@@ -202,7 +202,7 @@ public:
 	 * @param[in] cellID a cell ID
 	 * @param[out] neighborCell the desired neighbor cell
 	 *
-	 * @return local face number of the neighbor cell
+	 * @return local face number of cell1, denoting the respective cell number
 	 */
 	size_t getOppositeCellAtPeriodicBoundary(dealii::CellId cellID,
 			dealii::TriaIterator<dealii::CellAccessor<2> >& neighborCell);

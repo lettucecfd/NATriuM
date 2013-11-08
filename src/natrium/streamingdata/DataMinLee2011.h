@@ -51,13 +51,14 @@ private:
 	// out the calculations for 0-entries)
 	distributed_sparse_matrix m_massMatrix;
 
-	/// System matrices
-	vector<distributed_sparse_matrix> m_D;
+	/// Derivative matrices D_x, D_y (,D_z)
+	vector<distributed_sparse_matrix> m_derivativeMatrix;
 
-	/// System
-	numeric_vector m_systemRhs;
+	/// Matrix which stems from the integrals over faces (R)
+	vector<distributed_sparse_matrix> m_faceMatrix;
 
-
+	/// System matrix L = M^(-1)*(-D+R)
+	vector<distributed_sparse_matrix> m_systemMatrix;
 
 public:
 
@@ -74,8 +75,12 @@ public:
 
 	/// function to (re-)assemble linear system
 	virtual void reassemble();
+
+	/// make streaming step
+	virtual void stream();
 };
 
 } /* namespace natrium */
+
 
 #endif /* DATAMINLEE2011_H_ */

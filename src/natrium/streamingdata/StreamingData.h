@@ -39,6 +39,9 @@ public:
 
 	/// function to (re-)assemble linear system
 	virtual void reassemble() = 0;
+
+	/// make streaming step
+	virtual void stream() = 0;
 };
 
 } /* namespace natrium */

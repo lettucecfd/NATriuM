@@ -37,7 +37,7 @@ DataMinLee2011<dim>::DataMinLee2011(
 
 	//reinitialize system
 	//m_systemMatrix.reinit(m_sparsityPattern);
-	m_systemRhs.reinit(m_doFHandler->n_dofs());
+	//m_systemRhs.reinit(m_doFHandler->n_dofs());
 	//m_solution.reinit(m_doFHandler.n_dofs());
 
 	// assemble system
@@ -49,6 +49,14 @@ template DataMinLee2011<2>::DataMinLee2011(
 		shared_ptr<Triangulation<2> > triangulation, size_t orderOfFiniteElement);
 template DataMinLee2011<3>::DataMinLee2011(
 		shared_ptr<Triangulation<3> > triangulation, size_t orderOfFiniteElement);
+
+
+template<size_t dim>
+void DataMinLee2011<dim>::stream() {
+}
+// The template parameter must be made explicit in order for the code to compile.
+template void DataMinLee2011<2>::stream();
+template void DataMinLee2011<3>::stream();
 
 
 
