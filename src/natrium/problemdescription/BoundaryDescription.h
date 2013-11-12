@@ -44,6 +44,12 @@ public:
 	virtual void applyBoundaryValues(
 			const shared_ptr<dealii::DoFHandler<2> > doFHandler,
 			shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const = 0;
+
+	/** @short is the boundary a periodic boundary ?
+	 */
+	virtual bool isPeriodic(){
+		return false;
+	}
 };
 
 template<size_t dim>

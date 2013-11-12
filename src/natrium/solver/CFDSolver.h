@@ -70,10 +70,10 @@ public:
 
 		/// Build streaming data object
 		if (Streaming_MinLee2011 == configuration->getStreamingDataType()) {
-			m_streamingData = make_shared<DataMinLee2011<dim> >(
+/*			m_streamingData = make_shared<DataMinLee2011<dim> >(
 					m_problemDescription->getTriangulation(),
 					configuration->getOrderOfFiniteElement());
-		}
+*/		}
 
 		/// Build boltzmann model
 		if (Stencil_D2Q9 == configuration->getStencilType()) {

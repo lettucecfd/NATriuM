@@ -115,6 +115,8 @@ public:
 	void setBoundaries(const shared_ptr<BoundaryCollection<dim> >& boundaries) {
 		m_boundaries = boundaries;
 	}
+
+
 };
 /* class ProblemDescription */
 

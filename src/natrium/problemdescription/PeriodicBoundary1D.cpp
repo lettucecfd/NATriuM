@@ -88,9 +88,6 @@ PeriodicBoundary1D::PeriodicBoundary1D(size_t boundaryIndicator1,
 	// else throw PeriodicBoundaryNotPossible
 	checkInterfacePositions();
 
-	// create the map which stores the opposite cells of each boundary cell, respectively
-	createMap();
-
 } /* Constructor 2 */
 
 PeriodicBoundary1D::~PeriodicBoundary1D() {
@@ -226,20 +223,20 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 
 }/* getInterfacePositionsByBoundaryIndicator */
 
-void PeriodicBoundary1D::createMap() {
+void PeriodicBoundary1D::createCellMap(const dealii::DoFHandler<2>& doFHandler) {
 
 	// Make iterators over active faces
-	dealii::Triangulation<2>::active_cell_iterator currentCell =
-			m_triangulation->begin_active();
-	dealii::Triangulation<2>::active_cell_iterator lastCell =
-			m_triangulation->end();
+	dealii::DoFHandler<2>::active_cell_iterator currentCell =
+			doFHandler.begin_active();
+	dealii::DoFHandler<2>::active_cell_iterator lastCell =
+			doFHandler.end();
 
 	// The key of these cells is the distance from the begin point of the respective line.
 	// The second element of the value pair is the local face id of the face which belongs to the boundary.
 	std::map<double,
-			std::pair<dealii::Triangulation<2>::active_cell_iterator, size_t> > cellsAtBoundary1;
+			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > cellsAtBoundary1;
 	std::map<double,
-			std::pair<dealii::Triangulation<2>::active_cell_iterator, size_t> > cellsAtBoundary2;
+			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > cellsAtBoundary2;
 
 	// iterate over all active cells and sort them
 	for (; currentCell != lastCell; ++currentCell) {
@@ -251,14 +248,15 @@ void PeriodicBoundary1D::createMap() {
 					double key = currentCell->center().distance(m_beginLine1);
 					cellsAtBoundary1.insert(
 							std::make_pair(key,
-									std::make_pair(currentCell, dealii::GeometryInfo<2>::opposite_face[i])));
+									std::make_pair(currentCell, i)));
 				}
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator2) {
 					double key = currentCell->center().distance(m_beginLine2);
 					cellsAtBoundary2.insert(
 							std::make_pair(key,
-									std::make_pair(currentCell, dealii::GeometryInfo<2>::opposite_face[i])));
+									std::make_pair(currentCell, i)));
+					//// recently changed (12-11-2013): i insted of dealii::GeometryInfo<2>::opposite_face[i]
 				}
 			}
 		}
@@ -271,17 +269,16 @@ void PeriodicBoundary1D::createMap() {
 	}
 
 	// store the cell ids and their respective opposite cell in map
+	m_cells.clear();
 	std::map<double,
-			std::pair<dealii::Triangulation<2>::active_cell_iterator, size_t> >::iterator atBoundary1 =
+			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::iterator atBoundary1 =
 			cellsAtBoundary1.begin();
 	std::map<double,
-			std::pair<dealii::Triangulation<2>::active_cell_iterator, size_t> >::iterator atBoundary2 =
+			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::iterator atBoundary2 =
 			cellsAtBoundary2.begin();
 	for (; atBoundary1 != --cellsAtBoundary1.end(); atBoundary1++) {
-		dealii::CellId ID1 = atBoundary1->second.first->id();
-		m_cells.insert(std::make_pair(ID1, atBoundary2->second));
-		dealii::CellId ID2 = atBoundary2->second.first->id();
-		m_cells.insert(std::make_pair(ID2, atBoundary1->second));
+		m_cells.insert(std::make_pair(atBoundary1->second.first, atBoundary2->second));
+		m_cells.insert(std::make_pair(atBoundary2->second.first, atBoundary1->second));
 		atBoundary2++;
 	}
 
@@ -406,17 +403,21 @@ void PeriodicBoundary1D::applyBoundaryValues(
 } /* applyBoundaryValues */
 
 size_t PeriodicBoundary1D::getOppositeCellAtPeriodicBoundary(
-		dealii::CellId cellID,
-		dealii::TriaIterator<dealii::CellAccessor<2> >& neighborCell) {
+		const dealii::DoFHandler<2>::active_cell_iterator & cell,
+		dealii::DoFHandler<2>::active_cell_iterator & neighborCell) const {
 
-// assert that the given cell is at the boundary
-	if (m_cells.count(cellID) == 0) {
+	if (m_cells.size() == 0) {
 		throw PeriodicBoundaryNotPossible(
-				"The cellID does not belong to a cell at the boundary.");
+				"CreateMap has to be called before getOppositeCellAtPeriodicBoundary.");
+	}
+// assert that the given cell is at the boundary
+	if (m_cells.count(cell) == 0) {
+		throw PeriodicBoundaryNotPossible(
+				"The cell does not belong to the boundary.");
 	}
 
-	neighborCell = m_cells[cellID].first;
-	return m_cells[cellID].second;
+	neighborCell = m_cells.at(cell).first;
+	return m_cells.at(cell).second;
 }
 
 } /* namespace natrium */

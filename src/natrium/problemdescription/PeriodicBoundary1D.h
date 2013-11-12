@@ -12,14 +12,11 @@
 #include <string>
 #include <functional>
 #include <map>
-#include <sstream>
-
-#include <boost/unordered_map.hpp>
-#include <boost/functional/hash.hpp>
 
 #include "deal.II/base/point.h"
 #include "deal.II/grid/tria_accessor.h"
-#include "deal.II/grid/cell_id.h"
+#include "deal.II/grid/tria_iterator.h"
+#include "deal.II/dofs/dof_handler.h"
 
 #include "BoundaryDescription.h"
 
@@ -46,24 +43,6 @@ public:
 	}
 };
 
-/**
- * @short Hash function for dealii::CellID
- *
- * @note A hash function returns a unique integer for each CellID element.
- *       This has to be done via string hash for CellID, because CellID
- *       does not have any public component except "==" and "<<".
- *
- */
-struct hash_cellID : public std::unary_function<dealii::CellId,size_t> {
-  const size_t operator() (const dealii::CellId& cellID) const {
-	  // convert cellID to string
-	  std::stringstream stream;
-	  stream << cellID;
-	  // hash string
-	  boost::hash<std::string> string_hash;
-	  return string_hash(stream.str());
-  }
-};
 
 /**
  * @short  A periodic boundary condition on a line, appropriate for 2D problem descriptions.
@@ -94,8 +73,8 @@ private:
 	shared_ptr<dealii::Triangulation<2> > m_triangulation;
 
 	/// Container for all cells that belong to this boundary
-	/// stored as <cellID, (accessor to opposite cell, boundary face at opposite cell) > /
-	boost::unordered_map<dealii::CellId, std::pair<dealii::TriaIterator<dealii::CellAccessor<2> >, size_t>, hash_cellID> m_cells;
+	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
+	std::map<dealii::DoFHandler<2>::active_cell_iterator, std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > m_cells;
 
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
@@ -125,10 +104,6 @@ private:
 			dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
 			dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2);
 
-	/**
-	 * @short create the map m_cells which stores the cells adjacent to the periodic boundary
-	 */
-	void createMap();
 
 public:
 
@@ -204,8 +179,8 @@ public:
 	 *
 	 * @return local face number of cell1, denoting the respective cell number
 	 */
-	size_t getOppositeCellAtPeriodicBoundary(dealii::CellId cellID,
-			dealii::TriaIterator<dealii::CellAccessor<2> >& neighborCell);
+	size_t getOppositeCellAtPeriodicBoundary(const dealii::DoFHandler<2>::active_cell_iterator & cell,
+			dealii::DoFHandler<2>::active_cell_iterator & neighborCell) const;
 
 	/**
 	 * @short test if a given face belongs to this boundary
@@ -213,9 +188,9 @@ public:
 	 * @param[in] faceBoundaryIndicator the boundary indicator of the face
 	 *
 	 */
-	bool isFaceInBoundary(dealii::CellId cellID, size_t faceBoundaryIndicator) {
-		// first condition: cell map has a key <cellID>
-		if (m_cells.count(cellID) == 0) {
+	bool isFaceInBoundary(dealii::DoFHandler<2>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const {
+		// first condition: cell map has a key <cell>
+		if (m_cells.count(cell) == 0) {
 			return false;
 		}
 		// second condition: the face has the right boundary indicator
@@ -227,6 +202,16 @@ public:
 		}
 		return false;
 	}
+
+	virtual bool isPeriodic() const {
+		return true;
+	}
+
+	/**
+	 * @short create the map m_cells which stores the cells adjacent to the periodic boundary
+	 * @short doFHandler The map is stored with doFHandler iterators in order to access degrees of freedom at the boundary.
+	 */
+	void createCellMap(const dealii::DoFHandler<2>& doFHandler);
 
 	/////////////////////////////////
 	// GETTER     // SETTER        //
@@ -251,6 +236,18 @@ public:
 		return m_triangulation;
 	}
 
+	size_t getBoundaryIndicator1() const {
+		return m_boundaryIndicator1;
+	}
+
+	size_t getBoundaryIndicator2() const {
+		return m_boundaryIndicator2;
+	}
+
+	const std::map<dealii::DoFHandler<2>::active_cell_iterator,
+			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >& getCellMap() const {
+		return m_cells;
+	}
 };
 /* PeriodicBoundary1D */
 

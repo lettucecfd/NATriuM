@@ -15,6 +15,8 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/lac/constraint_matrix.h"
 #include "deal.II/fe/fe_q.h"
+#include "deal.II/fe/fe_dgq.h"
+#include "deal.II/base/quadrature_lib.h"
 
 #include "utilities/BasicNames.h"
 
@@ -197,42 +199,70 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_forDiscontinuousGalerkin_test) {
 	PeriodicBoundary1D periodicLeftRight(0, 1, triangulation);
 	PeriodicBoundary1D periodicTopBottom(2, 3, triangulation);
 
+	// distribute dofs
+	shared_ptr<dealii::DoFHandler<2> > doFHandler = make_shared<
+			dealii::DoFHandler<2> >(*triangulation);
+	dealii::QGaussLobatto<1> qGaussLobatto(2);
+	dealii::FE_DGQArbitraryNodes<2> fe(qGaussLobatto);
+	doFHandler->distribute_dofs(fe);
+
+	// create cell map
+	periodicLeftRight.createCellMap(*doFHandler);
+	periodicTopBottom.createCellMap(*doFHandler);
+
+	// navigate to left upper corner
+	dealii::DoFHandler<2>::active_cell_iterator leftUpperCorner =
+			doFHandler->begin_active();
+	bool cornerFound = false;
+	for (; leftUpperCorner != doFHandler->end(); leftUpperCorner++) {
+		for (size_t j = 0; j < 4; j++) {
+			if ((leftUpperCorner->vertex(j)[0] < 0.00001)
+					and (leftUpperCorner->vertex(j)[1] > 0.99999)) {
+				cornerFound = true;
+				break;
+			}
+		}
+		if (cornerFound)
+			break;
+	}
+
+	// make sure that the left upper corner was found
+	BOOST_CHECK(cornerFound);
+
 	// check function isFaceInBoundary (only left face can be in boundary)
 	// for left upper cell
-	dealii::Triangulation<2>::active_cell_iterator leftUpperCorner =
-			triangulation->begin_active();
 	BOOST_CHECK(
-			periodicLeftRight.isFaceInBoundary(leftUpperCorner->id(),
-					triangulation->begin_active(0)->face(0)->boundary_indicator()));
+			periodicLeftRight.isFaceInBoundary(leftUpperCorner,
+					leftUpperCorner->face(0)->boundary_indicator()));
 	BOOST_CHECK(
-			not periodicLeftRight.isFaceInBoundary(leftUpperCorner->id(),
-					triangulation->begin_active(0)->face(1)->boundary_indicator()));
+			not periodicLeftRight.isFaceInBoundary(leftUpperCorner,
+					leftUpperCorner->face(1)->boundary_indicator()));
 	BOOST_CHECK(
-			not periodicLeftRight.isFaceInBoundary(leftUpperCorner->id(),
-					triangulation->begin_active(0)->face(2)->boundary_indicator()));
+			not periodicLeftRight.isFaceInBoundary(leftUpperCorner,
+					leftUpperCorner->face(2)->boundary_indicator()));
 	BOOST_CHECK(
-			not periodicLeftRight.isFaceInBoundary(leftUpperCorner->id(),
-					triangulation->begin_active(0)->face(3)->boundary_indicator()));
+			not periodicLeftRight.isFaceInBoundary(leftUpperCorner,
+					leftUpperCorner->face(3)->boundary_indicator()));
 
 	BOOST_CHECK(
-			not periodicTopBottom.isFaceInBoundary(leftUpperCorner->id(),
-					triangulation->begin_active(0)->face(0)->boundary_indicator()));
+			not periodicTopBottom.isFaceInBoundary(leftUpperCorner,
+					leftUpperCorner->face(0)->boundary_indicator()));
 	BOOST_CHECK(
-			not periodicTopBottom.isFaceInBoundary(leftUpperCorner->id(),
-					triangulation->begin_active(0)->face(1)->boundary_indicator()));
+			not periodicTopBottom.isFaceInBoundary(leftUpperCorner,
+					leftUpperCorner->face(1)->boundary_indicator()));
 	BOOST_CHECK(
-			periodicTopBottom.isFaceInBoundary(leftUpperCorner->id(),
-					triangulation->begin_active(0)->face(2)->boundary_indicator()));
+			periodicTopBottom.isFaceInBoundary(leftUpperCorner,
+					leftUpperCorner->face(2)->boundary_indicator()));
 	BOOST_CHECK(
-			not periodicTopBottom.isFaceInBoundary(leftUpperCorner->id(),
-					triangulation->begin_active(0)->face(3)->boundary_indicator()));
+			not periodicTopBottom.isFaceInBoundary(leftUpperCorner,
+					leftUpperCorner->face(3)->boundary_indicator()));
 
 	// check if the opposite cells are really the opposite ones
-	dealii::Triangulation<2>::active_cell_iterator it, it2;
+	dealii::DoFHandler<2>::active_cell_iterator it, it2;
 	size_t faceIndex = periodicLeftRight.getOppositeCellAtPeriodicBoundary(
-			triangulation->begin_active()->id(), it);
+			leftUpperCorner, it);
 	size_t faceIndex2 = periodicTopBottom.getOppositeCellAtPeriodicBoundary(
-			triangulation->begin_active()->id(), it2);
+			leftUpperCorner, it2);
 
 	BOOST_CHECK(faceIndex == 0);
 	BOOST_CHECK(faceIndex2 == 2);
@@ -243,15 +273,15 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_forDiscontinuousGalerkin_test) {
 	BOOST_CHECK(it2->face(0)->boundary_indicator() == 0);
 	BOOST_CHECK(it2->face(3)->boundary_indicator() == 3);
 
-
 	//////////////////
 	// FAILURE TEST //
 	/////////////////
 
 	// Not the same number of cells:
-	triangulation->begin_active()->set_refine_flag();
+	leftUpperCorner->set_refine_flag();
 	triangulation->execute_coarsening_and_refinement();
-	BOOST_CHECK_THROW(PeriodicBoundary1D(0, 1, triangulation), PeriodicBoundaryNotPossible);
+	BOOST_CHECK_THROW(PeriodicBoundary1D(0, 1, triangulation),
+			PeriodicBoundaryNotPossible);
 
 	cout << "done." << endl;
 } /*PeriodicBoundary1D_forDisconitnuousGalerkin_test*/

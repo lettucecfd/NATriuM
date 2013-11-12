@@ -10,11 +10,15 @@
 #define DATAMINLEE2011_H_
 
 #include "deal.II/grid/tria.h"
-#include "deal.II/fe/fe_q.h"
+#include "deal.II/fe/fe_dgq.h"
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/lac/sparse_matrix.h"
+#include "deal.II/base/quadrature_lib.h"
+
 
 #include "StreamingData.h"
+#include "../problemdescription/BoundaryCollection.h"
+#include "../boltzmannmodels/BoltzmannModel.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
@@ -33,8 +37,14 @@ private:
 	/// Triangulation
 	shared_ptr<dealii::Triangulation<dim> > m_tria;
 
+	/// Boundary Description
+	shared_ptr<BoundaryCollection<dim> > m_boundaries;
+
+	/// integration on gauss lobatto nodes
+	shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
+
 	/// Finite Element function on one cell
-	shared_ptr<dealii::FE_Q<dim> > m_fe;
+	shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
 
 	/// dealii::DoFHandler to distribute the degrees of freedom over the Triangulation
 	shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
@@ -45,20 +55,42 @@ private:
 	/// Sparsity Pattern of the sparse matrix
 	dealii::SparsityPattern m_sparsityPattern;
 
-	/// sparse system mass matrix (diagonal)
-	// TODO this can be done more efficiently by storing the
-	// (diagonal) mass matrix in a numeric_vector (and leaving
-	// out the calculations for 0-entries)
-	distributed_sparse_matrix m_massMatrix;
-
-	/// Derivative matrices D_x, D_y (,D_z)
-	vector<distributed_sparse_matrix> m_derivativeMatrix;
-
-	/// Matrix which stems from the integrals over faces (R)
-	vector<distributed_sparse_matrix> m_faceMatrix;
-
 	/// System matrix L = M^(-1)*(-D+R)
 	vector<distributed_sparse_matrix> m_systemMatrix;
+
+	/// the DQ model (e.g. D2Q9)
+	shared_ptr<BoltzmannModel> m_boltzmannModel;
+
+	/**
+	 * @short update the sparsity pattern of the system matrix
+	 */
+	void updateSparsityPattern();
+
+	/**
+	 * @short update the global system matrix
+	 */
+	void updateSystemMatrixAccordingToSparsityPattern();
+
+	/**
+	 * @short assemble local mass matrix M
+	 */
+	void assembleLocalMassMatrix();
+
+	/**
+	 * @short assemble local derivative matrix
+	 */
+	void assembleLocalDerivativeMatrices();
+
+	/**
+	 * @short assemble local face matrix;
+	 */
+	void assembleLocalFaceMatrices();
+
+	/**
+	 * @short calculate system matrix L
+	 */
+	void calculateLocalSystemMatrix();
+
 
 public:
 
@@ -66,9 +98,11 @@ public:
 	/**
 	 * @short Constructor
 	 * @param[in] triangulation The global mesh.
+	 * @param[in] orderOfFiniteElement The number of nodes element and dimension
+	 * @param[in] boltzmannModel the DQ model
 	 */
 	DataMinLee2011(
-			shared_ptr<dealii::Triangulation<dim> > triangulation, size_t orderOfFiniteElement);
+			shared_ptr<dealii::Triangulation<dim> > triangulation, shared_ptr<BoundaryCollection<dim> > boundaries, size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel);
 
 	/// destructor
 	virtual ~DataMinLee2011(){};
