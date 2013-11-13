@@ -243,20 +243,20 @@ void PeriodicBoundary1D::createCellMap(const dealii::DoFHandler<2>& doFHandler) 
 		if (currentCell->at_boundary()) {
 			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
 					i++) {
+				const dealii::Point<2> & coord = currentCell->center();
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator1) {
 					double key = currentCell->center().distance(m_beginLine1);
 					cellsAtBoundary1.insert(
 							std::make_pair(key,
-									std::make_pair(currentCell, i)));
+									std::make_pair(currentCell, dealii::GeometryInfo<2>::opposite_face[i])));
 				}
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator2) {
 					double key = currentCell->center().distance(m_beginLine2);
 					cellsAtBoundary2.insert(
 							std::make_pair(key,
-									std::make_pair(currentCell, i)));
-					//// recently changed (12-11-2013): i insted of dealii::GeometryInfo<2>::opposite_face[i]
+									std::make_pair(currentCell, dealii::GeometryInfo<2>::opposite_face[i])));
 				}
 			}
 		}
@@ -276,7 +276,8 @@ void PeriodicBoundary1D::createCellMap(const dealii::DoFHandler<2>& doFHandler) 
 	std::map<double,
 			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::iterator atBoundary2 =
 			cellsAtBoundary2.begin();
-	for (; atBoundary1 != --cellsAtBoundary1.end(); atBoundary1++) {
+	for (; atBoundary1 != cellsAtBoundary1.end(); atBoundary1++) {
+		const dealii::Point<2> & coord = atBoundary1->second.first->center();
 		m_cells.insert(std::make_pair(atBoundary1->second.first, atBoundary2->second));
 		m_cells.insert(std::make_pair(atBoundary2->second.first, atBoundary1->second));
 		atBoundary2++;
