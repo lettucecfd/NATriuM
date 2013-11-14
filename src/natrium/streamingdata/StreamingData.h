@@ -42,6 +42,8 @@ public:
 
 	/// make streaming step
 	virtual void stream() = 0;
+	// TODO is blas installed with dealii? installing blas will speed up the streaming step
+
 };
 
 } /* namespace natrium */
