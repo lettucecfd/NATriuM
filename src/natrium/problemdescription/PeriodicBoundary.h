@@ -1,5 +1,5 @@
 /**
- * @file PeriodicBoundary1D.h
+ * @file PeriodicBoundary.h
  * @short Description of a periodic boundary on a line.
  * @date 25.10.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
@@ -18,7 +18,7 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/dofs/dof_handler.h"
 
-#include "BoundaryDescription.h"
+#include "Boundary.h"
 
 namespace natrium {
 
@@ -45,11 +45,19 @@ public:
 
 
 /**
- * @short  A periodic boundary condition on a line, appropriate for 2D problem descriptions.
+ * @short  A periodic boundary condition,
  * @note   First use in step-1 tutorial.
  */
-class PeriodicBoundary1D: public BoundaryDescription<1> {
+template<size_t dim>
+class PeriodicBoundary: public Boundary<dim> {
 private:
+
+	/// triangulation object
+	shared_ptr<dealii::Triangulation<dim> > m_triangulation;
+
+	/// Container for all cells that belong to this boundary
+	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
+	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::active_cell_iterator, size_t> > m_cells;
 
 	/// boundary indicator of first interfacial line
 	size_t m_boundaryIndicator1;
@@ -57,24 +65,22 @@ private:
 	/// boundary indicator of second interfacial line
 	size_t m_boundaryIndicator2;
 
+
+	//////////////////////////
+	// ONLY RELEVANT FOR 2D //
+	//////////////////////////
 	/// start point of line 1
-	dealii::Point<2> m_beginLine1;
+	dealii::Point<dim> m_beginLine1;
 
 	/// end point of line 1
-	dealii::Point<2> m_endLine1;
+	dealii::Point<dim> m_endLine1;
 
 	/// start point of line 2
-	dealii::Point<2> m_beginLine2;
+	dealii::Point<dim> m_beginLine2;
 
 	/// end point of line 2
-	dealii::Point<2> m_endLine2;
+	dealii::Point<dim> m_endLine2;
 
-	/// triangulation object
-	shared_ptr<dealii::Triangulation<2> > m_triangulation;
-
-	/// Container for all cells that belong to this boundary
-	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
-	std::map<dealii::DoFHandler<2>::active_cell_iterator, std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > m_cells;
 
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
@@ -100,9 +106,9 @@ private:
 	 */
 	void getInterfacePositionsByBoundaryIndicator(size_t boundaryIndicator1,
 			size_t boundaryIndicator2,
-			shared_ptr<dealii::Triangulation<2> > triangulation,
-			dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
-			dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2);
+			shared_ptr<dealii::Triangulation<dim> > triangulation,
+			dealii::Point<dim>& beginLine1, dealii::Point<dim>& endLine1,
+			dealii::Point<dim>& beginLine2, dealii::Point<dim>& endLine2);
 
 
 public:
@@ -138,11 +144,11 @@ public:
 	 *  @param boundaryIndicator2 boundary indicator of interface line 2
 	 *  @param triangulation A (shared ptr to a) triangulation object (the mesh)
 	 */
-	PeriodicBoundary1D(size_t boundaryIndicator1, size_t boundaryIndicator2,
-			shared_ptr<dealii::Triangulation<2> > triangulation);
+	PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2,
+			shared_ptr<dealii::Triangulation<dim> > triangulation);
 
 	/// destructor
-	virtual ~PeriodicBoundary1D();
+	virtual ~PeriodicBoundary();
 
 	/////////////////////////////////
 	// APPLY BOUNDARY VALUES       //
@@ -168,7 +174,7 @@ public:
 	 * @param constraintMatrix matrix to which constraints are stored
 	 */
 	virtual void applyBoundaryValues(
-			const shared_ptr<dealii::DoFHandler<2> > doFHandler,
+			const shared_ptr<dealii::DoFHandler<dim> > doFHandler,
 			shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const;
 
 	/**
@@ -179,8 +185,8 @@ public:
 	 *
 	 * @return local face number of cell1, denoting the respective cell number
 	 */
-	size_t getOppositeCellAtPeriodicBoundary(const dealii::DoFHandler<2>::active_cell_iterator & cell,
-			dealii::DoFHandler<2>::active_cell_iterator & neighborCell) const;
+	size_t getOppositeCellAtPeriodicBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+			typename dealii::DoFHandler<dim>::active_cell_iterator & neighborCell) const;
 
 	/**
 	 * @short test if a given face belongs to this boundary
@@ -188,7 +194,7 @@ public:
 	 * @param[in] faceBoundaryIndicator the boundary indicator of the face
 	 *
 	 */
-	bool isFaceInBoundary(dealii::DoFHandler<2>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const {
+	bool isFaceInBoundary(typename dealii::DoFHandler<dim>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const {
 		// first condition: cell map has a key <cell>
 		if (m_cells.count(cell) == 0) {
 			return false;
@@ -211,28 +217,28 @@ public:
 	 * @short create the map m_cells which stores the cells adjacent to the periodic boundary
 	 * @short doFHandler The map is stored with doFHandler iterators in order to access degrees of freedom at the boundary.
 	 */
-	void createCellMap(const dealii::DoFHandler<2>& doFHandler);
+	void createCellMap(const dealii::DoFHandler<dim>& doFHandler);
 
 	/////////////////////////////////
 	// GETTER     // SETTER        //
 	/////////////////////////////////
-	const dealii::Point<2>& getBeginLine1() const {
+	const dealii::Point<dim>& getBeginLine1() const {
 		return m_beginLine1;
 	}
 
-	const dealii::Point<2>& getBeginLine2() const {
+	const dealii::Point<dim>& getBeginLine2() const {
 		return m_beginLine2;
 	}
 
-	const dealii::Point<2>& getEndLine1() const {
+	const dealii::Point<dim>& getEndLine1() const {
 		return m_endLine1;
 	}
 
-	const dealii::Point<2>& getEndLine2() const {
+	const dealii::Point<dim>& getEndLine2() const {
 		return m_endLine2;
 	}
 
-	const shared_ptr<dealii::Triangulation<2> >& getTriangulation() const {
+	const shared_ptr<dealii::Triangulation<dim> >& getTriangulation() const {
 		return m_triangulation;
 	}
 
@@ -244,8 +250,8 @@ public:
 		return m_boundaryIndicator2;
 	}
 
-	const std::map<dealii::DoFHandler<2>::active_cell_iterator,
-			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >& getCellMap() const {
+	const std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
+			std::pair<typename dealii::DoFHandler<dim>::active_cell_iterator, size_t> >& getCellMap() const {
 		return m_cells;
 	}
 };

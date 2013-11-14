@@ -1,11 +1,11 @@
 /**
- * @file PeriodicBoundary1D.cpp
- * @short Description of a periodic boundary on a line.
+ * @file PeriodicBoundary.cpp
+ * @short Description of a periodic boundary
  * @date 25.10.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "PeriodicBoundary1D.h"
+#include "PeriodicBoundary.h"
 
 #include <iterator>
 
@@ -14,6 +14,7 @@
 #include "deal.II/dofs/dof_tools.h"
 
 #include "../utilities/BasicNames.h"
+#include "BoundaryTools.h"
 
 namespace natrium {
 
@@ -34,30 +35,9 @@ public:
 	double epsilon;
 };
 
-/* DEPRECATED, because boundary indicators are needed for application of boundary values
- PeriodicBoundary1D::PeriodicBoundary1D(dealii::Point<2>& beginLine1,
- dealii::Point<2>& endLine1, dealii::Point<2>& beginLine2,
- dealii::Point<2>& endLine2,
- shared_ptr<dealii::Triangulation<2> > triangulation) {
-
- // check if positions of the interfaces are OK;
- // else throw PeriodicBoundaryNotPossible
- checkInterfacePositions(beginLine1, endLine1, beginLine2, endLine2);
-
- // check if lines really define a boundary of the triangulation
- checkInterfacesAtBoundary(beginLine1, endLine1, beginLine2, endLine2,
- triangulation);
-
- m_beginLine1 = beginLine1;
- m_beginLine2 = beginLine2;
- m_endLine1 = endLine1;
- m_endLine2 = endLine2;
- m_triangulation = triangulation;
- }*//* Constructor 1 */
-
-PeriodicBoundary1D::PeriodicBoundary1D(size_t boundaryIndicator1,
-		size_t boundaryIndicator2,
-		shared_ptr<dealii::Triangulation<2> > triangulation) :
+template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
+		size_t boundaryIndicator1, size_t boundaryIndicator2,
+		shared_ptr<dealii::Triangulation<dim> > triangulation) :
 		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
 				boundaryIndicator2) {
 
@@ -67,72 +47,46 @@ PeriodicBoundary1D::PeriodicBoundary1D(size_t boundaryIndicator1,
 				"The boundary indicators defining the periodic boundaries must not be equal to each other.");
 	}
 
-	// create vertex points
-	dealii::Point<2> beginLine1(0.0, 0.0);
-	dealii::Point<2> endLine1(0.0, 0.0);
-	dealii::Point<2> beginLine2(0.0, 0.0);
-	dealii::Point<2> endLine2(0.0, 0.0);
-
-	// calculate the positions of the vertex points(
-	getInterfacePositionsByBoundaryIndicator(boundaryIndicator1,
-			boundaryIndicator2, triangulation, beginLine1, endLine1, beginLine2,
-			endLine2);
-
-	m_beginLine1 = beginLine1;
-	m_beginLine2 = beginLine2;
-	m_endLine1 = endLine1;
-	m_endLine2 = endLine2;
 	m_triangulation = triangulation;
 
-	// check if positions of the interfaces are OK;
-	// else throw PeriodicBoundaryNotPossible
-	checkInterfacePositions();
+	if (dim == 2) {
+		// create vertex points
+		dealii::Point<2> beginLine1(0.0, 0.0);
+		dealii::Point<2> endLine1(0.0, 0.0);
+		dealii::Point<2> beginLine2(0.0, 0.0);
+		dealii::Point<2> endLine2(0.0, 0.0);
 
+		// calculate the positions of the vertex points(
+		getInterfacePositionsByBoundaryIndicator(boundaryIndicator1,
+				boundaryIndicator2, triangulation, beginLine1, endLine1,
+				beginLine2, endLine2);
+
+		m_beginLine1 = beginLine1;
+		m_beginLine2 = beginLine2;
+		m_endLine1 = endLine1;
+		m_endLine2 = endLine2;
+
+		// check if positions of the interfaces are OK;
+		// else throw PeriodicBoundaryNotPossible
+		std::string errorMessage;
+		bool isParallel = BoundaryTools::checkParallelLines(m_beginLine1,
+				m_endLine1, m_beginLine2, m_endLine2, errorMessage);
+		if (not isParallel)
+			throw PeriodicBoundaryNotPossible(errorMessage);
+	}
 } /* Constructor 2 */
+// The template Parameter has to be made explicit in order for the code to compile
+template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
+		size_t boundaryIndicator2,
+		shared_ptr<dealii::Triangulation<2> > triangulation);
 
-PeriodicBoundary1D::~PeriodicBoundary1D() {
+template<size_t dim> PeriodicBoundary<dim>::~PeriodicBoundary() {
 }
+// The template Parameter has to be made explicit in order for the code to compile
+template PeriodicBoundary<2>::~PeriodicBoundary();
+template PeriodicBoundary<3>::~PeriodicBoundary();
 
-void PeriodicBoundary1D::checkInterfacePositions() {
-
-	// check input
-	double lengthLine1 = m_beginLine1.distance(m_endLine1);
-	double lengthLine2 = m_beginLine2.distance(m_endLine2);
-
-	// assert that points are not equal to one another
-	if ((lengthLine1 == 0) or (lengthLine2 == 0)
-			or (m_beginLine1.distance(m_beginLine2) == 0)
-			or (m_endLine1.distance(m_endLine2) == 0)
-			or (m_beginLine1.distance(m_endLine2) == 0)
-			or (m_beginLine2.distance(m_endLine1) == 0)) {
-		throw PeriodicBoundaryNotPossible(
-				"Two of the points defining a periodic boundary are equal. That is not allowed.");
-	}
-
-	// assert that both lines have same length (up to 1%)
-	if (abs(lengthLine1 - lengthLine2) / lengthLine1 > 0.01) {
-		throw PeriodicBoundaryNotPossible(
-				"The two lines defining a periodic boundary must have the same length.");
-	}
-
-	// assert that interfaces are parallel (anything else would need different handling)
-	dealii::Point<2> differenceVector1 = m_endLine1 - m_beginLine1;
-	dealii::Point<2> differenceVector2 = m_endLine2 - m_beginLine2;
-	if (not Math::is_angle_small(differenceVector1, differenceVector2)) {
-		// try to fix the problem by swapping begin and end
-		dealii::Point<2> tmp = m_beginLine2;
-		m_beginLine2 = m_endLine2;
-		m_endLine2 = tmp;
-		differenceVector2 = m_endLine2 - m_beginLine2;
-		if (not Math::is_angle_small(differenceVector1, differenceVector2)) {
-			throw PeriodicBoundaryNotPossible(
-					"The two lines defining a periodic boundary must be parallel to each other.");
-		}
-	}
-
-} /* checkInterfacePositions */
-
-void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
+template<> void PeriodicBoundary<2>::getInterfacePositionsByBoundaryIndicator(
 		size_t boundaryIndicator1, size_t boundaryIndicator2,
 		shared_ptr<dealii::Triangulation<2> > triangulation,
 		dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
@@ -223,13 +177,13 @@ void PeriodicBoundary1D::getInterfacePositionsByBoundaryIndicator(
 
 }/* getInterfacePositionsByBoundaryIndicator */
 
-void PeriodicBoundary1D::createCellMap(const dealii::DoFHandler<2>& doFHandler) {
+template<> void PeriodicBoundary<2>::createCellMap(
+		const dealii::DoFHandler<2>& doFHandler) {
 
 	// Make iterators over active faces
 	dealii::DoFHandler<2>::active_cell_iterator currentCell =
 			doFHandler.begin_active();
-	dealii::DoFHandler<2>::active_cell_iterator lastCell =
-			doFHandler.end();
+	dealii::DoFHandler<2>::active_cell_iterator lastCell = doFHandler.end();
 
 	// The key of these cells is the distance from the begin point of the respective line.
 	// The second element of the value pair is the local face id of the face which belongs to the boundary.
@@ -243,20 +197,21 @@ void PeriodicBoundary1D::createCellMap(const dealii::DoFHandler<2>& doFHandler) 
 		if (currentCell->at_boundary()) {
 			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
 					i++) {
-				const dealii::Point<2> & coord = currentCell->center();
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator1) {
 					double key = currentCell->center().distance(m_beginLine1);
 					cellsAtBoundary1.insert(
 							std::make_pair(key,
-									std::make_pair(currentCell, dealii::GeometryInfo<2>::opposite_face[i])));
+									std::make_pair(currentCell,
+											dealii::GeometryInfo<2>::opposite_face[i])));
 				}
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator2) {
 					double key = currentCell->center().distance(m_beginLine2);
 					cellsAtBoundary2.insert(
 							std::make_pair(key,
-									std::make_pair(currentCell, dealii::GeometryInfo<2>::opposite_face[i])));
+									std::make_pair(currentCell,
+											dealii::GeometryInfo<2>::opposite_face[i])));
 				}
 			}
 		}
@@ -277,16 +232,23 @@ void PeriodicBoundary1D::createCellMap(const dealii::DoFHandler<2>& doFHandler) 
 			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::iterator atBoundary2 =
 			cellsAtBoundary2.begin();
 	for (; atBoundary1 != cellsAtBoundary1.end(); atBoundary1++) {
-		const dealii::Point<2> & coord = atBoundary1->second.first->center();
-		m_cells.insert(std::make_pair(atBoundary1->second.first, atBoundary2->second));
-		m_cells.insert(std::make_pair(atBoundary2->second.first, atBoundary1->second));
+		// assert that the face discretizations on both lines are equal
+		if (cellsAtBoundary2.count(atBoundary1->first) == 0) {
+			throw PeriodicBoundaryNotPossible(
+					"The discretizations of opposite periodic boundaries do not coincide. This version of the NATriuM solver does only work with equal discretizations.");
+		}
+		// add to cells
+		m_cells.insert(
+				std::make_pair(atBoundary1->second.first, atBoundary2->second));
+		m_cells.insert(
+				std::make_pair(atBoundary2->second.first, atBoundary1->second));
 		atBoundary2++;
 	}
 
 } /* createMap */
 
-void PeriodicBoundary1D::applyBoundaryValues(
-		const shared_ptr<dealii::DoFHandler<2> > doFHandler,
+template<> void PeriodicBoundary<2>::applyBoundaryValues(
+		const shared_ptr<typename dealii::DoFHandler<2> > doFHandler,
 		shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const {
 
 // check direction of the constraint
@@ -402,10 +364,15 @@ void PeriodicBoundary1D::applyBoundaryValues(
 	 }
 	 */
 } /* applyBoundaryValues */
+template<> void PeriodicBoundary<3>::applyBoundaryValues(
+		const shared_ptr<typename dealii::DoFHandler<3> > doFHandler,
+		shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const {
+	//3D-Implementation
+}
 
-size_t PeriodicBoundary1D::getOppositeCellAtPeriodicBoundary(
-		const dealii::DoFHandler<2>::active_cell_iterator & cell,
-		dealii::DoFHandler<2>::active_cell_iterator & neighborCell) const {
+template<size_t dim> inline size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoundary(
+		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+		typename dealii::DoFHandler<dim>::active_cell_iterator & neighborCell) const {
 
 	if (m_cells.size() == 0) {
 		throw PeriodicBoundaryNotPossible(
@@ -420,5 +387,12 @@ size_t PeriodicBoundary1D::getOppositeCellAtPeriodicBoundary(
 	neighborCell = m_cells.at(cell).first;
 	return m_cells.at(cell).second;
 }
+// The template parameter has to be made explicit in order for the code to compile
+template size_t PeriodicBoundary<2>::getOppositeCellAtPeriodicBoundary(
+		const dealii::DoFHandler<2>::active_cell_iterator & cell,
+		dealii::DoFHandler<2>::active_cell_iterator & neighborCell) const;
+template size_t PeriodicBoundary<3>::getOppositeCellAtPeriodicBoundary(
+		const dealii::DoFHandler<3>::active_cell_iterator & cell,
+		dealii::DoFHandler<3>::active_cell_iterator & neighborCell) const;
 
 } /* namespace natrium */

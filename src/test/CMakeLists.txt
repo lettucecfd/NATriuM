@@ -10,6 +10,7 @@ set(    COLLISIONMODELS_TEST
         )            
 set(    PROBLEMDESCRIPTION_TEST
         problemdescription/PeriodicBoundary1D_test.cpp
+        problemdescription/BoundaryTools_test.cpp
         )        
 set(    UTILITIES_TEST
         utilities/BasicNames_test.cpp

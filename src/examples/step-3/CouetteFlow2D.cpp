@@ -11,7 +11,7 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 
-#include "problemdescription/PeriodicBoundary1D.h"
+#include "problemdescription/PeriodicBoundary.h"
 
 using dealii::GridGenerator;
 
@@ -61,8 +61,8 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
 			BoundaryCollection<2> >();
-	boundaries->addBoundary(make_shared<PeriodicBoundary1D>(0,1,getTriangulation()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary1D>(2,3,getTriangulation()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0,1,getTriangulation()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(2,3,getTriangulation()));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();

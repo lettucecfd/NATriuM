@@ -1,5 +1,5 @@
 /**
- * @file BoundaryDescription.h
+ * @file Boundary.h
  * @short Abstract class for Description of a Boundary object
  * @date 24.10.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
@@ -23,15 +23,15 @@ namespace natrium {
  * @tparam dim The dimension of the boundary is the dimension of the domain -1 (
  * 	       e.g. 2-dim meshes have 1-dim boundary)
  */
-template<size_t dim> class BoundaryDescription {
+template<size_t dim> class Boundary {
 
 public:
 
 	/// constructor
-	BoundaryDescription();
+	Boundary();
 
 	/// destructor
-	virtual ~BoundaryDescription();
+	virtual ~Boundary();
 
 	/**
 	 * @short Apply boundaries to the degrees of freedom.
@@ -42,7 +42,7 @@ public:
 	 * @param constraintMatrix matrix to which constraints are stored
 	 */
 	virtual void applyBoundaryValues(
-			const shared_ptr<dealii::DoFHandler<2> > doFHandler,
+			const shared_ptr<dealii::DoFHandler<dim> > doFHandler,
 			shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const = 0;
 
 	/** @short is the boundary a periodic boundary ?
@@ -53,11 +53,11 @@ public:
 };
 
 template<size_t dim>
-inline natrium::BoundaryDescription<dim>::BoundaryDescription() {
+inline natrium::Boundary<dim>::Boundary() {
 }
 
 template<size_t dim>
-inline natrium::BoundaryDescription<dim>::~BoundaryDescription() {
+inline natrium::Boundary<dim>::~Boundary() {
 }
 
 } /* namespace natrium */

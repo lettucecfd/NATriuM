@@ -8,9 +8,9 @@
 #ifndef BOUNDARYCOLLECTION_H_
 #define BOUNDARYCOLLECTION_H_
 
-#include "BoundaryDescription.h"
+#include "Boundary.h"
 
-#include "PeriodicBoundary1D.h"
+#include "PeriodicBoundary.h"
 
 #include "deal.II/lac/constraint_matrix.h"
 
@@ -22,10 +22,10 @@ template<size_t dim> class BoundaryCollection {
 private:
 
 	/// vector to store boundaries in
-	vector<shared_ptr<BoundaryDescription<dim - 1> > > m_boundaries;
+	vector<shared_ptr<Boundary<dim> > > m_boundaries;
 
 	/// vector to store periodic boundaries in
-	vector<shared_ptr<PeriodicBoundary1D> > m_periodicBoundaries;
+	vector<shared_ptr<PeriodicBoundary<dim> > > m_periodicBoundaries;
 
 	/// deal.II constraint matrix
 	shared_ptr<dealii::ConstraintMatrix> m_constraintMatrix;
@@ -41,7 +41,7 @@ public:
 	virtual ~BoundaryCollection(){
 
 	}
-	void addBoundary(shared_ptr<PeriodicBoundary1D> boundary) {
+	void addBoundary(shared_ptr<PeriodicBoundary<dim> > boundary) {
 		m_boundaries.push_back(boundary);
 		m_periodicBoundaries.push_back(boundary);
 	}
@@ -54,11 +54,11 @@ public:
 		m_constraintMatrix->close();
 	}
 
-	const vector<shared_ptr<BoundaryDescription<dim - 1> > >& getBoundaries() const {
+	const vector<shared_ptr<Boundary<dim> > >& getBoundaries() const {
 		return m_boundaries;
 	}
 
-	const vector<shared_ptr<PeriodicBoundary1D> >& getPeriodicBoundaries() const {
+	const vector<shared_ptr<PeriodicBoundary<dim> > >& getPeriodicBoundaries() const {
 		return m_periodicBoundaries;
 	}
 };

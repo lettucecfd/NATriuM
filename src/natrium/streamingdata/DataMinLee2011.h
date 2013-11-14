@@ -41,7 +41,7 @@ private:
 	shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
 	/// integration on gauss lobatto nodes
-	shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
+	shared_ptr<dealii::QGaussLobatto<1> > m_quadrature;
 
 	/// Finite Element function on one cell
 	shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
@@ -61,6 +61,12 @@ private:
 	/// the DQ model (e.g. D2Q9)
 	shared_ptr<BoltzmannModel> m_boltzmannModel;
 
+	/// number of dofs per cell
+	size_t m_dofs_per_cell;
+
+	// number of integration points
+	size_t m_n_q_points;
+
 	/**
 	 * @short update the sparsity pattern of the system matrix
 	 */
@@ -73,18 +79,26 @@ private:
 
 	/**
 	 * @short assemble local mass matrix M
+	 * @param[out] massMatrix The mass matrix <phi_i, phi_j>
+	 *             For SEDG methods the mass Matrix is diagonal.
+	 *
 	 */
-	void assembleLocalMassMatrix();
+	// TODO SEDG implemenation with fully diagonal mass matrix
+	void assembleLocalMassMatrix(dealii::FullMatrix<double> &massMatrix) const;
 
 	/**
-	 * @short assemble local derivative matrix
+	 * @short assemble the i-th local derivative matrix
+	 * @param[in] i < dim; 0 for Dx, 1 for Dy, 2 for Dz (3D)
+	 * @param[out] derivativeMatrix The i-th derivative matrix <D_i phi_j, phi_k>
 	 */
-	void assembleLocalDerivativeMatrices();
+	void assembleLocalDerivativeMatrix(size_t i, dealii::FullMatrix<double> &derivativeMatrix) const;
 
 	/**
 	 * @short assemble local face matrix;
+	 * @param[in] i < Q; this matrix is dependent on the flow direction
+	 * @param[out] faceMatrix The integral over all faces, incorporating boundary conditions
 	 */
-	void assembleLocalFaceMatrices();
+	void assembleLocalFaceMatrix(size_t i, dealii::FullMatrix<double> &faceMatrix) const;
 
 	/**
 	 * @short calculate system matrix L

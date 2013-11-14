@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        step-1-couette2D     
+        step-3-couette2D     
         )
 
 
@@ -12,7 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                step-1.cpp
+                step-3.cpp
                 CouetteFlow2D.h   
                 CouetteFlow2D.cpp
                )

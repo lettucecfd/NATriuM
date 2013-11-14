@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "problemdescription/PeriodicBoundary1D.h"
+#include "problemdescription/PeriodicBoundary.h"
 
 #include <iterator>
 
@@ -24,51 +24,12 @@
 
 namespace natrium {
 
-BOOST_AUTO_TEST_SUITE(PeriodicBoundary1D_test)
+BOOST_AUTO_TEST_SUITE(PeriodicBoundary2D_test)
 
-/* DEPRECATED CONSTRUCTOR
- BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ConstructionByPoints_test) {
 
- cout << "PeriodicBoundary1D_ConstructionByPoints_test..." << endl;
- /////////////////
- // SANITY TEST //
- /////////////////
- /// Valid set of points and triangulation
- shared_ptr<dealii::Triangulation<2> > triangulation = make_shared<
- dealii::Triangulation<2> >();
- dealii::GridGenerator::hyper_cube(*triangulation, 0.0, 1.0);
- dealii::Point<2> beginLine1(0.0, 0.0);
- dealii::Point<2> endLine1(0.0, 1.0);
- dealii::Point<2> beginLine2(1.0, 0.0);
- dealii::Point<2> endLine2(1.0, 1.0);
+BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 
- /// Test if construction of periodic boundary works
- BOOST_CHECK_NO_THROW(
- PeriodicBoundary1D(beginLine1, endLine1, beginLine2, endLine2,
- triangulation));
-
- /// Test if the same thing still works after refinement
- triangulation->refine_global(2);
- BOOST_CHECK_NO_THROW(
- PeriodicBoundary1D(beginLine1, endLine1, beginLine2, endLine2,
- triangulation));
-
- //////////////////
- // FAILURE TEST //
- //////////////////
- endLine2[1] += 0.1;
- BOOST_CHECK_THROW(
- PeriodicBoundary1D(beginLine1, endLine1, beginLine2, endLine2,
- triangulation), natrium::PeriodicBoundaryNotPossible);
-
- cout << "done." << endl;
-
- }
- */
-
-BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ConstructionByBoundaryIndicator_test) {
-
-	cout << "PeriodicBoundary1D_ConstructionByBoundaryIndicator_test..."
+	cout << "PeriodicBoundary<2>_ConstructionByBoundaryIndicator_test..."
 			<< endl;
 	/////////////////
 	// SANITY TEST //
@@ -83,8 +44,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ConstructionByBoundaryIndicator_test) {
 	triangulation->begin_active(0)->face(3)->set_boundary_indicator(3); //bottom
 
 	/// Test if construction works and vertices could be found automatically
-	BOOST_CHECK_NO_THROW(PeriodicBoundary1D(0, 1, triangulation));
-	PeriodicBoundary1D myBoundary(0, 1, triangulation);
+	BOOST_CHECK_NO_THROW(PeriodicBoundary<2>(0, 1, triangulation));
+	PeriodicBoundary<2> myBoundary(0, 1, triangulation);
 	BOOST_CHECK_SMALL(myBoundary.getBeginLine1()[0] - 0.0, 1e-10);
 	BOOST_CHECK_SMALL(myBoundary.getBeginLine1()[1] - 0.0, 1e-10);
 	BOOST_CHECK_SMALL(myBoundary.getEndLine1()[0] - 0.0, 1e-10);
@@ -96,8 +57,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ConstructionByBoundaryIndicator_test) {
 
 	// Check if same thing still works after refinement
 	triangulation->refine_global(2);
-	BOOST_CHECK_NO_THROW(PeriodicBoundary1D(0, 1, triangulation));
-	PeriodicBoundary1D myBoundary2(0, 1, triangulation);
+	BOOST_CHECK_NO_THROW(PeriodicBoundary<2>(0, 1, triangulation));
+	PeriodicBoundary<2> myBoundary2(0, 1, triangulation);
 	BOOST_CHECK_SMALL(myBoundary2.getBeginLine1()[0] - 0.0, 1e-10);
 	BOOST_CHECK_SMALL(myBoundary2.getBeginLine1()[1] - 0.0, 1e-10);
 	BOOST_CHECK_SMALL(myBoundary2.getEndLine1()[0] - 0.0, 1e-10);
@@ -108,25 +69,25 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ConstructionByBoundaryIndicator_test) {
 	BOOST_CHECK_SMALL(myBoundary2.getEndLine2()[1] - 1.0, 1e-10);
 
 	// Check if the same thing works for the top and bottom boundary
-	BOOST_CHECK_NO_THROW(PeriodicBoundary1D(2, 3, triangulation));
+	BOOST_CHECK_NO_THROW(PeriodicBoundary<2>(2, 3, triangulation));
 
 	//////////////////
 	// FAILURE TEST //
 	//////////////////
-	BOOST_CHECK_THROW(PeriodicBoundary1D(0, 0, triangulation),
+	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 0, triangulation),
 			PeriodicBoundaryNotPossible);
-	BOOST_CHECK_THROW(PeriodicBoundary1D(0, 2, triangulation),
+	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 2, triangulation),
 			PeriodicBoundaryNotPossible);
-	BOOST_CHECK_THROW(PeriodicBoundary1D(0, 3, triangulation),
+	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 3, triangulation),
 			PeriodicBoundaryNotPossible);
 
 	cout << "done." << endl;
 
-} /* PeriodicBoundary1D_ConstructionByBoundaryIndicator_test */
+} /* PeriodicBoundary<2>_ConstructionByBoundaryIndicator_test */
 
-BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ApplyBoundary_test) {
+BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ApplyBoundary_test) {
 
-	cout << "PeriodicBoundary1D_ApplyBoundary_test..." << endl;
+	cout << "PeriodicBoundary<2>_ApplyBoundary_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -156,8 +117,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ApplyBoundary_test) {
 	doFHandler->distribute_dofs(*fe);
 
 	// make periodic boundaries object
-	PeriodicBoundary1D periodicLeftRight(0, 1, triangulation);
-	PeriodicBoundary1D periodicTopBottom(2, 3, triangulation);
+	PeriodicBoundary<2> periodicLeftRight(0, 1, triangulation);
+	PeriodicBoundary<2> periodicTopBottom(2, 3, triangulation);
 
 	// Apply boundary values
 	periodicLeftRight.applyBoundaryValues(doFHandler, constraintMatrix);
@@ -176,11 +137,11 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_ApplyBoundary_test) {
 
 	cout << "done." << endl;
 
-} /* PeriodicBoundary1D_ApplyBoundary_test */
+} /* PeriodicBoundary<2>_ApplyBoundary_test */
 
-BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_forDiscontinuousGalerkin_test) {
+BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 
-	cout << "PeriodicBoundary1D_forDiscontinuousGalerkin_test..." << endl;
+	cout << "PeriodicBoundary<2>_forDiscontinuousGalerkin_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -198,8 +159,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_forDiscontinuousGalerkin_test) {
 	triangulation->refine_global(numberOfRefinementSteps);
 
 	// make periodic boundaries object
-	PeriodicBoundary1D periodicLeftRight(0, 1, triangulation);
-	PeriodicBoundary1D periodicTopBottom(2, 3, triangulation);
+	PeriodicBoundary<2> periodicLeftRight(0, 1, triangulation);
+	PeriodicBoundary<2> periodicTopBottom(2, 3, triangulation);
 
 	// distribute dofs
 	shared_ptr<dealii::DoFHandler<2> > doFHandler = make_shared<
@@ -297,13 +258,13 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary1D_forDiscontinuousGalerkin_test) {
 	// Not the same number of cells:
 	leftUpperCorner->set_refine_flag();
 	triangulation->execute_coarsening_and_refinement();
-	//BOOST_CHECK_THROW(PeriodicBoundary1D(0, 1, triangulation),
+	//BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 1, triangulation),
 	//		PeriodicBoundaryNotPossible);
 
 	doFHandler->clear();
 	cout << "done." << endl;
-} /*PeriodicBoundary1D_forDisconitnuousGalerkin_test*/
+} /*PeriodicBoundary<2>_forDisconitnuousGalerkin_test*/
 
-BOOST_AUTO_TEST_SUITE_END() /* PeriodicBoundary1D_test */
+BOOST_AUTO_TEST_SUITE_END() /* PeriodicBoundary<2>_test */
 
 } /* namespace natrium */
