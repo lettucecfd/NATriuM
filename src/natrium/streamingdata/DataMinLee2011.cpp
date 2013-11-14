@@ -196,8 +196,8 @@ template<> void DataMinLee2011<2>::calculateAndDistributeLocalSystemMatrix(
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
 	// TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
-	faceMatrix.add(m_boltzmannModel->getDirection(i)[0],
-			derivativeMatrices.at(0), m_boltzmannModel->getDirection(i)[1],
+	faceMatrix.add(-m_boltzmannModel->getDirection(i)[0],
+			derivativeMatrices.at(0), -m_boltzmannModel->getDirection(i)[1],
 			derivativeMatrices.at(1));
 	// TODO further speedup could be achieved when explicitly multiply diag * faceMatrix  instead of full * faceMatrix
 	inverseMassMatrix.mmult(systemMatrix, faceMatrix);
@@ -215,9 +215,9 @@ template<> void DataMinLee2011<3>::calculateAndDistributeLocalSystemMatrix(
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
 	// TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
-	faceMatrix.add(m_boltzmannModel->getDirection(i)[0],
-			derivativeMatrices.at(0), m_boltzmannModel->getDirection(i)[1],
-			derivativeMatrices.at(1), m_boltzmannModel->getDirection(i)[2],
+	faceMatrix.add(-m_boltzmannModel->getDirection(i)[0],
+			derivativeMatrices.at(0), -m_boltzmannModel->getDirection(i)[1],
+			derivativeMatrices.at(1), -m_boltzmannModel->getDirection(i)[2],
 			derivativeMatrices.at(2));
 	// TODO further speedup could be achieved when explicitly multiply diag * faceMatrix  instead of full * faceMatrix
 	inverseMassMatrix.mmult(systemMatrix, faceMatrix);
