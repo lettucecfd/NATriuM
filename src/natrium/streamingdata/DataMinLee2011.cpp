@@ -25,55 +25,22 @@ DataMinLee2011<dim>::DataMinLee2011(
 		m_tria(triangulation), m_boundaries(boundaries), m_boltzmannModel(
 				boltzmannModel) {
 	// make dof handler
-	m_quadrature = make_shared<QGaussLobatto<1> >(orderOfFiniteElement);
-	m_fe = make_shared<FE_DGQArbitraryNodes<dim> >(*m_quadrature);
+	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement);
+	m_fe = make_shared<FE_DGQArbitraryNodes<dim> >(QGaussLobatto<1>(orderOfFiniteElement));
 	m_doFHandler = make_shared<DoFHandler<dim> >(*triangulation);
 	m_dofs_per_cell = m_fe->dofs_per_cell;
-	m_n_q_points = m_quadrature->size();
+	m_n_quadrature_points = m_quadrature->size();
 
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
 	updateSparsityPattern();
 
-	/*
-	 // make sparsity pattern
-	 updateSparsityPattern();
-	 updateSystemMatrixAccordingToSparsityPattern();
-	 */
-	//make sparse matrix
-	/*CompressedSparsityPattern cSparse(m_doFHandler->n_dofs());
-
-	 //reorder degrees of freedom
-	 DoFRenumbering::Cuthill_McKee(*m_doFHandler);
-	 DoFTools::make_sparsity_pattern(*m_doFHandler, cSparse);
-	 m_sparsityPattern.copy_from(cSparse);
-
-	 //reinitialize matrices
-	 m_massMatrix.reinit(m_sparsityPattern);
-	 for (size_t i = 0; i < dim; i++) {
-	 distributed_sparse_matrix D_i;
-	 m_derivativeMatrix.push_back(D_i);
-	 m_derivativeMatrix.at(i).reinit(m_sparsityPattern);
-	 }
-
-	 for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-	 distributed_sparse_matrix R_i;
-	 m_faceMatrix.push_back(R_i);
-	 m_faceMatrix.at(i).reinit(m_sparsityPattern);
-	 }
-
-	 for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-	 distributed_sparse_matrix L;
-	 m_systemMatrix.push_back(L);
-	 }
-
 	 // fe values
-	 m_feValues = make_shared<FEValues<dim, dim> >(m_fe, m_quadrature,
+	 m_feValues = make_shared<FEValues<dim, dim> >(*m_fe, *m_quadrature,
 	 update_values | update_gradients | update_JxW_values);
 
 	 // assemble system
 	 reassemble();
-	 */
 } /* DataMinLee2011<dim>::DataMinLee2011 */
 /// The template parameter must be made explicit in order for the code to compile
 template DataMinLee2011<2>::DataMinLee2011(
@@ -87,7 +54,7 @@ template DataMinLee2011<3>::DataMinLee2011(
 
 template<size_t dim>
 inline void DataMinLee2011<dim>::updateSparsityPattern() {
-/*
+
 	//make sparse matrix
 	CompressedSparsityPattern cSparse(m_doFHandler->n_dofs());
 
@@ -98,17 +65,17 @@ inline void DataMinLee2011<dim>::updateSparsityPattern() {
 	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
 
 	//add periodic neighbors
-	const vector<shared_ptr<PeriodicBoundary1D> > periodicBoundaries =
+	const vector<shared_ptr<PeriodicBoundary<dim> > > periodicBoundaries =
 			m_boundaries->getPeriodicBoundaries();
 	for (size_t i = 0; i < periodicBoundaries.size(); i++) {
 		// map cells to each other
 		// TODO only update sparsity pattern for changed cells
 		periodicBoundaries.at(i)->createCellMap(*m_doFHandler);
-		const std::map<dealii::DoFHandler<2>::active_cell_iterator,
-				std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > cellMap =
+		const std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
+				std::pair<typename dealii::DoFHandler<dim>::active_cell_iterator, size_t> > cellMap =
 				periodicBoundaries.at(i)->getCellMap();
-		std::map<dealii::DoFHandler<2>::active_cell_iterator,
-				std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::const_iterator element =
+		typename std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
+				std::pair<typename dealii::DoFHandler<dim>::active_cell_iterator, size_t> >::const_iterator element =
 				cellMap.begin();
 		// for each cells belonging to the periodic boundary
 		for (; element != cellMap.end(); element++) {
@@ -136,7 +103,7 @@ inline void DataMinLee2011<dim>::updateSparsityPattern() {
 	for (size_t i = 0; i < m_systemMatrix.size(); i++) {
 		m_systemMatrix.at(i).reinit(m_sparsityPattern);
 	}
-*/
+
 } /* updateSparsityPattern */
 // The template parameter has to be made expicit in order for the code to compile
 template void DataMinLee2011<2>::updateSparsityPattern();
@@ -151,7 +118,7 @@ inline void DataMinLee2011<dim>::assembleLocalMassMatrix(
 	massMatrix = 0;
 	for (size_t i = 0; i < m_dofs_per_cell; ++i)
 		for (size_t j = 0; j < m_dofs_per_cell; ++j)
-			for (size_t q_point = 0; q_point < m_n_q_points; ++q_point)
+			for (size_t q_point = 0; q_point < m_n_quadrature_points; ++q_point)
 				massMatrix(i, j) += (m_feValues->shape_value(i,
 						q_point) * m_feValues->shape_value(j, q_point)
 						* m_feValues->JxW(q_point));
@@ -169,7 +136,7 @@ inline void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t i,
 	derivativeMatrix = 0;
 	for (size_t i = 0; i < m_dofs_per_cell; ++i)
 		for (size_t j = 0; j < m_dofs_per_cell; ++j)
-			for (size_t q_point = 0; q_point < m_n_q_points; ++q_point)
+			for (size_t q_point = 0; q_point < m_n_quadrature_points; ++q_point)
 				derivativeMatrix(i, j) +=
 						(m_feValues->shape_grad(i, q_point)
 								* m_feValues->shape_grad(j, q_point)
@@ -245,6 +212,6 @@ void DataMinLee2011<dim>::reassemble() {
 }
 /// The template parameter must be made explicit in order for the code to compile
 template void DataMinLee2011<2>::reassemble();
-//template void DataMinLee2011<3>::reassemble();
+template void DataMinLee2011<3>::reassemble();
 
 } /* namespace natrium */

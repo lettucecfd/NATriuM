@@ -41,7 +41,7 @@ private:
 	shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
 	/// integration on gauss lobatto nodes
-	shared_ptr<dealii::QGaussLobatto<1> > m_quadrature;
+	shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
 
 	/// Finite Element function on one cell
 	shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
@@ -65,7 +65,7 @@ private:
 	size_t m_dofs_per_cell;
 
 	// number of integration points
-	size_t m_n_q_points;
+	size_t m_n_quadrature_points;
 
 	/**
 	 * @short update the sparsity pattern of the system matrix
