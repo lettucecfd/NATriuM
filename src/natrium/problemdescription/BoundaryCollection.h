@@ -61,6 +61,14 @@ public:
 	const vector<shared_ptr<PeriodicBoundary<dim> > >& getPeriodicBoundaries() const {
 		return m_periodicBoundaries;
 	}
+
+	const size_t numberOfBoundaries() const {
+		return m_boundaries.size();
+	}
+
+	const size_t numberOfPeriodicBoundaries() const {
+		return m_periodicBoundaries.size();
+	}
 };
 
 } /* namespace natrium */

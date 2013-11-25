@@ -80,6 +80,25 @@ template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
 		size_t boundaryIndicator2,
 		shared_ptr<dealii::Triangulation<2> > triangulation);
 
+
+template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const {
+	// first condition: cell map has a key <cell>
+	if (m_cells.count(cell) == 0) {
+		return false;
+	}
+	// second condition: the face has the right boundary indicator
+	if (faceBoundaryIndicator == m_boundaryIndicator1) {
+		return true;
+	}
+	if (faceBoundaryIndicator == m_boundaryIndicator2) {
+		return true;
+	}
+	return false;
+}
+// The template Parameter has to be made explicit in order for the code to compile
+template bool PeriodicBoundary<2>::isFaceInBoundary(const typename dealii::DoFHandler<2>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const;
+template bool PeriodicBoundary<3>::isFaceInBoundary(const typename dealii::DoFHandler<3>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const;
+
 template<size_t dim> PeriodicBoundary<dim>::~PeriodicBoundary() {
 }
 // The template Parameter has to be made explicit in order for the code to compile
@@ -190,7 +209,7 @@ template<> void PeriodicBoundary<2>::createCellMap(
 	std::map<double,
 			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > cellsAtBoundary1;
 	std::map<double,
-			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > cellsAtBoundary2;
+			std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> > cellsAtBoundary2;
 
 	// iterate over all active cells and sort them
 	for (; currentCell != lastCell; ++currentCell) {
@@ -229,7 +248,7 @@ template<> void PeriodicBoundary<2>::createCellMap(
 			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::iterator atBoundary1 =
 			cellsAtBoundary1.begin();
 	std::map<double,
-			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::iterator atBoundary2 =
+			std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> >::iterator atBoundary2 =
 			cellsAtBoundary2.begin();
 	for (; atBoundary1 != cellsAtBoundary1.end(); atBoundary1++) {
 		// assert that the face discretizations on both lines are equal
@@ -370,9 +389,9 @@ template<> void PeriodicBoundary<3>::applyBoundaryValues(
 	//3D-Implementation
 }
 
-template<size_t dim> inline size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoundary(
+template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoundary(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
-		typename dealii::DoFHandler<dim>::active_cell_iterator & neighborCell) const {
+		typename dealii::DoFHandler<dim>::cell_iterator & neighborCell) const {
 
 	if (m_cells.size() == 0) {
 		throw PeriodicBoundaryNotPossible(
@@ -390,9 +409,9 @@ template<size_t dim> inline size_t PeriodicBoundary<dim>::getOppositeCellAtPerio
 // The template parameter has to be made explicit in order for the code to compile
 template size_t PeriodicBoundary<2>::getOppositeCellAtPeriodicBoundary(
 		const dealii::DoFHandler<2>::active_cell_iterator & cell,
-		dealii::DoFHandler<2>::active_cell_iterator & neighborCell) const;
+		dealii::DoFHandler<2>::cell_iterator & neighborCell) const;
 template size_t PeriodicBoundary<3>::getOppositeCellAtPeriodicBoundary(
 		const dealii::DoFHandler<3>::active_cell_iterator & cell,
-		dealii::DoFHandler<3>::active_cell_iterator & neighborCell) const;
+		dealii::DoFHandler<3>::cell_iterator & neighborCell) const;
 
 } /* namespace natrium */

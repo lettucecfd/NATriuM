@@ -57,7 +57,7 @@ private:
 
 	/// Container for all cells that belong to this boundary
 	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
-	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::active_cell_iterator, size_t> > m_cells;
+	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
 
 	/// boundary indicator of first interfacial line
 	size_t m_boundaryIndicator1;
@@ -186,28 +186,15 @@ public:
 	 * @return local face number of cell1, denoting the respective cell number
 	 */
 	size_t getOppositeCellAtPeriodicBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
-			typename dealii::DoFHandler<dim>::active_cell_iterator & neighborCell) const;
+			typename dealii::DoFHandler<dim>::cell_iterator & neighborCell) const;
 
 	/**
 	 * @short test if a given face belongs to this boundary
-	 * @param[in] cellID unique ID of the cell
+	 * @param[in] cell pointer to the cell
 	 * @param[in] faceBoundaryIndicator the boundary indicator of the face
 	 *
 	 */
-	bool isFaceInBoundary(typename dealii::DoFHandler<dim>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const {
-		// first condition: cell map has a key <cell>
-		if (m_cells.count(cell) == 0) {
-			return false;
-		}
-		// second condition: the face has the right boundary indicator
-		if (faceBoundaryIndicator == m_boundaryIndicator1) {
-			return true;
-		}
-		if (faceBoundaryIndicator == m_boundaryIndicator2) {
-			return true;
-		}
-		return false;
-	}
+	bool isFaceInBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const;
 
 	virtual bool isPeriodic() const {
 		return true;
@@ -251,7 +238,7 @@ public:
 	}
 
 	const std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
-			std::pair<typename dealii::DoFHandler<dim>::active_cell_iterator, size_t> >& getCellMap() const {
+			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >& getCellMap() const {
 		return m_cells;
 	}
 };

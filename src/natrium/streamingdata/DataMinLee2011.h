@@ -94,7 +94,7 @@ private:
 	 * @param[out] faceMatrix The integral over all faces, incorporating boundary conditions
 	 */
 	void assembleLocalFaceMatrix(size_t i,
-			typename dealii::DoFHandler<dim>::cell_iterator& cell,
+			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			dealii::FEFaceValuesBase<dim>& feFaceValues,
 			dealii::FEFaceValuesBase<dim>& feSubfaceValues,
 			dealii::FEFaceValuesBase<dim>& feNeighborFaceValues,
@@ -116,6 +116,25 @@ private:
 	 * @param[in/out] faceMatrix matrix belonging to a face
 	 */
 	void invertDiagonalMassMatrix(dealii::FullMatrix<double> &massMatrix) const;
+
+	/**
+	 * @short assemble and distribute internal face
+	 * @param cell the cell to which the face belongs
+	 * @param faceNumber the local number of the face (0,1,2 or 3)
+	 * @param neighborCell the cell on the other side of the face
+	 * @param neighborFaceNumber the local number of the face (0,1,2 or 3), as seen from the neigbor cell
+	 * @param feFaceValues is passed in order to avoid allocating memory for each call of the function
+	 * @param feSubfaceValues is passed in order to avoid allocating memory for each call of the function
+	 * @param feNeighborFaceValues is passed in order to avoid allocating memory for each call of the function
+	 */
+	void assembleAndDistributeInternalFace(typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+			size_t faceNumber,
+			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
+			size_t neighborFaceNumber,
+			dealii::FEFaceValuesBase<dim>& feFaceValues,
+			dealii::FEFaceValuesBase<dim>& feSubfaceValues,
+			dealii::FEFaceValuesBase<dim>& feNeighborFaceValues);
+
 
 public:
 

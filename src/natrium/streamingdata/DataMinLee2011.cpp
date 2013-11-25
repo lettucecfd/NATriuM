@@ -14,6 +14,8 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/fe/fe_update_flags.h"
 
+#include "../problemdescription/PeriodicBoundary.h"
+
 using namespace dealii;
 
 namespace natrium {
@@ -51,7 +53,7 @@ template DataMinLee2011<3>::DataMinLee2011(
 		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel);
 
 template<size_t dim>
-inline void DataMinLee2011<dim>::updateSparsityPattern() {
+void DataMinLee2011<dim>::updateSparsityPattern() {
 
 	//make sparse matrix
 	CompressedSparsityPattern cSparse(m_doFHandler->n_dofs());
@@ -71,13 +73,13 @@ inline void DataMinLee2011<dim>::updateSparsityPattern() {
 		periodicBoundaries.at(i)->createCellMap(*m_doFHandler);
 		const std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
 				std::pair<
-						typename dealii::DoFHandler<dim>::active_cell_iterator,
+						typename dealii::DoFHandler<dim>::cell_iterator,
 						size_t> > cellMap =
 				periodicBoundaries.at(i)->getCellMap();
 		typename std::map<
 				typename dealii::DoFHandler<dim>::active_cell_iterator,
 				std::pair<
-						typename dealii::DoFHandler<dim>::active_cell_iterator,
+						typename dealii::DoFHandler<dim>::cell_iterator,
 						size_t> >::const_iterator element = cellMap.begin();
 		// for each cells belonging to the periodic boundary
 		for (; element != cellMap.end(); element++) {
@@ -113,7 +115,7 @@ template void DataMinLee2011<2>::updateSparsityPattern();
 //template void DataMinLee2011<3>::updateSparsityPattern();
 
 template<size_t dim>
-inline void DataMinLee2011<dim>::assembleLocalMassMatrix(
+void DataMinLee2011<dim>::assembleLocalMassMatrix(
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double> &massMatrix) const {
 	massMatrix = 0;
@@ -133,7 +135,7 @@ template void DataMinLee2011<3>::assembleLocalMassMatrix(
 		size_t n_q_points, dealii::FullMatrix<double> &massMatrix) const;
 
 template<size_t dim>
-inline void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t i,
+void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t i,
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double> &derivativeMatrix) const {
 	derivativeMatrix = 0;
@@ -153,30 +155,71 @@ template void DataMinLee2011<3>::assembleLocalDerivativeMatrix(size_t i,
 		size_t n_q_points, dealii::FullMatrix<double> &derivativeMatrix) const;
 
 template<size_t dim>
-inline void DataMinLee2011<dim>::assembleLocalFaceMatrix(size_t i,
-		typename dealii::DoFHandler<dim>::cell_iterator& cell,
+void DataMinLee2011<dim>::assembleLocalFaceMatrix(size_t i,
+		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		dealii::FEFaceValuesBase<dim>& feFaceValues,
 		dealii::FEFaceValuesBase<dim>& feSubfaceValues,
 		dealii::FEFaceValuesBase<dim>& feNeighborFaceValues,
 		size_t dofs_per_cell, size_t n_q_points,
 		dealii::FullMatrix<double>& faceMatrix) const {
+	bool assemblyDone = false;
+	// loop over all faces
+	for (size_t j = 0; j < dealii::GeometryInfo<2>::faces_per_cell; j++) {
+		assemblyDone = false;
+
+		//Faces at boundary
+		if (cell->face(j)->at_boundary()) {
+			// TODO At this point the implementation is not efficient: Loop over all Boundaries :/ pfui
+			// Better: BoundaryCollection should have a map < <Boundary cell, face_id>, Boundary ID>
+
+			// Apply periodic boundaries
+			for (size_t k = 0; k < m_boundaries->numberOfPeriodicBoundaries();
+					k++) {
+				const shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
+						m_boundaries->getPeriodicBoundaries().at(k);
+				if (periodicBoundary->isFaceInBoundary(cell, j)) {
+					typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
+					periodicBoundary->getOppositeCellAtPeriodicBoundary(cell,
+									neighborCell);
+					assembleAndDistributeInternalFace(cell, j, neighborCell,
+							dealii::GeometryInfo<dim>::opposite_face[j],
+							feFaceValues, feSubfaceValues, feNeighborFaceValues);
+					assemblyDone = true;
+					break;
+				}
+			} /* for all periodic boundaries */
+			if (assemblyDone){
+				continue;
+			}
+
+			// Apply other boundaries
+			// TODO Implement other boundary conditions
+		} else {
+		// Internal faces
+			assembleAndDistributeInternalFace(cell, j, cell->neighbor(j),
+					dealii::GeometryInfo<dim>::opposite_face[j],
+					feFaceValues, feSubfaceValues, feNeighborFaceValues);
+		} /* if (face at boundary) {} else {} */
+
+	}
+
 } /* assembleLocalFaceMatrix */
 // The template parameter must be made explicit in order for the code to compile.
 template void DataMinLee2011<2>::assembleLocalFaceMatrix(size_t i,
-		typename dealii::DoFHandler<2>::cell_iterator& cell,
+		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		dealii::FEFaceValuesBase<2>& feFaceValues,
 		dealii::FEFaceValuesBase<2>& feSubfaceValues,
 		dealii::FEFaceValuesBase<2>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix) const;
 template void DataMinLee2011<3>::assembleLocalFaceMatrix(size_t i,
-		typename dealii::DoFHandler<3>::cell_iterator& cell,
+		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		dealii::FEFaceValuesBase<3>& feFaceValues,
 		dealii::FEFaceValuesBase<3>& feSubfaceValues,
 		dealii::FEFaceValuesBase<3>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix) const;
 
 template<size_t dim>
-inline void DataMinLee2011<dim>::invertDiagonalMassMatrix(
+void DataMinLee2011<dim>::invertDiagonalMassMatrix(
 		dealii::FullMatrix<double>& massMatrix) const {
 	for (size_t i; i < massMatrix.n_cols(); i++) {
 		massMatrix(i, i) = 1.0 / massMatrix(i, i);
@@ -226,6 +269,29 @@ template<> void DataMinLee2011<3>::calculateAndDistributeLocalSystemMatrix(
 			m_systemMatrix.at(i).add(globalDoFs[j], globalDoFs[k],
 					systemMatrix(j, k));
 }
+
+template<size_t dim>
+void DataMinLee2011<dim>::assembleAndDistributeInternalFace(
+		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+		size_t faceNumber,
+		typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
+		size_t neighborFaceNumber, dealii::FEFaceValuesBase<dim>& feFaceValues,
+		dealii::FEFaceValuesBase<dim>& feSubfaceValues,
+		dealii::FEFaceValuesBase<dim>& feNeighborFaceValues) {
+} /* assembleAndDistributeInternalFace */
+// The template parameter must be made explicit in order for the code to compile.
+template void DataMinLee2011<2>::assembleAndDistributeInternalFace(
+		typename dealii::DoFHandler<2>::active_cell_iterator& cell, size_t faceNumber,
+		typename dealii::DoFHandler<2>::cell_iterator& neighborCell,
+		size_t neighborFaceNumber, dealii::FEFaceValuesBase<2>& feFaceValues,
+		dealii::FEFaceValuesBase<2>& feSubfaceValues,
+		dealii::FEFaceValuesBase<2>& feNeighborFaceValues);
+template void DataMinLee2011<3>::assembleAndDistributeInternalFace(
+		typename dealii::DoFHandler<3>::active_cell_iterator& cell, size_t faceNumber,
+		typename dealii::DoFHandler<3>::cell_iterator& neighborCell,
+		size_t neighborFaceNumber, dealii::FEFaceValuesBase<3>& feFaceValues,
+		dealii::FEFaceValuesBase<3>& feSubfaceValues,
+		dealii::FEFaceValuesBase<3>& feNeighborFaceValues);
 
 template<size_t dim>
 void DataMinLee2011<dim>::stream() {
