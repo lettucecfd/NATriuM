@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 
 	// check the cell map defining the neighbors across boundaries
 	const std::map<dealii::DoFHandler<2>::active_cell_iterator,
-				std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >& cellMap = periodicLeftRight.getCellMap();
+				std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> >& cellMap = periodicLeftRight.getCellMap();
 	/*std::map<dealii::DoFHandler<2>::active_cell_iterator,
 					std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::const_iterator cell = cellMap.begin();
 	for (; cell != cellMap.end(); cell++){

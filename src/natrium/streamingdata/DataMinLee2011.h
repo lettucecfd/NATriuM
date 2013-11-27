@@ -76,7 +76,7 @@ private:
 	// TODO SEDG implemenation with fully diagonal mass matrix
 	void assembleLocalMassMatrix(const dealii::FEValues<dim>& feValues,
 			size_t dofs_per_cell, size_t n_q_points,
-			dealii::FullMatrix<double> &massMatrix) const;
+			vector<double> &massMatrix) const;
 
 	/**
 	 * @short assemble the i-th local derivative matrix
@@ -93,21 +93,22 @@ private:
 	 * @param[in] i < Q; this matrix is dependent on the flow direction
 	 * @param[out] faceMatrix The integral over all faces, incorporating boundary conditions
 	 */
-	void assembleLocalFaceMatrix(size_t i,
+	void assembleAndDistributeLocalFaceMatrices(size_t i,
+			const vector<double>& inverseLocalMassMatrix,
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			dealii::FEFaceValuesBase<dim>& feFaceValues,
 			dealii::FEFaceValuesBase<dim>& feSubfaceValues,
 			dealii::FEFaceValuesBase<dim>& feNeighborFaceValues,
 			size_t dofs_per_cell, size_t n_q_points,
-			dealii::FullMatrix<double> &faceMatrix) const;
+			dealii::FullMatrix<double> &faceMatrix);
+
 
 	/**
-	 * @short calculate system matrix L = M^{-1}*(Dx*eix + Dy*eiy + R)
+	 * @short calculate system diagonal block matrix  M^{-1}*(Dx*eix + Dy*eiy)
 	 */
-	void calculateAndDistributeLocalSystemMatrix(size_t i,
-			const dealii::FullMatrix<double> &inverseMassMatrix,
+	void calculateAndDistributeLocalCellMatrix(size_t i,
+			const vector<double> &inverseMassMatrix,
 			const vector<dealii::FullMatrix<double> > &derivativeMatrices,
-		    dealii::FullMatrix<double> &faceMatrix,
 			dealii::FullMatrix<double> &systemMatrix,
 			const std::vector<dealii::types::global_dof_index>& globalDoFs, size_t dofsPerCell);
 
@@ -115,7 +116,7 @@ private:
 	 * @short invert local mass matrix, assuming that it is diagonal
 	 * @param[in/out] faceMatrix matrix belonging to a face
 	 */
-	void invertDiagonalMassMatrix(dealii::FullMatrix<double> &massMatrix) const;
+	void invertDiagonalMassMatrix(vector<double> &massMatrix) const;
 
 	/**
 	 * @short assemble and distribute internal face
@@ -127,7 +128,8 @@ private:
 	 * @param feSubfaceValues is passed in order to avoid allocating memory for each call of the function
 	 * @param feNeighborFaceValues is passed in order to avoid allocating memory for each call of the function
 	 */
-	void assembleAndDistributeInternalFace(typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+	void assembleAndDistributeInternalFace(const vector<double>& inverseLocalMassMatrix,
+			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t faceNumber,
 			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
 			size_t neighborFaceNumber,
