@@ -86,14 +86,15 @@ void DataMinLee2011<dim>::updateSparsityPattern() {
 			vector<dealii::types::global_dof_index> doFIndicesAtCell2(
 					dofs_per_cell);
 			element->first->get_dof_indices(doFIndicesAtCell1);
-			element->first->get_dof_indices(doFIndicesAtCell2);
+			element->second.first->get_dof_indices(doFIndicesAtCell2);
 			// couple all dofs at boundary 1 with dofs at boundary 2
 			// TODO only couple the ones which are nonzero at the face (are there any???)
 			// TODO remove the INVARIANT "discretization at boundary 1 = discretization at boundary 2"
 			//      e.g. by mapping, allowing more than one periodic neighbor, ...
 			for (size_t j = 0; j < dofs_per_cell; j++) {
 				for (size_t k = 0; k < dofs_per_cell; k++) {
-					cSparse.add(j, k);
+					cSparse.add(doFIndicesAtCell1.at(j),
+							doFIndicesAtCell2.at(k));
 				}
 			}
 		}
@@ -106,6 +107,9 @@ void DataMinLee2011<dim>::updateSparsityPattern() {
 		m_systemMatrix.at(i).reinit(m_sparsityPattern);
 	}
 
+	m_massMatrix.reinit(m_doFHandler->n_dofs());
+	std::fill(m_massMatrix.begin(), m_massMatrix.end(), 0.0);
+
 } /* updateSparsityPattern */
 // The template parameter has to be made expicit in order for the code to compile
 template void DataMinLee2011<2>::updateSparsityPattern();
@@ -115,34 +119,47 @@ template void DataMinLee2011<2>::updateSparsityPattern();
 template<size_t dim>
 void DataMinLee2011<dim>::assembleLocalMassMatrix(
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, vector<double> &massMatrix) const {
+		size_t n_q_points, vector<double> &massMatrix,
+		const std::vector<dealii::types::global_dof_index>& globalDoFs) {
 	// initialize with zeros
+	// TODO the fill operation can be cut out in the final implementation,
+	// changing the += in the loop to =
 	std::fill(massMatrix.begin(), massMatrix.end(), 0.0);
 	// fill diagonal "matrix"
 	for (size_t i = 0; i < dofs_per_cell; ++i)
+		// TODO the inner for loop can be cut out in final implementation
 		for (size_t j = 0; j < dofs_per_cell; ++j) {
 			// TODO nonDiagonalElement is just for testing; cut out in final implementation
 			double nonDiagonalElement = 0.0;
+			// TODO the most inner loop can be cut out in the final implementation as the
+			// shape values are 0 for all nodes except the base node
 			for (size_t q_point = 0; q_point < n_q_points; ++q_point) {
 				if (i != j) {
 					nonDiagonalElement += feValues.shape_value(i, q_point)
 							* feValues.shape_value(j, q_point)
 							* feValues.JxW(q_point);
+				} else {
+					massMatrix.at(i) += feValues.shape_value(i, q_point)
+							* feValues.shape_value(j, q_point)
+							* feValues.JxW(q_point);
 				}
-				massMatrix.at(i) += feValues.shape_value(i, q_point)
-						* feValues.shape_value(j, q_point)
-						* feValues.JxW(q_point);
 			}
 			assert(abs(nonDiagonalElement) < 1e-15);
 		}
+	// Assemble to global mass matrix
+	for (size_t i = 0; i < dofs_per_cell; i++) {
+		m_massMatrix(globalDoFs.at(i)) = massMatrix.at(i);
+	}
 } /*assembleLocalMassMatrix*/
 // The template parameter must be made explicit in order for the code to compile.
 template void DataMinLee2011<2>::assembleLocalMassMatrix(
 		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, vector<double> &massMatrix) const;
+		size_t n_q_points, vector<double> &massMatrix,
+		const std::vector<dealii::types::global_dof_index>& globalDoFs);
 template void DataMinLee2011<3>::assembleLocalMassMatrix(
 		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, vector<double> &massMatrix) const;
+		size_t n_q_points, vector<double> &massMatrix,
+		const std::vector<dealii::types::global_dof_index>& globalDoFs);
 
 template<size_t dim>
 void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t i,
@@ -166,7 +183,6 @@ template void DataMinLee2011<3>::assembleLocalDerivativeMatrix(size_t i,
 
 template<size_t dim>
 void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
-		const vector<double>& inverseLocalMassMatrix,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		dealii::FEFaceValuesBase<dim>& feFaceValues,
 		dealii::FEFaceValuesBase<dim>& feSubfaceValues,
@@ -192,7 +208,7 @@ void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 					typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
 					periodicBoundary->getOppositeCellAtPeriodicBoundary(cell,
 							neighborCell);
-					assembleAndDistributeInternalFace(inverseLocalMassMatrix,
+					assembleAndDistributeInternalFace(
 							cell, j, neighborCell,
 							dealii::GeometryInfo<dim>::opposite_face[j],
 							feFaceValues, feSubfaceValues,
@@ -211,7 +227,7 @@ void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 			// Internal faces
 			typename DoFHandler<dim>::cell_iterator neighbor = cell->neighbor(
 					j);
-			assembleAndDistributeInternalFace(inverseLocalMassMatrix, cell, j,
+			assembleAndDistributeInternalFace(cell, j,
 					neighbor, dealii::GeometryInfo<dim>::opposite_face[j],
 					feFaceValues, feSubfaceValues, feNeighborFaceValues);
 		} /* if (face at boundary) {} else {} */
@@ -221,14 +237,14 @@ void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 } /* assembleLocalFaceMatrix */
 // The template parameter must be made explicit in order for the code to compile.
 template void DataMinLee2011<2>::assembleAndDistributeLocalFaceMatrices(
-		size_t i, const vector<double>& inverseLocalMassMatrix,
+		size_t i,
 		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		dealii::FEFaceValuesBase<2>& feFaceValues,
 		dealii::FEFaceValuesBase<2>& feSubfaceValues,
 		dealii::FEFaceValuesBase<2>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
 template void DataMinLee2011<3>::assembleAndDistributeLocalFaceMatrices(
-		size_t i, const vector<double>& inverseLocalMassMatrix,
+		size_t i,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		dealii::FEFaceValuesBase<3>& feFaceValues,
 		dealii::FEFaceValuesBase<3>& feSubfaceValues,
@@ -236,21 +252,27 @@ template void DataMinLee2011<3>::assembleAndDistributeLocalFaceMatrices(
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
 
 template<size_t dim>
-void DataMinLee2011<dim>::invertDiagonalMassMatrix(
-		vector<double>& massMatrix) const {
-	for (size_t i; i < massMatrix.size(); i++) {
-		massMatrix.at(i) = 1.0 / massMatrix.at(i);
+void DataMinLee2011<dim>::divideByDiagonalMassMatrix(
+		distributed_sparse_matrix& matrix,
+		const distributed_vector& massMatrix) {
+	size_t n = massMatrix.size();
+	for (size_t i; i < n; i++) {
+		for (size_t j; j < n; j++)
+			// TODO Parallel loop
+			if (m_sparsityPattern.exists(i, j))
+				matrix.set(i, j, matrix(i, j) / massMatrix(j));
 	}
 }
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::invertDiagonalMassMatrix(
-		vector<double>& massMatrix) const;
-template void DataMinLee2011<3>::invertDiagonalMassMatrix(
-		vector<double>& massMatrix) const;
+template void DataMinLee2011<2>::divideByDiagonalMassMatrix(
+		distributed_sparse_matrix& matrix,
+		const distributed_vector& massMatrix);
+template void DataMinLee2011<3>::divideByDiagonalMassMatrix(
+		distributed_sparse_matrix& matrix,
+		const distributed_vector& massMatrix);
 
-template<> void DataMinLee2011<2>::calculateAndDistributeLocalCellMatrix(
-		size_t i, const vector<double>& inverseMassMatrix,
-		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
+template<> void DataMinLee2011<2>::calculateAndDistributeLocalStiffnessMatrix(
+		size_t i, const vector<dealii::FullMatrix<double> >& derivativeMatrices,
 		dealii::FullMatrix<double> &systemMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
@@ -260,21 +282,14 @@ template<> void DataMinLee2011<2>::calculateAndDistributeLocalCellMatrix(
 	systemMatrix *= (-m_boltzmannModel->getDirection(i)[0]);
 	systemMatrix.add(-m_boltzmannModel->getDirection(i)[1],
 			derivativeMatrices.at(1));
-// calculate  M^-1 * -D
-	for (size_t j = 0; j < dofsPerCell; j++) {
-		for (size_t k = 0; k < dofsPerCell; k++) {
-			systemMatrix(j, k) *= inverseMassMatrix.at(k);
-		}
-	}
 // distribute to global system matrix
 	for (unsigned int j = 0; i < dofsPerCell; j++)
 		for (unsigned int k = 0; j < dofsPerCell; k++)
 			m_systemMatrix.at(i).add(globalDoFs[j], globalDoFs[k],
 					systemMatrix(j, k));
 }
-template<> void DataMinLee2011<3>::calculateAndDistributeLocalCellMatrix(
-		size_t i, const vector<double>& inverseMassMatrix,
-		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
+template<> void DataMinLee2011<3>::calculateAndDistributeLocalStiffnessMatrix(
+		size_t i, const vector<dealii::FullMatrix<double> >& derivativeMatrices,
 		dealii::FullMatrix<double> &systemMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
@@ -285,12 +300,6 @@ template<> void DataMinLee2011<3>::calculateAndDistributeLocalCellMatrix(
 	systemMatrix.add(-m_boltzmannModel->getDirection(i)[1],
 			derivativeMatrices.at(1), -m_boltzmannModel->getDirection(i)[2],
 			derivativeMatrices.at(2));
-// calculate  M^-1 * -D
-	for (size_t j = 0; j < dofsPerCell; j++) {
-		for (size_t k = 0; k < dofsPerCell; k++) {
-			systemMatrix(j, k) *= inverseMassMatrix.at(k);
-		}
-	}
 // distribute to global system matrix
 	for (unsigned int j = 0; i < dofsPerCell; j++)
 		for (unsigned int k = 0; j < dofsPerCell; k++)
@@ -300,7 +309,6 @@ template<> void DataMinLee2011<3>::calculateAndDistributeLocalCellMatrix(
 
 template<size_t dim>
 void DataMinLee2011<dim>::assembleAndDistributeInternalFace(
-		const vector<double>& inverseLocalMassMatrix,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
@@ -337,7 +345,6 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(
 } /* assembleAndDistributeInternalFace */
 // The template parameter must be made explicit in order for the code to compile.
 template void DataMinLee2011<2>::assembleAndDistributeInternalFace(
-		const vector<double>& inverseLocalMassMatrix,
 		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<2>::cell_iterator& neighborCell,
@@ -345,7 +352,6 @@ template void DataMinLee2011<2>::assembleAndDistributeInternalFace(
 		dealii::FEFaceValuesBase<2>& feSubfaceValues,
 		dealii::FEFaceValuesBase<2>& feNeighborFaceValues);
 template void DataMinLee2011<3>::assembleAndDistributeInternalFace(
-		const vector<double>& inverseLocalMassMatrix,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<3>::cell_iterator& neighborCell,
@@ -388,7 +394,7 @@ void DataMinLee2011<dim>::reassemble() {
 	const size_t n_quadrature_points = m_quadrature->size();
 
 // Initialize matrices
-	vector<double> inverseLocalMassMatrix(dofs_per_cell);
+	vector<double> localMassMatrix(dofs_per_cell);
 	vector<dealii::FullMatrix<double> > localDerivativeMatrices;
 	for (size_t i = 0; i < dim; i++) {
 		dealii::FullMatrix<double> D_i(dofs_per_cell, dofs_per_cell);
@@ -412,8 +418,7 @@ void DataMinLee2011<dim>::reassemble() {
 
 		// assemble local cell matrices
 		assembleLocalMassMatrix(feCellValues, dofs_per_cell,
-				n_quadrature_points, inverseLocalMassMatrix);
-		invertDiagonalMassMatrix(inverseLocalMassMatrix);
+				n_quadrature_points, localMassMatrix, localDoFIndices);
 		for (size_t i = 0; i < dim; i++) {
 			assembleLocalDerivativeMatrix(i, feCellValues, dofs_per_cell,
 					n_quadrature_points, localDerivativeMatrices.at(i));
@@ -421,17 +426,19 @@ void DataMinLee2011<dim>::reassemble() {
 
 		// assemble faces and put together
 		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-			// calculate local diagonal block (cell) matrix M^-1 * (-D)
-			calculateAndDistributeLocalCellMatrix(i, inverseLocalMassMatrix,
-					localDerivativeMatrices, localSystemMatrix, localDoFIndices,
-					dofs_per_cell);
+			// calculate local diagonal block (cell) matrix -D
+			calculateAndDistributeLocalStiffnessMatrix(i, localDerivativeMatrices,
+					localSystemMatrix, localDoFIndices, dofs_per_cell);
 			// calculate face contributions M^-1 * R
-			assembleAndDistributeLocalFaceMatrices(i, inverseLocalMassMatrix,
+			assembleAndDistributeLocalFaceMatrices(i,
 					cell, feFaceValues, feSubfaceValues, feNeighborFaceValues,
 					dofs_per_cell, n_quadrature_points, localFaceMatrix);
 		}
 	}
-
+	// Mulitply by inverse mass matrix
+	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
+		divideByDiagonalMassMatrix(m_systemMatrix.at(i), m_massMatrix);
+	}
 }
 /// The template parameter must be made explicit in order for the code to compile
 template void DataMinLee2011<2>::reassemble();

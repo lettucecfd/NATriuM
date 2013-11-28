@@ -56,6 +56,9 @@ private:
 	/// Mapping from real space to unit cell
 	const dealii::MappingQ1<dim> m_mapping;
 
+	/// global mass matrix M
+	distributed_vector m_massMatrix;
+
 	/// System matrix L = M^(-1)*(-D+R)
 	vector<distributed_sparse_matrix> m_systemMatrix;
 
@@ -76,7 +79,8 @@ private:
 	// TODO SEDG implemenation with fully diagonal mass matrix
 	void assembleLocalMassMatrix(const dealii::FEValues<dim>& feValues,
 			size_t dofs_per_cell, size_t n_q_points,
-			vector<double> &massMatrix) const;
+			vector<double> &massMatrix,
+			const std::vector<dealii::types::global_dof_index>& globalDoFs);
 
 	/**
 	 * @short assemble the i-th local derivative matrix
@@ -94,7 +98,6 @@ private:
 	 * @param[out] faceMatrix The integral over all faces, incorporating boundary conditions
 	 */
 	void assembleAndDistributeLocalFaceMatrices(size_t i,
-			const vector<double>& inverseLocalMassMatrix,
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			dealii::FEFaceValuesBase<dim>& feFaceValues,
 			dealii::FEFaceValuesBase<dim>& feSubfaceValues,
@@ -104,20 +107,23 @@ private:
 
 
 	/**
-	 * @short calculate system diagonal block matrix  M^{-1}*(Dx*eix + Dy*eiy)
+	 * @short calculate system diagonal block matrix  (Dx*eix + Dy*eiy)
 	 */
-	void calculateAndDistributeLocalCellMatrix(size_t i,
-			const vector<double> &inverseMassMatrix,
+	void calculateAndDistributeLocalStiffnessMatrix(size_t i,
 			const vector<dealii::FullMatrix<double> > &derivativeMatrices,
 			dealii::FullMatrix<double> &systemMatrix,
 			const std::vector<dealii::types::global_dof_index>& globalDoFs, size_t dofsPerCell);
 
 	/**
-	 * @short invert local mass matrix, assuming that it is diagonal
-	 * @param[in/out] faceMatrix matrix belonging to a face
+	 * @short calculate A <- M^-1 * A
+	 * @param[in/out] matrix sparse matrix A
+	 * @param[in] massMatrix diagonal matrix M (stored as vector)
+	 * @note Note that M^-1 * A is different from A * M^-1, even though M is diagonal
+	 *       (M^-1*A: columns are multiplied by the same diag element)
 	 */
-	void invertDiagonalMassMatrix(vector<double> &massMatrix) const;
-
+	void divideByDiagonalMassMatrix(
+			distributed_sparse_matrix& matrix,
+			const distributed_vector& massMatrix);
 	/**
 	 * @short assemble and distribute internal face
 	 * @param cell the cell to which the face belongs
@@ -128,7 +134,7 @@ private:
 	 * @param feSubfaceValues is passed in order to avoid allocating memory for each call of the function
 	 * @param feNeighborFaceValues is passed in order to avoid allocating memory for each call of the function
 	 */
-	void assembleAndDistributeInternalFace(const vector<double>& inverseLocalMassMatrix,
+	void assembleAndDistributeInternalFace(
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t faceNumber,
 			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
