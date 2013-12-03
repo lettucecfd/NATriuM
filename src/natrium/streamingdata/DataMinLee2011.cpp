@@ -186,7 +186,7 @@ void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
-		dealii::FEFaceValuesBase<dim>& feNeighborFaceValues,
+		dealii::FEFaceValues<dim>& feNeighborFaceValues,
 		size_t dofs_per_cell, size_t n_q_points,
 		dealii::FullMatrix<double>& faceMatrix) {
 	bool assemblyDone = false;
@@ -239,13 +239,13 @@ template void DataMinLee2011<2>::assembleAndDistributeLocalFaceMatrices(
 		size_t i, typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
-		dealii::FEFaceValuesBase<2>& feNeighborFaceValues, size_t dofs_per_cell,
+		dealii::FEFaceValues<2>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
 template void DataMinLee2011<3>::assembleAndDistributeLocalFaceMatrices(
 		size_t i, typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
-		dealii::FEFaceValuesBase<3>& feNeighborFaceValues, size_t dofs_per_cell,
+		dealii::FEFaceValues<3>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
 
 template<size_t dim>
@@ -311,27 +311,50 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 		typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
-		dealii::FEFaceValuesBase<dim>& feNeighborFaceValues) {
-// get the required FE Values for the local cell
+		dealii::FEFaceValues<dim>& feNeighborFaceValues) {
+	// get the required FE Values for the local cell
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
 	const vector<Point<dim> > &normals = feFaceValues.get_normal_vectors();
-	// TODO efficient multiplication
+
+	// get the required dofs of the neighbor cell
+	//	typename DoFHandler<dim>::face_iterator neighborFace = neighborCell->face(
+	//			neighborFaceNumber);
+	feNeighborFaceValues.reinit(neighborCell, neighborFaceNumber);
 
 	// calculate matrix entries
 	vector<double> factor(JxW);
 	double exn = 0.0;
 	// calculate scalar product
-	for (size_t i = 0; i < dim; i++){
+	for (size_t i = 0; i < dim; i++){	// TODO efficient multiplication
 		exn += normals.at(0)(i) *  m_boltzmannModel->getDirection(direction)(i);
 	}
 	for (size_t i = 0; i < factor.size(); i++) {
 		factor.at(i) *= exn;
 	}
 
-// get the required dofs of the neighbor cell
-//	typename DoFHandler<dim>::face_iterator neighborFace = neighborCell->face(
-//			neighborFaceNumber);
+	// TODO clean up construction; or (better): assembly directly
+	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
+	dealii::FullMatrix<double> neighborFaceMatrix(feFaceValues.dofs_per_cell);
+	cellFaceMatrix = 0;
+	neighborFaceMatrix = 0;
+
+	// loop over all quadrature points at the face
+	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
+		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
+			for (size_t k = 0; k < feFaceValues.dofs_per_cell; k++) {
+				cellFaceMatrix(j,k) += feFaceValues.shape_value(j, q) + feFaceValues.shape_value(k,q) * factor.at(q);
+			}
+		}
+	}
+	// loop over all quadrature points at the neighbor face
+	for (size_t q = 0; q < feNeighborFaceValues.n_quadrature_points; q++) {
+		for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
+			for (size_t k = 0; k < feNeighborFaceValues.dofs_per_cell; k++) {
+				neighborFaceMatrix(j,k) -= feNeighborFaceValues.shape_value(j, q) + feNeighborFaceValues.shape_value(k,q) * factor.at(q);
+			}
+		}
+	}
 
 	// get DoF indices
 	// TODO cut out construction (allocation); Allocating two vectors in most inner loop is too expensive
@@ -340,12 +363,11 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 	cell->face(faceNumber)->get_dof_indices(localDoFIndices);
 	neighborCell->face(neighborFaceNumber)->get_dof_indices(neighborDoFIndices);
 
-	// loop over all quadrature points at the face
-	for (size_t i = 0; i < feFaceValues.n_quadrature_points; i++) {
-		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
-			for (size_t k = 0; k < feFaceValues.dofs_per_cell; k++) {
-
-			}
+	/// Distribute to global matrix
+	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++){
+		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++){
+			m_systemMatrix.at(direction).add(localDoFIndices[i], localDoFIndices[j], cellFaceMatrix(i,j));
+			m_systemMatrix.at(direction).add(localDoFIndices[i], neighborDoFIndices[j], neighborFaceMatrix(i,j));
 		}
 	}
 
@@ -376,7 +398,7 @@ template void DataMinLee2011<2>::assembleAndDistributeInternalFace(
 		typename dealii::DoFHandler<2>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
-		dealii::FEFaceValuesBase<2>& feNeighborFaceValues);
+		dealii::FEFaceValues<2>& feNeighborFaceValues);
 template void DataMinLee2011<3>::assembleAndDistributeInternalFace(
 		size_t direction,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
@@ -384,7 +406,7 @@ template void DataMinLee2011<3>::assembleAndDistributeInternalFace(
 		typename dealii::DoFHandler<3>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
-		dealii::FEFaceValuesBase<3>& feNeighborFaceValues);
+		dealii::FEFaceValues<3>& feNeighborFaceValues);
 
 template<size_t dim>
 void DataMinLee2011<dim>::stream() {
@@ -457,7 +479,7 @@ void DataMinLee2011<dim>::reassemble() {
 			calculateAndDistributeLocalStiffnessMatrix(i,
 					localDerivativeMatrices, localSystemMatrix, localDoFIndices,
 					dofs_per_cell);
-			// calculate face contributions M^-1 * R
+			// calculate face contributions  R
 			assembleAndDistributeLocalFaceMatrices(i, cell, feFaceValues,
 					feSubfaceValues, feNeighborFaceValues, dofs_per_cell,
 					n_quadrature_points, localFaceMatrix);

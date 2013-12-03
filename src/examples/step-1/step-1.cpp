@@ -13,25 +13,27 @@
 
 #include "utilities/BasicNames.h"
 
-#include "CouetteFlow2D.h"
+#include "PeriodicFlow2D.h"
 
 using namespace natrium;
 
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-3..." << endl;
+	cout << "Starting NATriuM step-1..." << endl;
 
 	double relaxationParameter = 0.7;
-	double topPlateVelocity = 0.05;
+	numeric_vector velocity(2);
+	velocity(0) = 0.05;
+	velocity(1) = 0.01;
 
-	shared_ptr<ProblemDescription<2> > couetteFlow = make_shared<CouetteFlow2D>(relaxationParameter, topPlateVelocity);
+	shared_ptr<ProblemDescription<2> > periodicFlow = make_shared<PeriodicFlow2D>(relaxationParameter, velocity);
 	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
-	CFDSolver<2> solver(configuration, couetteFlow);
+	CFDSolver<2> solver(configuration, periodicFlow);
 
 	solver.run();
 
-	cout << "NATriuM step-3 terminated." << endl;
+	cout << "NATriuM step-1 terminated." << endl;
 
 	return 0;
 }

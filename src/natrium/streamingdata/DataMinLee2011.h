@@ -100,7 +100,7 @@ private:
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
-			dealii::FEFaceValuesBase<dim>& feNeighborFaceValues,
+			dealii::FEFaceValues<dim>& feNeighborFaceValues,
 			size_t dofs_per_cell, size_t n_q_points,
 			dealii::FullMatrix<double> &faceMatrix);
 
@@ -138,7 +138,7 @@ private:
 			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
 			size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
-			dealii::FEFaceValuesBase<dim>& feNeighborFaceValues);
+			dealii::FEFaceValues<dim>& feNeighborFaceValues);
 
 public:
 
