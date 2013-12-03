@@ -1,11 +1,11 @@
 /**
- * @file CouetteFlow2D.cpp
+ * @file PeriodicFlow2D.cpp
  * @short 
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "CouetteFlow2D.h"
+#include "PeriodicFlow2D.h"
 
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"

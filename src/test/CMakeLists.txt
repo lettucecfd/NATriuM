@@ -11,7 +11,12 @@ set(    COLLISIONMODELS_TEST
 set(    PROBLEMDESCRIPTION_TEST
         problemdescription/PeriodicBoundary1D_test.cpp
         problemdescription/BoundaryTools_test.cpp
-        )        
+        )   
+set(    STREAMINGDATA_TEST
+        streamingdata/DataMinLee2011_test.cpp
+        streamingdata/PeriodicFlow2D.h
+        streamingdata/PeriodicFlow2D.cpp
+        )     
 set(    UTILITIES_TEST
         utilities/BasicNames_test.cpp
         )      
@@ -25,9 +30,9 @@ set(    TESTS
         ${BOLTZMANNMODELS_TEST}
         ${COLLISIONMODELS_TEST}
         ${PROBLEMDESCRIPTION_TEST}
+        ${STREAMINGDATA_TEST}
         ${UTILITIES_TEST}
-        
-        
+                
 )
 
 

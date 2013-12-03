@@ -265,6 +265,8 @@ template<> void PeriodicBoundary<2>::createCellMap(
 	}
 
 } /* createMap */
+template<> void PeriodicBoundary<3>::createCellMap(
+		const dealii::DoFHandler<3>& doFHandler) {}
 
 template<> void PeriodicBoundary<2>::applyBoundaryValues(
 		const shared_ptr<typename dealii::DoFHandler<2> > doFHandler,

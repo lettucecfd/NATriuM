@@ -16,6 +16,8 @@
 
 #include "../problemdescription/PeriodicBoundary.h"
 
+#include "fstream"
+
 using namespace dealii;
 
 namespace natrium {
@@ -35,6 +37,9 @@ DataMinLee2011<dim>::DataMinLee2011(
 			QGaussLobatto<1>(orderOfFiniteElement));
 	m_doFHandler = make_shared<DoFHandler<dim> >(*triangulation);
 
+	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++){
+		m_systemMatrix.push_back(distributed_sparse_matrix());
+	}
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
 	updateSparsityPattern();
@@ -186,9 +191,8 @@ void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
-		dealii::FEFaceValues<dim>& feNeighborFaceValues,
-		size_t dofs_per_cell, size_t n_q_points,
-		dealii::FullMatrix<double>& faceMatrix) {
+		dealii::FEFaceValues<dim>& feNeighborFaceValues, size_t dofs_per_cell,
+		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix) {
 	bool assemblyDone = false;
 	// loop over all faces
 	for (size_t j = 0; j < dealii::GeometryInfo<2>::faces_per_cell; j++) {
@@ -280,10 +284,11 @@ template<> void DataMinLee2011<2>::calculateAndDistributeLocalStiffnessMatrix(
 	systemMatrix.add(-m_boltzmannModel->getDirection(i)[1],
 			derivativeMatrices.at(1));
 // distribute to global system matrix
-	for (unsigned int j = 0; i < dofsPerCell; j++)
-		for (unsigned int k = 0; j < dofsPerCell; k++)
+	for (unsigned int j = 0; j < dofsPerCell; j++)
+		for (unsigned int k = 0; k < dofsPerCell; k++) {
 			m_systemMatrix.at(i).add(globalDoFs[j], globalDoFs[k],
 					systemMatrix(j, k));
+		}
 }
 template<> void DataMinLee2011<3>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t i, const vector<dealii::FullMatrix<double> >& derivativeMatrices,
@@ -326,8 +331,8 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 	vector<double> factor(JxW);
 	double exn = 0.0;
 	// calculate scalar product
-	for (size_t i = 0; i < dim; i++){	// TODO efficient multiplication
-		exn += normals.at(0)(i) *  m_boltzmannModel->getDirection(direction)(i);
+	for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
+		exn += normals.at(0)(i) * m_boltzmannModel->getDirection(direction)(i);
 	}
 	for (size_t i = 0; i < factor.size(); i++) {
 		factor.at(i) *= exn;
@@ -342,17 +347,15 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 	// loop over all quadrature points at the face
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
 		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
-			for (size_t k = 0; k < feFaceValues.dofs_per_cell; k++) {
-				cellFaceMatrix(j,k) += feFaceValues.shape_value(j, q) + feFaceValues.shape_value(k,q) * factor.at(q);
-			}
+			cellFaceMatrix(j, j) += feFaceValues.shape_value(j, q)
+					* factor.at(q);
 		}
 	}
 	// loop over all quadrature points at the neighbor face
 	for (size_t q = 0; q < feNeighborFaceValues.n_quadrature_points; q++) {
 		for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
-			for (size_t k = 0; k < feNeighborFaceValues.dofs_per_cell; k++) {
-				neighborFaceMatrix(j,k) -= feNeighborFaceValues.shape_value(j, q) + feNeighborFaceValues.shape_value(k,q) * factor.at(q);
-			}
+			neighborFaceMatrix(j, j) -= feNeighborFaceValues.shape_value(j, q)
+					* factor.at(q);
 		}
 	}
 
@@ -364,10 +367,12 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 	neighborCell->face(neighborFaceNumber)->get_dof_indices(neighborDoFIndices);
 
 	/// Distribute to global matrix
-	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++){
-		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++){
-			m_systemMatrix.at(direction).add(localDoFIndices[i], localDoFIndices[j], cellFaceMatrix(i,j));
-			m_systemMatrix.at(direction).add(localDoFIndices[i], neighborDoFIndices[j], neighborFaceMatrix(i,j));
+	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
+		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
+			m_systemMatrix.at(direction).add(localDoFIndices[i],
+					localDoFIndices[j], cellFaceMatrix(i, j));
+			m_systemMatrix.at(direction).add(localDoFIndices[i],
+					neighborDoFIndices[j], neighborFaceMatrix(i, j));
 		}
 	}
 
