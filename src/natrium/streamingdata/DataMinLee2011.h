@@ -78,8 +78,7 @@ private:
 	 */
 	// TODO SEDG implemenation with fully diagonal mass matrix
 	void assembleLocalMassMatrix(const dealii::FEValues<dim>& feValues,
-			size_t dofs_per_cell, size_t n_q_points,
-			vector<double> &massMatrix,
+			size_t dofs_per_cell, size_t n_q_points, vector<double> &massMatrix,
 			const std::vector<dealii::types::global_dof_index>& globalDoFs);
 
 	/**
@@ -99,12 +98,11 @@ private:
 	 */
 	void assembleAndDistributeLocalFaceMatrices(size_t i,
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
-			dealii::FEFaceValuesBase<dim>& feFaceValues,
-			dealii::FEFaceValuesBase<dim>& feSubfaceValues,
+			dealii::FEFaceValues<dim>& feFaceValues,
+			dealii::FESubfaceValues<dim>& feSubfaceValues,
 			dealii::FEFaceValuesBase<dim>& feNeighborFaceValues,
 			size_t dofs_per_cell, size_t n_q_points,
 			dealii::FullMatrix<double> &faceMatrix);
-
 
 	/**
 	 * @short calculate system diagonal block matrix  (Dx*eix + Dy*eiy)
@@ -112,7 +110,8 @@ private:
 	void calculateAndDistributeLocalStiffnessMatrix(size_t i,
 			const vector<dealii::FullMatrix<double> > &derivativeMatrices,
 			dealii::FullMatrix<double> &systemMatrix,
-			const std::vector<dealii::types::global_dof_index>& globalDoFs, size_t dofsPerCell);
+			const std::vector<dealii::types::global_dof_index>& globalDoFs,
+			size_t dofsPerCell);
 
 	/**
 	 * @short calculate A <- M^-1 * A
@@ -121,8 +120,7 @@ private:
 	 * @note Note that M^-1 * A is different from A * M^-1, even though M is diagonal
 	 *       (M^-1*A: columns are multiplied by the same diag element)
 	 */
-	void divideByDiagonalMassMatrix(
-			distributed_sparse_matrix& matrix,
+	void divideByDiagonalMassMatrix(distributed_sparse_matrix& matrix,
 			const distributed_vector& massMatrix);
 	/**
 	 * @short assemble and distribute internal face
@@ -134,15 +132,13 @@ private:
 	 * @param feSubfaceValues is passed in order to avoid allocating memory for each call of the function
 	 * @param feNeighborFaceValues is passed in order to avoid allocating memory for each call of the function
 	 */
-	void assembleAndDistributeInternalFace(
+	void assembleAndDistributeInternalFace(size_t direction,
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t faceNumber,
 			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
-			size_t neighborFaceNumber,
-			dealii::FEFaceValuesBase<dim>& feFaceValues,
-			dealii::FEFaceValuesBase<dim>& feSubfaceValues,
+			size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
+			dealii::FESubfaceValues<dim>& feSubfaceValues,
 			dealii::FEFaceValuesBase<dim>& feNeighborFaceValues);
-
 
 public:
 
