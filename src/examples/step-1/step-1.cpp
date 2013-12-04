@@ -29,9 +29,9 @@ int main() {
 
 	shared_ptr<ProblemDescription<2> > periodicFlow = make_shared<PeriodicFlow2D>(relaxationParameter, velocity);
 	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
-	CFDSolver<2> solver(configuration, periodicFlow);
+	//CFDSolver<2> solver(configuration, periodicFlow);
 
-	solver.run();
+	//solver.run();
 
 	cout << "NATriuM step-1 terminated." << endl;
 
