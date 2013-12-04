@@ -37,7 +37,7 @@ DataMinLee2011<dim>::DataMinLee2011(
 			QGaussLobatto<1>(orderOfFiniteElement));
 	m_doFHandler = make_shared<DoFHandler<dim> >(*triangulation);
 
-	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++){
+	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
 		m_systemMatrix.push_back(distributed_sparse_matrix());
 	}
 	// distribute degrees of freedom over mesh
@@ -167,24 +167,27 @@ template void DataMinLee2011<3>::assembleLocalMassMatrix(
 		const std::vector<dealii::types::global_dof_index>& globalDoFs);
 
 template<size_t dim>
-void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t i,
+void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t coordinate,
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double> &derivativeMatrix) const {
 	derivativeMatrix = 0;
 	for (size_t i = 0; i < dofs_per_cell; ++i)
 		for (size_t j = 0; j < dofs_per_cell; ++j)
 			for (size_t q_point = 0; q_point < n_q_points; ++q_point)
-				derivativeMatrix(i, j) += (feValues.shape_grad(i, q_point)
-						* feValues.shape_grad(j, q_point)
-						* feValues.JxW(q_point));
+				derivativeMatrix(i, j) +=
+						(feValues.shape_grad(i, q_point)[coordinate]
+								* feValues.shape_value(j, q_point)
+								* feValues.JxW(q_point));
 } /* assembleLocalDerivativeMatrix */
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::assembleLocalDerivativeMatrix(size_t i,
-		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double> &derivativeMatrix) const;
-template void DataMinLee2011<3>::assembleLocalDerivativeMatrix(size_t i,
-		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double> &derivativeMatrix) const;
+template void DataMinLee2011<2>::assembleLocalDerivativeMatrix(
+		size_t coordinate, const dealii::FEValues<2>& feValues,
+		size_t dofs_per_cell, size_t n_q_points,
+		dealii::FullMatrix<double> &derivativeMatrix) const;
+template void DataMinLee2011<3>::assembleLocalDerivativeMatrix(
+		size_t coordinate, const dealii::FEValues<3>& feValues,
+		size_t dofs_per_cell, size_t n_q_points,
+		dealii::FullMatrix<double> &derivativeMatrix) const;
 
 template<size_t dim>
 void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
@@ -347,24 +350,46 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 	// loop over all quadrature points at the face
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
 		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
-			cellFaceMatrix(j, j) += feFaceValues.shape_value(j, q)
-					* factor.at(q);
+			double exn = 0.0;
+			// calculate scalar product
+			for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
+				// aren't the normals identical for all q points at the face ? Must be...
+				exn += normals.at(q)(i)
+						* m_boltzmannModel->getDirection(direction)(i);
+			}
+			if (exn < 0) {
+				// TODO VERy very unefficient: do this at the very beginning
+				cellFaceMatrix(j, j) += exn * feFaceValues.shape_value(j, q)
+						* JxW.at(q);
+			}
 		}
 	}
 	// loop over all quadrature points at the neighbor face
 	for (size_t q = 0; q < feNeighborFaceValues.n_quadrature_points; q++) {
 		for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
-			neighborFaceMatrix(j, j) -= feNeighborFaceValues.shape_value(j, q)
-					* factor.at(q);
+			double exn = 0.0;
+			// calculate scalar product
+			for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
+				exn += feNeighborFaceValues.get_normal_vectors().at(q)(i)
+						* m_boltzmannModel->getDirection(direction)(i);
+			}
+			// not "<" because the NeighborFaceValues.get_normal_vectors() points in the opposite direction
+			if (exn > 0) {
+			neighborFaceMatrix(j, j) += exn
+					* feNeighborFaceValues.shape_value(j, q)
+					* feNeighborFaceValues.get_JxW_values().at(q);
+			}
 		}
 	}
 
 	// get DoF indices
 	// TODO cut out construction (allocation); Allocating two vectors in most inner loop is too expensive
-	vector<dealii::types::global_dof_index> localDoFIndices;
-	vector<dealii::types::global_dof_index> neighborDoFIndices;
-	cell->face(faceNumber)->get_dof_indices(localDoFIndices);
-	neighborCell->face(neighborFaceNumber)->get_dof_indices(neighborDoFIndices);
+	vector<dealii::types::global_dof_index> localDoFIndices(
+			feFaceValues.dofs_per_cell);
+	vector<dealii::types::global_dof_index> neighborDoFIndices(
+			feFaceValues.dofs_per_cell);
+	cell->get_dof_indices(localDoFIndices);
+	neighborCell->get_dof_indices(neighborDoFIndices);
 
 	/// Distribute to global matrix
 	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
@@ -378,21 +403,6 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 
 // WARNING: Hanging nodes are not implemented, yet
 // TODO Implement local refinement
-	/*if (not neighborFace->has_children()){
-	 if () {
-
-	 }
-	 feNeighborFaceValues.reinit(neighborCell, neighborFaceNumber);
-	 }*/
-// TODO efficient multiplication with unit vector
-	vector<Point<dim> > beta(feFaceValues.n_quadrature_points);
-//beta_function.value_list (feFaceValues.get_quadrature_points(), beta);
-	for (unsigned int point = 0; point < feFaceValues.n_quadrature_points;
-			++point) {
-		const double beta_n = beta[point] * normals[point];
-		if (beta_n > 0) {
-		}
-	}
 
 } /* assembleAndDistributeInternalFace */
 // The template parameter must be made explicit in order for the code to compile.
@@ -433,7 +443,8 @@ void DataMinLee2011<dim>::reassemble() {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points | update_JxW_values
 			| update_normal_vectors;
-	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values;
+	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
+			| update_JxW_values | update_normal_vectors;
 // Finite Element
 	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
 			cellUpdateFlags);

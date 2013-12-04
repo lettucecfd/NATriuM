@@ -83,10 +83,10 @@ private:
 
 	/**
 	 * @short assemble the i-th local derivative matrix
-	 * @param[in] i < dim; 0 for Dx, 1 for Dy, 2 for Dz (3D)
+	 * @param[in] coordinate < dim; 0 for Dx, 1 for Dy, 2 for Dz (3D)
 	 * @param[out] derivativeMatrix The i-th derivative matrix <D_i phi_j, phi_k>
 	 */
-	void assembleLocalDerivativeMatrix(size_t i,
+	void assembleLocalDerivativeMatrix(size_t coordinate,
 			const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
 			size_t n_q_points,
 			dealii::FullMatrix<double> &derivativeMatrix) const;
@@ -165,6 +165,19 @@ public:
 
 	/// make streaming step
 	virtual void stream();
+
+	/// get global system matrix
+	const vector<distributed_sparse_matrix>& getSystemMatrix() const {
+		return m_systemMatrix;
+	}
+
+	const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
+		return m_doFHandler;
+	}
+
+	const dealii::SparsityPattern& getSparsityPattern() const {
+		return m_sparsityPattern;
+	}
 };
 
 } /* namespace natrium */

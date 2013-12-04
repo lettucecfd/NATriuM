@@ -47,8 +47,8 @@ shared_ptr<Triangulation<2> > PeriodicFlow2D::makeGrid() {
 	cell->face(2)->set_all_boundary_indicators(2);  // top
 	cell->face(3)->set_all_boundary_indicators(3);  // bottom
 
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	unitSquare->refine_global(3);
+	// Refine grid to 2x2 = 4 cells
+	unitSquare->refine_global(4);
 
 	return unitSquare;
 }

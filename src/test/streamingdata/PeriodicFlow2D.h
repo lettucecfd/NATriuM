@@ -19,8 +19,7 @@ using dealii::Triangulation;
 namespace natrium {
 
 /** @short Description of a simple Periodic Flow (flow in square domain).
- *  The domain is [0,1]^2. The domain consists of
- *  8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).
+ *  The domain is [0,1]^2. The domain consists of 4 elements.
  */
 class PeriodicFlow2D: public ProblemDescription<2> {
 public:
