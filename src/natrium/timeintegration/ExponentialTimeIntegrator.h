@@ -16,7 +16,7 @@ namespace natrium {
  *         Uga etal. (2012) Spectral-element discontinuous Galerkin lattice Boltzmann simulation
  *         of flow past two cylinders in tandem with an exponential time integrator, CMWA 65 pp. 239-251
  */
-class ExponentialTimeIntegrator: TimeIntegrator {
+class ExponentialTimeIntegrator { // : public TimeIntegrator {
 public:
 
 	/// constructor

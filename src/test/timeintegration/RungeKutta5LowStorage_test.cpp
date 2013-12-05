@@ -5,8 +5,9 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "../../timeintegration/RungeKutta5LowStorage.h"
+#include "timeintegration/RungeKutta5LowStorage.h"
 
 namespace natrium {
+
 
 } /* namespace natrium */

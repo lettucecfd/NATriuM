@@ -8,6 +8,8 @@
 #ifndef TIMEINTEGRATOR_H_
 #define TIMEINTEGRATOR_H_
 
+#include "../utilities/BasicNames.h"
+
 namespace natrium {
 
 /** @short Abstract class for time integration (solution of ordinary differential equations (ODE)).
@@ -18,13 +20,43 @@ namespace natrium {
  *         The latter can be solved using classical time integration methods like Runge-Kutta or Adams-Moulton.
  */
 class TimeIntegrator {
+private:
+
+	/// functions to initialize the RK coefficients
+	vector<vector<double> > makeA();
+	vector<vector<double> > makeB();
+	vector<double> makeC();
+
+	/// coefficients of the RK scheme
+	/// Source: http://www.ece.uvic.ca/~bctill/papers/numacoust/Carpenter_Kennedy_1994.pdf
+	const vector<vector<double> > m_a;
+	const vector<vector<double> > m_b;
+	const vector<double> m_c;
+
+	/// size of the time step
+	double m_timeStepSize;
+
 public:
 
 	/// constructor
-	TimeIntegrator();
+	TimeIntegrator(double timeStepSize);
 
 	/// destructor
 	virtual ~TimeIntegrator();
+
+	double getTimeStepSize() const {
+		return m_timeStepSize;
+	}
+
+	void setTimeStepSize(double timeStepSize) {
+		m_timeStepSize = timeStepSize;
+	}
+
+	/**
+	 * @short make one time integration step on vector
+	 *        using the system matrix
+	 */
+	virtual void step(distributed_vector& vector, const distributed_sparse_matrix& systemMatrix) = 0;
 };
 
 } /* namespace natrium */

@@ -8,11 +8,11 @@
 #include "streamingdata/DataMinLee2011.h"
 
 #include <fstream>
-//#include <strstream>
 
 #include "boost/test/unit_test.hpp"
 
 #include "deal.II/numerics/data_out.h"
+#include "deal.II/dofs/dof_tools.h"
 
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
 
@@ -114,8 +114,8 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
 	PeriodicFlow2D periodic(relaxationParameter, velocity);
 	DataMinLee2011<2> streaming(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices = streaming.getSystemMatrix();
-	const double timeStep = 1.;
-	const size_t numberOfTimeSteps = 100;
+	const double timeStep = 0.5;
+	const size_t numberOfTimeSteps = 50000;
 
 	// Initialize all particle distribution functions with 1, one corner element with 2
 	distributed_vector f(streaming.getSystemMatrix().at(0).n());
@@ -124,10 +124,22 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
 			f(i) = 1.0;
 			initialMass += 1;
 	}
+	// create smooth initial conditions
+	vector< dealii::Point<2> > supportPoints(streaming.getDoFHandler()->n_dofs());
+	dealii::DoFTools::map_dofs_to_support_points(streaming.getMapping(),*streaming.getDoFHandler(),supportPoints);
+	dealii::Point<2> midPoint (0.25,0.25);
+	const double PI = 3.14;
+	for (size_t i = 0; i < streaming.getDoFHandler()->n_dofs(); i++){
+		double distance = supportPoints.at(i).distance(midPoint);
+		if (distance <= 0.25){
+			f(i) = 1+cos(PI/0.5*distance);
+			initialMass += cos(PI/0.5*distance);
+		}
+	}/*
 	for (size_t i = 0; i < 9; i++){
 		f(i) = 2.0;
 		initialMass += 1;
-	}
+	}*/
 	// CHECK MASS CONSERVATION
 	// Explicit euler for streaming in direction (1,0)
 	distributed_sparse_matrix advectionMatrix;

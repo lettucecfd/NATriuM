@@ -86,9 +86,9 @@ public:
 		}
 
 		/// Build time integrator
-		if (Integrator_RungeKutta5LowStorage == configuration->getTimeIntegratorType()){
+		/*if (Integrator_RungeKutta5LowStorage == configuration->getTimeIntegratorType()){
 			m_timeIntegrator = make_shared<RungeKutta5LowStorage>();
-		}
+		}*/
 
 	}
 	;

@@ -178,6 +178,10 @@ public:
 	const dealii::SparsityPattern& getSparsityPattern() const {
 		return m_sparsityPattern;
 	}
+
+	const dealii::MappingQ1<dim>& getMapping() const {
+		return m_mapping;
+	}
 };
 
 } /* namespace natrium */

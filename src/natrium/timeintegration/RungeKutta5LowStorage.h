@@ -16,7 +16,7 @@ namespace natrium {
  *  @note  The scheme is described in Min and Lee (2011): A spectral-element discontinuous Galerkin lattice
  *         Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-259.
  */
-class RungeKutta5LowStorage: public TimeIntegrator {
+class RungeKutta5LowStorage {//: public TimeIntegrator {
 public:
 
 	/// constructor
@@ -24,6 +24,13 @@ public:
 
 	/// destructor
 	virtual ~RungeKutta5LowStorage();
+
+	/**
+	 * @short make one time integration step on vector
+	 *        using the system matrix
+	 */
+	virtual void step(distributed_vector& vector,
+			const distributed_sparse_matrix& systemMatrix) = 0;
 };
 
 } /* namespace natrium */

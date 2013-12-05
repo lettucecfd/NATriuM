@@ -170,10 +170,10 @@ template<size_t dim>
 void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t coordinate,
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double> &derivativeMatrix) const {
-	derivativeMatrix = 0;
-	for (size_t i = 0; i < dofs_per_cell; ++i)
-		for (size_t j = 0; j < dofs_per_cell; ++j)
-			for (size_t q_point = 0; q_point < n_q_points; ++q_point)
+	//derivativeMatrix = 0;
+	for (size_t i = 0; i < dofs_per_cell; i++)
+		for (size_t j = 0; j < dofs_per_cell; j++)
+			for (size_t q_point = 0; q_point < n_q_points; q_point++)
 				derivativeMatrix(i, j) +=
 						(feValues.shape_grad(i, q_point)[coordinate]
 								* feValues.shape_value(j, q_point)
@@ -485,6 +485,7 @@ void DataMinLee2011<dim>::reassemble() {
 		assembleLocalMassMatrix(feCellValues, dofs_per_cell,
 				n_quadrature_points, localMassMatrix, localDoFIndices);
 		for (size_t i = 0; i < dim; i++) {
+			localDerivativeMatrices.at(i) = 0;
 			assembleLocalDerivativeMatrix(i, feCellValues, dofs_per_cell,
 					n_quadrature_points, localDerivativeMatrices.at(i));
 		}
