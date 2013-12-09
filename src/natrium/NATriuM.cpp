@@ -14,7 +14,7 @@
 #include "utilities/BasicNames.h"
 
 using namespace natrium;
-using dealii::Triangulation;
+//using dealii::Triangulation;
 
 
 int main() {
@@ -37,4 +37,5 @@ int main() {
 	cout << "NATriuM terminated." << endl;
 
 	return 0;
+
 }

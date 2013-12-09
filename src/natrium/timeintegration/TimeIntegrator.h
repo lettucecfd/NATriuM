@@ -22,17 +22,6 @@ namespace natrium {
 class TimeIntegrator {
 private:
 
-	/// functions to initialize the RK coefficients
-	vector<vector<double> > makeA();
-	vector<vector<double> > makeB();
-	vector<double> makeC();
-
-	/// coefficients of the RK scheme
-	/// Source: http://www.ece.uvic.ca/~bctill/papers/numacoust/Carpenter_Kennedy_1994.pdf
-	const vector<vector<double> > m_a;
-	const vector<vector<double> > m_b;
-	const vector<double> m_c;
-
 	/// size of the time step
 	double m_timeStepSize;
 
@@ -49,6 +38,7 @@ public:
 	}
 
 	void setTimeStepSize(double timeStepSize) {
+		assert(timeStepSize > 0.0);
 		m_timeStepSize = timeStepSize;
 	}
 

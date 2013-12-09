@@ -17,6 +17,9 @@ set(    STREAMINGDATA_TEST
         streamingdata/PeriodicFlow2D.h
         streamingdata/PeriodicFlow2D.cpp
         )     
+set(    TIMEINTEGRATION_TEST
+        timeintegration/RungeKutta5LowStorage_test.cpp
+        )
 set(    UTILITIES_TEST
         utilities/BasicNames_test.cpp
         )      
@@ -31,6 +34,7 @@ set(    TESTS
         ${COLLISIONMODELS_TEST}
         ${PROBLEMDESCRIPTION_TEST}
         ${STREAMINGDATA_TEST}
+        ${TIMEINTEGRATION_TEST}
         ${UTILITIES_TEST}
                 
 )
