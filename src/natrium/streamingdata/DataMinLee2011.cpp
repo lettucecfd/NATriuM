@@ -174,7 +174,7 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t coordinate,
 	for (size_t i = 0; i < dofs_per_cell; i++)
 		for (size_t j = 0; j < dofs_per_cell; j++)
 			for (size_t q_point = 0; q_point < n_q_points; q_point++)
-				derivativeMatrix(i, j) +=
+				derivativeMatrix(j,i) +=
 						(feValues.shape_grad(i, q_point)[coordinate]
 								* feValues.shape_value(j, q_point)
 								* feValues.JxW(q_point));
@@ -283,8 +283,8 @@ template<> void DataMinLee2011<2>::calculateAndDistributeLocalStiffnessMatrix(
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
 // calculate -D = -(e_x * D_x  +  e_y * D_y)
 	systemMatrix = derivativeMatrices.at(0);
-	systemMatrix *= (-m_boltzmannModel->getDirection(i)[0]);
-	systemMatrix.add(-m_boltzmannModel->getDirection(i)[1],
+	systemMatrix *= (-(m_boltzmannModel->getDirection(i)[0]));
+	systemMatrix.add(-(m_boltzmannModel->getDirection(i)[1]),
 			derivativeMatrices.at(1));
 // distribute to global system matrix
 	for (unsigned int j = 0; j < dofsPerCell; j++)
@@ -330,17 +330,6 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 	//			neighborFaceNumber);
 	feNeighborFaceValues.reinit(neighborCell, neighborFaceNumber);
 
-	// calculate matrix entries
-	vector<double> factor(JxW);
-	double exn = 0.0;
-	// calculate scalar product
-	for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
-		exn += normals.at(0)(i) * m_boltzmannModel->getDirection(direction)(i);
-	}
-	for (size_t i = 0; i < factor.size(); i++) {
-		factor.at(i) *= exn;
-	}
-
 	// TODO clean up construction; or (better): assembly directly
 	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
 	dealii::FullMatrix<double> neighborFaceMatrix(feFaceValues.dofs_per_cell);
@@ -349,35 +338,42 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 
 	// loop over all quadrature points at the face
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
-		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
-			double exn = 0.0;
-			// calculate scalar product
-			for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
-				// aren't the normals identical for all q points at the face ? Must be...
-				exn += normals.at(q)(i)
-						* m_boltzmannModel->getDirection(direction)(i);
-			}
-			if (exn < 0) {
-				// TODO VERy very unefficient: do this at the very beginning
-				cellFaceMatrix(j, j) += exn * feFaceValues.shape_value(j, q)
-						* JxW.at(q);
-			}
+
+		// calculate matrix entries
+		vector<double> factor(JxW);
+		double exn = 0.0;
+		// calculate scalar product
+		for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
+			exn += normals.at(q)(i)
+					* m_boltzmannModel->getDirection(direction)(i);
 		}
-	}
-	// loop over all quadrature points at the neighbor face
-	for (size_t q = 0; q < feNeighborFaceValues.n_quadrature_points; q++) {
-		for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
-			double exn = 0.0;
-			// calculate scalar product
-			for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
-				exn += feNeighborFaceValues.get_normal_vectors().at(q)(i)
-						* m_boltzmannModel->getDirection(direction)(i);
+		for (size_t i = 0; i < factor.size(); i++) {
+			factor.at(i) *= exn;
+		}
+
+		if (exn < 0) { // otherwise: no contributions
+
+			// add up boundary dofs at point q
+			size_t i = 0;
+			for (; i < feFaceValues.dofs_per_cell; i++) {
+
+				if (fabs(feFaceValues.shape_value(i, q)) > 1e-10) {
+					// there is only one non-zero entry
+					break;
+				}
 			}
-			// not "<" because the NeighborFaceValues.get_normal_vectors() points in the opposite direction
-			if (exn > 0) {
-			neighborFaceMatrix(j, j) += exn
-					* feNeighborFaceValues.shape_value(j, q)
-					* feNeighborFaceValues.get_JxW_values().at(q);
+			// add up neighbor dofs at point q
+			for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
+				if (fabs(feNeighborFaceValues.shape_value(j, q)) > 1e-10) {
+					cellFaceMatrix(i, i) += exn
+							* feNeighborFaceValues.shape_value(j, q)
+							* feFaceValues.shape_value(i, q) * JxW.at(q);
+					neighborFaceMatrix(i,j) -= exn
+							* feNeighborFaceValues.shape_value(j, q)
+							* feFaceValues.shape_value(i, q) * JxW.at(q);
+					// there is only one non-zero entry
+					break;
+				}
 			}
 		}
 	}

@@ -78,8 +78,8 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_steadyStreaming_test) {
 			make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
-	const double timeStep = 10;
-	const size_t numberOfTimeSteps = 100;
+	const double timeStep = 0.05;
+	const size_t numberOfTimeSteps = 10;
 
 	// Initialize all particle distribution functions with 1
 	distributed_vector f(streaming.getSystemMatrix().at(0).n());
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_steadyStreaming_test) {
 		advectionMatrix.vmult_add(f, f_tmp);
 		double mass = 0.0;
 		for (size_t j = 0; j < f.size(); j++) {
-			BOOST_CHECK(fabs(f(j) - 1.0) < 1e-5);
+			BOOST_CHECK(fabs(f(j) - 1.0) < 1e-10);
 			mass += f(j);
 		}
 		BOOST_CHECK(fabs(mass - initialMass)/initialMass < 1e-5);
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 			make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
-	const double timeStep = 1;
+	const double timeStep = 50;
 	const size_t numberOfTimeSteps = 500;
 
 	// Initialize all particle distribution functions with 1, one corner element with 2
@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 		data_out.write_gnuplot(gnuplot_output);
 
 		//stream
-		for (size_t i = 0; i < 10; i++) {
+		for (size_t i = 0; i < 1; i++) {
 			//1000 time steps at once
 			RK5.step(f, advectionMatrix);
 		}
@@ -259,10 +259,14 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 			mass += f(j);
 		}
 
-		BOOST_CHECK(fabs(mass - initialMass) / mass < 0.05);
+		BOOST_CHECK(fabs(mass - initialMass) / mass < 1e-5);
 		// NOTE: mass is not conserved exactly for explicit euler (but up to 5 percent)
 
 	}
+
+	std::ofstream matrixfile("matrix.dat");
+	matrices.at(3).print_formatted(matrixfile);
+	cout << "Time step size: " << timeStep << endl;
 
 	cout << "done." << endl;
 } /* DataMinLee2011_RKstreaming_test */
