@@ -167,27 +167,35 @@ template void DataMinLee2011<3>::assembleLocalMassMatrix(
 		const std::vector<dealii::types::global_dof_index>& globalDoFs);
 
 template<size_t dim>
-void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t coordinate,
+void DataMinLee2011<dim>::assembleLocalDerivativeMatrices(
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double> &derivativeMatrix) const {
-	//derivativeMatrix = 0;
+		size_t n_q_points,
+		vector<dealii::FullMatrix<double> >&derivativeMatrix) const {
+	for (size_t i = 0; i < dim; i++) {
+		derivativeMatrix.at(i) = 0;
+	}
 	for (size_t i = 0; i < dofs_per_cell; i++)
 		for (size_t j = 0; j < dofs_per_cell; j++)
-			for (size_t q_point = 0; q_point < n_q_points; q_point++)
-				derivativeMatrix(j,i) +=
-						(feValues.shape_grad(i, q_point)[coordinate]
-								* feValues.shape_value(j, q_point)
-								* feValues.JxW(q_point));
+			for (size_t q_point = 0; q_point < n_q_points; q_point++) {
+				Tensor<1, dim> integrandAtQ, integrandAtQTimesInvJac;
+				integrandAtQ = feValues.shape_grad(i, q_point);
+				integrandAtQ *= (feValues.shape_value(j, q_point) * feValues.JxW(q_point));
+			integrandAtQTimesInvJac =  apply_transformation(feValues.inverse_jacobian(q_point), integrandAtQ);
+				for (size_t k = 0; k < dim; k++) {
+					derivativeMatrix.at(k)(j,i) += integrandAtQTimesInvJac[k];
+				}
+			}
+
 } /* assembleLocalDerivativeMatrix */
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::assembleLocalDerivativeMatrix(
-		size_t coordinate, const dealii::FEValues<2>& feValues,
-		size_t dofs_per_cell, size_t n_q_points,
-		dealii::FullMatrix<double> &derivativeMatrix) const;
-template void DataMinLee2011<3>::assembleLocalDerivativeMatrix(
-		size_t coordinate, const dealii::FEValues<3>& feValues,
-		size_t dofs_per_cell, size_t n_q_points,
-		dealii::FullMatrix<double> &derivativeMatrix) const;
+template void DataMinLee2011<2>::assembleLocalDerivativeMatrices(
+		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
+		size_t n_q_points,
+		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
+template void DataMinLee2011<3>::assembleLocalDerivativeMatrices(
+		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
+		size_t n_q_points,
+		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 template<size_t dim>
 void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
@@ -290,7 +298,7 @@ template<> void DataMinLee2011<2>::calculateAndDistributeLocalStiffnessMatrix(
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++) {
 			m_systemMatrix.at(i).add(globalDoFs[j], globalDoFs[k],
-					systemMatrix(j, k));
+					systemMatrix(j,k));
 		}
 }
 template<> void DataMinLee2011<3>::calculateAndDistributeLocalStiffnessMatrix(
@@ -435,7 +443,8 @@ void DataMinLee2011<dim>::reassemble() {
 /////////////////////////////////
 // Define update flags (which values have to be known at each cell, face, neighbor face)
 	const dealii::UpdateFlags cellUpdateFlags = update_values | update_gradients
-			| update_quadrature_points | update_JxW_values;
+			| update_quadrature_points | update_JxW_values
+			| update_inverse_jacobians;
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points | update_JxW_values
 			| update_normal_vectors;
@@ -480,11 +489,8 @@ void DataMinLee2011<dim>::reassemble() {
 		// assemble local cell matrices
 		assembleLocalMassMatrix(feCellValues, dofs_per_cell,
 				n_quadrature_points, localMassMatrix, localDoFIndices);
-		for (size_t i = 0; i < dim; i++) {
-			localDerivativeMatrices.at(i) = 0;
-			assembleLocalDerivativeMatrix(i, feCellValues, dofs_per_cell,
-					n_quadrature_points, localDerivativeMatrices.at(i));
-		}
+		assembleLocalDerivativeMatrices(feCellValues, dofs_per_cell,
+				n_quadrature_points, localDerivativeMatrices);
 
 		// assemble faces and put together
 		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {

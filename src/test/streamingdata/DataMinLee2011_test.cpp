@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
 			mass += f(j);
 		}
 
-		BOOST_CHECK(fabs(mass - initialMass) / mass < 0.05);
+		BOOST_CHECK(fabs(mass - initialMass) / mass < 1e-2);
 		// NOTE: mass is not conserved exactly for explicit euler (but up to 5 percent)
 
 	}
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 			make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
-	const double timeStep = 50;
+	const double timeStep = 1;
 	const size_t numberOfTimeSteps = 500;
 
 	// Initialize all particle distribution functions with 1, one corner element with 2
