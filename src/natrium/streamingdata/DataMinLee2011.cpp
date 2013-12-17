@@ -26,9 +26,10 @@ template<size_t dim>
 DataMinLee2011<dim>::DataMinLee2011(
 		shared_ptr<Triangulation<dim> > triangulation,
 		shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel) :
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		bool useCentralFlux) :
 		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_boltzmannModel(
-				boltzmannModel) {
+				boltzmannModel), m_useCentralFlux(useCentralFlux) {
 	// make dof handler
 	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement);
 	m_faceQuadrature = make_shared<QGaussLobatto<dim - 1> >(
@@ -51,11 +52,13 @@ DataMinLee2011<dim>::DataMinLee2011(
 template DataMinLee2011<2>::DataMinLee2011(
 		shared_ptr<Triangulation<2> > triangulation,
 		shared_ptr<BoundaryCollection<2> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel);
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		bool useCentralFlux);
 template DataMinLee2011<3>::DataMinLee2011(
 		shared_ptr<Triangulation<3> > triangulation,
 		shared_ptr<BoundaryCollection<3> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel);
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		bool useCentralFlux);
 
 template<size_t dim>
 void DataMinLee2011<dim>::updateSparsityPattern() {
@@ -174,9 +177,9 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t coordinate,
 	for (size_t i = 0; i < dofs_per_cell; i++)
 		for (size_t j = 0; j < dofs_per_cell; j++)
 			for (size_t q_point = 0; q_point < n_q_points; q_point++)
-				derivativeMatrix(j,i) +=
-						(feValues.shape_grad(i, q_point)[coordinate]
-								* feValues.shape_value(j, q_point)
+				derivativeMatrix(i,j) +=
+						(feValues.shape_grad(j, q_point)[coordinate]
+								* feValues.shape_value(i, q_point)
 								* feValues.JxW(q_point));
 } /* assembleLocalDerivativeMatrix */
 // The template parameter must be made explicit in order for the code to compile.
@@ -351,7 +354,7 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 			factor.at(i) *= exn;
 		}
 
-		if (exn < 0) { // otherwise: no contributions
+		if ((m_useCentralFlux) or (exn < 0)) { // otherwise: no contributions
 
 			// add up boundary dofs at point q
 			size_t i = 0;
@@ -365,12 +368,21 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 			// add up neighbor dofs at point q
 			for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
 				if (fabs(feNeighborFaceValues.shape_value(j, q)) > 1e-10) {
-					cellFaceMatrix(i, i) += exn
-							* feNeighborFaceValues.shape_value(j, q)
-							* feFaceValues.shape_value(i, q) * JxW.at(q);
-					neighborFaceMatrix(i,j) -= exn
-							* feNeighborFaceValues.shape_value(j, q)
-							* feFaceValues.shape_value(i, q) * JxW.at(q);
+					if (m_useCentralFlux) {
+						cellFaceMatrix(i, i) += 0.5 * exn
+								* feNeighborFaceValues.shape_value(j, q)
+								* feFaceValues.shape_value(i, q) * JxW.at(q);
+						neighborFaceMatrix(i, j) += 0.5 * exn
+								* feNeighborFaceValues.shape_value(j, q)
+								* feFaceValues.shape_value(i, q) * JxW.at(q);
+					} else {
+						cellFaceMatrix(i, i) += exn
+								* feNeighborFaceValues.shape_value(j, q)
+								* feFaceValues.shape_value(i, q) * JxW.at(q);
+						neighborFaceMatrix(i, j) -= exn
+								* feNeighborFaceValues.shape_value(j, q)
+								* feFaceValues.shape_value(i, q) * JxW.at(q);
+					}
 					// there is only one non-zero entry
 					break;
 				}

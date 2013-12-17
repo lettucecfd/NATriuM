@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 		BOOST_ASSERT(error < 1e-7);
 	}
 
-	cout << endl;
+	cout << "done." << endl;
 }
 	BOOST_AUTO_TEST_SUITE_END()
 

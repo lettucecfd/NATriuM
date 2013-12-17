@@ -17,7 +17,7 @@ using dealii::GridGenerator;
 
 namespace natrium {
 
-PeriodicFlow2D::PeriodicFlow2D(double relaxationParameter, numeric_vector& velocity) :
+PeriodicDomain2D::PeriodicFlow2D(double relaxationParameter, numeric_vector& velocity) :
 		ProblemDescription<2>(makeGrid(), relaxationParameter) {
 
 	/// apply boundary values
@@ -31,10 +31,10 @@ PeriodicFlow2D::PeriodicFlow2D(double relaxationParameter, numeric_vector& veloc
 	setConstantInitialDensity(1.0);
 }
 
-PeriodicFlow2D::~PeriodicFlow2D() {
+PeriodicDomain2D::~PeriodicDomain2D() {
 }
 
-shared_ptr<Triangulation<2> > PeriodicFlow2D::makeGrid() {
+shared_ptr<Triangulation<2> > PeriodicDomain2D::makeGrid() {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
@@ -53,7 +53,7 @@ shared_ptr<Triangulation<2> > PeriodicFlow2D::makeGrid() {
 	return unitSquare;
 }
 
-shared_ptr<BoundaryCollection<2> > PeriodicFlow2D::makeBoundaries() {
+shared_ptr<BoundaryCollection<2> > PeriodicDomain2D::makeBoundaries() {
 
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<

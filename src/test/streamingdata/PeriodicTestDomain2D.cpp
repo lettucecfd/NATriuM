@@ -1,11 +1,11 @@
 /**
- * @file PeriodicFlow2D.cpp
+ * @file PeriodicTestDomain2D.cpp
  * @short 
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "PeriodicFlow2D.h"
+#include "PeriodicTestDomain2D.h"
 
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
@@ -17,24 +17,24 @@ using dealii::GridGenerator;
 
 namespace natrium {
 
-PeriodicFlow2D::PeriodicFlow2D(double relaxationParameter, numeric_vector& velocity) :
-		ProblemDescription<2>(makeGrid(), relaxationParameter) {
+PeriodicTestDomain2D::PeriodicTestDomain2D(size_t globalRefinementLevel) :
+		ProblemDescription<2>(makeGrid(globalRefinementLevel), 1.0) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 
 	/// set initial velocities to zero
 	/// The numeric_vector is a dealii::Vector; The size-constructor applies the default value (0.0) to all components.
-	setConstantInitialVelocity(velocity);
+	/// setConstantInitialVelocity(velocity);
 
 	/// set initial densities to 1.0
 	setConstantInitialDensity(1.0);
 }
 
-PeriodicFlow2D::~PeriodicFlow2D() {
+PeriodicTestDomain2D::~PeriodicTestDomain2D() {
 }
 
-shared_ptr<Triangulation<2> > PeriodicFlow2D::makeGrid() {
+shared_ptr<Triangulation<2> > PeriodicTestDomain2D::makeGrid(size_t globalRefinementLevel) {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
@@ -48,12 +48,12 @@ shared_ptr<Triangulation<2> > PeriodicFlow2D::makeGrid() {
 	cell->face(3)->set_all_boundary_indicators(3);  // bottom
 
 	// Refine grid to 2x2 = 4 cells
-	unitSquare->refine_global(4);
+	unitSquare->refine_global(globalRefinementLevel);
 
 	return unitSquare;
 }
 
-shared_ptr<BoundaryCollection<2> > PeriodicFlow2D::makeBoundaries() {
+shared_ptr<BoundaryCollection<2> > PeriodicTestDomain2D::makeBoundaries() {
 
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<

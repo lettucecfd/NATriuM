@@ -65,6 +65,9 @@ private:
 	/// the DQ model (e.g. D2Q9)
 	shared_ptr<BoltzmannModel> m_boltzmannModel;
 
+	/// central flux or Lax-Friedrichs flux (default)
+	const bool m_useCentralFlux;
+
 	/**
 	 * @short update the sparsity pattern of the system matrix
 	 */
@@ -152,7 +155,7 @@ public:
 	DataMinLee2011(shared_ptr<dealii::Triangulation<dim> > triangulation,
 			shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement,
-			shared_ptr<BoltzmannModel> boltzmannModel);
+			shared_ptr<BoltzmannModel> boltzmannModel, bool useCentralFlux = false);
 
 	/// destructor
 	virtual ~DataMinLee2011() {
