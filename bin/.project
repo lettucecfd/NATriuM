@@ -414,6 +414,21 @@
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/problemdescription/BoundaryTools_test.cpp</location>
 		</link>
 		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/DataMinLee2011_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/streamingdata/DataMinLee2011_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/PeriodicTestDomain2D.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/streamingdata/PeriodicTestDomain2D.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/RungeKutta5LowStorage_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/timeintegration/RungeKutta5LowStorage_test.cpp</location>
+		</link>
+		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/BasicNames_test.cpp</name>
 			<type>1</type>
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/utilities/BasicNames_test.cpp</location>
@@ -422,6 +437,11 @@
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files/PeriodicTestDomain2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/streamingdata/PeriodicTestDomain2D.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/CMake Rules</name>

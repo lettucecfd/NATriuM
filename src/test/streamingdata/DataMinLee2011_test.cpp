@@ -255,7 +255,19 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
 		//stream
 		f_tmp = f;
 		advectionMatrix.vmult_add(f, f_tmp);
+<<<<<<< HEAD
 		// check if mass is conserved
+=======
+
+		double mass = 0.0;
+		for (size_t j = 0; j < f.size(); j++) {
+			mass += f(j);
+		}
+
+		BOOST_CHECK(fabs(mass - initialMass) / mass < 1e-2);
+		// NOTE: mass is not conserved exactly for explicit euler (but up to 5 percent)
+
+>>>>>>> 889e86e40cdea2e1a4b0fa8848567c004e24cdbf
 	}
 	double mass = 0.0;
 	for (size_t j = 0; j < f.size(); j++) {
@@ -282,8 +294,11 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
 	const double timeStep = 1;
+<<<<<<< HEAD
 #ifdef RK5_OUT
 	// The videoplot.sh file take by default 500 files
+=======
+>>>>>>> 889e86e40cdea2e1a4b0fa8848567c004e24cdbf
 	const size_t numberOfTimeSteps = 500;
 #else
 	const size_t numberOfTimeSteps = 50;

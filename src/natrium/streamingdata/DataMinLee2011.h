@@ -89,10 +89,9 @@ private:
 	 * @param[in] coordinate < dim; 0 for Dx, 1 for Dy, 2 for Dz (3D)
 	 * @param[out] derivativeMatrix The i-th derivative matrix <D_i phi_j, phi_k>
 	 */
-	void assembleLocalDerivativeMatrix(size_t coordinate,
-			const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
+	void assembleLocalDerivativeMatrices(const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
 			size_t n_q_points,
-			dealii::FullMatrix<double> &derivativeMatrix) const;
+			vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 	/**
 	 * @short assemble local face matrix;
