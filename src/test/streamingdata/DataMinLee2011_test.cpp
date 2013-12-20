@@ -27,10 +27,10 @@
 ///////////////////////////////
 ///////////////////////////////
 // FLAGS TO SWITCH OUTPUT ON //
-//#define CREATE_DATA_FILES // This takes a lot of time
+//#define CREATE_DATA_FILES // This takes a lot of time (~1h)
 //#define PRINT_SYSTEM_MATRIX
 //#define EULER_OUT
-//#define RK5_OUT
+#define RK5_OUT
 ///////////////////////////////
 ///////////////////////////////
 
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
 					systemMatrix = 0;
 					systemMatrix.copy_from(matrices.at(i));
 					systemMatrix.compute_eigenvalues();
-					// check eigenvalues (the real part must vanish for central flux, the absolute value must be approx. delta x)
+					// check eigenvalues (the real part must vanish for central flux, the absolute value must be in the same order of magnitude as delta x)
 					double max_eigenvalue = 0;
 					for (size_t j = 0; j < systemMatrix.n_cols(); j++) {
 						std::
@@ -273,15 +273,17 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 
 	/// relaxationParamter and velocity have no impact; just needed for construction
 	size_t refinementLevel = 4;
-	size_t fe_order = 5;
+	size_t fe_order = 2;
+	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	DataMinLee2011<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>());
+			make_shared<D2Q9IncompressibleModel>(), useCentralFlux);
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
 	const double timeStep = 1;
 #ifdef RK5_OUT
+	// The videoplot.sh file take by default 500 files
 	const size_t numberOfTimeSteps = 500;
 #else
 	const size_t numberOfTimeSteps = 50;

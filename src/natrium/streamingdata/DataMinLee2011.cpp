@@ -177,7 +177,7 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrix(size_t coordinate,
 	for (size_t i = 0; i < dofs_per_cell; i++)
 		for (size_t j = 0; j < dofs_per_cell; j++)
 			for (size_t q_point = 0; q_point < n_q_points; q_point++)
-				derivativeMatrix(i,j) +=
+				derivativeMatrix(i, j) +=
 						(feValues.shape_grad(j, q_point)[coordinate]
 								* feValues.shape_value(i, q_point)
 								* feValues.JxW(q_point));
@@ -360,33 +360,47 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 			size_t i = 0;
 			for (; i < feFaceValues.dofs_per_cell; i++) {
 
-				if (fabs(feFaceValues.shape_value(i, q)) > 1e-10) {
-					// there is only one non-zero entry
-					break;
-				}
-			}
-			// add up neighbor dofs at point q
-			for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
-				if (fabs(feNeighborFaceValues.shape_value(j, q)) > 1e-10) {
-					if (m_useCentralFlux) {
-						cellFaceMatrix(i, i) += 0.5 * exn
-								* feNeighborFaceValues.shape_value(j, q)
-								* feFaceValues.shape_value(i, q) * JxW.at(q);
-						neighborFaceMatrix(i, j) += 0.5 * exn
-								* feNeighborFaceValues.shape_value(j, q)
-								* feFaceValues.shape_value(i, q) * JxW.at(q);
-					} else {
-						cellFaceMatrix(i, i) += exn
-								* feNeighborFaceValues.shape_value(j, q)
-								* feFaceValues.shape_value(i, q) * JxW.at(q);
-						neighborFaceMatrix(i, j) -= exn
-								* feNeighborFaceValues.shape_value(j, q)
-								* feFaceValues.shape_value(i, q) * JxW.at(q);
+				//if (fabs(feFaceValues.shape_value(i, q)) > 1e-5) {
+				// there is only one non-zero entry
+				//break;
+				//}
+				// explicit assupmtion that there is only one non-zero entry
+				// for (size_t k = i + 1; k < feFaceValues.dofs_per_cell; k++) {
+				//	assert(fabs(feFaceValues.shape_value(k, q)) < 1e-5);
+				//}
+				// add up neighbor dofs at point q
+				size_t j = 0;
+				for (j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
+					if (fabs(feNeighborFaceValues.shape_value(j, q)) > 1e-5) {
+						if (m_useCentralFlux) {
+							cellFaceMatrix(i, i) += 0.5 * exn
+									* feNeighborFaceValues.shape_value(j, q)
+									* feFaceValues.shape_value(i, q)
+									* JxW.at(q);
+							neighborFaceMatrix(i, j) += 0.5 * exn
+									* feNeighborFaceValues.shape_value(j, q)
+									* feFaceValues.shape_value(i, q)
+									* JxW.at(q);
+						} else {
+							cellFaceMatrix(i, i) += exn
+									* feNeighborFaceValues.shape_value(j, q)
+									* feFaceValues.shape_value(i, q)
+									* JxW.at(q);
+							neighborFaceMatrix(i, j) -= exn
+									* feNeighborFaceValues.shape_value(j, q)
+									* feFaceValues.shape_value(i, q)
+									* JxW.at(q);
+						}
+						// there is only one non-zero entry
+						// TODO NO! WHY ARE THERE MORE THAN ONE NON-ZERO VALUES??????
+						// break;
 					}
-					// there is only one non-zero entry
-					break;
 				}
 			}
+			// explicit assupmtion that there is only one non-zero entry
+			//for (size_t k = j + 1; k < feFaceValues.dofs_per_cell; k++) {
+			//	assert(fabs(feFaceValues.shape_value(k, q)) < 1e-5);
+			//}
 		}
 	}
 
