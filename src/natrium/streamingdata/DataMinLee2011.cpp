@@ -29,6 +29,7 @@ DataMinLee2011<dim>::DataMinLee2011(
 		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel) :
 		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_boltzmannModel(
 				boltzmannModel) {
+	m_orderOfFiniteElement = orderOfFiniteElement;
 	// make dof handler
 	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement);
 	m_faceQuadrature = make_shared<QGaussLobatto<dim - 1> >(
@@ -43,6 +44,10 @@ DataMinLee2011<dim>::DataMinLee2011(
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
 	updateSparsityPattern();
+
+	// define relation between dofs and quadrature nodes
+	m_facedof_to_q_index = map_facedofs_to_q_index();
+	m_celldof_to_q_index = map_celldofs_to_q_index();
 
 	// assemble system
 	reassemble();
@@ -179,10 +184,12 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrices(
 			for (size_t q_point = 0; q_point < n_q_points; q_point++) {
 				Tensor<1, dim> integrandAtQ, integrandAtQTimesInvJac;
 				integrandAtQ = feValues.shape_grad(i, q_point);
-				integrandAtQ *= (feValues.shape_value(j, q_point) * feValues.JxW(q_point));
-			integrandAtQTimesInvJac =  apply_transformation(feValues.inverse_jacobian(q_point), integrandAtQ);
+				integrandAtQ *= (feValues.shape_value(j, q_point)
+						* feValues.JxW(q_point));
+				integrandAtQTimesInvJac = apply_transformation(
+						feValues.inverse_jacobian(q_point), integrandAtQ);
 				for (size_t k = 0; k < dim; k++) {
-					derivativeMatrix.at(k)(j,i) += integrandAtQTimesInvJac[k];
+					derivativeMatrix.at(k)(j, i) += integrandAtQTimesInvJac[k];
 				}
 			}
 
@@ -298,7 +305,7 @@ template<> void DataMinLee2011<2>::calculateAndDistributeLocalStiffnessMatrix(
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++) {
 			m_systemMatrix.at(i).add(globalDoFs[j], globalDoFs[k],
-					systemMatrix(j,k));
+					systemMatrix(j, k));
 		}
 }
 template<> void DataMinLee2011<3>::calculateAndDistributeLocalStiffnessMatrix(
@@ -341,6 +348,8 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 	// TODO clean up construction; or (better): assembly directly
 	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
 	dealii::FullMatrix<double> neighborFaceMatrix(feFaceValues.dofs_per_cell);
+	//vector<dealii::Point<dim> > unitSupportPoints = feFaceValues.get_fe().get_unit_support_points();
+	//cout << "Size of unit support points: " << unitSupportPoints.size() << endl;
 	cellFaceMatrix = 0;
 	neighborFaceMatrix = 0;
 
@@ -364,25 +373,26 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 			// add up boundary dofs at point q
 			size_t i = 0;
 			for (; i < feFaceValues.dofs_per_cell; i++) {
-
-				if (fabs(feFaceValues.shape_value(i, q)) > 1e-10) {
+				if (true) { //(fabs(feFaceValues.shape_value(i, q)) > 1e-10) {
 					// there is only one non-zero entry
-					break;
+					//break;
+					//cout << "i " << i << ",    q " << q << "       fi(q) "
+					//		<< feFaceValues.shape_value(i, q) << endl;
 				}
 			}
 			// add up neighbor dofs at point q
-			for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
-				if (fabs(feNeighborFaceValues.shape_value(j, q)) > 1e-10) {
-					cellFaceMatrix(i, i) += exn
-							* feNeighborFaceValues.shape_value(j, q)
-							* feFaceValues.shape_value(i, q) * JxW.at(q);
-					neighborFaceMatrix(i,j) -= exn
-							* feNeighborFaceValues.shape_value(j, q)
-							* feFaceValues.shape_value(i, q) * JxW.at(q);
-					// there is only one non-zero entry
-					break;
-				}
-			}
+			/*			for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
+			 if (fabs(feNeighborFaceValues.shape_value(j, q)) > 1e-10) {
+			 cellFaceMatrix(i, i) += exn
+			 * feNeighborFaceValues.shape_value(j, q)
+			 * feFaceValues.shape_value(i, q) * JxW.at(q);
+			 neighborFaceMatrix(i,j) -= exn
+			 * feNeighborFaceValues.shape_value(j, q)
+			 * feFaceValues.shape_value(i, q) * JxW.at(q);
+			 // there is only one non-zero entry
+			 //break;
+			 }
+			 }*/
 		}
 	}
 
@@ -426,6 +436,74 @@ template void DataMinLee2011<3>::assembleAndDistributeInternalFace(
 		size_t neighborFaceNumber, dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
 		dealii::FEFaceValues<3>& feNeighborFaceValues);
+
+template<size_t dim>
+std::map<size_t, size_t> natrium::DataMinLee2011<dim>::map_celldofs_to_q_index() {
+	const dealii::UpdateFlags cellUpdateFlags = update_values
+			| update_quadrature_points;
+	// Finite Element
+	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
+			cellUpdateFlags);
+	const size_t dofs_per_cell = m_fe->dofs_per_cell;
+	const size_t n_quadrature_points = m_quadrature->size();
+	// take first cell
+	typename DoFHandler<dim>::active_cell_iterator cell =
+			m_doFHandler->begin_active();
+	std::map<size_t, size_t> result;
+
+	/// find quadrature node for every DoF
+	feCellValues.reinit(cell);
+	for (size_t i = 0; i < dofs_per_cell; i++) {
+		int unique = 0;
+		for (size_t q = 0; q < n_quadrature_points; q++) {
+			if (feCellValues.shape_value(i, q) > 1e-10) {
+				assert(fabs(feCellValues.shape_value(i, q) - 1) < 1e-10);
+				unique += 1;
+				result.insert(std::make_pair(i, q));
+			}
+		}
+		assert(unique == 1);
+	}
+	return result;
+}
+// The template parameter must be made explicit in order for the code to compile.
+template std::map<size_t, size_t> DataMinLee2011<2>::map_celldofs_to_q_index();
+template std::map<size_t, size_t> DataMinLee2011<3>::map_celldofs_to_q_index();
+
+template<size_t dim>
+vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_facedofs_to_q_index() {
+	const dealii::UpdateFlags faceUpdateFlags = update_values
+			| update_quadrature_points;
+	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
+			faceUpdateFlags);
+
+	typename DoFHandler<dim>::active_cell_iterator cell =
+			m_doFHandler->begin_active();
+	// LOOP over all faces
+	vector<std::map<size_t, size_t> > result;
+	for (size_t f = 0; f < GeometryInfo<dim>::faces_per_cell; f++) {
+		feFaceValues.reinit(cell, f);
+		std::map<size_t, size_t> resultForFaceF;
+		for (size_t i = 0; i < m_fe->dofs_per_cell; i++) {
+			int unique = 0;
+			for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
+				if (feFaceValues.shape_value(i, q) > 1e-10) {
+					assert(fabs(feFaceValues.shape_value(i, q) - 1) < 1e-10);
+					unique += 1;
+					resultForFaceF.insert(std::make_pair(i, q));
+				}
+			}
+			// Test, if the relationship doF <-> quadrature points in unique
+			assert(unique <= 1);
+		}
+		result.push_back(resultForFaceF);
+		assert (resultForFaceF.size() == feFaceValues.n_quadrature_points);
+	}
+	return result;
+}
+// The template parameter must be made explicit in order for the code to compile.
+template vector<std::map<size_t, size_t> > DataMinLee2011<2>::map_facedofs_to_q_index();
+template vector<std::map<size_t, size_t> > DataMinLee2011<3>::map_facedofs_to_q_index();
 
 template<size_t dim>
 void DataMinLee2011<dim>::stream() {

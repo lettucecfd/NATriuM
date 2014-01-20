@@ -9,6 +9,8 @@
 #ifndef DATAMINLEE2011_H_
 #define DATAMINLEE2011_H_
 
+#include <map>
+
 #include "deal.II/grid/tria.h"
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/dofs/dof_handler.h"
@@ -65,6 +67,17 @@ private:
 	/// the DQ model (e.g. D2Q9)
 	shared_ptr<BoltzmannModel> m_boltzmannModel;
 
+	/// a set of maps, which connect degrees of freedom with their respective quadrature nodes
+	/// m_facedof_to_q_index.at(i)[j] is the support node index q of the j-th dof at face i
+	vector<std::map<size_t, size_t> > m_facedof_to_q_index;
+
+	/// a map, which connects degrees of freedom with their respective quadrature nodes
+	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
+	std::map<size_t, size_t> m_celldof_to_q_index;
+
+	/// order of the finite element functions
+	size_t m_orderOfFiniteElement;
+
 	/**
 	 * @short update the sparsity pattern of the system matrix
 	 */
@@ -86,8 +99,8 @@ private:
 	 * @param[in] coordinate < dim; 0 for Dx, 1 for Dy, 2 for Dz (3D)
 	 * @param[out] derivativeMatrix The i-th derivative matrix <D_i phi_j, phi_k>
 	 */
-	void assembleLocalDerivativeMatrices(const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
-			size_t n_q_points,
+	void assembleLocalDerivativeMatrices(const dealii::FEValues<dim>& feValues,
+			size_t dofs_per_cell, size_t n_q_points,
 			vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 	/**
@@ -139,6 +152,19 @@ private:
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
 			dealii::FEFaceValues<dim>& feNeighborFaceValues);
 
+	/**
+	 * @short map degrees of freedom to quadrature node indices on a cell
+	 * @note called by the constructor to initialize m_dof_to_q_index
+	 */
+	std::map<size_t, size_t>  map_celldofs_to_q_index();
+
+	/**
+	 * @short map degrees of freedom to quadrature node indices on the faces
+	 * @note called by the constructor to initialize m_dof_to_q_index
+	 */
+	vector<std::map<size_t, size_t> > map_facedofs_to_q_index();
+
+
 public:
 
 	/// constructor
@@ -180,6 +206,30 @@ public:
 
 	const dealii::MappingQ1<dim>& getMapping() const {
 		return m_mapping;
+	}
+
+	const std::map<size_t, size_t>& getCelldofToQIndex() const {
+		return m_celldof_to_q_index;
+	}
+
+	const vector<std::map<size_t, size_t> >& getFacedofToQIndex() const {
+		return m_facedof_to_q_index;
+	}
+
+	const shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
+		return m_faceQuadrature;
+	}
+
+	const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
+		return m_fe;
+	}
+
+	const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
+		return m_quadrature;
+	}
+
+	size_t getOrderOfFiniteElement() const {
+		return m_orderOfFiniteElement;
 	}
 };
 

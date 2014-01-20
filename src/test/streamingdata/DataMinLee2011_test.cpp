@@ -8,11 +8,15 @@
 #include "streamingdata/DataMinLee2011.h"
 
 #include <fstream>
+#include <map>
 
 #include "boost/test/unit_test.hpp"
 
 #include "deal.II/numerics/data_out.h"
+#include "deal.II/fe/fe_dgq.h"
+#include "deal.II/fe/fe_update_flags.h"
 #include "deal.II/dofs/dof_tools.h"
+#include "deal.II/base/quadrature_lib.h"
 
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
 
@@ -104,7 +108,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_steadyStreaming_test) {
 			BOOST_CHECK(fabs(f(j) - 1.0) < 1e-10);
 			mass += f(j);
 		}
-		BOOST_CHECK(fabs(mass - initialMass)/initialMass < 1e-5);
+		BOOST_CHECK(fabs(mass - initialMass) / initialMass < 1e-5);
 
 	}
 
@@ -190,11 +194,68 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
 	cout << "done." << endl;
 } /* DataMinLee2011_streaming_test */
 
+BOOST_AUTO_TEST_CASE(DataMinLee2011_unique_dofs_test) {
+	// Test if the unique relation between degrees of freedom and quadrature nodes is OK
+
+	cout << "DataMinLee2011_unique_dofs_test..." << endl;
+	// Create problem
+	double relaxationParameter = 0.7;
+	numeric_vector velocity(2);
+	velocity(0) = 0.05;
+	velocity(1) = 0.01;
+	size_t fe_order = 5;
+	PeriodicFlow2D periodic(relaxationParameter, velocity);
+	DataMinLee2011<2> streaming(periodic.getTriangulation(),
+			periodic.getBoundaries(), fe_order,
+			make_shared<D2Q9IncompressibleModel>());
+
+	// Test if fi(q) == 1 for the given pairs
+	dealii::MappingQ1<2> mapping;
+	/// integration on gauss lobatto nodes
+	shared_ptr<dealii::QGaussLobatto<2> > quadrature = make_shared<
+			dealii::QGaussLobatto<2> >(streaming.getOrderOfFiniteElement());
+	/// integration on boundary (with gauß lobatto nodes)
+	shared_ptr<dealii::QGaussLobatto<1> > faceQuadrature = make_shared<
+			dealii::QGaussLobatto<1> >(streaming.getOrderOfFiniteElement());
+	shared_ptr<dealii::FE_DGQArbitraryNodes<2> > fe = make_shared<
+			dealii::FE_DGQArbitraryNodes<2> >(
+			dealii::QGaussLobatto<1>(streaming.getOrderOfFiniteElement()));
+
+	dealii::FEValues<2> feCellValues(mapping, *fe, *quadrature,
+			dealii::update_values);
+	dealii::FEFaceValues<2> feFaceValues(mapping, *fe, *faceQuadrature,
+			dealii::update_values);
+
+	// for cell q points
+	feCellValues.reinit(streaming.getDoFHandler()->begin_active());
+	std::map<size_t, size_t> dofToQ = streaming.getCelldofToQIndex();
+	for (size_t i = 0; i < streaming.getFe()->n_dofs_per_cell(); i++) {
+		BOOST_CHECK(fabs(feCellValues.shape_value(i, dofToQ[i]) - 1) < 1e-10);
+	}
+	// for face q points
+	vector<std::map<size_t, size_t> > dofToFaceQ =
+			streaming.getFacedofToQIndex();
+	for (size_t i = 0; i < 4; i++) {
+		feFaceValues.reinit(streaming.getDoFHandler()->begin_active(), i);
+		for (size_t j = 0; j < streaming.getFe()->n_dofs_per_cell(); j++) {
+			// if key is in map
+			if (dofToFaceQ.at(i).count(j) == 1) {
+				BOOST_CHECK(
+						fabs(
+								feFaceValues.shape_value(j, dofToFaceQ.at(i)[j])
+										- 1) < 1e-10);
+			}
+		}
+	}
+
+	cout << "done" << endl;
+} /* DataMinLee2011_unique_dofs_test */
+
 BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 	cout << "DataMinLee2011_RKstreaming_test..." << endl;
-	/// THIS WILL SHOW, if streaming is really correct
+/// THIS WILL SHOW, if streaming is really correct
 
-	/// relaxationParamter and velocity have no impact; just needed for construction
+/// relaxationParamter and velocity have no impact; just needed for construction
 	double relaxationParameter = 0.7;
 	numeric_vector velocity(2);
 	velocity(0) = 0.05;
@@ -209,14 +270,14 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 	const double timeStep = 1;
 	const size_t numberOfTimeSteps = 500;
 
-	// Initialize all particle distribution functions with 1, one corner element with 2
+// Initialize all particle distribution functions with 1, one corner element with 2
 	distributed_vector f(streaming.getSystemMatrix().at(0).n());
 	double initialMass = 0.0;
 	for (size_t i = 0; i < f.size(); i++) {
 		f(i) = 1.0;
 		initialMass += 1;
 	}
-	// create smooth initial conditions
+// create smooth initial conditions
 	vector<dealii::Point<2> > supportPoints(
 			streaming.getDoFHandler()->n_dofs());
 	dealii::DoFTools::map_dofs_to_support_points(streaming.getMapping(),
@@ -226,12 +287,12 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 	for (size_t i = 0; i < streaming.getDoFHandler()->n_dofs(); i++) {
 		double distance = supportPoints.at(i).distance(midPoint);
 		if (distance <= 0.25) {
-			f(i) = 1 + 0.1*cos(PI / 0.5 * distance);
-			initialMass += 0.1*cos(PI / 0.5 * distance);
+			f(i) = 1 + 0.1 * cos(PI / 0.5 * distance);
+			initialMass += 0.1 * cos(PI / 0.5 * distance);
 		}
 	}
-	// CHECK MASS CONSERVATION
-	// RK5 for streaming in direction (1,0)
+// CHECK MASS CONSERVATION
+// RK5 for streaming in direction (1,0)
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(streaming.getSparsityPattern());
 	advectionMatrix.copy_from(matrices.at(3));
