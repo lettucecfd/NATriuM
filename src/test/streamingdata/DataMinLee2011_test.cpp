@@ -75,15 +75,15 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_steadyStreaming_test) {
 	numeric_vector velocity(2);
 	velocity(0) = 0.05;
 	velocity(1) = 0.01;
-	size_t fe_order = 4;
+	size_t fe_order = 3;
 	PeriodicFlow2D periodic(relaxationParameter, velocity);
 	DataMinLee2011<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
-	const double timeStep = 0.05;
-	const size_t numberOfTimeSteps = 10;
+	const double timeStep = 0.01;
+	const size_t numberOfTimeSteps = 100;
 
 	// Initialize all particle distribution functions with 1
 	distributed_vector f(streaming.getSystemMatrix().at(0).n());
@@ -122,15 +122,15 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
 	numeric_vector velocity(2);
 	velocity(0) = 0.05;
 	velocity(1) = 0.01;
-	size_t fe_order = 4;
+	size_t fe_order = 2;
 	PeriodicFlow2D periodic(relaxationParameter, velocity);
 	DataMinLee2011<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
-	const double timeStep = 0.5;
-	const size_t numberOfTimeSteps = 50;
+	const double timeStep = 0.01;
+	const size_t numberOfTimeSteps = 100;
 
 	// Initialize all particle distribution functions with 1, one corner element with 2
 	distributed_vector f(streaming.getSystemMatrix().at(0).n());
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_unique_dofs_test) {
 	numeric_vector velocity(2);
 	velocity(0) = 0.05;
 	velocity(1) = 0.01;
-	size_t fe_order = 5;
+	size_t fe_order = 3;
 	PeriodicFlow2D periodic(relaxationParameter, velocity);
 	DataMinLee2011<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
@@ -260,14 +260,14 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 	numeric_vector velocity(2);
 	velocity(0) = 0.05;
 	velocity(1) = 0.01;
-	size_t fe_order = 5;
+	size_t fe_order = 4;
 	PeriodicFlow2D periodic(relaxationParameter, velocity);
 	DataMinLee2011<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
-	const double timeStep = 1;
+	const double timeStep = 1./(16.*fe_order);
 	const size_t numberOfTimeSteps = 500;
 
 // Initialize all particle distribution functions with 1, one corner element with 2
@@ -320,14 +320,13 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 			mass += f(j);
 		}
 
-		BOOST_CHECK(fabs(mass - initialMass) / mass < 1e-5);
-		// NOTE: mass is not conserved exactly for explicit euler (but up to 5 percent)
+		BOOST_CHECK(fabs(mass - initialMass) / initialMass < 1e-5);
+		cout << mass << " " << streaming.getSystemMatrix().at(0).n() << " " << mass /streaming.getSystemMatrix().at(0).n() << " " << f(0) << " " << f(1) << " " << f(2) << " " << f(3) << endl;
 
 	}
 
 	std::ofstream matrixfile("matrix.dat");
 	matrices.at(3).print_formatted(matrixfile);
-	cout << "Time step size: " << timeStep << endl;
 
 	cout << "done." << endl;
 } /* DataMinLee2011_RKstreaming_test */

@@ -67,13 +67,16 @@ private:
 	/// the DQ model (e.g. D2Q9)
 	shared_ptr<BoltzmannModel> m_boltzmannModel;
 
+	/// a map, which connects degrees of freedom with their respective quadrature nodes
+	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
+	std::map<size_t, size_t> m_celldof_to_q_index;
+
 	/// a set of maps, which connect degrees of freedom with their respective quadrature nodes
 	/// m_facedof_to_q_index.at(i)[j] is the support node index q of the j-th dof at face i
 	vector<std::map<size_t, size_t> > m_facedof_to_q_index;
 
-	/// a map, which connects degrees of freedom with their respective quadrature nodes
-	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
-	std::map<size_t, size_t> m_celldof_to_q_index;
+	/// the transposed map of m_facedof_to_q_index
+	vector<std::map<size_t, size_t> > m_q_index_to_facedof;
 
 	/// order of the finite element functions
 	size_t m_orderOfFiniteElement;
@@ -156,14 +159,19 @@ private:
 	 * @short map degrees of freedom to quadrature node indices on a cell
 	 * @note called by the constructor to initialize m_dof_to_q_index
 	 */
-	std::map<size_t, size_t>  map_celldofs_to_q_index();
+	std::map<size_t, size_t>  map_celldofs_to_q_index() const;
 
 	/**
 	 * @short map degrees of freedom to quadrature node indices on the faces
 	 * @note called by the constructor to initialize m_dof_to_q_index
 	 */
-	vector<std::map<size_t, size_t> > map_facedofs_to_q_index();
+	vector<std::map<size_t, size_t> > map_facedofs_to_q_index() const;
 
+	/**
+	 * @short map quadrature node indices on the faces to degrees of freedom
+	 * @note called by the constructor to initialize m_q_index_to_facedof
+	 */
+	vector<std::map<size_t, size_t> > map_q_index_to_facedofs() const;
 
 public:
 

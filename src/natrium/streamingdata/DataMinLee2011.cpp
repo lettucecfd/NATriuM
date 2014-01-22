@@ -7,6 +7,8 @@
 
 #include "DataMinLee2011.h"
 
+#include "fstream"
+
 #include <deal.II/lac/compressed_sparsity_pattern.h>
 #include <deal.II/dofs/dof_tools.h>
 #include <deal.II/dofs/dof_renumbering.h>
@@ -15,8 +17,6 @@
 #include "deal.II/fe/fe_update_flags.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
-
-#include "fstream"
 
 using namespace dealii;
 
@@ -48,6 +48,7 @@ DataMinLee2011<dim>::DataMinLee2011(
 	// define relation between dofs and quadrature nodes
 	m_facedof_to_q_index = map_facedofs_to_q_index();
 	m_celldof_to_q_index = map_celldofs_to_q_index();
+	m_q_index_to_facedof = map_q_index_to_facedofs();
 
 	// assemble system
 	reassemble();
@@ -179,20 +180,19 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrices(
 	for (size_t i = 0; i < dim; i++) {
 		derivativeMatrix.at(i) = 0;
 	}
-	for (size_t i = 0; i < dofs_per_cell; i++)
-		for (size_t j = 0; j < dofs_per_cell; j++)
+	for (size_t i = 0; i < dofs_per_cell; i++) {
+		for (size_t j = 0; j < dofs_per_cell; j++) {
 			for (size_t q_point = 0; q_point < n_q_points; q_point++) {
-				Tensor<1, dim> integrandAtQ, integrandAtQTimesInvJac;
-				integrandAtQ = feValues.shape_grad(i, q_point);
-				integrandAtQ *= (feValues.shape_value(j, q_point)
+				Tensor<1, dim> integrandAtQ;
+				integrandAtQ = feValues.shape_grad(j, q_point);
+				integrandAtQ *= (feValues.shape_value(i, q_point)
 						* feValues.JxW(q_point));
-				integrandAtQTimesInvJac = apply_transformation(
-						feValues.inverse_jacobian(q_point), integrandAtQ);
 				for (size_t k = 0; k < dim; k++) {
-					derivativeMatrix.at(k)(j, i) += integrandAtQTimesInvJac[k];
+					derivativeMatrix.at(k)(i, j) += integrandAtQ[k];
 				}
 			}
-
+		}
+	}
 } /* assembleLocalDerivativeMatrix */
 // The template parameter must be made explicit in order for the code to compile.
 template void DataMinLee2011<2>::assembleLocalDerivativeMatrices(
@@ -218,10 +218,10 @@ void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 
 		//Faces at boundary
 		if (cell->face(j)->at_boundary()) {
-			// TODO At this point the implementation is not efficient: Loop over all Boundaries :/ pfui
-			// Better: BoundaryCollection should have a map < <Boundary cell, face_id>, Boundary ID>
+// TODO At this point the implementation is not efficient: Loop over all Boundaries :/ pfui
+// Better: BoundaryCollection should have a map < <Boundary cell, face_id>, Boundary ID>
 
-			// Apply periodic boundaries
+// Apply periodic boundaries
 			for (size_t k = 0; k < m_boundaries->numberOfPeriodicBoundaries();
 					k++) {
 				const shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
@@ -242,10 +242,10 @@ void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 				continue;
 			}
 
-			// Apply other boundaries
-			// TODO Implement other boundary conditions
+// Apply other boundaries
+// TODO Implement other boundary conditions
 		} else {
-			// Internal faces
+// Internal faces
 			typename DoFHandler<dim>::cell_iterator neighbor = cell->neighbor(
 					j);
 			assembleAndDistributeInternalFace(i, cell, j, neighbor,
@@ -275,11 +275,13 @@ void DataMinLee2011<dim>::divideByDiagonalMassMatrix(
 		distributed_sparse_matrix& matrix,
 		const distributed_vector& massMatrix) {
 	size_t n = massMatrix.size();
-	for (size_t i; i < n; i++) {
-		for (size_t j; j < n; j++)
-			// TODO Parallel loop
-			if (m_sparsityPattern.exists(i, j))
-				matrix.set(i, j, matrix(i, j) / massMatrix(j));
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < n; j++) {
+// TODO Parallel loop
+			if (m_sparsityPattern.exists(i, j)) {
+				matrix.set(i, j, matrix(i, j) / massMatrix(i));
+			}
+		}
 	}
 }
 // The template parameter must be made explicit in order for the code to compile.
@@ -347,14 +349,15 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 
 	// TODO clean up construction; or (better): assembly directly
 	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
-	dealii::FullMatrix<double> neighborFaceMatrix(feFaceValues.dofs_per_cell);
-	//vector<dealii::Point<dim> > unitSupportPoints = feFaceValues.get_fe().get_unit_support_points();
-	//cout << "Size of unit support points: " << unitSupportPoints.size() << endl;
+	dealii::FullMatrix<double> neighborFaceMatrix(
+			feNeighborFaceValues.dofs_per_cell, feFaceValues.dofs_per_cell);
 	cellFaceMatrix = 0;
 	neighborFaceMatrix = 0;
 
 	// loop over all quadrature points at the face
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
+		size_t thisDoF = m_q_index_to_facedof.at(faceNumber).at(q);
+		size_t neighborDoF = m_q_index_to_facedof.at(neighborFaceNumber).at(q);
 
 		// calculate matrix entries
 		vector<double> factor(JxW);
@@ -370,29 +373,9 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 
 		if (exn < 0) { // otherwise: no contributions
 
-			// add up boundary dofs at point q
-			size_t i = 0;
-			for (; i < feFaceValues.dofs_per_cell; i++) {
-				if (true) { //(fabs(feFaceValues.shape_value(i, q)) > 1e-10) {
-					// there is only one non-zero entry
-					//break;
-					//cout << "i " << i << ",    q " << q << "       fi(q) "
-					//		<< feFaceValues.shape_value(i, q) << endl;
-				}
-			}
-			// add up neighbor dofs at point q
-			/*			for (size_t j = 0; j < feNeighborFaceValues.dofs_per_cell; j++) {
-			 if (fabs(feNeighborFaceValues.shape_value(j, q)) > 1e-10) {
-			 cellFaceMatrix(i, i) += exn
-			 * feNeighborFaceValues.shape_value(j, q)
-			 * feFaceValues.shape_value(i, q) * JxW.at(q);
-			 neighborFaceMatrix(i,j) -= exn
-			 * feNeighborFaceValues.shape_value(j, q)
-			 * feFaceValues.shape_value(i, q) * JxW.at(q);
-			 // there is only one non-zero entry
-			 //break;
-			 }
-			 }*/
+			cellFaceMatrix(thisDoF, thisDoF) = factor.at(q);
+			neighborFaceMatrix(thisDoF, neighborDoF) = -factor.at(q);
+
 		}
 	}
 
@@ -438,7 +421,7 @@ template void DataMinLee2011<3>::assembleAndDistributeInternalFace(
 		dealii::FEFaceValues<3>& feNeighborFaceValues);
 
 template<size_t dim>
-std::map<size_t, size_t> natrium::DataMinLee2011<dim>::map_celldofs_to_q_index() {
+std::map<size_t, size_t> natrium::DataMinLee2011<dim>::map_celldofs_to_q_index() const {
 	const dealii::UpdateFlags cellUpdateFlags = update_values
 			| update_quadrature_points;
 	// Finite Element
@@ -467,11 +450,11 @@ std::map<size_t, size_t> natrium::DataMinLee2011<dim>::map_celldofs_to_q_index()
 	return result;
 }
 // The template parameter must be made explicit in order for the code to compile.
-template std::map<size_t, size_t> DataMinLee2011<2>::map_celldofs_to_q_index();
-template std::map<size_t, size_t> DataMinLee2011<3>::map_celldofs_to_q_index();
+template std::map<size_t, size_t> DataMinLee2011<2>::map_celldofs_to_q_index() const;
+template std::map<size_t, size_t> DataMinLee2011<3>::map_celldofs_to_q_index() const;
 
 template<size_t dim>
-vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_facedofs_to_q_index() {
+vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_facedofs_to_q_index() const {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
 	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
@@ -493,17 +476,52 @@ vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_facedofs_to_
 					resultForFaceF.insert(std::make_pair(i, q));
 				}
 			}
-			// Test, if the relationship doF <-> quadrature points in unique
+// Test, if the relationship doF <-> quadrature points in unique
 			assert(unique <= 1);
 		}
 		result.push_back(resultForFaceF);
-		assert (resultForFaceF.size() == feFaceValues.n_quadrature_points);
+		assert(resultForFaceF.size() == feFaceValues.n_quadrature_points);
 	}
 	return result;
 }
 // The template parameter must be made explicit in order for the code to compile.
-template vector<std::map<size_t, size_t> > DataMinLee2011<2>::map_facedofs_to_q_index();
-template vector<std::map<size_t, size_t> > DataMinLee2011<3>::map_facedofs_to_q_index();
+template vector<std::map<size_t, size_t> > DataMinLee2011<2>::map_facedofs_to_q_index() const;
+template vector<std::map<size_t, size_t> > DataMinLee2011<3>::map_facedofs_to_q_index() const;
+
+template<size_t dim>
+vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_q_index_to_facedofs() const {
+	const dealii::UpdateFlags faceUpdateFlags = update_values
+			| update_quadrature_points;
+	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
+			faceUpdateFlags);
+
+	typename DoFHandler<dim>::active_cell_iterator cell =
+			m_doFHandler->begin_active();
+	// LOOP over all faces
+	vector<std::map<size_t, size_t> > result;
+	for (size_t f = 0; f < GeometryInfo<dim>::faces_per_cell; f++) {
+		feFaceValues.reinit(cell, f);
+		std::map<size_t, size_t> resultForFaceF;
+		for (size_t i = 0; i < m_fe->dofs_per_cell; i++) {
+			int unique = 0;
+			for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
+				if (feFaceValues.shape_value(i, q) > 1e-10) {
+					assert(fabs(feFaceValues.shape_value(i, q) - 1) < 1e-10);
+					unique += 1;
+					resultForFaceF.insert(std::make_pair(q, i));
+				}
+			}
+// Test, if the relationship doF <-> quadrature points in unique
+			assert(unique <= 1);
+		}
+		result.push_back(resultForFaceF);
+		assert(resultForFaceF.size() == feFaceValues.n_quadrature_points);
+	}
+	return result;
+} /* map_q_index_to_facedofs */
+// The template parameter must be made explicit in order for the code to compile.
+template vector<std::map<size_t, size_t> > DataMinLee2011<2>::map_q_index_to_facedofs() const;
+template vector<std::map<size_t, size_t> > DataMinLee2011<3>::map_q_index_to_facedofs() const;
 
 template<size_t dim>
 void DataMinLee2011<dim>::stream() {
@@ -520,10 +538,12 @@ void DataMinLee2011<dim>::reassemble() {
 // Initialize Finite Element ////
 /////////////////////////////////
 // Define update flags (which values have to be known at each cell, face, neighbor face)
-	const dealii::UpdateFlags cellUpdateFlags = update_values | update_gradients
+const dealii::UpdateFlags cellUpdateFlags =  update_values | update_gradients
+
 			| update_quadrature_points | update_JxW_values
 			| update_inverse_jacobians;
-	const dealii::UpdateFlags faceUpdateFlags = update_values
+const dealii::UpdateFlags faceUpdateFlags =  update_values
+
 			| update_quadrature_points | update_JxW_values
 			| update_normal_vectors;
 	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
@@ -572,11 +592,11 @@ void DataMinLee2011<dim>::reassemble() {
 
 		// assemble faces and put together
 		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-			// calculate local diagonal block (cell) matrix -D
+// calculate local diagonal block (cell) matrix -D
 			calculateAndDistributeLocalStiffnessMatrix(i,
 					localDerivativeMatrices, localSystemMatrix, localDoFIndices,
 					dofs_per_cell);
-			// calculate face contributions  R
+// calculate face contributions  R
 			assembleAndDistributeLocalFaceMatrices(i, cell, feFaceValues,
 					feSubfaceValues, feNeighborFaceValues, dofs_per_cell,
 					n_quadrature_points, localFaceMatrix);
