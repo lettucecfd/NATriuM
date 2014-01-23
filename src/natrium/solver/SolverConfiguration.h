@@ -17,8 +17,8 @@ namespace natrium {
 /**
  * @short Implemented streaming data types
  */
-enum StreamingDataType {
-	Streaming_MinLee2011
+enum AdvectionOperatorType {
+	Advection_SEDGMinLee
 };
 
 /**
@@ -46,7 +46,7 @@ class SolverConfiguration {
 private:
 
 	/// Streaming data type (e.g. MinLee2011)
-	StreamingDataType m_streamingDataType;
+	AdvectionOperatorType m_advectionOperatorType;
 
 	/// Collision type (e.g. BGKTransformed)
 	CollisionType m_collisionType;
@@ -60,6 +60,8 @@ private:
 	/// Time step size
 	double m_timeStep;
 
+	size_t m_numberOfTimeSteps;
+
 	/// Order of finite element
 	size_t m_orderOfFiniteElement;
 
@@ -71,7 +73,7 @@ public:
 	SolverConfiguration(){
 		// TODO read configuration from file
 		// TODO custom configurations
-		m_streamingDataType = Streaming_MinLee2011;
+		m_advectionOperatorType = Advection_SEDGMinLee;
 		m_collisionType = Collision_BGKTransformed;
 		m_stencilType = Stencil_D2Q9;
 		m_timeIntegratorType = Integrator_RungeKutta5LowStorage;
@@ -120,13 +122,6 @@ public:
 		m_stencilType = stencilType;
 	}
 
-	StreamingDataType getStreamingDataType() const {
-		return m_streamingDataType;
-	}
-
-	void setStreamingDataType(StreamingDataType streamingDataType) {
-		m_streamingDataType = streamingDataType;
-	}
 
 	double getTimeStep() const {
 		return m_timeStep;
@@ -150,6 +145,22 @@ public:
 
 	void setTimeIntegratorType(TimeIntegratorType timeIntegratorType) {
 		m_timeIntegratorType = timeIntegratorType;
+	}
+
+	AdvectionOperatorType getAdvectionOperatorType() const {
+		return m_advectionOperatorType;
+	}
+
+	void setAdvectionOperatorType(AdvectionOperatorType advectionOperatorType) {
+		m_advectionOperatorType = advectionOperatorType;
+	}
+
+	size_t getNumberOfTimeSteps() const {
+		return m_numberOfTimeSteps;
+	}
+
+	void setNumberOfTimeSteps(size_t numberOfTimeSteps) {
+		m_numberOfTimeSteps = numberOfTimeSteps;
 	}
 };
 

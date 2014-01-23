@@ -203,7 +203,7 @@ public:
 	virtual void stream();
 
 	/// get global system matrix
-	const vector<distributed_sparse_matrix>& getSystemMatrix() const {
+	virtual const vector<distributed_sparse_matrix>& getSystemMatrix() const {
 		return m_systemMatrix;
 	}
 

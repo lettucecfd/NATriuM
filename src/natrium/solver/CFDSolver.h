@@ -70,37 +70,7 @@ public:
 	/// constructor
 	/// @note: has to be inlined, if the template parameter is not made explicit
 	CFDSolver(shared_ptr<SolverConfiguration> configuration,
-			shared_ptr<ProblemDescription<dim> > problemDescription) {
-
-		/// check if problem and solver configuration fit together
-		configuration->checkProblem(problemDescription);
-		m_problemDescription = problemDescription;
-		m_configuration = configuration;
-
-		/// Build streaming data object
-		if (Streaming_MinLee2011 == configuration->getStreamingDataType()) {
-/*			m_streamingData = make_shared<DataMinLee2011<dim> >(
-					m_problemDescription->getTriangulation(),
-					configuration->getOrderOfFiniteElement());
-*/		}
-
-		/// Build boltzmann model
-		if (Stencil_D2Q9 == configuration->getStencilType()) {
-			m_boltzmannModel = make_shared<D2Q9IncompressibleModel>();
-		}
-
-		/// Build collision model
-		if (Collision_BGKTransformed == configuration->getCollisionType()){
-			m_collisionModel = make_shared<BGKTransformed>(m_problemDescription->getRelaxationParameter(), m_boltzmannModel);
-		}
-
-		/// Build time integrator
-		/*if (Integrator_RungeKutta5LowStorage == configuration->getTimeIntegratorType()){
-			m_timeIntegrator = make_shared<RungeKutta5LowStorage>();
-		}*/
-
-	}
-	;
+			shared_ptr<ProblemDescription<dim> > problemDescription) ;
 
 /// destructor
 	virtual ~CFDSolver() {
@@ -108,14 +78,28 @@ public:
 	;
 
 	/**
+	 * @short Advection in all directions
+	 */
+	void stream();
+
+	/**
+	 *  @short Low-level collide function
+	 */
+	void collide();
+
+	/**
+	 * @short reassembly of all matrices
+	 */
+	void reassemble();
+
+	/**
 	 * @short run CFD solver
 	 */
-	void run(){};
+	void run();
 
-};
+}
+;
 
 } /* namespace natrium */
-
-
 
 #endif /* CFDSOLVER_H_ */

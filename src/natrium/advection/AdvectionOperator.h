@@ -32,6 +32,7 @@ public:
 	virtual void stream() = 0;
 	// TODO is blas installed with dealii? installing blas will speed up the streaming step
 
+	virtual const vector<distributed_sparse_matrix>& getSystemMatrix() const = 0;
 };
 
 } /* namespace natrium */

@@ -45,6 +45,15 @@ public:
 	 */
 	virtual void collide(vector<double>& distributions) const;
 
+
+	/**
+	 * @short virtual function for collision
+	 * @param[in] doF the doF index for which collision is done
+	 * @param[in] feq the vector of local equilibrium distributions
+	 * @param[in] f the vector of global distribution functions
+	 */
+	virtual void collide(size_t doF, const vector<double>& feq, vector<distributed_vector>& f);
+
 };
 
 } /* namespace natrium */

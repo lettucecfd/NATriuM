@@ -1,5 +1,5 @@
 /**
- * @file step-1.cpp
+ * @file step-3.cpp
  * @short First tutorial:  Couette Flow in 2D
  * @date 24.10.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
