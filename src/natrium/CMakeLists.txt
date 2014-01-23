@@ -11,7 +11,7 @@ file(   GLOB_RECURSE
         collisionmodels/*
         problemdescription/*
         solver/*
-        streamingdata/*
+        advection/*
         timeintegration/*
         utilites/*
         )

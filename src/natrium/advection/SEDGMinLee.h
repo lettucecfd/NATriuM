@@ -1,13 +1,13 @@
 /**
- * @file DataMinLee2011.h
- * @short Global data which is used by Min and Lee (2011): A spectral-elemennt discontinuous
+ * @file SEDGMinLee.h
+ * @short Advection operator proposed by Min and Lee (2011): A spectral-elemennt discontinuous
  *        Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-259.
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#ifndef DATAMINLEE2011_H_
-#define DATAMINLEE2011_H_
+#ifndef SEDGMINLEE_H_
+#define SEDGMINLEE_H_
 
 #include <map>
 
@@ -17,7 +17,7 @@
 #include "deal.II/lac/sparse_matrix.h"
 #include "deal.II/base/quadrature_lib.h"
 
-#include "StreamingData.h"
+#include "AdvectionOperator.h"
 #include "../problemdescription/BoundaryCollection.h"
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../utilities/BasicNames.h"
@@ -30,7 +30,7 @@ namespace natrium {
  *         gradient matrices Dx, Dy, (Dz) and boundary matrix R
  * @tparam dim The dimension of the flow (2 or 3).
  */
-template<size_t dim> class DataMinLee2011: public StreamingData<dim> {
+template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {
 
 private:
 
@@ -185,13 +185,13 @@ public:
 	 * @param[in] orderOfFiniteElement The number of nodes element and dimension
 	 * @param[in] boltzmannModel the DQ model
 	 */
-	DataMinLee2011(shared_ptr<dealii::Triangulation<dim> > triangulation,
+	SEDGMinLee(shared_ptr<dealii::Triangulation<dim> > triangulation,
 			shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement,
 			shared_ptr<BoltzmannModel> boltzmannModel, bool useCentralFlux = false);
 
 	/// destructor
-	virtual ~DataMinLee2011() {
+	virtual ~SEDGMinLee() {
 		m_doFHandler->clear();
 	}
 	;
@@ -246,4 +246,4 @@ public:
 
 } /* namespace natrium */
 
-#endif /* DATAMINLEE2011_H_ */
+#endif /* SEDGMINLEE_H_ */

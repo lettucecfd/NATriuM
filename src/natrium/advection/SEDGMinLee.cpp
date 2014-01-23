@@ -1,11 +1,11 @@
 /**
- * @file DataMinLee2011.cpp
- * @short 
+ * @file SEDGMinLee.cpp
+ * @short Advection scheme proposed by Min and Lee (2011)
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "DataMinLee2011.h"
+#include "SEDGMinLee.h"
 
 #include "fstream"
 
@@ -23,7 +23,7 @@ using namespace dealii;
 namespace natrium {
 
 template<size_t dim>
-DataMinLee2011<dim>::DataMinLee2011(
+SEDGMinLee<dim>::SEDGMinLee(
 		shared_ptr<Triangulation<dim> > triangulation,
 		shared_ptr<BoundaryCollection<dim> > boundaries,
 		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
@@ -52,21 +52,21 @@ DataMinLee2011<dim>::DataMinLee2011(
 
 	// assemble system
 	reassemble();
-} /* DataMinLee2011<dim>::DataMinLee2011 */
+} /* SEDGMinLee<dim>::SEDGMinLee */
 /// The template parameter must be made explicit in order for the code to compile
-template DataMinLee2011<2>::DataMinLee2011(
+template SEDGMinLee<2>::SEDGMinLee(
 		shared_ptr<Triangulation<2> > triangulation,
 		shared_ptr<BoundaryCollection<2> > boundaries,
 		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
 		bool useCentralFlux);
-template DataMinLee2011<3>::DataMinLee2011(
+template SEDGMinLee<3>::SEDGMinLee(
 		shared_ptr<Triangulation<3> > triangulation,
 		shared_ptr<BoundaryCollection<3> > boundaries,
 		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
 		bool useCentralFlux);
 
 template<size_t dim>
-void DataMinLee2011<dim>::updateSparsityPattern() {
+void SEDGMinLee<dim>::updateSparsityPattern() {
 
 	//make sparse matrix
 	CompressedSparsityPattern cSparse(m_doFHandler->n_dofs());
@@ -125,12 +125,12 @@ void DataMinLee2011<dim>::updateSparsityPattern() {
 
 } /* updateSparsityPattern */
 // The template parameter has to be made expicit in order for the code to compile
-template void DataMinLee2011<2>::updateSparsityPattern();
+template void SEDGMinLee<2>::updateSparsityPattern();
 //TODO generalize to 3D
-//template void DataMinLee2011<3>::updateSparsityPattern();
+//template void SEDGMinLee<3>::updateSparsityPattern();
 
 template<size_t dim>
-void DataMinLee2011<dim>::assembleLocalMassMatrix(
+void SEDGMinLee<dim>::assembleLocalMassMatrix(
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
 		size_t n_q_points, vector<double> &massMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs) {
@@ -152,17 +152,17 @@ void DataMinLee2011<dim>::assembleLocalMassMatrix(
 	}
 } /*assembleLocalMassMatrix*/
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::assembleLocalMassMatrix(
+template void SEDGMinLee<2>::assembleLocalMassMatrix(
 		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
 		size_t n_q_points, vector<double> &massMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs);
-template void DataMinLee2011<3>::assembleLocalMassMatrix(
+template void SEDGMinLee<3>::assembleLocalMassMatrix(
 		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
 		size_t n_q_points, vector<double> &massMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs);
 
 template<size_t dim>
-void DataMinLee2011<dim>::assembleLocalDerivativeMatrices(
+void SEDGMinLee<dim>::assembleLocalDerivativeMatrices(
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
 		size_t n_q_points,
 		vector<dealii::FullMatrix<double> >&derivativeMatrix) const {
@@ -186,17 +186,17 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrices(
 
 } /* assembleLocalDerivativeMatrix */
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::assembleLocalDerivativeMatrices(
+template void SEDGMinLee<2>::assembleLocalDerivativeMatrices(
 		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
 		size_t n_q_points,
 		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
-template void DataMinLee2011<3>::assembleLocalDerivativeMatrices(
+template void SEDGMinLee<3>::assembleLocalDerivativeMatrices(
 		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
 		size_t n_q_points,
 		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 template<size_t dim>
-void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
+void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
@@ -248,13 +248,13 @@ void DataMinLee2011<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 
 } /* assembleLocalFaceMatrix */
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::assembleAndDistributeLocalFaceMatrices(
+template void SEDGMinLee<2>::assembleAndDistributeLocalFaceMatrices(
 		size_t i, typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
 		dealii::FEFaceValues<2>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
-template void DataMinLee2011<3>::assembleAndDistributeLocalFaceMatrices(
+template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(
 		size_t i, typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
@@ -262,7 +262,7 @@ template void DataMinLee2011<3>::assembleAndDistributeLocalFaceMatrices(
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
 
 template<size_t dim>
-void DataMinLee2011<dim>::divideByDiagonalMassMatrix(
+void SEDGMinLee<dim>::divideByDiagonalMassMatrix(
 		distributed_sparse_matrix& matrix,
 		const distributed_vector& massMatrix) {
 	size_t n = massMatrix.size();
@@ -276,14 +276,14 @@ void DataMinLee2011<dim>::divideByDiagonalMassMatrix(
 	}
 }
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::divideByDiagonalMassMatrix(
+template void SEDGMinLee<2>::divideByDiagonalMassMatrix(
 		distributed_sparse_matrix& matrix,
 		const distributed_vector& massMatrix);
-template void DataMinLee2011<3>::divideByDiagonalMassMatrix(
+template void SEDGMinLee<3>::divideByDiagonalMassMatrix(
 		distributed_sparse_matrix& matrix,
 		const distributed_vector& massMatrix);
 
-template<> void DataMinLee2011<2>::calculateAndDistributeLocalStiffnessMatrix(
+template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t i, const vector<dealii::FullMatrix<double> >& derivativeMatrices,
 		dealii::FullMatrix<double> &systemMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
@@ -301,7 +301,7 @@ template<> void DataMinLee2011<2>::calculateAndDistributeLocalStiffnessMatrix(
 					systemMatrix(j, k));
 		}
 }
-template<> void DataMinLee2011<3>::calculateAndDistributeLocalStiffnessMatrix(
+template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t i, const vector<dealii::FullMatrix<double> >& derivativeMatrices,
 		dealii::FullMatrix<double> &systemMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
@@ -321,7 +321,7 @@ template<> void DataMinLee2011<3>::calculateAndDistributeLocalStiffnessMatrix(
 }
 
 template<size_t dim>
-void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
+void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t direction,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
@@ -398,7 +398,7 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 
 } /* assembleAndDistributeInternalFace */
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::assembleAndDistributeInternalFace(
+template void SEDGMinLee<2>::assembleAndDistributeInternalFace(
 		size_t direction,
 		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		size_t faceNumber,
@@ -406,7 +406,7 @@ template void DataMinLee2011<2>::assembleAndDistributeInternalFace(
 		size_t neighborFaceNumber, dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
 		dealii::FEFaceValues<2>& feNeighborFaceValues);
-template void DataMinLee2011<3>::assembleAndDistributeInternalFace(
+template void SEDGMinLee<3>::assembleAndDistributeInternalFace(
 		size_t direction,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		size_t faceNumber,
@@ -416,7 +416,7 @@ template void DataMinLee2011<3>::assembleAndDistributeInternalFace(
 		dealii::FEFaceValues<3>& feNeighborFaceValues);
 
 template<size_t dim>
-std::map<size_t, size_t> natrium::DataMinLee2011<dim>::map_celldofs_to_q_index() const {
+std::map<size_t, size_t> natrium::SEDGMinLee<dim>::map_celldofs_to_q_index() const {
 	const dealii::UpdateFlags cellUpdateFlags = update_values
 			| update_quadrature_points;
 	// Finite Element
@@ -445,11 +445,11 @@ std::map<size_t, size_t> natrium::DataMinLee2011<dim>::map_celldofs_to_q_index()
 	return result;
 }
 // The template parameter must be made explicit in order for the code to compile.
-template std::map<size_t, size_t> DataMinLee2011<2>::map_celldofs_to_q_index() const;
-template std::map<size_t, size_t> DataMinLee2011<3>::map_celldofs_to_q_index() const;
+template std::map<size_t, size_t> SEDGMinLee<2>::map_celldofs_to_q_index() const;
+template std::map<size_t, size_t> SEDGMinLee<3>::map_celldofs_to_q_index() const;
 
 template<size_t dim>
-vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_facedofs_to_q_index() const {
+vector<std::map<size_t, size_t> > natrium::SEDGMinLee<dim>::map_facedofs_to_q_index() const {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
 	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
@@ -480,11 +480,11 @@ vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_facedofs_to_
 	return result;
 }
 // The template parameter must be made explicit in order for the code to compile.
-template vector<std::map<size_t, size_t> > DataMinLee2011<2>::map_facedofs_to_q_index() const;
-template vector<std::map<size_t, size_t> > DataMinLee2011<3>::map_facedofs_to_q_index() const;
+template vector<std::map<size_t, size_t> > SEDGMinLee<2>::map_facedofs_to_q_index() const;
+template vector<std::map<size_t, size_t> > SEDGMinLee<3>::map_facedofs_to_q_index() const;
 
 template<size_t dim>
-vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_q_index_to_facedofs() const {
+vector<std::map<size_t, size_t> > natrium::SEDGMinLee<dim>::map_q_index_to_facedofs() const {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
 	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
@@ -515,18 +515,18 @@ vector<std::map<size_t, size_t> > natrium::DataMinLee2011<dim>::map_q_index_to_f
 	return result;
 } /* map_q_index_to_facedofs */
 // The template parameter must be made explicit in order for the code to compile.
-template vector<std::map<size_t, size_t> > DataMinLee2011<2>::map_q_index_to_facedofs() const;
-template vector<std::map<size_t, size_t> > DataMinLee2011<3>::map_q_index_to_facedofs() const;
+template vector<std::map<size_t, size_t> > SEDGMinLee<2>::map_q_index_to_facedofs() const;
+template vector<std::map<size_t, size_t> > SEDGMinLee<3>::map_q_index_to_facedofs() const;
 
 template<size_t dim>
-void DataMinLee2011<dim>::stream() {
+void SEDGMinLee<dim>::stream() {
 }
 // The template parameter must be made explicit in order for the code to compile.
-template void DataMinLee2011<2>::stream();
-template void DataMinLee2011<3>::stream();
+template void SEDGMinLee<2>::stream();
+template void SEDGMinLee<3>::stream();
 
 template<size_t dim>
-void DataMinLee2011<dim>::reassemble() {
+void SEDGMinLee<dim>::reassemble() {
 // TODO: if Triangulation changed: reinit dof-handler and sparsity pattern in some way
 
 /////////////////////////////////
@@ -601,7 +601,7 @@ void DataMinLee2011<dim>::reassemble() {
 	}
 }
 /// The template parameter must be made explicit in order for the code to compile
-template void DataMinLee2011<2>::reassemble();
-template void DataMinLee2011<3>::reassemble();
+template void SEDGMinLee<2>::reassemble();
+template void SEDGMinLee<3>::reassemble();
 
 } /* namespace natrium */

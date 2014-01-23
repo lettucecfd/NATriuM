@@ -1,15 +1,19 @@
 /**
- * @file DataMinLee2011_test.cpp
+ * @file SEDGMinLee_test.cpp
  * @short 
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "streamingdata/DataMinLee2011.h"
+#include "advection/SEDGMinLee.h"
 
 #include <fstream>
 #include <map>
 #include "complex.h"
+#include <cstring>
+#include <string>
+#include <dirent.h>
+#include <sys/stat.h>
 
 #include "boost/test/unit_test.hpp"
 
@@ -31,43 +35,67 @@
 ///////////////////////////////
 ///////////////////////////////
 // FLAGS TO SWITCH OUTPUT ON //
-//#define CREATE_DATA_FILES // This takes a lot of time (~1h)
-//#define PRINT_SYSTEM_MATRIX
-//#define EULER_OUT
-//#define RK5_OUT
+// #define CREATE_DATA_FILES // This takes a lot of time (~1h)
+// #define PRINT_SYSTEM_MATRIX
+// #define EULER_OUT
+// #define RK5_OUT
 ///////////////////////////////
 ///////////////////////////////
 
 namespace natrium {
 
-BOOST_AUTO_TEST_SUITE(DataMinLee2011_test)
+BOOST_AUTO_TEST_SUITE(SEDGMinLee_test)
 
-BOOST_AUTO_TEST_CASE(DataMinLee2011_Construction_test) {
-	cout << "DataMinLee2011_Construction_test..." << endl;
+BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
+	cout << "SEDGMinLee_Construction_test..." << endl;
 
 	size_t fe_order = 2;
 	size_t refinementLevel = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	BOOST_CHECK_NO_THROW(
-			DataMinLee2011<2> streaming(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9IncompressibleModel>()));
+			SEDGMinLee<2> streaming(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9IncompressibleModel>()));
 
 	cout << "done." << endl;
-} /* DataMinLee2011_Construction_test */
+} /* SEDGMinLee_Construction_test */
 
-BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
-	cout << "DataMinLee2011_systemMatrix_test..." << endl;
+BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
+	cout << "SEDGMinLee_systemMatrix_test..." << endl;
+
+	// Make results dir
+	std::string directory = "../results";
+	if (mkdir(directory.c_str(), 0777) == -1) {
+		if (errno != EEXIST) {
+			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
+		}
+	}
 
 	bool useLaxFlux = true;
 	do { // useCentralFlux = true/false
 #ifdef CREATE_DATA_FILES
-	for (size_t fe_order = 3; fe_order < 9; fe_order+=2) {
+	// Make results dir
+	std::string dirname("../results/maxeigenvalue_advection");
+	if (mkdir(dirname.c_str(), 0777) == -1) {
+		if (errno != EEXIST) {
+			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
+		}
+	}
+
+	// Make results dir 2
+	std::string dirname2("../results/eigenvalues_advection");
+	if (mkdir(dirname2.c_str(), 0777) == -1) {
+		if (errno != EEXIST) {
+			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
+		}
+	}
+
+	for (size_t fe_order = 3; fe_order <= 9; fe_order+=2) {
 		// create files for max eigenvalue diagram
 		std::stringstream maxEigenvalueFilename;
-		maxEigenvalueFilename << "../results/maxeigenvalue_advection/";
-		if (!LaxFlux) {
-			maxEigenvalueFilename << "maxeigenvalue_cflux_";
+		maxEigenvalueFilename << dirname;
+		if (!useLaxFlux) {
+			maxEigenvalueFilename << "/maxeigenvalue_cflux_";
 		} else {
-			maxEigenvalueFilename << "maxeigenvalue_laxflux_";
+			maxEigenvalueFilename << "/maxeigenvalue_laxflux_";
 		}
 		maxEigenvalueFilename << "feorder_" << fe_order << ".dat";
 		cout << maxEigenvalueFilename.str().c_str() << "..." << endl;
@@ -75,10 +103,10 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
 #else
 		for (size_t fe_order = 2; fe_order < 3; fe_order++) {
 #endif
-			for (size_t refinementLevel = 3; refinementLevel < 4;
+			for (size_t refinementLevel = 1; refinementLevel < 3;
 					refinementLevel++) {
 				PeriodicTestDomain2D periodic(refinementLevel);
-				DataMinLee2011<2> streaming(periodic.getTriangulation(),
+				SEDGMinLee<2> streaming(periodic.getTriangulation(),
 						periodic.getBoundaries(), fe_order,
 						make_shared<D2Q9IncompressibleModel>(), !useLaxFlux);
 				const vector<distributed_sparse_matrix>& matrices =
@@ -98,11 +126,11 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
 #ifdef CREATE_DATA_FILES
 					// create files for spectrum plots
 					std::stringstream filename;
-					filename << "../results/eigenvalues_advection/";
+					filename << dirname2;
 					if (!useLaxFlux) {
-						filename << "cflux_";
+						filename << "/cflux_";
 					} else {
-						filename << "laxflux_";
+						filename << "/laxflux_";
 					}
 					filename << "refine_" << refinementLevel << "_order_"
 					<< fe_order << "_matrix_" << i << "_spectrum.dat";
@@ -123,7 +151,8 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
 					// check eigenvalues (the real part must vanish for central flux, the absolute value must be in the same order of magnitude as delta x)
 					double max_eigenvalue = 0;
 					for (size_t j = 0; j < systemMatrix.n_cols(); j++) {
-						std::complex<double> eigenValue;
+						std::
+						complex<double> eigenValue;
 						eigenValue = systemMatrix.eigenvalue(j);
 						BOOST_CHECK(eigenValue.real() < 0.1);
 						//BOOST_CHECK(eigenValue.imag() < 1.0);
@@ -160,16 +189,16 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
 
 	cout << "done." << endl;
 }
-/* DataMinLee2011_systemMatrix_test */
+/* SEDGMinLee_systemMatrix_test */
 
-BOOST_AUTO_TEST_CASE(DataMinLee2011_steadyStreaming_test) {
-	cout << "DataMinLee2011_steadyStreaming_test..." << endl;
+BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
+	cout << "SEDGMinLee_steadyStreaming_test..." << endl;
 
 	size_t refinementLevel = 3;
 	size_t fe_order = 3;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	DataMinLee2011<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices =
@@ -206,16 +235,16 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_steadyStreaming_test) {
 	}
 
 	cout << "done." << endl;
-} /* DataMinLee2011_steadyStreaming_test */
+} /* SEDGMinLee_steadyStreaming_test */
 
-BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
-	cout << "DataMinLee2011_streaming_test..." << endl;
+BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
+	cout << "SEDGMinLee_streaming_test..." << endl;
 
 	size_t refinementLevel = 3;
 	size_t fe_order = 3;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	DataMinLee2011<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>());
 	const vector<distributed_sparse_matrix>& matrices =
@@ -252,11 +281,21 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
 	advectionMatrix.copy_from(matrices.at(3));
 	advectionMatrix *= timeStep;
 	distributed_vector f_tmp(streaming.getSystemMatrix().at(0).n());
+
+	// Make results dir
+#ifdef EULER_OUT
+	std::string dirname("../results/expliciteuler_periodicstreaming");
+	if (mkdir(dirname.c_str(), 0777) == -1) {
+		if (errno != EEXIST) {
+			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
+		}
+	}
+#endif
 	for (size_t i = 0; i < numberOfTimeSteps; i++) {
 #ifdef EULER_OUT
 		// output
 		std::stringstream str;
-		str << "../results/expliciteuler_periodicstreaming/t_" << i << ".dat";
+		str << dirname << "/t_" << i << ".dat";
 		std::string filename = str.str();
 		std::ofstream gnuplot_output (filename.c_str());
 		dealii::DataOut<2> data_out;
@@ -286,18 +325,18 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
 	// NOTE: mass is not conserved exactly for explicit euler (but up to 5 percent)
 
 	cout << "done." << endl;
-} /* DataMinLee2011_streaming_test */
+} /* SEDGMinLee_streaming_test */
 
 /*
- BOOST_AUTO_TEST_CASE(DataMinLee2011_unique_dofs_test) {
+ BOOST_AUTO_TEST_CASE(SEDGMinLee_unique_dofs_test) {
  // Test if the unique relation between degrees of freedom and quadrature nodes is OK
 
- cout << "DataMinLee2011_unique_dofs_test..." << endl;
+ cout << "SEDGMinLee_unique_dofs_test..." << endl;
  // Create problem
  size_t refinementLevel = 1;
  size_t fe_order = 3;
  PeriodicTestDomain2D periodic(refinementLevel);
- DataMinLee2011<2> streaming(periodic.getTriangulation(),
+ SEDGMinLee<2> streaming(periodic.getTriangulation(),
  periodic.getBoundaries(), fe_order,
  make_shared<D2Q9IncompressibleModel>());
 
@@ -341,10 +380,10 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_streaming_test) {
  }
 
  cout << "done" << endl;
- }  DataMinLee2011_unique_dofs_test */
+ }  SEDGMinLee_unique_dofs_test */
 
-BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
-	cout << "DataMinLee2011_RKstreaming_test..." << endl;
+BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
+	cout << "SEDGMinLee_RKstreaming_test..." << endl;
 /// THIS WILL SHOW, if streaming is really correct
 
 	/// relaxationParamter and velocity have no impact; just needed for construction
@@ -353,7 +392,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	DataMinLee2011<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>(), useCentralFlux);
 	const vector<distributed_sparse_matrix>& matrices =
@@ -396,11 +435,20 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 	advectionMatrix.reinit(streaming.getSparsityPattern());
 	advectionMatrix.copy_from(matrices.at(3));
 	RungeKutta5LowStorage RK5(timeStep, f.size());
+#ifdef RK5_OUT
+	// Make results dir
+		std::string dirname("../results/rk5_periodicstreaming");
+		if (mkdir(dirname.c_str(), 0777) == -1) {
+			if (errno != EEXIST) {
+				cerr << "Fehler in mkdir: " << strerror(errno) << endl;
+			}
+		}
+#endif
 	for (size_t i = 0; i < numberOfTimeSteps; i++) {
 #ifdef RK5_OUT
 		// output
 		std::stringstream str;
-		str << "../results/rk5_periodicstreaming/t_" << i << ".dat";
+		str <<dirname << "/t_" << i << ".dat";
 		std::string filename = str.str();
 		std::ofstream gnuplot_output(filename.c_str());
 		dealii::DataOut<2> data_out;
@@ -460,7 +508,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_RKstreaming_test) {
 	BOOST_CHECK(distToInitialMidPoint < 0.15);
 
 	cout << "done." << endl;
-} /* DataMinLee2011_RKstreaming_test */
+} /* SEDGMinLee_RKstreaming_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 

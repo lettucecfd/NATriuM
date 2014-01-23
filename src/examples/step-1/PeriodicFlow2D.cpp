@@ -13,11 +13,11 @@
 
 #include "problemdescription/PeriodicBoundary.h"
 
-using dealii::GridGenerator;
+using namespace dealii::GridGenerator;
 
 namespace natrium {
 
-PeriodicDomain2D::PeriodicFlow2D(double relaxationParameter, numeric_vector& velocity) :
+PeriodicFlow2D::PeriodicFlow2D(double relaxationParameter, const numeric_vector& velocity) :
 		ProblemDescription<2>(makeGrid(), relaxationParameter) {
 
 	/// apply boundary values
@@ -31,14 +31,14 @@ PeriodicDomain2D::PeriodicFlow2D(double relaxationParameter, numeric_vector& vel
 	setConstantInitialDensity(1.0);
 }
 
-PeriodicDomain2D::~PeriodicDomain2D() {
+PeriodicFlow2D::~PeriodicFlow2D() {
 }
 
-shared_ptr<Triangulation<2> > PeriodicDomain2D::makeGrid() {
+shared_ptr<Triangulation<2> > PeriodicFlow2D::makeGrid() {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
-	GridGenerator::hyper_cube(*unitSquare, 0, 1);
+	hyper_cube(*unitSquare, 0, 1);
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell = unitSquare->begin_active();
@@ -53,7 +53,7 @@ shared_ptr<Triangulation<2> > PeriodicDomain2D::makeGrid() {
 	return unitSquare;
 }
 
-shared_ptr<BoundaryCollection<2> > PeriodicDomain2D::makeBoundaries() {
+shared_ptr<BoundaryCollection<2> > PeriodicFlow2D::makeBoundaries() {
 
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<

@@ -26,7 +26,7 @@ class PeriodicFlow2D: public ProblemDescription<2> {
 public:
 
 	/// constructor
-	PeriodicFlow2D(double relaxationParameter, numeric_vector& velocity);
+	PeriodicFlow2D(double relaxationParameter, const numeric_vector& velocity);
 
 	/// destructor
 	virtual ~PeriodicFlow2D();

@@ -10,8 +10,8 @@
 
 #include "../problemdescription/ProblemDescription.h"
 
-#include "../streamingdata/StreamingData.h"
-#include "../streamingdata/DataMinLee2011.h"
+#include "../advection/AdvectionOperator.h"
+#include "../advection/SEDGMinLee.h"
 
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../boltzmannmodels/D2Q9IncompressibleModel.h"
@@ -38,11 +38,20 @@ template<size_t dim> class CFDSolver {
 
 private:
 
+	/// particle distribution functions
+	vector<distributed_vector> m_f;
+
+	/// macroscopic density
+	distributed_vector m_density;
+
+	/// macroscopic velocity
+	vector<distributed_vector> m_velocity;
+
 	/// description of the CFD problem (boundraries, initial values, etc.)
 	shared_ptr<ProblemDescription<dim> > m_problemDescription;
 
 	/// global streaming data
-	shared_ptr<StreamingData<dim> > m_streamingData;
+	shared_ptr<AdvectionOperator<dim> > m_advectionOperator;
 
 	/// DdQq Boltzmann model (e.g. D2Q9)
 	shared_ptr<BoltzmannModel> m_boltzmannModel;

@@ -13,9 +13,9 @@ set(    PROBLEMDESCRIPTION_TEST
         problemdescription/BoundaryTools_test.cpp
         )   
 set(    STREAMINGDATA_TEST
-        streamingdata/DataMinLee2011_test.cpp
-        streamingdata/PeriodicTestDomain2D.h
-        streamingdata/PeriodicTestDomain2D.cpp
+        advection/SEDGMinLee_test.cpp
+        advection/PeriodicTestDomain2D.h
+        advection/PeriodicTestDomain2D.cpp
         )     
 set(    TIMEINTEGRATION_TEST
         timeintegration/RungeKutta5LowStorage_test.cpp
