@@ -130,8 +130,8 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
 						if (!useLaxFlux) {
 							BOOST_CHECK(fabs(eigenValue.real()) < 1e-10);
 						}
-						if (fabs(eigenValue) > max_eigenvalue) {
-							max_eigenvalue = fabs(eigenValue);
+						if (abs(eigenValue) > max_eigenvalue) {
+							max_eigenvalue = abs(eigenValue);
 						}
 					}
 					if (i != 0) {
