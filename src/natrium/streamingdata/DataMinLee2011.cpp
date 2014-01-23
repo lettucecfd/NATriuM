@@ -138,27 +138,14 @@ void DataMinLee2011<dim>::assembleLocalMassMatrix(
 	// TODO the fill operation can be cut out in the final implementation,
 	// changing the += in the loop to =
 	std::fill(massMatrix.begin(), massMatrix.end(), 0.0);
+
 	// fill diagonal "matrix"
-	for (size_t i = 0; i < dofs_per_cell; ++i)
-		// TODO the inner for loop can be cut out in final implementation
-		for (size_t j = 0; j < dofs_per_cell; ++j) {
-			// TODO nonDiagonalElement is just for testing; cut out in final implementation
-			double nonDiagonalElement = 0.0;
-			// TODO the most inner loop can be cut out in the final implementation as the
-			// shape values are 0 for all nodes except the base node
-			for (size_t q_point = 0; q_point < n_q_points; ++q_point) {
-				if (i != j) {
-					nonDiagonalElement += feValues.shape_value(i, q_point)
-							* feValues.shape_value(j, q_point)
-							* feValues.JxW(q_point);
-				} else {
-					massMatrix.at(i) += feValues.shape_value(i, q_point)
-							* feValues.shape_value(j, q_point)
-							* feValues.JxW(q_point);
-				}
-			}
-			assert(abs(nonDiagonalElement) < 1e-15);
-		}
+	for (size_t i = 0; i < dofs_per_cell; i++) {
+		size_t q_point = m_celldof_to_q_index.at(i);
+		massMatrix.at(i) += feValues.shape_value(i, q_point)
+				* feValues.shape_value(i, q_point) * feValues.JxW(q_point);
+	}
+
 	// Assemble to global mass matrix
 	for (size_t i = 0; i < dofs_per_cell; i++) {
 		m_massMatrix(globalDoFs.at(i)) = massMatrix.at(i);
@@ -182,17 +169,16 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrices(
 	for (size_t i = 0; i < dim; i++) {
 		derivativeMatrix.at(i) = 0;
 	}
-
 	for (size_t i = 0; i < dofs_per_cell; i++) {
 		for (size_t j = 0; j < dofs_per_cell; j++) {
-			for (size_t q_point = 0; q_point < n_q_points; q_point++) {
-				Tensor<1, dim> integrandAtQ;
-				integrandAtQ = feValues.shape_grad(j, q_point);
-				integrandAtQ *= (feValues.shape_value(i, q_point)
-						* feValues.JxW(q_point));
-				for (size_t k = 0; k < dim; k++) {
-					derivativeMatrix.at(k)(i, j) += integrandAtQ[k];
-				}
+			// the shape value is zero for all q, except i<->q
+			size_t q_point = m_celldof_to_q_index.at(i);
+			Tensor<1, dim> integrandAtQ;
+			integrandAtQ = feValues.shape_grad(j, q_point);
+			integrandAtQ *= (feValues.shape_value(i, q_point)
+					* feValues.JxW(q_point));
+			for (size_t k = 0; k < dim; k++) {
+				derivativeMatrix.at(k)(i, j) += integrandAtQ[k];
 			}
 
 		}
@@ -379,10 +365,9 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 		if (m_useCentralFlux) {
 
 			cellFaceMatrix(thisDoF, thisDoF) = 0.5 * factor.at(q);
-			neighborFaceMatrix(thisDoF, neighborDoF) = 0.5* factor.at(q);
+			neighborFaceMatrix(thisDoF, neighborDoF) = 0.5 * factor.at(q);
 
-		}
-		else if (exn < 0) { // otherwise: no contributions
+		} else if (exn < 0) { // otherwise: no contributions
 
 			cellFaceMatrix(thisDoF, thisDoF) = factor.at(q);
 			neighborFaceMatrix(thisDoF, neighborDoF) = -factor.at(q);
@@ -548,14 +533,12 @@ void DataMinLee2011<dim>::reassemble() {
 // Initialize Finite Element ////
 /////////////////////////////////
 // Define update flags (which values have to be known at each cell, face, neighbor face)
-const dealii::UpdateFlags cellUpdateFlags =  update_values | update_gradients
+	const dealii::UpdateFlags cellUpdateFlags = update_values | update_gradients
 
-			| update_quadrature_points | update_JxW_values
-			| update_inverse_jacobians;
-const dealii::UpdateFlags faceUpdateFlags =  update_values
+	| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
+	const dealii::UpdateFlags faceUpdateFlags = update_values
 
-			| update_quadrature_points | update_JxW_values
-			| update_normal_vectors;
+	| update_quadrature_points | update_JxW_values | update_normal_vectors;
 	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
 			| update_JxW_values | update_normal_vectors;
 // Finite Element
