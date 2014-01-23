@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
 		// create files for max eigenvalue diagram
 		std::stringstream maxEigenvalueFilename;
 		maxEigenvalueFilename << "../results/maxeigenvalue_advection/";
-		if (useCentralFlux) {
+		if (!LaxFlux) {
 			maxEigenvalueFilename << "maxeigenvalue_cflux_";
 		} else {
 			maxEigenvalueFilename << "maxeigenvalue_laxflux_";
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(DataMinLee2011_systemMatrix_test) {
 					// create files for spectrum plots
 					std::stringstream filename;
 					filename << "../results/eigenvalues_advection/";
-					if (useCentralFlux) {
+					if (!useLaxFlux) {
 						filename << "cflux_";
 					} else {
 						filename << "laxflux_";
