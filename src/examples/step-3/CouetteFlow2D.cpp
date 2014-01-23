@@ -13,7 +13,7 @@
 
 #include "problemdescription/PeriodicBoundary.h"
 
-using dealii::GridGenerator;
+using namespace dealii::GridGenerator;
 
 namespace natrium {
 
@@ -40,7 +40,7 @@ shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid() {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
-	GridGenerator::hyper_cube(*unitSquare, 0, 1);
+	hyper_cube(*unitSquare, 0, 1);
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell = unitSquare->begin_active();
