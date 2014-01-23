@@ -14,8 +14,8 @@ set(    PROBLEMDESCRIPTION_TEST
         )   
 set(    STREAMINGDATA_TEST
         streamingdata/DataMinLee2011_test.cpp
-        streamingdata/PeriodicFlow2D.h
-        streamingdata/PeriodicFlow2D.cpp
+        streamingdata/PeriodicTestDomain2D.h
+        streamingdata/PeriodicTestDomain2D.cpp
         )     
 set(    TIMEINTEGRATION_TEST
         timeintegration/RungeKutta5LowStorage_test.cpp

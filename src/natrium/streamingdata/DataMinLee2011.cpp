@@ -26,10 +26,10 @@ template<size_t dim>
 DataMinLee2011<dim>::DataMinLee2011(
 		shared_ptr<Triangulation<dim> > triangulation,
 		shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel) :
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		bool useCentralFlux) :
 		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_boltzmannModel(
-				boltzmannModel) {
-	m_orderOfFiniteElement = orderOfFiniteElement;
+				boltzmannModel), m_useCentralFlux(useCentralFlux) {
 	// make dof handler
 	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement);
 	m_faceQuadrature = make_shared<QGaussLobatto<dim - 1> >(
@@ -57,11 +57,13 @@ DataMinLee2011<dim>::DataMinLee2011(
 template DataMinLee2011<2>::DataMinLee2011(
 		shared_ptr<Triangulation<2> > triangulation,
 		shared_ptr<BoundaryCollection<2> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel);
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		bool useCentralFlux);
 template DataMinLee2011<3>::DataMinLee2011(
 		shared_ptr<Triangulation<3> > triangulation,
 		shared_ptr<BoundaryCollection<3> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel);
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		bool useCentralFlux);
 
 template<size_t dim>
 void DataMinLee2011<dim>::updateSparsityPattern() {
@@ -180,6 +182,7 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrices(
 	for (size_t i = 0; i < dim; i++) {
 		derivativeMatrix.at(i) = 0;
 	}
+
 	for (size_t i = 0; i < dofs_per_cell; i++) {
 		for (size_t j = 0; j < dofs_per_cell; j++) {
 			for (size_t q_point = 0; q_point < n_q_points; q_point++) {
@@ -191,8 +194,10 @@ void DataMinLee2011<dim>::assembleLocalDerivativeMatrices(
 					derivativeMatrix.at(k)(i, j) += integrandAtQ[k];
 				}
 			}
+
 		}
 	}
+
 } /* assembleLocalDerivativeMatrix */
 // The template parameter must be made explicit in order for the code to compile.
 template void DataMinLee2011<2>::assembleLocalDerivativeMatrices(
@@ -371,11 +376,16 @@ void DataMinLee2011<dim>::assembleAndDistributeInternalFace(size_t direction,
 			factor.at(i) *= exn;
 		}
 
-		if (exn < 0) { // otherwise: no contributions
+		if (m_useCentralFlux) {
+
+			cellFaceMatrix(thisDoF, thisDoF) = 0.5 * factor.at(q);
+			neighborFaceMatrix(thisDoF, neighborDoF) = 0.5* factor.at(q);
+
+		}
+		else if (exn < 0) { // otherwise: no contributions
 
 			cellFaceMatrix(thisDoF, thisDoF) = factor.at(q);
 			neighborFaceMatrix(thisDoF, neighborDoF) = -factor.at(q);
-
 		}
 	}
 
