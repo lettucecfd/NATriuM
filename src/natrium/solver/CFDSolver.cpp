@@ -62,53 +62,7 @@ template void CFDSolver<3>::stream();
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
-	size_t n_dofs = m_f.at(0).size();
-	size_t Q = m_boltzmannModel->getQ();
-	//for all degrees of freedom
-	for (size_t i = 0; i < n_dofs; i++) {
-
-		// calculate density
-		m_density(i) = 0;
-		for (size_t j = 0; j < Q; j++) {
-			m_density(i) += m_f.at(j)(i);
-		}
-
-		// calculate velocity
-		// for all velocity components
-		for (size_t j = 0; j < dim; j++) {
-			m_velocity.at(j)(i) = 0;
-			for (size_t k = 0; k < Q; k++) {
-				// check that the components of the direction vectors are in fact ints
-				assert(std::modf(m_boltzmannModel->getDirection(k)(j), 0) == 0.0);
-				switch (int(m_boltzmannModel->getDirection(k)(j))) {
-				case 0:
-					break;
-				case 1:
-					m_velocity.at(j)(i) += m_f.at(k)(i);
-					break;
-				case -1:
-					m_velocity.at(j)(i) -= m_f.at(k)(i);
-					break;
-				default:
-					m_velocity.at(j)(i) += m_f.at(k)(i)
-							* m_boltzmannModel->getDirection(k)(j);
-				}
-			}
-			m_velocity.at(j)(i) /= m_density(j);
-		}
-
-		// calculate equilibrium distribution
-		// TODO Optimize by passing different arguments
-		vector<double> feq(Q);
-		numeric_vector u(dim);
-		for (size_t j = 0; j < dim; j++) {
-			u(j) = m_velocity.at(j)(i);
-		}
-		m_boltzmannModel->getEquilibriumDistributions(feq, u, m_density(i));
-
-		// BGK collision
-		m_collisionModel->collide(i, feq, m_f);
-	}
+	m_collisionModel->collideAll(m_f, m_density, m_velocity);
 }
 template void CFDSolver<2>::collide();
 template void CFDSolver<3>::collide();

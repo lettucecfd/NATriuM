@@ -34,6 +34,8 @@ void BoltzmannModel::getEquilibriumDistributions(vector<double>& feq,
 		const numeric_vector& u, const double rho) const {
 
 	assert(feq.size() == m_q);
+	assert(u.size() == 2);
+	assert(rho > 0);
 
 	for (size_t i = 0; i < m_q; i++){
 		feq.at(i) = getEquilibriumDistribution(i,u,rho);

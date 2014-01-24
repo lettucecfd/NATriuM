@@ -43,7 +43,7 @@ public:
 	 * @short function for collision
 	 * @param[in/out] distributions the particle distribution functions
 	 */
-	virtual void collide(vector<double>& distributions) const;
+	virtual void collideSinglePoint(vector<double>& distributions) const;
 
 
 	/**
@@ -52,7 +52,7 @@ public:
 	 * @param[in] feq the vector of local equilibrium distributions
 	 * @param[in] f the vector of global distribution functions
 	 */
-	virtual void collide(size_t doF, const vector<double>& feq, vector<distributed_vector>& f);
+	virtual void collideSingleDoF(size_t doF, const vector<double>& feq, vector<distributed_vector>& f) const;
 
 };
 

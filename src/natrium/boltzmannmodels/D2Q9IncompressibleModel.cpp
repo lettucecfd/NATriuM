@@ -37,6 +37,8 @@ double D2Q9IncompressibleModel::getEquilibriumDistribution(size_t i,
 	assert(rho > 0);
 	assert(i >= 0);
 	assert(u.size() == D);
+	assert(u(0) < 1000000000000000.);
+	assert(u(1) < 1000000000000000.);
 
 	double prefactor = getWeight(i) * rho;
 	double uSquareTerm  = - Math::scalar_product(u, u)/(2*speedOfSoundSquare);

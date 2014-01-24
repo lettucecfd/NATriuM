@@ -25,7 +25,7 @@ BGKTransformed::~BGKTransformed() {
 /* @note: this function is not used in the code, because it would require
  * to create the distributions vector for each dof
  */
-void BGKTransformed::collide(vector<double>& distributions) const {
+void BGKTransformed::collideSinglePoint(vector<double>& distributions) const {
 
 	// assert
 	assert(distributions.size() == m_q);
@@ -46,8 +46,8 @@ void BGKTransformed::collide(vector<double>& distributions) const {
 
 } //collide
 
-void BGKTransformed::collide(size_t doF, const vector<double>& feq,
-		vector<distributed_vector>& f) {
+void BGKTransformed::collideSingleDoF(size_t doF, const vector<double>& feq,
+		vector<distributed_vector>& f) const {
 	for (size_t j = 0; j < m_q; j++) {
 		f.at(j)(doF) += m_prefactor * (f.at(j)(doF) - feq.at(j));
 	}

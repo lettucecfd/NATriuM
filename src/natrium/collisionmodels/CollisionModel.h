@@ -14,7 +14,6 @@
 
 #include "../utilities/BasicNames.h"
 
-
 namespace natrium {
 
 /** @short Abstract class for the description of collision schemes.
@@ -41,7 +40,8 @@ public:
 	 * @short constructor
 	 * @param[in] relaxationParameter relaxation parameter tau
 	 */
-	CollisionModel(double relaxationParameter, boost::shared_ptr<BoltzmannModel> boltzmannModel);
+	CollisionModel(double relaxationParameter,
+			boost::shared_ptr<BoltzmannModel> boltzmannModel);
 
 	/// destructor
 	virtual ~CollisionModel();
@@ -50,7 +50,7 @@ public:
 	 * @short virtual function for collision
 	 * @param[in/out] distributions the particle distribution functions
 	 */
-	virtual void collide(vector<double>& distributions) const = 0;
+	virtual void collideSinglePoint(vector<double>& distributions) const = 0;
 
 	/**
 	 * @short virtual function for collision
@@ -58,7 +58,18 @@ public:
 	 * @param[in] feq the vector of local equilibrium distributions
 	 * @param[in] f the vector of global distribution functions
 	 */
-	virtual void collide(size_t doF, const vector<double>& feq, vector<distributed_vector>& f) = 0;
+	virtual void collideSingleDoF(size_t doF, const vector<double>& feq,
+			vector<distributed_vector>& f) const = 0;
+
+	/**
+	 * @short function for collision
+	 * @short f the global vectors of discrete particle distribution functions
+	 * @short densities the global vector of densities
+	 * @short velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ]
+	 */
+	void collideAll(vector<distributed_vector>& f,
+			distributed_vector& densities,
+			vector<distributed_vector>& velocities) const;
 
 	/// get relaxation parameter
 	double getRelaxationParameter() const {
