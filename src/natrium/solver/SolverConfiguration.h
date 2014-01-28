@@ -79,6 +79,7 @@ public:
 		m_timeIntegratorType = Integrator_RungeKutta5LowStorage;
 		m_timeStep = 1.0;
 		m_orderOfFiniteElement = 1;
+		m_numberOfTimeSteps = 100;
 	};
 
 	/// destructor
