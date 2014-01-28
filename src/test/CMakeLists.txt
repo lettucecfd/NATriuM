@@ -12,11 +12,16 @@ set(    PROBLEMDESCRIPTION_TEST
         problemdescription/PeriodicBoundary1D_test.cpp
         problemdescription/BoundaryTools_test.cpp
         )   
-set(    STREAMINGDATA_TEST
+set(    ADVECTION_TEST
         advection/SEDGMinLee_test.cpp
         advection/PeriodicTestDomain2D.h
         advection/PeriodicTestDomain2D.cpp
         )     
+set(	SOLVER_TEST
+		solver/CFDSolver_test.cpp
+		solver/PeriodicTestFlow2D.h
+		solver/PeriodicTestFlow2D.cpp		
+		)        
 set(    TIMEINTEGRATION_TEST
         timeintegration/RungeKutta5LowStorage_test.cpp
         )
@@ -33,7 +38,8 @@ set(    TESTS
         ${BOLTZMANNMODELS_TEST}
         ${COLLISIONMODELS_TEST}
         ${PROBLEMDESCRIPTION_TEST}
-        ${STREAMINGDATA_TEST}
+        ${ADVECTION_TEST}
+        ${SOLVER_TEST}
         ${TIMEINTEGRATION_TEST}
         ${UTILITIES_TEST}
                 
