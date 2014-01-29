@@ -13,7 +13,7 @@
 
 #include "problemdescription/PeriodicBoundary.h"
 
-using namespace dealii::GridGenerator;
+using dealii::GridGenerator::hyper_cube;
 
 namespace natrium {
 

@@ -18,7 +18,7 @@
 #include "utilities/BasicNames.h"
 
 using dealii::Triangulation;
-using namespace dealii::GridGenerator;
+using dealii::GridGenerator::hyper_cube;
 
 namespace natrium {
 
