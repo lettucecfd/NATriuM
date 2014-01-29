@@ -10,7 +10,6 @@
 #include "fstream"
 
 #include <deal.II/lac/compressed_sparsity_pattern.h>
-#include <deal.II/dofs/dof_tools.h>
 #include <deal.II/dofs/dof_renumbering.h>
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
@@ -30,6 +29,9 @@ SEDGMinLee<dim>::SEDGMinLee(
 		bool useCentralFlux) :
 		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_boltzmannModel(
 				boltzmannModel), m_useCentralFlux(useCentralFlux) {
+	// assertions
+	assert(orderOfFiniteElement >= 2);
+
 	// make dof handler
 	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement);
 	m_faceQuadrature = make_shared<QGaussLobatto<dim - 1> >(

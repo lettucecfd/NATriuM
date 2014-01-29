@@ -8,6 +8,8 @@
 #ifndef CFDSOLVER_H_
 #define CFDSOLVER_H_
 
+#include <exception>
+
 #include "../problemdescription/ProblemDescription.h"
 
 #include "../advection/AdvectionOperator.h"
@@ -27,6 +29,23 @@
 #include "SolverConfiguration.h"
 
 namespace natrium {
+
+/**
+ * @short Exception class for CFDSolver
+ */
+class CFDSolverException: public std::exception {
+private:
+	std::string message;
+public:
+	CFDSolverException(const char *msg) :
+			message(msg) {
+	}
+	~CFDSolverException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
 
 /** @short The central class for the CFD simulation based on the DBE.
  *  @note  The CFDSolver itself is quite static but it contains interchangeable modules, e.g. for the
@@ -70,7 +89,7 @@ public:
 	/// constructor
 	/// @note: has to be inlined, if the template parameter is not made explicit
 	CFDSolver(shared_ptr<SolverConfiguration> configuration,
-			shared_ptr<ProblemDescription<dim> > problemDescription) ;
+			shared_ptr<ProblemDescription<dim> > problemDescription);
 
 /// destructor
 	virtual ~CFDSolver() {
@@ -97,6 +116,22 @@ public:
 	 */
 	void run();
 
+	/**
+	 * @short create output data and write to file
+	 */
+	void output(size_t iteration);
+
+	const distributed_vector& getDensity() const {
+		return m_density;
+	}
+
+	const vector<distributed_vector>& getF() const {
+		return m_f;
+	}
+
+	const vector<distributed_vector>& getVelocity() const {
+		return m_velocity;
+	}
 }
 ;
 

@@ -15,7 +15,6 @@
 
 using dealii::Triangulation;
 
-
 namespace natrium {
 
 /** @short Description of a simple Couette Flow (regular channel flow in square domain).
@@ -31,6 +30,27 @@ public:
 
 	/// destructor
 	virtual ~CouetteFlow2D();
+
+	/**
+	 * @short set initial densities
+	 * @param[out] initialDensities vector of densities; to be filled
+	 * @param[in] supportPoints the coordinates associated with each degree of freedom
+	 */
+	virtual void applyInitialDensities(distributed_vector& initialDensities,
+			vector<dealii::Point<2> >& supportPoints) const {
+	}
+	;
+
+	/**
+	 * @short set initial velocities
+	 * @param[out] initialVelocities vector of velocities; to be filled
+	 * @param[in] supportPoints the coordinates associated with each degree of freedom
+	 */
+	virtual void applyInitialVelocities(
+			vector<distributed_vector>& initialVelocities,
+			vector<dealii::Point<2> >& supportPoints) const {
+	}
+	;
 
 private:
 

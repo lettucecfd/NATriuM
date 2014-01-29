@@ -27,10 +27,6 @@ CouetteFlow2D::CouetteFlow2D(double relaxationParameter,
 	/// set initial velocities to zero
 	/// The numeric_vector is a dealii::Vector; The size-constructor applies the default value (0.0) to all components.
 	numeric_vector initialVelocity(2);
-	setConstantInitialVelocity(initialVelocity);
-
-	/// set initial densities to 1.0
-	setConstantInitialDensity(1.0);
 }
 
 CouetteFlow2D::~CouetteFlow2D() {

@@ -38,6 +38,31 @@ enum TimeIntegratorType {
 };
 
 
+/**
+ * @short the numerical flux used to calculate the advection operator
+ */
+enum FluxType {
+	Flux_LaxFriedrichs,
+	Flux_Central
+};
+
+/**
+ * @short Exception class for CFDSolver
+ */
+class ConfigurationException: public std::exception {
+private:
+	std::string message;
+public:
+	ConfigurationException(const char *msg) :
+			message(msg) {
+	}
+	~ConfigurationException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
 
 /** @short Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE).
  *  @tparam dim The dimension of the flow (2 or 3).
@@ -57,15 +82,20 @@ private:
 	/// Time Integrator type (e.g. RK5LowStorage)
 	TimeIntegratorType m_timeIntegratorType;
 
+	/// Numerical Flux
+	FluxType m_fluxType;
+
 	/// Time step size
 	double m_timeStep;
 
+	/// Number of time steps
 	size_t m_numberOfTimeSteps;
 
 	/// Order of finite element
 	size_t m_orderOfFiniteElement;
 
-	///
+	/// Output directory
+	std::string m_outputDirectory;
 
 public:
 
@@ -77,9 +107,11 @@ public:
 		m_collisionType = Collision_BGKTransformed;
 		m_stencilType = Stencil_D2Q9;
 		m_timeIntegratorType = Integrator_RungeKutta5LowStorage;
-		m_timeStep = 1.0;
-		m_orderOfFiniteElement = 1;
+		m_fluxType = Flux_LaxFriedrichs;
+		m_timeStep = 0.1;
+		m_orderOfFiniteElement = 2;
 		m_numberOfTimeSteps = 100;
+		m_outputDirectory = "../results/test";
 	};
 
 	/// destructor
@@ -162,6 +194,22 @@ public:
 
 	void setNumberOfTimeSteps(size_t numberOfTimeSteps) {
 		m_numberOfTimeSteps = numberOfTimeSteps;
+	}
+
+	FluxType getFluxType() const {
+		return m_fluxType;
+	}
+
+	void setFluxType(FluxType fluxType) {
+		m_fluxType = fluxType;
+	}
+
+	const std::string& getOutputDirectory() const {
+		return m_outputDirectory;
+	}
+
+	void setOutputDirectory(const std::string& outputDirectory) {
+		this->m_outputDirectory = outputDirectory;
 	}
 };
 

@@ -23,12 +23,6 @@ PeriodicFlow2D::PeriodicFlow2D(double relaxationParameter, const numeric_vector&
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 
-	/// set initial velocities to zero
-	/// The numeric_vector is a dealii::Vector; The size-constructor applies the default value (0.0) to all components.
-	setConstantInitialVelocity(velocity);
-
-	/// set initial densities to 1.0
-	setConstantInitialDensity(1.0);
 }
 
 PeriodicFlow2D::~PeriodicFlow2D() {

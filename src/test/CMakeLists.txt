@@ -19,8 +19,7 @@ set(    ADVECTION_TEST
         )     
 set(	SOLVER_TEST
 		solver/CFDSolver_test.cpp
-		solver/PeriodicTestFlow2D.h
-		solver/PeriodicTestFlow2D.cpp		
+		solver/PeriodicTestFlow2D.h	
 		)        
 set(    TIMEINTEGRATION_TEST
         timeintegration/RungeKutta5LowStorage_test.cpp

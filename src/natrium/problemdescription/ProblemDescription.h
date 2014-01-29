@@ -29,12 +29,6 @@ private:
 	/// boundary description
 	shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
-	/// initial densities
-	shared_ptr<distributed_vector> m_initialDensities;
-
-	/// initial velocities
-	shared_ptr<vector<shared_ptr<distributed_vector> > > m_initialVelocities;
-
 	/// relaxation parameter
 	double m_relaxationParameter;
 
@@ -56,14 +50,6 @@ public:
 	// GETTER     // SETTER        //
 	/////////////////////////////////
 
-	const shared_ptr<distributed_vector>& getInitialDensities() const {
-		return m_initialDensities;
-	}
-
-	const shared_ptr<vector<distributed_vector> >& getInitialVelocities() const {
-		return m_initialVelocities;
-	}
-
 	double getRelaxationParameter() const {
 		return m_relaxationParameter;
 	}
@@ -76,32 +62,22 @@ public:
 		return m_boundaries;
 	}
 
-	/** @short set initial density
+	/**
+	 * @short set initial densities
+	 * @param[out] initialDensities vector of densities; to be filled
+	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
-	void setInitialDensities(shared_ptr<distributed_vector> initialDensities) {
-		m_initialDensities = initialDensities;
-	}
+	virtual void applyInitialDensities(distributed_vector& initialDensities,
+			vector<dealii::Point<dim> >& supportPoints) const = 0;
 
-	/** @short set constant initial density
+	/**
+	 * @short set initial velocities
+	 * @param[out] initialVelocities vector of velocities; to be filled
+	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
-	void setConstantInitialDensity(double initialDensity) {
-		// TODO implementation
-		// TODO (MPI) different constructor for petsc wrapper vectors
-	}
-
-	/** @short set initial density
-	 */
-	void setInitialVelocities(
-			shared_ptr<vector<distributed_vector> > initialVelocities) {
-		m_initialVelocities = initialVelocities;
-	}
-
-	/** @short set constant initial density
-	 */
-	void setConstantInitialVelocity(const numeric_vector& initialVelocity) {
-		// TODO implementation
-		// TODO (MPI) different constructor for petsc wrapper vectors
-	}
+	virtual void applyInitialVelocities(
+			vector<distributed_vector>& initialVelocities,
+			vector<dealii::Point<dim> >& supportPoints) const = 0;
 
 	void setRelaxationParameter(double relaxationParameter) {
 		m_relaxationParameter = relaxationParameter;
@@ -116,10 +92,8 @@ public:
 		m_boundaries = boundaries;
 	}
 
-
 };
 /* class ProblemDescription */
-
 
 template<size_t dim>
 inline ProblemDescription<dim>::ProblemDescription(

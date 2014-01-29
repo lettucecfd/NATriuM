@@ -14,6 +14,7 @@
 #include "deal.II/grid/tria.h"
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/dofs/dof_handler.h"
+#include <deal.II/dofs/dof_tools.h>
 #include "deal.II/lac/sparse_matrix.h"
 #include "deal.II/base/quadrature_lib.h"
 
@@ -207,7 +208,13 @@ public:
 		return m_systemMatrix;
 	}
 
-	const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
+	virtual void mapDoFsToSupportPoints(vector<dealii::Point<dim> >& supportPoints) const{
+		dealii::DoFTools::map_dofs_to_support_points(m_mapping,
+				*m_doFHandler, supportPoints);
+	}
+
+
+	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
 		return m_doFHandler;
 	}
 
@@ -245,5 +252,6 @@ public:
 };
 
 } /* namespace natrium */
+
 
 #endif /* SEDGMINLEE_H_ */
