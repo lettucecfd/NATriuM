@@ -1,11 +1,11 @@
 /**
- * @file PeriodicFlow2D.cpp
+ * @file PeriodicTestDomain2D.cpp
  * @short 
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "PeriodicFlow2D.h"
+#include "PeriodicTestDomain2D.h"
 
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
@@ -13,26 +13,24 @@
 
 #include "problemdescription/PeriodicBoundary.h"
 
-using dealii::GridGenerator::hyper_cube;
-
 namespace natrium {
 
-PeriodicFlow2D::PeriodicFlow2D(double relaxationParameter, const numeric_vector& velocity) :
-		ProblemDescription<2>(makeGrid(), relaxationParameter) {
+PeriodicTestDomain2D::PeriodicTestDomain2D(size_t globalRefinementLevel) :
+		ProblemDescription<2>(makeGrid(globalRefinementLevel), 1.0) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 
 }
 
-PeriodicFlow2D::~PeriodicFlow2D() {
+PeriodicTestDomain2D::~PeriodicTestDomain2D() {
 }
 
-shared_ptr<Triangulation<2> > PeriodicFlow2D::makeGrid() {
+shared_ptr<Triangulation<2> > PeriodicTestDomain2D::makeGrid(size_t globalRefinementLevel) {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
-	hyper_cube(*unitSquare, 0, 1);
+	dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell = unitSquare->begin_active();
@@ -41,13 +39,13 @@ shared_ptr<Triangulation<2> > PeriodicFlow2D::makeGrid() {
 	cell->face(2)->set_all_boundary_indicators(2);  // top
 	cell->face(3)->set_all_boundary_indicators(3);  // bottom
 
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	unitSquare->refine_global(3);
+	// Refine grid to 2x2 = 4 cells
+	unitSquare->refine_global(globalRefinementLevel);
 
 	return unitSquare;
 }
 
-shared_ptr<BoundaryCollection<2> > PeriodicFlow2D::makeBoundaries() {
+shared_ptr<BoundaryCollection<2> > PeriodicTestDomain2D::makeBoundaries() {
 
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<

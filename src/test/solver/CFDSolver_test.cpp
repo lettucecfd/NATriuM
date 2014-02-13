@@ -19,16 +19,18 @@ BOOST_AUTO_TEST_SUITE(CFDSolver_test)
 
 BOOST_AUTO_TEST_CASE(CFDSolver_CreateTestFlow_test) {
 	cout << "CFDSolver_CreateTestFlow_test..." << endl;
-	double tau = 0.9;
-	SteadyPeriodicTestFlow2D testFlow(tau);
+	double viscosity = 0.9;
+	size_t refinementLevel = 3;
+	SteadyPeriodicTestFlow2D testFlow(viscosity, refinementLevel);
 	cout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
 	cout << "CFDSolver_Construction_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
-	double tau = 0.9;
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(tau);
+	size_t refinementLevel = 3;
+	double viscosity = 0.9;
+	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 	CFDSolver<2> solver(testConfiguration, testFlow);
 	cout << "done" << endl;
 }
@@ -36,8 +38,13 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
 BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 	cout << "CFDSolver_SteadyStreaming_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
-	double tau = 0.9;
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(tau);
+	size_t refinementLevel = 3;
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getOrderOfFiniteElement()-1));
+	testConfiguration->setTimeStep(0.5*deltaX);
+	// set viscosity so that tau = 1
+	double viscosity = 0.5*deltaX/3;
+	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+
 	CFDSolver<2> solver(testConfiguration, testFlow);
 	solver.run();
 	// check results (must be the same as before)
@@ -55,18 +62,23 @@ BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	cout << "CFDSolver_UnsteadyStreaming_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
-	double tau = 0.9;
+	size_t refinementLevel = 3;
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getOrderOfFiniteElement()-1));
+	testConfiguration->setTimeStep(0.5*deltaX);
+	testConfiguration->setNumberOfTimeSteps(100);
+	// set viscosity so that tau = 1
+	double viscosity = deltaX/3;
+	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(tau);
 	CFDSolver<2> solver(testConfiguration, testFlow);
 	solver.run();
-	// check results (must be the same as before)
+	// check results (must be nearly at equilibrium)
 	const distributed_vector& rho = solver.getDensity();
 	const vector<distributed_vector>& v = solver.getVelocity();
 	for (size_t i = 0; i < rho.size(); i++){
-		//BOOST_CHECK(fabs(rho(i) - 1.0) < 1e-5);
-		//BOOST_CHECK(fabs(v.at(0)(i) - 0.1) < 1e-5);
-		//BOOST_CHECK(fabs(v.at(1)(i) - 0.1) < 1e-5);
+		BOOST_CHECK(fabs(rho(i) - 1.0) < 1e-5);
+		BOOST_CHECK(fabs(v.at(0)(i) - 0.0) < 0.02);
+		BOOST_CHECK(fabs(v.at(1)(i) - 0.0) < 0.02);
 	}
 	cout << "done" << endl;
 }

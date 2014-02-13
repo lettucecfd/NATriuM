@@ -43,12 +43,19 @@ public:
 
 	/// (speed of sound)^2
 	static const double speedOfSoundSquare;
-
 	/// constructor
 	D2Q9Model();
 
 	/// destructor
 	virtual ~D2Q9Model();
+
+	virtual double getSpeedOfSound() const {
+		return speedOfSound;
+	}
+	virtual double getSpeedOfSoundSquare() const {
+		return speedOfSoundSquare;
+	}
+
 };
 
 } /* namespace natrium */

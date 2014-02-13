@@ -24,7 +24,7 @@ namespace natrium {
  */
 class own_double_less: public std::binary_function<double, double, bool> {
 public:
-	own_double_less(double arg_ = 1e-7) :
+	own_double_less(double arg_ = 1e-8) :
 			epsilon(arg_) {
 	}
 	bool operator()(const double &left, const double &right) const {
@@ -218,7 +218,7 @@ template<> void PeriodicBoundary<2>::createCellMap(
 					i++) {
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator1) {
-					double key = currentCell->center().distance(m_beginLine1);
+					double key = (currentCell->face(i))->center().distance(m_beginLine1);
 					cellsAtBoundary1.insert(
 							std::make_pair(key,
 									std::make_pair(currentCell,
@@ -226,7 +226,7 @@ template<> void PeriodicBoundary<2>::createCellMap(
 				}
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator2) {
-					double key = currentCell->center().distance(m_beginLine2);
+					double key = (currentCell->face(i))->center().distance(m_beginLine2);
 					cellsAtBoundary2.insert(
 							std::make_pair(key,
 									std::make_pair(currentCell,

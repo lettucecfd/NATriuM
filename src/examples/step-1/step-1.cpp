@@ -13,7 +13,7 @@
 
 #include "utilities/BasicNames.h"
 
-#include "PeriodicFlow2D.h"
+#include "TaylorGreenVortex2D.h"
 
 using namespace natrium;
 
@@ -22,16 +22,24 @@ int main() {
 
 	cout << "Starting NATriuM step-1..." << endl;
 
-	double relaxationParameter = 0.7;
-	numeric_vector velocity(2);
-	velocity(0) = 0.05;
-	velocity(1) = 0.01;
+	size_t refinementLevel = 5;
+	size_t orderOfFiniteElement = 3;
 
-	shared_ptr<ProblemDescription<2> > periodicFlow = make_shared<PeriodicFlow2D>(relaxationParameter, velocity);
 	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
-	//CFDSolver<2> solver(configuration, periodicFlow);
+	double deltaX = 1./(pow(2,refinementLevel)*(configuration->getOrderOfFiniteElement()-1));
+	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
+	configuration->setTimeStep(0.005*deltaX);
+	configuration->setNumberOfTimeSteps(5000);
+	configuration->setOutputDirectory( "../results/step-1-2");
 
-	//solver.run();
+	// set viscosity so that tau = 1
+	double viscosity = 0.1*configuration->getTimeStep()/3.;
+
+	shared_ptr<ProblemDescription<2> > taylorGreen = make_shared<TaylorGreenVortex2D>(viscosity, refinementLevel);
+
+	CFDSolver<2> solver(configuration, taylorGreen);
+
+	solver.run();
 
 	cout << "NATriuM step-1 terminated." << endl;
 

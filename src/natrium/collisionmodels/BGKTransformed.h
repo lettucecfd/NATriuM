@@ -23,6 +23,8 @@ namespace natrium {
 class BGKTransformed: public CollisionModel {
 
 private:
+	/// relaxation parameter
+	double m_relaxationParameter;
 
 	/// prefactor of the collision (- 1/(tau + 0.5))
 	double m_prefactor;
@@ -33,8 +35,8 @@ public:
 	 * @short constructor
 	 * @param[in] relaxationParameter relaxation parameter tau
 	 */
-	BGKTransformed(double relaxationParameter, boost::shared_ptr<BoltzmannModel> boltzmannModel);
-
+	BGKTransformed(double relaxationParameter,
+			boost::shared_ptr<BoltzmannModel> boltzmannModel);
 
 	/// destructor
 	virtual ~BGKTransformed();
@@ -45,14 +47,25 @@ public:
 	 */
 	virtual void collideSinglePoint(vector<double>& distributions) const;
 
-
 	/**
 	 * @short virtual function for collision
 	 * @param[in] doF the doF index for which collision is done
 	 * @param[in] feq the vector of local equilibrium distributions
 	 * @param[in] f the vector of global distribution functions
 	 */
-	virtual void collideSingleDoF(size_t doF, const vector<double>& feq, vector<distributed_vector>& f) const;
+	virtual void collideSingleDoF(size_t doF, const vector<double>& feq,
+			vector<distributed_vector>& f) const;
+
+	/**
+	 * @short calculate relaxation parameter
+	 */
+	static double calculateRelaxationParameter(double viscosity, double timeStepSize,
+			boost::shared_ptr<BoltzmannModel> boltzmannModel) {
+		assert(viscosity > 0.0);
+		assert(timeStepSize > 0.0);
+		return viscosity
+				/ (boltzmannModel->getSpeedOfSoundSquare() * timeStepSize);
+	}
 
 };
 

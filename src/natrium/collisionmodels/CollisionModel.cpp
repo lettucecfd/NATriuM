@@ -12,10 +12,8 @@
 namespace natrium {
 
 // constructor
-CollisionModel::CollisionModel(double relaxationParameter,
-		const boost::shared_ptr<BoltzmannModel> boltzmannModel) :
-		m_relaxationParameter(relaxationParameter), m_boltzmannModel(
-				boltzmannModel), m_d(boltzmannModel->getD()), m_q(
+CollisionModel::CollisionModel(boost::shared_ptr<BoltzmannModel> boltzmannModel) :
+		m_boltzmannModel(boltzmannModel), m_d(boltzmannModel->getD()), m_q(
 				boltzmannModel->getQ()) {
 
 } // constructor
@@ -24,24 +22,24 @@ CollisionModel::~CollisionModel() {
 }
 
 void CollisionModel::collideAll(vector<distributed_vector>& f,
-		distributed_vector& densities, vector<distributed_vector>& velocities) const {
+		distributed_vector& densities,
+		vector<distributed_vector>& velocities) const {
 
 	size_t n_dofs = f.at(0).size();
 	size_t Q = m_boltzmannModel->getQ();
 
-	assert (f.size() == Q);
-	assert (velocities.size() == m_d);
+	assert(f.size() == Q);
+	assert(velocities.size() == m_d);
 
 #ifdef DEBUG
-	for (size_t i = 0; i < Q; i++){
+	for (size_t i = 0; i < Q; i++) {
 		assert (f.at(i).size() == n_dofs);
 	}
 	assert (densities.size() == n_dofs);
-	for (size_t i = 0; i < m_d; i++){
+	for (size_t i = 0; i < m_d; i++) {
 		assert (velocities.at(i).size() == n_dofs);
 	}
 #endif
-
 
 //for all degrees of freedom
 	for (size_t i = 0; i < n_dofs; i++) {
@@ -62,7 +60,7 @@ void CollisionModel::collideAll(vector<distributed_vector>& f,
 				double integer;
 				assert(
 						std::modf(m_boltzmannModel->getDirection(k)(j), &integer)
-								== 0.0);
+						== 0.0);
 #endif
 				switch (int(m_boltzmannModel->getDirection(k)(j))) {
 				case 0:
@@ -78,7 +76,7 @@ void CollisionModel::collideAll(vector<distributed_vector>& f,
 							* m_boltzmannModel->getDirection(k)(j);
 				}
 			}
-			assert ( densities(i) > 1e-10 );
+			assert(densities(i) > 1e-10);
 			velocities.at(j)(i) /= densities(i);
 		}
 

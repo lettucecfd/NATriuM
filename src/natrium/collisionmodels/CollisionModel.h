@@ -21,10 +21,6 @@ namespace natrium {
 class CollisionModel {
 
 protected:
-
-	/// relaxation parameter
-	double m_relaxationParameter;
-
 	/// Boltzmann model (e.g. D2Q9Incompressible)
 	const boost::shared_ptr<BoltzmannModel> m_boltzmannModel;
 
@@ -38,10 +34,11 @@ public:
 
 	/**
 	 * @short constructor
-	 * @param[in] relaxationParameter relaxation parameter tau
+	 * @param[in] viscosity the kinematic viscosity
+	 * @param[in] timeStepSize the size of the time step
+	 * @param[in] boltzmannModel the discrete velocity stencil
 	 */
-	CollisionModel(double relaxationParameter,
-			boost::shared_ptr<BoltzmannModel> boltzmannModel);
+	CollisionModel(boost::shared_ptr<BoltzmannModel> boltzmannModel);
 
 	/// destructor
 	virtual ~CollisionModel();
@@ -70,11 +67,6 @@ public:
 	void collideAll(vector<distributed_vector>& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities) const;
-
-	/// get relaxation parameter
-	double getRelaxationParameter() const {
-		return m_relaxationParameter;
-	}
 
 };
 

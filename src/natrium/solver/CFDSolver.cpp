@@ -36,11 +36,12 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				(configuration->getFluxType() == Flux_Central));
 	}
 
-	/// Build collision model
+	/// Calculate relaxation parameter and build collision model
 	if (Collision_BGKTransformed == configuration->getCollisionType()) {
-		m_collisionModel = make_shared<BGKTransformed>(
-				m_problemDescription->getRelaxationParameter(),
-				m_boltzmannModel);
+		double tau = BGKTransformed::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStep(), m_boltzmannModel);
+		m_collisionModel = make_shared<BGKTransformed>(tau, m_boltzmannModel);
 	}
 
 	/// Build time integrator
@@ -116,7 +117,9 @@ template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
 	for (size_t i = 0; i < N; i++) {
-		//cout << "Iteration " << i << endl;
+		if (i % 100 == 0) {
+			cout << "Iteration " << i << endl;
+		}
 		stream();
 		collide();
 		output(i);

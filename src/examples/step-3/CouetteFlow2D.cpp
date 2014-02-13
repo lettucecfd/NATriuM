@@ -13,13 +13,11 @@
 
 #include "problemdescription/PeriodicBoundary.h"
 
-using dealii::GridGenerator::hyper_cube;
-
 namespace natrium {
 
-CouetteFlow2D::CouetteFlow2D(double relaxationParameter,
+CouetteFlow2D::CouetteFlow2D(double viscosity,
 		double topPlateVelocity) :
-		ProblemDescription<2>(makeGrid(), relaxationParameter) {
+		ProblemDescription<2>(makeGrid(), viscosity) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(topPlateVelocity));
@@ -36,7 +34,7 @@ shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid() {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
-	hyper_cube(*unitSquare, 0, 1);
+	dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell = unitSquare->begin_active();

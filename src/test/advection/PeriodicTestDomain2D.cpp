@@ -13,8 +13,6 @@
 
 #include "problemdescription/PeriodicBoundary.h"
 
-using dealii::GridGenerator::hyper_cube;
-
 namespace natrium {
 
 PeriodicTestDomain2D::PeriodicTestDomain2D(size_t globalRefinementLevel) :
@@ -32,7 +30,7 @@ shared_ptr<Triangulation<2> > PeriodicTestDomain2D::makeGrid(size_t globalRefine
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
-	hyper_cube(*unitSquare, 0, 1);
+	dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell = unitSquare->begin_active();

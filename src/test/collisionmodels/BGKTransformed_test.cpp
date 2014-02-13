@@ -41,9 +41,6 @@ BOOST_AUTO_TEST_CASE(BGKTransformedGetter_test) {
 	double tau = 0.9;
 	BGKTransformed bgkCollision(tau, dqmodel);
 
-	// get relaxation parameter
-	BOOST_CHECK_EQUAL(bgkCollision.getRelaxationParameter(),tau);
-
 	cout << "done" << endl;
 } //BGKTransformedGetter_test
 

@@ -12,8 +12,9 @@ namespace natrium {
 /// constructor
 BGKTransformed::BGKTransformed(double relaxationParameter,
 		boost::shared_ptr<BoltzmannModel> boltzmannModel) :
-		CollisionModel(relaxationParameter, boltzmannModel), m_prefactor(
+		CollisionModel(boltzmannModel), m_relaxationParameter(relaxationParameter), m_prefactor(
 				-1. / (relaxationParameter + 0.5)) {
+
 
 } // constructor
 

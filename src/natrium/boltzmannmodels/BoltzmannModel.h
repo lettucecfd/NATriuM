@@ -208,6 +208,8 @@ public:
 	virtual void getEquilibriumDistributions(vector<double>& feq, const numeric_vector& u,
 			const double rho = 1) const;
 
+	virtual double getSpeedOfSound() const = 0;
+	virtual double getSpeedOfSoundSquare() const = 0;
 
 };
 

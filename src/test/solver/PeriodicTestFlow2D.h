@@ -18,7 +18,6 @@
 #include "utilities/BasicNames.h"
 
 using dealii::Triangulation;
-using dealii::GridGenerator::hyper_cube;
 
 namespace natrium {
 
@@ -28,10 +27,9 @@ namespace natrium {
  */
 class SteadyPeriodicTestFlow2D: public ProblemDescription<2> {
 public:
-
 	/// constructor
-	SteadyPeriodicTestFlow2D(double relaxationParameter) :
-			ProblemDescription<2>(makeGrid(), relaxationParameter) {
+	SteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
+			ProblemDescription<2>(makeGrid(refinementLevel), viscosity) {
 
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
@@ -76,11 +74,11 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid() {
+	shared_ptr<Triangulation<2> > makeGrid(size_t refinementLevel) {
 		//Creation of the principal domain
 		shared_ptr<Triangulation<2> > unitSquare =
 				make_shared<Triangulation<2> >();
-		hyper_cube(*unitSquare, 0, 1);
+		dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 		// Assign boundary indicators to the faces of the "parent cell"
 		Triangulation<2>::active_cell_iterator cell =
@@ -91,7 +89,7 @@ private:
 		cell->face(3)->set_all_boundary_indicators(3);  // bottom
 
 		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-		unitSquare->refine_global(3);
+		unitSquare->refine_global(refinementLevel);
 
 		return unitSquare;
 	}
@@ -124,8 +122,8 @@ private:
 class UnsteadyPeriodicTestFlow2D: public SteadyPeriodicTestFlow2D{
 public:
 	/// constructor
-	UnsteadyPeriodicTestFlow2D(double relaxationParameter) :
-		SteadyPeriodicTestFlow2D(relaxationParameter) {
+	UnsteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
+		SteadyPeriodicTestFlow2D(viscosity, refinementLevel) {
 	}
 	/// destructor
 	virtual ~UnsteadyPeriodicTestFlow2D() {
@@ -145,7 +143,7 @@ public:
 				initialVelocities.at(0).size()
 						== initialVelocities.at(1).size());
 		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-			if (supportPoints.at(i)(1) < 0.5){
+			if ((supportPoints.at(i)(1) > 0.25) and (supportPoints.at(i)(1) < 0.75)){
 				initialVelocities.at(0)(i) = 0.1;
 			} else {
 				initialVelocities.at(0)(i) = -0.1;

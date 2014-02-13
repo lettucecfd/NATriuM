@@ -29,8 +29,8 @@ private:
 	/// boundary description
 	shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
-	/// relaxation parameter
-	double m_relaxationParameter;
+	/// kinematic viscosity
+	double m_viscosity;
 
 public:
 
@@ -40,7 +40,7 @@ public:
 
 	/// constructor
 	ProblemDescription(shared_ptr<dealii::Triangulation<dim> > triangulation,
-			double relaxationParameter);
+			double viscosity);
 
 	///  destructor
 	virtual ~ProblemDescription() {
@@ -49,10 +49,6 @@ public:
 	/////////////////////////////////
 	// GETTER     // SETTER        //
 	/////////////////////////////////
-
-	double getRelaxationParameter() const {
-		return m_relaxationParameter;
-	}
 
 	const shared_ptr<dealii::Triangulation<dim> >& getTriangulation() const {
 		return m_triangulation;
@@ -79,10 +75,6 @@ public:
 			vector<distributed_vector>& initialVelocities,
 			vector<dealii::Point<dim> >& supportPoints) const = 0;
 
-	void setRelaxationParameter(double relaxationParameter) {
-		m_relaxationParameter = relaxationParameter;
-	}
-
 	void setTriangulation(
 			const shared_ptr<dealii::Triangulation<dim> >& triangulation) {
 		m_triangulation = triangulation;
@@ -92,15 +84,23 @@ public:
 		m_boundaries = boundaries;
 	}
 
+	double getViscosity() const {
+		return m_viscosity;
+	}
+
+	void setViscosity(double viscosity) {
+		assert (viscosity > 0.0);
+		m_viscosity = viscosity;
+	}
 };
 /* class ProblemDescription */
 
 template<size_t dim>
 inline ProblemDescription<dim>::ProblemDescription(
 		shared_ptr<dealii::Triangulation<dim> > triangulation,
-		double relaxationParameter) :
-		m_triangulation(triangulation), m_relaxationParameter(
-				relaxationParameter) {
+		double viscosity) :
+		m_triangulation(triangulation), m_viscosity(
+				viscosity) {
 }
 
 } /* namespace natrium */
