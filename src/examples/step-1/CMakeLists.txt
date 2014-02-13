@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        step-1-periodic2D     
+        step-1-taylorGreenVortex
         )
 
 
@@ -13,8 +13,8 @@ set(    TARGET
 #
 ADD_EXECUTABLE( ${TARGET} 
                 step-1.cpp
-                PeriodicFlow2D.h   
-                PeriodicFlow2D.cpp
+                TaylorGreenVortex2D.h   
+                TaylorGreenVortex2D.cpp
                )
 #
 # link natrium library to executable
