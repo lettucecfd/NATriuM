@@ -29,7 +29,7 @@ class SteadyPeriodicTestFlow2D: public ProblemDescription<2> {
 public:
 	/// constructor
 	SteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
-			ProblemDescription<2>(makeGrid(refinementLevel), viscosity) {
+			ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1) {
 
 		/// apply boundary values
 		setBoundaries(makeBoundaries());

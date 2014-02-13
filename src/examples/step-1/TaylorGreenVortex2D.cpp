@@ -16,7 +16,7 @@
 namespace natrium {
 
 TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity, size_t refinementLevel) :
-		ProblemDescription<2>(makeGrid(refinementLevel), viscosity) {
+		ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());

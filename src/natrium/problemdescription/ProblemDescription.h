@@ -32,6 +32,9 @@ private:
 	/// kinematic viscosity
 	double m_viscosity;
 
+	/// characteristic length
+	double m_characteristicLength;
+
 public:
 
 	/////////////////////////////////
@@ -40,7 +43,7 @@ public:
 
 	/// constructor
 	ProblemDescription(shared_ptr<dealii::Triangulation<dim> > triangulation,
-			double viscosity);
+			double viscosity, double characteristicLength);
 
 	///  destructor
 	virtual ~ProblemDescription() {
@@ -98,9 +101,9 @@ public:
 template<size_t dim>
 inline ProblemDescription<dim>::ProblemDescription(
 		shared_ptr<dealii::Triangulation<dim> > triangulation,
-		double viscosity) :
+		double viscosity, double characteristicLength) :
 		m_triangulation(triangulation), m_viscosity(
-				viscosity) {
+				viscosity), m_characteristicLength(characteristicLength) {
 }
 
 } /* namespace natrium */

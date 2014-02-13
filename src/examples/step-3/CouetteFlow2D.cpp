@@ -17,7 +17,7 @@ namespace natrium {
 
 CouetteFlow2D::CouetteFlow2D(double viscosity,
 		double topPlateVelocity) :
-		ProblemDescription<2>(makeGrid(), viscosity) {
+		ProblemDescription<2>(makeGrid(), viscosity, 1) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(topPlateVelocity));
