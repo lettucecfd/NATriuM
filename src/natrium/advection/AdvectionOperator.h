@@ -38,6 +38,8 @@ public:
 
 	virtual void mapDoFsToSupportPoints(vector<dealii::Point<dim> >& supportPoints) const = 0;
 
+	virtual const dealii::MappingQ1<dim>& getMapping() const = 0;
+
 	size_t getNumberOfDoFs() const {
 		return getSystemMatrix().at(0).n();
 	}

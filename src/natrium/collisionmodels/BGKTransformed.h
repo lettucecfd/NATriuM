@@ -56,16 +56,6 @@ public:
 	virtual void collideSingleDoF(size_t doF, const vector<double>& feq,
 			vector<distributed_vector>& f) const;
 
-	/**
-	 * @short calculate relaxation parameter
-	 */
-	static double calculateRelaxationParameter(double viscosity, double timeStepSize,
-			boost::shared_ptr<BoltzmannModel> boltzmannModel) {
-		assert(viscosity > 0.0);
-		assert(timeStepSize > 0.0);
-		return viscosity
-				/ (boltzmannModel->getSpeedOfSoundSquare() * timeStepSize);
-	}
 
 };
 

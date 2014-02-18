@@ -24,7 +24,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// Build boltzmann model
 	if (Stencil_D2Q9 == configuration->getStencilType()) {
-		m_boltzmannModel = make_shared<D2Q9IncompressibleModel>();
+		m_boltzmannModel = make_shared<D2Q9IncompressibleModel>(configuration->getDQScaling());
 	}
 
 	/// Build streaming data object
@@ -37,8 +37,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	}
 
 	/// Calculate relaxation parameter and build collision model
+	double tau = 0.0;
 	if (Collision_BGKTransformed == configuration->getCollisionType()) {
-		double tau = BGKTransformed::calculateRelaxationParameter(
+		tau = BGKTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStep(), m_boltzmannModel);
 		m_collisionModel = make_shared<BGKTransformed>(tau, m_boltzmannModel);
@@ -62,6 +63,20 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	}
 	m_problemDescription->applyInitialDensities(m_density, supportPoints);
 	m_problemDescription->applyInitialVelocities(m_velocity, supportPoints);
+
+
+	// OUTPUT
+	double maxU = getMaxVelocityNorm();
+	cout << "------ NATriuM solver ------" << endl;
+	cout << "viscosity:       " << problemDescription->getViscosity() << " m^2/s" << endl;
+	cout << "char. length:    " << problemDescription->getCharacteristicLength() << " m" << endl;
+	cout << "max |u_0|:       " << maxU * problemDescription->getCharacteristicLength() << " m/s" << endl;
+	cout << "Reynolds number: " << (maxU * problemDescription->getCharacteristicLength()) / problemDescription->getViscosity()  << endl;
+	cout << "Recommended dt:  " << m_collisionModel->calculateOptimalTimeStep(problemDescription->getViscosity(), m_boltzmannModel) << " s" << endl;
+	cout << "Actual dt:       " << configuration->getTimeStep() << " s" << endl;
+	cout << "tau:             " << tau << endl;
+	cout << "----------------------------" << endl;
+
 
 	// Initialize distribution functions
 	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {

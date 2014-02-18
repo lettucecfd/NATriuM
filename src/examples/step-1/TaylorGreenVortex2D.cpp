@@ -42,18 +42,18 @@ void TaylorGreenVortex2D::applyInitialVelocities(
 			initialVelocities.at(0).size()
 					== initialVelocities.at(1).size());
 	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-		initialVelocities.at(0)(i) = cos(supportPoints.at(i)(0))*sin(supportPoints.at(i)(1));
-		initialVelocities.at(1)(i) = sin(supportPoints.at(i)(0))*cos(supportPoints.at(i)(1));
+		initialVelocities.at(0)(i) = analyticVelocity1(supportPoints.at(i), 0);
+		initialVelocities.at(1)(i) = analyticVelocity2(supportPoints.at(i), 0);;
 	}
 }
 
 double TaylorGreenVortex2D::analyticVelocity1(const dealii::Point<2>& x,
-		double t) {
+		double t) const {
 	return sin(x(0))*cos(x(1))*exp(-2*getViscosity()*t);
 }
 
 double TaylorGreenVortex2D::analyticVelocity2(const dealii::Point<2>& x,
-		double t) {
+		double t) const {
 	return cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
 }
 

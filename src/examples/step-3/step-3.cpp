@@ -25,7 +25,7 @@ int main() {
 	double relaxationParameter = 0.7;
 	double topPlateVelocity = 0.05;
 
-	shared_ptr<ProblemDescription<2> > couetteFlow = make_shared<CouetteFlow2D>(relaxationParameter, topPlateVelocity, 1);
+	shared_ptr<ProblemDescription<2> > couetteFlow = make_shared<CouetteFlow2D>(relaxationParameter, topPlateVelocity);
 	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
 	CFDSolver<2> solver(configuration, couetteFlow);
 

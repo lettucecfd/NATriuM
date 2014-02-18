@@ -22,19 +22,18 @@ namespace natrium {
 // ASSIGN STATIC VARIABLES //
 /////////////////////////////
 
-// assign speed of sound
+// assign D and Q
 // has to be done outside the class, because function calls are not allowed in initialization of statics
-const double D2Q9Model::speedOfSound = pow(3, -0.5);
 /// D
 const size_t D2Q9Model::D = 2;
 /// Q
 const size_t D2Q9Model::Q = 9;
-/// (speed of sound)^2
-const double D2Q9Model::speedOfSoundSquare = 1. / 3.;
 
 /// constructor
-D2Q9Model::D2Q9Model():
-		BoltzmannModel(2, 9, makeDirections(), makeWeights(), Stencil_D2Q9){
+D2Q9Model::D2Q9Model(double scaling):
+		BoltzmannModel(2, 9, makeDirections(scaling), makeWeights(), Stencil_D2Q9),
+		m_speedOfSound(scaling*pow(3, -0.5)),
+		m_speedOfSoundSquare(scaling*scaling/3.){
 } //constructor
 
 
@@ -53,10 +52,10 @@ vector<double> D2Q9Model::makeWeights()  {
 
 
 /// make directions
-vector<numeric_vector> D2Q9Model::makeDirections() {
-	const double directionsArray[][2] = { { 0.0, 0.0 }, { 1.0, 0.0 }, { 0.0,
-			1.0 }, { -1.0, 0.0 }, { 0.0, -1.0 }, { 1.0, 1.0 },
-			{ -1.0, 1.0 }, { -1.0, -1.0 }, { 1.0, -1.0 } };
+vector<numeric_vector> D2Q9Model::makeDirections(double scaling) {
+	const double directionsArray[][2] = { { 0.0, 0.0 }, { scaling, 0.0 }, { 0.0,
+			scaling }, { -scaling, 0.0 }, { 0.0, -scaling }, { scaling, scaling },
+			{ -scaling, scaling }, { -scaling, -scaling }, { scaling, -scaling } };
 	vector<numeric_vector> result;
 	for (size_t i = 0; i < Q; i++) {
 		numeric_vector direction(2);

@@ -23,12 +23,20 @@ private:
 	/** @short function to create the vector of directions
 	 *  @return the vector of directions
 	 */
-	vector<numeric_vector> makeDirections();
+	vector<numeric_vector> makeDirections(double scaling);
 
 	/** @short function to create the vector of weights
 	 *  @return the vector of weights
 	 */
 	vector<double> makeWeights();
+
+protected:
+
+	/// speed of sound
+	const double m_speedOfSound;
+
+	/// (speed of sound)^2
+	const double m_speedOfSoundSquare;
 
 public:
 
@@ -38,22 +46,17 @@ public:
 	/// Q
 	static const size_t Q;
 
-	/// speed of sound
-	static const double speedOfSound;
-
-	/// (speed of sound)^2
-	static const double speedOfSoundSquare;
 	/// constructor
-	D2Q9Model();
+	D2Q9Model(double scaling);
 
 	/// destructor
 	virtual ~D2Q9Model();
 
 	virtual double getSpeedOfSound() const {
-		return speedOfSound;
+		return m_speedOfSound;
 	}
 	virtual double getSpeedOfSoundSquare() const {
-		return speedOfSoundSquare;
+		return m_speedOfSoundSquare;
 	}
 
 };

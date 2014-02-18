@@ -68,6 +68,27 @@ public:
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities) const;
 
+	/**
+	 * @short calculate relaxation parameter
+	 */
+	static double calculateRelaxationParameter(double viscosity, double timeStepSize,
+			boost::shared_ptr<BoltzmannModel> boltzmannModel) {
+		assert(viscosity > 0.0);
+		assert(timeStepSize > 0.0);
+		return (viscosity)
+				/ (timeStepSize * boltzmannModel->getSpeedOfSoundSquare());
+	}
+
+	/**
+	 * @short calculate the time step, for which tau = 1
+	 */
+	static double calculateOptimalTimeStep(double viscosity,
+			const boost::shared_ptr<BoltzmannModel> boltzmannModel) {
+		assert(viscosity > 0.0);
+		return viscosity
+				/ boltzmannModel->getSpeedOfSoundSquare();
+	}
+
 };
 
 } /* namespace natrium */

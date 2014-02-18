@@ -56,12 +56,12 @@ void CollisionModel::collideAll(vector<distributed_vector>& f,
 			velocities.at(j)(i) = 0;
 			for (size_t k = 0; k < Q; k++) {
 				// check that the components of the direction vectors are in fact ints
-#ifdef DEBUG
+/*#ifdef DEBUG
 				double integer;
 				assert(
 						std::modf(m_boltzmannModel->getDirection(k)(j), &integer)
 						== 0.0);
-#endif
+#endif*/
 				switch (int(m_boltzmannModel->getDirection(k)(j))) {
 				case 0:
 					break;

@@ -23,7 +23,7 @@ public:
 
 
 	/// constructor
-	D2Q9IncompressibleModel();
+	D2Q9IncompressibleModel(double scaling = 1);
 
 
 	/// destructor

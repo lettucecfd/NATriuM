@@ -94,6 +94,9 @@ private:
 	/// Order of finite element
 	size_t m_orderOfFiniteElement;
 
+	/// scaling of the difference stencil for the discrete particle velocity
+	double m_dQScaling;
+
 	/// Output directory
 	std::string m_outputDirectory;
 
@@ -111,6 +114,7 @@ public:
 		m_timeStep = 0.1;
 		m_orderOfFiniteElement = 2;
 		m_numberOfTimeSteps = 100;
+		m_dQScaling = 1.0;
 		m_outputDirectory = "../results/test";
 	};
 
@@ -210,6 +214,14 @@ public:
 
 	void setOutputDirectory(const std::string& outputDirectory) {
 		this->m_outputDirectory = outputDirectory;
+	}
+
+	double getDQScaling() const {
+		return m_dQScaling;
+	}
+
+	void setDQScaling(double dQScaling) {
+		m_dQScaling = dQScaling;
 	}
 };
 

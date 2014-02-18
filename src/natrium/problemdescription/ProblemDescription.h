@@ -95,6 +95,14 @@ public:
 		assert (viscosity > 0.0);
 		m_viscosity = viscosity;
 	}
+
+	double getCharacteristicLength() const {
+		return m_characteristicLength;
+	}
+
+	void setCharacteristicLength(double characteristicLength) {
+		m_characteristicLength = characteristicLength;
+	}
 };
 /* class ProblemDescription */
 

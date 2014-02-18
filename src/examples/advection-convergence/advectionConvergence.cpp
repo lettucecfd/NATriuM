@@ -9,7 +9,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-#include"advection/SEDGMinLee.h"
+#include "advection/SEDGMinLee.h"
 
 #include "problemdescription/ProblemDescription.h"
 
@@ -107,7 +107,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 // Main function
 int main() {
-	cout << "Starting convergence test for the SEDG advection solver..."
+	cout << "Starting convergence test for the SEDG advection solver.."
 			<< endl;
 
 	// Make results dir
@@ -119,23 +119,29 @@ int main() {
 	}
 	std::ofstream out("../results/advection_convergence/results.txt");
 
-	size_t numberOfTimeSteps = 1;
+	size_t numberOfTimeSteps = 0;
 	out << "#Number of time steps: " << numberOfTimeSteps << endl;
 	out << "#| level | " << "p  | " << "dx    | " << "dt     | "
-			<< "error (2-norm)  | " << "error (p-norm) | " << endl;
+			<< "error (2-norm)  | " << "error (sup-norm) | " << endl;
 
-	//
-	for (size_t refinementLevel = 3; refinementLevel < 7; refinementLevel++) {
-		for (size_t feOrder = 2; feOrder <= 8; feOrder *= 2) {
+
+	for (size_t feOrder = 2; feOrder < 6; feOrder++) {
+		cout << "p = " << feOrder << ", " << endl;
+		for (size_t refinementLevel = 3; refinementLevel < 7;
+				refinementLevel++) {
 			double deltaX = 1. / (pow(2, refinementLevel) * (feOrder - 1));
+			cout << endl << "dx = " << deltaX << ",    " << endl;
 			for (int i = -1; i < 5; i++) {
 				double deltaT = deltaX * pow(0.5, i);
+				cout << "dt = " << deltaT << "; " << endl;
+				numberOfTimeSteps = 0.5/deltaT;
 				std::string result = oneTest(refinementLevel, feOrder, deltaT,
 						numberOfTimeSteps);
 				out << result.c_str() << endl;
 			}
 			out << endl;
 		}
+		cout << endl;
 	}
 
 	cout << "done." << endl;

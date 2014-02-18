@@ -132,6 +132,59 @@ public:
 	const vector<distributed_vector>& getVelocity() const {
 		return m_velocity;
 	}
+
+	const shared_ptr<AdvectionOperator<dim> >& getAdvectionOperator() const {
+		return m_advectionOperator;
+	}
+
+	const shared_ptr<BoltzmannModel>& getBoltzmannModel() const {
+		return m_boltzmannModel;
+	}
+
+	const shared_ptr<CollisionModel>& getCollisionModel() const {
+		return m_collisionModel;
+	}
+
+	const shared_ptr<SolverConfiguration>& getConfiguration() const {
+		return m_configuration;
+	}
+
+	const shared_ptr<ProblemDescription<dim> >& getProblemDescription() const {
+		return m_problemDescription;
+	}
+
+	const shared_ptr<TimeIntegrator>& getTimeIntegrator() const {
+		return m_timeIntegrator;
+	}
+
+	size_t getNumberOfDoFs() const {
+		return m_advectionOperator->getSystemMatrix().at(0).n();
+	}
+
+	double getMaxVelocityNorm() const {
+		double maxnorm = 0.0;
+		for (size_t i = 0; i < getNumberOfDoFs(); i++) {
+			double norm = 0.0;
+			for (size_t j = 0; j < dim; j++) {
+				norm += m_velocity.at(j)(i) * m_velocity.at(j)(i);
+			}
+			if (norm > maxnorm) {
+				maxnorm = norm;
+			}
+		}
+		return sqrt(maxnorm);
+	}
+
+	double getMaxDensityDeviationFrom(double referenceDensity) const {
+		double maxdev = 0.0;
+		for (size_t i = 0; i < getNumberOfDoFs(); i++) {
+			double dev = fabs(m_density(i) - referenceDensity);
+			if (dev > maxdev) {
+				maxdev = dev;
+			}
+		}
+		return maxdev;
+	}
 }
 ;
 

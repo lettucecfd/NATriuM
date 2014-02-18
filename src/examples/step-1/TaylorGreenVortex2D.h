@@ -51,12 +51,12 @@ public:
 	/**
 	 * @short analytic solution of the Taylor-Green vortex, first component of velocity vector
 	 */
-	double analyticVelocity1(const dealii::Point<2>& x, double t);
+	double analyticVelocity1(const dealii::Point<2>& x, double t) const ;
 
 	/**
 	 * @short analytic solution of the Taylor-Green vortex, second component of velocity vector
 	 */
-	double analyticVelocity2(const dealii::Point<2>& x, double t);
+	double analyticVelocity2(const dealii::Point<2>& x, double t) const ;
 
 private:
 

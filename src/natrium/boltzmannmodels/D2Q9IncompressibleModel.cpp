@@ -14,7 +14,8 @@ namespace natrium{
 
 
 /// constructor
-D2Q9IncompressibleModel::D2Q9IncompressibleModel()
+D2Q9IncompressibleModel::D2Q9IncompressibleModel(double scaling):
+		D2Q9Model(scaling)
 {
 }/// constructor
 
@@ -41,11 +42,11 @@ double D2Q9IncompressibleModel::getEquilibriumDistribution(size_t i,
 	assert(u(1) < 1000000000000000.);
 
 	double prefactor = getWeight(i) * rho;
-	double uSquareTerm  = - Math::scalar_product(u, u)/(2*speedOfSoundSquare);
+	double uSquareTerm  = - Math::scalar_product(u, u)/(2*m_speedOfSoundSquare);
 	if (0 == i){
 		return prefactor * (1 + uSquareTerm);
 	}
-	double mixedTerm = Math::scalar_product(u,getDirection(i))/speedOfSoundSquare;
+	double mixedTerm = Math::scalar_product(u,getDirection(i))/m_speedOfSoundSquare;
 	return prefactor * (1 + mixedTerm * (1 + 0.5*(mixedTerm)) + uSquareTerm);
 
 }/// getEquilibriumDistribution
