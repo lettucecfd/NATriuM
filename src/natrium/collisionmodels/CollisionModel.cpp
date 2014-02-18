@@ -49,34 +49,17 @@ void CollisionModel::collideAll(vector<distributed_vector>& f,
 		for (size_t j = 0; j < Q; j++) {
 			densities(i) += f.at(j)(i);
 		}
+		assert(densities(i) > 1e-10);
 
 		// calculate velocity
 		// for all velocity components
 		for (size_t j = 0; j < m_d; j++) {
 			velocities.at(j)(i) = 0;
+
 			for (size_t k = 0; k < Q; k++) {
-				// check that the components of the direction vectors are in fact ints
-/*#ifdef DEBUG
-				double integer;
-				assert(
-						std::modf(m_boltzmannModel->getDirection(k)(j), &integer)
-						== 0.0);
-#endif*/
-				switch (int(m_boltzmannModel->getDirection(k)(j))) {
-				case 0:
-					break;
-				case 1:
-					velocities.at(j)(i) += f.at(k)(i);
-					break;
-				case -1:
-					velocities.at(j)(i) -= f.at(k)(i);
-					break;
-				default:
 					velocities.at(j)(i) += f.at(k)(i)
 							* m_boltzmannModel->getDirection(k)(j);
-				}
 			}
-			assert(densities(i) > 1e-10);
 			velocities.at(j)(i) /= densities(i);
 		}
 
