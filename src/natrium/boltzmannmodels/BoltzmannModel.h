@@ -10,6 +10,7 @@
 
 #include "assert.h"
 
+#include "../utilities/Math.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {

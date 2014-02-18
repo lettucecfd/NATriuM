@@ -13,6 +13,8 @@
 
 #include "problemdescription/PeriodicBoundary.h"
 
+#include "utilities/Math.h"
+
 namespace natrium {
 
 TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity, size_t refinementLevel) :
@@ -65,7 +67,7 @@ shared_ptr<Triangulation<2> > TaylorGreenVortex2D::makeGrid(size_t refinementLev
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > square =
 			make_shared<Triangulation<2> >();
-	dealii::GridGenerator::hyper_cube(*square, 0, 2*PI);
+	dealii::GridGenerator::hyper_cube(*square, 0, 2*Math::PI);
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell =

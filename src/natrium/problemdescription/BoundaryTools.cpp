@@ -6,6 +6,7 @@
  */
 
 #include "BoundaryTools.h"
+#include "../utilities/Math.h"
 
 bool natrium::BoundaryTools::checkParallelLines(
 		const dealii::Point<2>& beginLine1, const dealii::Point<2>& endLine1,
@@ -57,3 +58,100 @@ bool natrium::BoundaryTools::checkParallelLines(
 	}
 	return true;
 }
+
+
+bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
+		size_t boundaryIndicator1, size_t boundaryIndicator2,
+		shared_ptr<dealii::Triangulation<2> > triangulation,
+		dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
+		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
+				std::string& errorMessage) {
+
+	// Make iterators over active faces
+	dealii::Triangulation<2>::active_cell_iterator currentCell =
+			triangulation->begin_active();
+	dealii::Triangulation<2>::active_cell_iterator lastCell =
+			triangulation->end();
+
+	// Make containers for all vertices at the boundary
+	// maps are by default sorted by key;
+	// The key of a point (x,y) is calculated 1000 * x + y
+	// which leads to the fact that the first and last element of the map
+	// define start and end point of the line.
+	std::map<double, dealii::Point<2>, own_double_less> pointsAtBoundary1;
+	std::map<double, dealii::Point<2>, own_double_less> pointsAtBoundary2;
+
+	// iterate over all active faces and store coordinates of vertices in list
+	for (; currentCell != lastCell; ++currentCell) {
+		if (currentCell->at_boundary()) {
+			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
+					i++) {
+				if (currentCell->face(i)->boundary_indicator()
+						== boundaryIndicator1) {
+					for (size_t j = 0;
+							j < dealii::GeometryInfo<2>::vertices_per_face;
+							j++) {
+						double key = 1000. * currentCell->face(i)->vertex(j)[0]
+								+ currentCell->face(i)->vertex(j)[1];
+						pointsAtBoundary1.insert(
+								std::make_pair(key,
+										currentCell->face(i)->vertex(j)));
+					}
+				} else {
+					if (currentCell->face(i)->boundary_indicator()
+							== boundaryIndicator2) {
+						for (size_t j = 0;
+								j < dealii::GeometryInfo<2>::vertices_per_face;
+								j++) {
+							double key = 1000.
+									* currentCell->face(i)->vertex(j)[0]
+									+ currentCell->face(i)->vertex(j)[1];
+							pointsAtBoundary2.insert(
+									std::make_pair(key,
+											currentCell->face(i)->vertex(j)));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// get line edges
+	beginLine1 = pointsAtBoundary1.begin()->second;
+	endLine1 = (--pointsAtBoundary1.end())->second;
+	beginLine2 = pointsAtBoundary2.begin()->second;
+	endLine2 = (--pointsAtBoundary2.end())->second;
+
+	// Make sure that vertices are really on the line
+	// iterate over all active faces and store coordinates of vertices in list
+	std::map<double, dealii::Point<2> >::iterator element;
+	for (element = ++pointsAtBoundary1.begin();
+			element != --pointsAtBoundary1.end(); ++element) {
+		// check if the vertex is really on  line 1
+		dealii::Point<2> line = endLine1 - beginLine1;
+		dealii::Point<2> toPoint = element->second - beginLine1;
+		if (not Math::is_angle_small(line, toPoint)) {
+			std::stringstream s;
+			s << "Not all points with boundary indicator "
+					<< boundaryIndicator1 << " are on a line.";
+			errorMessage = s.str();
+			return false;
+		}
+	}
+	for (element = ++pointsAtBoundary2.begin();
+			element != --pointsAtBoundary2.end(); ++element) {
+		// check if the vertex is really on line
+		dealii::Point<2> line = endLine2 - beginLine2;
+		dealii::Point<2> toPoint = element->second - beginLine2;
+		if (not Math::is_angle_small(line, toPoint)) {
+			std::stringstream s;
+			s << "Not all points with boundary indicator "
+					<< boundaryIndicator2 << " are on a line.";
+			errorMessage = s.str();
+			return false;
+		}
+	}
+
+	return true;
+
+}/* getInterfacialLinesByBoundaryIndicator */

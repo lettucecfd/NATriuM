@@ -32,6 +32,28 @@ bool checkParallelLines(const dealii::Point<2>& beginLine1,
 		const dealii::Point<2>& endLine1, dealii::Point<2>& beginLine2,
 		dealii::Point<2>& endLine2, std::string& errorMessage);
 
+/**
+ * @short Get the positions of the lines that define interfaces from the
+ *        defining Boundary indicators.
+ *
+ *  @param boundaryIndicator1 boundary indicator of interface line 1
+ *  @param boundaryIndicator2 boundary indicator of interface line 2
+ *  @param triangulation A (shared ptr to a) triangulation object (the mesh)
+ *  @param[out] beginLine1 start point of line 1
+ *  @param[out] endLine1 end point of line 1
+ *  @param[out] beginLine2 start point of line 2
+ *  @param[out] endLine2 end point of line 2
+ *  @param[out] errorMessage contains the reason of failure when interfaces are no lines
+ *
+ *  @return true: if the interfaces are lines, false: else
+ */
+bool getInterfacialLinesByBoundaryIndicator(size_t boundaryIndicator1,
+		size_t boundaryIndicator2,
+		shared_ptr<dealii::Triangulation<2> > triangulation,
+		dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
+		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
+		std::string& errorMessage);
+
 }
 
 }

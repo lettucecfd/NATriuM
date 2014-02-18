@@ -18,6 +18,7 @@
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
 
 #include "utilities/BasicNames.h"
+#include "utilities/Math.h"
 
 #include "PeriodicTestDomain2D.h"
 
@@ -44,7 +45,7 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution,
 		}
 		double distance = originalPoint.distance(midPoint);
 		if (distance <= 0.25) {
-			analyticSolution(i) = 1 + 0.1 * cos(PI / 0.5 * distance);
+			analyticSolution(i) = 1 + 0.1 * cos(Math::PI / 0.5 * distance);
 		} else {
 			analyticSolution(i) = 1;
 		}
@@ -106,6 +107,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 }
 
 // Main function
+// Test the dependence between dt,dx,p and the global discretization error
 int main() {
 	cout << "Starting convergence test for the SEDG advection solver.."
 			<< endl;

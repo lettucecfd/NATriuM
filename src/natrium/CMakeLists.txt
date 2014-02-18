@@ -9,7 +9,7 @@ file(   GLOB_RECURSE
         benchmarks/*
         boltzmannmodels/*
         collisionmodels/*
-        problemdescription/*
+        problemdescription/* 
         solver/*
         advection/*
         timeintegration/*

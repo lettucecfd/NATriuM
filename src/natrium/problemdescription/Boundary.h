@@ -33,18 +33,6 @@ public:
 	/// destructor
 	virtual ~Boundary();
 
-	/**
-	 * @short Apply boundaries to the degrees of freedom.
-	 *        This is the central function of the boundary description classes,
-	 *        which is purely virtual (=0) in this abstract class.
-	 *
-	 * @param doFHandler The doFHandler associated with the mesh
-	 * @param constraintMatrix matrix to which constraints are stored
-	 */
-	virtual void applyBoundaryValues(
-			const shared_ptr<dealii::DoFHandler<dim> > doFHandler,
-			shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const = 0;
-
 	/** @short is the boundary a periodic boundary ?
 	 */
 	virtual bool isPeriodic(){

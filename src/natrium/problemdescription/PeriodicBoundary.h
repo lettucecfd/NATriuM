@@ -10,7 +10,6 @@
 
 #include <exception>
 #include <string>
-#include <functional>
 #include <map>
 
 #include "deal.II/base/point.h"
@@ -90,26 +89,6 @@ private:
 	 */
 	void checkInterfacePositions();
 
-	/**
-	 * @short Get the positions of the lines that define interfaces from the
-	 *        defining Boundary indicators.
-	 *
-	 *  @param boundaryIndicator1 boundary indicator of interface line 1
-	 *  @param boundaryIndicator2 boundary indicator of interface line 2
-	 *  @param triangulation A (shared ptr to a) triangulation object (the mesh)
-	 *  @param[out] beginLine1 start point of line 1
-	 *  @param[out] endLine1 end point of line 1
-	 *  @param[out] beginLine2 start point of line 2
-	 *  @param[out] endLine2 end point of line 2
-	 *
-	 *  @throws PeriodicBoundaryNotPossible exception if not all points with same boundary indicator are on a line
-	 */
-	void getInterfacePositionsByBoundaryIndicator(size_t boundaryIndicator1,
-			size_t boundaryIndicator2,
-			shared_ptr<dealii::Triangulation<dim> > triangulation,
-			dealii::Point<dim>& beginLine1, dealii::Point<dim>& endLine1,
-			dealii::Point<dim>& beginLine2, dealii::Point<dim>& endLine2);
-
 
 public:
 
@@ -149,33 +128,6 @@ public:
 
 	/// destructor
 	virtual ~PeriodicBoundary();
-
-	/////////////////////////////////
-	// APPLY BOUNDARY VALUES       //
-	/////////////////////////////////
-
-	/**
-	 * @short Apply boundaries to the degrees of freedom.
-	 *        This is the central function of the boundary description classes.
-	 *        Periodic boundaries are put into practice by introducing constraints
-	 *        x_i = x_j which force two (opposite) degrees of freedom to coincide.
-	 *        In other words, degrees of freedom are eliminated.
-	 *        NOTE: ELIMINATING DEGREES OF FREEDOM IS NOT POSSIBLE FOR DISCONTINUOUS GALERKIN METHODS.
-	 *        When using DG methods, use PeriodicBoundary1D::getAdjacentCellAtPeriodicBoundary
-	 *
-	 * @note  If the discretization of the two opposite boundaries do not fit together,
-	 *        a linear mapping is applied: x_i = w_j * x_j + w_k * x_k,
-	 *        where x_j and x_k are the "neighboring" dofs at the opposite boundary.
-	 *        NO! Linear mapping is not supported, yet!
-	 *        The high-level function dofTools::make_periodicity_constraints() does not
-	 *        support this.
-	 *
-	 * @param doFHandler The doFHandler associated with the mesh
-	 * @param constraintMatrix matrix to which constraints are stored
-	 */
-	virtual void applyBoundaryValues(
-			const shared_ptr<dealii::DoFHandler<dim> > doFHandler,
-			shared_ptr<dealii::ConstraintMatrix> constraintMatrix) const;
 
 	/**
 	 * @short get the respective neighbor cell on the other side of a periodic boundary

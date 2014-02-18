@@ -10,6 +10,8 @@
 
 #include <cassert>
 
+#include "../utilities/Math.h"
+
 namespace natrium{
 
 

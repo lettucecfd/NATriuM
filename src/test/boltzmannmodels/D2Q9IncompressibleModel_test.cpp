@@ -12,6 +12,7 @@
 
 #include "boost/test/unit_test.hpp"
 
+#include "utilities/Math.h"
 #include "utilities/BasicNames.h"
 
 using std::exception;
