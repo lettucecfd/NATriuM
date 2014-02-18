@@ -143,7 +143,7 @@ public:
 				initialVelocities.at(0).size()
 						== initialVelocities.at(1).size());
 		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-			if ((supportPoints.at(i)(1) > 0.25) and (supportPoints.at(i)(1) < 0.75)){
+			if ((supportPoints.at(i)(1) >= 0.25) and (supportPoints.at(i)(1) < 0.75)){
 				initialVelocities.at(0)(i) = 0.1;
 			} else {
 				initialVelocities.at(0)(i) = -0.1;

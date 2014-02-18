@@ -64,10 +64,12 @@ BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	size_t refinementLevel = 3;
 	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getOrderOfFiniteElement()-1));
-	testConfiguration->setTimeStep(0.5*deltaX);
+	testConfiguration->setTimeStep(0.1*deltaX);
 	testConfiguration->setNumberOfTimeSteps(100);
 	// set viscosity so that tau = 1
-	double viscosity = deltaX/3;
+	double viscosity = 1./5;
+	testConfiguration->setDQScaling(sqrt(3*viscosity/(testConfiguration->getTimeStep())));
+
 	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 
 	CFDSolver<2> solver(testConfiguration, testFlow);
@@ -77,8 +79,8 @@ BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	const vector<distributed_vector>& v = solver.getVelocity();
 	for (size_t i = 0; i < rho.size(); i++){
 		BOOST_CHECK(fabs(rho(i) - 1.0) < 1e-5);
-		BOOST_CHECK(fabs(v.at(0)(i) - 0.0) < 0.02);
-		BOOST_CHECK(fabs(v.at(1)(i) - 0.0) < 0.02);
+		BOOST_CHECK(fabs(v.at(0)(i) - 0.0) < 0.001);
+		BOOST_CHECK(fabs(v.at(1)(i) - 0.0) < 0.001);
 	}
 	cout << "done" << endl;
 }
