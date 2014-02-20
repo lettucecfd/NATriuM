@@ -40,17 +40,17 @@ int main() {
 	cout << "Starting NATriuM step-1..." << endl;
 
 	// set parameters, set up configuration object
-	size_t refinementLevel = 4;
-	size_t orderOfFiniteElement = 3;
+	size_t refinementLevel = 7;
+	size_t orderOfFiniteElement = 2;
 	double viscosity = 1;
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
 	double deltaX = 1./(pow(2,refinementLevel)*(configuration->getOrderOfFiniteElement()-1));
 	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setTimeStep(0.001*deltaX);
-	configuration->setDQScaling(sqrt(3.*viscosity/configuration->getTimeStep()));
+	configuration->setDQScaling(sqrt(300));
+	configuration->setTimeStep(deltaX);
 	configuration->setNumberOfTimeSteps(5000);
-	configuration->setOutputDirectory( "../results/step-1");
+	configuration->setOutputDirectory( "../results/step-1-DQ100");
 
 
 //configuration->getTimeStep()/3.;

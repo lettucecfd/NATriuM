@@ -47,6 +47,17 @@ enum FluxType {
 };
 
 /**
+ * Output flags
+ */
+enum OutputFlags{
+	CommandLineErrors = 1,
+	CommandLineBase = 2,
+	CommandLineCompleteLog = 4,
+	LogFile = 8,
+	VectorFields = 16
+};
+
+/**
  * @short Exception class for CFDSolver
  */
 class ConfigurationException: public std::exception {
@@ -100,6 +111,9 @@ private:
 	/// Output directory
 	std::string m_outputDirectory;
 
+	/// the output flags
+	int m_outputFlags;
+
 public:
 
 	/// constructor
@@ -116,6 +130,7 @@ public:
 		m_numberOfTimeSteps = 100;
 		m_dQScaling = 1.0;
 		m_outputDirectory = "../results/test";
+		m_outputFlags = CommandLineBase | VectorFields;
 	};
 
 	/// destructor
@@ -213,6 +228,7 @@ public:
 	}
 
 	void setOutputDirectory(const std::string& outputDirectory) {
+		// TODO create directory; check mod
 		this->m_outputDirectory = outputDirectory;
 	}
 
@@ -222,6 +238,23 @@ public:
 
 	void setDQScaling(double dQScaling) {
 		m_dQScaling = dQScaling;
+	}
+
+	int getOutputFlags() const {
+		return m_outputFlags;
+	}
+
+	void setOutputFlags(int outputFlags) {
+		m_outputFlags = outputFlags;
+		// if Complete log, then switch on all commandline flags
+		if (CommandLineCompleteLog & m_outputFlags){
+			m_outputFlags |= CommandLineBase;
+			m_outputFlags |= CommandLineErrors;
+		}
+		// if base, then switch on errors
+		if (CommandLineBase & m_outputFlags){
+			m_outputFlags |= CommandLineErrors;
+		}
 	}
 };
 

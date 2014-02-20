@@ -11,6 +11,8 @@
 
 #include "deal.II/numerics/data_out.h"
 
+#include "../utilities/Logging.h"
+
 namespace natrium {
 
 template<size_t dim>
@@ -67,15 +69,15 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	// OUTPUT
 	double maxU = getMaxVelocityNorm();
-	cout << "------ NATriuM solver ------" << endl;
-	cout << "viscosity:       " << problemDescription->getViscosity() << " m^2/s" << endl;
-	cout << "char. length:    " << problemDescription->getCharacteristicLength() << " m" << endl;
-	cout << "max |u_0|:       " << maxU * problemDescription->getCharacteristicLength() << " m/s" << endl;
-	cout << "Reynolds number: " << (maxU * problemDescription->getCharacteristicLength()) / problemDescription->getViscosity()  << endl;
-	cout << "Recommended dt:  " << m_collisionModel->calculateOptimalTimeStep(problemDescription->getViscosity(), m_boltzmannModel) << " s" << endl;
-	cout << "Actual dt:       " << configuration->getTimeStep() << " s" << endl;
-	cout << "tau:             " << tau << endl;
-	cout << "----------------------------" << endl;
+	*(Logging::BASIC) << "------ NATriuM solver ------" << endl;
+	*(Logging::BASIC) << "viscosity:       " << problemDescription->getViscosity() << " m^2/s" << endl;
+	*(Logging::BASIC) << "char. length:    " << problemDescription->getCharacteristicLength() << " m" << endl;
+	*(Logging::BASIC) << "max |u_0|:       " << maxU * problemDescription->getCharacteristicLength() << " m/s" << endl;
+	*(Logging::BASIC) << "Reynolds number: " << (maxU * problemDescription->getCharacteristicLength()) / problemDescription->getViscosity()  << endl;
+	*(Logging::BASIC) << "Recommended dt:  " << m_collisionModel->calculateOptimalTimeStep(problemDescription->getViscosity(), m_boltzmannModel) << " s" << endl;
+	*(Logging::BASIC) << "Actual dt:       " << configuration->getTimeStep() << " s" << endl;
+	*(Logging::BASIC) << "tau:             " << tau << endl;
+	*(Logging::BASIC) << "----------------------------" << endl;
 
 
 	// Initialize distribution functions
@@ -133,7 +135,7 @@ void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
 	for (size_t i = 0; i < N; i++) {
 		if (i % 100 == 0) {
-			cout << "Iteration " << i << endl;
+			*(Logging::BASIC) << "Iteration " << i << endl;
 		}
 		stream();
 		collide();

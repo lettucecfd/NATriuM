@@ -45,7 +45,7 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution,
 		}
 		double distance = originalPoint.distance(midPoint);
 		if (distance <= 0.25) {
-			analyticSolution(i) = 1 + 0.1 * cos(Math::PI / 0.5 * distance);
+			analyticSolution(i) = 1 + 0.1; //* cos(Math::PI / 0.5 * distance);
 		} else {
 			analyticSolution(i) = 1;
 		}
@@ -119,7 +119,7 @@ int main() {
 			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
 		}
 	}
-	std::ofstream out("../results/advection_convergence/results.txt");
+	std::ofstream out("../results/advection_convergence_step/results.txt");
 
 	size_t numberOfTimeSteps = 0;
 	out << "#Number of time steps: " << numberOfTimeSteps << endl;

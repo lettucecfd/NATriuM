@@ -13,7 +13,7 @@ file(   GLOB_RECURSE
         solver/*
         advection/*
         timeintegration/*
-        utilites/*
+        utilities/*
         )
  
  
