@@ -22,10 +22,9 @@ using namespace dealii;
 namespace natrium {
 
 template<size_t dim>
-SEDGMinLee<dim>::SEDGMinLee(
-		shared_ptr<Triangulation<dim> > triangulation,
+SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 		shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel, string inputDirectory,
 		bool useCentralFlux) :
 		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_boltzmannModel(
 				boltzmannModel), m_useCentralFlux(useCentralFlux) {
@@ -52,19 +51,22 @@ SEDGMinLee<dim>::SEDGMinLee(
 	m_celldof_to_q_index = map_celldofs_to_q_index();
 	m_q_index_to_facedof = map_q_index_to_facedofs();
 
-	// assemble system
-	reassemble();
+	// reassemble or read file
+	if (inputDirectory.empty()){
+		reassemble();
+	} else {
+		loadMatricesFromFiles(inputDirectory);
+	}
+
 } /* SEDGMinLee<dim>::SEDGMinLee */
 /// The template parameter must be made explicit in order for the code to compile
-template SEDGMinLee<2>::SEDGMinLee(
-		shared_ptr<Triangulation<2> > triangulation,
+template SEDGMinLee<2>::SEDGMinLee(shared_ptr<Triangulation<2> > triangulation,
 		shared_ptr<BoundaryCollection<2> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,string inputDirectory,
 		bool useCentralFlux);
-template SEDGMinLee<3>::SEDGMinLee(
-		shared_ptr<Triangulation<3> > triangulation,
+template SEDGMinLee<3>::SEDGMinLee(shared_ptr<Triangulation<3> > triangulation,
 		shared_ptr<BoundaryCollection<3> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,string inputDirectory,
 		bool useCentralFlux);
 
 template<size_t dim>
@@ -250,14 +252,14 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 
 } /* assembleLocalFaceMatrix */
 // The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::assembleAndDistributeLocalFaceMatrices(
-		size_t i, typename dealii::DoFHandler<2>::active_cell_iterator& cell,
+template void SEDGMinLee<2>::assembleAndDistributeLocalFaceMatrices(size_t i,
+		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
 		dealii::FEFaceValues<2>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
-template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(
-		size_t i, typename dealii::DoFHandler<3>::active_cell_iterator& cell,
+template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(size_t i,
+		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
 		dealii::FEFaceValues<3>& feNeighborFaceValues, size_t dofs_per_cell,
@@ -400,16 +402,14 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t direction,
 
 } /* assembleAndDistributeInternalFace */
 // The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::assembleAndDistributeInternalFace(
-		size_t direction,
+template void SEDGMinLee<2>::assembleAndDistributeInternalFace(size_t direction,
 		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<2>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
 		dealii::FEFaceValues<2>& feNeighborFaceValues);
-template void SEDGMinLee<3>::assembleAndDistributeInternalFace(
-		size_t direction,
+template void SEDGMinLee<3>::assembleAndDistributeInternalFace(size_t direction,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<3>::cell_iterator& neighborCell,
@@ -605,5 +605,67 @@ void SEDGMinLee<dim>::reassemble() {
 /// The template parameter must be made explicit in order for the code to compile
 template void SEDGMinLee<2>::reassemble();
 template void SEDGMinLee<3>::reassemble();
+
+template<size_t dim>
+void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
+	// read the system matrices from file
+	try {
+		for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
+			// filename
+			std::stringstream filename;
+			filename << directory << "/system_matrix_" << i << ".dat";
+			std::ofstream file(filename.str().c_str());
+			m_systemMatrix.at(i).block_write(file);
+		}
+	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+		throw AdvectionSolverException(
+				"An error occurred while writing the system matrices to files: Please make shure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
+	}
+	// Read the mass matrix
+	try {
+		// filename
+		std::stringstream filename;
+		filename << directory << "/mass_matrix.dat";
+		std::ofstream file(filename.str().c_str());
+		m_massMatrix.block_write(file);
+	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+		throw AdvectionSolverException(
+				"An error occurred while writing the mass matrix to file: Please make shure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
+	}
+
+}
+template void SEDGMinLee<2>::saveMatricesToFiles(const string& directory) const;
+template void SEDGMinLee<3>::saveMatricesToFiles(const string& directory) const;
+
+template<size_t dim>
+void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
+	// read the system matrices from file
+	try {
+		for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
+			// filename
+			std::stringstream filename;
+			filename << directory << "/system_matrix_" << i << ".dat";
+			std::ifstream file(filename.str().c_str());
+			m_systemMatrix.at(i).block_read(file);
+		}
+	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+		throw AdvectionSolverException(
+				"An error occurred while reading the system matrices from file: Please switch off the restart option to start the simulation from the beginning.");
+	}
+	// Read the mass matrix
+	try {
+		// filename
+		std::stringstream filename;
+		filename << directory << "/mass_matrix.dat";
+		std::ifstream file(filename.str().c_str());
+		m_massMatrix.block_read(file);
+	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+		throw AdvectionSolverException(
+				"An error occurred while reading the mass matrix from file: Please switch off the restart option to start the simulation from the beginning.");
+	}
+	// TODO Test: Is the matrix OK?
+}
+template void SEDGMinLee<2>::loadMatricesFromFiles(const string& directory);
+template void SEDGMinLee<3>::loadMatricesFromFiles(const string& directory);
 
 } /* namespace natrium */

@@ -61,7 +61,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	PeriodicTestDomain2D periodic(refinementLevel);
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), useCentralFlux);
+			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
 

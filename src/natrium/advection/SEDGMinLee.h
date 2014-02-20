@@ -25,6 +25,23 @@
 
 namespace natrium {
 
+/**
+ * @short Exception class for AdvectionSolver
+ */
+class AdvectionSolverException: public std::exception {
+private:
+	std::string message;
+public:
+	AdvectionSolverException(const char *msg) :
+			message(msg) {
+	}
+	~AdvectionSolverException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
 /** @short Global data which is used, e.g., by Min and Lee (2011): A spectral-element discontinuous
  *         Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-259.
  *         including particle distributions f, system matrix L, diagonal mass matrix M,
@@ -163,7 +180,7 @@ private:
 	 * @short map degrees of freedom to quadrature node indices on a cell
 	 * @note called by the constructor to initialize m_dof_to_q_index
 	 */
-	std::map<size_t, size_t>  map_celldofs_to_q_index() const;
+	std::map<size_t, size_t> map_celldofs_to_q_index() const;
 
 	/**
 	 * @short map degrees of freedom to quadrature node indices on the faces
@@ -189,7 +206,8 @@ public:
 	SEDGMinLee(shared_ptr<dealii::Triangulation<dim> > triangulation,
 			shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement,
-			shared_ptr<BoltzmannModel> boltzmannModel, bool useCentralFlux = false);
+			shared_ptr<BoltzmannModel> boltzmannModel, string inputDirectory = "", bool useCentralFlux =
+					false);
 
 	/// destructor
 	virtual ~SEDGMinLee() {
@@ -203,16 +221,28 @@ public:
 	/// make streaming step
 	virtual void stream();
 
+	/** @short save matrices to files
+	 *  @param[in] directory directory to save the matrix files to
+	 *  @throws AdvectionSolverException
+	 */
+	virtual void saveMatricesToFiles(const string& directory) const;
+
+	/** @short load matrices from files
+	 *  @param[in] directory directory to load the matrix files from
+	 *  @throws AdvectionSolverException
+	 */
+	void loadMatricesFromFiles(const string& directory);
+
 	/// get global system matrix
 	virtual const vector<distributed_sparse_matrix>& getSystemMatrix() const {
 		return m_systemMatrix;
 	}
 
-	virtual void mapDoFsToSupportPoints(vector<dealii::Point<dim> >& supportPoints) const{
-		dealii::DoFTools::map_dofs_to_support_points(m_mapping,
-				*m_doFHandler, supportPoints);
+	virtual void mapDoFsToSupportPoints(
+			vector<dealii::Point<dim> >& supportPoints) const {
+		dealii::DoFTools::map_dofs_to_support_points(m_mapping, *m_doFHandler,
+				supportPoints);
 	}
-
 
 	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
 		return m_doFHandler;
@@ -252,6 +282,5 @@ public:
 };
 
 } /* namespace natrium */
-
 
 #endif /* SEDGMINLEE_H_ */

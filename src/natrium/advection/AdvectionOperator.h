@@ -40,6 +40,13 @@ public:
 
 	virtual const dealii::MappingQ1<dim>& getMapping() const = 0;
 
+	/** @short save matrices to files
+	 *  @param[in] directory directory to save the matrix files to
+	 *  @throws AdvectionSolverException
+	 */
+	virtual void saveMatricesToFiles(const string& directory) const = 0;
+
+
 	size_t getNumberOfDoFs() const {
 		return getSystemMatrix().at(0).n();
 	}

@@ -11,6 +11,7 @@
 #include "../problemdescription/ProblemDescription.h"
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../utilities/BasicNames.h"
+#include "../utilities/Logging.h"
 
 namespace natrium {
 
@@ -25,7 +26,7 @@ enum AdvectionOperatorType {
  * @short Implemented collision models
  */
 enum CollisionType {
-	Collision_BGKTransformed	// Collision for the transformed distribution function as defined in MinLee2011
+	Collision_BGKTransformed // Collision for the transformed distribution function as defined in MinLee2011
 };
 
 // StencilType defined in BoltzmannModel.h
@@ -37,24 +38,23 @@ enum TimeIntegratorType {
 	Integrator_RungeKutta5LowStorage
 };
 
-
 /**
  * @short the numerical flux used to calculate the advection operator
  */
 enum FluxType {
-	Flux_LaxFriedrichs,
-	Flux_Central
+	Flux_LaxFriedrichs, Flux_Central
 };
 
 /**
  * Output flags
  */
-enum OutputFlags{
-	CommandLineErrors = 1,
-	CommandLineBase = 2,
-	CommandLineCompleteLog = 4,
-	LogFile = 8,
-	VectorFields = 16
+enum OutputFlags {
+	out_CommandLineError = 1,
+	out_CommandLineBasic = 2,
+	out_CommandLineFull = 4,
+	out_LogFile = 8,
+	out_VectorFields = 16,
+	out_StreamingMatrices = 32
 };
 
 /**
@@ -73,7 +73,6 @@ public:
 		return this->message.c_str();
 	}
 };
-
 
 /** @short Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE).
  *  @tparam dim The dimension of the flow (2 or 3).
@@ -114,10 +113,13 @@ private:
 	/// the output flags
 	int m_outputFlags;
 
+	/// restart option
+	bool m_restart;
+
 public:
 
 	/// constructor
-	SolverConfiguration(){
+	SolverConfiguration() {
 		// TODO read configuration from file
 		// TODO custom configurations
 		m_advectionOperatorType = Advection_SEDGMinLee;
@@ -130,11 +132,15 @@ public:
 		m_numberOfTimeSteps = 100;
 		m_dQScaling = 1.0;
 		m_outputDirectory = "../results/test";
-		m_outputFlags = CommandLineBase | VectorFields;
-	};
+		setOutputFlags(out_CommandLineBasic | out_VectorFields);
+		m_restart = false;
+	}
+	;
 
 	/// destructor
-	virtual ~SolverConfiguration(){};
+	virtual ~SolverConfiguration() {
+	}
+	;
 
 	/**
 	 * @short Check if the problem definition is in accordance with the solver configuration
@@ -173,7 +179,6 @@ public:
 	void setStencilType(StencilType stencilType) {
 		m_stencilType = stencilType;
 	}
-
 
 	double getTimeStep() const {
 		return m_timeStep;
@@ -247,14 +252,45 @@ public:
 	void setOutputFlags(int outputFlags) {
 		m_outputFlags = outputFlags;
 		// if Complete log, then switch on all commandline flags
-		if (CommandLineCompleteLog & m_outputFlags){
-			m_outputFlags |= CommandLineBase;
-			m_outputFlags |= CommandLineErrors;
+		if ((out_CommandLineFull & m_outputFlags) != 0) {
+			m_outputFlags |= out_CommandLineBasic;
+			m_outputFlags |= out_CommandLineError;
 		}
 		// if base, then switch on errors
-		if (CommandLineBase & m_outputFlags){
-			m_outputFlags |= CommandLineErrors;
+		if ((out_CommandLineBasic & m_outputFlags) != 0) {
+			m_outputFlags |= out_CommandLineError;
 		}
+		// redefine Logging stream
+		/*std::stringstream logFile;
+		if ((out_LogFile & m_outputFlags) != 0){
+		logFile << getOutputDirectory() << "/natrium.log";
+		} else {
+			logFile << "";
+		}
+		if ((out_CommandLineFull & m_outputFlags) != 0) {
+			Logging::FULL = Logging::makeTeeStream(true, false, false, logFile.str());
+		} else {
+			Logging::FULL = Logging::makeTeeStream(false, false, false, logFile.str());
+		}
+		if ((out_CommandLineBasic & m_outputFlags) != 0) {
+			Logging::BASIC = Logging::makeTeeStream(true, false, false, logFile.str());
+		} else {
+			Logging::BASIC = Logging::makeTeeStream(false, false, false, logFile.str());
+		}
+		if ((out_CommandLineError & m_outputFlags) != 0) {
+			Logging::ERROR = Logging::makeTeeStream(true, false, false, logFile.str());
+		} else {
+			Logging::ERROR = Logging::makeTeeStream(false, false, false, logFile.str());
+		}*/
+
+	}
+
+	bool isRestart() const {
+		return m_restart;
+	}
+
+	void setRestart(bool restart) {
+		m_restart = restart;
 	}
 };
 

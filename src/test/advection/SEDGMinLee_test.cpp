@@ -108,7 +108,8 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 				PeriodicTestDomain2D periodic(refinementLevel);
 				SEDGMinLee<2> streaming(periodic.getTriangulation(),
 						periodic.getBoundaries(), fe_order,
-						make_shared<D2Q9IncompressibleModel>(), !useLaxFlux);
+						make_shared<D2Q9IncompressibleModel>(), "",
+						!useLaxFlux);
 				const vector<distributed_sparse_matrix>& matrices =
 						streaming.getSystemMatrix();
 				BOOST_CHECK(matrices.size() == D2Q9IncompressibleModel::Q);
@@ -394,7 +395,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), useCentralFlux);
+			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
 	const vector<distributed_sparse_matrix>& matrices =
 			streaming.getSystemMatrix();
 
@@ -437,12 +438,12 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	RungeKutta5LowStorage RK5(timeStep, f.size());
 #ifdef RK5_OUT
 	// Make results dir
-		std::string dirname("../results/rk5_periodicstreaming");
-		if (mkdir(dirname.c_str(), 0777) == -1) {
-			if (errno != EEXIST) {
-				cerr << "Fehler in mkdir: " << strerror(errno) << endl;
-			}
+	std::string dirname("../results/rk5_periodicstreaming");
+	if (mkdir(dirname.c_str(), 0777) == -1) {
+		if (errno != EEXIST) {
+			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
 		}
+	}
 #endif
 	for (size_t i = 0; i < numberOfTimeSteps; i++) {
 #ifdef RK5_OUT
@@ -509,6 +510,55 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 
 	cout << "done." << endl;
 } /* SEDGMinLee_RKstreaming_test */
+
+BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadMatrices_test) {
+	cout << "SEDGMinLee_SaveAndLoadMatrices_test..." << endl;
+
+	/////////////////
+	// Sanity test //
+	/////////////////
+
+	string directory = "../results/test-SaveAndLoadMatrices";
+
+	// create streaming object
+	size_t refinementLevel = 3;
+	size_t fe_order = 4;
+	bool useCentralFlux = false;
+	PeriodicTestDomain2D periodic(refinementLevel);
+	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+			periodic.getBoundaries(), fe_order,
+			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
+	streaming.saveMatricesToFiles(directory);
+
+	// create streaming object
+	refinementLevel = 3;
+	fe_order = 4;
+	useCentralFlux = false;
+	SEDGMinLee<2> streaming2(periodic.getTriangulation(),
+			periodic.getBoundaries(), fe_order,
+			make_shared<D2Q9IncompressibleModel>(), directory, useCentralFlux);
+	BOOST_CHECK_NO_THROW(streaming2.stream());
+
+	//////////////////
+	// Failure test //
+	//////////////////
+
+	// non-valid input directory
+	BOOST_CHECK_THROW(
+			SEDGMinLee<2> streaming4(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9IncompressibleModel>(), "a", useCentralFlux),
+			AdvectionSolverException);
+/*
+	refinementLevel = 4;
+	fe_order = 4;
+	useCentralFlux = false;
+	PeriodicTestDomain2D periodic2(refinementLevel);
+	BOOST_CHECK_THROW(
+			SEDGMinLee<2> streaming3(periodic2.getTriangulation(), periodic2.getBoundaries(), fe_order, make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux),
+			std::exception);
+*/
+
+	cout << "done" << endl;
+} /* SEDGMinLee_SaveAndLoadMatrices_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 

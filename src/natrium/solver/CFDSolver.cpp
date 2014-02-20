@@ -8,6 +8,7 @@
 #include "CFDSolver.h"
 
 #include <fstream>
+#include <sstream>
 
 #include "deal.II/numerics/data_out.h"
 
@@ -26,19 +27,31 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// Build boltzmann model
 	if (Stencil_D2Q9 == configuration->getStencilType()) {
-		m_boltzmannModel = make_shared<D2Q9IncompressibleModel>(configuration->getDQScaling());
+		m_boltzmannModel = make_shared<D2Q9IncompressibleModel>(
+				configuration->getDQScaling());
 	}
 
 	/// Build streaming data object
 	if (Advection_SEDGMinLee == configuration->getAdvectionOperatorType()) {
+		// if this string is "": matrix is reassembled and not read from file
+		string whereAreTheStoredMatrices;
+		if (configuration->isRestart()) {
+			whereAreTheStoredMatrices = configuration->getOutputDirectory();
+		}
+		// create SEDG MinLee by reading the system matrices from files or assembling
 		m_advectionOperator = make_shared<SEDGMinLee<dim> >(
 				m_problemDescription->getTriangulation(),
 				m_problemDescription->getBoundaries(),
 				configuration->getOrderOfFiniteElement(), m_boltzmannModel,
+				whereAreTheStoredMatrices,
 				(configuration->getFluxType() == Flux_Central));
+		if (not configuration->isRestart()) {
+			m_advectionOperator->saveMatricesToFiles(
+					m_configuration->getOutputDirectory());
+		}
 	}
 
-	/// Calculate relaxation parameter and build collision model
+/// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
 	if (Collision_BGKTransformed == configuration->getCollisionType()) {
 		tau = BGKTransformed::calculateRelaxationParameter(
@@ -47,7 +60,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		m_collisionModel = make_shared<BGKTransformed>(tau, m_boltzmannModel);
 	}
 
-	/// Build time integrator
+/// Build time integrator
 	size_t numberOfDoFs = m_advectionOperator->getSystemMatrix().at(0).n();
 	if (Integrator_RungeKutta5LowStorage
 			== configuration->getTimeIntegratorType()) {
@@ -55,7 +68,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				configuration->getTimeStep(), numberOfDoFs);
 	}
 
-	// initialize macroscopic variables
+// initialize macroscopic variables
 	vector<dealii::Point<dim> > supportPoints(numberOfDoFs);
 	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
 	m_density.reinit(numberOfDoFs);
@@ -66,21 +79,29 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	m_problemDescription->applyInitialDensities(m_density, supportPoints);
 	m_problemDescription->applyInitialVelocities(m_velocity, supportPoints);
 
-
-	// OUTPUT
+// OUTPUT
 	double maxU = getMaxVelocityNorm();
 	*(Logging::BASIC) << "------ NATriuM solver ------" << endl;
-	*(Logging::BASIC) << "viscosity:       " << problemDescription->getViscosity() << " m^2/s" << endl;
-	*(Logging::BASIC) << "char. length:    " << problemDescription->getCharacteristicLength() << " m" << endl;
-	*(Logging::BASIC) << "max |u_0|:       " << maxU * problemDescription->getCharacteristicLength() << " m/s" << endl;
-	*(Logging::BASIC) << "Reynolds number: " << (maxU * problemDescription->getCharacteristicLength()) / problemDescription->getViscosity()  << endl;
-	*(Logging::BASIC) << "Recommended dt:  " << m_collisionModel->calculateOptimalTimeStep(problemDescription->getViscosity(), m_boltzmannModel) << " s" << endl;
-	*(Logging::BASIC) << "Actual dt:       " << configuration->getTimeStep() << " s" << endl;
+	*(Logging::BASIC) << "viscosity:       "
+			<< problemDescription->getViscosity() << " m^2/s" << endl;
+	*(Logging::BASIC) << "char. length:    "
+			<< problemDescription->getCharacteristicLength() << " m" << endl;
+	*(Logging::BASIC) << "max |u_0|:       "
+			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
+			<< endl;
+	*(Logging::BASIC) << "Reynolds number: "
+			<< (maxU * problemDescription->getCharacteristicLength())
+					/ problemDescription->getViscosity() << endl;
+	*(Logging::BASIC) << "Recommended dt:  "
+			<< m_collisionModel->calculateOptimalTimeStep(
+					problemDescription->getViscosity(), m_boltzmannModel)
+			<< " s" << endl;
+	*(Logging::BASIC) << "Actual dt:       " << configuration->getTimeStep()
+			<< " s" << endl;
 	*(Logging::BASIC) << "tau:             " << tau << endl;
 	*(Logging::BASIC) << "----------------------------" << endl;
 
-
-	// Initialize distribution functions
+// Initialize distribution functions
 	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
 		distributed_vector fi(m_advectionOperator->getNumberOfDoFs());
 		m_f.push_back(fi);
@@ -97,7 +118,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		}
 	}
 
-} /* Constructor */
+}
+/* Constructor */
 template CFDSolver<2>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		shared_ptr<ProblemDescription<2> > problemDescription);
 template CFDSolver<3>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
@@ -107,7 +129,7 @@ template<size_t dim>
 void CFDSolver<dim>::stream() {
 	const vector<distributed_sparse_matrix>& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
-	// no streaming in direction 0; begin with 1
+// no streaming in direction 0; begin with 1
 	for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
 		m_timeIntegrator->step(m_f.at(i), systemMatrix.at(i));
 	}
@@ -126,6 +148,11 @@ template void CFDSolver<3>::collide();
 template<size_t dim>
 void CFDSolver<dim>::reassemble() {
 	m_advectionOperator->reassemble();
+// print out streaming matrices
+	if ((out_StreamingMatrices & m_configuration->getOutputFlags()) != 0) {
+		m_advectionOperator->saveMatricesToFiles(
+				m_configuration->getOutputDirectory());
+	}
 }
 template void CFDSolver<2>::reassemble();
 template void CFDSolver<3>::reassemble();

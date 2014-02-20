@@ -33,6 +33,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::size_t;
+using std::string;
 
 using boost::shared_ptr;
 using boost::make_shared;

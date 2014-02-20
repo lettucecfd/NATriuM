@@ -28,6 +28,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_CreateTestFlow_test) {
 BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
 	cout << "CFDSolver_Construction_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	testConfiguration->setOutputFlags(out_CommandLineError);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
 	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
@@ -38,6 +39,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
 BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 	cout << "CFDSolver_SteadyStreaming_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	testConfiguration->setOutputFlags(out_CommandLineError);
 	size_t refinementLevel = 3;
 	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getOrderOfFiniteElement()-1));
 	testConfiguration->setTimeStep(0.5*deltaX);
@@ -62,6 +64,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	cout << "CFDSolver_UnsteadyStreaming_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	testConfiguration->setOutputFlags(out_CommandLineError);
 	size_t refinementLevel = 3;
 	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getOrderOfFiniteElement()-1));
 	testConfiguration->setTimeStep(0.1*deltaX);
