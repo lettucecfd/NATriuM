@@ -56,7 +56,7 @@ double TaylorGreenVortex2D::analyticVelocity1(const dealii::Point<2>& x,
 
 double TaylorGreenVortex2D::analyticVelocity2(const dealii::Point<2>& x,
 		double t) const {
-	return cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
+	return -cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
 }
 
 /**

@@ -19,13 +19,20 @@ using namespace natrium;
 
 int main() {
 
+	std::ifstream iFile("/home/kraemer/test.txt");
+
 	cout << "Starting NATriuM." << endl;
 
+	std::string a;
+	cout << "gimme: ";
+	do {
+	iFile >> a;
 	//Triangulation<2> tri;
 
+	std::cout << a << endl;
+	} while (not iFile.eof());
 	vector<double> v(2,0.0);
 	D2Q9IncompressibleModel boltzmannModel;
-
 
 	//CFDSolver<2>* solver = new CFDSolver<2>();
 

@@ -15,15 +15,19 @@ namespace natrium {
 /** @short Abstract class for spatial part of the Advection Operator e_i * dx_i f.
  *  @tparam dim The dimension of the flow (2 or 3).
  */
-template <size_t dim> class AdvectionOperator {
+template<size_t dim> class AdvectionOperator {
 
 public:
 
 	/// constructor
-	AdvectionOperator(){};
+	AdvectionOperator() {
+	}
+	;
 
 	/// destructor
-	virtual ~AdvectionOperator(){};
+	virtual ~AdvectionOperator() {
+	}
+	;
 
 	/// function to (re-)assemble linear system
 	virtual void reassemble() = 0;
@@ -36,16 +40,16 @@ public:
 
 	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const = 0;
 
-	virtual void mapDoFsToSupportPoints(vector<dealii::Point<dim> >& supportPoints) const = 0;
+	virtual void mapDoFsToSupportPoints(
+			vector<dealii::Point<dim> >& supportPoints) const = 0;
 
 	virtual const dealii::MappingQ1<dim>& getMapping() const = 0;
 
-	/** @short save matrices to files
+	/** @short save matrices and status to files
 	 *  @param[in] directory directory to save the matrix files to
 	 *  @throws AdvectionSolverException
 	 */
-	virtual void saveMatricesToFiles(const string& directory) const = 0;
-
+	virtual void saveCheckpoint(const string& directory) const = 0;
 
 	size_t getNumberOfDoFs() const {
 		return getSystemMatrix().at(0).n();

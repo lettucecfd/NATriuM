@@ -54,7 +54,15 @@ enum OutputFlags {
 	out_CommandLineFull = 4,
 	out_LogFile = 8,
 	out_VectorFields = 16,
-	out_StreamingMatrices = 32
+	out_Checkpoints = 32
+};
+
+/**
+ * @short the initialization procedure for the distribution functions
+ */
+enum DistributionInitType {
+	Equilibrium, // Distribute with equilibrium functions
+	Iterative // Distribute with iterative procedure; enforces consistent initial conditions
 };
 
 /**
@@ -113,10 +121,24 @@ private:
 	/// the output flags
 	int m_outputFlags;
 
+	/// output frequency
+	size_t m_outputVectorFieldsEvery;
+	size_t m_outputCheckpointEvery;
+
 	/// restart option
 	bool m_restart;
 
+	/// initialization procedure
+	DistributionInitType m_distributionInitType;
+
+	/// max initialization iterations
+	size_t m_maxDistributionInitIterations;
+
+	/// stop condition for the density residual of the initialization procedure
+	double m_stopDistributionInitResidual;
+
 public:
+
 
 	/// constructor
 	SolverConfiguration() {
@@ -134,6 +156,11 @@ public:
 		m_outputDirectory = "../results/test";
 		setOutputFlags(out_CommandLineBasic | out_VectorFields);
 		m_restart = false;
+		m_distributionInitType = Equilibrium;
+		m_maxDistributionInitIterations = 10000;
+		m_stopDistributionInitResidual = 1e-6;
+		m_outputVectorFieldsEvery = 10;
+		m_outputCheckpointEvery = 500;
 	}
 	;
 
@@ -141,6 +168,15 @@ public:
 	virtual ~SolverConfiguration() {
 	}
 	;
+
+	/**
+	 * @short Check if the configuration is consistent
+	 */
+	void checkConfiguration(){
+		/// Test writing permission on output directory
+		/// If no restart: Check if checkpoint exists. If yes -> ask for overwrite
+
+	}
 
 	/**
 	 * @short Check if the problem definition is in accordance with the solver configuration
@@ -291,6 +327,47 @@ public:
 
 	void setRestart(bool restart) {
 		m_restart = restart;
+	}
+
+	DistributionInitType getDistributionInitType() const {
+		return m_distributionInitType;
+	}
+
+	void setDistributionInitType(DistributionInitType distributionInitType) {
+		m_distributionInitType = distributionInitType;
+	}
+
+	size_t getMaxDistributionInitIterations() const {
+		return m_maxDistributionInitIterations;
+	}
+
+	void setMaxDistributionInitIterations(
+			size_t maxDistributionInitIterations) {
+		m_maxDistributionInitIterations = maxDistributionInitIterations;
+	}
+
+	double getStopDistributionInitResidual() const {
+		return m_stopDistributionInitResidual;
+	}
+
+	void setStopDistributionInitResidual(double stopDistributionInitResidual) {
+		m_stopDistributionInitResidual = stopDistributionInitResidual;
+	}
+
+	size_t getOutputCheckpointEvery() const {
+		return m_outputCheckpointEvery;
+	}
+
+	void setOutputCheckpointEvery(size_t outputCheckpointEvery) {
+		m_outputCheckpointEvery = outputCheckpointEvery;
+	}
+
+	size_t getOutputVectorFieldsEvery() const {
+		return m_outputVectorFieldsEvery;
+	}
+
+	void setOutputVectorFieldsEvery(size_t outputVectorFieldsEvery) {
+		m_outputVectorFieldsEvery = outputVectorFieldsEvery;
 	}
 };
 

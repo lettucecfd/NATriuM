@@ -24,8 +24,8 @@ namespace natrium {
 template<size_t dim>
 SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 		shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel, string inputDirectory,
-		bool useCentralFlux) :
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		string inputDirectory, bool useCentralFlux) :
 		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_boltzmannModel(
 				boltzmannModel), m_useCentralFlux(useCentralFlux) {
 	// assertions
@@ -52,22 +52,22 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 	m_q_index_to_facedof = map_q_index_to_facedofs();
 
 	// reassemble or read file
-	if (inputDirectory.empty()){
+	if (inputDirectory.empty()) {
 		reassemble();
 	} else {
-		loadMatricesFromFiles(inputDirectory);
+		loadCheckpoint(inputDirectory);
 	}
 
 } /* SEDGMinLee<dim>::SEDGMinLee */
 /// The template parameter must be made explicit in order for the code to compile
 template SEDGMinLee<2>::SEDGMinLee(shared_ptr<Triangulation<2> > triangulation,
 		shared_ptr<BoundaryCollection<2> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,string inputDirectory,
-		bool useCentralFlux);
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		string inputDirectory, bool useCentralFlux);
 template SEDGMinLee<3>::SEDGMinLee(shared_ptr<Triangulation<3> > triangulation,
 		shared_ptr<BoundaryCollection<3> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,string inputDirectory,
-		bool useCentralFlux);
+		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		string inputDirectory, bool useCentralFlux);
 
 template<size_t dim>
 void SEDGMinLee<dim>::updateSparsityPattern() {
@@ -520,6 +520,7 @@ vector<std::map<size_t, size_t> > natrium::SEDGMinLee<dim>::map_q_index_to_faced
 template vector<std::map<size_t, size_t> > SEDGMinLee<2>::map_q_index_to_facedofs() const;
 template vector<std::map<size_t, size_t> > SEDGMinLee<3>::map_q_index_to_facedofs() const;
 
+
 template<size_t dim>
 void SEDGMinLee<dim>::stream() {
 }
@@ -608,12 +609,14 @@ template void SEDGMinLee<3>::reassemble();
 
 template<size_t dim>
 void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
-	// read the system matrices from file
+	// Write a "fingerprint file", which will indicate a restart with a changed geometry or configuration
+
+	// write system matrices to files
 	try {
 		for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
 			// filename
 			std::stringstream filename;
-			filename << directory << "/system_matrix_" << i << ".dat";
+			filename << directory << "/checkpoint_system_matrix_" << i << ".dat";
 			std::ofstream file(filename.str().c_str());
 			m_systemMatrix.at(i).block_write(file);
 		}
@@ -621,11 +624,11 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 		throw AdvectionSolverException(
 				"An error occurred while writing the system matrices to files: Please make shure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
 	}
-	// Read the mass matrix
+	// Write the mass matrix
 	try {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/mass_matrix.dat";
+		filename << directory << "/checkpoint_mass_matrix.dat";
 		std::ofstream file(filename.str().c_str());
 		m_massMatrix.block_write(file);
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
@@ -644,7 +647,7 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 		for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
 			// filename
 			std::stringstream filename;
-			filename << directory << "/system_matrix_" << i << ".dat";
+			filename << directory << "/checkpoint_system_matrix_" << i << ".dat";
 			std::ifstream file(filename.str().c_str());
 			m_systemMatrix.at(i).block_read(file);
 		}
@@ -656,7 +659,7 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 	try {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/mass_matrix.dat";
+		filename << directory << "/checkpoint_mass_matrix.dat";
 		std::ifstream file(filename.str().c_str());
 		m_massMatrix.block_read(file);
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
@@ -667,5 +670,163 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 }
 template void SEDGMinLee<2>::loadMatricesFromFiles(const string& directory);
 template void SEDGMinLee<3>::loadMatricesFromFiles(const string& directory);
+
+template<size_t dim> void SEDGMinLee<dim>::writeStatus(
+		const string& directory) const {
+	//make file
+	std::stringstream filename;
+	filename << directory << "/checkpoint_status.dat";
+	std::ofstream outfile(filename.str().c_str());
+
+	//write number of cells
+	outfile << m_tria->n_cells() << endl;
+	//write order of fe
+	outfile << m_fe->get_degree() << endl;
+	//write number of dofs
+	outfile << this->getNumberOfDoFs() << endl;
+	//write D
+	outfile << m_boltzmannModel->getD() << endl;
+	//write Q
+	outfile << m_boltzmannModel->getQ() << endl;
+	//write magic number of cell geometry
+	outfile << calcMagicNumber() << endl;
+	//write dqScaling1
+	outfile << m_boltzmannModel->getDirection(1)(0) << endl;
+	//write dqScaling2
+	outfile << m_boltzmannModel->getDirection(1)(1) << endl;
+	//write fluxType
+	outfile << m_useCentralFlux << endl;
+	//write advectionType
+	outfile << "SEDGMinLee" << endl;
+}
+template void SEDGMinLee<2>::writeStatus(const string& directory) const;
+template void SEDGMinLee<3>::writeStatus(const string& directory) const;
+
+template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
+		string& message) const {
+	//read file
+	std::stringstream filename;
+	filename << directory << "/checkpoint_status.dat";
+	std::ifstream infile(filename.str().c_str());
+
+	// check if status file exists
+	if (not infile) {
+		message = "No checkpoint found. Please disable restart option.";
+		return false;
+	}
+	//number of cells
+	size_t tmp;
+	infile >> tmp;
+	if (tmp != m_tria->n_cells()) {
+		message = "Number of cells not equal.";
+		return false;
+	}
+	// order of fe
+	infile >> tmp;
+	if (tmp != m_fe->get_degree()) {
+		message = "Order of finite element not equal.";
+		return false;
+	}
+	// number of dofs
+	infile >> tmp;
+	if (tmp != this->getNumberOfDoFs()) {
+		message = "Number of degrees of freedom not equal.";
+		return false;
+	}
+	// D
+	infile >> tmp;
+	if (tmp != m_boltzmannModel->getD()) {
+		message = "Dimension not equal.";
+		return false;
+	}
+	// Q
+	infile >> tmp;
+	if (tmp != m_boltzmannModel->getQ()) {
+		message = "Number of particle velocities not equal.";
+		return false;
+	}
+	// magic number of cell geometry
+	double dtmp;
+	infile >> dtmp;
+	if (fabs(dtmp - calcMagicNumber()) > 1e-1) {
+		message = "Triangulation (or at least its magic number) not equal.";
+		return false;
+	}
+	// dqScaling1
+	infile >> dtmp;
+	if (fabs(dtmp - m_boltzmannModel->getDirection(1)(0)) > 1e-5) {
+		message = "Scaling of Boltzmann model (1st coordinate) not equal.";
+		return false;
+	}
+	// dqScaling2
+	infile >> dtmp;
+	if (fabs(dtmp - m_boltzmannModel->getDirection(1)(1)) > 1e-5) {
+		message = "Scaling of Boltzmann model (2nd) not equal.";
+		return false;
+	}
+	// fluxType
+	infile >> tmp;
+	if (tmp != m_useCentralFlux) {
+		message = "Flux not equal.";
+		return false;
+	}
+	// advectionType
+	string stmp;
+	infile >> stmp;
+	if (stmp != "SEDGMinLee") {
+		message = "AdvectionOperator Type not equal.";
+		return false;
+	}
+
+	return true;
+}
+template bool SEDGMinLee<2>::isStatusOK(const string& directory,
+		string& message) const;
+template bool SEDGMinLee<3>::isStatusOK(const string& directory,
+		string& message) const;
+
+template<size_t dim>
+double SEDGMinLee<dim>::calcMagicNumber() const {
+
+	double magicNumber = m_fe->get_degree() / m_tria->n_cells();
+
+	vector<dealii::Point<dim> > supportPoints(this->getNumberOfDoFs());
+	mapDoFsToSupportPoints(supportPoints);
+	for (size_t i = 0; i < supportPoints.size();
+			i += std::max(1., supportPoints.size() / 100.)) {
+		magicNumber += (1 + (i % 1000)) / (1 + i) * 1.
+				/ (supportPoints.at(i)(0) + 1) * 1.
+				/ (1 + supportPoints.at(i)(1)) * 1.
+				/ (1 + supportPoints.at(i)(dim - 1));
+	}
+	return magicNumber;
+}
+
+template double SEDGMinLee<2>::calcMagicNumber() const;
+template double SEDGMinLee<3>::calcMagicNumber() const;
+
+template<size_t dim>
+void SEDGMinLee<dim>::loadCheckpoint(const string& directory){
+	// check if stuff can be read from file. Else throw exception
+	string message;
+	if (isStatusOK(directory, message)) {
+		loadMatricesFromFiles(directory);
+	} else {
+		std::stringstream errorMessage;
+		errorMessage << "Restart not possible. " << message;
+		throw AdvectionSolverException(errorMessage.str().c_str());
+	}
+}
+template void SEDGMinLee<2>::loadCheckpoint(const string& directory);
+template void SEDGMinLee<3>::loadCheckpoint(const string& directory);
+
+
+template<size_t dim>
+void SEDGMinLee<dim>::saveCheckpoint(const string& directory) const{
+	writeStatus(directory);
+	saveMatricesToFiles(directory);
+}
+template void SEDGMinLee<2>::saveCheckpoint(const string& directory) const;
+template void SEDGMinLee<3>::saveCheckpoint(const string& directory) const;
 
 } /* namespace natrium */

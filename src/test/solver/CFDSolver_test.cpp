@@ -88,6 +88,41 @@ BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	cout << "done" << endl;
 }
 
+BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
+	cout << "CFDSolver_Restart_test..." << endl;
+
+	// Solver configuration
+	string directory = "../results/test-restart";
+	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	testConfiguration->setOutputDirectory(directory);
+	testConfiguration->setOutputFlags(out_CommandLineError | out_Checkpoints);
+	testConfiguration->setOutputCheckpointEvery(10);
+	size_t refinementLevel = 3;
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getOrderOfFiniteElement()-1));
+	testConfiguration->setTimeStep(0.1*deltaX);
+	testConfiguration->setNumberOfTimeSteps(15);
+	double viscosity = 1./5;
+	testConfiguration->setDQScaling(sqrt(3*viscosity/(testConfiguration->getTimeStep())));
+
+	// create problem and solver solver
+	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+	CFDSolver<2> solver(testConfiguration, testFlow);
+
+	// first run
+	solver.run();
+
+	// restart run
+	testConfiguration->setRestart(true);
+	testConfiguration->setNumberOfTimeSteps(25);
+	CFDSolver<2> solver2(testConfiguration, testFlow);
+	BOOST_CHECK(solver2.getIterationStart() == 10);
+	solver2.run();
+
+
+	cout << "done" << endl;
+} /* CFDSolver_Restart_test */
+
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } /* namespace natrium */

@@ -63,15 +63,18 @@ public:
 	 * @short f the global vectors of discrete particle distribution functions
 	 * @short densities the global vector of densities
 	 * @short velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ]
+	 * @short inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false
 	 */
 	void collideAll(vector<distributed_vector>& f,
 			distributed_vector& densities,
-			vector<distributed_vector>& velocities) const;
+			vector<distributed_vector>& velocities,
+			bool inInitializationProcedure = false) const;
 
 	/**
 	 * @short calculate relaxation parameter
 	 */
-	static double calculateRelaxationParameter(double viscosity, double timeStepSize,
+	static double calculateRelaxationParameter(double viscosity,
+			double timeStepSize,
 			boost::shared_ptr<BoltzmannModel> boltzmannModel) {
 		assert(viscosity > 0.0);
 		assert(timeStepSize > 0.0);
@@ -85,8 +88,7 @@ public:
 	static double calculateOptimalTimeStep(double viscosity,
 			const boost::shared_ptr<BoltzmannModel> boltzmannModel) {
 		assert(viscosity > 0.0);
-		return viscosity
-				/ boltzmannModel->getSpeedOfSoundSquare();
+		return viscosity / boltzmannModel->getSpeedOfSoundSquare();
 	}
 
 };

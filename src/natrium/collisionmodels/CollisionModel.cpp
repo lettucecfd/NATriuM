@@ -22,8 +22,8 @@ CollisionModel::~CollisionModel() {
 }
 
 void CollisionModel::collideAll(vector<distributed_vector>& f,
-		distributed_vector& densities,
-		vector<distributed_vector>& velocities) const {
+		distributed_vector& densities, vector<distributed_vector>& velocities,
+		bool inInitializationProcedure) const {
 
 	size_t n_dofs = f.at(0).size();
 	size_t Q = m_boltzmannModel->getQ();
@@ -51,16 +51,18 @@ void CollisionModel::collideAll(vector<distributed_vector>& f,
 		}
 		assert(densities(i) > 1e-10);
 
-		// calculate velocity
-		// for all velocity components
-		for (size_t j = 0; j < m_d; j++) {
-			velocities.at(j)(i) = 0;
+		if (not inInitializationProcedure) {
+			// calculate velocity
+			// for all velocity components
+			for (size_t j = 0; j < m_d; j++) {
+				velocities.at(j)(i) = 0;
 
-			for (size_t k = 0; k < Q; k++) {
+				for (size_t k = 0; k < Q; k++) {
 					velocities.at(j)(i) += f.at(k)(i)
 							* m_boltzmannModel->getDirection(k)(j);
+				}
+				velocities.at(j)(i) /= densities(i);
 			}
-			velocities.at(j)(i) /= densities(i);
 		}
 
 		// calculate equilibrium distribution

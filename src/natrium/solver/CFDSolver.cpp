@@ -45,10 +45,19 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				configuration->getOrderOfFiniteElement(), m_boltzmannModel,
 				whereAreTheStoredMatrices,
 				(configuration->getFluxType() == Flux_Central));
-		if (not configuration->isRestart()) {
-			m_advectionOperator->saveMatricesToFiles(
-					m_configuration->getOutputDirectory());
-		}
+	}
+
+	if (configuration->isRestart()) {
+		// read iteration number from file
+		std::stringstream filename;
+		filename << m_configuration->getOutputDirectory() << "/checkpoint.dat";
+		std::ifstream ifile(filename.str().c_str());
+		ifile >> m_iterationStart;
+		// print out message
+		*(Logging::BASIC) << "Restart at iteration " << m_iterationStart
+				<< endl;
+	} else {
+		m_iterationStart = 0;
 	}
 
 /// Calculate relaxation parameter and build collision model
@@ -102,20 +111,11 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	*(Logging::BASIC) << "----------------------------" << endl;
 
 // Initialize distribution functions
-	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-		distributed_vector fi(m_advectionOperator->getNumberOfDoFs());
-		m_f.push_back(fi);
-	}
-	vector<double> feq(m_boltzmannModel->getQ());
-	numeric_vector u(dim);
-	for (size_t i = 0; i < numberOfDoFs; i++) {
-		for (size_t j = 0; j < dim; j++) {
-			u(j) = m_velocity.at(j)(i);
-		}
-		m_boltzmannModel->getEquilibriumDistributions(feq, u, m_density(i));
-		for (size_t j = 0; j < m_boltzmannModel->getQ(); j++) {
-			m_f.at(j)(i) = feq.at(j);
-		}
+	if (configuration->isRestart()) {
+		loadDistributionFunctionsFromFiles(
+				m_configuration->getOutputDirectory());
+	} else {
+		initializeDistributions();
 	}
 
 }
@@ -148,11 +148,6 @@ template void CFDSolver<3>::collide();
 template<size_t dim>
 void CFDSolver<dim>::reassemble() {
 	m_advectionOperator->reassemble();
-// print out streaming matrices
-	if ((out_StreamingMatrices & m_configuration->getOutputFlags()) != 0) {
-		m_advectionOperator->saveMatricesToFiles(
-				m_configuration->getOutputDirectory());
-	}
 }
 template void CFDSolver<2>::reassemble();
 template void CFDSolver<3>::reassemble();
@@ -160,13 +155,13 @@ template void CFDSolver<3>::reassemble();
 template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
-	for (size_t i = 0; i < N; i++) {
+	for (size_t i = m_iterationStart; i < N; i++) {
 		if (i % 100 == 0) {
 			*(Logging::BASIC) << "Iteration " << i << endl;
 		}
+		output(i);
 		stream();
 		collide();
-		output(i);
 	}
 }
 template void CFDSolver<2>::run();
@@ -174,23 +169,168 @@ template void CFDSolver<3>::run();
 
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
-	std::stringstream str;
-	str << m_configuration->getOutputDirectory().c_str() << "/t_" << iteration
-			<< ".vtu";
-	std::string filename = str.str();
-	std::ofstream vtu_output(filename.c_str());
-	dealii::DataOut<dim> data_out;
-	data_out.attach_dof_handler(*m_advectionOperator->getDoFHandler());
-	data_out.add_data_vector(m_density, "rho");
-	for (size_t i = 0; i < dim; i++) {
-		std::stringstream vi;
-		vi << "v_" << i;
-		data_out.add_data_vector(m_velocity.at(i), vi.str().c_str());
+	// output: vector fields as .vtu files
+	if ((out_VectorFields & m_configuration->getOutputFlags()) != 0) {
+		if (iteration % m_configuration->getOutputVectorFieldsEvery() == 0) {
+			std::stringstream str;
+			str << m_configuration->getOutputDirectory().c_str() << "/t_"
+					<< iteration << ".vtu";
+			std::string filename = str.str();
+			std::ofstream vtu_output(filename.c_str());
+			dealii::DataOut<dim> data_out;
+			data_out.attach_dof_handler(*m_advectionOperator->getDoFHandler());
+			data_out.add_data_vector(m_density, "rho");
+			for (size_t i = 0; i < dim; i++) {
+				std::stringstream vi;
+				vi << "v_" << i;
+				data_out.add_data_vector(m_velocity.at(i), vi.str().c_str());
+			}
+			data_out.build_patches();
+			data_out.write_vtu(vtu_output);
+		}
 	}
-	data_out.build_patches();
-	data_out.write_vtu(vtu_output);
+	// output: checkpoint
+	if ((out_Checkpoints & m_configuration->getOutputFlags()) != 0) {
+		if (iteration % m_configuration->getOutputCheckpointEvery() == 0) {
+			// advection matrices
+			m_advectionOperator->saveCheckpoint(
+					m_configuration->getOutputDirectory());
+			// distribution functions
+			saveDistributionFunctionsToFiles(
+					m_configuration->getOutputDirectory());
+			// iteration
+			std::stringstream filename;
+			filename << m_configuration->getOutputDirectory()
+					<< "/checkpoint.dat";
+			std::ofstream outfile(filename.str().c_str());
+			outfile << iteration << endl;
+		}
+	}
 }
 template void CFDSolver<2>::output(size_t iteration);
 template void CFDSolver<3>::output(size_t iteration);
 
+template<size_t dim>
+void CFDSolver<dim>::initializeDistributions() {
+	(*Logging::BASIC) << "Initialize distribution functions: ";
+	vector<double> feq(m_boltzmannModel->getQ());
+	numeric_vector u(dim);
+
+	// Initialize f with the equilibrium distribution functions
+	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
+		distributed_vector fi(m_advectionOperator->getNumberOfDoFs());
+		m_f.push_back(fi);
+	}
+	for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
+		for (size_t j = 0; j < dim; j++) {
+			u(j) = m_velocity.at(j)(i);
+		}
+		m_boltzmannModel->getEquilibriumDistributions(feq, u, m_density(i));
+		for (size_t j = 0; j < m_boltzmannModel->getQ(); j++) {
+			m_f.at(j)(i) = feq.at(j);
+		}
+	}
+
+	switch (m_configuration->getDistributionInitType()) {
+	case Equilibrium: {
+		(*Logging::BASIC) << "Equilibrium distribution functions" << endl;
+		// do nothing else
+		break;
+	}
+	case Iterative: {
+		(*Logging::BASIC) << "Iterative procedure" << endl;
+		(*Logging::FULL) << "residual = "
+				<< m_configuration->getStopDistributionInitResidual();
+		(*Logging::FULL) << ", max iterations = "
+				<< m_configuration->getMaxDistributionInitIterations() << endl;
+		// Iterative procedure; leading to consistent initial values
+		size_t loopCount = 0;
+		double residual = 10;
+		const bool inInitializationProcedure = true;
+		distributed_vector oldDensities;
+		while (residual > m_configuration->getStopDistributionInitResidual()) {
+			if (loopCount
+					> m_configuration->getMaxDistributionInitIterations()) {
+				throw CFDSolverException(
+						"The iterative Initialization of equilibrium distribution functions failed. Either use another initialization procedure or change the preferences for iterative initialization (residual or maximal number of init iterations).");
+			}
+			oldDensities = m_density;
+			stream();
+			// collide without recalculating velocities
+			m_collisionModel->collideAll(m_f, m_density, m_velocity,
+					inInitializationProcedure);
+			oldDensities -= m_density;
+			residual = oldDensities.norm_sqr();
+			loopCount++;
+		}
+		(*Logging::FULL) << "Residual " << residual << " reached after "
+				<< loopCount << " iterations." << endl;
+
+		for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
+			for (size_t j = 0; j < dim; j++) {
+				u(j) = m_velocity.at(j)(i);
+			}
+			m_boltzmannModel->getEquilibriumDistributions(feq, u, m_density(i));
+			for (size_t j = 0; j < m_boltzmannModel->getQ(); j++) {
+				m_f.at(j)(i) = feq.at(j);
+			}
+		}
+		break;
+	}
+	default: {
+		throw CFDSolverException(
+				"Error in CFDSolver::InitializeDistributions. A part of the code was reached, which should never be reached.");
+		break;
+	}
+	}
+
+	(*Logging::BASIC) << "Initialize distribution functions: done." << endl;
+}
+
+template void CFDSolver<2>::initializeDistributions();
+template void CFDSolver<3>::initializeDistributions();
+
+template<size_t dim>
+void CFDSolver<dim>::saveDistributionFunctionsToFiles(const string& directory) {
+	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
+		// filename
+		std::stringstream filename;
+		filename << directory << "/checkpoint_f_" << i << ".dat";
+		std::ofstream file(filename.str().c_str());
+		m_f.at(i).block_write(file);
+	}
+}
+template void CFDSolver<2>::saveDistributionFunctionsToFiles(
+		const string& directory);
+template void CFDSolver<3>::saveDistributionFunctionsToFiles(
+		const string& directory);
+
+template<size_t dim>
+void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
+		const string& directory) {
+	// create vectors
+	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
+		distributed_vector fi(m_advectionOperator->getNumberOfDoFs());
+		m_f.push_back(fi);
+	}
+	// read the distribution functions from file
+	try {
+		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
+			// filename
+			std::stringstream filename;
+			filename << directory << "/checkpoint_f_" << i << ".dat";
+			std::ifstream file(filename.str().c_str());
+			m_f.at(i).block_read(file);
+		}
+	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+		throw CFDSolverException(
+				"An error occurred while reading the distribution functions from file: Please switch off the restart option to start the simulation from the beginning.");
+	}
+}
+template void CFDSolver<2>::loadDistributionFunctionsFromFiles(
+		const string& directory);
+template void CFDSolver<3>::loadDistributionFunctionsFromFiles(
+		const string& directory);
+
 } /* namespace natrium */
+

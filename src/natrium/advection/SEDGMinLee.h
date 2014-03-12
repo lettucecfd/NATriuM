@@ -194,6 +194,40 @@ private:
 	 */
 	vector<std::map<size_t, size_t> > map_q_index_to_facedofs() const;
 
+	/**
+	 * calculate a 'magic number' which helps to test whether two triangulations are equal
+	 */
+	double calcMagicNumber() const;
+
+	/** @short save matrices to files
+	 *  @param[in] directory directory to save the matrix files to
+	 */
+	void saveMatricesToFiles(const string& directory) const;
+
+	/** @short load matrices from files
+	 *  @param[in] directory directory to load the matrix files from
+	 */
+	void loadMatricesFromFiles(const string& directory);
+
+	/**
+	 * @short A function to write the status of the solver, mesh, etc at checkpoint time in order to prevent corrupt restarts of a simulation
+	 * @param[in] directory the output directory of a simulation
+	 */
+	void writeStatus(const string& directory) const;
+
+	/**
+	 * @short A function to write the status of the solver, mesh, etc at checkpoint time in order to prevent corrupt restarts of a simulation
+	 * @param[in] directory the output directory of a simulation
+	 * @param[out] if not OK, the message indicates what is not OK
+	 */
+	bool isStatusOK(const string& directory, string& message) const;
+
+	/** @short load matrices and status from files
+	 *  @param[in] directory directory to load the matrix files from
+	 *  @throws AdvectionSolverException
+	 */
+	void loadCheckpoint(const string& directory);
+
 public:
 
 	/// constructor
@@ -221,17 +255,11 @@ public:
 	/// make streaming step
 	virtual void stream();
 
-	/** @short save matrices to files
+	/** @short save matrices and status to files
 	 *  @param[in] directory directory to save the matrix files to
 	 *  @throws AdvectionSolverException
 	 */
-	virtual void saveMatricesToFiles(const string& directory) const;
-
-	/** @short load matrices from files
-	 *  @param[in] directory directory to load the matrix files from
-	 *  @throws AdvectionSolverException
-	 */
-	void loadMatricesFromFiles(const string& directory);
+	virtual void saveCheckpoint(const string& directory) const;
 
 	/// get global system matrix
 	virtual const vector<distributed_sparse_matrix>& getSystemMatrix() const {
@@ -240,6 +268,7 @@ public:
 
 	virtual void mapDoFsToSupportPoints(
 			vector<dealii::Point<dim> >& supportPoints) const {
+		assert(supportPoints.size() == this->getNumberOfDoFs());
 		dealii::DoFTools::map_dofs_to_support_points(m_mapping, *m_doFHandler,
 				supportPoints);
 	}
@@ -282,5 +311,6 @@ public:
 };
 
 } /* namespace natrium */
+
 
 #endif /* SEDGMINLEE_H_ */

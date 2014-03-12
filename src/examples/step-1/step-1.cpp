@@ -40,22 +40,22 @@ int main() {
 	cout << "Starting NATriuM step-1..." << endl;
 
 	// set parameters, set up configuration object
-	size_t refinementLevel = 6;
+	size_t refinementLevel = 5;
 	size_t orderOfFiniteElement = 2;
 	double viscosity = 1;
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
 	double deltaX = 1./(pow(2,refinementLevel)*(configuration->getOrderOfFiniteElement()-1));
-	configuration->setOutputDirectory( "../results/step-1-DQ100");
+	configuration->setOutputDirectory( "../results/step-1-variousDQ");
 	configuration->setRestart(true);
-	configuration->setOutputFlags(configuration->getOutputFlags() | out_StreamingMatrices);
+	configuration->setOutputFlags(configuration->getOutputFlags() | out_Checkpoints);
+	configuration->setOutputCheckpointEvery(100);
 	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setDQScaling(sqrt(300));
-	configuration->setTimeStep(0.01*deltaX);
+	configuration->setDQScaling(50);
+	double tScaling = std::min(0.1, 1./(2*configuration->getDQScaling()));
+	configuration->setTimeStep(tScaling*deltaX);
 	configuration->setNumberOfTimeSteps(5000);
-
-
-//configuration->getTimeStep()/3.;
+	//configuration->setDistributionInitType(Iterative);
 
 	// make problem and solver objects
 	shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<TaylorGreenVortex2D>(viscosity, refinementLevel);
@@ -81,11 +81,12 @@ int main() {
 	distributed_vector analyticSolution1(solver.getNumberOfDoFs());
 	distributed_vector analyticSolution2(solver.getNumberOfDoFs());
 	size_t N = configuration->getNumberOfTimeSteps();
-	for (size_t i = 0; i < N; i++) {
+	for (size_t i = solver.getIterationStart(); i < N; i++) {
 		if (i % 100 == 0) {
 			cout << "Iteration " << i << endl;
 		}
 		// Stream and collide
+		solver.output(i);
 		solver.stream();
 		solver.collide();
 

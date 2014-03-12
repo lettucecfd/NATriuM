@@ -84,6 +84,19 @@ private:
 	/// Configuration of the solver
 	shared_ptr<SolverConfiguration> m_configuration;
 
+	/// the number of the first iteration (normally 0, except for restart at a checkpoint)
+	size_t m_iterationStart;
+
+protected:
+
+	/// save the distribution functions to files for checkpointing
+	void saveDistributionFunctionsToFiles(const string& directory);
+
+	/// load the distribution functions from files for checkpointing
+	void loadDistributionFunctionsFromFiles(const string& directory);
+
+
+
 public:
 
 	/// constructor
@@ -95,6 +108,11 @@ public:
 	virtual ~CFDSolver() {
 	}
 	;
+
+	/**
+	 * @short initialize distribution functions
+	 */
+	void initializeDistributions();
 
 	/**
 	 * @short Advection in all directions
@@ -185,9 +203,14 @@ public:
 		}
 		return maxdev;
 	}
+
+	size_t getIterationStart() const {
+		return m_iterationStart;
+	}
 }
 ;
 
 } /* namespace natrium */
+
 
 #endif /* CFDSOLVER_H_ */

@@ -511,54 +511,48 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	cout << "done." << endl;
 } /* SEDGMinLee_RKstreaming_test */
 
-BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadMatrices_test) {
-	cout << "SEDGMinLee_SaveAndLoadMatrices_test..." << endl;
 
-	/////////////////
-	// Sanity test //
-	/////////////////
+BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
+	cout << "SEDGMinLee_SaveAndLoadCheckpoints_test..." << endl;
 
-	string directory = "../results/test-SaveAndLoadMatrices";
+	string directory = "../results/test-restart";
 
 	// create streaming object
 	size_t refinementLevel = 3;
-	size_t fe_order = 4;
+	size_t fe_order = 2;
 	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
-	streaming.saveMatricesToFiles(directory);
+	streaming.saveCheckpoint(directory);
 
-	// create streaming object
-	refinementLevel = 3;
-	fe_order = 4;
-	useCentralFlux = false;
-	SEDGMinLee<2> streaming2(periodic.getTriangulation(),
+	/////// SANITY TEST //////////
+	BOOST_CHECK_NO_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), directory, useCentralFlux);
-	BOOST_CHECK_NO_THROW(streaming2.stream());
+			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux));
 
-	//////////////////
-	// Failure test //
-	//////////////////
+	/////// FAILURE TEST ////////
+	PeriodicTestDomain2D periodic2(4);
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic2.getTriangulation(),
+			periodic2.getBoundaries(), fe_order,
+			make_shared<D2Q9IncompressibleModel>(), directory, useCentralFlux), AdvectionSolverException);
 
-	// non-valid input directory
-	BOOST_CHECK_THROW(
-			SEDGMinLee<2> streaming4(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9IncompressibleModel>(), "a", useCentralFlux),
-			AdvectionSolverException);
-/*
-	refinementLevel = 4;
-	fe_order = 4;
-	useCentralFlux = false;
-	PeriodicTestDomain2D periodic2(refinementLevel);
-	BOOST_CHECK_THROW(
-			SEDGMinLee<2> streaming3(periodic2.getTriangulation(), periodic2.getBoundaries(), fe_order, make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux),
-			std::exception);
-*/
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+			periodic.getBoundaries(), fe_order,
+			make_shared<D2Q9IncompressibleModel>(), "gubaguba", useCentralFlux), AdvectionSolverException);
+
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+			periodic.getBoundaries(), fe_order+1,
+			make_shared<D2Q9IncompressibleModel>(), directory, useCentralFlux), AdvectionSolverException);
+
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+			periodic.getBoundaries(), fe_order,
+			make_shared<D2Q9IncompressibleModel>(), directory, not useCentralFlux), AdvectionSolverException);
+
 
 	cout << "done" << endl;
-} /* SEDGMinLee_SaveAndLoadMatrices_test */
+} /*SEDGMinLee_SaveAndLoadCheckpoints_test*/
 
 BOOST_AUTO_TEST_SUITE_END()
 
