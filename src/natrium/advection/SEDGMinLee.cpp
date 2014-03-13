@@ -69,6 +69,88 @@ template SEDGMinLee<3>::SEDGMinLee(shared_ptr<Triangulation<3> > triangulation,
 		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
 		string inputDirectory, bool useCentralFlux);
 
+
+
+template<size_t dim>
+void SEDGMinLee<dim>::reassemble() {
+// TODO: if Triangulation changed: reinit dof-handler and sparsity pattern in some way
+
+/////////////////////////////////
+// Initialize Finite Element ////
+/////////////////////////////////
+// Define update flags (which values have to be known at each cell, face, neighbor face)
+	const dealii::UpdateFlags cellUpdateFlags = update_values | update_gradients
+
+	| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
+	const dealii::UpdateFlags faceUpdateFlags = update_values
+
+	| update_quadrature_points | update_JxW_values | update_normal_vectors;
+	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
+			| update_JxW_values | update_normal_vectors;
+// Finite Element
+	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
+			cellUpdateFlags);
+	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
+			faceUpdateFlags);
+	dealii::FESubfaceValues<dim> feSubfaceValues(m_mapping, *m_fe,
+			*m_faceQuadrature, faceUpdateFlags);
+	dealii::FEFaceValues<dim> feNeighborFaceValues(m_mapping, *m_fe,
+			*m_faceQuadrature, neighborFaceUpdateFlags);
+
+	const size_t dofs_per_cell = m_fe->dofs_per_cell;
+	const size_t n_quadrature_points = m_quadrature->size();
+
+// Initialize matrices
+	vector<double> localMassMatrix(dofs_per_cell);
+	vector<dealii::FullMatrix<double> > localDerivativeMatrices;
+	for (size_t i = 0; i < dim; i++) {
+		dealii::FullMatrix<double> D_i(dofs_per_cell, dofs_per_cell);
+		localDerivativeMatrices.push_back(D_i);
+	}
+	dealii::FullMatrix<double> localFaceMatrix(dofs_per_cell, dofs_per_cell);
+	dealii::FullMatrix<double> localSystemMatrix(dofs_per_cell, dofs_per_cell);
+	std::vector<types::global_dof_index> localDoFIndices(dofs_per_cell);
+
+///////////////
+// MAIN LOOP //
+///////////////
+	typename DoFHandler<dim>::active_cell_iterator cell =
+			m_doFHandler->begin_active(), endc = m_doFHandler->end();
+	for (; cell != endc; ++cell) {
+		// calculate the fe values for the cell
+		feCellValues.reinit(cell);
+
+		// get global degrees of freedom
+		cell->get_dof_indices(localDoFIndices);
+
+		// assemble local cell matrices
+		assembleLocalMassMatrix(feCellValues, dofs_per_cell,
+				n_quadrature_points, localMassMatrix, localDoFIndices);
+		assembleLocalDerivativeMatrices(feCellValues, dofs_per_cell,
+				n_quadrature_points, localDerivativeMatrices);
+
+		// assemble faces and put together
+		for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
+// calculate local diagonal block (cell) matrix -D
+			calculateAndDistributeLocalStiffnessMatrix(i,
+					localDerivativeMatrices, localSystemMatrix, localDoFIndices,
+					dofs_per_cell);
+// calculate face contributions  R
+			assembleAndDistributeLocalFaceMatrices(i, cell, feFaceValues,
+					feSubfaceValues, feNeighborFaceValues, dofs_per_cell,
+					n_quadrature_points, localFaceMatrix);
+		}
+	}
+	// Mulitply by inverse mass matrix
+	for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
+		divideByDiagonalMassMatrix(m_systemMatrix.at(i), m_massMatrix);
+	}
+} /* reassemble */
+/// The template parameter must be made explicit in order for the code to compile
+template void SEDGMinLee<2>::reassemble();
+template void SEDGMinLee<3>::reassemble();
+
+
 template<size_t dim>
 void SEDGMinLee<dim>::updateSparsityPattern() {
 
@@ -528,84 +610,6 @@ void SEDGMinLee<dim>::stream() {
 template void SEDGMinLee<2>::stream();
 template void SEDGMinLee<3>::stream();
 
-template<size_t dim>
-void SEDGMinLee<dim>::reassemble() {
-// TODO: if Triangulation changed: reinit dof-handler and sparsity pattern in some way
-
-/////////////////////////////////
-// Initialize Finite Element ////
-/////////////////////////////////
-// Define update flags (which values have to be known at each cell, face, neighbor face)
-	const dealii::UpdateFlags cellUpdateFlags = update_values | update_gradients
-
-	| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
-	const dealii::UpdateFlags faceUpdateFlags = update_values
-
-	| update_quadrature_points | update_JxW_values | update_normal_vectors;
-	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
-			| update_JxW_values | update_normal_vectors;
-// Finite Element
-	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
-			cellUpdateFlags);
-	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
-			faceUpdateFlags);
-	dealii::FESubfaceValues<dim> feSubfaceValues(m_mapping, *m_fe,
-			*m_faceQuadrature, faceUpdateFlags);
-	dealii::FEFaceValues<dim> feNeighborFaceValues(m_mapping, *m_fe,
-			*m_faceQuadrature, neighborFaceUpdateFlags);
-
-	const size_t dofs_per_cell = m_fe->dofs_per_cell;
-	const size_t n_quadrature_points = m_quadrature->size();
-
-// Initialize matrices
-	vector<double> localMassMatrix(dofs_per_cell);
-	vector<dealii::FullMatrix<double> > localDerivativeMatrices;
-	for (size_t i = 0; i < dim; i++) {
-		dealii::FullMatrix<double> D_i(dofs_per_cell, dofs_per_cell);
-		localDerivativeMatrices.push_back(D_i);
-	}
-	dealii::FullMatrix<double> localFaceMatrix(dofs_per_cell, dofs_per_cell);
-	dealii::FullMatrix<double> localSystemMatrix(dofs_per_cell, dofs_per_cell);
-	std::vector<types::global_dof_index> localDoFIndices(dofs_per_cell);
-
-///////////////
-// MAIN LOOP //
-///////////////
-	typename DoFHandler<dim>::active_cell_iterator cell =
-			m_doFHandler->begin_active(), endc = m_doFHandler->end();
-	for (; cell != endc; ++cell) {
-		// calculate the fe values for the cell
-		feCellValues.reinit(cell);
-
-		// get global degrees of freedom
-		cell->get_dof_indices(localDoFIndices);
-
-		// assemble local cell matrices
-		assembleLocalMassMatrix(feCellValues, dofs_per_cell,
-				n_quadrature_points, localMassMatrix, localDoFIndices);
-		assembleLocalDerivativeMatrices(feCellValues, dofs_per_cell,
-				n_quadrature_points, localDerivativeMatrices);
-
-		// assemble faces and put together
-		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-// calculate local diagonal block (cell) matrix -D
-			calculateAndDistributeLocalStiffnessMatrix(i,
-					localDerivativeMatrices, localSystemMatrix, localDoFIndices,
-					dofs_per_cell);
-// calculate face contributions  R
-			assembleAndDistributeLocalFaceMatrices(i, cell, feFaceValues,
-					feSubfaceValues, feNeighborFaceValues, dofs_per_cell,
-					n_quadrature_points, localFaceMatrix);
-		}
-	}
-	// Mulitply by inverse mass matrix
-	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-		divideByDiagonalMassMatrix(m_systemMatrix.at(i), m_massMatrix);
-	}
-}
-/// The template parameter must be made explicit in order for the code to compile
-template void SEDGMinLee<2>::reassemble();
-template void SEDGMinLee<3>::reassemble();
 
 template<size_t dim>
 void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {

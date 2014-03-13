@@ -16,7 +16,7 @@
 
 #include "utilities/BasicNames.h"
 
-#include "TaylorGreenVortex2D.h"
+#include "PoiseuilleFlow2D.h"
 
 using namespace natrium;
 
@@ -24,15 +24,15 @@ using namespace natrium;
 void getAnalyticSolution(double time, distributed_vector& analyticSolution1,
 		distributed_vector& analyticSolution2,
 		const vector<dealii::Point<2> >& supportPoints,
-		const TaylorGreenVortex2D& tgVortex) {
+		const PoiseuilleFlow2D& poiFlow) {
 	assert(analyticSolution1.size() == supportPoints.size());
 	assert(analyticSolution2.size() == supportPoints.size());
 	assert(supportPoints.size() > 0);
 
 	for (size_t i = 0; i < supportPoints.size(); i++) {
-		analyticSolution1(i) = tgVortex.analyticVelocity1(supportPoints.at(i),
+		analyticSolution1(i) = poiFlow.analyticVelocity1(supportPoints.at(i),
 				time);
-		analyticSolution2(i) = tgVortex.analyticVelocity2(supportPoints.at(i),
+		analyticSolution2(i) = poiFlow.analyticVelocity2(supportPoints.at(i),
 				time);
 	}
 }
@@ -40,7 +40,7 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution1,
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-1..." << endl;
+	cout << "Starting NATriuM step-2..." << endl;
 
 	// set parameters, set up configuration object
 	size_t refinementLevel = 5;
@@ -65,10 +65,10 @@ int main() {
 	//configuration->setDistributionInitType(Iterative);
 
 	// make problem and solver objects
-	shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<TaylorGreenVortex2D>(
+	shared_ptr<PoiseuilleFlow2D> poiFlow = make_shared<PoiseuilleFlow2D>(
 			viscosity, refinementLevel);
-	shared_ptr<ProblemDescription<2> > taylorGreen = tgVortex;
-	CFDSolver<2> solver(configuration, taylorGreen);
+	shared_ptr<ProblemDescription<2> > poiseuilleFlow = poiFlow;
+	CFDSolver<2> solver(configuration, poiseuilleFlow);
 
 	// File for max norms
 	std::stringstream s;
@@ -122,7 +122,7 @@ int main() {
 		data_out.add_data_vector(solver.getVelocity().at(1), "v_2");
 		// calculate analytic solution
 		getAnalyticSolution(configuration->getTimeStep() * i, analyticSolution1,
-				analyticSolution2, supportPoints, *tgVortex);
+				analyticSolution2, supportPoints, *poiFlow);
 		data_out.add_data_vector(analyticSolution1, "v_1_analytic");
 		data_out.add_data_vector(analyticSolution2, "v_2_analytic");
 		data_out.build_patches();
