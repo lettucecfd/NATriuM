@@ -40,6 +40,7 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 	m_doFHandler = make_shared<DoFHandler<dim> >(*triangulation);
 
 	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
+		// (the first one will be empty all the time; just for consistency of indices with the distribution functions)
 		m_systemMatrix.push_back(distributed_sparse_matrix());
 	}
 	// distribute degrees of freedom over mesh
@@ -613,8 +614,6 @@ template void SEDGMinLee<3>::stream();
 
 template<size_t dim>
 void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
-	// Write a "fingerprint file", which will indicate a restart with a changed geometry or configuration
-
 	// write system matrices to files
 	try {
 		for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
@@ -639,7 +638,6 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 		throw AdvectionSolverException(
 				"An error occurred while writing the mass matrix to file: Please make shure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
 	}
-
 }
 template void SEDGMinLee<2>::saveMatricesToFiles(const string& directory) const;
 template void SEDGMinLee<3>::saveMatricesToFiles(const string& directory) const;
