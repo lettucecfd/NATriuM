@@ -71,8 +71,10 @@ public:
  *         M_i = (\psi_j, \psi_k)_{\Omega_e} is diagonal. This circumvents the solution of a linear equation system.
  *         Each advection equation leads to a ODE
  *         \f[ \partial_t f_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) f_i + B_i f_{i^{\ast}} + b_i.\f]
- *         including particle distributions f, system matrix L, diagonal mass matrix M,
- *         gradient matrices Dx, Dy, (Dz) and boundary matrix R
+ *         Altogether, for the example of the D2Q9, the system becomes
+ *         \f[
+ *
+ *         \f]
  * @tparam dim The dimension of the flow (2 or 3).
  */
 template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {
