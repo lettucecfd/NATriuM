@@ -10,12 +10,14 @@
 namespace natrium {
 
 
-TimeIntegrator::TimeIntegrator(double timeStepSize):
+template <class MATRIX, class VECTOR> TimeIntegrator<MATRIX, VECTOR>::TimeIntegrator(double timeStepSize):
 	m_timeStepSize(timeStepSize){
 }
+template TimeIntegrator<distributed_sparse_matrix, distributed_vector>::TimeIntegrator(double timeStepSize);
+template TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>::TimeIntegrator(double timeStepSize);
 
 /// destructor
-TimeIntegrator::~TimeIntegrator(){
-}
+//template <class MATRIX, class VECTOR> TimeIntegrator<MATRIX, VECTOR>::~TimeIntegrator(){
+//}
 
 } /* namespace natrium */

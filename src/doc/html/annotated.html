@@ -103,7 +103,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\[ \left( \partial_t f_i + \partial_x (e_i f_i), \Phi \right)_{\Omega_e} = \left(n \left[ e_i f_i - F^{\ast}_{i}(f) \right], \Phi \right)_{\partial \Omega_e}. \]" src="form_3.png"/>
 </p>
-<p> In this formulation <img class="formulaInl" alt="$ F^{\ast}_{i}(f) $" src="form_4.png"/> denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-Friedrichs fluxes. Lax-Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-Lobatto quadrature is used, which has the advantage that the resulting mass matrix M_i = (, )_{} is diagonal. This circumvents the solution of a linear equation system. including particle distributions f, system matrix L, diagonal mass matrix M, gradient matrices Dx, Dy, (Dz) and boundary matrix R </td></tr>
+<p> In this formulation <img class="formulaInl" alt="$ F^{\ast}_{i}(f) $" src="form_4.png"/> denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-Friedrichs fluxes. Lax-Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-Lobatto quadrature is used, which has the advantage that the resulting mass matrix M_i = (, )_{} is diagonal. This circumvents the solution of a linear equation system. Each advection equation leads to a ODE </p>
+<p class="formulaDsp">
+<img class="formulaDsp" alt="\[ \partial_t f_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) f_i + B_i f_{i^{\ast}} + b_i.\]" src="form_5.png"/>
+</p>
+<p> Altogether, for the example of the D2Q9, the system becomes </p>
+<p class="formulaDsp">
+<img class="formulaDsp" alt="\[ \partial_t f_{1,\dots,Q} = \left( \matrix{ L_1 &amp; 0 &amp; B_1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; L_2 &amp; 0 &amp; B_2 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr B_3 &amp; 0 &amp; L_3 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; B_4 &amp; 0 &amp; L_4 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; L_5 &amp; 0 &amp; B_5 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; L_6 &amp; 0 &amp; B_6\cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; B_7 &amp; 0 &amp; L_7 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; B_8 &amp; 0 &amp; L_8 } \right) f_{1,\dots,Q} + \left( \matrix{ b_1 \cr b_2 \cr b_3 \cr b_4 \cr b_5 \cr b_6 \cr b_7 \cr b_8 }\right), \]" src="form_8.png"/>
+</p>
+<p> where <img class="formulaInl" alt="$ L_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) $" src="form_9.png"/> </td></tr>
 <tr id="row_0_8_"><td class="entry"><img src="ftv2blank.png" alt="&#160;" width="16" height="22" /><img src="ftv2node.png" alt="o" width="16" height="22" /><img src="ftv2cl.png" alt="C" width="24" height="22" /><a class="el" href="classnatrium_1_1BoltzmannModel.html" target="_self">BoltzmannModel</a></td><td class="desc">Abstract class for the description of a boltzmann model, e.g. D2Q9 </td></tr>
 <tr id="row_0_9_" class="even"><td class="entry"><img src="ftv2blank.png" alt="&#160;" width="16" height="22" /><img src="ftv2node.png" alt="o" width="16" height="22" /><img src="ftv2cl.png" alt="C" width="24" height="22" /><a class="el" href="classnatrium_1_1D2Q9IncompressibleModel.html" target="_self">D2Q9IncompressibleModel</a></td><td class="desc">D2Q9 model description for incompressible flow </td></tr>
 <tr id="row_0_10_"><td class="entry"><img src="ftv2blank.png" alt="&#160;" width="16" height="22" /><img src="ftv2node.png" alt="o" width="16" height="22" /><img src="ftv2cl.png" alt="C" width="24" height="22" /><a class="el" href="classnatrium_1_1D2Q9Model.html" target="_self">D2Q9Model</a></td><td class="desc">D2Q9 Model </td></tr>
@@ -130,7 +138,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 18 2014 10:36:49 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 11:58:44 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

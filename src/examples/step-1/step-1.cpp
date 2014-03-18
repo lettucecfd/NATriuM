@@ -53,7 +53,7 @@ int main() {
 			/ (pow(2, refinementLevel)
 					* (configuration->getOrderOfFiniteElement() - 1));
 	configuration->setOutputDirectory("../results/step-1-variousDQ");
-	configuration->setRestart(false);
+	configuration->setRestart(true);
 	configuration->setOutputFlags(
 			configuration->getOutputFlags() | out_Checkpoints);
 	configuration->setOutputCheckpointEvery(100);

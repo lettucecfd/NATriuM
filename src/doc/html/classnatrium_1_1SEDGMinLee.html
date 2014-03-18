@@ -101,7 +101,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\[ \left( \partial_t f_i + \partial_x (e_i f_i), \Phi \right)_{\Omega_e} = \left(n \left[ e_i f_i - F^{\ast}_{i}(f) \right], \Phi \right)_{\partial \Omega_e}. \]" src="form_3.png"/>
 </p>
-<p> In this formulation <img class="formulaInl" alt="$ F^{\ast}_{i}(f) $" src="form_4.png"/> denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-Friedrichs fluxes. Lax-Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-Lobatto quadrature is used, which has the advantage that the resulting mass matrix M_i = (, )_{} is diagonal. This circumvents the solution of a linear equation system. including particle distributions f, system matrix L, diagonal mass matrix M, gradient matrices Dx, Dy, (Dz) and boundary matrix R.  
+<p> In this formulation <img class="formulaInl" alt="$ F^{\ast}_{i}(f) $" src="form_4.png"/> denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-Friedrichs fluxes. Lax-Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-Lobatto quadrature is used, which has the advantage that the resulting mass matrix M_i = (, )_{} is diagonal. This circumvents the solution of a linear equation system. Each advection equation leads to a ODE </p>
+<p class="formulaDsp">
+<img class="formulaDsp" alt="\[ \partial_t f_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) f_i + B_i f_{i^{\ast}} + b_i.\]" src="form_5.png"/>
+</p>
+<p> Altogether, for the example of the D2Q9, the system becomes </p>
+<p class="formulaDsp">
+<img class="formulaDsp" alt="\[ \partial_t f_{1,\dots,Q} = \left( \matrix{ L_1 &amp; 0 &amp; B_1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; L_2 &amp; 0 &amp; B_2 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr B_3 &amp; 0 &amp; L_3 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; B_4 &amp; 0 &amp; L_4 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; L_5 &amp; 0 &amp; B_5 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; L_6 &amp; 0 &amp; B_6\cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; B_7 &amp; 0 &amp; L_7 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; B_8 &amp; 0 &amp; L_8 } \right) f_{1,\dots,Q} + \left( \matrix{ b_1 \cr b_2 \cr b_3 \cr b_4 \cr b_5 \cr b_6 \cr b_7 \cr b_8 }\right), \]" src="form_8.png"/>
+</p>
+<p> where <img class="formulaInl" alt="$ L_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) $" src="form_9.png"/>.  
  <a href="classnatrium_1_1SEDGMinLee.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="SEDGMinLee_8h_source.html">SEDGMinLee.h</a>&gt;</code></p>
@@ -204,7 +212,15 @@ class natrium::SEDGMinLee&lt; dim &gt;</h3>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\[ \left( \partial_t f_i + \partial_x (e_i f_i), \Phi \right)_{\Omega_e} = \left(n \left[ e_i f_i - F^{\ast}_{i}(f) \right], \Phi \right)_{\partial \Omega_e}. \]" src="form_3.png"/>
 </p>
-<p> In this formulation <img class="formulaInl" alt="$ F^{\ast}_{i}(f) $" src="form_4.png"/> denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-Friedrichs fluxes. Lax-Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-Lobatto quadrature is used, which has the advantage that the resulting mass matrix M_i = (, )_{} is diagonal. This circumvents the solution of a linear equation system. including particle distributions f, system matrix L, diagonal mass matrix M, gradient matrices Dx, Dy, (Dz) and boundary matrix R. </p>
+<p> In this formulation <img class="formulaInl" alt="$ F^{\ast}_{i}(f) $" src="form_4.png"/> denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-Friedrichs fluxes. Lax-Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-Lobatto quadrature is used, which has the advantage that the resulting mass matrix M_i = (, )_{} is diagonal. This circumvents the solution of a linear equation system. Each advection equation leads to a ODE </p>
+<p class="formulaDsp">
+<img class="formulaDsp" alt="\[ \partial_t f_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) f_i + B_i f_{i^{\ast}} + b_i.\]" src="form_5.png"/>
+</p>
+<p> Altogether, for the example of the D2Q9, the system becomes </p>
+<p class="formulaDsp">
+<img class="formulaDsp" alt="\[ \partial_t f_{1,\dots,Q} = \left( \matrix{ L_1 &amp; 0 &amp; B_1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; L_2 &amp; 0 &amp; B_2 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr B_3 &amp; 0 &amp; L_3 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; B_4 &amp; 0 &amp; L_4 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; L_5 &amp; 0 &amp; B_5 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; L_6 &amp; 0 &amp; B_6\cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; B_7 &amp; 0 &amp; L_7 &amp; 0 \cr 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; B_8 &amp; 0 &amp; L_8 } \right) f_{1,\dots,Q} + \left( \matrix{ b_1 \cr b_2 \cr b_3 \cr b_4 \cr b_5 \cr b_6 \cr b_7 \cr b_8 }\right), \]" src="form_8.png"/>
+</p>
+<p> where <img class="formulaInl" alt="$ L_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) $" src="form_9.png"/>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>The dimension of the flow (2 or 3). </td></tr>
@@ -356,7 +372,7 @@ template&lt;size_t dim&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 18 2014 10:36:42 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 11:58:38 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

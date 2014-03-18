@@ -436,7 +436,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(streaming.getSparsityPattern(2));
 	advectionMatrix.copy_from(matrices.block(2,2));
-	RungeKutta5LowStorage RK5(timeStep, f.size());
+	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(timeStep, f.size());
 #ifdef RK5_OUT
 	// Make results dir
 	std::string dirname("../results/rk5_periodicstreaming");

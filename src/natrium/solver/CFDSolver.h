@@ -79,7 +79,7 @@ private:
 	shared_ptr<CollisionModel> m_collisionModel;
 
 	/// Time Integrator for the solution of the ODE, which stems from the space discretization
-	shared_ptr<TimeIntegrator> m_timeIntegrator;
+	shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > m_timeIntegrator;
 
 	/// Configuration of the solver
 	shared_ptr<SolverConfiguration> m_configuration;
@@ -171,7 +171,7 @@ public:
 		return m_problemDescription;
 	}
 
-	const shared_ptr<TimeIntegrator>& getTimeIntegrator() const {
+	const shared_ptr<TimeIntegrator<distributed_vector, distributed_sparse_matrix> >& getTimeIntegrator() const {
 		return m_timeIntegrator;
 	}
 

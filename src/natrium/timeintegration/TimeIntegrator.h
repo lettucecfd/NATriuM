@@ -19,7 +19,7 @@ namespace natrium {
  *         The only remaining derivative is then the time derivative, which makes the equation an ODE.
  *         The latter can be solved using classical time integration methods like Runge-Kutta or Adams-Moulton.
  */
-class TimeIntegrator {
+template <class MATRIX, class VECTOR> class TimeIntegrator {
 private:
 
 	/// size of the time step
@@ -31,7 +31,9 @@ public:
 	TimeIntegrator(double timeStepSize);
 
 	/// destructor
-	virtual ~TimeIntegrator();
+	virtual ~TimeIntegrator(){
+
+	}
 
 	double getTimeStepSize() const {
 		return m_timeStepSize;
@@ -46,7 +48,7 @@ public:
 	 * @short make one time integration step on vector
 	 *        using the system matrix
 	 */
-	virtual void step(distributed_vector& vector, const dealii::SparseMatrix<double>& systemMatrix) = 0;
+	virtual void step(VECTOR& vector, const MATRIX& systemMatrix) = 0;
 };
 
 } /* namespace natrium */

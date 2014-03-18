@@ -77,7 +77,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(streaming.getSparsityPattern(0));
 	advectionMatrix.copy_from(matrices.block(0,0));
-	RungeKutta5LowStorage RK5(deltaT, f.size());
+	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(deltaT, f.size());
 
 	for (size_t i = 0; i < numberOfTimeSteps; i++) {
 		//stream

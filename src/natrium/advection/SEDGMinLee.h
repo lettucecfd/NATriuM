@@ -72,9 +72,24 @@ public:
  *         Each advection equation leads to a ODE
  *         \f[ \partial_t f_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) f_i + B_i f_{i^{\ast}} + b_i.\f]
  *         Altogether, for the example of the D2Q9, the system becomes
- *         \f[
- *
+ *         \f[ \partial_t f_{1,\dots,Q} =
+ *         \left( \matrix{
+ *         L_1 	& 	0 	& 	B_1 & 	0	& 	0 	& 	0	&	0	&	0 \cr
+ *         0	&	L_2	&	0	&	B_2	&	0	&	0	&	0	&	0 \cr
+ *         B_3	&	0	&	L_3	&	0	&	0	&	0	&	0	&	0 \cr
+ *         0	&	B_4	&	0	&	L_4	&	0	&	0	&	0	&	0 \cr
+ *         0 	& 	0	&	0	&	0	&	L_5 & 	0 	& 	B_5 & 	0 \cr
+ *         0 	& 	0	&	0	&	0	&	0	&	L_6 & 	0 	& 	B_6\cr
+ *         0 	& 	0	&	0	&	0	&	B_7 & 	0 	& 	L_7 & 	0 \cr
+ *         0 	& 	0	&	0	&	0	&	0	&	B_8 & 	0 	& 	L_8
+ *         } \right)
+ *		   f_{1,\dots,Q}
+ *		   +
+ *		   \left( \matrix{
+ *		   b_1  \cr b_2 \cr b_3 \cr b_4 \cr b_5 \cr b_6 \cr b_7 \cr b_8
+ *		   }\right),
  *         \f]
+ *         where \f$ L_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) \f$.
  * @tparam dim The dimension of the flow (2 or 3).
  */
 template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {

@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 	A.set(0,0,lambda);
 
 	// initialize Runge-Kutta 5
-	RungeKutta5LowStorage RK5(dt, 1);
+	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(dt, 1);
 
 	double t = 0;
 	for (size_t i = 0; i < numberOfSteps; i++){

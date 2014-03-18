@@ -73,7 +73,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	size_t numberOfDoFs = m_advectionOperator->getNumberOfDoFs();
 	if (Integrator_RungeKutta5LowStorage
 			== configuration->getTimeIntegratorType()) {
-		m_timeIntegrator = make_shared<RungeKutta5LowStorage>(
+		m_timeIntegrator = make_shared<RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> >(
 				configuration->getTimeStep(), numberOfDoFs);
 	}
 
