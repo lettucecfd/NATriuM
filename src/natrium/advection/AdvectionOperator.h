@@ -36,7 +36,7 @@ public:
 	virtual void stream() = 0;
 	// TODO is blas installed with dealii? installing blas will speed up the streaming step
 
-	virtual const vector<distributed_sparse_matrix>& getSystemMatrix() const = 0;
+	virtual const distributed_sparse_block_matrix& getSystemMatrix() const = 0;
 
 	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const = 0;
 
@@ -51,9 +51,7 @@ public:
 	 */
 	virtual void saveCheckpoint(const string& directory) const = 0;
 
-	size_t getNumberOfDoFs() const {
-		return getSystemMatrix().at(0).n();
-	}
+	virtual size_t getNumberOfDoFs() const = 0;
 };
 
 } /* namespace natrium */

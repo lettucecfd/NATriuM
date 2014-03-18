@@ -46,7 +46,7 @@ public:
 	 * @short make one time integration step on vector
 	 *        using the system matrix
 	 */
-	virtual void step(distributed_vector& vector, const distributed_sparse_matrix& systemMatrix) = 0;
+	virtual void step(distributed_vector& vector, const dealii::SparseMatrix<double>& systemMatrix) = 0;
 };
 
 } /* namespace natrium */

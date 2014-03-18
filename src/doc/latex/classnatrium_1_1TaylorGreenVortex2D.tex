@@ -1,0 +1,101 @@
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D}{\section{natrium\-:\-:Taylor\-Green\-Vortex2\-D Class Reference}
+\label{classnatrium_1_1TaylorGreenVortex2D}\index{natrium\-::\-Taylor\-Green\-Vortex2\-D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}}
+}
+
+
+Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  
+
+
+
+
+{\ttfamily \#include $<$Taylor\-Green\-Vortex2\-D.\-h$>$}
+
+Inheritance diagram for natrium\-:\-:Taylor\-Green\-Vortex2\-D\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classnatrium_1_1TaylorGreenVortex2D}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}{Taylor\-Green\-Vortex2\-D} (double viscosity, size\-\_\-t refinement\-Level)
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}{virtual \hyperlink{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}{$\sim$\-Taylor\-Green\-Vortex2\-D} ()}\label{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1TaylorGreenVortex2D_a4ce91370c76ec68a7593c7c99bfd37a7}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+\begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1TaylorGreenVortex2D_a271d4dc6bba9b162f96f593296b06e1d}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+\begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a86952afeffa9d8c9d7da62c1a0dddf1f}{double \hyperlink{classnatrium_1_1TaylorGreenVortex2D_a86952afeffa9d8c9d7da62c1a0dddf1f}{analytic\-Velocity1} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1TaylorGreenVortex2D_a86952afeffa9d8c9d7da62c1a0dddf1f}
+
+\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex, first component of velocity vector \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a79ac6363e53534affe7e2e143dd9cbdf}{double \hyperlink{classnatrium_1_1TaylorGreenVortex2D_a79ac6363e53534affe7e2e143dd9cbdf}{analytic\-Velocity2} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1TaylorGreenVortex2D_a79ac6363e53534affe7e2e143dd9cbdf}
+
+\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex, second component of velocity vector \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}{\index{natrium\-::\-Taylor\-Green\-Vortex2\-D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}!Taylor\-Green\-Vortex2\-D@{Taylor\-Green\-Vortex2\-D}}
+\index{Taylor\-Green\-Vortex2\-D@{Taylor\-Green\-Vortex2\-D}!natrium::TaylorGreenVortex2D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}}
+\subsubsection[{Taylor\-Green\-Vortex2\-D}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Taylor\-Green\-Vortex2\-D\-::\-Taylor\-Green\-Vortex2\-D (
+\begin{DoxyParamCaption}
+\item[{double}]{viscosity, }
+\item[{size\-\_\-t}]{refinement\-Level}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}
+
+
+constructor 
+
+apply boundary values 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a4ce91370c76ec68a7593c7c99bfd37a7}{\index{natrium\-::\-Taylor\-Green\-Vortex2\-D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
+\index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::TaylorGreenVortex2D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}}
+\subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Taylor\-Green\-Vortex2\-D\-::apply\-Initial\-Densities (
+\begin{DoxyParamCaption}
+\item[{distributed\-\_\-vector \&}]{initial\-Densities, }
+\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1TaylorGreenVortex2D_a4ce91370c76ec68a7593c7c99bfd37a7}
+
+
+set initial densities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Densities} & vector of densities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a271d4dc6bba9b162f96f593296b06e1d}{\index{natrium\-::\-Taylor\-Green\-Vortex2\-D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
+\index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::TaylorGreenVortex2D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}}
+\subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Taylor\-Green\-Vortex2\-D\-::apply\-Initial\-Velocities (
+\begin{DoxyParamCaption}
+\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
+\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1TaylorGreenVortex2D_a271d4dc6bba9b162f96f593296b06e1d}
+
+
+set initial velocities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Velocities} & vector of velocities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/1/\hyperlink{TaylorGreenVortex2D_8h}{Taylor\-Green\-Vortex2\-D.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/1/\hyperlink{TaylorGreenVortex2D_8cpp}{Taylor\-Green\-Vortex2\-D.\-cpp}\end{DoxyCompactItemize}

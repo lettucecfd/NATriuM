@@ -65,8 +65,6 @@ public:
 	/// destructor
 	virtual ~BoltzmannModel();
 
-
-
 ///////////////////////
 // GETTER AND SETTER //
 ///////////////////////
@@ -124,7 +122,7 @@ public:
 		return m_stencilType;
 	}
 
-
+	virtual size_t getIndexOfOppositeDirection(size_t index) const = 0;
 ////////////////////////////////////
 // CALCULATE MACROSCOPIC ENTITIES //
 ////////////////////////////////////
@@ -138,7 +136,7 @@ public:
 
 		// calculate macroscopic density (rho)
 		double rho = 0.0;
-		for (size_t i = 0; i < m_q; i++){
+		for (size_t i = 0; i < m_q; i++) {
 			rho += distributions.at(i);
 		}
 		return rho;
@@ -150,14 +148,17 @@ public:
 	 * @param[in] distributions particle distribution functions at a given point
 	 * @return macroscopic velocity
 	 */
-	numeric_vector calculateVelocity(const vector<double>& distributions) const {
+	numeric_vector calculateVelocity(
+			const vector<double>& distributions) const {
 
 		numeric_vector u(m_d);
-		for (size_t i = 0; i < m_q; i++){
+		for (size_t i = 0; i < m_q; i++) {
 			// TODO efficient calculation of scalar*directions?
-			Math::add_vector(u, Math::scalar_vector(distributions.at(i), m_directions.at(i)));
+			Math::add_vector(u,
+					Math::scalar_vector(distributions.at(i),
+							m_directions.at(i)));
 		}
-		Math::scale_vector(1./calculateDensity(distributions), u);
+		Math::scale_vector(1. / calculateDensity(distributions), u);
 		return u;
 	}
 
@@ -168,20 +169,22 @@ public:
 	 * @param[in] rho macroscopic density
 	 * @param[out] u macroscopic velocity
 	 */
-	void calculateVelocity(const vector<double>& distributions, const double rho, numeric_vector& u) const {
+	void calculateVelocity(const vector<double>& distributions,
+			const double rho, numeric_vector& u) const {
 
 		// assert
 		assert(u.size() == m_d);
 		assert(u(0) == 0.0);
-		assert(u(m_d-1) == 0.0);
+		assert(u(m_d - 1) == 0.0);
 
-		for (size_t i = 0; i < m_q; i++){
+		for (size_t i = 0; i < m_q; i++) {
 			// TODO efficient calculation of scalar*directions?
-			Math::add_vector(u, Math::scalar_vector(distributions.at(i), m_directions.at(i)));
+			Math::add_vector(u,
+					Math::scalar_vector(distributions.at(i),
+							m_directions.at(i)));
 		}
-		Math::scale_vector(1./rho, u);
+		Math::scale_vector(1. / rho, u);
 	}
-
 
 //////////////////////////////
 // EQUILIBRIUM DISTRIBUTION //
@@ -198,7 +201,6 @@ public:
 	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
 			const double rho = 1) const = 0;
 
-
 	/** @short function for the calculation of all equilibrium distributions
 	 *  @param[out] feq vector of all equality distributions, must have size Q
 	 *  @param[in] u macroscopic velocity
@@ -206,8 +208,8 @@ public:
 	 *  @note The calculation can surely be done more efficiently by passing different arguments,
 	 *        e.g. u*u or u/(c^2)
 	 */
-	virtual void getEquilibriumDistributions(vector<double>& feq, const numeric_vector& u,
-			const double rho = 1) const;
+	virtual void getEquilibriumDistributions(vector<double>& feq,
+			const numeric_vector& u, const double rho = 1) const;
 
 	virtual double getSpeedOfSound() const = 0;
 	virtual double getSpeedOfSoundSquare() const = 0;

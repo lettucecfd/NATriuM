@@ -62,11 +62,11 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
-	const vector<distributed_sparse_matrix>& matrices =
+	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
 	// create smooth initial conditions
-	distributed_vector f(streaming.getSystemMatrix().at(0).n());
+	distributed_vector f(streaming.getNumberOfDoFs());
 	vector<dealii::Point<2> > supportPoints(
 			streaming.getDoFHandler()->n_dofs());
 	dealii::DoFTools::map_dofs_to_support_points(streaming.getMapping(),
@@ -75,8 +75,8 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 	// RK5 for streaming in direction (1,0)
 	distributed_sparse_matrix advectionMatrix;
-	advectionMatrix.reinit(streaming.getSparsityPattern());
-	advectionMatrix.copy_from(matrices.at(1));
+	advectionMatrix.reinit(streaming.getSparsityPattern(0));
+	advectionMatrix.copy_from(matrices.block(0,0));
 	RungeKutta5LowStorage RK5(deltaT, f.size());
 
 	for (size_t i = 0; i < numberOfTimeSteps; i++) {

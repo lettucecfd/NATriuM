@@ -1,18 +1,24 @@
 var searchData=
 [
+  ['_7eadvectionoperator',['~AdvectionOperator',['../classnatrium_1_1AdvectionOperator.html#a691156dace41e3075fd89953f30ae83f',1,'natrium::AdvectionOperator']]],
   ['_7ebgktransformed',['~BGKTransformed',['../classnatrium_1_1BGKTransformed.html#a554c68facfbd2b126f24504f215eb193',1,'natrium::BGKTransformed']]],
   ['_7eboltzmannmodel',['~BoltzmannModel',['../classnatrium_1_1BoltzmannModel.html#ac2e3dabcbe15c1e37ff09ec1c53dafa5',1,'natrium::BoltzmannModel']]],
+  ['_7eboundary',['~Boundary',['../classnatrium_1_1Boundary.html#a63e8fb8ec44288b9145f819b515ae6d9',1,'natrium::Boundary']]],
   ['_7ecfdsolver',['~CFDSolver',['../classnatrium_1_1CFDSolver.html#a7ca9bd709255ac87b34f869c984b913b',1,'natrium::CFDSolver']]],
   ['_7ecollisionmodel',['~CollisionModel',['../classnatrium_1_1CollisionModel.html#a2b1fb83814227db3b99d4d68a6657d52',1,'natrium::CollisionModel']]],
   ['_7ecouetteflow2d',['~CouetteFlow2D',['../classnatrium_1_1CouetteFlow2D.html#a97b61b0f71dc653427ba3db46e185873',1,'natrium::CouetteFlow2D']]],
   ['_7ed2q9incompressiblemodel',['~D2Q9IncompressibleModel',['../classnatrium_1_1D2Q9IncompressibleModel.html#a6e757941f7ca2c5a6148893147211724',1,'natrium::D2Q9IncompressibleModel']]],
   ['_7ed2q9model',['~D2Q9Model',['../classnatrium_1_1D2Q9Model.html#aec7d8c160f430e14fbede9ecda368797',1,'natrium::D2Q9Model']]],
-  ['_7edataminlee2011',['~DataMinLee2011',['../classnatrium_1_1DataMinLee2011.html#a248508156e259f7278e7770d9e3c4c98',1,'natrium::DataMinLee2011']]],
   ['_7eexponentialtimeintegrator',['~ExponentialTimeIntegrator',['../classnatrium_1_1ExponentialTimeIntegrator.html#a7114f9845feb896b3129492de36a60b3',1,'natrium::ExponentialTimeIntegrator']]],
+  ['_7eperiodicboundary',['~PeriodicBoundary',['../classnatrium_1_1PeriodicBoundary.html#ae71c1a8ea1f1f9e29be8ab6496125a5c',1,'natrium::PeriodicBoundary']]],
+  ['_7eperiodictestdomain2d',['~PeriodicTestDomain2D',['../classnatrium_1_1PeriodicTestDomain2D.html#a81fe3504b294cd4d6219c360f465f84b',1,'natrium::PeriodicTestDomain2D::~PeriodicTestDomain2D()'],['../classnatrium_1_1PeriodicTestDomain2D.html#a7addeeedd4ece6367394ce17eb7cb589',1,'natrium::PeriodicTestDomain2D::~PeriodicTestDomain2D()']]],
+  ['_7epoiseuilleflow2d',['~PoiseuilleFlow2D',['../classnatrium_1_1PoiseuilleFlow2D.html#a62f9e7cfb2e32753b58eafb9d5936fd4',1,'natrium::PoiseuilleFlow2D']]],
   ['_7eproblemdescription',['~ProblemDescription',['../classnatrium_1_1ProblemDescription.html#a5270994970ddbd9f6fc98f292c1ccc0e',1,'natrium::ProblemDescription']]],
   ['_7erungekutta5lowstorage',['~RungeKutta5LowStorage',['../classnatrium_1_1RungeKutta5LowStorage.html#a0d0e4591d2b671f450029bb3ba3053de',1,'natrium::RungeKutta5LowStorage']]],
-  ['_7esimpleproblemdescription2d',['~SimpleProblemDescription2D',['../classnatrium_1_1SimpleProblemDescription2D.html#a350cd6fd7ee17aed498659d51088e3e1',1,'natrium::SimpleProblemDescription2D']]],
-  ['_7esolverconfiguration',['~SolverConfiguration',['../classnatrium_1_1SolverConfiguration.html#a830083ab7dceb06a4cf6320044e48d2f',1,'natrium::SolverConfiguration']]],
-  ['_7estreamingdata',['~StreamingData',['../classnatrium_1_1StreamingData.html#a11f35edbebcb05646e034f6a918cf7c7',1,'natrium::StreamingData']]],
-  ['_7etimeintegrator',['~TimeIntegrator',['../classnatrium_1_1TimeIntegrator.html#ac4f86a5402bf3185f5ed875065c722f2',1,'natrium::TimeIntegrator']]]
+  ['_7esedgminlee',['~SEDGMinLee',['../classnatrium_1_1SEDGMinLee.html#a6c55a31bc4cb0e314876af7251ad8ce3',1,'natrium::SEDGMinLee']]],
+  ['_7esolverconfiguration',['~SolverConfiguration',['../classnatrium_1_1SolverConfiguration.html#ac1b521d8c205b8774dbb7c038304336d',1,'natrium::SolverConfiguration']]],
+  ['_7esteadyperiodictestflow2d',['~SteadyPeriodicTestFlow2D',['../classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7344b71a404f2c4bbc73c1c738fdfa22',1,'natrium::SteadyPeriodicTestFlow2D']]],
+  ['_7etaylorgreenvortex2d',['~TaylorGreenVortex2D',['../classnatrium_1_1TaylorGreenVortex2D.html#abb6099f4f9791f7decabb35ccd3dbe49',1,'natrium::TaylorGreenVortex2D']]],
+  ['_7etimeintegrator',['~TimeIntegrator',['../classnatrium_1_1TimeIntegrator.html#ac4f86a5402bf3185f5ed875065c722f2',1,'natrium::TimeIntegrator']]],
+  ['_7eunsteadyperiodictestflow2d',['~UnsteadyPeriodicTestFlow2D',['../classnatrium_1_1UnsteadyPeriodicTestFlow2D.html#aa91ea175e2993bf00f8a48fded987c54',1,'natrium::UnsteadyPeriodicTestFlow2D']]]
 ];

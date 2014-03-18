@@ -1,41 +1,74 @@
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage}{\section{natrium\-:\-:\-Runge\-Kutta5\-Low\-Storage \-Class \-Reference}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage}{\section{natrium\-:\-:Runge\-Kutta5\-Low\-Storage Class Reference}
 \label{classnatrium_1_1RungeKutta5LowStorage}\index{natrium\-::\-Runge\-Kutta5\-Low\-Storage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}}
 }
 
 
-\-Implementation of the fifth-\/order \-Runge-\/\-Kutta time integration scheme with low storage consumption.  
+Implementation of the fifth-\/order Runge-\/\-Kutta time integration scheme with low storage consumption.  
 
 
 
 
-{\ttfamily \#include $<$\-Runge\-Kutta5\-Low\-Storage.\-h$>$}
+{\ttfamily \#include $<$Runge\-Kutta5\-Low\-Storage.\-h$>$}
 
-\-Inheritance diagram for natrium\-:\-:\-Runge\-Kutta5\-Low\-Storage\-:\begin{figure}[H]
+Inheritance diagram for natrium\-:\-:Runge\-Kutta5\-Low\-Storage\-:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{classnatrium_1_1RungeKutta5LowStorage}
 \end{center}
 \end{figure}
-\subsection*{\-Public \-Member \-Functions}
+\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage_adcb00ef16369158a395ecb54e5d5f91e}{\hyperlink{classnatrium_1_1RungeKutta5LowStorage_adcb00ef16369158a395ecb54e5d5f91e}{\-Runge\-Kutta5\-Low\-Storage} ()}\label{classnatrium_1_1RungeKutta5LowStorage_adcb00ef16369158a395ecb54e5d5f91e}
-
-\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hyperlink{classnatrium_1_1RungeKutta5LowStorage_a89468c83ced040a6373ddd05551e71d5}{Runge\-Kutta5\-Low\-Storage} (double time\-Step\-Size, size\-\_\-t problem\-Size)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1RungeKutta5LowStorage_a0d0e4591d2b671f450029bb3ba3053de}{virtual \hyperlink{classnatrium_1_1RungeKutta5LowStorage_a0d0e4591d2b671f450029bb3ba3053de}{$\sim$\-Runge\-Kutta5\-Low\-Storage} ()}\label{classnatrium_1_1RungeKutta5LowStorage_a0d0e4591d2b671f450029bb3ba3053de}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a91bc0f0c6eea11cb7c08f2572ba67408}{virtual void \hyperlink{classnatrium_1_1RungeKutta5LowStorage_a91bc0f0c6eea11cb7c08f2572ba67408}{step} (distributed\-\_\-vector \&vector, const dealii\-::\-Sparse\-Matrix$<$ double $>$ \&system\-Matrix)}\label{classnatrium_1_1RungeKutta5LowStorage_a91bc0f0c6eea11cb7c08f2572ba67408}
+
+\begin{DoxyCompactList}\small\item\em make one time integration using the R\-K5 scheme d\-U\-\_\-j = A\-\_\-j $\ast$ d\-U\-\_\-\{j-\/1\} + time\-Step $\ast$ F(\-U\-\_\-j) U\-\_\-j = U\-\_\-\{j-\/1\} + B\-\_\-j$\ast$ d\-U\-\_\-j \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_af8368ba6fbaaef108e8a556da293c2b7}{const vector$<$ double $>$ \& {\bfseries get\-A} () const }\label{classnatrium_1_1RungeKutta5LowStorage_af8368ba6fbaaef108e8a556da293c2b7}
+
+\item 
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a5045dc1bcf3df568f1574e12528b6d34}{const vector$<$ double $>$ \& {\bfseries get\-B} () const }\label{classnatrium_1_1RungeKutta5LowStorage_a5045dc1bcf3df568f1574e12528b6d34}
+
+\item 
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a1097baed3c0e00ee258812a71226f998}{const vector$<$ double $>$ \& {\bfseries get\-C} () const }\label{classnatrium_1_1RungeKutta5LowStorage_a1097baed3c0e00ee258812a71226f998}
+
+\end{DoxyCompactItemize}
 
 
-\subsection{\-Detailed \-Description}
-\-Implementation of the fifth-\/order \-Runge-\/\-Kutta time integration scheme with low storage consumption. 
+\subsection{Detailed Description}
+Implementation of the fifth-\/order Runge-\/\-Kutta time integration scheme with low storage consumption. 
 
-\begin{DoxyNote}{\-Note}
-\-The scheme is described in \-Min and \-Lee (2011)\-: \-A spectral-\/element discontinuous \-Galerkin lattice \-Boltzmann method for nearly incompressible flows, \-J\-C\-P 230 pp. 245-\/259. 
+\begin{DoxyNote}{Note}
+The scheme is described in Min and Lee (2011)\-: A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, J\-C\-P 230 pp. 245-\/259. 
 \end{DoxyNote}
 
 
-\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a89468c83ced040a6373ddd05551e71d5}{\index{natrium\-::\-Runge\-Kutta5\-Low\-Storage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}!Runge\-Kutta5\-Low\-Storage@{Runge\-Kutta5\-Low\-Storage}}
+\index{Runge\-Kutta5\-Low\-Storage@{Runge\-Kutta5\-Low\-Storage}!natrium::RungeKutta5LowStorage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}}
+\subsubsection[{Runge\-Kutta5\-Low\-Storage}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Runge\-Kutta5\-Low\-Storage\-::\-Runge\-Kutta5\-Low\-Storage (
+\begin{DoxyParamCaption}
+\item[{double}]{time\-Step\-Size, }
+\item[{size\-\_\-t}]{problem\-Size}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1RungeKutta5LowStorage_a89468c83ced040a6373ddd05551e71d5}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em time\-Step\-Size} & The initial time step size \\
+\hline
+{\em problem\-Size} & the number of degrees of freedom \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/timeintegration/\hyperlink{RungeKutta5LowStorage_8h}{\-Runge\-Kutta5\-Low\-Storage.\-h}\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/timeintegration/\hyperlink{RungeKutta5LowStorage_8cpp}{\-Runge\-Kutta5\-Low\-Storage.\-cpp}\end{DoxyCompactItemize}
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/timeintegration/\hyperlink{RungeKutta5LowStorage_8h}{Runge\-Kutta5\-Low\-Storage.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/timeintegration/\hyperlink{RungeKutta5LowStorage_8cpp}{Runge\-Kutta5\-Low\-Storage.\-cpp}\end{DoxyCompactItemize}

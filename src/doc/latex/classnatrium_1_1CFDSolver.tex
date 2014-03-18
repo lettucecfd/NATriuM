@@ -1,53 +1,137 @@
-\hypertarget{classnatrium_1_1CFDSolver}{\section{natrium\-:\-:\-C\-F\-D\-Solver$<$ dim $>$ \-Class \-Template \-Reference}
+\hypertarget{classnatrium_1_1CFDSolver}{\section{natrium\-:\-:C\-F\-D\-Solver$<$ dim $>$ Class Template Reference}
 \label{classnatrium_1_1CFDSolver}\index{natrium\-::\-C\-F\-D\-Solver$<$ dim $>$@{natrium\-::\-C\-F\-D\-Solver$<$ dim $>$}}
 }
 
 
-\-The central class for the \-C\-F\-D simulation based on the \-D\-B\-E.  
+The central class for the C\-F\-D simulation based on the D\-B\-E.  
 
 
 
 
-{\ttfamily \#include $<$\-C\-F\-D\-Solver.\-h$>$}
+{\ttfamily \#include $<$C\-F\-D\-Solver.\-h$>$}
 
-\subsection*{\-Public \-Member \-Functions}
+\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1CFDSolver_a3f085c00939b08434f91a7c7cd6bf568}{\-C\-F\-D\-Solver} ()
+\hyperlink{classnatrium_1_1CFDSolver_a2a459e7f9d5feb0d216f869812723af2}{C\-F\-D\-Solver} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1SolverConfiguration}{Solver\-Configuration} $>$ configuration, shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{Problem\-Description}$<$ dim $>$ $>$ problem\-Description)
 \item 
 \hypertarget{classnatrium_1_1CFDSolver_a7ca9bd709255ac87b34f869c984b913b}{virtual \hyperlink{classnatrium_1_1CFDSolver_a7ca9bd709255ac87b34f869c984b913b}{$\sim$\-C\-F\-D\-Solver} ()}\label{classnatrium_1_1CFDSolver_a7ca9bd709255ac87b34f869c984b913b}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CFDSolver_abe627b0bbde0635abb30b9bea4c72dc1}{void \hyperlink{classnatrium_1_1CFDSolver_abe627b0bbde0635abb30b9bea4c72dc1}{initialize\-Distributions} ()}\label{classnatrium_1_1CFDSolver_abe627b0bbde0635abb30b9bea4c72dc1}
+
+\begin{DoxyCompactList}\small\item\em initialize distribution functions \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CFDSolver_ac32a318e504b31195eb61c2cdc2659fe}{void \hyperlink{classnatrium_1_1CFDSolver_ac32a318e504b31195eb61c2cdc2659fe}{stream} ()}\label{classnatrium_1_1CFDSolver_ac32a318e504b31195eb61c2cdc2659fe}
+
+\begin{DoxyCompactList}\small\item\em Advection in all directions. \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CFDSolver_ac9bec7d0c4bcd5e02c5213ec09438c02}{void \hyperlink{classnatrium_1_1CFDSolver_ac9bec7d0c4bcd5e02c5213ec09438c02}{collide} ()}\label{classnatrium_1_1CFDSolver_ac9bec7d0c4bcd5e02c5213ec09438c02}
+
+\begin{DoxyCompactList}\small\item\em Low-\/level collide function. \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CFDSolver_a604212a1f6cd2549b8f60ab26b14de00}{void \hyperlink{classnatrium_1_1CFDSolver_a604212a1f6cd2549b8f60ab26b14de00}{reassemble} ()}\label{classnatrium_1_1CFDSolver_a604212a1f6cd2549b8f60ab26b14de00}
+
+\begin{DoxyCompactList}\small\item\em reassembly of all matrices \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CFDSolver_a11f503bc3f3c306b240874c74a38025b}{void \hyperlink{classnatrium_1_1CFDSolver_a11f503bc3f3c306b240874c74a38025b}{run} ()}\label{classnatrium_1_1CFDSolver_a11f503bc3f3c306b240874c74a38025b}
+
+\begin{DoxyCompactList}\small\item\em run C\-F\-D solver \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CFDSolver_abf6804f132885502b61877fc1f9ca4a2}{void \hyperlink{classnatrium_1_1CFDSolver_abf6804f132885502b61877fc1f9ca4a2}{output} (size\-\_\-t iteration)}\label{classnatrium_1_1CFDSolver_abf6804f132885502b61877fc1f9ca4a2}
+
+\begin{DoxyCompactList}\small\item\em create output data and write to file \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CFDSolver_adf0b4e4da292bcb195d926d3174ba2a9}{const distributed\-\_\-vector \& {\bfseries get\-Density} () const }\label{classnatrium_1_1CFDSolver_adf0b4e4da292bcb195d926d3174ba2a9}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_aa7a6591ab785a87d60bcc12da9daf8ff}{const vector\\*
+$<$ distributed\-\_\-vector $>$ \& {\bfseries get\-F} () const }\label{classnatrium_1_1CFDSolver_aa7a6591ab785a87d60bcc12da9daf8ff}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_a0e5ec3dc278216d5827410b7db82af59}{const vector\\*
+$<$ distributed\-\_\-vector $>$ \& {\bfseries get\-Velocity} () const }\label{classnatrium_1_1CFDSolver_a0e5ec3dc278216d5827410b7db82af59}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_a1aea207c81089c2e46092489557bb139}{const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1AdvectionOperator}{Advection\-Operator}$<$ dim $>$ $>$ \& {\bfseries get\-Advection\-Operator} () const }\label{classnatrium_1_1CFDSolver_a1aea207c81089c2e46092489557bb139}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_a3733dbd256b6d38659cee3cb044c1446}{const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} $>$ \& {\bfseries get\-Boltzmann\-Model} () const }\label{classnatrium_1_1CFDSolver_a3733dbd256b6d38659cee3cb044c1446}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_abb4b632b524bd68afcdff7d54c2d3d97}{const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1CollisionModel}{Collision\-Model} $>$ \& {\bfseries get\-Collision\-Model} () const }\label{classnatrium_1_1CFDSolver_abb4b632b524bd68afcdff7d54c2d3d97}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_a413691491ac82f384a03293be2294de5}{const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1SolverConfiguration}{Solver\-Configuration} $>$ \& {\bfseries get\-Configuration} () const }\label{classnatrium_1_1CFDSolver_a413691491ac82f384a03293be2294de5}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_a8b1131e8fd6b022bea5ddce72469c289}{const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1ProblemDescription}{Problem\-Description}$<$ dim $>$ $>$ \& {\bfseries get\-Problem\-Description} () const }\label{classnatrium_1_1CFDSolver_a8b1131e8fd6b022bea5ddce72469c289}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_ad6e0c772ffa335f28699bac489d3a837}{const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1TimeIntegrator}{Time\-Integrator} $>$ \& {\bfseries get\-Time\-Integrator} () const }\label{classnatrium_1_1CFDSolver_ad6e0c772ffa335f28699bac489d3a837}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_a74d459ef4f43d42e04ceb2178bb006f4}{size\-\_\-t {\bfseries get\-Number\-Of\-Do\-Fs} () const }\label{classnatrium_1_1CFDSolver_a74d459ef4f43d42e04ceb2178bb006f4}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_ae9c44bb0f33e2c73ee96fbe100061842}{double {\bfseries get\-Max\-Velocity\-Norm} () const }\label{classnatrium_1_1CFDSolver_ae9c44bb0f33e2c73ee96fbe100061842}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_ade641431988a82cb47d88a9d600e1c92}{double {\bfseries get\-Max\-Density\-Deviation\-From} (double reference\-Density) const }\label{classnatrium_1_1CFDSolver_ade641431988a82cb47d88a9d600e1c92}
+
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_a33c4bfd63b8d457a5bc15f0c0da02c38}{size\-\_\-t {\bfseries get\-Iteration\-Start} () const }\label{classnatrium_1_1CFDSolver_a33c4bfd63b8d457a5bc15f0c0da02c38}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1CFDSolver_a9a2592ea549fa10427c84f0a1e380c1e}{void \hyperlink{classnatrium_1_1CFDSolver_a9a2592ea549fa10427c84f0a1e380c1e}{save\-Distribution\-Functions\-To\-Files} (const string \&directory)}\label{classnatrium_1_1CFDSolver_a9a2592ea549fa10427c84f0a1e380c1e}
+
+\begin{DoxyCompactList}\small\item\em save the distribution functions to files for checkpointing \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CFDSolver_a42245d22e289d079a3b06a0c26f50050}{void \hyperlink{classnatrium_1_1CFDSolver_a42245d22e289d079a3b06a0c26f50050}{load\-Distribution\-Functions\-From\-Files} (const string \&directory)}\label{classnatrium_1_1CFDSolver_a42245d22e289d079a3b06a0c26f50050}
+
+\begin{DoxyCompactList}\small\item\em load the distribution functions from files for checkpointing \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\subsection{\-Detailed \-Description}
-\subsubsection*{template$<$int dim$>$class natrium\-::\-C\-F\-D\-Solver$<$ dim $>$}
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::\-C\-F\-D\-Solver$<$ dim $>$}
 
-\-The central class for the \-C\-F\-D simulation based on the \-D\-B\-E. 
+The central class for the C\-F\-D simulation based on the D\-B\-E. 
 
-\begin{DoxyNote}{\-Note}
-\-The \hyperlink{classnatrium_1_1CFDSolver}{\-C\-F\-D\-Solver} itself is quite static but it contains interchangeable modules, e.\-g. for the \-Boltzmann model or the time integrator. \-By these means, a variety of different simulation methods can be covered. 
+\begin{DoxyNote}{Note}
+The \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver} itself is quite static but it contains interchangeable modules, e.\-g. for the Boltzmann model or the time integrator. By these means, a variety of different simulation methods can be covered. 
 \end{DoxyNote}
 
-\begin{DoxyTemplParams}{\-Template Parameters}
-{\em dim} & \-The dimension of the flow (2 or 3). \\
+\begin{DoxyTemplParams}{Template Parameters}
+{\em dim} & The dimension of the flow (2 or 3). \\
 \hline
 \end{DoxyTemplParams}
 
 
-\subsection{\-Constructor \& \-Destructor \-Documentation}
-\hypertarget{classnatrium_1_1CFDSolver_a3f085c00939b08434f91a7c7cd6bf568}{\index{natrium\-::\-C\-F\-D\-Solver@{natrium\-::\-C\-F\-D\-Solver}!\-C\-F\-D\-Solver@{\-C\-F\-D\-Solver}}
-\index{\-C\-F\-D\-Solver@{\-C\-F\-D\-Solver}!natrium::CFDSolver@{natrium\-::\-C\-F\-D\-Solver}}
-\subsubsection[{\-C\-F\-D\-Solver}]{\setlength{\rightskip}{0pt plus 5cm}template$<$int dim$>$ {\bf natrium\-::\-C\-F\-D\-Solver}$<$ dim $>$\-::{\bf \-C\-F\-D\-Solver} (
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1CFDSolver_a2a459e7f9d5feb0d216f869812723af2}{\index{natrium\-::\-C\-F\-D\-Solver@{natrium\-::\-C\-F\-D\-Solver}!C\-F\-D\-Solver@{C\-F\-D\-Solver}}
+\index{C\-F\-D\-Solver@{C\-F\-D\-Solver}!natrium::CFDSolver@{natrium\-::\-C\-F\-D\-Solver}}
+\subsubsection[{C\-F\-D\-Solver}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template {\bf natrium\-::\-C\-F\-D\-Solver}$<$ dim $>$\-::{\bf C\-F\-D\-Solver} (
 \begin{DoxyParamCaption}
-{}
+\item[{shared\-\_\-ptr$<$ {\bf Solver\-Configuration} $>$}]{configuration, }
+\item[{shared\-\_\-ptr$<$ {\bf Problem\-Description}$<$ dim $>$ $>$}]{problem\-Description}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classnatrium_1_1CFDSolver_a3f085c00939b08434f91a7c7cd6bf568}
-constructor \begin{DoxyNote}{\-Note}
+)}}\label{classnatrium_1_1CFDSolver_a2a459e7f9d5feb0d216f869812723af2}
+constructor \begin{DoxyNote}{Note}
 \-: has to be inlined, if the template parameter is not made explicit 
 \end{DoxyNote}
+check if problem and solver configuration fit together
 
+Build boltzmann model
 
-\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+Build streaming data object
+
+Calculate relaxation parameter and build collision model
+
+Build time integrator 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/solver/\hyperlink{CFDSolver_8h}{\-C\-F\-D\-Solver.\-h}\end{DoxyCompactItemize}
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\hyperlink{CFDSolver_8h}{C\-F\-D\-Solver.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\hyperlink{CFDSolver_8cpp}{C\-F\-D\-Solver.\-cpp}\end{DoxyCompactItemize}

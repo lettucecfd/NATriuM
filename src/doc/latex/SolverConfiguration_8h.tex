@@ -1,22 +1,58 @@
-\hypertarget{SolverConfiguration_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/solver/\-Solver\-Configuration.h \-File \-Reference}
-\label{SolverConfiguration_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/solver/\-Solver\-Configuration.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/solver/\-Solver\-Configuration.\-h}}
+\hypertarget{SolverConfiguration_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-Solver\-Configuration.h File Reference}
+\label{SolverConfiguration_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-Solver\-Configuration.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-Solver\-Configuration.\-h}}
 }
 
 
-\-Class that stores the configuration for a \-C\-F\-D simulation based on the \-Discrete \-Boltzmann \-Equation (\-D\-B\-E).  
+Class that stores the configuration for a C\-F\-D simulation based on the Discrete Boltzmann Equation (D\-B\-E).  
 
 
-\subsection*{\-Classes}
+{\ttfamily \#include \char`\"{}../problemdescription/\-Problem\-Description.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../boltzmannmodels/\-Boltzmann\-Model.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../utilities/\-Basic\-Names.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../utilities/\-Logging.\-h\char`\"{}}\\*
+\subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
+class \hyperlink{classnatrium_1_1ConfigurationException}{natrium\-::\-Configuration\-Exception}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}. \end{DoxyCompactList}\item 
 class \hyperlink{classnatrium_1_1SolverConfiguration}{natrium\-::\-Solver\-Configuration}
-\begin{DoxyCompactList}\small\item\em \-Class that stores the configuration for a \-C\-F\-D simulation based on the \-Discrete \-Boltzmann \-Equation (\-D\-B\-E). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Class that stores the configuration for a C\-F\-D simulation based on the Discrete Boltzmann Equation (D\-B\-E). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries Advection\-Operator\-Type} \{ {\bfseries Advection\-\_\-\-S\-E\-D\-G\-Min\-Lee}
+ \}
+\begin{DoxyCompactList}\small\item\em Implemented streaming data types. \end{DoxyCompactList}\item 
+enum {\bfseries Collision\-Type} \{ {\bfseries Collision\-\_\-\-B\-G\-K\-Transformed}
+ \}
+\begin{DoxyCompactList}\small\item\em Implemented collision models. \end{DoxyCompactList}\item 
+enum {\bfseries Time\-Integrator\-Type} \{ {\bfseries Integrator\-\_\-\-Runge\-Kutta5\-Low\-Storage}
+ \}
+\begin{DoxyCompactList}\small\item\em Implemented time integrators. \end{DoxyCompactList}\item 
+enum {\bfseries Flux\-Type} \{ {\bfseries Flux\-\_\-\-Lax\-Friedrichs}, 
+{\bfseries Flux\-\_\-\-Central}
+ \}
+\begin{DoxyCompactList}\small\item\em the numerical flux used to calculate the advection operator \end{DoxyCompactList}\item 
+enum {\bfseries Output\-Flags} \{ \\*
+{\bfseries out\-\_\-\-Command\-Line\-Error} = 1, 
+{\bfseries out\-\_\-\-Command\-Line\-Basic} = 2, 
+{\bfseries out\-\_\-\-Command\-Line\-Full} = 4, 
+{\bfseries out\-\_\-\-Log\-File} = 8, 
+\\*
+{\bfseries out\-\_\-\-Vector\-Fields} = 16, 
+{\bfseries out\-\_\-\-Checkpoints} = 32
+ \}
+\item 
+enum {\bfseries Distribution\-Init\-Type} \{ {\bfseries Equilibrium}, 
+{\bfseries Iterative}
+ \}
+\begin{DoxyCompactList}\small\item\em the initialization procedure for the distribution functions \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\subsection{\-Detailed \-Description}
-\-Class that stores the configuration for a \-C\-F\-D simulation based on the \-Discrete \-Boltzmann \-Equation (\-D\-B\-E). \begin{DoxyDate}{\-Date}
+\subsection{Detailed Description}
+Class that stores the configuration for a C\-F\-D simulation based on the Discrete Boltzmann Equation (D\-B\-E). \begin{DoxyDate}{Date}
 29.\-05.\-2013 
 \end{DoxyDate}
-\begin{DoxyAuthor}{\-Author}
-\-Andreas \-Kraemer, \-Bonn-\/\-Rhein-\/\-Sieg \-University of \-Applied \-Sciences, \-Sankt \-Augustin 
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

@@ -1,80 +1,109 @@
-\hypertarget{classnatrium_1_1BGKTransformed}{\section{natrium\-:\-:\-B\-G\-K\-Transformed \-Class \-Reference}
+\hypertarget{classnatrium_1_1BGKTransformed}{\section{natrium\-:\-:B\-G\-K\-Transformed Class Reference}
 \label{classnatrium_1_1BGKTransformed}\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}}
 }
 
 
-\-Description of the \-B\-G\-K model for the transformed particle distributions, as described in \-Global data which is used by \-Min and \-Lee (2011)\-: \-A spectral-\/element discontinuous \-Galerkin lattice \-Boltzmann method for nearly incompressible flows, \-J\-C\-P 230 pp. 245-\/259.  
+Description of the B\-G\-K model for the transformed particle distributions, as described in Global data which is used by Min and Lee (2011)\-: A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, J\-C\-P 230 pp. 245-\/259.  
 
 
 
 
-{\ttfamily \#include $<$\-B\-G\-K\-Transformed.\-h$>$}
+{\ttfamily \#include $<$B\-G\-K\-Transformed.\-h$>$}
 
-\-Inheritance diagram for natrium\-:\-:\-B\-G\-K\-Transformed\-:\begin{figure}[H]
+Inheritance diagram for natrium\-:\-:B\-G\-K\-Transformed\-:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{classnatrium_1_1BGKTransformed}
 \end{center}
 \end{figure}
-\subsection*{\-Public \-Member \-Functions}
+\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1BGKTransformed_adb6cc9b3a10e88f5d1e938cf8d2d9582}{\-B\-G\-K\-Transformed} (float\-\_\-t relaxation\-Parameter, boost\-::shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{\-Boltzmann\-Model} $>$ boltzmann\-Model)
+\hyperlink{classnatrium_1_1BGKTransformed_aafd0ed5b888da93e496c0a29e092bf5b}{B\-G\-K\-Transformed} (double relaxation\-Parameter, boost\-::shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} $>$ boltzmann\-Model)
 \begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BGKTransformed_a554c68facfbd2b126f24504f215eb193}{virtual \hyperlink{classnatrium_1_1BGKTransformed_a554c68facfbd2b126f24504f215eb193}{$\sim$\-B\-G\-K\-Transformed} ()}\label{classnatrium_1_1BGKTransformed_a554c68facfbd2b126f24504f215eb193}
 
 \begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1BGKTransformed_a6ad393c3fde6ccc10e1de644dd7767e9}{collide} (vector$<$ float\-\_\-t $>$ \&distributions) const 
-\begin{DoxyCompactList}\small\item\em function for collision \end{DoxyCompactList}\end{DoxyCompactItemize}
+virtual void \hyperlink{classnatrium_1_1BGKTransformed_a2e40159e5f5204431b1acb84b15910c0}{collide\-Single\-Point} (vector$<$ double $>$ \&distributions) const 
+\begin{DoxyCompactList}\small\item\em function for collision \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1BGKTransformed_a9e04fc83b3c362febd4fc8e5060407e3}{collide\-Single\-Do\-F} (size\-\_\-t do\-F, const vector$<$ double $>$ \&feq, vector$<$ distributed\-\_\-vector $>$ \&f) const 
+\begin{DoxyCompactList}\small\item\em virtual function for collision \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
 
 
-\subsection{\-Detailed \-Description}
-\-Description of the \-B\-G\-K model for the transformed particle distributions, as described in \-Global data which is used by \-Min and \-Lee (2011)\-: \-A spectral-\/element discontinuous \-Galerkin lattice \-Boltzmann method for nearly incompressible flows, \-J\-C\-P 230 pp. 245-\/259. 
+\subsection{Detailed Description}
+Description of the B\-G\-K model for the transformed particle distributions, as described in Global data which is used by Min and Lee (2011)\-: A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, J\-C\-P 230 pp. 245-\/259. 
 
-\subsection{\-Constructor \& \-Destructor \-Documentation}
-\hypertarget{classnatrium_1_1BGKTransformed_adb6cc9b3a10e88f5d1e938cf8d2d9582}{\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}!\-B\-G\-K\-Transformed@{\-B\-G\-K\-Transformed}}
-\index{\-B\-G\-K\-Transformed@{\-B\-G\-K\-Transformed}!natrium::BGKTransformed@{natrium\-::\-B\-G\-K\-Transformed}}
-\subsubsection[{\-B\-G\-K\-Transformed}]{\setlength{\rightskip}{0pt plus 5cm}{\bf natrium\-::\-B\-G\-K\-Transformed\-::\-B\-G\-K\-Transformed} (
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1BGKTransformed_aafd0ed5b888da93e496c0a29e092bf5b}{\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}!B\-G\-K\-Transformed@{B\-G\-K\-Transformed}}
+\index{B\-G\-K\-Transformed@{B\-G\-K\-Transformed}!natrium::BGKTransformed@{natrium\-::\-B\-G\-K\-Transformed}}
+\subsubsection[{B\-G\-K\-Transformed}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-B\-G\-K\-Transformed\-::\-B\-G\-K\-Transformed (
 \begin{DoxyParamCaption}
-\item[{float\-\_\-t}]{relaxation\-Parameter, }
-\item[{boost\-::shared\-\_\-ptr$<$ {\bf \-Boltzmann\-Model} $>$}]{boltzmann\-Model}
+\item[{double}]{relaxation\-Parameter, }
+\item[{boost\-::shared\-\_\-ptr$<$ {\bf Boltzmann\-Model} $>$}]{boltzmann\-Model}
 \end{DoxyParamCaption}
-)}}\label{classnatrium_1_1BGKTransformed_adb6cc9b3a10e88f5d1e938cf8d2d9582}
+)}}\label{classnatrium_1_1BGKTransformed_aafd0ed5b888da93e496c0a29e092bf5b}
 
 
 constructor 
 
 
-\begin{DoxyParams}[1]{\-Parameters}
+\begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em relaxation\-Parameter} & relaxation parameter tau \\
 \hline
 \end{DoxyParams}
 
 
-\subsection{\-Member \-Function \-Documentation}
-\hypertarget{classnatrium_1_1BGKTransformed_a6ad393c3fde6ccc10e1de644dd7767e9}{\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}!collide@{collide}}
-\index{collide@{collide}!natrium::BGKTransformed@{natrium\-::\-B\-G\-K\-Transformed}}
-\subsubsection[{collide}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf natrium\-::\-B\-G\-K\-Transformed\-::collide} (
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1BGKTransformed_a9e04fc83b3c362febd4fc8e5060407e3}{\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}!collide\-Single\-Do\-F@{collide\-Single\-Do\-F}}
+\index{collide\-Single\-Do\-F@{collide\-Single\-Do\-F}!natrium::BGKTransformed@{natrium\-::\-B\-G\-K\-Transformed}}
+\subsubsection[{collide\-Single\-Do\-F}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-B\-G\-K\-Transformed\-::collide\-Single\-Do\-F (
 \begin{DoxyParamCaption}
-\item[{vector$<$ float\-\_\-t $>$ \&}]{distributions}
+\item[{size\-\_\-t}]{do\-F, }
+\item[{const vector$<$ double $>$ \&}]{feq, }
+\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{f}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classnatrium_1_1BGKTransformed_a6ad393c3fde6ccc10e1de644dd7767e9}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1BGKTransformed_a9e04fc83b3c362febd4fc8e5060407e3}
+
+
+virtual function for collision 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em do\-F} & the do\-F index for which collision is done \\
+\hline
+\mbox{\tt in}  & {\em feq} & the vector of local equilibrium distributions \\
+\hline
+\mbox{\tt in}  & {\em f} & the vector of global distribution functions \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classnatrium_1_1CollisionModel_aacc6f8b6590577eafa6461c290d2f33a}{natrium\-::\-Collision\-Model}.
+
+\hypertarget{classnatrium_1_1BGKTransformed_a2e40159e5f5204431b1acb84b15910c0}{\index{natrium\-::\-B\-G\-K\-Transformed@{natrium\-::\-B\-G\-K\-Transformed}!collide\-Single\-Point@{collide\-Single\-Point}}
+\index{collide\-Single\-Point@{collide\-Single\-Point}!natrium::BGKTransformed@{natrium\-::\-B\-G\-K\-Transformed}}
+\subsubsection[{collide\-Single\-Point}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-B\-G\-K\-Transformed\-::collide\-Single\-Point (
+\begin{DoxyParamCaption}
+\item[{vector$<$ double $>$ \&}]{distributions}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1BGKTransformed_a2e40159e5f5204431b1acb84b15910c0}
 
 
 function for collision 
 
 
-\begin{DoxyParams}{\-Parameters}
+\begin{DoxyParams}{Parameters}
 {\em in/out\mbox{]}} & distributions the particle distribution functions \\
 \hline
 \end{DoxyParams}
 
 
-\-Implements \hyperlink{classnatrium_1_1CollisionModel_aa4f3dd379940af2d80509dd6f5e23c62}{natrium\-::\-Collision\-Model}.
+Implements \hyperlink{classnatrium_1_1CollisionModel_acde767e924eb2124ab3eb725543111e8}{natrium\-::\-Collision\-Model}.
 
 
 
-\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/collisionmodels/\hyperlink{BGKTransformed_8h}{\-B\-G\-K\-Transformed.\-h}\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/collisionmodels/\hyperlink{BGKTransformed_8cpp}{\-B\-G\-K\-Transformed.\-cpp}\end{DoxyCompactItemize}
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/collisionmodels/\hyperlink{BGKTransformed_8h}{B\-G\-K\-Transformed.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/collisionmodels/\hyperlink{BGKTransformed_8cpp}{B\-G\-K\-Transformed.\-cpp}\end{DoxyCompactItemize}

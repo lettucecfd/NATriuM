@@ -55,7 +55,7 @@ public:
 	 * 			U_j  = U_{j-1} + B_j* dU_j
 	 */
 	virtual void step(distributed_vector& vector,
-			const distributed_sparse_matrix& systemMatrix);
+			const dealii::SparseMatrix<double>& systemMatrix);
 
 	const vector<double>& getA() const {
 		return m_a;

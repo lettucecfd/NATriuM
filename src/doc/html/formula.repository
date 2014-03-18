@@ -1,0 +1,5 @@
+\form#0:\[ \partial_t f_i + e_i \partial_x f_i = 0,\quad \forall i = 1,\dots,Q-1 \]
+\form#1:$ f_i(x,t) $
+\form#2:$ e_i $
+\form#3:\[ \left( \partial_t f_i + \partial_x (e_i f_i), \Phi \right)_{\Omega_e} = \left(n \left[ e_i f_i - F^{\ast}_{i}(f) \right], \Phi \right)_{\partial \Omega_e}. \]
+\form#4:$ F^{\ast}_{i}(f) $

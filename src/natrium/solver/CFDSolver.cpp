@@ -70,7 +70,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	}
 
 /// Build time integrator
-	size_t numberOfDoFs = m_advectionOperator->getSystemMatrix().at(0).n();
+	size_t numberOfDoFs = m_advectionOperator->getNumberOfDoFs();
 	if (Integrator_RungeKutta5LowStorage
 			== configuration->getTimeIntegratorType()) {
 		m_timeIntegrator = make_shared<RungeKutta5LowStorage>(
@@ -127,11 +127,11 @@ template CFDSolver<3>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 template<size_t dim>
 void CFDSolver<dim>::stream() {
-	const vector<distributed_sparse_matrix>& systemMatrix =
+	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
 // no streaming in direction 0; begin with 1
 	for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
-		m_timeIntegrator->step(m_f.at(i), systemMatrix.at(i));
+		m_timeIntegrator->step(m_f.at(i), systemMatrix.block(i-1,i-1));
 	}
 
 }

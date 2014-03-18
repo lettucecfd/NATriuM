@@ -110,20 +110,21 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 						periodic.getBoundaries(), fe_order,
 						make_shared<D2Q9IncompressibleModel>(), "",
 						!useLaxFlux);
-				const vector<distributed_sparse_matrix>& matrices =
+				const distributed_sparse_block_matrix& matrices =
 						streaming.getSystemMatrix();
-				BOOST_CHECK(matrices.size() == D2Q9IncompressibleModel::Q);
+				BOOST_CHECK(matrices.n_block_cols() == D2Q9IncompressibleModel::Q-1);
+				BOOST_CHECK(matrices.n_block_rows() == D2Q9IncompressibleModel::Q-1);
 #ifdef PRINT_SYSTEM_MATRIX
 				for (size_t i = 0; i < 2; i++) { //D2Q9IncompressibleModel::Q; i++){
 					cout << "Matrix " << i << ": " << endl;
-					matrices.at(i).print_formatted(cout);
+					matrices.block(i,i).print_formatted(cout);
 				}
 #endif
 				//BOOST_CHECK()
 				//singular value decomposition
 				dealii::LAPACKFullMatrix<double> systemMatrix(
-						matrices.at(0).n());
-				for (size_t i = 0; i < D2Q9IncompressibleModel::Q; i++) {
+						matrices.block(0,0).n());
+				for (size_t i = 0; i < D2Q9IncompressibleModel::Q-1; i++) {
 #ifdef CREATE_DATA_FILES
 					// create files for spectrum plots
 					std::stringstream filename;
@@ -144,8 +145,8 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 							/ (pow(2, refinementLevel) * (fe_order - 1));
 					double deltaT = deltaX;
 					distributed_sparse_matrix sparseSytemMatrix(
-							matrices.at(i).get_sparsity_pattern());
-					sparseSytemMatrix.copy_from(matrices.at(i));
+							matrices.block(i,i).get_sparsity_pattern());
+					sparseSytemMatrix.copy_from(matrices.block(i,i));
 					sparseSytemMatrix *= deltaT;
 					systemMatrix.copy_from(sparseSytemMatrix);
 					systemMatrix.compute_eigenvalues();
@@ -202,14 +203,14 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>());
-	const vector<distributed_sparse_matrix>& matrices =
+	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time
 	const double timeStep = 1. / (pow(2, refinementLevel) * (fe_order - 1));
 	const size_t numberOfTimeSteps = size_t(1. / timeStep);
 
 	// Initialize all particle distribution functions with 1
-	distributed_vector f(streaming.getSystemMatrix().at(0).n());
+	distributed_vector f(streaming.getNumberOfDoFs());
 	for (size_t i = 0; i < f.size(); i++) {
 		f(i) = 1.0;
 	}
@@ -218,10 +219,10 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
 	double initialMass = f.size();
 	// Explicit euler for streaming in direction (1,0)
 	distributed_sparse_matrix advectionMatrix;
-	advectionMatrix.reinit(streaming.getSparsityPattern());
-	advectionMatrix.copy_from(matrices.at(3));
+	advectionMatrix.reinit(streaming.getSparsityPattern(2));
+	advectionMatrix.copy_from(matrices.block(2,2));
 	advectionMatrix *= timeStep;
-	distributed_vector f_tmp(streaming.getSystemMatrix().at(0).n());
+	distributed_vector f_tmp(streaming.getNumberOfDoFs());
 	for (size_t i = 0; i < numberOfTimeSteps; i++) {
 		//stream
 		f_tmp = f;
@@ -248,14 +249,14 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>());
-	const vector<distributed_sparse_matrix>& matrices =
+	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time
 	const double timeStep = 0.1 / (pow(2, refinementLevel) * (fe_order - 1));
 	const size_t numberOfTimeSteps = size_t(1. / timeStep);
 
 	// Initialize all particle distribution functions with 1, one corner element with 2
-	distributed_vector f(streaming.getSystemMatrix().at(0).n());
+	distributed_vector f(streaming.getNumberOfDoFs());
 	double initialMass = 0.0;
 	for (size_t i = 0; i < f.size(); i++) {
 		f(i) = 1.0;
@@ -278,10 +279,10 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 	// CHECK MASS CONSERVATION
 	// Explicit euler for streaming in direction (1,0)
 	distributed_sparse_matrix advectionMatrix;
-	advectionMatrix.reinit(streaming.getSparsityPattern());
-	advectionMatrix.copy_from(matrices.at(3));
+	advectionMatrix.reinit(streaming.getSparsityPattern(2));
+	advectionMatrix.copy_from(matrices.block(2,2));
 	advectionMatrix *= timeStep;
-	distributed_vector f_tmp(streaming.getSystemMatrix().at(0).n());
+	distributed_vector f_tmp(streaming.getNumberOfDoFs());
 
 	// Make results dir
 #ifdef EULER_OUT
@@ -396,7 +397,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
-	const vector<distributed_sparse_matrix>& matrices =
+	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time (five times)
@@ -409,7 +410,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	const size_t timeStepsUntilHalfThroughDomain = 0.5 / timeStep;
 
 	// Initialize all particle distribution functions with 1, one corner element with 2
-	distributed_vector f(streaming.getSystemMatrix().at(0).n());
+	distributed_vector f(streaming.getNumberOfDoFs());
 	double mass = 0.0;
 	double initialMass = 0.0;
 	for (size_t i = 0; i < f.size(); i++) {
@@ -433,8 +434,8 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	// CHECK MASS CONSERVATION
 	// RK5 for streaming in direction (-1,0)
 	distributed_sparse_matrix advectionMatrix;
-	advectionMatrix.reinit(streaming.getSparsityPattern());
-	advectionMatrix.copy_from(matrices.at(3));
+	advectionMatrix.reinit(streaming.getSparsityPattern(2));
+	advectionMatrix.copy_from(matrices.block(2,2));
 	RungeKutta5LowStorage RK5(timeStep, f.size());
 #ifdef RK5_OUT
 	// Make results dir

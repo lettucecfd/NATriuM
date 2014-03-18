@@ -1,39 +1,62 @@
-\hypertarget{BasicNames_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/utilities/\-Basic\-Names.h \-File \-Reference}
-\label{BasicNames_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/utilities/\-Basic\-Names.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/utilities/\-Basic\-Names.\-h}}
+\hypertarget{BasicNames_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Basic\-Names.h File Reference}
+\label{BasicNames_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Basic\-Names.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Basic\-Names.\-h}}
 }
-{\ttfamily \#include \char`\"{}deal.\-I\-I/numerics/vector\-\_\-tools.\-h\char`\"{}}\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/petsc\-\_\-vector.\-h\char`\"{}}\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/petsc\-\_\-parallel\-\_\-vector.\-h\char`\"{}}\*
-\subsection*{\-Classes}
+
+
+Definition of the basic typedefs and names used in the Code.  
+
+
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$math.\-h$>$}\\*
+{\ttfamily \#include \char`\"{}boost/shared\-\_\-ptr.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}boost/make\-\_\-shared.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/base/point.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/numerics/vector\-\_\-tools.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/block\-\_\-sparse\-\_\-matrix.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/petsc\-\_\-vector.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/petsc\-\_\-parallel\-\_\-vector.\-h\char`\"{}}\\*
+\subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{classnatrium_1_1Math}{natrium\-::\-Math}
-\begin{DoxyCompactList}\small\item\em class which contains basic math functions \end{DoxyCompactList}\end{DoxyCompactItemize}
-\subsection*{\-Typedefs}
-\begin{DoxyCompactItemize}
-\item 
-\hypertarget{namespacenatrium_aabc99fb5107f5b61f0f20112ebd84f46}{typedef unsigned int {\bfseries natrium\-::size\-\_\-t}}\label{namespacenatrium_aabc99fb5107f5b61f0f20112ebd84f46}
-
-\begin{DoxyCompactList}\small\item\em size type \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_a30f1b2abba4a45ee5df90fe0d8931781}{typedef double {\bfseries natrium\-::float\-\_\-t}}\label{namespacenatrium_a30f1b2abba4a45ee5df90fe0d8931781}
-
-\begin{DoxyCompactList}\small\item\em floating point number \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_adb2ad910711685d6ad7a7c2000a210ca}{typedef dealii\-::\-Vector$<$ float\-\_\-t $>$ {\bfseries natrium\-::numeric\-\_\-vector}}\label{namespacenatrium_adb2ad910711685d6ad7a7c2000a210ca}
+\hypertarget{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{typedef dealii\-::\-Vector$<$ double $>$ {\bfseries natrium\-::numeric\-\_\-vector}}\label{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}
 
 \begin{DoxyCompactList}\small\item\em vector for numeric operations \end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_af033b61eba66ee890834d17f01c2ecb3}{typedef dealii\-::\-Block\-Vector\\*
+$<$ double $>$ {\bfseries natrium\-::block\-\_\-vector}}\label{namespacenatrium_af033b61eba66ee890834d17f01c2ecb3}
+
+\item 
+\hypertarget{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}{typedef dealii\-::\-Full\-Matrix\\*
+$<$ double $>$ {\bfseries natrium\-::numeric\-\_\-matrix}}\label{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}
+
+\begin{DoxyCompactList}\small\item\em matrix for numeric operations \end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}{typedef \\*
+dealii\-::\-Block\-Sparse\-Matrix\\*
+$<$ double $>$ {\bfseries natrium\-::sparse\-\_\-block\-\_\-matrix}}\label{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}
+
+\begin{DoxyCompactList}\small\item\em sparse matrix \end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}{typedef dealii\-::\-Sparse\-Matrix\\*
+$<$ double $>$ {\bfseries natrium\-::sparse\-\_\-matrix}}\label{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}
+
+\item 
 \hypertarget{namespacenatrium_a38766b5d2684504febaf4c4a3770049a}{typedef numeric\-\_\-vector {\bfseries natrium\-::distributed\-\_\-vector}}\label{namespacenatrium_a38766b5d2684504febaf4c4a3770049a}
 
 \begin{DoxyCompactList}\small\item\em vector which can be distributed over different cores \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_af4e390cd7d26fe191f3a5d615b42614d}{typedef dealii\-::\-Full\-Matrix\*
-$<$ float\-\_\-t $>$ {\bfseries natrium\-::numeric\-\_\-matrix}}\label{namespacenatrium_af4e390cd7d26fe191f3a5d615b42614d}
+\hypertarget{namespacenatrium_a60736b7916da17ac8f25cb99b6f9aaac}{typedef block\-\_\-vector {\bfseries natrium\-::distributed\-\_\-block\-\_\-vector}}\label{namespacenatrium_a60736b7916da17ac8f25cb99b6f9aaac}
 
-\begin{DoxyCompactList}\small\item\em matrix for numeric operations \end{DoxyCompactList}\end{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}{typedef sparse\-\_\-matrix {\bfseries natrium\-::distributed\-\_\-sparse\-\_\-matrix}}\label{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}
+
+\begin{DoxyCompactList}\small\item\em matrix which can be distributed over different cores \end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_a70f1738fc69761e34e1df08e0708d2f3}{typedef sparse\-\_\-block\-\_\-matrix {\bfseries natrium\-::distributed\-\_\-sparse\-\_\-block\-\_\-matrix}}\label{namespacenatrium_a70f1738fc69761e34e1df08e0708d2f3}
+
+\end{DoxyCompactItemize}
 
 
-\subsection{\-Detailed \-Description}
-\begin{DoxyDate}{\-Date}
+\subsection{Detailed Description}
+Definition of the basic typedefs and names used in the Code. \begin{DoxyDate}{Date}
 30.\-08.\-2013 
 \end{DoxyDate}
-\begin{DoxyAuthor}{\-Author}
-\-Andreas \-Kraemer, \-Bonn-\/\-Rhein-\/\-Sieg \-University of \-Applied \-Sciences, \-Sankt \-Augustin 
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

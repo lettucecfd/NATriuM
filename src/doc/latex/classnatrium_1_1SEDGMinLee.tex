@@ -1,0 +1,171 @@
+\hypertarget{classnatrium_1_1SEDGMinLee}{\section{natrium\-:\-:S\-E\-D\-G\-Min\-Lee$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1SEDGMinLee}\index{natrium\-::\-S\-E\-D\-G\-Min\-Lee$<$ dim $>$@{natrium\-::\-S\-E\-D\-G\-Min\-Lee$<$ dim $>$}}
+}
+
+
+This class solves the linear advection equations by a scheme which is used, e.\-g., by Min and Lee (2011)\-: A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, J\-C\-P 230 pp. 245-\/259. The advection equations used in the Lattice Boltzmann on unstructured grids are \[ \partial_t f_i + e_i \partial_x f_i = 0,\quad \forall i = 1,\dots,Q-1 \] where $ f_i(x,t) $ are the particle distribution functions, and $ e_i $ are the particle velocities. The discontinuous Galerkin (D\-G) method turns these P\-D\-Es into a large system of O\-D\-Es which can then be solved by a time integration scheme. Whereas this class implements the S\-E\-D\-G spatial discretization, the time integration is done by a subclass of \hyperlink{classnatrium_1_1TimeIntegrator}{Time\-Integrator}, e.\-g. \hyperlink{classnatrium_1_1RungeKutta5LowStorage}{Runge\-Kutta5\-Low\-Storage}. In other Finite Element schemes, degrees of freedom can belong to different elements (e.\-g. at corners of elements). In contrast, D\-G methods have the degrees of freedom belonging to a single element, which can lead to discontinuities at the element faces. To connect neighbor cells, the integral over the boundary of each cell incorporates the solution on neighbor cells. These contributions are called numerical fluxes. The D\-G scheme uses the weak formulation of the above equations on quadrilateral elements \$\$\-: \[ \left( \partial_t f_i + \partial_x (e_i f_i), \Phi \right)_{\Omega_e} = \left(n \left[ e_i f_i - F^{\ast}_{i}(f) \right], \Phi \right)_{\partial \Omega_e}. \] In this formulation $ F^{\ast}_{i}(f) $ denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-\/\-Friedrichs fluxes. Lax-\/\-Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-\/\-Lobatto quadrature is used, which has the advantage that the resulting mass matrix M\-\_\-i = (, )\-\_\-\{\} is diagonal. This circumvents the solution of a linear equation system. including particle distributions f, system matrix L, diagonal mass matrix M, gradient matrices Dx, Dy, (Dz) and boundary matrix R.  
+
+
+
+
+{\ttfamily \#include $<$S\-E\-D\-G\-Min\-Lee.\-h$>$}
+
+Inheritance diagram for natrium\-:\-:S\-E\-D\-G\-Min\-Lee$<$ dim $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classnatrium_1_1SEDGMinLee}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1SEDGMinLee_a5bcf88b62420136630f78323b9b161b8}{S\-E\-D\-G\-Min\-Lee} (shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ triangulation, shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{Boundary\-Collection}$<$ dim $>$ $>$ boundaries, size\-\_\-t order\-Of\-Finite\-Element, shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} $>$ boltzmann\-Model, string input\-Directory=\char`\"{}\char`\"{}, bool use\-Central\-Flux=false)
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a6c55a31bc4cb0e314876af7251ad8ce3}{virtual \hyperlink{classnatrium_1_1SEDGMinLee_a6c55a31bc4cb0e314876af7251ad8ce3}{$\sim$\-S\-E\-D\-G\-Min\-Lee} ()}\label{classnatrium_1_1SEDGMinLee_a6c55a31bc4cb0e314876af7251ad8ce3}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1SEDGMinLee_a5fa8b34df3c3bdd9f492a1e555effbe4}{reassemble} ()
+\begin{DoxyCompactList}\small\item\em function to (re-\/)assemble linear system \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a04707d696f7f466f17e3de055187ecd9}{virtual void \hyperlink{classnatrium_1_1SEDGMinLee_a04707d696f7f466f17e3de055187ecd9}{stream} ()}\label{classnatrium_1_1SEDGMinLee_a04707d696f7f466f17e3de055187ecd9}
+
+\begin{DoxyCompactList}\small\item\em make streaming step \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1SEDGMinLee_ab3cf80e18230ee7f08f4ed9883b9dadd}{save\-Checkpoint} (const string \&directory) const 
+\begin{DoxyCompactList}\small\item\em save matrices and status to files \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_adcf3f6321cbf27f6c540a6c5f21c7cb0}{virtual const \\*
+distributed\-\_\-sparse\-\_\-block\-\_\-matrix \& \hyperlink{classnatrium_1_1SEDGMinLee_adcf3f6321cbf27f6c540a6c5f21c7cb0}{get\-System\-Matrix} () const }\label{classnatrium_1_1SEDGMinLee_adcf3f6321cbf27f6c540a6c5f21c7cb0}
+
+\begin{DoxyCompactList}\small\item\em get global system matrix \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_ab01fe7f989aed26cb5547eaba8ddb4ee}{virtual void {\bfseries map\-Do\-Fs\-To\-Support\-Points} (vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const }\label{classnatrium_1_1SEDGMinLee_ab01fe7f989aed26cb5547eaba8ddb4ee}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a3ffd3d7bc5aae9dbb5a021d7e4913f65}{virtual const shared\-\_\-ptr\\*
+$<$ dealii\-::\-Do\-F\-Handler$<$ dim $>$ $>$ \& {\bfseries get\-Do\-F\-Handler} () const }\label{classnatrium_1_1SEDGMinLee_a3ffd3d7bc5aae9dbb5a021d7e4913f65}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a10acabaac20a992130e88fb9bd395d31}{const \\*
+dealii\-::\-Block\-Sparsity\-Pattern \& {\bfseries get\-Block\-Sparsity\-Pattern} () const }\label{classnatrium_1_1SEDGMinLee_a10acabaac20a992130e88fb9bd395d31}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_ac9392932aaab8186b427b9d12bc64771}{const dealii\-::\-Sparsity\-Pattern \& {\bfseries get\-Sparsity\-Pattern} (size\-\_\-t i) const }\label{classnatrium_1_1SEDGMinLee_ac9392932aaab8186b427b9d12bc64771}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a7d093da19c6796a3021f5d3f4beab542}{const dealii\-::\-Mapping\-Q1$<$ dim $>$ \& {\bfseries get\-Mapping} () const }\label{classnatrium_1_1SEDGMinLee_a7d093da19c6796a3021f5d3f4beab542}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a8947d4078fadf1f71fcd7304210fa75c}{const std\-::map$<$ size\-\_\-t, size\-\_\-t $>$ \& {\bfseries get\-Celldof\-To\-Q\-Index} () const }\label{classnatrium_1_1SEDGMinLee_a8947d4078fadf1f71fcd7304210fa75c}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a8b7d94c90ccfa5e341d854059d883f57}{const vector$<$ std\-::map$<$ size\-\_\-t, \\*
+size\-\_\-t $>$ $>$ \& {\bfseries get\-Facedof\-To\-Q\-Index} () const }\label{classnatrium_1_1SEDGMinLee_a8b7d94c90ccfa5e341d854059d883f57}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a653928dc9f0dd3715389b28196cab7bb}{const shared\-\_\-ptr\\*
+$<$ dealii\-::\-Q\-Gauss\-Lobatto$<$ dim-\/1 $>$ $>$ \& {\bfseries get\-Face\-Quadrature} () const }\label{classnatrium_1_1SEDGMinLee_a653928dc9f0dd3715389b28196cab7bb}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_adb3df3ea790cb6a4d58dd9bed2e1ce1c}{const shared\-\_\-ptr\\*
+$<$ dealii\-::\-F\-E\-\_\-\-D\-G\-Q\-Arbitrary\-Nodes\\*
+$<$ dim $>$ $>$ \& {\bfseries get\-Fe} () const }\label{classnatrium_1_1SEDGMinLee_adb3df3ea790cb6a4d58dd9bed2e1ce1c}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_ad3ca0f23194a27d69d82d0f3ba89e345}{const shared\-\_\-ptr\\*
+$<$ dealii\-::\-Q\-Gauss\-Lobatto$<$ dim $>$ $>$ \& {\bfseries get\-Quadrature} () const }\label{classnatrium_1_1SEDGMinLee_ad3ca0f23194a27d69d82d0f3ba89e345}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a745a65de3ee72a250c0706e6c7fcc361}{size\-\_\-t {\bfseries get\-Order\-Of\-Finite\-Element} () const }\label{classnatrium_1_1SEDGMinLee_a745a65de3ee72a250c0706e6c7fcc361}
+
+\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_af667cda1a894340f614da67c0a0ae5da}{virtual size\-\_\-t {\bfseries get\-Number\-Of\-Do\-Fs} () const }\label{classnatrium_1_1SEDGMinLee_af667cda1a894340f614da67c0a0ae5da}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::\-S\-E\-D\-G\-Min\-Lee$<$ dim $>$}
+
+This class solves the linear advection equations by a scheme which is used, e.\-g., by Min and Lee (2011)\-: A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, J\-C\-P 230 pp. 245-\/259. The advection equations used in the Lattice Boltzmann on unstructured grids are \[ \partial_t f_i + e_i \partial_x f_i = 0,\quad \forall i = 1,\dots,Q-1 \] where $ f_i(x,t) $ are the particle distribution functions, and $ e_i $ are the particle velocities. The discontinuous Galerkin (D\-G) method turns these P\-D\-Es into a large system of O\-D\-Es which can then be solved by a time integration scheme. Whereas this class implements the S\-E\-D\-G spatial discretization, the time integration is done by a subclass of \hyperlink{classnatrium_1_1TimeIntegrator}{Time\-Integrator}, e.\-g. \hyperlink{classnatrium_1_1RungeKutta5LowStorage}{Runge\-Kutta5\-Low\-Storage}. In other Finite Element schemes, degrees of freedom can belong to different elements (e.\-g. at corners of elements). In contrast, D\-G methods have the degrees of freedom belonging to a single element, which can lead to discontinuities at the element faces. To connect neighbor cells, the integral over the boundary of each cell incorporates the solution on neighbor cells. These contributions are called numerical fluxes. The D\-G scheme uses the weak formulation of the above equations on quadrilateral elements \$\$\-: \[ \left( \partial_t f_i + \partial_x (e_i f_i), \Phi \right)_{\Omega_e} = \left(n \left[ e_i f_i - F^{\ast}_{i}(f) \right], \Phi \right)_{\partial \Omega_e}. \] In this formulation $ F^{\ast}_{i}(f) $ denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-\/\-Friedrichs fluxes. Lax-\/\-Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-\/\-Lobatto quadrature is used, which has the advantage that the resulting mass matrix M\-\_\-i = (, )\-\_\-\{\} is diagonal. This circumvents the solution of a linear equation system. including particle distributions f, system matrix L, diagonal mass matrix M, gradient matrices Dx, Dy, (Dz) and boundary matrix R. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em dim} & The dimension of the flow (2 or 3). \\
+\hline
+\end{DoxyTemplParams}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1SEDGMinLee_a5bcf88b62420136630f78323b9b161b8}{\index{natrium\-::\-S\-E\-D\-G\-Min\-Lee@{natrium\-::\-S\-E\-D\-G\-Min\-Lee}!S\-E\-D\-G\-Min\-Lee@{S\-E\-D\-G\-Min\-Lee}}
+\index{S\-E\-D\-G\-Min\-Lee@{S\-E\-D\-G\-Min\-Lee}!natrium::SEDGMinLee@{natrium\-::\-S\-E\-D\-G\-Min\-Lee}}
+\subsubsection[{S\-E\-D\-G\-Min\-Lee}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template {\bf natrium\-::\-S\-E\-D\-G\-Min\-Lee}$<$ dim $>$\-::{\bf S\-E\-D\-G\-Min\-Lee} (
+\begin{DoxyParamCaption}
+\item[{shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$}]{triangulation, }
+\item[{shared\-\_\-ptr$<$ {\bf Boundary\-Collection}$<$ dim $>$ $>$}]{boundaries, }
+\item[{size\-\_\-t}]{order\-Of\-Finite\-Element, }
+\item[{shared\-\_\-ptr$<$ {\bf Boltzmann\-Model} $>$}]{boltzmann\-Model, }
+\item[{string}]{input\-Directory = {\ttfamily \char`\"{}\char`\"{}}, }
+\item[{bool}]{use\-Central\-Flux = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1SEDGMinLee_a5bcf88b62420136630f78323b9b161b8}
+
+
+constructor 
+
+The template parameter must be made explicit in order for the code to compile.
+
+Constructor 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em triangulation} & The global mesh. \\
+\hline
+\mbox{\tt in}  & {\em order\-Of\-Finite\-Element} & The number of nodes element and dimension \\
+\hline
+\mbox{\tt in}  & {\em boltzmann\-Model} & the D\-Q model \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1SEDGMinLee_a5fa8b34df3c3bdd9f492a1e555effbe4}{\index{natrium\-::\-S\-E\-D\-G\-Min\-Lee@{natrium\-::\-S\-E\-D\-G\-Min\-Lee}!reassemble@{reassemble}}
+\index{reassemble@{reassemble}!natrium::SEDGMinLee@{natrium\-::\-S\-E\-D\-G\-Min\-Lee}}
+\subsubsection[{reassemble}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::\-S\-E\-D\-G\-Min\-Lee}$<$ dim $>$\-::reassemble (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1SEDGMinLee_a5fa8b34df3c3bdd9f492a1e555effbe4}
+
+
+function to (re-\/)assemble linear system 
+
+The template parameter must be made explicit in order for the code to compile. 
+
+Implements \hyperlink{classnatrium_1_1AdvectionOperator_a89c25c3dae9a1e5973cd89fab8c2c052}{natrium\-::\-Advection\-Operator$<$ dim $>$}.
+
+\hypertarget{classnatrium_1_1SEDGMinLee_ab3cf80e18230ee7f08f4ed9883b9dadd}{\index{natrium\-::\-S\-E\-D\-G\-Min\-Lee@{natrium\-::\-S\-E\-D\-G\-Min\-Lee}!save\-Checkpoint@{save\-Checkpoint}}
+\index{save\-Checkpoint@{save\-Checkpoint}!natrium::SEDGMinLee@{natrium\-::\-S\-E\-D\-G\-Min\-Lee}}
+\subsubsection[{save\-Checkpoint}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::\-S\-E\-D\-G\-Min\-Lee}$<$ dim $>$\-::save\-Checkpoint (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{directory}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1SEDGMinLee_ab3cf80e18230ee7f08f4ed9883b9dadd}
+
+
+save matrices and status to files 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em directory} & directory to save the matrix files to \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classnatrium_1_1AdvectionSolverException}{Advection\-Solver\-Exception}} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implements \hyperlink{classnatrium_1_1AdvectionOperator_aca14260bae100874b0050a2a96d7a564}{natrium\-::\-Advection\-Operator$<$ dim $>$}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/advection/\hyperlink{SEDGMinLee_8h}{S\-E\-D\-G\-Min\-Lee.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/advection/\hyperlink{SEDGMinLee_8cpp}{S\-E\-D\-G\-Min\-Lee.\-cpp}\end{DoxyCompactItemize}

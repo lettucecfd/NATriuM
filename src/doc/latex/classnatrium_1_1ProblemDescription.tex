@@ -1,38 +1,109 @@
-\hypertarget{classnatrium_1_1ProblemDescription}{\section{natrium\-:\-:\-Problem\-Description$<$ dim $>$ \-Class \-Template \-Reference}
+\hypertarget{classnatrium_1_1ProblemDescription}{\section{natrium\-:\-:Problem\-Description$<$ dim $>$ Class Template Reference}
 \label{classnatrium_1_1ProblemDescription}\index{natrium\-::\-Problem\-Description$<$ dim $>$@{natrium\-::\-Problem\-Description$<$ dim $>$}}
 }
 
 
-\-Abstract class for the description of a \-C\-F\-D problem. \-The description includes the computational mesh, boundary description, viscosity and initial values.  
+Abstract class for the description of a C\-F\-D problem. The description includes the computational mesh, boundary description, viscosity and initial values.  
 
 
 
 
-{\ttfamily \#include $<$\-Problem\-Description.\-h$>$}
+{\ttfamily \#include $<$Problem\-Description.\-h$>$}
 
-\subsection*{\-Public \-Member \-Functions}
+\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_aa82a57ea450c667c7e391a175a54791c}{\hyperlink{classnatrium_1_1ProblemDescription_aa82a57ea450c667c7e391a175a54791c}{\-Problem\-Description} ()}\label{classnatrium_1_1ProblemDescription_aa82a57ea450c667c7e391a175a54791c}
+\hypertarget{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}{\hyperlink{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}{Problem\-Description} (shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ triangulation, double viscosity, double characteristic\-Length)}\label{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}
 
 \begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}{virtual \hyperlink{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}{$\sim$\-Problem\-Description} ()}\label{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ProblemDescription_a69d3b6c08733468e6c9c152ce4f83585}{const shared\-\_\-ptr\\*
+$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ \& {\bfseries get\-Triangulation} () const }\label{classnatrium_1_1ProblemDescription_a69d3b6c08733468e6c9c152ce4f83585}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_abb061fe78c8d289fe2a4a9000015d842}{const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{Boundary\-Collection}$<$ dim $>$ $>$ \& {\bfseries get\-Boundaries} () const }\label{classnatrium_1_1ProblemDescription_abb061fe78c8d289fe2a4a9000015d842}
+
+\item 
+virtual void \hyperlink{classnatrium_1_1ProblemDescription_ab4ccefafd2888510038259445076fed6}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const =0
+\begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1ProblemDescription_a28306325c69e7d2086a3dd7f8c514b21}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const =0
+\begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ProblemDescription_ae588b1e0ce4dd89e2fcfbb0c191b1c41}{void {\bfseries set\-Triangulation} (const shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ \&triangulation)}\label{classnatrium_1_1ProblemDescription_ae588b1e0ce4dd89e2fcfbb0c191b1c41}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_aadca2aac3953fa44bf9ce9cf43dc0417}{void {\bfseries set\-Boundaries} (const shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{Boundary\-Collection}$<$ dim $>$ $>$ \&boundaries)}\label{classnatrium_1_1ProblemDescription_aadca2aac3953fa44bf9ce9cf43dc0417}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_a582ecf296837d78a8a00fd598de38de2}{double {\bfseries get\-Viscosity} () const }\label{classnatrium_1_1ProblemDescription_a582ecf296837d78a8a00fd598de38de2}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_ad624cab941ab79af0422e5f7c735e8d8}{void {\bfseries set\-Viscosity} (double viscosity)}\label{classnatrium_1_1ProblemDescription_ad624cab941ab79af0422e5f7c735e8d8}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_ac424dbc36ad2d61d128f3656a8d6952d}{double {\bfseries get\-Characteristic\-Length} () const }\label{classnatrium_1_1ProblemDescription_ac424dbc36ad2d61d128f3656a8d6952d}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_adc48f96c34c6318d911bbc41582c202b}{void {\bfseries set\-Characteristic\-Length} (double characteristic\-Length)}\label{classnatrium_1_1ProblemDescription_adc48f96c34c6318d911bbc41582c202b}
+
+\end{DoxyCompactItemize}
 
 
-\subsection{\-Detailed \-Description}
-\subsubsection*{template$<$int dim$>$class natrium\-::\-Problem\-Description$<$ dim $>$}
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::\-Problem\-Description$<$ dim $>$}
 
-\-Abstract class for the description of a \-C\-F\-D problem. \-The description includes the computational mesh, boundary description, viscosity and initial values. 
+Abstract class for the description of a C\-F\-D problem. The description includes the computational mesh, boundary description, viscosity and initial values. 
 
 
-\begin{DoxyTemplParams}{\-Template Parameters}
-{\em dim} & \-The dimension of the flow (2 or 3). \\
+\begin{DoxyTemplParams}{Template Parameters}
+{\em dim} & The dimension of the flow (2 or 3). \\
 \hline
 \end{DoxyTemplParams}
 
 
-\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1ProblemDescription_ab4ccefafd2888510038259445076fed6}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
+\index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::ProblemDescription@{natrium\-::\-Problem\-Description}}
+\subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ virtual void {\bf natrium\-::\-Problem\-Description}$<$ dim $>$\-::apply\-Initial\-Densities (
+\begin{DoxyParamCaption}
+\item[{distributed\-\_\-vector \&}]{initial\-Densities, }
+\item[{vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classnatrium_1_1ProblemDescription_ab4ccefafd2888510038259445076fed6}
+
+
+set initial densities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Densities} & vector of densities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+\hypertarget{classnatrium_1_1ProblemDescription_a28306325c69e7d2086a3dd7f8c514b21}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
+\index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::ProblemDescription@{natrium\-::\-Problem\-Description}}
+\subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ virtual void {\bf natrium\-::\-Problem\-Description}$<$ dim $>$\-::apply\-Initial\-Velocities (
+\begin{DoxyParamCaption}
+\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
+\item[{vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classnatrium_1_1ProblemDescription_a28306325c69e7d2086a3dd7f8c514b21}
+
+
+set initial velocities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Velocities} & vector of velocities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/problemdescription/\hyperlink{ProblemDescription_8h}{\-Problem\-Description.\-h}\end{DoxyCompactItemize}
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\hyperlink{ProblemDescription_8h}{Problem\-Description.\-h}\end{DoxyCompactItemize}

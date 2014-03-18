@@ -1,0 +1,101 @@
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D}{\section{natrium\-:\-:Poiseuille\-Flow2\-D Class Reference}
+\label{classnatrium_1_1PoiseuilleFlow2D}\index{natrium\-::\-Poiseuille\-Flow2\-D@{natrium\-::\-Poiseuille\-Flow2\-D}}
+}
+
+
+Description of a simple Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}.  
+
+
+
+
+{\ttfamily \#include $<$Poiseuille\-Flow2\-D.\-h$>$}
+
+Inheritance diagram for natrium\-:\-:Poiseuille\-Flow2\-D\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classnatrium_1_1PoiseuilleFlow2D}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1PoiseuilleFlow2D_a1834e3440ac19a8734f9133cd577e0ca}{Poiseuille\-Flow2\-D} (double viscosity, size\-\_\-t refinement\-Level)
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a62f9e7cfb2e32753b58eafb9d5936fd4}{virtual \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a62f9e7cfb2e32753b58eafb9d5936fd4}{$\sim$\-Poiseuille\-Flow2\-D} ()}\label{classnatrium_1_1PoiseuilleFlow2D_a62f9e7cfb2e32753b58eafb9d5936fd4}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a5f3475deac6f2666f181a052baf76502}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+\begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a8fe39ca61c90d194255e61d36c0681af}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+\begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a7900b79dac4dc5c120d9a04d9d4138ac}{double \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a7900b79dac4dc5c120d9a04d9d4138ac}{analytic\-Velocity1} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1PoiseuilleFlow2D_a7900b79dac4dc5c120d9a04d9d4138ac}
+
+\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex, first component of velocity vector \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a373b2da2beb5eb83eb5caab3a421e356}{double \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a373b2da2beb5eb83eb5caab3a421e356}{analytic\-Velocity2} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1PoiseuilleFlow2D_a373b2da2beb5eb83eb5caab3a421e356}
+
+\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex, second component of velocity vector \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a simple Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a1834e3440ac19a8734f9133cd577e0ca}{\index{natrium\-::\-Poiseuille\-Flow2\-D@{natrium\-::\-Poiseuille\-Flow2\-D}!Poiseuille\-Flow2\-D@{Poiseuille\-Flow2\-D}}
+\index{Poiseuille\-Flow2\-D@{Poiseuille\-Flow2\-D}!natrium::PoiseuilleFlow2D@{natrium\-::\-Poiseuille\-Flow2\-D}}
+\subsubsection[{Poiseuille\-Flow2\-D}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Poiseuille\-Flow2\-D\-::\-Poiseuille\-Flow2\-D (
+\begin{DoxyParamCaption}
+\item[{double}]{viscosity, }
+\item[{size\-\_\-t}]{refinement\-Level}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1PoiseuilleFlow2D_a1834e3440ac19a8734f9133cd577e0ca}
+
+
+constructor 
+
+apply boundary values 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a5f3475deac6f2666f181a052baf76502}{\index{natrium\-::\-Poiseuille\-Flow2\-D@{natrium\-::\-Poiseuille\-Flow2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
+\index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::PoiseuilleFlow2D@{natrium\-::\-Poiseuille\-Flow2\-D}}
+\subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Poiseuille\-Flow2\-D\-::apply\-Initial\-Densities (
+\begin{DoxyParamCaption}
+\item[{distributed\-\_\-vector \&}]{initial\-Densities, }
+\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1PoiseuilleFlow2D_a5f3475deac6f2666f181a052baf76502}
+
+
+set initial densities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Densities} & vector of densities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a8fe39ca61c90d194255e61d36c0681af}{\index{natrium\-::\-Poiseuille\-Flow2\-D@{natrium\-::\-Poiseuille\-Flow2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
+\index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::PoiseuilleFlow2D@{natrium\-::\-Poiseuille\-Flow2\-D}}
+\subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Poiseuille\-Flow2\-D\-::apply\-Initial\-Velocities (
+\begin{DoxyParamCaption}
+\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
+\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1PoiseuilleFlow2D_a8fe39ca61c90d194255e61d36c0681af}
+
+
+set initial velocities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Velocities} & vector of velocities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/2/\hyperlink{PoiseuilleFlow2D_8h}{Poiseuille\-Flow2\-D.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/2/\hyperlink{PoiseuilleFlow2D_8cpp}{Poiseuille\-Flow2\-D.\-cpp}\end{DoxyCompactItemize}

@@ -20,7 +20,7 @@
 
 #include "deal.II/numerics/vector_tools.h"
 
-#include "deal.II/lac/sparse_matrix.h"
+#include "deal.II/lac/block_sparse_matrix.h"
 #include "deal.II/lac/petsc_vector.h"
 #include "deal.II/lac/petsc_parallel_vector.h"
 
@@ -40,11 +40,13 @@ using boost::make_shared;
 
 /// vector for numeric operations
 typedef dealii::Vector<double> numeric_vector;
+typedef dealii::BlockVector<double> block_vector;
 
 /// matrix for numeric operations
 typedef dealii::FullMatrix<double> numeric_matrix;
 
 /// sparse matrix
+typedef dealii::BlockSparseMatrix<double> sparse_block_matrix;
 typedef dealii::SparseMatrix<double> sparse_matrix;
 
 #undef WITH_PETSC
@@ -53,9 +55,14 @@ typedef dealii::SparseMatrix<double> sparse_matrix;
 typedef dealii::PETScWrappers::MPI::Vector distributed_vector;
 typedef dealii::PETScWrappers::MPI::SparseMatrix distributed_sparse_matrix;
 #else
+
 /// vector which can be distributed over different cores
 typedef numeric_vector distributed_vector;
+typedef block_vector distributed_block_vector;
+
+/// matrix which can be distributed over different cores
 typedef sparse_matrix distributed_sparse_matrix;
+typedef sparse_block_matrix distributed_sparse_block_matrix;
 #endif /* WITH_PETSC */
 
 } /* namespace natrium */

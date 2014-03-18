@@ -43,7 +43,7 @@ RungeKutta5LowStorage::~RungeKutta5LowStorage() {
 }
 
 void RungeKutta5LowStorage::step(distributed_vector& f,
-		const distributed_sparse_matrix& systemMatrix) {
+		const dealii::SparseMatrix<double>& systemMatrix) {
 	// Test all dimensions and change, if necessary
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());

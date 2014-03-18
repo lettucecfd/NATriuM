@@ -176,7 +176,7 @@ public:
 	}
 
 	size_t getNumberOfDoFs() const {
-		return m_advectionOperator->getSystemMatrix().at(0).n();
+		return m_advectionOperator->getNumberOfDoFs();
 	}
 
 	double getMaxVelocityNorm() const {

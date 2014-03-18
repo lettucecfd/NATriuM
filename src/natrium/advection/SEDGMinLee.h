@@ -16,6 +16,7 @@
 #include "deal.II/dofs/dof_handler.h"
 #include <deal.II/dofs/dof_tools.h>
 #include "deal.II/lac/sparse_matrix.h"
+#include "deal.II/lac/block_sparsity_pattern.h"
 #include "deal.II/base/quadrature_lib.h"
 
 #include "AdvectionOperator.h"
@@ -42,8 +43,34 @@ public:
 	}
 };
 
-/** @short Global data which is used, e.g., by Min and Lee (2011): A spectral-element discontinuous
- *         Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-259.
+/** @short This class solves the linear advection equations by a scheme which is used, e.g.,
+ * 		   by Min and Lee (2011): A spectral-element discontinuous Galerkin lattice Boltzmann
+ * 		   method for nearly incompressible flows, JCP 230 pp. 245-259.
+ *         The advection equations used in the Lattice Boltzmann on unstructured grids are
+ *         \f[
+ *         \partial_t f_i + e_i \partial_x f_i = 0,\quad \forall i = 1,\dots,Q-1
+ *         \f]
+ *         where \f$ f_i(x,t) \f$ are the particle distribution functions, and \f$ e_i \f$ are the particle
+ *         velocities. The discontinuous Galerkin (DG) method turns these PDEs into a large system of ODEs which can then be solved
+ *         by a time integration scheme. Whereas this class implements the SEDG spatial discretization, the
+ *         time integration is done by a subclass of TimeIntegrator, e.g. RungeKutta5LowStorage.
+ *         In other Finite Element schemes, degrees of freedom can belong to different elements
+ *         (e.g. at corners of elements). In contrast, DG methods have the degrees of freedom belonging to a
+ *         single element, which can lead to discontinuities at the element faces. To connect neighbor cells,
+ *         the integral over the boundary of each cell incorporates the solution on neighbor cells. These
+ *         contributions are called numerical fluxes.
+ *         The DG scheme uses the weak formulation of the above equations on quadrilateral elements $\Omega_e$:
+ *         \f[
+ *         \left( \partial_t f_i + \partial_x (e_i f_i), \Phi \right)_{\Omega_e}
+ *         = \left(n \left[ e_i f_i - F^{\ast}_{i}(f) \right], \Phi \right)_{\partial \Omega_e}.
+ *         \f]
+ *         In this formulation \f$ F^{\ast}_{i}(f) \f$ denotes the numerical fluxes. They can be be calculated
+ *         as central fluxes or Lax-Friedrichs fluxes. Lax-Friedrichs is in general more accurate for the advection equation.
+ *         For detailed information on the fluxes, see the cited paper.
+ *         For spatial integration a Gauss-Lobatto quadrature is used, which has the advantage that the resulting mass matrix
+ *         M_i = (\psi_j, \psi_k)_{\Omega_e} is diagonal. This circumvents the solution of a linear equation system.
+ *         Each advection equation leads to a ODE
+ *         \f[ \partial_t f_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) f_i + B_i f_{i^{\ast}} + b_i.\f]
  *         including particle distributions f, system matrix L, diagonal mass matrix M,
  *         gradient matrices Dx, Dy, (Dz) and boundary matrix R
  * @tparam dim The dimension of the flow (2 or 3).
@@ -71,7 +98,7 @@ private:
 	shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
 
 	/// Sparsity Pattern of the sparse matrix
-	dealii::SparsityPattern m_sparsityPattern;
+	dealii::BlockSparsityPattern m_sparsityPattern;
 
 	/// Mapping from real space to unit cell
 	const dealii::MappingQ1<dim> m_mapping;
@@ -80,7 +107,7 @@ private:
 	distributed_vector m_massMatrix;
 
 	/// System matrix L = M^(-1)*(-D+R)
-	vector<distributed_sparse_matrix> m_systemMatrix;
+	distributed_sparse_block_matrix m_systemMatrix;
 
 	/// the DQ model (e.g. D2Q9)
 	shared_ptr<BoltzmannModel> m_boltzmannModel;
@@ -156,7 +183,7 @@ private:
 	 * @note Note that M^-1 * A is different from A * M^-1, even though M is diagonal
 	 *       (M^-1*A: columns are multiplied by the same diag element)
 	 */
-	void divideByDiagonalMassMatrix(distributed_sparse_matrix& matrix,
+	void divideByDiagonalMassMatrix(dealii::SparseMatrix<double>& matrix,
 			const distributed_vector& massMatrix);
 	/**
 	 * @short assemble and distribute internal face
@@ -262,7 +289,7 @@ public:
 	virtual void saveCheckpoint(const string& directory) const;
 
 	/// get global system matrix
-	virtual const vector<distributed_sparse_matrix>& getSystemMatrix() const {
+	virtual const distributed_sparse_block_matrix& getSystemMatrix() const {
 		return m_systemMatrix;
 	}
 
@@ -277,8 +304,12 @@ public:
 		return m_doFHandler;
 	}
 
-	const dealii::SparsityPattern& getSparsityPattern() const {
+	const dealii::BlockSparsityPattern& getBlockSparsityPattern() const {
 		return m_sparsityPattern;
+	}
+
+	const dealii::SparsityPattern& getSparsityPattern(size_t i) const {
+		return m_systemMatrix.block(i,i).get_sparsity_pattern();
 	}
 
 	const dealii::MappingQ1<dim>& getMapping() const {
@@ -307,6 +338,10 @@ public:
 
 	size_t getOrderOfFiniteElement() const {
 		return m_orderOfFiniteElement;
+	}
+
+	virtual size_t getNumberOfDoFs() const {
+		return getSystemMatrix().block(0,0).n();
 	}
 };
 

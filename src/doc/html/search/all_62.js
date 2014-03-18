@@ -1,13 +1,23 @@
 var searchData=
 [
+  ['basic',['BASIC',['../classnatrium_1_1Logging.html#addbf66b690d29a9f8ca9edbc82672d36',1,'natrium::Logging']]],
   ['basicnames_2eh',['BasicNames.h',['../BasicNames_8h.html',1,'']]],
+  ['basicnames_5ftest_2ecpp',['BasicNames_test.cpp',['../BasicNames__test_8cpp.html',1,'']]],
+  ['bgktransformed',['BGKTransformed',['../classnatrium_1_1BGKTransformed.html#aafd0ed5b888da93e496c0a29e092bf5b',1,'natrium::BGKTransformed']]],
   ['bgktransformed',['BGKTransformed',['../classnatrium_1_1BGKTransformed.html',1,'natrium']]],
-  ['bgktransformed',['BGKTransformed',['../classnatrium_1_1BGKTransformed.html#adb6cc9b3a10e88f5d1e938cf8d2d9582',1,'natrium::BGKTransformed']]],
   ['bgktransformed_2ecpp',['BGKTransformed.cpp',['../BGKTransformed_8cpp.html',1,'']]],
   ['bgktransformed_2eh',['BGKTransformed.h',['../BGKTransformed_8h.html',1,'']]],
   ['bgktransformed_5ftest_2ecpp',['BGKTransformed_test.cpp',['../BGKTransformed__test_8cpp.html',1,'']]],
   ['boltzmannmodel',['BoltzmannModel',['../classnatrium_1_1BoltzmannModel.html',1,'natrium']]],
-  ['boltzmannmodel',['BoltzmannModel',['../classnatrium_1_1BoltzmannModel.html#a0547ee3c88330d7a2ac44ad3ece8d560',1,'natrium::BoltzmannModel']]],
+  ['boltzmannmodel',['BoltzmannModel',['../classnatrium_1_1BoltzmannModel.html#a550a1326623d766f529a0d60a7743588',1,'natrium::BoltzmannModel']]],
   ['boltzmannmodel_2ecpp',['BoltzmannModel.cpp',['../BoltzmannModel_8cpp.html',1,'']]],
-  ['boltzmannmodel_2eh',['BoltzmannModel.h',['../BoltzmannModel_8h.html',1,'']]]
+  ['boltzmannmodel_2eh',['BoltzmannModel.h',['../BoltzmannModel_8h.html',1,'']]],
+  ['boundary',['Boundary',['../classnatrium_1_1Boundary.html#a987978143b16ef0bbadd2b465dc1882d',1,'natrium::Boundary']]],
+  ['boundary',['Boundary',['../classnatrium_1_1Boundary.html',1,'natrium']]],
+  ['boundary_2ecpp',['Boundary.cpp',['../Boundary_8cpp.html',1,'']]],
+  ['boundary_2eh',['Boundary.h',['../Boundary_8h.html',1,'']]],
+  ['boundarycollection',['BoundaryCollection',['../classnatrium_1_1BoundaryCollection.html',1,'natrium']]],
+  ['boundarytools_2ecpp',['BoundaryTools.cpp',['../BoundaryTools_8cpp.html',1,'']]],
+  ['boundarytools_2eh',['BoundaryTools.h',['../BoundaryTools_8h.html',1,'']]],
+  ['boundarytools_5ftest_2ecpp',['BoundaryTools_test.cpp',['../BoundaryTools__test_8cpp.html',1,'']]]
 ];

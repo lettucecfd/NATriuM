@@ -1,0 +1,22 @@
+\hypertarget{BoundaryTools_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Boundary\-Tools.h File Reference}
+\label{BoundaryTools_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Boundary\-Tools.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Boundary\-Tools.\-h}}
+}
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/base/point.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../utilities/\-Basic\-Names.\-h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool {\bfseries natrium\-::\-Boundary\-Tools\-::check\-Parallel\-Lines} (const dealii\-::\-Point$<$ 2 $>$ \&begin\-Line1, const dealii\-::\-Point$<$ 2 $>$ \&end\-Line1, dealii\-::\-Point$<$ 2 $>$ \&begin\-Line2, dealii\-::\-Point$<$ 2 $>$ \&end\-Line2, std\-::string \&error\-Message)
+\begin{DoxyCompactList}\small\item\em Check if two lines in a 2\-D plane are parallel and not equal to each other. If they are antiparallel, swap begin and end of the second line. \end{DoxyCompactList}\item 
+bool {\bfseries natrium\-::\-Boundary\-Tools\-::get\-Interfacial\-Lines\-By\-Boundary\-Indicator} (size\-\_\-t boundary\-Indicator1, size\-\_\-t boundary\-Indicator2, shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ 2 $>$ $>$ triangulation, dealii\-::\-Point$<$ 2 $>$ \&begin\-Line1, dealii\-::\-Point$<$ 2 $>$ \&end\-Line1, dealii\-::\-Point$<$ 2 $>$ \&begin\-Line2, dealii\-::\-Point$<$ 2 $>$ \&end\-Line2, std\-::string \&error\-Message)
+\begin{DoxyCompactList}\small\item\em Get the positions of the lines that define interfaces from the defining \hyperlink{classnatrium_1_1Boundary}{Boundary} indicators. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyDate}{Date}
+14.\-11.\-2013 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}
