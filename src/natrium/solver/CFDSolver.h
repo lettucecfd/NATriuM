@@ -27,6 +27,7 @@
 #include "../utilities/BasicNames.h"
 
 #include "SolverConfiguration.h"
+#include "DistributionFunctions.h"
 
 namespace natrium {
 
@@ -58,7 +59,7 @@ template<size_t dim> class CFDSolver {
 private:
 
 	/// particle distribution functions
-	vector<distributed_vector> m_f;
+	DistributionFunctions m_f;
 
 	/// macroscopic density
 	distributed_vector m_density;

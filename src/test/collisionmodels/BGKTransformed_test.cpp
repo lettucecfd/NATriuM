@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(BGKTransformed_collideAll_test){
 	}
 
 	// collide and compare to previous collision function
-	vector<distributed_vector> fAfterCollision(f);
+	DistributionFunctions fAfterCollision(f);
 	bgkCollision.collideAll(fAfterCollision, rho, u);
 	for (size_t i = 0; i < 10; i++){
 		vector<double> localF(dqmodel->getQ());

@@ -13,6 +13,7 @@
 #include "CollisionModel.h"
 
 #include "../utilities/BasicNames.h"
+#include "../solver/DistributionFunctions.h"
 
 namespace natrium {
 
@@ -54,7 +55,7 @@ public:
 	 * @param[in] f the vector of global distribution functions
 	 */
 	virtual void collideSingleDoF(size_t doF, const vector<double>& feq,
-			vector<distributed_vector>& f) const;
+			DistributionFunctions& f) const;
 
 
 };

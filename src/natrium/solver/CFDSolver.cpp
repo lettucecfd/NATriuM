@@ -217,10 +217,7 @@ void CFDSolver<dim>::initializeDistributions() {
 	numeric_vector u(dim);
 
 	// Initialize f with the equilibrium distribution functions
-	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-		distributed_vector fi(m_advectionOperator->getNumberOfDoFs());
-		m_f.push_back(fi);
-	}
+	m_f.reinit(m_boltzmannModel->getQ(), m_advectionOperator->getNumberOfDoFs());
 	for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
 		for (size_t j = 0; j < dim; j++) {
 			u(j) = m_velocity.at(j)(i);
@@ -309,10 +306,7 @@ template<size_t dim>
 void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 		const string& directory) {
 	// create vectors
-	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
-		distributed_vector fi(m_advectionOperator->getNumberOfDoFs());
-		m_f.push_back(fi);
-	}
+	m_f.reinit(m_boltzmannModel->getQ(), m_advectionOperator->getNumberOfDoFs());
 	// read the distribution functions from file
 	try {
 		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {

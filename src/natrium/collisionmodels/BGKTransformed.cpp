@@ -48,7 +48,7 @@ void BGKTransformed::collideSinglePoint(vector<double>& distributions) const {
 } //collide
 
 void BGKTransformed::collideSingleDoF(size_t doF, const vector<double>& feq,
-		vector<distributed_vector>& f) const {
+		DistributionFunctions& f) const {
 	for (size_t j = 0; j < m_q; j++) {
 		f.at(j)(doF) += m_prefactor * (f.at(j)(doF) - feq.at(j));
 	}

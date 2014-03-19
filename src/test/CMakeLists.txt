@@ -18,6 +18,7 @@ set(    ADVECTION_TEST
         advection/PeriodicTestDomain2D.cpp
         )     
 set(	SOLVER_TEST
+		solver/DistributionFunctions_test.cpp
 		solver/CFDSolver_test.cpp
 		solver/PeriodicTestFlow2D.h
 		solver/SolverConfiguration_test.cpp	

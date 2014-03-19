@@ -7,6 +7,8 @@
 
 #include "CollisionModel.h"
 
+#include "../solver/DistributionFunctions.h"
+
 #include <cmath>
 
 namespace natrium {
@@ -21,7 +23,7 @@ CollisionModel::CollisionModel(boost::shared_ptr<BoltzmannModel> boltzmannModel)
 CollisionModel::~CollisionModel() {
 }
 
-void CollisionModel::collideAll(vector<distributed_vector>& f,
+void CollisionModel::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
 		bool inInitializationProcedure) const {
 

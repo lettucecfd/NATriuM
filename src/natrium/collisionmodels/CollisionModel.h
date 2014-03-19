@@ -12,6 +12,8 @@
 
 #include "../boltzmannmodels/BoltzmannModel.h"
 
+#include "../solver/DistributionFunctions.h"
+
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
@@ -56,7 +58,7 @@ public:
 	 * @param[in] f the vector of global distribution functions
 	 */
 	virtual void collideSingleDoF(size_t doF, const vector<double>& feq,
-			vector<distributed_vector>& f) const = 0;
+			DistributionFunctions& f) const = 0;
 
 	/**
 	 * @short function for collision
@@ -65,7 +67,7 @@ public:
 	 * @short velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ]
 	 * @short inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false
 	 */
-	void collideAll(vector<distributed_vector>& f,
+	void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
 			bool inInitializationProcedure = false) const;
