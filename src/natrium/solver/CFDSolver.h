@@ -80,7 +80,7 @@ private:
 	shared_ptr<CollisionModel> m_collisionModel;
 
 	/// Time Integrator for the solution of the ODE, which stems from the space discretization
-	shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > m_timeIntegrator;
+	shared_ptr<TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector> > m_timeIntegrator;
 
 	/// Configuration of the solver
 	shared_ptr<SolverConfiguration> m_configuration;

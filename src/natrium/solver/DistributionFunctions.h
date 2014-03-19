@@ -91,8 +91,22 @@ public:
 	/**
 	 * @short F0 denotes the vector \f$ f_0 \f$ (zero-velocity particles)
 	 */
+	distributed_vector& getF0() {
+		return m_f0;
+	}
+
+	/**
+	 * @short F0 denotes the vector \f$ f_0 \f$ (zero-velocity particles)
+	 */
 	void setF0(const distributed_vector& f0) {
 		m_f0 = f0;
+	}
+
+	/**
+	 * @short FStream denotes the block vector containing the vectors \f$ f_1, ..., f_Q \f$
+	 */
+	distributed_block_vector& getFStream() {
+		return m_fStream;
 	}
 
 	/**
@@ -101,6 +115,7 @@ public:
 	const distributed_block_vector& getFStream() const {
 		return m_fStream;
 	}
+
 
 	/**
 	 * @short FStream denotes the block vector containing the vectors \f$ f_1, ..., f_Q \f$

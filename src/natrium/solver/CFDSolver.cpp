@@ -73,8 +73,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	size_t numberOfDoFs = m_advectionOperator->getNumberOfDoFs();
 	if (Integrator_RungeKutta5LowStorage
 			== configuration->getTimeIntegratorType()) {
-		m_timeIntegrator = make_shared<RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> >(
-				configuration->getTimeStep(), numberOfDoFs);
+		m_timeIntegrator = make_shared<RungeKutta5LowStorage<distributed_sparse_block_matrix, distributed_block_vector> >(
+				configuration->getTimeStep(), numberOfDoFs, m_boltzmannModel->getQ() - 1);
 	}
 
 // initialize macroscopic variables
@@ -129,10 +129,13 @@ template<size_t dim>
 void CFDSolver<dim>::stream() {
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
+	distributed_block_vector& f = m_f.getFStream();
 // no streaming in direction 0; begin with 1
+	m_timeIntegrator->step(f, systemMatrix);
+	/*
 	for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
 		m_timeIntegrator->step(m_f.at(i), systemMatrix.block(i-1,i-1));
-	}
+	}*/
 
 }
 template void CFDSolver<2>::stream();
