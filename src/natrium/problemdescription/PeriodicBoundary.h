@@ -16,6 +16,7 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/dofs/dof_handler.h"
+#include <deal.II/lac/compressed_sparsity_pattern.h>
 
 #include "Boundary.h"
 
@@ -154,9 +155,19 @@ public:
 
 	/**
 	 * @short create the map m_cells which stores the cells adjacent to the periodic boundary
-	 * @short doFHandler The map is stored with doFHandler iterators in order to access degrees of freedom at the boundary.
+	 * @param doFHandler The map is stored with doFHandler iterators in order to access degrees of freedom at the boundary.
 	 */
 	void createCellMap(const dealii::DoFHandler<dim>& doFHandler);
+
+	/**
+	 * @short modify sparsity pattern so that the fluxes over periodic boundary can be incorporated
+	 * @param cSparse the block-sparsity pattern
+	 * @param n_blocks the number of blocks in cSparse
+	 * @param n_dofs_per_row number of degrees of freedom per block (normally: overall degrees of freedom on grid)
+	 * @param dofs_per_cell number of degrees of freedom per cell
+	 */
+	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern&  cSparse, size_t n_blocks, size_t n_dofs_per_block, size_t dofs_per_cell) const;
+
 
 	/////////////////////////////////
 	// GETTER     // SETTER        //
@@ -193,6 +204,8 @@ public:
 			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >& getCellMap() const {
 		return m_cells;
 	}
+
+
 };
 /* PeriodicBoundary1D */
 

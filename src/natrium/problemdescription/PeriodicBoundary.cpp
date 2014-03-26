@@ -18,7 +18,6 @@
 
 namespace natrium {
 
-
 template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 		size_t boundaryIndicator1, size_t boundaryIndicator2,
 		shared_ptr<dealii::Triangulation<dim> > triangulation) :
@@ -42,9 +41,9 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 
 		// calculate the positions of the vertex points(
 		std::string errorMessage1;
-		bool areLines = BoundaryTools::getInterfacialLinesByBoundaryIndicator(boundaryIndicator1,
-				boundaryIndicator2, triangulation, beginLine1, endLine1,
-				beginLine2, endLine2, errorMessage1);
+		bool areLines = BoundaryTools::getInterfacialLinesByBoundaryIndicator(
+				boundaryIndicator1, boundaryIndicator2, triangulation,
+				beginLine1, endLine1, beginLine2, endLine2, errorMessage1);
 		if (not areLines)
 			throw PeriodicBoundaryNotPossible(errorMessage1);
 
@@ -67,8 +66,9 @@ template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
 		size_t boundaryIndicator2,
 		shared_ptr<dealii::Triangulation<2> > triangulation);
 
-
-template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const {
+template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
+		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+		size_t faceBoundaryIndicator) const {
 	// first condition: cell map has a key <cell>
 	if (m_cells.count(cell) == 0) {
 		return false;
@@ -83,8 +83,12 @@ template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(const typename
 	return false;
 }
 // The template Parameter has to be made explicit in order for the code to compile
-template bool PeriodicBoundary<2>::isFaceInBoundary(const typename dealii::DoFHandler<2>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const;
-template bool PeriodicBoundary<3>::isFaceInBoundary(const typename dealii::DoFHandler<3>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const;
+template bool PeriodicBoundary<2>::isFaceInBoundary(
+		const typename dealii::DoFHandler<2>::active_cell_iterator & cell,
+		size_t faceBoundaryIndicator) const;
+template bool PeriodicBoundary<3>::isFaceInBoundary(
+		const typename dealii::DoFHandler<3>::active_cell_iterator & cell,
+		size_t faceBoundaryIndicator) const;
 
 template<size_t dim> PeriodicBoundary<dim>::~PeriodicBoundary() {
 }
@@ -104,8 +108,7 @@ template<> void PeriodicBoundary<2>::createCellMap(
 	// The second element of the value pair is the local face id of the face which belongs to the boundary.
 	std::map<double,
 			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > cellsAtBoundary1;
-	std::map<double,
-			std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> > cellsAtBoundary2;
+	std::map<double, std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> > cellsAtBoundary2;
 
 	// iterate over all active cells and sort them
 	for (; currentCell != lastCell; ++currentCell) {
@@ -114,7 +117,8 @@ template<> void PeriodicBoundary<2>::createCellMap(
 					i++) {
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator1) {
-					double key = (currentCell->face(i))->center().distance(m_beginLine1);
+					double key = (currentCell->face(i))->center().distance(
+							m_beginLine1);
 					cellsAtBoundary1.insert(
 							std::make_pair(key,
 									std::make_pair(currentCell,
@@ -122,7 +126,8 @@ template<> void PeriodicBoundary<2>::createCellMap(
 				}
 				if (currentCell->face(i)->boundary_indicator()
 						== m_boundaryIndicator2) {
-					double key = (currentCell->face(i))->center().distance(m_beginLine2);
+					double key = (currentCell->face(i))->center().distance(
+							m_beginLine2);
 					cellsAtBoundary2.insert(
 							std::make_pair(key,
 									std::make_pair(currentCell,
@@ -143,8 +148,7 @@ template<> void PeriodicBoundary<2>::createCellMap(
 	std::map<double,
 			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::iterator atBoundary1 =
 			cellsAtBoundary1.begin();
-	std::map<double,
-			std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> >::iterator atBoundary2 =
+	std::map<double, std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> >::iterator atBoundary2 =
 			cellsAtBoundary2.begin();
 	for (; atBoundary1 != cellsAtBoundary1.end(); atBoundary1++) {
 		// assert that the face discretizations on both lines are equal
@@ -162,9 +166,8 @@ template<> void PeriodicBoundary<2>::createCellMap(
 
 } /* createMap */
 template<> void PeriodicBoundary<3>::createCellMap(
-		const dealii::DoFHandler<3>& doFHandler) {}
-
-
+		const dealii::DoFHandler<3>& doFHandler) {
+}
 
 template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoundary(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
@@ -190,5 +193,52 @@ template size_t PeriodicBoundary<2>::getOppositeCellAtPeriodicBoundary(
 template size_t PeriodicBoundary<3>::getOppositeCellAtPeriodicBoundary(
 		const dealii::DoFHandler<3>::active_cell_iterator & cell,
 		dealii::DoFHandler<3>::cell_iterator & neighborCell) const;
+
+template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
+		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
+		size_t n_dofs_per_block, size_t dofs_per_cell) const {
+
+// add periodic boundaries to intermediate flux sparsity pattern
+	dealii::CompressedSparsityPattern cSparseTmp(n_dofs_per_block);
+	typename std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
+			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >::const_iterator element =
+			m_cells.begin();
+	// for each cells belonging to the periodic boundary
+	for (; element != m_cells.end(); element++) {
+		vector<dealii::types::global_dof_index> doFIndicesAtCell1(
+				dofs_per_cell);
+		vector<dealii::types::global_dof_index> doFIndicesAtCell2(
+				dofs_per_cell);
+		element->first->get_dof_indices(doFIndicesAtCell1);
+		element->second.first->get_dof_indices(doFIndicesAtCell2);
+		// couple all dofs at boundary 1 with dofs at boundary 2
+		// TODO only couple the ones which are nonzero at the face (are there any???)
+		// TODO remove the INVARIANT "discretization at boundary 1 = discretization at boundary 2"
+		//      e.g. by mapping, allowing more than one periodic neighbor, ...
+		for (size_t j = 0; j < dofs_per_cell; j++) {
+			for (size_t k = 0; k < dofs_per_cell; k++) {
+				cSparseTmp.add(doFIndicesAtCell1.at(j),
+						doFIndicesAtCell2.at(k));
+			}
+		}
+	}
+// copy cSparseTmp to all blocks
+	for (size_t i = 0; i < n_dofs_per_block; i++) {
+		for (size_t j = 0; j < n_dofs_per_block; j++) {
+			if (cSparseTmp.exists(i, j)) {
+				for (size_t I = 0; I < n_blocks; I++) {
+					cSparse.block(I, I).add(i, j);
+				}
+			}
+
+		}
+	}
+}
+template void PeriodicBoundary<2>::addToSparsityPattern(
+		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
+		size_t n_dofs_per_block, size_t dofs_per_cell) const;
+template void PeriodicBoundary<3>::addToSparsityPattern(
+		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
+		size_t n_dofs_per_block, size_t dofs_per_cell) const;
 
 } /* namespace natrium */
