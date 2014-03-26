@@ -16,6 +16,7 @@
 #include "deal.II/fe/fe_update_flags.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
+#include "../problemdescription/MinLeeBoundary.h"
 
 using namespace dealii;
 
@@ -148,9 +149,9 @@ template void SEDGMinLee<3>::reassemble();
 
 template<size_t dim>
 void SEDGMinLee<dim>::updateSparsityPattern() {
-
+	// TODO only update sparsity pattern for changed cells
 	///////////////////////////////////////////////////////
-	// Setup sparsity pattern completely manually:
+	// Setup sparsity pattern (completely manually):
 	///////////////////////////////////////////////////////
 	// allocate sizes
 	size_t n_blocks = m_boltzmannModel->getQ() - 1;
@@ -181,65 +182,26 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			m_boundaries->getPeriodicBoundaries().begin();
 			periodic != m_boundaries->getPeriodicBoundaries().end();
 			periodic++) {
-		// map cells to each other
-		// TODO only update sparsity pattern for changed cells
-		periodic->second->createCellMap(*m_doFHandler);
-		periodic->second->addToSparsityPattern(cSparse, n_blocks,
-				n_dofs_per_block, dofs_per_cell);
+		// Periodic boundaries have two boundary indicators; (and are stored twice in the map)
+		// skip double execution of addToSparsityPattern
+		if (periodic->first == periodic->second->getBoundaryIndicator1()) {
+			periodic->second->createCellMap(*m_doFHandler);
+			periodic->second->addToSparsityPattern(cSparse, n_blocks,
+					n_dofs_per_block, dofs_per_cell);
+		}
 	}
-//
-//	// add entries for non-periodic boundaries
-//	// couple opposite distribution functions at boundaries
-//	std::vector<types::global_dof_index> localDoFIndices(dofs_per_cell);
-//	for (size_t I = 0; I < n_blocks; I++) {
-//		for (size_t J = I + 1; J < n_blocks; J++) {
-//			if (I == m_boltzmannModel->getIndexOfOppositeDirection(J)) {
-//				// iterate over all cells
-//				typename DoFHandler<dim>::active_cell_iterator cell =
-//						m_doFHandler->begin_active(), endc =
-//						m_doFHandler->end();
-//				for (; cell != endc; ++cell) {
-//					// check if at least one face is at a non-periodic wall
-//					bool isAtWall = false;
-//					for (size_t i = 0;
-//							i < dealii::GeometryInfo<2>::faces_per_cell; i++) {
-//						if (cell->face(i)->at_boundary()) {
-//							if (not m_boundaries->getBoundary(
-//									cell->face(i)->boundary_indicator())->isPeriodic()) {
-//								isAtWall = true;
-//								break;
-//							}
-//						}
-//					}
-//					if (isAtWall) {
-//						// get global degrees of freedom
-//						cell->get_dof_indices(localDoFIndices);
-//						for (size_t i = 0; i < dofs_per_cell; i++) {
-//							for (size_t j = 0; j < dofs_per_cell; j++) {
-//								// Efficient implementation (for SEDG, MinLee Boundary): only at diagonal
-//								cSparse.block(I, J).add(localDoFIndices.at(i),
-//										localDoFIndices.at(j));
-//								cSparse.block(J, I).add(localDoFIndices.at(i),
-//										localDoFIndices.at(j));
-//
-//							}
-//						}
-//					}
-//				} /* end forall cells */
-//			} /* end if opposite boundary*/
-//		} /* end block J */
-//	} /* end block I */
 
 	// add entries for non-periodic boundaries
-	// TODO
-	// couple opposite distribution functions at boundaries
-	//if (I == m_boltzmannModel->getIndexOfOppositeDirection(J)) {
-	// ...
-	//}
+	for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =
+			m_boundaries->getMinLeeBoundaries().begin();
+			minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
+			minLeeIterator++) {
+		minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler, *m_boltzmannModel);
+	}
+
 
 	// initialize (static) sparsity pattern
 	m_sparsityPattern.copy_from(cSparse);
-
 	//reinitialize matrices
 	m_systemMatrix.reinit(m_sparsityPattern);
 	m_massMatrix.reinit(m_doFHandler->n_dofs());
