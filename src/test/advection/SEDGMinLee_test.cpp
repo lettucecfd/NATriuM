@@ -36,7 +36,7 @@
 ///////////////////////////////
 // FLAGS TO SWITCH OUTPUT ON //
 // #define CREATE_DATA_FILES // This takes a lot of time (~1h)
-#define PRINT_SYSTEM_MATRIX
+// #define PRINT_SYSTEM_MATRIX
 // #define EULER_OUT
 // #define RK5_OUT
 ///////////////////////////////
