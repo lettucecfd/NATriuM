@@ -331,9 +331,8 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 				assembleAndDistributeInternalFace(i, cell, j, neighborCell,
 						dealii::GeometryInfo<dim>::opposite_face[j],
 						feFaceValues, feSubfaceValues, feNeighborFaceValues);
-
 			}  else /* if is not periodic */ {
-
+				assert (1 == 0);
 				// Apply other boundaries
 				// TODO Implement other boundary conditions
 			} /* endif isPeriodic */

@@ -35,7 +35,7 @@ public:
 
 	/** @short is the boundary a periodic boundary ?
 	 */
-	virtual bool isPeriodic(){
+	virtual bool isPeriodic() const {
 		return false;
 	}
 };
