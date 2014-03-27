@@ -126,6 +126,8 @@ private:
 	/// System matrix L = M^(-1)*(-D+R)
 	distributed_sparse_block_matrix m_systemMatrix;
 
+	distributed_block_vector m_systemVector;
+
 	/// the DQ model (e.g. D2Q9)
 	shared_ptr<BoltzmannModel> m_boltzmannModel;
 
@@ -173,10 +175,10 @@ private:
 
 	/**
 	 * @short assemble local face matrix;
-	 * @param[in] i < Q; this matrix is dependent on the flow direction
+	 * @param[in] alpha < Q; this matrix is dependent on the flow direction
 	 * @param[out] faceMatrix The integral over all faces, incorporating boundary conditions
 	 */
-	void assembleAndDistributeLocalFaceMatrices(size_t i,
+	void assembleAndDistributeLocalFaceMatrices(size_t alpha,
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
@@ -187,7 +189,7 @@ private:
 	/**
 	 * @short calculate system diagonal block matrix  (Dx*eix + Dy*eiy)
 	 */
-	void calculateAndDistributeLocalStiffnessMatrix(size_t i,
+	void calculateAndDistributeLocalStiffnessMatrix(size_t alpha,
 			const vector<dealii::FullMatrix<double> > &derivativeMatrices,
 			dealii::FullMatrix<double> &systemMatrix,
 			const std::vector<dealii::types::global_dof_index>& globalDoFs,
@@ -212,7 +214,7 @@ private:
 	 * @param feSubfaceValues is passed in order to avoid allocating memory for each call of the function
 	 * @param feNeighborFaceValues is passed in order to avoid allocating memory for each call of the function
 	 */
-	void assembleAndDistributeInternalFace(size_t direction,
+	void assembleAndDistributeInternalFace(size_t alpha,
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t faceNumber,
 			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
@@ -359,6 +361,10 @@ public:
 
 	virtual size_t getNumberOfDoFs() const {
 		return getSystemMatrix().block(0,0).n();
+	}
+
+	virtual const distributed_block_vector& getSystemVector() const {
+		return m_systemVector;
 	}
 };
 

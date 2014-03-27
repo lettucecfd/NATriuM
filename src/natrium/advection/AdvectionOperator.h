@@ -38,6 +38,8 @@ public:
 
 	virtual const distributed_sparse_block_matrix& getSystemMatrix() const = 0;
 
+	virtual const distributed_block_vector& getSystemVector() const = 0;
+
 	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const = 0;
 
 	virtual void mapDoFsToSupportPoints(

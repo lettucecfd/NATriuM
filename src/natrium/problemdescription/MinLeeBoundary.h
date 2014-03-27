@@ -13,6 +13,7 @@
 
 #include "Boundary.h"
 #include "../boltzmannmodels/BoltzmannModel.h"
+#include "../utilities/BasicNames.h"
 
 namespace natrium {
 
@@ -33,17 +34,26 @@ public:
 	MinLeeBoundary(size_t boundaryIndicator);
 
 	/// destructor
-	virtual ~MinLeeBoundary(){};
+	virtual ~MinLeeBoundary() {
+	}
+	;
 
 	/**
 	 * @short modify sparsity pattern so that the fluxes over periodic boundary can be incorporated
 	 * @param cSparse the block-sparsity pattern
-	 * @param n_blocks the number of blocks in cSparse
-	 * @param n_dofs_per_row number of degrees of freedom per block (normally: overall degrees of freedom on grid)
-	 * @param dofs_per_cell number of degrees of freedom per cell
 	 */
-	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern&  cSparse, const dealii::DoFHandler<dim>& doFHandler, const BoltzmannModel& boltzmannModel) const;
+	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern& cSparse,
+			const dealii::DoFHandler<dim>& doFHandler,
+			const BoltzmannModel& boltzmannModel) const;
 
+	// assemble Min-Lee-Type boundary
+	void assembleBoundary(size_t alpha,
+			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+			size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
+			const BoltzmannModel& boltzmannModel,
+			const std::map<size_t, size_t>& q_index_to_facedof,
+			distributed_sparse_block_matrix& systemMatrix,
+			distributed_block_vector& systemVector) const;
 
 };
 

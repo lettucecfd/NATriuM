@@ -49,6 +49,9 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 	m_celldof_to_q_index = map_celldofs_to_q_index();
 	m_q_index_to_facedof = map_q_index_to_facedofs();
 
+	// set size for the system vector
+	m_systemVector.reinit(m_boltzmannModel->getQ() - 1, m_doFHandler->n_dofs());
+
 	// reassemble or read file
 	if (inputDirectory.empty()) {
 		reassemble();
@@ -126,13 +129,13 @@ void SEDGMinLee<dim>::reassemble() {
 				n_quadrature_points, localDerivativeMatrices);
 
 		// assemble faces and put together
-		for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
+		for (size_t alpha = 1; alpha < m_boltzmannModel->getQ(); alpha++) {
 // calculate local diagonal block (cell) matrix -D
-			calculateAndDistributeLocalStiffnessMatrix(i,
+			calculateAndDistributeLocalStiffnessMatrix(alpha,
 					localDerivativeMatrices, localSystemMatrix, localDoFIndices,
 					dofs_per_cell);
 // calculate face contributions  R
-			assembleAndDistributeLocalFaceMatrices(i, cell, feFaceValues,
+			assembleAndDistributeLocalFaceMatrices(alpha, cell, feFaceValues,
 					feSubfaceValues, feNeighborFaceValues, dofs_per_cell,
 					n_quadrature_points, localFaceMatrix);
 		}
@@ -196,9 +199,9 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			m_boundaries->getMinLeeBoundaries().begin();
 			minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
 			minLeeIterator++) {
-		minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler, *m_boltzmannModel);
+		minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler,
+				*m_boltzmannModel);
 	}
-
 
 	// initialize (static) sparsity pattern
 	m_sparsityPattern.copy_from(cSparse);
@@ -281,7 +284,7 @@ template void SEDGMinLee<3>::assembleLocalDerivativeMatrices(
 		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 template<size_t dim>
-void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
+void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
@@ -301,20 +304,26 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 				typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
 				periodicBoundary->getOppositeCellAtPeriodicBoundary(cell,
 						neighborCell);
-				assembleAndDistributeInternalFace(i, cell, j, neighborCell,
+				assembleAndDistributeInternalFace(alpha, cell, j, neighborCell,
 						dealii::GeometryInfo<dim>::opposite_face[j],
 						feFaceValues, feSubfaceValues, feNeighborFaceValues);
 			} else /* if is not periodic */{
-				assert(1 == 0);
 				// Apply other boundaries
-				// TODO Implement other boundary conditions
+				if (typeid(*(m_boundaries->getBoundary(boundaryIndicator)))
+						== typeid(MinLeeBoundary<dim> )) {
+					const shared_ptr<MinLeeBoundary<dim> >& minLeeBoundary =
+							m_boundaries->getMinLeeBoundary(boundaryIndicator);
+					minLeeBoundary->assembleBoundary(alpha, cell, j,
+							feFaceValues, *m_boltzmannModel,
+							m_q_index_to_facedof.at(j), m_systemMatrix, m_systemVector);
+				}
 			} /* endif isPeriodic */
 
 		} else /* if is not at boundary */{
 // Internal faces
 			typename DoFHandler<dim>::cell_iterator neighbor = cell->neighbor(
 					j);
-			assembleAndDistributeInternalFace(i, cell, j, neighbor,
+			assembleAndDistributeInternalFace(alpha, cell, j, neighbor,
 					dealii::GeometryInfo<dim>::opposite_face[j], feFaceValues,
 					feSubfaceValues, feNeighborFaceValues);
 		} /* endif is face at boundary*/
@@ -323,13 +332,15 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t i,
 
 } /* assembleLocalFaceMatrix */
 // The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::assembleAndDistributeLocalFaceMatrices(size_t i,
+template void SEDGMinLee<2>::assembleAndDistributeLocalFaceMatrices(
+		size_t alpha,
 		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
 		dealii::FEFaceValues<2>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
-template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(size_t i,
+template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(
+		size_t alpha,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
@@ -359,44 +370,46 @@ template void SEDGMinLee<3>::divideByDiagonalMassMatrix(
 		const distributed_vector& massMatrix);
 
 template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
-		size_t i, const vector<dealii::FullMatrix<double> >& derivativeMatrices,
+		size_t alpha,
+		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
 		dealii::FullMatrix<double> &systemMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
 // calculate -D = -(e_x * D_x  +  e_y * D_y)
 	systemMatrix = derivativeMatrices.at(0);
-	systemMatrix *= (-(m_boltzmannModel->getDirection(i + 1)[0]));
-	systemMatrix.add(-(m_boltzmannModel->getDirection(i + 1)[1]),
+	systemMatrix *= (-(m_boltzmannModel->getDirection(alpha)[0]));
+	systemMatrix.add(-(m_boltzmannModel->getDirection(alpha)[1]),
 			derivativeMatrices.at(1));
 // distribute to global system matrix
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++) {
-			m_systemMatrix.block(i, i).add(globalDoFs[j], globalDoFs[k],
-					systemMatrix(j, k));
+			m_systemMatrix.block(alpha - 1, alpha - 1).add(globalDoFs[j],
+					globalDoFs[k], systemMatrix(j, k));
 		}
 }
 template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
-		size_t i, const vector<dealii::FullMatrix<double> >& derivativeMatrices,
+		size_t alpha,
+		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
 		dealii::FullMatrix<double> &systemMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
 // calculate -D = -(e_x * D_x  +  e_y * D_y)
 	systemMatrix = derivativeMatrices.at(0);
-	systemMatrix *= (-m_boltzmannModel->getDirection(i + 1)[0]);
-	systemMatrix.add(-m_boltzmannModel->getDirection(i + 1)[1],
-			derivativeMatrices.at(1), -m_boltzmannModel->getDirection(i)[2],
+	systemMatrix *= (-m_boltzmannModel->getDirection(alpha)[0]);
+	systemMatrix.add(-m_boltzmannModel->getDirection(alpha)[1],
+			derivativeMatrices.at(1), -m_boltzmannModel->getDirection(alpha)[2],
 			derivativeMatrices.at(2));
 // distribute to global system matrix
-	for (unsigned int j = 0; i < dofsPerCell; j++)
-		for (unsigned int k = 0; j < dofsPerCell; k++)
-			m_systemMatrix.block(i, i).add(globalDoFs[j], globalDoFs[k],
-					systemMatrix(j, k));
+	for (unsigned int j = 0; j < dofsPerCell; j++)
+		for (unsigned int k = 0; k < dofsPerCell; k++)
+			m_systemMatrix.block(alpha - 1, alpha - 1).add(globalDoFs[j],
+					globalDoFs[k], systemMatrix(j, k));
 }
 
 template<size_t dim>
-void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t direction,
+void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
@@ -430,8 +443,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t direction,
 		double exn = 0.0;
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
-			exn += normals.at(q)(i)
-					* m_boltzmannModel->getDirection(direction + 1)(i);
+			exn += normals.at(q)(i) * m_boltzmannModel->getDirection(alpha)(i);
 		}
 		for (size_t i = 0; i < factor.size(); i++) {
 			factor.at(i) *= exn;
@@ -461,9 +473,9 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t direction,
 /// Distribute to global matrix
 	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
 		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
-			m_systemMatrix.block(direction, direction).add(localDoFIndices[i],
+			m_systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
 					localDoFIndices[j], cellFaceMatrix(i, j));
-			m_systemMatrix.block(direction, direction).add(localDoFIndices[i],
+			m_systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
 					neighborDoFIndices[j], neighborFaceMatrix(i, j));
 		}
 	}
