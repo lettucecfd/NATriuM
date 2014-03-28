@@ -103,6 +103,11 @@ public:
 	void setCharacteristicLength(double characteristicLength) {
 		m_characteristicLength = characteristicLength;
 	}
+
+	double getCharacteristicVelocity() const {
+		return 0.1/sqrt(3);
+		// TODO return 0.0
+	}
 };
 /* class ProblemDescription */
 

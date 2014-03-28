@@ -10,6 +10,7 @@
 
 #include <deal.II/lac/compressed_sparsity_pattern.h>
 #include "deal.II/dofs/dof_handler.h"
+#include "deal.II/base/function.h"
 
 #include "Boundary.h"
 #include "../boltzmannmodels/BoltzmannModel.h"
@@ -28,10 +29,17 @@ template<size_t dim> class MinLeeBoundary: public Boundary<dim> {
 private:
 
 	size_t m_boundaryIndicator;
+
+	shared_ptr<dealii::Function<dim> > m_boundaryDensity;
+
+	shared_ptr<dealii::Function<dim> > m_boundaryVelocity;
+
 public:
 
 	/// constructor
-	MinLeeBoundary(size_t boundaryIndicator);
+	MinLeeBoundary(size_t boundaryIndicator,
+			shared_ptr<dealii::Function<dim> > boundaryDensity,
+			shared_ptr<dealii::Function<dim> > boundaryVelocity);
 
 	/// destructor
 	virtual ~MinLeeBoundary() {
@@ -55,6 +63,9 @@ public:
 			distributed_sparse_block_matrix& systemMatrix,
 			distributed_block_vector& systemVector) const;
 
+	size_t getBoundaryIndicator() const {
+		return m_boundaryIndicator;
+	}
 };
 
 } /* namespace natrium */

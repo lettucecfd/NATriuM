@@ -101,7 +101,7 @@ public:
 			throw BoundaryCollectionError(
 					"Boundary could not be inserted. Boundary indicators must be unique.");
 		}
-		m_minLeeBoundaries.insert(std::make_pair(boundary->getBoundaryIndicator1(), boundary));
+		m_minLeeBoundaries.insert(std::make_pair(boundary->getBoundaryIndicator(), boundary));
 	}
 
 	/**

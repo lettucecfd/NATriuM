@@ -90,6 +90,10 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 // OUTPUT
 	double maxU = getMaxVelocityNorm();
+	double charU = problemDescription->getCharacteristicVelocity();
+	if (charU == 0.0){
+		charU = maxU;
+	}
 	*(Logging::BASIC) << "------ NATriuM solver ------" << endl;
 	*(Logging::BASIC) << "viscosity:       "
 			<< problemDescription->getViscosity() << " m^2/s" << endl;
@@ -99,7 +103,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
 			<< endl;
 	*(Logging::BASIC) << "Reynolds number: "
-			<< (maxU * problemDescription->getCharacteristicLength())
+			<< (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
 	*(Logging::BASIC) << "Recommended dt:  "
 			<< m_collisionModel->calculateOptimalTimeStep(
@@ -132,7 +136,12 @@ void CFDSolver<dim>::stream() {
 	distributed_block_vector& f = m_f.getFStream();
 // no streaming in direction 0; begin with 1
 	m_timeIntegrator->step(f, systemMatrix);
+	//f.print(cout);
 	f.add(m_timeIntegrator->getTimeStepSize(), m_advectionOperator->getSystemVector());
+	//f.add(1.0, m_advectionOperator->getSystemVector());
+	//m_advectionOperator->getSystemVector().print(cout);
+	//f.print(cout);
+	//assert (false);
 	/*
 	for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
 		m_timeIntegrator->step(m_f.at(i), systemMatrix.block(i-1,i-1));

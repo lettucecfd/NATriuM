@@ -17,8 +17,9 @@
 
 namespace natrium {
 
+
 PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel) :
-		ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1) {
+		ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1.0) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
@@ -44,18 +45,20 @@ void PoiseuilleFlow2D::applyInitialVelocities(
 			initialVelocities.at(0).size()
 					== initialVelocities.at(1).size());
 	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-		initialVelocities.at(0)(i) = analyticVelocity1(supportPoints.at(i), 0);
-		initialVelocities.at(1)(i) = analyticVelocity2(supportPoints.at(i), 0);;
+		initialVelocities.at(0)(i) = 0.0;
+		initialVelocities.at(1)(i) = 0.0;
 	}
 }
 
 double PoiseuilleFlow2D::analyticVelocity1(const dealii::Point<2>& x,
 		double t) const {
+	assert (false);
 	return sin(x(0))*cos(x(1))*exp(-2*getViscosity()*t);
 }
 
 double PoiseuilleFlow2D::analyticVelocity2(const dealii::Point<2>& x,
 		double t) const {
+	assert(false);
 	return -cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
 }
 
@@ -67,15 +70,15 @@ shared_ptr<Triangulation<2> > PoiseuilleFlow2D::makeGrid(size_t refinementLevel)
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > square =
 			make_shared<Triangulation<2> >();
-	dealii::GridGenerator::hyper_cube(*square, 0, 2*Math::PI);
+	dealii::GridGenerator::hyper_rectangle(*square, dealii::Point<2>(0,0), dealii::Point<2>(1,1), false);
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell =
 			square->begin_active();
 	cell->face(0)->set_all_boundary_indicators(0);  // left
 	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // top
-	cell->face(3)->set_all_boundary_indicators(3);  // bottom
+	cell->face(2)->set_all_boundary_indicators(2);  // bottom
+	cell->face(3)->set_all_boundary_indicators(3);  // top
 
 	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
 	square->refine_global(refinementLevel);
@@ -94,9 +97,13 @@ shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries() {
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
 			BoundaryCollection<2> >();
 	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, getTriangulation()));
+			make_shared<MinLeeBoundary<2> >(0, make_shared<BoundaryDensity>(), make_shared<BoundaryVelocity>(0.0)));
 	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(2, 3, getTriangulation()));
+			make_shared<MinLeeBoundary<2> >(1, make_shared<BoundaryDensity>(), make_shared<BoundaryVelocity>(0.0)));
+	boundaries->addBoundary(
+			make_shared<MinLeeBoundary<2> >(2, make_shared<BoundaryDensity>(), make_shared<BoundaryVelocity>(0.0)));
+	boundaries->addBoundary(
+			make_shared<MinLeeBoundary<2> >(3, make_shared<BoundaryDensity>(), make_shared<BoundaryVelocity>(0.1/sqrt(3))));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();

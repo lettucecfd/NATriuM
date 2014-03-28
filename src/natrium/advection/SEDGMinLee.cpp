@@ -140,11 +140,26 @@ void SEDGMinLee<dim>::reassemble() {
 					n_quadrature_points, localFaceMatrix);
 		}
 	}
-	// Mulitply by inverse mass matrix
-	for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
-		divideByDiagonalMassMatrix(m_systemMatrix.block(i, i), m_massMatrix);
-		// TODO Multiply non-diag block by inverse mass matrix
+	// Multiply by inverse mass matrix
+	size_t n = m_massMatrix.size();
+	// TODO Parallel loop
+	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
+		for (size_t J = 0; J < m_boltzmannModel->getQ() - 1; J++) {
+			for (size_t i = 0; i < n; i++) {
+				for (size_t j = 0; j < n; j++) {
+					if (m_sparsityPattern.block(I, J).exists(i, j)) {
+						m_systemMatrix.block(I, J).set(i, j,
+								m_systemMatrix.block(I, J)(i, j)
+										/ m_massMatrix(i));
+					}
+				}
+			}
+		}
+		for (size_t i = 0; i < n; i++){
+			m_systemVector.block(I)(i) = m_systemVector.block(I)(i) / m_massMatrix(i);
+		}
 	}
+
 } /* reassemble */
 /// The template parameter must be made explicit in order for the code to compile
 template void SEDGMinLee<2>::reassemble();
@@ -315,7 +330,8 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 							m_boundaries->getMinLeeBoundary(boundaryIndicator);
 					minLeeBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_boltzmannModel,
-							m_q_index_to_facedof.at(j), m_systemMatrix, m_systemVector);
+							m_q_index_to_facedof.at(j), m_systemMatrix,
+							m_systemVector);
 				}
 			} /* endif isPeriodic */
 
@@ -347,27 +363,6 @@ template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(
 		dealii::FEFaceValues<3>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
 
-template<size_t dim>
-void SEDGMinLee<dim>::divideByDiagonalMassMatrix(
-		dealii::SparseMatrix<double>& matrix,
-		const distributed_vector& massMatrix) {
-	size_t n = massMatrix.size();
-	for (size_t i = 0; i < n; i++) {
-		for (size_t j = 0; j < n; j++) {
-// TODO Parallel loop
-			if (m_sparsityPattern.exists(i, j)) {
-				matrix.set(i, j, matrix(i, j) / massMatrix(i));
-			}
-		}
-	}
-}
-// The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::divideByDiagonalMassMatrix(
-		dealii::SparseMatrix<double>& matrix,
-		const distributed_vector& massMatrix);
-template void SEDGMinLee<3>::divideByDiagonalMassMatrix(
-		dealii::SparseMatrix<double>& matrix,
-		const distributed_vector& massMatrix);
 
 template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
@@ -640,6 +635,17 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 		throw AdvectionSolverException(
 				"An error occurred while writing the mass matrix to file: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
 	}
+// Write the system vector
+	try {
+		// filename
+		std::stringstream filename;
+		filename << directory << "/checkpoint_system_vector.dat";
+		std::ofstream file(filename.str().c_str());
+		m_systemVector.block_write(file);
+	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+		throw AdvectionSolverException(
+				"An error occurred while writing the system vector to file: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
+	}
 }
 template void SEDGMinLee<2>::saveMatricesToFiles(const string& directory) const;
 template void SEDGMinLee<3>::saveMatricesToFiles(const string& directory) const;
@@ -673,6 +679,17 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
 		throw AdvectionSolverException(
 				"An error occurred while reading the mass matrix from file: Please switch off the restart option to start the simulation from the beginning.");
+	}
+// Read the system vector
+	try {
+		// filename
+		std::stringstream filename;
+		filename << directory << "/checkpoint_system_vector.dat";
+		std::ifstream file(filename.str().c_str());
+		m_systemVector.block_read(file);
+	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+		throw AdvectionSolverException(
+				"An error occurred while reading the systemVector from file: Please switch off the restart option to start the simulation from the beginning.");
 	}
 // TODO Test: Is the matrix OK?
 }

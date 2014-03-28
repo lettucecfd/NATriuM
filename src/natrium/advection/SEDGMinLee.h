@@ -48,9 +48,9 @@ public:
  * 		   method for nearly incompressible flows, JCP 230 pp. 245-259.
  *         The advection equations used in the Lattice Boltzmann on unstructured grids are
  *         \f[
- *         \partial_t f_i + e_i \partial_x f_i = 0,\quad \forall i = 1,\dots,Q-1
+ *         \partial_t f_{\alpha} + e_{\alpha} \partial_x f_{\alpha} = 0,\quad \forall {\alpha} = 1,\dots,Q-1
  *         \f]
- *         where \f$ f_i(x,t) \f$ are the particle distribution functions, and \f$ e_i \f$ are the particle
+ *         where \f$ f_{\alpha}(x,t) \f$ are the particle distribution functions, and \f$ e_{\alpha} \f$ are the particle
  *         velocities. The discontinuous Galerkin (DG) method turns these PDEs into a large system of ODEs which can then be solved
  *         by a time integration scheme. Whereas this class implements the SEDG spatial discretization, the
  *         time integration is done by a subclass of TimeIntegrator, e.g. RungeKutta5LowStorage.
@@ -61,16 +61,16 @@ public:
  *         contributions are called numerical fluxes.
  *         The DG scheme uses the weak formulation of the above equations on quadrilateral elements $\Omega_e$:
  *         \f[
- *         \left( \partial_t f_i + \partial_x (e_i f_i), \Phi \right)_{\Omega_e}
- *         = \left(n \left[ e_i f_i - F^{\ast}_{i}(f) \right], \Phi \right)_{\partial \Omega_e}.
+ *         \left( \partial_t f_{\alpha} + \partial_x (e_{\alpha} f_{\alpha}), \Phi \right)_{\Omega_e}
+ *         = \left(n \left[ e_i f_{\alpha} - F^{\ast}_{\alpha}(f) \right], \Phi \right)_{\partial \Omega_e}.
  *         \f]
  *         In this formulation \f$ F^{\ast}_{i}(f) \f$ denotes the numerical fluxes. They can be be calculated
  *         as central fluxes or Lax-Friedrichs fluxes. Lax-Friedrichs is in general more accurate for the advection equation.
  *         For detailed information on the fluxes, see the cited paper.
  *         For spatial integration a Gauss-Lobatto quadrature is used, which has the advantage that the resulting mass matrix
- *         M_i = (\psi_j, \psi_k)_{\Omega_e} is diagonal. This circumvents the solution of a linear equation system.
+ *         M_{\alpha} = (\psi_j, \psi_k)_{\Omega_e} is diagonal. This circumvents the solution of a linear equation system.
  *         Each advection equation leads to a ODE
- *         \f[ \partial_t f_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) f_i + B_i f_{i^{\ast}} + b_i.\f]
+ *         \f[ \partial_t f_{\alpha} = M_{\alpha}^{-1}(- e_{\alpha x} D_{{\alpha}x} - e_{{\alpha}y} D_{{\alpha}y} + R_{\alpha}) f_{\alpha} + B_i f_{{\alpha}^{\ast}} + b_{\alpha}.\f]
  *         Altogether, for the example of the D2Q9, the system becomes
  *         \f[ \partial_t f_{1,\dots,Q} =
  *         \left( \matrix{
@@ -89,7 +89,7 @@ public:
  *		   b_1  \cr b_2 \cr b_3 \cr b_4 \cr b_5 \cr b_6 \cr b_7 \cr b_8
  *		   }\right),
  *         \f]
- *         where \f$ L_i = M_i^{-1}(- e_{ix} D_{ix} - e_{iy} D_{iy} + R_i) \f$.
+ *         where \f$ L_{\alpha} = M_{\alpha}^{-1}(- e_{{\alpha}x} D_{{\alpha}x} - e_{{\alpha}y} D_{{\alpha}y} + R_{\alpha}) \f$.
  * @tparam dim The dimension of the flow (2 or 3).
  */
 template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {
@@ -165,7 +165,7 @@ private:
 			const std::vector<dealii::types::global_dof_index>& globalDoFs);
 
 	/**
-	 * @short assemble the i-th local derivative matrix
+	 * @short assemble the \f$\alpha\f$-th local derivative matrix
 	 * @param[in] coordinate < dim; 0 for Dx, 1 for Dy, 2 for Dz (3D)
 	 * @param[out] derivativeMatrix The i-th derivative matrix <D_i phi_j, phi_k>
 	 */
@@ -196,16 +196,8 @@ private:
 			size_t dofsPerCell);
 
 	/**
-	 * @short calculate A <- M^-1 * A
-	 * @param[in/out] matrix sparse matrix A
-	 * @param[in] massMatrix diagonal matrix M (stored as vector)
-	 * @note Note that M^-1 * A is different from A * M^-1, even though M is diagonal
-	 *       (M^-1*A: columns are multiplied by the same diag element)
-	 */
-	void divideByDiagonalMassMatrix(dealii::SparseMatrix<double>& matrix,
-			const distributed_vector& massMatrix);
-	/**
 	 * @short assemble and distribute internal face
+	 * @param[in] alpha < Q;  the index of the particle flow direction
 	 * @param cell the cell to which the face belongs
 	 * @param faceNumber the local number of the face (0,1,2 or 3)
 	 * @param neighborCell the cell on the other side of the face

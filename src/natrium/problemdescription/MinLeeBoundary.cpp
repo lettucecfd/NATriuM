@@ -12,11 +12,18 @@
 namespace natrium {
 
 template<size_t dim> MinLeeBoundary<dim>::MinLeeBoundary(
-		size_t boundaryIndicator) :
-		m_boundaryIndicator(boundaryIndicator) {
+		size_t boundaryIndicator,
+		shared_ptr<dealii::Function<dim> > boundaryDensity,
+		shared_ptr<dealii::Function<dim> > boundaryVelocity) :
+		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
+				boundaryDensity), m_boundaryVelocity(boundaryVelocity) {
 }
-template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator);
-template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator);
+template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator,
+		shared_ptr<dealii::Function<2> > boundaryDensity,
+		shared_ptr<dealii::Function<2> > boundaryVelocity);
+template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
+		shared_ptr<dealii::Function<3> > boundaryDensity,
+		shared_ptr<dealii::Function<3> > boundaryVelocity);
 
 template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 		dealii::BlockCompressedSparsityPattern& cSparse,
@@ -77,8 +84,7 @@ template void MinLeeBoundary<3>::addToSparsityPattern(
 		const dealii::DoFHandler<3>& doFHandler,
 		const BoltzmannModel& boltzmannModel) const;
 
-template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(
-		size_t alpha,
+template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 		const BoltzmannModel& boltzmannModel,
@@ -88,7 +94,8 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(
 	// let the feFaceValues object calculate all the values needed at the boundary
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
-	const vector<dealii::Point<dim> > &normals = feFaceValues.get_normal_vectors();
+	const vector<dealii::Point<dim> > &normals =
+			feFaceValues.get_normal_vectors();
 
 // TODO clean up construction; or (better): assembly directly
 	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
@@ -97,42 +104,61 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(
 
 	// calculate prefactor
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
-			size_t thisDoF = q_index_to_facedof.at(q);
+		// get density and velocity at boundary point
+		double density = m_boundaryDensity->value(
+				feFaceValues.quadrature_point(q));
+		dealii::Vector<double> velocity(dim);
+		m_boundaryVelocity->vector_value(feFaceValues.quadrature_point(q),
+				velocity);
 
-			// calculate matrix entries
-			vector<double> factor(JxW);
-			double exn = 0.0;
-			// calculate scalar product
-			for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
-				exn += normals.at(q)(i)
-						* boltzmannModel.getDirection(alpha)(i);
-			}
-			for (size_t i = 0; i < factor.size(); i++) {
-				factor.at(i) *= exn;
-			}
+		size_t thisDoF = q_index_to_facedof.at(q);
 
-			//
-			double density = 1/0;
+		// calculate matrix entries
+		vector<double> factor(JxW);
+		double exn = 0.0;
+		// calculate scalar product
+		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
+			exn += normals.at(q)(i) * boltzmannModel.getDirection(alpha)(i);
+		}
+		for (size_t i = 0; i < factor.size(); i++) {
+			factor.at(i) *= exn;
+		}
+		if ((exn) < 0) {
 			cellFaceMatrix(thisDoF, thisDoF) = factor.at(q);
-			//cellFaceVector(thisDoF) = -2* factor.at(q) * boltzmannModel.getWeight(direction) * density ;
+		}
+
+		// calculate vector entry
+		double exu = 0.0;
+		// calculate scalar product
+		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
+			exu += velocity(i) * boltzmannModel.getDirection(alpha)(i);
+		}
+
+		if ((exn) < 0) {
+			cellFaceVector(thisDoF) = -2 * factor.at(q)
+					* boltzmannModel.getWeight(alpha) * density * exu
+					/ boltzmannModel.getSpeedOfSoundSquare();
+		}
 	}
 
 	// get DoF indices
 	// TODO cut out construction (allocation); Allocating two vectors in most inner loop is too expensive
-		vector<dealii::types::global_dof_index> localDoFIndices(
-				feFaceValues.dofs_per_cell);
-		cell->get_dof_indices(localDoFIndices);
+	vector<dealii::types::global_dof_index> localDoFIndices(
+			feFaceValues.dofs_per_cell);
+	cell->get_dof_indices(localDoFIndices);
 
 	/// Distribute to global matrix
-		for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
-			for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
-				systemMatrix.block(alpha-1, alpha-1).add(localDoFIndices[i],
-						localDoFIndices[j], cellFaceMatrix(i, j));
-				systemMatrix.block(alpha, boltzmannModel.getIndexOfOppositeDirection(alpha)-1).add(localDoFIndices[i],
-						localDoFIndices[j], -cellFaceMatrix(i, j));
-			}
+	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
+		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
+			systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
+					localDoFIndices[j], cellFaceMatrix(i, j));
+			systemMatrix.block(alpha -1,
+					boltzmannModel.getIndexOfOppositeDirection(alpha) - 1).add(
+					localDoFIndices[i], localDoFIndices[j],
+					-cellFaceMatrix(i, j));
 		}
-
+		systemVector.block(alpha-1)(localDoFIndices[i]) = cellFaceVector(i);
+	}
 
 }
 template void MinLeeBoundary<2>::assembleBoundary(size_t alpha,
