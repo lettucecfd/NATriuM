@@ -18,30 +18,6 @@ using dealii::Triangulation;
 
 namespace natrium {
 
-class BoundaryDensity: public dealii::Function<2> {
-public:
-	virtual double value(const dealii::Point<2> &p,
-			const unsigned int component = 0) const {
-		return 1;
-	}
-};
-class BoundaryVelocity: public dealii::Function<2> {
-private:
-	double m_xVelocity;
-public:
-	BoundaryVelocity(double xVelocity) :
-			m_xVelocity(xVelocity) {
-	}
-	virtual void vector_value(const dealii::Point<2> &p,
-			dealii::Vector<double> &values) const {
-		values(0) = m_xVelocity;
-		values(1) = 0.0;
-	}
-
-	double getXVelocity() const {
-		return m_xVelocity;
-	}
-};
 
 /** @short Description of a simple Channel Flow
  *  The domain is [0,5]x[0,1].

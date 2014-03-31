@@ -25,6 +25,18 @@ template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
 		shared_ptr<dealii::Function<3> > boundaryDensity,
 		shared_ptr<dealii::Function<3> > boundaryVelocity);
 
+template<size_t dim>
+MinLeeBoundary<dim>::MinLeeBoundary(size_t boundaryIndicator,
+		const dealii::Vector<double>& velocity) :
+		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
+				make_shared<BoundaryDensity>()), m_boundaryVelocity(
+				make_shared<BoundaryVelocity>(velocity)) {
+}
+template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator,
+		const dealii::Vector<double>& velocity);
+/*template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
+		const dealii::Vector<double>& velocity);
+*/
 template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 		dealii::BlockCompressedSparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler,
@@ -152,14 +164,13 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
 			systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
 					localDoFIndices[j], cellFaceMatrix(i, j));
-			systemMatrix.block(alpha -1,
+			systemMatrix.block(alpha - 1,
 					boltzmannModel.getIndexOfOppositeDirection(alpha) - 1).add(
 					localDoFIndices[i], localDoFIndices[j],
 					-cellFaceMatrix(i, j));
 		}
-		systemVector.block(alpha-1)(localDoFIndices[i]) = cellFaceVector(i);
+		systemVector.block(alpha - 1)(localDoFIndices[i]) += cellFaceVector(i);
 	}
-
 }
 template void MinLeeBoundary<2>::assembleBoundary(size_t alpha,
 		const typename dealii::DoFHandler<2>::active_cell_iterator& cell,

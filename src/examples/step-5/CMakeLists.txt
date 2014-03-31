@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        step-3-LidDrivenCavity2D
+        step-2-PoiseuilleFlow
         )
 
 
@@ -12,9 +12,9 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                step-3.cpp
-                LidDrivenCavity2D.h   
-                LidDrivenCavity2D.cpp
+                step-2.cpp
+                PoiseuilleFlow2D.h   
+                PoiseuilleFlow2D.cpp
                )
 #
 # link natrium library to executable

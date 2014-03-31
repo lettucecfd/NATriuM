@@ -96,14 +96,17 @@ shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries() {
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
 			BoundaryCollection<2> >();
+	dealii::Vector<double> zeroVector(2);
+	dealii::Vector<double> xVelocity(2);
+	xVelocity(0) = 0.1/sqrt(3);
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(0, make_shared<BoundaryDensity>(), make_shared<BoundaryVelocity>(0.0)));
+			make_shared<MinLeeBoundary<2> >(0, zeroVector));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(1, make_shared<BoundaryDensity>(), make_shared<BoundaryVelocity>(0.0)));
+			make_shared<MinLeeBoundary<2> >(1, zeroVector));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(2, make_shared<BoundaryDensity>(), make_shared<BoundaryVelocity>(0.0)));
+			make_shared<MinLeeBoundary<2> >(2, zeroVector));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(3, make_shared<BoundaryDensity>(), make_shared<BoundaryVelocity>(0.1/sqrt(3))));
+			make_shared<MinLeeBoundary<2> >(3, xVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();

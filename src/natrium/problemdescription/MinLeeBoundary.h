@@ -18,6 +18,28 @@
 
 namespace natrium {
 
+
+class BoundaryDensity: public dealii::Function<2> {
+public:
+	virtual double value(const dealii::Point<2> &p,
+			const unsigned int component = 0) const {
+		return 1;
+	}
+};
+class BoundaryVelocity: public dealii::Function<2> {
+private:
+	dealii::Vector<double> m_Velocity;
+public:
+	BoundaryVelocity(const dealii::Vector<double>& velocity) :
+			m_Velocity(velocity) {
+	}
+	virtual void vector_value(const dealii::Point<2> &p,
+			dealii::Vector<double> &values) const {
+		values = m_Velocity;
+	}
+};
+
+
 /**
  * @short 	The boundary described by Min and Lee.
  * 			For outgoing particle distribution functions the fluxes are set to 0
@@ -40,6 +62,9 @@ public:
 	MinLeeBoundary(size_t boundaryIndicator,
 			shared_ptr<dealii::Function<dim> > boundaryDensity,
 			shared_ptr<dealii::Function<dim> > boundaryVelocity);
+
+	/// constructor
+	MinLeeBoundary(size_t boundaryIndicator, const dealii::Vector<double>& velocity);
 
 	/// destructor
 	virtual ~MinLeeBoundary() {

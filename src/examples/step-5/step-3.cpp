@@ -1,7 +1,7 @@
 /**
- * @file step-3.cpp
- * @short Third Tutorial:  Lid-Driven cavitys in 2D
- * @date 31.03.2014
+ * @file step-2.cpp
+ * @short Second tutorial:  Poiseuille Flow in 2D
+ * @date 24.10.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
@@ -16,7 +16,7 @@
 
 #include "utilities/BasicNames.h"
 
-#include "LidDrivenCavity2D.h"
+#include "PoiseuilleFlow2D.h"
 
 using namespace natrium;
 
@@ -24,15 +24,15 @@ using namespace natrium;
 void getAnalyticSolution(double time, distributed_vector& analyticSolution1,
 		distributed_vector& analyticSolution2,
 		const vector<dealii::Point<2> >& supportPoints,
-		const LidDrivenCavity2D& ldCavity) {
+		const PoiseuilleFlow2D& poiFlow) {
 	assert(analyticSolution1.size() == supportPoints.size());
 	assert(analyticSolution2.size() == supportPoints.size());
 	assert(supportPoints.size() > 0);
 
 	for (size_t i = 0; i < supportPoints.size(); i++) {
-		analyticSolution1(i) = ldCavity.analyticVelocity1(supportPoints.at(i),
+		analyticSolution1(i) = poiFlow.analyticVelocity1(supportPoints.at(i),
 				time);
-		analyticSolution2(i) = ldCavity.analyticVelocity2(supportPoints.at(i),
+		analyticSolution2(i) = poiFlow.analyticVelocity2(supportPoints.at(i),
 				time);
 	}
 }
@@ -40,7 +40,7 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution1,
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-3..." << endl;
+	cout << "Starting NATriuM step-2..." << endl;
 
 	// set parameters, set up configuration object
 	size_t refinementLevel = 5;
@@ -52,7 +52,7 @@ int main() {
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
 					* (configuration->getOrderOfFiniteElement() - 1));
-	configuration->setOutputDirectory("../results/step-3");
+	configuration->setOutputDirectory("../results/step-2");
 	configuration->setRestart(false);
 	configuration->setOutputFlags(
 			configuration->getOutputFlags() | out_Checkpoints);
@@ -67,10 +67,10 @@ int main() {
 	configuration->setDistributionInitType(Iterative);
 
 	// make problem and solver objects
-	shared_ptr<LidDrivenCavity2D> lidDrivenCavity = make_shared<LidDrivenCavity2D>(
+	shared_ptr<PoiseuilleFlow2D> poiseuilleFlow = make_shared<PoiseuilleFlow2D>(
 			viscosity, refinementLevel);
-	shared_ptr<ProblemDescription<2> > ldCavityProblem = lidDrivenCavity;
-	CFDSolver<2> solver(configuration, ldCavityProblem);
+	shared_ptr<ProblemDescription<2> > poiseuilleProblem = poiseuilleFlow;
+	CFDSolver<2> solver(configuration, poiseuilleProblem);
 
 	// File for max norms
 	/*	std::stringstream s;
@@ -140,7 +140,7 @@ int main() {
 
 	 */
 
-	cout << "NATriuM step-3 terminated." << endl;
+	cout << "NATriuM step-2 terminated." << endl;
 
 	return 0;
 }
