@@ -154,7 +154,7 @@ public:
 		m_orderOfFiniteElement = 2;
 		m_numberOfTimeSteps = 100;
 		m_dQScaling = 1.0;
-		m_outputDirectory = "../results/test";
+		m_outputDirectory = "/tmp/natrium";
 		setOutputFlags(out_CommandLineBasic | out_VectorFields);
 		m_restart = false;
 		m_distributionInitType = Equilibrium;

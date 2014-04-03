@@ -59,7 +59,7 @@ public:
 		return m_speedOfSoundSquare;
 	}
 
-	virtual size_t getIndexOfOppositeDirection(size_t index)const {
+	virtual size_t getIndexOfOppositeDirection(size_t index) const {
 		switch (index){
 			case 0:
 				return 0;

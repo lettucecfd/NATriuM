@@ -9,8 +9,11 @@ set(    COLLISIONMODELS_TEST
         collisionmodels/BGKTransformed_test.cpp
         )            
 set(    PROBLEMDESCRIPTION_TEST
-        problemdescription/PeriodicBoundary2D_test.cpp
         problemdescription/BoundaryTools_test.cpp
+        problemdescription/PeriodicBoundary2D_test.cpp
+        problemdescription/MinLeeBoundary2D_test.cpp
+        problemdescription/TaylorGreenTest2D.h
+        problemdescription/WallTestDomain2D.h
         )   
 set(    ADVECTION_TEST
         advection/SEDGMinLee_test.cpp
