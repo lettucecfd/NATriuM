@@ -20,7 +20,12 @@
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/base/quadrature_lib.h"
 
+#include "solver/SolverConfiguration.h"
+#include "solver/CFDSolver.h"
+#include "problemdescription/ProblemDescription.h"
 #include "utilities/BasicNames.h"
+
+#include "TaylorGreenTest2D.h"
 
 namespace natrium {
 
@@ -213,5 +218,72 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 } /*PeriodicBoundary<2>_forDisconitnuousGalerkin_test*/
 
 BOOST_AUTO_TEST_SUITE_END() /* PeriodicBoundary<2>_test */
+
+
+// A little integration test for the Taylor-Green vortex,
+// a benchmark which has only periodic boundaries
+BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_TaylorGreenVortex_test){
+
+	cout << "PeriodicBoundary2D_TaylorGreenVortex_test..." << endl;
+
+	// set parameters, set up configuration object
+	size_t refinementLevel = 4;
+	size_t orderOfFiniteElement = 2;
+	double viscosity = 1;
+
+	shared_ptr<SolverConfiguration> configuration = make_shared<
+			SolverConfiguration>();
+	double deltaX = 1.
+			/ (pow(2, refinementLevel)
+					* (configuration->getOrderOfFiniteElement() - 1));
+	configuration->setOutputDirectory("../results/test-PeriodicBoundary-TaylorGreen");
+	configuration->setRestart(false);
+	configuration->setOutputFlags(out_noOutput);
+	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
+	configuration->setDQScaling(50);
+	double tScaling = std::min(0.1, 1. / (2 * configuration->getDQScaling()));
+	configuration->setTimeStep(tScaling * deltaX);
+	configuration->setNumberOfTimeSteps(50);
+	//configuration->setDistributionInitType(Iterative);
+
+	// make problem and solver objects
+	shared_ptr<TaylorGreenTest2D> tgVortex = make_shared<TaylorGreenTest2D>(
+			viscosity, refinementLevel);
+	shared_ptr<ProblemDescription<2> > taylorGreen = tgVortex;
+	CFDSolver<2> solver(configuration, taylorGreen);
+
+
+	// THE LOOP
+	size_t N = configuration->getNumberOfTimeSteps();
+	for (size_t i = solver.getIterationStart(); i < N; i++) {
+		if (i % 100 == 0) {
+			cout << "Iteration " << i << endl;
+		}
+		// Stream and collide
+		solver.stream();
+		solver.collide();
+	}
+
+
+	// check mass conversion
+	double mass = 0.0;
+	for (size_t i = 0; i < solver.getNumberOfDoFs(); i++){
+		mass += solver.getDensity()(i);
+	}
+	mass /= solver.getNumberOfDoFs();
+	BOOST_CHECK_SMALL( fabs(mass-1.0), 1e-8);
+
+	// check if the dissipation of the vortex is realistic
+	double analyticMaxVelocityLoss = 1 - exp(-2 * viscosity * N * configuration->getTimeStep());
+	double numericalMaxVelocityLoss = 1- solver.getMaxVelocityNorm();
+	double relativeError = fabs(analyticMaxVelocityLoss-numericalMaxVelocityLoss)/analyticMaxVelocityLoss;
+	BOOST_CHECK_SMALL(relativeError,  1e-1);
+
+
+	cout << "done" << endl;
+
+
+} /* PeriodicBoundary2D_TaylorGreenVortex_test*/
+
 
 } /* namespace natrium */

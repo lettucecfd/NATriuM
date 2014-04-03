@@ -49,6 +49,7 @@ enum FluxType {
  * Output flags
  */
 enum OutputFlags {
+	out_noOutput = 0,
 	out_CommandLineError = 1,
 	out_CommandLineBasic = 2,
 	out_CommandLineFull = 4,

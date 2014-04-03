@@ -9,7 +9,7 @@ set(    COLLISIONMODELS_TEST
         collisionmodels/BGKTransformed_test.cpp
         )            
 set(    PROBLEMDESCRIPTION_TEST
-        problemdescription/PeriodicBoundary1D_test.cpp
+        problemdescription/PeriodicBoundary2D_test.cpp
         problemdescription/BoundaryTools_test.cpp
         )   
 set(    ADVECTION_TEST

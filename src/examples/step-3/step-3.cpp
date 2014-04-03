@@ -53,10 +53,10 @@ int main() {
 			/ (pow(2, refinementLevel)
 					* (configuration->getOrderOfFiniteElement() - 1));
 	configuration->setOutputDirectory("../results/step-3");
-	configuration->setRestart(false);
+	configuration->setRestart(true);
 	configuration->setOutputFlags(
 			configuration->getOutputFlags() | out_Checkpoints);
-	configuration->setOutputCheckpointEvery(10000);
+	configuration->setOutputCheckpointEvery(1000);
 	configuration->setOutputVectorFieldsEvery(100);
 	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setDQScaling(50);

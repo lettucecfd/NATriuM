@@ -65,21 +65,21 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 			}
 		}
 		if (not isAtThisWall)
-			break;
+			continue;
 
 		// add
 		for (size_t I = 0; I < n_blocks; I++) {
-			for (size_t J = I + 1; J < n_blocks; J++) {
+			for (size_t J = 0; J < n_blocks; J++) {
 				if (I == boltzmannModel.getIndexOfOppositeDirection(J)) {
 					// get global degrees of freedom
 					cell->get_dof_indices(localDoFIndices);
 					for (size_t i = 0; i < n_dofs_per_cell; i++) {
 						for (size_t j = 0; j < n_dofs_per_cell; j++) {
-							// Efficient implementation (for SEDG, MinLee Boundary): only at diagonal
+							// TODO: Efficient implementation (for SEDG, MinLee Boundary): only at diagonal
 							cSparse.block(I, J).add(localDoFIndices.at(i),
 									localDoFIndices.at(j));
-							cSparse.block(J, I).add(localDoFIndices.at(i),
-									localDoFIndices.at(j));
+							//cSparse.block(J, I).add(localDoFIndices.at(i),
+							//		localDoFIndices.at(j));
 						}
 					}
 				} /* end if opposite boundary*/

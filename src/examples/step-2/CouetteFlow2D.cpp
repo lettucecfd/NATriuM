@@ -69,4 +69,35 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	return boundaries;
 }
 
+
+double CouetteFlow2D::analyticVelocity1(const dealii::Point<2>& x,
+		double t) const {
+	// the analytic solution is given by an asymptotic series
+	double U = getCharacteristicVelocity();
+	double L = getCharacteristicLength();
+
+	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
+	assert (t > 0.1);
+
+	double sum = U*x(1)/L;
+	double lambda = 0.0;
+	const double PI = atan(1)*4;
+	double increment=1.0;
+	for(size_t i = 1; fabs(increment) > 1e-12; i++){
+		lambda = i*PI/L;
+		increment = (i % 2 == 0 ? 1. : -1.) * 2*U/(lambda*L)*exp(-getViscosity()*lambda*lambda*t)*sin(lambda*x(1));
+		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i =
+		sum += increment;
+		assert (i < 10000);
+		//cout << i << " " << exp(-getViscosity()*lambda*lambda*t) << " " << sum << " " << (i % 2 == 0 ? 1. : -1.) * 2*U/(lambda*L)*exp(-getViscosity()*lambda*lambda*t)*sin(lambda*x(1)) << endl;
+	}
+	// assert convergence of the above asymptotic sum
+	assert( fabs(increment) < 1e-9);
+	return sum;
+}
+
+double CouetteFlow2D::analyticVelocity2(const dealii::Point<2>& x,
+		double t) const {
+	return 0.0;
+}
 } /* namespace natrium */
