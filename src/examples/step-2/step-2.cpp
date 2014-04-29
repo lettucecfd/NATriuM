@@ -42,8 +42,8 @@ int main() {
 	cout << "Starting NATriuM step-2..." << endl;
 
 	// set parameters, set up configuration object
-	size_t refinementLevel = 3;
-	size_t orderOfFiniteElement = 4;
+	size_t refinementLevel = 5;
+	size_t orderOfFiniteElement = 2;
 	const double dqScaling = 1; //2 * sqrt(3);
 
 	// chose U (the velocity of the top wall) so that Ma = 0.05

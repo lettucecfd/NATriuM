@@ -17,6 +17,8 @@
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
 #include "problemdescription/ProblemDescription.h"
 #include "advection/SEDGMinLee.h"
+#include "solver/CFDSolver.h"
+#include "solver/SolverConfiguration.h"
 #include "WallTestDomain2D.h"
 
 namespace natrium {
@@ -53,20 +55,51 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_Construction_test) {
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test){
 	cout << "MinLeeBoundary2D_SparsityPattern_test..." << endl;
 
+	// The incoming particle distributions at the boundary must be affected by the opposite outgoing ones
+	// This means that diagonal entries must exist for the boundary dofs
+	// for all blocks (I,J) (I for incoming and J for their opposites)
 	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(1);
 	SEDGMinLee<2> advector(problem->getTriangulation(),
 			problem->getBoundaries(),
 			2, make_shared<D2Q9IncompressibleModel>());
 	vector< bool > isBoundary;
-	for (size_t i = 0; i++; i < advector.getNumberOfDoFs()){
-		// left boundary
+	for (size_t i = 0; i < advector.getNumberOfDoFs(); i++){
 		std::set<dealii::types::boundary_id> boundaryIndicators;
+		// left boundary
 		boundaryIndicators.insert(0);
 		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()), dealii::ComponentMask(), isBoundary, boundaryIndicators);
 		if (isBoundary.at(i)){
+			// note that block 0 refers to f_1 and so on
 			BOOST_CHECK(advector.getBlockSparsityPattern().block(4,6).exists(i,i));
 			BOOST_CHECK(advector.getBlockSparsityPattern().block(0,2).exists(i,i));
 			BOOST_CHECK(advector.getBlockSparsityPattern().block(5,7).exists(i,i));
+		}
+		// right boundary
+		boundaryIndicators.clear();
+		boundaryIndicators.insert(1);
+		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()), dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		if (isBoundary.at(i)){
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(6,4).exists(i,i));
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(2,0).exists(i,i));
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(7,5).exists(i,i));
+		}
+		// bottom boundary
+		boundaryIndicators.clear();
+		boundaryIndicators.insert(2);
+		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()), dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		if (isBoundary.at(i)){
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(4,6).exists(i,i));
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(1,3).exists(i,i));
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(5,7).exists(i,i));
+		}
+		// top boundary
+		boundaryIndicators.clear();
+		boundaryIndicators.insert(3);
+		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()), dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		if (isBoundary.at(i)){
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(6,4).exists(i,i));
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(3,1).exists(i,i));
+			BOOST_CHECK(advector.getBlockSparsityPattern().block(7,5).exists(i,i));
 		}
 	}
 
@@ -75,6 +108,28 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test){
 
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
 	cout << "MinLeeBoundary2D_MassConversion_test..." << endl;
+
+	// make problem and solver
+	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(1);
+	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
+	configuration->setOutputDirectory("/tmp");
+	configuration->setOutputFlags(out_noOutput);
+	configuration->setNumberOfTimeSteps(100);
+	configuration->setOrderOfFiniteElement(2);
+	configuration->setTimeStep(0.01);
+
+	CFDSolver<2> solver(configuration, problem);
+
+	solver.run();
+
+	// check mass conversion
+	double mass = 0.0;
+	for (size_t i = 0; i < solver.getNumberOfDoFs(); i++){
+		mass += solver.getDensity()(i);
+	}
+	mass /= solver.getNumberOfDoFs();
+	BOOST_CHECK_SMALL(mass - 1.0, 1e-10);
+
 
 	cout << "done" << endl;
 } /*MinLeeBoundary2D_MassConversion_test */
