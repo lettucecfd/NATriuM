@@ -32,12 +32,12 @@ public:
 	virtual ~CouetteFlow2D();
 
 	/*
-	 * @short analytic solution of the Taylor-Green vortex, first component of velocity vector
+	 * @short analytic solution of the Couette flow, first component of velocity vector
 	 */
 	double analyticVelocity1(const dealii::Point<2>& x, double t) const ;
 
 	/**
-	 * @short analytic solution of the Taylor-Green vortex, second component of velocity vector
+	 * @short analytic solution of the Couette flow, second component of velocity vector
 	 */
 	double analyticVelocity2(const dealii::Point<2>& x, double t) const ;
 
@@ -61,7 +61,14 @@ public:
 		}
 	}
 
+	virtual double getCharacteristicVelocity() const {
+		cout << "Haallo I'm child" << endl;
+		return m_topPlateVelocity;
+	}
+
 private:
+
+	const double m_topPlateVelocity;
 
 	/**
 	 * @short create triangulation for couette flow

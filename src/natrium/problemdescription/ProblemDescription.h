@@ -104,9 +104,9 @@ public:
 		m_characteristicLength = characteristicLength;
 	}
 
-	double getCharacteristicVelocity() const {
-		return 0.1/sqrt(3);
-		// TODO return 0.0
+	virtual double getCharacteristicVelocity() const {
+		cout << "Haallo I'm father" << endl;
+		return 0.0;
 	}
 };
 /* class ProblemDescription */
