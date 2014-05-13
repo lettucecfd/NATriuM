@@ -66,8 +66,10 @@ private:
 				make_shared<MinLeeBoundary<2> >(1, numeric_vector(2)));
 		boundaries->addBoundary(
 				make_shared<MinLeeBoundary<2> >(2, numeric_vector(2)));
+		numeric_vector topPlateVelocity(2);
+		topPlateVelocity(0) = 0.01;
 		boundaries->addBoundary(
-				make_shared<MinLeeBoundary<2> >(3, numeric_vector(2)));
+				make_shared<MinLeeBoundary<2> >(3, topPlateVelocity));
 
 		// Get the triangulation object (which belongs to the parent class).
 		shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
@@ -107,8 +109,8 @@ public:
 			vector<distributed_vector>& initialVelocities,
 			vector<dealii::Point<2> >& supportPoints) const{
 		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-			initialVelocities.at(0)(i) = 0.01;
-			initialVelocities.at(0)(i) = 0.01;
+			initialVelocities.at(0)(i) = 0.0;
+			initialVelocities.at(1)(i) = 0.0;
 		}
 	}
 

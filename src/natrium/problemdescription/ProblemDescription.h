@@ -105,7 +105,6 @@ public:
 	}
 
 	virtual double getCharacteristicVelocity() const {
-		cout << "Haallo I'm father" << endl;
 		return 0.0;
 	}
 };

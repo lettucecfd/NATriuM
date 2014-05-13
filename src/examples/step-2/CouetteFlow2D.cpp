@@ -10,15 +10,17 @@
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
+#include "deal.II/base/geometry_info.h"
 
 #include "problemdescription/PeriodicBoundary.h"
 #include "problemdescription/MinLeeBoundary.h"
 
 namespace natrium {
 
-CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity, size_t refinementLevel,
-		double L) :
-		ProblemDescription<2>(makeGrid(L, refinementLevel), viscosity, 1), m_topPlateVelocity(topPlateVelocity) {
+CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
+		size_t refinementLevel, double L) :
+		ProblemDescription<2>(makeGrid(L, refinementLevel), viscosity, 1), m_topPlateVelocity(
+				topPlateVelocity) {
 	setCharacteristicLength(L);
 
 	/// apply boundary values
@@ -28,7 +30,8 @@ CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity, size_t r
 CouetteFlow2D::~CouetteFlow2D() {
 }
 
-shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid(double L, size_t refinementLevel) {
+shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid(double L,
+		size_t refinementLevel) {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
@@ -43,6 +46,18 @@ shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid(double L, size_t refinemen
 
 	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
 	unitSquare->refine_global(refinementLevel);
+
+//	// Anisotropic refinement
+//	dealii::RefinementCase<2> yRefinement(1);
+//	for (size_t i = 0; i < 1; i++) {
+//		Triangulation<2>::active_cell_iterator it = unitSquare->begin_active();
+//		for (; it < unitSquare->end(); i++){
+//			if (it->face(3)->boundary_indicator()==3){
+//				it->set_refine_flag(yRefinement);
+//			}
+//		}
+//		unitSquare->execute_coarsening_and_refinement();
+//	}
 
 	return unitSquare;
 }
@@ -59,17 +74,15 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 
 	boundaries->addBoundary(
 			make_shared<PeriodicBoundary<2> >(0, 1, getTriangulation()));
+	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(2, zeroVelocity));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(2, zeroVelocity));
-	boundaries->addBoundary(
-				make_shared<MinLeeBoundary<2> >(3, constantVelocity));
+			make_shared<MinLeeBoundary<2> >(3, constantVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
 
 	return boundaries;
 }
-
 
 double CouetteFlow2D::analyticVelocity1(const dealii::Point<2>& x,
 		double t) const {
@@ -78,22 +91,24 @@ double CouetteFlow2D::analyticVelocity1(const dealii::Point<2>& x,
 	double L = getCharacteristicLength();
 
 	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
-	assert (t > 0.1);
+	// assert (t > 0.1);
 
-	double sum = U*x(1)/L;
+	double sum = U * x(1) / L;
 	double lambda = 0.0;
-	const double PI = atan(1)*4;
-	double increment=1.0;
-	for(size_t i = 1; fabs(increment) > 1e-12; i++){
-		lambda = i*PI/L;
-		increment = (i % 2 == 0 ? 1. : -1.) * 2*U/(lambda*L)*exp(-getViscosity()*lambda*lambda*t)*sin(lambda*x(1));
+	const double PI = atan(1) * 4;
+	double increment = 1.0;
+	for (size_t i = 1; fabs(increment) > 1e-20; i++) {
+		lambda = i * PI / L;
+		increment = (i % 2 == 0 ? 1. : -1.) * 2 * U / (lambda * L)
+				* exp(-getViscosity() * lambda * lambda * t)
+				* sin(lambda * x(1));
 		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i =
 		sum += increment;
-		assert (i < 10000);
+		assert(i < 10000);
 		//cout << i << " " << exp(-getViscosity()*lambda*lambda*t) << " " << sum << " " << (i % 2 == 0 ? 1. : -1.) * 2*U/(lambda*L)*exp(-getViscosity()*lambda*lambda*t)*sin(lambda*x(1)) << endl;
 	}
 	// assert convergence of the above asymptotic sum
-	assert( fabs(increment) < 1e-9);
+	assert(fabs(increment) < 1e-9);
 	return sum;
 }
 

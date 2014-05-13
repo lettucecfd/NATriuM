@@ -16,7 +16,7 @@
 
 #include "CouetteFlow2D.h"
 
-#define PRINT_SYSTEM_VECTOR
+//#define PRINT_SYSTEM_VECTOR
 
 using namespace natrium;
 
@@ -42,15 +42,16 @@ int main() {
 	cout << "Starting NATriuM step-2..." << endl;
 
 	// set parameters, set up configuration object
-	size_t refinementLevel = 5;
-	size_t orderOfFiniteElement = 2;
+	size_t refinementLevel = 4;
+	size_t orderOfFiniteElement = 5;
 	const double dqScaling = 1; //2 * sqrt(3);
 
 	// chose U (the velocity of the top wall) so that Ma = 0.05
-	const double U = 5. / 100. / sqrt(3) * dqScaling;
+	const double U = 5. / 100. * sqrt(3) * dqScaling;
 	// chose viscosity so that Re = 2000
 	const double viscosity = U / 2000.;
 
+	cout << "Mach number: " << U / (sqrt(3) * dqScaling) << endl;
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
@@ -63,13 +64,14 @@ int main() {
 	configuration->setNumberOfTimeSteps(100000000);
 	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setDQScaling(dqScaling);
-	configuration->setTimeStep(0.001);
+	configuration->setTimeStep(0.00025);
 	//configuration->setDistributionInitType(Iterative);
 
 	shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(
 			viscosity, U, refinementLevel);
 	shared_ptr<ProblemDescription<2> > couetteProblem = couetteFlow;
 	CFDSolver<2> solver(configuration, couetteProblem);
+	cout << "Number of DoFs: " << 9*solver.getNumberOfDoFs() << endl;
 
 #ifdef PRINT_SYSTEM_VECTOR
 	// put out system vector
@@ -132,26 +134,12 @@ int main() {
 		solver.stream();
 		solver.collide();
 
-		if (i % 100 == 0) {
-			if (t > 0.1) {
+		if (i % 1 == 0) {
+			if (t > 0.001) {
 				// put out max velocity norm for numerical and analytic solution
 				getAnalyticSolution(configuration->getTimeStep() * (i + 1),
 						analyticSolution1, analyticSolution2, supportPoints,
 						*couetteFlow);
-				double Linf_error = 0.0;
-				for (size_t j = 0; j < solver.getNumberOfDoFs(); j++) {
-					double error = fabs(
-							analyticSolution1(j)
-									- solver.getVelocity().at(0)(j));
-					if (error > Linf_error) {
-						Linf_error = error;
-					}
-				}
-				double xVelocityInTheMiddle = solver.getVelocity().at(0)(
-						middleDof);
-				(*maxNormOut) << i * configuration->getTimeStep() << "  "
-						<< xVelocityInTheMiddle << "  " << Linf_error << " "
-						<< solver.getMaxDensityDeviationFrom(1) << endl;
 
 				/// vtu ///
 				std::stringstream str;
@@ -162,16 +150,29 @@ int main() {
 				data_out.attach_dof_handler(
 						*solver.getAdvectionOperator()->getDoFHandler());
 				data_out.add_data_vector(solver.getDensity(), "rho");
-				data_out.add_data_vector(solver.getVelocity().at(0), "v_1");
-				data_out.add_data_vector(solver.getVelocity().at(1), "v_2");
+				data_out.add_data_vector(solver.getVelocity().at(0), "vx");
+				data_out.add_data_vector(solver.getVelocity().at(1), "vy");
 				// calculate analytic solution
 				getAnalyticSolution(configuration->getTimeStep() * i,
 						analyticSolution1, analyticSolution2, supportPoints,
 						*couetteFlow);
-				data_out.add_data_vector(analyticSolution1, "v_1_analytic");
-				data_out.add_data_vector(analyticSolution2, "v_2_analytic");
+				data_out.add_data_vector(analyticSolution1, "vx_analytic");
+				data_out.add_data_vector(analyticSolution2, "vy_analytic");
 				data_out.build_patches();
 				data_out.write_vtu(outfile);
+
+				// max error file //
+				// calculate error
+				analyticSolution1 *= -1.0;
+				analyticSolution1.add(solver.getVelocity().at(0));
+				analyticSolution2 *= -1.0;
+				analyticSolution2.add(solver.getVelocity().at(1));
+				double xVelocityInTheMiddle = solver.getVelocity().at(0)(
+						middleDof);
+				(*maxNormOut) << i * configuration->getTimeStep() << "  "
+						<< xVelocityInTheMiddle << "  "
+						<< analyticSolution1.linfty_norm() << " "
+						<< solver.getMaxDensityDeviationFrom(1) << endl;
 			}
 		}
 	}

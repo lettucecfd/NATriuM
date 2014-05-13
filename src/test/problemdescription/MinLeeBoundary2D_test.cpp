@@ -44,62 +44,92 @@ public:
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_Construction_test) {
 	cout << "MinLeeBoundary2D_Construction_test..." << endl;
 
-	BOOST_CHECK_NO_THROW(MinLeeBoundary<2> mlBound1(0, make_shared<BoundaryTestDensity>(), make_shared<BoundaryTestVelocity>()));
+	BOOST_CHECK_NO_THROW(
+			MinLeeBoundary<2> mlBound1(0, make_shared<BoundaryTestDensity>(), make_shared<BoundaryTestVelocity>()));
 	numeric_vector U(2);
-	BOOST_CHECK_NO_THROW(MinLeeBoundary<2> mlBound2(0, U);
-);
+	BOOST_CHECK_NO_THROW(MinLeeBoundary<2> mlBound2(0, U); );
 
 	cout << "done" << endl;
 } /*MinLeeBoundary2D_Construction_test */
 
-BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test){
+BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 	cout << "MinLeeBoundary2D_SparsityPattern_test..." << endl;
 
 	// The incoming particle distributions at the boundary must be affected by the opposite outgoing ones
 	// This means that diagonal entries must exist for the boundary dofs
 	// for all blocks (I,J) (I for incoming and J for their opposites)
-	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(1);
+	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
+			1);
 	SEDGMinLee<2> advector(problem->getTriangulation(),
-			problem->getBoundaries(),
-			2, make_shared<D2Q9IncompressibleModel>());
-	vector< bool > isBoundary;
-	for (size_t i = 0; i < advector.getNumberOfDoFs(); i++){
+			problem->getBoundaries(), 2,
+			make_shared<D2Q9IncompressibleModel>());
+	vector<bool> isBoundary(advector.getNumberOfDoFs());
+	for (size_t i = 0; i < advector.getNumberOfDoFs(); i++) {
 		std::set<dealii::types::boundary_id> boundaryIndicators;
 		// left boundary
 		boundaryIndicators.insert(0);
-		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()), dealii::ComponentMask(), isBoundary, boundaryIndicators);
-		if (isBoundary.at(i)){
+		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()),
+				dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		if (isBoundary.at(i)) {
+			cout << i << endl;
 			// note that block 0 refers to f_1 and so on
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(4,6).exists(i,i));
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(0,2).exists(i,i));
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(5,7).exists(i,i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(4, 6).exists(i,
+							i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(0, 2).exists(i,
+							i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(5, 7).exists(i,
+							i));
 		}
 		// right boundary
 		boundaryIndicators.clear();
 		boundaryIndicators.insert(1);
-		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()), dealii::ComponentMask(), isBoundary, boundaryIndicators);
-		if (isBoundary.at(i)){
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(6,4).exists(i,i));
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(2,0).exists(i,i));
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(7,5).exists(i,i));
+		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()),
+				dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		if (isBoundary.at(i)) {
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(6, 4).exists(i,
+							i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(2, 0).exists(i,
+							i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(7, 5).exists(i,
+							i));
 		}
 		// bottom boundary
 		boundaryIndicators.clear();
 		boundaryIndicators.insert(2);
-		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()), dealii::ComponentMask(), isBoundary, boundaryIndicators);
-		if (isBoundary.at(i)){
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(4,6).exists(i,i));
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(1,3).exists(i,i));
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(5,7).exists(i,i));
+		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()),
+				dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		if (isBoundary.at(i)) {
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(4, 6).exists(i,
+							i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(1, 3).exists(i,
+							i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(5, 7).exists(i,
+							i));
 		}
 		// top boundary
 		boundaryIndicators.clear();
 		boundaryIndicators.insert(3);
-		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()), dealii::ComponentMask(), isBoundary, boundaryIndicators);
-		if (isBoundary.at(i)){
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(6,4).exists(i,i));
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(3,1).exists(i,i));
-			BOOST_CHECK(advector.getBlockSparsityPattern().block(7,5).exists(i,i));
+		dealii::DoFTools::extract_boundary_dofs(*(advector.getDoFHandler()),
+				dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		if (isBoundary.at(i)) {
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(6, 4).exists(i,
+							i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(3, 1).exists(i,
+							i));
+			BOOST_CHECK(
+					advector.getBlockSparsityPattern().block(7, 5).exists(i,
+							i));
 		}
 	}
 
@@ -110,8 +140,10 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
 	cout << "MinLeeBoundary2D_MassConversion_test..." << endl;
 
 	// make problem and solver
-	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(1);
-	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
+	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
+			1);
+	shared_ptr<SolverConfiguration> configuration = make_shared<
+			SolverConfiguration>();
 	configuration->setOutputDirectory("/tmp");
 	configuration->setOutputFlags(out_noOutput);
 	configuration->setNumberOfTimeSteps(100);
@@ -124,15 +156,49 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
 
 	// check mass conversion
 	double mass = 0.0;
-	for (size_t i = 0; i < solver.getNumberOfDoFs(); i++){
+	for (size_t i = 0; i < solver.getNumberOfDoFs(); i++) {
 		mass += solver.getDensity()(i);
 	}
 	mass /= solver.getNumberOfDoFs();
 	BOOST_CHECK_SMALL(mass - 1.0, 1e-10);
 
-
 	cout << "done" << endl;
 } /*MinLeeBoundary2D_MassConversion_test */
+
+BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
+	cout << "MinLeeBoundary2D_BoundaryVelocity_test..." << endl;
+
+	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
+			1);
+	shared_ptr<SolverConfiguration> configuration = make_shared<
+			SolverConfiguration>();
+	configuration->setOutputDirectory("/tmp");
+	configuration->setOutputFlags(out_noOutput);
+	configuration->setNumberOfTimeSteps(1);
+	configuration->setOrderOfFiniteElement(10);
+	configuration->setTimeStep(0.0001);
+
+	CFDSolver<2> solver(configuration, problem);
+	solver.run();
+
+	// Check boundary velocity
+	std::set<dealii::types::boundary_id> boundaryIndicators;
+	boundaryIndicators.insert(3);
+	vector<bool> isBoundary;
+	dealii::DoFTools::extract_boundary_dofs(
+			*(solver.getAdvectionOperator()->getDoFHandler()),
+			dealii::ComponentMask(), isBoundary);//, boundaryIndicators);
+
+	for (size_t i = 0; i < solver.getNumberOfDoFs(); i++) {
+		if (isBoundary.at(i)) {
+			cout << i << endl;
+			BOOST_CHECK_CLOSE(solver.getVelocity().at(0)(i), 0.01, 0.00001);
+			BOOST_CHECK_SMALL(solver.getVelocity().at(1)(i), 1e-7);
+		}
+	}
+
+	cout << "done" << endl;
+} /* MinLeeBoundary2D_BoundaryVelocity_test */
 
 BOOST_AUTO_TEST_SUITE_END() /*MinLeeBoundary2D_test*/
 

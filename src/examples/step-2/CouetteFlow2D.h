@@ -62,7 +62,6 @@ public:
 	}
 
 	virtual double getCharacteristicVelocity() const {
-		cout << "Haallo I'm child" << endl;
 		return m_topPlateVelocity;
 	}
 
