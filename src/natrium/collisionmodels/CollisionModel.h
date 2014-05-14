@@ -60,6 +60,19 @@ public:
 	virtual void collideSingleDoF(size_t doF, const vector<double>& feq,
 			DistributionFunctions& f) const = 0;
 
+
+	/**
+	 * @short function for collision
+	 * @short f the global vectors of discrete particle distribution functions
+	 * @short densities the global vector of densities
+	 * @short velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ]
+	 * @short inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false
+	 */
+	void collideAll(DistributionFunctions& f,
+			distributed_vector& densities,
+			vector<distributed_vector>& velocities, const vector<bool>& isBoundary,
+			bool inInitializationProcedure = false) const;
+
 	/**
 	 * @short function for collision
 	 * @short f the global vectors of discrete particle distribution functions

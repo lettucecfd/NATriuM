@@ -58,6 +58,7 @@ private:
 public:
 
 	typedef typename std::map<size_t, shared_ptr<Boundary<dim> > >::iterator Iterator;
+	typedef typename std::map<size_t, shared_ptr<Boundary<dim> > >::const_iterator ConstIterator;
 	typedef typename std::map<size_t, shared_ptr<MinLeeBoundary<dim> > >::iterator MinLeeIterator;
 	typedef typename std::map<size_t, shared_ptr<MinLeeBoundary<dim> > >::const_iterator ConstMinLeeIterator;
 	typedef typename std::map<size_t, shared_ptr<PeriodicBoundary<dim> > >::iterator PeriodicIterator;

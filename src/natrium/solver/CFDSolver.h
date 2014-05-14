@@ -88,6 +88,9 @@ private:
 	/// the number of the first iteration (normally 0, except for restart at a checkpoint)
 	size_t m_iterationStart;
 
+	/// a vector that indicates if a dofs is at the boundary (for each dof)
+	vector<bool> m_isBoundary;
+
 protected:
 
 	/// save the distribution functions to files for checkpointing

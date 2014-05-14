@@ -11,6 +11,9 @@
 #include <sstream>
 
 #include "deal.II/numerics/data_out.h"
+#include "deal.II/fe/component_mask.h"
+
+#include "../problemdescription/BoundaryCollection.h"
 
 #include "../utilities/Logging.h"
 
@@ -73,8 +76,11 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	size_t numberOfDoFs = m_advectionOperator->getNumberOfDoFs();
 	if (Integrator_RungeKutta5LowStorage
 			== configuration->getTimeIntegratorType()) {
-		m_timeIntegrator = make_shared<RungeKutta5LowStorage<distributed_sparse_block_matrix, distributed_block_vector> >(
-				configuration->getTimeStep(), numberOfDoFs, m_boltzmannModel->getQ() - 1);
+		m_timeIntegrator = make_shared<
+				RungeKutta5LowStorage<distributed_sparse_block_matrix,
+						distributed_block_vector> >(
+				configuration->getTimeStep(), numberOfDoFs,
+				m_boltzmannModel->getQ() - 1);
 	}
 
 // initialize macroscopic variables
@@ -91,7 +97,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 // OUTPUT
 	double maxU = getMaxVelocityNorm();
 	double charU = problemDescription->getCharacteristicVelocity();
-	if (charU == 0.0){
+	if (charU == 0.0) {
 		charU = maxU;
 	}
 	*(Logging::BASIC) << "------ NATriuM solver ------" << endl;
@@ -122,6 +128,29 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 
+	// initialize boundary dof indicator
+	std::set<dealii::types::boundary_id> boundaryIndicators;
+	typename BoundaryCollection<dim>::ConstIterator it =
+			m_problemDescription->getBoundaries()->getBoundaries().begin();
+	for (; it != m_problemDescription->getBoundaries()->getBoundaries().end();
+			it++) {
+		if (not it->second->isPeriodic()) {
+			boundaryIndicators.insert(it->first);
+		}
+	}
+	m_isBoundary.resize(getNumberOfDoFs());
+	dealii::DoFTools::extract_dofs_with_support_on_boundary(
+			*(m_advectionOperator->getDoFHandler()), dealii::ComponentMask(),
+			m_isBoundary, boundaryIndicators);
+	size_t nofBoundaryNodes = 0;
+	for (size_t i = 0; i < m_isBoundary.size(); i++) {
+		if (m_isBoundary.at(i)) {
+			nofBoundaryNodes += 1;
+		}
+	}
+	*(Logging::BASIC) << "Number of non-periodic boundary dofs: 9*" << nofBoundaryNodes
+			<< endl;
+
 }
 /* Constructor */
 template CFDSolver<2>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
@@ -137,15 +166,16 @@ void CFDSolver<dim>::stream() {
 // no streaming in direction 0; begin with 1
 	m_timeIntegrator->step(f, systemMatrix);
 	//f.print(cout);
-	f.add(m_timeIntegrator->getTimeStepSize(), m_advectionOperator->getSystemVector());
+	f.add(m_timeIntegrator->getTimeStepSize(),
+			m_advectionOperator->getSystemVector());
 	//f.add(1.0, m_advectionOperator->getSystemVector());
 	//m_advectionOperator->getSystemVector().print(cout);
 	//f.print(cout);
 	//assert (false);
 	/*
-	for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
-		m_timeIntegrator->step(m_f.at(i), systemMatrix.block(i-1,i-1));
-	}*/
+	 for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
+	 m_timeIntegrator->step(m_f.at(i), systemMatrix.block(i-1,i-1));
+	 }*/
 
 }
 template void CFDSolver<2>::stream();
@@ -153,6 +183,7 @@ template void CFDSolver<3>::stream();
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
+	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
 	m_collisionModel->collideAll(m_f, m_density, m_velocity);
 }
 template void CFDSolver<2>::collide();
@@ -230,7 +261,8 @@ void CFDSolver<dim>::initializeDistributions() {
 	numeric_vector u(dim);
 
 	// Initialize f with the equilibrium distribution functions
-	m_f.reinit(m_boltzmannModel->getQ(), m_advectionOperator->getNumberOfDoFs());
+	m_f.reinit(m_boltzmannModel->getQ(),
+			m_advectionOperator->getNumberOfDoFs());
 	for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
 		for (size_t j = 0; j < dim; j++) {
 			u(j) = m_velocity.at(j)(i);
@@ -268,7 +300,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			stream();
 			// collide without recalculating velocities
 			m_collisionModel->collideAll(m_f, m_density, m_velocity,
-					inInitializationProcedure);
+					m_isBoundary, inInitializationProcedure);
 			oldDensities -= m_density;
 			residual = oldDensities.norm_sqr();
 			loopCount++;
@@ -319,7 +351,8 @@ template<size_t dim>
 void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 		const string& directory) {
 	// create vectors
-	m_f.reinit(m_boltzmannModel->getQ(), m_advectionOperator->getNumberOfDoFs());
+	m_f.reinit(m_boltzmannModel->getQ(),
+			m_advectionOperator->getNumberOfDoFs());
 	// read the distribution functions from file
 	try {
 		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {

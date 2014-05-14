@@ -113,6 +113,7 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
 	cellFaceMatrix = 0;
 	dealii::Vector<double> cellFaceVector(feFaceValues.dofs_per_cell);
+	cellFaceVector = 0;
 
 	// calculate prefactor
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
@@ -160,6 +161,7 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 	cell->get_dof_indices(localDoFIndices);
 
 	/// Distribute to global matrix
+	/// TODO Loop only over diagonal
 	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
 		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
 			systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],

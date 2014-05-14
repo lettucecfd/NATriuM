@@ -59,7 +59,7 @@ int main() {
 	configuration->setRestart(false);
 	configuration->setOutputFlags(
 			configuration->getOutputFlags() | out_Checkpoints);
-	configuration->setOutputCheckpointEvery(1000);
+	configuration->setOutputCheckpointEvery(10000);
 	configuration->setOutputVectorFieldsEvery(100000000);
 	configuration->setNumberOfTimeSteps(100000000);
 	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
@@ -134,7 +134,7 @@ int main() {
 		solver.stream();
 		solver.collide();
 
-		if (i % 1 == 0) {
+		if (i % 100 == 0) {
 			if (t > 0.001) {
 				// put out max velocity norm for numerical and analytic solution
 				getAnalyticSolution(configuration->getTimeStep() * (i + 1),

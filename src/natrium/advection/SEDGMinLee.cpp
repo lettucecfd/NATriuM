@@ -466,6 +466,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 	neighborCell->get_dof_indices(neighborDoFIndices);
 
 /// Distribute to global matrix
+	/// TODO Loop only over diagonal
 	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
 		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
 			m_systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
