@@ -8,6 +8,8 @@
 #ifndef SOLVERCONFIGURATION_H_
 #define SOLVERCONFIGURATION_H_
 
+#include "deal.II/base/parameter_handler.h"
+
 #include "../problemdescription/ProblemDescription.h"
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../utilities/BasicNames.h"
@@ -86,7 +88,7 @@ public:
 /** @short Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE).
  *  @tparam dim The dimension of the flow (2 or 3).
  */
-class SolverConfiguration {
+class SolverConfiguration: public dealii::ParameterHandler {
 private:
 
 	/// Streaming data type (e.g. MinLee2011)
@@ -140,9 +142,77 @@ private:
 
 public:
 
-
 	/// constructor
 	SolverConfiguration() {
+		// Declare structure of the parameter file
+		enter_subsection("General");
+		{
+			declare_entry("Time step size", "0.2",
+					dealii::Patterns::Double(1e-10),
+					"Size of the (initial) time step.");
+			declare_entry("Switch off output", "false",
+					dealii::Patterns::Bool(), "Switch output off, completely.");
+			declare_entry("Stencil", "D2Q9",
+					dealii::Patterns::Selection("D2Q9"),
+					"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
+			declare_entry("Stencil scaling", "1.0",
+					dealii::Patterns::Double(1e-10),
+					"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
+		}
+		leave_subsection();
+		enter_subsection("Advection");
+		{
+			enter_subsection("SEDG");
+			{
+				declare_entry("Output directory", "/tmp",
+						dealii::Patterns::DirectoryName(),
+						"The name of the directory to which the output is written.");
+				declare_entry("Output checkpoint interval", "1000",
+						dealii::Patterns::Integer(1),
+						"Write out checkpoint files every ... step.");
+				declare_entry("Output solution interval", "1000",
+						dealii::Patterns::Integer(1),
+						"Write out solution every ... step.");
+				declare_entry("Command line verbosity", "Basic",
+						dealii::Patterns::Selection("Error|Basic|Full"),
+						"The amount of command line output.");
+
+			}
+			leave_subsection();
+			enter_subsection("5-stage Runge-Kutta");
+			{
+
+			}
+			leave_subsection();
+		}
+		leave_subsection();
+		enter_subsection("Collision");
+		{
+
+		}
+		leave_subsection();
+
+		enter_subsection("Intitialization");
+		{
+			enter_subsection("Iterative Initialization stop condition");
+			{
+
+			}
+			leave_subsection();
+		}
+		leave_subsection();
+
+		enter_subsection("Stop condition");
+		{
+
+		}
+		leave_subsection();
+
+		enter_subsection("Output");
+		{
+
+		}
+		leave_subsection();
 		// TODO read configuration from file
 		// TODO custom configurations
 		m_advectionOperatorType = Advection_SEDGMinLee;
@@ -173,7 +243,7 @@ public:
 	/**
 	 * @short Check if the configuration is consistent
 	 */
-	void checkConfiguration(){
+	void checkConfiguration() {
 		/// Test writing permission on output directory
 		/// If no restart: Check if checkpoint exists. If yes -> ask for overwrite
 
@@ -299,26 +369,26 @@ public:
 		}
 		// redefine Logging stream
 		/*std::stringstream logFile;
-		if ((out_LogFile & m_outputFlags) != 0){
-		logFile << getOutputDirectory() << "/natrium.log";
-		} else {
-			logFile << "";
-		}
-		if ((out_CommandLineFull & m_outputFlags) != 0) {
-			Logging::FULL = Logging::makeTeeStream(true, false, false, logFile.str());
-		} else {
-			Logging::FULL = Logging::makeTeeStream(false, false, false, logFile.str());
-		}
-		if ((out_CommandLineBasic & m_outputFlags) != 0) {
-			Logging::BASIC = Logging::makeTeeStream(true, false, false, logFile.str());
-		} else {
-			Logging::BASIC = Logging::makeTeeStream(false, false, false, logFile.str());
-		}
-		if ((out_CommandLineError & m_outputFlags) != 0) {
-			Logging::ERROR = Logging::makeTeeStream(true, false, false, logFile.str());
-		} else {
-			Logging::ERROR = Logging::makeTeeStream(false, false, false, logFile.str());
-		}*/
+		 if ((out_LogFile & m_outputFlags) != 0){
+		 logFile << getOutputDirectory() << "/natrium.log";
+		 } else {
+		 logFile << "";
+		 }
+		 if ((out_CommandLineFull & m_outputFlags) != 0) {
+		 Logging::FULL = Logging::makeTeeStream(true, false, false, logFile.str());
+		 } else {
+		 Logging::FULL = Logging::makeTeeStream(false, false, false, logFile.str());
+		 }
+		 if ((out_CommandLineBasic & m_outputFlags) != 0) {
+		 Logging::BASIC = Logging::makeTeeStream(true, false, false, logFile.str());
+		 } else {
+		 Logging::BASIC = Logging::makeTeeStream(false, false, false, logFile.str());
+		 }
+		 if ((out_CommandLineError & m_outputFlags) != 0) {
+		 Logging::ERROR = Logging::makeTeeStream(true, false, false, logFile.str());
+		 } else {
+		 Logging::ERROR = Logging::makeTeeStream(false, false, false, logFile.str());
+		 }*/
 
 	}
 
