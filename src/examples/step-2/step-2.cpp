@@ -42,21 +42,21 @@ int main() {
 	cout << "Starting NATriuM step-2..." << endl;
 
 	// set parameters, set up configuration object
-	size_t refinementLevel = 4;
-	size_t orderOfFiniteElement = 5;
+	size_t refinementLevel = 3;
+	size_t orderOfFiniteElement = 3;
 	const double dqScaling = 1; //2 * sqrt(3);
 
 	// chose U (the velocity of the top wall) so that Ma = 0.05
 	const double U = 5. / 100. * sqrt(3) * dqScaling;
 	// chose viscosity so that Re = 2000
-	const double viscosity = U / 2000.;
+	const double viscosity = U / 20.;
 
 	cout << "Mach number: " << U / (sqrt(3) * dqScaling) << endl;
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("../results/step-2");
-	configuration->setRestart(false);
+	configuration->setRestart(true);
 	configuration->setOutputFlags(
 			configuration->getOutputFlags() | out_Checkpoints);
 	configuration->setOutputCheckpointEvery(10000);
@@ -64,7 +64,7 @@ int main() {
 	configuration->setNumberOfTimeSteps(100000000);
 	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setDQScaling(dqScaling);
-	configuration->setTimeStep(0.00025);
+	configuration->setTimeStep(0.00001);
 	//configuration->setDistributionInitType(Iterative);
 
 	shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(

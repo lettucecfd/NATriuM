@@ -312,7 +312,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 		if (cell->face(j)->at_boundary()) {
 			size_t boundaryIndicator = cell->face(j)->boundary_indicator();
 			if (m_boundaries->isPeriodic(boundaryIndicator)) {
-// Apply periodic boundaries
+				// Apply periodic boundaries
 				const shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
 						m_boundaries->getPeriodicBoundary(boundaryIndicator);
 				assert(periodicBoundary->isFaceInBoundary(cell, j));
