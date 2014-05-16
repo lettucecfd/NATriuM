@@ -18,12 +18,14 @@ This file describes the steps conducted for the creation of the NATriuM project 
                export PETSC_ARCH=ubuntu_lenovo (can be an arbitrary name for your installation)
         0.3.3) ./config/configure.py --with-shared-libraries=1 --with-x=0 --with-mpi=1 --download-hypre=1
         0.3.4) make
-        0.3.5) make test   
-    0.4) deal.ii
-        0.4.1) download and untar tarball from deal.ii homepage
-        0.4.2) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=/path/install/dir -DDEAL_II_WITH_PETSC=ON -DDEAL_II_WITH_MPI=ON ../deal.II
-        0.4.3) make install
-        0.4.4) set environment variable DEAL_II_DIR to deal path
+        0.3.5) make test 
+    0.4) Qt (full development kit)
+    	0.4.1) sudo apt-get install qt-sdk
+    0.5) deal.ii
+        0.5.1) download and untar tarball from deal.ii homepage
+        0.5.4) set environment variable DEAL_II_DIR to the path you want to install the library to
+        0.5.2) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=ON ../deal.II
+        0.5.3) make install
         
  1) Install Eclipse
     1.1) get tar at eclipse web page -> Downloads -> Eclipse bundle for c++ developers (or similar)
@@ -51,7 +53,9 @@ COULD BE FURTHER SIMPLIFIED
  6) Build project 
     (At least when having verbosity option on): CMake parses the include directories (das ist genial ;) )
     This will keep the error parser from underlining everything ;)
+ 7) Repeat steps 1-6) for "bin_relase" instead of "bin" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
  All source files are accessible and changable via [Source directory] in the project tree
+
 
          
 - DEPRECATED -

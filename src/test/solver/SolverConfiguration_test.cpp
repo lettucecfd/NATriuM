@@ -7,6 +7,8 @@
 
 #include "solver/SolverConfiguration.h"
 
+#include <fstream>
+
 #include "boost/test/unit_test.hpp"
 
 #include "utilities/BasicNames.h"
@@ -17,7 +19,16 @@ BOOST_AUTO_TEST_SUITE(CFDSolverConfiguration_test)
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_Construction_test){
 	cout << "CFDSolverConfiguration_Construction_test..." << endl;
-	SolverConfiguration solver;
+	SolverConfiguration config;
+	cout << "done" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CreateXMLFile_test){
+	cout << "CFDSolverConfiguration_CreateXMLFile_test..." << endl;
+	SolverConfiguration config;
+
+	std::ofstream paraOutFile("../results/NATriuM_parameters.xml");
+	config.print_parameters(paraOutFile, dealii::ParameterHandler::XML);
 	cout << "done" << endl;
 }
 

@@ -52,7 +52,7 @@ int main() {
 	const double Re = 20;
 	const double viscosity = U / Re;
 	const double startTime = 10;
-	const double timeStepSize = 1e-4;
+	const double timeStepSize = 5e-3;
 
 	cout << "Mach number: " << U / (sqrt(3) * dqScaling) << endl;
 	// configure solver
