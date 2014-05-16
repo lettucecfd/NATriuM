@@ -26,7 +26,7 @@ class CouetteFlow2D: public ProblemDescription<2> {
 public:
 
 	/// constructor
-	CouetteFlow2D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0);
+	CouetteFlow2D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0);
 
 	/// destructor
 	virtual ~CouetteFlow2D();
@@ -56,7 +56,7 @@ public:
 				initialVelocities.at(0).size()
 						== initialVelocities.at(1).size());
 		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-			initialVelocities.at(0)(i) = 0.0;
+			initialVelocities.at(0)(i) = analyticVelocity1(supportPoints.at(i), m_startTime);
 			initialVelocities.at(1)(i) = 0.0;
 		}
 	}
@@ -68,6 +68,8 @@ public:
 private:
 
 	const double m_topPlateVelocity;
+
+	const double m_startTime;
 
 	/**
 	 * @short create triangulation for couette flow

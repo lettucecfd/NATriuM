@@ -162,20 +162,11 @@ public:
 		leave_subsection();
 		enter_subsection("Advection");
 		{
+			declare_entry("Advection scheme", "SEDG",
+								dealii::Patterns::Selection("SEDG"),
+								"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming ");
 			enter_subsection("SEDG");
 			{
-				declare_entry("Output directory", "/tmp",
-						dealii::Patterns::DirectoryName(),
-						"The name of the directory to which the output is written.");
-				declare_entry("Output checkpoint interval", "1000",
-						dealii::Patterns::Integer(1),
-						"Write out checkpoint files every ... step.");
-				declare_entry("Output solution interval", "1000",
-						dealii::Patterns::Integer(1),
-						"Write out solution every ... step.");
-				declare_entry("Command line verbosity", "Basic",
-						dealii::Patterns::Selection("Error|Basic|Full"),
-						"The amount of command line output.");
 
 			}
 			leave_subsection();
@@ -210,7 +201,21 @@ public:
 
 		enter_subsection("Output");
 		{
-
+			declare_entry("Output directory", "/tmp/NATriuM",
+					dealii::Patterns::DirectoryName(),
+					"The name of the directory to which the output is written.");
+			declare_entry("Output checkpoint interval", "1000",
+					dealii::Patterns::Integer(1),
+					"Write out checkpoint files every ... step.");
+			declare_entry("Output solution interval", "1000",
+					dealii::Patterns::Integer(1),
+					"Write out solution every ... step.");
+			declare_entry("Command line verbosity", "Basic",
+					dealii::Patterns::Selection("Error|Basic|Full"),
+					"The amount of command line output.");
+			declare_entry("Write a log file?", "true",
+					dealii::Patterns::Bool(),
+					"Specifies if log is written to a file.");
 		}
 		leave_subsection();
 		// TODO read configuration from file

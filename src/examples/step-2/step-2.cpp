@@ -44,19 +44,22 @@ int main() {
 	// set parameters, set up configuration object
 	size_t refinementLevel = 3;
 	size_t orderOfFiniteElement = 3;
-	const double dqScaling = 1; //2 * sqrt(3);
+	const double dqScaling = 0.1;
 
 	// chose U (the velocity of the top wall) so that Ma = 0.05
 	const double U = 5. / 100. * sqrt(3) * dqScaling;
 	// chose viscosity so that Re = 2000
-	const double viscosity = U / 20.;
+	const double Re = 20;
+	const double viscosity = U / Re;
+	const double startTime = 10;
+	const double timeStepSize = 1e-4;
 
 	cout << "Mach number: " << U / (sqrt(3) * dqScaling) << endl;
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("../results/step-2");
-	configuration->setRestart(true);
+	configuration->setRestart(false);
 	configuration->setOutputFlags(
 			configuration->getOutputFlags() | out_Checkpoints);
 	configuration->setOutputCheckpointEvery(10000);
@@ -64,11 +67,11 @@ int main() {
 	configuration->setNumberOfTimeSteps(100000000);
 	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setDQScaling(dqScaling);
-	configuration->setTimeStep(0.00001);
+	configuration->setTimeStep(timeStepSize);
 	//configuration->setDistributionInitType(Iterative);
 
 	shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(
-			viscosity, U, refinementLevel);
+			viscosity, U, refinementLevel, 1.0, startTime);
 	shared_ptr<ProblemDescription<2> > couetteProblem = couetteFlow;
 	CFDSolver<2> solver(configuration, couetteProblem);
 	cout << "Number of DoFs: " << 9*solver.getNumberOfDoFs() << endl;
@@ -136,11 +139,6 @@ int main() {
 
 		if (i % 100 == 0) {
 			if (t > 0.001) {
-				// put out max velocity norm for numerical and analytic solution
-				getAnalyticSolution(configuration->getTimeStep() * (i + 1),
-						analyticSolution1, analyticSolution2, supportPoints,
-						*couetteFlow);
-
 				/// vtu ///
 				std::stringstream str;
 				str << configuration->getOutputDirectory().c_str() << "/t_" << i
@@ -153,7 +151,7 @@ int main() {
 				data_out.add_data_vector(solver.getVelocity().at(0), "vx");
 				data_out.add_data_vector(solver.getVelocity().at(1), "vy");
 				// calculate analytic solution
-				getAnalyticSolution(configuration->getTimeStep() * i,
+				getAnalyticSolution(startTime + configuration->getTimeStep() * i,
 						analyticSolution1, analyticSolution2, supportPoints,
 						*couetteFlow);
 				data_out.add_data_vector(analyticSolution1, "vx_analytic");

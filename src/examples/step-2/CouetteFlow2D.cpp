@@ -18,9 +18,9 @@
 namespace natrium {
 
 CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
-		size_t refinementLevel, double L) :
+		size_t refinementLevel, double L, double startTime) :
 		ProblemDescription<2>(makeGrid(L, refinementLevel), viscosity, 1), m_topPlateVelocity(
-				topPlateVelocity) {
+				topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
 	/// apply boundary values
