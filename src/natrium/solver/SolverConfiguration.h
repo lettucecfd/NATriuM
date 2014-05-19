@@ -150,7 +150,7 @@ public:
 			declare_entry("Time step size", "0.2",
 					dealii::Patterns::Double(1e-10),
 					"Size of the (initial) time step.");
-			declare_entry("Switch off output", "false",
+			declare_entry("Switch output off?", "false",
 					dealii::Patterns::Bool(), "Switch output off, completely.");
 			declare_entry("Stencil", "D2Q9",
 					dealii::Patterns::Selection("D2Q9"),

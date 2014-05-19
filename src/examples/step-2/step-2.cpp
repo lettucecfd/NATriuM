@@ -43,16 +43,16 @@ int main() {
 
 	// set parameters, set up configuration object
 	size_t refinementLevel = 3;
-	size_t orderOfFiniteElement = 3;
-	const double dqScaling = 0.1;
+	size_t orderOfFiniteElement = 14;
+	const double dqScaling = 1;
 
 	// chose U (the velocity of the top wall) so that Ma = 0.05
 	const double U = 5. / 100. * sqrt(3) * dqScaling;
 	// chose viscosity so that Re = 2000
-	const double Re = 20;
+	const double Re = 2000;
 	const double viscosity = U / Re;
-	const double startTime = 10;
-	const double timeStepSize = 5e-3;
+	const double startTime = 1;
+	const double timeStepSize = 2.5e-4;
 
 	cout << "Mach number: " << U / (sqrt(3) * dqScaling) << endl;
 	// configure solver
@@ -127,7 +127,7 @@ int main() {
 	distributed_vector analyticSolution1(solver.getNumberOfDoFs());
 	distributed_vector analyticSolution2(solver.getNumberOfDoFs());
 	double t = 0;
-	for (size_t i = solver.getIterationStart(); t < 40; i++) {
+	for (size_t i = solver.getIterationStart(); t < 400000; i++) {
 		t = i * configuration->getTimeStep();
 		if (i % 1000 == 0) {
 			cout << "Iteration " << i << ",  t = " << t << endl;

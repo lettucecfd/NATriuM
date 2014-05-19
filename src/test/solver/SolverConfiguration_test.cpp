@@ -32,6 +32,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CreateXMLFile_test){
 	cout << "done" << endl;
 }
 
+
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_OutputFlags_test){
 	cout << "CFDSolverConfiguration_OutputFlags_test..." << endl;
 	SolverConfiguration cfg;
