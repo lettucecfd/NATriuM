@@ -8,6 +8,9 @@
 #ifndef SOLVERCONFIGURATION_H_
 #define SOLVERCONFIGURATION_H_
 
+#include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
+
 #include "deal.II/base/parameter_handler.h"
 
 #include "../problemdescription/ProblemDescription.h"
@@ -97,64 +100,6 @@ public:
  */
 class SolverConfiguration: public dealii::ParameterHandler {
 private:
-/*
-	//////////////////////////////
-	// MEMBER VARIABLES       ////
-	//////////////////////////////
-
-	// SECTION ADVECTION
-	/// Streaming data type (e.g. MinLee2011)
-	AdvectionSchemeName m_advectionScheme;
-	/// Time Integrator type (e.g. RK5LowStorage)
-	TimeIntegratorName m_timeIntegrator;
-
-	// --- SUBSECTION SEDG
-	/// Numerical Flux
-	FluxTypeName m_SEDGFluxType;
-	/// Order of Finite Element
-	size_t m_SEDGOrderOfFiniteElement;
-
-	// SECTION COLLISION
-	bool m_collisionOnBoundaryNodes;
-	/// Collision type (e.g. BGKTransformed)
-	CollisionSchemeName m_collisionScheme;
-
-	// SECTION GENERAL
-	/// Stencil type (e.g. D2Q9)
-	StencilType m_stencilType;
-	/// scaling of the difference stencil for the discrete particle velocity
-	double m_stencilScaling;
-	/// Switch output off?
-	bool m_switchOutputOff;
-	/// Time step size
-	double m_timeStepSize;
-
-	// SECTION INITIALIZATION
-	InitializationSchemeName m_initializationScheme;
-	bool m_restartAtLastCheckpoint;
-
-	// --- SUBSECTION ITERATIVE INITIALIZATION STOP CONDITION
-	/// max initialization iterations
-	size_t m_iterativeInitializationNumberOfIterations;
-	/// stop condition for the density residual of the initialization procedure
-	double m_iterativeInitializationResidual;
-
-	// SECTION OUTPUT
-	/// degree of output on the command line
-	size_t m_commandLineVerbosity;
-	/// output frequency checkpoints
-	size_t m_outputCheckpointInterval;
-	/// Output directory
-	std::string m_outputDirectory;
-	/// Output frequency solution vector
-	size_t m_outputSolutionInterval;
-	/// Indicates whether to write a log file
-	bool m_writeALogFile;
-
-	// SECTION STOP CONDITION
-	/// Number of time steps
-	size_t m_numberOfTimeSteps;
-*/
 
 public:
 
@@ -188,10 +133,56 @@ public:
 	/**
 	 * @short Check if the configuration is consistent
 	 */
-	void checkConfiguration() {
-		/// Test writing permission on output directory
-		/// If no restart: Check if checkpoint exists. If yes -> ask for overwrite
+	void isConsistent() {
+	}
 
+	/**
+	 * @short prepare the Output directory
+	 * @throws SolverConfigurationError, if it was not possible
+	 */
+	void prepareOutputDirectory() {
+		/// If not exists, try to create output directory
+		//  ((Using boost::filesystem provides a cross-platform solution))
+		boost::filesystem::path outputDir(getOutputDirectory());
+		boost::filesystem::path parentDir(outputDir.branch_path());
+		if (not boost::filesystem::is_directory(parentDir)) {
+			std::stringstream msg;
+			msg << "You want to put your output directory into "
+					<< parentDir.string()
+					<< ", but this parent directory does not even exist.";
+			throw SolverConfiguration(msg.str());
+		}
+		// Make output directory
+		try {
+			//create_directory throws basic_filesystem_error<Path>, if fail other than that the directory already existed
+			//returns false, if directory already existed
+			bool newlyCreated = boost::filesystem::create_directory(outputDir);
+			if (newlyCreated) {
+				return;
+			}
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "You want to put your output directory into "
+					<< parentDir.string()
+					<< ", but you seem to have no writing permissions.";
+			throw SolverConfiguration(msg.str());
+		}
+		// Postcondition: directory exists
+		// Check writing permissions in directory, by trying to open all files
+		try {
+			boost::filesystem::directory_iterator it(outputDir), eod;
+			BOOST_FOREACH(boost::filesystem::path const &p, std::make_pair(it, eod)) {
+				if (not boost::filesystem::is_directory(p)) {
+					std::fstream filestream;
+					filestream.open(p.string().c_str(), std::fstream::app);
+				}
+			}
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "You don't have writing access to the files which are already existing in your Output directory "
+					<< outputDir.string();
+			throw SolverConfiguration(msg.str());
+		}
 	}
 
 	/**
@@ -378,6 +369,29 @@ public:
 		leave_subsection();
 	}
 
+	bool hasAnalyticSolution() {
+		enter_subsection("General");
+		bool hasAnalytic;
+		try {
+			hasAnalytic = get_bool("Has analytic solution?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Has analytic solution?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return hasAnalytic;
+	}
+
+	void setHasAnalyticSolution(bool hasAnalyticSolution) {
+		enter_subsection("General");
+		set("Has analytic solution?", hasAnalyticSolution);
+		leave_subsection();
+	}
+
 	InitializationSchemeName getInitializationScheme() {
 		enter_subsection("Initialization");
 		string initializationScheme = get("Initialization scheme");
@@ -558,6 +572,37 @@ public:
 		leave_subsection();
 	}
 
+	size_t getOutputTableInterval() {
+		enter_subsection("Output");
+		size_t tableInterval;
+		try {
+			tableInterval = get_integer("Output table interval");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Output table interval' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return tableInterval;
+	}
+
+	void setOutputTableInterval(long int outputTableInterval) {
+		enter_subsection("Output");
+		try {
+			set("Output table interval", outputTableInterval);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << outputTableInterval
+					<< " to Output table interval: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+	}
+
 	const std::string getOutputDirectory() {
 		enter_subsection("Output");
 		string outputDir;
@@ -612,8 +657,7 @@ public:
 			set("Output solution interval", outputSolutionInterval);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value "
-					<< outputSolutionInterval
+			msg << "Could not assign value " << outputSolutionInterval
 					<< " to Output solution interval: " << e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
@@ -668,11 +712,10 @@ public:
 		enter_subsection("SEDG");
 		switch (sedgFluxType) {
 		case LAX_FRIEDRICHS: {
-			set("Flux type",
-					"Lax-Friedrichs");
+			set("Flux type", "Lax-Friedrichs");
 			break;
 		}
-		case CENTRAL:{
+		case CENTRAL: {
 			set("Flux type", "Central");
 		}
 		default: {
@@ -715,8 +758,7 @@ public:
 			set("Order of finite element", sedgOrderOfFiniteElement);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value "
-					<< sedgOrderOfFiniteElement
+			msg << "Could not assign value " << sedgOrderOfFiniteElement
 					<< " to Order of finite element: " << e.what();
 			leave_subsection();
 			leave_subsection();
@@ -749,8 +791,7 @@ public:
 			set("Stencil scaling", stencilScaling);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value "
-					<< stencilScaling
+			msg << "Could not assign value " << stencilScaling
 					<< " to Stencil scaling: " << e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
@@ -777,8 +818,7 @@ public:
 		enter_subsection("General");
 		switch (stencil) {
 		case Stencil_D2Q9: {
-			set("Stencil",
-					"D2Q9");
+			set("Stencil", "D2Q9");
 			break;
 		}
 		default: {
@@ -811,8 +851,7 @@ public:
 		enter_subsection("Advection");
 		switch (timeIntegrator) {
 		case RUNGE_KUTTA_5STAGE: {
-			set("Time integrator",
-					"Runge-Kutta 5-stage");
+			set("Time integrator", "Runge-Kutta 5-stage");
 			break;
 		}
 		default: {
@@ -848,8 +887,7 @@ public:
 			set("Time step size", timeStepSize);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value "
-					<< timeStepSize
+			msg << "Could not assign value " << timeStepSize
 					<< " to Time step size: " << e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
@@ -902,6 +940,30 @@ public:
 		set("Switch output off?", switchOutputOff);
 		leave_subsection();
 	}
+
+	bool isUserInteraction() {
+		enter_subsection("Output");
+		bool userInteract;
+		try {
+			userInteract = get_bool("User interaction?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'User interaction?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return userInteract;
+	}
+
+	void setUserInteraction(bool userInteract) {
+		enter_subsection("Output");
+		set("User interaction?", userInteract);
+		leave_subsection();
+	}
+
 }
 ;
 

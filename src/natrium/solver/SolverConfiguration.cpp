@@ -13,15 +13,14 @@ SolverConfiguration::SolverConfiguration() {
 	// Declare structure of the parameter file
 	enter_subsection("General");
 	{
-		declare_entry("Time step size", "0.2",
-				dealii::Patterns::Double(1e-10),
+		declare_entry("Time step size", "0.2", dealii::Patterns::Double(1e-10),
 				"Size of the (initial) time step.");
-		declare_entry("Stencil", "D2Q9",
-				dealii::Patterns::Selection("D2Q9"),
+		declare_entry("Stencil", "D2Q9", dealii::Patterns::Selection("D2Q9"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
-		declare_entry("Stencil scaling", "1.0",
-				dealii::Patterns::Double(1e-10),
+		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
+		declare_entry("Has analytic solution?", "false", dealii::Patterns::Bool(),
+				"Indicates whether the given flow problem is inherited of BenchmarkProblem, which means that it has an analytic solution with which the numerical solution can be compared.");
 	}
 	leave_subsection();
 	enter_subsection("Advection");
@@ -69,8 +68,7 @@ SolverConfiguration::SolverConfiguration() {
 				"The initial particle distribution functions are normally assumed to be in local equilibrium. A more stable (and costly) scheme is to do some streaming steps on the density field but not on the velocity field, before starting the actual simulations (see e.g. the Book of Guo and Shu).");
 		enter_subsection("Iterative initialization stop condition");
 		{
-			declare_entry("Residual", "1e-6",
-					dealii::Patterns::Double(1e-25),
+			declare_entry("Residual", "1e-6", dealii::Patterns::Double(1e-25),
 					"The iterative initialization stops, when the density increment is smaller than the residual, i.e. the iteration has converged.");
 			declare_entry("Number of iterations", "2000",
 					dealii::Patterns::Integer(1),
@@ -92,14 +90,19 @@ SolverConfiguration::SolverConfiguration() {
 
 	enter_subsection("Output");
 	{
-		declare_entry("Switch output off?", "false",
-				dealii::Patterns::Bool(), "Switch output off, completely.");
+		declare_entry("Switch output off?", "false", dealii::Patterns::Bool(),
+				"Switch output off, completely.");
+		declare_entry("User interaction?", "true", dealii::Patterns::Bool(),
+				"Indicates, whether to ask the user in case that configurations are unclear or old files are possibly overwritten.");
 		declare_entry("Output directory", "/tmp/NATriuM",
 				dealii::Patterns::DirectoryName(),
 				"The name of the directory to which the output is written.");
 		declare_entry("Output checkpoint interval", "1000",
 				dealii::Patterns::Integer(1),
 				"Write out checkpoint files every ... step.");
+		declare_entry("Output table interval", "1000",
+				dealii::Patterns::Integer(1),
+				"Write out a line to the result table every ... step.");
 		declare_entry("Output solution interval", "1000",
 				dealii::Patterns::Integer(1),
 				"Write out solution every ... step.");
@@ -111,19 +114,18 @@ SolverConfiguration::SolverConfiguration() {
 	}
 	leave_subsection();
 
-
 }
 
-SolverConfiguration::SolverConfiguration(const std::string& XMLfilename){
+SolverConfiguration::SolverConfiguration(const std::string& XMLfilename) {
 	SolverConfiguration();
 	readFromXMLFile(XMLfilename);
 }
 
-
 /**
  * @short wrapper function for ParameterHandler::read_input; directing cerr into a C++-Exception
  **/
-void SolverConfiguration::readFromTextFile(const std::string & filename, const bool optional, const bool write_stripped_file) {
+void SolverConfiguration::readFromTextFile(const std::string & filename,
+		const bool optional, const bool write_stripped_file) {
 	// redirect cerr to a string buffer
 	std::stringstream buffer;
 	std::streambuf * old = cerr.rdbuf(buffer.rdbuf());
@@ -157,6 +159,5 @@ void SolverConfiguration::readFromXMLFile(const std::string & filename) {
 		throw ConfigurationException(errorMessage);
 	}
 } /* readFromXMLFile */
-
 
 } /* namespace natrium */
