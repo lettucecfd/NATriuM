@@ -89,10 +89,15 @@ public:
 
 /** @short Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE).
  *  @note The class is a subclass of dealii::ParameterHandler and functions as a wrapper.
+ *  @note To integrate new parameter into the framework, you have to declare the paramters in the constructor and write the getter and setter.
+ *        The setter and getter have to navigate through the sections of the Parameter handler and catch the exceptions thrown by the Parameter handler.
+ *        Finally you have to update the preprocessor/NATriuM_parameters.xml file, most easily run the UnitTests and copy results/NATriuM_parameters.xml there.
+ *        The latter file is automatically created according to the declared parameters.
+ *        Every selection-type parameter (e.g. Advection scheme) is implemented as an enum for better handling through the command line.
  */
 class SolverConfiguration: public dealii::ParameterHandler {
 private:
-
+/*
 	//////////////////////////////
 	// MEMBER VARIABLES       ////
 	//////////////////////////////
@@ -149,6 +154,7 @@ private:
 	// SECTION STOP CONDITION
 	/// Number of time steps
 	size_t m_numberOfTimeSteps;
+*/
 
 public:
 
@@ -260,7 +266,8 @@ public:
 		} else {
 			std::stringstream msg;
 			msg << "Unknown advection scheme '" << advectionScheme
-					<< " '. The implementation of AdvectionSchemeName might not be up-to-date.";
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of AdvectionSchemeName might not be up-to-date.";
 			throw ConfigurationException(msg.str());
 		}
 	}
@@ -275,7 +282,8 @@ public:
 		default: {
 			std::stringstream msg;
 			msg << "Unknown advection scheme; index. " << advectionScheme
-					<< " in enum AdvectionScheme. The constructor of SolverConfiguration might not be up-to-date.";
+					<< " in enum AdvectionSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}
 		}
@@ -300,157 +308,603 @@ public:
 	}
 
 	void setCollisionOnBoundaryNodes(bool collisionOnBoundaryNodes) {
-		m_collisionOnBoundaryNodes = collisionOnBoundaryNodes;
+		enter_subsection("Collision");
+		set("Collision on boundary nodes", collisionOnBoundaryNodes);
+		leave_subsection();
 	}
 
-	CollisionSchemeName getCollisionScheme() const {
-		return m_collisionScheme;
+	CollisionSchemeName getCollisionScheme() {
+		enter_subsection("Collision");
+		string collisionScheme = get("Collision scheme");
+		leave_subsection();
+		if ("BGK with transformed distribution functions" == collisionScheme) {
+			return BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown collision scheme '" << collisionScheme
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of CollisionSchemeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
 	}
 
 	void setCollisionScheme(CollisionSchemeName collisionScheme) {
-		m_collisionScheme = collisionScheme;
+		enter_subsection("Collision");
+		switch (collisionScheme) {
+		case BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS: {
+			set("Collision scheme",
+					"BGK with transformed distribution functions");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown collision scheme; index. " << collisionScheme
+					<< " in enum CollisionSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
 	}
 
-	size_t getCommandLineVerbosity() const {
-		return m_commandLineVerbosity;
+	size_t getCommandLineVerbosity() {
+		enter_subsection("Output");
+		size_t commandLineVerbosity;
+		try {
+			commandLineVerbosity = get_integer("Command line verbosity");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Command line verbosity' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return commandLineVerbosity;
 	}
 
-	void setCommandLineVerbosity(size_t commandLineVerbosity) {
-		m_commandLineVerbosity = commandLineVerbosity;
+	void setCommandLineVerbosity(long int commandLineVerbosity) {
+		enter_subsection("Output");
+		try {
+			set("Command line verbosity", commandLineVerbosity);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << commandLineVerbosity
+					<< " to command line verbosity: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 	}
 
-	InitializationSchemeName getInitializationScheme() const {
-		return m_initializationScheme;
+	InitializationSchemeName getInitializationScheme() {
+		enter_subsection("Initialization");
+		string initializationScheme = get("Initialization scheme");
+		leave_subsection();
+		if ("Iterative" == initializationScheme) {
+			return ITERATIVE;
+		} else if ("Equilibrium" == initializationScheme) {
+			return EQUILIBRIUM;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown initialization scheme '" << initializationScheme
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of InitilizationSchemeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
 	}
 
 	void setInitializationScheme(
 			InitializationSchemeName initializationScheme) {
-		m_initializationScheme = initializationScheme;
+		enter_subsection("Initialization");
+		switch (initializationScheme) {
+		case ITERATIVE: {
+			set("Initialization scheme", "Iterative");
+			break;
+		}
+		case EQUILIBRIUM: {
+			set("Initialization scheme", "Equilibrium");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown initialization scheme scheme; index. "
+					<< initializationScheme
+					<< " in enum InitializationSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
 	}
 
-	size_t getIterativeInitializationNumberOfIterations() const {
-		return m_iterativeInitializationNumberOfIterations;
+	size_t getIterativeInitializationNumberOfIterations() {
+		enter_subsection("Initialization");
+		enter_subsection("Iterative initialization stop condition");
+		size_t nofIterations;
+		try {
+			nofIterations = get_integer("Number of iterations");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Number of iterations' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return nofIterations;
 	}
 
 	void setIterativeInitializationNumberOfIterations(
-			size_t iterativeInitializationNumberOfIterations) {
-		m_iterativeInitializationNumberOfIterations =
-				iterativeInitializationNumberOfIterations;
+			long int iterativeInitializationNumberOfIterations) {
+		enter_subsection("Initialization");
+		enter_subsection("Iterative initalization stop condition");
+		try {
+			set("Number of iterations",
+					iterativeInitializationNumberOfIterations);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value "
+					<< iterativeInitializationNumberOfIterations
+					<< " to Number of iterations: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
 	}
 
-	double getIterativeInitializationResidual() const {
-		return m_iterativeInitializationResidual;
+	double getIterativeInitializationResidual() {
+		enter_subsection("Initialization");
+		enter_subsection("Iterative initialization stop condition");
+		double resid;
+		try {
+			resid = get_double("Residual");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not read parameter 'Residual' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return resid;
 	}
 
 	void setIterativeInitializationResidual(
 			double iterativeInitializationResidual) {
-		m_iterativeInitializationResidual = iterativeInitializationResidual;
+		enter_subsection("Initialization");
+		enter_subsection("Iterative initalization stop condition");
+		try {
+			set("Residual", iterativeInitializationResidual);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << iterativeInitializationResidual
+					<< " to Iterative initialization residual: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
 	}
 
-	size_t getNumberOfTimeSteps() const {
-		return m_numberOfTimeSteps;
+	size_t getNumberOfTimeSteps() {
+		enter_subsection("Stop condition");
+		size_t nofSteps;
+		try {
+			nofSteps = get_integer("Number of time steps");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Number of time steps' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return nofSteps;
 	}
 
-	void setNumberOfTimeSteps(size_t numberOfTimeSteps) {
-		m_numberOfTimeSteps = numberOfTimeSteps;
+	void setNumberOfTimeSteps(long int numberOfTimeSteps) {
+		enter_subsection("Stop condition");
+		try {
+			set("Number of time steps", numberOfTimeSteps);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << numberOfTimeSteps
+					<< " to Number of time steps: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 	}
 
-	size_t getOutputCheckpointInterval() const {
-		return m_outputCheckpointInterval;
+	size_t getOutputCheckpointInterval() {
+		enter_subsection("Output");
+		size_t checkpointInterval;
+		try {
+			checkpointInterval = get_integer("Output checkpoint interval");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Output checkpoint interval' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return checkpointInterval;
 	}
 
-	void setOutputCheckpointInterval(size_t outputCheckpointInterval) {
-		m_outputCheckpointInterval = outputCheckpointInterval;
+	void setOutputCheckpointInterval(long int outputCheckpointInterval) {
+		enter_subsection("Output");
+		try {
+			set("Output checkpoint interval", outputCheckpointInterval);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << outputCheckpointInterval
+					<< " to Output checkpoint interval: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 	}
 
-	const std::string& getOutputDirectory() const {
-		return m_outputDirectory;
+	const std::string getOutputDirectory() {
+		enter_subsection("Output");
+		string outputDir;
+		try {
+			outputDir = get("Output directory");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Output directory' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return outputDir;
 	}
 
 	void setOutputDirectory(const std::string& outputDirectory) {
-		m_outputDirectory = outputDirectory;
+		enter_subsection("Output");
+		try {
+			set("Output directory", outputDirectory);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << outputDirectory
+					<< " to Output directory: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 	}
 
-	size_t getOutputSolutionInterval() const {
-		return m_outputSolutionInterval;
+	size_t getOutputSolutionInterval() {
+		enter_subsection("Output");
+		size_t solutionInterval;
+		try {
+			solutionInterval = get_integer("Output solution interval");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Output solution interval' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return solutionInterval;
 	}
 
-	void setOutputSolutionInterval(size_t outputSolutionInterval) {
-		m_outputSolutionInterval = outputSolutionInterval;
+	void setOutputSolutionInterval(long int outputSolutionInterval) {
+		enter_subsection("Output");
+		try {
+			set("Output solution interval", outputSolutionInterval);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value "
+					<< outputSolutionInterval
+					<< " to Output solution interval: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 	}
 
-	bool isRestartAtLastCheckpoint() const {
-		return m_restartAtLastCheckpoint;
+	bool isRestartAtLastCheckpoint() {
+		enter_subsection("Initialization");
+		bool restartAtLastCheckpoint;
+		try {
+			restartAtLastCheckpoint = get_bool("Restart at last checkpoint?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Restart at last checkpoint?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return restartAtLastCheckpoint;
 	}
 
 	void setRestartAtLastCheckpoint(bool restartAtLastCheckpoint) {
-		m_restartAtLastCheckpoint = restartAtLastCheckpoint;
+		enter_subsection("Initialization");
+		set("Restart at last checkpoint?", restartAtLastCheckpoint);
+		leave_subsection();
 	}
 
-	FluxTypeName getSedgFluxType() const {
-		return m_SEDGFluxType;
+	FluxTypeName getSedgFluxType() {
+		enter_subsection("Advection");
+		enter_subsection("SEDG");
+		string fluxType = get("Flux type");
+		leave_subsection();
+		leave_subsection();
+		if ("Lax-Friedrichs" == fluxType) {
+			return LAX_FRIEDRICHS;
+		} else if ("Central" == fluxType) {
+			return CENTRAL;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown Flux type '" << fluxType
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of FluxTypeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
 	}
 
 	void setSedgFluxType(FluxTypeName sedgFluxType) {
-		m_SEDGFluxType = sedgFluxType;
+		enter_subsection("Advection");
+		enter_subsection("SEDG");
+		switch (sedgFluxType) {
+		case LAX_FRIEDRICHS: {
+			set("Flux type",
+					"Lax-Friedrichs");
+			break;
+		}
+		case CENTRAL:{
+			set("Flux type", "Central");
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown Flux type; index. " << sedgFluxType
+					<< " in enum FluxTypeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+		leave_subsection();
 	}
 
-	size_t getSedgOrderOfFiniteElement() const {
-		return m_SEDGOrderOfFiniteElement;
+	size_t getSedgOrderOfFiniteElement() {
+		enter_subsection("Advection");
+		enter_subsection("SEDG");
+		size_t orderOfFE;
+		try {
+			orderOfFE = get_integer("Order of finite element");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Order of finite element' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return orderOfFE;
 	}
 
-	void setSedgOrderOfFiniteElement(size_t sedgOrderOfFiniteElement) {
-		m_SEDGOrderOfFiniteElement = sedgOrderOfFiniteElement;
+	void setSedgOrderOfFiniteElement(long int sedgOrderOfFiniteElement) {
+		enter_subsection("Advection");
+		enter_subsection("SEDG");
+		try {
+			set("Order of finite element", sedgOrderOfFiniteElement);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value "
+					<< sedgOrderOfFiniteElement
+					<< " to Order of finite element: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
 	}
 
-	double getStencilScaling() const {
-		return m_stencilScaling;
+	double getStencilScaling() {
+		enter_subsection("General");
+		double stencilScaling;
+		try {
+			stencilScaling = get_double("Stencil scaling");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Stencil scaling' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return stencilScaling;
 	}
 
 	void setStencilScaling(double stencilScaling) {
-		m_stencilScaling = stencilScaling;
+		enter_subsection("General");
+		try {
+			set("Stencil scaling", stencilScaling);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value "
+					<< stencilScaling
+					<< " to Stencil scaling: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 	}
 
-	StencilType getStencilType() const {
-		return m_stencilType;
+	StencilType getStencil() {
+		enter_subsection("General");
+		string stencil = get("Stencil");
+		leave_subsection();
+		if ("D2Q9" == stencil) {
+			return Stencil_D2Q9;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown Stencil with index " << stencil
+					<< "in enum StencilType. Check your configuration file. If everything is alright, "
+					<< "the implementation of FluxTypeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
 	}
 
-	void setStencilType(StencilType stencilType) {
-		m_stencilType = stencilType;
+	void setStencil(StencilType stencil) {
+		enter_subsection("General");
+		switch (stencil) {
+		case Stencil_D2Q9: {
+			set("Stencil",
+					"D2Q9");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown Stencil; index. " << stencil
+					<< " in enum StencilType. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
 	}
 
-	TimeIntegratorName getTimeIntegrator() const {
-		return m_timeIntegrator;
+	TimeIntegratorName getTimeIntegrator() {
+		enter_subsection("Advection");
+		string integrator = get("Time integrator");
+		leave_subsection();
+		if ("Runge-Kutta 5-stage" == integrator) {
+			return RUNGE_KUTTA_5STAGE;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown Time integrator with index " << integrator
+					<< "in enum TimeIntegratorName. Check your configuration file. If everything is alright, "
+					<< "the implementation of TimeIntegratorName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
 	}
 
 	void setTimeIntegrator(TimeIntegratorName timeIntegrator) {
-		m_timeIntegrator = timeIntegrator;
+		enter_subsection("Advection");
+		switch (timeIntegrator) {
+		case RUNGE_KUTTA_5STAGE: {
+			set("Time integrator",
+					"Runge-Kutta 5-stage");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown Time integrator; index. " << timeIntegrator
+					<< " in enum TimeIntegratorName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
 	}
 
-	double getTimeStepSize() const {
-		return m_timeStepSize;
+	double getTimeStepSize() {
+		enter_subsection("General");
+		double stepSize;
+		try {
+			stepSize = get_double("Time step size");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not read parameter 'Time step size' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return stepSize;
 	}
 
 	void setTimeStepSize(double timeStepSize) {
-		m_timeStepSize = timeStepSize;
+		enter_subsection("General");
+		try {
+			set("Time step size", timeStepSize);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value "
+					<< timeStepSize
+					<< " to Time step size: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 	}
 
-	bool isWriteALogFile() const {
-		return m_writeALogFile;
+	bool isWriteALogFile() {
+		enter_subsection("Output");
+		bool writeLogFile;
+		try {
+			writeLogFile = get_bool("Write a log file?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Write a log file?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return writeLogFile;
 	}
 
 	void setWriteALogFile(bool writeALogFile) {
-		m_writeALogFile = writeALogFile;
+		enter_subsection("Output");
+		set("Write a log file?", writeALogFile);
+		leave_subsection();
 	}
 
-	bool isSwitchOutputOff() const {
-		return m_switchOutputOff;
+	bool isSwitchOutputOff() {
+		enter_subsection("Output");
+		bool outputOff;
+		try {
+			outputOff = get_bool("Switch output off?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Switch output off?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return outputOff;
 	}
 
 	void setSwitchOutputOff(bool switchOutputOff) {
-		this->m_switchOutputOff = switchOutputOff;
+		enter_subsection("Output");
+		set("Switch output off?", switchOutputOff);
+		leave_subsection();
 	}
-};
+}
+;
 
 } /* namespace natrium */
 #endif /* SOLVERCONFIGURATION_H_ */
+

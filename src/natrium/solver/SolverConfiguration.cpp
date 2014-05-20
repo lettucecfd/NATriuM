@@ -16,8 +16,6 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Time step size", "0.2",
 				dealii::Patterns::Double(1e-10),
 				"Size of the (initial) time step.");
-		declare_entry("Switch output off?", "false",
-				dealii::Patterns::Bool(), "Switch output off, completely.");
 		declare_entry("Stencil", "D2Q9",
 				dealii::Patterns::Selection("D2Q9"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
@@ -31,8 +29,8 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Advection scheme", "SEDG",
 				dealii::Patterns::Selection("SEDG"),
 				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme.");
-		declare_entry("Time integrator", "5-stage Runge Kutta",
-				dealii::Patterns::Selection("5-stage Runge Kutta"),
+		declare_entry("Time integrator", "Runge-Kutta 5-stage",
+				dealii::Patterns::Selection("Runge-Kutta 5-stage"),
 				"The algorithm which is used for the time integration of the discretizted advection (=streaming) equation. A time integrator is required, when the advection scheme is based upon some Finite Element/Difference/Volume or discontinuous Galerkin scheme.");
 
 		enter_subsection("SEDG");
@@ -63,13 +61,13 @@ SolverConfiguration::SolverConfiguration() {
 
 	enter_subsection("Initialization");
 	{
-		declare_entry("Restart at last checkpoint?", "true",
+		declare_entry("Restart at last checkpoint?", "false",
 				dealii::Patterns::Bool(),
 				"The solver can be restarted at the last stored checkpoint, in case that an old run had been aborted at some point of time.");
 		declare_entry("Initialization scheme", "Equilibrium",
 				dealii::Patterns::Selection("Equilibrium|Iterative"),
 				"The initial particle distribution functions are normally assumed to be in local equilibrium. A more stable (and costly) scheme is to do some streaming steps on the density field but not on the velocity field, before starting the actual simulations (see e.g. the Book of Guo and Shu).");
-		enter_subsection("Iterative Initialization stop condition");
+		enter_subsection("Iterative initialization stop condition");
 		{
 			declare_entry("Residual", "1e-6",
 					dealii::Patterns::Double(1e-25),
@@ -85,15 +83,17 @@ SolverConfiguration::SolverConfiguration() {
 
 	enter_subsection("Stop condition");
 	{
-		declare_entry("Number of iterations", "1000000",
+		declare_entry("Number of time steps", "1000000",
 				dealii::Patterns::Integer(1),
-				"The maximum number of iterations.");
+				"The maximum number of time steps.");
 
 	}
 	leave_subsection();
 
 	enter_subsection("Output");
 	{
+		declare_entry("Switch output off?", "false",
+				dealii::Patterns::Bool(), "Switch output off, completely.");
 		declare_entry("Output directory", "/tmp/NATriuM",
 				dealii::Patterns::DirectoryName(),
 				"The name of the directory to which the output is written.");

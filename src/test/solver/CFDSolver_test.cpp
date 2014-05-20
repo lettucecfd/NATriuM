@@ -43,6 +43,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 	size_t refinementLevel = 3;
 	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()-1));
 	testConfiguration->setTimeStepSize(0.5*deltaX);
+	testConfiguration->setNumberOfTimeSteps(100);
 	// set viscosity so that tau = 1
 	double viscosity = 0.5*deltaX/3;
 	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);

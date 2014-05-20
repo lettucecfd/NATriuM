@@ -29,7 +29,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	m_configuration = configuration;
 
 	/// Build boltzmann model
-	if (Stencil_D2Q9 == configuration->getStencilType()) {
+	if (Stencil_D2Q9 == configuration->getStencil()) {
 		m_boltzmannModel = make_shared<D2Q9IncompressibleModel>(
 				configuration->getStencilScaling());
 	}

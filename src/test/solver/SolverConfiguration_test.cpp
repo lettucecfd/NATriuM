@@ -45,17 +45,9 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test){
 	SolverConfiguration config;
 
 	// Set parameter
-	config.enter_subsection("Initialization");
-	config.set("Initialization scheme", "Iterative");
-	BOOST_CHECK(config.get("Initialization scheme") == "Iterative");
-	BOOST_CHECK_THROW(config.set("Initialization scheme", "guppy guppy"), std::exception );
+	config.setInitializationScheme(ITERATIVE);
+	BOOST_CHECK(config.getInitializationScheme() == ITERATIVE);
 
-	// The same for pointers
-	shared_ptr<SolverConfiguration> config2 = make_shared<SolverConfiguration>();
-	config2->enter_subsection("Initialization");
-	config2->set("Initialization scheme", "Iterative");
-	BOOST_CHECK(config2->get("Initialization scheme") == "Iterative");
-	BOOST_CHECK_THROW(config2->set("Initialization scheme", "guppy guppy"), std::exception );
 
 	cout << "done" << endl;
 } /*CFDSolverConfiguration_CheckSet_test*/
