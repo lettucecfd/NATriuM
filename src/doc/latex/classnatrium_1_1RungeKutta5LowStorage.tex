@@ -1,5 +1,5 @@
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage}{\section{natrium\-:\-:Runge\-Kutta5\-Low\-Storage Class Reference}
-\label{classnatrium_1_1RungeKutta5LowStorage}\index{natrium\-::\-Runge\-Kutta5\-Low\-Storage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage}{\section{natrium\-:\-:Runge\-Kutta5\-Low\-Storage$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$ Class Template Reference}
+\label{classnatrium_1_1RungeKutta5LowStorage}\index{natrium\-::\-Runge\-Kutta5\-Low\-Storage$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$@{natrium\-::\-Runge\-Kutta5\-Low\-Storage$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$}}
 }
 
 
@@ -10,7 +10,7 @@ Implementation of the fifth-\/order Runge-\/\-Kutta time integration scheme with
 
 {\ttfamily \#include $<$Runge\-Kutta5\-Low\-Storage.\-h$>$}
 
-Inheritance diagram for natrium\-:\-:Runge\-Kutta5\-Low\-Storage\-:\begin{figure}[H]
+Inheritance diagram for natrium\-:\-:Runge\-Kutta5\-Low\-Storage$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$\-:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{classnatrium_1_1RungeKutta5LowStorage}
@@ -19,26 +19,36 @@ Inheritance diagram for natrium\-:\-:Runge\-Kutta5\-Low\-Storage\-:\begin{figure
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1RungeKutta5LowStorage_a89468c83ced040a6373ddd05551e71d5}{Runge\-Kutta5\-Low\-Storage} (double time\-Step\-Size, size\-\_\-t problem\-Size)
+\hyperlink{classnatrium_1_1RungeKutta5LowStorage_add07295826ee6b9f5742ade3233f61b1}{Runge\-Kutta5\-Low\-Storage} (double time\-Step\-Size, size\-\_\-t problem\-Size)
 \begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a0d0e4591d2b671f450029bb3ba3053de}{virtual \hyperlink{classnatrium_1_1RungeKutta5LowStorage_a0d0e4591d2b671f450029bb3ba3053de}{$\sim$\-Runge\-Kutta5\-Low\-Storage} ()}\label{classnatrium_1_1RungeKutta5LowStorage_a0d0e4591d2b671f450029bb3ba3053de}
+\hyperlink{classnatrium_1_1RungeKutta5LowStorage_ad65bf4af8362a34f5530bb91bbec67fe}{Runge\-Kutta5\-Low\-Storage} (double time\-Step\-Size, size\-\_\-t problem\-Size, size\-\_\-t number\-Of\-Blocks)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a915493da30cf9308bd47e87d0c20cad8}{virtual \hyperlink{classnatrium_1_1RungeKutta5LowStorage_a915493da30cf9308bd47e87d0c20cad8}{$\sim$\-Runge\-Kutta5\-Low\-Storage} ()}\label{classnatrium_1_1RungeKutta5LowStorage_a915493da30cf9308bd47e87d0c20cad8}
 
 \begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a91bc0f0c6eea11cb7c08f2572ba67408}{virtual void \hyperlink{classnatrium_1_1RungeKutta5LowStorage_a91bc0f0c6eea11cb7c08f2572ba67408}{step} (distributed\-\_\-vector \&vector, const dealii\-::\-Sparse\-Matrix$<$ double $>$ \&system\-Matrix)}\label{classnatrium_1_1RungeKutta5LowStorage_a91bc0f0c6eea11cb7c08f2572ba67408}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a595cbb3047387c60507197d78a7ec054}{virtual void \hyperlink{classnatrium_1_1RungeKutta5LowStorage_a595cbb3047387c60507197d78a7ec054}{step} (V\-E\-C\-T\-O\-R \&vector, const M\-A\-T\-R\-I\-X \&system\-Matrix)}\label{classnatrium_1_1RungeKutta5LowStorage_a595cbb3047387c60507197d78a7ec054}
 
 \begin{DoxyCompactList}\small\item\em make one time integration using the R\-K5 scheme d\-U\-\_\-j = A\-\_\-j $\ast$ d\-U\-\_\-\{j-\/1\} + time\-Step $\ast$ F(\-U\-\_\-j) U\-\_\-j = U\-\_\-\{j-\/1\} + B\-\_\-j$\ast$ d\-U\-\_\-j \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage_af8368ba6fbaaef108e8a556da293c2b7}{const vector$<$ double $>$ \& {\bfseries get\-A} () const }\label{classnatrium_1_1RungeKutta5LowStorage_af8368ba6fbaaef108e8a556da293c2b7}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a452fad5bef3b7734c94ca5796ce0c589}{const vector$<$ double $>$ \& {\bfseries get\-A} () const }\label{classnatrium_1_1RungeKutta5LowStorage_a452fad5bef3b7734c94ca5796ce0c589}
 
 \item 
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a5045dc1bcf3df568f1574e12528b6d34}{const vector$<$ double $>$ \& {\bfseries get\-B} () const }\label{classnatrium_1_1RungeKutta5LowStorage_a5045dc1bcf3df568f1574e12528b6d34}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_ac866c3f75f850ab90b70b3eaedd3cc3c}{const vector$<$ double $>$ \& {\bfseries get\-B} () const }\label{classnatrium_1_1RungeKutta5LowStorage_ac866c3f75f850ab90b70b3eaedd3cc3c}
 
 \item 
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a1097baed3c0e00ee258812a71226f998}{const vector$<$ double $>$ \& {\bfseries get\-C} () const }\label{classnatrium_1_1RungeKutta5LowStorage_a1097baed3c0e00ee258812a71226f998}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a0b747cec432de72544b82b5033eb8211}{const vector$<$ double $>$ \& {\bfseries get\-C} () const }\label{classnatrium_1_1RungeKutta5LowStorage_a0b747cec432de72544b82b5033eb8211}
+
+\item 
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_ae505b2f0b97b6237e8e81caebe3e1841}{{\footnotesize template$<$$>$ }\\{\bfseries Runge\-Kutta5\-Low\-Storage} (double time\-Step\-Size, size\-\_\-t problem\-Size)}\label{classnatrium_1_1RungeKutta5LowStorage_ae505b2f0b97b6237e8e81caebe3e1841}
+
+\item 
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a2f6e627cc0a1463654a7f863f099d1a3}{{\footnotesize template$<$$>$ }\\{\bfseries Runge\-Kutta5\-Low\-Storage} (double time\-Step\-Size, size\-\_\-t problem\-Size, size\-\_\-t number\-Of\-Blocks)}\label{classnatrium_1_1RungeKutta5LowStorage_a2f6e627cc0a1463654a7f863f099d1a3}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
+\subsubsection*{template$<$class M\-A\-T\-R\-I\-X, class V\-E\-C\-T\-O\-R$>$class natrium\-::\-Runge\-Kutta5\-Low\-Storage$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$}
+
 Implementation of the fifth-\/order Runge-\/\-Kutta time integration scheme with low storage consumption. 
 
 \begin{DoxyNote}{Note}
@@ -47,14 +57,14 @@ The scheme is described in Min and Lee (2011)\-: A spectral-\/element discontinu
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1RungeKutta5LowStorage_a89468c83ced040a6373ddd05551e71d5}{\index{natrium\-::\-Runge\-Kutta5\-Low\-Storage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}!Runge\-Kutta5\-Low\-Storage@{Runge\-Kutta5\-Low\-Storage}}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_add07295826ee6b9f5742ade3233f61b1}{\index{natrium\-::\-Runge\-Kutta5\-Low\-Storage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}!Runge\-Kutta5\-Low\-Storage@{Runge\-Kutta5\-Low\-Storage}}
 \index{Runge\-Kutta5\-Low\-Storage@{Runge\-Kutta5\-Low\-Storage}!natrium::RungeKutta5LowStorage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}}
-\subsubsection[{Runge\-Kutta5\-Low\-Storage}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Runge\-Kutta5\-Low\-Storage\-::\-Runge\-Kutta5\-Low\-Storage (
+\subsubsection[{Runge\-Kutta5\-Low\-Storage}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class M\-A\-T\-R\-I\-X , class V\-E\-C\-T\-O\-R $>$ {\bf natrium\-::\-Runge\-Kutta5\-Low\-Storage}$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$\-::{\bf Runge\-Kutta5\-Low\-Storage} (
 \begin{DoxyParamCaption}
 \item[{double}]{time\-Step\-Size, }
 \item[{size\-\_\-t}]{problem\-Size}
 \end{DoxyParamCaption}
-)}}\label{classnatrium_1_1RungeKutta5LowStorage_a89468c83ced040a6373ddd05551e71d5}
+)}}\label{classnatrium_1_1RungeKutta5LowStorage_add07295826ee6b9f5742ade3233f61b1}
 
 
 Constructor. 
@@ -64,6 +74,28 @@ Constructor.
 {\em time\-Step\-Size} & The initial time step size \\
 \hline
 {\em problem\-Size} & the number of degrees of freedom \\
+\hline
+\end{DoxyParams}
+\hypertarget{classnatrium_1_1RungeKutta5LowStorage_ad65bf4af8362a34f5530bb91bbec67fe}{\index{natrium\-::\-Runge\-Kutta5\-Low\-Storage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}!Runge\-Kutta5\-Low\-Storage@{Runge\-Kutta5\-Low\-Storage}}
+\index{Runge\-Kutta5\-Low\-Storage@{Runge\-Kutta5\-Low\-Storage}!natrium::RungeKutta5LowStorage@{natrium\-::\-Runge\-Kutta5\-Low\-Storage}}
+\subsubsection[{Runge\-Kutta5\-Low\-Storage}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class M\-A\-T\-R\-I\-X , class V\-E\-C\-T\-O\-R $>$ {\bf natrium\-::\-Runge\-Kutta5\-Low\-Storage}$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$\-::{\bf Runge\-Kutta5\-Low\-Storage} (
+\begin{DoxyParamCaption}
+\item[{double}]{time\-Step\-Size, }
+\item[{size\-\_\-t}]{problem\-Size, }
+\item[{size\-\_\-t}]{number\-Of\-Blocks}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1RungeKutta5LowStorage_ad65bf4af8362a34f5530bb91bbec67fe}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em time\-Step\-Size} & The initial time step size \\
+\hline
+{\em problem\-Size} & the number of degrees of freedom \\
+\hline
+{\em number\-Of\-Blocks} & the number of blocks of the block vectors \\
 \hline
 \end{DoxyParams}
 

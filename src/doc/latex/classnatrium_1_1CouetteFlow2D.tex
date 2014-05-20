@@ -19,15 +19,26 @@ Inheritance diagram for natrium\-:\-:Couette\-Flow2\-D\-:\begin{figure}[H]
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1CouetteFlow2D_a138e7b6edd0fea07aece99bfa5b6ede0}{Couette\-Flow2\-D} (double viscosity, double top\-Plate\-Velocity)
+\hyperlink{classnatrium_1_1CouetteFlow2D_ac5abfdca75a910fb11cad175942de50f}{Couette\-Flow2\-D} (double viscosity, double top\-Plate\-Velocity, size\-\_\-t refinement\-Level, double L=1.\-0, double start\-Time=0.\-0)
 \begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1CouetteFlow2D_a97b61b0f71dc653427ba3db46e185873}{virtual \hyperlink{classnatrium_1_1CouetteFlow2D_a97b61b0f71dc653427ba3db46e185873}{$\sim$\-Couette\-Flow2\-D} ()}\label{classnatrium_1_1CouetteFlow2D_a97b61b0f71dc653427ba3db46e185873}
 
 \begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1CouetteFlow2D_ac0dc3c6b3ecc2b19175802d29ab3f78a}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
-\begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1CouetteFlow2D_a745711515d9e40be69d5563d678df6a0}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
-\begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\end{DoxyCompactItemize}
+\hypertarget{classnatrium_1_1CouetteFlow2D_a501e1b94630213ea9a53c1446eea7758}{double {\bfseries analytic\-Velocity1} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1CouetteFlow2D_a501e1b94630213ea9a53c1446eea7758}
+
+\item 
+\hypertarget{classnatrium_1_1CouetteFlow2D_a451b61096f36f0b7f74b9c3f7ceb75fb}{double \hyperlink{classnatrium_1_1CouetteFlow2D_a451b61096f36f0b7f74b9c3f7ceb75fb}{analytic\-Velocity2} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1CouetteFlow2D_a451b61096f36f0b7f74b9c3f7ceb75fb}
+
+\begin{DoxyCompactList}\small\item\em analytic solution of the Couette flow, second component of velocity vector \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CouetteFlow2D_a59ab86c4c395e3019060181d3b620765}{void {\bfseries apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const }\label{classnatrium_1_1CouetteFlow2D_a59ab86c4c395e3019060181d3b620765}
+
+\item 
+\hypertarget{classnatrium_1_1CouetteFlow2D_a7bbf54e0e7e75b3f9537857cfd26875b}{void {\bfseries apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const }\label{classnatrium_1_1CouetteFlow2D_a7bbf54e0e7e75b3f9537857cfd26875b}
+
+\item 
+\hypertarget{classnatrium_1_1CouetteFlow2D_a74429d98c455a0c06430a665505d8375}{virtual double {\bfseries get\-Characteristic\-Velocity} () const }\label{classnatrium_1_1CouetteFlow2D_a74429d98c455a0c06430a665505d8375}
+
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -39,64 +50,24 @@ The analytic solution is obtained by a formula stated in Min and Lee (2011).
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1CouetteFlow2D_a138e7b6edd0fea07aece99bfa5b6ede0}{\index{natrium\-::\-Couette\-Flow2\-D@{natrium\-::\-Couette\-Flow2\-D}!Couette\-Flow2\-D@{Couette\-Flow2\-D}}
+\hypertarget{classnatrium_1_1CouetteFlow2D_ac5abfdca75a910fb11cad175942de50f}{\index{natrium\-::\-Couette\-Flow2\-D@{natrium\-::\-Couette\-Flow2\-D}!Couette\-Flow2\-D@{Couette\-Flow2\-D}}
 \index{Couette\-Flow2\-D@{Couette\-Flow2\-D}!natrium::CouetteFlow2D@{natrium\-::\-Couette\-Flow2\-D}}
 \subsubsection[{Couette\-Flow2\-D}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Couette\-Flow2\-D\-::\-Couette\-Flow2\-D (
 \begin{DoxyParamCaption}
 \item[{double}]{viscosity, }
-\item[{double}]{top\-Plate\-Velocity}
+\item[{double}]{top\-Plate\-Velocity, }
+\item[{size\-\_\-t}]{refinement\-Level, }
+\item[{double}]{L = {\ttfamily 1.0}, }
+\item[{double}]{start\-Time = {\ttfamily 0.0}}
 \end{DoxyParamCaption}
-)}}\label{classnatrium_1_1CouetteFlow2D_a138e7b6edd0fea07aece99bfa5b6ede0}
+)}}\label{classnatrium_1_1CouetteFlow2D_ac5abfdca75a910fb11cad175942de50f}
 
 
 constructor 
 
-apply boundary values
-
-set initial velocities to zero The numeric\-\_\-vector is a dealii\-::\-Vector; The size-\/constructor applies the default value (0.\-0) to all components. 
-
-\subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1CouetteFlow2D_ac0dc3c6b3ecc2b19175802d29ab3f78a}{\index{natrium\-::\-Couette\-Flow2\-D@{natrium\-::\-Couette\-Flow2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
-\index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::CouetteFlow2D@{natrium\-::\-Couette\-Flow2\-D}}
-\subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void natrium\-::\-Couette\-Flow2\-D\-::apply\-Initial\-Densities (
-\begin{DoxyParamCaption}
-\item[{distributed\-\_\-vector \&}]{initial\-Densities, }
-\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classnatrium_1_1CouetteFlow2D_ac0dc3c6b3ecc2b19175802d29ab3f78a}
-
-
-set initial densities 
-
-
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt out}  & {\em initial\-Densities} & vector of densities; to be filled \\
-\hline
-\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
-\hline
-\end{DoxyParams}
-\hypertarget{classnatrium_1_1CouetteFlow2D_a745711515d9e40be69d5563d678df6a0}{\index{natrium\-::\-Couette\-Flow2\-D@{natrium\-::\-Couette\-Flow2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
-\index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::CouetteFlow2D@{natrium\-::\-Couette\-Flow2\-D}}
-\subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void natrium\-::\-Couette\-Flow2\-D\-::apply\-Initial\-Velocities (
-\begin{DoxyParamCaption}
-\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
-\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classnatrium_1_1CouetteFlow2D_a745711515d9e40be69d5563d678df6a0}
-
-
-set initial velocities 
-
-
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt out}  & {\em initial\-Velocities} & vector of velocities; to be filled \\
-\hline
-\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
-\hline
-\end{DoxyParams}
-
+apply boundary values 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/3/\hyperlink{CouetteFlow2D_8h}{Couette\-Flow2\-D.\-h}\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/3/\hyperlink{CouetteFlow2D_8cpp}{Couette\-Flow2\-D.\-cpp}\end{DoxyCompactItemize}
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/2/\hyperlink{CouetteFlow2D_8h}{Couette\-Flow2\-D.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/2/\hyperlink{CouetteFlow2D_8cpp}{Couette\-Flow2\-D.\-cpp}\end{DoxyCompactItemize}

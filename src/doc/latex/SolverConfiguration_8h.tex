@@ -6,6 +6,7 @@
 Class that stores the configuration for a C\-F\-D simulation based on the Discrete Boltzmann Equation (D\-B\-E).  
 
 
+{\ttfamily \#include \char`\"{}deal.\-I\-I/base/parameter\-\_\-handler.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}../problemdescription/\-Problem\-Description.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}../boltzmannmodels/\-Boltzmann\-Model.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}../utilities/\-Basic\-Names.\-h\char`\"{}}\\*
@@ -20,31 +21,21 @@ class \hyperlink{classnatrium_1_1SolverConfiguration}{natrium\-::\-Solver\-Confi
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum {\bfseries Advection\-Operator\-Type} \{ {\bfseries Advection\-\_\-\-S\-E\-D\-G\-Min\-Lee}
+enum {\bfseries Advection\-Scheme\-Name} \{ {\bfseries S\-E\-D\-G}
  \}
 \begin{DoxyCompactList}\small\item\em Implemented streaming data types. \end{DoxyCompactList}\item 
-enum {\bfseries Collision\-Type} \{ {\bfseries Collision\-\_\-\-B\-G\-K\-Transformed}
+enum {\bfseries Collision\-Scheme\-Name} \{ {\bfseries B\-G\-K\-\_\-\-W\-I\-T\-H\-\_\-\-T\-R\-A\-N\-S\-F\-O\-R\-M\-E\-D\-\_\-\-D\-I\-S\-T\-R\-I\-B\-U\-T\-I\-O\-N\-\_\-\-F\-U\-N\-C\-T\-I\-O\-N\-S}
  \}
 \begin{DoxyCompactList}\small\item\em Implemented collision models. \end{DoxyCompactList}\item 
-enum {\bfseries Time\-Integrator\-Type} \{ {\bfseries Integrator\-\_\-\-Runge\-Kutta5\-Low\-Storage}
+enum {\bfseries Time\-Integrator\-Name} \{ {\bfseries R\-U\-N\-G\-E\-\_\-\-K\-U\-T\-T\-A\-\_\-5\-S\-T\-A\-G\-E}
  \}
 \begin{DoxyCompactList}\small\item\em Implemented time integrators. \end{DoxyCompactList}\item 
-enum {\bfseries Flux\-Type} \{ {\bfseries Flux\-\_\-\-Lax\-Friedrichs}, 
-{\bfseries Flux\-\_\-\-Central}
+enum {\bfseries Flux\-Type\-Name} \{ {\bfseries L\-A\-X\-\_\-\-F\-R\-I\-E\-D\-R\-I\-C\-H\-S}, 
+{\bfseries C\-E\-N\-T\-R\-A\-L}
  \}
 \begin{DoxyCompactList}\small\item\em the numerical flux used to calculate the advection operator \end{DoxyCompactList}\item 
-enum {\bfseries Output\-Flags} \{ \\*
-{\bfseries out\-\_\-\-Command\-Line\-Error} = 1, 
-{\bfseries out\-\_\-\-Command\-Line\-Basic} = 2, 
-{\bfseries out\-\_\-\-Command\-Line\-Full} = 4, 
-{\bfseries out\-\_\-\-Log\-File} = 8, 
-\\*
-{\bfseries out\-\_\-\-Vector\-Fields} = 16, 
-{\bfseries out\-\_\-\-Checkpoints} = 32
- \}
-\item 
-enum {\bfseries Distribution\-Init\-Type} \{ {\bfseries Equilibrium}, 
-{\bfseries Iterative}
+enum {\bfseries Initialization\-Scheme\-Name} \{ {\bfseries E\-Q\-U\-I\-L\-I\-B\-R\-I\-U\-M}, 
+{\bfseries I\-T\-E\-R\-A\-T\-I\-V\-E}
  \}
 \begin{DoxyCompactList}\small\item\em the initialization procedure for the distribution functions \end{DoxyCompactList}\end{DoxyCompactItemize}
 

@@ -1,5 +1,5 @@
-\hypertarget{classnatrium_1_1TimeIntegrator}{\section{natrium\-:\-:Time\-Integrator Class Reference}
-\label{classnatrium_1_1TimeIntegrator}\index{natrium\-::\-Time\-Integrator@{natrium\-::\-Time\-Integrator}}
+\hypertarget{classnatrium_1_1TimeIntegrator}{\section{natrium\-:\-:Time\-Integrator$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$ Class Template Reference}
+\label{classnatrium_1_1TimeIntegrator}\index{natrium\-::\-Time\-Integrator$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$@{natrium\-::\-Time\-Integrator$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$}}
 }
 
 
@@ -10,7 +10,7 @@ Abstract class for time integration (solution of ordinary differential equations
 
 {\ttfamily \#include $<$Time\-Integrator.\-h$>$}
 
-Inheritance diagram for natrium\-:\-:Time\-Integrator\-:\begin{figure}[H]
+Inheritance diagram for natrium\-:\-:Time\-Integrator$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$\-:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{classnatrium_1_1TimeIntegrator}
@@ -19,24 +19,26 @@ Inheritance diagram for natrium\-:\-:Time\-Integrator\-:\begin{figure}[H]
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1TimeIntegrator_a4cb6253cff011c15b5518f1a4e9bb33b}{\hyperlink{classnatrium_1_1TimeIntegrator_a4cb6253cff011c15b5518f1a4e9bb33b}{Time\-Integrator} (double time\-Step\-Size)}\label{classnatrium_1_1TimeIntegrator_a4cb6253cff011c15b5518f1a4e9bb33b}
+\hypertarget{classnatrium_1_1TimeIntegrator_a420ea9baabf0839bc8ecb5f5e02ce95b}{\hyperlink{classnatrium_1_1TimeIntegrator_a420ea9baabf0839bc8ecb5f5e02ce95b}{Time\-Integrator} (double time\-Step\-Size)}\label{classnatrium_1_1TimeIntegrator_a420ea9baabf0839bc8ecb5f5e02ce95b}
 
 \begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1TimeIntegrator_ac4f86a5402bf3185f5ed875065c722f2}{virtual \hyperlink{classnatrium_1_1TimeIntegrator_ac4f86a5402bf3185f5ed875065c722f2}{$\sim$\-Time\-Integrator} ()}\label{classnatrium_1_1TimeIntegrator_ac4f86a5402bf3185f5ed875065c722f2}
+\hypertarget{classnatrium_1_1TimeIntegrator_a8795d06c5322b72a5a2a1f30aa7a051d}{virtual \hyperlink{classnatrium_1_1TimeIntegrator_a8795d06c5322b72a5a2a1f30aa7a051d}{$\sim$\-Time\-Integrator} ()}\label{classnatrium_1_1TimeIntegrator_a8795d06c5322b72a5a2a1f30aa7a051d}
 
 \begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1TimeIntegrator_abcf2980f310c13c3929a3ea7acd3c034}{double {\bfseries get\-Time\-Step\-Size} () const }\label{classnatrium_1_1TimeIntegrator_abcf2980f310c13c3929a3ea7acd3c034}
+\hypertarget{classnatrium_1_1TimeIntegrator_a6e763133e114cdd758307ca30b65f161}{double {\bfseries get\-Time\-Step\-Size} () const }\label{classnatrium_1_1TimeIntegrator_a6e763133e114cdd758307ca30b65f161}
 
 \item 
-\hypertarget{classnatrium_1_1TimeIntegrator_ac0248c553a0526015d93755c89149476}{void {\bfseries set\-Time\-Step\-Size} (double time\-Step\-Size)}\label{classnatrium_1_1TimeIntegrator_ac0248c553a0526015d93755c89149476}
+\hypertarget{classnatrium_1_1TimeIntegrator_a18592866e946c63ab1595d3ab688ea6b}{void {\bfseries set\-Time\-Step\-Size} (double time\-Step\-Size)}\label{classnatrium_1_1TimeIntegrator_a18592866e946c63ab1595d3ab688ea6b}
 
 \item 
-\hypertarget{classnatrium_1_1TimeIntegrator_a09ee587a56ffad3afe97871396ce4406}{virtual void \hyperlink{classnatrium_1_1TimeIntegrator_a09ee587a56ffad3afe97871396ce4406}{step} (distributed\-\_\-vector \&vector, const dealii\-::\-Sparse\-Matrix$<$ double $>$ \&system\-Matrix)=0}\label{classnatrium_1_1TimeIntegrator_a09ee587a56ffad3afe97871396ce4406}
+\hypertarget{classnatrium_1_1TimeIntegrator_ad3888242580c257058d8d6f8ddeb2c5d}{virtual void \hyperlink{classnatrium_1_1TimeIntegrator_ad3888242580c257058d8d6f8ddeb2c5d}{step} (V\-E\-C\-T\-O\-R \&vector, const M\-A\-T\-R\-I\-X \&system\-Matrix)=0}\label{classnatrium_1_1TimeIntegrator_ad3888242580c257058d8d6f8ddeb2c5d}
 
 \begin{DoxyCompactList}\small\item\em make one time integration step on vector using the system matrix \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
+\subsubsection*{template$<$class M\-A\-T\-R\-I\-X, class V\-E\-C\-T\-O\-R$>$class natrium\-::\-Time\-Integrator$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$}
+
 Abstract class for time integration (solution of ordinary differential equations (O\-D\-E)). 
 
 \begin{DoxyNote}{Note}

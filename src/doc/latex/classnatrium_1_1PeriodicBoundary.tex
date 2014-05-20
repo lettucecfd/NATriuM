@@ -28,11 +28,13 @@ size\-\_\-t \hyperlink{classnatrium_1_1PeriodicBoundary_ac790bcd5edc7fc6e009c6e9
 \begin{DoxyCompactList}\small\item\em get the respective neighbor cell on the other side of a periodic boundary \end{DoxyCompactList}\item 
 bool \hyperlink{classnatrium_1_1PeriodicBoundary_a80e5b08192d3e5ebe3ad0489966b4433}{is\-Face\-In\-Boundary} (const typename dealii\-::\-Do\-F\-Handler$<$ dim $>$\-::active\-\_\-cell\-\_\-iterator \&cell, size\-\_\-t face\-Boundary\-Indicator) const 
 \begin{DoxyCompactList}\small\item\em test if a given face belongs to this boundary \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1PeriodicBoundary_a38c5e966e4b2a1ee185a5634fc379393}{virtual bool {\bfseries is\-Periodic} () const }\label{classnatrium_1_1PeriodicBoundary_a38c5e966e4b2a1ee185a5634fc379393}
+\hypertarget{classnatrium_1_1PeriodicBoundary_a38c5e966e4b2a1ee185a5634fc379393}{virtual bool \hyperlink{classnatrium_1_1PeriodicBoundary_a38c5e966e4b2a1ee185a5634fc379393}{is\-Periodic} () const }\label{classnatrium_1_1PeriodicBoundary_a38c5e966e4b2a1ee185a5634fc379393}
 
-\item 
+\begin{DoxyCompactList}\small\item\em is the boundary a periodic boundary ? \end{DoxyCompactList}\item 
 void \hyperlink{classnatrium_1_1PeriodicBoundary_a233d460baa307b13bc32efb57c07f7c5}{create\-Cell\-Map} (const dealii\-::\-Do\-F\-Handler$<$ dim $>$ \&do\-F\-Handler)
 \begin{DoxyCompactList}\small\item\em create the map m\-\_\-cells which stores the cells adjacent to the periodic boundary \end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1PeriodicBoundary_a64bf40dba8fb5af766388e368a9ce2a1}{add\-To\-Sparsity\-Pattern} (dealii\-::\-Block\-Compressed\-Sparsity\-Pattern \&c\-Sparse, size\-\_\-t n\-\_\-blocks, size\-\_\-t n\-\_\-dofs\-\_\-per\-\_\-block, size\-\_\-t dofs\-\_\-per\-\_\-cell) const 
+\begin{DoxyCompactList}\small\item\em modify sparsity pattern so that the fluxes over periodic boundary can be incorporated \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1PeriodicBoundary_a65ae8204075b82c9bec0c3228a1a64b4}{const dealii\-::\-Point$<$ dim $>$ \& {\bfseries get\-Begin\-Line1} () const }\label{classnatrium_1_1PeriodicBoundary_a65ae8204075b82c9bec0c3228a1a64b4}
 
 \item 
@@ -124,6 +126,31 @@ Since both lines have to match each other perfectly, the constructor tests wheth
 
 
 \subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1PeriodicBoundary_a64bf40dba8fb5af766388e368a9ce2a1}{\index{natrium\-::\-Periodic\-Boundary@{natrium\-::\-Periodic\-Boundary}!add\-To\-Sparsity\-Pattern@{add\-To\-Sparsity\-Pattern}}
+\index{add\-To\-Sparsity\-Pattern@{add\-To\-Sparsity\-Pattern}!natrium::PeriodicBoundary@{natrium\-::\-Periodic\-Boundary}}
+\subsubsection[{add\-To\-Sparsity\-Pattern}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::\-Periodic\-Boundary}$<$ dim $>$\-::add\-To\-Sparsity\-Pattern (
+\begin{DoxyParamCaption}
+\item[{dealii\-::\-Block\-Compressed\-Sparsity\-Pattern \&}]{c\-Sparse, }
+\item[{size\-\_\-t}]{n\-\_\-blocks, }
+\item[{size\-\_\-t}]{n\-\_\-dofs\-\_\-per\-\_\-block, }
+\item[{size\-\_\-t}]{dofs\-\_\-per\-\_\-cell}
+\end{DoxyParamCaption}
+) const}}\label{classnatrium_1_1PeriodicBoundary_a64bf40dba8fb5af766388e368a9ce2a1}
+
+
+modify sparsity pattern so that the fluxes over periodic boundary can be incorporated 
+
+
+\begin{DoxyParams}{Parameters}
+{\em c\-Sparse} & the block-\/sparsity pattern \\
+\hline
+{\em n\-\_\-blocks} & the number of blocks in c\-Sparse \\
+\hline
+{\em n\-\_\-dofs\-\_\-per\-\_\-row} & number of degrees of freedom per block (normally\-: overall degrees of freedom on grid) \\
+\hline
+{\em dofs\-\_\-per\-\_\-cell} & number of degrees of freedom per cell \\
+\hline
+\end{DoxyParams}
 \hypertarget{classnatrium_1_1PeriodicBoundary_a233d460baa307b13bc32efb57c07f7c5}{\index{natrium\-::\-Periodic\-Boundary@{natrium\-::\-Periodic\-Boundary}!create\-Cell\-Map@{create\-Cell\-Map}}
 \index{create\-Cell\-Map@{create\-Cell\-Map}!natrium::PeriodicBoundary@{natrium\-::\-Periodic\-Boundary}}
 \subsubsection[{create\-Cell\-Map}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ void {\bf natrium\-::\-Periodic\-Boundary}$<$ dim $>$\-::create\-Cell\-Map (
@@ -135,7 +162,12 @@ Since both lines have to match each other perfectly, the constructor tests wheth
 
 create the map m\-\_\-cells which stores the cells adjacent to the periodic boundary 
 
-do\-F\-Handler The map is stored with do\-F\-Handler iterators in order to access degrees of freedom at the boundary. \hypertarget{classnatrium_1_1PeriodicBoundary_ac790bcd5edc7fc6e009c6e93019c8f13}{\index{natrium\-::\-Periodic\-Boundary@{natrium\-::\-Periodic\-Boundary}!get\-Opposite\-Cell\-At\-Periodic\-Boundary@{get\-Opposite\-Cell\-At\-Periodic\-Boundary}}
+
+\begin{DoxyParams}{Parameters}
+{\em do\-F\-Handler} & The map is stored with do\-F\-Handler iterators in order to access degrees of freedom at the boundary. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classnatrium_1_1PeriodicBoundary_ac790bcd5edc7fc6e009c6e93019c8f13}{\index{natrium\-::\-Periodic\-Boundary@{natrium\-::\-Periodic\-Boundary}!get\-Opposite\-Cell\-At\-Periodic\-Boundary@{get\-Opposite\-Cell\-At\-Periodic\-Boundary}}
 \index{get\-Opposite\-Cell\-At\-Periodic\-Boundary@{get\-Opposite\-Cell\-At\-Periodic\-Boundary}!natrium::PeriodicBoundary@{natrium\-::\-Periodic\-Boundary}}
 \subsubsection[{get\-Opposite\-Cell\-At\-Periodic\-Boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template size\-\_\-t {\bf natrium\-::\-Periodic\-Boundary}$<$ dim $>$\-::get\-Opposite\-Cell\-At\-Periodic\-Boundary (
 \begin{DoxyParamCaption}

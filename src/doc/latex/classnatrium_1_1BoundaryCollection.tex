@@ -1,29 +1,185 @@
 \hypertarget{classnatrium_1_1BoundaryCollection}{\section{natrium\-:\-:Boundary\-Collection$<$ dim $>$ Class Template Reference}
 \label{classnatrium_1_1BoundaryCollection}\index{natrium\-::\-Boundary\-Collection$<$ dim $>$@{natrium\-::\-Boundary\-Collection$<$ dim $>$}}
 }
+
+
+The \hyperlink{classnatrium_1_1BoundaryCollection}{Boundary\-Collection} class defines all boundaries of a flow domain. Internally, the boundaries are stored in two different std\-::map, one for the periodic boundaries and one for the non-\/periodic ones. Its keys are the boundary indicators (for periodic boundaries\-: the first boundary indicator).  
+
+
+
+
+{\ttfamily \#include $<$Boundary\-Collection.\-h$>$}
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_a8f113a1640c2f088c86f24cf9ddf4be6}{typedef std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1Boundary}{Boundary}$<$ dim $>$\\*
+ $>$ $>$\-::iterator {\bfseries Iterator}}\label{classnatrium_1_1BoundaryCollection_a8f113a1640c2f088c86f24cf9ddf4be6}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_a7b7a9bd9ff95ffe3cfdec0d6efcbdf81}{typedef std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1Boundary}{Boundary}$<$ dim $>$\\*
+ $>$ $>$\-::const\-\_\-iterator {\bfseries Const\-Iterator}}\label{classnatrium_1_1BoundaryCollection_a7b7a9bd9ff95ffe3cfdec0d6efcbdf81}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_aba4f994dd4290e55b888ac51800bbe9e}{typedef std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1MinLeeBoundary}{Min\-Lee\-Boundary}\\*
+$<$ dim $>$ $>$ $>$\-::iterator {\bfseries Min\-Lee\-Iterator}}\label{classnatrium_1_1BoundaryCollection_aba4f994dd4290e55b888ac51800bbe9e}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_a5248927752b4e9ac21dfc1a3e010e79d}{typedef std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1MinLeeBoundary}{Min\-Lee\-Boundary}\\*
+$<$ dim $>$ $>$ $>$\-::const\-\_\-iterator {\bfseries Const\-Min\-Lee\-Iterator}}\label{classnatrium_1_1BoundaryCollection_a5248927752b4e9ac21dfc1a3e010e79d}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_a7cf1943ddd37e2d31d41483365de04a2}{typedef std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1PeriodicBoundary}{Periodic\-Boundary}\\*
+$<$ dim $>$ $>$ $>$\-::iterator {\bfseries Periodic\-Iterator}}\label{classnatrium_1_1BoundaryCollection_a7cf1943ddd37e2d31d41483365de04a2}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_a132c389d4a4c65e2fad4c428c7183f8b}{typedef std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1PeriodicBoundary}{Periodic\-Boundary}\\*
+$<$ dim $>$ $>$ $>$\-::const\-\_\-iterator {\bfseries Const\-Periodic\-Iterator}}\label{classnatrium_1_1BoundaryCollection_a132c389d4a4c65e2fad4c428c7183f8b}
+
+\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1BoundaryCollection_a60d5efd5fa9bf2107705ee1a38508dd4}{void {\bfseries add\-Boundary} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1PeriodicBoundary}{Periodic\-Boundary}$<$ dim $>$ $>$ boundary)}\label{classnatrium_1_1BoundaryCollection_a60d5efd5fa9bf2107705ee1a38508dd4}
+void \hyperlink{classnatrium_1_1BoundaryCollection_a60d5efd5fa9bf2107705ee1a38508dd4}{add\-Boundary} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1PeriodicBoundary}{Periodic\-Boundary}$<$ dim $>$ $>$ boundary)
+\begin{DoxyCompactList}\small\item\em Add a boundary to the flow definition. This definition of add\-Boundary applies to periodic boundaries. As periodic boundaries have two boundary indicators, they are added twice to the boundary map. Internally, they are additionally added to the vector periodic\-Boundaries, which can be accessed separate from non-\/periodic boundaries. \end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1BoundaryCollection_ac8ad257c880937c59baad2d646392d7d}{add\-Boundary} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1MinLeeBoundary}{Min\-Lee\-Boundary}$<$ dim $>$ $>$ boundary)
+\begin{DoxyCompactList}\small\item\em Add a boundary to the flow definition. \end{DoxyCompactList}\item 
+const shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1Boundary}{Boundary}\\*
+$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1BoundaryCollection_adacc8205b74bdc7344161e73f1acadca}{get\-Boundary} (size\-\_\-t boundary\-Indicator) const 
+\begin{DoxyCompactList}\small\item\em get a specific boundary \end{DoxyCompactList}\item 
+const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1PeriodicBoundary}{Periodic\-Boundary}$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1BoundaryCollection_ac3a84114a57f0e321a24eaa743a141f3}{get\-Periodic\-Boundary} (size\-\_\-t boundary\-Indicator) const 
+\begin{DoxyCompactList}\small\item\em get a specific periodic boundary \end{DoxyCompactList}\item 
+const shared\-\_\-ptr\\*
+$<$ \hyperlink{classnatrium_1_1MinLeeBoundary}{Min\-Lee\-Boundary}$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1BoundaryCollection_aea35fe9645fc3521da83ae83ef84967b}{get\-Min\-Lee\-Boundary} (size\-\_\-t boundary\-Indicator) const 
+\begin{DoxyCompactList}\small\item\em get a specific Min\-Lee boundary \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_aec4a9de4aaccaa7a49e5308bf9812c66}{bool \hyperlink{classnatrium_1_1BoundaryCollection_aec4a9de4aaccaa7a49e5308bf9812c66}{is\-Periodic} (size\-\_\-t boundary\-Indicator) const }\label{classnatrium_1_1BoundaryCollection_aec4a9de4aaccaa7a49e5308bf9812c66}
 
-\item 
-\hypertarget{classnatrium_1_1BoundaryCollection_a89de2718a8813905dc1487f812e363a2}{void {\bfseries apply\-Boundaries} (const shared\-\_\-ptr$<$ dealii\-::\-Do\-F\-Handler$<$ dim $>$ $>$ do\-F\-Handler)}\label{classnatrium_1_1BoundaryCollection_a89de2718a8813905dc1487f812e363a2}
-
-\item 
-\hypertarget{classnatrium_1_1BoundaryCollection_a165425d13fc67c25f13c56ba49468102}{const vector$<$ shared\-\_\-ptr\\*
-$<$ \hyperlink{classnatrium_1_1Boundary}{Boundary}$<$ dim $>$ $>$ $>$ \& {\bfseries get\-Boundaries} () const }\label{classnatrium_1_1BoundaryCollection_a165425d13fc67c25f13c56ba49468102}
-
-\item 
-\hypertarget{classnatrium_1_1BoundaryCollection_a1d7ac8cc1b11c7b241f16be4a41c4582}{const vector$<$ shared\-\_\-ptr\\*
-$<$ \hyperlink{classnatrium_1_1PeriodicBoundary}{Periodic\-Boundary}$<$ dim $>$ $>$ $>$ \& {\bfseries get\-Periodic\-Boundaries} () const }\label{classnatrium_1_1BoundaryCollection_a1d7ac8cc1b11c7b241f16be4a41c4582}
-
-\item 
+\begin{DoxyCompactList}\small\item\em test if the boundary with the given boundary indicator is periodic \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BoundaryCollection_aaebf4e5f32663f1f94c08fdc9902c06f}{const size\-\_\-t {\bfseries number\-Of\-Boundaries} () const }\label{classnatrium_1_1BoundaryCollection_aaebf4e5f32663f1f94c08fdc9902c06f}
 
 \item 
 \hypertarget{classnatrium_1_1BoundaryCollection_a29d1d56e79872df40cbdd9a8150dd6d3}{const size\-\_\-t {\bfseries number\-Of\-Periodic\-Boundaries} () const }\label{classnatrium_1_1BoundaryCollection_a29d1d56e79872df40cbdd9a8150dd6d3}
 
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_ab1454365bef1b79a2bd38148f8037be6}{const std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1Boundary}{Boundary}$<$ dim $>$ $>$ $>$ \& {\bfseries get\-Boundaries} () const }\label{classnatrium_1_1BoundaryCollection_ab1454365bef1b79a2bd38148f8037be6}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_a3f72a07f410649d80f3077046521b551}{const std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1PeriodicBoundary}{Periodic\-Boundary}\\*
+$<$ dim $>$ $>$ $>$ \& {\bfseries get\-Periodic\-Boundaries} () const }\label{classnatrium_1_1BoundaryCollection_a3f72a07f410649d80f3077046521b551}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_a9a56438d4dfcfafe5842882fe34bbe0e}{const std\-::map$<$ size\-\_\-t, \\*
+shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1MinLeeBoundary}{Min\-Lee\-Boundary}\\*
+$<$ dim $>$ $>$ $>$ \& {\bfseries get\-Min\-Lee\-Boundaries} () const }\label{classnatrium_1_1BoundaryCollection_a9a56438d4dfcfafe5842882fe34bbe0e}
+
 \end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::\-Boundary\-Collection$<$ dim $>$}
+
+The \hyperlink{classnatrium_1_1BoundaryCollection}{Boundary\-Collection} class defines all boundaries of a flow domain. Internally, the boundaries are stored in two different std\-::map, one for the periodic boundaries and one for the non-\/periodic ones. Its keys are the boundary indicators (for periodic boundaries\-: the first boundary indicator). 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1BoundaryCollection_a60d5efd5fa9bf2107705ee1a38508dd4}{\index{natrium\-::\-Boundary\-Collection@{natrium\-::\-Boundary\-Collection}!add\-Boundary@{add\-Boundary}}
+\index{add\-Boundary@{add\-Boundary}!natrium::BoundaryCollection@{natrium\-::\-Boundary\-Collection}}
+\subsubsection[{add\-Boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ void {\bf natrium\-::\-Boundary\-Collection}$<$ dim $>$\-::add\-Boundary (
+\begin{DoxyParamCaption}
+\item[{shared\-\_\-ptr$<$ {\bf Periodic\-Boundary}$<$ dim $>$ $>$}]{boundary}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1BoundaryCollection_a60d5efd5fa9bf2107705ee1a38508dd4}
+
+
+Add a boundary to the flow definition. This definition of add\-Boundary applies to periodic boundaries. As periodic boundaries have two boundary indicators, they are added twice to the boundary map. Internally, they are additionally added to the vector periodic\-Boundaries, which can be accessed separate from non-\/periodic boundaries. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em boundary} & a periodic boundary \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classnatrium_1_1BoundaryCollectionError}{Boundary\-Collection\-Error},e.\-g.} & if boundary indicators are not unique \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classnatrium_1_1BoundaryCollection_ac8ad257c880937c59baad2d646392d7d}{\index{natrium\-::\-Boundary\-Collection@{natrium\-::\-Boundary\-Collection}!add\-Boundary@{add\-Boundary}}
+\index{add\-Boundary@{add\-Boundary}!natrium::BoundaryCollection@{natrium\-::\-Boundary\-Collection}}
+\subsubsection[{add\-Boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ void {\bf natrium\-::\-Boundary\-Collection}$<$ dim $>$\-::add\-Boundary (
+\begin{DoxyParamCaption}
+\item[{shared\-\_\-ptr$<$ {\bf Min\-Lee\-Boundary}$<$ dim $>$ $>$}]{boundary}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1BoundaryCollection_ac8ad257c880937c59baad2d646392d7d}
+
+
+Add a boundary to the flow definition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em boundary} & a periodic boundary \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classnatrium_1_1BoundaryCollectionError}{Boundary\-Collection\-Error},e.\-g.} & if boundary indicators are not unique \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classnatrium_1_1BoundaryCollection_adacc8205b74bdc7344161e73f1acadca}{\index{natrium\-::\-Boundary\-Collection@{natrium\-::\-Boundary\-Collection}!get\-Boundary@{get\-Boundary}}
+\index{get\-Boundary@{get\-Boundary}!natrium::BoundaryCollection@{natrium\-::\-Boundary\-Collection}}
+\subsubsection[{get\-Boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ const shared\-\_\-ptr$<${\bf Boundary}$<$dim$>$ $>$\& {\bf natrium\-::\-Boundary\-Collection}$<$ dim $>$\-::get\-Boundary (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{boundary\-Indicator}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1BoundaryCollection_adacc8205b74bdc7344161e73f1acadca}
+
+
+get a specific boundary 
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classnatrium_1_1BoundaryCollectionError}{Boundary\-Collection\-Error},if} & the specified boundary indicator does not exist \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classnatrium_1_1BoundaryCollection_aea35fe9645fc3521da83ae83ef84967b}{\index{natrium\-::\-Boundary\-Collection@{natrium\-::\-Boundary\-Collection}!get\-Min\-Lee\-Boundary@{get\-Min\-Lee\-Boundary}}
+\index{get\-Min\-Lee\-Boundary@{get\-Min\-Lee\-Boundary}!natrium::BoundaryCollection@{natrium\-::\-Boundary\-Collection}}
+\subsubsection[{get\-Min\-Lee\-Boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ const shared\-\_\-ptr$<${\bf Min\-Lee\-Boundary}$<$dim$>$ $>$\& {\bf natrium\-::\-Boundary\-Collection}$<$ dim $>$\-::get\-Min\-Lee\-Boundary (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{boundary\-Indicator}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1BoundaryCollection_aea35fe9645fc3521da83ae83ef84967b}
+
+
+get a specific Min\-Lee boundary 
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classnatrium_1_1BoundaryCollectionError}{Boundary\-Collection\-Error},if} & the specified boundary indicator does not exist \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classnatrium_1_1BoundaryCollection_ac3a84114a57f0e321a24eaa743a141f3}{\index{natrium\-::\-Boundary\-Collection@{natrium\-::\-Boundary\-Collection}!get\-Periodic\-Boundary@{get\-Periodic\-Boundary}}
+\index{get\-Periodic\-Boundary@{get\-Periodic\-Boundary}!natrium::BoundaryCollection@{natrium\-::\-Boundary\-Collection}}
+\subsubsection[{get\-Periodic\-Boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ const shared\-\_\-ptr$<${\bf Periodic\-Boundary}$<$dim$>$ $>$\& {\bf natrium\-::\-Boundary\-Collection}$<$ dim $>$\-::get\-Periodic\-Boundary (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{boundary\-Indicator}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1BoundaryCollection_ac3a84114a57f0e321a24eaa743a141f3}
+
+
+get a specific periodic boundary 
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classnatrium_1_1BoundaryCollectionError}{Boundary\-Collection\-Error},if} & the specified boundary indicator does not exist \\
+\hline
+\end{DoxyExceptions}
 
 
 The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
