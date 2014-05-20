@@ -51,20 +51,18 @@ int main() {
 			SolverConfiguration>();
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
-					* (configuration->getOrderOfFiniteElement() - 1));
+					* (configuration->getSedgOrderOfFiniteElement() - 1));
 	configuration->setOutputDirectory("../results/step-3");
-	configuration->setRestart(true);
-	configuration->setOutputFlags(
-			configuration->getOutputFlags() | out_Checkpoints);
-	configuration->setOutputCheckpointEvery(1000);
-	configuration->setOutputVectorFieldsEvery(100);
-	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setDQScaling(50);
-	double tScaling =  0.4 / (sqrt(2) * configuration->getDQScaling());
-	configuration->setTimeStep(tScaling * deltaX);
-	configuration->setTimeStep( 1.2e-05);
+	configuration->setRestartAtLastCheckpoint(true);
+	configuration->setOutputCheckpointInterval(1000);
+	configuration->setOutputSolutionInterval(100);
+	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+	configuration->setStencilScaling(50);
+	double tScaling =  0.4 / (sqrt(2) * configuration->getStencilScaling());
+	configuration->setTimeStepSize(tScaling * deltaX);
+	configuration->setTimeStepSize( 1.2e-05);
 	configuration->setNumberOfTimeSteps(100000);
-	configuration->setDistributionInitType(Iterative);
+	configuration->setInitializationScheme(ITERATIVE);
 
 	// make problem and solver objects
 	shared_ptr<LidDrivenCavity2D> lidDrivenCavity = make_shared<LidDrivenCavity2D>(

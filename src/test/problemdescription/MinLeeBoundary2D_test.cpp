@@ -145,10 +145,10 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("/tmp");
-	configuration->setOutputFlags(out_noOutput);
+	configuration->setSwitchOutputOff(true);
 	configuration->setNumberOfTimeSteps(100);
-	configuration->setOrderOfFiniteElement(2);
-	configuration->setTimeStep(0.01);
+	configuration->setSedgOrderOfFiniteElement(2);
+	configuration->setTimeStepSize(0.01);
 
 	CFDSolver<2> solver(configuration, problem);
 
@@ -173,10 +173,10 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("/tmp");
-	configuration->setOutputFlags(out_noOutput);
+	configuration->setSwitchOutputOff(true);
 	configuration->setNumberOfTimeSteps(1);
-	configuration->setOrderOfFiniteElement(10);
-	configuration->setTimeStep(0.0001);
+	configuration->setSedgOrderOfFiniteElement(10);
+	configuration->setTimeStepSize(0.0001);
 
 	CFDSolver<2> solver(configuration, problem);
 	solver.run();

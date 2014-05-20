@@ -235,14 +235,14 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_TaylorGreenVortex_test){
 			SolverConfiguration>();
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
-					* (configuration->getOrderOfFiniteElement() - 1));
+					* (configuration->getSedgOrderOfFiniteElement() - 1));
 	configuration->setOutputDirectory("../results/test-PeriodicBoundary-TaylorGreen");
-	configuration->setRestart(false);
-	configuration->setOutputFlags(out_noOutput);
-	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setDQScaling(50);
-	double tScaling = std::min(0.1, 1. / (2 * configuration->getDQScaling()));
-	configuration->setTimeStep(tScaling * deltaX);
+	configuration->setRestartAtLastCheckpoint(false);
+	configuration->setSwitchOutputOff(true);
+	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+	configuration->setStencilScaling(50);
+	double tScaling = std::min(0.1, 1. / (2 * configuration->getStencilScaling()));
+	configuration->setTimeStepSize(tScaling * deltaX);
 	configuration->setNumberOfTimeSteps(50);
 	//configuration->setDistributionInitType(Iterative);
 
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_TaylorGreenVortex_test){
 	BOOST_CHECK_SMALL( fabs(mass-1.0), 1e-8);
 
 	// check if the dissipation of the vortex is realistic
-	double analyticMaxVelocityLoss = 1 - exp(-2 * viscosity * N * configuration->getTimeStep());
+	double analyticMaxVelocityLoss = 1 - exp(-2 * viscosity * N * configuration->getTimeStepSize());
 	double numericalMaxVelocityLoss = 1- solver.getMaxVelocityNorm();
 	double relativeError = fabs(analyticMaxVelocityLoss-numericalMaxVelocityLoss)/analyticMaxVelocityLoss;
 	BOOST_CHECK_SMALL(relativeError,  1e-1);

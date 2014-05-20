@@ -31,26 +31,26 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	/// Build boltzmann model
 	if (Stencil_D2Q9 == configuration->getStencilType()) {
 		m_boltzmannModel = make_shared<D2Q9IncompressibleModel>(
-				configuration->getDQScaling());
+				configuration->getStencilScaling());
 	}
 
 	/// Build streaming data object
-	if (Advection_SEDGMinLee == configuration->getAdvectionOperatorType()) {
+	if (SEDG == configuration->getAdvectionScheme()) {
 		// if this string is "": matrix is reassembled and not read from file
 		string whereAreTheStoredMatrices;
-		if (configuration->isRestart()) {
+		if (configuration->isRestartAtLastCheckpoint()) {
 			whereAreTheStoredMatrices = configuration->getOutputDirectory();
 		}
 		// create SEDG MinLee by reading the system matrices from files or assembling
 		m_advectionOperator = make_shared<SEDGMinLee<dim> >(
 				m_problemDescription->getTriangulation(),
 				m_problemDescription->getBoundaries(),
-				configuration->getOrderOfFiniteElement(), m_boltzmannModel,
+				configuration->getSedgOrderOfFiniteElement(), m_boltzmannModel,
 				whereAreTheStoredMatrices,
-				(configuration->getFluxType() == Flux_Central));
+				(CENTRAL == configuration->getSedgFluxType()));
 	}
 
-	if (configuration->isRestart()) {
+	if (configuration->isRestartAtLastCheckpoint()) {
 		// read iteration number from file
 		std::stringstream filename;
 		filename << m_configuration->getOutputDirectory() << "/checkpoint.dat";
@@ -65,21 +65,21 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
-	if (Collision_BGKTransformed == configuration->getCollisionType()) {
+	if (BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS == configuration->getCollisionScheme()) {
 		tau = BGKTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStep(), m_boltzmannModel);
+				m_configuration->getTimeStepSize(), m_boltzmannModel);
 		m_collisionModel = make_shared<BGKTransformed>(tau, m_boltzmannModel);
 	}
 
 /// Build time integrator
 	size_t numberOfDoFs = m_advectionOperator->getNumberOfDoFs();
-	if (Integrator_RungeKutta5LowStorage
-			== configuration->getTimeIntegratorType()) {
+	if (RUNGE_KUTTA_5STAGE
+			== configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 				RungeKutta5LowStorage<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
-				configuration->getTimeStep(), numberOfDoFs,
+				configuration->getTimeStepSize(), numberOfDoFs,
 				m_boltzmannModel->getQ() - 1);
 	}
 
@@ -115,13 +115,13 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< m_collisionModel->calculateOptimalTimeStep(
 					problemDescription->getViscosity(), m_boltzmannModel)
 			<< " s" << endl;
-	*(Logging::BASIC) << "Actual dt:       " << configuration->getTimeStep()
+	*(Logging::BASIC) << "Actual dt:       " << configuration->getTimeStepSize()
 			<< " s" << endl;
 	*(Logging::BASIC) << "tau:             " << tau << endl;
 	*(Logging::BASIC) << "----------------------------" << endl;
 
 // Initialize distribution functions
-	if (configuration->isRestart()) {
+	if (configuration->isRestartAtLastCheckpoint()) {
 		loadDistributionFunctionsFromFiles(
 				m_configuration->getOutputDirectory());
 	} else {
@@ -214,8 +214,8 @@ template void CFDSolver<3>::run();
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
 	// output: vector fields as .vtu files
-	if ((out_VectorFields & m_configuration->getOutputFlags()) != 0) {
-		if (iteration % m_configuration->getOutputVectorFieldsEvery() == 0) {
+	if (not m_configuration->isSwitchOutputOff()) {
+		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
 					<< iteration << ".vtu";
@@ -232,10 +232,9 @@ void CFDSolver<dim>::output(size_t iteration) {
 			data_out.build_patches();
 			data_out.write_vtu(vtu_output);
 		}
-	}
+
 	// output: checkpoint
-	if ((out_Checkpoints & m_configuration->getOutputFlags()) != 0) {
-		if (iteration % m_configuration->getOutputCheckpointEvery() == 0) {
+			if (iteration % m_configuration->getOutputCheckpointInterval() == 0) {
 			// advection matrices
 			m_advectionOperator->saveCheckpoint(
 					m_configuration->getOutputDirectory());
@@ -248,7 +247,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 					<< "/checkpoint.dat";
 			std::ofstream outfile(filename.str().c_str());
 			outfile << iteration << endl;
-		}
+	}
 	}
 }
 template void CFDSolver<2>::output(size_t iteration);
@@ -273,26 +272,26 @@ void CFDSolver<dim>::initializeDistributions() {
 		}
 	}
 
-	switch (m_configuration->getDistributionInitType()) {
-	case Equilibrium: {
+	switch (m_configuration->getInitializationScheme()) {
+	case EQUILIBRIUM: {
 		(*Logging::BASIC) << "Equilibrium distribution functions" << endl;
 		// do nothing else
 		break;
 	}
-	case Iterative: {
+	case ITERATIVE: {
 		(*Logging::BASIC) << "Iterative procedure" << endl;
 		(*Logging::FULL) << "residual = "
-				<< m_configuration->getStopDistributionInitResidual();
+				<< m_configuration->getIterativeInitializationResidual();
 		(*Logging::FULL) << ", max iterations = "
-				<< m_configuration->getMaxDistributionInitIterations() << endl;
+				<< m_configuration->getIterativeInitializationNumberOfIterations() << endl;
 		// Iterative procedure; leading to consistent initial values
 		size_t loopCount = 0;
 		double residual = 10;
 		const bool inInitializationProcedure = true;
 		distributed_vector oldDensities;
-		while (residual > m_configuration->getStopDistributionInitResidual()) {
+		while (residual > m_configuration->getIterativeInitializationResidual()) {
 			if (loopCount
-					> m_configuration->getMaxDistributionInitIterations()) {
+					> m_configuration->getIterativeInitializationNumberOfIterations()) {
 				throw CFDSolverException(
 						"The iterative Initialization of equilibrium distribution functions failed. Either use another initialization procedure or change the preferences for iterative initialization (residual or maximal number of init iterations).");
 			}

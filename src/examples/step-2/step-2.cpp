@@ -59,15 +59,13 @@ int main() {
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("../results/step-2");
-	configuration->setRestart(false);
-	configuration->setOutputFlags(
-			configuration->getOutputFlags() | out_Checkpoints);
-	configuration->setOutputCheckpointEvery(10000);
-	configuration->setOutputVectorFieldsEvery(100000000);
+	configuration->setRestartAtLastCheckpoint(false);
+	configuration->setOutputCheckpointInterval(1000);
+	configuration->setOutputSolutionInterval(100000000);
 	configuration->setNumberOfTimeSteps(100000000);
-	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setDQScaling(dqScaling);
-	configuration->setTimeStep(timeStepSize);
+	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+	configuration->setStencilScaling(dqScaling);
+	configuration->setTimeStepSize(timeStepSize);
 	//configuration->setDistributionInitType(Iterative);
 
 	shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(
@@ -128,7 +126,7 @@ int main() {
 	distributed_vector analyticSolution2(solver.getNumberOfDoFs());
 	double t = 0;
 	for (size_t i = solver.getIterationStart(); t < 400000; i++) {
-		t = i * configuration->getTimeStep();
+		t = i * configuration->getTimeStepSize();
 		if (i % 1000 == 0) {
 			cout << "Iteration " << i << ",  t = " << t << endl;
 		}
@@ -151,7 +149,7 @@ int main() {
 				data_out.add_data_vector(solver.getVelocity().at(0), "vx");
 				data_out.add_data_vector(solver.getVelocity().at(1), "vy");
 				// calculate analytic solution
-				getAnalyticSolution(startTime + configuration->getTimeStep() * i,
+				getAnalyticSolution(startTime + configuration->getTimeStepSize() * i,
 						analyticSolution1, analyticSolution2, supportPoints,
 						*couetteFlow);
 				data_out.add_data_vector(analyticSolution1, "vx_analytic");
@@ -167,7 +165,7 @@ int main() {
 				analyticSolution2.add(solver.getVelocity().at(1));
 				double xVelocityInTheMiddle = solver.getVelocity().at(0)(
 						middleDof);
-				(*maxNormOut) << i * configuration->getTimeStep() << "  "
+				(*maxNormOut) << i * configuration->getTimeStepSize() << "  "
 						<< xVelocityInTheMiddle << "  "
 						<< analyticSolution1.linfty_norm() << " "
 						<< solver.getMaxDensityDeviationFrom(1) << endl;

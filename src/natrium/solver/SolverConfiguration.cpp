@@ -111,25 +111,6 @@ SolverConfiguration::SolverConfiguration() {
 	}
 	leave_subsection();
 
-	// TODO read configuration from file
-	// TODO custom configurations
-	m_advectionOperatorType = Advection_SEDGMinLee;
-	m_collisionType = Collision_BGKTransformed;
-	m_stencilType = Stencil_D2Q9;
-	m_timeIntegratorType = Integrator_RungeKutta5LowStorage;
-	m_fluxType = Flux_LaxFriedrichs;
-	m_timeStep = 0.1;
-	m_orderOfFiniteElement = 2;
-	m_numberOfTimeSteps = 100;
-	m_dQScaling = 1.0;
-	m_outputDirectory = "/tmp/natrium";
-	setOutputFlags(out_CommandLineBasic | out_VectorFields);
-	m_restart = false;
-	m_distributionInitType = Equilibrium;
-	m_maxDistributionInitIterations = 10000;
-	m_stopDistributionInitResidual = 1e-6;
-	m_outputVectorFieldsEvery = 10;
-	m_outputCheckpointEvery = 500;
 
 }
 

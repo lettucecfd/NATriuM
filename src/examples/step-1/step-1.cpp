@@ -49,19 +49,18 @@ int main() {
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
+	configuration->setOutputDirectory("../results/step-1-variousDQ");
+	configuration->setRestartAtLastCheckpoint(true);
+	configuration->setOutputCheckpointInterval(100);
+	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+	configuration->setStencilScaling(50);
+	double tScaling = std::min(0.1, 1. / (2 * configuration->getStencilScaling()));
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
-					* (configuration->getOrderOfFiniteElement() - 1));
-	configuration->setOutputDirectory("../results/step-1-variousDQ");
-	configuration->setRestart(true);
-	configuration->setOutputFlags(
-			configuration->getOutputFlags() | out_Checkpoints);
-	configuration->setOutputCheckpointEvery(100);
-	configuration->setOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setDQScaling(50);
-	double tScaling = std::min(0.1, 1. / (2 * configuration->getDQScaling()));
-	configuration->setTimeStep(tScaling * deltaX);
+					* (configuration->getSedgOrderOfFiniteElement() - 1));
+	configuration->setTimeStepSize(tScaling * deltaX);
 	configuration->setNumberOfTimeSteps(5000);
+
 	//configuration->setDistributionInitType(Iterative);
 
 	// make problem and solver objects
@@ -121,16 +120,16 @@ int main() {
 		data_out.add_data_vector(solver.getVelocity().at(0), "v_1");
 		data_out.add_data_vector(solver.getVelocity().at(1), "v_2");
 		// calculate analytic solution
-		getAnalyticSolution(configuration->getTimeStep() * i, analyticSolution1,
+		getAnalyticSolution(configuration->getTimeStepSize() * i, analyticSolution1,
 				analyticSolution2, supportPoints, *tgVortex);
 		data_out.add_data_vector(analyticSolution1, "v_1_analytic");
 		data_out.add_data_vector(analyticSolution2, "v_2_analytic");
 		data_out.build_patches();
 		data_out.write_vtu(vtu_output);
 		// put out max velocity norm for numerical and analytic solution
-		(*maxNormOut) << i * configuration->getTimeStep() << "  "
+		(*maxNormOut) << i * configuration->getTimeStepSize() << "  "
 				<< solver.getMaxVelocityNorm() << "  "
-				<< exp(-2 * viscosity * i * configuration->getTimeStep()) << " "
+				<< exp(-2 * viscosity * i * configuration->getTimeStepSize()) << " "
 				<< solver.getMaxDensityDeviationFrom(1) << endl;
 	}
 	delete maxNormOut;

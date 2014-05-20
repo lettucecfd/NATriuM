@@ -17,18 +17,22 @@
 
 namespace natrium {
 
+//////////////////////////////
+// DECLARE ALL SELECTIONS ////
+//////////////////////////////
+
 /**
  * @short Implemented streaming data types
  */
-enum AdvectionOperatorType {
-	Advection_SEDGMinLee
+enum AdvectionSchemeName {
+	SEDG
 };
 
 /**
  * @short Implemented collision models
  */
-enum CollisionType {
-	Collision_BGKTransformed // Collision for the transformed distribution function as defined in MinLee2011
+enum CollisionSchemeName {
+	BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS // Collision for the transformed distribution function as defined in MinLee2011
 };
 
 // StencilType defined in BoltzmannModel.h
@@ -36,37 +40,28 @@ enum CollisionType {
 /**
  * @short Implemented time integrators
  */
-enum TimeIntegratorType {
-	Integrator_RungeKutta5LowStorage
+enum TimeIntegratorName {
+	RUNGE_KUTTA_5STAGE
 };
 
 /**
  * @short the numerical flux used to calculate the advection operator
  */
-enum FluxType {
-	Flux_LaxFriedrichs, Flux_Central
-};
-
-/**
- * Output flags
- */
-enum OutputFlags {
-	out_noOutput = 0,
-	out_CommandLineError = 1,
-	out_CommandLineBasic = 2,
-	out_CommandLineFull = 4,
-	out_LogFile = 8,
-	out_VectorFields = 16,
-	out_Checkpoints = 32
+enum FluxTypeName {
+	LAX_FRIEDRICHS, CENTRAL
 };
 
 /**
  * @short the initialization procedure for the distribution functions
  */
-enum DistributionInitType {
-	Equilibrium, // Distribute with equilibrium functions
-	Iterative // Distribute with iterative procedure; enforces consistent initial conditions
+enum InitializationSchemeName {
+	EQUILIBRIUM, // Distribute with equilibrium functions
+	ITERATIVE // Distribute with iterative procedure; enforces consistent initial conditions
 };
+
+//////////////////////////////
+// EXCEPTION CLASS        ////
+//////////////////////////////
 
 /**
  * @short Exception class for CFDSolver
@@ -88,60 +83,72 @@ public:
 	}
 };
 
+//////////////////////////////
+// MAIN CLASS             ////
+//////////////////////////////
+
 /** @short Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE).
- *  @tparam dim The dimension of the flow (2 or 3).
+ *  @note The class is a subclass of dealii::ParameterHandler and functions as a wrapper.
  */
 class SolverConfiguration: public dealii::ParameterHandler {
 private:
 
+	//////////////////////////////
+	// MEMBER VARIABLES       ////
+	//////////////////////////////
+
+	// SECTION ADVECTION
 	/// Streaming data type (e.g. MinLee2011)
-	AdvectionOperatorType m_advectionOperatorType;
+	AdvectionSchemeName m_advectionScheme;
+	/// Time Integrator type (e.g. RK5LowStorage)
+	TimeIntegratorName m_timeIntegrator;
 
+	// --- SUBSECTION SEDG
+	/// Numerical Flux
+	FluxTypeName m_SEDGFluxType;
+	/// Order of Finite Element
+	size_t m_SEDGOrderOfFiniteElement;
+
+	// SECTION COLLISION
+	bool m_collisionOnBoundaryNodes;
 	/// Collision type (e.g. BGKTransformed)
-	CollisionType m_collisionType;
+	CollisionSchemeName m_collisionScheme;
 
+	// SECTION GENERAL
 	/// Stencil type (e.g. D2Q9)
 	StencilType m_stencilType;
-
-	/// Time Integrator type (e.g. RK5LowStorage)
-	TimeIntegratorType m_timeIntegratorType;
-
-	/// Numerical Flux
-	FluxType m_fluxType;
-
-	/// Time step size
-	double m_timeStep;
-
-	/// Number of time steps
-	size_t m_numberOfTimeSteps;
-
-	/// Order of finite element
-	size_t m_orderOfFiniteElement;
-
 	/// scaling of the difference stencil for the discrete particle velocity
-	double m_dQScaling;
+	double m_stencilScaling;
+	/// Switch output off?
+	bool m_switchOutputOff;
+	/// Time step size
+	double m_timeStepSize;
 
+	// SECTION INITIALIZATION
+	InitializationSchemeName m_initializationScheme;
+	bool m_restartAtLastCheckpoint;
+
+	// --- SUBSECTION ITERATIVE INITIALIZATION STOP CONDITION
+	/// max initialization iterations
+	size_t m_iterativeInitializationNumberOfIterations;
+	/// stop condition for the density residual of the initialization procedure
+	double m_iterativeInitializationResidual;
+
+	// SECTION OUTPUT
+	/// degree of output on the command line
+	size_t m_commandLineVerbosity;
+	/// output frequency checkpoints
+	size_t m_outputCheckpointInterval;
 	/// Output directory
 	std::string m_outputDirectory;
+	/// Output frequency solution vector
+	size_t m_outputSolutionInterval;
+	/// Indicates whether to write a log file
+	bool m_writeALogFile;
 
-	/// the output flags
-	int m_outputFlags;
-
-	/// output frequency
-	size_t m_outputVectorFieldsEvery;
-	size_t m_outputCheckpointEvery;
-
-	/// restart option
-	bool m_restart;
-
-	/// initialization procedure
-	DistributionInitType m_distributionInitType;
-
-	/// max initialization iterations
-	size_t m_maxDistributionInitIterations;
-
-	/// stop condition for the density residual of the initialization procedure
-	double m_stopDistributionInitResidual;
+	// SECTION STOP CONDITION
+	/// Number of time steps
+	size_t m_numberOfTimeSteps;
 
 public:
 
@@ -160,7 +167,6 @@ public:
 	virtual ~SolverConfiguration() {
 	}
 	;
-
 
 	/**
 	 * @short wrapper function for ParameterHandler::read_input; directing cerr into a C++-Exception
@@ -204,52 +210,141 @@ public:
 		//TODO: implement the checkProblem function
 	}
 
-	CollisionType getCollisionType() const {
-		return m_collisionType;
+	/*void setOutputFlags(int outputFlags) {
+	 m_outputFlags = outputFlags;
+	 // if Complete log, then switch on all commandline flags
+	 if ((out_CommandLineFull & m_outputFlags) != 0) {
+	 m_outputFlags |= out_CommandLineBasic;
+	 m_outputFlags |= out_CommandLineError;
+	 }
+	 // if base, then switch on errors
+	 if ((out_CommandLineBasic & m_outputFlags) != 0) {
+	 m_outputFlags |= out_CommandLineError;
+	 }
+	 // redefine Logging stream
+	 std::stringstream logFile;
+	 if ((out_LogFile & m_outputFlags) != 0){
+	 logFile << getOutputDirectory() << "/natrium.log";
+	 } else {
+	 logFile << "";
+	 }
+	 if ((out_CommandLineFull & m_outputFlags) != 0) {
+	 Logging::FULL = Logging::makeTeeStream(true, false, false, logFile.str());
+	 } else {
+	 Logging::FULL = Logging::makeTeeStream(false, false, false, logFile.str());
+	 }
+	 if ((out_CommandLineBasic & m_outputFlags) != 0) {
+	 Logging::BASIC = Logging::makeTeeStream(true, false, false, logFile.str());
+	 } else {
+	 Logging::BASIC = Logging::makeTeeStream(false, false, false, logFile.str());
+	 }
+	 if ((out_CommandLineError & m_outputFlags) != 0) {
+	 Logging::ERROR = Logging::makeTeeStream(true, false, false, logFile.str());
+	 } else {
+	 Logging::ERROR = Logging::makeTeeStream(false, false, false, logFile.str());
+	 }
+
+	 }*/
+
+	//////////////////////////////////
+	// GETTER AND SETTER -------  ////
+	// WRAPPED AROUND THE DEAL.II ////
+	// PARMETER HANDLER CLASS     ////
+	//////////////////////////////////
+	AdvectionSchemeName getAdvectionScheme() {
+		enter_subsection("Advection");
+		string advectionScheme = get("Advection scheme");
+		leave_subsection();
+		if ("SEDG" == advectionScheme) {
+			return SEDG;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown advection scheme '" << advectionScheme
+					<< " '. The implementation of AdvectionSchemeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
 	}
 
-	void setCollisionType(CollisionType collisionType) {
-		m_collisionType = collisionType;
+	void setAdvectionScheme(AdvectionSchemeName advectionScheme) {
+		enter_subsection("Advection");
+		switch (advectionScheme) {
+		case SEDG: {
+			set("Advection scheme", "SEDG");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown advection scheme; index. " << advectionScheme
+					<< " in enum AdvectionScheme. The constructor of SolverConfiguration might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
 	}
 
-	StencilType getStencilType() const {
-		return m_stencilType;
+	bool isCollisionOnBoundaryNodes() {
+		enter_subsection("Collision");
+		bool collisionOnBoundaryNodes;
+		try {
+			collisionOnBoundaryNodes = get_bool("Collision on boundary nodes");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Collision on boundary nodes' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return collisionOnBoundaryNodes;
 	}
 
-	void setStencilType(StencilType stencilType) {
-		m_stencilType = stencilType;
+	void setCollisionOnBoundaryNodes(bool collisionOnBoundaryNodes) {
+		m_collisionOnBoundaryNodes = collisionOnBoundaryNodes;
 	}
 
-	double getTimeStep() const {
-		return m_timeStep;
+	CollisionSchemeName getCollisionScheme() const {
+		return m_collisionScheme;
 	}
 
-	void setTimeStep(double timeStep) {
-		m_timeStep = timeStep;
+	void setCollisionScheme(CollisionSchemeName collisionScheme) {
+		m_collisionScheme = collisionScheme;
 	}
 
-	size_t getOrderOfFiniteElement() const {
-		return m_orderOfFiniteElement;
+	size_t getCommandLineVerbosity() const {
+		return m_commandLineVerbosity;
 	}
 
-	void setOrderOfFiniteElement(size_t orderOfFiniteElement) {
-		m_orderOfFiniteElement = orderOfFiniteElement;
+	void setCommandLineVerbosity(size_t commandLineVerbosity) {
+		m_commandLineVerbosity = commandLineVerbosity;
 	}
 
-	TimeIntegratorType getTimeIntegratorType() const {
-		return m_timeIntegratorType;
+	InitializationSchemeName getInitializationScheme() const {
+		return m_initializationScheme;
 	}
 
-	void setTimeIntegratorType(TimeIntegratorType timeIntegratorType) {
-		m_timeIntegratorType = timeIntegratorType;
+	void setInitializationScheme(
+			InitializationSchemeName initializationScheme) {
+		m_initializationScheme = initializationScheme;
 	}
 
-	AdvectionOperatorType getAdvectionOperatorType() const {
-		return m_advectionOperatorType;
+	size_t getIterativeInitializationNumberOfIterations() const {
+		return m_iterativeInitializationNumberOfIterations;
 	}
 
-	void setAdvectionOperatorType(AdvectionOperatorType advectionOperatorType) {
-		m_advectionOperatorType = advectionOperatorType;
+	void setIterativeInitializationNumberOfIterations(
+			size_t iterativeInitializationNumberOfIterations) {
+		m_iterativeInitializationNumberOfIterations =
+				iterativeInitializationNumberOfIterations;
+	}
+
+	double getIterativeInitializationResidual() const {
+		return m_iterativeInitializationResidual;
+	}
+
+	void setIterativeInitializationResidual(
+			double iterativeInitializationResidual) {
+		m_iterativeInitializationResidual = iterativeInitializationResidual;
 	}
 
 	size_t getNumberOfTimeSteps() const {
@@ -260,12 +355,12 @@ public:
 		m_numberOfTimeSteps = numberOfTimeSteps;
 	}
 
-	FluxType getFluxType() const {
-		return m_fluxType;
+	size_t getOutputCheckpointInterval() const {
+		return m_outputCheckpointInterval;
 	}
 
-	void setFluxType(FluxType fluxType) {
-		m_fluxType = fluxType;
+	void setOutputCheckpointInterval(size_t outputCheckpointInterval) {
+		m_outputCheckpointInterval = outputCheckpointInterval;
 	}
 
 	const std::string& getOutputDirectory() const {
@@ -273,105 +368,87 @@ public:
 	}
 
 	void setOutputDirectory(const std::string& outputDirectory) {
-		// TODO create directory; check mod
-		this->m_outputDirectory = outputDirectory;
+		m_outputDirectory = outputDirectory;
 	}
 
-	double getDQScaling() const {
-		return m_dQScaling;
+	size_t getOutputSolutionInterval() const {
+		return m_outputSolutionInterval;
 	}
 
-	void setDQScaling(double dQScaling) {
-		m_dQScaling = dQScaling;
+	void setOutputSolutionInterval(size_t outputSolutionInterval) {
+		m_outputSolutionInterval = outputSolutionInterval;
 	}
 
-	int getOutputFlags() const {
-		return m_outputFlags;
+	bool isRestartAtLastCheckpoint() const {
+		return m_restartAtLastCheckpoint;
 	}
 
-	void setOutputFlags(int outputFlags) {
-		m_outputFlags = outputFlags;
-		// if Complete log, then switch on all commandline flags
-		if ((out_CommandLineFull & m_outputFlags) != 0) {
-			m_outputFlags |= out_CommandLineBasic;
-			m_outputFlags |= out_CommandLineError;
-		}
-		// if base, then switch on errors
-		if ((out_CommandLineBasic & m_outputFlags) != 0) {
-			m_outputFlags |= out_CommandLineError;
-		}
-		// redefine Logging stream
-		/*std::stringstream logFile;
-		 if ((out_LogFile & m_outputFlags) != 0){
-		 logFile << getOutputDirectory() << "/natrium.log";
-		 } else {
-		 logFile << "";
-		 }
-		 if ((out_CommandLineFull & m_outputFlags) != 0) {
-		 Logging::FULL = Logging::makeTeeStream(true, false, false, logFile.str());
-		 } else {
-		 Logging::FULL = Logging::makeTeeStream(false, false, false, logFile.str());
-		 }
-		 if ((out_CommandLineBasic & m_outputFlags) != 0) {
-		 Logging::BASIC = Logging::makeTeeStream(true, false, false, logFile.str());
-		 } else {
-		 Logging::BASIC = Logging::makeTeeStream(false, false, false, logFile.str());
-		 }
-		 if ((out_CommandLineError & m_outputFlags) != 0) {
-		 Logging::ERROR = Logging::makeTeeStream(true, false, false, logFile.str());
-		 } else {
-		 Logging::ERROR = Logging::makeTeeStream(false, false, false, logFile.str());
-		 }*/
-
+	void setRestartAtLastCheckpoint(bool restartAtLastCheckpoint) {
+		m_restartAtLastCheckpoint = restartAtLastCheckpoint;
 	}
 
-	bool isRestart() const {
-		return m_restart;
+	FluxTypeName getSedgFluxType() const {
+		return m_SEDGFluxType;
 	}
 
-	void setRestart(bool restart) {
-		m_restart = restart;
+	void setSedgFluxType(FluxTypeName sedgFluxType) {
+		m_SEDGFluxType = sedgFluxType;
 	}
 
-	DistributionInitType getDistributionInitType() const {
-		return m_distributionInitType;
+	size_t getSedgOrderOfFiniteElement() const {
+		return m_SEDGOrderOfFiniteElement;
 	}
 
-	void setDistributionInitType(DistributionInitType distributionInitType) {
-		m_distributionInitType = distributionInitType;
+	void setSedgOrderOfFiniteElement(size_t sedgOrderOfFiniteElement) {
+		m_SEDGOrderOfFiniteElement = sedgOrderOfFiniteElement;
 	}
 
-	size_t getMaxDistributionInitIterations() const {
-		return m_maxDistributionInitIterations;
+	double getStencilScaling() const {
+		return m_stencilScaling;
 	}
 
-	void setMaxDistributionInitIterations(
-			size_t maxDistributionInitIterations) {
-		m_maxDistributionInitIterations = maxDistributionInitIterations;
+	void setStencilScaling(double stencilScaling) {
+		m_stencilScaling = stencilScaling;
 	}
 
-	double getStopDistributionInitResidual() const {
-		return m_stopDistributionInitResidual;
+	StencilType getStencilType() const {
+		return m_stencilType;
 	}
 
-	void setStopDistributionInitResidual(double stopDistributionInitResidual) {
-		m_stopDistributionInitResidual = stopDistributionInitResidual;
+	void setStencilType(StencilType stencilType) {
+		m_stencilType = stencilType;
 	}
 
-	size_t getOutputCheckpointEvery() const {
-		return m_outputCheckpointEvery;
+	TimeIntegratorName getTimeIntegrator() const {
+		return m_timeIntegrator;
 	}
 
-	void setOutputCheckpointEvery(size_t outputCheckpointEvery) {
-		m_outputCheckpointEvery = outputCheckpointEvery;
+	void setTimeIntegrator(TimeIntegratorName timeIntegrator) {
+		m_timeIntegrator = timeIntegrator;
 	}
 
-	size_t getOutputVectorFieldsEvery() const {
-		return m_outputVectorFieldsEvery;
+	double getTimeStepSize() const {
+		return m_timeStepSize;
 	}
 
-	void setOutputVectorFieldsEvery(size_t outputVectorFieldsEvery) {
-		m_outputVectorFieldsEvery = outputVectorFieldsEvery;
+	void setTimeStepSize(double timeStepSize) {
+		m_timeStepSize = timeStepSize;
+	}
+
+	bool isWriteALogFile() const {
+		return m_writeALogFile;
+	}
+
+	void setWriteALogFile(bool writeALogFile) {
+		m_writeALogFile = writeALogFile;
+	}
+
+	bool isSwitchOutputOff() const {
+		return m_switchOutputOff;
+	}
+
+	void setSwitchOutputOff(bool switchOutputOff) {
+		this->m_switchOutputOff = switchOutputOff;
 	}
 };
 
