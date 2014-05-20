@@ -35,7 +35,7 @@ SolverConfiguration::SolverConfiguration() {
 
 		enter_subsection("SEDG");
 		{
-			declare_entry("Order of finite element", "4",
+			declare_entry("Order of finite element", "2",
 					dealii::Patterns::Integer(2),
 					"The degree of the polynomial shape functions used by the SEDG scheme.");
 			declare_entry("Flux type", "Lax-Friedrichs",
