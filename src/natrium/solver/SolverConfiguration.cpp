@@ -160,4 +160,6 @@ void SolverConfiguration::readFromXMLFile(const std::string & filename) {
 	}
 } /* readFromXMLFile */
 
+/*void SolverConfiguration::prepareOutputDirectory()  prepareOutputDirectory */
+
 } /* namespace natrium */

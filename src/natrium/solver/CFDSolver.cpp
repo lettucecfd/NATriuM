@@ -23,6 +23,13 @@ template<size_t dim>
 CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		shared_ptr<ProblemDescription<dim> > problemDescription) {
 
+	/// Create output directory
+	if (not configuration->isSwitchOutputOff()){
+		//configuration->prepareOutputDirectory();
+	} else {
+
+	}
+
 	/// check if problem and solver configuration fit together
 	configuration->checkProblem(problemDescription);
 	m_problemDescription = problemDescription;
