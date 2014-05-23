@@ -12,10 +12,12 @@
 
 #include "deal.II/numerics/data_out.h"
 #include "deal.II/fe/component_mask.h"
+#include "deal.II/base/logstream.h"
 
 #include "../problemdescription/BoundaryCollection.h"
 
 #include "../utilities/Logging.h"
+
 
 namespace natrium {
 
@@ -25,7 +27,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// Create output directory
 	if (not configuration->isSwitchOutputOff()){
-		//configuration->prepareOutputDirectory();
+		configuration->prepareOutputDirectory();
 	} else {
 
 	}

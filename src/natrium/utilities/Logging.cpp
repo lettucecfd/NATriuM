@@ -10,7 +10,9 @@
 #include <fstream>
 #include <sstream>
 
+
 #include "boost/make_shared.hpp"
+
 
 namespace natrium {
 
@@ -21,6 +23,7 @@ boost::shared_ptr<std::ofstream> fileToNull = boost::make_shared<std::ofstream>(
 
 boost::shared_ptr<std::stringstream> logToNull = boost::make_shared<
 		std::stringstream>();
+
 
 // Create Tee objects, which allow output to file and cout, simultaneously
 Tee fullTee(

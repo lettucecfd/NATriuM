@@ -23,8 +23,8 @@ include_directories( /usr/include/boost ${PROJECT_SOURCE_DIR}/natrium ${PROJECT_
 
 target_link_libraries(  ${TARGET}
                         natrium
-                      #${Boost_FILESYSTEM_LIBRARY}
-                      # ${Boost_SYSTEM_LIBRARY}
+                       ${Boost_FILESYSTEM_LIBRARY}
+                       ${Boost_SYSTEM_LIBRARY}
                         )
                        
                        

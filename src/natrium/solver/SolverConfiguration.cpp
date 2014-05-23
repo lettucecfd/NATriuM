@@ -7,6 +7,9 @@
 
 #include "SolverConfiguration.h"
 
+#include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
+
 namespace natrium {
 
 SolverConfiguration::SolverConfiguration() {
@@ -160,6 +163,106 @@ void SolverConfiguration::readFromXMLFile(const std::string & filename) {
 	}
 } /* readFromXMLFile */
 
-/*void SolverConfiguration::prepareOutputDirectory()  prepareOutputDirectory */
+void SolverConfiguration::prepareOutputDirectory(){
+	/// If not exists, try to create output directory
+	//  ((Using boost::filesystem provides a cross-platform solution))
+	boost::filesystem::path outputDir(getOutputDirectory());
+	boost::filesystem::path parentDir(outputDir.branch_path());
+	if (not boost::filesystem::is_directory(parentDir)) {
+		std::stringstream msg;
+		msg << "You want to put your output directory into "
+				<< parentDir.string()
+				<< ", but this parent directory does not even exist.";
+		throw ConfigurationException(msg.str());
+	}
+	// Make output directory
+	try {
+		//create_directory throws basic_filesystem_error<Path>, if fail other than that the directory already existed
+		//returns false, if directory already existed
+		bool newlyCreated = boost::filesystem::create_directory(outputDir);
+		if (newlyCreated) {
+			return;
+		}
+	} catch (std::exception& e) {
+		std::stringstream msg;
+		msg << "You want to put your output directory into "
+				<< parentDir.string()
+				<< ", but you seem to have no writing permissions.";
+		throw ConfigurationException(msg.str());
+	}
+	// Postcondition: directory exists
+	// Check writing permissions in directory
+	try {
+		/// try to create a single file
+		std::ofstream filestream;
+		filestream.open((outputDir/"testtatata.txt").string().c_str());
+		filestream << " ";
+		filestream.close();
+		boost::filesystem::remove((outputDir/"testtatata.txt").string().c_str());
+		/// try to open all files
+		boost::filesystem::directory_iterator it(outputDir), eod;
+		BOOST_FOREACH(boost::filesystem::path const &p, std::make_pair(it, eod)) {
+			if (not boost::filesystem::is_directory(p)) {
+				std::fstream filestream;
+				filestream.open(p.string().c_str(), std::fstream::app | std::fstream::out);
+				// throw exception if file is not opened
+				if (not filestream.is_open()) {
+					throw std::exception();
+				}
+			}
+		}
+	} catch (std::exception& e) {
+		std::stringstream msg;
+		msg
+				<< "You don't have writing access to the files which are already existing in your Output directory "
+				<< outputDir.string();
+		throw ConfigurationException(msg.str());
+	}
+	// check if something is possibly going to be overwritten
+	clock_t begin = clock();
+	if ((not isRestartAtLastCheckpoint())
+			and (not boost::filesystem::is_empty(outputDir))) {
+		if (isUserInteraction()) {
+			// Request user input
+			cout
+					<< "'Restart at last checkpoint' is disabled, but Output directory is not empty. The simulation might overwrite old data. Do you really want to continue?"
+					<< endl;
+			size_t yes1_or_no2 = 0; // = 1 for yes; = 2 for no
+			string input = "";
+			for (size_t i = 0; true; i++) {
+				cout << "Please enter 'y' or 'n':" << endl;
+				getline(std::cin, input);
+				// check for yes
+				if ("y" == input) {
+					yes1_or_no2 = 1;
+					break;
+				// check for no
+				} else if ("n" == input) {
+					yes1_or_no2 = 2;
+					break;
+				}
+				// check for too many tries
+				if (i > 5) {
+					break;
+				}
+				// check for timeout
+				clock_t end = clock();
+				double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+				if (elapsed_secs > 30){
+					break;
+				}
+				cout << "Your input was not understood. ";
+			}
+			// no sound input
+			if (0 == yes1_or_no2){
+				throw ConfigurationException("Requested user input, but did not get meaningful answer.");
+			} else if (2 == yes1_or_no2){
+				throw ConfigurationException("Execution stopped due to user's intervention.");
+			}
+		} else {
+			// TODO Warning to log file: Overwrite files
+		}
+	}
+}
 
 } /* namespace natrium */
