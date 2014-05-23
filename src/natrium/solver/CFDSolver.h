@@ -10,6 +10,9 @@
 
 #include <exception>
 
+#include "SolverConfiguration.h"
+#include "DistributionFunctions.h"
+
 #include "../problemdescription/ProblemDescription.h"
 
 #include "../advection/AdvectionOperator.h"
@@ -26,8 +29,6 @@
 
 #include "../utilities/BasicNames.h"
 
-#include "SolverConfiguration.h"
-#include "DistributionFunctions.h"
 
 namespace natrium {
 

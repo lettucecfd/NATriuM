@@ -9,6 +9,8 @@
 #define SOLVERCONFIGURATION_H_
 
 #include <ctime>
+#include <fstream>
+#include <sstream>
 
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
@@ -171,7 +173,7 @@ public:
 			throw ConfigurationException(msg.str());
 		}
 		// Postcondition: directory exists
-		// Check writing permissions in directory, by trying to open all files
+		// Check writing permissions in directory
 		try {
 			/// try to create a single file
 			std::ofstream filestream;
