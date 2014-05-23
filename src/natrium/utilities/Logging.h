@@ -16,6 +16,8 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include "deal.II/base/logstream.h"
+
 #include "BasicNames.h"
 
 namespace natrium {
@@ -31,13 +33,31 @@ enum LogLevel {
 /**
  * @short this class is responsible for output streams to the command line and log file
  */
-class Logging {
-
+class Logging: public dealii::LogStream {
+private:
+	size_t m_currentLevel;
 public:
+	Logging(){
+		m_currentLevel = 0;
+		pop();
+	}
 	/// set log level for command line output
+	Logging& operator()(LogLevel level){
+		while (m_currentLevel < level){
+			push("");
+			m_currentLevel ++;
+		}
+		while (m_currentLevel > level){
+			pop();
+			m_currentLevel --;
+		}
+		return *this;
+	}
+	// set log file
+	//
 
 	/// print
-	static void print(LogLevel level, string msg);
+	//static void operator(LogLevel level, string msg);
 	/// Full (complete) log; stream for detailed information
 	static boost::shared_ptr<TeeStream> FULL;
 	/// Stream for basic information
