@@ -18,7 +18,7 @@
 namespace natrium {
 
 TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity, size_t refinementLevel) :
-		ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1) {
+		Benchmark<2>(makeGrid(refinementLevel), viscosity, 1) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
@@ -31,7 +31,7 @@ TaylorGreenVortex2D::~TaylorGreenVortex2D() {
 
 void TaylorGreenVortex2D::applyInitialDensities(
 		distributed_vector& initialDensities,
-		vector<dealii::Point<2> >& supportPoints) const {
+		const vector<dealii::Point<2> >& supportPoints) const {
 	for (size_t i = 0; i < initialDensities.size(); i++) {
 		initialDensities(i) = 1.0;
 	}
@@ -39,24 +39,16 @@ void TaylorGreenVortex2D::applyInitialDensities(
 
 void TaylorGreenVortex2D::applyInitialVelocities(
 		vector<distributed_vector>& initialVelocities,
-		vector<dealii::Point<2> >& supportPoints) const {
+		const vector<dealii::Point<2> >& supportPoints) const {
 	assert(
 			initialVelocities.at(0).size()
 					== initialVelocities.at(1).size());
-	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-		initialVelocities.at(0)(i) = analyticVelocity1(supportPoints.at(i), 0);
-		initialVelocities.at(1)(i) = analyticVelocity2(supportPoints.at(i), 0);;
-	}
+	this->getAnalyticSolution(0.0, initialVelocities, supportPoints);
 }
 
-double TaylorGreenVortex2D::analyticVelocity1(const dealii::Point<2>& x,
-		double t) const {
-	return sin(x(0))*cos(x(1))*exp(-2*getViscosity()*t);
-}
-
-double TaylorGreenVortex2D::analyticVelocity2(const dealii::Point<2>& x,
-		double t) const {
-	return -cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
+void TaylorGreenVortex2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const {
+	velocity(0) = sin(x(0))*cos(x(1))*exp(-2*getViscosity()*t);
+	velocity(1) = -cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
 }
 
 /**

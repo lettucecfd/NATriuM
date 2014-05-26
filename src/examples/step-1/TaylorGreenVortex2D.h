@@ -10,7 +10,7 @@
 
 #include "deal.II/grid/tria.h"
 
-#include "problemdescription/ProblemDescription.h"
+#include "problemdescription/Benchmark.h"
 #include "utilities/BasicNames.h"
 
 using dealii::Triangulation;
@@ -21,7 +21,7 @@ namespace natrium {
  *  The domain is [0,1]^2. The domain consists of
  *  8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).
  */
-class TaylorGreenVortex2D: public ProblemDescription<2> {
+class TaylorGreenVortex2D: public Benchmark<2> {
 public:
 
 	/// constructor
@@ -37,7 +37,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			vector<dealii::Point<2> >& supportPoints) const;
+			const vector<dealii::Point<2> >& supportPoints) const;
 
 	/**
 	 * @short set initial velocities
@@ -46,17 +46,12 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			vector<dealii::Point<2> >& supportPoints) const;
-
+			const vector<dealii::Point<2> >& supportPoints) const;
 	/**
-	 * @short analytic solution of the Taylor-Green vortex, first component of velocity vector
+	 * @short analytic solution of the Taylor-Green vortex
 	 */
-	double analyticVelocity1(const dealii::Point<2>& x, double t) const ;
+	virtual void getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const;
 
-	/**
-	 * @short analytic solution of the Taylor-Green vortex, second component of velocity vector
-	 */
-	double analyticVelocity2(const dealii::Point<2>& x, double t) const ;
 
 private:
 

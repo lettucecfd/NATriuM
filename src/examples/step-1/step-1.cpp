@@ -20,22 +20,6 @@
 
 using namespace natrium;
 
-// analytic solution (where should the bump be after a certain time)
-void getAnalyticSolution(double time, distributed_vector& analyticSolution1,
-		distributed_vector& analyticSolution2,
-		const vector<dealii::Point<2> >& supportPoints,
-		const TaylorGreenVortex2D& tgVortex) {
-	assert(analyticSolution1.size() == supportPoints.size());
-	assert(analyticSolution2.size() == supportPoints.size());
-	assert(supportPoints.size() > 0);
-
-	for (size_t i = 0; i < supportPoints.size(); i++) {
-		analyticSolution1(i) = tgVortex.analyticVelocity1(supportPoints.at(i),
-				time);
-		analyticSolution2(i) = tgVortex.analyticVelocity2(supportPoints.at(i),
-				time);
-	}
-}
 
 // Main function
 int main() {
@@ -95,8 +79,10 @@ int main() {
 	dealii::DoFTools::map_dofs_to_support_points(
 			solver.getAdvectionOperator()->getMapping(),
 			*solver.getAdvectionOperator()->getDoFHandler(), supportPoints);
-	distributed_vector analyticSolution1(solver.getNumberOfDoFs());
-	distributed_vector analyticSolution2(solver.getNumberOfDoFs());
+	vector<distributed_vector> analyticSolution;
+	analyticSolution.push_back(distributed_vector(solver.getNumberOfDoFs()));
+	analyticSolution.push_back(distributed_vector(solver.getNumberOfDoFs()));
+
 	size_t N = configuration->getNumberOfTimeSteps();
 	for (size_t i = solver.getIterationStart(); i < N; i++) {
 		if (i % 100 == 0) {
@@ -120,10 +106,9 @@ int main() {
 		data_out.add_data_vector(solver.getVelocity().at(0), "v_1");
 		data_out.add_data_vector(solver.getVelocity().at(1), "v_2");
 		// calculate analytic solution
-		getAnalyticSolution(configuration->getTimeStepSize() * i, analyticSolution1,
-				analyticSolution2, supportPoints, *tgVortex);
-		data_out.add_data_vector(analyticSolution1, "v_1_analytic");
-		data_out.add_data_vector(analyticSolution2, "v_2_analytic");
+		tgVortex->getAnalyticSolution(configuration->getTimeStepSize() * i, analyticSolution, supportPoints);
+		data_out.add_data_vector(analyticSolution.at(0), "v_1_analytic");
+		data_out.add_data_vector(analyticSolution.at(1), "v_2_analytic");
 		data_out.build_patches();
 		data_out.write_vtu(vtu_output);
 		// put out max velocity norm for numerical and analytic solution

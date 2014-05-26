@@ -32,7 +32,7 @@ LidDrivenCavity2D::~LidDrivenCavity2D() {
 
 void LidDrivenCavity2D::applyInitialDensities(
 		distributed_vector& initialDensities,
-		vector<dealii::Point<2> >& supportPoints) const {
+		const vector<dealii::Point<2> >& supportPoints) const {
 	for (size_t i = 0; i < initialDensities.size(); i++) {
 		initialDensities(i) = 1.0;
 	}
@@ -40,7 +40,7 @@ void LidDrivenCavity2D::applyInitialDensities(
 
 void LidDrivenCavity2D::applyInitialVelocities(
 		vector<distributed_vector>& initialVelocities,
-		vector<dealii::Point<2> >& supportPoints) const {
+		const vector<dealii::Point<2> >& supportPoints) const {
 	assert(
 			initialVelocities.at(0).size()
 					== initialVelocities.at(1).size());

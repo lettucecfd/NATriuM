@@ -67,7 +67,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			vector<dealii::Point<dim> >& supportPoints) const = 0;
+			const vector<dealii::Point<dim> >& supportPoints) const = 0;
 
 	/**
 	 * @short set initial velocities
@@ -76,7 +76,7 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			vector<dealii::Point<dim> >& supportPoints) const = 0;
+			const vector<dealii::Point<dim> >& supportPoints) const = 0;
 
 	void setTriangulation(
 			const shared_ptr<dealii::Triangulation<dim> >& triangulation) {

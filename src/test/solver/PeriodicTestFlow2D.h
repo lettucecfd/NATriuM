@@ -45,7 +45,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			vector<dealii::Point<2> >& supportPoints) const {
+			const vector<dealii::Point<2> >& supportPoints) const {
 		for (size_t i = 0; i < initialDensities.size(); i++) {
 			initialDensities(i) = 1.0;
 		}
@@ -58,7 +58,7 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			vector<dealii::Point<2> >& supportPoints) const {
+			const vector<dealii::Point<2> >& supportPoints) const {
 		assert(
 				initialVelocities.at(0).size()
 						== initialVelocities.at(1).size());
@@ -130,7 +130,7 @@ public:
 	}
 
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			vector<dealii::Point<2> >& supportPoints) const {
+			const vector<dealii::Point<2> >& supportPoints) const {
 		for (size_t i = 0; i < initialDensities.size(); i++) {
 			initialDensities(i) = 1.0;
 		}
@@ -138,7 +138,7 @@ public:
 
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			vector<dealii::Point<2> >& supportPoints) const {
+			const vector<dealii::Point<2> >& supportPoints) const {
 		assert(
 				initialVelocities.at(0).size()
 						== initialVelocities.at(1).size());

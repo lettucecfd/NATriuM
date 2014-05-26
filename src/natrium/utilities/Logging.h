@@ -33,7 +33,7 @@ enum LogLevel {
 
 /**
  * @short this class is responsible for output streams to the command line and log file
- * @note Asn ormally, there is only one ouput stream needed, this class provides the
+ * @note As normally there is only one ouput stream needed, this class provides the
  * possibily to access the default logging instance from everywhere. The friend functions LOG and LOGGER are used as a
  * wrapper around the private, but static, m_LOGGER. When m_LOGGER does not exists, it is created by LOG or LOGGER.
  */
