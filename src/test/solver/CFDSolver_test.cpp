@@ -106,6 +106,8 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
 
 	// create problem and solver solver
 	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+	testConfiguration->setUserInteraction(false);
+	testConfiguration->setCommandLineVerbosity(6);
 	CFDSolver<2> solver(testConfiguration, testFlow);
 
 	// first run

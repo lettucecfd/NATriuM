@@ -10,6 +10,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <boost/filesystem.hpp>
+
 #include "deal.II/numerics/data_out.h"
 #include "deal.II/fe/component_mask.h"
 #include "deal.II/base/logstream.h"
@@ -18,7 +20,6 @@
 
 #include "../utilities/Logging.h"
 
-
 namespace natrium {
 
 template<size_t dim>
@@ -26,10 +27,18 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		shared_ptr<ProblemDescription<dim> > problemDescription) {
 
 	/// Create output directory
-	if (not configuration->isSwitchOutputOff()){
+	if (not configuration->isSwitchOutputOff()) {
 		configuration->prepareOutputDirectory();
-	} else {
+	}
 
+	// CONFIGURE LOGGER
+	if (configuration->isSwitchOutputOff()) {
+		LOGGER().setConsoleLevel(SILENT);
+		LOGGER().setFileLevel(SILENT);
+	} else {
+		LOGGER().setConsoleLevel(LogLevel(configuration->getCommandLineVerbosity()));
+		LOGGER().setFileLevel(ALL);
+		LOGGER().setLogFile((boost::filesystem::path(configuration->getOutputDirectory())/"natrium.log").string());
 	}
 
 	/// check if problem and solver configuration fit together
@@ -66,15 +75,15 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		std::ifstream ifile(filename.str().c_str());
 		ifile >> m_iterationStart;
 		// print out message
-		*(Logging::BASIC) << "Restart at iteration " << m_iterationStart
-				<< endl;
+		LOG(BASIC) << "Restart at iteration " << m_iterationStart << endl;
 	} else {
 		m_iterationStart = 0;
 	}
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
-	if (BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS == configuration->getCollisionScheme()) {
+	if (BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS
+			== configuration->getCollisionScheme()) {
 		tau = BGKTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), m_boltzmannModel);
@@ -83,8 +92,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 /// Build time integrator
 	size_t numberOfDoFs = m_advectionOperator->getNumberOfDoFs();
-	if (RUNGE_KUTTA_5STAGE
-			== configuration->getTimeIntegrator()) {
+	if (RUNGE_KUTTA_5STAGE == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 				RungeKutta5LowStorage<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
@@ -109,25 +117,25 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	if (charU == 0.0) {
 		charU = maxU;
 	}
-	*(Logging::BASIC) << "------ NATriuM solver ------" << endl;
-	*(Logging::BASIC) << "viscosity:       "
-			<< problemDescription->getViscosity() << " m^2/s" << endl;
-	*(Logging::BASIC) << "char. length:    "
+	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
+	LOG(WELCOME) << "viscosity:       " << problemDescription->getViscosity()
+			<< " m^2/s" << endl;
+	LOG(WELCOME) << "char. length:    "
 			<< problemDescription->getCharacteristicLength() << " m" << endl;
-	*(Logging::BASIC) << "max |u_0|:       "
+	LOG(WELCOME) << "max |u_0|:       "
 			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
 			<< endl;
-	*(Logging::BASIC) << "Reynolds number: "
+	LOG(WELCOME) << "Reynolds number: "
 			<< (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
-	*(Logging::BASIC) << "Recommended dt:  "
+	LOG(WELCOME) << "Recommended dt:  "
 			<< m_collisionModel->calculateOptimalTimeStep(
 					problemDescription->getViscosity(), m_boltzmannModel)
 			<< " s" << endl;
-	*(Logging::BASIC) << "Actual dt:       " << configuration->getTimeStepSize()
+	LOG(WELCOME) << "Actual dt:       " << configuration->getTimeStepSize()
 			<< " s" << endl;
-	*(Logging::BASIC) << "tau:             " << tau << endl;
-	*(Logging::BASIC) << "----------------------------" << endl;
+	LOG(WELCOME) << "tau:             " << tau << endl;
+	LOG(WELCOME) << "----------------------------" << endl;
 
 // Initialize distribution functions
 	if (configuration->isRestartAtLastCheckpoint()) {
@@ -157,8 +165,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			nofBoundaryNodes += 1;
 		}
 	}
-	*(Logging::BASIC) << "Number of non-periodic boundary dofs: 9*" << nofBoundaryNodes
-			<< endl;
+	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
+			<< nofBoundaryNodes << endl;
 
 }
 /* Constructor */
@@ -210,7 +218,7 @@ void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
 	for (size_t i = m_iterationStart; i < N; i++) {
 		if (i % 100 == 0) {
-			*(Logging::BASIC) << "Iteration " << i << endl;
+			LOG(BASIC) << "Iteration " << i << endl;
 		}
 		output(i);
 		stream();
@@ -242,8 +250,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 			data_out.write_vtu(vtu_output);
 		}
 
-	// output: checkpoint
-			if (iteration % m_configuration->getOutputCheckpointInterval() == 0) {
+		// output: checkpoint
+		if (iteration % m_configuration->getOutputCheckpointInterval() == 0) {
 			// advection matrices
 			m_advectionOperator->saveCheckpoint(
 					m_configuration->getOutputDirectory());
@@ -256,7 +264,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 					<< "/checkpoint.dat";
 			std::ofstream outfile(filename.str().c_str());
 			outfile << iteration << endl;
-	}
+		}
 	}
 }
 template void CFDSolver<2>::output(size_t iteration);
@@ -264,7 +272,7 @@ template void CFDSolver<3>::output(size_t iteration);
 
 template<size_t dim>
 void CFDSolver<dim>::initializeDistributions() {
-	(*Logging::BASIC) << "Initialize distribution functions: ";
+	LOG(BASIC) << "Initialize distribution functions: ";
 	vector<double> feq(m_boltzmannModel->getQ());
 	numeric_vector u(dim);
 
@@ -283,16 +291,17 @@ void CFDSolver<dim>::initializeDistributions() {
 
 	switch (m_configuration->getInitializationScheme()) {
 	case EQUILIBRIUM: {
-		(*Logging::BASIC) << "Equilibrium distribution functions" << endl;
+		LOG(BASIC) << "Equilibrium distribution functions" << endl;
 		// do nothing else
 		break;
 	}
 	case ITERATIVE: {
-		(*Logging::BASIC) << "Iterative procedure" << endl;
-		(*Logging::FULL) << "residual = "
+		LOG(BASIC) << "Iterative procedure" << endl;
+		LOG(DETAILED) << "residual = "
 				<< m_configuration->getIterativeInitializationResidual();
-		(*Logging::FULL) << ", max iterations = "
-				<< m_configuration->getIterativeInitializationNumberOfIterations() << endl;
+		LOG(DETAILED) << ", max iterations = "
+				<< m_configuration->getIterativeInitializationNumberOfIterations()
+				<< endl;
 		// Iterative procedure; leading to consistent initial values
 		size_t loopCount = 0;
 		double residual = 10;
@@ -313,7 +322,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			residual = oldDensities.norm_sqr();
 			loopCount++;
 		}
-		(*Logging::FULL) << "Residual " << residual << " reached after "
+		LOG(DETAILED) << "Residual " << residual << " reached after "
 				<< loopCount << " iterations." << endl;
 
 		for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
@@ -334,7 +343,7 @@ void CFDSolver<dim>::initializeDistributions() {
 	}
 	}
 
-	(*Logging::BASIC) << "Initialize distribution functions: done." << endl;
+	LOG(BASIC) << "Initialize distribution functions: done." << endl;
 }
 
 template void CFDSolver<2>::initializeDistributions();

@@ -109,8 +109,8 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Output solution interval", "1000",
 				dealii::Patterns::Integer(1),
 				"Write out solution every ... step.");
-		declare_entry("Command line verbosity", "Basic",
-				dealii::Patterns::Selection("Error|Basic|Full"),
+		declare_entry("Command line verbosity", "5",
+				dealii::Patterns::Integer(0,8),
 				"The amount of command line output.");
 		declare_entry("Write a log file?", "true", dealii::Patterns::Bool(),
 				"Specifies if log is written to a file.");

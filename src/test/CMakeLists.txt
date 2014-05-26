@@ -3,34 +3,34 @@
 # define testing files
 #
 set(    BOLTZMANNMODELS_TEST
-#        boltzmannmodels/D2Q9IncompressibleModel_test.cpp
+        boltzmannmodels/D2Q9IncompressibleModel_test.cpp
         )
 set(    COLLISIONMODELS_TEST
-#        collisionmodels/BGKTransformed_test.cpp
+        collisionmodels/BGKTransformed_test.cpp
         )            
 set(    PROBLEMDESCRIPTION_TEST
-#        problemdescription/BoundaryTools_test.cpp
-#        problemdescription/PeriodicBoundary2D_test.cpp
-#        problemdescription/MinLeeBoundary2D_test.cpp
-#        problemdescription/TaylorGreenTest2D.h
-#        problemdescription/WallTestDomain2D.h
+        problemdescription/BoundaryTools_test.cpp
+        problemdescription/PeriodicBoundary2D_test.cpp
+        problemdescription/MinLeeBoundary2D_test.cpp
+        problemdescription/TaylorGreenTest2D.h
+        problemdescription/WallTestDomain2D.h
         )   
 set(    ADVECTION_TEST
-#        advection/SEDGMinLee_test.cpp
-#        advection/PeriodicTestDomain2D.h
-#        advection/PeriodicTestDomain2D.cpp
+        advection/SEDGMinLee_test.cpp
+        advection/PeriodicTestDomain2D.h
+        advection/PeriodicTestDomain2D.cpp
         )     
 set(	SOLVER_TEST
-#		solver/DistributionFunctions_test.cpp
-#		solver/CFDSolver_test.cpp
-#		solver/PeriodicTestFlow2D.h
-#		solver/SolverConfiguration_test.cpp	
+		solver/DistributionFunctions_test.cpp
+		solver/CFDSolver_test.cpp
+		solver/PeriodicTestFlow2D.h
+		solver/SolverConfiguration_test.cpp	
 		)        
 set(    TIMEINTEGRATION_TEST
-#        timeintegration/RungeKutta5LowStorage_test.cpp
+        timeintegration/RungeKutta5LowStorage_test.cpp
         )
 set(    UTILITIES_TEST
-#        utilities/BasicNames_test.cpp
+        utilities/BasicNames_test.cpp
 		utilities/Logging_test.cpp
         )      
 
