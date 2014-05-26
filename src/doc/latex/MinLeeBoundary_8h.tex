@@ -1,0 +1,32 @@
+\hypertarget{MinLeeBoundary_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Min\-Lee\-Boundary.h File Reference}
+\label{MinLeeBoundary_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Min\-Lee\-Boundary.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Min\-Lee\-Boundary.\-h}}
+}
+
+
+Description of a boundary as described by Min and Lee.  
+
+
+{\ttfamily \#include $<$deal.\-I\-I/lac/compressed\-\_\-sparsity\-\_\-pattern.\-h$>$}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/dofs/dof\-\_\-handler.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/base/function.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Boundary.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../boltzmannmodels/\-Boltzmann\-Model.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../utilities/\-Basic\-Names.\-h\char`\"{}}\\*
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1BoundaryDensity}{natrium\-::\-Boundary\-Density}
+\item 
+class \hyperlink{classnatrium_1_1BoundaryVelocity}{natrium\-::\-Boundary\-Velocity}
+\item 
+class \hyperlink{classnatrium_1_1MinLeeBoundary}{natrium\-::\-Min\-Lee\-Boundary$<$ dim $>$}
+\begin{DoxyCompactList}\small\item\em The boundary described by Min and Lee. For outgoing particle distribution functions the fluxes are set to 0 For incoming particle distributions fluxes are set to \[ f_{\alpha} - f^{+}_{\alpha} = f_{\alpha} - f_{\alpha^{*}} - 2w_{\alpha} \rho_{0} (e_{\alpha}\cdot u_{b})/c^{2}_{s}\]. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a boundary as described by Min and Lee. \begin{DoxyDate}{Date}
+26.\-03.\-2014 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}

@@ -1,0 +1,106 @@
+\hypertarget{classTaylorGreenTest2D}{\section{Taylor\-Green\-Test2\-D Class Reference}
+\label{classTaylorGreenTest2D}\index{Taylor\-Green\-Test2\-D@{Taylor\-Green\-Test2\-D}}
+}
+
+
+Description of a Taylor-\/\-Green vortex, a benchmark with only periodic boundaries.  
+
+
+
+
+{\ttfamily \#include $<$Taylor\-Green\-Test2\-D.\-h$>$}
+
+Inheritance diagram for Taylor\-Green\-Test2\-D\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classTaylorGreenTest2D}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classTaylorGreenTest2D_a891500a30b0fae0784496f9c219bd31b}{Taylor\-Green\-Test2\-D} (double viscosity, size\-\_\-t refinement\-Level)
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classTaylorGreenTest2D_a393d90458a3415572c3d9bebccdcb662}{virtual \hyperlink{classTaylorGreenTest2D_a393d90458a3415572c3d9bebccdcb662}{$\sim$\-Taylor\-Green\-Test2\-D} ()}\label{classTaylorGreenTest2D_a393d90458a3415572c3d9bebccdcb662}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+virtual void \hyperlink{classTaylorGreenTest2D_a02adafbe397ef264d790235320b4c4b6}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+\begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
+virtual void \hyperlink{classTaylorGreenTest2D_ad4dfca769ef4500c236dda33d4d9ae54}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+\begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
+\hypertarget{classTaylorGreenTest2D_a2ae2c4a4ec55242c69a7c9cd60e8bc01}{double \hyperlink{classTaylorGreenTest2D_a2ae2c4a4ec55242c69a7c9cd60e8bc01}{analytic\-Velocity1} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classTaylorGreenTest2D_a2ae2c4a4ec55242c69a7c9cd60e8bc01}
+
+\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex, first component of velocity vector \end{DoxyCompactList}\item 
+\hypertarget{classTaylorGreenTest2D_af7c07357ef5c57c46218b9c65e45572d}{double \hyperlink{classTaylorGreenTest2D_af7c07357ef5c57c46218b9c65e45572d}{analytic\-Velocity2} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classTaylorGreenTest2D_af7c07357ef5c57c46218b9c65e45572d}
+
+\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex, second component of velocity vector \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classTaylorGreenTest2D_a648c0969136540979c37f81d3ab1f1b2}{static void {\bfseries get\-Analytic\-Solution} (double time, distributed\-\_\-vector \&analytic\-Solution1, distributed\-\_\-vector \&analytic\-Solution2, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points, const \hyperlink{classTaylorGreenTest2D}{Taylor\-Green\-Test2\-D} \&tg\-Vortex)}\label{classTaylorGreenTest2D_a648c0969136540979c37f81d3ab1f1b2}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a Taylor-\/\-Green vortex, a benchmark with only periodic boundaries. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classTaylorGreenTest2D_a891500a30b0fae0784496f9c219bd31b}{\index{Taylor\-Green\-Test2\-D@{Taylor\-Green\-Test2\-D}!Taylor\-Green\-Test2\-D@{Taylor\-Green\-Test2\-D}}
+\index{Taylor\-Green\-Test2\-D@{Taylor\-Green\-Test2\-D}!TaylorGreenTest2D@{Taylor\-Green\-Test2\-D}}
+\subsubsection[{Taylor\-Green\-Test2\-D}]{\setlength{\rightskip}{0pt plus 5cm}Taylor\-Green\-Test2\-D\-::\-Taylor\-Green\-Test2\-D (
+\begin{DoxyParamCaption}
+\item[{double}]{viscosity, }
+\item[{size\-\_\-t}]{refinement\-Level}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classTaylorGreenTest2D_a891500a30b0fae0784496f9c219bd31b}
+
+
+constructor 
+
+apply boundary values 
+
+\subsection{Member Function Documentation}
+\hypertarget{classTaylorGreenTest2D_a02adafbe397ef264d790235320b4c4b6}{\index{Taylor\-Green\-Test2\-D@{Taylor\-Green\-Test2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
+\index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!TaylorGreenTest2D@{Taylor\-Green\-Test2\-D}}
+\subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Taylor\-Green\-Test2\-D\-::apply\-Initial\-Densities (
+\begin{DoxyParamCaption}
+\item[{distributed\-\_\-vector \&}]{initial\-Densities, }
+\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classTaylorGreenTest2D_a02adafbe397ef264d790235320b4c4b6}
+
+
+set initial densities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Densities} & vector of densities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+\hypertarget{classTaylorGreenTest2D_ad4dfca769ef4500c236dda33d4d9ae54}{\index{Taylor\-Green\-Test2\-D@{Taylor\-Green\-Test2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
+\index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!TaylorGreenTest2D@{Taylor\-Green\-Test2\-D}}
+\subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Taylor\-Green\-Test2\-D\-::apply\-Initial\-Velocities (
+\begin{DoxyParamCaption}
+\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
+\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classTaylorGreenTest2D_ad4dfca769ef4500c236dda33d4d9ae54}
+
+
+set initial velocities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Velocities} & vector of velocities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/test/problemdescription/\hyperlink{TaylorGreenTest2D_8h}{Taylor\-Green\-Test2\-D.\-h}\end{DoxyCompactItemize}

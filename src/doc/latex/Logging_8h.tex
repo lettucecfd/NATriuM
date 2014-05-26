@@ -8,26 +8,38 @@ Definition of logging output streams.
 
 {\ttfamily \#include $<$fstream$>$}\\*
 {\ttfamily \#include $<$iostream$>$}\\*
-{\ttfamily \#include $<$boost/iostreams/tee.\-hpp$>$}\\*
-{\ttfamily \#include $<$boost/iostreams/stream.\-hpp$>$}\\*
 {\ttfamily \#include $<$boost/shared\-\_\-ptr.\-hpp$>$}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/base/logstream.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Basic\-Names.\-h\char`\"{}}\\*
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \hyperlink{classnatrium_1_1Logging}{natrium\-::\-Logging}
 \begin{DoxyCompactList}\small\item\em this class is responsible for output streams to the command line and log file \end{DoxyCompactList}\end{DoxyCompactItemize}
-\subsection*{Typedefs}
+\subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespacenatrium_aabb09720317096a03a7b4c6a94e0419c}{typedef \\*
-boost\-::iostreams\-::tee\-\_\-device\\*
-$<$ std\-::ostream, std\-::ofstream $>$ {\bfseries natrium\-::\-Tee}}\label{namespacenatrium_aabb09720317096a03a7b4c6a94e0419c}
-
-\item 
-\hypertarget{namespacenatrium_aeff1c1ff8f905d3eb87673bfb5c76b5d}{typedef \\*
-boost\-::iostreams\-::stream$<$ Tee $>$ {\bfseries natrium\-::\-Tee\-Stream}}\label{namespacenatrium_aeff1c1ff8f905d3eb87673bfb5c76b5d}
-
+enum {\bfseries Log\-Level} \{ \\*
+{\bfseries S\-I\-L\-E\-N\-T}, 
+{\bfseries E\-R\-R\-O\-R}, 
+{\bfseries W\-A\-R\-N\-I\-N\-G}, 
+{\bfseries W\-E\-L\-C\-O\-M\-E}, 
+\\*
+{\bfseries B\-A\-S\-I\-C}, 
+{\bfseries D\-E\-T\-A\-I\-L\-E\-D}, 
+{\bfseries D\-E\-A\-L\-\_\-\-I\-I\-\_\-\-B\-A\-S\-I\-C}, 
+{\bfseries D\-E\-A\-L\-\_\-\-I\-I\-\_\-\-D\-E\-T\-A\-I\-L\-E\-D}, 
+\\*
+{\bfseries A\-L\-L}
+ \}
 \end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Logging \& {\bfseries natrium\-::\-L\-O\-G} (Log\-Level level)
+\begin{DoxyCompactList}\small\item\em can be used like \char`\"{}\-L\-O\-G(\-E\-R\-R\-O\-R) $<$$<$ ...;\char`\"{}, to write output to the log file and command line \end{DoxyCompactList}\item 
+Logging \& {\bfseries natrium\-::\-L\-O\-G\-G\-E\-R} ()
+\begin{DoxyCompactList}\small\item\em is used to access the default logging instance m\-\_\-\-L\-O\-G\-G\-E\-R; e.\-g. L\-O\-G\-G\-E\-R().set\-Log\-File(...) \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -86,7 +86,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classnatrium_1_1Logging-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">natrium::Logging Class Reference</div>  </div>
@@ -97,35 +98,91 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
  <a href="classnatrium_1_1Logging.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Logging_8h_source.html">Logging.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for natrium::Logging:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classnatrium_1_1Logging.png" usemap="#natrium::Logging_map" alt=""/>
+  <map id="natrium::Logging_map" name="natrium::Logging_map">
+</map>
+ </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a3f7c1686be8b25fcfec6f624467d6346"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f7c1686be8b25fcfec6f624467d6346"></a>
-static boost::shared_ptr<br class="typebreak"/>
-&lt; TeeStream &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a3f7c1686be8b25fcfec6f624467d6346">FULL</a> = boost::make_shared&lt;TeeStream&gt;(fullTee)</td></tr>
-<tr class="memdesc:a3f7c1686be8b25fcfec6f624467d6346"><td class="mdescLeft">&#160;</td><td class="mdescRight">Full (complete) log; stream for detailed information. <br/></td></tr>
-<tr class="separator:a3f7c1686be8b25fcfec6f624467d6346"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addbf66b690d29a9f8ca9edbc82672d36"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="addbf66b690d29a9f8ca9edbc82672d36"></a>
-static boost::shared_ptr<br class="typebreak"/>
-&lt; TeeStream &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#addbf66b690d29a9f8ca9edbc82672d36">BASIC</a> = boost::make_shared&lt;TeeStream&gt;(basicTee)</td></tr>
-<tr class="memdesc:addbf66b690d29a9f8ca9edbc82672d36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream for basic information. <br/></td></tr>
-<tr class="separator:addbf66b690d29a9f8ca9edbc82672d36"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83b60e3e23cc20425605e3b57962460d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83b60e3e23cc20425605e3b57962460d"></a>
-static boost::shared_ptr<br class="typebreak"/>
-&lt; TeeStream &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a83b60e3e23cc20425605e3b57962460d">ERROR</a> = boost::make_shared&lt;TeeStream&gt;(errorTee)</td></tr>
-<tr class="memdesc:a83b60e3e23cc20425605e3b57962460d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream for error messages. <br/></td></tr>
-<tr class="separator:a83b60e3e23cc20425605e3b57962460d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a255455c6e8a6c109a8e7e905bdd57ea3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a255455c6e8a6c109a8e7e905bdd57ea3"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3">Logging</a> ()</td></tr>
+<tr class="memdesc:a255455c6e8a6c109a8e7e905bdd57ea3"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br/></td></tr>
+<tr class="separator:a255455c6e8a6c109a8e7e905bdd57ea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bfeafec90e8b3fdceddc2866fda6e3d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2bfeafec90e8b3fdceddc2866fda6e3d"></a>
+<a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d">operator()</a> (LogLevel level)</td></tr>
+<tr class="memdesc:a2bfeafec90e8b3fdceddc2866fda6e3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">set log level for command line output <br/></td></tr>
+<tr class="separator:a2bfeafec90e8b3fdceddc2866fda6e3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dc3bdfa386b24a031578f9293a24403"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6dc3bdfa386b24a031578f9293a24403"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403">setLogFile</a> (string logFile)</td></tr>
+<tr class="memdesc:a6dc3bdfa386b24a031578f9293a24403"><td class="mdescLeft">&#160;</td><td class="mdescRight">set log file <br/></td></tr>
+<tr class="separator:a6dc3bdfa386b24a031578f9293a24403"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae32db6189a7c963323a869821bb26d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae32db6189a7c963323a869821bb26d9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#aae32db6189a7c963323a869821bb26d9">unsetLogFile</a> (string logFile)</td></tr>
+<tr class="memdesc:aae32db6189a7c963323a869821bb26d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">detach log file <br/></td></tr>
+<tr class="separator:aae32db6189a7c963323a869821bb26d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45"></a>
+LogLevel&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45">setConsoleLevel</a> (LogLevel level)</td></tr>
+<tr class="memdesc:a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the level of console output <br/></td></tr>
+<tr class="separator:a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21852bc69b5ff32f5ec5241a810ab8d5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21852bc69b5ff32f5ec5241a810ab8d5"></a>
+LogLevel&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5">setFileLevel</a> (LogLevel level)</td></tr>
+<tr class="memdesc:a21852bc69b5ff32f5ec5241a810ab8d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the level of file output <br/></td></tr>
+<tr class="separator:a21852bc69b5ff32f5ec5241a810ab8d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a913b816565b3ede4c25b89d25ca5148d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a913b816565b3ede4c25b89d25ca5148d">LOG</a> (LogLevel level)</td></tr>
+<tr class="memdesc:a913b816565b3ede4c25b89d25ca5148d"><td class="mdescLeft">&#160;</td><td class="mdescRight">friend function; can be used like "LOG(ERROR) &lt;&lt; ...;", to write output to the log file and command line  <a href="#a913b816565b3ede4c25b89d25ca5148d">More...</a><br/></td></tr>
+<tr class="separator:a913b816565b3ede4c25b89d25ca5148d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9339ce5458ee8cadf69734faf310c21b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9339ce5458ee8cadf69734faf310c21b"></a>
+<a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b">LOGGER</a> ()</td></tr>
+<tr class="memdesc:a9339ce5458ee8cadf69734faf310c21b"><td class="mdescLeft">&#160;</td><td class="mdescRight">friend function; is used to access the default logging instance; e.g. <a class="el" href="classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b" title="friend function; is used to access the default logging instance; e.g. LOGGER().setLogFile(...) ">LOGGER()</a>.setLogFile(...) <br/></td></tr>
+<tr class="separator:a9339ce5458ee8cadf69734faf310c21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>this class is responsible for output streams to the command line and log file </p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+<dl class="section note"><dt>Note</dt><dd>Asn ormally, there is only one ouput stream needed, this class provides the possibily to access the default logging instance from everywhere. The friend functions LOG and LOGGER are used as a wrapper around the private, but static, m_LOGGER. When m_LOGGER does not exists, it is created by LOG or LOGGER. </dd></dl>
+</div><h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a class="anchor" id="a913b816565b3ede4c25b89d25ca5148d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classnatrium_1_1Logging.html">Logging</a>&amp; LOG </td>
+          <td>(</td>
+          <td class="paramtype">LogLevel&#160;</td>
+          <td class="paramname"><em>level</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>friend function; can be used like "LOG(ERROR) &lt;&lt; ...;", to write output to the log file and command line </p>
+<dl class="section note"><dt>Note</dt><dd>accesses the default logstream Logging::m_LOGGER </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/<a class="el" href="Logging_8h_source.html">Logging.h</a></li>
 <li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/Logging.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 20 2014 14:29:11 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 26 2014 15:19:21 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

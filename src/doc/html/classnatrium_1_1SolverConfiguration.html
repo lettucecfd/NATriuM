@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -127,9 +127,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SolverConfiguration.html#a18c63509007270fa96212fef36a2c172">readFromXMLFile</a> (const std::string &amp;filename)</td></tr>
 <tr class="memdesc:a18c63509007270fa96212fef36a2c172"><td class="mdescLeft">&#160;</td><td class="mdescRight">wrapper function for ParameterHandler::read_input_from_xml; directing cerr into a C++-Exception <br/></td></tr>
 <tr class="separator:a18c63509007270fa96212fef36a2c172"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06547d0908d22a6f4f0bde286ba0c4fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SolverConfiguration.html#a06547d0908d22a6f4f0bde286ba0c4fc">checkConfiguration</a> ()</td></tr>
-<tr class="memdesc:a06547d0908d22a6f4f0bde286ba0c4fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the configuration is consistent.  <a href="#a06547d0908d22a6f4f0bde286ba0c4fc">More...</a><br/></td></tr>
-<tr class="separator:a06547d0908d22a6f4f0bde286ba0c4fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90f8fb87f504897d3bbbc746749d2967"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a90f8fb87f504897d3bbbc746749d2967"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SolverConfiguration.html#a90f8fb87f504897d3bbbc746749d2967">isConsistent</a> ()</td></tr>
+<tr class="memdesc:a90f8fb87f504897d3bbbc746749d2967"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the configuration is consistent. <br/></td></tr>
+<tr class="separator:a90f8fb87f504897d3bbbc746749d2967"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69c009fd87690677b66ab10a000d07f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SolverConfiguration.html#a69c009fd87690677b66ab10a000d07f6">prepareOutputDirectory</a> ()</td></tr>
+<tr class="memdesc:a69c009fd87690677b66ab10a000d07f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">prepare the Output directory  <a href="#a69c009fd87690677b66ab10a000d07f6">More...</a><br/></td></tr>
+<tr class="separator:a69c009fd87690677b66ab10a000d07f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49e6c9cd57689289c79b47a6104b483a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SolverConfiguration.html#a49e6c9cd57689289c79b47a6104b483a">checkProblem</a> (shared_ptr&lt; <a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; 2 &gt; &gt; cFDProblem)</td></tr>
 <tr class="memdesc:a49e6c9cd57689289c79b47a6104b483a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the problem definition is in accordance with the solver configuration.  <a href="#a49e6c9cd57689289c79b47a6104b483a">More...</a><br/></td></tr>
 <tr class="separator:a49e6c9cd57689289c79b47a6104b483a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,6 +164,12 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getCommandLineVerbo
 <tr class="memitem:a906afb09b544bf2137c0d3bf9214b4a5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a906afb09b544bf2137c0d3bf9214b4a5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setCommandLineVerbosity</b> (long int commandLineVerbosity)</td></tr>
 <tr class="separator:a906afb09b544bf2137c0d3bf9214b4a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43270017646e2efa400ae84d644ac897"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43270017646e2efa400ae84d644ac897"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasAnalyticSolution</b> ()</td></tr>
+<tr class="separator:a43270017646e2efa400ae84d644ac897"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae23ef2513c7b4ed3eacd678e38ff146f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae23ef2513c7b4ed3eacd678e38ff146f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setHasAnalyticSolution</b> (bool hasAnalyticSolution)</td></tr>
+<tr class="separator:ae23ef2513c7b4ed3eacd678e38ff146f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe9fd2087df0ab6066f260bf6bfd03ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe9fd2087df0ab6066f260bf6bfd03ac"></a>
 InitializationSchemeName&#160;</td><td class="memItemRight" valign="bottom"><b>getInitializationScheme</b> ()</td></tr>
 <tr class="separator:afe9fd2087df0ab6066f260bf6bfd03ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,6 +200,12 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputCheckpoint
 <tr class="memitem:ab7a39dfb46cb1b0c7b54b92700fd7360"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7a39dfb46cb1b0c7b54b92700fd7360"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setOutputCheckpointInterval</b> (long int outputCheckpointInterval)</td></tr>
 <tr class="separator:ab7a39dfb46cb1b0c7b54b92700fd7360"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c0fb63902a6828c06c48918402375bb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c0fb63902a6828c06c48918402375bb"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputTableInterval</b> ()</td></tr>
+<tr class="separator:a6c0fb63902a6828c06c48918402375bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a207c38e009015be45e74eaa86f9db7ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a207c38e009015be45e74eaa86f9db7ad"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setOutputTableInterval</b> (long int outputTableInterval)</td></tr>
+<tr class="separator:a207c38e009015be45e74eaa86f9db7ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a0444878a5fb512772e024bc03ec076"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a0444878a5fb512772e024bc03ec076"></a>
 const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputDirectory</b> ()</td></tr>
 <tr class="separator:a2a0444878a5fb512772e024bc03ec076"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -256,6 +272,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isSwitchOutputOff</b>
 <tr class="memitem:afcae7f43456c2a127c242b230ea3a8a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcae7f43456c2a127c242b230ea3a8a2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setSwitchOutputOff</b> (bool switchOutputOff)</td></tr>
 <tr class="separator:afcae7f43456c2a127c242b230ea3a8a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e41f8ce5da4ecafe2e4326997e79f3d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e41f8ce5da4ecafe2e4326997e79f3d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isUserInteraction</b> ()</td></tr>
+<tr class="separator:a6e41f8ce5da4ecafe2e4326997e79f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad013b9240ee7ae0d5cc43ff5f588c3f3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad013b9240ee7ae0d5cc43ff5f588c3f3"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setUserInteraction</b> (bool userInteract)</td></tr>
+<tr class="separator:ad013b9240ee7ae0d5cc43ff5f588c3f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE). </p>
@@ -288,32 +310,6 @@ To integrate new parameter into the framework, you have to declare the paramters
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a06547d0908d22a6f4f0bde286ba0c4fc"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void natrium::SolverConfiguration::checkConfiguration </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Check if the configuration is consistent. </p>
-<p>Test writing permission on output directory If no restart: Check if checkpoint exists. If yes -&gt; ask for overwrite </p>
-
-</div>
-</div>
 <a class="anchor" id="a49e6c9cd57689289c79b47a6104b483a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -390,6 +386,33 @@ To integrate new parameter into the framework, you have to declare the paramters
 
 </div>
 </div>
+<a class="anchor" id="a69c009fd87690677b66ab10a000d07f6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void natrium::SolverConfiguration::prepareOutputDirectory </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>prepare the Output directory </p>
+<dl class="section note"><dt>Note</dt><dd>If 'User interaction' is enabled, user input is requested in case of possible overwriting </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">SolverConfigurationError,if</td><td>it was not possible </td></tr>
+  </table>
+  </dd>
+</dl>
+<p>If not exists, try to create output directory</p>
+<p>try to create a single file</p>
+<p>try to open all files </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/<a class="el" href="SolverConfiguration_8h_source.html">SolverConfiguration.h</a></li>
 <li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/<a class="el" href="SolverConfiguration_8cpp.html">SolverConfiguration.cpp</a></li>
@@ -397,7 +420,7 @@ To integrate new parameter into the framework, you have to declare the paramters
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 20 2014 14:29:10 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 26 2014 15:19:20 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

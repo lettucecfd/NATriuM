@@ -33,8 +33,11 @@ Inheritance diagram for natrium\-:\-:Solver\-Configuration\-:\begin{figure}[H]
 \hypertarget{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}{void \hyperlink{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}{read\-From\-X\-M\-L\-File} (const std\-::string \&filename)}\label{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}
 
 \begin{DoxyCompactList}\small\item\em wrapper function for Parameter\-Handler\-::read\-\_\-input\-\_\-from\-\_\-xml; directing cerr into a C++-\/\-Exception \end{DoxyCompactList}\item 
-void \hyperlink{classnatrium_1_1SolverConfiguration_a06547d0908d22a6f4f0bde286ba0c4fc}{check\-Configuration} ()
+\hypertarget{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}{void \hyperlink{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}{is\-Consistent} ()}\label{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}
+
 \begin{DoxyCompactList}\small\item\em Check if the configuration is consistent. \end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}{prepare\-Output\-Directory} ()
+\begin{DoxyCompactList}\small\item\em prepare the Output directory \end{DoxyCompactList}\item 
 void \hyperlink{classnatrium_1_1SolverConfiguration_a49e6c9cd57689289c79b47a6104b483a}{check\-Problem} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{Problem\-Description}$<$ 2 $>$ $>$ c\-F\-D\-Problem)
 \begin{DoxyCompactList}\small\item\em Check if the problem definition is in accordance with the solver configuration. \end{DoxyCompactList}\item 
 void \hyperlink{classnatrium_1_1SolverConfiguration_af13da3022a9f995ce09b0918092da0c9}{check\-Problem} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{Problem\-Description}$<$ 3 $>$ $>$ c\-F\-D\-Problem)
@@ -61,6 +64,12 @@ void \hyperlink{classnatrium_1_1SolverConfiguration_af13da3022a9f995ce09b0918092
 
 \item 
 \hypertarget{classnatrium_1_1SolverConfiguration_a906afb09b544bf2137c0d3bf9214b4a5}{void {\bfseries set\-Command\-Line\-Verbosity} (long int command\-Line\-Verbosity)}\label{classnatrium_1_1SolverConfiguration_a906afb09b544bf2137c0d3bf9214b4a5}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a43270017646e2efa400ae84d644ac897}{bool {\bfseries has\-Analytic\-Solution} ()}\label{classnatrium_1_1SolverConfiguration_a43270017646e2efa400ae84d644ac897}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_ae23ef2513c7b4ed3eacd678e38ff146f}{void {\bfseries set\-Has\-Analytic\-Solution} (bool has\-Analytic\-Solution)}\label{classnatrium_1_1SolverConfiguration_ae23ef2513c7b4ed3eacd678e38ff146f}
 
 \item 
 \hypertarget{classnatrium_1_1SolverConfiguration_afe9fd2087df0ab6066f260bf6bfd03ac}{Initialization\-Scheme\-Name {\bfseries get\-Initialization\-Scheme} ()}\label{classnatrium_1_1SolverConfiguration_afe9fd2087df0ab6066f260bf6bfd03ac}
@@ -91,6 +100,12 @@ void \hyperlink{classnatrium_1_1SolverConfiguration_af13da3022a9f995ce09b0918092
 
 \item 
 \hypertarget{classnatrium_1_1SolverConfiguration_ab7a39dfb46cb1b0c7b54b92700fd7360}{void {\bfseries set\-Output\-Checkpoint\-Interval} (long int output\-Checkpoint\-Interval)}\label{classnatrium_1_1SolverConfiguration_ab7a39dfb46cb1b0c7b54b92700fd7360}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a6c0fb63902a6828c06c48918402375bb}{size\-\_\-t {\bfseries get\-Output\-Table\-Interval} ()}\label{classnatrium_1_1SolverConfiguration_a6c0fb63902a6828c06c48918402375bb}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a207c38e009015be45e74eaa86f9db7ad}{void {\bfseries set\-Output\-Table\-Interval} (long int output\-Table\-Interval)}\label{classnatrium_1_1SolverConfiguration_a207c38e009015be45e74eaa86f9db7ad}
 
 \item 
 \hypertarget{classnatrium_1_1SolverConfiguration_a2a0444878a5fb512772e024bc03ec076}{const std\-::string {\bfseries get\-Output\-Directory} ()}\label{classnatrium_1_1SolverConfiguration_a2a0444878a5fb512772e024bc03ec076}
@@ -158,6 +173,12 @@ void \hyperlink{classnatrium_1_1SolverConfiguration_af13da3022a9f995ce09b0918092
 \item 
 \hypertarget{classnatrium_1_1SolverConfiguration_afcae7f43456c2a127c242b230ea3a8a2}{void {\bfseries set\-Switch\-Output\-Off} (bool switch\-Output\-Off)}\label{classnatrium_1_1SolverConfiguration_afcae7f43456c2a127c242b230ea3a8a2}
 
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a6e41f8ce5da4ecafe2e4326997e79f3d}{bool {\bfseries is\-User\-Interaction} ()}\label{classnatrium_1_1SolverConfiguration_a6e41f8ce5da4ecafe2e4326997e79f3d}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_ad013b9240ee7ae0d5cc43ff5f588c3f3}{void {\bfseries set\-User\-Interaction} (bool user\-Interact)}\label{classnatrium_1_1SolverConfiguration_ad013b9240ee7ae0d5cc43ff5f588c3f3}
+
 \end{DoxyCompactItemize}
 
 
@@ -191,18 +212,7 @@ Constructor -- initializes parameters from an xmlfile.
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1SolverConfiguration_a06547d0908d22a6f4f0bde286ba0c4fc}{\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}!check\-Configuration@{check\-Configuration}}
-\index{check\-Configuration@{check\-Configuration}!natrium::SolverConfiguration@{natrium\-::\-Solver\-Configuration}}
-\subsubsection[{check\-Configuration}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Solver\-Configuration\-::check\-Configuration (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1SolverConfiguration_a06547d0908d22a6f4f0bde286ba0c4fc}
-
-
-Check if the configuration is consistent. 
-
-Test writing permission on output directory If no restart\-: Check if checkpoint exists. If yes -\/$>$ ask for overwrite \hypertarget{classnatrium_1_1SolverConfiguration_a49e6c9cd57689289c79b47a6104b483a}{\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}!check\-Problem@{check\-Problem}}
+\hypertarget{classnatrium_1_1SolverConfiguration_a49e6c9cd57689289c79b47a6104b483a}{\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}!check\-Problem@{check\-Problem}}
 \index{check\-Problem@{check\-Problem}!natrium::SolverConfiguration@{natrium\-::\-Solver\-Configuration}}
 \subsubsection[{check\-Problem}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Solver\-Configuration\-::check\-Problem (
 \begin{DoxyParamCaption}
@@ -244,7 +254,30 @@ Check if the problem definition is in accordance with the solver configuration.
 {\em ...} & //\-T\-O\-D\-O implement custom exception \\
 \hline
 \end{DoxyExceptions}
+\hypertarget{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}{\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}!prepare\-Output\-Directory@{prepare\-Output\-Directory}}
+\index{prepare\-Output\-Directory@{prepare\-Output\-Directory}!natrium::SolverConfiguration@{natrium\-::\-Solver\-Configuration}}
+\subsubsection[{prepare\-Output\-Directory}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Solver\-Configuration\-::prepare\-Output\-Directory (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}
 
+
+prepare the Output directory 
+
+\begin{DoxyNote}{Note}
+If 'User interaction' is enabled, user input is requested in case of possible overwriting 
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Solver\-Configuration\-Error,if} & it was not possible \\
+\hline
+\end{DoxyExceptions}
+If not exists, try to create output directory
+
+try to create a single file
+
+try to open all files 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 

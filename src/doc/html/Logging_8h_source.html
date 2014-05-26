@@ -69,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -92,38 +92,101 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef LOGGING_H_</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LOGGING_H_</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;fstream&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;boost/iostreams/tee.hpp&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;boost/iostreams/stream.hpp&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;boost/shared_ptr.hpp&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>natrium {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">typedef</span> boost::iostreams::tee_device&lt;std::ostream, std::ofstream&gt;  Tee;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">typedef</span> boost::iostreams::stream&lt; Tee &gt; TeeStream;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="classnatrium_1_1Logging.html">Logging</a> {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#a3f7c1686be8b25fcfec6f624467d6346">   31</a></span>&#160;        <span class="keyword">static</span> boost::shared_ptr&lt;TeeStream&gt; <a class="code" href="classnatrium_1_1Logging.html#a3f7c1686be8b25fcfec6f624467d6346">FULL</a>;</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#addbf66b690d29a9f8ca9edbc82672d36">   33</a></span>&#160;        <span class="keyword">static</span> boost::shared_ptr&lt;TeeStream&gt; <a class="code" href="classnatrium_1_1Logging.html#addbf66b690d29a9f8ca9edbc82672d36">BASIC</a>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#a83b60e3e23cc20425605e3b57962460d">   35</a></span>&#160;        <span class="keyword">static</span> boost::shared_ptr&lt;TeeStream&gt; <a class="code" href="classnatrium_1_1Logging.html#a83b60e3e23cc20425605e3b57962460d">ERROR</a>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;};</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LOGGING_H_ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="classnatrium_1_1Logging_html_a3f7c1686be8b25fcfec6f624467d6346"><div class="ttname"><a href="classnatrium_1_1Logging.html#a3f7c1686be8b25fcfec6f624467d6346">natrium::Logging::FULL</a></div><div class="ttdeci">static boost::shared_ptr&lt; TeeStream &gt; FULL</div><div class="ttdoc">Full (complete) log; stream for detailed information. </div><div class="ttdef"><b>Definition:</b> Logging.h:31</div></div>
-<div class="ttc" id="classnatrium_1_1Logging_html"><div class="ttname"><a href="classnatrium_1_1Logging.html">natrium::Logging</a></div><div class="ttdoc">this class is responsible for output streams to the command line and log file </div><div class="ttdef"><b>Definition:</b> Logging.h:27</div></div>
-<div class="ttc" id="classnatrium_1_1Logging_html_a83b60e3e23cc20425605e3b57962460d"><div class="ttname"><a href="classnatrium_1_1Logging.html#a83b60e3e23cc20425605e3b57962460d">natrium::Logging::ERROR</a></div><div class="ttdeci">static boost::shared_ptr&lt; TeeStream &gt; ERROR</div><div class="ttdoc">Stream for error messages. </div><div class="ttdef"><b>Definition:</b> Logging.h:35</div></div>
-<div class="ttc" id="classnatrium_1_1Logging_html_addbf66b690d29a9f8ca9edbc82672d36"><div class="ttname"><a href="classnatrium_1_1Logging.html#addbf66b690d29a9f8ca9edbc82672d36">natrium::Logging::BASIC</a></div><div class="ttdeci">static boost::shared_ptr&lt; TeeStream &gt; BASIC</div><div class="ttdoc">Stream for basic information. </div><div class="ttdef"><b>Definition:</b> Logging.h:33</div></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;fstream&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;boost/shared_ptr.hpp&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;deal.II/base/logstream.h&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="BasicNames_8h.html">BasicNames.h</a>&quot;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span>natrium {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">enum</span> LogLevel {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        SILENT,</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        ERROR,</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        WARNING,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        WELCOME,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        BASIC,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        DETAILED,</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        DEAL_II_BASIC,</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        DEAL_II_DETAILED,</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        ALL</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;};</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html">   40</a></span>&#160;<span class="keyword">class </span><a class="code" href="classnatrium_1_1Logging.html">Logging</a>: <span class="keyword">public</span> dealii::LogStream {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">friend</span> <a class="code" href="classnatrium_1_1Logging.html">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a913b816565b3ede4c25b89d25ca5148d">LOG</a>(LogLevel level);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keyword">friend</span> <a class="code" href="classnatrium_1_1Logging.html">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b">LOGGER</a>();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordtype">size_t</span> m_currentLevel;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        shared_ptr&lt;std::ofstream&gt; m_fileStream;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">static</span> shared_ptr&lt;Logging&gt; m_LOGGER;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3">   56</a></span>&#160;        <a class="code" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3">Logging</a>() {</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                m_currentLevel = 0;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                pop();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                <a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45">setConsoleLevel</a>(BASIC);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                <a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5">setFileLevel</a>(ALL);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        }</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d">   64</a></span>&#160;        <a class="code" href="classnatrium_1_1Logging.html">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d">operator()</a>(LogLevel level) {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                <span class="keywordflow">while</span> (m_currentLevel &lt; level) {</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                        push(<span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                        m_currentLevel++;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                }</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                <span class="keywordflow">while</span> (m_currentLevel &gt; level) {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                        pop();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                        m_currentLevel--;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403">   77</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403">setLogFile</a>(<span class="keywordtype">string</span> logFile) {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                <span class="keywordflow">if</span> (has_file()) {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                        detach();</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                m_fileStream = make_shared&lt;std::ofstream&gt;(logFile);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                attach(*m_fileStream);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#aae32db6189a7c963323a869821bb26d9">   86</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1Logging.html#aae32db6189a7c963323a869821bb26d9">unsetLogFile</a>(<span class="keywordtype">string</span> logFile) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                <span class="keywordflow">if</span> (has_file()) {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                        detach();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45">   93</a></span>&#160;        LogLevel <a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45">setConsoleLevel</a>(LogLevel level) {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                <span class="keywordflow">return</span> LogLevel(depth_console(level));</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5">   98</a></span>&#160;        LogLevel <a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5">setFileLevel</a>(LogLevel level) {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <span class="keywordflow">return</span> LogLevel(depth_file(level));</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        }</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;};</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;Logging&amp; LOG(LogLevel level);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;Logging&amp; LOGGER();</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LOGGING_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="BasicNames_8h_html"><div class="ttname"><a href="BasicNames_8h.html">BasicNames.h</a></div><div class="ttdoc">Definition of the basic typedefs and names used in the Code. </div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html_a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45"><div class="ttname"><a href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45">natrium::Logging::setConsoleLevel</a></div><div class="ttdeci">LogLevel setConsoleLevel(LogLevel level)</div><div class="ttdoc">set the level of console output </div><div class="ttdef"><b>Definition:</b> Logging.h:93</div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html"><div class="ttname"><a href="classnatrium_1_1Logging.html">natrium::Logging</a></div><div class="ttdoc">this class is responsible for output streams to the command line and log file </div><div class="ttdef"><b>Definition:</b> Logging.h:40</div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html_a913b816565b3ede4c25b89d25ca5148d"><div class="ttname"><a href="classnatrium_1_1Logging.html#a913b816565b3ede4c25b89d25ca5148d">natrium::Logging::LOG</a></div><div class="ttdeci">friend Logging &amp; LOG(LogLevel level)</div><div class="ttdoc">friend function; can be used like &quot;LOG(ERROR) &lt;&lt; ...;&quot;, to write output to the log file and command l...</div><div class="ttdef"><b>Definition:</b> Logging.cpp:19</div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html_aae32db6189a7c963323a869821bb26d9"><div class="ttname"><a href="classnatrium_1_1Logging.html#aae32db6189a7c963323a869821bb26d9">natrium::Logging::unsetLogFile</a></div><div class="ttdeci">void unsetLogFile(string logFile)</div><div class="ttdoc">detach log file </div><div class="ttdef"><b>Definition:</b> Logging.h:86</div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html_a9339ce5458ee8cadf69734faf310c21b"><div class="ttname"><a href="classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b">natrium::Logging::LOGGER</a></div><div class="ttdeci">friend Logging &amp; LOGGER()</div><div class="ttdoc">friend function; is used to access the default logging instance; e.g. LOGGER().setLogFile(...) </div><div class="ttdef"><b>Definition:</b> Logging.cpp:25</div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html_a6dc3bdfa386b24a031578f9293a24403"><div class="ttname"><a href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403">natrium::Logging::setLogFile</a></div><div class="ttdeci">void setLogFile(string logFile)</div><div class="ttdoc">set log file </div><div class="ttdef"><b>Definition:</b> Logging.h:77</div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html_a2bfeafec90e8b3fdceddc2866fda6e3d"><div class="ttname"><a href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d">natrium::Logging::operator()</a></div><div class="ttdeci">Logging &amp; operator()(LogLevel level)</div><div class="ttdoc">set log level for command line output </div><div class="ttdef"><b>Definition:</b> Logging.h:64</div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html_a255455c6e8a6c109a8e7e905bdd57ea3"><div class="ttname"><a href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3">natrium::Logging::Logging</a></div><div class="ttdeci">Logging()</div><div class="ttdoc">constructor </div><div class="ttdef"><b>Definition:</b> Logging.h:56</div></div>
+<div class="ttc" id="classnatrium_1_1Logging_html_a21852bc69b5ff32f5ec5241a810ab8d5"><div class="ttname"><a href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5">natrium::Logging::setFileLevel</a></div><div class="ttdeci">LogLevel setFileLevel(LogLevel level)</div><div class="ttdoc">set the level of file output </div><div class="ttdef"><b>Definition:</b> Logging.h:98</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 20 2014 14:28:58 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 26 2014 15:19:11 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

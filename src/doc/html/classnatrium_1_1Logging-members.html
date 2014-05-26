@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -92,13 +92,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p>This is the complete list of members for <a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#addbf66b690d29a9f8ca9edbc82672d36">BASIC</a></td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a83b60e3e23cc20425605e3b57962460d">ERROR</a></td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a3f7c1686be8b25fcfec6f624467d6346">FULL</a></td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a913b816565b3ede4c25b89d25ca5148d">LOG</a>(LogLevel level)</td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b">LOGGER</a>()</td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3">Logging</a>()</td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d">operator()</a>(LogLevel level)</td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45">setConsoleLevel</a>(LogLevel level)</td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5">setFileLevel</a>(LogLevel level)</td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403">setLogFile</a>(string logFile)</td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classnatrium_1_1Logging.html#aae32db6189a7c963323a869821bb26d9">unsetLogFile</a>(string logFile)</td><td class="entry"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 20 2014 14:29:11 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 26 2014 15:19:22 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -1,0 +1,83 @@
+\hypertarget{classnatrium_1_1MinLeeBoundary}{\section{natrium\-:\-:Min\-Lee\-Boundary$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1MinLeeBoundary}\index{natrium\-::\-Min\-Lee\-Boundary$<$ dim $>$@{natrium\-::\-Min\-Lee\-Boundary$<$ dim $>$}}
+}
+
+
+The boundary described by Min and Lee. For outgoing particle distribution functions the fluxes are set to 0 For incoming particle distributions fluxes are set to \[ f_{\alpha} - f^{+}_{\alpha} = f_{\alpha} - f_{\alpha^{*}} - 2w_{\alpha} \rho_{0} (e_{\alpha}\cdot u_{b})/c^{2}_{s}\].  
+
+
+
+
+{\ttfamily \#include $<$Min\-Lee\-Boundary.\-h$>$}
+
+Inheritance diagram for natrium\-:\-:Min\-Lee\-Boundary$<$ dim $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classnatrium_1_1MinLeeBoundary}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1MinLeeBoundary_a1e9acd91ee2b97783932c4df45d38668}{\hyperlink{classnatrium_1_1MinLeeBoundary_a1e9acd91ee2b97783932c4df45d38668}{Min\-Lee\-Boundary} (size\-\_\-t boundary\-Indicator, shared\-\_\-ptr$<$ dealii\-::\-Function$<$ dim $>$ $>$ boundary\-Density, shared\-\_\-ptr$<$ dealii\-::\-Function$<$ dim $>$ $>$ boundary\-Velocity)}\label{classnatrium_1_1MinLeeBoundary_a1e9acd91ee2b97783932c4df45d38668}
+
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1MinLeeBoundary_a6bd31d48ffaf23ac74bc303b379b4ca8}{\hyperlink{classnatrium_1_1MinLeeBoundary_a6bd31d48ffaf23ac74bc303b379b4ca8}{Min\-Lee\-Boundary} (size\-\_\-t boundary\-Indicator, const dealii\-::\-Vector$<$ double $>$ \&velocity)}\label{classnatrium_1_1MinLeeBoundary_a6bd31d48ffaf23ac74bc303b379b4ca8}
+
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1MinLeeBoundary_ab2409b8dceb378d7e2bdb457e8c5f374}{virtual \hyperlink{classnatrium_1_1MinLeeBoundary_ab2409b8dceb378d7e2bdb457e8c5f374}{$\sim$\-Min\-Lee\-Boundary} ()}\label{classnatrium_1_1MinLeeBoundary_ab2409b8dceb378d7e2bdb457e8c5f374}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1MinLeeBoundary_a873e55801ae7972803d50c7fb805c391}{add\-To\-Sparsity\-Pattern} (dealii\-::\-Block\-Compressed\-Sparsity\-Pattern \&c\-Sparse, const dealii\-::\-Do\-F\-Handler$<$ dim $>$ \&do\-F\-Handler, const \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} \&boltzmann\-Model) const 
+\begin{DoxyCompactList}\small\item\em modify sparsity pattern so that the fluxes over periodic boundary can be incorporated \end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1MinLeeBoundary_af546e18b114f794f8e8a6bf0c73ae5ed}{assemble\-Boundary} (size\-\_\-t alpha, const typename dealii\-::\-Do\-F\-Handler$<$ dim $>$\-::active\-\_\-cell\-\_\-iterator \&cell, size\-\_\-t face\-Number, dealii\-::\-F\-E\-Face\-Values$<$ dim $>$ \&fe\-Face\-Values, const \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} \&boltzmann\-Model, const std\-::map$<$ size\-\_\-t, size\-\_\-t $>$ \&q\-\_\-index\-\_\-to\-\_\-facedof, distributed\-\_\-sparse\-\_\-block\-\_\-matrix \&system\-Matrix, distributed\-\_\-block\-\_\-vector \&system\-Vector) const 
+\item 
+\hypertarget{classnatrium_1_1MinLeeBoundary_a050f00caec37ee8e2f6e19a4d3d2d1fc}{size\-\_\-t {\bfseries get\-Boundary\-Indicator} () const }\label{classnatrium_1_1MinLeeBoundary_a050f00caec37ee8e2f6e19a4d3d2d1fc}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::\-Min\-Lee\-Boundary$<$ dim $>$}
+
+The boundary described by Min and Lee. For outgoing particle distribution functions the fluxes are set to 0 For incoming particle distributions fluxes are set to \[ f_{\alpha} - f^{+}_{\alpha} = f_{\alpha} - f_{\alpha^{*}} - 2w_{\alpha} \rho_{0} (e_{\alpha}\cdot u_{b})/c^{2}_{s}\]. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1MinLeeBoundary_a873e55801ae7972803d50c7fb805c391}{\index{natrium\-::\-Min\-Lee\-Boundary@{natrium\-::\-Min\-Lee\-Boundary}!add\-To\-Sparsity\-Pattern@{add\-To\-Sparsity\-Pattern}}
+\index{add\-To\-Sparsity\-Pattern@{add\-To\-Sparsity\-Pattern}!natrium::MinLeeBoundary@{natrium\-::\-Min\-Lee\-Boundary}}
+\subsubsection[{add\-To\-Sparsity\-Pattern}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::\-Min\-Lee\-Boundary}$<$ dim $>$\-::add\-To\-Sparsity\-Pattern (
+\begin{DoxyParamCaption}
+\item[{dealii\-::\-Block\-Compressed\-Sparsity\-Pattern \&}]{c\-Sparse, }
+\item[{const dealii\-::\-Do\-F\-Handler$<$ dim $>$ \&}]{do\-F\-Handler, }
+\item[{const {\bf Boltzmann\-Model} \&}]{boltzmann\-Model}
+\end{DoxyParamCaption}
+) const}}\label{classnatrium_1_1MinLeeBoundary_a873e55801ae7972803d50c7fb805c391}
+
+
+modify sparsity pattern so that the fluxes over periodic boundary can be incorporated 
+
+
+\begin{DoxyParams}{Parameters}
+{\em c\-Sparse} & the block-\/sparsity pattern \\
+\hline
+\end{DoxyParams}
+\hypertarget{classnatrium_1_1MinLeeBoundary_af546e18b114f794f8e8a6bf0c73ae5ed}{\index{natrium\-::\-Min\-Lee\-Boundary@{natrium\-::\-Min\-Lee\-Boundary}!assemble\-Boundary@{assemble\-Boundary}}
+\index{assemble\-Boundary@{assemble\-Boundary}!natrium::MinLeeBoundary@{natrium\-::\-Min\-Lee\-Boundary}}
+\subsubsection[{assemble\-Boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::\-Min\-Lee\-Boundary}$<$ dim $>$\-::assemble\-Boundary (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{alpha, }
+\item[{const typename dealii\-::\-Do\-F\-Handler$<$ dim $>$\-::active\-\_\-cell\-\_\-iterator \&}]{cell, }
+\item[{size\-\_\-t}]{face\-Number, }
+\item[{dealii\-::\-F\-E\-Face\-Values$<$ dim $>$ \&}]{fe\-Face\-Values, }
+\item[{const {\bf Boltzmann\-Model} \&}]{boltzmann\-Model, }
+\item[{const std\-::map$<$ size\-\_\-t, size\-\_\-t $>$ \&}]{q\-\_\-index\-\_\-to\-\_\-facedof, }
+\item[{distributed\-\_\-sparse\-\_\-block\-\_\-matrix \&}]{system\-Matrix, }
+\item[{distributed\-\_\-block\-\_\-vector \&}]{system\-Vector}
+\end{DoxyParamCaption}
+) const}}\label{classnatrium_1_1MinLeeBoundary_af546e18b114f794f8e8a6bf0c73ae5ed}
+Distribute to global matrix T\-O\-D\-O Loop only over diagonal 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\hyperlink{MinLeeBoundary_8h}{Min\-Lee\-Boundary.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/Min\-Lee\-Boundary.\-cpp\end{DoxyCompactItemize}

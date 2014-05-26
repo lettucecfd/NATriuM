@@ -69,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -86,7 +86,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">Logging.h File Reference</div>  </div>
 </div><!--header-->
@@ -96,9 +97,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;fstream&gt;</code><br/>
 <code>#include &lt;iostream&gt;</code><br/>
-<code>#include &lt;boost/iostreams/tee.hpp&gt;</code><br/>
-<code>#include &lt;boost/iostreams/stream.hpp&gt;</code><br/>
 <code>#include &lt;boost/shared_ptr.hpp&gt;</code><br/>
+<code>#include &quot;deal.II/base/logstream.h&quot;</code><br/>
+<code>#include &quot;<a class="el" href="BasicNames_8h_source.html">BasicNames.h</a>&quot;</code><br/>
 </div>
 <p><a href="Logging_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -108,17 +109,32 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">this class is responsible for output streams to the command line and log file  <a href="classnatrium_1_1Logging.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:aabb09720317096a03a7b4c6a94e0419c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aabb09720317096a03a7b4c6a94e0419c"></a>
-typedef <br class="typebreak"/>
-boost::iostreams::tee_device<br class="typebreak"/>
-&lt; std::ostream, std::ofstream &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>natrium::Tee</b></td></tr>
-<tr class="separator:aabb09720317096a03a7b4c6a94e0419c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeff1c1ff8f905d3eb87673bfb5c76b5d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeff1c1ff8f905d3eb87673bfb5c76b5d"></a>
-typedef <br class="typebreak"/>
-boost::iostreams::stream&lt; Tee &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>natrium::TeeStream</b></td></tr>
-<tr class="separator:aeff1c1ff8f905d3eb87673bfb5c76b5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:adbd75562a84c86649a3699d2047139da"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>LogLevel</b> { <br/>
+&#160;&#160;<b>SILENT</b>, 
+<b>ERROR</b>, 
+<b>WARNING</b>, 
+<b>WELCOME</b>, 
+<br/>
+&#160;&#160;<b>BASIC</b>, 
+<b>DETAILED</b>, 
+<b>DEAL_II_BASIC</b>, 
+<b>DEAL_II_DETAILED</b>, 
+<br/>
+&#160;&#160;<b>ALL</b>
+<br/>
+ }</td></tr>
+<tr class="separator:adbd75562a84c86649a3699d2047139da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ad2838e1bab766ae66a68aa1ac6f2f7cb"><td class="memItemLeft" align="right" valign="top">Logging &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>natrium::LOG</b> (LogLevel level)</td></tr>
+<tr class="memdesc:ad2838e1bab766ae66a68aa1ac6f2f7cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">can be used like "LOG(ERROR) &lt;&lt; ...;", to write output to the log file and command line  <a href="#ad2838e1bab766ae66a68aa1ac6f2f7cb">More...</a><br/></td></tr>
+<tr class="separator:ad2838e1bab766ae66a68aa1ac6f2f7cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addbc7112675b740db86c1c775fce7b1d"><td class="memItemLeft" align="right" valign="top">Logging &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>natrium::LOGGER</b> ()</td></tr>
+<tr class="memdesc:addbc7112675b740db86c1c775fce7b1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">is used to access the default logging instance m_LOGGER; e.g. LOGGER().setLogFile(...)  <a href="#addbc7112675b740db86c1c775fce7b1d">More...</a><br/></td></tr>
+<tr class="separator:addbc7112675b740db86c1c775fce7b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Definition of logging output streams. </p>
@@ -129,7 +145,7 @@ boost::iostreams::stream&lt; Tee &gt;&#160;</td><td class="memItemRight" valign=
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 20 2014 14:28:58 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 26 2014 15:19:11 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

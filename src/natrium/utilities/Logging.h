@@ -106,7 +106,9 @@ public:
  *  @note accesses the default logstream Logging::m_LOGGER
  */
 Logging& LOG(LogLevel level);
-/** @short
+
+/**
+ * @short
  *  is used to access the default logging instance m_LOGGER; e.g. LOGGER().setLogFile(...)
  */
 Logging& LOGGER();
