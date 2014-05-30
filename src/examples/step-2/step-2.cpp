@@ -43,7 +43,7 @@ int main() {
 
 	// set parameters, set up configuration object
 	size_t refinementLevel = 3;
-	size_t orderOfFiniteElement = 14;
+	size_t orderOfFiniteElement = 2;
 	const double dqScaling = 1;
 
 	// chose U (the velocity of the top wall) so that Ma = 0.05
@@ -66,6 +66,7 @@ int main() {
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
 	configuration->setTimeStepSize(timeStepSize);
+	configuration->setCommandLineVerbosity(7);
 	//configuration->setDistributionInitType(Iterative);
 
 	shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(

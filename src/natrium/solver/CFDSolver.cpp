@@ -36,9 +36,12 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		LOGGER().setConsoleLevel(SILENT);
 		LOGGER().setFileLevel(SILENT);
 	} else {
-		LOGGER().setConsoleLevel(LogLevel(configuration->getCommandLineVerbosity()));
+		LOGGER().setConsoleLevel(
+				LogLevel(configuration->getCommandLineVerbosity()));
 		LOGGER().setFileLevel(ALL);
-		LOGGER().setLogFile((boost::filesystem::path(configuration->getOutputDirectory())/"natrium.log").string());
+		LOGGER().setLogFile(
+				(boost::filesystem::path(configuration->getOutputDirectory())
+						/ "natrium.log").string());
 	}
 
 	/// check if problem and solver configuration fit together
@@ -69,15 +72,18 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	}
 
 	if (configuration->isRestartAtLastCheckpoint()) {
-		// read iteration number from file
+		// read iteration number and time from file
 		std::stringstream filename;
 		filename << m_configuration->getOutputDirectory() << "/checkpoint.dat";
 		std::ifstream ifile(filename.str().c_str());
 		ifile >> m_iterationStart;
+		ifile >> m_time;
 		// print out message
-		LOG(BASIC) << "Restart at iteration " << m_iterationStart << endl;
+		LOG(BASIC) << "Restart at iteration " << m_iterationStart
+				<< " (simulation time = " << m_time << " s)." << endl;
 	} else {
 		m_iterationStart = 0;
+		m_time = 0;
 	}
 
 /// Calculate relaxation parameter and build collision model
@@ -155,13 +161,13 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			boundaryIndicators.insert(it->first);
 		}
 	}
-	m_isBoundary.resize(getNumberOfDoFs());
+	m_isDoFAtBoundary.resize(getNumberOfDoFs());
 	dealii::DoFTools::extract_dofs_with_support_on_boundary(
 			*(m_advectionOperator->getDoFHandler()), dealii::ComponentMask(),
-			m_isBoundary, boundaryIndicators);
+			m_isDoFAtBoundary, boundaryIndicators);
 	size_t nofBoundaryNodes = 0;
-	for (size_t i = 0; i < m_isBoundary.size(); i++) {
-		if (m_isBoundary.at(i)) {
+	for (size_t i = 0; i < m_isDoFAtBoundary.size(); i++) {
+		if (m_isDoFAtBoundary.at(i)) {
 			nofBoundaryNodes += 1;
 		}
 	}
@@ -185,6 +191,7 @@ void CFDSolver<dim>::stream() {
 	//f.print(cout);
 	f.add(m_timeIntegrator->getTimeStepSize(),
 			m_advectionOperator->getSystemVector());
+	m_time += m_timeIntegrator->getTimeStepSize();
 	//f.add(1.0, m_advectionOperator->getSystemVector());
 	//m_advectionOperator->getSystemVector().print(cout);
 	//f.print(cout);
@@ -216,11 +223,8 @@ template void CFDSolver<3>::reassemble();
 template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
-	for (size_t i = m_iterationStart; i < N; i++) {
-		if (i % 100 == 0) {
-			LOG(BASIC) << "Iteration " << i << endl;
-		}
-		output(i);
+	for (m_i = m_iterationStart; m_i < N; m_i++) {
+		output(m_i);
 		stream();
 		collide();
 	}
@@ -232,6 +236,10 @@ template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
 	// output: vector fields as .vtu files
 	if (not m_configuration->isSwitchOutputOff()) {
+		if (iteration % 100 == 0) {
+			LOG(BASIC) << "Iteration " << iteration << ",  t = " << m_time
+					<< endl;
+		}
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
@@ -241,11 +249,16 @@ void CFDSolver<dim>::output(size_t iteration) {
 			dealii::DataOut<dim> data_out;
 			data_out.attach_dof_handler(*m_advectionOperator->getDoFHandler());
 			data_out.add_data_vector(m_density, "rho");
-			for (size_t i = 0; i < dim; i++) {
-				std::stringstream vi;
-				vi << "v_" << i;
-				data_out.add_data_vector(m_velocity.at(i), vi.str().c_str());
+			if (dim == 2) {
+				data_out.add_data_vector(m_velocity.at(0), "ux");
+				data_out.add_data_vector(m_velocity.at(1), "uy");
+			} else { //dim == 3
+				data_out.add_data_vector(m_velocity.at(0), "ux");
+				data_out.add_data_vector(m_velocity.at(1), "uy");
+				data_out.add_data_vector(m_velocity.at(2), "uz");
 			}
+			addAnalyticSolutionToOutput(data_out);
+			/// For Benchmarks: add analytic solution
 			data_out.build_patches();
 			data_out.write_vtu(vtu_output);
 		}
@@ -264,6 +277,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 					<< "/checkpoint.dat";
 			std::ofstream outfile(filename.str().c_str());
 			outfile << iteration << endl;
+			// time
+			outfile << m_time << endl;
 		}
 	}
 }
@@ -317,7 +332,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			stream();
 			// collide without recalculating velocities
 			m_collisionModel->collideAll(m_f, m_density, m_velocity,
-					m_isBoundary, inInitializationProcedure);
+					m_isDoFAtBoundary, inInitializationProcedure);
 			oldDensities -= m_density;
 			residual = oldDensities.norm_sqr();
 			loopCount++;

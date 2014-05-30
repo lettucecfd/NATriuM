@@ -29,23 +29,6 @@ TaylorGreenVortex2D::~TaylorGreenVortex2D() {
 }
 
 
-void TaylorGreenVortex2D::applyInitialDensities(
-		distributed_vector& initialDensities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	for (size_t i = 0; i < initialDensities.size(); i++) {
-		initialDensities(i) = 1.0;
-	}
-}
-
-void TaylorGreenVortex2D::applyInitialVelocities(
-		vector<distributed_vector>& initialVelocities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	assert(
-			initialVelocities.at(0).size()
-					== initialVelocities.at(1).size());
-	this->getAnalyticSolution(0.0, initialVelocities, supportPoints);
-}
-
 void TaylorGreenVortex2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const {
 	velocity(0) = sin(x(0))*cos(x(1))*exp(-2*getViscosity()*t);
 	velocity(1) = -cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);

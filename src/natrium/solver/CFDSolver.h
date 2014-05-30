@@ -10,6 +10,8 @@
 
 #include <exception>
 
+#include "deal.II/numerics/data_out.h"
+
 #include "SolverConfiguration.h"
 #include "DistributionFunctions.h"
 
@@ -89,8 +91,14 @@ private:
 	/// the number of the first iteration (normally 0, except for restart at a checkpoint)
 	size_t m_iterationStart;
 
+	/// the physical time passed (normally initialized with 0.0, except for restart at a checkpoint)
+	double m_time;
+
 	/// a vector that indicates if a dofs is at the boundary (for each dof)
-	vector<bool> m_isBoundary;
+	vector<bool> m_isDoFAtBoundary;
+
+	/// current iteration
+	size_t m_i;
 
 protected:
 
@@ -100,6 +108,9 @@ protected:
 	/// load the distribution functions from files for checkpointing
 	void loadDistributionFunctionsFromFiles(const string& directory);
 
+	/// gives the possibility for Benchmark instances to add the analytic solution to output
+	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& data_out){
+	}
 
 
 public:
@@ -142,7 +153,7 @@ public:
 	/**
 	 * @short create output data and write to file
 	 */
-	void output(size_t iteration);
+	virtual void output(size_t iteration);
 
 	const distributed_vector& getDensity() const {
 		return m_density;
@@ -211,6 +222,14 @@ public:
 
 	size_t getIterationStart() const {
 		return m_iterationStart;
+	}
+
+	double getTime() const {
+		return m_time;
+	}
+
+	size_t getIteration() const {
+		return m_i;
 	}
 }
 ;
