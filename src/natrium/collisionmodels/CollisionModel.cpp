@@ -10,6 +10,7 @@
 #include "../solver/DistributionFunctions.h"
 
 #include <cmath>
+#include <exception>
 
 namespace natrium {
 
@@ -22,6 +23,9 @@ CollisionModel::CollisionModel(boost::shared_ptr<BoltzmannModel> boltzmannModel)
 
 CollisionModel::~CollisionModel() {
 }
+
+
+// TODO Replace std::exception by a custom exception
 
 void CollisionModel::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
@@ -51,7 +55,9 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 		for (size_t j = 0; j < Q; j++) {
 			densities(i) += f.at(j)(i);
 		}
-		assert(densities(i) > 1e-10);
+		if (densities(i) < 1e-10){
+			throw std::exception();
+		}
 
 		if (not inInitializationProcedure) {
 			// calculate velocity
@@ -109,7 +115,9 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 		for (size_t j = 0; j < Q; j++) {
 			densities(i) += f.at(j)(i);
 		}
-		assert(densities(i) > 1e-10);
+		if (densities(i) < 1e-10){
+			throw std::exception();
+		}
 
 		if (not inInitializationProcedure) {
 			// calculate velocity
