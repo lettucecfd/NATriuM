@@ -19,7 +19,7 @@ namespace natrium {
 
 CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, double L, double startTime) :
-		ProblemDescription<2>(makeGrid(L, refinementLevel), viscosity, 1), m_topPlateVelocity(
+		Benchmark<2>(makeGrid(L, refinementLevel), viscosity, L), m_topPlateVelocity(
 				topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
@@ -84,14 +84,18 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	return boundaries;
 }
 
-double CouetteFlow2D::analyticVelocity1(const dealii::Point<2>& x,
-		double t) const {
+void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const {
 	// the analytic solution is given by an asymptotic series
 	double U = getCharacteristicVelocity();
 	double L = getCharacteristicLength();
 
 	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
 	// assert (t > 0.1);
+	if (t < 0.001) {
+		velocity(0) = 0;
+		velocity(1) = 0;
+		return;
+	}
 
 	double sum = U * x(1) / L;
 	double lambda = 0.0;
@@ -109,11 +113,10 @@ double CouetteFlow2D::analyticVelocity1(const dealii::Point<2>& x,
 	}
 	// assert convergence of the above asymptotic sum
 	assert(fabs(increment) < 1e-9);
-	return sum;
+	velocity(0) = sum;
+	velocity(1) = 0.0;
+
 }
 
-double CouetteFlow2D::analyticVelocity2(const dealii::Point<2>& x,
-		double t) const {
-	return 0.0;
-}
+
 } /* namespace natrium */

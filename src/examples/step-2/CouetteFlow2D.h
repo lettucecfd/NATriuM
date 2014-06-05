@@ -10,7 +10,7 @@
 
 #include "deal.II/grid/tria.h"
 
-#include "problemdescription/ProblemDescription.h"
+#include "problemdescription/Benchmark.h"
 #include "utilities/BasicNames.h"
 
 using dealii::Triangulation;
@@ -22,7 +22,7 @@ namespace natrium {
  *  8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).
  *  @note The analytic solution is obtained by a formula stated in Min and Lee (2011).
  */
-class CouetteFlow2D: public ProblemDescription<2> {
+class CouetteFlow2D: public Benchmark<2> {
 public:
 
 	/// constructor
@@ -31,35 +31,11 @@ public:
 	/// destructor
 	virtual ~CouetteFlow2D();
 
-	/*
-	 * @short analytic solution of the Couette flow, first component of velocity vector
-	 */
-	double analyticVelocity1(const dealii::Point<2>& x, double t) const ;
-
 	/**
-	 * @short analytic solution of the Couette flow, second component of velocity vector
+	 * @short analytic solution of the Taylor-Green vortex
 	 */
-	double analyticVelocity2(const dealii::Point<2>& x, double t) const ;
+	virtual void getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const;
 
-	void applyInitialDensities(
-			distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const {
-		for (size_t i = 0; i < initialDensities.size(); i++) {
-			initialDensities(i) = 1.0;
-		}
-	}
-
-	void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const {
-		assert(
-				initialVelocities.at(0).size()
-						== initialVelocities.at(1).size());
-		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-			initialVelocities.at(0)(i) = analyticVelocity1(supportPoints.at(i), m_startTime);
-			initialVelocities.at(1)(i) = 0.0;
-		}
-	}
 
 	virtual double getCharacteristicVelocity() const {
 		return m_topPlateVelocity;
