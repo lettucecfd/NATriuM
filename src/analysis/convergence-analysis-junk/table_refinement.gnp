@@ -1,0 +1,49 @@
+# format1
+
+#################################################
+# Gnuplot script file for plotting data in files#
+#################################################
+reset
+set term postscript eps color enhanced "Helvetica" 28
+set size 1.0, 0.8
+set rmargin at screen 0.7
+
+# LINESTYLE DEFINITIONS
+set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 7 pointtype 4 pointsize 2# pointinterval 10
+set style line 2  linetype 1 linecolor rgb "dark-orange"  linewidth 7 pointtype 6 pointsize 2#pointinterval 10
+set style line 3  linetype 1 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 8 pointsize 2# pointinterval 10
+set style line 4  linetype 1 linecolor rgb "dark-green"  linewidth 7.000 pointtype 12 pointsize 2# pointinterval 10
+set style line 5  linetype 1 linecolor rgb "violet"  linewidth 7.000 pointtype 3 pointsize 2# pointinterval 10
+set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 7 pointsize 2# pointinterval 10
+set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
+
+#set linestyle lw 15
+#set xlabel 't' offset 0, 0.5
+#set ylabel 'Compression error (sup-Norm)' offset 2.0, 0
+#set output 'convergence_analysis_basic_compression_error.eps'
+#set logscale x
+set logscale y
+
+set xlabel 't'
+set xtics 0.25
+#set mxtics 4
+#set mytics 5
+
+
+set key box rmargin samplen 1 # horizontal maxcols 1 spacing 1.2
+#plot \
+#'table_refinement.txt' using ($1):($4) every :::0::0 title 'FE Order 2' with linespoints ls 2,\
+#'table_refinement.txt' using ($1):($4) every :::1::1 title 'FE Order 3' with linespoints ls 3,\
+#'table_refinement.txt' using ($1):($4) every :::2::2 title 'FE Order 4' with linespoints ls 4,\
+#'table_refinement.txt' using ($1):($4) every :::3::3 title 'FE Order 5' with linespoints ls 5
+
+
+set output 'convergence_analysis_basic_velocity_error.eps'
+set ylabel 'Max velocity error (in %)' offset 2.0, 0
+plot \
+'../../../results/convergence-analysis-junk/2_2/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 2' with linespoints ls 2,\
+'../../../results/convergence-analysis-junk/2_3/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 3' with linespoints ls 3,\
+'../../../results/convergence-analysis-junk/2_4/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 4' with linespoints ls 4,\
+'../../../results/convergence-analysis-junk/2_5/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 5' with linespoints ls 5,\
+'../../../results/convergence-analysis-junk/2_6/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 6' with linespoints ls 6,\
+'../../../results/convergence-analysis-junk/2_7/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 7' with linespoints ls 7

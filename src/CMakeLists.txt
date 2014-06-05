@@ -43,6 +43,7 @@ find_package( Boost
 add_subdirectory( natrium )
 add_subdirectory( test )
 add_subdirectory( examples )
+add_subdirectory( analysis )
 
 
 #
