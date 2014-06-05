@@ -90,7 +90,7 @@ public:
 	 */
 	static double calculateRelaxationParameter(double viscosity,
 			double timeStepSize,
-			boost::shared_ptr<BoltzmannModel> boltzmannModel) {
+			const boost::shared_ptr<BoltzmannModel> boltzmannModel) {
 		assert(viscosity > 0.0);
 		assert(timeStepSize > 0.0);
 		return (viscosity)

@@ -223,7 +223,7 @@ template void CFDSolver<3>::reassemble();
 template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
-	for (m_i = m_iterationStart; m_i < N; m_i++) {
+	for (m_i = m_iterationStart; m_i <= N; m_i++) {
 		output(m_i);
 		stream();
 		collide();

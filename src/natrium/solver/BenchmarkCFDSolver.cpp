@@ -28,8 +28,8 @@ template<size_t dim> BenchmarkCFDSolver<dim>::BenchmarkCFDSolver(
 
 // File for errors
 	if ((not configuration->isSwitchOutputOff())
-			and (configuration->getOutputTableInterval()
-					< configuration->getNumberOfTimeSteps())) {
+			/*and (configuration->getOutputTableInterval()
+					< configuration->getNumberOfTimeSteps())*/) {
 		std::stringstream s;
 		s << configuration->getOutputDirectory().c_str() << "/errors_table.txt";
 		if (this->getIterationStart() > 0) {
@@ -57,6 +57,7 @@ template<> ErrorNorms BenchmarkCFDSolver<2>::getErrors() {
 	// therefor check a marker value that is set by this function (see below)
 
 	// get analytic and numeric values
+	// TODO: only assign once (see. addAnalyticSolutionToOutput)
 	m_benchmark->getAllAnalyticVelocities(getTime(), m_analyticVelocity, m_supportPoints);
 	m_benchmark->getAllAnalyticDensities(getTime(), m_analyticDensity, m_supportPoints);
 	const vector<distributed_vector>& numericVelocity = getVelocity();
@@ -95,6 +96,7 @@ template<> ErrorNorms BenchmarkCFDSolver<3>::getErrors() {
 	// therefor check a marker value that is set by this function (see below)
 
 	// get analytic and numeric values
+	// TODO: only assign once
 	m_benchmark->getAllAnalyticVelocities(getTime(), m_analyticVelocity, m_supportPoints);
 	m_benchmark->getAllAnalyticDensities(getTime(), m_analyticDensity, m_supportPoints);
 	const vector<distributed_vector>& numericVelocity = getVelocity();

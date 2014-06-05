@@ -59,7 +59,7 @@ public:
 			analyticSolution.at(0)(i) = velocity(0);
 			analyticSolution.at(1)(i) = velocity(1);
 			if (dim == 3) {
-				analyticSolution.at(2)(i) == velocity(2);
+				analyticSolution.at(2)(i) = velocity(2);
 			}
 		}
 	}

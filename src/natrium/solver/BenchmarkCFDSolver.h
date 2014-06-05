@@ -65,6 +65,8 @@ public:
 
 /// gives the possibility for Benchmark instances to add the analytic solution to output
 	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& data_out) {
+		m_benchmark->getAllAnalyticVelocities(this->getTime(), m_analyticVelocity, m_supportPoints);
+		m_benchmark->getAllAnalyticDensities(this->getTime(), m_analyticDensity, m_supportPoints);
 		data_out.add_data_vector(m_analyticDensity, "rho_analytic");
 		if (dim == 2) {
 			data_out.add_data_vector(m_analyticVelocity.at(0), "ux_analytic");
