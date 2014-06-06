@@ -98,12 +98,12 @@ public:
 	}
 
 	/**
-	 * @short calculate the time step, for which tau = 1
+	 * @short calculate the time step, so that the Courant number is 1 for the diagonal directions
 	 */
-	static double calculateOptimalTimeStep(double viscosity,
+	static double calculateOptimalTimeStep(double dx,
 			const boost::shared_ptr<BoltzmannModel> boltzmannModel) {
-		assert(viscosity > 0.0);
-		return viscosity / boltzmannModel->getSpeedOfSoundSquare();
+		assert(dx > 0);
+		return dx / boltzmannModel->getMaxParticleVelocityMagnitude();
 	}
 
 };

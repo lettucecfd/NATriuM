@@ -213,6 +213,7 @@ public:
 
 	virtual double getSpeedOfSound() const = 0;
 	virtual double getSpeedOfSoundSquare() const = 0;
+	virtual double getMaxParticleVelocityMagnitude() const = 0;
 
 };
 

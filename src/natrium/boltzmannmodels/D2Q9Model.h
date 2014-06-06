@@ -38,6 +38,9 @@ protected:
 	/// (speed of sound)^2
 	const double m_speedOfSoundSquare;
 
+	/// scaling of the stencil
+	const double m_scaling;
+
 public:
 
 	/// D
@@ -93,6 +96,13 @@ public:
 		}
 	}
 
+	virtual double getMaxParticleVelocityMagnitude() const {
+		return m_scaling*sqrt(2);
+	}
+
+	const double getScaling() const {
+		return m_scaling;
+	}
 };
 
 } /* namespace natrium */

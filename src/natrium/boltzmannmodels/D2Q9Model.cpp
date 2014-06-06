@@ -33,7 +33,8 @@ const size_t D2Q9Model::Q = 9;
 D2Q9Model::D2Q9Model(double scaling):
 		BoltzmannModel(2, 9, makeDirections(scaling), makeWeights(), Stencil_D2Q9),
 		m_speedOfSound(scaling*pow(3, -0.5)),
-		m_speedOfSoundSquare(scaling*scaling/3.){
+		m_speedOfSoundSquare(scaling*scaling/3.),
+		m_scaling(scaling){
 } //constructor
 
 

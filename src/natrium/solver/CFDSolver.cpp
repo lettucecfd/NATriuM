@@ -15,6 +15,7 @@
 #include "deal.II/numerics/data_out.h"
 #include "deal.II/fe/component_mask.h"
 #include "deal.II/base/logstream.h"
+#include "deal.II/grid/grid_tools.h"
 
 #include "../problemdescription/BoundaryCollection.h"
 
@@ -63,6 +64,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			whereAreTheStoredMatrices = configuration->getOutputDirectory();
 		}
 		// create SEDG MinLee by reading the system matrices from files or assembling
+		// TODO estimate time for assembly
 		m_advectionOperator = make_shared<SEDGMinLee<dim> >(
 				m_problemDescription->getTriangulation(),
 				m_problemDescription->getBoundaries(),
@@ -123,6 +125,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	if (charU == 0.0) {
 		charU = maxU;
 	}
+	double dx = dealii::GridTools::minimal_cell_diameter(*(m_problemDescription->getTriangulation()));
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
 	LOG(WELCOME) << "viscosity:       " << problemDescription->getViscosity()
 			<< " m^2/s" << endl;
@@ -132,14 +135,17 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
 			<< endl;
 	LOG(WELCOME) << "Reynolds number: "
-			<< (charU * problemDescription->getCharacteristicLength())
-					/ problemDescription->getViscosity() << endl;
+				<< (charU * problemDescription->getCharacteristicLength())
+						/ problemDescription->getViscosity() << endl;
+	LOG(WELCOME) << "Mach number: "
+				<< charU / configuration->getStencilScaling() << endl;
 	LOG(WELCOME) << "Recommended dt:  "
 			<< m_collisionModel->calculateOptimalTimeStep(
-					problemDescription->getViscosity(), m_boltzmannModel)
+					dx, m_boltzmannModel)
 			<< " s" << endl;
 	LOG(WELCOME) << "Actual dt:       " << configuration->getTimeStepSize()
 			<< " s" << endl;
+	LOG(WELCOME) << "dx:              " << dx << endl;
 	LOG(WELCOME) << "tau:             " << tau << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 
@@ -223,6 +229,7 @@ template void CFDSolver<3>::reassemble();
 template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
+	// TODO estimate runtime
 	for (m_i = m_iterationStart; m_i <= N; m_i++) {
 		output(m_i);
 		stream();
