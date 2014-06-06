@@ -32,11 +32,11 @@ int main() {
 
 	// Re = viscosity/(2*pi)
 	const double viscosity = 1;
-	//initial mach number
-	const double initialMa = 0.05;
+	//initial mach number = 0.05
+	const double initialScaling = 100 / 5 * sqrt(3);
 	// zunaechst: fixed order of FE
 	const double orderOfFiniteElement = 2;
-	const double constant = -0.36;
+	//const double constant = -0.36;
 
 	for (size_t refinementLevel = 2; refinementLevel < 10; refinementLevel++) {
 		cout << "refinement Level = " << refinementLevel << endl;
@@ -50,13 +50,13 @@ int main() {
 				/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 
 		// chose scaling so that the ratio between log xi_0^2 and log tau is constant
-		double scaling = pow(3*viscosity*sqrt(2)/dx,constant/(constant+2.0));
+		double scaling = initialScaling/sqrt(dx);//pow(3*viscosity*sqrt(2)/dx,constant/(constant+2.0));
 
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		double dt = dx / (scaling * sqrt(2));
 
 
-		cout << "dt = " << dt << " ..." ;
+		cout << "dt = " << dt;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -93,7 +93,8 @@ int main() {
 		// get tau to test if the "constant value" is really constant
 		const double tau = BGKTransformed::calculateRelaxationParameter(
 						viscosity, dt, solver.getBoltzmannModel());
-		cout << "constant = " << log2(scaling*scaling) / log2(tau) << " ...";
+		cout  << "... scaling = " << scaling << " ... tau = " << tau << " ...";
+		//cout << "constant = " << log2(scaling*scaling) / log2(tau) << " ...";
 		time1 = clock() - timestart;
 
 		try {

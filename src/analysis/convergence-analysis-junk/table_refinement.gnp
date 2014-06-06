@@ -46,4 +46,5 @@ plot \
 '../../../results/convergence-analysis-junk/2_4/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 4' with linespoints ls 4,\
 '../../../results/convergence-analysis-junk/2_5/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 5' with linespoints ls 5,\
 '../../../results/convergence-analysis-junk/2_6/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 6' with linespoints ls 6,\
-'../../../results/convergence-analysis-junk/2_7/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 7' with linespoints ls 7
+'../../../results/convergence-analysis-junk/2_7/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 7' with linespoints ls 7,\
+'../../../results/convergence-analysis-junk/2_8/errors_table.txt' using ($2):($4)/($3) every :::0::0 title 'Level 8' with linespoints ls 8
