@@ -100,6 +100,9 @@ private:
 	/// current iteration
 	size_t m_i;
 
+	/// table out
+	shared_ptr<std::fstream> m_tableFile;
+
 protected:
 
 	/// save the distribution functions to files for checkpointing

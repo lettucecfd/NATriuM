@@ -24,14 +24,22 @@ set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 
 #set logscale x
 set logscale y
 
-set xlabel 'refinement level'
+set xlabel 't'
+set xtics 5
+#set mxtics 4
+#set mytics 5
 
-set output 'convergence_analysis_basic.eps'
+
 set key box rmargin samplen 1 # horizontal maxcols 1 spacing 1.2
-set ylabel 'Max velocity error (in %)' offset 2.0, 0
-plot \
-'table_order.txt' using ($1):($7) title 'relative' with linespoints ls 2,\
-'table_order.txt' using ($1):($5) title 'absolute' with linespoints ls 3,\
-'table_order.txt' using ($1):($6) title 'err on rho' with linespoints ls 4,\
-2**(-x), 2**(-2*x)
+#plot \
+#'table_refinement.txt' using ($1):($4) every :::0::0 title 'FE Order 2' with linespoints ls 2,\
+#'table_refinement.txt' using ($1):($4) every :::1::1 title 'FE Order 3' with linespoints ls 3,\
+#'table_refinement.txt' using ($1):($4) every :::2::2 title 'FE Order 4' with linespoints ls 4,\
+#'table_refinement.txt' using ($1):($4) every :::3::3 title 'FE Order 5' with linespoints ls 5
 
+
+set output 'kinetic_energy.eps'
+set ylabel 'Kinetic energy' offset 2.0, 0
+plot \
+'../../../results/convergence-analysis-kinE/results_table.txt' using ($2):($4) title 'LB' with lines ls 2,\
+exp(-4*x)/0.25 title 'reference' with lines ls 3

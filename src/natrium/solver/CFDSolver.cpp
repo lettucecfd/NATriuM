@@ -17,6 +17,8 @@
 #include "deal.II/base/logstream.h"
 #include "deal.II/grid/grid_tools.h"
 
+#include "PhysicalProperties.h"
+
 #include "../problemdescription/BoundaryCollection.h"
 
 #include "../utilities/Logging.h"
@@ -30,6 +32,24 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	/// Create output directory
 	if (not configuration->isSwitchOutputOff()) {
 		configuration->prepareOutputDirectory();
+	}
+
+	// Create file for errors
+	if ((not configuration->isSwitchOutputOff())
+	/*and (configuration->getOutputTableInterval()
+	 < configuration->getNumberOfTimeSteps())*/) {
+		std::stringstream s;
+		s << configuration->getOutputDirectory().c_str()
+				<< "/results_table.txt";
+		if (this->getIterationStart() > 0) {
+			m_tableFile = make_shared<std::fstream>(s.str().c_str(),
+					std::fstream::out | std::fstream::app);
+		} else {
+			m_tableFile = make_shared<std::fstream>(s.str().c_str(),
+					std::fstream::out);
+			(*m_tableFile) << "#  i      t      max |u_numeric|    kinE"
+					<< endl;
+		}
 	}
 
 	// CONFIGURE LOGGER
@@ -125,7 +145,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	if (charU == 0.0) {
 		charU = maxU;
 	}
-	double dx = dealii::GridTools::minimal_cell_diameter(*(m_problemDescription->getTriangulation()));
+	double dx = dealii::GridTools::minimal_cell_diameter(
+			*(m_problemDescription->getTriangulation()));
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
 	LOG(WELCOME) << "viscosity:       " << problemDescription->getViscosity()
 			<< " m^2/s" << endl;
@@ -135,13 +156,14 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
 			<< endl;
 	LOG(WELCOME) << "Reynolds number: "
-				<< (charU * problemDescription->getCharacteristicLength())
-						/ problemDescription->getViscosity() << endl;
-	LOG(WELCOME) << "Mach number: "
-				<< charU / configuration->getStencilScaling() << endl;
+			<< (charU * problemDescription->getCharacteristicLength())
+					/ problemDescription->getViscosity() << endl;
+	LOG(WELCOME) << "Mach number:     "
+				<< charU / m_boltzmannModel->getSpeedOfSound() << endl;
+	LOG(WELCOME) << "Stencil scaling: "
+				<< configuration->getStencilScaling() << endl;
 	LOG(WELCOME) << "Recommended dt:  "
-			<< m_collisionModel->calculateOptimalTimeStep(
-					dx, m_boltzmannModel)
+			<< m_collisionModel->calculateOptimalTimeStep(dx, m_boltzmannModel)
 			<< " s" << endl;
 	LOG(WELCOME) << "Actual dt:       " << configuration->getTimeStepSize()
 			<< " s" << endl;
@@ -268,6 +290,16 @@ void CFDSolver<dim>::output(size_t iteration) {
 			/// For Benchmarks: add analytic solution
 			data_out.build_patches();
 			data_out.write_vtu(vtu_output);
+		}
+
+		// output: table
+		if (iteration % m_configuration->getOutputTableInterval() == 0) {
+			//#  i      t         max |u_numeric|  kinE  mass"
+			(*m_tableFile) << getIteration() << " " << getTime()
+					<< " " << getMaxVelocityNorm() << " "
+					<< PhysicalProperties<dim>::kineticEnergy(getVelocity(),
+							getDensity()) << endl;
+			//<< " " << PhysicalProperties<dim>::mass(getVelocity(), getDensity());
 		}
 
 		// output: checkpoint
