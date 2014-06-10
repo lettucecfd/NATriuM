@@ -24,7 +24,7 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM convergence analysis (basic)..." << endl;
+	cout << "Starting NATriuM convergence analysis (diffusive scaling)..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -38,7 +38,7 @@ int main() {
 	const double orderOfFiniteElement = 2;
 	//const double constant = -0.36;
 
-	for (size_t refinementLevel = 2; refinementLevel < 10; refinementLevel++) {
+	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
 		cout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {

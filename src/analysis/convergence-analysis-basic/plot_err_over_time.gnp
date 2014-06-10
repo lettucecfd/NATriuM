@@ -38,12 +38,13 @@ set key box rmargin samplen 1 # horizontal maxcols 1 spacing 1.2
 #'table_refinement.txt' using ($1):($4) every :::3::3 title 'FE Order 5' with linespoints ls 5
 
 
-set output 'convergence_analysis_basic_abs_velocity_error.eps'
-set ylabel 'Max velocity error (in %)' offset 2.0, 0
+set output 'convergence_analysis_basic_velocity_error.eps'
+set ylabel 'Velocity error (2-norm)' offset 2.0, 0
 plot \
-'../../../results/convergence-analysis-basic/2_2_34.641_0.0320637/errors_table.txt' using ($2):($4) every :::0::0 title 'Level 2' with linespoints ls 2,\
-'../../../results/convergence-analysis-basic/2_3_34.641_0.0160319/errors_table.txt' using ($2):($4) every :::0::0 title 'Level 3' with linespoints ls 3,\
-'../../../results/convergence-analysis-basic/2_4_34.641_0.00801594/errors_table.txt' using ($2):($4) every :::0::0 title 'Level 4' with linespoints ls 4,\
-'../../../results/convergence-analysis-basic/2_5_34.641_0.00400797/errors_table.txt' using ($2):($4) every :::0::0 title 'Level 5' with linespoints ls 5,\
-'../../../results/convergence-analysis-basic/2_6_34.641_0.00200398/errors_table.txt' using ($2):($4) every :::0::0 title 'Level 6' with linespoints ls 6,\
-'../../../results/convergence-analysis-basic/2_7_34.641_0.00100199/errors_table.txt' using ($2):($4) every :::0::0 title 'Level 7' with linespoints ls 7
+'../../../results/convergence-analysis-basic/2_2/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 2' with linespoints ls 2,\
+'../../../results/convergence-analysis-basic/2_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 3' with linespoints ls 3,\
+'../../../results/convergence-analysis-basic/2_4/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 4' with linespoints ls 4,\
+'../../../results/convergence-analysis-basic/2_5/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 5' with linespoints ls 5,\
+'../../../results/convergence-analysis-basic/2_6/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 6' with linespoints ls 6,\
+'../../../results/convergence-analysis-basic/2_7/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 7' with linespoints ls 7,\
+'../../../results/convergence-analysis-basic/2_8/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 8' with linespoints ls 8

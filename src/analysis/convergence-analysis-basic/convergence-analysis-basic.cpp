@@ -24,7 +24,7 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM convergence analysis (basic)..." << endl;
+	cout << "Starting NATriuM convergence analysis (linear scaling)..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -41,7 +41,7 @@ int main() {
 	// chose scaling so that the right Ma-number is achieved
 	double scaling = sqrt(3) * 1 / Ma;
 
-	for (size_t refinementLevel = 2; refinementLevel < 10; refinementLevel++) {
+	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
 		cout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
@@ -62,8 +62,7 @@ int main() {
 		// setup configuration
 		std::stringstream dirName;
 		dirName << "../results/convergence-analysis-basic/"
-				<< orderOfFiniteElement << "_" << refinementLevel << "_"
-				<< scaling << "_" << dt;
+				<< orderOfFiniteElement << "_" << refinementLevel;
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);

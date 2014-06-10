@@ -43,11 +43,11 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.build.arguments</key>
-					<value></value>
+					<value>-j8</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>/home/kraemer/eclipse_workspace/NATriuM/bin</value>
+					<value>/home/kraemer/workspace/NATriuM/bin</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.useDefaultBuildCmd</key>
@@ -83,7 +83,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.build.location</key>
-					<value>/home/kraemer/eclipse_workspace/NATriuM/bin</value>
+					<value>/home/kraemer/workspace/NATriuM/bin</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.autoBuildTarget</key>
@@ -111,7 +111,7 @@
 		<link>
 			<name>[Source directory]</name>
 			<type>2</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src</location>
+			<location>/home/kraemer/workspace/NATriuM/src</location>
 		</link>
 		<link>
 			<name>[Subprojects]</name>
@@ -121,7 +121,7 @@
 		<link>
 			<name>[Subprojects]/NATriuM</name>
 			<type>2</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src</location>
+			<location>/home/kraemer/workspace/NATriuM/src</location>
 		</link>
 		<link>
 			<name>[Targets]</name>
@@ -146,7 +146,7 @@
 		<link>
 			<name>[Targets]/[exe] NATriuM_exe/Source Files/NATriuM.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/NATriuM.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/NATriuM.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_exe/Header Files</name>
@@ -186,87 +186,107 @@
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/BoltzmannModel.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/boltzmannmodels/BoltzmannModel.cpp</location>
-		</link>
-		<link>
-			<name>[Targets]/[lib] natrium/Source Files/D2Q9IncompressibleModel.cpp</name>
-			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/boltzmannmodels/D2Q9IncompressibleModel.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/boltzmannmodels/BoltzmannModel.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/D2Q9Model.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/boltzmannmodels/D2Q9Model.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/boltzmannmodels/D2Q9Model.cpp</location>
 		</link>
 		<link>
-			<name>[Targets]/[lib] natrium/Source Files/CollisionModel.cpp</name>
+			<name>[Targets]/[lib] natrium/Source Files/D2Q9IncompressibleModel.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/collisionmodels/CollisionModel.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/boltzmannmodels/D2Q9IncompressibleModel.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/BGKTransformed.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/collisionmodels/BGKTransformed.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/collisionmodels/BGKTransformed.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Source Files/CollisionModel.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/collisionmodels/CollisionModel.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/BoundaryTools.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/BoundaryTools.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/BoundaryTools.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/PeriodicBoundary.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/PeriodicBoundary.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/PeriodicBoundary.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/Boundary.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/Boundary.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/Boundary.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/BoundaryCollection.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/BoundaryCollection.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/BoundaryCollection.cpp</location>
 		</link>
 		<link>
-			<name>[Targets]/[lib] natrium/Source Files/SolverConfiguration.cpp</name>
+			<name>[Targets]/[lib] natrium/Source Files/Benchmark.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/SolverConfiguration.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/Benchmark.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Source Files/MinLeeBoundary.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/MinLeeBoundary.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Source Files/PhysicalProperties.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/PhysicalProperties.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/CFDSolver.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/CFDSolver.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/CFDSolver.cpp</location>
 		</link>
 		<link>
-			<name>[Targets]/[lib] natrium/Source Files/AdvectionOperator.cpp</name>
+			<name>[Targets]/[lib] natrium/Source Files/BenchmarkCFDSolver.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/advection/AdvectionOperator.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/BenchmarkCFDSolver.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Source Files/SolverConfiguration.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/SolverConfiguration.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/SEDGMinLee.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/advection/SEDGMinLee.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/advection/SEDGMinLee.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Source Files/AdvectionOperator.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/advection/AdvectionOperator.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/ExponentialTimeIntegrator.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/ExponentialTimeIntegrator.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/timeintegration/ExponentialTimeIntegrator.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/RungeKutta5LowStorage.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/RungeKutta5LowStorage.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/timeintegration/RungeKutta5LowStorage.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/TimeIntegrator.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/TimeIntegrator.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/timeintegration/TimeIntegrator.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Source Files/Logging.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/Logging.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/utilities/Logging.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files</name>
@@ -274,109 +294,129 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[lib] natrium/Header Files/BoltzmannModel.h</name>
+			<name>[Targets]/[lib] natrium/Header Files/D2Q9Model.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/boltzmannmodels/BoltzmannModel.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/boltzmannmodels/D2Q9Model.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/D2Q9IncompressibleModel.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/boltzmannmodels/D2Q9IncompressibleModel.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/boltzmannmodels/D2Q9IncompressibleModel.h</location>
 		</link>
 		<link>
-			<name>[Targets]/[lib] natrium/Header Files/D2Q9Model.h</name>
+			<name>[Targets]/[lib] natrium/Header Files/BoltzmannModel.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/boltzmannmodels/D2Q9Model.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/boltzmannmodels/BoltzmannModel.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/CollisionModel.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/collisionmodels/CollisionModel.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/collisionmodels/CollisionModel.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/BGKTransformed.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/collisionmodels/BGKTransformed.h</location>
-		</link>
-		<link>
-			<name>[Targets]/[lib] natrium/Header Files/PeriodicBoundary.h</name>
-			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/PeriodicBoundary.h</location>
-		</link>
-		<link>
-			<name>[Targets]/[lib] natrium/Header Files/BoundaryCollection.h</name>
-			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/BoundaryCollection.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/collisionmodels/BGKTransformed.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/BoundaryTools.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/BoundaryTools.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/BoundaryTools.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/Boundary.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/Boundary.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/Boundary.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/ProblemDescription.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/problemdescription/ProblemDescription.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/ProblemDescription.h</location>
 		</link>
 		<link>
-			<name>[Targets]/[lib] natrium/Header Files/SolverConfiguration.h</name>
+			<name>[Targets]/[lib] natrium/Header Files/BoundaryCollection.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/SolverConfiguration.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/BoundaryCollection.h</location>
 		</link>
 		<link>
-			<name>[Targets]/[lib] natrium/Header Files/DistributionFunctions.h</name>
+			<name>[Targets]/[lib] natrium/Header Files/PeriodicBoundary.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/DistributionFunctions.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/PeriodicBoundary.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/Benchmark.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/Benchmark.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/MinLeeBoundary.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/problemdescription/MinLeeBoundary.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/CFDSolver.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/CFDSolver.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/CFDSolver.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/PhysicalProperties.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/PhysicalProperties.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/SolverConfiguration.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/SolverConfiguration.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/BenchmarkCFDSolver.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/BenchmarkCFDSolver.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/DistributionFunctions.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/DistributionFunctions.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/AdvectionOperator.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/advection/AdvectionOperator.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/advection/AdvectionOperator.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/SEDGMinLee.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/advection/SEDGMinLee.h</location>
-		</link>
-		<link>
-			<name>[Targets]/[lib] natrium/Header Files/RungeKutta5LowStorage.h</name>
-			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/RungeKutta5LowStorage.h</location>
-		</link>
-		<link>
-			<name>[Targets]/[lib] natrium/Header Files/ExponentialTimeIntegrator.h</name>
-			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/ExponentialTimeIntegrator.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/advection/SEDGMinLee.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/TimeIntegrator.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/TimeIntegrator.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/timeintegration/TimeIntegrator.h</location>
 		</link>
 		<link>
-			<name>[Targets]/[lib] natrium/Header Files/BasicNames.h</name>
+			<name>[Targets]/[lib] natrium/Header Files/RungeKutta5LowStorage.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/BasicNames.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/timeintegration/RungeKutta5LowStorage.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/ExponentialTimeIntegrator.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/timeintegration/ExponentialTimeIntegrator.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/Logging.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/Logging.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/utilities/Logging.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/BasicNames.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/utilities/BasicNames.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/Math.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/Math.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/utilities/Math.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/CMake Rules</name>
@@ -411,62 +451,72 @@
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/MainTest.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/MainTest.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/MainTest.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/D2Q9IncompressibleModel_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/boltzmannmodels/D2Q9IncompressibleModel_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/boltzmannmodels/D2Q9IncompressibleModel_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/BGKTransformed_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/collisionmodels/BGKTransformed_test.cpp</location>
-		</link>
-		<link>
-			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/PeriodicBoundary1D_test.cpp</name>
-			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/problemdescription/PeriodicBoundary1D_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/collisionmodels/BGKTransformed_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/BoundaryTools_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/problemdescription/BoundaryTools_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/problemdescription/BoundaryTools_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/PeriodicBoundary2D_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/problemdescription/PeriodicBoundary2D_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/MinLeeBoundary2D_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/problemdescription/MinLeeBoundary2D_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/SEDGMinLee_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/advection/SEDGMinLee_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/advection/SEDGMinLee_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/PeriodicTestDomain2D.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/advection/PeriodicTestDomain2D.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/advection/PeriodicTestDomain2D.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/DistributionFunctions_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/solver/DistributionFunctions_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/DistributionFunctions_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/CFDSolver_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/solver/CFDSolver_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/CFDSolver_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/SolverConfiguration_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/solver/SolverConfiguration_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/SolverConfiguration_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/RungeKutta5LowStorage_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/timeintegration/RungeKutta5LowStorage_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/timeintegration/RungeKutta5LowStorage_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/BasicNames_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/utilities/BasicNames_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/utilities/BasicNames_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/Logging_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/utilities/Logging_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files</name>
@@ -474,14 +524,24 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files/TaylorGreenTest2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/problemdescription/TaylorGreenTest2D.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files/WallTestDomain2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/problemdescription/WallTestDomain2D.h</location>
+		</link>
+		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files/PeriodicTestDomain2D.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/advection/PeriodicTestDomain2D.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/advection/PeriodicTestDomain2D.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files/PeriodicTestFlow2D.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/solver/PeriodicTestFlow2D.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/PeriodicTestFlow2D.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/CMake Rules</name>
@@ -516,12 +576,12 @@
 		<link>
 			<name>[Targets]/[exe] step-1-taylorGreenVortex/Source Files/step-1.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-1/step-1.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/step-1.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] step-1-taylorGreenVortex/Source Files/TaylorGreenVortex2D.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] step-1-taylorGreenVortex/Header Files</name>
@@ -531,7 +591,7 @@
 		<link>
 			<name>[Targets]/[exe] step-1-taylorGreenVortex/Header Files/TaylorGreenVortex2D.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] step-1-taylorGreenVortex/CMake Rules</name>
@@ -549,102 +609,102 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow</name>
+			<name>[Targets]/[exe] step-2-couette2D</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/</name>
+			<name>[Targets]/[exe] step-2-couette2D/</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/Source Files</name>
+			<name>[Targets]/[exe] step-2-couette2D/Source Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/Source Files/step-2.cpp</name>
+			<name>[Targets]/[exe] step-2-couette2D/Source Files/step-2.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-2/step-2.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-2/step-2.cpp</location>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/Source Files/PoiseuilleFlow2D.cpp</name>
+			<name>[Targets]/[exe] step-2-couette2D/Source Files/CouetteFlow2D.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-2/PoiseuilleFlow2D.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-2/CouetteFlow2D.cpp</location>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/Header Files</name>
+			<name>[Targets]/[exe] step-2-couette2D/Header Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/Header Files/PoiseuilleFlow2D.h</name>
+			<name>[Targets]/[exe] step-2-couette2D/Header Files/CouetteFlow2D.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-2/PoiseuilleFlow2D.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-2/CouetteFlow2D.h</location>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/CMake Rules</name>
+			<name>[Targets]/[exe] step-2-couette2D/CMake Rules</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/Resources</name>
+			<name>[Targets]/[exe] step-2-couette2D/Resources</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-2-PoiseuilleFlow/Object Files</name>
+			<name>[Targets]/[exe] step-2-couette2D/Object Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/Source Files</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/Source Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/Source Files/step-3.cpp</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/Source Files/step-3.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-3/step-3.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-3/step-3.cpp</location>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/Source Files/CouetteFlow2D.cpp</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/Source Files/LidDrivenCavity2D.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-3/CouetteFlow2D.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-3/LidDrivenCavity2D.cpp</location>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/Header Files</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/Header Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/Header Files/CouetteFlow2D.h</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/Header Files/LidDrivenCavity2D.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-3/CouetteFlow2D.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-3/LidDrivenCavity2D.h</location>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/CMake Rules</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/CMake Rules</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/Resources</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/Resources</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>[Targets]/[exe] step-3-couette2D/Object Files</name>
+			<name>[Targets]/[exe] step-3-LidDrivenCavity2D/Object Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -666,12 +726,12 @@
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Source Files/advectionConvergence.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/advection-convergence/advectionConvergence.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/advection-convergence/advectionConvergence.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Source Files/PeriodicTestDomain2D.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/advection-convergence/PeriodicTestDomain2D.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/advection-convergence/PeriodicTestDomain2D.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Header Files</name>
@@ -681,7 +741,7 @@
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Header Files/PeriodicTestDomain2D.h</name>
 			<type>1</type>
-			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/advection-convergence/PeriodicTestDomain2D.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/advection-convergence/PeriodicTestDomain2D.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/CMake Rules</name>
@@ -695,6 +755,156 @@
 		</link>
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Object Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/Source Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/Source Files/convergence-analysis-basic.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/analysis/convergence-analysis-basic/convergence-analysis-basic.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/Source Files/TaylorGreenVortex2D.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/Header Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/Header Files/TaylorGreenVortex2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/CMake Rules</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/Resources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-basic/Object Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/Source Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/Source Files/convergence-analysis-junk.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/analysis/convergence-analysis-junk/convergence-analysis-junk.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/Source Files/TaylorGreenVortex2D.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/Header Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/Header Files/TaylorGreenVortex2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/CMake Rules</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/Resources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-junk/Object Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/Source Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/Source Files/convergence-analysis-kinE.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/analysis/convergence-analysis-kinetic-energy/convergence-analysis-kinE.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/Source Files/TaylorGreenVortex2D.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/Header Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/Header Files/TaylorGreenVortex2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/CMake Rules</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/Resources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] convergence-analysis-kinetic-energy/Object Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
