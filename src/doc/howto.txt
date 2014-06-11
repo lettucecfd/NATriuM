@@ -54,7 +54,8 @@ COULD BE FURTHER SIMPLIFIED
     (At least when having verbosity option on): CMake parses the include directories (das ist genial ;) )
     This will keep the error parser from underlining everything ;)
  7) Repeat steps 1-6) for "bin_relase" instead of "bin" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
- All source files are accessible and changable via [Source directory] in the project tree
+    All source files are accessible and changable via [Source directory] in the project tree
+ 8) Set the environment variable NATRIUM_HOME to the principal output directory (in .bashrc)
 
 
          
