@@ -14,6 +14,7 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/fe/fe_update_flags.h"
+#include "deal.II/lac/matrix_iterator.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
 #include "../problemdescription/MinLeeBoundary.h"
@@ -143,20 +144,21 @@ void SEDGMinLee<dim>::reassemble() {
 	// Multiply by inverse mass matrix
 	size_t n = m_massMatrix.size();
 	// TODO Parallel loop
-	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
-		for (size_t J = 0; J < m_boltzmannModel->getQ() - 1; J++) {
-			for (size_t i = 0; i < n; i++) {
-				for (size_t j = 0; j < n; j++) {
-					if (m_sparsityPattern.block(I, J).exists(i, j)) {
-						m_systemMatrix.block(I, J).set(i, j,
-								m_systemMatrix.block(I, J)(i, j)
-										/ m_massMatrix(i));
-					}
+	// By using iterators instead of operator () this method became much more efficient
+	distributed_sparse_block_matrix::iterator blockIterator(&m_systemMatrix,0);
+	distributed_sparse_block_matrix::iterator lastBlock(&m_systemMatrix);
+	for (; blockIterator != lastBlock; lastBlock++){
+				distributed_sparse_matrix& block = m_systemMatrix.block(blockIterator->row(), blockIterator->column());
+				distributed_sparse_matrix::iterator entryIterator(&block,0);
+				distributed_sparse_matrix::iterator lastEntry(&block);
+				for (; entryIterator != lastEntry; entryIterator++){
+					entryIterator->value() = entryIterator->value() / m_massMatrix(entryIterator->row());
 				}
-			}
 		}
-		for (size_t i = 0; i < n; i++){
-			m_systemVector.block(I)(i) = m_systemVector.block(I)(i) / m_massMatrix(i);
+	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
+		for (size_t i = 0; i < n; i++) {
+			m_systemVector.block(I)(i) = m_systemVector.block(I)(i)
+					/ m_massMatrix(i);
 		}
 	}
 
@@ -188,6 +190,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	DoFRenumbering::Cuthill_McKee(*m_doFHandler);
 	DoFTools::make_flux_sparsity_pattern(*m_doFHandler, cSparseTmp);
 	// copy cSparseTmp to all blocks
+	// TODO this could probably be done more efficiently by iterating over the sparsity pattern
 	for (size_t i = 0; i < n_dofs_per_block; i++)
 		for (size_t j = 0; j < n_dofs_per_block; j++)
 			if (cSparseTmp.exists(i, j))
@@ -362,7 +365,6 @@ template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(
 		dealii::FESubfaceValues<3>& feSubfaceValues,
 		dealii::FEFaceValues<3>& feNeighborFaceValues, size_t dofs_per_cell,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
-
 
 template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
