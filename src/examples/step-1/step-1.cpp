@@ -78,8 +78,7 @@ int main() {
 		if (dt > 0.1) {
 			cout << "Timestep too big." << endl;
 		}
-//configuration->setNumberOfTimeSteps(1.0 / dt);
-		configuration->setNumberOfTimeSteps(1);
+        configuration->setNumberOfTimeSteps(1.0 / dt);
 
 		// make problem and solver objects
 		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
