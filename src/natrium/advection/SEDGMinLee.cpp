@@ -177,6 +177,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	size_t n_blocks = m_boltzmannModel->getQ() - 1;
 	size_t n_dofs_per_block = m_doFHandler->n_dofs();
 	BlockCompressedSparsityPattern cSparse(n_blocks, n_blocks);
+	// TODO do not initialize empty blocks?
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
 			cSparse.block(I, J).reinit(n_dofs_per_block, n_dofs_per_block);
@@ -185,17 +186,15 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	cSparse.collect_sizes();
 
 	// intermediate flux sparsity pattern (connects neighbor cells)
-	CompressedSparsityPattern cSparseTmp(n_dofs_per_block);
+	//CompressedSparsityPattern cSparseTmp(n_dofs_per_block);
 	//reorder degrees of freedom
 	DoFRenumbering::Cuthill_McKee(*m_doFHandler);
-	DoFTools::make_flux_sparsity_pattern(*m_doFHandler, cSparseTmp);
+	for (size_t I = 0; I < n_blocks; I++) {
+	DoFTools::make_flux_sparsity_pattern(*m_doFHandler, cSparse.block(I,I));
+	}
 	// copy cSparseTmp to all blocks
 	// TODO this could probably be done more efficiently by iterating over the sparsity pattern
-	for (size_t i = 0; i < n_dofs_per_block; i++)
-		for (size_t j = 0; j < n_dofs_per_block; j++)
-			if (cSparseTmp.exists(i, j))
-				for (size_t I = 0; I < n_blocks; I++)
-					cSparse.block(I, I).add(i, j);
+
 
 	// add periodic boundaries to intermediate flux sparsity pattern
 	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;

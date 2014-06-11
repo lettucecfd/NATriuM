@@ -42,7 +42,7 @@ int main() {
 	// chose scaling so that the right Ma-number is achieved
 	double scaling = sqrt(3) * 1 / Ma;
 
-	const double refinementLevel = 3;
+	const double refinementLevel = 5;
 		cout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
@@ -78,7 +78,8 @@ int main() {
 		if (dt > 0.1) {
 			cout << "Timestep too big." << endl;
 		}
-		configuration->setNumberOfTimeSteps(1.0 / dt);
+//configuration->setNumberOfTimeSteps(1.0 / dt);
+		configuration->setNumberOfTimeSteps(1);
 
 		// make problem and solver objects
 		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<

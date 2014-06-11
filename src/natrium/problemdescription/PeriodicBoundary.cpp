@@ -199,7 +199,7 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 		size_t n_dofs_per_block, size_t dofs_per_cell) const {
 
 // add periodic boundaries to intermediate flux sparsity pattern
-	dealii::CompressedSparsityPattern cSparseTmp(n_dofs_per_block);
+	//dealii::CompressedSparsityPattern cSparseTmp(n_dofs_per_block);
 	typename std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
 			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >::const_iterator element =
 			m_cells.begin();
@@ -217,20 +217,11 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 		//      e.g. by mapping, allowing more than one periodic neighbor, ...
 		for (size_t j = 0; j < dofs_per_cell; j++) {
 			for (size_t k = 0; k < dofs_per_cell; k++) {
-				cSparseTmp.add(doFIndicesAtCell1.at(j),
-						doFIndicesAtCell2.at(k));
-			}
-		}
-	}
-// copy cSparseTmp to all blocks
-	for (size_t i = 0; i < n_dofs_per_block; i++) {
-		for (size_t j = 0; j < n_dofs_per_block; j++) {
-			if (cSparseTmp.exists(i, j)) {
 				for (size_t I = 0; I < n_blocks; I++) {
-					cSparse.block(I, I).add(i, j);
+					cSparse.block(I,I).add(doFIndicesAtCell1.at(j),
+							doFIndicesAtCell2.at(k));
 				}
 			}
-
 		}
 	}
 }

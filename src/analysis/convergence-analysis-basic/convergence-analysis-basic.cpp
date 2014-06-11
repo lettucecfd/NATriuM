@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <time.h>
+#include <stdlib.h>
 
 #include "deal.II/numerics/data_out.h"
 
@@ -20,6 +21,10 @@
 #include "../../examples/step-1/TaylorGreenVortex2D.h"
 
 using namespace natrium;
+
+// if this define statement is enabled: only the initialization time is regarded
+#define MEASURE_ONLY_INIT_TIME
+
 
 // Main function
 int main() {
@@ -41,14 +46,18 @@ int main() {
 	// chose scaling so that the right Ma-number is achieved
 	double scaling = sqrt(3) * 1 / Ma;
 
+	// prepare table file
+	std::stringstream filename;
+	filename << getenv("NATRIUM_HOME")
+			<< "/convergence-analysis-basic/runtime.txt";
+	std::ofstream timeFile(filename.str().c_str());
+	timeFile
+			<< "#refinement Level     dt        init time (sec)             iteration time (sec)"
+			<< endl;
+
 	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
 		cout << "refinement Level = " << refinementLevel << endl;
-//		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
-//				orderOfFiniteElement++) {
-//			cout << "FE order = " << orderOfFiniteElement << endl;
-		// the scaling has to be orders of magnitude greater than the boundary velocity
 
-		// calculate distance between quadrature nodes
 		double dx = 2 * 3.1415926
 				/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
@@ -82,6 +91,10 @@ int main() {
 		}
 		configuration->setNumberOfTimeSteps(1.0 / dt);
 
+#ifdef MEASUE_ONLY_INIT_TIME
+		configuration->setNumberOfTimeSteps(1);
+#endif
+
 		// make problem and solver objects
 		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
 				TaylorGreenVortex2D>(viscosity, refinementLevel);
@@ -97,12 +110,11 @@ int main() {
 			time2 /= CLOCKS_PER_SEC;
 			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
+			timeFile << refinementLevel << "         " << dt << "      "
+					<< time1 << "     " << time2 << endl;
 		} catch (std::exception& e) {
 			cout << " Error" << endl;
 		}
-		//}
-		//}
-//	}
 	}
 	cout << "Convergence analysis (basic) terminated." << endl;
 
