@@ -17,7 +17,6 @@
 
 namespace natrium {
 
-
 template<size_t dim> class Benchmark: public ProblemDescription<dim> {
 public:
 	/// Constructor
@@ -66,9 +65,7 @@ public:
 
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
 			const vector<dealii::Point<dim> >& supportPoints) const {
-		for (size_t i = 0; i < initialDensities.size(); i++) {
-			getAllAnalyticDensities(0.0, initialDensities, supportPoints);
-		}
+		getAllAnalyticDensities(0.0, initialDensities, supportPoints);
 	}
 
 	virtual void applyInitialVelocities(
@@ -80,7 +77,6 @@ public:
 		assert(initialVelocities.size() == dim);
 		getAllAnalyticVelocities(0.0, initialVelocities, supportPoints);
 	}
-
 
 	/**
 	 * @short get full analytic solution for the density field at time t
