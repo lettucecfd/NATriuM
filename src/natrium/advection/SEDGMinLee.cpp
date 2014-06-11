@@ -145,15 +145,13 @@ void SEDGMinLee<dim>::reassemble() {
 	size_t n = m_massMatrix.size();
 	// TODO Parallel loop
 	// By using iterators instead of operator () this method became much more efficient
-	distributed_sparse_block_matrix::iterator blockIterator(&m_systemMatrix,0);
+	distributed_sparse_block_matrix::iterator blockIterator(&m_systemMatrix);
 	distributed_sparse_block_matrix::iterator lastBlock(&m_systemMatrix);
-	for (; blockIterator != lastBlock; lastBlock++){
-				distributed_sparse_matrix& block = m_systemMatrix.block(blockIterator->row(), blockIterator->column());
-				distributed_sparse_matrix::iterator entryIterator(&block,0);
-				distributed_sparse_matrix::iterator lastEntry(&block);
-				for (; entryIterator != lastEntry; entryIterator++){
-					entryIterator->value() = entryIterator->value() / m_massMatrix(entryIterator->row());
-				}
+	blockIterator = m_systemMatrix.begin();
+	lastBlock = m_systemMatrix.end();
+	for (; blockIterator != lastBlock; blockIterator++){
+				size_t rowInBlock = blockIterator->row() - n*blockIterator->block_row();
+				blockIterator->set_value( blockIterator->value() / m_massMatrix(rowInBlock) );
 		}
 	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
 		for (size_t i = 0; i < n; i++) {
