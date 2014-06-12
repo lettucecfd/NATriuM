@@ -256,9 +256,6 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_TaylorGreenVortex_test){
 	// THE LOOP
 	size_t N = configuration->getNumberOfTimeSteps();
 	for (size_t i = solver.getIterationStart(); i < N; i++) {
-		if (i % 100 == 0) {
-			cout << "Iteration " << i << endl;
-		}
 		// Stream and collide
 		solver.stream();
 		solver.collide();

@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
 				dealii::ComponentMask(), isBoundary, boundaryIndicators);
 		if (isBoundary.at(i)) {
-			cout << i << endl;
+			//cout << i << endl;
 			// note that block 0 refers to f_1 and so on
 			BOOST_CHECK(
 					advector.getBlockSparsityPattern().block(4, 6).exists(i,
