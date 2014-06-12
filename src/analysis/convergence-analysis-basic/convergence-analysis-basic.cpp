@@ -70,7 +70,7 @@ int main() {
 
 		// setup configuration
 		std::stringstream dirName;
-		dirName << "../results/convergence-analysis-basic/"
+		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-basic/"
 				<< orderOfFiniteElement << "_" << refinementLevel;
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();

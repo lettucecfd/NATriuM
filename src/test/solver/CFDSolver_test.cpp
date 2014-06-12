@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
 	cout << "CFDSolver_Restart_test..." << endl;
 
 	// Solver configuration
-	string directory = "../results/test-restart";
+	string directory = "/tmp/test-restart";
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	testConfiguration->setOutputDirectory(directory);
 	testConfiguration->setOutputCheckpointInterval(10);

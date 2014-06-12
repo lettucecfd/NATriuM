@@ -5,6 +5,8 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
+#include <stdlib.h>
+
 #include "deal.II/numerics/data_out.h"
 
 #include "solver/BenchmarkCFDSolver.h"
@@ -45,7 +47,9 @@ int main() {
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
-	configuration->setOutputDirectory("../results/step-2-stencilbig");
+	std::stringstream dirname;
+	dirname << getenv("NATRIUM_HOME") << "/step-2-stencilbig";
+	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(1000);
 	configuration->setOutputSolutionInterval(500);

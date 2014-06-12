@@ -8,6 +8,7 @@
 #include <fstream>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #include "advection/SEDGMinLee.h"
 
@@ -113,13 +114,17 @@ int main() {
 			<< endl;
 
 	// Make results dir
-	std::string dirname("../results/advection_convergence");
-	if (mkdir(dirname.c_str(), 0777) == -1) {
+	std::stringstream dirName;
+	dirName << getenv("NATRIUM_HOME") << "/convergence-advection-solver";
+	if (mkdir(dirName.str().c_str(), 0777) == -1) {
 		if (errno != EEXIST) {
 			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
 		}
 	}
-	std::ofstream out("../results/advection_convergence_step/results.txt");
+
+	std::stringstream resFileName;
+	resFileName << dirName.str() << "/results.txt";
+	std::ofstream out(resFileName.str().c_str());
 
 	size_t numberOfTimeSteps = 0;
 	out << "#Number of time steps: " << numberOfTimeSteps << endl;

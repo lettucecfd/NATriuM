@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <time.h>
+#include <stdlib.h>
 
 #include "deal.II/numerics/data_out.h"
 
@@ -55,7 +56,7 @@ int main() {
 
 	// setup configuration
 	std::stringstream dirName;
-	dirName << "../results/convergence-analysis-kinE";
+	dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-kinE";
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);

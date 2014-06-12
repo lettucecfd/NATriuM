@@ -1,5 +1,5 @@
 /**
- * @file convergence-analysis-basic.cpp
+ * @file convergence-analysis-junk.cpp
  * @short Taylor-Green vortex in 2D (only periodic walls)
  * @date 05.06.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <time.h>
+#include <stdlib.h>
 
 #include "deal.II/numerics/data_out.h"
 
@@ -63,7 +64,7 @@ int main() {
 
 		// setup configuration
 		std::stringstream dirName;
-		dirName << "../results/convergence-analysis-junk/"
+		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-junk/"
 				<< orderOfFiniteElement << "_" << refinementLevel;
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();

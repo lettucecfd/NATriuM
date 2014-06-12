@@ -6,6 +6,7 @@
  */
 
 #include <fstream>
+#include <stdlib.h>
 
 #include "deal.II/numerics/data_out.h"
 
@@ -52,7 +53,9 @@ int main() {
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
 					* (configuration->getSedgOrderOfFiniteElement() - 1));
-	configuration->setOutputDirectory("../results/step-3");
+	std::stringstream dirname;
+	dirname << getenv("NATRIUM_HOME") << "/step-3";
+	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(true);
 	configuration->setOutputCheckpointInterval(1000);
 	configuration->setOutputSolutionInterval(100);

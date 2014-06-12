@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_TaylorGreenVortex_test){
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
 					* (configuration->getSedgOrderOfFiniteElement() - 1));
-	configuration->setOutputDirectory("../results/test-PeriodicBoundary-TaylorGreen");
+	std::stringstream dirname;
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(true);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);

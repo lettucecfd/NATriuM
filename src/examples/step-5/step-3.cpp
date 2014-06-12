@@ -52,7 +52,7 @@ int main() {
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
 					* (configuration->getOrderOfFiniteElement() - 1));
-	configuration->setOutputDirectory("../results/step-2");
+	configuration->setOutputDirectory("/tmp");
 	configuration->setRestart(false);
 	configuration->setOutputFlags(
 			configuration->getOutputFlags() | out_Checkpoints);

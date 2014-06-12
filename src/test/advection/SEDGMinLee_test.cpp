@@ -14,6 +14,7 @@
 #include <string>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #include "boost/test/unit_test.hpp"
 
@@ -35,10 +36,10 @@
 ///////////////////////////////
 ///////////////////////////////
 // FLAGS TO SWITCH OUTPUT ON //
-// #define CREATE_DATA_FILES // This takes a lot of time (~1h)
-// #define PRINT_SYSTEM_MATRIX
-// #define EULER_OUT
-// #define RK5_OUT
+ #define CREATE_DATA_FILES // This takes a lot of time (~1h)
+ #define PRINT_SYSTEM_MATRIX
+ #define EULER_OUT
+ #define RK5_OUT
 ///////////////////////////////
 ///////////////////////////////
 
@@ -61,28 +62,22 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
 BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 	cout << "SEDGMinLee_systemMatrix_test..." << endl;
 
-	// Make results dir
-	std::string directory = "../results";
-	if (mkdir(directory.c_str(), 0777) == -1) {
-		if (errno != EEXIST) {
-			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
-		}
-	}
-
 	bool useLaxFlux = true;
 	do { // useCentralFlux = true/false
 #ifdef CREATE_DATA_FILES
 	// Make results dir
-	std::string dirname("../results/maxeigenvalue_advection");
-	if (mkdir(dirname.c_str(), 0777) == -1) {
+		std::stringstream dirname;
+		dirname << getenv("NATRIUM_HOME") << "/maxeigenvalue_advection";
+	if (mkdir(dirname.str().c_str(), 0777) == -1) {
 		if (errno != EEXIST) {
 			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
 		}
 	}
 
 	// Make results dir 2
-	std::string dirname2("../results/eigenvalues_advection");
-	if (mkdir(dirname2.c_str(), 0777) == -1) {
+	std::stringstream dirname2;
+	dirname2 << getenv("NATRIUM_HOME") << "/eigenvalues_advection";
+	if (mkdir(dirname2.str().c_str(), 0777) == -1) {
 		if (errno != EEXIST) {
 			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
 		}
@@ -128,7 +123,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 #ifdef CREATE_DATA_FILES
 					// create files for spectrum plots
 					std::stringstream filename;
-					filename << dirname2;
+					filename << dirname2.str();
 					if (!useLaxFlux) {
 						filename << "/cflux_";
 					} else {
@@ -286,8 +281,9 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 
 	// Make results dir
 #ifdef EULER_OUT
-	std::string dirname("../results/expliciteuler_periodicstreaming");
-	if (mkdir(dirname.c_str(), 0777) == -1) {
+	std::stringstream dirname;
+	dirname << getenv("NATRIUM_HOME") << "/expliciteuler_periodicstreaming";
+	if (mkdir(dirname.str().c_str(), 0777) == -1) {
 		if (errno != EEXIST) {
 			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
 		}
@@ -297,7 +293,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 #ifdef EULER_OUT
 		// output
 		std::stringstream str;
-		str << dirname << "/t_" << i << ".dat";
+		str << dirname.str() << "/t_" << i << ".dat";
 		std::string filename = str.str();
 		std::ofstream gnuplot_output (filename.c_str());
 		dealii::DataOut<2> data_out;
@@ -439,8 +435,9 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(timeStep, f.size());
 #ifdef RK5_OUT
 	// Make results dir
-	std::string dirname("../results/rk5_periodicstreaming");
-	if (mkdir(dirname.c_str(), 0777) == -1) {
+	std::stringstream dirname;
+	dirname << getenv("NATRIUM_HOME") << "/rk5_periodicstreaming";
+	if (mkdir(dirname.str().c_str(), 0777) == -1) {
 		if (errno != EEXIST) {
 			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
 		}
@@ -450,7 +447,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 #ifdef RK5_OUT
 		// output
 		std::stringstream str;
-		str <<dirname << "/t_" << i << ".dat";
+		str <<dirname.str() << "/t_" << i << ".dat";
 		std::string filename = str.str();
 		std::ofstream gnuplot_output(filename.c_str());
 		dealii::DataOut<2> data_out;
@@ -485,8 +482,10 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	}
 
 #ifdef RK5_OUT
-	std::ofstream matrixfile("../results/rk5_periodicstreaming/matrix.dat");
-	matrices.at(3).print_formatted(matrixfile);
+	std::stringstream filename;
+	filename << getenv("NATRIUM_HOME") << "/rk5_periodicstreaming/matrix.dat";
+	std::ofstream matrixfile(filename.str());
+	matrices.block(3,3).print_formatted(matrixfile);
 #endif
 
 	// check if mass was conserved
@@ -516,7 +515,8 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 	cout << "SEDGMinLee_SaveAndLoadCheckpoints_test..." << endl;
 
-	string directory = "../results/test-restart";
+	std::stringstream directory;
+	directory << getenv("NATRIUM_HOME") << "/test-restart";
 
 	// create streaming object
 	size_t refinementLevel = 3;
@@ -526,7 +526,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
-	streaming.saveCheckpoint(directory);
+	streaming.saveCheckpoint(directory.str());
 
 	/////// SANITY TEST //////////
 	BOOST_CHECK_NO_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
@@ -537,7 +537,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 	PeriodicTestDomain2D periodic2(4);
 	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic2.getTriangulation(),
 			periodic2.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), directory, useCentralFlux), AdvectionSolverException);
+			make_shared<D2Q9IncompressibleModel>(), directory.str(), useCentralFlux), AdvectionSolverException);
 
 	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
@@ -545,11 +545,11 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 
 	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order+1,
-			make_shared<D2Q9IncompressibleModel>(), directory, useCentralFlux), AdvectionSolverException);
+			make_shared<D2Q9IncompressibleModel>(), directory.str(), useCentralFlux), AdvectionSolverException);
 
 	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), directory, not useCentralFlux), AdvectionSolverException);
+			make_shared<D2Q9IncompressibleModel>(), directory.str(), not useCentralFlux), AdvectionSolverException);
 
 
 	cout << "done" << endl;

@@ -31,13 +31,19 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CreateParameterFiles_test) {
 	cout << "CFDSolverConfiguration_CreateXMLFile_test..." << endl;
 	SolverConfiguration config;
 
-	std::ofstream paraOutFile1("../results/NATriuM_parameters.xml");
+	std::stringstream name1;
+	name1 << getenv("NATRIUM_HOME") << "/NATriuM_parameters.xml";
+	std::ofstream paraOutFile1(name1.str());
 	config.print_parameters(paraOutFile1, dealii::ParameterHandler::XML);
 
-	std::ofstream paraOutFile2("../results/NATriuM_parameters.tex");
+	std::stringstream name2;
+	name2 << getenv("NATRIUM_HOME") << "/NATriuM_parameters.tex";
+	std::ofstream paraOutFile2(name2.str());
 	config.print_parameters(paraOutFile2, dealii::ParameterHandler::LaTeX);
 
-	std::ofstream paraOutFile3("../results/NATriuM_parameters.txt");
+	std::stringstream name3;
+	name3 << getenv("NATRIUM_HOME") << "/NATriuM_parameters.txt";
+	std::ofstream paraOutFile3(name2.str());
 	config.print_parameters(paraOutFile3,
 			dealii::ParameterHandler::Description);
 
