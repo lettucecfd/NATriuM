@@ -267,7 +267,6 @@
 <pathentry kind="mac" name="__GXX_RTTI" path="" value="1"/>
 <pathentry kind="mac" name="__EXCEPTIONS" path="" value="1"/>
 <pathentry kind="mac" name="_GNU_SOURCE" path="" value="1"/>
-<pathentry include="/home/kraemer/workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/deal.II-8.1.0/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/deal.II-8.1.0/include/deal.II" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/deal.II-8.1.0/include/deal.II/bundled" kind="inc" path="" system="true"/>
@@ -275,6 +274,7 @@
 <pathentry include="/usr/lib/openmpi/include/openmpi" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/petsc-3.4.4/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/petsc-3.4.4/mint_aspire/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/workspace/NATriuM/src/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include/boost" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" kind="inc" path="" system="true"/>
@@ -1485,14 +1485,28 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[exe] advectionConvergence" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name=": all" path="analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>all</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": clean" path="analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>clean</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] advectionConvergence" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>advectionConvergence</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[exe] advectionConvergence/fast" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[exe] advectionConvergence/fast" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>advectionConvergence/fast</buildTarget>
@@ -1508,78 +1522,64 @@
 </target>
 <target name="Clean" path="[Targets]/[exe] advectionConvergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/examples/advection-convergence" "/usr/bin/cmake" -P "CMakeFiles/advectionConvergence.dir/cmake_clean.cmake"</buildArguments>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-advection-solver" "/usr/bin/cmake" -P "CMakeFiles/advectionConvergence.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name=": all" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name=": all" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name=": clean" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name=": clean" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[obj] PeriodicTestDomain2D.cpp.o" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[obj] PeriodicTestDomain2D.cpp.o" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>PeriodicTestDomain2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[pre] PeriodicTestDomain2D.cpp.i" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[pre] PeriodicTestDomain2D.cpp.i" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>PeriodicTestDomain2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[to asm] PeriodicTestDomain2D.cpp.s" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[to asm] PeriodicTestDomain2D.cpp.s" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>PeriodicTestDomain2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[obj] advectionConvergence.cpp.o" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[obj] advectionConvergence.cpp.o" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>advectionConvergence.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[pre] advectionConvergence.cpp.i" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[pre] advectionConvergence.cpp.i" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>advectionConvergence.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[to asm] advectionConvergence.cpp.s" path="examples/advection-convergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[to asm] advectionConvergence.cpp.s" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>advectionConvergence.cpp.s</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-</target>
-<target name=": all" path="analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
-<buildTarget>all</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-</target>
-<target name=": clean" path="analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
-<buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

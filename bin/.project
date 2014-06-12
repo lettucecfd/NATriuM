@@ -726,12 +726,12 @@
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Source Files/advectionConvergence.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/workspace/NATriuM/src/examples/advection-convergence/advectionConvergence.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/analysis/convergence-analysis-advection-solver/advectionConvergence.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Source Files/PeriodicTestDomain2D.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/workspace/NATriuM/src/examples/advection-convergence/PeriodicTestDomain2D.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/analysis/convergence-analysis-advection-solver/PeriodicTestDomain2D.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Header Files</name>
@@ -741,7 +741,7 @@
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/Header Files/PeriodicTestDomain2D.h</name>
 			<type>1</type>
-			<location>/home/kraemer/workspace/NATriuM/src/examples/advection-convergence/PeriodicTestDomain2D.h</location>
+			<location>/home/kraemer/workspace/NATriuM/src/analysis/convergence-analysis-advection-solver/PeriodicTestDomain2D.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] advectionConvergence/CMake Rules</name>
