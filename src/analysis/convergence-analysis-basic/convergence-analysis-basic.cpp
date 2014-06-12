@@ -23,7 +23,7 @@
 using namespace natrium;
 
 // if this define statement is enabled: only the initialization time is regarded
-#define MEASURE_ONLY_INIT_TIME
+//#define MEASURE_ONLY_INIT_TIME
 
 
 // Main function
@@ -52,7 +52,7 @@ int main() {
 			<< "/convergence-analysis-basic/runtime.txt";
 	std::ofstream timeFile(filename.str().c_str());
 	timeFile
-			<< "#refinement Level     dt        init time (sec)             iteration time (sec)"
+			<< "#refinement Level     dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
 			<< endl;
 
 	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
@@ -91,7 +91,7 @@ int main() {
 		}
 		configuration->setNumberOfTimeSteps(1.0 / dt);
 
-#ifdef MEASUE_ONLY_INIT_TIME
+#ifdef MEASURE_ONLY_INIT_TIME
 		configuration->setNumberOfTimeSteps(1);
 #endif
 
@@ -111,7 +111,7 @@ int main() {
 			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
 			timeFile << refinementLevel << "         " << dt << "      "
-					<< time1 << "     " << time2 << endl;
+					<< time1 << "     " << time2 << "        " << time2/configuration->getNumberOfTimeSteps() << endl;
 		} catch (std::exception& e) {
 			cout << " Error" << endl;
 		}

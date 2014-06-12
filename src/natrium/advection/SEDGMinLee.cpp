@@ -183,10 +183,17 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	}
 	cSparse.collect_sizes();
 
-	// intermediate flux sparsity pattern (connects neighbor cells)
-	//CompressedSparsityPattern cSparseTmp(n_dofs_per_block);
 	//reorder degrees of freedom
-	DoFRenumbering::Cuthill_McKee(*m_doFHandler);
+	//DoFRenumbering::Cuthill_McKee(*m_doFHandler);
+	//The Renumbering operation is commented out because of its quadratic complexity.
+	//When it is used, it takes the most time of all assembly functions for meshes with >250 cells
+	//The main point of renumbering algorithms is to make solving linear equation systems faster.
+	//As we have no LES to solve, renumbering does not bring anything here.
+	//However, when porting the code to distributed triangulations, it might become an issue again,
+	//as the numbering of the DoFs determines the partition (and thus the number of halo nodes
+	//for each MPI process). Furthermore, using implicit time integration schemes could bring
+	//the issue of renumbering up again, as they require linear equation systems to be solved.
+
 	for (size_t I = 0; I < n_blocks; I++) {
 	DoFTools::make_flux_sparsity_pattern(*m_doFHandler, cSparse.block(I,I));
 	}
