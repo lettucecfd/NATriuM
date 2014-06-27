@@ -44,13 +44,13 @@ set(    UTILITIES_TEST
 # define which directories to test
 #
 set(    TESTS
-#        ${BOLTZMANNMODELS_TEST}
-#        ${COLLISIONMODELS_TEST}
-#        ${PROBLEMDESCRIPTION_TEST}
-#        ${ADVECTION_TEST}
+        ${BOLTZMANNMODELS_TEST}
+        ${COLLISIONMODELS_TEST}
+        ${PROBLEMDESCRIPTION_TEST}
+        ${ADVECTION_TEST}
         ${SOLVER_TEST}
-#        ${TIMEINTEGRATION_TEST}
-#        ${UTILITIES_TEST}
+        ${TIMEINTEGRATION_TEST}
+        ${UTILITIES_TEST}
                 
 )
 
