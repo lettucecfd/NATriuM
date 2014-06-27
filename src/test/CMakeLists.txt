@@ -25,7 +25,10 @@ set(	SOLVER_TEST
 		solver/CFDSolver_test.cpp
 		solver/PeriodicTestFlow2D.h
 		solver/SolverConfiguration_test.cpp	
-		solver/Stats_test.cpp
+		solver/SolverStats_test.cpp
+		solver/ErrorStats_test.cpp
+		solver/TaylorGreenVortex2D.h
+		solver/TaylorGreenVortex2D.cpp
 		)        
 set(    TIMEINTEGRATION_TEST
         timeintegration/RungeKutta5LowStorage_test.cpp

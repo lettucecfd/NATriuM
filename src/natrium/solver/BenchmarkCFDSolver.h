@@ -12,7 +12,7 @@
 
 #include "CFDSolver.h"
 #include "SolverConfiguration.h"
-#include "Stats.h"
+#include "ErrorStats.h"
 
 #include "../problemdescription/Benchmark.h"
 #include "../utilities/BasicNames.h"
@@ -35,6 +35,8 @@ struct ErrorNorms {
  * @short a class that overrides the output function of the CFD solver class with comparisons to a reference solution
  */
 template<size_t dim> class BenchmarkCFDSolver: public CFDSolver<dim> {
+	template<size_t dim2> friend class ErrorStats;
+
 private:
 	/// the problem description, pointed to explicitly as Benchmark
 	shared_ptr<Benchmark<dim> > m_benchmark;

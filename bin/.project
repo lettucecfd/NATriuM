@@ -259,6 +259,16 @@
 			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/SolverConfiguration.cpp</location>
 		</link>
 		<link>
+			<name>[Targets]/[lib] natrium/Source Files/SolverStats.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/SolverStats.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Source Files/ErrorStats.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/ErrorStats.cpp</location>
+		</link>
+		<link>
 			<name>[Targets]/[lib] natrium/Source Files/SEDGMinLee.cpp</name>
 			<type>1</type>
 			<location>/home/kraemer/workspace/NATriuM/src/natrium/advection/SEDGMinLee.cpp</location>
@@ -374,6 +384,11 @@
 			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/BenchmarkCFDSolver.h</location>
 		</link>
 		<link>
+			<name>[Targets]/[lib] natrium/Header Files/SolverStats.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/SolverStats.h</location>
+		</link>
+		<link>
 			<name>[Targets]/[lib] natrium/Header Files/Stats.h</name>
 			<type>1</type>
 			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/Stats.h</location>
@@ -382,6 +397,11 @@
 			<name>[Targets]/[lib] natrium/Header Files/DistributionFunctions.h</name>
 			<type>1</type>
 			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/DistributionFunctions.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] natrium/Header Files/ErrorStats.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/ErrorStats.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[lib] natrium/Header Files/AdvectionOperator.h</name>
@@ -474,9 +494,19 @@
 			<location>/home/kraemer/workspace/NATriuM/src/test/solver/SolverConfiguration_test.cpp</location>
 		</link>
 		<link>
-			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/Stats_test.cpp</name>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/SolverStats_test.cpp</name>
 			<type>1</type>
-			<location>/home/kraemer/workspace/NATriuM/src/test/solver/Stats_test.cpp</location>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/SolverStats_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/ErrorStats_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/ErrorStats_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/TaylorGreenVortex2D.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/TaylorGreenVortex2D.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files</name>
@@ -487,6 +517,11 @@
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files/PeriodicTestFlow2D.h</name>
 			<type>1</type>
 			<location>/home/kraemer/workspace/NATriuM/src/test/solver/PeriodicTestFlow2D.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files/TaylorGreenVortex2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/TaylorGreenVortex2D.h</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/CMake Rules</name>

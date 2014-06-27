@@ -14,7 +14,7 @@
 
 #include "SolverConfiguration.h"
 #include "DistributionFunctions.h"
-#include "Stats.h"
+#include "SolverStats.h"
 
 #include "../problemdescription/ProblemDescription.h"
 

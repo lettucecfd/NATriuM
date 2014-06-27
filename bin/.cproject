@@ -267,7 +267,6 @@
 <pathentry kind="mac" name="__GXX_RTTI" path="" value="1"/>
 <pathentry kind="mac" name="__EXCEPTIONS" path="" value="1"/>
 <pathentry kind="mac" name="_GNU_SOURCE" path="" value="1"/>
-<pathentry include="/home/kraemer/workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/deal.II-8.1.0/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/deal.II-8.1.0/include/deal.II" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/deal.II-8.1.0/include/deal.II/bundled" kind="inc" path="" system="true"/>
@@ -275,6 +274,7 @@
 <pathentry include="/usr/lib/openmpi/include/openmpi" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/petsc-3.4.4/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/lib/petsc-3.4.4/mint_aspire/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/workspace/NATriuM/src/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include/boost" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" kind="inc" path="" system="true"/>
@@ -757,6 +757,27 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
+<target name="[obj] solver/ErrorStats.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/ErrorStats.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] solver/ErrorStats.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/ErrorStats.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] solver/ErrorStats.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/ErrorStats.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
 <target name="[obj] solver/PhysicalProperties.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
@@ -796,6 +817,27 @@
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>solver/SolverConfiguration.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] solver/SolverStats.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/SolverStats.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] solver/SolverStats.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/SolverStats.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] solver/SolverStats.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/SolverStats.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
@@ -988,6 +1030,27 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
+<target name="[obj] solver/ErrorStats_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/ErrorStats_test.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] solver/ErrorStats_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/ErrorStats_test.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] solver/ErrorStats_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/ErrorStats_test.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
 <target name="[obj] solver/SolverConfiguration_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
@@ -1009,24 +1072,45 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[obj] solver/Stats_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[obj] solver/SolverStats_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
-<buildTarget>solver/Stats_test.cpp.o</buildTarget>
+<buildTarget>solver/SolverStats_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[pre] solver/Stats_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[pre] solver/SolverStats_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
-<buildTarget>solver/Stats_test.cpp.i</buildTarget>
+<buildTarget>solver/SolverStats_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[to asm] solver/Stats_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="[to asm] solver/SolverStats_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments>-j8</buildArguments>
-<buildTarget>solver/Stats_test.cpp.s</buildTarget>
+<buildTarget>solver/SolverStats_test.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] solver/TaylorGreenVortex2D.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/TaylorGreenVortex2D.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] solver/TaylorGreenVortex2D.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/TaylorGreenVortex2D.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] solver/TaylorGreenVortex2D.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-j8</buildArguments>
+<buildTarget>solver/TaylorGreenVortex2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
