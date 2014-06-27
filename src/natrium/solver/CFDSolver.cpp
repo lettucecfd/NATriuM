@@ -257,6 +257,7 @@ void CFDSolver<dim>::run() {
 		stream();
 		collide();
 	}
+	output(N);
 }
 template void CFDSolver<2>::run();
 template void CFDSolver<3>::run();
@@ -293,6 +294,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 		}
 
 		// output: table
+		// calculate information + physical properties
+
 		if (iteration % m_configuration->getOutputTableInterval() == 0) {
 			//#  i      t         max |u_numeric|  kinE  mass"
 			(*m_tableFile) << getIteration() << " " << getTime()

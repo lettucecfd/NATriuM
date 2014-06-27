@@ -14,6 +14,7 @@
 
 #include "SolverConfiguration.h"
 #include "DistributionFunctions.h"
+#include "Stats.h"
 
 #include "../problemdescription/ProblemDescription.h"
 
@@ -58,9 +59,9 @@ public:
  * @tparam dim The dimension of the flow (2 or 3).
  */
 template<size_t dim> class CFDSolver {
+	template<size_t dim2> friend class SolverStats;
 
 private:
-
 	/// particle distribution functions
 	DistributionFunctions m_f;
 

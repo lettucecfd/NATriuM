@@ -374,6 +374,11 @@
 			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/BenchmarkCFDSolver.h</location>
 		</link>
 		<link>
+			<name>[Targets]/[lib] natrium/Header Files/Stats.h</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/Stats.h</location>
+		</link>
+		<link>
 			<name>[Targets]/[lib] natrium/Header Files/DistributionFunctions.h</name>
 			<type>1</type>
 			<location>/home/kraemer/workspace/NATriuM/src/natrium/solver/DistributionFunctions.h</location>
@@ -502,6 +507,11 @@
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/SolverConfiguration_test.cpp</name>
 			<type>1</type>
 			<location>/home/kraemer/workspace/NATriuM/src/test/solver/SolverConfiguration_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/Stats_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/workspace/NATriuM/src/test/solver/Stats_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/RungeKutta5LowStorage_test.cpp</name>

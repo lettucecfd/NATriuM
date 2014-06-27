@@ -12,8 +12,9 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "../problemdescription/Benchmark.h"
 #include "SolverConfiguration.h"
+
+#include "../problemdescription/Benchmark.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
