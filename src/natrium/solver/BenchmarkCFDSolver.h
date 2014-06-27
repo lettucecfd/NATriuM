@@ -20,18 +20,6 @@
 namespace natrium {
 
 /**
- * @ short an object to store the error norms
- */
-struct ErrorNorms {
-	double maxVelocityError = 0.0;
-	double maxDensityError = 0.0;
-	double l2VelocityError = 0.0;
-	double l2DensityError = 0.0;
-	double maxVelocity = 0.0;
-};
-
-
-/**
  * @short a class that overrides the output function of the CFD solver class with comparisons to a reference solution
  */
 template<size_t dim> class BenchmarkCFDSolver: public CFDSolver<dim> {
@@ -49,18 +37,13 @@ private:
 	vector<distributed_vector> m_analyticVelocity;
 
 	/// table out
-	shared_ptr<std::fstream> m_errorsTableFile;
+	shared_ptr<ErrorStats<dim> > m_errorStats;
 
 public:
 	/// constructor
 	BenchmarkCFDSolver(shared_ptr<SolverConfiguration> configuration,
 			shared_ptr<Benchmark<dim> > problemDescription);
 
-	/**
-	 * @short get norms of errors
-	 * @note this function calculates the errors in place, which means that it overrides m_analyticDensity/Velocity with garbage
-	 */
-	ErrorNorms getErrors();
 
 	/**
 	 * @short create output data and write to file
@@ -109,6 +92,10 @@ public:
 
 	const vector<dealii::Point<2> >& getSupportPoints() const {
 		return m_supportPoints;
+	}
+
+	const shared_ptr<ErrorStats<dim> >& getErrorStats() const {
+		return m_errorStats;
 	}
 }
 ;
