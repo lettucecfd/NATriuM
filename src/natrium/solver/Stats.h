@@ -11,14 +11,14 @@
 #include <fstream>
 
 #include "PhysicalProperties.h"
-//#include "CFDSolver.h"
-//#include "BenchmarkCFDSolver.h"
+//#include "CFDSolver.h" -> must not be in there because CFDSolver includes this module
+//#include "BenchmarkCFDSolver.h"-> must not be in there because CFDBenchmarkSolver includes this module
 
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
 template<size_t dim> class CFDSolver;
-//template<size_t dim> class BenchmarkCFDSolver;
+template<size_t dim> class BenchmarkCFDSolver;
 
 /**
  * @short Container for solver statistics and table file
@@ -39,6 +39,9 @@ private:
 	double m_kinE;
 
 public:
+	/**
+	 * @short Constructor, if second argument is "" (which it is by default), then no output file is created
+	 */
 	SolverStats(CFDSolver<dim> * cfdsolver,
 			const std::string tableFileName = "") :
 			m_solver(cfdsolver),
@@ -120,59 +123,68 @@ public:
  * @short Container for error statistics and table file; only for use with BenchmarkCFDSolver
  * @note As this class is a friend of BenchmarkCFDSolver, it can access its private attributes
  */
-/*template<size_t dim>
+template<size_t dim>
 class ErrorStats {
 private:
 
-	const BenchmarkCFDSolver<dim>& m_solver;
-	shared_ptr<std::fstream> m_tableFile;
+	BenchmarkCFDSolver<dim> * m_solver;
+	shared_ptr<std::fstream> m_errorsTableFile;
+	std::string m_filename;
+	const bool m_outputOff;
 
 	// information per iteration
 	size_t m_iterationNumber;
 	double m_time;
-	double m_maxVelocityError = 0.0;
-	double m_maxDensityError = 0.0;
-	double m_l2VelocityError = 0.0;
-	double m_l2DensityError = 0.0;
-	double m_maxVelocity = 0.0;
+	double m_maxVelocityError;
+	double m_maxDensityError;
+	double m_l2VelocityError;
+	double m_l2DensityError;
+	double m_maxUAnalytic;
 
 public:
-	ErrorStats(const BenchmarkCFDSolver<dim>& cfdsolver,
-			const std::string tableFileName = "/tmp/natrium_error_table.txt") :
-			m_solver(cfdsolver) {
+	ErrorStats(BenchmarkCFDSolver<dim> * cfdsolver,
+			const std::string tableFileName = "") :
+			m_solver(cfdsolver),
+			m_filename(tableFileName),
+			m_outputOff(tableFileName == "") {
 		// set information
 		size_t m_iterationNumber = 100000000037;
 		double m_time = 0.0;
 
 		// create file (if necessary)
-		if (m_solver.getIterationStart() > 0) {
-			m_tableFile = make_shared<std::fstream>(tableFileName,
+		if (m_solver->getIterationStart() > 0) {
+			m_errorsTableFile = make_shared<std::fstream>(tableFileName,
 					std::fstream::out | std::fstream::app);
 		} else {
-			m_tableFile = make_shared<std::fstream>(tableFileName,
+			m_errorsTableFile = make_shared<std::fstream>(tableFileName,
 					std::fstream::out);
 			printHeaderLine();
 		}
 	}
 	void printHeaderLine() {
-		(*m_tableFile) << "#  i      t      max |u_numeric|    kinE" << endl;
+		(*m_errorsTableFile)
+				<< "#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
+				<< endl;
 	}
 	void update(){
-
+		// TODO implement
 	}
 
 	void printNewLine() {
 		if (not isUpToDate()) {
 			update();
 		}
-		(*m_tableFile) << m_iterationNumber << " " << m_time << " " << endl;
+		(*m_errorsTableFile) << m_iterationNumber << " " << m_time << " "
+				<< m_maxUAnalytic << " " << m_maxVelocityError << " "
+				<< m_maxDensityError << " " << m_l2VelocityError << " "
+				<< m_l2DensityError << endl;
 	}
 
 	bool isUpToDate() const {
-		return (m_iterationNumber == m_solver.getIteration());
+		return (m_iterationNumber == m_solver->getIteration());
 	}
 };
-*/
+
 
 } /* namespace natrium */
 
