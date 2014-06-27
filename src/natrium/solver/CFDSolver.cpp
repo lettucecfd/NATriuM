@@ -34,24 +34,6 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		configuration->prepareOutputDirectory();
 	}
 
-	// Create file for errors
-	if ((not configuration->isSwitchOutputOff())
-	/*and (configuration->getOutputTableInterval()
-	 < configuration->getNumberOfTimeSteps())*/) {
-		std::stringstream s;
-		s << configuration->getOutputDirectory().c_str()
-				<< "/results_table.txt";
-		if (this->getIterationStart() > 0) {
-			m_tableFile = make_shared<std::fstream>(s.str().c_str(),
-					std::fstream::out | std::fstream::app);
-		} else {
-			m_tableFile = make_shared<std::fstream>(s.str().c_str(),
-					std::fstream::out);
-			(*m_tableFile) << "#  i      t      max |u_numeric|    kinE"
-					<< endl;
-		}
-	}
-
 	// CONFIGURE LOGGER
 	if (configuration->isSwitchOutputOff()) {
 		LOGGER().setConsoleLevel(SILENT);
@@ -107,6 +89,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		m_iterationStart = 0;
 		m_time = 0;
 	}
+	m_i = m_iterationStart;
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
@@ -202,6 +185,16 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
 			<< nofBoundaryNodes << endl;
 
+	// Create file for output table
+	if ((not configuration->isSwitchOutputOff())
+	/*and (configuration->getOutputTableInterval()
+	 < configuration->getNumberOfTimeSteps())*/) {
+		std::stringstream s;
+		s << configuration->getOutputDirectory().c_str()
+				<< "/results_table.txt";
+		//create the SolverStats object which is responsible for the results table
+		m_solverStats = make_shared< SolverStats<dim> >(this,s.str());
+	}
 }
 /* Constructor */
 template CFDSolver<2>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
@@ -252,7 +245,7 @@ template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
 	// TODO estimate runtime
-	for (m_i = m_iterationStart; m_i <= N; m_i++) {
+	for (m_i = m_iterationStart; m_i < N; m_i++) {
 		output(m_i);
 		stream();
 		collide();
@@ -297,12 +290,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 		// calculate information + physical properties
 
 		if (iteration % m_configuration->getOutputTableInterval() == 0) {
-			//#  i      t         max |u_numeric|  kinE  mass"
-			(*m_tableFile) << getIteration() << " " << getTime()
-					<< " " << getMaxVelocityNorm() << " "
-					<< PhysicalProperties<dim>::kineticEnergy(getVelocity(),
-							getDensity()) << endl;
-			//<< " " << PhysicalProperties<dim>::mass(getVelocity(), getDensity());
+			m_solverStats->printNewLine();
 		}
 
 		// output: checkpoint

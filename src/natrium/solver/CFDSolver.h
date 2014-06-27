@@ -102,7 +102,7 @@ private:
 	size_t m_i;
 
 	/// table out
-	shared_ptr<std::fstream> m_tableFile;
+	shared_ptr<SolverStats<dim> > m_solverStats;
 
 protected:
 
@@ -234,6 +234,10 @@ public:
 
 	size_t getIteration() const {
 		return m_i;
+	}
+
+	const shared_ptr<SolverStats<dim> >& getSolverStats() const {
+		return m_solverStats;
 	}
 }
 ;

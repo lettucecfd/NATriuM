@@ -8,11 +8,11 @@
 #ifndef BENCHMARKCFDSOLVER_H_
 #define BENCHMARKCFDSOLVER_H_
 
-#include <solver/CFDSolver.h>
-
 #include "deal.II/numerics/data_out.h"
 
+#include "CFDSolver.h"
 #include "SolverConfiguration.h"
+#include "Stats.h"
 
 #include "../problemdescription/Benchmark.h"
 #include "../utilities/BasicNames.h"
@@ -29,6 +29,7 @@ struct ErrorNorms {
 	double l2DensityError = 0.0;
 	double maxVelocity = 0.0;
 };
+
 
 /**
  * @short a class that overrides the output function of the CFD solver class with comparisons to a reference solution
