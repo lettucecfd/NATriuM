@@ -194,6 +194,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				<< "/results_table.txt";
 		//create the SolverStats object which is responsible for the results table
 		m_solverStats = make_shared< SolverStats<dim> >(this,s.str());
+	} else {
+		m_solverStats = make_shared< SolverStats<dim> >(this);
 	}
 }
 /* Constructor */

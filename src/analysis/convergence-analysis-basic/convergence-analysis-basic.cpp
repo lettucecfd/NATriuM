@@ -1,6 +1,9 @@
 /**
  * @file convergence-analysis-basic.cpp
- * @short Taylor-Green vortex in 2D (only periodic walls)
+ * @short The convergence of the NATriuM solver is analyzed by application to the Taylor-Green vortex in 2D (only periodic walls).
+ * This script uses a linear scaling (= constant Mach number). Thus, there is a general compressibily error, which destroys the
+ * convergence for the finer meshes. To analyze the results, move the table_order.txt and table_results.txt files to NATriuM/src/analysis/convergence_analysis_basic/
+ * and execute the gnuplot scripts.
  * @date 05.06.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
@@ -25,7 +28,6 @@ using namespace natrium;
 // if this define statement is enabled: only the initialization time is regarded
 //#define MEASURE_ONLY_INIT_TIME
 
-
 // Main function
 int main() {
 
@@ -43,16 +45,27 @@ int main() {
 	// zunaechst: fixed order of FE
 	const double orderOfFiniteElement = 2;
 
-	// chose scaling so that the right Ma-number is achieved
+	// chose scaling so that the right Mach number is achieved
 	double scaling = sqrt(3) * 1 / Ma;
 
-	// prepare table file
+	// prepare time table file
+	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 	std::stringstream filename;
 	filename << getenv("NATRIUM_HOME")
-			<< "/convergence-analysis-basic/runtime.txt";
+			<< "/convergence-analysis-basic/table_runtime.txt";
 	std::ofstream timeFile(filename.str().c_str());
 	timeFile
 			<< "#refinement Level     dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
+			<< endl;
+
+	// prepare error table file
+	std::stringstream filename2;
+	filename2 << getenv("NATRIUM_HOME")
+			<< "/convergence-analysis-basic/table_order.txt";
+	std::ofstream orderFile(filename2.str().c_str());
+	orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
+	orderFile
+			<< "#  refinementlevel  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
 	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
@@ -79,7 +92,7 @@ int main() {
 		configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
 		configuration->setOutputTableInterval(10);
-		configuration->setOutputCheckpointInterval(1000);
+		//configuration->setOutputCheckpointInterval(1000);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(0);
@@ -95,7 +108,7 @@ int main() {
 		configuration->setNumberOfTimeSteps(1);
 #endif
 
-		// make problem and solver objects
+		// make problem and solver objects; measure time
 		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
 				TaylorGreenVortex2D>(viscosity, refinementLevel);
 		shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
@@ -110,12 +123,25 @@ int main() {
 			time2 /= CLOCKS_PER_SEC;
 			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
+			// put out runtime
 			timeFile << refinementLevel << "         " << dt << "      "
-					<< time1 << "     " << time2 << "        " << time2/configuration->getNumberOfTimeSteps() << endl;
+					<< time1 << "     " << time2 << "        "
+					<< time2 / configuration->getNumberOfTimeSteps() << endl;
+			// put out final errors
+			solver.getErrorStats()->update();
+			orderFile << refinementLevel << " " << solver.getIteration() << " "
+					<< solver.getTime() << " "
+					<< solver.getErrorStats()->getMaxUAnalytic() << " "
+					<< solver.getErrorStats()->getMaxVelocityError() << " "
+					<< solver.getErrorStats()->getMaxDensityError() << " "
+					<< solver.getErrorStats()->getL2VelocityError() << " "
+					<< solver.getErrorStats()->getL2DensityError() << endl;
 		} catch (std::exception& e) {
 			cout << " Error" << endl;
 		}
-	}
+
+	} /* for refinement level */
+
 	cout << "Convergence analysis (basic) terminated." << endl;
 
 	return 0;

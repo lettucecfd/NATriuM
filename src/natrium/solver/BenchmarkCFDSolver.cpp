@@ -31,6 +31,8 @@ template<size_t dim> BenchmarkCFDSolver<dim>::BenchmarkCFDSolver(
 		std::stringstream s;
 		s << configuration->getOutputDirectory().c_str() << "/errors_table.txt";
 		m_errorStats = make_shared<ErrorStats<dim> >(this, s.str());
+	} else {
+		m_errorStats = make_shared<ErrorStats<dim> >(this);
 	}
 
 } /*BenchmarkCFDSolver constructor */

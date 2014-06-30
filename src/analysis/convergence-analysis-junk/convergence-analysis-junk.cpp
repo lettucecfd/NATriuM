@@ -1,6 +1,10 @@
 /**
  * @file convergence-analysis-junk.cpp
- * @short Taylor-Green vortex in 2D (only periodic walls)
+ * @shortThe convergence of the NATriuM solver is analyzed by application to the Taylor-Green vortex in 2D (only periodic walls).
+ * This script uses a diffusive scaling (= increasing Mach number). Thus, the numerical solution convergence against the
+ * incompressible solution.
+ * To analyze the results, move the table_order.txt and table_results.txt files to NATriuM/src/analysis/convergence_analysis_basic/
+ * and execute the gnuplot scripts.
  * @date 05.06.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
@@ -25,7 +29,8 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM convergence analysis (diffusive scaling)..." << endl;
+	cout << "Starting NATriuM convergence analysis (diffusive scaling)..."
+			<< endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -39,6 +44,26 @@ int main() {
 	const double orderOfFiniteElement = 2;
 	//const double constant = -0.36;
 
+	// prepare time table file
+	std::stringstream filename;
+	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
+	filename << getenv("NATRIUM_HOME")
+			<< "/convergence-analysis-junk/table_runtime.txt";
+	std::ofstream timeFile(filename.str().c_str());
+	timeFile
+			<< "#refinement Level     dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
+			<< endl;
+
+	// prepare error table file
+	std::stringstream filename2;
+	filename2 << getenv("NATRIUM_HOME")
+			<< "/convergence-analysis-junk/table_order.txt";
+	std::ofstream orderFile(filename2.str().c_str());
+	orderFile << "# visc = " << viscosity << ";" << endl;
+	orderFile
+			<< "#  refinementlevel  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
+			<< endl;
+
 	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
 		cout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
@@ -51,11 +76,10 @@ int main() {
 				/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 
 		// chose scaling so that the ratio between log xi_0^2 and log tau is constant
-		double scaling = initialScaling/sqrt(dx);//pow(3*viscosity*sqrt(2)/dx,constant/(constant+2.0));
+		double scaling = initialScaling / sqrt(dx);	//pow(3*viscosity*sqrt(2)/dx,constant/(constant+2.0));
 
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		double dt = dx / (scaling * sqrt(2));
-
 
 		cout << "dt = " << dt;
 
@@ -93,8 +117,8 @@ int main() {
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 		// get tau to test if the "constant value" is really constant
 		const double tau = BGKTransformed::calculateRelaxationParameter(
-						viscosity, dt, solver.getBoltzmannModel());
-		cout  << "... scaling = " << scaling << " ... tau = " << tau << " ...";
+				viscosity, dt, solver.getBoltzmannModel());
+		cout << "... scaling = " << scaling << " ... tau = " << tau << " ...";
 		//cout << "constant = " << log2(scaling*scaling) / log2(tau) << " ...";
 		time1 = clock() - timestart;
 
@@ -105,6 +129,19 @@ int main() {
 			time2 /= CLOCKS_PER_SEC;
 			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
+			// put out runtime
+			timeFile << refinementLevel << "         " << dt << "      "
+					<< time1 << "     " << time2 << "        "
+					<< time2 / configuration->getNumberOfTimeSteps() << endl;
+			// put out final errors
+			solver.getErrorStats()->update();
+			orderFile << refinementLevel << " " << solver.getIteration() << " "
+					<< solver.getTime() << " "
+					<< solver.getErrorStats()->getMaxUAnalytic() << " "
+					<< solver.getErrorStats()->getMaxVelocityError() << " "
+					<< solver.getErrorStats()->getMaxDensityError() << " "
+					<< solver.getErrorStats()->getL2VelocityError() << " "
+					<< solver.getErrorStats()->getL2DensityError() << endl;
 		} catch (std::exception& e) {
 			cout << " Error" << endl;
 		}
