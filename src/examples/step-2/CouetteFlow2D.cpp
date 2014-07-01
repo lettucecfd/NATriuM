@@ -89,6 +89,7 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dea
 	double U = getCharacteristicVelocity();
 	double L = getCharacteristicLength();
 
+	t += m_startTime;
 	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
 	// assert (t > 0.1);
 	if (t < 0.001) {
