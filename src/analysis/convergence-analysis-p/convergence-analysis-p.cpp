@@ -76,10 +76,11 @@ int main() {
 			orderOfFiniteElement += 2) {
 		cout << "order of FE = " << orderOfFiniteElement << endl;
 
-		double dx = 2 * 3.1415926
-				/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
+		//double dx = 2 * 3.1415926
+		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
-		double dt = dx / (scaling * sqrt(2));
+		//double dt = dx / (scaling * sqrt(2));
+		double dt = 0.0001;
 
 		cout << "dt = " << dt << " ...";
 
@@ -108,6 +109,10 @@ int main() {
 
 		}
 		configuration->setNumberOfTimeSteps(1.0 / dt);
+
+		configuration->setInitializationScheme(ITERATIVE);
+		configuration->setIterativeInitializationNumberOfIterations(1000);
+		//configuration->setIterativeInitialization(1000);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 		configuration->setNumberOfTimeSteps(1);

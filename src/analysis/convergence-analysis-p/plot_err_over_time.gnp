@@ -41,10 +41,10 @@ set key box rmargin samplen 1 # horizontal maxcols 1 spacing 1.2
 set output 'convergence_analysis_basic_velocity_error.eps'
 set ylabel 'Velocity error (2-norm)' offset 2.0, 0
 plot \
-'../../../results/convergence-analysis-basic/2_2/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 2' with linespoints ls 2,\
-'../../../results/convergence-analysis-basic/2_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 3' with linespoints ls 3,\
-'../../../results/convergence-analysis-basic/2_4/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 4' with linespoints ls 4,\
-'../../../results/convergence-analysis-basic/2_5/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 5' with linespoints ls 5,\
-'../../../results/convergence-analysis-basic/2_6/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 6' with linespoints ls 6,\
-'../../../results/convergence-analysis-basic/2_7/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 7' with linespoints ls 7,\
-'../../../results/convergence-analysis-basic/2_8/errors_table.txt' using ($2):($6) every :::0::0 title 'Level 8' with linespoints ls 8
+'../../../results/convergence-analysis-p/2_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Order 2' with linespoints ls 2,\
+'../../../results/convergence-analysis-p/4_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Order 4' with linespoints ls 3,\
+'../../../results/convergence-analysis-p/6_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Order 6' with linespoints ls 4,\
+'../../../results/convergence-analysis-p/8_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Order 8' with linespoints ls 5,\
+'../../../results/convergence-analysis-p/10_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Order 10' with linespoints ls 6,\
+'../../../results/convergence-analysis-p/12_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Order 12' with linespoints ls 7,\
+'../../../results/convergence-analysis-p/14_3/errors_table.txt' using ($2):($6) every :::0::0 title 'Order 14' with linespoints ls 8
