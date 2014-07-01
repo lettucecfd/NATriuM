@@ -1,0 +1,31 @@
+# format1
+
+#################################################
+# Gnuplot script file for plotting data in files#
+#################################################
+reset
+set term postscript eps color enhanced "Helvetica" 28
+set size 1.15, 0.8
+set rmargin at screen 0.7
+
+# LINESTYLE DEFINITIONS
+set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 7 pointtype 4 pointsize 2# pointinterval 10
+set style line 2  linetype 1 linecolor rgb "dark-orange"  linewidth 7 pointtype 6 pointsize 2#pointinterval 10
+set style line 3  linetype 1 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 8 pointsize 2# pointinterval 10
+set style line 4  linetype 2 linecolor rgb "dark-green"  linewidth 7.000 pointtype 12 pointsize 2# pointinterval 10
+set style line 5  linetype 1 linecolor rgb "violet"  linewidth 7.000 pointtype 3 pointsize 2# pointinterval 10
+set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 7 pointsize 2# pointinterval 10
+set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
+
+set logscale y
+
+set xlabel 'refinement level'
+
+set output 'plot_order.eps'
+set key rmargin samplen 1 horizontal maxrows 1 spacing 1.2
+set ylabel 'Error on velocity (2-norm)' offset 2.0, 0
+plot \
+0.0953393 * 2**10 * 2**(-2*x) title 'order 2' with lines ls 4#,\
+'table_order.txt' using ($1):($7) title 'linear scaling' with linespoints ls 2,\
+#'../convergence-analysis-p/table_order.txt' using ($1):($7) title 'diffusive scaling' with linespoints ls 5#,\
+#'table_order.txt' using ($1):($6) title 'on rho' with linespoints ls 3
