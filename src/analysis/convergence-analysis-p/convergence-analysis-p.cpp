@@ -41,9 +41,9 @@ int main() {
 	const double viscosity = 1;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
-	const double Ma = 0.05;
+	const double Ma = 0.005;
 	// zunaechst: fixed order of FE
-	const double refinementLevel = 3;
+	const double refinementLevel = 2;
 
 	// chose scaling so that the right Mach number is achieved
 	double scaling = sqrt(3) * 1 / Ma;
@@ -110,8 +110,9 @@ int main() {
 		}
 		configuration->setNumberOfTimeSteps(1.0 / dt);
 
-		configuration->setInitializationScheme(ITERATIVE);
-		configuration->setIterativeInitializationNumberOfIterations(1000);
+		//configuration->setInitializationScheme(ITERATIVE);
+		//configuration->setIterativeInitializationNumberOfIterations(100000);
+		//configuration->setIterativeInitializationResidual(1e-5);
 		//configuration->setIterativeInitialization(1000);
 
 #ifdef MEASURE_ONLY_INIT_TIME
