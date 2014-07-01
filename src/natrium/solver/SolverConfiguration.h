@@ -415,7 +415,7 @@ public:
 	void setIterativeInitializationNumberOfIterations(
 			long int iterativeInitializationNumberOfIterations) {
 		enter_subsection("Initialization");
-		enter_subsection("Iterative initalization stop condition");
+		enter_subsection("Iterative initialization stop condition");
 		try {
 			set("Number of iterations",
 					iterativeInitializationNumberOfIterations);
