@@ -124,6 +124,27 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
 	cout << "done" << endl;
 } /* CFDSolver_Restart_test */
 
+BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
+	cout << "CFDSolver_IterativeInit_test..." << endl;
+	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	testConfiguration->setSwitchOutputOff(true);
+	testConfiguration->setInitializationScheme(ITERATIVE);
+	testConfiguration->setIterativeInitializationNumberOfIterations(10);
+	testConfiguration->setIterativeInitializationResidual(0.001);
+	size_t refinementLevel = 3;
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()-1));
+	testConfiguration->setTimeStepSize(0.1*deltaX);
+	testConfiguration->setNumberOfTimeSteps(100);
+	// set viscosity so that tau = 1
+	double viscosity = 1./5;
+	testConfiguration->setStencilScaling(sqrt(3*viscosity/(testConfiguration->getTimeStepSize())));
+
+	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+
+	CFDSolver<2> solver(testConfiguration, testFlow);
+
+	cout << "done" << endl;
+} /* CFDSolver_IterativeInit_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 

@@ -57,6 +57,10 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	// Set parameter
 	config.setInitializationScheme(ITERATIVE);
 	BOOST_CHECK(config.getInitializationScheme() == ITERATIVE);
+	config.setIterativeInitializationNumberOfIterations(10);
+	BOOST_CHECK_EQUAL(config.getIterativeInitializationNumberOfIterations(),10);
+	config.setIterativeInitializationResidual(0.001);
+	BOOST_CHECK(0.001  == config.getIterativeInitializationResidual());
 
 	cout << "done" << endl;
 } /*CFDSolverConfiguration_CheckSet_test*/

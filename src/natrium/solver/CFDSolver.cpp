@@ -142,9 +142,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
 	LOG(WELCOME) << "Mach number:     "
-				<< charU / m_boltzmannModel->getSpeedOfSound() << endl;
-	LOG(WELCOME) << "Stencil scaling: "
-				<< configuration->getStencilScaling() << endl;
+			<< charU / m_boltzmannModel->getSpeedOfSound() << endl;
+	LOG(WELCOME) << "Stencil scaling: " << configuration->getStencilScaling()
+			<< endl;
 	LOG(WELCOME) << "Recommended dt:  "
 			<< m_collisionModel->calculateOptimalTimeStep(dx, m_boltzmannModel)
 			<< " s" << endl;
@@ -153,14 +153,6 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "dx:              " << dx << endl;
 	LOG(WELCOME) << "tau:             " << tau << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
-
-// Initialize distribution functions
-	if (configuration->isRestartAtLastCheckpoint()) {
-		loadDistributionFunctionsFromFiles(
-				m_configuration->getOutputDirectory());
-	} else {
-		initializeDistributions();
-	}
 
 	// initialize boundary dof indicator
 	std::set<dealii::types::boundary_id> boundaryIndicators;
@@ -185,6 +177,14 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
 			<< nofBoundaryNodes << endl;
 
+	// Initialize distribution functions
+	if (configuration->isRestartAtLastCheckpoint()) {
+		loadDistributionFunctionsFromFiles(
+				m_configuration->getOutputDirectory());
+	} else {
+		initializeDistributions();
+	}
+
 	// Create file for output table
 	if ((not configuration->isSwitchOutputOff())
 	/*and (configuration->getOutputTableInterval()
@@ -193,9 +193,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		s << configuration->getOutputDirectory().c_str()
 				<< "/results_table.txt";
 		//create the SolverStats object which is responsible for the results table
-		m_solverStats = make_shared< SolverStats<dim> >(this,s.str());
+		m_solverStats = make_shared<SolverStats<dim> >(this, s.str());
 	} else {
-		m_solverStats = make_shared< SolverStats<dim> >(this);
+		m_solverStats = make_shared<SolverStats<dim> >(this);
 	}
 }
 /* Constructor */
@@ -351,7 +351,7 @@ void CFDSolver<dim>::initializeDistributions() {
 				<< endl;
 		// Iterative procedure; leading to consistent initial values
 		size_t loopCount = 0;
-		double residual = 10;
+		double residual = 1000000000;
 		const bool inInitializationProcedure = true;
 		distributed_vector oldDensities;
 		while (residual > m_configuration->getIterativeInitializationResidual()) {
@@ -364,7 +364,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			stream();
 			// collide without recalculating velocities
 			m_collisionModel->collideAll(m_f, m_density, m_velocity,
-					m_isDoFAtBoundary, inInitializationProcedure);
+					inInitializationProcedure);
 			oldDensities -= m_density;
 			residual = oldDensities.norm_sqr();
 			loopCount++;
@@ -372,7 +372,7 @@ void CFDSolver<dim>::initializeDistributions() {
 		LOG(DETAILED) << "Residual " << residual << " reached after "
 				<< loopCount << " iterations." << endl;
 
-		for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
+		for (size_t i = 0; i < getNumberOfDoFs(); i++) {
 			for (size_t j = 0; j < dim; j++) {
 				u(j) = m_velocity.at(j)(i);
 			}
