@@ -10,7 +10,6 @@
 #include "../solver/DistributionFunctions.h"
 
 #include <cmath>
-#include <exception>
 
 namespace natrium {
 
@@ -56,7 +55,7 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 			densities(i) += f.at(j)(i);
 		}
 		if (densities(i) < 1e-10){
-			throw std::exception();
+			throw CollisionModelException("Densities too small (< 1e-10) for collisions. Decrease time step size.");
 		}
 
 		if (not inInitializationProcedure) {
@@ -116,7 +115,7 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 			densities(i) += f.at(j)(i);
 		}
 		if (densities(i) < 1e-10){
-			throw std::exception();
+			throw CollisionModelException("Densities too small (< 1e-10) for collisions. Decrease time step size.");
 		}
 
 		if (not inInitializationProcedure) {

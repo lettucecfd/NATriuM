@@ -8,6 +8,8 @@
 #ifndef COLLISIONMODEL_H_
 #define COLLISIONMODEL_H_
 
+#include <exception>
+
 #include "boost/shared_ptr.hpp"
 
 #include "../boltzmannmodels/BoltzmannModel.h"
@@ -17,6 +19,24 @@
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
+
+/**
+ * @short Exception class for Collision model
+ */
+class CollisionModelException: public std::exception {
+private:
+	std::string message;
+public:
+	CollisionModelException(const char *msg) :
+			message(msg) {
+	}
+	~CollisionModelException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
 
 /** @short Abstract class for the description of collision schemes.
  */
