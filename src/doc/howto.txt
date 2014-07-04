@@ -3,21 +3,29 @@ This file describes the steps conducted for the creation of the NATriuM project 
    R E Q U I R E D   R E S O U R C E S
 0) Install resources (via apt-get, synaptic, or manually)
     0.0) All boost libraries (sudo apt-get install libboost-all-dev)
+    0.0a) (on cluster: module load boost... )
+    0.0a') (on cluster: if boost is not installed - get tar)
+    0.0b') (on cluster: tar xzvf .. ;  cd .. ; ./bootstrap --prefix .. ; ./b2)
     0.1) Install cmake download and untar tarball from cmake homepage; follow instructions
          (Version 2.8.8 required!)
          (Version on ubuntu software center is too old)
          tar -xzvf cmake....tgz; cd cmake...; ./bootstrap; make; make install;
+    0.1a) (on cluster: module load cmake/<version newer than 2.8.8> )         
+    0.1a') (on cluster: install with ./bootstrap --prefix=<your custom directory> )
     0.2) If not installed, install valgrind (e.g. sudo apt-get install valgrind)
          If not installed, install blas/lapack
          If not installed, install gfortran
+    0.3a) (on cluster:  module load gcc/4.9.0; module load openmpi/gnu)     
     0.3) PETSc
-        0.3.1) download and untar tarball from petsc homepage
+        0.3.1) download and untar tarball from petsc homepage 
+               (perhaps the newer versions (>= 3.5.0) fail as they use the outdated SAME_PRECONDITIONER flag)
         0.3.2) access petsc directory
         0.3.3) set environment variables PETSC_DIR, PETSC_ARCH in ~/.bashrc, e.g.
                export PETSC_DIR=/home/kraemer/Dissertation/petsc-3.4.2
                export PETSC_ARCH=ubuntu_lenovo (can be an arbitrary name for your installation)
         0.3.3) ./config/configure.py --with-shared-libraries=1 --with-x=0 --with-mpi=1 --download-hypre=1
         0.3.4) make
+        0.3.5a) (on cluster: log in on backend-node, e.g. with qsub -I; repeat 0.3a) ) 
         0.3.5) make test 
     0.4) Qt (full development kit)
     	0.4.1) sudo apt-get install qt-sdk

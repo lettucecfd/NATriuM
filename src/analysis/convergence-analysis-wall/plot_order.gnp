@@ -5,8 +5,8 @@
 #################################################
 reset
 set term postscript eps color enhanced "Helvetica" 28
-set size 1.15, 0.8
-set rmargin at screen 0.7
+set size 0.8, 0.8
+#set rmargin at screen 0.7
 
 # LINESTYLE DEFINITIONS
 set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 7 pointtype 4 pointsize 2# pointinterval 10
@@ -18,14 +18,19 @@ set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtyp
 set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
 
 set logscale y
+set logscale x
 
-set xlabel 'refinement level'
+set xlabel 'dt'
+set title '4x4 cells, FE order 4'
+# Re = 1.0, Ma = 0.1, 
+
+set xtics 0.0001 0.1 
 
 set output 'plot_order.eps'
-set key rmargin samplen 1 horizontal maxrows 1 spacing 1.2
+set key left samplen 1 horizontal maxrows 1
 set ylabel 'Error on velocity (2-norm)' offset 2.0, 0
 plot \
-0.0953393 * 2**10 * 2**(-2*x) title 'order 2' with lines ls 4,\
-'table_order.txt' using ($1):($7) title 'linear scaling' with linespoints ls 2,\
-'../convergence-analysis-junk/table_order.txt' using ($1):($7) title 'diffusive scaling' with linespoints ls 5#,\
+x title 'order 1' with lines ls 4,\
+'table_order.txt' using ($3/$2):($7) title '' with linespoints ls 2#,\
+#'../convergence-analysis-junk/table_order.txt' using ($1):($7) title 'diffusive scaling' with linespoints ls 5#,\
 #'table_order.txt' using ($1):($6) title 'on rho' with linespoints ls 3

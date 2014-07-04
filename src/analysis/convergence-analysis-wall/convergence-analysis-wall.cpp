@@ -40,7 +40,7 @@ int main() {
 	//////////////////////////////////////////////////
 
 	// specify Reynolds number
-	const double Re = 2000;
+	const double Re = 1;
 	// specify Mach number
 	const double Ma = 0.05;
 
@@ -57,7 +57,8 @@ int main() {
 
 	// chose scaling so that the right Mach number is achieved
 	double scaling = sqrt(3) * U / Ma;
-	size_t refinementLevel = 3;
+	size_t refinementLevel = 2;
+	size_t orderOfFiniteElement = 4;
 
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
@@ -79,22 +80,11 @@ int main() {
 			<< "#  orderOfFe  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	//for (double dt = 0.01; dt >= 0.0001; dt /= 2.) {
-	//	timeFile << "# dt = " << dt << endl;
-	//	orderFile << "# dt = " << dt << endl;
-	//	cout << "dt = " << dt << endl;
-		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 14;
-				orderOfFiniteElement += 2) {
-			cout << "order of FE = " << orderOfFiniteElement << endl;
+	for (double dt = 0.1; dt >= 0.00001; dt /= 2.) {
+		timeFile << "# dt = " << dt << endl;
+		orderFile << "# dt = " << dt << endl;
+		cout << "dt = " << dt << endl;
 
-			//double dx = 1.0
-			//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
-			// chose dt so that courant (advection) = 1 for the diagonal directions
-			// double dt = dx / (scaling * sqrt(2));
-
-			double dt = 0.001;
-
-			cout << "dt = " << dt << " ...";
 
 			// time measurement variables
 			double time1, time2, timestart;
@@ -115,7 +105,7 @@ int main() {
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(0);
 			configuration->setTimeStepSize(dt);
-			configuration->setNumberOfTimeSteps(40.0 / dt);
+			configuration->setNumberOfTimeSteps(1.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 			configuration->setNumberOfTimeSteps(1);

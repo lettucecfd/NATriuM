@@ -267,15 +267,15 @@
 <pathentry kind="mac" name="__GXX_RTTI" path="" value="1"/>
 <pathentry kind="mac" name="__EXCEPTIONS" path="" value="1"/>
 <pathentry kind="mac" name="_GNU_SOURCE" path="" value="1"/>
-<pathentry include="/home/kraemer/workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/lib/deal.II-8.1.0/include" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/lib/deal.II-8.1.0/include/deal.II" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/lib/deal.II-8.1.0/include/deal.II/bundled" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/eclipse_workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include/deal.II" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include/deal.II/bundled" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/openmpi/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/openmpi/include/openmpi" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/lib/petsc-3.4.4/include" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/lib/petsc-3.4.4/mint_aspire/include" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/workspace/NATriuM/src/natrium" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/NATriuM/petsc-3.4.3/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/NATriuM/petsc-3.4.3/vm_hbrs_pc/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/eclipse_workspace/NATriuM/src/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include/boost" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/local/include" kind="inc" path="" system="true"/>
@@ -290,1821 +290,2073 @@
 <buildTargets>
 <target name="[exe] NATriuM_exe" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>NATriuM_exe</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] NATriuM_exe/fast" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>NATriuM_exe/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] NATriuM_exe" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>NATriuM_exe</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] NATriuM_exe" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin" "/usr/bin/cmake" -P "CMakeFiles/NATriuM_exe.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin" "/usr/local/bin/cmake" -P "CMakeFiles/NATriuM_exe.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": install" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>install</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": install/local" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>install/local</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": install/strip" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>install/strip</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": list_install_components" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>list_install_components</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": rebuild_cache" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>rebuild_cache</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": run" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>run</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>test</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] natrium/NATriuM.cpp.o" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>natrium/NATriuM.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] natrium/NATriuM.cpp.i" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>natrium/NATriuM.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] natrium/NATriuM.cpp.s" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>natrium/NATriuM.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[lib] natrium" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>natrium</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[lib] natrium/fast" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>natrium/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[lib] natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>natrium</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[lib] natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/natrium" "/usr/bin/cmake" -P "CMakeFiles/natrium.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/natrium" "/usr/local/bin/cmake" -P "CMakeFiles/natrium.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] advection/AdvectionOperator.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/AdvectionOperator.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] advection/AdvectionOperator.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/AdvectionOperator.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] advection/AdvectionOperator.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/AdvectionOperator.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] advection/SEDGMinLee.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/SEDGMinLee.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] advection/SEDGMinLee.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/SEDGMinLee.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] advection/SEDGMinLee.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/SEDGMinLee.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] boltzmannmodels/BoltzmannModel.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/BoltzmannModel.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] boltzmannmodels/BoltzmannModel.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/BoltzmannModel.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] boltzmannmodels/BoltzmannModel.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/BoltzmannModel.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] boltzmannmodels/D2Q9IncompressibleModel.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9IncompressibleModel.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] boltzmannmodels/D2Q9IncompressibleModel.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9IncompressibleModel.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] boltzmannmodels/D2Q9IncompressibleModel.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9IncompressibleModel.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] boltzmannmodels/D2Q9Model.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9Model.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] boltzmannmodels/D2Q9Model.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9Model.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] boltzmannmodels/D2Q9Model.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9Model.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] collisionmodels/BGKTransformed.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/BGKTransformed.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] collisionmodels/BGKTransformed.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/BGKTransformed.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] collisionmodels/BGKTransformed.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/BGKTransformed.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] collisionmodels/CollisionModel.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/CollisionModel.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] collisionmodels/CollisionModel.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/CollisionModel.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] collisionmodels/CollisionModel.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/CollisionModel.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/Benchmark.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/Benchmark.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/Benchmark.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/Benchmark.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/Benchmark.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/Benchmark.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/Boundary.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/Boundary.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/Boundary.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/Boundary.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/Boundary.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/Boundary.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/BoundaryCollection.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryCollection.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/BoundaryCollection.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryCollection.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/BoundaryCollection.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryCollection.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/BoundaryTools.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryTools.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/BoundaryTools.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryTools.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/BoundaryTools.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryTools.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/MinLeeBoundary.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/MinLeeBoundary.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/MinLeeBoundary.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/MinLeeBoundary.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/MinLeeBoundary.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/MinLeeBoundary.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/PeriodicBoundary.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/PeriodicBoundary.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/PeriodicBoundary.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/PeriodicBoundary.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/PeriodicBoundary.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/PeriodicBoundary.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/BenchmarkCFDSolver.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/BenchmarkCFDSolver.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/BenchmarkCFDSolver.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/BenchmarkCFDSolver.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/BenchmarkCFDSolver.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/BenchmarkCFDSolver.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/CFDSolver.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/CFDSolver.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/CFDSolver.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/CFDSolver.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/CFDSolver.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/CFDSolver.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/ErrorStats.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/ErrorStats.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/ErrorStats.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/ErrorStats.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/ErrorStats.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/ErrorStats.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/PhysicalProperties.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/PhysicalProperties.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/PhysicalProperties.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/PhysicalProperties.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/PhysicalProperties.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/PhysicalProperties.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/SolverConfiguration.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverConfiguration.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/SolverConfiguration.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverConfiguration.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/SolverConfiguration.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverConfiguration.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/SolverStats.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverStats.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/SolverStats.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverStats.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/SolverStats.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverStats.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] timeintegration/ExponentialTimeIntegrator.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/ExponentialTimeIntegrator.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] timeintegration/ExponentialTimeIntegrator.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/ExponentialTimeIntegrator.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] timeintegration/ExponentialTimeIntegrator.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/ExponentialTimeIntegrator.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] timeintegration/RungeKutta5LowStorage.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/RungeKutta5LowStorage.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] timeintegration/RungeKutta5LowStorage.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/RungeKutta5LowStorage.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] timeintegration/RungeKutta5LowStorage.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/RungeKutta5LowStorage.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] timeintegration/TimeIntegrator.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/TimeIntegrator.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] timeintegration/TimeIntegrator.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/TimeIntegrator.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] timeintegration/TimeIntegrator.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/TimeIntegrator.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] utilities/Logging.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/Logging.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] utilities/Logging.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/Logging.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] utilities/Logging.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/Logging.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] NATriuM_UnitTest_exe" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>NATriuM_UnitTest_exe</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] NATriuM_UnitTest_exe/fast" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>NATriuM_UnitTest_exe/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] NATriuM_UnitTest_exe" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>NATriuM_UnitTest_exe</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] NATriuM_UnitTest_exe" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/test" "/usr/bin/cmake" -P "CMakeFiles/NATriuM_UnitTest_exe.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/test" "/usr/local/bin/cmake" -P "CMakeFiles/NATriuM_UnitTest_exe.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] MainTest.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>MainTest.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] MainTest.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>MainTest.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] MainTest.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>MainTest.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] advection/PeriodicTestDomain2D.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/PeriodicTestDomain2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] advection/PeriodicTestDomain2D.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/PeriodicTestDomain2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] advection/PeriodicTestDomain2D.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/PeriodicTestDomain2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] advection/SEDGMinLee_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/SEDGMinLee_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] advection/SEDGMinLee_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/SEDGMinLee_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] advection/SEDGMinLee_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advection/SEDGMinLee_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] boltzmannmodels/D2Q9IncompressibleModel_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9IncompressibleModel_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] boltzmannmodels/D2Q9IncompressibleModel_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9IncompressibleModel_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] boltzmannmodels/D2Q9IncompressibleModel_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>boltzmannmodels/D2Q9IncompressibleModel_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] collisionmodels/BGKTransformed_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/BGKTransformed_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] collisionmodels/BGKTransformed_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/BGKTransformed_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] collisionmodels/BGKTransformed_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>collisionmodels/BGKTransformed_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/BoundaryTools_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryTools_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/BoundaryTools_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryTools_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/BoundaryTools_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/BoundaryTools_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/MinLeeBoundary2D_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/MinLeeBoundary2D_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/MinLeeBoundary2D_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/MinLeeBoundary2D_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/MinLeeBoundary2D_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/MinLeeBoundary2D_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] problemdescription/PeriodicBoundary2D_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/PeriodicBoundary2D_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] problemdescription/PeriodicBoundary2D_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/PeriodicBoundary2D_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] problemdescription/PeriodicBoundary2D_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>problemdescription/PeriodicBoundary2D_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/CFDSolver_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/CFDSolver_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/CFDSolver_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/CFDSolver_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/CFDSolver_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/CFDSolver_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/DistributionFunctions_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/DistributionFunctions_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/DistributionFunctions_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/DistributionFunctions_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/DistributionFunctions_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/DistributionFunctions_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/ErrorStats_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/ErrorStats_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/ErrorStats_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/ErrorStats_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/ErrorStats_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/ErrorStats_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/SolverConfiguration_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverConfiguration_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/SolverConfiguration_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverConfiguration_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/SolverConfiguration_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverConfiguration_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/SolverStats_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverStats_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/SolverStats_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverStats_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/SolverStats_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/SolverStats_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] solver/TaylorGreenVortex2D.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/TaylorGreenVortex2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] solver/TaylorGreenVortex2D.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/TaylorGreenVortex2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] solver/TaylorGreenVortex2D.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>solver/TaylorGreenVortex2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] timeintegration/RungeKutta5LowStorage_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/RungeKutta5LowStorage_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] timeintegration/RungeKutta5LowStorage_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/RungeKutta5LowStorage_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] timeintegration/RungeKutta5LowStorage_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>timeintegration/RungeKutta5LowStorage_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] utilities/BasicNames_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/BasicNames_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] utilities/BasicNames_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/BasicNames_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] utilities/BasicNames_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/BasicNames_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] utilities/Logging_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/Logging_test.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] utilities/Logging_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/Logging_test.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] utilities/Logging_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>utilities/Logging_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="examples" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="examples" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] step-1-taylorGreenVortex" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-1-taylorGreenVortex</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] step-1-taylorGreenVortex/fast" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-1-taylorGreenVortex/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] step-1-taylorGreenVortex" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>step-1-taylorGreenVortex</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] step-1-taylorGreenVortex" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/examples/step-1" "/usr/bin/cmake" -P "CMakeFiles/step-1-taylorGreenVortex.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/examples/step-1" "/usr/local/bin/cmake" -P "CMakeFiles/step-1-taylorGreenVortex.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] TaylorGreenVortex2D.cpp.o" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>TaylorGreenVortex2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] TaylorGreenVortex2D.cpp.i" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>TaylorGreenVortex2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] TaylorGreenVortex2D.cpp.s" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>TaylorGreenVortex2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] step-1.cpp.o" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-1.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] step-1.cpp.i" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-1.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] step-1.cpp.s" path="examples/step-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-1.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] step-2-couette2D" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-2-couette2D</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] step-2-couette2D/fast" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-2-couette2D/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] step-2-couette2D" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>step-2-couette2D</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] step-2-couette2D" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/examples/step-2" "/usr/bin/cmake" -P "CMakeFiles/step-2-couette2D.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/examples/step-2" "/usr/local/bin/cmake" -P "CMakeFiles/step-2-couette2D.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] CouetteFlow2D.cpp.o" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>CouetteFlow2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] CouetteFlow2D.cpp.i" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>CouetteFlow2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] CouetteFlow2D.cpp.s" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>CouetteFlow2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] step-2.cpp.o" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-2.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] step-2.cpp.i" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-2.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] step-2.cpp.s" path="examples/step-2" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-2.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] step-3-LidDrivenCavity2D" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-3-LidDrivenCavity2D</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] step-3-LidDrivenCavity2D/fast" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-3-LidDrivenCavity2D/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] step-3-LidDrivenCavity2D" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>step-3-LidDrivenCavity2D</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] step-3-LidDrivenCavity2D" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/examples/step-3" "/usr/bin/cmake" -P "CMakeFiles/step-3-LidDrivenCavity2D.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/examples/step-3" "/usr/local/bin/cmake" -P "CMakeFiles/step-3-LidDrivenCavity2D.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] LidDrivenCavity2D.cpp.o" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>LidDrivenCavity2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] LidDrivenCavity2D.cpp.i" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>LidDrivenCavity2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] LidDrivenCavity2D.cpp.s" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>LidDrivenCavity2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] step-3.cpp.o" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-3.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] step-3.cpp.i" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-3.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] step-3.cpp.s" path="examples/step-3" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>step-3.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] advectionConvergence" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advectionConvergence</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] advectionConvergence/fast" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advectionConvergence/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] advectionConvergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>advectionConvergence</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] advectionConvergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-advection-solver" "/usr/bin/cmake" -P "CMakeFiles/advectionConvergence.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-advection-solver" "/usr/local/bin/cmake" -P "CMakeFiles/advectionConvergence.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] PeriodicTestDomain2D.cpp.o" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>PeriodicTestDomain2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] PeriodicTestDomain2D.cpp.i" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>PeriodicTestDomain2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] PeriodicTestDomain2D.cpp.s" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>PeriodicTestDomain2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] advectionConvergence.cpp.o" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advectionConvergence.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] advectionConvergence.cpp.i" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advectionConvergence.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] advectionConvergence.cpp.s" path="analysis/convergence-analysis-advection-solver" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>advectionConvergence.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] convergence-analysis-spatial" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-spatial</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] convergence-analysis-spatial/fast" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-spatial/fast</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Build" path="[Targets]/[exe] convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildTarget>convergence-analysis-spatial</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Clean" path="[Targets]/[exe] convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-spatial" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-spatial.dir/cmake_clean.cmake"</buildArguments>
+<buildTarget></buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": all" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>all</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": clean" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>clean</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] __/__/examples/step-1/TaylorGreenVortex2D.cpp.o" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] __/__/examples/step-1/TaylorGreenVortex2D.cpp.i" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] __/__/examples/step-1/TaylorGreenVortex2D.cpp.s" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] convergence-analysis-spatial.cpp.o" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-spatial.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] convergence-analysis-spatial.cpp.i" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-spatial.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] convergence-analysis-spatial.cpp.s" path="analysis/convergence-analysis-spatial" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-spatial.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] convergence-analysis-time" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-time</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] convergence-analysis-time/fast" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-time/fast</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Build" path="[Targets]/[exe] convergence-analysis-time" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildTarget>convergence-analysis-time</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Clean" path="[Targets]/[exe] convergence-analysis-time" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-timestepping" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-time.dir/cmake_clean.cmake"</buildArguments>
+<buildTarget></buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": all" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>all</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": clean" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>clean</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] __/__/examples/step-1/TaylorGreenVortex2D.cpp.o" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] __/__/examples/step-1/TaylorGreenVortex2D.cpp.i" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] __/__/examples/step-1/TaylorGreenVortex2D.cpp.s" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] convergence-analysis-time.cpp.o" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-time.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] convergence-analysis-time.cpp.i" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-time.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] convergence-analysis-time.cpp.s" path="analysis/convergence-analysis-timestepping" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-time.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-basic" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-basic</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-basic/fast" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-basic/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-basic</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-basic" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-basic.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-basic" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-basic.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] __/__/examples/step-1/TaylorGreenVortex2D.cpp.o" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] __/__/examples/step-1/TaylorGreenVortex2D.cpp.i" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] __/__/examples/step-1/TaylorGreenVortex2D.cpp.s" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] convergence-analysis-basic.cpp.o" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-basic.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] convergence-analysis-basic.cpp.i" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-basic.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] convergence-analysis-basic.cpp.s" path="analysis/convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-basic.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-junk" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-junk</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-junk/fast" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-junk/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-junk</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-junk" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-junk.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-junk" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-junk.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] __/__/examples/step-1/TaylorGreenVortex2D.cpp.o" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] __/__/examples/step-1/TaylorGreenVortex2D.cpp.i" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] __/__/examples/step-1/TaylorGreenVortex2D.cpp.s" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] convergence-analysis-junk.cpp.o" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-junk.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] convergence-analysis-junk.cpp.i" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-junk.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] convergence-analysis-junk.cpp.s" path="analysis/convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-junk.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-kinetic-energy" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-kinetic-energy</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-kinetic-energy/fast" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-kinetic-energy/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-kinetic-energy</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-kinetic-energy" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-kinetic-energy.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-kinetic-energy" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-kinetic-energy.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] __/__/examples/step-1/TaylorGreenVortex2D.cpp.o" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] __/__/examples/step-1/TaylorGreenVortex2D.cpp.i" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] __/__/examples/step-1/TaylorGreenVortex2D.cpp.s" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] convergence-analysis-kinE.cpp.o" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-kinE.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] convergence-analysis-kinE.cpp.i" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-kinE.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] convergence-analysis-kinE.cpp.s" path="analysis/convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-kinE.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-p" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-p</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-p/fast" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-p/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-p</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-p" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-p.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-p" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-p.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] __/__/examples/step-1/TaylorGreenVortex2D.cpp.o" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] __/__/examples/step-1/TaylorGreenVortex2D.cpp.i" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] __/__/examples/step-1/TaylorGreenVortex2D.cpp.s" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] convergence-analysis-p.cpp.o" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-p.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] convergence-analysis-p.cpp.i" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-p.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] convergence-analysis-p.cpp.s" path="analysis/convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-p.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-wall" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-wall</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[exe] convergence-analysis-wall/fast" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-wall/fast</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" -j8</buildArguments>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-wall</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-wall" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-wall.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-wall" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-wall.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": all" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name=": clean" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>clean</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] __/__/examples/step-2/CouetteFlow2D.cpp.o" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] __/__/examples/step-2/CouetteFlow2D.cpp.i" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] __/__/examples/step-2/CouetteFlow2D.cpp.s" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[obj] convergence-analysis-wall.cpp.o" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-wall.cpp.o</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[pre] convergence-analysis-wall.cpp.i" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-wall.cpp.i</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="[to asm] convergence-analysis-wall.cpp.s" path="analysis/convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-j8</buildArguments>
+<buildArguments></buildArguments>
 <buildTarget>convergence-analysis-wall.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] convergence-analysis-wall-p" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-wall-p</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] convergence-analysis-wall-p/fast" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-wall-p/fast</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Build" path="[Targets]/[exe] convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildTarget>convergence-analysis-wall-p</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Clean" path="[Targets]/[exe] convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-wall-p" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-wall-p.dir/cmake_clean.cmake"</buildArguments>
+<buildTarget></buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": all" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>all</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": clean" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>clean</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] __/__/examples/step-2/CouetteFlow2D.cpp.o" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] __/__/examples/step-2/CouetteFlow2D.cpp.i" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] __/__/examples/step-2/CouetteFlow2D.cpp.s" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] convergence-analysis-wall-p.cpp.o" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-wall-p.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] convergence-analysis-wall-p.cpp.i" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-wall-p.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] convergence-analysis-wall-p.cpp.s" path="analysis/convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>convergence-analysis-wall-p.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

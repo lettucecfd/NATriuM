@@ -27,33 +27,37 @@ int main() {
 
 	cout << "Starting NATriuM step-2..." << endl;
 
-	// set parameters, set up configuration object
-	size_t refinementLevel = 3;
+	// set Reynolds and Mach number
+	const double Re = 10;
+	const double Ma = 0.1;
+
+	// set spatial discretization
+	size_t refinementLevel = 4;
 	size_t orderOfFiniteElement = 2;
-	const double dqScaling = 256;
 
-	// chose U (the velocity of the top wall) so that Ma = 0.05
-	//const double U = 5. / 100. * sqrt(3) * dqScaling;
-	const double U = 5. / 100. * sqrt(3);
-	// chose viscosity so that Re = 2000
-	//const double Re = 2000;
-	const double Re = 2000;
-	const double viscosity = U / Re;
-	const double startTime = 1;
-	const double timeStepSize = 5e-6;
-	//const double timeStepSize = 1e-4;
+	// set Problem so that the right Re and Ma are achieved
+	const double U = 1/sqrt(3)*Ma;
+	const double dqScaling = 1;
+	const double viscosity = U / Re; // (because L = 1)
 
-	cout << "Mach number: " << U / (sqrt(3) * dqScaling) << endl;
+	// in order to start from a continuous solution, do not start at t=0
+	const double startTime = 0.0;
+
+	// set small time step size
+	const double timeStepSize = 0.0001;
+
+	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/step-2-stencilbig";
+	dirname << getenv("NATRIUM_HOME") << "/step-2";
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
-	configuration->setOutputCheckpointInterval(1000);
-	configuration->setOutputSolutionInterval(500);
-	configuration->setNumberOfTimeSteps(100000000);
+	configuration->setOutputCheckpointInterval(10000);
+	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputTableInterval(100);
+	configuration->setNumberOfTimeSteps(5./timeStepSize);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
 	configuration->setTimeStepSize(timeStepSize);

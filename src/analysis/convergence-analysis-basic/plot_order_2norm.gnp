@@ -21,7 +21,7 @@ set logscale y
 
 set xlabel 'refinement level'
 
-set output 'plot_order.eps'
+set output 'plot_order_2norm.eps'
 set key rmargin samplen 1 horizontal maxrows 1 spacing 1.2
 set ylabel 'Error on velocity (2-norm)' offset 2.0, 0
 plot \

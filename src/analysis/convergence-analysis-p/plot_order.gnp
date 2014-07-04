@@ -23,9 +23,9 @@ set xlabel 'FE order'
 
 set output 'plot_order.eps'
 set key rmargin samplen 1 horizontal maxrows 1 spacing 1.2
-set ylabel 'Error on velocity (2-norm)' offset 2.0, 0
+set ylabel 'Error on velocity (sup-norm)' offset 2.0, 0
 plot \
 0.0953393 * 2**10 * 2**(-2*x) title 'order 2' with lines ls 4,\
-'table_order.txt' using ($1):($7) title 'dt=0.0001' with linespoints ls 2#,\
+'table_order.txt' using ($1):($5) title 'dt=0.0001' with linespoints ls 2#,\
 #'../convergence-analysis-p/table_order.txt' using ($1):($7) title 'diffusive scaling' with linespoints ls 5#,\
 #'table_order.txt' using ($1):($6) title 'on rho' with linespoints ls 3

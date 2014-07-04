@@ -41,7 +41,7 @@ int main() {
 	const double viscosity = 1;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
-	const double Ma = 0.005;
+	const double Ma = 0.001;
 	// zunaechst: fixed order of FE
 	const double refinementLevel = 2;
 
@@ -77,10 +77,10 @@ int main() {
 		cout << "order of FE = " << orderOfFiniteElement << endl;
 
 		//double dx = 2 * 3.1415926
-		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
+		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement-1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		//double dt = dx / (scaling * sqrt(2));
-		double dt = 0.0001;
+		double dt = 0.00001;
 
 		cout << "dt = " << dt << " ...";
 
