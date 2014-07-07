@@ -38,6 +38,9 @@ find_package( Boost ${BOOST_MIN_VERSION}
               unit_test_framework
               REQUIRED
               )
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+              
 #
 # descend into subdirectories (build natrium library in src and unit tests in test as well as examples)
 #
