@@ -30,6 +30,7 @@ project( NATriuM )
 #
 # include boost
 #
+SET(BOOST_MIN_VERSION "1.54.0")
 find_package( Boost
               COMPONENTS
               system
