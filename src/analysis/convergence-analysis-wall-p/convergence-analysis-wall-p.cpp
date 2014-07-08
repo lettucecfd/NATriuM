@@ -32,7 +32,7 @@ using namespace natrium;
 int main() {
 
 	cout
-			<< "Starting NATriuM convergence analysis with moving wall boundaries ..."
+			<< "Starting NATriuM convergence analysis with moving wall boundaries (various p) ..."
 			<< endl;
 
 	/////////////////////////////////////////////////
@@ -57,14 +57,13 @@ int main() {
 	//const double t0 = 30.0;
 	const double t0 = 0.0;
 
-	// chose scaling so that the right Mach number is achieved
-	size_t orderOfFiniteElement = 4;
 
+	size_t refinementLevel = 3;
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 	std::stringstream filename;
 	filename << getenv("NATRIUM_HOME")
-			<< "/convergence-analysis-wall/table_runtime.txt";
+			<< "/convergence-analysis-wall-p/table_runtime.txt";
 	std::ofstream timeFile(filename.str().c_str());
 	timeFile
 			<< "# order of FE   dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
@@ -73,17 +72,17 @@ int main() {
 	// prepare error table file
 	std::stringstream filename2;
 	filename2 << getenv("NATRIUM_HOME")
-			<< "/convergence-analysis-wall/table_order.txt";
+			<< "/convergence-analysis-wall-p/table_order.txt";
 	std::ofstream orderFile(filename2.str().c_str());
 	orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 	orderFile
 			<< "#  orderOfFe  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (size_t refinementLevel = 2; refinementLevel <= 6; refinementLevel++) {
-		timeFile << endl << "# refinement = " << refinementLevel << endl;
-		orderFile << endl << "# refinement = " << refinementLevel << endl;
-		cout << endl << "refinement = " << refinementLevel << endl;
+	for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 12; orderOfFiniteElement++) {
+		timeFile << endl << "# order FE = " << orderOfFiniteElement << endl;
+		orderFile << endl << "# order FE = " << orderOfFiniteElement << endl;
+		cout << endl << "order FE = " << orderOfFiniteElement << endl;
 
 		for (double dt = 0.1; dt >= 0.00001; dt /= 2.) {
 			timeFile << "# dt = " << dt << endl;
@@ -95,7 +94,7 @@ int main() {
 
 			// setup configuration
 			std::stringstream dirName;
-			dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-wall/"
+			dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-wall-p/"
 					<< orderOfFiniteElement << "_" << refinementLevel << "_"
 					<< dt;
 			shared_ptr<SolverConfiguration> configuration = make_shared<
