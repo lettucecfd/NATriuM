@@ -87,11 +87,28 @@ public:
 		const distributed_vector& numericDensity = m_solver->getDensity();
 
 		//#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2
-		m_maxUAnalytic = m_solver->getMaxVelocityNorm();
-		// TODO take the analytic!!!
 		m_solver->m_analyticDensity.add(-1.0, numericDensity);
 		m_maxDensityError = m_solver->m_analyticDensity.linfty_norm();
 		m_l2DensityError = m_solver->m_analyticDensity.l2_norm();
+
+		// calculate maximum analytic velocity norm
+		size_t n_dofs = m_solver->getNumberOfDoFs();
+		double norm_square = 0.0;
+		for (size_t i = 0; i < n_dofs; i++) {
+			norm_square = m_solver->m_analyticVelocity.at(0)(i)
+					* m_solver->m_analyticVelocity.at(0)(i)
+					+ m_solver->m_analyticVelocity.at(1)(i)
+							* m_solver->m_analyticVelocity.at(1)(i);
+			if (dim == 3){
+				norm_square += m_solver->m_analyticVelocity.at(2)(i)
+									* m_solver->m_analyticVelocity.at(2)(i);
+			}
+			if (norm_square > m_maxUAnalytic){
+				m_maxUAnalytic = norm_square;
+			}
+		}
+		m_maxUAnalytic = sqrt(m_maxUAnalytic);
+
 		// substract numeric from analytic velocity
 		m_solver->m_analyticVelocity.at(0).add(-1.0, numericVelocity.at(0));
 		m_solver->m_analyticVelocity.at(1).add(-1.0, numericVelocity.at(1));

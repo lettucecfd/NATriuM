@@ -15,6 +15,8 @@
 #include "problemdescription/PeriodicBoundary.h"
 #include "problemdescription/MinLeeBoundary.h"
 
+#include "utilities/Logging.h"
+
 namespace natrium {
 
 CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
@@ -92,7 +94,7 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dea
 	t += m_startTime;
 	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
 	// assert (t > 0.1);
-	if (t < 0.001) {
+	if (t < 0.1) {
 		velocity(0) = 0;
 		velocity(1) = 0;
 		return;
@@ -109,11 +111,16 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dea
 				* sin(lambda * x(1));
 		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i =
 		sum += increment;
-		assert(i < 10000);
+		if(i >= 10000){
+			LOG(WARNING) << "Warning: Analytic solution of Couette Flow not converged" << endl;
+			break;
+		}
 		//cout << i << " " << exp(-getViscosity()*lambda*lambda*t) << " " << sum << " " << (i % 2 == 0 ? 1. : -1.) * 2*U/(lambda*L)*exp(-getViscosity()*lambda*lambda*t)*sin(lambda*x(1)) << endl;
 	}
 	// assert convergence of the above asymptotic sum
-	assert(fabs(increment) < 1e-9);
+	if (fabs(increment) >= 1e-9){
+		LOG(WARNING) << "Warning: Increment of analytic solution not beyond threshold 1e-9." << endl;
+	}
 	velocity(0) = sum;
 	velocity(1) = 0.0;
 
