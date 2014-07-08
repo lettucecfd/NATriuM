@@ -40,23 +40,25 @@ int main() {
 	//////////////////////////////////////////////////
 
 	// specify Reynolds number
-	const double Re = 1;
+	const double Re = 2000;
 	// specify Mach number
 	const double Ma = 0.05;
 
 	// Problem description
 	// -------------------
+	double scaling = 1; //sqrt(3) * U / Ma;
 	// velocity of top plate
-	const double U = 0.01;
+	const double U = scaling * Ma / sqrt(3); //0.01;
 	// length of quadratic domain
 	const double L = 1.0;
 	// Viscosity
 	const double viscosity = U * L / Re;
 	// starting time
-	const double t0 = 30.0;
+	//const double t0 = 30.0;
+	const double t0 = 0.0;
 
 	// chose scaling so that the right Mach number is achieved
-	double scaling = sqrt(3) * U / Ma;
+
 	size_t refinementLevel = 2;
 	size_t orderOfFiniteElement = 4;
 
@@ -92,7 +94,7 @@ int main() {
 			// setup configuration
 			std::stringstream dirName;
 			dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-wall/"
-					<< orderOfFiniteElement << "_" << refinementLevel;
+					<< orderOfFiniteElement << "_" << refinementLevel << "_" << dt;
 			shared_ptr<SolverConfiguration> configuration = make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
@@ -105,7 +107,7 @@ int main() {
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(0);
 			configuration->setTimeStepSize(dt);
-			configuration->setNumberOfTimeSteps(1.0 / dt);
+			configuration->setNumberOfTimeSteps(40.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 			configuration->setNumberOfTimeSteps(1);
