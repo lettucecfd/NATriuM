@@ -86,7 +86,8 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	return boundaries;
 }
 
-void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const {
+void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t,
+		dealii::Point<2>& velocity) const {
 	// the analytic solution is given by an asymptotic series
 	double U = getCharacteristicVelocity();
 	double L = getCharacteristicLength();
@@ -104,27 +105,29 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dea
 	double lambda = 0.0;
 	const double PI = atan(1) * 4;
 	double increment = 1.0;
-	for (size_t i = 1; fabs(increment) > 1e-20; i++) {
+	double exp_expression = 0.0;
+
+	for (size_t i = 1; i <= 10000; i++) {
+		// calculate term in series
 		lambda = i * PI / L;
+		exp_expression = exp(-getViscosity() * lambda * lambda * t);
 		increment = (i % 2 == 0 ? 1. : -1.) * 2 * U / (lambda * L)
-				* exp(-getViscosity() * lambda * lambda * t)
-				* sin(lambda * x(1));
-		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i =
+				* exp_expression * sin(lambda * x(1));
+		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i
 		sum += increment;
-		if(i >= 10000){
-			LOG(WARNING) << "Warning: Analytic solution of Couette Flow not converged" << endl;
+		// stop conditions: a) converged, b)
+		if (exp_expression < 1e-20) {
 			break;
 		}
-		//cout << i << " " << exp(-getViscosity()*lambda*lambda*t) << " " << sum << " " << (i % 2 == 0 ? 1. : -1.) * 2*U/(lambda*L)*exp(-getViscosity()*lambda*lambda*t)*sin(lambda*x(1)) << endl;
 	}
 	// assert convergence of the above asymptotic sum
-	if (fabs(increment) >= 1e-9){
-		LOG(WARNING) << "Warning: Increment of analytic solution not beyond threshold 1e-9." << endl;
+	if (exp_expression >= 1e-25) {
+		LOG(WARNING) << "Warning: Analytic solution series did not converge."
+				<< endl;
 	}
 	velocity(0) = sum;
 	velocity(1) = 0.0;
 
 }
-
 
 } /* namespace natrium */
