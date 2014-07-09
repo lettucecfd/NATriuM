@@ -79,7 +79,7 @@ int main() {
 			<< "#  orderOfFe  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 12; orderOfFiniteElement++) {
+	for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 12; orderOfFiniteElement+= 2) {
 		timeFile << endl << "# order FE = " << orderOfFiniteElement << endl;
 		orderFile << endl << "# order FE = " << orderOfFiniteElement << endl;
 		cout << endl << "order FE = " << orderOfFiniteElement << endl;
