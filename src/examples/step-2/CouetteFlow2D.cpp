@@ -121,7 +121,7 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t,
 		}
 	}
 	// assert convergence of the above asymptotic sum
-	if (exp_expression >= 1e-25) {
+	if (exp_expression >= 1e-12) {
 		LOG(WARNING) << "Warning: Analytic solution series did not converge."
 				<< endl;
 	}

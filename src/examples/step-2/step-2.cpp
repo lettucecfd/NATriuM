@@ -6,6 +6,7 @@
  */
 
 #include <stdlib.h>
+#include <sstream>
 
 #include "deal.II/numerics/data_out.h"
 
@@ -52,6 +53,7 @@ int main() {
 			SolverConfiguration>();
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-2";
+	cout << dirname.str().c_str() << endl;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);

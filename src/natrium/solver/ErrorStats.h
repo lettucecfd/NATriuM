@@ -73,7 +73,9 @@ public:
 		// this function must not be called more often than once per iteration
 		// as the data for the analytic solution is constantly overwritten
 		// therefor check a marker value that is set by this function (see below)
-
+		if (m_iterationNumber == m_solver->getIteration()){
+			return;
+		}
 		m_iterationNumber = m_solver->getIteration();
 		m_time = m_solver->getTime();
 		// get analytic and numeric values
