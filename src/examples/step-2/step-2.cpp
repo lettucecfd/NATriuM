@@ -19,8 +19,6 @@
 
 #include "CouetteFlow2D.h"
 
-//#define PRINT_SYSTEM_VECTOR
-
 using namespace natrium;
 
 // Main function
@@ -53,7 +51,6 @@ int main() {
 			SolverConfiguration>();
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-2";
-	cout << dirname.str().c_str() << endl;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);

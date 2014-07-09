@@ -65,6 +65,51 @@ inline bool is_angle_small(dealii::Point<2> vector1, dealii::Point<2> vector2,
 	}
 } /* is_angle_small */
 
+inline double maxVelocityNorm(const vector<distributed_vector>& velocity) {
+	// check sizes
+	size_t dim = velocity.size();
+	assert (dim > 1);
+	assert (dim < 4);
+	size_t n = velocity.at(0).size();
+	assert (n == velocity.at(1).size());
+	if (dim == 3){
+		assert (n == velocity.at(2).size());
+	}
+	double max_norm_square = 0.0;
+	for (size_t i = 0; i < n; i++) {
+		double norm_square = 0.0;
+		for (size_t j = 0; j < dim; j++) {
+			norm_square += velocity.at(j)(i) * velocity.at(j)(i);
+		}
+		if (norm_square > max_norm_square) {
+			max_norm_square = norm_square;
+		}
+	}
+	return sqrt(max_norm_square);
+}
+
+inline double velocity2Norm(const vector<distributed_vector>& velocity) {
+	size_t dim = velocity.size();
+	assert (dim > 1);
+	assert (dim < 4);
+	size_t n = velocity.at(0).size();
+	assert (n == velocity.at(1).size());
+	if (dim == 3){
+		assert (n == velocity.at(2).size());
+	}
+
+	double sum = 0.0;
+	for (size_t i = 0; i < n; i++) {
+		double norm_square = 0.0;
+		for (size_t j = 0; j < dim; j++) {
+			norm_square += velocity.at(j)(i) * velocity.at(j)(i);
+		}
+		sum += norm_square;
+	}
+	return sqrt(sum);
+}
+
+
 } /* Math */
 
 /**

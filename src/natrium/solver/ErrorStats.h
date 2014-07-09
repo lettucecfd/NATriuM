@@ -14,6 +14,7 @@
 //#include "BenchmarkCFDSolver.h"-> must not be in there because CFDBenchmarkSolver includes this module
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/Math.h"
 
 namespace natrium {
 template<size_t dim> class BenchmarkCFDSolver;
@@ -94,22 +95,7 @@ public:
 		m_l2DensityError = m_solver->m_analyticDensity.l2_norm();
 
 		// calculate maximum analytic velocity norm
-		size_t n_dofs = m_solver->getNumberOfDoFs();
-		double norm_square = 0.0;
-		for (size_t i = 0; i < n_dofs; i++) {
-			norm_square = m_solver->m_analyticVelocity.at(0)(i)
-					* m_solver->m_analyticVelocity.at(0)(i)
-					+ m_solver->m_analyticVelocity.at(1)(i)
-							* m_solver->m_analyticVelocity.at(1)(i);
-			if (dim == 3){
-				norm_square += m_solver->m_analyticVelocity.at(2)(i)
-									* m_solver->m_analyticVelocity.at(2)(i);
-			}
-			if (norm_square > m_maxUAnalytic){
-				m_maxUAnalytic = norm_square;
-			}
-		}
-		m_maxUAnalytic = sqrt(m_maxUAnalytic);
+		m_maxUAnalytic = Math::maxVelocityNorm(m_solver->m_analyticVelocity);
 
 		// substract numeric from analytic velocity
 		m_solver->m_analyticVelocity.at(0).add(-1.0, numericVelocity.at(0));

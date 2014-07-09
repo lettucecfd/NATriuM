@@ -554,6 +554,11 @@
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/utilities/Logging_test.cpp</location>
 		</link>
 		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/Math_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/utilities/Math_test.cpp</location>
+		</link>
+		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

@@ -31,6 +31,7 @@
 #include "../timeintegration/RungeKutta5LowStorage.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/Math.h"
 
 
 namespace natrium {
@@ -198,19 +199,8 @@ public:
 	size_t getNumberOfDoFs() const {
 		return m_advectionOperator->getNumberOfDoFs();
 	}
-
 	double getMaxVelocityNorm() const {
-		double maxnorm = 0.0;
-		for (size_t i = 0; i < getNumberOfDoFs(); i++) {
-			double norm = 0.0;
-			for (size_t j = 0; j < dim; j++) {
-				norm += m_velocity.at(j)(i) * m_velocity.at(j)(i);
-			}
-			if (norm > maxnorm) {
-				maxnorm = norm;
-			}
-		}
-		return sqrt(maxnorm);
+		return Math::maxVelocityNorm(m_velocity);
 	}
 
 	double getMaxDensityDeviationFrom(double referenceDensity) const {

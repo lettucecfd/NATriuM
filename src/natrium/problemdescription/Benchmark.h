@@ -47,11 +47,14 @@ public:
 	void getAllAnalyticVelocities(double time,
 			vector<distributed_vector>& analyticSolution,
 			const vector<dealii::Point<dim> >& supportPoints) const {
+		// check dimensions
 		assert(analyticSolution.at(0).size() == supportPoints.size());
 		assert(analyticSolution.at(1).size() == supportPoints.size());
 		if (dim == 3)
 			assert(analyticSolution.at(2).size() == supportPoints.size());
 		assert(supportPoints.size() > 0);
+
+		// get analytic velocities
 		dealii::Point<dim> velocity;
 		for (size_t i = 0; i < supportPoints.size(); i++) {
 			getAnalyticVelocity(supportPoints.at(i), time, velocity);
