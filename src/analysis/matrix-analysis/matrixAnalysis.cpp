@@ -23,8 +23,12 @@ template<> matrixAnalysis<3>::matrixAnalysis(shared_ptr<CFDSolver<3> > solver):
 		m_solver(solver) {
 
 }
-template<> matrixAnalysis<2>::~matrixAnalysis();
-template<> matrixAnalysis<3>::~matrixAnalysis();
+template<> matrixAnalysis<2>::~matrixAnalysis(){
+
+}
+template<> matrixAnalysis<3>::~matrixAnalysis(){
+
+}
 
 
 template<size_t dim>

@@ -10,11 +10,13 @@
 
 #include "matrixAnalysis.h"
 
-namespace natrium{
+using namespace natrium;
 
-int main(){
+int main() {
 	//PERIODIC BOUNDARIES
 	cout << "Periodic Boundaries: Calculating spectrum of streaming matrix..."  << endl;
+
+
 
 	cout << "done." << endl;
 
@@ -27,4 +29,4 @@ int main(){
 	return 0;
 }
 
-}
+
