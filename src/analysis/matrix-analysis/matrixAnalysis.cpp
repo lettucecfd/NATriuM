@@ -7,6 +7,11 @@
 
 #include "matrixAnalysis.h"
 
+#include <fstream>
+#include <sstream>
+
+#include "deal.II/lac/lapack_full_matrix.h"
+
 namespace natrium {
 
 // constructor/destructor
@@ -25,11 +30,11 @@ template<> matrixAnalysis<3>::~matrixAnalysis();
 template<size_t dim>
 void matrixAnalysis<dim>::writeSpectrum() {
 	// compute eigenvalues of A
-	vector<std::complex<double> > eigenvalues;
-	copmuteSpectrum(m_solver->getProblemDescription()->getAdvectionOperator()->getSystemMatrix(), eigenvalues);
+/*	vector<std::complex<double> > eigenvalues;
+	computeSpectrum(m_solver->getAdvectionOperator()->getSystemMatrix(), eigenvalues);
 	// scale by time step (=> eigenvalues of dt*A)
 	for (size_t i = 0; i < eigenvalues.size(); i++){
-		eigenvalues.at(i) *= m_solver->getTimeStep();
+		eigenvalues.at(i) *= m_solver->getConfiguration()->getTimeStepSize();
 	}
 	// open file
 	std::stringstream s;
@@ -45,20 +50,21 @@ void matrixAnalysis<dim>::writeSpectrum() {
 	// write eigenvalues
 	for (size_t i = 0; i < eigenvalues.size(); i++){
 		spectrumFile << eigenvalues.at(i).real() << " " << eigenvalues.at(i).imag() << endl;
-	}
+	}*/
 }
 template void matrixAnalysis<2>::writeSpectrum();
 template void matrixAnalysis<3>::writeSpectrum();
 
-
+/*
 template<size_t dim>
-static void matrixAnalysis<dim>::computeSpectrum(const distributed_sparse_block_matrix& matrix,
+void matrixAnalysis<dim>::computeSpectrum(const distributed_sparse_block_matrix& matrix,
 		vector<std::complex<double> > & eigenvalues) {
 	// make sure the matrix is quadratic
 	assert (matrix.n() == matrix.m());
 	eigenvalues.clear();
 	// use the LAPACK routine for eigenvalues
-	dealii::LAPACKFullMatrix<double> fullSystemMatrix = 0;
+	dealii::LAPACKFullMatrix<double> fullSystemMatrix(matrix.n(), matrix.n());
+	fullSystemMatrix = 0;
 	fullSystemMatrix.copy_from(matrix);
 	fullSystemMatrix.compute_eigenvalues();
 	// write eigenvalues to vector
@@ -67,9 +73,9 @@ static void matrixAnalysis<dim>::computeSpectrum(const distributed_sparse_block_
 		eigenvalues.at(i) = fullSystemMatrix.eigenvalue(i);
 	}
 }
-template static void matrixAnalysis<2>::computeSpectrum(const distributed_sparse_block_matrix& matrix,
+template void matrixAnalysis<2>::computeSpectrum(const distributed_sparse_block_matrix& matrix,
 		vector<std::complex<double> > & eigenvalues);
-template static void matrixAnalysis<3>::computeSpectrum(const distributed_sparse_block_matrix& matrix,
+template void matrixAnalysis<3>::computeSpectrum(const distributed_sparse_block_matrix& matrix,
 		vector<std::complex<double> > & eigenvalues);
-
+*/
 } /* namespace natrium */

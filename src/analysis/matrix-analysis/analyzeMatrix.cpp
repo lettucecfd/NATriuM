@@ -23,6 +23,8 @@ int main(){
 	cout << "Wall Boundaries: Calculating spectrum of streaming matrix..." << endl;
 
 	cout << "done." << endl;
+
+	return 0;
 }
 
 }

@@ -267,7 +267,6 @@
 <pathentry kind="mac" name="__GXX_RTTI" path="" value="1"/>
 <pathentry kind="mac" name="__EXCEPTIONS" path="" value="1"/>
 <pathentry kind="mac" name="_GNU_SOURCE" path="" value="1"/>
-<pathentry include="/home/kraemer/eclipse_workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include/deal.II" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include/deal.II/bundled" kind="inc" path="" system="true"/>
@@ -275,6 +274,7 @@
 <pathentry include="/usr/lib/openmpi/include/openmpi" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/petsc-3.4.3/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/petsc-3.4.3/vm_hbrs_pc/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/eclipse_workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/eclipse_workspace/NATriuM/src/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include/boost" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" kind="inc" path="" system="true"/>
@@ -2210,6 +2210,132 @@
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments></buildArguments>
 <buildTarget>convergence-analysis-wall-p.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] matrix-analysis" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>matrix-analysis</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] matrix-analysis/fast" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>matrix-analysis/fast</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Build" path="[Targets]/[exe] matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildTarget>matrix-analysis</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Clean" path="[Targets]/[exe] matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/local/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/matrix-analysis" "/usr/local/bin/cmake" -P "CMakeFiles/matrix-analysis.dir/cmake_clean.cmake"</buildArguments>
+<buildTarget></buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": all" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>all</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": clean" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>clean</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] __/__/examples/step-1/TaylorGreenVortex2D.cpp.o" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] __/__/examples/step-1/TaylorGreenVortex2D.cpp.i" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] __/__/examples/step-1/TaylorGreenVortex2D.cpp.s" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-1/TaylorGreenVortex2D.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] __/__/examples/step-2/CouetteFlow2D.cpp.o" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] __/__/examples/step-2/CouetteFlow2D.cpp.i" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] __/__/examples/step-2/CouetteFlow2D.cpp.s" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>__/__/examples/step-2/CouetteFlow2D.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] analyzeMatrix.cpp.o" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>analyzeMatrix.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] analyzeMatrix.cpp.i" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>analyzeMatrix.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] analyzeMatrix.cpp.s" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>analyzeMatrix.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] matrixAnalysis.cpp.o" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>matrixAnalysis.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] matrixAnalysis.cpp.i" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>matrixAnalysis.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] matrixAnalysis.cpp.s" path="analysis/matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>matrixAnalysis.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

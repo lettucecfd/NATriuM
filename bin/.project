@@ -1103,5 +1103,75 @@
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Source Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Source Files/analyzeMatrix.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/analysis/matrix-analysis/analyzeMatrix.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Source Files/matrixAnalysis.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/analysis/matrix-analysis/matrixAnalysis.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Source Files/TaylorGreenVortex2D.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Source Files/CouetteFlow2D.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-2/CouetteFlow2D.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Header Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Header Files/matrixAnalysis.h</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/analysis/matrix-analysis/matrixAnalysis.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Header Files/TaylorGreenVortex2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-1/TaylorGreenVortex2D.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Header Files/CouetteFlow2D.h</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-2/CouetteFlow2D.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/CMake Rules</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Resources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] matrix-analysis/Object Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

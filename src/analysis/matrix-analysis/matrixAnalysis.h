@@ -8,15 +8,11 @@
 #ifndef MATRIXANALYSIS_H_
 #define MATRIXANALYSIS_H_
 
-#include "complex.h"
-#include "fstream"
+//#include "complex.h"
 
-#include "deal.II/lac/lapack_full_matrix.h"
-
-#include "timeintegration/RungeKutta5LowStorage.h"
-#include "utilities/BasicNames.h"
-#include "problemdescription/ProblemDescription.h"
 #include "solver/CFDSolver.h"
+
+#include "utilities/BasicNames.h"
 
 namespace natrium {
 
