@@ -1,0 +1,10 @@
+Information about the Figure depicting the eigenvalues
+plot_spectrum.eps, created 31.07.2014
+
+CFL = 1
+Refinement Level = 3
+periodic: Taylor-Green Vortex (as usual with L=2PI)
+wall: Couette Flow with U = 1/2PI 
+
+..._p2 -> Order of FE = 2
+..._p2 -> Order of FE = 3

@@ -34,7 +34,7 @@ template<> matrixAnalysis<3>::~matrixAnalysis(){
 template<size_t dim>
 void matrixAnalysis<dim>::writeSpectrum() {
 	// compute eigenvalues of A
-/*	vector<std::complex<double> > eigenvalues;
+	vector<std::complex<double> > eigenvalues;
 	computeSpectrum(m_solver->getAdvectionOperator()->getSystemMatrix(), eigenvalues);
 	// scale by time step (=> eigenvalues of dt*A)
 	for (size_t i = 0; i < eigenvalues.size(); i++){
@@ -54,12 +54,12 @@ void matrixAnalysis<dim>::writeSpectrum() {
 	// write eigenvalues
 	for (size_t i = 0; i < eigenvalues.size(); i++){
 		spectrumFile << eigenvalues.at(i).real() << " " << eigenvalues.at(i).imag() << endl;
-	}*/
+	}
 }
 template void matrixAnalysis<2>::writeSpectrum();
 template void matrixAnalysis<3>::writeSpectrum();
 
-/*
+
 template<size_t dim>
 void matrixAnalysis<dim>::computeSpectrum(const distributed_sparse_block_matrix& matrix,
 		vector<std::complex<double> > & eigenvalues) {
@@ -81,5 +81,5 @@ template void matrixAnalysis<2>::computeSpectrum(const distributed_sparse_block_
 		vector<std::complex<double> > & eigenvalues);
 template void matrixAnalysis<3>::computeSpectrum(const distributed_sparse_block_matrix& matrix,
 		vector<std::complex<double> > & eigenvalues);
-*/
+
 } /* namespace natrium */

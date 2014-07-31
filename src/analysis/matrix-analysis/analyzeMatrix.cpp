@@ -5,28 +5,121 @@
  *      Author: kraemer
  */
 
+#include "matrixAnalysis.h"
+
+#include "solver/BenchmarkCFDSolver.h"
+#include "solver/CFDSolver.h"
+#include "problemdescription/Benchmark.h"
+
+#include "../examples/step-1/TaylorGreenVortex2D.h"
+#include "../examples/step-2/CouetteFlow2D.h"
 
 #include "utilities/BasicNames.h"
-
-#include "matrixAnalysis.h"
 
 using namespace natrium;
 
 int main() {
+
+
+	// ----------------------------------------------------------------------------------------------------
+
+	// set Reynolds and Mach number
+	const double Re = 2000;
+	const double Ma = 0.1;
+	const double PI = 4*atan(1);
+
+	// set order of FE and timeStepSize
+	const size_t refinementLevel = 3;
+
+	// ----------------------------------------------------------------------------------------------------
+
 	//PERIODIC BOUNDARIES
-	cout << "Periodic Boundaries: Calculating spectrum of streaming matrix..."  << endl;
+	cout << "Only periodic Boundaries: Calculating spectrum of streaming matrix..."
+			<< endl;
+	// set Problem so that the right Re and Ma are achieved
+	double U = 1;
+	double dqScaling = sqrt(3) * 1 / Ma;
+	double viscosity = 2*PI*U / Re; // (because L = 1)
 
+	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 5; orderOfFiniteElement++) {
 
+		// configure solver
+		shared_ptr<SolverConfiguration> configuration = make_shared<
+				SolverConfiguration>();
+		std::stringstream dirname;
+		dirname << getenv("NATRIUM_HOME") << "/matrix-analysis/taylorgreen"
+				<< orderOfFiniteElement << "_" << refinementLevel;
+		configuration->setOutputDirectory(dirname.str());
+		configuration->setRestartAtLastCheckpoint(false);
+		configuration->setUserInteraction(false);
+		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+		configuration->setStencilScaling(dqScaling);
+		// set CFL = 1
+		configuration->setTimeStepSize(2*PI/(pow(2.0,refinementLevel)*dqScaling*(orderOfFiniteElement-1)));
+		configuration->setCommandLineVerbosity(0);
 
+		// create solver
+		shared_ptr<TaylorGreenVortex2D> tgv = make_shared<TaylorGreenVortex2D>(
+				viscosity, refinementLevel);
+		shared_ptr<Benchmark<2> > tgBenchmark = tgv;
+		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
+				configuration, tgBenchmark);
+
+		// analyze eigenvalues
+		matrixAnalysis<2> analyzer(solver);
+		analyzer.writeSpectrum();
+
+	}
 	cout << "done." << endl;
 
+	// ----------------------------------------------------------------------------------------------------
 
 	//WALL BOUNDARIES
-	cout << "Wall Boundaries: Calculating spectrum of streaming matrix..." << endl;
+	cout << "With wall Boundaries: Calculating spectrum of streaming matrix..."
+			<< endl;
 
+	// set Problem so that the right Re and Ma are achieved
+	// set consistent U:     U/L (couette) = U/L (taylor-green) = 1/2PI
+	U = 1 / (2*PI);// / sqrt(3) * Ma;
+	dqScaling = sqrt(3) * U / Ma;
+	viscosity = U / Re; // (because L = 1)
+	// in order to start from a continuous solution, do not start at t=0
+	const double startTime = 0.0;
+	// set small time step size
+
+	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 5; orderOfFiniteElement++) {
+
+		// configure solver
+		shared_ptr<SolverConfiguration> configuration = make_shared<
+				SolverConfiguration>();
+		std::stringstream dirname;
+		dirname << getenv("NATRIUM_HOME") << "/matrix-analysis/couette"
+				<< orderOfFiniteElement << "_" << refinementLevel;
+		configuration->setOutputDirectory(dirname.str());
+		configuration->setRestartAtLastCheckpoint(false);
+		configuration->setUserInteraction(false);
+		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+		configuration->setStencilScaling(dqScaling);
+		// set CFL = 1
+		configuration->setTimeStepSize(1.0/(pow(2.0,refinementLevel)*dqScaling*(orderOfFiniteElement-1)));
+		configuration->setCommandLineVerbosity(0);
+
+		// create solver
+		shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(
+				viscosity, U, refinementLevel, 1.0, startTime);
+		shared_ptr<Benchmark<2> > couetteProblem = couetteFlow;
+		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
+				configuration, couetteProblem);
+
+		// analyze eigenvalues
+		matrixAnalysis<2> analyzer(solver);
+		analyzer.writeSpectrum();
+
+	}
 	cout << "done." << endl;
+
+	// ----------------------------------------------------------------------------------------------------
 
 	return 0;
 }
-
 
