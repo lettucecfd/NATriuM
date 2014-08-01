@@ -44,10 +44,10 @@ public:
 	 * The pseudospectrum contains the eigenvalues of all matrices that are "close to the matrix A", i.e. all entries can be
 	 * perturbed by a small number.
 	 * @param numberOfCycles The number of matrices "close to A", whose eigenvalues will be calculated. Default: 10.
-	 * @param perturbation Maximal perturbation of the matrix entries. Default: 0.01.
+	 * @param perturbation Maximal perturbation of the matrix entries. Default: 0.1.
 	 * @note If the output directory does not exist: Write to /tmp/NATrium_pseudospectrum.txt
 	 */
-	void writePseudospectrum(size_t numberOfCycles = 10, double perturbation = 0.01) ;
+	void writePseudospectrum(size_t numberOfCycles = 10, double perturbation = 0.1) ;
 
 	/**
 	 * @short Compute the eigenvalues of a sparse block matrix

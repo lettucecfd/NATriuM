@@ -5,6 +5,17 @@ CFL = 1
 Refinement Level = 3
 periodic: Taylor-Green Vortex (as usual with L=2PI)
 wall: Couette Flow with U = 1/2PI 
+pseudospectrum with perturbation = 0.1
 
 ..._p2 -> Order of FE = 2
 ..._p2 -> Order of FE = 3
+
+
+For plot_spectrum_p3.eps:
+- The bigger region of eigenvalues comes from the calculation of the CFL number
+  which assumes equidistant intervals. The dofs however do not reside in equidistant
+  vertices, but on GLL points. Through applying a corrected CFL number
+  
+  CFL = dt * U / min(dx)
+  
+  the eigenvalues will be roughly in the same region as before.
