@@ -61,7 +61,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -91,33 +90,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>First tutorial: Couette Flow in 2D.  
+<p>Taylor-Green vortex in 2D (only periodic walls)  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;fstream&gt;</code><br/>
+<code>#include &lt;time.h&gt;</code><br/>
+<code>#include &lt;stdlib.h&gt;</code><br/>
 <code>#include &quot;deal.II/numerics/data_out.h&quot;</code><br/>
-<code>#include &quot;<a class="el" href="CFDSolver_8h_source.html">solver/CFDSolver.h</a>&quot;</code><br/>
+<code>#include &quot;solver/BenchmarkCFDSolver.h&quot;</code><br/>
 <code>#include &quot;<a class="el" href="SolverConfiguration_8h_source.html">solver/SolverConfiguration.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="ProblemDescription_8h_source.html">problemdescription/ProblemDescription.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="Benchmark_8h_source.html">problemdescription/Benchmark.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="BasicNames_8h_source.html">utilities/BasicNames.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="TaylorGreenVortex2D_8h_source.html">TaylorGreenVortex2D.h</a>&quot;</code><br/>
+<code>#include &quot;TaylorGreenVortex2D.h&quot;</code><br/>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a775bad3411ff74d8d2c1eda1bf4a518a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a775bad3411ff74d8d2c1eda1bf4a518a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>getAnalyticSolution</b> (double time, distributed_vector &amp;analyticSolution1, distributed_vector &amp;analyticSolution2, const vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints, const <a class="el" href="classnatrium_1_1TaylorGreenVortex2D.html">TaylorGreenVortex2D</a> &amp;tgVortex)</td></tr>
-<tr class="separator:a775bad3411ff74d8d2c1eda1bf4a518a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> ()</td></tr>
 <tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>First tutorial: Couette Flow in 2D. </p>
-<dl class="section date"><dt>Date</dt><dd>24.10.2013 </dd></dl>
+<div class="textblock"><p>Taylor-Green vortex in 2D (only periodic walls) </p>
+<dl class="section date"><dt>Date</dt><dd>05.06.2014 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:11 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:19 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

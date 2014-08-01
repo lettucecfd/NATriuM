@@ -61,7 +61,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -145,34 +144,79 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        }</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;} <span class="comment">/* is_angle_small */</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;} <span class="comment">/* Math */</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="classnatrium_1_1own__double__less.html">   74</a></span>&#160;<span class="keyword">class </span><a class="code" href="classnatrium_1_1own__double__less.html">own_double_less</a>: <span class="keyword">public</span> std::binary_function&lt;double, double, bool&gt; {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <a class="code" href="classnatrium_1_1own__double__less.html">own_double_less</a>(<span class="keywordtype">double</span> arg_ = 1e-8) :</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                        epsilon(arg_) {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordtype">bool</span> operator()(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;left, <span class="keyword">const</span> <span class="keywordtype">double</span> &amp;right)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                <span class="comment">// you can choose other way to make decision</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                <span class="comment">// (The original version is: return left &lt; right;)</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                <span class="keywordflow">return</span> (abs(left - right) &gt; epsilon) &amp;&amp; (left &lt; right);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">double</span> epsilon;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;};</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;}</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">//namespace natrium</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* MATH_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">double</span> maxVelocityNorm(<span class="keyword">const</span> vector&lt;distributed_vector&gt;&amp; velocity) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="comment">// check sizes</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordtype">size_t</span> dim = velocity.size();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        assert (dim &gt; 1);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        assert (dim &lt; 4);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordtype">size_t</span> n = velocity.at(0).size();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        assert (n == velocity.at(1).size());</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">if</span> (dim == 3){</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                assert (n == velocity.at(2).size());</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        }</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">double</span> max_norm_square = 0.0;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; n; i++) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                <span class="keywordtype">double</span> norm_square = 0.0;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; dim; j++) {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                        norm_square += velocity.at(j)(i) * velocity.at(j)(i);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                <span class="keywordflow">if</span> (norm_square &gt; max_norm_square) {</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                        max_norm_square = norm_square;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keywordflow">return</span> sqrt(max_norm_square);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">double</span> velocity2Norm(<span class="keyword">const</span> vector&lt;distributed_vector&gt;&amp; velocity) {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordtype">size_t</span> dim = velocity.size();</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        assert (dim &gt; 1);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        assert (dim &lt; 4);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordtype">size_t</span> n = velocity.at(0).size();</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        assert (n == velocity.at(1).size());</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordflow">if</span> (dim == 3){</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                assert (n == velocity.at(2).size());</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordtype">double</span> sum = 0.0;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; n; i++) {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                <span class="keywordtype">double</span> norm_square = 0.0;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; dim; j++) {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                        norm_square += velocity.at(j)(i) * velocity.at(j)(i);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                sum += norm_square;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        }</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordflow">return</span> sqrt(sum);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;}</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;} <span class="comment">/* Math */</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="classnatrium_1_1own__double__less.html">  119</a></span>&#160;<span class="keyword">class </span><a class="code" href="classnatrium_1_1own__double__less.html">own_double_less</a>: <span class="keyword">public</span> std::binary_function&lt;double, double, bool&gt; {</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <a class="code" href="classnatrium_1_1own__double__less.html">own_double_less</a>(<span class="keywordtype">double</span> arg_ = 1e-8) :</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                        epsilon(arg_) {</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordtype">bool</span> operator()(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;left, <span class="keyword">const</span> <span class="keywordtype">double</span> &amp;right)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                <span class="comment">// you can choose other way to make decision</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                <span class="comment">// (The original version is: return left &lt; right;)</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                <span class="keywordflow">return</span> (abs(left - right) &gt; epsilon) &amp;&amp; (left &lt; right);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordtype">double</span> epsilon;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;};</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;}</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">//namespace natrium</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* MATH_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="BasicNames_8h_html"><div class="ttname"><a href="BasicNames_8h.html">BasicNames.h</a></div><div class="ttdoc">Definition of the basic typedefs and names used in the Code. </div></div>
 <div class="ttc" id="namespacenatrium_1_1Math_html_af6c85a423e8c6ec87858a3d48669a271"><div class="ttname"><a href="namespacenatrium_1_1Math.html#af6c85a423e8c6ec87858a3d48669a271">natrium::Math::scalar_vector</a></div><div class="ttdeci">numeric_vector scalar_vector(double a, const numeric_vector &amp;x)</div><div class="ttdoc">scalar times vector </div><div class="ttdef"><b>Definition:</b> Math.h:34</div></div>
 <div class="ttc" id="namespacenatrium_1_1Math_html_a60a79394533003516ee1895b0cb93c73"><div class="ttname"><a href="namespacenatrium_1_1Math.html#a60a79394533003516ee1895b0cb93c73">natrium::Math::scalar_product</a></div><div class="ttdeci">double scalar_product(const numeric_vector &amp;x, const numeric_vector &amp;y)</div><div class="ttdoc">scalar product </div><div class="ttdef"><b>Definition:</b> Math.h:24</div></div>
 <div class="ttc" id="namespacenatrium_1_1Math_html_a951fe967a78de6add632ac1944465bf3"><div class="ttname"><a href="namespacenatrium_1_1Math.html#a951fe967a78de6add632ac1944465bf3">natrium::Math::scale_vector</a></div><div class="ttdeci">void scale_vector(double a, numeric_vector &amp;x)</div><div class="ttdoc">scale existing vector </div><div class="ttdef"><b>Definition:</b> Math.h:29</div></div>
-<div class="ttc" id="classnatrium_1_1own__double__less_html"><div class="ttname"><a href="classnatrium_1_1own__double__less.html">natrium::own_double_less</a></div><div class="ttdoc">function to compare doubles as map keys; regards two doubles equal if they are in a epsilon(=1e-7)-ra...</div><div class="ttdef"><b>Definition:</b> Math.h:74</div></div>
+<div class="ttc" id="classnatrium_1_1own__double__less_html"><div class="ttname"><a href="classnatrium_1_1own__double__less.html">natrium::own_double_less</a></div><div class="ttdoc">function to compare doubles as map keys; regards two doubles equal if they are in a epsilon(=1e-7)-ra...</div><div class="ttdef"><b>Definition:</b> Math.h:119</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:11 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:19 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

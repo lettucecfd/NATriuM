@@ -35,12 +35,12 @@ void \hyperlink{classnatrium_1_1CollisionModel_a01fae50f538a52a86214db46c1dcaeaa
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1CollisionModel_af8641f834d40077437a57c637c9572b1}{static double \hyperlink{classnatrium_1_1CollisionModel_af8641f834d40077437a57c637c9572b1}{calculate\-Relaxation\-Parameter} (double viscosity, double time\-Step\-Size, boost\-::shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} $>$ boltzmann\-Model)}\label{classnatrium_1_1CollisionModel_af8641f834d40077437a57c637c9572b1}
+\hypertarget{classnatrium_1_1CollisionModel_a62aa0017c633a5716b1a6b31ec31aa52}{static double \hyperlink{classnatrium_1_1CollisionModel_a62aa0017c633a5716b1a6b31ec31aa52}{calculate\-Relaxation\-Parameter} (double viscosity, double time\-Step\-Size, const boost\-::shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} $>$ boltzmann\-Model)}\label{classnatrium_1_1CollisionModel_a62aa0017c633a5716b1a6b31ec31aa52}
 
 \begin{DoxyCompactList}\small\item\em calculate relaxation parameter \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1CollisionModel_a7b383765606800e9963688150c3a3297}{static double \hyperlink{classnatrium_1_1CollisionModel_a7b383765606800e9963688150c3a3297}{calculate\-Optimal\-Time\-Step} (double viscosity, const boost\-::shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} $>$ boltzmann\-Model)}\label{classnatrium_1_1CollisionModel_a7b383765606800e9963688150c3a3297}
+\hypertarget{classnatrium_1_1CollisionModel_abb8f6d14ca6994afd4c720e42f778df5}{static double \hyperlink{classnatrium_1_1CollisionModel_abb8f6d14ca6994afd4c720e42f778df5}{calculate\-Optimal\-Time\-Step} (double dx, const boost\-::shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} $>$ boltzmann\-Model)}\label{classnatrium_1_1CollisionModel_abb8f6d14ca6994afd4c720e42f778df5}
 
-\begin{DoxyCompactList}\small\item\em calculate the time step, for which tau = 1 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em calculate the time step, so that the Courant number is 1 for the diagonal directions \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 

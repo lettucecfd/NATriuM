@@ -42,106 +42,32 @@ private:
 	double m_maxUAnalytic;
 
 public:
+	/**
+	 * @short Constructor
+	 * @param cfdsolver Instance of CFDSolver object
+	 * @param tableFileName Default: "" means: switch output off
+	 */
 	ErrorStats(BenchmarkCFDSolver<dim> * cfdsolver,
-			const std::string tableFileName = "") :
-			m_solver(cfdsolver), m_filename(tableFileName), m_outputOff(
-					tableFileName == "") {
-		// set information
-		m_iterationNumber = 100000000037;
-		m_time = 0.0;
-		m_maxVelocityError = 0.0;
-		m_maxDensityError = 0.0;
-		m_l2VelocityError = 0.0;
-		m_l2DensityError = 0.0;
-		m_maxUAnalytic = 0.0;
+			const std::string tableFileName = "") ;
 
-		// create file (if necessary)
-		if (m_solver->getIterationStart() > 0) {
-			m_errorsTableFile = make_shared<std::fstream>(tableFileName,
-					std::fstream::out | std::fstream::app);
-		} else {
-			m_errorsTableFile = make_shared<std::fstream>(tableFileName,
-					std::fstream::out);
-			printHeaderLine();
-		}
-	}
-	void printHeaderLine() {
-		(*m_errorsTableFile)
-				<< "#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
-				<< endl;
-	}
-	void update() {
-		// this function must not be called more often than once per iteration
-		// as the data for the analytic solution is constantly overwritten
-		// therefor check a marker value that is set by this function (see below)
-		if (m_iterationNumber == m_solver->getIteration()){
-			return;
-		}
-		m_iterationNumber = m_solver->getIteration();
-		m_time = m_solver->getTime();
-		// get analytic and numeric values
-		// TODO: only assign once (see. addAnalyticSolutionToOutput)
-		m_solver->m_benchmark->getAllAnalyticVelocities(m_solver->getTime(),
-				m_solver->m_analyticVelocity, m_solver->m_supportPoints);
-		m_solver->m_benchmark->getAllAnalyticDensities(m_solver->getTime(),
-				m_solver->m_analyticDensity, m_solver->m_supportPoints);
-		const vector<distributed_vector>& numericVelocity =
-				m_solver->getVelocity();
-		const distributed_vector& numericDensity = m_solver->getDensity();
+	/**
+	 * @short write header line to table  file
+	 */
+	void printHeaderLine();
 
-		//#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2
-		m_solver->m_analyticDensity.add(-1.0, numericDensity);
-		m_maxDensityError = m_solver->m_analyticDensity.linfty_norm();
-		m_l2DensityError = m_solver->m_analyticDensity.l2_norm();
+	/**
+	 * @short write information of the current iteration to table file
+	 */
+	void printNewLine();
 
-		// calculate maximum analytic velocity norm
-		m_maxUAnalytic = Math::maxVelocityNorm(m_solver->m_analyticVelocity);
+	/**
+	 * @short update errors for the current iteration
+	 */
+	void update();
 
-		// substract numeric from analytic velocity
-		m_solver->m_analyticVelocity.at(0).add(-1.0, numericVelocity.at(0));
-		m_solver->m_analyticVelocity.at(1).add(-1.0, numericVelocity.at(1));
-		if (dim == 3) {
-			m_solver->m_analyticVelocity.at(2).add(-1.0, numericVelocity.at(2));
-		}
-		// calculate squares
-		m_solver->m_analyticVelocity.at(0).scale(
-				m_solver->m_analyticVelocity.at(0));
-		m_solver->m_analyticVelocity.at(1).scale(
-				m_solver->m_analyticVelocity.at(1));
-		if (dim == 3) {
-			m_solver->m_analyticVelocity.at(2).scale(
-					m_solver->m_analyticVelocity.at(2));
-		}
-		// calculate ||error (pointwise)||^2
-		m_solver->m_analyticVelocity.at(0).add(
-				m_solver->m_analyticVelocity.at(1));
-		if (dim == 3) {
-			m_solver->m_analyticVelocity.at(0).add(
-					m_solver->m_analyticVelocity.at(2));
-		}
-		// calculate || error (pointwise) ||
-		for (size_t i = 0; i < m_solver->getNumberOfDoFs(); i++) {
-			m_solver->m_analyticVelocity.at(0)(i) = sqrt(
-					m_solver->m_analyticVelocity.at(0)(i));
-		}
-		m_maxVelocityError = m_solver->m_analyticVelocity.at(0).linfty_norm();
-		m_l2VelocityError = m_solver->m_analyticVelocity.at(0).l2_norm();
-
-		// set marker value that indicates that this function has already been called
-		// for the present data
-		m_solver->m_analyticVelocity.at(1)(0) = 31415926;
-	} /*update*/
-
-	void printNewLine() {
-		if (not isUpToDate()) {
-			update();
-		}
-		(*m_errorsTableFile) << m_iterationNumber << " " << m_time << " "
-				<< m_maxUAnalytic << " " << m_maxVelocityError << " "
-				<< m_maxDensityError << " " << m_l2VelocityError << " "
-				<< m_l2DensityError << endl;
-	}
-
+	/**
+	 * @short check, if errors are up-to-date, i.e. have already been calculated in the current iteration
+	 */
 	bool isUpToDate() const {
 		return (m_iterationNumber == m_solver->getIteration());
 	}
@@ -158,22 +84,41 @@ public:
 		return m_iterationNumber;
 	}
 
+	/**
+	 * @short return L2-Error of density, DIVIDED BY NUMBER OF DOFS!!!
+	 *        \f$ \frac{1}{N} \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} }  \f$
+	 * @note The division by the number of dofs is required, because otherwise finer grids result in bigger errors.
+	 */
 	double getL2DensityError() const {
 		return m_l2DensityError;
 	}
 
+	/**
+	 * @short return L2-Error of velocity, DIVIDED BY NUMBER OF DOFS!!!
+	 *  \f$ \frac{1}{N} \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} }  \f$
+	 * @note The division by the number of dofs is required, because otherwise finer grids result in bigger errors.
+	 */
 	double getL2VelocityError() const {
 		return m_l2VelocityError;
 	}
 
+	/**
+	 * @short return max error of density
+	 *        \f$ max | \rho_{i} - \rho_{i}^{ref} |  \f$
+	 */
 	double getMaxDensityError() const {
 		return m_maxDensityError;
 	}
+
 
 	double getMaxUAnalytic() const {
 		return m_maxUAnalytic;
 	}
 
+	/**
+	 * @short return max error of velocity
+	 *        \f$ max  \|u_{i} - u_{i}^{ref}\|_{2}  \f$
+	 */
 	double getMaxVelocityError() const {
 		return m_maxVelocityError;
 	}

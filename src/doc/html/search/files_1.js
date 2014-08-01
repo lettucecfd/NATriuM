@@ -2,6 +2,8 @@ var searchData=
 [
   ['basicnames_2eh',['BasicNames.h',['../BasicNames_8h.html',1,'']]],
   ['basicnames_5ftest_2ecpp',['BasicNames_test.cpp',['../BasicNames__test_8cpp.html',1,'']]],
+  ['benchmark_2ecpp',['Benchmark.cpp',['../Benchmark_8cpp.html',1,'']]],
+  ['benchmark_2eh',['Benchmark.h',['../Benchmark_8h.html',1,'']]],
   ['bgktransformed_2ecpp',['BGKTransformed.cpp',['../BGKTransformed_8cpp.html',1,'']]],
   ['bgktransformed_2eh',['BGKTransformed.h',['../BGKTransformed_8h.html',1,'']]],
   ['bgktransformed_5ftest_2ecpp',['BGKTransformed_test.cpp',['../BGKTransformed__test_8cpp.html',1,'']]],

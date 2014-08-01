@@ -112,12 +112,12 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWallTestDomain2D.html#af086a6015fed51c4e1bd14e39fa52971">~WallTestDomain2D</a> ()</td></tr>
 <tr class="memdesc:af086a6015fed51c4e1bd14e39fa52971"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br/></td></tr>
 <tr class="separator:af086a6015fed51c4e1bd14e39fa52971"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11b249db20612e04d2f0857c96e234b0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWallTestDomain2D.html#a11b249db20612e04d2f0857c96e234b0">applyInitialDensities</a> (distributed_vector &amp;initialDensities, vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </td></tr>
-<tr class="memdesc:a11b249db20612e04d2f0857c96e234b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial densities  <a href="#a11b249db20612e04d2f0857c96e234b0">More...</a><br/></td></tr>
-<tr class="separator:a11b249db20612e04d2f0857c96e234b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2921c1be674bd66d8d297c979bb84f2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWallTestDomain2D.html#ad2921c1be674bd66d8d297c979bb84f2">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </td></tr>
-<tr class="memdesc:ad2921c1be674bd66d8d297c979bb84f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial velocities  <a href="#ad2921c1be674bd66d8d297c979bb84f2">More...</a><br/></td></tr>
-<tr class="separator:ad2921c1be674bd66d8d297c979bb84f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a725e16638909ea1474033723eb47d7db"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWallTestDomain2D.html#a725e16638909ea1474033723eb47d7db">applyInitialDensities</a> (distributed_vector &amp;initialDensities, const vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </td></tr>
+<tr class="memdesc:a725e16638909ea1474033723eb47d7db"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial densities  <a href="#a725e16638909ea1474033723eb47d7db">More...</a><br/></td></tr>
+<tr class="separator:a725e16638909ea1474033723eb47d7db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18698926c1b06762119e4b1ec6f865df"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWallTestDomain2D.html#a18698926c1b06762119e4b1ec6f865df">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, const vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </td></tr>
+<tr class="memdesc:a18698926c1b06762119e4b1ec6f865df"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial velocities  <a href="#a18698926c1b06762119e4b1ec6f865df">More...</a><br/></td></tr>
+<tr class="separator:a18698926c1b06762119e4b1ec6f865df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classnatrium_1_1ProblemDescription"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classnatrium_1_1ProblemDescription')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classnatrium_1_1ProblemDescription.html">natrium::ProblemDescription&lt; 2 &gt;</a></td></tr>
 <tr class="memitem:aae378c7eb216b616de56dfcd162c02c2 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae378c7eb216b616de56dfcd162c02c2"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#aae378c7eb216b616de56dfcd162c02c2">ProblemDescription</a> (shared_ptr&lt; dealii::Triangulation&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)</td></tr>
@@ -135,12 +135,12 @@ const shared_ptr<br class="typebreak"/>
 const shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getBoundaries</b> () const</td></tr>
 <tr class="separator:abb061fe78c8d289fe2a4a9000015d842 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4ccefafd2888510038259445076fed6 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#ab4ccefafd2888510038259445076fed6">applyInitialDensities</a> (distributed_vector &amp;initialDensities, vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
-<tr class="memdesc:ab4ccefafd2888510038259445076fed6 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial densities  <a href="#ab4ccefafd2888510038259445076fed6">More...</a><br/></td></tr>
-<tr class="separator:ab4ccefafd2888510038259445076fed6 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28306325c69e7d2086a3dd7f8c514b21 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#a28306325c69e7d2086a3dd7f8c514b21">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
-<tr class="memdesc:a28306325c69e7d2086a3dd7f8c514b21 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial velocities  <a href="#a28306325c69e7d2086a3dd7f8c514b21">More...</a><br/></td></tr>
-<tr class="separator:a28306325c69e7d2086a3dd7f8c514b21 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f3da77af3942e626677cbdb04d683a9 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#a2f3da77af3942e626677cbdb04d683a9">applyInitialDensities</a> (distributed_vector &amp;initialDensities, const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
+<tr class="memdesc:a2f3da77af3942e626677cbdb04d683a9 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial densities  <a href="#a2f3da77af3942e626677cbdb04d683a9">More...</a><br/></td></tr>
+<tr class="separator:a2f3da77af3942e626677cbdb04d683a9 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a545b19d87ec6dc9c27e8740097f7cace inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#a545b19d87ec6dc9c27e8740097f7cace">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
+<tr class="memdesc:a545b19d87ec6dc9c27e8740097f7cace inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial velocities  <a href="#a545b19d87ec6dc9c27e8740097f7cace">More...</a><br/></td></tr>
+<tr class="separator:a545b19d87ec6dc9c27e8740097f7cace inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae588b1e0ce4dd89e2fcfbb0c191b1c41 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae588b1e0ce4dd89e2fcfbb0c191b1c41"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setTriangulation</b> (const shared_ptr&lt; dealii::Triangulation&lt; dim &gt; &gt; &amp;triangulation)</td></tr>
 <tr class="separator:ae588b1e0ce4dd89e2fcfbb0c191b1c41 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,7 +194,7 @@ virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>getCharacte
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a11b249db20612e04d2f0857c96e234b0"></a>
+<a class="anchor" id="a725e16638909ea1474033723eb47d7db"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -210,7 +210,7 @@ virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>getCharacte
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">const vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>supportPoints</em>&#160;</td>
         </tr>
         <tr>
@@ -237,7 +237,7 @@ virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>getCharacte
 
 </div>
 </div>
-<a class="anchor" id="ad2921c1be674bd66d8d297c979bb84f2"></a>
+<a class="anchor" id="a18698926c1b06762119e4b1ec6f865df"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -253,7 +253,7 @@ virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>getCharacte
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">const vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>supportPoints</em>&#160;</td>
         </tr>
         <tr>
@@ -286,7 +286,7 @@ virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>getCharacte
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:12 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:20 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

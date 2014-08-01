@@ -24,9 +24,9 @@ Inheritance diagram for natrium\-:\-:Lid\-Driven\-Cavity2\-D\-:\begin{figure}[H]
 \hypertarget{classnatrium_1_1LidDrivenCavity2D_a8ae5029b008eb3d3c810bae81440b29c}{virtual \hyperlink{classnatrium_1_1LidDrivenCavity2D_a8ae5029b008eb3d3c810bae81440b29c}{$\sim$\-Lid\-Driven\-Cavity2\-D} ()}\label{classnatrium_1_1LidDrivenCavity2D_a8ae5029b008eb3d3c810bae81440b29c}
 
 \begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1LidDrivenCavity2D_aa01ed12f218d80ab0245fa89371c26cd}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+virtual void \hyperlink{classnatrium_1_1LidDrivenCavity2D_ab4a8629cfd3472847d40cf42a4ca72a8}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
 \begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1LidDrivenCavity2D_a9d5cdae26e13bc43d14f62b390c1d73a}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+virtual void \hyperlink{classnatrium_1_1LidDrivenCavity2D_a6e633e30cfeae500757bdd4c37a5c478}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
 \begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1LidDrivenCavity2D_a35bd8e7b30690dd85f4c6931f62aaa53}{double \hyperlink{classnatrium_1_1LidDrivenCavity2D_a35bd8e7b30690dd85f4c6931f62aaa53}{analytic\-Velocity1} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1LidDrivenCavity2D_a35bd8e7b30690dd85f4c6931f62aaa53}
 
@@ -58,14 +58,14 @@ constructor
 apply boundary values 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1LidDrivenCavity2D_aa01ed12f218d80ab0245fa89371c26cd}{\index{natrium\-::\-Lid\-Driven\-Cavity2\-D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
+\hypertarget{classnatrium_1_1LidDrivenCavity2D_ab4a8629cfd3472847d40cf42a4ca72a8}{\index{natrium\-::\-Lid\-Driven\-Cavity2\-D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
 \index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::LidDrivenCavity2D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}}
 \subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Lid\-Driven\-Cavity2\-D\-::apply\-Initial\-Densities (
 \begin{DoxyParamCaption}
 \item[{distributed\-\_\-vector \&}]{initial\-Densities, }
-\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\item[{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1LidDrivenCavity2D_aa01ed12f218d80ab0245fa89371c26cd}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1LidDrivenCavity2D_ab4a8629cfd3472847d40cf42a4ca72a8}
 
 
 set initial densities 
@@ -77,14 +77,14 @@ set initial densities
 \mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
 \hline
 \end{DoxyParams}
-\hypertarget{classnatrium_1_1LidDrivenCavity2D_a9d5cdae26e13bc43d14f62b390c1d73a}{\index{natrium\-::\-Lid\-Driven\-Cavity2\-D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
+\hypertarget{classnatrium_1_1LidDrivenCavity2D_a6e633e30cfeae500757bdd4c37a5c478}{\index{natrium\-::\-Lid\-Driven\-Cavity2\-D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
 \index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::LidDrivenCavity2D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}}
 \subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Lid\-Driven\-Cavity2\-D\-::apply\-Initial\-Velocities (
 \begin{DoxyParamCaption}
 \item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
-\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\item[{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1LidDrivenCavity2D_a9d5cdae26e13bc43d14f62b390c1d73a}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1LidDrivenCavity2D_a6e633e30cfeae500757bdd4c37a5c478}
 
 
 set initial velocities 

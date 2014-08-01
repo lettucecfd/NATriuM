@@ -21,6 +21,8 @@ var searchData=
   ['solverconfiguration_2ecpp',['SolverConfiguration.cpp',['../SolverConfiguration_8cpp.html',1,'']]],
   ['solverconfiguration_2eh',['SolverConfiguration.h',['../SolverConfiguration_8h.html',1,'']]],
   ['solverconfiguration_5ftest_2ecpp',['SolverConfiguration_test.cpp',['../SolverConfiguration__test_8cpp.html',1,'']]],
+  ['solverstats',['SolverStats',['../classnatrium_1_1SolverStats.html',1,'natrium']]],
+  ['solverstats',['SolverStats',['../classnatrium_1_1SolverStats.html#aaa0b74781be83337875982f0a46c67b8',1,'natrium::SolverStats']]],
   ['steadyperiodictestflow2d',['SteadyPeriodicTestFlow2D',['../classnatrium_1_1SteadyPeriodicTestFlow2D.html',1,'natrium']]],
   ['steadyperiodictestflow2d',['SteadyPeriodicTestFlow2D',['../classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7db4598e86b34158612497ea2ff0ca74',1,'natrium::SteadyPeriodicTestFlow2D']]],
   ['step',['step',['../classnatrium_1_1RungeKutta5LowStorage.html#a595cbb3047387c60507197d78a7ec054',1,'natrium::RungeKutta5LowStorage::step()'],['../classnatrium_1_1TimeIntegrator.html#ad3888242580c257058d8d6f8ddeb2c5d',1,'natrium::TimeIntegrator::step()']]],

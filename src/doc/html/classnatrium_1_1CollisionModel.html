@@ -133,14 +133,14 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af8641f834d40077437a57c637c9572b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8641f834d40077437a57c637c9572b1"></a>
-static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#af8641f834d40077437a57c637c9572b1">calculateRelaxationParameter</a> (double viscosity, double timeStepSize, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt; boltzmannModel)</td></tr>
-<tr class="memdesc:af8641f834d40077437a57c637c9572b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate relaxation parameter <br/></td></tr>
-<tr class="separator:af8641f834d40077437a57c637c9572b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b383765606800e9963688150c3a3297"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b383765606800e9963688150c3a3297"></a>
-static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a7b383765606800e9963688150c3a3297">calculateOptimalTimeStep</a> (double viscosity, const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt; boltzmannModel)</td></tr>
-<tr class="memdesc:a7b383765606800e9963688150c3a3297"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate the time step, for which tau = 1 <br/></td></tr>
-<tr class="separator:a7b383765606800e9963688150c3a3297"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62aa0017c633a5716b1a6b31ec31aa52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a62aa0017c633a5716b1a6b31ec31aa52"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a62aa0017c633a5716b1a6b31ec31aa52">calculateRelaxationParameter</a> (double viscosity, double timeStepSize, const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt; boltzmannModel)</td></tr>
+<tr class="memdesc:a62aa0017c633a5716b1a6b31ec31aa52"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate relaxation parameter <br/></td></tr>
+<tr class="separator:a62aa0017c633a5716b1a6b31ec31aa52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb8f6d14ca6994afd4c720e42f778df5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb8f6d14ca6994afd4c720e42f778df5"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#abb8f6d14ca6994afd4c720e42f778df5">calculateOptimalTimeStep</a> (double dx, const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt; boltzmannModel)</td></tr>
+<tr class="memdesc:abb8f6d14ca6994afd4c720e42f778df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate the time step, so that the Courant number is 1 for the diagonal directions <br/></td></tr>
+<tr class="separator:abb8f6d14ca6994afd4c720e42f778df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -369,7 +369,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:17 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:23 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

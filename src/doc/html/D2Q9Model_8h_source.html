@@ -61,7 +61,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -112,74 +111,84 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
 <div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classnatrium_1_1D2Q9Model.html#afa28316438de5055d51674d89a0075ba">   39</a></span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#afa28316438de5055d51674d89a0075ba">m_speedOfSoundSquare</a>;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classnatrium_1_1D2Q9Model.html#a81532a1067ba5f280698a1a84711ede5">   44</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#a81532a1067ba5f280698a1a84711ede5">D</a>;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classnatrium_1_1D2Q9Model.html#ab0aa145ad44fe849371f8bda592eadf2">   42</a></span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#ab0aa145ad44fe849371f8bda592eadf2">m_scaling</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classnatrium_1_1D2Q9Model.html#ad3d102dfb9c8ad7b56a8f82c3f4286f6">   47</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#ad3d102dfb9c8ad7b56a8f82c3f4286f6">Q</a>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classnatrium_1_1D2Q9Model.html#a81532a1067ba5f280698a1a84711ede5">   47</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#a81532a1067ba5f280698a1a84711ede5">D</a>;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <a class="code" href="classnatrium_1_1D2Q9Model.html#af498c14d311e9172d96b5d962ccc5202">D2Q9Model</a>(<span class="keywordtype">double</span> scaling);</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classnatrium_1_1D2Q9Model.html#ad3d102dfb9c8ad7b56a8f82c3f4286f6">   50</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#ad3d102dfb9c8ad7b56a8f82c3f4286f6">Q</a>;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#aec7d8c160f430e14fbede9ecda368797">~D2Q9Model</a>();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <a class="code" href="classnatrium_1_1D2Q9Model.html#af498c14d311e9172d96b5d962ccc5202">D2Q9Model</a>(<span class="keywordtype">double</span> scaling);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">double</span> getSpeedOfSound()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#ab212c0c04921591f16c1970d93878cf9">m_speedOfSound</a>;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">double</span> getSpeedOfSoundSquare()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#afa28316438de5055d51674d89a0075ba">m_speedOfSoundSquare</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#aec7d8c160f430e14fbede9ecda368797">~D2Q9Model</a>();</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">double</span> getSpeedOfSound()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#ab212c0c04921591f16c1970d93878cf9">m_speedOfSound</a>;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> getIndexOfOppositeDirection(<span class="keywordtype">size_t</span> index)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                <span class="keywordflow">switch</span> (index){</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                        <span class="keywordflow">case</span> 0:</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                                <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                        <span class="keywordflow">case</span> 1:</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                <span class="keywordflow">return</span> 3;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">double</span> getSpeedOfSoundSquare()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#afa28316438de5055d51674d89a0075ba">m_speedOfSoundSquare</a>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> getIndexOfOppositeDirection(<span class="keywordtype">size_t</span> index)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                <span class="keywordflow">switch</span> (index){</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                        <span class="keywordflow">case</span> 0:</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                        <span class="keywordflow">case</span> 2:</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                                <span class="keywordflow">return</span> 4;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                        <span class="keywordflow">case</span> 1:</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                                <span class="keywordflow">return</span> 3;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                        <span class="keywordflow">case</span> 3:</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                                <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                        <span class="keywordflow">case</span> 2:</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                                <span class="keywordflow">return</span> 4;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                        <span class="keywordflow">case</span> 4:</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                                <span class="keywordflow">return</span> 2;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                        <span class="keywordflow">case</span> 3:</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                                <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                        <span class="keywordflow">case</span> 5:</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                                <span class="keywordflow">return</span> 7;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                        <span class="keywordflow">case</span> 4:</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                                <span class="keywordflow">return</span> 2;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                        <span class="keywordflow">case</span> 6:</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                                <span class="keywordflow">return</span> 8;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                        <span class="keywordflow">case</span> 5:</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                                <span class="keywordflow">return</span> 7;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                        <span class="keywordflow">case</span> 7:</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                                <span class="keywordflow">return</span> 5;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                        <span class="keywordflow">case</span> 6:</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                                <span class="keywordflow">return</span> 8;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                        <span class="keywordflow">case</span> 8:</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                                <span class="keywordflow">return</span> 6;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                        <span class="keywordflow">case</span> 7:</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                                <span class="keywordflow">return</span> 5;</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                        <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                                <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                }</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;};</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* D2Q9MODEL_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                        <span class="keywordflow">case</span> 8:</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                                <span class="keywordflow">return</span> 6;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                        <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                                <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                }</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        }</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">double</span> getMaxParticleVelocityMagnitude()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#ab0aa145ad44fe849371f8bda592eadf2">m_scaling</a>*sqrt(2);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> getScaling()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="classnatrium_1_1D2Q9Model.html#ab0aa145ad44fe849371f8bda592eadf2">m_scaling</a>;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        }</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;};</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* D2Q9MODEL_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="classnatrium_1_1D2Q9Model_html_ab0aa145ad44fe849371f8bda592eadf2"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#ab0aa145ad44fe849371f8bda592eadf2">natrium::D2Q9Model::m_scaling</a></div><div class="ttdeci">const double m_scaling</div><div class="ttdoc">scaling of the stencil </div><div class="ttdef"><b>Definition:</b> D2Q9Model.h:42</div></div>
 <div class="ttc" id="BoltzmannModel_8h_html"><div class="ttname"><a href="BoltzmannModel_8h.html">BoltzmannModel.h</a></div><div class="ttdoc">Abstract class for the description of a boltzmann model. </div></div>
 <div class="ttc" id="classnatrium_1_1BoltzmannModel_html"><div class="ttname"><a href="classnatrium_1_1BoltzmannModel.html">natrium::BoltzmannModel</a></div><div class="ttdoc">Abstract class for the description of a boltzmann model, e.g. D2Q9. </div><div class="ttdef"><b>Definition:</b> BoltzmannModel.h:31</div></div>
 <div class="ttc" id="classnatrium_1_1D2Q9Model_html"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html">natrium::D2Q9Model</a></div><div class="ttdoc">D2Q9 Model. </div><div class="ttdef"><b>Definition:</b> D2Q9Model.h:19</div></div>
-<div class="ttc" id="classnatrium_1_1D2Q9Model_html_aec7d8c160f430e14fbede9ecda368797"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#aec7d8c160f430e14fbede9ecda368797">natrium::D2Q9Model::~D2Q9Model</a></div><div class="ttdeci">virtual ~D2Q9Model()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> D2Q9Model.cpp:41</div></div>
+<div class="ttc" id="classnatrium_1_1D2Q9Model_html_aec7d8c160f430e14fbede9ecda368797"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#aec7d8c160f430e14fbede9ecda368797">natrium::D2Q9Model::~D2Q9Model</a></div><div class="ttdeci">virtual ~D2Q9Model()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> D2Q9Model.cpp:42</div></div>
 <div class="ttc" id="classnatrium_1_1D2Q9Model_html_afa28316438de5055d51674d89a0075ba"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#afa28316438de5055d51674d89a0075ba">natrium::D2Q9Model::m_speedOfSoundSquare</a></div><div class="ttdeci">const double m_speedOfSoundSquare</div><div class="ttdoc">(speed of sound)^2 </div><div class="ttdef"><b>Definition:</b> D2Q9Model.h:39</div></div>
 <div class="ttc" id="classnatrium_1_1D2Q9Model_html_ab212c0c04921591f16c1970d93878cf9"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#ab212c0c04921591f16c1970d93878cf9">natrium::D2Q9Model::m_speedOfSound</a></div><div class="ttdeci">const double m_speedOfSound</div><div class="ttdoc">speed of sound </div><div class="ttdef"><b>Definition:</b> D2Q9Model.h:36</div></div>
 <div class="ttc" id="classnatrium_1_1D2Q9Model_html_af498c14d311e9172d96b5d962ccc5202"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#af498c14d311e9172d96b5d962ccc5202">natrium::D2Q9Model::D2Q9Model</a></div><div class="ttdeci">D2Q9Model(double scaling)</div><div class="ttdoc">constructor </div><div class="ttdef"><b>Definition:</b> D2Q9Model.cpp:33</div></div>
-<div class="ttc" id="classnatrium_1_1D2Q9Model_html_a81532a1067ba5f280698a1a84711ede5"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#a81532a1067ba5f280698a1a84711ede5">natrium::D2Q9Model::D</a></div><div class="ttdeci">static const size_t D</div><div class="ttdoc">D. </div><div class="ttdef"><b>Definition:</b> D2Q9Model.h:44</div></div>
-<div class="ttc" id="classnatrium_1_1D2Q9Model_html_ad3d102dfb9c8ad7b56a8f82c3f4286f6"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#ad3d102dfb9c8ad7b56a8f82c3f4286f6">natrium::D2Q9Model::Q</a></div><div class="ttdeci">static const size_t Q</div><div class="ttdoc">Q. </div><div class="ttdef"><b>Definition:</b> D2Q9Model.h:47</div></div>
+<div class="ttc" id="classnatrium_1_1D2Q9Model_html_a81532a1067ba5f280698a1a84711ede5"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#a81532a1067ba5f280698a1a84711ede5">natrium::D2Q9Model::D</a></div><div class="ttdeci">static const size_t D</div><div class="ttdoc">D. </div><div class="ttdef"><b>Definition:</b> D2Q9Model.h:47</div></div>
+<div class="ttc" id="classnatrium_1_1D2Q9Model_html_ad3d102dfb9c8ad7b56a8f82c3f4286f6"><div class="ttname"><a href="classnatrium_1_1D2Q9Model.html#ad3d102dfb9c8ad7b56a8f82c3f4286f6">natrium::D2Q9Model::Q</a></div><div class="ttdeci">static const size_t Q</div><div class="ttdoc">Q. </div><div class="ttdef"><b>Definition:</b> D2Q9Model.h:50</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:10 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:19 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

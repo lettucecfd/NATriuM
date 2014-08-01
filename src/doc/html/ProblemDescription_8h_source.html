@@ -61,7 +61,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -130,12 +129,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                <span class="keywordflow">return</span> m_boundaries;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        }</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ProblemDescription.html#ab4ccefafd2888510038259445076fed6">applyInitialDensities</a>(distributed_vector&amp; initialDensities,</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                        vector&lt;dealii::Point&lt;dim&gt; &gt;&amp; supportPoints) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ProblemDescription.html#a2f3da77af3942e626677cbdb04d683a9">applyInitialDensities</a>(distributed_vector&amp; initialDensities,</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                        <span class="keyword">const</span> vector&lt;dealii::Point&lt;dim&gt; &gt;&amp; supportPoints) <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ProblemDescription.html#a28306325c69e7d2086a3dd7f8c514b21">applyInitialVelocities</a>(</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ProblemDescription.html#a545b19d87ec6dc9c27e8740097f7cace">applyInitialVelocities</a>(</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                        vector&lt;distributed_vector&gt;&amp; initialVelocities,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                        vector&lt;dealii::Point&lt;dim&gt; &gt;&amp; supportPoints) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                        <span class="keyword">const</span> vector&lt;dealii::Point&lt;dim&gt; &gt;&amp; supportPoints) <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">void</span> setTriangulation(</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                        <span class="keyword">const</span> shared_ptr&lt;dealii::Triangulation&lt;dim&gt; &gt;&amp; triangulation) {</div>
@@ -180,15 +179,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* PROBLEMDESCRIPTION_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="classnatrium_1_1ProblemDescription_html_a2f3da77af3942e626677cbdb04d683a9"><div class="ttname"><a href="classnatrium_1_1ProblemDescription.html#a2f3da77af3942e626677cbdb04d683a9">natrium::ProblemDescription::applyInitialDensities</a></div><div class="ttdeci">virtual void applyInitialDensities(distributed_vector &amp;initialDensities, const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</div><div class="ttdoc">set initial densities </div></div>
 <div class="ttc" id="classnatrium_1_1ProblemDescription_html_a5270994970ddbd9f6fc98f292c1ccc0e"><div class="ttname"><a href="classnatrium_1_1ProblemDescription.html#a5270994970ddbd9f6fc98f292c1ccc0e">natrium::ProblemDescription::~ProblemDescription</a></div><div class="ttdeci">virtual ~ProblemDescription()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> ProblemDescription.h:49</div></div>
 <div class="ttc" id="classnatrium_1_1ProblemDescription_html_aae378c7eb216b616de56dfcd162c02c2"><div class="ttname"><a href="classnatrium_1_1ProblemDescription.html#aae378c7eb216b616de56dfcd162c02c2">natrium::ProblemDescription::ProblemDescription</a></div><div class="ttdeci">ProblemDescription(shared_ptr&lt; dealii::Triangulation&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)</div><div class="ttdoc">constructor </div><div class="ttdef"><b>Definition:</b> ProblemDescription.h:114</div></div>
-<div class="ttc" id="classnatrium_1_1ProblemDescription_html_a28306325c69e7d2086a3dd7f8c514b21"><div class="ttname"><a href="classnatrium_1_1ProblemDescription.html#a28306325c69e7d2086a3dd7f8c514b21">natrium::ProblemDescription::applyInitialVelocities</a></div><div class="ttdeci">virtual void applyInitialVelocities(vector&lt; distributed_vector &gt; &amp;initialVelocities, vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</div><div class="ttdoc">set initial velocities </div></div>
-<div class="ttc" id="classnatrium_1_1ProblemDescription_html_ab4ccefafd2888510038259445076fed6"><div class="ttname"><a href="classnatrium_1_1ProblemDescription.html#ab4ccefafd2888510038259445076fed6">natrium::ProblemDescription::applyInitialDensities</a></div><div class="ttdeci">virtual void applyInitialDensities(distributed_vector &amp;initialDensities, vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</div><div class="ttdoc">set initial densities </div></div>
+<div class="ttc" id="classnatrium_1_1ProblemDescription_html_a545b19d87ec6dc9c27e8740097f7cace"><div class="ttname"><a href="classnatrium_1_1ProblemDescription.html#a545b19d87ec6dc9c27e8740097f7cace">natrium::ProblemDescription::applyInitialVelocities</a></div><div class="ttdeci">virtual void applyInitialVelocities(vector&lt; distributed_vector &gt; &amp;initialVelocities, const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</div><div class="ttdoc">set initial velocities </div></div>
 <div class="ttc" id="classnatrium_1_1ProblemDescription_html"><div class="ttname"><a href="classnatrium_1_1ProblemDescription.html">natrium::ProblemDescription</a></div><div class="ttdoc">Abstract class for the description of a CFD problem. The description includes the computational mesh...</div><div class="ttdef"><b>Definition:</b> ProblemDescription.h:23</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:10 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:19 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

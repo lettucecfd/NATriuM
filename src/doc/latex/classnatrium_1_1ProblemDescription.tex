@@ -10,6 +10,12 @@ Abstract class for the description of a C\-F\-D problem. The description include
 
 {\ttfamily \#include $<$Problem\-Description.\-h$>$}
 
+Inheritance diagram for natrium\-:\-:Problem\-Description$<$ dim $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.545455cm]{classnatrium_1_1ProblemDescription}
+\end{center}
+\end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -27,9 +33,9 @@ $<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ \& {\bfseries get\-Triangulation} (
 $<$ \hyperlink{classnatrium_1_1BoundaryCollection}{Boundary\-Collection}$<$ dim $>$ $>$ \& {\bfseries get\-Boundaries} () const }\label{classnatrium_1_1ProblemDescription_abb061fe78c8d289fe2a4a9000015d842}
 
 \item 
-virtual void \hyperlink{classnatrium_1_1ProblemDescription_ab4ccefafd2888510038259445076fed6}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const =0
+virtual void \hyperlink{classnatrium_1_1ProblemDescription_a2f3da77af3942e626677cbdb04d683a9}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const =0
 \begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1ProblemDescription_a28306325c69e7d2086a3dd7f8c514b21}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const =0
+virtual void \hyperlink{classnatrium_1_1ProblemDescription_a545b19d87ec6dc9c27e8740097f7cace}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const =0
 \begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ProblemDescription_ae588b1e0ce4dd89e2fcfbb0c191b1c41}{void {\bfseries set\-Triangulation} (const shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ \&triangulation)}\label{classnatrium_1_1ProblemDescription_ae588b1e0ce4dd89e2fcfbb0c191b1c41}
 
@@ -67,14 +73,14 @@ Abstract class for the description of a C\-F\-D problem. The description include
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1ProblemDescription_ab4ccefafd2888510038259445076fed6}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
+\hypertarget{classnatrium_1_1ProblemDescription_a2f3da77af3942e626677cbdb04d683a9}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
 \index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::ProblemDescription@{natrium\-::\-Problem\-Description}}
 \subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ virtual void {\bf natrium\-::\-Problem\-Description}$<$ dim $>$\-::apply\-Initial\-Densities (
 \begin{DoxyParamCaption}
 \item[{distributed\-\_\-vector \&}]{initial\-Densities, }
-\item[{vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&}]{support\-Points}
+\item[{const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&}]{support\-Points}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classnatrium_1_1ProblemDescription_ab4ccefafd2888510038259445076fed6}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classnatrium_1_1ProblemDescription_a2f3da77af3942e626677cbdb04d683a9}
 
 
 set initial densities 
@@ -86,14 +92,18 @@ set initial densities
 \mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
 \hline
 \end{DoxyParams}
-\hypertarget{classnatrium_1_1ProblemDescription_a28306325c69e7d2086a3dd7f8c514b21}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
+
+
+Implemented in \hyperlink{classnatrium_1_1Benchmark_a659a0f7f17ad64f70ec843e2255f6662}{natrium\-::\-Benchmark$<$ dim $>$}, and \hyperlink{classnatrium_1_1Benchmark_a659a0f7f17ad64f70ec843e2255f6662}{natrium\-::\-Benchmark$<$ 2 $>$}.
+
+\hypertarget{classnatrium_1_1ProblemDescription_a545b19d87ec6dc9c27e8740097f7cace}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
 \index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::ProblemDescription@{natrium\-::\-Problem\-Description}}
 \subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ virtual void {\bf natrium\-::\-Problem\-Description}$<$ dim $>$\-::apply\-Initial\-Velocities (
 \begin{DoxyParamCaption}
 \item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
-\item[{vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&}]{support\-Points}
+\item[{const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&}]{support\-Points}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classnatrium_1_1ProblemDescription_a28306325c69e7d2086a3dd7f8c514b21}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classnatrium_1_1ProblemDescription_a545b19d87ec6dc9c27e8740097f7cace}
 
 
 set initial velocities 
@@ -105,6 +115,10 @@ set initial velocities
 \mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
 \hline
 \end{DoxyParams}
+
+
+Implemented in \hyperlink{classnatrium_1_1Benchmark_a51988a00da9aa9d055e4e40815c3ee71}{natrium\-::\-Benchmark$<$ dim $>$}, and \hyperlink{classnatrium_1_1Benchmark_a51988a00da9aa9d055e4e40815c3ee71}{natrium\-::\-Benchmark$<$ 2 $>$}.
+
 
 
 The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}

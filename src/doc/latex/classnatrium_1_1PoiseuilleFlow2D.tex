@@ -24,9 +24,9 @@ Inheritance diagram for natrium\-:\-:Poiseuille\-Flow2\-D\-:\begin{figure}[H]
 \hypertarget{classnatrium_1_1PoiseuilleFlow2D_a62f9e7cfb2e32753b58eafb9d5936fd4}{virtual \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a62f9e7cfb2e32753b58eafb9d5936fd4}{$\sim$\-Poiseuille\-Flow2\-D} ()}\label{classnatrium_1_1PoiseuilleFlow2D_a62f9e7cfb2e32753b58eafb9d5936fd4}
 
 \begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a5f3475deac6f2666f181a052baf76502}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+virtual void \hyperlink{classnatrium_1_1PoiseuilleFlow2D_abeeaed38da5f7e4fc4c299815fa850e7}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
 \begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a8fe39ca61c90d194255e61d36c0681af}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
+virtual void \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a638b6505cc7aba17c69a04005ebf91eb}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
 \begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1PoiseuilleFlow2D_a7900b79dac4dc5c120d9a04d9d4138ac}{double \hyperlink{classnatrium_1_1PoiseuilleFlow2D_a7900b79dac4dc5c120d9a04d9d4138ac}{analytic\-Velocity1} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1PoiseuilleFlow2D_a7900b79dac4dc5c120d9a04d9d4138ac}
 
@@ -58,14 +58,14 @@ constructor
 apply boundary values 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a5f3475deac6f2666f181a052baf76502}{\index{natrium\-::\-Poiseuille\-Flow2\-D@{natrium\-::\-Poiseuille\-Flow2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D_abeeaed38da5f7e4fc4c299815fa850e7}{\index{natrium\-::\-Poiseuille\-Flow2\-D@{natrium\-::\-Poiseuille\-Flow2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
 \index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::PoiseuilleFlow2D@{natrium\-::\-Poiseuille\-Flow2\-D}}
 \subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Poiseuille\-Flow2\-D\-::apply\-Initial\-Densities (
 \begin{DoxyParamCaption}
 \item[{distributed\-\_\-vector \&}]{initial\-Densities, }
-\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\item[{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1PoiseuilleFlow2D_a5f3475deac6f2666f181a052baf76502}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1PoiseuilleFlow2D_abeeaed38da5f7e4fc4c299815fa850e7}
 
 
 set initial densities 
@@ -77,14 +77,14 @@ set initial densities
 \mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
 \hline
 \end{DoxyParams}
-\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a8fe39ca61c90d194255e61d36c0681af}{\index{natrium\-::\-Poiseuille\-Flow2\-D@{natrium\-::\-Poiseuille\-Flow2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
+\hypertarget{classnatrium_1_1PoiseuilleFlow2D_a638b6505cc7aba17c69a04005ebf91eb}{\index{natrium\-::\-Poiseuille\-Flow2\-D@{natrium\-::\-Poiseuille\-Flow2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
 \index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::PoiseuilleFlow2D@{natrium\-::\-Poiseuille\-Flow2\-D}}
 \subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Poiseuille\-Flow2\-D\-::apply\-Initial\-Velocities (
 \begin{DoxyParamCaption}
 \item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
-\item[{vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
+\item[{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1PoiseuilleFlow2D_a8fe39ca61c90d194255e61d36c0681af}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1PoiseuilleFlow2D_a638b6505cc7aba17c69a04005ebf91eb}
 
 
 set initial velocities 

@@ -88,6 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classnatrium_1_1CFDSolver-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">natrium::CFDSolver&lt; dim &gt; Class Template Reference</div>  </div>
@@ -98,6 +99,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
  <a href="classnatrium_1_1CFDSolver.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="CFDSolver_8h_source.html">CFDSolver.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for natrium::CFDSolver&lt; dim &gt;:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classnatrium_1_1CFDSolver.png" usemap="#natrium::CFDSolver&lt; dim &gt;_map" alt=""/>
+  <map id="natrium::CFDSolver&lt; dim &gt;_map" name="natrium::CFDSolver&lt; dim &gt;_map">
+<area href="classnatrium_1_1BenchmarkCFDSolver.html" title="a class that overrides the output function of the CFD solver class with comparisons to a reference so..." alt="natrium::BenchmarkCFDSolver&lt; dim &gt;" shape="rect" coords="0,56,228,80"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -127,9 +137,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolver.html#a11f503bc3f3c306b240874c74a38025b">run</a> ()</td></tr>
 <tr class="memdesc:a11f503bc3f3c306b240874c74a38025b"><td class="mdescLeft">&#160;</td><td class="mdescRight">run CFD solver <br/></td></tr>
 <tr class="separator:a11f503bc3f3c306b240874c74a38025b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf6804f132885502b61877fc1f9ca4a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf6804f132885502b61877fc1f9ca4a2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolver.html#abf6804f132885502b61877fc1f9ca4a2">output</a> (size_t iteration)</td></tr>
-<tr class="memdesc:abf6804f132885502b61877fc1f9ca4a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">create output data and write to file <br/></td></tr>
+<tr class="memitem:abf6804f132885502b61877fc1f9ca4a2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolver.html#abf6804f132885502b61877fc1f9ca4a2">output</a> (size_t iteration)</td></tr>
+<tr class="memdesc:abf6804f132885502b61877fc1f9ca4a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">create output data and write to file  <a href="#abf6804f132885502b61877fc1f9ca4a2">More...</a><br/></td></tr>
 <tr class="separator:abf6804f132885502b61877fc1f9ca4a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf0b4e4da292bcb195d926d3174ba2a9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf0b4e4da292bcb195d926d3174ba2a9"></a>
 const distributed_vector &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getDensity</b> () const </td></tr>
@@ -180,6 +189,16 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxDensityDeviat
 <tr class="memitem:a33c4bfd63b8d457a5bc15f0c0da02c38"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33c4bfd63b8d457a5bc15f0c0da02c38"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getIterationStart</b> () const </td></tr>
 <tr class="separator:a33c4bfd63b8d457a5bc15f0c0da02c38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e3686b16794c0040bd5cc7cf9fe98d3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e3686b16794c0040bd5cc7cf9fe98d3"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>getTime</b> () const </td></tr>
+<tr class="separator:a8e3686b16794c0040bd5cc7cf9fe98d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c0920e02df800abcfb8f82518cab0ca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3c0920e02df800abcfb8f82518cab0ca"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getIteration</b> () const </td></tr>
+<tr class="separator:a3c0920e02df800abcfb8f82518cab0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab40725ea85fde34033d92027d13a4b06"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab40725ea85fde34033d92027d13a4b06"></a>
+const shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverStats.html">SolverStats</a><br class="typebreak"/>
+&lt; dim &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSolverStats</b> () const </td></tr>
+<tr class="separator:ab40725ea85fde34033d92027d13a4b06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -191,6 +210,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolver.html#a42245d22e289d079a3b06a0c26f50050">loadDistributionFunctionsFromFiles</a> (const string &amp;directory)</td></tr>
 <tr class="memdesc:a42245d22e289d079a3b06a0c26f50050"><td class="mdescLeft">&#160;</td><td class="mdescRight">load the distribution functions from files for checkpointing <br/></td></tr>
 <tr class="separator:a42245d22e289d079a3b06a0c26f50050"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b0be7ae225b1d3ab4aa5a641ae52497"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2b0be7ae225b1d3ab4aa5a641ae52497"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolver.html#a2b0be7ae225b1d3ab4aa5a641ae52497">addAnalyticSolutionToOutput</a> (dealii::DataOut&lt; dim &gt; &amp;data_out)</td></tr>
+<tr class="memdesc:a2b0be7ae225b1d3ab4aa5a641ae52497"><td class="mdescLeft">&#160;</td><td class="mdescRight">gives the possibility for <a class="el" href="classnatrium_1_1Benchmark.html">Benchmark</a> instances to add the analytic solution to output <br/></td></tr>
+<tr class="separator:a2b0be7ae225b1d3ab4aa5a641ae52497"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:ae7379bc2c8ff4554d9a0567dece3c38e"><td class="memTemplParams" colspan="2"><a class="anchor" id="ae7379bc2c8ff4554d9a0567dece3c38e"></a>
+template&lt;size_t dim2&gt; </td></tr>
+<tr class="memitem:ae7379bc2c8ff4554d9a0567dece3c38e"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SolverStats</b></td></tr>
+<tr class="separator:ae7379bc2c8ff4554d9a0567dece3c38e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;size_t dim&gt;<br/>
@@ -241,6 +271,38 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="abf6804f132885502b61877fc1f9ca4a2"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="classnatrium_1_1CFDSolver.html">natrium::CFDSolver</a>&lt; dim &gt;::output </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>iteration</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>create output data and write to file </p>
+<p>For Benchmarks: add analytic solution </p>
+
+<p>Reimplemented in <a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a9708132fc0cef4ae55e3453672891c81">natrium::BenchmarkCFDSolver&lt; dim &gt;</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/<a class="el" href="CFDSolver_8h_source.html">CFDSolver.h</a></li>
 <li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/solver/<a class="el" href="CFDSolver_8cpp.html">CFDSolver.cpp</a></li>
@@ -248,7 +310,7 @@ template&lt;size_t dim&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:20 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:25 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

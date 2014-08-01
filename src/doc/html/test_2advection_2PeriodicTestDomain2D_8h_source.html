@@ -61,7 +61,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -108,14 +107,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1PeriodicTestDomain2D.html#a81fe3504b294cd4d6219c360f465f84b">~PeriodicTestDomain2D</a>();</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classnatrium_1_1PeriodicTestDomain2D.html#abd87cfcf8cd6178c435bec6365923069">   37</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1PeriodicTestDomain2D.html#abd87cfcf8cd6178c435bec6365923069">applyInitialDensities</a>(distributed_vector&amp; initialDensities,</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                        vector&lt;dealii::Point&lt;2&gt; &gt;&amp; supportPoints)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classnatrium_1_1PeriodicTestDomain2D.html#ae2a3a181175afa80e73097e51ef8b242">   37</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1PeriodicTestDomain2D.html#ae2a3a181175afa80e73097e51ef8b242">applyInitialDensities</a>(distributed_vector&amp; initialDensities,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                        <span class="keyword">const</span> vector&lt;dealii::Point&lt;2&gt; &gt;&amp; supportPoints)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        }</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        ;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classnatrium_1_1PeriodicTestDomain2D.html#aaf2befcb4b723013ed156b67439e718a">   47</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1PeriodicTestDomain2D.html#aaf2befcb4b723013ed156b67439e718a">applyInitialVelocities</a>(</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classnatrium_1_1PeriodicTestDomain2D.html#a52663163abcc41edd8491db3ea4d3b4c">   47</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1PeriodicTestDomain2D.html#a52663163abcc41edd8491db3ea4d3b4c">applyInitialVelocities</a>(</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                        vector&lt;distributed_vector&gt;&amp; initialVelocities,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                        vector&lt;dealii::Point&lt;2&gt; &gt;&amp; supportPoints)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                        <span class="keyword">const</span> vector&lt;dealii::Point&lt;2&gt; &gt;&amp; supportPoints)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        }</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        ;</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
@@ -131,14 +130,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* PeriodicTestDomain2D_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classnatrium_1_1PeriodicTestDomain2D_html_a930da37a3e1be744aaf59e27ba956318"><div class="ttname"><a href="classnatrium_1_1PeriodicTestDomain2D.html#a930da37a3e1be744aaf59e27ba956318">natrium::PeriodicTestDomain2D::PeriodicTestDomain2D</a></div><div class="ttdeci">PeriodicTestDomain2D(size_t globalRefinementLevel)</div><div class="ttdoc">constructor </div><div class="ttdef"><b>Definition:</b> PeriodicTestDomain2D.cpp:18</div></div>
 <div class="ttc" id="BasicNames_8h_html"><div class="ttname"><a href="BasicNames_8h.html">BasicNames.h</a></div><div class="ttdoc">Definition of the basic typedefs and names used in the Code. </div></div>
-<div class="ttc" id="classnatrium_1_1PeriodicTestDomain2D_html_aaf2befcb4b723013ed156b67439e718a"><div class="ttname"><a href="classnatrium_1_1PeriodicTestDomain2D.html#aaf2befcb4b723013ed156b67439e718a">natrium::PeriodicTestDomain2D::applyInitialVelocities</a></div><div class="ttdeci">virtual void applyInitialVelocities(vector&lt; distributed_vector &gt; &amp;initialVelocities, vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </div><div class="ttdoc">set initial velocities </div><div class="ttdef"><b>Definition:</b> PeriodicTestDomain2D.h:47</div></div>
+<div class="ttc" id="classnatrium_1_1PeriodicTestDomain2D_html_ae2a3a181175afa80e73097e51ef8b242"><div class="ttname"><a href="classnatrium_1_1PeriodicTestDomain2D.html#ae2a3a181175afa80e73097e51ef8b242">natrium::PeriodicTestDomain2D::applyInitialDensities</a></div><div class="ttdeci">virtual void applyInitialDensities(distributed_vector &amp;initialDensities, const vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </div><div class="ttdoc">set initial densities </div><div class="ttdef"><b>Definition:</b> PeriodicTestDomain2D.h:37</div></div>
 <div class="ttc" id="ProblemDescription_8h_html"><div class="ttname"><a href="ProblemDescription_8h.html">ProblemDescription.h</a></div><div class="ttdoc">Abstract class for the description of a CFD problem. The description includes the computational mesh...</div></div>
 <div class="ttc" id="classnatrium_1_1PeriodicTestDomain2D_html_a81fe3504b294cd4d6219c360f465f84b"><div class="ttname"><a href="classnatrium_1_1PeriodicTestDomain2D.html#a81fe3504b294cd4d6219c360f465f84b">natrium::PeriodicTestDomain2D::~PeriodicTestDomain2D</a></div><div class="ttdeci">virtual ~PeriodicTestDomain2D()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> PeriodicTestDomain2D.cpp:26</div></div>
-<div class="ttc" id="classnatrium_1_1PeriodicTestDomain2D_html_abd87cfcf8cd6178c435bec6365923069"><div class="ttname"><a href="classnatrium_1_1PeriodicTestDomain2D.html#abd87cfcf8cd6178c435bec6365923069">natrium::PeriodicTestDomain2D::applyInitialDensities</a></div><div class="ttdeci">virtual void applyInitialDensities(distributed_vector &amp;initialDensities, vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </div><div class="ttdoc">set initial densities </div><div class="ttdef"><b>Definition:</b> PeriodicTestDomain2D.h:37</div></div>
+<div class="ttc" id="classnatrium_1_1PeriodicTestDomain2D_html_a52663163abcc41edd8491db3ea4d3b4c"><div class="ttname"><a href="classnatrium_1_1PeriodicTestDomain2D.html#a52663163abcc41edd8491db3ea4d3b4c">natrium::PeriodicTestDomain2D::applyInitialVelocities</a></div><div class="ttdeci">virtual void applyInitialVelocities(vector&lt; distributed_vector &gt; &amp;initialVelocities, const vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </div><div class="ttdoc">set initial velocities </div><div class="ttdef"><b>Definition:</b> PeriodicTestDomain2D.h:47</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:10 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:19 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

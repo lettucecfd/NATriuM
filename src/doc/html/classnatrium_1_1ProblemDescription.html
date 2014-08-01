@@ -97,6 +97,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
  <a href="classnatrium_1_1ProblemDescription.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ProblemDescription_8h_source.html">ProblemDescription.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for natrium::ProblemDescription&lt; dim &gt;:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classnatrium_1_1ProblemDescription.png" usemap="#natrium::ProblemDescription&lt; dim &gt;_map" alt=""/>
+  <map id="natrium::ProblemDescription&lt; dim &gt;_map" name="natrium::ProblemDescription&lt; dim &gt;_map">
+<area href="classnatrium_1_1Benchmark.html" alt="natrium::Benchmark&lt; 2 &gt;" shape="rect" coords="222,56,434,80"/>
+<area href="classnatrium_1_1Benchmark.html" alt="natrium::Benchmark&lt; dim &gt;" shape="rect" coords="444,56,656,80"/>
+<area href="classnatrium_1_1CouetteFlow2D.html" title="Description of a simple Couette Flow (regular channel flow in square domain). The domain is [0..." alt="natrium::CouetteFlow2D" shape="rect" coords="0,112,212,136"/>
+<area href="classnatrium_1_1TaylorGreenVortex2D.html" title="Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). " alt="natrium::TaylorGreenVortex2D" shape="rect" coords="222,112,434,136"/>
+<area href="classnatrium_1_1TaylorGreenVortex2D.html" title="Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). " alt="natrium::TaylorGreenVortex2D" shape="rect" coords="444,112,656,136"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -116,12 +129,12 @@ const shared_ptr<br class="typebreak"/>
 const shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getBoundaries</b> () const </td></tr>
 <tr class="separator:abb061fe78c8d289fe2a4a9000015d842"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4ccefafd2888510038259445076fed6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#ab4ccefafd2888510038259445076fed6">applyInitialDensities</a> (distributed_vector &amp;initialDensities, vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
-<tr class="memdesc:ab4ccefafd2888510038259445076fed6"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial densities  <a href="#ab4ccefafd2888510038259445076fed6">More...</a><br/></td></tr>
-<tr class="separator:ab4ccefafd2888510038259445076fed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28306325c69e7d2086a3dd7f8c514b21"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#a28306325c69e7d2086a3dd7f8c514b21">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
-<tr class="memdesc:a28306325c69e7d2086a3dd7f8c514b21"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial velocities  <a href="#a28306325c69e7d2086a3dd7f8c514b21">More...</a><br/></td></tr>
-<tr class="separator:a28306325c69e7d2086a3dd7f8c514b21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f3da77af3942e626677cbdb04d683a9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#a2f3da77af3942e626677cbdb04d683a9">applyInitialDensities</a> (distributed_vector &amp;initialDensities, const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
+<tr class="memdesc:a2f3da77af3942e626677cbdb04d683a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial densities  <a href="#a2f3da77af3942e626677cbdb04d683a9">More...</a><br/></td></tr>
+<tr class="separator:a2f3da77af3942e626677cbdb04d683a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a545b19d87ec6dc9c27e8740097f7cace"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#a545b19d87ec6dc9c27e8740097f7cace">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
+<tr class="memdesc:a545b19d87ec6dc9c27e8740097f7cace"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial velocities  <a href="#a545b19d87ec6dc9c27e8740097f7cace">More...</a><br/></td></tr>
+<tr class="separator:a545b19d87ec6dc9c27e8740097f7cace"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae588b1e0ce4dd89e2fcfbb0c191b1c41"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae588b1e0ce4dd89e2fcfbb0c191b1c41"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setTriangulation</b> (const shared_ptr&lt; dealii::Triangulation&lt; dim &gt; &gt; &amp;triangulation)</td></tr>
 <tr class="separator:ae588b1e0ce4dd89e2fcfbb0c191b1c41"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,7 +169,7 @@ class natrium::ProblemDescription&lt; dim &gt;</h3>
   </dd>
 </dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ab4ccefafd2888510038259445076fed6"></a>
+<a class="anchor" id="a2f3da77af3942e626677cbdb04d683a9"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -174,7 +187,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>supportPoints</em>&#160;</td>
         </tr>
         <tr>
@@ -199,9 +212,11 @@ template&lt;size_t dim&gt; </div>
   </dd>
 </dl>
 
+<p>Implemented in <a class="el" href="classnatrium_1_1Benchmark.html#a659a0f7f17ad64f70ec843e2255f6662">natrium::Benchmark&lt; dim &gt;</a>, and <a class="el" href="classnatrium_1_1Benchmark.html#a659a0f7f17ad64f70ec843e2255f6662">natrium::Benchmark&lt; 2 &gt;</a>.</p>
+
 </div>
 </div>
-<a class="anchor" id="a28306325c69e7d2086a3dd7f8c514b21"></a>
+<a class="anchor" id="a545b19d87ec6dc9c27e8740097f7cace"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -219,7 +234,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>supportPoints</em>&#160;</td>
         </tr>
         <tr>
@@ -244,6 +259,8 @@ template&lt;size_t dim&gt; </div>
   </dd>
 </dl>
 
+<p>Implemented in <a class="el" href="classnatrium_1_1Benchmark.html#a51988a00da9aa9d055e4e40815c3ee71">natrium::Benchmark&lt; dim &gt;</a>, and <a class="el" href="classnatrium_1_1Benchmark.html#a51988a00da9aa9d055e4e40815c3ee71">natrium::Benchmark&lt; 2 &gt;</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -252,7 +269,7 @@ template&lt;size_t dim&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 26 2014 15:19:19 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 1 2014 11:54:24 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
