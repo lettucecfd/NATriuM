@@ -31,6 +31,7 @@ set arrow from 0.0,-4.0 to 0.0,4.0 nohead
  
 
 plot \
+'results/taylorgreen2_3/pseudospectrum.txt' title 'pseudospectrum' with points ps 1 lc rgb "green",\
 'results/taylorgreen2_3/spectrum.txt' title 'only periodic' w p ls 4, \
+'results/couette2_3/pseudospectrum.txt' title 'pseudospectrum' with points ps 1 pt 1 lc rgb "orange",\
 'results/couette2_3/spectrum.txt' title 'with wall' w p ls 2
-

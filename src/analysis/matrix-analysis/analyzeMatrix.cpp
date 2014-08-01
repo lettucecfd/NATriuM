@@ -1,8 +1,8 @@
-/*
- * matrix_analysis.cpp
- *
- *  Created on: 03.07.2014
- *      Author: kraemer
+/**
+ * @file analyzeMatrix.cpp
+ * @short Executable for the analysis of spectra/pseudospectra of streaming matrices
+ * @date 01.08.2014
+ * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
 #include "matrixAnalysis.h"
@@ -34,14 +34,14 @@ int main() {
 	// ----------------------------------------------------------------------------------------------------
 
 	//PERIODIC BOUNDARIES
-	cout << "Only periodic Boundaries: Calculating spectrum of streaming matrix..."
+	cout << "Only periodic Boundaries: Calculating spectrum + pseudospectrum of streaming matrix..."
 			<< endl;
 	// set Problem so that the right Re and Ma are achieved
 	double U = 1;
 	double dqScaling = sqrt(3) * 1 / Ma;
 	double viscosity = 2*PI*U / Re; // (because L = 1)
 
-	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 5; orderOfFiniteElement++) {
+	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 2; orderOfFiniteElement++) {
 
 		// configure solver
 		shared_ptr<SolverConfiguration> configuration = make_shared<
@@ -68,6 +68,7 @@ int main() {
 		// analyze eigenvalues
 		matrixAnalysis<2> analyzer(solver);
 		analyzer.writeSpectrum();
+		analyzer.writePseudospectrum();
 
 	}
 	cout << "done." << endl;
@@ -75,7 +76,7 @@ int main() {
 	// ----------------------------------------------------------------------------------------------------
 
 	//WALL BOUNDARIES
-	cout << "With wall Boundaries: Calculating spectrum of streaming matrix..."
+	cout << "With wall Boundaries: Calculating spectrum + pseudospectrum of streaming matrix..."
 			<< endl;
 
 	// set Problem so that the right Re and Ma are achieved
@@ -87,7 +88,7 @@ int main() {
 	const double startTime = 0.0;
 	// set small time step size
 
-	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 5; orderOfFiniteElement++) {
+	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 2; orderOfFiniteElement++) {
 
 		// configure solver
 		shared_ptr<SolverConfiguration> configuration = make_shared<
@@ -114,6 +115,7 @@ int main() {
 		// analyze eigenvalues
 		matrixAnalysis<2> analyzer(solver);
 		analyzer.writeSpectrum();
+		analyzer.writePseudospectrum();
 
 	}
 	cout << "done." << endl;
