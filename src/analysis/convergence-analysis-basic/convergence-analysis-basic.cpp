@@ -37,7 +37,6 @@ int main() {
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 
-	// Re = viscosity/(2*pi)
 	const double viscosity = 1;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
@@ -74,7 +73,9 @@ int main() {
 		double dx = 2 * 3.1415926
 				/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
-		double dt = dx / (scaling * sqrt(2));
+		//double dt = dx / (scaling * sqrt(2));
+		//chose CFL = 0.4
+		double dt = 0.4 * dx / scaling;
 
 		cout << "dt = " << dt << " ...";
 

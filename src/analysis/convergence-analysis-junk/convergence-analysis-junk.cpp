@@ -79,7 +79,9 @@ int main() {
 		double scaling = initialScaling / sqrt(dx);	//pow(3*viscosity*sqrt(2)/dx,constant/(constant+2.0));
 
 		// chose dt so that courant (advection) = 1 for the diagonal directions
-		double dt = dx / (scaling * sqrt(2));
+		// double dt = dx / (scaling * sqrt(2));
+		//chose CFL = 0.4
+		double dt = 0.4 * dx / scaling;
 
 		cout << "dt = " << dt;
 
