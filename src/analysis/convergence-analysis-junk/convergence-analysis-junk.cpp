@@ -151,7 +151,7 @@ int main() {
 		//}
 //	}
 	}
-	cout << "Convergence analysis (basic) terminated." << endl;
+	cout << "Convergence analysis (diffusive scaling) terminated." << endl;
 
 	return 0;
 }
