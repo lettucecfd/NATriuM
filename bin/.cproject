@@ -267,6 +267,7 @@
 <pathentry kind="mac" name="__GXX_RTTI" path="" value="1"/>
 <pathentry kind="mac" name="__EXCEPTIONS" path="" value="1"/>
 <pathentry kind="mac" name="_GNU_SOURCE" path="" value="1"/>
+<pathentry include="/home/kraemer/eclipse_workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include/deal.II" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include/deal.II/bundled" kind="inc" path="" system="true"/>
@@ -274,7 +275,6 @@
 <pathentry include="/usr/lib/openmpi/include/openmpi" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/petsc-3.4.3/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/petsc-3.4.3/vm_hbrs_pc/include" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/eclipse_workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/eclipse_workspace/NATriuM/src/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include/boost" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" kind="inc" path="" system="true"/>
@@ -904,6 +904,27 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
+<target name="[obj] utilities/CFDSolverUtilities.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>utilities/CFDSolverUtilities.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] utilities/CFDSolverUtilities.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>utilities/CFDSolverUtilities.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] utilities/CFDSolverUtilities.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>utilities/CFDSolverUtilities.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
 <target name="[obj] utilities/Logging.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments></buildArguments>
@@ -1300,6 +1321,27 @@
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments></buildArguments>
 <buildTarget>utilities/BasicNames_test.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] utilities/CFDSolverUtilities_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>utilities/CFDSolverUtilities_test.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] utilities/CFDSolverUtilities_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>utilities/CFDSolverUtilities_test.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] utilities/CFDSolverUtilities_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>utilities/CFDSolverUtilities_test.cpp.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

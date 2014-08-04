@@ -294,6 +294,11 @@
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/TimeIntegrator.cpp</location>
 		</link>
 		<link>
+			<name>[Targets]/[lib] natrium/Source Files/CFDSolverUtilities.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/CFDSolverUtilities.cpp</location>
+		</link>
+		<link>
 			<name>[Targets]/[lib] natrium/Source Files/Logging.cpp</name>
 			<type>1</type>
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/Logging.cpp</location>
@@ -434,6 +439,11 @@
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/Logging.h</location>
 		</link>
 		<link>
+			<name>[Targets]/[lib] natrium/Header Files/CFDSolverUtilities.h</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/CFDSolverUtilities.h</location>
+		</link>
+		<link>
 			<name>[Targets]/[lib] natrium/Header Files/Math.h</name>
 			<type>1</type>
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/Math.h</location>
@@ -557,6 +567,11 @@
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/Math_test.cpp</name>
 			<type>1</type>
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/utilities/Math_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/CFDSolverUtilities_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/utilities/CFDSolverUtilities_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Header Files</name>

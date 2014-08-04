@@ -1,249 +1,138 @@
-==6411== Callgrind, a call-graph generating cache profiler
-==6411== Copyright (C) 2002-2013, and GNU GPL'd, by Josef Weidendorfer et al.
-==6411== Using Valgrind-3.10.0.SVN and LibVEX; rerun with -h for copyright info
-==6411== Command: ../../../bin/examples/step-1/step-1-taylorGreenVortex
-==6411== Parent PID: 6410
-==6411== 
---6411-- 
---6411-- Valgrind options:
---6411--    --tool=callgrind
---6411--    -v
---6411--    --log-file=cg.log
---6411-- Contents of /proc/version:
---6411--   Linux version 3.13.0-24-generic (buildd@batsu) (gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1) ) #47-Ubuntu SMP Fri May 2 23:30:00 UTC 2014
---6411-- Arch and hwcaps: AMD64, amd64-cx16-rdtscp-sse3
---6411-- Page sizes: currently 4096, max supported 4096
---6411-- Valgrind library directory: /usr/lib/valgrind
-==6411== For interactive control, run 'callgrind_control -h'.
---6411-- Reading syms from /home/kraemer/workspace/NATriuM/bin/examples/step-1/step-1-taylorGreenVortex
---6411-- Reading syms from /lib/x86_64-linux-gnu/ld-2.19.so
---6411--   Considering /lib/x86_64-linux-gnu/ld-2.19.so ..
---6411--   .. CRC mismatch (computed 4cbae35e wanted 8d683c31)
---6411--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.19.so ..
---6411--   .. CRC is valid
---6411-- Reading syms from /usr/lib/valgrind/callgrind-amd64-linux
---6411--   Considering /usr/lib/valgrind/callgrind-amd64-linux ..
---6411--   .. CRC mismatch (computed 200319ec wanted 9808e5eb)
---6411--    object doesn't have a symbol table
---6411--    object doesn't have a dynamic symbol table
---6411-- Scheduler: using generic scheduler lock implementation.
-==6411== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-6411-by-kraemer-on-???
-==6411== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-6411-by-kraemer-on-???
-==6411== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-6411-by-kraemer-on-???
-==6411== 
-==6411== TO CONTROL THIS PROCESS USING vgdb (which you probably
-==6411== don't want to do, unless you know exactly what you're doing,
-==6411== or are doing some strange experiment):
-==6411==   /usr/lib/valgrind/../../bin/vgdb --pid=6411 ...command...
-==6411== 
-==6411== TO DEBUG THIS PROCESS USING GDB: start GDB like this
-==6411==   /path/to/gdb ../../../bin/examples/step-1/step-1-taylorGreenVortex
-==6411== and then give GDB the following command
-==6411==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=6411
-==6411== --pid is optional if only one valgrind process is running
-==6411== 
---6411-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
---6411--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
---6411--   .. CRC mismatch (computed 329d6860 wanted c0186920)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.54.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libboost_system.so.1.54.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /home/kraemer/lib/deal.II-8.1.0/lib/libdeal_II.g.so.8.1.0
---6411-- Reading syms from /usr/lib/openmpi/lib/libmpi_cxx.so.1.0.2
---6411--   Considering /usr/lib/openmpi/lib/libmpi_cxx.so.1.0.2 ..
---6411--   .. CRC mismatch (computed b86ae008 wanted b8df3d30)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/openmpi/lib/libmpi.so.1.0.8
---6411--   Considering /usr/lib/openmpi/lib/libmpi.so.1.0.8 ..
---6411--   .. CRC mismatch (computed 67536d0f wanted 15944252)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.19
---6411--   Considering /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.19 ..
---6411--   .. CRC mismatch (computed a220b90a wanted 886349ba)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libm-2.19.so
---6411--   Considering /lib/x86_64-linux-gnu/libm-2.19.so ..
---6411--   .. CRC mismatch (computed 0ebccb69 wanted 44d41128)
---6411--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.19.so ..
---6411--   .. CRC is valid
---6411-- Reading syms from /lib/x86_64-linux-gnu/libc-2.19.so
---6411--   Considering /lib/x86_64-linux-gnu/libc-2.19.so ..
---6411--   .. CRC mismatch (computed 2b8f2acf wanted 60636809)
---6411--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.19.so ..
---6411--   .. CRC is valid
---6411-- Reading syms from /lib/x86_64-linux-gnu/libgcc_s.so.1
---6411--   Considering /lib/x86_64-linux-gnu/libgcc_s.so.1 ..
---6411--   .. CRC mismatch (computed 7864c503 wanted 247e7cfd)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libpthread-2.19.so
---6411--   Considering /lib/x86_64-linux-gnu/libpthread-2.19.so ..
---6411--   .. CRC mismatch (computed d7f7b713 wanted 28afece6)
---6411--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libpthread-2.19.so ..
---6411--   .. CRC is valid
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libmetis.so.5.1.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /home/kraemer/lib/petsc-3.4.4/mint_aspire/lib/libpetsc.so
---6411-- Reading syms from /usr/lib/lapack/liblapack.so.3.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/libblas/libblas.so.3.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/libnetcdf_c++.so.4.1.0
---6411--   Considering /usr/lib/libnetcdf_c++.so.4.1.0 ..
---6411--   .. CRC mismatch (computed 13128eb7 wanted 74cdd283)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libz.so.1.2.8
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libutil-2.19.so
---6411--   Considering /lib/x86_64-linux-gnu/libutil-2.19.so ..
---6411--   .. CRC mismatch (computed e1165780 wanted c579be89)
---6411--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libutil-2.19.so ..
---6411--   .. CRC is valid
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libhwloc.so.5.4.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.0 ..
---6411--   .. CRC mismatch (computed d26b41ab wanted 3a5c804f)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/openmpi/lib/libmpi_f77.so.1.0.7
---6411--   Considering /usr/lib/openmpi/lib/libmpi_f77.so.1.0.7 ..
---6411--   .. CRC mismatch (computed 44caf665 wanted 97ec80a2)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libgfortran.so.3.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libgfortran.so.3.0.0 ..
---6411--   .. CRC mismatch (computed e1e928bc wanted 7ade6969)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libdl-2.19.so
---6411--   Considering /lib/x86_64-linux-gnu/libdl-2.19.so ..
---6411--   .. CRC mismatch (computed c1315e8c wanted 37097b60)
---6411--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libdl-2.19.so ..
---6411--   .. CRC is valid
---6411-- Reading syms from /usr/lib/libnetcdf.so.7.1.1
---6411--   Considering /usr/lib/libnetcdf.so.7.1.1 ..
---6411--   .. CRC mismatch (computed 73e46822 wanted 932b2a42)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libnuma.so.1
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libquadmath.so.0.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libquadmath.so.0.0.0 ..
---6411--   .. CRC mismatch (computed c685bdba wanted 85a541a2)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libhdf5_hl.so.7.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libhdf5_hl.so.7.0.0 ..
---6411--   .. CRC mismatch (computed 4771c125 wanted cffab552)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libhdf5.so.7.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libhdf5.so.7.0.0 ..
---6411--   .. CRC mismatch (computed ebd99e74 wanted 269884ed)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libcurl-gnutls.so.4.3.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libidn.so.11.6.11
---6411--   Considering /usr/lib/x86_64-linux-gnu/libidn.so.11.6.11 ..
---6411--   .. CRC mismatch (computed 0e88c96f wanted 634ebbd2)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/librtmp.so.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libgcrypt.so.11.8.2
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2.2
---6411--   Considering /usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2.2 ..
---6411--   .. CRC mismatch (computed a8677328 wanted 4076819c)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/liblber-2.4.so.2.8.3
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libldap_r-2.4.so.2.8.3
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libgpg-error.so.0.10.0
---6411--   Considering /lib/x86_64-linux-gnu/libgpg-error.so.0.10.0 ..
---6411--   .. CRC mismatch (computed fe28a920 wanted 24f96a1d)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libtasn1.so.6.2.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libkrb5.so.3.3
---6411--   Considering /usr/lib/x86_64-linux-gnu/libkrb5.so.3.3 ..
---6411--   .. CRC mismatch (computed e608eb2d wanted 8bd2a4a3)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libk5crypto.so.3.1
---6411--   Considering /usr/lib/x86_64-linux-gnu/libk5crypto.so.3.1 ..
---6411--   .. CRC mismatch (computed 32a9532f wanted c4494603)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libcom_err.so.2.1
---6411--   Considering /lib/x86_64-linux-gnu/libcom_err.so.2.1 ..
---6411--   .. CRC mismatch (computed c8224b1b wanted 4ffc15c0)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libkrb5support.so.0.1
---6411--   Considering /usr/lib/x86_64-linux-gnu/libkrb5support.so.0.1 ..
---6411--   .. CRC mismatch (computed e27d2a9e wanted bc9a55dc)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libresolv-2.19.so
---6411--   Considering /lib/x86_64-linux-gnu/libresolv-2.19.so ..
---6411--   .. CRC mismatch (computed 5c733db8 wanted 30cd2eee)
---6411--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libresolv-2.19.so ..
---6411--   .. CRC is valid
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libsasl2.so.2.0.25
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libgssapi.so.3.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libgssapi.so.3.0.0 ..
---6411--   .. CRC mismatch (computed e35294d4 wanted 2caddf91)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libffi.so.6.0.1
---6411--   Considering /usr/lib/x86_64-linux-gnu/libffi.so.6.0.1 ..
---6411--   .. CRC mismatch (computed cbfcaa4a wanted 2012f49a)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libkeyutils.so.1.4
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libheimntlm.so.0.1.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libheimntlm.so.0.1.0 ..
---6411--   .. CRC mismatch (computed d6b9b8d7 wanted b56e8fd2)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libkrb5.so.26.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libkrb5.so.26.0.0 ..
---6411--   .. CRC mismatch (computed 6983274d wanted d2be6069)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libasn1.so.8.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libasn1.so.8.0.0 ..
---6411--   .. CRC mismatch (computed 8852f8fc wanted b9f884df)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libhcrypto.so.4.1.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libhcrypto.so.4.1.0 ..
---6411--   .. CRC mismatch (computed 6d50061f wanted 89db6712)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libroken.so.18.1.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libroken.so.18.1.0 ..
---6411--   .. CRC mismatch (computed 9db4a0ee wanted 215492f5)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libwind.so.0.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libwind.so.0.0.0 ..
---6411--   .. CRC mismatch (computed b3dc6177 wanted 6ae7fe8e)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libheimbase.so.1.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libheimbase.so.1.0.0 ..
---6411--   .. CRC mismatch (computed d4674ade wanted 47c60510)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libhx509.so.5.0.0
---6411--   Considering /usr/lib/x86_64-linux-gnu/libhx509.so.5.0.0 ..
---6411--   .. CRC mismatch (computed 2410d401 wanted 67df4c0a)
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /usr/lib/x86_64-linux-gnu/libsqlite3.so.0.8.6
---6411--    object doesn't have a symbol table
---6411-- Reading syms from /lib/x86_64-linux-gnu/libcrypt-2.19.so
---6411--   Considering /lib/x86_64-linux-gnu/libcrypt-2.19.so ..
---6411--   .. CRC mismatch (computed 9558285e wanted ec70842c)
---6411--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libcrypt-2.19.so ..
---6411--   .. CRC is valid
---6411-- Symbol match: found runtime_resolve: ld-2.19.so +0x164e0=0x40164e0
---6411-- REDIR: 0xffffffffff600400 (???) redirected to 0x3805106d (???)
-==6411== 
---6411-- Start dumping at BB 8304467314 (Prg.Term.)...
---6411-- Dump to /home/kraemer/workspace/NATriuM/src/analysis/valgrind-analysis/callgrind.out.6411
---6411-- Dumping done.
-==6411== Events    : Ir
-==6411== Collected : 40151483078
-==6411== 
-==6411== I   refs:      40,151,483,078
+==53686== Callgrind, a call-graph generating cache profiler
+==53686== Copyright (C) 2002-2013, and GNU GPL'd, by Josef Weidendorfer et al.
+==53686== Using Valgrind-3.10.0.SVN and LibVEX; rerun with -h for copyright info
+==53686== Command: ../../../bin/examples/step-1/step-1-taylorGreenVortex
+==53686== Parent PID: 53685
+==53686== 
+--53686-- 
+--53686-- Valgrind options:
+--53686--    --tool=callgrind
+--53686--    -v
+--53686--    --log-file=cg.log
+--53686-- Contents of /proc/version:
+--53686--   Linux version 3.13.0-32-generic (buildd@kissel) (gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1) ) #57-Ubuntu SMP Tue Jul 15 03:51:08 UTC 2014
+--53686-- Arch and hwcaps: AMD64, amd64-cx16-rdtscp-sse3-avx
+--53686-- Page sizes: currently 4096, max supported 4096
+--53686-- Valgrind library directory: /usr/lib/valgrind
+==53686== For interactive control, run 'callgrind_control -h'.
+--53686-- Reading syms from /home/kraemer/eclipse_workspace/NATriuM/bin/examples/step-1/step-1-taylorGreenVortex
+--53686-- Reading syms from /lib/x86_64-linux-gnu/ld-2.19.so
+--53686--   Considering /lib/x86_64-linux-gnu/ld-2.19.so ..
+--53686--   .. CRC mismatch (computed 4cbae35e wanted 8d683c31)
+--53686--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.19.so ..
+--53686--   .. CRC is valid
+--53686-- Reading syms from /usr/lib/valgrind/callgrind-amd64-linux
+--53686--   Considering /usr/lib/valgrind/callgrind-amd64-linux ..
+--53686--   .. CRC mismatch (computed 200319ec wanted 9808e5eb)
+--53686--    object doesn't have a symbol table
+--53686--    object doesn't have a dynamic symbol table
+--53686-- Scheduler: using generic scheduler lock implementation.
+==53686== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-53686-by-kraemer-on-???
+==53686== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-53686-by-kraemer-on-???
+==53686== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-53686-by-kraemer-on-???
+==53686== 
+==53686== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==53686== don't want to do, unless you know exactly what you're doing,
+==53686== or are doing some strange experiment):
+==53686==   /usr/lib/valgrind/../../bin/vgdb --pid=53686 ...command...
+==53686== 
+==53686== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==53686==   /path/to/gdb ../../../bin/examples/step-1/step-1-taylorGreenVortex
+==53686== and then give GDB the following command
+==53686==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=53686
+==53686== --pid is optional if only one valgrind process is running
+==53686== 
+--53686-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--53686--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--53686--   .. CRC mismatch (computed 329d6860 wanted c0186920)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.54.0
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/x86_64-linux-gnu/libboost_system.so.1.54.0
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /home/kraemer/NATriuM/deal.II-8.1.0/lib/libdeal_II.g.so.8.1.0
+--53686-- Reading syms from /usr/lib/openmpi/lib/libmpi_cxx.so.1.0.2
+--53686--   Considering /usr/lib/openmpi/lib/libmpi_cxx.so.1.0.2 ..
+--53686--   .. CRC mismatch (computed b86ae008 wanted b8df3d30)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/openmpi/lib/libmpi.so.1.0.8
+--53686--   Considering /usr/lib/openmpi/lib/libmpi.so.1.0.8 ..
+--53686--   .. CRC mismatch (computed 67536d0f wanted 15944252)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.19
+--53686--   Considering /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.19 ..
+--53686--   .. CRC mismatch (computed a220b90a wanted 886349ba)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /lib/x86_64-linux-gnu/libm-2.19.so
+--53686--   Considering /lib/x86_64-linux-gnu/libm-2.19.so ..
+--53686--   .. CRC mismatch (computed 0ebccb69 wanted 44d41128)
+--53686--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.19.so ..
+--53686--   .. CRC mismatch (computed 21e75a69 wanted 44d41128)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /lib/x86_64-linux-gnu/libc-2.19.so
+--53686--   Considering /lib/x86_64-linux-gnu/libc-2.19.so ..
+--53686--   .. CRC mismatch (computed 2b8f2acf wanted 60636809)
+--53686--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.19.so ..
+--53686--   .. CRC is valid
+--53686-- Reading syms from /lib/x86_64-linux-gnu/libgcc_s.so.1
+--53686--   Considering /lib/x86_64-linux-gnu/libgcc_s.so.1 ..
+--53686--   .. CRC mismatch (computed 7864c503 wanted 247e7cfd)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /lib/x86_64-linux-gnu/libpthread-2.19.so
+--53686--   Considering /lib/x86_64-linux-gnu/libpthread-2.19.so ..
+--53686--   .. CRC mismatch (computed d7f7b713 wanted 28afece6)
+--53686--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libpthread-2.19.so ..
+--53686--   .. CRC is valid
+--53686-- Reading syms from /usr/lib/atlas-base/libf77blas.so.3.0
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /home/kraemer/NATriuM/petsc-3.4.3/vm_hbrs_pc/lib/libpetsc.so
+--53686-- Reading syms from /usr/lib/lapack/liblapack.so.3.0
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /lib/x86_64-linux-gnu/libz.so.1.2.8
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /lib/x86_64-linux-gnu/libutil-2.19.so
+--53686--   Considering /lib/x86_64-linux-gnu/libutil-2.19.so ..
+--53686--   .. CRC mismatch (computed e1165780 wanted c579be89)
+--53686--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libutil-2.19.so ..
+--53686--   .. CRC is valid
+--53686-- Reading syms from /usr/lib/x86_64-linux-gnu/libhwloc.so.5.4.0
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.0
+--53686--   Considering /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.0 ..
+--53686--   .. CRC mismatch (computed d26b41ab wanted 3a5c804f)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/atlas-base/libcblas.so.3.0
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/atlas-base/libatlas.so.3.0
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/x86_64-linux-gnu/libgfortran.so.3.0.0
+--53686--   Considering /usr/lib/x86_64-linux-gnu/libgfortran.so.3.0.0 ..
+--53686--   .. CRC mismatch (computed e1e928bc wanted 7ade6969)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/atlas-base/atlas/libblas.so.3.0
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/openmpi/lib/libmpi_f77.so.1.0.7
+--53686--   Considering /usr/lib/openmpi/lib/libmpi_f77.so.1.0.7 ..
+--53686--   .. CRC mismatch (computed 44caf665 wanted 97ec80a2)
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /lib/x86_64-linux-gnu/libdl-2.19.so
+--53686--   Considering /lib/x86_64-linux-gnu/libdl-2.19.so ..
+--53686--   .. CRC mismatch (computed c1315e8c wanted 37097b60)
+--53686--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libdl-2.19.so ..
+--53686--   .. CRC is valid
+--53686-- Reading syms from /usr/lib/x86_64-linux-gnu/libnuma.so.1
+--53686--    object doesn't have a symbol table
+--53686-- Reading syms from /usr/lib/x86_64-linux-gnu/libquadmath.so.0.0.0
+--53686--   Considering /usr/lib/x86_64-linux-gnu/libquadmath.so.0.0.0 ..
+--53686--   .. CRC mismatch (computed c685bdba wanted 85a541a2)
+--53686--    object doesn't have a symbol table
+--53686-- Symbol match: found runtime_resolve: ld-2.19.so +0x164e0=0x40164e0
+--53686-- REDIR: 0xffffffffff600400 (???) redirected to 0x3805106d (???)
+==53686== 
+--53686-- Start dumping at BB 27403778353 (Prg.Term.)...
+--53686-- Dump to /home/kraemer/eclipse_workspace/NATriuM/src/analysis/valgrind-analysis/callgrind.out.53686
+--53686-- Dumping done.
+==53686== Events    : Ir
+==53686== Collected : 130481760889
+==53686== 
+==53686== I   refs:      130,481,760,889

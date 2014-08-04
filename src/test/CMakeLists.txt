@@ -37,6 +37,7 @@ set(    UTILITIES_TEST
         utilities/BasicNames_test.cpp
 		utilities/Logging_test.cpp
 		utilities/Math_test.cpp
+		utilities/CFDSolverUtilities_test.cpp
         )      
 
 

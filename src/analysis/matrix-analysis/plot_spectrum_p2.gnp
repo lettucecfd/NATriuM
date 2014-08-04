@@ -25,7 +25,6 @@ set xtics 2
 set ytics 2
 
 set output 'plot_spectrum_p2.eps'
-#set output 'plot_spectrum_p3.eps'
 set key rmargin samplen 1 horizontal maxrows 1 spacing 1.2
 set arrow from 0.0,-4.0 to 0.0,4.0 nohead
  
