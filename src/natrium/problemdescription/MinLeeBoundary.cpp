@@ -70,7 +70,7 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 		// add
 		for (size_t I = 0; I < n_blocks; I++) {
 			for (size_t J = 0; J < n_blocks; J++) {
-				if (I == boltzmannModel.getIndexOfOppositeDirection(J)) {
+				if (I == boltzmannModel.getIndexOfOppositeDirection(J+1)-1) {
 					// get global degrees of freedom
 					cell->get_dof_indices(localDoFIndices);
 					for (size_t i = 0; i < n_dofs_per_cell; i++) {
