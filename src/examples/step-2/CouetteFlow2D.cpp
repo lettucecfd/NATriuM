@@ -94,11 +94,18 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t,
 
 	t += m_startTime;
 	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
-	// assert (t > 0.1);
+	// therefor the initial condition is set first:
 	if (t < 0.1) {
-		velocity(0) = 0;
-		velocity(1) = 0;
-		return;
+		if (x(1) < L - 0.00001) {
+			velocity(0) = 0;
+			velocity(1) = 0;
+			return;
+		} else {
+			// upper border
+			velocity(0) = m_topPlateVelocity;
+			velocity(1) = 0;
+			return;
+		}
 	}
 
 	double sum = U * x(1) / L;
