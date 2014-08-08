@@ -676,6 +676,7 @@ public:
 		}
 		case CENTRAL: {
 			set("Flux type", "Central");
+			break;
 		}
 		default: {
 			std::stringstream msg;
