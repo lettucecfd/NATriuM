@@ -149,10 +149,12 @@ void SEDGMinLee<dim>::reassemble() {
 	distributed_sparse_block_matrix::iterator lastBlock(&m_systemMatrix);
 	blockIterator = m_systemMatrix.begin();
 	lastBlock = m_systemMatrix.end();
-	for (; blockIterator != lastBlock; blockIterator++){
-				size_t rowInBlock = blockIterator->row() - n*blockIterator->block_row();
-				blockIterator->set_value( blockIterator->value() / m_massMatrix(rowInBlock) );
-		}
+	for (; blockIterator != lastBlock; blockIterator++) {
+		size_t rowInBlock = blockIterator->row()
+				- n * blockIterator->block_row();
+		blockIterator->set_value(
+				blockIterator->value() / m_massMatrix(rowInBlock));
+	}
 	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
 		for (size_t i = 0; i < n; i++) {
 			m_systemVector.block(I)(i) = m_systemVector.block(I)(i)
@@ -195,11 +197,11 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 
 	for (size_t I = 0; I < n_blocks; I++) {
-	DoFTools::make_flux_sparsity_pattern(*m_doFHandler, cSparse.block(I,I));
+		DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
+				cSparse.block(I, I));
 	}
 	// copy cSparseTmp to all blocks
 	// TODO this could probably be done more efficiently by iterating over the sparsity pattern
-
 
 	// add periodic boundaries to intermediate flux sparsity pattern
 	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
@@ -338,7 +340,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 					minLeeBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_boltzmannModel,
 							m_q_index_to_facedof.at(j), m_systemMatrix,
-							m_systemVector);
+							m_systemVector, m_useCentralFlux);
 				}
 			} /* endif isPeriodic */
 
@@ -346,6 +348,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 // Internal faces
 			typename DoFHandler<dim>::cell_iterator neighbor = cell->neighbor(
 					j);
+			// TODO OPPOSITE FACE WONT DO IN ALL CASES!
 			assembleAndDistributeInternalFace(alpha, cell, j, neighbor,
 					dealii::GeometryInfo<dim>::opposite_face[j], feFaceValues,
 					feSubfaceValues, feNeighborFaceValues);
@@ -440,25 +443,22 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 		size_t neighborDoF = m_q_index_to_facedof.at(neighborFaceNumber).at(q);
 
 		// calculate matrix entries
-		vector<double> factor(JxW);
+		double prefactor = JxW.at(q);
 		double exn = 0.0;
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
 			exn += normals.at(q)(i) * m_boltzmannModel->getDirection(alpha)(i);
 		}
-		for (size_t i = 0; i < factor.size(); i++) {
-			factor.at(i) *= exn;
-		}
+		prefactor *= exn;
 
 		if (m_useCentralFlux) {
-
-			cellFaceMatrix(thisDoF, thisDoF) = 0.5 * factor.at(q);
-			neighborFaceMatrix(thisDoF, neighborDoF) = 0.5 * factor.at(q);
+			cellFaceMatrix(thisDoF, thisDoF) = 0.5 * prefactor;
+			neighborFaceMatrix(thisDoF, neighborDoF) = 0.5 * prefactor;
 
 		} else if (exn < 0) { // otherwise: no contributions
 
-			cellFaceMatrix(thisDoF, thisDoF) = factor.at(q);
-			neighborFaceMatrix(thisDoF, neighborDoF) = -factor.at(q);
+			cellFaceMatrix(thisDoF, thisDoF) = prefactor;
+			neighborFaceMatrix(thisDoF, neighborDoF) = -prefactor;
 		}
 	}
 
