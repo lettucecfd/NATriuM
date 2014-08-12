@@ -86,7 +86,7 @@ public:
 			const BoltzmannModel& boltzmannModel,
 			const std::map<size_t, size_t>& q_index_to_facedof,
 			distributed_sparse_block_matrix& systemMatrix,
-			distributed_block_vector& systemVector) const;
+			distributed_block_vector& systemVector, bool useCentralFlux = false) const;
 
 	size_t getBoundaryIndicator() const {
 		return m_boundaryIndicator;
