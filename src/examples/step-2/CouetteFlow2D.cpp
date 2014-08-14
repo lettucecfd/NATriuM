@@ -95,7 +95,7 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t,
 	t += m_startTime;
 	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
 	// therefor the initial condition is set first:
-	if (t < 0.1) {
+	if (t < 0.00001) {
 		if (x(1) < L - 0.00001) {
 			velocity(0) = 0;
 			velocity(1) = 0;
