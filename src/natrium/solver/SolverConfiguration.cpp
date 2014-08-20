@@ -32,9 +32,8 @@ SolverConfiguration::SolverConfiguration() {
 				dealii::Patterns::Selection("SEDG"),
 				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme.");
 		declare_entry("Time integrator", "Runge-Kutta 5-stage",
-				dealii::Patterns::Selection("Runge-Kutta 5-stage"),
+				dealii::Patterns::Selection("Runge-Kutta 5-stage|Theta method|Exponential"),
 				"The algorithm which is used for the time integration of the discretizted advection (=streaming) equation. A time integrator is required, when the advection scheme is based upon some Finite Element/Difference/Volume or discontinuous Galerkin scheme.");
-
 		enter_subsection("SEDG");
 		{
 			declare_entry("Order of finite element", "2",
@@ -43,6 +42,13 @@ SolverConfiguration::SolverConfiguration() {
 			declare_entry("Flux type", "Lax-Friedrichs",
 					dealii::Patterns::Selection("Lax-Friedrichs|Central"),
 					"The flux connects the shape functions between neighboring elements. It is strongly recommended to use the Lax-Friedrichs scheme which is a forward-discretization along characteristics, rather than a central flux.");
+		}
+		leave_subsection();
+		enter_subsection("Theta method");
+		{
+			declare_entry("Theta", "0.5",
+					dealii::Patterns::Double(0,1),
+					"Theta=0: Explicit Euler; Theta=0.5: Crank-Nicholson; Theta=1.0: Implicit Euler.");
 		}
 		leave_subsection();
 	}

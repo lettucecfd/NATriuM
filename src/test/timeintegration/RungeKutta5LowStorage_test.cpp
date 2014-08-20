@@ -29,6 +29,8 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 	const double lambda = 2.0;
 	distributed_vector f(1);
 	f(0) = 1;
+	distributed_vector g(1);
+	g(0) = 0;
 	// build the 1x1 matrix [[lambda]]
 	dealii::CompressedSparsityPattern compressedSparsityPattern(1,1);
 	compressedSparsityPattern.add(0,0);
@@ -44,7 +46,7 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 	double t = 0;
 	for (size_t i = 0; i < numberOfSteps; i++){
 		t += dt;
-		RK5.step(f,A);
+		RK5.step(f,A,g);
 		double error = fabs(f(0)-exp(lambda*t));
 		BOOST_ASSERT(error < 1e-7);
 	}

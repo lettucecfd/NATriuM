@@ -48,7 +48,7 @@ public:
 	 * @short make one time integration step on vector
 	 *        using the system matrix
 	 */
-	virtual void step(VECTOR& vector, const MATRIX& systemMatrix) = 0;
+	virtual void step(VECTOR& vector, const MATRIX& systemMatrix, const VECTOR& systemVector) = 0;
 };
 
 } /* namespace natrium */

@@ -45,7 +45,7 @@ enum CollisionSchemeName {
  * @short Implemented time integrators
  */
 enum TimeIntegratorName {
-	RUNGE_KUTTA_5STAGE
+	RUNGE_KUTTA_5STAGE, THETA_METHOD, EXPONENTIAL
 };
 
 /**
@@ -798,6 +798,10 @@ public:
 		leave_subsection();
 		if ("Runge-Kutta 5-stage" == integrator) {
 			return RUNGE_KUTTA_5STAGE;
+		} else if ("Theta method" == integrator) {
+			return THETA_METHOD;
+		} else if ("Exponential" == integrator) {
+			return EXPONENTIAL;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown Time integrator with index " << integrator
@@ -814,6 +818,14 @@ public:
 			set("Time integrator", "Runge-Kutta 5-stage");
 			break;
 		}
+		case THETA_METHOD: {
+			set("Time integrator", "Theta method");
+			break;
+		}
+		case EXPONENTIAL: {
+			set("Time integrator", "Exponential");
+			break;
+		}
 		default: {
 			std::stringstream msg;
 			msg << "Unknown Time integrator; index. " << timeIntegrator
@@ -822,6 +834,43 @@ public:
 			throw ConfigurationException(msg.str());
 		}
 		}
+		leave_subsection();
+	}
+
+	double getThetaMethodTheta() {
+		enter_subsection("Advection");
+		enter_subsection("Theta method");
+		double theta;
+		try {
+			theta = get_double("Theta");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not read parameter 'Theta' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return theta;
+	}
+
+	void setThetaMethodTheta(
+			double theta) {
+		enter_subsection("Advection");
+		enter_subsection("Theta method");
+		try {
+			set("Theta", theta);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << theta
+					<< " to Theta in Theta Method: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 		leave_subsection();
 	}
 

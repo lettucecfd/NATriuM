@@ -8,6 +8,10 @@
 #ifndef RUNGEKUTTA5LOWSTORAGE_H_
 #define RUNGEKUTTA5LOWSTORAGE_H_
 
+// enable + operator for filling vectors
+#include "boost/assign/std/vector.hpp"
+using namespace boost::assign;
+
 #include "TimeIntegrator.h"
 #include "../utilities/BasicNames.h"
 
@@ -80,7 +84,7 @@ public:
 	 * 			U_j  = U_{j-1} + B_j* dU_j
 	 */
 	virtual void step(VECTOR& vector,
-			const MATRIX& systemMatrix);
+			const MATRIX& systemMatrix, const VECTOR& systemVector);
 
 	const vector<double>& getA() const {
 		return m_a;

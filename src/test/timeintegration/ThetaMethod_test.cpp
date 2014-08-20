@@ -48,7 +48,6 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_Convergence_test) {
 			t += dt;
 			tm.step(f, A, g);
 			double error = fabs(f(0) - exp(lambda * t));
-			cout << f(0) << " " << exp(lambda * t) << endl;
 			BOOST_ASSERT(error < 1e-3);
 		}
 	}

@@ -460,7 +460,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 		// 1 time steps at once
 		const size_t numberOfTimeStepsAtOnce = 1;
 		for (size_t j = 0; j < numberOfTimeStepsAtOnce; j++) {
-			RK5.step(f, advectionMatrix);
+			RK5.step(f, advectionMatrix, distributed_vector(f.size()));
 		}
 
 		if (i == timeStepsUntilHalfThroughDomain) {

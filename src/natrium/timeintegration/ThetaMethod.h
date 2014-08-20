@@ -35,7 +35,13 @@ public:
 	 */
 	ThetaMethod(double timeStepSize, size_t problemSize, double theta);
 
-
+	/**
+	 * @short Constructor
+	 * @param timeStepSize The initial time step size
+	 * @param problemSize the number of degrees of freedom
+	 * @param theta  theta = 0: Explicit Euler, theta = 1: implicit Euler, theta = 0.5: Crank-Nicholson.
+	 */
+	ThetaMethod(double timeStepSize, size_t problemSize, size_t numberOfBlocks, double theta);
 
 	/// destructor
 	virtual ~ThetaMethod(){};
@@ -46,11 +52,6 @@ public:
 	 void step(VECTOR& vector,
 			const MATRIX& systemMatrix, const VECTOR& systemVector);
 
-	 /**
-	  * @short DOES NOTHING
-	  */
-	 virtual void step(
-			VECTOR& f, const MATRIX& systemMatrix);
 };
 
 } /* namespace natrium */

@@ -28,7 +28,6 @@
 #include "../collisionmodels/BGKTransformed.h"
 
 #include "../timeintegration/TimeIntegrator.h"
-#include "../timeintegration/RungeKutta5LowStorage.h"
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"

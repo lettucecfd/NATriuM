@@ -21,6 +21,9 @@
 
 #include "../problemdescription/BoundaryCollection.h"
 
+#include "../timeintegration/ThetaMethod.h"
+#include "../timeintegration/RungeKutta5LowStorage.h"
+
 #include "../utilities/Logging.h"
 
 namespace natrium {
@@ -109,6 +112,14 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), numberOfDoFs,
 				m_boltzmannModel->getQ() - 1);
+	} else if (THETA_METHOD == configuration->getTimeIntegrator()){
+		m_timeIntegrator = make_shared<
+						ThetaMethod<distributed_sparse_block_matrix,
+								distributed_block_vector> >(
+						configuration->getTimeStepSize(), numberOfDoFs,
+						m_boltzmannModel->getQ() - 1, configuration->getThetaMethodTheta());
+	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
+		throw CFDSolverException("Exponential time integrator is not implemented, yet.");
 	}
 
 // initialize macroscopic variables
@@ -206,23 +217,16 @@ template CFDSolver<3>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 template<size_t dim>
 void CFDSolver<dim>::stream() {
+
+	// no streaming in direction 0; begin with 1
+	distributed_block_vector& f = m_f.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
-	distributed_block_vector& f = m_f.getFStream();
-// no streaming in direction 0; begin with 1
-	m_timeIntegrator->step(f, systemMatrix);
-	//f.print(cout);
-	f.add(m_timeIntegrator->getTimeStepSize(),
-			m_advectionOperator->getSystemVector());
+	const distributed_block_vector& systemVector =
+			m_advectionOperator->getSystemVector();
+
+	m_timeIntegrator->step(f, systemMatrix, systemVector);
 	m_time += m_timeIntegrator->getTimeStepSize();
-	//f.add(1.0, m_advectionOperator->getSystemVector());
-	//m_advectionOperator->getSystemVector().print(cout);
-	//f.print(cout);
-	//assert (false);
-	/*
-	 for (size_t i = 1; i < m_boltzmannModel->getQ(); i++) {
-	 m_timeIntegrator->step(m_f.at(i), systemMatrix.block(i-1,i-1));
-	 }*/
 
 }
 template void CFDSolver<2>::stream();
