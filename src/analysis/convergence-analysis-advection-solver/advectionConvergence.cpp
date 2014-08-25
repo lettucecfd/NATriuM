@@ -68,6 +68,8 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 	// create smooth initial conditions
 	distributed_vector f(streaming.getNumberOfDoFs());
+	// zero-vector for time integrator
+	distributed_vector g(streaming.getNumberOfDoFs());
 	vector<dealii::Point<2> > supportPoints(
 			streaming.getDoFHandler()->n_dofs());
 	dealii::DoFTools::map_dofs_to_support_points(streaming.getMapping(),
@@ -82,7 +84,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 	for (size_t i = 0; i < numberOfTimeSteps; i++) {
 		//stream
-		RK5.step(f, advectionMatrix);
+		RK5.step(f, advectionMatrix,g );
 	}
 
 	// compare with analytic solution by sup-norm and 2-norm
