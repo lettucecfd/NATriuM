@@ -267,15 +267,15 @@
 <pathentry kind="mac" name="__GXX_RTTI" path="" value="1"/>
 <pathentry kind="mac" name="__EXCEPTIONS" path="" value="1"/>
 <pathentry kind="mac" name="_GNU_SOURCE" path="" value="1"/>
-<pathentry include="/home/kraemer/eclipse_workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include/deal.II" kind="inc" path="" system="true"/>
 <pathentry include="/home/kraemer/NATriuM/deal.II-8.1.0/include/deal.II/bundled" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/openmpi/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/openmpi/include/openmpi" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/NATriuM/petsc-3.4.3/include" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/NATriuM/petsc-3.4.3/vm_hbrs_pc/include" kind="inc" path="" system="true"/>
-<pathentry include="/home/kraemer/eclipse_workspace/NATriuM/src/natrium" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/NATriuM/petsc-3.4.5/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/NATriuM/petsc-3.4.5/home_zotac_VM/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/workspace/NATriuM/bin/natrium" kind="inc" path="" system="true"/>
+<pathentry include="/home/kraemer/workspace/NATriuM/src/natrium" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include/boost" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/local/include" kind="inc" path="" system="true"/>
@@ -304,14 +304,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] NATriuM_exe" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>NATriuM_exe</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] NATriuM_exe" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin" "/usr/local/bin/cmake" -P "CMakeFiles/NATriuM_exe.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin" "/usr/bin/cmake" -P "CMakeFiles/NATriuM_exe.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -416,14 +416,14 @@
 </target>
 <target name="Build" path="[Targets]/[lib] natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>natrium</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[lib] natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/natrium" "/usr/local/bin/cmake" -P "CMakeFiles/natrium.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/natrium" "/usr/bin/cmake" -P "CMakeFiles/natrium.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -883,6 +883,27 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
+<target name="[obj] timeintegration/ThetaMethod.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>timeintegration/ThetaMethod.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] timeintegration/ThetaMethod.cpp.i" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>timeintegration/ThetaMethod.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] timeintegration/ThetaMethod.cpp.s" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>timeintegration/ThetaMethod.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
 <target name="[obj] timeintegration/TimeIntegrator.cpp.o" path="natrium" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments></buildArguments>
@@ -962,14 +983,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] NATriuM_UnitTest_exe" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>NATriuM_UnitTest_exe</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] NATriuM_UnitTest_exe" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/test" "/usr/local/bin/cmake" -P "CMakeFiles/NATriuM_UnitTest_exe.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/test" "/usr/bin/cmake" -P "CMakeFiles/NATriuM_UnitTest_exe.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -1303,6 +1324,27 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
+<target name="[obj] timeintegration/ThetaMethod_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>timeintegration/ThetaMethod_test.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] timeintegration/ThetaMethod_test.cpp.i" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>timeintegration/ThetaMethod_test.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] timeintegration/ThetaMethod_test.cpp.s" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>timeintegration/ThetaMethod_test.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
 <target name="[obj] utilities/BasicNames_test.cpp.o" path="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments></buildArguments>
@@ -1417,14 +1459,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] step-1-taylorGreenVortex" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>step-1-taylorGreenVortex</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] step-1-taylorGreenVortex" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/examples/step-1" "/usr/local/bin/cmake" -P "CMakeFiles/step-1-taylorGreenVortex.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/examples/step-1" "/usr/bin/cmake" -P "CMakeFiles/step-1-taylorGreenVortex.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -1501,14 +1543,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] step-2-couette2D" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>step-2-couette2D</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] step-2-couette2D" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/examples/step-2" "/usr/local/bin/cmake" -P "CMakeFiles/step-2-couette2D.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/examples/step-2" "/usr/bin/cmake" -P "CMakeFiles/step-2-couette2D.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -1585,14 +1627,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] step-3-LidDrivenCavity2D" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>step-3-LidDrivenCavity2D</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] step-3-LidDrivenCavity2D" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/examples/step-3" "/usr/local/bin/cmake" -P "CMakeFiles/step-3-LidDrivenCavity2D.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/examples/step-3" "/usr/bin/cmake" -P "CMakeFiles/step-3-LidDrivenCavity2D.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -1653,6 +1695,90 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
+<target name="[exe] step-6-complex-wall-1" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>step-6-complex-wall-1</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] step-6-complex-wall-1/fast" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>step-6-complex-wall-1/fast</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Build" path="[Targets]/[exe] step-6-complex-wall-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
+<buildTarget>step-6-complex-wall-1</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Clean" path="[Targets]/[exe] step-6-complex-wall-1" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/examples/step-6" "/usr/bin/cmake" -P "CMakeFiles/step-6-complex-wall-1.dir/cmake_clean.cmake"</buildArguments>
+<buildTarget></buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": all" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>all</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": clean" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>clean</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] ComplexWall1.cpp.o" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>ComplexWall1.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] ComplexWall1.cpp.i" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>ComplexWall1.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] ComplexWall1.cpp.s" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>ComplexWall1.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] step-6.cpp.o" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>step-6.cpp.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] step-6.cpp.i" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>step-6.cpp.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] step-6.cpp.s" path="examples/step-6" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>step-6.cpp.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
 <target name=": all" path="analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
 <buildArguments></buildArguments>
@@ -1683,14 +1809,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] advectionConvergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>advectionConvergence</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] advectionConvergence" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-advection-solver" "/usr/local/bin/cmake" -P "CMakeFiles/advectionConvergence.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-advection-solver" "/usr/bin/cmake" -P "CMakeFiles/advectionConvergence.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -1767,14 +1893,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-basic</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-basic" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-basic" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-basic.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-basic" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-basic.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -1851,14 +1977,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-junk</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-junk" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-junk" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-junk.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-junk" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-junk.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -1935,14 +2061,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-kinetic-energy</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-kinetic-energy" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-kinetic-energy" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-kinetic-energy.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-kinetic-energy" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-kinetic-energy.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -2019,14 +2145,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-p</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-p" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-p.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-p" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-p.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -2103,14 +2229,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-wall</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-wall" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-wall" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-wall.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-wall" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-wall.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -2187,14 +2313,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>convergence-analysis-wall-p</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] convergence-analysis-wall-p" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/convergence-analysis-wall-p" "/usr/local/bin/cmake" -P "CMakeFiles/convergence-analysis-wall-p.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/convergence-analysis-wall-p" "/usr/bin/cmake" -P "CMakeFiles/convergence-analysis-wall-p.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -2271,14 +2397,14 @@
 </target>
 <target name="Build" path="[Targets]/[exe] matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/make</buildCommand>
-<buildArguments>-C "/home/kraemer/eclipse_workspace/NATriuM/bin" </buildArguments>
+<buildArguments>-C "/home/kraemer/workspace/NATriuM/bin" </buildArguments>
 <buildTarget>matrix-analysis</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="Clean" path="[Targets]/[exe] matrix-analysis" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/local/bin/cmake</buildCommand>
-<buildArguments>-E chdir "/home/kraemer/eclipse_workspace/NATriuM/bin/analysis/matrix-analysis" "/usr/local/bin/cmake" -P "CMakeFiles/matrix-analysis.dir/cmake_clean.cmake"</buildArguments>
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/home/kraemer/workspace/NATriuM/bin/analysis/matrix-analysis" "/usr/bin/cmake" -P "CMakeFiles/matrix-analysis.dir/cmake_clean.cmake"</buildArguments>
 <buildTarget></buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
