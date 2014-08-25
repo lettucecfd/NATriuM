@@ -8,6 +8,7 @@
 #include "CouetteFlow2D.h"
 
 #include "deal.II/grid/grid_generator.h"
+#include "deal.II/grid/grid_tools.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/geometry_info.h"
@@ -20,8 +21,8 @@
 namespace natrium {
 
 CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
-		size_t refinementLevel, double L, double startTime) :
-		Benchmark<2>(makeGrid(L, refinementLevel), viscosity, L), m_topPlateVelocity(
+		size_t refinementLevel, double L, double startTime, bool isUnstructured) :
+		Benchmark<2>(makeGrid(L, refinementLevel, isUnstructured), viscosity, L), m_topPlateVelocity(
 				topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
@@ -33,7 +34,7 @@ CouetteFlow2D::~CouetteFlow2D() {
 }
 
 shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid(double L,
-		size_t refinementLevel) {
+		size_t refinementLevel, bool isUnstructured) {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
@@ -46,21 +47,13 @@ shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid(double L,
 	cell->face(2)->set_all_boundary_indicators(2);  // bottom
 	cell->face(3)->set_all_boundary_indicators(3);  // top
 
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
+	// refine grid
 	unitSquare->refine_global(refinementLevel);
 
-//	// Anisotropic refinement
-//	dealii::RefinementCase<2> yRefinement(1);
-//	for (size_t i = 0; i < 1; i++) {
-//		Triangulation<2>::active_cell_iterator it = unitSquare->begin_active();
-//		for (; it < unitSquare->end(); i++){
-//			if (it->face(3)->boundary_indicator()==3){
-//				it->set_refine_flag(yRefinement);
-//			}
-//		}
-//		unitSquare->execute_coarsening_and_refinement();
-//	}
-
+	// transform grid
+	if (isUnstructured){
+	  dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
+	}
 	return unitSquare;
 }
 

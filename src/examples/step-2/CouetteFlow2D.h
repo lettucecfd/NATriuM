@@ -26,7 +26,7 @@ class CouetteFlow2D: public Benchmark<2> {
 public:
 
 	/// constructor
-	CouetteFlow2D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0);
+	CouetteFlow2D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false);
 
 	/// destructor
 	virtual ~CouetteFlow2D();
@@ -51,7 +51,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(double L, size_t refinementLevel);
+	shared_ptr<Triangulation<2> > makeGrid(double L, size_t refinementLevel, bool isUnstructured = false);
 
 	/**
 	 * @short create boundaries for couette flow
@@ -59,6 +59,22 @@ private:
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
 	shared_ptr<BoundaryCollection<2> > makeBoundaries(double topPlateVelocity);
+
+	/**
+	 * @short function to generate the unstructured mesh grid
+	 */
+	struct UnstructuredGridFunc
+	{
+	  double trans(const double y) const
+	  {
+	    return std::tanh(2*y)/tanh(2);
+	  }
+	  dealii::Point<2> operator() (const dealii::Point<2> &in) const
+	  {
+	    return dealii::Point<2> (in(0),
+	                     trans(in(1)));
+	  }
+	};
 
 };
 
