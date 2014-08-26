@@ -1,0 +1,32 @@
+\hypertarget{convergence-analysis-basic_8cpp}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/analysis/convergence-\/analysis-\/basic/convergence-\/analysis-\/basic.cpp File Reference}
+\label{convergence-analysis-basic_8cpp}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/analysis/convergence-\/analysis-\/basic/convergence-\/analysis-\/basic.\-cpp@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/analysis/convergence-\/analysis-\/basic/convergence-\/analysis-\/basic.\-cpp}}
+}
+
+
+The convergence of the N\-A\-Triu\-M solver is analyzed by application to the Taylor-\/\-Green vortex in 2\-D (only periodic walls). This script uses a linear scaling (= constant Mach number). Thus, there is a general compressibily error, which destroys the convergence for the finer meshes. To analyze the results, move the table\-\_\-order.\-txt and table\-\_\-results.\-txt files to N\-A\-Triu\-M/src/analysis/convergence\-\_\-analysis\-\_\-basic/ and execute the gnuplot scripts.  
+
+
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$time.\-h$>$}\\*
+{\ttfamily \#include $<$stdlib.\-h$>$}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/numerics/data\-\_\-out.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}solver/\-Benchmark\-C\-F\-D\-Solver.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}solver/\-Solver\-Configuration.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}problemdescription/\-Benchmark.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}utilities/\-Basic\-Names.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../../examples/step-\/1/\-Taylor\-Green\-Vortex2\-D.\-h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{convergence-analysis-basic_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{int {\bfseries main} ()}\label{convergence-analysis-basic_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The convergence of the N\-A\-Triu\-M solver is analyzed by application to the Taylor-\/\-Green vortex in 2\-D (only periodic walls). This script uses a linear scaling (= constant Mach number). Thus, there is a general compressibily error, which destroys the convergence for the finer meshes. To analyze the results, move the table\-\_\-order.\-txt and table\-\_\-results.\-txt files to N\-A\-Triu\-M/src/analysis/convergence\-\_\-analysis\-\_\-basic/ and execute the gnuplot scripts. \begin{DoxyDate}{Date}
+05.\-06.\-2014 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}

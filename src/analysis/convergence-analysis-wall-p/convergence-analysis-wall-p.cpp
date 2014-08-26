@@ -58,7 +58,7 @@ int main() {
 	const double t0 = 0.0;
 
 
-	size_t refinementLevel = 3;
+	size_t refinementLevel = 2;
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 	std::stringstream filename;
