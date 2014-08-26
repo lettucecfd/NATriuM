@@ -294,6 +294,11 @@
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/TimeIntegrator.cpp</location>
 		</link>
 		<link>
+			<name>[Targets]/[lib] natrium/Source Files/ThetaMethod.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/ThetaMethod.cpp</location>
+		</link>
+		<link>
 			<name>[Targets]/[lib] natrium/Source Files/CFDSolverUtilities.cpp</name>
 			<type>1</type>
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/CFDSolverUtilities.cpp</location>
@@ -429,6 +434,11 @@
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/TimeIntegrator.h</location>
 		</link>
 		<link>
+			<name>[Targets]/[lib] natrium/Header Files/ThetaMethod.h</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/timeintegration/ThetaMethod.h</location>
+		</link>
+		<link>
 			<name>[Targets]/[lib] natrium/Header Files/BasicNames.h</name>
 			<type>1</type>
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/utilities/BasicNames.h</location>
@@ -552,6 +562,11 @@
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/RungeKutta5LowStorage_test.cpp</name>
 			<type>1</type>
 			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/timeintegration/RungeKutta5LowStorage_test.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/ThetaMethod_test.cpp</name>
+			<type>1</type>
+			<location>/home/kraemer/eclipse_workspace/NATriuM/src/test/timeintegration/ThetaMethod_test.cpp</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] NATriuM_UnitTest_exe/Source Files/BasicNames_test.cpp</name>

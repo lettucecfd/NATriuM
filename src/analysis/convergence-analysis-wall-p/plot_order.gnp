@@ -5,7 +5,7 @@
 #################################################
 reset
 set term postscript eps color enhanced "Helvetica" 28
-set size 1.15, 0.8
+set size 1.0, 0.8
 set rmargin at screen 0.7
 
 # LINESTYLE DEFINITIONS
@@ -18,17 +18,16 @@ set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtyp
 set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
 
 set logscale y
+set format y "   %.0e"
 
 set xlabel 'FE order'
 
-set output 'plot_order.eps'
-set key rmargin samplen 1 horizontal maxrows 1 spacing 1.2
-set ylabel 'Error on velocity (sup-norm)' offset 2.0, 0
+set output 'error_2norm.eps'
+set key rmargin samplen 1 vertical maxcols 1 spacing 1.2
+set ylabel 'Error on velocity (2-norm)' offset 2.0, 0
 plot \
-0.0953393 * 2**10 * 2**(-2*x) title 'order 2' with lines ls 4,\
-'table_order.txt' using ($1):($7) every :::0::0 title 'dt=0.01' with linespoints ls 2,\
-'table_order.txt' using ($1):($7) every :::0::0 title 'dt=0.005' with linespoints ls 4,\
-'table_order.txt' using ($1):($7) every :::0::0 title 'dt=0.0025' with linespoints ls 5,\
-'table_order.txt' using ($1):($7) every :::0::0 title 'dt=0.000125' with linespoints ls 6#,\
-#'../convergence-analysis-p/table_order.txt' using ($1):($7) title 'diffusive scaling' with linespoints ls 5#,\
-#'table_order.txt' using ($1):($6) title 'on rho' with linespoints ls 3
+'table_order.txt' using ($1):($7) every :::4::4 title 'dt=0.02' with linespoints ls 6,\
+'table_order.txt' using ($1):($7) every :::5::5 title 'dt=0.01' with linespoints ls 2,\
+'table_order.txt' using ($1):($7) every :::6::6 title 'dt=0.005' with linespoints ls 4,\
+'table_order.txt' using ($1):($7) every :::7::7 title 'dt=0.0025' with linespoints ls 5
+
