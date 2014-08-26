@@ -5,8 +5,8 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#ifndef COUETTEFLOW2D_H_
-#define COUETTEFLOW2D_H_
+#ifndef COMPLEXWALL1_H_
+#define COMPLEXWALL1_H_
 
 #include "deal.II/grid/tria.h"
 
@@ -76,13 +76,13 @@ private:
 	struct UnstructuredGridFunc
 	{
 		double refineBoundary (const double y) const {
-			return fabs(std::tanh(2*y-1))/tanh(2);
+			return 0.5*(1+std::tanh(y-1));
 		}
 	  double trans(const double x, const double y) const
 	  {
-		  double h = 0.5;
-		  double k = 4;
-	    double upper = 1-h*pow(std::sin(k*3.1415926*x),2);
+		  double h = 0.7;
+		  double k = 6;
+	    double upper = 1-h*pow(std::sin(k*4*std::atan(1)*x),2);
 	    return y*upper;
 	  }
 	  dealii::Point<2> operator() (const dealii::Point<2> &in) const

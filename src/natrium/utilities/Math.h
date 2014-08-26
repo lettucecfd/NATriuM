@@ -124,7 +124,7 @@ public:
 	bool operator()(const double &left, const double &right) const {
 		// you can choose other way to make decision
 		// (The original version is: return left < right;)
-		return (abs(left - right) > epsilon) && (left < right);
+		return (fabs(left - right) > epsilon) && (left < right);
 	}
 	double epsilon;
 };

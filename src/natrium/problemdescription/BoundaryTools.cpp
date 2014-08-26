@@ -86,17 +86,16 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 		if (currentCell->at_boundary()) {
 			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
 					i++) {
-				cout << "f" << endl;
 				if (currentCell->face(i)->boundary_indicator()
 						== boundaryIndicator1) {
-					cout << "  < @ b " << endl;
 					for (size_t j = 0;
 							j < dealii::GeometryInfo<2>::vertices_per_face;
 							j++) {
 						double key = 1000. * currentCell->face(i)->vertex(j)[0]
 								+ currentCell->face(i)->vertex(j)[1];
-						cout << "key:" << key << endl;
-						pointsAtBoundary1[key]=		currentCell->face(i)->vertex(j);
+						pointsAtBoundary1.insert(
+								std::make_pair(key,
+										currentCell->face(i)->vertex(j)));
 					}
 				} else {
 					if (currentCell->face(i)->boundary_indicator()
@@ -116,8 +115,6 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 			}
 		}
 	}
-
-	cout << "SAIZ: " << pointsAtBoundary1.size() << " " << pointsAtBoundary2.size() << endl;
 
 	// get line edges
 	beginLine1 = pointsAtBoundary1.begin()->second;

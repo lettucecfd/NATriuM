@@ -27,11 +27,11 @@ int main() {
 	cout << "Starting NATriuM step-6..." << endl;
 
 	// set Reynolds and Mach number
-	const double Re = 10;
+	const double Re = 2000;
 	const double Ma = 0.1;
 
 	// set spatial discretization
-	size_t refinementLevel = 6;
+	size_t refinementLevel = 5;
 	size_t orderOfFiniteElement = 2;
 
 	// set Problem so that the right Re and Ma are achieved
@@ -40,7 +40,7 @@ int main() {
 	const double viscosity = U / Re; // (because L = 1)
 
 	// set small time step size
-	const double timeStepSize = 0.0001;
+	const double timeStepSize = 0.0005;
 
 	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
@@ -53,7 +53,7 @@ int main() {
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
-	configuration->setNumberOfTimeSteps(5./timeStepSize);
+	configuration->setNumberOfTimeSteps(20./timeStepSize);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
 	configuration->setTimeStepSize(timeStepSize);
