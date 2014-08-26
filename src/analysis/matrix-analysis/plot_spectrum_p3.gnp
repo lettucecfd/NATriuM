@@ -1,0 +1,37 @@
+# format1
+
+#################################################
+# Gnuplot script file for plotting data in files#
+#################################################
+reset
+set term postscript eps color enhanced "Helvetica" 28
+set size 1.1, 0.8
+set rmargin at screen 0.7
+
+# LINESTYLE DEFINITIONS
+set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 2 pointtype 4 pointsize 1# pointinterval 10
+set style line 2  linetype 1 linecolor rgb "dark-orange"  linewidth 3 pointtype 6 pointsize 1#pointinterval 10
+set style line 3  linetype 1 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 8 pointsize 2# pointinterval 10
+set style line 4  linetype 1 linecolor rgb "dark-green"  linewidth 3.000 pointtype 12 pointsize 2# pointinterval 10
+set style line 5  linetype 1 linecolor rgb "violet"  linewidth 7.000 pointtype 3 pointsize 2# pointinterval 10
+set style line 6  linetype 2 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 7 pointsize 2 pointinterval 17
+set style line 7  linetype 2 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
+
+set yrange [-4:4]
+
+set xlabel 'Re'
+set ylabel 'Im'
+
+set xtics 2
+set ytics 2
+
+set output 'plot_spectrum_p3.eps'
+set key rmargin samplen 1 horizontal maxrows 1 spacing 1.2
+set arrow from 0.0,-4.0 to 0.0,4.0 nohead
+ 
+
+plot \
+'results/taylorgreen3_3/pseudospectrum.txt' title 'pseudospectrum' with points ps 1 lc rgb "green",\
+'results/taylorgreen3_3/spectrum.txt' title 'only periodic' w p ls 4, \
+'results/couette3_3/pseudospectrum.txt' title 'pseudospectrum' with points ps 1 pt 1 lc rgb "orange",\
+'results/couette3_3/spectrum.txt' title 'with wall' w p ls 2
