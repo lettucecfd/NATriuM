@@ -26,6 +26,7 @@ var searchData=
   ['_7esteadyperiodictestflow2d',['~SteadyPeriodicTestFlow2D',['../classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7344b71a404f2c4bbc73c1c738fdfa22',1,'natrium::SteadyPeriodicTestFlow2D']]],
   ['_7etaylorgreentest2d',['~TaylorGreenTest2D',['../classTaylorGreenTest2D.html#a393d90458a3415572c3d9bebccdcb662',1,'TaylorGreenTest2D']]],
   ['_7etaylorgreenvortex2d',['~TaylorGreenVortex2D',['../classnatrium_1_1TaylorGreenVortex2D.html#abb6099f4f9791f7decabb35ccd3dbe49',1,'natrium::TaylorGreenVortex2D::~TaylorGreenVortex2D()'],['../classnatrium_1_1TaylorGreenVortex2D.html#a4e2a315c38f607f4fe6008dd270f3b81',1,'natrium::TaylorGreenVortex2D::~TaylorGreenVortex2D()']]],
+  ['_7ethetamethod',['~ThetaMethod',['../classnatrium_1_1ThetaMethod.html#ac742c678ab9674722295585f10d27279',1,'natrium::ThetaMethod']]],
   ['_7etimeintegrator',['~TimeIntegrator',['../classnatrium_1_1TimeIntegrator.html#a8795d06c5322b72a5a2a1f30aa7a051d',1,'natrium::TimeIntegrator']]],
   ['_7eunsteadyperiodictestflow2d',['~UnsteadyPeriodicTestFlow2D',['../classnatrium_1_1UnsteadyPeriodicTestFlow2D.html#aa91ea175e2993bf00f8a48fded987c54',1,'natrium::UnsteadyPeriodicTestFlow2D']]],
   ['_7ewalltestdomain2d',['~WallTestDomain2D',['../classWallTestDomain2D.html#af086a6015fed51c4e1bd14e39fa52971',1,'WallTestDomain2D']]]

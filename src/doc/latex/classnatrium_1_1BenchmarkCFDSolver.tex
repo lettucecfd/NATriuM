@@ -1,0 +1,69 @@
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver}{\section{natrium\-:\-:Benchmark\-C\-F\-D\-Solver$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1BenchmarkCFDSolver}\index{natrium\-::\-Benchmark\-C\-F\-D\-Solver$<$ dim $>$@{natrium\-::\-Benchmark\-C\-F\-D\-Solver$<$ dim $>$}}
+}
+
+
+a class that overrides the output function of the C\-F\-D solver class with comparisons to a reference solution  
+
+
+
+
+{\ttfamily \#include $<$Benchmark\-C\-F\-D\-Solver.\-h$>$}
+
+Inheritance diagram for natrium\-:\-:Benchmark\-C\-F\-D\-Solver$<$ dim $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classnatrium_1_1BenchmarkCFDSolver}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_ac90d82e4b09e658a18439996b0ab1ec1}{\hyperlink{classnatrium_1_1BenchmarkCFDSolver_ac90d82e4b09e658a18439996b0ab1ec1}{Benchmark\-C\-F\-D\-Solver} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1SolverConfiguration}{Solver\-Configuration} $>$ configuration, shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1Benchmark}{Benchmark}$<$ dim $>$ $>$ problem\-Description)}\label{classnatrium_1_1BenchmarkCFDSolver_ac90d82e4b09e658a18439996b0ab1ec1}
+
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_a9708132fc0cef4ae55e3453672891c81}{virtual void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_a9708132fc0cef4ae55e3453672891c81}{output} (size\-\_\-t iteration)}\label{classnatrium_1_1BenchmarkCFDSolver_a9708132fc0cef4ae55e3453672891c81}
+
+\begin{DoxyCompactList}\small\item\em create output data and write to file \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_a96be8add7c888ef4e6a1cb41cd2b40f6}{virtual void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_a96be8add7c888ef4e6a1cb41cd2b40f6}{add\-Analytic\-Solution\-To\-Output} (dealii\-::\-Data\-Out$<$ dim $>$ \&data\-\_\-out)}\label{classnatrium_1_1BenchmarkCFDSolver_a96be8add7c888ef4e6a1cb41cd2b40f6}
+
+\begin{DoxyCompactList}\small\item\em gives the possibility for \hyperlink{classnatrium_1_1Benchmark}{Benchmark} instances to add the analytic solution to output \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_aafd3c01db648420ce6d98a8349bdfa09}{virtual \hyperlink{classnatrium_1_1BenchmarkCFDSolver_aafd3c01db648420ce6d98a8349bdfa09}{$\sim$\-Benchmark\-C\-F\-D\-Solver} ()}\label{classnatrium_1_1BenchmarkCFDSolver_aafd3c01db648420ce6d98a8349bdfa09}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_a3c2c8da9004e370209db1b611a136fe9}{const distributed\-\_\-vector \& {\bfseries get\-Analytic\-Density} () const }\label{classnatrium_1_1BenchmarkCFDSolver_a3c2c8da9004e370209db1b611a136fe9}
+
+\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_aee14ac9e3a9d36960d16f0b4899a3c08}{const vector\\*
+$<$ distributed\-\_\-vector $>$ \& {\bfseries get\-Analytic\-Velocity} () const }\label{classnatrium_1_1BenchmarkCFDSolver_aee14ac9e3a9d36960d16f0b4899a3c08}
+
+\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_aa5a174cf76431ba7b1721f1ce55df967}{const shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1Benchmark}{Benchmark}\\*
+$<$ dim $>$ $>$ \& {\bfseries get\-Benchmark} () const }\label{classnatrium_1_1BenchmarkCFDSolver_aa5a174cf76431ba7b1721f1ce55df967}
+
+\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_a7d71686aaf03be14827bded582f76e71}{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \& {\bfseries get\-Support\-Points} () const }\label{classnatrium_1_1BenchmarkCFDSolver_a7d71686aaf03be14827bded582f76e71}
+
+\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_ac015d170b19024e63ff43f4a2e516fef}{const shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1ErrorStats}{Error\-Stats}\\*
+$<$ dim $>$ $>$ \& {\bfseries get\-Error\-Stats} () const }\label{classnatrium_1_1BenchmarkCFDSolver_ac015d170b19024e63ff43f4a2e516fef}
+
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_af0f098157b0009154b8effd1fb919fe6}{{\footnotesize template$<$size\-\_\-t dim2$>$ }\\class {\bfseries Error\-Stats}}\label{classnatrium_1_1BenchmarkCFDSolver_af0f098157b0009154b8effd1fb919fe6}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::\-Benchmark\-C\-F\-D\-Solver$<$ dim $>$}
+
+a class that overrides the output function of the C\-F\-D solver class with comparisons to a reference solution 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/Benchmark\-C\-F\-D\-Solver.\-h\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/Benchmark\-C\-F\-D\-Solver.\-cpp\end{DoxyCompactItemize}

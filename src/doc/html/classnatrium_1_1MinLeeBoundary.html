@@ -128,8 +128,8 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a873e55801ae7972803d50c7fb805c391"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MinLeeBoundary.html#a873e55801ae7972803d50c7fb805c391">addToSparsityPattern</a> (dealii::BlockCompressedSparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; dim &gt; &amp;doFHandler, const <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &amp;boltzmannModel) const </td></tr>
 <tr class="memdesc:a873e55801ae7972803d50c7fb805c391"><td class="mdescLeft">&#160;</td><td class="mdescRight">modify sparsity pattern so that the fluxes over periodic boundary can be incorporated  <a href="#a873e55801ae7972803d50c7fb805c391">More...</a><br/></td></tr>
 <tr class="separator:a873e55801ae7972803d50c7fb805c391"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af546e18b114f794f8e8a6bf0c73ae5ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MinLeeBoundary.html#af546e18b114f794f8e8a6bf0c73ae5ed">assembleBoundary</a> (size_t alpha, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t faceNumber, dealii::FEFaceValues&lt; dim &gt; &amp;feFaceValues, const <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &amp;boltzmannModel, const std::map&lt; size_t, size_t &gt; &amp;q_index_to_facedof, distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector) const </td></tr>
-<tr class="separator:af546e18b114f794f8e8a6bf0c73ae5ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad23ea2da1a52b6550419eb504aa611ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MinLeeBoundary.html#ad23ea2da1a52b6550419eb504aa611ab">assembleBoundary</a> (size_t alpha, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t faceNumber, dealii::FEFaceValues&lt; dim &gt; &amp;feFaceValues, const <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &amp;boltzmannModel, const std::map&lt; size_t, size_t &gt; &amp;q_index_to_facedof, distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, bool useCentralFlux=false) const </td></tr>
+<tr class="separator:ad23ea2da1a52b6550419eb504aa611ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a050f00caec37ee8e2f6e19a4d3d2d1fc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a050f00caec37ee8e2f6e19a4d3d2d1fc"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getBoundaryIndicator</b> () const </td></tr>
 <tr class="separator:a050f00caec37ee8e2f6e19a4d3d2d1fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,7 +199,7 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="af546e18b114f794f8e8a6bf0c73ae5ed"></a>
+<a class="anchor" id="ad23ea2da1a52b6550419eb504aa611ab"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -251,7 +251,13 @@ template&lt;size_t dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">distributed_block_vector &amp;&#160;</td>
-          <td class="paramname"><em>systemVector</em>&#160;</td>
+          <td class="paramname"><em>systemVector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>useCentralFlux</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -271,7 +277,7 @@ template&lt;size_t dim&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 1 2014 11:54:24 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Aug 26 2014 09:02:16 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

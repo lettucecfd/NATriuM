@@ -1,0 +1,88 @@
+\hypertarget{classnatrium_1_1Benchmark}{\section{natrium\-:\-:Benchmark$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1Benchmark}\index{natrium\-::\-Benchmark$<$ dim $>$@{natrium\-::\-Benchmark$<$ dim $>$}}
+}
+Inheritance diagram for natrium\-:\-:Benchmark$<$ dim $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classnatrium_1_1Benchmark}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1Benchmark_a1e363ed027e7d466bb21a72128922d24}{\hyperlink{classnatrium_1_1Benchmark_a1e363ed027e7d466bb21a72128922d24}{Benchmark} (shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ triangulation, double viscosity, double characteristic\-Length)}\label{classnatrium_1_1Benchmark_a1e363ed027e7d466bb21a72128922d24}
+
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Benchmark_a9560e49a097a369ec972b72fb2873a2e}{virtual \hyperlink{classnatrium_1_1Benchmark_a9560e49a097a369ec972b72fb2873a2e}{$\sim$\-Benchmark} ()}\label{classnatrium_1_1Benchmark_a9560e49a097a369ec972b72fb2873a2e}
+
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Benchmark_a52241103d87abdd89b880a0ec87cc359}{virtual void \hyperlink{classnatrium_1_1Benchmark_a52241103d87abdd89b880a0ec87cc359}{get\-Analytic\-Velocity} (const dealii\-::\-Point$<$ dim $>$ \&x, double t, dealii\-::\-Point$<$ dim $>$ \&velocity) const =0}\label{classnatrium_1_1Benchmark_a52241103d87abdd89b880a0ec87cc359}
+
+\begin{DoxyCompactList}\small\item\em get Analytic velocity at one point in space and time \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Benchmark_a99a915af5bc0c79f5d5c8a8eac0dcbbe}{virtual double \hyperlink{classnatrium_1_1Benchmark_a99a915af5bc0c79f5d5c8a8eac0dcbbe}{get\-Analytic\-Density} (const dealii\-::\-Point$<$ dim $>$ \&x, double t) const }\label{classnatrium_1_1Benchmark_a99a915af5bc0c79f5d5c8a8eac0dcbbe}
+
+\begin{DoxyCompactList}\small\item\em get Analytic density at one point in space and time \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Benchmark_a2cb79a2f6325a72ad7b9109902b6688e}{void \hyperlink{classnatrium_1_1Benchmark_a2cb79a2f6325a72ad7b9109902b6688e}{get\-All\-Analytic\-Velocities} (double time, vector$<$ distributed\-\_\-vector $>$ \&analytic\-Solution, const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const }\label{classnatrium_1_1Benchmark_a2cb79a2f6325a72ad7b9109902b6688e}
+
+\begin{DoxyCompactList}\small\item\em get full analytic solution for the velocity field at time t \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1Benchmark_a659a0f7f17ad64f70ec843e2255f6662}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const 
+\begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1Benchmark_a51988a00da9aa9d055e4e40815c3ee71}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const 
+\begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Benchmark_af4d7fdf46dd2677d2782511b07853540}{virtual void \hyperlink{classnatrium_1_1Benchmark_af4d7fdf46dd2677d2782511b07853540}{get\-All\-Analytic\-Densities} (double time, distributed\-\_\-vector \&analytic\-Solution, const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const }\label{classnatrium_1_1Benchmark_af4d7fdf46dd2677d2782511b07853540}
+
+\begin{DoxyCompactList}\small\item\em get full analytic solution for the density field at time t \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1Benchmark_a659a0f7f17ad64f70ec843e2255f6662}{\index{natrium\-::\-Benchmark@{natrium\-::\-Benchmark}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
+\index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::Benchmark@{natrium\-::\-Benchmark}}
+\subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ virtual void {\bf natrium\-::\-Benchmark}$<$ dim $>$\-::apply\-Initial\-Densities (
+\begin{DoxyParamCaption}
+\item[{distributed\-\_\-vector \&}]{initial\-Densities, }
+\item[{const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classnatrium_1_1Benchmark_a659a0f7f17ad64f70ec843e2255f6662}
+
+
+set initial densities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Densities} & vector of densities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classnatrium_1_1ProblemDescription_a2f3da77af3942e626677cbdb04d683a9}{natrium\-::\-Problem\-Description$<$ dim $>$}.
+
+\hypertarget{classnatrium_1_1Benchmark_a51988a00da9aa9d055e4e40815c3ee71}{\index{natrium\-::\-Benchmark@{natrium\-::\-Benchmark}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
+\index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::Benchmark@{natrium\-::\-Benchmark}}
+\subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ virtual void {\bf natrium\-::\-Benchmark}$<$ dim $>$\-::apply\-Initial\-Velocities (
+\begin{DoxyParamCaption}
+\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
+\item[{const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&}]{support\-Points}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classnatrium_1_1Benchmark_a51988a00da9aa9d055e4e40815c3ee71}
+
+
+set initial velocities 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em initial\-Velocities} & vector of velocities; to be filled \\
+\hline
+\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classnatrium_1_1ProblemDescription_a545b19d87ec6dc9c27e8740097f7cace}{natrium\-::\-Problem\-Description$<$ dim $>$}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\hyperlink{Benchmark_8h}{Benchmark.\-h}\end{DoxyCompactItemize}

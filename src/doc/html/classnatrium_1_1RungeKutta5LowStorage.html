@@ -119,10 +119,10 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">~RungeKutta5LowStorage</a> ()</td></tr>
 <tr class="memdesc:a915493da30cf9308bd47e87d0c20cad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br/></td></tr>
 <tr class="separator:a915493da30cf9308bd47e87d0c20cad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a595cbb3047387c60507197d78a7ec054"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a595cbb3047387c60507197d78a7ec054"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a595cbb3047387c60507197d78a7ec054">step</a> (VECTOR &amp;vector, const MATRIX &amp;systemMatrix)</td></tr>
-<tr class="memdesc:a595cbb3047387c60507197d78a7ec054"><td class="mdescLeft">&#160;</td><td class="mdescRight">make one time integration using the RK5 scheme dU_j = A_j * dU_{j-1} + timeStep * F(U_j) U_j = U_{j-1} + B_j* dU_j <br/></td></tr>
-<tr class="separator:a595cbb3047387c60507197d78a7ec054"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52b84da7a67cf85b9681e1b37c4e28df"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a52b84da7a67cf85b9681e1b37c4e28df"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a52b84da7a67cf85b9681e1b37c4e28df">step</a> (VECTOR &amp;vector, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector)</td></tr>
+<tr class="memdesc:a52b84da7a67cf85b9681e1b37c4e28df"><td class="mdescLeft">&#160;</td><td class="mdescRight">make one time integration using the RK5 scheme dU_j = A_j * dU_{j-1} + timeStep * F(U_j) U_j = U_{j-1} + B_j* dU_j <br/></td></tr>
+<tr class="separator:a52b84da7a67cf85b9681e1b37c4e28df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a452fad5bef3b7734c94ca5796ce0c589"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a452fad5bef3b7734c94ca5796ce0c589"></a>
 const vector&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getA</b> () const </td></tr>
 <tr class="separator:a452fad5bef3b7734c94ca5796ce0c589"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -251,7 +251,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 1 2014 11:54:25 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Aug 26 2014 09:02:17 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
