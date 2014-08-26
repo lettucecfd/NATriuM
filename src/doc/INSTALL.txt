@@ -14,8 +14,8 @@ This file describes the steps conducted for the creation of the NATriuM project 
     0.1a) (on cluster: module load cmake/<version newer than 2.8.8> )         
     0.1a') (on cluster: install with ./bootstrap --prefix=<your custom directory> )
     0.2) If not installed, install valgrind (e.g. sudo apt-get install valgrind)
-         If not installed, install blas/lapack
-         If not installed, install gfortran
+         If not installed, install blas/lapack (e.g. sudo apt-get install libblas-dev liblapack-dev)
+         If not installed, install gfortran (e.g. sudo apt-get install gfortran)
     0.3a) (on cluster:  module load gcc/4.9.0; module load openmpi/gnu)     
     0.3) PETSc
         0.3.1) download and untar tarball from petsc homepage 

@@ -33,6 +33,7 @@ int main() {
 	// set spatial discretization
 	size_t refinementLevel = 4;
 	size_t orderOfFiniteElement = 2;
+	bool isUnstructured = false;
 
 	// set Problem so that the right Re and Ma are achieved
 	const double U = 1/sqrt(3)*Ma;
@@ -64,7 +65,7 @@ int main() {
 	//configuration->setDistributionInitType(Iterative);
 
 	shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(
-			viscosity, U, refinementLevel, 1.0, startTime);
+			viscosity, U, refinementLevel, 1.0, startTime, isUnstructured);
 	shared_ptr<Benchmark<2> > couetteProblem = couetteFlow;
 	BenchmarkCFDSolver<2> solver(configuration, couetteProblem);
 
