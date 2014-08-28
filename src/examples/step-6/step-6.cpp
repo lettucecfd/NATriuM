@@ -31,8 +31,8 @@ int main() {
 	const double Ma = 0.1;
 
 	// set spatial discretization
-	size_t refinementLevel = 5;
-	size_t orderOfFiniteElement = 2;
+	size_t refinementLevel = 6;
+	size_t orderOfFiniteElement = 4;
 
 	// set Problem so that the right Re and Ma are achieved
 	const double U = 1/sqrt(3)*Ma;
@@ -40,7 +40,7 @@ int main() {
 	const double viscosity = U / Re; // (because L = 1)
 
 	// set small time step size
-	const double timeStepSize = 0.0005;
+	const double timeStepSize = 0.0002;
 
 	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
