@@ -103,7 +103,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classnatrium_1_1CouetteFlow2D.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="classnatrium_1_1CouetteFlow2D.html">CouetteFlow2D</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1Benchmark.html">Benchmark</a>&lt;2&gt; {</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <a class="code" href="classnatrium_1_1CouetteFlow2D.html#ac5abfdca75a910fb11cad175942de50f">CouetteFlow2D</a>(<span class="keywordtype">double</span> viscosity, <span class="keywordtype">double</span> topPlateVelocity, <span class="keywordtype">size_t</span> refinementLevel, <span class="keywordtype">double</span> L=1.0, <span class="keywordtype">double</span> startTime=0.0);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <a class="code" href="classnatrium_1_1CouetteFlow2D.html#a94e51b7eaff3998383f1d7dc07b994cb">CouetteFlow2D</a>(<span class="keywordtype">double</span> viscosity, <span class="keywordtype">double</span> topPlateVelocity, <span class="keywordtype">size_t</span> refinementLevel, <span class="keywordtype">double</span> L=1.0, <span class="keywordtype">double</span> startTime=0.0, <span class="keywordtype">bool</span> isUnstructured=<span class="keyword">false</span>);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1CouetteFlow2D.html#a97b61b0f71dc653427ba3db46e185873">~CouetteFlow2D</a>();</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
@@ -120,25 +120,38 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> m_startTime;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        shared_ptr&lt;Triangulation&lt;2&gt; &gt; makeGrid(<span class="keywordtype">double</span> L, <span class="keywordtype">size_t</span> refinementLevel);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        shared_ptr&lt;Triangulation&lt;2&gt; &gt; makeGrid(<span class="keywordtype">double</span> L, <span class="keywordtype">size_t</span> refinementLevel, <span class="keywordtype">bool</span> isUnstructured = <span class="keyword">false</span>);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries(<span class="keywordtype">double</span> topPlateVelocity);</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;};</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* COUETTEFLOW2D_H_ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="classnatrium_1_1CouetteFlow2D_html_a3953d81acbab33424dfc4135930253df"><div class="ttname"><a href="classnatrium_1_1CouetteFlow2D.html#a3953d81acbab33424dfc4135930253df">natrium::CouetteFlow2D::getAnalyticVelocity</a></div><div class="ttdeci">virtual void getAnalyticVelocity(const dealii::Point&lt; 2 &gt; &amp;x, double t, dealii::Point&lt; 2 &gt; &amp;velocity) const </div><div class="ttdoc">analytic solution of the Taylor-Green vortex </div><div class="ttdef"><b>Definition:</b> CouetteFlow2D.cpp:89</div></div>
-<div class="ttc" id="classnatrium_1_1CouetteFlow2D_html_a97b61b0f71dc653427ba3db46e185873"><div class="ttname"><a href="classnatrium_1_1CouetteFlow2D.html#a97b61b0f71dc653427ba3db46e185873">natrium::CouetteFlow2D::~CouetteFlow2D</a></div><div class="ttdeci">virtual ~CouetteFlow2D()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> CouetteFlow2D.cpp:32</div></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keyword">struct </span>UnstructuredGridFunc</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;          <span class="keywordtype">double</span> trans(<span class="keyword">const</span> <span class="keywordtype">double</span> y)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">          </span>{</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordflow">return</span> std::tanh(2*y)/tanh(2);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;          }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;          dealii::Point&lt;2&gt; operator() (<span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;in)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keyword">          </span>{</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <span class="keywordflow">return</span> dealii::Point&lt;2&gt; (in(0),</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                             trans(in(1)));</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          }</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        };</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;};</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* COUETTEFLOW2D_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="classnatrium_1_1CouetteFlow2D_html_a3953d81acbab33424dfc4135930253df"><div class="ttname"><a href="classnatrium_1_1CouetteFlow2D.html#a3953d81acbab33424dfc4135930253df">natrium::CouetteFlow2D::getAnalyticVelocity</a></div><div class="ttdeci">virtual void getAnalyticVelocity(const dealii::Point&lt; 2 &gt; &amp;x, double t, dealii::Point&lt; 2 &gt; &amp;velocity) const </div><div class="ttdoc">analytic solution of the Taylor-Green vortex </div><div class="ttdef"><b>Definition:</b> CouetteFlow2D.cpp:82</div></div>
+<div class="ttc" id="classnatrium_1_1CouetteFlow2D_html_a97b61b0f71dc653427ba3db46e185873"><div class="ttname"><a href="classnatrium_1_1CouetteFlow2D.html#a97b61b0f71dc653427ba3db46e185873">natrium::CouetteFlow2D::~CouetteFlow2D</a></div><div class="ttdeci">virtual ~CouetteFlow2D()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> CouetteFlow2D.cpp:33</div></div>
 <div class="ttc" id="BasicNames_8h_html"><div class="ttname"><a href="BasicNames_8h.html">BasicNames.h</a></div><div class="ttdoc">Definition of the basic typedefs and names used in the Code. </div></div>
 <div class="ttc" id="classnatrium_1_1Benchmark_html"><div class="ttname"><a href="classnatrium_1_1Benchmark.html">natrium::Benchmark</a></div><div class="ttdef"><b>Definition:</b> Benchmark.h:20</div></div>
+<div class="ttc" id="classnatrium_1_1CouetteFlow2D_html_a94e51b7eaff3998383f1d7dc07b994cb"><div class="ttname"><a href="classnatrium_1_1CouetteFlow2D.html#a94e51b7eaff3998383f1d7dc07b994cb">natrium::CouetteFlow2D::CouetteFlow2D</a></div><div class="ttdeci">CouetteFlow2D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false)</div><div class="ttdoc">constructor </div><div class="ttdef"><b>Definition:</b> CouetteFlow2D.cpp:23</div></div>
 <div class="ttc" id="classnatrium_1_1CouetteFlow2D_html"><div class="ttname"><a href="classnatrium_1_1CouetteFlow2D.html">natrium::CouetteFlow2D</a></div><div class="ttdoc">Description of a simple Couette Flow (regular channel flow in square domain). The domain is [0...</div><div class="ttdef"><b>Definition:</b> CouetteFlow2D.h:25</div></div>
 <div class="ttc" id="Benchmark_8h_html"><div class="ttname"><a href="Benchmark_8h.html">Benchmark.h</a></div><div class="ttdoc">Abstract class for the description of a CFD Benchmark problem. </div></div>
-<div class="ttc" id="classnatrium_1_1CouetteFlow2D_html_ac5abfdca75a910fb11cad175942de50f"><div class="ttname"><a href="classnatrium_1_1CouetteFlow2D.html#ac5abfdca75a910fb11cad175942de50f">natrium::CouetteFlow2D::CouetteFlow2D</a></div><div class="ttdeci">CouetteFlow2D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0)</div><div class="ttdoc">constructor </div><div class="ttdef"><b>Definition:</b> CouetteFlow2D.cpp:22</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 26 2014 09:03:33 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 28 2014 13:57:54 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

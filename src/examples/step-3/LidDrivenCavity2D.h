@@ -23,10 +23,12 @@ namespace natrium {
  *  The domain is [0,5]x[0,1].
  */
 class LidDrivenCavity2D: public ProblemDescription<2> {
+private:
+	double topPlateVelocity;
 public:
 
 	/// constructor
-	LidDrivenCavity2D(double viscosity, size_t refinementLevel);
+	LidDrivenCavity2D(double velocity, double viscosity, size_t refinementLevel);
 
 	/// destructor
 	virtual ~LidDrivenCavity2D();
@@ -59,7 +61,7 @@ public:
 	double analyticVelocity2(const dealii::Point<2>& x, double t) const;
 
 	virtual double getCharacteristicVelocity() const {
-		return 0.1/sqrt(3);
+		return topPlateVelocity;
 	}
 
 private:

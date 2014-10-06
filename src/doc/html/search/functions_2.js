@@ -11,7 +11,8 @@ var searchData=
   ['collidesingledof',['collideSingleDoF',['../classnatrium_1_1BGKTransformed.html#a6bb41acd37234d2f92a9d868ff2486e1',1,'natrium::BGKTransformed::collideSingleDoF()'],['../classnatrium_1_1CollisionModel.html#abe4f58658074680b679db7b7fddd6113',1,'natrium::CollisionModel::collideSingleDoF()']]],
   ['collidesinglepoint',['collideSinglePoint',['../classnatrium_1_1BGKTransformed.html#a2e40159e5f5204431b1acb84b15910c0',1,'natrium::BGKTransformed::collideSinglePoint()'],['../classnatrium_1_1CollisionModel.html#acde767e924eb2124ab3eb725543111e8',1,'natrium::CollisionModel::collideSinglePoint()']]],
   ['collisionmodel',['CollisionModel',['../classnatrium_1_1CollisionModel.html#a5afab5d75747f5239172a6d8a89affbe',1,'natrium::CollisionModel']]],
+  ['complexwall1',['ComplexWall1',['../classnatrium_1_1ComplexWall1.html#ad619c81f979a47c447fc0061bed20e05',1,'natrium::ComplexWall1']]],
   ['computespectrum',['computeSpectrum',['../classnatrium_1_1matrixAnalysis.html#a78f3d3996a02982e4b465b627a9b999f',1,'natrium::matrixAnalysis']]],
-  ['couetteflow2d',['CouetteFlow2D',['../classnatrium_1_1CouetteFlow2D.html#ac5abfdca75a910fb11cad175942de50f',1,'natrium::CouetteFlow2D']]],
+  ['couetteflow2d',['CouetteFlow2D',['../classnatrium_1_1CouetteFlow2D.html#a94e51b7eaff3998383f1d7dc07b994cb',1,'natrium::CouetteFlow2D']]],
   ['createcellmap',['createCellMap',['../classnatrium_1_1PeriodicBoundary.html#a233d460baa307b13bc32efb57c07f7c5',1,'natrium::PeriodicBoundary']]]
 ];

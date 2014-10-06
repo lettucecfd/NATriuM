@@ -8,6 +8,7 @@ var searchData=
   ['_7eboundary',['~Boundary',['../classnatrium_1_1Boundary.html#a63e8fb8ec44288b9145f819b515ae6d9',1,'natrium::Boundary']]],
   ['_7ecfdsolver',['~CFDSolver',['../classnatrium_1_1CFDSolver.html#a7ca9bd709255ac87b34f869c984b913b',1,'natrium::CFDSolver']]],
   ['_7ecollisionmodel',['~CollisionModel',['../classnatrium_1_1CollisionModel.html#a2b1fb83814227db3b99d4d68a6657d52',1,'natrium::CollisionModel']]],
+  ['_7ecomplexwall1',['~ComplexWall1',['../classnatrium_1_1ComplexWall1.html#a6d68cdec98529c139716ae98e8149d30',1,'natrium::ComplexWall1']]],
   ['_7ecouetteflow2d',['~CouetteFlow2D',['../classnatrium_1_1CouetteFlow2D.html#a97b61b0f71dc653427ba3db46e185873',1,'natrium::CouetteFlow2D']]],
   ['_7ed2q9incompressiblemodel',['~D2Q9IncompressibleModel',['../classnatrium_1_1D2Q9IncompressibleModel.html#a6e757941f7ca2c5a6148893147211724',1,'natrium::D2Q9IncompressibleModel']]],
   ['_7ed2q9model',['~D2Q9Model',['../classnatrium_1_1D2Q9Model.html#aec7d8c160f430e14fbede9ecda368797',1,'natrium::D2Q9Model']]],

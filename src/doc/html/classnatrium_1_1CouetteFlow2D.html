@@ -86,6 +86,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classnatrium_1_1CouetteFlow2D-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -110,9 +111,9 @@ Inheritance diagram for natrium::CouetteFlow2D:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac5abfdca75a910fb11cad175942de50f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlow2D.html#ac5abfdca75a910fb11cad175942de50f">CouetteFlow2D</a> (double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0)</td></tr>
-<tr class="memdesc:ac5abfdca75a910fb11cad175942de50f"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#ac5abfdca75a910fb11cad175942de50f">More...</a><br/></td></tr>
-<tr class="separator:ac5abfdca75a910fb11cad175942de50f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94e51b7eaff3998383f1d7dc07b994cb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlow2D.html#a94e51b7eaff3998383f1d7dc07b994cb">CouetteFlow2D</a> (double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false)</td></tr>
+<tr class="memdesc:a94e51b7eaff3998383f1d7dc07b994cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a94e51b7eaff3998383f1d7dc07b994cb">More...</a><br/></td></tr>
+<tr class="separator:a94e51b7eaff3998383f1d7dc07b994cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97b61b0f71dc653427ba3db46e185873"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97b61b0f71dc653427ba3db46e185873"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlow2D.html#a97b61b0f71dc653427ba3db46e185873">~CouetteFlow2D</a> ()</td></tr>
 <tr class="memdesc:a97b61b0f71dc653427ba3db46e185873"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -195,7 +196,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCharacteristicLeng
 <div class="textblock"><p>Description of a simple Couette Flow (regular channel flow in square domain). The domain is [0,1]^2. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). </p>
 <dl class="section note"><dt>Note</dt><dd>The analytic solution is obtained by a formula stated in Min and Lee (2011). </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ac5abfdca75a910fb11cad175942de50f"></a>
+<a class="anchor" id="a94e51b7eaff3998383f1d7dc07b994cb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -227,7 +228,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCharacteristicLeng
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>startTime</em> = <code>0.0</code>&#160;</td>
+          <td class="paramname"><em>startTime</em> = <code>0.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isUnstructured</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -249,7 +256,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCharacteristicLeng
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 26 2014 09:03:35 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 28 2014 13:57:57 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
