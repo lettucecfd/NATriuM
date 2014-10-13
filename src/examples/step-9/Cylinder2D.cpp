@@ -55,7 +55,7 @@ shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 			BoundaryCollection<2> >();
 	numeric_vector zeroVelocity(2);
 	numeric_vector constantVelocity(2);
-	constantVelocity(0) = -inletVelocity;
+	constantVelocity(0) = inletVelocity;
 
 	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(0, constantVelocity));
 	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(1, constantVelocity));
@@ -92,7 +92,7 @@ void  Cylinder2D::applyInitialDensities(distributed_vector& initialDensities,
 		const vector<dealii::Point<2> >& supportPoints) const{
 	 assert ( initialVelocities.size() == 2);
 		for (size_t i = 0; i < initialVelocities.at(0).size(); i++){
-			initialVelocities.at(0)(i) = -getCharacteristicVelocity();
+			initialVelocities.at(0)(i) = getCharacteristicVelocity();
 			initialVelocities.at(1)(i) = 0.0;
 		}
  }

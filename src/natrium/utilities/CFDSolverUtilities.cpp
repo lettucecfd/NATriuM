@@ -7,7 +7,13 @@
 
 #include <utilities/CFDSolverUtilities.h>
 
+#include <fstream>
+
+#include "deal.II/grid/grid_tools.h"
+#include "deal.II/grid/grid_out.h"
 #include "deal.II/base/geometry_info.h"
+#include "deal.II/base/geometry_info.h"
+
 
 namespace natrium {
 
@@ -44,5 +50,47 @@ template double CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
 		const dealii::Triangulation<2>& tria, const size_t orderOfFiniteElement);
 template double CFDSolverUtilities::getMinimumDoFDistanceGLL<3>(
 		const dealii::Triangulation<3>& tria, const size_t orderOfFiniteElement);
+
+
+template<int dim>
+void CFDSolverUtilities::mesh_info(const dealii::Triangulation<dim> &tria,
+               const std::string        &filename)
+{
+  std::cout << "Mesh info:" << std::endl
+            << " dimension: " << dim << std::endl
+            << " no. of cells: " << tria.n_active_cells() << std::endl;
+  {
+    std::map<unsigned int, unsigned int> boundary_count;
+    typename dealii::Triangulation<dim>::active_cell_iterator
+    cell = tria.begin_active(),
+    endc = tria.end();
+    for (; cell!=endc; ++cell)
+      {
+        for (unsigned int face=0; face<dealii::GeometryInfo<dim>::faces_per_cell; ++face)
+          {
+            if (cell->face(face)->at_boundary())
+              boundary_count[cell->face(face)->boundary_indicator()]++;
+          }
+      }
+    std::cout << " boundary indicators: ";
+    for (std::map<unsigned int, unsigned int>::iterator it=boundary_count.begin();
+         it!=boundary_count.end();
+         ++it)
+      {
+        std::cout << it->first << "(" << it->second << " times) ";
+      }
+    std::cout << std::endl;
+  }
+  std::ofstream out (filename.c_str());
+  dealii::GridOut grid_out;
+  grid_out.write_eps (tria, out);
+  std::cout << " written to " << filename
+            << std::endl
+            << std::endl;
+} /*mesh_info */
+template void CFDSolverUtilities::mesh_info<2>(const dealii::Triangulation<2> &tria,
+        const std::string        &filename);
+template void CFDSolverUtilities::mesh_info<3>(const dealii::Triangulation<3> &tria,
+        const std::string        &filename);
 
 } /* namespace natrium */

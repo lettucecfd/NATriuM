@@ -9,7 +9,6 @@
 #define CFDSOLVERUTILITIES_H_
 
 #include "deal.II/grid/tria.h"
-#include "deal.II/grid/grid_tools.h"
 #include "deal.II/base/quadrature_lib.h"
 
 #include "../utilities/BasicNames.h"
@@ -25,8 +24,15 @@ template<size_t dim>
 double getMinimumDoFDistanceGLL(const dealii::Triangulation<dim>& tria,
 		const size_t orderOfFiniteElement);
 
-} /* CFDSolverUtilities */
 
+/**
+ * @short stolen from Deal.II's step 49 tutorial
+ */
+template<int dim>
+void mesh_info(const dealii::Triangulation<dim> &tria,
+               const std::string        &filename);
+
+} /* CFDSolverUtilities */
 } /* namespace natrium */
 
 #endif /* CFDSOLVERUTILITIES_H_ */

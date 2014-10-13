@@ -27,7 +27,7 @@ int main() {
 	cout << "Starting NATriuM step-9..." << endl;
 
 	// set Reynolds and Mach number
-	const double Re = 1;
+	const double Re = 10;
 	const double Ma = 0.1;
 
 	// set Problem so that the right Re and Ma are achieved
@@ -37,7 +37,7 @@ int main() {
 
 
 	// set small time step size
-	const double timeStepSize = 0.005;
+	const double timeStepSize = 0.01;
 	const size_t orderOfFiniteElement = 5;
 
 	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;

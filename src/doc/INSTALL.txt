@@ -33,7 +33,7 @@ This file describes the steps conducted for the creation of the NATriuM project 
     0.5) deal.ii
         0.5.1) download and untar tarball from deal.ii homepage
         0.5.2) set environment variable DEAL_II_DIR to the path you want to install the library to
-  		0.5.3a) (on cluster: execute the -> cmake command with -DDEAL_II_FORCE_BUNDLED_BOOST=OFF -DDEAL_II_WITH_THREADS=OFF)
+  		0.5.3a) (on cluster: execute the -> cmake command with -DDEAL_II_FORCE_BUNDLED_BOOST=OFF -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT)
   		        (This is important to prevent errors that occur from different/old versions of dynamic libraries that are normally preinstalled.)
         0.5.4) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=ON ../deal.II
         0.5.5) make install
