@@ -12,6 +12,7 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/geometry_info.h"
 #include "deal.II/dofs/dof_tools.h"
+#include "deal.II/lac/constraint_matrix.h"
 
 #include "../utilities/BasicNames.h"
 #include "BoundaryTools.h"
@@ -198,32 +199,38 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
 		size_t n_dofs_per_block, size_t dofs_per_cell) const {
 
+	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
+	const dealii::ConstraintMatrix constraints;
+
 // add periodic boundaries to intermediate flux sparsity pattern
-	//dealii::CompressedSparsityPattern cSparseTmp(n_dofs_per_block);
-	typename std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
-			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >::const_iterator element =
-			m_cells.begin();
-	// for each cells belonging to the periodic boundary
-	for (; element != m_cells.end(); element++) {
-		vector<dealii::types::global_dof_index> doFIndicesAtCell1(
-				dofs_per_cell);
-		vector<dealii::types::global_dof_index> doFIndicesAtCell2(
-				dofs_per_cell);
-		element->first->get_dof_indices(doFIndicesAtCell1);
-		element->second.first->get_dof_indices(doFIndicesAtCell2);
-		// couple all dofs at boundary 1 with dofs at boundary 2
-		// TODO only couple the ones which are nonzero at the face (are there any???)
-		// TODO remove the INVARIANT "discretization at boundary 1 = discretization at boundary 2"
-		//      e.g. by mapping, allowing more than one periodic neighbor, ...
-		for (size_t j = 0; j < dofs_per_cell; j++) {
-			for (size_t k = 0; k < dofs_per_cell; k++) {
-				for (size_t I = 0; I < n_blocks; I++) {
-					cSparse.block(I,I).add(doFIndicesAtCell1.at(j),
-							doFIndicesAtCell2.at(k));
-				}
-			}
+	vector<dealii::types::global_dof_index> doFIndicesAtCell1(dofs_per_cell);
+	vector<dealii::types::global_dof_index> doFIndicesAtCell2(dofs_per_cell);
+	// for all blocks (it is important to have this loop in the outer part
+	// because otherwise it is very Cache-inefficient)
+	for (size_t I = 0; I < n_blocks; I++) {
+		//minimize calls of block(), because expensive
+		dealii::CompressedSparsityPattern& block = cSparse.block(I, I);
+		typename std::map<
+				typename dealii::DoFHandler<dim>::active_cell_iterator,
+				std::pair<typename dealii::DoFHandler<dim>::cell_iterator,
+						size_t> >::const_iterator element = m_cells.begin();
+		// for each cells belonging to the periodic boundary
+		for (; element != m_cells.end(); element++) {
+			element->first->get_dof_indices(doFIndicesAtCell1);
+			element->second.first->get_dof_indices(doFIndicesAtCell2);
+			// couple all dofs at boundary 1 with dofs at boundary 2
+			constraints.add_entries_local_to_global(doFIndicesAtCell1, doFIndicesAtCell2, block, true);
+			// TODO only couple the ones which are nonzero at the face
+			// TODO remove the INVARIANT "discretization at boundary 1 = discretization at boundary 2"
+			//      e.g. by mapping, allowing more than one periodic neighbor, ...
+			// iterate over rows
+			//for (size_t j = 0; j < dofs_per_cell; j++) {
+			//	block.add_entries (doFIndicesAtCell1[j], doFIndicesAtCell2.begin(), doFIndicesAtCell2.end());
+			//}
 		}
 	}
+
+
 }
 template void PeriodicBoundary<2>::addToSparsityPattern(
 		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,

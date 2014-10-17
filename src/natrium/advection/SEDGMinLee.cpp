@@ -144,16 +144,33 @@ void SEDGMinLee<dim>::reassemble() {
 	// Multiply by inverse mass matrix
 	size_t n = m_massMatrix.size();
 	// TODO Parallel loop
-	// By using iterators instead of operator () this method became much more efficient
-	distributed_sparse_block_matrix::iterator blockIterator(&m_systemMatrix);
-	distributed_sparse_block_matrix::iterator lastBlock(&m_systemMatrix);
-	blockIterator = m_systemMatrix.begin();
-	lastBlock = m_systemMatrix.end();
-	for (; blockIterator != lastBlock; blockIterator++) {
-		size_t rowInBlock = blockIterator->row()
-				- n * blockIterator->block_row();
-		blockIterator->set_value(
-				blockIterator->value() / m_massMatrix(rowInBlock));
+	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
+		// consider only diagonal blocks and opposite blocks
+		for (size_t J = 0; J < m_boltzmannModel->getQ() - 1; J++) {
+			if (I != J) {
+				if (I
+						!= m_boltzmannModel->getIndexOfOppositeDirection(J + 1)
+								- 1) {
+					continue;
+				}
+			}
+			// avoid block() calls (expensive!)
+			distributed_sparse_matrix& block = m_systemMatrix.block(I, J);
+			// By using iterators instead of operator () this method became much more efficient
+			distributed_sparse_matrix::iterator matrixIterator(&block);
+			distributed_sparse_matrix::iterator lastElement(&block);
+			// iterate over rows (makes the whole procedure cheaper)
+			for (size_t block_row = 0; block_row < block.m(); block_row++) {
+				matrixIterator = block.begin(block_row);
+				lastElement = block.end(block_row);
+				double scaling_factor = 1.0 / m_massMatrix(block_row);
+				for (; matrixIterator != lastElement; matrixIterator++) {
+					// divide by mass Matrix element
+					matrixIterator->value() = scaling_factor
+							* matrixIterator->value();
+				}
+			}
+		}
 	}
 	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
 		for (size_t i = 0; i < n; i++) {
@@ -196,12 +213,9 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//for each MPI process). Furthermore, using implicit time integration schemes could bring
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 
-	for (size_t I = 0; I < n_blocks; I++) {
-		DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
-				cSparse.block(I, I));
-	}
-	// copy cSparseTmp to all blocks
-	// TODO this could probably be done more efficiently by iterating over the sparsity pattern
+	// make diagonal block 0,0 which can be copied to the other ones
+	DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
+				cSparse.block(0, 0));
 
 	// add periodic boundaries to intermediate flux sparsity pattern
 	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
@@ -213,8 +227,9 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 		// skip double execution of addToSparsityPattern
 		if (periodic->first == periodic->second->getBoundaryIndicator1()) {
 			periodic->second->createCellMap(*m_doFHandler);
-			periodic->second->addToSparsityPattern(cSparse, n_blocks,
-					n_dofs_per_block, dofs_per_cell);
+			size_t only_on_block_0_0 = 1;
+			periodic->second->addToSparsityPattern(cSparse, only_on_block_0_0, n_dofs_per_block,
+					dofs_per_cell);
 		}
 	}
 
@@ -228,7 +243,19 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	}
 
 	// initialize (static) sparsity pattern
-	m_sparsityPattern.copy_from(cSparse);
+	m_sparsityPattern.reinit(n_blocks, n_blocks);
+	for (size_t I = 0; I < n_blocks; I++) {
+		for (size_t J = 0; J < n_blocks; J++) {
+			// the following distinction is valid because non-periodic boundaries
+			// do not affect the diagonal blocks
+			if ((I != J) or (I == 0)) {
+				m_sparsityPattern.block(I, J).copy_from(cSparse.block(I,J));
+			} else {
+				m_sparsityPattern.block(I, J).copy_from(cSparse.block(0,0));
+			}
+		}
+	}
+	m_sparsityPattern.collect_sizes();
 	//reinitialize matrices
 	m_systemMatrix.reinit(m_sparsityPattern);
 	m_massMatrix.reinit(m_doFHandler->n_dofs());
@@ -472,12 +499,14 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 	neighborCell->get_dof_indices(neighborDoFIndices);
 
 /// Distribute to global matrix
+	// avoid many calls to block()
+	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1, alpha - 1);
 	/// TODO Loop only over diagonal
 	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
 		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
-			m_systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
+			block.add(localDoFIndices[i],
 					localDoFIndices[j], cellFaceMatrix(i, j));
-			m_systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
+			block.add(localDoFIndices[i],
 					neighborDoFIndices[j], neighborFaceMatrix(i, j));
 		}
 	}

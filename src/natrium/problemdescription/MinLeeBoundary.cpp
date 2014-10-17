@@ -6,6 +6,7 @@
  */
 
 #include <problemdescription/MinLeeBoundary.h>
+#include "deal.II/lac/compressed_sparsity_pattern.h"
 
 #include <deal.II/dofs/dof_handler.h>
 
@@ -73,15 +74,15 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 				if (I
 						== boltzmannModel.getIndexOfOppositeDirection(J + 1)
 								- 1) {
+					// avoid to many calls to block()
+					dealii::CompressedSparsityPattern& block = cSparse.block(I, J);
 					// get global degrees of freedom
 					cell->get_dof_indices(localDoFIndices);
 					for (size_t i = 0; i < n_dofs_per_cell; i++) {
 						for (size_t j = 0; j < n_dofs_per_cell; j++) {
 							// TODO: Efficient implementation (for SEDG, MinLee Boundary): only at diagonal
-							cSparse.block(I, J).add(localDoFIndices.at(i),
+							block.add(localDoFIndices.at(i),
 									localDoFIndices.at(j));
-							//cSparse.block(J, I).add(localDoFIndices.at(i),
-							//		localDoFIndices.at(j));
 						}
 					}
 				} /* end if opposite boundary*/
