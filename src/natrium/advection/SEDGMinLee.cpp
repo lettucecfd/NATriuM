@@ -413,9 +413,11 @@ template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 	systemMatrix.add(-(m_boltzmannModel->getDirection(alpha)[1]),
 			derivativeMatrices.at(1));
 // distribute to global system matrix
+	// avoid to call block() too often
+	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1, alpha - 1);
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++) {
-			m_systemMatrix.block(alpha - 1, alpha - 1).add(globalDoFs[j],
+			block.add(globalDoFs[j],
 					globalDoFs[k], systemMatrix(j, k));
 		}
 }
@@ -433,9 +435,10 @@ template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 			derivativeMatrices.at(1), -m_boltzmannModel->getDirection(alpha)[2],
 			derivativeMatrices.at(2));
 // distribute to global system matrix
+	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1, alpha - 1);
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++)
-			m_systemMatrix.block(alpha - 1, alpha - 1).add(globalDoFs[j],
+			block.add(globalDoFs[j],
 					globalDoFs[k], systemMatrix(j, k));
 }
 
