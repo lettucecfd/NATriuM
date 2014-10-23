@@ -10,7 +10,7 @@
 #ifndef BGKTRANSFORMED_H_
 #define BGKTRANSFORMED_H_
 
-#include "CollisionModel.h"
+#include "Collision.h"
 
 #include "../utilities/BasicNames.h"
 #include "../solver/DistributionFunctions.h"
@@ -21,9 +21,12 @@ namespace natrium {
  *        as described in Global data which is used by Min and Lee (2011): A spectral-element discontinuous
  *        Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-259.
  */
-class BGKTransformed: public CollisionModel {
-
+class BGKTransformed {
 private:
+
+	// number of discrete particle velocities
+	size_t m_Q;
+
 	/// relaxation parameter
 	double m_relaxationParameter;
 
@@ -36,28 +39,48 @@ public:
 	 * @short constructor
 	 * @param[in] relaxationParameter relaxation parameter tau
 	 */
-	BGKTransformed(double relaxationParameter,
-			boost::shared_ptr<BoltzmannModel> boltzmannModel);
+	BGKTransformed(size_t Q, double relaxationParameter);
 
 	/// destructor
 	virtual ~BGKTransformed();
 
-	/**
-	 * @short function for collision
-	 * @param[in/out] distributions the particle distribution functions
-	 */
-	virtual void collideSinglePoint(vector<double>& distributions) const;
+	/* @short virtual function for collision
+	* @param[in] doF the doF index for which collision is done
+	* @param[in] feq the vector of local equilibrium distributions
+	* @param[in] f the vector of global distribution functions
+	*/
+	void collideSingleDoF(size_t doF, const vector<double>& feq,
+			DistributionFunctions& f) const {
+		for (size_t j = 0; j < m_Q; j++) {
+			f.at(j)(doF) += m_prefactor * (f.at(j)(doF) - feq.at(j));
+		}
+
+	}
+	/* collide */
 
 	/**
-	 * @short virtual function for collision
-	 * @param[in] doF the doF index for which collision is done
-	 * @param[in] feq the vector of local equilibrium distributions
-	 * @param[in] f the vector of global distribution functions
+	 * @short calculate relaxation parameter
 	 */
-	virtual void collideSingleDoF(size_t doF, const vector<double>& feq,
-			DistributionFunctions& f) const;
+	static double calculateRelaxationParameter(double viscosity,
+			double timeStepSize,
+			const BoltzmannModel& boltzmannModel) {
+		assert(viscosity > 0.0);
+		assert(timeStepSize > 0.0);
+		return (viscosity)
+				/ (timeStepSize * boltzmannModel.getSpeedOfSoundSquare());
+	}
 
+	double getPrefactor() const {
+		return m_prefactor;
+	}
 
+	size_t getQ() const {
+		return m_Q;
+	}
+
+	double getRelaxationParameter() const {
+		return m_relaxationParameter;
+	}
 };
 
 } /* namespace natrium */

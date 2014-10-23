@@ -50,7 +50,6 @@ int main() {
 	// set spatial discretization
 	size_t refinementLevel = 4;
 	size_t orderOfFiniteElement = 5;
-	bool isUnstructured = false;
 
 	// set temporal discretization
 	double CFL = 0.1;
@@ -58,7 +57,6 @@ int main() {
 
 	// set Problem so that the right Re and Ma are achieved
 	const double U = 1 / sqrt(3) * Ma;
-	const double dqScaling = 1;
 	const double viscosity = U / Re; // (because L = 1)
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<

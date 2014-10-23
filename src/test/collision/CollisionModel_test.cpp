@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "collisionmodels/CollisionModel.h"
+#include "collision/Collision.h"
 
 namespace natrium {
 

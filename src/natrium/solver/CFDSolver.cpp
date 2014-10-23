@@ -24,6 +24,8 @@
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
 
+#include "../collision/BGKTransformed.h"
+
 #include "../utilities/Logging.h"
 
 namespace natrium {
@@ -100,8 +102,13 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			== configuration->getCollisionScheme()) {
 		tau = BGKTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), m_boltzmannModel);
-		m_collisionModel = make_shared<BGKTransformed>(tau, m_boltzmannModel);
+				m_configuration->getTimeStepSize(), *m_boltzmannModel);
+		if (Stencil_D2Q9 == configuration->getStencil()) {
+			BGKTransformed bgk(m_boltzmannModel->getQ(), tau);
+			D2Q9IncompressibleModel d2q9(configuration->getStencilScaling());
+			m_collisionModel = make_shared<
+					Collision<D2Q9IncompressibleModel, BGKTransformed> >(d2q9, bgk);
+		}
 	}
 
 /// Build time integrator
@@ -112,14 +119,16 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), numberOfDoFs,
 				m_boltzmannModel->getQ() - 1);
-	} else if (THETA_METHOD == configuration->getTimeIntegrator()){
+	} else if (THETA_METHOD == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
-						ThetaMethod<distributed_sparse_block_matrix,
-								distributed_block_vector> >(
-						configuration->getTimeStepSize(), numberOfDoFs,
-						m_boltzmannModel->getQ() - 1, configuration->getThetaMethodTheta());
+				ThetaMethod<distributed_sparse_block_matrix,
+						distributed_block_vector> >(
+				configuration->getTimeStepSize(), numberOfDoFs,
+				m_boltzmannModel->getQ() - 1,
+				configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
-		throw CFDSolverException("Exponential time integrator is not implemented, yet.");
+		throw CFDSolverException(
+				"Exponential time integrator is not implemented, yet.");
 	}
 
 // initialize macroscopic variables
@@ -156,9 +165,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< charU / m_boltzmannModel->getSpeedOfSound() << endl;
 	LOG(WELCOME) << "Stencil scaling: " << configuration->getStencilScaling()
 			<< endl;
-	LOG(WELCOME) << "Recommended dt:  "
-			<< m_collisionModel->calculateOptimalTimeStep(dx, m_boltzmannModel)
-			<< " s" << endl;
+	//LOG(WELCOME) << "Recommended dt:  "
+	//		<< m_collisionType->calculateOptimalTimeStep(dx, m_boltzmannModel)
+	//		<< " s" << endl;
 	LOG(WELCOME) << "Actual dt:       " << configuration->getTimeStepSize()
 			<< " s" << endl;
 	LOG(WELCOME) << "dx:              " << dx << endl;

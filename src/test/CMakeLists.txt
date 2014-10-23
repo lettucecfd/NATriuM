@@ -6,7 +6,7 @@ set(    BOLTZMANNMODELS_TEST
         boltzmannmodels/D2Q9IncompressibleModel_test.cpp
         )
 set(    COLLISIONMODELS_TEST
-        collisionmodels/BGKTransformed_test.cpp
+        collision/BGKTransformed_test.cpp
         )            
 set(    PROBLEMDESCRIPTION_TEST
         problemdescription/BoundaryTools_test.cpp

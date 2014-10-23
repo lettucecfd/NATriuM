@@ -24,8 +24,7 @@
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../boltzmannmodels/D2Q9IncompressibleModel.h"
 
-#include "../collisionmodels/CollisionModel.h"
-#include "../collisionmodels/BGKTransformed.h"
+#include "../collision/Collision.h"
 
 #include "../timeintegration/TimeIntegrator.h"
 

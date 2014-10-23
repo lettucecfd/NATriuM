@@ -5,33 +5,43 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "CollisionModel.h"
+#include "Collision.h"
 
 #include "../solver/DistributionFunctions.h"
+
+#include "../boltzmannmodels/D2Q9IncompressibleModel.h"
+#include "BGKTransformed.h"
 
 #include <cmath>
 
 namespace natrium {
 
 // constructor
-CollisionModel::CollisionModel(boost::shared_ptr<BoltzmannModel> boltzmannModel) :
-		m_boltzmannModel(boltzmannModel), m_d(boltzmannModel->getD()), m_q(
-				boltzmannModel->getQ()) {
+template<class BoltzmannType, class CollisionType>
+Collision<BoltzmannType, CollisionType>::Collision(
+		BoltzmannType boltzmannType,
+		CollisionType collisionType) :
+		m_boltzmannType(boltzmannType), m_collisionType(collisionType), m_d(
+				boltzmannType.getD()), m_q(boltzmannType.getQ()) {
 
 } // constructor
+template Collision<D2Q9IncompressibleModel, BGKTransformed>::Collision(
+		D2Q9IncompressibleModel boltzmannType,
+		BGKTransformed collisionModel);
 
-CollisionModel::~CollisionModel() {
+template<class BoltzmannType, class CollisionType>
+Collision<BoltzmannType, CollisionType>::~Collision() {
 }
+template Collision<D2Q9IncompressibleModel, BGKTransformed>::~Collision();
 
-
-// TODO Replace std::exception by a custom exception
-
-void CollisionModel::collideAll(DistributionFunctions& f,
-		distributed_vector& densities, vector<distributed_vector>& velocities,
-		bool inInitializationProcedure) const{
+template<class BoltzmannType, class CollisionType>
+void Collision<BoltzmannType, CollisionType>::collideAll(
+		DistributionFunctions& f, distributed_vector& densities,
+		vector<distributed_vector>& velocities,
+		bool inInitializationProcedure) const {
 
 	size_t n_dofs = f.at(0).size();
-	size_t Q = m_boltzmannModel->getQ();
+	size_t Q = m_boltzmannType.getQ();
 
 	assert(f.size() == Q);
 	assert(velocities.size() == m_d);
@@ -54,8 +64,9 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 		for (size_t j = 0; j < Q; j++) {
 			densities(i) += f.at(j)(i);
 		}
-		if (densities(i) < 1e-10){
-			throw CollisionModelException("Densities too small (< 1e-10) for collisions. Decrease time step size.");
+		if (densities(i) < 1e-10) {
+			throw CollisionException(
+					"Densities too small (< 1e-10) for collisions. Decrease time step size.");
 		}
 
 		if (not inInitializationProcedure) {
@@ -66,7 +77,7 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 
 				for (size_t k = 0; k < Q; k++) {
 					velocities.at(j)(i) += f.at(k)(i)
-							* m_boltzmannModel->getDirection(k)(j);
+							* m_boltzmannType.getDirection(k)(j);
 				}
 				velocities.at(j)(i) /= densities(i);
 			}
@@ -79,19 +90,26 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 		for (size_t j = 0; j < m_d; j++) {
 			u(j) = velocities.at(j)(i);
 		}
-		m_boltzmannModel->getEquilibriumDistributions(feq, u, densities(i));
+		m_boltzmannType.getEquilibriumDistributions(feq, u, densities(i));
 
 		// BGK collision
-		collideSingleDoF(i, feq, f);
+		m_collisionType.collideSingleDoF(i, feq, f);
 	}
 }
+template
+void Collision<D2Q9IncompressibleModel, BGKTransformed>::collideAll(
+		DistributionFunctions& f, distributed_vector& densities,
+		vector<distributed_vector>& velocities,
+		bool inInitializationProcedure) const;
 
-void CollisionModel::collideAll(DistributionFunctions& f,
-		distributed_vector& densities, vector<distributed_vector>& velocities, const vector<bool>& isBoundary,
+template<class BoltzmannType, class CollisionType>
+void Collision<BoltzmannType, CollisionType>::collideAll(
+		DistributionFunctions& f, distributed_vector& densities,
+		vector<distributed_vector>& velocities, const vector<bool>& isBoundary,
 		bool inInitializationProcedure) const {
 
 	size_t n_dofs = f.at(0).size();
-	size_t Q = m_boltzmannModel->getQ();
+	size_t Q = m_boltzmannType.getQ();
 
 	assert(f.size() == Q);
 	assert(velocities.size() == m_d);
@@ -114,8 +132,9 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 		for (size_t j = 0; j < Q; j++) {
 			densities(i) += f.at(j)(i);
 		}
-		if (densities(i) < 1e-10){
-			throw CollisionModelException("Densities too small (< 1e-10) for collisions. Decrease time step size.");
+		if (densities(i) < 1e-10) {
+			throw CollisionException(
+					"Densities too small (< 1e-10) for collisions. Decrease time step size.");
 		}
 
 		if (not inInitializationProcedure) {
@@ -126,13 +145,13 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 
 				for (size_t k = 0; k < Q; k++) {
 					velocities.at(j)(i) += f.at(k)(i)
-							* m_boltzmannModel->getDirection(k)(j);
+							* m_boltzmannType.getDirection(k)(j);
 				}
 				velocities.at(j)(i) /= densities(i);
 			}
 		}
 
-		if (isBoundary.at(i)){
+		if (isBoundary.at(i)) {
 			continue;
 		}
 
@@ -143,11 +162,15 @@ void CollisionModel::collideAll(DistributionFunctions& f,
 		for (size_t j = 0; j < m_d; j++) {
 			u(j) = velocities.at(j)(i);
 		}
-		m_boltzmannModel->getEquilibriumDistributions(feq, u, densities(i));
+		m_boltzmannType.getEquilibriumDistributions(feq, u, densities(i));
 
 		// BGK collision
-		collideSingleDoF(i, feq, f);
+		m_collisionType.collideSingleDoF(i, feq, f);
 	}
 } /*collideAll */
+template void Collision<D2Q9IncompressibleModel, BGKTransformed>::collideAll(
+		DistributionFunctions& f, distributed_vector& densities,
+		vector<distributed_vector>& velocities, const vector<bool>& isBoundary,
+		bool inInitializationProcedure) const;
 
 } /* namespace natrium */
