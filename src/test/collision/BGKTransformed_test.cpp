@@ -130,6 +130,7 @@ BOOST_AUTO_TEST_CASE(BGKTransformed_collideAll_test){
 		}
 		bgk_collision.collideSinglePoint(localF);
 		for (size_t j = 0; j < dqmodel.getQ(); j++){
+			cout << i << " " << j << endl;
 			BOOST_CHECK( fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-15);
 		}
 	}

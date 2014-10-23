@@ -5,8 +5,9 @@
 set(    BOLTZMANNMODELS_TEST
         boltzmannmodels/D2Q9IncompressibleModel_test.cpp
         )
-set(    COLLISIONMODELS_TEST
+set(    COLLISION_TEST
         collision/BGKTransformed_test.cpp
+        collision/Collision_test.cpp
         )            
 set(    PROBLEMDESCRIPTION_TEST
         problemdescription/BoundaryTools_test.cpp
@@ -48,7 +49,7 @@ set(    UTILITIES_TEST
 #
 set(    TESTS
         ${BOLTZMANNMODELS_TEST}
-        ${COLLISIONMODELS_TEST}
+        ${COLLISION_TEST}
         ${PROBLEMDESCRIPTION_TEST}
         ${ADVECTION_TEST}
         ${SOLVER_TEST}

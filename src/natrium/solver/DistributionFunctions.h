@@ -82,6 +82,19 @@ public:
 	}
 
 	/**
+	 * @short mimes std::vector.at(i)
+	 */
+	const distributed_vector& at(size_t i) const {
+		assert(m_Q > 0);
+		assert(i < m_Q);
+		if (i == 0) {
+			return m_f0;
+		} else {
+			return m_fStream.block(i - 1);
+		}
+	}
+
+	/**
 	 * @short F0 denotes the vector \f$ f_0 \f$ (zero-velocity particles)
 	 */
 	const distributed_vector& getF0() const {
@@ -143,7 +156,7 @@ public:
 	/**
 	 * @short the number of discrete velocities, including zero
 	 */
-	size_t size() {
+	size_t size() const {
 		return m_Q;
 	}
 
