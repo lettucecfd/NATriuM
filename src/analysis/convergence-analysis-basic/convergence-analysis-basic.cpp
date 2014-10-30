@@ -88,11 +88,11 @@ int main() {
 				<< orderOfFiniteElement << "_" << refinementLevel;
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
-		//configuration->setSwitchOutputOff(true);
+		configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
 		configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
-		configuration->setOutputTableInterval(10);
+		//configuration->setOutputTableInterval(10);
 		//configuration->setOutputCheckpointInterval(1000);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
