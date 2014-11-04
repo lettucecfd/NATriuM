@@ -67,7 +67,7 @@ int main() {
 			<< "#  refinementlevel  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
+	for (size_t refinementLevel = 2; refinementLevel < 12; refinementLevel++) {
 		cout << "refinement Level = " << refinementLevel << endl;
 
 		double dx = 2 * 3.1415926
@@ -103,7 +103,7 @@ int main() {
 			continue;
 
 		}
-		configuration->setNumberOfTimeSteps(1.0 / dt);
+		configuration->setNumberOfTimeSteps(50.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 		configuration->setNumberOfTimeSteps(1);
