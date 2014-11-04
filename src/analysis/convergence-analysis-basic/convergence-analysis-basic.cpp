@@ -45,7 +45,7 @@ int main() {
 	const double orderOfFiniteElement = 2;
 
 	// chose scaling so that the right Mach number is achieved
-	double scaling = sqrt(3) * 1 / Ma;
+	double scaling = 1; //sqrt(3) * 1 / Ma;
 
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
@@ -62,7 +62,7 @@ int main() {
 	filename2 << getenv("NATRIUM_HOME")
 			<< "/convergence-analysis-basic/table_order.txt";
 	std::ofstream orderFile(filename2.str().c_str());
-	orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
+	//orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 	orderFile
 			<< "#  refinementlevel  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
