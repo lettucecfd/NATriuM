@@ -103,7 +103,7 @@ int main() {
 			continue;
 
 		}
-		configuration->setNumberOfTimeSteps(50.0 / dt);
+		configuration->setNumberOfTimeSteps(100.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 		configuration->setNumberOfTimeSteps(1);
