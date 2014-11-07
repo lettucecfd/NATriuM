@@ -37,7 +37,7 @@ int main() {
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 
-	const double viscosity = 1;
+	const double viscosity = 0.01;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
 	const double Ma = 0.05;
@@ -45,7 +45,7 @@ int main() {
 	const double orderOfFiniteElement = 2;
 
 	// chose scaling so that the right Mach number is achieved
-	double scaling = 1; //sqrt(3) * 1 / Ma;
+	double scaling = sqrt(3) * 1 / Ma;
 
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
