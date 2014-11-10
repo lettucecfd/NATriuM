@@ -37,7 +37,7 @@ int main() {
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 
-	const double viscosity = 0.01;
+	const double viscosity = 1;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
 	const double Ma = 0.05;
@@ -103,7 +103,7 @@ int main() {
 			continue;
 
 		}
-		configuration->setNumberOfTimeSteps(100.0 / dt);
+		configuration->setNumberOfTimeSteps(1.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 		configuration->setNumberOfTimeSteps(1);
