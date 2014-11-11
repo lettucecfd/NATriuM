@@ -52,6 +52,23 @@ template double CFDSolverUtilities::getMinimumDoFDistanceGLL<3>(
 		const dealii::Triangulation<3>& tria, const size_t orderOfFiniteElement);
 
 
+template<size_t dim>
+double CFDSolverUtilities::calculateTimestep(
+		const dealii::Triangulation<dim>& tria,
+		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel, double cFL) {
+	assert(orderOfFiniteElement >= 2);
+	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL(tria, orderOfFiniteElement);
+	double u = boltzmannModel.getMaxParticleVelocityMagnitude();
+	double dt = cFL * dx / u;
+	return dt;
+}
+template double CFDSolverUtilities::calculateTimestep<2>(
+		const dealii::Triangulation<2>& tria, const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel, double cFL);
+template double CFDSolverUtilities::calculateTimestep<3>(
+		const dealii::Triangulation<3>& tria, const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel, double cFL);
+
+
+
 template<int dim>
 void CFDSolverUtilities::mesh_info(const dealii::Triangulation<dim> &tria,
                const std::string        &filename)

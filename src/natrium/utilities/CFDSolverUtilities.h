@@ -11,6 +11,8 @@
 #include "deal.II/grid/tria.h"
 #include "deal.II/base/quadrature_lib.h"
 
+#include "../boltzmannmodels/BoltzmannModel.h"
+
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
@@ -24,6 +26,9 @@ template<size_t dim>
 double getMinimumDoFDistanceGLL(const dealii::Triangulation<dim>& tria,
 		const size_t orderOfFiniteElement);
 
+template<size_t dim>
+double calculateTimestep(const dealii::Triangulation<dim>& tria,
+		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel, double cFL=0.4);
 
 /**
  * @short stolen from Deal.II's step 49 tutorial

@@ -27,6 +27,7 @@
 #include "../collision/BGKTransformed.h"
 
 #include "../utilities/Logging.h"
+#include "../utilities/CFDSolverUtilities.h"
 
 namespace natrium {
 
@@ -148,30 +149,32 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	if (charU == 0.0) {
 		charU = maxU;
 	}
-	double dx = dealii::GridTools::minimal_cell_diameter(
-			*(m_problemDescription->getTriangulation()));
+	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(*m_problemDescription->getTriangulation(), configuration->getSedgOrderOfFiniteElement());
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
-	LOG(WELCOME) << "viscosity:       " << problemDescription->getViscosity()
+	LOG(WELCOME) << "viscosity:                " << problemDescription->getViscosity()
 			<< " m^2/s" << endl;
-	LOG(WELCOME) << "char. length:    "
+	LOG(WELCOME) << "char. length:             "
 			<< problemDescription->getCharacteristicLength() << " m" << endl;
-	LOG(WELCOME) << "max |u_0|:       "
+	LOG(WELCOME) << "max |u_0|:                "
 			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
 			<< endl;
-	LOG(WELCOME) << "Reynolds number: "
+	LOG(WELCOME) << "Reynolds number:          "
 			<< (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
-	LOG(WELCOME) << "Mach number:     "
+	LOG(WELCOME) << "Mach number:              "
 			<< charU / m_boltzmannModel->getSpeedOfSound() << endl;
-	LOG(WELCOME) << "Stencil scaling: " << configuration->getStencilScaling()
+	LOG(WELCOME) << "Stencil scaling:          " << configuration->getStencilScaling()
 			<< endl;
-	//LOG(WELCOME) << "Recommended dt:  "
-	//		<< m_collisionType->calculateOptimalTimeStep(dx, m_boltzmannModel)
-	//		<< " s" << endl;
-	LOG(WELCOME) << "Actual dt:       " << configuration->getTimeStepSize()
+	//TODO propose optimal cfl based on time integrator
+	const double optimal_cfl = 0.4;
+	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
+			<< CFDSolverUtilities::calculateTimestep<dim>(*m_problemDescription->getTriangulation(), configuration->getSedgOrderOfFiniteElement(), *m_boltzmannModel, optimal_cfl)
 			<< " s" << endl;
-	LOG(WELCOME) << "dx:              " << dx << endl;
-	LOG(WELCOME) << "tau:             " << tau << endl;
+	LOG(WELCOME) << "Actual dt:                " << configuration->getTimeStepSize()
+			<< " s" << endl;
+	LOG(WELCOME) << "CFL number:               " << configuration->getTimeStepSize() / dx * m_boltzmannModel->getMaxParticleVelocityMagnitude();
+	LOG(WELCOME) << "dx:                       " << dx << endl;
+	LOG(WELCOME) << "tau:                      " << tau << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 
 	// initialize boundary dof indicator

@@ -266,7 +266,8 @@ void SolverConfiguration::prepareOutputDirectory(){
 				throw ConfigurationException("Execution stopped due to user's intervention.");
 			}
 		} else {
-			// TODO Warning to log file: Overwrite files
+			LOG(BASIC) << "Starting NATriuM..." << endl;
+			LOG(WARNING) << "Simulation might overwrite old data in output file." << endl;
 		}
 	}
 }
