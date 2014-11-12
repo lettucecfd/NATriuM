@@ -23,6 +23,7 @@
 
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
+#include "../timeintegration/ExponentialTimeIntegrator.h"
 
 #include "../utilities/Logging.h"
 
@@ -119,7 +120,11 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 						configuration->getTimeStepSize(), numberOfDoFs,
 						m_boltzmannModel->getQ() - 1, configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
-		throw CFDSolverException("Exponential time integrator is not implemented, yet.");
+		m_timeIntegrator = make_shared<
+								ExponentialTimeIntegrator<distributed_sparse_block_matrix,
+										distributed_block_vector> >(
+												configuration->getTimeStepSize(), numberOfDoFs,
+												m_boltzmannModel->getQ() - 1);
 	}
 
 // initialize macroscopic variables
