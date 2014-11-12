@@ -24,8 +24,6 @@
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
 
-#include "../collision/BGKTransformed.h"
-
 #include "../utilities/Logging.h"
 #include "../utilities/CFDSolverUtilities.h"
 
