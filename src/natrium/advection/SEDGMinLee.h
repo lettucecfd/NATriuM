@@ -327,7 +327,7 @@ public:
 		return m_mapping;
 	}
 
-	const std::map<size_t, size_t>& getCelldofToQIndex() const {
+	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const {
 		return m_celldof_to_q_index;
 	}
 
@@ -339,11 +339,15 @@ public:
 		return m_faceQuadrature;
 	}
 
-	const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
+	virtual const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
 		return m_fe;
 	}
 
-	const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
+	virtual size_t getNumberOfDoFsPerCell() const{
+		return m_fe->dofs_per_cell;
+	}
+
+	virtual const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
 		return m_quadrature;
 	}
 

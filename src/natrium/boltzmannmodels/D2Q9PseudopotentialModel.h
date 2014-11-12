@@ -13,31 +13,46 @@
 #include "deal.II/grid/tria.h"
 #include "deal.II/numerics/vector_tools.h"
 
-#include "../utilities/BasicNames.h"
+//#include "../advection/SEDGMinLee.h"
 
-#include "AdvectionOperator.h"
+#include "../utilities/BasicNames.h"
 
 namespace natrium {
 
-	class D2Q9PseudopotentialModel: public D2Q9Model {
-	public:
+// forward declaration
+template<size_t dim>
+class SEDGMinLee;
 
-		/// constructor
-		D2Q9PseudopotentialModel(double scaling,
-				shared_ptr<SolverConfiguration> configuration,
-				shared_ptr<Triangulation<dim>> triangulation,
-				DistributionFunctions& f,
-				distributed_vector& densities);
+class D2Q9PseudopotentialModel: public D2Q9Model {
+private:
+	shared_ptr<SEDGMinLee<2> > m_advectionOperator;
+	const double m_dt;
 
-		/// destructor
-		virtual ~D2Q9PseudopotentialModel();
+public:
 
-		virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u, const double rho = 1) const;
+	/// constructor
+	D2Q9PseudopotentialModel(double scaling, const double dt);
 
-		virtual vector<double> getDensityGradient() ;
+	/// destructor
+	virtual ~D2Q9PseudopotentialModel();
 
-		virtual void getInteractionForce(shared_ptr<SolverConfiguration> configuration, size_t i, const numeric_vector& u, const double rho = 1) ;
-	};
+	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
+			const double rho = 1) const;
+
+	//virtual vector<double> getDensityGradient() ;
+
+	void getInteractionForce(const vector<double>& distributions,
+			numeric_vector & interactionForce, const double rho = 1);
+
+	const shared_ptr<SEDGMinLee<2> > getAdvectionOperator() const {
+		return m_advectionOperator;
+	}
+
+	void setAdvectionOperator(
+			const shared_ptr<SEDGMinLee<2> >& advectionOperator) {
+		m_advectionOperator = advectionOperator;
+	}
+};
 
 } /* namespace natrium */
 

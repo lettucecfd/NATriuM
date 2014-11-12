@@ -5,7 +5,7 @@
  *      Author: kk
  */
 
-#include "D2Q9Pseudopotential.h"
+#include "D2Q9PseudopotentialModel.h"
 
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
@@ -14,53 +14,54 @@
 
 #include "../utilities/Math.h"
 
-namespace natrium{
+namespace natrium {
 
-	/// constructor
-	D2Q9PseudopotentialModel::D2Q9PseudopotentialModel(
-			double scaling,
-			shared_ptr<SolverConfiguration> configuration,
-			shared_ptr<Triangulation<dim>> triangulation,
-			DistributionFunctions& f,
-			distributed_vector& densities):D2Q9Model(scaling){
+/// constructor
+D2Q9PseudopotentialModel::D2Q9PseudopotentialModel(double scaling,
+		const double dt) :
+		D2Q9Model(scaling), m_dt(dt) {
+
+}
+
+// destructor
+D2Q9PseudopotentialModel::~D2Q9PseudopotentialModel() {
+}
+
+// getEquilibriumDistribution
+double D2Q9PseudopotentialModel::getEquilibriumDistribution(size_t i,
+		const numeric_vector& u, const double rho) const {
+	assert(i < Q);
+	assert(rho > 0);
+	assert(i >= 0);
+	assert(u.size() == D);
+	assert(u(0) < 1000000000000000.);
+	assert(u(1) < 1000000000000000.);
+
+	double prefactor = getWeight(i) * rho;
+	double uSquareTerm = -Math::scalar_product(u, u)
+			/ (2 * m_speedOfSoundSquare);
+	if (0 == i) {
+		return prefactor * (1 + uSquareTerm);
 	}
+	double mixedTerm = Math::scalar_product(u, getDirection(i))
+			/ m_speedOfSoundSquare;
+	return prefactor * (1 + mixedTerm * (1 + 0.5 * (mixedTerm)) + uSquareTerm);
+}
 
-	// destructor
-	D2Q9PseudopotentialModel::~D2Q9PseudopotentialModel() {
-	}
+// getInteractionForce
+void D2Q9PseudopotentialModel::getInteractionForce(
+		const vector<double>& distributions, numeric_vector & interactionForce,
+		const double rho) {
 
-	// getEquilibriumDistribution
-	double D2Q9PseudopotentialModel::getEquilibriumDistribution(size_t i,
-			const numeric_vector& u, const double rho) const {
-		assert(i < Q) ;
-		assert(rho > 0) ;
-		assert(i >= 0) ;
-		assert(u.size() == D) ;
-		assert(u(0) < 1000000000000000.) ;
-		assert(u(1) < 1000000000000000.) ;
+	const double G = -4.4;
+	numeric_vector densityGradient(2);
 
-		double prefactor = getWeight(i) * rho ;
-		double uSquareTerm  = - Math::scalar_product(u, u)/(2*m_speedOfSoundSquare) ;
-		if (0 == i){
-			return prefactor * (1 + uSquareTerm) ;
-		}
-		double mixedTerm = Math::scalar_product(u,getDirection(i))/m_speedOfSoundSquare ;
-		return prefactor * (1 + mixedTerm * (1 + 0.5*(mixedTerm)) + uSquareTerm) ;
-	}
+	interactionForce(0) = 0.0;
+	interactionForce(1) = 0.0;
 
-	// getInteractionForce
-	virtual void D2Q9PseudopotentialModel::getInteractionForce(const vector<double>& distributions,
-			numeric_vector & interactionForce, const double rho = 1) {
+	//TODO getDensityGradient ;
 
-		const double G = -4.4 ;
-		numeric_vector densityGradient (2) ;
-
-		interactionForce(0) = 0.0 ;
-		interactionForce(1) = 0.0 ;
-
-		//TODO getDensityGradient ;
-
-		interactionForce(0) = -G*(1.-exp(rho))*densityGradient(0) ;
-		interactionForce(1) = -G*(1.-exp(rho))*densityGradient(1) ;
-	}
+	interactionForce(0) = -G * (1. - exp(rho)) * densityGradient(0);
+	interactionForce(1) = -G * (1. - exp(rho)) * densityGradient(1);
+}
 }

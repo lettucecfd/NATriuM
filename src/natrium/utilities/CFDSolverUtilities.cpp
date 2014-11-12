@@ -57,7 +57,7 @@ double CFDSolverUtilities::calculateTimestep(
 		const dealii::Triangulation<dim>& tria,
 		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel, double cFL) {
 	assert(orderOfFiniteElement >= 2);
-	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL(tria, orderOfFiniteElement);
+	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(tria, orderOfFiniteElement);
 	double u = boltzmannModel.getMaxParticleVelocityMagnitude();
 	double dt = cFL * dx / u;
 	return dt;

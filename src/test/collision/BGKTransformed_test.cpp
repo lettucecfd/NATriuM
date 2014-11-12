@@ -10,7 +10,11 @@
 #include "boost/test/unit_test.hpp"
 
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
+#include "boltzmannmodels/D2Q9PseudopotentialModel.h"
 #include "boltzmannmodels/BoltzmannModel.h"
+
+#include "advection/SEDGMinLee.h"
+#include "../advection/PeriodicTestDomain2D.h"
 
 #include "utilities/BasicNames.h"
 
@@ -130,7 +134,7 @@ BOOST_AUTO_TEST_CASE(BGKTransformed_collideAll_test){
 		}
 		bgk_collision.collideSinglePoint(localF);
 		for (size_t j = 0; j < dqmodel.getQ(); j++){
-			cout << i << " " << j << endl;
+			//cout << i << " " << j << endl;
 			BOOST_CHECK( fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-15);
 		}
 	}
@@ -139,6 +143,63 @@ BOOST_AUTO_TEST_CASE(BGKTransformed_collideAll_test){
 	cout << "done." << endl;
 } /* BGKTransformed_collideAll_test*/
 
+BOOST_AUTO_TEST_CASE(BGKTransformed_collideAll_PPModel_test){
+
+	cout << "BGKTransformed_collideAll_PPModel_test..." << endl;
+
+	// create collision model
+	const size_t orderOfFiniteElement = 2;
+	const double dt = 0.01;
+	const size_t refinementLevel = 2;
+	PeriodicTestDomain2D periodic(refinementLevel);
+	// advection operator is assigned later as it has to be created, first
+	shared_ptr<D2Q9PseudopotentialModel> dqmodel = make_shared<D2Q9PseudopotentialModel> (1.0, dt);
+	shared_ptr<SEDGMinLee<2> > sedgMinLee = make_shared<SEDGMinLee<2> >(periodic.getTriangulation(), periodic.getBoundaries(), orderOfFiniteElement, dqmodel);
+	dqmodel->setAdvectionOperator(sedgMinLee);
+	double tau = 0.9;
+	BGKTransformed bgk(9, tau);
+	Collision<D2Q9PseudopotentialModel, BGKTransformed> bgk_collision(*dqmodel, bgk);
+
+	// initialize distributions with arbitrary components
+	vector<distributed_vector> f;
+	size_t nof_dofs = sedgMinLee->getNumberOfDoFs();
+	distributed_vector rho(nof_dofs);
+	vector<distributed_vector> u;
+	for (size_t i = 0; i < dqmodel->getQ(); i++){
+		distributed_vector f_i(nof_dofs);
+		for (size_t j = 0; j < nof_dofs; j++){
+			f_i(j) = 1.5 + sin(1.5*i)+0.001+i/(i+1) + pow((0.5*cos(j)),2);
+		}
+		f.push_back(f_i);
+	}
+	for (size_t i = 0; i < dqmodel->getD(); i++){
+		distributed_vector u_i(nof_dofs);
+		for (size_t j = 0; j < nof_dofs; j++){
+			u_i(j) = 0;
+		}
+		u.push_back(u_i);
+	}
+
+
+	// TODO (KNUT) make good test
+	// collide and compare to previous collision function
+	DistributionFunctions fAfterCollision(f);
+	bgk_collision.collideAll(fAfterCollision, rho, u);
+	for (size_t i = 0; i < nof_dofs; i++){
+		vector<double> localF(dqmodel->getQ());
+		for (size_t j = 0; j < dqmodel->getQ(); j++){
+			localF.at(j) = f.at(j)(i);
+		}
+		bgk_collision.collideSinglePoint(localF);
+		for (size_t j = 0; j < dqmodel->getQ(); j++){
+			//cout << i << " " << j << endl;
+			BOOST_CHECK( fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-10);
+		}
+	}
+
+
+	cout << "done." << endl;
+} /* BGKTransformed_collideAll_PPModel_test*/
 
 BOOST_AUTO_TEST_SUITE_END()
 
