@@ -105,6 +105,9 @@ private:
 	/// table out
 	shared_ptr<SolverStats<dim> > m_solverStats;
 
+	// starting time
+	time_t m_tstart;
+
 protected:
 
 	/// save the distribution functions to files for checkpointing

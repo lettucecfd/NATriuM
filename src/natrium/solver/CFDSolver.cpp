@@ -106,7 +106,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			BGKTransformed bgk(m_boltzmannModel->getQ(), tau);
 			D2Q9IncompressibleModel d2q9(configuration->getStencilScaling());
 			m_collisionModel = make_shared<
-					Collision<D2Q9IncompressibleModel, BGKTransformed> >(d2q9, bgk);
+					Collision<D2Q9IncompressibleModel, BGKTransformed> >(d2q9,
+					bgk);
 		}
 	}
 
@@ -147,10 +148,12 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	if (charU == 0.0) {
 		charU = maxU;
 	}
-	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(*m_problemDescription->getTriangulation(), configuration->getSedgOrderOfFiniteElement());
+	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(
+			*m_problemDescription->getTriangulation(),
+			configuration->getSedgOrderOfFiniteElement());
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
-	LOG(WELCOME) << "viscosity:                " << problemDescription->getViscosity()
-			<< " m^2/s" << endl;
+	LOG(WELCOME) << "viscosity:                "
+			<< problemDescription->getViscosity() << " m^2/s" << endl;
 	LOG(WELCOME) << "char. length:             "
 			<< problemDescription->getCharacteristicLength() << " m" << endl;
 	LOG(WELCOME) << "max |u_0|:                "
@@ -161,16 +164,20 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 					/ problemDescription->getViscosity() << endl;
 	LOG(WELCOME) << "Mach number:              "
 			<< charU / m_boltzmannModel->getSpeedOfSound() << endl;
-	LOG(WELCOME) << "Stencil scaling:          " << configuration->getStencilScaling()
-			<< endl;
+	LOG(WELCOME) << "Stencil scaling:          "
+			<< configuration->getStencilScaling() << endl;
 	//TODO propose optimal cfl based on time integrator
 	const double optimal_cfl = 0.4;
 	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
-			<< CFDSolverUtilities::calculateTimestep<dim>(*m_problemDescription->getTriangulation(), configuration->getSedgOrderOfFiniteElement(), *m_boltzmannModel, optimal_cfl)
-			<< " s" << endl;
-	LOG(WELCOME) << "Actual dt:                " << configuration->getTimeStepSize()
-			<< " s" << endl;
-	LOG(WELCOME) << "CFL number:               " << configuration->getTimeStepSize() / dx * m_boltzmannModel->getMaxParticleVelocityMagnitude();
+			<< CFDSolverUtilities::calculateTimestep<dim>(
+					*m_problemDescription->getTriangulation(),
+					configuration->getSedgOrderOfFiniteElement(),
+					*m_boltzmannModel, optimal_cfl) << " s" << endl;
+	LOG(WELCOME) << "Actual dt:                "
+			<< configuration->getTimeStepSize() << " s" << endl;
+	LOG(WELCOME) << "CFL number:               "
+			<< configuration->getTimeStepSize() / dx
+					* m_boltzmannModel->getMaxParticleVelocityMagnitude() << endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
 	LOG(WELCOME) << "tau:                      " << tau << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
@@ -260,13 +267,14 @@ template void CFDSolver<3>::reassemble();
 template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
-	// TODO estimate runtime
+	m_tstart = time(0);
 	for (m_i = m_iterationStart; m_i < N; m_i++) {
 		output(m_i);
 		stream();
 		collide();
 	}
 	output(N);
+	LOG(BASIC) << "NATriuM run complete." << endl;
 }
 template void CFDSolver<2>::run();
 template void CFDSolver<3>::run();
@@ -276,8 +284,21 @@ void CFDSolver<dim>::output(size_t iteration) {
 	// output: vector fields as .vtu files
 	if (not m_configuration->isSwitchOutputOff()) {
 		if (iteration % 100 == 0) {
-			LOG(BASIC) << "Iteration " << iteration << ",  t = " << m_time
+			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time
 					<< endl;
+		}
+		// output estimated runtime after iterations 1, 10, 100, 1000, ...
+		if (iteration > m_iterationStart) {
+			if (int(log10(iteration - m_iterationStart))
+					== log10(iteration - m_iterationStart)) {
+				time_t estimated_end = m_tstart
+						+ (m_configuration->getNumberOfTimeSteps()
+								- m_iterationStart) / (m_i - m_iterationStart)
+								* (time(0) - m_tstart);
+				struct tm * ltm = localtime(&estimated_end);
+				LOG(BASIC) << "i = " << iteration << "; Estimated end: "
+						<< string(asctime(ltm)) << endl;
+			}
 		}
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			std::stringstream str;
