@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
 
 			// avoid too expensive runs
 			// individual jobs should take < 1h
-			if (L/dx * tmax/dt > 3 * 1e3*1e4) {
+			if (L/dx * tmax/dt > 5 * 1e6) {
 				continue;
 			}
 

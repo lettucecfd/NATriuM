@@ -58,6 +58,7 @@ COULD BE FURTHER SIMPLIFIED
  1) cd bin
  2') (on cluster: cmake -DCMAKE_BUILD_TYPE=Release ../src/ -B. && make all)
  2) cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
+    (or for Release version cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS_RELEASE=-O3 ../src/ -B.)
     (just so you know: -B. sets cmake's binary dir to .)
  3) Launch eclipse
  4) File->Import->General->Existing Projects Into Workspace->Select root directory
