@@ -214,19 +214,19 @@ int main(int argc, char* argv[]) {
 						make_shared<CouetteFlow2D>(viscosity, U,
 								refinementLevel, L, 0.0);
 				benchmark = couette2D;
-				dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
-						*couette2D->getTriangulation(), orderOfFiniteElement);
+				dx = CFDSolverUtilities::getMinimumVertexDistance<2>(
+						*couette2D->getTriangulation());
 			} else {
 				shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
 						TaylorGreenVortex2D>(viscosity, refinementLevel);
 				benchmark = tgVortex;
-				dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
-						*tgVortex->getTriangulation(), orderOfFiniteElement);
+				dx = CFDSolverUtilities::getMinimumVertexDistance<2>(
+						*tgVortex->getTriangulation());
 			}
 
 			// determine time step size
 			if (DIFFUSIVE) {
-				double tmp_Ma = Ma * dx / L;
+				double tmp_Ma = Ma * sqrt(dx) / L / orderOfFiniteElement;
 				scaling = sqrt(3) * 1 / tmp_Ma;
 			}
 			double CFL = 0.4;
