@@ -31,14 +31,14 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_boltzmannModel(
 				boltzmannModel), m_useCentralFlux(useCentralFlux) {
 	// assertions
-	assert(orderOfFiniteElement >= 2);
+	assert(orderOfFiniteElement >= 1);
 
 	// make dof handler
-	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement);
+	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement+1);
 	m_faceQuadrature = make_shared<QGaussLobatto<dim - 1> >(
-			orderOfFiniteElement);
+			orderOfFiniteElement+1);
 	m_fe = make_shared<FE_DGQArbitraryNodes<dim> >(
-			QGaussLobatto<1>(orderOfFiniteElement));
+			QGaussLobatto<1>(orderOfFiniteElement+1));
 	m_doFHandler = make_shared<DoFHandler<dim> >(*triangulation);
 
 	// distribute degrees of freedom over mesh

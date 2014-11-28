@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
 	configuration->setOutputDirectory("/tmp");
 	configuration->setSwitchOutputOff(true);
 	configuration->setNumberOfTimeSteps(100);
-	configuration->setSedgOrderOfFiniteElement(2);
+	configuration->setSedgOrderOfFiniteElement(1);
 	configuration->setTimeStepSize(0.01);
 
 	CFDSolver<2> solver(configuration, problem);
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 	configuration->setOutputDirectory("/tmp");
 	configuration->setSwitchOutputOff(true);
 	configuration->setNumberOfTimeSteps(1);
-	configuration->setSedgOrderOfFiniteElement(10);
+	configuration->setSedgOrderOfFiniteElement(9);
 	configuration->setTimeStepSize(0.0001);
 
 	CFDSolver<2> solver(configuration, problem);

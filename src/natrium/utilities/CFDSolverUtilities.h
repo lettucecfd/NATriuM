@@ -27,6 +27,9 @@ double getMinimumDoFDistanceGLL(const dealii::Triangulation<dim>& tria,
 		const size_t orderOfFiniteElement);
 
 template<size_t dim>
+double getMinimumVertexDistance(const dealii::Triangulation<dim>& tria);
+
+template<size_t dim>
 double calculateTimestep(const dealii::Triangulation<dim>& tria,
 		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel, double cFL=0.4);
 

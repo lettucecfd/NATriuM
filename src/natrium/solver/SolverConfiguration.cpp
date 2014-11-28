@@ -36,8 +36,8 @@ SolverConfiguration::SolverConfiguration() {
 				"The algorithm which is used for the time integration of the discretizted advection (=streaming) equation. A time integrator is required, when the advection scheme is based upon some Finite Element/Difference/Volume or discontinuous Galerkin scheme.");
 		enter_subsection("SEDG");
 		{
-			declare_entry("Order of finite element", "2",
-					dealii::Patterns::Integer(2),
+			declare_entry("Order of finite element", "1",
+					dealii::Patterns::Integer(1),
 					"The degree of the polynomial shape functions used by the SEDG scheme.");
 			declare_entry("Flux type", "Lax-Friedrichs",
 					dealii::Patterns::Selection("Lax-Friedrichs|Central"),

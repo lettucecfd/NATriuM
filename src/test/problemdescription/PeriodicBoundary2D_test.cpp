@@ -228,14 +228,14 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_TaylorGreenVortex_test){
 
 	// set parameters, set up configuration object
 	size_t refinementLevel = 4;
-	size_t orderOfFiniteElement = 2;
+	size_t orderOfFiniteElement = 1;
 	double viscosity = 1;
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
-					* (configuration->getSedgOrderOfFiniteElement() - 1));
+					* (configuration->getSedgOrderOfFiniteElement()));
 	std::stringstream dirname;
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(true);

@@ -67,6 +67,7 @@ void ErrorStats<dim>::update() {
 
 	// calculate maximum analytic velocity norm
 	m_maxUAnalytic = Math::maxVelocityNorm(m_solver->m_analyticVelocity);
+	m_l2UAnalytic = Math::velocity2Norm(m_solver->m_analyticVelocity);
 
 	// substract numeric from analytic velocity
 	m_solver->m_analyticVelocity.at(0).add(-1.0, numericVelocity.at(0));

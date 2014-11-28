@@ -21,22 +21,15 @@ template<size_t dim>
 double CFDSolverUtilities::getMinimumDoFDistanceGLL(
 		const dealii::Triangulation<dim>& tria,
 		const size_t orderOfFiniteElement) {
-	assert(orderOfFiniteElement >= 2);
+	assert(orderOfFiniteElement >= 1);
 	// calculate minimal distance between vertices of the triangulation
-	double min_vertex_distance = 100000000000.0;
-	double distance = 0.0;
-	for (typename dealii::Triangulation<dim>::active_cell_iterator cell =
-			tria.begin_active(); cell != tria.end(); ++cell) {
-		distance = cell->minimum_vertex_distance();
-		if (distance < min_vertex_distance) {
-			min_vertex_distance = distance;
-		}
-	}
+	double min_vertex_distance = CFDSolverUtilities::getMinimumVertexDistance<dim>(tria);
+
 	// calculate distance between closest quadrature nodes on a line
-	dealii::QGaussLobatto<1> quadrature(orderOfFiniteElement);
+	dealii::QGaussLobatto<1> quadrature(orderOfFiniteElement+1);
 	double min_dof_distance = 10000;
-	for (size_t i = 0; i < orderOfFiniteElement; i++) {
-		for (size_t j = i + 1; j < orderOfFiniteElement; j++) {
+	for (size_t i = 0; i < orderOfFiniteElement+1; i++) {
+		for (size_t j = i + 1; j < orderOfFiniteElement+1; j++) {
 			double pointDist = quadrature.get_points().at(i).distance(
 					quadrature.get_points().at(j));
 			if (pointDist < min_dof_distance) {
@@ -52,14 +45,37 @@ template double CFDSolverUtilities::getMinimumDoFDistanceGLL<3>(
 		const dealii::Triangulation<3>& tria, const size_t orderOfFiniteElement);
 
 
+
+template<size_t dim>
+double CFDSolverUtilities::getMinimumVertexDistance(
+		const dealii::Triangulation<dim>& tria) {
+	// calculate minimal distance between vertices of the triangulation
+	double min_vertex_distance = 100000000000.0;
+	double distance = 0.0;
+	for (typename dealii::Triangulation<dim>::active_cell_iterator cell =
+			tria.begin_active(); cell != tria.end(); ++cell) {
+		distance = cell->minimum_vertex_distance();
+		if (distance < min_vertex_distance) {
+			min_vertex_distance = distance;
+		}
+	}
+	return min_vertex_distance;
+}
+template double CFDSolverUtilities::getMinimumVertexDistance<2>(
+		const dealii::Triangulation<2>& tria);
+template double CFDSolverUtilities::getMinimumVertexDistance<3>(
+		const dealii::Triangulation<3>& tria);
+
+
 template<size_t dim>
 double CFDSolverUtilities::calculateTimestep(
 		const dealii::Triangulation<dim>& tria,
 		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel, double cFL) {
-	assert(orderOfFiniteElement >= 2);
-	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(tria, orderOfFiniteElement);
+	assert(orderOfFiniteElement >= 1);
+	double dx = CFDSolverUtilities::getMinimumVertexDistance<dim>(tria);
 	double u = boltzmannModel.getMaxParticleVelocityMagnitude();
-	double dt = cFL * dx / u;
+	// according to Hesthaven, dt ~ p^{-2}
+	double dt = cFL * dx / (u * orderOfFiniteElement * orderOfFiniteElement);
 	return dt;
 }
 template double CFDSolverUtilities::calculateTimestep<2>(

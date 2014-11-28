@@ -26,15 +26,15 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
 
 	// test for different refinement levels
 	square.refine_global(1);
-	BOOST_CHECK_SMALL(2.0*PI/2.0 - CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 2), 1e-10);
+	BOOST_CHECK_SMALL(2.0*PI/2.0 - CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 1), 1e-10);
 	square.refine_global(1);
-	BOOST_CHECK_SMALL(2.0*PI/4.0 - CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 2), 1e-10);
+	BOOST_CHECK_SMALL(2.0*PI/4.0 - CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 1), 1e-10);
 
 	// test for order 3 (dof in the middle of the cell)
-	BOOST_CHECK_SMALL(2.0*PI/(4*2) - CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 3), 1e-10);
+	BOOST_CHECK_SMALL(2.0*PI/(4*2) - CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 2), 1e-10);
 
 	// test for order 4 (distances not regular any more)
-	BOOST_CHECK_GT(2.0*PI/(4*3), CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 4 ));
+	BOOST_CHECK_GT(2.0*PI/(4*3), CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 3 ));
 
 	cout << endl;
 }

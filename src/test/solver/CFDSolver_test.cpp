@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	size_t refinementLevel = 3;
-	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()-1));
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()));
 	testConfiguration->setTimeStepSize(0.5*deltaX);
 	testConfiguration->setNumberOfTimeSteps(100);
 	// set viscosity so that tau = 1
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	size_t refinementLevel = 3;
-	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()-1));
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()));
 	testConfiguration->setTimeStepSize(0.1*deltaX);
 	testConfiguration->setNumberOfTimeSteps(100);
 	// set viscosity so that tau = 1
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
 	testConfiguration->setOutputDirectory(directory);
 	testConfiguration->setOutputCheckpointInterval(10);
 	size_t refinementLevel = 3;
-	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()-1));
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()));
 	testConfiguration->setTimeStepSize(0.1*deltaX);
 	testConfiguration->setNumberOfTimeSteps(15);
 	double viscosity = 1./5;
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
 	testConfiguration->setIterativeInitializationNumberOfIterations(10);
 	testConfiguration->setIterativeInitializationResidual(0.001);
 	size_t refinementLevel = 3;
-	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()-1));
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()));
 	testConfiguration->setTimeStepSize(0.1*deltaX);
 	testConfiguration->setNumberOfTimeSteps(100);
 	// set viscosity so that tau = 1

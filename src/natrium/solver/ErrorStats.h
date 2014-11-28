@@ -40,6 +40,7 @@ private:
 	double m_l2VelocityError;
 	double m_l2DensityError;
 	double m_maxUAnalytic;
+	double m_l2UAnalytic;
 
 public:
 	/**
@@ -125,6 +126,10 @@ public:
 
 	double getTime() const {
 		return m_time;
+	}
+
+	double getL2UAnalytic() const {
+		return m_l2UAnalytic;
 	}
 };
 

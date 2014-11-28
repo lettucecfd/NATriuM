@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_SUITE(SEDGMinLee_test)
 BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
 	cout << "SEDGMinLee_Construction_test..." << endl;
 
-	size_t fe_order = 2;
+	size_t fe_order = 1;
 	size_t refinementLevel = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	BOOST_CHECK_NO_THROW(
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 		}
 	}
 
-	for (size_t fe_order = 3; fe_order <= 9; fe_order+=2) {
+	for (size_t fe_order = 2; fe_order <= 8; fe_order+=2) {
 		// create files for max eigenvalue diagram
 		std::stringstream maxEigenvalueFilename;
 		maxEigenvalueFilename << dirname;
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 		cout << maxEigenvalueFilename.str().c_str() << "..." << endl;
 		std::ofstream normOut(maxEigenvalueFilename.str().c_str());
 #else
-		for (size_t fe_order = 2; fe_order < 3; fe_order++) {
+		for (size_t fe_order = 1; fe_order < 2; fe_order++) {
 #endif
 			for (size_t refinementLevel = 1; refinementLevel < 3;
 					refinementLevel++) {
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 					// compute eigenvalues
 					systemMatrix = 0;
 					double deltaX = 1.
-							/ (pow(2, refinementLevel) * (fe_order - 1));
+							/ (pow(2, refinementLevel) * (fe_order));
 					double deltaT = deltaX;
 					distributed_sparse_matrix sparseSytemMatrix(
 							matrices.block(i,i).get_sparsity_pattern());
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
 	cout << "SEDGMinLee_steadyStreaming_test..." << endl;
 
 	size_t refinementLevel = 3;
-	size_t fe_order = 3;
+	size_t fe_order = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time
-	const double timeStep = 1. / (pow(2, refinementLevel) * (fe_order - 1));
+	const double timeStep = 1. / (pow(2, refinementLevel) * (fe_order));
 	const size_t numberOfTimeSteps = size_t(1. / timeStep);
 
 	// Initialize all particle distribution functions with 1
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 	cout << "SEDGMinLee_streaming_test..." << endl;
 
 	size_t refinementLevel = 3;
-	size_t fe_order = 3;
+	size_t fe_order = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time
-	const double timeStep = 0.1 / (pow(2, refinementLevel) * (fe_order - 1));
+	const double timeStep = 0.1 / (pow(2, refinementLevel) * (fe_order));
 	const size_t numberOfTimeSteps = size_t(1. / timeStep);
 
 	// Initialize all particle distribution functions with 1, one corner element with 2
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 
 	/// relaxationParamter and velocity have no impact; just needed for construction
 	size_t refinementLevel = 3;
-	size_t fe_order = 4;
+	size_t fe_order = 3;
 	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 			streaming.getSystemMatrix();
 
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time (five times)
-	const double timeStep = 1. / (pow(2, refinementLevel) * (fe_order - 1));
+	const double timeStep = 1. / (pow(2, refinementLevel) * (fe_order));
 #ifdef RK5_OUT
 	const size_t numberOfTimeSteps = size_t(5. / timeStep);
 #else
@@ -520,7 +520,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 
 	// create streaming object
 	size_t refinementLevel = 3;
-	size_t fe_order = 2;
+	size_t fe_order = 1;
 	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),

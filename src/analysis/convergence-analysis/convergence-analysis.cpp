@@ -40,8 +40,15 @@ int main(int argc, char* argv[]) {
 	bool WALL = false;
 	bool DIFFUSIVE = false;
 
+	// default values
+	size_t P_MIN = 2;
+	size_t P_MAX = 12;
+	size_t N_MIN = 2;
+	size_t N_MAX = 8;
+	double MAX_TIME = 3600; // /sec
+
 	try {
-		assert(argc == 3);
+		assert(argc >= 3);
 		size_t wall = atoi(argv[1]);
 		size_t diffusive = atoi(argv[2]);
 		assert(wall < 2);
@@ -58,8 +65,62 @@ int main(int argc, char* argv[]) {
 		cout
 				<< "The second number (0 or 1) indicates whether you want to use the diffusive scaling (i.e. dt ~ dx^2)."
 				<< endl;
+		cout
+				<< "Optional arguments are (here with default values) -p_min=2 , -p_max=12, -N_min=2, -N_max=8, -max_time=3600"
+				<< endl;
+		cout
+				<< "They define the max and min order of finite element, max and min refinement level and max real time per simulation (in sec)."
+				<< endl;
 		cout << e.what() << endl;
 		return -1;
+	}
+
+	// Optional arguments
+	size_t max_args = argc;
+	for (size_t i = 3; i < max_args; i++) {
+		try {
+			char delim = '=';
+			std::stringstream ss(argv[i]);
+			std::string item;
+			std::vector<std::string> elems;
+			while (std::getline(ss, item, delim)) {
+				elems.push_back(item);
+			}
+			if ("-p_min" == elems[0]) {
+				P_MIN = atoi(elems[1].c_str());
+			} else if ("-p_max" == elems[0]) {
+				P_MAX = atoi(elems[1].c_str());
+			} else if ("-N_min" == elems[0]) {
+				N_MIN = atoi(elems[1].c_str());
+			} else if ("-N_max" == elems[0]) {
+				N_MAX = atoi(elems[1].c_str());
+			} else if ("-max_time" == elems[0]) {
+				MAX_TIME = atof(elems[1].c_str());
+			} else {
+				cout << "---------------------------" << endl;
+				cout << "No option " << elems[0] << endl;
+				cout << "---------------------------" << endl;
+				throw ("Not all cmd line arguments valid.");
+			}
+		} catch (std::exception& e) {
+			cout
+					<< "Please call this program with command line arguments( e.g. convergence-analysis-hp 0 0)."
+					<< endl;
+			cout
+					<< "The first number (0 or 1) indicates whether you want to use wall boundaries (i.e. unsteady Couette flow benchmark)."
+					<< endl;
+			cout
+					<< "The second number (0 or 1) indicates whether you want to use the diffusive scaling (i.e. dt ~ dx^2)."
+					<< endl;
+			cout
+					<< "Optional arguments are (here with default values) -p_min=2 , -p_max=12, -N_min=2, -N_max=8, -max_time=3600"
+					<< endl;
+			cout
+					<< "They define the max and min order of finite element, max and min refinement level and max real time per simulation (in sec)."
+					<< endl;
+			cout << e.what() << endl;
+			return -1;
+		}
 	}
 
 	///////////////////////////////
@@ -126,20 +187,24 @@ int main(int argc, char* argv[]) {
 	time_t now = time(0);
 	tm *ltm = localtime(&now);
 	std::stringstream filename;
-	filename << getenv("NATRIUM_HOME") << "/convergence-" << bench_str << "-"
-			<< scal_str << "-" << 1900 + ltm->tm_year << "-" << ltm->tm_mon	<< "-" << ltm->tm_mday << "_" << ltm->tm_hour << "-" << ltm->tm_min << ".txt";
+	filename << getenv("NATRIUM_HOME") << "/convergence-analysis/convergence-" << bench_str << "-"
+			<< scal_str << "-" << 1900 + ltm->tm_year << "-" << ltm->tm_mon +1
+			<< "-" << ltm->tm_mday << "_" << ltm->tm_hour << "-" << ltm->tm_min
+			<< ".txt";
 	std::ofstream orderFile(filename.str().c_str());
 	orderFile
-			<< "# refinement   p      dx    #dofs    dt   #steps   tmax    scaling    Ma    tau    max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2       init time (sec)             loop time (sec)         time for one iteration (sec)"
+			<< "# refinement   p      dx    #dofs    dt   #steps   tmax    scaling    Ma    tau    max |u_analytic|  ||u_analytic||_2   max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2       init time (sec)             loop time (sec)         time for one iteration (sec)"
 			<< endl;
 
 	////////////////////////////
 	// convergence analysis ////
 	////////////////////////////
-	for (size_t refinementLevel = 2; refinementLevel <= 10; refinementLevel++) {
+	cout << "Starting benchmarking for p in [" << P_MIN << ", " << P_MAX << "]; N in [" << N_MIN << ", " << N_MAX << "]; max_time = " << MAX_TIME << "..." << endl;
+	for (size_t refinementLevel = N_MIN; refinementLevel <= N_MAX;
+			refinementLevel++) {
 
-		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 14;
-				orderOfFiniteElement += 2) {
+		for (size_t orderOfFiniteElement = P_MIN; orderOfFiniteElement <= P_MAX;
+				orderOfFiniteElement += 1) {
 			cout << "N = " << refinementLevel << "; p = "
 					<< orderOfFiniteElement << " ... " << endl;
 
@@ -171,9 +236,9 @@ int main(int argc, char* argv[]) {
 
 			// avoid too expensive runs
 			// individual jobs should take < 1h
-			if (L/dx * tmax/dt > 5 * 1e6) {
+			// estimated runtime /sec : 1e-5 (L / dx * tmax / dt)**(1.5)
+			if (1e-5 * pow(L / dx * tmax / dt, 1.5) > MAX_TIME)
 				continue;
-			}
 
 			/////////////////////////////
 			// run benchmark problem ////
@@ -208,16 +273,17 @@ int main(int argc, char* argv[]) {
 				// put out errors and times
 				solver.getErrorStats()->update();
 				orderFile << refinementLevel << " " << orderOfFiniteElement
-						<< " " << dx << " " << solver.getNumberOfDoFs() << " " << dt << " "
-						<< solver.getIteration() << " " << solver.getTime()
-						<< " " << scaling << " " << sqrt(3) * U / scaling << " "
-						<< solver.getTau() << " "
-						<< solver.getErrorStats()->getMaxUAnalytic() << " "
-						<< solver.getErrorStats()->getMaxVelocityError() << " "
-						<< solver.getErrorStats()->getMaxDensityError() << " "
-						<< solver.getErrorStats()->getL2VelocityError() << " "
-						<< solver.getErrorStats()->getL2DensityError() << " "
-						<< time1 << " " << time2 << " "
+						<< " " << dx << " " << solver.getNumberOfDoFs() << " "
+						<< dt << " " << solver.getIteration() << " "
+						<< solver.getTime() << " " << scaling << " "
+						<< sqrt(3) * U / scaling << " " << solver.getTau()
+						<< " " << solver.getErrorStats()->getMaxUAnalytic()
+						<< " " << solver.getErrorStats()->getL2UAnalytic()
+						<< " " << solver.getErrorStats()->getMaxVelocityError()
+						<< " " << solver.getErrorStats()->getMaxDensityError()
+						<< " " << solver.getErrorStats()->getL2VelocityError()
+						<< " " << solver.getErrorStats()->getL2DensityError()
+						<< " " << time1 << " " << time2 << " "
 						<< time2 / configuration->getNumberOfTimeSteps()
 						<< endl;
 			} catch (std::exception& e) {
