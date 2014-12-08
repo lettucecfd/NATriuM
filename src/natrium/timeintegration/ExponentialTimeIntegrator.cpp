@@ -12,7 +12,7 @@ namespace natrium {
 template<> ExponentialTimeIntegrator<distributed_sparse_matrix, distributed_vector>::ExponentialTimeIntegrator(
 		double timeStepSize, size_t problemSize) :
 		TimeIntegrator<distributed_sparse_matrix, distributed_vector>(
-				timeStepSize) {
+				timeStepSize), identityMatrix(makeIdentityMatrix()), H_m(makeMatrix(arnoldiSize,arnoldiSize)), H(makeMatrix(arnoldiSize+1,arnoldiSize))   {
 
 }
 
@@ -20,7 +20,7 @@ template<> ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 		distributed_block_vector>::ExponentialTimeIntegrator(double timeStepSize,
 		size_t problemSize, size_t numberOfBlocks) :
 		TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>(
-				timeStepSize) {
+				timeStepSize), identityMatrix(makeIdentityMatrix()), H_m(makeMatrix(arnoldiSize,arnoldiSize)), H(makeMatrix(arnoldiSize+1,arnoldiSize))  {
 }
 
 
@@ -32,32 +32,44 @@ template<class MATRIX, class VECTOR> void ExponentialTimeIntegrator<MATRIX, VECT
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
 
+	if (w.size() != f.size()) {
+			w.reinit(f.size(),true);
+	}
 
-cout << "Dimension" << systemMatrix.n() << " f.size " << f.size()<< " " << f.l2_norm() <<  endl;
+	if (v_j.size() != f.size()) {
+			v_j.reinit(f.size(),true);
+	}
 
-const int m = 5; // Factor of the arnoldi algorithm; sets the size of the orthonomal matrix V
+	if (v_i.size() != f.size()) {
+			v_i.reinit(f.size(),true);
+	}
+
+	if (firstColumn.size() != arnoldiSize) {
+			firstColumn.reinit(arnoldiSize,true);
+		}
+
+	if (m_f.size() != f.size()) {
+				m_f.reinit(f.size(),true);
+		}
+
+	w = f;
+	v_j = f;
+	v_i = f;
 
 
+numeric_matrix V(f.size(),arnoldiSize); // Orthonormal basis
 
-numeric_matrix m_Adt(systemMatrix.m(),systemMatrix.n());
-numeric_matrix V(f.size(),m); // Orthonormal basis
-numeric_matrix H(m+1,m); // Hessenberg matrix
-numeric_matrix H_m(m); // Hessenberg matrix (symmetric)
-numeric_vector v_j(f.size());
-
-m_Adt.copy_from(systemMatrix);
-m_Adt *= this->getTimeStepSize();
 
 double f_Norm = f.l2_norm();
 
 for (int i=0;i<f.size();i++) // Arnoldi algorithm (first step)
 
 {
-	V(i,0) = f(i) / f_Norm ;
+	V.set(i,0,f(i) / f_Norm );
 
 }
 
-for (int j=0;j<m;j++)  // Arnoldi algorithm (second step)
+for (int j=0;j<arnoldiSize;j++)  // Arnoldi algorithm (second step)
 	{
 
 
@@ -67,14 +79,11 @@ for (int j=0;j<m;j++)  // Arnoldi algorithm (second step)
 
 		}
 
-		numeric_vector w(f.size());
-		cout << "Test hier" << endl;
-		m_Adt.vmult(w,v_j);
-	//	w *=this->getTimeStepSize();
+		systemMatrix.vmult(w,v_j);
+		w *= this->getTimeStepSize();
 
 		for (int i=0;i<=j;i++)
 		{
-			numeric_vector v_i(f.size());
 				for (int k=0;k<f.size();k++)
 				{
 					v_i(k) = V(k,i);
@@ -87,7 +96,7 @@ for (int j=0;j<m;j++)  // Arnoldi algorithm (second step)
 		}
 
 		H(j+1,j) = w.l2_norm();
-		if(H(j+1,j)!=0 && j<m-1)
+		if(H(j+1,j)!=0 && j<arnoldiSize-1)
 		{
 			for (int k=0;k<f.size();k++)
 			{
@@ -97,8 +106,8 @@ for (int j=0;j<m;j++)  // Arnoldi algorithm (second step)
 		}
 	}
 
-for (int i=0;i<m;i++)
-		for(int j=0;j<m;j++)
+for (int i=0;i<arnoldiSize;i++) // Transform H to H_m (symmetric)
+		for(int j=0;j<arnoldiSize;j++)
 		{
 			{
 				H_m(i,j) = H(i,j);
@@ -106,53 +115,19 @@ for (int i=0;i<m;i++)
 		}
 
 
-numeric_matrix exponential(m);  // Builds the identity matrix
-	for (int i=0;i<m;i++)
-		for(int j=0;j<m;j++)
-		{
-			{
-				if(i==j)
-					exponential(i,j)=1;
-				else
-					exponential(i,j)=0;
-			}
-		}
+H_m=taylorSeries(H_m); // Matrix exponential of H_m
 
 
-
-	numeric_matrix factor(H_m.m(),H_m.n());
-
-	factor = H_m;
-	exponential.add(factor,1);
-
-	for(int j=2;j<29;j++) // Taylor series as matrix exponential
-	{
-
-		factor.mmult(factor,H_m);
-		factor /=j;
-		exponential.add (factor, 1);
-	}
-
-
-numeric_vector e(m);  // Vector e_1
-for(int i=0;i<m;i++)
+for(int i=0;i<arnoldiSize;i++)
 {
-	if(i==0)
-		e(i)=1;
-	else
-		e(i)=0;
+firstColumn(i)=H_m(i,0);
 }
 
 
-numeric_vector f_f(f.size());  // auxiliary vector (to be removed)
-numeric_vector aid(m);
-exponential.vmult(aid,e);
-//V.mmult(helpme,exponential);
-V.vmult(f_f,aid);
-f_f*=f_Norm;
-f = f_f;
+V.vmult(m_f,firstColumn);
+m_f*=f_Norm;
+f = m_f;
 
-// = f_Norm * V * exponential*e;
 
 
 	}
