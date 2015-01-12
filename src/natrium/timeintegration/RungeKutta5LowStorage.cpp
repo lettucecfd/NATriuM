@@ -16,6 +16,25 @@ namespace natrium {
  size_t problemSize): TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_a(makeA()), m_b(makeB()), m_c(makeC()), m_df(
  problemSize), m_Af(problemSize) {}*/
 
+#ifdef WITH_TRILINOS
+template<> RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector>::RungeKutta5LowStorage(
+		double timeStepSize, size_t problemSize) :
+		TimeIntegrator<distributed_sparse_matrix, distributed_vector>(
+				timeStepSize), m_a(makeA()), m_b(makeB()), m_c(makeC()), m_df(
+				problemSize), m_Af(problemSize) {
+}
+
+template<> RungeKutta5LowStorage<distributed_sparse_block_matrix,
+		distributed_block_vector>::RungeKutta5LowStorage(double timeStepSize,
+		size_t problemSize, size_t numberOfBlocks) :
+		TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>(
+				timeStepSize), m_a(makeA()), m_b(makeB()), m_c(makeC()), m_df(numberOfBlocks), m_Af(numberOfBlocks) {
+	for (size_t i = 0; i < m_Af.size(); i++){
+		m_Af.block(i).reinit(problemSize);
+		m_df.block(i).reinit(problemSize);
+	}
+}
+#else
 template<> RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector>::RungeKutta5LowStorage(
 		double timeStepSize, size_t problemSize) :
 		TimeIntegrator<distributed_sparse_matrix, distributed_vector>(
@@ -30,7 +49,7 @@ template<> RungeKutta5LowStorage<distributed_sparse_block_matrix,
 				timeStepSize), m_a(makeA()), m_b(makeB()), m_c(makeC()), m_df(numberOfBlocks,
 				problemSize), m_Af(numberOfBlocks, problemSize) {
 }
-
+#endif
 
 template<class MATRIX, class VECTOR> void RungeKutta5LowStorage<MATRIX, VECTOR>::step(
 		VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector) {

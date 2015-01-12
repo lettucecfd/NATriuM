@@ -53,8 +53,14 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 	m_q_index_to_facedof = map_q_index_to_facedofs();
 
 	// set size for the system vector
+#ifdef WITH_TRILINOS
+	m_systemVector.reinit(m_boltzmannModel->getQ() - 1);
+	for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++){
+		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
+	}
+#else
 	m_systemVector.reinit(m_boltzmannModel->getQ() - 1, m_doFHandler->n_dofs());
-
+#endif
 	// reassemble or read file
 	if (inputDirectory.empty()) {
 		reassemble();
@@ -159,8 +165,13 @@ void SEDGMinLee<dim>::reassemble() {
 			// avoid block() calls (expensive!)
 			distributed_sparse_matrix& block = m_systemMatrix.block(I, J);
 			// By using iterators instead of operator () this method became much more efficient
+#ifdef WITH_TRILINOS
+			distributed_sparse_matrix::iterator matrixIterator(&block,0,0);
+			distributed_sparse_matrix::iterator lastElement(&block,0,0);
+#else
 			distributed_sparse_matrix::iterator matrixIterator(&block);
 			distributed_sparse_matrix::iterator lastElement(&block);
+#endif
 			// iterate over rows (makes the whole procedure cheaper)
 			for (size_t block_row = 0; block_row < block.m(); block_row++) {
 				matrixIterator = block.begin(block_row);
@@ -652,7 +663,11 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 				filename << directory << "/checkpoint_system_matrix_" << i
 						<< "_" << j << ".dat";
 				std::ofstream file(filename.str().c_str());
+#ifndef WITH_TRILINOS
 				m_systemMatrix.block(i, j).block_write(file);
+#else
+				// TODO use trilinos functions for read and write. This here is really bad
+#endif
 			}
 		}
 
@@ -666,7 +681,11 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 		std::stringstream filename;
 		filename << directory << "/checkpoint_mass_matrix.dat";
 		std::ofstream file(filename.str().c_str());
+#ifndef WITH_TRILINOS
 		m_massMatrix.block_write(file);
+#else
+		// TODO use trilinos functions for read and write. This here is really bad
+#endif
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
 		throw AdvectionSolverException(
 				"An error occurred while writing the mass matrix to file: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
@@ -677,7 +696,14 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 		std::stringstream filename;
 		filename << directory << "/checkpoint_system_vector.dat";
 		std::ofstream file(filename.str().c_str());
+#ifdef WITH_TRILINOS
+		for (size_t i = 0; i < m_boltzmannModel->getQ() -1 ; i++){
+			numeric_vector tmp(m_systemVector.block(i));
+			tmp.block_write(file);
+		}
+#else
 		m_systemVector.block_write(file);
+#endif
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
 		throw AdvectionSolverException(
 				"An error occurred while writing the system vector to file: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
@@ -697,7 +723,11 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 				filename << directory << "/checkpoint_system_matrix_" << i
 						<< "_" << j << ".dat";
 				std::ifstream file(filename.str().c_str());
+#ifndef WITH_TRILINOS
 				m_systemMatrix.block(i, j).block_read(file);
+#else
+				// TODO use trilinos functions for read and write. This here is really bad
+#endif
 			}
 		}
 
@@ -711,7 +741,11 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 		std::stringstream filename;
 		filename << directory << "/checkpoint_mass_matrix.dat";
 		std::ifstream file(filename.str().c_str());
+#ifndef WITH_TRILINOS
 		m_massMatrix.block_read(file);
+#else
+		// TODO use trilinos functions for read and write. This here is really bad
+#endif
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
 		throw AdvectionSolverException(
 				"An error occurred while reading the mass matrix from file: Please switch off the restart option to start the simulation from the beginning.");
@@ -722,7 +756,16 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 		std::stringstream filename;
 		filename << directory << "/checkpoint_system_vector.dat";
 		std::ifstream file(filename.str().c_str());
+#ifdef WITH_TRILINOS
+		for (size_t i = 0; i < m_boltzmannModel->getQ() -1 ; i++){
+			numeric_vector tmp(m_systemVector.block(i));
+			tmp.block_read(file);
+			m_systemVector.block(i) = tmp;
+		}
+#else
+
 		m_systemVector.block_read(file);
+#endif
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
 		throw AdvectionSolverException(
 				"An error occurred while reading the systemVector from file: Please switch off the restart option to start the simulation from the beginning.");

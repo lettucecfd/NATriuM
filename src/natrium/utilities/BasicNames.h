@@ -29,7 +29,7 @@
 namespace natrium {
 
 /// The following names will be used throughout natrium
-/// by #includeing BasicNames.h they can are used by default
+/// by #including BasicNames.h they can are used by default
 using std::vector;
 using std::cout;
 using std::cerr;
@@ -51,14 +51,27 @@ typedef dealii::FullMatrix<double> numeric_matrix;
 typedef dealii::BlockSparseMatrix<double> sparse_block_matrix;
 typedef dealii::SparseMatrix<double> sparse_matrix;
 
+// Matrix and Vector classes
 #define WITH_TRILINOS
 #ifdef WITH_TRILINOS
-/// vectors and matrices which can be distributed over different cores
-typedef dealii::TrilinosWrappers::MPI::Vector distributed_vector;
-typedef dealii::TrilinosWrappers::MPI::BlockVector distributed_block_vector;
+typedef dealii::TrilinosWrappers::Vector distributed_vector;
+typedef dealii::TrilinosWrappers::BlockVector distributed_block_vector;
 
 typedef dealii::TrilinosWrappers::SparseMatrix distributed_sparse_matrix;
 typedef dealii::TrilinosWrappers::BlockSparseMatrix distributed_sparse_block_matrix;
+
+
+#if WITH_TRILINOS_MPI
+
+#ifndef WITH_TRILINOS
+#define WITH_TRILINOS
+#endif
+
+/// vectors which can be distributed over different cores
+typedef dealii::TrilinosWrappers::MPI::Vector distributed_vector;
+typedef dealii::TrilinosWrappers::MPI::BlockVector distributed_block_vector;
+
+#endif
 #else
 
 /// vector which can be distributed over different cores
@@ -68,7 +81,8 @@ typedef block_vector distributed_block_vector;
 /// matrix which can be distributed over different cores
 typedef sparse_matrix distributed_sparse_matrix;
 typedef sparse_block_matrix distributed_sparse_block_matrix;
-#endif /* WITH_PETSC */
+
+#endif
 
 } /* namespace natrium */
 

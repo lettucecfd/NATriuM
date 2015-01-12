@@ -319,9 +319,15 @@ public:
 		return m_sparsityPattern;
 	}
 
+#ifndef WITH_TRILINOS
+	/**
+	 * @short get sparsity pattern
+	 * @note not available for trilinos, as trilinos has an internal format for sparsity patterns (Epetra_CrsGraph)
+	 */
 	const dealii::SparsityPattern& getSparsityPattern(size_t i) const {
 		return m_systemMatrix.block(i,i).get_sparsity_pattern();
 	}
+#endif
 
 	const dealii::MappingQ1<dim>& getMapping() const {
 		return m_mapping;

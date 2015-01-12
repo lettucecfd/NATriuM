@@ -29,6 +29,17 @@ template ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector>:
 template ThetaMethod<distributed_sparse_matrix, distributed_vector>::ThetaMethod(
 		double timeStepSize, size_t problemSize, double theta);
 
+#ifdef WITH_TRILINOS
+template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector>::ThetaMethod(
+		double timeStepSize, size_t problemSize, size_t numberOfBlocks,
+		double theta) :
+		TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>(
+				timeStepSize), m_theta(theta), m_tmpSystemVector(numberOfBlocks) {
+	for (size_t i = 0; i < numberOfBlocks; i++){
+		m_tmpSystemVector.block(i).reinit(problemSize);
+	}
+}
+#else
 template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector>::ThetaMethod(
 		double timeStepSize, size_t problemSize, size_t numberOfBlocks,
 		double theta) :
@@ -36,6 +47,7 @@ template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector
 				timeStepSize), m_theta(theta), m_tmpSystemVector(numberOfBlocks,
 				problemSize) {
 }
+#endif
 
 template<class MATRIX, class VECTOR> void ThetaMethod<MATRIX, VECTOR>::step(
 		VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector) {
@@ -46,6 +58,11 @@ template<class MATRIX, class VECTOR> void ThetaMethod<MATRIX, VECTOR>::step(
 	if (m_tmpSystemVector.size() != f.size()) {
 		m_tmpSystemVector.reinit(f.size());
 	}
+#ifdef WITH_TRILINOS
+	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()){
+		m_tmpMatrix.reinit(systemMatrix);
+	}
+#else
 	if ((m_tmpMatrix.empty()) or
 	// the next check should give true if the sparsity patterns are equal
 	// and false, else. n_nonzero_elements returns the number of entries
@@ -54,7 +71,7 @@ template<class MATRIX, class VECTOR> void ThetaMethod<MATRIX, VECTOR>::step(
 					!= systemMatrix.n_nonzero_elements())) {
 		m_tmpMatrix.reinit(systemMatrix.get_sparsity_pattern());
 	}
-
+#endif
 	// dt*b
 	m_tmpSystemVector = systemVector;
 	m_tmpSystemVector *= this->getTimeStepSize();

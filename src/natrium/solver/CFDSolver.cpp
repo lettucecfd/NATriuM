@@ -448,7 +448,13 @@ void CFDSolver<dim>::saveDistributionFunctionsToFiles(const string& directory) {
 		std::stringstream filename;
 		filename << directory << "/checkpoint_f_" << i << ".dat";
 		std::ofstream file(filename.str().c_str());
+#ifndef WITH_TRILINOS
 		m_f.at(i).block_write(file);
+#else
+		// TODO Write and read functions for Trilinos vectors. This here is really bad.
+		numeric_vector tmp(m_f.at(i));
+		tmp.block_write(file);
+#endif
 	}
 }
 template void CFDSolver<2>::saveDistributionFunctionsToFiles(
@@ -469,7 +475,15 @@ void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 			std::stringstream filename;
 			filename << directory << "/checkpoint_f_" << i << ".dat";
 			std::ifstream file(filename.str().c_str());
+#ifndef WITH_TRILINOS
 			m_f.at(i).block_read(file);
+#else
+			// TODO Write and read functions for Trilinos vectors. This here is really bad.
+			numeric_vector tmp(m_f.at(i));
+			tmp.block_read(file);
+			m_f.at(i) = tmp;
+
+#endif
 		}
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
 		throw CFDSolverException(

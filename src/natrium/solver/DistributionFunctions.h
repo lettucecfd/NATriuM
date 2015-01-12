@@ -53,7 +53,11 @@ public:
 	 */
 	DistributionFunctions(const vector<distributed_vector>& f) :
 			m_Q(f.size()), m_f0(f.at(0)) {
+#ifdef WITH_TRILINOS
+		m_fStream.reinit(m_Q);
+#else
 		m_fStream.reinit(m_Q, m_f0.size());
+#endif
 		for (size_t i = 1; i < m_Q; i++) {
 			m_fStream.block(i - 1).reinit(f.at(i));
 			// reinit does only change the size but not the content
@@ -149,8 +153,15 @@ public:
 	 */
 	void reinit(size_t Q, size_t size) {
 		m_Q = Q;
-		m_fStream.reinit(Q - 1, size);
 		m_f0.reinit(size);
+#ifdef WITH_TRILINOS
+		m_fStream.reinit(Q-1);
+		for (size_t i = 0; i < Q - 1; i++){
+			m_fStream.block(i).reinit(m_f0);
+		}
+#else
+		m_fStream.reinit(Q - 1, size);
+#endif
 	}
 
 	/**
