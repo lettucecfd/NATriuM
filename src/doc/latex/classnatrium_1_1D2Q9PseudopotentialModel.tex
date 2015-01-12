@@ -1,0 +1,71 @@
+\hypertarget{classnatrium_1_1D2Q9PseudopotentialModel}{\section{natrium\-:\-:D2\-Q9\-Pseudopotential\-Model Class Reference}
+\label{classnatrium_1_1D2Q9PseudopotentialModel}\index{natrium\-::\-D2\-Q9\-Pseudopotential\-Model@{natrium\-::\-D2\-Q9\-Pseudopotential\-Model}}
+}
+Inheritance diagram for natrium\-:\-:D2\-Q9\-Pseudopotential\-Model\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classnatrium_1_1D2Q9PseudopotentialModel}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1D2Q9PseudopotentialModel_af533d01219626d11d9f2cf296aa7cc63}{\hyperlink{classnatrium_1_1D2Q9PseudopotentialModel_af533d01219626d11d9f2cf296aa7cc63}{D2\-Q9\-Pseudopotential\-Model} (double scaling, const double dt)}\label{classnatrium_1_1D2Q9PseudopotentialModel_af533d01219626d11d9f2cf296aa7cc63}
+
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1D2Q9PseudopotentialModel_ac8cdc8eb6e099490819423455325ecbb}{virtual \hyperlink{classnatrium_1_1D2Q9PseudopotentialModel_ac8cdc8eb6e099490819423455325ecbb}{$\sim$\-D2\-Q9\-Pseudopotential\-Model} ()}\label{classnatrium_1_1D2Q9PseudopotentialModel_ac8cdc8eb6e099490819423455325ecbb}
+
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+virtual double \hyperlink{classnatrium_1_1D2Q9PseudopotentialModel_a54a15a3c9590e7c40b4b3052fcb7319e}{get\-Equilibrium\-Distribution} (size\-\_\-t i, const numeric\-\_\-vector \&u, const double rho=1) const 
+\begin{DoxyCompactList}\small\item\em virtual function for the calculation of the equilibrium distribution \end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1D2Q9PseudopotentialModel_aa74c0b3299f15d9830cf427b4d61bd68}{void {\bfseries get\-Interaction\-Force} (const vector$<$ double $>$ \&distributions, numeric\-\_\-vector \&interaction\-Force, const double rho=1)}\label{classnatrium_1_1D2Q9PseudopotentialModel_aa74c0b3299f15d9830cf427b4d61bd68}
+
+\item 
+\hypertarget{classnatrium_1_1D2Q9PseudopotentialModel_ae8ac734b4cfb98151ed7daa8a9af3af2}{const shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1SEDGMinLee}{S\-E\-D\-G\-Min\-Lee}$<$ 2 $>$ $>$ {\bfseries get\-Advection\-Operator} () const }\label{classnatrium_1_1D2Q9PseudopotentialModel_ae8ac734b4cfb98151ed7daa8a9af3af2}
+
+\item 
+\hypertarget{classnatrium_1_1D2Q9PseudopotentialModel_a192ab3089f17ae9cb95557e03a6a5eaf}{void {\bfseries set\-Advection\-Operator} (const shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1SEDGMinLee}{S\-E\-D\-G\-Min\-Lee}$<$ 2 $>$ $>$ \&advection\-Operator)}\label{classnatrium_1_1D2Q9PseudopotentialModel_a192ab3089f17ae9cb95557e03a6a5eaf}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1D2Q9PseudopotentialModel_a54a15a3c9590e7c40b4b3052fcb7319e}{\index{natrium\-::\-D2\-Q9\-Pseudopotential\-Model@{natrium\-::\-D2\-Q9\-Pseudopotential\-Model}!get\-Equilibrium\-Distribution@{get\-Equilibrium\-Distribution}}
+\index{get\-Equilibrium\-Distribution@{get\-Equilibrium\-Distribution}!natrium::D2Q9PseudopotentialModel@{natrium\-::\-D2\-Q9\-Pseudopotential\-Model}}
+\subsubsection[{get\-Equilibrium\-Distribution}]{\setlength{\rightskip}{0pt plus 5cm}double natrium\-::\-D2\-Q9\-Pseudopotential\-Model\-::get\-Equilibrium\-Distribution (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{i, }
+\item[{const numeric\-\_\-vector \&}]{u, }
+\item[{const double}]{rho = {\ttfamily 1}}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classnatrium_1_1D2Q9PseudopotentialModel_a54a15a3c9590e7c40b4b3052fcb7319e}
+
+
+virtual function for the calculation of the equilibrium distribution 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & index of the direction \\
+\hline
+{\em u} & macroscopic velocity \\
+\hline
+{\em rho} & macroscopic density \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value of the equilibrium distribution 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+The calculation can surely be done more efficiently by passing different arguments, e.\-g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classnatrium_1_1BoltzmannModel_ad482e26c4df3014e4b1447ee6cbb44ff}{natrium\-::\-Boltzmann\-Model}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/boltzmannmodels/D2\-Q9\-Pseudopotential\-Model.\-h\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/boltzmannmodels/D2\-Q9\-Pseudopotential\-Model.\-cpp\end{DoxyCompactItemize}
