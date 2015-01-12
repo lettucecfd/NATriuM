@@ -1,0 +1,47 @@
+# format1
+
+#################################################
+# Gnuplot script file for plotting data in files#
+#################################################
+#    1     2     3       4           5                 6
+#| level | p  | dx    | dt     | error (2-norm)  | error (sup-norm) | 
+
+
+reset
+set term postscript eps color enhanced "Helvetica" 28
+set size 1.0, 0.8
+set rmargin at screen 0.7
+set key right outside
+
+# LINESTYLE DEFINITIONS
+set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 7 pointtype 4 pointsize 2# pointinterval 10
+set style line 2  linetype 1 linecolor rgb "dark-orange"  linewidth 7 pointtype 6 pointsize 2#pointinterval 10
+set style line 3  linetype 1 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 8 pointsize 2# pointinterval 10
+set style line 4  linetype 2 linecolor rgb "dark-green"  linewidth 7.000 pointtype 12 pointsize 2# pointinterval 10
+set style line 5  linetype 1 linecolor rgb "violet"  linewidth 7.000 pointtype 3 pointsize 2# pointinterval 10
+set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 7 pointsize 2# pointinterval 10
+set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
+
+set logscale y
+set xlabel 'p'
+set ylabel '||(u-u_{ref})||_{/Symbol \245}  ' offset 2.0, 0
+
+factor = 0.3
+factor2 = 100.0
+set output 'errors.eps'
+data_file = 'results.txt'
+
+plot data_file using ($2):($6) every :::0::0 title 'N = 1' with linespoints ls 2,\
+data_file using ($2):($6) every :::1::1 title 'N = 2' with linespoints ls 3,\
+data_file using ($2):($6) every :::2::2 title 'N = 3' with linespoints ls 4,\
+data_file using ($2):($6) every :::3::3 title 'N = 4' with linespoints ls 5,\
+data_file using ($2):($6) every :::4::4 title 'N = 5' with linespoints ls 6,\
+data_file using ($2):($6) every :::5::5 title 'N = 6' with linespoints ls 7,\
+data_file using ($2):(factor2*(factor*$3)**($2+1)) every :::0::0 title '' w l linecolor rgb "dark-orange",\
+data_file using ($2):(factor2*(factor*$3)**($2+1)) every :::1::1 title '' w l linecolor rgb "dark-goldenrod",\
+data_file using ($2):(factor2*(factor*$3)**($2+1)) every :::2::2 title '' w l linecolor rgb "dark-green",\
+data_file using ($2):(factor2*(factor*$3)**($2+1)) every :::3::3 title '' w l linecolor rgb "violet",\
+data_file using ($2):(factor2*(factor*$3)**($2+1)) every :::4::4 title '' w l linecolor rgb "dark-blue",\
+data_file using ($2):(factor2*(factor*$3)**($2+1)) every :::5::5 title '' w l linecolor rgb "cyan"
+
+
