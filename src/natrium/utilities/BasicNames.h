@@ -21,8 +21,10 @@
 #include "deal.II/numerics/vector_tools.h"
 
 #include "deal.II/lac/block_sparse_matrix.h"
-#include "deal.II/lac/petsc_vector.h"
-#include "deal.II/lac/petsc_parallel_vector.h"
+#include "deal.II/lac/trilinos_vector.h"
+#include "deal.II/lac/trilinos_block_vector.h"
+#include "deal.II/lac/trilinos_sparse_matrix.h"
+#include "deal.II/lac/trilinos_block_sparse_matrix.h"
 
 namespace natrium {
 
@@ -49,11 +51,14 @@ typedef dealii::FullMatrix<double> numeric_matrix;
 typedef dealii::BlockSparseMatrix<double> sparse_block_matrix;
 typedef dealii::SparseMatrix<double> sparse_matrix;
 
-#undef WITH_PETSC
-#ifdef WITH_PETSC
-/// vector which can be distributed over different cores
-typedef dealii::PETScWrappers::MPI::Vector distributed_vector;
-typedef dealii::PETScWrappers::MPI::SparseMatrix distributed_sparse_matrix;
+#define WITH_TRILINOS
+#ifdef WITH_TRILINOS
+/// vectors and matrices which can be distributed over different cores
+typedef dealii::TrilinosWrappers::MPI::Vector distributed_vector;
+typedef dealii::TrilinosWrappers::MPI::BlockVector distributed_block_vector;
+
+typedef dealii::TrilinosWrappers::SparseMatrix distributed_sparse_matrix;
+typedef dealii::TrilinosWrappers::BlockSparseMatrix distributed_sparse_block_matrix;
 #else
 
 /// vector which can be distributed over different cores
