@@ -120,6 +120,10 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 distributed_vector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">at</a> (size_t i)</td></tr>
 <tr class="memdesc:a34f0147178c17597eaf24befdcced975"><td class="mdescLeft">&#160;</td><td class="mdescRight">mimes std::vector.at(i) <br/></td></tr>
 <tr class="separator:a34f0147178c17597eaf24befdcced975"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a750d7de21f207ac694c72b215ba7b6de"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a750d7de21f207ac694c72b215ba7b6de"></a>
+const distributed_vector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a750d7de21f207ac694c72b215ba7b6de">at</a> (size_t i) const </td></tr>
+<tr class="memdesc:a750d7de21f207ac694c72b215ba7b6de"><td class="mdescLeft">&#160;</td><td class="mdescRight">mimes std::vector.at(i) <br/></td></tr>
+<tr class="separator:a750d7de21f207ac694c72b215ba7b6de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d76ae4f928f324ec82099dbdce678d7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d76ae4f928f324ec82099dbdce678d7"></a>
 const distributed_vector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">getF0</a> () const </td></tr>
 <tr class="memdesc:a3d76ae4f928f324ec82099dbdce678d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">F0 denotes the vector <img class="formulaInl" alt="$ f_0 $" src="form_18.png"/> (zero-velocity particles) <br/></td></tr>
@@ -149,13 +153,13 @@ const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memdesc:ae0fd8e8234c7d5abec8522767d2a95e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of discrete velocities <br/></td></tr>
 <tr class="separator:ae0fd8e8234c7d5abec8522767d2a95e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acaca68f7cbb9322d354ad6dca68b2cb2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acaca68f7cbb9322d354ad6dca68b2cb2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">reinit</a> (size_t Q, size_t <a class="el" href="classnatrium_1_1DistributionFunctions.html#a20accab9335de906696ad792164728ed">size</a>)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">reinit</a> (size_t Q, size_t <a class="el" href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">size</a>)</td></tr>
 <tr class="memdesc:acaca68f7cbb9322d354ad6dca68b2cb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">reinitialize the sizes of the distribution functions <br/></td></tr>
 <tr class="separator:acaca68f7cbb9322d354ad6dca68b2cb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20accab9335de906696ad792164728ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a20accab9335de906696ad792164728ed"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a20accab9335de906696ad792164728ed">size</a> ()</td></tr>
-<tr class="memdesc:a20accab9335de906696ad792164728ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of discrete velocities, including zero <br/></td></tr>
-<tr class="separator:a20accab9335de906696ad792164728ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a636814c639143c76989b09b2a92b6757"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a636814c639143c76989b09b2a92b6757"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">size</a> () const </td></tr>
+<tr class="memdesc:a636814c639143c76989b09b2a92b6757"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of discrete velocities, including zero <br/></td></tr>
+<tr class="separator:a636814c639143c76989b09b2a92b6757"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class contains the distribution functions. As the zero-velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (fStream) in the implementation. fStream is a block vector, which has the advantage that it can be multiplied with the SystemMatrix. The <a class="el" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0) can be ignored fo...">DistributionFunctions</a> class is designed to mime the behaviour of a vector&lt;distributed_vector&gt; . </p>
@@ -165,7 +169,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:58:01 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jan 12 2015 13:28:49 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

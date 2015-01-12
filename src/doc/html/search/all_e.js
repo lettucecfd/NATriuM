@@ -15,7 +15,7 @@ var searchData=
   ['setfilelevel',['setFileLevel',['../classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5',1,'natrium::Logging']]],
   ['setfstream',['setFStream',['../classnatrium_1_1DistributionFunctions.html#ad0ada0c54968a61f78eb1b82eb6c5a68',1,'natrium::DistributionFunctions']]],
   ['setlogfile',['setLogFile',['../classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403',1,'natrium::Logging']]],
-  ['size',['size',['../classnatrium_1_1DistributionFunctions.html#a20accab9335de906696ad792164728ed',1,'natrium::DistributionFunctions']]],
+  ['size',['size',['../classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757',1,'natrium::DistributionFunctions']]],
   ['solverconfiguration',['SolverConfiguration',['../classnatrium_1_1SolverConfiguration.html',1,'natrium']]],
   ['solverconfiguration',['SolverConfiguration',['../classnatrium_1_1SolverConfiguration.html#a9aa7109e2eac9b8a7b424a35509ccdb0',1,'natrium::SolverConfiguration::SolverConfiguration()'],['../classnatrium_1_1SolverConfiguration.html#a062fa86eca607f830540ef4f2c06f0b3',1,'natrium::SolverConfiguration::SolverConfiguration(const std::string &amp;XMLfilename)']]],
   ['solverconfiguration_2ecpp',['SolverConfiguration.cpp',['../SolverConfiguration_8cpp.html',1,'']]],

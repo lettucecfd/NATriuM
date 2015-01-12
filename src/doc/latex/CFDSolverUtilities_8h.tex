@@ -7,15 +7,24 @@ General utility functions for the C\-F\-D solver.
 
 
 {\ttfamily \#include \char`\"{}deal.\-I\-I/grid/tria.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/grid/grid\-\_\-tools.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}deal.\-I\-I/base/quadrature\-\_\-lib.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../boltzmannmodels/\-Boltzmann\-Model.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}../utilities/\-Basic\-Names.\-h\char`\"{}}\\*
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 \hypertarget{namespacenatrium_1_1CFDSolverUtilities_a48b631fb44a1a7f9da997746cb302798}{{\footnotesize template$<$size\-\_\-t dim$>$ }\\double {\bfseries natrium\-::\-C\-F\-D\-Solver\-Utilities\-::get\-Minimum\-Do\-F\-Distance\-G\-L\-L} (const dealii\-::\-Triangulation$<$ dim $>$ \&tria, const size\-\_\-t order\-Of\-Finite\-Element)}\label{namespacenatrium_1_1CFDSolverUtilities_a48b631fb44a1a7f9da997746cb302798}
 
-\end{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a2a8bf03864f7f97ffbb350db1ba6f903}{{\footnotesize template$<$size\-\_\-t dim$>$ }\\double {\bfseries natrium\-::\-C\-F\-D\-Solver\-Utilities\-::get\-Minimum\-Vertex\-Distance} (const dealii\-::\-Triangulation$<$ dim $>$ \&tria)}\label{namespacenatrium_1_1CFDSolverUtilities_a2a8bf03864f7f97ffbb350db1ba6f903}
+
+\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a0b55ad9be8fbf2304bd3a3953ae2921a}{{\footnotesize template$<$size\-\_\-t dim$>$ }\\double {\bfseries natrium\-::\-C\-F\-D\-Solver\-Utilities\-::calculate\-Timestep} (const dealii\-::\-Triangulation$<$ dim $>$ \&tria, const size\-\_\-t order\-Of\-Finite\-Element, const Boltzmann\-Model \&boltzmann\-Model, double c\-F\-L=0.\-4)}\label{namespacenatrium_1_1CFDSolverUtilities_a0b55ad9be8fbf2304bd3a3953ae2921a}
+
+\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a5f5e899a1a8bd6bad9a38025e4baa6a5}{{\footnotesize template$<$int dim$>$ }\\void {\bfseries natrium\-::\-C\-F\-D\-Solver\-Utilities\-::mesh\-\_\-info} (const dealii\-::\-Triangulation$<$ dim $>$ \&tria, const std\-::string \&filename)}\label{namespacenatrium_1_1CFDSolverUtilities_a5f5e899a1a8bd6bad9a38025e4baa6a5}
+
+\begin{DoxyCompactList}\small\item\em stolen from Deal.\-I\-I's step 49 tutorial \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

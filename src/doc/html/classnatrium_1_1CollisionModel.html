@@ -87,289 +87,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classnatrium_1_1CollisionModel-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">natrium::CollisionModel Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Abstract class for the description of collision schemes.  
+<p>Abstract collision model. Required to have a common parent of all template specializations of <a class="el" href="classnatrium_1_1Collision.html" title="Abstract class for the description of collision schemes. ">Collision</a>.  
  <a href="classnatrium_1_1CollisionModel.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="CollisionModel_8h_source.html">CollisionModel.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="Collision_8h_source.html">Collision.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for natrium::CollisionModel:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classnatrium_1_1CollisionModel.png" usemap="#natrium::CollisionModel_map" alt=""/>
   <map id="natrium::CollisionModel_map" name="natrium::CollisionModel_map">
-<area href="classnatrium_1_1BGKTransformed.html" title="Description of the BGK model for the transformed particle distributions, as described in Global data ..." alt="natrium::BGKTransformed" shape="rect" coords="0,56,155,80"/>
+<area href="classnatrium_1_1Collision.html" title="Abstract class for the description of collision schemes. " alt="natrium::Collision&lt; BoltzmannType, CollisionType &gt;" shape="rect" coords="0,56,301,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5afab5d75747f5239172a6d8a89affbe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a5afab5d75747f5239172a6d8a89affbe">CollisionModel</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt; boltzmannModel)</td></tr>
-<tr class="memdesc:a5afab5d75747f5239172a6d8a89affbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a5afab5d75747f5239172a6d8a89affbe">More...</a><br/></td></tr>
-<tr class="separator:a5afab5d75747f5239172a6d8a89affbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b1fb83814227db3b99d4d68a6657d52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2b1fb83814227db3b99d4d68a6657d52"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a2b1fb83814227db3b99d4d68a6657d52">~CollisionModel</a> ()</td></tr>
-<tr class="memdesc:a2b1fb83814227db3b99d4d68a6657d52"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr class="separator:a2b1fb83814227db3b99d4d68a6657d52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acde767e924eb2124ab3eb725543111e8"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#acde767e924eb2124ab3eb725543111e8">collideSinglePoint</a> (vector&lt; double &gt; &amp;distributions) const =0</td></tr>
-<tr class="memdesc:acde767e924eb2124ab3eb725543111e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">virtual function for collision  <a href="#acde767e924eb2124ab3eb725543111e8">More...</a><br/></td></tr>
-<tr class="separator:acde767e924eb2124ab3eb725543111e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe4f58658074680b679db7b7fddd6113"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#abe4f58658074680b679db7b7fddd6113">collideSingleDoF</a> (size_t doF, const vector&lt; double &gt; &amp;feq, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f) const =0</td></tr>
-<tr class="memdesc:abe4f58658074680b679db7b7fddd6113"><td class="mdescLeft">&#160;</td><td class="mdescRight">virtual function for collision  <a href="#abe4f58658074680b679db7b7fddd6113">More...</a><br/></td></tr>
-<tr class="separator:abe4f58658074680b679db7b7fddd6113"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13be8de5560d98335e4710051d9aab62"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a13be8de5560d98335e4710051d9aab62">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const vector&lt; bool &gt; &amp;isBoundary, bool inInitializationProcedure=false) const </td></tr>
-<tr class="memdesc:a13be8de5560d98335e4710051d9aab62"><td class="mdescLeft">&#160;</td><td class="mdescRight">function for collision  <a href="#a13be8de5560d98335e4710051d9aab62">More...</a><br/></td></tr>
-<tr class="separator:a13be8de5560d98335e4710051d9aab62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01fae50f538a52a86214db46c1dcaeaa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a01fae50f538a52a86214db46c1dcaeaa">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const </td></tr>
-<tr class="memdesc:a01fae50f538a52a86214db46c1dcaeaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">function for collision  <a href="#a01fae50f538a52a86214db46c1dcaeaa">More...</a><br/></td></tr>
-<tr class="separator:a01fae50f538a52a86214db46c1dcaeaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a62aa0017c633a5716b1a6b31ec31aa52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a62aa0017c633a5716b1a6b31ec31aa52"></a>
-static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a62aa0017c633a5716b1a6b31ec31aa52">calculateRelaxationParameter</a> (double viscosity, double timeStepSize, const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt; boltzmannModel)</td></tr>
-<tr class="memdesc:a62aa0017c633a5716b1a6b31ec31aa52"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate relaxation parameter <br/></td></tr>
-<tr class="separator:a62aa0017c633a5716b1a6b31ec31aa52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb8f6d14ca6994afd4c720e42f778df5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb8f6d14ca6994afd4c720e42f778df5"></a>
-static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#abb8f6d14ca6994afd4c720e42f778df5">calculateOptimalTimeStep</a> (double dx, const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt; boltzmannModel)</td></tr>
-<tr class="memdesc:abb8f6d14ca6994afd4c720e42f778df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate the time step, so that the Courant number is 1 for the diagonal directions <br/></td></tr>
-<tr class="separator:abb8f6d14ca6994afd4c720e42f778df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a0c77cb3544948bb6d289ea8d47076012"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c77cb3544948bb6d289ea8d47076012"></a>
-const boost::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a0c77cb3544948bb6d289ea8d47076012">m_boltzmannModel</a></td></tr>
-<tr class="memdesc:a0c77cb3544948bb6d289ea8d47076012"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boltzmann model (e.g. D2Q9Incompressible) <br/></td></tr>
-<tr class="separator:a0c77cb3544948bb6d289ea8d47076012"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6dcd37d98c4a462286f41240a918b59"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad6dcd37d98c4a462286f41240a918b59"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#ad6dcd37d98c4a462286f41240a918b59">m_d</a></td></tr>
-<tr class="memdesc:ad6dcd37d98c4a462286f41240a918b59"><td class="mdescLeft">&#160;</td><td class="mdescRight">D (dimension) <br/></td></tr>
-<tr class="separator:ad6dcd37d98c4a462286f41240a918b59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77470299003744c7c68e3e87383c40d2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77470299003744c7c68e3e87383c40d2"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a77470299003744c7c68e3e87383c40d2">m_q</a></td></tr>
-<tr class="memdesc:a77470299003744c7c68e3e87383c40d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Q (number of directions) <br/></td></tr>
-<tr class="separator:a77470299003744c7c68e3e87383c40d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97aeb4fa9513c45785fe9153ef062062"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97aeb4fa9513c45785fe9153ef062062"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>collideAll</b> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const vector&lt; bool &gt; &amp;isBoundary, bool inInitializationProcedure=false) const =0</td></tr>
+<tr class="separator:a97aeb4fa9513c45785fe9153ef062062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7443a320a4badab46185915b78d002f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7443a320a4badab46185915b78d002f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>collideAll</b> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const =0</td></tr>
+<tr class="separator:ac7443a320a4badab46185915b78d002f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Abstract class for the description of collision schemes. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a5afab5d75747f5239172a6d8a89affbe"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">natrium::CollisionModel::CollisionModel </td>
-          <td>(</td>
-          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &gt;&#160;</td>
-          <td class="paramname"><em>boltzmannModel</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>constructor </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">viscosity</td><td>the kinematic viscosity </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">timeStepSize</td><td>the size of the time step </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">boltzmannModel</td><td>the discrete velocity stencil </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a13be8de5560d98335e4710051d9aab62"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void natrium::CollisionModel::collideAll </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>f</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">distributed_vector &amp;&#160;</td>
-          <td class="paramname"><em>densities</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">vector&lt; distributed_vector &gt; &amp;&#160;</td>
-          <td class="paramname"><em>velocities</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const vector&lt; bool &gt; &amp;&#160;</td>
-          <td class="paramname"><em>isBoundary</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>inInitializationProcedure</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>function for collision </p>
-<p>f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ] inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false </p>
-
-</div>
-</div>
-<a class="anchor" id="a01fae50f538a52a86214db46c1dcaeaa"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void natrium::CollisionModel::collideAll </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>f</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">distributed_vector &amp;&#160;</td>
-          <td class="paramname"><em>densities</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">vector&lt; distributed_vector &gt; &amp;&#160;</td>
-          <td class="paramname"><em>velocities</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>inInitializationProcedure</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>function for collision </p>
-<p>f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ] inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false </p>
-
-</div>
-</div>
-<a class="anchor" id="abe4f58658074680b679db7b7fddd6113"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void natrium::CollisionModel::collideSingleDoF </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>doF</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>feq</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>f</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>virtual function for collision </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">doF</td><td>the doF index for which collision is done </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">feq</td><td>the vector of local equilibrium distributions </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>the vector of global distribution functions </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implemented in <a class="el" href="classnatrium_1_1BGKTransformed.html#a6bb41acd37234d2f92a9d868ff2486e1">natrium::BGKTransformed</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="acde767e924eb2124ab3eb725543111e8"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void natrium::CollisionModel::collideSinglePoint </td>
-          <td>(</td>
-          <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>distributions</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>virtual function for collision </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in/out]</td><td>distributions the particle distribution functions </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implemented in <a class="el" href="classnatrium_1_1BGKTransformed.html#a2e40159e5f5204431b1acb84b15910c0">natrium::BGKTransformed</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/collisionmodels/<a class="el" href="CollisionModel_8h_source.html">CollisionModel.h</a></li>
-<li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/collisionmodels/<a class="el" href="CollisionModel_8cpp.html">CollisionModel.cpp</a></li>
+<div class="textblock"><p>Abstract collision model. Required to have a common parent of all template specializations of <a class="el" href="classnatrium_1_1Collision.html" title="Abstract class for the description of collision schemes. ">Collision</a>. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
+<li>/home/kraemer/eclipse_workspace/NATriuM/src/natrium/collision/<a class="el" href="Collision_8h_source.html">Collision.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:57:59 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jan 12 2015 13:28:45 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

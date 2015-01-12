@@ -164,9 +164,10 @@ const dealii::SparsityPattern &amp;&#160;</td><td class="memItemRight" valign="b
 <tr class="memitem:a7d093da19c6796a3021f5d3f4beab542"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d093da19c6796a3021f5d3f4beab542"></a>
 const dealii::MappingQ1&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getMapping</b> () const </td></tr>
 <tr class="separator:a7d093da19c6796a3021f5d3f4beab542"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8947d4078fadf1f71fcd7304210fa75c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8947d4078fadf1f71fcd7304210fa75c"></a>
-const std::map&lt; size_t, size_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getCelldofToQIndex</b> () const </td></tr>
-<tr class="separator:a8947d4078fadf1f71fcd7304210fa75c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec38323cbd34487a73b4f62f0a310ceb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec38323cbd34487a73b4f62f0a310ceb"></a>
+virtual const std::map&lt; size_t, <br class="typebreak"/>
+size_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getCelldofToQIndex</b> () const </td></tr>
+<tr class="separator:aec38323cbd34487a73b4f62f0a310ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b7d94c90ccfa5e341d854059d883f57"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b7d94c90ccfa5e341d854059d883f57"></a>
 const vector&lt; std::map&lt; size_t, <br class="typebreak"/>
 size_t &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getFacedofToQIndex</b> () const </td></tr>
@@ -175,15 +176,18 @@ size_t &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>get
 const shared_ptr<br class="typebreak"/>
 &lt; dealii::QGaussLobatto&lt; dim-1 &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getFaceQuadrature</b> () const </td></tr>
 <tr class="separator:a653928dc9f0dd3715389b28196cab7bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb3df3ea790cb6a4d58dd9bed2e1ce1c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb3df3ea790cb6a4d58dd9bed2e1ce1c"></a>
-const shared_ptr<br class="typebreak"/>
+<tr class="memitem:a7fd488e872e5cf9870be39f07a2dcd74"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7fd488e872e5cf9870be39f07a2dcd74"></a>
+virtual const shared_ptr<br class="typebreak"/>
 &lt; dealii::FE_DGQArbitraryNodes<br class="typebreak"/>
 &lt; dim &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getFe</b> () const </td></tr>
-<tr class="separator:adb3df3ea790cb6a4d58dd9bed2e1ce1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3ca0f23194a27d69d82d0f3ba89e345"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3ca0f23194a27d69d82d0f3ba89e345"></a>
-const shared_ptr<br class="typebreak"/>
+<tr class="separator:a7fd488e872e5cf9870be39f07a2dcd74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5dac839ef4963af315dba5f201bd763c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5dac839ef4963af315dba5f201bd763c"></a>
+virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumberOfDoFsPerCell</b> () const </td></tr>
+<tr class="separator:a5dac839ef4963af315dba5f201bd763c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4db0d2b4c857962d5425f755be3daf13"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4db0d2b4c857962d5425f755be3daf13"></a>
+virtual const shared_ptr<br class="typebreak"/>
 &lt; dealii::QGaussLobatto&lt; dim &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getQuadrature</b> () const </td></tr>
-<tr class="separator:ad3ca0f23194a27d69d82d0f3ba89e345"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a4db0d2b4c857962d5425f755be3daf13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a745a65de3ee72a250c0706e6c7fcc361"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a745a65de3ee72a250c0706e6c7fcc361"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getOrderOfFiniteElement</b> () const </td></tr>
 <tr class="separator:a745a65de3ee72a250c0706e6c7fcc361"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -376,7 +380,7 @@ template&lt;size_t dim&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:57:58 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jan 12 2015 13:28:43 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
