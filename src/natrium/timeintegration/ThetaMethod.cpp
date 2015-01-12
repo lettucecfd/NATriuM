@@ -59,8 +59,9 @@ template<class MATRIX, class VECTOR> void ThetaMethod<MATRIX, VECTOR>::step(
 		m_tmpSystemVector.reinit(f.size());
 	}
 #ifdef WITH_TRILINOS
+	// check equality of sparsity patterns
 	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()){
-		m_tmpMatrix.reinit(systemMatrix);
+		m_tmpMatrix = systemMatrix;
 	}
 #else
 	if ((m_tmpMatrix.empty()) or

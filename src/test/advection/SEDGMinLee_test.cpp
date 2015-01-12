@@ -59,6 +59,8 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
 	cout << "done." << endl;
 } /* SEDGMinLee_Construction_test */
 
+#ifndef WITH_TRILINOS
+
 BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 	cout << "SEDGMinLee_systemMatrix_test..." << endl;
 
@@ -105,8 +107,10 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 						periodic.getBoundaries(), fe_order,
 						make_shared<D2Q9IncompressibleModel>(), "",
 						!useLaxFlux);
-				const distributed_sparse_block_matrix& matrices =
+
+				distributed_sparse_block_matrix& matrices =
 						streaming.getSystemMatrix();
+
 				BOOST_CHECK(matrices.n_block_cols() == D2Q9IncompressibleModel::Q-1);
 				BOOST_CHECK(matrices.n_block_rows() == D2Q9IncompressibleModel::Q-1);
 #ifdef PRINT_SYSTEM_MATRIX
@@ -554,6 +558,9 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 
 	cout << "done" << endl;
 } /*SEDGMinLee_SaveAndLoadCheckpoints_test*/
+
+//TODO Make tests available for Trilinos
+#endif
 
 BOOST_AUTO_TEST_SUITE_END()
 

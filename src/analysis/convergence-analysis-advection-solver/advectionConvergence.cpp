@@ -91,9 +91,13 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	assert(g.all_zero());
 
 	// RK5 for streaming in direction (1,0)
+#ifdef WITH_TRILINOS
+	distributed_sparse_matrix advectionMatrix = streaming.getSystemMatrix().block(0,0);
+#else
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(streaming.getSparsityPattern(0));
 	advectionMatrix.copy_from(matrices.block(0, 0));
+#endif
 	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(
 			deltaT, f.size());
 
@@ -160,10 +164,16 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	norm2 = sqrt(norm2);
 
 	std::stringstream result;
+#ifdef WITH_TRILINOS
+	result << "      " << refinementLevel << "      " << fe_order << "     "
+			<< deltaX << "     " << deltaT << "      " << norm2 << "       "
+			<< normSup << "    " << timesec ;
+#else
 	result << "      " << refinementLevel << "      " << fe_order << "     "
 			<< deltaX << "     " << deltaT << "      " << norm2 << "       "
 			<< normSup << "    " << timesec << "    "
 			<< advectionMatrix.get_sparsity_pattern().n_nonzero_elements();
+#endif
 
 	std::stringstream fileName;
 	fileName << getenv("NATRIUM_HOME") << "/convergence-advection-solver/Level_"
