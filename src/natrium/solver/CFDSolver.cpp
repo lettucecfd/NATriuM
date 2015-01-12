@@ -177,7 +177,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< configuration->getTimeStepSize() << " s" << endl;
 	LOG(WELCOME) << "CFL number:               "
 			<< configuration->getTimeStepSize() / dx
-					* m_boltzmannModel->getMaxParticleVelocityMagnitude() << endl;
+					* m_boltzmannModel->getMaxParticleVelocityMagnitude()
+			<< endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
 	LOG(WELCOME) << "tau:                      " << tau << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
@@ -243,7 +244,6 @@ void CFDSolver<dim>::stream() {
 			m_advectionOperator->getSystemVector();
 
 	m_timeIntegrator->step(f, systemMatrix, systemVector);
-	m_time += m_timeIntegrator->getTimeStepSize();
 
 }
 template void CFDSolver<2>::stream();
@@ -267,11 +267,11 @@ template void CFDSolver<3>::reassemble();
 template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
-	m_tstart = time(0);
 	for (m_i = m_iterationStart; m_i < N; m_i++) {
 		output(m_i);
 		stream();
 		collide();
+		m_time += m_timeIntegrator->getTimeStepSize();
 	}
 	output(N);
 	LOG(BASIC) << "NATriuM run complete." << endl;
@@ -282,6 +282,9 @@ template void CFDSolver<3>::run();
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
 	// output: vector fields as .vtu files
+	if (iteration == m_iterationStart) {
+		m_tstart = time(0);
+	}
 	if (not m_configuration->isSwitchOutputOff()) {
 		if (iteration % 100 == 0) {
 			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time
@@ -293,7 +296,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 					== log10(iteration - m_iterationStart)) {
 				time_t estimated_end = m_tstart
 						+ (m_configuration->getNumberOfTimeSteps()
-								- m_iterationStart) / (m_i - m_iterationStart)
+								- m_iterationStart)
+								/ (iteration - m_iterationStart)
 								* (time(0) - m_tstart);
 				struct tm * ltm = localtime(&estimated_end);
 				LOG(BASIC) << "i = " << iteration << "; Estimated end: "
@@ -392,8 +396,14 @@ void CFDSolver<dim>::initializeDistributions() {
 		while (residual > m_configuration->getIterativeInitializationResidual()) {
 			if (loopCount
 					> m_configuration->getIterativeInitializationNumberOfIterations()) {
-				throw CFDSolverException(
-						"The iterative Initialization of equilibrium distribution functions failed. Either use another initialization procedure or change the preferences for iterative initialization (residual or maximal number of init iterations).");
+				LOG(WARNING)
+						<< "The iterative Initialization of equilibrium distribution functions could only reach residual "
+						<< residual << " after " << loopCount
+						<< " iterations (Aimed at residual "
+						<< m_configuration->getIterativeInitializationResidual()
+						<< "). If that is too bad, increase the number of iterations in the iterative initialization scheme. "
+						<< "To avoid this Warning, soften the scheme (i.e. aim at a greater residual.)";
+				break;
 			}
 			oldDensities = m_density;
 			stream();

@@ -19,6 +19,8 @@
 #include "../problemdescription/PeriodicBoundary.h"
 #include "../problemdescription/MinLeeBoundary.h"
 
+#include "../utilities/DealiiExtensions.h"
+
 using namespace dealii;
 
 namespace natrium {
@@ -34,11 +36,11 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 	assert(orderOfFiniteElement >= 1);
 
 	// make dof handler
-	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement+1);
+	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement + 1);
 	m_faceQuadrature = make_shared<QGaussLobatto<dim - 1> >(
-			orderOfFiniteElement+1);
+			orderOfFiniteElement + 1);
 	m_fe = make_shared<FE_DGQArbitraryNodes<dim> >(
-			QGaussLobatto<1>(orderOfFiniteElement+1));
+			QGaussLobatto<1>(orderOfFiniteElement + 1));
 	m_doFHandler = make_shared<DoFHandler<dim> >(*triangulation);
 
 	// distribute degrees of freedom over mesh
@@ -214,8 +216,10 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 
 	// make diagonal block 0,0 which can be copied to the other ones
-	DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
-				cSparse.block(0, 0));
+	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
+			cSparse.block(0, 0));
+	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
+	 cSparse.block(0, 0));*/
 
 	// add periodic boundaries to intermediate flux sparsity pattern
 	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
@@ -228,8 +232,8 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 		if (periodic->first == periodic->second->getBoundaryIndicator1()) {
 			periodic->second->createCellMap(*m_doFHandler);
 			size_t only_on_block_0_0 = 1;
-			periodic->second->addToSparsityPattern(cSparse, only_on_block_0_0, n_dofs_per_block,
-					dofs_per_cell);
+			periodic->second->addToSparsityPattern(cSparse, only_on_block_0_0,
+					n_dofs_per_block, dofs_per_cell);
 		}
 	}
 
@@ -249,9 +253,9 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			// the following distinction is valid because non-periodic boundaries
 			// do not affect the diagonal blocks
 			if ((I != J) or (I == 0)) {
-				m_sparsityPattern.block(I, J).copy_from(cSparse.block(I,J));
+				m_sparsityPattern.block(I, J).copy_from(cSparse.block(I, J));
 			} else {
-				m_sparsityPattern.block(I, J).copy_from(cSparse.block(0,0));
+				m_sparsityPattern.block(I, J).copy_from(cSparse.block(0, 0));
 			}
 		}
 	}
@@ -414,11 +418,11 @@ template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 			derivativeMatrices.at(1));
 // distribute to global system matrix
 	// avoid to call block() too often
-	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1, alpha - 1);
+	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1,
+			alpha - 1);
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++) {
-			block.add(globalDoFs[j],
-					globalDoFs[k], systemMatrix(j, k));
+			block.add(globalDoFs[j], globalDoFs[k], systemMatrix(j, k));
 		}
 }
 template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
@@ -435,11 +439,11 @@ template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 			derivativeMatrices.at(1), -m_boltzmannModel->getDirection(alpha)[2],
 			derivativeMatrices.at(2));
 // distribute to global system matrix
-	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1, alpha - 1);
+	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1,
+			alpha - 1);
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++)
-			block.add(globalDoFs[j],
-					globalDoFs[k], systemMatrix(j, k));
+			block.add(globalDoFs[j], globalDoFs[k], systemMatrix(j, k));
 }
 
 template<size_t dim>
@@ -460,21 +464,29 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 //			neighborFaceNumber);
 	feNeighborFaceValues.reinit(neighborCell, neighborFaceNumber);
 
-// TODO clean up construction; or (better): assembly directly
-	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
-	dealii::FullMatrix<double> neighborFaceMatrix(
-			feNeighborFaceValues.dofs_per_cell, feFaceValues.dofs_per_cell);
-	cellFaceMatrix = 0;
-	neighborFaceMatrix = 0;
+	vector<dealii::types::global_dof_index> localDoFIndices(
+			feFaceValues.get_fe().dofs_per_cell);
+	vector<dealii::types::global_dof_index> neighborDoFIndices(
+			feFaceValues.get_fe().dofs_per_cell);
+	cell->get_dof_indices(localDoFIndices);
+	neighborCell->get_dof_indices(neighborDoFIndices);
+
+	// avoid many calls to block()
+	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1,
+			alpha - 1);
 
 // loop over all quadrature points at the face
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
 		size_t thisDoF = m_q_index_to_facedof.at(faceNumber).at(q);
 		size_t neighborDoF = m_q_index_to_facedof.at(neighborFaceNumber).at(q);
 
+		double cell_entry = 0.0;
+		double neighbor_entry = 0.0;
+
 		// calculate matrix entries
 		double prefactor = JxW.at(q);
 		double exn = 0.0;
+
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
 			exn += normals.at(q)(i) * m_boltzmannModel->getDirection(alpha)(i);
@@ -482,37 +494,22 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 		prefactor *= exn;
 
 		if (m_useCentralFlux) {
-			cellFaceMatrix(thisDoF, thisDoF) = 0.5 * prefactor;
-			neighborFaceMatrix(thisDoF, neighborDoF) = 0.5 * prefactor;
+			cell_entry = 0.5 * prefactor;
+			neighbor_entry = 0.5 * prefactor;
 
 		} else if (exn < 0) { // otherwise: no contributions
-
-			cellFaceMatrix(thisDoF, thisDoF) = prefactor;
-			neighborFaceMatrix(thisDoF, neighborDoF) = -prefactor;
+			cell_entry = prefactor;
+			neighbor_entry = -prefactor;
 		}
+		block.add(localDoFIndices[thisDoF], localDoFIndices[thisDoF],
+				cell_entry);
+		block.add(localDoFIndices[thisDoF], neighborDoFIndices[neighborDoF],
+				neighbor_entry);
 	}
 
 // get DoF indices
 // TODO cut out construction (allocation); Allocating two vectors in most inner loop is too expensive
-	vector<dealii::types::global_dof_index> localDoFIndices(
-			feFaceValues.dofs_per_cell);
-	vector<dealii::types::global_dof_index> neighborDoFIndices(
-			feFaceValues.dofs_per_cell);
-	cell->get_dof_indices(localDoFIndices);
-	neighborCell->get_dof_indices(neighborDoFIndices);
 
-/// Distribute to global matrix
-	// avoid many calls to block()
-	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1, alpha - 1);
-	/// TODO Loop only over diagonal
-	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
-		for (size_t j = 0; j < feFaceValues.dofs_per_cell; j++) {
-			block.add(localDoFIndices[i],
-					localDoFIndices[j], cellFaceMatrix(i, j));
-			block.add(localDoFIndices[i],
-					neighborDoFIndices[j], neighborFaceMatrix(i, j));
-		}
-	}
 
 // WARNING: Hanging nodes are not implemented, yet
 // TODO Implement local refinement
@@ -535,7 +532,7 @@ template void SEDGMinLee<3>::assembleAndDistributeInternalFace(size_t direction,
 		dealii::FEFaceValues<3>& feNeighborFaceValues);
 
 template<size_t dim>
-std::map<size_t, size_t> natrium::SEDGMinLee<dim>::map_celldofs_to_q_index() const {
+std::map<size_t, size_t> SEDGMinLee<dim>::map_celldofs_to_q_index() const {
 	const dealii::UpdateFlags cellUpdateFlags = update_values
 			| update_quadrature_points;
 // Finite Element
@@ -568,7 +565,7 @@ template std::map<size_t, size_t> SEDGMinLee<2>::map_celldofs_to_q_index() const
 template std::map<size_t, size_t> SEDGMinLee<3>::map_celldofs_to_q_index() const;
 
 template<size_t dim>
-vector<std::map<size_t, size_t> > natrium::SEDGMinLee<dim>::map_facedofs_to_q_index() const {
+vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_facedofs_to_q_index() const {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
 	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
@@ -603,7 +600,7 @@ template vector<std::map<size_t, size_t> > SEDGMinLee<2>::map_facedofs_to_q_inde
 template vector<std::map<size_t, size_t> > SEDGMinLee<3>::map_facedofs_to_q_index() const;
 
 template<size_t dim>
-vector<std::map<size_t, size_t> > natrium::SEDGMinLee<dim>::map_q_index_to_facedofs() const {
+vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_q_index_to_facedofs() const {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
 	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,

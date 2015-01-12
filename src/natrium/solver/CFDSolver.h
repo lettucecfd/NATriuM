@@ -166,7 +166,7 @@ public:
 		return m_density;
 	}
 
-	const vector<distributed_vector>& getF() const {
+	const DistributionFunctions& getF() const {
 		return m_f;
 	}
 

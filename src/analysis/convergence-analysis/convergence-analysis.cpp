@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
 		U = 1;
 		L = 1;
 		viscosity = U * L / Re;
-		tmax = 40.0;
+		tmax = L/U*40/(sqrt(3)*20); //40.0 -> dimensionless;
 
 	} else {
 		//////////////////////////
@@ -257,6 +257,9 @@ int main(int argc, char* argv[]) {
 			configuration->setCommandLineVerbosity(WARNING);
 			configuration->setTimeStepSize(dt);
 			configuration->setNumberOfTimeSteps(tmax / dt);
+			configuration->setInitializationScheme(ITERATIVE);
+			configuration->setIterativeInitializationNumberOfIterations(1000);
+			configuration->setIterativeInitializationResidual(1e-15);
 
 			timestart = clock();
 			BenchmarkCFDSolver<2> solver(configuration, benchmark);

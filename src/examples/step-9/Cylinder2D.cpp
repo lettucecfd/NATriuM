@@ -39,9 +39,9 @@ shared_ptr<Triangulation<2> > Cylinder2D::makeGrid() {
 	shared_ptr<Triangulation<2> > tria = make_shared<Triangulation<2> >();
 	dealii::GridIn<2> gridin;
 	gridin.attach_triangulation(*tria);
-	std::ifstream f("/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-9/cylinder_coarse.msh");
-
-	gridin.read_msh(f);
+	//std::ifstream f("/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-9/cylinder_coarse.msh");
+	std::ifstream f("/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-9/salome/Mesh_1.unv");
+	gridin.read_unv(f);
 	//CFDSolverUtilities::mesh_info(*tria, "cylinder.eps");
 
 	return tria;
