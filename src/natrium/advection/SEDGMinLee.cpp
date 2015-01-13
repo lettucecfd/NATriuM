@@ -58,6 +58,7 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 	for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++){
 		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
 	}
+	m_systemVector.collect_sizes();
 #else
 	m_systemVector.reinit(m_boltzmannModel->getQ() - 1, m_doFHandler->n_dofs());
 #endif

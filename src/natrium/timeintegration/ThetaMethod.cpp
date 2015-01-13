@@ -38,6 +38,7 @@ template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector
 	for (size_t i = 0; i < numberOfBlocks; i++){
 		m_tmpSystemVector.block(i).reinit(problemSize);
 	}
+	m_tmpSystemVector.collect_sizes();
 }
 #else
 template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector>::ThetaMethod(
@@ -55,15 +56,19 @@ template<class MATRIX, class VECTOR> void ThetaMethod<MATRIX, VECTOR>::step(
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
 	assert(systemVector.size() == systemMatrix.n());
+
+#ifdef WITH_TRILINOS
+	if (m_tmpSystemVector.size() != f.size()) {
+		m_tmpSystemVector.reinit(f);
+	}
+	// check equality of sparsity patterns
+	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()){
+		m_tmpMatrix.copy_from(systemMatrix);
+	}
+#else
 	if (m_tmpSystemVector.size() != f.size()) {
 		m_tmpSystemVector.reinit(f.size());
 	}
-#ifdef WITH_TRILINOS
-	// check equality of sparsity patterns
-	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()){
-		m_tmpMatrix = systemMatrix;
-	}
-#else
 	if ((m_tmpMatrix.empty()) or
 	// the next check should give true if the sparsity patterns are equal
 	// and false, else. n_nonzero_elements returns the number of entries

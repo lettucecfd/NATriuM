@@ -61,6 +61,9 @@ public:
 		for (size_t i = 1; i < m_Q; i++) {
 			m_fStream.block(i - 1).reinit(f.at(i));
 			// reinit does only change the size but not the content
+		}
+		m_fStream.collect_sizes();
+		for (size_t i = 1; i < m_Q; i++) {
 			for (size_t j = 0; j < f.at(i).size(); j++){
 				m_fStream.block(i-1)(j) = f.at(i)(j);
 			}
@@ -162,6 +165,7 @@ public:
 #else
 		m_fStream.reinit(Q - 1, size);
 #endif
+		m_fStream.collect_sizes();
 	}
 
 	/**

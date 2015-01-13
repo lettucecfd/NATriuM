@@ -33,6 +33,8 @@ template<> RungeKutta5LowStorage<distributed_sparse_block_matrix,
 		m_Af.block(i).reinit(problemSize);
 		m_df.block(i).reinit(problemSize);
 	}
+	m_Af.collect_sizes();
+	m_df.collect_sizes();
 }
 #else
 template<> RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector>::RungeKutta5LowStorage(
@@ -56,12 +58,31 @@ template<class MATRIX, class VECTOR> void RungeKutta5LowStorage<MATRIX, VECTOR>:
 	// Test all dimensions and change, if necessary
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
+#ifdef WITH_TRILINOS
+	if (m_Af.size() != f.size()) {
+		m_Af.reinit(f);
+		/*.n_blocks());
+		for (size_t i = 0; i < f.n_blocks(); i++){
+			m_Af.block(i).reinit(f.block(i).size());
+		}
+		m_Af.collect_sizes();*/
+	}
+	if (m_df.size() != f.size()) {
+		m_df.reinit(f);
+		/*.n_blocks());
+		for (size_t i = 0; i < f.n_blocks(); i++){
+			m_df.block(i).reinit(f.block(i).size());
+		}
+		m_df.collect_sizes();*/
+	}
+#else
 	if (m_Af.size() != f.size()) {
 		m_Af.reinit(f.size());
 	}
 	if (m_df.size() != f.size()) {
 		m_df.reinit(f.size());
 	}
+#endif
 	// According to Carpenter and Kennedy (1994) - p. 3
 	// df = a*df + h*Af
 	// f = f + B* df
