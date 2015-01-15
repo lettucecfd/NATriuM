@@ -19,6 +19,7 @@
 #include <deal.II/dofs/function_map.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe.h>
+#include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/component_mask.h>
 #include <deal.II/hp/mapping_collection.h>
 
@@ -36,7 +37,6 @@ namespace DealIIExtensions{
 
 using namespace dealii;
 
-
 /**
  * @short Like dealii::DoFTools::make_flux_sparsity_pattern but does only create
  * 		  non-zero entries for the DoFs situated on faces
@@ -46,6 +46,7 @@ template <class DH, class SparsityPattern>
   make_sparser_flux_sparsity_pattern (const DH                  &dof,
                               SparsityPattern           &sparsity,
                               const ConstraintMatrix    &constraints,
+                              FEFaceValues<DH::dimension>* fe_face = NULL,
                               const bool                keep_constrained_dofs = true,
                               const types::subdomain_id  subdomain_id = numbers::invalid_unsigned_int);
 
@@ -54,7 +55,8 @@ template <class DH, class SparsityPattern>
 template <class DH, class SparsityPattern>
  void
  make_sparser_flux_sparsity_pattern (const DH        &dof,
-                             SparsityPattern &sparsity);
+                             SparsityPattern &sparsity,
+                             FEFaceValues<DH::dimension>* fe_face = NULL);
 
 
 //DEAL_II_NAMESPACE_CLOSE

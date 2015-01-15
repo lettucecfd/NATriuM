@@ -228,8 +228,13 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 
 	// make diagonal block 0,0 which can be copied to the other ones
+	const dealii::UpdateFlags faceUpdateFlags = update_values
+			| update_quadrature_points;
+	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping, *m_fe, *m_faceQuadrature,
+			faceUpdateFlags);
 	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-			cSparse.block(0, 0));
+			cSparse.block(0, 0), feFaceValues);
+	delete feFaceValues ;
 	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
 	 cSparse.block(0, 0));*/
 

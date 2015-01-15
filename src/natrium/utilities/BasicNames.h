@@ -1,6 +1,7 @@
 /**
  * @file BasicNames.h
- * @short Definition of the basic typedefs and names used in the Code
+ * @short Definition of the basic typedefs and names used in the Code;
+ * @note As this file is used by most of the others it can contain different compiler flags and other global settings
  * @date 30.08.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
@@ -28,6 +29,10 @@
 
 namespace natrium {
 
+// GLOBAL COMPILER FLAGS
+#define WITH_TRILINOS
+
+
 /// The following names will be used throughout natrium
 /// by #including BasicNames.h they can are used by default
 using std::vector;
@@ -52,7 +57,6 @@ typedef dealii::BlockSparseMatrix<double> sparse_block_matrix;
 typedef dealii::SparseMatrix<double> sparse_matrix;
 
 // Matrix and Vector classes
-#define WITH_TRILINOS
 #ifdef WITH_TRILINOS
 typedef dealii::TrilinosWrappers::Vector distributed_vector;
 typedef dealii::TrilinosWrappers::BlockVector distributed_block_vector;
@@ -63,6 +67,7 @@ typedef dealii::TrilinosWrappers::BlockSparseMatrix distributed_sparse_block_mat
 
 #if WITH_TRILINOS_MPI
 
+// WITH_TRILINOS_MPI flag includes WITH_TRILINOS flag
 #ifndef WITH_TRILINOS
 #define WITH_TRILINOS
 #endif
