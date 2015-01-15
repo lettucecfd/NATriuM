@@ -208,6 +208,20 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	size_t n_blocks = m_boltzmannModel->getQ() - 1;
 	size_t n_dofs_per_block = m_doFHandler->n_dofs();
 	BlockCompressedSparsityPattern cSparse(n_blocks, n_blocks);
+
+	// create cell maps for periodic boundary
+	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
+			m_boundaries->getPeriodicBoundaries().begin();
+			periodic != m_boundaries->getPeriodicBoundaries().end();
+			periodic++) {
+		// Periodic boundaries have two boundary indicators; (and are stored twice in the map)
+		// skip double execution of addToSparsityPattern
+		if (periodic->first == periodic->second->getBoundaryIndicator1()) {
+			periodic->second->createCellMap(*m_doFHandler);
+		}
+	}
+
+
 	// TODO do not initialize empty blocks?
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
@@ -238,22 +252,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
 	 cSparse.block(0, 0));*/
 
-	// add periodic boundaries to intermediate flux sparsity pattern
-	/*size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
-	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
-			m_boundaries->getPeriodicBoundaries().begin();
-			periodic != m_boundaries->getPeriodicBoundaries().end();
-			periodic++) {
-		// Periodic boundaries have two boundary indicators; (and are stored twice in the map)
-		// skip double execution of addToSparsityPattern
-		if (periodic->first == periodic->second->getBoundaryIndicator1()) {
-			periodic->second->createCellMap(*m_doFHandler);
-			size_t only_on_block_0_0 = 1;
-			periodic->second->addToSparsityPattern(cSparse, only_on_block_0_0,
-					n_dofs_per_block, dofs_per_cell);
-		}
-	}*/
-
 	// add entries for non-periodic boundaries
 	for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =
 			m_boundaries->getMinLeeBoundaries().begin();
@@ -281,6 +279,9 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	m_systemMatrix.reinit(m_sparsityPattern);
 	m_massMatrix.reinit(m_doFHandler->n_dofs());
 	std::fill(m_massMatrix.begin(), m_massMatrix.end(), 0.0);
+
+	std::ofstream f("/home/kraemer/sparser_sparsity.dat");
+	m_systemMatrix.block(0,0).print(f, true);
 
 }
 /* updateSparsityPattern */
@@ -374,10 +375,10 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 						m_boundaries->getPeriodicBoundary(boundaryIndicator);
 				assert(periodicBoundary->isFaceInBoundary(cell, j));
 				typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
-				periodicBoundary->getOppositeCellAtPeriodicBoundary(cell,
+				size_t opposite_face = periodicBoundary->getOppositeCellAtPeriodicBoundary(cell,
 						neighborCell);
 				assembleAndDistributeInternalFace(alpha, cell, j, neighborCell,
-						dealii::GeometryInfo<dim>::opposite_face[j],
+						opposite_face,
 						feFaceValues, feSubfaceValues, feNeighborFaceValues);
 			} else /* if is not periodic */{
 				// Apply other boundaries

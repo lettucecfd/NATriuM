@@ -55,10 +55,6 @@ private:
 	/// triangulation object
 	shared_ptr<dealii::Triangulation<dim> > m_triangulation;
 
-	/// Container for all cells that belong to this boundary
-	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
-	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
-
 	/// boundary indicator of first interfacial line
 	size_t m_boundaryIndicator1;
 
@@ -92,6 +88,11 @@ private:
 
 
 public:
+
+	/// Container for all cells that belong to this boundary
+	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
+	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
+
 
 	/////////////////////////////////
 	// CONSTRUCTION // DESTRUCTION //

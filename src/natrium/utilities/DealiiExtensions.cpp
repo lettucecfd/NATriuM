@@ -119,19 +119,25 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 							boundaries.getPeriodicBoundaries().begin();
 							periodic != boundaries.getPeriodicBoundaries().end();
 							periodic++) {
-						// Periodic boundaries have two boundary indicators; (and are stored twice in the map)
-						// skip double execution of addToSparsityPattern
+						std::cout << "info:" << face << " "
+								<< (this_face->boundary_indicator()
+										== periodic->first) << " "
+								<< (periodic->second->m_cells.find(cell)
+										== periodic->second->m_cells.end())
+								<< std::endl;
 						if (periodic->second->isFaceInBoundary(cell,
 								this_face->boundary_indicator())) {
 							neighbor_face =
 									periodic->second->getOppositeCellAtPeriodicBoundary(
 											cell, neighbor);
+							other_face = neighbor->face(neighbor_face);
 							break;
 						}
 					}
 					if (neighbor_face == 1000) {
 						break;
 					}
+					std::cout << "faces: " << int(face) << int(neighbor_face) << std::endl;
 				} else {
 					neighbor = cell->neighbor(face);
 					neighbor_face = 1000; // indicator that it has to be assembled, later
@@ -142,7 +148,7 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 
 				dofs_on_this_face.clear();
 				dofs_on_other_face.clear();
-				if (fe_face == NULL) {
+				if (!pairwise_coupling_valid) {
 					// get face dofs
 					for (size_t i = 0; i < n_dofs_on_this_cell; i++) {
 						if (cell->get_fe().has_support_on_face(i, face)) {
@@ -219,10 +225,12 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 				} else {
 					// Refinement edges are taken care of by coarser
 					// cells
-					if (cell->neighbor_is_coarser(face)
-							&& neighbor->subdomain_id() == cell->subdomain_id())
-						continue;
-
+					if (!cell->at_boundary(face)) {
+						if (cell->neighbor_is_coarser(face)
+								&& neighbor->subdomain_id()
+										== cell->subdomain_id())
+							continue;
+					}
 					const unsigned int n_dofs_on_neighbor =
 							neighbor->get_fe().dofs_per_cell;
 					dofs_on_other_cell.resize(n_dofs_on_neighbor);
@@ -316,7 +324,7 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 					// is not locally owned - otherwise, we touch each
 					// face twice and hence put the indices the other way
 					// around
-					if (!cell->neighbor(face)->active()
+					if (!(neighbor->active())
 							|| (neighbor->subdomain_id() != cell->subdomain_id())) {
 						if (!pairwise_coupling_valid) {
 							constraints.add_entries_local_to_global(
