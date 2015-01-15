@@ -233,13 +233,13 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping, *m_fe, *m_faceQuadrature,
 			faceUpdateFlags);
 	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-			cSparse.block(0, 0), feFaceValues);
+			cSparse.block(0, 0), *m_boundaries, feFaceValues);
 	delete feFaceValues ;
 	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
 	 cSparse.block(0, 0));*/
 
 	// add periodic boundaries to intermediate flux sparsity pattern
-	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
+	/*size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
 	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
 			m_boundaries->getPeriodicBoundaries().begin();
 			periodic != m_boundaries->getPeriodicBoundaries().end();
@@ -252,7 +252,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			periodic->second->addToSparsityPattern(cSparse, only_on_block_0_0,
 					n_dofs_per_block, dofs_per_cell);
 		}
-	}
+	}*/
 
 	// add entries for non-periodic boundaries
 	for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =

@@ -8,6 +8,9 @@
 #ifndef DEALIIEXTENSIONS_H_
 #define DEALIIEXTENSIONS_H_
 
+#include <vector>
+#include <set>
+#include <map>
 
 #include <deal.II/base/config.h>
 #include <deal.II/base/exceptions.h>
@@ -23,9 +26,8 @@
 #include <deal.II/fe/component_mask.h>
 #include <deal.II/hp/mapping_collection.h>
 
-#include <vector>
-#include <set>
-#include <map>
+#include "../problemdescription/BoundaryCollection.h"
+
 
 
 
@@ -46,6 +48,7 @@ template <class DH, class SparsityPattern>
   make_sparser_flux_sparsity_pattern (const DH                  &dof,
                               SparsityPattern           &sparsity,
                               const ConstraintMatrix    &constraints,
+                              const BoundaryCollection<DH::dimension>& boundaries = natrium::BoundaryCollection<DH::dimension>(),
                               FEFaceValues<DH::dimension>* fe_face = NULL,
                               const bool                keep_constrained_dofs = true,
                               const types::subdomain_id  subdomain_id = numbers::invalid_unsigned_int);
@@ -55,7 +58,7 @@ template <class DH, class SparsityPattern>
 template <class DH, class SparsityPattern>
  void
  make_sparser_flux_sparsity_pattern (const DH        &dof,
-                             SparsityPattern &sparsity,
+                             SparsityPattern &sparsity, const natrium::BoundaryCollection<DH::dimension>& boundaries = BoundaryCollection<DH::dimension>(),
                              FEFaceValues<DH::dimension>* fe_face = NULL);
 
 
