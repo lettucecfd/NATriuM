@@ -185,7 +185,7 @@ template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoun
 	}
 
 	neighborCell = m_cells.at(cell).first;
-	return m_cells.at(cell).second;
+	return m_cells.at(neighborCell).second;
 }
 // The template parameter has to be made explicit in order for the code to compile
 template size_t PeriodicBoundary<2>::getOppositeCellAtPeriodicBoundary(
