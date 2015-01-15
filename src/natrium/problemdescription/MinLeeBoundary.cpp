@@ -42,10 +42,16 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 		dealii::BlockCompressedSparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler,
 		const BoltzmannModel& boltzmannModel) const {
+
+	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
+	const dealii::ConstraintMatrix constraints;
+
 	size_t n_blocks = boltzmannModel.getQ() - 1;
 	size_t n_dofs_per_cell = doFHandler.get_fe().dofs_per_cell;
-	std::vector<dealii::types::global_dof_index> localDoFIndices(
+	std::vector<dealii::types::global_dof_index> dofs_on_this_cell(
 			n_dofs_per_cell);
+	std::vector<dealii::types::global_dof_index> dofs_on_this_face;
+	dofs_on_this_face.reserve(sqrt(n_dofs_per_cell));
 
 	// couple opposite distribution functions at boundaries
 	// iterate over all cells
@@ -54,40 +60,54 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 	typename dealii::DoFHandler<dim>::active_cell_iterator endc =
 			doFHandler.end();
 	for (; cell != endc; ++cell) {
-		// check if at least one face is at this wall
-		bool isAtThisWall = false;
 		for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell; i++) {
 			if (cell->face(i)->at_boundary()) {
 				if (cell->face(i)->boundary_indicator()
 						== m_boundaryIndicator) {
-					isAtThisWall = true;
-					break;
-				}
-			}
-		}
-		if (not isAtThisWall)
-			continue;
-
-		// add
-		for (size_t I = 0; I < n_blocks; I++) {
-			for (size_t J = 0; J < n_blocks; J++) {
-				if (I
-						== boltzmannModel.getIndexOfOppositeDirection(J + 1)
-								- 1) {
-					// avoid to many calls to block()
-					dealii::CompressedSparsityPattern& block = cSparse.block(I, J);
-					// get global degrees of freedom
-					cell->get_dof_indices(localDoFIndices);
-					for (size_t i = 0; i < n_dofs_per_cell; i++) {
-						for (size_t j = 0; j < n_dofs_per_cell; j++) {
-							// TODO: Efficient implementation (for SEDG, MinLee Boundary): only at diagonal
-							block.add(localDoFIndices.at(i),
-									localDoFIndices.at(j));
+					cell->get_dof_indices(dofs_on_this_cell);
+					dofs_on_this_face.clear();
+					for (size_t j = 0; j < n_dofs_on_this_cell; j++) {
+						if (cell->get_fe().has_support_on_face(i, face)) {
+							dofs_on_this_face.push_back(
+									dofs_on_this_cell.at(i));
 						}
 					}
-				} /* end if opposite boundary*/
-			} /* end block J */
-		} /* end block I */
+
+					// add
+					for (size_t I = 0; I < n_blocks; I++) {
+						for (size_t J = 0; J < n_blocks; J++) {
+							if (I
+									== boltzmannModel.getIndexOfOppositeDirection(
+											J + 1) - 1) {
+								// avoid to many calls to block()
+								dealii::CompressedSparsityPattern& block =
+										cSparse.block(I, J);
+								for (size_t i = 0; i < n_dofs_per_cell; i++) {
+									for (size_t j = 0; j < n_dofs_per_cell;
+											j++) {
+										// couple only individual dofs with each other
+										std::vector<dealii::types::global_dof_index> dof_this(1);
+										std::vector<dealii::types::global_dof_index> dof_this2(1);
+										for (size_t i = 0; i < dofs_on_this_face.size(); i++) {
+											dof_this.at(0) = dofs_on_this_face.at(i);
+											dof_this2.at(0) = dofs_on_this_face.at(i);
+											// Add entries to sparsity pattern
+											constraints.add_entries_local_to_global(dof_this,
+													dof_this2, block, true);
+										}
+										/*// TODO: Efficient implementation (for SEDG, MinLee Boundary): only at diagonal
+										block.add(localDoFIndices.at(i),
+												localDoFIndices.at(j));*/
+									}
+								}
+							} /* end if opposite boundary*/
+						} /* end block J */
+					} /* end block I */
+
+				} /* end if boundary indicator */
+			} /* end if at boundary */
+		} /* end for all faces */
+
 	} /* end forall cells */
 }
 template void MinLeeBoundary<2>::addToSparsityPattern(
