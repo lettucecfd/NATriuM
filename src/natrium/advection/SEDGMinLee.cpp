@@ -207,6 +207,14 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	// allocate sizes
 	size_t n_blocks = m_boltzmannModel->getQ() - 1;
 	size_t n_dofs_per_block = m_doFHandler->n_dofs();
+	
+	const dealii::UpdateFlags faceUpdateFlags = update_values
+			| update_quadrature_points;
+	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping,
+			*m_fe, *m_faceQuadrature, faceUpdateFlags);
+
+#ifdef WITH_TRILINOS
+	// Trilinos can work with imroved sparsity structures
 	CompressedSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
 	CompressedSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
 	CompressedSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
@@ -237,10 +245,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 
 	// make diagonal block 0,0 which can be copied to the other ones
-	const dealii::UpdateFlags faceUpdateFlags = update_values
-			| update_quadrature_points;
-	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping,
-			*m_fe, *m_faceQuadrature, faceUpdateFlags);
 	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
 			cSparseDiag, *m_boundaries, feFaceValues);
 	delete feFaceValues;
@@ -286,6 +290,66 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 		}
 	}
 	m_systemMatrix.collect_sizes();
+
+#else
+	BlockCompressedSparsityPattern cSparse(n_blocks, n_blocks);
+	// TODO do not initialize empty blocks?
+	for (size_t I = 0; I < n_blocks; I++) {
+		for (size_t J = 0; J < n_blocks; J++) {
+			cSparse.block(I, J).reinit(n_dofs_per_block, n_dofs_per_block);
+		}
+	}
+	cSparse.collect_sizes();
+
+	// make diagonal block 0,0 which can be copied to the other ones
+	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
+			cSparse.block(0, 0), *m_boundaries, feFaceValues);
+	delete feFaceValues ;
+	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
+	 cSparse.block(0, 0));*/
+
+	// add periodic boundaries to intermediate flux sparsity pattern
+	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
+	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
+			m_boundaries->getPeriodicBoundaries().begin();
+			periodic != m_boundaries->getPeriodicBoundaries().end();
+			periodic++) {
+		// Periodic boundaries have two boundary indicators; (and are stored twice in the map)
+		// skip double execution of addToSparsityPattern
+		if (periodic->first == periodic->second->getBoundaryIndicator1()) {
+			periodic->second->createCellMap(*m_doFHandler);
+			size_t only_on_block_0_0 = 1;
+			periodic->second->addToSparsityPattern(cSparse, only_on_block_0_0,
+					n_dofs_per_block, dofs_per_cell);
+		}
+	}
+
+	// add entries for non-periodic boundaries
+	/*for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =
+			m_boundaries->getMinLeeBoundaries().begin();
+			minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
+			minLeeIterator++) {
+		minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler,
+				*m_boltzmannModel);
+	}*/
+
+	// initialize (static) sparsity pattern
+	m_sparsityPattern.reinit(n_blocks, n_blocks);
+	for (size_t I = 0; I < n_blocks; I++) {
+		for (size_t J = 0; J < n_blocks; J++) {
+			// the following distinction is valid because non-periodic boundaries
+			// do not affect the diagonal blocks
+			if ((I != J) or (I == 0)) {
+				m_sparsityPattern.block(I, J).copy_from(cSparse.block(I, J));
+			} else {
+				m_sparsityPattern.block(I, J).copy_from(cSparse.block(0, 0));
+			}
+		}
+	}
+	m_sparsityPattern.collect_sizes();
+	//reinitialize matrices
+	m_systemMatrix.reinit(m_sparsityPattern);
+#endif
 
 	m_massMatrix.reinit(m_doFHandler->n_dofs());
 	std::fill(m_massMatrix.begin(), m_massMatrix.end(), 0.0);
