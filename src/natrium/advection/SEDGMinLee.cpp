@@ -55,7 +55,7 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 	// set size for the system vector
 #ifdef WITH_TRILINOS
 	m_systemVector.reinit(m_boltzmannModel->getQ() - 1);
-	for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++){
+	for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
 		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
 	}
 	m_systemVector.collect_sizes();
@@ -167,8 +167,8 @@ void SEDGMinLee<dim>::reassemble() {
 			distributed_sparse_matrix& block = m_systemMatrix.block(I, J);
 			// By using iterators instead of operator () this method became much more efficient
 #ifdef WITH_TRILINOS
-			distributed_sparse_matrix::iterator matrixIterator(&block,0,0);
-			distributed_sparse_matrix::iterator lastElement(&block,0,0);
+			distributed_sparse_matrix::iterator matrixIterator(&block, 0, 0);
+			distributed_sparse_matrix::iterator lastElement(&block, 0, 0);
 #else
 			distributed_sparse_matrix::iterator matrixIterator(&block);
 			distributed_sparse_matrix::iterator lastElement(&block);
@@ -207,7 +207,11 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	// allocate sizes
 	size_t n_blocks = m_boltzmannModel->getQ() - 1;
 	size_t n_dofs_per_block = m_doFHandler->n_dofs();
-	BlockCompressedSparsityPattern cSparse(n_blocks, n_blocks);
+	CompressedSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
+	CompressedSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
+	CompressedSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
+
+
 
 	// create cell maps for periodic boundary
 	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
@@ -220,15 +224,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			periodic->second->createCellMap(*m_doFHandler);
 		}
 	}
-
-
-	// TODO do not initialize empty blocks?
-	for (size_t I = 0; I < n_blocks; I++) {
-		for (size_t J = 0; J < n_blocks; J++) {
-			cSparse.block(I, J).reinit(n_dofs_per_block, n_dofs_per_block);
-		}
-	}
-	cSparse.collect_sizes();
 
 	//reorder degrees of freedom
 	//DoFRenumbering::Cuthill_McKee(*m_doFHandler);
@@ -244,11 +239,11 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	// make diagonal block 0,0 which can be copied to the other ones
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
-	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping, *m_fe, *m_faceQuadrature,
-			faceUpdateFlags);
+	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping,
+			*m_fe, *m_faceQuadrature, faceUpdateFlags);
 	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-			cSparse.block(0, 0), *m_boundaries, feFaceValues);
-	delete feFaceValues ;
+			cSparseDiag, *m_boundaries, feFaceValues);
+	delete feFaceValues;
 	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
 	 cSparse.block(0, 0));*/
 
@@ -257,31 +252,43 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			m_boundaries->getMinLeeBoundaries().begin();
 			minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
 			minLeeIterator++) {
-		minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler,
-				*m_boltzmannModel);
+		minLeeIterator->second->addToSparsityPattern(cSparseOpposite,
+				*m_doFHandler, *m_boltzmannModel);
 	}
 
-	// initialize (static) sparsity pattern
-	m_sparsityPattern.reinit(n_blocks, n_blocks);
+	//reinitialize matrices
+	m_systemMatrix.reinit(n_blocks, n_blocks);
+	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
+	m_systemMatrix.block(0, 1).reinit(cSparseEmpty);
+	m_systemMatrix.block(0, 2).reinit(cSparseOpposite);
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
-			// the following distinction is valid because non-periodic boundaries
-			// do not affect the diagonal blocks
-			if ((I != J) or (I == 0)) {
-				m_sparsityPattern.block(I, J).copy_from(cSparse.block(I, J));
-			} else {
-				m_sparsityPattern.block(I, J).copy_from(cSparse.block(0, 0));
+			if ((I == 0) and (J == 0)) {
+				continue;
 			}
+			if ((I == 0) and (J == 1)) {
+				continue;
+			}
+			if ((I == 0) and (J == 2)) {
+				continue;
+			}
+			if (I == J) {
+				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, 0));
+				continue;
+			}
+			if (I == m_boltzmannModel->getIndexOfOppositeDirection(J + 1) - 1) {
+				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, 2));
+				continue;
+			} else {
+				m_systemMatrix.block(I,J).reinit(m_systemMatrix.block(0,1));
+			}
+
 		}
 	}
-	m_sparsityPattern.collect_sizes();
-	//reinitialize matrices
-	m_systemMatrix.reinit(m_sparsityPattern);
+	m_systemMatrix.collect_sizes();
+
 	m_massMatrix.reinit(m_doFHandler->n_dofs());
 	std::fill(m_massMatrix.begin(), m_massMatrix.end(), 0.0);
-
-	std::ofstream f("/home/kraemer/sparser_sparsity.dat");
-	m_systemMatrix.block(0,0).print(f, true);
 
 }
 /* updateSparsityPattern */
@@ -375,11 +382,12 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 						m_boundaries->getPeriodicBoundary(boundaryIndicator);
 				assert(periodicBoundary->isFaceInBoundary(cell, j));
 				typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
-				size_t opposite_face = periodicBoundary->getOppositeCellAtPeriodicBoundary(cell,
-						neighborCell);
+				size_t opposite_face =
+						periodicBoundary->getOppositeCellAtPeriodicBoundary(
+								cell, neighborCell);
 				assembleAndDistributeInternalFace(alpha, cell, j, neighborCell,
-						opposite_face,
-						feFaceValues, feSubfaceValues, feNeighborFaceValues);
+						opposite_face, feFaceValues, feSubfaceValues,
+						feNeighborFaceValues);
 			} else /* if is not periodic */{
 				// Apply other boundaries
 				if (typeid(*(m_boundaries->getBoundary(boundaryIndicator)))
@@ -397,9 +405,8 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 // Internal faces
 			typename DoFHandler<dim>::cell_iterator neighbor = cell->neighbor(
 					j);
-			// TODO OPPOSITE FACE WONT DO IN ALL CASES!
 			assembleAndDistributeInternalFace(alpha, cell, j, neighbor,
-					dealii::GeometryInfo<dim>::opposite_face[j], feFaceValues,
+					cell->neighbor_face_no(j), feFaceValues,
 					feSubfaceValues, feNeighborFaceValues);
 		} /* endif is face at boundary*/
 
@@ -527,7 +534,6 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 
 // get DoF indices
 // TODO cut out construction (allocation); Allocating two vectors in most inner loop is too expensive
-
 
 // WARNING: Hanging nodes are not implemented, yet
 // TODO Implement local refinement
@@ -704,7 +710,7 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 		filename << directory << "/checkpoint_system_vector.dat";
 		std::ofstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
-		for (size_t i = 0; i < m_boltzmannModel->getQ() -1 ; i++){
+		for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
 			numeric_vector tmp(m_systemVector.block(i));
 			tmp.block_write(file);
 		}
@@ -764,7 +770,7 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 		filename << directory << "/checkpoint_system_vector.dat";
 		std::ifstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
-		for (size_t i = 0; i < m_boltzmannModel->getQ() -1 ; i++){
+		for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
 			numeric_vector tmp(m_systemVector.block(i));
 			tmp.block_read(file);
 			m_systemVector.block(i) = tmp;

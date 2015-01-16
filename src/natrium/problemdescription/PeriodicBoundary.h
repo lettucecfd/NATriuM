@@ -77,6 +77,11 @@ private:
 	/// end point of line 2
 	dealii::Point<dim> m_endLine2;
 
+	/// Container for all cells that belong to this boundary
+	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
+	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
+
+
 
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
@@ -88,11 +93,6 @@ private:
 
 
 public:
-
-	/// Container for all cells that belong to this boundary
-	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
-	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
-
 
 	/////////////////////////////////
 	// CONSTRUCTION // DESTRUCTION //

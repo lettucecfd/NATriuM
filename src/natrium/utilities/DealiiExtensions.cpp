@@ -112,32 +112,36 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 				typename DH::face_iterator this_face = cell->face(face);
 				typename DH::face_iterator other_face;
 				typename DH::cell_iterator neighbor;
+				typename DH::cell_iterator test_cell;
 				unsigned int neighbor_face = 1000;
+				unsigned int test_face;
 				if (cell->at_boundary(face)) {
 					// check if cell is in periodic boundary
 					for (typename BoundaryCollection<DH::dimension>::ConstPeriodicIterator periodic =
 							boundaries.getPeriodicBoundaries().begin();
 							periodic != boundaries.getPeriodicBoundaries().end();
 							periodic++) {
-						std::cout << "info:" << face << " "
-								<< (this_face->boundary_indicator()
-										== periodic->first) << " "
-								<< (periodic->second->m_cells.find(cell)
-										== periodic->second->m_cells.end())
-								<< std::endl;
 						if (periodic->second->isFaceInBoundary(cell,
 								this_face->boundary_indicator())) {
 							neighbor_face =
 									periodic->second->getOppositeCellAtPeriodicBoundary(
 											cell, neighbor);
-							other_face = neighbor->face(neighbor_face);
-							break;
+							// if the face is not really at the boundary: do not consider cell
+							/*test_face =
+									periodic->second->getOppositeCellAtPeriodicBoundary(
+											neighbor, test_cell);
+							if (not ((test_cell == cell) && (test_face == face))) {
+								neighbor_face = 1000;
+								break;
+							} else {*/
+								other_face = neighbor->face(neighbor_face);
+								break;
+							//}
 						}
 					}
 					if (neighbor_face == 1000) {
-						break;
+						continue;
 					}
-					std::cout << "faces: " << int(face) << int(neighbor_face) << std::endl;
 				} else {
 					neighbor = cell->neighbor(face);
 					neighbor_face = 1000; // indicator that it has to be assembled, later

@@ -194,8 +194,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 	size_t faceIndex2 = periodicTopBottom.getOppositeCellAtPeriodicBoundary(
 			leftUpperCorner, it2);
 
-	BOOST_CHECK(faceIndex == 0);
-	BOOST_CHECK(faceIndex2 == 3);
+	BOOST_CHECK(faceIndex == 1);
+	BOOST_CHECK(faceIndex2 == 2);
 
 	// Check if cells are correct
 	BOOST_CHECK(it->face(1)->boundary_indicator() == 1);

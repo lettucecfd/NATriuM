@@ -199,6 +199,10 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
 		size_t n_dofs_per_block, size_t dofs_per_cell) const {
 
+	// THIS FUNCTION IS NOT USED!!! See DealIIExtensions module for details
+
+
+
 	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
 	const dealii::ConstraintMatrix constraints;
 

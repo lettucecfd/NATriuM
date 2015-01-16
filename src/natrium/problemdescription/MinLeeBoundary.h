@@ -75,7 +75,7 @@ public:
 	 * @short modify sparsity pattern so that the fluxes over periodic boundary can be incorporated
 	 * @param cSparse the block-sparsity pattern
 	 */
-	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern& cSparse,
+	void addToSparsityPattern(dealii::CompressedSparsityPattern& cSparse,
 			const dealii::DoFHandler<dim>& doFHandler,
 			const BoltzmannModel& boltzmannModel) const;
 
