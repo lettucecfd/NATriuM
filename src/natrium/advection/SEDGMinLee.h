@@ -120,9 +120,6 @@ private:
 	/// Mapping from real space to unit cell
 	const dealii::MappingQ1<dim> m_mapping;
 
-	/// global mass matrix M
-	distributed_vector m_massMatrix;
-
 	/// System matrix L = M^(-1)*(-D+R)
 	distributed_sparse_block_matrix m_systemMatrix;
 
@@ -184,14 +181,14 @@ private:
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
 			dealii::FEFaceValues<dim>& feNeighborFaceValues,
 			size_t dofs_per_cell, size_t n_q_points,
-			dealii::FullMatrix<double> &faceMatrix);
+			dealii::FullMatrix<double> &faceMatrix, const vector<double>& inverseLocalMassMatrix);
 
 	/**
 	 * @short calculate system diagonal block matrix  (Dx*eix + Dy*eiy)
 	 */
 	void calculateAndDistributeLocalStiffnessMatrix(size_t alpha,
 			const vector<dealii::FullMatrix<double> > &derivativeMatrices,
-			dealii::FullMatrix<double> &systemMatrix,
+			dealii::FullMatrix<double> &systemMatrix, const vector<double>& inverseLocalMassMatrix,
 			const std::vector<dealii::types::global_dof_index>& globalDoFs,
 			size_t dofsPerCell);
 
@@ -212,7 +209,7 @@ private:
 			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
 			size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
-			dealii::FEFaceValues<dim>& feNeighborFaceValues);
+			dealii::FEFaceValues<dim>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
 
 	/**
 	 * @short map degrees of freedom to quadrature node indices on a cell

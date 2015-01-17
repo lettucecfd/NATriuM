@@ -84,7 +84,7 @@ public:
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 			const BoltzmannModel& boltzmannModel,
-			const std::map<size_t, size_t>& q_index_to_facedof,
+			const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
 			distributed_sparse_block_matrix& systemMatrix,
 			distributed_block_vector& systemVector, bool useCentralFlux = false) const;
 

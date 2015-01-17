@@ -105,7 +105,7 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 		const BoltzmannModel& boltzmannModel,
-		const std::map<size_t, size_t>& q_index_to_facedof,
+		const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
 		distributed_sparse_block_matrix& systemMatrix,
 		distributed_block_vector& systemVector, bool useCentralFlux) const {
 	// let the feFaceValues object calculate all the values needed at the boundary
@@ -175,13 +175,13 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 	for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
 		if (cell->get_fe().has_support_on_face(i, faceNumber)) {
 			systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
-					localDoFIndices[i], cellFaceMatrix(i, i));
+					localDoFIndices[i], cellFaceMatrix(i, i) * inverseLocalMassMatrix.at(i));
 			systemMatrix.block(alpha - 1,
 					boltzmannModel.getIndexOfOppositeDirection(alpha) - 1).add(
 					localDoFIndices[i], localDoFIndices[i],
-					oppositeDirectionCellFaceMatrix(i, i));
-			systemVector.block(alpha - 1)(localDoFIndices[i]) += cellFaceVector(
-					i);
+					oppositeDirectionCellFaceMatrix(i, i) * inverseLocalMassMatrix.at(i));
+			systemVector.block(alpha - 1)(localDoFIndices[i]) += (cellFaceVector(
+					i) * inverseLocalMassMatrix.at(i));
 		}
 	}
 }
@@ -189,14 +189,14 @@ template void MinLeeBoundary<2>::assembleBoundary(size_t alpha,
 		const typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<2>& feFaceValues,
 		const BoltzmannModel& boltzmannModel,
-		const std::map<size_t, size_t>& q_index_to_facedof,
+		const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
 		distributed_sparse_block_matrix& systemMatrix,
 		distributed_block_vector& systemVector, bool useCentralFlux) const;
 template void MinLeeBoundary<3>::assembleBoundary(size_t alpha,
 		const typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<3>& feFaceValues,
 		const BoltzmannModel& boltzmannModel,
-		const std::map<size_t, size_t>& q_index_to_facedof,
+		const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
 		distributed_sparse_block_matrix& systemMatrix,
 		distributed_block_vector& systemVector, bool useCentralFlux) const;
 

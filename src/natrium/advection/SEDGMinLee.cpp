@@ -111,6 +111,7 @@ void SEDGMinLee<dim>::reassemble() {
 
 // Initialize matrices
 	vector<double> localMassMatrix(dofs_per_cell);
+	vector<double> inverseLocalMassMatrix(dofs_per_cell);
 	vector<dealii::FullMatrix<double> > localDerivativeMatrices;
 	for (size_t i = 0; i < dim; i++) {
 		dealii::FullMatrix<double> D_i(dofs_per_cell, dofs_per_cell);
@@ -138,60 +139,25 @@ void SEDGMinLee<dim>::reassemble() {
 		assembleLocalDerivativeMatrices(feCellValues, dofs_per_cell,
 				n_quadrature_points, localDerivativeMatrices);
 
+		// invert local mass matrix
+		for (size_t i = 0; i < dofs_per_cell; i++){
+			inverseLocalMassMatrix.at(i) = 1./localMassMatrix.at(i);
+		}
+
 		// assemble faces and put together
 		for (size_t alpha = 1; alpha < m_boltzmannModel->getQ(); alpha++) {
 // calculate local diagonal block (cell) matrix -D
 			calculateAndDistributeLocalStiffnessMatrix(alpha,
-					localDerivativeMatrices, localSystemMatrix, localDoFIndices,
+					localDerivativeMatrices, localSystemMatrix, inverseLocalMassMatrix, localDoFIndices,
 					dofs_per_cell);
 // calculate face contributions  R
 			assembleAndDistributeLocalFaceMatrices(alpha, cell, feFaceValues,
 					feSubfaceValues, feNeighborFaceValues, dofs_per_cell,
-					n_quadrature_points, localFaceMatrix);
+					n_quadrature_points, localFaceMatrix, inverseLocalMassMatrix);
 		}
 	}
-	// Multiply by inverse mass matrix
-	size_t n = m_massMatrix.size();
-	// TODO Parallel loop
-	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
-		// consider only diagonal blocks and opposite blocks
-		for (size_t J = 0; J < m_boltzmannModel->getQ() - 1; J++) {
-			if (I != J) {
-				if (I
-						!= m_boltzmannModel->getIndexOfOppositeDirection(J + 1)
-								- 1) {
-					continue;
-				}
-			}
-			// avoid block() calls (expensive!)
-			distributed_sparse_matrix& block = m_systemMatrix.block(I, J);
-			// By using iterators instead of operator () this method became much more efficient
-#ifdef WITH_TRILINOS
-			distributed_sparse_matrix::iterator matrixIterator(&block, 0, 0);
-			distributed_sparse_matrix::iterator lastElement(&block, 0, 0);
-#else
-			distributed_sparse_matrix::iterator matrixIterator(&block);
-			distributed_sparse_matrix::iterator lastElement(&block);
-#endif
-			// iterate over rows (makes the whole procedure cheaper)
-			for (size_t block_row = 0; block_row < block.m(); block_row++) {
-				matrixIterator = block.begin(block_row);
-				lastElement = block.end(block_row);
-				double scaling_factor = 1.0 / m_massMatrix(block_row);
-				for (; matrixIterator != lastElement; matrixIterator++) {
-					// divide by mass Matrix element
-					matrixIterator->value() = scaling_factor
-							* matrixIterator->value();
-				}
-			}
-		}
-	}
-	for (size_t I = 0; I < m_boltzmannModel->getQ() - 1; I++) {
-		for (size_t i = 0; i < n; i++) {
-			m_systemVector.block(I)(i) = m_systemVector.block(I)(i)
-					/ m_massMatrix(i);
-		}
-	}
+
+//#endif
 
 } /* reassemble */
 /// The template parameter must be made explicit in order for the code to compile
@@ -351,8 +317,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	m_systemMatrix.reinit(m_sparsityPattern);
 #endif
 
-	m_massMatrix.reinit(m_doFHandler->n_dofs());
-	std::fill(m_massMatrix.begin(), m_massMatrix.end(), 0.0);
 
 }
 /* updateSparsityPattern */
@@ -367,8 +331,6 @@ void SEDGMinLee<dim>::assembleLocalMassMatrix(
 		size_t n_q_points, vector<double> &massMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs) {
 // initialize with zeros
-// TODO the fill operation can be cut out in the final implementation,
-// changing the += in the loop to =
 	std::fill(massMatrix.begin(), massMatrix.end(), 0.0);
 
 // fill diagonal "matrix"
@@ -378,10 +340,6 @@ void SEDGMinLee<dim>::assembleLocalMassMatrix(
 				* feValues.shape_value(i, q_point) * feValues.JxW(q_point);
 	}
 
-// Assemble to global mass matrix
-	for (size_t i = 0; i < dofs_per_cell; i++) {
-		m_massMatrix(globalDoFs.at(i)) = massMatrix.at(i);
-	}
 } /*assembleLocalMassMatrix*/
 // The template parameter must be made explicit in order for the code to compile.
 template void SEDGMinLee<2>::assembleLocalMassMatrix(
@@ -433,7 +391,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 		dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
 		dealii::FEFaceValues<dim>& feNeighborFaceValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix) {
+		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix, const vector<double>& inverseLocalMassMatrix) {
 
 // loop over all faces
 	for (size_t j = 0; j < dealii::GeometryInfo<2>::faces_per_cell; j++) {
@@ -451,7 +409,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 								cell, neighborCell);
 				assembleAndDistributeInternalFace(alpha, cell, j, neighborCell,
 						opposite_face, feFaceValues, feSubfaceValues,
-						feNeighborFaceValues);
+						feNeighborFaceValues, inverseLocalMassMatrix);
 			} else /* if is not periodic */{
 				// Apply other boundaries
 				if (typeid(*(m_boundaries->getBoundary(boundaryIndicator)))
@@ -460,7 +418,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 							m_boundaries->getMinLeeBoundary(boundaryIndicator);
 					minLeeBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_boltzmannModel,
-							m_q_index_to_facedof.at(j), m_systemMatrix,
+							m_q_index_to_facedof.at(j), inverseLocalMassMatrix, m_systemMatrix,
 							m_systemVector, m_useCentralFlux);
 				}
 			} /* endif isPeriodic */
@@ -471,7 +429,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 					j);
 			assembleAndDistributeInternalFace(alpha, cell, j, neighbor,
 					cell->neighbor_face_no(j), feFaceValues,
-					feSubfaceValues, feNeighborFaceValues);
+					feSubfaceValues, feNeighborFaceValues, inverseLocalMassMatrix);
 		} /* endif is face at boundary*/
 
 	}
@@ -484,19 +442,19 @@ template void SEDGMinLee<2>::assembleAndDistributeLocalFaceMatrices(
 		dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
 		dealii::FEFaceValues<2>& feNeighborFaceValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
+		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix, const vector<double>& inverseLocalMassMatrix);
 template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(
 		size_t alpha,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
 		dealii::FEFaceValues<3>& feNeighborFaceValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix);
+		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix, const vector<double>& inverseLocalMassMatrix);
 
 template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
 		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
-		dealii::FullMatrix<double> &systemMatrix,
+		dealii::FullMatrix<double> &systemMatrix, const vector<double>& inverseLocalMassMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
@@ -511,13 +469,13 @@ template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 			alpha - 1);
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++) {
-			block.add(globalDoFs[j], globalDoFs[k], systemMatrix(j, k));
+			block.add(globalDoFs[j], globalDoFs[k], systemMatrix(j, k) * inverseLocalMassMatrix.at(j));
 		}
 }
 template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
 		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
-		dealii::FullMatrix<double> &systemMatrix,
+		dealii::FullMatrix<double> &systemMatrix, const vector<double>& inverseLocalMassMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
@@ -532,7 +490,7 @@ template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 			alpha - 1);
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++)
-			block.add(globalDoFs[j], globalDoFs[k], systemMatrix(j, k));
+			block.add(globalDoFs[j], globalDoFs[k], systemMatrix(j, k) * inverseLocalMassMatrix.at(j));
 }
 
 template<size_t dim>
@@ -542,7 +500,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 		typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
-		dealii::FEFaceValues<dim>& feNeighborFaceValues) {
+		dealii::FEFaceValues<dim>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix) {
 // get the required FE Values for the local cell
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
@@ -590,10 +548,11 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 			cell_entry = prefactor;
 			neighbor_entry = -prefactor;
 		}
+
 		block.add(localDoFIndices[thisDoF], localDoFIndices[thisDoF],
-				cell_entry);
+				cell_entry * inverseLocalMassMatrix.at(thisDoF));
 		block.add(localDoFIndices[thisDoF], neighborDoFIndices[neighborDoF],
-				neighbor_entry);
+				neighbor_entry * inverseLocalMassMatrix.at(thisDoF));
 	}
 
 // get DoF indices
@@ -610,14 +569,14 @@ template void SEDGMinLee<2>::assembleAndDistributeInternalFace(size_t direction,
 		typename dealii::DoFHandler<2>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
-		dealii::FEFaceValues<2>& feNeighborFaceValues);
+		dealii::FEFaceValues<2>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
 template void SEDGMinLee<3>::assembleAndDistributeInternalFace(size_t direction,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<3>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
-		dealii::FEFaceValues<3>& feNeighborFaceValues);
+		dealii::FEFaceValues<3>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
 
 template<size_t dim>
 std::map<size_t, size_t> SEDGMinLee<dim>::map_celldofs_to_q_index() const {
@@ -752,21 +711,7 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 		throw AdvectionSolverException(
 				"An error occurred while writing the system matrices to files: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
 	}
-// Write the mass matrix
-	try {
-		// filename
-		std::stringstream filename;
-		filename << directory << "/checkpoint_mass_matrix.dat";
-		std::ofstream file(filename.str().c_str());
-#ifndef WITH_TRILINOS
-		m_massMatrix.block_write(file);
-#else
-		// TODO use trilinos functions for read and write. This here is really bad
-#endif
-	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-		throw AdvectionSolverException(
-				"An error occurred while writing the mass matrix to file: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
-	}
+
 // Write the system vector
 	try {
 		// filename
@@ -812,21 +757,7 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 		throw AdvectionSolverException(
 				"An error occurred while reading the system matrices from file: Please switch off the restart option to start the simulation from the beginning.");
 	}
-// Read the mass matrix
-	try {
-		// filename
-		std::stringstream filename;
-		filename << directory << "/checkpoint_mass_matrix.dat";
-		std::ifstream file(filename.str().c_str());
-#ifndef WITH_TRILINOS
-		m_massMatrix.block_read(file);
-#else
-		// TODO use trilinos functions for read and write. This here is really bad
-#endif
-	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-		throw AdvectionSolverException(
-				"An error occurred while reading the mass matrix from file: Please switch off the restart option to start the simulation from the beginning.");
-	}
+
 // Read the system vector
 	try {
 		// filename

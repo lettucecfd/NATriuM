@@ -35,7 +35,9 @@ int main(int argc, char* argv[]) {
 	cout << "Starting NATriuM convergence analysis (h + p)..." << endl;
 
 #ifdef WITH_TRILINOS
-	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
+	int a = 0;
+	char ** b;
+	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a,b);
 #endif
 
 	/////////////////////////////////////
@@ -49,7 +51,7 @@ int main(int argc, char* argv[]) {
 	size_t P_MAX = 12;
 	size_t N_MIN = 2;
 	size_t N_MAX = 8;
-	double MAX_TIME = 3600; // /sec
+	double MAX_TIME = 20000; //
 
 	try {
 		assert(argc >= 3);
@@ -166,11 +168,11 @@ int main(int argc, char* argv[]) {
 		//////////////////////////
 		// Taylor-Green vortex ///
 		//////////////////////////
-		Re = 2 * 4 * atan(1); // 2pi
+		Re =2 * 4 * atan(1); // 2pi
 		L = 2 * 4 * atan(1); // 2pi
 		U = 1.0; // must not be changed here!
 		viscosity = U * L / Re;
-		tmax = 1.0;
+		tmax = 1.0 / viscosity; // scale with viscosity to get same behavior for every Re
 
 	}
 
