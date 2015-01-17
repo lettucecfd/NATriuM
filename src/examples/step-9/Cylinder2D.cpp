@@ -39,7 +39,8 @@ shared_ptr<Triangulation<2> > Cylinder2D::makeGrid() {
 	shared_ptr<Triangulation<2> > tria = make_shared<Triangulation<2> >();
 	dealii::GridIn<2> gridin;
 	gridin.attach_triangulation(*tria);
-	//std::ifstream f("/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-9/cylinder_coarse.msh");
+	// !!! When including unv meshes from Salome, the first two blocks have to be deleted manually (compare Original_Mesh_1.unv to Mesh_1.unv)
+	// The mesh file then regularly begins with the lines "-1" and "2411"
 	std::ifstream f("/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-9/salome/Mesh_1.unv");
 	gridin.read_unv(f);
 	//CFDSolverUtilities::mesh_info(*tria, "cylinder.eps");
@@ -62,7 +63,7 @@ shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(2, constantVelocity));
 	boundaries->addBoundary(
 			make_shared<MinLeeBoundary<2> >(3, constantVelocity));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(4, zeroVelocity));
+	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(5, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();

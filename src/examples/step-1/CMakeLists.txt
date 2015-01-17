@@ -12,7 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                step-1-variousRe.cpp
+                step-1.cpp 
                 TaylorGreenVortex2D.h   
                 TaylorGreenVortex2D.cpp
                )

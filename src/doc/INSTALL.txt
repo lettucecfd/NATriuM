@@ -33,7 +33,7 @@ This file describes the steps conducted for the creation of the NATriuM project 
         0.4.2) You will have to register to download the .gz files (Version 11.10.2 is recommended by deal.II)
         0.4.3) Download and untar
         0.4.7) set environment variable TRILINOS_DIR to a path of your choice (e.g. ~/NATriuM/trilinos-11.10.2)
-        0.4.4) cd trilinos-11.4.1; mkdir build; cd build
+        0.4.4) cd trilinos-11.10.2; mkdir build; cd build
         0.4.5) Cmake: 
 	cmake -D Trilinos_ENABLE_Sacado=ON \
 	-D Trilinos_ENABLE_Stratimikos=ON \

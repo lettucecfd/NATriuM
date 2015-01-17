@@ -7,13 +7,16 @@
 
 #include <stdlib.h>
 #include <sstream>
+#include <mpi.h>
 
 #include "deal.II/numerics/data_out.h"
 
 #include "solver/CFDSolver.h"
 #include "solver/SolverConfiguration.h"
+#include "utilities/CFDSolverUtilities.h"
 
 #include "problemdescription/ProblemDescription.h"
+#include "boltzmannmodels/D2Q9IncompressibleModel.h"
 
 #include "utilities/BasicNames.h"
 
@@ -22,9 +25,12 @@
 using namespace natrium;
 
 // Main function
-int main() {
+int main(int argc, char** argv) {
 
 	cout << "Starting NATriuM step-9..." << endl;
+#ifdef WITH_TRILINOS
+	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
+#endif
 
 	// set Reynolds and Mach number
 	const double Re = 10;
@@ -35,10 +41,17 @@ int main() {
 	const double dqScaling = 1;
 	const double viscosity = U / Re; // (because L = 1)
 
+	// load grid
+	shared_ptr<Cylinder2D> cylinder = make_shared<Cylinder2D>(
+				viscosity, U);
+	D2Q9IncompressibleModel boltzmannModel(dqScaling);
+	// set FE order and time step size
+	const size_t orderOfFiniteElement = 2;
+	const double cfl=1.5;
 
-	// set small time step size
-	const double timeStepSize = 0.01;
-	const size_t orderOfFiniteElement = 5;
+	const double timeStepSize = CFDSolverUtilities::calculateTimestep<2>(*cylinder->getTriangulation(),
+			orderOfFiniteElement, boltzmannModel, cfl);
+
 
 	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 
@@ -49,6 +62,7 @@ int main() {
 	dirname << getenv("NATRIUM_HOME") << "/step-9";
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
+	configuration->setUserInteraction(false);
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
@@ -59,9 +73,6 @@ int main() {
 	configuration->setCommandLineVerbosity(7);
 	//configuration->setDistributionInitType(Iterative);
 
-
-	shared_ptr<Cylinder2D> cylinder = make_shared<Cylinder2D>(
-				viscosity, U);
 
 	shared_ptr<ProblemDescription<2> > couetteProblem = cylinder;
 	CFDSolver<2> solver(configuration, couetteProblem);

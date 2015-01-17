@@ -323,7 +323,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 			}
 			addAnalyticSolutionToOutput(data_out);
 			/// For Benchmarks: add analytic solution
-			data_out.build_patches();
+			data_out.build_patches(m_configuration->getSedgOrderOfFiniteElement()+1);
 			data_out.write_vtu(vtu_output);
 		}
 
