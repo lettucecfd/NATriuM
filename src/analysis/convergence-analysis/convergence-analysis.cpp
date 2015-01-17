@@ -34,6 +34,10 @@ int main(int argc, char* argv[]) {
 
 	cout << "Starting NATriuM convergence analysis (h + p)..." << endl;
 
+#ifdef WITH_TRILINOS
+	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
+#endif
+
 	/////////////////////////////////////
 	// parse command line parameters ////
 	/////////////////////////////////////
