@@ -29,7 +29,7 @@ int main() {
 #ifdef WITH_TRILINOS
 	int a = 0;
 	char ** b;
-	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
+	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a, b);
 
 #endif
 
