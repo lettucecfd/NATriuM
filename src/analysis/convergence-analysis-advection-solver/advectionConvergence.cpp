@@ -28,6 +28,7 @@
 using namespace natrium;
 
 //#define OUTPUT
+#define SMOOTH
 
 // analytic solution (where should the bump be after a certain time)
 void getAnalyticSolution(double time, distributed_vector& analyticSolution,
@@ -35,8 +36,6 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution,
 	assert(analyticSolution.size() == supportPoints.size());
 	assert(supportPoints.size() > 0);
 
-	//dealii::Point<2> midPoint(0.25, 0.25);
-	//double R = 0.125;
 	double lambda = 1;
 
 	dealii::Point<2> originalPoint;
@@ -51,18 +50,15 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution,
 		while (originalPoint(0) > 1.0) {
 			originalPoint(0) -= 1.0;
 		}
-		/*double distance = originalPoint.distance(midPoint);
-		 if (distance <= 2*R) {
-		 // smooth function!
-		 double smooth = 0.5 - 1.0/(4*atan(1)) * atan(1.0/pow(5*(R-distance),2) - 1.0/pow(5*distance,2));
-		 //double smooth = 0.1*cos(Math::PI / 0.5 * distance);
-		 analyticSolution(i) = 1 + smooth;//; + 0.1;/smooth;//cos(Math::PI / 0.5 * distance);  1 + 0.1;
-		 } else {
-		 analyticSolution(i) = 1;
-		 }*/
+#ifdef SMOOTH
+		// see Hesthaven, p. 27
+		double h = sin(8 * atan(1) * originalPoint(0) * lambda);
+		analyticSolution(i) = h;
+#else
+		// see Hesthaven, p. 83
 		double h = sin(8 * atan(1) * originalPoint(0) * lambda);
 		analyticSolution(i) = ((h > 0) - (h < 0)) * pow(fabs(h), 2.0);
-		//analyticSolution(i) = exp(-(originalPoint(0)-0.25)*(originalPoint(0)-0.25));
+#endif
 	}
 }
 
@@ -189,6 +185,12 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 int main() {
 	cout << "Starting convergence test for the SEDG advection solver.." << endl;
 
+#ifdef WITH_TRILINOS
+	int a = 0;
+	char ** b;
+	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a, b);
+#endif
+
 	// Make results dir
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/convergence-advection-solver";
@@ -217,7 +219,7 @@ int main() {
 			//for (int i = -1; i < 5; i++) {
 			//	double deltaT = deltaX * pow(0.5, i);
 			double deltaT = 0.4 * pow(0.5, refinementLevel)
-					/ (feOrder * feOrder);
+					/ ((feOrder+1) * (feOrder+1));
 			cout << "dt = " << deltaT << "; " << endl;
 			numberOfTimeSteps = 1.0 / deltaT;
 			if (numberOfTimeSteps <= 5) {

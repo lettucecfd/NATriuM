@@ -22,17 +22,19 @@
 using namespace natrium;
 
 // Main function
-int main() {
+int main(int argc, char** argv) {
 
 	cout << "Starting NATriuM step-2..." << endl;
+
+	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
 
 	// set Reynolds and Mach number
 	const double Re = 10;
 	const double Ma = 0.1;
 
 	// set spatial discretization
-	size_t refinementLevel = 4;
-	size_t orderOfFiniteElement = 2;
+	size_t refinementLevel = 1;
+	size_t orderOfFiniteElement = 1;
 	bool isUnstructured = false;
 
 	// set Problem so that the right Re and Ma are achieved
@@ -57,7 +59,7 @@ int main() {
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
-	configuration->setNumberOfTimeSteps(5./timeStepSize);
+	configuration->setNumberOfTimeSteps(1000);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
 	configuration->setTimeStepSize(timeStepSize);

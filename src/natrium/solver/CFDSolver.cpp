@@ -51,6 +51,13 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 						/ "natrium.log").string());
 	}
 
+	/// check if problem's boundary conditions are well defined
+	bool boundaries_ok = problemDescription->checkBoundaryConditions();
+	if (!boundaries_ok){
+		throw CFDSolverException(
+				"Boundary conditions do no fit to triangulation.");
+	}
+
 	/// check if problem and solver configuration fit together
 	configuration->checkProblem(problemDescription);
 	m_problemDescription = problemDescription;

@@ -172,7 +172,7 @@ int main(int argc, char* argv[]) {
 		L = 2 * 4 * atan(1); // 2pi
 		U = 1.0; // must not be changed here!
 		viscosity = U * L / Re;
-		tmax = 1.0 / viscosity; // scale with viscosity to get same behavior for every Re
+		tmax = 0.01 / viscosity; // scale with viscosity to get same behavior for every Re
 
 	}
 
@@ -262,6 +262,9 @@ int main(int argc, char* argv[]) {
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(WARNING);
 			configuration->setTimeStepSize(dt);
+			if ( int(tmax / dt) == 0) {
+				continue;
+			}
 			configuration->setNumberOfTimeSteps(tmax / dt);
 			configuration->setInitializationScheme(ITERATIVE);
 			configuration->setIterativeInitializationNumberOfIterations(1000);
