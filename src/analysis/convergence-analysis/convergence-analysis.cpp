@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 #ifdef WITH_TRILINOS
 	int a = 0;
 	char ** b;
-	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a,b);
+	static dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a, b);
 #endif
 
 	/////////////////////////////////////
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 				cout << "---------------------------" << endl;
 				cout << "No option " << elems[0] << endl;
 				cout << "---------------------------" << endl;
-				throw ("Not all cmd line arguments valid.");
+				throw("Not all cmd line arguments valid.");
 			}
 		} catch (std::exception& e) {
 			cout
@@ -162,17 +162,17 @@ int main(int argc, char* argv[]) {
 		U = 1;
 		L = 1;
 		viscosity = U * L / Re;
-		tmax = L/U*40/(sqrt(3)*20); //40.0 -> dimensionless;
+		tmax = L / U * 40 / (sqrt(3) * 20); //40.0 -> dimensionless;
 
 	} else {
 		//////////////////////////
 		// Taylor-Green vortex ///
 		//////////////////////////
-		Re =2 * 4 * atan(1); // 2pi
+		Re = 2 * 4 * atan(1); // 2pi
 		L = 2 * 4 * atan(1); // 2pi
 		U = 1.0; // must not be changed here!
 		viscosity = U * L / Re;
-		tmax = 0.01 / viscosity; // scale with viscosity to get same behavior for every Re
+		tmax = 1 / viscosity; // scale with viscosity to get same behavior for every Re
 
 	}
 
@@ -193,10 +193,10 @@ int main(int argc, char* argv[]) {
 	time_t now = time(0);
 	tm *ltm = localtime(&now);
 	std::stringstream filename;
-	filename << getenv("NATRIUM_HOME") << "/convergence-analysis/convergence-" << bench_str << "-"
-			<< scal_str << "-" << 1900 + ltm->tm_year << "-" << ltm->tm_mon +1
-			<< "-" << ltm->tm_mday << "_" << ltm->tm_hour << "-" << ltm->tm_min
-			<< ".txt";
+	filename << getenv("NATRIUM_HOME") << "/convergence-analysis/convergence-"
+			<< bench_str << "-" << scal_str << "-" << 1900 + ltm->tm_year << "-"
+			<< ltm->tm_mon + 1 << "-" << ltm->tm_mday << "_" << ltm->tm_hour
+			<< "-" << ltm->tm_min << ".txt";
 	std::ofstream orderFile(filename.str().c_str());
 	orderFile
 			<< "# refinement   p      dx    #dofs    dt   #steps   tmax    scaling    Ma    tau    max |u_analytic|  ||u_analytic||_2   max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2       init time (sec)             loop time (sec)         time for one iteration (sec)"
@@ -205,7 +205,9 @@ int main(int argc, char* argv[]) {
 	////////////////////////////
 	// convergence analysis ////
 	////////////////////////////
-	cout << "Starting benchmarking for p in [" << P_MIN << ", " << P_MAX << "]; N in [" << N_MIN << ", " << N_MAX << "]; max_time = " << MAX_TIME << "..." << endl;
+	cout << "Starting benchmarking for p in [" << P_MIN << ", " << P_MAX
+			<< "]; N in [" << N_MIN << ", " << N_MAX << "]; max_time = "
+			<< MAX_TIME << "..." << endl;
 	for (size_t refinementLevel = N_MIN; refinementLevel <= N_MAX;
 			refinementLevel++) {
 
@@ -262,14 +264,16 @@ int main(int argc, char* argv[]) {
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(WARNING);
 			configuration->setTimeStepSize(dt);
-			if ( int(tmax / dt) == 0) {
+			if (int(tmax / dt) == 0) {
 				continue;
 			}
 			configuration->setNumberOfTimeSteps(tmax / dt);
-			configuration->setInitializationScheme(ITERATIVE);
-			configuration->setIterativeInitializationNumberOfIterations(1000);
-			configuration->setIterativeInitializationResidual(1e-15);
-
+			if (!WALL) {
+				configuration->setInitializationScheme(ITERATIVE);
+				configuration->setIterativeInitializationNumberOfIterations(
+						0.1*tmax/dt);
+				configuration->setIterativeInitializationResidual(1e-20);
+			}
 			timestart = clock();
 			BenchmarkCFDSolver<2> solver(configuration, benchmark);
 			time1 = clock() - timestart;
