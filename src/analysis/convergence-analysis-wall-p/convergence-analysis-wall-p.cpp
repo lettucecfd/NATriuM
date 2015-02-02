@@ -79,15 +79,16 @@ int main() {
 			<< "#  orderOfFe  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 12; orderOfFiniteElement+= 2) {
-		timeFile << endl << "# order FE = " << orderOfFiniteElement << endl;
-		orderFile << endl << "# order FE = " << orderOfFiniteElement << endl;
-		cout << endl << "order FE = " << orderOfFiniteElement << endl;
-
-		for (double dt = 0.1; dt >= 0.00001; dt /= 2.) {
+		for (double dt = 0.001; dt > 0.00025; dt /= 2.) {
 			timeFile << "# dt = " << dt << endl;
 			orderFile << "# dt = " << dt << endl;
 			cout << "dt = " << dt << endl;
+
+
+			for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 12; orderOfFiniteElement+= 2) {
+				timeFile << endl << "# order FE = " << orderOfFiniteElement << endl;
+				orderFile << endl << "# order FE = " << orderOfFiniteElement << endl;
+				cout << endl << "order FE = " << orderOfFiniteElement << endl;
 
 			// time measurement variables
 			double time1, time2, timestart;

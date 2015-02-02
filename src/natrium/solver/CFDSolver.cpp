@@ -26,6 +26,7 @@
 
 #include "../utilities/Logging.h"
 #include "../utilities/CFDSolverUtilities.h"
+#include "../utilities/MPIGuard.h"
 
 namespace natrium {
 

@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -125,11 +125,11 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MinLeeBoundary.html#ab2409b8dceb378d7e2bdb457e8c5f374">~MinLeeBoundary</a> ()</td></tr>
 <tr class="memdesc:ab2409b8dceb378d7e2bdb457e8c5f374"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br/></td></tr>
 <tr class="separator:ab2409b8dceb378d7e2bdb457e8c5f374"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a873e55801ae7972803d50c7fb805c391"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MinLeeBoundary.html#a873e55801ae7972803d50c7fb805c391">addToSparsityPattern</a> (dealii::BlockCompressedSparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; dim &gt; &amp;doFHandler, const <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &amp;boltzmannModel) const </td></tr>
-<tr class="memdesc:a873e55801ae7972803d50c7fb805c391"><td class="mdescLeft">&#160;</td><td class="mdescRight">modify sparsity pattern so that the fluxes over periodic boundary can be incorporated  <a href="#a873e55801ae7972803d50c7fb805c391">More...</a><br/></td></tr>
-<tr class="separator:a873e55801ae7972803d50c7fb805c391"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad23ea2da1a52b6550419eb504aa611ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MinLeeBoundary.html#ad23ea2da1a52b6550419eb504aa611ab">assembleBoundary</a> (size_t alpha, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t faceNumber, dealii::FEFaceValues&lt; dim &gt; &amp;feFaceValues, const <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &amp;boltzmannModel, const std::map&lt; size_t, size_t &gt; &amp;q_index_to_facedof, distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, bool useCentralFlux=false) const </td></tr>
-<tr class="separator:ad23ea2da1a52b6550419eb504aa611ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9737abb4fab0f8b6763e65d42118ab07"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MinLeeBoundary.html#a9737abb4fab0f8b6763e65d42118ab07">addToSparsityPattern</a> (dealii::CompressedSparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; dim &gt; &amp;doFHandler, const <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &amp;boltzmannModel) const </td></tr>
+<tr class="memdesc:a9737abb4fab0f8b6763e65d42118ab07"><td class="mdescLeft">&#160;</td><td class="mdescRight">modify sparsity pattern so that the fluxes over periodic boundary can be incorporated  <a href="#a9737abb4fab0f8b6763e65d42118ab07">More...</a><br/></td></tr>
+<tr class="separator:a9737abb4fab0f8b6763e65d42118ab07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cbf4118f7344522e87027bc606b7b11"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MinLeeBoundary.html#a4cbf4118f7344522e87027bc606b7b11">assembleBoundary</a> (size_t alpha, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t faceNumber, dealii::FEFaceValues&lt; dim &gt; &amp;feFaceValues, const <a class="el" href="classnatrium_1_1BoltzmannModel.html">BoltzmannModel</a> &amp;boltzmannModel, const std::map&lt; size_t, size_t &gt; &amp;q_index_to_facedof, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, bool useCentralFlux=false) const </td></tr>
+<tr class="separator:a4cbf4118f7344522e87027bc606b7b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a050f00caec37ee8e2f6e19a4d3d2d1fc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a050f00caec37ee8e2f6e19a4d3d2d1fc"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getBoundaryIndicator</b> () const </td></tr>
 <tr class="separator:a050f00caec37ee8e2f6e19a4d3d2d1fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,7 +157,7 @@ class natrium::MinLeeBoundary&lt; dim &gt;</h3>
 </p>
 <p>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a873e55801ae7972803d50c7fb805c391"></a>
+<a class="anchor" id="a9737abb4fab0f8b6763e65d42118ab07"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -166,7 +166,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="memname">template void <a class="el" href="classnatrium_1_1MinLeeBoundary.html">natrium::MinLeeBoundary</a>&lt; dim &gt;::addToSparsityPattern </td>
           <td>(</td>
-          <td class="paramtype">dealii::BlockCompressedSparsityPattern &amp;&#160;</td>
+          <td class="paramtype">dealii::CompressedSparsityPattern &amp;&#160;</td>
           <td class="paramname"><em>cSparse</em>, </td>
         </tr>
         <tr>
@@ -199,7 +199,7 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ad23ea2da1a52b6550419eb504aa611ab"></a>
+<a class="anchor" id="a4cbf4118f7344522e87027bc606b7b11"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -244,6 +244,12 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>inverseLocalMassMatrix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">distributed_sparse_block_matrix &amp;&#160;</td>
           <td class="paramname"><em>systemMatrix</em>, </td>
         </tr>
@@ -266,7 +272,7 @@ template&lt;size_t dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Distribute to global matrix TODO Loop only over diagonal </p>
+<p>Distribute to global matrix </p>
 
 </div>
 </div>
@@ -277,7 +283,7 @@ template&lt;size_t dim&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jan 12 2015 13:28:47 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 2 2015 08:44:03 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

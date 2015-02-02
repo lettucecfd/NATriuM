@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['operator_28_29',['operator()',['../classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d',1,'natrium::Logging']]],
-  ['output',['output',['../classnatrium_1_1BenchmarkCFDSolver.html#a9708132fc0cef4ae55e3453672891c81',1,'natrium::BenchmarkCFDSolver::output()'],['../classnatrium_1_1CFDSolver.html#abf6804f132885502b61877fc1f9ca4a2',1,'natrium::CFDSolver::output()']]],
-  ['own_5fdouble_5fless',['own_double_less',['../classnatrium_1_1own__double__less.html',1,'natrium']]]
+  ['natrium_20_2d_20a_20discontinuous_20galerkin_20lattice_20boltzmann_20simulation_20tool_20based_20on_20deal_2eii',['NATriuM - A discontinuous Galerkin Lattice Boltzmann simulation tool based on deal.II',['../index.html',1,'']]],
+  ['math',['Math',['../namespacenatrium_1_1Math.html',1,'natrium']]]
 ];

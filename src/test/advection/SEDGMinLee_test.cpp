@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 						make_shared<D2Q9IncompressibleModel>(), "",
 						!useLaxFlux);
 
-				distributed_sparse_block_matrix& matrices =
+				const distributed_sparse_block_matrix& matrices =
 						streaming.getSystemMatrix();
 
 				BOOST_CHECK(matrices.n_block_cols() == D2Q9IncompressibleModel::Q-1);

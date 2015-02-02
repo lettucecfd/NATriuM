@@ -154,6 +154,10 @@ inline ProblemDescription<dim>::ProblemDescription(
 		double viscosity, double characteristicLength) :
 		m_triangulation(triangulation), m_viscosity(
 				viscosity), m_characteristicLength(characteristicLength) {
+#ifdef WITH_TRILINOS
+	/// Create MPI (if not done yet)
+	MPIGuard::getInstance();
+#endif
 }
 
 } /* namespace natrium */

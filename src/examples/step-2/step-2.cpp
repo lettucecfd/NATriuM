@@ -26,8 +26,6 @@ int main(int argc, char** argv) {
 
 	cout << "Starting NATriuM step-2..." << endl;
 
-	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
-
 	// set Reynolds and Mach number
 	const double Re = 10;
 	const double Ma = 0.1;

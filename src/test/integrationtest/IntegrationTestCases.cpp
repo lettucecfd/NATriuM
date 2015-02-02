@@ -9,6 +9,7 @@
 
 #include <time.h>
 #include <math.h>
+#include <sstream>
 
 #include "solver/BenchmarkCFDSolver.h"
 #include "solver/SolverConfiguration.h"
@@ -18,6 +19,7 @@
 #include "utilities/CFDSolverUtilities.h"
 
 #include "step-1/TaylorGreenVortex2D.h"
+#include "step-2/CouetteFlow2D.h"
 
 namespace natrium {
 namespace IntegrationTestCases {
@@ -33,7 +35,6 @@ TestResult ConvergenceTestPeriodic() {
 					"The kinematic viscosity is nu=1 and the Reynolds number 2*PI."
 					"The simulated and reference E_kin are compared at t=1/(2 nu)";
 	result.time = clock();
-
 
 	// Initialization
 	const double viscosity = 1;
@@ -97,14 +98,80 @@ TestResult ConvergenceTestPeriodic() {
 		}
 	}
 	return result;
-}
+} /* ConvergenceTestPeriodicBoundary */
 
 TestResult ConvergenceTestMovingWall() {
 	TestResult result;
+	result.id = 2;
+	result.name = "Convergence Test: Wall Boundaries";
+	result.details =
+			"This test runs the Unsteady Couette flow benchmark on a 4x4 grid with FE orders 4,6,8 "
+					"and CFL=0.4. It reproduces exponential convergence observed by Min and Lee for Re=2000."
+					"The kinematic viscosity is nu=1 and the Reynolds number 2*PI."
+					"The simulated and reference E_kin are compared at t=1/(2 nu)";
+	result.time = clock();
 
+	// Initialization (with standard LB units <=> scaling=1)
+	const double Re = 2000;
+	const double Ma = 0.05;
+	double scaling = 1;
+	const double U = scaling * Ma / sqrt(3);
+	const double L = 1.0;
+	const double viscosity = U * L / Re;
+	const double refinementLevel = 2;
+	const double CFL = 0.4;
+
+	shared_ptr<Benchmark<2> > benchmark = make_shared<CouetteFlow2D>(viscosity,
+			U, refinementLevel);
+
+	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 6;
+			orderOfFiniteElement += 2) {
+		// Initialization
+		double dt = CFDSolverUtilities::calculateTimestep<2>(
+				*benchmark->getTriangulation(), orderOfFiniteElement,
+				D2Q9IncompressibleModel(scaling), CFL);
+		shared_ptr<SolverConfiguration> configuration = make_shared<
+				SolverConfiguration>();
+		configuration->setSwitchOutputOff(true);
+		configuration->setRestartAtLastCheckpoint(false);
+		configuration->setUserInteraction(false);
+		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+		configuration->setStencilScaling(scaling);
+		configuration->setTimeStepSize(dt);
+		configuration->setNumberOfTimeSteps(40.0 / dt);
+
+		// Simulation
+		BenchmarkCFDSolver<2> solver(configuration, benchmark);
+		solver.getSolverStats()->update();
+		solver.run();
+		solver.getErrorStats()->update();
+
+		// Analysis
+		// Velocity error (compare Paper by Min and Lee)
+		std::stringstream stream1;
+		stream1 << "|u-u_ref|_sup; p=" << orderOfFiniteElement;
+		result.quantity.push_back(stream1.str());
+		result.expected.push_back(pow(10.0, -(0.5 * orderOfFiniteElement + 1.0)));
+		result.threshold.push_back(pow(10.0, -(0.5 * orderOfFiniteElement + 1.0)));
+		result.outcome.push_back(solver.getErrorStats()->getMaxVelocityError());
+	}
+
+	// Finalize test
+	result.time = (clock() - result.time) / CLOCKS_PER_SEC;
+	assert(result.quantity.size() == result.expected.size());
+	assert(result.quantity.size() == result.threshold.size());
+	assert(result.quantity.size() == result.outcome.size());
+	result.success = true;
+	for (size_t i = 0; i < result.quantity.size(); i++) {
+		if (fabs(result.expected.at(i) - result.outcome.at(i))
+				> result.threshold.at(i)) {
+			result.success = false;
+			*result.error_msg << result.quantity.at(i)
+					<< " not below threshold.";
+		}
+	}
 	return result;
-
-}
+} /* ConvergenceTestMovingWall */
 
 } /* namespace IntegrationTests */
 } /* namespace natrium */

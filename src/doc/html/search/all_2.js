@@ -13,6 +13,7 @@ var searchData=
   ['cfdsolverutilities_2ecpp',['CFDSolverUtilities.cpp',['../CFDSolverUtilities_8cpp.html',1,'']]],
   ['cfdsolverutilities_2eh',['CFDSolverUtilities.h',['../CFDSolverUtilities_8h.html',1,'']]],
   ['cfdsolverutilities_5ftest_2ecpp',['CFDSolverUtilities_test.cpp',['../CFDSolverUtilities__test_8cpp.html',1,'']]],
+  ['checkboundaryconditions',['checkBoundaryConditions',['../classnatrium_1_1ProblemDescription.html#aed8ec93fcba6c0b78c04ef91b8703f7a',1,'natrium::ProblemDescription']]],
   ['checkproblem',['checkProblem',['../classnatrium_1_1SolverConfiguration.html#a49e6c9cd57689289c79b47a6104b483a',1,'natrium::SolverConfiguration::checkProblem(shared_ptr&lt; ProblemDescription&lt; 2 &gt; &gt; cFDProblem)'],['../classnatrium_1_1SolverConfiguration.html#af13da3022a9f995ce09b0918092da0c9',1,'natrium::SolverConfiguration::checkProblem(shared_ptr&lt; ProblemDescription&lt; 3 &gt; &gt; cFDProblem)']]],
   ['collide',['collide',['../classnatrium_1_1CFDSolver.html#ac9bec7d0c4bcd5e02c5213ec09438c02',1,'natrium::CFDSolver']]],
   ['collideall',['collideAll',['../classnatrium_1_1Collision.html#a5e1fe09430194ccb35bd2fcaa5958bf2',1,'natrium::Collision::collideAll(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const vector&lt; bool &gt; &amp;isBoundary, bool inInitializationProcedure=false) const '],['../classnatrium_1_1Collision.html#a12e3b507cbf329bbcc2bc8b9a184f6e2',1,'natrium::Collision::collideAll(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const ']]],
@@ -37,8 +38,8 @@ var searchData=
   ['couetteflow2d_2ecpp',['CouetteFlow2D.cpp',['../CouetteFlow2D_8cpp.html',1,'']]],
   ['couetteflow2d_2eh',['CouetteFlow2D.h',['../CouetteFlow2D_8h.html',1,'']]],
   ['createcellmap',['createCellMap',['../classnatrium_1_1PeriodicBoundary.html#a233d460baa307b13bc32efb57c07f7c5',1,'natrium::PeriodicBoundary']]],
-  ['cylinder2d',['Cylinder2D',['../classnatrium_1_1Cylinder2D.html',1,'natrium']]],
   ['cylinder2d',['Cylinder2D',['../classnatrium_1_1Cylinder2D.html#a38e5826b6fd4fc859b74783de3999658',1,'natrium::Cylinder2D']]],
+  ['cylinder2d',['Cylinder2D',['../classnatrium_1_1Cylinder2D.html',1,'natrium']]],
   ['cylinder2d_2ecpp',['Cylinder2D.cpp',['../Cylinder2D_8cpp.html',1,'']]],
   ['cylinder2d_2eh',['Cylinder2D.h',['../Cylinder2D_8h.html',1,'']]]
 ];

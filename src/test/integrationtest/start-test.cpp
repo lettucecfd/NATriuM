@@ -86,16 +86,21 @@ int main() {
 	bool errors = false;
 	HtmlTrace htmlTrace;
 
-#ifdef WITH_TRILINOS
-	int a = 0;
-	char ** b;
-	static dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a, b);
-
-#endif
-
 	// Test 1: Convergence Periodic Walls
 	IntegrationTestCases::TestResult result =
 			IntegrationTestCases::ConvergenceTestPeriodic();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		cout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		cout << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
+	// Test 2: Convergence Moving Walls
+	result = IntegrationTestCases::ConvergenceTestMovingWall();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
 		cout << "-  " << result.name << " ... " << "OK." << endl;

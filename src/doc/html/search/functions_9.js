@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['operator_28_29',['operator()',['../classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d',1,'natrium::Logging']]],
-  ['output',['output',['../classnatrium_1_1BenchmarkCFDSolver.html#a9708132fc0cef4ae55e3453672891c81',1,'natrium::BenchmarkCFDSolver::output()'],['../classnatrium_1_1CFDSolver.html#abf6804f132885502b61877fc1f9ca4a2',1,'natrium::CFDSolver::output()']]]
+  ['minleeboundary',['MinLeeBoundary',['../classnatrium_1_1MinLeeBoundary.html#a1e9acd91ee2b97783932c4df45d38668',1,'natrium::MinLeeBoundary::MinLeeBoundary(size_t boundaryIndicator, shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryDensity, shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryVelocity)'],['../classnatrium_1_1MinLeeBoundary.html#a6bd31d48ffaf23ac74bc303b379b4ca8',1,'natrium::MinLeeBoundary::MinLeeBoundary(size_t boundaryIndicator, const dealii::Vector&lt; double &gt; &amp;velocity)']]]
 ];

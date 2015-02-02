@@ -19,8 +19,7 @@ Inheritance diagram for natrium\-:\-:Problem\-Description$<$ dim $>$\-:\begin{fi
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}{\hyperlink{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}{Problem\-Description} (shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ triangulation, double viscosity, double characteristic\-Length)}\label{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}
-
+\hyperlink{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}{Problem\-Description} (shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ triangulation, double viscosity, double characteristic\-Length)
 \begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}{virtual \hyperlink{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}{$\sim$\-Problem\-Description} ()}\label{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}
 
@@ -37,6 +36,8 @@ virtual void \hyperlink{classnatrium_1_1ProblemDescription_a2f3da77af3942e626677
 \begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
 virtual void \hyperlink{classnatrium_1_1ProblemDescription_a545b19d87ec6dc9c27e8740097f7cace}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, const vector$<$ dealii\-::\-Point$<$ dim $>$ $>$ \&support\-Points) const =0
 \begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
+bool \hyperlink{classnatrium_1_1ProblemDescription_aed8ec93fcba6c0b78c04ef91b8703f7a}{check\-Boundary\-Conditions} ()
+\begin{DoxyCompactList}\small\item\em check if boundary conditions are uniquely assigned to boundary indicator \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ProblemDescription_ae588b1e0ce4dd89e2fcfbb0c191b1c41}{void {\bfseries set\-Triangulation} (const shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$ \&triangulation)}\label{classnatrium_1_1ProblemDescription_ae588b1e0ce4dd89e2fcfbb0c191b1c41}
 
 \item 
@@ -71,6 +72,22 @@ Abstract class for the description of a C\-F\-D problem. The description include
 \hline
 \end{DoxyTemplParams}
 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!Problem\-Description@{Problem\-Description}}
+\index{Problem\-Description@{Problem\-Description}!natrium::ProblemDescription@{natrium\-::\-Problem\-Description}}
+\subsubsection[{Problem\-Description}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ {\bf natrium\-::\-Problem\-Description}$<$ dim $>$\-::{\bf Problem\-Description} (
+\begin{DoxyParamCaption}
+\item[{shared\-\_\-ptr$<$ dealii\-::\-Triangulation$<$ dim $>$ $>$}]{triangulation, }
+\item[{double}]{viscosity, }
+\item[{double}]{characteristic\-Length}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1ProblemDescription_aae378c7eb216b616de56dfcd162c02c2}
+
+
+constructor 
+
+Create M\-P\-I (if not done yet) 
 
 \subsection{Member Function Documentation}
 \hypertarget{classnatrium_1_1ProblemDescription_a2f3da77af3942e626677cbdb04d683a9}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
@@ -119,6 +136,20 @@ set initial velocities
 
 Implemented in \hyperlink{classnatrium_1_1Benchmark_a51988a00da9aa9d055e4e40815c3ee71}{natrium\-::\-Benchmark$<$ dim $>$}, and \hyperlink{classnatrium_1_1Benchmark_a51988a00da9aa9d055e4e40815c3ee71}{natrium\-::\-Benchmark$<$ 2 $>$}.
 
+\hypertarget{classnatrium_1_1ProblemDescription_aed8ec93fcba6c0b78c04ef91b8703f7a}{\index{natrium\-::\-Problem\-Description@{natrium\-::\-Problem\-Description}!check\-Boundary\-Conditions@{check\-Boundary\-Conditions}}
+\index{check\-Boundary\-Conditions@{check\-Boundary\-Conditions}!natrium::ProblemDescription@{natrium\-::\-Problem\-Description}}
+\subsubsection[{check\-Boundary\-Conditions}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ bool {\bf natrium\-::\-Problem\-Description}$<$ dim $>$\-::check\-Boundary\-Conditions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1ProblemDescription_aed8ec93fcba6c0b78c04ef91b8703f7a}
+
+
+check if boundary conditions are uniquely assigned to boundary indicator 
+
+\begin{DoxyReturn}{Returns}
+true, if boundaries O\-K 
+\end{DoxyReturn}
 
 
 The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}

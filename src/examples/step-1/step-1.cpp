@@ -26,12 +26,6 @@ using namespace natrium;
 int main() {
 
 	cout << "Starting NATriuM step-1 ..." << endl;
-#ifdef WITH_TRILINOS
-	int a = 0;
-	char ** b;
-	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a, b);
-
-#endif
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
