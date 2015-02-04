@@ -19,6 +19,20 @@ namespace natrium {
 
 namespace CFDSolverUtilities {
 
+class CFDSolverUtilitiesException: public std::exception {
+private:
+	std::string message;
+public:
+	CFDSolverUtilitiesException(const char *msg) :
+			message(msg) {
+	}
+	~CFDSolverUtilitiesException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
 /**
  * @short
  */

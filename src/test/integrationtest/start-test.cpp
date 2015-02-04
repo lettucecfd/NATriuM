@@ -76,13 +76,14 @@ void print_line_html(IntegrationTestCases::TestResult& result,
 		//end line
 		html << "  </tr>\n";
 	}
+	html.flush();
 
 }
 
 // Main function
 int main() {
 
-	cout << "Start integration tests ..." << endl;
+	cout << "Start integration tests. This will take a few minutes..." << endl;
 	bool errors = false;
 	HtmlTrace htmlTrace;
 

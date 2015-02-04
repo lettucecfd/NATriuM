@@ -15,6 +15,7 @@
 
 #include "../utilities/Logging.h"
 #include "../utilities/BasicNames.h"
+#include "../utilities/MPIGuard.h"
 
 namespace natrium {
 

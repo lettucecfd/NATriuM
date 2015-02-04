@@ -43,7 +43,6 @@ public:
 	}
 };
 
-
 /**
  * @short  A periodic boundary condition,
  * @note   First use in step-1 tutorial.
@@ -60,7 +59,6 @@ private:
 
 	/// boundary indicator of second interfacial line
 	size_t m_boundaryIndicator2;
-
 
 	//////////////////////////
 	// ONLY RELEVANT FOR 2D //
@@ -79,9 +77,8 @@ private:
 
 	/// Container for all cells that belong to this boundary
 	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
-	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
-
-
+	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
+			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
 
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
@@ -90,7 +87,6 @@ private:
 	 * @throws PeriodicBoundaryNotPossible exception if not OK
 	 */
 	void checkInterfacePositions();
-
 
 public:
 
@@ -139,7 +135,8 @@ public:
 	 *
 	 * @return local face number of cell1, denoting the respective cell number
 	 */
-	size_t getOppositeCellAtPeriodicBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+	size_t getOppositeCellAtPeriodicBoundary(
+			const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
 			typename dealii::DoFHandler<dim>::cell_iterator & neighborCell) const;
 
 	/**
@@ -148,7 +145,9 @@ public:
 	 * @param[in] faceBoundaryIndicator the boundary indicator of the face
 	 *
 	 */
-	bool isFaceInBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const;
+	bool isFaceInBoundary(
+			const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+			size_t faceBoundaryIndicator) const;
 
 	virtual bool isPeriodic() const {
 		return true;
@@ -167,8 +166,9 @@ public:
 	 * @param n_dofs_per_row number of degrees of freedom per block (normally: overall degrees of freedom on grid)
 	 * @param dofs_per_cell number of degrees of freedom per cell
 	 */
-	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern&  cSparse, size_t n_blocks, size_t n_dofs_per_block, size_t dofs_per_cell) const;
-
+	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern& cSparse,
+			size_t n_blocks, size_t n_dofs_per_block,
+			size_t dofs_per_cell) const;
 
 	/////////////////////////////////
 	// GETTER     // SETTER        //
@@ -205,7 +205,6 @@ public:
 			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >& getCellMap() const {
 		return m_cells;
 	}
-
 
 };
 /* PeriodicBoundary1D */

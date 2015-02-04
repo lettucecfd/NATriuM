@@ -118,7 +118,7 @@ inline double velocity2Norm(const vector<distributed_vector>& velocity) {
  */
 class own_double_less: public std::binary_function<double, double, bool> {
 public:
-	own_double_less(double arg_ = 1e-8) :
+	own_double_less(double arg_ = 1e-12) :
 			epsilon(arg_) {
 	}
 	bool operator()(const double &left, const double &right) const {

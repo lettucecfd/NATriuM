@@ -1,9 +1,22 @@
 /**
  * @file step-3.cpp
- * @short Third Tutorial:  Lid-Driven cavitys in 2D
+ * @short Tutorial:  Lid-Driven Cavity in 2D
+ *        This example is thoroughly commented to introduce you to the key concepts in
+ *        fluid flow simulations with NATriuM. There are three main classes that are
+ *        used in a NATriuM simulation:
+ *        - SolverConfiguration: Contains all the simulation preferences.
+ *        - ProblemDescription: Contains the computation grid, initial conditions and
+ *          boundary conditions. ProblemDescription is an abstract class with the purely
+ *          virtual functions appyInitialDensities and applyInitialVelocities.
+ *          When you use NATriuM as a library, this class has to be overriden by a problem specific
+ *          child class (here the class LidDrivenCavity2D), which implements the virtual
+ *          functions.
+ *        - CFDSolver: The CFDSolver is the central class in the NATriuM framework.
+ *          It creates all necessary classes and runs the simulation.
  * @date 31.03.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
+
 
 #include <fstream>
 #include <stdlib.h>

@@ -15,6 +15,8 @@
 #include "deal.II/lac/constraint_matrix.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/Math.h"
+
 #include "BoundaryTools.h"
 
 namespace natrium {
@@ -108,8 +110,8 @@ template<> void PeriodicBoundary<2>::createCellMap(
 	// The key of these cells is the distance from the begin point of the respective line.
 	// The second element of the value pair is the local face id of the face which belongs to the boundary.
 	std::map<double,
-			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> > cellsAtBoundary1;
-	std::map<double, std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> > cellsAtBoundary2;
+			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t>, own_double_less > cellsAtBoundary1;
+	std::map<double, std::pair<dealii::DoFHandler<2>::cell_iterator, size_t>, own_double_less > cellsAtBoundary2;
 
 	// iterate over all active cells and sort them
 	for (; currentCell != lastCell; ++currentCell) {

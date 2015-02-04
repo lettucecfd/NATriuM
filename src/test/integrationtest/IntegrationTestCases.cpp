@@ -105,10 +105,11 @@ TestResult ConvergenceTestMovingWall() {
 	result.id = 2;
 	result.name = "Convergence Test: Wall Boundaries";
 	result.details =
-			"This test runs the Unsteady Couette flow benchmark on a 4x4 grid with FE orders 4,6,8 "
+			"This test runs the Unsteady Couette flow benchmark on a 4x4 grid with FE orders 2,4,6,8,10,12 "
 					"and CFL=0.4. It reproduces exponential convergence observed by Min and Lee for Re=2000."
-					"The kinematic viscosity is nu=1 and the Reynolds number 2*PI."
-					"The simulated and reference E_kin are compared at t=1/(2 nu)";
+					"The stencil scaling, Mach and Reynolds numbers are 1, 0.05 and 2000, respectively."
+					"The simulation STARTS AT t=40.0 and lasts only one time unit (!!!)"
+	 	 	 	 	"The exponential convergence of maximum velocity errors is tested.";
 	result.time = clock();
 
 	// Initialization (with standard LB units <=> scaling=1)
@@ -120,11 +121,12 @@ TestResult ConvergenceTestMovingWall() {
 	const double viscosity = U * L / Re;
 	const double refinementLevel = 2;
 	const double CFL = 0.4;
+	const double t0 = 40.0;
 
 	shared_ptr<Benchmark<2> > benchmark = make_shared<CouetteFlow2D>(viscosity,
-			U, refinementLevel);
+			U, refinementLevel, L, t0);
 
-	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 6;
+	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 12;
 			orderOfFiniteElement += 2) {
 		// Initialization
 		double dt = CFDSolverUtilities::calculateTimestep<2>(
@@ -138,9 +140,9 @@ TestResult ConvergenceTestMovingWall() {
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setTimeStepSize(dt);
-		configuration->setNumberOfTimeSteps(40.0 / dt);
+		configuration->setNumberOfTimeSteps(1.0 / dt);
 
-		// Simulation
+		// Simulation (simulate 1 time unit from t=40.0)
 		BenchmarkCFDSolver<2> solver(configuration, benchmark);
 		solver.getSolverStats()->update();
 		solver.run();
@@ -151,8 +153,8 @@ TestResult ConvergenceTestMovingWall() {
 		std::stringstream stream1;
 		stream1 << "|u-u_ref|_sup; p=" << orderOfFiniteElement;
 		result.quantity.push_back(stream1.str());
-		result.expected.push_back(pow(10.0, -(0.5 * orderOfFiniteElement + 1.0)));
-		result.threshold.push_back(pow(10.0, -(0.5 * orderOfFiniteElement + 1.0)));
+		result.expected.push_back(0.002 * pow(2.0, -( orderOfFiniteElement + 1.0)));
+		result.threshold.push_back(0.002 * pow(2.0, -( orderOfFiniteElement + 1.0)));
 		result.outcome.push_back(solver.getErrorStats()->getMaxVelocityError());
 	}
 
