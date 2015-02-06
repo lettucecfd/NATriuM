@@ -23,7 +23,7 @@
 
 #include "boltzmannmodels/D2Q9IncompressibleModel.h"
 
-#include "SinusoidalShear2D.h"
+#include "../../examples/step-sinusoidal/SinusoidalShear2D.h"
 
 using namespace natrium;
 
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 		cout << "Timestep too big." << endl;
 	}
 
-	configuration->setNumberOfTimeSteps(10000.0 / dt);
+	configuration->setNumberOfTimeSteps(10.0 / dt);
 
 	// make solver object
 	CFDSolver<2> solver(configuration, sinusFlow);

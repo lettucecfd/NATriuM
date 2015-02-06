@@ -9,6 +9,7 @@ var searchData=
   ['d2q9model_2eh',['D2Q9Model.h',['../D2Q9Model_8h.html',1,'']]],
   ['d2q9pseudopotentialmodel',['D2Q9PseudopotentialModel',['../classnatrium_1_1D2Q9PseudopotentialModel.html#af533d01219626d11d9f2cf296aa7cc63',1,'natrium::D2Q9PseudopotentialModel']]],
   ['d2q9pseudopotentialmodel',['D2Q9PseudopotentialModel',['../classnatrium_1_1D2Q9PseudopotentialModel.html',1,'natrium']]],
+  ['dealiiwrapper',['DealIIWrapper',['../classnatrium_1_1DealIIWrapper.html',1,'natrium']]],
   ['densityfluctuation2d',['DensityFluctuation2D',['../classnatrium_1_1DensityFluctuation2D.html',1,'natrium']]],
   ['distributionfunctions',['DistributionFunctions',['../classnatrium_1_1DistributionFunctions.html',1,'natrium']]],
   ['distributionfunctions',['DistributionFunctions',['../classnatrium_1_1DistributionFunctions.html#a4fc9c42637465355a9df7681d45340c9',1,'natrium::DistributionFunctions::DistributionFunctions()'],['../classnatrium_1_1DistributionFunctions.html#af0a970355419acf79be898e573f3149a',1,'natrium::DistributionFunctions::DistributionFunctions(const DistributionFunctions &amp;f)'],['../classnatrium_1_1DistributionFunctions.html#a0ea3ad0426df18a986578f7b57361dd3',1,'natrium::DistributionFunctions::DistributionFunctions(const vector&lt; distributed_vector &gt; &amp;f)']]],

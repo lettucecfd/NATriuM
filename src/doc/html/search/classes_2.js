@@ -2,6 +2,7 @@ var searchData=
 [
   ['cfdsolver',['CFDSolver',['../classnatrium_1_1CFDSolver.html',1,'natrium']]],
   ['cfdsolverexception',['CFDSolverException',['../classnatrium_1_1CFDSolverException.html',1,'natrium']]],
+  ['cfdsolverutilitiesexception',['CFDSolverUtilitiesException',['../classnatrium_1_1CFDSolverUtilities_1_1CFDSolverUtilitiesException.html',1,'natrium::CFDSolverUtilities']]],
   ['collision',['Collision',['../classnatrium_1_1Collision.html',1,'natrium']]],
   ['collisionexception',['CollisionException',['../classnatrium_1_1CollisionException.html',1,'natrium']]],
   ['collisionmodel',['CollisionModel',['../classnatrium_1_1CollisionModel.html',1,'natrium']]],

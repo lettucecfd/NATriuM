@@ -26,6 +26,7 @@ var searchData=
   ['_7eproblemdescription',['~ProblemDescription',['../classnatrium_1_1ProblemDescription.html#a5270994970ddbd9f6fc98f292c1ccc0e',1,'natrium::ProblemDescription']]],
   ['_7erungekutta5lowstorage',['~RungeKutta5LowStorage',['../classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8',1,'natrium::RungeKutta5LowStorage']]],
   ['_7esedgminlee',['~SEDGMinLee',['../classnatrium_1_1SEDGMinLee.html#a6c55a31bc4cb0e314876af7251ad8ce3',1,'natrium::SEDGMinLee']]],
+  ['_7esinusoidalshear2d',['~SinusoidalShear2D',['../classnatrium_1_1SinusoidalShear2D.html#a7aaf185e32e29f1f50b3f9db9c213a2c',1,'natrium::SinusoidalShear2D']]],
   ['_7esolverconfiguration',['~SolverConfiguration',['../classnatrium_1_1SolverConfiguration.html#ac1b521d8c205b8774dbb7c038304336d',1,'natrium::SolverConfiguration']]],
   ['_7esteadyperiodictestflow2d',['~SteadyPeriodicTestFlow2D',['../classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7344b71a404f2c4bbc73c1c738fdfa22',1,'natrium::SteadyPeriodicTestFlow2D']]],
   ['_7etaylorgreentest2d',['~TaylorGreenTest2D',['../classTaylorGreenTest2D.html#a393d90458a3415572c3d9bebccdcb662',1,'TaylorGreenTest2D']]],
