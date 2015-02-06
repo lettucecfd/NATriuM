@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        step-3-LidDrivenCavity2D
+        step-0-LidDrivenCavity2D
         )
 
 
@@ -12,7 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                step-3.cpp
+                step-0.cpp
                 LidDrivenCavity2D.h   
                 LidDrivenCavity2D.cpp
                )

@@ -63,8 +63,8 @@
  * on interfacing Salome and deal.II.
  *
  * \section start_sec Getting started
- * For simple applications, the triangulation can be generated within deal.II. The steps in the examples directory
- * will help you get grip on the code.
+ * For simple applications, the triangulation can be generated within deal.II. The examples in the Examples section will help
+ * you to get grip on the code.
  *
  * \section install_sec Installation
  *

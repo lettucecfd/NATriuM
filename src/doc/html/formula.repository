@@ -24,3 +24,5 @@
 \form#23:$ max \|u_{i} - u_{i}^{ref}\|_{2} $
 \form#24:$ \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $
 \form#25:$ \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $
+\form#26:\[ \delta_t \sim \frac{1}{(p+1)^2} \]
+\form#27:\[ c_s = \frac{1}{\sqrt{3}} \]

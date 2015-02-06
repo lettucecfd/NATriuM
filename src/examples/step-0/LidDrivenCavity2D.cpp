@@ -1,6 +1,6 @@
 /**
  * @file LidDrivenCavity2D.cpp
- * @short
+ * @short Lid-driven cavity with three static walls and one moving wall
  * @date 31.03.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
@@ -46,18 +46,6 @@ void LidDrivenCavity2D::applyInitialVelocities(
 		initialVelocities.at(0)(i) = 0.0;
 		initialVelocities.at(1)(i) = 0.0;
 	}
-}
-
-double LidDrivenCavity2D::analyticVelocity1(const dealii::Point<2>& x,
-		double t) const {
-	assert(false);
-	return sin(x(0)) * cos(x(1)) * exp(-2 * getViscosity() * t);
-}
-
-double LidDrivenCavity2D::analyticVelocity2(const dealii::Point<2>& x,
-		double t) const {
-	assert(false);
-	return -cos(x(0)) * sin(x(1)) * exp(-2 * getViscosity() * t);
 }
 
 /**
