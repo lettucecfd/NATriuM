@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 	// Problem definition
 	const double radius = 0.005;
 	const double delta_radius = 0.004 * radius; //
-	const double epsilon = 0.5; // clearance (relative to delta_radius)
+	double epsilon = 0.5; // clearance (relative to delta_radius)
 	if (argc > 1) {
 		epsilon = atof(argv[1]);
 	}
