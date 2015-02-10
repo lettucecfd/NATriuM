@@ -36,7 +36,7 @@ shared_ptr<Triangulation<2> > LubricationSine::makeGrid(double L,
 	repetitions.at(1) = 1;
 	bool colorize = true; 	// set boundary ids automatically to
 							// 0:left; 1:right; 2:bottom; 3:top
-	dealii::GridGenerator::hyper_rectangle(*rect, repetitions, x1, x2, true);
+	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1, x2, true);
 
 	// refine grid
 	rect->refine_global(refinementLevel);
