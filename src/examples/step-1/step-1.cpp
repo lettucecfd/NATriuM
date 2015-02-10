@@ -72,24 +72,25 @@ int main() {
 		configuration->setUserInteraction(false);
 		configuration->setOutputTableInterval(10);
 		configuration->setOutputCheckpointInterval(1000);
+		configuration->setOutputSolutionInterval(10);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(ALL);
 		configuration->setTimeStepSize(dt);
 
-		configuration->setInitializationScheme(ITERATIVE);
-		configuration->setIterativeInitializationNumberOfIterations(1000);
-		configuration->setIterativeInitializationResidual(1e-15);
+		//configuration->setInitializationScheme(ITERATIVE);
+		//configuration->setIterativeInitializationNumberOfIterations(1000);
+		//configuration->setIterativeInitializationResidual(1e-15);
 
 		if (dt > 0.1) {
 			cout << "Timestep too big." << endl;
 		}
 
-		configuration->setNumberOfTimeSteps(1.0 / dt);
+		configuration->setNumberOfTimeSteps(10.0 / dt);
 
 		// make problem and solver objects
 		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
-				TaylorGreenVortex2D>(viscosity, refinementLevel);
+				TaylorGreenVortex2D>(viscosity, refinementLevel, 1./Ma);
 		shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);

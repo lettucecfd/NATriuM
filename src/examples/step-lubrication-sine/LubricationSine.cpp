@@ -14,9 +14,9 @@ namespace natrium {
 
 LubricationSine::LubricationSine(double viscosity, double bottomVelocity,
 		size_t refinementLevel, double L, double averageHeight,
-		double amplitude) :
+		double amplitude, double cellAspectRatio) :
 		ProblemDescription<2>(
-				makeGrid(L, refinementLevel, averageHeight, amplitude),
+				makeGrid(L, refinementLevel, averageHeight, amplitude, cellAspectRatio),
 				viscosity, L), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 }
@@ -25,14 +25,14 @@ LubricationSine::~LubricationSine() {
 }
 
 shared_ptr<Triangulation<2> > LubricationSine::makeGrid(double L,
-		size_t refinementLevel, double averageHeight, double amplitude) {
+		size_t refinementLevel, double averageHeight, double amplitude, double cellAspectRatio) {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > rect = make_shared<Triangulation<2> >();
 	dealii::Point<2> x1(0,0);
 	dealii::Point<2> x2(L,averageHeight);
 	std::vector<unsigned int> repetitions;
-	repetitions.push_back( L / averageHeight);
+	repetitions.push_back( L / averageHeight / cellAspectRatio);
 	repetitions.push_back( 1 );
 	bool colorize = true; 	// set boundary ids automatically to
 							// 0:left; 1:right; 2:bottom; 3:top

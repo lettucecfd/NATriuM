@@ -17,8 +17,8 @@
 
 namespace natrium {
 
-TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity, size_t refinementLevel) :
-		Benchmark<2>(makeGrid(refinementLevel), viscosity, 8*atan(1)) {
+TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity, size_t refinementLevel, double cs) :
+		Benchmark<2>(makeGrid(refinementLevel), viscosity, 8*atan(1)), m_cs(cs){
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
@@ -32,6 +32,17 @@ TaylorGreenVortex2D::~TaylorGreenVortex2D() {
 void TaylorGreenVortex2D::getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const {
 	velocity(0) = sin(x(0))*cos(x(1))*exp(-2*getViscosity()*t);
 	velocity(1) = -cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
+}
+
+
+/**
+ * @short get Analytic density at one point in space and time
+ */
+double TaylorGreenVortex2D::getAnalyticDensity(const dealii::Point<2>& x,
+		double t) const {
+	double rho0 = 1;
+	double p = rho0/4.* (cos(2*x(0)) + cos(2*x(1))) * exp(-4 * getViscosity() * t);
+	return rho0 + p / (m_cs*m_cs) ;
 }
 
 /**

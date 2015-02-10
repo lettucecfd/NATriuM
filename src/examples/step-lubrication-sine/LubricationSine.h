@@ -23,7 +23,7 @@ public:
 	/// constructor
 	LubricationSine(double viscosity, double bottomVelocity,
 			size_t refinementLevel, double L = 1.0, double averageHeight = 1.0,
-			double amplitude = 0.5);
+			double amplitude = 0.5, double cellAspectRatio=0.5);
 
 	/// destructor
 	virtual ~LubricationSine();
@@ -43,7 +43,7 @@ private:
 	 * @return shared pointer to a triangulation instance
 	 */
 	shared_ptr<Triangulation<2> > makeGrid(double L, size_t refinementLevel,
-			double averageHeight, double amplitude);
+			double averageHeight, double amplitude, double cellAspectRatio);
 
 	/**
 	 * @short create boundaries for couette flow
