@@ -1,7 +1,7 @@
 # Examples
 
 #add_subdirectory(step-0)
-#add_subdirectory(step-1)
+add_subdirectory(step-1)
 #add_subdirectory(step-2)
 #add_subdirectory(step-6)
 
