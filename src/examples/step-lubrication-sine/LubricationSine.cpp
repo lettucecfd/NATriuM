@@ -29,8 +29,8 @@ shared_ptr<Triangulation<2> > LubricationSine::makeGrid(double L,
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > rect = make_shared<Triangulation<2> >();
-	dealii::Point<2> x1(0,1);
-	dealii::Point<2> x2(0,1);
+	dealii::Point<2> x1(0,0);
+	dealii::Point<2> x2(L,averageHeight);
 	std::vector<unsigned int> repetitions;
 	repetitions.push_back( L / averageHeight);
 	repetitions.push_back( 1 );
