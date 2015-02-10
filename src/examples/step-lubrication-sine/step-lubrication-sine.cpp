@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 	cout << "Starting analysis of sinusoidal shear flow ..." << endl;
 
 	const double Ma = 0.1;
-	const double cFL = 0.0004;
+	const double cFL = 0.4;
 	const double factorL = 1000;
 	const double factorT = 1e6;
 
