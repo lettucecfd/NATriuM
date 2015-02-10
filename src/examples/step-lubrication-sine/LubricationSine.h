@@ -91,10 +91,10 @@ private:
 		}
 		double trans(const double x, const double y) const {
 			double upper = m_height +  m_ampl * cos(8 * atan(1) * x / m_wavelength );
-			return y * upper;
+			return y / m_height * upper;
 		}
 		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
-			return dealii::Point<2>(m_wavelength * refineBoundaryX(in(0)), trans(refineBoundaryX(in(0)), refineBoundaryY(in(1))));
+			return dealii::Point<2>(refineBoundaryX(in(0)), trans(refineBoundaryX(in(0)), refineBoundaryY(in(1))));
 		}
 		UnstructuredGridFunc(double averageHeight, double amplitude, double wavelength) {
 			assert (averageHeight > amplitude);

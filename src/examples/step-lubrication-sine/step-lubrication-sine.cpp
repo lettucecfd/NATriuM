@@ -34,16 +34,18 @@ int main(int argc, char* argv[]) {
 	cout << "Starting analysis of sinusoidal shear flow ..." << endl;
 
 	const double Ma = 0.1;
-	const double cFL = 1.0;
+	const double cFL = 0.0004;
+	const double factorL = 1000;
+	const double factorT = 1e6;
 
 	// Problem definition
-	const double radius = 0.005;
+	const double radius = 0.005 * factorL;
 	const double delta_radius = 0.004 * radius; //
 	double epsilon = 0.5; // clearance (relative to delta_radius)
-	if (argc > 1) {
+	/*if (argc > 2) {
 		epsilon = atof(argv[1]);
-	}
-	const double bottomVelocity = 50.0;
+	}*/
+	const double bottomVelocity = 50.0 * factorL / factorT;
 
 	const double amplitude = epsilon * delta_radius;
 	const double L = 8 * atan(1) * radius;
@@ -52,11 +54,11 @@ int main(int argc, char* argv[]) {
 	const double viscosity = eta / density;
 	const double scaling = bottomVelocity / Ma;
 	const double Re = bottomVelocity * L / viscosity;
-	cout << 'epsilon = '  << epsilon;
+	cout << "epsilon = "  << epsilon << endl;
 
 	// Solver Definition
-	const double refinementLevel = 4;
-	const double orderOfFiniteElement = 5;
+	const double refinementLevel = 2;
+	const double orderOfFiniteElement = 2;
 
 	shared_ptr<ProblemDescription<2> > sinusFlow =
 			make_shared<LubricationSine>(viscosity, bottomVelocity,
@@ -83,14 +85,14 @@ int main(int argc, char* argv[]) {
 	configuration->setTimeStepSize(dt);
 
 	configuration->setInitializationScheme(ITERATIVE);
-	configuration->setIterativeInitializationNumberOfIterations(1000);
+	configuration->setIterativeInitializationNumberOfIterations(10);
 	configuration->setIterativeInitializationResidual(1e-15);
 
 	if (dt > 0.1) {
 		cout << "Timestep too big." << endl;
 	}
 
-	configuration->setNumberOfTimeSteps(10.0 / dt);
+	configuration->setNumberOfTimeSteps(10000);
 
 	// make solver object
 	CFDSolver<2> solver(configuration, sinusFlow);
