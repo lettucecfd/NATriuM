@@ -32,8 +32,8 @@ shared_ptr<Triangulation<2> > LubricationSine::makeGrid(double L,
 	dealii::Point<2> x1(0,1);
 	dealii::Point<2> x2(0,1);
 	std::vector<unsigned int> repetitions;
-	repetitions.at(0) = L / averageHeight;
-	repetitions.at(1) = 1;
+	repetitions.push_back( L / averageHeight);
+	repetitions.push_back( 1 );
 	bool colorize = true; 	// set boundary ids automatically to
 							// 0:left; 1:right; 2:bottom; 3:top
 	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1, x2, true);
