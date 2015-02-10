@@ -7,3 +7,4 @@ add_subdirectory(step-6)
 
 add_subdirectory(step-9)
 add_subdirectory(step-sinusoidal)
+add_subdirectory(step-lubrication-sine)
