@@ -59,10 +59,10 @@ double CFDSolverUtilities::getMinimumVertexDistance(
 			min_vertex_distance = distance;
 		}
 	}
-	if (min_vertex_distance < 1e-10) {
+	if (min_vertex_distance < 1e-15) {
 		throw CFDSolverUtilitiesException(
-				"Minimum vertex distance < 1e-10; but the periodic boundary detection "
-				"tests for cells distances < 1e-12 in own_double_less. That might cause "
+				"Minimum vertex distance < 1e-15; but the periodic boundary detection "
+				"tests for cells distances < 1e-16 in own_double_less. That might cause "
 				"serious problems.");
 	}
 	return min_vertex_distance;
