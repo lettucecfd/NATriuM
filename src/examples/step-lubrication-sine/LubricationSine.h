@@ -23,7 +23,7 @@ public:
 	/// constructor
 	LubricationSine(double viscosity, double bottomVelocity,
 			size_t refinementLevel, double L = 1.0, double averageHeight = 1.0,
-			double amplitude = 0.5, double cellAspectRatio=0.5);
+			double amplitude = 0.5, double cellAspectRatio=0.5, double roughnessHeight = 0.0, size_t roughnessLengthRatio = 1);
 
 	/// destructor
 	virtual ~LubricationSine();
@@ -43,7 +43,7 @@ private:
 	 * @return shared pointer to a triangulation instance
 	 */
 	shared_ptr<Triangulation<2> > makeGrid(double L, size_t refinementLevel,
-			double averageHeight, double amplitude, double cellAspectRatio);
+			double averageHeight, double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio);
 
 	/**
 	 * @short create boundaries for couette flow
@@ -76,6 +76,8 @@ private:
 		double m_height;
 		double m_ampl;
 		double m_wavelength;
+		double m_roughnessHeight;
+		size_t m_roughnessLengthRatio;
 		double refineBoundaryY(const double y) const {
 			// a smooth curve with gradients that are not 0 or infinity
 			// less steepness on the boundaries leads to fine resolution
@@ -90,17 +92,19 @@ private:
 			return x + m_wavelength * m_ampl / m_height / (8.0 * atan(1.0)) * sin (8.0 * atan(1.0) * x / m_wavelength);
 		}
 		double trans(const double x, const double y) const {
-			double upper = m_height +  m_ampl * cos(8 * atan(1) * x / m_wavelength );
+			double upper = m_height +  m_ampl * cos(8 * atan(1) * x / m_wavelength + );
 			return y / m_height * upper;
 		}
 		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
 			return dealii::Point<2>(refineBoundaryX(in(0)), trans(refineBoundaryX(in(0)), refineBoundaryY(in(1))));
 		}
-		UnstructuredGridFunc(double averageHeight, double amplitude, double wavelength) {
+		UnstructuredGridFunc(double averageHeight, double amplitude, double wavelength, double roughnessHeight, size_t roughnessLengthRatio) {
 			assert (averageHeight > amplitude);
 			m_height = averageHeight;
 			m_ampl = amplitude;
 			m_wavelength = wavelength;
+			m_roughnessHeight = roughnessHeight;
+			m_roughnessLengthRatio = roughnessLengthRatio;
 		}
 	};
 

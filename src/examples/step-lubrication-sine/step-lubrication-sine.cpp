@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 	cout << "Starting analysis of sinusoidal shear flow ..." << endl;
 
 	const double Ma = 0.1;
-	const double cFL = 10;
+	const double cFL = 20;
 
 	const double LPhysToSim = 1000; // [1/m]
 	const double TPhysToSim = 1e6; // [1/s]
@@ -46,6 +46,8 @@ int main(int argc, char* argv[]) {
 	const double radius = 0.005 * LPhysToSim;
 	const double delta_radius = 0.004 * radius; //
 	double epsilon = 0.5; // clearance (relative to delta_radius)
+	double roughnessHeight = 1e-6 * LPhysToSim;
+	size_t roughnessLengthRatio = radius / 2e-6 / LPhysToSim ;
 	/*if (argc > 2) {
 		epsilon = atof(argv[1]);
 	}*/
@@ -61,20 +63,20 @@ int main(int argc, char* argv[]) {
 	cout << "epsilon = "  << epsilon << endl;
 	// calculation of pressure from simulated density: p - p0 = ( rho - rho0) cs**2 /RhoPhysToSim * TPhysToSim**2 / LPhysToSim**2
 	// Solver Definition
-	const double refinementLevel = 1;
-	const double orderOfFiniteElement = 1;
-	const double cellAspectRatio = 100;
+	const double refinementLevel = 5;
+	const double orderOfFiniteElement = 5;
+	const double cellAspectRatio = 1;
 
 	shared_ptr<ProblemDescription<2> > sinusFlow =
 			make_shared<LubricationSine>(viscosity, bottomVelocity,
-					refinementLevel, L, delta_radius, amplitude, cellAspectRatio);
+					refinementLevel, L, delta_radius, amplitude, cellAspectRatio, roughnessHeight, roughnessLengthRatio);
 	const double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*sinusFlow->getTriangulation(), orderOfFiniteElement,
 			D2Q9IncompressibleModel(scaling), cFL);
 
 	// setup configuration
 	std::stringstream dirName;
-	dirName << getenv("NATRIUM_HOME") << "/lubrication-sine-0.5";
+	dirName << getenv("NATRIUM_HOME") << "/lubrication-sine-rough";
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
@@ -99,7 +101,7 @@ int main(int argc, char* argv[]) {
 		cout << "Timestep too big." << endl;
 	}
 
-	configuration->setNumberOfTimeSteps(800000);
+	configuration->setNumberOfTimeSteps(80000000);
 
 	// make solver object
 	CFDSolver<2> solver(configuration, sinusFlow);

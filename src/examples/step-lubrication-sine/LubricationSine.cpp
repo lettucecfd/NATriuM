@@ -14,9 +14,9 @@ namespace natrium {
 
 LubricationSine::LubricationSine(double viscosity, double bottomVelocity,
 		size_t refinementLevel, double L, double averageHeight,
-		double amplitude, double cellAspectRatio) :
+		double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio) :
 		ProblemDescription<2>(
-				makeGrid(L, refinementLevel, averageHeight, amplitude, cellAspectRatio),
+				makeGrid(L, refinementLevel, averageHeight, amplitude, cellAspectRatio, roughnessHeight, roughnessLengthRatio),
 				viscosity, L), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 }
@@ -25,7 +25,7 @@ LubricationSine::~LubricationSine() {
 }
 
 shared_ptr<Triangulation<2> > LubricationSine::makeGrid(double L,
-		size_t refinementLevel, double averageHeight, double amplitude, double cellAspectRatio) {
+		size_t refinementLevel, double averageHeight, double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio) {
 
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > rect = make_shared<Triangulation<2> >();
@@ -42,7 +42,7 @@ shared_ptr<Triangulation<2> > LubricationSine::makeGrid(double L,
 	rect->refine_global(refinementLevel);
 
 	// transform grid
-	dealii::GridTools::transform(UnstructuredGridFunc(averageHeight, amplitude, L),
+	dealii::GridTools::transform(UnstructuredGridFunc(averageHeight, amplitude, L, roughnessHeight, roughnessLengthRatio),
 			*rect);
 	std::ofstream out("grid-2.eps");
 	dealii::GridOut grid_out;
