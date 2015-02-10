@@ -31,7 +31,7 @@ shared_ptr<Triangulation<2> > LubricationSine::makeGrid(double L,
 	shared_ptr<Triangulation<2> > rect = make_shared<Triangulation<2> >();
 	dealii::Point<2> x1(0,1);
 	dealii::Point<2> x2(0,1);
-	std::vector<size_t> repetitions;
+	std::vector<unsigned int> repetitions;
 	repetitions.at(0) = L / averageHeight;
 	repetitions.at(1) = 1;
 	bool colorize = true; 	// set boundary ids automatically to
