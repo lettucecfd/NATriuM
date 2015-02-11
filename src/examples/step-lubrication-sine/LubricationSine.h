@@ -92,7 +92,7 @@ private:
 			return x + m_wavelength * m_ampl / m_height / (8.0 * atan(1.0)) * sin (8.0 * atan(1.0) * x / m_wavelength);
 		}
 		double trans(const double x, const double y) const {
-			double upper = m_height +  m_ampl * cos(8 * atan(1) * x / m_wavelength + );
+			double upper = m_height +  m_ampl * cos(8 * atan(1) * x / m_wavelength) + m_roughnessHeight * cos(8.0 * atan(1) * x / (m_wavelength/m_roughnessLengthRatio));
 			return y / m_height * upper;
 		}
 		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
