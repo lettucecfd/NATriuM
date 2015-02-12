@@ -165,8 +165,13 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
+#ifdef WITH_TRILINOS
+	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
+			dealii::TrilinosWrappers::PreconditionIdentity());
+#else
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
+#endif
 
 }
 
