@@ -33,8 +33,8 @@ int main(int argc, char* argv[]) {
 
 	cout << "Starting analysis of sinusoidal shear flow ..." << endl;
 
-	const double Ma = 0.1;
-	const double cFL = 20;
+	const double Ma = 0.05;
+	const double cFL = 10;
 
 	const double LPhysToSim = 1000; // [1/m]
 	const double TPhysToSim = 1e6; // [1/s]
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 	const double radius = 0.005 * LPhysToSim;
 	const double delta_radius = 0.004 * radius; //
 	double epsilon = 0.5; // clearance (relative to delta_radius)
-	double roughnessHeight = 1e-6 * LPhysToSim;
+	double roughnessHeight = 0;//1e-6 * LPhysToSim;
 	size_t roughnessLengthRatio = radius / 2e-6 / LPhysToSim ;
 	/*if (argc > 2) {
 		epsilon = atof(argv[1]);
@@ -56,16 +56,17 @@ int main(int argc, char* argv[]) {
 	const double amplitude = epsilon * delta_radius;
 	const double L = 8 * atan(1) * radius;
 	const double eta = 0.032; // dynamic viscosity in Pas
-	const double density = 1;
-	const double viscosity = eta / ( RhoPhysToSim * density) * LPhysToSim * LPhysToSim / TPhysToSim;
-	const double scaling = bottomVelocity / Ma;
-	const double Re = bottomVelocity * L / viscosity;
+	const double viscosity = eta / (rho / RhoPhysToSim) * LPhysToSim * LPhysToSim / TPhysToSim;
+	const double scaling = sqrt(3) * bottomVelocity / Ma;
+	const double Re = bottomVelocity * delta_radius / viscosity;
+	const double Re_phys = 50.0 * 0.004 * 0.005 / (0.032/850);
+	cout << "Physical and dimensionless Reynolds number should agree: " << Re_phys << " " << Re << endl ;
 	cout << "epsilon = "  << epsilon << endl;
 	// calculation of pressure from simulated density: p - p0 = ( rho - rho0) cs**2 /RhoPhysToSim * TPhysToSim**2 / LPhysToSim**2
 	// Solver Definition
-	const double refinementLevel = 1;
-	const double orderOfFiniteElement = 1;
-	const double cellAspectRatio = 1;
+	const double refinementLevel = 2;
+	const double orderOfFiniteElement = 4;
+	const double cellAspectRatio = 5;
 
 	shared_ptr<ProblemDescription<2> > sinusFlow =
 			make_shared<LubricationSine>(viscosity, bottomVelocity,
@@ -76,16 +77,16 @@ int main(int argc, char* argv[]) {
 
 	// setup configuration
 	std::stringstream dirName;
-	dirName << getenv("NATRIUM_HOME") << "/lubrication-sine-rough";
+	dirName << getenv("NATRIUM_HOME") << "/lubrication-sine-0.5-smoothx";
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
-	configuration->setOutputTableInterval(10);
-	configuration->setOutputCheckpointInterval(1000);
-	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputTableInterval(100);
+	configuration->setOutputCheckpointInterval(1e9);
+	configuration->setOutputSolutionInterval(10000);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setTimeIntegrator(THETA_METHOD);
 	configuration->setThetaMethodTheta(0.5);
@@ -94,7 +95,7 @@ int main(int argc, char* argv[]) {
 	configuration->setTimeStepSize(dt);
 
 	configuration->setInitializationScheme(ITERATIVE);
-	configuration->setIterativeInitializationNumberOfIterations(10);
+	configuration->setIterativeInitializationNumberOfIterations(100);
 	configuration->setIterativeInitializationResidual(1e-15);
 
 	if (dt > 0.1) {

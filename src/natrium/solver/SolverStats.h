@@ -35,6 +35,8 @@ private:
 	double m_time;
 	double m_maxU;
 	double m_kinE;
+	double m_maxP;
+	double m_minP;
 
 public:
 	/**
@@ -52,6 +54,8 @@ public:
 		m_time = 0;
 		m_maxU = 0;
 		m_kinE = 0;
+		m_maxP = 0;
+		m_minP = 0;
 
 		if (not m_outputOff) {
 			// create file (if necessary)
@@ -67,7 +71,7 @@ public:
 	}
 	void printHeaderLine() {
 		assert(not m_outputOff);
-		(*m_tableFile) << "#  i      t      max |u_numeric|    kinE" << endl;
+		(*m_tableFile) << "#  i      t      max |u_numeric|    kinE    maxP     minP" << endl;
 	}
 	void update() {
 		if (isUpToDate()){
@@ -78,6 +82,7 @@ public:
 		m_maxU = m_solver->getMaxVelocityNorm();
 		m_kinE = PhysicalProperties<dim>::kineticEnergy(m_solver->getVelocity(),
 				m_solver->getDensity());
+		m_maxP = PhysicalProperties<dim>::maximalPressure(m_solver->getDensity(), m_solver->getBoltzmannModel()->getSpeedOfSound(), m_minP);
 	}
 	void printNewLine() {
 		assert(not m_outputOff);
@@ -85,7 +90,7 @@ public:
 			update();
 		}
 		(*m_tableFile) << m_iterationNumber << " " << m_time << " " << m_maxU
-				<< " " << m_kinE << endl;
+				<< " " << m_kinE << " " << m_maxP << " " << m_minP <<  endl;
 	}
 
 	size_t getIterationNumber() const {
@@ -114,6 +119,14 @@ public:
 
 	const std::string& getFilename() const {
 		return m_filename;
+	}
+
+	double getMaxP() const {
+		return m_maxP;
+	}
+
+	double getMinP() const {
+		return m_minP;
 	}
 };
 
