@@ -15,7 +15,7 @@
 
 
 #ifdef WITH_TRILINOS
-#include "deal.II/lac/trilinos_precondition.h"
+#include "../utilities/TrilinosBlockPreconditioner.h"
 #else
 #include "deal.II/lac/precondition.h"
 #endif
@@ -106,7 +106,7 @@ template<> void ThetaMethod<distributed_sparse_matrix, distributed_vector>::step
 	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
-			dealii::TrilinosWrappers::PreconditionIdentity());
+			TrilinosBlockPreconditioner());
 #else
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
@@ -179,7 +179,7 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
-			dealii::TrilinosWrappers::PreconditionIdentity());
+			TrilinosBlockPreconditioner());
 #else
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
