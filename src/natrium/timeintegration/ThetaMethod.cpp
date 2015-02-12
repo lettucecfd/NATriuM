@@ -64,7 +64,7 @@ template<> void ThetaMethod<distributed_sparse_matrix, distributed_vector>::step
 	}
 	// check equality of sparsity patterns
 	// check equality of sparsity patterns
-	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()){
+	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()) {
 		m_tmpMatrix.copy_from(systemMatrix);
 	}
 #else
@@ -118,7 +118,7 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 	// check equality of sparsity patterns
 	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()) {
 		size_t n_blocks = systemMatrix.n_block_rows();
-		assert (systemMatrix.n_block_rows() == systemMatrix.n_block_rows());
+		assert (systemMatrix.n_block_cols() == systemMatrix.n_block_rows());
 		m_tmpMatrix.reinit(n_blocks, n_blocks);
 		for (size_t I = 0; I < n_blocks; I++) {
 			for (size_t J = 0; J < n_blocks; J++) {
@@ -143,16 +143,15 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 	m_tmpSystemVector = systemVector;
 	m_tmpSystemVector *= this->getTimeStepSize();
 	// dt*A*f(t) + dt*b
-#ifdef WITH_TRILINOS
+	m_tmpMatrix.copy_from(systemMatrix);
 	size_t n_blocks = systemMatrix.n_block_rows();
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
-			m_tmpMatrix.block(I, J).copy_from(systemMatrix.block(I, J));
+			assert(
+					m_tmpMatrix.block(I, J).l1_norm()
+							== systemMatrix.block(I, J).l1_norm());
 		}
 	}
-#else
-	m_tmpMatrix.copy_from(systemMatrix);
-#endif
 	m_tmpMatrix *= this->getTimeStepSize();
 	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
 	// I-theta*dt*A
