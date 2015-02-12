@@ -20,8 +20,8 @@ namespace natrium {
 	class TrilinosBlockPreconditioner: public dealii::Subscriptor {
 	public:
 		TrilinosBlockPreconditioner() {};
-		void vmult (TrilinosWrappers::BlockVector &dst,
-				const TrilinosWrappers::BlockVector &src) const {
+		void vmult (dealii::TrilinosWrappers::BlockVector &dst,
+				const dealii::TrilinosWrappers::BlockVector &src) const {
 			dst.reinit(src, true);
 		};
 		virtual ~TrilinosBlockPreconditioner() {};
