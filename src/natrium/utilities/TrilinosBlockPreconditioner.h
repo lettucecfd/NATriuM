@@ -22,7 +22,7 @@ namespace natrium {
 		TrilinosBlockPreconditioner() {};
 		void vmult (TrilinosWrappers::BlockVector &dst,
 				const TrilinosWrappers::BlockVector &src) const {
-			dst = src;
+			dst.reinit(src, true);
 		};
 		virtual ~TrilinosBlockPreconditioner() {};
 	};
