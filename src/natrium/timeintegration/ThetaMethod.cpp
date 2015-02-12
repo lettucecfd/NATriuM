@@ -153,7 +153,7 @@ template<> void ThetaMethod<distributed_sparse_matrix, distributed_vector>::step
 	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
 
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
-	dealii::SolverBicgstab<VECTOR> bicgstab(solver_control);
+	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
