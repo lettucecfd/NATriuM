@@ -14,7 +14,7 @@
 
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_precondition.h"
-#include "deal.II/lac/trilinos_solver"
+#include "deal.II/lac/trilinos_solver.h"
 #else
 #include "deal.II/lac/precondition.h"
 #include "deal.II/lac/solver_bicgstab.h"
