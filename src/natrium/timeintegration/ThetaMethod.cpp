@@ -104,7 +104,7 @@ template<> void ThetaMethod<distributed_sparse_matrix, distributed_vector>::step
 
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
 #ifdef WITH_TRILINOS
-	dealii::TrilinosWrappers::SolverBicgstab<distributed_vector> bicgstab(solver_control);
+	dealii::TrilinosWrappers::SolverBicgstab bicgstab(solver_control);
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::TrilinosWrappers::PreconditionIdentity());
 #else
@@ -178,7 +178,7 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
 #ifdef WITH_TRILINOS
-	dealii::TrilinosWrappers::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+	dealii::TrilinosWrappers::SolverBicgstab bicgstab(solver_control);
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::TrilinosWrappers::PreconditionIdentity());
 #else
