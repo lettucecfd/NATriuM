@@ -213,7 +213,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	}
 	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
 			<< nofBoundaryNodes << endl;
-	LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs();
+	LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs() << endl;
 
 	// Initialize distribution functions
 	if (configuration->isRestartAtLastCheckpoint()) {

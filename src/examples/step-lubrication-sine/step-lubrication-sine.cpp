@@ -64,8 +64,8 @@ int main(int argc, char* argv[]) {
 	cout << "epsilon = "  << epsilon << endl;
 	// calculation of pressure from simulated density: p - p0 = ( rho - rho0) cs**2 /RhoPhysToSim * TPhysToSim**2 / LPhysToSim**2
 	// Solver Definition
-	const double refinementLevel = 2;
-	const double orderOfFiniteElement = 4;
+	const double refinementLevel = 0;
+	const double orderOfFiniteElement = 1;
 	const double cellAspectRatio = 5;
 
 	shared_ptr<ProblemDescription<2> > sinusFlow =
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
 	configuration->setOutputDirectory(dirName.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
-	configuration->setOutputTableInterval(100);
+	configuration->setOutputTableInterval(1000);
 	configuration->setOutputCheckpointInterval(1e9);
 	configuration->setOutputSolutionInterval(10000);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -94,9 +94,9 @@ int main(int argc, char* argv[]) {
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setTimeStepSize(dt);
 
-	configuration->setInitializationScheme(ITERATIVE);
-	configuration->setIterativeInitializationNumberOfIterations(100);
-	configuration->setIterativeInitializationResidual(1e-15);
+	//configuration->setInitializationScheme(ITERATIVE);
+	//configuration->setIterativeInitializationNumberOfIterations(100);
+	//configuration->setIterativeInitializationResidual(1e-15);
 
 	if (dt > 0.1) {
 		cout << "Timestep too big." << endl;
