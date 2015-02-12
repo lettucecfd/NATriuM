@@ -11,13 +11,13 @@
 
 #include "deal.II/lac/solver_control.h"
 #include "deal.II/lac/identity_matrix.h"
+#include "deal.II/lac/solver_bicgstab.h"
+
 
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_precondition.h"
-#include "deal.II/lac/trilinos_solver.h"
 #else
 #include "deal.II/lac/precondition.h"
-#include "deal.II/lac/solver_bicgstab.h"
 #endif
 
 
@@ -103,12 +103,11 @@ template<> void ThetaMethod<distributed_sparse_matrix, distributed_vector>::step
 	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
 
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
+	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
-	dealii::TrilinosWrappers::SolverBicgstab bicgstab(solver_control);
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::TrilinosWrappers::PreconditionIdentity());
 #else
-	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
 #endif
@@ -177,12 +176,11 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
+	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
-	dealii::TrilinosWrappers::SolverBicgstab bicgstab(solver_control);
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::TrilinosWrappers::PreconditionIdentity());
 #else
-	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
 #endif
