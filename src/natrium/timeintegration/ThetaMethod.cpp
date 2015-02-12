@@ -143,7 +143,16 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 	m_tmpSystemVector = systemVector;
 	m_tmpSystemVector *= this->getTimeStepSize();
 	// dt*A*f(t) + dt*b
+#ifdef WITH_TRILINOS
+	size_t n_blocks = systemMatrix.n_block_rows();
+	for (size_t I = 0; I < n_blocks; I++) {
+		for (size_t J = 0; J < n_blocks; J++) {
+			m_tmpMatrix.block(I, J).copy_from(systemMatrix.block(I, J));
+		}
+	}
+#else
 	m_tmpMatrix.copy_from(systemMatrix);
+#endif
 	m_tmpMatrix *= this->getTimeStepSize();
 	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
 	// I-theta*dt*A
