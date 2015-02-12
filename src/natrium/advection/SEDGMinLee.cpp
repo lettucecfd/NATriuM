@@ -267,7 +267,8 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	}
 	cSparse.collect_sizes();
 
-	// make diagonal block 0,0 which can be copied to the other ones
+	// THIS IS JUST A WORKAROUND
+	// TODO get sparser sparsity pattern working also for simulations without trilinos.
 	//DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
 	//		cSparse.block(0, 0), *m_boundaries, feFaceValues);
 	delete feFaceValues ;
