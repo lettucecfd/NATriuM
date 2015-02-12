@@ -195,7 +195,7 @@ TestResult ConvergenceTestImplicitLBM() {
 	const double orderOfFiniteElement = 4;
 	const double scaling = sqrt(3) * 1 / Ma;
 	const double refinementLevel = 3;
-	const double CFL = 5;
+	const double CFL = 20;
 
 	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1./Ma);

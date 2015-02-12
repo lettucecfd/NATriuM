@@ -94,7 +94,7 @@ int main() {
 	if (result.success) {
 		cout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << result.name << " ... " << "Error: "
+		cout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -106,7 +106,7 @@ int main() {
 	if (result.success) {
 		cout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << result.name << " ... " << "Error: "
+		cout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -118,7 +118,7 @@ int main() {
 	if (result.success) {
 		cout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << result.name << " ... " << "Error: "
+		cout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;

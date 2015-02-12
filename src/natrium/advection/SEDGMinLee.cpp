@@ -268,11 +268,11 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	cSparse.collect_sizes();
 
 	// make diagonal block 0,0 which can be copied to the other ones
-	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-			cSparse.block(0, 0), *m_boundaries, feFaceValues);
+	//DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
+	//		cSparse.block(0, 0), *m_boundaries, feFaceValues);
 	delete feFaceValues ;
-	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
-	 cSparse.block(0, 0));*/
+	DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
+	 cSparse.block(0, 0));
 
 	// add periodic boundaries to intermediate flux sparsity pattern
 	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;

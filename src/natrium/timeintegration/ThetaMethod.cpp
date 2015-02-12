@@ -33,9 +33,9 @@ template ThetaMethod<distributed_sparse_matrix, distributed_vector>::ThetaMethod
 template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector>::ThetaMethod(
 		double timeStepSize, size_t problemSize, size_t numberOfBlocks,
 		double theta) :
-		TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>(
-				timeStepSize), m_theta(theta), m_tmpSystemVector(numberOfBlocks) {
-	for (size_t i = 0; i < numberOfBlocks; i++){
+TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>(
+		timeStepSize), m_theta(theta), m_tmpSystemVector(numberOfBlocks) {
+	for (size_t i = 0; i < numberOfBlocks; i++) {
 		m_tmpSystemVector.block(i).reinit(problemSize);
 	}
 	m_tmpSystemVector.collect_sizes();
@@ -62,8 +62,14 @@ template<class MATRIX, class VECTOR> void ThetaMethod<MATRIX, VECTOR>::step(
 		m_tmpSystemVector.reinit(f);
 	}
 	// check equality of sparsity patterns
-	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()){
-		m_tmpMatrix.copy_from(systemMatrix);
+	if (m_tmpMatrix.memory_consumption() != systemMatrix.memory_consumption()) {
+		size_t n_blocks = systemMatrix.n_block_rows();
+		assert (systemMatrix.n_block_rows() == systemMatrix.n_block_rows());
+		for (size_t I = 0; I < n_blocks; I++) {
+			for (size_t J = 0; J < n_blocks; J++) {
+				m_tmpMatrix.block(I, J).reinit(systemMatrix.block(I, J));
+			}
+		}
 	}
 #else
 	if (m_tmpSystemVector.size() != f.size()) {
