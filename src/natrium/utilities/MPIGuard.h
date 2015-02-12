@@ -10,8 +10,9 @@
 
 #include <mpi.h>
 
-#include "Logging.h"
-#include "BasicNames.h"
+#include <deal.II/base/mpi.h>
+
+//#include "BasicNames.h"
 
 
 namespace natrium {
