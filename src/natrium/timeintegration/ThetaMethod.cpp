@@ -9,10 +9,17 @@
 
 #include <cassert>
 
-#include "deal.II/lac/solver_bicgstab.h"
-#include "deal.II/lac/identity_matrix.h"
 #include "deal.II/lac/solver_control.h"
+#include "deal.II/lac/identity_matrix.h"
+
+#ifdef WITH_TRILINOS
+#include "deal.II/lac/trilinos_precondition.h"
+#include "deal.II/lac/trilinos_solver"
+#else
 #include "deal.II/lac/precondition.h"
+#include "deal.II/lac/solver_bicgstab.h"
+#endif
+
 
 namespace natrium {
 
