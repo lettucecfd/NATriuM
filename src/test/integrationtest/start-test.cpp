@@ -112,6 +112,18 @@ int main() {
 		errors = true;
 	}
 
+	// Test 3: Convergence Implicit LBM
+	result = IntegrationTestCases::ConvergenceTestImplicitLBM();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		cout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		cout << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
 
 
 	// FINALIZE

@@ -24,9 +24,9 @@ namespace natrium {
 class TaylorGreenVortex2D: public Benchmark<2> {
 public:
 
-	/// constructor
+	/// constructor (with default cs=1/sqrt(3))
 	TaylorGreenVortex2D(double viscosity,
-			size_t refinementLevel, double cs = 1./sqrt(3));
+			size_t refinementLevel, double cs = 0.57735026919);
 
 	/// destructor
 	virtual ~TaylorGreenVortex2D();

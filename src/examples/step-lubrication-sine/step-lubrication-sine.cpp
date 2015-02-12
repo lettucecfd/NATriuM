@@ -64,8 +64,8 @@ int main(int argc, char* argv[]) {
 	cout << "epsilon = "  << epsilon << endl;
 	// calculation of pressure from simulated density: p - p0 = ( rho - rho0) cs**2 /RhoPhysToSim * TPhysToSim**2 / LPhysToSim**2
 	// Solver Definition
-	const double refinementLevel = 0;
-	const double orderOfFiniteElement = 1;
+	const double refinementLevel = 2;
+	const double orderOfFiniteElement = 4;
 	const double cellAspectRatio = 5;
 
 	shared_ptr<ProblemDescription<2> > sinusFlow =
