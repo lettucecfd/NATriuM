@@ -180,7 +180,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			*m_fe, *m_faceQuadrature, faceUpdateFlags);
 
 #ifdef WITH_TRILINOS
-	// Trilinos can work with imroved sparsity structures
+	// Trilinos can work with improved sparsity structures
 	CompressedSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
 	CompressedSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
 	CompressedSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
