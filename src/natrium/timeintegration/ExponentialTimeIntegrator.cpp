@@ -12,7 +12,7 @@ namespace natrium {
 template<> ExponentialTimeIntegrator<distributed_sparse_matrix, distributed_vector>::ExponentialTimeIntegrator(
 		double timeStepSize, size_t problemSize) :
 		TimeIntegrator<distributed_sparse_matrix, distributed_vector>(
-				timeStepSize), identityMatrix(makeIdentityMatrix()), H_m(makeMatrix(arnoldiSize,arnoldiSize)), H(makeMatrix(arnoldiSize+1,arnoldiSize))   {
+				timeStepSize), identityMatrix(makeIdentityMatrix()), H_m(makeMatrix(arnoldiSize,arnoldiSize)), H(makeMatrix(arnoldiSize+2,arnoldiSize+2))   {
 
 }
 
@@ -20,7 +20,7 @@ template<> ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 		distributed_block_vector>::ExponentialTimeIntegrator(double timeStepSize,
 		size_t problemSize, size_t numberOfBlocks) :
 		TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>(
-				timeStepSize), identityMatrix(makeIdentityMatrix()), H_m(makeMatrix(arnoldiSize,arnoldiSize)), H(makeMatrix(arnoldiSize+1,arnoldiSize))  {
+				timeStepSize), identityMatrix(makeIdentityMatrix()), H_m(makeMatrix(arnoldiSize,arnoldiSize)), H(makeMatrix(arnoldiSize+2,arnoldiSize+2))  {
 }
 
 
@@ -44,8 +44,8 @@ template<class MATRIX, class VECTOR> void ExponentialTimeIntegrator<MATRIX, VECT
 			v_i.reinit(f.size(),true);
 	}
 
-	if (firstColumn.size() != arnoldiSize) {
-			firstColumn.reinit(arnoldiSize,true);
+	if (firstColumn.size() != arnoldiSize+1) {
+			firstColumn.reinit(arnoldiSize+1,true);
 		}
 
 	if (m_f.size() != f.size()) {
@@ -56,31 +56,38 @@ template<class MATRIX, class VECTOR> void ExponentialTimeIntegrator<MATRIX, VECT
 	v_j = f;
 	v_i = f;
 
+	for (int i=0;i<arnoldiSize+2;i++)
+	{
+		for (int j=0;j<arnoldiSize+2;j++)
+		{
+			H(i,j)=0;
+		}
+	}
 
-numeric_matrix V(f.size(),arnoldiSize); // Orthonormal basis
+numeric_matrix V(f.size(),arnoldiSize+1); // Orthonormal basis V_(m+1)
 
+systemMatrix.vmult(w, f); 	// w = A*f + u
+w.add(systemVector);		// w = A*f + u
 
-double f_Norm = f.l2_norm();
+double beta = w.l2_norm();
 
-for (int i=0;i<f.size();i++) // Arnoldi algorithm (first step)
+for (int i=0;i<f.size();i++) 		// Arnoldi algorithm (first step)
 
 {
-	V.set(i,0,f(i) / f_Norm );
+	V.set(i,0,w(i)/beta );
 
 }
 
-for (int j=0;j<arnoldiSize;j++)  // Arnoldi algorithm (second step)
+for (int j=0;j<arnoldiSize;j++)  	// Arnoldi algorithm (second step)
 	{
 
 
 		for (int i=0;i<f.size();i++)
 		{
 			v_j(i) = V(i,j);
-
 		}
 
 		systemMatrix.vmult(w,v_j);
-		w *= this->getTimeStepSize();
 
 		for (int i=0;i<=j;i++)
 		{
@@ -96,7 +103,7 @@ for (int j=0;j<arnoldiSize;j++)  // Arnoldi algorithm (second step)
 		}
 
 		H(j+1,j) = w.l2_norm();
-		if(H(j+1,j)!=0 && j<arnoldiSize-1)
+		if(H(j+1,j)!=0) // && j<arnoldiSize-1)
 		{
 			for (int k=0;k<f.size();k++)
 			{
@@ -104,9 +111,11 @@ for (int j=0;j<arnoldiSize;j++)  // Arnoldi algorithm (second step)
 
 			}
 		}
+	H(arnoldiSize+1,arnoldiSize)=1;
+
 	}
 
-for (int i=0;i<arnoldiSize;i++) // Transform H to H_m (symmetric)
+for (int i=0;i<arnoldiSize;i++) // Transform H to H_m
 		for(int j=0;j<arnoldiSize;j++)
 		{
 			{
@@ -115,19 +124,57 @@ for (int i=0;i<arnoldiSize;i++) // Transform H to H_m (symmetric)
 		}
 
 
-H_m=taylorSeries(H_m); // Matrix exponential of H_m
+numeric_matrix phiOne(arnoldiSize);
+numeric_matrix phiTwo(arnoldiSize);
+numeric_matrix phiExtended(arnoldiSize+1);
 
 
-for(int i=0;i<arnoldiSize;i++)
+phiFunction(H_m,phiOne,phiTwo);
+
+
+for (int i=0;i<arnoldiSize;i++)
 {
-firstColumn(i)=H_m(i,0);
+	for (int j=0;j<arnoldiSize;j++)
+	{
+		phiExtended(i,j)=phiOne(i,j);
+
+	}
+phiExtended(i,arnoldiSize)=0;
 }
 
 
-V.vmult(m_f,firstColumn);
-m_f*=f_Norm;
-f = m_f;
+for (int j=0;j<arnoldiSize;j++)
+{
+	phiExtended(arnoldiSize,j)=H(arnoldiSize,arnoldiSize-1)*this->getTimeStepSize();
+	phiExtended(arnoldiSize,j)*=phiTwo(arnoldiSize-1,j);
+}
 
+phiExtended(arnoldiSize,arnoldiSize)=1;
+
+
+for(int i=0;i<arnoldiSize+1;i++)
+{
+firstColumn(i)=phiExtended(i,0);
+}
+V.vmult(m_f,firstColumn);
+
+
+
+
+m_f*=(this->getTimeStepSize()*beta);
+
+for (int i=0;i<f.size();i++)
+
+{
+	f(i)+=m_f(i);
+}
+
+
+
+/*V.vmult(m_f,firstColumn);
+m_f*=beta;
+f = m_f;
+*/
 
 
 	}
