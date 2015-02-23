@@ -43,10 +43,19 @@ enum CollisionSchemeName {
 
 /**
  * @short Implemented time integrators
+ * @note other refers to dealii integrators which are accessed through a wrapper class
  */
 enum TimeIntegratorName {
-	RUNGE_KUTTA_5STAGE, THETA_METHOD, EXPONENTIAL
+	RUNGE_KUTTA_5STAGE, THETA_METHOD, EXPONENTIAL, OTHER
 };
+
+enum DealIntegrators {
+  FORWARD_EULER, RK_THIRD_ORDER, RK_CLASSIC_FOURTH_ORDER, BACKWARD_EULER,
+  IMPLICIT_MIDPOINT, CRANK_NICOLSON, SDIRK_TWO_STAGES, HEUN_EULER,
+  BOGACKI_SHAMPINE, DOPRI, FEHLBERG, CASH_KARP
+};
+
+enum EmbeddedMode {NONE, DELTA_T, MIN_DELTA_T, MAX_DELTA_T };
 
 /**
  * @short the numerical flux used to calculate the advection operator

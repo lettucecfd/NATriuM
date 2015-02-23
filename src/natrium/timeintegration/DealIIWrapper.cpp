@@ -11,7 +11,6 @@
 #include "deal.II/lac/identity_matrix.h"
 #include "deal.II/lac/solver_bicgstab.h"
 
-
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_precondition.h"
 #include "../utilities/TrilinosBlockPreconditioner.h"
@@ -33,8 +32,9 @@ VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::evaluateF(const double t,
 }
 
 template<>
-distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix, distributed_vector>::evaluateJInverse(const double t,
-		const double tau, const distributed_vector& f) const {
+distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
+		distributed_vector>::evaluateJInverse(const double t, const double tau,
+		const distributed_vector& f) const {
 
 	distributed_vector result = f;
 
@@ -51,7 +51,8 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix, distributed
 }
 
 template<>
-distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix, distributed_block_vector>::evaluateJInverse(const double t,
+distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
+		distributed_block_vector>::evaluateJInverse(const double t,
 		const double tau, const distributed_block_vector& f) const {
 
 	distributed_block_vector result = f;
@@ -59,8 +60,7 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
-	bicgstab.solve(*m_systemMatrix, result, f,
-			TrilinosBlockPreconditioner());
+	bicgstab.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
 #else
 	bicgstab.solve(*m_systemMatrix, result, f,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
@@ -68,10 +68,10 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	return result;
 }
 
-
 template<>
-distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix, distributed_vector>::evaluateIdMinusTauJInverse(
-		const double t, const double tau, const distributed_vector& f) const {
+distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
+		distributed_vector>::evaluateIdMinusTauJInverse(const double t,
+		const double tau, const distributed_vector& f) const {
 
 	distributed_vector result = f;
 	distributed_sparse_matrix tmpMatrix;
@@ -96,10 +96,10 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix, distributed
 	return result;
 }
 
-
 template<>
-distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix, distributed_block_vector>::evaluateIdMinusTauJInverse(
-		const double t, const double tau, const distributed_block_vector& f) const {
+distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
+		distributed_block_vector>::evaluateIdMinusTauJInverse(const double t,
+		const double tau, const distributed_block_vector& f) const {
 
 	distributed_block_vector result = f;
 	distributed_sparse_block_matrix tmpMatrix;
@@ -107,17 +107,16 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	tmpMatrix.copy_from(*m_systemMatrix);
 	// I-theta*A
 	tmpMatrix *= (-tau);
-	for (size_t I = 0; I < tmpMatrix.n_block_cols(); I++){
-		for (size_t i = 0; i < tmpMatrix.block(I,I).n(); i++) {
-			tmpMatrix.block(I,I).add(i, i, 1.0);
+	for (size_t I = 0; I < tmpMatrix.n_block_cols(); I++) {
+		for (size_t i = 0; i < tmpMatrix.block(I, I).n(); i++) {
+			tmpMatrix.block(I, I).add(i, i, 1.0);
 		}
 	}
 
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
-	bicgstab.solve(tmpMatrix, result, f,
-			TrilinosBlockPreconditioner());
+	bicgstab.solve(tmpMatrix, result, f, TrilinosBlockPreconditioner());
 #else
 	bicgstab.solve(tmpMatrix, result, f,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
@@ -139,12 +138,15 @@ void natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 			dealii::std_cxx11::bind(
 					&DealIIWrapper<MATRIX, VECTOR>::evaluateIdMinusTauJInverse,
 					this, dealii::std_cxx11::_1, dealii::std_cxx11::_2,
-					dealii::std_cxx11::_3), t,	dt, vector);
+					dealii::std_cxx11::_3), t, dt, vector);
 }
 
 template<class MATRIX, class VECTOR>
 natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize) :
 		TimeIntegrator<MATRIX, VECTOR>(timeStepSize) {
+	m_dealIIRKStepper = make_shared<
+			dealii::TimeStepping::ExplicitRungeKutta<VECTOR> >(
+			dealii::TimeStepping::RK_CLASSIC_FOURTH_ORDER);
 }
 
 /// explicit instantiation
