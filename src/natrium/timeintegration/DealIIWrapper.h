@@ -31,6 +31,8 @@ private:
 
 	/// time stepping scheme in dealii
 	shared_ptr<dealii::TimeStepping::RungeKutta<VECTOR> > m_dealIIRKStepper;
+	///
+	shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> > m_dealIIRKEmbedded;
 
 	/**
 	 * @short function that is needed to call evolve_one_time_step
@@ -53,8 +55,15 @@ public:
 	virtual ~DealIIWrapper() {
 	}
 	;
-	virtual void step(VECTOR& vector, const MATRIX& systemMatrix,
-			const VECTOR& systemVector);
+	virtual double step(VECTOR& vector, const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = TimeIntegrator<MATRIX,VECTOR>::getTimeStepSize());
+
+	const shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >& getDealIIEmbedded() const {
+		return m_dealIIRKEmbedded;
+	}
+
+	const shared_ptr<dealii::TimeStepping::RungeKutta<VECTOR> >& getDealIIRKStepper() const {
+		return m_dealIIRKStepper;
+	}
 };
 
 } /* namespace natrium */

@@ -49,8 +49,8 @@ public:
 	/**
 	 * @short One time step of the theta method
 	 */
-	 void step(VECTOR& vector,
-			const MATRIX& systemMatrix, const VECTOR& systemVector);
+	 virtual double step(VECTOR& vector,
+			const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = 0);
 
 };
 

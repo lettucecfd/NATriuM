@@ -53,8 +53,8 @@ template<> RungeKutta5LowStorage<distributed_sparse_block_matrix,
 }
 #endif
 
-template<class MATRIX, class VECTOR> void RungeKutta5LowStorage<MATRIX, VECTOR>::step(
-		VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector) {
+template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR>::step(
+		VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector, double t, double dt){
 	// Test all dimensions and change, if necessary
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
@@ -106,11 +106,11 @@ template<class MATRIX, class VECTOR> void RungeKutta5LowStorage<MATRIX, VECTOR>:
 	}
 
 }
-template void RungeKutta5LowStorage<distributed_sparse_matrix,
+template double RungeKutta5LowStorage<distributed_sparse_matrix,
 		distributed_vector>::step(distributed_vector& f,
-		const distributed_sparse_matrix& systemMatrix, const distributed_vector& systemVector);
-template void RungeKutta5LowStorage<distributed_sparse_block_matrix,
+		const distributed_sparse_matrix& systemMatrix, const distributed_vector& systemVector, double t, double dt);
+template double RungeKutta5LowStorage<distributed_sparse_block_matrix,
 		distributed_block_vector>::step(distributed_block_vector& f,
-		const distributed_sparse_block_matrix& systemMatrix, const distributed_block_vector& systemVector);
+		const distributed_sparse_block_matrix& systemMatrix, const distributed_block_vector& systemVector, double t, double dt);
 
 } /* namespace natrium */

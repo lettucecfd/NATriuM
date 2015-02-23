@@ -59,9 +59,9 @@ template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector
 }
 #endif
 
-template<> void ThetaMethod<distributed_sparse_matrix, distributed_vector>::step(
+template<> double ThetaMethod<distributed_sparse_matrix, distributed_vector>::step(
 		distributed_vector& f, const distributed_sparse_matrix& systemMatrix,
-		const distributed_vector& systemVector) {
+		const distributed_vector& systemVector, double t, double dt) {
 	// Test all dimensions and change, if necessary
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
@@ -115,10 +115,10 @@ template<> void ThetaMethod<distributed_sparse_matrix, distributed_vector>::step
 #endif
 
 }
-template<> void ThetaMethod<distributed_sparse_block_matrix,
+template<> double ThetaMethod<distributed_sparse_block_matrix,
 		distributed_block_vector>::step(distributed_block_vector& f,
 		const distributed_sparse_block_matrix& systemMatrix,
-		const distributed_block_vector& systemVector) {
+		const distributed_block_vector& systemVector, double t, double dt) {
 	// Test all dimensions and change, if necessary
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());

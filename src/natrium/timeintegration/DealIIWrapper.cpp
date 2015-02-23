@@ -163,13 +163,12 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 }
 
 template<class MATRIX, class VECTOR>
-void natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
-		const MATRIX& systemMatrix, const VECTOR& systemVector) {
+double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
+		const MATRIX& systemMatrix, const VECTOR& systemVector, double t,
+		double dt) {
 	m_systemMatrix = &systemMatrix;
 	m_systemVector = &systemVector;
-	double t = 0;
-	double dt = TimeIntegrator<MATRIX, VECTOR>::getTimeStepSize();
-	m_dealIIRKStepper->evolve_one_time_step(
+	return m_dealIIRKStepper->evolve_one_time_step(
 			dealii::std_cxx11::bind(&DealIIWrapper<MATRIX, VECTOR>::evaluateF,
 					this, dealii::std_cxx11::_1, dealii::std_cxx11::_2),
 			dealii::std_cxx11::bind(
@@ -194,8 +193,9 @@ natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
 		m_dealIIRKStepper = make_shared<
 				dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(rk);
 	} else if (rkScheme < 12) {
-		m_dealIIRKStepper = make_shared<
+		m_dealIIRKEmbedded = make_shared<
 				dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >(rk);
+		m_dealIIRKStepper = m_dealIIRKEmbedded;
 	};
 }
 

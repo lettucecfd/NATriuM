@@ -25,11 +25,11 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
 		cout << "  - Integrator " << n << "...";
-
 		// solve ODE F(f) = lambda*f
 		// with initial value f0 = 1
-		// analytic solution: f(x) = e^(lamda*x)
-		const double dt = 0.001;
+		// analytic solution: f(x) = e^(lambda*x)
+		const double tmax = 1;
+		double dt = 0.001;
 		const size_t numberOfSteps = 1000;
 		const double lambda = -2.0;
 		distributed_vector g(1);
@@ -43,21 +43,25 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		A.reinit(sparsityPattern);
 		A.set(0, 0, lambda);
 
-		for (double theta = 0.0; theta <= 1; theta += 0.5) {
-			DealIIWrapper<distributed_sparse_matrix, distributed_vector> tm(dt,
-					name);
-			distributed_vector f(1);
-			f(0) = 1;
-			double t = 0;
-			for (size_t i = 0; i < numberOfSteps; i++) {
-				t += dt;
-				tm.step(f, A, g);
-				double error = fabs(f(0) - exp(lambda * t));
-				BOOST_ASSERT(error < 1e-3);
-			}
-		}
+		DealIIWrapper<distributed_sparse_matrix, distributed_vector> tm(dt,
+				name);
 
-		cout << "done." << endl;
+		distributed_vector f(1);
+		f(0) = 1;
+		double t = 0;
+		unsigned int n_steps = 0;
+		while (t < tmax) {
+			if (t + dt > tmax)
+				dt = tmax - t;
+			t = tm.step(f, A, g, t, dt);
+			if (n >= 7) { // embedded rk
+				dt = tm.getDealIIEmbedded()->get_status().delta_t_guess;
+			}
+			++n_steps;
+		}
+		BOOST_CHECK_CLOSE((double ) f(0), exp(lambda * t), 1);
+
+		cout << " " << n_steps << " steps. done." << endl;
 	}
 	cout << "done." << endl;
 }
@@ -73,7 +77,8 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		// with initial value f0 = [ 1 2 ]
 		// and A = [ 1 -1 , 0 3 ]
 		// analytic solution: f(x) = e^(A*x)
-		const double dt = 0.001;
+		const double tmax = 1;
+		double dt = 0.001;
 		const size_t numberOfSteps = 1000;
 		// build matrix
 		distributed_sparse_block_matrix A;
@@ -108,51 +113,59 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		A.set(1, 0, 0);
 		A.set(1, 1, 3);
 
-		for (double theta = 0.0; theta <= 1; theta += 0.5) {
-			DealIIWrapper<distributed_sparse_block_matrix,
-					distributed_block_vector> tm(dt, name);
-			// initialize block vectors
-			distributed_block_vector f;
-			distributed_block_vector b;
+		DealIIWrapper<distributed_sparse_block_matrix, distributed_block_vector> tm(
+				dt, name);
+		// initialize block vectors
+		distributed_block_vector f;
+		distributed_block_vector b;
 #ifdef WITH_TRILINOS
-			f.reinit(2);
-			for (size_t i = 0; i < 2; i++) {
-				f.block(i).reinit(1);
-			}
-			f.collect_sizes();
-			//b
-			b.reinit(2);
-			for (size_t i = 0; i < 2; i++) {
-				b.block(i).reinit(1);
-			}
-			b.collect_sizes();
-#else
-			f.reinit(2, 1);
-			b.reinit(2, 1);
-#endif
-			f(0) = 1;
-			f(1) = 2;
-			b(0) = 0;
-			b(1) = 0;
-			double c0 = f(0);
-			double c1 = f(1);
-			double t = 0;
-			for (size_t i = 0; i < numberOfSteps; i++) {
-				t += dt;
-				tm.step(f, A, b);
-			}
-			// calculate analytic solution
-			// f1(x) = c1 * exp(x) - 0.5 * c2 * exp(x) [ exp(2x) - 1]
-			// f2(x) = c2 * exp(3x)
-			// with c2 = f2(0) and c1 = f1(0)
-			double f0 = c0 * exp(t) - 0.5 * c1 * exp(t) * (exp(2 * t) - 1.0);
-			double f1 = c1 * exp(3 * t);
-			// compare
-			BOOST_CHECK_CLOSE((double ) f(0), f0, 1e-1);
-			BOOST_CHECK_CLOSE((double ) f(1), f1, 1e-1);
+		f.reinit(2);
+		for (size_t i = 0; i < 2; i++) {
+			f.block(i).reinit(1);
 		}
+		f.collect_sizes();
+		//b
+		b.reinit(2);
+		for (size_t i = 0; i < 2; i++) {
+			b.block(i).reinit(1);
+		}
+		b.collect_sizes();
+#else
+		f.reinit(2, 1);
+		b.reinit(2, 1);
+#endif
+		f(0) = 1;
+		f(1) = 2;
+		b(0) = 0;
+		b(1) = 0;
+		double c0 = f(0);
+		double c1 = f(1);
+		double t = 0;
+
+		unsigned int n_steps = 0;
+		while (t < tmax) {
+			if (t + dt > tmax)
+				dt = tmax - t;
+			t = tm.step(f, A, b, t, dt);
+			if (n >= 7) { // embedded rk
+				dt = tm.getDealIIEmbedded()->get_status().delta_t_guess;
+			}
+			++n_steps;
+		}
+
+		// calculate analytic solution
+		// f1(x) = c1 * exp(x) - 0.5 * c2 * exp(x) [ exp(2x) - 1]
+		// f2(x) = c2 * exp(3x)
+		// with c2 = f2(0) and c1 = f1(0)
+		double f0 = c0 * exp(t) - 0.5 * c1 * exp(t) * (exp(2 * t) - 1.0);
+		double f1 = c1 * exp(3 * t);
+		// compare
+		BOOST_CHECK_CLOSE((double ) f(0), f0, 1);
+		BOOST_CHECK_CLOSE((double ) f(1), f1, 1);
+
 		A.clear();
-		cout << "done." << endl;
+
+		cout << " " << n_steps << " steps. done." << endl;
 
 	}
 	cout << "done." << endl;
