@@ -14,9 +14,9 @@
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_precondition.h"
 #include "../utilities/TrilinosBlockPreconditioner.h"
-#else
-#include "deal.II/lac/precondition.h"
 #endif
+
+#include "deal.II/lac/precondition.h"
 
 namespace natrium {
 
@@ -71,22 +71,21 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 template<>
 distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 		distributed_vector>::evaluateIdMinusTauJInverse(const double t,
-		const double tau, const distributed_vector& f) const {
+		const double tau, const distributed_vector& f) {
 
 	distributed_vector result = f;
-	distributed_sparse_matrix tmpMatrix;
 	// A
-	tmpMatrix.copy_from(*m_systemMatrix);
+	m_tmpMatrix.copy_from(*m_systemMatrix);
 	// I-theta*A
-	tmpMatrix *= (-tau);
-	for (size_t i = 0; i < tmpMatrix.n(); i++) {
-		tmpMatrix.add(i, i, 1.0);
+	m_tmpMatrix *= (-tau);
+	for (size_t i = 0; i < m_tmpMatrix.n(); i++) {
+		m_tmpMatrix.add(i, i, 1.0);
 	}
 
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
-	bicgstab.solve(tmpMatrix, result, f,
+	bicgstab.solve(m_tmpMatrix, result, f,
 			dealii::TrilinosWrappers::PreconditionIdentity());
 #else
 	bicgstab.solve(tmpMatrix, result, f,
@@ -99,30 +98,67 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 template<>
 distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 		distributed_block_vector>::evaluateIdMinusTauJInverse(const double t,
-		const double tau, const distributed_block_vector& f) const {
+		const double tau, const distributed_block_vector& f) {
+	// Test all dimensions and change, if necessary
+	assert(m_systemMatrix->n() == m_systemMatrix->m());
+	assert(f.size() == m_systemMatrix->n());
 
 	distributed_block_vector result = f;
-	distributed_sparse_block_matrix tmpMatrix;
-	// A
-	tmpMatrix.copy_from(*m_systemMatrix);
-	// I-theta*A
-	tmpMatrix *= (-tau);
-	for (size_t I = 0; I < tmpMatrix.n_block_cols(); I++) {
-		for (size_t i = 0; i < tmpMatrix.block(I, I).n(); i++) {
-			tmpMatrix.block(I, I).add(i, i, 1.0);
+
+#ifdef WITH_TRILINOS
+	// check equality of sparsity patterns
+	if (m_tmpMatrix.memory_consumption() != m_systemMatrix->memory_consumption()) {
+		size_t n_blocks = m_systemMatrix->n_block_rows();
+		assert (m_systemMatrix->n_block_cols() == m_systemMatrix->n_block_rows());
+		m_tmpMatrix.reinit(n_blocks, n_blocks);
+		for (size_t I = 0; I < n_blocks; I++) {
+			for (size_t J = 0; J < n_blocks; J++) {
+				m_tmpMatrix.block(I, J).reinit(m_systemMatrix->block(I, J));
+			}
+		}
+	}
+#else
+	if ((m_tmpMatrix.empty()) or
+	// the next check should give true if the sparsity patterns are equal
+	// and false, else. n_nonzero_elements returns the number of entries
+	// in the sparsity pattern, not the actual number of nonzero entries
+			(m_tmpMatrix.n_nonzero_elements()
+					!= m_systemMatrix->n_nonzero_elements())) {
+		m_tmpMatrix.reinit(m_systemMatrix->get_sparsity_pattern());
+	}
+#endif
+	// A*f(t)
+	m_tmpMatrix.copy_from(*m_systemMatrix);
+	size_t n_blocks = m_systemMatrix->n_block_rows();
+	for (size_t I = 0; I < n_blocks; I++) {
+		for (size_t J = 0; J < n_blocks; J++) {
+			assert(
+					m_tmpMatrix.block(I, J).l1_norm()
+							== m_systemMatrix->block(I, J).l1_norm());
+		}
+	}
+	// I-tau*A
+	m_tmpMatrix *= (-tau);
+	for (size_t I = 0; I < m_tmpMatrix.n_block_cols(); I++){
+		for (size_t i = 0; i < m_tmpMatrix.block(I,I).n(); i++) {
+			m_tmpMatrix.block(I,I).add(i, i, 1.0);
 		}
 	}
 
+	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
-	bicgstab.solve(tmpMatrix, result, f, TrilinosBlockPreconditioner());
+	bicgstab.solve(m_tmpMatrix, result, f,
+			dealii::PreconditionIdentity());
 #else
-	bicgstab.solve(tmpMatrix, result, f,
+	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
 #endif
 
 	return result;
+
+
 }
 
 template<class MATRIX, class VECTOR>
@@ -145,8 +181,8 @@ template<class MATRIX, class VECTOR>
 natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize) :
 		TimeIntegrator<MATRIX, VECTOR>(timeStepSize) {
 	m_dealIIRKStepper = make_shared<
-			dealii::TimeStepping::ExplicitRungeKutta<VECTOR> >(
-			dealii::TimeStepping::RK_CLASSIC_FOURTH_ORDER);
+			dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(
+			dealii::TimeStepping::IMPLICIT_MIDPOINT);
 }
 
 /// explicit instantiation

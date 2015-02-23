@@ -26,6 +26,8 @@ private:
 	MATRIX const * m_systemMatrix;
 	VECTOR const * m_systemVector;
 
+	MATRIX m_tmpMatrix;
+
 	/// time stepping scheme in dealii
 	shared_ptr<dealii::TimeStepping::RungeKutta<VECTOR> > m_dealIIRKStepper;
 
@@ -43,7 +45,7 @@ private:
 	 * @short function that is needed to call evolve_one_time_step
 	 */
 	VECTOR evaluateIdMinusTauJInverse(const double t, const double tau,
-			const VECTOR & f) const;
+			const VECTOR & f);
 
 public:
 	DealIIWrapper(const double timeStepSize);
