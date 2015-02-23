@@ -73,6 +73,7 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
 	A.block(0, 1).reinit(A.block(0, 0));
 	A.block(1, 0).reinit(A.block(0, 0));
 	A.block(1, 1).reinit(A.block(0, 0));
+	A.collect_sizes();
 #else
 	dealii::BlockCompressedSparsityPattern cSparse(2, 2);
 	for (size_t I = 0; I < 2; I++) {
@@ -135,8 +136,8 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
 		double f0 = c0 * exp(t) - 0.5 * c1 * exp(t) * (exp(2*t) - 1.0);
 		double f1 = c1 * exp(3*t);
 		// compare
-		BOOST_CHECK_CLOSE(f(0), f0, 1e-1);
-		BOOST_CHECK_CLOSE(f(1), f1, 1e-1);
+		BOOST_CHECK_CLOSE( (double) f(0), f0, 1e-1);
+		BOOST_CHECK_CLOSE( (double) f(1), f1, 1e-1);
 	}
 	A.clear();
 	cout << "done." << endl;

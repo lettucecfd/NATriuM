@@ -100,8 +100,8 @@ int main() {
 		errors = true;
 	}
 
-	// Test 2: Convergence Moving Walls
-	result = IntegrationTestCases::ConvergenceTestMovingWall();
+	// Test 2: Convergence Implicit LBM
+	result = IntegrationTestCases::ConvergenceTestImplicitLBM();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
 		cout << "-  " << result.name << " ... " << "OK." << endl;
@@ -112,8 +112,8 @@ int main() {
 		errors = true;
 	}
 
-	// Test 3: Convergence Implicit LBM
-	result = IntegrationTestCases::ConvergenceTestImplicitLBM();
+	// Test 3: Convergence Moving Walls
+	result = IntegrationTestCases::ConvergenceTestMovingWall();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
 		cout << "-  " << result.name << " ... " << "OK." << endl;

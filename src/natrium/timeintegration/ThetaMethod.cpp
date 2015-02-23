@@ -17,9 +17,10 @@
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_precondition.h"
 #include "../utilities/TrilinosBlockPreconditioner.h"
-#else
-#include "deal.II/lac/precondition.h"
 #endif
+//#else
+#include "deal.II/lac/precondition.h"
+//#endif
 
 
 namespace natrium {
@@ -168,9 +169,12 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
 	// I-theta*dt*A
 	m_tmpMatrix *= (-m_theta);
-	for (size_t i = 0; i < m_tmpMatrix.n(); i++) {
-		m_tmpMatrix.add(i, i, 1.0);
+	for (size_t I = 0; I < m_tmpMatrix.n_block_cols(); I++){
+		for (size_t i = 0; i < m_tmpMatrix.block(I,I).n(); i++) {
+			m_tmpMatrix.block(I,I).add(i, i, 1.0);
+		}
 	}
+
 	// (I-theta*dt*A)f(t) + dt*A*f(t) + dt*b
 	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
 
@@ -180,7 +184,7 @@ template<> void ThetaMethod<distributed_sparse_block_matrix,
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
-			TrilinosBlockPreconditioner());
+			dealii::PreconditionIdentity());//TrilinosBlockPreconditioner());
 #else
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
