@@ -107,9 +107,12 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 
 #ifdef WITH_TRILINOS
 	// check equality of sparsity patterns
-	if (m_tmpMatrix.memory_consumption() != m_systemMatrix->memory_consumption()) {
+	if (m_tmpMatrix.memory_consumption()
+			!= m_systemMatrix->memory_consumption()) {
 		size_t n_blocks = m_systemMatrix->n_block_rows();
-		assert (m_systemMatrix->n_block_cols() == m_systemMatrix->n_block_rows());
+		assert(
+				m_systemMatrix->n_block_cols()
+						== m_systemMatrix->n_block_rows());
 		m_tmpMatrix.reinit(n_blocks, n_blocks);
 		for (size_t I = 0; I < n_blocks; I++) {
 			for (size_t J = 0; J < n_blocks; J++) {
@@ -119,9 +122,9 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	}
 #else
 	if ((m_tmpMatrix.empty()) or
-	// the next check should give true if the sparsity patterns are equal
-	// and false, else. n_nonzero_elements returns the number of entries
-	// in the sparsity pattern, not the actual number of nonzero entries
+			// the next check should give true if the sparsity patterns are equal
+			// and false, else. n_nonzero_elements returns the number of entries
+			// in the sparsity pattern, not the actual number of nonzero entries
 			(m_tmpMatrix.n_nonzero_elements()
 					!= m_systemMatrix->n_nonzero_elements())) {
 		m_tmpMatrix.reinit(m_systemMatrix->get_sparsity_pattern());
@@ -139,9 +142,9 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	}
 	// I-tau*A
 	m_tmpMatrix *= (-tau);
-	for (size_t I = 0; I < m_tmpMatrix.n_block_cols(); I++){
-		for (size_t i = 0; i < m_tmpMatrix.block(I,I).n(); i++) {
-			m_tmpMatrix.block(I,I).add(i, i, 1.0);
+	for (size_t I = 0; I < m_tmpMatrix.n_block_cols(); I++) {
+		for (size_t i = 0; i < m_tmpMatrix.block(I, I).n(); i++) {
+			m_tmpMatrix.block(I, I).add(i, i, 1.0);
 		}
 	}
 
@@ -149,15 +152,13 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
-	bicgstab.solve(m_tmpMatrix, result, f,
-			dealii::PreconditionIdentity());
+	bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
 #else
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
 #endif
 
 	return result;
-
 
 }
 
@@ -178,11 +179,24 @@ void natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 }
 
 template<class MATRIX, class VECTOR>
-natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize) :
-		TimeIntegrator<MATRIX, VECTOR>(timeStepSize) {
-	m_dealIIRKStepper = make_shared<
-			dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(
-			dealii::TimeStepping::IMPLICIT_MIDPOINT);
+natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
+		const DealIntegratorName rkScheme) :
+		TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_systemMatrix(NULL), m_systemVector(
+		NULL) {
+	assert(rkScheme < 12);
+	assert(NONE != rkScheme);
+	dealii::TimeStepping::runge_kutta_method rk =
+			static_cast<dealii::TimeStepping::runge_kutta_method>((int) rkScheme);
+	if (rkScheme < 3) {
+		m_dealIIRKStepper = make_shared<
+				dealii::TimeStepping::ExplicitRungeKutta<VECTOR> >(rk);
+	} else if (rkScheme < 7) {
+		m_dealIIRKStepper = make_shared<
+				dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(rk);
+	} else if (rkScheme < 12) {
+		m_dealIIRKStepper = make_shared<
+				dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >(rk);
+	};
 }
 
 /// explicit instantiation

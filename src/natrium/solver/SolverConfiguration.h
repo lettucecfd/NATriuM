@@ -49,13 +49,21 @@ enum TimeIntegratorName {
 	RUNGE_KUTTA_5STAGE, THETA_METHOD, EXPONENTIAL, OTHER
 };
 
-enum DealIntegrators {
-  FORWARD_EULER, RK_THIRD_ORDER, RK_CLASSIC_FOURTH_ORDER, BACKWARD_EULER,
-  IMPLICIT_MIDPOINT, CRANK_NICOLSON, SDIRK_TWO_STAGES, HEUN_EULER,
-  BOGACKI_SHAMPINE, DOPRI, FEHLBERG, CASH_KARP
+enum DealIntegratorName {
+	FORWARD_EULER,
+	RK_THIRD_ORDER,
+	RK_CLASSIC_FOURTH_ORDER,
+	BACKWARD_EULER,
+	IMPLICIT_MIDPOINT,
+	CRANK_NICOLSON,
+	SDIRK_TWO_STAGES,
+	HEUN_EULER,
+	BOGACKI_SHAMPINE,
+	DOPRI,
+	FEHLBERG,
+	CASH_KARP,
+	NONE
 };
-
-enum EmbeddedMode {NONE, DELTA_T, MIN_DELTA_T, MAX_DELTA_T };
 
 /**
  * @short the numerical flux used to calculate the advection operator
@@ -811,6 +819,8 @@ public:
 			return THETA_METHOD;
 		} else if ("Exponential" == integrator) {
 			return EXPONENTIAL;
+		} else if ("Other" == integrator) {
+			return OTHER;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown Time integrator with index " << integrator
@@ -833,6 +843,17 @@ public:
 		}
 		case EXPONENTIAL: {
 			set("Time integrator", "Exponential");
+			break;
+		}
+		case OTHER: {
+			set("Time integrator", "Other");
+			if (NONE == getDealIntegrator()) {
+				std::stringstream msg1;
+				msg1
+						<< "If you set time integrator to 'other' you will need to specify the Deal integrator. Found none.";
+				leave_subsection();
+				throw ConfigurationException(msg1.str());
+			}
 			break;
 		}
 		default: {
@@ -865,8 +886,7 @@ public:
 		return theta;
 	}
 
-	void setThetaMethodTheta(
-			double theta) {
+	void setThetaMethodTheta(double theta) {
 		enter_subsection("Advection");
 		enter_subsection("Theta method");
 		try {
@@ -878,6 +898,116 @@ public:
 			leave_subsection();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
+	DealIntegratorName getDealIntegrator() {
+		enter_subsection("Advection");
+		enter_subsection("Deal.II integrator");
+		string integrator = get("Runge Kutta scheme");
+		leave_subsection();
+		leave_subsection();
+		if ("None" == integrator) {
+			return NONE;
+		} else if ("Forward Euler" == integrator) {
+			return FORWARD_EULER;
+		} else if ("RK 3rd order" == integrator) {
+			return RK_THIRD_ORDER;
+		} else if ("RK Classic 4th order" == integrator) {
+			return RK_CLASSIC_FOURTH_ORDER;
+		} else if ("Backward Euler" == integrator) {
+			return BACKWARD_EULER;
+		} else if ("Implicit midpoint" == integrator) {
+			return IMPLICIT_MIDPOINT;
+		} else if ("Crank-Nicoloson" == integrator) {
+			return CRANK_NICOLSON;
+		} else if ("SDIRK 2 stages" == integrator) {
+			return SDIRK_TWO_STAGES;
+		} else if ("Heun-Euler" == integrator) {
+			return HEUN_EULER;
+		} else if ("Bogacki-Shampine" == integrator) {
+			return BOGACKI_SHAMPINE;
+		} else if ("Dopri" == integrator) {
+			return DOPRI;
+		} else if ("Fehlberg" == integrator) {
+			return FEHLBERG;
+		} else if ("Cash-Karp" == integrator) {
+			return CASH_KARP;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown Dealii time integrator with index " << integrator
+					<< "in enum TimeIntegratorName. Check your configuration file. If everything is alright, "
+					<< "the implementation of DealIntegratorName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void getDealIntegrator(DealIntegratorName integrator) {
+		enter_subsection("Advection");
+		enter_subsection("Deal.II integrator");
+		switch (integrator) {
+		case NONE: {
+			set("Runge Kutta scheme", "");
+			break;
+		}
+		case FORWARD_EULER: {
+			set("Runge Kutta scheme", "Forward Euler");
+			break;
+		}
+		case RK_THIRD_ORDER: {
+			set("Runge Kutta scheme", "RK 3rd order");
+			break;
+		}
+		case RK_CLASSIC_FOURTH_ORDER: {
+			set("Runge Kutta scheme", "RK Classic 4th order");
+			break;
+		}
+		case BACKWARD_EULER: {
+			set("Runge Kutta scheme", "Backward Euler");
+			break;
+		}
+		case IMPLICIT_MIDPOINT: {
+			set("Runge Kutta scheme", "Implicit midpoint");
+			break;
+		}
+		case CRANK_NICOLSON: {
+			set("Runge Kutta scheme", "Crank-Nicoloson");
+			break;
+		}
+		case SDIRK_TWO_STAGES: {
+			set("Runge Kutta scheme", "SDIRK 2 stages");
+			break;
+		}
+		case HEUN_EULER: {
+			set("Runge Kutta scheme", "Heun-Euler");
+			break;
+		}
+		case BOGACKI_SHAMPINE: {
+			set("Runge Kutta scheme", "Bogacki-Shampine");
+			break;
+		}
+		case DOPRI: {
+			set("Runge Kutta scheme", "Dopri");
+			break;
+		}
+		case FEHLBERG: {
+			set("Runge Kutta scheme", "Fehlberg");
+			break;
+		}
+		case CASH_KARP: {
+			set("Runge Kutta scheme", "Cash-Karp");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown Deal.II integrator (Runge Kutta Scheme); index. " << integrator
+					<< " in enum DealIntegratorName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
 		}
 		leave_subsection();
 		leave_subsection();

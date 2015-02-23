@@ -13,6 +13,7 @@
 
 #include "TimeIntegrator.h"
 #include "utilities/BasicNames.h"
+#include "solver/SolverConfiguration.h"
 
 namespace natrium {
 
@@ -48,7 +49,7 @@ private:
 			const VECTOR & f);
 
 public:
-	DealIIWrapper(const double timeStepSize);
+	DealIIWrapper(const double timeStepSize, const DealIntegratorName rkScheme);
 	virtual ~DealIIWrapper() {
 	}
 	;
