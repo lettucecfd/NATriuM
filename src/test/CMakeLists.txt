@@ -34,6 +34,7 @@ set(	SOLVER_TEST
 set(    TIMEINTEGRATION_TEST
         timeintegration/RungeKutta5LowStorage_test.cpp
         timeintegration/ThetaMethod_test.cpp
+        timeintegration/DealIIWrapper_test.cpp
         )
 set(    UTILITIES_TEST
         utilities/BasicNames_test.cpp
@@ -48,13 +49,13 @@ set(    UTILITIES_TEST
 # define which directories to test
 #
 set(    TESTS
-        ${BOLTZMANNMODELS_TEST}
-        ${COLLISION_TEST}
-        ${PROBLEMDESCRIPTION_TEST}
-        ${ADVECTION_TEST}
-        ${SOLVER_TEST}
+#        ${BOLTZMANNMODELS_TEST}
+#        ${COLLISION_TEST}
+#        ${PROBLEMDESCRIPTION_TEST}
+#        ${ADVECTION_TEST}
+#        ${SOLVER_TEST}
         ${TIMEINTEGRATION_TEST}
-        ${UTILITIES_TEST}
+#        ${UTILITIES_TEST}
                 
 )
 
