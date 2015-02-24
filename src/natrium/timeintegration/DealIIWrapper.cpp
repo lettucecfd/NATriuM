@@ -38,7 +38,7 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 
 	distributed_vector result = f;
 
-	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
+	dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(*m_systemMatrix, result, f,
@@ -57,7 +57,7 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 
 	distributed_block_vector result = f;
 
-	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
+	dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
@@ -74,6 +74,18 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 		const double tau, const distributed_vector& f) {
 
 	distributed_vector result = f;
+
+#ifndef WITH_TRILINOS
+	if ((m_tmpMatrix.empty()) or
+			// the next check should give true if the sparsity patterns are equal
+			// and false, else. n_nonzero_elements returns the number of entries
+			// in the sparsity pattern, not the actual number of nonzero entries
+			(m_tmpMatrix.n_nonzero_elements()
+					!= m_systemMatrix->n_nonzero_elements())) {
+		m_tmpMatrix.reinit(m_systemMatrix->get_sparsity_pattern());
+	}
+#endif
+
 	// A
 	m_tmpMatrix.copy_from(*m_systemMatrix);
 	// I-theta*A
@@ -82,13 +94,13 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 		m_tmpMatrix.add(i, i, 1.0);
 	}
 
-	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
+	dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(m_tmpMatrix, result, f,
 			dealii::TrilinosWrappers::PreconditionIdentity());
 #else
-	bicgstab.solve(tmpMatrix, result, f,
+	bicgstab.solve(m_tmpMatrix, result, f,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
 #endif
 
@@ -149,12 +161,12 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	}
 
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
-	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
+	dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
 #else
-	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
+	bicgstab.solve(m_tmpMatrix, result, f,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
 #endif
 

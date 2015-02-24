@@ -18,7 +18,9 @@
 namespace natrium {
 
 /**
- * @short not yet implemented
+ * @short Wrapper class to deal.II's built-in time stepping routines
+ * @short This implementation supports all time stepping schemes in deal Release 8.2.1,
+ *        which includes Explicit, Implicit and Embedded explicit Runge Kutta methods.
  */
 template<class MATRIX, class VECTOR>
 class DealIIWrapper: public TimeIntegrator<MATRIX, VECTOR> {
@@ -31,7 +33,9 @@ private:
 
 	/// time stepping scheme in dealii
 	shared_ptr<dealii::TimeStepping::RungeKutta<VECTOR> > m_dealIIRKStepper;
-	///
+
+	/// time stepping scheme, for embedded RK methods, additional methods need to be called,
+	/// which requires an extra pointer
 	shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> > m_dealIIRKEmbedded;
 
 	/**
@@ -51,10 +55,24 @@ private:
 			const VECTOR & f);
 
 public:
+
+	/// constructor
 	DealIIWrapper(const double timeStepSize, const DealIntegratorName rkScheme);
+
+	/// destructor
 	virtual ~DealIIWrapper() {
 	}
 	;
+
+	/**
+	 * @short make one time integration step on f: \f[ \frac{df}{dt} = Af+b \f].
+	 * @param[in/out] f Vector of degrees of freedom
+	 * @param[in] systemMatrix Matrix A
+	 * @param[in] systemVector Vector b
+	 * @param[in] double t global time
+	 * @param[in] double dt time step size. Required to interface deal.II's embedded RK methods
+	 * @return new global time t + dt
+	 */
 	virtual double step(VECTOR& vector, const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = TimeIntegrator<MATRIX,VECTOR>::getTimeStepSize());
 
 	const shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >& getDealIIEmbedded() const {

@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		// solve ODE F(f) = lambda*f
 		// with initial value f0 = 1
 		// analytic solution: f(x) = e^(lambda*x)
-		const double tmax = 1;
+		double tmax = 1;
 		double dt = 0.001;
 		const size_t numberOfSteps = 1000;
 		const double lambda = -2.0;
@@ -50,6 +50,9 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		f(0) = 1;
 		double t = 0;
 		unsigned int n_steps = 0;
+		if (7 == n){
+			tmax = 0.1;
+		}
 		while (t < tmax) {
 			if (t + dt > tmax)
 				dt = tmax - t;
@@ -77,7 +80,7 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		// with initial value f0 = [ 1 2 ]
 		// and A = [ 1 -1 , 0 3 ]
 		// analytic solution: f(x) = e^(A*x)
-		const double tmax = 1;
+		double tmax = 1;
 		double dt = 0.001;
 		const size_t numberOfSteps = 1000;
 		// build matrix
@@ -142,6 +145,9 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		double c1 = f(1);
 		double t = 0;
 
+		if (7 == n){
+			tmax = 0.1;
+		}
 		unsigned int n_steps = 0;
 		while (t < tmax) {
 			if (t + dt > tmax)

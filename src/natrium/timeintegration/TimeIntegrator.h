@@ -45,8 +45,14 @@ public:
 	}
 
 	/**
-	 * @short make one time integration step on vector
-	 *        using the system matrix
+	 * @short make one time integration step on f: \f[ \frac{df}{dt} = Af+b \f].
+	 * @param[in/out] f Vector of degrees of freedom
+	 * @param[in] systemMatrix Matrix A
+	 * @param[in] systemVector Vector b
+	 * @param[in] double t global time
+	 * @param[in] double dt time step size. Required to interface deal.II's embedded RK methods
+	 * @return new global time
+	 * @note fully virtual method. Overloaded by subclasses.
 	 */
 	virtual double step(VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = 0) = 0;
 };

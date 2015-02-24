@@ -104,7 +104,7 @@ template<> double ThetaMethod<distributed_sparse_matrix, distributed_vector>::st
 	// (I-theta*dt*A)f(t) + dt*A*f(t) + dt*b
 	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
 
-	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
+	dealii::SolverControl solver_control(1000, 1e-6*m_tmpSystemVector.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
@@ -180,7 +180,7 @@ template<> double ThetaMethod<distributed_sparse_block_matrix,
 
 
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
-	dealii::SolverControl solver_control(1000, 1e-8, false, false);	//* m_tmpSystemVector.l2_norm());
+	dealii::SolverControl solver_control(1000, 1e-6*m_tmpSystemVector.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	bicgstab.solve(m_tmpMatrix, f, m_tmpSystemVector,
