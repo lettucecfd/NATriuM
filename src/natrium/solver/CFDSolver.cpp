@@ -23,6 +23,7 @@
 
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
+#include "../timeintegration/DealIIWrapper.h"
 
 #include "../utilities/Logging.h"
 #include "../utilities/CFDSolverUtilities.h"
@@ -137,6 +138,11 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
 		throw CFDSolverException(
 				"Exponential time integrator is not implemented, yet.");
+	} else if (OTHER == configuration->getTimeIntegrator()) {
+		m_timeIntegrator = make_shared<
+						DealIIWrapper<distributed_sparse_block_matrix,
+								distributed_block_vector> >(
+						configuration->getTimeStepSize(), configuration->getDealIntegrator());
 	}
 
 // initialize macroscopic variables
@@ -252,7 +258,7 @@ void CFDSolver<dim>::stream() {
 	const distributed_block_vector& systemVector =
 			m_advectionOperator->getSystemVector();
 
-	m_timeIntegrator->step(f, systemMatrix, systemVector);
+	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time, m_timeIntegrator->getTimeStepSize());
 
 }
 template void CFDSolver<2>::stream();
@@ -280,7 +286,6 @@ void CFDSolver<dim>::run() {
 		output(m_i);
 		stream();
 		collide();
-		m_time += m_timeIntegrator->getTimeStepSize();
 	}
 	output(N);
 	LOG(BASIC) << "NATriuM run complete." << endl;

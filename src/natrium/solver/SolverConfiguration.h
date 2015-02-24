@@ -847,13 +847,14 @@ public:
 		}
 		case OTHER: {
 			set("Time integrator", "Other");
+			leave_subsection(); // in order to call getDeal... which will also navigate through the configuration
 			if (NONE == getDealIntegrator()) {
 				std::stringstream msg1;
 				msg1
 						<< "If you set time integrator to 'other' you will need to specify the Deal integrator. Found none.";
-				leave_subsection();
 				throw ConfigurationException(msg1.str());
 			}
+			enter_subsection("Advection");
 			break;
 		}
 		default: {
@@ -944,7 +945,8 @@ public:
 		}
 	}
 
-	void getDealIntegrator(DealIntegratorName integrator) {
+	void setDealIntegrator(DealIntegratorName integrator) {
+		bool is_other = (getTimeIntegrator() == OTHER);
 		enter_subsection("Advection");
 		enter_subsection("Deal.II integrator");
 		switch (integrator) {
@@ -1011,6 +1013,11 @@ public:
 		}
 		leave_subsection();
 		leave_subsection();
+		// Warn if the Deal.II integrator setting will not be applied
+		if ((NONE != integrator) and (not is_other)) {
+			LOG(WARNING) << "Did not understand setting of Deal.II integrator. If you want to use the Deal.II "
+					"time integration schemes, you will have to set Time integrator to 'OTHER'.";
+		}
 	}
 
 	double getTimeStepSize() {

@@ -114,6 +114,8 @@ template<> double ThetaMethod<distributed_sparse_matrix, distributed_vector>::st
 			dealii::PreconditionIdentity());	//,	           preconditioner);
 #endif
 
+	return t+dt;
+
 }
 template<> double ThetaMethod<distributed_sparse_block_matrix,
 		distributed_block_vector>::step(distributed_block_vector& f,
@@ -190,6 +192,7 @@ template<> double ThetaMethod<distributed_sparse_block_matrix,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
 #endif
 
+	return t+dt;
 }
 
 } /* namespace natrium */

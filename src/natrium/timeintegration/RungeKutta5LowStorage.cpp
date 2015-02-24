@@ -105,6 +105,8 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 		m_df /= m_b.at(i);
 	}
 
+	return t+dt;
+
 }
 template double RungeKutta5LowStorage<distributed_sparse_matrix,
 		distributed_vector>::step(distributed_vector& f,

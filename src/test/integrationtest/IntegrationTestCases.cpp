@@ -120,7 +120,7 @@ TestResult ConvergenceTestImplicitLBM() {
 	const double orderOfFiniteElement = 4;
 	const double scaling = sqrt(3) * 1 / Ma;
 	const double refinementLevel = 3;
-	const double CFL = 5;
+	const double CFL = 1.0;
 
 	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1./Ma);
@@ -137,8 +137,10 @@ TestResult ConvergenceTestImplicitLBM() {
 	configuration->setStencilScaling(scaling);
 	configuration->setTimeStepSize(dt);
 	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
-	configuration->setTimeIntegrator(THETA_METHOD);
-	configuration->setThetaMethodTheta(0.5);
+	//configuration->setTimeIntegrator(THETA_METHOD);
+	//configuration->setThetaMethodTheta(0.5);
+	configuration->setDealIntegrator(SDIRK_TWO_STAGES);
+	configuration->setTimeIntegrator(OTHER);
 
 	// Simulation
 	BenchmarkCFDSolver<2> solver(configuration, benchmark);

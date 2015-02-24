@@ -52,15 +52,15 @@ SolverConfiguration::SolverConfiguration() {
 		enter_subsection("Theta method");
 		{
 			declare_entry("Theta", "0.5", dealii::Patterns::Double(0, 1),
-					"Theta=0: Explicit Euler; Theta=0.5: Crank-Nicholson; Theta=1.0: Implicit Euler.");
+					"Theta=0: Explicit Euler; Theta=0.5: Crank-Nicolson; Theta=1.0: Implicit Euler.");
 		}
 		leave_subsection();
 		enter_subsection("Deal.II integrator");
 		{
 			declare_entry("Runge Kutta scheme", "None",
 					dealii::Patterns::Selection(
-							"None|Forward Euler|RK 3rd order|RK Classic 4th order|Backward Euler|"
-									"Implicit midpoint|Crank-Nicoloson|SDIRK 2 stages|Heun-Euler|Bogacki-Shampine|Dopri|Fehlberg|Cash-Karp"),
+							"Forward Euler|RK 3rd order|RK Classic 4th order|Backward Euler|"
+									"Implicit midpoint|Crank-Nicoloson|SDIRK 2 stages|Heun-Euler|Bogacki-Shampine|Dopri|Fehlberg|Cash-Karp|None"),
 					"Deal.ii built-in time integrators. They are accessed by chosing time integrator = other.");
 		}
 		leave_subsection();
