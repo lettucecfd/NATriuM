@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        step-sinus-shear
+        compare-Brenner
         )
 
 
@@ -12,7 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                sinus-shear.cpp
+                compare-Brenner.cpp
                 SinusoidalShear2D.h   
                 SinusoidalShear2D.cpp             
                )
