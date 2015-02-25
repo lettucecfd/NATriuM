@@ -64,6 +64,8 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 	if ((0.0 != dt) and dt != this->getTimeStepSize()){
 		this->setTimeStepSize(dt);
 		LOG(BASIC) << "Time step size set to " << dt << endl;
+	} else if (0.0 == dt){
+		dt = this->getTimeStepSize();
 	}
 
 #ifdef WITH_TRILINOS

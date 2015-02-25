@@ -188,7 +188,10 @@ double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 		} else {
 			LOG(DETAILED) << "Time step size set to " << dt << endl;
 		}
+	} else if (0.0 == dt){
+		dt = this->getTimeStepSize();
 	}
+
 
 	m_systemMatrix = &systemMatrix;
 	m_systemVector = &systemVector;

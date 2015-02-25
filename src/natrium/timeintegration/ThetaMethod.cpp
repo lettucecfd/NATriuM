@@ -72,7 +72,10 @@ template<> double ThetaMethod<distributed_sparse_matrix, distributed_vector>::st
 	if ((0.0 != dt) and dt != this->getTimeStepSize()){
 		this->setTimeStepSize(dt);
 		LOG(BASIC) << "Time step size set to " << dt << endl;
+	} else if (0.0 == dt){
+		dt = this->getTimeStepSize();
 	}
+
 
 #ifdef WITH_TRILINOS
 	if (m_tmpSystemVector.size() != f.size()) {
@@ -136,7 +139,10 @@ template<> double ThetaMethod<distributed_sparse_block_matrix,
 	if ((0.0 != dt) and dt != this->getTimeStepSize()){
 		this->setTimeStepSize(dt);
 		LOG(BASIC) << "Time step size set to " << dt << endl;
+	} else if (0.0 == dt){
+		dt = this->getTimeStepSize();
 	}
+
 
 #ifdef WITH_TRILINOS
 	if (m_tmpSystemVector.size() != f.size()) {
