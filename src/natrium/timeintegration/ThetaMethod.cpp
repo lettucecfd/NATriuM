@@ -69,8 +69,8 @@ template<> double ThetaMethod<distributed_sparse_matrix, distributed_vector>::st
 	assert(f.size() == systemMatrix.n());
 	assert(systemVector.size() == systemMatrix.n());
 
-	if ((0.0 != dt) and dt != getTimeStepSize()){
-		setTimeStepSize(dt);
+	if ((0.0 != dt) and dt != this->getTimeStepSize()){
+		this->setTimeStepSize(dt);
 		LOG(BASIC) << "Time step size set to " << dt << endl;
 	}
 
@@ -133,8 +133,8 @@ template<> double ThetaMethod<distributed_sparse_block_matrix,
 	assert(f.size() == systemMatrix.n());
 	assert(systemVector.size() == systemMatrix.n());
 
-	if ((0.0 != dt) and dt != getTimeStepSize()){
-		setTimeStepSize(dt);
+	if ((0.0 != dt) and dt != this->getTimeStepSize()){
+		this->setTimeStepSize(dt);
 		LOG(BASIC) << "Time step size set to " << dt << endl;
 	}
 

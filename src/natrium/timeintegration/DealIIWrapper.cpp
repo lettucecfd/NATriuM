@@ -181,8 +181,8 @@ double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 		const MATRIX& systemMatrix, const VECTOR& systemVector, double t,
 		double dt) {
 
-	if ((0.0 != dt) and dt != getTimeStepSize()){
-		setTimeStepSize(dt);
+	if ((0.0 != dt) and dt != this->getTimeStepSize()){
+		this->setTimeStepSize(dt);
 		if (m_dealIIRKEmbedded){
 			LOG(BASIC) << "Time step size set to " << dt << endl;
 		} else {

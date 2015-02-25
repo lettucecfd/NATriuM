@@ -61,8 +61,8 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
 
-	if ((0.0 != dt) and dt != getTimeStepSize()){
-		setTimeStepSize(dt);
+	if ((0.0 != dt) and dt != this->getTimeStepSize()){
+		this->setTimeStepSize(dt);
 		LOG(BASIC) << "Time step size set to " << dt << endl;
 	}
 
