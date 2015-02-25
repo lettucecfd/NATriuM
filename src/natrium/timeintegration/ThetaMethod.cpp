@@ -22,6 +22,8 @@
 #include "deal.II/lac/precondition.h"
 //#endif
 
+#include "utilities/Logging.h"
+
 
 namespace natrium {
 
@@ -66,6 +68,11 @@ template<> double ThetaMethod<distributed_sparse_matrix, distributed_vector>::st
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
 	assert(systemVector.size() == systemMatrix.n());
+
+	if ((0.0 != dt) and dt != getTimeStepSize()){
+		setTimeStepSize(dt);
+		LOG(BASIC) << "Time step size set to " << dt << endl;
+	}
 
 #ifdef WITH_TRILINOS
 	if (m_tmpSystemVector.size() != f.size()) {
@@ -125,6 +132,11 @@ template<> double ThetaMethod<distributed_sparse_block_matrix,
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
 	assert(systemVector.size() == systemMatrix.n());
+
+	if ((0.0 != dt) and dt != getTimeStepSize()){
+		setTimeStepSize(dt);
+		LOG(BASIC) << "Time step size set to " << dt << endl;
+	}
 
 #ifdef WITH_TRILINOS
 	if (m_tmpSystemVector.size() != f.size()) {

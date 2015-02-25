@@ -18,6 +18,8 @@
 
 #include "deal.II/lac/precondition.h"
 
+#include "../utilities/Logging.h"
+
 namespace natrium {
 
 template<class MATRIX, class VECTOR>
@@ -178,6 +180,16 @@ template<class MATRIX, class VECTOR>
 double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 		const MATRIX& systemMatrix, const VECTOR& systemVector, double t,
 		double dt) {
+
+	if ((0.0 != dt) and dt != getTimeStepSize()){
+		setTimeStepSize(dt);
+		if (m_dealIIRKEmbedded){
+			LOG(BASIC) << "Time step size set to " << dt << endl;
+		} else {
+			LOG(DETAILED) << "Time step size set to " << dt << endl;
+		}
+	}
+
 	m_systemMatrix = &systemMatrix;
 	m_systemVector = &systemVector;
 	return m_dealIIRKStepper->evolve_one_time_step(

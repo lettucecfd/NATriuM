@@ -9,6 +9,8 @@
 
 #include <cassert>
 
+#include "../utilities/Logging.h"
+
 
 namespace natrium {
 
@@ -58,6 +60,12 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 	// Test all dimensions and change, if necessary
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
+
+	if ((0.0 != dt) and dt != getTimeStepSize()){
+		setTimeStepSize(dt);
+		LOG(BASIC) << "Time step size set to " << dt << endl;
+	}
+
 #ifdef WITH_TRILINOS
 	if (m_Af.size() != f.size()) {
 		m_Af.reinit(f);
