@@ -18,6 +18,7 @@
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/Logging.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
@@ -87,15 +88,15 @@ enum InitializationSchemeName {
 /**
  * @short Exception class for CFDSolver
  */
-class ConfigurationException: public std::exception {
+class ConfigurationException: public NATriuMException {
 private:
 	std::string message;
 public:
 	ConfigurationException(const char *msg) :
-			message(msg) {
+			NATriuMException(msg), message(msg) {
 	}
 	ConfigurationException(const string& msg) :
-			message(msg) {
+			NATriuMException(msg), message(msg) {
 	}
 	~ConfigurationException() throw () {
 	}

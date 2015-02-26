@@ -14,17 +14,21 @@
 #include "../boltzmannmodels/BoltzmannModel.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
 namespace CFDSolverUtilities {
 
-class CFDSolverUtilitiesException: public std::exception {
+class CFDSolverUtilitiesException: public NATriuMException {
 private:
 	std::string message;
 public:
 	CFDSolverUtilitiesException(const char *msg) :
-			message(msg) {
+		NATriuMException(msg), message(msg) {
+	}
+	CFDSolverUtilitiesException(const string& msg) :
+		NATriuMException(msg), message(msg) {
 	}
 	~CFDSolverUtilitiesException() throw () {
 	}
@@ -45,14 +49,15 @@ double getMinimumVertexDistance(const dealii::Triangulation<dim>& tria);
 
 template<size_t dim>
 double calculateTimestep(const dealii::Triangulation<dim>& tria,
-		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel, double cFL=0.4);
+		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel,
+		double cFL = 0.4);
 
 /**
  * @short stolen from Deal.II's step 49 tutorial
  */
 template<int dim>
 void mesh_info(const dealii::Triangulation<dim> &tria,
-               const std::string        &filename);
+		const std::string &filename);
 
 } /* CFDSolverUtilities */
 } /* namespace natrium */

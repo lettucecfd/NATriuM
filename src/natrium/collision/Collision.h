@@ -17,18 +17,22 @@
 #include "../solver/DistributionFunctions.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
 /**
- * @short Exception class for Collision model
+ * @short Exception class for Collision
  */
-class CollisionException: public std::exception {
+class CollisionException: public NATriuMException {
 private:
 	std::string message;
 public:
 	CollisionException(const char *msg) :
-			message(msg) {
+			NATriuMException(msg), message(msg) {
+	}
+	CollisionException(const string& msg) :
+			NATriuMException(msg), message(msg) {
 	}
 	~CollisionException() throw () {
 	}

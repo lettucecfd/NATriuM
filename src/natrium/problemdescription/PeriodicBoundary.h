@@ -18,6 +18,8 @@
 #include "deal.II/dofs/dof_handler.h"
 #include <deal.II/lac/compressed_sparsity_pattern.h>
 
+#include "../utilities/NATriuMException.h"
+
 #include "Boundary.h"
 
 namespace natrium {
@@ -26,20 +28,20 @@ namespace natrium {
  * @short Exception for impossible periodic boundary,
  * e.g. when the interfaces don't have the same length.
  */
-class PeriodicBoundaryNotPossible: public std::exception {
+class PeriodicBoundaryNotPossible: public NATriuMException {
 private:
-	std::string m_message;
+	std::string message;
 public:
-	PeriodicBoundaryNotPossible() :
-			m_message("Error in periodic boundary") {
+	PeriodicBoundaryNotPossible(const char *msg) :
+			NATriuMException(msg), message(msg) {
 	}
-	PeriodicBoundaryNotPossible(const std::string& message) :
-			m_message("Error in periodic boundary: " + message) {
+	PeriodicBoundaryNotPossible(const string& msg) :
+			NATriuMException(msg), message(msg) {
 	}
-	virtual const char* what() const throw () {
-		return m_message.c_str();
+	~PeriodicBoundaryNotPossible() throw () {
 	}
-	virtual ~PeriodicBoundaryNotPossible() throw () {
+	const char *what() const throw () {
+		return this->message.c_str();
 	}
 };
 

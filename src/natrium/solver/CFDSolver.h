@@ -31,18 +31,22 @@
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
 /**
  * @short Exception class for CFDSolver
  */
-class CFDSolverException: public std::exception {
+class CFDSolverException: public NATriuMException {
 private:
 	std::string message;
 public:
 	CFDSolverException(const char *msg) :
-			message(msg) {
+			NATriuMException(msg), message(msg) {
+	}
+	CFDSolverException(const string& msg) :
+			NATriuMException(msg), message(msg) {
 	}
 	~CFDSolverException() throw () {
 	}
@@ -240,7 +244,9 @@ public:
 					m_problemDescription->getViscosity(),
 					m_configuration->getTimeStepSize(), *m_boltzmannModel);
 		}
-		LOG(WARNING) << "getTau() is called, but you don't have a BGKTransformed model." << endl;
+		LOG(WARNING)
+				<< "getTau() is called, but you don't have a BGKTransformed model."
+				<< endl;
 		return 0;
 
 	}
