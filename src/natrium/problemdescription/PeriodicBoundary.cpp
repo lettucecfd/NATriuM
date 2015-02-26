@@ -110,8 +110,10 @@ template<> void PeriodicBoundary<2>::createCellMap(
 	// The key of these cells is the distance from the begin point of the respective line.
 	// The second element of the value pair is the local face id of the face which belongs to the boundary.
 	std::map<double,
-			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t>, own_double_less > cellsAtBoundary1;
-	std::map<double, std::pair<dealii::DoFHandler<2>::cell_iterator, size_t>, own_double_less > cellsAtBoundary2;
+			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t>,
+			own_double_less> cellsAtBoundary1;
+	std::map<double, std::pair<dealii::DoFHandler<2>::cell_iterator, size_t>,
+			own_double_less> cellsAtBoundary2;
 
 	// iterate over all active cells and sort them
 	for (; currentCell != lastCell; ++currentCell) {
@@ -156,8 +158,34 @@ template<> void PeriodicBoundary<2>::createCellMap(
 	for (; atBoundary1 != cellsAtBoundary1.end(); atBoundary1++) {
 		// assert that the face discretizations on both lines are equal
 		if (cellsAtBoundary2.count(atBoundary1->first) == 0) {
+			// Generate lengthy error message
+			std::stringstream info;
+			info << "Face centers for boundaries " << m_boundaryIndicator1
+					<< " (left column) and " << m_boundaryIndicator2
+					<< " (right column):" << endl;
+			std::map<double,
+					std::pair<dealii::DoFHandler<2>::active_cell_iterator,
+							size_t> >::iterator it1 = cellsAtBoundary1.begin();
+			std::map<double,
+					std::pair<dealii::DoFHandler<2>::cell_iterator,
+							size_t> >::iterator it2 = cellsAtBoundary2.begin();
+			while ((it1 != cellsAtBoundary1.end())
+					or (it2 != cellsAtBoundary2.end())) {
+				if (it1 != cellsAtBoundary1.end()) {
+					info << it1->first;
+					it1++;
+				} else {
+					info << "          ";
+				}
+				if (it2 != cellsAtBoundary2.end()) {
+					info << it2->first;
+					it2++;
+				}
+				info << endl;
+			}
 			throw PeriodicBoundaryNotPossible(
-					"The discretizations of opposite periodic boundaries do not coincide. This version of the NATriuM solver does only work with equal discretizations.");
+					"The discretizations of opposite periodic boundaries do not coincide. "
+					"This version of the NATriuM solver does only work with equal discretizations. ", info);
 		}
 		// add to cells
 		m_cells.insert(
@@ -203,8 +231,6 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 
 	// THIS FUNCTION IS NOT USED!!! See DealIIExtensions module for details
 
-
-
 	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
 	const dealii::ConstraintMatrix constraints;
 
@@ -225,7 +251,8 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 			element->first->get_dof_indices(doFIndicesAtCell1);
 			element->second.first->get_dof_indices(doFIndicesAtCell2);
 			// couple all dofs at boundary 1 with dofs at boundary 2
-			constraints.add_entries_local_to_global(doFIndicesAtCell1, doFIndicesAtCell2, block, true);
+			constraints.add_entries_local_to_global(doFIndicesAtCell1,
+					doFIndicesAtCell2, block, true);
 			// TODO only couple the ones which are nonzero at the face
 			// TODO remove the INVARIANT "discretization at boundary 1 = discretization at boundary 2"
 			//      e.g. by mapping, allowing more than one periodic neighbor, ...
@@ -235,7 +262,6 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 			//}
 		}
 	}
-
 
 }
 template void PeriodicBoundary<2>::addToSparsityPattern(

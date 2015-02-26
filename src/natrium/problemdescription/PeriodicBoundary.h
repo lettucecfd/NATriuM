@@ -19,6 +19,7 @@
 #include <deal.II/lac/compressed_sparsity_pattern.h>
 
 #include "../utilities/NATriuMException.h"
+#include "../utilities/Logging.h"
 
 #include "Boundary.h"
 
@@ -32,11 +33,16 @@ class PeriodicBoundaryNotPossible: public NATriuMException {
 private:
 	std::string message;
 public:
-	PeriodicBoundaryNotPossible(const char *msg) :
+	PeriodicBoundaryNotPossible(const char *msg,
+			const std::stringstream & additionalInfo = std::stringstream()) :
 			NATriuMException(msg), message(msg) {
+		LOG(DETAILED) << "Additional information on error: " << endl;
+
 	}
-	PeriodicBoundaryNotPossible(const string& msg) :
+	PeriodicBoundaryNotPossible(const string& msg,
+			const std::stringstream & additionalInfo = std::stringstream()) :
 			NATriuMException(msg), message(msg) {
+		LOG(DETAILED) << "Additional information on error: " << endl;
 	}
 	~PeriodicBoundaryNotPossible() throw () {
 	}
