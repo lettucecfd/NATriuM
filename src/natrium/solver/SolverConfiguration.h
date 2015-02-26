@@ -151,8 +151,7 @@ public:
 	/**
 	 * @short Check if the configuration is consistent
 	 */
-	void isConsistent() {
-	}
+	void isConsistent();
 
 	/**
 	 * @short prepare the Output directory
@@ -847,14 +846,6 @@ public:
 		}
 		case OTHER: {
 			set("Time integrator", "Other");
-			leave_subsection(); // in order to call getDeal... which will also navigate through the configuration
-			if (NONE == getDealIntegrator()) {
-				std::stringstream msg1;
-				msg1
-						<< "If you set time integrator to 'other' you will need to specify the Deal integrator. Found none.";
-				throw ConfigurationException(msg1.str());
-			}
-			enter_subsection("Advection");
 			break;
 		}
 		default: {
@@ -946,7 +937,6 @@ public:
 	}
 
 	void setDealIntegrator(DealIntegratorName integrator) {
-		bool is_other = (getTimeIntegrator() == OTHER);
 		enter_subsection("Advection");
 		enter_subsection("Deal.II integrator");
 		switch (integrator) {
@@ -1004,7 +994,8 @@ public:
 		}
 		default: {
 			std::stringstream msg;
-			msg << "Unknown Deal.II integrator (Runge Kutta Scheme); index. " << integrator
+			msg << "Unknown Deal.II integrator (Runge Kutta Scheme); index. "
+					<< integrator
 					<< " in enum DealIntegratorName. The constructor of SolverConfiguration might not be up-to-date.";
 			leave_subsection();
 			leave_subsection();
@@ -1013,11 +1004,6 @@ public:
 		}
 		leave_subsection();
 		leave_subsection();
-		// Warn if the Deal.II integrator setting will not be applied
-		if ((NONE != integrator) and (not is_other)) {
-			LOG(WARNING) << "Did not understand setting of Deal.II integrator. If you want to use the Deal.II "
-					"time integration schemes, you will have to set Time integrator to 'OTHER'.";
-		}
 	}
 
 	double getTimeStepSize() {

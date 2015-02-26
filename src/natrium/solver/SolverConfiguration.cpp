@@ -291,4 +291,22 @@ void SolverConfiguration::prepareOutputDirectory() {
 	}
 }
 
+void SolverConfiguration::isConsistent() {
+	// check consistency of time integrator setting
+	if (OTHER == this->getTimeIntegrator()) {
+		if (NONE == this->getDealIntegrator()) {
+			std::stringstream msg1;
+			msg1
+					<< "If you set time integrator to 'other' you will need to specify the Deal integrator. Found none.";
+			LOG(ERROR) << msg1.str().c_str() << endl;
+			throw ConfigurationException(msg1.str());
+		}
+	} else if (NONE != this->getDealIntegrator()) {
+		// Warn if the Deal.II integrator setting will not be applied
+		LOG(WARNING)
+				<< "Did not understand setting of Deal.II integrator. If you want to use the Deal.II "
+						"time integration schemes, you will have to set Time integrator to 'OTHER'.";
+	}
+}
+
 } /* namespace natrium */
