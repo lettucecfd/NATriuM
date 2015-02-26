@@ -305,7 +305,7 @@ void SolverConfiguration::isConsistent() {
 		// Warn if the Deal.II integrator setting will not be applied
 		LOG(WARNING)
 				<< "Did not understand setting of Deal.II integrator. If you want to use the Deal.II "
-						"time integration schemes, you will have to set Time integrator to 'OTHER'.";
+						"time integration schemes, you will have to set Time integrator to 'OTHER'." << endl;
 	}
 }
 
