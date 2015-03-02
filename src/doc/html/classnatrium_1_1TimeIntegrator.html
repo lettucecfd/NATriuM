@@ -104,6 +104,7 @@ Inheritance diagram for natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;:</div>
   <img src="classnatrium_1_1TimeIntegrator.png" usemap="#natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;_map" alt=""/>
   <map id="natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;_map" name="natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;_map">
 <area href="classnatrium_1_1RungeKutta5LowStorage.html" title="Implementation of the fifth-order Runge-Kutta time integration scheme with low storage consumption..." alt="natrium::RungeKutta5LowStorage&lt; MATRIX, VECTOR &gt;" shape="rect" coords="0,56,328,80"/>
+<area href="classnatrium_1_1ThetaMethod.html" title="Implementation of the Theta method for time integration. " alt="natrium::ThetaMethod&lt; MATRIX, VECTOR &gt;" shape="rect" coords="338,56,666,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -123,10 +124,10 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>getTimeStepSize</b>
 <tr class="memitem:a18592866e946c63ab1595d3ab688ea6b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18592866e946c63ab1595d3ab688ea6b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setTimeStepSize</b> (double timeStepSize)</td></tr>
 <tr class="separator:a18592866e946c63ab1595d3ab688ea6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3888242580c257058d8d6f8ddeb2c5d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3888242580c257058d8d6f8ddeb2c5d"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TimeIntegrator.html#ad3888242580c257058d8d6f8ddeb2c5d">step</a> (VECTOR &amp;vector, const MATRIX &amp;systemMatrix)=0</td></tr>
-<tr class="memdesc:ad3888242580c257058d8d6f8ddeb2c5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">make one time integration step on vector using the system matrix <br/></td></tr>
-<tr class="separator:ad3888242580c257058d8d6f8ddeb2c5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09e1ad9254abec537cda42b1d2fb83e6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a09e1ad9254abec537cda42b1d2fb83e6"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TimeIntegrator.html#a09e1ad9254abec537cda42b1d2fb83e6">step</a> (VECTOR &amp;vector, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector)=0</td></tr>
+<tr class="memdesc:a09e1ad9254abec537cda42b1d2fb83e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">make one time integration step on vector using the system matrix <br/></td></tr>
+<tr class="separator:a09e1ad9254abec537cda42b1d2fb83e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class MATRIX, class VECTOR&gt;<br/>
@@ -141,7 +142,7 @@ class natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;</h3>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 1 2014 11:54:25 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 28 2014 13:58:03 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -30,7 +30,7 @@ Inheritance diagram for natrium\-:\-:Min\-Lee\-Boundary$<$ dim $>$\-:\begin{figu
 \begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
 void \hyperlink{classnatrium_1_1MinLeeBoundary_a873e55801ae7972803d50c7fb805c391}{add\-To\-Sparsity\-Pattern} (dealii\-::\-Block\-Compressed\-Sparsity\-Pattern \&c\-Sparse, const dealii\-::\-Do\-F\-Handler$<$ dim $>$ \&do\-F\-Handler, const \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} \&boltzmann\-Model) const 
 \begin{DoxyCompactList}\small\item\em modify sparsity pattern so that the fluxes over periodic boundary can be incorporated \end{DoxyCompactList}\item 
-void \hyperlink{classnatrium_1_1MinLeeBoundary_af546e18b114f794f8e8a6bf0c73ae5ed}{assemble\-Boundary} (size\-\_\-t alpha, const typename dealii\-::\-Do\-F\-Handler$<$ dim $>$\-::active\-\_\-cell\-\_\-iterator \&cell, size\-\_\-t face\-Number, dealii\-::\-F\-E\-Face\-Values$<$ dim $>$ \&fe\-Face\-Values, const \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} \&boltzmann\-Model, const std\-::map$<$ size\-\_\-t, size\-\_\-t $>$ \&q\-\_\-index\-\_\-to\-\_\-facedof, distributed\-\_\-sparse\-\_\-block\-\_\-matrix \&system\-Matrix, distributed\-\_\-block\-\_\-vector \&system\-Vector) const 
+void \hyperlink{classnatrium_1_1MinLeeBoundary_ad23ea2da1a52b6550419eb504aa611ab}{assemble\-Boundary} (size\-\_\-t alpha, const typename dealii\-::\-Do\-F\-Handler$<$ dim $>$\-::active\-\_\-cell\-\_\-iterator \&cell, size\-\_\-t face\-Number, dealii\-::\-F\-E\-Face\-Values$<$ dim $>$ \&fe\-Face\-Values, const \hyperlink{classnatrium_1_1BoltzmannModel}{Boltzmann\-Model} \&boltzmann\-Model, const std\-::map$<$ size\-\_\-t, size\-\_\-t $>$ \&q\-\_\-index\-\_\-to\-\_\-facedof, distributed\-\_\-sparse\-\_\-block\-\_\-matrix \&system\-Matrix, distributed\-\_\-block\-\_\-vector \&system\-Vector, bool use\-Central\-Flux=false) const 
 \item 
 \hypertarget{classnatrium_1_1MinLeeBoundary_a050f00caec37ee8e2f6e19a4d3d2d1fc}{size\-\_\-t {\bfseries get\-Boundary\-Indicator} () const }\label{classnatrium_1_1MinLeeBoundary_a050f00caec37ee8e2f6e19a4d3d2d1fc}
 
@@ -61,7 +61,7 @@ modify sparsity pattern so that the fluxes over periodic boundary can be incorpo
 {\em c\-Sparse} & the block-\/sparsity pattern \\
 \hline
 \end{DoxyParams}
-\hypertarget{classnatrium_1_1MinLeeBoundary_af546e18b114f794f8e8a6bf0c73ae5ed}{\index{natrium\-::\-Min\-Lee\-Boundary@{natrium\-::\-Min\-Lee\-Boundary}!assemble\-Boundary@{assemble\-Boundary}}
+\hypertarget{classnatrium_1_1MinLeeBoundary_ad23ea2da1a52b6550419eb504aa611ab}{\index{natrium\-::\-Min\-Lee\-Boundary@{natrium\-::\-Min\-Lee\-Boundary}!assemble\-Boundary@{assemble\-Boundary}}
 \index{assemble\-Boundary@{assemble\-Boundary}!natrium::MinLeeBoundary@{natrium\-::\-Min\-Lee\-Boundary}}
 \subsubsection[{assemble\-Boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::\-Min\-Lee\-Boundary}$<$ dim $>$\-::assemble\-Boundary (
 \begin{DoxyParamCaption}
@@ -72,9 +72,10 @@ modify sparsity pattern so that the fluxes over periodic boundary can be incorpo
 \item[{const {\bf Boltzmann\-Model} \&}]{boltzmann\-Model, }
 \item[{const std\-::map$<$ size\-\_\-t, size\-\_\-t $>$ \&}]{q\-\_\-index\-\_\-to\-\_\-facedof, }
 \item[{distributed\-\_\-sparse\-\_\-block\-\_\-matrix \&}]{system\-Matrix, }
-\item[{distributed\-\_\-block\-\_\-vector \&}]{system\-Vector}
+\item[{distributed\-\_\-block\-\_\-vector \&}]{system\-Vector, }
+\item[{bool}]{use\-Central\-Flux = {\ttfamily false}}
 \end{DoxyParamCaption}
-) const}}\label{classnatrium_1_1MinLeeBoundary_af546e18b114f794f8e8a6bf0c73ae5ed}
+) const}}\label{classnatrium_1_1MinLeeBoundary_ad23ea2da1a52b6550419eb504aa611ab}
 Distribute to global matrix T\-O\-D\-O Loop only over diagonal 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}

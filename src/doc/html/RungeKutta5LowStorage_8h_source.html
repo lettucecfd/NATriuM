@@ -91,77 +91,82 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef RUNGEKUTTA5LOWSTORAGE_H_</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define RUNGEKUTTA5LOWSTORAGE_H_</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="TimeIntegrator_8h.html">TimeIntegrator.h</a>&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span>natrium {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classnatrium_1_1RungeKutta5LowStorage.html">   20</a></span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> MATRIX, <span class="keyword">class</span> VECTOR&gt; <span class="keyword">class </span><a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html">RungeKutta5LowStorage</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>&lt;MATRIX, VECTOR&gt; {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        vector&lt;double&gt; makeA(){</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                vector&lt;double&gt; A;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                A += 0, -0.4178904745, -1.192151694643, -1.697784692471, -1.514183444257;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                <span class="keywordflow">return</span> A;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        }</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        vector&lt;double&gt; makeB(){</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                vector&lt;double&gt; B;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                B += 0.1496590219993, 0.3792103129999, 0.8229550293869, 0.6994504559488, 0.1530572479681;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                <span class="keywordflow">return</span> B;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        }</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        vector&lt;double&gt; makeC(){</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                vector&lt;double&gt; C;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                C += 0, 0.1496590219993, 0.3704009573644, 0.6222557631345, 0.9582821306748;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                <span class="keywordflow">return</span> C;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt; m_a;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt; m_b;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt; m_c;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">// The scheme has storage 2N (f and df). this vector stores df</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        VECTOR m_df;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="comment">// The storage of F(f) = systemMatrix * f requires an additional storage array</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        VECTOR m_Af;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// enable + operator for filling vectors</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;boost/assign/std/vector.hpp&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">using namespace </span>boost::assign;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="TimeIntegrator_8h.html">TimeIntegrator.h</a>&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>natrium {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classnatrium_1_1RungeKutta5LowStorage.html">   24</a></span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> MATRIX, <span class="keyword">class</span> VECTOR&gt; <span class="keyword">class </span><a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html">RungeKutta5LowStorage</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>&lt;MATRIX, VECTOR&gt; {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        vector&lt;double&gt; makeA(){</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                vector&lt;double&gt; A;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                A += <span class="comment">/*0, -0.4178904745, -1.192151694643, -1.697784692471, -1.514183444257;*/</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;               0.0,  -567301805773.0/1357537059087.0,  -2404267990393.0/2016746695238.0,  -3550918686646.0/2091501179385.0,  -1275806237668.0/842570457699.0;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                <span class="keywordflow">return</span> A;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        vector&lt;double&gt; makeB(){</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                vector&lt;double&gt; B;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                B += <span class="comment">/*0.1496590219993, 0.3792103129999, 0.8229550293869, 0.6994504559488, 0.1530572479681;*/</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                             1432997174477.0/9575080441755.0,   5161836677717.0/13612068292357.0,  1720146321549.0/2090206949498.0,  3134564353537.0/4481467310338.0, 2277821191437.0/14882151754819.0;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                <span class="keywordflow">return</span> B;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        vector&lt;double&gt; makeC(){</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                vector&lt;double&gt; C;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                C += <span class="comment">/*0, 0.1496590219993, 0.3704009573644, 0.6222557631345, 0.9582821306748;*/</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                                0.0,  1432997174477.0/9575080441755.0,  2526269341429.0/6820363962896.0, 2006345519317.0/3224310063776.0, 2802321613138.0/2924317926251.0,  1.;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                <span class="keywordflow">return</span> C;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt; m_a;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt; m_b;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt; m_c;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html#add07295826ee6b9f5742ade3233f61b1">RungeKutta5LowStorage</a>(<span class="keywordtype">double</span> timeStepSize, <span class="keywordtype">size_t</span> problemSize);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">// The scheme has storage 2N (f and df). this vector stores df</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        VECTOR m_df;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="comment">// The storage of F(f) = systemMatrix * f requires an additional storage array</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        VECTOR m_Af;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html#add07295826ee6b9f5742ade3233f61b1">RungeKutta5LowStorage</a>(<span class="keywordtype">double</span> timeStepSize, <span class="keywordtype">size_t</span> problemSize, <span class="keywordtype">size_t</span> numberOfBlocks);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html">RungeKutta5LowStorage</a>(<span class="keywordtype">double</span> timeStepSize, <span class="keywordtype">size_t</span> problemSize);</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">   71</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">~RungeKutta5LowStorage</a>(){};</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html#a595cbb3047387c60507197d78a7ec054">step</a>(VECTOR&amp; vector,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                        <span class="keyword">const</span> MATRIX&amp; systemMatrix);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html">RungeKutta5LowStorage</a>(<span class="keywordtype">double</span> timeStepSize, <span class="keywordtype">size_t</span> problemSize, <span class="keywordtype">size_t</span> numberOfBlocks);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">   79</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">~RungeKutta5LowStorage</a>(){};</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt;&amp; getA()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                <span class="keywordflow">return</span> m_a;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt;&amp; getB()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                <span class="keywordflow">return</span> m_b;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> step(VECTOR&amp; vector,</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                        <span class="keyword">const</span> MATRIX&amp; systemMatrix, <span class="keyword">const</span> VECTOR&amp; systemVector);</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt;&amp; getC()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                <span class="keywordflow">return</span> m_c;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt;&amp; getA()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                <span class="keywordflow">return</span> m_a;</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;};</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* RUNGEKUTTA5LOWSTORAGE_H_ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="classnatrium_1_1RungeKutta5LowStorage_html_add07295826ee6b9f5742ade3233f61b1"><div class="ttname"><a href="classnatrium_1_1RungeKutta5LowStorage.html#add07295826ee6b9f5742ade3233f61b1">natrium::RungeKutta5LowStorage::RungeKutta5LowStorage</a></div><div class="ttdeci">RungeKutta5LowStorage(double timeStepSize, size_t problemSize)</div><div class="ttdoc">Constructor. </div></div>
-<div class="ttc" id="classnatrium_1_1RungeKutta5LowStorage_html_a915493da30cf9308bd47e87d0c20cad8"><div class="ttname"><a href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">natrium::RungeKutta5LowStorage::~RungeKutta5LowStorage</a></div><div class="ttdeci">virtual ~RungeKutta5LowStorage()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> RungeKutta5LowStorage.h:71</div></div>
-<div class="ttc" id="classnatrium_1_1RungeKutta5LowStorage_html"><div class="ttname"><a href="classnatrium_1_1RungeKutta5LowStorage.html">natrium::RungeKutta5LowStorage</a></div><div class="ttdoc">Implementation of the fifth-order Runge-Kutta time integration scheme with low storage consumption...</div><div class="ttdef"><b>Definition:</b> RungeKutta5LowStorage.h:20</div></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt;&amp; getB()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                <span class="keywordflow">return</span> m_b;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keyword">const</span> vector&lt;double&gt;&amp; getC()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                <span class="keywordflow">return</span> m_c;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;};</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* RUNGEKUTTA5LOWSTORAGE_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="classnatrium_1_1RungeKutta5LowStorage_html_a915493da30cf9308bd47e87d0c20cad8"><div class="ttname"><a href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">natrium::RungeKutta5LowStorage::~RungeKutta5LowStorage</a></div><div class="ttdeci">virtual ~RungeKutta5LowStorage()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> RungeKutta5LowStorage.h:79</div></div>
+<div class="ttc" id="classnatrium_1_1RungeKutta5LowStorage_html"><div class="ttname"><a href="classnatrium_1_1RungeKutta5LowStorage.html">natrium::RungeKutta5LowStorage</a></div><div class="ttdoc">Implementation of the fifth-order Runge-Kutta time integration scheme with low storage consumption...</div><div class="ttdef"><b>Definition:</b> RungeKutta5LowStorage.h:24</div></div>
 <div class="ttc" id="classnatrium_1_1TimeIntegrator_html"><div class="ttname"><a href="classnatrium_1_1TimeIntegrator.html">natrium::TimeIntegrator</a></div><div class="ttdoc">Abstract class for time integration (solution of ordinary differential equations (ODE)). </div><div class="ttdef"><b>Definition:</b> TimeIntegrator.h:22</div></div>
-<div class="ttc" id="classnatrium_1_1RungeKutta5LowStorage_html_a595cbb3047387c60507197d78a7ec054"><div class="ttname"><a href="classnatrium_1_1RungeKutta5LowStorage.html#a595cbb3047387c60507197d78a7ec054">natrium::RungeKutta5LowStorage::step</a></div><div class="ttdeci">virtual void step(VECTOR &amp;vector, const MATRIX &amp;systemMatrix)</div><div class="ttdoc">make one time integration using the RK5 scheme dU_j = A_j * dU_{j-1} + timeStep * F(U_j) U_j = U_{j-1...</div><div class="ttdef"><b>Definition:</b> RungeKutta5LowStorage.cpp:38</div></div>
 <div class="ttc" id="TimeIntegrator_8h_html"><div class="ttname"><a href="TimeIntegrator_8h.html">TimeIntegrator.h</a></div><div class="ttdoc">Abstract class for time integrationof ordinary differential equations (ODEs). </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 1 2014 11:54:19 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 28 2014 13:57:54 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

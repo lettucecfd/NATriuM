@@ -117,19 +117,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                m_timeStepSize = timeStepSize;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1TimeIntegrator.html#ad3888242580c257058d8d6f8ddeb2c5d">step</a>(VECTOR&amp; vector, <span class="keyword">const</span> MATRIX&amp; systemMatrix) = 0;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1TimeIntegrator.html#a09e1ad9254abec537cda42b1d2fb83e6">step</a>(VECTOR&amp; vector, <span class="keyword">const</span> MATRIX&amp; systemMatrix, <span class="keyword">const</span> VECTOR&amp; systemVector) = 0;</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;};</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* TIMEINTEGRATOR_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classnatrium_1_1TimeIntegrator_html_a8795d06c5322b72a5a2a1f30aa7a051d"><div class="ttname"><a href="classnatrium_1_1TimeIntegrator.html#a8795d06c5322b72a5a2a1f30aa7a051d">natrium::TimeIntegrator::~TimeIntegrator</a></div><div class="ttdeci">virtual ~TimeIntegrator()</div><div class="ttdoc">destructor </div><div class="ttdef"><b>Definition:</b> TimeIntegrator.h:34</div></div>
 <div class="ttc" id="classnatrium_1_1TimeIntegrator_html_a420ea9baabf0839bc8ecb5f5e02ce95b"><div class="ttname"><a href="classnatrium_1_1TimeIntegrator.html#a420ea9baabf0839bc8ecb5f5e02ce95b">natrium::TimeIntegrator::TimeIntegrator</a></div><div class="ttdeci">TimeIntegrator(double timeStepSize)</div><div class="ttdoc">constructor </div><div class="ttdef"><b>Definition:</b> TimeIntegrator.cpp:13</div></div>
-<div class="ttc" id="classnatrium_1_1TimeIntegrator_html_ad3888242580c257058d8d6f8ddeb2c5d"><div class="ttname"><a href="classnatrium_1_1TimeIntegrator.html#ad3888242580c257058d8d6f8ddeb2c5d">natrium::TimeIntegrator::step</a></div><div class="ttdeci">virtual void step(VECTOR &amp;vector, const MATRIX &amp;systemMatrix)=0</div><div class="ttdoc">make one time integration step on vector using the system matrix </div></div>
 <div class="ttc" id="classnatrium_1_1TimeIntegrator_html"><div class="ttname"><a href="classnatrium_1_1TimeIntegrator.html">natrium::TimeIntegrator</a></div><div class="ttdoc">Abstract class for time integration (solution of ordinary differential equations (ODE)). </div><div class="ttdef"><b>Definition:</b> TimeIntegrator.h:22</div></div>
+<div class="ttc" id="classnatrium_1_1TimeIntegrator_html_a09e1ad9254abec537cda42b1d2fb83e6"><div class="ttname"><a href="classnatrium_1_1TimeIntegrator.html#a09e1ad9254abec537cda42b1d2fb83e6">natrium::TimeIntegrator::step</a></div><div class="ttdeci">virtual void step(VECTOR &amp;vector, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector)=0</div><div class="ttdoc">make one time integration step on vector using the system matrix </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 1 2014 11:54:19 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 28 2014 13:57:54 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
