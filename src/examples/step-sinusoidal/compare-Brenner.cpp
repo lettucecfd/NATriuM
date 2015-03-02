@@ -35,8 +35,8 @@ int main(int argc, char* argv[]) {
 	const double Ma = 0.05;
 	const double Re = 1.0;
 	const double cFL = 10.0;
-	const double refinementLevel = 3;
-	const double orderOfFiniteElement = 3;
+	const double refinementLevel = 5;
+	const double orderOfFiniteElement = 5;
 	const double tmax = 5.0;
 
 	// parameterization by Brenner:
