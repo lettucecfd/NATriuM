@@ -124,6 +124,17 @@ template<> void PeriodicBoundary<2>::createCellMap(
 						== m_boundaryIndicator1) {
 					double key = (currentCell->face(i))->center().distance(
 							m_beginLine1);
+					if (cellsAtBoundary1.find(key) != cellsAtBoundary1.end()) {
+						std::stringstream s;
+						s
+								<< "Minimum vertex distance < 1e-6; but the periodic boundary detection "
+										"tests for cells distances < 1e-6 in own_double_less. That might cause "
+										"serious problems." << endl;
+						throw PeriodicBoundaryNotPossible(
+								"Error in Periodic Boundary: Cells on opposite boundaries not unique."
+										"The cell diameter might be < 1e-6, which is not allowed by the function own_double_less.",
+								s);
+					}
 					cellsAtBoundary1.insert(
 							std::make_pair(key,
 									std::make_pair(currentCell,
@@ -133,6 +144,17 @@ template<> void PeriodicBoundary<2>::createCellMap(
 						== m_boundaryIndicator2) {
 					double key = (currentCell->face(i))->center().distance(
 							m_beginLine2);
+
+					if (cellsAtBoundary2.find(key) != cellsAtBoundary2.end()) {
+						std::stringstream s;
+						s
+								<< "Vertex distance < 1e-6; but the periodic boundary detection "
+										"tests for cells distances < 1e-6 in own_double_less. That might cause "
+										"serious problems." << endl;
+						throw PeriodicBoundaryNotPossible(
+								"Error in Periodic Boundary: Cells on opposite boundaries not unique."
+										"The cell diameter might be < 1e-6, which is not allowed by the function own_double_less.", s);
+					}
 					cellsAtBoundary2.insert(
 							std::make_pair(key,
 									std::make_pair(currentCell,
@@ -167,12 +189,12 @@ template<> void PeriodicBoundary<2>::createCellMap(
 					std::pair<dealii::DoFHandler<2>::active_cell_iterator,
 							size_t> >::iterator it1 = cellsAtBoundary1.begin();
 			std::map<double,
-					std::pair<dealii::DoFHandler<2>::cell_iterator,
-							size_t> >::iterator it2 = cellsAtBoundary2.begin();
+					std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> >::iterator it2 =
+					cellsAtBoundary2.begin();
 			while ((it1 != cellsAtBoundary1.end())
 					or (it2 != cellsAtBoundary2.end())) {
 				if (it1 != cellsAtBoundary1.end()) {
-					info << it1->first;
+					info << it1->first << "  ";
 					it1++;
 				} else {
 					info << "          ";
@@ -185,7 +207,8 @@ template<> void PeriodicBoundary<2>::createCellMap(
 			}
 			throw PeriodicBoundaryNotPossible(
 					"The discretizations of opposite periodic boundaries do not coincide. "
-					"This version of the NATriuM solver does only work with equal discretizations. ", info);
+							"This version of the NATriuM solver does only work with equal discretizations. ",
+					info);
 		}
 		// add to cells
 		m_cells.insert(

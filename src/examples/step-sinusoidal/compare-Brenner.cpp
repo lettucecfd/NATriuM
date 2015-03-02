@@ -34,9 +34,9 @@ int main(int argc, char* argv[]) {
 
 	const double Ma = 0.05;
 	const double Re = 1.0;
-	const double cFL = 50.0;
-	const double refinementLevel = 4;
-	const double orderOfFiniteElement = 5;
+	const double cFL = 10.0;
+	const double refinementLevel = 3;
+	const double orderOfFiniteElement = 3;
 	const double tmax = 5.0;
 
 	// parameterization by Brenner:
@@ -57,8 +57,8 @@ int main(int argc, char* argv[]) {
 	// with swapped upper and lower wall
 	// {Lx, h, a, b}
 	const size_t n_cfg = 5;
-	double configurations[n_cfg][4] = { { 1, 0.3, 0, 0.1 }, { 5, 0.3, 0, 0.1 },
-			{ 1, 0.3, 0, 0.29 }, { 1, 0.3, 0, 0.05 }, { 5, 0.3, 0, 0.05 } };
+	double configurations[n_cfg][4] = { { 1, 0.3, 0, 0.29 }, { 1, 0.3, 0, 0.1 },
+			{ 5, 0.3, 0, 0.1 }, { 1, 0.3, 0, 0.05 }, { 5, 0.3, 0, 0.05 } };
 
 	std::stringstream fName;
 	fName << getenv("NATRIUM_HOME") << "/sinus-shear-Brenner1/result.txt";
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 
 	/// for all configurations
 	for (size_t i; i < n_cfg; i++) {
-		cout << "Starting configuration " << i << "..."  << endl;
+		cout << "Starting configuration " << i << "..." << endl;
 
 		/// get geometry parameters
 		double Lx = configurations[i][0];
@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
 		configuration->setTimeIntegrator(OTHER);
 
 		configuration->setInitializationScheme(ITERATIVE);
-		configuration->setIterativeInitializationNumberOfIterations(100);
+		configuration->setIterativeInitializationNumberOfIterations(10);
 		configuration->setIterativeInitializationResidual(1e-15);
 
 		configuration->setNumberOfTimeSteps(tmax / dt);
@@ -120,10 +120,13 @@ int main(int argc, char* argv[]) {
 		// calculate and put out flow factors
 		double Psi_s = 0.0;
 		const distributed_vector & ux = solver.getVelocity().at(0);
-		for (size_t j = 0; j < ux.size(); j++){
-			Psi_s =+ ux(j);
+		for (size_t j = 0; j < ux.size(); j++) {
+			Psi_s += ux(j);
 		}
+		// compute average (divide by number of grid points)
 		Psi_s /= ux.size();
+		// relate to shear velocity
+		Psi_s /= u_a;
 		resultFile << i << "  " << epsilon << "   " << alpha << "   " << Lx
 				<< "   " << h << "   " << a << "   " << b << "   " << Psi_s
 				<< endl;

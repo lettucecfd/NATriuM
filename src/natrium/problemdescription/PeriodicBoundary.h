@@ -36,13 +36,13 @@ public:
 	PeriodicBoundaryNotPossible(const char *msg,
 			const std::stringstream & additionalInfo = std::stringstream()) :
 			NATriuMException(msg), message(msg) {
-		LOG(DETAILED) << "Additional information on error: " << endl;
+		LOG(DETAILED) << "Additional information on error: " << additionalInfo.str().c_str() << endl;
 
 	}
 	PeriodicBoundaryNotPossible(const string& msg,
 			const std::stringstream & additionalInfo = std::stringstream()) :
 			NATriuMException(msg), message(msg) {
-		LOG(DETAILED) << "Additional information on error: " << endl;
+		LOG(DETAILED) << "Additional information on error: " << additionalInfo.str().c_str() << endl;
 	}
 	~PeriodicBoundaryNotPossible() throw () {
 	}
@@ -51,12 +51,15 @@ public:
 	}
 };
 
+
+
 /**
  * @short  A periodic boundary condition,
  * @note   First use in step-1 tutorial.
  */
 template<size_t dim>
 class PeriodicBoundary: public Boundary<dim> {
+	friend class own_double_less_periodic;
 private:
 
 	/// triangulation object
