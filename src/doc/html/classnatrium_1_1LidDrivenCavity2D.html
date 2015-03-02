@@ -40,6 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -70,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -109,9 +110,9 @@ Inheritance diagram for natrium::LidDrivenCavity2D:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a27c7eaba95a6876f6b4f4592b5afa104"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LidDrivenCavity2D.html#a27c7eaba95a6876f6b4f4592b5afa104">LidDrivenCavity2D</a> (double viscosity, size_t refinementLevel)</td></tr>
-<tr class="memdesc:a27c7eaba95a6876f6b4f4592b5afa104"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a27c7eaba95a6876f6b4f4592b5afa104">More...</a><br/></td></tr>
-<tr class="separator:a27c7eaba95a6876f6b4f4592b5afa104"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a139fe700f3e871e1b51eada1a41c69b1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LidDrivenCavity2D.html#a139fe700f3e871e1b51eada1a41c69b1">LidDrivenCavity2D</a> (double velocity, double viscosity, size_t refinementLevel)</td></tr>
+<tr class="memdesc:a139fe700f3e871e1b51eada1a41c69b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a139fe700f3e871e1b51eada1a41c69b1">More...</a><br/></td></tr>
+<tr class="separator:a139fe700f3e871e1b51eada1a41c69b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ae5029b008eb3d3c810bae81440b29c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ae5029b008eb3d3c810bae81440b29c"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LidDrivenCavity2D.html#a8ae5029b008eb3d3c810bae81440b29c">~LidDrivenCavity2D</a> ()</td></tr>
 <tr class="memdesc:a8ae5029b008eb3d3c810bae81440b29c"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -122,14 +123,6 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a6e633e30cfeae500757bdd4c37a5c478"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LidDrivenCavity2D.html#a6e633e30cfeae500757bdd4c37a5c478">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, const vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;supportPoints) const </td></tr>
 <tr class="memdesc:a6e633e30cfeae500757bdd4c37a5c478"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial velocities  <a href="#a6e633e30cfeae500757bdd4c37a5c478">More...</a><br/></td></tr>
 <tr class="separator:a6e633e30cfeae500757bdd4c37a5c478"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35bd8e7b30690dd85f4c6931f62aaa53"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35bd8e7b30690dd85f4c6931f62aaa53"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LidDrivenCavity2D.html#a35bd8e7b30690dd85f4c6931f62aaa53">analyticVelocity1</a> (const dealii::Point&lt; 2 &gt; &amp;x, double t) const </td></tr>
-<tr class="memdesc:a35bd8e7b30690dd85f4c6931f62aaa53"><td class="mdescLeft">&#160;</td><td class="mdescRight">analytic solution of the Taylor-Green vortex, first component of velocity vector <br/></td></tr>
-<tr class="separator:a35bd8e7b30690dd85f4c6931f62aaa53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2cd81e733c597d28f396e4fb92d455f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad2cd81e733c597d28f396e4fb92d455f"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LidDrivenCavity2D.html#ad2cd81e733c597d28f396e4fb92d455f">analyticVelocity2</a> (const dealii::Point&lt; 2 &gt; &amp;x, double t) const </td></tr>
-<tr class="memdesc:ad2cd81e733c597d28f396e4fb92d455f"><td class="mdescLeft">&#160;</td><td class="mdescRight">analytic solution of the Taylor-Green vortex, second component of velocity vector <br/></td></tr>
-<tr class="separator:ad2cd81e733c597d28f396e4fb92d455f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82c2d453cd5dd83f09a438201a7adec6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82c2d453cd5dd83f09a438201a7adec6"></a>
 virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>getCharacteristicVelocity</b> () const </td></tr>
 <tr class="separator:a82c2d453cd5dd83f09a438201a7adec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,6 +149,9 @@ const shared_ptr<br class="typebreak"/>
 <tr class="memitem:a545b19d87ec6dc9c27e8740097f7cace inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#a545b19d87ec6dc9c27e8740097f7cace">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, const vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
 <tr class="memdesc:a545b19d87ec6dc9c27e8740097f7cace inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="mdescLeft">&#160;</td><td class="mdescRight">set initial velocities  <a href="#a545b19d87ec6dc9c27e8740097f7cace">More...</a><br/></td></tr>
 <tr class="separator:a545b19d87ec6dc9c27e8740097f7cace inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed8ec93fcba6c0b78c04ef91b8703f7a inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#aed8ec93fcba6c0b78c04ef91b8703f7a">checkBoundaryConditions</a> ()</td></tr>
+<tr class="memdesc:aed8ec93fcba6c0b78c04ef91b8703f7a inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if boundary conditions are uniquely assigned to boundary indicator  <a href="#aed8ec93fcba6c0b78c04ef91b8703f7a">More...</a><br/></td></tr>
+<tr class="separator:aed8ec93fcba6c0b78c04ef91b8703f7a inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae588b1e0ce4dd89e2fcfbb0c191b1c41 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae588b1e0ce4dd89e2fcfbb0c191b1c41"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setTriangulation</b> (const shared_ptr&lt; dealii::Triangulation&lt; dim &gt; &gt; &amp;triangulation)</td></tr>
 <tr class="separator:ae588b1e0ce4dd89e2fcfbb0c191b1c41 inherit pub_methods_classnatrium_1_1ProblemDescription"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,14 +173,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCharacteristicLeng
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Description of a simple Channel Flow The domain is [0,5]x[0,1]. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a27c7eaba95a6876f6b4f4592b5afa104"></a>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="step-0_8cpp-example.html#_a3">step-0.cpp</a>.</dd>
+</dl></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a139fe700f3e871e1b51eada1a41c69b1"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">natrium::LidDrivenCavity2D::LidDrivenCavity2D </td>
           <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>viscosity</em>, </td>
         </tr>
@@ -295,13 +298,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCharacteristicLeng
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-3/<a class="el" href="LidDrivenCavity2D_8h_source.html">LidDrivenCavity2D.h</a></li>
-<li>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-3/<a class="el" href="LidDrivenCavity2D_8cpp.html">LidDrivenCavity2D.cpp</a></li>
+<li>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-0/<a class="el" href="LidDrivenCavity2D_8h_source.html">LidDrivenCavity2D.h</a></li>
+<li>/home/kraemer/eclipse_workspace/NATriuM/src/examples/step-0/<a class="el" href="LidDrivenCavity2D_8cpp.html">LidDrivenCavity2D.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:57:57 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 6 2015 20:01:10 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -292,8 +292,7 @@ public:
 	/// destructor
 	virtual ~ExponentialTimeIntegrator(){};
 
-	virtual void step(VECTOR& vector,
-				const MATRIX& systemMatrix, const VECTOR& systemVector);
+	virtual double step(VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = 0);
 
 
 };

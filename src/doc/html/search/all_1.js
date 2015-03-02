@@ -10,7 +10,7 @@ var searchData=
   ['benchmarkcfdsolver',['BenchmarkCFDSolver',['../classnatrium_1_1BenchmarkCFDSolver.html',1,'natrium']]],
   ['benchmarkcfdsolver',['BenchmarkCFDSolver',['../classnatrium_1_1BenchmarkCFDSolver.html#ac90d82e4b09e658a18439996b0ab1ec1',1,'natrium::BenchmarkCFDSolver']]],
   ['bgktransformed',['BGKTransformed',['../classnatrium_1_1BGKTransformed.html',1,'natrium']]],
-  ['bgktransformed',['BGKTransformed',['../classnatrium_1_1BGKTransformed.html#aafd0ed5b888da93e496c0a29e092bf5b',1,'natrium::BGKTransformed']]],
+  ['bgktransformed',['BGKTransformed',['../classnatrium_1_1BGKTransformed.html#af0293d10fd8072e89a3cff2d645bc292',1,'natrium::BGKTransformed']]],
   ['bgktransformed_2ecpp',['BGKTransformed.cpp',['../BGKTransformed_8cpp.html',1,'']]],
   ['bgktransformed_2eh',['BGKTransformed.h',['../BGKTransformed_8h.html',1,'']]],
   ['bgktransformed_5ftest_2ecpp',['BGKTransformed_test.cpp',['../BGKTransformed__test_8cpp.html',1,'']]],

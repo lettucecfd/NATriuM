@@ -37,9 +37,9 @@ Container for error statistics and table file; only for use with \hyperlink{clas
 
 \item 
 double \hyperlink{classnatrium_1_1ErrorStats_a66f817c7daaf15724d5d42de4f17a1e8}{get\-L2\-Density\-Error} () const 
-\begin{DoxyCompactList}\small\item\em return L2-\/\-Error of density, D\-I\-V\-I\-D\-E\-D B\-Y N\-U\-M\-B\-E\-R O\-F D\-O\-F\-S!!! $ \frac{1}{N} \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $ \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em return L2-\/\-Error of density, $ \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $ \end{DoxyCompactList}\item 
 double \hyperlink{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}{get\-L2\-Velocity\-Error} () const 
-\begin{DoxyCompactList}\small\item\em return L2-\/\-Error of velocity, D\-I\-V\-I\-D\-E\-D B\-Y N\-U\-M\-B\-E\-R O\-F D\-O\-F\-S!!! $ \frac{1}{N} \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $ \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em return L2-\/\-Error of velocity, $ \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $ \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}{double \hyperlink{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}{get\-Max\-Density\-Error} () const }\label{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}
 
 \begin{DoxyCompactList}\small\item\em return max error of density $ max | \rho_{i} - \rho_{i}^{ref} | $ \end{DoxyCompactList}\item 
@@ -50,6 +50,9 @@ double \hyperlink{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}{
 
 \begin{DoxyCompactList}\small\item\em return max error of velocity $ max \|u_{i} - u_{i}^{ref}\|_{2} $ \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ErrorStats_aa79b49d872935e567c94a2727af24dea}{double {\bfseries get\-Time} () const }\label{classnatrium_1_1ErrorStats_aa79b49d872935e567c94a2727af24dea}
+
+\item 
+\hypertarget{classnatrium_1_1ErrorStats_a965b8a50d1f84d8962c995808c222799}{double {\bfseries get\-L2\-U\-Analytic} () const }\label{classnatrium_1_1ErrorStats_a965b8a50d1f84d8962c995808c222799}
 
 \end{DoxyCompactItemize}
 
@@ -96,7 +99,7 @@ Constructor.
 ) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1ErrorStats_a66f817c7daaf15724d5d42de4f17a1e8}
 
 
-return L2-\/\-Error of density, D\-I\-V\-I\-D\-E\-D B\-Y N\-U\-M\-B\-E\-R O\-F D\-O\-F\-S!!! $ \frac{1}{N} \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $ 
+return L2-\/\-Error of density, $ \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $ 
 
 \begin{DoxyNote}{Note}
 The division by the number of dofs is required, because otherwise finer grids result in bigger errors. 
@@ -110,7 +113,7 @@ The division by the number of dofs is required, because otherwise finer grids re
 ) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}
 
 
-return L2-\/\-Error of velocity, D\-I\-V\-I\-D\-E\-D B\-Y N\-U\-M\-B\-E\-R O\-F D\-O\-F\-S!!! $ \frac{1}{N} \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $ 
+return L2-\/\-Error of velocity, $ \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $ 
 
 \begin{DoxyNote}{Note}
 The division by the number of dofs is required, because otherwise finer grids result in bigger errors. 

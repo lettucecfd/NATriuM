@@ -1,0 +1,33 @@
+# format1
+
+#################################################
+# Gnuplot script file for plotting data in files#
+#################################################
+reset
+set term postscript eps color enhanced "Helvetica" 14
+set size 0.5, 0.4
+set rmargin at screen 0.35
+
+# LINESTYLE DEFINITIONS
+set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 7 pointtype 4 pointsize 2# pointinterval 10
+set style line 2  linetype 1 linecolor rgb "dark-orange"  linewidth 7 pointtype 6 pointsize 2#pointinterval 10
+set style line 3  linetype 1 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 8 pointsize 2# pointinterval 10
+set style line 4  linetype 2 linecolor rgb "dark-green"  linewidth 7.000 pointtype 12 pointsize 2# pointinterval 10
+set style line 5  linetype 1 linecolor rgb "violet"  linewidth 7.000 pointtype 3 pointsize 2# pointinterval 10
+set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 7 pointsize 2# pointinterval 10
+set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
+
+# PLOT DEFINTIONS
+data_file="../convergence-periodic-acoustic-2015-1-16_11-48.txt"
+f(p,N)=log10(((p+1)**2)*4**N)
+g(x)= 10**(x-5.6)
+set output 'runtime.eps'
+
+# PLOT
+set logscale y
+set yrange [0.001:5]
+set xlabel 'log(N_{DoFs})'
+set ylabel '(Time/Step) / s' offset 2.0,0
+set key rmargin samplen 1 spacing 1.2
+
+plot data_file every ::0::0 u (f($2,$1)):($19) title "p=2" ps 1 , data_file every ::1::1 u (f($2,$1)):($19)  title "p=3" ps 1, data_file every ::2::2 u (f($2,$1)):($19)   title "p=4" ps 1, 10**(x-5.3) title "c{/Symbol \327}N_{DoFs}"

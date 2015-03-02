@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 		std::set<dealii::types::boundary_id> boundaryIndicators;
 		// left boundary
 		boundaryIndicators.insert(0);
-		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
+/*		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
 				dealii::ComponentMask(), isBoundary, boundaryIndicators);
 		if (isBoundary.at(i)) {
 			//cout << i << endl;
@@ -131,6 +131,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 					advector.getBlockSparsityPattern().block(7, 5).exists(i,
 							i));
 		}
+	*/
 	}
 
 	cout << "done" << endl;
@@ -147,7 +148,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
 	configuration->setOutputDirectory("/tmp");
 	configuration->setSwitchOutputOff(true);
 	configuration->setNumberOfTimeSteps(100);
-	configuration->setSedgOrderOfFiniteElement(2);
+	configuration->setSedgOrderOfFiniteElement(1);
 	configuration->setTimeStepSize(0.01);
 
 	CFDSolver<2> solver(configuration, problem);
@@ -175,7 +176,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 	configuration->setOutputDirectory("/tmp");
 	configuration->setSwitchOutputOff(true);
 	configuration->setNumberOfTimeSteps(1);
-	configuration->setSedgOrderOfFiniteElement(10);
+	configuration->setSedgOrderOfFiniteElement(9);
 	configuration->setTimeStepSize(0.0001);
 
 	CFDSolver<2> solver(configuration, problem);

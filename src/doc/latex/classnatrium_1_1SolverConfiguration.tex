@@ -196,6 +196,9 @@ The class is a subclass of dealii\-::\-Parameter\-Handler and functions as a wra
 
 To integrate new parameter into the framework, you have to declare the paramters in the constructor and write the getter and setter. The setter and getter have to navigate through the sections of the Parameter handler and catch the exceptions thrown by the Parameter handler. Finally you have to update the preprocessor/\-N\-A\-Triu\-M\-\_\-parameters.\-xml file, most easily run the Unit\-Tests and copy results/\-N\-A\-Triu\-M\-\_\-parameters.\-xml there. The latter file is automatically created according to the declared parameters. Every selection-\/type parameter (e.\-g. Advection scheme) is implemented as an enum for better handling through the command line. 
 \end{DoxyNote}
+\begin{Desc}
+\item[Examples\-: ]\par
+\hyperlink{step-0_8cpp-example}{step-\/0.\-cpp}.\end{Desc}
 
 
 \subsection{Constructor \& Destructor Documentation}

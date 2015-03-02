@@ -17,8 +17,8 @@
 
 namespace natrium {
 
-TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity, size_t refinementLevel) :
-		Benchmark<2>(makeGrid(refinementLevel), viscosity, 1) {
+TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity, size_t refinementLevel, double cs) :
+		Benchmark<2>(makeGrid(refinementLevel), viscosity, 8*atan(1)), m_cs(cs){
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
@@ -34,6 +34,17 @@ void TaylorGreenVortex2D::getAnalyticVelocity(const dealii::Point<2>& x, double 
 	velocity(1) = -cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
 }
 
+
+/**
+ * @short get Analytic density at one point in space and time
+ */
+double TaylorGreenVortex2D::getAnalyticDensity(const dealii::Point<2>& x,
+		double t) const {
+	double rho0 = 1;
+	double p = rho0/4.* (cos(2*x(0)) + cos(2*x(1))) * exp(-4 * getViscosity() * t);
+	return rho0 + p / (m_cs*m_cs) ;
+}
+
 /**
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
@@ -42,7 +53,7 @@ shared_ptr<Triangulation<2> > TaylorGreenVortex2D::makeGrid(size_t refinementLev
 	//Creation of the principal domain
 	shared_ptr<Triangulation<2> > square =
 			make_shared<Triangulation<2> >();
-	dealii::GridGenerator::hyper_cube(*square, 0, 2*Math::PI);
+	dealii::GridGenerator::hyper_cube(*square, 0, 8*atan(1));
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell =

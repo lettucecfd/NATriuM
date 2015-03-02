@@ -18,6 +18,11 @@
 #include "solver/BenchmarkCFDSolver.h"
 #include "solver/SolverConfiguration.h"
 
+#include "collision/Collision.h"
+#include "collision/BGKTransformed.h"
+
+#include "boltzmannmodels/D2Q9IncompressibleModel.h"
+
 #include "problemdescription/Benchmark.h"
 
 #include "utilities/BasicNames.h"
@@ -119,7 +124,7 @@ int main() {
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 		// get tau to test if the "constant value" is really constant
 		const double tau = BGKTransformed::calculateRelaxationParameter(
-				viscosity, dt, solver.getBoltzmannModel());
+				viscosity, dt, *solver.getBoltzmannModel());
 		cout << "... scaling = " << scaling << " ... tau = " << tau << " ...";
 		//cout << "constant = " << log2(scaling*scaling) / log2(tau) << " ...";
 		time1 = clock() - timestart;

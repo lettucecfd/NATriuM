@@ -40,6 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -61,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -68,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -221,7 +223,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* BOUNDARYCOLLECTION_H_ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="classnatrium_1_1PeriodicBoundary_html"><div class="ttname"><a href="classnatrium_1_1PeriodicBoundary.html">natrium::PeriodicBoundary</a></div><div class="ttdoc">A periodic boundary condition,. </div><div class="ttdef"><b>Definition:</b> PeriodicBoundary.h:52</div></div>
+<div class="ttc" id="classnatrium_1_1PeriodicBoundary_html"><div class="ttname"><a href="classnatrium_1_1PeriodicBoundary.html">natrium::PeriodicBoundary</a></div><div class="ttdoc">A periodic boundary condition,. </div><div class="ttdef"><b>Definition:</b> PeriodicBoundary.h:51</div></div>
 <div class="ttc" id="classnatrium_1_1BoundaryCollection_html_ac3a84114a57f0e321a24eaa743a141f3"><div class="ttname"><a href="classnatrium_1_1BoundaryCollection.html#ac3a84114a57f0e321a24eaa743a141f3">natrium::BoundaryCollection::getPeriodicBoundary</a></div><div class="ttdeci">const shared_ptr&lt; PeriodicBoundary&lt; dim &gt; &gt; &amp; getPeriodicBoundary(size_t boundaryIndicator) const </div><div class="ttdoc">get a specific periodic boundary </div><div class="ttdef"><b>Definition:</b> BoundaryCollection.h:123</div></div>
 <div class="ttc" id="classnatrium_1_1MinLeeBoundary_html"><div class="ttname"><a href="classnatrium_1_1MinLeeBoundary.html">natrium::MinLeeBoundary</a></div><div class="ttdoc">The boundary described by Min and Lee. For outgoing particle distribution functions the fluxes are se...</div><div class="ttdef"><b>Definition:</b> MinLeeBoundary.h:50</div></div>
 <div class="ttc" id="classnatrium_1_1BoundaryCollection_html_a60d5efd5fa9bf2107705ee1a38508dd4"><div class="ttname"><a href="classnatrium_1_1BoundaryCollection.html#a60d5efd5fa9bf2107705ee1a38508dd4">natrium::BoundaryCollection::addBoundary</a></div><div class="ttdeci">void addBoundary(shared_ptr&lt; PeriodicBoundary&lt; dim &gt; &gt; boundary)</div><div class="ttdoc">Add a boundary to the flow definition. This definition of addBoundary applies to periodic boundaries...</div><div class="ttdef"><b>Definition:</b> BoundaryCollection.h:80</div></div>
@@ -237,7 +239,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:57:54 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 6 2015 20:01:01 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

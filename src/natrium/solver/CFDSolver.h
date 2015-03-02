@@ -24,26 +24,29 @@
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../boltzmannmodels/D2Q9IncompressibleModel.h"
 
-#include "../collisionmodels/CollisionModel.h"
-#include "../collisionmodels/BGKTransformed.h"
+#include "../collision/Collision.h"
+#include "../collision/BGKTransformed.h"
 
 #include "../timeintegration/TimeIntegrator.h"
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
-
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
 /**
  * @short Exception class for CFDSolver
  */
-class CFDSolverException: public std::exception {
+class CFDSolverException: public NATriuMException {
 private:
 	std::string message;
 public:
 	CFDSolverException(const char *msg) :
-			message(msg) {
+			NATriuMException(msg), message(msg) {
+	}
+	CFDSolverException(const string& msg) :
+			NATriuMException(msg), message(msg) {
 	}
 	~CFDSolverException() throw () {
 	}
@@ -84,7 +87,9 @@ private:
 	shared_ptr<CollisionModel> m_collisionModel;
 
 	/// Time Integrator for the solution of the ODE, which stems from the space discretization
-	shared_ptr<TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector> > m_timeIntegrator;
+	shared_ptr<
+			TimeIntegrator<distributed_sparse_block_matrix,
+					distributed_block_vector> > m_timeIntegrator;
 
 	/// Configuration of the solver
 	shared_ptr<SolverConfiguration> m_configuration;
@@ -104,6 +109,9 @@ private:
 	/// table out
 	shared_ptr<SolverStats<dim> > m_solverStats;
 
+	// starting time
+	time_t m_tstart;
+
 protected:
 
 	/// save the distribution functions to files for checkpointing
@@ -113,9 +121,8 @@ protected:
 	void loadDistributionFunctionsFromFiles(const string& directory);
 
 	/// gives the possibility for Benchmark instances to add the analytic solution to output
-	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& data_out){
+	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& data_out) {
 	}
-
 
 public:
 
@@ -163,7 +170,7 @@ public:
 		return m_density;
 	}
 
-	const vector<distributed_vector>& getF() const {
+	const DistributionFunctions& getF() const {
 		return m_f;
 	}
 
@@ -191,7 +198,8 @@ public:
 		return m_problemDescription;
 	}
 
-	const shared_ptr<TimeIntegrator<distributed_vector, distributed_sparse_matrix> >& getTimeIntegrator() const {
+	const shared_ptr<
+			TimeIntegrator<distributed_vector, distributed_sparse_matrix> >& getTimeIntegrator() const {
 		return m_timeIntegrator;
 	}
 
@@ -228,10 +236,23 @@ public:
 	const shared_ptr<SolverStats<dim> >& getSolverStats() const {
 		return m_solverStats;
 	}
+
+	double getTau() const {
+		if (BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS
+				== m_configuration->getCollisionScheme()) {
+			return BGKTransformed::calculateRelaxationParameter(
+					m_problemDescription->getViscosity(),
+					m_configuration->getTimeStepSize(), *m_boltzmannModel);
+		}
+		LOG(WARNING)
+				<< "getTau() is called, but you don't have a BGKTransformed model."
+				<< endl;
+		return 0;
+
+	}
 }
 ;
 
 } /* namespace natrium */
-
 
 #endif /* CFDSOLVER_H_ */

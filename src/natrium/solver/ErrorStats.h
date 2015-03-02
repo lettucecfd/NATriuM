@@ -40,6 +40,7 @@ private:
 	double m_l2VelocityError;
 	double m_l2DensityError;
 	double m_maxUAnalytic;
+	double m_l2UAnalytic;
 
 public:
 	/**
@@ -85,8 +86,8 @@ public:
 	}
 
 	/**
-	 * @short return L2-Error of density, DIVIDED BY NUMBER OF DOFS!!!
-	 *        \f$ \frac{1}{N} \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} }  \f$
+	 * @short return L2-Error of density,
+	 *        \f$ \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} }  \f$
 	 * @note The division by the number of dofs is required, because otherwise finer grids result in bigger errors.
 	 */
 	double getL2DensityError() const {
@@ -94,8 +95,8 @@ public:
 	}
 
 	/**
-	 * @short return L2-Error of velocity, DIVIDED BY NUMBER OF DOFS!!!
-	 *  \f$ \frac{1}{N} \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} }  \f$
+	 * @short return L2-Error of velocity,
+	 *  \f$ \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} }  \f$
 	 * @note The division by the number of dofs is required, because otherwise finer grids result in bigger errors.
 	 */
 	double getL2VelocityError() const {
@@ -125,6 +126,10 @@ public:
 
 	double getTime() const {
 		return m_time;
+	}
+
+	double getL2UAnalytic() const {
+		return m_l2UAnalytic;
 	}
 };
 

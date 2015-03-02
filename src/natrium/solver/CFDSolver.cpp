@@ -24,8 +24,12 @@
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
 #include "../timeintegration/ExponentialTimeIntegrator.h"
+#include "../timeintegration/DealIIWrapper.h"
+
 
 #include "../utilities/Logging.h"
+#include "../utilities/CFDSolverUtilities.h"
+#include "../utilities/MPIGuard.h"
 
 namespace natrium {
 
@@ -49,6 +53,13 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		LOGGER().setLogFile(
 				(boost::filesystem::path(configuration->getOutputDirectory())
 						/ "natrium.log").string());
+	}
+
+	/// check if problem's boundary conditions are well defined
+	bool boundaries_ok = problemDescription->checkBoundaryConditions();
+	if (!boundaries_ok){
+		throw CFDSolverException(
+				"Boundary conditions do no fit to triangulation.");
 	}
 
 	/// check if problem and solver configuration fit together
@@ -101,8 +112,14 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			== configuration->getCollisionScheme()) {
 		tau = BGKTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), m_boltzmannModel);
-		m_collisionModel = make_shared<BGKTransformed>(tau, m_boltzmannModel);
+				m_configuration->getTimeStepSize(), *m_boltzmannModel);
+		if (Stencil_D2Q9 == configuration->getStencil()) {
+			BGKTransformed bgk(m_boltzmannModel->getQ(), tau);
+			D2Q9IncompressibleModel d2q9(configuration->getStencilScaling());
+			m_collisionModel = make_shared<
+					Collision<D2Q9IncompressibleModel, BGKTransformed> >(d2q9,
+					bgk);
+		}
 	}
 
 /// Build time integrator
@@ -113,18 +130,24 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), numberOfDoFs,
 				m_boltzmannModel->getQ() - 1);
-	} else if (THETA_METHOD == configuration->getTimeIntegrator()){
+	} else if (THETA_METHOD == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
-						ThetaMethod<distributed_sparse_block_matrix,
-								distributed_block_vector> >(
-						configuration->getTimeStepSize(), numberOfDoFs,
-						m_boltzmannModel->getQ() - 1, configuration->getThetaMethodTheta());
+				ThetaMethod<distributed_sparse_block_matrix,
+						distributed_block_vector> >(
+				configuration->getTimeStepSize(), numberOfDoFs,
+				m_boltzmannModel->getQ() - 1,
+				configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 								ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 										distributed_block_vector> >(
 												configuration->getTimeStepSize(), numberOfDoFs,
 												m_boltzmannModel->getQ() - 1);
+	} else if (OTHER == configuration->getTimeIntegrator()) {
+		m_timeIntegrator = make_shared<
+						DealIIWrapper<distributed_sparse_block_matrix,
+								distributed_block_vector> >(
+						configuration->getTimeStepSize(), configuration->getDealIntegrator());
 	}
 
 // initialize macroscopic variables
@@ -144,30 +167,39 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	if (charU == 0.0) {
 		charU = maxU;
 	}
-	double dx = dealii::GridTools::minimal_cell_diameter(
-			*(m_problemDescription->getTriangulation()));
+	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(
+			*m_problemDescription->getTriangulation(),
+			configuration->getSedgOrderOfFiniteElement());
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
-	LOG(WELCOME) << "viscosity:       " << problemDescription->getViscosity()
-			<< " m^2/s" << endl;
-	LOG(WELCOME) << "char. length:    "
+	LOG(WELCOME) << "viscosity:                "
+			<< problemDescription->getViscosity() << " m^2/s" << endl;
+	LOG(WELCOME) << "char. length:             "
 			<< problemDescription->getCharacteristicLength() << " m" << endl;
-	LOG(WELCOME) << "max |u_0|:       "
+	LOG(WELCOME) << "max |u_0|:                "
 			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
 			<< endl;
-	LOG(WELCOME) << "Reynolds number: "
+	LOG(WELCOME) << "Reynolds number:          "
 			<< (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
-	LOG(WELCOME) << "Mach number:     "
+	LOG(WELCOME) << "Mach number:              "
 			<< charU / m_boltzmannModel->getSpeedOfSound() << endl;
-	LOG(WELCOME) << "Stencil scaling: " << configuration->getStencilScaling()
+	LOG(WELCOME) << "Stencil scaling:          "
+			<< configuration->getStencilScaling() << endl;
+	//TODO propose optimal cfl based on time integrator
+	const double optimal_cfl = 0.4;
+	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
+			<< CFDSolverUtilities::calculateTimestep<dim>(
+					*m_problemDescription->getTriangulation(),
+					configuration->getSedgOrderOfFiniteElement(),
+					*m_boltzmannModel, optimal_cfl) << " s" << endl;
+	LOG(WELCOME) << "Actual dt:                "
+			<< configuration->getTimeStepSize() << " s" << endl;
+	LOG(WELCOME) << "CFL number:               "
+			<< configuration->getTimeStepSize() / dx
+					* m_boltzmannModel->getMaxParticleVelocityMagnitude()
 			<< endl;
-	LOG(WELCOME) << "Recommended dt:  "
-			<< m_collisionModel->calculateOptimalTimeStep(dx, m_boltzmannModel)
-			<< " s" << endl;
-	LOG(WELCOME) << "Actual dt:       " << configuration->getTimeStepSize()
-			<< " s" << endl;
-	LOG(WELCOME) << "dx:              " << dx << endl;
-	LOG(WELCOME) << "tau:             " << tau << endl;
+	LOG(WELCOME) << "dx:                       " << dx << endl;
+	LOG(WELCOME) << "tau:                      " << tau << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 
 	// initialize boundary dof indicator
@@ -192,6 +224,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	}
 	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
 			<< nofBoundaryNodes << endl;
+	LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs() << endl;
 
 	// Initialize distribution functions
 	if (configuration->isRestartAtLastCheckpoint()) {
@@ -230,8 +263,7 @@ void CFDSolver<dim>::stream() {
 	const distributed_block_vector& systemVector =
 			m_advectionOperator->getSystemVector();
 
-	m_timeIntegrator->step(f, systemMatrix, systemVector);
-	m_time += m_timeIntegrator->getTimeStepSize();
+	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time, m_timeIntegrator->getTimeStepSize());
 
 }
 template void CFDSolver<2>::stream();
@@ -255,13 +287,13 @@ template void CFDSolver<3>::reassemble();
 template<size_t dim>
 void CFDSolver<dim>::run() {
 	size_t N = m_configuration->getNumberOfTimeSteps();
-	// TODO estimate runtime
 	for (m_i = m_iterationStart; m_i < N; m_i++) {
 		output(m_i);
 		stream();
 		collide();
 	}
 	output(N);
+	LOG(BASIC) << "NATriuM run complete." << endl;
 }
 template void CFDSolver<2>::run();
 template void CFDSolver<3>::run();
@@ -269,10 +301,27 @@ template void CFDSolver<3>::run();
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
 	// output: vector fields as .vtu files
+	if (iteration == m_iterationStart) {
+		m_tstart = time(0);
+	}
 	if (not m_configuration->isSwitchOutputOff()) {
 		if (iteration % 100 == 0) {
-			LOG(BASIC) << "Iteration " << iteration << ",  t = " << m_time
+			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time
 					<< endl;
+		}
+		// output estimated runtime after iterations 1, 10, 100, 1000, ...
+		if (iteration > m_iterationStart) {
+			if (int(log10(iteration - m_iterationStart))
+					== log10(iteration - m_iterationStart)) {
+				time_t estimated_end = m_tstart
+						+ (m_configuration->getNumberOfTimeSteps()
+								- m_iterationStart)
+								/ (iteration - m_iterationStart)
+								* (time(0) - m_tstart);
+				struct tm * ltm = localtime(&estimated_end);
+				LOG(BASIC) << "i = " << iteration << "; Estimated end: "
+						<< string(asctime(ltm)) << endl;
+			}
 		}
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			std::stringstream str;
@@ -293,7 +342,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 			}
 			addAnalyticSolutionToOutput(data_out);
 			/// For Benchmarks: add analytic solution
-			data_out.build_patches();
+			data_out.build_patches(m_configuration->getSedgOrderOfFiniteElement()+1);
 			data_out.write_vtu(vtu_output);
 		}
 
@@ -366,8 +415,14 @@ void CFDSolver<dim>::initializeDistributions() {
 		while (residual > m_configuration->getIterativeInitializationResidual()) {
 			if (loopCount
 					> m_configuration->getIterativeInitializationNumberOfIterations()) {
-				throw CFDSolverException(
-						"The iterative Initialization of equilibrium distribution functions failed. Either use another initialization procedure or change the preferences for iterative initialization (residual or maximal number of init iterations).");
+				LOG(WARNING)
+						<< "The iterative Initialization of equilibrium distribution functions could only reach residual "
+						<< residual << " after " << loopCount
+						<< " iterations (Aimed at residual "
+						<< m_configuration->getIterativeInitializationResidual()
+						<< "). If that is too bad, increase the number of iterations in the iterative initialization scheme. "
+						<< "To avoid this Warning, soften the scheme (i.e. aim at a greater residual.)";
+				break;
 			}
 			oldDensities = m_density;
 			stream();
@@ -412,7 +467,13 @@ void CFDSolver<dim>::saveDistributionFunctionsToFiles(const string& directory) {
 		std::stringstream filename;
 		filename << directory << "/checkpoint_f_" << i << ".dat";
 		std::ofstream file(filename.str().c_str());
+#ifndef WITH_TRILINOS
 		m_f.at(i).block_write(file);
+#else
+		// TODO Write and read functions for Trilinos vectors. This here is really bad.
+		numeric_vector tmp(m_f.at(i));
+		tmp.block_write(file);
+#endif
 	}
 }
 template void CFDSolver<2>::saveDistributionFunctionsToFiles(
@@ -433,7 +494,15 @@ void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 			std::stringstream filename;
 			filename << directory << "/checkpoint_f_" << i << ".dat";
 			std::ifstream file(filename.str().c_str());
+#ifndef WITH_TRILINOS
 			m_f.at(i).block_read(file);
+#else
+			// TODO Write and read functions for Trilinos vectors. This here is really bad.
+			numeric_vector tmp(m_f.at(i));
+			tmp.block_read(file);
+			m_f.at(i) = tmp;
+
+#endif
 		}
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
 		throw CFDSolverException(

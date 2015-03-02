@@ -40,6 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -70,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -143,10 +144,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:adf0b4e4da292bcb195d926d3174ba2a9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf0b4e4da292bcb195d926d3174ba2a9"></a>
 const distributed_vector &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getDensity</b> () const </td></tr>
 <tr class="separator:adf0b4e4da292bcb195d926d3174ba2a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7a6591ab785a87d60bcc12da9daf8ff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7a6591ab785a87d60bcc12da9daf8ff"></a>
-const vector<br class="typebreak"/>
-&lt; distributed_vector &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getF</b> () const </td></tr>
-<tr class="separator:aa7a6591ab785a87d60bcc12da9daf8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a963e069873d88d130b0fe3f7f77c3d83"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a963e069873d88d130b0fe3f7f77c3d83"></a>
+const <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getF</b> () const </td></tr>
+<tr class="separator:a963e069873d88d130b0fe3f7f77c3d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e5ec3dc278216d5827410b7db82af59"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0e5ec3dc278216d5827410b7db82af59"></a>
 const vector<br class="typebreak"/>
 &lt; distributed_vector &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getVelocity</b> () const </td></tr>
@@ -171,12 +171,12 @@ const shared_ptr<br class="typebreak"/>
 const shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getProblemDescription</b> () const </td></tr>
 <tr class="separator:a8b1131e8fd6b022bea5ddce72469c289"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc432b8516f531639914001616d36ab9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc432b8516f531639914001616d36ab9"></a>
+<tr class="memitem:af1b1ca6771029003bc9bac7cfe0b4d3c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1b1ca6771029003bc9bac7cfe0b4d3c"></a>
 const shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a><br class="typebreak"/>
 &lt; distributed_vector, <br class="typebreak"/>
 distributed_sparse_matrix &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getTimeIntegrator</b> () const </td></tr>
-<tr class="separator:adc432b8516f531639914001616d36ab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:af1b1ca6771029003bc9bac7cfe0b4d3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74d459ef4f43d42e04ceb2178bb006f4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a74d459ef4f43d42e04ceb2178bb006f4"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumberOfDoFs</b> () const </td></tr>
 <tr class="separator:a74d459ef4f43d42e04ceb2178bb006f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,6 +199,9 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getIteration</b> ()
 const shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverStats.html">SolverStats</a><br class="typebreak"/>
 &lt; dim &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSolverStats</b> () const </td></tr>
 <tr class="separator:ab40725ea85fde34033d92027d13a4b06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac34fdc9baa1219418385ebb0c3daefde"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac34fdc9baa1219418385ebb0c3daefde"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>getTau</b> () const </td></tr>
+<tr class="separator:ac34fdc9baa1219418385ebb0c3daefde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -234,7 +237,8 @@ class natrium::CFDSolver&lt; dim &gt;</h3>
   </table>
   </dd>
 </dl>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="step-0_8cpp-example.html#_a4">step-0.cpp</a>.</dd>
+</dl></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a2a459e7f9d5feb0d216f869812723af2"></a>
 <div class="memitem">
 <div class="memproto">
@@ -263,6 +267,7 @@ template&lt;size_t dim&gt; </div>
 <p>constructor </p>
 <dl class="section note"><dt>Note</dt><dd>: has to be inlined, if the template parameter is not made explicit </dd></dl>
 <p>Create output directory</p>
+<p>check if problem's boundary conditions are well defined</p>
 <p>check if problem and solver configuration fit together</p>
 <p>Build boltzmann model</p>
 <p>Build streaming data object</p>
@@ -310,7 +315,7 @@ template&lt;size_t dim&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:58:01 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 6 2015 20:01:34 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

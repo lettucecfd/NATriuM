@@ -23,18 +23,23 @@
 #include "../problemdescription/BoundaryCollection.h"
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
+
 /**
- * @short Exception class for AdvectionSolver
+ * @short Exception class for SEDGMinLee
  */
-class AdvectionSolverException: public std::exception {
+class AdvectionSolverException: public NATriuMException {
 private:
 	std::string message;
 public:
 	AdvectionSolverException(const char *msg) :
-			message(msg) {
+			NATriuMException(msg), message(msg) {
+	}
+	AdvectionSolverException(const string& msg) :
+			NATriuMException(msg), message(msg) {
 	}
 	~AdvectionSolverException() throw () {
 	}
@@ -120,9 +125,6 @@ private:
 	/// Mapping from real space to unit cell
 	const dealii::MappingQ1<dim> m_mapping;
 
-	/// global mass matrix M
-	distributed_vector m_massMatrix;
-
 	/// System matrix L = M^(-1)*(-D+R)
 	distributed_sparse_block_matrix m_systemMatrix;
 
@@ -184,14 +186,14 @@ private:
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
 			dealii::FEFaceValues<dim>& feNeighborFaceValues,
 			size_t dofs_per_cell, size_t n_q_points,
-			dealii::FullMatrix<double> &faceMatrix);
+			dealii::FullMatrix<double> &faceMatrix, const vector<double>& inverseLocalMassMatrix);
 
 	/**
 	 * @short calculate system diagonal block matrix  (Dx*eix + Dy*eiy)
 	 */
 	void calculateAndDistributeLocalStiffnessMatrix(size_t alpha,
 			const vector<dealii::FullMatrix<double> > &derivativeMatrices,
-			dealii::FullMatrix<double> &systemMatrix,
+			dealii::FullMatrix<double> &systemMatrix, const vector<double>& inverseLocalMassMatrix,
 			const std::vector<dealii::types::global_dof_index>& globalDoFs,
 			size_t dofsPerCell);
 
@@ -212,7 +214,7 @@ private:
 			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
 			size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
-			dealii::FEFaceValues<dim>& feNeighborFaceValues);
+			dealii::FEFaceValues<dim>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
 
 	/**
 	 * @short map degrees of freedom to quadrature node indices on a cell
@@ -319,15 +321,21 @@ public:
 		return m_sparsityPattern;
 	}
 
+#ifndef WITH_TRILINOS
+	/**
+	 * @short get sparsity pattern
+	 * @note not available for trilinos, as trilinos has an internal format for sparsity patterns (Epetra_CrsGraph)
+	 */
 	const dealii::SparsityPattern& getSparsityPattern(size_t i) const {
 		return m_systemMatrix.block(i,i).get_sparsity_pattern();
 	}
+#endif
 
 	const dealii::MappingQ1<dim>& getMapping() const {
 		return m_mapping;
 	}
 
-	const std::map<size_t, size_t>& getCelldofToQIndex() const {
+	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const {
 		return m_celldof_to_q_index;
 	}
 
@@ -339,11 +347,15 @@ public:
 		return m_faceQuadrature;
 	}
 
-	const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
+	virtual const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
 		return m_fe;
 	}
 
-	const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
+	virtual size_t getNumberOfDoFsPerCell() const{
+		return m_fe->dofs_per_cell;
+	}
+
+	virtual const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
 		return m_quadrature;
 	}
 

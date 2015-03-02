@@ -194,8 +194,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 	size_t faceIndex2 = periodicTopBottom.getOppositeCellAtPeriodicBoundary(
 			leftUpperCorner, it2);
 
-	BOOST_CHECK(faceIndex == 0);
-	BOOST_CHECK(faceIndex2 == 3);
+	BOOST_CHECK(faceIndex == 1);
+	BOOST_CHECK(faceIndex2 == 2);
 
 	// Check if cells are correct
 	BOOST_CHECK(it->face(1)->boundary_indicator() == 1);
@@ -228,14 +228,14 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_TaylorGreenVortex_test){
 
 	// set parameters, set up configuration object
 	size_t refinementLevel = 4;
-	size_t orderOfFiniteElement = 2;
+	size_t orderOfFiniteElement = 1;
 	double viscosity = 1;
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
-					* (configuration->getSedgOrderOfFiniteElement() - 1));
+					* (configuration->getSedgOrderOfFiniteElement()));
 	std::stringstream dirname;
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(true);

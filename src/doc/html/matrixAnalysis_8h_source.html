@@ -40,6 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -61,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -68,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -124,8 +126,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* MATRIXANALYSIS_H_ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="BasicNames_8h_html"><div class="ttname"><a href="BasicNames_8h.html">BasicNames.h</a></div><div class="ttdoc">Definition of the basic typedefs and names used in the Code. </div></div>
-<div class="ttc" id="classnatrium_1_1CFDSolver_html"><div class="ttname"><a href="classnatrium_1_1CFDSolver.html">natrium::CFDSolver</a></div><div class="ttdoc">The central class for the CFD simulation based on the DBE. </div><div class="ttdef"><b>Definition:</b> CFDSolver.h:61</div></div>
+<div class="ttc" id="BasicNames_8h_html"><div class="ttname"><a href="BasicNames_8h.html">BasicNames.h</a></div><div class="ttdoc">Definition of the basic typedefs and names used in the Code;. </div></div>
+<div class="ttc" id="classnatrium_1_1CFDSolver_html"><div class="ttname"><a href="classnatrium_1_1CFDSolver.html">natrium::CFDSolver</a></div><div class="ttdoc">The central class for the CFD simulation based on the DBE. </div><div class="ttdef"><b>Definition:</b> CFDSolver.h:60</div></div>
 <div class="ttc" id="classnatrium_1_1matrixAnalysis_html"><div class="ttname"><a href="classnatrium_1_1matrixAnalysis.html">natrium::matrixAnalysis</a></div><div class="ttdoc">Calculation of spectra and pseudospectra of streaming matrices. </div><div class="ttdef"><b>Definition:</b> matrixAnalysis.h:22</div></div>
 <div class="ttc" id="CFDSolver_8h_html"><div class="ttname"><a href="CFDSolver_8h.html">CFDSolver.h</a></div><div class="ttdoc">CFD Solver, specified for Benchmark applications. </div></div>
 <div class="ttc" id="classnatrium_1_1matrixAnalysis_html_a78f3d3996a02982e4b465b627a9b999f"><div class="ttname"><a href="classnatrium_1_1matrixAnalysis.html#a78f3d3996a02982e4b465b627a9b999f">natrium::matrixAnalysis::computeSpectrum</a></div><div class="ttdeci">static void computeSpectrum(const distributed_sparse_block_matrix &amp;matrix, vector&lt; std::complex&lt; double &gt; &gt; &amp;eigenvalues, double perturbation=0.0)</div><div class="ttdoc">Compute the eigenvalues of a sparse block matrix. </div><div class="ttdef"><b>Definition:</b> matrixAnalysis.cpp:64</div></div>
@@ -134,7 +136,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:57:54 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 6 2015 20:01:00 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

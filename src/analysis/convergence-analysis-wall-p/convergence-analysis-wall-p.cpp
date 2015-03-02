@@ -57,8 +57,7 @@ int main() {
 	//const double t0 = 30.0;
 	const double t0 = 0.0;
 
-
-	size_t refinementLevel = 2;
+	size_t refinementLevel = 3;
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 	std::stringstream filename;
@@ -79,77 +78,76 @@ int main() {
 			<< "#  orderOfFe  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 12; orderOfFiniteElement+= 2) {
+	for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 12;
+			orderOfFiniteElement += 2) {
 		timeFile << endl << "# order FE = " << orderOfFiniteElement << endl;
 		orderFile << endl << "# order FE = " << orderOfFiniteElement << endl;
 		cout << endl << "order FE = " << orderOfFiniteElement << endl;
 
-		for (double dt = 0.1; dt >= 0.00001; dt /= 2.) {
-			timeFile << "# dt = " << dt << endl;
-			orderFile << "# dt = " << dt << endl;
-			cout << "dt = " << dt << endl;
+		double dt = 0.0005;
+		//for (double dt = 0.1; dt >= 0.00001; dt /= 2.) {
+		timeFile << "# dt = " << dt << endl;
+		orderFile << "# dt = " << dt << endl;
+		cout << "dt = " << dt << endl;
 
-			// time measurement variables
-			double time1, time2, timestart;
+		// time measurement variables
+		double time1, time2, timestart;
 
-			// setup configuration
-			std::stringstream dirName;
-			dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-wall-p/"
-					<< orderOfFiniteElement << "_" << refinementLevel << "_"
-					<< dt;
-			shared_ptr<SolverConfiguration> configuration = make_shared<
-					SolverConfiguration>();
-			//configuration->setSwitchOutputOff(true);
-			configuration->setOutputDirectory(dirName.str());
-			configuration->setRestartAtLastCheckpoint(false);
-			configuration->setUserInteraction(false);
-			configuration->setOutputTableInterval(1000);
-			//configuration->setOutputCheckpointInterval(1000);
-			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
-			configuration->setStencilScaling(scaling);
-			configuration->setCommandLineVerbosity(0);
-			configuration->setTimeStepSize(dt);
-			configuration->setNumberOfTimeSteps(40.0 / dt);
+		// setup configuration
+		std::stringstream dirName;
+		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-wall-p/"
+				<< orderOfFiniteElement << "_" << refinementLevel << "_" << dt;
+		shared_ptr<SolverConfiguration> configuration = make_shared<
+				SolverConfiguration>();
+		//configuration->setSwitchOutputOff(true);
+		configuration->setOutputDirectory(dirName.str());
+		configuration->setRestartAtLastCheckpoint(false);
+		configuration->setUserInteraction(false);
+		configuration->setOutputTableInterval(1000);
+		//configuration->setOutputCheckpointInterval(1000);
+		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+		configuration->setStencilScaling(scaling);
+		configuration->setCommandLineVerbosity(0);
+		configuration->setTimeStepSize(dt);
+		configuration->setNumberOfTimeSteps(40.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
-			configuration->setNumberOfTimeSteps(1);
+		configuration->setNumberOfTimeSteps(1);
 #endif
 
-			// make problem and solver objects; measure time
-			shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(
-					viscosity, U, refinementLevel, L, t0);
-			shared_ptr<Benchmark<2> > benchmark = couette2D;
-			timestart = clock();
-			BenchmarkCFDSolver<2> solver(configuration, benchmark);
-			time1 = clock() - timestart;
+		// make problem and solver objects; measure time
+		shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(
+				viscosity, U, refinementLevel, L, t0);
+		shared_ptr<Benchmark<2> > benchmark = couette2D;
+		timestart = clock();
+		BenchmarkCFDSolver<2> solver(configuration, benchmark);
+		time1 = clock() - timestart;
 
-			try {
-				solver.run();
-				time2 = clock() - time1 - timestart;
-				time1 /= CLOCKS_PER_SEC;
-				time2 /= CLOCKS_PER_SEC;
-				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
-						<< " sec." << endl;
-				// put out runtime
-				timeFile << orderOfFiniteElement << "         " << dt
-						<< "      " << time1 << "     " << time2 << "        "
-						<< time2 / configuration->getNumberOfTimeSteps()
-						<< endl;
-				// put out final errors
-				solver.getErrorStats()->update();
-				orderFile << orderOfFiniteElement << " "
-						<< solver.getIteration() << " " << solver.getTime()
-						<< " " << solver.getErrorStats()->getMaxUAnalytic()
-						<< " " << solver.getErrorStats()->getMaxVelocityError()
-						<< " " << solver.getErrorStats()->getMaxDensityError()
-						<< " " << solver.getErrorStats()->getL2VelocityError()
-						<< " " << solver.getErrorStats()->getL2DensityError()
-						<< endl;
-			} catch (std::exception& e) {
-				cout << " Error" << endl;
-			}
+		try {
+			solver.run();
+			time2 = clock() - time1 - timestart;
+			time1 /= CLOCKS_PER_SEC;
+			time2 /= CLOCKS_PER_SEC;
+			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+					<< " sec." << endl;
+			// put out runtime
+			timeFile << orderOfFiniteElement << "         " << dt << "      "
+					<< time1 << "     " << time2 << "        "
+					<< time2 / configuration->getNumberOfTimeSteps() << endl;
+			// put out final errors
+			solver.getErrorStats()->update();
+			orderFile << orderOfFiniteElement << " " << solver.getIteration()
+					<< " " << solver.getTime() << " "
+					<< solver.getErrorStats()->getMaxUAnalytic() << " "
+					<< solver.getErrorStats()->getMaxVelocityError() << " "
+					<< solver.getErrorStats()->getMaxDensityError() << " "
+					<< solver.getErrorStats()->getL2VelocityError() << " "
+					<< solver.getErrorStats()->getL2DensityError() << endl;
+		} catch (std::exception& e) {
+			cout << " Error" << endl;
+		}
 
-		} /* for time step*/
+		//} /* for time step*/
 		timeFile << endl;
 		orderFile << endl;
 	} /* for refinement level */

@@ -40,6 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -61,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -68,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -121,94 +123,120 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        }</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
 <div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a0ea3ad0426df18a986578f7b57361dd3">   54</a></span>&#160;        <a class="code" href="classnatrium_1_1DistributionFunctions.html#a0ea3ad0426df18a986578f7b57361dd3">DistributionFunctions</a>(<span class="keyword">const</span> vector&lt;distributed_vector&gt;&amp; f) :</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                        m_Q(f.<a class="code" href="classnatrium_1_1DistributionFunctions.html#a20accab9335de906696ad792164728ed">size</a>()), m_f0(f.<a class="code" href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">at</a>(0)) {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                m_fStream.reinit(m_Q, m_f0.size());</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1; i &lt; m_Q; i++) {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                        m_fStream.block(i - 1).reinit(f.at(i));</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                        <span class="comment">// reinit does only change the size but not the content</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; f.at(i).size(); j++){</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                                m_fStream.block(i-1)(j) = f.at(i)(j);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                        }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        }</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#af965a46fbf124e8f90250c843e615bcd">   67</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#af965a46fbf124e8f90250c843e615bcd">~DistributionFunctions</a>() {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        }</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">   74</a></span>&#160;        distributed_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">at</a>(<span class="keywordtype">size_t</span> i) {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                assert(m_Q &gt; 0);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                assert(i &lt; m_Q);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                <span class="keywordflow">if</span> (i == 0) {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                        <span class="keywordflow">return</span> m_f0;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                        <span class="keywordflow">return</span> m_fStream.block(i - 1);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">   87</a></span>&#160;        <span class="keyword">const</span> distributed_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">getF0</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                <span class="keywordflow">return</span> m_f0;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                        m_Q(f.<a class="code" href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">size</a>()), m_f0(f.<a class="code" href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">at</a>(0)) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#ifdef WITH_TRILINOS</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor"></span>                m_fStream.reinit(m_Q);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor"></span>                m_fStream.reinit(m_Q, m_f0.size());</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor"></span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1; i &lt; m_Q; i++) {</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                        m_fStream.block(i - 1).reinit(f.at(i));</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                        <span class="comment">// reinit does only change the size but not the content</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                m_fStream.collect_sizes();</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1; i &lt; m_Q; i++) {</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; f.at(i).size(); j++){</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                m_fStream.block(i-1)(j) = f.at(i)(j);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                        }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#af965a46fbf124e8f90250c843e615bcd">   74</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#af965a46fbf124e8f90250c843e615bcd">~DistributionFunctions</a>() {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        }</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">   81</a></span>&#160;        distributed_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">at</a>(<span class="keywordtype">size_t</span> i) {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                assert(m_Q &gt; 0);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                assert(i &lt; m_Q);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                <span class="keywordflow">if</span> (i == 0) {</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                        <span class="keywordflow">return</span> m_f0;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                        <span class="keywordflow">return</span> m_fStream.block(i - 1);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        }</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#abb98df52461532f58e77741dd9b6a975">   94</a></span>&#160;        distributed_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#abb98df52461532f58e77741dd9b6a975">getF0</a>() {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                <span class="keywordflow">return</span> m_f0;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#ae7cc68f9576384b3fbec8f171856f607">  101</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#ae7cc68f9576384b3fbec8f171856f607">setF0</a>(<span class="keyword">const</span> distributed_vector&amp; f0) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                m_f0 = f0;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a74dfe8e6ac6d5f463dcb8220f37800a3">  108</a></span>&#160;        distributed_block_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a74dfe8e6ac6d5f463dcb8220f37800a3">getFStream</a>() {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                <span class="keywordflow">return</span> m_fStream;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        }</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a88224d528262c522ea2ad8bec11178c1">  115</a></span>&#160;        <span class="keyword">const</span> distributed_block_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a88224d528262c522ea2ad8bec11178c1">getFStream</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                <span class="keywordflow">return</span> m_fStream;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        }</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#ad0ada0c54968a61f78eb1b82eb6c5a68">  123</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#ad0ada0c54968a61f78eb1b82eb6c5a68">setFStream</a>(<span class="keyword">const</span> distributed_block_vector&amp; fStream) {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                m_fStream = fStream;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        }</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#ae0fd8e8234c7d5abec8522767d2a95e7">  130</a></span>&#160;        <span class="keyword">const</span> <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#ae0fd8e8234c7d5abec8522767d2a95e7">getQ</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                <span class="keywordflow">return</span> m_Q;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        }</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
-<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">  137</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">reinit</a>(<span class="keywordtype">size_t</span> Q, <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#a20accab9335de906696ad792164728ed">size</a>) {</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                m_Q = Q;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                m_fStream.reinit(Q - 1, size);</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                m_f0.reinit(size);</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        }</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div>
-<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a20accab9335de906696ad792164728ed">  146</a></span>&#160;        <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#a20accab9335de906696ad792164728ed">size</a>() {</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                <span class="keywordflow">return</span> m_Q;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        }</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;};</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a750d7de21f207ac694c72b215ba7b6de">   94</a></span>&#160;        <span class="keyword">const</span> distributed_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a750d7de21f207ac694c72b215ba7b6de">at</a>(<span class="keywordtype">size_t</span> i)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                assert(m_Q &gt; 0);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                assert(i &lt; m_Q);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                <span class="keywordflow">if</span> (i == 0) {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                        <span class="keywordflow">return</span> m_f0;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                        <span class="keywordflow">return</span> m_fStream.block(i - 1);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        }</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">  107</a></span>&#160;        <span class="keyword">const</span> distributed_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">getF0</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                <span class="keywordflow">return</span> m_f0;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#abb98df52461532f58e77741dd9b6a975">  114</a></span>&#160;        distributed_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#abb98df52461532f58e77741dd9b6a975">getF0</a>() {</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                <span class="keywordflow">return</span> m_f0;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        }</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#ae7cc68f9576384b3fbec8f171856f607">  121</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#ae7cc68f9576384b3fbec8f171856f607">setF0</a>(<span class="keyword">const</span> distributed_vector&amp; f0) {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                m_f0 = f0;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a74dfe8e6ac6d5f463dcb8220f37800a3">  128</a></span>&#160;        distributed_block_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a74dfe8e6ac6d5f463dcb8220f37800a3">getFStream</a>() {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                <span class="keywordflow">return</span> m_fStream;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
+<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a88224d528262c522ea2ad8bec11178c1">  135</a></span>&#160;        <span class="keyword">const</span> distributed_block_vector&amp; <a class="code" href="classnatrium_1_1DistributionFunctions.html#a88224d528262c522ea2ad8bec11178c1">getFStream</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                <span class="keywordflow">return</span> m_fStream;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
+<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#ad0ada0c54968a61f78eb1b82eb6c5a68">  143</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#ad0ada0c54968a61f78eb1b82eb6c5a68">setFStream</a>(<span class="keyword">const</span> distributed_block_vector&amp; fStream) {</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                m_fStream = fStream;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        }</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#ae0fd8e8234c7d5abec8522767d2a95e7">  150</a></span>&#160;        <span class="keyword">const</span> <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#ae0fd8e8234c7d5abec8522767d2a95e7">getQ</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                <span class="keywordflow">return</span> m_Q;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        }</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* DISTRIBUTIONFUNCTIONS_H_ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a88224d528262c522ea2ad8bec11178c1"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a88224d528262c522ea2ad8bec11178c1">natrium::DistributionFunctions::getFStream</a></div><div class="ttdeci">const distributed_block_vector &amp; getFStream() const </div><div class="ttdoc">FStream denotes the block vector containing the vectors . </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:115</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a20accab9335de906696ad792164728ed"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a20accab9335de906696ad792164728ed">natrium::DistributionFunctions::size</a></div><div class="ttdeci">size_t size()</div><div class="ttdoc">the number of discrete velocities, including zero </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:146</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_ad0ada0c54968a61f78eb1b82eb6c5a68"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#ad0ada0c54968a61f78eb1b82eb6c5a68">natrium::DistributionFunctions::setFStream</a></div><div class="ttdeci">void setFStream(const distributed_block_vector &amp;fStream)</div><div class="ttdoc">FStream denotes the block vector containing the vectors . </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:123</div></div>
+<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">  157</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">reinit</a>(<span class="keywordtype">size_t</span> Q, <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">size</a>) {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                m_Q = Q;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                m_f0.reinit(size);</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="preprocessor">#ifdef WITH_TRILINOS</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="preprocessor"></span>                m_fStream.reinit(Q-1);</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Q - 1; i++){</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                        m_fStream.block(i).reinit(m_f0);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                }</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="preprocessor"></span>                m_fStream.reinit(Q - 1, size);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="preprocessor"></span>                m_fStream.collect_sizes();</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        }</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="line"><a name="l00174"></a><span class="lineno"><a class="line" href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">  174</a></span>&#160;        <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">size</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                <span class="keywordflow">return</span> m_Q;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        }</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;};</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;} <span class="comment">/* namespace natrium */</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* DISTRIBUTIONFUNCTIONS_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a88224d528262c522ea2ad8bec11178c1"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a88224d528262c522ea2ad8bec11178c1">natrium::DistributionFunctions::getFStream</a></div><div class="ttdeci">const distributed_block_vector &amp; getFStream() const </div><div class="ttdoc">FStream denotes the block vector containing the vectors . </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:135</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_ad0ada0c54968a61f78eb1b82eb6c5a68"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#ad0ada0c54968a61f78eb1b82eb6c5a68">natrium::DistributionFunctions::setFStream</a></div><div class="ttdeci">void setFStream(const distributed_block_vector &amp;fStream)</div><div class="ttdoc">FStream denotes the block vector containing the vectors . </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:143</div></div>
 <div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a4fc9c42637465355a9df7681d45340c9"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a4fc9c42637465355a9df7681d45340c9">natrium::DistributionFunctions::DistributionFunctions</a></div><div class="ttdeci">DistributionFunctions()</div><div class="ttdoc">empty constructor. Construction is done through reinit. </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:39</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a74dfe8e6ac6d5f463dcb8220f37800a3"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a74dfe8e6ac6d5f463dcb8220f37800a3">natrium::DistributionFunctions::getFStream</a></div><div class="ttdeci">distributed_block_vector &amp; getFStream()</div><div class="ttdoc">FStream denotes the block vector containing the vectors . </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:108</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a3d76ae4f928f324ec82099dbdce678d7"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">natrium::DistributionFunctions::getF0</a></div><div class="ttdeci">const distributed_vector &amp; getF0() const </div><div class="ttdoc">F0 denotes the vector  (zero-velocity particles) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:87</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_ae7cc68f9576384b3fbec8f171856f607"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#ae7cc68f9576384b3fbec8f171856f607">natrium::DistributionFunctions::setF0</a></div><div class="ttdeci">void setF0(const distributed_vector &amp;f0)</div><div class="ttdoc">F0 denotes the vector  (zero-velocity particles) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:101</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a74dfe8e6ac6d5f463dcb8220f37800a3"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a74dfe8e6ac6d5f463dcb8220f37800a3">natrium::DistributionFunctions::getFStream</a></div><div class="ttdeci">distributed_block_vector &amp; getFStream()</div><div class="ttdoc">FStream denotes the block vector containing the vectors . </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:128</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a3d76ae4f928f324ec82099dbdce678d7"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">natrium::DistributionFunctions::getF0</a></div><div class="ttdeci">const distributed_vector &amp; getF0() const </div><div class="ttdoc">F0 denotes the vector  (zero-velocity particles) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:107</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_ae7cc68f9576384b3fbec8f171856f607"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#ae7cc68f9576384b3fbec8f171856f607">natrium::DistributionFunctions::setF0</a></div><div class="ttdeci">void setF0(const distributed_vector &amp;f0)</div><div class="ttdoc">F0 denotes the vector  (zero-velocity particles) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:121</div></div>
 <div class="ttc" id="classnatrium_1_1DistributionFunctions_html_af0a970355419acf79be898e573f3149a"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#af0a970355419acf79be898e573f3149a">natrium::DistributionFunctions::DistributionFunctions</a></div><div class="ttdeci">DistributionFunctions(const DistributionFunctions &amp;f)</div><div class="ttdoc">Copy constructor. </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:47</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_abb98df52461532f58e77741dd9b6a975"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#abb98df52461532f58e77741dd9b6a975">natrium::DistributionFunctions::getF0</a></div><div class="ttdeci">distributed_vector &amp; getF0()</div><div class="ttdoc">F0 denotes the vector  (zero-velocity particles) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:94</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a34f0147178c17597eaf24befdcced975"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">natrium::DistributionFunctions::at</a></div><div class="ttdeci">distributed_vector &amp; at(size_t i)</div><div class="ttdoc">mimes std::vector.at(i) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:74</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_abb98df52461532f58e77741dd9b6a975"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#abb98df52461532f58e77741dd9b6a975">natrium::DistributionFunctions::getF0</a></div><div class="ttdeci">distributed_vector &amp; getF0()</div><div class="ttdoc">F0 denotes the vector  (zero-velocity particles) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:114</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a750d7de21f207ac694c72b215ba7b6de"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a750d7de21f207ac694c72b215ba7b6de">natrium::DistributionFunctions::at</a></div><div class="ttdeci">const distributed_vector &amp; at(size_t i) const </div><div class="ttdoc">mimes std::vector.at(i) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:94</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a636814c639143c76989b09b2a92b6757"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">natrium::DistributionFunctions::size</a></div><div class="ttdeci">size_t size() const </div><div class="ttdoc">the number of discrete velocities, including zero </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:174</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a34f0147178c17597eaf24befdcced975"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">natrium::DistributionFunctions::at</a></div><div class="ttdeci">distributed_vector &amp; at(size_t i)</div><div class="ttdoc">mimes std::vector.at(i) </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:81</div></div>
 <div class="ttc" id="classnatrium_1_1DistributionFunctions_html_a0ea3ad0426df18a986578f7b57361dd3"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#a0ea3ad0426df18a986578f7b57361dd3">natrium::DistributionFunctions::DistributionFunctions</a></div><div class="ttdeci">DistributionFunctions(const vector&lt; distributed_vector &gt; &amp;f)</div><div class="ttdoc">Copy constructor. Conversion from vector&lt;distributed_vector&gt;. </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:54</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_acaca68f7cbb9322d354ad6dca68b2cb2"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">natrium::DistributionFunctions::reinit</a></div><div class="ttdeci">void reinit(size_t Q, size_t size)</div><div class="ttdoc">reinitialize the sizes of the distribution functions </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:137</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_ae0fd8e8234c7d5abec8522767d2a95e7"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#ae0fd8e8234c7d5abec8522767d2a95e7">natrium::DistributionFunctions::getQ</a></div><div class="ttdeci">const size_t getQ() const </div><div class="ttdoc">the number of discrete velocities </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:130</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_acaca68f7cbb9322d354ad6dca68b2cb2"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">natrium::DistributionFunctions::reinit</a></div><div class="ttdeci">void reinit(size_t Q, size_t size)</div><div class="ttdoc">reinitialize the sizes of the distribution functions </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:157</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_ae0fd8e8234c7d5abec8522767d2a95e7"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#ae0fd8e8234c7d5abec8522767d2a95e7">natrium::DistributionFunctions::getQ</a></div><div class="ttdeci">const size_t getQ() const </div><div class="ttdoc">the number of discrete velocities </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:150</div></div>
 <div class="ttc" id="classnatrium_1_1DistributionFunctions_html"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html">natrium::DistributionFunctions</a></div><div class="ttdoc">This class contains the distribution functions. As the zero-velocity particles (f0) can be ignored fo...</div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:23</div></div>
-<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_af965a46fbf124e8f90250c843e615bcd"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#af965a46fbf124e8f90250c843e615bcd">natrium::DistributionFunctions::~DistributionFunctions</a></div><div class="ttdeci">virtual ~DistributionFunctions()</div><div class="ttdoc">Destructor. </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:67</div></div>
+<div class="ttc" id="classnatrium_1_1DistributionFunctions_html_af965a46fbf124e8f90250c843e615bcd"><div class="ttname"><a href="classnatrium_1_1DistributionFunctions.html#af965a46fbf124e8f90250c843e615bcd">natrium::DistributionFunctions::~DistributionFunctions</a></div><div class="ttdeci">virtual ~DistributionFunctions()</div><div class="ttdoc">Destructor. </div><div class="ttdef"><b>Definition:</b> DistributionFunctions.h:74</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:57:54 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 6 2015 20:01:01 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

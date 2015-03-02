@@ -18,6 +18,9 @@
 #include "deal.II/dofs/dof_handler.h"
 #include <deal.II/lac/compressed_sparsity_pattern.h>
 
+#include "../utilities/NATriuMException.h"
+#include "../utilities/Logging.h"
+
 #include "Boundary.h"
 
 namespace natrium {
@@ -26,22 +29,28 @@ namespace natrium {
  * @short Exception for impossible periodic boundary,
  * e.g. when the interfaces don't have the same length.
  */
-class PeriodicBoundaryNotPossible: public std::exception {
+class PeriodicBoundaryNotPossible: public NATriuMException {
 private:
-	std::string m_message;
+	std::string message;
 public:
-	PeriodicBoundaryNotPossible() :
-			m_message("Error in periodic boundary") {
+	PeriodicBoundaryNotPossible(const char *msg,
+			const std::stringstream & additionalInfo = std::stringstream()) :
+			NATriuMException(msg), message(msg) {
+		LOG(DETAILED) << "Additional information on error: " << additionalInfo.str().c_str() << endl;
+
 	}
-	PeriodicBoundaryNotPossible(const std::string& message) :
-			m_message("Error in periodic boundary: " + message) {
+	PeriodicBoundaryNotPossible(const string& msg,
+			const std::stringstream & additionalInfo = std::stringstream()) :
+			NATriuMException(msg), message(msg) {
+		LOG(DETAILED) << "Additional information on error: " << additionalInfo.str().c_str() << endl;
 	}
-	virtual const char* what() const throw () {
-		return m_message.c_str();
+	~PeriodicBoundaryNotPossible() throw () {
 	}
-	virtual ~PeriodicBoundaryNotPossible() throw () {
+	const char *what() const throw () {
+		return this->message.c_str();
 	}
 };
+
 
 
 /**
@@ -50,21 +59,17 @@ public:
  */
 template<size_t dim>
 class PeriodicBoundary: public Boundary<dim> {
+	friend class own_double_less_periodic;
 private:
 
 	/// triangulation object
 	shared_ptr<dealii::Triangulation<dim> > m_triangulation;
-
-	/// Container for all cells that belong to this boundary
-	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
-	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
 
 	/// boundary indicator of first interfacial line
 	size_t m_boundaryIndicator1;
 
 	/// boundary indicator of second interfacial line
 	size_t m_boundaryIndicator2;
-
 
 	//////////////////////////
 	// ONLY RELEVANT FOR 2D //
@@ -81,6 +86,10 @@ private:
 	/// end point of line 2
 	dealii::Point<dim> m_endLine2;
 
+	/// Container for all cells that belong to this boundary
+	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
+	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
+			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
 
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
@@ -89,7 +98,6 @@ private:
 	 * @throws PeriodicBoundaryNotPossible exception if not OK
 	 */
 	void checkInterfacePositions();
-
 
 public:
 
@@ -138,7 +146,8 @@ public:
 	 *
 	 * @return local face number of cell1, denoting the respective cell number
 	 */
-	size_t getOppositeCellAtPeriodicBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+	size_t getOppositeCellAtPeriodicBoundary(
+			const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
 			typename dealii::DoFHandler<dim>::cell_iterator & neighborCell) const;
 
 	/**
@@ -147,7 +156,9 @@ public:
 	 * @param[in] faceBoundaryIndicator the boundary indicator of the face
 	 *
 	 */
-	bool isFaceInBoundary(const typename dealii::DoFHandler<dim>::active_cell_iterator & cell, size_t faceBoundaryIndicator) const;
+	bool isFaceInBoundary(
+			const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+			size_t faceBoundaryIndicator) const;
 
 	virtual bool isPeriodic() const {
 		return true;
@@ -166,8 +177,9 @@ public:
 	 * @param n_dofs_per_row number of degrees of freedom per block (normally: overall degrees of freedom on grid)
 	 * @param dofs_per_cell number of degrees of freedom per cell
 	 */
-	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern&  cSparse, size_t n_blocks, size_t n_dofs_per_block, size_t dofs_per_cell) const;
-
+	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern& cSparse,
+			size_t n_blocks, size_t n_dofs_per_block,
+			size_t dofs_per_cell) const;
 
 	/////////////////////////////////
 	// GETTER     // SETTER        //
@@ -204,7 +216,6 @@ public:
 			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >& getCellMap() const {
 		return m_cells;
 	}
-
 
 };
 /* PeriodicBoundary1D */

@@ -1,18 +1,23 @@
-\hypertarget{step-3_8cpp}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/3/step-\/3.cpp File Reference}
-\label{step-3_8cpp}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/3/step-\/3.\-cpp@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/3/step-\/3.\-cpp}}
+\hypertarget{step-3_8cpp}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/5/step-\/3.cpp File Reference}
+\label{step-3_8cpp}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/5/step-\/3.\-cpp@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/5/step-\/3.\-cpp}}
 }
 
 
-First tutorial\-: Couette Flow in 2\-D.  
+Tutorial\-: Lid-\/\-Driven Cavity in 2\-D This example is thoroughly commented to introduce you to the key concepts in fluid flow simulations with N\-A\-Triu\-M. There are three main classes that are used in a N\-A\-Triu\-M simulation\-:  
 
 
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/numerics/data\-\_\-out.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}solver/\-C\-F\-D\-Solver.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}solver/\-Solver\-Configuration.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}problemdescription/\-Problem\-Description.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}utilities/\-Basic\-Names.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}Couette\-Flow2\-D.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Poiseuille\-Flow2\-D.\-h\char`\"{}}\\*
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
+\item 
+\hypertarget{step-3_8cpp_a34a3c1505f1afc2a3d8186abd7b11475}{void {\bfseries get\-Analytic\-Solution} (double time, distributed\-\_\-vector \&analytic\-Solution1, distributed\-\_\-vector \&analytic\-Solution2, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points, const \hyperlink{classnatrium_1_1PoiseuilleFlow2D}{Poiseuille\-Flow2\-D} \&poi\-Flow)}\label{step-3_8cpp_a34a3c1505f1afc2a3d8186abd7b11475}
+
 \item 
 \hypertarget{step-3_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{int {\bfseries main} ()}\label{step-3_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}
 
@@ -20,9 +25,15 @@ First tutorial\-: Couette Flow in 2\-D.
 
 
 \subsection{Detailed Description}
-First tutorial\-: Couette Flow in 2\-D. \begin{DoxyDate}{Date}
-24.\-10.\-2013 
+Tutorial\-: Lid-\/\-Driven Cavity in 2\-D This example is thoroughly commented to introduce you to the key concepts in fluid flow simulations with N\-A\-Triu\-M. There are three main classes that are used in a N\-A\-Triu\-M simulation\-: 
+\begin{DoxyItemize}
+\item Solver\-Configuration\-: Contains all the simulation preferences.
+\item Problem\-Description\-: Contains the computation grid, initial conditions and boundary conditions. Problem\-Description is an abstract class with the purely virtual functions appy\-Initial\-Densities and apply\-Initial\-Velocities. When you use N\-A\-Triu\-M as a library, this class has to be overriden by a problem specific child class (here the class Lid\-Driven\-Cavity2\-D), which implements the virtual functions.
+\item C\-F\-D\-Solver\-: The C\-F\-D\-Solver is the central class in the N\-A\-Triu\-M framework. It creates all necessary classes and runs the simulation. \begin{DoxyDate}{Date}
+31.\-03.\-2014 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
 Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}
+
+\end{DoxyItemize}

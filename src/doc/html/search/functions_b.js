@@ -1,9 +1,11 @@
 var searchData=
 [
-  ['readfromtextfile',['readFromTextFile',['../classnatrium_1_1SolverConfiguration.html#a2900baca8d49d3a1d48926b8c8c39b71',1,'natrium::SolverConfiguration']]],
-  ['readfromxmlfile',['readFromXMLFile',['../classnatrium_1_1SolverConfiguration.html#a18c63509007270fa96212fef36a2c172',1,'natrium::SolverConfiguration']]],
-  ['reassemble',['reassemble',['../classnatrium_1_1AdvectionOperator.html#a89c25c3dae9a1e5973cd89fab8c2c052',1,'natrium::AdvectionOperator::reassemble()'],['../classnatrium_1_1SEDGMinLee.html#a5fa8b34df3c3bdd9f492a1e555effbe4',1,'natrium::SEDGMinLee::reassemble()'],['../classnatrium_1_1CFDSolver.html#a604212a1f6cd2549b8f60ab26b14de00',1,'natrium::CFDSolver::reassemble()']]],
-  ['reinit',['reinit',['../classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2',1,'natrium::DistributionFunctions']]],
-  ['run',['run',['../classnatrium_1_1CFDSolver.html#a11f503bc3f3c306b240874c74a38025b',1,'natrium::CFDSolver']]],
-  ['rungekutta5lowstorage',['RungeKutta5LowStorage',['../classnatrium_1_1RungeKutta5LowStorage.html#add07295826ee6b9f5742ade3233f61b1',1,'natrium::RungeKutta5LowStorage::RungeKutta5LowStorage(double timeStepSize, size_t problemSize)'],['../classnatrium_1_1RungeKutta5LowStorage.html#ad65bf4af8362a34f5530bb91bbec67fe',1,'natrium::RungeKutta5LowStorage::RungeKutta5LowStorage(double timeStepSize, size_t problemSize, size_t numberOfBlocks)']]]
+  ['periodicboundary',['PeriodicBoundary',['../classnatrium_1_1PeriodicBoundary.html#aac12a26adafba9f31b6fa7b417933340',1,'natrium::PeriodicBoundary']]],
+  ['periodictestdomain2d',['PeriodicTestDomain2D',['../classnatrium_1_1PeriodicTestDomain2D.html#a930da37a3e1be744aaf59e27ba956318',1,'natrium::PeriodicTestDomain2D::PeriodicTestDomain2D(size_t globalRefinementLevel)'],['../classnatrium_1_1PeriodicTestDomain2D.html#a930da37a3e1be744aaf59e27ba956318',1,'natrium::PeriodicTestDomain2D::PeriodicTestDomain2D(size_t globalRefinementLevel)']]],
+  ['physicalproperties',['PhysicalProperties',['../classnatrium_1_1PhysicalProperties.html#a5047491de09441e2aae00f6ba838f99e',1,'natrium::PhysicalProperties']]],
+  ['poiseuilleflow2d',['PoiseuilleFlow2D',['../classnatrium_1_1PoiseuilleFlow2D.html#a1834e3440ac19a8734f9133cd577e0ca',1,'natrium::PoiseuilleFlow2D']]],
+  ['prepareoutputdirectory',['prepareOutputDirectory',['../classnatrium_1_1SolverConfiguration.html#a69c009fd87690677b66ab10a000d07f6',1,'natrium::SolverConfiguration']]],
+  ['printheaderline',['printHeaderLine',['../classnatrium_1_1ErrorStats.html#ad8cc77e4ac7a50e030e9a49fe1a5bdba',1,'natrium::ErrorStats']]],
+  ['printnewline',['printNewLine',['../classnatrium_1_1ErrorStats.html#af02f31d82efefb482ea4ab3d69642486',1,'natrium::ErrorStats']]],
+  ['problemdescription',['ProblemDescription',['../classnatrium_1_1ProblemDescription.html#aae378c7eb216b616de56dfcd162c02c2',1,'natrium::ProblemDescription']]]
 ];

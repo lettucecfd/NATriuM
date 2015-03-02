@@ -1,0 +1,160 @@
+\hypertarget{step-0_8cpp-example}{\section{step-\/0.\-cpp}
+}
+\hypertarget{step-0.cpp_sec_intro}{}\subsection{Basis tutorial\-: Lid-\/driven cavity in 2\-D}\label{step-0.cpp_sec_intro}
+This example is thoroughly commented to introduce you to the key concepts in fluid flow simulations with N\-A\-Triu\-M. There are three main classes that are used in a N\-A\-Triu\-M simulation\-:
+\begin{DoxyItemize}
+\item Solver\-Configuration\-: Contains all the simulation preferences.
+\item Problem\-Description\-: Contains the computation grid, initial conditions and boundary conditions. Problem\-Description is an abstract class with the purely virtual functions apply\-Initial\-Densities and apply\-Initial\-Velocities. When you use N\-A\-Triu\-M as a library, this class has to be overriden by a problem specific child class (here the class Lid\-Driven\-Cavity2\-D), which implements the virtual functions.
+\item C\-F\-D\-Solver\-: The C\-F\-D\-Solver is the central class in the N\-A\-Triu\-M framework. It creates all necessary classes and runs the simulation.
+\end{DoxyItemize}
+
+We have the following includes that are part of every simulation script in N\-A\-Triu\-M\-: First, we need stdlib.\-h to access the environment variable N\-A\-T\-R\-I\-U\-M\-\_\-\-H\-O\-M\-E and ssteam to concatenate strings to build the path of the output directory. Second, the three classes mentioned above are implemented in \hyperlink{CFDSolver_8h}{C\-F\-D\-Solver.\-h}, \hyperlink{SolverConfiguration_8h}{Solver\-Configuration.\-h}, and \hyperlink{ProblemDescription_8h}{Problem\-Description.\-h}. Third, \hyperlink{BasicNames_8h}{Basic\-Names.\-h} contains some general typedefs used throughout N\-A\-Triu\-M and automatically enables using certain std and boost types and functions (e.\-g. shared\-\_\-ptr). It has to be included in basically every file that is part of or uses N\-A\-Triu\-M. Finally, we include \hyperlink{LidDrivenCavity2D_8h}{Lid\-Driven\-Cavity2\-D.\-h}. It contains the class Lid\-Driven\-Cavity2\-D, which defines the concrete flow we want to simulate. 
+\begin{DoxyCodeInclude}
+\textcolor{preprocessor}{#include <stdlib.h>}
+\textcolor{preprocessor}{#include <sstream>}
+
+\textcolor{preprocessor}{#include "\hyperlink{CFDSolver_8h}{solver/CFDSolver.h}"}
+\textcolor{preprocessor}{#include "\hyperlink{SolverConfiguration_8h}{solver/SolverConfiguration.h}"}
+
+\textcolor{preprocessor}{#include "\hyperlink{ProblemDescription_8h}{problemdescription/ProblemDescription.h}"}
+
+\textcolor{preprocessor}{#include "\hyperlink{BasicNames_8h}{utilities/BasicNames.h}"}
+
+\textcolor{preprocessor}{#include "\hyperlink{LidDrivenCavity2D_8h}{LidDrivenCavity2D.h}"}
+\end{DoxyCodeInclude}
+ We include the namespace natrium to access all classes and functions directly. 
+\begin{DoxyCodeInclude}
+\textcolor{keyword}{using namespace }natrium;
+\end{DoxyCodeInclude}
+ The Main function of the program begins with defining the Reynolds and Mach number. Note that in the L\-B\-M context the Mach number must not exceed a limit of approximately 0.\-3. On the other hand the time step is proportional to the Mach number, meaning that for Ma $<$$<$ 0.\-1 the runtime of the code will grow. Usually, Ma is set roughly to 0.\-1. (On the contrary, the Reynolds number does not influence the time step size directly.) 
+\begin{DoxyCodeInclude}
+\textcolor{keywordtype}{int} \hyperlink{step-0_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}() \{
+
+        cout << \textcolor{stringliteral}{"Starting NATriuM step-0..."} << endl;
+
+        \textcolor{comment}{// set Reynolds and Mach number}
+        \textcolor{keyword}{const} \textcolor{keywordtype}{double} Re = 1000;
+        \textcolor{keyword}{const} \textcolor{keywordtype}{double} Ma = 0.1;
+\end{DoxyCodeInclude}
+ Next, the discretization is defined. As the grid generation in the easier geometries is done inside deal.\-I\-I, we need to specify the refinement level. Refinement level 4 will mean that our quadratic domain will have 2$^\wedge$4 $\ast$ 2$^\wedge$4 = 256 cells. See Lid\-Driven\-Cavity2\-D\-::make\-Grid() for details on the grid generation. The next thing to specify is the order of the finite element, often referred to as p. p=1 stands for linear shape functions (the finite elments), while greater values of p stand for higher order polynomials. The choice of p has a tremendous impact on the accuracy and runtime of the program. Great values of p can lead to very accurate solutions (sometimes even exponential convergence in space!) but they require tiny timesteps ( \[ \delta_t \sim \frac{1}{(p+1)^2} \]). To chose p=5 is often a reasonable compromise. Finally, we have to chose the time step. Small timesteps lead to long simulations, while big timesteps render the simulation unstable. When we use explicit time integration, the suitable time step depends only on the C\-F\-L condition. There are functions implemented in N\-A\-Triu\-M to automate theses calculations. This is left for later tutorials and we simply set dt=0.\-0001. 
+\begin{DoxyCodeInclude}
+        \textcolor{comment}{// set spatial discretization}
+        \textcolor{keywordtype}{size\_t} refinementLevel = 4;
+        \textcolor{keywordtype}{size\_t} orderOfFiniteElement = 5;
+
+        \textcolor{comment}{// set temporal discretization}
+        \textcolor{keywordtype}{double} dt = 0.0001;
+\end{DoxyCodeInclude}
+ Now, we have to specify the characteristic velocity and kinematic viscosity of the flow. The setting of the characteristic velocity depends on the fact, that we fix the speed of sound to \[ c_s = \frac{1}{\sqrt{3}} \] and normalize the time scale with respect to that speed. This is a standard approach in Lattice Boltzmann. However, N\-A\-Triu\-M also provides the possibility to use physical units, which has to do with the scaling of the difference stencil is covered in later tutorials. The viscosity is determined by the Reynolds number, characteristic velocity and characteristic length L = 1.\-0. 
+\begin{DoxyCodeInclude}
+        \textcolor{comment}{// set Problem so that the right Re and Ma are achieved}
+        \textcolor{keyword}{const} \textcolor{keywordtype}{double} U = 1 / sqrt(3) * Ma;
+        \textcolor{keyword}{const} \textcolor{keywordtype}{double} viscosity = U / Re; \textcolor{comment}{// (because L = 1)}
+
+        std::stringstream dirname;
+        dirname << getenv(\textcolor{stringliteral}{"NATRIUM\_HOME"}) << \textcolor{stringliteral}{"/step-0"};
+\end{DoxyCodeInclude}
+ The next step is to create the configuration object and feed it with the information we have just discussed. There are a lot more things to set, but we take the default settings for the rest. The the output frequency and number of time steps are set manually. Additionally, we disable the restart option, which forces the simulation to start at t=0. 
+\begin{DoxyCodeInclude}
+        shared\_ptr<SolverConfiguration> configuration = make\_shared<
+                        SolverConfiguration>();
+        configuration->setOutputDirectory(dirname.str());
+        configuration->setRestartAtLastCheckpoint(\textcolor{keyword}{false});
+        configuration->setOutputCheckpointInterval(1000);
+        configuration->setOutputSolutionInterval(100);
+        configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+        configuration->setTimeStepSize(dt);
+        configuration->setNumberOfTimeSteps(200000);
+\end{DoxyCodeInclude}
+ Similarly, we create the flow object. It is inherited of Problem\-Description and needed to be assigned to a shared\-\_\-ptr$<$\-Problem\-Description$>$. 
+\begin{DoxyCodeInclude}
+        \textcolor{comment}{// make problem and solver objects}
+        shared\_ptr<LidDrivenCavity2D> lidDrivenCavity = make\_shared<
+                        LidDrivenCavity2D>(U, viscosity, refinementLevel);
+        shared\_ptr<ProblemDescription<2> > ldCavityProblem = lidDrivenCavity;
+\end{DoxyCodeInclude}
+ Finally, we are ready to create the C\-F\-D solver and run the simulation. 
+\begin{DoxyCodeInclude}
+        CFDSolver<2> solver(configuration, ldCavityProblem);
+        solver.run();
+
+        cout << \textcolor{stringliteral}{"NATriuM step-0 terminated."} << endl;
+
+        \textcolor{keywordflow}{return} 0;
+\}
+
+\end{DoxyCodeInclude}
+
+
+\begin{DoxyDate}{Date}
+31.\-03.\-2014 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin
+\end{DoxyAuthor}
+
+\begin{DoxyCodeInclude}
+
+\textcolor{preprocessor}{#include <stdlib.h>}
+\textcolor{preprocessor}{#include <sstream>}
+
+\textcolor{preprocessor}{#include "\hyperlink{CFDSolver_8h}{solver/CFDSolver.h}"}
+\textcolor{preprocessor}{#include "\hyperlink{SolverConfiguration_8h}{solver/SolverConfiguration.h}"}
+
+\textcolor{preprocessor}{#include "\hyperlink{ProblemDescription_8h}{problemdescription/ProblemDescription.h}"}
+
+\textcolor{preprocessor}{#include "\hyperlink{BasicNames_8h}{utilities/BasicNames.h}"}
+
+\textcolor{preprocessor}{#include "\hyperlink{LidDrivenCavity2D_8h}{LidDrivenCavity2D.h}"}
+
+\textcolor{keyword}{using namespace }natrium;
+
+
+
+\textcolor{keywordtype}{int} \hyperlink{step-0_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}() \{
+
+        cout << \textcolor{stringliteral}{"Starting NATriuM step-0..."} << endl;
+
+        \textcolor{comment}{// set Reynolds and Mach number}
+        \textcolor{keyword}{const} \textcolor{keywordtype}{double} Re = 1000;
+        \textcolor{keyword}{const} \textcolor{keywordtype}{double} Ma = 0.1;
+
+        \textcolor{comment}{// set spatial discretization}
+        \textcolor{keywordtype}{size\_t} refinementLevel = 4;
+        \textcolor{keywordtype}{size\_t} orderOfFiniteElement = 5;
+
+        \textcolor{comment}{// set temporal discretization}
+        \textcolor{keywordtype}{double} dt = 0.0001;
+
+        \textcolor{comment}{// set Problem so that the right Re and Ma are achieved}
+        \textcolor{keyword}{const} \textcolor{keywordtype}{double} U = 1 / sqrt(3) * Ma;
+        \textcolor{keyword}{const} \textcolor{keywordtype}{double} viscosity = U / Re; \textcolor{comment}{// (because L = 1)}
+
+        std::stringstream dirname;
+        dirname << getenv(\textcolor{stringliteral}{"NATRIUM\_HOME"}) << \textcolor{stringliteral}{"/step-0"};
+
+        shared\_ptr<SolverConfiguration> configuration = make\_shared<
+                        \hyperlink{classnatrium_1_1SolverConfiguration}{SolverConfiguration}>();
+        configuration->setOutputDirectory(dirname.str());
+        configuration->setRestartAtLastCheckpoint(\textcolor{keyword}{false});
+        configuration->setOutputCheckpointInterval(1000);
+        configuration->setOutputSolutionInterval(100);
+        configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+        configuration->setTimeStepSize(dt);
+        configuration->setNumberOfTimeSteps(200000);
+
+        \textcolor{comment}{// make problem and solver objects}
+        shared\_ptr<LidDrivenCavity2D> lidDrivenCavity = make\_shared<
+                        \hyperlink{classnatrium_1_1LidDrivenCavity2D}{LidDrivenCavity2D}>(U, viscosity, refinementLevel);
+        shared\_ptr<ProblemDescription<2> > ldCavityProblem = lidDrivenCavity;
+
+        \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver<2>} solver(configuration, ldCavityProblem);
+        solver.\hyperlink{classnatrium_1_1CFDSolver_a11f503bc3f3c306b240874c74a38025b}{run}();
+
+        cout << \textcolor{stringliteral}{"NATriuM step-0 terminated."} << endl;
+
+        \textcolor{keywordflow}{return} 0;
+\}
+
+\end{DoxyCodeInclude}
+ 

@@ -62,12 +62,12 @@ int main() {
 	filename2 << getenv("NATRIUM_HOME")
 			<< "/convergence-analysis-basic/table_order.txt";
 	std::ofstream orderFile(filename2.str().c_str());
-	orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
+	//orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 	orderFile
 			<< "#  refinementlevel  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
+	for (size_t refinementLevel = 2; refinementLevel < 12; refinementLevel++) {
 		cout << "refinement Level = " << refinementLevel << endl;
 
 		double dx = 2 * 3.1415926
@@ -88,11 +88,11 @@ int main() {
 				<< orderOfFiniteElement << "_" << refinementLevel;
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
-		//configuration->setSwitchOutputOff(true);
+		configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
 		configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
-		configuration->setOutputTableInterval(10);
+		//configuration->setOutputTableInterval(10);
 		//configuration->setOutputCheckpointInterval(1000);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);

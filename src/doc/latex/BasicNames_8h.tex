@@ -3,7 +3,7 @@
 }
 
 
-Definition of the basic typedefs and names used in the Code.  
+Definition of the basic typedefs and names used in the Code;.  
 
 
 {\ttfamily \#include $<$vector$>$}\\*
@@ -14,8 +14,10 @@ Definition of the basic typedefs and names used in the Code.
 {\ttfamily \#include \char`\"{}deal.\-I\-I/base/point.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}deal.\-I\-I/numerics/vector\-\_\-tools.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}deal.\-I\-I/lac/block\-\_\-sparse\-\_\-matrix.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/petsc\-\_\-vector.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/petsc\-\_\-parallel\-\_\-vector.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/trilinos\-\_\-vector.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/trilinos\-\_\-block\-\_\-vector.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/trilinos\-\_\-sparse\-\_\-matrix.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/trilinos\-\_\-block\-\_\-sparse\-\_\-matrix.\-h\char`\"{}}\\*
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
@@ -39,22 +41,29 @@ $<$ double $>$ {\bfseries natrium\-::sparse\-\_\-block\-\_\-matrix}}\label{names
 $<$ double $>$ {\bfseries natrium\-::sparse\-\_\-matrix}}\label{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}
 
 \item 
-\hypertarget{namespacenatrium_a38766b5d2684504febaf4c4a3770049a}{typedef numeric\-\_\-vector {\bfseries natrium\-::distributed\-\_\-vector}}\label{namespacenatrium_a38766b5d2684504febaf4c4a3770049a}
-
-\begin{DoxyCompactList}\small\item\em vector which can be distributed over different cores \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_a60736b7916da17ac8f25cb99b6f9aaac}{typedef block\-\_\-vector {\bfseries natrium\-::distributed\-\_\-block\-\_\-vector}}\label{namespacenatrium_a60736b7916da17ac8f25cb99b6f9aaac}
+\hypertarget{namespacenatrium_a5e4c0f4afd1e514e58cee155d521598e}{typedef \\*
+dealii\-::\-Trilinos\-Wrappers\-::\-Vector {\bfseries natrium\-::distributed\-\_\-vector}}\label{namespacenatrium_a5e4c0f4afd1e514e58cee155d521598e}
 
 \item 
-\hypertarget{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}{typedef sparse\-\_\-matrix {\bfseries natrium\-::distributed\-\_\-sparse\-\_\-matrix}}\label{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}
+\hypertarget{namespacenatrium_a840604dc7193c966535692c2825a6a55}{typedef \\*
+dealii\-::\-Trilinos\-Wrappers\-::\-Block\-Vector {\bfseries natrium\-::distributed\-\_\-block\-\_\-vector}}\label{namespacenatrium_a840604dc7193c966535692c2825a6a55}
 
-\begin{DoxyCompactList}\small\item\em matrix which can be distributed over different cores \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_a70f1738fc69761e34e1df08e0708d2f3}{typedef sparse\-\_\-block\-\_\-matrix {\bfseries natrium\-::distributed\-\_\-sparse\-\_\-block\-\_\-matrix}}\label{namespacenatrium_a70f1738fc69761e34e1df08e0708d2f3}
+\item 
+\hypertarget{namespacenatrium_a8dd7c05bcf8179eb2ce78b9b2dab02cf}{typedef \\*
+dealii\-::\-Trilinos\-Wrappers\-::\-Sparse\-Matrix {\bfseries natrium\-::distributed\-\_\-sparse\-\_\-matrix}}\label{namespacenatrium_a8dd7c05bcf8179eb2ce78b9b2dab02cf}
+
+\item 
+\hypertarget{namespacenatrium_a46b3f17aace42dedfb46dfade71a3fbb}{typedef \\*
+dealii\-::\-Trilinos\-Wrappers\-::\-Block\-Sparse\-Matrix {\bfseries natrium\-::distributed\-\_\-sparse\-\_\-block\-\_\-matrix}}\label{namespacenatrium_a46b3f17aace42dedfb46dfade71a3fbb}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Definition of the basic typedefs and names used in the Code. \begin{DoxyDate}{Date}
+Definition of the basic typedefs and names used in the Code;. \begin{DoxyNote}{Note}
+As this file is used by most of the others it can contain different compiler flags and other global settings 
+\end{DoxyNote}
+\begin{DoxyDate}{Date}
 30.\-08.\-2013 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}

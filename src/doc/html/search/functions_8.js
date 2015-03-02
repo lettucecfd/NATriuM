@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['minleeboundary',['MinLeeBoundary',['../classnatrium_1_1MinLeeBoundary.html#a1e9acd91ee2b97783932c4df45d38668',1,'natrium::MinLeeBoundary::MinLeeBoundary(size_t boundaryIndicator, shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryDensity, shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryVelocity)'],['../classnatrium_1_1MinLeeBoundary.html#a6bd31d48ffaf23ac74bc303b379b4ca8',1,'natrium::MinLeeBoundary::MinLeeBoundary(size_t boundaryIndicator, const dealii::Vector&lt; double &gt; &amp;velocity)']]]
+  ['liddrivencavity2d',['LidDrivenCavity2D',['../classnatrium_1_1LidDrivenCavity2D.html#a139fe700f3e871e1b51eada1a41c69b1',1,'natrium::LidDrivenCavity2D']]],
+  ['loaddistributionfunctionsfromfiles',['loadDistributionFunctionsFromFiles',['../classnatrium_1_1CFDSolver.html#a42245d22e289d079a3b06a0c26f50050',1,'natrium::CFDSolver']]],
+  ['logging',['Logging',['../classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3',1,'natrium::Logging']]]
 ];

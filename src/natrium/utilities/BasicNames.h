@@ -1,6 +1,7 @@
 /**
  * @file BasicNames.h
- * @short Definition of the basic typedefs and names used in the Code
+ * @short Definition of the basic typedefs and names used in the Code;
+ * @note As this file is used by most of the others it can contain different compiler flags and other global settings
  * @date 30.08.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
@@ -21,13 +22,19 @@
 #include "deal.II/numerics/vector_tools.h"
 
 #include "deal.II/lac/block_sparse_matrix.h"
-#include "deal.II/lac/petsc_vector.h"
-#include "deal.II/lac/petsc_parallel_vector.h"
+#include "deal.II/lac/trilinos_vector.h"
+#include "deal.II/lac/trilinos_block_vector.h"
+#include "deal.II/lac/trilinos_sparse_matrix.h"
+#include "deal.II/lac/trilinos_block_sparse_matrix.h"
 
 namespace natrium {
 
+// GLOBAL COMPILER FLAGS
+// #define WITH_TRILINOS
+
+
 /// The following names will be used throughout natrium
-/// by #includeing BasicNames.h they can are used by default
+/// by #including BasicNames.h they can are used by default
 using std::vector;
 using std::cout;
 using std::cerr;
@@ -49,11 +56,27 @@ typedef dealii::FullMatrix<double> numeric_matrix;
 typedef dealii::BlockSparseMatrix<double> sparse_block_matrix;
 typedef dealii::SparseMatrix<double> sparse_matrix;
 
-#undef WITH_PETSC
-#ifdef WITH_PETSC
-/// vector which can be distributed over different cores
-typedef dealii::PETScWrappers::MPI::Vector distributed_vector;
-typedef dealii::PETScWrappers::MPI::SparseMatrix distributed_sparse_matrix;
+// Matrix and Vector classes
+#ifdef WITH_TRILINOS
+typedef dealii::TrilinosWrappers::Vector distributed_vector;
+typedef dealii::TrilinosWrappers::BlockVector distributed_block_vector;
+
+typedef dealii::TrilinosWrappers::SparseMatrix distributed_sparse_matrix;
+typedef dealii::TrilinosWrappers::BlockSparseMatrix distributed_sparse_block_matrix;
+
+
+#if WITH_TRILINOS_MPI
+
+// WITH_TRILINOS_MPI flag includes WITH_TRILINOS flag
+#ifndef WITH_TRILINOS
+#define WITH_TRILINOS
+#endif
+
+/// vectors which can be distributed over different cores
+typedef dealii::TrilinosWrappers::MPI::Vector distributed_vector;
+typedef dealii::TrilinosWrappers::MPI::BlockVector distributed_block_vector;
+
+#endif
 #else
 
 /// vector which can be distributed over different cores
@@ -63,7 +86,8 @@ typedef block_vector distributed_block_vector;
 /// matrix which can be distributed over different cores
 typedef sparse_matrix distributed_sparse_matrix;
 typedef sparse_block_matrix distributed_sparse_block_matrix;
-#endif /* WITH_PETSC */
+
+#endif
 
 } /* namespace natrium */
 

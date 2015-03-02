@@ -8,12 +8,12 @@ file(   GLOB_RECURSE
         SRC_FILES
         benchmarks/*
         boltzmannmodels/*
-        collisionmodels/*
+        collision/*
         problemdescription/* 
         solver/*
         advection/*
         timeintegration/*
-        utilities/*
+        utilities/* 
         )
   
  

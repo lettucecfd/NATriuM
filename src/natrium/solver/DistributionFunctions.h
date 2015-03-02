@@ -53,10 +53,17 @@ public:
 	 */
 	DistributionFunctions(const vector<distributed_vector>& f) :
 			m_Q(f.size()), m_f0(f.at(0)) {
+#ifdef WITH_TRILINOS
+		m_fStream.reinit(m_Q);
+#else
 		m_fStream.reinit(m_Q, m_f0.size());
+#endif
 		for (size_t i = 1; i < m_Q; i++) {
 			m_fStream.block(i - 1).reinit(f.at(i));
 			// reinit does only change the size but not the content
+		}
+		m_fStream.collect_sizes();
+		for (size_t i = 1; i < m_Q; i++) {
 			for (size_t j = 0; j < f.at(i).size(); j++){
 				m_fStream.block(i-1)(j) = f.at(i)(j);
 			}
@@ -72,6 +79,19 @@ public:
 	 * @short mimes std::vector.at(i)
 	 */
 	distributed_vector& at(size_t i) {
+		assert(m_Q > 0);
+		assert(i < m_Q);
+		if (i == 0) {
+			return m_f0;
+		} else {
+			return m_fStream.block(i - 1);
+		}
+	}
+
+	/**
+	 * @short mimes std::vector.at(i)
+	 */
+	const distributed_vector& at(size_t i) const {
 		assert(m_Q > 0);
 		assert(i < m_Q);
 		if (i == 0) {
@@ -136,14 +156,22 @@ public:
 	 */
 	void reinit(size_t Q, size_t size) {
 		m_Q = Q;
-		m_fStream.reinit(Q - 1, size);
 		m_f0.reinit(size);
+#ifdef WITH_TRILINOS
+		m_fStream.reinit(Q-1);
+		for (size_t i = 0; i < Q - 1; i++){
+			m_fStream.block(i).reinit(m_f0);
+		}
+#else
+		m_fStream.reinit(Q - 1, size);
+#endif
+		m_fStream.collect_sizes();
 	}
 
 	/**
 	 * @short the number of discrete velocities, including zero
 	 */
-	size_t size() {
+	size_t size() const {
 		return m_Q;
 	}
 

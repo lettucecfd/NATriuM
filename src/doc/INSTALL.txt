@@ -1,6 +1,8 @@
-This file describes the steps conducted for the creation of the NATriuM project under eclipse:
 
-   R E Q U I R E D   R E S O U R C E S
+================================================================================================
+   INSTALL REQUIRED RESSOURCES
+================================================================================================
+
 0) Install resources (via apt-get, synaptic, or manually)
     0.0) All boost libraries (sudo apt-get install libboost-all-dev)
     0.0a) (on cluster: module load gcc openmpi/gnu, boost)
@@ -16,29 +18,44 @@ This file describes the steps conducted for the creation of the NATriuM project 
     0.2) If not installed, install valgrind (e.g. sudo apt-get install valgrind)
          If not installed, install blas/lapack (e.g. sudo apt-get install libblas-dev liblapack-dev)
          If not installed, install gfortran (e.g. sudo apt-get install gfortran)
-    0.3a) (on cluster:  module load gcc/4.9.0; module load openmpi/gnu)     
-    0.3) PETSc
-        0.3.1) download and untar tarball from petsc homepage 
-               (perhaps the newer versions (>= 3.5.0) fail as they use the outdated SAME_PRECONDITIONER flag)
-        0.3.2) access petsc directory
-        0.3.3) set environment variables PETSC_DIR, PETSC_ARCH in ~/.bashrc, e.g.
-               export PETSC_DIR=/home/kraemer/Dissertation/petsc-3.4.2
-               export PETSC_ARCH=ubuntu_lenovo (can be an arbitrary name for your installation)
-        0.3.3) ./config/configure.py --with-shared-libraries=1 --with-x=0 --with-mpi=1 --download-hypre=1
-        0.3.4) make
-        0.3.5a) (on cluster: log in on backend-node, e.g. with qsub -I; repeat 0.3a) ) 
-        0.3.5) make test 
-    0.4) Qt (full development kit) -> optional (for the parameter gui)
-    	0.4.1) sudo apt-get install qt-sdk
-    0.5) deal.ii
-        0.5.1) download and untar tarball from deal.ii homepage
-        0.5.2) set environment variable DEAL_II_DIR to the path you want to install the library to
-  		0.5.3a) (on cluster: execute the -> cmake command with -DDEAL_II_FORCE_BUNDLED_BOOST=OFF -DDEAL_II_WITH_THREADS=OFF)
+    0.3) (on cluster:  module load gcc/4.9.0; module load openmpi/gnu)     
+    0.4) Trilinos
+        0.4.1) Go to the Trilinos web page; download section
+        0.4.2) You will have to register to download the .gz files (Version 11.10.2 is recommended by deal.II)
+        0.4.3) Download and untar
+        0.4.7) set environment variable TRILINOS_DIR to a path of your choice (e.g. ~/NATriuM/trilinos-11.10.2)
+        0.4.4) cd trilinos-11.10.2; mkdir build; cd build
+        0.4.5) Cmake: (on cluster: add option	-D TPL_ENABLE_Pthread = OFF as including threads leads to a segmentation fault in the natrium executables)
+	cmake -D Trilinos_ENABLE_Sacado=ON \
+	-D Trilinos_ENABLE_Stratimikos=ON \
+	-D CMAKE_BUILD_TYPE=RELEASE \
+	-D CMAKE_CXX_FLAGS="-g -O3" \
+	-D CMAKE_C_FLAGS="-g -O3" \
+	-D CMAKE_FORTRAN_FLAGS="-g -O5" \
+	-D Trilinos_EXTRA_LINK_FLAGS="-lgfortran" \
+	-D CMAKE_VERBOSE_MAKEFILE=FALSE \
+	-D Trilinos_VERBOSE_CONFIGURE=FALSE \
+	-D TPL_ENABLE_MPI=ON \
+	-D BUILD_SHARED_LIBS=ON \
+	-D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
+	.. 
+    0.4.6) make -jN; make install, with N=number of processors (N=1 works, not so sure about that at the moment; perhaps just "make && make install" will do)
+    0.5) Qt (full development kit) -> optional (for the parameter gui)
+    	0.5.1) sudo apt-get install qt-sdk
+    0.6) deal.ii
+        0.6.1) download and untar tarball from deal.ii homepage
+        0.6.2) set environment variable DEAL_II_DIR to the path you want to install the library to
+  		0.6.3a) (on cluster: execute the -> cmake command with -DDEAL_II_FORCE_BUNDLED_BOOST=OFF -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT)
   		        (This is important to prevent errors that occur from different/old versions of dynamic libraries that are normally preinstalled.)
-        0.5.4) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=ON ../deal.II
-        0.5.5) make install
-        0.5.5a) (on cluster) check in the log if DEAL.II really used the external boost and not the bundled one 
+        0.6.4) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=ON ../deal.II
+        0.6.5) make install
+        0.6.5a) (on cluster) check in the log if DEAL.II really used the external boost and not the bundled one 
         		(NATriuM does not work with the bundled filesystem module and they have to be consistent)
+        
+        
+================================================================================================
+   OPTIONAL (IF YOU WANT TO CONTRIBUTE): INSTALL ECLIPSE
+================================================================================================
         
  1) Install Eclipse
     1.1) get tar at eclipse web page -> Downloads -> Eclipse bundle for c++ developers (or similar)
@@ -51,115 +68,64 @@ This file describes the steps conducted for the creation of the NATriuM project 
     1.6) close
     1.7) sudo chmod +x 
     1.8) Launch eclipse by typing "eclipse" in a terminal
-    
+            
 
-BY FULLY SEPERATING SRC AND BIN (IN SIBLING DIRECTORIES) THE CMAKE-TO-ECLIPSE PROCEDURE
-COULD BE FURTHER SIMPLIFIED 
- 1) cd bin
- 2') (on cluster: cmake -DCMAKE_BUILD_TYPE=Release ../src/ -B. && make all)
- 2) cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
-    (just so you know: -B. sets cmake's binary dir to .)
- 3) Launch eclipse
- 4) File->Import->General->Existing Projects Into Workspace->Select root directory
- 5) IMPORTANT: Select the cmake   b i n   directory (e.g. NATriuM/bin)
-    This will automatically set the build and run options in eclipse
-    Eclipse will automatically detect that it is a git repository
- 6) Build project 
-    (At least when having verbosity option on): CMake parses the include directories (das ist genial ;) )
-    This will keep the error parser from underlining everything ;)
- 7) Repeat steps 1-6) for "bin_relase" instead of "bin" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
-    All source files are accessible and changable via [Source directory] in the project tree
- 8) Set the environment variable NATRIUM_HOME to the principal output directory (in .bashrc)
+================================================================================================
+   GET AND COMPILE NATRIUM CODE
+================================================================================================
+Currently the code is hosted at the wr0 Cluster (at the Bonn-Rhein-Sieg University of Applied Sciences).
 
 
-         
-- DEPRECATED -
-HOW I MANAGED TO CREATE THE CMAKE NATRIUM PROJECT:
-A.1) got to NATriuM root directory
-     cd ~/eclipse_workspace/NATriuM
-A.2) copy CMakeLists.txt from step-17 tutorial to NATriuM folder (and change it drastically ;) )
-A.3) automatically create .project and .cproject file for eclipse
-     mkdir bin
-     cd bin
-     cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug .. -B.
-A.4) Start eclipse
-A.6) Disable eclipse Auto-build (Project->Build automatically 'off')
-A.7) [only if NATriuM is not yet on the left] File->Import->Existing Projects into Workspace->...
-A.8) Click Run 
-A.9a) [if Run fails] Run->Run configurations...->new (bin/test/NATriuM_UnitTest_exe)
-A.9b)                Run->Run configurations...->new (bin/NATriuM_exe)
-A.10) Define an external tool calling cmake
-      Run -> External tools -> External tool configurations
-      New (+)
-      name: NATriuM CMake
-      location: /usr/local/bin/cmake
-      working directory: ${workspace_loc:/NATriuM}/bin
-      arguments: "Eclipse CDT4 - Unix Makefiles" .. -B.
-      Environment->Add: DEAL_II_DIR /path/to/dealii
-      (just so you know: -B. specifies the working directory as cmake PROJECT_BINARY_DIR)
-A.11) [If Build fails] define an external tool calling make
-      New (+)
-      name: NATriuM Make (Build)
-      location: /usr/bin/make
-      working directory: ${workspace_loc:/NATriuM}/bin
-      arguments: 
-      
-
-Toolchain (How to compile and run NATriuM):
--> External Tool Button -> NATriuM CMake
--> External Tool Button -> NATriuM Make
--> Either Run 
+OPTION A (IF YOU JUST WANT TO USE THE CODE, e.g. on a compute cluster): SET UP NATRIUM CODE AS A MAKEFILE PROJECT        
+-----------------------------------------------------------------------------------------------------------------
+   - go to the directory you want NATriuM to be installed in
+   - Clone the git repository: git clone username@wr0.wr.inf.h-brs.de:/home/akraem3m/git/NATriuM.git
+     (if you do not have an account, contact andreas.kraemer@h-brs.de)
+   1) go to the directory NATriuM/bin
+   2) cmake -DCMAKE_BUILD_TYPE=Release ../src/ -B. && make all
+   3) Set the environment variable NATRIUM_HOME to the principal output directory (in .bashrc)
 
 
-
-WHEN CHANGING ANY CMAKELISTS FILE
-... you have to rebuild your cmake by typing
-mkdir ~/eclipse_workspace/NATriuM/bin; cd ~/eclipse_workspace/NATriuM/bin; cmake "Eclipse CDT4 - Unix Makefiles" ../ -B.;
-or (alternatively)
-run the external tool NATriuM CMake (see A.10)
-
-Creates an out-of-source build in bin directory.
-the option -B. sets the cmake project's Binary directory to .
-../ navigates to the folder containing the root CMakeList.txt
-
-
-
-
-###                             ###
-#      D E P R E C A T E D:       #
-###                             ###
-(in the current version of the code this is all done by cmake files CMakeLists.txt)
-
-
-
+OPTION B (IF YOU WANT TO CONTRIUBTE): SET UP NATRIUM CODE AS AN ECLIPSE PROJECT
+-------------------------------------------------------------------------------
+   - go to your eclipse workspace 
+   - Clone the git repository: git clone username@wr0.wr.inf.h-brs.de:/home/akraem3m/git/NATriuM.git
+     (if you do not have an account, contact andreas.kraemer@h-brs.de)
+   1) go to the directory NATriuM/bin
+   2) cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
+     (just so you know: -B. sets cmake's binary dir to .)
+   3) Launch eclipse
+   4) File->Import->General->Existing Projects Into Workspace->Select root directory
+   5) IMPORTANT: Select the cmake   b i n   directory (e.g. NATriuM/bin)
+      This will automatically set the build and run options in eclipse
+      Eclipse will automatically detect that it is a git repository
+   6) Build project 
+      (At least when having verbosity option on): CMake parses the include directories (das ist genial ;) )
+      This will keep the error parser from underlining everything ;)
+   7) Repeat steps 1-6) for "bin_relase" instead of "bin" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
+      All source files are accessible and changable via [Source directory] in the project tree
+   8) Set the environment variable NATRIUM_HOME to the principal output directory (in .bashrc)
 
 
-   M A K E   I T   P O S S I B L E   T O   I N C L U D E   F I L E S  F R O M   T H E   L I B R A R Y
-2) Include external ressources: Project -> Properties -> C/C++ Build -> Settings -> Cross G++ Compiler
-   2.1) Add deal.ii includes directory to Includes (e.g. /home/kraemer/Dissertation/deal.II/include)
-   2.2) Add base and bundled subdirectories separately
-   2.3) Add boost to Includes (e.g. /usr/include/boost) -> ATTENTION: Deal uses boost 1.49; Local installation is 1.48
-   
-   
-    M A K E   T H E   L I N K E R   A B L E   T O   F I N D   T H E   L I B R A R I E S   
-3) Add libraries: Project -> Properties -> C/C++ Build -> Settings -> Cross G++ Linker
-   3.1) Add deal.ii lib directory to Libraries -> Library search path (e.g. /home/kraemer/Dissertation/deal.II/lib)
-   3.2) Add the library deal_II to Libraries -> Libraries (Simply add "deal_II") 
-       (note: This refers to the file libdeal_II.so in deal.II/lib -> pre- and postfix are omitted)
-   3.3) Add the library z to Libraries -> Libraries (this is the standard compression library which is used by deal.ii)
-   3.4) Add the boost libraries boost_unit_test_framework-mt, and boost_system; No Library path required 
-   
-
-    M A K E   T H E   E X E C U T A B L E   A B L E   T O   F I N D   T H E   L I B R A R I E S   
-4) Edit LD_LIBRARY_PATH
-   4.1) Set environment variable LD_LIBRARY_PATH (in ~/.bashrc or in Run->Run Configurations->Environment)
-        to deal.ii's lib directory (e.g. LD_LIBRARY_PATH=(irgendwelche_pfade):/home/kraemer/Dissertation/deal.II/lib/)
-   4.2) Make sure /usr/lib is in the LD_LIBRARY_PATH
-   4.3) Don't forget to "source ~/.bashrc" thereafter
-   
-   
-5) Additional settings in Project Properties
-   5.1) Switch to old c++ namings by adding -std=c++0x to the compile flags
-        Otherwise there may be problems with the boost libraries.
         
-   
+================================================================================================
+   TEST THE CODE 
+================================================================================================
+
+Run unit tests:
+   - go to NATriuM's bin directory
+   - type ./test/NATriuM_UnitTest_exe
+
+Run integration tests (takes a few minutes)
+   - go to NATriuM's bin directory
+   - type ./test/NATriuM_Test
+   - The results will be written to natrium.html (in the bin directory)
+
+
+================================================================================================
+  GETTING STARTED
+================================================================================================
+To get started, take a look at the Mainpage of the technical Documentation (doc/html/index.html)
+and navigate to the Examples section.
+        
+

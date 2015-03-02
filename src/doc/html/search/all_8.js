@@ -1,19 +1,14 @@
 var searchData=
 [
-  ['m_5fboltzmannmodel',['m_boltzmannModel',['../classnatrium_1_1CollisionModel.html#a0c77cb3544948bb6d289ea8d47076012',1,'natrium::CollisionModel']]],
-  ['m_5fd',['m_d',['../classnatrium_1_1CollisionModel.html#ad6dcd37d98c4a462286f41240a918b59',1,'natrium::CollisionModel']]],
-  ['m_5fq',['m_q',['../classnatrium_1_1CollisionModel.html#a77470299003744c7c68e3e87383c40d2',1,'natrium::CollisionModel']]],
-  ['m_5fscaling',['m_scaling',['../classnatrium_1_1D2Q9Model.html#ab0aa145ad44fe849371f8bda592eadf2',1,'natrium::D2Q9Model']]],
-  ['m_5fspeedofsound',['m_speedOfSound',['../classnatrium_1_1D2Q9Model.html#ab212c0c04921591f16c1970d93878cf9',1,'natrium::D2Q9Model']]],
-  ['m_5fspeedofsoundsquare',['m_speedOfSoundSquare',['../classnatrium_1_1D2Q9Model.html#afa28316438de5055d51674d89a0075ba',1,'natrium::D2Q9Model']]],
-  ['maintest_2ecpp',['MainTest.cpp',['../MainTest_8cpp.html',1,'']]],
-  ['math_2eh',['Math.h',['../Math_8h.html',1,'']]],
-  ['math_5ftest_2ecpp',['Math_test.cpp',['../Math__test_8cpp.html',1,'']]],
-  ['matrixanalysis',['matrixAnalysis',['../classnatrium_1_1matrixAnalysis.html',1,'natrium']]],
-  ['matrixanalysis_2ecpp',['matrixAnalysis.cpp',['../matrixAnalysis_8cpp.html',1,'']]],
-  ['matrixanalysis_2eh',['matrixAnalysis.h',['../matrixAnalysis_8h.html',1,'']]],
-  ['minleeboundary',['MinLeeBoundary',['../classnatrium_1_1MinLeeBoundary.html',1,'natrium']]],
-  ['minleeboundary',['MinLeeBoundary',['../classnatrium_1_1MinLeeBoundary.html#a1e9acd91ee2b97783932c4df45d38668',1,'natrium::MinLeeBoundary::MinLeeBoundary(size_t boundaryIndicator, shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryDensity, shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryVelocity)'],['../classnatrium_1_1MinLeeBoundary.html#a6bd31d48ffaf23ac74bc303b379b4ca8',1,'natrium::MinLeeBoundary::MinLeeBoundary(size_t boundaryIndicator, const dealii::Vector&lt; double &gt; &amp;velocity)']]],
-  ['minleeboundary_2eh',['MinLeeBoundary.h',['../MinLeeBoundary_8h.html',1,'']]],
-  ['minleeboundary2d_5ftest_2ecpp',['MinLeeBoundary2D_test.cpp',['../MinLeeBoundary2D__test_8cpp.html',1,'']]]
+  ['liddrivencavity2d',['LidDrivenCavity2D',['../classnatrium_1_1LidDrivenCavity2D.html',1,'natrium']]],
+  ['liddrivencavity2d',['LidDrivenCavity2D',['../classnatrium_1_1LidDrivenCavity2D.html#a139fe700f3e871e1b51eada1a41c69b1',1,'natrium::LidDrivenCavity2D']]],
+  ['liddrivencavity2d_2ecpp',['LidDrivenCavity2D.cpp',['../LidDrivenCavity2D_8cpp.html',1,'']]],
+  ['liddrivencavity2d_2eh',['LidDrivenCavity2D.h',['../LidDrivenCavity2D_8h.html',1,'']]],
+  ['loaddistributionfunctionsfromfiles',['loadDistributionFunctionsFromFiles',['../classnatrium_1_1CFDSolver.html#a42245d22e289d079a3b06a0c26f50050',1,'natrium::CFDSolver']]],
+  ['log',['LOG',['../classnatrium_1_1Logging.html#a913b816565b3ede4c25b89d25ca5148d',1,'natrium::Logging']]],
+  ['logger',['LOGGER',['../classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b',1,'natrium::Logging']]],
+  ['logging',['Logging',['../classnatrium_1_1Logging.html',1,'natrium']]],
+  ['logging',['Logging',['../classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3',1,'natrium::Logging']]],
+  ['logging_2eh',['Logging.h',['../Logging_8h.html',1,'']]],
+  ['logging_5ftest_2ecpp',['Logging_test.cpp',['../Logging__test_8cpp.html',1,'']]]
 ];

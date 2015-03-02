@@ -12,7 +12,10 @@
 #include "deal.II/grid/tria.h"
 
 #include "BoundaryCollection.h"
+
+#include "../utilities/Logging.h"
 #include "../utilities/BasicNames.h"
+#include "../utilities/MPIGuard.h"
 
 namespace natrium {
 
@@ -78,6 +81,42 @@ public:
 			vector<distributed_vector>& initialVelocities,
 			const vector<dealii::Point<dim> >& supportPoints) const = 0;
 
+	/**
+	 * @short check if boundary conditions are uniquely assigned to boundary indicator
+	 * @return true, if boundaries OK
+	 */
+	bool checkBoundaryConditions(){
+		// read boundary ids from triangulation
+		bool result = true;
+		std::vector<dealii::types::boundary_id> tria_boundary_ids(m_triangulation->get_boundary_indicators());
+
+		// read boundary ids from boundary collection
+		std::vector<dealii::types::boundary_id> collection_boundary_ids;
+		typename BoundaryCollection<dim>::ConstIterator boundary;
+		typename BoundaryCollection<dim>::ConstIterator end;
+		end = m_boundaries->getBoundaries().end();
+		for (boundary = m_boundaries->getBoundaries().begin(); boundary != end; ++ boundary){
+			collection_boundary_ids.push_back(boundary->first);
+		}
+		// check uniqueness in one direction
+		std::vector<dealii::types::boundary_id>::iterator it;
+		for (size_t i = 0; i < tria_boundary_ids.size(); i++){
+			it = std::find(collection_boundary_ids.begin(), collection_boundary_ids.end(), tria_boundary_ids.at(i));
+			if (it == collection_boundary_ids.end()){
+				LOG(ERROR) << "Found boundary ID " << size_t(tria_boundary_ids.at(i)) << " in mesh, but not in boundaries." << endl;
+				result = false;
+			} else {
+				collection_boundary_ids.erase(it);
+			}
+		}
+		// check uniqueness in other directions
+		for (size_t i = 0; i < collection_boundary_ids.size(); i++){
+			LOG(ERROR) << "Found boundary ID " << size_t(collection_boundary_ids.at(i)) << " in boundaries, but not in mesh." << endl;
+			result = false;
+		}
+		return result;
+	}
+
 	void setTriangulation(
 			const shared_ptr<dealii::Triangulation<dim> >& triangulation) {
 		m_triangulation = triangulation;
@@ -116,6 +155,10 @@ inline ProblemDescription<dim>::ProblemDescription(
 		double viscosity, double characteristicLength) :
 		m_triangulation(triangulation), m_viscosity(
 				viscosity), m_characteristicLength(characteristicLength) {
+#ifdef WITH_TRILINOS
+	/// Create MPI (if not done yet)
+	MPIGuard::getInstance();
+#endif
 }
 
 } /* namespace natrium */

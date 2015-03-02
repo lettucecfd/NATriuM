@@ -40,6 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -61,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -68,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -125,77 +127,82 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordtype">double</span> m_l2VelocityError;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordtype">double</span> m_l2DensityError;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordtype">double</span> m_maxUAnalytic;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <a class="code" href="classnatrium_1_1ErrorStats.html#a911e70f932c75a80dad345b90e8b8c0d">ErrorStats</a>(<a class="code" href="classnatrium_1_1BenchmarkCFDSolver.html">BenchmarkCFDSolver&lt;dim&gt;</a> * cfdsolver,</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                        <span class="keyword">const</span> std::string tableFileName = <span class="stringliteral">&quot;&quot;</span>) ;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ErrorStats.html#ad8cc77e4ac7a50e030e9a49fe1a5bdba">printHeaderLine</a>();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ErrorStats.html#af02f31d82efefb482ea4ab3d69642486">printNewLine</a>();</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ErrorStats.html#ad24a8dae524127631e75368a0aac61b5">update</a>();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a72dcc0b8b86335a50ee1b324bbed0e61">   71</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a72dcc0b8b86335a50ee1b324bbed0e61">isUpToDate</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                <span class="keywordflow">return</span> (m_iterationNumber == m_solver-&gt;getIteration());</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keyword">const</span> shared_ptr&lt;std::fstream&gt;&amp; getErrorsTableFile()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                <span class="keywordflow">return</span> m_errorsTableFile;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keyword">const</span> std::string&amp; getFilename()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                <span class="keywordflow">return</span> m_filename;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordtype">size_t</span> getIterationNumber()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                <span class="keywordflow">return</span> m_iterationNumber;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a66f817c7daaf15724d5d42de4f17a1e8">   92</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a66f817c7daaf15724d5d42de4f17a1e8">getL2DensityError</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                <span class="keywordflow">return</span> m_l2DensityError;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a201f625a3607a814fdd645aabfe37fbc">  101</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a201f625a3607a814fdd645aabfe37fbc">getL2VelocityError</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                <span class="keywordflow">return</span> m_l2VelocityError;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a8e32b3e8c8d141b6cdcf5428613a875e">  109</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a8e32b3e8c8d141b6cdcf5428613a875e">getMaxDensityError</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                <span class="keywordflow">return</span> m_maxDensityError;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordtype">double</span> m_l2UAnalytic;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <a class="code" href="classnatrium_1_1ErrorStats.html#a911e70f932c75a80dad345b90e8b8c0d">ErrorStats</a>(<a class="code" href="classnatrium_1_1BenchmarkCFDSolver.html">BenchmarkCFDSolver&lt;dim&gt;</a> * cfdsolver,</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                        <span class="keyword">const</span> std::string tableFileName = <span class="stringliteral">&quot;&quot;</span>) ;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ErrorStats.html#ad8cc77e4ac7a50e030e9a49fe1a5bdba">printHeaderLine</a>();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ErrorStats.html#af02f31d82efefb482ea4ab3d69642486">printNewLine</a>();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1ErrorStats.html#ad24a8dae524127631e75368a0aac61b5">update</a>();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a72dcc0b8b86335a50ee1b324bbed0e61">   72</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a72dcc0b8b86335a50ee1b324bbed0e61">isUpToDate</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                <span class="keywordflow">return</span> (m_iterationNumber == m_solver-&gt;getIteration());</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keyword">const</span> shared_ptr&lt;std::fstream&gt;&amp; getErrorsTableFile()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                <span class="keywordflow">return</span> m_errorsTableFile;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keyword">const</span> std::string&amp; getFilename()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                <span class="keywordflow">return</span> m_filename;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">size_t</span> getIterationNumber()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                <span class="keywordflow">return</span> m_iterationNumber;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a66f817c7daaf15724d5d42de4f17a1e8">   93</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a66f817c7daaf15724d5d42de4f17a1e8">getL2DensityError</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                <span class="keywordflow">return</span> m_l2DensityError;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a201f625a3607a814fdd645aabfe37fbc">  102</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a201f625a3607a814fdd645aabfe37fbc">getL2VelocityError</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                <span class="keywordflow">return</span> m_l2VelocityError;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a8e32b3e8c8d141b6cdcf5428613a875e">  110</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a8e32b3e8c8d141b6cdcf5428613a875e">getMaxDensityError</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                <span class="keywordflow">return</span> m_maxDensityError;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        }</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <span class="keywordtype">double</span> getMaxUAnalytic()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                <span class="keywordflow">return</span> m_maxUAnalytic;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        }</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a48ea1bfc5db4dad6369b4b2991aa1f5c">  122</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a48ea1bfc5db4dad6369b4b2991aa1f5c">getMaxVelocityError</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                <span class="keywordflow">return</span> m_maxVelocityError;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        }</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="keywordtype">double</span> getTime()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                <span class="keywordflow">return</span> m_time;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        }</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;};</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keywordtype">double</span> getMaxUAnalytic()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                <span class="keywordflow">return</span> m_maxUAnalytic;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        }</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classnatrium_1_1ErrorStats.html#a48ea1bfc5db4dad6369b4b2991aa1f5c">  123</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ErrorStats.html#a48ea1bfc5db4dad6369b4b2991aa1f5c">getMaxVelocityError</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                <span class="keywordflow">return</span> m_maxVelocityError;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <span class="keywordtype">double</span> getTime()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                <span class="keywordflow">return</span> m_time;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        }</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;}<span class="comment">/*namespace natrium */</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ERRORSTATS_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordtype">double</span> getL2UAnalytic()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                <span class="keywordflow">return</span> m_l2UAnalytic;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        }</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;};</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;}<span class="comment">/*namespace natrium */</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ERRORSTATS_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classnatrium_1_1BenchmarkCFDSolver_html"><div class="ttname"><a href="classnatrium_1_1BenchmarkCFDSolver.html">natrium::BenchmarkCFDSolver</a></div><div class="ttdoc">a class that overrides the output function of the CFD solver class with comparisons to a reference so...</div><div class="ttdef"><b>Definition:</b> BenchmarkCFDSolver.h:25</div></div>
-<div class="ttc" id="classnatrium_1_1ErrorStats_html_a66f817c7daaf15724d5d42de4f17a1e8"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a66f817c7daaf15724d5d42de4f17a1e8">natrium::ErrorStats::getL2DensityError</a></div><div class="ttdeci">double getL2DensityError() const </div><div class="ttdoc">return L2-Error of density, DIVIDED BY NUMBER OF DOFS!!!  </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:92</div></div>
+<div class="ttc" id="classnatrium_1_1ErrorStats_html_a66f817c7daaf15724d5d42de4f17a1e8"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a66f817c7daaf15724d5d42de4f17a1e8">natrium::ErrorStats::getL2DensityError</a></div><div class="ttdeci">double getL2DensityError() const </div><div class="ttdoc">return L2-Error of density,  </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:93</div></div>
 <div class="ttc" id="classnatrium_1_1ErrorStats_html_ad24a8dae524127631e75368a0aac61b5"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#ad24a8dae524127631e75368a0aac61b5">natrium::ErrorStats::update</a></div><div class="ttdeci">void update()</div><div class="ttdoc">update errors for the current iteration </div><div class="ttdef"><b>Definition:</b> ErrorStats.cpp:44</div></div>
-<div class="ttc" id="classnatrium_1_1ErrorStats_html_a48ea1bfc5db4dad6369b4b2991aa1f5c"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a48ea1bfc5db4dad6369b4b2991aa1f5c">natrium::ErrorStats::getMaxVelocityError</a></div><div class="ttdeci">double getMaxVelocityError() const </div><div class="ttdoc">return max error of velocity  </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:122</div></div>
-<div class="ttc" id="classnatrium_1_1ErrorStats_html_a8e32b3e8c8d141b6cdcf5428613a875e"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a8e32b3e8c8d141b6cdcf5428613a875e">natrium::ErrorStats::getMaxDensityError</a></div><div class="ttdeci">double getMaxDensityError() const </div><div class="ttdoc">return max error of density  </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:109</div></div>
-<div class="ttc" id="classnatrium_1_1ErrorStats_html_ad8cc77e4ac7a50e030e9a49fe1a5bdba"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#ad8cc77e4ac7a50e030e9a49fe1a5bdba">natrium::ErrorStats::printHeaderLine</a></div><div class="ttdeci">void printHeaderLine()</div><div class="ttdoc">write header line to table file </div><div class="ttdef"><b>Definition:</b> ErrorStats.cpp:110</div></div>
-<div class="ttc" id="classnatrium_1_1ErrorStats_html_a201f625a3607a814fdd645aabfe37fbc"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a201f625a3607a814fdd645aabfe37fbc">natrium::ErrorStats::getL2VelocityError</a></div><div class="ttdeci">double getL2VelocityError() const </div><div class="ttdoc">return L2-Error of velocity, DIVIDED BY NUMBER OF DOFS!!!  </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:101</div></div>
+<div class="ttc" id="classnatrium_1_1ErrorStats_html_a48ea1bfc5db4dad6369b4b2991aa1f5c"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a48ea1bfc5db4dad6369b4b2991aa1f5c">natrium::ErrorStats::getMaxVelocityError</a></div><div class="ttdeci">double getMaxVelocityError() const </div><div class="ttdoc">return max error of velocity  </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:123</div></div>
+<div class="ttc" id="classnatrium_1_1ErrorStats_html_a8e32b3e8c8d141b6cdcf5428613a875e"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a8e32b3e8c8d141b6cdcf5428613a875e">natrium::ErrorStats::getMaxDensityError</a></div><div class="ttdeci">double getMaxDensityError() const </div><div class="ttdoc">return max error of density  </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:110</div></div>
+<div class="ttc" id="classnatrium_1_1ErrorStats_html_ad8cc77e4ac7a50e030e9a49fe1a5bdba"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#ad8cc77e4ac7a50e030e9a49fe1a5bdba">natrium::ErrorStats::printHeaderLine</a></div><div class="ttdeci">void printHeaderLine()</div><div class="ttdoc">write header line to table file </div><div class="ttdef"><b>Definition:</b> ErrorStats.cpp:111</div></div>
+<div class="ttc" id="classnatrium_1_1ErrorStats_html_a201f625a3607a814fdd645aabfe37fbc"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a201f625a3607a814fdd645aabfe37fbc">natrium::ErrorStats::getL2VelocityError</a></div><div class="ttdeci">double getL2VelocityError() const </div><div class="ttdoc">return L2-Error of velocity,  </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:102</div></div>
 <div class="ttc" id="classnatrium_1_1ErrorStats_html"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html">natrium::ErrorStats</a></div><div class="ttdoc">Container for error statistics and table file; only for use with BenchmarkCFDSolver. </div><div class="ttdef"><b>Definition:</b> ErrorStats.h:27</div></div>
 <div class="ttc" id="classnatrium_1_1ErrorStats_html_a911e70f932c75a80dad345b90e8b8c0d"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a911e70f932c75a80dad345b90e8b8c0d">natrium::ErrorStats::ErrorStats</a></div><div class="ttdeci">ErrorStats(BenchmarkCFDSolver&lt; dim &gt; *cfdsolver, const std::string tableFileName=&quot;&quot;)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> ErrorStats.cpp:15</div></div>
-<div class="ttc" id="classnatrium_1_1ErrorStats_html_af02f31d82efefb482ea4ab3d69642486"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#af02f31d82efefb482ea4ab3d69642486">natrium::ErrorStats::printNewLine</a></div><div class="ttdeci">void printNewLine()</div><div class="ttdoc">write information of the current iteration to table file </div><div class="ttdef"><b>Definition:</b> ErrorStats.cpp:120</div></div>
-<div class="ttc" id="classnatrium_1_1ErrorStats_html_a72dcc0b8b86335a50ee1b324bbed0e61"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a72dcc0b8b86335a50ee1b324bbed0e61">natrium::ErrorStats::isUpToDate</a></div><div class="ttdeci">bool isUpToDate() const </div><div class="ttdoc">check, if errors are up-to-date, i.e. have already been calculated in the current iteration ...</div><div class="ttdef"><b>Definition:</b> ErrorStats.h:71</div></div>
+<div class="ttc" id="classnatrium_1_1ErrorStats_html_af02f31d82efefb482ea4ab3d69642486"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#af02f31d82efefb482ea4ab3d69642486">natrium::ErrorStats::printNewLine</a></div><div class="ttdeci">void printNewLine()</div><div class="ttdoc">write information of the current iteration to table file </div><div class="ttdef"><b>Definition:</b> ErrorStats.cpp:121</div></div>
+<div class="ttc" id="classnatrium_1_1ErrorStats_html_a72dcc0b8b86335a50ee1b324bbed0e61"><div class="ttname"><a href="classnatrium_1_1ErrorStats.html#a72dcc0b8b86335a50ee1b324bbed0e61">natrium::ErrorStats::isUpToDate</a></div><div class="ttdeci">bool isUpToDate() const </div><div class="ttdoc">check, if errors are up-to-date, i.e. have already been calculated in the current iteration ...</div><div class="ttdef"><b>Definition:</b> ErrorStats.h:72</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 28 2014 13:57:54 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 6 2015 20:01:01 for NATriuM by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

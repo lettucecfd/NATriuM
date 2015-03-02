@@ -20,6 +20,7 @@
 #include "problemdescription/Benchmark.h"
 
 #include "utilities/BasicNames.h"
+#include "utilities/CFDSolverUtilities.h"
 
 #include "../../examples/step-1/TaylorGreenVortex2D.h"
 
@@ -41,12 +42,12 @@ int main() {
 	const double viscosity = 1;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
-	const double Ma = 0.001;
+	const double Ma = 0.05;
 	// zunaechst: fixed order of FE
 	const double refinementLevel = 2;
 
 	// chose scaling so that the right Mach number is achieved
-	double scaling = sqrt(3) * 1 / Ma;
+	double scaling = sqrt(3) * 1  / Ma;
 
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
@@ -76,11 +77,12 @@ int main() {
 			orderOfFiniteElement += 2) {
 		cout << "order of FE = " << orderOfFiniteElement << endl;
 
-		//double dx = 2 * 3.1415926
-		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement-1));
-		// chose dt so that courant (advection) = 1 for the diagonal directions
-		//double dt = dx / (scaling * sqrt(2));
-		double dt = 0.00001;
+		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+						TaylorGreenVortex2D>(viscosity, refinementLevel);
+		double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(*tgVortex->getTriangulation(), orderOfFiniteElement);
+		// chose dt so that courant (advection) = 0.4
+		double dt = 0.4 *  dx / scaling;
+		//double dt = 0.00001;
 
 		cout << "dt = " << dt << " ...";
 
@@ -120,8 +122,8 @@ int main() {
 #endif
 
 		// make problem and solver objects; measure time
-		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
-				TaylorGreenVortex2D>(viscosity, refinementLevel);
+		//shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+		//		TaylorGreenVortex2D>(viscosity, refinementLevel);
 		shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);

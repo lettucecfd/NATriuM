@@ -47,7 +47,7 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 add_subdirectory( natrium )
 add_subdirectory( test )
 add_subdirectory( examples )
-add_subdirectory( analysis )
+#add_subdirectory( analysis )
 
 
 #
@@ -81,7 +81,7 @@ target_link_libraries(  ${NATRIUM_TARGET}
                         natrium
                         )
                        
-
+ 
 
 #
 # (Optional)
@@ -92,7 +92,7 @@ ADD_CUSTOM_TARGET(  run
                     COMMENT "Run ${NATRIUM_TARGET}  with ${CMAKE_BUILD_TYPE} configuration"
 )
 ADD_CUSTOM_TARGET(  test
-                    COMMAND bin/test/NATriuM_UnitTest_exe 
+                    COMMAND ./bin/test/NATriuM_UnitTest_exe 
                     COMMENT "Run UnitTests  with ${CMAKE_BUILD_TYPE} configuration"
 )
 

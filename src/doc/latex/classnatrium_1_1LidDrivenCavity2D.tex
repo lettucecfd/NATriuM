@@ -19,7 +19,7 @@ Inheritance diagram for natrium\-:\-:Lid\-Driven\-Cavity2\-D\-:\begin{figure}[H]
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1LidDrivenCavity2D_a27c7eaba95a6876f6b4f4592b5afa104}{Lid\-Driven\-Cavity2\-D} (double viscosity, size\-\_\-t refinement\-Level)
+\hyperlink{classnatrium_1_1LidDrivenCavity2D_a139fe700f3e871e1b51eada1a41c69b1}{Lid\-Driven\-Cavity2\-D} (double velocity, double viscosity, size\-\_\-t refinement\-Level)
 \begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1LidDrivenCavity2D_a8ae5029b008eb3d3c810bae81440b29c}{virtual \hyperlink{classnatrium_1_1LidDrivenCavity2D_a8ae5029b008eb3d3c810bae81440b29c}{$\sim$\-Lid\-Driven\-Cavity2\-D} ()}\label{classnatrium_1_1LidDrivenCavity2D_a8ae5029b008eb3d3c810bae81440b29c}
 
@@ -28,29 +28,27 @@ virtual void \hyperlink{classnatrium_1_1LidDrivenCavity2D_ab4a8629cfd3472847d40c
 \begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
 virtual void \hyperlink{classnatrium_1_1LidDrivenCavity2D_a6e633e30cfeae500757bdd4c37a5c478}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
 \begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1LidDrivenCavity2D_a35bd8e7b30690dd85f4c6931f62aaa53}{double \hyperlink{classnatrium_1_1LidDrivenCavity2D_a35bd8e7b30690dd85f4c6931f62aaa53}{analytic\-Velocity1} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1LidDrivenCavity2D_a35bd8e7b30690dd85f4c6931f62aaa53}
-
-\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex, first component of velocity vector \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1LidDrivenCavity2D_ad2cd81e733c597d28f396e4fb92d455f}{double \hyperlink{classnatrium_1_1LidDrivenCavity2D_ad2cd81e733c597d28f396e4fb92d455f}{analytic\-Velocity2} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t) const }\label{classnatrium_1_1LidDrivenCavity2D_ad2cd81e733c597d28f396e4fb92d455f}
-
-\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex, second component of velocity vector \end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1LidDrivenCavity2D_a82c2d453cd5dd83f09a438201a7adec6}{virtual double {\bfseries get\-Characteristic\-Velocity} () const }\label{classnatrium_1_1LidDrivenCavity2D_a82c2d453cd5dd83f09a438201a7adec6}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Description of a simple Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. 
+Description of a simple Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. \begin{Desc}
+\item[Examples\-: ]\par
+\hyperlink{step-0_8cpp-example}{step-\/0.\-cpp}.\end{Desc}
+
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1LidDrivenCavity2D_a27c7eaba95a6876f6b4f4592b5afa104}{\index{natrium\-::\-Lid\-Driven\-Cavity2\-D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}!Lid\-Driven\-Cavity2\-D@{Lid\-Driven\-Cavity2\-D}}
+\hypertarget{classnatrium_1_1LidDrivenCavity2D_a139fe700f3e871e1b51eada1a41c69b1}{\index{natrium\-::\-Lid\-Driven\-Cavity2\-D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}!Lid\-Driven\-Cavity2\-D@{Lid\-Driven\-Cavity2\-D}}
 \index{Lid\-Driven\-Cavity2\-D@{Lid\-Driven\-Cavity2\-D}!natrium::LidDrivenCavity2D@{natrium\-::\-Lid\-Driven\-Cavity2\-D}}
 \subsubsection[{Lid\-Driven\-Cavity2\-D}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Lid\-Driven\-Cavity2\-D\-::\-Lid\-Driven\-Cavity2\-D (
 \begin{DoxyParamCaption}
+\item[{double}]{velocity, }
 \item[{double}]{viscosity, }
 \item[{size\-\_\-t}]{refinement\-Level}
 \end{DoxyParamCaption}
-)}}\label{classnatrium_1_1LidDrivenCavity2D_a27c7eaba95a6876f6b4f4592b5afa104}
+)}}\label{classnatrium_1_1LidDrivenCavity2D_a139fe700f3e871e1b51eada1a41c69b1}
 
 
 constructor 
@@ -100,5 +98,5 @@ set initial velocities
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/3/\hyperlink{LidDrivenCavity2D_8h}{Lid\-Driven\-Cavity2\-D.\-h}\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/3/\hyperlink{LidDrivenCavity2D_8cpp}{Lid\-Driven\-Cavity2\-D.\-cpp}\end{DoxyCompactItemize}
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/0/\hyperlink{LidDrivenCavity2D_8h}{Lid\-Driven\-Cavity2\-D.\-h}\item 
+/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/0/\hyperlink{LidDrivenCavity2D_8cpp}{Lid\-Driven\-Cavity2\-D.\-cpp}\end{DoxyCompactItemize}

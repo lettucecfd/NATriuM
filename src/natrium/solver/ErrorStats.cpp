@@ -63,10 +63,11 @@ void ErrorStats<dim>::update() {
 	//#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2
 	m_solver->m_analyticDensity.add(-1.0, numericDensity);
 	m_maxDensityError = m_solver->m_analyticDensity.linfty_norm();
-	m_l2DensityError = m_solver->m_analyticDensity.l2_norm() / m_solver->getNumberOfDoFs();
+	m_l2DensityError = m_solver->m_analyticDensity.l2_norm();
 
 	// calculate maximum analytic velocity norm
 	m_maxUAnalytic = Math::maxVelocityNorm(m_solver->m_analyticVelocity);
+	m_l2UAnalytic = Math::velocity2Norm(m_solver->m_analyticVelocity);
 
 	// substract numeric from analytic velocity
 	m_solver->m_analyticVelocity.at(0).add(-1.0, numericVelocity.at(0));
@@ -96,7 +97,7 @@ void ErrorStats<dim>::update() {
 				m_solver->m_analyticVelocity.at(0)(i));
 	}
 	m_maxVelocityError = m_solver->m_analyticVelocity.at(0).linfty_norm();
-	m_l2VelocityError = m_solver->m_analyticVelocity.at(0).l2_norm() / m_solver->getNumberOfDoFs();
+	m_l2VelocityError = m_solver->m_analyticVelocity.at(0).l2_norm();
 
 	// set marker value that indicates that this function has already been called
 	// for the present data
