@@ -41,6 +41,8 @@ TestResult ConvergenceTestMovingWall ();
 
 TestResult ConvergenceTestImplicitLBM ();
 
+TestResult ConvergenceTestExponentialLBM();
+
 
 } /* namespace IntegrationTests */
 } /* namespace natrium */
