@@ -46,17 +46,31 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		dt = this->getTimeStepSize();
 	}
 
-	if (w.size() != f.size()) {
-		w.reinit(f.size(), true);
+#ifdef WITH_TRILINOS
+	if (m_w.size() != f.size()) {
+		m_w.reinit(f);
 	}
 
-	if (v_j.size() != f.size()) {
-		v_j.reinit(f.size(), true);
+	if (m_v_j.size() != f.size()) {
+		m_v_j.reinit(f);
 	}
 
-	if (v_i.size() != f.size()) {
-		v_i.reinit(f.size(), true);
+	if (m_v_i.size() != f.size()) {
+		m_v_i.reinit(f);
 	}
+#else
+	if (m_w.size() != f.size()) {
+		m_w.reinit(f.size(), true);
+	}
+
+	if (m_v_j.size() != f.size()) {
+		m_v_j.reinit(f.size(), true);
+	}
+
+	if (m_v_i.size() != f.size()) {
+		m_v_i.reinit(f.size(), true);
+	}
+#endif
 
 	if (firstColumn.size() != arnoldiSize + 1) {
 		firstColumn.reinit(arnoldiSize + 1, true);
@@ -66,9 +80,9 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		m_f.reinit(f.size(), true);
 	}
 
-	w = f;
-	v_j = f;
-	v_i = f;
+	m_w = f;
+	m_v_j = f;
+	m_v_i = f;
 
 	for (int i = 0; i < arnoldiSize + 2; i++) {
 		for (int j = 0; j < arnoldiSize + 2; j++) {
@@ -78,15 +92,15 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 	numeric_matrix V(f.size(), arnoldiSize + 1); // Orthonormal basis V_(m+1)
 
-	systemMatrix.vmult(w, f); 	// w = A*f + u
-	w.add(systemVector);		// w = A*f + u
+	systemMatrix.vmult(m_w, f); 	// w = A*f + u
+	m_w.add(systemVector);		// w = A*f + u
 
-	double beta = w.l2_norm();
+	double beta = m_w.l2_norm();
 
 	for (int i = 0; i < f.size(); i++) 		// Arnoldi algorithm (first step)
 
 			{
-		V.set(i, 0, w(i) / beta);
+		V.set(i, 0, m_w(i) / beta);
 
 	}
 
@@ -94,27 +108,27 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 			{
 
 		for (int i = 0; i < f.size(); i++) {
-			v_j(i) = V(i, j);
+			m_v_j(i) = V(i, j);
 		}
 
-		systemMatrix.vmult(w, v_j);
+		systemMatrix.vmult(m_w, m_v_j);
 
 		for (int i = 0; i <= j; i++) {
 			for (int k = 0; k < f.size(); k++) {
-				v_i(k) = V(k, i);
+				m_v_i(k) = V(k, i);
 			}
 
-			H(i, j) = w * v_i;
-			v_i *= H(i, j);
-			w -= v_i;
+			H(i, j) = m_w * m_v_i;
+			m_v_i *= H(i, j);
+			m_w -= m_v_i;
 
 		}
 
-		H(j + 1, j) = w.l2_norm();
+		H(j + 1, j) = m_w.l2_norm();
 		if (H(j + 1, j) != 0) // && j<arnoldiSize-1)
 				{
 			for (int k = 0; k < f.size(); k++) {
-				V(k, j + 1) = w(k) / H(j + 1, j);
+				V(k, j + 1) = m_w(k) / H(j + 1, j);
 
 			}
 		}

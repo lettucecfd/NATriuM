@@ -277,9 +277,9 @@ private:
 	numeric_vector 	m_f;	 		//auxiliary vector for calculating f
 	numeric_vector 	firstColumn; 	//vector for the first column of H_m (Symmetric Hessenberg matrix)
 
-	VECTOR w; 	// Auxiliary vector for the Arnoldi algorithm
-	VECTOR v_j; // Auxiliary vector for the Arnoldi algorithm
-	VECTOR v_i; // Auxiliary vector for the Arnoldi algorithm
+	VECTOR m_w; 	// Auxiliary vector for the Arnoldi algorithm
+	VECTOR m_v_j; // Auxiliary vector for the Arnoldi algorithm
+	VECTOR m_v_i; // Auxiliary vector for the Arnoldi algorithm
 
 public:
 
