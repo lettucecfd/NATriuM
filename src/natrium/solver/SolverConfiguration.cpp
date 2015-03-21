@@ -22,7 +22,8 @@ SolverConfiguration::SolverConfiguration() {
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
 		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
-		declare_entry("Has analytic solution?", "false", dealii::Patterns::Bool(),
+		declare_entry("Has analytic solution?", "false",
+				dealii::Patterns::Bool(),
 				"Indicates whether the given flow problem is inherited of BenchmarkProblem, which means that it has an analytic solution with which the numerical solution can be compared.");
 	}
 	leave_subsection();
@@ -32,8 +33,12 @@ SolverConfiguration::SolverConfiguration() {
 				dealii::Patterns::Selection("SEDG"),
 				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme.");
 		declare_entry("Time integrator", "Runge-Kutta 5-stage",
-				dealii::Patterns::Selection("Runge-Kutta 5-stage|Theta method|Exponential"),
-				"The algorithm which is used for the time integration of the discretizted advection (=streaming) equation. A time integrator is required, when the advection scheme is based upon some Finite Element/Difference/Volume or discontinuous Galerkin scheme.");
+				dealii::Patterns::Selection(
+						"Runge-Kutta 5-stage|Theta method|Exponential|Other"),
+				"The algorithm which is used for the time integration of the discretizted advection (=streaming) equation. "
+						"A time integrator is required, when the advection scheme is based upon some Finite Element/Difference/Volume "
+						"or discontinuous Galerkin scheme. Other refers to  deal.II's built-in integrators which are accessible through "
+						"the section DealIntegrator.");
 		enter_subsection("SEDG");
 		{
 			declare_entry("Order of finite element", "1",
@@ -46,9 +51,17 @@ SolverConfiguration::SolverConfiguration() {
 		leave_subsection();
 		enter_subsection("Theta method");
 		{
-			declare_entry("Theta", "0.5",
-					dealii::Patterns::Double(0,1),
-					"Theta=0: Explicit Euler; Theta=0.5: Crank-Nicholson; Theta=1.0: Implicit Euler.");
+			declare_entry("Theta", "0.5", dealii::Patterns::Double(0, 1),
+					"Theta=0: Explicit Euler; Theta=0.5: Crank-Nicolson; Theta=1.0: Implicit Euler.");
+		}
+		leave_subsection();
+		enter_subsection("Deal.II integrator");
+		{
+			declare_entry("Runge Kutta scheme", "None",
+					dealii::Patterns::Selection(
+							"Forward Euler|RK 3rd order|RK Classic 4th order|Backward Euler|"
+									"Implicit midpoint|Crank-Nicoloson|SDIRK 2 stages|Heun-Euler|Bogacki-Shampine|Dopri|Fehlberg|Cash-Karp|None"),
+					"Deal.ii built-in time integrators. They are accessed by chosing time integrator = other.");
 		}
 		leave_subsection();
 	}
@@ -116,7 +129,7 @@ SolverConfiguration::SolverConfiguration() {
 				dealii::Patterns::Integer(1),
 				"Write out solution every ... step.");
 		declare_entry("Command line verbosity", "5",
-				dealii::Patterns::Integer(0,8),
+				dealii::Patterns::Integer(0, 8),
 				"The amount of command line output.");
 		declare_entry("Write a log file?", "true", dealii::Patterns::Bool(),
 				"Specifies if log is written to a file.");
@@ -169,7 +182,7 @@ void SolverConfiguration::readFromXMLFile(const std::string & filename) {
 	}
 } /* readFromXMLFile */
 
-void SolverConfiguration::prepareOutputDirectory(){
+void SolverConfiguration::prepareOutputDirectory() {
 	/// If not exists, try to create output directory
 	//  ((Using boost::filesystem provides a cross-platform solution))
 	boost::filesystem::path outputDir(getOutputDirectory());
@@ -201,16 +214,18 @@ void SolverConfiguration::prepareOutputDirectory(){
 	try {
 		/// try to create a single file
 		std::ofstream filestream;
-		filestream.open((outputDir/"testtatata.txt").string().c_str());
+		filestream.open((outputDir / "testtatata.txt").string().c_str());
 		filestream << " ";
 		filestream.close();
-		boost::filesystem::remove((outputDir/"testtatata.txt").string().c_str());
+		boost::filesystem::remove(
+				(outputDir / "testtatata.txt").string().c_str());
 		/// try to open all files
 		boost::filesystem::directory_iterator it(outputDir), eod;
 		BOOST_FOREACH(boost::filesystem::path const &p, std::make_pair(it, eod)) {
 			if (not boost::filesystem::is_directory(p)) {
 				std::fstream filestream;
-				filestream.open(p.string().c_str(), std::fstream::app | std::fstream::out);
+				filestream.open(p.string().c_str(),
+						std::fstream::app | std::fstream::out);
 				// throw exception if file is not opened
 				if (not filestream.is_open()) {
 					throw std::exception();
@@ -242,7 +257,7 @@ void SolverConfiguration::prepareOutputDirectory(){
 				if ("y" == input) {
 					yes1_or_no2 = 1;
 					break;
-				// check for no
+					// check for no
 				} else if ("n" == input) {
 					yes1_or_no2 = 2;
 					break;
@@ -254,21 +269,43 @@ void SolverConfiguration::prepareOutputDirectory(){
 				// check for timeout
 				clock_t end = clock();
 				double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-				if (elapsed_secs > 30){
+				if (elapsed_secs > 30) {
 					break;
 				}
 				cout << "Your input was not understood. ";
 			}
 			// no sound input
-			if (0 == yes1_or_no2){
-				throw ConfigurationException("Requested user input, but did not get meaningful answer.");
-			} else if (2 == yes1_or_no2){
-				throw ConfigurationException("Execution stopped due to user's intervention.");
+			if (0 == yes1_or_no2) {
+				throw ConfigurationException(
+						"Requested user input, but did not get meaningful answer.");
+			} else if (2 == yes1_or_no2) {
+				throw ConfigurationException(
+						"Execution stopped due to user's intervention.");
 			}
 		} else {
 			LOG(BASIC) << "Starting NATriuM..." << endl;
-			LOG(WARNING) << "Simulation might overwrite old data in output file." << endl;
+			LOG(WARNING)
+					<< "Simulation might overwrite old data in output file."
+					<< endl;
 		}
+	}
+}
+
+void SolverConfiguration::isConsistent() {
+	// check consistency of time integrator setting
+	if (OTHER == this->getTimeIntegrator()) {
+		if (NONE == this->getDealIntegrator()) {
+			std::stringstream msg1;
+			msg1
+					<< "If you set time integrator to 'other' you will need to specify the Deal integrator. Found none.";
+			LOG(ERROR) << msg1.str().c_str() << endl;
+			throw ConfigurationException(msg1.str());
+		}
+	} else if (NONE != this->getDealIntegrator()) {
+		// Warn if the Deal.II integrator setting will not be applied
+		LOG(WARNING)
+				<< "Did not understand setting of Deal.II integrator. If you want to use the Deal.II "
+						"time integration schemes, you will have to set Time integrator to 'OTHER'." << endl;
 	}
 }
 

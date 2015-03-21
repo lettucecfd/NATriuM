@@ -23,18 +23,23 @@
 #include "../problemdescription/BoundaryCollection.h"
 #include "../boltzmannmodels/BoltzmannModel.h"
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
+
 /**
- * @short Exception class for AdvectionSolver
+ * @short Exception class for SEDGMinLee
  */
-class AdvectionSolverException: public std::exception {
+class AdvectionSolverException: public NATriuMException {
 private:
 	std::string message;
 public:
 	AdvectionSolverException(const char *msg) :
-			message(msg) {
+			NATriuMException(msg), message(msg) {
+	}
+	AdvectionSolverException(const string& msg) :
+			NATriuMException(msg), message(msg) {
 	}
 	~AdvectionSolverException() throw () {
 	}

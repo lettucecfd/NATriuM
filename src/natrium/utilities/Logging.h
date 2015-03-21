@@ -11,7 +11,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <boost/shared_ptr.hpp>
 
 #include "deal.II/base/logstream.h"
 

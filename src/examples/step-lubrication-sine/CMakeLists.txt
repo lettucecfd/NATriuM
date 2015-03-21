@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        compare-Brenner
+        step-lubrication-sine
         )
 
 
@@ -12,9 +12,9 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                compare-Brenner.cpp
-                SinusoidalShear2D.h   
-                SinusoidalShear2D.cpp             
+                step-lubrication-sine.cpp
+                LubricationSine.h   
+                LubricationSine.cpp             
                )
 #
 # link natrium library to executable

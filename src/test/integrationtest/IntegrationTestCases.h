@@ -39,6 +39,8 @@ TestResult ConvergenceTestPeriodic ();
 
 TestResult ConvergenceTestMovingWall ();
 
+TestResult ConvergenceTestImplicitLBM ();
+
 
 } /* namespace IntegrationTests */
 } /* namespace natrium */

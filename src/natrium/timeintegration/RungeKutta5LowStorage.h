@@ -83,8 +83,7 @@ public:
 	 * 			dU_j = A_j * dU_{j-1} + timeStep * F(U_j)
 	 * 			U_j  = U_{j-1} + B_j* dU_j
 	 */
-	virtual void step(VECTOR& vector,
-			const MATRIX& systemMatrix, const VECTOR& systemVector);
+	virtual double step(VECTOR& vector, const MATRIX& systemMatrix, const VECTOR& systemVector,  double t = 0, double dt = 0);
 
 	const vector<double>& getA() const {
 		return m_a;

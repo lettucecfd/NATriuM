@@ -18,6 +18,9 @@
 #include "deal.II/dofs/dof_handler.h"
 #include <deal.II/lac/compressed_sparsity_pattern.h>
 
+#include "../utilities/NATriuMException.h"
+#include "../utilities/Logging.h"
+
 #include "Boundary.h"
 
 namespace natrium {
@@ -26,22 +29,29 @@ namespace natrium {
  * @short Exception for impossible periodic boundary,
  * e.g. when the interfaces don't have the same length.
  */
-class PeriodicBoundaryNotPossible: public std::exception {
+class PeriodicBoundaryNotPossible: public NATriuMException {
 private:
-	std::string m_message;
+	std::string message;
 public:
-	PeriodicBoundaryNotPossible() :
-			m_message("Error in periodic boundary") {
+	PeriodicBoundaryNotPossible(const char *msg,
+			const std::stringstream & additionalInfo = std::stringstream()) :
+			NATriuMException(msg), message(msg) {
+		LOG(DETAILED) << "Additional information on error: " << additionalInfo.str().c_str() << endl;
+
 	}
-	PeriodicBoundaryNotPossible(const std::string& message) :
-			m_message("Error in periodic boundary: " + message) {
+	PeriodicBoundaryNotPossible(const string& msg,
+			const std::stringstream & additionalInfo = std::stringstream()) :
+			NATriuMException(msg), message(msg) {
+		LOG(DETAILED) << "Additional information on error: " << additionalInfo.str().c_str() << endl;
 	}
-	virtual const char* what() const throw () {
-		return m_message.c_str();
+	~PeriodicBoundaryNotPossible() throw () {
 	}
-	virtual ~PeriodicBoundaryNotPossible() throw () {
+	const char *what() const throw () {
+		return this->message.c_str();
 	}
 };
+
+
 
 /**
  * @short  A periodic boundary condition,
@@ -49,6 +59,7 @@ public:
  */
 template<size_t dim>
 class PeriodicBoundary: public Boundary<dim> {
+	friend class own_double_less_periodic;
 private:
 
 	/// triangulation object

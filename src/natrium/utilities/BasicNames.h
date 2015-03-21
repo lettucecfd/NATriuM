@@ -30,7 +30,7 @@
 namespace natrium {
 
 // GLOBAL COMPILER FLAGS
-#define WITH_TRILINOS
+// #define WITH_TRILINOS
 
 
 /// The following names will be used throughout natrium

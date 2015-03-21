@@ -1,5 +1,6 @@
 
 #include "MPIGuard.h"
+#include "Logging.h"
 
 namespace natrium  {
 

@@ -34,6 +34,8 @@ set(	SOLVER_TEST
 set(    TIMEINTEGRATION_TEST
         timeintegration/RungeKutta5LowStorage_test.cpp
         timeintegration/ThetaMethod_test.cpp
+        timeintegration/DealIIWrapper_test.cpp
+        timeintegration/ExponentialTimeIntegrator_test.cpp
         )
 set(    UTILITIES_TEST
         utilities/BasicNames_test.cpp

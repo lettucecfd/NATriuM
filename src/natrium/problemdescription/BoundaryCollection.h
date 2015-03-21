@@ -15,28 +15,30 @@
 #include "deal.II/lac/constraint_matrix.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
 /**
- * @short Boundary errors (e.g. duplicate boundary indicators)
+ * @short Exception class for Boundaries
  */
-class BoundaryCollectionError: public std::exception {
+class BoundaryCollectionException: public NATriuMException {
 private:
-	std::string m_message;
+	std::string message;
 public:
-	BoundaryCollectionError() :
-			m_message("Error in Boundary collection") {
+	BoundaryCollectionException(const char *msg) :
+			NATriuMException(msg), message(msg) {
 	}
-	BoundaryCollectionError(const std::string& message) :
-			m_message("Error in Boundary collection: " + message) {
+	BoundaryCollectionException(const string& msg) :
+			NATriuMException(msg), message(msg) {
 	}
-	virtual const char* what() const throw () {
-		return m_message.c_str();
+	~BoundaryCollectionException() throw () {
 	}
-	virtual ~BoundaryCollectionError() throw () {
+	const char *what() const throw () {
+		return this->message.c_str();
 	}
 };
+
 
 /**
  * @short The BoundaryCollection class defines all boundaries of a flow domain.
@@ -83,7 +85,7 @@ public:
 		bool success2 = m_boundaries.insert(
 				std::make_pair(boundary->getBoundaryIndicator2(), boundary)).second;
 		if ((not success1) or (not success2)) {
-			throw BoundaryCollectionError(
+			throw BoundaryCollectionException(
 					"Boundary could not be inserted. Boundary indicators must be unique.");
 		}
 		m_periodicBoundaries.insert(std::make_pair(boundary->getBoundaryIndicator1(), boundary));
@@ -99,7 +101,7 @@ public:
 		bool success = m_boundaries.insert(
 				std::make_pair(boundary->getBoundaryIndicator(), boundary)).second;
 		if (not success) {
-			throw BoundaryCollectionError(
+			throw BoundaryCollectionException(
 					"Boundary could not be inserted. Boundary indicators must be unique.");
 		}
 		m_minLeeBoundaries.insert(std::make_pair(boundary->getBoundaryIndicator(), boundary));
@@ -111,7 +113,7 @@ public:
 	 */
 	const shared_ptr<Boundary<dim> >& getBoundary(size_t boundaryIndicator) const{
 		if (m_boundaries.count(boundaryIndicator) == 0){
-			throw BoundaryCollectionError("in getBoundary: This boundary collection does not contain a boundary with the specified boundary indicator.");
+			throw BoundaryCollectionException("in getBoundary: This boundary collection does not contain a boundary with the specified boundary indicator.");
 		}
 		return m_boundaries.at(boundaryIndicator);
 	}
@@ -123,7 +125,7 @@ public:
 	const shared_ptr<PeriodicBoundary<dim> >& getPeriodicBoundary(size_t boundaryIndicator) const {
 		assert (isPeriodic(boundaryIndicator));
 		if (m_periodicBoundaries.count(boundaryIndicator) == 0){
-			throw BoundaryCollectionError("in getPeriodicBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.");
+			throw BoundaryCollectionException("in getPeriodicBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.");
 		}
 		return m_periodicBoundaries.at(boundaryIndicator);
 	}
@@ -135,7 +137,7 @@ public:
 	const shared_ptr<MinLeeBoundary<dim> >& getMinLeeBoundary(size_t boundaryIndicator) const{
 		assert (not isPeriodic(boundaryIndicator));
 		if (m_minLeeBoundaries.count(boundaryIndicator) == 0){
-			throw BoundaryCollectionError("in minLeeBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.");
+			throw BoundaryCollectionException("in minLeeBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.");
 		}
 		return m_minLeeBoundaries.at(boundaryIndicator);
 	}

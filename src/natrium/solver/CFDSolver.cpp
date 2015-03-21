@@ -23,6 +23,9 @@
 
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
+#include "../timeintegration/ExponentialTimeIntegrator.h"
+#include "../timeintegration/DealIIWrapper.h"
+
 
 #include "../utilities/Logging.h"
 #include "../utilities/CFDSolverUtilities.h"
@@ -135,8 +138,16 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				m_boltzmannModel->getQ() - 1,
 				configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
-		throw CFDSolverException(
-				"Exponential time integrator is not implemented, yet.");
+		m_timeIntegrator = make_shared<
+								ExponentialTimeIntegrator<distributed_sparse_block_matrix,
+										distributed_block_vector> >(
+												configuration->getTimeStepSize(), numberOfDoFs,
+												m_boltzmannModel->getQ() - 1);
+	} else if (OTHER == configuration->getTimeIntegrator()) {
+		m_timeIntegrator = make_shared<
+						DealIIWrapper<distributed_sparse_block_matrix,
+								distributed_block_vector> >(
+						configuration->getTimeStepSize(), configuration->getDealIntegrator());
 	}
 
 // initialize macroscopic variables
@@ -213,6 +224,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	}
 	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
 			<< nofBoundaryNodes << endl;
+	LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs() << endl;
 
 	// Initialize distribution functions
 	if (configuration->isRestartAtLastCheckpoint()) {
@@ -251,7 +263,7 @@ void CFDSolver<dim>::stream() {
 	const distributed_block_vector& systemVector =
 			m_advectionOperator->getSystemVector();
 
-	m_timeIntegrator->step(f, systemMatrix, systemVector);
+	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time, m_timeIntegrator->getTimeStepSize());
 
 }
 template void CFDSolver<2>::stream();
@@ -279,7 +291,6 @@ void CFDSolver<dim>::run() {
 		output(m_i);
 		stream();
 		collide();
-		m_time += m_timeIntegrator->getTimeStepSize();
 	}
 	output(N);
 	LOG(BASIC) << "NATriuM run complete." << endl;
