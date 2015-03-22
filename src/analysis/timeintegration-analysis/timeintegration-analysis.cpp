@@ -45,7 +45,7 @@ using namespace natrium;
 int main() {
 
 	cout
-			<< "Starting NATriuM convergence analysis with moving wall boundaries (various p) ..."
+			<< "Starting NATriuM time integrator analysis with moving wall boundaries..."
 			<< endl;
 
 	/////////////////////////////////////////////////
@@ -212,12 +212,15 @@ int main() {
 		std::ofstream orderFile(filename2.str().c_str());
 		orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 		orderFile
-				<< "#  orderOfFe  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
+				<< "#  orderOfFe  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2	runtime"
 				<< endl;
 
 		cout << "Time integrator: " << timeintegrator.c_str() << endl;
 
-		for (double dt = 2; dt >= 2; dt /= 2.) {
+		for (double dt = 0.001; dt <= 1.024; dt *= 2.) {
+			if (dt<0.05)
+				dt *=2;
+
 			cout << "dt = " << dt << endl;
 
 		// time measurement variables
@@ -239,7 +242,7 @@ int main() {
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(0);
 		configuration->setTimeStepSize(dt);
-		configuration->setNumberOfTimeSteps(10.0 / dt);
+		configuration->setNumberOfTimeSteps(1.024 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 		configuration->setNumberOfTimeSteps(1);
@@ -258,6 +261,10 @@ int main() {
 			time1 /= CLOCKS_PER_SEC;
 			time2 /= CLOCKS_PER_SEC;
 			solver.getErrorStats()->update();
+
+			if (solver.getErrorStats()->getMaxVelocityError()>solver.getErrorStats()->getMaxUAnalytic())
+				break;
+
 			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << " Max Error U_analytic: "<< solver.getErrorStats()->getMaxVelocityError() << endl;
 			// put out runtime
@@ -272,10 +279,13 @@ int main() {
 					<< solver.getErrorStats()->getMaxVelocityError() << " "
 					<< solver.getErrorStats()->getMaxDensityError() << " "
 					<< solver.getErrorStats()->getL2VelocityError() << " "
-					<< solver.getErrorStats()->getL2DensityError() << endl;
+					<< solver.getErrorStats()->getL2DensityError() << " "
+					<< time2 << endl;
 		} catch (std::exception& e) {
 			cout << " Error: " << e.what() << endl;
 		}
+
+
 
 	} /* for time step*/
 	} /* for integrator */
