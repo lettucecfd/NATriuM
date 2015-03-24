@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        convergence-analysis-basic
+        convergence-analysis-Ma
         )
 
 
@@ -12,7 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                convergence-analysis-basic.cpp
+                convergence-analysis-Ma.cpp
                 ${PROJECT_SOURCE_DIR}/examples/step-1/TaylorGreenVortex2D.h   
                 ${PROJECT_SOURCE_DIR}/examples/step-1/TaylorGreenVortex2D.cpp
                )
