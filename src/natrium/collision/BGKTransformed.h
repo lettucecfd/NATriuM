@@ -33,13 +33,15 @@ private:
 	/// prefactor of the collision (- 1/(tau + 0.5))
 	double m_prefactor;
 
+	// time step size
+	double  m_dt;
 public:
 
 	/**
 	 * @short constructor
 	 * @param[in] relaxationParameter relaxation parameter tau
 	 */
-	BGKTransformed(size_t Q, double relaxationParameter);
+	BGKTransformed(size_t Q, double relaxationParameter, double dt);
 
 	/// destructor
 	virtual ~BGKTransformed();
@@ -70,8 +72,26 @@ public:
 				/ (timeStepSize * boltzmannModel.getSpeedOfSoundSquare());
 	}
 
+	void setRelaxationParameter(double tau, double dt){
+		assert (tau > 0);
+		m_relaxationParameter = tau;
+		m_prefactor = - 1. / (tau + 0.5);
+		m_dt = dt;
+	}
+
 	double getPrefactor() const {
 		return m_prefactor;
+	}
+
+	/**
+	 * @short changes time step and relaxation time at constant velocity and speed of sound
+	 */
+	void setTimeStep(double dt){
+		assert (dt > 0);
+		double tau_times_dt = m_dt * m_relaxationParameter;
+		m_dt = dt;
+		m_relaxationParameter = tau_times_dt/dt;
+		m_prefactor = - 1. / (m_relaxationParameter + 0.5);
 	}
 
 	size_t getQ() const {

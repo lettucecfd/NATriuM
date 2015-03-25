@@ -517,6 +517,68 @@ public:
 		leave_subsection();
 	}
 
+	double getSimulationEndTime() {
+		enter_subsection("Stop condition");
+		double end_time;
+		try {
+			end_time = get_double("Simulation end time");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Simulation end time' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return end_time;
+	}
+
+	void setSimulationEndTime(double end_time) {
+		enter_subsection("Stop condition");
+		try {
+			set("Simulation end time", end_time);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << end_time
+					<< " to Simulation end time: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+	}
+
+	double getConvergenceThreshold() {
+		enter_subsection("Stop condition");
+		double threshold;
+		try {
+			threshold = get_double("Convergence threshold");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Convergence threshold' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return threshold;
+	}
+
+	void setConvergenceThreshold(double threshold) {
+		enter_subsection("Stop condition");
+		try {
+			set("Convergence threshold", threshold);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << threshold
+					<< " to Convergence threshold: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+	}
+
 	size_t getOutputCheckpointInterval() {
 		enter_subsection("Output");
 		size_t checkpointInterval;

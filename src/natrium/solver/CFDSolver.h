@@ -74,6 +74,12 @@ private:
 	/// macroscopic velocity
 	vector<distributed_vector> m_velocity;
 
+	/// macroscopic density
+	distributed_vector m_tmpDensity;
+
+	/// temporary velocity to test for convergence
+	vector<distributed_vector> m_tmpVelocity;
+
 	/// description of the CFD problem (boundraries, initial values, etc.)
 	shared_ptr<ProblemDescription<dim> > m_problemDescription;
 
@@ -111,6 +117,10 @@ private:
 
 	// starting time
 	time_t m_tstart;
+
+	// residuum
+	double m_residuumDensity;
+	double m_residuumVelocity;
 
 protected:
 
@@ -160,6 +170,11 @@ public:
 	 * @short run CFD solver
 	 */
 	void run();
+
+	/**
+	 * @short test for stop conditions
+	 */
+	bool stopConditionMet();
 
 	/**
 	 * @short create output data and write to file
@@ -249,6 +264,14 @@ public:
 				<< endl;
 		return 0;
 
+	}
+
+	double getResiduumDensity() const {
+		return m_residuumDensity;
+	}
+
+	double getResiduumVelocity() const {
+		return m_residuumVelocity;
 	}
 }
 ;

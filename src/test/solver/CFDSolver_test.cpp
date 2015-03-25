@@ -12,6 +12,7 @@
 #include "utilities/BasicNames.h"
 
 #include "PeriodicTestFlow2D.h"
+#include "TaylorGreenVortex2D.h"
 
 namespace natrium {
 
@@ -145,6 +146,42 @@ BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
 
 	cout << "done" << endl;
 } /* CFDSolver_IterativeInit_test */
+
+BOOST_AUTO_TEST_CASE(CFDSolver_StopCondition_test) {
+	cout << "CFDSolver_StopCondition_test..." << endl;
+
+	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	testConfiguration->setSwitchOutputOff(false);
+	testConfiguration->setUserInteraction(false);
+	testConfiguration->setSimulationEndTime(0.5);
+	testConfiguration->setNumberOfTimeSteps(10);
+	testConfiguration->setConvergenceThreshold(5e-2);
+
+	size_t refinementLevel = 2;
+	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()));
+	testConfiguration->setTimeStepSize(0.1*deltaX);
+	// set viscosity so that tau = 1
+	double viscosity = 1./5;
+
+	shared_ptr<ProblemDescription<2> > testFlow = make_shared<TaylorGreenVortex2D>(viscosity, refinementLevel);
+	CFDSolver<2> solver(testConfiguration, testFlow);
+
+	solver.run();
+	BOOST_CHECK(solver.getIteration() == 10);
+	testConfiguration->setNumberOfTimeSteps(1000000);
+
+	solver.run();
+	BOOST_CHECK(solver.getTime() >= 0.5);
+	BOOST_CHECK(solver.getTime() < 0.5 + 0.1*deltaX);
+	testConfiguration->setSimulationEndTime(1000000.0);
+
+	solver.run();
+	BOOST_CHECK_LE(solver.getResiduumDensity(), 5e-2);
+	BOOST_CHECK_LE(solver.getResiduumVelocity(), 5e-2);
+
+
+	cout << "done" << endl;
+} /* CFDSolver_StopCondition_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 
