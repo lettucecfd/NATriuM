@@ -151,7 +151,8 @@ BOOST_AUTO_TEST_CASE(CFDSolver_StopCondition_test) {
 	cout << "CFDSolver_StopCondition_test..." << endl;
 
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
-	testConfiguration->setSwitchOutputOff(true);
+	testConfiguration->setSwitchOutputOff(false);
+	testConfiguration->setUserInteraction(false);
 	testConfiguration->setSimulationEndTime(0.5);
 	testConfiguration->setNumberOfTimeSteps(10);
 	testConfiguration->setConvergenceThreshold(5e-2);

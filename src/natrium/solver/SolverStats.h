@@ -44,9 +44,8 @@ public:
 	 */
 	SolverStats(CFDSolver<dim> * cfdsolver,
 			const std::string tableFileName = "") :
-			m_solver(cfdsolver),
-			m_filename(tableFileName),
-			m_outputOff(tableFileName == ""){
+			m_solver(cfdsolver), m_filename(tableFileName), m_outputOff(
+					tableFileName == "") {
 		// be careful: The solver won't be constructed completely when this constructor is called
 
 		// set information
@@ -71,10 +70,12 @@ public:
 	}
 	void printHeaderLine() {
 		assert(not m_outputOff);
-		(*m_tableFile) << "#  i      t      max |u_numeric|    kinE    maxP     minP" << endl;
+		(*m_tableFile)
+				<< "#  i      t      max |u_numeric|    kinE    maxP     minP    residuum(rho)   residuum(u)"
+				<< endl;
 	}
 	void update() {
-		if (isUpToDate()){
+		if (isUpToDate()) {
 			return;
 		}
 		m_iterationNumber = m_solver->getIteration();
@@ -82,15 +83,49 @@ public:
 		m_maxU = m_solver->getMaxVelocityNorm();
 		m_kinE = PhysicalProperties<dim>::kineticEnergy(m_solver->getVelocity(),
 				m_solver->getDensity());
-		m_maxP = PhysicalProperties<dim>::maximalPressure(m_solver->getDensity(), m_solver->getBoltzmannModel()->getSpeedOfSound(), m_minP);
+		m_maxP = PhysicalProperties<dim>::maximalPressure(
+				m_solver->getDensity(),
+				m_solver->getBoltzmannModel()->getSpeedOfSound(), m_minP);
+		// Residuals must not be calculated because they have to be determined every 10th time steps
 	}
+
+	void calulateResiduals(size_t iteration){
+		assert(iteration % 10 == 0);
+		if (not (m_solver->m_i - m_solver->m_iterationStart < 100)) {
+			// i.e. not first visit of this if-statement
+			///// CALCULATE MAX VELOCITY VARIATION
+			// substract new from old velocity
+			m_solver->m_tmpVelocity.at(0).add(-1.0, m_solver->m_velocity.at(0));
+			m_solver->m_tmpVelocity.at(1).add(-1.0, m_solver->m_velocity.at(1));
+			// calculate squares
+			m_solver->m_tmpVelocity.at(0).scale(m_solver->m_tmpVelocity.at(0));
+			m_solver->m_tmpVelocity.at(1).scale(m_solver->m_tmpVelocity.at(1));
+			// calculate ||error (pointwise)||^2
+			m_solver->m_tmpVelocity.at(0).add(m_solver->m_tmpVelocity.at(1));
+			m_solver->m_residuumVelocity = sqrt(
+					m_solver->m_tmpVelocity.at(0).linfty_norm());
+			///// CALCULATE MAX DENSITY VARIATION
+			m_solver->m_tmpDensity.add(-1.0, m_solver->m_density);
+			m_solver->m_residuumDensity = sqrt(
+					m_solver->m_tmpVelocity.at(0).linfty_norm());
+
+		}
+		// (if first visit of this if-statement, only this part is executed)
+		assert(m_solver->m_tmpVelocity.size() == m_solver->m_velocity.size());
+		m_solver->m_tmpVelocity.at(0) = m_solver->m_velocity.at(0);
+		m_solver->m_tmpVelocity.at(1) = m_solver->m_velocity.at(1);
+		m_solver->m_tmpDensity = m_solver->m_density;
+	}
+
 	void printNewLine() {
 		assert(not m_outputOff);
 		if (not isUpToDate()) {
 			update();
 		}
 		(*m_tableFile) << m_iterationNumber << " " << m_time << " " << m_maxU
-				<< " " << m_kinE << " " << m_maxP << " " << m_minP <<  endl;
+				<< " " << m_kinE << " " << m_maxP << " " << m_minP << " "
+				<< m_solver->m_residuumDensity << " "
+				<< m_solver->m_residuumVelocity << endl;
 	}
 
 	size_t getIterationNumber() const {
@@ -128,9 +163,10 @@ public:
 	double getMinP() const {
 		return m_minP;
 	}
+
 };
 
-
 } /* namespace natrium */
+
 
 #endif /* SOLVERSTATS_H_ */

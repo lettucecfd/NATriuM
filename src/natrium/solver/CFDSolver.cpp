@@ -328,59 +328,23 @@ bool CFDSolver<dim>::stopConditionMet() {
 	}
 	// Converged
 	const size_t check_interval = 10;
-	const double convergence_threshold = m_configuration->getConvergenceThreshold();
-	if (m_i % check_interval == 0) {
-		if (not (m_i - m_iterationStart < 100)) {
-			// i.e. not first visit of this if-statement
-			///// CALCULATE MAX VELOCITY VARIATION
-			// substract new from old velocity
-			m_tmpVelocity.at(0).add(-1.0, m_velocity.at(0));
-			m_tmpVelocity.at(1).add(-1.0, m_velocity.at(1));
-			if (dim == 3) {
-				m_tmpVelocity.at(2).add(-1.0, m_velocity.at(2));
-			}
-			// calculate squares
-			m_tmpVelocity.at(0).scale(m_tmpVelocity.at(0));
-			m_tmpVelocity.at(1).scale(m_tmpVelocity.at(1));
-			if (dim == 3) {
-				m_tmpVelocity.at(2).scale(m_tmpVelocity.at(2));
-			}
-			// calculate ||error (pointwise)||^2
-			m_tmpVelocity.at(0).add(m_tmpVelocity.at(1));
-			if (dim == 3) {
-				m_tmpVelocity.at(0).add(m_tmpVelocity.at(2));
-			}
-			m_residuumVelocity = sqrt(
-					m_tmpVelocity.at(0).linfty_norm());
-			///// CALCULATE MAX DENSITY VARIATION
-			m_tmpDensity.add(-1.0, m_density);
-			m_residuumDensity = sqrt(
-					m_tmpVelocity.at(0).linfty_norm());
-
-			if ((m_residuumVelocity < convergence_threshold)
-					and (m_residuumDensity < convergence_threshold)) {
-				LOG(BASIC)
-						<< "Stop condition: Simulation converged below threshold "
-						<< convergence_threshold << " in iteration " << m_i
-						<< "." << endl;
-				LOG(BASIC) << "The actual variation was "
-						<< m_residuumVelocity << " on velocity and "
-						<< m_residuumDensity
-						<< " on density between iterations "
-						<< m_i - check_interval << " and m_i." << endl;
-				return true;
-			}
+	const double convergence_threshold =
+			m_configuration->getConvergenceThreshold();
+	if (m_i % 10 == 0) {
+		m_solverStats->calulateResiduals(m_i);
+		if ((m_residuumVelocity < convergence_threshold)
+				and (m_residuumDensity < convergence_threshold)) {
+			LOG(BASIC)
+					<< "Stop condition: Simulation converged below threshold "
+					<< convergence_threshold << " in iteration " << m_i << "."
+					<< endl;
+			LOG(BASIC) << "The actual variation was " << m_residuumVelocity
+					<< " on velocity and " << m_residuumDensity
+					<< " on density between iterations " << m_i - check_interval
+					<< " and " << m_i << "." << endl;
+			return true;
 		}
-		// (if first visit of this if-statement, only this part is executed)
-		assert (m_tmpVelocity.size() == m_velocity.size());
-		m_tmpVelocity.at(0) = m_velocity.at(0);
-		m_tmpVelocity.at(1) = m_velocity.at(1);
-		if (dim == 3){
-			m_tmpVelocity.at(2) = m_velocity.at(2);
-		}
-		m_tmpDensity = m_density;
-
-	} /* if (m_i % 100 == 0) */
+	}
 	return false;
 }
 template bool CFDSolver<2>::stopConditionMet();
@@ -398,7 +362,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 					<< endl;
 		}
 		// output estimated runtime after iterations 1, 10, 100, 1000, ...
-		if (iteration > m_iterationStart) {
+		/*if (iteration > m_iterationStart) {
 			if (int(log10(iteration - m_iterationStart))
 					== log10(iteration - m_iterationStart)) {
 				time_t estimated_end = m_tstart
@@ -410,7 +374,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 				LOG(BASIC) << "i = " << iteration << "; Estimated end: "
 						<< string(asctime(ltm)) << endl;
 			}
-		}
+		}*/
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"

@@ -56,6 +56,7 @@ public:
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
 			bool inInitializationProcedure = false) const = 0;
+	virtual void setTimeStep(double dt) = 0;
 };
 
 /** @short Abstract class for the description of collision schemes.
@@ -65,9 +66,9 @@ class Collision: public CollisionModel {
 
 protected:
 	/// Boltzmann model (e.g. D2Q9Incompressible)
-	const BoltzmannType m_boltzmannType;
+	BoltzmannType m_boltzmannType;
 
-	const CollisionType m_collisionType;
+	CollisionType m_collisionType;
 
 	/// D (dimension)
 	size_t m_d;
@@ -146,16 +147,18 @@ public:
 			vector<distributed_vector>& velocities,
 			bool inInitializationProcedure = false) const;
 
-
-	/**
-	 * @short calculate the time step, so that the Courant number is 1 for the diagonal directions
-	 */
-	static double calculateOptimalTimeStep(double dx,
-			const BoltzmannType& boltzmannType) {
-		assert(dx > 0);
-		return dx / boltzmannType.getMaxParticleVelocityMagnitude();
+	virtual void setTimeStep(double dt){
+		m_collisionType.setTimeStep(dt);
 	}
 
+
+	BoltzmannType getBoltzmannType() const {
+		return m_boltzmannType;
+	}
+
+	CollisionType getCollisionType() const {
+		return m_collisionType;
+	}
 };
 
 } /* namespace natrium */

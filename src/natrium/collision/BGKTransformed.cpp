@@ -10,9 +10,9 @@
 namespace natrium {
 
 /// constructor
-BGKTransformed::BGKTransformed(size_t Q, double relaxationParameter) :
+BGKTransformed::BGKTransformed(size_t Q, double relaxationParameter, double dt) :
 	 m_Q(Q), m_relaxationParameter(relaxationParameter), m_prefactor(
-				-1. / (relaxationParameter + 0.5)) {
+				-1. / (relaxationParameter + 0.5)), m_dt(dt) {
 
 
 } // constructor
