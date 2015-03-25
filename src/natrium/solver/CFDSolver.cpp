@@ -26,7 +26,6 @@
 #include "../timeintegration/ExponentialTimeIntegrator.h"
 #include "../timeintegration/DealIIWrapper.h"
 
-
 #include "../utilities/Logging.h"
 #include "../utilities/CFDSolverUtilities.h"
 #include "../utilities/MPIGuard.h"
@@ -57,7 +56,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// check if problem's boundary conditions are well defined
 	bool boundaries_ok = problemDescription->checkBoundaryConditions();
-	if (!boundaries_ok){
+	if (!boundaries_ok) {
 		throw CFDSolverException(
 				"Boundary conditions do no fit to triangulation.");
 	}
@@ -114,7 +113,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_boltzmannModel);
 		if (Stencil_D2Q9 == configuration->getStencil()) {
-			BGKTransformed bgk(m_boltzmannModel->getQ(), tau);
+			BGKTransformed bgk(m_boltzmannModel->getQ(), tau,
+					m_configuration->getTimeStepSize());
 			D2Q9IncompressibleModel d2q9(configuration->getStencilScaling());
 			m_collisionModel = make_shared<
 					Collision<D2Q9IncompressibleModel, BGKTransformed> >(d2q9,
@@ -139,27 +139,32 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
-								ExponentialTimeIntegrator<distributed_sparse_block_matrix,
-										distributed_block_vector> >(
-												configuration->getTimeStepSize(), numberOfDoFs,
-												m_boltzmannModel->getQ() - 1);
+				ExponentialTimeIntegrator<distributed_sparse_block_matrix,
+						distributed_block_vector> >(
+				configuration->getTimeStepSize(), numberOfDoFs,
+				m_boltzmannModel->getQ() - 1);
 	} else if (OTHER == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
-						DealIIWrapper<distributed_sparse_block_matrix,
-								distributed_block_vector> >(
-						configuration->getTimeStepSize(), configuration->getDealIntegrator());
+				DealIIWrapper<distributed_sparse_block_matrix,
+						distributed_block_vector> >(
+				configuration->getTimeStepSize(),
+				configuration->getDealIntegrator());
 	}
 
 // initialize macroscopic variables
 	vector<dealii::Point<dim> > supportPoints(numberOfDoFs);
 	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
 	m_density.reinit(numberOfDoFs);
+	m_tmpDensity.reinit(numberOfDoFs);
 	for (size_t i = 0; i < dim; i++) {
 		distributed_vector vi(numberOfDoFs);
 		m_velocity.push_back(vi);
+		m_tmpVelocity.push_back(vi);
 	}
 	m_problemDescription->applyInitialDensities(m_density, supportPoints);
 	m_problemDescription->applyInitialVelocities(m_velocity, supportPoints);
+	m_residuumDensity = 1.0;
+	m_residuumVelocity = 1.0;
 
 // OUTPUT
 	double maxU = getMaxVelocityNorm();
@@ -263,7 +268,9 @@ void CFDSolver<dim>::stream() {
 	const distributed_block_vector& systemVector =
 			m_advectionOperator->getSystemVector();
 
-	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time, m_timeIntegrator->getTimeStepSize());
+	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time,
+			m_timeIntegrator->getTimeStepSize());
+	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
 
 }
 template void CFDSolver<2>::stream();
@@ -286,21 +293,102 @@ template void CFDSolver<3>::reassemble();
 
 template<size_t dim>
 void CFDSolver<dim>::run() {
-	size_t N = m_configuration->getNumberOfTimeSteps();
-	for (m_i = m_iterationStart; m_i < N; m_i++) {
+	m_i = m_iterationStart;
+	while (true) {
+		m_i++;
+		if (stopConditionMet()) {
+			break;
+		}
 		output(m_i);
 		stream();
 		collide();
 	}
-	output(N);
+	output(m_i);
 	LOG(BASIC) << "NATriuM run complete." << endl;
 }
 template void CFDSolver<2>::run();
 template void CFDSolver<3>::run();
 
 template<size_t dim>
+bool CFDSolver<dim>::stopConditionMet() {
+	// Maximum number of iterations
+	size_t N = m_configuration->getNumberOfTimeSteps();
+	if (m_i >= N) {
+		LOG(BASIC)
+				<< "Stop condition: Maximum number of iterations reached in iteration "
+				<< m_i << "." << endl;
+		return true;
+	}
+	// End time
+	const double end_time = m_configuration->getSimulationEndTime();
+	if (m_time >= end_time) {
+		LOG(BASIC) << "Stop condition: Simulation end time t_max=" << end_time
+				<< " reached in iteration " << m_i << "." << endl;
+		return true;
+	}
+	// Converged
+	const size_t check_interval = 10;
+	const double convergence_threshold = m_configuration->getConvergenceThreshold();
+	if (m_i % check_interval == 0) {
+		if (not (m_i - m_iterationStart < 100)) {
+			// i.e. not first visit of this if-statement
+			///// CALCULATE MAX VELOCITY VARIATION
+			// substract new from old velocity
+			m_tmpVelocity.at(0).add(-1.0, m_velocity.at(0));
+			m_tmpVelocity.at(1).add(-1.0, m_velocity.at(1));
+			if (dim == 3) {
+				m_tmpVelocity.at(2).add(-1.0, m_velocity.at(2));
+			}
+			// calculate squares
+			m_tmpVelocity.at(0).scale(m_tmpVelocity.at(0));
+			m_tmpVelocity.at(1).scale(m_tmpVelocity.at(1));
+			if (dim == 3) {
+				m_tmpVelocity.at(2).scale(m_tmpVelocity.at(2));
+			}
+			// calculate ||error (pointwise)||^2
+			m_tmpVelocity.at(0).add(m_tmpVelocity.at(1));
+			if (dim == 3) {
+				m_tmpVelocity.at(0).add(m_tmpVelocity.at(2));
+			}
+			m_residuumVelocity = sqrt(
+					m_tmpVelocity.at(0).linfty_norm());
+			///// CALCULATE MAX DENSITY VARIATION
+			m_tmpDensity.add(-1.0, m_density);
+			m_residuumDensity = sqrt(
+					m_tmpVelocity.at(0).linfty_norm());
+
+			if ((m_residuumVelocity < convergence_threshold)
+					and (m_residuumDensity < convergence_threshold)) {
+				LOG(BASIC)
+						<< "Stop condition: Simulation converged below threshold "
+						<< convergence_threshold << " in iteration " << m_i
+						<< "." << endl;
+				LOG(BASIC) << "The actual variation was "
+						<< m_residuumVelocity << " on velocity and "
+						<< m_residuumDensity
+						<< " on density between iterations "
+						<< m_i - check_interval << " and m_i." << endl;
+				return true;
+			}
+		}
+		// (if first visit of this if-statement, only this part is executed)
+		assert (m_tmpVelocity.size() == m_velocity.size());
+		m_tmpVelocity.at(0) = m_velocity.at(0);
+		m_tmpVelocity.at(1) = m_velocity.at(1);
+		if (dim == 3){
+			m_tmpVelocity.at(2) = m_velocity.at(2);
+		}
+		m_tmpDensity = m_density;
+
+	} /* if (m_i % 100 == 0) */
+	return false;
+}
+template bool CFDSolver<2>::stopConditionMet();
+template bool CFDSolver<3>::stopConditionMet();
+
+template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
-	// output: vector fields as .vtu files
+// output: vector fields as .vtu files
 	if (iteration == m_iterationStart) {
 		m_tstart = time(0);
 	}
@@ -342,7 +430,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 			}
 			addAnalyticSolutionToOutput(data_out);
 			/// For Benchmarks: add analytic solution
-			data_out.build_patches(m_configuration->getSedgOrderOfFiniteElement()+1);
+			data_out.build_patches(
+					m_configuration->getSedgOrderOfFiniteElement() + 1);
 			data_out.write_vtu(vtu_output);
 		}
 
@@ -381,7 +470,7 @@ void CFDSolver<dim>::initializeDistributions() {
 	vector<double> feq(m_boltzmannModel->getQ());
 	numeric_vector u(dim);
 
-	// Initialize f with the equilibrium distribution functions
+// Initialize f with the equilibrium distribution functions
 	m_f.reinit(m_boltzmannModel->getQ(),
 			m_advectionOperator->getNumberOfDoFs());
 	for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
@@ -484,10 +573,10 @@ template void CFDSolver<3>::saveDistributionFunctionsToFiles(
 template<size_t dim>
 void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 		const string& directory) {
-	// create vectors
+// create vectors
 	m_f.reinit(m_boltzmannModel->getQ(),
 			m_advectionOperator->getNumberOfDoFs());
-	// read the distribution functions from file
+// read the distribution functions from file
 	try {
 		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
 			// filename

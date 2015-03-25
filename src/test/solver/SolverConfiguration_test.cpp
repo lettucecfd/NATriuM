@@ -62,6 +62,19 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	config.setIterativeInitializationResidual(0.001);
 	BOOST_CHECK(0.001  == config.getIterativeInitializationResidual());
 
+	config.setSimulationEndTime(10.0);
+	BOOST_CHECK_CLOSE(config.getSimulationEndTime(),10.0,1e-10);
+	config.setNumberOfTimeSteps(100);
+	BOOST_CHECK_EQUAL(config.getNumberOfTimeSteps(),100);
+	config.setConvergenceThreshold(1e-12);
+	BOOST_CHECK_CLOSE(config.getConvergenceThreshold(),1e-12,1e-5);
+
+	/// Failure test
+	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);
+	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-0.1), ConfigurationException);
+
+
+
 	cout << "done" << endl;
 } /*CFDSolverConfiguration_CheckSet_test*/
 
