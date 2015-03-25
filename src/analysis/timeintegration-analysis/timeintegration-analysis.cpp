@@ -40,7 +40,7 @@ using namespace natrium;
 
 // if this define statement is enabled: only the initialization time is regarded
 //#define MEASURE_ONLY_INIT_TIME
-#define ONLY_PERIODIC
+// #define ONLY_PERIODIC
 
 // Main function
 int main() {
@@ -55,7 +55,7 @@ int main() {
 
 #ifdef ONLY_PERIODIC
 	// specify Reynolds number
-	const double Re = 1;
+	const double Re = 8 * atan(1); // = 2 pi
 	// specify Mach number
 	const double Ma = 0.1;
 #else
@@ -67,7 +67,7 @@ int main() {
 	// -------------------
 #ifdef ONLY_PERIODIC
 	// length of quadratic domain
-	const double L = 2 * 3.1415926;
+	const double L =  8 * atan(1); // = 2 pi
 	const double U = 1;
 	const double tmax = 1;
 #else
@@ -85,7 +85,7 @@ int main() {
 	const double t0 = 0.0;
 
 	size_t refinementLevel = 3;
-	size_t orderOfFiniteElement = 5;
+	size_t orderOfFiniteElement = 2;
 
 #ifndef ONLY_PERIODIC
 	// make problem object
