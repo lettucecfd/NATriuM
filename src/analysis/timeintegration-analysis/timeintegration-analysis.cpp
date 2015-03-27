@@ -82,10 +82,10 @@ int main() {
 	const double viscosity = U * L / Re;
 	// starting time
 	//const double t0 = 30.0;
-	const double t0 = 0.0;
+	const double t0 = 1.0; 	// analytic solution won't converge for t0 = 0.0 and adaptive timesteps
 
 	size_t refinementLevel = 3;
-	size_t orderOfFiniteElement = 2;
+	size_t orderOfFiniteElement = 5;
 
 #ifndef ONLY_PERIODIC
 	// make problem object
@@ -235,7 +235,7 @@ int main() {
 			// setup configuration
 			std::stringstream dirName;
 			dirName << getenv("NATRIUM_HOME") << "/timeintegration-analysis/"
-					<< orderOfFiniteElement << "_" << refinementLevel << "_"
+					<< timeintegrator << "_" << CFL << "_"
 					<< dt;
 
 			//configuration->setSwitchOutputOff(true);
@@ -247,7 +247,7 @@ int main() {
 			//configuration->setOutputCheckpointInterval(1000);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
-			configuration->setCommandLineVerbosity(0);
+			configuration->setCommandLineVerbosity(BASIC);
 			configuration->setTimeStepSize(dt);
 			configuration->setSimulationEndTime(tmax);
 

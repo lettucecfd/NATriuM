@@ -1,0 +1,49 @@
+# format1
+
+#################################################
+# Gnuplot script file for plotting data in files#
+#################################################
+reset
+set term postscript eps color enhanced "Helvetica" 28
+set size 1.7, 0.8
+set rmargin at screen 0.7
+
+# LINESTYLE DEFINITIONS
+set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 7 pointtype 1 pointsize 2# pointinterval 10
+set style line 2  linetype 1 linecolor rgb "dark-orange"  linewidth 7 pointtype 2 pointsize 2#pointinterval 10
+set style line 3  linetype 1 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 3 pointsize 2# pointinterval 10
+set style line 4  linetype 1 linecolor rgb "dark-green"  linewidth 7.000 pointtype 4 pointsize 2# pointinterval 10
+set style line 5  linetype 1 linecolor rgb "violet"  linewidth 7.000 pointtype 5 pointsize 2# pointinterval 10
+set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 6 pointsize 2# pointinterval 10
+set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 7 pointsize 2# pointinterval 10
+set style line 8  linetype 3 linecolor rgb "dark-red"  linewidth 7 pointtype 8 pointsize 2# pointinterval 10
+set style line 9  linetype 3 linecolor rgb "dark-orange"  linewidth 7 pointtype 9 pointsize 2#pointinterval 10
+set style line 10  linetype 3 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 10 pointsize 2# pointinterval 10
+set style line 11  linetype 3 linecolor rgb "dark-green"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
+set style line 12  linetype 3 linecolor rgb "violet"  linewidth 7.000 pointtype 12 pointsize 2# pointinterval 10
+set style line 13  linetype 3 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 13 pointsize 2# pointinterval 10
+set style line 14  linetype 3 linecolor rgb "cyan"  linewidth 7.000 pointtype 14 pointsize 2# pointinterval 10
+
+set logscale x
+set logscale y
+set xlabel 'Runtime [s]'
+set ylabel 'Error on u (sup-norm)' offset 2.0, 0
+#set xtics (1e4, 1e6, 1e8)
+
+set output 'integrators_error_vs_runtime.eps'
+set key out vert right #rmargin #samplen 1 horizontal maxrows 1 spacing 1.2
+
+plot 	"FORWARD_EULER_error.txt" 		u 9:5 title "Forward Euler" 	with linespoints ls 2,\
+	"RK_THIRD_ORDER_error.txt" 		u 9:5 title "RK 3rd order" 	with linespoints ls 3,\
+	"RK_CLASSIC_FOURTH_ORDER_error.txt" 	u 9:5 title "RK 4th order" 	with linespoints ls 4,\
+	"RUNGE_KUTTA_5STAGE_error.txt"	 	u 9:5 title "RK 4th order 2"	with linespoints ls 5,\
+	"EXPONENTIAL_error.txt"	 		u 9:5 title "Exponential"	with linespoints ls 6,\
+	"BACKWARD_EULER_error.txt" 		u 9:5 title "Backward Euler"	with linespoints ls 7,\
+	"IMPLICIT_MIDPOINT_error.txt" 		u 9:5 title "Implicit Midpoint"	with linespoints ls 8,\
+	"THETA_METHOD_error.txt" 		u 9:5 title "Theta method" 	with linespoints ls 9,\
+	"CRANK_NICOLSON_error.txt" 		u 9:5 title "Crank Nicolson" 	with linespoints ls 10,\
+	"HEUN_EULER_error.txt" 			u 9:5 title "Heun Euler" 	with linespoints ls 11,\
+	"DOPRI_error.txt" 			u 9:5 title "Dopri" 		with linespoints ls 12,\
+	"BOGACKI_SHAMPINE_error.txt" 		u 9:5 title "Bogacki Shampine" 	with linespoints ls 13,\
+	"SDIRK_TWO_STAGES_error.txt" 		u 9:5 title "SDIRK 2 stages" 	with linespoints ls 14
+
