@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <utilities/DealiiExtensions.h>
+#include "natrium/utilities/DealiiExtensions.h"
 
 namespace natrium {
 

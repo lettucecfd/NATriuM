@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <problemdescription/Boundary.h>
+#include "natrium/problemdescription/Boundary.h"
 
 namespace natrium {
 

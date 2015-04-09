@@ -11,9 +11,9 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 
-#include "problemdescription/PeriodicBoundary.h"
+#include "natrium/problemdescription/PeriodicBoundary.h"
 
-#include "utilities/Math.h"
+#include "natrium/utilities/Math.h"
 
 namespace natrium {
 

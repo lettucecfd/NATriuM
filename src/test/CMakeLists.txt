@@ -1,64 +1,16 @@
+include(../CMake_UnityBuild.txt)
 
-#
-# define testing files
-#
-set(    BOLTZMANNMODELS_TEST
-        boltzmannmodels/D2Q9IncompressibleModel_test.cpp
+
+file(   GLOB_RECURSE
+        TEST_FILES
+        advection/*.cpp
+        collision/*.cpp
+        problemdescription/*.cpp
+        solver/*.cpp
+        stencils/*.cpp
+        timeintegration/*.cpp
+        utilities/*.cpp
         )
-set(    COLLISION_TEST
-        collision/BGKTransformed_test.cpp
-        collision/Collision_test.cpp
-        )            
-set(    PROBLEMDESCRIPTION_TEST
-        problemdescription/BoundaryTools_test.cpp
-        problemdescription/PeriodicBoundary2D_test.cpp
-        problemdescription/MinLeeBoundary2D_test.cpp
-        problemdescription/TaylorGreenTest2D.h
-        problemdescription/WallTestDomain2D.h
-        )   
-set(    ADVECTION_TEST
-        advection/SEDGMinLee_test.cpp
-        advection/PeriodicTestDomain2D.h
-        advection/PeriodicTestDomain2D.cpp
-        )     
-set(	SOLVER_TEST
-		solver/DistributionFunctions_test.cpp
-		solver/CFDSolver_test.cpp 
-		solver/PeriodicTestFlow2D.h
-		solver/SolverConfiguration_test.cpp	
-		solver/SolverStats_test.cpp
-		solver/ErrorStats_test.cpp
-		solver/TaylorGreenVortex2D.h
-		solver/TaylorGreenVortex2D.cpp
-		)        
-set(    TIMEINTEGRATION_TEST
-        timeintegration/RungeKutta5LowStorage_test.cpp
-        timeintegration/ThetaMethod_test.cpp
-        timeintegration/DealIIWrapper_test.cpp
-        timeintegration/ExponentialTimeIntegrator_test.cpp
-        )
-set(    UTILITIES_TEST
-        utilities/BasicNames_test.cpp
-		utilities/Logging_test.cpp
-		utilities/Math_test.cpp
-		utilities/CFDSolverUtilities_test.cpp
-        )      
-
-
-
-#
-# define which directories to test
-#
-set(    TESTS
-        ${BOLTZMANNMODELS_TEST}
-        ${COLLISION_TEST}
-        ${PROBLEMDESCRIPTION_TEST}
-        ${ADVECTION_TEST}
-        ${SOLVER_TEST}
-        ${TIMEINTEGRATION_TEST}
-        ${UTILITIES_TEST}
-                
-)
 
 
 #
@@ -72,12 +24,16 @@ set(    INTEGRATION_TEST_TARGET
         NATriuM_Test
         )
 
+
+
+enable_unity_build(${TEST_TARGET} TEST_FILES)
+
 #
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TEST_TARGET} 
                 MainTest.cpp
-                ${TESTS}
+                ${TEST_FILES}
                 )
 
 ADD_EXECUTABLE( ${INTEGRATION_TEST_TARGET} 
@@ -99,9 +55,8 @@ deal_ii_setup_target( ${INTEGRATION_TEST_TARGET} )
 #
 # link natrium library to executable
 #           
-include_directories( ${PROJECT_SOURCE_DIR}/natrium
+include_directories( ${PROJECT_SOURCE_DIR}/library
 				     ${PROJECT_SOURCE_DIR}/examples
-                     ${PROJECT_BINARY_DIR}/natrium
                      /usr/include/boost
                      )
 

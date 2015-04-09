@@ -5,15 +5,15 @@
  *      Author: kraemer
  */
 
-#include <timeintegration/DealIIWrapper.h>
+#include "natrium/timeintegration/DealIIWrapper.h"
 
 #include "boost/test/unit_test.hpp"
 
 #include "deal.II/lac/sparsity_pattern.h"
 #include "deal.II/lac/compressed_sparsity_pattern.h"
 
-#include "solver/SolverConfiguration.h"
-#include "utilities/BasicNames.h"
+#include "natrium/solver/SolverConfiguration.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 

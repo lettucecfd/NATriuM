@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "utilities/Logging.h"
+#include "natrium/utilities/Logging.h"
 
 #include <time.h>
 

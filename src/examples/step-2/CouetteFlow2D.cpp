@@ -13,10 +13,10 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/geometry_info.h"
 
-#include "problemdescription/PeriodicBoundary.h"
-#include "problemdescription/MinLeeBoundary.h"
+#include "natrium/problemdescription/PeriodicBoundary.h"
+#include "natrium/problemdescription/MinLeeBoundary.h"
 
-#include "utilities/Logging.h"
+#include "natrium/utilities/Logging.h"
 
 namespace natrium {
 

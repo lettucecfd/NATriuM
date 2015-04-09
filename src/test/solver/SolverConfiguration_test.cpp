@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/SolverConfiguration.h"
 
 #include <fstream>
 
@@ -13,7 +13,7 @@
 #include "boost/filesystem.hpp"
 #include "boost/foreach.hpp"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 

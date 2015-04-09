@@ -11,14 +11,14 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "solver/CFDSolver.h"
-#include "solver/SolverConfiguration.h"
-#include "utilities/CFDSolverUtilities.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
 
-#include "problemdescription/ProblemDescription.h"
-#include "boltzmannmodels/D2Q9IncompressibleModel.h"
+#include "natrium/problemdescription/ProblemDescription.h"
+#include "natrium/stencils/D2Q9.h"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "Cylinder2D.h"
 
@@ -44,13 +44,13 @@ int main(int argc, char** argv) {
 	// load grid
 	shared_ptr<Cylinder2D> cylinder = make_shared<Cylinder2D>(
 				viscosity, U);
-	D2Q9IncompressibleModel boltzmannModel(dqScaling);
+	D2Q9 stencil(dqScaling);
 	// set FE order and time step size
 	const size_t orderOfFiniteElement = 2;
 	const double cfl=1.5;
 
 	const double timeStepSize = CFDSolverUtilities::calculateTimestep<2>(*cylinder->getTriangulation(),
-			orderOfFiniteElement, boltzmannModel, cfl);
+			orderOfFiniteElement, stencil, cfl);
 
 
 	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;

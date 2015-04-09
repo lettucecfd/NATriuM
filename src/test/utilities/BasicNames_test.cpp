@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "boost/test/unit_test.hpp"
 

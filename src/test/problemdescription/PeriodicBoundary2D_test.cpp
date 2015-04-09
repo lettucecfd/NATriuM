@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "problemdescription/PeriodicBoundary.h"
+#include "natrium/problemdescription/PeriodicBoundary.h"
 
 #include <iterator>
 
@@ -20,10 +20,10 @@
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/base/quadrature_lib.h"
 
-#include "solver/SolverConfiguration.h"
-#include "solver/CFDSolver.h"
-#include "problemdescription/ProblemDescription.h"
-#include "utilities/BasicNames.h"
+#include "natrium/solver/SolverConfiguration.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/problemdescription/ProblemDescription.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "TaylorGreenTest2D.h"
 

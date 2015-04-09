@@ -25,13 +25,15 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "solver/BenchmarkCFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/stencils/D2Q9.h"
 
-#include "problemdescription/Benchmark.h"
+#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "utilities/CFDSolverUtilities.h"
-#include "utilities/BasicNames.h"
+#include "natrium/problemdescription/Benchmark.h"
+
+#include "natrium/utilities/CFDSolverUtilities.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "../../examples/step-2/CouetteFlow2D.h"
 #include "../../examples/step-1/TaylorGreenVortex2D.h"
@@ -221,7 +223,7 @@ int main() {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*benchmark->getTriangulation(), orderOfFiniteElement,
-					D2Q9IncompressibleModel(scaling), CFL);
+					D2Q9(scaling), CFL);
 
 			cout << "CFL = " << CFL << endl;
 			if (tmax/ dt < 2) {

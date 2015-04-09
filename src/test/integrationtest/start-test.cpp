@@ -11,7 +11,7 @@
 
 #include "IntegrationTestCases.h"
 
-#include "utilities/HtmlTrace.h"
+#include "natrium/utilities/HtmlTrace.h"
 
 using namespace natrium;
 

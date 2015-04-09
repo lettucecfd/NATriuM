@@ -8,13 +8,12 @@
 #ifndef WallTestDomain2D_H_
 #define WallTestDomain2D_H_
 
-#include "problemdescription/ProblemDescription.h"
-
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_generator.h"
 
-#include "problemdescription/MinLeeBoundary.h"
-#include "utilities/BasicNames.h"
+#include "natrium/problemdescription/ProblemDescription.h"
+#include "natrium/problemdescription/MinLeeBoundary.h"
+#include "natrium/utilities/BasicNames.h"
 
 using dealii::Triangulation;
 

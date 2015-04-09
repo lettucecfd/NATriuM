@@ -5,20 +5,20 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include <problemdescription/MinLeeBoundary.h>
+#include "natrium/problemdescription/MinLeeBoundary.h"
 
-#include <boost/test/unit_test.hpp>
+#include "boost/test/unit_test.hpp"
 
 #include "deal.II/base/function.h"
 #include "deal.II/dofs/dof_tools.h"
 #include "deal.II/fe/component_mask.h"
 
-#include "utilities/BasicNames.h"
-#include "boltzmannmodels/D2Q9IncompressibleModel.h"
-#include "problemdescription/ProblemDescription.h"
-#include "advection/SEDGMinLee.h"
-#include "solver/CFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/utilities/BasicNames.h"
+#include "natrium/stencils/D2Q9.h"
+#include "natrium/problemdescription/ProblemDescription.h"
+#include "natrium/advection/SEDGMinLee.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 #include "WallTestDomain2D.h"
 
 namespace natrium {
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 			1);
 	SEDGMinLee<2> advector(problem->getTriangulation(),
 			problem->getBoundaries(), 2,
-			make_shared<D2Q9IncompressibleModel>());
+			make_shared<D2Q9>());
 	vector<bool> isBoundary(advector.getNumberOfDoFs());
 	for (size_t i = 0; i < advector.getNumberOfDoFs(); i++) {
 		std::set<dealii::types::boundary_id> boundaryIndicators;

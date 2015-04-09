@@ -5,11 +5,11 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "solver/CFDSolver.h"
+#include "natrium/solver/CFDSolver.h"
 
 #include "boost/test/unit_test.hpp"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "PeriodicTestFlow2D.h"
 #include "TaylorGreenVortex2D.h"

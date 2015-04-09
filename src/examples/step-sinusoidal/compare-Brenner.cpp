@@ -13,15 +13,15 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "solver/CFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "problemdescription/ProblemDescription.h"
+#include "natrium/problemdescription/ProblemDescription.h"
 
-#include "utilities/BasicNames.h"
-#include "utilities/CFDSolverUtilities.h"
+#include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
 
-#include "boltzmannmodels/D2Q9IncompressibleModel.h"
+#include "natrium/stencils/D2Q9.h"
 
 #include "SinusoidalShear2D.h"
 
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
 				SinusoidalShear2D>(viscosity, u_a, refinementLevel, Lx, h, b);
 		const double dt = CFDSolverUtilities::calculateTimestep<2>(
 				*sinusFlow->getTriangulation(), orderOfFiniteElement,
-				D2Q9IncompressibleModel(scaling), cFL);
+				D2Q9(scaling), cFL);
 
 		/// setup configuration
 		std::stringstream dirName;

@@ -15,17 +15,14 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "solver/BenchmarkCFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "collision/Collision.h"
-#include "collision/BGKTransformed.h"
+#include "natrium/collision/BGKStandard.h"
 
-#include "boltzmannmodels/D2Q9IncompressibleModel.h"
+#include "natrium/problemdescription/Benchmark.h"
 
-#include "problemdescription/Benchmark.h"
-
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "../../examples/step-1/TaylorGreenVortex2D.h"
 
@@ -123,8 +120,8 @@ int main() {
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 		// get tau to test if the "constant value" is really constant
-		const double tau = BGKTransformed::calculateRelaxationParameter(
-				viscosity, dt, *solver.getBoltzmannModel());
+		const double tau = BGK::calculateRelaxationParameter(
+				viscosity, dt, *solver.getStencil());
 		cout << "... scaling = " << scaling << " ... tau = " << tau << " ...";
 		//cout << "constant = " << log2(scaling*scaling) / log2(tau) << " ...";
 		time1 = clock() - timestart;

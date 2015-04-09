@@ -10,7 +10,7 @@
 
 #include <sstream>
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 namespace IntegrationTestCases {

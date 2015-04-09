@@ -11,12 +11,14 @@
 #include <math.h>
 #include <sstream>
 
-#include "solver/BenchmarkCFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "problemdescription/Benchmark.h"
+#include "natrium/problemdescription/Benchmark.h"
 
-#include "utilities/CFDSolverUtilities.h"
+#include "natrium/stencils/D2Q9.h"
+
+#include "natrium/utilities/CFDSolverUtilities.h"
 
 #include "step-1/TaylorGreenVortex2D.h"
 #include "step-2/CouetteFlow2D.h"
@@ -48,7 +50,7 @@ TestResult ConvergenceTestPeriodic() {
 			viscosity, refinementLevel, 1./Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*benchmark->getTriangulation(), orderOfFiniteElement,
-			D2Q9IncompressibleModel(scaling), CFL);
+			D2Q9(scaling), CFL);
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
@@ -126,7 +128,7 @@ TestResult ConvergenceTestImplicitLBM() {
 			viscosity, refinementLevel, 1./Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*benchmark->getTriangulation(), orderOfFiniteElement,
-			D2Q9IncompressibleModel(scaling), CFL);
+			D2Q9(scaling), CFL);
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
@@ -216,7 +218,7 @@ TestResult ConvergenceTestMovingWall() {
 		// Initialization
 		double dt = CFDSolverUtilities::calculateTimestep<2>(
 				*benchmark->getTriangulation(), orderOfFiniteElement,
-				D2Q9IncompressibleModel(scaling), CFL);
+				D2Q9(scaling), CFL);
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
@@ -286,7 +288,7 @@ TestResult ConvergenceTestExponentialLBM() {
 			viscosity, refinementLevel, 1./Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*benchmark->getTriangulation(), orderOfFiniteElement,
-			D2Q9IncompressibleModel(scaling), CFL);
+			D2Q9(scaling), CFL);
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();

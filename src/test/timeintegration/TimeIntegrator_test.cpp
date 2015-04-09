@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "../../timeintegration/TimeIntegrator.h"
+#include "natrium/timeintegration/TimeIntegrator.h"
 
 namespace natrium {
 

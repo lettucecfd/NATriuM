@@ -11,12 +11,12 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "solver/BenchmarkCFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "problemdescription/Benchmark.h"
+#include "natrium/problemdescription/Benchmark.h"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "TaylorGreenVortex2D.h"
 

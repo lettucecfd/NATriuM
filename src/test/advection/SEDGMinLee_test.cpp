@@ -5,11 +5,11 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "advection/SEDGMinLee.h"
+#include "natrium/advection/SEDGMinLee.h"
 
 #include <fstream>
 #include <map>
-#include "complex.h"
+#include <complex.h>
 #include <cstring>
 #include <string>
 #include <dirent.h>
@@ -25,13 +25,11 @@
 #include "deal.II/base/quadrature_lib.h"
 #include "deal.II/lac/lapack_full_matrix.h"
 
-#include "boltzmannmodels/D2Q9IncompressibleModel.h"
-
-#include "timeintegration/RungeKutta5LowStorage.h"
+#include "natrium/stencils/D2Q9.h"
+#include "natrium/timeintegration/RungeKutta5LowStorage.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "PeriodicTestDomain2D.h"
-
-#include "utilities/BasicNames.h"
 
 ///////////////////////////////
 ///////////////////////////////
@@ -54,7 +52,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
 	size_t refinementLevel = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	BOOST_CHECK_NO_THROW(
-			SEDGMinLee<2> streaming(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9IncompressibleModel>()));
+			SEDGMinLee<2> streaming(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9>()));
 
 	cout << "done." << endl;
 } /* SEDGMinLee_Construction_test */
@@ -105,16 +103,16 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 				PeriodicTestDomain2D periodic(refinementLevel);
 				SEDGMinLee<2> streaming(periodic.getTriangulation(),
 						periodic.getBoundaries(), fe_order,
-						make_shared<D2Q9IncompressibleModel>(), "",
+						make_shared<D2Q9>(), "",
 						!useLaxFlux);
 
 				const distributed_sparse_block_matrix& matrices =
 						streaming.getSystemMatrix();
 
-				BOOST_CHECK(matrices.n_block_cols() == D2Q9IncompressibleModel::Q-1);
-				BOOST_CHECK(matrices.n_block_rows() == D2Q9IncompressibleModel::Q-1);
+				BOOST_CHECK(matrices.n_block_cols() == D2Q9::Q-1);
+				BOOST_CHECK(matrices.n_block_rows() == D2Q9::Q-1);
 #ifdef PRINT_SYSTEM_MATRIX
-				for (size_t i = 0; i < 2; i++) { //D2Q9IncompressibleModel::Q; i++){
+				for (size_t i = 0; i < 2; i++) { //D2Q9::Q; i++){
 					cout << "Matrix " << i << ": " << endl;
 					matrices.block(i,i).print_formatted(cout);
 				}
@@ -123,7 +121,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 				//singular value decomposition
 				dealii::LAPACKFullMatrix<double> systemMatrix(
 						matrices.block(0,0).n());
-				for (size_t i = 0; i < D2Q9IncompressibleModel::Q-1; i++) {
+				for (size_t i = 0; i < D2Q9::Q-1; i++) {
 #ifdef CREATE_DATA_FILES
 					// create files for spectrum plots
 					std::stringstream filename;
@@ -201,7 +199,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
 
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>());
+			make_shared<D2Q9>());
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time
@@ -247,7 +245,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>());
+			make_shared<D2Q9>());
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time
@@ -340,7 +338,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
  PeriodicTestDomain2D periodic(refinementLevel);
  SEDGMinLee<2> streaming(periodic.getTriangulation(),
  periodic.getBoundaries(), fe_order,
- make_shared<D2Q9IncompressibleModel>());
+ make_shared<D2Q9>());
 
  // Test if fi(q) == 1 for the given pairs
  dealii::MappingQ1<2> mapping;
@@ -396,7 +394,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
+			make_shared<D2Q9>(), "", useCentralFlux);
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
@@ -529,31 +527,31 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 	PeriodicTestDomain2D periodic(refinementLevel);
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
+			make_shared<D2Q9>(), "", useCentralFlux);
 	streaming.saveCheckpoint(directory.str());
 
 	/////// SANITY TEST //////////
 	BOOST_CHECK_NO_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux));
+			make_shared<D2Q9>(), "", useCentralFlux));
 
 	/////// FAILURE TEST ////////
 	PeriodicTestDomain2D periodic2(4);
 	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic2.getTriangulation(),
 			periodic2.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), directory.str(), useCentralFlux), AdvectionSolverException);
+			make_shared<D2Q9>(), directory.str(), useCentralFlux), AdvectionSolverException);
 
 	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), "gubaguba", useCentralFlux), AdvectionSolverException);
+			make_shared<D2Q9>(), "gubaguba", useCentralFlux), AdvectionSolverException);
 
 	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order+1,
-			make_shared<D2Q9IncompressibleModel>(), directory.str(), useCentralFlux), AdvectionSolverException);
+			make_shared<D2Q9>(), directory.str(), useCentralFlux), AdvectionSolverException);
 
 	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), directory.str(), not useCentralFlux), AdvectionSolverException);
+			make_shared<D2Q9>(), directory.str(), not useCentralFlux), AdvectionSolverException);
 
 
 	cout << "done" << endl;
