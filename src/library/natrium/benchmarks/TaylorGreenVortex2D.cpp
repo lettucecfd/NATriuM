@@ -40,9 +40,10 @@ void TaylorGreenVortex2D::getAnalyticVelocity(const dealii::Point<2>& x, double 
  */
 double TaylorGreenVortex2D::getAnalyticDensity(const dealii::Point<2>& x,
 		double t) const {
-	double rho0 = 1;
-	double p = rho0/4.* (cos(2*x(0)) + cos(2*x(1))) * exp(-4 * getViscosity() * t);
-	return rho0 + p / (m_cs*m_cs) ;
+	//double rho0 = 1;
+	//double p = rho0/4.* (cos(2*x(0)) + cos(2*x(1))) * exp(-4 * getViscosity() * t);
+	//return rho0 + p / (m_cs*m_cs) ;
+	return 1.0;
 }
 
 /**
