@@ -13,8 +13,6 @@ set(    TARGET
 #
 ADD_EXECUTABLE( ${TARGET} 
                 advectionConvergence.cpp
-                PeriodicTestDomain2D.h
-                PeriodicTestDomain2D.cpp
                )
 #
 # link natrium library to executable

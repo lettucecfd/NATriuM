@@ -23,7 +23,7 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/Math.h"
 
-#include "PeriodicTestDomain2D.h"
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
 
 using namespace natrium;
 

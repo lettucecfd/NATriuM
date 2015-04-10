@@ -12,7 +12,7 @@
 #include "natrium/utilities/BasicNames.h"
 
 #include "PeriodicTestFlow2D.h"
-#include "TaylorGreenVortex2D.h"
+#include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 namespace natrium {
 

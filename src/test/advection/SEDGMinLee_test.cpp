@@ -29,7 +29,7 @@
 #include "natrium/timeintegration/RungeKutta5LowStorage.h"
 #include "natrium/utilities/BasicNames.h"
 
-#include "PeriodicTestDomain2D.h"
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
 
 ///////////////////////////////
 ///////////////////////////////

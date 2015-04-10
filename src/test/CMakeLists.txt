@@ -39,11 +39,7 @@ ADD_EXECUTABLE( ${TEST_TARGET}
 ADD_EXECUTABLE( ${INTEGRATION_TEST_TARGET} 
                 integrationtest/start-test.cpp
                 integrationtest/IntegrationTestCases.h
-                integrationtest/IntegrationTestCases.cpp
-                ${PROJECT_SOURCE_DIR}/examples/step-1/TaylorGreenVortex2D.h
-                ${PROJECT_SOURCE_DIR}/examples/step-1/TaylorGreenVortex2D.cpp
- 				${PROJECT_SOURCE_DIR}/examples/step-2/CouetteFlow2D.h
-                ${PROJECT_SOURCE_DIR}/examples/step-2/CouetteFlow2D.cpp             
+                integrationtest/IntegrationTestCases.cpp       
                 )
 
 #
@@ -56,7 +52,6 @@ deal_ii_setup_target( ${INTEGRATION_TEST_TARGET} )
 # link natrium library to executable
 #           
 include_directories( ${PROJECT_SOURCE_DIR}/library
-				     ${PROJECT_SOURCE_DIR}/examples
                      /usr/include/boost
                      )
 
@@ -65,7 +60,7 @@ target_link_libraries(  ${TEST_TARGET}
                        ${Boost_FILESYSTEM_LIBRARY}
                        ${Boost_SYSTEM_LIBRARY}
                        ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-                        )
+                        ) 
                         
 target_link_libraries(  ${INTEGRATION_TEST_TARGET}
                         natrium

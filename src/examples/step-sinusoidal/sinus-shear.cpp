@@ -23,7 +23,7 @@
 
 #include "natrium/stencils/D2Q9.h"
 
-#include "SinusoidalShear2D.h"
+#include "natrium/benchmarks/SinusoidalShear2D.h"
 
 using namespace natrium;
 

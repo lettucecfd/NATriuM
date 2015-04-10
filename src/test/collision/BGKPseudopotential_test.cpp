@@ -15,8 +15,6 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-#include "../advection/PeriodicTestDomain2D.h"
-
 namespace natrium {
 
 BOOST_AUTO_TEST_SUITE(BGKPseudopotential_test)

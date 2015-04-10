@@ -16,7 +16,7 @@
 #include "natrium/problemdescription/Benchmark.h"
 #include "natrium/utilities/BasicNames.h"
 
-#include "TaylorGreenVortex2D.h"
+#include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 namespace natrium {
 

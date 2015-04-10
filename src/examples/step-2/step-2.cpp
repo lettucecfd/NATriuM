@@ -17,7 +17,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-#include "CouetteFlow2D.h"
+#include "natrium/benchmarks/CouetteFlow2D.h"
 
 using namespace natrium;
 

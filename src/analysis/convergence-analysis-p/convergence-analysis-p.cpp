@@ -22,7 +22,7 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 
-#include "../../examples/step-1/TaylorGreenVortex2D.h"
+#include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 using namespace natrium;
 

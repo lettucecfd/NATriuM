@@ -13,8 +13,6 @@ set(    TARGET
 #
 ADD_EXECUTABLE( ${TARGET} 
                 step-2.cpp
-                PoiseuilleFlow2D.h   
-                PoiseuilleFlow2D.cpp
                )
 #
 # link natrium library to executable

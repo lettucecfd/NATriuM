@@ -12,9 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                compare-Brenner.cpp
-                SinusoidalShear2D.h   
-                SinusoidalShear2D.cpp             
+                compare-Brenner.cpp     
                )
 #
 # link natrium library to executable

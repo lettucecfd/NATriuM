@@ -13,8 +13,6 @@ set(    TARGET
 #
 ADD_EXECUTABLE( ${TARGET} 
                 step-1.cpp 
-                TaylorGreenVortex2D.h   
-                TaylorGreenVortex2D.cpp
                )
 #
 # link natrium library to executable

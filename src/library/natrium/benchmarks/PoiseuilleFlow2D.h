@@ -1,33 +1,35 @@
 /**
- * @file PeriodicTestDomain2D.h
- * @short Description of a simple Periodic Flow (in rectangular domain).
+ * @file PoiseuilleFlow2D.h
+ * @short Channel flow in 2D
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#ifndef PERIODICTESTDOMAIN2D_H_
-#define PERIODICTESTDOMAIN2D_H_
+#ifndef POISEUILLEFLOW2D_H_
+#define POISEUILLEFLOW2D_H_
 
 #include "deal.II/grid/tria.h"
+#include "deal.II/base/function.h"
 
-#include "natrium/problemdescription/ProblemDescription.h"
-#include "natrium/utilities/BasicNames.h"
+#include "../problemdescription/ProblemDescription.h"
+#include "../utilities/BasicNames.h"
 
 using dealii::Triangulation;
 
 namespace natrium {
 
-/** @short Description of a simple Periodic Flow (flow in square domain).
- *  The domain is [0,1]^2. The domain consists of 4 elements.
+
+/** @short Description of a simple Channel Flow
+ *  The domain is [0,5]x[0,1].
  */
-class PeriodicTestDomain2D: public ProblemDescription<2> {
+class PoiseuilleFlow2D: public ProblemDescription<2> {
 public:
 
 	/// constructor
-	PeriodicTestDomain2D(size_t globalRefinementLevel);
+	PoiseuilleFlow2D(double viscosity, size_t refinementLevel);
 
 	/// destructor
-	virtual ~PeriodicTestDomain2D();
+	virtual ~PoiseuilleFlow2D();
 
 	/**
 	 * @short set initial densities
@@ -35,9 +37,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const {
-	}
-	;
+			const vector<dealii::Point<2> >& supportPoints) const;
 
 	/**
 	 * @short set initial velocities
@@ -46,9 +46,21 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const {
+			const vector<dealii::Point<2> >& supportPoints) const;
+
+	/**
+	 * @short analytic solution of the Taylor-Green vortex, first component of velocity vector
+	 */
+	double analyticVelocity1(const dealii::Point<2>& x, double t) const;
+
+	/**
+	 * @short analytic solution of the Taylor-Green vortex, second component of velocity vector
+	 */
+	double analyticVelocity2(const dealii::Point<2>& x, double t) const;
+
+	virtual double getCharacteristicVelocity() const {
+		return 0.1/sqrt(3);
 	}
-	;
 
 private:
 
@@ -56,7 +68,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(size_t globalRefinementLevel);
+	shared_ptr<Triangulation<2> > makeGrid(size_t refinementLevel);
 
 	/**
 	 * @short create boundaries for couette flow
@@ -68,4 +80,4 @@ private:
 };
 
 } /* namespace natrium */
-#endif /* PeriodicTestDomain2D_H_ */
+#endif /* PERIODICFLOW2D_H_ */

@@ -10,8 +10,8 @@
 
 #include "deal.II/grid/tria.h"
 
-#include "natrium/problemdescription/Benchmark.h"
-#include "natrium/utilities/BasicNames.h"
+#include "../problemdescription/Benchmark.h"
+#include "../utilities/BasicNames.h"
 
 using dealii::Triangulation;
 

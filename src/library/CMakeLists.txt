@@ -9,10 +9,11 @@ file( GLOB_RECURSE
       INCLUDES
       natrium/*.h
       )
-
+  
 file(   GLOB_RECURSE
         SRC_FILES
         natrium/advection/*.cpp
+        natrium/benchmarks/*.cpp
         natrium/collision/*.cpp
         natrium/problemdescription/*.cpp
         natrium/solver/*.cpp
@@ -22,7 +23,7 @@ file(   GLOB_RECURSE
         )
 
 
-        
+          
 enable_unity_build(natrium SRC_FILES)
   
  
@@ -30,8 +31,8 @@ enable_unity_build(natrium SRC_FILES)
 #
 # Create natrium library
 #
-add_library( natrium SHARED ${INCLUDES} ${SRC_FILES} )
-
+add_library( natrium ${INCLUDES} ${SRC_FILES} )
+ 
 
 
 #
@@ -39,11 +40,6 @@ add_library( natrium SHARED ${INCLUDES} ${SRC_FILES} )
 #
 DEAL_II_SETUP_TARGET ( natrium )
 
-
-#
-# Include src directory (to avoid ../../)
-#
-# include_directories( ${PROJECT_SOURCE_DIR}/natrium )
 
 #
 # copy natrium library to lib/ folder when typing 'make install'

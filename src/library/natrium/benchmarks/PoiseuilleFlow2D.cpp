@@ -11,9 +11,9 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 
-#include "natrium/problemdescription/PeriodicBoundary.h"
+#include "../problemdescription/PeriodicBoundary.h"
 
-#include "natrium/utilities/Math.h"
+#include "../utilities/Math.h"
 
 namespace natrium {
 
@@ -32,7 +32,7 @@ PoiseuilleFlow2D::~PoiseuilleFlow2D() {
 
 void PoiseuilleFlow2D::applyInitialDensities(
 		distributed_vector& initialDensities,
-		vector<dealii::Point<2> >& supportPoints) const {
+		const vector<dealii::Point<2> >& supportPoints) const {
 	for (size_t i = 0; i < initialDensities.size(); i++) {
 		initialDensities(i) = 1.0;
 	}
@@ -40,7 +40,7 @@ void PoiseuilleFlow2D::applyInitialDensities(
 
 void PoiseuilleFlow2D::applyInitialVelocities(
 		vector<distributed_vector>& initialVelocities,
-		vector<dealii::Point<2> >& supportPoints) const {
+		const vector<dealii::Point<2> >& supportPoints) const {
 	assert(
 			initialVelocities.at(0).size()
 					== initialVelocities.at(1).size());

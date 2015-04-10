@@ -13,8 +13,6 @@ set(    TARGET
 #
 ADD_EXECUTABLE( ${TARGET} 
                 convergence-analysis-wall-p.cpp
-                ${PROJECT_SOURCE_DIR}/examples/step-2/CouetteFlow2D.h   
-                ${PROJECT_SOURCE_DIR}/examples/step-2/CouetteFlow2D.cpp
                )
 #
 # link natrium library to executable

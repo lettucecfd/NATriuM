@@ -13,8 +13,6 @@ set(    TARGET
 #
 ADD_EXECUTABLE( ${TARGET} 
                 step-2.cpp
-                CouetteFlow2D.h   
-                CouetteFlow2D.cpp
                )
 #
 # link natrium library to executable

@@ -12,9 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                sinus-shear.cpp
-                ${PROJECT_SOURCE_DIR}/examples/step-sinusoidal/SinusoidalShear2D.h   
-                ${PROJECT_SOURCE_DIR}/examples/step-sinusoidal/SinusoidalShear2D.cpp             
+                sinus-shear.cpp   
                )
 #
 # link natrium library to executable

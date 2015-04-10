@@ -16,7 +16,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-#include "PoiseuilleFlow2D.h"
+#include "natrium/benchmarks/PoiseuilleFlow2D.h"
 
 using namespace natrium;
 
