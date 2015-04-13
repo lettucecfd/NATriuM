@@ -1069,6 +1069,143 @@ public:
 		leave_subsection();
 	}
 
+	void setEmbeddedDealIntegratorParameters(double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol)
+		{
+			enter_subsection("Advection");
+			enter_subsection("Embedded Parameters");
+
+			set("Coarsen parameter", coarsen_param);
+			set("Refinement parameter", refine_param);
+			set("Minimum time step", min_delta);
+			set("Maximum time step", max_delta);
+			set("Refinement tolerance", refine_tol);
+			set("Coarsen tolerance", coarsen_tol);
+
+			leave_subsection();
+			leave_subsection();
+		}
+
+		double getEmbeddedDealIntegratorCoarsenParameter()
+		{
+			enter_subsection("Advection");
+			enter_subsection("Embedded Parameters");
+			double coarsen_param;
+			try {
+			coarsen_param = get_double("Coarsen parameter");
+			} catch (std::exception& e) {
+				std::stringstream msg;
+				msg << "Could not read parameter 'Coarsen parameter' from parameters: "
+						<< e.what();
+				leave_subsection();
+				leave_subsection();
+				throw ConfigurationException(msg.str());
+			}
+			leave_subsection();
+			leave_subsection();
+			return coarsen_param;
+			}
+
+		double getEmbeddedDealIntegratorRefinementParameter()
+		{
+			enter_subsection("Advection");
+			enter_subsection("Embedded Parameters");
+			double refine_param;
+			try {
+			refine_param = get_double("Refinement parameter");
+			} catch (std::exception& e) {
+				std::stringstream msg;
+				msg << "Could not read parameter 'Refinement parameter' from parameters: "
+						<< e.what();
+				leave_subsection();
+				leave_subsection();
+				throw ConfigurationException(msg.str());
+			}
+			leave_subsection();
+			leave_subsection();
+			return refine_param;
+			}
+
+		double getEmbeddedDealIntegratorMinimumTimeStep()
+		{
+			enter_subsection("Advection");
+			enter_subsection("Embedded Parameters");
+			double min_delta;
+			try {
+			min_delta = get_double("Minimum time step");
+			} catch (std::exception& e) {
+				std::stringstream msg;
+				msg << "Could not read parameter 'Minimum time step' from parameters: "
+						<< e.what();
+				leave_subsection();
+				leave_subsection();
+				throw ConfigurationException(msg.str());
+			}
+			leave_subsection();
+			leave_subsection();
+			return min_delta;
+			}
+
+		double getEmbeddedDealIntegratorMaximumTimeStep()
+		{
+			enter_subsection("Advection");
+			enter_subsection("Embedded Parameters");
+			double max_delta;
+			try {
+			max_delta = get_double("Maximum time step");
+			} catch (std::exception& e) {
+				std::stringstream msg;
+				msg << "Could not read parameter 'Maximum time step' from parameters: "
+						<< e.what();
+				leave_subsection();
+				leave_subsection();
+				throw ConfigurationException(msg.str());
+			}
+			leave_subsection();
+			leave_subsection();
+			return max_delta;
+			}
+
+		double getEmbeddedDealIntegratorRefinementTolerance()
+			{
+				enter_subsection("Advection");
+				enter_subsection("Embedded Parameters");
+				double refine_tol = 1e-8;
+				try {
+				refine_tol = get_double("Refinement tolerance");
+				} catch (std::exception& e) {
+					std::stringstream msg;
+					msg << "Could not read parameter 'Refinement tolerance' from parameters: "
+							<< e.what();
+					leave_subsection();
+					leave_subsection();
+					throw ConfigurationException(msg.str());
+				}
+				leave_subsection();
+				leave_subsection();
+				return refine_tol;
+				}
+
+		double getEmbeddedDealIntegratorCoarsenTolerance()
+			{
+				enter_subsection("Advection");
+				enter_subsection("Embedded Parameters");
+				double coarsen_tol;
+				try {
+				coarsen_tol = get_double("Coarsen tolerance");
+				} catch (std::exception& e) {
+					std::stringstream msg;
+					msg << "Could not read parameter 'Coarsen tolerance' from parameters: "
+							<< e.what();
+					leave_subsection();
+					leave_subsection();
+					throw ConfigurationException(msg.str());
+				}
+				leave_subsection();
+				leave_subsection();
+				return coarsen_tol;
+				}
+
+
 	double getTimeStepSize() {
 		enter_subsection("General");
 		double stepSize;

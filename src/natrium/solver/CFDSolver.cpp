@@ -144,12 +144,29 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				configuration->getTimeStepSize(), numberOfDoFs,
 				m_boltzmannModel->getQ() - 1);
 	} else if (OTHER == configuration->getTimeIntegrator()) {
+		if(configuration->getDealIntegrator()<7)
+		{
 		m_timeIntegrator = make_shared<
 				DealIIWrapper<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(),
 				configuration->getDealIntegrator());
-	}
+		}
+		else if (configuration->getDealIntegrator()<12)
+		{
+		m_timeIntegrator = make_shared<
+				DealIIWrapper<distributed_sparse_block_matrix,
+						distributed_block_vector> >(
+				configuration->getTimeStepSize(),
+				configuration->getDealIntegrator(),
+				configuration->getEmbeddedDealIntegratorCoarsenParameter(),
+				configuration->getEmbeddedDealIntegratorRefinementParameter(),
+				configuration->getEmbeddedDealIntegratorMinimumTimeStep(),
+				configuration->getEmbeddedDealIntegratorMaximumTimeStep(),
+				configuration->getEmbeddedDealIntegratorRefinementTolerance(),
+				configuration->getEmbeddedDealIntegratorCoarsenTolerance());
+		};
+		}
 
 // initialize macroscopic variables
 	vector<dealii::Point<dim> > supportPoints(numberOfDoFs);

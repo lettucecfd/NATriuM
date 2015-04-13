@@ -58,7 +58,8 @@ public:
 
 	/// constructor
 	DealIIWrapper(const double timeStepSize, const DealIntegratorName rkScheme);
-
+	DealIIWrapper(const double timeStepSize,
+		const DealIntegratorName rkScheme, 	double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol);
 	/// destructor
 	virtual ~DealIIWrapper() {
 	}

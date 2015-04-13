@@ -64,6 +64,22 @@ SolverConfiguration::SolverConfiguration() {
 					"Deal.ii built-in time integrators. They are accessed by chosing time integrator = other.");
 		}
 		leave_subsection();
+		enter_subsection("Embedded Parameters");
+		{
+			declare_entry("Coarsen parameter", "1.2", dealii::Patterns::Double(1,1000),
+								"Parameter for the embedded deal.II methods. This parameter is the factor (>1) by which the time step is multiplied when the time stepping can be coarsen.");
+			declare_entry("Refinement parameter", "0.8", dealii::Patterns::Double(0,1),
+								"Parameter for the embedded deal.II methods. This parameter is the factor (<1) by which the time step is multiplied when the time stepping must be refined.");
+			declare_entry("Minimum time step", "1e-14", dealii::Patterns::Double(),
+								"Parameter for the embedded deal.II methods. Smallest time step allowed.");
+			declare_entry("Maximum time step", "1e100", dealii::Patterns::Double(),
+								"Parameter for the embedded deal.II methods. Largest time step allowed.");
+			declare_entry("Refinement tolerance", "1e-8", dealii::Patterns::Double(),
+								"Parameter for the embedded deal.II methods. Refinement tolerance: if the error estimate is larger than refine_tol, the time step is refined.");
+			declare_entry("Coarsen tolerance", "1e-12", dealii::Patterns::Double(),
+								"Parameter for the embedded deal.II methods. Coarsening tolerance: if the error estimate is smaller than coarse_tol, the time step is coarsen.");
+		}
+		leave_subsection();
 	}
 	leave_subsection();
 	enter_subsection("Collision");

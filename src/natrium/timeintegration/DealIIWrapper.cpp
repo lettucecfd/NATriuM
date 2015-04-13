@@ -206,24 +206,35 @@ double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 
 template<class MATRIX, class VECTOR>
 natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
-		const DealIntegratorName rkScheme) :
-		TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_systemMatrix(NULL), m_systemVector(
-		NULL) {
-	assert(rkScheme < 12);
-	assert(NONE != rkScheme);
-	dealii::TimeStepping::runge_kutta_method rk =
-			static_cast<dealii::TimeStepping::runge_kutta_method>((int) rkScheme);
-	if (rkScheme < 3) {
-		m_dealIIRKStepper = make_shared<
-				dealii::TimeStepping::ExplicitRungeKutta<VECTOR> >(rk);
-	} else if (rkScheme < 7) {
-		m_dealIIRKStepper = make_shared<
-				dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(rk);
-	} else if (rkScheme < 12) {
-		m_dealIIRKEmbedded = make_shared<
-				dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >(rk);
-		m_dealIIRKStepper = m_dealIIRKEmbedded;
-	};
+        const DealIntegratorName rkScheme) :
+        TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_systemMatrix(NULL), m_systemVector(
+        NULL) {
+    assert(rkScheme < 12);
+    assert(NONE != rkScheme);
+    dealii::TimeStepping::runge_kutta_method rk =
+            static_cast<dealii::TimeStepping::runge_kutta_method>((int) rkScheme);
+    if (rkScheme < 3) {
+        m_dealIIRKStepper = make_shared<
+                dealii::TimeStepping::ExplicitRungeKutta<VECTOR> >(rk);
+    } else if (rkScheme < 7) {
+        m_dealIIRKStepper = make_shared<
+                dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(rk);
+    };
+}
+
+template<class MATRIX, class VECTOR>
+natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
+        const DealIntegratorName rkScheme, 	double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol) :
+        TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_systemMatrix(NULL), m_systemVector(
+        NULL) {
+    assert(rkScheme < 12);
+    assert(NONE != rkScheme);
+    dealii::TimeStepping::runge_kutta_method rk =
+            static_cast<dealii::TimeStepping::runge_kutta_method>((int) rkScheme);
+    m_dealIIRKEmbedded = make_shared<
+            dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >(rk,coarsen_param,refine_param,min_delta,max_delta,refine_tol,coarsen_tol);
+    m_dealIIRKStepper = m_dealIIRKEmbedded;
+
 }
 
 /// explicit instantiation
