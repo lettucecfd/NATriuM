@@ -37,7 +37,8 @@ enum AdvectionSchemeName {
  * @short Implemented collision models
  */
 enum CollisionSchemeName {
-	BGK_STANDARD // Collision for the transformed distribution function as defined in MinLee2011
+	BGK_STANDARD, // Collision for the transformed distribution function as defined in MinLee2011
+	BGK_STEADY_STATE // Steady state preconditioning by Guo et al. (2004)
 };
 
 // StencilType defined in Stencil.h
@@ -263,6 +264,8 @@ public:
 		leave_subsection();
 		if ("BGK standard" == collisionScheme) {
 			return BGK_STANDARD;
+		} else if ("BGK steady state" == collisionScheme) {
+			return BGK_STEADY_STATE;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown collision scheme '" << collisionScheme
@@ -276,8 +279,11 @@ public:
 		enter_subsection("Collision");
 		switch (collisionScheme) {
 		case BGK_STANDARD: {
-			set("Collision scheme",
-					"BGK standard");
+			set("Collision scheme", "BGK standard");
+			break;
+		}
+		case BGK_STEADY_STATE: {
+			set("Collision scheme", "BGK steady state");
 			break;
 		}
 		default: {
@@ -288,6 +294,46 @@ public:
 			throw ConfigurationException(msg.str());
 		}
 		}
+		leave_subsection();
+	}
+
+	double getBGKSteadyStateGamma() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		double gamma;
+		try {
+			gamma = get_double("Steady state gamma");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not read parameter 'Steady state gamma' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return gamma;
+	}
+
+
+	void setBGKSteadyStateGamma(
+			double gamma) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		try {
+			set("Steady state gamma",
+					gamma);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value "
+					<< gamma
+					<< " to Steady state gamma: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 		leave_subsection();
 	}
 

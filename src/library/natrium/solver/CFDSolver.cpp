@@ -23,6 +23,7 @@
 #include "../stencils/Stencil.h"
 
 #include "../collision/BGKStandard.h"
+#include "../collision/BGKSteadyState.h"
 
 #include "../problemdescription/BoundaryCollection.h"
 
@@ -30,7 +31,6 @@
 #include "../timeintegration/RungeKutta5LowStorage.h"
 #include "../timeintegration/ExponentialTimeIntegrator.h"
 #include "../timeintegration/DealIIWrapper.h"
-
 
 #include "../utilities/Logging.h"
 #include "../utilities/CFDSolverUtilities.h"
@@ -112,12 +112,20 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
+	double gamma = -1.0;
 	if (BGK_STANDARD == configuration->getCollisionScheme()) {
-		tau = BGK::calculateRelaxationParameter(
+		tau = BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = make_shared<BGKStandard>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (BGK_STEADY_STATE == configuration->getCollisionScheme()) {
+		gamma = configuration->getBGKSteadyStateGamma();
+		tau = BGKSteadyState::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil, gamma);
+		m_collisionModel = make_shared<BGKSteadyState>(tau,
+				m_configuration->getTimeStepSize(), m_stencil, gamma);
 	}
 
 /// Build time integrator
@@ -133,8 +141,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				ThetaMethod<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), numberOfDoFs,
-				m_stencil->getQ() - 1,
-				configuration->getThetaMethodTheta());
+				m_stencil->getQ() - 1, configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 				ExponentialTimeIntegrator<distributed_sparse_block_matrix,
@@ -184,25 +191,41 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "Reynolds number:          "
 			<< (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
+	double Ma = charU / m_stencil->getSpeedOfSound();
 	LOG(WELCOME) << "Mach number:              "
-			<< charU / m_stencil->getSpeedOfSound() << endl;
+			<< Ma << endl;
 	LOG(WELCOME) << "Stencil scaling:          "
 			<< configuration->getStencilScaling() << endl;
+	LOG(WELCOME) << "Sound speed:              "
+			<< m_stencil->getSpeedOfSound() << endl;
 	//TODO propose optimal cfl based on time integrator
 	const double optimal_cfl = 0.4;
 	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
 			<< CFDSolverUtilities::calculateTimestep<dim>(
 					*m_problemDescription->getTriangulation(),
-					configuration->getSedgOrderOfFiniteElement(),
-					*m_stencil, optimal_cfl) << " s" << endl;
+					configuration->getSedgOrderOfFiniteElement(), *m_stencil,
+					optimal_cfl) << " s" << endl;
 	LOG(WELCOME) << "Actual dt:                "
 			<< configuration->getTimeStepSize() << " s" << endl;
 	LOG(WELCOME) << "CFL number:               "
 			<< configuration->getTimeStepSize() / dx
-					* m_stencil->getMaxParticleVelocityMagnitude()
-			<< endl;
+					* m_stencil->getMaxParticleVelocityMagnitude() << endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
-	LOG(WELCOME) << "tau:                      " << tau << endl;
+	LOG(WELCOME) << "----------------------------" << endl;
+	LOG(WELCOME) << "== COLLSISION ==          " << endl;
+	switch (configuration->getCollisionScheme()) {
+	case BGK_STANDARD: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
+	case BGK_STEADY_STATE: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		LOG(WELCOME) << "steady state gamma:       " << gamma << endl;
+		LOG(WELCOME) << "Effective Ma:             " <<  sqrt(gamma)*Ma << endl;
+
+		break;
+	}
+	}
 	LOG(WELCOME) << "----------------------------" << endl;
 
 	// initialize boundary dof indicator
@@ -226,7 +249,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		}
 	}
 	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
-			<< nofBoundaryNodes << endl;
+	<< nofBoundaryNodes << endl;
 	LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs() << endl;
 
 	// Initialize distribution functions
@@ -239,11 +262,11 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	// Create file for output table
 	if ((not configuration->isSwitchOutputOff())
-	/*and (configuration->getOutputTableInterval()
-	 < configuration->getNumberOfTimeSteps())*/) {
+			/*and (configuration->getOutputTableInterval()
+			 < configuration->getNumberOfTimeSteps())*/) {
 		std::stringstream s;
 		s << configuration->getOutputDirectory().c_str()
-				<< "/results_table.txt";
+		<< "/results_table.txt";
 		//create the SolverStats object which is responsible for the results table
 		m_solverStats = make_shared<SolverStats<dim> >(this, s.str());
 	} else {
@@ -297,11 +320,11 @@ void CFDSolver<dim>::run() {
 		if (stopConditionMet()) {
 			break;
 		}
-		output(m_i);
+		output (m_i);
 		stream();
 		collide();
 	}
-	output(m_i);
+	output (m_i);
 	LOG(BASIC) << "NATriuM run complete." << endl;
 }
 template void CFDSolver<2>::run();
@@ -379,7 +402,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 					<< iteration << ".vtu";
 			std::string filename = str.str();
 			std::ofstream vtu_output(filename.c_str());
-			dealii::DataOut<dim> data_out;
+			dealii::DataOut < dim > data_out;
 			data_out.attach_dof_handler(*m_advectionOperator->getDoFHandler());
 			data_out.add_data_vector(m_density, "rho");
 			if (dim == 2) {
@@ -390,7 +413,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 				data_out.add_data_vector(m_velocity.at(1), "uy");
 				data_out.add_data_vector(m_velocity.at(2), "uz");
 			}
-			addAnalyticSolutionToOutput(data_out);
+			addAnalyticSolutionToOutput (data_out);
 			/// For Benchmarks: add analytic solution
 			data_out.build_patches(
 					m_configuration->getSedgOrderOfFiniteElement() + 1);
@@ -433,8 +456,7 @@ void CFDSolver<dim>::initializeDistributions() {
 	numeric_vector u(dim);
 
 // Initialize f with the equilibrium distribution functions
-	m_f.reinit(m_stencil->getQ(),
-			m_advectionOperator->getNumberOfDoFs());
+	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
 	for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
 		for (size_t j = 0; j < dim; j++) {
 			u(j) = m_velocity.at(j)(i);
@@ -536,8 +558,7 @@ template<size_t dim>
 void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 		const string& directory) {
 // create vectors
-	m_f.reinit(m_stencil->getQ(),
-			m_advectionOperator->getNumberOfDoFs());
+	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
 // read the distribution functions from file
 	try {
 		for (size_t i = 0; i < m_stencil->getQ(); i++) {
@@ -567,8 +588,7 @@ template void CFDSolver<3>::loadDistributionFunctionsFromFiles(
 
 template<size_t dim>
 double CFDSolver<dim>::getTau() const {
-	if (BGK_STANDARD
-			== m_configuration->getCollisionScheme()) {
+	if (BGK_STANDARD == m_configuration->getCollisionScheme()) {
 		return BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil);

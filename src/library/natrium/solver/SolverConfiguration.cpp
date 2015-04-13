@@ -71,8 +71,20 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Collision scheme",
 				"BGK standard",
 				dealii::Patterns::Selection(
-						"BGK standard"),
-				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook. Using transformed particle distribution functions enhances the accuracy of the LBM.");
+						"BGK standard|BGK steady state"),
+				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards "
+				"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
+				"The standard");
+		enter_subsection("BGK parameters");
+		{
+			declare_entry("Steady state gamma",
+					"0.25",
+					dealii::Patterns::Double(0,1+1e-50),
+					"The parameter of the steady state preconditioner. For gamma = 1, the scheme is equivalent to the standard BGK"
+					"For gamma -> 0, the convergence to steady states is speed up and the effective Mach number is lowered, which"
+					"gives nearly incompressible results.");
+		}
+		leave_subsection();
 	}
 	leave_subsection();
 
