@@ -107,7 +107,7 @@ public:
 			///// CALCULATE MAX DENSITY VARIATION
 			m_solver->m_tmpDensity.add(-1.0, m_solver->m_density);
 			m_solver->m_residuumDensity = sqrt(
-					m_solver->m_tmpVelocity.at(0).linfty_norm());
+					m_solver->m_tmpDensity.linfty_norm());
 
 		}
 		// (if first visit of this if-statement, only this part is executed)

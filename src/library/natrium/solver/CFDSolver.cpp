@@ -221,7 +221,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	case BGK_STEADY_STATE: {
 		LOG(WELCOME) << "tau:                      " << tau << endl;
 		LOG(WELCOME) << "steady state gamma:       " << gamma << endl;
-		LOG(WELCOME) << "Effective Ma:             " <<  sqrt(gamma)*Ma << endl;
+		LOG(WELCOME) << "Effective Ma:             " << Ma/sqrt(gamma) << endl;
 
 		break;
 	}
@@ -354,7 +354,7 @@ bool CFDSolver<dim>::stopConditionMet() {
 	if (m_i % 10 == 0) {
 		m_solverStats->calulateResiduals(m_i);
 		if ((m_residuumVelocity < convergence_threshold)
-				and (m_residuumDensity < convergence_threshold)) {
+				/*and (m_residuumDensity < convergence_threshold)*/) {
 			LOG(BASIC)
 					<< "Stop condition: Simulation converged below threshold "
 					<< convergence_threshold << " in iteration " << m_i << "."

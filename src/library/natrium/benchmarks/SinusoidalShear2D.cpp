@@ -14,9 +14,9 @@ namespace natrium {
 
 SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 		size_t refinementLevel, double L, double averageHeight,
-		double amplitude) :
+		double amplitude, double cell_aspect_ratio) :
 		ProblemDescription<2>(
-				makeGrid(L, refinementLevel, averageHeight, amplitude),
+				makeGrid(L, refinementLevel, averageHeight, amplitude, cell_aspect_ratio),
 				viscosity, L), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 }
@@ -25,29 +25,28 @@ SinusoidalShear2D::~SinusoidalShear2D() {
 }
 
 shared_ptr<Triangulation<2> > SinusoidalShear2D::makeGrid(double L,
-		size_t refinementLevel, double averageHeight, double amplitude) {
+		size_t refinementLevel, double averageHeight, double amplitude, double cell_aspect_ratio) {
 
-	//Creation of the principal domain
-	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
-	dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
-
-	// Assign boundary indicators to the faces of the "parent cell"
-	Triangulation<2>::active_cell_iterator cell = unitSquare->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // bottom
-	cell->face(3)->set_all_boundary_indicators(3);  // top
+	shared_ptr<Triangulation<2> > rect = make_shared<Triangulation<2> >();
+	dealii::Point<2> x1(0,0);
+	dealii::Point<2> x2(1,1);
+	std::vector<unsigned int> repetitions;
+	repetitions.push_back( 1./ cell_aspect_ratio);
+	repetitions.push_back( 1 );
+	bool colorize = true; 	// set boundary ids automatically to
+							// 0:left; 1:right; 2:bottom; 3:top
+	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1, x2, colorize);
 
 	// refine grid
-	unitSquare->refine_global(refinementLevel);
+	rect->refine_global(refinementLevel);
 
 	// transform grid
 	dealii::GridTools::transform(UnstructuredGridFunc(averageHeight, amplitude, L),
-			*unitSquare);
+			*rect);
 	std::ofstream out("grid-2.eps");
 	dealii::GridOut grid_out;
-	grid_out.write_eps(*unitSquare, out);
-	return unitSquare;
+	grid_out.write_eps(*rect, out);
+	return rect;
 }
 
 shared_ptr<BoundaryCollection<2> > SinusoidalShear2D::makeBoundaries(
