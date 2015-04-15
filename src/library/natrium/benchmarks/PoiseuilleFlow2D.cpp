@@ -59,7 +59,7 @@ shared_ptr<Triangulation<2> > PoiseuilleFlow2D::makeGrid(size_t refinementLevel,
  * @return shared pointer to a vector of boundaries
  * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
  */
-shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries() {
+shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(bool is_periodic) {
 
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<

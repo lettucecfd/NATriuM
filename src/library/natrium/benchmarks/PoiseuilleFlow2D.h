@@ -72,7 +72,7 @@ private:
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries();
+	shared_ptr<BoundaryCollection<2> > makeBoundaries(bool is_periodic);
 
 };
 

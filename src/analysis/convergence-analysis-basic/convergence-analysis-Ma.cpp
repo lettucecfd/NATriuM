@@ -39,12 +39,9 @@ int main() {
 	//////////////////////////////////////////////////
 
 	const double viscosity = 1.;
-	// C-E-approach: constant stencil scaling
 
 	// zunaechst: fixed order of FE
-	const size_t orderOfFiniteElement = 2;
-
-	// chose scaling so that the right Mach number is achieved
+	const size_t refinementLevel = 4;
 
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
@@ -53,7 +50,7 @@ int main() {
 			<< "/convergence-analysis-Ma/table_runtime.txt";
 	std::ofstream timeFile(filename.str().c_str());
 	timeFile
-			<< "#refinement Level     dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
+			<< "#refinement Level    FE order     dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
 			<< endl;
 
 	// prepare error table file
@@ -63,19 +60,20 @@ int main() {
 	std::ofstream orderFile(filename2.str().c_str());
 	//orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 	orderFile
-			<< "#  refinementlevel     Ma    i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
+			<< "#  refinementlevel  FE order    Ma    dt    tau    i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (size_t refinementLevel = 3; refinementLevel < 4; refinementLevel++) {
+	for (size_t orderOfFiniteElement = 1; orderOfFiniteElement < 5; orderOfFiniteElement++) {
 		cout << "refinement Level = " << refinementLevel << endl;
 
-		for (double Ma = 0.3; Ma > 1e-6; Ma /= 2) {
+		for (double Ma = 0.3; Ma > 5e-5; Ma /= 2) {
 			cout << "Ma = " << Ma << endl;
 
 			double scaling = sqrt(3) * 1 / Ma;
 
 			shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
-					TaylorGreenVortex2D>(viscosity, refinementLevel, scaling/sqrt(3));
+					TaylorGreenVortex2D>(viscosity, refinementLevel,
+					scaling / sqrt(3));
 			shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
@@ -98,10 +96,11 @@ int main() {
 			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(1);
-			//configuration->setOutputCheckpointInterval(1000);
+			configuration->setOutputSolutionInterval(10);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(0);
+			configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 			configuration->setTimeStepSize(dt);
 			if (dt > 0.1) {
 				cout << "Timestep too big." << endl;
@@ -127,13 +126,15 @@ int main() {
 				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << endl;
 				// put out runtime
-				timeFile << refinementLevel << "         " << dt << "      "
-						<< time1 << "     " << time2 << "        "
+				timeFile << refinementLevel << "     " << orderOfFiniteElement
+						<< "         " << dt << "      " << time1 << "     "
+						<< time2 << "        "
 						<< time2 / configuration->getNumberOfTimeSteps()
 						<< endl;
 				// put out final errors
 				solver.getErrorStats()->update();
-				orderFile << refinementLevel << " " << Ma << " "
+				orderFile << refinementLevel << "     " << orderOfFiniteElement
+						<< " " << Ma << "  " << dt << " " << solver.getTau() << " "
 						<< solver.getIteration() << " " << solver.getTime()
 						<< " " << solver.getErrorStats()->getMaxUAnalytic()
 						<< " " << solver.getErrorStats()->getMaxVelocityError()
@@ -146,9 +147,12 @@ int main() {
 			}
 		} /* for Ma */
 
+		orderFile << endl;
+		timeFile << endl;
+
 	} /* for refinement level */
 
-	cout << "Convergence analysis (basic) terminated." << endl;
+	cout << "Convergence analysis (Ma) terminated." << endl;
 
 	return 0;
 }
