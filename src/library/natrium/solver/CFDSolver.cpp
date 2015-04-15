@@ -23,6 +23,7 @@
 #include "../stencils/Stencil.h"
 
 #include "../collision/BGKStandard.h"
+#include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
 
 #include "../problemdescription/BoundaryCollection.h"
@@ -126,6 +127,12 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				m_configuration->getTimeStepSize(), *m_stencil, gamma);
 		m_collisionModel = make_shared<BGKSteadyState>(tau,
 				m_configuration->getTimeStepSize(), m_stencil, gamma);
+	} else if (BGK_STANDARD_TRANSFORMED == configuration->getCollisionScheme()) {
+		tau = BGKStandardTransformed::calculateRelaxationParameter(
+						m_problemDescription->getViscosity(),
+						m_configuration->getTimeStepSize(), *m_stencil);
+				m_collisionModel = make_shared<BGKStandardTransformed>(tau,
+						m_configuration->getTimeStepSize(), m_stencil);
 	}
 
 /// Build time integrator
@@ -215,6 +222,10 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "== COLLSISION ==          " << endl;
 	switch (configuration->getCollisionScheme()) {
 	case BGK_STANDARD: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
+	case BGK_STANDARD_TRANSFORMED: {
 		LOG(WELCOME) << "tau:                      " << tau << endl;
 		break;
 	}

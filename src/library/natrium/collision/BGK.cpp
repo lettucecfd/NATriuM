@@ -37,13 +37,13 @@ void BGK::collideSinglePoint(vector<double>& distributions) const {
 	}
 
 	// calculate macroscopic entities
-	double rho = getStencil()->calculateDensity(distributions);
+	double rho = this->calculateDensity(distributions);
 	numeric_vector u(getStencil()->getD());
-	getStencil()->calculateVelocity(distributions, rho, u);
+	this->calculateVelocity(distributions, rho, u);
 
 	// calculate equilibrium distribution (feq)
 	vector<double> feq(Q);
-	getEquilibriumDistributions(feq, u, rho);
+	this->getEquilibriumDistributions(feq, u, rho);
 
 	// update distribution
 	collideSingleDoF(0, feq, f);
@@ -110,7 +110,7 @@ void BGK::collideSinglePoint(vector<double>& distributions) const {
 		for (size_t j = 0; j < D; j++) {
 			u(j) = velocities.at(j)(i);
 		}
-		getEquilibriumDistributions(feq, u, densities(i));
+		this->getEquilibriumDistributions(feq, u, densities(i));
 
 		// BGK collision
 		collideSingleDoF(i, feq, f);

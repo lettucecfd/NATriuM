@@ -66,6 +66,68 @@ public:
 
 	}
 
+	////////////////////////////////////
+	// CALCULATE MACROSCOPIC ENTITIES //
+	////////////////////////////////////
+
+	/**
+	 * @short calculate macroscopic density
+	 * @param[in] distributions particle distribution functions at a given point
+	 * @return macroscopic density (sum of all distributions)
+	 */
+	virtual double calculateDensity(const vector<double>& distributions) const {
+
+		// calculate macroscopic density (rho)
+		double rho = 0.0;
+		for (size_t i = 0; i < getStencil()->getQ(); i++) {
+			rho += distributions.at(i);
+		}
+		return rho;
+
+	}
+
+	/**
+	 * @short calculate macroscopic velocity
+	 * @param[in] distributions particle distribution functions at a given point
+	 * @return macroscopic velocity
+	 */
+	virtual numeric_vector calculateVelocity(
+			const vector<double>& distributions) const {
+
+		numeric_vector u(getStencil()->getD());
+		for (size_t i = 0; i < getStencil()->getQ(); i++) {
+			// TODO efficient calculation of scalar*directions?
+			Math::add_vector(u,
+					Math::scalar_vector(distributions.at(i),
+							getStencil()->getDirection(i)));
+		}
+		Math::scale_vector(1. / this->calculateDensity(distributions), u);
+		return u;
+	}
+
+	/**
+	 * @short calculate macroscopic velocity; saves the double calculation of the density
+	 * @note more efficient
+	 * @param[in] distributions particle distribution functions at a given point
+	 * @param[in] rho macroscopic density
+	 * @param[out] u macroscopic velocity
+	 */
+	virtual void calculateVelocity(const vector<double>& distributions,
+			const double rho, numeric_vector& u) const {
+
+		// assert
+		assert(u.size() == m_stencil->getD());
+		assert(u(0) == 0.0);
+		assert(u(m_stencil->getD() - 1) == 0.0);
+
+		for (size_t i = 0; i < m_stencil->getQ(); i++) {
+			// TODO efficient calculation of scalar*directions?
+			Math::add_vector(u,
+					Math::scalar_vector(distributions.at(i),
+							m_stencil->getDirection(i)));
+		}
+		Math::scale_vector(1. / rho, u);
+	}
 
 	//////////////////////////////
 	// EQUILIBRIUM DISTRIBUTION //
@@ -81,7 +143,6 @@ public:
 	 */
 	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
 			const double rho = 1) const = 0;
-
 
 	/** @short function for the calculation of all equilibrium distributions
 	 *  @param[out] feq vector of all equality distributions, must have size Q

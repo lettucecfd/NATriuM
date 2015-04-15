@@ -123,68 +123,6 @@ public:
 	}
 
 	virtual size_t getIndexOfOppositeDirection(size_t index) const = 0;
-////////////////////////////////////
-// CALCULATE MACROSCOPIC ENTITIES //
-////////////////////////////////////
-
-	/**
-	 * @short calculate macroscopic density
-	 * @param[in] distributions particle distribution functions at a given point
-	 * @return macroscopic density (sum of all distributions)
-	 */
-	double calculateDensity(const vector<double>& distributions) const {
-
-		// calculate macroscopic density (rho)
-		double rho = 0.0;
-		for (size_t i = 0; i < m_q; i++) {
-			rho += distributions.at(i);
-		}
-		return rho;
-
-	}
-
-	/**
-	 * @short calculate macroscopic velocity
-	 * @param[in] distributions particle distribution functions at a given point
-	 * @return macroscopic velocity
-	 */
-	numeric_vector calculateVelocity(
-			const vector<double>& distributions) const {
-
-		numeric_vector u(m_d);
-		for (size_t i = 0; i < m_q; i++) {
-			// TODO efficient calculation of scalar*directions?
-			Math::add_vector(u,
-					Math::scalar_vector(distributions.at(i),
-							m_directions.at(i)));
-		}
-		Math::scale_vector(1. / calculateDensity(distributions), u);
-		return u;
-	}
-
-	/**
-	 * @short calculate macroscopic velocity; saves the double calculation of the density
-	 * @note more efficient
-	 * @param[in] distributions particle distribution functions at a given point
-	 * @param[in] rho macroscopic density
-	 * @param[out] u macroscopic velocity
-	 */
-	void calculateVelocity(const vector<double>& distributions,
-			const double rho, numeric_vector& u) const {
-
-		// assert
-		assert(u.size() == m_d);
-		assert(u(0) == 0.0);
-		assert(u(m_d - 1) == 0.0);
-
-		for (size_t i = 0; i < m_q; i++) {
-			// TODO efficient calculation of scalar*directions?
-			Math::add_vector(u,
-					Math::scalar_vector(distributions.at(i),
-							m_directions.at(i)));
-		}
-		Math::scale_vector(1. / rho, u);
-	}
 
 
 	virtual double getSpeedOfSound() const = 0;

@@ -37,7 +37,8 @@ enum AdvectionSchemeName {
  * @short Implemented collision models
  */
 enum CollisionSchemeName {
-	BGK_STANDARD, // Collision for the transformed distribution function as defined in MinLee2011
+	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
+	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
 	BGK_STEADY_STATE // Steady state preconditioning by Guo et al. (2004)
 };
 
@@ -264,6 +265,8 @@ public:
 		leave_subsection();
 		if ("BGK standard" == collisionScheme) {
 			return BGK_STANDARD;
+		} else if ("BGK standard transformed" == collisionScheme) {
+			return BGK_STANDARD_TRANSFORMED;
 		} else if ("BGK steady state" == collisionScheme) {
 			return BGK_STEADY_STATE;
 		} else {
@@ -280,6 +283,10 @@ public:
 		switch (collisionScheme) {
 		case BGK_STANDARD: {
 			set("Collision scheme", "BGK standard");
+			break;
+		}
+		case BGK_STANDARD_TRANSFORMED: {
+			set("Collision scheme", "BGK standard transformed");
 			break;
 		}
 		case BGK_STEADY_STATE: {

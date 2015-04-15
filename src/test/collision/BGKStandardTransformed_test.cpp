@@ -1,12 +1,12 @@
 /**
- * @file BGKSteadyState_test.cpp
+ * @file BGKStandardTransformed_test.cpp
  * @short 
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
 #include "natrium/stencils/D2Q9.h"
-#include "natrium/collision/BGKSteadyState.h"
+#include "natrium/collision/BGKStandardTransformed.h"
 
 #include <math.h>
 #include <exception>
@@ -21,31 +21,28 @@ using std::exception;
 
 namespace natrium {
 
-BOOST_AUTO_TEST_SUITE(BGKSteadyState_test)
+BOOST_AUTO_TEST_SUITE(BGKStandardTransformed_test)
 
-BOOST_AUTO_TEST_CASE(BGKSteadyStateConstruction_test) {
-	cout << "BGKSteadyStateConstruction_test..." << endl;
+BOOST_AUTO_TEST_CASE(BGKStandardTransformedConstruction_test) {
+	cout << "BGKStandardTransformedConstruction_test..." << endl;
 
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
 	double dt = 0.1;
-	double gamma = 0.34;
 
-	BOOST_CHECK_NO_THROW(BGKSteadyState bgkCollision(tau, dt, make_shared<D2Q9>(), gamma));
+	BOOST_CHECK_NO_THROW(BGKStandardTransformed bgkCollision(tau, dt, make_shared<D2Q9>()));
 
 	cout << "done" << endl;
-} //BGKSteadyStateConstruction_test
+} //BGKStandardTransformedConstruction_test
 
 
-BOOST_AUTO_TEST_CASE(BGKSteadyStateSetTimeStep_test) {
-	cout << "BGKSteadyStateTimeStep_test..." << endl;
+BOOST_AUTO_TEST_CASE(BGKStandardTransformedSetTimeStep_test) {
+	cout << "BGKStandardTransformedSetTimeStep_test..." << endl;
 
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
 	double dt = 0.1;
-	double gamma = 0.34;
-
-	BGKSteadyState bgkCollision(tau, dt, make_shared<D2Q9>(), gamma);
+	BGKStandardTransformed bgkCollision(tau, dt, make_shared<D2Q9>());
 
 	// check if viscosity is untouched (viscosity ~ dt*tau)
 	double dt_times_tau = tau * dt;
@@ -54,7 +51,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateSetTimeStep_test) {
 			1e-10);
 
 	cout << "done" << endl;
-} //BGKSteadyStateSetTimeStep_test
+} //BGKStandardTransformedSetTimeStep_test
 
 
 
@@ -62,29 +59,28 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateSetTimeStep_test) {
 // CHECK EQUILIBRIUM //////////////
 ///////////////////////////////////
 
-BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_test) {
-	cout << "BGKSteadyStateMoments_test..." << endl;
+BOOST_AUTO_TEST_CASE(BGKTransformedMoments_test) {
+	cout << "BGKTransformedMoments_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
 	/////////////////
 	// Notice: This text can be applied to different stencils (independent of D and Q)
 
-	const double TOLERANCE = 1e-11;
+	const double TOLERANCE = 1e-12;
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
 	double dt = 0.1;
-	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, make_shared<D2Q9>(), gamma);
+	BGKStandardTransformed bgk(tau, 0.1, make_shared<D2Q9>());
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
 	numeric_vector macroscopicVelocity(dqmodel->getD());
-	macroscopicVelocity(0) = 2.3;
-	macroscopicVelocity(1) = -1.14;
+	macroscopicVelocity(0) = 0.02;
+	macroscopicVelocity(1) = -0.4;
 	if (dqmodel->getD() == 3) {
 		macroscopicVelocity(2) = 1.13;
 	}
@@ -95,13 +91,9 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_test) {
 		eqDistributions.at(i) = bgk.getEquilibriumDistribution(i,
 				macroscopicVelocity, macroscopicDensity);
 	}
-
 	// test first order moment (=density)
-	double moment1 = 0.0;
-	for (size_t i = 0; i < dqmodel->getQ(); i++) {
-		moment1 += eqDistributions.at(i);
-	}
-	BOOST_CHECK_SMALL(moment1 - macroscopicDensity, TOLERANCE);
+	double moment1 = bgk.calculateDensity(eqDistributions);
+	BOOST_CHECK_CLOSE(moment1, macroscopicDensity, TOLERANCE);
 
 	// test second order moments (=impulse)
 	numeric_vector moment2(dqmodel->getD());
@@ -126,6 +118,9 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_test) {
 				moment3(i, j) += dqmodel->getDirection(k)(i)
 						* dqmodel->getDirection(k)(j) * eqDistributions.at(k);
 			}
+			if (i == j){
+				moment3(i,j) += dqmodel->getSpeedOfSoundSquare() * bgk.getRho0();
+			}
 		}
 	}
 	numeric_matrix expectedImpulsTensor(dqmodel->getD(), dqmodel->getD());
@@ -133,9 +128,9 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_test) {
 	for (size_t i = 0; i < dqmodel->getD(); i++) {
 		for (size_t j = 0; j < dqmodel->getD(); j++) {
 			expectedImpulsTensor(i, j) = macroscopicVelocity(i)
-					* macroscopicVelocity(j) * macroscopicDensity  / gamma;
+					* macroscopicVelocity(j) * macroscopicDensity;
 			if (i == j) {
-				expectedImpulsTensor(i, j) += pressure ;
+				expectedImpulsTensor(i, j) += pressure;
 			}
 		}
 	}
@@ -147,7 +142,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_test) {
 	}
 
 	cout << "done" << endl;
-} //BGKSteadyStateMoments_test
+} //BGKTransformedMoments_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	cout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
@@ -156,8 +151,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
 	double dt = 0.1;
-	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, make_shared<D2Q9>(), gamma);
+	BGKStandardTransformed bgk(tau, 0.1, make_shared<D2Q9>());
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
@@ -183,23 +177,22 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	cout << "done" << endl;
 } //D2Q9IncompressibleModelAllEqDistributions_test
 
-BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_Scaled_test) {
-	cout << "BGKSteadyStateMoments_Scaled_test..." << endl;
+BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
+	cout << "D2Q9IncompressibleModelMoments_Scaled_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
 	/////////////////
 	// Notice: This text can be applied to different stencils (independent of D and Q)
 
-	const double TOLERANCE = 1e-11;
+	const double TOLERANCE = 1e-12;
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
 	double tau = 0.9;
 	double dt = 0.1;
-	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
+	BGKStandardTransformed bgk(tau, 0.1, dqmodel);
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
@@ -218,10 +211,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_Scaled_test) {
 	}
 
 	// test first order moment (=density)
-	double moment1 = 0.0;
-	for (size_t i = 0; i < dqmodel->getQ(); i++) {
-		moment1 += eqDistributions.at(i);
-	}
+	double moment1 = bgk.calculateDensity(eqDistributions);
 	BOOST_CHECK_SMALL(moment1 - macroscopicDensity, TOLERANCE);
 
 	// test second order moments (=impulse)
@@ -247,6 +237,9 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_Scaled_test) {
 				moment3(i, j) += dqmodel->getDirection(k)(i)
 						* dqmodel->getDirection(k)(j) * eqDistributions.at(k);
 			}
+			if (i == j){
+				moment3(i,j) += dqmodel->getSpeedOfSoundSquare() * bgk.getRho0();
+			}
 		}
 	}
 	numeric_matrix expectedImpulsTensor(dqmodel->getD(), dqmodel->getD());
@@ -254,9 +247,9 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_Scaled_test) {
 	for (size_t i = 0; i < dqmodel->getD(); i++) {
 		for (size_t j = 0; j < dqmodel->getD(); j++) {
 			expectedImpulsTensor(i, j) = macroscopicVelocity(i)
-					* macroscopicVelocity(j) * macroscopicDensity / gamma;
+					* macroscopicVelocity(j) * macroscopicDensity;
 			if (i == j) {
-				expectedImpulsTensor(i, j) += pressure ;
+				expectedImpulsTensor(i, j) += pressure;
 			}
 		}
 	}
@@ -268,17 +261,16 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_Scaled_test) {
 	}
 
 	cout << "done" << endl;
-} //BGKSteadyStateMoments_Scaled_test
+} //D2Q9IncompressibleModelMoments_Scaled_test
 
-BOOST_AUTO_TEST_CASE(BGKSteadyStateAllEqDistributions_Scaled_test) {
-	cout << "BGKSteadyStateAllEqDistributions_Scaled_test..." << endl;
+BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
+	cout << "D2Q9IncompressibleModelAllEqDistributions_Scaled_test..." << endl;
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
 	double tau = 0.9;
 	double dt = 0.1;
-	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
+	BGKStandardTransformed bgk(tau, 0.1, dqmodel);
 
 
 	// Define macroscopic entities
@@ -303,7 +295,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateAllEqDistributions_Scaled_test) {
 	}
 
 	cout << "done" << endl;
-} //BGKSteadyStateAllEqDistributions_Scaled_test
+} //D2Q9IncompressibleModelAllEqDistributions_Scaled_test
 
 
 
@@ -312,20 +304,19 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateAllEqDistributions_Scaled_test) {
 ///////////////////////////////////
 
 
-BOOST_AUTO_TEST_CASE(BGKSteadyStateInvariants_test) {
-	cout << "BGKSteadyStateInvariants_test..." << endl;
+BOOST_AUTO_TEST_CASE(BGKStandardTransformedCollisionInvariants_test) {
+	cout << "BGKStandardTransformedCollisionInvariants_test..." << endl;
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
 	double dt = 0.1;
-	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
+	BGKStandardTransformed bgk(tau, 0.1, dqmodel);
 
 	// initialize distributions with arbitrary components
 	vector<double> f(bgk.getQ());
 	for (size_t i = 0; i < bgk.getQ(); i++) {
-		f.at(i) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1);
+		f.at(i) = 0.5 + sin(1.5 * i) + 0.001 + i / (i + 1);
 	}
 
 	// calculate macroscopic entities before and after collision
@@ -334,17 +325,17 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateInvariants_test) {
 	vector<double> fBefore(f);
 	bgk.collideSinglePoint(f);
 	double rhoAfter = bgk.calculateDensity(f);
-	numeric_vector uAfter = bgk.calculateVelocity(f);
+	numeric_vector uAfter = bgk.calculateVelocity(f) ;
 
 	// Check that f was changed
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
 		BOOST_CHECK(fabs(fBefore.at(i) - f.at(i)) > 1e-5);
 	}
 	// Check invariance of density
-	BOOST_CHECK_SMALL(rhoBefore - rhoAfter, 1e-14);
+	BOOST_CHECK_SMALL(rhoBefore - rhoAfter, 1e-15);
 	// Check invariance of impulse
-	BOOST_CHECK_SMALL(rhoBefore * uBefore(0) - rhoAfter * uAfter(0), 1e-14);
-	BOOST_CHECK_SMALL(rhoBefore * uBefore(1) - rhoAfter * uAfter(1), 1e-14);
+	BOOST_CHECK_SMALL(rhoBefore * uBefore(0) - rhoAfter * uAfter(0), 1e-15);
+	BOOST_CHECK_SMALL(rhoBefore * uBefore(1) - rhoAfter * uAfter(1), 1e-15);
 
 	// Check collision invariance of equality distribution
 	double prescribedDensity = 0.8;
@@ -355,22 +346,21 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateInvariants_test) {
 	vector<double> feqAfterCollision(feq);
 	bgk.collideSinglePoint(feqAfterCollision);
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
-		BOOST_CHECK_SMALL(feq.at(i) - feqAfterCollision.at(i), 1e-14);
+		BOOST_CHECK_SMALL(feq.at(i) - feqAfterCollision.at(i), 1e-15);
 	}
 
 	cout << "done" << endl;
-} //BGKSteadyStateInvariants_test
+} //BGKStandardTransformedCollisionInvariants_test
 
-BOOST_AUTO_TEST_CASE(BGKSteadyState_collideAll_test) {
+BOOST_AUTO_TEST_CASE(BGKStandardTransformed_collideAll_test) {
 
-	cout << "BGKSteadyState_collideAll_test..." << endl;
+	cout << "BGKStandardTransformed_collideAll_test..." << endl;
 
 	// create collision model// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
 	double dt = 0.1;
-	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, make_shared<D2Q9>(), gamma);
+	BGKStandardTransformed bgk(tau, 0.1, make_shared<D2Q9>());
 
 	// initialize distributions with arbitrary components
 	vector<distributed_vector> f;
@@ -403,12 +393,12 @@ BOOST_AUTO_TEST_CASE(BGKSteadyState_collideAll_test) {
 		bgk.collideSinglePoint(localF);
 		for (size_t j = 0; j < dqmodel->getQ(); j++) {
 			//cout << i << " " << j << endl;
-			BOOST_CHECK(fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-13);
+			BOOST_CHECK(fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-15);
 		}
 	}
 
 	cout << "done." << endl;
-} /* BGKSteadyState_collideAll_test*/
+} /* BGKStandardTransformed_collideAll_test*/
 
 BOOST_AUTO_TEST_SUITE_END()
 

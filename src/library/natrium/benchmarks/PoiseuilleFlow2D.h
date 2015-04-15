@@ -11,33 +11,25 @@
 #include "deal.II/grid/tria.h"
 #include "deal.II/base/function.h"
 
-#include "../problemdescription/ProblemDescription.h"
+#include "../problemdescription/Benchmark.h"
 #include "../utilities/BasicNames.h"
 
 using dealii::Triangulation;
 
 namespace natrium {
 
-
 /** @short Description of a simple Channel Flow
  *  The domain is [0,5]x[0,1].
  */
-class PoiseuilleFlow2D: public ProblemDescription<2> {
+class PoiseuilleFlow2D: public Benchmark<2> {
 public:
 
 	/// constructor
-	PoiseuilleFlow2D(double viscosity, size_t refinementLevel);
+	PoiseuilleFlow2D(double viscosity, size_t refinementLevel, double height =
+			1.0, double length = 2.0, bool is_periodic = true);
 
 	/// destructor
 	virtual ~PoiseuilleFlow2D();
-
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const;
 
 	/**
 	 * @short set initial velocities
@@ -49,17 +41,21 @@ public:
 			const vector<dealii::Point<2> >& supportPoints) const;
 
 	/**
-	 * @short analytic solution of the Taylor-Green vortex, first component of velocity vector
+	 * @short analytic solution of the Taylor-Green vortex
 	 */
-	double analyticVelocity1(const dealii::Point<2>& x, double t) const;
+	virtual void getAnalyticVelocity(const dealii::Point<2>& x, double t,
+			dealii::Point<2>& velocity) const;
 
 	/**
-	 * @short analytic solution of the Taylor-Green vortex, second component of velocity vector
+	 * @short get Analytic density at one point in space and time
+	 * @note Lattice Boltzmann uses an ideal EOS to couple density and pressure. In that sense, the analytic
+	 * density here is rather a pressure, and as such calculated from the analytic solution for p.
 	 */
-	double analyticVelocity2(const dealii::Point<2>& x, double t) const;
+	virtual double getAnalyticDensity(const dealii::Point<2>& x,
+			double t) const;
 
 	virtual double getCharacteristicVelocity() const {
-		return 0.1/sqrt(3);
+		return 0.1 / sqrt(3);
 	}
 
 private:
@@ -68,7 +64,8 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(size_t refinementLevel);
+	shared_ptr<Triangulation<2> > makeGrid(size_t refinementLevel,
+			double height, double length, bool is_periodic);
 
 	/**
 	 * @short create boundaries for couette flow

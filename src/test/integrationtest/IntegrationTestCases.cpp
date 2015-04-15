@@ -61,6 +61,7 @@ TestResult ConvergenceTestPeriodic() {
 	configuration->setStencilScaling(scaling);
 	configuration->setTimeStepSize(dt);
 	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
+	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 
 	// Simulation
 	BenchmarkCFDSolver<2> solver(configuration, benchmark);

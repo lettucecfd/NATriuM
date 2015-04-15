@@ -143,40 +143,6 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_test) {
 } //D2Q9Getter_test
 
 
-BOOST_AUTO_TEST_CASE(D2Q9MacroscopicEntities_test) {
-	cout << "D2Q9MacroscopicEntities_test..." << endl;
-
-	D2Q9 dqmodel;
-
-	// initialize distributions with arbitrary components
-	vector<double> f(dqmodel.getQ());
-	for (size_t i = 0; i < dqmodel.getQ(); i++){
-		f.at(i) = 0.5 + abs(sin(i));
-	}
-
-	// calculate macroscopic entities
-	double rho = dqmodel.calculateDensity(f);
-	numeric_vector u1 = dqmodel.calculateVelocity(f);
-	numeric_vector u2(dqmodel.getD());
-	dqmodel.calculateVelocity(f, rho, u2);
-
-	// compare two ways of calculating the velocity
-	for (size_t i = 0; i < dqmodel.getD(); i++){
-		BOOST_CHECK_EQUAL(u1(i), u2(i));
-	}
-
-	// re-calculate and compare density
-	double density = 0.0;
-	for (size_t i = 0; i < dqmodel.getQ(); i++){
-		density += f.at(i);
-	}
-	BOOST_CHECK_EQUAL(density, rho);
-
-	cout << "done" << endl;
-} //D2Q9MacroscopicEntities_test
-
-
-
 //////////////////////////////////
 // TESTS FOR THE SCALED VERSION //
 //////////////////////////////////
@@ -292,37 +258,6 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_Scaled_test) {
 } //D2Q9Getter_Scaled_test
 
 
-BOOST_AUTO_TEST_CASE(D2Q9MacroscopicEntities_Scaled_test) {
-	cout << "D2Q9MacroscopicEntities_Scaled_test..." << endl;
-
-	D2Q9 dqmodel(SCALING);
-
-	// initialize distributions with arbitrary components
-	vector<double> f(dqmodel.getQ());
-	for (size_t i = 0; i < dqmodel.getQ(); i++){
-		f.at(i) = 0.5 + abs(sin(i));
-	}
-
-	// calculate macroscopic entities
-	double rho = dqmodel.calculateDensity(f);
-	numeric_vector u1 = dqmodel.calculateVelocity(f);
-	numeric_vector u2(dqmodel.getD());
-	dqmodel.calculateVelocity(f, rho, u2);
-
-	// compare two ways of calculating the velocity
-	for (size_t i = 0; i < dqmodel.getD(); i++){
-		BOOST_CHECK_EQUAL(u1(i), u2(i));
-	}
-
-	// re-calculate and compare density
-	double density = 0.0;
-	for (size_t i = 0; i < dqmodel.getQ(); i++){
-		density += f.at(i);
-	}
-	BOOST_CHECK_EQUAL(density, rho);
-
-	cout << "done" << endl;
-} //D2Q9MacroscopicEntities_Scaled_test
 
 BOOST_AUTO_TEST_SUITE_END()
 

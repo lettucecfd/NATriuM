@@ -321,12 +321,12 @@ BOOST_AUTO_TEST_CASE(BGKStandardCollisionInvariants_test) {
 	}
 
 	// calculate macroscopic entities before and after collision
-	double rhoBefore = dqmodel->calculateDensity(f);
-	numeric_vector uBefore = dqmodel->calculateVelocity(f);
+	double rhoBefore = bgk.calculateDensity(f);
+	numeric_vector uBefore = bgk.calculateVelocity(f);
 	vector<double> fBefore(f);
 	bgk.collideSinglePoint(f);
-	double rhoAfter = dqmodel->calculateDensity(f);
-	numeric_vector uAfter = dqmodel->calculateVelocity(f);
+	double rhoAfter = bgk.calculateDensity(f);
+	numeric_vector uAfter = bgk.calculateVelocity(f);
 
 	// Check that f was changed
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {

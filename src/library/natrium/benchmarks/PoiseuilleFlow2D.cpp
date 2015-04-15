@@ -17,64 +17,32 @@
 
 namespace natrium {
 
-
-PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel) :
-		ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1.0) {
+PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
+		double height, double length, bool is_periodic) :
+		Benchmark<2>(makeGrid(refinementLevel, height, length, is_periodic),
+				viscosity, height) {
 
 	/// apply boundary values
-	setBoundaries(makeBoundaries());
+	setBoundaries(makeBoundaries(is_periodic));
 
 }
 
 PoiseuilleFlow2D::~PoiseuilleFlow2D() {
 }
 
-
-void PoiseuilleFlow2D::applyInitialDensities(
-		distributed_vector& initialDensities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	for (size_t i = 0; i < initialDensities.size(); i++) {
-		initialDensities(i) = 1.0;
-	}
-}
-
-void PoiseuilleFlow2D::applyInitialVelocities(
-		vector<distributed_vector>& initialVelocities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	assert(
-			initialVelocities.at(0).size()
-					== initialVelocities.at(1).size());
-	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-		initialVelocities.at(0)(i) = 0.0;
-		initialVelocities.at(1)(i) = 0.0;
-	}
-}
-
-double PoiseuilleFlow2D::analyticVelocity1(const dealii::Point<2>& x,
-		double t) const {
-	assert (false);
-	return sin(x(0))*cos(x(1))*exp(-2*getViscosity()*t);
-}
-
-double PoiseuilleFlow2D::analyticVelocity2(const dealii::Point<2>& x,
-		double t) const {
-	assert(false);
-	return -cos(x(0))*sin(x(1))*exp(-2*getViscosity()*t);
-}
-
 /**
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Triangulation<2> > PoiseuilleFlow2D::makeGrid(size_t refinementLevel) {
+shared_ptr<Triangulation<2> > PoiseuilleFlow2D::makeGrid(size_t refinementLevel,
+		double height, double length, bool is_periodic) {
 	//Creation of the principal domain
-	shared_ptr<Triangulation<2> > square =
-			make_shared<Triangulation<2> >();
-	dealii::GridGenerator::hyper_rectangle(*square, dealii::Point<2>(0,0), dealii::Point<2>(1,1), false);
+	shared_ptr<Triangulation<2> > square = make_shared<Triangulation<2> >();
+	dealii::GridGenerator::hyper_rectangle(*square, dealii::Point<2>(0, 0),
+			dealii::Point<2>(1, 1), false);
 
 	// Assign boundary indicators to the faces of the "parent cell"
-	Triangulation<2>::active_cell_iterator cell =
-			square->begin_active();
+	Triangulation<2>::active_cell_iterator cell = square->begin_active();
 	cell->face(0)->set_all_boundary_indicators(0);  // left
 	cell->face(1)->set_all_boundary_indicators(1);  // right
 	cell->face(2)->set_all_boundary_indicators(2);  // bottom
@@ -98,15 +66,11 @@ shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries() {
 			BoundaryCollection<2> >();
 	dealii::Vector<double> zeroVector(2);
 	dealii::Vector<double> xVelocity(2);
-	xVelocity(0) = 0.1/sqrt(3);
-	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(0, zeroVector));
-	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(1, zeroVector));
-	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(2, zeroVector));
-	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(3, xVelocity));
+	xVelocity(0) = 0.1 / sqrt(3);
+	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(0, zeroVector));
+	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(1, zeroVector));
+	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(2, zeroVector));
+	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(3, xVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
@@ -114,3 +78,17 @@ shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries() {
 	return boundaries;
 }
 } /* namespace natrium */
+
+void natrium::PoiseuilleFlow2D::applyInitialVelocities(
+		vector<distributed_vector>& initialVelocities,
+		const vector<dealii::Point<2> >& supportPoints) const {
+}
+
+void natrium::PoiseuilleFlow2D::getAnalyticVelocity(const dealii::Point<2>& x,
+		double t, dealii::Point<2>& velocity) const {
+}
+
+double natrium::PoiseuilleFlow2D::getAnalyticDensity(const dealii::Point<2>& x,
+		double t) const {
+	return 1.0;
+}

@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 			{ 1, 0.3, 0, 0.29 }, { 1, 0.3, 0, 0.05 }, { 5, 0.3, 0, 0.05 } };
 
 	std::stringstream fName;
-	fName << getenv("NATRIUM_HOME") << "/sinus-shear-Brenner1/result.txt";
+	fName << getenv("NATRIUM_HOME") << "/sinus-shear-Brenner2/result.txt";
 	std::ofstream resultFile(fName.str().c_str());
 	resultFile
 			<< "#gamma   no    eps     alpha      Lx       h       a        b      Psi_s"
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 
 	/// for all configurations
 	//for (size_t i=0; i < n_cfg; i++) {
-	for (double gamma = 0.05; gamma < 1.1; gamma += 0.15) {
+	for (double gamma = 0.005; gamma < 1.1; gamma += 0.15) {
 		size_t i = 2;
 		cout << "Starting configuration " << i << "..." << endl;
 
