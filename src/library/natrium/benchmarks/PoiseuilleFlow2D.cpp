@@ -18,9 +18,9 @@
 namespace natrium {
 
 PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
-		double height, double length, bool is_periodic) :
+		double u_bulk, double height, double length, bool is_periodic) :
 		Benchmark<2>(makeGrid(refinementLevel, height, length, is_periodic),
-				viscosity, height) {
+				viscosity, height), m_uBulk(u_bulk), m_uMax(3. / 2. * u_bulk) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
@@ -37,9 +37,9 @@ PoiseuilleFlow2D::~PoiseuilleFlow2D() {
 shared_ptr<Triangulation<2> > PoiseuilleFlow2D::makeGrid(size_t refinementLevel,
 		double height, double length, bool is_periodic) {
 	//Creation of the principal domain
-	shared_ptr<Triangulation<2> > square = make_shared<Triangulation<2> >();
-	dealii::GridGenerator::hyper_rectangle(*square, dealii::Point<2>(0, 0),
-			dealii::Point<2>(1, 1), false);
+	shared_ptr<Triangulation<2> > rect = make_shared<Triangulation<2> >();
+	dealii::GridGenerator::hyper_rectangle(*rect, dealii::Point<2>(0, -height),
+			dealii::Point<2>(length, height), false);
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Triangulation<2>::active_cell_iterator cell = square->begin_active();
@@ -48,10 +48,9 @@ shared_ptr<Triangulation<2> > PoiseuilleFlow2D::makeGrid(size_t refinementLevel,
 	cell->face(2)->set_all_boundary_indicators(2);  // bottom
 	cell->face(3)->set_all_boundary_indicators(3);  // top
 
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	square->refine_global(refinementLevel);
+	rect->refine_global(refinementLevel);
 
-	return square;
+	return rect;
 }
 
 /**
@@ -59,7 +58,8 @@ shared_ptr<Triangulation<2> > PoiseuilleFlow2D::makeGrid(size_t refinementLevel,
  * @return shared pointer to a vector of boundaries
  * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
  */
-shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(bool is_periodic) {
+shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
+		bool is_periodic) {
 
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
@@ -82,10 +82,16 @@ shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(bool is_peri
 void natrium::PoiseuilleFlow2D::applyInitialVelocities(
 		vector<distributed_vector>& initialVelocities,
 		const vector<dealii::Point<2> >& supportPoints) const {
+	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
+		initialVelocities.at(0)(i) = 0.0;
+		initialVelocities.at(0)(i) = 0.0;
+	}
 }
 
 void natrium::PoiseuilleFlow2D::getAnalyticVelocity(const dealii::Point<2>& x,
 		double t, dealii::Point<2>& velocity) const {
+	velocity(0) = m_uMax * (1 - pow(x(1) / getCharacteristicLength(), 2));
+	velocity(1) = 0.0;
 }
 
 double natrium::PoiseuilleFlow2D::getAnalyticDensity(const dealii::Point<2>& x,

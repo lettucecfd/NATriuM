@@ -25,8 +25,8 @@ class PoiseuilleFlow2D: public Benchmark<2> {
 public:
 
 	/// constructor
-	PoiseuilleFlow2D(double viscosity, size_t refinementLevel, double height =
-			1.0, double length = 2.0, bool is_periodic = true);
+	PoiseuilleFlow2D(double viscosity, size_t refinementLevel, double u_bulk = 1.0,
+			double height = 1.0, double length = 2.0, bool is_periodic = true);
 
 	/// destructor
 	virtual ~PoiseuilleFlow2D();
@@ -55,10 +55,14 @@ public:
 			double t) const;
 
 	virtual double getCharacteristicVelocity() const {
-		return 0.1 / sqrt(3);
+		return m_uBulk;
 	}
 
 private:
+
+	double m_uBulk;
+
+	double m_uMax;
 
 	/**
 	 * @short create triangulation for couette flow
