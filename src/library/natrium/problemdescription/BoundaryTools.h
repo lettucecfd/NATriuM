@@ -19,6 +19,21 @@ namespace natrium {
 namespace BoundaryTools {
 
 /**
+ * @short function to compare points as map keys;
+ *        the points with smaller x components fall before others. in case of equal x,
+ *        the points with smaller y components will be placed first.
+ */
+class point_sorter : public std::binary_function<dealii::Point<2> , dealii::Point<2> , bool > {
+public:
+
+  bool operator()(const dealii::Point<2> &left, const dealii::Point<2> &right) const {
+    if (left[0] < right[0]){return true;}
+        else if ((left[0] == right[0])&&(left[1] < right[1])) {return true;}
+    else  return false;
+        }
+};
+
+/**
  * @short Check if two lines in a 2D plane are parallel and not equal to each other.
  *        If they are antiparallel, swap begin and end of the second line.
  *  @param[in] beginLine1 start point of line 1

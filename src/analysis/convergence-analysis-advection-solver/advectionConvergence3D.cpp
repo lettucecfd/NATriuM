@@ -18,45 +18,52 @@
 
 #include "natrium/timeintegration/RungeKutta5LowStorage.h"
 
-#include "natrium/stencils/D2Q9.h"
+#include "natrium/stencils/D3Q19.h"
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/Math.h"
 
-#include "natrium/benchmarks/PeriodicTestDomain2D.h"
+#include "natrium/benchmarks/PeriodicTestDomain3D.h"
 
 using namespace natrium;
 
-//#define OUTPUT
+#define OUTPUT
 #define SMOOTH
 
 // analytic solution (where should the bump be after a certain time)
 void getAnalyticSolution(double time, distributed_vector& analyticSolution,
-		const vector<dealii::Point<2> >& supportPoints) {
+		const vector<dealii::Point<3> >& supportPoints) {
 	assert(analyticSolution.size() == supportPoints.size());
 	assert(supportPoints.size() > 0);
 
 	double lambda = 1;
 
-	dealii::Point<2> originalPoint;
+	dealii::Point<3> originalPoint;
 	for (size_t i = 0; i < supportPoints.size(); i++) {
 		originalPoint = supportPoints.at(i);
 		// move back to original point
-		originalPoint(0) -= time;
+		originalPoint(1) -= time;
+		originalPoint(2) += time;
 		// transform back to [0,1]
-		while (originalPoint(0) < 0.0) {
-			originalPoint(0) += 1.0;
+		while (originalPoint(1) < 0.0) {
+			originalPoint(1) += 1.0;
 		}
-		while (originalPoint(0) > 1.0) {
-			originalPoint(0) -= 1.0;
+		while (originalPoint(1) > 1.0) {
+			originalPoint(1) -= 1.0;
+		}
+		while (originalPoint(2) < 0.0) {
+			originalPoint(2) += 1.0;
+		}
+		while (originalPoint(2) > 1.0) {
+			originalPoint(2) -= 1.0;
 		}
 #ifdef SMOOTH
 		// see Hesthaven, p. 27
-		double h = sin(8 * atan(1) * originalPoint(0) * lambda);
+		double h = sin(8 * atan(1) * originalPoint(2) * lambda) * cos(8 * atan(1) * originalPoint(1) * lambda);
 		analyticSolution(i) = h;
 #else
 		// see Hesthaven, p. 83
-		double h = sin(8 * atan(1) * originalPoint(0) * lambda);
+		double h = sin(8 * atan(1) * originalPoint(2) * lambda) * cos(8 * atan(1) * originalPoint(1) * lambda);
 		analyticSolution(i) = ((h > 0) - (h < 0)) * pow(fabs(h), 2.0);
 #endif
 	}
@@ -68,10 +75,10 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	double deltaX = 1. / (pow(2, refinementLevel));
 
 	// create problem and solver
-	PeriodicTestDomain2D periodic(refinementLevel);
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	PeriodicTestDomain3D periodic(refinementLevel);
+	SEDGMinLee<3> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9>(), "", useCentralFlux);
+			make_shared<D3Q19>(), "", useCentralFlux);
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
@@ -79,20 +86,21 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	distributed_vector f(streaming.getNumberOfDoFs());
 	// zero-vector for time integrator
 	distributed_vector g(streaming.getNumberOfDoFs());
-	vector<dealii::Point<2> > supportPoints(
+	vector<dealii::Point<3> > supportPoints(
 			streaming.getDoFHandler()->n_dofs());
 	dealii::DoFTools::map_dofs_to_support_points(streaming.getMapping(),
 			*streaming.getDoFHandler(), supportPoints);
 	getAnalyticSolution(0.0, f, supportPoints);
 	assert(g.all_zero());
 
-	// RK5 for streaming in direction (1,0)
+	// RK5 for streaming in direction (0,1,1)
 #ifdef WITH_TRILINOS
-	distributed_sparse_matrix advectionMatrix = streaming.getSystemMatrix().block(0,0);
+	distributed_sparse_matrix advectionMatrix = streaming.getSystemMatrix().block(3,3);
 #else
 	distributed_sparse_matrix advectionMatrix;
-	advectionMatrix.reinit(streaming.getSparsityPattern(0));
-	advectionMatrix.copy_from(matrices.block(0, 0));
+	advectionMatrix.reinit(streaming.getSparsityPattern(3));
+	advectionMatrix.copy_from(matrices.block(3,3));
+	//advectionMatrix.print_formatted(cout);
 #endif
 	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(
 			deltaT, f.size());
@@ -105,7 +113,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 #ifdef OUTPUT
 	// prepare output directory
 	std::stringstream dirName;
-	dirName << getenv("NATRIUM_HOME") << "/convergence-advection-solver/Level_"
+	dirName << getenv("NATRIUM_HOME") << "/convergence-advection-solver3D/Level_"
 	<< refinementLevel << "_p_" << fe_order;
 	if (mkdir(dirName.str().c_str(), 0777) == -1) {
 		if (errno != EEXIST) {
@@ -124,7 +132,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 			<< i << ".vtu";
 			std::string filename = str.str();
 			std::ofstream vtu_output(filename.c_str());
-			dealii::DataOut<2> data_out;
+			dealii::DataOut<3> data_out;
 			data_out.attach_dof_handler(*streaming.getDoFHandler());
 			data_out.add_data_vector(f, "f");
 			getAnalyticSolution(deltaT * i, fAnalytic, supportPoints);
@@ -172,7 +180,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 #endif
 
 	std::stringstream fileName;
-	fileName << getenv("NATRIUM_HOME") << "/convergence-advection-solver/Level_"
+	fileName << getenv("NATRIUM_HOME") << "/convergence-advection-solver3D/Level_"
 			<< refinementLevel << "_p_" << fe_order << ".sp";
 	std::ofstream sp_file(fileName.str().c_str());
 	streaming.getBlockSparsityPattern().print_gnuplot(sp_file);
@@ -183,12 +191,11 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 // Main function
 // Test the dependence between dt,dx,p and the global discretization error
 int main() {
-	cout << "Starting convergence test for the SEDG advection solver.." << endl;
-
+	cout << "Starting convergence test for the 3D SEDG advection solver.." << endl;
 
 	// Make results dir
 	std::stringstream dirName;
-	dirName << getenv("NATRIUM_HOME") << "/convergence-advection-solver";
+	dirName << getenv("NATRIUM_HOME") << "/convergence-advection-solver3D";
 	if (mkdir(dirName.str().c_str(), 0777) == -1) {
 		if (errno != EEXIST) {
 			cerr << "Fehler in mkdir: " << strerror(errno) << endl;
@@ -205,8 +212,8 @@ int main() {
 			<< "error (2-norm)  | " << "error (sup-norm) | "
 			<< " time/step (sec) |" << "non-0 in SparsityPattern" << endl;
 
-	for (size_t refinementLevel = 1; refinementLevel < 5; refinementLevel++) {
-		for (size_t feOrder = 1; feOrder < 12; feOrder++) {
+	for (size_t refinementLevel = 1; refinementLevel < 2; refinementLevel++) {
+		for (size_t feOrder = 1; feOrder < 6; feOrder++) {
 			cout << "N = " << refinementLevel << ",     " << "p = " << feOrder
 					<< ", " << endl;
 			double deltaX = 1. / (pow(2, refinementLevel));

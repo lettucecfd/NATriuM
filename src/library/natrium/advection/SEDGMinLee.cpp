@@ -36,6 +36,7 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 				Stencil), m_useCentralFlux(useCentralFlux) {
 	// assertions
 	assert(orderOfFiniteElement >= 1);
+	assert(Stencil->getD() == dim);
 
 	// make dof handler
 	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement + 1);
@@ -94,7 +95,6 @@ void SEDGMinLee<dim>::reassemble() {
 
 	| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
 	const dealii::UpdateFlags faceUpdateFlags = update_values
-
 	| update_quadrature_points | update_JxW_values | update_normal_vectors;
 	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
 			| update_JxW_values | update_normal_vectors;
@@ -229,19 +229,22 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	}
 
 	//reinitialize matrices
+	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
-	m_systemMatrix.block(0, 1).reinit(cSparseEmpty);
-	m_systemMatrix.block(0, 2).reinit(cSparseOpposite);
+	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
+	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
+	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
+	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
 			if ((I == 0) and (J == 0)) {
 				continue;
 			}
-			if ((I == 0) and (J == 1)) {
+			if ((I == 0) and (J == some_empty)) {
 				continue;
 			}
-			if ((I == 0) and (J == 2)) {
+			if ((I == 0) and (J == first_opposite)) {
 				continue;
 			}
 			if (I == J) {
@@ -249,10 +252,10 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 				continue;
 			}
 			if (I == m_stencil->getIndexOfOppositeDirection(J + 1) - 1) {
-				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, 2));
+				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, first_opposite));
 				continue;
 			} else {
-				m_systemMatrix.block(I,J).reinit(m_systemMatrix.block(0,1));
+				m_systemMatrix.block(I,J).reinit(m_systemMatrix.block(0,some_empty));
 			}
 
 		}
@@ -397,7 +400,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix, const vector<double>& inverseLocalMassMatrix) {
 
 // loop over all faces
-	for (size_t j = 0; j < dealii::GeometryInfo<2>::faces_per_cell; j++) {
+	for (size_t j = 0; j < dealii::GeometryInfo<dim>::faces_per_cell; j++) {
 		//Faces at boundary
 		if (cell->face(j)->at_boundary()) {
 			size_t boundaryIndicator = cell->face(j)->boundary_indicator();
@@ -509,6 +512,9 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
 	const vector<Point<dim> > &normals = feFaceValues.get_normal_vectors();
 
+	if (4 == alpha){
+
+	}
 // get the required dofs of the neighbor cell
 //	typename DoFHandler<dim>::face_iterator neighborFace = neighborCell->face(
 //			neighborFaceNumber);
@@ -528,7 +534,9 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 // loop over all quadrature points at the face
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
 		size_t thisDoF = m_q_index_to_facedof.at(faceNumber).at(q);
+		assert (feFaceValues.shape_value(thisDoF, q) > 0);
 		size_t neighborDoF = m_q_index_to_facedof.at(neighborFaceNumber).at(q);
+		assert (feNeighborFaceValues.shape_value(neighborDoF, q) > 0);
 
 		double cell_entry = 0.0;
 		double neighbor_entry = 0.0;

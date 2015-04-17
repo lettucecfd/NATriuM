@@ -13,6 +13,12 @@
 
 namespace natrium {
 
+template class BoundaryDensity<2>;
+template class BoundaryDensity<3>;
+template class BoundaryVelocity<2>;
+template class BoundaryVelocity<3>;
+
+
 template<size_t dim> MinLeeBoundary<dim>::MinLeeBoundary(
 		size_t boundaryIndicator,
 		shared_ptr<dealii::Function<dim> > boundaryDensity,
@@ -31,14 +37,14 @@ template<size_t dim>
 MinLeeBoundary<dim>::MinLeeBoundary(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity) :
 		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
-				make_shared<BoundaryDensity>()), m_boundaryVelocity(
-				make_shared<BoundaryVelocity>(velocity)) {
+				make_shared<BoundaryDensity<dim> >()), m_boundaryVelocity(
+				make_shared<BoundaryVelocity<dim> >(velocity)) {
 }
 template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity);
-/*template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
+template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
  const dealii::Vector<double>& velocity);
- */
+
 template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 		dealii::CompressedSparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler,
@@ -51,7 +57,7 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 	std::vector<dealii::types::global_dof_index> dofs_on_this_cell(
 			n_dofs_per_cell);
 	std::vector<dealii::types::global_dof_index> dofs_on_this_face;
-	dofs_on_this_face.reserve(sqrt(n_dofs_per_cell));
+	dofs_on_this_face.reserve(n_dofs_per_cell);
 
 	// couple opposite distribution functions at boundaries
 	// iterate over all cells
@@ -60,7 +66,7 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 	typename dealii::DoFHandler<dim>::active_cell_iterator endc =
 			doFHandler.end();
 	for (; cell != endc; ++cell) {
-		for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell; i++) {
+		for (size_t i = 0; i < dealii::GeometryInfo<dim>::faces_per_cell; i++) {
 			if (cell->face(i)->at_boundary()) {
 				if (cell->face(i)->boundary_indicator()
 						== m_boundaryIndicator) {

@@ -136,6 +136,18 @@ int main() {
 		errors = true;
 	}
 
+	// Test 5: Convergence 3D LBM
+	result = IntegrationTestCases::ConvergenceTest3D();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		cout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		cout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
 	// FINALIZE
 	if (errors) {
 		cout << "Done. Errors occured in tests. See natrium.html for details."

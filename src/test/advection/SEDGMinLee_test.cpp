@@ -26,6 +26,7 @@
 #include "deal.II/lac/lapack_full_matrix.h"
 
 #include "natrium/stencils/D2Q9.h"
+#include "natrium/stencils/D3Q19.h"
 #include "natrium/timeintegration/RungeKutta5LowStorage.h"
 #include "natrium/utilities/BasicNames.h"
 
@@ -559,6 +560,8 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 
 //TODO Make tests available for Trilinos
 #endif
+
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

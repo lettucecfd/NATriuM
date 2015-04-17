@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        advectionConvergence
+        step-16-taylorGreenVortex3D
         )
 
 
@@ -12,17 +12,17 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                advectionConvergence3D.cpp 
+                step-16.cpp
                )
 #
 # link natrium library to executable
 #           
-include_directories( /usr/include/boost  ${PROJECT_SOURCE_DIR}/library)
+include_directories( /usr/include/boost ${PROJECT_SOURCE_DIR}/library )
 
 target_link_libraries(  ${TARGET}
                         natrium
-                        ${Boost_FILESYSTEM_LIBRARY}
-                        ${Boost_SYSTEM_LIBRARY}
+                       ${Boost_FILESYSTEM_LIBRARY}
+                       ${Boost_SYSTEM_LIBRARY}
                         )
                        
                        

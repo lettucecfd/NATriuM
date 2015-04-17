@@ -20,6 +20,7 @@
 #include "PhysicalProperties.h"
 
 #include "../stencils/D2Q9.h"
+#include "../stencils/D3Q19.h"
 #include "../stencils/Stencil.h"
 
 #include "../collision/BGKStandard.h"
@@ -76,6 +77,15 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	/// Build boltzmann model
 	if (Stencil_D2Q9 == configuration->getStencil()) {
 		m_stencil = make_shared<D2Q9>(configuration->getStencilScaling());
+	} else if (Stencil_D3Q19 == configuration->getStencil()) {
+		m_stencil = make_shared<D3Q19>(configuration->getStencilScaling());
+	} else {
+		throw CFDSolverException(
+			"Stencil not known to CFDSolver.");
+	}
+	if (m_stencil->getD() != dim){
+		throw CFDSolverException(
+			"Stencil has wrong dimension.");
 	}
 
 	/// Build streaming data object
@@ -328,11 +338,11 @@ template<size_t dim>
 void CFDSolver<dim>::run() {
 	m_i = m_iterationStart;
 	while (true) {
-		m_i++;
 		if (stopConditionMet()) {
 			break;
 		}
 		output(m_i);
+		m_i++;
 		stream();
 		collide();
 	}

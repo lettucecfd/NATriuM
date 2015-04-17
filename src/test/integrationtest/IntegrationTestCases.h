@@ -43,6 +43,7 @@ TestResult ConvergenceTestImplicitLBM ();
 
 TestResult ConvergenceTestExponentialLBM();
 
+TestResult ConvergenceTest3D();
 
 } /* namespace IntegrationTests */
 } /* namespace natrium */

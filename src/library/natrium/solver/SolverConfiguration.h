@@ -312,7 +312,8 @@ public:
 			gamma = get_double("Steady state gamma");
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not read parameter 'Steady state gamma' from parameters: "
+			msg
+					<< "Could not read parameter 'Steady state gamma' from parameters: "
 					<< e.what();
 			leave_subsection();
 			leave_subsection();
@@ -323,18 +324,14 @@ public:
 		return gamma;
 	}
 
-
-	void setBGKSteadyStateGamma(
-			double gamma) {
+	void setBGKSteadyStateGamma(double gamma) {
 		enter_subsection("Collision");
 		enter_subsection("BGK parameters");
 		try {
-			set("Steady state gamma",
-					gamma);
+			set("Steady state gamma", gamma);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value "
-					<< gamma
+			msg << "Could not assign value " << gamma
 					<< " to Steady state gamma: " << e.what();
 			leave_subsection();
 			leave_subsection();
@@ -874,6 +871,8 @@ public:
 		leave_subsection();
 		if ("D2Q9" == stencil) {
 			return Stencil_D2Q9;
+		} else if ("D3Q19" == stencil) {
+			return Stencil_D3Q19;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown Stencil with index " << stencil
@@ -888,6 +887,10 @@ public:
 		switch (stencil) {
 		case Stencil_D2Q9: {
 			set("Stencil", "D2Q9");
+			break;
+		}
+		case Stencil_D3Q19: {
+			set("Stencil", "D3Q19");
 			break;
 		}
 		default: {

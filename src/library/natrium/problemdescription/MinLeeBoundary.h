@@ -19,26 +19,30 @@
 namespace natrium {
 
 
-class BoundaryDensity: public dealii::Function<2> {
+template <size_t dim>
+class BoundaryDensity: public dealii::Function<dim> {
 public:
-	virtual double value(const dealii::Point<2> &p,
+	BoundaryDensity(){};
+	virtual ~BoundaryDensity(){};
+	virtual double value(const dealii::Point<dim> &p,
 			const unsigned int component = 0) const {
 		return 1;
 	}
 };
-class BoundaryVelocity: public dealii::Function<2> {
+template <size_t dim>
+class BoundaryVelocity: public dealii::Function<dim> {
 private:
 	dealii::Vector<double> m_Velocity;
 public:
 	BoundaryVelocity(const dealii::Vector<double>& velocity) :
 			m_Velocity(velocity) {
 	}
-	virtual void vector_value(const dealii::Point<2> &p,
+	virtual ~BoundaryVelocity(){};
+	virtual void vector_value(const dealii::Point<dim> &p,
 			dealii::Vector<double> &values) const {
 		values = m_Velocity;
 	}
 };
-
 
 /**
  * @short 	The boundary described by Min and Lee.
