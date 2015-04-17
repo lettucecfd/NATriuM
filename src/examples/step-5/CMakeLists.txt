@@ -13,13 +13,11 @@ set(    TARGET
 #
 ADD_EXECUTABLE( ${TARGET} 
                 step-2.cpp
-                PoiseuilleFlow2D.h   
-                PoiseuilleFlow2D.cpp
                )
 #
 # link natrium library to executable
 #           
-include_directories( /usr/include/boost ${PROJECT_SOURCE_DIR}/natrium ${PROJECT_BINARY_DIR}/natrium)
+include_directories( /usr/include/boost  ${PROJECT_SOURCE_DIR}/library)
 
 target_link_libraries(  ${TARGET}
                         natrium

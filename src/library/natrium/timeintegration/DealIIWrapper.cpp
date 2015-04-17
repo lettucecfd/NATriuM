@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <timeintegration/DealIIWrapper.h>
+#include "DealIIWrapper.h"
 
 #include "deal.II/lac/solver_control.h"
 #include "deal.II/lac/identity_matrix.h"

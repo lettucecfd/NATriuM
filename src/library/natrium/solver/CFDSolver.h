@@ -21,11 +21,7 @@
 #include "../advection/AdvectionOperator.h"
 #include "../advection/SEDGMinLee.h"
 
-#include "../boltzmannmodels/BoltzmannModel.h"
-#include "../boltzmannmodels/D2Q9IncompressibleModel.h"
-
-#include "../collision/Collision.h"
-#include "../collision/BGKTransformed.h"
+#include "../collision/CollisionModel.h"
 
 #include "../timeintegration/TimeIntegrator.h"
 
@@ -34,6 +30,11 @@
 #include "../utilities/NATriuMException.h"
 
 namespace natrium {
+
+/* forward declarations */
+class Stencil;
+
+
 
 /**
  * @short Exception class for CFDSolver
@@ -57,7 +58,7 @@ public:
 
 /** @short The central class for the CFD simulation based on the DBE.
  *  @note  The CFDSolver itself is quite static but it contains interchangeable modules, e.g. for the
- *         Boltzmann model or the time integrator. By these means, a variety of different simulation
+ *         Stencil or the time integrator. By these means, a variety of different simulation
  *         methods can be covered.
  * @tparam dim The dimension of the flow (2 or 3).
  */
@@ -87,7 +88,7 @@ private:
 	shared_ptr<AdvectionOperator<dim> > m_advectionOperator;
 
 	/// DdQq Boltzmann model (e.g. D2Q9)
-	shared_ptr<BoltzmannModel> m_boltzmannModel;
+	shared_ptr<Stencil> m_stencil;
 
 	/// Description of the collision algorithm
 	shared_ptr<CollisionModel> m_collisionModel;
@@ -197,8 +198,8 @@ public:
 		return m_advectionOperator;
 	}
 
-	const shared_ptr<BoltzmannModel>& getBoltzmannModel() const {
-		return m_boltzmannModel;
+	const shared_ptr<Stencil>& getStencil() const {
+		return m_stencil;
 	}
 
 	const shared_ptr<CollisionModel>& getCollisionModel() const {
@@ -252,19 +253,7 @@ public:
 		return m_solverStats;
 	}
 
-	double getTau() const {
-		if (BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS
-				== m_configuration->getCollisionScheme()) {
-			return BGKTransformed::calculateRelaxationParameter(
-					m_problemDescription->getViscosity(),
-					m_configuration->getTimeStepSize(), *m_boltzmannModel);
-		}
-		LOG(WARNING)
-				<< "getTau() is called, but you don't have a BGKTransformed model."
-				<< endl;
-		return 0;
-
-	}
+	double getTau() const;
 
 	double getResiduumDensity() const {
 		return m_residuumDensity;

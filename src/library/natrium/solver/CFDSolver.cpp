@@ -19,6 +19,14 @@
 
 #include "PhysicalProperties.h"
 
+#include "../stencils/D2Q9.h"
+#include "../stencils/D3Q19.h"
+#include "../stencils/Stencil.h"
+
+#include "../collision/BGKStandard.h"
+#include "../collision/BGKStandardTransformed.h"
+#include "../collision/BGKSteadyState.h"
+
 #include "../problemdescription/BoundaryCollection.h"
 
 #include "../timeintegration/ThetaMethod.h"
@@ -68,8 +76,16 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// Build boltzmann model
 	if (Stencil_D2Q9 == configuration->getStencil()) {
-		m_boltzmannModel = make_shared<D2Q9IncompressibleModel>(
-				configuration->getStencilScaling());
+		m_stencil = make_shared<D2Q9>(configuration->getStencilScaling());
+	} else if (Stencil_D3Q19 == configuration->getStencil()) {
+		m_stencil = make_shared<D3Q19>(configuration->getStencilScaling());
+	} else {
+		throw CFDSolverException(
+			"Stencil not known to CFDSolver.");
+	}
+	if (m_stencil->getD() != dim){
+		throw CFDSolverException(
+			"Stencil has wrong dimension.");
 	}
 
 	/// Build streaming data object
@@ -84,7 +100,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		m_advectionOperator = make_shared<SEDGMinLee<dim> >(
 				m_problemDescription->getTriangulation(),
 				m_problemDescription->getBoundaries(),
-				configuration->getSedgOrderOfFiniteElement(), m_boltzmannModel,
+				configuration->getSedgOrderOfFiniteElement(), m_stencil,
 				whereAreTheStoredMatrices,
 				(CENTRAL == configuration->getSedgFluxType()));
 	}
@@ -107,19 +123,27 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
-	if (BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS
-			== configuration->getCollisionScheme()) {
-		tau = BGKTransformed::calculateRelaxationParameter(
+	double gamma = -1.0;
+	if (BGK_STANDARD == configuration->getCollisionScheme()) {
+		tau = BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_boltzmannModel);
-		if (Stencil_D2Q9 == configuration->getStencil()) {
-			BGKTransformed bgk(m_boltzmannModel->getQ(), tau,
-					m_configuration->getTimeStepSize());
-			D2Q9IncompressibleModel d2q9(configuration->getStencilScaling());
-			m_collisionModel = make_shared<
-					Collision<D2Q9IncompressibleModel, BGKTransformed> >(d2q9,
-					bgk);
-		}
+				m_configuration->getTimeStepSize(), *m_stencil);
+		m_collisionModel = make_shared<BGKStandard>(tau,
+				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (BGK_STEADY_STATE == configuration->getCollisionScheme()) {
+		gamma = configuration->getBGKSteadyStateGamma();
+		tau = BGKSteadyState::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil, gamma);
+		m_collisionModel = make_shared<BGKSteadyState>(tau,
+				m_configuration->getTimeStepSize(), m_stencil, gamma);
+	} else if (BGK_STANDARD_TRANSFORMED
+			== configuration->getCollisionScheme()) {
+		tau = BGKStandardTransformed::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
+		m_collisionModel = make_shared<BGKStandardTransformed>(tau,
+				m_configuration->getTimeStepSize(), m_stencil);
 	}
 
 /// Build time integrator
@@ -129,20 +153,19 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				RungeKutta5LowStorage<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), numberOfDoFs,
-				m_boltzmannModel->getQ() - 1);
+				m_stencil->getQ() - 1);
 	} else if (THETA_METHOD == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 				ThetaMethod<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), numberOfDoFs,
-				m_boltzmannModel->getQ() - 1,
-				configuration->getThetaMethodTheta());
+				m_stencil->getQ() - 1, configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 				ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), numberOfDoFs,
-				m_boltzmannModel->getQ() - 1);
+				m_stencil->getQ() - 1);
 	} else if (OTHER == configuration->getTimeIntegrator()) {
 		if(configuration->getDealIntegrator()<7)
 		{
@@ -203,25 +226,45 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "Reynolds number:          "
 			<< (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
-	LOG(WELCOME) << "Mach number:              "
-			<< charU / m_boltzmannModel->getSpeedOfSound() << endl;
+	double Ma = charU / m_stencil->getSpeedOfSound();
+	LOG(WELCOME) << "Mach number:              " << Ma << endl;
 	LOG(WELCOME) << "Stencil scaling:          "
 			<< configuration->getStencilScaling() << endl;
+	LOG(WELCOME) << "Sound speed:              " << m_stencil->getSpeedOfSound()
+			<< endl;
 	//TODO propose optimal cfl based on time integrator
 	const double optimal_cfl = 0.4;
 	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
 			<< CFDSolverUtilities::calculateTimestep<dim>(
 					*m_problemDescription->getTriangulation(),
-					configuration->getSedgOrderOfFiniteElement(),
-					*m_boltzmannModel, optimal_cfl) << " s" << endl;
+					configuration->getSedgOrderOfFiniteElement(), *m_stencil,
+					optimal_cfl) << " s" << endl;
 	LOG(WELCOME) << "Actual dt:                "
 			<< configuration->getTimeStepSize() << " s" << endl;
 	LOG(WELCOME) << "CFL number:               "
 			<< configuration->getTimeStepSize() / dx
-					* m_boltzmannModel->getMaxParticleVelocityMagnitude()
-			<< endl;
+					* m_stencil->getMaxParticleVelocityMagnitude() << endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
-	LOG(WELCOME) << "tau:                      " << tau << endl;
+	LOG(WELCOME) << "----------------------------" << endl;
+	LOG(WELCOME) << "== COLLSISION ==          " << endl;
+	switch (configuration->getCollisionScheme()) {
+	case BGK_STANDARD: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
+	case BGK_STANDARD_TRANSFORMED: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
+	case BGK_STEADY_STATE: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		LOG(WELCOME) << "steady state gamma:       " << gamma << endl;
+		LOG(WELCOME) << "Effective Ma:             " << Ma / sqrt(gamma)
+				<< endl;
+
+		break;
+	}
+	}
 	LOG(WELCOME) << "----------------------------" << endl;
 
 	// initialize boundary dof indicator
@@ -312,11 +355,11 @@ template<size_t dim>
 void CFDSolver<dim>::run() {
 	m_i = m_iterationStart;
 	while (true) {
-		m_i++;
 		if (stopConditionMet()) {
 			break;
 		}
 		output(m_i);
+		m_i++;
 		stream();
 		collide();
 	}
@@ -350,7 +393,7 @@ bool CFDSolver<dim>::stopConditionMet() {
 	if (m_i % 10 == 0) {
 		m_solverStats->calulateResiduals(m_i);
 		if ((m_residuumVelocity < convergence_threshold)
-				and (m_residuumDensity < convergence_threshold)) {
+		/*and (m_residuumDensity < convergence_threshold)*/) {
 			LOG(BASIC)
 					<< "Stop condition: Simulation converged below threshold "
 					<< convergence_threshold << " in iteration " << m_i << "."
@@ -380,18 +423,18 @@ void CFDSolver<dim>::output(size_t iteration) {
 		}
 		// output estimated runtime after iterations 1, 10, 100, 1000, ...
 		/*if (iteration > m_iterationStart) {
-			if (int(log10(iteration - m_iterationStart))
-					== log10(iteration - m_iterationStart)) {
-				time_t estimated_end = m_tstart
-						+ (m_configuration->getNumberOfTimeSteps()
-								- m_iterationStart)
-								/ (iteration - m_iterationStart)
-								* (time(0) - m_tstart);
-				struct tm * ltm = localtime(&estimated_end);
-				LOG(BASIC) << "i = " << iteration << "; Estimated end: "
-						<< string(asctime(ltm)) << endl;
-			}
-		}*/
+		 if (int(log10(iteration - m_iterationStart))
+		 == log10(iteration - m_iterationStart)) {
+		 time_t estimated_end = m_tstart
+		 + (m_configuration->getNumberOfTimeSteps()
+		 - m_iterationStart)
+		 / (iteration - m_iterationStart)
+		 * (time(0) - m_tstart);
+		 struct tm * ltm = localtime(&estimated_end);
+		 LOG(BASIC) << "i = " << iteration << "; Estimated end: "
+		 << string(asctime(ltm)) << endl;
+		 }
+		 }*/
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
@@ -448,18 +491,20 @@ template void CFDSolver<3>::output(size_t iteration);
 template<size_t dim>
 void CFDSolver<dim>::initializeDistributions() {
 	LOG(BASIC) << "Initialize distribution functions: ";
-	vector<double> feq(m_boltzmannModel->getQ());
+	vector<double> feq(m_stencil->getQ());
 	numeric_vector u(dim);
 
+	// save starting time
+	double t0 = m_time;
+
 // Initialize f with the equilibrium distribution functions
-	m_f.reinit(m_boltzmannModel->getQ(),
-			m_advectionOperator->getNumberOfDoFs());
+	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
 	for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
 		for (size_t j = 0; j < dim; j++) {
 			u(j) = m_velocity.at(j)(i);
 		}
-		m_boltzmannModel->getEquilibriumDistributions(feq, u, m_density(i));
-		for (size_t j = 0; j < m_boltzmannModel->getQ(); j++) {
+		m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
+		for (size_t j = 0; j < m_stencil->getQ(); j++) {
 			m_f.at(j)(i) = feq.at(j);
 		}
 	}
@@ -510,8 +555,8 @@ void CFDSolver<dim>::initializeDistributions() {
 			for (size_t j = 0; j < dim; j++) {
 				u(j) = m_velocity.at(j)(i);
 			}
-			m_boltzmannModel->getEquilibriumDistributions(feq, u, m_density(i));
-			for (size_t j = 0; j < m_boltzmannModel->getQ(); j++) {
+			m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
+			for (size_t j = 0; j < m_stencil->getQ(); j++) {
 				m_f.at(j)(i) = feq.at(j);
 			}
 		}
@@ -524,6 +569,8 @@ void CFDSolver<dim>::initializeDistributions() {
 	}
 	}
 
+	m_time = t0;
+
 	LOG(BASIC) << "Initialize distribution functions: done." << endl;
 }
 
@@ -532,7 +579,7 @@ template void CFDSolver<3>::initializeDistributions();
 
 template<size_t dim>
 void CFDSolver<dim>::saveDistributionFunctionsToFiles(const string& directory) {
-	for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
+	for (size_t i = 0; i < m_stencil->getQ(); i++) {
 		// filename
 		std::stringstream filename;
 		filename << directory << "/checkpoint_f_" << i << ".dat";
@@ -555,11 +602,10 @@ template<size_t dim>
 void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 		const string& directory) {
 // create vectors
-	m_f.reinit(m_boltzmannModel->getQ(),
-			m_advectionOperator->getNumberOfDoFs());
+	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
 // read the distribution functions from file
 	try {
-		for (size_t i = 0; i < m_boltzmannModel->getQ(); i++) {
+		for (size_t i = 0; i < m_stencil->getQ(); i++) {
 			// filename
 			std::stringstream filename;
 			filename << directory << "/checkpoint_f_" << i << ".dat";
@@ -583,6 +629,23 @@ template void CFDSolver<2>::loadDistributionFunctionsFromFiles(
 		const string& directory);
 template void CFDSolver<3>::loadDistributionFunctionsFromFiles(
 		const string& directory);
+
+template<size_t dim>
+double CFDSolver<dim>::getTau() const {
+	if ((BGK_STANDARD == m_configuration->getCollisionScheme())
+			or (BGK_STANDARD_TRANSFORMED
+					== m_configuration->getCollisionScheme())) {
+		return BGKStandard::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
+	}
+	LOG(WARNING)
+			<< "getTau() is called, but you don't have a BGK Standard model."
+			<< endl;
+	return 0;
+}
+template double CFDSolver<2>::getTau() const;
+template double CFDSolver<3>::getTau() const;
 
 } /* namespace natrium */
 

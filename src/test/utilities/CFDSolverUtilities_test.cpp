@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "utilities/CFDSolverUtilities.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
 
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_generator.h"

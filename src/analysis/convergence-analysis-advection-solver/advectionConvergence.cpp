@@ -12,18 +12,18 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "advection/SEDGMinLee.h"
+#include "natrium/advection/SEDGMinLee.h"
 
-#include "problemdescription/ProblemDescription.h"
+#include "natrium/problemdescription/ProblemDescription.h"
 
-#include "timeintegration/RungeKutta5LowStorage.h"
+#include "natrium/timeintegration/RungeKutta5LowStorage.h"
 
-#include "boltzmannmodels/D2Q9IncompressibleModel.h"
+#include "natrium/stencils/D2Q9.h"
 
-#include "utilities/BasicNames.h"
-#include "utilities/Math.h"
+#include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/Math.h"
 
-#include "PeriodicTestDomain2D.h"
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
 
 using namespace natrium;
 
@@ -71,7 +71,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	PeriodicTestDomain2D periodic(refinementLevel);
 	SEDGMinLee<2> streaming(periodic.getTriangulation(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9IncompressibleModel>(), "", useCentralFlux);
+			make_shared<D2Q9>(), "", useCentralFlux);
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
@@ -185,11 +185,6 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 int main() {
 	cout << "Starting convergence test for the SEDG advection solver.." << endl;
 
-#ifdef WITH_TRILINOS
-	int a = 0;
-	char ** b;
-	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a, b);
-#endif
 
 	// Make results dir
 	std::stringstream dirName;

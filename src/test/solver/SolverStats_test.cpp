@@ -5,15 +5,15 @@
  *      Author: kraemer
  */
 
-#include <solver/SolverStats.h>
+#include "natrium/solver/SolverStats.h"
 #include <fstream>
 
 #include "boost/test/unit_test.hpp"
 #include "boost/filesystem.hpp"
 
-#include "solver/SolverConfiguration.h"
-#include "solver/CFDSolver.h"
-#include "utilities/BasicNames.h"
+#include "natrium/solver/SolverConfiguration.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "PeriodicTestFlow2D.h"
 

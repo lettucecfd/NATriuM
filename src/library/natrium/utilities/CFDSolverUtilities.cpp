@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include <utilities/CFDSolverUtilities.h>
+#include "CFDSolverUtilities.h"
 
 #include <fstream>
 
@@ -69,21 +69,21 @@ template double CFDSolverUtilities::getMinimumVertexDistance<3>(
 template<size_t dim>
 double CFDSolverUtilities::calculateTimestep(
 		const dealii::Triangulation<dim>& tria,
-		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel,
+		const size_t orderOfFiniteElement, const Stencil& stencil,
 		double cFL) {
 	assert(orderOfFiniteElement >= 1);
 	double dx = CFDSolverUtilities::getMinimumVertexDistance<dim>(tria);
-	double u = boltzmannModel.getMaxParticleVelocityMagnitude();
+	double u = stencil.getMaxParticleVelocityMagnitude();
 	// according to Hesthaven, dt ~ p^{-2}
 	double dt = cFL * dx / (u * orderOfFiniteElement * orderOfFiniteElement);
 	return dt;
 }
 template double CFDSolverUtilities::calculateTimestep<2>(
 		const dealii::Triangulation<2>& tria, const size_t orderOfFiniteElement,
-		const BoltzmannModel& boltzmannModel, double cFL);
+		const Stencil& stencil, double cFL);
 template double CFDSolverUtilities::calculateTimestep<3>(
 		const dealii::Triangulation<3>& tria, const size_t orderOfFiniteElement,
-		const BoltzmannModel& boltzmannModel, double cFL);
+		const Stencil& stencil, double cFL);
 
 template<int dim>
 void CFDSolverUtilities::mesh_info(const dealii::Triangulation<dim> &tria,

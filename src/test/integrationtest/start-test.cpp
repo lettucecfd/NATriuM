@@ -11,7 +11,7 @@
 
 #include "IntegrationTestCases.h"
 
-#include "utilities/HtmlTrace.h"
+#include "natrium/utilities/HtmlTrace.h"
 
 using namespace natrium;
 
@@ -124,7 +124,29 @@ int main() {
 		errors = true;
 	}
 
+	// Test 4: Convergence Exponential LBM
+	result = IntegrationTestCases::ConvergenceTestExponentialLBM();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		cout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		cout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
 
+	// Test 5: Convergence 3D LBM
+	result = IntegrationTestCases::ConvergenceTest3D();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		cout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		cout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
 
 	// FINALIZE
 	if (errors) {

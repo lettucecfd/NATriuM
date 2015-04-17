@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/SolverConfiguration.h"
 
 #include <fstream>
 
@@ -13,7 +13,7 @@
 #include "boost/filesystem.hpp"
 #include "boost/foreach.hpp"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 
@@ -68,10 +68,15 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.getNumberOfTimeSteps(),100);
 	config.setConvergenceThreshold(1e-12);
 	BOOST_CHECK_CLOSE(config.getConvergenceThreshold(),1e-12,1e-5);
+	config.setBGKSteadyStateGamma(0.1);
+	BOOST_CHECK_CLOSE(config.getBGKSteadyStateGamma(), 0.1, 1e-5);
+	config.setCollisionScheme(BGK_STEADY_STATE);
+	BOOST_CHECK_EQUAL(config.getCollisionScheme(), BGK_STEADY_STATE);
 
 	/// Failure test
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);
 	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-0.1), ConfigurationException);
+	BOOST_CHECK_THROW(config.setBGKSteadyStateGamma(-0.1), ConfigurationException);
 
 
 

@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <solver/BenchmarkCFDSolver.h>
+#include "natrium/solver/BenchmarkCFDSolver.h"
 
 namespace natrium {
 

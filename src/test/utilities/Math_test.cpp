@@ -5,11 +5,11 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "utilities/Math.h"
+#include "natrium/utilities/Math.h"
 
 #include "boost/test/unit_test.hpp"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium{
 

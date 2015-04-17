@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <solver/BenchmarkCFDSolver.h>
+#include "BenchmarkCFDSolver.h"
 
 #include "deal.II/dofs/dof_tools.h"
 

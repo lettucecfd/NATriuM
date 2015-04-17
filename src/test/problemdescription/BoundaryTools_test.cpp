@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "problemdescription/BoundaryTools.h"
+#include "natrium/problemdescription/BoundaryTools.h"
 
 #include <string>
 
@@ -13,7 +13,7 @@
 
 #include "deal.II/base/point.h"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 namespace BoundaryTools{

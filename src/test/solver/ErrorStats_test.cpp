@@ -5,18 +5,18 @@
  *      Author: kraemer
  */
 
-#include <solver/ErrorStats.h>
+#include "natrium/solver/ErrorStats.h"
 #include <fstream>
 
 #include "boost/test/unit_test.hpp"
 #include "boost/filesystem.hpp"
 
-#include "solver/SolverConfiguration.h"
-#include "solver/BenchmarkCFDSolver.h"
-#include "problemdescription/Benchmark.h"
-#include "utilities/BasicNames.h"
+#include "natrium/solver/SolverConfiguration.h"
+#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/problemdescription/Benchmark.h"
+#include "natrium/utilities/BasicNames.h"
 
-#include "TaylorGreenVortex2D.h"
+#include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 namespace natrium {
 

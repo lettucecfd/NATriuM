@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include "PhysicalProperties.h"
+#include "natrium/solver/PhysicalProperties.h"
 
 namespace natrium {
 

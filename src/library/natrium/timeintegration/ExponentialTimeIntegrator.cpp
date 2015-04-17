@@ -49,6 +49,20 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		dt = this->getTimeStepSize();
 	}
 
+
+#ifdef WITH_TRILINOS
+	if (m_w.size() != f.size()) {
+		m_w.reinit(f);
+	}
+
+	if (m_vj.size() != f.size()) {
+		m_vj.reinit(f);
+	}
+
+	if (m_vi.size() != f.size()) {
+		m_vi.reinit(f);
+	}
+#else
 	if (m_w.size() != f.size()) {
 		m_w.reinit(f.size(), true);
 	}
@@ -60,6 +74,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	if (m_vi.size() != f.size()) {
 		m_vi.reinit(f.size(), true);
 	}
+#endif
 
 	if (m_firstColumn.size() != arnoldiSize + 1) {
 		m_firstColumn.reinit(arnoldiSize + 1, true);
@@ -68,6 +83,8 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	if (m_f.size() != f.size()) {
 		m_f.reinit(f.size(), true);
 	}
+
+
 
 	m_w = f;
 	m_vj = f;

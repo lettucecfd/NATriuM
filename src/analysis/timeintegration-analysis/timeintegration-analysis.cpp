@@ -25,16 +25,18 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "solver/BenchmarkCFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/stencils/D2Q9.h"
 
-#include "problemdescription/Benchmark.h"
+#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "utilities/CFDSolverUtilities.h"
-#include "utilities/BasicNames.h"
+#include "natrium/problemdescription/Benchmark.h"
 
-#include "../../examples/step-2/CouetteFlow2D.h"
-#include "../../examples/step-1/TaylorGreenVortex2D.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
+#include "natrium/utilities/BasicNames.h"
+
+#include "natrium/benchmarks/CouetteFlow2D.h"
+#include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 using namespace natrium;
 
@@ -82,10 +84,10 @@ int main() {
 	const double viscosity = U * L / Re;
 	// starting time
 	//const double t0 = 30.0;
-	const double t0 = 0.0;
+	const double t0 = 1.0; 	// analytic solution won't converge for t0 = 0.0 and adaptive timesteps
 
 	size_t refinementLevel = 3;
-	size_t orderOfFiniteElement = 2;
+	size_t orderOfFiniteElement = 5;
 
 #ifndef ONLY_PERIODIC
 	// make problem object
@@ -221,7 +223,7 @@ int main() {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*benchmark->getTriangulation(), orderOfFiniteElement,
-					D2Q9IncompressibleModel(scaling), CFL);
+					D2Q9(scaling), CFL);
 
 			cout << "CFL = " << CFL << endl;
 			if (tmax/ dt < 2) {
@@ -235,7 +237,7 @@ int main() {
 			// setup configuration
 			std::stringstream dirName;
 			dirName << getenv("NATRIUM_HOME") << "/timeintegration-analysis/"
-					<< orderOfFiniteElement << "_" << refinementLevel << "_"
+					<< timeintegrator << "_" << CFL << "_"
 					<< dt;
 
 			//configuration->setSwitchOutputOff(true);
@@ -247,7 +249,7 @@ int main() {
 			//configuration->setOutputCheckpointInterval(1000);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
-			configuration->setCommandLineVerbosity(0);
+			configuration->setCommandLineVerbosity(BASIC);
 			configuration->setTimeStepSize(dt);
 			configuration->setSimulationEndTime(tmax);
 

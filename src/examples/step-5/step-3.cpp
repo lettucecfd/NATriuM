@@ -9,14 +9,14 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "solver/CFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "problemdescription/ProblemDescription.h"
+#include "natrium/problemdescription/ProblemDescription.h"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
-#include "PoiseuilleFlow2D.h"
+#include "natrium/benchmarks/PoiseuilleFlow2D.h"
 
 using namespace natrium;
 

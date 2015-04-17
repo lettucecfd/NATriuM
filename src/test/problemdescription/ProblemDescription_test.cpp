@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "../../problemdescription/ProblemDescription.h"
+#include "natrium/problemdescription/ProblemDescription.h"
 
 namespace natrium {
 

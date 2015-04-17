@@ -86,12 +86,12 @@
 #include <stdlib.h>
 #include <sstream>
 
-#include "solver/CFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "problemdescription/ProblemDescription.h"
+#include "natrium/problemdescription/ProblemDescription.h"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 #include "LidDrivenCavity2D.h"
 //! [Includes]

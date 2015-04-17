@@ -15,7 +15,7 @@
 #include "deal.II/base/parameter_handler.h"
 
 #include "../problemdescription/ProblemDescription.h"
-#include "../boltzmannmodels/BoltzmannModel.h"
+#include "../stencils/Stencil.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/Logging.h"
 #include "../utilities/NATriuMException.h"
@@ -37,10 +37,12 @@ enum AdvectionSchemeName {
  * @short Implemented collision models
  */
 enum CollisionSchemeName {
-	BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS // Collision for the transformed distribution function as defined in MinLee2011
+	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
+	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
+	BGK_STEADY_STATE // Steady state preconditioning by Guo et al. (2004)
 };
 
-// StencilType defined in BoltzmannModel.h
+// StencilType defined in Stencil.h
 
 /**
  * @short Implemented time integrators
@@ -257,35 +259,16 @@ public:
 		leave_subsection();
 	}
 
-	bool isCollisionOnBoundaryNodes() {
-		enter_subsection("Collision");
-		bool collisionOnBoundaryNodes;
-		try {
-			collisionOnBoundaryNodes = get_bool("Collision on boundary nodes");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Collision on boundary nodes' from parameters: "
-					<< e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		return collisionOnBoundaryNodes;
-	}
-
-	void setCollisionOnBoundaryNodes(bool collisionOnBoundaryNodes) {
-		enter_subsection("Collision");
-		set("Collision on boundary nodes", collisionOnBoundaryNodes);
-		leave_subsection();
-	}
-
 	CollisionSchemeName getCollisionScheme() {
 		enter_subsection("Collision");
 		string collisionScheme = get("Collision scheme");
 		leave_subsection();
-		if ("BGK with transformed distribution functions" == collisionScheme) {
-			return BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS;
+		if ("BGK standard" == collisionScheme) {
+			return BGK_STANDARD;
+		} else if ("BGK standard transformed" == collisionScheme) {
+			return BGK_STANDARD_TRANSFORMED;
+		} else if ("BGK steady state" == collisionScheme) {
+			return BGK_STEADY_STATE;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown collision scheme '" << collisionScheme
@@ -298,9 +281,16 @@ public:
 	void setCollisionScheme(CollisionSchemeName collisionScheme) {
 		enter_subsection("Collision");
 		switch (collisionScheme) {
-		case BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS: {
-			set("Collision scheme",
-					"BGK with transformed distribution functions");
+		case BGK_STANDARD: {
+			set("Collision scheme", "BGK standard");
+			break;
+		}
+		case BGK_STANDARD_TRANSFORMED: {
+			set("Collision scheme", "BGK standard transformed");
+			break;
+		}
+		case BGK_STEADY_STATE: {
+			set("Collision scheme", "BGK steady state");
 			break;
 		}
 		default: {
@@ -311,6 +301,43 @@ public:
 			throw ConfigurationException(msg.str());
 		}
 		}
+		leave_subsection();
+	}
+
+	double getBGKSteadyStateGamma() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		double gamma;
+		try {
+			gamma = get_double("Steady state gamma");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Steady state gamma' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return gamma;
+	}
+
+	void setBGKSteadyStateGamma(double gamma) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		try {
+			set("Steady state gamma", gamma);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << gamma
+					<< " to Steady state gamma: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 		leave_subsection();
 	}
 
@@ -844,6 +871,8 @@ public:
 		leave_subsection();
 		if ("D2Q9" == stencil) {
 			return Stencil_D2Q9;
+		} else if ("D3Q19" == stencil) {
+			return Stencil_D3Q19;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown Stencil with index " << stencil
@@ -858,6 +887,10 @@ public:
 		switch (stencil) {
 		case Stencil_D2Q9: {
 			set("Stencil", "D2Q9");
+			break;
+		}
+		case Stencil_D3Q19: {
+			set("Stencil", "D3Q19");
 			break;
 		}
 		default: {

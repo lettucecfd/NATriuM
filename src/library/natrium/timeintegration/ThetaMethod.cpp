@@ -22,7 +22,7 @@
 #include "deal.II/lac/precondition.h"
 //#endif
 
-#include "utilities/Logging.h"
+#include "../utilities/Logging.h"
 
 
 namespace natrium {

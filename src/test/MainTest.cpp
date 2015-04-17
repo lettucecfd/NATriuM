@@ -11,8 +11,8 @@
 
 #include "boost/test/unit_test.hpp"
 
-#include "utilities/BasicNames.h"
-#include "utilities/MPIGuard.h"
+#include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/MPIGuard.h"
 
 
 using std::cout;

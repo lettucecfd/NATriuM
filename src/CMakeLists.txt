@@ -2,7 +2,7 @@
 # CMake File for NATriuM test
 #    
 
-
+ 
 #
 # It is good practise to specify a version requirement:
 #
@@ -44,11 +44,10 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 #
 # descend into subdirectories (build natrium library in src and unit tests in test as well as examples)
 #
-add_subdirectory( natrium )
+add_subdirectory( library )
 add_subdirectory( test )
 add_subdirectory( examples )
 add_subdirectory( analysis )
-
 
 #
 # set variable NATRIUM_TARGET (only used in this file)
@@ -59,12 +58,12 @@ set(    NATRIUM_TARGET
         )
 
 
-
+  
 #
 # Specify a target:
 #
 add_executable( ${NATRIUM_TARGET} 
-                natrium/NATriuM.cpp
+                NATriuM.cpp
                 )
 
 #
@@ -76,7 +75,7 @@ deal_ii_setup_target( ${NATRIUM_TARGET} )
 #
 # link natrium library to executable
 #           
-include_directories( "${PROJECT_BINARY_DIR}/natrium" )
+include_directories( "${PROJECT_SOURCE_DIR}/library" )
 target_link_libraries(  ${NATRIUM_TARGET}
                         natrium
                         )

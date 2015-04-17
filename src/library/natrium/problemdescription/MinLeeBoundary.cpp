@@ -5,13 +5,19 @@
  *      Author: kraemer
  */
 
-#include <problemdescription/MinLeeBoundary.h>
+#include "MinLeeBoundary.h"
 
 #include "deal.II/lac/compressed_sparsity_pattern.h"
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/lac/constraint_matrix.h>
 
 namespace natrium {
+
+template class BoundaryDensity<2>;
+template class BoundaryDensity<3>;
+template class BoundaryVelocity<2>;
+template class BoundaryVelocity<3>;
+
 
 template<size_t dim> MinLeeBoundary<dim>::MinLeeBoundary(
 		size_t boundaryIndicator,
@@ -31,18 +37,18 @@ template<size_t dim>
 MinLeeBoundary<dim>::MinLeeBoundary(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity) :
 		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
-				make_shared<BoundaryDensity>()), m_boundaryVelocity(
-				make_shared<BoundaryVelocity>(velocity)) {
+				make_shared<BoundaryDensity<dim> >()), m_boundaryVelocity(
+				make_shared<BoundaryVelocity<dim> >(velocity)) {
 }
 template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity);
-/*template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
+template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
  const dealii::Vector<double>& velocity);
- */
+
 template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 		dealii::CompressedSparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler,
-		const BoltzmannModel& boltzmannModel) const {
+		const Stencil& stencil) const {
 
 	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
 	const dealii::ConstraintMatrix constraints;
@@ -51,7 +57,7 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 	std::vector<dealii::types::global_dof_index> dofs_on_this_cell(
 			n_dofs_per_cell);
 	std::vector<dealii::types::global_dof_index> dofs_on_this_face;
-	dofs_on_this_face.reserve(sqrt(n_dofs_per_cell));
+	dofs_on_this_face.reserve(n_dofs_per_cell);
 
 	// couple opposite distribution functions at boundaries
 	// iterate over all cells
@@ -60,7 +66,7 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 	typename dealii::DoFHandler<dim>::active_cell_iterator endc =
 			doFHandler.end();
 	for (; cell != endc; ++cell) {
-		for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell; i++) {
+		for (size_t i = 0; i < dealii::GeometryInfo<dim>::faces_per_cell; i++) {
 			if (cell->face(i)->at_boundary()) {
 				if (cell->face(i)->boundary_indicator()
 						== m_boundaryIndicator) {
@@ -95,16 +101,16 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 template void MinLeeBoundary<2>::addToSparsityPattern(
 		dealii::CompressedSparsityPattern& cSparse,
 		const dealii::DoFHandler<2>& doFHandler,
-		const BoltzmannModel& boltzmannModel) const;
+		const Stencil& stencil) const;
 template void MinLeeBoundary<3>::addToSparsityPattern(
 		dealii::CompressedSparsityPattern& cSparse,
 		const dealii::DoFHandler<3>& doFHandler,
-		const BoltzmannModel& boltzmannModel) const;
+		const Stencil& stencil) const;
 
 template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
-		const BoltzmannModel& boltzmannModel,
+		const Stencil& stencil,
 		const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
 		distributed_sparse_block_matrix& systemMatrix,
 		distributed_block_vector& systemVector, bool useCentralFlux) const {
@@ -139,7 +145,7 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		double exn = 0.0;
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
-			exn += normals.at(q)(i) * boltzmannModel.getDirection(alpha)(i);
+			exn += normals.at(q)(i) * stencil.getDirection(alpha)(i);
 		}
 		prefactor *= exn;
 
@@ -147,21 +153,21 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		double exu = 0.0;
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
-			exu += velocity(i) * boltzmannModel.getDirection(alpha)(i);
+			exu += velocity(i) * stencil.getDirection(alpha)(i);
 		}
 
 		if (useCentralFlux) {
 			cellFaceMatrix(thisDoF, thisDoF) = 0.5 * prefactor;
 			oppositeDirectionCellFaceMatrix(thisDoF, thisDoF) = 0.5 * prefactor;
 			cellFaceVector(thisDoF) = -prefactor
-					* boltzmannModel.getWeight(alpha) * density * exu
-					/ boltzmannModel.getSpeedOfSoundSquare();
+					* stencil.getWeight(alpha) * density * exu
+					/ stencil.getSpeedOfSoundSquare();
 		} else if (exn < 0) {
 			cellFaceMatrix(thisDoF, thisDoF) = prefactor;
 			oppositeDirectionCellFaceMatrix(thisDoF, thisDoF) = -prefactor;
 			cellFaceVector(thisDoF) = -2 * prefactor
-					* boltzmannModel.getWeight(alpha) * density * exu
-					/ boltzmannModel.getSpeedOfSoundSquare();
+					* stencil.getWeight(alpha) * density * exu
+					/ stencil.getSpeedOfSoundSquare();
 		}
 	}
 
@@ -177,7 +183,7 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 			systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
 					localDoFIndices[i], cellFaceMatrix(i, i) * inverseLocalMassMatrix.at(i));
 			systemMatrix.block(alpha - 1,
-					boltzmannModel.getIndexOfOppositeDirection(alpha) - 1).add(
+					stencil.getIndexOfOppositeDirection(alpha) - 1).add(
 					localDoFIndices[i], localDoFIndices[i],
 					oppositeDirectionCellFaceMatrix(i, i) * inverseLocalMassMatrix.at(i));
 			systemVector.block(alpha - 1)(localDoFIndices[i]) += (cellFaceVector(
@@ -188,14 +194,14 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 template void MinLeeBoundary<2>::assembleBoundary(size_t alpha,
 		const typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<2>& feFaceValues,
-		const BoltzmannModel& boltzmannModel,
+		const Stencil& stencil,
 		const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
 		distributed_sparse_block_matrix& systemMatrix,
 		distributed_block_vector& systemVector, bool useCentralFlux) const;
 template void MinLeeBoundary<3>::assembleBoundary(size_t alpha,
 		const typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<3>& feFaceValues,
-		const BoltzmannModel& boltzmannModel,
+		const Stencil& stencil,
 		const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
 		distributed_sparse_block_matrix& systemMatrix,
 		distributed_block_vector& systemVector, bool useCentralFlux) const;

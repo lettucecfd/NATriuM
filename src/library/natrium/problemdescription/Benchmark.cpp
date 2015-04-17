@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include <problemdescription/Benchmark.h>
+#include "Benchmark.h"
 
 namespace natrium {
 

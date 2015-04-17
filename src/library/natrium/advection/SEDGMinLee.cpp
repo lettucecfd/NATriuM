@@ -9,8 +9,8 @@
 
 #include "fstream"
 
-#include <deal.II/lac/compressed_sparsity_pattern.h>
-#include <deal.II/dofs/dof_renumbering.h>
+#include "deal.II/lac/compressed_sparsity_pattern.h"
+#include "deal.II/dofs/dof_renumbering.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/fe/fe_update_flags.h"
@@ -18,6 +18,8 @@
 
 #include "../problemdescription/PeriodicBoundary.h"
 #include "../problemdescription/MinLeeBoundary.h"
+
+#include "../stencils/Stencil.h"
 
 #include "../utilities/DealiiExtensions.h"
 
@@ -28,12 +30,13 @@ namespace natrium {
 template<size_t dim>
 SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 		shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux) :
-		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_boltzmannModel(
-				boltzmannModel), m_useCentralFlux(useCentralFlux) {
+		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_stencil(
+				Stencil), m_useCentralFlux(useCentralFlux) {
 	// assertions
 	assert(orderOfFiniteElement >= 1);
+	assert(Stencil->getD() == dim);
 
 	// make dof handler
 	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement + 1);
@@ -54,13 +57,13 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 
 	// set size for the system vector
 #ifdef WITH_TRILINOS
-	m_systemVector.reinit(m_boltzmannModel->getQ() - 1);
-	for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
+	m_systemVector.reinit(m_stencil->getQ() - 1);
+	for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
 		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
 	}
 	m_systemVector.collect_sizes();
 #else
-	m_systemVector.reinit(m_boltzmannModel->getQ() - 1, m_doFHandler->n_dofs());
+	m_systemVector.reinit(m_stencil->getQ() - 1, m_doFHandler->n_dofs());
 #endif
 	// reassemble or read file
 	if (inputDirectory.empty()) {
@@ -73,11 +76,11 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 /// The template parameter must be made explicit in order for the code to compile
 template SEDGMinLee<2>::SEDGMinLee(shared_ptr<Triangulation<2> > triangulation,
 		shared_ptr<BoundaryCollection<2> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux);
 template SEDGMinLee<3>::SEDGMinLee(shared_ptr<Triangulation<3> > triangulation,
 		shared_ptr<BoundaryCollection<3> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<BoltzmannModel> boltzmannModel,
+		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux);
 
 template<size_t dim>
@@ -92,7 +95,6 @@ void SEDGMinLee<dim>::reassemble() {
 
 	| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
 	const dealii::UpdateFlags faceUpdateFlags = update_values
-
 	| update_quadrature_points | update_JxW_values | update_normal_vectors;
 	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
 			| update_JxW_values | update_normal_vectors;
@@ -145,7 +147,7 @@ void SEDGMinLee<dim>::reassemble() {
 		}
 
 		// assemble faces and put together
-		for (size_t alpha = 1; alpha < m_boltzmannModel->getQ(); alpha++) {
+		for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
 // calculate local diagonal block (cell) matrix -D
 			calculateAndDistributeLocalStiffnessMatrix(alpha,
 					localDerivativeMatrices, localSystemMatrix, inverseLocalMassMatrix, localDoFIndices,
@@ -171,7 +173,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	// Setup sparsity pattern (completely manually):
 	///////////////////////////////////////////////////////
 	// allocate sizes
-	size_t n_blocks = m_boltzmannModel->getQ() - 1;
+	size_t n_blocks = m_stencil->getQ() - 1;
 	size_t n_dofs_per_block = m_doFHandler->n_dofs();
 	
 	const dealii::UpdateFlags faceUpdateFlags = update_values
@@ -223,34 +225,37 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
 			minLeeIterator++) {
 		minLeeIterator->second->addToSparsityPattern(cSparseOpposite,
-				*m_doFHandler, *m_boltzmannModel);
+				*m_doFHandler, *m_stencil);
 	}
 
 	//reinitialize matrices
+	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
-	m_systemMatrix.block(0, 1).reinit(cSparseEmpty);
-	m_systemMatrix.block(0, 2).reinit(cSparseOpposite);
+	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
+	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
+	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
+	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
 			if ((I == 0) and (J == 0)) {
 				continue;
 			}
-			if ((I == 0) and (J == 1)) {
+			if ((I == 0) and (J == some_empty)) {
 				continue;
 			}
-			if ((I == 0) and (J == 2)) {
+			if ((I == 0) and (J == first_opposite)) {
 				continue;
 			}
 			if (I == J) {
 				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, 0));
 				continue;
 			}
-			if (I == m_boltzmannModel->getIndexOfOppositeDirection(J + 1) - 1) {
-				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, 2));
+			if (I == m_stencil->getIndexOfOppositeDirection(J + 1) - 1) {
+				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, first_opposite));
 				continue;
 			} else {
-				m_systemMatrix.block(I,J).reinit(m_systemMatrix.block(0,1));
+				m_systemMatrix.block(I,J).reinit(m_systemMatrix.block(0,some_empty));
 			}
 
 		}
@@ -297,7 +302,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
 			minLeeIterator++) {
 		minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler,
-				*m_boltzmannModel);
+				*m_stencil);
 	}*/
 
 	// initialize (static) sparsity pattern
@@ -395,7 +400,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix, const vector<double>& inverseLocalMassMatrix) {
 
 // loop over all faces
-	for (size_t j = 0; j < dealii::GeometryInfo<2>::faces_per_cell; j++) {
+	for (size_t j = 0; j < dealii::GeometryInfo<dim>::faces_per_cell; j++) {
 		//Faces at boundary
 		if (cell->face(j)->at_boundary()) {
 			size_t boundaryIndicator = cell->face(j)->boundary_indicator();
@@ -418,7 +423,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 					const shared_ptr<MinLeeBoundary<dim> >& minLeeBoundary =
 							m_boundaries->getMinLeeBoundary(boundaryIndicator);
 					minLeeBoundary->assembleBoundary(alpha, cell, j,
-							feFaceValues, *m_boltzmannModel,
+							feFaceValues, *m_stencil,
 							m_q_index_to_facedof.at(j), inverseLocalMassMatrix, m_systemMatrix,
 							m_systemVector, m_useCentralFlux);
 				}
@@ -461,8 +466,8 @@ template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
 // calculate -D = -(e_x * D_x  +  e_y * D_y)
 	systemMatrix = derivativeMatrices.at(0);
-	systemMatrix *= (-(m_boltzmannModel->getDirection(alpha)[0]));
-	systemMatrix.add(-(m_boltzmannModel->getDirection(alpha)[1]),
+	systemMatrix *= (-(m_stencil->getDirection(alpha)[0]));
+	systemMatrix.add(-(m_stencil->getDirection(alpha)[1]),
 			derivativeMatrices.at(1));
 // distribute to global system matrix
 	// avoid to call block() too often
@@ -482,9 +487,9 @@ template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
 // calculate -D = -(e_x * D_x  +  e_y * D_y)
 	systemMatrix = derivativeMatrices.at(0);
-	systemMatrix *= (-m_boltzmannModel->getDirection(alpha)[0]);
-	systemMatrix.add(-m_boltzmannModel->getDirection(alpha)[1],
-			derivativeMatrices.at(1), -m_boltzmannModel->getDirection(alpha)[2],
+	systemMatrix *= (-m_stencil->getDirection(alpha)[0]);
+	systemMatrix.add(-m_stencil->getDirection(alpha)[1],
+			derivativeMatrices.at(1), -m_stencil->getDirection(alpha)[2],
 			derivativeMatrices.at(2));
 // distribute to global system matrix
 	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1,
@@ -507,6 +512,9 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
 	const vector<Point<dim> > &normals = feFaceValues.get_normal_vectors();
 
+	if (4 == alpha){
+
+	}
 // get the required dofs of the neighbor cell
 //	typename DoFHandler<dim>::face_iterator neighborFace = neighborCell->face(
 //			neighborFaceNumber);
@@ -526,7 +534,9 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 // loop over all quadrature points at the face
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
 		size_t thisDoF = m_q_index_to_facedof.at(faceNumber).at(q);
+		assert (feFaceValues.shape_value(thisDoF, q) > 0);
 		size_t neighborDoF = m_q_index_to_facedof.at(neighborFaceNumber).at(q);
+		assert (feNeighborFaceValues.shape_value(neighborDoF, q) > 0);
 
 		double cell_entry = 0.0;
 		double neighbor_entry = 0.0;
@@ -537,7 +547,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
-			exn += normals.at(q)(i) * m_boltzmannModel->getDirection(alpha)(i);
+			exn += normals.at(q)(i) * m_stencil->getDirection(alpha)(i);
 		}
 		prefactor *= exn;
 
@@ -693,8 +703,8 @@ template<size_t dim>
 void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 // write system matrices to files
 	try {
-		for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
-			for (size_t j = 0; j < m_boltzmannModel->getQ() - 1; j++) {
+		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
+			for (size_t j = 0; j < m_stencil->getQ() - 1; j++) {
 				// filename
 				std::stringstream filename;
 				filename << directory << "/checkpoint_system_matrix_" << i
@@ -720,7 +730,7 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 		filename << directory << "/checkpoint_system_vector.dat";
 		std::ofstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
-		for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
+		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
 			numeric_vector tmp(m_systemVector.block(i));
 			tmp.block_write(file);
 		}
@@ -739,8 +749,8 @@ template<size_t dim>
 void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 // read the system matrices from file
 	try {
-		for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
-			for (size_t j = 0; j < m_boltzmannModel->getQ() - 1; j++) {
+		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
+			for (size_t j = 0; j < m_stencil->getQ() - 1; j++) {
 				// filename
 				std::stringstream filename;
 				filename << directory << "/checkpoint_system_matrix_" << i
@@ -766,7 +776,7 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 		filename << directory << "/checkpoint_system_vector.dat";
 		std::ifstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
-		for (size_t i = 0; i < m_boltzmannModel->getQ() - 1; i++) {
+		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
 			numeric_vector tmp(m_systemVector.block(i));
 			tmp.block_read(file);
 			m_systemVector.block(i) = tmp;
@@ -798,15 +808,15 @@ template<size_t dim> void SEDGMinLee<dim>::writeStatus(
 //write number of dofs
 	outfile << this->getNumberOfDoFs() << endl;
 //write D
-	outfile << m_boltzmannModel->getD() << endl;
+	outfile << m_stencil->getD() << endl;
 //write Q
-	outfile << m_boltzmannModel->getQ() << endl;
+	outfile << m_stencil->getQ() << endl;
 //write magic number of cell geometry
 	outfile << calcMagicNumber() << endl;
 //write dqScaling1
-	outfile << m_boltzmannModel->getDirection(1)(0) << endl;
+	outfile << m_stencil->getDirection(1)(0) << endl;
 //write dqScaling2
-	outfile << m_boltzmannModel->getDirection(1)(1) << endl;
+	outfile << m_stencil->getDirection(1)(1) << endl;
 //write fluxType
 	outfile << m_useCentralFlux << endl;
 //write advectionType
@@ -848,13 +858,13 @@ template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
 	}
 // D
 	infile >> tmp;
-	if (tmp != m_boltzmannModel->getD()) {
+	if (tmp != m_stencil->getD()) {
 		message = "Dimension not equal.";
 		return false;
 	}
 // Q
 	infile >> tmp;
-	if (tmp != m_boltzmannModel->getQ()) {
+	if (tmp != m_stencil->getQ()) {
 		message = "Number of particle velocities not equal.";
 		return false;
 	}
@@ -867,14 +877,14 @@ template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
 	}
 // dqScaling1
 	infile >> dtmp;
-	if (fabs(dtmp - m_boltzmannModel->getDirection(1)(0)) > 1e-5) {
-		message = "Scaling of Boltzmann model (1st coordinate) not equal.";
+	if (fabs(dtmp - m_stencil->getDirection(1)(0)) > 1e-5) {
+		message = "Scaling of Stencil (1st coordinate) not equal.";
 		return false;
 	}
 // dqScaling2
 	infile >> dtmp;
-	if (fabs(dtmp - m_boltzmannModel->getDirection(1)(1)) > 1e-5) {
-		message = "Scaling of Boltzmann model (2nd) not equal.";
+	if (fabs(dtmp - m_stencil->getDirection(1)(1)) > 1e-5) {
+		message = "Scaling of Stencil (2nd) not equal.";
 		return false;
 	}
 // fluxType

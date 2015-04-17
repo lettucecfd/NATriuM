@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <solver/SolverStats.h>
+#include "SolverStats.h"
 
 namespace natrium {
 

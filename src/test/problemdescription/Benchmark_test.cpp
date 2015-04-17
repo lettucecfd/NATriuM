@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <problemdescription/Benchmark.h>
+#include "natrium/problemdescription/Benchmark.h"
 
 namespace natrium {
 

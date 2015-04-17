@@ -23,16 +23,16 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "solver/BenchmarkCFDSolver.h"
-#include "solver/SolverConfiguration.h"
+#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/SolverConfiguration.h"
 
-#include "problemdescription/Benchmark.h"
+#include "natrium/problemdescription/Benchmark.h"
 
-#include "utilities/CFDSolverUtilities.h"
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
+#include "natrium/utilities/BasicNames.h"
 
-#include "../../examples/step-2/CouetteFlow2D.h"
-#include "../../examples/step-1/TaylorGreenVortex2D.h"
+#include "natrium/benchmarks/CouetteFlow2D.h"
+#include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 using namespace natrium;
 

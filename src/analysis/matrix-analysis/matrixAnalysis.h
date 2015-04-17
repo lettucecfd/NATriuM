@@ -9,9 +9,9 @@
 #define MATRIXANALYSIS_H_
 
 
-#include "solver/CFDSolver.h"
+#include "natrium/solver/CFDSolver.h"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 

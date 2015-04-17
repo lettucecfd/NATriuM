@@ -6,6 +6,12 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
+
+// GLOBAL COMPILER FLAGS
+#define WITH_TRILINOS
+
+
+
 #ifndef BASICNAMES_H_
 #define BASICNAMES_H_
 
@@ -22,15 +28,15 @@
 #include "deal.II/numerics/vector_tools.h"
 
 #include "deal.II/lac/block_sparse_matrix.h"
+
+#ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_vector.h"
 #include "deal.II/lac/trilinos_block_vector.h"
 #include "deal.II/lac/trilinos_sparse_matrix.h"
 #include "deal.II/lac/trilinos_block_sparse_matrix.h"
+#endif
 
 namespace natrium {
-
-// GLOBAL COMPILER FLAGS
-// #define WITH_TRILINOS
 
 
 /// The following names will be used throughout natrium

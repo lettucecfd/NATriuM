@@ -10,7 +10,7 @@
 
 #include <sstream>
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 namespace IntegrationTestCases {
@@ -41,6 +41,9 @@ TestResult ConvergenceTestMovingWall ();
 
 TestResult ConvergenceTestImplicitLBM ();
 
+TestResult ConvergenceTestExponentialLBM();
+
+TestResult ConvergenceTest3D();
 
 } /* namespace IntegrationTests */
 } /* namespace natrium */

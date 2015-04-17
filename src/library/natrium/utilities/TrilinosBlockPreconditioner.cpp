@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <utilities/TrilinosBlockPreconditioner.h>
+#include "TrilinosBlockPreconditioner.h"
 
 namespace natrium {
 

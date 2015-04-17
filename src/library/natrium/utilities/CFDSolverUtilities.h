@@ -11,7 +11,7 @@
 #include "deal.II/grid/tria.h"
 #include "deal.II/base/quadrature_lib.h"
 
-#include "../boltzmannmodels/BoltzmannModel.h"
+#include "../stencils/Stencil.h"
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
@@ -49,7 +49,7 @@ double getMinimumVertexDistance(const dealii::Triangulation<dim>& tria);
 
 template<size_t dim>
 double calculateTimestep(const dealii::Triangulation<dim>& tria,
-		const size_t orderOfFiniteElement, const BoltzmannModel& boltzmannModel,
+		const size_t orderOfFiniteElement, const Stencil& stencil,
 		double cFL = 0.4);
 
 /**

@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <utilities/DealiiExtensions.h>
+#include "DealiiExtensions.h"
 
 #include <deal.II/base/thread_management.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -307,8 +307,13 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 							assert(unique <= 1);
 						}
 
+						if (2 == DH::dimension){
 						AssertDimension(dofs_on_this_face.size(),
 								sqrt(n_dofs_on_this_cell));
+						} else if (3 == DH::dimension){
+							AssertDimension(dofs_on_this_face.size()* sqrt(dofs_on_this_face.size()),
+									n_dofs_on_this_cell);
+						}
 						AssertDimension(dofs_on_other_face.size(),
 								dofs_on_this_face.size());
 

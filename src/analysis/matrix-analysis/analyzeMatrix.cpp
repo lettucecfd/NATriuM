@@ -7,15 +7,15 @@
 
 #include "matrixAnalysis.h"
 
-#include "solver/BenchmarkCFDSolver.h"
-#include "solver/CFDSolver.h"
-#include "problemdescription/Benchmark.h"
-#include "utilities/CFDSolverUtilities.h"
+#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/problemdescription/Benchmark.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
 
-#include "../examples/step-1/TaylorGreenVortex2D.h"
-#include "../examples/step-2/CouetteFlow2D.h"
+#include "natrium/benchmarks/TaylorGreenVortex2D.h"
+#include "natrium/benchmarks/CouetteFlow2D.h"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 using namespace natrium;
 

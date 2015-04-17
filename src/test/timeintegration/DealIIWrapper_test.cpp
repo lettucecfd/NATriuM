@@ -5,15 +5,15 @@
  *      Author: kraemer
  */
 
-#include <timeintegration/DealIIWrapper.h>
+#include "natrium/timeintegration/DealIIWrapper.h"
 
 #include "boost/test/unit_test.hpp"
 
 #include "deal.II/lac/sparsity_pattern.h"
 #include "deal.II/lac/compressed_sparsity_pattern.h"
 
-#include "solver/SolverConfiguration.h"
-#include "utilities/BasicNames.h"
+#include "natrium/solver/SolverConfiguration.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 
@@ -96,16 +96,16 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		A.collect_sizes();
 #else
 		dealii::BlockCompressedSparsityPattern cSparse(2, 2);
-		for (size_t I = 0; I < 2; I++) {
+		for (size_t iI = 0; iI < 2; iI++) {
 			for (size_t J = 0; J < 2; J++) {
-				cSparse.block(I, J).reinit(1, 1);
+				cSparse.block(iI, J).reinit(1, 1);
 			}
 		}
 		cSparse.collect_sizes();
 		dealii::BlockSparsityPattern sparse(2, 2);
-		for (size_t I = 0; I < 2; I++) {
+		for (size_t iI = 0; iI < 2; iI++) {
 			for (size_t J = 0; J < 2; J++) {
-				sparse.block(I, J).copy_from(cSparse.block(I, J));
+				sparse.block(iI, J).copy_from(cSparse.block(iI, J));
 			}
 		}
 		sparse.collect_sizes();

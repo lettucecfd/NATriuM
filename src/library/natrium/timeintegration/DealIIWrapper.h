@@ -12,8 +12,8 @@
 #include "deal.II/base/std_cxx11/function.h"
 
 #include "TimeIntegrator.h"
-#include "utilities/BasicNames.h"
-#include "solver/SolverConfiguration.h"
+#include "../utilities/BasicNames.h"
+#include "../solver/SolverConfiguration.h"
 
 namespace natrium {
 

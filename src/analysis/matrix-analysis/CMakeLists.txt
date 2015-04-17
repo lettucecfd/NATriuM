@@ -15,17 +15,12 @@ ADD_EXECUTABLE( ${TARGET}
                 analyzeMatrix.cpp
                 matrixAnalysis.h
                 matrixAnalysis.cpp
-                ${PROJECT_SOURCE_DIR}/examples/step-1/TaylorGreenVortex2D.h   
-                ${PROJECT_SOURCE_DIR}/examples/step-1/TaylorGreenVortex2D.cpp
-                ${PROJECT_SOURCE_DIR}/examples/step-2/CouetteFlow2D.h
-                ${PROJECT_SOURCE_DIR}/examples/step-2/CouetteFlow2D.cpp
                )
                
 #
 # link natrium library to executable
 #           
-include_directories( ${PROJECT_SOURCE_DIR}/natrium 
-                     ${PROJECT_BINARY_DIR}/natrium 
+include_directories(  ${PROJECT_SOURCE_DIR}/library
                      /usr/include/boost 
                    )
 

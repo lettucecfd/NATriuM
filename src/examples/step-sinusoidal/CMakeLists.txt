@@ -12,14 +12,12 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                compare-Brenner.cpp
-                SinusoidalShear2D.h   
-                SinusoidalShear2D.cpp             
+                compare-Brenner.cpp     
                )
 #
 # link natrium library to executable
 #           
-include_directories( /usr/include/boost ${PROJECT_SOURCE_DIR}/natrium ${PROJECT_BINARY_DIR}/natrium)
+include_directories( /usr/include/boost  ${PROJECT_SOURCE_DIR}/library) 
 
 target_link_libraries(  ${TARGET}
                         natrium

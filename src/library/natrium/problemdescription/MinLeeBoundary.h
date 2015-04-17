@@ -13,32 +13,36 @@
 #include "deal.II/base/function.h"
 
 #include "Boundary.h"
-#include "../boltzmannmodels/BoltzmannModel.h"
+#include "../stencils/Stencil.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
 
 
-class BoundaryDensity: public dealii::Function<2> {
+template <size_t dim>
+class BoundaryDensity: public dealii::Function<dim> {
 public:
-	virtual double value(const dealii::Point<2> &p,
+	BoundaryDensity(){};
+	virtual ~BoundaryDensity(){};
+	virtual double value(const dealii::Point<dim> &p,
 			const unsigned int component = 0) const {
 		return 1;
 	}
 };
-class BoundaryVelocity: public dealii::Function<2> {
+template <size_t dim>
+class BoundaryVelocity: public dealii::Function<dim> {
 private:
 	dealii::Vector<double> m_Velocity;
 public:
 	BoundaryVelocity(const dealii::Vector<double>& velocity) :
 			m_Velocity(velocity) {
 	}
-	virtual void vector_value(const dealii::Point<2> &p,
+	virtual ~BoundaryVelocity(){};
+	virtual void vector_value(const dealii::Point<dim> &p,
 			dealii::Vector<double> &values) const {
 		values = m_Velocity;
 	}
 };
-
 
 /**
  * @short 	The boundary described by Min and Lee.
@@ -77,13 +81,13 @@ public:
 	 */
 	void addToSparsityPattern(dealii::CompressedSparsityPattern& cSparse,
 			const dealii::DoFHandler<dim>& doFHandler,
-			const BoltzmannModel& boltzmannModel) const;
+			const Stencil& stencil) const;
 
 	// assemble Min-Lee-Type boundary
 	void assembleBoundary(size_t alpha,
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
-			const BoltzmannModel& boltzmannModel,
+			const Stencil& stencil,
 			const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
 			distributed_sparse_block_matrix& systemMatrix,
 			distributed_block_vector& systemVector, bool useCentralFlux = false) const;

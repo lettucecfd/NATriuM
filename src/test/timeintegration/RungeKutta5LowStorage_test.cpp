@@ -5,14 +5,14 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "timeintegration/RungeKutta5LowStorage.h"
+#include "natrium/timeintegration/RungeKutta5LowStorage.h"
 
 #include "boost/test/unit_test.hpp"
 
 #include "deal.II/lac/sparsity_pattern.h"
 #include "deal.II/lac/compressed_sparsity_pattern.h"
 
-#include "utilities/BasicNames.h"
+#include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
 

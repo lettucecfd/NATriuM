@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include <problemdescription/BoundaryCollection.h>
+#include "BoundaryCollection.h"
 
 namespace natrium {
 

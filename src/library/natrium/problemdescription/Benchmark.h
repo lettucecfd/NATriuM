@@ -8,11 +8,14 @@
 #ifndef BENCHMARK_H_
 #define BENCHMARK_H_
 
-#include "problemdescription/ProblemDescription.h"
+
 
 #include "deal.II/grid/tria.h"
 
 #include "BoundaryCollection.h"
+
+#include "../problemdescription/ProblemDescription.h"
+
 #include "../utilities/BasicNames.h"
 
 namespace natrium {

@@ -18,7 +18,7 @@ SolverConfiguration::SolverConfiguration() {
 	{
 		declare_entry("Time step size", "0.2", dealii::Patterns::Double(1e-10),
 				"Size of the (initial) time step.");
-		declare_entry("Stencil", "D2Q9", dealii::Patterns::Selection("D2Q9"),
+		declare_entry("Stencil", "D2Q9", dealii::Patterns::Selection("D2Q9|D3Q19"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
 		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
@@ -85,14 +85,22 @@ SolverConfiguration::SolverConfiguration() {
 	enter_subsection("Collision");
 	{
 		declare_entry("Collision scheme",
-				"BGK with transformed distribution functions",
+				"BGK standard",
 				dealii::Patterns::Selection(
-						"BGK with transformed distribution functions"),
-				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook. Using transformed particle distribution functions enhances the accuracy of the LBM.");
-		declare_entry("Collision on boundary nodes", "true",
-				dealii::Patterns::Bool(),
-				"States whether the collision step is to be done on all nodes or only on internal nodes. E.g. the standard bounce back scheme is of 2nd order, when collisions take place at boundary nodes, and of 1st order, if not.");
-
+						"BGK standard|BGK steady state|BGK standard transformed"),
+				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards "
+				"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
+				"The standard");
+		enter_subsection("BGK parameters");
+		{
+			declare_entry("Steady state gamma",
+					"0.25",
+					dealii::Patterns::Double(0,1+1e-50),
+					"The parameter of the steady state preconditioner. For gamma = 1, the scheme is equivalent to the standard BGK"
+					"For gamma -> 0, the convergence to steady states is speed up and the effective Mach number is lowered, which"
+					"gives nearly incompressible results.");
+		}
+		leave_subsection();
 	}
 	leave_subsection();
 

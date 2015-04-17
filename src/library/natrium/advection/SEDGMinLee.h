@@ -21,12 +21,14 @@
 
 #include "AdvectionOperator.h"
 #include "../problemdescription/BoundaryCollection.h"
-#include "../boltzmannmodels/BoltzmannModel.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
+
+/* forward declaration */
+class Stencil;
 
 /**
  * @short Exception class for SEDGMinLee
@@ -131,7 +133,7 @@ private:
 	distributed_block_vector m_systemVector;
 
 	/// the DQ model (e.g. D2Q9)
-	shared_ptr<BoltzmannModel> m_boltzmannModel;
+	shared_ptr<Stencil> m_stencil;
 
 	/// a map, which connects degrees of freedom with their respective quadrature nodes
 	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
@@ -275,12 +277,12 @@ public:
 	 * @short Constructor
 	 * @param[in] triangulation The global mesh.
 	 * @param[in] orderOfFiniteElement The number of nodes element and dimension
-	 * @param[in] boltzmannModel the DQ model
+	 * @param[in] stencil the DQ model
 	 */
 	SEDGMinLee(shared_ptr<dealii::Triangulation<dim> > triangulation,
 			shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement,
-			shared_ptr<BoltzmannModel> boltzmannModel, string inputDirectory = "", bool useCentralFlux =
+			shared_ptr<Stencil> stencil, string inputDirectory = "", bool useCentralFlux =
 					false);
 
 	/// destructor
