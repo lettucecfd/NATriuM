@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
 			orderOfFiniteElement++) {
 		cout << "refinement Level = " << refinementLevel << endl;
 
-		for (double Ma = 0.3; Ma > 5e-5; Ma /= 2) {
+		for (double Ma = 0.3; Ma > 5e-4; Ma /= 2) {
 			cout << "Ma = " << Ma << endl;
 
 			double scaling = sqrt(3) * 1 / Ma;
