@@ -35,36 +35,48 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	natrium::LOG(BASIC)
+	cout
 			<< "Starting NATriuM convergence analysis (Ma-dependency)..."
 			<< endl;
 
 	// PARSE INPUT
-	cout << "To use incompressible scheme, pass cmd line parameter 1." << endl;
+	cout
+			<< "To use incompressible scheme, pass 1st cmd line parameter 1 (standard), 2 (trafo) or 3 (incompressible)."
+			<< endl;
 	cout
 			<< "To specify initialization, pass 2nd cmd line parameter 1 (rho=1), 2 (iterative) or 3 (analytic)."
 			<< endl;
-	bool INCOMPRESSIBLE = false;
+	int BGK_SCHEME = 1;
 	int INIT_SCHEME = 1;
 	if (argc > 0) {
 		if (std::atoi(argv[1]) == 1) {
-			natrium::LOG(BASIC) << "Incompressible scheme by He and Luo"
+			cout << "Standard BGK"
 					<< endl;
-			INCOMPRESSIBLE = true;
+			BGK_SCHEME = 1;
+		} else if (std::atoi(argv[1]) == 2) {
+			cout << "Transformed BGK"
+					<< endl;
+			BGK_SCHEME = 2;
+		} else if (std::atoi(argv[1]) == 3) {
+			cout << "Incompressible scheme by He and Luo"
+					<< endl;
+			BGK_SCHEME = 3;
+		} else {
+			cout << "Did not understand collision scheme." << endl;
 		}
 	}
 	if (argc > 1) {
 		if (std::atoi(argv[2]) == 1) {
-			natrium::LOG(BASIC) << "Init with rho = 1" << endl;
+			cout << "Init with rho = 1" << endl;
 			INIT_SCHEME = 1;
 		} else if (std::atoi(argv[2]) == 2) {
-			natrium::LOG(BASIC) << "Init with iterative scheme" << endl;
+			cout<< "Init with iterative scheme" << endl;
 			INIT_SCHEME = 2;
 		} else if (std::atoi(argv[2]) == 3) {
-			natrium::LOG(BASIC) << "Init with analytic pressure" << endl;
+			cout << "Init with analytic pressure" << endl;
 			INIT_SCHEME = 3;
 		} else {
-			natrium::LOG(BASIC) << "Did not understand init scheme." << endl;
+			cout << "Did not understand init scheme." << endl;
 		}
 	}
 
@@ -75,10 +87,12 @@ int main(int argc, char* argv[]) {
 	// setup configuration
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-Ma/";
-	if (INCOMPRESSIBLE) {
+	if (1 == BGK_SCHEME) {
+		dirName << "std";
+	} else if (2 == BGK_SCHEME) {
+		dirName << "trans";
+	} else if (3 == BGK_SCHEME) {
 		dirName << "inc";
-	} else {
-		dirName << "comp";
 	}
 	if (1 == INIT_SCHEME) {
 		dirName << "_rho1/";
@@ -136,26 +150,12 @@ int main(int argc, char* argv[]) {
 			double time1, time2, timestart;
 
 			// setup configuration
-			std::stringstream dirName;
-			dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-Ma/";
-			if (INCOMPRESSIBLE) {
-				dirName << "inc";
-			} else {
-				dirName << "comp";
-			}
-			if (1 == INIT_SCHEME) {
-				dirName << "_rho1/";
-			} else if (2 == INIT_SCHEME) {
-				dirName << "_iter/";
-			} else if (3 == INIT_SCHEME) {
-				dirName << "_ana/";
-			}
-			boost::filesystem::create_directory(dirName.str().c_str());
-			dirName << Ma << "_" << refinementLevel;
+			std::stringstream dirName2;
+			dirName2 << dirName.str() << Ma << "_" << refinementLevel;
 			shared_ptr<SolverConfiguration> configuration = make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
-			configuration->setOutputDirectory(dirName.str());
+			configuration->setOutputDirectory(dirName2.str());
 			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(100);
@@ -170,10 +170,14 @@ int main(int argc, char* argv[]) {
 				configuration->setIterativeInitializationResidual(1e-10);
 
 			}
-			if (INCOMPRESSIBLE) {
-				cout << "Not yet implemented" << endl;
-			} else {
+			if (1 == BGK_SCHEME) {
+				configuration->setCollisionScheme(BGK_STANDARD);
+			}
+			if (2 == BGK_SCHEME) {
 				configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+			} else if (3 == BGK_SCHEME) {
+				cout << "Not yet implemented" << endl;
+				continue;
 			}
 			configuration->setTimeStepSize(dt);
 			if (dt > 0.1) {
@@ -181,7 +185,7 @@ int main(int argc, char* argv[]) {
 				continue;
 
 			}
-			configuration->setNumberOfTimeSteps(2.0 / dt);
+			configuration->setNumberOfTimeSteps(1.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 			configuration->setNumberOfTimeSteps(1);
