@@ -12,6 +12,8 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include <boost/filesystem.hpp>
+
 #include "deal.II/numerics/data_out.h"
 
 #include "natrium/solver/BenchmarkCFDSolver.h"
@@ -21,6 +23,7 @@
 #include "natrium/problemdescription/Benchmark.h"
 
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/Logging.h"
 
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
@@ -30,13 +33,61 @@ using namespace natrium;
 // #define MEASURE_ONLY_INIT_TIME
 
 // Main function
-int main() {
+int main(int argc, char* argv[]) {
 
-	cout << "Starting NATriuM convergence analysis (Ma-dependency)..." << endl;
+	natrium::LOG(BASIC)
+			<< "Starting NATriuM convergence analysis (Ma-dependency)..."
+			<< endl;
+
+	// PARSE INPUT
+	cout << "To use incompressible scheme, pass cmd line parameter 1." << endl;
+	cout
+			<< "To specify initialization, pass 2nd cmd line parameter 1 (rho=1), 2 (iterative) or 3 (analytic)."
+			<< endl;
+	bool INCOMPRESSIBLE = false;
+	int INIT_SCHEME = 1;
+	if (argc > 0) {
+		if (std::atoi(argv[1]) == 1) {
+			natrium::LOG(BASIC) << "Incompressible scheme by He and Luo"
+					<< endl;
+			INCOMPRESSIBLE = true;
+		}
+	}
+	if (argc > 1) {
+		if (std::atoi(argv[2]) == 1) {
+			natrium::LOG(BASIC) << "Init with rho = 1" << endl;
+			INIT_SCHEME = 1;
+		} else if (std::atoi(argv[2]) == 2) {
+			natrium::LOG(BASIC) << "Init with iterative scheme" << endl;
+			INIT_SCHEME = 2;
+		} else if (std::atoi(argv[2]) == 3) {
+			natrium::LOG(BASIC) << "Init with analytic pressure" << endl;
+			INIT_SCHEME = 3;
+		} else {
+			natrium::LOG(BASIC) << "Did not understand init scheme." << endl;
+		}
+	}
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
+
+	// setup configuration
+	std::stringstream dirName;
+	dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-Ma/";
+	if (INCOMPRESSIBLE) {
+		dirName << "inc";
+	} else {
+		dirName << "comp";
+	}
+	if (1 == INIT_SCHEME) {
+		dirName << "_rho1/";
+	} else if (2 == INIT_SCHEME) {
+		dirName << "_iter/";
+	} else if (3 == INIT_SCHEME) {
+		dirName << "_ana/";
+	}
+	boost::filesystem::create_directory(dirName.str().c_str());
 
 	const double viscosity = 1.;
 
@@ -46,8 +97,7 @@ int main() {
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 	std::stringstream filename;
-	filename << getenv("NATRIUM_HOME")
-			<< "/convergence-analysis-Ma/table_runtime.txt";
+	filename << dirName.str() << "table_runtime.txt";
 	std::ofstream timeFile(filename.str().c_str());
 	timeFile
 			<< "#refinement Level    FE order     dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
@@ -55,15 +105,15 @@ int main() {
 
 	// prepare error table file
 	std::stringstream filename2;
-	filename2 << getenv("NATRIUM_HOME")
-			<< "/convergence-analysis-Ma/table_order.txt";
+	filename2 << dirName.str() << "table_order.txt";
 	std::ofstream orderFile(filename2.str().c_str());
 	//orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 	orderFile
 			<< "#  refinementlevel  FE order    Ma    dt    tau    i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (size_t orderOfFiniteElement = 1; orderOfFiniteElement < 5; orderOfFiniteElement++) {
+	for (size_t orderOfFiniteElement = 1; orderOfFiniteElement < 5;
+			orderOfFiniteElement++) {
 		cout << "refinement Level = " << refinementLevel << endl;
 
 		for (double Ma = 0.3; Ma > 5e-5; Ma /= 2) {
@@ -73,7 +123,7 @@ int main() {
 
 			shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
 					TaylorGreenVortex2D>(viscosity, refinementLevel,
-					scaling / sqrt(3));
+					scaling / sqrt(3), (INIT_SCHEME == 3));
 			shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
@@ -87,20 +137,44 @@ int main() {
 
 			// setup configuration
 			std::stringstream dirName;
-			dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-Ma/"
-					<< Ma << "_" << refinementLevel;
+			dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-Ma/";
+			if (INCOMPRESSIBLE) {
+				dirName << "inc";
+			} else {
+				dirName << "comp";
+			}
+			if (1 == INIT_SCHEME) {
+				dirName << "_rho1/";
+			} else if (2 == INIT_SCHEME) {
+				dirName << "_iter/";
+			} else if (3 == INIT_SCHEME) {
+				dirName << "_ana/";
+			}
+			boost::filesystem::create_directory(dirName.str().c_str());
+			dirName << Ma << "_" << refinementLevel;
 			shared_ptr<SolverConfiguration> configuration = make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());
 			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
-			configuration->setOutputTableInterval(1);
-			configuration->setOutputSolutionInterval(10);
+			configuration->setOutputTableInterval(100);
+			configuration->setOutputSolutionInterval(100000);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(0);
-			configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+			if (2 == INIT_SCHEME) {
+				configuration->setInitializationScheme(ITERATIVE);
+				configuration->setIterativeInitializationNumberOfIterations(
+						1e5);
+				configuration->setIterativeInitializationResidual(1e-10);
+
+			}
+			if (INCOMPRESSIBLE) {
+				cout << "Not yet implemented" << endl;
+			} else {
+				configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+			}
 			configuration->setTimeStepSize(dt);
 			if (dt > 0.1) {
 				cout << "Timestep too big." << endl;
@@ -134,14 +208,14 @@ int main() {
 				// put out final errors
 				solver.getErrorStats()->update();
 				orderFile << refinementLevel << "     " << orderOfFiniteElement
-						<< " " << Ma << "  " << dt << " " << solver.getTau() << " "
-						<< solver.getIteration() << " " << solver.getTime()
-						<< " " << solver.getErrorStats()->getMaxUAnalytic()
-						<< " " << solver.getErrorStats()->getMaxVelocityError()
-						<< " " << solver.getErrorStats()->getMaxDensityError()
-						<< " " << solver.getErrorStats()->getL2VelocityError()
-						<< " " << solver.getErrorStats()->getL2DensityError()
-						<< endl;
+						<< " " << Ma << "  " << dt << " " << solver.getTau()
+						<< " " << solver.getIteration() << " "
+						<< solver.getTime() << " "
+						<< solver.getErrorStats()->getMaxUAnalytic() << " "
+						<< solver.getErrorStats()->getMaxVelocityError() << " "
+						<< solver.getErrorStats()->getMaxDensityError() << " "
+						<< solver.getErrorStats()->getL2VelocityError() << " "
+						<< solver.getErrorStats()->getL2DensityError() << endl;
 			} catch (std::exception& e) {
 				cout << " Error" << endl;
 			}

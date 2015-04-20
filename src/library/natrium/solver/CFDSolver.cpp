@@ -37,6 +37,7 @@
 #include "../utilities/Logging.h"
 #include "../utilities/CFDSolverUtilities.h"
 #include "../utilities/MPIGuard.h"
+#include "../utilities/Info.h"
 
 namespace natrium {
 
@@ -216,6 +217,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			*m_problemDescription->getTriangulation(),
 			configuration->getSedgOrderOfFiniteElement());
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
+	LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
+	LOG(WELCOME) << "------ " << currentDateTime() << " ------" << endl;
+	LOG(WELCOME) << "------ " << Info::getUserName() << " on " << Info::getHostName() << " ------" << endl;
 	LOG(WELCOME) << "viscosity:                "
 			<< problemDescription->getViscosity() << " m^2/s" << endl;
 	LOG(WELCOME) << "char. length:             "
