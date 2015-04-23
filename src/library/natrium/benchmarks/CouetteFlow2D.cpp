@@ -9,6 +9,7 @@
 
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/grid_tools.h"
+#include "deal.II/grid/grid_out.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/geometry_info.h"
@@ -54,6 +55,11 @@ shared_ptr<Triangulation<2> > CouetteFlow2D::makeGrid(double L,
 	if (isUnstructured){
 	  dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
 	}
+
+	std::ofstream out("grid-couette.eps");
+	dealii::GridOut grid_out;
+	grid_out.write_eps(*unitSquare, out);
+
 	return unitSquare;
 }
 
