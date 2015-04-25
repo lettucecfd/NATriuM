@@ -219,6 +219,10 @@ natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
     } else if (rkScheme < 7) {
         m_dealIIRKStepper = make_shared<
                 dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(rk);
+    } else if (rkScheme < 12) {
+        m_dealIIRKEmbedded = make_shared<
+                dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >(rk);
+        m_dealIIRKStepper = m_dealIIRKEmbedded;
     };
 }
 
