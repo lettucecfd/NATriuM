@@ -15,6 +15,8 @@
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 #include "natrium/benchmarks/CouetteFlow2D.h"
 
+#include "natrium/stencils/D2Q9.h"
+
 #include "natrium/utilities/BasicNames.h"
 
 using namespace natrium;
@@ -29,7 +31,7 @@ int main() {
 	const double PI = 4 * atan(1);
 
 	// set order of FE and timeStepSize
-	const size_t refinementLevel = 3;
+	const size_t refinementLevel = 4;
 
 	// ----------------------------------------------------------------------------------------------------
 
@@ -42,7 +44,7 @@ int main() {
 	double dqScaling = sqrt(3) * 1 / Ma;
 	double viscosity = 2 * PI * U / Re; // (because L = 1)
 
-	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 3;
+	for (size_t orderOfFiniteElement = 1; orderOfFiniteElement <= 4;
 			orderOfFiniteElement++) {
 
 		// configure solver
@@ -62,24 +64,23 @@ int main() {
 		shared_ptr<TaylorGreenVortex2D> tgv = make_shared<TaylorGreenVortex2D>(
 				viscosity, refinementLevel);
 		shared_ptr<Benchmark<2> > tgBenchmark = tgv;
-		configuration->setTimeStepSize(
-				1.0 / dqScaling
-						* CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
-								*tgv->getTriangulation(), orderOfFiniteElement));
+		configuration->setTimeStepSize(CFDSolverUtilities::calculateTimestep<2>(*(tgv->getTriangulation()),orderOfFiniteElement,D2Q9(dqScaling),0.4));
 		cout << "dt = " << configuration->getTimeStepSize() << endl;
 		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
 				configuration, tgBenchmark);
 
 		// analyze eigenvalues
 		matrixAnalysis<2> analyzer(solver);
-		analyzer.writeSpectrum();
-		analyzer.writePseudospectrum();
+		vector<std::complex<double> > eigenvalues;
+		cout << "abs max: " << configuration->getTimeStepSize() * analyzer.computeSpectrum(solver->getAdvectionOperator()->getSystemMatrix(),eigenvalues, 0.0) << endl;
+		//analyzer.writeSpectrum();
+		//analyzer.writePseudospectrum();
 
 	}
 	cout << "done." << endl;
 
 	// ----------------------------------------------------------------------------------------------------
-
+/*
 	//WALL BOUNDARIES
 	cout
 			<< "With wall Boundaries: Calculating spectrum + pseudospectrum of streaming matrix..."
@@ -130,7 +131,7 @@ int main() {
 
 	}
 	cout << "done." << endl;
-
+*/
 	// ----------------------------------------------------------------------------------------------------
 
 	return 0;

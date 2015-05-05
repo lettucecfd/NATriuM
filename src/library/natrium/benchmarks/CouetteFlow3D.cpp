@@ -20,6 +20,8 @@
 
 namespace natrium {
 
+
+
 CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, double L, double startTime, bool isUnstructured) :
 		Benchmark<3>(makeGrid(L, refinementLevel, isUnstructured), viscosity, L), m_topPlateVelocity(

@@ -76,7 +76,7 @@ int main() {
 	const double L = 1;
 	// velocity of top plate
 	const double U = 1 / sqrt(3) * Ma;//5.773502691896258e-02/3.1415926;//0.02;
-	const double tmax = 40;
+	const double tmax = 10;
 #endif
 	// scaling of particle velocities
 	double scaling = sqrt(3) * U / Ma;
@@ -84,15 +84,15 @@ int main() {
 	const double viscosity = U * L / Re;
 	// starting time
 	//const double t0 = 30.0;
-	const double t0 = 1.0; 	// analytic solution won't converge for t0 = 0.0 and adaptive timesteps
+	const double t0 = 5.0; 	// analytic solution won't converge for t0 = 0.0 and adaptive timesteps
 
-	size_t refinementLevel = 3;
-	size_t orderOfFiniteElement = 5;
+	size_t refinementLevel = 4;
+	size_t orderOfFiniteElement = 1;
 
 #ifndef ONLY_PERIODIC
 	// make problem object
 	shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(viscosity,
-			U, refinementLevel, L, t0, false);
+			U, refinementLevel, L, t0, true);
 	shared_ptr<Benchmark<2> > benchmark = couette2D;
 #else
 	// make problem object
@@ -104,7 +104,7 @@ int main() {
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 
-	for (int integrator = 1; integrator < 16; integrator++) {
+	for (int integrator = 1; integrator < 10; integrator++) {
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
 		std::string timeintegrator = "test";
@@ -219,7 +219,7 @@ int main() {
 
 		cout << "Time integrator: " << timeintegrator.c_str() << endl;
 
-		for (double CFL = 0.1; CFL <= 102.4; CFL *= 2.) {
+		for (double CFL = 0.2; CFL <= 102.4; CFL *= 2.) {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*benchmark->getTriangulation(), orderOfFiniteElement,
