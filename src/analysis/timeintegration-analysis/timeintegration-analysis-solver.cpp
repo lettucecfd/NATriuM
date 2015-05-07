@@ -110,7 +110,7 @@ int main() {
 		std::string linearsolver = "test";
 
 		configuration->setTimeIntegrator(OTHER);
-		configuration->setDealIntegrator(RK_CLASSIC_FOURTH_ORDER);
+		configuration->setDealIntegrator(IMPLICIT_MIDPOINT);
 
 		switch (solver) {
 		case 1:

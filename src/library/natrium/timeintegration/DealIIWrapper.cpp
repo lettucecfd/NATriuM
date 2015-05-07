@@ -145,6 +145,7 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 
 #ifdef WITH_TRILINOS
     cout << "Point 2" << endl;
+
     result = solve<TrilinosBlockPreconditioner>(f);
 
 #else
@@ -246,7 +247,7 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
         }
     }
 
-    //dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
+    // dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
 //    dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
  //   dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
@@ -344,7 +345,10 @@ template distributed_block_vector natrium::DealIIWrapper<distributed_sparse_bloc
         solve<TrilinosBlockPreconditioner>(const distributed_block_vector& f) const;
 
 template distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,distributed_block_vector>::
-        solve<dealii::TrilinosWrappers::PreconditionIdentity>(const distributed_block_vector& f) const;
+        solve<dealii::PreconditionIdentity>(const distributed_block_vector& f) const;
+
+//template distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,distributed_block_vector>::
+//        solve<dealii::TrilinosWrappers::PreconditionIdentity>(const distributed_block_vector& f) const;
 
 
 template class DealIIWrapper<distributed_sparse_matrix, distributed_vector> ;
