@@ -29,6 +29,8 @@ private:
 	MATRIX const * m_systemMatrix;
 	VECTOR const * m_systemVector;
 
+	int solver;
+
 	MATRIX m_tmpMatrix;
 
 	/// time stepping scheme in dealii
@@ -54,12 +56,15 @@ private:
 	VECTOR evaluateIdMinusTauJInverse(const double t, const double tau,
 			const VECTOR & f);
 
+	template <class RELAXATION>
+	VECTOR solve(const VECTOR& f) const;
+
 public:
 
 	/// constructor
-	DealIIWrapper(const double timeStepSize, const DealIntegratorName rkScheme);
+	DealIIWrapper(const double timeStepSize, const DealIntegratorName rkScheme, const DealSolverName linearSolver);
 	DealIIWrapper(const double timeStepSize,
-		const DealIntegratorName rkScheme, 	double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol);
+		const DealIntegratorName rkScheme, const DealSolverName linearSolver,	double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol);
 	/// destructor
 	virtual ~DealIIWrapper() {
 	}

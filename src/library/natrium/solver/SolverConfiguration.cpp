@@ -64,6 +64,14 @@ SolverConfiguration::SolverConfiguration() {
 					"Deal.ii built-in time integrators. They are accessed by chosing time integrator = other.");
 		}
 		leave_subsection();
+		enter_subsection("Deal.II linear solver");
+		{
+					declare_entry("Linear solver", "Bicgstab",
+							dealii::Patterns::Selection(
+									"Bicgstab|Cg|Fgmres|Gmres|Minres|Qmrs|Relaxation|Richardson"),
+							"Deal.ii built-in linear solvers.");
+		}
+		leave_subsection();
 		enter_subsection("Embedded Parameters");
 		{
 			declare_entry("Coarsen parameter", "1.2", dealii::Patterns::Double(1,1000),
