@@ -1,4 +1,4 @@
-#add_subdirectory(convergence-analysis-advection-solver)
+add_subdirectory(convergence-analysis-advection-solver)
 #add_subdirectory(convergence-analysis-spatial)
 #add_subdirectory(convergence-analysis-timestepping)
 #add_subdirectory(convergence-analysis-basic)

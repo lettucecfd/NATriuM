@@ -25,6 +25,7 @@
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/CouetteFlow3D.h"
+#include "natrium/benchmarks/AdvectionBenchmark.h"
 
 namespace natrium {
 namespace IntegrationTestCases {
@@ -416,10 +417,131 @@ TestResult ConvergenceTest3D() {
 	}
 
 	return result;
-}
 } /* ConvergenceTest3D */
 
+TestResult ConvergencePureLinearAdvectionSmooth() {
 
-/* namespace IntegrationTests */
+	TestResult result;
+	result.id = 6;
+	result.name = "Convergence Test: Pure linear advection (smooth problem)";
+	result.details =
+			"This test runs the advection solver for a smooth periodic sine profile."
+					"Theoretically, the solver has to converge exponentially, which is tested.";
+	result.time = clock();
+	// smooth: 100*(0.3*dx)**(p+1)
+	// nonsmooth: (0.5*p)**(-1.5)*4*dx**2
+
+	bool is_smooth = true;
+	for (size_t N = 2; N <= 3; N++) {
+		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
+				orderOfFiniteElement += 2) {
+
+			double deltaX = 1. / (pow(2, N));
+			double deltaT = 0.4 * pow(0.5, N)
+					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));
+			size_t numberOfTimeSteps = 0.2 / deltaT;
+			if (numberOfTimeSteps <= 5) {
+				continue;
+			}
+			AdvectionBenchmark::AdvectionResult advectionResult =
+					AdvectionBenchmark::oneTest(N, orderOfFiniteElement, deltaT,
+							numberOfTimeSteps, is_smooth, true, false);
+
+			// Analysis
+			// Velocity error (compare Paper by Min and Lee)
+			std::stringstream stream1;
+			stream1 << "|f-f_ref|_sup; N=" << N << "; p=" << orderOfFiniteElement;
+			result.quantity.push_back(stream1.str());
+			double expected = std::log10(800*std::pow(0.3*deltaX, orderOfFiniteElement+1));
+			result.expected.push_back(expected);
+			result.threshold.push_back(0.8);
+			result.outcome.push_back(std::log10(advectionResult.normSup));
+
+		} /* for p */
+	} /* for N */
+
+// Finalize test
+	result.time = (clock() - result.time) / CLOCKS_PER_SEC;
+	assert(result.quantity.size() == result.expected.size());
+	assert(result.quantity.size() == result.threshold.size());
+	assert(result.quantity.size() == result.outcome.size());
+	result.success = true;
+	for (size_t i = 0; i < result.quantity.size(); i++) {
+		if (fabs(result.expected.at(i) - result.outcome.at(i))
+				> result.threshold.at(i)) {
+			result.success = false;
+			*result.error_msg << result.quantity.at(i)
+					<< " not below threshold.";
+		}
+	}
+
+	return result;
+
+
+} /* ConvergencePureLinearAdvectionSmooth */
+
+TestResult ConvergencePureLinearAdvectionNonsmooth() {
+
+	TestResult result;
+	result.id = 7;
+	result.name =
+			"Convergence Test: Pure linear advection (non-smooth problem)";
+	result.details =
+			"This test runs the advection solver for a non-smooth periodic profile, which is "
+					"only twice continuously differentiable."
+					"The theoretical convergence rate is O(h^min( p+1 , 2 ) * p^(-1.5)) , which is tested.";
+	result.time = clock();
+	// smooth: 100*(0.3*dx)**(p+1)
+	// nonsmooth: (0.5*p)**(-1.5)*4*dx**2
+
+	bool is_smooth = false;
+	for (size_t N = 2; N <= 3; N++) {
+		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
+				orderOfFiniteElement += 2) {
+
+			double deltaX = 1. / (pow(2, N));
+			double deltaT = 0.4 * pow(0.5, N)
+					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));
+			size_t numberOfTimeSteps = 0.2 / deltaT;
+			if (numberOfTimeSteps <= 5) {
+				continue;
+			}
+			AdvectionBenchmark::AdvectionResult advectionResult =
+					AdvectionBenchmark::oneTest(N, orderOfFiniteElement, deltaT,
+							numberOfTimeSteps, is_smooth, true, false);
+
+			// Analysis
+			std::stringstream stream1;
+			stream1 << "log10(|f-f_ref|_sup); N=" << N << "; p=" << orderOfFiniteElement;
+			result.quantity.push_back(stream1.str());
+			double expected = std::log10(std::pow(0.5*orderOfFiniteElement, -1.5) * deltaX*deltaX);
+			result.expected.push_back(expected);
+			result.threshold.push_back(0.8);
+			result.outcome.push_back( std::log10(advectionResult.normSup));
+
+		} /* for p */
+	} /* for N */
+
+// Finalize test
+	result.time = (clock() - result.time) / CLOCKS_PER_SEC;
+	assert(result.quantity.size() == result.expected.size());
+	assert(result.quantity.size() == result.threshold.size());
+	assert(result.quantity.size() == result.outcome.size());
+	result.success = true;
+	for (size_t i = 0; i < result.quantity.size(); i++) {
+		if (fabs(result.expected.at(i) - result.outcome.at(i))
+				> result.threshold.at(i)) {
+			result.success = false;
+			*result.error_msg << result.quantity.at(i)
+					<< " not below threshold.";
+		}
+	}
+
+	return result;
+
+}
+/* ConvergencePureLinearAdvectionNonsmooth */
+
+} /* namespace IntegrationTests */
 } /* namespace natrium */
 

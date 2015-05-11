@@ -45,6 +45,10 @@ TestResult ConvergenceTestExponentialLBM();
 
 TestResult ConvergenceTest3D();
 
+TestResult ConvergencePureLinearAdvectionSmooth();
+
+TestResult ConvergencePureLinearAdvectionNonsmooth();
+
 } /* namespace IntegrationTests */
 } /* namespace natrium */
 
