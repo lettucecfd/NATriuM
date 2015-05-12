@@ -125,7 +125,7 @@ private:
 	dealii::BlockSparsityPattern m_sparsityPattern;
 
 	/// Mapping from real space to unit cell
-	const dealii::MappingQ1<dim> m_mapping;
+	const dealii::MappingQ<dim> m_mapping;
 
 	/// System matrix L = M^(-1)*(-D+R)
 	distributed_sparse_block_matrix m_systemMatrix;
@@ -333,7 +333,7 @@ public:
 	}
 #endif
 
-	const dealii::MappingQ1<dim>& getMapping() const {
+	const dealii::MappingQ<dim>& getMapping() const {
 		return m_mapping;
 	}
 

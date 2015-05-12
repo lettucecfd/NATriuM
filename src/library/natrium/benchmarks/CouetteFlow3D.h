@@ -78,7 +78,7 @@ private:
 	};
 
 
-#define TURBULENT
+//#define TURBULENT
 #ifdef TURBULENT
 
 	virtual void applyInitialVelocities(

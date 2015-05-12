@@ -434,12 +434,12 @@ TestResult ConvergencePureLinearAdvectionSmooth() {
 	bool is_smooth = true;
 	for (size_t N = 2; N <= 3; N++) {
 		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
-				orderOfFiniteElement += 2) {
+				orderOfFiniteElement += 4) {
 
 			double deltaX = 1. / (pow(2, N));
 			double deltaT = 0.4 * pow(0.5, N)
 					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));
-			size_t numberOfTimeSteps = 0.2 / deltaT;
+			size_t numberOfTimeSteps = 0.1 / deltaT;
 			if (numberOfTimeSteps <= 5) {
 				continue;
 			}
@@ -452,7 +452,7 @@ TestResult ConvergencePureLinearAdvectionSmooth() {
 			std::stringstream stream1;
 			stream1 << "|f-f_ref|_sup; N=" << N << "; p=" << orderOfFiniteElement;
 			result.quantity.push_back(stream1.str());
-			double expected = std::log10(800*std::pow(0.3*deltaX, orderOfFiniteElement+1));
+			double expected = std::log10(400*std::pow(0.3*deltaX, orderOfFiniteElement+1));
 			result.expected.push_back(expected);
 			result.threshold.push_back(0.8);
 			result.outcome.push_back(std::log10(advectionResult.normSup));
@@ -497,12 +497,12 @@ TestResult ConvergencePureLinearAdvectionNonsmooth() {
 	bool is_smooth = false;
 	for (size_t N = 2; N <= 3; N++) {
 		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
-				orderOfFiniteElement += 2) {
+				orderOfFiniteElement += 4) {
 
 			double deltaX = 1. / (pow(2, N));
 			double deltaT = 0.4 * pow(0.5, N)
 					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));
-			size_t numberOfTimeSteps = 0.2 / deltaT;
+			size_t numberOfTimeSteps = 0.1 / deltaT;
 			if (numberOfTimeSteps <= 5) {
 				continue;
 			}
@@ -514,7 +514,7 @@ TestResult ConvergencePureLinearAdvectionNonsmooth() {
 			std::stringstream stream1;
 			stream1 << "log10(|f-f_ref|_sup); N=" << N << "; p=" << orderOfFiniteElement;
 			result.quantity.push_back(stream1.str());
-			double expected = std::log10(std::pow(0.5*orderOfFiniteElement, -1.5) * deltaX*deltaX);
+			double expected = std::log10(0.5 * std::pow(0.5*orderOfFiniteElement, -1.5) * deltaX*deltaX);
 			result.expected.push_back(expected);
 			result.threshold.push_back(0.8);
 			result.outcome.push_back( std::log10(advectionResult.normSup));

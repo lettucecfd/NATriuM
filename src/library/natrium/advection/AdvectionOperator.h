@@ -49,7 +49,7 @@ public:
 	virtual void mapDoFsToSupportPoints(
 			vector<dealii::Point<dim> >& supportPoints) const = 0;
 
-	virtual const dealii::MappingQ1<dim>& getMapping() const = 0;
+	virtual const dealii::MappingQ<dim>& getMapping() const = 0;
 
 	/** @short save matrices and status to files
 	 *  @param[in] directory directory to save the matrix files to
