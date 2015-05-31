@@ -29,7 +29,7 @@ private:
 	MATRIX const * m_systemMatrix;
 	VECTOR const * m_systemVector;
 
-	int solver;
+	int m_solver;
 
 	MATRIX m_tmpMatrix;
 
@@ -39,6 +39,7 @@ private:
 	/// time stepping scheme, for embedded RK methods, additional methods need to be called,
 	/// which requires an extra pointer
 	shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> > m_dealIIRKEmbedded;
+
 
 	/**
 	 * @short function that is needed to call evolve_one_time_step
@@ -55,9 +56,8 @@ private:
 	 */
 	VECTOR evaluateIdMinusTauJInverse(const double t, const double tau,
 			const VECTOR & f);
-
-	template <class RELAXATION>
-	VECTOR solve(const VECTOR& f) const;
+	//template<class MATRIX, class VECTOR>
+	VECTOR solvers(const VECTOR& f, bool isTmpMatrix);
 
 public:
 

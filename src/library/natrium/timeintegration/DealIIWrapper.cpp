@@ -42,63 +42,73 @@ VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::evaluateF(const double t,
     return result;
 }
 
-template<class MATRIX, class VECTOR>
-template<class PRECONDITION>
-VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::solve(const VECTOR& f) const
+//template<class MATRIX, class VECTOR>
+template<class MATRIX, class VECTOR, class PRECONDITION()>
+VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::solvers(const VECTOR& f, bool isTmpMatrix)
         {
-        VECTOR result;
+
+	cout << m_tmpMatrix.m() << " " << m_tmpMatrix.n() << " " << endl;
+	cout << systemMatrix.memory_consumption() << endl;
+	MATRIX testMatrix;
+	if (isTmpMatrix)
+	{
+		//m_tmpMatrix.reinit();
+		testMatrix.copy_from(m_tmpMatrix);
+	}
+	else
+	{
+		testMatrix.copy_from(*m_systemMatrix);
+	}
+
+	VECTOR result;
         dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 
-        switch(solver){
+        switch(m_solver){
 
                 case 0:
                 {
+                	cout << "point 10" << endl;
                     dealii::SolverBicgstab<VECTOR> bicgstab(solver_control);
-                    bicgstab.solve(m_tmpMatrix, result, f, PRECONDITION());
+                    bicgstab.solve(testMatrix, result, f, PRECONDITION());
                     cout << "BIC works" ;
                     break;
                 }
                 case 1:
                 {
                     dealii::SolverCG<VECTOR> cg(solver_control);
-                    cg.solve(m_tmpMatrix, result, f, PRECONDITION());
+                    cg.solve(testMatrix, result, f, PRECONDITION());
                     cout << "CG works" ;
                     break;
                 }
                 case 2:
                 {
                     dealii::SolverFGMRES<VECTOR> fgmres(solver_control);
-                    fgmres.solve(m_tmpMatrix, result, f,PRECONDITION());
+                    fgmres.solve(testMatrix, result, f,PRECONDITION());
                     break;
                 }
                 case 3:
                 {
                     dealii::SolverGMRES<VECTOR> gmres(solver_control);
-                    gmres.solve(m_tmpMatrix, result, f, PRECONDITION());
+                    gmres.solve(testMatrix, result, f, PRECONDITION());
                     break;
                 }
                 case 4:
                 {
                     dealii::SolverMinRes<VECTOR> minres(solver_control);
-                    minres.solve(m_tmpMatrix, result, f, PRECONDITION());
+                    minres.solve(testMatrix, result, f, PRECONDITION());
                     break;
                 }
                 case 5:
                 {
                     dealii::SolverQMRS<VECTOR> qmrs(solver_control);
-                    qmrs.solve(m_tmpMatrix, result, f, PRECONDITION());
+                    qmrs.solve(testMatrix, result, f, PRECONDITION());
                     break;
                 }
-             /*   case 6:
-                {
-                    dealii::SolverRelaxation<VECTOR> relax(solver_control);
-                    relax.solve(m_tmpMatrix, result, f, dealii::TrilinosWrappers::PreconditionRelaxation<MATRIX>());
-                    break;
-                } */
+
                 case 7:
                 {
                     dealii::SolverRichardson<VECTOR> richard(solver_control);
-                    richard.solve(m_tmpMatrix, result, f, PRECONDITION());
+                    richard.solve(testMatrix, result, f, PRECONDITION());
                     break;
                 }
 
@@ -116,7 +126,6 @@ VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::solve(const VECTOR& f) const
 
 
 
-
 template<>
 distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
         distributed_vector>::evaluateJInverse(const double t, const double tau,
@@ -126,7 +135,7 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 
 #ifdef WITH_TRILINOS
     cout << "Point 1" << endl;
-    result = solve<dealii::TrilinosWrappers::PreconditionIdentity>(f);
+    result = solvers<dealii::TrilinosWrappers::PreconditionIdentity>(f, 0);
 
 #else
     bicgstab.solve(*m_systemMatrix, result, f,
@@ -146,7 +155,8 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 #ifdef WITH_TRILINOS
     cout << "Point 2" << endl;
 
-    result = solve<TrilinosBlockPreconditioner>(f);
+    result = natrium::DealIIWrapper<distributed_sparse_block_matrix,
+            distributed_block_vector>::solvers<distributed_sparse_block_matrix,distributed_block_vector,TrilinosBlockPreconditioner>(f, 0);
 
 #else
     bicgstab.solve(*m_systemMatrix, result, f,
@@ -159,7 +169,7 @@ template<>
 distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
         distributed_vector>::evaluateIdMinusTauJInverse(const double t,
         const double tau, const distributed_vector& f) {
-    cout << "Point 3" << endl;
+
     distributed_vector result = f;
 
 #ifndef WITH_TRILINOS
@@ -183,7 +193,7 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 
 
 #ifdef WITH_TRILINOS
-    result = solve<dealii::TrilinosWrappers::PreconditionIdentity>(f);
+    result = solvers<dealii::TrilinosWrappers::PreconditionIdentity>(f, 1);
 
     #else
     bicgstab.solve(m_tmpMatrix, result, f,
@@ -198,7 +208,9 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
         distributed_block_vector>::evaluateIdMinusTauJInverse(const double t,
         const double tau, const distributed_block_vector& f) {
     // Test all dimensions and change, if necessary
-    assert(m_systemMatrix->n() == m_systemMatrix->m());
+
+	cout << m_tmpMatrix.memory_consumption() << endl;
+	assert(m_systemMatrix->n() == m_systemMatrix->m());
     assert(f.size() == m_systemMatrix->n());
 
     distributed_block_vector result = f;
@@ -231,7 +243,7 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
     // A*f(t)
     m_tmpMatrix.copy_from(*m_systemMatrix);
     size_t n_blocks = m_systemMatrix->n_block_rows();
-    cout << "Point 5" << endl;
+    cout << n_blocks << " Point 5" << endl;
     for (size_t I = 0; I < n_blocks; I++) {
         for (size_t J = 0; J < n_blocks; J++) {
             assert(
@@ -246,13 +258,20 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
             m_tmpMatrix.block(I, I).add(i, i, 1.0);
         }
     }
+;
 
-    // dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
+
 //    dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
  //   dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
   //  bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-    result = solve<dealii::PreconditionIdentity>(f);
+
+
+   // natrium::DealIIWrapper<distributed_sparse_block_matrix,
+    // distributed_block_vector>::m_tmpMatrix = m_tmpMatrix;
+	cout << m_tmpMatrix.memory_consumption() << endl;
+    result = natrium::DealIIWrapper<distributed_sparse_block_matrix,distributed_block_vector>::
+            solvers<dealii::PreconditionIdentity>(f, 1);
 #else
     bicgstab.solve(m_tmpMatrix, result, f,
             dealii::PreconditionIdentity());	//,	           preconditioner);
@@ -282,7 +301,6 @@ double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
     m_systemMatrix = &systemMatrix;
     m_systemVector = &systemVector;
 
-    cout << "point 6" << endl ;
     return m_dealIIRKStepper->evolve_one_time_step(
             dealii::std_cxx11::bind(&DealIIWrapper<MATRIX, VECTOR>::evaluateF,
                     this, dealii::std_cxx11::_1, dealii::std_cxx11::_2),
@@ -298,8 +316,7 @@ natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
         TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_systemMatrix(NULL), m_systemVector(
         NULL) {
 
-    solver = linearSolver;
-    cout << "Solver: " << solver << endl;
+    m_solver = linearSolver;
     assert(rkScheme < 12);
     assert(NONE != rkScheme);
     dealii::TimeStepping::runge_kutta_method rk =
@@ -323,7 +340,7 @@ natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
         TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_systemMatrix(NULL), m_systemVector(
         NULL) {
 
-    solver = linearSolver;
+    m_solver = linearSolver;
 
 
     assert(rkScheme < 12);
@@ -339,13 +356,13 @@ natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
 /// explicit instantiation
 
 template distributed_vector
-        natrium::DealIIWrapper<distributed_sparse_matrix,distributed_vector>::solve<dealii::TrilinosWrappers::PreconditionIdentity>(const distributed_vector& f) const;
+        natrium::DealIIWrapper<distributed_sparse_matrix,distributed_vector>::solvers<distributed_sparse_matrix,distributed_vector,dealii::TrilinosWrappers::PreconditionIdentity>(const distributed_vector& f, bool isTmpMatrix);
 
 template distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,distributed_block_vector>::
-        solve<TrilinosBlockPreconditioner>(const distributed_block_vector& f) const;
+        solvers<distributed_sparse_block_matrix,distributed_block_vector,TrilinosBlockPreconditioner>(const distributed_block_vector& f, bool isTmpMatrix);
 
 template distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,distributed_block_vector>::
-        solve<dealii::PreconditionIdentity>(const distributed_block_vector& f) const;
+        solvers<distributed_sparse_block_matrix,distributed_block_vector,dealii::PreconditionIdentity>(const distributed_block_vector& f, bool isTmpMatrix);
 
 //template distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,distributed_block_vector>::
 //        solve<dealii::TrilinosWrappers::PreconditionIdentity>(const distributed_block_vector& f) const;

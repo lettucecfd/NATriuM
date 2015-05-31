@@ -104,7 +104,7 @@ int main() {
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 
-	for (int solver = 1; solver < 8; solver++) {
+	for (int solver = 2; solver < 8; solver++) {
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
 		std::string linearsolver = "test";
