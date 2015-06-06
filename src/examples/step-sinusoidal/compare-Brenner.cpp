@@ -33,11 +33,11 @@ int main(int argc, char* argv[]) {
 
 	cout << "Starting analysis of sinusoidal shear flow ...." << endl;
 
-	const double Ma = 5e-4;
+	const double Ma = 5e-2;
 	const double Re = 1.0;
 	const double cFL = 5.0;
 	const double refinementLevel = 4 ;
-	const double orderOfFiniteElement = 3 ;
+	const double orderOfFiniteElement = 5 ;
 	const double tmax = 5.0;
 
 	// parameterization by Brenner:
@@ -118,10 +118,10 @@ int main(int argc, char* argv[]) {
 			configuration->setDealIntegrator(CRANK_NICOLSON);
 
 			configuration->setInitializationScheme(ITERATIVE);
-			configuration->setIterativeInitializationNumberOfIterations(10);
+			configuration->setIterativeInitializationNumberOfIterations(100);
 			configuration->setIterativeInitializationResidual(1e-15);
 
-			configuration->setConvergenceThreshold(1e-8);
+			configuration->setConvergenceThreshold(1e-4);
 			configuration->setCollisionScheme(BGK_STEADY_STATE);
 			configuration->setBGKSteadyStateGamma(gamma);
 
