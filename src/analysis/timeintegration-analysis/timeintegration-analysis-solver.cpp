@@ -76,7 +76,7 @@ int main() {
 	const double L = 1;
 	// velocity of top plate
 	const double U = 1 / sqrt(3) * Ma;//5.773502691896258e-02/3.1415926;//0.02;
-	const double tmax = 1;
+	const double tmax = 5;
 #endif
 	// scaling of particle velocities
 	double scaling = sqrt(3) * U / Ma;
@@ -104,7 +104,7 @@ int main() {
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 
-	for (int solver = 2; solver < 8; solver++) {
+	for (int solver = 1; solver < 8; solver++) {
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
 		std::string linearsolver = "test";
@@ -176,7 +176,7 @@ int main() {
 
 		cout << "Linear solver: " << linearsolver.c_str() << endl;
 
-		for (double CFL = 1; CFL <= 1; CFL = CFL +0.2) {
+		for (double CFL = 0.4; CFL <= 3.2; CFL = CFL +0.2) {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*benchmark->getTriangulation(), orderOfFiniteElement,
