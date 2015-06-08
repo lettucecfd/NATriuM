@@ -119,7 +119,7 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	distributed_block_vector result = f;
 
 	dealii::SolverControl solver_control(m_iterations, m_tol*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
-	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+	// dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 	switch(m_solver)
 	{
@@ -174,7 +174,7 @@ default:
     cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
 }
 	}
-	bicgstab.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
+	//bicgstab.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
 #else
 	bicgstab.solve(*m_systemMatrix, result, f,
 			dealii::PreconditionIdentity());	//,	           preconditioner);
@@ -328,7 +328,7 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
 	dealii::SolverControl solver_control(m_iterations, m_tol*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
-	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+	//dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
 #ifdef WITH_TRILINOS
 
 	switch(m_solver)
