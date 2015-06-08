@@ -76,7 +76,7 @@ int main() {
 	const double L = 1;
 	// velocity of top plate
 	const double U = 1 / sqrt(3) * Ma;//5.773502691896258e-02/3.1415926;//0.02;
-	const double tmax = 40;
+	const double tmax = 4;
 #endif
 	// scaling of particle velocities
 	double scaling = sqrt(3) * U / Ma;

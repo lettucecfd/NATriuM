@@ -50,7 +50,7 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 	dealii::SolverControl solver_control(m_iterations, m_tol*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 
 #ifdef WITH_TRILINOS
-	cout << "bicgstab used here " << endl ;
+
 	switch(m_solver)
 		{
 	case 0:

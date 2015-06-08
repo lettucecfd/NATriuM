@@ -59,8 +59,7 @@ private:
 	 */
 	VECTOR evaluateIdMinusTauJInverse(const double t, const double tau,
 			const VECTOR & f);
-	//template<class MATRIX, class VECTOR>
-	VECTOR solvers(const VECTOR& f, bool isTmpMatrix);
+
 
 public:
 

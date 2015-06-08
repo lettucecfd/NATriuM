@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		A.set(0, 0, lambda);
 
 		DealIIWrapper<distributed_sparse_matrix, distributed_vector> tm(dt,
-				name);
+				name,BICGSTAB);
 
 		distributed_vector f(1);
 		f(0) = 1;
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		A.set(1, 1, 3);
 
 		DealIIWrapper<distributed_sparse_block_matrix, distributed_block_vector> tm(
-				dt, name);
+				dt, name,BICGSTAB);
 		// initialize block vectors
 		distributed_block_vector f;
 		distributed_block_vector b;
