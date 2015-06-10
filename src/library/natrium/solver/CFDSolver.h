@@ -256,6 +256,10 @@ public:
 		return m_i;
 	}
 
+	void setIteration(size_t iteration) {
+		m_i = iteration;
+	}
+
 	const shared_ptr<SolverStats<dim> >& getSolverStats() const {
 		return m_solverStats;
 	}

@@ -17,7 +17,7 @@ LubricationSine::LubricationSine(double viscosity, double bottomVelocity,
 		double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio) :
 		ProblemDescription<2>(
 				makeGrid(L, refinementLevel, averageHeight, amplitude, cellAspectRatio, roughnessHeight, roughnessLengthRatio),
-				viscosity, L), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
+				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude), m_length(L) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 }
 
@@ -85,7 +85,7 @@ void LubricationSine::applyInitialVelocities(
 		const vector<dealii::Point<2> >& supportPoints) const {
 	assert ( initialVelocities.size() == 2);
 	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-		double upper = m_height +  m_ampl * std::sin(8 * std::atan(1) * supportPoints.at(i)(0) );
+		double upper = m_height - m_ampl; //+  m_ampl * std::sin(8 * std::atan(1) * supportPoints.at(i)(0) / m_length() );
 		initialVelocities.at(0)(i) = m_bottomVelocity * pow( 1 - supportPoints.at(i)(1)/upper,2);
 		initialVelocities.at(1)(i) = 0.0;
 	}

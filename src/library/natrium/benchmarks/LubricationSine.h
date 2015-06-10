@@ -37,6 +37,7 @@ private:
 	const double m_bottomVelocity;
 	double m_height;
 	double m_ampl;
+	const double m_length;
 
 	/**
 	 * @short create triangulation for couette flow

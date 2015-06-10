@@ -58,14 +58,14 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	config.setInitializationScheme(ITERATIVE);
 	BOOST_CHECK(config.getInitializationScheme() == ITERATIVE);
 	config.setIterativeInitializationNumberOfIterations(10);
-	BOOST_CHECK_EQUAL(config.getIterativeInitializationNumberOfIterations(),10);
+	BOOST_CHECK_EQUAL(config.getIterativeInitializationNumberOfIterations(),(size_t) 10);
 	config.setIterativeInitializationResidual(0.001);
 	BOOST_CHECK(0.001  == config.getIterativeInitializationResidual());
 
 	config.setSimulationEndTime(10.0);
 	BOOST_CHECK_CLOSE(config.getSimulationEndTime(),10.0,1e-10);
 	config.setNumberOfTimeSteps(100);
-	BOOST_CHECK_EQUAL(config.getNumberOfTimeSteps(),100);
+	BOOST_CHECK_EQUAL(config.getNumberOfTimeSteps(), (size_t) 100);
 	config.setConvergenceThreshold(1e-12);
 	BOOST_CHECK_CLOSE(config.getConvergenceThreshold(),1e-12,1e-5);
 	config.setBGKSteadyStateGamma(0.1);

@@ -17,7 +17,7 @@ SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 		double amplitude, double cell_aspect_ratio) :
 		ProblemDescription<2>(
 				makeGrid(L, refinementLevel, averageHeight, amplitude, cell_aspect_ratio),
-				viscosity, L), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
+				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 }
 

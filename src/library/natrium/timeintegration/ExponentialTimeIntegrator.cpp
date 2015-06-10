@@ -105,7 +105,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 	double beta = m_w.l2_norm();
 
-	for (int i = 0; i < f.size(); i++) 		// Arnoldi algorithm (first step)
+	for (size_t i = 0; i < f.size(); i++) 		// Arnoldi algorithm (first step)
 
 	{
 		V.set(i, 0, m_w(i) / beta);
@@ -113,7 +113,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 	for (int j = 0; j < arnoldiSize; j++)  	// Arnoldi algorithm (second step)
 	{
-		for (int i = 0; i < f.size(); i++)
+		for (size_t i = 0; i < f.size(); i++)
 		{
 			m_vj(i) = V(i, j);
 		}
@@ -122,7 +122,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 		for (int i = 0; i <= j; i++)
 		{
-			for (int k = 0; k < f.size(); k++)
+			for (size_t k = 0; k < f.size(); k++)
 			{
 				m_vi(k) = V(k, i);
 			}
@@ -136,7 +136,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		m_H(j + 1, j) = m_w.l2_norm();
 		if (m_H(j + 1, j) != 0) // && j<arnoldiSize-1)
 		{
-			for (int k = 0; k < f.size(); k++)
+			for (size_t k = 0; k < f.size(); k++)
 				{
 					V(k, j + 1) = m_w(k) / m_H(j + 1, j);
 				}
@@ -145,9 +145,9 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 	}
 
-	for (int i = 0; i < arnoldiSize; i++)	// Transform H to Hm
+	for (size_t i = 0; i < arnoldiSize; i++)	// Transform H to Hm
 	{
-		for (int j = 0; j < arnoldiSize; j++)
+		for (size_t j = 0; j < arnoldiSize; j++)
 		{
 			m_Hm(i, j) = m_H(i, j);
 		}
@@ -159,16 +159,16 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 	phiFunction(m_Hm, m_phiOne, m_phiTwo);
 
-	for (int i = 0; i < arnoldiSize; i++)
+	for (size_t i = 0; i < arnoldiSize; i++)
 	{
-		for (int j = 0; j < arnoldiSize; j++)
+		for (size_t j = 0; j < arnoldiSize; j++)
 		{
 			m_phiExtended(i, j) = m_phiOne(i, j);
 		}
 		m_phiExtended(i, arnoldiSize) = 0;
 	}
 
-	for (int j = 0; j < arnoldiSize; j++)
+	for (size_t j = 0; j < arnoldiSize; j++)
 	{
 		m_phiExtended(arnoldiSize, j) = m_H(arnoldiSize, arnoldiSize - 1)
 				* this->getTimeStepSize();
@@ -177,7 +177,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 	m_phiExtended(arnoldiSize, arnoldiSize) = 1;
 
-	for (int i = 0; i < arnoldiSize + 1; i++)
+	for (size_t i = 0; i < arnoldiSize + 1; i++)
 	{
 		m_firstColumn(i) = m_phiExtended(i, 0);
 	}
@@ -185,7 +185,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 	m_f *= (dt * beta);
 
-	for (int i = 0; i < f.size(); i++)
+	for (size_t i = 0; i < f.size(); i++)
 
 	{
 		f(i) += m_f(i);
@@ -215,8 +215,8 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,VEC
 template<class MATRIX, class VECTOR> numeric_matrix ExponentialTimeIntegrator<MATRIX,VECTOR>:: makeIdentityMatrix()
 	{
 		numeric_matrix identityM(arnoldiSize);
-		for (int i=0;i<arnoldiSize;i++)
-			for(int j=0;j<arnoldiSize;j++)
+		for (size_t i=0;i<arnoldiSize;i++)
+			for(size_t j=0;j<arnoldiSize;j++)
 			{
 				{
 					if(i==j)
@@ -245,7 +245,7 @@ template<class MATRIX, class VECTOR> numeric_matrix ExponentialTimeIntegrator<MA
 		factor = base;
 		exponential.add(factor,1);
 
-		for(int j=2;j<taylorSteps;j++) // Taylor series as matrix exponential
+		for(size_t j=2;j<taylorSteps;j++) // Taylor series as matrix exponential
 		{
 			factor.mmult(factor,base);
 			factor /=j;
@@ -261,7 +261,7 @@ template<class MATRIX, class VECTOR> numeric_matrix ExponentialTimeIntegrator<MA
 		numeric_matrix aid(arnoldiSize);
 		numeric_matrix N(arnoldiSize);
 		numeric_matrix D(arnoldiSize);
-		int m=taylorSteps;
+		size_t m=taylorSteps;
 
 		double s = base.linfty_norm();
 
@@ -281,7 +281,7 @@ template<class MATRIX, class VECTOR> numeric_matrix ExponentialTimeIntegrator<MA
 		N=factor;
 		D=factor;
 
-		for(int n=1;n<=m;n++) // Padé approximation as matrix exponential
+		for(size_t n=1;n<=m;n++) // Padé approximation as matrix exponential
 		{
 			double a = m;
 			double b = n;
@@ -306,7 +306,7 @@ template<class MATRIX, class VECTOR> numeric_matrix ExponentialTimeIntegrator<MA
 
 			D.mmult(exponential,N);
 
-			for (int i=1;i<=s;i++)
+			for (size_t i=1;i<=s;i++)
 			{
 				D=exponential;
 				D.mmult(N,exponential);

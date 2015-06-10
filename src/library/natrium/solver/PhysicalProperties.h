@@ -29,7 +29,8 @@ public:
 	static double maximalPressure(const distributed_vector& rho, const double speedOfSound, double & minimalPressure);
 
 	/// Flow factor
-	static double massFluxX(const distributed_vector& ux, shared_ptr<AdvectionOperator<dim> > advection, double Lx);
+	static double meanVelocityX(const distributed_vector& ux, shared_ptr<AdvectionOperator<dim> > advection);
+
 };
 
 } /* namespace natrium */

@@ -32,13 +32,17 @@ using namespace natrium;
 int main(int argc, char* argv[]) {
 
 	cout << "Starting analysis of sinusoidal shear flow ...." << endl;
+	cout << "Usage: compare-Brenner <Ma-Number> <Gamma> <Refinement level>" << endl;
 
-	const double Ma = 5e-2;
-	const double Re = 1.0;
-	const double cFL = 5.0;
-	const double refinementLevel = 4 ;
-	const double orderOfFiniteElement = 5 ;
-	const double tmax = 5.0;
+	assert (argc == 4);
+
+	const double Ma = atof (argv[1]);
+	const double gamma = atof (argv[2]);
+	const double refinementLevel = atoi (argv[3]);
+	cout << "Ma = " << Ma << ", gamma = " << gamma << endl;
+	const double Re = 1;
+	const double cFL = 10;
+	const double orderOfFiniteElement = 2 ;
 
 	// parameterization by Brenner:
 	// - average height: h
@@ -64,15 +68,15 @@ int main(int argc, char* argv[]) {
 			0.3, 0, 0.05 } };
 
 	std::stringstream fName;
-	fName << getenv("NATRIUM_HOME") << "/sinus-shear-Brenner2/result.txt";
+	fName << getenv("NATRIUM_HOME") << "/Brenner/Ma-"<< Ma << "/result.txt";
 	std::ofstream resultFile(fName.str().c_str());
 	resultFile
-			<< "#gamma   no    eps     alpha      Lx       h       a        b     u_mean    sigma    Psi_s"
+			<< "#gamma   no    eps     alpha      Lx       h       a        b     u_mean    sigma  tau   Psi_s"
 			<< endl;
 
 	/// for all configurations
 	for (size_t i = 1; i < n_cfg; i++) {
-		double gamma = 5e-4;
+		// Gamma falsifies the velocity field (flow factor drops)
 		//for (double gamma = 0.005; gamma <= 1; gamma += 0.15) {
 			//size_t i = 0;
 			cout << "Starting configuration " << i << "..." << endl;
@@ -99,7 +103,7 @@ int main(int argc, char* argv[]) {
 
 			/// setup configuration
 			std::stringstream dirName;
-			dirName << getenv("NATRIUM_HOME") << "/sinus-shear-Brenner2/gamma-"
+			dirName << getenv("NATRIUM_HOME") << "/Brenner/Ma-"<< Ma << "/gamma-"
 					<< gamma << "_cfg-" << i;
 			shared_ptr<SolverConfiguration> configuration = make_shared<
 					SolverConfiguration>();
@@ -108,22 +112,37 @@ int main(int argc, char* argv[]) {
 			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(1);
-			configuration->setOutputCheckpointInterval(1000);
-			configuration->setOutputSolutionInterval(100);
+			configuration->setOutputCheckpointInterval(100000000);
+			configuration->setOutputSolutionInterval(1000000);
+			configuration->setCommandLineVerbosity(WELCOME);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(ALL);
 			configuration->setTimeStepSize(dt);
+			double tau = viscosity/(dt*(scaling*scaling)/3.0);
+
+			if (tau < 0.5){
+				double new_dt  = viscosity/(scaling*scaling/3.0);
+				tau = viscosity/(new_dt*(scaling*scaling)/3.0);
+				configuration->setTimeStepSize(new_dt);
+				cout << "Config " << i <<": tau too small. Automatic decrease of time step size (now CFL = " << cFL * new_dt / dt << " , tau = " << tau << ")." << endl;
+
+			}
+
+
+
 			configuration->setTimeIntegrator(OTHER);
 			configuration->setDealIntegrator(CRANK_NICOLSON);
 
-			configuration->setInitializationScheme(ITERATIVE);
-			configuration->setIterativeInitializationNumberOfIterations(100);
-			configuration->setIterativeInitializationResidual(1e-15);
+			//configuration->setInitializationScheme(ITERATIVE);
+			//configuration->setIterativeInitializationNumberOfIterations(100);
+			//configuration->setIterativeInitializationResidual(1e-15);
 
-			configuration->setConvergenceThreshold(1e-4);
-			configuration->setCollisionScheme(BGK_STEADY_STATE);
-			configuration->setBGKSteadyStateGamma(gamma);
+			configuration->setConvergenceThreshold(1e-5*Ma/gamma);
+			if (gamma < 1 - 1e-5){
+				configuration->setCollisionScheme(BGK_STEADY_STATE);
+				configuration->setBGKSteadyStateGamma(gamma);
+			}
 
 			// make solver object and run simulation
 			CFDSolver<2> solver(configuration, sinusFlow);
@@ -132,11 +151,12 @@ int main(int argc, char* argv[]) {
 			// calculate and put out flow factors
 			const distributed_vector & ux = solver.getVelocity().at(0);
 			// flow factor
-			double qx = u_a*h - PhysicalProperties<2>::massFluxX(ux, solver.getAdvectionOperator(), Lx);
+			double qx = u_a*h - PhysicalProperties<2>::meanVelocityX(ux, solver.getAdvectionOperator())*h;
 			double Psi_s = 2*qx / (sigma * u_a) - h / sigma;
 			resultFile << gamma << "  " << i << "  " << epsilon << "   "
 					<< alpha << "   " << Lx << "   " << h << "   " << a << "   "
-					<< b << "   " << qx/h << "   " << sigma << "  " << Psi_s << endl;
+					<< b << "   " << qx/h << "   " << sigma << "   " << tau << "  " << Psi_s  << endl;
+			cout << "Flow factor " << Psi_s << endl;
 		//}
 	}
 	cout << "Analysis finished." << endl;

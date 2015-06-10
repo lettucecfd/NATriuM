@@ -79,8 +79,8 @@ double PhysicalProperties<3>::maximalPressure(const distributed_vector& rho,
 		const double speedOfSound, double & minimalPressure);
 
 template<size_t dim>
-double PhysicalProperties<dim>::massFluxX(const distributed_vector& ux,
-		shared_ptr<AdvectionOperator<dim> > advection, double Lx) {
+double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
+		shared_ptr<AdvectionOperator<dim> > advection) {
 
 	// Integrate ux over whole domain
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
@@ -88,6 +88,7 @@ double PhysicalProperties<dim>::massFluxX(const distributed_vector& ux,
 	dealii::FEValues<dim> feCellValues(advection->getMapping(), *(advection->getFe()), *(advection->getQuadrature()),
 				cellUpdateFlags);
 	double result = 0.0;
+	double area = 0.0;
 	size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
 
 
@@ -103,13 +104,14 @@ double PhysicalProperties<dim>::massFluxX(const distributed_vector& ux,
 
 		for (size_t i = 0; i < dofs_per_cell; i++){
 			result += ux(localDoFIndices.at(i)) * feCellValues.JxW(advection->getCelldofToQIndex().at(i));
+			area += feCellValues.JxW(advection->getCelldofToQIndex().at(i));
 		}
 	}
-	return result / Lx;
+	return result / area;
 }
-template double PhysicalProperties<2>::massFluxX(const distributed_vector& ux,
-		shared_ptr<AdvectionOperator<2> > advection, double Lx);
-template double PhysicalProperties<3>::massFluxX(const distributed_vector& ux,
-		shared_ptr<AdvectionOperator<3> > advection, double Lx);
+template double PhysicalProperties<2>::meanVelocityX(const distributed_vector& ux,
+		shared_ptr<AdvectionOperator<2> > advection);
+template double PhysicalProperties<3>::meanVelocityX(const distributed_vector& ux,
+		shared_ptr<AdvectionOperator<3> > advection);
 
 } /* namespace natrium */
