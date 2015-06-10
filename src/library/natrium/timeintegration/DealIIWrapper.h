@@ -30,8 +30,8 @@ private:
 	VECTOR const * m_systemVector;
 
 	int m_solver;
-	int m_iterations = 1000;
-	int m_tol = 1e-6;
+	const int m_iterations = 100000;
+	const double m_tol = 1e-6;
 
 
 	MATRIX m_tmpMatrix;

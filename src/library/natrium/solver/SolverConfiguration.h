@@ -1122,7 +1122,7 @@ public:
 
 
 			if ("Bicgstab" == solver) {
-				cout << "Bigcstab read" << endl;
+
 				return BICGSTAB;
 			} else if ("Cg" == solver) {
 				cout << "Cg read" << endl;

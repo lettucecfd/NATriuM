@@ -104,7 +104,7 @@ int main() {
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 
-	for (int integrator = 1; integrator < 16; integrator++) {
+	for (int integrator = 8; integrator < 16; integrator++) {
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
 		std::string timeintegrator = "test";
@@ -219,7 +219,7 @@ int main() {
 
 		cout << "Time integrator: " << timeintegrator.c_str() << endl;
 
-		for (double CFL = 0.1; CFL <= 102.4; CFL *= 2.) {
+		for (double CFL = 0.8; CFL <= 102.4; CFL *= 2.) {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*benchmark->getTriangulation(), orderOfFiniteElement,
