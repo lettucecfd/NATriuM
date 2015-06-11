@@ -34,14 +34,19 @@ int main(int argc, char* argv[]) {
 	cout << "Starting analysis of sinusoidal shear flow ...." << endl;
 	cout << "Usage: compare-Brenner <Ma-Number> <Gamma> <Refinement level>" << endl;
 
-	assert (argc == 4);
+	double cFL = 10;
+	bool automatic_decrease = true;
+	if (argc != 4){
+		assert (argc == 5);
+		cFL = atof(argv[4]);
+		automatic_decrease = false;
+	}
 
 	const double Ma = atof (argv[1]);
 	const double gamma = atof (argv[2]);
 	const double refinementLevel = atoi (argv[3]);
 	cout << "Ma = " << Ma << ", gamma = " << gamma << endl;
 	const double Re = 1;
-	const double cFL = 10;
 	const double orderOfFiniteElement = 2 ;
 
 	// parameterization by Brenner:
@@ -121,7 +126,7 @@ int main(int argc, char* argv[]) {
 			configuration->setTimeStepSize(dt);
 			double tau = viscosity/(dt*(scaling*scaling)/3.0);
 
-			if (tau < 0.5){
+			if ((tau < 0.5) and (automatic_decrease)) {
 				double new_dt  = viscosity/(scaling*scaling/3.0);
 				tau = viscosity/(new_dt*(scaling*scaling)/3.0);
 				configuration->setTimeStepSize(new_dt);

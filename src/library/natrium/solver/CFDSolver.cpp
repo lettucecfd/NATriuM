@@ -81,12 +81,10 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	} else if (Stencil_D3Q19 == configuration->getStencil()) {
 		m_stencil = make_shared<D3Q19>(configuration->getStencilScaling());
 	} else {
-		throw CFDSolverException(
-			"Stencil not known to CFDSolver.");
+		throw CFDSolverException("Stencil not known to CFDSolver.");
 	}
-	if (m_stencil->getD() != dim){
-		throw CFDSolverException(
-			"Stencil has wrong dimension.");
+	if (m_stencil->getD() != dim) {
+		throw CFDSolverException("Stencil has wrong dimension.");
 	}
 
 	/// Build streaming data object
@@ -168,29 +166,27 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				configuration->getTimeStepSize(), numberOfDoFs,
 				m_stencil->getQ() - 1);
 	} else if (OTHER == configuration->getTimeIntegrator()) {
-		if(configuration->getDealIntegrator()<7)
-		{
-		m_timeIntegrator = make_shared<
-				DealIIWrapper<distributed_sparse_block_matrix,
-						distributed_block_vector> >(
-				configuration->getTimeStepSize(),
-				configuration->getDealIntegrator());
-		}
-		else if (configuration->getDealIntegrator()<12)
-		{
-		m_timeIntegrator = make_shared<
-				DealIIWrapper<distributed_sparse_block_matrix,
-						distributed_block_vector> >(
-				configuration->getTimeStepSize(),
-				configuration->getDealIntegrator(),
-				configuration->getEmbeddedDealIntegratorCoarsenParameter(),
-				configuration->getEmbeddedDealIntegratorRefinementParameter(),
-				configuration->getEmbeddedDealIntegratorMinimumTimeStep(),
-				configuration->getEmbeddedDealIntegratorMaximumTimeStep(),
-				configuration->getEmbeddedDealIntegratorRefinementTolerance(),
-				configuration->getEmbeddedDealIntegratorCoarsenTolerance());
+		if (configuration->getDealIntegrator() < 7) {
+			m_timeIntegrator = make_shared<
+					DealIIWrapper<distributed_sparse_block_matrix,
+							distributed_block_vector> >(
+					configuration->getTimeStepSize(),
+					configuration->getDealIntegrator());
+		} else if (configuration->getDealIntegrator() < 12) {
+			m_timeIntegrator =
+					make_shared<
+							DealIIWrapper<distributed_sparse_block_matrix,
+									distributed_block_vector> >(
+							configuration->getTimeStepSize(),
+							configuration->getDealIntegrator(),
+							configuration->getEmbeddedDealIntegratorCoarsenParameter(),
+							configuration->getEmbeddedDealIntegratorRefinementParameter(),
+							configuration->getEmbeddedDealIntegratorMinimumTimeStep(),
+							configuration->getEmbeddedDealIntegratorMaximumTimeStep(),
+							configuration->getEmbeddedDealIntegratorRefinementTolerance(),
+							configuration->getEmbeddedDealIntegratorCoarsenTolerance());
 		};
-		}
+	}
 
 // initialize macroscopic variables
 	vector<dealii::Point<dim> > supportPoints(numberOfDoFs);
@@ -213,13 +209,12 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	if (charU == 0.0) {
 		charU = maxU;
 	}
-	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(
-			*m_problemDescription->getTriangulation(),
-			configuration->getSedgOrderOfFiniteElement());
+	double dx =  CFDSolverUtilities::getMinimumVertexDistance<dim>(*problemDescription->getTriangulation());
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
 	LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
 	LOG(WELCOME) << "------ " << currentDateTime() << " ------" << endl;
-	LOG(WELCOME) << "------ " << Info::getUserName() << " on " << Info::getHostName() << " ------" << endl;
+	LOG(WELCOME) << "------ " << Info::getUserName() << " on "
+			<< Info::getHostName() << " ------" << endl;
 	LOG(WELCOME) << "viscosity:                "
 			<< problemDescription->getViscosity() << " m^2/s" << endl;
 	LOG(WELCOME) << "char. length:             "
@@ -247,7 +242,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< configuration->getTimeStepSize() << " s" << endl;
 	LOG(WELCOME) << "CFL number:               "
 			<< configuration->getTimeStepSize() / dx
-					* m_stencil->getMaxParticleVelocityMagnitude() << endl;
+					* m_stencil->getMaxParticleVelocityMagnitude()
+					* configuration->getSedgOrderOfFiniteElement()
+					* configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLSISION ==          " << endl;
