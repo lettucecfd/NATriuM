@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <exception>
 #include <ctime>
+#include <iomanip>
 
 #include "deal.II/numerics/data_out.h"
 
@@ -73,7 +74,7 @@ int main(int argc, char* argv[]) {
 			0.3, 0, 0.05 } };
 
 	std::stringstream fName;
-	fName << getenv("NATRIUM_HOME") << "/Brenner/Ma-"<< Ma << "/result.txt";
+	fName << getenv("NATRIUM_HOME") << "/Brenner/Ma-" << std::setprecision(5) << Ma << "-ref" << refinementLevel << "/result.txt";
 	std::ofstream resultFile(fName.str().c_str());
 	resultFile
 			<< "#gamma   no    eps     alpha      Lx       h       a        b     u_mean    sigma  tau   Psi_s"
@@ -108,8 +109,8 @@ int main(int argc, char* argv[]) {
 
 			/// setup configuration
 			std::stringstream dirName;
-			dirName << getenv("NATRIUM_HOME") << "/Brenner/Ma-"<< Ma << "/gamma-"
-					<< gamma << "_cfg-" << i;
+			dirName << getenv("NATRIUM_HOME") << "/Brenner/Ma-" << std::setprecision(5) << Ma << "-ref" << refinementLevel << "/gamma-"
+					<< std::setprecision(4) << gamma << "_cfg-" << i;
 			shared_ptr<SolverConfiguration> configuration = make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
