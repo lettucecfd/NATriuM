@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
 			//configuration->setIterativeInitializationNumberOfIterations(100);
 			//configuration->setIterativeInitializationResidual(1e-15);
 
-			configuration->setConvergenceThreshold(1e-5*Ma/gamma);
+			configuration->setConvergenceThreshold(1e-5*Ma/sqrt(gamma));
 			if (gamma < 1 - 1e-5){
 				configuration->setCollisionScheme(BGK_STEADY_STATE);
 				configuration->setBGKSteadyStateGamma(gamma);
