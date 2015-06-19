@@ -27,12 +27,15 @@ int main() {
 	cout << "Starting NATriuM step-6..." << endl;
 
 	// set Reynolds and Mach number
-	const double Re = 2000;
+	//steady:
+	//const double Re = 1;
+	// unsteady:
+	const double Re = 20;
 	const double Ma = 0.1;
 
 	// set spatial discretization
-	size_t refinementLevel = 6;
-	size_t orderOfFiniteElement = 4;
+	size_t refinementLevel = 4;
+	size_t orderOfFiniteElement = 2;
 
 	// set Problem so that the right Re and Ma are achieved
 	const double U = 1/sqrt(3)*Ma;
@@ -40,14 +43,14 @@ int main() {
 	const double viscosity = U / Re; // (because L = 1)
 
 	// set small time step size
-	const double timeStepSize = 0.0002;
+	const double timeStepSize = 0.001;
 
 	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/step-6";
+	dirname << getenv("NATRIUM_HOME") << "/step-6-unsteady";
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);
@@ -58,10 +61,12 @@ int main() {
 	configuration->setStencilScaling(dqScaling);
 	configuration->setTimeStepSize(timeStepSize);
 	configuration->setCommandLineVerbosity(7);
+	//configuration->setTimeIntegrator(OTHER);
+	//configuration->setDealIntegrator(CRANK_NICOLSON);
 	//configuration->setDistributionInitType(Iterative);
 
 	shared_ptr<ComplexWall1> complex = make_shared<ComplexWall1>(
-			viscosity, U, refinementLevel, 1.0);
+			viscosity, U, refinementLevel, 7.0);
 	shared_ptr<ProblemDescription<2> > prob = complex;
 	CFDSolver<2> solver(configuration, prob);
 
