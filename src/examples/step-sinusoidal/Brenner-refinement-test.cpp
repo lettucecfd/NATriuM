@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
 	cout << "Starting analysis of sinusoidal shear flow ...." << endl;
 	cout
-			<< "Usage: compare-Brenner <configuration id> <Ma-Number> <Gamma> <Refinement level>"
+			<< "Usage: compare-Brenner <configuration id> <Ma-Number> <Gamma> <Refinement level> <order FE> [<CFL>]"
 			<< endl;
 
 	double cFL = 10;
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 
 	std::stringstream fName;
 	fName << getenv("OUTPUT_DIR") << "/result.txt";
-	cout << fName.str().c_str();
+	cout << fName.str().c_str() << endl;
 	std::ofstream resultFile(fName.str().c_str());
 	resultFile
 			<< "#<configuration id> <Ma-Number> <Gamma> <Refinement level>  eps     alpha      Lx       h       a        b     u_mean    sigma  tau   Psi_s"
@@ -115,10 +115,10 @@ int main(int argc, char* argv[]) {
 	configuration->setOutputDirectory(dirName.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
-	configuration->setOutputTableInterval(1);
+	configuration->setOutputTableInterval(10);
 	configuration->setOutputCheckpointInterval(100000000);
 	configuration->setOutputSolutionInterval(1000000);
-	configuration->setCommandLineVerbosity(WELCOME);
+	configuration->setCommandLineVerbosity(ALL);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
@@ -156,11 +156,14 @@ int main(int argc, char* argv[]) {
 		for (size_t i = 0; i < 100; i++) {
 			solver.stream();
 			solver.collide();
+			solver.output(solver.getIteration());
+			solver.setIteration(solver.getIteration()+1);
 		}
 		const distributed_vector & ux = solver.getVelocity().at(0);
 		qx = u_a * h
 				- PhysicalProperties<2>::meanVelocityX(ux,
 						solver.getAdvectionOperator()) * h;
+		Psi_s_old = Psi_s;
 		Psi_s = 2 * qx / (sigma * u_a) - h / sigma;
 		err = fabs(Psi_s - Psi_s_old);
 	}
