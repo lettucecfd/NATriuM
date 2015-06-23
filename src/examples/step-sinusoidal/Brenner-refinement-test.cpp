@@ -34,15 +34,26 @@ int main(int argc, char* argv[]) {
 
 	cout << "Starting analysis of sinusoidal shear flow ...." << endl;
 	cout
-			<< "Usage: compare-Brenner <configuration id> <Ma-Number> <Gamma> <Refinement level> <order FE> [<CFL>]"
+			<< "Usage: compare-Brenner <configuration id> <Ma-Number> <Gamma> <Refinement level> <order FE> [<CFL>] [<Integrator ID>]"
+			<< endl <<
+			"0: FORWARD_EULER, 1:RK_THIRD_ORDER, 2: RK_CLASSIC_FOURTH_ORDER, 3:	BACKWARD_EULER, 4: IMPLICIT_MIDPOINT, 5: CRANK_NICOLSON,\n"
+			"6: SDIRK_TWO_STAGES, 7: HEUN_EULER, 8:	BOGACKI_SHAMPINE, 9: DOPRI, 10: FEHLBERG, 11: CASH_KARP,\n"
+			"12: RUNGE_KUTTA_5STAGE (NATriuM), 13: THETA_METHOD (NATriuM), 14: EXPONENTIAL"
 			<< endl;
 
 	double cFL = 10;
+	size_t integrator_id = 0;
 	bool automatic_decrease = true;
 	if (argc != 6) {
-		assert(argc == 7);
+		assert(argc >= 7);
 		cFL = atof(argv[6]);
 		automatic_decrease = false;
+		// automatic crank-nicolson
+		integrator_id = 5;
+		if (argc > 7){
+			assert (argc == 8);
+			integrator_id = atoi(argv[7]);
+		}
 	}
 
 	const size_t cfg = atoi(argv[1]);
@@ -137,8 +148,13 @@ int main(int argc, char* argv[]) {
 
 	}
 
-	configuration->setTimeIntegrator(OTHER);
-	configuration->setDealIntegrator(CRANK_NICOLSON);
+	if (integrator_id < 12){
+		configuration->setTimeIntegrator(OTHER);
+		configuration->setDealIntegrator(static_cast<DealIntegratorName>(integrator_id));
+	} else {
+		assert (integrator_id < 15);
+		configuration->setTimeIntegrator(static_cast<TimeIntegratorName>(integrator_id - 12));
+	}
 
 	configuration->setConvergenceThreshold(1e-5 * Ma / sqrt(gamma));
 	if (gamma < 1 - 1e-5) {
