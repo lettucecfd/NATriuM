@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 
 			// setup configuration
 			std::stringstream dirName2;
-			dirName2 << dirName.str() << Ma << "_" << refinementLevel;
+			dirName2 << dirName.str() << Ma << "-ref" << refinementLevel << "-p" << orderOfFiniteElement;
 			shared_ptr<SolverConfiguration> configuration = make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
