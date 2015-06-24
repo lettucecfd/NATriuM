@@ -168,7 +168,7 @@ int main(int argc, char* argv[]) {
 	double err = 100.0;
 	double qx = 0.0;
 	double Psi_s = 0.0;
-	while (err > 1e-4) {
+	while (err > 1e-6) {
 		for (size_t i = 0; i < 100; i++) {
 			solver.stream();
 			solver.collide();
