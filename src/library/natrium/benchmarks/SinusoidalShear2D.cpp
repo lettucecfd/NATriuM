@@ -84,9 +84,14 @@ void SinusoidalShear2D::applyInitialVelocities(
 		const vector<dealii::Point<2> >& supportPoints) const {
 	assert ( initialVelocities.size() == 2);
 	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
+#ifdef FASTER_CONVERGENCE_INIT
 		double upper = m_height +  m_ampl * std::sin(8 * std::atan(1) * supportPoints.at(i)(0) );
 		initialVelocities.at(0)(i) = m_bottomVelocity * pow( 1 - supportPoints.at(i)(1)/upper,2);
 		initialVelocities.at(1)(i) = 0.0;
+#else
+		initialVelocities.at(0)(i) = 0.0;
+		initialVelocities.at(1)(i) = 0.0;
+#endif
 	}
 }
 
