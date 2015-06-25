@@ -35,9 +35,7 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout
-			<< "Starting NATriuM convergence analysis (Ma-dependency)..."
-			<< endl;
+	cout << "Starting NATriuM convergence analysis (Ma-dependency)..." << endl;
 
 	// PARSE INPUT
 	cout
@@ -46,20 +44,21 @@ int main(int argc, char* argv[]) {
 	cout
 			<< "To specify initialization, pass 2nd cmd line parameter 1 (rho=1), 2 (iterative) or 3 (analytic)."
 			<< endl;
+	cout
+			<< "To specify a CFL number other than 0.4, pass CFL number as 3rd cmd line parameter."
+			<< endl;
 	int BGK_SCHEME = 1;
 	int INIT_SCHEME = 1;
+	double CFL = 0.4;
 	if (argc > 0) {
 		if (std::atoi(argv[1]) == 1) {
-			cout << "Standard BGK"
-					<< endl;
+			cout << "Standard BGK" << endl;
 			BGK_SCHEME = 1;
 		} else if (std::atoi(argv[1]) == 2) {
-			cout << "Transformed BGK"
-					<< endl;
+			cout << "Transformed BGK" << endl;
 			BGK_SCHEME = 2;
 		} else if (std::atoi(argv[1]) == 3) {
-			cout << "Incompressible scheme by He and Luo"
-					<< endl;
+			cout << "Incompressible scheme by He and Luo" << endl;
 			BGK_SCHEME = 3;
 		} else {
 			cout << "Did not understand collision scheme." << endl;
@@ -70,7 +69,7 @@ int main(int argc, char* argv[]) {
 			cout << "Init with rho = 1" << endl;
 			INIT_SCHEME = 1;
 		} else if (std::atoi(argv[2]) == 2) {
-			cout<< "Init with iterative scheme" << endl;
+			cout << "Init with iterative scheme" << endl;
 			INIT_SCHEME = 2;
 		} else if (std::atoi(argv[2]) == 3) {
 			cout << "Init with analytic pressure" << endl;
@@ -79,12 +78,15 @@ int main(int argc, char* argv[]) {
 			cout << "Did not understand init scheme." << endl;
 		}
 	}
+	if (argc > 2) {
+		CFL = std::atof(argv[3]);
+	}
 
-	/////////////////////////////////////////////////
-	// set parameters, set up configuration object
-	//////////////////////////////////////////////////
+/////////////////////////////////////////////////
+// set parameters, set up configuration object
+//////////////////////////////////////////////////
 
-	// setup configuration
+// setup configuration
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-Ma/";
 	if (1 == BGK_SCHEME) {
@@ -105,11 +107,11 @@ int main(int argc, char* argv[]) {
 
 	const double viscosity = 1.;
 
-	// zunaechst: fixed order of FE
+// zunaechst: fixed order of FE
 	const size_t refinementLevel = 4;
 
-	// prepare time table file
-	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
+// prepare time table file
+// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 	std::stringstream filename;
 	filename << dirName.str() << "table_runtime.txt";
 	std::ofstream timeFile(filename.str().c_str());
@@ -117,11 +119,11 @@ int main(int argc, char* argv[]) {
 			<< "#refinement Level    FE order     dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
 			<< endl;
 
-	// prepare error table file
+// prepare error table file
 	std::stringstream filename2;
 	filename2 << dirName.str() << "table_order.txt";
 	std::ofstream orderFile(filename2.str().c_str());
-	//orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
+//orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 	orderFile
 			<< "#  refinementlevel  FE order    Ma    dt    tau    i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
@@ -142,7 +144,7 @@ int main(int argc, char* argv[]) {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*tgVortex->getTriangulation(), orderOfFiniteElement,
-					D2Q9(scaling));
+					D2Q9(scaling), CFL);
 
 			cout << "dt = " << dt << " ...";
 
@@ -151,7 +153,8 @@ int main(int argc, char* argv[]) {
 
 			// setup configuration
 			std::stringstream dirName2;
-			dirName2 << dirName.str() << Ma << "-ref" << refinementLevel << "-p" << orderOfFiniteElement;
+			dirName2 << dirName.str() << Ma << "-ref" << refinementLevel << "-p"
+					<< orderOfFiniteElement;
 			shared_ptr<SolverConfiguration> configuration = make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
