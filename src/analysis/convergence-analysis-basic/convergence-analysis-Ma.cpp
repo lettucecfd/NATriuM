@@ -97,12 +97,13 @@ int main(int argc, char* argv[]) {
 		dirName << "inc";
 	}
 	if (1 == INIT_SCHEME) {
-		dirName << "_rho1/";
+		dirName << "_rho1";
 	} else if (2 == INIT_SCHEME) {
-		dirName << "_iter/";
+		dirName << "_iter";
 	} else if (3 == INIT_SCHEME) {
-		dirName << "_ana/";
+		dirName << "_ana";
 	}
+	dirName << "_cfl" << CFL << "/";
 	boost::filesystem::create_directory(dirName.str().c_str());
 
 	const double viscosity = 1.;
