@@ -83,7 +83,7 @@ public:
 		m_time = m_solver->getTime();
 		m_maxU = m_solver->getMaxVelocityNorm();
 		m_kinE = PhysicalProperties<dim>::kineticEnergy(m_solver->getVelocity(),
-				m_solver->getDensity());
+				m_solver->getDensity(), m_solver->getAdvectionOperator());
 		m_maxP = PhysicalProperties<dim>::maximalPressure(
 				m_solver->getDensity(),
 				m_solver->getStencil()->getSpeedOfSound(), m_minP);

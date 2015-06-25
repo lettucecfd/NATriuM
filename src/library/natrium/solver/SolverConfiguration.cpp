@@ -134,9 +134,9 @@ SolverConfiguration::SolverConfiguration() {
 						dealii::Patterns::Double(0),
 						"The end time of the simulation. "
 						"Especially for adaptive time stepping schemes, number of steps is not an appropriate stop condition");
-		declare_entry("Convergence threshold", "1e-7",
+		declare_entry("Convergence threshold", "1e-30",
 						dealii::Patterns::Double(),
-						"The codes stops when the maximum velocity and density variations are below this threshold in 10 iterations.");
+						"The codes stops when the maximum velocity variation is below this threshold in 10 iterations.");
 	}
 	leave_subsection();
 

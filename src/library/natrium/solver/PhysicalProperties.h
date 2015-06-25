@@ -23,7 +23,8 @@ public:
 	virtual ~PhysicalProperties();
 
 	// kinetic energy
-	static double kineticEnergy(const vector<distributed_vector>& u, const distributed_vector& rho);
+	static double kineticEnergy(const vector<distributed_vector>& u, const distributed_vector& rho,
+			shared_ptr<AdvectionOperator<dim> > advection);
 
 	/// Pressure
 	static double maximalPressure(const distributed_vector& rho, const double speedOfSound, double & minimalPressure);

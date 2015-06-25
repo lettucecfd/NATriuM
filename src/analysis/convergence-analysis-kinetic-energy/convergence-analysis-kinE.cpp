@@ -13,6 +13,9 @@
 
 #include "natrium/solver/BenchmarkCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
+
+#include "natrium/stencils/D2Q9.h"
 
 #include "natrium/collision/BGK.h"
 
@@ -27,7 +30,7 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM convergence analysis (basic)..." << endl;
+	cout << "Starting Taylor Green vortex to check the kinetic energy decay..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -39,19 +42,20 @@ int main() {
 	const double Ma = 0.05;
 	// fixed order of FE and refinement level
 	const double orderOfFiniteElement = 2;
-	const size_t refinementLevel = 7;
-
-	// calculate distance between quadrature nodes
-	double dx = 2 * 3.1415926
-			/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
+	const size_t refinementLevel = 3;
 
 	// chose scaling so that Ma is recovered
 	double scaling = sqrt(3) * 1 / Ma;
 
-	// chose dt so that courant (advection) = 1 for the diagonal directions
-	double dt = dx / (scaling * sqrt(2));
+	shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<TaylorGreenVortex2D>(
+			viscosity, refinementLevel);
 
-	cout << "dt = " << dt;
+	// chose dt so that courant (advection) = 1 for the diagonal directions
+	double 	dt = CFDSolverUtilities::calculateTimestep<2>(
+			*tgVortex->getTriangulation(), orderOfFiniteElement,
+			D2Q9(scaling), 0.4);
+
+
 
 	// time measurement variables
 	//double time1, time2, timestart;
@@ -72,22 +76,21 @@ int main() {
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(0);
 	configuration->setTimeStepSize(dt);
+	configuration->setConvergenceThreshold(1e-15);
 	if (dt > 0.1) {
 		cout << "Timestep too big." << endl;
 
 	}
-	configuration->setNumberOfTimeSteps(1000.0 / dt);
+	configuration->setNumberOfTimeSteps(20.0 / dt);
 
 	// make problem and solver objects
-	shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<TaylorGreenVortex2D>(
-			viscosity, refinementLevel);
 	shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 	//timestart = clock();
 	BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 	// get tau to test if the "constant value" is really constant
 	const double tau = BGK::calculateRelaxationParameter(viscosity,
 			dt, *solver.getStencil());
-	cout << "... scaling = " << scaling << " ... tau = " << tau << " ...";
+	cout << "... scaling = " << scaling << " ... tau = " << tau << " ..." << endl;
 	//time1 = clock() - timestart;
 
 	try {
@@ -101,7 +104,7 @@ int main() {
 		cout << " Error" << endl;
 	}
 
-cout << "Convergence analysis (basic) terminated." << endl;
+cout << "Kinetic energy decay test terminated." << endl;
 
 return 0;
 }

@@ -35,6 +35,7 @@ set key right samplen 1 # horizontal maxcols 1 spacing 1.2
 
 set output 'kinetic_energy.eps'
 set ylabel 'E_{kin} / E_{kin}(t=0)' offset 2.0, 0
+# the kinetic energy of the TGV is 1./4. exp(-4 nu t)
 plot \
 exp(-4*x) title 'Reference solution' with linespoints ls 3,\
 '../../../results/convergence-analysis-kinE/results_table.txt' using ($2):(4*($4)) title 'SEDG-LBM' with lines ls 1

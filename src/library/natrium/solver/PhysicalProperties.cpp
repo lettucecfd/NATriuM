@@ -27,30 +27,87 @@ template<> PhysicalProperties<3>::~PhysicalProperties() {
 }
 
 template<> double PhysicalProperties<2>::kineticEnergy(
-		const vector<distributed_vector>& u, const distributed_vector& rho) {
+		const vector<distributed_vector>& u, const distributed_vector& rho,
+		shared_ptr<AdvectionOperator<2> > advection) {
 	const size_t n_dofs = u.at(0).size();
 	assert(n_dofs == rho.size());
 	assert(n_dofs == u.at(1).size());
-	double kE = 0.0;
-	for (size_t i = 0; i < n_dofs; i++) {
-		kE += 0.5 * rho(i)
-				* (u.at(0)(i) * u.at(0)(i) + u.at(1)(i) * u.at(1)(i));
+
+	const distributed_vector& ux = u.at(0);
+	const distributed_vector& uy = u.at(1);
+
+	// Integrate ux over whole domain
+	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
+	const dealii::DoFHandler<2> & dof_handler = *(advection->getDoFHandler());
+	dealii::FEValues<2> feCellValues(advection->getMapping(),
+			*(advection->getFe()), *(advection->getQuadrature()),
+			cellUpdateFlags);
+	double result = 0.0;
+	size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
+
+	typename dealii::DoFHandler<2>::active_cell_iterator cell =
+			dof_handler.begin_active(), endc = dof_handler.end();
+	for (; cell != endc; ++cell) {
+
+		// get global degrees of freedom
+		std::vector<dealii::types::global_dof_index> localDoFIndices(
+				dofs_per_cell);
+		cell->get_dof_indices(localDoFIndices);
+		// calculate the fe values for the cell
+		feCellValues.reinit(cell);
+
+		size_t local_i;
+		for (size_t i = 0; i < dofs_per_cell; i++) {
+			local_i = localDoFIndices.at(i);
+			result += rho(local_i)
+					* (ux(local_i) * ux(local_i) + uy(local_i) * uy(local_i))
+					* feCellValues.JxW(advection->getCelldofToQIndex().at(i));
+		}
 	}
-	return kE * 0.5 / n_dofs;
+	return 0.5 * result;
 }
 template<> double PhysicalProperties<3>::kineticEnergy(
-		const vector<distributed_vector>& u, const distributed_vector& rho) {
+		const vector<distributed_vector>& u, const distributed_vector& rho,
+		shared_ptr<AdvectionOperator<3> > advection) {
 	const size_t n_dofs = u.at(0).size();
 	assert(n_dofs == rho.size());
 	assert(n_dofs == u.at(1).size());
 	assert(n_dofs == u.at(2).size());
-	double kE = 0.0;
-	for (size_t i = 0; i < n_dofs; i++) {
-		kE += rho(i)
-				* (u.at(0)(i) * u.at(0)(i) + u.at(1)(i) * u.at(1)(i)
-						+ u.at(2)(i) * u.at(2)(i));
+
+	const distributed_vector& ux = u.at(0);
+	const distributed_vector& uy = u.at(1);
+	const distributed_vector& uz = u.at(2);
+
+	// Integrate ux over whole domain
+	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
+	const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
+	dealii::FEValues<3> feCellValues(advection->getMapping(),
+			*(advection->getFe()), *(advection->getQuadrature()),
+			cellUpdateFlags);
+	double result = 0.0;
+	size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
+
+	typename dealii::DoFHandler<3>::active_cell_iterator cell =
+			dof_handler.begin_active(), endc = dof_handler.end();
+	for (; cell != endc; ++cell) {
+
+		// get global degrees of freedom
+		std::vector<dealii::types::global_dof_index> localDoFIndices(
+				dofs_per_cell);
+		cell->get_dof_indices(localDoFIndices);
+		// calculate the fe values for the cell
+		feCellValues.reinit(cell);
+
+		size_t local_i;
+		for (size_t i = 0; i < dofs_per_cell; i++) {
+			local_i = localDoFIndices.at(i);
+			result += rho(local_i)
+					* (ux(local_i) * ux(local_i) + uy(local_i) * uy(local_i)
+							+ uz(local_i) * uz(local_i))
+					* feCellValues.JxW(advection->getCelldofToQIndex().at(i));
+		}
 	}
-	return kE * 0.5 / n_dofs;
+	return 0.5 * result;
 }
 
 template<size_t dim>
@@ -85,33 +142,37 @@ double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
 	// Integrate ux over whole domain
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
 	const dealii::DoFHandler<dim> & dof_handler = *(advection->getDoFHandler());
-	dealii::FEValues<dim> feCellValues(advection->getMapping(), *(advection->getFe()), *(advection->getQuadrature()),
-				cellUpdateFlags);
+	dealii::FEValues<dim> feCellValues(advection->getMapping(),
+			*(advection->getFe()), *(advection->getQuadrature()),
+			cellUpdateFlags);
 	double result = 0.0;
 	double area = 0.0;
 	size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
-
 
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
 	for (; cell != endc; ++cell) {
 
 		// get global degrees of freedom
-		std::vector<dealii::types::global_dof_index> localDoFIndices(dofs_per_cell);
+		std::vector<dealii::types::global_dof_index> localDoFIndices(
+				dofs_per_cell);
 		cell->get_dof_indices(localDoFIndices);
 		// calculate the fe values for the cell
 		feCellValues.reinit(cell);
 
-		for (size_t i = 0; i < dofs_per_cell; i++){
-			result += ux(localDoFIndices.at(i)) * feCellValues.JxW(advection->getCelldofToQIndex().at(i));
+		for (size_t i = 0; i < dofs_per_cell; i++) {
+			result += ux(localDoFIndices.at(i))
+					* feCellValues.JxW(advection->getCelldofToQIndex().at(i));
 			area += feCellValues.JxW(advection->getCelldofToQIndex().at(i));
 		}
 	}
 	return result / area;
 }
-template double PhysicalProperties<2>::meanVelocityX(const distributed_vector& ux,
+template double PhysicalProperties<2>::meanVelocityX(
+		const distributed_vector& ux,
 		shared_ptr<AdvectionOperator<2> > advection);
-template double PhysicalProperties<3>::meanVelocityX(const distributed_vector& ux,
+template double PhysicalProperties<3>::meanVelocityX(
+		const distributed_vector& ux,
 		shared_ptr<AdvectionOperator<3> > advection);
 
 } /* namespace natrium */
