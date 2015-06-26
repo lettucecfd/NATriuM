@@ -1,0 +1,87 @@
+# format1
+
+#################################################
+# Gnuplot script file for plotting data in files#
+#################################################
+#  1           2       3        4     5     6      7         8         9    10        11                  12               13                14             15               16
+# refinement   p      dx    #dofs    dt   #steps   tmax    scaling    Ma    tau    max |u_analytic|  ||u_analytic||_2   max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2       
+#     17                         18                               19
+# init time (sec)             loop time (sec)         time for one iteration (sec)
+
+
+reset
+set term postscript eps color enhanced "Helvetica" 28
+set size 1.2, 0.8
+set rmargin at screen 0.7
+set key right outside 
+
+# LINESTYLE DEFINITIONS
+set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 7 pointtype 4 pointsize 2# pointinterval 10
+set style line 2  linetype 1 linecolor rgb "dark-orange"  linewidth 7 pointtype 6 pointsize 2#pointinterval 10
+set style line 3  linetype 1 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 8 pointsize 2# pointinterval 10
+set style line 4  linetype 2 linecolor rgb "dark-green"  linewidth 7.000 pointtype 12 pointsize 2# pointinterval 10
+set style line 5  linetype 1 linecolor rgb "violet"  linewidth 7.000 pointtype 3 pointsize 2# pointinterval 10
+set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 7 pointsize 2# pointinterval 10
+set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
+
+set xlabel 'runtime(sec)'
+set ylabel 'Psi_x'
+set yrange [0:1.5]
+set format x "10^%L"
+
+set logscale x
+
+A(eps) = sqrt(2)/(eps+sqrt(2))
+Psi(eps) = 6*(eps+sqrt(2))/(2*(eps+sqrt(2))**2+2)
+
+
+######################################################################
+set output "psi_vs_runtime.eps"
+plot 	"table.txt" u 5:4 every 5::0 title "Config 1" ls 1,\
+	"table.txt" u 5:4 every 5::1 title "Config 2"  ls 2,\
+	"table.txt" u 5:4 every 5::2 title "Config 3"  ls 3,\
+	"table.txt" u 5:4 every 5::3 title "Config 4"  ls 4,\
+	"table.txt" u 5:4 every 5::4 title "Config 5" ls 5,\
+        Psi(2.82843) title  "Letalleur (1)" w l ls 2,\
+	Psi(0.048766) title "Letalleur (3)" w l  ls 3,\
+	Psi(7.07107) title  "Letalleur (4)" w l  ls 5
+######################################################################
+set output "psi_vs_runtime_p2.eps"
+plot 	"table.txt" u 5:4 every 5:4:0:0 title "Config 1" ls 1,\
+	"table.txt" u 5:4 every 5:4:1:0 title "Config 2"  ls 2,\
+	"table.txt" u 5:4 every 5:4:2:0 title "Config 3"  ls 3,\
+	"table.txt" u 5:4 every 5:4:3:0 title "Config 4"  ls 4,\
+	"table.txt" u 5:4 every 5:4:4:0 title "Config 5" ls 5,\
+        Psi(2.82843) title  "Letalleur (1)" w l ls 2,\
+	Psi(0.048766) title "Letalleur (3)" w l  ls 3,\
+	Psi(7.07107) title  "Letalleur (4)" w l  ls 5
+######################################################################
+set output "psi_vs_runtime_p4.eps"
+plot 	"table.txt" u 5:4 every 5:4:0:1 title "Config 1" ls 1,\
+	"table.txt" u 5:4 every 5:4:1:1 title "Config 2"  ls 2,\
+	"table.txt" u 5:4 every 5:4:2:1 title "Config 3"  ls 3,\
+	"table.txt" u 5:4 every 5:4:3:1 title "Config 4"  ls 4,\
+	"table.txt" u 5:4 every 5:4:4:1 title "Config 5" ls 5,\
+        Psi(2.82843) title  "Letalleur (1)" w l ls 2,\
+	Psi(0.048766) title "Letalleur (3)" w l  ls 3,\
+	Psi(7.07107) title  "Letalleur (4)" w l  ls 5
+######################################################################
+set output "psi_vs_runtime_p6.eps"
+plot 	"table.txt" u 5:4 every 5:4:0:2 title "Config 1" ls 1,\
+	"table.txt" u 5:4 every 5:4:1:2 title "Config 2"  ls 2,\
+	"table.txt" u 5:4 every 5:4:2:2 title "Config 3"  ls 3,\
+	"table.txt" u 5:4 every 5:4:3:2 title "Config 4"  ls 4,\
+	"table.txt" u 5:4 every 5:4:4:2 title "Config 5" ls 5,\
+        Psi(2.82843) title  "Letalleur (1)" w l ls 2,\
+	Psi(0.048766) title "Letalleur (3)" w l  ls 3,\
+	Psi(7.07107) title  "Letalleur (4)" w l  ls 5
+######################################################################
+set output "psi_vs_runtime_p8.eps"
+plot 	"table.txt" u 5:4 every 5:4:0:3 title "Config 1" ls 1,\
+	"table.txt" u 5:4 every 5:4:1:3 title "Config 2"  ls 2,\
+	"table.txt" u 5:4 every 5:4:2:3 title "Config 3"  ls 3,\
+	"table.txt" u 5:4 every 5:4:3:3 title "Config 4"  ls 4,\
+	"table.txt" u 5:4 every 5:4:4:3 title "Config 5" ls 5,\
+        Psi(2.82843) title  "Letalleur (1)" w l ls 2,\
+	Psi(0.048766) title "Letalleur (3)" w l  ls 3,\
+	Psi(7.07107) title  "Letalleur (4)" w l  ls 5

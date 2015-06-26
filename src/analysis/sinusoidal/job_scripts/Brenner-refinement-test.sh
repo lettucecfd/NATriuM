@@ -9,7 +9,7 @@
 module load gcc/4.9.0
 module load openmpi/gnu
 
-cp $CURRENT_DIR/plot_flowfactors_generic.gnp $OUTPUT_DIR
+cp /home/akraem3m/NATriuM/job_scripts/compare-Brenner/refinement-test-2015-06-19/plot_flowfactors_generic.gnp $OUTPUT_DIR
 cd $OUTPUT_DIR
 echo "CFG_ID="$CFG_ID", Ma ="$Ma", Gamma="$Gamma", Refinement="$Refinement",orderFE="$orderFE",cfl="$CFL
 time /home/akraem3m/NATriuM/bin_release/examples/step-sinusoidal/Brenner-refinement-test $CFG_ID $Ma $Gamma $Refinement $orderFE $CFL

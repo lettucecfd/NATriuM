@@ -5,7 +5,6 @@ import os
 
 os.putenv("Ma", repr(0.01))
 os.putenv("Gamma", repr(1))
-os.putenv("CURRENT_DIR", os.path.dirname(os.path.realpath(__file__)))
 
 for orderFE in range(2,10,2):
     os.putenv("orderFE", repr(orderFE))
