@@ -56,8 +56,9 @@ public:
 	 * @param perturbation Can be used to perturb all matrix entries by a random number in the interval [-perturbation, perturbation].
 	 * This is required for the calculation of pseudospectra. Default: 0.0 (no perturbation).
 	 * @note Only practicable for small matrices, as the sparse matrix is turned into a full matrix.
+	 * @return maximum of absolute eigenvalues
 	 */
-	static void computeSpectrum(const distributed_sparse_block_matrix& matrix,
+	static double computeSpectrum(const distributed_sparse_block_matrix& matrix,
 			vector<std::complex<double> > & eigenvalues, double perturbation = 0.0) ;
 
 }

@@ -8,6 +8,7 @@
 #ifndef PHYSICALPROPERTIES_H_
 #define PHYSICALPROPERTIES_H_
 
+#include "../advection/AdvectionOperator.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
@@ -26,8 +27,12 @@ public:
 
 	/// Pressure
 	static double maximalPressure(const distributed_vector& rho, const double speedOfSound, double & minimalPressure);
+
+	/// Flow factor
+	static double massFluxX(const distributed_vector& ux, shared_ptr<AdvectionOperator<dim> > advection, double Lx);
 };
 
 } /* namespace natrium */
+
 
 #endif /* PHYSICALPROPERTIES_H_ */

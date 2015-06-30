@@ -37,6 +37,7 @@
 #include "../utilities/Logging.h"
 #include "../utilities/CFDSolverUtilities.h"
 #include "../utilities/MPIGuard.h"
+#include "../utilities/Info.h"
 
 namespace natrium {
 
@@ -209,110 +210,115 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
     m_residuumVelocity = 1.0;
 
 // OUTPUT
-    double maxU = getMaxVelocityNorm();
-    double charU = problemDescription->getCharacteristicVelocity();
-    if (charU == 0.0) {
-        charU = maxU;
-    }
-    double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(
-            *m_problemDescription->getTriangulation(),
-            configuration->getSedgOrderOfFiniteElement());
-    LOG(WELCOME) << "------ NATriuM solver ------" << endl;
-    LOG(WELCOME) << "viscosity:                "
-            << problemDescription->getViscosity() << " m^2/s" << endl;
-    LOG(WELCOME) << "char. length:             "
-            << problemDescription->getCharacteristicLength() << " m" << endl;
-    LOG(WELCOME) << "max |u_0|:                "
-            << maxU * problemDescription->getCharacteristicLength() << " m/s"
-            << endl;
-    LOG(WELCOME) << "Reynolds number:          "
-            << (charU * problemDescription->getCharacteristicLength())
-                    / problemDescription->getViscosity() << endl;
-    double Ma = charU / m_stencil->getSpeedOfSound();
-    LOG(WELCOME) << "Mach number:              " << Ma << endl;
-    LOG(WELCOME) << "Stencil scaling:          "
-            << configuration->getStencilScaling() << endl;
-    LOG(WELCOME) << "Sound speed:              " << m_stencil->getSpeedOfSound()
-            << endl;
-    //TODO propose optimal cfl based on time integrator
-    const double optimal_cfl = 0.4;
-    LOG(WELCOME) << "Recommended dt (CFL 0.4): "
-            << CFDSolverUtilities::calculateTimestep<dim>(
-                    *m_problemDescription->getTriangulation(),
-                    configuration->getSedgOrderOfFiniteElement(), *m_stencil,
-                    optimal_cfl) << " s" << endl;
-    LOG(WELCOME) << "Actual dt:                "
-            << configuration->getTimeStepSize() << " s" << endl;
-    LOG(WELCOME) << "CFL number:               "
-            << configuration->getTimeStepSize() / dx
-                    * m_stencil->getMaxParticleVelocityMagnitude() << endl;
-    LOG(WELCOME) << "dx:                       " << dx << endl;
-    LOG(WELCOME) << "----------------------------" << endl;
-    LOG(WELCOME) << "== COLLSISION ==          " << endl;
-    switch (configuration->getCollisionScheme()) {
-    case BGK_STANDARD: {
-        LOG(WELCOME) << "tau:                      " << tau << endl;
-        break;
-    }
-    case BGK_STANDARD_TRANSFORMED: {
-        LOG(WELCOME) << "tau:                      " << tau << endl;
-        break;
-    }
-    case BGK_STEADY_STATE: {
-        LOG(WELCOME) << "tau:                      " << tau << endl;
-        LOG(WELCOME) << "steady state gamma:       " << gamma << endl;
-        LOG(WELCOME) << "Effective Ma:             " << Ma / sqrt(gamma)
-                << endl;
 
-        break;
-    }
-    }
-    LOG(WELCOME) << "----------------------------" << endl;
+	double maxU = getMaxVelocityNorm();
+	double charU = problemDescription->getCharacteristicVelocity();
+	if (charU == 0.0) {
+		charU = maxU;
+	}
+	double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(
+			*m_problemDescription->getTriangulation(),
+			configuration->getSedgOrderOfFiniteElement());
+	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
+	LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
+	LOG(WELCOME) << "------ " << currentDateTime() << " ------" << endl;
+	LOG(WELCOME) << "------ " << Info::getUserName() << " on " << Info::getHostName() << " ------" << endl;
+	LOG(WELCOME) << "viscosity:                "
+			<< problemDescription->getViscosity() << " m^2/s" << endl;
+	LOG(WELCOME) << "char. length:             "
+			<< problemDescription->getCharacteristicLength() << " m" << endl;
+	LOG(WELCOME) << "max |u_0|:                "
+			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
+			<< endl;
+	LOG(WELCOME) << "Reynolds number:          "
+			<< (charU * problemDescription->getCharacteristicLength())
+					/ problemDescription->getViscosity() << endl;
+	double Ma = charU / m_stencil->getSpeedOfSound();
+	LOG(WELCOME) << "Mach number:              " << Ma << endl;
+	LOG(WELCOME) << "Stencil scaling:          "
+			<< configuration->getStencilScaling() << endl;
+	LOG(WELCOME) << "Sound speed:              " << m_stencil->getSpeedOfSound()
+			<< endl;
+	//TODO propose optimal cfl based on time integrator
+	const double optimal_cfl = 0.4;
+	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
+			<< CFDSolverUtilities::calculateTimestep<dim>(
+					*m_problemDescription->getTriangulation(),
+					configuration->getSedgOrderOfFiniteElement(), *m_stencil,
+					optimal_cfl) << " s" << endl;
+	LOG(WELCOME) << "Actual dt:                "
+			<< configuration->getTimeStepSize() << " s" << endl;
+	LOG(WELCOME) << "CFL number:               "
+			<< configuration->getTimeStepSize() / dx
+					* m_stencil->getMaxParticleVelocityMagnitude() << endl;
+	LOG(WELCOME) << "dx:                       " << dx << endl;
+	LOG(WELCOME) << "----------------------------" << endl;
+	LOG(WELCOME) << "== COLLSISION ==          " << endl;
+	switch (configuration->getCollisionScheme()) {
+	case BGK_STANDARD: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
+	case BGK_STANDARD_TRANSFORMED: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
+	case BGK_STEADY_STATE: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		LOG(WELCOME) << "steady state gamma:       " << gamma << endl;
+		LOG(WELCOME) << "Effective Ma:             " << Ma / sqrt(gamma)
+				<< endl;
 
-    // initialize boundary dof indicator
-    std::set<dealii::types::boundary_id> boundaryIndicators;
-    typename BoundaryCollection<dim>::ConstIterator it =
-            m_problemDescription->getBoundaries()->getBoundaries().begin();
-    for (; it != m_problemDescription->getBoundaries()->getBoundaries().end();
-            it++) {
-        if (not it->second->isPeriodic()) {
-            boundaryIndicators.insert(it->first);
-        }
-    }
-    m_isDoFAtBoundary.resize(getNumberOfDoFs());
-    dealii::DoFTools::extract_dofs_with_support_on_boundary(
-            *(m_advectionOperator->getDoFHandler()), dealii::ComponentMask(),
-            m_isDoFAtBoundary, boundaryIndicators);
-    size_t nofBoundaryNodes = 0;
-    for (size_t i = 0; i < m_isDoFAtBoundary.size(); i++) {
-        if (m_isDoFAtBoundary.at(i)) {
-            nofBoundaryNodes += 1;
-        }
-    }
-    LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
-            << nofBoundaryNodes << endl;
-    LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs() << endl;
+		break;
+	}
+	}
+	LOG(WELCOME) << "----------------------------" << endl;
 
-    // Initialize distribution functions
-    if (configuration->isRestartAtLastCheckpoint()) {
-        loadDistributionFunctionsFromFiles(
-                m_configuration->getOutputDirectory());
-    } else {
-        initializeDistributions();
-    }
+	// initialize boundary dof indicator
+	std::set<dealii::types::boundary_id> boundaryIndicators;
+	typename BoundaryCollection<dim>::ConstIterator it =
+			m_problemDescription->getBoundaries()->getBoundaries().begin();
+	for (; it != m_problemDescription->getBoundaries()->getBoundaries().end();
+			it++) {
+		if (not it->second->isPeriodic()) {
+			boundaryIndicators.insert(it->first);
+		}
+	}
+	m_isDoFAtBoundary.resize(getNumberOfDoFs());
+	dealii::DoFTools::extract_dofs_with_support_on_boundary(
+			*(m_advectionOperator->getDoFHandler()), dealii::ComponentMask(),
+			m_isDoFAtBoundary, boundaryIndicators);
+	size_t nofBoundaryNodes = 0;
+	for (size_t i = 0; i < m_isDoFAtBoundary.size(); i++) {
+		if (m_isDoFAtBoundary.at(i)) {
+			nofBoundaryNodes += 1;
+		}
+	}
+	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
+			<< nofBoundaryNodes << endl;
+	LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs() << endl;
 
-    // Create file for output table
-    if ((not configuration->isSwitchOutputOff())
-    /*and (configuration->getOutputTableInterval()
-     < configuration->getNumberOfTimeSteps())*/) {
-        std::stringstream s;
-        s << configuration->getOutputDirectory().c_str()
-                << "/results_table.txt";
-        //create the SolverStats object which is responsible for the results table
-        m_solverStats = make_shared<SolverStats<dim> >(this, s.str());
-    } else {
-        m_solverStats = make_shared<SolverStats<dim> >(this);
-    }
+	// Initialize distribution functions
+	if (configuration->isRestartAtLastCheckpoint()) {
+		loadDistributionFunctionsFromFiles(
+				m_configuration->getOutputDirectory());
+	} else {
+		initializeDistributions();
+	}
+
+	// Create file for output table
+	if ((not configuration->isSwitchOutputOff())
+	/*and (configuration->getOutputTableInterval()
+	 < configuration->getNumberOfTimeSteps())*/) {
+		std::stringstream s;
+		s << configuration->getOutputDirectory().c_str()
+				<< "/results_table.txt";
+		//create the SolverStats object which is responsible for the results table
+		m_solverStats = make_shared<SolverStats<dim> >(this, s.str());
+	} else {
+		m_solverStats = make_shared<SolverStats<dim> >(this);
+	}
+
 }
 /* Constructor */
 template CFDSolver<2>::CFDSolver(shared_ptr<SolverConfiguration> configuration,

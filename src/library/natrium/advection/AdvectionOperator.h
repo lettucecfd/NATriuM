@@ -49,7 +49,7 @@ public:
 	virtual void mapDoFsToSupportPoints(
 			vector<dealii::Point<dim> >& supportPoints) const = 0;
 
-	virtual const dealii::MappingQ1<dim>& getMapping() const = 0;
+	virtual const dealii::MappingQ<dim>& getMapping() const = 0;
 
 	/** @short save matrices and status to files
 	 *  @param[in] directory directory to save the matrix files to
@@ -61,11 +61,10 @@ public:
 
 	virtual const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const = 0;
 
-	/*virtual size_t getNumberOfDoFsPerCell() const = 0;
-
+	//virtual size_t getNumberOfDoFsPerCell() const = 0;
 	virtual const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const  = 0;
 
-	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const = 0;*/
+	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const = 0;
 };
 
 } /* namespace natrium */

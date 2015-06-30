@@ -182,6 +182,13 @@ public:
 	 */
 	virtual void output(size_t iteration);
 
+	/**
+	 *
+	 */
+	bool hasGeometryChanged(){
+		return false;
+	}
+
 	const distributed_vector& getDensity() const {
 		return m_density;
 	}

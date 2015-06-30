@@ -26,7 +26,7 @@ public:
 
 	/// constructor (with default cs=1/sqrt(3))
 	TaylorGreenVortex2D(double viscosity,
-			size_t refinementLevel, double cs = 0.57735026919);
+			size_t refinementLevel, double cs = 0.57735026919, bool init_rho_analytically = false);
 
 	/// destructor
 	virtual ~TaylorGreenVortex2D();
@@ -48,6 +48,9 @@ public:
 private:
 	/// speed of sound
 	double m_cs;
+
+	/// initialization with analytic pressure
+	bool m_analyticInit;
 
 	/**
 	 * @short create triangulation for couette flow

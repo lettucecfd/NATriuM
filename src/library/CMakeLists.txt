@@ -18,7 +18,7 @@ file(   GLOB_RECURSE
         natrium/problemdescription/*.cpp
         natrium/solver/*.cpp
         natrium/stencils/*.cpp
-        natrium/timeintegration/*.cpp
+        natrium/timeintegration/*.cpp 
         natrium/utilities/*.cpp
         )
  

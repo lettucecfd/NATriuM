@@ -61,7 +61,7 @@ template void matrixAnalysis<2>::writeSpectrum();
 template void matrixAnalysis<3>::writeSpectrum();
 
 template<size_t dim>
-void matrixAnalysis<dim>::computeSpectrum(
+double matrixAnalysis<dim>::computeSpectrum(
 		const distributed_sparse_block_matrix& matrix,
 		vector<std::complex<double> > & eigenvalues, double perturbation) {
 	// make sure the matrix is quadratic
@@ -87,14 +87,21 @@ void matrixAnalysis<dim>::computeSpectrum(
 	fullSystemMatrix.compute_eigenvalues();
 	// write eigenvalues to vector
 	eigenvalues.resize(matrix.n());
+	double abs_max_eigenvalue = 0.0;
 	for (size_t i = 0; i < fullSystemMatrix.n_cols(); i++) {
 		eigenvalues.at(i) = fullSystemMatrix.eigenvalue(i);
+		if (abs(eigenvalues.at(i)) > abs_max_eigenvalue){
+			abs_max_eigenvalue = abs(eigenvalues.at(i));
+		}
 	}
+
+	//return max absolute of eigenvalues
+	return abs_max_eigenvalue;
 }
-template void matrixAnalysis<2>::computeSpectrum(
+template double matrixAnalysis<2>::computeSpectrum(
 		const distributed_sparse_block_matrix& matrix,
 		vector<std::complex<double> > & eigenvalues, double perturbation);
-template void matrixAnalysis<3>::computeSpectrum(
+template double matrixAnalysis<3>::computeSpectrum(
 		const distributed_sparse_block_matrix& matrix,
 		vector<std::complex<double> > & eigenvalues, double perturbation);
 

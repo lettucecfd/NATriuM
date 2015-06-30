@@ -17,6 +17,7 @@ using dealii::Triangulation;
 
 namespace natrium {
 
+
 /** @short Description of a simple Couette Flow (regular channel flow in square domain).
  *  The domain is [0,1]^3. The top plate is moved with constant velocity. The domain consists of
  *  8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).
@@ -75,6 +76,26 @@ private:
 	                     trans(in(1)));
 	  }
 	};
+
+
+//#define TURBULENT
+#ifdef TURBULENT
+
+	virtual void applyInitialVelocities(
+			vector<distributed_vector>& initialVelocities,
+			const vector<dealii::Point<3> >& supportPoints) const {
+		cout << "crazy init" << endl;
+		assert(
+				initialVelocities.at(0).size()
+						== initialVelocities.at(1).size());
+		assert(initialVelocities.size() == 3);
+		for (size_t i = 0; i < supportPoints.size(); i++){
+			initialVelocities.at(0)(i) = supportPoints.at(i)(2)* m_topPlateVelocity;
+			initialVelocities.at(1)(i) = 0.5* m_topPlateVelocity*sin(8*atan(1)*supportPoints.at(i)(0)/getCharacteristicLength());
+			initialVelocities.at(2)(i) = 0.5* m_topPlateVelocity*cos(8*atan(1)*supportPoints.at(i)(0)/getCharacteristicLength());
+		}
+	}
+#endif
 
 };
 

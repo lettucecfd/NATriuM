@@ -67,7 +67,7 @@ private:
 	{
 	  double trans(const double y) const
 	  {
-	    return std::tanh(2*y)/tanh(2);
+	    return std::tanh(4*(y-0.5))/tanh(2)/2 + 0.5;
 	  }
 	  dealii::Point<2> operator() (const dealii::Point<2> &in) const
 	  {

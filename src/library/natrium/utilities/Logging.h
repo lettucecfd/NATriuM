@@ -112,6 +112,8 @@ Logging& LOG(LogLevel level);
  */
 Logging& LOGGER();
 
+const std::string currentDateTime();
+
 } /* namespace natrium */
 
 #endif /* LOGGING_H_ */

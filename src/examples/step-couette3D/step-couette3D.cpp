@@ -30,12 +30,12 @@ int main(int argc, char** argv) {
 	cout << "Starting NATriuM step-couette3D..." << endl;
 
 	// set Reynolds and Mach number
-	const double Re = 10;
+	const double Re = 550;
 	const double Ma = 0.1;
 
 	// set spatial discretization
-	size_t refinementLevel = 2;
-	size_t orderOfFiniteElement = 2;
+	size_t refinementLevel = 3;
+	size_t orderOfFiniteElement = 4;
 	bool isUnstructured = false;
 
 	// set Problem so that the right Re and Ma are achieved
@@ -64,8 +64,8 @@ int main(int argc, char** argv) {
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);
-	configuration->setOutputSolutionInterval(1);
-	configuration->setOutputTableInterval(1);
+	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputTableInterval(100);
 	configuration->setNumberOfTimeSteps(1000);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);

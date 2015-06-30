@@ -32,7 +32,7 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 		shared_ptr<BoundaryCollection<dim> > boundaries,
 		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux) :
-		m_tria(triangulation), m_boundaries(boundaries), m_mapping(), m_stencil(
+		m_tria(triangulation), m_boundaries(boundaries), m_mapping(orderOfFiniteElement), m_stencil(
 				Stencil), m_useCentralFlux(useCentralFlux) {
 	// assertions
 	assert(orderOfFiniteElement >= 1);
