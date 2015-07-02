@@ -1125,7 +1125,6 @@ public:
 
 				return BICGSTAB;
 			} else if ("Cg" == solver) {
-				cout << "Cg read" << endl;
 				return CG;
 			} else if ("Fgmres" == solver) {
 				return FGMRES;
@@ -1154,12 +1153,10 @@ public:
 			switch (solver) {
 			case BICGSTAB: {
 				set("Linear solver", "Bicgstab");
-				cout << "BICGSTAB set" << endl;
 				break;
 			}
 			case CG: {
 				set("Linear solver", "Cg");
-				cout << "CG set" << endl;
 				break;
 			}
 			case FGMRES: {
