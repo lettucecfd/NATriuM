@@ -5,23 +5,22 @@
  *      Author: dominik
  */
 
-#include <natrium/collision/BGKIncompressible.h>
+#include "BGKIncompressible.h"
 
 namespace natrium {
 
 BGKIncompressible::BGKIncompressible(double relaxationParameter, double dt,
 		const shared_ptr<Stencil> stencil) :
 		BGK(relaxationParameter, dt, stencil) {
-
 }
 
 BGKIncompressible::~BGKIncompressible() {
 	// TODO Auto-generated destructor stub
 }
 
-double BGKStandard::getEquilibriumDistribution(size_t i,
+double BGKIncompressible::getEquilibriumDistribution(size_t i,
 		const numeric_vector& u, const double rho) const {
-
+	cout << "test" << endl;
 	assert(i < getStencil()->getQ());
 	assert(rho > 0);
 	assert(i >= 0);

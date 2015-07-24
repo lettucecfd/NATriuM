@@ -276,9 +276,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		break;
 	}
 	case BGK_INCOMPRESSIBLE: {
-			LOG(WELCOME) << "tau:                      " << tau << endl;
-			break;
-		}
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
 	}
 	LOG(WELCOME) << "----------------------------" << endl;
 
@@ -650,6 +650,8 @@ template<size_t dim>
 double CFDSolver<dim>::getTau() const {
 	if ((BGK_STANDARD == m_configuration->getCollisionScheme())
 			or (BGK_STANDARD_TRANSFORMED
+					== m_configuration->getCollisionScheme())
+			or (BGK_INCOMPRESSIBLE
 					== m_configuration->getCollisionScheme())) {
 		return BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
