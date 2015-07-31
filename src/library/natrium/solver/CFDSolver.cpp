@@ -1,6 +1,6 @@
 /**
  * @file CFDSolver.cpp
- * @short 
+ * @short
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
@@ -146,6 +146,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	}
 
 /// Build time integrator
+
 	size_t numberOfDoFs = m_advectionOperator->getNumberOfDoFs();
 	if (RUNGE_KUTTA_5STAGE == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
@@ -171,7 +172,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 					DealIIWrapper<distributed_sparse_block_matrix,
 							distributed_block_vector> >(
 					configuration->getTimeStepSize(),
-					configuration->getDealIntegrator());
+					configuration->getDealIntegrator(),
+					configuration->getDealLinearSolver());
 		} else if (configuration->getDealIntegrator() < 12) {
 			m_timeIntegrator =
 					make_shared<
@@ -179,6 +181,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 									distributed_block_vector> >(
 							configuration->getTimeStepSize(),
 							configuration->getDealIntegrator(),
+							configuration->getDealLinearSolver(),
 							configuration->getEmbeddedDealIntegratorCoarsenParameter(),
 							configuration->getEmbeddedDealIntegratorRefinementParameter(),
 							configuration->getEmbeddedDealIntegratorMinimumTimeStep(),
@@ -204,12 +207,14 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	m_residuumVelocity = 1.0;
 
 // OUTPUT
+
 	double maxU = getMaxVelocityNorm();
 	double charU = problemDescription->getCharacteristicVelocity();
 	if (charU == 0.0) {
 		charU = maxU;
 	}
-	double dx =  CFDSolverUtilities::getMinimumVertexDistance<dim>(*problemDescription->getTriangulation());
+	double dx = CFDSolverUtilities::getMinimumVertexDistance<dim>(
+			*problemDescription->getTriangulation());
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
 	LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
 	LOG(WELCOME) << "------ " << currentDateTime() << " ------" << endl;
@@ -312,6 +317,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	} else {
 		m_solverStats = make_shared<SolverStats<dim> >(this);
 	}
+
 }
 /* Constructor */
 template CFDSolver<2>::CFDSolver(shared_ptr<SolverConfiguration> configuration,

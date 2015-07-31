@@ -29,6 +29,11 @@ private:
 	MATRIX const * m_systemMatrix;
 	VECTOR const * m_systemVector;
 
+	int m_solver;
+	const int m_iterations = 100000;
+	const double m_tol = 1e-6;
+
+
 	MATRIX m_tmpMatrix;
 
 	/// time stepping scheme in dealii
@@ -37,6 +42,7 @@ private:
 	/// time stepping scheme, for embedded RK methods, additional methods need to be called,
 	/// which requires an extra pointer
 	shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> > m_dealIIRKEmbedded;
+
 
 	/**
 	 * @short function that is needed to call evolve_one_time_step
@@ -54,12 +60,13 @@ private:
 	VECTOR evaluateIdMinusTauJInverse(const double t, const double tau,
 			const VECTOR & f);
 
+
 public:
 
 	/// constructor
-	DealIIWrapper(const double timeStepSize, const DealIntegratorName rkScheme);
+	DealIIWrapper(const double timeStepSize, const DealIntegratorName rkScheme, const DealSolverName linearSolver);
 	DealIIWrapper(const double timeStepSize,
-		const DealIntegratorName rkScheme, 	double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol);
+		const DealIntegratorName rkScheme, const DealSolverName linearSolver,	double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol);
 	/// destructor
 	virtual ~DealIIWrapper() {
 	}

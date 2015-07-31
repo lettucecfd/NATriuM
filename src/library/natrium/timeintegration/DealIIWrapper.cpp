@@ -9,8 +9,13 @@
 
 #include "deal.II/lac/solver_control.h"
 #include "deal.II/lac/identity_matrix.h"
-#include "deal.II/lac/solver_bicgstab.h"
 
+#include "deal.II/lac/solver_bicgstab.h"
+#include "deal.II/lac/solver_cg.h"
+#include "deal.II/lac/solver_gmres.h"
+#include "deal.II/lac/solver_minres.h"
+#include "deal.II/lac/solver_qmrs.h"
+#include "deal.II/lac/solver_richardson.h"
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_precondition.h"
 #include "../utilities/TrilinosBlockPreconditioner.h"
@@ -40,14 +45,108 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 
 	distributed_vector result = f;
 
-	dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
-	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
+	dealii::SolverControl solver_control(m_iterations, m_tol*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
+
 #ifdef WITH_TRILINOS
-	bicgstab.solve(*m_systemMatrix, result, f,
-			dealii::TrilinosWrappers::PreconditionIdentity());
+
+switch(m_solver)
+	{
+case 0:
+{
+
+	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
+	bicgstab.solve(*m_systemMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+	break;
+}
+case 1:
+{
+	dealii::SolverCG<distributed_vector> cg(solver_control);
+	cg.solve(*m_systemMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+	break;
+}
+case 2:
+{
+	dealii::SolverFGMRES<distributed_vector> fgmres(solver_control);
+	fgmres.solve(*m_systemMatrix, result, f,dealii::TrilinosWrappers::PreconditionIdentity());
+	break;
+}
+case 3:
+{
+	dealii::SolverGMRES<distributed_vector> gmres(solver_control);
+	gmres.solve(*m_systemMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+	break;
+}
+case 4:
+{
+	dealii::SolverMinRes<distributed_vector> minres(solver_control);
+	minres.solve(*m_systemMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+	break;
+}
+case 5:
+{
+	dealii::SolverQMRS<distributed_vector> qmrs(solver_control);
+	qmrs.solve(*m_systemMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+	break;
+}
+case 7:
+{
+	dealii::SolverRichardson<distributed_vector> richard(solver_control);
+	richard.solve(*m_systemMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+	break;
+}
+
+default:
+{
+	cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
+}
+	}
 #else
-	bicgstab.solve(*m_systemMatrix, result, f,
-			dealii::PreconditionIdentity());	//,	           preconditioner);
+	switch(m_solver)
+	{
+case 0:
+{
+
+    dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+    bicgstab.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 1:
+{
+    dealii::SolverCG<distributed_block_vector> cg(solver_control);
+    cg.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 2:
+{
+    dealii::SolverFGMRES<distributed_block_vector> fgmres(solver_control);
+    fgmres.solve(*m_systemMatrix, result, f,dealii::PreconditionIdentity());
+    break;
+}
+case 3:
+{
+    dealii::SolverGMRES<distributed_block_vector> gmres(solver_control);
+    gmres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 4:
+{
+    dealii::SolverMinRes<distributed_block_vector> minres(solver_control);
+    minres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 5:
+{
+    dealii::SolverQMRS<distributed_block_vector> qmrs(solver_control);
+    qmrs.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 7:
+{
+    dealii::SolverRichardson<distributed_block_vector> richard(solver_control);
+    richard.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+	}//,	           preconditioner);
 #endif
 	return result;
 }
@@ -59,13 +158,108 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 
 	distributed_block_vector result = f;
 
-	dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
-	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+	dealii::SolverControl solver_control(m_iterations, m_tol*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
+
 #ifdef WITH_TRILINOS
-	bicgstab.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
+	switch(m_solver)
+	{
+case 0:
+{
+
+    dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+    bicgstab.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
+    break;
+}
+case 1:
+{
+    dealii::SolverCG<distributed_block_vector> cg(solver_control);
+    cg.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
+    break;
+}
+case 2:
+{
+    dealii::SolverFGMRES<distributed_block_vector> fgmres(solver_control);
+    fgmres.solve(*m_systemMatrix, result, f,TrilinosBlockPreconditioner());
+    break;
+}
+case 3:
+{
+    dealii::SolverGMRES<distributed_block_vector> gmres(solver_control);
+    gmres.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
+    break;
+}
+case 4:
+{
+    dealii::SolverMinRes<distributed_block_vector> minres(solver_control);
+    minres.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
+    break;
+}
+case 5:
+{
+    dealii::SolverQMRS<distributed_block_vector> qmrs(solver_control);
+    qmrs.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
+    break;
+}
+case 7:
+{
+    dealii::SolverRichardson<distributed_block_vector> richard(solver_control);
+    richard.solve(*m_systemMatrix, result, f, TrilinosBlockPreconditioner());
+    break;
+}
+
+default:
+{
+    cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
+}
+	}
+
 #else
-	bicgstab.solve(*m_systemMatrix, result, f,
-			dealii::PreconditionIdentity());	//,	           preconditioner);
+	switch(m_solver)
+	{
+case 0:
+{
+
+    dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+    bicgstab.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 1:
+{
+    dealii::SolverCG<distributed_block_vector> cg(solver_control);
+    cg.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 2:
+{
+    dealii::SolverFGMRES<distributed_block_vector> fgmres(solver_control);
+    fgmres.solve(*m_systemMatrix, result, f,dealii::PreconditionIdentity());
+    break;
+}
+case 3:
+{
+    dealii::SolverGMRES<distributed_block_vector> gmres(solver_control);
+    gmres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 4:
+{
+    dealii::SolverMinRes<distributed_block_vector> minres(solver_control);
+    minres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 5:
+{
+    dealii::SolverQMRS<distributed_block_vector> qmrs(solver_control);
+    qmrs.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 7:
+{
+    dealii::SolverRichardson<distributed_block_vector> richard(solver_control);
+    richard.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+	}//,	           preconditioner);
 #endif
 	return result;
 }
@@ -96,14 +290,108 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 		m_tmpMatrix.add(i, i, 1.0);
 	}
 
-	dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
-	dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
+	dealii::SolverControl solver_control(m_iterations, m_tol*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
+
 #ifdef WITH_TRILINOS
-	bicgstab.solve(m_tmpMatrix, result, f,
-			dealii::TrilinosWrappers::PreconditionIdentity());
+	switch(m_solver)
+	{
+case 0:
+{
+
+    dealii::SolverBicgstab<distributed_vector> bicgstab(solver_control);
+    bicgstab.solve(m_tmpMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+    break;
+}
+case 1:
+{
+    dealii::SolverCG<distributed_vector> cg(solver_control);
+    cg.solve(m_tmpMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+    break;
+}
+case 2:
+{
+    dealii::SolverFGMRES<distributed_vector> fgmres(solver_control);
+    fgmres.solve(m_tmpMatrix, result, f,dealii::TrilinosWrappers::PreconditionIdentity());
+    break;
+}
+case 3:
+{
+    dealii::SolverGMRES<distributed_vector> gmres(solver_control);
+    gmres.solve(m_tmpMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+    break;
+}
+case 4:
+{
+    dealii::SolverMinRes<distributed_vector> minres(solver_control);
+    minres.solve(m_tmpMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+    break;
+}
+case 5:
+{
+    dealii::SolverQMRS<distributed_vector> qmrs(solver_control);
+    qmrs.solve(m_tmpMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+    break;
+}
+case 7:
+{
+    dealii::SolverRichardson<distributed_vector> richard(solver_control);
+    richard.solve(m_tmpMatrix, result, f, dealii::TrilinosWrappers::PreconditionIdentity());
+    break;
+}
+
+default:
+{
+    cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
+}
+	}
+
 #else
-	bicgstab.solve(m_tmpMatrix, result, f,
-			dealii::PreconditionIdentity());	//,	           preconditioner);
+	switch(m_solver)
+	{
+case 0:
+{
+
+    dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+    bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 1:
+{
+    dealii::SolverCG<distributed_block_vector> cg(solver_control);
+    cg.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 2:
+{
+    dealii::SolverFGMRES<distributed_block_vector> fgmres(solver_control);
+    fgmres.solve(m_tmpMatrix, result, f,dealii::PreconditionIdentity());
+    break;
+}
+case 3:
+{
+    dealii::SolverGMRES<distributed_block_vector> gmres(solver_control);
+    gmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 4:
+{
+    dealii::SolverMinRes<distributed_block_vector> minres(solver_control);
+    minres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 5:
+{
+    dealii::SolverQMRS<distributed_block_vector> qmrs(solver_control);
+    qmrs.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 7:
+{
+    dealii::SolverRichardson<distributed_block_vector> richard(solver_control);
+    richard.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+	}//,	           preconditioner);
 #endif
 
 	return result;
@@ -162,14 +450,110 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 		}
 	}
 
-	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
-	dealii::SolverControl solver_control(1000, 1e-6*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
-	dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+	dealii::SolverControl solver_control(m_iterations, (m_tol*f.l2_norm()), false, false);	//* m_tmpSystemVector.l2_norm());
+
 #ifdef WITH_TRILINOS
-	bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+
+	switch(m_solver)
+	{
+case 0:
+{
+    dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+    bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 1:
+{
+    dealii::SolverCG<distributed_block_vector> cg(solver_control);
+    cg.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 2:
+{
+    dealii::SolverFGMRES<distributed_block_vector> fgmres(solver_control);
+    fgmres.solve(m_tmpMatrix, result, f,dealii::PreconditionIdentity());
+    break;
+}
+case 3:
+{
+    dealii::SolverGMRES<distributed_block_vector> gmres(solver_control);
+    gmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 4:
+{
+    dealii::SolverMinRes<distributed_block_vector> minres(solver_control);
+    minres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 5:
+{
+    dealii::SolverQMRS<distributed_block_vector> qmrs(solver_control);
+    qmrs.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 7:
+{
+    dealii::SolverRichardson<distributed_block_vector> richard(solver_control);
+    richard.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+
+default:
+{
+    cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
+}
+	}
+
 #else
-	bicgstab.solve(m_tmpMatrix, result, f,
-			dealii::PreconditionIdentity());	//,	           preconditioner);
+	switch(m_solver)
+	{
+case 0:
+{
+
+    dealii::SolverBicgstab<distributed_block_vector> bicgstab(solver_control);
+    bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+
+    break;
+}
+case 1:
+{
+    dealii::SolverCG<distributed_block_vector> cg(solver_control);
+    cg.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+
+    break;
+}
+case 2:
+{
+    dealii::SolverFGMRES<distributed_block_vector> fgmres(solver_control);
+    fgmres.solve(m_tmpMatrix, result, f,dealii::PreconditionIdentity());
+    break;
+}
+case 3:
+{
+    dealii::SolverGMRES<distributed_block_vector> gmres(solver_control);
+    gmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 4:
+{
+    dealii::SolverMinRes<distributed_block_vector> minres(solver_control);
+    minres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 5:
+{
+    dealii::SolverQMRS<distributed_block_vector> qmrs(solver_control);
+    qmrs.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+case 7:
+{
+    dealii::SolverRichardson<distributed_block_vector> richard(solver_control);
+    richard.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+    break;
+}
+	}	//,	           preconditioner);
 #endif
 
 	return result;
@@ -206,9 +590,10 @@ double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 
 template<class MATRIX, class VECTOR>
 natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
-        const DealIntegratorName rkScheme) :
+        const DealIntegratorName rkScheme, const DealSolverName linearSolver) :
         TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_systemMatrix(NULL), m_systemVector(
-        NULL) {
+        NULL), m_solver(){
+	m_solver = linearSolver;
     assert(rkScheme < 12);
     assert(NONE != rkScheme);
     dealii::TimeStepping::runge_kutta_method rk =
@@ -219,14 +604,19 @@ natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
     } else if (rkScheme < 7) {
         m_dealIIRKStepper = make_shared<
                 dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(rk);
+    } else if (rkScheme < 12) {
+        m_dealIIRKEmbedded = make_shared<
+                dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >(rk);
+        m_dealIIRKStepper = m_dealIIRKEmbedded;
     };
 }
 
 template<class MATRIX, class VECTOR>
 natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
-        const DealIntegratorName rkScheme, 	double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol) :
+        const DealIntegratorName rkScheme, const DealSolverName linearSolver, double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol) :
         TimeIntegrator<MATRIX, VECTOR>(timeStepSize), m_systemMatrix(NULL), m_systemVector(
-        NULL) {
+        NULL), m_solver() {
+	m_solver = linearSolver;
     assert(rkScheme < 12);
     assert(NONE != rkScheme);
     dealii::TimeStepping::runge_kutta_method rk =

@@ -68,6 +68,17 @@ enum DealIntegratorName {
 	NONE
 };
 
+enum DealSolverName {
+	BICGSTAB,
+	CG,
+	FGMRES,
+	GMRES,
+	MINRES,
+	QMRS,
+	RELAXATION,
+	RICHARDSON
+};
+
 /**
  * @short the numerical flux used to calculate the advection operator
  */
@@ -1100,6 +1111,90 @@ public:
 		}
 		leave_subsection();
 		leave_subsection();
+	}
+
+	DealSolverName getDealLinearSolver() {
+			enter_subsection("Advection");
+			enter_subsection("Deal.II linear solver");
+			string solver = get("Linear solver");
+			leave_subsection();
+			leave_subsection();
+
+
+			if ("Bicgstab" == solver) {
+
+				return BICGSTAB;
+			} else if ("Cg" == solver) {
+				return CG;
+			} else if ("Fgmres" == solver) {
+				return FGMRES;
+			} else if ("Gmres" == solver) {
+				return GMRES;
+			} else if ("Minres" == solver) {
+				return MINRES;
+			} else if ("Qmrs" == solver) {
+				return QMRS;
+			} else if ("Relaxation" == solver) {
+				return RELAXATION;
+			} else if ("Richardson" == solver) {
+				return RICHARDSON;
+			} else {
+				std::stringstream msg;
+				msg << "Unknown Dealii linear solver with index " << solver
+						<< "in enum LinearSolverName. Check your configuration file. If everything is alright, "
+						<< "the implementation of DealSolverName might not be up-to-date.";
+				throw ConfigurationException(msg.str());
+			}
+		}
+
+	void setDealLinearSolver(DealSolverName solver) {
+			enter_subsection("Advection");
+			enter_subsection("Deal.II linear solver");
+			switch (solver) {
+			case BICGSTAB: {
+				set("Linear solver", "Bicgstab");
+				break;
+			}
+			case CG: {
+				set("Linear solver", "Cg");
+				break;
+			}
+			case FGMRES: {
+				set("Linear solver", "Fgmres");
+				break;
+			}
+			case GMRES: {
+				set("Linear solver", "Gmres");
+				break;
+			}
+			case MINRES: {
+				set("Linear solver", "Minres");
+				break;
+			}
+			case QMRS: {
+				set("Linear solver", "Qmrs");
+				break;
+			}
+			case RELAXATION: {
+				set("Linear solver", "Relaxation");
+				break;
+			}
+			case RICHARDSON: {
+							set("Linear solver", "Richardson");
+							break;
+						}
+			default: {
+				std::stringstream msg;
+				msg << "Unknown Deal.II linear solver (Linear solver); index. "
+						<< solver
+						<< " in enum DealLinearSolverName. The constructor of SolverConfiguration might not be up-to-date.";
+				leave_subsection();
+				leave_subsection();
+				throw ConfigurationException(msg.str());
+			}
+			}
+			leave_subsection();
+			leave_subsection();
 	}
 
 	void setEmbeddedDealIntegratorParameters(double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol)

@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        timeintegration-analysis
+        timeintegration-analysis-solver
         )
 
 
@@ -12,7 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                timeintegration-analysis.cpp
+                timeintegration-analysis-solver.cpp
                )
 #
 # link natrium library to executable

@@ -71,12 +71,12 @@ int main() {
 	// length of quadratic domain
 	const double L =  8 * atan(1); // = 2 pi
 	const double U = 1;
-	const double tmax = 1;
+	const double tmax = 0.01;
 #else
 	const double L = 1;
 	// velocity of top plate
 	const double U = 1 / sqrt(3) * Ma;//5.773502691896258e-02/3.1415926;//0.02;
-	const double tmax = 10;
+	const double tmax = 1;
 #endif
 	// scaling of particle velocities
 	double scaling = sqrt(3) * U / Ma;
@@ -104,104 +104,61 @@ int main() {
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 
-	for (int integrator = 1; integrator < 10; integrator++) {
+	for (int solver = 6; solver < 7; solver++) {
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
-		std::string timeintegrator = "test";
+		std::string linearsolver = "test";
 
-		switch (integrator) {
+		configuration->setTimeIntegrator(OTHER);
+		configuration->setDealIntegrator(IMPLICIT_MIDPOINT);
+
+		switch (solver) {
 		case 1:
-			configuration->setTimeIntegrator(RUNGE_KUTTA_5STAGE);
-			timeintegrator = "RUNGE_KUTTA_5STAGE";
+			configuration->setDealLinearSolver(BICGSTAB);
+			linearsolver = "BICGSTAB";
 			break;
 
 		case 2:
-			configuration->setTimeIntegrator(THETA_METHOD);
-			timeintegrator = "THETA_METHOD";
+			configuration->setDealLinearSolver(CG);
+			linearsolver = "CG";
 			break;
 
 		case 3:
-			configuration->setTimeIntegrator(EXPONENTIAL);
-			timeintegrator = "EXPONENTIAL";
+			configuration->setDealLinearSolver(FGMRES);
+			linearsolver = "FGMRES";
 			break;
 
 		case 4:
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(FORWARD_EULER);
-			timeintegrator = "FORWARD_EULER";
+			configuration->setDealLinearSolver(GMRES);
+			linearsolver = "GMRES";
 			break;
 
 		case 5:
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(RK_THIRD_ORDER);
-			timeintegrator = "RK_THIRD_ORDER";
+			configuration->setDealLinearSolver(MINRES);
+			linearsolver = "MINRES";
 			break;
 
-		case 6: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(RK_CLASSIC_FOURTH_ORDER);
-			timeintegrator = "RK_CLASSIC_FOURTH_ORDER";
+		case 6:
+			configuration->setDealLinearSolver(QMRS);
+			linearsolver = "QMRS";
 			break;
-		}
-		case 7: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(BACKWARD_EULER);
-			timeintegrator = "BACKWARD_EULER";
+
+		case 7:
+			configuration->setDealLinearSolver(RICHARDSON);
+			linearsolver = "RICHARDSON";
 			break;
-		}
-		case 8: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(IMPLICIT_MIDPOINT);
-			timeintegrator = "IMPLICIT_MIDPOINT";
+
+/*		case 8: {
+		//	configuration->setDealLinearSolver(RELAXATION);
+		//	linearsolver = "RELAXATION";
 			break;
-		}
-		case 9: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(CRANK_NICOLSON);
-			timeintegrator = "CRANK_NICOLSON";
-			break;
-		}
-		case 10: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(SDIRK_TWO_STAGES);
-			timeintegrator = "SDIRK_TWO_STAGES";
-			break;
-		}
-		case 11: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(HEUN_EULER);
-			timeintegrator = "HEUN_EULER";
-			break;
-		}
-		case 12: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(BOGACKI_SHAMPINE);
-			timeintegrator = "BOGACKI_SHAMPINE";
-			break;
-		}
-		case 13: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(DOPRI);
-			timeintegrator = "DOPRI";
-			break;
-		}
-		case 14: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(FEHLBERG);
-			timeintegrator = "FEHLBERG";
-			break;
-		}
-		case 15: {
-			configuration->setTimeIntegrator(OTHER);
-			configuration->setDealIntegrator(CASH_KARP);
-			timeintegrator = "CASH_KARP";
-			break;
-		}
+
+*/		//}
 		}
 
 		std::stringstream filename;
-		filename << getenv("NATRIUM_HOME") << "/timeintegration-analysis/"
-				<< timeintegrator.c_str() << "_table.txt";
+		filename << getenv("NATRIUM_HOME")  << "/timeintegration-analysis/"
+				<< linearsolver.c_str() << "_table.txt";
 		std::ofstream timeFile(filename.str().c_str());
 		timeFile
 				<< "# order of FE   dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
@@ -210,16 +167,16 @@ int main() {
 		// prepare error table file
 		std::stringstream filename2;
 		filename2 << getenv("NATRIUM_HOME") << "/timeintegration-analysis/"
-				<< timeintegrator.c_str() << "_error.txt";
+				<< linearsolver.c_str() << "_error.txt";
 		std::ofstream orderFile(filename2.str().c_str());
 		orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 		orderFile
 				<< "#  dt  i      CFL         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   "
 						"||error_rho||_2	runtime" << endl;
 
-		cout << "Time integrator: " << timeintegrator.c_str() << endl;
+		cout << "Linear solver: " << linearsolver.c_str() << endl;
 
-		for (double CFL = 0.2; CFL <= 102.4; CFL *= 2.) {
+		for (double CFL = 0.4; CFL <= 50; CFL = CFL *2) {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*benchmark->getTriangulation(), orderOfFiniteElement,
@@ -237,14 +194,14 @@ int main() {
 			// setup configuration
 			std::stringstream dirName;
 			dirName << getenv("NATRIUM_HOME") << "/timeintegration-analysis/"
-					<< timeintegrator << "_" << CFL << "_"
+					<< linearsolver << "_" << CFL << "_"
 					<< dt;
 
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());
 			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
-			configuration->setOutputTableInterval(10000000);
+			configuration->setOutputTableInterval(10);
 
 			//configuration->setOutputCheckpointInterval(1000);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -252,6 +209,7 @@ int main() {
 			configuration->setCommandLineVerbosity(BASIC);
 			configuration->setTimeStepSize(dt);
 			configuration->setSimulationEndTime(tmax);
+
 
 #ifdef MEASURE_ONLY_INIT_TIME
 			configuration->setNumberOfTimeSteps(1);
@@ -269,9 +227,6 @@ int main() {
 				time2 /= CLOCKS_PER_SEC;
 				solver.getErrorStats()->update();
 
-				/*if (solver.getErrorStats()->getMaxVelocityError()
-						> solver.getErrorStats()->getMaxUAnalytic())
-					break;*/
 
 				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << " Max Error U_analytic: "
