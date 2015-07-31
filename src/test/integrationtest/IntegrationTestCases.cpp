@@ -445,7 +445,7 @@ TestResult ConvergencePureLinearAdvectionSmooth() {
 			}
 			AdvectionBenchmark::AdvectionResult advectionResult =
 					AdvectionBenchmark::oneTest(N, orderOfFiniteElement, deltaT,
-							numberOfTimeSteps, is_smooth, true, false);
+							numberOfTimeSteps, is_smooth, false, false);
 
 			// Analysis
 			// Velocity error (compare Paper by Min and Lee)
@@ -508,7 +508,7 @@ TestResult ConvergencePureLinearAdvectionNonsmooth() {
 			}
 			AdvectionBenchmark::AdvectionResult advectionResult =
 					AdvectionBenchmark::oneTest(N, orderOfFiniteElement, deltaT,
-							numberOfTimeSteps, is_smooth, true, false);
+							numberOfTimeSteps, is_smooth, false, false);
 
 			// Analysis
 			std::stringstream stream1;
