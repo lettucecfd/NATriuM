@@ -158,8 +158,12 @@ int main(int argc, char* argv[]) {
 			CFDSolver<2> solver(configuration, benchmark);
 			time1 = clock() - timestart;
 
+			size_t n_steps = 20;
 			try {
-				solver.run();
+				for (size_t i = 0; i < n_steps; i++) {
+					solver.stream();
+					solver.collide();
+				}
 				time2 = clock() - time1 - timestart;
 				time1 /= CLOCKS_PER_SEC;
 				time2 /= CLOCKS_PER_SEC;
@@ -169,7 +173,7 @@ int main(int argc, char* argv[]) {
 				// put out errors and times
 				outfile_ntrm << refinementLevel << " " << orderOfFiniteElement
 						<< " " << solver.getNumberOfDoFs() << " "
-						<< solver.getIteration() << " " << " " << time1 << " "
+						<< n_steps << " " << " " << time1 << " "
 						<< time2 << " "
 						<< time2 / configuration->getNumberOfTimeSteps()
 						<< endl;
