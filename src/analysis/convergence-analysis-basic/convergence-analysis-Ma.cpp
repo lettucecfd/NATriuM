@@ -144,7 +144,7 @@ int main(int argc, char* argv[]) {
 			shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*tgVortex->getTriangulation(), orderOfFiniteElement,
+					*tgVortex->getMesh(), orderOfFiniteElement,
 					D2Q9(scaling), CFL);
 
 			cout << "dt = " << dt << " ...";

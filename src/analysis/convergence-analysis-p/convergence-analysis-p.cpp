@@ -79,7 +79,7 @@ int main() {
 
 		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
 						TaylorGreenVortex2D>(viscosity, refinementLevel);
-		double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(*tgVortex->getTriangulation(), orderOfFiniteElement);
+		double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(*tgVortex->getMesh(), orderOfFiniteElement);
 		// chose dt so that courant (advection) = 0.4
 		double dt = 0.4 *  dx / scaling;
 		//double dt = 0.00001;

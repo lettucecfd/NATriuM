@@ -35,15 +35,15 @@ CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 CouetteFlow3D::~CouetteFlow3D() {
 }
 
-shared_ptr<Triangulation<3> > CouetteFlow3D::makeGrid(double L,
+shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L,
 		size_t refinementLevel, bool isUnstructured) {
 
 	//Creation of the principal domain
-	shared_ptr<Triangulation<3> > unitSquare = make_shared<Triangulation<3> >();
+	shared_ptr<Mesh<3> > unitSquare = make_shared<Mesh<3> >();
 	dealii::GridGenerator::hyper_cube(*unitSquare, 0, L);
 
 	// Assign boundary indicators to the faces of the "parent cell"
-	Triangulation<3>::active_cell_iterator cell = unitSquare->begin_active();
+	Mesh<3>::active_cell_iterator cell = unitSquare->begin_active();
 	cell->face(0)->set_all_boundary_indicators(0);  // left
 	cell->face(1)->set_all_boundary_indicators(1);  // right
 	cell->face(2)->set_all_boundary_indicators(2);  // front
@@ -72,15 +72,15 @@ shared_ptr<BoundaryCollection<3> > CouetteFlow3D::makeBoundaries(
 	constantVelocity(0) = topPlateVelocity;
 
 	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<3> >(0, 1, getTriangulation()));
+			make_shared<PeriodicBoundary<3> >(0, 1, getMesh()));
 	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<3> >(2, 3, getTriangulation()));
+			make_shared<PeriodicBoundary<3> >(2, 3, getMesh()));
 	boundaries->addBoundary(make_shared<MinLeeBoundary<3> >(4, zeroVelocity));
 	boundaries->addBoundary(
 			make_shared<MinLeeBoundary<3> >(5, constantVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Triangulation<3> > tria_pointer = getTriangulation();
+	shared_ptr<Mesh<3> > tria_pointer = getMesh();
 
 	return boundaries;
 }

@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
 			make_shared<SinusoidalShear2D>(viscosity, u_a, refinementLevel, Lx,
 					h, b, cell_aspect_ratio);
 	const double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*sinusFlow->getTriangulation(), orderOfFiniteElement, D2Q9(scaling),
+			*sinusFlow->getMesh(), orderOfFiniteElement, D2Q9(scaling),
 			cFL);
 
 	/// setup configuration

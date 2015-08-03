@@ -41,14 +41,14 @@ public:
  * @short
  */
 template<size_t dim>
-double getMinimumDoFDistanceGLL(const dealii::Triangulation<dim>& tria,
+double getMinimumDoFDistanceGLL(const Mesh<dim>& tria,
 		const size_t orderOfFiniteElement);
 
 template<size_t dim>
-double getMinimumVertexDistance(const dealii::Triangulation<dim>& tria);
+double getMinimumVertexDistance(const Mesh<dim>& tria);
 
 template<size_t dim>
-double calculateTimestep(const dealii::Triangulation<dim>& tria,
+double calculateTimestep(const Mesh<dim>& tria,
 		const size_t orderOfFiniteElement, const Stencil& stencil,
 		double cFL = 0.4);
 
@@ -56,7 +56,7 @@ double calculateTimestep(const dealii::Triangulation<dim>& tria,
  * @short stolen from Deal.II's step 49 tutorial
  */
 template<int dim>
-void mesh_info(const dealii::Triangulation<dim> &tria,
+void mesh_info(const Mesh<dim> &tria,
 		const std::string &filename);
 
 } /* CFDSolverUtilities */

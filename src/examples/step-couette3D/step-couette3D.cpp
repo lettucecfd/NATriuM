@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 
 	// set small time step size
 	const double timeStepSize = CFDSolverUtilities::calculateTimestep<3>(
-					*couetteProblem->getTriangulation(), orderOfFiniteElement,
+					*couetteProblem->getMesh(), orderOfFiniteElement,
 					D3Q19(dqScaling), 0.4);
 
 	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;

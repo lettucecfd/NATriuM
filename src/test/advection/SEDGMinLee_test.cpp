@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
 	size_t refinementLevel = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	BOOST_CHECK_NO_THROW(
-			SEDGMinLee<2> streaming(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9>()));
+			SEDGMinLee<2> streaming(periodic.getMesh(), periodic.getBoundaries(), fe_order, make_shared<D2Q9>()));
 
 	cout << "done." << endl;
 } /* SEDGMinLee_Construction_test */
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 			for (size_t refinementLevel = 1; refinementLevel < 3;
 					refinementLevel++) {
 				PeriodicTestDomain2D periodic(refinementLevel);
-				SEDGMinLee<2> streaming(periodic.getTriangulation(),
+				SEDGMinLee<2> streaming(periodic.getMesh(),
 						periodic.getBoundaries(), fe_order,
 						make_shared<D2Q9>(), "",
 						!useLaxFlux);
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
 	size_t fe_order = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9>());
 	const distributed_sparse_block_matrix& matrices =
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 	size_t fe_order = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9>());
 	const distributed_sparse_block_matrix& matrices =
@@ -337,7 +337,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
  size_t refinementLevel = 1;
  size_t fe_order = 3;
  PeriodicTestDomain2D periodic(refinementLevel);
- SEDGMinLee<2> streaming(periodic.getTriangulation(),
+ SEDGMinLee<2> streaming(periodic.getMesh(),
  periodic.getBoundaries(), fe_order,
  make_shared<D2Q9>());
 
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9>(), "", useCentralFlux);
 	const distributed_sparse_block_matrix& matrices =
@@ -526,31 +526,31 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 	size_t fe_order = 1;
 	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9>(), "", useCentralFlux);
 	streaming.saveCheckpoint(directory.str());
 
 	/////// SANITY TEST //////////
-	BOOST_CHECK_NO_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+	BOOST_CHECK_NO_THROW(SEDGMinLee<2>(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9>(), "", useCentralFlux));
 
 	/////// FAILURE TEST ////////
 	PeriodicTestDomain2D periodic2(4);
-	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic2.getTriangulation(),
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic2.getMesh(),
 			periodic2.getBoundaries(), fe_order,
 			make_shared<D2Q9>(), directory.str(), useCentralFlux), AdvectionSolverException);
 
-	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9>(), "gubaguba", useCentralFlux), AdvectionSolverException);
 
-	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order+1,
 			make_shared<D2Q9>(), directory.str(), useCentralFlux), AdvectionSolverException);
 
-	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
 			make_shared<D2Q9>(), directory.str(), not useCentralFlux), AdvectionSolverException);
 

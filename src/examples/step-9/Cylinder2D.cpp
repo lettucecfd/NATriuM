@@ -33,10 +33,10 @@ Cylinder2D::Cylinder2D(double viscosity, double inletVelocity) :
 Cylinder2D::~Cylinder2D() {
 }
 
-shared_ptr<Triangulation<2> > Cylinder2D::makeGrid() {
+shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 
 	//Creation of the principal domain
-	shared_ptr<Triangulation<2> > tria = make_shared<Triangulation<2> >();
+	shared_ptr<Mesh<2> > tria = make_shared<Mesh<2> >();
 	dealii::GridIn<2> gridin;
 	gridin.attach_triangulation(*tria);
 	// !!! When including unv meshes from Salome, the first two blocks have to be deleted manually (compare Original_Mesh_1.unv to Mesh_1.unv)
@@ -66,7 +66,7 @@ shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(4, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
+	shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

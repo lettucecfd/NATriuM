@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(PhysicalProperties_MassFluxX_test) {
 	config->setStencilScaling(1);
 	config->setSedgOrderOfFiniteElement(2);
 	const double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*problem->getTriangulation(), 2,
+			*problem->getMesh(), 2,
 			D2Q9(1));
 	config->setTimeStepSize(dt);
 

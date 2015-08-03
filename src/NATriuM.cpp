@@ -79,7 +79,7 @@
 #include "natrium/utilities/BasicNames.h"
 
 using namespace natrium;
-//using dealii::Triangulation;
+//
 
 int main() {
 
@@ -91,7 +91,7 @@ int main() {
 	cout << "gimme: ";
 	do {
 		iFile >> a;
-		//Triangulation<2> tri;
+		//Mesh<2> tri;
 
 		std::cout << a << endl;
 	} while (not iFile.eof());

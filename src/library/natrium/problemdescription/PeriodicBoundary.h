@@ -63,7 +63,7 @@ class PeriodicBoundary: public Boundary<dim> {
 private:
 
 	/// triangulation object
-	shared_ptr<dealii::Triangulation<dim> > m_triangulation;
+	shared_ptr<Mesh<dim> > m_triangulation;
 
 	/// boundary indicator of first interfacial line
 	size_t m_boundaryIndicator1;
@@ -119,7 +119,7 @@ public:
 	 *  @param endLine2 end point of line 2
 	 PeriodicBoundary1D(dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
 	 dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
-	 shared_ptr<dealii::Triangulation<2> > triangulation);
+	 shared_ptr<Mesh<2> > triangulation);
 	 */
 
 	/** @short Constructor; the periodic boundary is defined by two lines. The degrees of freedom on
@@ -133,7 +133,7 @@ public:
 	 *  @param triangulation A (shared ptr to a) triangulation object (the mesh)
 	 */
 	PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2,
-			shared_ptr<dealii::Triangulation<dim> > triangulation);
+			shared_ptr<Mesh<dim> > triangulation);
 
 	/// destructor
 	virtual ~PeriodicBoundary();
@@ -200,7 +200,7 @@ public:
 		return m_endLine2;
 	}
 
-	const shared_ptr<dealii::Triangulation<dim> >& getTriangulation() const {
+	const shared_ptr<Mesh<dim> >& getMesh() const {
 		return m_triangulation;
 	}
 

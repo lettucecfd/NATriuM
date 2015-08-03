@@ -18,7 +18,7 @@ namespace natrium {
 
 template<size_t dim>
 double CFDSolverUtilities::getMinimumDoFDistanceGLL(
-		const dealii::Triangulation<dim>& tria,
+		const Mesh<dim>& tria,
 		const size_t orderOfFiniteElement) {
 	assert(orderOfFiniteElement >= 1);
 	// calculate minimal distance between vertices of the triangulation
@@ -40,19 +40,19 @@ double CFDSolverUtilities::getMinimumDoFDistanceGLL(
 	return min_vertex_distance * min_dof_distance;
 }
 template double CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
-		const dealii::Triangulation<2>& tria,
+		const Mesh<2>& tria,
 		const size_t orderOfFiniteElement);
 template double CFDSolverUtilities::getMinimumDoFDistanceGLL<3>(
-		const dealii::Triangulation<3>& tria,
+		const Mesh<3>& tria,
 		const size_t orderOfFiniteElement);
 
 template<size_t dim>
 double CFDSolverUtilities::getMinimumVertexDistance(
-		const dealii::Triangulation<dim>& tria) {
+		const Mesh<dim>& tria) {
 	// calculate minimal distance between vertices of the triangulation
 	double min_vertex_distance = 100000000000.0;
 	double distance = 0.0;
-	for (typename dealii::Triangulation<dim>::active_cell_iterator cell =
+	for (typename Mesh<dim>::active_cell_iterator cell =
 			tria.begin_active(); cell != tria.end(); ++cell) {
 		distance = cell->minimum_vertex_distance();
 		if (distance < min_vertex_distance) {
@@ -62,13 +62,13 @@ double CFDSolverUtilities::getMinimumVertexDistance(
 	return min_vertex_distance;
 }
 template double CFDSolverUtilities::getMinimumVertexDistance<2>(
-		const dealii::Triangulation<2>& tria);
+		const Mesh<2>& tria);
 template double CFDSolverUtilities::getMinimumVertexDistance<3>(
-		const dealii::Triangulation<3>& tria);
+		const Mesh<3>& tria);
 
 template<size_t dim>
 double CFDSolverUtilities::calculateTimestep(
-		const dealii::Triangulation<dim>& tria,
+		const Mesh<dim>& tria,
 		const size_t orderOfFiniteElement, const Stencil& stencil,
 		double cFL) {
 	assert(orderOfFiniteElement >= 1);
@@ -79,20 +79,20 @@ double CFDSolverUtilities::calculateTimestep(
 	return dt;
 }
 template double CFDSolverUtilities::calculateTimestep<2>(
-		const dealii::Triangulation<2>& tria, const size_t orderOfFiniteElement,
+		const Mesh<2>& tria, const size_t orderOfFiniteElement,
 		const Stencil& stencil, double cFL);
 template double CFDSolverUtilities::calculateTimestep<3>(
-		const dealii::Triangulation<3>& tria, const size_t orderOfFiniteElement,
+		const Mesh<3>& tria, const size_t orderOfFiniteElement,
 		const Stencil& stencil, double cFL);
 
 template<int dim>
-void CFDSolverUtilities::mesh_info(const dealii::Triangulation<dim> &tria,
+void CFDSolverUtilities::mesh_info(const Mesh<dim> &tria,
 		const std::string &filename) {
 	std::cout << "Mesh info:" << std::endl << " dimension: " << dim << std::endl
 			<< " no. of cells: " << tria.n_active_cells() << std::endl;
 	{
 		std::map<unsigned int, unsigned int> boundary_count;
-		typename dealii::Triangulation<dim>::active_cell_iterator cell =
+		typename Mesh<dim>::active_cell_iterator cell =
 				tria.begin_active(), endc = tria.end();
 		for (; cell != endc; ++cell) {
 			for (unsigned int face = 0;
@@ -114,8 +114,8 @@ void CFDSolverUtilities::mesh_info(const dealii::Triangulation<dim> &tria,
 	std::cout << " written to " << filename << std::endl << std::endl;
 } /*mesh_info */
 template void CFDSolverUtilities::mesh_info<2>(
-		const dealii::Triangulation<2> &tria, const std::string &filename);
+		const Mesh<2> &tria, const std::string &filename);
 template void CFDSolverUtilities::mesh_info<3>(
-		const dealii::Triangulation<3> &tria, const std::string &filename);
+		const Mesh<3> &tria, const std::string &filename);
 
 } /* namespace natrium */

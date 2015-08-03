@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
 
 			double CFL = 0.4;
 			dt = CFDSolverUtilities::calculateTimestep<2>(
-					*benchmark->getTriangulation(), orderOfFiniteElement,
+					*benchmark->getMesh(), orderOfFiniteElement,
 					D2Q9(scaling), CFL);
 
 			/////////////////////////////

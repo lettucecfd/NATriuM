@@ -14,7 +14,7 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 
 namespace natrium {
 
@@ -34,7 +34,7 @@ public:
 
 private:
 
-	shared_ptr<Triangulation<2> > makeGrid(size_t refinementLevel);
+	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel);
 	shared_ptr<BoundaryCollection<2> > makeBoundaries();
 
 };

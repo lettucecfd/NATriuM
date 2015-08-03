@@ -39,14 +39,14 @@ void TaylorGreenVortex3D::getAnalyticVelocity(const dealii::Point<3>& x, double 
  * @short create triangulation for TaylorGreen Vortex flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Triangulation<3> > TaylorGreenVortex3D::makeGrid(size_t refinementLevel) {
+shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid(size_t refinementLevel) {
   //Creation of the principal domain
-  shared_ptr<Triangulation<3> > square =
-      make_shared<Triangulation<3> >();
+  shared_ptr<Mesh<3> > square =
+      make_shared<Mesh<3> >();
   dealii::GridGenerator::hyper_cube(*square, 0, 8*atan(1));
 
   // Assign boundary indicators to the faces of the "parent cell"
-  Triangulation<3>::active_cell_iterator cell =
+  Mesh<3>::active_cell_iterator cell =
       square->begin_active();
   cell->face(0)->set_all_boundary_indicators(0);  //
   cell->face(1)->set_all_boundary_indicators(1);  //
@@ -72,14 +72,14 @@ shared_ptr<BoundaryCollection<3> > TaylorGreenVortex3D::makeBoundaries() {
   shared_ptr<BoundaryCollection<3> > boundaries = make_shared<
       BoundaryCollection<3> >();
   boundaries->addBoundary(
-      make_shared<PeriodicBoundary<3> >(0, 1, getTriangulation()));
+      make_shared<PeriodicBoundary<3> >(0, 1, getMesh()));
   boundaries->addBoundary(
-      make_shared<PeriodicBoundary<3> >(2, 3, getTriangulation()));
+      make_shared<PeriodicBoundary<3> >(2, 3, getMesh()));
   boundaries->addBoundary(
-      make_shared<PeriodicBoundary<3> >(4, 5, getTriangulation()));
+      make_shared<PeriodicBoundary<3> >(4, 5, getMesh()));
 
   // Get the triangulation object (which belongs to the parent class).
-  shared_ptr<Triangulation<3> > tria_pointer = getTriangulation();
+  shared_ptr<Mesh<3> > tria_pointer = getMesh();
 
   return boundaries;
 }

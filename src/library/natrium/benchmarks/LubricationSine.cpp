@@ -24,11 +24,11 @@ LubricationSine::LubricationSine(double viscosity, double bottomVelocity,
 LubricationSine::~LubricationSine() {
 }
 
-shared_ptr<Triangulation<2> > LubricationSine::makeGrid(double L,
+shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L,
 		size_t refinementLevel, double averageHeight, double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio) {
 
 	//Creation of the principal domain
-	shared_ptr<Triangulation<2> > rect = make_shared<Triangulation<2> >();
+	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >();
 	dealii::Point<2> x1(0,0);
 	dealii::Point<2> x2(L,averageHeight);
 	std::vector<unsigned int> repetitions;
@@ -61,13 +61,13 @@ shared_ptr<BoundaryCollection<2> > LubricationSine::makeBoundaries(
 	constantVelocity(0) = bottomVelocity;
 
 	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, getTriangulation()));
+			make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
 	boundaries->addBoundary(
 			make_shared<MinLeeBoundary<2> >(2, constantVelocity));
 	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
+	shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

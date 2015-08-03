@@ -103,8 +103,8 @@ template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {
 
 private:
 
-	/// Triangulation
-	shared_ptr<dealii::Triangulation<dim> > m_tria;
+	/// Mesh
+	shared_ptr<Mesh<dim> > m_tria;
 
 	/// Boundary Description
 	shared_ptr<BoundaryCollection<dim> > m_boundaries;
@@ -118,7 +118,7 @@ private:
 	/// Finite Element function on one cell
 	shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
 
-	/// dealii::DoFHandler to distribute the degrees of freedom over the Triangulation
+	/// dealii::DoFHandler to distribute the degrees of freedom over the Mesh
 	shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
 
 	/// Sparsity Pattern of the sparse matrix
@@ -279,7 +279,7 @@ public:
 	 * @param[in] orderOfFiniteElement The number of nodes element and dimension
 	 * @param[in] stencil the DQ model
 	 */
-	SEDGMinLee(shared_ptr<dealii::Triangulation<dim> > triangulation,
+	SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 			shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement,
 			shared_ptr<Stencil> stencil, string inputDirectory = "", bool useCentralFlux =

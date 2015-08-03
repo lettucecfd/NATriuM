@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 	// for all blocks (I,J) (I for incoming and J for their opposites)
 	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
 			1);
-	SEDGMinLee<2> advector(problem->getTriangulation(),
+	SEDGMinLee<2> advector(problem->getMesh(),
 			problem->getBoundaries(), 2,
 			make_shared<D2Q9>());
 	vector<bool> isBoundary(advector.getNumberOfDoFs());

@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
 
 	// make grid
 	const double PI = 4*std::atan(1);
-	dealii::Triangulation<2> square;
+	Mesh<2> square;
 	dealii::GridGenerator::hyper_cube(square, 0.0, 2*PI);
 
 	// test for different refinement levels

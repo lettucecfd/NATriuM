@@ -53,7 +53,7 @@ TestResult ConvergenceTestPeriodic() {
 	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*benchmark->getTriangulation(), orderOfFiniteElement, D2Q9(scaling),
+			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
 			CFL);
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
@@ -131,7 +131,7 @@ TestResult ConvergenceTestImplicitLBM() {
 	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*benchmark->getTriangulation(), orderOfFiniteElement, D2Q9(scaling),
+			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
 			CFL);
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
@@ -220,7 +220,7 @@ TestResult ConvergenceTestMovingWall() {
 			orderOfFiniteElement += 2) {
 		// Initialization
 		double dt = CFDSolverUtilities::calculateTimestep<2>(
-				*benchmark->getTriangulation(), orderOfFiniteElement,
+				*benchmark->getMesh(), orderOfFiniteElement,
 				D2Q9(scaling), CFL);
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
@@ -291,7 +291,7 @@ TestResult ConvergenceTestExponentialLBM() {
 	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*benchmark->getTriangulation(), orderOfFiniteElement, D2Q9(scaling),
+			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
 			CFL);
 
 	shared_ptr<SolverConfiguration> configuration = make_shared<
@@ -372,7 +372,7 @@ TestResult ConvergenceTest3D() {
 	size_t orderOfFiniteElement = 4;
 	// Initialization
 	double dt = CFDSolverUtilities::calculateTimestep<3>(
-			*benchmark->getTriangulation(), orderOfFiniteElement,
+			*benchmark->getMesh(), orderOfFiniteElement,
 			D3Q19(scaling), CFL);
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();

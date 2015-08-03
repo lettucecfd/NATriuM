@@ -52,7 +52,7 @@ int main() {
 
 	// chose dt so that courant (advection) = 1 for the diagonal directions
 	double 	dt = CFDSolverUtilities::calculateTimestep<2>(
-			*tgVortex->getTriangulation(), orderOfFiniteElement,
+			*tgVortex->getMesh(), orderOfFiniteElement,
 			D2Q9(scaling), 0.4);
 
 

@@ -64,7 +64,7 @@ int main() {
 		shared_ptr<TaylorGreenVortex2D> tgv = make_shared<TaylorGreenVortex2D>(
 				viscosity, refinementLevel);
 		shared_ptr<Benchmark<2> > tgBenchmark = tgv;
-		configuration->setTimeStepSize(CFDSolverUtilities::calculateTimestep<2>(*(tgv->getTriangulation()),orderOfFiniteElement,D2Q9(dqScaling),0.4));
+		configuration->setTimeStepSize(CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),orderOfFiniteElement,D2Q9(dqScaling),0.4));
 		cout << "dt = " << configuration->getTimeStepSize() << endl;
 		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
 				configuration, tgBenchmark);
@@ -118,7 +118,7 @@ int main() {
 		configuration->setTimeStepSize(
 				1.0 / dqScaling
 						* CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
-								*couetteFlow->getTriangulation(),
+								*couetteFlow->getMesh(),
 								orderOfFiniteElement));
 		cout << "dt = " << configuration->getTimeStepSize() << endl;
 		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(

@@ -14,7 +14,7 @@
 #include "../problemdescription/Benchmark.h"
 #include "../utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 
 namespace natrium {
 
@@ -68,7 +68,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(size_t refinementLevel,
+	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel,
 			double height, double length, bool is_periodic);
 
 	/**

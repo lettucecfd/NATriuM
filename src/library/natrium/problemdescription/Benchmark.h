@@ -23,7 +23,7 @@ namespace natrium {
 template<size_t dim> class Benchmark: public ProblemDescription<dim> {
 public:
 	/// Constructor
-	Benchmark(shared_ptr<dealii::Triangulation<dim> > triangulation,
+	Benchmark(shared_ptr<Mesh<dim> > triangulation,
 			double viscosity, double characteristicLength);
 
 	/// Destructor
@@ -100,7 +100,7 @@ public:
 
 template<size_t dim>
 inline Benchmark<dim>::Benchmark(
-		shared_ptr<dealii::Triangulation<dim> > triangulation, double viscosity,
+		shared_ptr<Mesh<dim> > triangulation, double viscosity,
 		double characteristicLength) :
 		ProblemDescription<dim>(triangulation, viscosity, characteristicLength) {
 }

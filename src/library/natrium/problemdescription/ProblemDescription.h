@@ -27,7 +27,7 @@ template<size_t dim> class ProblemDescription {
 private:
 
 	/// computational grid
-	shared_ptr<dealii::Triangulation<dim> > m_triangulation;
+	shared_ptr<Mesh<dim> > m_triangulation;
 
 	/// boundary description
 	shared_ptr<BoundaryCollection<dim> > m_boundaries;
@@ -45,7 +45,7 @@ public:
 	/////////////////////////////////
 
 	/// constructor
-	ProblemDescription(shared_ptr<dealii::Triangulation<dim> > triangulation,
+	ProblemDescription(shared_ptr<Mesh<dim> > triangulation,
 			double viscosity, double characteristicLength);
 
 	///  destructor
@@ -56,7 +56,7 @@ public:
 	// GETTER     // SETTER        //
 	/////////////////////////////////
 
-	const shared_ptr<dealii::Triangulation<dim> >& getTriangulation() const {
+	const shared_ptr<Mesh<dim> >& getMesh() const {
 		return m_triangulation;
 	}
 
@@ -117,8 +117,8 @@ public:
 		return result;
 	}
 
-	void setTriangulation(
-			const shared_ptr<dealii::Triangulation<dim> >& triangulation) {
+	void setMesh(
+			const shared_ptr<Mesh<dim> >& triangulation) {
 		m_triangulation = triangulation;
 	}
 
@@ -151,7 +151,7 @@ public:
 
 template<size_t dim>
 inline ProblemDescription<dim>::ProblemDescription(
-		shared_ptr<dealii::Triangulation<dim> > triangulation,
+		shared_ptr<Mesh<dim> > triangulation,
 		double viscosity, double characteristicLength) :
 		m_triangulation(triangulation), m_viscosity(
 				viscosity), m_characteristicLength(characteristicLength) {

@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 	const size_t orderOfFiniteElement = 2;
 	const double cfl=1.5;
 
-	const double timeStepSize = CFDSolverUtilities::calculateTimestep<2>(*cylinder->getTriangulation(),
+	const double timeStepSize = CFDSolverUtilities::calculateTimestep<2>(*cylinder->getMesh(),
 			orderOfFiniteElement, stencil, cfl);
 
 

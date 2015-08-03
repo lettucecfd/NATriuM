@@ -24,7 +24,7 @@ namespace natrium {
 // The template Parameter has to be made explicit in order for the code to compile
 template<> PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
 		size_t boundaryIndicator2,
-		shared_ptr<dealii::Triangulation<2> > triangulation) :
+		shared_ptr<Mesh<2> > triangulation) :
 		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
 				boundaryIndicator2) {
 
@@ -66,7 +66,7 @@ template<> PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
 } /* Constructor 2 */
 template<> PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
 		size_t boundaryIndicator2,
-		shared_ptr<dealii::Triangulation<3> > triangulation) :
+		shared_ptr<Mesh<3> > triangulation) :
 		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
 				boundaryIndicator2) {
 

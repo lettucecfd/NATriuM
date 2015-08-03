@@ -97,7 +97,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		// create SEDG MinLee by reading the system matrices from files or assembling
 		// TODO estimate time for assembly
 		m_advectionOperator = make_shared<SEDGMinLee<dim> >(
-				m_problemDescription->getTriangulation(),
+				m_problemDescription->getMesh(),
 				m_problemDescription->getBoundaries(),
 				configuration->getSedgOrderOfFiniteElement(), m_stencil,
 				whereAreTheStoredMatrices,
@@ -214,7 +214,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		charU = maxU;
 	}
 	double dx = CFDSolverUtilities::getMinimumVertexDistance<dim>(
-			*problemDescription->getTriangulation());
+			*problemDescription->getMesh());
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
 	LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
 	LOG(WELCOME) << "------ " << currentDateTime() << " ------" << endl;
@@ -240,7 +240,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	const double optimal_cfl = 0.4;
 	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
 			<< CFDSolverUtilities::calculateTimestep<dim>(
-					*m_problemDescription->getTriangulation(),
+					*m_problemDescription->getMesh(),
 					configuration->getSedgOrderOfFiniteElement(), *m_stencil,
 					optimal_cfl) << " s" << endl;
 	LOG(WELCOME) << "Actual dt:                "

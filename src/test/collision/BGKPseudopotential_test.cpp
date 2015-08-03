@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(BGKPseudopotential_collideAll_test) {
 	PeriodicTestDomain2D periodic(refinementLevel);
 	// advection operator is assigned later as it has to be created, first
 	shared_ptr<SEDGMinLee<2> > sedgMinLee = make_shared<SEDGMinLee<2> >(
-			periodic.getTriangulation(), periodic.getBoundaries(),
+			periodic.getMesh(), periodic.getBoundaries(),
 			orderOfFiniteElement, dqmodel);
 
 	bgk.setAdvectionOperator(sedgMinLee);

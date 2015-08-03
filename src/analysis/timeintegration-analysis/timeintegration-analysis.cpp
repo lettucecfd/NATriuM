@@ -222,7 +222,7 @@ int main() {
 		for (double CFL = 0.2; CFL <= 102.4; CFL *= 2.) {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*benchmark->getTriangulation(), orderOfFiniteElement,
+					*benchmark->getMesh(), orderOfFiniteElement,
 					D2Q9(scaling), CFL);
 
 			cout << "CFL = " << CFL << endl;

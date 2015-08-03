@@ -28,7 +28,7 @@ using namespace dealii;
 namespace natrium {
 
 template<size_t dim>
-SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
+SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 		shared_ptr<BoundaryCollection<dim> > boundaries,
 		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux) :
@@ -74,18 +74,18 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 
 } /* SEDGMinLee<dim>::SEDGMinLee */
 /// The template parameter must be made explicit in order for the code to compile
-template SEDGMinLee<2>::SEDGMinLee(shared_ptr<Triangulation<2> > triangulation,
+template SEDGMinLee<2>::SEDGMinLee(shared_ptr<Mesh<2> > triangulation,
 		shared_ptr<BoundaryCollection<2> > boundaries,
 		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux);
-template SEDGMinLee<3>::SEDGMinLee(shared_ptr<Triangulation<3> > triangulation,
+template SEDGMinLee<3>::SEDGMinLee(shared_ptr<Mesh<3> > triangulation,
 		shared_ptr<BoundaryCollection<3> > boundaries,
 		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux);
 
 template<size_t dim>
 void SEDGMinLee<dim>::reassemble() {
-// TODO: if Triangulation changed: reinit dof-handler and sparsity pattern in some way
+// TODO: if Mesh changed: reinit dof-handler and sparsity pattern in some way
 
 /////////////////////////////////
 // Initialize Finite Element ////
@@ -872,7 +872,7 @@ template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
 	double dtmp;
 	infile >> dtmp;
 	if (fabs(dtmp - calcMagicNumber()) > 1e-1) {
-		message = "Triangulation (or at least its magic number) not equal.";
+		message = "Mesh (or at least its magic number) not equal.";
 		return false;
 	}
 // dqScaling1

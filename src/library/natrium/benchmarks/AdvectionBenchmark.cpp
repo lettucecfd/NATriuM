@@ -78,7 +78,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 	// create problem and solver
 	PeriodicTestDomain2D periodic(refinementLevel);
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order, make_shared<D2Q9>(), "",
 			useCentralFlux);
 	const distributed_sparse_block_matrix& matrices =

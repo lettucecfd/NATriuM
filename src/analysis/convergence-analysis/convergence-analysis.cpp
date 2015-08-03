@@ -225,13 +225,13 @@ int main(int argc, char* argv[]) {
 								refinementLevel, L, 0.0);
 				benchmark = couette2D;
 				dx = CFDSolverUtilities::getMinimumVertexDistance<2>(
-						*couette2D->getTriangulation());
+						*couette2D->getMesh());
 			} else {
 				shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
 						TaylorGreenVortex2D>(viscosity, refinementLevel);
 				benchmark = tgVortex;
 				dx = CFDSolverUtilities::getMinimumVertexDistance<2>(
-						*tgVortex->getTriangulation());
+						*tgVortex->getMesh());
 			}
 
 			// determine time step size
@@ -241,7 +241,7 @@ int main(int argc, char* argv[]) {
 			}
 			double CFL = 0.4;
 			dt = CFDSolverUtilities::calculateTimestep<2>(
-					*benchmark->getTriangulation(), orderOfFiniteElement,
+					*benchmark->getMesh(), orderOfFiniteElement,
 					D2Q9(scaling), CFL);
 
 			// avoid too expensive runs

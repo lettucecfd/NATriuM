@@ -13,7 +13,7 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 
 namespace natrium {
 
@@ -43,7 +43,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(double L, size_t refinementLevel);
+	shared_ptr<Mesh<2> > makeGrid(double L, size_t refinementLevel);
 
 	/**
 	 * @short create boundaries for couette flow

@@ -53,12 +53,12 @@ int main() {
 			shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 
 			double dx = CFDSolverUtilities::getMinimumVertexDistance<2>(
-									*tgVortex->getTriangulation());
+									*tgVortex->getMesh());
 			double tmp_Ma = Ma * sqrt(dx) / L / orderOfFiniteElement;
 			scaling = sqrt(3) * 1 / tmp_Ma;
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*tgVortex->getTriangulation(), orderOfFiniteElement,
+					*tgVortex->getMesh(), orderOfFiniteElement,
 					D2Q9IncompressibleModel(scaling), 0.4);
 			cout << "p = " << orderOfFiniteElement << "; dt = " << dt << " ..."
 					<< endl;

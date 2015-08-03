@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 			make_shared<LubricationSine>(viscosity, bottomVelocity,
 					refinementLevel, L, delta_radius, amplitude, cellAspectRatio, roughnessHeight, roughnessLengthRatio);
 	const double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*sinusFlow->getTriangulation(), orderOfFiniteElement,
+			*sinusFlow->getMesh(), orderOfFiniteElement,
 			D2Q9(scaling), cFL);
 
 	// setup configuration

@@ -54,7 +54,7 @@ int main() {
 
     // the scaling has to be orders of magnitude greater than the boundary velocity
     double dt = CFDSolverUtilities::calculateTimestep<3>(
-					*taylorGreen->getTriangulation(), orderOfFiniteElement,
+					*taylorGreen->getMesh(), orderOfFiniteElement,
 					D3Q19(scaling), 0.4);
 
     cout << "dt = " << dt << " ...";
