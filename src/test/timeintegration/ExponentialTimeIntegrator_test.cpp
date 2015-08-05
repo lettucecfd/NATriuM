@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 	z(9)=8.616738e+03;
 
 	// initialize Runge-Kutta 5
-	ExponentialTimeIntegrator<distributed_sparse_matrix, distributed_vector> ETI(dt, 1); //
+	ExponentialTimeIntegrator<distributed_sparse_matrix, distributed_vector> ETI(dt); //
 
 	double t = 0;
 	for (size_t i = 0; i < numberOfSteps; i++){

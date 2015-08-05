@@ -84,10 +84,17 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
+#ifdef WITH_TRILINOS_MPI
+	// create smooth initial conditions
+	distributed_vector f(streaming.getLocallyOwnedDofs(), streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	// zero-vector for time integrator
+	distributed_vector g(streaming.getLocallyOwnedDofs(), streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+#else
 	// create smooth initial conditions
 	distributed_vector f(streaming.getNumberOfDoFs());
 	// zero-vector for time integrator
 	distributed_vector g(streaming.getNumberOfDoFs());
+#endif
 	vector<dealii::Point<2> > supportPoints(
 			streaming.getDoFHandler()->n_dofs());
 	dealii::DoFTools::map_dofs_to_support_points(streaming.getMapping(),
@@ -106,9 +113,13 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 #endif
 	shared_ptr<TimeIntegrator<distributed_sparse_matrix,
 	distributed_vector> > RK5 = make_shared<RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> >(
-			deltaT, f.size());
+			deltaT, f);
 
+#ifdef WITH_TRILINOS_MPI
+	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(), streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+#else
 	distributed_vector fAnalytic(f.size());
+#endif
 
 	double timestart;
 	timestart = clock();

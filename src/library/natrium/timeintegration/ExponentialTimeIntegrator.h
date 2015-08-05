@@ -42,10 +42,10 @@ private:
 public:
 
 	/// constructor
-	ExponentialTimeIntegrator(double timeStepSize, size_t problemSize);
+	ExponentialTimeIntegrator(double timeStepSize);
 
 
-	ExponentialTimeIntegrator(double timeStepSize, size_t problemSize, size_t numberOfBlocks);
+	ExponentialTimeIntegrator(double timeStepSize, size_t numberOfBlocks);
 
 	/// destructor
 	virtual ~ExponentialTimeIntegrator(){};

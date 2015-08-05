@@ -145,26 +145,66 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				m_configuration->getTimeStepSize(), m_stencil);
 	}
 
-/// Build time integrator
+// initialize macroscopic variables
+#ifdef WITH_TRILINOS_MPI
+	vector<dealii::Point<dim> > supportPoints(m_advectionOperator->getLocallyOwnedDofs().size());
+		m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
+	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
+			m_advectionOperator->getLocallyRelevantDofs(),
+			MPI_COMM_WORLD);
+	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
+			m_advectionOperator->getLocallyRelevantDofs(),
+			MPI_COMM_WORLD);
+	for (size_t i = 0; i < dim; i++) {
+		distributed_vector vi(m_advectionOperator->getLocallyOwnedDofs(),
+				m_advectionOperator->getLocallyRelevantDofs(),
+				MPI_COMM_WORLD);
+		m_velocity.push_back(vi);
+		m_tmpVelocity.push_back(vi);
+	}
+#else
+	size_t numberOfDoFs = this->getNumberOfDoFs();
+	vector<dealii::Point<dim> > supportPoints(numberOfDoFs);
+		m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
+	m_density.reinit(numberOfDoFs);
+	m_tmpDensity.reinit(numberOfDoFs);
+	for (size_t i = 0; i < dim; i++) {
+		distributed_vector vi(numberOfDoFs);
+		m_velocity.push_back(vi);
+		m_tmpVelocity.push_back(vi);
+	}
+#endif
+	m_problemDescription->applyInitialDensities(m_density, supportPoints);
+	m_problemDescription->applyInitialVelocities(m_velocity, supportPoints);
+	m_residuumDensity = 1.0;
+	m_residuumVelocity = 1.0;
 
-	size_t numberOfDoFs = m_advectionOperator->getNumberOfDoFs();
+	//distribution functions
+#ifdef WITH_TRILINOS_MPI
+	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
+			m_advectionOperator->getLocallyRelevantDofs(),
+			MPI_COMM_WORLD);
+#else
+	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
+#endif
+
+	/// Build time integrator
 	if (RUNGE_KUTTA_5STAGE == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 				RungeKutta5LowStorage<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
-				configuration->getTimeStepSize(), numberOfDoFs,
-				m_stencil->getQ() - 1);
+				configuration->getTimeStepSize(), m_f.getFStream());
 	} else if (THETA_METHOD == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 				ThetaMethod<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
-				configuration->getTimeStepSize(), numberOfDoFs,
-				m_stencil->getQ() - 1, configuration->getThetaMethodTheta());
+				configuration->getTimeStepSize(), m_f.getFStream(),
+				configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = make_shared<
 				ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
-				configuration->getTimeStepSize(), numberOfDoFs,
+				configuration->getTimeStepSize(),
 				m_stencil->getQ() - 1);
 	} else if (OTHER == configuration->getTimeIntegrator()) {
 		if (configuration->getDealIntegrator() < 7) {
@@ -190,21 +230,6 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 							configuration->getEmbeddedDealIntegratorCoarsenTolerance());
 		};
 	}
-
-// initialize macroscopic variables
-	vector<dealii::Point<dim> > supportPoints(numberOfDoFs);
-	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
-	m_density.reinit(numberOfDoFs);
-	m_tmpDensity.reinit(numberOfDoFs);
-	for (size_t i = 0; i < dim; i++) {
-		distributed_vector vi(numberOfDoFs);
-		m_velocity.push_back(vi);
-		m_tmpVelocity.push_back(vi);
-	}
-	m_problemDescription->applyInitialDensities(m_density, supportPoints);
-	m_problemDescription->applyInitialVelocities(m_velocity, supportPoints);
-	m_residuumDensity = 1.0;
-	m_residuumVelocity = 1.0;
 
 // OUTPUT
 
@@ -497,6 +522,8 @@ template void CFDSolver<3>::output(size_t iteration);
 
 template<size_t dim>
 void CFDSolver<dim>::initializeDistributions() {
+	// PRECONDITION: vectors already created with the right sizes
+
 	LOG(BASIC) << "Initialize distribution functions: ";
 	vector<double> feq(m_stencil->getQ());
 	numeric_vector u(dim);
@@ -505,7 +532,6 @@ void CFDSolver<dim>::initializeDistributions() {
 	double t0 = m_time;
 
 // Initialize f with the equilibrium distribution functions
-	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
 	for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
 		for (size_t j = 0; j < dim; j++) {
 			u(j) = m_velocity.at(j)(i);
@@ -589,7 +615,13 @@ void CFDSolver<dim>::saveDistributionFunctionsToFiles(const string& directory) {
 	for (size_t i = 0; i < m_stencil->getQ(); i++) {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/checkpoint_f_" << i << ".dat";
+
+		filename << directory << "/checkpoint_f_" << i
+#ifdef WITH_TRILINOS_MPI
+				<< "_"
+				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+#endif
+				<< ".dat";
 		std::ofstream file(filename.str().c_str());
 #ifndef WITH_TRILINOS
 		m_f.at(i).block_write(file);
@@ -608,14 +640,15 @@ template void CFDSolver<3>::saveDistributionFunctionsToFiles(
 template<size_t dim>
 void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 		const string& directory) {
-// create vectors
-	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
+// PRECONDITION: vectors already created with the right sizes
 // read the distribution functions from file
 	try {
 		for (size_t i = 0; i < m_stencil->getQ(); i++) {
 			// filename
 			std::stringstream filename;
-			filename << directory << "/checkpoint_f_" << i << ".dat";
+			filename << directory << "/checkpoint_f_" << i << "_"
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< ".dat";
 			std::ifstream file(filename.str().c_str());
 #ifndef WITH_TRILINOS
 			m_f.at(i).block_read(file);

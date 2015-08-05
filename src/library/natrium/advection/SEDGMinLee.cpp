@@ -48,6 +48,13 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
+
+#ifdef WITH_TRILINOS_MPI
+	//get locally owned and locally relevant dofs
+	m_locallyOwnedDofs = m_doFHandler->locally_owned_dofs ();
+	DoFTools::extract_locally_relevant_dofs (*m_doFHandler,
+			m_locallyRelevantDofs);
+#endif
 	updateSparsityPattern();
 
 	// define relation between dofs and quadrature nodes
@@ -59,7 +66,11 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 #ifdef WITH_TRILINOS
 	m_systemVector.reinit(m_stencil->getQ() - 1);
 	for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
+#ifdef WITH_TRILINOS_MPI
+		m_systemVector.block(i).reinit(m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+#else
 		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
+#endif
 	}
 	m_systemVector.collect_sizes();
 #else
@@ -183,6 +194,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 
 #ifdef WITH_TRILINOS
 	// Trilinos can work with improved sparsity structures
+
 	CompressedSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
 	CompressedSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
 	CompressedSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
@@ -708,7 +720,11 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 				// filename
 				std::stringstream filename;
 				filename << directory << "/checkpoint_system_matrix_" << i
+#ifdef WITH_TRILINOS_MPI
+						<< "_" << j << "_" << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
+#else
 						<< "_" << j << ".dat";
+#endif
 				std::ofstream file(filename.str().c_str());
 #ifndef WITH_TRILINOS
 				m_systemMatrix.block(i, j).block_write(file);
@@ -754,7 +770,11 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 				// filename
 				std::stringstream filename;
 				filename << directory << "/checkpoint_system_matrix_" << i
+#ifdef WITH_TRILINOS_MPI
+						<< "_" << j << "_" << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
+#else
 						<< "_" << j << ".dat";
+#endif
 				std::ifstream file(filename.str().c_str());
 #ifndef WITH_TRILINOS
 				m_systemMatrix.block(i, j).block_read(file);

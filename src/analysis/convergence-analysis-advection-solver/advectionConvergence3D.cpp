@@ -103,7 +103,7 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	//advectionMatrix.print_formatted(cout);
 #endif
 	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(
-			deltaT, f.size());
+			deltaT, f);
 
 	distributed_vector fAnalytic(f.size());
 

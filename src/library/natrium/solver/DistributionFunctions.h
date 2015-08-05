@@ -154,6 +154,17 @@ public:
 	/**
 	 * @short reinitialize the sizes of the distribution functions
 	 */
+#ifdef WITH_TRILINOS_MPI
+void reinit(size_t Q, const dealii::IndexSet &local, const dealii::IndexSet &ghost, const MPI_Comm &communicator=MPI_COMM_WORLD) {
+		m_Q = Q;
+		m_f0.reinit(local, ghost, communicator);
+		m_fStream.reinit(Q-1);
+		for (size_t i = 0; i < Q - 1; i++){
+			m_fStream.block(i).reinit(m_f0);
+		}
+		m_fStream.collect_sizes();
+	}
+#else
 	void reinit(size_t Q, size_t size) {
 		m_Q = Q;
 		m_f0.reinit(size);
@@ -167,6 +178,7 @@ public:
 #endif
 		m_fStream.collect_sizes();
 	}
+#endif
 
 	/**
 	 * @short the number of discrete velocities, including zero

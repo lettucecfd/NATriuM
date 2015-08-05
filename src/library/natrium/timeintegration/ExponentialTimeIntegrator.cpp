@@ -13,8 +13,7 @@
 namespace natrium {
 
 template<> ExponentialTimeIntegrator<distributed_sparse_matrix,
-		distributed_vector>::ExponentialTimeIntegrator(double timeStepSize,
-		size_t problemSize) :
+		distributed_vector>::ExponentialTimeIntegrator(double timeStepSize) :
 		TimeIntegrator<distributed_sparse_matrix, distributed_vector>(
 				timeStepSize), m_identityMatrix(makeIdentityMatrix()), m_Hm(
 				makeMatrix(arnoldiSize, arnoldiSize)), m_H(
@@ -25,7 +24,7 @@ template<> ExponentialTimeIntegrator<distributed_sparse_matrix,
 
 template<> ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 		distributed_block_vector>::ExponentialTimeIntegrator(
-		double timeStepSize, size_t problemSize, size_t numberOfBlocks) :
+		double timeStepSize, size_t numberOfBlocks) :
 		TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>(
 				timeStepSize), m_identityMatrix(makeIdentityMatrix()), m_Hm(
 				makeMatrix(arnoldiSize, arnoldiSize)), m_H(

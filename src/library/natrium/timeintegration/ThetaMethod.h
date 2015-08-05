@@ -33,15 +33,8 @@ public:
 	 * @param problemSize the number of degrees of freedom
 	 * @param theta  theta = 0: Explicit Euler, theta = 1: implicit Euler, theta = 0.5: Crank-Nicholson.
 	 */
-	ThetaMethod(double timeStepSize, size_t problemSize, double theta);
+	ThetaMethod(double timeStepSize, const VECTOR& prototype_vector, double theta);
 
-	/**
-	 * @short Constructor
-	 * @param timeStepSize The initial time step size
-	 * @param problemSize the number of degrees of freedom
-	 * @param theta  theta = 0: Explicit Euler, theta = 1: implicit Euler, theta = 0.5: Crank-Nicholson.
-	 */
-	ThetaMethod(double timeStepSize, size_t problemSize, size_t numberOfBlocks, double theta);
 
 	/// destructor
 	virtual ~ThetaMethod(){};

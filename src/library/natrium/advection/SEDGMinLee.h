@@ -152,6 +152,13 @@ private:
 	/// central flux or Lax-Friedrichs flux (default)
 	const bool m_useCentralFlux;
 
+#ifdef WITH_TRILINOS_MPI
+	// locally owned degrees of freedom (for MPI parallelization)
+	dealii::IndexSet m_locallyOwnedDofs;
+	// locally relevant degrees of freedom (i.e. ghost layer cells)
+	dealii::IndexSet m_locallyRelevantDofs;
+#endif
+
 	/**
 	 * @short update the sparsity pattern of the system matrix
 	 */
@@ -372,6 +379,16 @@ public:
 	virtual const distributed_block_vector& getSystemVector() const {
 		return m_systemVector;
 	}
+
+#ifdef WITH_TRILINOS_MPI
+	const dealii::IndexSet& getLocallyOwnedDofs() {
+		return m_locallyOwnedDofs;
+	}
+	const dealii::IndexSet& getLocallyRelevantDofs() {
+		return m_locallyRelevantDofs;
+	}
+#endif
+
 };
 
 } /* namespace natrium */

@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_Convergence_test) {
 	A.set(0, 0, lambda);
 
 	for (double theta = 0.0; theta <= 1; theta += 0.5) {
-		ThetaMethod<distributed_sparse_matrix, distributed_vector> tm(dt, 1,
+		ThetaMethod<distributed_sparse_matrix, distributed_vector> tm(dt, g,
 				theta);
 		distributed_vector f(1);
 		f(0) = 1;
@@ -97,8 +97,6 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
 	A.set(1, 1, 3);
 
 	for (double theta = 0.0; theta <= 1; theta += 0.5) {
-		ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector> tm(
-				dt, 1, theta);
 		// initialize block vectors
 		distributed_block_vector f;
 		distributed_block_vector b;
@@ -125,6 +123,8 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
 		double c0 = f(0);
 		double c1 = f(1);
 		double t = 0;
+		ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector> tm(
+						dt, f, theta);
 		for (size_t i = 0; i < numberOfSteps; i++) {
 			t += dt;
 			tm.step(f, A, b);
