@@ -49,7 +49,7 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
 
-#ifdef WITH_TRILINOS_MPI
+#ifdef WITH_TRILINOS
 	//get locally owned and locally relevant dofs
 	m_locallyOwnedDofs = m_doFHandler->locally_owned_dofs ();
 	DoFTools::extract_locally_relevant_dofs (*m_doFHandler,

@@ -152,7 +152,7 @@ private:
 	/// central flux or Lax-Friedrichs flux (default)
 	const bool m_useCentralFlux;
 
-#ifdef WITH_TRILINOS_MPI
+#ifdef WITH_TRILINOS
 	// locally owned degrees of freedom (for MPI parallelization)
 	dealii::IndexSet m_locallyOwnedDofs;
 	// locally relevant degrees of freedom (i.e. ghost layer cells)
@@ -380,7 +380,7 @@ public:
 		return m_systemVector;
 	}
 
-#ifdef WITH_TRILINOS_MPI
+#ifdef WITH_TRILINOS
 	const dealii::IndexSet& getLocallyOwnedDofs() {
 		return m_locallyOwnedDofs;
 	}
