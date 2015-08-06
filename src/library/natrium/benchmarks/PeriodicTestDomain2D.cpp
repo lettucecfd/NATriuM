@@ -29,7 +29,11 @@ PeriodicTestDomain2D::~PeriodicTestDomain2D() {
 shared_ptr<Mesh<2> > PeriodicTestDomain2D::makeGrid(size_t globalRefinementLevel) {
 
 	//Creation of the principal domain
+#ifdef WITH_TRILINOS_MPI
+	shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >(MPI_COMM_WORLD);
+#else
 	shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >();
+#endif
 	dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 	// Assign boundary indicators to the faces of the "parent cell"

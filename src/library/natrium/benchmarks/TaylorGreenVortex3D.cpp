@@ -41,8 +41,13 @@ void TaylorGreenVortex3D::getAnalyticVelocity(const dealii::Point<3>& x, double 
  */
 shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid(size_t refinementLevel) {
   //Creation of the principal domain
+#ifdef WITH_TRILINOS_MPI
+	  shared_ptr<Mesh<3> > square =
+	      make_shared<Mesh<3> >(MPI_COMM_WORLD);
+#else
   shared_ptr<Mesh<3> > square =
       make_shared<Mesh<3> >();
+#endif
   dealii::GridGenerator::hyper_cube(*square, 0, 8*atan(1));
 
   // Assign boundary indicators to the faces of the "parent cell"

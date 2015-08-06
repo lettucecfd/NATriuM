@@ -58,7 +58,11 @@ double TaylorGreenVortex2D::getAnalyticDensity(const dealii::Point<2>& x,
 shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid(
 		size_t refinementLevel) {
 	//Creation of the principal domain
+#ifdef WITH_TRILINOS_MPI
+	shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >(MPI_COMM_WORLD);
+#else
 	shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >();
+#endif
 	dealii::GridGenerator::hyper_cube(*square, 0, 8 * atan(1));
 
 	// Assign boundary indicators to the faces of the "parent cell"

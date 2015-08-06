@@ -40,16 +40,23 @@
 	-D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
 	.. 
     0.4.6) make -jN; make install, with N=number of processors (N=1 works, not so sure about that at the moment; perhaps just "make && make install" will do)
-    0.5) Qt (full development kit) -> optional (for the parameter gui)
-    	0.5.1) sudo apt-get install qt-sdk
-    0.6) deal.ii
-        0.6.1) download and untar tarball from deal.ii homepage
-        0.6.2) set environment variable DEAL_II_DIR to the path you want to install the library to
-  		0.6.3a) (on cluster: execute the -> cmake command with -DDEAL_II_FORCE_BUNDLED_BOOST=OFF -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT)
+    0.5) p4est
+    	0.5.1) download tarball from p4est homepage (here: version 1.1; no need to untar)
+		0.5.2) get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
+		0.5.3) export CC=mpicc && export CXX=mpicxx (somehow the configuration script does not detect the right compilers, otherwise)
+    	0.5.4) set environment variable P4EST_DIR in .bashrc
+    	0.5.5) ./p4est-setup.sh <p4est tarball> $P4EST_DIR
+    0.6) Qt (full development kit) -> optional (for the parameter gui)
+    	0.6.1) sudo apt-get install qt-sdk
+    0.7) deal.ii
+        0.7.1) download and untar tarball from deal.ii homepage
+        	   (rename directory if it has the name of your target directory)
+        0.7.2) set environment variable DEAL_II_DIR to the path you want to install the library to
+  		0.7.3a) (on cluster: execute the -> cmake command with -DDEAL_II_FORCE_BUNDLED_BOOST=OFF -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT)
   		        (This is important to prevent errors that occur from different/old versions of dynamic libraries that are normally preinstalled.)
-        0.6.4) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=ON ../deal.II
-        0.6.5) make install
-        0.6.5a) (on cluster) check in the log if DEAL.II really used the external boost and not the bundled one 
+        0.7.4) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=ON -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON <directory/with/deal/source>
+        0.7.5) make -j 6 install (-j 6 enables parallel compilation on 6 processors; otherwise installation will take hours)
+        0.7.5a) (on cluster) check in the log if DEAL.II really used the external boost and not the bundled one 
         		(NATriuM does not work with the bundled filesystem module and they have to be consistent)
         
         

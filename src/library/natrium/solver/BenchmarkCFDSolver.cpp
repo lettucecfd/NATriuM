@@ -21,13 +21,13 @@ template<size_t dim> BenchmarkCFDSolver<dim>::BenchmarkCFDSolver(
 	m_supportPoints.resize(this->getAdvectionOperator()->getLocallyOwnedDofs().size());
 	m_analyticDensity.reinit(
 			this->getAdvectionOperator()->getLocallyOwnedDofs(),
-			m_advectionOperator->getLocallyRelevantDofs(),
+			this->getAdvectionOperator()->getLocallyRelevantDofs(),
 			MPI_COMM_WORLD);
 	for (size_t i = 0; i < dim; i++) {
 		m_analyticVelocity.push_back(
 				distributed_vector(
 						this->getAdvectionOperator()->getLocallyOwnedDofs(),
-						m_advectionOperator->getLocallyRelevantDofs(),
+						this->getAdvectionOperator()->getLocallyRelevantDofs(),
 						MPI_COMM_WORLD));
 	}
 #else
