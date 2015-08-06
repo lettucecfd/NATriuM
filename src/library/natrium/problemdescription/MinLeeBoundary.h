@@ -79,7 +79,7 @@ public:
 	 * @short modify sparsity pattern so that the fluxes over periodic boundary can be incorporated
 	 * @param cSparse the block-sparsity pattern
 	 */
-	void addToSparsityPattern(dealii::CompressedSparsityPattern& cSparse,
+	void addToSparsityPattern(dealii::DynamicSparsityPattern& cSparse,
 			const dealii::DoFHandler<dim>& doFHandler,
 			const Stencil& stencil) const;
 

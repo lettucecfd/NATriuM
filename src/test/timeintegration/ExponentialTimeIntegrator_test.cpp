@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 
 
 	// build the 1x1 matrix [[lambda]]
-	dealii::CompressedSparsityPattern compressedSparsityPattern(10,10);
+	dealii::DynamicSparsityPattern compressedSparsityPattern(10,10);
 	for (int i = 0; i<10; i++)
 	{
 		for (int j=0; j<10; j++)

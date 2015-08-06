@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_Convergence_test) {
 	distributed_vector g(1);
 	g(0) = 0;
 	// build the 1x1 matrix [[lambda]]
-	dealii::CompressedSparsityPattern compressedSparsityPattern(1, 1);
+	dealii::DynamicSparsityPattern compressedSparsityPattern(1, 1);
 	compressedSparsityPattern.add(0, 0);
 	dealii::SparsityPattern sparsityPattern;
 	sparsityPattern.copy_from(compressedSparsityPattern);
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
 	// build matrix
 	distributed_sparse_block_matrix A;
 #ifdef WITH_TRILINOS
-	dealii::CompressedSparsityPattern compressedSparsityPattern(1, 1);
+	dealii::DynamicSparsityPattern compressedSparsityPattern(1, 1);
 	compressedSparsityPattern.add(0, 0);
 	A.reinit(2, 2);
 	A.block(0, 0).reinit(compressedSparsityPattern);
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
 	A.block(1, 1).reinit(A.block(0, 0));
 	A.collect_sizes();
 #else
-	dealii::BlockCompressedSparsityPattern cSparse(2, 2);
+	dealii::BlockDynamicSparsityPattern cSparse(2, 2);
 	for (size_t iI = 0; iI < 2; iI++) {
 		for (size_t J = 0; J < 2; J++) {
 			cSparse.block(iI, J).reinit(1, 1);

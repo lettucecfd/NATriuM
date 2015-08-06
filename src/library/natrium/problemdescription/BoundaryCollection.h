@@ -149,11 +149,11 @@ public:
 		return getBoundary(boundaryIndicator)->isPeriodic();
 	}
 
-	const size_t numberOfBoundaries() const {
+	size_t numberOfBoundaries() const {
 		return m_boundaries.size();
 	}
 
-	const size_t numberOfPeriodicBoundaries() const {
+	size_t numberOfPeriodicBoundaries() const {
 		return m_periodicBoundaries.size();
 	}
 

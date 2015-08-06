@@ -38,8 +38,8 @@ bool natrium::BoundaryTools::checkParallelLines(
 	}
 
 	// assert that interfaces are parallel (anything else would need different handling)
-	dealii::Point<2> differenceVector1 = endLine1 - beginLine1;
-	dealii::Point<2> differenceVector2 = endLine2 - beginLine2;
+	dealii::Tensor<1,2> differenceVector1 = endLine1 - beginLine1;
+	dealii::Tensor<1,2> differenceVector2 = endLine2 - beginLine2;
 
 	if (not Math::is_angle_small(differenceVector1, differenceVector2)) {
 		// try to fix the problem by swapping begin and end
@@ -128,8 +128,8 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 	for (element = ++pointsAtBoundary1.begin();
 			element != --pointsAtBoundary1.end(); ++element) {
 		// check if the vertex is really on  line 1
-		dealii::Point<2> line = endLine1 - beginLine1;
-		dealii::Point<2> toPoint = element->second - beginLine1;
+		dealii::Tensor<1,2> line = endLine1 - beginLine1;
+		dealii::Tensor<1,2> toPoint = element->second - beginLine1;
 		if (not Math::is_angle_small(line, toPoint)) {
 			std::stringstream s;
 			s << "Not all points with boundary indicator "
@@ -141,8 +141,8 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 	for (element = ++pointsAtBoundary2.begin();
 			element != --pointsAtBoundary2.end(); ++element) {
 		// check if the vertex is really on line
-		dealii::Point<2> line = endLine2 - beginLine2;
-		dealii::Point<2> toPoint = element->second - beginLine2;
+		dealii::Tensor<1,2> line = endLine2 - beginLine2;
+		dealii::Tensor<1,2> toPoint = element->second - beginLine2;
 		if (not Math::is_angle_small(line, toPoint)) {
 			std::stringstream s;
 			s << "Not all points with boundary indicator "

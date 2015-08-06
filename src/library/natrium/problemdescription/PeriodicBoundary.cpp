@@ -364,7 +364,7 @@ template size_t PeriodicBoundary<3>::getOppositeCellAtPeriodicBoundary(
 		dealii::DoFHandler<3>::cell_iterator & neighborCell) const;
 
 template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
-		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
+		dealii::BlockDynamicSparsityPattern& cSparse, size_t n_blocks,
 		size_t n_dofs_per_block, size_t dofs_per_cell) const {
 
 	// THIS FUNCTION IS NOT USED!!! See DealIIExtensions module for details
@@ -379,7 +379,7 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 	// because otherwise it is very Cache-inefficient)
 	for (size_t I = 0; I < n_blocks; I++) {
 		//minimize calls of block(), because expensive
-		dealii::CompressedSparsityPattern& block = cSparse.block(I, I);
+		dealii::DynamicSparsityPattern& block = cSparse.block(I, I);
 		typename std::map<
 				typename dealii::DoFHandler<dim>::active_cell_iterator,
 				std::pair<typename dealii::DoFHandler<dim>::cell_iterator,
@@ -403,10 +403,10 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 
 }
 template void PeriodicBoundary<2>::addToSparsityPattern(
-		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
+		dealii::BlockDynamicSparsityPattern& cSparse, size_t n_blocks,
 		size_t n_dofs_per_block, size_t dofs_per_cell) const;
 template void PeriodicBoundary<3>::addToSparsityPattern(
-		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
+		dealii::BlockDynamicSparsityPattern& cSparse, size_t n_blocks,
 		size_t n_dofs_per_block, size_t dofs_per_cell) const;
 
 } /* namespace natrium */

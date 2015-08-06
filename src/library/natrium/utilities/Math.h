@@ -55,7 +55,7 @@ inline double euclidean_norm(numeric_vector& x) {
 // check if the angle between to 2d vectors is small
 // The formula stems from the cosine theorem: <a,b> / (|a| |b|) = cos( angle(a,b) ).
 // Asserting abs[ <a,b> / (|a| |b|) ] > 0.99 is equivalent to:    angle(a,b) < 8 degrees.
-inline bool is_angle_small(dealii::Point<2> vector1, dealii::Point<2> vector2,
+inline bool is_angle_small(dealii::Tensor<1,2> vector1, dealii::Tensor<1,2> vector2,
 		double thresholdDegrees = 0.0) {
 	if (thresholdDegrees == 0.0) {
 		return (vector1 * vector2 / (vector1.norm() * vector2.norm()) > 0.99);

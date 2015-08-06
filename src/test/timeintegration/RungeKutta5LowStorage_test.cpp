@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 	distributed_vector g(1);
 	g(0) = 0;
 	// build the 1x1 matrix [[lambda]]
-	dealii::CompressedSparsityPattern compressedSparsityPattern(1,1);
+	dealii::DynamicSparsityPattern compressedSparsityPattern(1,1);
 	compressedSparsityPattern.add(0,0);
 	dealii::SparsityPattern sparsityPattern;
 	sparsityPattern.copy_from(compressedSparsityPattern);

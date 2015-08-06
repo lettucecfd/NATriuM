@@ -82,7 +82,7 @@ public:
 	}
 
 	/// detach log file
-	void unsetLogFile(string logFile) {
+	void unsetLogFile() {
 		if (has_file()) {
 			detach();
 		}

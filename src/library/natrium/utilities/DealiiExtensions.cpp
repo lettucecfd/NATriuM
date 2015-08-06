@@ -35,8 +35,6 @@
 #include <deal.II/dofs/dof_tools.h>
 #include <deal.II/numerics/vector_tools.h>
 
-#include <deal.II/multigrid/mg_dof_handler.h>
-
 #include <algorithm>
 #include <numeric>
 
@@ -378,7 +376,7 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 
 } /* namespace natrium */
 
-typedef CompressedSparsityPattern SP;
+typedef DynamicSparsityPattern SP;
 //for (SP : SPARSITY_PATTERNS; deal_II_dimension : DIMENSIONS)
 //for (size_t deal_II_dimension = 1; deal_II_dimension < 4; deal_II_dimension++)
 //{

@@ -119,7 +119,7 @@ public:
 	/** @short get stencil type
 	 *  @return stencil type, e.g. D2Q9
 	 */
-	const StencilType getStencilType() const {
+	const StencilType& getStencilType() const {
 		return m_stencilType;
 	}
 
@@ -130,7 +130,7 @@ public:
 	virtual double getSpeedOfSoundSquare() const = 0;
 	virtual double getMaxParticleVelocityMagnitude() const = 0;
 
-	virtual const double getScaling() const {
+	virtual double getScaling() const {
 		return 1.0;
 	}
 

@@ -177,7 +177,7 @@ public:
 	 * @param n_dofs_per_row number of degrees of freedom per block (normally: overall degrees of freedom on grid)
 	 * @param dofs_per_cell number of degrees of freedom per cell
 	 */
-	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern& cSparse,
+	void addToSparsityPattern(dealii::BlockDynamicSparsityPattern& cSparse,
 			size_t n_blocks, size_t n_dofs_per_block,
 			size_t dofs_per_cell) const;
 

@@ -162,8 +162,9 @@ void BGKPseudopotential::collideAll(DistributionFunctions& f,
 				// it uses the relation grad(rho)(x_i) = grad( sum_alpha f_alpha(x_i))  = grad ( sum_alpha(sum_k(dof_{alpha,k} phi_k(x_i))))
 				//                                     = sum_k ((sum_alpha dof_{alpha,k}) grad(phi_k(x_i))) = sum_k (rho_k grad(phi_k(x_i)))
 				for (size_t k = 0; k < dofs_per_cell; k++) {
-					density_gradient += densities(localDoFIndices.at(k))
-							* feValues.shape_grad(k, celldofToQIndex.at(j));
+					// TODO: make this line work
+				//	density_gradient += densities(localDoFIndices.at(k))
+				//			* feValues.shape_grad(k, celldofToQIndex.at(j));
 				}
 
 				// iterative initialization scheme (solve poisson equation indirectly)

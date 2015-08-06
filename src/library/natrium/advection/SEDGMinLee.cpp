@@ -195,9 +195,9 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 #ifdef WITH_TRILINOS
 	// Trilinos can work with improved sparsity structures
 
-	CompressedSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
-	CompressedSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
-	CompressedSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
+	DynamicSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
+	DynamicSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
+	DynamicSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
 
 
 
@@ -275,7 +275,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	m_systemMatrix.collect_sizes();
 
 #else
-	BlockCompressedSparsityPattern cSparse(n_blocks, n_blocks);
+	BlockDynamicSparsityPattern cSparse(n_blocks, n_blocks);
 	// TODO do not initialize empty blocks?
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {

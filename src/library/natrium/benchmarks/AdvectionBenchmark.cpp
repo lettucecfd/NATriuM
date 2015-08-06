@@ -104,9 +104,11 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 	// RK5 for streaming in direction (1,0)
 #ifdef WITH_TRILINOS
-	distributed_sparse_matrix advectionMatrix =
-			streaming.getSystemMatrix().block(0, 0);
+	distributed_sparse_matrix advectionMatrix;
+	advectionMatrix.reinit(matrices.block(0, 0));
+	advectionMatrix.copy_from(matrices.block(0, 0));
 #else
+	// TODO (AK) Can we remove the ifdef?
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(streaming.getSparsityPattern(0));
 	advectionMatrix.copy_from(matrices.block(0, 0));

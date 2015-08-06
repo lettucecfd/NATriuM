@@ -130,7 +130,7 @@ namespace natrium {
         return m_scaling*sqrt(2);
       }
 
-      const double getScaling() const {
+      virtual double getScaling() const {
         return m_scaling;
       }
 
