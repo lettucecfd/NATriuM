@@ -141,7 +141,7 @@ void SEDGMinLee<dim>::reassemble() {
 	}
 	dealii::FullMatrix<double> localFaceMatrix(dofs_per_cell, dofs_per_cell);
 	dealii::FullMatrix<double> localSystemMatrix(dofs_per_cell, dofs_per_cell);
-	std::vector<types::global_dof_index> localDoFIndices(dofs_per_cell);
+	std::vector<dealii::types::global_dof_index> localDoFIndices(dofs_per_cell);
 
 ///////////////
 // MAIN LOOP //

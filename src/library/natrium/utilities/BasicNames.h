@@ -11,7 +11,7 @@
 
 // GLOBAL COMPILER FLAGS
 #define WITH_TRILINOS
-#define WITH_TRILINOS_MPI
+//#define WITH_TRILINOS_MPI
 //TODO(AK) merge WITH_TRILINOS_MPI into WITH_TRILINOS
 
 // WITH_TRILINOS_MPI flag includes WITH_TRILINOS flag
@@ -34,6 +34,8 @@
 #include "deal.II/numerics/vector_tools.h"
 
 #include "deal.II/lac/block_sparse_matrix.h"
+
+#include "deal.II/base/types.h"
 
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_vector.h"
@@ -88,7 +90,6 @@ typedef sparse_matrix distributed_sparse_matrix;
 typedef sparse_block_matrix distributed_sparse_block_matrix;
 #endif
 
-
 #ifdef WITH_TRILINOS_MPI
 /// vectors which can be distributed over multiple cores
 typedef dealii::TrilinosWrappers::MPI::Vector distributed_vector;
@@ -114,23 +115,30 @@ shared_ptr<dealii::IndexSet> all_indices(size_t size) {
 	indices->add_range(0, size);
 	return indices;
 }
-#define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector name (*all_indices( size ), MPI_COMM_WORLD)
-// similar for block vector reinit (but without macros)
-void REINIT_UNDISTRIBUTED_BLOCK_VECTOR(distributed_block_vector& bv, size_t n_blocks, size_t block_size){
+#define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector (name) (*all_indices( size ), MPI_COMM_WORLD)
+#else
+#define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector (name) ( size )
+#endif
+// similar for block vector reinit (but no macros needed)
+inline void REINIT_UNDISTRIBUTED_BLOCK_VECTOR(distributed_block_vector& bv,
+		size_t n_blocks, size_t block_size) {
+#ifdef WITH_TRILINOS_MPI
 	bv.reinit(n_blocks);
 	for (size_t i = 0; i < n_blocks; i++) {
 		bv.block(i).reinit(*all_indices(block_size), MPI_COMM_WORLD);
 	}
 	bv.collect_sizes();
-}
 #else
-#define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector name ( size )
-#define REINIT_UNDISTRIBUTED_BLOCK_VECTOR ( name , n_blocks , block_size ) name .reinit( n_blocks, block_size )
-void REINIT_UNDISTRIBUTED_BLOCK_VECTOR(distributed_block_vector& bv, size_t n_blocks, size_t block_size){
-	bv.reinit(n_blocks,block_size);
-}
+#ifdef WITH_TRILINOS
+	bv.reinit(n_blocks);
+	for (size_t i = 0; i < n_blocks; i++) {
+		bv.block(i).reinit(block_size);
+	}
+	bv.collect_sizes();
+#else
+	bv.reinit(n_blocks, block_size);
 #endif
-
+#endif
 
 }
 /* namespace natrium */

@@ -15,8 +15,6 @@
 #include "natrium/problemdescription/MinLeeBoundary.h"
 #include "natrium/utilities/BasicNames.h"
 
-
-
 using namespace natrium;
 
 /** @short Description of a simple Flow with wall boundaries (flow in square domain).
@@ -32,17 +30,15 @@ private:
 	shared_ptr<Mesh<2> > makeGrid(size_t globalRefinementLevel) {
 
 		//Creation of the principal domain
-		shared_ptr<Mesh<2> > unitSquare =
-#ifdef WITH_TRILINOS
-				make_shared<Mesh<2> >(MPI_COMM_WORLD);
-#else
-				make_shared<Mesh<2> >();
+		shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >(
+#ifdef WITH_TRILINOS_MPI
+				MPI_COMM_WORLD
 #endif
+				);
 		dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 		// Assign boundary indicators to the faces of the "parent cell"
-		Mesh<2>::active_cell_iterator cell =
-				unitSquare->begin_active();
+		Mesh<2>::active_cell_iterator cell = unitSquare->begin_active();
 		cell->face(0)->set_all_boundary_indicators(0);  // left
 		cell->face(1)->set_all_boundary_indicators(1);  // right
 		cell->face(2)->set_all_boundary_indicators(2);  // top
@@ -83,14 +79,16 @@ private:
 public:
 
 	/// constructor
-	WallTestDomain2D(size_t refineLevel):
-		ProblemDescription<2>(makeGrid(refineLevel), 1.0, 1) {
-			/// apply boundary values
-			setBoundaries(makeBoundaries());
-		}
+	WallTestDomain2D(size_t refineLevel) :
+			ProblemDescription<2>(makeGrid(refineLevel), 1.0, 1) {
+		/// apply boundary values
+		setBoundaries(makeBoundaries());
+	}
 
 	/// destructor
-	virtual ~WallTestDomain2D(){};
+	virtual ~WallTestDomain2D() {
+	}
+	;
 
 	/**
 	 * @short set initial densities
@@ -98,7 +96,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const{
+			const vector<dealii::Point<2> >& supportPoints) const {
 		for (size_t i = 0; i < initialDensities.size(); i++) {
 			initialDensities(i) = 1.0;
 		}
@@ -110,13 +108,12 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const{
+			const vector<dealii::Point<2> >& supportPoints) const {
 		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
 			initialVelocities.at(0)(i) = 0.0;
 			initialVelocities.at(1)(i) = 0.0;
 		}
 	}
-
 
 };
 
