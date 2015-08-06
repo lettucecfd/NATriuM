@@ -18,13 +18,14 @@
 #include "../problemdescription/MinLeeBoundary.h"
 
 #include "../utilities/Logging.h"
+#include "../utilities/MPIGuard.h"
 
 namespace natrium {
 
 CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, double L, double startTime, bool isUnstructured) :
-		Benchmark<2>(makeGrid(L, refinementLevel, isUnstructured), viscosity, L), m_topPlateVelocity(
-				topPlateVelocity), m_startTime(startTime) {
+		Benchmark<2>(makeGrid(L, refinementLevel, isUnstructured), viscosity,
+				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
 	/// apply boundary values
@@ -34,11 +35,16 @@ CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 CouetteFlow2D::~CouetteFlow2D() {
 }
 
-shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L,
-		size_t refinementLevel, bool isUnstructured) {
+shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L, size_t refinementLevel,
+		bool isUnstructured) {
 
 	//Creation of the principal domain
+#ifdef WITH_TRILINOS_MPI
+	shared_ptr<Mesh<2> > unitSquare =
+			make_shared<Mesh<2> >(MPI_COMM_WORLD);
+#else
 	shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >();
+#endif
 	dealii::GridGenerator::hyper_cube(*unitSquare, 0, L);
 
 	// Assign boundary indicators to the faces of the "parent cell"
@@ -52,8 +58,8 @@ shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L,
 	unitSquare->refine_global(refinementLevel);
 
 	// transform grid
-	if (isUnstructured){
-	  dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
+	if (isUnstructured) {
+		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
 	}
 
 	std::ofstream out("grid-couette.eps");
@@ -73,8 +79,7 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = topPlateVelocity;
 
-	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
 	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(2, zeroVelocity));
 	boundaries->addBoundary(
 			make_shared<MinLeeBoundary<2> >(3, constantVelocity));

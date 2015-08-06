@@ -39,7 +39,11 @@ shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L,
 		size_t refinementLevel, bool isUnstructured) {
 
 	//Creation of the principal domain
+#ifdef WITH_TRILINOS_MPI
+	shared_ptr<Mesh<3> > unitSquare = make_shared<Mesh<3> >(MPI_COMM_WORLD);
+#else
 	shared_ptr<Mesh<3> > unitSquare = make_shared<Mesh<3> >();
+#endif
 	dealii::GridGenerator::hyper_cube(*unitSquare, 0, L);
 
 	// Assign boundary indicators to the faces of the "parent cell"

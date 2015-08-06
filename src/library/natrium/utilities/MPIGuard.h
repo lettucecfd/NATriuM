@@ -14,9 +14,7 @@
 
 //#include "BasicNames.h"
 
-
 namespace natrium {
-
 
 /**
  * @short Singleton that encapsulates the MPI init and finalize calls so that they are called at most once per run.
@@ -26,9 +24,12 @@ class MPIGuard {
 private:
 	static MPIGuard* m_privateInstance;
 	dealii::Utilities::MPI::MPI_InitFinalize* m_mpi_initialization;
+	MPI_Comm m_mpi_communicator;
 protected:
-	MPIGuard(int argc, char** argv){
-		m_mpi_initialization = new dealii::Utilities::MPI::MPI_InitFinalize(argc, argv);
+	MPIGuard(int argc, char** argv) :
+			m_mpi_communicator(MPI_COMM_WORLD) {
+		m_mpi_initialization = new dealii::Utilities::MPI::MPI_InitFinalize(
+				argc, argv);
 	}
 public:
 	/**
@@ -42,12 +43,16 @@ public:
 	/**
 	 * @short return dealii's MPI_InitFinalize object
 	 */
-	dealii::Utilities::MPI::MPI_InitFinalize* getMPI_InitFinalize(){
+	dealii::Utilities::MPI::MPI_InitFinalize* getMPI_InitFinalize() {
 		return m_mpi_initialization;
 	}
-	virtual ~MPIGuard(){
+	static MPI_Comm& getMPICommunicator() {
+		return MPIGuard::getInstance()->m_mpi_communicator;
+	}
+	virtual ~MPIGuard() {
 		;
 	}
+
 };
 
 } /* namespace natrium */

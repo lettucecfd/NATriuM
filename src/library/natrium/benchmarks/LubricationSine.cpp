@@ -28,7 +28,11 @@ shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L,
 		size_t refinementLevel, double averageHeight, double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio) {
 
 	//Creation of the principal domain
+#ifdef WITH_TRILINOS_MPI
+	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >(MPI_COMM_WORLD);
+#else
 	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >();
+#endif
 	dealii::Point<2> x1(0,0);
 	dealii::Point<2> x2(L,averageHeight);
 	std::vector<unsigned int> repetitions;

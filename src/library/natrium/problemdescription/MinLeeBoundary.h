@@ -18,18 +18,21 @@
 
 namespace natrium {
 
-
-template <size_t dim>
+template<size_t dim>
 class BoundaryDensity: public dealii::Function<dim> {
 public:
-	BoundaryDensity(){};
-	virtual ~BoundaryDensity(){};
+	BoundaryDensity() {
+	}
+	;
+	virtual ~BoundaryDensity() {
+	}
+	;
 	virtual double value(const dealii::Point<dim> &p,
 			const unsigned int component = 0) const {
 		return 1;
 	}
 };
-template <size_t dim>
+template<size_t dim>
 class BoundaryVelocity: public dealii::Function<dim> {
 private:
 	dealii::Vector<double> m_Velocity;
@@ -37,7 +40,9 @@ public:
 	BoundaryVelocity(const dealii::Vector<double>& velocity) :
 			m_Velocity(velocity) {
 	}
-	virtual ~BoundaryVelocity(){};
+	virtual ~BoundaryVelocity() {
+	}
+	;
 	virtual void vector_value(const dealii::Point<dim> &p,
 			dealii::Vector<double> &values) const {
 		values = m_Velocity;
@@ -68,7 +73,8 @@ public:
 			shared_ptr<dealii::Function<dim> > boundaryVelocity);
 
 	/// constructor
-	MinLeeBoundary(size_t boundaryIndicator, const dealii::Vector<double>& velocity);
+	MinLeeBoundary(size_t boundaryIndicator,
+			const dealii::Vector<double>& velocity);
 
 	/// destructor
 	virtual ~MinLeeBoundary() {
@@ -79,7 +85,12 @@ public:
 	 * @short modify sparsity pattern so that the fluxes over periodic boundary can be incorporated
 	 * @param cSparse the block-sparsity pattern
 	 */
-	void addToSparsityPattern(dealii::CompressedSparsityPattern& cSparse,
+	void addToSparsityPattern(
+#ifdef WITH_TRILINOS
+			dealii::TrilinosWrappers::SparsityPattern& cSparse,
+#else
+			dealii::CompressedSparsityPattern& cSparse,
+#endif
 			const dealii::DoFHandler<dim>& doFHandler,
 			const Stencil& stencil) const;
 
@@ -88,9 +99,11 @@ public:
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 			const Stencil& stencil,
-			const std::map<size_t, size_t>& q_index_to_facedof, const vector<double> & inverseLocalMassMatrix,
+			const std::map<size_t, size_t>& q_index_to_facedof,
+			const vector<double> & inverseLocalMassMatrix,
 			distributed_sparse_block_matrix& systemMatrix,
-			distributed_block_vector& systemVector, bool useCentralFlux = false) const;
+			distributed_block_vector& systemVector,
+			bool useCentralFlux = false) const;
 
 	size_t getBoundaryIndicator() const {
 		return m_boundaryIndicator;

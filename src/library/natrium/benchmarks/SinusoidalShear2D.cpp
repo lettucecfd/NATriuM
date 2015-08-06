@@ -26,8 +26,11 @@ SinusoidalShear2D::~SinusoidalShear2D() {
 
 shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double L,
 		size_t refinementLevel, double averageHeight, double amplitude, double cell_aspect_ratio) {
-
+#ifdef WITH_TRILINOS_MPI
+	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >(MPI_COMM_WORLD);
+#else
 	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >();
+#endif
 	dealii::Point<2> x1(0,0);
 	dealii::Point<2> x2(1,1);
 	std::vector<unsigned int> repetitions;

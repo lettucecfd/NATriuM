@@ -37,7 +37,11 @@ PoiseuilleFlow2D::~PoiseuilleFlow2D() {
 shared_ptr<Mesh<2> > PoiseuilleFlow2D::makeGrid(size_t refinementLevel,
 		double height, double length, bool is_periodic) {
 	//Creation of the principal domain
+#ifdef WITH_TRILINOS_MPI
+	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >(MPI_COMM_WORLD);
+#else
 	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >();
+#endif
 	dealii::GridGenerator::hyper_rectangle(*rect, dealii::Point<2>(0, -height),
 			dealii::Point<2>(length, height), false);
 
