@@ -646,8 +646,10 @@ void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 		for (size_t i = 0; i < m_stencil->getQ(); i++) {
 			// filename
 			std::stringstream filename;
-			filename << directory << "/checkpoint_f_" << i << "_"
-					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+			filename << directory << "/checkpoint_f_" << i
+#ifdef WITH_TRILINOS_MPI
+					<< "_" << dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+#endif
 					<< ".dat";
 			std::ifstream file(filename.str().c_str());
 #ifndef WITH_TRILINOS
