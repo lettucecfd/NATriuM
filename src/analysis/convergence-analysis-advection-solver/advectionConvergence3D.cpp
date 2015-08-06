@@ -94,16 +94,9 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	assert(g.all_zero());
 
 	// RK5 for streaming in direction (0,1,1)
-#ifdef WITH_TRILINOS
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(matrices.block(3,3));
 	advectionMatrix.copy_from(matrices.block(3,3));
-#else
-	distributed_sparse_matrix advectionMatrix;
-	advectionMatrix.reinit(streaming.getSparsityPattern(3));
-	advectionMatrix.copy_from(matrices.block(3,3));
-	//advectionMatrix.print_formatted(cout);
-#endif
 	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(
 			deltaT, f);
 
