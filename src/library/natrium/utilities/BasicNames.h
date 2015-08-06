@@ -11,7 +11,7 @@
 
 // GLOBAL COMPILER FLAGS
 #define WITH_TRILINOS
-//#define WITH_TRILINOS_MPI
+#define WITH_TRILINOS_MPI
 //TODO(AK) merge WITH_TRILINOS_MPI into WITH_TRILINOS
 
 // WITH_TRILINOS_MPI flag includes WITH_TRILINOS flag
@@ -20,8 +20,6 @@
 #define WITH_TRILINOS
 #endif
 #endif
-
-
 
 #include <vector>
 #include <iostream>
@@ -44,7 +42,6 @@
 #include "deal.II/lac/trilinos_block_sparse_matrix.h"
 #endif
 
-
 namespace natrium {
 
 /// Typdef Mesh
@@ -57,7 +54,6 @@ template<size_t dim> using Mesh = dealii::parallel::distributed::Triangulation<d
 //alias template; works only in C++11
 template<size_t dim> using Mesh = dealii::Triangulation<dim>;
 #endif
-
 
 /// The following names will be used throughout natrium
 /// by #including BasicNames.h they can are used by default
@@ -92,8 +88,9 @@ typedef sparse_matrix distributed_sparse_matrix;
 typedef sparse_block_matrix distributed_sparse_block_matrix;
 #endif
 
+
 #ifdef WITH_TRILINOS_MPI
-/// vectors which can be distributed over different cores
+/// vectors which can be distributed over multiple cores
 typedef dealii::TrilinosWrappers::MPI::Vector distributed_vector;
 typedef dealii::TrilinosWrappers::MPI::BlockVector distributed_block_vector;
 
@@ -103,15 +100,40 @@ typedef dealii::TrilinosWrappers::Vector distributed_vector;
 typedef dealii::TrilinosWrappers::BlockVector distributed_block_vector;
 
 #else
-/// vector which can be distributed over different cores
+/// vector which can't be distributed over different cores
 typedef numeric_vector distributed_vector;
 typedef block_vector distributed_block_vector;
 #endif
 #endif
 
+// macro to avoid ifdefs when creating a distributed_vector that is actually not distributed
+#ifdef WITH_TRILINOS_MPI
+// small function to quickly fill in the vectors
+shared_ptr<dealii::IndexSet> all_indices(size_t size) {
+	shared_ptr<dealii::IndexSet> indices = make_shared<dealii::IndexSet>(size);
+	indices->add_range(0, size);
+	return indices;
+}
+#define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector name (*all_indices( size ), MPI_COMM_WORLD)
+// similar for block vector reinit (but without macros)
+void REINIT_UNDISTRIBUTED_BLOCK_VECTOR(distributed_block_vector& bv, size_t n_blocks, size_t block_size){
+	bv.reinit(n_blocks);
+	for (size_t i = 0; i < n_blocks; i++) {
+		bv.block(i).reinit(*all_indices(block_size), MPI_COMM_WORLD);
+	}
+	bv.collect_sizes();
+}
+#else
+#define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector name ( size )
+#define REINIT_UNDISTRIBUTED_BLOCK_VECTOR ( name , n_blocks , block_size ) name .reinit( n_blocks, block_size )
+void REINIT_UNDISTRIBUTED_BLOCK_VECTOR(distributed_block_vector& bv, size_t n_blocks, size_t block_size){
+	bv.reinit(n_blocks,block_size);
+}
+#endif
 
-} /* namespace natrium */
 
+}
+/* namespace natrium */
 
 #endif/*BASICNAMES_H_*/
 

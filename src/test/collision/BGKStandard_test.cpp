@@ -360,15 +360,14 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAll_test) {
 	// create collision model// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
 
 	// initialize distributions with arbitrary components
 	vector<distributed_vector> f;
-	distributed_vector rho(10);
+	UNDISTRIBUTED_VECTOR(rho, 10);
 	vector<distributed_vector> u;
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
-		distributed_vector f_i(10);
+		UNDISTRIBUTED_VECTOR(f_i,10);
 		for (size_t j = 0; j < 10; j++) {
 			f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
 					+ pow((0.5 * cos(j)), 2);
@@ -376,7 +375,7 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAll_test) {
 		f.push_back(f_i);
 	}
 	for (size_t i = 0; i < dqmodel->getD(); i++) {
-		distributed_vector u_i(10);
+		UNDISTRIBUTED_VECTOR(u_i,10);
 		for (size_t j = 0; j < 10; j++) {
 			u_i(j) = 0;
 		}

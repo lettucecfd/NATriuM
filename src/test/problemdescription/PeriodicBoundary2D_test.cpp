@@ -41,7 +41,11 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 	/////////////////
 	/// Valid set of points and triangulation
 	shared_ptr<Mesh<2> > triangulation = make_shared<
-			Mesh<2> >();
+			Mesh<2> >(
+#ifdef WITH_TRILINOS_MPI
+					MPI_COMM_WORLD
+#endif
+					);
 	dealii::GridGenerator::hyper_cube(*triangulation, 0.0, 1.0);
 	triangulation->begin_active(0)->face(0)->set_boundary_indicator(0); //left
 	triangulation->begin_active(0)->face(1)->set_boundary_indicator(1); //right
@@ -102,7 +106,11 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 
 	/// create triangulation
 	shared_ptr<Mesh<2> > triangulation = make_shared<
-			Mesh<2> >();
+			Mesh<2> >(
+#ifdef WITH_TRILINOS_MPI
+					MPI_COMM_WORLD
+#endif
+					);
 	dealii::GridGenerator::hyper_cube(*triangulation, 0.0, 1.0);
 	triangulation->begin_active(0)->face(0)->set_boundary_indicator(0); //left
 	triangulation->begin_active(0)->face(1)->set_boundary_indicator(1); //right

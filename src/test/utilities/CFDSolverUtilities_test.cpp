@@ -21,7 +21,11 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
 
 	// make grid
 	const double PI = 4*std::atan(1);
+#ifdef WITH_TRILINOS_MPI
+	Mesh<2> square(MPI_COMM_WORLD);
+#else
 	Mesh<2> square;
+#endif
 	dealii::GridGenerator::hyper_cube(square, 0.0, 2*PI);
 
 	// test for different refinement levels

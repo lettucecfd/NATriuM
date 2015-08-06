@@ -30,9 +30,8 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		// analytic solution: f(x) = e^(lambda*x)
 		double tmax = 1;
 		double dt = 0.001;
-		const size_t numberOfSteps = 1000;
 		const double lambda = -2.0;
-		distributed_vector g(1);
+		UNDISTRIBUTED_VECTOR(g,1);
 		g(0) = 0;
 		// build the 1x1 matrix [[lambda]]
 		dealii::DynamicSparsityPattern compressedSparsityPattern(1, 1);
@@ -46,7 +45,7 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		DealIIWrapper<distributed_sparse_matrix, distributed_vector> tm(dt,
 				name,MINRES);
 
-		distributed_vector f(1);
+		UNDISTRIBUTED_VECTOR(f,1);
 		f(0) = 1;
 		double t = 0;
 		unsigned int n_steps = 0;
@@ -82,7 +81,6 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		// analytic solution: f(x) = e^(A*x)
 		double tmax = 1;
 		double dt = 0.001;
-		const size_t numberOfSteps = 1000;
 		// build matrix
 		distributed_sparse_block_matrix A;
 #ifdef WITH_TRILINOS
@@ -121,22 +119,8 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		// initialize block vectors
 		distributed_block_vector f;
 		distributed_block_vector b;
-#ifdef WITH_TRILINOS
-		f.reinit(2);
-		for (size_t i = 0; i < 2; i++) {
-			f.block(i).reinit(1);
-		}
-		f.collect_sizes();
-		//b
-		b.reinit(2);
-		for (size_t i = 0; i < 2; i++) {
-			b.block(i).reinit(1);
-		}
-		b.collect_sizes();
-#else
-		f.reinit(2, 1);
-		b.reinit(2, 1);
-#endif
+		REINIT_UNDISTRIBUTED_BLOCK_VECTOR(f, 2, 1);
+		REINIT_UNDISTRIBUTED_BLOCK_VECTOR(b, 2, 1);
 		f(0) = 1;
 		f(1) = 2;
 		b(0) = 0;

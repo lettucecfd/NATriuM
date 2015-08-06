@@ -108,7 +108,11 @@ private:
 	 */
 	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel) {
 		//Creation of the principal domain
-		shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >();
+		shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >(
+#ifdef WITH_TRILINOS_MPI
+				MPI_COMM_WORLD
+#endif
+				);
 		dealii::GridGenerator::hyper_cube(*square, 0, 2 * Math::PI);
 
 		// Assign boundary indicators to the faces of the "parent cell"

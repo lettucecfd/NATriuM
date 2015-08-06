@@ -33,7 +33,11 @@ private:
 
 		//Creation of the principal domain
 		shared_ptr<Mesh<2> > unitSquare =
+#ifdef WITH_TRILINOS
+				make_shared<Mesh<2> >(MPI_COMM_WORLD);
+#else
 				make_shared<Mesh<2> >();
+#endif
 		dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 		// Assign boundary indicators to the faces of the "parent cell"
