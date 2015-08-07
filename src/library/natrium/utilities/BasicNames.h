@@ -139,6 +139,7 @@ inline void REINIT_UNDISTRIBUTED_BLOCK_VECTOR(distributed_block_vector& bv,
 	bv.reinit(n_blocks, block_size);
 #endif
 #endif
+} /* REINIT_UNDISTRIBUTED_BLOCK_VECTOR */
 
 }
 /* namespace natrium */
