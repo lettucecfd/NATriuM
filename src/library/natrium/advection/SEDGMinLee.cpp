@@ -207,9 +207,12 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 
 
 #ifdef WITH_TRILINOS_MPI
-	TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyRelevantDofs);
+	/*TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyRelevantDofs);
 	TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyRelevantDofs);
-	TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyRelevantDofs);
+	TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
+	DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
+	DynamicSparsityPattern cSparseOpposite(m_locallyRelevantDofs);
+	DynamicSparsityPattern cSparseEmpty(m_locallyRelevantDofs);
 #else
 	DynamicSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
 	DynamicSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
@@ -254,7 +257,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 		minLeeIterator->second->addToSparsityPattern(cSparseOpposite,
 				*m_doFHandler, *m_stencil);
 	}
-	cout << "Hallo5" << endl;
 	//reinitialize matrices
 	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
 #ifdef WITH_TRILINOS_MPI
@@ -268,10 +270,10 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
 			m_locallyRelevantDofs);*/
 	m_systemMatrix.reinit(n_blocks, n_blocks);
-	m_systemMatrix.block(0, 0).reinit(m_locallyOwnedDofs, m_locallyOwnedDofs,
-			cSparseDiag, MPI_COMM_WORLD);
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
 	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
+	m_systemMatrix.block(0, 0).reinit(m_locallyOwnedDofs, m_locallyOwnedDofs,
+			cSparseDiag, MPI_COMM_WORLD);
 	m_systemMatrix.block(0, some_empty).reinit(m_locallyOwnedDofs,
 			m_locallyOwnedDofs, cSparseEmpty, MPI_COMM_WORLD);
 	m_systemMatrix.block(0, first_opposite).reinit(m_locallyOwnedDofs,
@@ -280,14 +282,11 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
 	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
-	cout << "1hi" << endl;
 	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
-	cout << "2hi" << endl;
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
 	
 	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
 #endif
-	cout << "Hallo6" << endl;
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
 			if ((I == 0) and (J == 0)) {
@@ -314,9 +313,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 
 		}
 	}
-	cout << "Hallo" << endl;
 	m_systemMatrix.collect_sizes();
-	cout << "No Hallo" << endl;
 
 #else
 	BlockDynamicSparsityPattern cSparse(n_blocks, n_blocks);

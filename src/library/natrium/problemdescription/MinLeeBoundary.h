@@ -87,11 +87,12 @@ public:
 	 */
 
 	void addToSparsityPattern(
-#ifdef WITH_TRILINOS_MPI
+/*#ifdef WITH_TRILINOS_MPI
 			dealii::TrilinosWrappers::SparsityPattern& cSparse,
 #else
+*/
 			dealii::DynamicSparsityPattern& cSparse,
-#endif
+//#endif
 			const dealii::DoFHandler<dim>& doFHandler,
 			const Stencil& stencil) const;
 

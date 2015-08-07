@@ -12,7 +12,7 @@ MPIGuard* MPIGuard::getInstance(int argc, char** argv){
 		LOG(DETAILED) << "MPIGuard  was created." << endl;
 		m_privateInstance = new MPIGuard(argc, argv);
 	} else {
-		LOG(WARNING) << "Double Construction of MPIGuard caught. NATriuM will continue." << endl;
+		LOG(DETAILED) << "Double Construction of MPIGuard caught. NATriuM will continue." << endl;
 	}
 	return m_privateInstance;
 }

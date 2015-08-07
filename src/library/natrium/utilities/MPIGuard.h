@@ -24,10 +24,9 @@ class MPIGuard {
 private:
 	static MPIGuard* m_privateInstance;
 	dealii::Utilities::MPI::MPI_InitFinalize* m_mpi_initialization;
-	MPI_Comm m_mpi_communicator;
+
 protected:
-	MPIGuard(int argc, char** argv) :
-			m_mpi_communicator(MPI_COMM_WORLD) {
+	MPIGuard(int argc, char** argv) {
 		m_mpi_initialization = new dealii::Utilities::MPI::MPI_InitFinalize(
 				argc, argv);
 	}
@@ -46,9 +45,7 @@ public:
 	dealii::Utilities::MPI::MPI_InitFinalize* getMPI_InitFinalize() {
 		return m_mpi_initialization;
 	}
-	static MPI_Comm& getMPICommunicator() {
-		return MPIGuard::getInstance()->m_mpi_communicator;
-	}
+
 	virtual ~MPIGuard() {
 		;
 	}

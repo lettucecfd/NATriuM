@@ -45,11 +45,12 @@ template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity);
 
 template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
-#ifdef WITH_TRILINOS_MPI
+/*#ifdef WITH_TRILINOS_MPI
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 #else
+*/
 		dealii::DynamicSparsityPattern& cSparse,
-#endif
+//#endif
 		const dealii::DoFHandler<dim>& doFHandler,
 		const Stencil& stencil) const {
 
@@ -105,18 +106,18 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 }
 
 template void MinLeeBoundary<2>::addToSparsityPattern(
-#ifdef WITH_TRILINOS_MPI
+/*#ifdef WITH_TRILINOS_MPI
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
-#else
+#else*/
 		dealii::DynamicSparsityPattern& cSparse,
-#endif
+//#endif
 		const dealii::DoFHandler<2>& doFHandler, const Stencil& stencil) const;
 template void MinLeeBoundary<3>::addToSparsityPattern(
-#ifdef WITH_TRILINOS_MPI
+/*#ifdef WITH_TRILINOS_MPI
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
-#else
+#else*/
 		dealii::DynamicSparsityPattern& cSparse,
-#endif
+//#endif
 		const dealii::DoFHandler<3>& doFHandler, const Stencil& stencil) const;
 
 

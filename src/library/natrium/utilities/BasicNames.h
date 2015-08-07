@@ -11,7 +11,7 @@
 
 // GLOBAL COMPILER FLAGS
 #define WITH_TRILINOS
-//#define WITH_TRILINOS_MPI
+#define WITH_TRILINOS_MPI
 //TODO(AK) merge WITH_TRILINOS_MPI into WITH_TRILINOS
 
 // WITH_TRILINOS_MPI flag includes WITH_TRILINOS flag
@@ -42,6 +42,7 @@
 #include "deal.II/lac/trilinos_block_vector.h"
 #include "deal.II/lac/trilinos_sparse_matrix.h"
 #include "deal.II/lac/trilinos_block_sparse_matrix.h"
+#include "deal.II/base/index_set.h"
 #endif
 
 namespace natrium {
@@ -110,12 +111,7 @@ typedef block_vector distributed_block_vector;
 // macro to avoid ifdefs when creating a distributed_vector that is actually not distributed
 #ifdef WITH_TRILINOS_MPI
 // small function to quickly fill in the vectors
-shared_ptr<dealii::IndexSet> all_indices(size_t size) {
-	shared_ptr<dealii::IndexSet> indices = make_shared<dealii::IndexSet>(size);
-	indices->add_range(0, size);
-	return indices;
-}
-#define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector (name) (*all_indices( size ), MPI_COMM_WORLD)
+#define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector (name) (dealii::complete_index_set(size), MPI_COMM_WORLD)
 #else
 #define UNDISTRIBUTED_VECTOR( name, size ) distributed_vector (name) ( size )
 #endif
@@ -125,7 +121,7 @@ inline void REINIT_UNDISTRIBUTED_BLOCK_VECTOR(distributed_block_vector& bv,
 #ifdef WITH_TRILINOS_MPI
 	bv.reinit(n_blocks);
 	for (size_t i = 0; i < n_blocks; i++) {
-		bv.block(i).reinit(*all_indices(block_size), MPI_COMM_WORLD);
+		bv.block(i).reinit(dealii::complete_index_set(block_size), MPI_COMM_WORLD);
 	}
 	bv.collect_sizes();
 #else
