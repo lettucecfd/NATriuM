@@ -40,7 +40,8 @@ enum CollisionSchemeName {
 	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
 	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
 	BGK_STEADY_STATE, // Steady state preconditioning by Guo et al. (2004)
-	BGK_INCOMPRESSIBLE // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
+	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
+	MRT_STANDARD // Multiple Relexation Time scheme by d'Humières (1992)
 };
 
 // StencilType defined in Stencil.h
@@ -229,7 +230,7 @@ public:
 	//////////////////////////////////
 	// GETTER AND SETTER -------  ////
 	// WRAPPED AROUND THE DEAL.II ////
-	// PARMETER HANDLER CLASS     ////
+	// PARAMETER HANDLER CLASS     ////
 	//////////////////////////////////
 	AdvectionSchemeName getAdvectionScheme() {
 		enter_subsection("Advection");
@@ -276,6 +277,8 @@ public:
 			return BGK_STEADY_STATE;
 		} else if ("BGK incompressible" == collisionScheme) {
 			return BGK_INCOMPRESSIBLE;
+		} else if ("MRT standard" == collisionScheme) {
+			return MRT_STANDARD;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown collision scheme '" << collisionScheme
@@ -302,6 +305,10 @@ public:
 		}
 		case BGK_INCOMPRESSIBLE: {
 			set("Collision scheme", "BGK incompressible");
+			break;
+		}
+		case MRT_STANDARD: {
+			set("Collision scheme", "MRT standard");
 			break;
 		}
 		default: {
