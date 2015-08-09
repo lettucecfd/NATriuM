@@ -19,7 +19,11 @@ MRT::MRT(double relaxationParameter, double dt,
 MRT::~MRT() {
 	// TODO Auto-generated destructor stub
 }
+<<<<<<< HEAD
 /*
+=======
+
+>>>>>>> 2a302a152dab9de8ae5197c22fc27058b28da820
 void MRT::collideSinglePoint(vector<double>& distributions) const {
 
 	// assert
@@ -47,7 +51,10 @@ void MRT::collideSinglePoint(vector<double>& distributions) const {
 		distributions.at(i) += getPrefactor()
 				* (distributions.at(i) - feq.at(i));
 	}
+<<<<<<< HEAD
 } */
+=======
+>>>>>>> 2a302a152dab9de8ae5197c22fc27058b28da820
 
 } // namespace natrium
 

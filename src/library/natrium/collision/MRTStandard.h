@@ -19,7 +19,8 @@ namespace natrium {
 
 class MRTStandard: public MRT {
 public:
-	MRTStandard(double relaxationParameter,double dt, const shared_ptr<Stencil> stencil);
+	MRTStandard(double relaxationParameter, double dt,
+			const shared_ptr<Stencil> stencil);
 	virtual ~MRTStandard();
 
 	virtual void collideAll(DistributionFunctions& f,
@@ -27,7 +28,7 @@ public:
 			vector<distributed_vector>& velocities,
 			bool inInitializationProcedure = false) const;
 
-	virtual double getEquilibriumDistributions(size_t i, const numeric_vector& u,
+	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
 			const double rho) const;
 
 	double getMomentEquilibriumDistribution(size_t i, const numeric_vector& u,

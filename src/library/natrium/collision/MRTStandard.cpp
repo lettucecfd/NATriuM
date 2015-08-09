@@ -18,7 +18,7 @@ MRTStandard::MRTStandard(double relaxationParameter, double dt,
 MRTStandard::~MRTStandard() {
 }
 
-double MRTStandard::getEquilibriumDistributions (size_t i,
+double MRTStandard::getEquilibriumDistribution(size_t i,
 		const numeric_vector& u, const double rho) const {
 
 	assert(i < getStencil()->getQ());
@@ -42,6 +42,7 @@ double MRTStandard::getEquilibriumDistributions (size_t i,
 
 double MRTStandard::getMomentEquilibriumDistribution(size_t i,
 		const numeric_vector& u, const double rho) const {
+
 	double x;
 	double scaling = getStencil()->getScaling();
 	switch (i) {
@@ -106,53 +107,54 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 				* (f.at(2)(i) + f.at(5)(i) + f.at(6)(i) - f.at(4)(i)
 						- f.at(7)(i) - f.at(8)(i));
 
-		// calculate density
-		densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
-				+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
-				+ f.at(8)(i);
+			// calculate density
+			densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
+			+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
+			+ f.at(8)(i);
 
-		m.at(0) = f.at(i)(0) + f.at(i)(1) + f.at(i)(2) + f.at(i)(3) + f.at(i)(4)
-				+ f.at(i)(5) + f.at(i)(6) + f.at(i)(7) + f.at(i)(8);
-		m.at(1) = -4 * f.at(i)(0) - f.at(i)(1) - f.at(i)(2) - f.at(i)(3)
-				- f.at(i)(4)
-				+ 2 * (f.at(i)(5) + f.at(i)(6) + f.at(i)(7) + f.at(i)(8));
-		m.at(2) = 4 * f.at(i)(0)
-				- 2 * (f.at(i)(1) + f.at(i)(2) + f.at(i)(3) + f.at(i)(4))
-				+ f.at(i)(5) + f.at(i)(6) + f.at(i)(7) + f.at(i)(8);
-		m.at(3) = f.at(i)(1) - f.at(i)(3) + f.at(i)(5) - f.at(i)(6) - f.at(i)(7)
-				+ f.at(i)(8);
-		m.at(4) = -2 * (f.at(i)(1) - f.at(i)(3)) + f.at(i)(5) - f.at(i)(6)
-				- f.at(i)(7) + f.at(i)(8);
-		m.at(5) = f.at(i)(2) - f.at(i)(4) + f.at(i)(5) + f.at(i)(6) - f.at(i)(7)
-				- f.at(i)(8);
-		m.at(6) = -2 * (f.at(i)(2) - f.at(i)(4)) + f.at(i)(5) + f.at(i)(6)
-				- f.at(i)(7) - f.at(i)(8);
-		m.at(7) = f.at(i)(1) - f.at(i)(2) + f.at(i)(3) - f.at(i)(4);
-		m.at(8) = f.at(i)(5) - f.at(i)(6) + f.at(i)(7) - f.at(i)(8);
+			m.at(0) = f.at(i)(0) + f.at(i)(1) + f.at(i)(2) + f.at(i)(3) + f.at(i)(4)
+			+ f.at(i)(5) + f.at(i)(6) + f.at(i)(7) + f.at(i)(8);
+			m.at(1) = -4 * f.at(i)(0) - f.at(i)(1) - f.at(i)(2) - f.at(i)(3)
+			- f.at(i)(4)
+			+ 2 * (f.at(i)(5) + f.at(i)(6) + f.at(i)(7) + f.at(i)(8));
+			m.at(2) = 4 * f.at(i)(0)
+			- 2 * (f.at(i)(1) + f.at(i)(2) + f.at(i)(3) + f.at(i)(4))
+			+ f.at(i)(5) + f.at(i)(6) + f.at(i)(7) + f.at(i)(8);
+			m.at(3) = f.at(i)(1) - f.at(i)(3) + f.at(i)(5) - f.at(i)(6) - f.at(i)(7)
+			+ f.at(i)(8);
+			m.at(4) = -2 * (f.at(i)(1) - f.at(i)(3)) + f.at(i)(5) - f.at(i)(6)
+			- f.at(i)(7) + f.at(i)(8);
+			m.at(5) = f.at(i)(2) - f.at(i)(4) + f.at(i)(5) + f.at(i)(6) - f.at(i)(7)
+			- f.at(i)(8);
+			m.at(6) = -2 * (f.at(i)(2) - f.at(i)(4)) + f.at(i)(5) + f.at(i)(6)
+			- f.at(i)(7) - f.at(i)(8);
+			m.at(7) = f.at(i)(1) - f.at(i)(2) + f.at(i)(3) - f.at(i)(4);
+			m.at(8) = f.at(i)(5) - f.at(i)(6) + f.at(i)(7) - f.at(i)(8);
 
-		for (size_t j = 0; j < Q; j++) {
-			numeric_vector u(2);
-			u(0) = velocities.at(0)(i);
-			u(1) = velocities.at(0)(j);
-			meq.at(j) = getMomentEquilibriumDistribution(j, u, densities(i));
+			for (size_t j = 0; j < Q; j++) {
+				numeric_vector u(2);
+				u(0) = velocities.at(0)(i);
+				u(1) = velocities.at(0)(j);
+				meq.at(j) = getMomentEquilibriumDistribution(j, u, densities(i));
+			}
+
+			f.at(i)(0) = m.at(0) - 4 * (m.at(1) - m.at(2));
+			f.at(i)(1) = m.at(0) - m.at(1) - 2 * (m.at(2) + m.at(4)) + m.at(3) + m.at(7);
+			f.at(i)(2) = m.at(0) - m.at(1) - 2 * (m.at(2) + m.at(6)) + m.at(5) - m.at(7);
+			f.at(i)(3) = m.at(0) - m.at(1) - 2 * (m.at(2) - m.at(4)) - m.at(3) + m.at(7);
+			f.at(i)(4) = m.at(0) - m.at(1) - 2 * (m.at(2) - m.at(6)) - m.at(5) - m.at(7);
+			f.at(i)(5) = m.at(0) + m.at(1) + m.at(1) + m.at(2) + m.at(3) + m.at(4) + m.at(5) + m.at(6)
+			+ m.at(8);
+			f.at(i)(6) = m.at(0) + m.at(1) + m.at(1) + m.at(2) - m.at(3) - m.at(4) + m.at(5) + m.at(6)
+			- m.at(8);
+			f.at(i)(7) = m.at(0) + m.at(1) + m.at(1) + m.at(2) - m.at(3) - m.at(4) - m.at(5) - m.at(6)
+			+ m.at(8);
+			f.at(i)(8) = m.at(0) + m.at(1) + m.at(1) + m.at(2) + m.at(3) + m.at(4) - m.at(5) - m.at(6)
+			- m.at(8);
+
 		}
-
-		f.at(i)(0) = m.at(0) - 4 * (m.at(1) - m.at(2));
-		f.at(i)(1) = m.at(0) - m.at(1) - 2 * (m.at(2) + m.at(4)) + m.at(3) + m.at(7);
-		f.at(i)(2) = m.at(0) - m.at(1) - 2 * (m.at(2) + m.at(6)) + m.at(5) - m.at(7);
-		f.at(i)(3) = m.at(0) - m.at(1) - 2 * (m.at(2) - m.at(4)) - m.at(3) + m.at(7);
-		f.at(i)(4) = m.at(0) - m.at(1) - 2 * (m.at(2) - m.at(6)) - m.at(5) - m.at(7);
-		f.at(i)(5) = m.at(0) + m.at(1) + m.at(1) + m.at(2) + m.at(3) + m.at(4) + m.at(5) + m.at(6)
-				+ m.at(8);
-		f.at(i)(6) = m.at(0) + m.at(1) + m.at(1) + m.at(2) - m.at(3) - m.at(4) + m.at(5) + m.at(6)
-				- m.at(8);
-		f.at(i)(7) = m.at(0) + m.at(1) + m.at(1) + m.at(2) - m.at(3) - m.at(4) - m.at(5) - m.at(6)
-				+ m.at(8);
-		f.at(i)(8) = m.at(0) + m.at(1) + m.at(1) + m.at(2) + m.at(3) + m.at(4) - m.at(5) - m.at(6)
-				- m.at(8);
-
 	}
-}
 
-} // namespace natrium
+}
+// namespace natrium
 
