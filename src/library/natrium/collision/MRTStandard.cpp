@@ -18,7 +18,7 @@ MRTStandard::MRTStandard(double relaxationParameter, double dt,
 MRTStandard::~MRTStandard() {
 }
 
-double MRTStandard::getEquilibriumDistributions(size_t i,
+double MRTStandard::getEquilibriumDistributions (size_t i,
 		const numeric_vector& u, const double rho) const {
 
 	assert(i < getStencil()->getQ());
