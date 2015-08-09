@@ -27,6 +27,7 @@
 #include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
 #include "../collision/BGKIncompressible.h"
+// #include "../collision/MRTStandard.h"
 
 #include "../problemdescription/BoundaryCollection.h"
 
@@ -149,6 +150,10 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = make_shared<BGKIncompressible>(tau,
+				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (MRT_STANDARD == configuration->getCollisionScheme()) {
+		m_configuration->getTimeStepSize(), *m_stencil;
+		m_collisionModel = make_shared<MRTStandard>(
 				m_configuration->getTimeStepSize(), m_stencil);
 	}
 
@@ -279,6 +284,11 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "tau:                      " << tau << endl;
 		break;
 	}
+	case MRT_STANDARD: {
+		LOG(WELCOME) << "No tau" << endl;
+		break;
+	}
+
 	}
 	LOG(WELCOME) << "----------------------------" << endl;
 
@@ -651,8 +661,7 @@ double CFDSolver<dim>::getTau() const {
 	if ((BGK_STANDARD == m_configuration->getCollisionScheme())
 			or (BGK_STANDARD_TRANSFORMED
 					== m_configuration->getCollisionScheme())
-			or (BGK_INCOMPRESSIBLE
-					== m_configuration->getCollisionScheme())) {
+			or (BGK_INCOMPRESSIBLE == m_configuration->getCollisionScheme())) {
 		return BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil);

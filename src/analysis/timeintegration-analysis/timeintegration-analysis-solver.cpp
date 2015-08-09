@@ -104,7 +104,7 @@ int main() {
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 
-	for (int solver = 6; solver < 7; solver++) {
+	for (int solver = 1; solver < 7; solver++) {
 		shared_ptr<SolverConfiguration> configuration = make_shared<
 				SolverConfiguration>();
 		std::string linearsolver = "test";
@@ -209,6 +209,7 @@ int main() {
 			configuration->setCommandLineVerbosity(BASIC);
 			configuration->setTimeStepSize(dt);
 			configuration->setSimulationEndTime(tmax);
+			//configuration->setCollisionScheme(BGK_INCOMPRESSIBLE);
 
 
 #ifdef MEASURE_ONLY_INIT_TIME
