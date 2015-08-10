@@ -18,7 +18,6 @@ template<size_t dim> BenchmarkCFDSolver<dim>::BenchmarkCFDSolver(
 				problemDescription) {
 	// initialize macroscopic variables
 #ifdef WITH_TRILINOS_MPI
-	m_supportPoints.resize(this->getAdvectionOperator()->getLocallyOwnedDofs().size());
 	m_analyticDensity.reinit(
 			this->getAdvectionOperator()->getLocallyOwnedDofs(),
 			this->getAdvectionOperator()->getLocallyRelevantDofs(),
@@ -31,16 +30,13 @@ template<size_t dim> BenchmarkCFDSolver<dim>::BenchmarkCFDSolver(
 						MPI_COMM_WORLD));
 	}
 #else
-	m_supportPoints.resize(this->getNumberOfDoFs());
 	m_analyticDensity.reinit(this->getNumberOfDoFs(), true);
 	for (size_t i = 0; i < dim; i++) {
 		m_analyticVelocity.push_back(
 				distributed_vector(this->getNumberOfDoFs()));
 	}
 #endif
-	dealii::DoFTools::map_dofs_to_support_points(
-			this->getAdvectionOperator()->getMapping(),
-			*(this->getAdvectionOperator()->getDoFHandler()), m_supportPoints);
+	this->getAdvectionOperator()->mapDoFsToSupportPoints(m_supportPoints);
 
 // File for errors
 	if ((not configuration->isSwitchOutputOff())) {
@@ -72,5 +68,108 @@ void BenchmarkCFDSolver<dim>::output(size_t iteration) {
 } /*output*/
 template void BenchmarkCFDSolver<2>::output(size_t iteration);
 template void BenchmarkCFDSolver<3>::output(size_t iteration);
+
+
+template<size_t dim>
+void natrium::BenchmarkCFDSolver<dim>::getAllAnalyticDensities(double time,
+		distributed_vector& analyticDensities,
+		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
+	shared_ptr<AdvectionOperator<dim> > adv_op = this->getAdvectionOperator();
+	// get Function instance
+	const shared_ptr<dealii::Function<dim> > f_rho =
+			m_benchmark->getAnalyticRhoFunction(time);
+	const unsigned int dofs_per_cell =
+			adv_op->getFe()->dofs_per_cell;
+	vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+			adv_op->getDoFHandler()->begin_active(), endc =
+					adv_op->getDoFHandler()->end();
+	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
+			cell->get_dof_indices(local_dof_indices);
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				assert(
+						analyticDensities.in_local_range(
+								local_dof_indices.at(i)));
+				assert(supportPoints.find(local_dof_indices.at(i))!=supportPoints.end());
+				analyticDensities(local_dof_indices.at(i)) = f_rho->value(supportPoints.at(local_dof_indices.at(i)));
+			}
+		} /* if is locally owned */
+	} /* for all cells */
+}
+template
+void natrium::BenchmarkCFDSolver<2>::getAllAnalyticDensities(double time,
+		distributed_vector& analyticDensities,
+		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const;
+template
+void natrium::BenchmarkCFDSolver<3>::getAllAnalyticDensities(double time,
+		distributed_vector& analyticDensities,
+		const map<dealii::types::global_dof_index, dealii::Point<3> >& supportPoints) const;
+
+template<size_t dim>
+void natrium::BenchmarkCFDSolver<dim>::getAllAnalyticVelocities(double time,
+		vector<distributed_vector>& analyticVelocities,
+		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
+	shared_ptr<AdvectionOperator<dim> > adv_op = this->getAdvectionOperator();
+	// get Function instance
+	const shared_ptr<dealii::Function<dim> > f_u =
+			m_benchmark->getAnalyticUFunction(time);
+	const shared_ptr<dealii::Function<dim> > f_v =
+			m_benchmark->getAnalyticVFunction(time);
+	const unsigned int dofs_per_cell =
+			adv_op->getFe()->dofs_per_cell;
+	vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+			adv_op->getDoFHandler()->begin_active(), endc =
+					adv_op->getDoFHandler()->end();
+	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
+			cell->get_dof_indices(local_dof_indices);
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				assert(
+						analyticVelocities.at(0).in_local_range(
+								local_dof_indices.at(i)));
+				assert(
+						analyticVelocities.at(1).in_local_range(
+								local_dof_indices.at(i)));
+				assert(supportPoints.find(local_dof_indices.at(i))!=supportPoints.end());
+				analyticVelocities.at(0)(local_dof_indices.at(i)) = f_u->value(supportPoints.at(local_dof_indices.at(i)));
+				analyticVelocities.at(1)(local_dof_indices.at(i)) = f_v->value(supportPoints.at(local_dof_indices.at(i)));
+			}
+		} /* if is locally owned */
+	} /* for all cells */
+	if (dim == 3) {
+		// get Function instance
+		const shared_ptr<dealii::Function<dim> > f_w =
+				m_benchmark->getAnalyticWFunction(time);
+		const unsigned int dofs_per_cell =
+				adv_op->getFe()->dofs_per_cell;
+		vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+		typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+				adv_op->getDoFHandler()->begin_active(), endc =
+						adv_op->getDoFHandler()->end();
+		for (; cell != endc; ++cell) {
+			if (cell->is_locally_owned()) {
+				cell->get_dof_indices(local_dof_indices);
+				for (size_t i = 0; i < dofs_per_cell; i++) {
+					assert(
+							analyticVelocities.at(2).in_local_range(
+									local_dof_indices.at(i)));
+					assert(supportPoints.find(local_dof_indices.at(i))!=supportPoints.end());
+					analyticVelocities.at(2)(local_dof_indices.at(i)) = f_w->value(supportPoints.at(local_dof_indices.at(i)));
+				}
+			} /* if is locally owned */
+		} /* for all cells */
+	}
+}
+template
+void natrium::BenchmarkCFDSolver<2>::getAllAnalyticVelocities(double time,
+		vector<distributed_vector>& analyticVelocities,
+		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const;
+template
+void natrium::BenchmarkCFDSolver<3>::getAllAnalyticVelocities(double time,
+		vector<distributed_vector>& analyticVelocities,
+		const map<dealii::types::global_dof_index, dealii::Point<3> >& supportPoints) const;
+
 
 } /* namespace natrium */

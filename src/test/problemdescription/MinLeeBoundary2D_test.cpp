@@ -12,6 +12,7 @@
 #include "deal.II/base/function.h"
 #include "deal.II/dofs/dof_tools.h"
 #include "deal.II/fe/component_mask.h"
+#include "deal.II/base/index_set.h"
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/stencils/D2Q9.h"
@@ -60,78 +61,77 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 	// for all blocks (I,J) (I for incoming and J for their opposites)
 	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
 			1);
-	SEDGMinLee<2> advector(problem->getMesh(),
-			problem->getBoundaries(), 2,
+	SEDGMinLee<2> advector(problem->getMesh(), problem->getBoundaries(), 2,
 			make_shared<D2Q9>());
 	vector<bool> isBoundary(advector.getNumberOfDoFs());
 	for (size_t i = 0; i < advector.getNumberOfDoFs(); i++) {
 		std::set<dealii::types::boundary_id> boundaryIndicators;
 		// left boundary
 		boundaryIndicators.insert(0);
-/*		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
-				dealii::ComponentMask(), isBoundary, boundaryIndicators);
-		if (isBoundary.at(i)) {
-			//cout << i << endl;
-			// note that block 0 refers to f_1 and so on
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(4, 6).exists(i,
-							i));
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(0, 2).exists(i,
-							i));
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(5, 7).exists(i,
-							i));
-		}
-		// right boundary
-		boundaryIndicators.clear();
-		boundaryIndicators.insert(1);
-		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
-				dealii::ComponentMask(), isBoundary, boundaryIndicators);
-		if (isBoundary.at(i)) {
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(6, 4).exists(i,
-							i));
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(2, 0).exists(i,
-							i));
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(7, 5).exists(i,
-							i));
-		}
-		// bottom boundary
-		boundaryIndicators.clear();
-		boundaryIndicators.insert(2);
-		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
-				dealii::ComponentMask(), isBoundary, boundaryIndicators);
-		if (isBoundary.at(i)) {
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(4, 6).exists(i,
-							i));
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(1, 3).exists(i,
-							i));
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(5, 7).exists(i,
-							i));
-		}
-		// top boundary
-		boundaryIndicators.clear();
-		boundaryIndicators.insert(3);
-		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
-				dealii::ComponentMask(), isBoundary, boundaryIndicators);
-		if (isBoundary.at(i)) {
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(6, 4).exists(i,
-							i));
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(3, 1).exists(i,
-							i));
-			BOOST_CHECK(
-					advector.getBlockSparsityPattern().block(7, 5).exists(i,
-							i));
-		}
-	*/
+		/*		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
+		 dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		 if (isBoundary.at(i)) {
+		 //cout << i << endl;
+		 // note that block 0 refers to f_1 and so on
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(4, 6).exists(i,
+		 i));
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(0, 2).exists(i,
+		 i));
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(5, 7).exists(i,
+		 i));
+		 }
+		 // right boundary
+		 boundaryIndicators.clear();
+		 boundaryIndicators.insert(1);
+		 dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
+		 dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		 if (isBoundary.at(i)) {
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(6, 4).exists(i,
+		 i));
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(2, 0).exists(i,
+		 i));
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(7, 5).exists(i,
+		 i));
+		 }
+		 // bottom boundary
+		 boundaryIndicators.clear();
+		 boundaryIndicators.insert(2);
+		 dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
+		 dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		 if (isBoundary.at(i)) {
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(4, 6).exists(i,
+		 i));
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(1, 3).exists(i,
+		 i));
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(5, 7).exists(i,
+		 i));
+		 }
+		 // top boundary
+		 boundaryIndicators.clear();
+		 boundaryIndicators.insert(3);
+		 dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
+		 dealii::ComponentMask(), isBoundary, boundaryIndicators);
+		 if (isBoundary.at(i)) {
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(6, 4).exists(i,
+		 i));
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(3, 1).exists(i,
+		 i));
+		 BOOST_CHECK(
+		 advector.getBlockSparsityPattern().block(7, 5).exists(i,
+		 i));
+		 }
+		 */
 	}
 
 	cout << "done" << endl;
@@ -185,17 +185,18 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 	// Check boundary velocity
 	std::set<dealii::types::boundary_id> boundaryIndicators;
 	boundaryIndicators.insert(3);
-	vector<bool> isBoundary;
+	dealii::IndexSet isBoundary;
 	dealii::DoFTools::extract_boundary_dofs(
 			*(solver.getAdvectionOperator()->getDoFHandler()),
-			dealii::ComponentMask(), isBoundary);//, boundaryIndicators);
+			dealii::ComponentMask(), isBoundary);	//, boundaryIndicators);
 
-	for (size_t i = 0; i < solver.getNumberOfDoFs(); i++) {
-		if (isBoundary.at(i)) {
-			cout << i << endl;
-			BOOST_CHECK_CLOSE(solver.getVelocity().at(0)(i), 0.01, 0.00001);
-			BOOST_CHECK_SMALL(solver.getVelocity().at(1)(i), 1e-7);
-		}
+	for (size_t i = 0; i < isBoundary.n_elements(); i++) {
+		cout << i << endl;
+		BOOST_CHECK_CLOSE(
+				solver.getVelocity().at(0)(isBoundary.nth_index_in_set(i)),
+				0.01, 0.00001);
+		BOOST_CHECK_SMALL(solver.getVelocity().at(1)(i), 1e-7);
+
 	}
 
 	cout << "done" << endl;

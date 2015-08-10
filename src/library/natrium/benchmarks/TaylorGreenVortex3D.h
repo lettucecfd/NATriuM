@@ -30,18 +30,54 @@ namespace natrium {
 class TaylorGreenVortex3D: public Benchmark<3> {
 public:
 
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class AnalyticVelocityU: public dealii::Function<3> {
+	private:
+		TaylorGreenVortex3D* m_flow;
+	public:
+		AnalyticVelocityU(TaylorGreenVortex3D* flow) :
+				m_flow(flow) {
+		}
+		double value(const dealii::Point<3>& x) const;
+	};
+
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class AnalyticVelocityV: public dealii::Function<3> {
+	private:
+		TaylorGreenVortex3D* m_flow;
+	public:
+		AnalyticVelocityV(TaylorGreenVortex3D* flow) :
+				m_flow(flow) {
+		}
+		double value(const dealii::Point<3>& x) const;
+	};
+
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class AnalyticVelocityW: public dealii::Function<3> {
+	private:
+		TaylorGreenVortex3D* m_flow;
+	public:
+		AnalyticVelocityW(TaylorGreenVortex3D* flow) :
+				m_flow(flow) {
+		}
+		double value(const dealii::Point<3>& x) const;
+	};
+
   /// constructor
   TaylorGreenVortex3D(double viscosity,
       size_t refinementLevel);
 
   /// destructor
   virtual ~TaylorGreenVortex3D();
-
-  /**
-   * @short analytic solution of the Taylor-Green vortex
-   */
-  virtual void getAnalyticVelocity(const dealii::Point<3>& x, double t, dealii::Point<3>& velocity) const;
-
 
 private:
 

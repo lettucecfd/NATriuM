@@ -26,16 +26,24 @@ namespace natrium {
 class CouetteFlow3D: public Benchmark<3> {
 public:
 
+
+	/* class to describe the x-component of the analytic solution */
+	class AnalyticVelocityU: public dealii::Function<3> {
+	private:
+		CouetteFlow3D* m_benchmark;
+	public:
+		AnalyticVelocityU(CouetteFlow3D* couette) :
+				m_benchmark(couette) {
+		}
+		double value(const dealii::Point<3>& x) const;
+
+	};
+
 	/// constructor
 	CouetteFlow3D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false);
 
 	/// destructor
 	virtual ~CouetteFlow3D();
-
-	/**
-	 * @short analytic solution of the Taylor-Green vortex
-	 */
-	virtual void getAnalyticVelocity(const dealii::Point<3>& x, double t, dealii::Point<3>& velocity) const;
 
 
 	virtual double getCharacteristicVelocity() const {
@@ -61,6 +69,10 @@ private:
 	 */
 	shared_ptr<BoundaryCollection<3> > makeBoundaries(double topPlateVelocity);
 
+	double getStartTime() const {
+		return m_startTime;
+	}
+
 	/**
 	 * @short function to generate the unstructured mesh grid
 	 */
@@ -76,26 +88,6 @@ private:
 	                     trans(in(1)));
 	  }
 	};
-
-
-//#define TURBULENT
-#ifdef TURBULENT
-
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<3> >& supportPoints) const {
-		cout << "crazy init" << endl;
-		assert(
-				initialVelocities.at(0).size()
-						== initialVelocities.at(1).size());
-		assert(initialVelocities.size() == 3);
-		for (size_t i = 0; i < supportPoints.size(); i++){
-			initialVelocities.at(0)(i) = supportPoints.at(i)(2)* m_topPlateVelocity;
-			initialVelocities.at(1)(i) = 0.5* m_topPlateVelocity*sin(8*atan(1)*supportPoints.at(i)(0)/getCharacteristicLength());
-			initialVelocities.at(2)(i) = 0.5* m_topPlateVelocity*cos(8*atan(1)*supportPoints.at(i)(0)/getCharacteristicLength());
-		}
-	}
-#endif
 
 };
 

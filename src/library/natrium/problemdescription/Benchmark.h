@@ -21,6 +21,14 @@
 namespace natrium {
 
 template<size_t dim> class Benchmark: public ProblemDescription<dim> {
+protected:
+	/// function to define initial densities
+	shared_ptr<dealii::Function<dim> > m_analyticRho;
+
+	/// function to define initial velocities (u,v,w for x,y,z component)
+	shared_ptr<dealii::Function<dim> > m_analyticU;
+	shared_ptr<dealii::Function<dim> > m_analyticV;
+	shared_ptr<dealii::Function<dim> > m_analyticW;
 public:
 	/// Constructor
 	Benchmark(shared_ptr<Mesh<dim> > triangulation,
@@ -30,71 +38,100 @@ public:
 	virtual ~Benchmark() {
 	}
 
-	/**
-	 * @short get Analytic velocity at one point in space and time
+	/*
+	 * @short analytic solution at time t
+	 * @note This function sets the time at which the analytic solution is evaluated.
+	 * It is not recommended to store the return value in any local object that is used
+	 * in more than one time step.
 	 */
-	virtual void getAnalyticVelocity(const dealii::Point<dim>& x, double t,
-			dealii::Point<dim>& velocity) const = 0;
+	const shared_ptr<dealii::Function<dim> >& getAnalyticRhoFunction(double time) const {
+		m_analyticRho->set_time(time);
+		return m_analyticRho;
+	}
 
-	/**
-	 * @short get Analytic density at one point in space and time
+	/*
+	 * @short analytic solution at time t
+	 * @note This function sets the time at which the analytic solution is evaluated.
+	 * It is not recommended to store the return value in any local object that is used
+	 * in more than one time step.
 	 */
-	virtual double getAnalyticDensity(const dealii::Point<dim>& x,
-			double t) const {
-		return 1.0;
+	const shared_ptr<dealii::Function<dim> >& getAnalyticUFunction(double time) const {
+		m_analyticU->set_time(time);
+		return m_analyticU;
 	}
 
-	/**
-	 * @short get full analytic solution for the velocity field at time t
+
+	/*
+	 * @short analytic solution at time t
+	 * @note This function sets the time at which the analytic solution is evaluated.
+	 * It is not recommended to store the return value in any local object that is used
+	 * in more than one time step.
 	 */
-	void getAllAnalyticVelocities(double time,
-			vector<distributed_vector>& analyticSolution,
-			const vector<dealii::Point<dim> >& supportPoints) const {
-		// check dimensions
-		assert(analyticSolution.at(0).size() == supportPoints.size());
-		assert(analyticSolution.at(1).size() == supportPoints.size());
-		if (dim == 3)
-			assert(analyticSolution.at(2).size() == supportPoints.size());
-		assert(supportPoints.size() > 0);
-
-		// get analytic velocities
-		dealii::Point<dim> velocity;
-		for (size_t i = 0; i < supportPoints.size(); i++) {
-			getAnalyticVelocity(supportPoints.at(i), time, velocity);
-			analyticSolution.at(0)(i) = velocity(0);
-			analyticSolution.at(1)(i) = velocity(1);
-			if (dim == 3) {
-				analyticSolution.at(2)(i) = velocity(2);
-			}
-		}
+	const shared_ptr<dealii::Function<dim> >& getAnalyticVFunction(double time) const {
+		m_analyticV->set_time(time);
+		return m_analyticV;
 	}
 
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<dim> >& supportPoints) const {
-		getAllAnalyticDensities(0.0, initialDensities, supportPoints);
-	}
 
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<dim> >& supportPoints) const {
-		assert(
-				initialVelocities.at(0).size()
-						== initialVelocities.at(1).size());
-		assert(initialVelocities.size() == dim);
-		getAllAnalyticVelocities(0.0, initialVelocities, supportPoints);
-	}
-
-	/**
-	 * @short get full analytic solution for the density field at time t
+	/*
+	 * @short analytic solution at time t
+	 * @note This function sets the time at which the analytic solution is evaluated.
+	 * It is not recommended to store the return value in any local object that is used
+	 * in more than one time step.
 	 */
-	virtual void getAllAnalyticDensities(double time,
-			distributed_vector& analyticSolution,
-			const vector<dealii::Point<dim> >& supportPoints) const {
-		assert(analyticSolution.size() == supportPoints.size());
-		for (size_t i = 0; i < analyticSolution.size(); i++) {
-			analyticSolution(i) = getAnalyticDensity(supportPoints.at(i), time);
-		}
+	const shared_ptr<dealii::Function<dim> >& getAnalyticWFunction(double time) const {
+		m_analyticW->set_time(time);
+		return m_analyticW;
 	}
+
+
+	/*
+	 * @short analytic solution at time t
+	 * @note This function sets the time at which the analytic solution is evaluated.
+	 * It is not recommended to store the return value in any local object that is used
+	 * in more than one time step.
+	 */
+	const shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
+		m_analyticRho->set_time(0);
+		return m_analyticRho;
+	}
+
+
+	/*
+	 * @short analytic solution at time t
+	 * @note This function sets the time at which the analytic solution is evaluated.
+	 * It is not recommended to store the return value in any local object that is used
+	 * in more than one time step.
+	 */
+	const shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
+		m_analyticU->set_time(0);
+		return m_analyticU;
+	}
+
+
+	/*
+	 * @short analytic solution at time t
+	 * @note This function sets the time at which the analytic solution is evaluated.
+	 * It is not recommended to store the return value in any local object that is used
+	 * in more than one time step.
+	 */
+	const shared_ptr<dealii::Function<dim> >& getInitialVFunction() const {
+		m_analyticV->set_time(0);
+		return m_analyticV;
+	}
+
+
+	/*
+	 * @short analytic solution at time t
+	 * @note This function sets the time at which the analytic solution is evaluated.
+	 * It is not recommended to store the return value in any local object that is used
+	 * in more than one time step.
+	 */
+	const shared_ptr<dealii::Function<dim> >& getInitialWFunction() const {
+		m_analyticW->set_time(0);
+		return m_analyticW;
+	}
+
 
 };
 

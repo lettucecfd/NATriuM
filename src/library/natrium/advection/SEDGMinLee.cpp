@@ -7,7 +7,7 @@
 
 #include "SEDGMinLee.h"
 
-#include "fstream"
+#include <fstream>
 
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_sparsity_pattern.h"
@@ -205,11 +205,10 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 #ifdef WITH_TRILINOS
 	// Trilinos can work with improved sparsity structures
 
-
 #ifdef WITH_TRILINOS_MPI
 	/*TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyRelevantDofs);
-	TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyRelevantDofs);
-	TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
+	 TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyRelevantDofs);
+	 TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
 	DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
 	DynamicSparsityPattern cSparseOpposite(m_locallyRelevantDofs);
 	DynamicSparsityPattern cSparseEmpty(m_locallyRelevantDofs);
@@ -230,7 +229,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			periodic->second->createCellMap(*m_doFHandler);
 		}
 	}
-	
+
 	//reorder degrees of freedom
 	//DoFRenumbering::Cuthill_McKee(*m_doFHandler);
 	//The Renumbering operation is commented out because of its quadratic complexity.
@@ -248,7 +247,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	delete feFaceValues;
 	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
 	 cSparse.block(0, 0));*/
-	
+
 	// add entries for non-periodic boundaries
 	for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =
 			m_boundaries->getMinLeeBoundaries().begin();
@@ -261,14 +260,14 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
 #ifdef WITH_TRILINOS_MPI
 	/*SparsityTools::distribute_sparsity_pattern(cSparseDiag,
-			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-			m_locallyRelevantDofs);
-	SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
-			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-			m_locallsyRelevantDofs);
-	SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
-			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-			m_locallyRelevantDofs);*/
+	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+	 m_locallyRelevantDofs);
+	 SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
+	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+	 m_locallsyRelevantDofs);
+	 SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
+	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+	 m_locallyRelevantDofs);*/
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
 	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
@@ -284,7 +283,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
 	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
-	
+
 	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
 #endif
 	for (size_t I = 0; I < n_blocks; I++) {
@@ -984,19 +983,7 @@ template bool SEDGMinLee<3>::isStatusOK(const string& directory,
 
 template<size_t dim>
 double SEDGMinLee<dim>::calcMagicNumber() const {
-
-	double magicNumber = m_fe->get_degree() / m_tria->n_cells();
-
-	vector<dealii::Point<dim> > supportPoints(this->getNumberOfDoFs());
-	mapDoFsToSupportPoints(supportPoints);
-	for (size_t i = 0; i < supportPoints.size();
-			i += std::max(1., supportPoints.size() / 100.)) {
-		magicNumber += (1 + (i % 1000)) / (1 + i) * 1.
-				/ (supportPoints.at(i)(0) + 1) * 1.
-				/ (1 + supportPoints.at(i)(1)) * 1.
-				/ (1 + supportPoints.at(i)(dim - 1));
-	}
-	return magicNumber;
+	return 0;
 }
 
 template double SEDGMinLee<2>::calcMagicNumber() const;

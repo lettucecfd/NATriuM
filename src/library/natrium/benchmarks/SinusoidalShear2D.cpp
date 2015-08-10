@@ -10,6 +10,8 @@
 #include "deal.II/grid/grid_out.h"
 #include "deal.II/grid/grid_tools.h"
 
+#include "../utilities/BasicNames.h"
+
 namespace natrium {
 
 SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
@@ -74,28 +76,13 @@ shared_ptr<BoundaryCollection<2> > SinusoidalShear2D::makeBoundaries(
 	return boundaries;
 }
 
-void SinusoidalShear2D::applyInitialDensities(
-		distributed_vector& initialDensities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	for (size_t i = 0; i < initialDensities.size(); i++) {
-		initialDensities(i) = 1.0;
-	}
-}
-
-void SinusoidalShear2D::applyInitialVelocities(
-		vector<distributed_vector>& initialVelocities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	assert ( initialVelocities.size() == 2);
-	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
+double SinusoidalShear2D::AnalyticVelocityU::value(const dealii::Point<2>& x) const{
 #ifdef FASTER_CONVERGENCE_INIT
-		double upper = m_height +  m_ampl * std::sin(8 * std::atan(1) * supportPoints.at(i)(0) );
-		initialVelocities.at(0)(i) = m_bottomVelocity * pow( 1 - supportPoints.at(i)(1)/upper,2);
-		initialVelocities.at(1)(i) = 0.0;
+		double upper = m_flow->m_height +  flow->m_ampl * std::sin(8 * std::atan(1) * x(0) );
+		return flow->m_bottomVelocity * pow( 1 - x(1)/upper,2);
 #else
-		initialVelocities.at(0)(i) = 0.0;
-		initialVelocities.at(1)(i) = 0.0;
+		return 0.0;
 #endif
-	}
 }
 
 } /* namespace natrium */

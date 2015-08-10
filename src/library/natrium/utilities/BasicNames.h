@@ -11,7 +11,7 @@
 
 // GLOBAL COMPILER FLAGS
 #define WITH_TRILINOS
-#define WITH_TRILINOS_MPI
+// #define WITH_TRILINOS_MPI
 //TODO(AK) merge WITH_TRILINOS_MPI into WITH_TRILINOS
 
 // WITH_TRILINOS_MPI flag includes WITH_TRILINOS flag
@@ -22,6 +22,7 @@
 #endif
 
 #include <vector>
+#include <map>
 #include <iostream>
 
 #include <math.h>
@@ -61,6 +62,7 @@ template<size_t dim> using Mesh = dealii::Triangulation<dim>;
 /// The following names will be used throughout natrium
 /// by #including BasicNames.h they can are used by default
 using std::vector;
+using std::map;
 using std::cout;
 using std::cerr;
 using std::endl;

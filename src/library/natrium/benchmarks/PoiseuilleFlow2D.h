@@ -24,6 +24,20 @@ namespace natrium {
 class PoiseuilleFlow2D: public Benchmark<2> {
 public:
 
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class AnalyticVelocityU: public dealii::Function<2> {
+	private:
+		PoiseuilleFlow2D* m_flow;
+	public:
+		AnalyticVelocityU(PoiseuilleFlow2D* flow) :
+				m_flow(flow) {
+		}
+		double value(const dealii::Point<2>& x) const;
+	};
+
 	/// constructor
 	PoiseuilleFlow2D(double viscosity, size_t refinementLevel, double u_bulk = 1.0,
 			double height = 1.0, double length = 2.0, bool is_periodic = true);
@@ -31,28 +45,6 @@ public:
 	/// destructor
 	virtual ~PoiseuilleFlow2D();
 
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const;
-
-	/**
-	 * @short analytic solution of the Taylor-Green vortex
-	 */
-	virtual void getAnalyticVelocity(const dealii::Point<2>& x, double t,
-			dealii::Point<2>& velocity) const;
-
-	/**
-	 * @short get Analytic density at one point in space and time
-	 * @note Lattice Boltzmann uses an ideal EOS to couple density and pressure. In that sense, the analytic
-	 * density here is rather a pressure, and as such calculated from the analytic solution for p.
-	 */
-	virtual double getAnalyticDensity(const dealii::Point<2>& x,
-			double t) const;
 
 	virtual double getCharacteristicVelocity() const {
 		return m_uBulk;

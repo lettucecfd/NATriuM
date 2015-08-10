@@ -81,24 +81,10 @@ shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 
 	return boundaries;
 }
+
+double PoiseuilleFlow2D::AnalyticVelocityU::value(const dealii::Point<2>& x) const{
+	return m_flow->m_uMax * (1 - pow(x(1) / m_flow->getCharacteristicLength(), 2));
+}
+
 } /* namespace natrium */
 
-void natrium::PoiseuilleFlow2D::applyInitialVelocities(
-		vector<distributed_vector>& initialVelocities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-		initialVelocities.at(0)(i) = 0.0;
-		initialVelocities.at(0)(i) = 0.0;
-	}
-}
-
-void natrium::PoiseuilleFlow2D::getAnalyticVelocity(const dealii::Point<2>& x,
-		double t, dealii::Point<2>& velocity) const {
-	velocity(0) = m_uMax * (1 - pow(x(1) / getCharacteristicLength(), 2));
-	velocity(1) = 0.0;
-}
-
-double natrium::PoiseuilleFlow2D::getAnalyticDensity(const dealii::Point<2>& x,
-		double t) const {
-	return 1.0;
-}

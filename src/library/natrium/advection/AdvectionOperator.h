@@ -48,7 +48,7 @@ public:
 	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const = 0;
 
 	virtual void mapDoFsToSupportPoints(
-			vector<dealii::Point<dim> >& supportPoints) const = 0;
+			std::map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const = 0;
 
 	virtual const dealii::MappingQ<dim>& getMapping() const = 0;
 

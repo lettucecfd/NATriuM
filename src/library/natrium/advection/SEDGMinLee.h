@@ -316,8 +316,8 @@ public:
 	}
 
 	virtual void mapDoFsToSupportPoints(
-			vector<dealii::Point<dim> >& supportPoints) const {
-		assert(supportPoints.size() == this->getNumberOfDoFs());
+			std::map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
+		//assert(supportPoints.size() == this->getNumberOfDoFs());
 		dealii::DoFTools::map_dofs_to_support_points(m_mapping, *m_doFHandler,
 				supportPoints);
 	}

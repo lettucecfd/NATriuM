@@ -20,23 +20,24 @@
 
 namespace natrium {
 
-
-
 CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, double L, double startTime, bool isUnstructured) :
-		Benchmark<3>(makeGrid(L, refinementLevel, isUnstructured), viscosity, L), m_topPlateVelocity(
-				topPlateVelocity), m_startTime(startTime) {
+		Benchmark<3>(makeGrid(L, refinementLevel, isUnstructured), viscosity,
+				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(topPlateVelocity));
+
+	/// apply initial values
+	m_analyticU = make_shared<AnalyticVelocityU>(this);
 }
 
 CouetteFlow3D::~CouetteFlow3D() {
 }
 
-shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L,
-		size_t refinementLevel, bool isUnstructured) {
+shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L, size_t refinementLevel,
+		bool isUnstructured) {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
@@ -59,8 +60,8 @@ shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L,
 	unitSquare->refine_global(refinementLevel);
 
 	// transform grid
-	if (isUnstructured){
-	  dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
+	if (isUnstructured) {
+		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
 	}
 	return unitSquare;
 }
@@ -75,10 +76,8 @@ shared_ptr<BoundaryCollection<3> > CouetteFlow3D::makeBoundaries(
 	numeric_vector constantVelocity(3);
 	constantVelocity(0) = topPlateVelocity;
 
-	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<3> >(0, 1, getMesh()));
-	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<3> >(2, 3, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(0, 1, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(2, 3, getMesh()));
 	boundaries->addBoundary(make_shared<MinLeeBoundary<3> >(4, zeroVelocity));
 	boundaries->addBoundary(
 			make_shared<MinLeeBoundary<3> >(5, constantVelocity));
@@ -89,27 +88,24 @@ shared_ptr<BoundaryCollection<3> > CouetteFlow3D::makeBoundaries(
 	return boundaries;
 }
 
-void CouetteFlow3D::getAnalyticVelocity(const dealii::Point<3>& x, double t,
-		dealii::Point<3>& velocity) const {
+double CouetteFlow3D::AnalyticVelocityU::value(
+		const dealii::Point<3>& x) const {
 	// the analytic solution is given by an asymptotic series
-	double U = getCharacteristicVelocity();
-	double L = getCharacteristicLength();
+	double t = this->get_time();
+	double U = m_benchmark->getCharacteristicVelocity();
+	double L = m_benchmark->getCharacteristicLength();
+	double t0 = m_benchmark->getStartTime();
+	double nu = m_benchmark->getViscosity();
 
-	t += m_startTime;
+	t += t0;
 	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
 	// therefor the initial condition is set first:
 	if (t < 0.00001) {
 		if (x(2) < L - 0.00001) {
-			velocity(0) = 0;
-			velocity(1) = 0;
-			velocity(2) = 0;
-			return;
+			return 0;
 		} else {
 			// upper border
-			velocity(0) = m_topPlateVelocity;
-			velocity(1) = 0;
-			velocity(2) = 0;
-			return;
+			return U;
 		}
 	}
 
@@ -122,7 +118,7 @@ void CouetteFlow3D::getAnalyticVelocity(const dealii::Point<3>& x, double t,
 	for (size_t i = 1; i <= 10000; i++) {
 		// calculate term in series
 		lambda = i * PI / L;
-		exp_expression = exp(-getViscosity() * lambda * lambda * t);
+		exp_expression = exp(-nu * lambda * lambda * t);
 		increment = (i % 2 == 0 ? 1. : -1.) * 2 * U / (lambda * L)
 				* exp_expression * sin(lambda * x(2));
 		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i
@@ -137,10 +133,7 @@ void CouetteFlow3D::getAnalyticVelocity(const dealii::Point<3>& x, double t,
 		LOG(WARNING) << "Warning: Analytic solution series did not converge."
 				<< endl;
 	}
-	velocity(0) = sum;
-	velocity(1) = 0.0;
-	velocity(2) = 0;
-
+	return sum;
 }
 
 } /* namespace natrium */

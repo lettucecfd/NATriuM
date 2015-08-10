@@ -20,6 +20,21 @@ namespace natrium {
 class SinusoidalShear2D: public ProblemDescription<2> {
 public:
 
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class AnalyticVelocityU: public dealii::Function<2> {
+	private:
+		SinusoidalShear2D* m_flow;
+	public:
+		AnalyticVelocityU(SinusoidalShear2D* flow) :
+				m_flow(flow) {
+		}
+		double value(const dealii::Point<2>& x) const;
+	};
+
+
 	/// constructor
 	SinusoidalShear2D(double viscosity, double bottomVelocity,
 			size_t refinementLevel, double L = 1.0, double averageHeight = 1.0,
@@ -51,23 +66,6 @@ private:
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
 	shared_ptr<BoundaryCollection<2> > makeBoundaries(double bottomVelocity);
-
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const;
-
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const;
 
 	/**
 	 * @short function to generate the unstructured mesh grid

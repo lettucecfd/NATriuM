@@ -76,23 +76,10 @@ shared_ptr<BoundaryCollection<2> > LubricationSine::makeBoundaries(
 	return boundaries;
 }
 
-void LubricationSine::applyInitialDensities(
-		distributed_vector& initialDensities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	for (size_t i = 0; i < initialDensities.size(); i++) {
-		initialDensities(i) = 1.0;
-	}
-}
 
-void LubricationSine::applyInitialVelocities(
-		vector<distributed_vector>& initialVelocities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	assert ( initialVelocities.size() == 2);
-	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-		double upper = m_height - m_ampl; //+  m_ampl * std::sin(8 * std::atan(1) * supportPoints.at(i)(0) / m_length() );
-		initialVelocities.at(0)(i) = m_bottomVelocity * pow( 1 - supportPoints.at(i)(1)/upper,2);
-		initialVelocities.at(1)(i) = 0.0;
-	}
+double LubricationSine::AnalyticVelocityU::value(const dealii::Point<2>& x) const{
+	double upper = m_flow->m_height - m_flow->m_ampl; //+  m_ampl * std::sin(8 * std::atan(1) * supportPoints.at(i)(0) / m_length() );
+	return m_flow->m_bottomVelocity * pow( 1 - x(1)/upper,2);
 }
 
 } /* namespace natrium */

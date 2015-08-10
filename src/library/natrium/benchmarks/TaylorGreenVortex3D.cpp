@@ -27,13 +27,16 @@ TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity, size_t refinementLeve
 TaylorGreenVortex3D::~TaylorGreenVortex3D() {
 }
 
-
-void TaylorGreenVortex3D::getAnalyticVelocity(const dealii::Point<3>& x, double t, dealii::Point<3>& velocity) const {
-	  velocity(0) = sin(x(0))*cos(x(1))*cos(x(2))*exp(-2*getViscosity()*t);
-	  velocity(1) = -cos(x(0))*sin(x(1))*cos(x(2))*exp(-2*getViscosity()*t);
-	  velocity(2) = 0;
-
+double TaylorGreenVortex3D::AnalyticVelocityU::value(const dealii::Point<3>& x) const{
+	return sin(x(0))*cos(x(1))*cos(x(2))*exp(-2*m_flow->getViscosity()*this->get_time());
 }
+double TaylorGreenVortex3D::AnalyticVelocityV::value(const dealii::Point<3>& x) const{
+	 return -cos(x(0))*sin(x(1))*cos(x(2))*exp(-2*m_flow->getViscosity()*this->get_time());
+}
+double TaylorGreenVortex3D::AnalyticVelocityW::value(const dealii::Point<3>& x) const{
+	return 0;
+}
+
 
 /**
  * @short create triangulation for TaylorGreen Vortex flow

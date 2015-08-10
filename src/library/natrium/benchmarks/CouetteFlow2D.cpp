@@ -27,6 +27,7 @@ CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 		Benchmark<2>(makeGrid(L, refinementLevel, isUnstructured), viscosity,
 				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
+	m_analyticU = make_shared<AnalyticVelocityU>(this);
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(topPlateVelocity));
@@ -90,25 +91,23 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	return boundaries;
 }
 
-void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t,
-		dealii::Point<2>& velocity) const {
+double CouetteFlow2D::AnalyticVelocityU::value(const dealii::Point<2>& x) const {
 	// the analytic solution is given by an asymptotic series
-	double U = getCharacteristicVelocity();
-	double L = getCharacteristicLength();
+	double t = this->get_time();
+	double U = m_benchmark->getCharacteristicVelocity();
+	double L = m_benchmark->getCharacteristicLength();
+	double t0 = m_benchmark->getStartTime();
+	double nu = m_benchmark->getViscosity();
 
-	t += m_startTime;
+	t += t0;
 	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
 	// therefor the initial condition is set first:
 	if (t < 0.00001) {
 		if (x(1) < L - 0.00001) {
-			velocity(0) = 0;
-			velocity(1) = 0;
-			return;
+			return 0 ;
 		} else {
 			// upper border
-			velocity(0) = m_topPlateVelocity;
-			velocity(1) = 0;
-			return;
+			return U;
 		}
 	}
 
@@ -121,7 +120,7 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t,
 	for (size_t i = 1; i <= 10000; i++) {
 		// calculate term in series
 		lambda = i * PI / L;
-		exp_expression = exp(-getViscosity() * lambda * lambda * t);
+		exp_expression = exp(-nu * lambda * lambda * t);
 		increment = (i % 2 == 0 ? 1. : -1.) * 2 * U / (lambda * L)
 				* exp_expression * sin(lambda * x(1));
 		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i
@@ -133,12 +132,12 @@ void CouetteFlow2D::getAnalyticVelocity(const dealii::Point<2>& x, double t,
 	}
 	// assert convergence of the above asymptotic sum
 	if (exp_expression >= 1e-12) {
-		LOG(WARNING) << "Warning: Analytic solution series did not converge."
+		LOG(WARNING)
+				<< "Warning: Analytic solution series did not converge."
 				<< endl;
 	}
-	velocity(0) = sum;
-	velocity(1) = 0.0;
-
+	return sum;
 }
+
 
 } /* namespace natrium */

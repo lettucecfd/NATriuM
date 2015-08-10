@@ -30,22 +30,23 @@ TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
 TaylorGreenVortex2D::~TaylorGreenVortex2D() {
 }
 
-void TaylorGreenVortex2D::getAnalyticVelocity(const dealii::Point<2>& x,
-		double t, dealii::Point<2>& velocity) const {
-	velocity(0) = sin(x(0)) * cos(x(1)) * exp(-2 * getViscosity() * t);
-	velocity(1) = -cos(x(0)) * sin(x(1)) * exp(-2 * getViscosity() * t);
+double TaylorGreenVortex2D::AnalyticVelocityU::value(
+		const dealii::Point<2>& x) const {
+	return sin(x(0)) * cos(x(1))
+			* exp(-2 * m_flow->getViscosity() * this->get_time());
 }
-
-/**
- * @short get Analytic density at one point in space and time
- */
-double TaylorGreenVortex2D::getAnalyticDensity(const dealii::Point<2>& x,
-		double t) const {
-	if (m_analyticInit) {
-		 double rho0 = 1;
-		 double p0 = 0;
-		 double p = rho0/4.* (cos(2*x(0)) + cos(2*x(1))) * exp(-4 * getViscosity() * t);
-		 return rho0 + p / (m_cs*m_cs) ;
+double TaylorGreenVortex2D::AnalyticVelocityV::value(
+		const dealii::Point<2>& x) const {
+	return -cos(x(0)) * sin(x(1))
+			* exp(-2 * m_flow->getViscosity() * this->get_time());
+}
+double TaylorGreenVortex2D::AnalyticDensity::value(
+		const dealii::Point<2>& x) const {
+	if (m_flow->m_analyticInit) {
+		double rho0 = 1;
+		double p = rho0 / 4. * (cos(2 * x(0)) + cos(2 * x(1)))
+				* exp(-4 * m_flow->getViscosity() * this->get_time());
+		return rho0 + p / (m_flow->m_cs * m_flow->m_cs);
 	} else {
 		return 1.0;
 	}
@@ -55,8 +56,7 @@ double TaylorGreenVortex2D::getAnalyticDensity(const dealii::Point<2>& x,
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid(
-		size_t refinementLevel) {
+shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid(size_t refinementLevel) {
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
 	shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >(MPI_COMM_WORLD);
@@ -88,10 +88,8 @@ shared_ptr<BoundaryCollection<2> > TaylorGreenVortex2D::makeBoundaries() {
 	// make boundary description
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
 			BoundaryCollection<2> >();
-	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
-	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(2, 3, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(2, 3, getMesh()));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Mesh<2> > tria_pointer = getMesh();

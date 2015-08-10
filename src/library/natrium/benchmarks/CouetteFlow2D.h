@@ -9,11 +9,9 @@
 #define COUETTEFLOW2D_H_
 
 #include "deal.II/grid/tria.h"
-
+#include "deal.II/base/function.h"
 #include "../problemdescription/Benchmark.h"
 #include "../utilities/BasicNames.h"
-
-
 
 namespace natrium {
 
@@ -25,17 +23,27 @@ namespace natrium {
 class CouetteFlow2D: public Benchmark<2> {
 public:
 
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class AnalyticVelocityU: public dealii::Function<2> {
+	private:
+		CouetteFlow2D* m_benchmark;
+	public:
+		AnalyticVelocityU(CouetteFlow2D* couette) :
+				m_benchmark(couette) {
+		}
+		double value(const dealii::Point<2>& x) const;
+	};
+
 	/// constructor
-	CouetteFlow2D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false);
+	CouetteFlow2D(double viscosity, double topPlateVelocity,
+			size_t refinementLevel, double L = 1.0, double startTime = 0.0,
+			bool isUnstructured = false);
 
 	/// destructor
 	virtual ~CouetteFlow2D();
-
-	/**
-	 * @short analytic solution of the Taylor-Green vortex
-	 */
-	virtual void getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const;
-
 
 	virtual double getCharacteristicVelocity() const {
 		return m_topPlateVelocity;
@@ -51,7 +59,8 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid(double L, size_t refinementLevel, bool isUnstructured = false);
+	shared_ptr<Mesh<2> > makeGrid(double L, size_t refinementLevel,
+			bool isUnstructured = false);
 
 	/**
 	 * @short create boundaries for couette flow
@@ -63,18 +72,18 @@ private:
 	/**
 	 * @short function to generate the unstructured mesh grid
 	 */
-	struct UnstructuredGridFunc
-	{
-	  double trans(const double y) const
-	  {
-	    return std::tanh(4*(y-0.5))/tanh(2)/2 + 0.5;
-	  }
-	  dealii::Point<2> operator() (const dealii::Point<2> &in) const
-	  {
-	    return dealii::Point<2> (in(0),
-	                     trans(in(1)));
-	  }
+	struct UnstructuredGridFunc {
+		double trans(const double y) const {
+			return std::tanh(4 * (y - 0.5)) / tanh(2) / 2 + 0.5;
+		}
+		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
+			return dealii::Point<2>(in(0), trans(in(1)));
+		}
 	};
+
+	double getStartTime() const {
+		return m_startTime;
+	}
 
 };
 

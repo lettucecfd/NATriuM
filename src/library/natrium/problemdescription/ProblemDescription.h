@@ -10,6 +10,7 @@
 #define PROBLEMDESCRIPTION_H_
 
 #include "deal.II/grid/tria.h"
+#include "deal.II/base/function.h"
 
 #include "BoundaryCollection.h"
 
@@ -18,6 +19,8 @@
 #include "../utilities/MPIGuard.h"
 
 namespace natrium {
+
+
 
 /** @short Abstract class for the description of a CFD problem. The description includes the computational mesh,
  *         boundary description, viscosity and initial values.
@@ -38,6 +41,17 @@ private:
 	/// characteristic length
 	double m_characteristicLength;
 
+protected:
+	/// function to define initial densities
+	shared_ptr<dealii::Function<dim> > m_initialRho;
+
+	/// function to define initial velocities (u,v,w for x,y,z component)
+	shared_ptr<dealii::Function<dim> > m_initialU;
+	shared_ptr<dealii::Function<dim> > m_initialV;
+	shared_ptr<dealii::Function<dim> > m_initialW;
+
+
+
 public:
 
 	/////////////////////////////////
@@ -45,8 +59,8 @@ public:
 	/////////////////////////////////
 
 	/// constructor
-	ProblemDescription(shared_ptr<Mesh<dim> > triangulation,
-			double viscosity, double characteristicLength);
+	ProblemDescription(shared_ptr<Mesh<dim> > triangulation, double viscosity,
+			double characteristicLength);
 
 	///  destructor
 	virtual ~ProblemDescription() {
@@ -64,61 +78,66 @@ public:
 		return m_boundaries;
 	}
 
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<dim> >& supportPoints) const = 0;
+	const shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
+		return m_initialRho;
+	}
 
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<dim> >& supportPoints) const = 0;
+	const shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
+		return m_initialU;
+	}
+
+	const shared_ptr<dealii::Function<dim> >& getInitialVFunction() const {
+		return m_initialV;
+	}
+
+	const shared_ptr<dealii::Function<dim> >& getInitialWFunction() const {
+		return m_initialW;
+	}
 
 	/**
 	 * @short check if boundary conditions are uniquely assigned to boundary indicator
 	 * @return true, if boundaries OK
 	 */
-	bool checkBoundaryConditions(){
+	bool checkBoundaryConditions() {
 		// read boundary ids from triangulation
 		bool result = true;
-		std::vector<dealii::types::boundary_id> tria_boundary_ids(m_triangulation->get_boundary_indicators());
+		std::vector<dealii::types::boundary_id> tria_boundary_ids(
+				m_triangulation->get_boundary_indicators());
 
 		// read boundary ids from boundary collection
 		std::vector<dealii::types::boundary_id> collection_boundary_ids;
 		typename BoundaryCollection<dim>::ConstIterator boundary;
 		typename BoundaryCollection<dim>::ConstIterator end;
 		end = m_boundaries->getBoundaries().end();
-		for (boundary = m_boundaries->getBoundaries().begin(); boundary != end; ++ boundary){
+		for (boundary = m_boundaries->getBoundaries().begin(); boundary != end;
+				++boundary) {
 			collection_boundary_ids.push_back(boundary->first);
 		}
 		// check uniqueness in one direction
 		std::vector<dealii::types::boundary_id>::iterator it;
-		for (size_t i = 0; i < tria_boundary_ids.size(); i++){
-			it = std::find(collection_boundary_ids.begin(), collection_boundary_ids.end(), tria_boundary_ids.at(i));
-			if (it == collection_boundary_ids.end()){
-				LOG(ERROR) << "Found boundary ID " << size_t(tria_boundary_ids.at(i)) << " in mesh, but not in boundaries." << endl;
+		for (size_t i = 0; i < tria_boundary_ids.size(); i++) {
+			it = std::find(collection_boundary_ids.begin(),
+					collection_boundary_ids.end(), tria_boundary_ids.at(i));
+			if (it == collection_boundary_ids.end()) {
+				LOG(ERROR) << "Found boundary ID "
+						<< size_t(tria_boundary_ids.at(i))
+						<< " in mesh, but not in boundaries." << endl;
 				result = false;
 			} else {
 				collection_boundary_ids.erase(it);
 			}
 		}
 		// check uniqueness in other directions
-		for (size_t i = 0; i < collection_boundary_ids.size(); i++){
-			LOG(ERROR) << "Found boundary ID " << size_t(collection_boundary_ids.at(i)) << " in boundaries, but not in mesh." << endl;
+		for (size_t i = 0; i < collection_boundary_ids.size(); i++) {
+			LOG(ERROR) << "Found boundary ID "
+					<< size_t(collection_boundary_ids.at(i))
+					<< " in boundaries, but not in mesh." << endl;
 			result = false;
 		}
 		return result;
 	}
 
-	void setMesh(
-			const shared_ptr<Mesh<dim> >& triangulation) {
+	void setMesh(const shared_ptr<Mesh<dim> >& triangulation) {
 		m_triangulation = triangulation;
 	}
 
@@ -131,7 +150,7 @@ public:
 	}
 
 	void setViscosity(double viscosity) {
-		assert (viscosity > 0.0);
+		assert(viscosity > 0.0);
 		m_viscosity = viscosity;
 	}
 
@@ -151,10 +170,15 @@ public:
 
 template<size_t dim>
 inline ProblemDescription<dim>::ProblemDescription(
-		shared_ptr<Mesh<dim> > triangulation,
-		double viscosity, double characteristicLength) :
-		m_triangulation(triangulation), m_viscosity(
-				viscosity), m_characteristicLength(characteristicLength) {
+		shared_ptr<Mesh<dim> > triangulation, double viscosity,
+		double characteristicLength) :
+		m_triangulation(triangulation), m_viscosity(viscosity), m_characteristicLength(
+				characteristicLength) {
+	// make default initial conditions (rho = 1, u = v = 0)
+	m_initialRho = make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
+	m_initialU = make_shared<dealii::ConstantFunction<dim> >(0.0, 1);
+	m_initialV = make_shared<dealii::ConstantFunction<dim> >(0.0, 1);
+	m_initialW = make_shared<dealii::ConstantFunction<dim> >(0.0, 1);
 #ifdef WITH_TRILINOS
 	/// Create MPI (if not done yet)
 	MPIGuard::getInstance();

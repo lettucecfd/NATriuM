@@ -52,9 +52,9 @@ void ErrorStats<dim>::update() {
 	m_time = m_solver->getTime();
 	// get analytic and numeric values
 	// TODO: only assign once (see. addAnalyticSolutionToOutput)
-	m_solver->m_benchmark->getAllAnalyticVelocities(m_solver->getTime(),
+	m_solver->getAllAnalyticVelocities(m_solver->getTime(),
 			m_solver->m_analyticVelocity, m_solver->m_supportPoints);
-	m_solver->m_benchmark->getAllAnalyticDensities(m_solver->getTime(),
+	m_solver->getAllAnalyticDensities(m_solver->getTime(),
 			m_solver->m_analyticDensity, m_solver->m_supportPoints);
 	const vector<distributed_vector>& numericVelocity =
 			m_solver->getVelocity();
