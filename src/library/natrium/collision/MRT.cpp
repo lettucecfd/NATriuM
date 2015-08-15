@@ -9,52 +9,37 @@
 
 namespace natrium {
 
-MRT::MRT(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil) :
-		CollisionModel(stencil), m_relaxationParameter(relaxationParameter), m_prefactor(
-				-1. / (relaxationParameter + 0.5)), m_dt(dt) {
+MRT::MRT(double relaxationTime, double dt, const shared_ptr<Stencil> stencil) :
+		CollisionModel(stencil), m_relaxationTime(relaxationTime), m_prefactor(
+				(relaxationTime * 3 / dt + 0.5)), m_dt(dt) {
 
 }
 
 MRT::~MRT() {
 	// TODO Auto-generated destructor stub
 }
-<<<<<<< HEAD
-/*
-=======
 
->>>>>>> 2a302a152dab9de8ae5197c22fc27058b28da820
-void MRT::collideSinglePoint(vector<double>& distributions) const {
+double MRT::getEquilibriumDistribution(size_t i, const numeric_vector& u,
+		const double rho) const {
 
-	// assert
-	size_t Q = getStencil()->getQ();
-	assert(distributions.size() == Q);
-	// create DistributionFunctions
-	DistributionFunctions f;
-	f.reinit(Q, 1);
-	for (size_t i = 0; i < Q; i++) {
-		f.at(i)(0) = distributions.at(i);
+	assert(i < getStencil()->getQ());
+	assert(rho > 0);
+	assert(i >= 0);
+	assert(u.size() == getStencil()->getD());
+	assert(u(0) < 1000000000000000.);
+	assert(u(1) < 1000000000000000.);
+
+	double prefactor = getStencil()->getWeight(i) * rho;
+	double uSquareTerm = -Math::scalar_product(u, u)
+			/ (2 * getStencil()->getSpeedOfSoundSquare());
+	if (0 == i) {
+		return prefactor * (1 + uSquareTerm);
 	}
+	double mixedTerm = Math::scalar_product(u, getStencil()->getDirection(i))
+			/ getStencil()->getSpeedOfSoundSquare();
+	return prefactor * (1 + mixedTerm * (1 + 0.5 * (mixedTerm)) + uSquareTerm);
 
-	// calculate macroscopic entities
-	double rho = this->calculateDensity(distributions);
-	numeric_vector u(getStencil()->getD());
-	this->calculateVelocity(distributions, rho, u);
-
-	// calculate equilibrium distribution (feq)
-	vector<double> feq(Q);
-	this->getEquilibriumDistributions(feq, u, rho);
-
-	// update distribution
-	collideSingleDoF(0, feq, f);
-	for (size_t i = 0; i < Q; i++) {
-		distributions.at(i) += getPrefactor()
-				* (distributions.at(i) - feq.at(i));
-	}
-<<<<<<< HEAD
-} */
-=======
->>>>>>> 2a302a152dab9de8ae5197c22fc27058b28da820
+} // The BGK Equilibrium Distribution is used to initialize the system in the beginning
 
 } // namespace natrium
 

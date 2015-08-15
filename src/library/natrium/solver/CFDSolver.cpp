@@ -152,7 +152,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		m_collisionModel = make_shared<BGKIncompressible>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
 	} else if (MRT_STANDARD == configuration->getCollisionScheme()) {
-		m_configuration->getTimeStepSize(), *m_stencil;
+		tau = BGKStandard::calculateRelaxationParameter(
+						m_problemDescription->getViscosity(),
+						m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = make_shared<MRTStandard>(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), m_stencil);
@@ -286,7 +288,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		break;
 	}
 	case MRT_STANDARD: {
-		LOG(WELCOME) << "No tau" << endl;
+		LOG(WELCOME) << "tau:						" << tau << endl;
 		break;
 	}
 

@@ -17,36 +17,43 @@ namespace natrium {
 class MRT: public CollisionModel {
 private:
 
-	/// relaxation parameter
-	double m_relaxationParameter;
+	/// relaxation time Tau
+	double m_relaxationTime;
 
-	/// prefactor of the collision (- 1/(tau + 0.5))
+	/// prefactor of the collision
 	double m_prefactor;
 
 	// time step size
 	double m_dt;
 
 public:
-	MRT(double relaxationParameter,double dt, const shared_ptr<Stencil> stencil);
+	MRT(double relaxationParameter, double dt,
+			const shared_ptr<Stencil> stencil);
 	virtual ~MRT();
 
-	virtual void collideSinglePoint(vector<double>& distributions) const;
+	// virtual void collideSinglePoint(vector<double>& distributions) const;
+
+	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
+			const double rho) const;
 
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
 			bool inInitializationProcedure = false) const;
 
-	void collideSingleDoF(size_t doF, const vector<double>& feq,
-			DistributionFunctions& f) const {
-		for (size_t j = 0; j < getStencil()->getQ(); j++) {
-			f.at(j)(doF) += m_prefactor * (f.at(j)(doF) - feq.at(j));
-		}
+	static double calculateRelaxationParameter(double viscosity,
+			double timeStepSize, const Stencil& stencil,
+			double preconditioning_parameter = 1.0) {
+		assert(viscosity > 0.0);
+		assert(timeStepSize > 0.0);
+		return (viscosity) / (timeStepSize * stencil.getSpeedOfSoundSquare());
 	}
 
 	void setTimeStep(double dt) {
 		assert(dt > 0);
+
 		m_dt = dt;
+		m_prefactor = (m_relaxationTime * 3 / dt + 0.5);
 	}
 
 	size_t getQ() const {
@@ -56,7 +63,6 @@ public:
 	double getPrefactor() const {
 		return m_prefactor;
 	}
-
 
 };
 }
