@@ -1,8 +1,8 @@
-/*
- * BGKIncompressible.cpp
- *
- *  Created on: 19.07.2015
- *      Author: dominik
+/**
+ * @file BGKIncompressible.cpp
+ * @short D2Q9 model description for improved incompressible flow by Guo et al.(2000)s.
+ * @date 19.07.2015
+ * @author Dominik Wilde, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
 #include "BGKIncompressible.h"
@@ -11,19 +11,10 @@ namespace natrium {
 
 BGKIncompressible::BGKIncompressible(double relaxationParameter, double dt,
 		const shared_ptr<Stencil> stencil) :
-		BGK(relaxationParameter, dt, stencil), m_p0(0), firstRound(1) {
+		BGK(relaxationParameter, dt, stencil) {
 }
 
 BGKIncompressible::~BGKIncompressible() {
-}
-
-void BGKIncompressible::setInitialDensity(double test) const {
-	/*for (size_t i = 0; i < n_dofs; i++) {
-	 m_p0 += densities(i);
-	 }
-	 m_p0 /= n_dofs; */
-	m_p0 = test;
-	cout << "Density 0 =" << m_p0 << endl;
 }
 
 double BGKIncompressible::getEquilibriumDistribution(size_t i,
@@ -68,7 +59,6 @@ void BGKIncompressible::collideAll(DistributionFunctions& f,
 		assert(f.size() == Q);
 		assert(velocities.size() == D);
 
-
 #ifdef DEBUG
 		for (size_t i = 0; i < Q; i++) {
 			assert (f.at(i).size() == n_dofs);
@@ -85,7 +75,7 @@ void BGKIncompressible::collideAll(DistributionFunctions& f,
 		double uSquareTerm;
 		double mixedTerm;
 		double weighting;
-		
+
 		// for all dofs
 		for (size_t i = 0; i < n_dofs; i++) {
 
@@ -94,12 +84,7 @@ void BGKIncompressible::collideAll(DistributionFunctions& f,
 					+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
 					+ f.at(8)(i);
 
-			if (firstRound) {
-				m_p0 = densities (i);
-			}
 
-			double p0 = densities(i);//m_p0;
-			double pi = densities(i);
 			if (densities(i) < 1e-10) {
 				throw CollisionException(
 						"Densities too small (< 1e-10) for collisions. Decrease time step size.");
@@ -116,62 +101,58 @@ void BGKIncompressible::collideAll(DistributionFunctions& f,
 								- f.at(7)(i) - f.at(8)(i));
 			}
 
+			//BGK Incompressible parameters
+			double sigma = m_lambda + m_gamma;
+
 			// calculate equilibrium distribution
 			scalar_product = velocities.at(0)(i) * velocities.at(0)(i)
 					+ velocities.at(1)(i) * velocities.at(1)(i);
 			uSquareTerm = -scalar_product / (2 * cs2);
 			// direction 0
 			weighting = 4. / 9.;
-			feq.at(0) = weighting * (pi + uSquareTerm * p0);
+			feq.at(0) = -4 * sigma * densities(i)
+					+ weighting * (1 + uSquareTerm);
 			// directions 1-4
 			weighting = 1. / 9.;
 			mixedTerm = prefactor * (velocities.at(0)(i));
-			feq.at(1) = weighting
-					* (pi
-							+ p0
-									* (mixedTerm * (1 + 0.5 * mixedTerm)
-											+ uSquareTerm));
-			feq.at(3) = weighting
-					* (pi
-							- p0
-									* (mixedTerm * (1 - 0.5 * mixedTerm)
-											+ uSquareTerm));
+			feq.at(1) = m_lambda * densities(i)
+					+ weighting
+							* (1 + mixedTerm * (1 + 0.5 * mixedTerm)
+									+ uSquareTerm);
+			feq.at(3) = m_lambda * densities(i)
+					+ weighting
+							* (1 - mixedTerm * (1 - 0.5 * mixedTerm)
+									+ uSquareTerm);
 			mixedTerm = prefactor * (velocities.at(1)(i));
-			feq.at(2) = weighting
-					* (pi
-							+ p0
-									* (mixedTerm * (1 + 0.5 * mixedTerm)
-											+ uSquareTerm));
-			feq.at(4) = weighting
-					* (pi
-							- p0
-									* (mixedTerm * (1 - 0.5 * mixedTerm)
-											+ uSquareTerm));
+			feq.at(2) = m_lambda * densities(i)
+					+ weighting
+							* (1 + mixedTerm * (1 + 0.5 * mixedTerm)
+									+ uSquareTerm);
+			feq.at(4) = m_lambda * densities(i)
+					+ weighting
+							* (1 - mixedTerm * (1 - 0.5 * mixedTerm)
+									+ uSquareTerm);
 			// directions 5-8
-			weighting = 1. / 36.;
+			weighting = 1. / 36. * densities(i);
 			mixedTerm = prefactor * (velocities.at(0)(i) + velocities.at(1)(i));
-			feq.at(5) = weighting
-					* (pi
-							+ p0
-									* (mixedTerm * (1 + 0.5 * mixedTerm)
-											+ uSquareTerm));
-			feq.at(7) = weighting
-					* (pi
-							- p0
-									* (mixedTerm * (1 - 0.5 * mixedTerm)
-											+ uSquareTerm));
+			feq.at(5) = m_gamma * densities(i)
+					+ weighting
+							* (1 + mixedTerm * (1 + 0.5 * mixedTerm)
+									+ uSquareTerm);
+			feq.at(7) = m_gamma * densities(i)
+					+ weighting
+							* (1 - mixedTerm * (1 - 0.5 * mixedTerm)
+									+ uSquareTerm);
 			mixedTerm = prefactor
 					* (-velocities.at(0)(i) + velocities.at(1)(i));
-			feq.at(6) = weighting
-					* (pi
-							+ p0
-									* (mixedTerm * (1 + 0.5 * mixedTerm)
-											+ uSquareTerm));
-			feq.at(8) = weighting
-					* (pi
-							- p0
-									* (mixedTerm * (1 - 0.5 * mixedTerm)
-											+ uSquareTerm));
+			feq.at(6) = m_gamma * densities(i)
+					+ weighting
+							* (1 + mixedTerm * (1 + 0.5 * mixedTerm)
+									+ uSquareTerm);
+			feq.at(8) = m_gamma * densities(i)
+					+ weighting
+							* (1 - mixedTerm * (1 - 0.5 * mixedTerm)
+									+ uSquareTerm);
 
 			// BGK collision
 			f.at(0)(i) += relax_factor * (f.at(0)(i) - feq.at(0));
@@ -185,15 +166,6 @@ void BGKIncompressible::collideAll(DistributionFunctions& f,
 			f.at(8)(i) += relax_factor * (f.at(8)(i) - feq.at(8));
 		}
 
-		if (firstRound) {
-			double test = 0;
-			for (size_t i = 0; i < n_dofs; i++) {
-				test += densities(i);
-			}
-			test /= n_dofs;
-			this->setInitialDensity(test);
-			firstRound = 0;
-		}
 	}
 }
 }

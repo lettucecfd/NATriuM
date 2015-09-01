@@ -54,10 +54,9 @@ int main() {
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
-
 #ifdef ONLY_PERIODIC
 	// specify Reynolds number
-	const double Re = 8 * atan(1);// = 2 pi
+	const double Re = 8 * atan(1); // = 2 pi
 	// specify Mach number
 	const double Ma = 0.1;
 #else
@@ -69,14 +68,14 @@ int main() {
 	// -------------------
 #ifdef ONLY_PERIODIC
 	// length of quadratic domain
-	const double L = 8 * atan(1);// = 2 pi
+	const double L = 8 * atan(1); // = 2 pi
 	const double U = 1;
 	const double tmax = 1;
 #else
 	const double L = 1;
 	// velocity of top plate
-	const double U = 1 / sqrt(3) * Ma; //5.773502691896258e-02/3.1415926;//0.02;
-	const double tmax = 1;
+	const double U = 1 / sqrt(3) * Ma;//5.773502691896258e-02/3.1415926;//0.02;
+	const double tmax = 10;
 #endif
 	// scaling of particle velocities
 	double scaling = sqrt(3) * U / Ma;
@@ -89,7 +88,7 @@ int main() {
 	size_t refinementLevel = 3;
 	size_t orderOfFiniteElement = 5;
 
-	for (int i = 1; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 
 #ifndef ONLY_PERIODIC
 		// make problem object
@@ -98,8 +97,9 @@ int main() {
 		shared_ptr<Benchmark<2> > benchmark = couette2D;
 #else
 		// make problem object
-		shared_ptr<TaylorGreenVortex2D> tgv2D = make_shared<TaylorGreenVortex2D>(
-				viscosity, refinementLevel, 1. / sqrt(3.) / Ma);
+		shared_ptr<TaylorGreenVortex2D> tgv2D =
+				make_shared<TaylorGreenVortex2D>(viscosity, refinementLevel,
+						1. / sqrt(3.) / Ma);
 		shared_ptr<Benchmark<2> > benchmark = tgv2D;
 #endif
 
@@ -117,11 +117,25 @@ int main() {
 			break;
 
 		case 1:
+			configuration->setCollisionScheme(BGK_INCOMPRESSIBLE);
+			collisionScheme = "BGK_INCOMPRESSIBLE";
+			break;
+
+		case 2:
 			configuration->setCollisionScheme(MRT_STANDARD);
 			collisionScheme = "MRT_STANDARD";
 			break;
 		}
 
+		std::stringstream filename_parameter;
+		filename_parameter << getenv("NATRIUM_HOME") << "/collision-analysis/"
+				<< "parameter.txt";
+		std::ofstream parameterFile(filename_parameter.str().c_str());
+		parameterFile << "Ma: " << Ma << endl << "Re: " << Re << endl << "L: "
+				<< L << endl << "U: " << U << endl << "Viscosity: " << viscosity
+				<< endl << "t0: " << t0 << endl << "tmax:" << tmax << endl
+				<< "RefinementLevel: " << refinementLevel << endl
+				<< "Order of Finite Element : " << orderOfFiniteElement << endl;
 
 		std::stringstream filename;
 		filename << getenv("NATRIUM_HOME") << "/collision-analysis/"
@@ -143,7 +157,7 @@ int main() {
 
 		cout << "CollisionScheme: " << collisionScheme.c_str() << endl;
 
-		for (double CFL = 0.2; CFL <= 102.4; CFL *= 2.) {
+		for (double CFL = 0.1; CFL <= 12.8; CFL *= 2.) {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*benchmark->getTriangulation(), orderOfFiniteElement,

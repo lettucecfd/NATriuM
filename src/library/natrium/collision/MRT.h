@@ -39,7 +39,7 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
-			bool inInitializationProcedure = false) const;
+			bool inInitializationProcedure = false) const = 0;
 
 	static double calculateRelaxationParameter(double viscosity,
 			double timeStepSize, const Stencil& stencil,

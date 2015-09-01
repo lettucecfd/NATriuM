@@ -24,7 +24,7 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 		bool inInitializationProcedure = false) const {
 
 	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
-		// No MRT collision for other than D2Q9
+		// No MRT collision for other StencilTypes than D2Q9
 		throw CollisionException("MRT only implemented for D2Q9");
 	} else {
 
