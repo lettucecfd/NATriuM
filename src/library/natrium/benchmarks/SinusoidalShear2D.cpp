@@ -21,6 +21,7 @@ SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 				makeGrid(L, refinementLevel, averageHeight, amplitude, cell_aspect_ratio),
 				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
 	setBoundaries(makeBoundaries(bottomVelocity));
+	this->setInitialRho(make_shared<InitialVelocity>(this));
 }
 
 SinusoidalShear2D::~SinusoidalShear2D() {
@@ -76,10 +77,13 @@ shared_ptr<BoundaryCollection<2> > SinusoidalShear2D::makeBoundaries(
 	return boundaries;
 }
 
-double SinusoidalShear2D::AnalyticVelocityU::value(const dealii::Point<2>& x) const{
+double SinusoidalShear2D::InitialVelocity::value(const dealii::Point<2>& x, const unsigned int component) const{
+	assert (component < 2);
 #ifdef FASTER_CONVERGENCE_INIT
+	if (component == 0){
 		double upper = m_flow->m_height +  flow->m_ampl * std::sin(8 * std::atan(1) * x(0) );
 		return flow->m_bottomVelocity * pow( 1 - x(1)/upper,2);
+	}
 #else
 		return 0.0;
 #endif

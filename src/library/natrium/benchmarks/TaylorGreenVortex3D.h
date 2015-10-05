@@ -34,42 +34,14 @@ public:
 	 * @short class to describe the x-component of the analytic solution
 	 * @note other are default (v0=w0=0, rho0=1)
 	 */
-	class AnalyticVelocityU: public dealii::Function<3> {
+	class AnalyticVelocity: public dealii::Function<3> {
 	private:
 		TaylorGreenVortex3D* m_flow;
 	public:
-		AnalyticVelocityU(TaylorGreenVortex3D* flow) :
+		AnalyticVelocity(TaylorGreenVortex3D* flow) :
 				m_flow(flow) {
 		}
-		double value(const dealii::Point<3>& x) const;
-	};
-
-	/**
-	 * @short class to describe the x-component of the analytic solution
-	 * @note other are default (v0=w0=0, rho0=1)
-	 */
-	class AnalyticVelocityV: public dealii::Function<3> {
-	private:
-		TaylorGreenVortex3D* m_flow;
-	public:
-		AnalyticVelocityV(TaylorGreenVortex3D* flow) :
-				m_flow(flow) {
-		}
-		double value(const dealii::Point<3>& x) const;
-	};
-
-	/**
-	 * @short class to describe the x-component of the analytic solution
-	 * @note other are default (v0=w0=0, rho0=1)
-	 */
-	class AnalyticVelocityW: public dealii::Function<3> {
-	private:
-		TaylorGreenVortex3D* m_flow;
-	public:
-		AnalyticVelocityW(TaylorGreenVortex3D* flow) :
-				m_flow(flow) {
-		}
-		double value(const dealii::Point<3>& x) const;
+		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
 	};
 
   /// constructor

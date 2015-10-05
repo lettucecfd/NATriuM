@@ -27,14 +27,14 @@ public:
 	 * @short class to describe the x-component of the analytic solution
 	 * @note other are default (v0=w0=0, rho0=1)
 	 */
-	class AnalyticVelocityU: public dealii::Function<2> {
+	class AnalyticVelocity: public dealii::Function<2> {
 	private:
 		CouetteFlow2D* m_benchmark;
 	public:
-		AnalyticVelocityU(CouetteFlow2D* couette) :
+		AnalyticVelocity(CouetteFlow2D* couette) :
 				m_benchmark(couette) {
 		}
-		double value(const dealii::Point<2>& x) const;
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
 	};
 
 	/// constructor

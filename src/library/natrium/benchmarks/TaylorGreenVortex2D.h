@@ -27,27 +27,14 @@ public:
 	/**
 	 * @short class to describe the x-component of the analytic solution
 	 */
-	class AnalyticVelocityU: public dealii::Function<2> {
+	class AnalyticVelocity: public dealii::Function<2> {
 	private:
 		TaylorGreenVortex2D* m_flow;
 	public:
-		AnalyticVelocityU(TaylorGreenVortex2D* flow) :
+		AnalyticVelocity(TaylorGreenVortex2D* flow) :
 				m_flow(flow) {
 		}
-		double value(const dealii::Point<2>& x) const;
-	};
-
-	/**
-	 * @short class to describe the y-component of the analytic solution
-	 */
-	class AnalyticVelocityV: public dealii::Function<2> {
-	private:
-		TaylorGreenVortex2D* m_flow;
-	public:
-		AnalyticVelocityV(TaylorGreenVortex2D* flow) :
-				m_flow(flow) {
-		}
-		double value(const dealii::Point<2>& x) const;
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
 	};
 
 	/**
@@ -60,7 +47,7 @@ public:
 		AnalyticDensity(TaylorGreenVortex2D* flow) :
 				m_flow(flow) {
 		}
-		double value(const dealii::Point<2>& x) const;
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
 	};
 
 	/// constructor (with default cs=1/sqrt(3))

@@ -24,6 +24,7 @@
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 #include "TaylorGreenTest2D.h"
 
@@ -255,7 +256,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_TaylorGreenVortex_test){
 	//configuration->setDistributionInitType(Iterative);
 
 	// make problem and solver objects
-	shared_ptr<TaylorGreenTest2D> tgVortex = make_shared<TaylorGreenTest2D>(
+	shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel);
 	shared_ptr<ProblemDescription<2> > taylorGreen = tgVortex;
 	CFDSolver<2> solver(configuration, taylorGreen);

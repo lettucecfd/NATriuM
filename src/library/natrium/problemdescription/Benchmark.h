@@ -11,6 +11,7 @@
 
 
 #include "deal.II/grid/tria.h"
+#include "deal.II/base/function.h"
 
 #include "BoundaryCollection.h"
 
@@ -21,18 +22,28 @@
 namespace natrium {
 
 template<size_t dim> class Benchmark: public ProblemDescription<dim> {
-protected:
+private:
 	/// function to define initial densities
 	shared_ptr<dealii::Function<dim> > m_analyticRho;
 
 	/// function to define initial velocities (u,v,w for x,y,z component)
 	shared_ptr<dealii::Function<dim> > m_analyticU;
-	shared_ptr<dealii::Function<dim> > m_analyticV;
-	shared_ptr<dealii::Function<dim> > m_analyticW;
+
+protected:
+	void setAnalyticRho(shared_ptr<dealii::Function<dim> > ana_rho){
+		m_analyticRho = ana_rho;
+	}
+	void setAnalyticU(shared_ptr<dealii::Function<dim> > ana_u){
+		m_analyticU =  ana_u;
+	}
 public:
 	/// Constructor
 	Benchmark(shared_ptr<Mesh<dim> > triangulation,
-			double viscosity, double characteristicLength);
+			double viscosity, double characteristicLength):
+				ProblemDescription<dim>(triangulation, viscosity, characteristicLength){
+			m_analyticRho = make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
+			m_analyticU = make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
+	}
 
 	/// Destructor
 	virtual ~Benchmark() {
@@ -67,31 +78,7 @@ public:
 	 * It is not recommended to store the return value in any local object that is used
 	 * in more than one time step.
 	 */
-	const shared_ptr<dealii::Function<dim> >& getAnalyticVFunction(double time) const {
-		m_analyticV->set_time(time);
-		return m_analyticV;
-	}
-
-
-	/*
-	 * @short analytic solution at time t
-	 * @note This function sets the time at which the analytic solution is evaluated.
-	 * It is not recommended to store the return value in any local object that is used
-	 * in more than one time step.
-	 */
-	const shared_ptr<dealii::Function<dim> >& getAnalyticWFunction(double time) const {
-		m_analyticW->set_time(time);
-		return m_analyticW;
-	}
-
-
-	/*
-	 * @short analytic solution at time t
-	 * @note This function sets the time at which the analytic solution is evaluated.
-	 * It is not recommended to store the return value in any local object that is used
-	 * in more than one time step.
-	 */
-	const shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
+	virtual const shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
 		m_analyticRho->set_time(0);
 		return m_analyticRho;
 	}
@@ -103,44 +90,14 @@ public:
 	 * It is not recommended to store the return value in any local object that is used
 	 * in more than one time step.
 	 */
-	const shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
+	virtual const shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
 		m_analyticU->set_time(0);
 		return m_analyticU;
 	}
 
 
-	/*
-	 * @short analytic solution at time t
-	 * @note This function sets the time at which the analytic solution is evaluated.
-	 * It is not recommended to store the return value in any local object that is used
-	 * in more than one time step.
-	 */
-	const shared_ptr<dealii::Function<dim> >& getInitialVFunction() const {
-		m_analyticV->set_time(0);
-		return m_analyticV;
-	}
-
-
-	/*
-	 * @short analytic solution at time t
-	 * @note This function sets the time at which the analytic solution is evaluated.
-	 * It is not recommended to store the return value in any local object that is used
-	 * in more than one time step.
-	 */
-	const shared_ptr<dealii::Function<dim> >& getInitialWFunction() const {
-		m_analyticW->set_time(0);
-		return m_analyticW;
-	}
-
 
 };
-
-template<size_t dim>
-inline Benchmark<dim>::Benchmark(
-		shared_ptr<Mesh<dim> > triangulation, double viscosity,
-		double characteristicLength) :
-		ProblemDescription<dim>(triangulation, viscosity, characteristicLength) {
-}
 
 } /* namespace natrium */
 

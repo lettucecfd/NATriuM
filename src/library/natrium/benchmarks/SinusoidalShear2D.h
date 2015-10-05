@@ -24,14 +24,14 @@ public:
 	 * @short class to describe the x-component of the analytic solution
 	 * @note other are default (v0=w0=0, rho0=1)
 	 */
-	class AnalyticVelocityU: public dealii::Function<2> {
+	class InitialVelocity: public dealii::Function<2> {
 	private:
 		SinusoidalShear2D* m_flow;
 	public:
-		AnalyticVelocityU(SinusoidalShear2D* flow) :
+		InitialVelocity(SinusoidalShear2D* flow) :
 				m_flow(flow) {
 		}
-		double value(const dealii::Point<2>& x) const;
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
 	};
 
 

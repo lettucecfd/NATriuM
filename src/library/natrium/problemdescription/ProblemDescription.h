@@ -41,16 +41,21 @@ private:
 	/// characteristic length
 	double m_characteristicLength;
 
-protected:
 	/// function to define initial densities
 	shared_ptr<dealii::Function<dim> > m_initialRho;
 
-	/// function to define initial velocities (u,v,w for x,y,z component)
+	/// function to define initial velocities
 	shared_ptr<dealii::Function<dim> > m_initialU;
-	shared_ptr<dealii::Function<dim> > m_initialV;
-	shared_ptr<dealii::Function<dim> > m_initialW;
 
 
+protected:
+	void setInitialRho(shared_ptr<dealii::Function<dim> > ini_rho){
+		m_initialRho = ini_rho;
+	}
+
+	void setInitialU(shared_ptr<dealii::Function<dim> > ini_u){
+		m_initialU = ini_u;
+	}
 
 public:
 
@@ -78,21 +83,14 @@ public:
 		return m_boundaries;
 	}
 
-	const shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
+	virtual const shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
 		return m_initialRho;
 	}
 
-	const shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
+	virtual const shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
 		return m_initialU;
 	}
 
-	const shared_ptr<dealii::Function<dim> >& getInitialVFunction() const {
-		return m_initialV;
-	}
-
-	const shared_ptr<dealii::Function<dim> >& getInitialWFunction() const {
-		return m_initialW;
-	}
 
 	/**
 	 * @short check if boundary conditions are uniquely assigned to boundary indicator
@@ -176,9 +174,7 @@ inline ProblemDescription<dim>::ProblemDescription(
 				characteristicLength) {
 	// make default initial conditions (rho = 1, u = v = 0)
 	m_initialRho = make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
-	m_initialU = make_shared<dealii::ConstantFunction<dim> >(0.0, 1);
-	m_initialV = make_shared<dealii::ConstantFunction<dim> >(0.0, 1);
-	m_initialW = make_shared<dealii::ConstantFunction<dim> >(0.0, 1);
+	m_initialU = make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
 #ifdef WITH_TRILINOS
 	/// Create MPI (if not done yet)
 	MPIGuard::getInstance();

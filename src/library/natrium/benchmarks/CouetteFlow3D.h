@@ -28,14 +28,14 @@ public:
 
 
 	/* class to describe the x-component of the analytic solution */
-	class AnalyticVelocityU: public dealii::Function<3> {
+	class AnalyticVelocity: public dealii::Function<3> {
 	private:
 		CouetteFlow3D* m_benchmark;
 	public:
-		AnalyticVelocityU(CouetteFlow3D* couette) :
+		AnalyticVelocity(CouetteFlow3D* couette) :
 				m_benchmark(couette) {
 		}
-		double value(const dealii::Point<3>& x) const;
+		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
 
 	};
 

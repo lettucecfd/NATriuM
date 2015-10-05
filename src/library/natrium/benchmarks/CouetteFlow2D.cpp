@@ -27,7 +27,9 @@ CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 		Benchmark<2>(makeGrid(L, refinementLevel, isUnstructured), viscosity,
 				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
-	m_analyticU = make_shared<AnalyticVelocityU>(this);
+
+	//applyInitialValues
+	this->setAnalyticU(make_shared<AnalyticVelocity>(this));
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(topPlateVelocity));
@@ -42,7 +44,7 @@ shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L, size_t refinementLevel,
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
 	shared_ptr<Mesh<2> > unitSquare =
-			make_shared<Mesh<2> >(MPI_COMM_WORLD);
+	make_shared<Mesh<2> >(MPI_COMM_WORLD);
 #else
 	shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >();
 #endif
@@ -91,53 +93,57 @@ shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	return boundaries;
 }
 
-double CouetteFlow2D::AnalyticVelocityU::value(const dealii::Point<2>& x) const {
+double CouetteFlow2D::AnalyticVelocity::value(const dealii::Point<2>& x,
+		const unsigned int component) const {
+	assert (component < 2);
 	// the analytic solution is given by an asymptotic series
-	double t = this->get_time();
-	double U = m_benchmark->getCharacteristicVelocity();
-	double L = m_benchmark->getCharacteristicLength();
-	double t0 = m_benchmark->getStartTime();
-	double nu = m_benchmark->getViscosity();
+	if (component == 0){
+		double t = this->get_time();
+		double U = m_benchmark->getCharacteristicVelocity();
+		double L = m_benchmark->getCharacteristicLength();
+		double t0 = m_benchmark->getStartTime();
+		double nu = m_benchmark->getViscosity();
 
-	t += t0;
-	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
-	// therefor the initial condition is set first:
-	if (t < 0.00001) {
-		if (x(1) < L - 0.00001) {
-			return 0 ;
-		} else {
-			// upper border
-			return U;
+		t += t0;
+		// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
+		// therefor the initial condition is set first:
+		if (t < 0.00001) {
+			if (x(1) < L - 0.00001) {
+				return 0;
+			} else {
+				// upper border
+				return U;
+			}
 		}
-	}
 
-	double sum = U * x(1) / L;
-	double lambda = 0.0;
-	const double PI = atan(1) * 4;
-	double increment = 1.0;
-	double exp_expression = 0.0;
+		double sum = U * x(1) / L;
+		double lambda = 0.0;
+		const double PI = atan(1) * 4;
+		double increment = 1.0;
+		double exp_expression = 0.0;
 
-	for (size_t i = 1; i <= 10000; i++) {
-		// calculate term in series
-		lambda = i * PI / L;
-		exp_expression = exp(-nu * lambda * lambda * t);
-		increment = (i % 2 == 0 ? 1. : -1.) * 2 * U / (lambda * L)
-				* exp_expression * sin(lambda * x(1));
-		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i
-		sum += increment;
-		// stop conditions: a) converged, b)
-		if (exp_expression < 1e-20) {
-			break;
+		for (size_t i = 1; i <= 10000; i++) {
+			// calculate term in series
+			lambda = i * PI / L;
+			exp_expression = exp(-nu * lambda * lambda * t);
+			increment = (i % 2 == 0 ? 1. : -1.) * 2 * U / (lambda * L)
+					* exp_expression * sin(lambda * x(1));
+			// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i
+			sum += increment;
+			// stop conditions: a) converged, b)
+			if (exp_expression < 1e-20) {
+				break;
+			}
 		}
+		// assert convergence of the above asymptotic sum
+		if (exp_expression >= 1e-12) {
+			LOG(WARNING)
+					<< "Warning: Analytic solution series did not converge."
+					<< endl;
+		}
+		return sum;
 	}
-	// assert convergence of the above asymptotic sum
-	if (exp_expression >= 1e-12) {
-		LOG(WARNING)
-				<< "Warning: Analytic solution series did not converge."
-				<< endl;
-	}
-	return sum;
+	return 0.0;
 }
-
 
 } /* namespace natrium */

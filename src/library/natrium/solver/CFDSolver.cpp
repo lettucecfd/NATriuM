@@ -679,7 +679,7 @@ void natrium::CFDSolver<dim>::applyInitialDensities(
 		distributed_vector& initialDensities,
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
 	// get Function instance
-	const shared_ptr<dealii::Function<dim> > f_rho =
+	const shared_ptr<dealii::Function<dim> >& f_rho =
 			m_problemDescription->getInitialRhoFunction();
 	const unsigned int dofs_per_cell =
 			m_advectionOperator->getFe()->dofs_per_cell;
@@ -694,8 +694,11 @@ void natrium::CFDSolver<dim>::applyInitialDensities(
 				assert(
 						initialDensities.in_local_range(
 								local_dof_indices.at(i)));
-				assert(supportPoints.find(local_dof_indices.at(i))!=supportPoints.end());
-				initialDensities(local_dof_indices.at(i)) = f_rho->value(supportPoints.at(local_dof_indices.at(i)));
+				assert(
+						supportPoints.find(local_dof_indices.at(i))
+								!= supportPoints.end());
+				initialDensities(local_dof_indices.at(i)) = f_rho->value(
+						supportPoints.at(local_dof_indices.at(i)));
 			}
 		} /* if is locally owned */
 	} /* for all cells */
@@ -714,10 +717,8 @@ void natrium::CFDSolver<dim>::applyInitialVelocities(
 		vector<distributed_vector>& initialVelocities,
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
 	// get Function instance
-	const shared_ptr<dealii::Function<dim> > f_u =
+	const shared_ptr<dealii::Function<dim> >& f_u =
 			m_problemDescription->getInitialUFunction();
-	const shared_ptr<dealii::Function<dim> > f_v =
-			m_problemDescription->getInitialVFunction();
 	const unsigned int dofs_per_cell =
 			m_advectionOperator->getFe()->dofs_per_cell;
 	vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -734,35 +735,18 @@ void natrium::CFDSolver<dim>::applyInitialVelocities(
 				assert(
 						initialVelocities.at(1).in_local_range(
 								local_dof_indices.at(i)));
-				assert(supportPoints.find(local_dof_indices.at(i))!=supportPoints.end());
-				initialVelocities.at(0)(local_dof_indices.at(i)) = f_u->value(supportPoints.at(local_dof_indices.at(i)));
-				initialVelocities.at(1)(local_dof_indices.at(i)) = f_v->value(supportPoints.at(local_dof_indices.at(i)));
+				assert(
+						supportPoints.find(local_dof_indices.at(i))
+								!= supportPoints.end());
+				for (size_t component = 0; component < dim; component++) {
+					initialVelocities.at(component)(local_dof_indices.at(i)) =
+							f_u->value(
+									supportPoints.at(local_dof_indices.at(i)),
+									component);
+				}
 			}
 		} /* if is locally owned */
 	} /* for all cells */
-	if (dim == 3) {
-		// get Function instance
-		const shared_ptr<dealii::Function<dim> > f_w =
-				m_problemDescription->getInitialWFunction();
-		const unsigned int dofs_per_cell =
-				m_advectionOperator->getFe()->dofs_per_cell;
-		vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
-		typename dealii::DoFHandler<dim>::active_cell_iterator cell =
-				m_advectionOperator->getDoFHandler()->begin_active(), endc =
-				m_advectionOperator->getDoFHandler()->end();
-		for (; cell != endc; ++cell) {
-			if (cell->is_locally_owned()) {
-				cell->get_dof_indices(local_dof_indices);
-				for (size_t i = 0; i < dofs_per_cell; i++) {
-					assert(
-							initialVelocities.at(2).in_local_range(
-									local_dof_indices.at(i)));
-					assert(supportPoints.find(local_dof_indices.at(i))!=supportPoints.end());
-					initialVelocities.at(2)(local_dof_indices.at(i)) = f_w->value(supportPoints.at(local_dof_indices.at(i)));
-				}
-			} /* if is locally owned */
-		} /* for all cells */
-	}
 }
 template
 void natrium::CFDSolver<2>::applyInitialVelocities(

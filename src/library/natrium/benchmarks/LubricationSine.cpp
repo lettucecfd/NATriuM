@@ -14,18 +14,23 @@ namespace natrium {
 
 LubricationSine::LubricationSine(double viscosity, double bottomVelocity,
 		size_t refinementLevel, double L, double averageHeight,
-		double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio) :
+		double amplitude, double cellAspectRatio, double roughnessHeight,
+		size_t roughnessLengthRatio) :
 		ProblemDescription<2>(
-				makeGrid(L, refinementLevel, averageHeight, amplitude, cellAspectRatio, roughnessHeight, roughnessLengthRatio),
-				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude), m_length(L) {
+				makeGrid(L, refinementLevel, averageHeight, amplitude,
+						cellAspectRatio, roughnessHeight, roughnessLengthRatio),
+				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(
+				averageHeight), m_ampl(amplitude), m_length(L) {
 	setBoundaries(makeBoundaries(bottomVelocity));
+	setInitialU(make_shared<InitialVelocity>(this));
 }
 
 LubricationSine::~LubricationSine() {
 }
 
-shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L,
-		size_t refinementLevel, double averageHeight, double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio) {
+shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L, size_t refinementLevel,
+		double averageHeight, double amplitude, double cellAspectRatio,
+		double roughnessHeight, size_t roughnessLengthRatio) {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
@@ -33,21 +38,23 @@ shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L,
 #else
 	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >();
 #endif
-	dealii::Point<2> x1(0,0);
-	dealii::Point<2> x2(L,averageHeight);
+	dealii::Point<2> x1(0, 0);
+	dealii::Point<2> x2(L, averageHeight);
 	std::vector<unsigned int> repetitions;
-	repetitions.push_back( L / averageHeight / cellAspectRatio);
-	repetitions.push_back( 1 );
+	repetitions.push_back(L / averageHeight / cellAspectRatio);
+	repetitions.push_back(1);
 	bool colorize = true; 	// set boundary ids automatically to
 							// 0:left; 1:right; 2:bottom; 3:top
-	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1, x2, colorize);
+	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1,
+			x2, colorize);
 
 	// refine grid
 	rect->refine_global(refinementLevel);
 
 	// transform grid
-	dealii::GridTools::transform(UnstructuredGridFunc(averageHeight, amplitude, L, roughnessHeight, roughnessLengthRatio),
-			*rect);
+	dealii::GridTools::transform(
+			UnstructuredGridFunc(averageHeight, amplitude, L, roughnessHeight,
+					roughnessLengthRatio), *rect);
 	std::ofstream out("grid-2.eps");
 	dealii::GridOut grid_out;
 	grid_out.write_eps(*rect, out);
@@ -64,8 +71,7 @@ shared_ptr<BoundaryCollection<2> > LubricationSine::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = bottomVelocity;
 
-	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
 	boundaries->addBoundary(
 			make_shared<MinLeeBoundary<2> >(2, constantVelocity));
 	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
@@ -76,10 +82,15 @@ shared_ptr<BoundaryCollection<2> > LubricationSine::makeBoundaries(
 	return boundaries;
 }
 
-
-double LubricationSine::AnalyticVelocityU::value(const dealii::Point<2>& x) const{
-	double upper = m_flow->m_height - m_flow->m_ampl; //+  m_ampl * std::sin(8 * std::atan(1) * supportPoints.at(i)(0) / m_length() );
-	return m_flow->m_bottomVelocity * pow( 1 - x(1)/upper,2);
+double LubricationSine::InitialVelocity::value(const dealii::Point<2>& x,
+		const unsigned int component) const {
+	assert(component < 2);
+	if (component == 0) {
+		double upper = m_flow->m_height - m_flow->m_ampl; //+  m_ampl * std::sin(8 * std::atan(1) * supportPoints.at(i)(0) / m_length() );
+		return m_flow->m_bottomVelocity * pow(1 - x(1) / upper, 2);
+	} else {
+		return 0.0;
+	}
 }
 
 } /* namespace natrium */

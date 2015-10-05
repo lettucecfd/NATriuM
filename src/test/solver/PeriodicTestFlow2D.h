@@ -17,8 +17,6 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-
-
 namespace natrium {
 
 /** @short Description of a simple Periodic Flow (flow in square domain).
@@ -27,10 +25,26 @@ namespace natrium {
  */
 class SteadyPeriodicTestFlow2D: public ProblemDescription<2> {
 public:
+	// class that represents the initial velocity
+	class InitialVelocity: public dealii::Function<2> {
+	private:
+		SteadyPeriodicTestFlow2D* m_flow;
+	public:
+		InitialVelocity(SteadyPeriodicTestFlow2D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x,
+				const unsigned int component = 0) const {
+			assert(component < 2);
+			return 0.1;
+
+		}
+	};
+
 	/// constructor
 	SteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
 			ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1) {
-
+		setInitialU(make_shared<InitialVelocity>(this));
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
 	}
@@ -76,17 +90,15 @@ private:
 	 */
 	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel) {
 		//Creation of the principal domain
-		shared_ptr<Mesh<2> > unitSquare =
-				make_shared<Mesh<2> >(
+		shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >(
 #ifdef WITH_TRILINOS_MPI
-					MPI_COMM_WORLD
+				MPI_COMM_WORLD
 #endif
-					);
+				);
 		dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 		// Assign boundary indicators to the faces of the "parent cell"
-		Mesh<2>::active_cell_iterator cell =
-				unitSquare->begin_active();
+		Mesh<2>::active_cell_iterator cell = unitSquare->begin_active();
 		cell->face(0)->set_all_boundary_indicators(0);  // left
 		cell->face(1)->set_all_boundary_indicators(1);  // right
 		cell->face(2)->set_all_boundary_indicators(2);  // top
@@ -121,40 +133,41 @@ private:
 
 };
 
-
-
-class UnsteadyPeriodicTestFlow2D: public SteadyPeriodicTestFlow2D{
+class UnsteadyPeriodicTestFlow2D: public SteadyPeriodicTestFlow2D {
 public:
+	// class that represents the initial velocity
+	class UnsteadyInitialVelocity: public dealii::Function<2> {
+	private:
+		UnsteadyPeriodicTestFlow2D* m_flow;
+	public:
+		UnsteadyInitialVelocity(UnsteadyPeriodicTestFlow2D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x,
+				const unsigned int component = 0) const {
+			assert(component < 2);
+			if (component == 0) {
+				if ((x(1) >= 0.25) and (x(1) < 0.75)) {
+					return 0.1;
+				} else {
+					return -0.1;
+				}
+			} else {
+				return 0.0;
+			}
+
+		}
+	};
+
 	/// constructor
 	UnsteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
-		SteadyPeriodicTestFlow2D(viscosity, refinementLevel) {
+			SteadyPeriodicTestFlow2D(viscosity, refinementLevel) {
+		setInitialU(make_shared<UnsteadyInitialVelocity>(this));
 	}
 	/// destructor
 	virtual ~UnsteadyPeriodicTestFlow2D() {
 	}
 
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const {
-		for (size_t i = 0; i < initialDensities.size(); i++) {
-			initialDensities(i) = 1.0;
-		}
-	}
-
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const {
-		assert(
-				initialVelocities.at(0).size()
-						== initialVelocities.at(1).size());
-		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-			if ((supportPoints.at(i)(1) >= 0.25) and (supportPoints.at(i)(1) < 0.75)){
-				initialVelocities.at(0)(i) = 0.1;
-			} else {
-				initialVelocities.at(0)(i) = -0.1;
-			}
-			initialVelocities.at(1)(i) = 0.0;
-		}
-	}
 };
 
 } /* namespace natrium */

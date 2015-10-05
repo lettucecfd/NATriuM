@@ -30,7 +30,7 @@ CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 	setBoundaries(makeBoundaries(topPlateVelocity));
 
 	/// apply initial values
-	m_analyticU = make_shared<AnalyticVelocityU>(this);
+	setAnalyticU(make_shared<AnalyticVelocity>(this));
 }
 
 CouetteFlow3D::~CouetteFlow3D() {
@@ -88,52 +88,58 @@ shared_ptr<BoundaryCollection<3> > CouetteFlow3D::makeBoundaries(
 	return boundaries;
 }
 
-double CouetteFlow3D::AnalyticVelocityU::value(
-		const dealii::Point<3>& x) const {
-	// the analytic solution is given by an asymptotic series
-	double t = this->get_time();
-	double U = m_benchmark->getCharacteristicVelocity();
-	double L = m_benchmark->getCharacteristicLength();
-	double t0 = m_benchmark->getStartTime();
-	double nu = m_benchmark->getViscosity();
+double CouetteFlow3D::AnalyticVelocity::value(const dealii::Point<3>& x,
+		const unsigned int component) const {
+	assert(component < 3);
+	if (component == 0) {
+		// the analytic solution is given by an asymptotic series
+		double t = this->get_time();
+		double U = m_benchmark->getCharacteristicVelocity();
+		double L = m_benchmark->getCharacteristicLength();
+		double t0 = m_benchmark->getStartTime();
+		double nu = m_benchmark->getViscosity();
 
-	t += t0;
-	// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
-	// therefor the initial condition is set first:
-	if (t < 0.00001) {
-		if (x(2) < L - 0.00001) {
-			return 0;
-		} else {
-			// upper border
-			return U;
+		t += t0;
+		// the series converges veeeeeery slowly for t -> 0, thus assert t > epsilon
+		// therefor the initial condition is set first:
+		if (t < 0.00001) {
+			if (x(2) < L - 0.00001) {
+				return 0;
+			} else {
+				// upper border
+				return U;
+			}
 		}
-	}
 
-	double sum = U * x(2) / L;
-	double lambda = 0.0;
-	const double PI = atan(1) * 4;
-	double increment = 1.0;
-	double exp_expression = 0.0;
+		double sum = U * x(2) / L;
+		double lambda = 0.0;
+		const double PI = atan(1) * 4;
+		double increment = 1.0;
+		double exp_expression = 0.0;
 
-	for (size_t i = 1; i <= 10000; i++) {
-		// calculate term in series
-		lambda = i * PI / L;
-		exp_expression = exp(-nu * lambda * lambda * t);
-		increment = (i % 2 == 0 ? 1. : -1.) * 2 * U / (lambda * L)
-				* exp_expression * sin(lambda * x(2));
-		// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i
-		sum += increment;
-		// stop conditions: a) converged, b)
-		if (exp_expression < 1e-20) {
-			break;
+		for (size_t i = 1; i <= 10000; i++) {
+			// calculate term in series
+			lambda = i * PI / L;
+			exp_expression = exp(-nu * lambda * lambda * t);
+			increment = (i % 2 == 0 ? 1. : -1.) * 2 * U / (lambda * L)
+					* exp_expression * sin(lambda * x(2));
+			// (i % 2 == 0 ? 1. : -1.) is a more efficient expression of (-1)^i
+			sum += increment;
+			// stop conditions: a) converged, b)
+			if (exp_expression < 1e-20) {
+				break;
+			}
 		}
+		// assert convergence of the above asymptotic sum
+		if (exp_expression >= 1e-12) {
+			LOG(WARNING)
+					<< "Warning: Analytic solution series did not converge."
+					<< endl;
+		}
+		return sum;
+	} else {
+		return 0.0;
 	}
-	// assert convergence of the above asymptotic sum
-	if (exp_expression >= 1e-12) {
-		LOG(WARNING) << "Warning: Analytic solution series did not converge."
-				<< endl;
-	}
-	return sum;
 }
 
 } /* namespace natrium */

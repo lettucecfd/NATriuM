@@ -24,24 +24,30 @@ TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
+	// apply initial and analytical solution
+	this->setAnalyticU(make_shared<AnalyticVelocity>(this));
+	this->setAnalyticRho(make_shared<AnalyticDensity>(this));
 
 }
 
 TaylorGreenVortex2D::~TaylorGreenVortex2D() {
 }
 
-double TaylorGreenVortex2D::AnalyticVelocityU::value(
-		const dealii::Point<2>& x) const {
-	return sin(x(0)) * cos(x(1))
-			* exp(-2 * m_flow->getViscosity() * this->get_time());
+double TaylorGreenVortex2D::AnalyticVelocity::value(const dealii::Point<2>& x,
+		const unsigned int component) const {
+	assert(component < 2);
+	if (component == 0) {
+		return sin(x(0)) * cos(x(1))
+				* exp(-2 * m_flow->getViscosity() * this->get_time());
+	} else {
+		return -cos(x(0)) * sin(x(1))
+				* exp(-2 * m_flow->getViscosity() * this->get_time());
+	}
 }
-double TaylorGreenVortex2D::AnalyticVelocityV::value(
-		const dealii::Point<2>& x) const {
-	return -cos(x(0)) * sin(x(1))
-			* exp(-2 * m_flow->getViscosity() * this->get_time());
-}
-double TaylorGreenVortex2D::AnalyticDensity::value(
-		const dealii::Point<2>& x) const {
+
+double TaylorGreenVortex2D::AnalyticDensity::value(const dealii::Point<2>& x,
+		const unsigned int component) const {
+	assert (component == 0);
 	if (m_flow->m_analyticInit) {
 		double rho0 = 1;
 		double p = rho0 / 4. * (cos(2 * x(0)) + cos(2 * x(1)))

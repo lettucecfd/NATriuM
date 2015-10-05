@@ -24,6 +24,8 @@ PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
+	// apply initial values / analytic solution
+	setAnalyticU(make_shared<AnalyticVelocity>(this));
 
 }
 
@@ -82,8 +84,15 @@ shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 	return boundaries;
 }
 
-double PoiseuilleFlow2D::AnalyticVelocityU::value(const dealii::Point<2>& x) const{
-	return m_flow->m_uMax * (1 - pow(x(1) / m_flow->getCharacteristicLength(), 2));
+double PoiseuilleFlow2D::AnalyticVelocity::value(const dealii::Point<2>& x,
+		const unsigned int component) const {
+	assert (component < 2);
+	if (component == 0) {
+		return m_flow->m_uMax
+				* (1 - pow(x(1) / m_flow->getCharacteristicLength(), 2));
+	} else {
+		return 0.0;
+	}
 }
 
 } /* namespace natrium */
