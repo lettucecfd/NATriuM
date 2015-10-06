@@ -12,6 +12,7 @@
 
 #include <deal.II/base/mpi.h>
 
+#include "Logging.h"
 //#include "BasicNames.h"
 
 namespace natrium {
@@ -26,9 +27,13 @@ private:
 	dealii::Utilities::MPI::MPI_InitFinalize* m_mpi_initialization;
 
 protected:
-	MPIGuard(int argc, char** argv) {
+	MPIGuard(int& argc, char**& argv) {
 		m_mpi_initialization = new dealii::Utilities::MPI::MPI_InitFinalize(
-				argc, argv);
+				argc, argv, 1);
+		// 1 is the max number of TBB threads
+		LOG(BASIC) << "NATriuM runs on "
+				<< dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
+				<< " MPI processes." << endl;
 	}
 public:
 	/**
@@ -38,7 +43,9 @@ public:
 	 * @argv Command line argument.Can be used to determine the number of parallel processes.
 	 * See documentation of  dealii::Utilities::MPI::MPI_InitFinalize(argc, argv) for details.
 	 */
-	static MPIGuard* getInstance(int argc = 0, char** argv = NULL);
+	static MPIGuard* getInstance(int& argc, char**& argv);
+
+	static MPIGuard* getInstance();
 	/**
 	 * @short return dealii's MPI_InitFinalize object
 	 */

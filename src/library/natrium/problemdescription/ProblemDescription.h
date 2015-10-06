@@ -176,7 +176,7 @@ inline ProblemDescription<dim>::ProblemDescription(
 	m_initialRho = make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
 	m_initialU = make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
 #ifdef WITH_TRILINOS
-	/// Create MPI (if not done yet)
+	/// Create MPI (if not done yet);
 	MPIGuard::getInstance();
 #endif
 }

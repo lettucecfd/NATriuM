@@ -12,6 +12,7 @@
 #include "IntegrationTestCases.h"
 
 #include "natrium/utilities/HtmlTrace.h"
+#include "natrium/utilities/MPIGuard.h"
 
 using namespace natrium;
 
@@ -81,9 +82,12 @@ void print_line_html(IntegrationTestCases::TestResult& result,
 }
 
 // Main function
-int main() {
+int main(int argc, char **argv) {
 
 	cout << "Start integration tests. This will take a few minutes..." << endl;
+
+	MPIGuard::getInstance(argc, argv);
+
 	bool errors = false;
 	HtmlTrace htmlTrace;
 

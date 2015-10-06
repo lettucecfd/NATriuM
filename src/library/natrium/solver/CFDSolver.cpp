@@ -506,7 +506,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)
-			if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0) {
+			if (dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0) {
 				// generate .pvtu filename
 				std::stringstream pvtu_filename;
 				pvtu_filename << m_configuration->getOutputDirectory().c_str() << "/t_"
@@ -518,7 +518,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 				// generate all other filenames
 				std::vector<std::string> filenames;
 				for (unsigned int i = 0;
-						i < Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
+						i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
 						++i) {
 					std::stringstream vtu_filename_i;
 					vtu_filename_i
