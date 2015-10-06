@@ -469,9 +469,12 @@ void CFDSolver<dim>::output(size_t iteration) {
 		 }
 		 }*/
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
+			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
-					<< iteration << ".vtu";
+					<< iteration << "."
+					<< m_problemDescription->getMesh()->locally_owned_subdomain()
+					<< ".vtu";
 			std::string filename = str.str();
 			std::ofstream vtu_output(filename.c_str());
 			dealii::DataOut<dim> data_out;
@@ -485,11 +488,48 @@ void CFDSolver<dim>::output(size_t iteration) {
 				data_out.add_data_vector(m_velocity.at(1), "uy");
 				data_out.add_data_vector(m_velocity.at(2), "uz");
 			}
-			addAnalyticSolutionToOutput(data_out);
+
 			/// For Benchmarks: add analytic solution
+			addAnalyticSolutionToOutput(data_out);
+
+			// tell the data processor the locally owned cells
+			dealii::Vector<float> subdomain(
+					m_problemDescription->getMesh()->n_active_cells());
+			for (unsigned int i = 0; i < subdomain.size(); ++i)
+				subdomain(i) =
+						m_problemDescription->getMesh()->locally_owned_subdomain();
+			data_out.add_data_vector(subdomain, "subdomain");
+
+			// Write vtu file
 			data_out.build_patches(
 					m_configuration->getSedgOrderOfFiniteElement() + 1);
 			data_out.write_vtu(vtu_output);
+
+			// Write pvtu file (which is a master file for all the single vtu files)
+			if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0) {
+				// generate .pvtu filename
+				std::stringstream pvtu_filename;
+				pvtu_filename << m_configuration->getOutputDirectory().c_str() << "/t_"
+						<< iteration << "."
+						<< m_problemDescription->getMesh()->locally_owned_subdomain()
+						<< ".pvtu";
+				std::ofstream pvtu_output(pvtu_filename.str().c_str());
+
+				// generate all other filenames
+				std::vector<std::string> filenames;
+				for (unsigned int i = 0;
+						i < Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
+						++i) {
+					std::stringstream vtu_filename_i;
+					vtu_filename_i
+							<< m_configuration->getOutputDirectory().c_str()
+							<< "/t_" << iteration << "."
+							<< m_problemDescription->getMesh()->locally_owned_subdomain()
+							<< ".vtu";
+					filenames.push_back(vtu_filename_i.str());
+				}
+				data_out.write_pvtu_record(pvtu_output, filenames);
+			}
 		}
 
 		// output: table
@@ -619,7 +659,7 @@ void CFDSolver<dim>::saveDistributionFunctionsToFiles(const string& directory) {
 
 		filename << directory << "/checkpoint_f_" << i
 #ifdef WITH_TRILINOS_MPI
-				<< "_"
+				<< "."
 				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
 #endif
 				<< ".dat";
@@ -649,7 +689,7 @@ void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 			std::stringstream filename;
 			filename << directory << "/checkpoint_f_" << i
 #ifdef WITH_TRILINOS_MPI
-					<< "_"
+					<< "."
 					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
 #endif
 					<< ".dat";
