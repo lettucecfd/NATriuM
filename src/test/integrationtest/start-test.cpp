@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 		errors = true;
 	}
 
-	// Test 5: Convergence 3D LBM
+	// Test 5: Convergence 3D flow
 	result = IntegrationTestCases::ConvergenceTest3D();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {

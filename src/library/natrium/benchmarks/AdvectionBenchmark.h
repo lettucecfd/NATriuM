@@ -25,8 +25,14 @@ struct AdvectionResult {
 	double timesec;
 };
 
+/* function to calculate analytic solution at a point x*/
+double analytic_solution(double time, const dealii::Point<2>& x,
+		bool is_smooth);
+
 void getAnalyticSolution(double time, distributed_vector& analyticSolution,
-		const vector<dealii::Point<2> >& supportPoints, bool is_smooth = true);
+		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints,
+		const shared_ptr<AdvectionOperator<2> > & streaming,
+		bool is_smooth = true);
 
 
 

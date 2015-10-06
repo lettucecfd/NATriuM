@@ -33,7 +33,10 @@ protected:
 		// 1 is the max number of TBB threads
 		LOG(BASIC) << "NATriuM runs on "
 				<< dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
-				<< " MPI processes." << endl;
+				<< " MPI process";
+		if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) != 1)
+			LOG(BASIC) << "es";
+		LOG(BASIC) << endl;
 	}
 public:
 	/**

@@ -26,44 +26,66 @@
 
 #include "../benchmarks/PeriodicTestDomain2D.h"
 
-
 namespace natrium {
 
-template class SEDGMinLee<2>;
-template class RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector>;
+template class SEDGMinLee<2> ;
+template class RungeKutta5LowStorage<distributed_sparse_matrix,
+		distributed_vector> ;
 
 namespace AdvectionBenchmark {
+
 // analytic solution (where should the bump be after a certain time)
-void getAnalyticSolution(double time, distributed_vector& analyticSolution,
-		const vector<dealii::Point<2> >& supportPoints, bool is_smooth) {
-	assert(analyticSolution.size() == supportPoints.size());
-	assert(supportPoints.size() > 0);
+double analytic_solution(double time, const dealii::Point<2>& x,
+		bool is_smooth) {
 
 	double lambda = 1;
-
 	dealii::Point<2> originalPoint;
-	for (size_t i = 0; i < supportPoints.size(); i++) {
-		originalPoint = supportPoints.at(i);
-		// move back to original point
-		originalPoint(0) -= time;
-		// transform back to [0,1]
-		while (originalPoint(0) < 0.0) {
-			originalPoint(0) += 1.0;
-		}
-		while (originalPoint(0) > 1.0) {
-			originalPoint(0) -= 1.0;
-		}
-		if (is_smooth) {
-			// see Hesthaven, p. 27
-			double h = sin(8 * atan(1) * originalPoint(0) * lambda);
-			analyticSolution(i) = h;
-		} else {
-			// see Hesthaven, p. 83
-			double h = sin(8 * atan(1) * originalPoint(0) * lambda);
-			analyticSolution(i) = ((h > 0) - (h < 0)) * pow(fabs(h), 2.0);
-		}
-	} /* for i in points */
-} /* getAnalyticSolution */
+	originalPoint = x;
+	// move back to original point
+	originalPoint(0) -= time;
+	// transform back to [0,1]
+	while (originalPoint(0) < 0.0) {
+		originalPoint(0) += 1.0;
+	}
+	while (originalPoint(0) > 1.0) {
+		originalPoint(0) -= 1.0;
+	}
+	if (is_smooth) {
+		// see Hesthaven, p. 27
+		return sin(8 * atan(1) * originalPoint(0) * lambda);
+	} else {
+		// see Hesthaven, p. 83
+		double h = sin(8 * atan(1) * originalPoint(0) * lambda);
+		return ((h > 0) - (h < 0)) * pow(fabs(h), 2.0);
+	}
+} /* analytic_solution */
+
+void getAnalyticSolution(double time, distributed_vector& analyticSolution,
+		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints,
+		const SEDGMinLee<2>& streaming, bool is_smooth) {
+	// get Function instance
+	const unsigned int dofs_per_cell = streaming.getFe()->dofs_per_cell;
+	vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+	typename dealii::DoFHandler<2>::active_cell_iterator cell =
+			streaming.getDoFHandler()->begin_active(), endc =
+			streaming.getDoFHandler()->end();
+	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
+			cell->get_dof_indices(local_dof_indices);
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				assert(
+						analyticSolution.in_local_range(
+								local_dof_indices.at(i)));
+				assert(
+						supportPoints.find(local_dof_indices.at(i))
+								!= supportPoints.end());
+				analyticSolution(local_dof_indices.at(i)) = analytic_solution(
+						time, supportPoints.at(local_dof_indices.at(i)),
+						is_smooth);
+			}
+		} /* if is locally owned */
+	} /* for all cells */
+}
 
 AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 		size_t numberOfTimeSteps, bool is_smooth, bool output_to_std_dir,
@@ -78,40 +100,41 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 	// create problem and solver
 	PeriodicTestDomain2D periodic(refinementLevel);
-	SEDGMinLee<2> streaming(periodic.getMesh(),
-			periodic.getBoundaries(), fe_order, make_shared<D2Q9>(), "",
-			useCentralFlux);
+	SEDGMinLee<2> streaming(periodic.getMesh(), periodic.getBoundaries(),
+			fe_order, make_shared<D2Q9>(), "", useCentralFlux);
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
 #ifdef WITH_TRILINOS_MPI
 	// create smooth initial conditions
-	distributed_vector f(streaming.getLocallyOwnedDofs(), streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	distributed_vector f(streaming.getLocallyOwnedDofs(),
+			streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
 	// zero-vector for time integrator
-	distributed_vector g(streaming.getLocallyOwnedDofs(), streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	distributed_vector g(streaming.getLocallyOwnedDofs(),
+			streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
 #else
 	// create smooth initial conditions
 	distributed_vector f(streaming.getNumberOfDoFs());
 	// zero-vector for time integrator
 	distributed_vector g(streaming.getNumberOfDoFs());
 #endif
-	vector<dealii::Point<2> > supportPoints(
-			streaming.getDoFHandler()->n_dofs());
-	dealii::DoFTools::map_dofs_to_support_points(streaming.getMapping(),
-			*streaming.getDoFHandler(), supportPoints);
-	getAnalyticSolution(0.0, f, supportPoints, is_smooth);
+	map<dealii::types::global_dof_index, dealii::Point<2> > supportPoints;
+	streaming.mapDoFsToSupportPoints(supportPoints);
+	getAnalyticSolution(0.0, f, supportPoints, streaming, is_smooth);
 	assert(g.all_zero());
 
 	// RK5 for streaming in direction (1,0)
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(matrices.block(0, 0));
 	advectionMatrix.copy_from(matrices.block(0, 0));
-	shared_ptr<TimeIntegrator<distributed_sparse_matrix,
-	distributed_vector> > RK5 = make_shared<RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> >(
-			deltaT, f);
+	shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > RK5 =
+			make_shared<
+					RungeKutta5LowStorage<distributed_sparse_matrix,
+							distributed_vector> >(deltaT, f);
 
 #ifdef WITH_TRILINOS_MPI
-	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(), streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(),
+			streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
 #else
 	distributed_vector fAnalytic(f.size());
 #endif
@@ -144,7 +167,8 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 				dealii::DataOut<2> data_out;
 				data_out.attach_dof_handler(*streaming.getDoFHandler());
 				data_out.add_data_vector(f, "f");
-				getAnalyticSolution(deltaT * i, fAnalytic, supportPoints, is_smooth);
+				getAnalyticSolution(deltaT * i, fAnalytic, supportPoints, streaming,
+						is_smooth);
 				data_out.add_data_vector(fAnalytic, "f_ref");
 				data_out.build_patches(20);
 				data_out.write_vtu(vtu_output);
@@ -164,7 +188,8 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	result.timesec /= CLOCKS_PER_SEC;
 
 	// compare with analytic solution by sup-norm and 2-norm
-	getAnalyticSolution(deltaT * numberOfTimeSteps, fAnalytic, supportPoints, is_smooth);
+	getAnalyticSolution(deltaT * numberOfTimeSteps, fAnalytic, supportPoints, streaming,
+			is_smooth);
 	result.normSup = 0.0;
 	result.norm2 = 0.0;
 	for (size_t i = 0; i < f.size(); i++) {
