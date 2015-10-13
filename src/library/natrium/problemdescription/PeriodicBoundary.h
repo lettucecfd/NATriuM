@@ -15,8 +15,9 @@
 #include "deal.II/base/point.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
+#include "deal.II/grid/grid_tools.h"
 #include "deal.II/dofs/dof_handler.h"
-#include <deal.II/lac/compressed_sparsity_pattern.h>
+#include "deal.II/lac/compressed_sparsity_pattern.h"
 
 #include "../utilities/NATriuMException.h"
 #include "../utilities/Logging.h"
@@ -51,7 +52,14 @@ public:
 	}
 };
 
-
+/**
+ * @short Map that stores all information that is needed for a periodic boundary
+ */
+template<size_t dim, size_t spacedim = dim>
+using PeriodicCellMap = std::map<
+			dealii::TriaIterator< dealii::CellAccessor<dim, spacedim> >,
+			dealii::GridTools::PeriodicFacePair< dealii::TriaIterator<dealii::CellAccessor<dim, spacedim> > >
+	>;
 
 /**
  * @short  A periodic boundary condition,
@@ -216,6 +224,7 @@ public:
 			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >& getCellMap() const {
 		return m_cells;
 	}
+
 
 };
 /* PeriodicBoundary1D */
