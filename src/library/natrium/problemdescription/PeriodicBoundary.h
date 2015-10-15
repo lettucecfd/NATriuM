@@ -21,6 +21,7 @@
 
 #include "../utilities/NATriuMException.h"
 #include "../utilities/Logging.h"
+#include "../utilities/DealiiExtensions.h"
 
 #include "Boundary.h"
 
@@ -52,14 +53,6 @@ public:
 	}
 };
 
-/**
- * @short Map that stores all information that is needed for a periodic boundary
- */
-template<size_t dim, size_t spacedim = dim>
-using PeriodicCellMap = std::map<
-			dealii::TriaIterator< dealii::CellAccessor<dim, spacedim> >,
-			dealii::GridTools::PeriodicFacePair< dealii::TriaIterator<dealii::CellAccessor<dim, spacedim> > >
-	>;
 
 /**
  * @short  A periodic boundary condition,
@@ -79,25 +72,9 @@ private:
 	/// boundary indicator of second interfacial line
 	size_t m_boundaryIndicator2;
 
-	//////////////////////////
-	// ONLY RELEVANT FOR 2D //
-	//////////////////////////
-	/// start point of line 1
-	dealii::Point<dim> m_beginLine1;
-
-	/// end point of line 1
-	dealii::Point<dim> m_endLine1;
-
-	/// start point of line 2
-	dealii::Point<dim> m_beginLine2;
-
-	/// end point of line 2
-	dealii::Point<dim> m_endLine2;
-
 	/// Container for all cells that belong to this boundary
 	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
-	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
-			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
+	PeriodicCellMap<dim> m_cells;
 
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
@@ -192,21 +169,6 @@ public:
 	/////////////////////////////////
 	// GETTER     // SETTER        //
 	/////////////////////////////////
-	const dealii::Point<dim>& getBeginLine1() const {
-		return m_beginLine1;
-	}
-
-	const dealii::Point<dim>& getBeginLine2() const {
-		return m_beginLine2;
-	}
-
-	const dealii::Point<dim>& getEndLine1() const {
-		return m_endLine1;
-	}
-
-	const dealii::Point<dim>& getEndLine2() const {
-		return m_endLine2;
-	}
 
 	const shared_ptr<Mesh<dim> >& getMesh() const {
 		return m_triangulation;
@@ -220,8 +182,7 @@ public:
 		return m_boundaryIndicator2;
 	}
 
-	const std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
-			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >& getCellMap() const {
+	const PeriodicCellMap<dim>& getCellMap() const {
 		return m_cells;
 	}
 

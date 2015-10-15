@@ -21,7 +21,6 @@
 #include <deal.II/lac/vector.h>
 #include <deal.II/lac/constraint_matrix.h>
 #include <deal.II/grid/tria.h>
-#include <deal.II/grid/tria_iterator.h>
 #include <deal.II/grid/intergrid_map.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/dofs/dof_handler.h>
@@ -126,14 +125,14 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 											cell, neighbor);
 							// if the face is not really at the boundary: do not consider cell
 							/*test_face =
-									periodic->second->getOppositeCellAtPeriodicBoundary(
-											neighbor, test_cell);
-							if (not ((test_cell == cell) && (test_face == face))) {
-								neighbor_face = 1000;
-								break;
-							} else {*/
-								other_face = neighbor->face(neighbor_face);
-								break;
+							 periodic->second->getOppositeCellAtPeriodicBoundary(
+							 neighbor, test_cell);
+							 if (not ((test_cell == cell) && (test_face == face))) {
+							 neighbor_face = 1000;
+							 break;
+							 } else {*/
+							other_face = neighbor->face(neighbor_face);
+							break;
 							//}
 						}
 					}
@@ -305,11 +304,12 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 							assert(unique <= 1);
 						}
 
-						if (2 == DH::dimension){
-						AssertDimension(dofs_on_this_face.size(),
-								sqrt(n_dofs_on_this_cell));
-						} else if (3 == DH::dimension){
-							AssertDimension(dofs_on_this_face.size()* sqrt(dofs_on_this_face.size()),
+						if (2 == DH::dimension) {
+							AssertDimension(dofs_on_this_face.size(),
+									sqrt(n_dofs_on_this_cell));
+						} else if (3 == DH::dimension) {
+							AssertDimension(
+									dofs_on_this_face.size()* sqrt(dofs_on_this_face.size()),
 									n_dofs_on_this_cell);
 						}
 						AssertDimension(dofs_on_other_face.size(),
@@ -372,39 +372,259 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 			fe_face);
 }
 
-} /* namepace DealIIExtensions */
+///////////////////////////////////////////
+////////////// PERIODICITY ////////////////
+///////////////////////////////////////////
+// derived from make_periodicity constraints
 
-} /* namespace natrium */
+template<typename DH>
+void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
+		const typename identity<typename DH::cell_iterator>::type &cell_2,
+		size_t face_nr_1, size_t face_nr_2,
+		PeriodicCellMap<DH::dimension>& cell_map, const bool face_orientation,
+		const bool face_flip, const bool face_rotation) {
+	static const int dim = DH::dimension;
+	static const int spacedim = DH::space_dimension;
+
+	typedef typename DH::face_iterator FaceIterator;
+	FaceIterator face_1 = cell_1->face(face_nr_1);
+	FaceIterator face_2 = cell_2->face(face_nr_2);
+
+	Assert(
+			(dim != 1) || (face_orientation == true && face_flip == false && face_rotation == false),
+			ExcMessage ("The supplied orientation " "(face_orientation, face_flip, face_rotation) " "is invalid for 1D"));
+
+	Assert((dim != 2) || (face_orientation == true && face_rotation == false),
+			ExcMessage ("The supplied orientation " "(face_orientation, face_flip, face_rotation) " "is invalid for 2D"));
+
+	Assert(face_1 != face_2,
+			ExcMessage ("face_1 and face_2 are equal! Cannot constrain DoFs " "on the very same face"));
+
+	Assert(face_1->at_boundary() && face_2->at_boundary(),
+			ExcMessage ("Faces for periodicity constraints must be on the " "boundary"));
+
+	// A lookup table on how to go through the child cells depending on the
+	// orientation:
+	// see Documentation of GeometryInfo for details
+
+	static const int lookup_table_2d[2][2] = {
+	//          flip:
+			{ 0, 1 }, //  false
+			{ 1, 0 }, //  true
+			};
+
+	static const int lookup_table_3d[2][2][2][4] = {
+	//                    orientation flip  rotation
+			{ { { 0, 2, 1, 3 }, //  false       false false
+					{ 2, 3, 0, 1 }, //  false       false true
+					}, { { 3, 1, 2, 0 }, //  false       true  false
+							{ 1, 0, 3, 2 }, //  false       true  true
+					}, }, { { { 0, 1, 2, 3 }, //  true        false false
+					{ 1, 3, 0, 2 }, //  true        false true
+					}, { { 3, 2, 1, 0 }, //  true        true  false
+							{ 2, 0, 3, 1 }, //  true        true  true
+					}, }, };
+
+	if (cell_1->has_children() && cell_2->has_children()) {
+		// In the case that both faces have children, we loop over all
+		// children and apply make_periodicty_constrains recursively:
+
+		Assert(
+				face_1->n_children() == GeometryInfo<dim>::max_children_per_face && face_2->n_children() == GeometryInfo<dim>::max_children_per_face,
+				ExcNotImplemented());
+
+		for (unsigned int i = 0; i < GeometryInfo<dim>::max_children_per_face;
+				++i) {
+			// Lookup the index for the second face
+			unsigned int j;
+			switch (dim) {
+			case 2:
+				j = lookup_table_2d[face_flip][i];
+				break;
+			case 3:
+				j =
+						lookup_table_3d[face_orientation][face_flip][face_rotation][i];
+				break;
+			default:
+				AssertThrow(false, ExcNotImplemented())
+				;
+			}
+
+			// find subcell ids that belong to the subface indices
+			size_t child_cell_1 = GeometryInfo<dim>::child_cell_on_face(
+					cell_1->refinement_case(), face_nr_1, i, face_orientation,
+					face_flip, face_rotation, face_1->refinement_case());
+			size_t child_cell_2 = GeometryInfo<dim>::child_cell_on_face(
+					cell_2->refinement_case(), face_nr_2, j, face_orientation,
+					face_flip, face_rotation, face_2->refinement_case());
+
+			// recursive call
+			make_periodicity_map_dg<DH>(cell_1->child(child_cell_1),
+					cell_2->child(child_cell_2), i, j, cell_map,
+					face_orientation, face_flip, face_rotation);
+		}
+	} else {
+		// Otherwise at least one of the two faces is active and
+		// we need to do some work and enter the periodic face pairs!
+
+		// This case could only be allowed with anisotropic refinement,
+		// because the coarser cell is not allowed to have subfaces at the boundary.
+		// Anisotropic refinement is also left out here for simplicity.
+		// Consequently, opposite cells at periodic boundaries have to have the same
+		// refinement level.
+		if (cell_1->has_children())
+				PeriodicBoundaryNotPossible("Opposite cells at periodic boundaries have to have the same refinement level.");
+		if (cell_2->has_children())
+				PeriodicBoundaryNotPossible("Opposite cells at periodic boundaries have to have the same refinement level.");
+
+		// insert periodic face pair for both cells
+		dealii::GridTools::PeriodicFacePair<
+				dealii::TriaIterator<dealii::CellAccessor<dim, spacedim> > > face_pair;
+		face_pair.cell[0] = cell_1;
+		face_pair.cell[1] = cell_2;
+		face_pair.face_idx[0] = face_nr_1;
+		face_pair.face_idx[1] = face_nr_2;
+		face_pair.orientation[0] = face_orientation;
+		face_pair.orientation[1] = face_flip;
+		face_pair.orientation[2] = face_rotation;
+		cell_map.insert(
+				std::pair<
+						dealii::TriaIterator<dealii::CellAccessor<dim, spacedim> >,
+						dealii::GridTools::PeriodicFacePair<
+								dealii::TriaIterator<
+										dealii::CellAccessor<dim, spacedim> > > >(
+						cell_1, face_pair));
+
+		cell_map.insert(
+				std::pair<
+						dealii::TriaIterator<dealii::CellAccessor<dim, spacedim> >,
+						dealii::GridTools::PeriodicFacePair<
+								dealii::TriaIterator<
+										dealii::CellAccessor<dim, spacedim> > > >(
+						cell_2, face_pair));
+
+	}
+}
+
+template<typename DH>
+void make_periodicity_map_dg(
+		const std::vector<
+				GridTools::PeriodicFacePair<typename DH::cell_iterator> > &periodic_faces,
+		PeriodicCellMap<DH::dimension>& cell_map) {
+	typedef std::vector<GridTools::PeriodicFacePair<typename DH::cell_iterator> > FaceVector;
+	typename FaceVector::const_iterator it, end_periodic;
+	it = periodic_faces.begin();
+	end_periodic = periodic_faces.end();
+
+	// Loop over all periodic faces...
+	for (; it != end_periodic; ++it) {
+		const typename DH::cell_iterator cell_1 = it->cell[0];
+		size_t face_id_1 = it->face_idx[0];
+		const typename DH::cell_iterator cell_2 = it->cell[1];
+		size_t face_id_2 = it->face_idx[1];
+
+		Assert(
+				cell_1->face(face_id_1)->at_boundary() && cell_2->face(face_id_2)->at_boundary(),
+				ExcInternalError());
+
+		Assert(cell_1->face(face_id_1) != cell_2->face(face_id_2),
+				ExcInternalError());
+
+		// ... and apply the low level function to
+		// every matching pair:
+		make_periodicity_map_dg<DH>(cell_1, cell_2, face_id_1, face_id_2, cell_map,
+				it->orientation[0], it->orientation[1], it->orientation[2]);
+	}
+}
+
+// High level interface variants:
+
+template<typename DH>
+void make_periodicity_map_dg(const DH &dof_handler,
+		size_t b_id1, size_t b_id2,
+		const int direction, PeriodicCellMap<DH::dimension>& cell_map) {
+	static const int space_dim = DH::space_dimension;
+	(void) space_dim;
+	Assert(0<=direction && direction<space_dim,
+			ExcIndexRange (direction, 0, space_dim));
+
+	Assert(b_id1 != b_id2,
+			ExcMessage ("The boundary indicators b_id1 and b_id2 must be" "different to denote different boundaries."));
+
+	std::vector<GridTools::PeriodicFacePair<typename DH::cell_iterator> > matched_faces;
+
+	// Collect matching periodic cells on the coarsest level:
+	GridTools::collect_periodic_faces(dof_handler, b_id1, b_id2, direction,
+			matched_faces);
+
+	make_periodicity_map_dg<DH>(matched_faces, cell_map);
+}
 
 typedef DynamicSparsityPattern SP;
 //for (SP : SPARSITY_PATTERNS; deal_II_dimension : DIMENSIONS)
 //for (size_t deal_II_dimension = 1; deal_II_dimension < 4; deal_II_dimension++)
 //{
 template void
-natrium::DealIIExtensions::make_sparser_flux_sparsity_pattern<DoFHandler<2>, SP>(
-		const DoFHandler<2> &dof, SP &sparsity,
-		const natrium::BoundaryCollection<2>& boundaries,
+make_sparser_flux_sparsity_pattern<DoFHandler<2>, SP>(const DoFHandler<2> &dof,
+		SP &sparsity, const BoundaryCollection<2>& boundaries,
 		FEFaceValues<2>* fe_face);
 
 template void
-natrium::DealIIExtensions::make_sparser_flux_sparsity_pattern<DoFHandler<2>, SP>(
-		const DoFHandler<2> &dof, SP &sparsity,
-		const ConstraintMatrix &constraints,
-		const natrium::BoundaryCollection<2>& boundaries,
-		FEFaceValues<2>* fe_face, const bool, const unsigned int);
+make_sparser_flux_sparsity_pattern<DoFHandler<2>, SP>(const DoFHandler<2> &dof,
+		SP &sparsity, const ConstraintMatrix &constraints,
+		const BoundaryCollection<2>& boundaries, FEFaceValues<2>* fe_face,
+		const bool, const unsigned int);
 
 template void
-natrium::DealIIExtensions::make_sparser_flux_sparsity_pattern<DoFHandler<3>, SP>(
-		const DoFHandler<3> &dof, SP &sparsity,
-		const natrium::BoundaryCollection<3>& boundaries,
+make_sparser_flux_sparsity_pattern<DoFHandler<3>, SP>(const DoFHandler<3> &dof,
+		SP &sparsity, const BoundaryCollection<3>& boundaries,
 		FEFaceValues<3>* fe_face);
 
 template void
-natrium::DealIIExtensions::make_sparser_flux_sparsity_pattern<DoFHandler<3>, SP>(
-		const DoFHandler<3> &dof, SP &sparsity,
-		const ConstraintMatrix &constraints,
-		const natrium::BoundaryCollection<3>& boundaries,
-		FEFaceValues<3>* fe_face, const bool, const unsigned int);
+make_sparser_flux_sparsity_pattern<DoFHandler<3>, SP>(const DoFHandler<3> &dof,
+		SP &sparsity, const ConstraintMatrix &constraints,
+		const BoundaryCollection<3>& boundaries, FEFaceValues<3>* fe_face,
+		const bool, const unsigned int);
 
+template
+void make_periodicity_map_dg<DoFHandler<2> >(
+		const typename DoFHandler<2>::cell_iterator &cell_1,
+		const identity<typename DoFHandler<2>::cell_iterator>::type &cell_2,
+		size_t face_nr_1, size_t face_nr_2, PeriodicCellMap<2>& cell_map,
+		const bool face_orientation, const bool face_flip,
+		const bool face_rotation);
+template
+void make_periodicity_map_dg<DoFHandler<3> >(
+		const typename DoFHandler<3>::cell_iterator &cell_1,
+		const identity<typename DoFHandler<3>::cell_iterator>::type &cell_2,
+		size_t face_nr_1, size_t face_nr_2, PeriodicCellMap<3>& cell_map,
+		const bool face_orientation, const bool face_flip,
+		const bool face_rotation);
+
+template
+void make_periodicity_map_dg<DoFHandler<2> >(
+		const std::vector<
+				GridTools::PeriodicFacePair<
+						typename DoFHandler<2>::cell_iterator> > &periodic_faces,
+		PeriodicCellMap<2>& cell_map);
+
+template
+void make_periodicity_map_dg<DoFHandler<3> >(
+		const std::vector<
+				GridTools::PeriodicFacePair<
+						typename DoFHandler<3>::cell_iterator> > &periodic_faces,
+		PeriodicCellMap<3>& cell_map);
+
+template
+void make_periodicity_map_dg<DoFHandler<2> >(const DoFHandler<2> &dof_handler,
+		size_t b_id1, size_t b_id2,
+		const int direction, PeriodicCellMap<2>& cell_map);
+template
+void make_periodicity_map_dg<DoFHandler<3> >(const DoFHandler<3> &dof_handler,
+		size_t b_id1, size_t b_id2,
+		const int direction, PeriodicCellMap<3>& cell_map);
 //}
 
+} /* namepace DealIIExtensions */
+
+} /* namespace natrium */

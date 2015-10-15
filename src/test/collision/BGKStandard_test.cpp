@@ -92,14 +92,14 @@ BOOST_AUTO_TEST_CASE(BGKMoments_test) {
 				macroscopicVelocity, macroscopicDensity);
 	}
 
-	// test first order moment (=density)
+	// test zeroth order moment (=density)
 	double moment1 = 0.0;
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
 		moment1 += eqDistributions.at(i);
 	}
 	BOOST_CHECK_SMALL(moment1 - macroscopicDensity, TOLERANCE);
 
-	// test second order moments (=impulse)
+	// test first order moments (=impulse)
 	numeric_vector moment2(dqmodel->getD());
 	BOOST_CHECK(moment2(0) == 0);
 	BOOST_CHECK(moment2(1) == 0);
