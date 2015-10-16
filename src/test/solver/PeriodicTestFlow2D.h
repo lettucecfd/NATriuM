@@ -121,9 +121,9 @@ private:
 		shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
 				BoundaryCollection<2> >();
 		boundaries->addBoundary(
-				make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
+				make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 		boundaries->addBoundary(
-				make_shared<PeriodicBoundary<2> >(2, 3, getMesh()));
+				make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
 		// Get the triangulation object (which belongs to the parent class).
 		shared_ptr<Mesh<2> > tria_pointer = getMesh();

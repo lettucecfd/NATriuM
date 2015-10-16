@@ -398,7 +398,7 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 			ExcMessage ("The supplied orientation " "(face_orientation, face_flip, face_rotation) " "is invalid for 2D"));
 
 	Assert(face_1 != face_2,
-			ExcMessage ("face_1 and face_2 are equal! Cannot constrain DoFs " "on the very same face"));
+			ExcMessage ("face_1 and face_2 are equal! Cannot create boundary conditions DoFs " "on the very same face"));
 
 	Assert(face_1->at_boundary() && face_2->at_boundary(),
 			ExcMessage ("Faces for periodicity constraints must be on the " "boundary"));
@@ -460,7 +460,7 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 
 			// recursive call
 			make_periodicity_map_dg<DH>(cell_1->child(child_cell_1),
-					cell_2->child(child_cell_2), i, j, cell_map,
+					cell_2->child(child_cell_2), face_nr_1, face_nr_2, cell_map,
 					face_orientation, face_flip, face_rotation);
 		}
 	} else {

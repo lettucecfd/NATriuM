@@ -72,6 +72,9 @@ private:
 	/// boundary indicator of second interfacial line
 	size_t m_boundaryIndicator2;
 
+	/// direction of the boundary
+	size_t m_direction;
+
 	/// Container for all cells that belong to this boundary
 	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
 	PeriodicCellMap<dim> m_cells;
@@ -117,7 +120,7 @@ public:
 	 *  @param boundaryIndicator2 boundary indicator of interface line 2
 	 *  @param triangulation A (shared ptr to a) triangulation object (the mesh)
 	 */
-	PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2,
+	PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction,
 			shared_ptr<Mesh<dim> > triangulation);
 
 	/// destructor
@@ -156,11 +159,8 @@ public:
 	void createCellMap(const dealii::DoFHandler<dim>& doFHandler);
 
 	/**
-	 * @short modify sparsity pattern so that the fluxes over periodic boundary can be incorporated
-	 * @param cSparse the block-sparsity pattern
-	 * @param n_blocks the number of blocks in cSparse
-	 * @param n_dofs_per_row number of degrees of freedom per block (normally: overall degrees of freedom on grid)
-	 * @param dofs_per_cell number of degrees of freedom per cell
+	 * @short This function does nothing; just to satisfy the interface.
+	 * 		  The Periodic Boundary conditions are directly incorporated in make_sparser_flux_sparsity_pattern
 	 */
 	void addToSparsityPattern(dealii::BlockDynamicSparsityPattern& cSparse,
 			size_t n_blocks, size_t n_dofs_per_block,
@@ -186,7 +186,13 @@ public:
 		return m_cells;
 	}
 
+	size_t getDirection() const {
+		return m_direction;
+	}
 
+	const shared_ptr<Mesh<dim> >& getTriangulation() const {
+		return m_triangulation;
+	}
 };
 /* PeriodicBoundary1D */
 

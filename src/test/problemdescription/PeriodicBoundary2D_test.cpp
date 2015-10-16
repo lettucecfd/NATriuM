@@ -54,8 +54,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 	triangulation->begin_active(0)->face(3)->set_boundary_indicator(3); //bottom
 
 	/// Test if construction works and vertices could be found automatically
-	BOOST_CHECK_NO_THROW(PeriodicBoundary<2>(0, 1, triangulation));
-	PeriodicBoundary<2> myBoundary(0, 1, triangulation);
+	BOOST_CHECK_NO_THROW(PeriodicBoundary<2>(0, 1, 0, triangulation));
+	PeriodicBoundary<2> myBoundary(0, 1, 0, triangulation);
 	/*
 	BOOST_CHECK_SMALL(myBoundary.getBeginLine1()[0] - 0.0, 1e-10);
 	BOOST_CHECK_SMALL(myBoundary.getBeginLine1()[1] - 0.0, 1e-10);
@@ -80,16 +80,16 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 	BOOST_CHECK_SMALL(myBoundary2.getEndLine2()[1] - 1.0, 1e-10);
 */
 	// Check if the same thing works for the top and bottom boundary
-	BOOST_CHECK_NO_THROW(PeriodicBoundary<2>(2, 3, triangulation));
+	BOOST_CHECK_NO_THROW(PeriodicBoundary<2>(2, 3, 1, triangulation));
 
 	//////////////////
 	// FAILURE TEST //
 	//////////////////
-	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 0, triangulation),
+	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 0, 0, triangulation),
 			PeriodicBoundaryNotPossible);
-	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 2, triangulation),
+	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 2, 0, triangulation),
 			PeriodicBoundaryNotPossible);
-	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 3, triangulation),
+	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 3, 0, triangulation),
 			PeriodicBoundaryNotPossible);
 
 	cout << "done." << endl;
@@ -121,8 +121,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 	triangulation->refine_global(numberOfRefinementSteps);
 
 	// make periodic boundaries object
-	PeriodicBoundary<2> periodicLeftRight(0, 1, triangulation);
-	PeriodicBoundary<2> periodicTopBottom(2, 3, triangulation);
+	PeriodicBoundary<2> periodicLeftRight(0, 1, 0, triangulation);
+	PeriodicBoundary<2> periodicTopBottom(2, 3, 1, triangulation);
 
 	// distribute dofs
 	shared_ptr<dealii::DoFHandler<2> > doFHandler = make_shared<

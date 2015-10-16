@@ -82,9 +82,9 @@ shared_ptr<BoundaryCollection<3> > TaylorGreenVortex3D::makeBoundaries() {
 	// make boundary description
 	shared_ptr<BoundaryCollection<3> > boundaries = make_shared<
 			BoundaryCollection<3> >();
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(0, 1, getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(2, 3, getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(4, 5, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 
 	// Get the triangulation object (which belongs to the parent class).
 	shared_ptr<Mesh<3> > tria_pointer = getMesh();

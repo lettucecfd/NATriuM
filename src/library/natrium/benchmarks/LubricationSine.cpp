@@ -71,7 +71,7 @@ shared_ptr<BoundaryCollection<2> > LubricationSine::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = bottomVelocity;
 
-	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
 			make_shared<MinLeeBoundary<2> >(2, constantVelocity));
 	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(3, zeroVelocity));

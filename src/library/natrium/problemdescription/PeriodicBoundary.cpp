@@ -22,11 +22,11 @@
 namespace natrium {
 
 // The template Parameter has to be made explicit in order for the code to compile
-template<> PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
-		size_t boundaryIndicator2,
-		shared_ptr<Mesh<2> > triangulation) :
+template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(size_t boundaryIndicator1,
+		size_t boundaryIndicator2, size_t direction,
+		shared_ptr<Mesh<dim> > triangulation) :
 		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
-				boundaryIndicator2) {
+				boundaryIndicator2), m_direction(direction) {
 
 	// check if boundary indcators are different
 	if (boundaryIndicator1 == boundaryIndicator2) {
@@ -35,25 +35,14 @@ template<> PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
 	}
 
 	m_triangulation = triangulation;
-
 
 } /* Constructor 2 */
-template<> PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
-		size_t boundaryIndicator2,
-		shared_ptr<Mesh<3> > triangulation) :
-		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
-				boundaryIndicator2) {
-
-	// check if boundary indcators are different
-	if (boundaryIndicator1 == boundaryIndicator2) {
-		throw PeriodicBoundaryNotPossible(
-				"The boundary indicators defining the periodic boundaries must not be equal to each other.");
-	}
-
-	// TODO Meaningfully check if the boundaries are parallel
-
-	m_triangulation = triangulation;
-}
+template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
+		size_t boundaryIndicator2, size_t direction,
+		shared_ptr<Mesh<2> > triangulation);
+template PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
+		size_t boundaryIndicator2, size_t direction,
+		shared_ptr<Mesh<3> > triangulation);
 
 template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
@@ -91,11 +80,8 @@ template PeriodicBoundary<3>::~PeriodicBoundary();
 template<size_t dim> void PeriodicBoundary<dim>::createCellMap(
 		const dealii::DoFHandler<dim>& doFHandler) {
 
-	// TODO: Das hier ist aeussert vorlaeufig und falsch!!!!!!!!!!!!!!!
-	const int direction = 0;
-
 	DealIIExtensions::make_periodicity_map_dg(doFHandler,
-			m_boundaryIndicator1, m_boundaryIndicator2, direction, m_cells);
+			m_boundaryIndicator1, m_boundaryIndicator2, m_direction, m_cells);
 
 } /* createMap */
 template void PeriodicBoundary<2>::createCellMap(
@@ -110,7 +96,7 @@ template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoun
 
 	if (m_cells.size() == 0) {
 		throw PeriodicBoundaryNotPossible(
-				"CreateMap has to be called before getOppositeCellAtPeriodicBoundary.");
+				"CreateCellMap has to be called before getOppositeCellAtPeriodicBoundary.");
 	}
 // assert that the given cell is at the boundary
 	if (m_cells.count(cell) == 0) {

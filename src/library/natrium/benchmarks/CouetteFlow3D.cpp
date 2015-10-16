@@ -76,8 +76,8 @@ shared_ptr<BoundaryCollection<3> > CouetteFlow3D::makeBoundaries(
 	numeric_vector constantVelocity(3);
 	constantVelocity(0) = topPlateVelocity;
 
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(0, 1, getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(2, 3, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
 	boundaries->addBoundary(make_shared<MinLeeBoundary<3> >(4, zeroVelocity));
 	boundaries->addBoundary(
 			make_shared<MinLeeBoundary<3> >(5, constantVelocity));

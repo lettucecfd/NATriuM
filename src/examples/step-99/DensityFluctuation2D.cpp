@@ -71,8 +71,8 @@ shared_ptr<Mesh<2> > DensityFluctuation2D::makeGrid(size_t refinementLevel) {
 
 shared_ptr<BoundaryCollection<2> > DensityFluctuation2D::makeBoundaries() {
 	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<BoundaryCollection<2> >();
-	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(2, 3, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 	shared_ptr<Mesh<2> > tria_pointer = getMesh();
 	return boundaries;
 }
