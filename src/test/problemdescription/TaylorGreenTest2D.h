@@ -25,11 +25,13 @@ public:
 
 	/// constructor
 	TaylorGreenTest2D(double viscosity, size_t refinementLevel) :
-			ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1) {
+			ProblemDescription<2>(makeGrid(), viscosity, 1) {
 
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
 
+		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
+		getMesh()->refine_global(refinementLevel);
 	}
 
 	/// destructor
@@ -60,7 +62,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
 		for (size_t i = 0; i < initialDensities.size(); i++) {
 			initialDensities(i) = 1.0;
 		}
@@ -106,7 +108,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel) {
+	shared_ptr<Mesh<2> > makeGrid() {
 		//Creation of the principal domain
 		shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >(
 #ifdef WITH_TRILINOS_MPI
@@ -117,13 +119,11 @@ private:
 
 		// Assign boundary indicators to the faces of the "parent cell"
 		Mesh<2>::active_cell_iterator cell = square->begin_active();
-		cell->face(0)->set_all_boundary_indicators(0);  // left
-		cell->face(1)->set_all_boundary_indicators(1);  // right
-		cell->face(2)->set_all_boundary_indicators(2);  // top
-		cell->face(3)->set_all_boundary_indicators(3);  // bottom
+		cell->face(0)->set_all_boundary_ids(0);  // left
+		cell->face(1)->set_all_boundary_ids(1);  // right
+		cell->face(2)->set_all_boundary_ids(2);  // top
+		cell->face(3)->set_all_boundary_ids(3);  // bottom
 
-		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-		square->refine_global(refinementLevel);
 
 		return square;
 	}

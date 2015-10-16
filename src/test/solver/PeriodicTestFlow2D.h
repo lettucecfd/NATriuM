@@ -102,10 +102,10 @@ private:
 
 		// Assign boundary indicators to the faces of the "parent cell"
 		Mesh<2>::active_cell_iterator cell = unitSquare->begin_active();
-		cell->face(0)->set_all_boundary_indicators(0);  // left
-		cell->face(1)->set_all_boundary_indicators(1);  // right
-		cell->face(2)->set_all_boundary_indicators(2);  // top
-		cell->face(3)->set_all_boundary_indicators(3);  // bottom
+		cell->face(0)->set_all_boundary_ids(0);  // left
+		cell->face(1)->set_all_boundary_ids(1);  // right
+		cell->face(2)->set_all_boundary_ids(2);  // top
+		cell->face(3)->set_all_boundary_ids(3);  // bottom
 
 		return unitSquare;
 	}

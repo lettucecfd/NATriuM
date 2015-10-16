@@ -29,10 +29,10 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_Periodicity_test) {
 	dealii::GridGenerator::hyper_cube(square, 0, 1);
 	Mesh<2>::active_cell_iterator cell = square.begin_active();
 	Mesh<2>::active_cell_iterator neighbor = square.begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // top
-	cell->face(3)->set_all_boundary_indicators(3);  // bottom
+	cell->face(0)->set_all_boundary_ids(0);  // left
+	cell->face(1)->set_all_boundary_ids(1);  // right
+	cell->face(2)->set_all_boundary_ids(2);  // top
+	cell->face(3)->set_all_boundary_ids(3);  // bottom
 
 
 	// check if periodicity updates neighbors

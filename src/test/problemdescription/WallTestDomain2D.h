@@ -27,7 +27,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid(size_t globalRefinementLevel) {
+	shared_ptr<Mesh<2> > makeGrid() {
 
 		//Creation of the principal domain
 		shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >(
@@ -39,13 +39,11 @@ private:
 
 		// Assign boundary indicators to the faces of the "parent cell"
 		Mesh<2>::active_cell_iterator cell = unitSquare->begin_active();
-		cell->face(0)->set_all_boundary_indicators(0);  // left
-		cell->face(1)->set_all_boundary_indicators(1);  // right
-		cell->face(2)->set_all_boundary_indicators(2);  // top
-		cell->face(3)->set_all_boundary_indicators(3);  // bottom
+		cell->face(0)->set_all_boundary_ids(0);  // left
+		cell->face(1)->set_all_boundary_ids(1);  // right
+		cell->face(2)->set_all_boundary_ids(2);  // top
+		cell->face(3)->set_all_boundary_ids(3);  // bottom
 
-		// Refine grid to 2x2 = 4 cells
-		unitSquare->refine_global(globalRefinementLevel);
 
 		return unitSquare;
 	}
@@ -80,9 +78,12 @@ public:
 
 	/// constructor
 	WallTestDomain2D(size_t refineLevel) :
-			ProblemDescription<2>(makeGrid(refineLevel), 1.0, 1) {
+			ProblemDescription<2>(makeGrid(), 1.0, 1) {
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
+
+		// Refine grid to 2x2 = 4 cells
+		getMesh()->refine_global(refineLevel);
 	}
 
 	/// destructor
