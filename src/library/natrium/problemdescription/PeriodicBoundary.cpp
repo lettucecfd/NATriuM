@@ -22,8 +22,8 @@
 namespace natrium {
 
 // The template Parameter has to be made explicit in order for the code to compile
-template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(size_t boundaryIndicator1,
-		size_t boundaryIndicator2, size_t direction,
+template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
+		size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction,
 		shared_ptr<Mesh<dim> > triangulation) :
 		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
 				boundaryIndicator2), m_direction(direction) {
@@ -37,6 +37,43 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(size_t boundaryIndi
 	m_triangulation = triangulation;
 	m_doFHandler = NULL;
 
+	// collect periodic faces and extend halo layer of ghost cells across periodic boundaries
+	// take care: collect_periodic_faces must not be called for a refined grid
+	if (m_triangulation->n_levels() > 1) {
+		throw PeriodicBoundaryNotPossible(
+				"The periodic boundaries have to be set before the refinement.");
+	}
+	std::vector<
+			dealii::GridTools::PeriodicFacePair<
+					typename Mesh<dim>::cell_iterator> > matched_pairs;
+	cout << "yippie" << endl;
+	dealii::GridTools::collect_periodic_faces(*m_triangulation,
+			m_boundaryIndicator1, m_boundaryIndicator2, m_direction,
+			matched_pairs);
+	cout << "yippie" << endl;
+	// check if the boundary has neighbors
+	if (matched_pairs.at(0).cell[0]->neighbor_index(
+			matched_pairs.at(0).face_idx[0]) != -1) {
+		throw PeriodicBoundaryNotPossible(
+				"Cell at periodic boundary had neighbor. That is not allowed.");
+	}
+	cout << "yippie" << endl;
+	// check if the boundary has already been created
+	for (size_t i = 0; i < matched_pairs.size(); i++) {
+		size_t face_nr_1 = matched_pairs.at(i).face_idx[0];
+		size_t face_nr_2 = matched_pairs.at(i).face_idx[1];
+		if ((matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set())
+				or (matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set())) {
+			cout << "yippieyeah" << endl;
+			throw PeriodicBoundaryNotPossible(
+					"You're trying to create a PeriodicBoundary, where another one "
+							"has already been created. That does not work.");
+		}
+	}
+	cout << "yippie" << endl;
+	m_triangulation->add_periodicity(matched_pairs);
+	cout << "yippie" << endl;
+
 } /* Constructor 2 */
 template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
 		size_t boundaryIndicator2, size_t direction,
@@ -46,14 +83,14 @@ template PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
 		shared_ptr<Mesh<3> > triangulation);
 
 template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
-		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+		const typename dealii::DoFHandler<dim>::active_cell_iterator & ,
 		size_t faceBoundaryIndicator) const {
 	/*
-	// first condition: cell map has a key <cell>
-	if (m_cells.count(cell) == 0) {
-		return false;
-	}
-	// second condition: the face has the right boundary indicator
+	 // first condition: cell map has a key <cell>
+	 if (m_cells.count(cell) == 0) {
+	 return false;
+	 }
+	 // second condition: the face has the right boundary indicator
 	 */
 	// assert(m_cells.count(cell) != 0);
 	if (faceBoundaryIndicator == m_boundaryIndicator1) {
@@ -66,10 +103,10 @@ template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 }
 // The template Parameter has to be made explicit in order for the code to compile
 template bool PeriodicBoundary<2>::isFaceInBoundary(
-		const typename dealii::DoFHandler<2>::active_cell_iterator & cell,
+		const typename dealii::DoFHandler<2>::active_cell_iterator & ,
 		size_t faceBoundaryIndicator) const;
 template bool PeriodicBoundary<3>::isFaceInBoundary(
-		const typename dealii::DoFHandler<3>::active_cell_iterator & cell,
+		const typename dealii::DoFHandler<3>::active_cell_iterator & ,
 		size_t faceBoundaryIndicator) const;
 
 template<size_t dim> PeriodicBoundary<dim>::~PeriodicBoundary() {
@@ -82,8 +119,10 @@ template<size_t dim> void PeriodicBoundary<dim>::createCellMap(
 		const dealii::DoFHandler<dim>& doFHandler) {
 	m_doFHandler = &doFHandler;
 
-	DealIIExtensions::make_periodicity_map_dg(doFHandler,
-			m_boundaryIndicator1, m_boundaryIndicator2, m_direction, m_cells);
+	DealIIExtensions::make_periodicity_map_dg(doFHandler, m_boundaryIndicator1,
+			m_boundaryIndicator2, m_direction, m_cells);
+
+	checkCellMap();
 
 } /* createMap */
 template void PeriodicBoundary<2>::createCellMap(
@@ -91,6 +130,32 @@ template void PeriodicBoundary<2>::createCellMap(
 template void PeriodicBoundary<3>::createCellMap(
 		const dealii::DoFHandler<3>& doFHandler);
 
+template<size_t dim> void PeriodicBoundary<dim>::checkCellMap() {
+	typename PeriodicCellMap<dim>::const_iterator it, end = m_cells.end();
+	size_t face_nr_1, face_nr_2, boundary_id_1, boundary_id_2;
+	for (it = m_cells.begin(); it != end; it++) {
+		face_nr_1 = it->second.face_idx[0];
+		face_nr_2 = it->second.face_idx[1];
+		boundary_id_1 = it->second.cell[0]->face(face_nr_1)->boundary_id();
+		boundary_id_2 = it->second.cell[1]->face(face_nr_2)->boundary_id();
+		assert(
+				(boundary_id_1 == m_boundaryIndicator1)
+						or (boundary_id_1 == m_boundaryIndicator2));
+		assert(
+				(boundary_id_2 == m_boundaryIndicator1)
+						or (boundary_id_2 == m_boundaryIndicator2));
+		assert(not it->second.cell[0]->is_artificial());
+		assert(not it->second.cell[1]->is_artificial());
+		assert(it->second.cell[0]->active());
+		assert(it->second.cell[1]->active());
+		assert(
+				(it->first == it->second.cell[0])
+						or (it->first == it->second.cell[1]));
+
+	}
+}
+template void PeriodicBoundary<2>::checkCellMap();
+template void PeriodicBoundary<3>::checkCellMap();
 
 template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoundary(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
@@ -111,11 +176,11 @@ template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoun
 	neighborCell = m_doFHandler->begin_active();
 	// return cell and face id
 	FacePair<dim> face_pair = m_cells.at(cell);
-	if (face_pair.cell[0] == cell){
+	if (face_pair.cell[0] == cell) {
 		neighborCell = face_pair.cell[1];
 		return face_pair.face_idx[1];
 	} else {
-		assert (face_pair.cell[1] == cell);
+		assert(face_pair.cell[1] == cell);
 		neighborCell = face_pair.cell[0];
 		return face_pair.face_idx[0];
 	}
@@ -133,7 +198,7 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 		size_t n_dofs_per_block, size_t dofs_per_cell) const {
 
 	// THIS FUNCTION IS NOT USED!!! See DealIIExtensions module for details
-	assert (false);
+	assert(false);
 }
 template void PeriodicBoundary<2>::addToSparsityPattern(
 		dealii::BlockDynamicSparsityPattern& cSparse, size_t n_blocks,

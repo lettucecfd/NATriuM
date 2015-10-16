@@ -55,7 +55,7 @@ public:
 
 
 /**
- * @short  A periodic boundary condition,
+ * @short  A periodic boundary condition. Periodic boundaries have to be set before the grid is refined!
  * @note   First use in step-1 tutorial.
  */
 template<size_t dim>
@@ -147,7 +147,7 @@ public:
 	 *
 	 */
 	bool isFaceInBoundary(
-			const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+			const typename dealii::DoFHandler<dim>::active_cell_iterator &,
 			size_t faceBoundaryIndicator) const;
 
 	virtual bool isPeriodic() const {
@@ -159,6 +159,12 @@ public:
 	 * @param doFHandler The map is stored with doFHandler iterators in order to access degrees of freedom at the boundary.
 	 */
 	void createCellMap(const dealii::DoFHandler<dim>& doFHandler);
+
+
+	/** @short
+	 * check if all cells in the cell map have appropriate boundary indicators
+	 */
+	void checkCellMap();
 
 	/**
 	 * @short This function does nothing; just to satisfy the interface.

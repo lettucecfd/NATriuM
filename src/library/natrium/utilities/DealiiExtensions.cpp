@@ -474,9 +474,17 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 		// Consequently, opposite cells at periodic boundaries have to have the same
 		// refinement level.
 		if (cell_1->has_children())
-				PeriodicBoundaryNotPossible("Opposite cells at periodic boundaries have to have the same refinement level.");
+			PeriodicBoundaryNotPossible(
+					"Opposite cells at periodic boundaries have to have the same refinement level.");
 		if (cell_2->has_children())
-				PeriodicBoundaryNotPossible("Opposite cells at periodic boundaries have to have the same refinement level.");
+			PeriodicBoundaryNotPossible(
+					"Opposite cells at periodic boundaries have to have the same refinement level.");
+
+		// check if cells are at least ghost cells (or even locally owned)
+		Assert(not cell_1->is_artificial(),
+				ExcMessage ("Cell at periodic boundary must not be artificial."));
+		Assert(not cell_2->is_artificial(),
+				ExcMessage ("Cell at periodic boundary must not be artificial."));
 
 		// insert periodic face pair for both cells
 		dealii::GridTools::PeriodicFacePair<
@@ -533,16 +541,16 @@ void make_periodicity_map_dg(
 
 		// ... and apply the low level function to
 		// every matching pair:
-		make_periodicity_map_dg<DH>(cell_1, cell_2, face_id_1, face_id_2, cell_map,
-				it->orientation[0], it->orientation[1], it->orientation[2]);
+		make_periodicity_map_dg<DH>(cell_1, cell_2, face_id_1, face_id_2,
+				cell_map, it->orientation[0], it->orientation[1],
+				it->orientation[2]);
 	}
 }
 
 // High level interface variants:
 
 template<typename DH>
-void make_periodicity_map_dg(const DH &dof_handler,
-		size_t b_id1, size_t b_id2,
+void make_periodicity_map_dg(const DH &dof_handler, size_t b_id1, size_t b_id2,
 		const int direction, PeriodicCellMap<DH::dimension>& cell_map) {
 	static const int space_dim = DH::space_dimension;
 	(void) space_dim;
@@ -552,13 +560,22 @@ void make_periodicity_map_dg(const DH &dof_handler,
 	Assert(b_id1 != b_id2,
 			ExcMessage ("The boundary indicators b_id1 and b_id2 must be" "different to denote different boundaries."));
 
-	std::vector<GridTools::PeriodicFacePair<typename DH::cell_iterator> > matched_faces;
+	std::vector<GridTools::PeriodicFacePair<typename DH::cell_iterator> > matched_pairs;
 
 	// Collect matching periodic cells on the coarsest level:
 	GridTools::collect_periodic_faces(dof_handler, b_id1, b_id2, direction,
-			matched_faces);
+			matched_pairs);
 
-	make_periodicity_map_dg<DH>(matched_faces, cell_map);
+	// set user flag that indicates that the faces are part of a periodic boundary
+	for (size_t i = 0; i < matched_pairs.size(); i++) {
+		size_t face_nr_1 = matched_pairs.at(i).face_idx[0];
+		size_t face_nr_2 = matched_pairs.at(i).face_idx[1];
+		matched_pairs.at(i).cell[0]->face(face_nr_1)->set_user_flag();
+		matched_pairs.at(i).cell[1]->face(face_nr_2)->set_user_flag();
+	}
+
+	// call function to make the periodicity map
+	make_periodicity_map_dg<DH>(matched_pairs, cell_map);
 }
 
 typedef DynamicSparsityPattern SP;
@@ -618,12 +635,12 @@ void make_periodicity_map_dg<DoFHandler<3> >(
 
 template
 void make_periodicity_map_dg<DoFHandler<2> >(const DoFHandler<2> &dof_handler,
-		size_t b_id1, size_t b_id2,
-		const int direction, PeriodicCellMap<2>& cell_map);
+		size_t b_id1, size_t b_id2, const int direction,
+		PeriodicCellMap<2>& cell_map);
 template
 void make_periodicity_map_dg<DoFHandler<3> >(const DoFHandler<3> &dof_handler,
-		size_t b_id1, size_t b_id2,
-		const int direction, PeriodicCellMap<3>& cell_map);
+		size_t b_id1, size_t b_id2, const int direction,
+		PeriodicCellMap<3>& cell_map);
 //}
 
 } /* namepace DealIIExtensions */

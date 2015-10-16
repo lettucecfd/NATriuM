@@ -18,17 +18,28 @@ SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 		size_t refinementLevel, double L, double averageHeight,
 		double amplitude, double cell_aspect_ratio) :
 		ProblemDescription<2>(
-				makeGrid(L, refinementLevel, averageHeight, amplitude, cell_aspect_ratio),
+				makeGrid(L, averageHeight, cell_aspect_ratio),
 				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 	this->setInitialRho(make_shared<InitialVelocity>(this));
+
+	// refine grid
+	shared_ptr<Mesh<2> > rect = getMesh();
+	rect->refine_global(refinementLevel);
+
+	// transform grid
+	dealii::GridTools::transform(UnstructuredGridFunc(averageHeight, amplitude, L),
+			*rect);
+	std::ofstream out("grid-2.eps");
+	dealii::GridOut grid_out;
+	grid_out.write_eps(*rect, out);
+
 }
 
 SinusoidalShear2D::~SinusoidalShear2D() {
 }
 
-shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double L,
-		size_t refinementLevel, double averageHeight, double amplitude, double cell_aspect_ratio) {
+shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double L, double averageHeight, double cell_aspect_ratio) {
 #ifdef WITH_TRILINOS_MPI
 	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >(MPI_COMM_WORLD);
 #else
@@ -43,15 +54,6 @@ shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double L,
 							// 0:left; 1:right; 2:bottom; 3:top
 	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1, x2, colorize);
 
-	// refine grid
-	rect->refine_global(refinementLevel);
-
-	// transform grid
-	dealii::GridTools::transform(UnstructuredGridFunc(averageHeight, amplitude, L),
-			*rect);
-	std::ofstream out("grid-2.eps");
-	dealii::GridOut grid_out;
-	grid_out.write_eps(*rect, out);
 	return rect;
 }
 

@@ -22,7 +22,7 @@ namespace natrium {
 
 CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, double L, double startTime, bool isUnstructured) :
-		Benchmark<3>(makeGrid(L, refinementLevel, isUnstructured), viscosity,
+		Benchmark<3>(makeGrid(L), viscosity,
 				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
@@ -31,13 +31,21 @@ CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 
 	/// apply initial values
 	setAnalyticU(make_shared<AnalyticVelocity>(this));
+
+	// refine grid
+	shared_ptr<Mesh<3> > unitSquare = getMesh();
+	unitSquare->refine_global(refinementLevel);
+
+	// transform grid
+	if (isUnstructured) {
+		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
+	}
 }
 
 CouetteFlow3D::~CouetteFlow3D() {
 }
 
-shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L, size_t refinementLevel,
-		bool isUnstructured) {
+shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L) {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
@@ -49,20 +57,13 @@ shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L, size_t refinementLevel,
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Mesh<3>::active_cell_iterator cell = unitSquare->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // front
-	cell->face(3)->set_all_boundary_indicators(3);  // back
-	cell->face(4)->set_all_boundary_indicators(4);  // bottom
-	cell->face(5)->set_all_boundary_indicators(5);  // top
+	cell->face(0)->set_all_boundary_ids(0);  // left
+	cell->face(1)->set_all_boundary_ids(1);  // right
+	cell->face(2)->set_all_boundary_ids(2);  // front
+	cell->face(3)->set_all_boundary_ids(3);  // back
+	cell->face(4)->set_all_boundary_ids(4);  // bottom
+	cell->face(5)->set_all_boundary_ids(5);  // top
 
-	// refine grid
-	unitSquare->refine_global(refinementLevel);
-
-	// transform grid
-	if (isUnstructured) {
-		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
-	}
 	return unitSquare;
 }
 

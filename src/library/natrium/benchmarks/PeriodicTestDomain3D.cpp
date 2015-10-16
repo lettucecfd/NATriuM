@@ -16,17 +16,19 @@
 namespace natrium {
 
 PeriodicTestDomain3D::PeriodicTestDomain3D(size_t globalRefinementLevel) :
-		ProblemDescription<3>(makeGrid(globalRefinementLevel), 1.0, 1) {
+		ProblemDescription<3>(makeGrid(), 1.0, 1) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 
+	// Refine grid
+	getMesh()->refine_global(globalRefinementLevel);
 }
 
 PeriodicTestDomain3D::~PeriodicTestDomain3D() {
 }
 
-shared_ptr<Mesh<3> > PeriodicTestDomain3D::makeGrid(size_t globalRefinementLevel) {
+shared_ptr<Mesh<3> > PeriodicTestDomain3D::makeGrid() {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
@@ -39,15 +41,12 @@ shared_ptr<Mesh<3> > PeriodicTestDomain3D::makeGrid(size_t globalRefinementLevel
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Mesh<3>::active_cell_iterator cell = unitSquare->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // fron
-	cell->face(3)->set_all_boundary_indicators(3);  // back
-	cell->face(4)->set_all_boundary_indicators(4);  // bottom
-	cell->face(5)->set_all_boundary_indicators(5);  // top
-
-	// Refine grid to 2x2 = 4 cells
-	unitSquare->refine_global(globalRefinementLevel);
+	cell->face(0)->set_all_boundary_ids(0);  // left
+	cell->face(1)->set_all_boundary_ids(1);  // right
+	cell->face(2)->set_all_boundary_ids(2);  // fron
+	cell->face(3)->set_all_boundary_ids(3);  // back
+	cell->face(4)->set_all_boundary_ids(4);  // bottom
+	cell->face(5)->set_all_boundary_ids(5);  // top
 
 	return unitSquare;
 }

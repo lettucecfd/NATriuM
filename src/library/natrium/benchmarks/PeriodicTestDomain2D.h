@@ -33,10 +33,10 @@ public:
 private:
 
 	/**
-	 * @short create triangulation for couette flow
+	 * @short create triangulation for periodic domain
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid(size_t globalRefinementLevel);
+	shared_ptr<Mesh<2> > makeGrid();
 
 	/**
 	 * @short create boundaries for couette flow

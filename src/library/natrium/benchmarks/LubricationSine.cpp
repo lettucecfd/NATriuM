@@ -17,20 +17,29 @@ LubricationSine::LubricationSine(double viscosity, double bottomVelocity,
 		double amplitude, double cellAspectRatio, double roughnessHeight,
 		size_t roughnessLengthRatio) :
 		ProblemDescription<2>(
-				makeGrid(L, refinementLevel, averageHeight, amplitude,
-						cellAspectRatio, roughnessHeight, roughnessLengthRatio),
+				makeGrid(L,  averageHeight, cellAspectRatio),
 				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(
 				averageHeight), m_ampl(amplitude), m_length(L) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 	setInitialU(make_shared<InitialVelocity>(this));
+
+	// refine grid
+	shared_ptr<Mesh<2> > rect = getMesh();
+	rect->refine_global(refinementLevel);
+
+	// transform grid
+	dealii::GridTools::transform(
+			UnstructuredGridFunc(averageHeight, amplitude, L, roughnessHeight,
+					roughnessLengthRatio), *rect);
+	std::ofstream out("grid-2.eps");
+	dealii::GridOut grid_out;
+	grid_out.write_eps(*rect, out);
 }
 
 LubricationSine::~LubricationSine() {
 }
 
-shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L, size_t refinementLevel,
-		double averageHeight, double amplitude, double cellAspectRatio,
-		double roughnessHeight, size_t roughnessLengthRatio) {
+shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L, double averageHeight, double cellAspectRatio) {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
@@ -48,16 +57,6 @@ shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L, size_t refinementLevel,
 	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1,
 			x2, colorize);
 
-	// refine grid
-	rect->refine_global(refinementLevel);
-
-	// transform grid
-	dealii::GridTools::transform(
-			UnstructuredGridFunc(averageHeight, amplitude, L, roughnessHeight,
-					roughnessLengthRatio), *rect);
-	std::ofstream out("grid-2.eps");
-	dealii::GridOut grid_out;
-	grid_out.write_eps(*rect, out);
 	return rect;
 }
 

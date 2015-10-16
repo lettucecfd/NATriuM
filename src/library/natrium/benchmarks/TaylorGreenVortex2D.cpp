@@ -19,7 +19,7 @@ namespace natrium {
 
 TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
 		size_t refinementLevel, double cs, bool init_rho_analytically) :
-		Benchmark<2>(makeGrid(refinementLevel), viscosity, 8 * atan(1)), m_cs(
+		Benchmark<2>(makeGrid(), viscosity, 8 * atan(1)), m_cs(
 				cs), m_analyticInit(init_rho_analytically) {
 
 	/// apply boundary values
@@ -28,6 +28,8 @@ TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
 	this->setAnalyticU(make_shared<AnalyticVelocity>(this));
 	this->setAnalyticRho(make_shared<AnalyticDensity>(this));
 
+	// Refine grid
+	getMesh()->refine_global(refinementLevel);
 }
 
 TaylorGreenVortex2D::~TaylorGreenVortex2D() {
@@ -62,7 +64,7 @@ double TaylorGreenVortex2D::AnalyticDensity::value(const dealii::Point<2>& x,
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid(size_t refinementLevel) {
+shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid() {
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
 	shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >(MPI_COMM_WORLD);
@@ -73,13 +75,11 @@ shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid(size_t refinementLevel) {
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Mesh<2>::active_cell_iterator cell = square->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // top
-	cell->face(3)->set_all_boundary_indicators(3);  // bottom
+	cell->face(0)->set_all_boundary_ids(0);  // left
+	cell->face(1)->set_all_boundary_ids(1);  // right
+	cell->face(2)->set_all_boundary_ids(2);  // top
+	cell->face(3)->set_all_boundary_ids(3);  // bottom
 
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	square->refine_global(refinementLevel);
 
 	return square;
 }

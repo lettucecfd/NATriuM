@@ -86,7 +86,7 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 		if (currentCell->at_boundary()) {
 			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
 					i++) {
-				if (currentCell->face(i)->boundary_indicator()
+				if (currentCell->face(i)->boundary_id()
 						== boundaryIndicator1) {
 					for (size_t j = 0;
 							j < dealii::GeometryInfo<2>::vertices_per_face;
@@ -98,7 +98,7 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 										currentCell->face(i)->vertex(j)));
 					}
 				} else {
-					if (currentCell->face(i)->boundary_indicator()
+					if (currentCell->face(i)->boundary_id()
 							== boundaryIndicator2) {
 						for (size_t j = 0;
 								j < dealii::GeometryInfo<2>::vertices_per_face;

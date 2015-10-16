@@ -43,10 +43,13 @@ public:
 
 	/// constructor
 	SteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
-			ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1) {
+			ProblemDescription<2>(makeGrid(), viscosity, 1) {
 		setInitialU(make_shared<InitialVelocity>(this));
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
+		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
+		getMesh()->refine_global(refinementLevel);
+
 	}
 
 	/// destructor
@@ -59,7 +62,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
 		for (size_t i = 0; i < initialDensities.size(); i++) {
 			initialDensities(i) = 1.0;
 		}
@@ -72,7 +75,7 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
 		assert(
 				initialVelocities.at(0).size()
 						== initialVelocities.at(1).size());
@@ -88,7 +91,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel) {
+	shared_ptr<Mesh<2> > makeGrid() {
 		//Creation of the principal domain
 		shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >(
 #ifdef WITH_TRILINOS_MPI
@@ -103,9 +106,6 @@ private:
 		cell->face(1)->set_all_boundary_indicators(1);  // right
 		cell->face(2)->set_all_boundary_indicators(2);  // top
 		cell->face(3)->set_all_boundary_indicators(3);  // bottom
-
-		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-		unitSquare->refine_global(refinementLevel);
 
 		return unitSquare;
 	}

@@ -24,7 +24,7 @@ namespace natrium {
 
 CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, double L, double startTime, bool isUnstructured) :
-		Benchmark<2>(makeGrid(L, refinementLevel, isUnstructured), viscosity,
+		Benchmark<2>(makeGrid(L), viscosity,
 				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
@@ -33,13 +33,28 @@ CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(topPlateVelocity));
+
+	/// refinement
+
+	// refine grid
+	shared_ptr<Mesh<2> > unitSquare = getMesh();
+	unitSquare->refine_global(refinementLevel);
+
+	// transform grid
+	if (isUnstructured) {
+		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
+	}
+
+	std::ofstream out("grid-couette.eps");
+	dealii::GridOut grid_out;
+	grid_out.write_eps(*unitSquare, out);
+
 }
 
 CouetteFlow2D::~CouetteFlow2D() {
 }
 
-shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L, size_t refinementLevel,
-		bool isUnstructured) {
+shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L) {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
@@ -52,22 +67,10 @@ shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L, size_t refinementLevel,
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Mesh<2>::active_cell_iterator cell = unitSquare->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // bottom
-	cell->face(3)->set_all_boundary_indicators(3);  // top
-
-	// refine grid
-	unitSquare->refine_global(refinementLevel);
-
-	// transform grid
-	if (isUnstructured) {
-		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
-	}
-
-	std::ofstream out("grid-couette.eps");
-	dealii::GridOut grid_out;
-	grid_out.write_eps(*unitSquare, out);
+	cell->face(0)->set_all_boundary_ids(0);  // left
+	cell->face(1)->set_all_boundary_ids(1);  // right
+	cell->face(2)->set_all_boundary_ids(2);  // bottom
+	cell->face(3)->set_all_boundary_ids(3);  // top
 
 	return unitSquare;
 }

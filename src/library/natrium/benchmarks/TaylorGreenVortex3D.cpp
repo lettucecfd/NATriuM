@@ -17,12 +17,15 @@ namespace natrium {
 
 TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
 		size_t refinementLevel) :
-		Benchmark<3>(makeGrid(refinementLevel), viscosity, 1) {
+		Benchmark<3>(makeGrid(), viscosity, 1) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply analytic solution
 	this->setAnalyticU(make_shared<AnalyticVelocity>(this));
+
+	// Refine grid
+	getMesh()->refine_global(refinementLevel);
 
 }
 
@@ -47,7 +50,7 @@ double TaylorGreenVortex3D::AnalyticVelocity::value(const dealii::Point<3>& x,
  * @short create triangulation for TaylorGreen Vortex flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid(size_t refinementLevel) {
+shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid() {
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
 	shared_ptr<Mesh<3> > square =
@@ -59,15 +62,12 @@ shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid(size_t refinementLevel) {
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Mesh<3>::active_cell_iterator cell = square->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  //
-	cell->face(1)->set_all_boundary_indicators(1);  //
-	cell->face(2)->set_all_boundary_indicators(2);  //
-	cell->face(3)->set_all_boundary_indicators(3);  //
-	cell->face(4)->set_all_boundary_indicators(4);  //
-	cell->face(5)->set_all_boundary_indicators(5);  //
-
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	square->refine_global(refinementLevel);
+	cell->face(0)->set_all_boundary_ids(0);  //
+	cell->face(1)->set_all_boundary_ids(1);  //
+	cell->face(2)->set_all_boundary_ids(2);  //
+	cell->face(3)->set_all_boundary_ids(3);  //
+	cell->face(4)->set_all_boundary_ids(4);  //
+	cell->face(5)->set_all_boundary_ids(5);  //
 
 	return square;
 }

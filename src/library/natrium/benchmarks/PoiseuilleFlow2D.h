@@ -60,8 +60,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel,
-			double height, double length, bool is_periodic);
+	shared_ptr<Mesh<2> > makeGrid(double height, double length);
 
 	/**
 	 * @short create boundaries for couette flow
