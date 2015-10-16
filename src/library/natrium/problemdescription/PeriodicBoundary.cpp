@@ -35,6 +35,7 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(size_t boundaryIndi
 	}
 
 	m_triangulation = triangulation;
+	m_doFHandler = NULL;
 
 } /* Constructor 2 */
 template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
@@ -54,7 +55,7 @@ template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 	}
 	// second condition: the face has the right boundary indicator
 	 */
-	assert(m_cells.count(cell) != 0);
+	// assert(m_cells.count(cell) != 0);
 	if (faceBoundaryIndicator == m_boundaryIndicator1) {
 		return true;
 	}
@@ -79,6 +80,7 @@ template PeriodicBoundary<3>::~PeriodicBoundary();
 
 template<size_t dim> void PeriodicBoundary<dim>::createCellMap(
 		const dealii::DoFHandler<dim>& doFHandler) {
+	m_doFHandler = &doFHandler;
 
 	DealIIExtensions::make_periodicity_map_dg(doFHandler,
 			m_boundaryIndicator1, m_boundaryIndicator2, m_direction, m_cells);
@@ -103,6 +105,11 @@ template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoun
 		throw PeriodicBoundaryNotPossible(
 				"The cell does not belong to the boundary.");
 	}
+	//initialize neighbor cell so that the dof handler is set properly,
+	//in this way, m_cells can contain arbitrary TriaIterators and still return a DofAccessor
+	//If this is left out we get an error in setting the neighbor cell
+	neighborCell = m_doFHandler->begin_active();
+	// return cell and face id
 	FacePair<dim> face_pair = m_cells.at(cell);
 	if (face_pair.cell[0] == cell){
 		neighborCell = face_pair.cell[1];

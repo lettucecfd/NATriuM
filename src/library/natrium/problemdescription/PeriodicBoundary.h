@@ -79,6 +79,8 @@ private:
 	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
 	PeriodicCellMap<dim> m_cells;
 
+	dealii::DoFHandler<dim> const * m_doFHandler;
+
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
 	 *        If they are anti-parallel, begin and end vector of the second are swapped.
@@ -162,9 +164,9 @@ public:
 	 * @short This function does nothing; just to satisfy the interface.
 	 * 		  The Periodic Boundary conditions are directly incorporated in make_sparser_flux_sparsity_pattern
 	 */
-	void addToSparsityPattern(dealii::BlockDynamicSparsityPattern& cSparse,
-			size_t n_blocks, size_t n_dofs_per_block,
-			size_t dofs_per_cell) const;
+	void addToSparsityPattern(dealii::BlockDynamicSparsityPattern& ,
+			size_t , size_t ,
+			size_t ) const;
 
 	/////////////////////////////////
 	// GETTER     // SETTER        //

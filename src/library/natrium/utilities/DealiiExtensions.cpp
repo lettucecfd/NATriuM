@@ -458,6 +458,7 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 					cell_2->refinement_case(), face_nr_2, j, face_orientation,
 					face_flip, face_rotation, face_2->refinement_case());
 
+			// precondition: subcell has the same orientation as cell (so that the face numbers coincide)
 			// recursive call
 			make_periodicity_map_dg<DH>(cell_1->child(child_cell_1),
 					cell_2->child(child_cell_2), face_nr_1, face_nr_2, cell_map,

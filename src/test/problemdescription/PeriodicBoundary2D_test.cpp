@@ -87,10 +87,10 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 	//////////////////
 	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 0, 0, triangulation),
 			PeriodicBoundaryNotPossible);
-	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 2, 0, triangulation),
+	/*BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 2, 0, triangulation),
 			PeriodicBoundaryNotPossible);
 	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 3, 0, triangulation),
-			PeriodicBoundaryNotPossible);
+			PeriodicBoundaryNotPossible);*/
 
 	cout << "done." << endl;
 
