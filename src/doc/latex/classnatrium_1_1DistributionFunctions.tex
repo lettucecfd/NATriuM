@@ -1,68 +1,95 @@
-\hypertarget{classnatrium_1_1DistributionFunctions}{\section{natrium\-:\-:Distribution\-Functions Class Reference}
-\label{classnatrium_1_1DistributionFunctions}\index{natrium\-::\-Distribution\-Functions@{natrium\-::\-Distribution\-Functions}}
+\hypertarget{classnatrium_1_1DistributionFunctions}{
+\section{natrium::DistributionFunctions Class Reference}
+\label{classnatrium_1_1DistributionFunctions}\index{natrium::DistributionFunctions@{natrium::DistributionFunctions}}
 }
 
 
-This class contains the distribution functions. As the zero-\/velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (f\-Stream) in the implementation. f\-Stream is a block vector, which has the advantage that it can be multiplied with the System\-Matrix. The \hyperlink{classnatrium_1_1DistributionFunctions}{Distribution\-Functions} class is designed to mime the behaviour of a vector$<$distributed\-\_\-vector$>$ .  
+This class contains the distribution functions. As the zero-\/velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (fStream) in the implementation. fStream is a block vector, which has the advantage that it can be multiplied with the SystemMatrix. The \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} class is designed to mime the behaviour of a vector$<$distributed\_\-vector$>$ .  
 
 
-
-
-{\ttfamily \#include $<$Distribution\-Functions.\-h$>$}
-
-\subsection*{Public Member Functions}
+{\ttfamily \#include $<$DistributionFunctions.h$>$}\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a4fc9c42637465355a9df7681d45340c9}{\hyperlink{classnatrium_1_1DistributionFunctions_a4fc9c42637465355a9df7681d45340c9}{Distribution\-Functions} ()}\label{classnatrium_1_1DistributionFunctions_a4fc9c42637465355a9df7681d45340c9}
+\hypertarget{classnatrium_1_1DistributionFunctions_a4fc9c42637465355a9df7681d45340c9}{
+\hyperlink{classnatrium_1_1DistributionFunctions_a4fc9c42637465355a9df7681d45340c9}{DistributionFunctions} ()}
+\label{classnatrium_1_1DistributionFunctions_a4fc9c42637465355a9df7681d45340c9}
 
-\begin{DoxyCompactList}\small\item\em empty constructor. Construction is done through reinit. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_af0a970355419acf79be898e573f3149a}{\hyperlink{classnatrium_1_1DistributionFunctions_af0a970355419acf79be898e573f3149a}{Distribution\-Functions} (const \hyperlink{classnatrium_1_1DistributionFunctions}{Distribution\-Functions} \&f)}\label{classnatrium_1_1DistributionFunctions_af0a970355419acf79be898e573f3149a}
+\begin{DoxyCompactList}\small\item\em empty constructor. Construction is done through reinit. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_af0a970355419acf79be898e573f3149a}{
+\hyperlink{classnatrium_1_1DistributionFunctions_af0a970355419acf79be898e573f3149a}{DistributionFunctions} (const \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f)}
+\label{classnatrium_1_1DistributionFunctions_af0a970355419acf79be898e573f3149a}
 
-\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a0ea3ad0426df18a986578f7b57361dd3}{\hyperlink{classnatrium_1_1DistributionFunctions_a0ea3ad0426df18a986578f7b57361dd3}{Distribution\-Functions} (const vector$<$ distributed\-\_\-vector $>$ \&f)}\label{classnatrium_1_1DistributionFunctions_a0ea3ad0426df18a986578f7b57361dd3}
+\begin{DoxyCompactList}\small\item\em Copy constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_a0ea3ad0426df18a986578f7b57361dd3}{
+\hyperlink{classnatrium_1_1DistributionFunctions_a0ea3ad0426df18a986578f7b57361dd3}{DistributionFunctions} (const vector$<$ distributed\_\-vector $>$ \&f)}
+\label{classnatrium_1_1DistributionFunctions_a0ea3ad0426df18a986578f7b57361dd3}
 
-\begin{DoxyCompactList}\small\item\em Copy constructor. Conversion from vector$<$distributed\-\_\-vector$>$. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_af965a46fbf124e8f90250c843e615bcd}{virtual \hyperlink{classnatrium_1_1DistributionFunctions_af965a46fbf124e8f90250c843e615bcd}{$\sim$\-Distribution\-Functions} ()}\label{classnatrium_1_1DistributionFunctions_af965a46fbf124e8f90250c843e615bcd}
+\begin{DoxyCompactList}\small\item\em Copy constructor. Conversion from vector$<$distributed\_\-vector$>$. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_af965a46fbf124e8f90250c843e615bcd}{
+virtual \hyperlink{classnatrium_1_1DistributionFunctions_af965a46fbf124e8f90250c843e615bcd}{$\sim$DistributionFunctions} ()}
+\label{classnatrium_1_1DistributionFunctions_af965a46fbf124e8f90250c843e615bcd}
 
-\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}{distributed\-\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}{at} (size\-\_\-t i)}\label{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}
+\begin{DoxyCompactList}\small\item\em Destructor. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}{
+distributed\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}{at} (size\_\-t i)}
+\label{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}
 
-\begin{DoxyCompactList}\small\item\em mimes std\-::vector.\-at(i) \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}{const distributed\-\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}{at} (size\-\_\-t i) const }\label{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}
+\begin{DoxyCompactList}\small\item\em mimes std::vector.at(i) \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}{
+const distributed\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}{at} (size\_\-t i) const }
+\label{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}
 
-\begin{DoxyCompactList}\small\item\em mimes std\-::vector.\-at(i) \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a3d76ae4f928f324ec82099dbdce678d7}{const distributed\-\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a3d76ae4f928f324ec82099dbdce678d7}{get\-F0} () const }\label{classnatrium_1_1DistributionFunctions_a3d76ae4f928f324ec82099dbdce678d7}
+\begin{DoxyCompactList}\small\item\em mimes std::vector.at(i) \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_a3d76ae4f928f324ec82099dbdce678d7}{
+const distributed\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a3d76ae4f928f324ec82099dbdce678d7}{getF0} () const }
+\label{classnatrium_1_1DistributionFunctions_a3d76ae4f928f324ec82099dbdce678d7}
 
-\begin{DoxyCompactList}\small\item\em F0 denotes the vector $ f_0 $ (zero-\/velocity particles) \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_abb98df52461532f58e77741dd9b6a975}{distributed\-\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_abb98df52461532f58e77741dd9b6a975}{get\-F0} ()}\label{classnatrium_1_1DistributionFunctions_abb98df52461532f58e77741dd9b6a975}
+\begin{DoxyCompactList}\small\item\em F0 denotes the vector $ f_0 $ (zero-\/velocity particles). \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_abb98df52461532f58e77741dd9b6a975}{
+distributed\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_abb98df52461532f58e77741dd9b6a975}{getF0} ()}
+\label{classnatrium_1_1DistributionFunctions_abb98df52461532f58e77741dd9b6a975}
 
-\begin{DoxyCompactList}\small\item\em F0 denotes the vector $ f_0 $ (zero-\/velocity particles) \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_ae7cc68f9576384b3fbec8f171856f607}{void \hyperlink{classnatrium_1_1DistributionFunctions_ae7cc68f9576384b3fbec8f171856f607}{set\-F0} (const distributed\-\_\-vector \&f0)}\label{classnatrium_1_1DistributionFunctions_ae7cc68f9576384b3fbec8f171856f607}
+\begin{DoxyCompactList}\small\item\em F0 denotes the vector $ f_0 $ (zero-\/velocity particles). \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_ae7cc68f9576384b3fbec8f171856f607}{
+void \hyperlink{classnatrium_1_1DistributionFunctions_ae7cc68f9576384b3fbec8f171856f607}{setF0} (const distributed\_\-vector \&f0)}
+\label{classnatrium_1_1DistributionFunctions_ae7cc68f9576384b3fbec8f171856f607}
 
-\begin{DoxyCompactList}\small\item\em F0 denotes the vector $ f_0 $ (zero-\/velocity particles) \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a74dfe8e6ac6d5f463dcb8220f37800a3}{distributed\-\_\-block\-\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a74dfe8e6ac6d5f463dcb8220f37800a3}{get\-F\-Stream} ()}\label{classnatrium_1_1DistributionFunctions_a74dfe8e6ac6d5f463dcb8220f37800a3}
+\begin{DoxyCompactList}\small\item\em F0 denotes the vector $ f_0 $ (zero-\/velocity particles). \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_a74dfe8e6ac6d5f463dcb8220f37800a3}{
+distributed\_\-block\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a74dfe8e6ac6d5f463dcb8220f37800a3}{getFStream} ()}
+\label{classnatrium_1_1DistributionFunctions_a74dfe8e6ac6d5f463dcb8220f37800a3}
 
-\begin{DoxyCompactList}\small\item\em F\-Stream denotes the block vector containing the vectors $ f_1, ..., f_Q $. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a88224d528262c522ea2ad8bec11178c1}{const distributed\-\_\-block\-\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a88224d528262c522ea2ad8bec11178c1}{get\-F\-Stream} () const }\label{classnatrium_1_1DistributionFunctions_a88224d528262c522ea2ad8bec11178c1}
+\begin{DoxyCompactList}\small\item\em FStream denotes the block vector containing the vectors $ f_1, ..., f_Q $. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_a88224d528262c522ea2ad8bec11178c1}{
+const distributed\_\-block\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a88224d528262c522ea2ad8bec11178c1}{getFStream} () const }
+\label{classnatrium_1_1DistributionFunctions_a88224d528262c522ea2ad8bec11178c1}
 
-\begin{DoxyCompactList}\small\item\em F\-Stream denotes the block vector containing the vectors $ f_1, ..., f_Q $. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_ad0ada0c54968a61f78eb1b82eb6c5a68}{void \hyperlink{classnatrium_1_1DistributionFunctions_ad0ada0c54968a61f78eb1b82eb6c5a68}{set\-F\-Stream} (const distributed\-\_\-block\-\_\-vector \&f\-Stream)}\label{classnatrium_1_1DistributionFunctions_ad0ada0c54968a61f78eb1b82eb6c5a68}
+\begin{DoxyCompactList}\small\item\em FStream denotes the block vector containing the vectors $ f_1, ..., f_Q $. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_ad0ada0c54968a61f78eb1b82eb6c5a68}{
+void \hyperlink{classnatrium_1_1DistributionFunctions_ad0ada0c54968a61f78eb1b82eb6c5a68}{setFStream} (const distributed\_\-block\_\-vector \&fStream)}
+\label{classnatrium_1_1DistributionFunctions_ad0ada0c54968a61f78eb1b82eb6c5a68}
 
-\begin{DoxyCompactList}\small\item\em F\-Stream denotes the block vector containing the vectors $ f_1, ..., f_Q $. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_ae0fd8e8234c7d5abec8522767d2a95e7}{const size\-\_\-t \hyperlink{classnatrium_1_1DistributionFunctions_ae0fd8e8234c7d5abec8522767d2a95e7}{get\-Q} () const }\label{classnatrium_1_1DistributionFunctions_ae0fd8e8234c7d5abec8522767d2a95e7}
+\begin{DoxyCompactList}\small\item\em FStream denotes the block vector containing the vectors $ f_1, ..., f_Q $. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_a2ab8e5abf8cdef76f62e443a8dde5fd4}{
+size\_\-t \hyperlink{classnatrium_1_1DistributionFunctions_a2ab8e5abf8cdef76f62e443a8dde5fd4}{getQ} () const }
+\label{classnatrium_1_1DistributionFunctions_a2ab8e5abf8cdef76f62e443a8dde5fd4}
 
-\begin{DoxyCompactList}\small\item\em the number of discrete velocities \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}{void \hyperlink{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}{reinit} (size\-\_\-t Q, size\-\_\-t \hyperlink{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}{size})}\label{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}
+\begin{DoxyCompactList}\small\item\em the number of discrete velocities \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}{
+void \hyperlink{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}{reinit} (size\_\-t Q, size\_\-t size)}
+\label{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}
 
-\begin{DoxyCompactList}\small\item\em reinitialize the sizes of the distribution functions \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}{size\-\_\-t \hyperlink{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}{size} () const }\label{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}
+\begin{DoxyCompactList}\small\item\em reinitialize the sizes of the distribution functions \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}{
+size\_\-t \hyperlink{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}{size} () const }
+\label{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}
 
-\begin{DoxyCompactList}\small\item\em the number of discrete velocities, including zero \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em the number of discrete velocities, including zero \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-This class contains the distribution functions. As the zero-\/velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (f\-Stream) in the implementation. f\-Stream is a block vector, which has the advantage that it can be multiplied with the System\-Matrix. The \hyperlink{classnatrium_1_1DistributionFunctions}{Distribution\-Functions} class is designed to mime the behaviour of a vector$<$distributed\-\_\-vector$>$ . 
+This class contains the distribution functions. As the zero-\/velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (fStream) in the implementation. fStream is a block vector, which has the advantage that it can be multiplied with the SystemMatrix. The \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} class is designed to mime the behaviour of a vector$<$distributed\_\-vector$>$ . 
 
-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/Distribution\-Functions.\-h\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/DistributionFunctions.h\end{DoxyCompactItemize}

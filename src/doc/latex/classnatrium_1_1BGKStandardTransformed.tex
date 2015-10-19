@@ -1,0 +1,104 @@
+\hypertarget{classnatrium_1_1BGKStandardTransformed}{
+\section{natrium::BGKStandardTransformed Class Reference}
+\label{classnatrium_1_1BGKStandardTransformed}\index{natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}}
+}
+
+
+Simple \hyperlink{classnatrium_1_1BGK}{BGK} model with transformed distributions in order to lower round-\/off errors The scheme is described in \char`\"{}How to improve the accuracy of Lattice Boltzmann calculations\char`\"{} by Bastien Chopard (May 2008), available on LBMethod.org.  
+
+
+{\ttfamily \#include $<$BGKStandardTransformed.h$>$}Inheritance diagram for natrium::BGKStandardTransformed::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1BGKStandardTransformed}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1BGKStandardTransformed_a6eb65cf04592c98483b0e7e533c342c7}{
+\hyperlink{classnatrium_1_1BGKStandardTransformed_a6eb65cf04592c98483b0e7e533c342c7}{BGKStandardTransformed} (double relaxationParameter, double dt, const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil)}
+\label{classnatrium_1_1BGKStandardTransformed_a6eb65cf04592c98483b0e7e533c342c7}
+
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+virtual \hyperlink{classnatrium_1_1BGKStandardTransformed_a07dc7f5ccaf1abaa725a7b62a2b79ac4}{$\sim$BGKStandardTransformed} ()
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+virtual double \hyperlink{classnatrium_1_1BGKStandardTransformed_a870465cc026f92c8ffba899af6f95634}{getEquilibriumDistribution} (size\_\-t i, const numeric\_\-vector \&u, const double rho=1) const 
+\begin{DoxyCompactList}\small\item\em function for the calculation of the equilibrium distribution in the incompressible \hyperlink{classnatrium_1_1D2Q9}{D2Q9} model \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1BGKStandardTransformed_a00c806c32f16e518117c818a29c2fef4}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, bool inInitializationProcedure=false) const 
+\begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGKStandardTransformed_a883401ad796f196bcc47456b31159eae}{
+double {\bfseries getRho0} () const }
+\label{classnatrium_1_1BGKStandardTransformed_a883401ad796f196bcc47456b31159eae}
+
+\item 
+virtual double \hyperlink{classnatrium_1_1BGKStandardTransformed_a58c4dc0c67ff4898c6555b614afc1ace}{calculateDensity} (const vector$<$ double $>$ \&distributions) const 
+\begin{DoxyCompactList}\small\item\em calculate macroscopic density \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Simple \hyperlink{classnatrium_1_1BGK}{BGK} model with transformed distributions in order to lower round-\/off errors The scheme is described in \char`\"{}How to improve the accuracy of Lattice Boltzmann calculations\char`\"{} by Bastien Chopard (May 2008), available on LBMethod.org. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1BGKStandardTransformed_a07dc7f5ccaf1abaa725a7b62a2b79ac4}{
+\index{natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}!$\sim$BGKStandardTransformed@{$\sim$BGKStandardTransformed}}
+\index{$\sim$BGKStandardTransformed@{$\sim$BGKStandardTransformed}!natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}}
+\subsubsection[{$\sim$BGKStandardTransformed}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BGKStandardTransformed::$\sim$BGKStandardTransformed ()\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGKStandardTransformed_a07dc7f5ccaf1abaa725a7b62a2b79ac4}
+
+
+destructor constructor 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1BGKStandardTransformed_a58c4dc0c67ff4898c6555b614afc1ace}{
+\index{natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}!calculateDensity@{calculateDensity}}
+\index{calculateDensity@{calculateDensity}!natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}}
+\subsubsection[{calculateDensity}]{\setlength{\rightskip}{0pt plus 5cm}virtual double natrium::BGKStandardTransformed::calculateDensity (const vector$<$ double $>$ \& {\em distributions}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1BGKStandardTransformed_a58c4dc0c67ff4898c6555b614afc1ace}
+
+
+calculate macroscopic density 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em distributions}]particle distribution functions at a given point \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+macroscopic density (sum of all distributions) 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classnatrium_1_1CollisionModel_ae1c879c87ac210a227a8e3da2d0ac385}{natrium::CollisionModel}.\hypertarget{classnatrium_1_1BGKStandardTransformed_a00c806c32f16e518117c818a29c2fef4}{
+\index{natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}!collideAll@{collideAll}}
+\index{collideAll@{collideAll}!natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}}
+\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGKStandardTransformed::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGKStandardTransformed_a00c806c32f16e518117c818a29c2fef4}
+
+
+function for collision getEquilibriumDistribution
+
+f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components \mbox{[} \mbox{[}u\_\-1x, u\_\-2x, ...\mbox{]}, \mbox{[}u\_\-1y, u\_\-2y, ...\mbox{]} \mbox{]} inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false 
+
+Reimplemented from \hyperlink{classnatrium_1_1BGK_ae5e97a4995fe927e9042a6cffac80acc}{natrium::BGK}.\hypertarget{classnatrium_1_1BGKStandardTransformed_a870465cc026f92c8ffba899af6f95634}{
+\index{natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}!getEquilibriumDistribution@{getEquilibriumDistribution}}
+\index{getEquilibriumDistribution@{getEquilibriumDistribution}!natrium::BGKStandardTransformed@{natrium::BGKStandardTransformed}}
+\subsubsection[{getEquilibriumDistribution}]{\setlength{\rightskip}{0pt plus 5cm}double natrium::BGKStandardTransformed::getEquilibriumDistribution (size\_\-t {\em i}, \/  const numeric\_\-vector \& {\em u}, \/  const double {\em rho} = {\ttfamily 1}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGKStandardTransformed_a870465cc026f92c8ffba899af6f95634}
+
+
+function for the calculation of the equilibrium distribution in the incompressible \hyperlink{classnatrium_1_1D2Q9}{D2Q9} model destructor
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em i}]index of the direction \item[{\em u}]macroscopic velocity \item[{\em rho}]macroscopic density \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value of the equilibrium distribution 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+The calculation can surely be done more efficiently by passing different arguments, e.g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classnatrium_1_1CollisionModel_a88b382d63da80e950bc58e8afad769a6}{natrium::CollisionModel}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/\hyperlink{BGKStandardTransformed_8h}{BGKStandardTransformed.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/\hyperlink{BGKStandardTransformed_8cpp}{BGKStandardTransformed.cpp}\end{DoxyCompactItemize}

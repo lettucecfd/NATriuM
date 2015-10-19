@@ -36,6 +36,10 @@ template<size_t dim, size_t spacedim = dim>
 using FacePair = dealii::GridTools::PeriodicFacePair< dealii::TriaIterator<dealii::CellAccessor<dim, spacedim> > >;
 
 
+/**
+ * @short	A std::map that maps cells to face pairs
+ * @note	The order of cells in the Face Pair is of no meaning
+ */
 template<size_t dim, size_t spacedim = dim>
 using PeriodicCellMap = std::map<
 			dealii::TriaIterator< dealii::CellAccessor<dim, spacedim> >,
@@ -47,6 +51,10 @@ class PeriodicBoundaryNotPossible;
 template <size_t dim>
 class BoundaryCollection;
 
+
+/** @short
+ * some extensions to deal.ii
+ */
 namespace DealIIExtensions {
 
 //DEAL_II_NAMESPACE_OPEN
@@ -75,6 +83,21 @@ make_sparser_flux_sparsity_pattern(const DH &dof, SparsityPattern &sparsity,
 				BoundaryCollection<DH::dimension>(),
 		FEFaceValues<DH::dimension>* fe_face = NULL);
 
+
+/**
+ *  @short 	Gathers cell pairs at a periodic boundary. This function starts at the coarsest level and
+ *  		recursively visits the subcells of boundary cells. At the active level, cell pairs are added
+ *  		to the cell_map.
+ *  @param[in] cell_1 		cell at the one side of a periodic boundary
+ *  @param[in] cell_2 		cell at the other side of a periodic boundary
+ *  @param[in] face_nr_1	boundary face number of the cell_1
+ *  @param[in] face_nr_2	boundary face number of the cell_2
+ *  @param[out] cell_map	A map that stores cells and faces at the periodic boundary
+ *  @param[in] face_orientation		see deal.ii Glossary
+ *  @param[in] face_flip			see deal.ii Glossary
+ *  @param[in] face_rotation		see deal.ii Glossary
+ *  @note The implementation of this function is similar to dealii::make_periodicity_constraints
+ */
 template<typename DH>
 void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 		const typename identity<typename DH::cell_iterator>::type &cell_2, size_t face_nr_1,
@@ -82,12 +105,32 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 		const bool face_orientation, const bool face_flip,
 		const bool face_rotation);
 
+/**
+ * @short	High-level version of the first function, starting from PeriodicFacePairs
+ * @param[in]	periodic_faces 	a vector of PeriodicFacePairs. They can be obtained by
+ * 								calling collect_periodic_faces.
+ * @param[out]	cell_map		A map that stores cells and faces at the periodic boundary
+ */
 template<typename DH>
 void make_periodicity_map_dg(
 		const std::vector<
 				GridTools::PeriodicFacePair<typename DH::cell_iterator> > &periodic_faces,
 		PeriodicCellMap<DH::dimension>& cell_map);
 
+/**
+ * @short	Another high-level version of the first function, starting from boundary indicators
+ * @param[in]	dof_handler 	a DoFHandler object
+ * @param[in]	b_id1			boundary id at the first side of the periodic boundary
+ * @param[in]	b_id2			boundary id at the second side of the periodic boundary
+ * @param[out]	cell_map		A map that stores cells and faces at the periodic boundary
+ * @note 	Creating periodic boundaries requires great care in the order of operations (at least for
+ * 			Meshes of type parallel::distributed::Triangulation<dim>)
+ * 			-# create unrefined mesh
+ * 			-# call collect_periodic_faces<Mesh> to find out the periodic couplings at the coarsest level
+ * 			-# call add_periodicity to create a layer of ghost nodes across the periodic boundary
+ * 			-# call this function (make_periodicity_map_dg) to recursively find out the periodic couplings
+ * 			   on the active levels
+ */
 template<typename DH>
 void make_periodicity_map_dg(const DH &dof_handler,
 		size_t b_id1, size_t b_id2,

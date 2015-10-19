@@ -19,7 +19,7 @@ find_package(   deal.II 8.0 REQUIRED
 # Initialize Deal variables (has to be called before "project")
 #
 DEAL_II_INITIALIZE_CACHED_VARIABLES() 
-
+ 
 #
 # PROJECT has to be called after DEAL_II_INITIALIZE_CACHED_VARIABLES
 # otherwise CMake will have already set the compiler and compiler

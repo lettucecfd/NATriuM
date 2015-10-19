@@ -1,30 +1,77 @@
-\hypertarget{classnatrium_1_1ExponentialTimeIntegrator}{\section{natrium\-:\-:Exponential\-Time\-Integrator Class Reference}
-\label{classnatrium_1_1ExponentialTimeIntegrator}\index{natrium\-::\-Exponential\-Time\-Integrator@{natrium\-::\-Exponential\-Time\-Integrator}}
+\hypertarget{classnatrium_1_1ExponentialTimeIntegrator}{
+\section{natrium::ExponentialTimeIntegrator$<$ MATRIX, VECTOR $>$ Class Template Reference}
+\label{classnatrium_1_1ExponentialTimeIntegrator}\index{natrium::ExponentialTimeIntegrator@{natrium::ExponentialTimeIntegrator}}
 }
 
 
-Exponential time integration scheme for the solution of f' = L$\ast$f, as used in Uga etal. (2012) Spectral-\/element discontinuous Galerkin lattice Boltzmann simulation of flow past two cylinders in tandem with an exponential time integrator, C\-M\-W\-A 65 pp. 239-\/251.  
+Exponential time integration scheme for the solution of f' = L$\ast$f, as used in Uga etal. (2012) Spectral-\/element discontinuous Galerkin lattice Boltzmann simulation of flow past two cylinders in tandem with an exponential time integrator, CMWA 65 pp. 239-\/251.  
 
 
-
-
-{\ttfamily \#include $<$Exponential\-Time\-Integrator.\-h$>$}
-
+{\ttfamily \#include $<$ExponentialTimeIntegrator.h$>$}Inheritance diagram for natrium::ExponentialTimeIntegrator$<$ MATRIX, VECTOR $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classnatrium_1_1ExponentialTimeIntegrator}
+\end{center}
+\end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1ExponentialTimeIntegrator_a91472d03faddf0e2166fb5d77e6cb062}{\hyperlink{classnatrium_1_1ExponentialTimeIntegrator_a91472d03faddf0e2166fb5d77e6cb062}{Exponential\-Time\-Integrator} ()}\label{classnatrium_1_1ExponentialTimeIntegrator_a91472d03faddf0e2166fb5d77e6cb062}
+\hypertarget{classnatrium_1_1ExponentialTimeIntegrator_a3a3e7b0c53b5c083dbdb7b3d625d8087}{
+\hyperlink{classnatrium_1_1ExponentialTimeIntegrator_a3a3e7b0c53b5c083dbdb7b3d625d8087}{ExponentialTimeIntegrator} (double timeStepSize)}
+\label{classnatrium_1_1ExponentialTimeIntegrator_a3a3e7b0c53b5c083dbdb7b3d625d8087}
 
-\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ExponentialTimeIntegrator_a7114f9845feb896b3129492de36a60b3}{virtual \hyperlink{classnatrium_1_1ExponentialTimeIntegrator_a7114f9845feb896b3129492de36a60b3}{$\sim$\-Exponential\-Time\-Integrator} ()}\label{classnatrium_1_1ExponentialTimeIntegrator_a7114f9845feb896b3129492de36a60b3}
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ExponentialTimeIntegrator_a7da2892aead7c5e1fec82be549dcb37b}{
+{\bfseries ExponentialTimeIntegrator} (double timeStepSize, size\_\-t numberOfBlocks)}
+\label{classnatrium_1_1ExponentialTimeIntegrator_a7da2892aead7c5e1fec82be549dcb37b}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\end{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1ExponentialTimeIntegrator_ad85e62117ec3dbfebfbccd6ad1135d8c}{
+virtual \hyperlink{classnatrium_1_1ExponentialTimeIntegrator_ad85e62117ec3dbfebfbccd6ad1135d8c}{$\sim$ExponentialTimeIntegrator} ()}
+\label{classnatrium_1_1ExponentialTimeIntegrator_ad85e62117ec3dbfebfbccd6ad1135d8c}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+virtual double \hyperlink{classnatrium_1_1ExponentialTimeIntegrator_ae0a9cff9bdafab123016db72d1439ef8}{step} (VECTOR \&f, const MATRIX \&systemMatrix, const VECTOR \&systemVector, double t=0, double dt=0)
+\begin{DoxyCompactList}\small\item\em make one time integration step on f: \[ \frac{df}{dt} = Af+b \]. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ExponentialTimeIntegrator_a7b68727897acae02ff025c39a56a4bf6}{
+{\footnotesize template$<$$>$ }\\{\bfseries ExponentialTimeIntegrator} (double timeStepSize)}
+\label{classnatrium_1_1ExponentialTimeIntegrator_a7b68727897acae02ff025c39a56a4bf6}
+
+\item 
+\hypertarget{classnatrium_1_1ExponentialTimeIntegrator_acbd606f38f9c5c0b4cb9b9fc817f1186}{
+{\footnotesize template$<$$>$ }\\{\bfseries ExponentialTimeIntegrator} (double timeStepSize, size\_\-t)}
+\label{classnatrium_1_1ExponentialTimeIntegrator_acbd606f38f9c5c0b4cb9b9fc817f1186}
+
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Exponential time integration scheme for the solution of f' = L$\ast$f, as used in Uga etal. (2012) Spectral-\/element discontinuous Galerkin lattice Boltzmann simulation of flow past two cylinders in tandem with an exponential time integrator, C\-M\-W\-A 65 pp. 239-\/251. 
+\subsubsection*{template$<$class MATRIX, class VECTOR$>$ class natrium::ExponentialTimeIntegrator$<$ MATRIX, VECTOR $>$}
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+Exponential time integration scheme for the solution of f' = L$\ast$f, as used in Uga etal. (2012) Spectral-\/element discontinuous Galerkin lattice Boltzmann simulation of flow past two cylinders in tandem with an exponential time integrator, CMWA 65 pp. 239-\/251. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1ExponentialTimeIntegrator_ae0a9cff9bdafab123016db72d1439ef8}{
+\index{natrium::ExponentialTimeIntegrator@{natrium::ExponentialTimeIntegrator}!step@{step}}
+\index{step@{step}!natrium::ExponentialTimeIntegrator@{natrium::ExponentialTimeIntegrator}}
+\subsubsection[{step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class MATRIX , class VECTOR $>$ double {\bf natrium::ExponentialTimeIntegrator}$<$ MATRIX, VECTOR $>$::step (VECTOR \& {\em f}, \/  const MATRIX \& {\em systemMatrix}, \/  const VECTOR \& {\em systemVector}, \/  double {\em t} = {\ttfamily 0}, \/  double {\em dt} = {\ttfamily 0})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1ExponentialTimeIntegrator_ae0a9cff9bdafab123016db72d1439ef8}
+
+
+make one time integration step on f: \[ \frac{df}{dt} = Af+b \]. 
+\begin{DoxyParams}{Parameters}
+\item[{\em in/out\mbox{]}}]f Vector of degrees of freedom \item[\mbox{$\leftarrow$} {\em systemMatrix}]Matrix A \item[\mbox{$\leftarrow$} {\em systemVector}]Vector b \item[\mbox{$\leftarrow$} {\em double}]t global time \item[\mbox{$\leftarrow$} {\em double}]dt time step size. Required to interface deal.II's embedded RK methods \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+new global time 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+fully virtual method. Overloaded by subclasses. 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classnatrium_1_1TimeIntegrator_a1c438e41d183d172d524aa5dc97785fb}{natrium::TimeIntegrator$<$ MATRIX, VECTOR $>$}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/timeintegration/\hyperlink{ExponentialTimeIntegrator_8h}{Exponential\-Time\-Integrator.\-h}\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/timeintegration/\hyperlink{ExponentialTimeIntegrator_8cpp}{Exponential\-Time\-Integrator.\-cpp}\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/timeintegration/ExponentialTimeIntegrator.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/timeintegration/\hyperlink{ExponentialTimeIntegrator_8cpp}{ExponentialTimeIntegrator.cpp}\end{DoxyCompactItemize}

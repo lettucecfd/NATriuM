@@ -1,63 +1,100 @@
-\hypertarget{classnatrium_1_1SolverStats}{\section{natrium\-:\-:Solver\-Stats$<$ dim $>$ Class Template Reference}
-\label{classnatrium_1_1SolverStats}\index{natrium\-::\-Solver\-Stats$<$ dim $>$@{natrium\-::\-Solver\-Stats$<$ dim $>$}}
+\hypertarget{classnatrium_1_1SolverStats}{
+\section{natrium::SolverStats$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1SolverStats}\index{natrium::SolverStats@{natrium::SolverStats}}
 }
 
 
 Container for solver statistics and table file.  
 
 
-
-
-{\ttfamily \#include $<$Solver\-Stats.\-h$>$}
-
-\subsection*{Public Member Functions}
+{\ttfamily \#include $<$SolverStats.h$>$}\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1SolverStats_aaa0b74781be83337875982f0a46c67b8}{\hyperlink{classnatrium_1_1SolverStats_aaa0b74781be83337875982f0a46c67b8}{Solver\-Stats} (\hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}$<$ dim $>$ $\ast$cfdsolver, const std\-::string table\-File\-Name=\char`\"{}\char`\"{})}\label{classnatrium_1_1SolverStats_aaa0b74781be83337875982f0a46c67b8}
+\hypertarget{classnatrium_1_1SolverStats_aaa0b74781be83337875982f0a46c67b8}{
+\hyperlink{classnatrium_1_1SolverStats_aaa0b74781be83337875982f0a46c67b8}{SolverStats} (\hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}$<$ dim $>$ $\ast$cfdsolver, const std::string tableFileName=\char`\"{}\char`\"{})}
+\label{classnatrium_1_1SolverStats_aaa0b74781be83337875982f0a46c67b8}
 
-\begin{DoxyCompactList}\small\item\em Constructor, if second argument is \char`\"{}\char`\"{} (which it is by default), then no output file is created. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SolverStats_a32c66bc8d05fbd0144dc9023fd17d3a8}{void {\bfseries print\-Header\-Line} ()}\label{classnatrium_1_1SolverStats_a32c66bc8d05fbd0144dc9023fd17d3a8}
-
-\item 
-\hypertarget{classnatrium_1_1SolverStats_a15b90f4fa22d7881a0ab868f2e12680b}{void {\bfseries update} ()}\label{classnatrium_1_1SolverStats_a15b90f4fa22d7881a0ab868f2e12680b}
-
-\item 
-\hypertarget{classnatrium_1_1SolverStats_a55101045c882c45fe3b46aa236d63604}{void {\bfseries print\-New\-Line} ()}\label{classnatrium_1_1SolverStats_a55101045c882c45fe3b46aa236d63604}
+\begin{DoxyCompactList}\small\item\em Constructor, if second argument is \char`\"{}\char`\"{} (which it is by default), then no output file is created. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SolverStats_a32c66bc8d05fbd0144dc9023fd17d3a8}{
+void {\bfseries printHeaderLine} ()}
+\label{classnatrium_1_1SolverStats_a32c66bc8d05fbd0144dc9023fd17d3a8}
 
 \item 
-\hypertarget{classnatrium_1_1SolverStats_acf824edde9e155f0c19c591179fed5eb}{size\-\_\-t {\bfseries get\-Iteration\-Number} () const }\label{classnatrium_1_1SolverStats_acf824edde9e155f0c19c591179fed5eb}
+\hypertarget{classnatrium_1_1SolverStats_a15b90f4fa22d7881a0ab868f2e12680b}{
+void {\bfseries update} ()}
+\label{classnatrium_1_1SolverStats_a15b90f4fa22d7881a0ab868f2e12680b}
 
 \item 
-\hypertarget{classnatrium_1_1SolverStats_a24d2637fa64a779c0f01820ae7e0dfa6}{double {\bfseries get\-Kin\-E} () const }\label{classnatrium_1_1SolverStats_a24d2637fa64a779c0f01820ae7e0dfa6}
+\hypertarget{classnatrium_1_1SolverStats_a0f980c759a166a697a7338baec559ee8}{
+void {\bfseries calulateResiduals} (size\_\-t iteration)}
+\label{classnatrium_1_1SolverStats_a0f980c759a166a697a7338baec559ee8}
 
 \item 
-\hypertarget{classnatrium_1_1SolverStats_ac880e86e2e93cafad88fa447ebb641b5}{double {\bfseries get\-Max\-U} () const }\label{classnatrium_1_1SolverStats_ac880e86e2e93cafad88fa447ebb641b5}
+\hypertarget{classnatrium_1_1SolverStats_a55101045c882c45fe3b46aa236d63604}{
+void {\bfseries printNewLine} ()}
+\label{classnatrium_1_1SolverStats_a55101045c882c45fe3b46aa236d63604}
 
 \item 
-\hypertarget{classnatrium_1_1SolverStats_ae4ab93dfcac8500e41afe4d14b485a3a}{shared\-\_\-ptr$<$ std\-::fstream $>$ {\bfseries get\-Table\-File} () const }\label{classnatrium_1_1SolverStats_ae4ab93dfcac8500e41afe4d14b485a3a}
+\hypertarget{classnatrium_1_1SolverStats_acf824edde9e155f0c19c591179fed5eb}{
+size\_\-t {\bfseries getIterationNumber} () const }
+\label{classnatrium_1_1SolverStats_acf824edde9e155f0c19c591179fed5eb}
 
 \item 
-\hypertarget{classnatrium_1_1SolverStats_a7eb7473ffe34d624bb8c09666021a6e8}{double {\bfseries get\-Time} () const }\label{classnatrium_1_1SolverStats_a7eb7473ffe34d624bb8c09666021a6e8}
+\hypertarget{classnatrium_1_1SolverStats_a24d2637fa64a779c0f01820ae7e0dfa6}{
+double {\bfseries getKinE} () const }
+\label{classnatrium_1_1SolverStats_a24d2637fa64a779c0f01820ae7e0dfa6}
 
 \item 
-\hypertarget{classnatrium_1_1SolverStats_ade0d711e048a834547ad32643bc2b529}{bool {\bfseries is\-Up\-To\-Date} () const }\label{classnatrium_1_1SolverStats_ade0d711e048a834547ad32643bc2b529}
+\hypertarget{classnatrium_1_1SolverStats_ac880e86e2e93cafad88fa447ebb641b5}{
+double {\bfseries getMaxU} () const }
+\label{classnatrium_1_1SolverStats_ac880e86e2e93cafad88fa447ebb641b5}
 
 \item 
-\hypertarget{classnatrium_1_1SolverStats_aedf3ce8027cba3da15c8b28241234c94}{const std\-::string \& {\bfseries get\-Filename} () const }\label{classnatrium_1_1SolverStats_aedf3ce8027cba3da15c8b28241234c94}
+\hypertarget{classnatrium_1_1SolverStats_ae4ab93dfcac8500e41afe4d14b485a3a}{
+shared\_\-ptr$<$ std::fstream $>$ {\bfseries getTableFile} () const }
+\label{classnatrium_1_1SolverStats_ae4ab93dfcac8500e41afe4d14b485a3a}
+
+\item 
+\hypertarget{classnatrium_1_1SolverStats_a7eb7473ffe34d624bb8c09666021a6e8}{
+double {\bfseries getTime} () const }
+\label{classnatrium_1_1SolverStats_a7eb7473ffe34d624bb8c09666021a6e8}
+
+\item 
+\hypertarget{classnatrium_1_1SolverStats_ade0d711e048a834547ad32643bc2b529}{
+bool {\bfseries isUpToDate} () const }
+\label{classnatrium_1_1SolverStats_ade0d711e048a834547ad32643bc2b529}
+
+\item 
+\hypertarget{classnatrium_1_1SolverStats_aedf3ce8027cba3da15c8b28241234c94}{
+const std::string \& {\bfseries getFilename} () const }
+\label{classnatrium_1_1SolverStats_aedf3ce8027cba3da15c8b28241234c94}
+
+\item 
+\hypertarget{classnatrium_1_1SolverStats_a101f0b150f9bf2bf48ae6c4031f4c270}{
+double {\bfseries getMaxP} () const }
+\label{classnatrium_1_1SolverStats_a101f0b150f9bf2bf48ae6c4031f4c270}
+
+\item 
+\hypertarget{classnatrium_1_1SolverStats_a582de4d3fd470f78c03cada1c8ebf959}{
+double {\bfseries getMinP} () const }
+\label{classnatrium_1_1SolverStats_a582de4d3fd470f78c03cada1c8ebf959}
+
+\item 
+\hypertarget{classnatrium_1_1SolverStats_a331dab963d64362612b3378fc9588894}{
+double {\bfseries getMeanVelocityX} () const }
+\label{classnatrium_1_1SolverStats_a331dab963d64362612b3378fc9588894}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::\-Solver\-Stats$<$ dim $>$}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::SolverStats$<$ dim $>$}
 
-Container for solver statistics and table file. 
-
-\begin{DoxyNote}{Note}
-As this class is a friend of \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}, it can access its private attributes 
+Container for solver statistics and table file. \begin{DoxyNote}{Note}
+As this class is a friend of \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}, it can access its private attributes 
 \end{DoxyNote}
 
 
-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/Solver\-Stats.\-h\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/SolverStats.h\end{DoxyCompactItemize}

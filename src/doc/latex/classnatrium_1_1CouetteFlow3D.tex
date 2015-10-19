@@ -1,0 +1,63 @@
+\hypertarget{classnatrium_1_1CouetteFlow3D}{
+\section{natrium::CouetteFlow3D Class Reference}
+\label{classnatrium_1_1CouetteFlow3D}\index{natrium::CouetteFlow3D@{natrium::CouetteFlow3D}}
+}
+
+
+Description of a simple Couette Flow (regular channel flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$3. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  
+
+
+{\ttfamily \#include $<$CouetteFlow3D.h$>$}Inheritance diagram for natrium::CouetteFlow3D::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1CouetteFlow3D}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1CouetteFlow3D_1_1AnalyticVelocity}{AnalyticVelocity}
+\item 
+struct {\bfseries UnstructuredGridFunc}
+\begin{DoxyCompactList}\small\item\em function to generate the unstructured mesh grid \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1CouetteFlow3D_ae7dd1be0d19989bb3b015492b59c0e06}{CouetteFlow3D} (double viscosity, double topPlateVelocity, size\_\-t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CouetteFlow3D_a2d1b9db247ba3e51ed092dab3637a657}{
+virtual \hyperlink{classnatrium_1_1CouetteFlow3D_a2d1b9db247ba3e51ed092dab3637a657}{$\sim$CouetteFlow3D} ()}
+\label{classnatrium_1_1CouetteFlow3D_a2d1b9db247ba3e51ed092dab3637a657}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CouetteFlow3D_a38cc986a0f45a5ec7ef56fefc9e342df}{
+virtual double {\bfseries getCharacteristicVelocity} () const }
+\label{classnatrium_1_1CouetteFlow3D_a38cc986a0f45a5ec7ef56fefc9e342df}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a simple Couette Flow (regular channel flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$3. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \begin{DoxyNote}{Note}
+The analytic solution is obtained by a formula stated in Min and Lee (2011). 
+\end{DoxyNote}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1CouetteFlow3D_ae7dd1be0d19989bb3b015492b59c0e06}{
+\index{natrium::CouetteFlow3D@{natrium::CouetteFlow3D}!CouetteFlow3D@{CouetteFlow3D}}
+\index{CouetteFlow3D@{CouetteFlow3D}!natrium::CouetteFlow3D@{natrium::CouetteFlow3D}}
+\subsubsection[{CouetteFlow3D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::CouetteFlow3D::CouetteFlow3D (double {\em viscosity}, \/  double {\em topPlateVelocity}, \/  size\_\-t {\em refinementLevel}, \/  double {\em L} = {\ttfamily 1.0}, \/  double {\em startTime} = {\ttfamily 0.0}, \/  bool {\em isUnstructured} = {\ttfamily false})}}
+\label{classnatrium_1_1CouetteFlow3D_ae7dd1be0d19989bb3b015492b59c0e06}
+
+
+constructor 
+
+apply boundary values
+
+apply initial values 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{CouetteFlow3D_8h}{CouetteFlow3D.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{CouetteFlow3D_8cpp}{CouetteFlow3D.cpp}\end{DoxyCompactItemize}

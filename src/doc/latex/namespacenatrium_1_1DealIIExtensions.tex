@@ -1,0 +1,132 @@
+\hypertarget{namespacenatrium_1_1DealIIExtensions}{
+\section{natrium::DealIIExtensions Namespace Reference}
+\label{namespacenatrium_1_1DealIIExtensions}\index{natrium::DealIIExtensions@{natrium::DealIIExtensions}}
+}
+
+
+some extensions to deal.ii  
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a2d320098833f9b096e93d4c565675338}{
+typedef DynamicSparsityPattern {\bfseries SP}}
+\label{namespacenatrium_1_1DealIIExtensions_a2d320098833f9b096e93d4c565675338}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a9796541c82011b8b792400ebefd9c008}{
+{\footnotesize template$<$class DH , class SparsityPattern $>$ }\\void \hyperlink{namespacenatrium_1_1DealIIExtensions_a9796541c82011b8b792400ebefd9c008}{make\_\-sparser\_\-flux\_\-sparsity\_\-pattern} (const DH \&dof, SparsityPattern \&sparsity, const ConstraintMatrix \&constraints, const \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ DH::dimension $>$ \&boundaries=\hyperlink{classnatrium_1_1BoundaryCollection}{natrium::BoundaryCollection}$<$ DH::dimension $>$(), FEFaceValues$<$ DH::dimension $>$ $\ast$fe\_\-face=NULL, const bool keep\_\-constrained\_\-dofs=true, const types::subdomain\_\-id subdomain\_\-id=numbers::invalid\_\-unsigned\_\-int)}
+\label{namespacenatrium_1_1DealIIExtensions_a9796541c82011b8b792400ebefd9c008}
+
+\begin{DoxyCompactList}\small\item\em Like dealii::DoFTools::make\_\-flux\_\-sparsity\_\-pattern but does only create non-\/zero entries for the DoFs situated on faces. \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a4bc61b539df963c21b595378f9b80f5a}{
+{\footnotesize template$<$class DH , class SparsityPattern $>$ }\\void {\bfseries make\_\-sparser\_\-flux\_\-sparsity\_\-pattern} (const DH \&dof, SparsityPattern \&sparsity, const \hyperlink{classnatrium_1_1BoundaryCollection}{natrium::BoundaryCollection}$<$ DH::dimension $>$ \&boundaries, FEFaceValues$<$ DH::dimension $>$ $\ast$fe\_\-face)}
+\label{namespacenatrium_1_1DealIIExtensions_a4bc61b539df963c21b595378f9b80f5a}
+
+\item 
+{\footnotesize template$<$typename DH $>$ }\\void \hyperlink{namespacenatrium_1_1DealIIExtensions_a6bc5b9999ee7c47791ea8754f586277e}{make\_\-periodicity\_\-map\_\-dg} (const typename DH::cell\_\-iterator \&cell\_\-1, const typename identity$<$ typename DH::cell\_\-iterator $>$::type \&cell\_\-2, size\_\-t face\_\-nr\_\-1, size\_\-t face\_\-nr\_\-2, PeriodicCellMap$<$ DH::dimension $>$ \&cell\_\-map, const bool face\_\-orientation, const bool face\_\-flip, const bool face\_\-rotation)
+\begin{DoxyCompactList}\small\item\em Gathers cell pairs at a periodic boundary. This function starts at the coarsest level and recursively visits the subcells of boundary cells. At the active level, cell pairs are added to the cell\_\-map. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$typename DH $>$ }\\void \hyperlink{namespacenatrium_1_1DealIIExtensions_a02ccc2d5be9d7550b75fa196aeb71656}{make\_\-periodicity\_\-map\_\-dg} (const std::vector$<$ GridTools::PeriodicFacePair$<$ typename DH::cell\_\-iterator $>$ $>$ \&periodic\_\-faces, PeriodicCellMap$<$ DH::dimension $>$ \&cell\_\-map)
+\begin{DoxyCompactList}\small\item\em High-\/level version of the first function, starting from PeriodicFacePairs. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$typename DH $>$ }\\void \hyperlink{namespacenatrium_1_1DealIIExtensions_a01f414566020f59f29036fd7e22341b9}{make\_\-periodicity\_\-map\_\-dg} (const DH \&dof\_\-handler, size\_\-t b\_\-id1, size\_\-t b\_\-id2, const int direction, PeriodicCellMap$<$ DH::dimension $>$ \&cell\_\-map)
+\begin{DoxyCompactList}\small\item\em Another high-\/level version of the first function, starting from boundary indicators. \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a1114fe047dc504c301fade5677bcea1d}{
+template void {\bfseries make\_\-sparser\_\-flux\_\-sparsity\_\-pattern$<$ DoFHandler$<$ 2 $>$, SP $>$} (const DoFHandler$<$ 2 $>$ \&dof, SP \&sparsity, const \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ 2 $>$ \&boundaries, FEFaceValues$<$ 2 $>$ $\ast$fe\_\-face)}
+\label{namespacenatrium_1_1DealIIExtensions_a1114fe047dc504c301fade5677bcea1d}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a9f6065aca54041aa9bd6ca3733478988}{
+template void {\bfseries make\_\-sparser\_\-flux\_\-sparsity\_\-pattern$<$ DoFHandler$<$ 2 $>$, SP $>$} (const DoFHandler$<$ 2 $>$ \&dof, SP \&sparsity, const ConstraintMatrix \&constraints, const \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ 2 $>$ \&boundaries, FEFaceValues$<$ 2 $>$ $\ast$fe\_\-face, const bool, const unsigned int)}
+\label{namespacenatrium_1_1DealIIExtensions_a9f6065aca54041aa9bd6ca3733478988}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a33884e02520bb06cf29f3be01a2d7b42}{
+template void {\bfseries make\_\-sparser\_\-flux\_\-sparsity\_\-pattern$<$ DoFHandler$<$ 3 $>$, SP $>$} (const DoFHandler$<$ 3 $>$ \&dof, SP \&sparsity, const \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ 3 $>$ \&boundaries, FEFaceValues$<$ 3 $>$ $\ast$fe\_\-face)}
+\label{namespacenatrium_1_1DealIIExtensions_a33884e02520bb06cf29f3be01a2d7b42}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a6bfd0edfcc602aa68f3e5e627a5f1e8b}{
+template void {\bfseries make\_\-sparser\_\-flux\_\-sparsity\_\-pattern$<$ DoFHandler$<$ 3 $>$, SP $>$} (const DoFHandler$<$ 3 $>$ \&dof, SP \&sparsity, const ConstraintMatrix \&constraints, const \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ 3 $>$ \&boundaries, FEFaceValues$<$ 3 $>$ $\ast$fe\_\-face, const bool, const unsigned int)}
+\label{namespacenatrium_1_1DealIIExtensions_a6bfd0edfcc602aa68f3e5e627a5f1e8b}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_aec93b076a99e59c28b7921e26d81b450}{
+template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 2 $>$ $>$} (const typename DoFHandler$<$ 2 $>$::cell\_\-iterator \&cell\_\-1, const identity$<$ typename DoFHandler$<$ 2 $>$::cell\_\-iterator $>$::type \&cell\_\-2, size\_\-t face\_\-nr\_\-1, size\_\-t face\_\-nr\_\-2, PeriodicCellMap$<$ 2 $>$ \&cell\_\-map, const bool face\_\-orientation, const bool face\_\-flip, const bool face\_\-rotation)}
+\label{namespacenatrium_1_1DealIIExtensions_aec93b076a99e59c28b7921e26d81b450}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_aff90e32d1a427e62cb287350abe90ba0}{
+template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 3 $>$ $>$} (const typename DoFHandler$<$ 3 $>$::cell\_\-iterator \&cell\_\-1, const identity$<$ typename DoFHandler$<$ 3 $>$::cell\_\-iterator $>$::type \&cell\_\-2, size\_\-t face\_\-nr\_\-1, size\_\-t face\_\-nr\_\-2, PeriodicCellMap$<$ 3 $>$ \&cell\_\-map, const bool face\_\-orientation, const bool face\_\-flip, const bool face\_\-rotation)}
+\label{namespacenatrium_1_1DealIIExtensions_aff90e32d1a427e62cb287350abe90ba0}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_aa7db4d0d0c8236483eb98b0f09e79b89}{
+template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 2 $>$ $>$} (const std::vector$<$ GridTools::PeriodicFacePair$<$ typename DoFHandler$<$ 2 $>$::cell\_\-iterator $>$ $>$ \&periodic\_\-faces, PeriodicCellMap$<$ 2 $>$ \&cell\_\-map)}
+\label{namespacenatrium_1_1DealIIExtensions_aa7db4d0d0c8236483eb98b0f09e79b89}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a9da850ee914812ca5d374fe70461f170}{
+template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 3 $>$ $>$} (const std::vector$<$ GridTools::PeriodicFacePair$<$ typename DoFHandler$<$ 3 $>$::cell\_\-iterator $>$ $>$ \&periodic\_\-faces, PeriodicCellMap$<$ 3 $>$ \&cell\_\-map)}
+\label{namespacenatrium_1_1DealIIExtensions_a9da850ee914812ca5d374fe70461f170}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_ae31f8793dc208deb99e34201a9c17779}{
+template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 2 $>$ $>$} (const DoFHandler$<$ 2 $>$ \&dof\_\-handler, size\_\-t b\_\-id1, size\_\-t b\_\-id2, const int direction, PeriodicCellMap$<$ 2 $>$ \&cell\_\-map)}
+\label{namespacenatrium_1_1DealIIExtensions_ae31f8793dc208deb99e34201a9c17779}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a4d4a08bca6d3ef3833ba3a0107ea7fa8}{
+template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 3 $>$ $>$} (const DoFHandler$<$ 3 $>$ \&dof\_\-handler, size\_\-t b\_\-id1, size\_\-t b\_\-id2, const int direction, PeriodicCellMap$<$ 3 $>$ \&cell\_\-map)}
+\label{namespacenatrium_1_1DealIIExtensions_a4d4a08bca6d3ef3833ba3a0107ea7fa8}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+some extensions to deal.ii 
+
+\subsection{Function Documentation}
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a01f414566020f59f29036fd7e22341b9}{
+\index{natrium::DealIIExtensions@{natrium::DealIIExtensions}!make\_\-periodicity\_\-map\_\-dg@{make\_\-periodicity\_\-map\_\-dg}}
+\index{make\_\-periodicity\_\-map\_\-dg@{make\_\-periodicity\_\-map\_\-dg}!natrium::DealIIExtensions@{natrium::DealIIExtensions}}
+\subsubsection[{make\_\-periodicity\_\-map\_\-dg}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename DH $>$ void natrium::DealIIExtensions::make\_\-periodicity\_\-map\_\-dg (const DH \& {\em dof\_\-handler}, \/  size\_\-t {\em b\_\-id1}, \/  size\_\-t {\em b\_\-id2}, \/  const int {\em direction}, \/  PeriodicCellMap$<$ DH::dimension $>$ \& {\em cell\_\-map})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_1_1DealIIExtensions_a01f414566020f59f29036fd7e22341b9}
+
+
+Another high-\/level version of the first function, starting from boundary indicators. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em dof\_\-handler}]a DoFHandler object \item[\mbox{$\leftarrow$} {\em b\_\-id1}]boundary id at the first side of the periodic boundary \item[\mbox{$\leftarrow$} {\em b\_\-id2}]boundary id at the second side of the periodic boundary \item[\mbox{$\rightarrow$} {\em cell\_\-map}]A map that stores cells and faces at the periodic boundary \end{DoxyParams}
+\begin{DoxyNote}{Note}
+Creating periodic boundaries requires great care in the order of operations (at least for Meshes of type parallel::distributed::Triangulation$<$dim$>$)
+\begin{DoxyEnumerate}
+\item create unrefined mesh
+\item call collect\_\-periodic\_\-faces$<$Mesh$>$ to find out the periodic couplings at the coarsest level
+\item call add\_\-periodicity to create a layer of ghost nodes across the periodic boundary
+\item call this function (make\_\-periodicity\_\-map\_\-dg) to recursively find out the periodic couplings on the active levels 
+\end{DoxyEnumerate}
+\end{DoxyNote}
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a02ccc2d5be9d7550b75fa196aeb71656}{
+\index{natrium::DealIIExtensions@{natrium::DealIIExtensions}!make\_\-periodicity\_\-map\_\-dg@{make\_\-periodicity\_\-map\_\-dg}}
+\index{make\_\-periodicity\_\-map\_\-dg@{make\_\-periodicity\_\-map\_\-dg}!natrium::DealIIExtensions@{natrium::DealIIExtensions}}
+\subsubsection[{make\_\-periodicity\_\-map\_\-dg}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename DH $>$ void natrium::DealIIExtensions::make\_\-periodicity\_\-map\_\-dg (const std::vector$<$ GridTools::PeriodicFacePair$<$ typename DH::cell\_\-iterator $>$ $>$ \& {\em periodic\_\-faces}, \/  PeriodicCellMap$<$ DH::dimension $>$ \& {\em cell\_\-map})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_1_1DealIIExtensions_a02ccc2d5be9d7550b75fa196aeb71656}
+
+
+High-\/level version of the first function, starting from PeriodicFacePairs. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em periodic\_\-faces}]a vector of PeriodicFacePairs. They can be obtained by calling collect\_\-periodic\_\-faces. \item[\mbox{$\rightarrow$} {\em cell\_\-map}]A map that stores cells and faces at the periodic boundary \end{DoxyParams}
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a6bc5b9999ee7c47791ea8754f586277e}{
+\index{natrium::DealIIExtensions@{natrium::DealIIExtensions}!make\_\-periodicity\_\-map\_\-dg@{make\_\-periodicity\_\-map\_\-dg}}
+\index{make\_\-periodicity\_\-map\_\-dg@{make\_\-periodicity\_\-map\_\-dg}!natrium::DealIIExtensions@{natrium::DealIIExtensions}}
+\subsubsection[{make\_\-periodicity\_\-map\_\-dg}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename DH $>$ void natrium::DealIIExtensions::make\_\-periodicity\_\-map\_\-dg (const typename DH::cell\_\-iterator \& {\em cell\_\-1}, \/  const typename identity$<$ typename DH::cell\_\-iterator $>$::type \& {\em cell\_\-2}, \/  size\_\-t {\em face\_\-nr\_\-1}, \/  size\_\-t {\em face\_\-nr\_\-2}, \/  PeriodicCellMap$<$ DH::dimension $>$ \& {\em cell\_\-map}, \/  const bool {\em face\_\-orientation}, \/  const bool {\em face\_\-flip}, \/  const bool {\em face\_\-rotation})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_1_1DealIIExtensions_a6bc5b9999ee7c47791ea8754f586277e}
+
+
+Gathers cell pairs at a periodic boundary. This function starts at the coarsest level and recursively visits the subcells of boundary cells. At the active level, cell pairs are added to the cell\_\-map. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em cell\_\-1}]cell at the one side of a periodic boundary \item[\mbox{$\leftarrow$} {\em cell\_\-2}]cell at the other side of a periodic boundary \item[\mbox{$\leftarrow$} {\em face\_\-nr\_\-1}]boundary face number of the cell\_\-1 \item[\mbox{$\leftarrow$} {\em face\_\-nr\_\-2}]boundary face number of the cell\_\-2 \item[\mbox{$\rightarrow$} {\em cell\_\-map}]A map that stores cells and faces at the periodic boundary \item[\mbox{$\leftarrow$} {\em face\_\-orientation}]see deal.ii Glossary \item[\mbox{$\leftarrow$} {\em face\_\-flip}]see deal.ii Glossary \item[\mbox{$\leftarrow$} {\em face\_\-rotation}]see deal.ii Glossary \end{DoxyParams}
+\begin{DoxyNote}{Note}
+The implementation of this function is similar to dealii::make\_\-periodicity\_\-constraints 
+\end{DoxyNote}

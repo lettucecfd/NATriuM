@@ -1,39 +1,47 @@
-\hypertarget{classnatrium_1_1MPIGuard}{\section{natrium\-:\-:M\-P\-I\-Guard Class Reference}
-\label{classnatrium_1_1MPIGuard}\index{natrium\-::\-M\-P\-I\-Guard@{natrium\-::\-M\-P\-I\-Guard}}
+\hypertarget{classnatrium_1_1MPIGuard}{
+\section{natrium::MPIGuard Class Reference}
+\label{classnatrium_1_1MPIGuard}\index{natrium::MPIGuard@{natrium::MPIGuard}}
 }
 
 
-Singleton that encapsulates the M\-P\-I init and finalize calls so that they are called at most once per run. This class wraps the function dealii\-::\-Utilities\-::\-M\-P\-I\-::\-M\-P\-I\-\_\-\-Init\-Finalize(argc, argv).  
+Singleton that encapsulates the MPI init and finalize calls so that they are called at most once per run. This class wraps the function dealii::Utilities::MPI::MPI\_\-InitFinalize(argc, argv).  
 
 
-
-
-{\ttfamily \#include $<$M\-P\-I\-Guard.\-h$>$}
-
-\subsection*{Public Member Functions}
+{\ttfamily \#include $<$MPIGuard.h$>$}\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1MPIGuard_a3211b8cb3a966a3f776eb669ae3ef0fe}{dealii\-::\-Utilities\-::\-M\-P\-I\-::\-M\-P\-I\-\_\-\-Init\-Finalize $\ast$ \hyperlink{classnatrium_1_1MPIGuard_a3211b8cb3a966a3f776eb669ae3ef0fe}{get\-M\-P\-I\-\_\-\-Init\-Finalize} ()}\label{classnatrium_1_1MPIGuard_a3211b8cb3a966a3f776eb669ae3ef0fe}
+\hypertarget{classnatrium_1_1MPIGuard_a3211b8cb3a966a3f776eb669ae3ef0fe}{
+dealii::Utilities::MPI::MPI\_\-InitFinalize $\ast$ \hyperlink{classnatrium_1_1MPIGuard_a3211b8cb3a966a3f776eb669ae3ef0fe}{getMPI\_\-InitFinalize} ()}
+\label{classnatrium_1_1MPIGuard_a3211b8cb3a966a3f776eb669ae3ef0fe}
 
-\begin{DoxyCompactList}\small\item\em return dealii's M\-P\-I\-\_\-\-Init\-Finalize object \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em return dealii's MPI\_\-InitFinalize object \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1MPIGuard_a665a19e7f489daba1f311b65fc5931a8}{static \hyperlink{classnatrium_1_1MPIGuard}{M\-P\-I\-Guard} $\ast$ \hyperlink{classnatrium_1_1MPIGuard_a665a19e7f489daba1f311b65fc5931a8}{get\-Instance} (int argc=0, char $\ast$$\ast$argv=N\-U\-L\-L)}\label{classnatrium_1_1MPIGuard_a665a19e7f489daba1f311b65fc5931a8}
+\hypertarget{classnatrium_1_1MPIGuard_a224d510033f3ef22368c3ccecf5fdab8}{
+static \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard} $\ast$ \hyperlink{classnatrium_1_1MPIGuard_a224d510033f3ef22368c3ccecf5fdab8}{getInstance} (int \&argc, char $\ast$$\ast$\&argv)}
+\label{classnatrium_1_1MPIGuard_a224d510033f3ef22368c3ccecf5fdab8}
 
-\begin{DoxyCompactList}\small\item\em Static constructor.  Command line argument. Can be used to determine the number of parallel processes. See documentation of dealii\-::\-Utilities\-::\-M\-P\-I\-::\-M\-P\-I\-\_\-\-Init\-Finalize(argc, argv) for details.  Command line argument.\-Can be used to determine the number of parallel processes. See documentation of dealii\-::\-Utilities\-::\-M\-P\-I\-::\-M\-P\-I\-\_\-\-Init\-Finalize(argc, argv) for details. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Static constructor.  Command line argument. Can be used to determine the number of parallel processes. See documentation of dealii::Utilities::MPI::MPI\_\-InitFinalize(argc, argv) for details.  Command line argument.Can be used to determine the number of parallel processes. See documentation of dealii::Utilities::MPI::MPI\_\-InitFinalize(argc, argv) for details. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1MPIGuard_a29d560de3666736bbecd800932a7209d}{
+static \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard} $\ast$ {\bfseries getInstance} ()}
+\label{classnatrium_1_1MPIGuard_a29d560de3666736bbecd800932a7209d}
+
+\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1MPIGuard_a8c962bb3cb17b91c2142b2a3b7e0bae2}{{\bfseries M\-P\-I\-Guard} (int argc, char $\ast$$\ast$argv)}\label{classnatrium_1_1MPIGuard_a8c962bb3cb17b91c2142b2a3b7e0bae2}
+\hypertarget{classnatrium_1_1MPIGuard_a1e07fafea3f7724d0d2dd9c106e1a44b}{
+{\bfseries MPIGuard} (int \&argc, char $\ast$$\ast$\&argv)}
+\label{classnatrium_1_1MPIGuard_a1e07fafea3f7724d0d2dd9c106e1a44b}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Singleton that encapsulates the M\-P\-I init and finalize calls so that they are called at most once per run. This class wraps the function dealii\-::\-Utilities\-::\-M\-P\-I\-::\-M\-P\-I\-\_\-\-Init\-Finalize(argc, argv). 
+Singleton that encapsulates the MPI init and finalize calls so that they are called at most once per run. This class wraps the function dealii::Utilities::MPI::MPI\_\-InitFinalize(argc, argv). 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/M\-P\-I\-Guard.\-h\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/M\-P\-I\-Guard.\-cpp\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/MPIGuard.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/MPIGuard.cpp\end{DoxyCompactItemize}

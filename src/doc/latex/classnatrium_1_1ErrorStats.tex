@@ -1,126 +1,128 @@
-\hypertarget{classnatrium_1_1ErrorStats}{\section{natrium\-:\-:Error\-Stats$<$ dim $>$ Class Template Reference}
-\label{classnatrium_1_1ErrorStats}\index{natrium\-::\-Error\-Stats$<$ dim $>$@{natrium\-::\-Error\-Stats$<$ dim $>$}}
+\hypertarget{classnatrium_1_1ErrorStats}{
+\section{natrium::ErrorStats$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1ErrorStats}\index{natrium::ErrorStats@{natrium::ErrorStats}}
 }
 
 
-Container for error statistics and table file; only for use with \hyperlink{classnatrium_1_1BenchmarkCFDSolver}{Benchmark\-C\-F\-D\-Solver}.  
+Container for error statistics and table file; only for use with \hyperlink{classnatrium_1_1BenchmarkCFDSolver}{BenchmarkCFDSolver}.  
 
 
-
-
-{\ttfamily \#include $<$Error\-Stats.\-h$>$}
-
-\subsection*{Public Member Functions}
+{\ttfamily \#include $<$ErrorStats.h$>$}\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1ErrorStats_a911e70f932c75a80dad345b90e8b8c0d}{Error\-Stats} (\hyperlink{classnatrium_1_1BenchmarkCFDSolver}{Benchmark\-C\-F\-D\-Solver}$<$ dim $>$ $\ast$cfdsolver, const std\-::string table\-File\-Name=\char`\"{}\char`\"{})
-\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ErrorStats_ad8cc77e4ac7a50e030e9a49fe1a5bdba}{void \hyperlink{classnatrium_1_1ErrorStats_ad8cc77e4ac7a50e030e9a49fe1a5bdba}{print\-Header\-Line} ()}\label{classnatrium_1_1ErrorStats_ad8cc77e4ac7a50e030e9a49fe1a5bdba}
+\hyperlink{classnatrium_1_1ErrorStats_a1dcdc9cb0508c7f64a067efae4134754}{ErrorStats} (\hyperlink{classnatrium_1_1BenchmarkCFDSolver}{BenchmarkCFDSolver}$<$ dim $>$ $\ast$cfdsolver, const std::string tableFileName=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ErrorStats_ad8cc77e4ac7a50e030e9a49fe1a5bdba}{
+void \hyperlink{classnatrium_1_1ErrorStats_ad8cc77e4ac7a50e030e9a49fe1a5bdba}{printHeaderLine} ()}
+\label{classnatrium_1_1ErrorStats_ad8cc77e4ac7a50e030e9a49fe1a5bdba}
 
-\begin{DoxyCompactList}\small\item\em write header line to table file \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ErrorStats_af02f31d82efefb482ea4ab3d69642486}{void \hyperlink{classnatrium_1_1ErrorStats_af02f31d82efefb482ea4ab3d69642486}{print\-New\-Line} ()}\label{classnatrium_1_1ErrorStats_af02f31d82efefb482ea4ab3d69642486}
+\begin{DoxyCompactList}\small\item\em write header line to table file \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ErrorStats_af02f31d82efefb482ea4ab3d69642486}{
+void \hyperlink{classnatrium_1_1ErrorStats_af02f31d82efefb482ea4ab3d69642486}{printNewLine} ()}
+\label{classnatrium_1_1ErrorStats_af02f31d82efefb482ea4ab3d69642486}
 
-\begin{DoxyCompactList}\small\item\em write information of the current iteration to table file \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ErrorStats_ad24a8dae524127631e75368a0aac61b5}{void \hyperlink{classnatrium_1_1ErrorStats_ad24a8dae524127631e75368a0aac61b5}{update} ()}\label{classnatrium_1_1ErrorStats_ad24a8dae524127631e75368a0aac61b5}
+\begin{DoxyCompactList}\small\item\em write information of the current iteration to table file \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ErrorStats_ad24a8dae524127631e75368a0aac61b5}{
+void \hyperlink{classnatrium_1_1ErrorStats_ad24a8dae524127631e75368a0aac61b5}{update} ()}
+\label{classnatrium_1_1ErrorStats_ad24a8dae524127631e75368a0aac61b5}
 
-\begin{DoxyCompactList}\small\item\em update errors for the current iteration \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ErrorStats_a72dcc0b8b86335a50ee1b324bbed0e61}{bool \hyperlink{classnatrium_1_1ErrorStats_a72dcc0b8b86335a50ee1b324bbed0e61}{is\-Up\-To\-Date} () const }\label{classnatrium_1_1ErrorStats_a72dcc0b8b86335a50ee1b324bbed0e61}
+\begin{DoxyCompactList}\small\item\em update errors for the current iteration \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ErrorStats_a72dcc0b8b86335a50ee1b324bbed0e61}{
+bool \hyperlink{classnatrium_1_1ErrorStats_a72dcc0b8b86335a50ee1b324bbed0e61}{isUpToDate} () const }
+\label{classnatrium_1_1ErrorStats_a72dcc0b8b86335a50ee1b324bbed0e61}
 
-\begin{DoxyCompactList}\small\item\em check, if errors are up-\/to-\/date, i.\-e. have already been calculated in the current iteration \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ErrorStats_aebc5c3f92adfee93ece2f97275651e44}{const shared\-\_\-ptr$<$ std\-::fstream $>$ \& {\bfseries get\-Errors\-Table\-File} () const }\label{classnatrium_1_1ErrorStats_aebc5c3f92adfee93ece2f97275651e44}
-
-\item 
-\hypertarget{classnatrium_1_1ErrorStats_a341ef071a84aa3a2b78485ce90bca7b2}{const std\-::string \& {\bfseries get\-Filename} () const }\label{classnatrium_1_1ErrorStats_a341ef071a84aa3a2b78485ce90bca7b2}
-
-\item 
-\hypertarget{classnatrium_1_1ErrorStats_ab710182a15d0c548fbc8c3b071dbebd1}{size\-\_\-t {\bfseries get\-Iteration\-Number} () const }\label{classnatrium_1_1ErrorStats_ab710182a15d0c548fbc8c3b071dbebd1}
-
-\item 
-double \hyperlink{classnatrium_1_1ErrorStats_a66f817c7daaf15724d5d42de4f17a1e8}{get\-L2\-Density\-Error} () const 
-\begin{DoxyCompactList}\small\item\em return L2-\/\-Error of density, $ \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $ \end{DoxyCompactList}\item 
-double \hyperlink{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}{get\-L2\-Velocity\-Error} () const 
-\begin{DoxyCompactList}\small\item\em return L2-\/\-Error of velocity, $ \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $ \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}{double \hyperlink{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}{get\-Max\-Density\-Error} () const }\label{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}
-
-\begin{DoxyCompactList}\small\item\em return max error of density $ max | \rho_{i} - \rho_{i}^{ref} | $ \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ErrorStats_a350f6b6fcc91f18006095331b0aa430c}{double {\bfseries get\-Max\-U\-Analytic} () const }\label{classnatrium_1_1ErrorStats_a350f6b6fcc91f18006095331b0aa430c}
+\begin{DoxyCompactList}\small\item\em check, if errors are up-\/to-\/date, i.e. have already been calculated in the current iteration \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ErrorStats_aebc5c3f92adfee93ece2f97275651e44}{
+const shared\_\-ptr$<$ std::fstream $>$ \& {\bfseries getErrorsTableFile} () const }
+\label{classnatrium_1_1ErrorStats_aebc5c3f92adfee93ece2f97275651e44}
 
 \item 
-\hypertarget{classnatrium_1_1ErrorStats_a48ea1bfc5db4dad6369b4b2991aa1f5c}{double \hyperlink{classnatrium_1_1ErrorStats_a48ea1bfc5db4dad6369b4b2991aa1f5c}{get\-Max\-Velocity\-Error} () const }\label{classnatrium_1_1ErrorStats_a48ea1bfc5db4dad6369b4b2991aa1f5c}
-
-\begin{DoxyCompactList}\small\item\em return max error of velocity $ max \|u_{i} - u_{i}^{ref}\|_{2} $ \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ErrorStats_aa79b49d872935e567c94a2727af24dea}{double {\bfseries get\-Time} () const }\label{classnatrium_1_1ErrorStats_aa79b49d872935e567c94a2727af24dea}
+\hypertarget{classnatrium_1_1ErrorStats_a341ef071a84aa3a2b78485ce90bca7b2}{
+const std::string \& {\bfseries getFilename} () const }
+\label{classnatrium_1_1ErrorStats_a341ef071a84aa3a2b78485ce90bca7b2}
 
 \item 
-\hypertarget{classnatrium_1_1ErrorStats_a965b8a50d1f84d8962c995808c222799}{double {\bfseries get\-L2\-U\-Analytic} () const }\label{classnatrium_1_1ErrorStats_a965b8a50d1f84d8962c995808c222799}
+\hypertarget{classnatrium_1_1ErrorStats_ab710182a15d0c548fbc8c3b071dbebd1}{
+size\_\-t {\bfseries getIterationNumber} () const }
+\label{classnatrium_1_1ErrorStats_ab710182a15d0c548fbc8c3b071dbebd1}
+
+\item 
+double \hyperlink{classnatrium_1_1ErrorStats_a66f817c7daaf15724d5d42de4f17a1e8}{getL2DensityError} () const 
+\begin{DoxyCompactList}\small\item\em return L2-\/Error of density, $ \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $ \item\end{DoxyCompactList}\item 
+double \hyperlink{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}{getL2VelocityError} () const 
+\begin{DoxyCompactList}\small\item\em return L2-\/Error of velocity, $ \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $ \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}{
+double \hyperlink{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}{getMaxDensityError} () const }
+\label{classnatrium_1_1ErrorStats_a8e32b3e8c8d141b6cdcf5428613a875e}
+
+\begin{DoxyCompactList}\small\item\em return max error of density $ max | \rho_{i} - \rho_{i}^{ref} | $ \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ErrorStats_a350f6b6fcc91f18006095331b0aa430c}{
+double {\bfseries getMaxUAnalytic} () const }
+\label{classnatrium_1_1ErrorStats_a350f6b6fcc91f18006095331b0aa430c}
+
+\item 
+\hypertarget{classnatrium_1_1ErrorStats_a48ea1bfc5db4dad6369b4b2991aa1f5c}{
+double \hyperlink{classnatrium_1_1ErrorStats_a48ea1bfc5db4dad6369b4b2991aa1f5c}{getMaxVelocityError} () const }
+\label{classnatrium_1_1ErrorStats_a48ea1bfc5db4dad6369b4b2991aa1f5c}
+
+\begin{DoxyCompactList}\small\item\em return max error of velocity $ max \|u_{i} - u_{i}^{ref}\|_{2} $ \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ErrorStats_aa79b49d872935e567c94a2727af24dea}{
+double {\bfseries getTime} () const }
+\label{classnatrium_1_1ErrorStats_aa79b49d872935e567c94a2727af24dea}
+
+\item 
+\hypertarget{classnatrium_1_1ErrorStats_a965b8a50d1f84d8962c995808c222799}{
+double {\bfseries getL2UAnalytic} () const }
+\label{classnatrium_1_1ErrorStats_a965b8a50d1f84d8962c995808c222799}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::\-Error\-Stats$<$ dim $>$}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::ErrorStats$<$ dim $>$}
 
-Container for error statistics and table file; only for use with \hyperlink{classnatrium_1_1BenchmarkCFDSolver}{Benchmark\-C\-F\-D\-Solver}. 
-
-\begin{DoxyNote}{Note}
-As this class is a friend of \hyperlink{classnatrium_1_1BenchmarkCFDSolver}{Benchmark\-C\-F\-D\-Solver}, it can access its private attributes 
+Container for error statistics and table file; only for use with \hyperlink{classnatrium_1_1BenchmarkCFDSolver}{BenchmarkCFDSolver}. \begin{DoxyNote}{Note}
+As this class is a friend of \hyperlink{classnatrium_1_1BenchmarkCFDSolver}{BenchmarkCFDSolver}, it can access its private attributes 
 \end{DoxyNote}
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1ErrorStats_a911e70f932c75a80dad345b90e8b8c0d}{\index{natrium\-::\-Error\-Stats@{natrium\-::\-Error\-Stats}!Error\-Stats@{Error\-Stats}}
-\index{Error\-Stats@{Error\-Stats}!natrium::ErrorStats@{natrium\-::\-Error\-Stats}}
-\subsubsection[{Error\-Stats}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template {\bf natrium\-::\-Error\-Stats}$<$ dim $>$\-::{\bf Error\-Stats} (
-\begin{DoxyParamCaption}
-\item[{{\bf Benchmark\-C\-F\-D\-Solver}$<$ dim $>$ $\ast$}]{cfdsolver, }
-\item[{const std\-::string}]{table\-File\-Name = {\ttfamily \char`\"{}\char`\"{}}}
-\end{DoxyParamCaption}
-)}}\label{classnatrium_1_1ErrorStats_a911e70f932c75a80dad345b90e8b8c0d}
+\hypertarget{classnatrium_1_1ErrorStats_a1dcdc9cb0508c7f64a067efae4134754}{
+\index{natrium::ErrorStats@{natrium::ErrorStats}!ErrorStats@{ErrorStats}}
+\index{ErrorStats@{ErrorStats}!natrium::ErrorStats@{natrium::ErrorStats}}
+\subsubsection[{ErrorStats}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::ErrorStats}$<$ dim $>$::{\bf ErrorStats} ({\bf BenchmarkCFDSolver}$<$ dim $>$ $\ast$ {\em cfdsolver}, \/  const std::string {\em tableFileName} = {\ttfamily \char`\"{}\char`\"{}})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1ErrorStats_a1dcdc9cb0508c7f64a067efae4134754}
 
 
 Constructor. 
-
-
 \begin{DoxyParams}{Parameters}
-{\em cfdsolver} & Instance of \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver} object \\
-\hline
-{\em table\-File\-Name} & Default\-: \char`\"{}\char`\"{} means\-: switch output off \\
-\hline
-\end{DoxyParams}
+\item[{\em cfdsolver}]Instance of \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver} object \item[{\em tableFileName}]Default: \char`\"{}\char`\"{} means: switch output off \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1ErrorStats_a66f817c7daaf15724d5d42de4f17a1e8}{\index{natrium\-::\-Error\-Stats@{natrium\-::\-Error\-Stats}!get\-L2\-Density\-Error@{get\-L2\-Density\-Error}}
-\index{get\-L2\-Density\-Error@{get\-L2\-Density\-Error}!natrium::ErrorStats@{natrium\-::\-Error\-Stats}}
-\subsubsection[{get\-L2\-Density\-Error}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ double {\bf natrium\-::\-Error\-Stats}$<$ dim $>$\-::get\-L2\-Density\-Error (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1ErrorStats_a66f817c7daaf15724d5d42de4f17a1e8}
+\hypertarget{classnatrium_1_1ErrorStats_a66f817c7daaf15724d5d42de4f17a1e8}{
+\index{natrium::ErrorStats@{natrium::ErrorStats}!getL2DensityError@{getL2DensityError}}
+\index{getL2DensityError@{getL2DensityError}!natrium::ErrorStats@{natrium::ErrorStats}}
+\subsubsection[{getL2DensityError}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ double {\bf natrium::ErrorStats}$<$ dim $>$::getL2DensityError () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1ErrorStats_a66f817c7daaf15724d5d42de4f17a1e8}
 
 
-return L2-\/\-Error of density, $ \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $ 
-
-\begin{DoxyNote}{Note}
+return L2-\/Error of density, $ \sqrt{ \sum_{i=1}^{N} (\rho_{i} - \rho_{i}^{ref})^{2} } $ \begin{DoxyNote}{Note}
 The division by the number of dofs is required, because otherwise finer grids result in bigger errors. 
 \end{DoxyNote}
-\hypertarget{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}{\index{natrium\-::\-Error\-Stats@{natrium\-::\-Error\-Stats}!get\-L2\-Velocity\-Error@{get\-L2\-Velocity\-Error}}
-\index{get\-L2\-Velocity\-Error@{get\-L2\-Velocity\-Error}!natrium::ErrorStats@{natrium\-::\-Error\-Stats}}
-\subsubsection[{get\-L2\-Velocity\-Error}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ double {\bf natrium\-::\-Error\-Stats}$<$ dim $>$\-::get\-L2\-Velocity\-Error (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}
+\hypertarget{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}{
+\index{natrium::ErrorStats@{natrium::ErrorStats}!getL2VelocityError@{getL2VelocityError}}
+\index{getL2VelocityError@{getL2VelocityError}!natrium::ErrorStats@{natrium::ErrorStats}}
+\subsubsection[{getL2VelocityError}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ double {\bf natrium::ErrorStats}$<$ dim $>$::getL2VelocityError () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1ErrorStats_a201f625a3607a814fdd645aabfe37fbc}
 
 
-return L2-\/\-Error of velocity, $ \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $ 
-
-\begin{DoxyNote}{Note}
+return L2-\/Error of velocity, $ \sqrt{ \sum_{i=1}^{N} \|u_{i} - u_{i}^{ref}\|_{2}^{2} } $ \begin{DoxyNote}{Note}
 The division by the number of dofs is required, because otherwise finer grids result in bigger errors. 
 \end{DoxyNote}
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/Error\-Stats.\-h\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/Error\-Stats.\-cpp\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/ErrorStats.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/ErrorStats.cpp\end{DoxyCompactItemize}

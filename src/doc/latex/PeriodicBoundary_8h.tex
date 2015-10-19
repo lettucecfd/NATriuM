@@ -1,33 +1,36 @@
-\hypertarget{PeriodicBoundary_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Periodic\-Boundary.h File Reference}
-\label{PeriodicBoundary_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Periodic\-Boundary.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/problemdescription/\-Periodic\-Boundary.\-h}}
+\hypertarget{PeriodicBoundary_8h}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/PeriodicBoundary.h File Reference}
+\label{PeriodicBoundary_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/PeriodicBoundary.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/PeriodicBoundary.h}}
 }
 
 
 Description of a periodic boundary on a line.  
-
-
-{\ttfamily \#include $<$exception$>$}\\*
-{\ttfamily \#include $<$string$>$}\\*
-{\ttfamily \#include $<$map$>$}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/base/point.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/grid/tria\-\_\-accessor.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/grid/tria\-\_\-iterator.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/dofs/dof\-\_\-handler.\-h\char`\"{}}\\*
-{\ttfamily \#include $<$deal.\-I\-I/lac/compressed\-\_\-sparsity\-\_\-pattern.\-h$>$}\\*
-{\ttfamily \#include \char`\"{}Boundary.\-h\char`\"{}}\\*
+{\ttfamily \#include $<$exception$>$}\par
+{\ttfamily \#include $<$string$>$}\par
+{\ttfamily \#include $<$map$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/base/point.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/grid/tria\_\-accessor.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/grid/tria\_\-iterator.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/grid/grid\_\-tools.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/dofs/dof\_\-handler.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/compressed\_\-sparsity\_\-pattern.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/NATriuMException.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/Logging.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/DealiiExtensions.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}Boundary.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{classnatrium_1_1PeriodicBoundaryNotPossible}{natrium\-::\-Periodic\-Boundary\-Not\-Possible}
-\begin{DoxyCompactList}\small\item\em Exception for impossible periodic boundary, e.\-g. when the interfaces don't have the same length. \end{DoxyCompactList}\item 
-class \hyperlink{classnatrium_1_1PeriodicBoundary}{natrium\-::\-Periodic\-Boundary$<$ dim $>$}
-\begin{DoxyCompactList}\small\item\em A periodic boundary condition,. \end{DoxyCompactList}\end{DoxyCompactItemize}
+class \hyperlink{classnatrium_1_1PeriodicBoundaryNotPossible}{natrium::PeriodicBoundaryNotPossible}
+\begin{DoxyCompactList}\small\item\em Exception for impossible periodic boundary, e.g. when the interfaces don't have the same length. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1PeriodicBoundary}{natrium::PeriodicBoundary$<$ dim $>$}
+\begin{DoxyCompactList}\small\item\em A periodic boundary condition. Periodic boundaries have to be set before the grid is refined! \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Description of a periodic boundary on a line. \begin{DoxyDate}{Date}
-25.\-10.\-2013 
+25.10.2013 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
-Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

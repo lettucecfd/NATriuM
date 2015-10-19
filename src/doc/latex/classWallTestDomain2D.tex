@@ -1,46 +1,43 @@
-\hypertarget{classWallTestDomain2D}{\section{Wall\-Test\-Domain2\-D Class Reference}
-\label{classWallTestDomain2D}\index{Wall\-Test\-Domain2\-D@{Wall\-Test\-Domain2\-D}}
+\hypertarget{classWallTestDomain2D}{
+\section{WallTestDomain2D Class Reference}
+\label{classWallTestDomain2D}\index{WallTestDomain2D@{WallTestDomain2D}}
 }
 
 
 Description of a simple Flow with wall boundaries (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 4 elements.  
 
 
-
-
-{\ttfamily \#include $<$Wall\-Test\-Domain2\-D.\-h$>$}
-
-Inheritance diagram for Wall\-Test\-Domain2\-D\-:\begin{figure}[H]
+{\ttfamily \#include $<$WallTestDomain2D.h$>$}Inheritance diagram for WallTestDomain2D::\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classWallTestDomain2D}
+\includegraphics[height=2cm]{classWallTestDomain2D}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classWallTestDomain2D_ae2a5588bd00b23f67587f5030520daca}{Wall\-Test\-Domain2\-D} (size\-\_\-t refine\-Level)
-\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
-\hypertarget{classWallTestDomain2D_af086a6015fed51c4e1bd14e39fa52971}{virtual \hyperlink{classWallTestDomain2D_af086a6015fed51c4e1bd14e39fa52971}{$\sim$\-Wall\-Test\-Domain2\-D} ()}\label{classWallTestDomain2D_af086a6015fed51c4e1bd14e39fa52971}
+\hyperlink{classWallTestDomain2D_ae2a5588bd00b23f67587f5030520daca}{WallTestDomain2D} (size\_\-t refineLevel)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classWallTestDomain2D_af086a6015fed51c4e1bd14e39fa52971}{
+virtual \hyperlink{classWallTestDomain2D_af086a6015fed51c4e1bd14e39fa52971}{$\sim$WallTestDomain2D} ()}
+\label{classWallTestDomain2D_af086a6015fed51c4e1bd14e39fa52971}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-virtual void \hyperlink{classWallTestDomain2D_a725e16638909ea1474033723eb47d7db}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
-\begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
-virtual void \hyperlink{classWallTestDomain2D_a18698926c1b06762119e4b1ec6f865df}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
-\begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classWallTestDomain2D_af8d57a6c29029514a2f2d09547f7fba1}{applyInitialDensities} (distributed\_\-vector \&initialDensities, const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ 2 $>$ $>$ \&) const 
+\begin{DoxyCompactList}\small\item\em set initial densities \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classWallTestDomain2D_ad2f712c227bc9ada17002006e90de3a1}{applyInitialVelocities} (vector$<$ distributed\_\-vector $>$ \&initialVelocities, const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ 2 $>$ $>$ \&) const 
+\begin{DoxyCompactList}\small\item\em set initial velocities \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Description of a simple Flow with wall boundaries (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 4 elements. 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classWallTestDomain2D_ae2a5588bd00b23f67587f5030520daca}{\index{Wall\-Test\-Domain2\-D@{Wall\-Test\-Domain2\-D}!Wall\-Test\-Domain2\-D@{Wall\-Test\-Domain2\-D}}
-\index{Wall\-Test\-Domain2\-D@{Wall\-Test\-Domain2\-D}!WallTestDomain2D@{Wall\-Test\-Domain2\-D}}
-\subsubsection[{Wall\-Test\-Domain2\-D}]{\setlength{\rightskip}{0pt plus 5cm}Wall\-Test\-Domain2\-D\-::\-Wall\-Test\-Domain2\-D (
-\begin{DoxyParamCaption}
-\item[{size\-\_\-t}]{refine\-Level}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classWallTestDomain2D_ae2a5588bd00b23f67587f5030520daca}
+\hypertarget{classWallTestDomain2D_ae2a5588bd00b23f67587f5030520daca}{
+\index{WallTestDomain2D@{WallTestDomain2D}!WallTestDomain2D@{WallTestDomain2D}}
+\index{WallTestDomain2D@{WallTestDomain2D}!WallTestDomain2D@{WallTestDomain2D}}
+\subsubsection[{WallTestDomain2D}]{\setlength{\rightskip}{0pt plus 5cm}WallTestDomain2D::WallTestDomain2D (size\_\-t {\em refineLevel})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classWallTestDomain2D_ae2a5588bd00b23f67587f5030520daca}
 
 
 constructor 
@@ -48,46 +45,28 @@ constructor
 apply boundary values 
 
 \subsection{Member Function Documentation}
-\hypertarget{classWallTestDomain2D_a725e16638909ea1474033723eb47d7db}{\index{Wall\-Test\-Domain2\-D@{Wall\-Test\-Domain2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
-\index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!WallTestDomain2D@{Wall\-Test\-Domain2\-D}}
-\subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Wall\-Test\-Domain2\-D\-::apply\-Initial\-Densities (
-\begin{DoxyParamCaption}
-\item[{distributed\-\_\-vector \&}]{initial\-Densities, }
-\item[{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classWallTestDomain2D_a725e16638909ea1474033723eb47d7db}
+\hypertarget{classWallTestDomain2D_af8d57a6c29029514a2f2d09547f7fba1}{
+\index{WallTestDomain2D@{WallTestDomain2D}!applyInitialDensities@{applyInitialDensities}}
+\index{applyInitialDensities@{applyInitialDensities}!WallTestDomain2D@{WallTestDomain2D}}
+\subsubsection[{applyInitialDensities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void WallTestDomain2D::applyInitialDensities (distributed\_\-vector \& {\em initialDensities}, \/  const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ 2 $>$ $>$ \&) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classWallTestDomain2D_af8d57a6c29029514a2f2d09547f7fba1}
 
 
 set initial densities 
-
-
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt out}  & {\em initial\-Densities} & vector of densities; to be filled \\
-\hline
-\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
-\hline
-\end{DoxyParams}
-\hypertarget{classWallTestDomain2D_a18698926c1b06762119e4b1ec6f865df}{\index{Wall\-Test\-Domain2\-D@{Wall\-Test\-Domain2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
-\index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!WallTestDomain2D@{Wall\-Test\-Domain2\-D}}
-\subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Wall\-Test\-Domain2\-D\-::apply\-Initial\-Velocities (
-\begin{DoxyParamCaption}
-\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
-\item[{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classWallTestDomain2D_a18698926c1b06762119e4b1ec6f865df}
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\rightarrow$} {\em initialDensities}]vector of densities; to be filled \item[\mbox{$\leftarrow$} {\em supportPoints}]the coordinates associated with each degree of freedom \end{DoxyParams}
+\hypertarget{classWallTestDomain2D_ad2f712c227bc9ada17002006e90de3a1}{
+\index{WallTestDomain2D@{WallTestDomain2D}!applyInitialVelocities@{applyInitialVelocities}}
+\index{applyInitialVelocities@{applyInitialVelocities}!WallTestDomain2D@{WallTestDomain2D}}
+\subsubsection[{applyInitialVelocities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void WallTestDomain2D::applyInitialVelocities (vector$<$ distributed\_\-vector $>$ \& {\em initialVelocities}, \/  const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ 2 $>$ $>$ \&) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classWallTestDomain2D_ad2f712c227bc9ada17002006e90de3a1}
 
 
 set initial velocities 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\rightarrow$} {\em initialVelocities}]vector of velocities; to be filled \item[\mbox{$\leftarrow$} {\em supportPoints}]the coordinates associated with each degree of freedom \end{DoxyParams}
 
 
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt out}  & {\em initial\-Velocities} & vector of velocities; to be filled \\
-\hline
-\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
-\hline
-\end{DoxyParams}
-
-
-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/test/problemdescription/\hyperlink{WallTestDomain2D_8h}{Wall\-Test\-Domain2\-D.\-h}\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/test/problemdescription/\hyperlink{WallTestDomain2D_8h}{WallTestDomain2D.h}\end{DoxyCompactItemize}
