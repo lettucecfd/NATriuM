@@ -63,11 +63,8 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 	BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 0, 0, triangulation),
 			PeriodicBoundaryNotPossible);
 	// Check that an error is thrown, when a boundary is created more than once
-	//BOOST_CHECK_THROW(PeriodicBoundary<2> myBoundary(0, 1, 0, triangulation), PeriodicBoundaryNotPossible);
-	/*BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 2, 0, triangulation),
-	 PeriodicBoundaryNotPossible);
-	 BOOST_CHECK_THROW(PeriodicBoundary<2>(0, 3, 0, triangulation),
-	 PeriodicBoundaryNotPossible);*/
+	// Ouch! This does not work, unfortunately -> see comment in PeriodicBoundary.cpp
+	// BOOST_CHECK_THROW(PeriodicBoundary<2> myBoundary(0, 1, 0, triangulation), PeriodicBoundaryNotPossible);
 
 	cout << "done." << endl;
 

@@ -16,6 +16,7 @@
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
+#include "../utilities/Logging.h"
 
 #include "BoundaryTools.h"
 
@@ -55,32 +56,30 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 		throw PeriodicBoundaryNotPossible(
 				"Cell at periodic boundary had neighbor. That is not allowed.");
 	}
-	// check if the boundary has already been created by setting user flags
+	// check if the boundary has already been created by setting user flags.
+	// Somehow, this test does not work properly. The code crashes without
+	// an error message in case you try to create a single Periodic Boundary
+	// twice. I could not figure out why this does not work, but it should not
+	// be so much of a problem, because normally the boundary collection will
+	// already throw an error if you try to assign a boundary indicator to two
+	// different objects in the boundary collection.
 	for (size_t i = 0; i < matched_pairs.size(); i++) {
 		size_t face_nr_1 = matched_pairs.at(i).face_idx[0];
 		size_t face_nr_2 = matched_pairs.at(i).face_idx[1];
-		cout << matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set()
-				<< matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set()
-				<< endl;
 		if ((matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set())
 				or (matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set())) {
-			cout << "yippieyeah" << endl;
-			throw PeriodicBoundaryNotPossible(
+						throw PeriodicBoundaryNotPossible(
 					"You're trying to create a PeriodicBoundary, where another one "
 							"has already been created. That does not work.");
 		} else {
 			matched_pairs.at(i).cell[0]->face(face_nr_1)->set_user_flag();
 			matched_pairs.at(i).cell[1]->face(face_nr_2)->set_user_flag();
-			cout
-					<< matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set()
-					<< matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set()
-					<< endl;
 		}
 	}
 
-	cout << "add periodicity..." << endl;
+	LOG(DETAILED) << "add periodicity to mesh... (if it succeeds, it will be displayed)" << endl;
 	m_triangulation->add_periodicity(matched_pairs);
-	cout << "...success" << endl;
+	LOG(DETAILED) << "...success" << endl;
 
 } /* Constructor 2 */
 template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
