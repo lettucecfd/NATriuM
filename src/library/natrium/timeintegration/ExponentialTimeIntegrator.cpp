@@ -24,7 +24,7 @@ template<> ExponentialTimeIntegrator<distributed_sparse_matrix,
 
 template<> ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 		distributed_block_vector>::ExponentialTimeIntegrator(
-		double timeStepSize, size_t numberOfBlocks) :
+		double timeStepSize, size_t ) :
 		TimeIntegrator<distributed_sparse_block_matrix, distributed_block_vector>(
 				timeStepSize), m_identityMatrix(makeIdentityMatrix()), m_Hm(
 				makeMatrix(arnoldiSize, arnoldiSize)), m_H(
@@ -100,7 +100,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	numeric_matrix V(f.size(), arnoldiSize + 1); // Orthonormal basis V_(m+1)
 
 	systemMatrix.vmult(m_w, f); 	// w = A*f + u
-	m_w.add(systemVector);		// w = A*f + u
+	m_w += systemVector;		// w = A*f + u
 
 	double beta = m_w.l2_norm();
 

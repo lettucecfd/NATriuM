@@ -76,7 +76,6 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
 	double gamma = 0.34;
 	BGKSteadyState bgk(tau, 0.1, make_shared<D2Q9>(), gamma);
 
@@ -155,7 +154,6 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
 	double gamma = 0.34;
 	BGKSteadyState bgk(tau, 0.1, make_shared<D2Q9>(), gamma);
 
@@ -197,7 +195,6 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_Scaled_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
 	double tau = 0.9;
-	double dt = 0.1;
 	double gamma = 0.34;
 	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
 
@@ -276,7 +273,6 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateAllEqDistributions_Scaled_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
 	double tau = 0.9;
-	double dt = 0.1;
 	double gamma = 0.34;
 	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
 
@@ -318,7 +314,6 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateInvariants_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
 	double gamma = 0.34;
 	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
 

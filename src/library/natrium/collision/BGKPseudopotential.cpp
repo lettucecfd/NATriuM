@@ -42,7 +42,6 @@ double BGKPseudopotential::getEquilibriumDistribution(size_t i,
 
 	assert(i < getStencil()->getQ());
 	assert(rho > 0);
-	assert(i >= 0);
 	assert(u.size() == getStencil()->getD());
 	assert(u(0) < 1000000000000000.);
 	assert(u(1) < 1000000000000000.);
@@ -60,7 +59,7 @@ double BGKPseudopotential::getEquilibriumDistribution(size_t i,
 
 // getInteractionForce
 void BGKPseudopotential::getInteractionForce(
-		const vector<double>& distributions, numeric_vector & interactionForce,
+		const vector<double>& , numeric_vector & interactionForce,
 		const double rho) {
 
 	const double G = -4.4;

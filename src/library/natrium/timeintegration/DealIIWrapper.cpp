@@ -28,7 +28,7 @@
 namespace natrium {
 
 template<class MATRIX, class VECTOR>
-VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::evaluateF(const double t,
+VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::evaluateF(const double ,
 		const VECTOR& f) const {
 	VECTOR result = *m_systemVector;
 
@@ -40,7 +40,7 @@ VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::evaluateF(const double t,
 
 template<>
 distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
-		distributed_vector>::evaluateJInverse(const double t, const double tau,
+		distributed_vector>::evaluateJInverse(const double , const double ,
 		const distributed_vector& f) const {
 
 	distributed_vector result = f;
@@ -153,8 +153,8 @@ case 7:
 
 template<>
 distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
-		distributed_block_vector>::evaluateJInverse(const double t,
-		const double tau, const distributed_block_vector& f) const {
+		distributed_block_vector>::evaluateJInverse(const double ,
+		const double , const distributed_block_vector& f) const {
 
 	distributed_block_vector result = f;
 
@@ -266,7 +266,7 @@ case 7:
 
 template<>
 distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
-		distributed_vector>::evaluateIdMinusTauJInverse(const double t,
+		distributed_vector>::evaluateIdMinusTauJInverse(const double ,
 		const double tau, const distributed_vector& f) {
 
 	distributed_vector result = f;
@@ -399,7 +399,7 @@ case 7:
 
 template<>
 distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
-		distributed_block_vector>::evaluateIdMinusTauJInverse(const double t,
+		distributed_block_vector>::evaluateIdMinusTauJInverse(const double,
 		const double tau, const distributed_block_vector& f) {
 	// Test all dimensions and change, if necessary
 	assert(m_systemMatrix->n() == m_systemMatrix->m());

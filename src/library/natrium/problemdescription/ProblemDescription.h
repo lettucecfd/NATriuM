@@ -100,7 +100,7 @@ public:
 		// read boundary ids from triangulation
 		bool result = true;
 		std::vector<dealii::types::boundary_id> tria_boundary_ids(
-				m_triangulation->get_boundary_indicators());
+				m_triangulation->get_boundary_ids());
 
 		// read boundary ids from boundary collection
 		std::vector<dealii::types::boundary_id> collection_boundary_ids;

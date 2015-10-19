@@ -73,7 +73,6 @@ BOOST_AUTO_TEST_CASE(BGKMoments_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
 
 	// Define macroscopic entities
@@ -151,7 +150,6 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
 
 	// Define macroscopic entities
@@ -192,7 +190,6 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
 	// Define macroscopic entities
@@ -270,7 +267,6 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
 
@@ -311,7 +307,6 @@ BOOST_AUTO_TEST_CASE(BGKStandardCollisionInvariants_test) {
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
 	// initialize distributions with arbitrary components

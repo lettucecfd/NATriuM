@@ -18,7 +18,7 @@ SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 		size_t refinementLevel, double L, double averageHeight,
 		double amplitude, double cell_aspect_ratio) :
 		ProblemDescription<2>(
-				makeGrid(L, averageHeight, cell_aspect_ratio),
+				makeGrid(cell_aspect_ratio),
 				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 	this->setInitialRho(make_shared<InitialVelocity>(this));
@@ -39,7 +39,7 @@ SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 SinusoidalShear2D::~SinusoidalShear2D() {
 }
 
-shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double L, double averageHeight, double cell_aspect_ratio) {
+shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double cell_aspect_ratio) {
 #ifdef WITH_TRILINOS_MPI
 	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >(MPI_COMM_WORLD);
 #else
@@ -79,7 +79,7 @@ shared_ptr<BoundaryCollection<2> > SinusoidalShear2D::makeBoundaries(
 	return boundaries;
 }
 
-double SinusoidalShear2D::InitialVelocity::value(const dealii::Point<2>& x, const unsigned int component) const{
+double SinusoidalShear2D::InitialVelocity::value(const dealii::Point<2>& , const unsigned int component) const{
 	assert (component < 2);
 #ifdef FASTER_CONVERGENCE_INIT
 	if (component == 0){

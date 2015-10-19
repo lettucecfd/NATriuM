@@ -130,7 +130,7 @@ protected:
 	void loadDistributionFunctionsFromFiles(const string& directory);
 
 	/// gives the possibility for Benchmark instances to add the analytic solution to output
-	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& data_out) {
+	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& ) {
 	}
 
 public:

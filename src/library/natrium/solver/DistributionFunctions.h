@@ -147,7 +147,7 @@ public:
 	/**
 	 * @short the number of discrete velocities
 	 */
-	const size_t getQ() const {
+	size_t getQ() const {
 		return m_Q;
 	}
 

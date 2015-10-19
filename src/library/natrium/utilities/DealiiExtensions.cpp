@@ -111,7 +111,6 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 				typename DH::cell_iterator neighbor;
 				typename DH::cell_iterator test_cell;
 				unsigned int neighbor_face = 1000;
-				unsigned int test_face;
 				if (cell->at_boundary(face)) {
 					// check if cell is in periodic boundary
 					for (typename BoundaryCollection<DH::dimension>::ConstPeriodicIterator periodic =
@@ -119,7 +118,7 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 							periodic != boundaries.getPeriodicBoundaries().end();
 							periodic++) {
 						if (periodic->second->isFaceInBoundary(cell,
-								this_face->boundary_indicator())) {
+								this_face->boundary_id())) {
 							neighbor_face =
 									periodic->second->getOppositeCellAtPeriodicBoundary(
 											cell, neighbor);
@@ -566,14 +565,6 @@ void make_periodicity_map_dg(const DH &dof_handler, size_t b_id1, size_t b_id2,
 	GridTools::collect_periodic_faces(dof_handler, b_id1, b_id2, direction,
 			matched_pairs);
 
-	// set user flag that indicates that the faces are part of a periodic boundary
-	for (size_t i = 0; i < matched_pairs.size(); i++) {
-		size_t face_nr_1 = matched_pairs.at(i).face_idx[0];
-		size_t face_nr_2 = matched_pairs.at(i).face_idx[1];
-		matched_pairs.at(i).cell[0]->face(face_nr_1)->set_user_flag();
-		matched_pairs.at(i).cell[1]->face(face_nr_2)->set_user_flag();
-	}
-
 	// call function to make the periodicity map
 	make_periodicity_map_dg<DH>(matched_pairs, cell_map);
 }
@@ -619,6 +610,7 @@ void make_periodicity_map_dg<DoFHandler<3> >(
 		const bool face_orientation, const bool face_flip,
 		const bool face_rotation);
 
+
 template
 void make_periodicity_map_dg<DoFHandler<2> >(
 		const std::vector<
@@ -633,6 +625,7 @@ void make_periodicity_map_dg<DoFHandler<3> >(
 						typename DoFHandler<3>::cell_iterator> > &periodic_faces,
 		PeriodicCellMap<3>& cell_map);
 
+
 template
 void make_periodicity_map_dg<DoFHandler<2> >(const DoFHandler<2> &dof_handler,
 		size_t b_id1, size_t b_id2, const int direction,
@@ -641,7 +634,7 @@ template
 void make_periodicity_map_dg<DoFHandler<3> >(const DoFHandler<3> &dof_handler,
 		size_t b_id1, size_t b_id2, const int direction,
 		PeriodicCellMap<3>& cell_map);
-//}
+//}s
 
 } /* namepace DealIIExtensions */
 

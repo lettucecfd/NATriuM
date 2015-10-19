@@ -96,6 +96,30 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_Periodicity_test) {
 	cout << "done." << endl;
 
 }
+
+
+BOOST_AUTO_TEST_CASE(DealIIFunctionality_UserFlags_test) {
+	// Check how the built-in periodic bc works in deal.II
+	cout << "DealIIFunctionality_UserFlags_test..." << endl;
+
+	Mesh<2> square(MPI_COMM_WORLD);
+	dealii::GridGenerator::hyper_cube(square, 0, 1);
+	Mesh<2>::active_cell_iterator cell = square.begin_active();
+	cell->face(0)->set_user_flag();
+
+	BOOST_CHECK(cell->face(0)->user_flag_set());
+
+	// setting twice -> still true?
+	cell->face(0)->set_user_flag();
+	BOOST_CHECK(cell->face(0)->user_flag_set());
+
+	// different iterator -> still true?
+	Mesh<2>::cell_iterator cell2 = square.begin();
+	BOOST_CHECK(cell2->face(0)->user_flag_set());
+
+	cout << "done" << endl;
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } /* namespace natrium */

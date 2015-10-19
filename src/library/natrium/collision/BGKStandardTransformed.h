@@ -59,7 +59,7 @@ public:
 			vector<distributed_vector>& velocities,
 			bool inInitializationProcedure = false) const;
 
-	const double getRho0() const {
+	double getRho0() const {
 		return m_rho0;
 	}
 

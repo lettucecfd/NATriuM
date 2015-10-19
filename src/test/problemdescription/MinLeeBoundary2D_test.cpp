@@ -28,14 +28,14 @@ BOOST_AUTO_TEST_SUITE(MinLeeBoundary2D_test)
 
 class BoundaryTestDensity: public dealii::Function<2> {
 public:
-	virtual double value(const dealii::Point<2> &p,
-			const unsigned int component = 0) const {
+	virtual double value(const dealii::Point<2> &,
+			const unsigned int ) const {
 		return 1;
 	}
 };
 class BoundaryTestVelocity: public dealii::Function<2> {
 public:
-	virtual void vector_value(const dealii::Point<2> &p,
+	virtual void vector_value(const dealii::Point<2> &,
 			dealii::Vector<double> &values) const {
 		values(0) = 0;
 		values(1) = 0;

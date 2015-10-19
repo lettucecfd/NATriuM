@@ -98,7 +98,7 @@ void CFDSolverUtilities::mesh_info(const Mesh<dim> &tria,
 			for (unsigned int face = 0;
 					face < dealii::GeometryInfo<dim>::faces_per_cell; ++face) {
 				if (cell->face(face)->at_boundary())
-					boundary_count[cell->face(face)->boundary_indicator()]++;
+					boundary_count[cell->face(face)->boundary_id()]++;
 			}
 		}
 		std::cout << " boundary indicators: ";

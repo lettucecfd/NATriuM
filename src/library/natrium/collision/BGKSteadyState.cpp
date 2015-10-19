@@ -30,7 +30,6 @@ double BGKSteadyState::getEquilibriumDistribution(size_t i,
 
 	assert(i < getStencil()->getQ());
 	assert(rho > 0);
-	assert(i >= 0);
 	assert(u.size() == getStencil()->getD());
 	assert(u(0) < 1000000000000000.);
 	assert(u(1) < 1000000000000000.);

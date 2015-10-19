@@ -27,8 +27,8 @@ public:
 	virtual ~BoundaryDensity() {
 	}
 	;
-	virtual double value(const dealii::Point<dim> &p,
-			const unsigned int component = 0) const {
+	virtual double value(const dealii::Point<dim> &,
+			const unsigned int  = 0) const {
 		return 1;
 	}
 };
@@ -43,7 +43,7 @@ public:
 	virtual ~BoundaryVelocity() {
 	}
 	;
-	virtual void vector_value(const dealii::Point<dim> &p,
+	virtual void vector_value(const dealii::Point<dim> &,
 			dealii::Vector<double> &values) const {
 		values = m_Velocity;
 	}
@@ -94,7 +94,7 @@ public:
 			dealii::DynamicSparsityPattern& cSparse,
 //#endif
 			const dealii::DoFHandler<dim>& doFHandler,
-			const Stencil& stencil) const;
+			const Stencil& ) const;
 
 	// assemble Min-Lee-Type boundary
 	void assembleBoundary(size_t alpha,

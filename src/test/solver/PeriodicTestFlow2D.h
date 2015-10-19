@@ -27,13 +27,10 @@ class SteadyPeriodicTestFlow2D: public ProblemDescription<2> {
 public:
 	// class that represents the initial velocity
 	class InitialVelocity: public dealii::Function<2> {
-	private:
-		SteadyPeriodicTestFlow2D* m_flow;
 	public:
-		InitialVelocity(SteadyPeriodicTestFlow2D* flow) :
-				m_flow(flow) {
+		InitialVelocity(){
 		}
-		virtual double value(const dealii::Point<2>& x,
+		virtual double value(const dealii::Point<2>& ,
 				const unsigned int component = 0) const {
 			assert(component < 2);
 			return 0.1;
@@ -44,7 +41,7 @@ public:
 	/// constructor
 	SteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
 			ProblemDescription<2>(makeGrid(), viscosity, 1) {
-		setInitialU(make_shared<InitialVelocity>(this));
+		setInitialU(make_shared<InitialVelocity>());
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
 		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
@@ -56,34 +53,6 @@ public:
 	virtual ~SteadyPeriodicTestFlow2D() {
 	}
 
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
-		for (size_t i = 0; i < initialDensities.size(); i++) {
-			initialDensities(i) = 1.0;
-		}
-	}
-
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
-		assert(
-				initialVelocities.at(0).size()
-						== initialVelocities.at(1).size());
-		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-			initialVelocities.at(0)(i) = 0.1;
-			initialVelocities.at(1)(i) = 0.1;
-		}
-	}
 
 private:
 
@@ -125,9 +94,6 @@ private:
 		boundaries->addBoundary(
 				make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
-		// Get the triangulation object (which belongs to the parent class).
-		shared_ptr<Mesh<2> > tria_pointer = getMesh();
-
 		return boundaries;
 	}
 
@@ -137,11 +103,8 @@ class UnsteadyPeriodicTestFlow2D: public SteadyPeriodicTestFlow2D {
 public:
 	// class that represents the initial velocity
 	class UnsteadyInitialVelocity: public dealii::Function<2> {
-	private:
-		UnsteadyPeriodicTestFlow2D* m_flow;
 	public:
-		UnsteadyInitialVelocity(UnsteadyPeriodicTestFlow2D* flow) :
-				m_flow(flow) {
+		UnsteadyInitialVelocity(){
 		}
 		virtual double value(const dealii::Point<2>& x,
 				const unsigned int component = 0) const {
@@ -162,7 +125,7 @@ public:
 	/// constructor
 	UnsteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
 			SteadyPeriodicTestFlow2D(viscosity, refinementLevel) {
-		setInitialU(make_shared<UnsteadyInitialVelocity>(this));
+		setInitialU(make_shared<UnsteadyInitialVelocity>());
 	}
 	/// destructor
 	virtual ~UnsteadyPeriodicTestFlow2D() {

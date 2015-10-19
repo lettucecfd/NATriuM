@@ -52,7 +52,7 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 		dealii::DynamicSparsityPattern& cSparse,
 //#endif
 		const dealii::DoFHandler<dim>& doFHandler,
-		const Stencil& stencil) const {
+		const Stencil& ) const {
 
 	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
 	const dealii::ConstraintMatrix constraints;
@@ -74,7 +74,7 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 			for (size_t i = 0; i < dealii::GeometryInfo<dim>::faces_per_cell;
 					i++) {
 				if (cell->face(i)->at_boundary()) {
-					if (cell->face(i)->boundary_indicator()
+					if (cell->face(i)->boundary_id()
 							== m_boundaryIndicator) {
 						cell->get_dof_indices(dofs_on_this_cell);
 						dofs_on_this_face.clear();
@@ -111,14 +111,14 @@ template void MinLeeBoundary<2>::addToSparsityPattern(
 #else*/
 		dealii::DynamicSparsityPattern& cSparse,
 //#endif
-		const dealii::DoFHandler<2>& doFHandler, const Stencil& stencil) const;
+		const dealii::DoFHandler<2>& doFHandler, const Stencil& ) const;
 template void MinLeeBoundary<3>::addToSparsityPattern(
 /*#ifdef WITH_TRILINOS_MPI
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 #else*/
 		dealii::DynamicSparsityPattern& cSparse,
 //#endif
-		const dealii::DoFHandler<3>& doFHandler, const Stencil& stencil) const;
+		const dealii::DoFHandler<3>& doFHandler, const Stencil& ) const;
 
 
 template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,

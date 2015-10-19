@@ -172,8 +172,7 @@ private:
 	 */
 	// TODO SEDG implemenation with fully diagonal mass matrix
 	void assembleLocalMassMatrix(const dealii::FEValues<dim>& feValues,
-			size_t dofs_per_cell, size_t n_q_points, vector<double> &massMatrix,
-			const std::vector<dealii::types::global_dof_index>& globalDoFs);
+			size_t dofs_per_cell, vector<double> &massMatrix);
 
 	/**
 	 * @short assemble the \f$\alpha\f$-th local derivative matrix
@@ -181,7 +180,7 @@ private:
 	 * @param[out] derivativeMatrix The i-th derivative matrix <D_i phi_j, phi_k>
 	 */
 	void assembleLocalDerivativeMatrices(const dealii::FEValues<dim>& feValues,
-			size_t dofs_per_cell, size_t n_q_points,
+			size_t dofs_per_cell,
 			vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 	/**
@@ -193,9 +192,7 @@ private:
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
-			dealii::FEFaceValues<dim>& feNeighborFaceValues,
-			size_t dofs_per_cell, size_t n_q_points,
-			dealii::FullMatrix<double> &faceMatrix, const vector<double>& inverseLocalMassMatrix);
+			dealii::FEFaceValues<dim>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
 
 	/**
 	 * @short calculate system diagonal block matrix  (Dx*eix + Dy*eiy)

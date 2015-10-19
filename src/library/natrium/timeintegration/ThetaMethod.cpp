@@ -30,7 +30,7 @@ namespace natrium {
  problemSize), m_Af(problemSize) {}*/
 
 template<> ThetaMethod<distributed_sparse_matrix, distributed_vector>::ThetaMethod(
-		double timeStepSize, const distributed_vector& prototype_vector,
+		double timeStepSize, const distributed_vector& ,
 		double theta) :
 		TimeIntegrator<distributed_sparse_matrix, distributed_vector>(
 				timeStepSize), m_theta(theta) {

@@ -100,7 +100,7 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 	// f = f + B* df
 	// make first step manually
 	systemMatrix.vmult(m_Af, f);
-	m_Af.add(systemVector);
+	m_Af += systemVector;
 	m_Af *= this->getTimeStepSize();
 	m_df = m_Af;
 	m_df *= m_b.at(0);
@@ -108,7 +108,7 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 	m_df /= m_b.at(0);
 	for (size_t i = 1; i < 5; i++) {
 		systemMatrix.vmult(m_Af, f);
-		m_Af.add(systemVector);
+		m_Af += systemVector;
 		m_Af *= this->getTimeStepSize();
 		m_df *= m_a.at(i);
 		m_df += m_Af;

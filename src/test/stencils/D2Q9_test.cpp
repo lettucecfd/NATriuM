@@ -28,8 +28,8 @@ BOOST_AUTO_TEST_CASE(D2Q9Construction_test) {
 	// SANITY TEST //
 	/////////////////
 	D2Q9 dqmodel;
-	BOOST_CHECK_EQUAL(dqmodel.D, 2);
-	BOOST_CHECK_EQUAL(dqmodel.Q, 9);
+	BOOST_CHECK_EQUAL(dqmodel.D, size_t(2));
+	BOOST_CHECK_EQUAL(dqmodel.Q, size_t(9));
 	BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSound(), sqrt(1./3.));
 	BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSoundSquare(), 1./3.);
 
@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_CASE(D2Q9Static_test) {
 	/////////////////
 	// SANITY TEST //
 	/////////////////
-	BOOST_CHECK_EQUAL(D2Q9::D, 2);
-	BOOST_CHECK_EQUAL(D2Q9::Q, 9);
+	BOOST_CHECK_EQUAL(D2Q9::D, size_t(2));
+	BOOST_CHECK_EQUAL(D2Q9::Q, size_t(9));
 
 	cout << "done" << endl;
 } //D2Q9Static_test
@@ -59,8 +59,8 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_test) {
 	D2Q9 dqmodel;
 
 	// Dimensions
-	BOOST_CHECK_EQUAL(dqmodel.getD(), 2);
-	BOOST_CHECK_EQUAL(dqmodel.getQ(), 9);
+	BOOST_CHECK_EQUAL(dqmodel.getD(), size_t(2));
+	BOOST_CHECK_EQUAL(dqmodel.getQ(), size_t(9));
 
 	// Weights (getWeight; getWeights)
 	BOOST_CHECK_EQUAL(dqmodel.getWeight(0),4./9.);
@@ -155,8 +155,8 @@ BOOST_AUTO_TEST_CASE(D2Q9Construction_Scaled_test) {
 	// SANITY TEST //
 	/////////////////
 	D2Q9 dqmodel(SCALING);
-	BOOST_CHECK_EQUAL(dqmodel.D, 2);
-	BOOST_CHECK_EQUAL(dqmodel.Q, 9);
+	BOOST_CHECK_EQUAL(dqmodel.getD(), size_t(2));
+	BOOST_CHECK_EQUAL(dqmodel.getQ(), size_t(9));
 	BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSound(), SCALING*sqrt(1./3.));
 	BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSoundSquare(), SCALING*SCALING*1./3.);
 
@@ -174,8 +174,8 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_Scaled_test) {
 	D2Q9 dqmodel(SCALING);
 
 	// Dimensions
-	BOOST_CHECK_EQUAL(dqmodel.getD(), 2);
-	BOOST_CHECK_EQUAL(dqmodel.getQ(), 9);
+	BOOST_CHECK_EQUAL(dqmodel.getD(), size_t(2));
+	BOOST_CHECK_EQUAL(dqmodel.getQ(), size_t(9));
 
 	// Weights (getWeight; getWeights)
 	BOOST_CHECK_EQUAL(dqmodel.getWeight(0),4./9.);
@@ -199,60 +199,60 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_Scaled_test) {
 
 	// Directions (getDirection; getDirections)
 	// direction0 = (0,0)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(0)(0), 0);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(0)(1), 0);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(0)(0), 0, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(0)(1), 0, 1e-10);
 	// direction1 = (1,0)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(1)(0), SCALING);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(1)(1), 0);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(1)(0), SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(1)(1), 0, 1e-10);
 	// direction2 = (0,1)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(2)(0), 0);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(2)(1), SCALING);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(2)(0), 0, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(2)(1), SCALING, 1e-10);
 	// direction3 = (-1,0)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(3)(0), -SCALING);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(3)(1), 0);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(3)(0), -SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(3)(1), 0, 1e-10);
 	// direction4 = (0,-1)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(4)(0), 0);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(4)(1), -SCALING);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(4)(0), 0, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(4)(1), -SCALING, 1e-10);
 	// direction5 = (1,1)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(5)(0), SCALING);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(5)(1), SCALING);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(5)(0), SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(5)(1), SCALING, 1e-10);
 	// direction6 = (-1,1)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(6)(0), -SCALING);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(6)(1), SCALING);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(6)(0), -SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(6)(1), SCALING, 1e-10);
 	// direction7 = (-1,-1)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(7)(0), -SCALING);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(7)(1), -SCALING);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(7)(0), -SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(7)(1), -SCALING, 1e-10);
 	// direction8 = (1,-1)
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(8)(0), SCALING);
-	BOOST_CHECK_EQUAL(dqmodel.getDirection(8)(1), -SCALING);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(8)(0), SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(dqmodel.getDirection(8)(1), -SCALING, 1e-10);
 	const vector<numeric_vector> gotDirection(dqmodel.getDirections());
 	// direction0 = (0,0)
-	BOOST_CHECK_EQUAL(gotDirection.at(0)(0), 0);
-	BOOST_CHECK_EQUAL(gotDirection.at(0)(1), 0);
+	BOOST_CHECK_CLOSE(gotDirection.at(0)(0), 0, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(0)(1), 0, 1e-10);
 	// direction1 = (1,0)
-	BOOST_CHECK_EQUAL(gotDirection.at(1)(0), SCALING);
-	BOOST_CHECK_EQUAL(gotDirection.at(1)(1), 0);
+	BOOST_CHECK_CLOSE(gotDirection.at(1)(0), SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(1)(1), 0, 1e-10);
 	// direction2 = (0,1)
-	BOOST_CHECK_EQUAL(gotDirection.at(2)(0), 0);
-	BOOST_CHECK_EQUAL(gotDirection.at(2)(1), SCALING);
+	BOOST_CHECK_CLOSE(gotDirection.at(2)(0), 0, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(2)(1), SCALING, 1e-10);
 	// direction3 = (-1,0)
-	BOOST_CHECK_EQUAL(gotDirection.at(3)(0), -SCALING);
-	BOOST_CHECK_EQUAL(gotDirection.at(3)(1), 0);
+	BOOST_CHECK_CLOSE(gotDirection.at(3)(0), -SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(3)(1), 0, 1e-10);
 	// direction4 = (0,-1)
-	BOOST_CHECK_EQUAL(gotDirection.at(4)(0), 0);
-	BOOST_CHECK_EQUAL(gotDirection.at(4)(1), -SCALING);
+	BOOST_CHECK_CLOSE(gotDirection.at(4)(0), 0, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(4)(1), -SCALING, 1e-10);
 	// direction5 = (1,1)
-	BOOST_CHECK_EQUAL(gotDirection.at(5)(0), SCALING);
-	BOOST_CHECK_EQUAL(gotDirection.at(5)(1), SCALING);
+	BOOST_CHECK_CLOSE(gotDirection.at(5)(0), SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(5)(1), SCALING, 1e-10);
 	// direction6 = (-1,1)
-	BOOST_CHECK_EQUAL(gotDirection.at(6)(0), -SCALING);
-	BOOST_CHECK_EQUAL(gotDirection.at(6)(1), SCALING);
+	BOOST_CHECK_CLOSE(gotDirection.at(6)(0), -SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(6)(1), SCALING, 1e-10);
 	// direction7 = (-1,-1)
-	BOOST_CHECK_EQUAL(gotDirection.at(7)(0), -SCALING);
-	BOOST_CHECK_EQUAL(gotDirection.at(7)(1), -SCALING);
+	BOOST_CHECK_CLOSE(gotDirection.at(7)(0), -SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(7)(1), -SCALING, 1e-10);
 	// direction8 = (1,-1)
-	BOOST_CHECK_EQUAL(gotDirection.at(8)(0), SCALING);
-	BOOST_CHECK_EQUAL(gotDirection.at(8)(1), -SCALING);
+	BOOST_CHECK_CLOSE(gotDirection.at(8)(0), SCALING, 1e-10);
+	BOOST_CHECK_CLOSE(gotDirection.at(8)(1), -SCALING, 1e-10);
 
 	cout << "done" << endl;
 } //D2Q9Getter_Scaled_test

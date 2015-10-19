@@ -181,7 +181,7 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(shared_ptr<ProblemDescription<2> > cFDProblem) {
+	void checkProblem(shared_ptr<ProblemDescription<2> > ) {
 		//TODO: implement the checkProblem function
 	}
 
@@ -192,7 +192,7 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(shared_ptr<ProblemDescription<3> > cFDProblem) {
+	void checkProblem(shared_ptr<ProblemDescription<3> > ) {
 		//TODO: implement the checkProblem function
 	}
 

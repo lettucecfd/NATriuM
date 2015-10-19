@@ -46,33 +46,41 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 	std::vector<
 			dealii::GridTools::PeriodicFacePair<
 					typename Mesh<dim>::cell_iterator> > matched_pairs;
-	cout << "yippie" << endl;
 	dealii::GridTools::collect_periodic_faces(*m_triangulation,
 			m_boundaryIndicator1, m_boundaryIndicator2, m_direction,
 			matched_pairs);
-	cout << "yippie" << endl;
 	// check if the boundary has neighbors
 	if (matched_pairs.at(0).cell[0]->neighbor_index(
 			matched_pairs.at(0).face_idx[0]) != -1) {
 		throw PeriodicBoundaryNotPossible(
 				"Cell at periodic boundary had neighbor. That is not allowed.");
 	}
-	cout << "yippie" << endl;
-	// check if the boundary has already been created
+	// check if the boundary has already been created by setting user flags
 	for (size_t i = 0; i < matched_pairs.size(); i++) {
 		size_t face_nr_1 = matched_pairs.at(i).face_idx[0];
 		size_t face_nr_2 = matched_pairs.at(i).face_idx[1];
+		cout << matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set()
+				<< matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set()
+				<< endl;
 		if ((matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set())
 				or (matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set())) {
 			cout << "yippieyeah" << endl;
 			throw PeriodicBoundaryNotPossible(
 					"You're trying to create a PeriodicBoundary, where another one "
 							"has already been created. That does not work.");
+		} else {
+			matched_pairs.at(i).cell[0]->face(face_nr_1)->set_user_flag();
+			matched_pairs.at(i).cell[1]->face(face_nr_2)->set_user_flag();
+			cout
+					<< matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set()
+					<< matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set()
+					<< endl;
 		}
 	}
-	cout << "yippie" << endl;
+
+	cout << "add periodicity..." << endl;
 	m_triangulation->add_periodicity(matched_pairs);
-	cout << "yippie" << endl;
+	cout << "...success" << endl;
 
 } /* Constructor 2 */
 template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
@@ -83,7 +91,7 @@ template PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
 		shared_ptr<Mesh<3> > triangulation);
 
 template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
-		const typename dealii::DoFHandler<dim>::active_cell_iterator & ,
+		const typename dealii::DoFHandler<dim>::active_cell_iterator &,
 		size_t faceBoundaryIndicator) const {
 	/*
 	 // first condition: cell map has a key <cell>
@@ -103,10 +111,10 @@ template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 }
 // The template Parameter has to be made explicit in order for the code to compile
 template bool PeriodicBoundary<2>::isFaceInBoundary(
-		const typename dealii::DoFHandler<2>::active_cell_iterator & ,
+		const typename dealii::DoFHandler<2>::active_cell_iterator &,
 		size_t faceBoundaryIndicator) const;
 template bool PeriodicBoundary<3>::isFaceInBoundary(
-		const typename dealii::DoFHandler<3>::active_cell_iterator & ,
+		const typename dealii::DoFHandler<3>::active_cell_iterator &,
 		size_t faceBoundaryIndicator) const;
 
 template<size_t dim> PeriodicBoundary<dim>::~PeriodicBoundary() {
@@ -194,17 +202,14 @@ template size_t PeriodicBoundary<3>::getOppositeCellAtPeriodicBoundary(
 		dealii::DoFHandler<3>::cell_iterator & neighborCell) const;
 
 template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
-		dealii::BlockDynamicSparsityPattern& cSparse, size_t n_blocks,
-		size_t n_dofs_per_block, size_t dofs_per_cell) const {
+		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const {
 
 	// THIS FUNCTION IS NOT USED!!! See DealIIExtensions module for details
 	assert(false);
 }
 template void PeriodicBoundary<2>::addToSparsityPattern(
-		dealii::BlockDynamicSparsityPattern& cSparse, size_t n_blocks,
-		size_t n_dofs_per_block, size_t dofs_per_cell) const;
+		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const;
 template void PeriodicBoundary<3>::addToSparsityPattern(
-		dealii::BlockDynamicSparsityPattern& cSparse, size_t n_blocks,
-		size_t n_dofs_per_block, size_t dofs_per_cell) const;
+		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const;
 
 } /* namespace natrium */
