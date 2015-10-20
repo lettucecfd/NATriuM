@@ -46,7 +46,8 @@ void BGK::collideSinglePoint(vector<double>& distributions) const {
 
 void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 		vector<distributed_vector>& velocities,
-		bool inInitializationProcedure) const {
+		bool inInitializationProcedure,
+		const dealii::IndexSet& locally_owned_dofs) const {
 
 	size_t n_dofs = f.at(0).size();
 	size_t Q = getStencil()->getQ();
@@ -65,8 +66,11 @@ void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 	}
 #endif
 
-//for all degrees of freedom
-	for (size_t i = 0; i < n_dofs; i++) {
+
+	//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it, end = locally_owned_dofs.end();
+	for (it = locally_owned_dofs.begin(); it != end; it++){
+		size_t i = *it;
 
 		// calculate density
 		densities(i) = 0;

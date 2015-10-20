@@ -48,7 +48,8 @@ double BGKSteadyState::getEquilibriumDistribution(size_t i,
 
 void BGKSteadyState::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
-		bool inInitializationProcedure) const {
+		bool inInitializationProcedure,
+		const dealii::IndexSet& locally_owned_dofs) const {
 
 	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
 		// Inefficient collision for other than D2Q9
@@ -84,8 +85,10 @@ void BGKSteadyState::collideAll(DistributionFunctions& f,
 		double weighting;
 		double one_by_2gamma = 0.5/m_gamma;
 
-		// for all dofs
-		for (size_t i = 0; i < n_dofs; i++) {
+		//for all degrees of freedom on current processor
+		dealii::IndexSet::ElementIterator it, end = locally_owned_dofs.end();
+		for (it = locally_owned_dofs.begin(); it != end; it++){
+			size_t i = *it;
 
 			// calculate density
 			densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)

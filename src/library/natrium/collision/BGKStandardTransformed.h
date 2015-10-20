@@ -10,9 +10,11 @@
 
 #include "BGK.h"
 
-#include "../utilities/BasicNames.h"
-
 #include <cassert>
+
+#include "deal.II/base/index_set.h"
+
+#include "../utilities/BasicNames.h"
 
 #include "../utilities/Math.h"
 
@@ -57,7 +59,8 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
-			bool inInitializationProcedure = false) const;
+			bool inInitializationProcedure = false,
+			const dealii::IndexSet& locally_owned_dofs = dealii::IndexSet()) const;
 
 	double getRho0() const {
 		return m_rho0;

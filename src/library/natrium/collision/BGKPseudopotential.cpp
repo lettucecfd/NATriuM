@@ -27,6 +27,8 @@ BGKPseudopotential::BGKPseudopotential(double relaxationParameter, double dt,
 		const shared_ptr<Stencil> stencil) :
 		BGK(relaxationParameter, dt, stencil) {
 
+	throw CollisionException("Pseudopotential model not implemented, yet.");
+
 }
 
 // destructor
@@ -79,7 +81,8 @@ void BGKPseudopotential::getInteractionForce(
 /////////////////////////////
 void BGKPseudopotential::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
-		bool inInitializationProcedure) const {
+		bool inInitializationProcedure,
+		const dealii::IndexSet& locally_owned_dofs) const {
 
 	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
 		// Inefficient collision for other than D2Q9
@@ -135,6 +138,9 @@ void BGKPseudopotential::collideAll(DistributionFunctions& f,
 		typename dealii::DoFHandler<2>::active_cell_iterator cell =
 				dof_handler.begin_active(), endc = dof_handler.end();
 		for (; cell != endc; ++cell) {
+
+			if (! cell->is_locally_owned())
+				continue;
 
 			// get global degrees of freedom
 			cell->get_dof_indices(localDoFIndices);

@@ -30,13 +30,13 @@
 #include "boost/shared_ptr.hpp"
 #include "boost/make_shared.hpp"
 
+
+// other deal.II includes
 #include "deal.II/base/point.h"
-
 #include "deal.II/numerics/vector_tools.h"
-
 #include "deal.II/lac/block_sparse_matrix.h"
-
 #include "deal.II/base/types.h"
+
 
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_vector.h"
@@ -45,6 +45,8 @@
 #include "deal.II/lac/trilinos_block_sparse_matrix.h"
 #include "deal.II/base/index_set.h"
 #endif
+
+
 
 namespace natrium {
 

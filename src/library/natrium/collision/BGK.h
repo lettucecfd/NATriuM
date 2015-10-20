@@ -12,6 +12,8 @@
 
 #include "CollisionModel.h"
 
+#include "deal.II/base/index_set.h"
+
 #include "../utilities/BasicNames.h"
 
 #include "../solver/DistributionFunctions.h"
@@ -54,7 +56,8 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
-			bool inInitializationProcedure = false) const;
+			bool inInitializationProcedure = false,
+			const dealii::IndexSet& locally_owned_dofs = dealii::IndexSet()) const;
 
 	/* @short virtual function for collision
 	 * @param[in] doF the doF index for which collision is done

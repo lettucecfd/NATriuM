@@ -49,7 +49,8 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
-			bool inInitializationProcedure = false) const;
+			bool inInitializationProcedure = false,
+			const dealii::IndexSet& locally_owned_dofs = dealii::IndexSet()) const;
 
 	void getInteractionForce(const vector<double>& distributions,
 			numeric_vector & interactionForce, const double rho = 1);

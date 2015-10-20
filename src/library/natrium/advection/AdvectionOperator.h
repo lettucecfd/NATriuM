@@ -8,11 +8,13 @@
 #ifndef ADVECTIONOPERATOR_H_
 #define ADVECTIONOPERATOR_H_
 
+#include "../utilities/BasicNames.h"
+
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/base/quadrature_lib.h"
+#include "deal.II/base/index_set.h"
 
-#include "../utilities/BasicNames.h"
 
 namespace natrium {
 

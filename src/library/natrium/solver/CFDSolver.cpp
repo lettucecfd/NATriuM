@@ -372,7 +372,7 @@ template void CFDSolver<3>::stream();
 template<size_t dim>
 void CFDSolver<dim>::collide() {
 	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
-	m_collisionModel->collideAll(m_f, m_density, m_velocity);
+	m_collisionModel->collideAll(m_f, m_density, m_velocity, false, m_advectionOperator->getLocallyOwnedDoFs());
 }
 template void CFDSolver<2>::collide();
 template void CFDSolver<3>::collide();
@@ -617,7 +617,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			stream();
 			// collide without recalculating velocities
 			m_collisionModel->collideAll(m_f, m_density, m_velocity,
-					inInitializationProcedure);
+					inInitializationProcedure, m_advectionOperator->getLocallyOwnedDoFs());
 			oldDensities -= m_density;
 			residual = oldDensities.norm_sqr();
 			loopCount++;

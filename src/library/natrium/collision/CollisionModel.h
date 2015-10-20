@@ -12,6 +12,8 @@
 
 #include "boost/shared_ptr.hpp"
 
+#include "deal.II/base/index_set.h"
+
 #include "../stencils/Stencil.h"
 
 #include "../solver/DistributionFunctions.h"
@@ -58,7 +60,8 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
-			bool inInitializationProcedure = false) const = 0;
+			bool inInitializationProcedure = false,
+			const dealii::IndexSet& locally_owned_dofs = dealii::IndexSet()) const = 0;
 	virtual void setTimeStep(double dt) = 0;
 
 	const shared_ptr<Stencil>& getStencil() const {
