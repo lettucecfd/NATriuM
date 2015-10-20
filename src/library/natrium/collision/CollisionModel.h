@@ -60,8 +60,9 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
-			bool inInitializationProcedure = false,
-			const dealii::IndexSet& locally_owned_dofs = dealii::IndexSet()) const = 0;
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure = false) const = 0;
+
 	virtual void setTimeStep(double dt) = 0;
 
 	const shared_ptr<Stencil>& getStencil() const {

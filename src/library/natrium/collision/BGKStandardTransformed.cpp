@@ -45,12 +45,12 @@ double BGKStandardTransformed::getEquilibriumDistribution(size_t i,
 
 void BGKStandardTransformed::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
-		bool inInitializationProcedure,
-		const dealii::IndexSet& locally_owned_dofs) const {
+		const dealii::IndexSet& locally_owned_dofs,
+		bool inInitializationProcedure) const {
 
 	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
 		// Inefficient collision for other than D2Q9
-		BGK::collideAll(f, densities, velocities, inInitializationProcedure);
+		BGK::collideAll(f, densities, velocities, locally_owned_dofs, inInitializationProcedure);
 	} else {
 		// Efficient collision for D2Q9
 		size_t n_dofs = f.at(0).size();
@@ -84,7 +84,8 @@ void BGKStandardTransformed::collideAll(DistributionFunctions& f,
 		double weighting;
 
 		//for all degrees of freedom on current processor
-		dealii::IndexSet::ElementIterator it, end = locally_owned_dofs.end();
+		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
 		for (it = locally_owned_dofs.begin(); it != end; it++){
 			size_t i = *it;
 

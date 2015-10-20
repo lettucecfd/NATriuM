@@ -59,8 +59,8 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
-			bool inInitializationProcedure = false,
-			const dealii::IndexSet& locally_owned_dofs = dealii::IndexSet()) const;
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure = false) const;
 
 	double getRho0() const {
 		return m_rho0;

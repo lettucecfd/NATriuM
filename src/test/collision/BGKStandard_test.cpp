@@ -378,8 +378,10 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAll_test) {
 	}
 
 	// collide and compare to previous collision function
+	dealii::IndexSet locally_owned_dofs(10);
+	locally_owned_dofs.add_range(0,10);
 	DistributionFunctions fAfterCollision(f);
-	bgk.collideAll(fAfterCollision, rho, u);
+	bgk.collideAll(fAfterCollision, rho, u, locally_owned_dofs);
 	for (size_t i = 0; i < 10; i++) {
 		vector<double> localF(dqmodel->getQ());
 		for (size_t j = 0; j < dqmodel->getQ(); j++) {

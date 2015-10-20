@@ -372,7 +372,8 @@ template void CFDSolver<3>::stream();
 template<size_t dim>
 void CFDSolver<dim>::collide() {
 	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
-	m_collisionModel->collideAll(m_f, m_density, m_velocity, false, m_advectionOperator->getLocallyOwnedDoFs());
+	m_collisionModel->collideAll(m_f, m_density, m_velocity,
+			m_advectionOperator->getLocallyOwnedDofs(), false);
 }
 template void CFDSolver<2>::collide();
 template void CFDSolver<3>::collide();
@@ -509,8 +510,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 			if (dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0) {
 				// generate .pvtu filename
 				std::stringstream pvtu_filename;
-				pvtu_filename << m_configuration->getOutputDirectory().c_str() << "/t_"
-						<< iteration << "."
+				pvtu_filename << m_configuration->getOutputDirectory().c_str()
+						<< "/t_" << iteration << "."
 						<< m_problemDescription->getMesh()->locally_owned_subdomain()
 						<< ".pvtu";
 				std::ofstream pvtu_output(pvtu_filename.str().c_str());
@@ -518,8 +519,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 				// generate all other filenames
 				std::vector<std::string> filenames;
 				for (unsigned int i = 0;
-						i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
-						++i) {
+						i < dealii::Utilities::MPI::n_mpi_processes(
+						MPI_COMM_WORLD); ++i) {
 					std::stringstream vtu_filename_i;
 					vtu_filename_i
 							<< m_configuration->getOutputDirectory().c_str()
@@ -617,7 +618,8 @@ void CFDSolver<dim>::initializeDistributions() {
 			stream();
 			// collide without recalculating velocities
 			m_collisionModel->collideAll(m_f, m_density, m_velocity,
-					inInitializationProcedure, m_advectionOperator->getLocallyOwnedDoFs());
+					m_advectionOperator->getLocallyOwnedDofs(),
+					inInitializationProcedure);
 			oldDensities -= m_density;
 			residual = oldDensities.norm_sqr();
 			loopCount++;

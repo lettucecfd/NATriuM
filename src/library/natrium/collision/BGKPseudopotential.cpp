@@ -81,12 +81,12 @@ void BGKPseudopotential::getInteractionForce(
 /////////////////////////////
 void BGKPseudopotential::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
-		bool inInitializationProcedure,
-		const dealii::IndexSet& locally_owned_dofs) const {
+		const dealii::IndexSet& locally_owned_dofs,
+		bool inInitializationProcedure) const {
 
 	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
 		// Inefficient collision for other than D2Q9
-		BGK::collideAll(f, densities, velocities, inInitializationProcedure);
+		BGK::collideAll(f, densities, velocities, locally_owned_dofs, inInitializationProcedure);
 	} else {
 		size_t n_dofs = f.at(0).size();
 		size_t Q = 9;

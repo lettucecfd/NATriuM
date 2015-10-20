@@ -46,17 +46,19 @@
 #include "deal.II/base/index_set.h"
 #endif
 
-
+#ifdef WITH_TRILINOS_MPI
+#include "deal.II/distributed/tria.h"
+#else
+#include "deal.II/grid/tria.h"
+#endif
 
 namespace natrium {
 
 /// Typdef Mesh
 #ifdef WITH_TRILINOS_MPI
-#include "deal.II/distributed/tria.h"
 //alias template; works only in C++11
 template<size_t dim> using Mesh = dealii::parallel::distributed::Triangulation<dim>;
 #else
-#include "deal.II/grid/tria.h"
 //alias template; works only in C++11
 template<size_t dim> using Mesh = dealii::Triangulation<dim>;
 #endif
