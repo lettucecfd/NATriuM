@@ -258,15 +258,17 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//reinitialize matrices
 	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
 #ifdef WITH_TRILINOS_MPI
-	/*SparsityTools::distribute_sparsity_pattern(cSparseDiag,
+	//
+	SparsityTools::distribute_sparsity_pattern(cSparseDiag,
 	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
 	 m_locallyRelevantDofs);
 	 SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
 	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-	 m_locallsyRelevantDofs);
+	 m_locallyRelevantDofs);
 	 SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
 	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-	 m_locallyRelevantDofs);*/
+	 m_locallyRelevantDofs);
+	 //
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
 	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);

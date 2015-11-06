@@ -137,8 +137,8 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 	cout << "done" << endl;
 } /* MinLeeBoundary2D_SparsityPattern_test */
 
-BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
-	cout << "MinLeeBoundary2D_MassConversion_test..." << endl;
+BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConservation_test) {
+	cout << "MinLeeBoundary2D_MassConservation_test..." << endl;
 
 	// make problem and solver
 	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
 
 	solver.run();
 
-	// check mass conversion
+	// check mass conservation
 	double mass = 0.0;
 	for (size_t i = 0; i < solver.getNumberOfDoFs(); i++) {
 		mass += solver.getDensity()(i);
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConversion_test) {
 	BOOST_CHECK_SMALL(mass - 1.0, 1e-10);
 
 	cout << "done" << endl;
-} /*MinLeeBoundary2D_MassConversion_test */
+} /*MinLeeBoundary2D_MassConservation_test */
 
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 	cout << "MinLeeBoundary2D_BoundaryVelocity_test..." << endl;
