@@ -152,14 +152,11 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	map<dealii::types::global_dof_index, dealii::Point<dim> > supportPoints;
 	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
 	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-			m_advectionOperator->getLocallyRelevantDofs(),
 			MPI_COMM_WORLD);
 	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-			m_advectionOperator->getLocallyRelevantDofs(),
 			MPI_COMM_WORLD);
 	for (size_t i = 0; i < dim; i++) {
 		distributed_vector vi(m_advectionOperator->getLocallyOwnedDofs(),
-				m_advectionOperator->getLocallyRelevantDofs(),
 				MPI_COMM_WORLD);
 		m_velocity.push_back(vi);
 		m_tmpVelocity.push_back(vi);
@@ -184,7 +181,6 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	//distribution functions
 #ifdef WITH_TRILINOS_MPI
 	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
-			m_advectionOperator->getLocallyRelevantDofs(),
 			MPI_COMM_WORLD);
 #else
 	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());

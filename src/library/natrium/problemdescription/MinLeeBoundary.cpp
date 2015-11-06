@@ -132,8 +132,8 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 	// let the feFaceValues object calculate all the values needed at the boundary
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
-	const vector<dealii::Point<dim> > &normals =
-			feFaceValues.get_normal_vectors();
+	const vector<dealii::Tensor<1, dim> > &normals =
+			feFaceValues.get_all_normal_vectors();
 
 // TODO clean up construction; or (better): assembly directly
 	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
@@ -160,7 +160,7 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		double exn = 0.0;
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
-			exn += normals.at(q)(i) * stencil.getDirection(alpha)(i);
+			exn += normals.at(q)[i] * stencil.getDirection(alpha)(i);
 		}
 		prefactor *= exn;
 

@@ -75,12 +75,12 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 	for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
 #ifdef WITH_TRILINOS_MPI
 		m_systemVector.block(i).reinit(m_locallyOwnedDofs,
-				m_locallyRelevantDofs, MPI_COMM_WORLD);
+				MPI_COMM_WORLD);
+		m_systemVector.collect_sizes();
 #else
 		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
 #endif
 	}
-	m_systemVector.collect_sizes();
 #else
 	m_systemVector.reinit(m_stencil->getQ() - 1, m_doFHandler->n_dofs());
 #endif
@@ -178,6 +178,8 @@ void SEDGMinLee<dim>::reassemble() {
 			}
 		}
 	}
+	m_systemVector.compress(dealii::VectorOperation::add);
+	m_systemMatrix.compress(dealii::VectorOperation::add);
 
 //#endif
 
@@ -557,7 +559,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 // get the required FE Values for the local cell
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
-	const vector<Point<dim> > &normals = feFaceValues.get_normal_vectors();
+	const vector<Tensor<1, dim> > &normals = feFaceValues.get_all_normal_vectors();
 
 	if (4 == alpha) {
 
@@ -594,7 +596,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
-			exn += normals.at(q)(i) * m_stencil->getDirection(alpha)(i);
+			exn += normals.at(q)[i] * m_stencil->getDirection(alpha)(i);
 		}
 		prefactor *= exn;
 

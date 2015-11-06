@@ -107,11 +107,9 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 #ifdef WITH_TRILINOS_MPI
 	// create smooth initial conditions
-	distributed_vector f(streaming.getLocallyOwnedDofs(),
-			streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	distributed_vector f(streaming.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 	// zero-vector for time integrator
-	distributed_vector g(streaming.getLocallyOwnedDofs(),
-			streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	distributed_vector g(streaming.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 #else
 	// create smooth initial conditions
 	distributed_vector f(streaming.getNumberOfDoFs());
@@ -133,8 +131,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 							distributed_vector> >(deltaT, f);
 
 #ifdef WITH_TRILINOS_MPI
-	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(),
-			streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 #else
 	distributed_vector fAnalytic(f.size());
 #endif

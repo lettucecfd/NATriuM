@@ -64,8 +64,10 @@ public:
 		}
 		m_fStream.collect_sizes();
 		for (size_t i = 1; i < m_Q; i++) {
-			for (size_t j = 0; j < f.at(i).size(); j++){
-				m_fStream.block(i-1)(j) = f.at(i)(j);
+			for (size_t j = 0; j < f.at(i).size(); j++) {
+				if (m_fStream.block(i - 1).in_local_range(j)) {
+					m_fStream.block(i - 1)(j) = f.at(i)(j);
+				}
 			}
 		}
 	}
@@ -136,7 +138,6 @@ public:
 		return m_fStream;
 	}
 
-
 	/**
 	 * @short FStream denotes the block vector containing the vectors \f$ f_1, ..., f_Q \f$
 	 */
@@ -152,14 +153,15 @@ public:
 	}
 
 	/**
-	 * @short reinitialize the sizes of the distribution functions
+	 * @short reinitialize the sizes of the distribution functions - without ghost elements
 	 */
 #ifdef WITH_TRILINOS_MPI
-void reinit(size_t Q, const dealii::IndexSet &local, const dealii::IndexSet &ghost, const MPI_Comm &communicator=MPI_COMM_WORLD) {
+	void reinit(size_t Q, const dealii::IndexSet &local,
+			const MPI_Comm &communicator = MPI_COMM_WORLD) {
 		m_Q = Q;
-		m_f0.reinit(local, ghost, communicator);
-		m_fStream.reinit(Q-1);
-		for (size_t i = 0; i < Q - 1; i++){
+		m_f0.reinit(local, communicator);
+		m_fStream.reinit(Q - 1);
+		for (size_t i = 0; i < Q - 1; i++) {
 			m_fStream.block(i).reinit(m_f0);
 		}
 		m_fStream.collect_sizes();
@@ -170,7 +172,7 @@ void reinit(size_t Q, const dealii::IndexSet &local, const dealii::IndexSet &gho
 		m_f0.reinit(size);
 #ifdef WITH_TRILINOS
 		m_fStream.reinit(Q-1);
-		for (size_t i = 0; i < Q - 1; i++){
+		for (size_t i = 0; i < Q - 1; i++) {
 			m_fStream.block(i).reinit(m_f0);
 		}
 #else
@@ -187,7 +189,17 @@ void reinit(size_t Q, const dealii::IndexSet &local, const dealii::IndexSet &gho
 		return m_Q;
 	}
 
+	/**
+	 * @short call dealii's compress function to all distributed_vectors stored herein. Compress has to
+	 * be called, whenever the elements of a vector have been changed by hand. It distributes the local
+	 * information to the other processors, if required.
+	 */
+	void compress() const {
+
+	}
+
 };
+/* class DistributionFunctions */
 
 } /* namespace natrium */
 

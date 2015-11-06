@@ -350,49 +350,64 @@ BOOST_AUTO_TEST_CASE(BGKStandardCollisionInvariants_test) {
 
 BOOST_AUTO_TEST_CASE(BGKStandard_collideAll_test) {
 
-	cout << "BGKStandard_collideAll_test..." << endl;
+	cout << "BGKStandardTransformed_collideAll_test..." << endl;
 
 	// create collision model// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
 	double tau = 0.9;
 	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
 
+	// vectors have to be distributed, because otherwise
+	// they are recognized as ghost vectors; and ghost
+	// do not support writing on individual elements
+	PeriodicTestDomain2D test_domain(3);
+	dealii::QGaussLobatto<1> quadrature(2);
+	dealii::FE_DGQArbitraryNodes<2> fe(quadrature);
+	dealii::DoFHandler<2> dof_handler(*(test_domain.getMesh()));
+	dof_handler.distribute_dofs(fe);
+
 	// initialize distributions with arbitrary components
 	vector<distributed_vector> f;
-	UNDISTRIBUTED_VECTOR(rho, 10);
+	distributed_vector rho;
+	rho.reinit((dof_handler.locally_owned_dofs()), MPI_COMM_WORLD);
+	rho.compress(dealii::VectorOperation::add);
 	vector<distributed_vector> u;
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
-		UNDISTRIBUTED_VECTOR(f_i,10);
-		for (size_t j = 0; j < 10; j++) {
-			f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
-					+ pow((0.5 * cos(j)), 2);
+		distributed_vector f_i(rho);
+		for (size_t j = 0; j < dof_handler.n_dofs(); j++) {
+			if (rho.in_local_range(j)) {
+				f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
+						+ pow((0.5 * cos(j)), 2);
+			}
 		}
+		f_i.compress(dealii::VectorOperation::add);
 		f.push_back(f_i);
 	}
 	for (size_t i = 0; i < dqmodel->getD(); i++) {
-		UNDISTRIBUTED_VECTOR(u_i,10);
+		distributed_vector u_i(rho);
 		for (size_t j = 0; j < 10; j++) {
 			u_i(j) = 0;
 		}
+		u_i.compress(dealii::VectorOperation::add);
 		u.push_back(u_i);
 	}
 
 	// collide and compare to previous collision function
-	dealii::IndexSet locally_owned_dofs(10);
-	locally_owned_dofs.add_range(0,10);
 	DistributionFunctions fAfterCollision(f);
-	bgk.collideAll(fAfterCollision, rho, u, locally_owned_dofs);
-	for (size_t i = 0; i < 10; i++) {
-		vector<double> localF(dqmodel->getQ());
-		for (size_t j = 0; j < dqmodel->getQ(); j++) {
-			localF.at(j) = f.at(j)(i);
-		}
-		bgk.collideSinglePoint(localF);
-		for (size_t j = 0; j < dqmodel->getQ(); j++) {
-			//cout << i << " " << j << endl;
-			BOOST_CHECK(fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-15);
-		}
-	}
+	bgk.collideAll(fAfterCollision, rho, u, dof_handler.locally_owned_dofs());
+	for (size_t i = 0; i < dof_handler.n_dofs(); i++) {
+		if (rho.in_local_range(i)) {
+			vector<double> localF(dqmodel->getQ());
+			for (size_t j = 0; j < dqmodel->getQ(); j++) {
+				localF.at(j) = f.at(j)(i);
+			}
+			bgk.collideSinglePoint(localF);
+			for (size_t j = 0; j < dqmodel->getQ(); j++) {
+				//cout << i << " " << j << endl;
+				BOOST_CHECK_CLOSE(localF.at(j), 0.0 + fAfterCollision.at(j)(i), 1e-10);
+			}
+		} /* if in local range */
+	} /* for all dofs */
 
 	cout << "done." << endl;
 } /* BGKStandard_collideAll_test*/
