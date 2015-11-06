@@ -306,7 +306,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		}
 	}
 	m_isDoFAtBoundary.resize(getNumberOfDoFs());
-	dealii::DoFTools::extract_dofs_with_support_on_boundary(
+	DealIIExtensions::extract_dofs_with_support_on_boundary(
 			*(m_advectionOperator->getDoFHandler()), dealii::ComponentMask(),
 			m_isDoFAtBoundary, boundaryIndicators);
 	size_t nofBoundaryNodes = 0;
@@ -570,7 +570,12 @@ void CFDSolver<dim>::initializeDistributions() {
 	double t0 = m_time;
 
 // Initialize f with the equilibrium distribution functions
-	for (size_t i = 0; i < m_velocity.at(0).size(); i++) {
+	//for all degrees of freedom on current processor
+	const dealii::IndexSet& locally_owned_dofs = m_advectionOperator->getLocallyOwnedDofs();
+	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+	for (; it != end; it++){
+		size_t i = *it;
 		for (size_t j = 0; j < dim; j++) {
 			u(j) = m_velocity.at(j)(i);
 		}
@@ -623,7 +628,9 @@ void CFDSolver<dim>::initializeDistributions() {
 		LOG(DETAILED) << "Residual " << residual << " reached after "
 				<< loopCount << " iterations." << endl;
 
-		for (size_t i = 0; i < getNumberOfDoFs(); i++) {
+		//for all degrees of freedom on current processor
+		for (it = locally_owned_dofs.begin(); it != end; it++){
+			size_t i = *it;
 			for (size_t j = 0; j < dim; j++) {
 				u(j) = m_velocity.at(j)(i);
 			}

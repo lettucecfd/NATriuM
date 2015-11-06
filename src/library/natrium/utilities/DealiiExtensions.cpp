@@ -569,6 +569,88 @@ void make_periodicity_map_dg(const DH &dof_handler, size_t b_id1, size_t b_id2,
 	make_periodicity_map_dg<DH>(matched_pairs, cell_map);
 }
 
+template<class DH>
+void extract_dofs_with_support_on_boundary(const DH &dof_handler,
+		const ComponentMask &component_mask, std::vector<bool> &selected_dofs,
+		const std::set<types::boundary_id> &boundary_ids) {
+	Assert(component_mask.represents_n_components (n_components(dof_handler)),
+			ExcMessage ("This component mask has the wrong size."));
+	Assert(
+			boundary_ids.find (numbers::internal_face_boundary_id) == boundary_ids.end(),
+			ExcInvalidBoundaryIndicator());
+	// let's see whether we have to check for certain boundary indicators
+	// or whether we can accept all
+	const bool check_boundary_id = (boundary_ids.size() != 0);
+
+	// also see whether we have to check whether a certain vector component
+	// is selected, or all
+	const bool check_vector_component =
+			(component_mask.represents_the_all_selected_mask() == false);
+
+	// clear and reset array by default values
+	selected_dofs.clear();
+	selected_dofs.resize(dof_handler.n_dofs(), false);
+	std::vector<types::global_dof_index> cell_dof_indices;
+	cell_dof_indices.reserve(max_dofs_per_cell(dof_handler));
+
+	// now loop over all cells and check whether their faces are at the
+	// boundary. note that we need not take special care of single lines
+	// being at the boundary (using @p{cell->has_boundary_lines}), since we
+	// do not support boundaries of dimension dim-2, and so every isolated
+	// boundary line is also part of a boundary face which we will be
+	// visiting sooner or later
+	for (typename DH::active_cell_iterator cell = dof_handler.begin_active();
+			cell != dof_handler.end(); ++cell) {
+		if (cell->is_locally_owned()) {
+			for (unsigned int face = 0;
+					face < GeometryInfo<DH::dimension>::faces_per_cell;
+					++face) {
+				if (cell->at_boundary(face)) {
+					if (!check_boundary_id
+							|| (boundary_ids.find(
+									cell->face(face)->boundary_id())
+									!= boundary_ids.end())) {
+						const FiniteElement<DH::dimension, DH::space_dimension> &fe =
+								cell->get_fe();
+
+						const unsigned int dofs_per_cell = fe.dofs_per_cell;
+						cell_dof_indices.resize(dofs_per_cell);
+						cell->get_dof_indices(cell_dof_indices);
+
+						for (unsigned int i = 0; i < fe.dofs_per_cell; ++i) {
+							if (fe.has_support_on_face(i, face)) {
+								if (!check_vector_component)
+									selected_dofs[cell_dof_indices[i]] = true;
+								else
+								// check for component is required. somewhat tricky
+								// as usual for the case that the shape function is
+								// non-primitive, but use usual convention (see docs)
+								{
+									if (fe.is_primitive(i))
+										selected_dofs[cell_dof_indices[i]] =
+												(component_mask[fe.system_to_component_index(
+														i).first] == true);
+									else // not primitive
+									{
+										const unsigned int first_nonzero_comp =
+												fe.get_nonzero_components(i).first_selected_component();
+										Assert(
+												first_nonzero_comp < fe.n_components(),
+												ExcInternalError());
+										selected_dofs[cell_dof_indices[i]] =
+												(component_mask[first_nonzero_comp]
+														== true);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 typedef DynamicSparsityPattern SP;
 //for (SP : SPARSITY_PATTERNS; deal_II_dimension : DIMENSIONS)
 //for (size_t deal_II_dimension = 1; deal_II_dimension < 4; deal_II_dimension++)
@@ -610,7 +692,6 @@ void make_periodicity_map_dg<DoFHandler<3> >(
 		const bool face_orientation, const bool face_flip,
 		const bool face_rotation);
 
-
 template
 void make_periodicity_map_dg<DoFHandler<2> >(
 		const std::vector<
@@ -625,7 +706,6 @@ void make_periodicity_map_dg<DoFHandler<3> >(
 						typename DoFHandler<3>::cell_iterator> > &periodic_faces,
 		PeriodicCellMap<3>& cell_map);
 
-
 template
 void make_periodicity_map_dg<DoFHandler<2> >(const DoFHandler<2> &dof_handler,
 		size_t b_id1, size_t b_id2, const int direction,
@@ -635,6 +715,16 @@ void make_periodicity_map_dg<DoFHandler<3> >(const DoFHandler<3> &dof_handler,
 		size_t b_id1, size_t b_id2, const int direction,
 		PeriodicCellMap<3>& cell_map);
 //}s
+
+template
+void extract_dofs_with_support_on_boundary(const dealii::DoFHandler<2> &dof_handler,
+		const ComponentMask &component_mask, std::vector<bool> &selected_dofs,
+		const std::set<types::boundary_id> &boundary_ids);
+
+template
+void extract_dofs_with_support_on_boundary(const dealii::DoFHandler<3> &dof_handler,
+		const ComponentMask &component_mask, std::vector<bool> &selected_dofs,
+		const std::set<types::boundary_id> &boundary_ids);
 
 } /* namepace DealIIExtensions */
 

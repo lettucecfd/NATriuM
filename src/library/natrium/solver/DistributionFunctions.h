@@ -193,8 +193,12 @@ public:
 	 * @short call dealii's compress function to all distributed_vectors stored herein. Compress has to
 	 * be called, whenever the elements of a vector have been changed by hand. It distributes the local
 	 * information to the other processors, if required.
+	 * @param[in] operation specifies, if element was inserted or added. Operation has to be
+	 * dealii::VectorOperation::add or dealii::VectorOperation::compress
 	 */
-	void compress() const {
+	void compress(dealii::VectorOperation::values operation) {
+		m_f0.compress(operation);
+		m_fStream.compress(operation);
 
 	}
 

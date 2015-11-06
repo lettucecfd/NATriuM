@@ -130,7 +130,7 @@ protected:
 	void loadDistributionFunctionsFromFiles(const string& directory);
 
 	/// gives the possibility for Benchmark instances to add the analytic solution to output
-	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& ) {
+	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>&) {
 	}
 
 public:
@@ -244,7 +244,18 @@ public:
 		return m_advectionOperator->getNumberOfDoFs();
 	}
 	double getMaxVelocityNorm() const {
-		return Math::maxVelocityNorm(m_velocity);
+		double max = m_velocity.at(0).linfty_norm();
+		double comp2 = m_velocity.at(1).linfty_norm();
+		if (comp2 > max){
+			max = comp2;
+		}
+		double comp3 = 0;
+		if (dim == 3)
+			comp3 = m_velocity.at(2).linfty_norm();
+		if (comp3 > max){
+			max = comp3;
+		}
+		return max;
 	}
 
 	double getMaxDensityDeviationFrom(double referenceDensity) const {
