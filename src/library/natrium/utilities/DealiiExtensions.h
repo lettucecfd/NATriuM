@@ -136,6 +136,10 @@ void make_periodicity_map_dg(const DH &dof_handler,
 		size_t b_id1, size_t b_id2,
 		const int direction, PeriodicCellMap<DH::dimension>& cell_map);
 
+/**
+ * @short This function is the same as the deal.ii function with the same name;
+ * except for one line which restricts the function to the locally owned cells.
+ */
 template<class DH>
 void extract_dofs_with_support_on_boundary(const DH &dof_handler,
 		const ComponentMask &component_mask, std::vector<bool> &selected_dofs,
