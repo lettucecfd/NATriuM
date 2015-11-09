@@ -370,6 +370,8 @@ void CFDSolver<dim>::collide() {
 	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
 	m_collisionModel->collideAll(m_f, m_density, m_velocity,
 			m_advectionOperator->getLocallyOwnedDofs(), false);
+	// copy vectors to ghosted vectors in order to do streaming and output
+	copyToGhosted();
 }
 template void CFDSolver<2>::collide();
 template void CFDSolver<3>::collide();
@@ -818,6 +820,13 @@ double CFDSolver<dim>::getTau() const {
 }
 template double CFDSolver<2>::getTau() const;
 template double CFDSolver<3>::getTau() const;
+
+template <size_t dim>
+void copyToGhosted() {
+	//TODO
+}
+template void CFDSolver<2>::copyToGhosted();
+template void CFDSolver<3>::copyToGhosted();
 
 } /* namespace natrium */
 

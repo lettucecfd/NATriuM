@@ -19,25 +19,6 @@
 
 namespace natrium {
 
-/**
- * @short class for parallel cout
-
-class RankZeroOStream: public dealii::ConditionalOStream {
-private:
-	bool is_rank_0() {
-		int mpi_rank;
-		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-		return mpi_rank == 0;
-	}
-public:
-	RankZeroOStream() :
-			ConditionalOStream(cout, is_rank_0()) {
-	}
-};
-
-/// stream for parallel cout
-static RankZeroOStream pout;
- */
 
 enum LogLevel {
 	SILENT,

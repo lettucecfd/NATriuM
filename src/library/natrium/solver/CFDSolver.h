@@ -121,6 +121,9 @@ private:
 	double m_residuumDensity;
 	double m_residuumVelocity;
 
+	// copy vectors to ghost vectors
+	void copyToGhosted();
+
 protected:
 
 	/// save the distribution functions to files for checkpointing
