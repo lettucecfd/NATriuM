@@ -12,7 +12,7 @@
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_sparsity_pattern.h"
 #else
-#include "deal.II/lac/compressed_sparsity_pattern.h"
+#include "deal.II/lac/dynamic_sparsity_pattern.h"
 #endif
 
 #include "deal.II/dofs/dof_renumbering.h"
@@ -21,6 +21,8 @@
 #include "deal.II/fe/fe_update_flags.h"
 #include "deal.II/lac/matrix_iterator.h"
 #include "deal.II/lac/sparsity_tools.h"
+#include "deal.II/base/utilities.h"
+#include "deal.II/lac/constraint_matrix.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
 #include "../problemdescription/MinLeeBoundary.h"
@@ -56,12 +58,6 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
 
-#ifdef WITH_TRILINOS
-	//get locally owned and locally relevant dofs
-	m_locallyOwnedDofs = m_doFHandler->locally_owned_dofs();
-	DoFTools::extract_locally_relevant_dofs(*m_doFHandler,
-			m_locallyRelevantDofs);
-#endif
 	updateSparsityPattern();
 
 	// define relation between dofs and quadrature nodes
@@ -75,7 +71,7 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 	for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
 #ifdef WITH_TRILINOS_MPI
 		m_systemVector.block(i).reinit(m_locallyOwnedDofs,
-				MPI_COMM_WORLD);
+		MPI_COMM_WORLD);
 		m_systemVector.collect_sizes();
 #else
 		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
@@ -156,7 +152,8 @@ void SEDGMinLee<dim>::reassemble() {
 			cell->get_dof_indices(localDoFIndices);
 
 			// assemble local cell matrices
-			assembleLocalMassMatrix(feCellValues, dofs_per_cell, localMassMatrix);
+			assembleLocalMassMatrix(feCellValues, dofs_per_cell,
+					localMassMatrix);
 			assembleLocalDerivativeMatrices(feCellValues, dofs_per_cell,
 					localDerivativeMatrices);
 
@@ -200,22 +197,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			| update_quadrature_points;
 	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping,
 			*m_fe, *m_faceQuadrature, faceUpdateFlags);
-#ifdef WITH_TRILINOS
-	// Trilinos can work with improved sparsity structures
-
-#ifdef WITH_TRILINOS_MPI
-	/*TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyRelevantDofs);
-	 TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyRelevantDofs);
-	 TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
-	DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
-	DynamicSparsityPattern cSparseOpposite(m_locallyRelevantDofs);
-	DynamicSparsityPattern cSparseEmpty(m_locallyRelevantDofs);
-#else
-	size_t n_dofs_per_block = m_doFHandler->n_dofs();
-	DynamicSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
-	DynamicSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
-	DynamicSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
-#endif
 
 	// create cell maps for periodic boundary
 	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
@@ -229,6 +210,33 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 		}
 	}
 
+#ifdef WITH_TRILINOS
+	//get locally owned and locally relevant dofs
+	m_locallyOwnedDofs = m_doFHandler->locally_owned_dofs();
+	DoFTools::extract_locally_relevant_dofs(*m_doFHandler,
+			m_locallyRelevantDofs);
+#endif
+
+#ifdef WITH_TRILINOS
+	// Trilinos can work with improved sparsity structures
+
+#ifdef WITH_TRILINOS_MPI
+	TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyOwnedDofs,
+			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+	TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyOwnedDofs,
+			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+	TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyOwnedDofs,
+			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+	/*DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
+	 DynamicSparsityPattern cSparseOpposite(m_locallyRelevantDofs);
+	 DynamicSparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
+#else
+	size_t n_dofs_per_block = m_doFHandler->n_dofs();
+	DynamicSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
+	DynamicSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
+	DynamicSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
+#endif
+
 	//reorder degrees of freedom
 	//DoFRenumbering::Cuthill_McKee(*m_doFHandler);
 	//The Renumbering operation is commented out because of its quadratic complexity.
@@ -241,8 +249,10 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 
 	// make diagonal block 0,0 which can be copied to the other ones
+	ConstraintMatrix constraints;
 	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-			cSparseDiag, *m_boundaries, feFaceValues);
+			cSparseDiag, constraints, *m_boundaries, feFaceValues, true,
+			dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
 	delete feFaceValues;
 	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
 	 cSparse.block(0, 0));*/
@@ -258,26 +268,25 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//reinitialize matrices
 	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
 #ifdef WITH_TRILINOS_MPI
-	//
-	SparsityTools::distribute_sparsity_pattern(cSparseDiag,
-	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-	 m_locallyRelevantDofs);
-	 SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
-	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-	 m_locallyRelevantDofs);
-	 SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
-	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-	 m_locallyRelevantDofs);
-	 //
+	cSparseDiag.compress();
+	cSparseOpposite.compress();
+	cSparseEmpty.compress();
+	/*SparsityTools::distribute_sparsity_pattern(cSparseDiag,
+			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+			m_locallyRelevantDofs);
+	SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
+			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+			m_locallyRelevantDofs);
+	SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
+			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+			m_locallyRelevantDofs);
+	*/
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
 	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
-	m_systemMatrix.block(0, 0).reinit(m_locallyOwnedDofs, m_locallyOwnedDofs,
-			cSparseDiag, MPI_COMM_WORLD);
-	m_systemMatrix.block(0, some_empty).reinit(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, cSparseEmpty, MPI_COMM_WORLD);
-	m_systemMatrix.block(0, first_opposite).reinit(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, cSparseOpposite, MPI_COMM_WORLD);
+	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
+	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
+	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
 #else
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
@@ -404,7 +413,7 @@ template void SEDGMinLee<2>::assembleLocalMassMatrix(
 		vector<double> &massMatrix);
 template void SEDGMinLee<3>::assembleLocalMassMatrix(
 		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
-	    vector<double> &massMatrix);
+		vector<double> &massMatrix);
 
 template<size_t dim>
 void SEDGMinLee<dim>::assembleLocalDerivativeMatrices(
@@ -561,7 +570,8 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 // get the required FE Values for the local cell
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
-	const vector<Tensor<1, dim> > &normals = feFaceValues.get_all_normal_vectors();
+	const vector<Tensor<1, dim> > &normals =
+			feFaceValues.get_all_normal_vectors();
 
 	if (4 == alpha) {
 

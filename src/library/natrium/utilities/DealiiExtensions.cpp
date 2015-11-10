@@ -684,7 +684,7 @@ void extract_dofs_with_support_on_boundary(const DH &dof_handler,
 	}
 }
 
-typedef DynamicSparsityPattern SP;
+typedef TrilinosWrappers::SparsityPattern SP;
 //for (SP : SPARSITY_PATTERNS; deal_II_dimension : DIMENSIONS)
 //for (size_t deal_II_dimension = 1; deal_II_dimension < 4; deal_II_dimension++)
 //{

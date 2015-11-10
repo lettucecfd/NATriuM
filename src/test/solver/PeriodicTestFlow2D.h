@@ -118,7 +118,6 @@ public:
 			} else {
 				return 0.0;
 			}
-
 		}
 	};
 

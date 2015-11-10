@@ -371,6 +371,11 @@ void CFDSolver<dim>::stream() {
 	const distributed_block_vector& systemVector =
 			m_advectionOperator->getSystemVector();
 
+		cout << "fsize" << f.block(0).local_size() << ", matrixsize" << systemMatrix.block(0,0).locally_owned_range_indices().n_elements()
+				<< "x" << systemMatrix.block(0,0).locally_owned_domain_indices().n_elements() <<
+				" ,unghosted size" << m_f.getFStream().block(0).local_size() << endl;
+
+
 	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time,
 			m_timeIntegrator->getTimeStepSize());
 	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());

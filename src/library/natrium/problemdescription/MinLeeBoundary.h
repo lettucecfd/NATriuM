@@ -8,7 +8,8 @@
 #ifndef MINLEEBOUNDARY_H_
 #define MINLEEBOUNDARY_H_
 
-#include <deal.II/lac/compressed_sparsity_pattern.h>
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include "deal.II/lac/trilinos_sparsity_pattern.h"
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/base/function.h"
 
@@ -87,12 +88,12 @@ public:
 	 */
 
 	void addToSparsityPattern(
-/*#ifdef WITH_TRILINOS_MPI
+#ifdef WITH_TRILINOS_MPI
 			dealii::TrilinosWrappers::SparsityPattern& cSparse,
 #else
-*/
+
 			dealii::DynamicSparsityPattern& cSparse,
-//#endif
+#endif
 			const dealii::DoFHandler<dim>& doFHandler,
 			const Stencil& ) const;
 
