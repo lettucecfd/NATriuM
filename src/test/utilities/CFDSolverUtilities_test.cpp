@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
 	// test for order 4 (distances not regular any more)
 	BOOST_CHECK_GT(2.0*PI/(4*3), CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 3 ));
 
-	pout << endl;
+	pout << "done." << endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

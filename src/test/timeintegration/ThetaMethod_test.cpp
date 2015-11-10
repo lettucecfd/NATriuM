@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
 	// and A = [ 1 -1 , 0 3 ]
 	// analytic solution: f(x) = e^(A*x)
 	const double dt = 0.0001;
-	const size_t numberOfSteps = 10000;
+	const size_t numberOfSteps = 1000;
 	// build matrix
 	distributed_sparse_block_matrix A;
 #ifdef WITH_TRILINOS

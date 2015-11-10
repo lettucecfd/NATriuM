@@ -48,14 +48,6 @@ BOOST_AUTO_TEST_SUITE(SEDGMinLee_test)
 
 BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
 
-
-	int mpi_rank;
-	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-	cout << mpi_rank << pout.is_active() << endl;
-	pout << mpi_rank << pout.is_active() << endl;
-	BOOST_CHECK( ((bool) mpi_rank ) != perr.is_active());
-	BOOST_CHECK( ((bool) mpi_rank ) != pout.is_active());
-
 	pout << "SEDGMinLee_Construction_test..." << endl;
 
 	size_t fe_order = 1;

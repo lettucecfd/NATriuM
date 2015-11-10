@@ -24,10 +24,6 @@ MPIGuard::MPIGuard(int& argc, char**& argv) {
 	LOG(BASIC) << endl;
 	perr.set_condition(is_rank_0());
 	pout.set_condition(is_rank_0());
-	int mpi_rank;
-	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-	cout << mpi_rank << pout.is_active() << endl;
-	pout << mpi_rank << pout.is_active() << endl;
 
 }
 

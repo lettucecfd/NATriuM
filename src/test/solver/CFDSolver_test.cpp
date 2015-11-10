@@ -31,6 +31,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	//testConfiguration->setSwitchOutputOff(true);
 	testConfiguration->setCommandLineVerbosity(DETAILED);
+	testConfiguration->setUserInteraction(false);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
 	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
