@@ -365,20 +365,24 @@ template<size_t dim>
 void CFDSolver<dim>::stream() {
 
 	// no streaming in direction 0; begin with 1
-	distributed_block_vector& f = m_f_ghosted.getFStream();
+	// using ghosted vector here works for 1 MPI process
+	// but throws incompatible dimensions error for multiple processes
+	// using completely local vector gives a false result for unsteady streaming
+	distributed_block_vector& f = m_f.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
 	const distributed_block_vector& systemVector =
 			m_advectionOperator->getSystemVector();
 
-		cout << "fsize" << f.block(0).local_size() << ", matrixsize" << systemMatrix.block(0,0).locally_owned_range_indices().n_elements()
+		/*cout << "fsize" << f.block(0).local_size() << ", matrixsize" << systemMatrix.block(0,0).locally_owned_range_indices().n_elements()
 				<< "x" << systemMatrix.block(0,0).locally_owned_domain_indices().n_elements() <<
 				" ,unghosted size" << m_f.getFStream().block(0).local_size() << endl;
-
+*/
 
 	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time,
 			m_timeIntegrator->getTimeStepSize());
 	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
+	copyToGhosted();
 }
 template void CFDSolver<2>::stream();
 template void CFDSolver<3>::stream();
@@ -390,6 +394,7 @@ void CFDSolver<dim>::collide() {
 	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
 	m_collisionModel->collideAll(m_f, m_density, m_velocity,
 			m_advectionOperator->getLocallyOwnedDofs(), false);
+	//m_f.compress(dealii::VectorOperation::add);
 	// copy vectors to ghosted vectors in order to do streaming and output
 	copyToGhosted();
 }
