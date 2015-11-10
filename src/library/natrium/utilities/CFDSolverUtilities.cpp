@@ -88,7 +88,7 @@ template double CFDSolverUtilities::calculateTimestep<3>(
 template<int dim>
 void CFDSolverUtilities::mesh_info(const Mesh<dim> &tria,
 		const std::string &filename) {
-	std::cout << "Mesh info:" << std::endl << " dimension: " << dim << std::endl
+	pout << "Mesh info:" << std::endl << " dimension: " << dim << std::endl
 			<< " no. of cells: " << tria.n_active_cells() << std::endl;
 	{
 		std::map<unsigned int, unsigned int> boundary_count;
@@ -101,17 +101,17 @@ void CFDSolverUtilities::mesh_info(const Mesh<dim> &tria,
 					boundary_count[cell->face(face)->boundary_id()]++;
 			}
 		}
-		std::cout << " boundary indicators: ";
+		pout << " boundary indicators: ";
 		for (std::map<unsigned int, unsigned int>::iterator it =
 				boundary_count.begin(); it != boundary_count.end(); ++it) {
-			std::cout << it->first << "(" << it->second << " times) ";
+			pout << it->first << "(" << it->second << " times) ";
 		}
-		std::cout << std::endl;
+		pout << endl;
 	}
 	std::ofstream out(filename.c_str());
 	dealii::GridOut grid_out;
 	grid_out.write_eps(tria, out);
-	std::cout << " written to " << filename << std::endl << std::endl;
+	pout << " written to " << filename << std::endl << std::endl;
 } /*mesh_info */
 template void CFDSolverUtilities::mesh_info<2>(
 		const Mesh<2> &tria, const std::string &filename);

@@ -12,18 +12,13 @@
 
 #include "boost/test/unit_test.hpp"
 
-
-using std::cout;
-using std::endl;
-
 namespace natrium {
 
 BOOST_AUTO_TEST_SUITE(DealIIFunctionality_test)
 
-
 BOOST_AUTO_TEST_CASE(DealIIFunctionality_Periodicity_test) {
 	// Check how the built-in periodic bc works in deal.II
-	cout << "DealIIFunctionality_Periodicity_test..." << endl;
+	pout << "DealIIFunctionality_Periodicity_test..." << endl;
 
 	Mesh<2> square(MPI_COMM_WORLD);
 	dealii::GridGenerator::hyper_cube(square, 0, 1);
@@ -93,14 +88,14 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_Periodicity_test) {
 
 
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 
 }
 
 
 BOOST_AUTO_TEST_CASE(DealIIFunctionality_UserFlags_test) {
 	// Check how the built-in periodic bc works in deal.II
-	cout << "DealIIFunctionality_UserFlags_test..." << endl;
+	pout << "DealIIFunctionality_UserFlags_test..." << endl;
 
 	Mesh<2> square(MPI_COMM_WORLD);
 	dealii::GridGenerator::hyper_cube(square, 0, 1);
@@ -117,7 +112,7 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_UserFlags_test) {
 	Mesh<2>::cell_iterator cell2 = square.begin();
 	BOOST_CHECK(cell2->face(0)->user_flag_set());
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

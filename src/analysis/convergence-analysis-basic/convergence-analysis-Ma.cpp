@@ -35,16 +35,18 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout << "Starting NATriuM convergence analysis (Ma-dependency)..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM convergence analysis (Ma-dependency)..." << endl;
 
 	// PARSE INPUT
-	cout
+	pout
 			<< "To use incompressible scheme, pass 1st cmd line parameter 1 (standard), 2 (trafo) or 3 (incompressible)."
 			<< endl;
-	cout
+	pout
 			<< "To specify initialization, pass 2nd cmd line parameter 1 (rho=1), 2 (iterative) or 3 (analytic)."
 			<< endl;
-	cout
+	pout
 			<< "To specify a CFL number other than 0.4, pass CFL number as 3rd cmd line parameter."
 			<< endl;
 	int BGK_SCHEME = 1;
@@ -52,30 +54,30 @@ int main(int argc, char* argv[]) {
 	double CFL = 0.4;
 	if (argc > 0) {
 		if (std::atoi(argv[1]) == 1) {
-			cout << "Standard BGK" << endl;
+			pout << "Standard BGK" << endl;
 			BGK_SCHEME = 1;
 		} else if (std::atoi(argv[1]) == 2) {
-			cout << "Transformed BGK" << endl;
+			pout << "Transformed BGK" << endl;
 			BGK_SCHEME = 2;
 		} else if (std::atoi(argv[1]) == 3) {
-			cout << "Incompressible scheme by He and Luo" << endl;
+			pout << "Incompressible scheme by He and Luo" << endl;
 			BGK_SCHEME = 3;
 		} else {
-			cout << "Did not understand collision scheme." << endl;
+			pout << "Did not understand collision scheme." << endl;
 		}
 	}
 	if (argc > 1) {
 		if (std::atoi(argv[2]) == 1) {
-			cout << "Init with rho = 1" << endl;
+			pout << "Init with rho = 1" << endl;
 			INIT_SCHEME = 1;
 		} else if (std::atoi(argv[2]) == 2) {
-			cout << "Init with iterative scheme" << endl;
+			pout << "Init with iterative scheme" << endl;
 			INIT_SCHEME = 2;
 		} else if (std::atoi(argv[2]) == 3) {
-			cout << "Init with analytic pressure" << endl;
+			pout << "Init with analytic pressure" << endl;
 			INIT_SCHEME = 3;
 		} else {
-			cout << "Did not understand init scheme." << endl;
+			pout << "Did not understand init scheme." << endl;
 		}
 	}
 	if (argc > 2) {
@@ -131,10 +133,10 @@ int main(int argc, char* argv[]) {
 
 	for (size_t orderOfFiniteElement = 1; orderOfFiniteElement < 5;
 			orderOfFiniteElement++) {
-		cout << "refinement Level = " << refinementLevel << endl;
+		pout << "refinement Level = " << refinementLevel << endl;
 
 		for (double Ma = 0.3; Ma > 5e-4; Ma /= 2) {
-			cout << "Ma = " << Ma << endl;
+			pout << "Ma = " << Ma << endl;
 
 			double scaling = sqrt(3) * 1 / Ma;
 
@@ -147,7 +149,7 @@ int main(int argc, char* argv[]) {
 					*tgVortex->getMesh(), orderOfFiniteElement,
 					D2Q9(scaling), CFL);
 
-			cout << "dt = " << dt << " ...";
+			pout << "dt = " << dt << " ...";
 
 			// time measurement variables
 			double time1, time2, timestart;
@@ -180,12 +182,12 @@ int main(int argc, char* argv[]) {
 			if (2 == BGK_SCHEME) {
 				configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 			} else if (3 == BGK_SCHEME) {
-				cout << "Not yet implemented" << endl;
+				pout << "Not yet implemented" << endl;
 				continue;
 			}
 			configuration->setTimeStepSize(dt);
 			if (dt > 0.1) {
-				cout << "Timestep too big." << endl;
+				pout << "Timestep too big." << endl;
 				continue;
 
 			}
@@ -205,7 +207,7 @@ int main(int argc, char* argv[]) {
 				time2 = clock() - time1 - timestart;
 				time1 /= CLOCKS_PER_SEC;
 				time2 /= CLOCKS_PER_SEC;
-				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+				pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << endl;
 				// put out runtime
 				timeFile << refinementLevel << "     " << orderOfFiniteElement
@@ -225,7 +227,7 @@ int main(int argc, char* argv[]) {
 						<< solver.getErrorStats()->getL2VelocityError() << " "
 						<< solver.getErrorStats()->getL2DensityError() << endl;
 			} catch (std::exception& e) {
-				cout << " Error" << endl;
+				pout << " Error" << endl;
 			}
 		} /* for Ma */
 
@@ -234,7 +236,7 @@ int main(int argc, char* argv[]) {
 
 	} /* for refinement level */
 
-	cout << "Convergence analysis (Ma) terminated." << endl;
+	pout << "Convergence analysis (Ma) terminated." << endl;
 
 	return 0;
 }

@@ -43,7 +43,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout
+	MPIGuard::getInstance();
+
+	pout
 			<< "Starting NATriuM convergence analysis with moving wall boundaries (various p) ..."
 			<< endl;
 
@@ -112,7 +114,7 @@ int main() {
 			<< endl;
 
 	for (double dt = 0.5; dt >= 0.00001; dt /= 2.) {
-		cout << "dt = " << dt << endl;
+		pout << "dt = " << dt << endl;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -149,7 +151,7 @@ int main() {
 			time2 = clock() - time1 - timestart;
 			time1 /= CLOCKS_PER_SEC;
 			time2 /= CLOCKS_PER_SEC;
-			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+			pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
 			// put out runtime
 			timeFile << orderOfFiniteElement << "         " << dt << "      "
@@ -165,12 +167,12 @@ int main() {
 					<< solver.getErrorStats()->getL2VelocityError() << " "
 					<< solver.getErrorStats()->getL2DensityError() << endl;
 		} catch (std::exception& e) {
-			cout << " Error: " << e.what() << endl;
+			pout << " Error: " << e.what() << endl;
 		}
 
 	} /* for time step*/
 
-	cout << "Convergence analysis of dt convergence terminated." << endl;
+	pout << "Convergence analysis of dt convergence terminated." << endl;
 
 	return 0;
 }

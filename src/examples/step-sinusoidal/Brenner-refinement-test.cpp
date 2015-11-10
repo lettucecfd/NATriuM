@@ -32,8 +32,10 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout << "Starting analysis of sinusoidal shear flow ...." << endl;
-	cout
+	MPIGuard::getInstance(argc, argv);
+
+	pout << "Starting analysis of sinusoidal shear flow ...." << endl;
+	pout
 			<< "Usage: compare-Brenner <configuration id> <Ma-Number> <Gamma> <Refinement level> <order FE> [<CFL>] [<Integrator ID>]"
 			<< endl <<
 			"0: FORWARD_EULER, 1:RK_THIRD_ORDER, 2: RK_CLASSIC_FOURTH_ORDER, 3:	BACKWARD_EULER, 4: IMPLICIT_MIDPOINT, 5: CRANK_NICOLSON,\n"
@@ -61,7 +63,7 @@ int main(int argc, char* argv[]) {
 	const double gamma = atof(argv[3]);
 	const size_t refinementLevel = atoi(argv[4]);
 	const size_t orderOfFiniteElement = atoi(argv[5]);
-	cout << "Ma = " << Ma << ", gamma = " << gamma << endl;
+	pout << "Ma = " << Ma << ", gamma = " << gamma << endl;
 	const double Re = 1;
 
 	// parameterization by Brenner:
@@ -89,13 +91,13 @@ int main(int argc, char* argv[]) {
 
 	std::stringstream fName;
 	fName << getenv("OUTPUT_DIR") << "/result.txt";
-	cout << fName.str().c_str() << endl;
+	pout << fName.str().c_str() << endl;
 	std::ofstream resultFile(fName.str().c_str());
 	resultFile
 			<< "#<configuration id> <Ma-Number> <Gamma> <Refinement level>  eps     alpha      Lx       h       a        b     u_mean    sigma  tau   Psi_s"
 			<< endl;
 
-	cout << "Starting configuration " << cfg << "..." << endl;
+	pout << "Starting configuration " << cfg << "..." << endl;
 
 	/// get geometry parameters
 	double Lx = configurations[cfg][0];
@@ -141,7 +143,7 @@ int main(int argc, char* argv[]) {
 		double new_dt = viscosity / (scaling * scaling / 3.0);
 		tau = viscosity / (new_dt * (scaling * scaling) / 3.0);
 		configuration->setTimeStepSize(new_dt);
-		cout << "Config " << cfg << ": tau too small ("
+		pout << "Config " << cfg << ": tau too small ("
 				<< viscosity / (dt * (scaling * scaling) / 3.0)
 				<< "). Automatic decrease of time step size (now CFL = "
 				<< cFL * new_dt / dt << " , tau = " << tau << ")." << endl;
@@ -187,8 +189,8 @@ int main(int argc, char* argv[]) {
 			<< "   " << Lx << "   " << h << "   " << a << "   " << b << "   "
 			<< qx / h << "   " << sigma << "   " << tau << "  " << Psi_s
 			<< endl;
-	cout << "Flow factor " << Psi_s << endl;
-	cout << "Analysis finished." << endl;
+	pout << "Flow factor " << Psi_s << endl;
+	pout << "Analysis finished." << endl;
 
 	return 0;
 }

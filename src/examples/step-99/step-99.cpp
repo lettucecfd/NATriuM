@@ -25,7 +25,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-99 ..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM step-99 ..." << endl;
 
 	size_t refinementLevel = 6;
 	size_t orderOfFiniteElement = 2;
@@ -61,7 +63,7 @@ int main() {
 
 	solver.run();
 
-	cout << "step-99 terminated." << endl;
+	pout << "step-99 terminated." << endl;
 
 	return 0;
 }

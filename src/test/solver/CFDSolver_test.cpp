@@ -19,15 +19,15 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(CFDSolver_test)
 
 BOOST_AUTO_TEST_CASE(CFDSolver_CreateTestFlow_test) {
-	cout << "CFDSolver_CreateTestFlow_test..." << endl;
+	pout << "CFDSolver_CreateTestFlow_test..." << endl;
 	double viscosity = 0.9;
 	size_t refinementLevel = 3;
 	SteadyPeriodicTestFlow2D testFlow(viscosity, refinementLevel);
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
-	cout << "CFDSolver_Construction_test..." << endl;
+	pout << "CFDSolver_Construction_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	//testConfiguration->setSwitchOutputOff(true);
 	testConfiguration->setCommandLineVerbosity(DETAILED);
@@ -35,11 +35,11 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
 	double viscosity = 0.9;
 	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 	CFDSolver<2> solver(testConfiguration, testFlow);
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
-	cout << "CFDSolver_SteadyStreaming_test..." << endl;
+	pout << "CFDSolver_SteadyStreaming_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	size_t refinementLevel = 3;
@@ -60,12 +60,12 @@ BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 		BOOST_CHECK(fabs(v.at(0)(i) - 0.1) < 1e-5);
 		BOOST_CHECK(fabs(v.at(1)(i) - 0.1) < 1e-5);
 	}
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 
 BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
-	cout << "CFDSolver_UnsteadyStreaming_test..." << endl;
+	pout << "CFDSolver_UnsteadyStreaming_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	size_t refinementLevel = 3;
@@ -88,11 +88,11 @@ BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 		BOOST_CHECK(fabs(v.at(0)(i) - 0.0) < 0.001);
 		BOOST_CHECK(fabs(v.at(1)(i) - 0.0) < 0.001);
 	}
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
-	cout << "CFDSolver_Restart_test..." << endl;
+	pout << "CFDSolver_Restart_test..." << endl;
 
 	// Solver configuration
 	string directory = "/tmp/test-restart";
@@ -123,11 +123,11 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
 	solver2.run();
 
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } // CFDSolver_Restart_test
 
 BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
-	cout << "CFDSolver_IterativeInit_test..." << endl;
+	pout << "CFDSolver_IterativeInit_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	testConfiguration->setInitializationScheme(ITERATIVE);
@@ -145,12 +145,12 @@ BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
 
 	CFDSolver<2> solver(testConfiguration, testFlow);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } // CFDSolver_IterativeInit_test
 
 
 BOOST_AUTO_TEST_CASE(CFDSolver_StopCondition_test) {
-	cout << "CFDSolver_StopCondition_test..." << endl;
+	pout << "CFDSolver_StopCondition_test..." << endl;
 
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(false);
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_StopCondition_test) {
 	BOOST_CHECK_LE(solver.getResiduumVelocity(), 5e-2);
 
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /* CFDSolver_StopCondition_test */
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -39,7 +39,7 @@ BGKPseudopotential::~BGKPseudopotential() {
 double BGKPseudopotential::getEquilibriumDistribution(size_t i,
 		const numeric_vector& u, const double rho) const {
 
-	cout << "Function not implemented, yet." << endl;
+	pout << "Function not implemented, yet." << endl;
 	assert(false);
 
 	assert(i < getStencil()->getQ());

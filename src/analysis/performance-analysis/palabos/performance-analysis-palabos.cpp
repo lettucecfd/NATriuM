@@ -59,6 +59,7 @@ void initializeLattice(MultiBlockLattice2D<T, DESCRIPTOR>& lattice)
 }
 
 int main(int argc, char* argv[]) {
+
 	string outputFolder, resultFile;
 	plint n_min, n_max, k_min, k_max;
 	T max_time, u_max, reynolds, physicalSize;

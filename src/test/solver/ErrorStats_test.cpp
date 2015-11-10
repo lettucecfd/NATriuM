@@ -23,7 +23,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(ErrorStats_test)
 
 BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
-	cout << "ErrorStats_ConstructionAndFunctionality_test..." << endl;
+	pout << "ErrorStats_ConstructionAndFunctionality_test..." << endl;
 
 	// make solver object
 	const boost::filesystem::path natriumTmpDir("/tmp/natrium_test");
@@ -70,11 +70,11 @@ BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
 			std::istreambuf_iterator<char>(), '\n');
 	BOOST_CHECK(linecount > 1);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(ErrorStats_FunctionsInSolverContext_test) {
-	cout << "ErrorStats_FunctionsInSolverContext_test..." << endl;
+	pout << "ErrorStats_FunctionsInSolverContext_test..." << endl;
 	// make solver object
 	const boost::filesystem::path natriumTmpDir("/tmp/natrium_test");
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_FunctionsInSolverContext_test) {
 			std::istreambuf_iterator<char>(), '\n');
 	BOOST_CHECK(linecount > 8);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

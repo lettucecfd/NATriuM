@@ -40,7 +40,9 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution1,
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-2..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM step-2..." << endl;
 
 	// set parameters, set up configuration object
 	size_t refinementLevel = 5;
@@ -104,7 +106,7 @@ int main() {
 	 size_t N = configuration->getNumberOfTimeSteps();
 	 for (size_t i = solver.getIterationStart(); i < N; i++) {
 	 if (i % 100 == 0) {
-	 cout << "Iteration " << i << endl;
+	 pout << "Iteration " << i << endl;
 	 }
 	 // Stream and collide
 	 solver.output(i);
@@ -140,7 +142,7 @@ int main() {
 
 	 */
 
-	cout << "NATriuM step-2 terminated." << endl;
+	pout << "NATriuM step-2 terminated." << endl;
 
 	return 0;
 }

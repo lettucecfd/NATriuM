@@ -47,7 +47,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout
+	MPIGuard::getInstance();
+
+	pout
 			<< "Starting NATriuM time integrator analysis with moving wall boundaries..."
 			<< endl;
 
@@ -217,7 +219,7 @@ int main() {
 				<< "#  dt  i      CFL         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   "
 						"||error_rho||_2	runtime" << endl;
 
-		cout << "Time integrator: " << timeintegrator.c_str() << endl;
+		pout << "Time integrator: " << timeintegrator.c_str() << endl;
 
 		for (double CFL = 0.2; CFL <= 102.4; CFL *= 2.) {
 
@@ -225,9 +227,9 @@ int main() {
 					*benchmark->getMesh(), orderOfFiniteElement,
 					D2Q9(scaling), CFL);
 
-			cout << "CFL = " << CFL << endl;
+			pout << "CFL = " << CFL << endl;
 			if (tmax/ dt < 2) {
-				cout << "time step too big." << endl;
+				pout << "time step too big." << endl;
 				continue;
 			}
 
@@ -273,7 +275,7 @@ int main() {
 						> solver.getErrorStats()->getMaxUAnalytic())
 					break;*/
 
-				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+				pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << " Max Error U_analytic: "
 						<< solver.getErrorStats()->getMaxVelocityError()
 						<< endl;
@@ -293,12 +295,12 @@ int main() {
 						<< solver.getErrorStats()->getL2DensityError() << " "
 						<< time2 << endl;
 			} catch (std::exception& e) {
-				cout << " Error: " << e.what() << endl;
+				pout << " Error: " << e.what() << endl;
 			}
 
 		} /* for time step*/
 	} /* for integrator */
-	cout << "Time integration analysis terminated." << endl;
+	pout << "Time integration analysis terminated." << endl;
 
 	return 0;
 }

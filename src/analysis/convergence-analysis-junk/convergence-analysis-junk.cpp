@@ -31,7 +31,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM convergence analysis (diffusive scaling)..."
+	MPIGuard::getInstance()
+
+	pout << "Starting NATriuM convergence analysis (diffusive scaling)..."
 			<< endl;
 
 	/////////////////////////////////////////////////
@@ -67,10 +69,10 @@ int main() {
 			<< endl;
 
 	for (size_t refinementLevel = 2; refinementLevel < 9; refinementLevel++) {
-		cout << "refinement Level = " << refinementLevel << endl;
+		pout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
-//			cout << "FE order = " << orderOfFiniteElement << endl;
+//			pout << "FE order = " << orderOfFiniteElement << endl;
 		// the scaling has to be orders of magnitude greater than the boundary velocity
 
 		// calculate distance between quadrature nodes
@@ -85,7 +87,7 @@ int main() {
 		//chose CFL = 0.4
 		double dt = 0.4 * dx / scaling;
 
-		cout << "dt = " << dt;
+		pout << "dt = " << dt;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -107,7 +109,7 @@ int main() {
 		configuration->setCommandLineVerbosity(0);
 		configuration->setTimeStepSize(dt);
 		if (dt > 0.1) {
-			cout << "Timestep too big." << endl;
+			pout << "Timestep too big." << endl;
 			continue;
 
 		}
@@ -122,8 +124,8 @@ int main() {
 		// get tau to test if the "constant value" is really constant
 		const double tau = BGK::calculateRelaxationParameter(
 				viscosity, dt, *solver.getStencil());
-		cout << "... scaling = " << scaling << " ... tau = " << tau << " ...";
-		//cout << "constant = " << log2(scaling*scaling) / log2(tau) << " ...";
+		pout << "... scaling = " << scaling << " ... tau = " << tau << " ...";
+		//pout << "constant = " << log2(scaling*scaling) / log2(tau) << " ...";
 		time1 = clock() - timestart;
 
 		try {
@@ -131,7 +133,7 @@ int main() {
 			time2 = clock() - time1 - timestart;
 			time1 /= CLOCKS_PER_SEC;
 			time2 /= CLOCKS_PER_SEC;
-			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+			pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
 			// put out runtime
 			timeFile << refinementLevel << "         " << dt << "      "
@@ -147,13 +149,13 @@ int main() {
 					<< solver.getErrorStats()->getL2VelocityError() << " "
 					<< solver.getErrorStats()->getL2DensityError() << endl;
 		} catch (std::exception& e) {
-			cout << " Error" << endl;
+			pout << " Error" << endl;
 		}
 		//}
 		//}
 //	}
 	}
-	cout << "Convergence analysis (diffusive scaling) terminated." << endl;
+	pout << "Convergence analysis (diffusive scaling) terminated." << endl;
 
 	return 0;
 }

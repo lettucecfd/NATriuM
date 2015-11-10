@@ -19,7 +19,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(PhysicalProperties_test)
 
 BOOST_AUTO_TEST_CASE(PhysicalProperties_MassFluxX_test) {
-	cout << "PhysicalProperties_MassFluxX_test..." << endl;
+	pout << "PhysicalProperties_MassFluxX_test..." << endl;
 
 	shared_ptr<ProblemDescription<2> > problem = make_shared<CouetteFlow2D> (1,1,2,1,40,true);
 	shared_ptr<SolverConfiguration> config  = make_shared<SolverConfiguration>();
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(PhysicalProperties_MassFluxX_test) {
 	double qx = PhysicalProperties<2>::meanVelocityX(ux, solver.getAdvectionOperator());
 	BOOST_CHECK_CLOSE(qx, 0.5, 1e-4);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 

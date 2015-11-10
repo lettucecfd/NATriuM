@@ -97,7 +97,7 @@ case 7:
 
 default:
 {
-	cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
+	pout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
 }
 	}
 #else
@@ -209,7 +209,7 @@ case 7:
 
 default:
 {
-    cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
+    pout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
 }
 	}
 
@@ -341,7 +341,7 @@ case 7:
 
 default:
 {
-    cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
+    pout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
 }
 	}
 
@@ -501,7 +501,7 @@ case 7:
 
 default:
 {
-    cout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
+    pout << "Something went wrong with the selection of the Deal.II linear solver" << endl;
 }
 	}
 

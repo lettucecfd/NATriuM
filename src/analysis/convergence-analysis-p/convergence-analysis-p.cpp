@@ -32,7 +32,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM convergence analysis (p)..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM convergence analysis (p)..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -72,10 +74,10 @@ int main() {
 	//for (double dt = 0.01; dt >= 0.0001; dt /= 2.) {
 	//	timeFile << "# dt = " << dt << endl;
 	//	orderFile << "# dt = " << dt << endl;
-	//	cout << "dt = " << dt << endl;
+	//	pout << "dt = " << dt << endl;
 	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 14;
 			orderOfFiniteElement += 2) {
-		cout << "order of FE = " << orderOfFiniteElement << endl;
+		pout << "order of FE = " << orderOfFiniteElement << endl;
 
 		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
 						TaylorGreenVortex2D>(viscosity, refinementLevel);
@@ -84,7 +86,7 @@ int main() {
 		double dt = 0.4 *  dx / scaling;
 		//double dt = 0.00001;
 
-		cout << "dt = " << dt << " ...";
+		pout << "dt = " << dt << " ...";
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -106,7 +108,7 @@ int main() {
 		configuration->setCommandLineVerbosity(WARNING);
 		configuration->setTimeStepSize(dt);
 		if (dt > 0.1) {
-			cout << "Timestep too big." << endl;
+			pout << "Timestep too big." << endl;
 			continue;
 
 		}
@@ -134,7 +136,7 @@ int main() {
 			time2 = clock() - time1 - timestart;
 			time1 /= CLOCKS_PER_SEC;
 			time2 /= CLOCKS_PER_SEC;
-			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+			pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
 			// put out runtime
 			timeFile << orderOfFiniteElement << "         " << dt << "      "
@@ -150,12 +152,12 @@ int main() {
 					<< solver.getErrorStats()->getL2VelocityError() << " "
 					<< solver.getErrorStats()->getL2DensityError() << endl;
 		} catch (std::exception& e) {
-			cout << " Error: " << e.what() << endl;
+			pout << " Error: " << e.what() << endl;
 		}
 
 	} /* for order FE */
 
-	cout << "Convergence analysis (p) terminated." << endl;
+	pout << "Convergence analysis (p) terminated." << endl;
 
 	return 0;
 }

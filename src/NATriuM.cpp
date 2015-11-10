@@ -77,23 +77,25 @@
 #include "natrium/solver/CFDSolver.h"
 
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/MPIGuard.h"
 
 using namespace natrium;
 //
 
 int main() {
 
+	/*
 	std::ifstream iFile("/home/kraemer/test.txt");
 
-	cout << "Starting NATriuM." << endl;
+	pout << "Starting NATriuM." << endl;
 
 	std::string a;
-	cout << "gimme: ";
+	pout << "gimme: ";
 	do {
 		iFile >> a;
 		//Mesh<2> tri;
 
-		std::cout << a << endl;
+		pout << a << endl;
 	} while (not iFile.eof());
 	vector<double> v(2, 0.0);
 	//D2Q9 stencil;
@@ -102,8 +104,9 @@ int main() {
 
 	//double rho = 1;
 
-	cout << "NATriuM terminated." << endl;
+	pout << "NATriuM terminated." << endl;
 
+*/
 	return 0;
 
 }

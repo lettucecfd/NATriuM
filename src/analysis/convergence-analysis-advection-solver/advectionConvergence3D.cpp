@@ -186,7 +186,10 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 // Main function
 // Test the dependence between dt,dx,p and the global discretization error
 int main() {
-	cout << "Starting convergence test for the 3D SEDG advection solver.." << endl;
+
+	MPIGuard::getInstance();
+
+	pout << "Starting convergence test for the 3D SEDG advection solver.." << endl;
 
 	// Make results dir
 	std::stringstream dirName;
@@ -209,15 +212,15 @@ int main() {
 
 	for (size_t refinementLevel = 1; refinementLevel < 2; refinementLevel++) {
 		for (size_t feOrder = 1; feOrder < 6; feOrder++) {
-			cout << "N = " << refinementLevel << ",     " << "p = " << feOrder
+			pout << "N = " << refinementLevel << ",     " << "p = " << feOrder
 					<< ", " << endl;
 			double deltaX = 1. / (pow(2, refinementLevel));
-			cout << "dx = " << deltaX << ",    " << endl;
+			pout << "dx = " << deltaX << ",    " << endl;
 			//for (int i = -1; i < 5; i++) {
 			//	double deltaT = deltaX * pow(0.5, i);
 			double deltaT = 0.4 * pow(0.5, refinementLevel)
 					/ ((feOrder+1) * (feOrder+1));
-			cout << "dt = " << deltaT << "; " << endl;
+			pout << "dt = " << deltaT << "; " << endl;
 			numberOfTimeSteps = 1.0 / deltaT;
 			if (numberOfTimeSteps <= 5) {
 				continue;
@@ -227,11 +230,11 @@ int main() {
 			out << result.c_str() << endl;
 			//}
 			//out << endl;
-			cout << "----------" << endl;
+			pout << "----------" << endl;
 		}
-		cout << endl;
+		pout << endl;
 		out << endl;
 	}
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* Main */

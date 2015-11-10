@@ -22,7 +22,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(D2Q9_test)
 
 BOOST_AUTO_TEST_CASE(D2Q9Construction_test) {
-	cout << "D2Q9Construction_test..." << endl;
+	pout << "D2Q9Construction_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -33,12 +33,12 @@ BOOST_AUTO_TEST_CASE(D2Q9Construction_test) {
 	BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSound(), sqrt(1./3.));
 	BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSoundSquare(), 1./3.);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9Construction_test
 
 
 BOOST_AUTO_TEST_CASE(D2Q9Static_test) {
-	cout << "D2Q9Static_test..." << endl;
+	pout << "D2Q9Static_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -46,11 +46,11 @@ BOOST_AUTO_TEST_CASE(D2Q9Static_test) {
 	BOOST_CHECK_EQUAL(D2Q9::D, size_t(2));
 	BOOST_CHECK_EQUAL(D2Q9::Q, size_t(9));
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9Static_test
 
 BOOST_AUTO_TEST_CASE(D2Q9Getter_test) {
-	cout << "D2Q9Getter_test..." << endl;
+	pout << "D2Q9Getter_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_test) {
 	BOOST_CHECK_EQUAL(gotDirection.at(8)(0), 1);
 	BOOST_CHECK_EQUAL(gotDirection.at(8)(1), -1);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9Getter_test
 
 
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_test) {
 const double SCALING = 0.5;
 
 BOOST_AUTO_TEST_CASE(D2Q9Construction_Scaled_test) {
-	cout << "D2Q9Construction_Scaled_test..." << endl;
+	pout << "D2Q9Construction_Scaled_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -160,12 +160,12 @@ BOOST_AUTO_TEST_CASE(D2Q9Construction_Scaled_test) {
 	BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSound(), SCALING*sqrt(1./3.));
 	BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSoundSquare(), SCALING*SCALING*1./3.);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9Construction_Scaled_test
 
 
 BOOST_AUTO_TEST_CASE(D2Q9Getter_Scaled_test) {
-	cout << "D2Q9Getter_Scaled_test..." << endl;
+	pout << "D2Q9Getter_Scaled_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_Scaled_test) {
 	BOOST_CHECK_CLOSE(gotDirection.at(8)(0), SCALING, 1e-10);
 	BOOST_CHECK_CLOSE(gotDirection.at(8)(1), -SCALING, 1e-10);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9Getter_Scaled_test
 
 

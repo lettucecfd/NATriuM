@@ -29,7 +29,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(BGKStandardTransformed_test)
 
 BOOST_AUTO_TEST_CASE(BGKStandardTransformedConstruction_test) {
-	cout << "BGKStandardTransformedConstruction_test..." << endl;
+	pout << "BGKStandardTransformedConstruction_test..." << endl;
 
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
@@ -38,11 +38,11 @@ BOOST_AUTO_TEST_CASE(BGKStandardTransformedConstruction_test) {
 	BOOST_CHECK_NO_THROW(
 			BGKStandardTransformed bgkCollision(tau, dt, make_shared<D2Q9>()));
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardTransformedConstruction_test
 
 BOOST_AUTO_TEST_CASE(BGKStandardTransformedSetTimeStep_test) {
-	cout << "BGKStandardTransformedSetTimeStep_test..." << endl;
+	pout << "BGKStandardTransformedSetTimeStep_test..." << endl;
 
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardTransformedSetTimeStep_test) {
 	BOOST_CHECK_CLOSE(dt_times_tau, bgkCollision.getRelaxationParameter() * 0.2,
 			1e-10);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardTransformedSetTimeStep_test
 
 ///////////////////////////////////
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardTransformedSetTimeStep_test) {
 ///////////////////////////////////
 
 BOOST_AUTO_TEST_CASE(BGKTransformedMoments_test) {
-	cout << "BGKTransformedMoments_test..." << endl;
+	pout << "BGKTransformedMoments_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -144,11 +144,11 @@ BOOST_AUTO_TEST_CASE(BGKTransformedMoments_test) {
 		}
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKTransformedMoments_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
-	cout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
+	pout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
@@ -175,11 +175,11 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 								macroscopicDensity), 1e-30);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelAllEqDistributions_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
-	cout << "D2Q9IncompressibleModelMoments_Scaled_test..." << endl;
+	pout << "D2Q9IncompressibleModelMoments_Scaled_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -261,11 +261,11 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
 		}
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelMoments_Scaled_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
-	cout << "D2Q9IncompressibleModelAllEqDistributions_Scaled_test..." << endl;
+	pout << "D2Q9IncompressibleModelAllEqDistributions_Scaled_test..." << endl;
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
 								macroscopicDensity), 1e-30);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelAllEqDistributions_Scaled_test
 
 ///////////////////////////////////
@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
 ///////////////////////////////////
 
 BOOST_AUTO_TEST_CASE(BGKStandardTransformedCollisionInvariants_test) {
-	cout << "BGKStandardTransformedCollisionInvariants_test..." << endl;
+	pout << "BGKStandardTransformedCollisionInvariants_test..." << endl;
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
@@ -342,12 +342,12 @@ BOOST_AUTO_TEST_CASE(BGKStandardTransformedCollisionInvariants_test) {
 		BOOST_CHECK_SMALL(feq.at(i) - feqAfterCollision.at(i), 1e-15);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardTransformedCollisionInvariants_test
 
 BOOST_AUTO_TEST_CASE(BGKStandardTransformed_collideAll_test) {
 
-	cout << "BGKStandardTransformed_collideAll_test..." << endl;
+	pout << "BGKStandardTransformed_collideAll_test..." << endl;
 
 	// create collision model// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
@@ -400,13 +400,13 @@ BOOST_AUTO_TEST_CASE(BGKStandardTransformed_collideAll_test) {
 			}
 			bgk.collideSinglePoint(localF);
 			for (size_t j = 0; j < dqmodel->getQ(); j++) {
-				//cout << i << " " << j << endl;
+				//pout << i << " " << j << endl;
 				BOOST_CHECK_CLOSE(localF.at(j), 0.0 + fAfterCollision.at(j)(i), 1e-10);
 			}
 		} /* if in local range */
 	} /* for all dofs */
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* BGKStandardTransformed_collideAll_test*/
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -16,7 +16,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(DistributionFunctions_test)
 
 BOOST_AUTO_TEST_CASE(DistributionFunctions_Construction_test) {
-	cout << "DistributionFunctions_Construction_test..." << endl;
+	pout << "DistributionFunctions_Construction_test..." << endl;
 
 	/// Empty constructor
 	BOOST_CHECK_NO_THROW(DistributionFunctions());
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(DistributionFunctions_Construction_test) {
 	}
 
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /* DistributionFunctions_Construction_test */
 
 

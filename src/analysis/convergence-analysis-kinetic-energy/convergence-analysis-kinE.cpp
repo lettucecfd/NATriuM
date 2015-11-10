@@ -30,7 +30,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting Taylor Green vortex to check the kinetic energy decay..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting Taylor Green vortex to check the kinetic energy decay..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -78,7 +80,7 @@ int main() {
 	configuration->setTimeStepSize(dt);
 	configuration->setConvergenceThreshold(1e-15);
 	if (dt > 0.1) {
-		cout << "Timestep too big." << endl;
+		pout << "Timestep too big." << endl;
 
 	}
 	configuration->setNumberOfTimeSteps(20.0 / dt);
@@ -90,7 +92,7 @@ int main() {
 	// get tau to test if the "constant value" is really constant
 	const double tau = BGK::calculateRelaxationParameter(viscosity,
 			dt, *solver.getStencil());
-	cout << "... scaling = " << scaling << " ... tau = " << tau << " ..." << endl;
+	pout << "... scaling = " << scaling << " ... tau = " << tau << " ..." << endl;
 	//time1 = clock() - timestart;
 
 	try {
@@ -98,13 +100,13 @@ int main() {
 		/*time2 = clock() - time1 - timestart;
 		time1 /= CLOCKS_PER_SEC;
 		time2 /= CLOCKS_PER_SEC;
-		cout << " OK ... Init: " << time1 << " sec; Run: " << time2 << " sec."
+		pout << " OK ... Init: " << time1 << " sec; Run: " << time2 << " sec."
 				<< endl;*/
 	} catch (std::exception& e) {
-		cout << " Error" << endl;
+		pout << " Error" << endl;
 	}
 
-cout << "Kinetic energy decay test terminated." << endl;
+pout << "Kinetic energy decay test terminated." << endl;
 
 return 0;
 }

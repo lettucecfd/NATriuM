@@ -43,18 +43,18 @@ public:
 };
 
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_Construction_test) {
-	cout << "MinLeeBoundary2D_Construction_test..." << endl;
+	pout << "MinLeeBoundary2D_Construction_test..." << endl;
 
 	BOOST_CHECK_NO_THROW(
 			MinLeeBoundary<2> mlBound1(0, make_shared<BoundaryTestDensity>(), make_shared<BoundaryTestVelocity>()));
 	numeric_vector U(2);
 	BOOST_CHECK_NO_THROW(MinLeeBoundary<2> mlBound2(0, U); );
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /*MinLeeBoundary2D_Construction_test */
 
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
-	cout << "MinLeeBoundary2D_SparsityPattern_test..." << endl;
+	pout << "MinLeeBoundary2D_SparsityPattern_test..." << endl;
 
 	// The incoming particle distributions at the boundary must be affected by the opposite outgoing ones
 	// This means that diagonal entries must exist for the boundary dofs
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 		/*		dealii::DoFTools::extract_dofs_with_support_on_boundary(*(advector.getDoFHandler()),
 		 dealii::ComponentMask(), isBoundary, boundaryIndicators);
 		 if (isBoundary.at(i)) {
-		 //cout << i << endl;
+		 //pout << i << endl;
 		 // note that block 0 refers to f_1 and so on
 		 BOOST_CHECK(
 		 advector.getBlockSparsityPattern().block(4, 6).exists(i,
@@ -134,11 +134,11 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 		 */
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /* MinLeeBoundary2D_SparsityPattern_test */
 
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConservation_test) {
-	cout << "MinLeeBoundary2D_MassConservation_test..." << endl;
+	pout << "MinLeeBoundary2D_MassConservation_test..." << endl;
 
 	// make problem and solver
 	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
@@ -163,11 +163,11 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConservation_test) {
 	mass /= solver.getNumberOfDoFs();
 	BOOST_CHECK_SMALL(mass - 1.0, 1e-10);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /*MinLeeBoundary2D_MassConservation_test */
 
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
-	cout << "MinLeeBoundary2D_BoundaryVelocity_test..." << endl;
+	pout << "MinLeeBoundary2D_BoundaryVelocity_test..." << endl;
 
 	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
 			1);
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 			dealii::ComponentMask(), isBoundary);	//, boundaryIndicators);
 
 	for (size_t i = 0; i < isBoundary.n_elements(); i++) {
-		cout << i << endl;
+		pout << i << endl;
 		BOOST_CHECK_CLOSE(
 				solver.getVelocity().at(0)(isBoundary.nth_index_in_set(i)),
 				0.01, 0.00001);
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /* MinLeeBoundary2D_BoundaryVelocity_test */
 
 BOOST_AUTO_TEST_SUITE_END() /*MinLeeBoundary2D_test*/

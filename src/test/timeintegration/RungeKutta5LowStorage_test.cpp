@@ -19,7 +19,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(RungeKutta5LowStorage_test)
 
 BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
-	cout << "RungeKutta5LowStorage_Convergence_test..." << endl;
+	pout << "RungeKutta5LowStorage_Convergence_test..." << endl;
 
 	// solve ODE F(f) = lambda*f
 	// with initial value f0 = 1
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 		BOOST_ASSERT(error < 1e-7);
 	}
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 }
 	BOOST_AUTO_TEST_SUITE_END()
 

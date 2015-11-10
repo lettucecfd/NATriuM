@@ -36,6 +36,7 @@
 #include "deal.II/numerics/vector_tools.h"
 #include "deal.II/lac/block_sparse_matrix.h"
 #include "deal.II/base/types.h"
+#include "deal.II/base/conditional_ostream.h"
 
 
 #ifdef WITH_TRILINOS
@@ -143,8 +144,15 @@ inline void REINIT_UNDISTRIBUTED_BLOCK_VECTOR(distributed_block_vector& bv,
 #endif
 } /* REINIT_UNDISTRIBUTED_BLOCK_VECTOR */
 
-}
-/* namespace natrium */
+
+/// Parallel cout and cerr
+/// Their activity is changed, when MPIGuard is initialized
+/// Defined in MPIGuard.cpp
+extern dealii::ConditionalOStream perr;
+extern dealii::ConditionalOStream pout;
+
+
+}/* namespace natrium */
 
 #endif/*BASICNAMES_H_*/
 

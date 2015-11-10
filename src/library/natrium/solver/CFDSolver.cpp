@@ -351,7 +351,7 @@ template<size_t dim>
 void CFDSolver<dim>::stream() {
 
 	// no streaming in direction 0; begin with 1
-	distributed_block_vector& f = m_f.getFStream();
+	distributed_block_vector& f = m_f_ghosted.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
 	const distributed_block_vector& systemVector =
@@ -360,7 +360,8 @@ void CFDSolver<dim>::stream() {
 	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time,
 			m_timeIntegrator->getTimeStepSize());
 	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
-
+	// copy vectors from ghosted vectors in order to do collisions
+	copyFromGhosted();
 }
 template void CFDSolver<2>::stream();
 template void CFDSolver<3>::stream();
@@ -822,11 +823,22 @@ template double CFDSolver<2>::getTau() const;
 template double CFDSolver<3>::getTau() const;
 
 template <size_t dim>
-void copyToGhosted() {
-	//TODO
+void CFDSolver<dim>::copyToGhosted() {
+	m_f_ghosted = m_f;
+	m_velocity_ghosted = m_velocity;
+	m_density_ghosted = m_density;
 }
 template void CFDSolver<2>::copyToGhosted();
 template void CFDSolver<3>::copyToGhosted();
+
+template <size_t dim>
+void CFDSolver<dim>::copyFromGhosted() {
+	m_f = m_f_ghosted;
+	m_velocity = m_velocity_ghosted;
+	m_density = m_density_ghosted;
+}
+template void CFDSolver<2>::copyFromGhosted();
+template void CFDSolver<3>::copyFromGhosted();
 
 } /* namespace natrium */
 

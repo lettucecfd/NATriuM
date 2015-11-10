@@ -27,7 +27,9 @@ using namespace natrium;
 // Main function
 int main(int argc, char** argv) {
 
-	cout << "Starting NATriuM step-couette3D..." << endl;
+	MPIGuard::getInstance(argc, argv);
+
+	pout << "Starting NATriuM step-couette3D..." << endl;
 
 	// set Reynolds and Mach number
 	const double Re = 550;
@@ -54,7 +56,7 @@ int main(int argc, char** argv) {
 					*couetteProblem->getMesh(), orderOfFiniteElement,
 					D3Q19(dqScaling), 0.4);
 
-	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
+	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
@@ -77,7 +79,7 @@ int main(int argc, char** argv) {
 
 	solver.run();
 
-	cout << "NATriuM step-2 terminated." << endl;
+	pout << "NATriuM step-2 terminated." << endl;
 
 	return 0;
 }

@@ -34,13 +34,11 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout << "Starting NATriuM convergence analysis (h + p)..." << endl;
-
 #ifdef WITH_TRILINOS
-	int a = 0;
-	char ** b;
-	static dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(a, b);
+	MPIGuard::getInstance();
 #endif
+
+	pout << "Starting NATriuM convergence analysis (h + p)..." << endl;
 
 	/////////////////////////////////////
 	// parse command line parameters ////
@@ -64,22 +62,22 @@ int main(int argc, char* argv[]) {
 		WALL = (wall == 1);
 		DIFFUSIVE = (diffusive == 1);
 	} catch (std::exception& e) {
-		cout
+		pout
 				<< "Please call this program with command line arguments( e.g. convergence-analysis-hp 0 0)."
 				<< endl;
-		cout
+		pout
 				<< "The first number (0 or 1) indicates whether you want to use wall boundaries (i.e. unsteady Couette flow benchmark)."
 				<< endl;
-		cout
+		pout
 				<< "The second number (0 or 1) indicates whether you want to use the diffusive scaling (i.e. dt ~ dx^2)."
 				<< endl;
-		cout
+		pout
 				<< "Optional arguments are (here with default values) -p_min=2 , -p_max=12, -N_min=2, -N_max=8, -max_time=3600"
 				<< endl;
-		cout
+		pout
 				<< "They define the max and min order of finite element, max and min refinement level and max real time per simulation (in sec)."
 				<< endl;
-		cout << e.what() << endl;
+		pout << e.what() << endl;
 		return -1;
 	}
 
@@ -105,28 +103,28 @@ int main(int argc, char* argv[]) {
 			} else if ("-max_time" == elems[0]) {
 				MAX_TIME = atof(elems[1].c_str());
 			} else {
-				cout << "---------------------------" << endl;
-				cout << "No option " << elems[0] << endl;
-				cout << "---------------------------" << endl;
+				pout << "---------------------------" << endl;
+				pout << "No option " << elems[0] << endl;
+				pout << "---------------------------" << endl;
 				throw("Not all cmd line arguments valid.");
 			}
 		} catch (std::exception& e) {
-			cout
+			pout
 					<< "Please call this program with command line arguments( e.g. convergence-analysis-hp 0 0)."
 					<< endl;
-			cout
+			pout
 					<< "The first number (0 or 1) indicates whether you want to use wall boundaries (i.e. unsteady Couette flow benchmark)."
 					<< endl;
-			cout
+			pout
 					<< "The second number (0 or 1) indicates whether you want to use the diffusive scaling (i.e. dt ~ dx^2)."
 					<< endl;
-			cout
+			pout
 					<< "Optional arguments are (here with default values) -p_min=2 , -p_max=12, -N_min=2, -N_max=8, -max_time=3600"
 					<< endl;
-			cout
+			pout
 					<< "They define the max and min order of finite element, max and min refinement level and max real time per simulation (in sec)."
 					<< endl;
-			cout << e.what() << endl;
+			pout << e.what() << endl;
 			return -1;
 		}
 	}
@@ -207,7 +205,7 @@ int main(int argc, char* argv[]) {
 	////////////////////////////
 	// convergence analysis ////
 	////////////////////////////
-	cout << "Starting benchmarking for p in [" << P_MIN << ", " << P_MAX
+	pout << "Starting benchmarking for p in [" << P_MIN << ", " << P_MAX
 			<< "]; N in [" << N_MIN << ", " << N_MAX << "]; max_time = "
 			<< MAX_TIME << "..." << endl;
 	for (size_t refinementLevel = N_MIN; refinementLevel <= N_MAX;
@@ -215,7 +213,7 @@ int main(int argc, char* argv[]) {
 
 		for (size_t orderOfFiniteElement = P_MIN; orderOfFiniteElement <= P_MAX;
 				orderOfFiniteElement += 1) {
-			cout << "N = " << refinementLevel << "; p = "
+			pout << "N = " << refinementLevel << "; p = "
 					<< orderOfFiniteElement << " ... " << endl;
 
 			// make benchmark problem
@@ -285,7 +283,7 @@ int main(int argc, char* argv[]) {
 				time2 = clock() - time1 - timestart;
 				time1 /= CLOCKS_PER_SEC;
 				time2 /= CLOCKS_PER_SEC;
-				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+				pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << endl;
 
 				// put out errors and times
@@ -305,14 +303,14 @@ int main(int argc, char* argv[]) {
 						<< time2 / configuration->getNumberOfTimeSteps()
 						<< endl;
 			} catch (std::exception& e) {
-				cout << " Error: " << e.what() << endl;
+				pout << " Error: " << e.what() << endl;
 			}
 
 		} /* for order FE */
 		orderFile << endl;
 	} /* for refinement level */
 
-	cout << "Convergence analysis terminated." << endl;
+	pout << "Convergence analysis terminated." << endl;
 
 	return 0;
 }

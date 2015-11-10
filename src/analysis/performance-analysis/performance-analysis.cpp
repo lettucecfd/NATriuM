@@ -26,7 +26,9 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout << "Starting NATriuM performance analysis..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM performance analysis..." << endl;
 
 	/////////////////////////////////////
 	// parse command line parameters ////
@@ -60,19 +62,19 @@ int main(int argc, char* argv[]) {
 			} else if ("-N_max" == elems[0]) {
 				N_MAX = atoi(elems[1].c_str());
 			} else {
-				cout << "---------------------------" << endl;
-				cout << "No option " << elems[0] << endl;
-				cout << "---------------------------" << endl;
+				pout << "---------------------------" << endl;
+				pout << "No option " << elems[0] << endl;
+				pout << "---------------------------" << endl;
 				throw("Not all cmd line arguments valid.");
 			}
 		} catch (std::exception& e) {
-			cout
+			pout
 					<< "Optional arguments are (here with default values) -p_min=2 , -p_max=12, -N_min=2, -N_max=8"
 					<< endl;
-			cout
+			pout
 					<< "They define the max and min order of finite element + max and min refinement level."
 					<< endl;
-			cout << e.what() << endl;
+			pout << e.what() << endl;
 			return -1;
 		}
 	}
@@ -117,14 +119,14 @@ int main(int argc, char* argv[]) {
 	////////////////////////////////////
 	// performance analysis natrium ////
 	////////////////////////////////////
-	cout << "Starting Benchmarking for p in [" << P_MIN << ", " << P_MAX
+	pout << "Starting Benchmarking for p in [" << P_MIN << ", " << P_MAX
 			<< "]; N in [" << N_MIN << ", " << N_MAX << "]" << endl;
 	for (size_t orderOfFiniteElement = P_MIN; orderOfFiniteElement <= P_MAX;
 			orderOfFiniteElement += 1) {
 
 		for (size_t refinementLevel = N_MIN; refinementLevel <= N_MAX;
 				refinementLevel++) {
-			cout << "N = " << refinementLevel << "; p = "
+			pout << "N = " << refinementLevel << "; p = "
 					<< orderOfFiniteElement << " ... " << endl;
 			// make benchmark problem
 
@@ -167,7 +169,7 @@ int main(int argc, char* argv[]) {
 				time2 = clock() - time1 - timestart;
 				time1 /= CLOCKS_PER_SEC;
 				time2 /= CLOCKS_PER_SEC;
-				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+				pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << endl;
 
 				// put out errors and times
@@ -178,13 +180,13 @@ int main(int argc, char* argv[]) {
 						<< time2 / configuration->getNumberOfTimeSteps()
 						<< endl;
 			} catch (std::exception& e) {
-				cout << " Error: " << e.what() << endl;
+				pout << " Error: " << e.what() << endl;
 			}
 
 		} /* for order FE */
 		outfile_ntrm << endl;
 	} /* for refinement level */
 
-	cout << "Performance analysis terminated." << endl;
+	pout << "Performance analysis terminated." << endl;
 	return 0;
 }

@@ -24,7 +24,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(BGKStandard_test)
 
 BOOST_AUTO_TEST_CASE(BGKStandardConstruction_test) {
-	cout << "BGKStandardConstruction_test..." << endl;
+	pout << "BGKStandardConstruction_test..." << endl;
 
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
@@ -32,12 +32,12 @@ BOOST_AUTO_TEST_CASE(BGKStandardConstruction_test) {
 
 	BOOST_CHECK_NO_THROW(BGKStandard bgkCollision(tau, dt, make_shared<D2Q9>()));
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardConstruction_test
 
 
 BOOST_AUTO_TEST_CASE(BGKStandardSetTimeStep_test) {
-	cout << "BGKStandardSetTimeStep_test..." << endl;
+	pout << "BGKStandardSetTimeStep_test..." << endl;
 
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardSetTimeStep_test) {
 	BOOST_CHECK_CLOSE(dt_times_tau, bgkCollision.getRelaxationParameter() * 0.2,
 			1e-10);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardSetTimeStep_test
 
 
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardSetTimeStep_test) {
 ///////////////////////////////////
 
 BOOST_AUTO_TEST_CASE(BGKMoments_test) {
-	cout << "BGKMoments_test..." << endl;
+	pout << "BGKMoments_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -141,11 +141,11 @@ BOOST_AUTO_TEST_CASE(BGKMoments_test) {
 		}
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKMoments_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
-	cout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
+	pout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
@@ -173,11 +173,11 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 				1e-30);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelAllEqDistributions_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
-	cout << "D2Q9IncompressibleModelMoments_Scaled_test..." << endl;
+	pout << "D2Q9IncompressibleModelMoments_Scaled_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -258,11 +258,11 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
 		}
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelMoments_Scaled_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
-	cout << "D2Q9IncompressibleModelAllEqDistributions_Scaled_test..." << endl;
+	pout << "D2Q9IncompressibleModelAllEqDistributions_Scaled_test..." << endl;
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
 				1e-30);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelAllEqDistributions_Scaled_test
 
 
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
 
 
 BOOST_AUTO_TEST_CASE(BGKStandardCollisionInvariants_test) {
-	cout << "BGKStandardCollisionInvariants_test..." << endl;
+	pout << "BGKStandardCollisionInvariants_test..." << endl;
 
 	// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
@@ -345,12 +345,12 @@ BOOST_AUTO_TEST_CASE(BGKStandardCollisionInvariants_test) {
 		BOOST_CHECK_SMALL(feq.at(i) - feqAfterCollision.at(i), 1e-15);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardCollisionInvariants_test
 
 BOOST_AUTO_TEST_CASE(BGKStandard_collideAll_test) {
 
-	cout << "BGKStandardTransformed_collideAll_test..." << endl;
+	pout << "BGKStandardTransformed_collideAll_test..." << endl;
 
 	// create collision model// create collision model
 	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
@@ -403,13 +403,13 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAll_test) {
 			}
 			bgk.collideSinglePoint(localF);
 			for (size_t j = 0; j < dqmodel->getQ(); j++) {
-				//cout << i << " " << j << endl;
+				//pout << i << " " << j << endl;
 				BOOST_CHECK_CLOSE(localF.at(j), 0.0 + fAfterCollision.at(j)(i), 1e-10);
 			}
 		} /* if in local range */
 	} /* for all dofs */
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* BGKStandard_collideAll_test*/
 
 BOOST_AUTO_TEST_SUITE_END()

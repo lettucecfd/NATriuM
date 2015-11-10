@@ -104,8 +104,11 @@ using namespace natrium;
 
 //! [Main function]
 int main() {
+	// TODO Documentation
+	MPIGuard::getInstance();
 
-	cout << "Starting NATriuM step-0..." << endl;
+	// TODO Documentation
+	pout << "Starting NATriuM step-0..." << endl;
 
 	// set Reynolds and Mach number
 	const double Re = 1000;
@@ -153,7 +156,7 @@ int main() {
 	CFDSolver<2> solver(configuration, ldCavityProblem);
 	solver.run();
 
-	cout << "NATriuM step-0 terminated." << endl;
+	pout << "NATriuM step-0 terminated." << endl;
 
 	return 0;
 }

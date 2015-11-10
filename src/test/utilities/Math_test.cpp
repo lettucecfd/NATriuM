@@ -16,7 +16,7 @@ namespace natrium{
 BOOST_AUTO_TEST_SUITE(Math_test)
 
 BOOST_AUTO_TEST_CASE(Math_VelocityNorm_test){
-	cout << "Math_VelocityNorm_test..." << endl;
+	pout << "Math_VelocityNorm_test..." << endl;
 
 	// 1d case -> failure
 	vector<distributed_vector> v;
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(Math_VelocityNorm_test){
 	//BOOST_CHECK_THROW(Math::maxVelocityNorm(v), std::exception);
 	//BOOST_CHECK_THROW(Math::velocity2Norm(v), std::exception);
 
-	cout << "done" <<endl;
+	pout << "done" <<endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

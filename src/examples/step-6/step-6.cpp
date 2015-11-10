@@ -24,7 +24,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-6..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM step-6..." << endl;
 
 	// set Reynolds and Mach number
 	//steady:
@@ -45,7 +47,7 @@ int main() {
 	// set small time step size
 	const double timeStepSize = 0.001;
 
-	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
+	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
@@ -72,7 +74,7 @@ int main() {
 
 	solver.run();
 
-	cout << "NATriuM step-6 terminated." << endl;
+	pout << "NATriuM step-6 terminated." << endl;
 
 	return 0;
 }

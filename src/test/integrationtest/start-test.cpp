@@ -11,6 +11,7 @@
 
 #include "IntegrationTestCases.h"
 
+#include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/HtmlTrace.h"
 #include "natrium/utilities/MPIGuard.h"
 
@@ -84,9 +85,9 @@ void print_line_html(IntegrationTestCases::TestResult& result,
 // Main function
 int main(int argc, char **argv) {
 
-	cout << "Start integration tests. This will take a few minutes..." << endl;
-
 	MPIGuard::getInstance(argc, argv);
+
+	pout << "Start integration tests. This will take a few minutes..." << endl;
 
 	bool errors = false;
 	HtmlTrace htmlTrace;
@@ -96,9 +97,9 @@ int main(int argc, char **argv) {
 			IntegrationTestCases::ConvergenceTestPeriodic();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -108,9 +109,9 @@ int main(int argc, char **argv) {
 	result = IntegrationTestCases::ConvergenceTestImplicitLBM();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -120,9 +121,9 @@ int main(int argc, char **argv) {
 	result = IntegrationTestCases::ConvergenceTestMovingWall();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -132,9 +133,9 @@ int main(int argc, char **argv) {
 	result = IntegrationTestCases::ConvergenceTestExponentialLBM();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -144,9 +145,9 @@ int main(int argc, char **argv) {
 	result = IntegrationTestCases::ConvergenceTest3D();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -156,9 +157,9 @@ int main(int argc, char **argv) {
 	result = IntegrationTestCases::ConvergencePureLinearAdvectionSmooth();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -168,9 +169,9 @@ int main(int argc, char **argv) {
 	result = IntegrationTestCases::ConvergencePureLinearAdvectionNonsmooth();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -178,10 +179,10 @@ int main(int argc, char **argv) {
 
 	// FINALIZE
 	if (errors) {
-		cout << "Done. Errors occured in tests. See natrium.html for details."
+		pout << "Done. Errors occured in tests. See natrium.html for details."
 				<< endl;
 	} else {
-		cout << "All tests passed. No errors detected." << endl;
+		pout << "All tests passed. No errors detected." << endl;
 	}
 	return 0;
 }

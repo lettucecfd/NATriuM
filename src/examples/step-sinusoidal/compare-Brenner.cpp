@@ -32,8 +32,10 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout << "Starting analysis of sinusoidal shear flow ...." << endl;
-	cout << "Usage: compare-Brenner <Ma-Number> <Gamma> <Refinement level>" << endl;
+	MPIGuard::getInstance(argc, argv);
+
+	pout << "Starting analysis of sinusoidal shear flow ...." << endl;
+	pout << "Usage: compare-Brenner <Ma-Number> <Gamma> <Refinement level>" << endl;
 
 	double cFL = 10;
 	bool automatic_decrease = true;
@@ -46,7 +48,7 @@ int main(int argc, char* argv[]) {
 	const double Ma = atof (argv[1]);
 	const double gamma = atof (argv[2]);
 	const double refinementLevel = atoi (argv[3]);
-	cout << "Ma = " << Ma << ", gamma = " << gamma << endl;
+	pout << "Ma = " << Ma << ", gamma = " << gamma << endl;
 	const double Re = 1;
 	const double orderOfFiniteElement = 2 ;
 
@@ -75,7 +77,7 @@ int main(int argc, char* argv[]) {
 
 	std::stringstream fName;
 	fName << getenv("NATRIUM_HOME") << "/Brenner/Ma-" << std::fixed << std::setprecision(5) << Ma << "-ref-" << std::fixed << std::setprecision(0) << refinementLevel << "/result.txt";
-	cout << fName.str().c_str();
+	pout << fName.str().c_str();
 	std::ofstream resultFile(fName.str().c_str());
 	resultFile
 			<< "#gamma   no    eps     alpha      Lx       h       a        b     u_mean    sigma  tau   Psi_s"
@@ -86,7 +88,7 @@ int main(int argc, char* argv[]) {
 		// Gamma falsifies the velocity field (flow factor drops)
 		//for (double gamma = 0.005; gamma <= 1; gamma += 0.15) {
 			//size_t i = 0;
-			cout << "Starting configuration " << i << "..." << endl;
+			pout << "Starting configuration " << i << "..." << endl;
 
 			/// get geometry parameters
 			double Lx = configurations[i][0];
@@ -132,7 +134,7 @@ int main(int argc, char* argv[]) {
 				double new_dt  = viscosity/(scaling*scaling/3.0);
 				tau = viscosity/(new_dt*(scaling*scaling)/3.0);
 				configuration->setTimeStepSize(new_dt);
-				cout << "Config " << i <<": tau too small. Automatic decrease of time step size (now CFL = " << cFL * new_dt / dt << " , tau = " << tau << ")." << endl;
+				pout << "Config " << i <<": tau too small. Automatic decrease of time step size (now CFL = " << cFL * new_dt / dt << " , tau = " << tau << ")." << endl;
 
 			}
 
@@ -163,10 +165,10 @@ int main(int argc, char* argv[]) {
 			resultFile << gamma << "  " << i << "  " << epsilon << "   "
 					<< alpha << "   " << Lx << "   " << h << "   " << a << "   "
 					<< b << "   " << qx/h << "   " << sigma << "   " << tau << "  " << Psi_s  << endl;
-			cout << "Flow factor " << Psi_s << endl;
+			pout << "Flow factor " << Psi_s << endl;
 		//}
 	}
-	cout << "Analysis finished." << endl;
+	pout << "Analysis finished." << endl;
 
 	return 0;
 }

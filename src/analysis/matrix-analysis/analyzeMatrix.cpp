@@ -23,6 +23,8 @@ using namespace natrium;
 
 int main() {
 
+	MPIGuard::getInstance();
+
 	// ----------------------------------------------------------------------------------------------------
 
 	// set Reynolds and Mach number
@@ -36,7 +38,7 @@ int main() {
 	// ----------------------------------------------------------------------------------------------------
 
 	//PERIODIC BOUNDARIES
-	cout
+	pout
 			<< "Only periodic Boundaries: Calculating spectrum + pseudospectrum of streaming matrix..."
 			<< endl;
 	// set Problem so that the right Re and Ma are achieved
@@ -65,24 +67,24 @@ int main() {
 				viscosity, refinementLevel);
 		shared_ptr<Benchmark<2> > tgBenchmark = tgv;
 		configuration->setTimeStepSize(CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),orderOfFiniteElement,D2Q9(dqScaling),0.4));
-		cout << "dt = " << configuration->getTimeStepSize() << endl;
+		pout << "dt = " << configuration->getTimeStepSize() << endl;
 		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
 				configuration, tgBenchmark);
 
 		// analyze eigenvalues
 		matrixAnalysis<2> analyzer(solver);
 		vector<std::complex<double> > eigenvalues;
-		cout << "abs max: " << configuration->getTimeStepSize() * analyzer.computeSpectrum(solver->getAdvectionOperator()->getSystemMatrix(),eigenvalues, 0.0) << endl;
+		pout << "abs max: " << configuration->getTimeStepSize() * analyzer.computeSpectrum(solver->getAdvectionOperator()->getSystemMatrix(),eigenvalues, 0.0) << endl;
 		//analyzer.writeSpectrum();
 		//analyzer.writePseudospectrum();
 
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 
 	// ----------------------------------------------------------------------------------------------------
 /*
 	//WALL BOUNDARIES
-	cout
+	pout
 			<< "With wall Boundaries: Calculating spectrum + pseudospectrum of streaming matrix..."
 			<< endl;
 
@@ -120,7 +122,7 @@ int main() {
 						* CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
 								*couetteFlow->getMesh(),
 								orderOfFiniteElement));
-		cout << "dt = " << configuration->getTimeStepSize() << endl;
+		pout << "dt = " << configuration->getTimeStepSize() << endl;
 		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
 				configuration, couetteProblem);
 
@@ -130,7 +132,7 @@ int main() {
 		analyzer.writePseudospectrum();
 
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 */
 	// ----------------------------------------------------------------------------------------------------
 

@@ -283,13 +283,13 @@ void SolverConfiguration::prepareOutputDirectory() {
 			and (not boost::filesystem::is_empty(outputDir))) {
 		if (isUserInteraction()) {
 			// Request user input
-			cout
+			pout
 					<< "'Restart at last checkpoint' is disabled, but Output directory is not empty. The simulation might overwrite old data. Do you really want to continue?"
 					<< endl;
 			size_t yes1_or_no2 = 0; // = 1 for yes; = 2 for no
 			string input = "";
 			for (size_t i = 0; true; i++) {
-				cout << "Please enter 'y' or 'n':" << endl;
+				pout << "Please enter 'y' or 'n':" << endl;
 				getline(std::cin, input);
 				// check for yes
 				if ("y" == input) {
@@ -310,7 +310,7 @@ void SolverConfiguration::prepareOutputDirectory() {
 				if (elapsed_secs > 30) {
 					break;
 				}
-				cout << "Your input was not understood. ";
+				pout << "Your input was not understood. ";
 			}
 			// no sound input
 			if (0 == yes1_or_no2) {

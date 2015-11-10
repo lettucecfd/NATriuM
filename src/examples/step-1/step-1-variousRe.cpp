@@ -26,7 +26,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-1 ..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM step-1 ..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -60,7 +62,7 @@ int main() {
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*tgVortex->getMesh(), orderOfFiniteElement,
 					D2Q9IncompressibleModel(scaling), 0.4);
-			cout << "p = " << orderOfFiniteElement << "; dt = " << dt << " ..."
+			pout << "p = " << orderOfFiniteElement << "; dt = " << dt << " ..."
 					<< endl;
 
 			// time measurement variables
@@ -97,7 +99,7 @@ int main() {
 			}
 
 			if (dt > 0.1) {
-				cout << "Timestep too big." << endl;
+				pout << "Timestep too big." << endl;
 			}
 
 			configuration->setNumberOfTimeSteps(2.0 / dt);
@@ -111,16 +113,16 @@ int main() {
 				time2 = clock() - time1 - timestart;
 				time1 /= CLOCKS_PER_SEC;
 				time2 /= CLOCKS_PER_SEC;
-				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+				pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << endl;
 			} catch (std::exception& e) {
-				cout << " Error" << endl;
+				pout << " Error" << endl;
 			}
 
 			LOG(BASIC) << "NATriuM run for Re " << Re << " complete." << endl;
 		}
 	}
-	cout << "step-1-variousRe terminated." << endl;
+	pout << "step-1-variousRe terminated." << endl;
 
 	return 0;
 }

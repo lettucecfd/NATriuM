@@ -28,7 +28,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-  cout << "Starting NATriuM step-16 ..." << endl;
+  MPIGuard::getInstance();
+
+  pout << "Starting NATriuM step-16 ..." << endl;
 
   /////////////////////////////////////////////////
   // set parameters, set up configuration object
@@ -57,7 +59,7 @@ int main() {
 					*taylorGreen->getMesh(), orderOfFiniteElement,
 					D3Q19(scaling), 0.4);
 
-    cout << "dt = " << dt << " ...";
+    pout << "dt = " << dt << " ...";
 
     // time measurement variables
     double time1, time2, timestart;
@@ -82,7 +84,7 @@ int main() {
     //configuration->setCommandLineVerbosity(BASIC);
     configuration->setTimeStepSize(dt);
     if (dt > 0.1) {
-      cout << "Timestep too big." << endl;
+      pout << "Timestep too big." << endl;
     }
 
     //configuration->setNumberOfTimeSteps(1.0 / dt);
@@ -96,12 +98,12 @@ int main() {
       time2 = clock() - time1 - timestart;
       time1 /= CLOCKS_PER_SEC;
       time2 /= CLOCKS_PER_SEC;
-      cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+      pout << " OK ... Init: " << time1 << " sec; Run: " << time2
           << " sec." << endl;
 
 
 
-  cout << "step-1 terminated." << endl;
+  pout << "step-1 terminated." << endl;
 
   return 0;
 

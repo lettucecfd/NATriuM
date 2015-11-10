@@ -22,13 +22,13 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(CFDSolverConfiguration_test)
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_Construction_test) {
-	cout << "CFDSolverConfiguration_Construction_test..." << endl;
+	pout << "CFDSolverConfiguration_Construction_test..." << endl;
 	SolverConfiguration config;
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CreateParameterFiles_test) {
-	cout << "CFDSolverConfiguration_CreateXMLFile_test..." << endl;
+	pout << "CFDSolverConfiguration_CreateXMLFile_test..." << endl;
 	SolverConfiguration config;
 
 	std::stringstream name1;
@@ -47,11 +47,11 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CreateParameterFiles_test) {
 	config.print_parameters(paraOutFile3,
 			dealii::ParameterHandler::Description);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
-	cout << "CFDSolverConfiguration_CheckSet_test..." << endl;
+	pout << "CFDSolverConfiguration_CheckSet_test..." << endl;
 	SolverConfiguration config;
 
 	// Set parameter
@@ -80,28 +80,28 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 
 
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /*CFDSolverConfiguration_CheckSet_test*/
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_ReadFromFile_test) {
-	cout << "CFDSolverConfiguration_ReadFromFile_test..." << endl;
+	pout << "CFDSolverConfiguration_ReadFromFile_test..." << endl;
 	SolverConfiguration config;
 
 	try {
 		config.readFromXMLFile("../src/preprocessing/NATriuM_parameters.xml");
 	} catch (std::exception& e) {
-		cout << e.what()
+		pout << e.what()
 				<< "  Error! ARE YOU SURE THAT src/preprocessing/NATriuM_parameters.xml is up to date. Try to replace it by results/NATriuM_parameters.xml";
 	}
 	BOOST_CHECK_THROW(
 			config.readFromXMLFile("../src/test/solver/invalid_parameters.xml"),
 			ConfigurationException);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /*CFDSolverConfiguration_ReadFromFile_test*/
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_PrepareOutputDirectory_test) {
-	cout << "CFDSolverConfiguration_PrepareOutputDirectory_test..." << endl;
+	pout << "CFDSolverConfiguration_PrepareOutputDirectory_test..." << endl;
 	SolverConfiguration config;
 
 	const boost::filesystem::path natriumTmpDir("/tmp/natrium");
@@ -160,11 +160,11 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_PrepareOutputDirectory_test) {
 	//clean up
 	boost::filesystem::remove_all(natriumTmpDir);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /*CFDSolverConfiguration_PrepareOutputDirectory_test*/
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_OutputFlags_test) {
-	cout << "CFDSolverConfiguration_OutputFlags_test..." << endl;
+	pout << "CFDSolverConfiguration_OutputFlags_test..." << endl;
 	SolverConfiguration cfg;
 
 	// Check implications
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_OutputFlags_test) {
 	 BOOST_CHECK((out_CommandLineError & cfg.getOutputFlags()) != 0);
 	 BOOST_CHECK((out_CommandLineFull & cfg.getOutputFlags()) != 0);
 	 */
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

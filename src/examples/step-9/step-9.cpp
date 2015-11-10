@@ -27,7 +27,9 @@ using namespace natrium;
 // Main function
 int main(int argc, char** argv) {
 
-	cout << "Starting NATriuM step-9..." << endl;
+	MPIGuard::getInstance(argc, argv);
+
+	pout << "Starting NATriuM step-9..." << endl;
 #ifdef WITH_TRILINOS
 	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
 #endif
@@ -53,7 +55,7 @@ int main(int argc, char** argv) {
 			orderOfFiniteElement, stencil, cfl);
 
 
-	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
+	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
@@ -81,7 +83,7 @@ int main(int argc, char** argv) {
 
 
 
-	cout << "NATriuM step-9 terminated." << endl;
+	pout << "NATriuM step-9 terminated." << endl;
 
 	return 0;
 }

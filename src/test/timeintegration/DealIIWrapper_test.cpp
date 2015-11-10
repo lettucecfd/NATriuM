@@ -20,11 +20,11 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(DealIIWrapper_test)
 
 BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
-	cout << "DealIIWrapper_Convergence_test..." << endl;
+	pout << "DealIIWrapper_Convergence_test..." << endl;
 
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
-		cout << "  - Integrator " << n << "...";
+		pout << "  - Integrator " << n << "...";
 		// solve ODE F(f) = lambda*f
 		// with initial value f0 = 1
 		// analytic solution: f(x) = e^(lambda*x)
@@ -63,17 +63,17 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		}
 		BOOST_CHECK_CLOSE((double ) f(0), exp(lambda * t), 1);
 
-		cout << " " << n_steps << " steps. done." << endl;
+		pout << " " << n_steps << " steps. done." << endl;
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 }
 
 BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
-	cout << "DealIIWrapper_MultiBlock_test..." << endl;
+	pout << "DealIIWrapper_MultiBlock_test..." << endl;
 
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
-		cout << "  - Integrator " << n << "...";
+		pout << "  - Integrator " << n << "...";
 
 		// solve ODE F(f) = A*f
 		// with initial value f0 = [ 1 2 ]
@@ -155,10 +155,10 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 
 		A.clear();
 
-		cout << " " << n_steps << " steps. done." << endl;
+		pout << " " << n_steps << " steps. done." << endl;
 
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* DealIIWrapper_MultiBlock_test */
 
 BOOST_AUTO_TEST_SUITE_END()

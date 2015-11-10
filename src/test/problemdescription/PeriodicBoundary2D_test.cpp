@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_SUITE(PeriodicBoundary2D_test)
 
 BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 
-	cout << "PeriodicBoundary<2>_ConstructionByBoundaryIndicator_test..."
+	pout << "PeriodicBoundary<2>_ConstructionByBoundaryIndicator_test..."
 			<< endl;
 	/////////////////
 	// SANITY TEST //
@@ -66,13 +66,13 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 	// Ouch! This does not work, unfortunately -> see comment in PeriodicBoundary.cpp
 	// BOOST_CHECK_THROW(PeriodicBoundary<2> myBoundary(0, 1, 0, triangulation), PeriodicBoundaryNotPossible);
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 
 } /* PeriodicBoundary<2>_ConstructionByBoundaryIndicator_test */
 
 BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 
-	cout << "PeriodicBoundary<2>_forDiscontinuousGalerkin_test..." << endl;
+	pout << "PeriodicBoundary<2>_forDiscontinuousGalerkin_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 	/*std::map<dealii::DoFHandler<2>::active_cell_iterator,
 	 std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::const_iterator cell = cellMap.begin();
 	 for (; cell != cellMap.end(); cell++){
-	 cout << cell->first->center() <<  " -----" <<cell->second.second<<"----- "  << cell->second.first->center() << endl;
+	 pout << cell->first->center() <<  " -----" <<cell->second.second<<"----- "  << cell->second.first->center() << endl;
 
 	 }*/
 	BOOST_CHECK(cellMap.size() == 8);
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 	//		PeriodicBoundaryNotPossible);
 
 	doFHandler->clear();
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /*PeriodicBoundary<2>_forDisconitnuousGalerkin_test*/
 
 BOOST_AUTO_TEST_SUITE_END() /* PeriodicBoundary<2>_test */

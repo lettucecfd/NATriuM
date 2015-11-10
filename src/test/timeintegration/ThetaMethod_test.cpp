@@ -19,7 +19,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(ThetaMethod_test)
 
 BOOST_AUTO_TEST_CASE(ThetaMethod_Convergence_test) {
-	cout << "ThetaMethod_Convergence_test..." << endl;
+	pout << "ThetaMethod_Convergence_test..." << endl;
 
 	// solve ODE F(f) = lambda*f
 	// with initial value f0 = 1
@@ -51,11 +51,11 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_Convergence_test) {
 			BOOST_ASSERT(error < 1e-3);
 		}
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 }
 
 BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
-	cout << "ThetaMethod_MultiBlock_test..." << endl;
+	pout << "ThetaMethod_MultiBlock_test..." << endl;
 
 	// solve ODE F(f) = A*f
 	// with initial value f0 = [ 1 2 ]
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(ThetaMethod_MultiBlock_test) {
 		BOOST_CHECK_CLOSE( (double) f(1), f1, 1e-1);
 	}
 	A.clear();
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* ThetaMethod_MultiBlock_test */
 
 BOOST_AUTO_TEST_SUITE_END()

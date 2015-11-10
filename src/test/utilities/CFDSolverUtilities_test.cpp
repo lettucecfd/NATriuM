@@ -17,7 +17,7 @@ namespace natrium{
 BOOST_AUTO_TEST_SUITE(CFDSolverUtilities_test)
 
 BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
-	cout << "CFDSolverUtilities_DoFDistance_test..." << endl;
+	pout << "CFDSolverUtilities_DoFDistance_test..." << endl;
 
 	// make grid
 	const double PI = 4*std::atan(1);
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
 	// test for order 4 (distances not regular any more)
 	BOOST_CHECK_GT(2.0*PI/(4*3), CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 3 ));
 
-	cout << endl;
+	pout << endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

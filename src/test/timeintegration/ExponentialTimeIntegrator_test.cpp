@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_SUITE(ExponentialTimeIntegrator_test)
 BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 
 
-	cout << "ExponentialTimeIntegrator_test..." << endl;
+	pout << "ExponentialTimeIntegrator_test..." << endl;
 
 	// solve ODE F(f) = lambda*f
 	// with initial value f0 = 1
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 
 	BOOST_ASSERT(error < 1e-2);
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 
 
 }

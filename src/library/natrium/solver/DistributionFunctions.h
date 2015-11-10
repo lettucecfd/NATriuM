@@ -51,26 +51,7 @@ public:
 	/**
 	 * @short Copy constructor. Conversion from vector<distributed_vector>.
 	 */
-	DistributionFunctions(const vector<distributed_vector>& f) :
-			m_Q(f.size()), m_f0(f.at(0)) {
-#ifdef WITH_TRILINOS
-		m_fStream.reinit(m_Q);
-#else
-		m_fStream.reinit(m_Q, m_f0.size());
-#endif
-		for (size_t i = 1; i < m_Q; i++) {
-			m_fStream.block(i - 1).reinit(f.at(i));
-			// reinit does only change the size but not the content
-		}
-		m_fStream.collect_sizes();
-		for (size_t i = 1; i < m_Q; i++) {
-			for (size_t j = 0; j < f.at(i).size(); j++) {
-				if (m_fStream.block(i - 1).in_local_range(j)) {
-					m_fStream.block(i - 1)(j) = f.at(i)(j);
-				}
-			}
-		}
-	}
+	DistributionFunctions(const vector<distributed_vector>& f) ;
 
 	/// Destructor
 	virtual ~DistributionFunctions() {
@@ -80,28 +61,12 @@ public:
 	/**
 	 * @short mimes std::vector.at(i)
 	 */
-	distributed_vector& at(size_t i) {
-		assert(m_Q > 0);
-		assert(i < m_Q);
-		if (i == 0) {
-			return m_f0;
-		} else {
-			return m_fStream.block(i - 1);
-		}
-	}
+	distributed_vector& at(size_t i);
 
 	/**
 	 * @short mimes std::vector.at(i)
 	 */
-	const distributed_vector& at(size_t i) const {
-		assert(m_Q > 0);
-		assert(i < m_Q);
-		if (i == 0) {
-			return m_f0;
-		} else {
-			return m_fStream.block(i - 1);
-		}
-	}
+	const distributed_vector& at(size_t i) const ;
 
 	/**
 	 * @short F0 denotes the vector \f$ f_0 \f$ (zero-velocity particles)
@@ -152,34 +117,21 @@ public:
 		return m_Q;
 	}
 
+#ifdef WITH_TRILINOS_MPI
 	/**
 	 * @short reinitialize the sizes of the distribution functions - without ghost elements
 	 */
-#ifdef WITH_TRILINOS_MPI
+	void reinit(size_t Q, const dealii::IndexSet &local, const dealii::IndexSet &relevant,
+			const MPI_Comm &communicator = MPI_COMM_WORLD);
+
+	/**
+	 * @short reinitialize the sizes of the distribution functions - with ghost elements
+	 */
 	void reinit(size_t Q, const dealii::IndexSet &local,
-			const MPI_Comm &communicator = MPI_COMM_WORLD) {
-		m_Q = Q;
-		m_f0.reinit(local, communicator);
-		m_fStream.reinit(Q - 1);
-		for (size_t i = 0; i < Q - 1; i++) {
-			m_fStream.block(i).reinit(m_f0);
-		}
-		m_fStream.collect_sizes();
-	}
+			const MPI_Comm &communicator = MPI_COMM_WORLD);
+
 #else
-	void reinit(size_t Q, size_t size) {
-		m_Q = Q;
-		m_f0.reinit(size);
-#ifdef WITH_TRILINOS
-		m_fStream.reinit(Q-1);
-		for (size_t i = 0; i < Q - 1; i++) {
-			m_fStream.block(i).reinit(m_f0);
-		}
-#else
-		m_fStream.reinit(Q - 1, size);
-#endif
-		m_fStream.collect_sizes();
-	}
+	void reinit(size_t Q, size_t size);
 #endif
 
 	/**
@@ -189,6 +141,7 @@ public:
 		return m_Q;
 	}
 
+
 	/**
 	 * @short call dealii's compress function to all distributed_vectors stored herein. Compress has to
 	 * be called, whenever the elements of a vector have been changed by hand. It distributes the local
@@ -196,11 +149,13 @@ public:
 	 * @param[in] operation specifies, if element was inserted or added. Operation has to be
 	 * dealii::VectorOperation::add or dealii::VectorOperation::compress
 	 */
-	void compress(dealii::VectorOperation::values operation) {
-		m_f0.compress(operation);
-		m_fStream.compress(operation);
+	void compress(dealii::VectorOperation::values operation);
 
-	}
+	/**
+	 * @short call operator= for all distribution functions
+	 * @note is only allowed for DistributionFunctions of equal size
+	 */
+	void operator=(const DistributionFunctions& other);
 
 };
 /* class DistributionFunctions */
