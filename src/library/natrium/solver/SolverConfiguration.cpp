@@ -284,7 +284,10 @@ void SolverConfiguration::prepareOutputDirectory() {
 		if (isUserInteraction()) {
 			// Request user input
 			pout
-					<< "'Restart at last checkpoint' is disabled, but Output directory is not empty. The simulation might overwrite old data. Do you really want to continue?"
+					<< "'Restart at last checkpoint' is disabled, but Output directory is not empty. "
+					"The simulation might overwrite old data. Do you really want to continue?"
+					"If you are running your simulation in a parallel environment, you might want to "
+					"switch user interaction off (which can be done through SolverConfiguration)."
 					<< endl;
 			size_t yes1_or_no2 = 0; // = 1 for yes; = 2 for no
 			string input = "";

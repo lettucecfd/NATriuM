@@ -68,7 +68,7 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 		size_t face_nr_2 = matched_pairs.at(i).face_idx[1];
 		if ((matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set())
 				or (matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set())) {
-						throw PeriodicBoundaryNotPossible(
+			throw PeriodicBoundaryNotPossible(
 					"You're trying to create a PeriodicBoundary, where another one "
 							"has already been created. That does not work.");
 		} else {
@@ -77,7 +77,10 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 		}
 	}
 
-	LOG(DETAILED) << "add periodicity to mesh... (if it succeeds, it will be displayed)" << endl;
+	LOG(DETAILED)
+			<< "add periodicity to mesh... (if it succeeds, it will be displayed), in total "
+			<< matched_pairs.size() << " matched pair(s) between boundaries "
+			<< m_boundaryIndicator1 << " and  " << m_boundaryIndicator2 << endl;
 	m_triangulation->add_periodicity(matched_pairs);
 	LOG(DETAILED) << "...success" << endl;
 

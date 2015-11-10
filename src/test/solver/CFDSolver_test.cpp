@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_CreateTestFlow_test) {
 BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
 	pout << "CFDSolver_Construction_test..." << endl;
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
-	//testConfiguration->setSwitchOutputOff(true);
+	testConfiguration->setSwitchOutputOff(true);
 	testConfiguration->setCommandLineVerbosity(DETAILED);
 	testConfiguration->setUserInteraction(false);
 	size_t refinementLevel = 3;
