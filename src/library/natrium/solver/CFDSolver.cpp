@@ -153,13 +153,20 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
 	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
 			MPI_COMM_WORLD);
+	m_density_ghosted.reinit(m_advectionOperator->getLocallyOwnedDofs(),
+			m_advectionOperator->getLocallyRelevantDofs(),
+			MPI_COMM_WORLD);
 	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
 			MPI_COMM_WORLD);
 	for (size_t i = 0; i < dim; i++) {
 		distributed_vector vi(m_advectionOperator->getLocallyOwnedDofs(),
 				MPI_COMM_WORLD);
+		 distributed_vector vi_ghosted(m_advectionOperator->getLocallyOwnedDofs(),
+				m_advectionOperator->getLocallyRelevantDofs(),
+				MPI_COMM_WORLD);
 		m_velocity.push_back(vi);
 		m_tmpVelocity.push_back(vi);
+		m_velocity_ghosted.push_back(vi_ghosted);
 	}
 #else
 	size_t numberOfDoFs = this->getNumberOfDoFs();
@@ -182,9 +189,13 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 #ifdef WITH_TRILINOS_MPI
 	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
 			MPI_COMM_WORLD);
+	m_f_ghosted.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
+			m_advectionOperator->getLocallyRelevantDofs(),
+			MPI_COMM_WORLD);
 #else
 	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
 #endif
+
 
 	/// Build time integrator
 	if (RUNGE_KUTTA_5STAGE == configuration->getTimeIntegrator()) {
@@ -327,6 +338,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 
+	// fill ghosted vectors
+	copyToGhosted();
+
 	// Create file for output table
 	if ((not configuration->isSwitchOutputOff())
 	/*and (configuration->getOutputTableInterval()
@@ -360,14 +374,14 @@ void CFDSolver<dim>::stream() {
 	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time,
 			m_timeIntegrator->getTimeStepSize());
 	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
-	// copy vectors from ghosted vectors in order to do collisions
-	copyFromGhosted();
 }
 template void CFDSolver<2>::stream();
 template void CFDSolver<3>::stream();
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
+	// copy vectors from ghosted vectors in order to do collisions
+	copyFromGhosted();
 	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
 	m_collisionModel->collideAll(m_f, m_density, m_velocity,
 			m_advectionOperator->getLocallyOwnedDofs(), false);
@@ -587,6 +601,8 @@ void CFDSolver<dim>::initializeDistributions() {
 			m_f.at(j)(i) = feq.at(j);
 		}
 	}
+
+	m_f_ghosted = m_f;
 
 	switch (m_configuration->getInitializationScheme()) {
 	case EQUILIBRIUM: {
