@@ -11,7 +11,7 @@
 
 namespace natrium {
 
-template <size_t dim>
+template<size_t dim>
 ErrorStats<dim>::ErrorStats(BenchmarkCFDSolver<dim> * cfdsolver,
 		const std::string tableFileName) :
 		m_solver(cfdsolver), m_filename(tableFileName), m_outputOff(
@@ -26,13 +26,15 @@ ErrorStats<dim>::ErrorStats(BenchmarkCFDSolver<dim> * cfdsolver,
 	m_maxUAnalytic = 0.0;
 
 	// create file (if necessary)
-	if (m_solver->getIterationStart() > 0) {
-		m_errorsTableFile = make_shared<std::fstream>(tableFileName,
-				std::fstream::out | std::fstream::app);
-	} else {
-		m_errorsTableFile = make_shared<std::fstream>(tableFileName,
-				std::fstream::out);
-		printHeaderLine();
+	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+		if (m_solver->getIterationStart() > 0) {
+			m_errorsTableFile = make_shared<std::fstream>(tableFileName,
+					std::fstream::out | std::fstream::app);
+		} else {
+			m_errorsTableFile = make_shared<std::fstream>(tableFileName,
+					std::fstream::out);
+			printHeaderLine();
+		}
 	}
 }
 template ErrorStats<2>::ErrorStats(BenchmarkCFDSolver<2> * cfdsolver,
@@ -45,7 +47,7 @@ void ErrorStats<dim>::update() {
 	// this function must not be called more often than once per iteration
 	// as the data for the analytic solution is constantly overwritten
 	// therefor check a marker value that is set by this function (see below)
-	if (m_iterationNumber == m_solver->getIteration()){
+	if (m_iterationNumber == m_solver->getIteration()) {
 		return;
 	}
 	m_iterationNumber = m_solver->getIteration();
@@ -56,8 +58,7 @@ void ErrorStats<dim>::update() {
 			m_solver->m_analyticVelocity, m_solver->m_supportPoints);
 	m_solver->getAllAnalyticDensities(m_solver->getTime(),
 			m_solver->m_analyticDensity, m_solver->m_supportPoints);
-	const vector<distributed_vector>& numericVelocity =
-			m_solver->getVelocity();
+	const vector<distributed_vector>& numericVelocity = m_solver->getVelocity();
 	const distributed_vector& numericDensity = m_solver->getDensity();
 
 	//#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2
@@ -85,8 +86,7 @@ void ErrorStats<dim>::update() {
 				m_solver->m_analyticVelocity.at(2));
 	}
 	// calculate ||error (pointwise)||^2
-	m_solver->m_analyticVelocity.at(0).add(
-			m_solver->m_analyticVelocity.at(1));
+	m_solver->m_analyticVelocity.at(0).add(m_solver->m_analyticVelocity.at(1));
 	if (dim == 3) {
 		m_solver->m_analyticVelocity.at(0).add(
 				m_solver->m_analyticVelocity.at(2));
@@ -106,26 +106,28 @@ void ErrorStats<dim>::update() {
 template void ErrorStats<2>::update();
 template void ErrorStats<3>::update();
 
-
-template <size_t dim>
+template<size_t dim>
 void ErrorStats<dim>::printHeaderLine() {
-	(*m_errorsTableFile)
-			<< "#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
-			<< endl;
+	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+		(*m_errorsTableFile)
+				<< "#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
+				<< endl;
+	}
 }
-template void ErrorStats<2>::printHeaderLine() ;
-template void ErrorStats<3>::printHeaderLine() ;
+template void ErrorStats<2>::printHeaderLine();
+template void ErrorStats<3>::printHeaderLine();
 
-
-template <size_t dim>
+template<size_t dim>
 void ErrorStats<dim>::printNewLine() {
 	if (not isUpToDate()) {
 		update();
 	}
-	(*m_errorsTableFile) << m_iterationNumber << " " << m_time << " "
-			<< m_maxUAnalytic << " " << m_maxVelocityError << " "
-			<< m_maxDensityError << " " << m_l2VelocityError << " "
-			<< m_l2DensityError << endl;
+	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+		(*m_errorsTableFile) << m_iterationNumber << " " << m_time << " "
+				<< m_maxUAnalytic << " " << m_maxVelocityError << " "
+				<< m_maxDensityError << " " << m_l2VelocityError << " "
+				<< m_l2DensityError << endl;
+	}
 }
 template void ErrorStats<2>::printNewLine();
 template void ErrorStats<3>::printNewLine();

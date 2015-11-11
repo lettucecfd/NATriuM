@@ -37,15 +37,17 @@ BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
 	testConfiguration->setNumberOfTimeSteps(10);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
-	shared_ptr<Benchmark<2> > testFlow = make_shared<
-			TaylorGreenVortex2D>(viscosity, refinementLevel);
+	shared_ptr<Benchmark<2> > testFlow = make_shared<TaylorGreenVortex2D>(
+			viscosity, refinementLevel);
 	BenchmarkCFDSolver<2> solver(testConfiguration, testFlow);
 
 	// make error stats object
-	if (boost::filesystem::is_directory(natriumTmpDir)) {
-		boost::filesystem::remove_all(natriumTmpDir);
+	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+		if (boost::filesystem::is_directory(natriumTmpDir)) {
+			boost::filesystem::remove_all(natriumTmpDir);
+		}
+		boost::filesystem::create_directory(natriumTmpDir);
 	}
-	boost::filesystem::create_directory(natriumTmpDir);
 	ErrorStats<2> stats(&solver, natriumTmpFile.c_str());
 	BOOST_CHECK(boost::filesystem::exists(natriumTmpFile));
 
@@ -86,8 +88,8 @@ BOOST_AUTO_TEST_CASE(ErrorStats_FunctionsInSolverContext_test) {
 	testConfiguration->setOutputTableInterval(1);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
-	shared_ptr<Benchmark<2> > testFlow = make_shared<
-			TaylorGreenVortex2D>(viscosity, refinementLevel);
+	shared_ptr<Benchmark<2> > testFlow = make_shared<TaylorGreenVortex2D>(
+			viscosity, refinementLevel);
 	BenchmarkCFDSolver<2> solver(testConfiguration, testFlow);
 
 	solver.run();

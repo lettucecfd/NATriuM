@@ -23,11 +23,7 @@ DistributionFunctions::DistributionFunctions(
 	}
 	m_fStream.collect_sizes();
 	for (size_t i = 1; i < m_Q; i++) {
-		for (size_t j = 0; j < f.at(i).size(); j++) {
-			if (m_fStream.block(i - 1).in_local_range(j)) {
-				m_fStream.block(i - 1)(j) = f.at(i)(j);
-			}
-		}
+		m_fStream.block(i-1) = f.at(i);
 	}
 }
 

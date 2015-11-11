@@ -796,7 +796,8 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 	try {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/checkpoint_system_vector.dat";
+		filename << directory << "/checkpoint_system_vector." << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+		<< ".dat";
 		std::ofstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
 		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
@@ -848,7 +849,8 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 	try {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/checkpoint_system_vector.dat";
+		filename << directory << "/checkpoint_system_vector." << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+						<< ".dat";
 		std::ifstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
 		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
@@ -873,7 +875,8 @@ template<size_t dim> void SEDGMinLee<dim>::writeStatus(
 		const string& directory) const {
 //make file
 	std::stringstream filename;
-	filename << directory << "/checkpoint_status.dat";
+	filename << directory << "/checkpoint_status."
+			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
 	std::ofstream outfile(filename.str().c_str());
 
 //write number of cells
@@ -904,7 +907,8 @@ template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
 		string& message) const {
 //read file
 	std::stringstream filename;
-	filename << directory << "/checkpoint_status.dat";
+	filename << directory << "/checkpoint_status."
+			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
 	std::ifstream infile(filename.str().c_str());
 
 // check if status file exists

@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_StopCondition_test) {
 	pout << "CFDSolver_StopCondition_test..." << endl;
 
 	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
-	testConfiguration->setSwitchOutputOff(false);
+	testConfiguration->setSwitchOutputOff(true);
 	testConfiguration->setUserInteraction(false);
 	testConfiguration->setSimulationEndTime(0.5);
 	testConfiguration->setNumberOfTimeSteps(10);

@@ -19,7 +19,6 @@
 
 namespace natrium {
 
-
 enum LogLevel {
 	SILENT,
 	ERROR,
@@ -59,6 +58,13 @@ public:
 		pop();
 		setConsoleLevel(BASIC);
 		setFileLevel(ALL);
+		if ((dealii::Utilities::MPI::job_supports_mpi())
+				and (0
+						!= dealii::Utilities::MPI::this_mpi_process(
+								MPI_COMM_WORLD))) {
+			setConsoleLevel(SILENT);
+			setFileLevel(SILENT);
+		}
 	}
 
 	/// set log level for command line output
@@ -92,12 +98,26 @@ public:
 
 	/// set the level of console output
 	LogLevel setConsoleLevel(LogLevel level) {
-		return LogLevel(depth_console(level));
+		if ((dealii::Utilities::MPI::job_supports_mpi())
+				and (0
+						!= dealii::Utilities::MPI::this_mpi_process(
+								MPI_COMM_WORLD))) {
+			return LogLevel(depth_console(SILENT));
+		} else {
+			return LogLevel(depth_console(level));
+		}
 	}
 
 	/// set the level of file output
 	LogLevel setFileLevel(LogLevel level) {
-		return LogLevel(depth_file(level));
+		if ((dealii::Utilities::MPI::job_supports_mpi())
+				and (0
+						!= dealii::Utilities::MPI::this_mpi_process(
+								MPI_COMM_WORLD))) {
+			return LogLevel(depth_file(SILENT));
+		} else {
+			return LogLevel(depth_file(level));
+		}
 	}
 
 };

@@ -71,9 +71,11 @@ public:
 	}
 	void printHeaderLine() {
 		assert(not m_outputOff);
+		if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
 		(*m_tableFile)
 				<< "#  i      t      max |u_numeric|    kinE    maxP     minP    residuum(rho)   residuum(u)    mean(ux)"
 				<< endl;
+		}
 	}
 	void update() {
 		if (isUpToDate()) {
@@ -124,11 +126,13 @@ public:
 		if (not isUpToDate()) {
 			update();
 		}
+		if 	(0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)){
 		(*m_tableFile) << m_iterationNumber << " " << m_time << " " << m_maxU
 				<< " " << m_kinE << " " << m_maxP << " " << m_minP << " "
 				<< m_solver->m_residuumDensity << " "
 				<< m_solver->m_residuumVelocity <<  " "
 				<< m_meanVelocityX << endl;
+		}
 	}
 
 	size_t getIterationNumber() const {
