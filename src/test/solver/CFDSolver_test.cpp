@@ -56,7 +56,13 @@ BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 	// check results (must be the same as before)
 	const distributed_vector& rho = solver.getDensity();
 	const vector<distributed_vector>& v = solver.getVelocity();
-	for (size_t i = 0; i < rho.size(); i++){
+
+	//for all degrees of freedom on current processor
+	const dealii::IndexSet& locally_owned_dofs = solver.getAdvectionOperator()->getLocallyOwnedDofs();
+	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+	for (; it != end; it++){
+		size_t i = *it;
 		BOOST_CHECK(fabs(rho(i) - 1.0) < 1e-5);
 		BOOST_CHECK(fabs(v.at(0)(i) - 0.1) < 1e-5);
 		BOOST_CHECK(fabs(v.at(1)(i) - 0.1) < 1e-5);
@@ -84,7 +90,12 @@ BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	// check results (must be nearly at equilibrium)
 	const distributed_vector& rho = solver.getDensity();
 	const vector<distributed_vector>& v = solver.getVelocity();
-	for (size_t i = 0; i < rho.size(); i++){
+	//for all degrees of freedom on current processor
+	const dealii::IndexSet& locally_owned_dofs = solver.getAdvectionOperator()->getLocallyOwnedDofs();
+	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+	for (; it != end; it++){
+		size_t i = *it;
 		BOOST_CHECK(fabs(rho(i) - 1.0) < 1e-5);
 		BOOST_CHECK(fabs(v.at(0)(i) - 0.0) < 0.001);
 		BOOST_CHECK(fabs(v.at(1)(i) - 0.0) < 0.001);

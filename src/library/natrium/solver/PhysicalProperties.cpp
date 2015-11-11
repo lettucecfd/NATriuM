@@ -48,23 +48,32 @@ template<> double PhysicalProperties<2>::kineticEnergy(
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
 	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
 
-		// get global degrees of freedom
-		std::vector<dealii::types::global_dof_index> localDoFIndices(
-				dofs_per_cell);
-		cell->get_dof_indices(localDoFIndices);
-		// calculate the fe values for the cell
-		feCellValues.reinit(cell);
+			// get global degrees of freedom
+			std::vector<dealii::types::global_dof_index> localDoFIndices(
+					dofs_per_cell);
+			cell->get_dof_indices(localDoFIndices);
+			// calculate the fe values for the cell
+			feCellValues.reinit(cell);
 
-		size_t local_i;
-		for (size_t i = 0; i < dofs_per_cell; i++) {
-			local_i = localDoFIndices.at(i);
-			result += rho(local_i)
-					* (ux(local_i) * ux(local_i) + uy(local_i) * uy(local_i))
-					* feCellValues.JxW(advection->getCelldofToQIndex().at(i));
-		}
-	}
-	return 0.5 * result;
+			size_t local_i;
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				local_i = localDoFIndices.at(i);
+				result +=
+						rho(local_i)
+								* (ux(local_i) * ux(local_i)
+										+ uy(local_i) * uy(local_i))
+								* feCellValues.JxW(
+										advection->getCelldofToQIndex().at(i));
+			}
+		} /* if is locally owned */
+	} /* for cells */
+
+	// communicate among MPI processes
+	dealii::Utilities::MPI::MinMaxAvg global_res = dealii::Utilities::MPI::min_max_avg(result, MPI_COMM_WORLD);
+	return 0.5 * global_res.sum;
+
 }
 template<> double PhysicalProperties<3>::kineticEnergy(
 		const vector<distributed_vector>& u, const distributed_vector& rho,
@@ -90,40 +99,36 @@ template<> double PhysicalProperties<3>::kineticEnergy(
 	typename dealii::DoFHandler<3>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
 	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
+			// get global degrees of freedom
+			std::vector<dealii::types::global_dof_index> localDoFIndices(
+					dofs_per_cell);
+			cell->get_dof_indices(localDoFIndices);
+			// calculate the fe values for the cell
+			feCellValues.reinit(cell);
 
-		// get global degrees of freedom
-		std::vector<dealii::types::global_dof_index> localDoFIndices(
-				dofs_per_cell);
-		cell->get_dof_indices(localDoFIndices);
-		// calculate the fe values for the cell
-		feCellValues.reinit(cell);
+			size_t local_i;
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				local_i = localDoFIndices.at(i);
+				result += rho(local_i)
+						* (ux(local_i) * ux(local_i) + uy(local_i) * uy(local_i)
+								+ uz(local_i) * uz(local_i))
+						* feCellValues.JxW(
+								advection->getCelldofToQIndex().at(i));
+			}
+		} /* if is locally owned */
+	} /* for cells */
 
-		size_t local_i;
-		for (size_t i = 0; i < dofs_per_cell; i++) {
-			local_i = localDoFIndices.at(i);
-			result += rho(local_i)
-					* (ux(local_i) * ux(local_i) + uy(local_i) * uy(local_i)
-							+ uz(local_i) * uz(local_i))
-					* feCellValues.JxW(advection->getCelldofToQIndex().at(i));
-		}
-	}
-	return 0.5 * result;
+	// communicate among MPI processes
+	dealii::Utilities::MPI::MinMaxAvg global_res = dealii::Utilities::MPI::min_max_avg(result, MPI_COMM_WORLD);
+	return 0.5 * global_res.sum;
 }
 
 template<size_t dim>
 double PhysicalProperties<dim>::maximalPressure(const distributed_vector& rho,
 		const double speedOfSound, double & minimalPressure) {
-	const size_t n_dofs = rho.size();
-	double maximal = -100000000000.;
-	minimalPressure = 10000000000000000;
-	for (size_t i = 0; i < n_dofs; i++) {
-		if (rho(i) < minimalPressure) {
-			minimalPressure = rho(i);
-		}
-		if (rho(i) > maximal) {
-			maximal = rho(i);
-		}
-	}
+	double maximal = rho.max();
+	minimalPressure = rho.min();
 	minimalPressure = (minimalPressure - 1.0) * speedOfSound * speedOfSound;
 	return (maximal - 1.0) * (speedOfSound * speedOfSound);
 
@@ -152,21 +157,28 @@ double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
 	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
 
-		// get global degrees of freedom
-		std::vector<dealii::types::global_dof_index> localDoFIndices(
-				dofs_per_cell);
-		cell->get_dof_indices(localDoFIndices);
-		// calculate the fe values for the cell
-		feCellValues.reinit(cell);
+			// get global degrees of freedom
+			std::vector<dealii::types::global_dof_index> localDoFIndices(
+					dofs_per_cell);
+			cell->get_dof_indices(localDoFIndices);
+			// calculate the fe values for the cell
+			feCellValues.reinit(cell);
 
-		for (size_t i = 0; i < dofs_per_cell; i++) {
-			result += ux(localDoFIndices.at(i))
-					* feCellValues.JxW(advection->getCelldofToQIndex().at(i));
-			area += feCellValues.JxW(advection->getCelldofToQIndex().at(i));
-		}
-	}
-	return result / area;
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				result += ux(localDoFIndices.at(i))
+						* feCellValues.JxW(
+								advection->getCelldofToQIndex().at(i));
+				area += feCellValues.JxW(advection->getCelldofToQIndex().at(i));
+			}
+		} /* if is locally owned */
+	} /* for all cells */
+	// communicate among MPI processes
+	dealii::Utilities::MPI::MinMaxAvg global_res = dealii::Utilities::MPI::min_max_avg(result, MPI_COMM_WORLD);
+	dealii::Utilities::MPI::MinMaxAvg global_area = dealii::Utilities::MPI::min_max_avg(area, MPI_COMM_WORLD);
+	return global_res.sum / global_area.sum;
+
 }
 template double PhysicalProperties<2>::meanVelocityX(
 		const distributed_vector& ux,
