@@ -22,6 +22,7 @@ BOOST_AUTO_TEST_SUITE(DealIIWrapper_test)
 BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 	pout << "DealIIWrapper_Convergence_test..." << endl;
 
+	if (is_MPI_rank_0()){
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
 		pout << "  - Integrator " << n << "...";
@@ -65,12 +66,14 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 
 		pout << " " << n_steps << " steps. done." << endl;
 	}
+	}
 	pout << "done." << endl;
 }
 
 BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 	pout << "DealIIWrapper_MultiBlock_test..." << endl;
 
+	if (is_MPI_rank_0()){
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
 		pout << "  - Integrator " << n << "...";
@@ -158,8 +161,17 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		pout << " " << n_steps << " steps. done." << endl;
 
 	}
+	}
 	pout << "done." << endl;
 } /* DealIIWrapper_MultiBlock_test */
+
+BOOST_AUTO_TEST_CASE(DealIIWrapper_MPI_test) {
+	pout << "DealIIWrapper_MPI_test..." << endl;
+
+	// TODO Meaningful test
+
+	pout << "done." << endl;
+}/* DealIIWrapper_MPI_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 

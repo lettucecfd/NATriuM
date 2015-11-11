@@ -58,6 +58,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
 
 	// count lines
 	std::ifstream file(natriumTmpFile.c_str());
+	MPI_sync();
 	size_t linecount = std::count(std::istreambuf_iterator<char>(file),
 			std::istreambuf_iterator<char>(), '\n');
 	BOOST_CHECK(linecount == 1);
@@ -66,6 +67,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
 	stats.printNewLine();
 	solver.run();
 	stats.printNewLine();
+	MPI_sync();
 	BOOST_CHECK_EQUAL(stats.getIterationNumber(),
 			testConfiguration->getNumberOfTimeSteps());
 	linecount = std::count(std::istreambuf_iterator<char>(file),
@@ -99,6 +101,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_FunctionsInSolverContext_test) {
 
 	// count lines
 	std::ifstream file(solver.getErrorStats()->getFilename());
+	MPI_sync();
 	size_t linecount = std::count(std::istreambuf_iterator<char>(file),
 			std::istreambuf_iterator<char>(), '\n');
 	BOOST_CHECK(linecount > 8);

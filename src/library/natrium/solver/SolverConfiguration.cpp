@@ -227,11 +227,16 @@ void SolverConfiguration::readFromXMLFile(const std::string & filename) {
 
 void SolverConfiguration::prepareOutputDirectory() {
 	// make sure that the code is compiled with mpi
-	assert (dealii::Utilities::MPI::job_supports_mpi());
-	/// If not exists, try to create output directory
+	assert(dealii::Utilities::MPI::job_supports_mpi());
+
+	// Everything is checked by process 0.
+
 	//  ((Using boost::filesystem provides a cross-platform solution))
 	boost::filesystem::path outputDir(getOutputDirectory());
+
+	// Make output directory
 	if (is_MPI_rank_0()) {
+		/// If not exists, try to create output directory
 		boost::filesystem::path parentDir(outputDir.branch_path());
 		if (not boost::filesystem::is_directory(parentDir)) {
 			std::stringstream msg;
@@ -240,14 +245,10 @@ void SolverConfiguration::prepareOutputDirectory() {
 					<< ", but this parent directory does not even exist.";
 			throw ConfigurationException(msg.str());
 		}
-		// Make output directory
 		try {
-			//create_directory throws basic_filesystem_error<Path>, if fail other than that the directory already existed
+			//create_directory throws basic_filesystem_error<Path>, if fail (= no writing permissions)
 			//returns false, if directory already existed
-			bool newlyCreated = boost::filesystem::create_directory(outputDir);
-			if (newlyCreated) {
-				return;
-			}
+			boost::filesystem::create_directory(outputDir);
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg << "You want to put your output directory into "
@@ -256,32 +257,6 @@ void SolverConfiguration::prepareOutputDirectory() {
 			throw ConfigurationException(msg.str());
 		}
 		// Postcondition: directory exists
-	} //if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD))
-	MPI_sync();
-	  // Check writing permissions in directory
-	try {
-		/// try to create a single file
-		std::ofstream filestream;
-		std::stringstream filename;
-		filename << "testtatata."
-				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-				<< ".txt";
-		filestream.open((outputDir / filename.str().c_str()).string().c_str());
-		filestream << " ";
-		filestream.close();
-		boost::filesystem::remove(
-				(outputDir / filename.str().c_str()).string().c_str());
-	} catch (std::exception& e) {
-		std::stringstream msg;
-		msg << "Process "
-				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-				<< " running on host "
-				<< dealii::Utilities::System::get_hostname()
-				<< " does not have writing access to your Output directory "
-				<< outputDir.string();
-		throw ConfigurationException(msg.str());
-	}
-	if (is_MPI_rank_0()) {
 		try {
 			/// try to open all files
 			boost::filesystem::directory_iterator it(outputDir), eod;
@@ -314,8 +289,8 @@ void SolverConfiguration::prepareOutputDirectory() {
 						<< "'Restart at last checkpoint' is disabled, but Output directory is not empty. "
 								"The simulation might overwrite old data. Do you really want to continue?"
 								"If you are running your simulation in a parallel environment, you might want to "
-								"switch user interaction off (which can be done through SolverConfiguration)."
-						<< endl;
+								"switch user interaction off (which can be done by the corresponding option in SolverConfiguration"
+								"or in the parameter file)." << endl;
 				size_t yes1_or_no2 = 0; // = 1 for yes; = 2 for no
 				string input = "";
 				for (size_t i = 0; true; i++) {
@@ -357,8 +332,31 @@ void SolverConfiguration::prepareOutputDirectory() {
 						<< endl;
 			}
 		}
-	} //if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD))
-	MPI_sync();
+		// Check writing permissions in directory (for every MPI process)
+		try {
+			/// try to create a single file
+			std::ofstream filestream;
+			std::stringstream filename;
+			filename << "testfile_process."
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< ".txt";
+			filestream.open(
+					(outputDir / filename.str().c_str()).string().c_str());
+			filestream << " ";
+			filestream.close();
+			boost::filesystem::remove(
+					(outputDir / filename.str().c_str()).string().c_str());
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Process "
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< " running on host "
+					<< dealii::Utilities::System::get_hostname()
+					<< " does not have writing access to your Output directory "
+					<< outputDir.string();
+			throw ConfigurationException(msg.str());
+		}
+	} /* if is_MPI_rank_0() */
 }
 
 void SolverConfiguration::isConsistent() {
@@ -377,6 +375,20 @@ void SolverConfiguration::isConsistent() {
 				<< "Did not understand setting of Deal.II integrator. If you want to use the Deal.II "
 						"time integration schemes, you will have to set Time integrator to 'OTHER'."
 				<< endl;
+	}
+
+	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) > 1) {
+		if (this->isUserInteraction()) {
+			std::stringstream msg;
+			msg
+					<< "UserInteraction is switched on in the solver configuration. "
+					<< "As that might be very dangerous when working on multiple MPI processes, "
+					<< "I am throwing an exception (Safety first!) Please change your solver "
+					<< "configuration (either in the parameter file or in natrium::SolverConfiguration.)"
+					<< "It might be a good idea to make sure (manually) that you are not overwriting anything. ";
+			LOG(ERROR) << msg.str() << endl;
+			throw ConfigurationException(msg.str());
+		}
 	}
 }
 

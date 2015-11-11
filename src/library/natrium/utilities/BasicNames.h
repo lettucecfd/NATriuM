@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include <math.h>
+#include <mpi.h>
 
 #include "boost/shared_ptr.hpp"
 #include "boost/make_shared.hpp"
@@ -158,10 +159,11 @@ inline void MPI_sync(){
 	if (!dealii::Utilities::MPI::job_supports_mpi()){
 		return;
 	}
-	int i = 0;
+	//int i = 0;
 	// TODO more efficient barrier.
 	// sync all MPI processes (barrier)
-	dealii::Utilities::MPI::min_max_avg(i, MPI_COMM_WORLD);
+	//dealii::Utilities::MPI::min_max_avg(i, MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
 
 }
 
