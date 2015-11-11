@@ -41,10 +41,12 @@ BOOST_AUTO_TEST_CASE(SolverStats_ConstructionAndFunctionality_test) {
 	CFDSolver<2> solver(testConfiguration, testFlow);
 
 	// make solver stats object
-	if (boost::filesystem::is_directory(natriumTmpDir)) {
-		boost::filesystem::remove_all(natriumTmpDir);
+	if (is_MPI_rank_0()) {
+		if (boost::filesystem::is_directory(natriumTmpDir)) {
+			boost::filesystem::remove_all(natriumTmpDir);
+		}
+		boost::filesystem::create_directory(natriumTmpDir);
 	}
-	boost::filesystem::create_directory(natriumTmpDir);
 	SolverStats<2> stats(&solver, natriumTmpFile.c_str());
 	BOOST_CHECK(boost::filesystem::exists(natriumTmpFile));
 

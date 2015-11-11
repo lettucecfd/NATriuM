@@ -226,10 +226,12 @@ void SolverConfiguration::readFromXMLFile(const std::string & filename) {
 } /* readFromXMLFile */
 
 void SolverConfiguration::prepareOutputDirectory() {
+	// make sure that the code is compiled with mpi
+	assert (dealii::Utilities::MPI::job_supports_mpi());
 	/// If not exists, try to create output directory
 	//  ((Using boost::filesystem provides a cross-platform solution))
 	boost::filesystem::path outputDir(getOutputDirectory());
-	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+	if (is_MPI_rank_0()) {
 		boost::filesystem::path parentDir(outputDir.branch_path());
 		if (not boost::filesystem::is_directory(parentDir)) {
 			std::stringstream msg;
@@ -255,6 +257,7 @@ void SolverConfiguration::prepareOutputDirectory() {
 		}
 		// Postcondition: directory exists
 	} //if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD))
+	MPI_sync();
 	  // Check writing permissions in directory
 	try {
 		/// try to create a single file
@@ -278,7 +281,7 @@ void SolverConfiguration::prepareOutputDirectory() {
 				<< outputDir.string();
 		throw ConfigurationException(msg.str());
 	}
-	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+	if (is_MPI_rank_0()) {
 		try {
 			/// try to open all files
 			boost::filesystem::directory_iterator it(outputDir), eod;
@@ -355,6 +358,7 @@ void SolverConfiguration::prepareOutputDirectory() {
 			}
 		}
 	} //if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD))
+	MPI_sync();
 }
 
 void SolverConfiguration::isConsistent() {

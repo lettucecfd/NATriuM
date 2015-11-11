@@ -152,6 +152,28 @@ extern dealii::ConditionalOStream perr;
 extern dealii::ConditionalOStream pout;
 
 
+/// Synchronize all MPI processes
+inline void MPI_sync(){
+
+	if (!dealii::Utilities::MPI::job_supports_mpi()){
+		return;
+	}
+	int i = 0;
+	// TODO more efficient barrier.
+	// sync all MPI processes (barrier)
+	dealii::Utilities::MPI::min_max_avg(i, MPI_COMM_WORLD);
+
+}
+
+/// check if the MPI process has rank zero
+/// returns true, if MPI is not used
+inline bool is_MPI_rank_0(){
+	if (!dealii::Utilities::MPI::job_supports_mpi()){
+		return true;
+	}
+	return (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
+}
+
 }/* namespace natrium */
 
 #endif/*BASICNAMES_H_*/

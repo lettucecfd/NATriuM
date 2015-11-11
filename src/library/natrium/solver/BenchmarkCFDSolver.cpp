@@ -18,16 +18,9 @@ template<size_t dim> BenchmarkCFDSolver<dim>::BenchmarkCFDSolver(
 				problemDescription) {
 	// initialize macroscopic variables
 #ifdef WITH_TRILINOS_MPI
-	m_analyticDensity.reinit(
-			this->getAdvectionOperator()->getLocallyOwnedDofs(),
-			this->getAdvectionOperator()->getLocallyRelevantDofs(),
-			MPI_COMM_WORLD);
+	m_analyticDensity.reinit(this->getDensity());
 	for (size_t i = 0; i < dim; i++) {
-		m_analyticVelocity.push_back(
-				distributed_vector(
-						this->getAdvectionOperator()->getLocallyOwnedDofs(),
-						this->getAdvectionOperator()->getLocallyRelevantDofs(),
-						MPI_COMM_WORLD));
+		m_analyticVelocity.push_back(this->getVelocity().at(i));
 	}
 #else
 	m_analyticDensity.reinit(this->getNumberOfDoFs(), true);
@@ -87,9 +80,6 @@ void natrium::BenchmarkCFDSolver<dim>::getAllAnalyticDensities(double time,
 			cell->get_dof_indices(local_dof_indices);
 			for (size_t i = 0; i < dofs_per_cell; i++) {
 				assert(
-						analyticDensities.in_local_range(
-								local_dof_indices.at(i)));
-				assert(
 						supportPoints.find(local_dof_indices.at(i))
 								!= supportPoints.end());
 				analyticDensities(local_dof_indices.at(i)) = f_rho->value(
@@ -124,12 +114,6 @@ void natrium::BenchmarkCFDSolver<dim>::getAllAnalyticVelocities(double time,
 		if (cell->is_locally_owned()) {
 			cell->get_dof_indices(local_dof_indices);
 			for (size_t i = 0; i < dofs_per_cell; i++) {
-				assert(
-						analyticVelocities.at(0).in_local_range(
-								local_dof_indices.at(i)));
-				assert(
-						analyticVelocities.at(1).in_local_range(
-								local_dof_indices.at(i)));
 				assert(
 						supportPoints.find(local_dof_indices.at(i))
 								!= supportPoints.end());

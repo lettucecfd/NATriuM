@@ -156,7 +156,7 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 		distributed_block_vector>::evaluateJInverse(const double ,
 		const double , const distributed_block_vector& f) const {
 
-	distributed_block_vector result = f;
+	distributed_block_vector result(f);
 
 	dealii::SolverControl solver_control(m_iterations, m_tol*f.l2_norm(), false, false);	//* m_tmpSystemVector.l2_norm());
 

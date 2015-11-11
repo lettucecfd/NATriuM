@@ -530,7 +530,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)
-			if (dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0) {
+			if (is_MPI_rank_0()) {
 				// generate .pvtu filename
 				std::stringstream pvtu_filename;
 				pvtu_filename << m_configuration->getOutputDirectory().c_str()

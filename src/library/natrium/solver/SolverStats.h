@@ -63,18 +63,23 @@ public:
 				m_tableFile = make_shared<std::fstream>(tableFileName,
 						std::fstream::out | std::fstream::app);
 			} else {
-				m_tableFile = make_shared<std::fstream>(tableFileName,
-						std::fstream::out);
+				if (is_MPI_rank_0()) {
+					m_tableFile = make_shared<std::fstream>(tableFileName,
+							std::fstream::out);
+				}
 				printHeaderLine();
 			}
 		}
+
+		// sync all MPI processes (barrier)
+		MPI_sync();
 	}
 	void printHeaderLine() {
 		assert(not m_outputOff);
-		if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
-		(*m_tableFile)
-				<< "#  i      t      max |u_numeric|    kinE    maxP     minP    residuum(rho)   residuum(u)    mean(ux)"
-				<< endl;
+		if (is_MPI_rank_0()) {
+			(*m_tableFile)
+					<< "#  i      t      max |u_numeric|    kinE    maxP     minP    residuum(rho)   residuum(u)    mean(ux)"
+					<< endl;
 		}
 	}
 	void update() {
@@ -89,11 +94,12 @@ public:
 		m_maxP = PhysicalProperties<dim>::maximalPressure(
 				m_solver->getDensity(),
 				m_solver->getStencil()->getSpeedOfSound(), m_minP);
-		m_meanVelocityX = PhysicalProperties<dim>::meanVelocityX(m_solver->m_velocity.at(0), m_solver->getAdvectionOperator());
+		m_meanVelocityX = PhysicalProperties<dim>::meanVelocityX(
+				m_solver->m_velocity.at(0), m_solver->getAdvectionOperator());
 		// Residuals must not be calculated because they have to be determined every 10th time steps
 	}
 
-	void calulateResiduals(size_t iteration){
+	void calulateResiduals(size_t iteration) {
 		assert(iteration % 10 == 0);
 		if (not (m_solver->m_i - m_solver->m_iterationStart < 100)) {
 			// i.e. not first visit of this if-statement
@@ -126,12 +132,12 @@ public:
 		if (not isUpToDate()) {
 			update();
 		}
-		if 	(0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)){
-		(*m_tableFile) << m_iterationNumber << " " << m_time << " " << m_maxU
-				<< " " << m_kinE << " " << m_maxP << " " << m_minP << " "
-				<< m_solver->m_residuumDensity << " "
-				<< m_solver->m_residuumVelocity <<  " "
-				<< m_meanVelocityX << endl;
+		if (is_MPI_rank_0()) {
+			(*m_tableFile) << m_iterationNumber << " " << m_time << " "
+					<< m_maxU << " " << m_kinE << " " << m_maxP << " " << m_minP
+					<< " " << m_solver->m_residuumDensity << " "
+					<< m_solver->m_residuumVelocity << " " << m_meanVelocityX
+					<< endl;
 		}
 	}
 
@@ -177,6 +183,5 @@ public:
 };
 
 } /* namespace natrium */
-
 
 #endif /* SOLVERSTATS_H_ */

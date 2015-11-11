@@ -21,10 +21,14 @@ private:
 	/// Stream for html output.
 	std::ofstream m_html;
 
+	/// if false, the stream does not write,
+	/// e.g. for all mpi processes but zero
+	bool m_active;
+
 public:
 
 	/// Constructor
-	HtmlTrace();
+	HtmlTrace(bool active = true);
 
 	/// Destructor
 	~HtmlTrace();

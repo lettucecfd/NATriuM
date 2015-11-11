@@ -58,10 +58,7 @@ public:
 		pop();
 		setConsoleLevel(BASIC);
 		setFileLevel(ALL);
-		if ((dealii::Utilities::MPI::job_supports_mpi())
-				and (0
-						!= dealii::Utilities::MPI::this_mpi_process(
-								MPI_COMM_WORLD))) {
+		if (!is_MPI_rank_0()) {
 			setConsoleLevel(SILENT);
 			setFileLevel(SILENT);
 		}
@@ -110,10 +107,7 @@ public:
 
 	/// set the level of file output
 	LogLevel setFileLevel(LogLevel level) {
-		if ((dealii::Utilities::MPI::job_supports_mpi())
-				and (0
-						!= dealii::Utilities::MPI::this_mpi_process(
-								MPI_COMM_WORLD))) {
+		if (!is_MPI_rank_0()) {
 			return LogLevel(depth_file(SILENT));
 		} else {
 			return LogLevel(depth_file(level));

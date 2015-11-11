@@ -11,6 +11,8 @@
 #include <functional>
 #include <math.h>
 
+#include "deal.II/base/index_set.h"
+
 #include "BasicNames.h"
 
 namespace natrium {
@@ -55,8 +57,8 @@ inline double euclidean_norm(numeric_vector& x) {
 // check if the angle between to 2d vectors is small
 // The formula stems from the cosine theorem: <a,b> / (|a| |b|) = cos( angle(a,b) ).
 // Asserting abs[ <a,b> / (|a| |b|) ] > 0.99 is equivalent to:    angle(a,b) < 8 degrees.
-inline bool is_angle_small(dealii::Tensor<1,2> vector1, dealii::Tensor<1,2> vector2,
-		double thresholdDegrees = 0.0) {
+inline bool is_angle_small(dealii::Tensor<1, 2> vector1,
+		dealii::Tensor<1, 2> vector2, double thresholdDegrees = 0.0) {
 	if (thresholdDegrees == 0.0) {
 		return (vector1 * vector2 / (vector1.norm() * vector2.norm()) > 0.99);
 	} else {
@@ -65,18 +67,23 @@ inline bool is_angle_small(dealii::Tensor<1,2> vector1, dealii::Tensor<1,2> vect
 	}
 } /* is_angle_small */
 
-inline double maxVelocityNorm(const vector<distributed_vector>& velocity) {
+inline double maxVelocityNorm(const vector<distributed_vector>& velocity,
+		const dealii::IndexSet& locally_owned_dofs) {
 	// check sizes
 	size_t dim = velocity.size();
-	assert (dim > 1);
-	assert (dim < 4);
+	assert(dim > 1);
+	assert(dim < 4);
 	size_t n = velocity.at(0).size();
-	assert (n == velocity.at(1).size());
-	if (dim == 3){
-		assert (n == velocity.at(2).size());
+	assert(n == velocity.at(1).size());
+	if (dim == 3) {
+		assert(n == velocity.at(2).size());
 	}
 	double max_norm_square = 0.0;
-	for (size_t i = 0; i < n; i++) {
+	//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+	for (; it != end; it++) {
+		size_t i = *it;
 		double norm_square = 0.0;
 		for (size_t j = 0; j < dim; j++) {
 			norm_square += velocity.at(j)(i) * velocity.at(j)(i);
@@ -85,30 +92,38 @@ inline double maxVelocityNorm(const vector<distributed_vector>& velocity) {
 			max_norm_square = norm_square;
 		}
 	}
-	return sqrt(max_norm_square);
+	double global_mpi = dealii::Utilities::MPI::min_max_avg(max_norm_square,
+			MPI_COMM_WORLD).max;
+	return sqrt(global_mpi);
 }
 
-inline double velocity2Norm(const vector<distributed_vector>& velocity) {
+inline double velocity2Norm(const vector<distributed_vector>& velocity,
+		const dealii::IndexSet& locally_owned_dofs) {
 	size_t dim = velocity.size();
-	assert (dim > 1);
-	assert (dim < 4);
+	assert(dim > 1);
+	assert(dim < 4);
 	size_t n = velocity.at(0).size();
-	assert (n == velocity.at(1).size());
-	if (dim == 3){
-		assert (n == velocity.at(2).size());
+	assert(n == velocity.at(1).size());
+	if (dim == 3) {
+		assert(n == velocity.at(2).size());
 	}
 
 	double sum = 0.0;
-	for (size_t i = 0; i < n; i++) {
+	//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+	for (; it != end; it++) {
+		size_t i = *it;
 		double norm_square = 0.0;
 		for (size_t j = 0; j < dim; j++) {
 			norm_square += velocity.at(j)(i) * velocity.at(j)(i);
 		}
 		sum += norm_square;
 	}
-	return sqrt(sum);
+	double global_mpi =
+			dealii::Utilities::MPI::min_max_avg(sum, MPI_COMM_WORLD).sum;
+	return sqrt(global_mpi);
 }
-
 
 } /* Math */
 

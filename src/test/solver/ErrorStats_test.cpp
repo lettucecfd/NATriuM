@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
 	BenchmarkCFDSolver<2> solver(testConfiguration, testFlow);
 
 	// make error stats object
-	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+	if (is_MPI_rank_0()) {
 		if (boost::filesystem::is_directory(natriumTmpDir)) {
 			boost::filesystem::remove_all(natriumTmpDir);
 		}

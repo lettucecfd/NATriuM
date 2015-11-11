@@ -26,16 +26,15 @@ ErrorStats<dim>::ErrorStats(BenchmarkCFDSolver<dim> * cfdsolver,
 	m_maxUAnalytic = 0.0;
 
 	// create file (if necessary)
-	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
-		if (m_solver->getIterationStart() > 0) {
-			m_errorsTableFile = make_shared<std::fstream>(tableFileName,
-					std::fstream::out | std::fstream::app);
-		} else {
-			m_errorsTableFile = make_shared<std::fstream>(tableFileName,
-					std::fstream::out);
-			printHeaderLine();
-		}
+	if (m_solver->getIterationStart() > 0) {
+		m_errorsTableFile = make_shared<std::fstream>(tableFileName,
+				std::fstream::out | std::fstream::app);
+	} else {
+		m_errorsTableFile = make_shared<std::fstream>(tableFileName,
+				std::fstream::out);
+		printHeaderLine();
 	}
+	MPI_sync();
 }
 template ErrorStats<2>::ErrorStats(BenchmarkCFDSolver<2> * cfdsolver,
 		const std::string tableFileName);
@@ -67,8 +66,9 @@ void ErrorStats<dim>::update() {
 	m_l2DensityError = m_solver->m_analyticDensity.l2_norm();
 
 	// calculate maximum analytic velocity norm
-	m_maxUAnalytic = Math::maxVelocityNorm(m_solver->m_analyticVelocity);
-	m_l2UAnalytic = Math::velocity2Norm(m_solver->m_analyticVelocity);
+	const dealii::IndexSet& locally_owned_dofs = m_solver->getAdvectionOperator()->getLocallyOwnedDofs();
+	m_maxUAnalytic = Math::maxVelocityNorm(m_solver->m_analyticVelocity, locally_owned_dofs);
+	m_l2UAnalytic = Math::velocity2Norm(m_solver->m_analyticVelocity, locally_owned_dofs);
 
 	// substract numeric from analytic velocity
 	m_solver->m_analyticVelocity.at(0).add(-1.0, numericVelocity.at(0));
@@ -92,7 +92,11 @@ void ErrorStats<dim>::update() {
 				m_solver->m_analyticVelocity.at(2));
 	}
 	// calculate || error (pointwise) ||
-	for (size_t i = 0; i < m_solver->getNumberOfDoFs(); i++) {
+	//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+	for (; it != end; it++){
+		size_t i = *it;
 		m_solver->m_analyticVelocity.at(0)(i) = sqrt(
 				m_solver->m_analyticVelocity.at(0)(i));
 	}
@@ -108,7 +112,7 @@ template void ErrorStats<3>::update();
 
 template<size_t dim>
 void ErrorStats<dim>::printHeaderLine() {
-	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+	if (is_MPI_rank_0()) {
 		(*m_errorsTableFile)
 				<< "#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 				<< endl;
@@ -122,7 +126,7 @@ void ErrorStats<dim>::printNewLine() {
 	if (not isUpToDate()) {
 		update();
 	}
-	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) {
+	if (is_MPI_rank_0()) {
 		(*m_errorsTableFile) << m_iterationNumber << " " << m_time << " "
 				<< m_maxUAnalytic << " " << m_maxVelocityError << " "
 				<< m_maxDensityError << " " << m_l2VelocityError << " "

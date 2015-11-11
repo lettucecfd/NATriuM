@@ -20,6 +20,7 @@ using namespace natrium;
 void print_line_html(IntegrationTestCases::TestResult& result,
 		std::ofstream& html) {
 
+	if (is_MPI_rank_0()){
 //////////////////////
 // Print html trace //
 //////////////////////
@@ -79,6 +80,7 @@ void print_line_html(IntegrationTestCases::TestResult& result,
 		html << "  </tr>\n";
 	}
 	html.flush();
+	} /*	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) */
 
 }
 
@@ -90,7 +92,7 @@ int main(int argc, char **argv) {
 	pout << "Start integration tests. This will take a few minutes..." << endl;
 
 	bool errors = false;
-	HtmlTrace htmlTrace;
+	HtmlTrace htmlTrace(is_MPI_rank_0());
 
 	// Test 1: Convergence Periodic Walls
 	IntegrationTestCases::TestResult result =
