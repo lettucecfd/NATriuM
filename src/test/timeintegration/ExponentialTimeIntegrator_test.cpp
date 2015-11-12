@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 	// analytic solution: f(x) = e^(lamda*x)
 	const double dt = 0.01;
 	const size_t numberOfSteps = 100;
-	UNDISTRIBUTED_VECTOR(f,10);
+	numeric_vector f(10);
 
 	f(0)=-3;
 	f(1)=0;
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 	f(7)=-2;
 	f(8)=-5;
 	f(9)=-5;
-	UNDISTRIBUTED_VECTOR(g,10);
+	numeric_vector g(10);
 
 	g(0)=2;
 	g(1)=0;
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 	}
 	dealii::SparsityPattern sparsityPattern;
 	sparsityPattern.copy_from(compressedSparsityPattern);
-	distributed_sparse_matrix A;
+	sparse_matrix A;
 	A.reinit(sparsityPattern);
 	A.set(0,0,-1);
 	A.set(0,1,1);
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 	A.set(9,7,1);
 	A.set(9,8,0);
 	A.set(9,9,2);
-	UNDISTRIBUTED_VECTOR(z,10);
+	numeric_vector z(10);
 
 	z(0)=-2.251746e+03;
 	z(1)=3.070874e+03;
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_test) {
 	z(9)=8.616738e+03;
 
 	// initialize Runge-Kutta 5
-	ExponentialTimeIntegrator<distributed_sparse_matrix, distributed_vector> ETI(dt); //
+	ExponentialTimeIntegrator<sparse_matrix, numeric_vector> ETI(dt); //
 
 	double t = 0;
 	for (size_t i = 0; i < numberOfSteps; i++){

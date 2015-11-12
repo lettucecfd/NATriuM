@@ -27,21 +27,21 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 	const double dt = 0.01;
 	const size_t numberOfSteps = 100;
 	const double lambda = 2.0;
-	UNDISTRIBUTED_VECTOR(f,1);
+	numeric_vector f(1);
 	f(0) = 1;
-	UNDISTRIBUTED_VECTOR(g,1);
+	numeric_vector g(1);
 	g(0) = 0;
 	// build the 1x1 matrix [[lambda]]
 	dealii::DynamicSparsityPattern compressedSparsityPattern(1,1);
 	compressedSparsityPattern.add(0,0);
 	dealii::SparsityPattern sparsityPattern;
 	sparsityPattern.copy_from(compressedSparsityPattern);
-	distributed_sparse_matrix A;
+	sparse_matrix A;
 	A.reinit(sparsityPattern);
 	A.set(0,0,lambda);
 
 	// initialize Runge-Kutta 5
-	RungeKutta5LowStorage<distributed_sparse_matrix, distributed_vector> RK5(dt, f);
+	RungeKutta5LowStorage<sparse_matrix, numeric_vector> RK5(dt, f);
 
 	double t = 0;
 	for (size_t i = 0; i < numberOfSteps; i++){

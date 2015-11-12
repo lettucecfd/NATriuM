@@ -25,6 +25,12 @@ private:
 	/// size of the time step
 	double m_timeStepSize;
 
+protected:
+	/// reinit vector (initialization is different for trilinos data structures,
+	/// so this functions has two different instantiation)
+	void reinitVector(VECTOR& dst, const VECTOR& src);
+
+
 public:
 
 	/// constructor

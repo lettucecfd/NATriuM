@@ -22,7 +22,6 @@ BOOST_AUTO_TEST_SUITE(DealIIWrapper_test)
 BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 	pout << "DealIIWrapper_Convergence_test..." << endl;
 
-	if (is_MPI_rank_0()){
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
 		pout << "  - Integrator " << n << "...";
@@ -32,21 +31,21 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		double tmax = 1;
 		double dt = 0.001;
 		const double lambda = -2.0;
-		UNDISTRIBUTED_VECTOR(g,1);
+		numeric_vector g(1);
 		g(0) = 0;
 		// build the 1x1 matrix [[lambda]]
 		dealii::DynamicSparsityPattern compressedSparsityPattern(1, 1);
 		compressedSparsityPattern.add(0, 0);
 		dealii::SparsityPattern sparsityPattern;
 		sparsityPattern.copy_from(compressedSparsityPattern);
-		distributed_sparse_matrix A;
+		sparse_matrix A;
 		A.reinit(sparsityPattern);
 		A.set(0, 0, lambda);
 
-		DealIIWrapper<distributed_sparse_matrix, distributed_vector> tm(dt,
+		DealIIWrapper<sparse_matrix, numeric_vector> tm(dt,
 				name,MINRES);
 
-		UNDISTRIBUTED_VECTOR(f,1);
+		numeric_vector f(1);
 		f(0) = 1;
 		double t = 0;
 		unsigned int n_steps = 0;
@@ -66,14 +65,12 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 
 		pout << " " << n_steps << " steps. done." << endl;
 	}
-	}
 	pout << "done." << endl;
 }
 
 BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 	pout << "DealIIWrapper_MultiBlock_test..." << endl;
 
-	if (is_MPI_rank_0()){
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
 		pout << "  - Integrator " << n << "...";
@@ -85,17 +82,7 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		double tmax = 1;
 		double dt = 0.001;
 		// build matrix
-		distributed_sparse_block_matrix A;
-#ifdef WITH_TRILINOS
-		dealii::DynamicSparsityPattern compressedSparsityPattern(1, 1);
-		compressedSparsityPattern.add(0, 0);
-		A.reinit(2, 2);
-		A.block(0, 0).reinit(compressedSparsityPattern);
-		A.block(0, 1).reinit(A.block(0, 0));
-		A.block(1, 0).reinit(A.block(0, 0));
-		A.block(1, 1).reinit(A.block(0, 0));
-		A.collect_sizes();
-#else
+		sparse_block_matrix A;
 		dealii::BlockDynamicSparsityPattern cSparse(2, 2);
 		for (size_t iI = 0; iI < 2; iI++) {
 			for (size_t J = 0; J < 2; J++) {
@@ -111,19 +98,16 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		}
 		sparse.collect_sizes();
 		A.reinit(sparse);
-#endif
 		A.set(0, 0, 1);
 		A.set(0, 1, -1);
 		A.set(1, 0, 0);
 		A.set(1, 1, 3);
 
-		DealIIWrapper<distributed_sparse_block_matrix, distributed_block_vector> tm(
+		DealIIWrapper<sparse_block_matrix, block_vector> tm(
 				dt, name,MINRES);
 		// initialize block vectors
-		distributed_block_vector f;
-		distributed_block_vector b;
-		REINIT_UNDISTRIBUTED_BLOCK_VECTOR(f, 2, 1);
-		REINIT_UNDISTRIBUTED_BLOCK_VECTOR(b, 2, 1);
+		block_vector f(2,1);
+		block_vector b(2,1);
 		f(0) = 1;
 		f(1) = 2;
 		b(0) = 0;
@@ -160,7 +144,6 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 
 		pout << " " << n_steps << " steps. done." << endl;
 
-	}
 	}
 	pout << "done." << endl;
 } /* DealIIWrapper_MultiBlock_test */
