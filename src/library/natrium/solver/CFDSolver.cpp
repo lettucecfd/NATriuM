@@ -49,7 +49,11 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// Create output directory
 	if (not configuration->isSwitchOutputOff()) {
-		configuration->prepareOutputDirectory();
+		try {
+			configuration->prepareOutputDirectory();
+		} catch (ConfigurationException & e) {
+			natrium_errorexit(e.what());
+		}
 	}
 
 	// CONFIGURE LOGGER
@@ -68,12 +72,15 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	/// check if problem's boundary conditions are well defined
 	bool boundaries_ok = problemDescription->checkBoundaryConditions();
 	if (!boundaries_ok) {
-		throw CFDSolverException(
-				"Boundary conditions do no fit to triangulation.");
+		natrium_errorexit("Boundary conditions do no fit to triangulation.");
 	}
 
 	/// check if problem and solver configuration fit together
-	configuration->checkProblem(problemDescription);
+	try {
+		configuration->checkProblem(problemDescription);
+	} catch (ConfigurationException & e) {
+		natrium_errorexit(e.what());
+	}
 	m_problemDescription = problemDescription;
 	m_configuration = configuration;
 
@@ -83,10 +90,10 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	} else if (Stencil_D3Q19 == configuration->getStencil()) {
 		m_stencil = make_shared<D3Q19>(configuration->getStencilScaling());
 	} else {
-		throw CFDSolverException("Stencil not known to CFDSolver.");
+		natrium_errorexit("Stencil not known to CFDSolver.");
 	}
 	if (m_stencil->getD() != dim) {
-		throw CFDSolverException("Stencil has wrong dimension.");
+		natrium_errorexit("Stencil has wrong dimension.");
 	}
 
 	/// Build streaming data object
@@ -98,12 +105,16 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		}
 		// create SEDG MinLee by reading the system matrices from files or assembling
 		// TODO estimate time for assembly
-		m_advectionOperator = make_shared<SEDGMinLee<dim> >(
-				m_problemDescription->getMesh(),
-				m_problemDescription->getBoundaries(),
-				configuration->getSedgOrderOfFiniteElement(), m_stencil,
-				whereAreTheStoredMatrices,
-				(CENTRAL == configuration->getSedgFluxType()));
+		try {
+			m_advectionOperator = make_shared<SEDGMinLee<dim> >(
+					m_problemDescription->getMesh(),
+					m_problemDescription->getBoundaries(),
+					configuration->getSedgOrderOfFiniteElement(), m_stencil,
+					whereAreTheStoredMatrices,
+					(CENTRAL == configuration->getSedgFluxType()));
+		} catch (AdvectionSolverException & e) {
+			natrium_errorexit(e.what());
+		}
 	}
 
 	if (configuration->isRestartAtLastCheckpoint()) {
@@ -152,16 +163,17 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	map<dealii::types::global_dof_index, dealii::Point<dim> > supportPoints;
 	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
 	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-			MPI_COMM_WORLD);
+	MPI_COMM_WORLD);
 	m_density_ghosted.reinit(m_advectionOperator->getLocallyOwnedDofs(),
 			m_advectionOperator->getLocallyRelevantDofs(),
 			MPI_COMM_WORLD);
 	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-			MPI_COMM_WORLD);
+	MPI_COMM_WORLD);
 	for (size_t i = 0; i < dim; i++) {
 		distributed_vector vi(m_advectionOperator->getLocallyOwnedDofs(),
-				MPI_COMM_WORLD);
-		 distributed_vector vi_ghosted(m_advectionOperator->getLocallyOwnedDofs(),
+		MPI_COMM_WORLD);
+		distributed_vector vi_ghosted(
+				m_advectionOperator->getLocallyOwnedDofs(),
 				m_advectionOperator->getLocallyRelevantDofs(),
 				MPI_COMM_WORLD);
 		m_velocity.push_back(vi);
@@ -188,14 +200,14 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	//distribution functions
 #ifdef WITH_TRILINOS_MPI
 	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
-			MPI_COMM_WORLD);
-	m_f_ghosted.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
+	MPI_COMM_WORLD);
+	m_f_ghosted.reinit(m_stencil->getQ(),
+			m_advectionOperator->getLocallyOwnedDofs(),
 			m_advectionOperator->getLocallyRelevantDofs(),
 			MPI_COMM_WORLD);
 #else
 	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
 #endif
-
 
 	/// Build time integrator
 	if (RUNGE_KUTTA_5STAGE == configuration->getTimeIntegrator()) {
@@ -374,13 +386,16 @@ void CFDSolver<dim>::stream() {
 	const distributed_block_vector& systemVector =
 			m_advectionOperator->getSystemVector();
 
-		/*cout << "fsize" << f.block(0).local_size() << ", matrixsize" << systemMatrix.block(0,0).locally_owned_range_indices().n_elements()
-				<< "x" << systemMatrix.block(0,0).locally_owned_domain_indices().n_elements() <<
-				" ,unghosted size" << m_f.getFStream().block(0).local_size() << endl;
-*/
-
-	m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time,
-			m_timeIntegrator->getTimeStepSize());
+	/*cout << "fsize" << f.block(0).local_size() << ", matrixsize" << systemMatrix.block(0,0).locally_owned_range_indices().n_elements()
+	 << "x" << systemMatrix.block(0,0).locally_owned_domain_indices().n_elements() <<
+	 " ,unghosted size" << m_f.getFStream().block(0).local_size() << endl;
+	 */
+	try {
+		m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time,
+				m_timeIntegrator->getTimeStepSize());
+	} catch (std::exception& e) {
+		natrium_errorexit(e.what());
+	}
 	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
 	copyToGhosted();
 }
@@ -392,8 +407,12 @@ void CFDSolver<dim>::collide() {
 	// copy vectors from ghosted vectors in order to do collisions
 	copyFromGhosted();
 	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
-	m_collisionModel->collideAll(m_f, m_density, m_velocity,
-			m_advectionOperator->getLocallyOwnedDofs(), false);
+	try {
+		m_collisionModel->collideAll(m_f, m_density, m_velocity,
+				m_advectionOperator->getLocallyOwnedDofs(), false);
+	} catch (CollisionException& e) {
+		natrium_errorexit(e.what());
+	}
 	//m_f.compress(dealii::VectorOperation::add);
 	// copy vectors to ghosted vectors in order to do streaming and output
 	copyToGhosted();
@@ -403,7 +422,11 @@ template void CFDSolver<3>::collide();
 
 template<size_t dim>
 void CFDSolver<dim>::reassemble() {
-	m_advectionOperator->reassemble();
+	try {
+		m_advectionOperator->reassemble();
+	} catch (AdvectionSolverException & e) {
+		natrium_errorexit(e.what());
+	}
 }
 template void CFDSolver<2>::reassemble();
 template void CFDSolver<3>::reassemble();
@@ -598,10 +621,11 @@ void CFDSolver<dim>::initializeDistributions() {
 
 // Initialize f with the equilibrium distribution functions
 	//for all degrees of freedom on current processor
-	const dealii::IndexSet& locally_owned_dofs = m_advectionOperator->getLocallyOwnedDofs();
+	const dealii::IndexSet& locally_owned_dofs =
+			m_advectionOperator->getLocallyOwnedDofs();
 	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
-	for (; it != end; it++){
+	for (; it != end; it++) {
 		size_t i = *it;
 		for (size_t j = 0; j < dim; j++) {
 			u(j) = m_velocity.at(j)(i);
@@ -645,11 +669,19 @@ void CFDSolver<dim>::initializeDistributions() {
 				break;
 			}
 			oldDensities = m_density;
-			stream();
+			try {
+				stream();
+			} catch (std::exception& e) {
+				natrium_errorexit(e.what());
+			}
 			// collide without recalculating velocities
-			m_collisionModel->collideAll(m_f, m_density, m_velocity,
-					m_advectionOperator->getLocallyOwnedDofs(),
-					inInitializationProcedure);
+			try {
+				m_collisionModel->collideAll(m_f, m_density, m_velocity,
+						m_advectionOperator->getLocallyOwnedDofs(),
+						inInitializationProcedure);
+			} catch (CollisionException& e) {
+				natrium_errorexit(e.what());
+			}
 			oldDensities -= m_density;
 			residual = oldDensities.norm_sqr();
 			loopCount++;
@@ -658,7 +690,7 @@ void CFDSolver<dim>::initializeDistributions() {
 				<< loopCount << " iterations." << endl;
 
 		//for all degrees of freedom on current processor
-		for (it = locally_owned_dofs.begin(); it != end; it++){
+		for (it = locally_owned_dofs.begin(); it != end; it++) {
 			size_t i = *it;
 			for (size_t j = 0; j < dim; j++) {
 				u(j) = m_velocity.at(j)(i);
@@ -739,7 +771,7 @@ void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
 #endif
 		}
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-		throw CFDSolverException(
+		natrium_errorexit(
 				"An error occurred while reading the distribution functions from file: Please switch off the restart option to start the simulation from the beginning.");
 	}
 }
@@ -848,7 +880,7 @@ double CFDSolver<dim>::getTau() const {
 template double CFDSolver<2>::getTau() const;
 template double CFDSolver<3>::getTau() const;
 
-template <size_t dim>
+template<size_t dim>
 void CFDSolver<dim>::copyToGhosted() {
 	m_f_ghosted = m_f;
 	m_velocity_ghosted = m_velocity;
@@ -857,7 +889,7 @@ void CFDSolver<dim>::copyToGhosted() {
 template void CFDSolver<2>::copyToGhosted();
 template void CFDSolver<3>::copyToGhosted();
 
-template <size_t dim>
+template<size_t dim>
 void CFDSolver<dim>::copyFromGhosted() {
 	m_f = m_f_ghosted;
 	m_velocity = m_velocity_ghosted;
