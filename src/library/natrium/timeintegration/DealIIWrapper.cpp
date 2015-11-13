@@ -27,8 +27,9 @@
 
 namespace natrium {
 
-// TODO: refactor this class;  See class dealii::SolverSelector
-
+/// TODO: refactor this class;  See class dealii::SolverSelector
+/// Maybe with a new LinearSolver class
+/// Unif
 
 template<class MATRIX, class VECTOR>
 VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::evaluateF(const double,
@@ -107,65 +108,58 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 }
 
 template<>
-numeric_vector natrium::DealIIWrapper<sparse_matrix,
-		numeric_vector>::evaluateJInverse(const double, const double,
-		const numeric_vector& f) const {
+numeric_vector natrium::DealIIWrapper<sparse_matrix, numeric_vector>::evaluateJInverse(
+		const double, const double, const numeric_vector& f) const {
 
 	numeric_vector result = f;
 
 	dealii::SolverControl solver_control(m_iterations, m_tol * f.l2_norm(),
 			false, false);	//* m_tmpSystemVector.l2_norm());
 
+	switch (m_solver) {
+	case 0: {
 
-	switch(m_solver)
-	{
-		case 0:
-		{
-
-			dealii::SolverBicgstab<numeric_vector> bicgstab(solver_control);
-			bicgstab.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 1:
-		{
-			dealii::SolverCG<numeric_vector> cg(solver_control);
-			cg.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 2:
-		{
-			dealii::SolverFGMRES<numeric_vector> fgmres(solver_control);
-			fgmres.solve(*m_systemMatrix, result, f,dealii::PreconditionIdentity());
-			break;
-		}
-		case 3:
-		{
-			dealii::SolverGMRES<numeric_vector> gmres(solver_control);
-			gmres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 4:
-		{
-			dealii::SolverMinRes<numeric_vector> minres(solver_control);
-			minres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 5:
-		{
-			dealii::SolverQMRS<numeric_vector> qmrs(solver_control);
-			qmrs.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 7:
-		{
-			dealii::SolverRichardson<numeric_vector> richard(solver_control);
-			richard.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
+		dealii::SolverBicgstab<numeric_vector> bicgstab(solver_control);
+		bicgstab.solve(*m_systemMatrix, result, f,
+				dealii::PreconditionIdentity());
+		break;
+	}
+	case 1: {
+		dealii::SolverCG<numeric_vector> cg(solver_control);
+		cg.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 2: {
+		dealii::SolverFGMRES<numeric_vector> fgmres(solver_control);
+		fgmres.solve(*m_systemMatrix, result, f,
+				dealii::PreconditionIdentity());
+		break;
+	}
+	case 3: {
+		dealii::SolverGMRES<numeric_vector> gmres(solver_control);
+		gmres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 4: {
+		dealii::SolverMinRes<numeric_vector> minres(solver_control);
+		minres.solve(*m_systemMatrix, result, f,
+				dealii::PreconditionIdentity());
+		break;
+	}
+	case 5: {
+		dealii::SolverQMRS<numeric_vector> qmrs(solver_control);
+		qmrs.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 7: {
+		dealii::SolverRichardson<numeric_vector> richard(solver_control);
+		richard.solve(*m_systemMatrix, result, f,
+				dealii::PreconditionIdentity());
+		break;
+	}
 	}	//,	           preconditioner);
 	return result;
 }
-
 
 template<>
 distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
@@ -230,65 +224,58 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 }
 
 template<>
-block_vector natrium::DealIIWrapper<sparse_block_matrix,
-		block_vector>::evaluateJInverse(const double, const double,
-		const block_vector& f) const {
+block_vector natrium::DealIIWrapper<sparse_block_matrix, block_vector>::evaluateJInverse(
+		const double, const double, const block_vector& f) const {
 
 	block_vector result(f);
 
 	dealii::SolverControl solver_control(m_iterations, m_tol * f.l2_norm(),
 			false, false);	//* m_tmpSystemVector.l2_norm());
 
-	switch(m_solver)
-	{
-		case 0:
-		{
+	switch (m_solver) {
+	case 0: {
 
-			dealii::SolverBicgstab<block_vector> bicgstab(solver_control);
-			bicgstab.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 1:
-		{
-			dealii::SolverCG<block_vector> cg(solver_control);
-			cg.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 2:
-		{
-			dealii::SolverFGMRES<block_vector> fgmres(solver_control);
-			fgmres.solve(*m_systemMatrix, result, f,dealii::PreconditionIdentity());
-			break;
-		}
-		case 3:
-		{
-			dealii::SolverGMRES<block_vector> gmres(solver_control);
-			gmres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 4:
-		{
-			dealii::SolverMinRes<block_vector> minres(solver_control);
-			minres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 5:
-		{
-			dealii::SolverQMRS<block_vector> qmrs(solver_control);
-			qmrs.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 7:
-		{
-			dealii::SolverRichardson<block_vector> richard(solver_control);
-			richard.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
+		dealii::SolverBicgstab<block_vector> bicgstab(solver_control);
+		bicgstab.solve(*m_systemMatrix, result, f,
+				dealii::PreconditionIdentity());
+		break;
+	}
+	case 1: {
+		dealii::SolverCG<block_vector> cg(solver_control);
+		cg.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 2: {
+		dealii::SolverFGMRES<block_vector> fgmres(solver_control);
+		fgmres.solve(*m_systemMatrix, result, f,
+				dealii::PreconditionIdentity());
+		break;
+	}
+	case 3: {
+		dealii::SolverGMRES<block_vector> gmres(solver_control);
+		gmres.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 4: {
+		dealii::SolverMinRes<block_vector> minres(solver_control);
+		minres.solve(*m_systemMatrix, result, f,
+				dealii::PreconditionIdentity());
+		break;
+	}
+	case 5: {
+		dealii::SolverQMRS<block_vector> qmrs(solver_control);
+		qmrs.solve(*m_systemMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 7: {
+		dealii::SolverRichardson<block_vector> richard(solver_control);
+		richard.solve(*m_systemMatrix, result, f,
+				dealii::PreconditionIdentity());
+		break;
+	}
 	}	//,	           preconditioner);
 	return result;
 }
-
-
 
 template<>
 distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
@@ -363,19 +350,16 @@ distributed_vector natrium::DealIIWrapper<distributed_sparse_matrix,
 	return result;
 }
 
-
-
 template<>
-numeric_vector natrium::DealIIWrapper<sparse_matrix,
-numeric_vector>::evaluateIdMinusTauJInverse(const double,
-		const double tau, const numeric_vector& f) {
+numeric_vector natrium::DealIIWrapper<sparse_matrix, numeric_vector>::evaluateIdMinusTauJInverse(
+		const double, const double tau, const numeric_vector& f) {
 
 	numeric_vector result = f;
 
 	if ((m_tmpMatrix.empty()) or
-			// the next check should give true if the sparsity patterns are equal
-			// and false, else. n_nonzero_elements returns the number of entries
-			// in the sparsity pattern, not the actual number of nonzero entries
+	// the next check should give true if the sparsity patterns are equal
+	// and false, else. n_nonzero_elements returns the number of entries
+	// in the sparsity pattern, not the actual number of nonzero entries
 			(m_tmpMatrix.n_nonzero_elements()
 					!= m_systemMatrix->n_nonzero_elements())) {
 		m_tmpMatrix.reinit(m_systemMatrix->get_sparsity_pattern());
@@ -392,56 +376,47 @@ numeric_vector>::evaluateIdMinusTauJInverse(const double,
 	dealii::SolverControl solver_control(m_iterations, m_tol * f.l2_norm(),
 			false, false);	//* m_tmpSystemVector.l2_norm());
 
-	switch(m_solver)
-	{
-		case 0:
-		{
+	switch (m_solver) {
+	case 0: {
 
-			dealii::SolverBicgstab<numeric_vector> bicgstab(solver_control);
-			bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 1:
-		{
-			dealii::SolverCG<numeric_vector> cg(solver_control);
-			cg.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 2:
-		{
-			dealii::SolverFGMRES<numeric_vector> fgmres(solver_control);
-			fgmres.solve(m_tmpMatrix, result, f,dealii::PreconditionIdentity());
-			break;
-		}
-		case 3:
-		{
-			dealii::SolverGMRES<numeric_vector> gmres(solver_control);
-			gmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 4:
-		{
-			dealii::SolverMinRes<numeric_vector> minres(solver_control);
-			minres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 5:
-		{
-			dealii::SolverQMRS<numeric_vector> qmrs(solver_control);
-			qmrs.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 7:
-		{
-			dealii::SolverRichardson<numeric_vector> richard(solver_control);
-			richard.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
+		dealii::SolverBicgstab<numeric_vector> bicgstab(solver_control);
+		bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 1: {
+		dealii::SolverCG<numeric_vector> cg(solver_control);
+		cg.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 2: {
+		dealii::SolverFGMRES<numeric_vector> fgmres(solver_control);
+		fgmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 3: {
+		dealii::SolverGMRES<numeric_vector> gmres(solver_control);
+		gmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 4: {
+		dealii::SolverMinRes<numeric_vector> minres(solver_control);
+		minres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 5: {
+		dealii::SolverQMRS<numeric_vector> qmrs(solver_control);
+		qmrs.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 7: {
+		dealii::SolverRichardson<numeric_vector> richard(solver_control);
+		richard.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
 	}	//,	           preconditioner);
 
 	return result;
 }
-
 
 template<>
 distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
@@ -480,8 +455,14 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 	}
 	// I-tau*A
 	m_tmpMatrix *= (-tau);
+	const dealii::IndexSet& locally_owned_domain_indices = m_tmpMatrix.block(0,
+			0).locally_owned_domain_indices();
+	//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it(locally_owned_domain_indices.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_domain_indices.end());
 	for (size_t I = 0; I < m_tmpMatrix.n_block_cols(); I++) {
-		for (size_t i = 0; i < m_tmpMatrix.block(I, I).n(); i++) {
+		for (it = locally_owned_domain_indices.begin(); it != end; it++) {
+			size_t i = *it;
 			m_tmpMatrix.block(I, I).add(i, i, 1.0);
 		}
 	}
@@ -540,9 +521,8 @@ distributed_block_vector natrium::DealIIWrapper<distributed_sparse_block_matrix,
 }
 
 template<>
-block_vector natrium::DealIIWrapper<sparse_block_matrix,
-		block_vector>::evaluateIdMinusTauJInverse(const double,
-		const double tau, const block_vector& f) {
+block_vector natrium::DealIIWrapper<sparse_block_matrix, block_vector>::evaluateIdMinusTauJInverse(
+		const double, const double tau, const block_vector& f) {
 	// Test all dimensions and change, if necessary
 	assert(m_systemMatrix->n() == m_systemMatrix->m());
 	assert(f.size() == m_systemMatrix->n());
@@ -550,14 +530,13 @@ block_vector natrium::DealIIWrapper<sparse_block_matrix,
 	block_vector result = f;
 
 	if ((m_tmpMatrix.empty()) or
-			// the next check should give true if the sparsity patterns are equal
-			// and false, else. n_nonzero_elements returns the number of entries
-			// in the sparsity pattern, not the actual number of nonzero entries
+	// the next check should give true if the sparsity patterns are equal
+	// and false, else. n_nonzero_elements returns the number of entries
+	// in the sparsity pattern, not the actual number of nonzero entries
 			(m_tmpMatrix.n_nonzero_elements()
 					!= m_systemMatrix->n_nonzero_elements())) {
 		m_tmpMatrix.reinit(m_systemMatrix->get_sparsity_pattern());
 	}
-
 
 	// A*f(t)
 	m_tmpMatrix.copy_from(*m_systemMatrix);
@@ -580,54 +559,45 @@ block_vector natrium::DealIIWrapper<sparse_block_matrix,
 	dealii::SolverControl solver_control(m_iterations, (m_tol * f.l2_norm()),
 			false, false);	//* m_tmpSystemVector.l2_norm());
 
+	switch (m_solver) {
+	case 0: {
 
-	switch(m_solver)
-	{
-		case 0:
-		{
+		dealii::SolverBicgstab<block_vector> bicgstab(solver_control);
+		bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
 
-			dealii::SolverBicgstab<block_vector> bicgstab(solver_control);
-			bicgstab.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 1: {
+		dealii::SolverCG<block_vector> cg(solver_control);
+		cg.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
 
-			break;
-		}
-		case 1:
-		{
-			dealii::SolverCG<block_vector> cg(solver_control);
-			cg.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-
-			break;
-		}
-		case 2:
-		{
-			dealii::SolverFGMRES<block_vector> fgmres(solver_control);
-			fgmres.solve(m_tmpMatrix, result, f,dealii::PreconditionIdentity());
-			break;
-		}
-		case 3:
-		{
-			dealii::SolverGMRES<block_vector> gmres(solver_control);
-			gmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 4:
-		{
-			dealii::SolverMinRes<block_vector> minres(solver_control);
-			minres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 5:
-		{
-			dealii::SolverQMRS<block_vector> qmrs(solver_control);
-			qmrs.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
-		case 7:
-		{
-			dealii::SolverRichardson<block_vector> richard(solver_control);
-			richard.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
-			break;
-		}
+		break;
+	}
+	case 2: {
+		dealii::SolverFGMRES<block_vector> fgmres(solver_control);
+		fgmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 3: {
+		dealii::SolverGMRES<block_vector> gmres(solver_control);
+		gmres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 4: {
+		dealii::SolverMinRes<block_vector> minres(solver_control);
+		minres.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 5: {
+		dealii::SolverQMRS<block_vector> qmrs(solver_control);
+		qmrs.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
+	case 7: {
+		dealii::SolverRichardson<block_vector> richard(solver_control);
+		richard.solve(m_tmpMatrix, result, f, dealii::PreconditionIdentity());
+		break;
+	}
 	}	//,	           preconditioner);
 
 	return result;
