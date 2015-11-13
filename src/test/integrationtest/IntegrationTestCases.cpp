@@ -439,13 +439,13 @@ TestResult ConvergencePureLinearAdvectionSmooth() {
 			double deltaX = 1. / (pow(2, N));
 			double deltaT = 0.4 * pow(0.5, N)
 					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));
-			size_t numberOfTimeSteps = 0.1 / deltaT;
-			if (numberOfTimeSteps <= 5) {
+			double t_end = 0.1;
+			if (t_end/deltaT <= 5) {
 				continue;
 			}
 			AdvectionBenchmark::AdvectionResult advectionResult =
 					AdvectionBenchmark::oneTest(N, orderOfFiniteElement, deltaT,
-							numberOfTimeSteps, is_smooth, false, false);
+							t_end, RUNGE_KUTTA_5STAGE, NONE, is_smooth, false, false);
 
 			// Analysis
 			// Velocity error (compare Paper by Min and Lee)
@@ -502,13 +502,13 @@ TestResult ConvergencePureLinearAdvectionNonsmooth() {
 			double deltaX = 1. / (pow(2, N));
 			double deltaT = 0.4 * pow(0.5, N)
 					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));
-			size_t numberOfTimeSteps = 0.1 / deltaT;
-			if (numberOfTimeSteps <= 5) {
+			double t_end = 0.1;
+			if (t_end/deltaT <= 5) {
 				continue;
 			}
 			AdvectionBenchmark::AdvectionResult advectionResult =
 					AdvectionBenchmark::oneTest(N, orderOfFiniteElement, deltaT,
-							numberOfTimeSteps, is_smooth, false, false);
+							t_end, RUNGE_KUTTA_5STAGE, NONE, is_smooth, false, false);
 
 			// Analysis
 			std::stringstream stream1;

@@ -14,7 +14,7 @@ cmake_minimum_required( VERSION 2.8.8 )
 find_package(   deal.II 8.0 REQUIRED
                 HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
 )
- 
+
 #
 # Initialize Deal variables (has to be called before "project")
 #

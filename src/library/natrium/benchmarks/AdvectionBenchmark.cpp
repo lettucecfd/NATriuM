@@ -18,7 +18,10 @@
 
 #include "../problemdescription/ProblemDescription.h"
 
+#include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
+#include "../timeintegration/ExponentialTimeIntegrator.h"
+#include "../timeintegration/DealIIWrapper.h"
 
 #include "../stencils/D2Q9.h"
 
@@ -29,8 +32,57 @@
 namespace natrium {
 
 template class SEDGMinLee<2> ;
-template class RungeKutta5LowStorage<distributed_sparse_matrix,
-		distributed_vector> ;
+
+shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > make_integrator(
+		TimeIntegratorName integrator_name,
+		DealIntegratorName deal_integrator_name, double delta_t,
+		distributed_vector& f) {
+
+	/// Build time integrator
+	switch (integrator_name) {
+	case RUNGE_KUTTA_5STAGE: {
+		return make_shared<
+				RungeKutta5LowStorage<distributed_sparse_matrix,
+						distributed_vector> >(delta_t, f);
+	}
+	case THETA_METHOD: {
+		const double theta = 0.5;
+		return make_shared<
+				ThetaMethod<distributed_sparse_matrix, distributed_vector> >(
+				delta_t, f, theta);
+	}
+	case EXPONENTIAL: {
+		return make_shared<
+				ExponentialTimeIntegrator<distributed_sparse_matrix,
+						distributed_vector> >(delta_t);
+	}
+	case OTHER: {
+		// create configuration object to get standard preferences
+		SolverConfiguration config;
+		if (deal_integrator_name < 7) {
+			return make_shared<
+					DealIIWrapper<distributed_sparse_matrix, distributed_vector> >(
+					delta_t, deal_integrator_name, config.getDealLinearSolver());
+		} else if (deal_integrator_name < 12) {
+			return make_shared<
+					DealIIWrapper<distributed_sparse_matrix, distributed_vector> >(
+					delta_t, deal_integrator_name, config.getDealLinearSolver(),
+					config.getEmbeddedDealIntegratorCoarsenParameter(),
+					config.getEmbeddedDealIntegratorRefinementParameter(),
+					0.1*delta_t, // minimum time step
+					10*delta_t, // maximum time step
+					config.getEmbeddedDealIntegratorRefinementTolerance(),
+					config.getEmbeddedDealIntegratorCoarsenTolerance());
+		}
+		assert(false);
+		return NULL;
+	}/* case OTHER */
+	default: {
+		assert(false);
+		return NULL;
+	}
+	} /* switch integrator_name */
+}
 
 namespace AdvectionBenchmark {
 
@@ -88,8 +140,9 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution,
 }
 
 AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
-		size_t numberOfTimeSteps, bool is_smooth, bool output_to_std_dir,
-		bool useCentralFlux) {
+		double t_end, const TimeIntegratorName integrator,
+		const DealIntegratorName deal_integrator, bool is_smooth,
+		bool output_to_std_dir, bool useCentralFlux) {
 
 	AdvectionResult result;
 	result.refinementLevel = refinementLevel;
@@ -125,19 +178,20 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(matrices.block(0, 0));
 	advectionMatrix.copy_from(matrices.block(0, 0));
-	shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > RK5 =
-			make_shared<
-					RungeKutta5LowStorage<distributed_sparse_matrix,
-							distributed_vector> >(deltaT, f);
+	shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > time_stepper;
+	time_stepper = make_integrator(integrator, deal_integrator, deltaT, f);
 
 #ifdef WITH_TRILINOS_MPI
-	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(), MPI_COMM_WORLD);
+	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(),
+	MPI_COMM_WORLD);
 #else
 	distributed_vector fAnalytic(f.size());
 #endif
 
 	double timestart;
 	timestart = clock();
+	double t = 0;
+	size_t i = 0;
 
 	if (output_to_std_dir) {
 		// prepare output directory
@@ -151,9 +205,12 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 			}
 		}
 
-		for (size_t i = 0; i < numberOfTimeSteps; i++) {
+		while (t < t_end){
+			i++;
+		//for (size_t i = 0; i < numberOfTimeSteps; i++) {
 			//stream
-			RK5->step(f, advectionMatrix, g);
+			t = time_stepper->step(f, advectionMatrix, g, t,
+					time_stepper->getTimeStepSize());
 
 			// output
 			if (i % 10 == 0) {
@@ -164,8 +221,8 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 				dealii::DataOut<2> data_out;
 				data_out.attach_dof_handler(*streaming.getDoFHandler());
 				data_out.add_data_vector(f, "f");
-				getAnalyticSolution(deltaT * i, fAnalytic, supportPoints, streaming,
-						is_smooth);
+				getAnalyticSolution(deltaT * i, fAnalytic, supportPoints,
+						streaming, is_smooth);
 				data_out.add_data_vector(fAnalytic, "f_ref");
 				data_out.build_patches(20);
 				data_out.write_vtu(vtu_output);
@@ -174,29 +231,25 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 		}
 	} else {
 
-		for (size_t i = 0; i < numberOfTimeSteps; i++) {
+		while (t < t_end){
+			i++;
 			//stream
-			RK5->step(f, advectionMatrix, g);
+			t = time_stepper->step(f, advectionMatrix, g, t,
+					time_stepper->getTimeStepSize());
+			//pout << t << endl;
 		}
 
 	}
 	result.timesec = clock() - timestart;
-	result.timesec /= numberOfTimeSteps;
+	result.timesec /= i;
 	result.timesec /= CLOCKS_PER_SEC;
 
 	// compare with analytic solution by sup-norm and 2-norm
-	getAnalyticSolution(deltaT * numberOfTimeSteps, fAnalytic, supportPoints, streaming,
-			is_smooth);
-	result.normSup = 0.0;
-	result.norm2 = 0.0;
-	for (size_t i = 0; i < f.size(); i++) {
-		double error = fabs(f(i) - fAnalytic(i));
-		if (error > result.normSup) {
-			result.normSup = error;
-		}
-		result.norm2 += (error * error);
-	}
-	result.norm2 = sqrt(result.norm2);
+	getAnalyticSolution(t_end, fAnalytic, supportPoints,
+			streaming, is_smooth);
+	fAnalytic.add(-1, f);
+	result.normSup = fAnalytic.linfty_norm();
+	result.norm2 = fAnalytic.l2_norm();
 
 	std::stringstream fileName;
 	fileName << getenv("NATRIUM_HOME") << "/convergence-advection-solver/Level_"

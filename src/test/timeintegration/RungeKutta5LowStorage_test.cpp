@@ -53,6 +53,36 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 
 	pout << "done." << endl;
 }
+
+BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_MPI_test) {
+	pout << "RungeKutta5LowStorage_MPI_test..." << endl;
+
+	// Advection benchmark
+
+	size_t N = 2;	// refinement level
+	size_t p = 4;	// fe order
+	bool is_smooth = true;
+
+	double delta_x = 1. / (pow(2, N));
+	double delta_t;
+
+	delta_t = 0.2 * pow(0.5, N) / ((p + 1) * (p + 1));
+
+	double t_end = 0.1;
+	AdvectionBenchmark::AdvectionResult advectionResult =
+			AdvectionBenchmark::oneTest(N, p, delta_t, t_end,
+					RUNGE_KUTTA_5STAGE, NONE, is_smooth, false, false);
+
+	double result = std::log10(advectionResult.normSup);
+	// taken from the integration test
+	double expected = std::log10(400 * std::pow(0.3 * delta_x, p + 1));
+
+	BOOST_CHECK_SMALL(result - expected, 0.8);
+
+	pout << "done." << endl;
+}/* RungeKutta5LowStorage_MPI_test */
+
+
 	BOOST_AUTO_TEST_SUITE_END()
 
 }	/* namespace natrium */

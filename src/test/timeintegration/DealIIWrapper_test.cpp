@@ -14,6 +14,7 @@
 
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/benchmarks/AdvectionBenchmark.h"
 
 namespace natrium {
 
@@ -42,14 +43,13 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		A.reinit(sparsityPattern);
 		A.set(0, 0, lambda);
 
-		DealIIWrapper<sparse_matrix, numeric_vector> tm(dt,
-				name,MINRES);
+		DealIIWrapper<sparse_matrix, numeric_vector> tm(dt, name, MINRES);
 
 		numeric_vector f(1);
 		f(0) = 1;
 		double t = 0;
 		unsigned int n_steps = 0;
-		if (7 == n){
+		if (7 == n) {
 			tmax = 0.1;
 		}
 		while (t < tmax) {
@@ -103,11 +103,10 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		A.set(1, 0, 0);
 		A.set(1, 1, 3);
 
-		DealIIWrapper<sparse_block_matrix, block_vector> tm(
-				dt, name,MINRES);
+		DealIIWrapper<sparse_block_matrix, block_vector> tm(dt, name, MINRES);
 		// initialize block vectors
-		block_vector f(2,1);
-		block_vector b(2,1);
+		block_vector f(2, 1);
+		block_vector b(2, 1);
 		f(0) = 1;
 		f(1) = 2;
 		b(0) = 0;
@@ -116,7 +115,7 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		double c1 = f(1);
 		double t = 0;
 
-		if (7 == n){
+		if (7 == n) {
 			tmax = 0.1;
 		}
 		unsigned int n_steps = 0;
@@ -151,8 +150,44 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 BOOST_AUTO_TEST_CASE(DealIIWrapper_MPI_test) {
 	pout << "DealIIWrapper_MPI_test..." << endl;
 
-	// TODO Meaningful test
+	// Advection benchmark
 
+	for (int n = 0; n < 12; n++) {
+		DealIntegratorName integrator_name = static_cast<DealIntegratorName>(n);
+		pout << "  - Integrator " << n << "...";
+
+		size_t N = 2;	// refinement level
+		size_t p = 4;	// fe order
+		bool is_smooth = true;
+
+		double delta_x = 1. / (pow(2, N));
+		double CFL;
+		if ((0 == n)) { // expl. Euler
+			CFL = 0.1;
+		} else if ((3 <= n) and (n <= 4)) { // impl. Euler + impl. Midpoint
+			CFL = 0.2;
+		} else  {
+			CFL = 0.4;
+		}
+		double delta_t = CFL * pow(0.5, N) / ((p + 1) * (p + 1));
+
+		double t_end = 0.1;
+		size_t numberOfTimeSteps = t_end / delta_t;
+		if (numberOfTimeSteps <= 5) {
+			continue;
+		}
+		AdvectionBenchmark::AdvectionResult advectionResult =
+				AdvectionBenchmark::oneTest(N, p, delta_t, t_end,
+						OTHER, integrator_name, is_smooth, false, false);
+
+		double result = std::log10(advectionResult.normSup);
+		// taken from the integration test
+		double expected = std::log10(400 * std::pow(0.3 * delta_x, p + 1));
+
+		BOOST_CHECK_SMALL(result - expected, 0.8);
+
+		pout << " done." << endl;
+	}
 	pout << "done." << endl;
 }/* DealIIWrapper_MPI_test */
 
