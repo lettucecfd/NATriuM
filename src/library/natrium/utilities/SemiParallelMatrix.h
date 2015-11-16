@@ -69,6 +69,30 @@ public:
 	 * @param[in] src	Vector to be multiplied with. Is not parallelized.
 	 */
 	void vmult(VECTOR& dst, const numeric_vector& src) const;
+
+	/**
+	 * @short extract j-th column of the matrix
+	 * @param[in] j 	column index
+	 * @param[out] dst	result (column j)
+	 *
+	 */
+	void getColumn(size_t j, VECTOR& dst) const;
+
+	/**
+	 * @short get reference to j-th column of the matrix
+	 * @param[in] j 		column index
+	 * @param[out] return	reference to j-th column
+	 *
+	 */
+	VECTOR&  column(size_t j);
+
+	/**
+	 * @short set j-th column of the matrix
+	 * @param[in] j 	column index
+	 * @param[in] src	new column j
+	 *
+	 */
+	void setColumn(size_t j, const VECTOR& src);
 };
 
 } /* namespace natrium */

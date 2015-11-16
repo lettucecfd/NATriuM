@@ -68,7 +68,8 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	assert(f.size() == systemMatrix.n());
 
 	// for iteration
-	const dealii::IndexSet& locally_owned_domain_indices = getIndexSet(systemMatrix);
+	const dealii::IndexSet& locally_owned_domain_indices = getIndexSet(
+			systemMatrix);
 	dealii::IndexSet::ElementIterator it(locally_owned_domain_indices.begin());
 	dealii::IndexSet::ElementIterator end(locally_owned_domain_indices.end());
 
@@ -117,19 +118,13 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	for (int j = 0; j < arnoldiSize; j++)  	// Arnoldi algorithm (second step)
 			{
 
-		//for all degrees of freedom on current processor
-		for (it = locally_owned_domain_indices.begin(); it != end; it++) {
-			size_t i = *it;
-			m_vj(i) = m_V(i, j);
-		}
+		m_V.getColumn(j, m_vj);
 
 		systemMatrix.vmult(m_w, m_vj);
 
 		for (int i = 0; i <= j; i++) {
-			for (it = locally_owned_domain_indices.begin(); it != end; it++) {
-				size_t k = *it;
-				m_vi(k) = m_V(k, i);
-			}
+
+			m_V.getColumn(i, m_vi);
 
 			m_H(i, j) = m_w * m_vi;
 			m_vi *= m_H(i, j);
@@ -138,12 +133,13 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		}
 
 		m_H(j + 1, j) = m_w.l2_norm();
+		// TODO: rather assert
 		if (m_H(j + 1, j) != 0) // && j<arnoldiSize-1)
 				{
-			for (it = locally_owned_domain_indices.begin(); it != end; it++) {
-				size_t k = *it;
-				m_V.set(k, j + 1, m_w(k) / m_H(j + 1, j));
-			}
+			// the next two lines set m_V(k,j+1) = m_w(k) / m_H(j + 1, j)
+			// in a way that takes care about the individual blocks of block vectors
+			m_V.setColumn(j + 1, m_w);
+			m_V.column(j+1) /= m_H(j + 1, j);
 		}
 		m_H(arnoldiSize + 1, arnoldiSize) = 1;
 
@@ -342,23 +338,24 @@ template double ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 
 template<>
 dealii::IndexSet ExponentialTimeIntegrator<distributed_sparse_matrix,
-distributed_vector>::getIndexSet (const distributed_sparse_matrix& m){
+		distributed_vector>::getIndexSet(const distributed_sparse_matrix& m) {
 	return m.locally_owned_domain_indices();
 }
 template<>
 dealii::IndexSet ExponentialTimeIntegrator<distributed_sparse_block_matrix,
-distributed_block_vector>::getIndexSet (const distributed_sparse_block_matrix& m){
- return m.block(0,0).locally_owned_domain_indices();
+		distributed_block_vector>::getIndexSet(
+		const distributed_sparse_block_matrix& m) {
+	return m.block(0, 0).locally_owned_domain_indices();
 }
 template<>
-dealii::IndexSet ExponentialTimeIntegrator<sparse_matrix,
-numeric_vector>::getIndexSet (const sparse_matrix& m){
+dealii::IndexSet ExponentialTimeIntegrator<sparse_matrix, numeric_vector>::getIndexSet(
+		const sparse_matrix& m) {
 	return dealii::complete_index_set(m.n());
 }
 template<>
-dealii::IndexSet ExponentialTimeIntegrator<sparse_block_matrix,
-block_vector>::getIndexSet (const sparse_block_matrix& m){
-	return dealii::complete_index_set(m.block(0,0).n());
+dealii::IndexSet ExponentialTimeIntegrator<sparse_block_matrix, block_vector>::getIndexSet(
+		const sparse_block_matrix& m) {
+	return dealii::complete_index_set(m.block(0, 0).n());
 }
 
 template class ExponentialTimeIntegrator<distributed_sparse_block_matrix,

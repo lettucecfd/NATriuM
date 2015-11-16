@@ -18,6 +18,10 @@ namespace natrium {
 
 BOOST_AUTO_TEST_SUITE(RungeKutta5LowStorage_test)
 
+		// This unit test module ensures that the time integrator work
+		// for the vector classes numeric_vector, block_vector and distributed_vector.
+		// A test for distributed_block_vector is provided by the integration test.
+
 BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_Convergence_test) {
 	pout << "RungeKutta5LowStorage_Convergence_test..." << endl;
 

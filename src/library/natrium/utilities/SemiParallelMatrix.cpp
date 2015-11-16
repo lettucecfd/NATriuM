@@ -82,6 +82,23 @@ void SemiParallelMatrix<VECTOR>::vmult(VECTOR& dst,
 	}
 }
 
+template<class VECTOR>
+void SemiParallelMatrix<VECTOR>::getColumn(size_t j, VECTOR& dst) const{
+	assert (j < m_M.size());
+	dst = m_M.at(j);
+}
+
+template<class VECTOR>
+VECTOR&  SemiParallelMatrix<VECTOR>::column(size_t j){
+	return m_M.at(j);
+}
+
+template<class VECTOR>
+void SemiParallelMatrix<VECTOR>::setColumn(size_t j, const VECTOR& src){
+	assert (j < m_M.size());
+	m_M.at(j) = src;
+}
+
 template class SemiParallelMatrix<numeric_vector> ;
 template class SemiParallelMatrix<block_vector> ;
 template class SemiParallelMatrix<distributed_vector> ;

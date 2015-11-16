@@ -35,19 +35,21 @@ struct TestResult {
 	~TestResult(){};
 };
 
-TestResult ConvergenceTestPeriodic ();
+TestResult ConvergencePureLinearAdvectionSmooth();
 
-TestResult ConvergenceTestMovingWall ();
+TestResult ConvergencePureLinearAdvectionNonsmooth();
+
+TestResult ConvergenceTestPeriodic ();
 
 TestResult ConvergenceTestImplicitLBM ();
 
 TestResult ConvergenceTestExponentialLBM();
 
+TestResult ConvergenceTestDealIIWrapper();
+
 TestResult ConvergenceTest3D();
 
-TestResult ConvergencePureLinearAdvectionSmooth();
-
-TestResult ConvergencePureLinearAdvectionNonsmooth();
+TestResult ConvergenceTestMovingWall ();
 
 } /* namespace IntegrationTests */
 } /* namespace natrium */

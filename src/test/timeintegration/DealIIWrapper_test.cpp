@@ -20,6 +20,10 @@ namespace natrium {
 
 BOOST_AUTO_TEST_SUITE(DealIIWrapper_test)
 
+		// This unit test module ensures that the time integrator work
+		// for the vector classes numeric_vector, block_vector and distributed_vector.
+		// A test for distributed_block_vector is provided by the integration test.
+
 BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 	pout << "DealIIWrapper_Convergence_test..." << endl;
 
