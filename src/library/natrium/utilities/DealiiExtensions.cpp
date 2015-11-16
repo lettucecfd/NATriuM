@@ -511,6 +511,8 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 		}
 
 		// make sure cells are at least ghost cells (or even locally owned)
+		if ((cell_1->has_children()) or (cell_2->has_children()))
+			return;
 		if ((cell_1->is_artificial()) or (cell_2->is_artificial()))
 			return;
 		/*Assert(not cell_1->is_artificial(),
