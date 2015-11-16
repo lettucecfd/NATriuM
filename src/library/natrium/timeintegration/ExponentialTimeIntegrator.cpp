@@ -109,11 +109,10 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 
 	double beta = m_w.l2_norm();
 
-	//for all degrees of freedom on current processor
-	for (it = locally_owned_domain_indices.begin(); it != end; it++) { // Arnoldi algorithm (first step)
-		size_t i = *it;
-		m_V.set(i, 0, m_w(i) / beta);
-	}
+	// the next two lines set m_V(i,0) =  m_w(i) / beta
+	// in a way that takes care about the individual blocks of block vectors
+		m_V.setColumn(0, m_w);
+		m_V.column(0) /= beta;
 
 	for (int j = 0; j < arnoldiSize; j++)  	// Arnoldi algorithm (second step)
 			{

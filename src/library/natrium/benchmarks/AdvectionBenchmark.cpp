@@ -245,7 +245,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	result.timesec /= CLOCKS_PER_SEC;
 
 	// compare with analytic solution by sup-norm and 2-norm
-	getAnalyticSolution(t_end, fAnalytic, supportPoints,
+	getAnalyticSolution(t, fAnalytic, supportPoints,
 			streaming, is_smooth);
 	fAnalytic.add(-1, f);
 	result.normSup = fAnalytic.linfty_norm();
