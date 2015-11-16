@@ -1,7 +1,7 @@
 /**
- * @file step-2.cpp
- * @short Second tutorial:  Couette Flow in 2D
- * @date 24.10.2013
+ * @file benchmark.cpp
+ * @short Couette Flow in 2D with time measurement
+ * @date 16.11.2015
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
@@ -38,8 +38,6 @@ int main(int argc, char** argv) {
 
 	pout << "Performance analysis with N=" << refinementLevel << " and p="
 			<< orderOfFiniteElement << endl;
-	pout << "on " << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
-			<< " mpi processes:" << endl;
 
 	bool isUnstructured = false;
 
@@ -72,9 +70,6 @@ int main(int argc, char** argv) {
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
-	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/step-2";
-	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(true);
 	configuration->setUserInteraction(false);
@@ -90,13 +85,13 @@ int main(int argc, char** argv) {
 	solver.run();
 	time3 = clock() - time2;
 
-	double mlups = 1e-6 * solver.getNumberOfDoFs() / time3;
+	double lups = solver.getNumberOfDoFs() * nof_iterations / (time3/1000.0);
 	pout << "----------------------------------------------------------------------------------"
 			<< endl;
 	pout << "all times in ms:" << endl;
-	pout << "n_mpi_proc         t_build_solver         t_per_iteration      MLUPS       t_total" << endl;
+	pout << "n_mpi_proc         t_build_solver         t_per_iteration      LUPS       t_total" << endl;
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
-			<< time1 << " " << time2 << " " << time3 / nof_iterations << " " << mlups << " "
+			<< time1 << " " << time2 << " " << time3 / nof_iterations << " " << lups << " "
 			<< clock() - timestart << endl;
 	pout << "done." << endl;
 

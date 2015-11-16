@@ -30,8 +30,8 @@ MPIGuard::MPIGuard(int& argc, char**& argv) {
 			<< dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
 			<< " MPI process";
 	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) != 1)
-		LOG(ALL) << "es";
-	LOG(ALL) << endl;
+		pout << "es";
+	pout << endl;
 
 }
 

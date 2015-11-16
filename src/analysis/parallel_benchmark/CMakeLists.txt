@@ -4,15 +4,15 @@
 # set variable TARGET
 #
 set(    TARGET 
-        step-2-couette2D     
+        benchmark    
         )
-
+ 
 
 #
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                step-2.cpp
+                benchmark.cpp
                )
 #
 # link natrium library to executable
