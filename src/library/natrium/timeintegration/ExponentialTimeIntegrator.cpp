@@ -38,8 +38,8 @@ template<> ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 
 template<> ExponentialTimeIntegrator<sparse_matrix, numeric_vector>::ExponentialTimeIntegrator(
 		double timeStepSize) :
-		TimeIntegrator<sparse_matrix, numeric_vector>(
-				timeStepSize), m_identityMatrix(makeIdentityMatrix()), m_Hm(
+		TimeIntegrator<sparse_matrix, numeric_vector>(timeStepSize), m_identityMatrix(
+				makeIdentityMatrix()), m_Hm(
 				makeMatrix(arnoldiSize, arnoldiSize)), m_H(
 				makeMatrix(arnoldiSize + 2, arnoldiSize + 2)), m_phiOne(
 				makeMatrix(arnoldiSize, arnoldiSize)), m_phiTwo(
@@ -50,15 +50,14 @@ template<> ExponentialTimeIntegrator<sparse_matrix, numeric_vector>::Exponential
 
 template<> ExponentialTimeIntegrator<sparse_block_matrix, block_vector>::ExponentialTimeIntegrator(
 		double timeStepSize, size_t) :
-		TimeIntegrator<sparse_block_matrix, block_vector>(
-				timeStepSize), m_identityMatrix(makeIdentityMatrix()), m_Hm(
+		TimeIntegrator<sparse_block_matrix, block_vector>(timeStepSize), m_identityMatrix(
+				makeIdentityMatrix()), m_Hm(
 				makeMatrix(arnoldiSize, arnoldiSize)), m_H(
 				makeMatrix(arnoldiSize + 2, arnoldiSize + 2)), m_phiOne(
 				makeMatrix(arnoldiSize, arnoldiSize)), m_phiTwo(
 				makeMatrix(arnoldiSize, arnoldiSize)), m_phiExtended(
 				makeMatrix(arnoldiSize + 1, arnoldiSize + 1)) {
 }
-
 
 template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		VECTOR>::step(VECTOR& f, const MATRIX& systemMatrix,
@@ -68,6 +67,11 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	assert(systemMatrix.n() == systemMatrix.m());
 	assert(f.size() == systemMatrix.n());
 
+	// for iteration
+	const dealii::IndexSet& locally_owned_domain_indices = getIndexSet(systemMatrix);
+	dealii::IndexSet::ElementIterator it(locally_owned_domain_indices.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_domain_indices.end());
+
 	if ((0.0 != dt) and dt != this->getTimeStepSize()) {
 		this->setTimeStepSize(dt);
 		LOG(BASIC) << "Time step size set to " << dt << endl;
@@ -75,16 +79,16 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		dt = this->getTimeStepSize();
 	}
 
-	TimeIntegrator<MATRIX, VECTOR>::reinitVector(m_w, f);
-	TimeIntegrator<MATRIX, VECTOR>::reinitVector(m_vi, f);
-	TimeIntegrator<MATRIX, VECTOR>::reinitVector(m_vj, f);
+	reinitVector(m_w, f);
+	reinitVector(m_vi, f);
+	reinitVector(m_vj, f);
 
 	if (m_firstColumn.size() != arnoldiSize + 1) {
 		m_firstColumn.reinit(arnoldiSize + 1, true);
 	}
 
 	if (m_f.size() != f.size()) {
-		m_f.reinit(f.size(), true);
+		reinitVector(m_f, f);
 	}
 
 	m_w = f;
@@ -97,30 +101,34 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		}
 	}
 
-	numeric_matrix V(f.size(), arnoldiSize + 1); // Orthonormal basis V_(m+1)
+	m_V.reinit(m_f, arnoldiSize + 1); // Orthonormal basis V_(m+1)
 
 	systemMatrix.vmult(m_w, f); 	// w = A*f + u
 	m_w += systemVector;		// w = A*f + u
 
 	double beta = m_w.l2_norm();
 
-	for (size_t i = 0; i < f.size(); i++) 	// Arnoldi algorithm (first step)
-
-			{
-		V.set(i, 0, m_w(i) / beta);
+	//for all degrees of freedom on current processor
+	for (it = locally_owned_domain_indices.begin(); it != end; it++) { // Arnoldi algorithm (first step)
+		size_t i = *it;
+		m_V.set(i, 0, m_w(i) / beta);
 	}
 
 	for (int j = 0; j < arnoldiSize; j++)  	// Arnoldi algorithm (second step)
 			{
-		for (size_t i = 0; i < f.size(); i++) {
-			m_vj(i) = V(i, j);
+
+		//for all degrees of freedom on current processor
+		for (it = locally_owned_domain_indices.begin(); it != end; it++) {
+			size_t i = *it;
+			m_vj(i) = m_V(i, j);
 		}
 
 		systemMatrix.vmult(m_w, m_vj);
 
 		for (int i = 0; i <= j; i++) {
-			for (size_t k = 0; k < f.size(); k++) {
-				m_vi(k) = V(k, i);
+			for (it = locally_owned_domain_indices.begin(); it != end; it++) {
+				size_t k = *it;
+				m_vi(k) = m_V(k, i);
 			}
 
 			m_H(i, j) = m_w * m_vi;
@@ -132,8 +140,9 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		m_H(j + 1, j) = m_w.l2_norm();
 		if (m_H(j + 1, j) != 0) // && j<arnoldiSize-1)
 				{
-			for (size_t k = 0; k < f.size(); k++) {
-				V(k, j + 1) = m_w(k) / m_H(j + 1, j);
+			for (it = locally_owned_domain_indices.begin(); it != end; it++) {
+				size_t k = *it;
+				m_V.set(k, j + 1, m_w(k) / m_H(j + 1, j));
 			}
 		}
 		m_H(arnoldiSize + 1, arnoldiSize) = 1;
@@ -171,15 +180,11 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	for (size_t i = 0; i < arnoldiSize + 1; i++) {
 		m_firstColumn(i) = m_phiExtended(i, 0);
 	}
-	V.vmult(m_f, m_firstColumn);
+	m_V.vmult(m_f, m_firstColumn);
 
 	m_f *= (dt * beta);
 
-	for (size_t i = 0; i < f.size(); i++)
-
-	{
-		f(i) += m_f(i);
-	}
+	f += m_f;
 
 	/*V.vmult(m_f,m_firstColumn);
 	 m_f*=beta;
@@ -334,6 +339,27 @@ template double ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 		distributed_block_vector>::step(distributed_block_vector& f,
 		const distributed_sparse_block_matrix& systemMatrix,
 		const distributed_block_vector& systemVector, double t, double dt);
+
+template<>
+dealii::IndexSet ExponentialTimeIntegrator<distributed_sparse_matrix,
+distributed_vector>::getIndexSet (const distributed_sparse_matrix& m){
+	return m.locally_owned_domain_indices();
+}
+template<>
+dealii::IndexSet ExponentialTimeIntegrator<distributed_sparse_block_matrix,
+distributed_block_vector>::getIndexSet (const distributed_sparse_block_matrix& m){
+ return m.block(0,0).locally_owned_domain_indices();
+}
+template<>
+dealii::IndexSet ExponentialTimeIntegrator<sparse_matrix,
+numeric_vector>::getIndexSet (const sparse_matrix& m){
+	return dealii::complete_index_set(m.n());
+}
+template<>
+dealii::IndexSet ExponentialTimeIntegrator<sparse_block_matrix,
+block_vector>::getIndexSet (const sparse_block_matrix& m){
+	return dealii::complete_index_set(m.block(0,0).n());
+}
 
 template class ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 		distributed_block_vector> ;

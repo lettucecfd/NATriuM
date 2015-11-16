@@ -10,6 +10,7 @@
 #include <cassert>
 
 #include "../utilities/Logging.h"
+#include "../utilities/SemiParallelMatrix.h"
 
 namespace natrium {
 
@@ -66,8 +67,8 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 		dt = this->getTimeStepSize();
 	}
 
-	TimeIntegrator<MATRIX, VECTOR>::reinitVector(m_Af, f);
-	TimeIntegrator<MATRIX, VECTOR>::reinitVector(m_df, f);
+	reinitVector(m_Af, f);
+	reinitVector(m_df, f);
 
 	// According to Carpenter and Kennedy (1994) - p. 3
 	// df = a*df + h*Af

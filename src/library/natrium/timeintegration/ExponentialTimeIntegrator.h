@@ -6,11 +6,13 @@ using namespace boost::assign;
 
 #include "TimeIntegrator.h"
 #include "../utilities/BasicNames.h"
+#include "../utilities/SemiParallelMatrix.h"
 
 const int taylorSteps = 6;// Factor of the Taylor series; sets the number of iterations
 const int arnoldiSize = 6; // Factor of the Arnoldi algorithm; sets the size of the orthonomal matrix V
 
 namespace natrium {
+
 
 /** @short Exponential time integration scheme for the solution of f' = L*f, as used in
  *         Uga etal. (2012) Spectral-element discontinuous Galerkin lattice Boltzmann simulation
@@ -32,12 +34,16 @@ private:
 	numeric_matrix 	m_phiOne;
 	numeric_matrix 	m_phiTwo;
 	numeric_matrix 	m_phiExtended;
-	numeric_vector 	m_f;	 		//auxiliary vector for calculating f
+	VECTOR  	m_f;	 		//auxiliary vector for calculating f
 	numeric_vector 	m_firstColumn; 	//vector for the first column of H_m (Symmetric Hessenberg matrix)
 
 	VECTOR m_w; 	// Auxiliary vector for the Arnoldi algorithm
 	VECTOR m_vj; // Auxiliary vector for the Arnoldi algorithm
 	VECTOR m_vi; // Auxiliary vector for the Arnoldi algorithm
+
+	SemiParallelMatrix<VECTOR> m_V;
+
+	dealii::IndexSet getIndexSet (const MATRIX& m);
 
 public:
 
