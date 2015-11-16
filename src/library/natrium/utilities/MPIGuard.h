@@ -29,8 +29,8 @@ extern dealii::ConditionalOStream pout;
  */
 class MPIGuard {
 private:
-	static MPIGuard* m_privateInstance;
-	dealii::Utilities::MPI::MPI_InitFinalize* m_mpi_initialization;
+	static shared_ptr<MPIGuard> m_privateInstance;
+	shared_ptr<dealii::Utilities::MPI::MPI_InitFinalize> m_mpi_initialization;
 
 	bool is_rank_0() {
 		int mpi_rank;
@@ -38,9 +38,12 @@ private:
 		return mpi_rank == 0;
 	}
 
-protected:
-	MPIGuard(int& argc, char**& argv);
 public:
+	/**
+	 * @short Constructor (should normally be private, but is not allowed by make_shared)
+	 */
+	MPIGuard(int& argc, char**& argv);
+
 	/**
 	 * @short Static constructor.
 	 * @argc Command line argument. Can be used to determine the number of parallel processes.
@@ -48,13 +51,13 @@ public:
 	 * @argv Command line argument.Can be used to determine the number of parallel processes.
 	 * See documentation of  dealii::Utilities::MPI::MPI_InitFinalize(argc, argv) for details.
 	 */
-	static MPIGuard* getInstance(int& argc, char**& argv);
+	static shared_ptr<MPIGuard> getInstance(int& argc, char**& argv);
 
-	static MPIGuard* getInstance();
+	static shared_ptr<MPIGuard> getInstance();
 	/**
 	 * @short return dealii's MPI_InitFinalize object
 	 */
-	dealii::Utilities::MPI::MPI_InitFinalize* getMPI_InitFinalize() {
+	shared_ptr<dealii::Utilities::MPI::MPI_InitFinalize> getMPI_InitFinalize() {
 		return m_mpi_initialization;
 	}
 

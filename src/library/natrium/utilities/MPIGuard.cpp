@@ -3,7 +3,7 @@
 
 namespace natrium {
 
-MPIGuard* MPIGuard::m_privateInstance = NULL;
+shared_ptr<MPIGuard> MPIGuard::m_privateInstance = NULL;
 
 /// Parallel cout and cerr
 /// Their activity is changed, when MPIGuard is initialized
@@ -11,7 +11,7 @@ dealii::ConditionalOStream perr(std::cerr, true);
 dealii::ConditionalOStream pout(std::cout, true);
 
 MPIGuard::MPIGuard(int& argc, char**& argv) {
-	m_mpi_initialization = new dealii::Utilities::MPI::MPI_InitFinalize(argc,
+	m_mpi_initialization = make_shared<dealii::Utilities::MPI::MPI_InitFinalize>(argc,
 			argv, 1);
 	// 1 is the max number of TBB threads
 
@@ -35,10 +35,10 @@ MPIGuard::MPIGuard(int& argc, char**& argv) {
 
 }
 
-MPIGuard* MPIGuard::getInstance(int& argc, char**& argv) {
+shared_ptr<MPIGuard> MPIGuard::getInstance(int& argc, char**& argv) {
 	if (m_privateInstance == NULL) {
 		LOG(DETAILED) << "MPIGuard  was created." << endl;
-		m_privateInstance = new MPIGuard(argc, argv);
+		m_privateInstance = make_shared<MPIGuard>(argc, argv);
 	} else {
 		LOG(DETAILED)
 				<< "Double Construction of MPIGuard caught. NATriuM will continue."
@@ -47,7 +47,7 @@ MPIGuard* MPIGuard::getInstance(int& argc, char**& argv) {
 	return m_privateInstance;
 }
 
-MPIGuard* MPIGuard::getInstance() {
+shared_ptr<MPIGuard> MPIGuard::getInstance() {
 	int argc = 0;
 	char ** argv = NULL;
 	return getInstance(argc, argv);
