@@ -155,7 +155,7 @@ public:
 	 * @short wrapper function for ParameterHandler::read_input; directing cerr into a C++-Exception
 	 **/
 	void readFromTextFile(const std::string & filename, const bool optional =
-			false, const bool write_stripped_file = false);
+			true, const bool write_stripped_file = false);
 
 	/**
 	 * @short wrapper function for ParameterHandler::read_input_from_xml; directing cerr into a C++-Exception

@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
 
 	// in order to start from a continuous solution, do not start at t=0
 	const double startTime = 0.0;
-	const double nof_iterations = 50;
+	const double nof_iterations = 10;
 
 	// time measurement variables
 	double time1, time2, time3, timestart;
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 	pout << "----------------------------------------------------------------------------------"
 			<< endl;
 	pout << "all times in ms:" << endl;
-	pout << "n_mpi_proc         t_build_solver         t_per_iteration      LUPS       t_total" << endl;
+	pout << "n_mpi_proc     t_build problem     t_build_solver         t_per_iteration      LUPS       t_total" << endl;
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
 			<< time1 << " " << time2 << " " << time3 / nof_iterations << " " << lups << " "
 			<< clock() - timestart << endl;

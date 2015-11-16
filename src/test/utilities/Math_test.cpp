@@ -19,8 +19,8 @@ BOOST_AUTO_TEST_CASE(Math_VelocityNorm_test){
 	pout << "Math_VelocityNorm_test..." << endl;
 
 	// 1d case -> failure
-	vector<distributed_vector> v;
-	UNDISTRIBUTED_VECTOR(vx,2);
+	vector<numeric_vector> v;
+	numeric_vector vx (2);
 	vx(0) = 0.3;
 	vx(1) = 0.1;
 	v.push_back(vx);
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(Math_VelocityNorm_test){
 	//BOOST_CHECK_THROW(Math::velocity2Norm(v), std::exception);
 
 	// 2d case
-	UNDISTRIBUTED_VECTOR(vy,2);
+	numeric_vector vy(2);
 	vy(0) = 0.4;
 	vy(1) = 0.2;
 	v.push_back(vy);
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(Math_VelocityNorm_test){
 	BOOST_CHECK_CLOSE(Math::velocity2Norm(v, dealii::complete_index_set(2)), sqrt(30)/10., 1e-15);
 
 	// 3d case
-	UNDISTRIBUTED_VECTOR(vz,2);
+	numeric_vector vz (2);
 	vz(0) = 0.2;
 	vz(1) = - sqrt(76)/10;
 	v.push_back(vz);
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(Math_VelocityNorm_test){
 	BOOST_CHECK_CLOSE(Math::velocity2Norm(v, dealii::complete_index_set(2)), sqrt(110)/10., 1e-13);
 
 	// 4d case -> failure
-	UNDISTRIBUTED_VECTOR(va,2);
+	numeric_vector va(2);
 	v.push_back(va);
 	//BOOST_CHECK_THROW(Math::maxVelocityNorm(v), std::exception);
 	//BOOST_CHECK_THROW(Math::velocity2Norm(v), std::exception);

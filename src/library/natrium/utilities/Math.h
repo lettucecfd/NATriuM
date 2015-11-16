@@ -67,7 +67,14 @@ inline bool is_angle_small(dealii::Tensor<1, 2> vector1,
 	}
 } /* is_angle_small */
 
-inline double maxVelocityNorm(const vector<distributed_vector>& velocity,
+/**
+ * @short Calculate the maximum of the euclidean velocity norm
+ * @param[in] velocity Velocity vector.
+ * @param[in] locally_owned_dofs Index set that contains the locally owned degrees of freedom.
+ * @note not implemented for block vectors, because the velocity should not come as a block vector in natrium
+ */
+template<class VECTOR>
+inline double maxVelocityNorm(const vector<VECTOR>& velocity,
 		const dealii::IndexSet& locally_owned_dofs) {
 	// check sizes
 	size_t dim = velocity.size();
@@ -97,33 +104,18 @@ inline double maxVelocityNorm(const vector<distributed_vector>& velocity,
 	return sqrt(global_mpi);
 }
 
-inline double velocity2Norm(const vector<distributed_vector>& velocity,
-		const dealii::IndexSet& locally_owned_dofs) {
-	size_t dim = velocity.size();
-	assert(dim > 1);
-	assert(dim < 4);
-	size_t n = velocity.at(0).size();
-	assert(n == velocity.at(1).size());
-	if (dim == 3) {
-		assert(n == velocity.at(2).size());
-	}
-
-	double sum = 0.0;
-	//for all degrees of freedom on current processor
-	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
-	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
-	for (; it != end; it++) {
-		size_t i = *it;
-		double norm_square = 0.0;
-		for (size_t j = 0; j < dim; j++) {
-			norm_square += velocity.at(j)(i) * velocity.at(j)(i);
-		}
-		sum += norm_square;
-	}
-	double global_mpi =
-			dealii::Utilities::MPI::min_max_avg(sum, MPI_COMM_WORLD).sum;
-	return sqrt(global_mpi);
-}
+/**
+ * @short Calculate the euclidean norm of the velocity over all points (not in the finite element space, but element-wise)
+ * @param[in] velocity Velocity vector.
+ * @param[in] locally_owned_dofs Index set that contains the locally owned degrees of freedom.
+ * @note not implemented for block vectors, because the velocity should not come as a block vector in natrium
+ * @note In contrast to maxVelocityNorm, this function is seperately implemented for distributed vectors,
+ *       (specialized template instantiation) because a global sum would corrupt the solution, when using local vectors.
+ *       This does not allow to declare the function as inline.
+ */
+template< class VECTOR>
+double velocity2Norm(const vector<VECTOR>& velocity,
+		const dealii::IndexSet& locally_owned_dofs);
 
 } /* Math */
 
