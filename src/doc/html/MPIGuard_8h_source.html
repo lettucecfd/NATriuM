@@ -55,47 +55,50 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
 <a name="l00011"></a>00011 <span class="preprocessor">#include &lt;mpi.h&gt;</span>
 <a name="l00012"></a>00012 
-<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;deal.II/base/mpi.h&gt;</span>
-<a name="l00014"></a>00014 
-<a name="l00015"></a>00015 <span class="preprocessor">#include &quot;<a class="code" href="Logging_8h.html" title="Definition of logging output streams.">Logging.h</a>&quot;</span>
-<a name="l00016"></a>00016 <span class="comment">//#include &quot;BasicNames.h&quot;</span>
-<a name="l00017"></a>00017 
-<a name="l00018"></a>00018 <span class="keyword">namespace </span>natrium {
-<a name="l00019"></a>00019 
-<a name="l00024"></a><a class="code" href="classnatrium_1_1MPIGuard.html">00024</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1MPIGuard.html" title="Singleton that encapsulates the MPI init and finalize calls so that they are called...">MPIGuard</a> {
-<a name="l00025"></a>00025 <span class="keyword">private</span>:
-<a name="l00026"></a>00026         <span class="keyword">static</span> <a class="code" href="classnatrium_1_1MPIGuard.html" title="Singleton that encapsulates the MPI init and finalize calls so that they are called...">MPIGuard</a>* m_privateInstance;
-<a name="l00027"></a>00027         dealii::Utilities::MPI::MPI_InitFinalize* m_mpi_initialization;
-<a name="l00028"></a>00028 
-<a name="l00029"></a>00029 <span class="keyword">protected</span>:
-<a name="l00030"></a>00030         <a class="code" href="classnatrium_1_1MPIGuard.html" title="Singleton that encapsulates the MPI init and finalize calls so that they are called...">MPIGuard</a>(<span class="keywordtype">int</span>&amp; argc, <span class="keywordtype">char</span>**&amp; argv) {
-<a name="l00031"></a>00031                 m_mpi_initialization = <span class="keyword">new</span> dealii::Utilities::MPI::MPI_InitFinalize(
-<a name="l00032"></a>00032                                 argc, argv, 1);
-<a name="l00033"></a>00033                 <span class="comment">// 1 is the max number of TBB threads</span>
-<a name="l00034"></a>00034                 LOG(BASIC) &lt;&lt; <span class="stringliteral">&quot;NATriuM runs on &quot;</span>
-<a name="l00035"></a>00035                                 &lt;&lt; dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
-<a name="l00036"></a>00036                                 &lt;&lt; <span class="stringliteral">&quot; MPI process&quot;</span>;
-<a name="l00037"></a>00037                 <span class="keywordflow">if</span> (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) != 1)
-<a name="l00038"></a>00038                         LOG(BASIC) &lt;&lt; <span class="stringliteral">&quot;es&quot;</span>;
-<a name="l00039"></a>00039                 LOG(BASIC) &lt;&lt; endl;
-<a name="l00040"></a>00040         }
+<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;deal.II/base/mpi.h&quot;</span>
+<a name="l00014"></a>00014 <span class="preprocessor">#include &quot;deal.II/base/conditional_ostream.h&quot;</span>
+<a name="l00015"></a>00015 
+<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;<a class="code" href="Logging_8h.html" title="Definition of logging output streams.">Logging.h</a>&quot;</span>
+<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;<a class="code" href="BasicNames_8h.html" title="Definition of the basic typedefs and names used in the Code;.">BasicNames.h</a>&quot;</span>
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="keyword">namespace </span>natrium {
+<a name="l00020"></a>00020 
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022 <span class="comment">// defined in cpp-file</span>
+<a name="l00023"></a>00023 <span class="keyword">extern</span> dealii::ConditionalOStream perr;
+<a name="l00024"></a>00024 <span class="keyword">extern</span> dealii::ConditionalOStream pout;
+<a name="l00025"></a>00025 
+<a name="l00030"></a><a class="code" href="classnatrium_1_1MPIGuard.html">00030</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1MPIGuard.html" title="Singleton that encapsulates the MPI init and finalize calls so that they are called...">MPIGuard</a> {
+<a name="l00031"></a>00031 <span class="keyword">private</span>:
+<a name="l00032"></a>00032         <span class="keyword">static</span> shared_ptr&lt;MPIGuard&gt; m_privateInstance;
+<a name="l00033"></a>00033         shared_ptr&lt;dealii::Utilities::MPI::MPI_InitFinalize&gt; m_mpi_initialization;
+<a name="l00034"></a>00034 
+<a name="l00035"></a>00035         <span class="keywordtype">bool</span> is_rank_0() {
+<a name="l00036"></a>00036                 <span class="keywordtype">int</span> mpi_rank;
+<a name="l00037"></a>00037                 MPI_Comm_rank(MPI_COMM_WORLD, &amp;mpi_rank);
+<a name="l00038"></a>00038                 <span class="keywordflow">return</span> mpi_rank == 0;
+<a name="l00039"></a>00039         }
+<a name="l00040"></a>00040 
 <a name="l00041"></a>00041 <span class="keyword">public</span>:
-<a name="l00049"></a>00049         <span class="keyword">static</span> <a class="code" href="classnatrium_1_1MPIGuard.html" title="Singleton that encapsulates the MPI init and finalize calls so that they are called...">MPIGuard</a>* <a class="code" href="classnatrium_1_1MPIGuard.html#a224d510033f3ef22368c3ccecf5fdab8" title="Static constructor.  Command line argument. Can be used to determine the number of...">getInstance</a>(<span class="keywordtype">int</span>&amp; argc, <span class="keywordtype">char</span>**&amp; argv);
-<a name="l00050"></a>00050 
-<a name="l00051"></a>00051         <span class="keyword">static</span> <a class="code" href="classnatrium_1_1MPIGuard.html" title="Singleton that encapsulates the MPI init and finalize calls so that they are called...">MPIGuard</a>* getInstance();
-<a name="l00055"></a><a class="code" href="classnatrium_1_1MPIGuard.html#a3211b8cb3a966a3f776eb669ae3ef0fe">00055</a>         dealii::Utilities::MPI::MPI_InitFinalize* <a class="code" href="classnatrium_1_1MPIGuard.html#a3211b8cb3a966a3f776eb669ae3ef0fe" title="return dealii&amp;#39;s MPI_InitFinalize object">getMPI_InitFinalize</a>() {
-<a name="l00056"></a>00056                 <span class="keywordflow">return</span> m_mpi_initialization;
-<a name="l00057"></a>00057         }
-<a name="l00058"></a>00058 
-<a name="l00059"></a>00059         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1MPIGuard.html" title="Singleton that encapsulates the MPI init and finalize calls so that they are called...">MPIGuard</a>() {
-<a name="l00060"></a>00060                 ;
-<a name="l00061"></a>00061         }
-<a name="l00062"></a>00062 
-<a name="l00063"></a>00063 };
-<a name="l00064"></a>00064 
-<a name="l00065"></a>00065 } <span class="comment">/* namespace natrium */</span>
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067 <span class="preprocessor">#endif </span><span class="comment">/* MPIGUARD_H_ */</span>
+<a name="l00045"></a>00045         <a class="code" href="classnatrium_1_1MPIGuard.html#a1e07fafea3f7724d0d2dd9c106e1a44b" title="Constructor (should normally be private, but is not allowed by make_shared).">MPIGuard</a>(<span class="keywordtype">int</span>&amp; argc, <span class="keywordtype">char</span>**&amp; argv);
+<a name="l00046"></a>00046 
+<a name="l00054"></a>00054         <span class="keyword">static</span> shared_ptr&lt;MPIGuard&gt; <a class="code" href="classnatrium_1_1MPIGuard.html#a2633a4f3fdd0fb9959dc91ffca5f5232" title="Static constructor.  Command line argument. Can be used to determine the number of...">getInstance</a>(<span class="keywordtype">int</span>&amp; argc, <span class="keywordtype">char</span>**&amp; argv);
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056         <span class="keyword">static</span> shared_ptr&lt;MPIGuard&gt; getInstance();
+<a name="l00060"></a><a class="code" href="classnatrium_1_1MPIGuard.html#ab999564027da999d5038c67a4a313d78">00060</a>         shared_ptr&lt;dealii::Utilities::MPI::MPI_InitFinalize&gt; <a class="code" href="classnatrium_1_1MPIGuard.html#ab999564027da999d5038c67a4a313d78" title="return dealii&amp;#39;s MPI_InitFinalize object">getMPI_InitFinalize</a>() {
+<a name="l00061"></a>00061                 <span class="keywordflow">return</span> m_mpi_initialization;
+<a name="l00062"></a>00062         }
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1MPIGuard.html" title="Singleton that encapsulates the MPI init and finalize calls so that they are called...">MPIGuard</a>() {
+<a name="l00065"></a>00065                 ;
+<a name="l00066"></a>00066         }
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068 };
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 } <span class="comment">/* namespace natrium */</span>
+<a name="l00072"></a>00072 
+<a name="l00073"></a>00073 <span class="preprocessor">#endif </span><span class="comment">/* MPIGUARD_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -111,7 +114,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -22,7 +22,7 @@ virtual \hyperlink{classnatrium_1_1BGKSteadyState_ab2c58f1d6b964179a2abeb5f54aa5
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
 virtual double \hyperlink{classnatrium_1_1BGKSteadyState_ad99d9159cc14b5897bea7f145c3b39ca}{getEquilibriumDistribution} (size\_\-t i, const numeric\_\-vector \&u, const double rho=1) const 
 \begin{DoxyCompactList}\small\item\em function for the calculation of the equilibrium distribution in the incompressible \hyperlink{classnatrium_1_1D2Q9}{D2Q9} model \item\end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1BGKSteadyState_a21eda1096ed5c75672b338a75f49d2cc}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, bool inInitializationProcedure=false) const 
+virtual void \hyperlink{classnatrium_1_1BGKSteadyState_a8554fb624c5a3abe01651747b3d9aeb7}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
 \begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
@@ -69,18 +69,18 @@ the preconditioning parameter gamma is only used for steady state
 \end{DoxyNote}
 
 
-Reimplemented from \hyperlink{classnatrium_1_1BGK_a430f5020b6101a64d89a0cc2a246260e}{natrium::BGK}.\hypertarget{classnatrium_1_1BGKSteadyState_a21eda1096ed5c75672b338a75f49d2cc}{
+Reimplemented from \hyperlink{classnatrium_1_1BGK_a430f5020b6101a64d89a0cc2a246260e}{natrium::BGK}.\hypertarget{classnatrium_1_1BGKSteadyState_a8554fb624c5a3abe01651747b3d9aeb7}{
 \index{natrium::BGKSteadyState@{natrium::BGKSteadyState}!collideAll@{collideAll}}
 \index{collideAll@{collideAll}!natrium::BGKSteadyState@{natrium::BGKSteadyState}}
-\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGKSteadyState::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
-\label{classnatrium_1_1BGKSteadyState_a21eda1096ed5c75672b338a75f49d2cc}
+\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGKSteadyState::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGKSteadyState_a8554fb624c5a3abe01651747b3d9aeb7}
 
 
 function for collision getEquilibriumDistribution
 
 f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components \mbox{[} \mbox{[}u\_\-1x, u\_\-2x, ...\mbox{]}, \mbox{[}u\_\-1y, u\_\-2y, ...\mbox{]} \mbox{]} inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false 
 
-Reimplemented from \hyperlink{classnatrium_1_1BGK_ae5e97a4995fe927e9042a6cffac80acc}{natrium::BGK}.\hypertarget{classnatrium_1_1BGKSteadyState_ad99d9159cc14b5897bea7f145c3b39ca}{
+Reimplemented from \hyperlink{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{natrium::BGK}.\hypertarget{classnatrium_1_1BGKSteadyState_ad99d9159cc14b5897bea7f145c3b39ca}{
 \index{natrium::BGKSteadyState@{natrium::BGKSteadyState}!getEquilibriumDistribution@{getEquilibriumDistribution}}
 \index{getEquilibriumDistribution@{getEquilibriumDistribution}!natrium::BGKSteadyState@{natrium::BGKSteadyState}}
 \subsubsection[{getEquilibriumDistribution}]{\setlength{\rightskip}{0pt plus 5cm}double natrium::BGKSteadyState::getEquilibriumDistribution (size\_\-t {\em i}, \/  const numeric\_\-vector \& {\em u}, \/  const double {\em rho} = {\ttfamily 1}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}

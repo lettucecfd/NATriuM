@@ -30,14 +30,14 @@ virtual \hyperlink{classnatrium_1_1DistributionFunctions_af965a46fbf124e8f90250c
 \label{classnatrium_1_1DistributionFunctions_af965a46fbf124e8f90250c843e615bcd}
 
 \begin{DoxyCompactList}\small\item\em Destructor. \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}{
-distributed\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}{at} (size\_\-t i)}
-\label{classnatrium_1_1DistributionFunctions_a34f0147178c17597eaf24befdcced975}
+\hypertarget{classnatrium_1_1DistributionFunctions_af8b473d257152e9d588030eac9500d08}{
+distributed\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_af8b473d257152e9d588030eac9500d08}{at} (size\_\-t i)}
+\label{classnatrium_1_1DistributionFunctions_af8b473d257152e9d588030eac9500d08}
 
 \begin{DoxyCompactList}\small\item\em mimes std::vector.at(i) \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}{
-const distributed\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}{at} (size\_\-t i) const }
-\label{classnatrium_1_1DistributionFunctions_a750d7de21f207ac694c72b215ba7b6de}
+\hypertarget{classnatrium_1_1DistributionFunctions_a55af3d8382ed4c46d88e86a8f41844f7}{
+const distributed\_\-vector \& \hyperlink{classnatrium_1_1DistributionFunctions_a55af3d8382ed4c46d88e86a8f41844f7}{at} (size\_\-t i) const }
+\label{classnatrium_1_1DistributionFunctions_a55af3d8382ed4c46d88e86a8f41844f7}
 
 \begin{DoxyCompactList}\small\item\em mimes std::vector.at(i) \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1DistributionFunctions_a3d76ae4f928f324ec82099dbdce678d7}{
@@ -76,20 +76,48 @@ size\_\-t \hyperlink{classnatrium_1_1DistributionFunctions_a2ab8e5abf8cdef76f62e
 
 \begin{DoxyCompactList}\small\item\em the number of discrete velocities \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}{
-void \hyperlink{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}{reinit} (size\_\-t Q, size\_\-t size)}
+void {\bfseries reinit} (size\_\-t Q, size\_\-t size)}
 \label{classnatrium_1_1DistributionFunctions_acaca68f7cbb9322d354ad6dca68b2cb2}
 
-\begin{DoxyCompactList}\small\item\em reinitialize the sizes of the distribution functions \item\end{DoxyCompactList}\item 
+\item 
 \hypertarget{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}{
 size\_\-t \hyperlink{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}{size} () const }
 \label{classnatrium_1_1DistributionFunctions_a636814c639143c76989b09b2a92b6757}
 
-\begin{DoxyCompactList}\small\item\em the number of discrete velocities, including zero \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em the number of discrete velocities, including zero \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1DistributionFunctions_a5b0afbafe841922dd3f949cc315b5533}{compress} (dealii::VectorOperation::values operation)
+\begin{DoxyCompactList}\small\item\em call dealii's compress function to all distributed\_\-vectors stored herein. Compress has to be called, whenever the elements of a vector have been changed by hand. It distributes the local information to the other processors, if required. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1DistributionFunctions_a5e61cb3ba258cf0958e1557061ed31b9}{operator=} (const \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&other)
+\begin{DoxyCompactList}\small\item\em call operator= for all distribution functions \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 This class contains the distribution functions. As the zero-\/velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (fStream) in the implementation. fStream is a block vector, which has the advantage that it can be multiplied with the SystemMatrix. The \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} class is designed to mime the behaviour of a vector$<$distributed\_\-vector$>$ . 
 
-The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1DistributionFunctions_a5b0afbafe841922dd3f949cc315b5533}{
+\index{natrium::DistributionFunctions@{natrium::DistributionFunctions}!compress@{compress}}
+\index{compress@{compress}!natrium::DistributionFunctions@{natrium::DistributionFunctions}}
+\subsubsection[{compress}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::DistributionFunctions::compress (dealii::VectorOperation::values {\em operation})}}
+\label{classnatrium_1_1DistributionFunctions_a5b0afbafe841922dd3f949cc315b5533}
+
+
+call dealii's compress function to all distributed\_\-vectors stored herein. Compress has to be called, whenever the elements of a vector have been changed by hand. It distributes the local information to the other processors, if required. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em operation}]specifies, if element was inserted or added. Operation has to be dealii::VectorOperation::add or dealii::VectorOperation::compress \end{DoxyParams}
+\hypertarget{classnatrium_1_1DistributionFunctions_a5e61cb3ba258cf0958e1557061ed31b9}{
+\index{natrium::DistributionFunctions@{natrium::DistributionFunctions}!operator=@{operator=}}
+\index{operator=@{operator=}!natrium::DistributionFunctions@{natrium::DistributionFunctions}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::DistributionFunctions::operator= (const {\bf DistributionFunctions} \& {\em other})}}
+\label{classnatrium_1_1DistributionFunctions_a5e61cb3ba258cf0958e1557061ed31b9}
+
+
+call operator= for all distribution functions \begin{DoxyNote}{Note}
+is only allowed for \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} of equal size 
+\end{DoxyNote}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/DistributionFunctions.h\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/DistributionFunctions.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/\hyperlink{DistributionFunctions_8cpp}{DistributionFunctions.cpp}\end{DoxyCompactItemize}

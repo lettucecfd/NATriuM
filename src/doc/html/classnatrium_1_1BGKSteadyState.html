@@ -82,8 +82,8 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor  <a href="#ab2c58f1d6b964179a2abeb5f54aa5edc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">getEquilibriumDistribution</a> (size_t i, const numeric_vector &amp;u, const double rho=1) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for the calculation of the equilibrium distribution in the incompressible <a class="el" href="classnatrium_1_1D2Q9.html" title="D2Q9 Model.">D2Q9</a> model  <a href="#ad99d9159cc14b5897bea7f145c3b39ca"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#a21eda1096ed5c75672b338a75f49d2cc">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#a21eda1096ed5c75672b338a75f49d2cc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#a8554fb624c5a3abe01651747b3d9aeb7">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#a8554fb624c5a3abe01651747b3d9aeb7"></a><br/></td></tr>
 <tr><td colspan="2"><h2>Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#a2cd6628c71475663e204656147de99b8">calculateRelaxationParameter</a> (double viscosity, double timeStepSize, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;stencil, double preconditioning_parameter)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">calculate relaxation parameter  <a href="#a2cd6628c71475663e204656147de99b8"></a><br/></td></tr>
@@ -224,7 +224,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 
 </div>
 </div>
-<a class="anchor" id="a21eda1096ed5c75672b338a75f49d2cc"></a><!-- doxytag: member="natrium::BGKSteadyState::collideAll" ref="a21eda1096ed5c75672b338a75f49d2cc" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const " -->
+<a class="anchor" id="a8554fb624c5a3abe01651747b3d9aeb7"></a><!-- doxytag: member="natrium::BGKSteadyState::collideAll" ref="a8554fb624c5a3abe01651747b3d9aeb7" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -249,6 +249,12 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const dealii::IndexSet &amp;&nbsp;</td>
+          <td class="paramname"> <em>locally_owned_dofs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">bool&nbsp;</td>
           <td class="paramname"> <em>inInitializationProcedure</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
@@ -265,7 +271,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 <p>getEquilibriumDistribution</p>
 <p>f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ] inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false </p>
 
-<p>Reimplemented from <a class="el" href="classnatrium_1_1BGK.html#ae5e97a4995fe927e9042a6cffac80acc">natrium::BGK</a>.</p>
+<p>Reimplemented from <a class="el" href="classnatrium_1_1BGK.html#a9fa1c980217a183fc4762954e86ba36d">natrium::BGK</a>.</p>
 
 </div>
 </div>
@@ -336,7 +342,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

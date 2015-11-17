@@ -25,6 +25,11 @@ virtual \hyperlink{classnatrium_1_1ThetaMethod_ac742c678ab9674722295585f10d27279
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
 virtual double \hyperlink{classnatrium_1_1ThetaMethod_a247c639f49a05904dae01b05115bc7e4}{step} (VECTOR \&vector, const MATRIX \&systemMatrix, const VECTOR \&systemVector, double t=0, double dt=0)
 \begin{DoxyCompactList}\small\item\em Make one time integration step on f: \[ \frac{df}{dt} = Af+b \] with the theta method. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ThetaMethod_abbab4d93f6d54e1b82ea8cc008eba126}{
+{\footnotesize template$<$$>$ }\\{\bfseries ThetaMethod} (double timeStepSize, const numeric\_\-vector \&, double theta)}
+\label{classnatrium_1_1ThetaMethod_abbab4d93f6d54e1b82ea8cc008eba126}
+
+\item 
 \hypertarget{classnatrium_1_1ThetaMethod_a8ab913e8242378d6877ef6dcee80aebb}{
 {\footnotesize template$<$$>$ }\\{\bfseries ThetaMethod} (double timeStepSize, const distributed\_\-vector \&, double theta)}
 \label{classnatrium_1_1ThetaMethod_a8ab913e8242378d6877ef6dcee80aebb}
@@ -35,14 +40,29 @@ virtual double \hyperlink{classnatrium_1_1ThetaMethod_a247c639f49a05904dae01b051
 \label{classnatrium_1_1ThetaMethod_ac5b08a9ab08f4f61779dc818a6dac3b2}
 
 \item 
+\hypertarget{classnatrium_1_1ThetaMethod_a6329a87c9fd50d6db3546b892b716b3c}{
+{\footnotesize template$<$$>$ }\\{\bfseries ThetaMethod} (double timeStepSize, const block\_\-vector \&prototype\_\-vector, double theta)}
+\label{classnatrium_1_1ThetaMethod_a6329a87c9fd50d6db3546b892b716b3c}
+
+\item 
 \hypertarget{classnatrium_1_1ThetaMethod_a68e1ddc84cd0ae5ee13a26333a9b5b97}{
 {\footnotesize template$<$$>$ }\\double {\bfseries step} (distributed\_\-vector \&f, const distributed\_\-sparse\_\-matrix \&systemMatrix, const distributed\_\-vector \&systemVector, double t, double dt)}
 \label{classnatrium_1_1ThetaMethod_a68e1ddc84cd0ae5ee13a26333a9b5b97}
 
 \item 
+\hypertarget{classnatrium_1_1ThetaMethod_a1fe9306f09ecdc50f27c7ae36c528e13}{
+{\footnotesize template$<$$>$ }\\double {\bfseries step} (numeric\_\-vector \&f, const sparse\_\-matrix \&systemMatrix, const numeric\_\-vector \&systemVector, double t, double dt)}
+\label{classnatrium_1_1ThetaMethod_a1fe9306f09ecdc50f27c7ae36c528e13}
+
+\item 
 \hypertarget{classnatrium_1_1ThetaMethod_a09182df9e98932d93b7e32ffdd2ae46f}{
 {\footnotesize template$<$$>$ }\\double {\bfseries step} (distributed\_\-block\_\-vector \&f, const distributed\_\-sparse\_\-block\_\-matrix \&systemMatrix, const distributed\_\-block\_\-vector \&systemVector, double t, double dt)}
 \label{classnatrium_1_1ThetaMethod_a09182df9e98932d93b7e32ffdd2ae46f}
+
+\item 
+\hypertarget{classnatrium_1_1ThetaMethod_a30d578fab2d0189fe2a4c51ddc29cc3a}{
+{\footnotesize template$<$$>$ }\\double {\bfseries step} (block\_\-vector \&f, const sparse\_\-block\_\-matrix \&systemMatrix, const block\_\-vector \&systemVector, double t, double dt)}
+\label{classnatrium_1_1ThetaMethod_a30d578fab2d0189fe2a4c51ddc29cc3a}
 
 \end{DoxyCompactItemize}
 

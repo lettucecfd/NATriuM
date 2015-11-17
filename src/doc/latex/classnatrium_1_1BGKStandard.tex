@@ -25,7 +25,7 @@ virtual \hyperlink{classnatrium_1_1BGKStandard_aa55035be79098a762cf4f0ef308d41e5
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
 virtual double \hyperlink{classnatrium_1_1BGKStandard_a3d45ef2fe5536bf14914f99297477754}{getEquilibriumDistribution} (size\_\-t i, const numeric\_\-vector \&u, const double rho=1) const 
 \begin{DoxyCompactList}\small\item\em function for the calculation of the equilibrium distribution in the incompressible \hyperlink{classnatrium_1_1D2Q9}{D2Q9} model \item\end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1BGKStandard_a58ffede8b7587e584875ab8e4279fcac}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, bool inInitializationProcedure=false) const 
+virtual void \hyperlink{classnatrium_1_1BGKStandard_a8e0493b063d56275d7ee607e25c4145e}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
 \begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
@@ -43,18 +43,18 @@ Simple \hyperlink{classnatrium_1_1BGK}{BGK} model.
 destructor constructor 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1BGKStandard_a58ffede8b7587e584875ab8e4279fcac}{
+\hypertarget{classnatrium_1_1BGKStandard_a8e0493b063d56275d7ee607e25c4145e}{
 \index{natrium::BGKStandard@{natrium::BGKStandard}!collideAll@{collideAll}}
 \index{collideAll@{collideAll}!natrium::BGKStandard@{natrium::BGKStandard}}
-\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGKStandard::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
-\label{classnatrium_1_1BGKStandard_a58ffede8b7587e584875ab8e4279fcac}
+\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGKStandard::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGKStandard_a8e0493b063d56275d7ee607e25c4145e}
 
 
 function for collision getEquilibriumDistribution
 
 f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components \mbox{[} \mbox{[}u\_\-1x, u\_\-2x, ...\mbox{]}, \mbox{[}u\_\-1y, u\_\-2y, ...\mbox{]} \mbox{]} inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false 
 
-Reimplemented from \hyperlink{classnatrium_1_1BGK_ae5e97a4995fe927e9042a6cffac80acc}{natrium::BGK}.\hypertarget{classnatrium_1_1BGKStandard_a3d45ef2fe5536bf14914f99297477754}{
+Reimplemented from \hyperlink{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{natrium::BGK}.\hypertarget{classnatrium_1_1BGKStandard_a3d45ef2fe5536bf14914f99297477754}{
 \index{natrium::BGKStandard@{natrium::BGKStandard}!getEquilibriumDistribution@{getEquilibriumDistribution}}
 \index{getEquilibriumDistribution@{getEquilibriumDistribution}!natrium::BGKStandard@{natrium::BGKStandard}}
 \subsubsection[{getEquilibriumDistribution}]{\setlength{\rightskip}{0pt plus 5cm}double natrium::BGKStandard::getEquilibriumDistribution (size\_\-t {\em i}, \/  const numeric\_\-vector \& {\em u}, \/  const double {\em rho} = {\ttfamily 1}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}

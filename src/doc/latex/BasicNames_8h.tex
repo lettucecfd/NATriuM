@@ -9,12 +9,14 @@ Definition of the basic typedefs and names used in the Code;.
 {\ttfamily \#include $<$map$>$}\par
 {\ttfamily \#include $<$iostream$>$}\par
 {\ttfamily \#include $<$math.h$>$}\par
+{\ttfamily \#include $<$mpi.h$>$}\par
 {\ttfamily \#include \char`\"{}boost/shared\_\-ptr.hpp\char`\"{}}\par
 {\ttfamily \#include \char`\"{}boost/make\_\-shared.hpp\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/base/point.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/numerics/vector\_\-tools.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/lac/block\_\-sparse\_\-matrix.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/base/types.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/conditional\_\-ostream.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/distributed/tria.h\char`\"{}}\par
 \subsection*{Defines}
 \begin{DoxyCompactItemize}
@@ -83,6 +85,23 @@ typedef dealii::TrilinosWrappers::MPI::BlockVector {\bfseries natrium::distribut
 \hypertarget{namespacenatrium_a31c41694ea4808b3e801fd586bc10fef}{
 void {\bfseries natrium::REINIT\_\-UNDISTRIBUTED\_\-BLOCK\_\-VECTOR} (distributed\_\-block\_\-vector \&bv, size\_\-t n\_\-blocks, size\_\-t block\_\-size)}
 \label{namespacenatrium_a31c41694ea4808b3e801fd586bc10fef}
+
+\item 
+\hypertarget{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}{
+void \hyperlink{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}{natrium::MPI\_\-sync} ()}
+\label{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}
+
+\begin{DoxyCompactList}\small\item\em Synchronize all MPI processes. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacenatrium_a791202a0d8b6bdac2c62f3ae63905a36}{natrium::is\_\-MPI\_\-rank\_\-0} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+dealii::ConditionalOStream \hyperlink{namespacenatrium_a3cedd4d2c74ed3a6e0f61166ddff40d1}{natrium::perr}
+\item 
+\hypertarget{namespacenatrium_ae1c1457daa96180a3ee2057cf5f7f9e3}{
+dealii::ConditionalOStream {\bfseries natrium::pout}}
+\label{namespacenatrium_ae1c1457daa96180a3ee2057cf5f7f9e3}
 
 \end{DoxyCompactItemize}
 

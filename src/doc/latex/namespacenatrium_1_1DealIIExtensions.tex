@@ -8,9 +8,9 @@ some extensions to deal.ii
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespacenatrium_1_1DealIIExtensions_a2d320098833f9b096e93d4c565675338}{
-typedef DynamicSparsityPattern {\bfseries SP}}
-\label{namespacenatrium_1_1DealIIExtensions_a2d320098833f9b096e93d4c565675338}
+\hypertarget{namespacenatrium_1_1DealIIExtensions_ae3b719f221dd5d719bd58896660e6525}{
+typedef TrilinosWrappers::SparsityPattern {\bfseries SP}}
+\label{namespacenatrium_1_1DealIIExtensions_ae3b719f221dd5d719bd58896660e6525}
 
 \end{DoxyCompactItemize}
 \subsection*{Functions}
@@ -32,6 +32,8 @@ typedef DynamicSparsityPattern {\bfseries SP}}
 \begin{DoxyCompactList}\small\item\em High-\/level version of the first function, starting from PeriodicFacePairs. \item\end{DoxyCompactList}\item 
 {\footnotesize template$<$typename DH $>$ }\\void \hyperlink{namespacenatrium_1_1DealIIExtensions_a01f414566020f59f29036fd7e22341b9}{make\_\-periodicity\_\-map\_\-dg} (const DH \&dof\_\-handler, size\_\-t b\_\-id1, size\_\-t b\_\-id2, const int direction, PeriodicCellMap$<$ DH::dimension $>$ \&cell\_\-map)
 \begin{DoxyCompactList}\small\item\em Another high-\/level version of the first function, starting from boundary indicators. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$class DH $>$ }\\void \hyperlink{namespacenatrium_1_1DealIIExtensions_ad74bfc63a45e2d4c1c9f2dd625cf1a66}{extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary} (const DH \&dof\_\-handler, const ComponentMask \&component\_\-mask, std::vector$<$ bool $>$ \&selected\_\-dofs, const std::set$<$ types::boundary\_\-id $>$ \&boundary\_\-ids)
+\begin{DoxyCompactList}\small\item\em This function extracts those degrees of freedom whose shape functions are nonzero on at least part of the selected boundary. For continuous elements, this is exactly the set of shape functions whose degrees of freedom are defined on boundary faces. On the other hand, if the finite element in used is a discontinuous element, all degrees of freedom are defined in the inside of cells and consequently none would be boundary degrees of freedom. Several of those would have shape functions that are nonzero on the boundary, however. This function therefore extracts all those for which the FiniteElement::has\_\-support\_\-on\_\-face function says that it is nonzero on any face on one of the selected boundary parts. \item\end{DoxyCompactList}\item 
 \hypertarget{namespacenatrium_1_1DealIIExtensions_a1114fe047dc504c301fade5677bcea1d}{
 template void {\bfseries make\_\-sparser\_\-flux\_\-sparsity\_\-pattern$<$ DoFHandler$<$ 2 $>$, SP $>$} (const DoFHandler$<$ 2 $>$ \&dof, SP \&sparsity, const \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ 2 $>$ \&boundaries, FEFaceValues$<$ 2 $>$ $\ast$fe\_\-face)}
 \label{namespacenatrium_1_1DealIIExtensions_a1114fe047dc504c301fade5677bcea1d}
@@ -81,6 +83,16 @@ template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 2 $>$
 template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 3 $>$ $>$} (const DoFHandler$<$ 3 $>$ \&dof\_\-handler, size\_\-t b\_\-id1, size\_\-t b\_\-id2, const int direction, PeriodicCellMap$<$ 3 $>$ \&cell\_\-map)}
 \label{namespacenatrium_1_1DealIIExtensions_a4d4a08bca6d3ef3833ba3a0107ea7fa8}
 
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_ae531bdf7ab145d71f306ec1d4a1cefb3}{
+template void {\bfseries extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary} (const dealii::DoFHandler$<$ 2 $>$ \&dof\_\-handler, const ComponentMask \&component\_\-mask, std::vector$<$ bool $>$ \&selected\_\-dofs, const std::set$<$ types::boundary\_\-id $>$ \&boundary\_\-ids)}
+\label{namespacenatrium_1_1DealIIExtensions_ae531bdf7ab145d71f306ec1d4a1cefb3}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a157762b4a7d95c0f6b614f451d1dbd2d}{
+template void {\bfseries extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary} (const dealii::DoFHandler$<$ 3 $>$ \&dof\_\-handler, const ComponentMask \&component\_\-mask, std::vector$<$ bool $>$ \&selected\_\-dofs, const std::set$<$ types::boundary\_\-id $>$ \&boundary\_\-ids)}
+\label{namespacenatrium_1_1DealIIExtensions_a157762b4a7d95c0f6b614f451d1dbd2d}
+
 \end{DoxyCompactItemize}
 
 
@@ -88,6 +100,16 @@ template void {\bfseries make\_\-periodicity\_\-map\_\-dg$<$ DoFHandler$<$ 3 $>$
 some extensions to deal.ii 
 
 \subsection{Function Documentation}
+\hypertarget{namespacenatrium_1_1DealIIExtensions_ad74bfc63a45e2d4c1c9f2dd625cf1a66}{
+\index{natrium::DealIIExtensions@{natrium::DealIIExtensions}!extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary@{extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary}}
+\index{extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary@{extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary}!natrium::DealIIExtensions@{natrium::DealIIExtensions}}
+\subsubsection[{extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class DH $>$ void natrium::DealIIExtensions::extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary (const DH \& {\em dof\_\-handler}, \/  const ComponentMask \& {\em component\_\-mask}, \/  std::vector$<$ bool $>$ \& {\em selected\_\-dofs}, \/  const std::set$<$ types::boundary\_\-id $>$ \& {\em boundary\_\-ids})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_1_1DealIIExtensions_ad74bfc63a45e2d4c1c9f2dd625cf1a66}
+
+
+This function extracts those degrees of freedom whose shape functions are nonzero on at least part of the selected boundary. For continuous elements, this is exactly the set of shape functions whose degrees of freedom are defined on boundary faces. On the other hand, if the finite element in used is a discontinuous element, all degrees of freedom are defined in the inside of cells and consequently none would be boundary degrees of freedom. Several of those would have shape functions that are nonzero on the boundary, however. This function therefore extracts all those for which the FiniteElement::has\_\-support\_\-on\_\-face function says that it is nonzero on any face on one of the selected boundary parts. \begin{DoxyNote}{Note}
+This function is the same as the deal.ii function with the same name; except for one line which restricts the function to the locally owned cells. 
+\end{DoxyNote}
 \hypertarget{namespacenatrium_1_1DealIIExtensions_a01f414566020f59f29036fd7e22341b9}{
 \index{natrium::DealIIExtensions@{natrium::DealIIExtensions}!make\_\-periodicity\_\-map\_\-dg@{make\_\-periodicity\_\-map\_\-dg}}
 \index{make\_\-periodicity\_\-map\_\-dg@{make\_\-periodicity\_\-map\_\-dg}!natrium::DealIIExtensions@{natrium::DealIIExtensions}}

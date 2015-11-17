@@ -71,8 +71,8 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKPseudopotential.html#a63ce98e44a07466963fb123cac9dd905">getEquilibriumDistribution</a> (size_t i, const numeric_vector &amp;u, const double rho=1) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">virtual function for the calculation of the equilibrium distribution  <a href="#a63ce98e44a07466963fb123cac9dd905"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKPseudopotential.html#ac52de8933fa8fbd8a8aa2a3a978f0f4b">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#ac52de8933fa8fbd8a8aa2a3a978f0f4b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKPseudopotential.html#a5f40f5076273f9ec38f3078c891b453c">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#a5f40f5076273f9ec38f3078c891b453c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7129a321a07b85ac6245d71190eeeedd"></a><!-- doxytag: member="natrium::BGKPseudopotential::getInteractionForce" ref="a7129a321a07b85ac6245d71190eeeedd" args="(const vector&lt; double &gt; &amp;distributions, numeric_vector &amp;interactionForce, const double rho=1)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>getInteractionForce</b> (const vector&lt; double &gt; &amp;distributions, numeric_vector &amp;interactionForce, const double rho=1)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab326d9268e46a37af8d0e5ffaaa3efc9"></a><!-- doxytag: member="natrium::BGKPseudopotential::getAdvectionOperator" ref="ab326d9268e46a37af8d0e5ffaaa3efc9" args="() const " -->
@@ -81,7 +81,7 @@ const shared_ptr&lt; <a class="el" href="classnatrium_1_1SEDGMinLee.html">SEDGMi
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAdvectionOperator</b> (const shared_ptr&lt; <a class="el" href="classnatrium_1_1SEDGMinLee.html">SEDGMinLee</a>&lt; 2 &gt; &gt; &amp;advectionOperator)</td></tr>
 </table>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="ac52de8933fa8fbd8a8aa2a3a978f0f4b"></a><!-- doxytag: member="natrium::BGKPseudopotential::collideAll" ref="ac52de8933fa8fbd8a8aa2a3a978f0f4b" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const " -->
+<a class="anchor" id="a5f40f5076273f9ec38f3078c891b453c"></a><!-- doxytag: member="natrium::BGKPseudopotential::collideAll" ref="a5f40f5076273f9ec38f3078c891b453c" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -106,6 +106,12 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAdvectionOperator<
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const dealii::IndexSet &amp;&nbsp;</td>
+          <td class="paramname"> <em>locally_owned_dofs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">bool&nbsp;</td>
           <td class="paramname"> <em>inInitializationProcedure</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
@@ -121,7 +127,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAdvectionOperator<
 <p>function for collision </p>
 <p>f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ] inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false </p>
 
-<p>Reimplemented from <a class="el" href="classnatrium_1_1BGK.html#ae5e97a4995fe927e9042a6cffac80acc">natrium::BGK</a>.</p>
+<p>Reimplemented from <a class="el" href="classnatrium_1_1BGK.html#a9fa1c980217a183fc4762954e86ba36d">natrium::BGK</a>.</p>
 
 </div>
 </div>
@@ -191,7 +197,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAdvectionOperator<
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -23,7 +23,7 @@ virtual \hyperlink{classnatrium_1_1BGK_a1029401a72788a6538e4e1941c305ab4}{$\sim$
 \label{classnatrium_1_1BGK_a1029401a72788a6538e4e1941c305ab4}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1BGK_ae5e97a4995fe927e9042a6cffac80acc}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, bool inInitializationProcedure=false) const 
+virtual void \hyperlink{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
 \begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BGK_ab82471c249d19fdc62005fb8b7e03190}{
 void {\bfseries collideSingleDoF} (size\_\-t doF, const vector$<$ double $>$ \&feq, \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f) const }
@@ -96,18 +96,18 @@ preconditioning\_\-parameter is only used for steady state
 \end{DoxyNote}
 
 
-Reimplemented in \hyperlink{classnatrium_1_1BGKSteadyState_a2cd6628c71475663e204656147de99b8}{natrium::BGKSteadyState}.\hypertarget{classnatrium_1_1BGK_ae5e97a4995fe927e9042a6cffac80acc}{
+Reimplemented in \hyperlink{classnatrium_1_1BGKSteadyState_a2cd6628c71475663e204656147de99b8}{natrium::BGKSteadyState}.\hypertarget{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{
 \index{natrium::BGK@{natrium::BGK}!collideAll@{collideAll}}
 \index{collideAll@{collideAll}!natrium::BGK@{natrium::BGK}}
-\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGK::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
-\label{classnatrium_1_1BGK_ae5e97a4995fe927e9042a6cffac80acc}
+\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGK::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}
 
 
 function for collision f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components \mbox{[} \mbox{[}u\_\-1x, u\_\-2x, ...\mbox{]}, \mbox{[}u\_\-1y, u\_\-2y, ...\mbox{]} \mbox{]} inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false 
 
 Implements \hyperlink{classnatrium_1_1CollisionModel}{natrium::CollisionModel}.
 
-Reimplemented in \hyperlink{classnatrium_1_1BGKPseudopotential_ac52de8933fa8fbd8a8aa2a3a978f0f4b}{natrium::BGKPseudopotential}, \hyperlink{classnatrium_1_1BGKStandard_a58ffede8b7587e584875ab8e4279fcac}{natrium::BGKStandard}, \hyperlink{classnatrium_1_1BGKStandardTransformed_a00c806c32f16e518117c818a29c2fef4}{natrium::BGKStandardTransformed}, and \hyperlink{classnatrium_1_1BGKSteadyState_a21eda1096ed5c75672b338a75f49d2cc}{natrium::BGKSteadyState}.
+Reimplemented in \hyperlink{classnatrium_1_1BGKPseudopotential_a5f40f5076273f9ec38f3078c891b453c}{natrium::BGKPseudopotential}, \hyperlink{classnatrium_1_1BGKStandard_a8e0493b063d56275d7ee607e25c4145e}{natrium::BGKStandard}, \hyperlink{classnatrium_1_1BGKStandardTransformed_aaa2e752c6aa2294f1ebeb9d326ba9eb8}{natrium::BGKStandardTransformed}, and \hyperlink{classnatrium_1_1BGKSteadyState_a8554fb624c5a3abe01651747b3d9aeb7}{natrium::BGKSteadyState}.
 
 The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 

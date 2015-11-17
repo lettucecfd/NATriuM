@@ -47,98 +47,99 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00008"></a>00008 <span class="preprocessor">#ifndef MINLEEBOUNDARY_H_</span>
 <a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define MINLEEBOUNDARY_H_</span>
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
-<a name="l00011"></a>00011 <span class="preprocessor">#include &lt;deal.II/lac/compressed_sparsity_pattern.h&gt;</span>
-<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;deal.II/dofs/dof_handler.h&quot;</span>
-<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;deal.II/base/function.h&quot;</span>
-<a name="l00014"></a>00014 
-<a name="l00015"></a>00015 <span class="preprocessor">#include &quot;<a class="code" href="Boundary_8h.html" title="Abstract class for Description of a Boundary object.">Boundary.h</a>&quot;</span>
-<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;../stencils/Stencil.h&quot;</span>
-<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span>
-<a name="l00018"></a>00018 
-<a name="l00019"></a>00019 <span class="keyword">namespace </span>natrium {
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
-<a name="l00022"></a><a class="code" href="classnatrium_1_1BoundaryDensity.html">00022</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryDensity.html">BoundaryDensity</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
-<a name="l00023"></a>00023 <span class="keyword">public</span>:
-<a name="l00024"></a>00024         <a class="code" href="classnatrium_1_1BoundaryDensity.html">BoundaryDensity</a>() {
-<a name="l00025"></a>00025         }
-<a name="l00026"></a>00026         ;
-<a name="l00027"></a>00027         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryDensity.html">BoundaryDensity</a>() {
-<a name="l00028"></a>00028         }
-<a name="l00029"></a>00029         ;
-<a name="l00030"></a>00030         <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
-<a name="l00031"></a>00031                         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  = 0)<span class="keyword"> const </span>{
-<a name="l00032"></a>00032                 <span class="keywordflow">return</span> 1;
-<a name="l00033"></a>00033         }
-<a name="l00034"></a>00034 };
-<a name="l00035"></a>00035 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
-<a name="l00036"></a><a class="code" href="classnatrium_1_1BoundaryVelocity.html">00036</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryVelocity.html">BoundaryVelocity</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
-<a name="l00037"></a>00037 <span class="keyword">private</span>:
-<a name="l00038"></a>00038         dealii::Vector&lt;double&gt; m_Velocity;
-<a name="l00039"></a>00039 <span class="keyword">public</span>:
-<a name="l00040"></a>00040         <a class="code" href="classnatrium_1_1BoundaryVelocity.html">BoundaryVelocity</a>(<span class="keyword">const</span> dealii::Vector&lt;double&gt;&amp; velocity) :
-<a name="l00041"></a>00041                         m_Velocity(velocity) {
-<a name="l00042"></a>00042         }
-<a name="l00043"></a>00043         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryVelocity.html">BoundaryVelocity</a>() {
-<a name="l00044"></a>00044         }
-<a name="l00045"></a>00045         ;
-<a name="l00046"></a>00046         <span class="keyword">virtual</span> <span class="keywordtype">void</span> vector_value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
-<a name="l00047"></a>00047                         dealii::Vector&lt;double&gt; &amp;values)<span class="keyword"> const </span>{
-<a name="l00048"></a>00048                 values = m_Velocity;
-<a name="l00049"></a>00049         }
-<a name="l00050"></a>00050 };
-<a name="l00051"></a>00051 
-<a name="l00059"></a><a class="code" href="classnatrium_1_1MinLeeBoundary.html">00059</a> <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt; <span class="keyword">class </span><a class="code" href="classnatrium_1_1MinLeeBoundary.html" title="The boundary described by Min and Lee. For outgoing particle distribution functions...">MinLeeBoundary</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a>&lt;dim&gt; {
-<a name="l00060"></a>00060 <span class="keyword">private</span>:
-<a name="l00061"></a>00061 
-<a name="l00062"></a>00062         <span class="keywordtype">size_t</span> m_boundaryIndicator;
-<a name="l00063"></a>00063 
-<a name="l00064"></a>00064         shared_ptr&lt;dealii::Function&lt;dim&gt; &gt; m_boundaryDensity;
-<a name="l00065"></a>00065 
-<a name="l00066"></a>00066         shared_ptr&lt;dealii::Function&lt;dim&gt; &gt; m_boundaryVelocity;
-<a name="l00067"></a>00067 
-<a name="l00068"></a>00068 <span class="keyword">public</span>:
-<a name="l00069"></a>00069 
-<a name="l00071"></a>00071         <a class="code" href="classnatrium_1_1MinLeeBoundary.html#a1e9acd91ee2b97783932c4df45d38668" title="constructor">MinLeeBoundary</a>(<span class="keywordtype">size_t</span> boundaryIndicator,
-<a name="l00072"></a>00072                         shared_ptr&lt;dealii::Function&lt;dim&gt; &gt; boundaryDensity,
-<a name="l00073"></a>00073                         shared_ptr&lt;dealii::Function&lt;dim&gt; &gt; boundaryVelocity);
-<a name="l00074"></a>00074 
-<a name="l00076"></a>00076         <a class="code" href="classnatrium_1_1MinLeeBoundary.html#a1e9acd91ee2b97783932c4df45d38668" title="constructor">MinLeeBoundary</a>(<span class="keywordtype">size_t</span> boundaryIndicator,
-<a name="l00077"></a>00077                         <span class="keyword">const</span> dealii::Vector&lt;double&gt;&amp; velocity);
-<a name="l00078"></a>00078 
-<a name="l00080"></a><a class="code" href="classnatrium_1_1MinLeeBoundary.html#ab2409b8dceb378d7e2bdb457e8c5f374">00080</a>         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1MinLeeBoundary.html#ab2409b8dceb378d7e2bdb457e8c5f374" title="destructor">~MinLeeBoundary</a>() {
-<a name="l00081"></a>00081         }
-<a name="l00082"></a>00082         ;
-<a name="l00083"></a>00083 
-<a name="l00089"></a>00089         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1MinLeeBoundary.html#a9d9b16e12b09af906b21cae27102e1c3" title="modify sparsity pattern so that the fluxes over periodic boundary can be incorporated...">addToSparsityPattern</a>(
-<a name="l00090"></a>00090 <span class="comment">/*#ifdef WITH_TRILINOS_MPI</span>
-<a name="l00091"></a>00091 <span class="comment">                        dealii::TrilinosWrappers::SparsityPattern&amp; cSparse,</span>
-<a name="l00092"></a>00092 <span class="comment">#else</span>
-<a name="l00093"></a>00093 <span class="comment">*/</span>
-<a name="l00094"></a>00094                         dealii::DynamicSparsityPattern&amp; cSparse,
-<a name="l00095"></a>00095 <span class="comment">//#endif</span>
-<a name="l00096"></a>00096                         <span class="keyword">const</span> dealii::DoFHandler&lt;dim&gt;&amp; doFHandler,
-<a name="l00097"></a>00097                         <span class="keyword">const</span> <a class="code" href="classnatrium_1_1Stencil.html" title="Abstract class for the description of a boltzmann model, e.g. D2Q9.">Stencil</a>&amp; ) <span class="keyword">const</span>;
-<a name="l00098"></a>00098 
-<a name="l00099"></a>00099         <span class="comment">// assemble Min-Lee-Type boundary</span>
-<a name="l00100"></a>00100         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1MinLeeBoundary.html#ac23616963c4e9873c2177cdc7f67e159">assembleBoundary</a>(<span class="keywordtype">size_t</span> alpha,
-<a name="l00101"></a>00101                         <span class="keyword">const</span> <span class="keyword">typename</span> dealii::DoFHandler&lt;dim&gt;::active_cell_iterator&amp; cell,
-<a name="l00102"></a>00102                         <span class="keywordtype">size_t</span> faceNumber, dealii::FEFaceValues&lt;dim&gt;&amp; feFaceValues,
-<a name="l00103"></a>00103                         <span class="keyword">const</span> <a class="code" href="classnatrium_1_1Stencil.html" title="Abstract class for the description of a boltzmann model, e.g. D2Q9.">Stencil</a>&amp; stencil,
-<a name="l00104"></a>00104                         <span class="keyword">const</span> std::map&lt;size_t, size_t&gt;&amp; q_index_to_facedof,
-<a name="l00105"></a>00105                         <span class="keyword">const</span> vector&lt;double&gt; &amp; inverseLocalMassMatrix,
-<a name="l00106"></a>00106                         distributed_sparse_block_matrix&amp; systemMatrix,
-<a name="l00107"></a>00107                         distributed_block_vector&amp; systemVector,
-<a name="l00108"></a>00108                         <span class="keywordtype">bool</span> useCentralFlux = <span class="keyword">false</span>) <span class="keyword">const</span>;
-<a name="l00109"></a>00109 
-<a name="l00110"></a>00110         <span class="keywordtype">size_t</span> getBoundaryIndicator()<span class="keyword"> const </span>{
-<a name="l00111"></a>00111                 <span class="keywordflow">return</span> m_boundaryIndicator;
-<a name="l00112"></a>00112         }
-<a name="l00113"></a>00113 };
-<a name="l00114"></a>00114 
-<a name="l00115"></a>00115 } <span class="comment">/* namespace natrium */</span>
-<a name="l00116"></a>00116 
-<a name="l00117"></a>00117 <span class="preprocessor">#endif </span><span class="comment">/* MINLEEBOUNDARY_H_ */</span>
+<a name="l00011"></a>00011 <span class="preprocessor">#include &lt;deal.II/lac/dynamic_sparsity_pattern.h&gt;</span>
+<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;deal.II/lac/trilinos_sparsity_pattern.h&quot;</span>
+<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;deal.II/dofs/dof_handler.h&quot;</span>
+<a name="l00014"></a>00014 <span class="preprocessor">#include &quot;deal.II/base/function.h&quot;</span>
+<a name="l00015"></a>00015 
+<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;<a class="code" href="Boundary_8h.html" title="Abstract class for Description of a Boundary object.">Boundary.h</a>&quot;</span>
+<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;../stencils/Stencil.h&quot;</span>
+<a name="l00018"></a>00018 <span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span>
+<a name="l00019"></a>00019 
+<a name="l00020"></a>00020 <span class="keyword">namespace </span>natrium {
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00023"></a><a class="code" href="classnatrium_1_1BoundaryDensity.html">00023</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryDensity.html">BoundaryDensity</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
+<a name="l00024"></a>00024 <span class="keyword">public</span>:
+<a name="l00025"></a>00025         <a class="code" href="classnatrium_1_1BoundaryDensity.html">BoundaryDensity</a>() {
+<a name="l00026"></a>00026         }
+<a name="l00027"></a>00027         ;
+<a name="l00028"></a>00028         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryDensity.html">BoundaryDensity</a>() {
+<a name="l00029"></a>00029         }
+<a name="l00030"></a>00030         ;
+<a name="l00031"></a>00031         <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
+<a name="l00032"></a>00032                         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  = 0)<span class="keyword"> const </span>{
+<a name="l00033"></a>00033                 <span class="keywordflow">return</span> 1;
+<a name="l00034"></a>00034         }
+<a name="l00035"></a>00035 };
+<a name="l00036"></a>00036 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00037"></a><a class="code" href="classnatrium_1_1BoundaryVelocity.html">00037</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryVelocity.html">BoundaryVelocity</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
+<a name="l00038"></a>00038 <span class="keyword">private</span>:
+<a name="l00039"></a>00039         dealii::Vector&lt;double&gt; m_Velocity;
+<a name="l00040"></a>00040 <span class="keyword">public</span>:
+<a name="l00041"></a>00041         <a class="code" href="classnatrium_1_1BoundaryVelocity.html">BoundaryVelocity</a>(<span class="keyword">const</span> dealii::Vector&lt;double&gt;&amp; velocity) :
+<a name="l00042"></a>00042                         m_Velocity(velocity) {
+<a name="l00043"></a>00043         }
+<a name="l00044"></a>00044         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryVelocity.html">BoundaryVelocity</a>() {
+<a name="l00045"></a>00045         }
+<a name="l00046"></a>00046         ;
+<a name="l00047"></a>00047         <span class="keyword">virtual</span> <span class="keywordtype">void</span> vector_value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
+<a name="l00048"></a>00048                         dealii::Vector&lt;double&gt; &amp;values)<span class="keyword"> const </span>{
+<a name="l00049"></a>00049                 values = m_Velocity;
+<a name="l00050"></a>00050         }
+<a name="l00051"></a>00051 };
+<a name="l00052"></a>00052 
+<a name="l00060"></a><a class="code" href="classnatrium_1_1MinLeeBoundary.html">00060</a> <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt; <span class="keyword">class </span><a class="code" href="classnatrium_1_1MinLeeBoundary.html" title="The boundary described by Min and Lee. For outgoing particle distribution functions...">MinLeeBoundary</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a>&lt;dim&gt; {
+<a name="l00061"></a>00061 <span class="keyword">private</span>:
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063         <span class="keywordtype">size_t</span> m_boundaryIndicator;
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065         shared_ptr&lt;dealii::Function&lt;dim&gt; &gt; m_boundaryDensity;
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067         shared_ptr&lt;dealii::Function&lt;dim&gt; &gt; m_boundaryVelocity;
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069 <span class="keyword">public</span>:
+<a name="l00070"></a>00070 
+<a name="l00072"></a>00072         <a class="code" href="classnatrium_1_1MinLeeBoundary.html#a1e9acd91ee2b97783932c4df45d38668" title="constructor">MinLeeBoundary</a>(<span class="keywordtype">size_t</span> boundaryIndicator,
+<a name="l00073"></a>00073                         shared_ptr&lt;dealii::Function&lt;dim&gt; &gt; boundaryDensity,
+<a name="l00074"></a>00074                         shared_ptr&lt;dealii::Function&lt;dim&gt; &gt; boundaryVelocity);
+<a name="l00075"></a>00075 
+<a name="l00077"></a>00077         <a class="code" href="classnatrium_1_1MinLeeBoundary.html#a1e9acd91ee2b97783932c4df45d38668" title="constructor">MinLeeBoundary</a>(<span class="keywordtype">size_t</span> boundaryIndicator,
+<a name="l00078"></a>00078                         <span class="keyword">const</span> dealii::Vector&lt;double&gt;&amp; velocity);
+<a name="l00079"></a>00079 
+<a name="l00081"></a><a class="code" href="classnatrium_1_1MinLeeBoundary.html#ab2409b8dceb378d7e2bdb457e8c5f374">00081</a>         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1MinLeeBoundary.html#ab2409b8dceb378d7e2bdb457e8c5f374" title="destructor">~MinLeeBoundary</a>() {
+<a name="l00082"></a>00082         }
+<a name="l00083"></a>00083         ;
+<a name="l00084"></a>00084 
+<a name="l00090"></a>00090         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1MinLeeBoundary.html#a9d9b16e12b09af906b21cae27102e1c3" title="modify sparsity pattern so that the fluxes over periodic boundary can be incorporated...">addToSparsityPattern</a>(
+<a name="l00091"></a>00091 #ifdef WITH_TRILINOS_MPI
+<a name="l00092"></a>00092                         dealii::TrilinosWrappers::SparsityPattern&amp; cSparse,
+<a name="l00093"></a>00093 #<span class="keywordflow">else</span>
+<a name="l00094"></a>00094 
+<a name="l00095"></a>00095                         dealii::DynamicSparsityPattern&amp; cSparse,
+<a name="l00096"></a>00096 #endif
+<a name="l00097"></a>00097                         <span class="keyword">const</span> dealii::DoFHandler&lt;dim&gt;&amp; doFHandler,
+<a name="l00098"></a>00098                         <span class="keyword">const</span> <a class="code" href="classnatrium_1_1Stencil.html" title="Abstract class for the description of a boltzmann model, e.g. D2Q9.">Stencil</a>&amp; ) <span class="keyword">const</span>;
+<a name="l00099"></a>00099 
+<a name="l00100"></a>00100         <span class="comment">// assemble Min-Lee-Type boundary</span>
+<a name="l00101"></a>00101         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1MinLeeBoundary.html#ac23616963c4e9873c2177cdc7f67e159">assembleBoundary</a>(<span class="keywordtype">size_t</span> alpha,
+<a name="l00102"></a>00102                         <span class="keyword">const</span> <span class="keyword">typename</span> dealii::DoFHandler&lt;dim&gt;::active_cell_iterator&amp; cell,
+<a name="l00103"></a>00103                         <span class="keywordtype">size_t</span> faceNumber, dealii::FEFaceValues&lt;dim&gt;&amp; feFaceValues,
+<a name="l00104"></a>00104                         <span class="keyword">const</span> <a class="code" href="classnatrium_1_1Stencil.html" title="Abstract class for the description of a boltzmann model, e.g. D2Q9.">Stencil</a>&amp; stencil,
+<a name="l00105"></a>00105                         <span class="keyword">const</span> std::map&lt;size_t, size_t&gt;&amp; q_index_to_facedof,
+<a name="l00106"></a>00106                         <span class="keyword">const</span> vector&lt;double&gt; &amp; inverseLocalMassMatrix,
+<a name="l00107"></a>00107                         distributed_sparse_block_matrix&amp; systemMatrix,
+<a name="l00108"></a>00108                         distributed_block_vector&amp; systemVector,
+<a name="l00109"></a>00109                         <span class="keywordtype">bool</span> useCentralFlux = <span class="keyword">false</span>) <span class="keyword">const</span>;
+<a name="l00110"></a>00110 
+<a name="l00111"></a>00111         <span class="keywordtype">size_t</span> getBoundaryIndicator()<span class="keyword"> const </span>{
+<a name="l00112"></a>00112                 <span class="keywordflow">return</span> m_boundaryIndicator;
+<a name="l00113"></a>00113         }
+<a name="l00114"></a>00114 };
+<a name="l00115"></a>00115 
+<a name="l00116"></a>00116 } <span class="comment">/* namespace natrium */</span>
+<a name="l00117"></a>00117 
+<a name="l00118"></a>00118 <span class="preprocessor">#endif </span><span class="comment">/* MINLEEBOUNDARY_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -154,7 +155,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

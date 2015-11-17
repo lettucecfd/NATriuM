@@ -78,18 +78,30 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <img class="formulaDsp" alt="\[ \frac{df}{dt} = Af+b \]" src="form_33.png"/>
 </p>
 <p> with the theta method.  <a href="#a247c639f49a05904dae01b05115bc7e4"></a><br/></td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="abbab4d93f6d54e1b82ea8cc008eba126"></a><!-- doxytag: member="natrium::ThetaMethod::ThetaMethod" ref="abbab4d93f6d54e1b82ea8cc008eba126" args="(double timeStepSize, const numeric_vector &amp;, double theta)" -->
+template&lt;&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const numeric_vector &amp;, double theta)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a8ab913e8242378d6877ef6dcee80aebb"></a><!-- doxytag: member="natrium::ThetaMethod::ThetaMethod" ref="a8ab913e8242378d6877ef6dcee80aebb" args="(double timeStepSize, const distributed_vector &amp;, double theta)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const distributed_vector &amp;, double theta)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="ac5b08a9ab08f4f61779dc818a6dac3b2"></a><!-- doxytag: member="natrium::ThetaMethod::ThetaMethod" ref="ac5b08a9ab08f4f61779dc818a6dac3b2" args="(double timeStepSize, const distributed_block_vector &amp;prototype_vector, double theta)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const distributed_block_vector &amp;prototype_vector, double theta)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a6329a87c9fd50d6db3546b892b716b3c"></a><!-- doxytag: member="natrium::ThetaMethod::ThetaMethod" ref="a6329a87c9fd50d6db3546b892b716b3c" args="(double timeStepSize, const block_vector &amp;prototype_vector, double theta)" -->
+template&lt;&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const block_vector &amp;prototype_vector, double theta)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a68e1ddc84cd0ae5ee13a26333a9b5b97"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a68e1ddc84cd0ae5ee13a26333a9b5b97" args="(distributed_vector &amp;f, const distributed_sparse_matrix &amp;systemMatrix, const distributed_vector &amp;systemVector, double t, double dt)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (distributed_vector &amp;f, const distributed_sparse_matrix &amp;systemMatrix, const distributed_vector &amp;systemVector, double t, double dt)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a1fe9306f09ecdc50f27c7ae36c528e13"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a1fe9306f09ecdc50f27c7ae36c528e13" args="(numeric_vector &amp;f, const sparse_matrix &amp;systemMatrix, const numeric_vector &amp;systemVector, double t, double dt)" -->
+template&lt;&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (numeric_vector &amp;f, const sparse_matrix &amp;systemMatrix, const numeric_vector &amp;systemVector, double t, double dt)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a09182df9e98932d93b7e32ffdd2ae46f"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a09182df9e98932d93b7e32ffdd2ae46f" args="(distributed_block_vector &amp;f, const distributed_sparse_block_matrix &amp;systemMatrix, const distributed_block_vector &amp;systemVector, double t, double dt)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (distributed_block_vector &amp;f, const distributed_sparse_block_matrix &amp;systemMatrix, const distributed_block_vector &amp;systemVector, double t, double dt)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a30d578fab2d0189fe2a4c51ddc29cc3a"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a30d578fab2d0189fe2a4c51ddc29cc3a" args="(block_vector &amp;f, const sparse_block_matrix &amp;systemMatrix, const block_vector &amp;systemVector, double t, double dt)" -->
+template&lt;&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (block_vector &amp;f, const sparse_block_matrix &amp;systemMatrix, const block_vector &amp;systemVector, double t, double dt)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;class MATRIX, class VECTOR&gt;<br/>
@@ -227,7 +239,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -53,8 +53,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00008"></a>00008 <span class="preprocessor">#ifndef ADVECTIONBENCHMARK_H_</span>
 <a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define ADVECTIONBENCHMARK_H_</span>
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
-<a name="l00011"></a>00011 
-<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span>
+<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span>
+<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;../solver/SolverConfiguration.h&quot;</span>
 <a name="l00013"></a>00013 
 <a name="l00014"></a>00014 <span class="keyword">namespace </span>natrium {
 <a name="l00015"></a>00015 
@@ -76,19 +76,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00031"></a>00031 
 <a name="l00032"></a>00032 <span class="keywordtype">void</span> getAnalyticSolution(<span class="keywordtype">double</span> time, distributed_vector&amp; analyticSolution,
 <a name="l00033"></a>00033                 <span class="keyword">const</span> map&lt;dealii::types::global_dof_index, dealii::Point&lt;2&gt; &gt;&amp; supportPoints,
-<a name="l00034"></a>00034                 <span class="keyword">const</span> shared_ptr&lt;<a class="code" href="classnatrium_1_1AdvectionOperator.html" title="Abstract class for spatial part of the Advection Operator e_i * dx_i f.">AdvectionOperator&lt;2&gt;</a> &gt; &amp; streaming,
-<a name="l00035"></a>00035                 <span class="keywordtype">bool</span> is_smooth = <span class="keyword">true</span>);
+<a name="l00034"></a>00034                 <span class="keyword">const</span> shared_ptr&lt;<a class="code" href="classnatrium_1_1AdvectionOperator.html" title="Abstract class for spatial part of the Advection Operator e_i * dx_i f.">AdvectionOperator&lt;2&gt;</a> &gt; &amp; streaming, <span class="keywordtype">bool</span> is_smooth =
+<a name="l00035"></a>00035                                 <span class="keyword">true</span>);
 <a name="l00036"></a>00036 
-<a name="l00037"></a>00037 
-<a name="l00038"></a>00038 
-<a name="l00039"></a>00039 <a class="code" href="structnatrium_1_1AdvectionBenchmark_1_1AdvectionResult.html">AdvectionResult</a> oneTest(<span class="keywordtype">size_t</span> refinementLevel, <span class="keywordtype">size_t</span> fe_order, <span class="keywordtype">double</span> deltaT,
-<a name="l00040"></a>00040                 <span class="keywordtype">size_t</span> numberOfTimeSteps, <span class="keywordtype">bool</span> is_smooth = <span class="keyword">true</span>,  <span class="keywordtype">bool</span> output_to_std_dir = <span class="keyword">false</span>, <span class="keywordtype">bool</span> useCentralFlux = <span class="keyword">false</span>);
+<a name="l00037"></a>00037 <a class="code" href="structnatrium_1_1AdvectionBenchmark_1_1AdvectionResult.html">AdvectionResult</a> oneTest(<span class="keywordtype">size_t</span> refinementLevel, <span class="keywordtype">size_t</span> fe_order, <span class="keywordtype">double</span> deltaT,
+<a name="l00038"></a>00038                 <span class="keywordtype">double</span> t_end, <span class="keyword">const</span> TimeIntegratorName integrator,
+<a name="l00039"></a>00039                 <span class="keyword">const</span> DealIntegratorName deal_integrator = NONE, <span class="keywordtype">bool</span> is_smooth = <span class="keyword">true</span>,
+<a name="l00040"></a>00040                 <span class="keywordtype">bool</span> output_to_std_dir = <span class="keyword">false</span>, <span class="keywordtype">bool</span> useCentralFlux = <span class="keyword">false</span>);
 <a name="l00041"></a>00041 
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043 } <span class="comment">/*namespace  AdvectionBenchmark */</span>
-<a name="l00044"></a>00044 } <span class="comment">/* namespace natrium */</span>
-<a name="l00045"></a>00045 
-<a name="l00046"></a>00046 <span class="preprocessor">#endif </span><span class="comment">/* ADVECTIONBENCHMARK_H_ */</span>
+<a name="l00042"></a>00042 } <span class="comment">/*namespace  AdvectionBenchmark */</span>
+<a name="l00043"></a>00043 } <span class="comment">/* namespace natrium */</span>
+<a name="l00044"></a>00044 
+<a name="l00045"></a>00045 <span class="preprocessor">#endif </span><span class="comment">/* ADVECTIONBENCHMARK_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -104,7 +103,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

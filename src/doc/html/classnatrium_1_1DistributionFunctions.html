@@ -69,11 +69,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af965a46fbf124e8f90250c843e615bcd"></a><!-- doxytag: member="natrium::DistributionFunctions::~DistributionFunctions" ref="af965a46fbf124e8f90250c843e615bcd" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#af965a46fbf124e8f90250c843e615bcd">~DistributionFunctions</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a34f0147178c17597eaf24befdcced975"></a><!-- doxytag: member="natrium::DistributionFunctions::at" ref="a34f0147178c17597eaf24befdcced975" args="(size_t i)" -->
-distributed_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a34f0147178c17597eaf24befdcced975">at</a> (size_t i)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8b473d257152e9d588030eac9500d08"></a><!-- doxytag: member="natrium::DistributionFunctions::at" ref="af8b473d257152e9d588030eac9500d08" args="(size_t i)" -->
+distributed_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#af8b473d257152e9d588030eac9500d08">at</a> (size_t i)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">mimes std::vector.at(i) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a750d7de21f207ac694c72b215ba7b6de"></a><!-- doxytag: member="natrium::DistributionFunctions::at" ref="a750d7de21f207ac694c72b215ba7b6de" args="(size_t i) const " -->
-const distributed_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a750d7de21f207ac694c72b215ba7b6de">at</a> (size_t i) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55af3d8382ed4c46d88e86a8f41844f7"></a><!-- doxytag: member="natrium::DistributionFunctions::at" ref="a55af3d8382ed4c46d88e86a8f41844f7" args="(size_t i) const " -->
+const distributed_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a55af3d8382ed4c46d88e86a8f41844f7">at</a> (size_t i) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">mimes std::vector.at(i) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d76ae4f928f324ec82099dbdce678d7"></a><!-- doxytag: member="natrium::DistributionFunctions::getF0" ref="a3d76ae4f928f324ec82099dbdce678d7" args="() const " -->
 const distributed_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">getF0</a> () const </td></tr>
@@ -97,16 +97,68 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a2ab8e5abf8cdef76f62e443a8dde5fd4">getQ</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">the number of discrete velocities <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acaca68f7cbb9322d354ad6dca68b2cb2"></a><!-- doxytag: member="natrium::DistributionFunctions::reinit" ref="acaca68f7cbb9322d354ad6dca68b2cb2" args="(size_t Q, size_t size)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#acaca68f7cbb9322d354ad6dca68b2cb2">reinit</a> (size_t Q, size_t size)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">reinitialize the sizes of the distribution functions <br/></td></tr>
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reinit</b> (size_t Q, size_t size)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a636814c639143c76989b09b2a92b6757"></a><!-- doxytag: member="natrium::DistributionFunctions::size" ref="a636814c639143c76989b09b2a92b6757" args="() const " -->
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">size</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">the number of discrete velocities, including zero <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a5b0afbafe841922dd3f949cc315b5533">compress</a> (dealii::VectorOperation::values operation)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">call dealii's compress function to all distributed_vectors stored herein. Compress has to be called, whenever the elements of a vector have been changed by hand. It distributes the local information to the other processors, if required.  <a href="#a5b0afbafe841922dd3f949cc315b5533"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a5e61cb3ba258cf0958e1557061ed31b9">operator=</a> (const <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;other)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">call operator= for all distribution functions  <a href="#a5e61cb3ba258cf0958e1557061ed31b9"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>This class contains the distribution functions. As the zero-velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (fStream) in the implementation. fStream is a block vector, which has the advantage that it can be multiplied with the SystemMatrix. The <a class="el" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a> class is designed to mime the behaviour of a vector&lt;distributed_vector&gt; . </p>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a5b0afbafe841922dd3f949cc315b5533"></a><!-- doxytag: member="natrium::DistributionFunctions::compress" ref="a5b0afbafe841922dd3f949cc315b5533" args="(dealii::VectorOperation::values operation)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void natrium::DistributionFunctions::compress </td>
+          <td>(</td>
+          <td class="paramtype">dealii::VectorOperation::values&nbsp;</td>
+          <td class="paramname"> <em>operation</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>call dealii's compress function to all distributed_vectors stored herein. Compress has to be called, whenever the elements of a vector have been changed by hand. It distributes the local information to the other processors, if required. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>operation</em>&nbsp;</td><td>specifies, if element was inserted or added. Operation has to be dealii::VectorOperation::add or dealii::VectorOperation::compress </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a5e61cb3ba258cf0958e1557061ed31b9"></a><!-- doxytag: member="natrium::DistributionFunctions::operator=" ref="a5e61cb3ba258cf0958e1557061ed31b9" args="(const DistributionFunctions &amp;other)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void natrium::DistributionFunctions::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>other</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>call operator= for all distribution functions </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>is only allowed for <a class="el" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a> of equal size </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/<a class="el" href="DistributionFunctions_8h_source.html">DistributionFunctions.h</a></li>
+<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/<a class="el" href="DistributionFunctions_8cpp.html">DistributionFunctions.cpp</a></li>
 </ul>
 </div>
 <!--- window showing the filter options -->
@@ -123,7 +175,7 @@ size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -76,8 +76,8 @@ Inheritance diagram for natrium::BGK:</div>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1029401a72788a6538e4e1941c305ab4"></a><!-- doxytag: member="natrium::BGK::~BGK" ref="a1029401a72788a6538e4e1941c305ab4" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGK.html#a1029401a72788a6538e4e1941c305ab4">~BGK</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGK.html#ae5e97a4995fe927e9042a6cffac80acc">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#ae5e97a4995fe927e9042a6cffac80acc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGK.html#a9fa1c980217a183fc4762954e86ba36d">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#a9fa1c980217a183fc4762954e86ba36d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab82471c249d19fdc62005fb8b7e03190"></a><!-- doxytag: member="natrium::BGK::collideSingleDoF" ref="ab82471c249d19fdc62005fb8b7e03190" args="(size_t doF, const vector&lt; double &gt; &amp;feq, DistributionFunctions &amp;f) const " -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>collideSingleDoF</b> (size_t doF, const vector&lt; double &gt; &amp;feq, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f) const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aebf6d64d5e537c2e352451667d9003d4"></a><!-- doxytag: member="natrium::BGK::collideSinglePoint" ref="aebf6d64d5e537c2e352451667d9003d4" args="(vector&lt; double &gt; &amp;distributions) const " -->
@@ -187,7 +187,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParame
 
 </div>
 </div>
-<a class="anchor" id="ae5e97a4995fe927e9042a6cffac80acc"></a><!-- doxytag: member="natrium::BGK::collideAll" ref="ae5e97a4995fe927e9042a6cffac80acc" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, bool inInitializationProcedure=false) const " -->
+<a class="anchor" id="a9fa1c980217a183fc4762954e86ba36d"></a><!-- doxytag: member="natrium::BGK::collideAll" ref="a9fa1c980217a183fc4762954e86ba36d" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -212,6 +212,12 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParame
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const dealii::IndexSet &amp;&nbsp;</td>
+          <td class="paramname"> <em>locally_owned_dofs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">bool&nbsp;</td>
           <td class="paramname"> <em>inInitializationProcedure</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
@@ -229,7 +235,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParame
 
 <p>Implements <a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a>.</p>
 
-<p>Reimplemented in <a class="el" href="classnatrium_1_1BGKPseudopotential.html#ac52de8933fa8fbd8a8aa2a3a978f0f4b">natrium::BGKPseudopotential</a>, <a class="el" href="classnatrium_1_1BGKStandard.html#a58ffede8b7587e584875ab8e4279fcac">natrium::BGKStandard</a>, <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#a00c806c32f16e518117c818a29c2fef4">natrium::BGKStandardTransformed</a>, and <a class="el" href="classnatrium_1_1BGKSteadyState.html#a21eda1096ed5c75672b338a75f49d2cc">natrium::BGKSteadyState</a>.</p>
+<p>Reimplemented in <a class="el" href="classnatrium_1_1BGKPseudopotential.html#a5f40f5076273f9ec38f3078c891b453c">natrium::BGKPseudopotential</a>, <a class="el" href="classnatrium_1_1BGKStandard.html#a8e0493b063d56275d7ee607e25c4145e">natrium::BGKStandard</a>, <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#aaa2e752c6aa2294f1ebeb9d326ba9eb8">natrium::BGKStandardTransformed</a>, and <a class="el" href="classnatrium_1_1BGKSteadyState.html#a8554fb624c5a3abe01651747b3d9aeb7">natrium::BGKSteadyState</a>.</p>
 
 </div>
 </div>
@@ -252,7 +258,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParame
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

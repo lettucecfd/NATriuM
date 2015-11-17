@@ -52,12 +52,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &lt;map&gt;</code><br/>
 <code>#include &lt;iostream&gt;</code><br/>
 <code>#include &lt;math.h&gt;</code><br/>
+<code>#include &lt;mpi.h&gt;</code><br/>
 <code>#include &quot;boost/shared_ptr.hpp&quot;</code><br/>
 <code>#include &quot;boost/make_shared.hpp&quot;</code><br/>
 <code>#include &quot;deal.II/base/point.h&quot;</code><br/>
 <code>#include &quot;deal.II/numerics/vector_tools.h&quot;</code><br/>
 <code>#include &quot;deal.II/lac/block_sparse_matrix.h&quot;</code><br/>
 <code>#include &quot;deal.II/base/types.h&quot;</code><br/>
+<code>#include &quot;deal.II/base/conditional_ostream.h&quot;</code><br/>
 <code>#include &quot;deal.II/distributed/tria.h&quot;</code><br/>
 
 <p><a href="BasicNames_8h_source.html">Go to the source code of this file.</a></p>
@@ -101,6 +103,14 @@ dealii::TrilinosWrappers::MPI::BlockVector&nbsp;</td><td class="memItemRight" va
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31c41694ea4808b3e801fd586bc10fef"></a><!-- doxytag: member="BasicNames.h::REINIT_UNDISTRIBUTED_BLOCK_VECTOR" ref="a31c41694ea4808b3e801fd586bc10fef" args="(distributed_block_vector &amp;bv, size_t n_blocks, size_t block_size)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::REINIT_UNDISTRIBUTED_BLOCK_VECTOR</b> (distributed_block_vector &amp;bv, size_t n_blocks, size_t block_size)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad9280c1cdcb421c6bf3f719ae2747120"></a><!-- doxytag: member="BasicNames.h::MPI_sync" ref="ad9280c1cdcb421c6bf3f719ae2747120" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#ad9280c1cdcb421c6bf3f719ae2747120">natrium::MPI_sync</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Synchronize all MPI processes. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a791202a0d8b6bdac2c62f3ae63905a36">natrium::is_MPI_rank_0</a> ()</td></tr>
+<tr><td colspan="2"><h2>Variables</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dealii::ConditionalOStream&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a3cedd4d2c74ed3a6e0f61166ddff40d1">natrium::perr</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1c1457daa96180a3ee2057cf5f7f9e3"></a><!-- doxytag: member="BasicNames.h::pout" ref="ae1c1457daa96180a3ee2057cf5f7f9e3" args="" -->
+dealii::ConditionalOStream&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::pout</b></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Definition of the basic typedefs and names used in the Code;. </p>
@@ -122,7 +132,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::REINIT_UNDIS
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

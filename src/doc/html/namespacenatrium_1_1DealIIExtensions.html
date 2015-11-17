@@ -52,8 +52,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#_details">More...</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2d320098833f9b096e93d4c565675338"></a><!-- doxytag: member="natrium::DealIIExtensions::SP" ref="a2d320098833f9b096e93d4c565675338" args="" -->
-typedef DynamicSparsityPattern&nbsp;</td><td class="memItemRight" valign="bottom"><b>SP</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae3b719f221dd5d719bd58896660e6525"></a><!-- doxytag: member="natrium::DealIIExtensions::SP" ref="ae3b719f221dd5d719bd58896660e6525" args="" -->
+typedef <br class="typebreak"/>
+TrilinosWrappers::SparsityPattern&nbsp;</td><td class="memItemRight" valign="bottom"><b>SP</b></td></tr>
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a9796541c82011b8b792400ebefd9c008"></a><!-- doxytag: member="natrium::DealIIExtensions::make_sparser_flux_sparsity_pattern" ref="a9796541c82011b8b792400ebefd9c008" args="(const DH &amp;dof, SparsityPattern &amp;sparsity, const ConstraintMatrix &amp;constraints, const BoundaryCollection&lt; DH::dimension &gt; &amp;boundaries=natrium::BoundaryCollection&lt; DH::dimension &gt;(), FEFaceValues&lt; DH::dimension &gt; *fe_face=NULL, const bool keep_constrained_dofs=true, const types::subdomain_id subdomain_id=numbers::invalid_unsigned_int)" -->
 template&lt;class DH , class SparsityPattern &gt; </td></tr>
@@ -71,6 +72,9 @@ template&lt;class DH , class SparsityPattern &gt; </td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;typename DH &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1DealIIExtensions.html#a01f414566020f59f29036fd7e22341b9">make_periodicity_map_dg</a> (const DH &amp;dof_handler, size_t b_id1, size_t b_id2, const int direction, PeriodicCellMap&lt; DH::dimension &gt; &amp;cell_map)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Another high-level version of the first function, starting from boundary indicators.  <a href="#a01f414566020f59f29036fd7e22341b9"></a><br/></td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;class DH &gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1DealIIExtensions.html#ad74bfc63a45e2d4c1c9f2dd625cf1a66">extract_dofs_with_support_on_boundary</a> (const DH &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function extracts those degrees of freedom whose shape functions are nonzero on at least part of the selected boundary. For continuous elements, this is exactly the set of shape functions whose degrees of freedom are defined on boundary faces. On the other hand, if the finite element in used is a discontinuous element, all degrees of freedom are defined in the inside of cells and consequently none would be boundary degrees of freedom. Several of those would have shape functions that are nonzero on the boundary, however. This function therefore extracts all those for which the FiniteElement::has_support_on_face function says that it is nonzero on any face on one of the selected boundary parts.  <a href="#ad74bfc63a45e2d4c1c9f2dd625cf1a66"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1114fe047dc504c301fade5677bcea1d"></a><!-- doxytag: member="natrium::DealIIExtensions::make_sparser_flux_sparsity_pattern&lt; DoFHandler&lt; 2 &gt;, SP &gt;" ref="a1114fe047dc504c301fade5677bcea1d" args="(const DoFHandler&lt; 2 &gt; &amp;dof, SP &amp;sparsity, const BoundaryCollection&lt; 2 &gt; &amp;boundaries, FEFaceValues&lt; 2 &gt; *fe_face)" -->
 template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>make_sparser_flux_sparsity_pattern&lt; DoFHandler&lt; 2 &gt;, SP &gt;</b> (const DoFHandler&lt; 2 &gt; &amp;dof, SP &amp;sparsity, const <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; 2 &gt; &amp;boundaries, FEFaceValues&lt; 2 &gt; *fe_face)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9f6065aca54041aa9bd6ca3733478988"></a><!-- doxytag: member="natrium::DealIIExtensions::make_sparser_flux_sparsity_pattern&lt; DoFHandler&lt; 2 &gt;, SP &gt;" ref="a9f6065aca54041aa9bd6ca3733478988" args="(const DoFHandler&lt; 2 &gt; &amp;dof, SP &amp;sparsity, const ConstraintMatrix &amp;constraints, const BoundaryCollection&lt; 2 &gt; &amp;boundaries, FEFaceValues&lt; 2 &gt; *fe_face, const bool, const unsigned int)" -->
@@ -91,10 +95,58 @@ template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>make_periodi
 template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>make_periodicity_map_dg&lt; DoFHandler&lt; 2 &gt; &gt;</b> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, size_t b_id1, size_t b_id2, const int direction, PeriodicCellMap&lt; 2 &gt; &amp;cell_map)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d4a08bca6d3ef3833ba3a0107ea7fa8"></a><!-- doxytag: member="natrium::DealIIExtensions::make_periodicity_map_dg&lt; DoFHandler&lt; 3 &gt; &gt;" ref="a4d4a08bca6d3ef3833ba3a0107ea7fa8" args="(const DoFHandler&lt; 3 &gt; &amp;dof_handler, size_t b_id1, size_t b_id2, const int direction, PeriodicCellMap&lt; 3 &gt; &amp;cell_map)" -->
 template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>make_periodicity_map_dg&lt; DoFHandler&lt; 3 &gt; &gt;</b> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, size_t b_id1, size_t b_id2, const int direction, PeriodicCellMap&lt; 3 &gt; &amp;cell_map)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae531bdf7ab145d71f306ec1d4a1cefb3"></a><!-- doxytag: member="natrium::DealIIExtensions::extract_dofs_with_support_on_boundary" ref="ae531bdf7ab145d71f306ec1d4a1cefb3" args="(const dealii::DoFHandler&lt; 2 &gt; &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>extract_dofs_with_support_on_boundary</b> (const dealii::DoFHandler&lt; 2 &gt; &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a157762b4a7d95c0f6b614f451d1dbd2d"></a><!-- doxytag: member="natrium::DealIIExtensions::extract_dofs_with_support_on_boundary" ref="a157762b4a7d95c0f6b614f451d1dbd2d" args="(const dealii::DoFHandler&lt; 3 &gt; &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>extract_dofs_with_support_on_boundary</b> (const dealii::DoFHandler&lt; 3 &gt; &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>some extensions to deal.ii </p>
 <hr/><h2>Function Documentation</h2>
+<a class="anchor" id="ad74bfc63a45e2d4c1c9f2dd625cf1a66"></a><!-- doxytag: member="natrium::DealIIExtensions::extract_dofs_with_support_on_boundary" ref="ad74bfc63a45e2d4c1c9f2dd625cf1a66" args="(const DH &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DH &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void natrium::DealIIExtensions::extract_dofs_with_support_on_boundary </td>
+          <td>(</td>
+          <td class="paramtype">const DH &amp;&nbsp;</td>
+          <td class="paramname"> <em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ComponentMask &amp;&nbsp;</td>
+          <td class="paramname"> <em>component_mask</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; bool &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>selected_dofs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::set&lt; types::boundary_id &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>boundary_ids</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function extracts those degrees of freedom whose shape functions are nonzero on at least part of the selected boundary. For continuous elements, this is exactly the set of shape functions whose degrees of freedom are defined on boundary faces. On the other hand, if the finite element in used is a discontinuous element, all degrees of freedom are defined in the inside of cells and consequently none would be boundary degrees of freedom. Several of those would have shape functions that are nonzero on the boundary, however. This function therefore extracts all those for which the FiniteElement::has_support_on_face function says that it is nonzero on any face on one of the selected boundary parts. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>This function is the same as the deal.ii function with the same name; except for one line which restricts the function to the locally owned cells. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a01f414566020f59f29036fd7e22341b9"></a><!-- doxytag: member="natrium::DealIIExtensions::make_periodicity_map_dg" ref="a01f414566020f59f29036fd7e22341b9" args="(const DH &amp;dof_handler, size_t b_id1, size_t b_id2, const int direction, PeriodicCellMap&lt; DH::dimension &gt; &amp;cell_map)" -->
 <div class="memitem">
 <div class="memproto">
@@ -294,7 +346,7 @@ template&lt;typename DH &gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

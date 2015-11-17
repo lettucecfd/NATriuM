@@ -62,18 +62,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00020"></a>00020 
 <a name="l00022"></a>00022         std::ofstream m_html;
 <a name="l00023"></a>00023 
-<a name="l00024"></a>00024 <span class="keyword">public</span>:
-<a name="l00025"></a>00025 
-<a name="l00027"></a>00027         <a class="code" href="classHtmlTrace.html#aad24986d7bce81d050ea6f5ec4773be7" title="Constructor.">HtmlTrace</a>();
-<a name="l00028"></a>00028 
-<a name="l00030"></a>00030         <a class="code" href="classHtmlTrace.html#a27003513f2782cbd57bf387a1fca8be5" title="Destructor.">~HtmlTrace</a>();
-<a name="l00031"></a>00031 
-<a name="l00033"></a><a class="code" href="classHtmlTrace.html#a334a99ca80288f4b25ee6e5d02edf679">00033</a>         std::ofstream &amp; <a class="code" href="classHtmlTrace.html#a334a99ca80288f4b25ee6e5d02edf679" title="Return stream.">getHtml</a>() {
-<a name="l00034"></a>00034                 <span class="keywordflow">return</span> m_html;
-<a name="l00035"></a>00035         }
-<a name="l00036"></a>00036 };
-<a name="l00037"></a>00037 
-<a name="l00038"></a>00038 <span class="preprocessor">#endif // HTML_TRACE_H</span>
+<a name="l00026"></a>00026         <span class="keywordtype">bool</span> m_active;
+<a name="l00027"></a>00027 
+<a name="l00028"></a>00028 <span class="keyword">public</span>:
+<a name="l00029"></a>00029 
+<a name="l00031"></a>00031         <a class="code" href="classHtmlTrace.html#aea8d1172bceb532eac4978e42222477e" title="Constructor.">HtmlTrace</a>(<span class="keywordtype">bool</span> active = <span class="keyword">true</span>);
+<a name="l00032"></a>00032 
+<a name="l00034"></a>00034         <a class="code" href="classHtmlTrace.html#a27003513f2782cbd57bf387a1fca8be5" title="Destructor.">~HtmlTrace</a>();
+<a name="l00035"></a>00035 
+<a name="l00037"></a><a class="code" href="classHtmlTrace.html#a334a99ca80288f4b25ee6e5d02edf679">00037</a>         std::ofstream &amp; <a class="code" href="classHtmlTrace.html#a334a99ca80288f4b25ee6e5d02edf679" title="Return stream.">getHtml</a>() {
+<a name="l00038"></a>00038                 <span class="keywordflow">return</span> m_html;
+<a name="l00039"></a>00039         }
+<a name="l00040"></a>00040 };
+<a name="l00041"></a>00041 
+<a name="l00042"></a>00042 <span class="preprocessor">#endif // HTML_TRACE_H</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -89,7 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

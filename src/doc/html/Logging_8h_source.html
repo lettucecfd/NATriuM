@@ -49,86 +49,102 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
 <a name="l00011"></a>00011 <span class="preprocessor">#include &lt;fstream&gt;</span>
 <a name="l00012"></a>00012 <span class="preprocessor">#include &lt;iostream&gt;</span>
-<a name="l00013"></a>00013 
+<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;mpi.h&gt;</span>
 <a name="l00014"></a>00014 
 <a name="l00015"></a>00015 <span class="preprocessor">#include &quot;deal.II/base/logstream.h&quot;</span>
-<a name="l00016"></a>00016 
-<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;<a class="code" href="BasicNames_8h.html" title="Definition of the basic typedefs and names used in the Code;.">BasicNames.h</a>&quot;</span>
-<a name="l00018"></a>00018 
-<a name="l00019"></a>00019 <span class="keyword">namespace </span>natrium {
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021 <span class="keyword">enum</span> LogLevel {
-<a name="l00022"></a>00022         SILENT,
-<a name="l00023"></a>00023         ERROR,
-<a name="l00024"></a>00024         WARNING,
-<a name="l00025"></a>00025         WELCOME,
-<a name="l00026"></a>00026         BASIC,
-<a name="l00027"></a>00027         DETAILED,
-<a name="l00028"></a>00028         DEAL_II_BASIC,
-<a name="l00029"></a>00029         DEAL_II_DETAILED,
-<a name="l00030"></a>00030         ALL
-<a name="l00031"></a>00031 };
-<a name="l00032"></a>00032 
-<a name="l00039"></a><a class="code" href="classnatrium_1_1Logging.html">00039</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>: <span class="keyword">public</span> dealii::LogStream {
-<a name="l00041"></a>00041         <span class="keyword">friend</span> <a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a913b816565b3ede4c25b89d25ca5148d" title="friend function; can be used like &amp;quot;LOG(ERROR) &amp;lt;&amp;lt; ...;&amp;quot;, to write...">LOG</a>(LogLevel level);
-<a name="l00043"></a>00043         <span class="keyword">friend</span> <a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b" title="friend function; is used to access the default logging instance; e.g. LOGGER().setLogFile(...">LOGGER</a>();
-<a name="l00044"></a>00044 <span class="keyword">private</span>:
-<a name="l00046"></a>00046         <span class="keywordtype">size_t</span> m_currentLevel;
-<a name="l00048"></a>00048         shared_ptr&lt;std::ofstream&gt; m_fileStream;
-<a name="l00050"></a>00050         <span class="keyword">static</span> shared_ptr&lt;Logging&gt; m_LOGGER;
-<a name="l00051"></a>00051 <span class="keyword">public</span>:
-<a name="l00055"></a><a class="code" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3">00055</a>         <a class="code" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3" title="constructor">Logging</a>() {
-<a name="l00056"></a>00056                 m_currentLevel = 0;
-<a name="l00057"></a>00057                 pop();
-<a name="l00058"></a>00058                 <a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45" title="set the level of console output">setConsoleLevel</a>(BASIC);
-<a name="l00059"></a>00059                 <a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5" title="set the level of file output">setFileLevel</a>(ALL);
-<a name="l00060"></a>00060         }
-<a name="l00061"></a>00061 
-<a name="l00063"></a><a class="code" href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d">00063</a>         <a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d" title="set log level for command line output">operator()</a>(LogLevel level) {
-<a name="l00064"></a>00064                 <span class="keywordflow">while</span> (m_currentLevel &lt; level) {
-<a name="l00065"></a>00065                         push(<span class="stringliteral">&quot;&quot;</span>);
-<a name="l00066"></a>00066                         m_currentLevel++;
-<a name="l00067"></a>00067                 }
-<a name="l00068"></a>00068                 <span class="keywordflow">while</span> (m_currentLevel &gt; level) {
-<a name="l00069"></a>00069                         pop();
-<a name="l00070"></a>00070                         m_currentLevel--;
-<a name="l00071"></a>00071                 }
-<a name="l00072"></a>00072                 <span class="keywordflow">return</span> *<span class="keyword">this</span>;
-<a name="l00073"></a>00073         }
-<a name="l00074"></a>00074 
-<a name="l00076"></a><a class="code" href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403">00076</a>         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403" title="set log file">setLogFile</a>(<span class="keywordtype">string</span> logFile) {
-<a name="l00077"></a>00077                 <span class="keywordflow">if</span> (has_file()) {
-<a name="l00078"></a>00078                         detach();
-<a name="l00079"></a>00079                 }
-<a name="l00080"></a>00080                 m_fileStream = make_shared&lt;std::ofstream&gt;(logFile);
-<a name="l00081"></a>00081                 attach(*m_fileStream);
-<a name="l00082"></a>00082         }
-<a name="l00083"></a>00083 
-<a name="l00085"></a><a class="code" href="classnatrium_1_1Logging.html#a23b437c7ee426af555a42409ca3aa566">00085</a>         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1Logging.html#a23b437c7ee426af555a42409ca3aa566" title="detach log file">unsetLogFile</a>() {
-<a name="l00086"></a>00086                 <span class="keywordflow">if</span> (has_file()) {
-<a name="l00087"></a>00087                         detach();
-<a name="l00088"></a>00088                 }
-<a name="l00089"></a>00089         }
-<a name="l00090"></a>00090 
-<a name="l00092"></a><a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45">00092</a>         LogLevel <a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45" title="set the level of console output">setConsoleLevel</a>(LogLevel level) {
-<a name="l00093"></a>00093                 <span class="keywordflow">return</span> LogLevel(depth_console(level));
+<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;deal.II/base/conditional_ostream.h&quot;</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="preprocessor">#include &quot;<a class="code" href="BasicNames_8h.html" title="Definition of the basic typedefs and names used in the Code;.">BasicNames.h</a>&quot;</span>
+<a name="l00019"></a>00019 
+<a name="l00020"></a>00020 <span class="keyword">namespace </span>natrium {
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022 <span class="keyword">enum</span> LogLevel {
+<a name="l00023"></a>00023         SILENT,
+<a name="l00024"></a>00024         ERROR,
+<a name="l00025"></a>00025         WARNING,
+<a name="l00026"></a>00026         WELCOME,
+<a name="l00027"></a>00027         BASIC,
+<a name="l00028"></a>00028         DETAILED,
+<a name="l00029"></a>00029         DEAL_II_BASIC,
+<a name="l00030"></a>00030         DEAL_II_DETAILED,
+<a name="l00031"></a>00031         ALL
+<a name="l00032"></a>00032 };
+<a name="l00033"></a>00033 
+<a name="l00040"></a><a class="code" href="classnatrium_1_1Logging.html">00040</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>: <span class="keyword">public</span> dealii::LogStream {
+<a name="l00042"></a>00042         <span class="keyword">friend</span> <a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a913b816565b3ede4c25b89d25ca5148d" title="friend function; can be used like &amp;quot;LOG(ERROR) &amp;lt;&amp;lt; ...;&amp;quot;, to write...">LOG</a>(LogLevel level);
+<a name="l00044"></a>00044         <span class="keyword">friend</span> <a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b" title="friend function; is used to access the default logging instance; e.g. LOGGER().setLogFile(...">LOGGER</a>();
+<a name="l00045"></a>00045 <span class="keyword">private</span>:
+<a name="l00047"></a>00047         <span class="keywordtype">size_t</span> m_currentLevel;
+<a name="l00049"></a>00049         shared_ptr&lt;std::ofstream&gt; m_fileStream;
+<a name="l00051"></a>00051         <span class="keyword">static</span> shared_ptr&lt;Logging&gt; m_LOGGER;
+<a name="l00052"></a>00052 <span class="keyword">public</span>:
+<a name="l00056"></a><a class="code" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3">00056</a>         <a class="code" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3" title="constructor">Logging</a>() {
+<a name="l00057"></a>00057                 m_currentLevel = 0;
+<a name="l00058"></a>00058                 pop();
+<a name="l00059"></a>00059                 <a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45" title="set the level of console output">setConsoleLevel</a>(BASIC);
+<a name="l00060"></a>00060                 <a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5" title="set the level of file output">setFileLevel</a>(ALL);
+<a name="l00061"></a>00061                 <span class="keywordflow">if</span> (!is_MPI_rank_0()) {
+<a name="l00062"></a>00062                         <a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45" title="set the level of console output">setConsoleLevel</a>(SILENT);
+<a name="l00063"></a>00063                         <a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5" title="set the level of file output">setFileLevel</a>(SILENT);
+<a name="l00064"></a>00064                 }
+<a name="l00065"></a>00065         }
+<a name="l00066"></a>00066 
+<a name="l00068"></a><a class="code" href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d">00068</a>         <a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a2bfeafec90e8b3fdceddc2866fda6e3d" title="set log level for command line output">operator()</a>(LogLevel level) {
+<a name="l00069"></a>00069                 <span class="keywordflow">while</span> (m_currentLevel &lt; level) {
+<a name="l00070"></a>00070                         push(<span class="stringliteral">&quot;&quot;</span>);
+<a name="l00071"></a>00071                         m_currentLevel++;
+<a name="l00072"></a>00072                 }
+<a name="l00073"></a>00073                 <span class="keywordflow">while</span> (m_currentLevel &gt; level) {
+<a name="l00074"></a>00074                         pop();
+<a name="l00075"></a>00075                         m_currentLevel--;
+<a name="l00076"></a>00076                 }
+<a name="l00077"></a>00077                 <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00078"></a>00078         }
+<a name="l00079"></a>00079 
+<a name="l00081"></a><a class="code" href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403">00081</a>         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1Logging.html#a6dc3bdfa386b24a031578f9293a24403" title="set log file">setLogFile</a>(<span class="keywordtype">string</span> logFile) {
+<a name="l00082"></a>00082                 <span class="keywordflow">if</span> (has_file()) {
+<a name="l00083"></a>00083                         detach();
+<a name="l00084"></a>00084                 }
+<a name="l00085"></a>00085                 m_fileStream = make_shared&lt;std::ofstream&gt;(logFile);
+<a name="l00086"></a>00086                 attach(*m_fileStream);
+<a name="l00087"></a>00087         }
+<a name="l00088"></a>00088 
+<a name="l00090"></a><a class="code" href="classnatrium_1_1Logging.html#a23b437c7ee426af555a42409ca3aa566">00090</a>         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1Logging.html#a23b437c7ee426af555a42409ca3aa566" title="detach log file">unsetLogFile</a>() {
+<a name="l00091"></a>00091                 <span class="keywordflow">if</span> (has_file()) {
+<a name="l00092"></a>00092                         detach();
+<a name="l00093"></a>00093                 }
 <a name="l00094"></a>00094         }
 <a name="l00095"></a>00095 
-<a name="l00097"></a><a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5">00097</a>         LogLevel <a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5" title="set the level of file output">setFileLevel</a>(LogLevel level) {
-<a name="l00098"></a>00098                 <span class="keywordflow">return</span> LogLevel(depth_file(level));
-<a name="l00099"></a>00099         }
-<a name="l00100"></a>00100 
-<a name="l00101"></a>00101 };
-<a name="l00102"></a>00102 
-<a name="l00107"></a>00107 Logging&amp; LOG(LogLevel level);
-<a name="l00108"></a>00108 
-<a name="l00113"></a>00113 Logging&amp; LOGGER();
-<a name="l00114"></a>00114 
-<a name="l00115"></a>00115 <span class="keyword">const</span> std::string currentDateTime();
+<a name="l00097"></a><a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45">00097</a>         LogLevel <a class="code" href="classnatrium_1_1Logging.html#a1bfdfbdfdf8a69e9aa9d6ffa78cb3d45" title="set the level of console output">setConsoleLevel</a>(LogLevel level) {
+<a name="l00098"></a>00098                 <span class="keywordflow">if</span> ((dealii::Utilities::MPI::job_supports_mpi())
+<a name="l00099"></a>00099                                 and (0
+<a name="l00100"></a>00100                                                 != dealii::Utilities::MPI::this_mpi_process(
+<a name="l00101"></a>00101                                                                 MPI_COMM_WORLD))) {
+<a name="l00102"></a>00102                         <span class="keywordflow">return</span> LogLevel(depth_console(SILENT));
+<a name="l00103"></a>00103                 } <span class="keywordflow">else</span> {
+<a name="l00104"></a>00104                         <span class="keywordflow">return</span> LogLevel(depth_console(level));
+<a name="l00105"></a>00105                 }
+<a name="l00106"></a>00106         }
+<a name="l00107"></a>00107 
+<a name="l00109"></a><a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5">00109</a>         LogLevel <a class="code" href="classnatrium_1_1Logging.html#a21852bc69b5ff32f5ec5241a810ab8d5" title="set the level of file output">setFileLevel</a>(LogLevel level) {
+<a name="l00110"></a>00110                 <span class="keywordflow">if</span> (!is_MPI_rank_0()) {
+<a name="l00111"></a>00111                         <span class="keywordflow">return</span> LogLevel(depth_file(SILENT));
+<a name="l00112"></a>00112                 } <span class="keywordflow">else</span> {
+<a name="l00113"></a>00113                         <span class="keywordflow">return</span> LogLevel(depth_file(level));
+<a name="l00114"></a>00114                 }
+<a name="l00115"></a>00115         }
 <a name="l00116"></a>00116 
-<a name="l00117"></a>00117 } <span class="comment">/* namespace natrium */</span>
+<a name="l00117"></a>00117 };
 <a name="l00118"></a>00118 
-<a name="l00119"></a>00119 <span class="preprocessor">#endif </span><span class="comment">/* LOGGING_H_ */</span>
+<a name="l00123"></a>00123 Logging&amp; LOG(LogLevel level);
+<a name="l00124"></a>00124 
+<a name="l00129"></a>00129 Logging&amp; LOGGER();
+<a name="l00130"></a>00130 
+<a name="l00131"></a>00131 <span class="keyword">const</span> std::string currentDateTime();
+<a name="l00132"></a>00132 
+<a name="l00133"></a>00133 } <span class="comment">/* namespace natrium */</span>
+<a name="l00134"></a>00134 
+<a name="l00135"></a>00135 <span class="preprocessor">#endif </span><span class="comment">/* LOGGING_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -144,7 +160,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 19 Oct 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
