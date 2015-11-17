@@ -91,12 +91,14 @@ int main(int argc, char** argv) {
 			<< endl;
 	pout << "all times in ms:" << endl;
 	pout
-			<< "n_mpi_proc   N    p    np     t_build problem     t_build_solver         t_per_iteration      LUPS       t_total"
+			<< "n_mpi_proc   N    p    np     t_build problem     t_build_solver         t_per_iteration     t_total    LUPS     LUPS/node"
 			<< endl;
 	pout << refinementLevel << " " << orderOfFiniteElement << " "
 			<< dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
 			<< time1 << " " << time2 << " " << time3 / nof_iterations << " "
-			<< lups << " " << clock() - timestart << endl;
+			<< clock() - timestart << lups << " "
+			<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
+			<< endl;
 	pout << "done." << endl;
 
 	return 0;
