@@ -38,7 +38,7 @@ void BGK::collideSinglePoint(vector<double>& distributions) const {
 
 	// update distribution
 	for (size_t i = 0; i < Q; i++) {
-		distributions.at(i) += getPrefactor()
+		distributions.at(i) = distributions.at(i) + getPrefactor()
 				* (distributions.at(i) - feq.at(i));
 	}
 
@@ -49,7 +49,6 @@ void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
-	size_t n_dofs = f.at(0).size();
 	size_t Q = getStencil()->getQ();
 	size_t D = getStencil()->getD();
 
@@ -57,6 +56,7 @@ void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 	assert(velocities.size() == D);
 
 #ifdef DEBUG
+	size_t n_dofs = f.at(0).size();
 	for (size_t i = 0; i < Q; i++) {
 		assert (f.at(i).size() == n_dofs);
 	}
@@ -76,7 +76,7 @@ void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 		// calculate density
 		densities(i) = 0;
 		for (size_t j = 0; j < Q; j++) {
-			densities(i) += f.at(j)(i);
+			densities(i) = densities(i) + f.at(j)(i);
 		}
 		if (densities(i) < 1e-10) {
 			throw CollisionException(
@@ -90,10 +90,10 @@ void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 				velocities.at(j)(i) = 0;
 
 				for (size_t k = 0; k < Q; k++) {
-					velocities.at(j)(i) += f.at(k)(i)
+					velocities.at(j)(i) = velocities.at(j)(i) + f.at(k)(i)
 							* getStencil()->getDirection(k)(j);
 				}
-				velocities.at(j)(i) /= densities(i);
+				velocities.at(j)(i) = velocities.at(j)(i) / densities(i);
 			}
 		}
 

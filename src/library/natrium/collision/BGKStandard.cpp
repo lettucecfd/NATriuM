@@ -50,7 +50,6 @@ void BGKStandard::collideAll(DistributionFunctions& f,
 		BGK::collideAll(f, densities, velocities, locally_owned_dofs, inInitializationProcedure);
 	} else {
 		// Efficient collision for D2Q9
-		size_t n_dofs = f.at(0).size();
 		size_t Q = 9;
 		size_t D = 2;
 		double scaling = getStencil()->getScaling();
@@ -62,6 +61,7 @@ void BGKStandard::collideAll(DistributionFunctions& f,
 		assert(velocities.size() == D);
 
 #ifdef DEBUG
+		size_t n_dofs = f.at(0).size();
 		for (size_t i = 0; i < Q; i++) {
 			assert (f.at(i).size() == n_dofs);
 		}
