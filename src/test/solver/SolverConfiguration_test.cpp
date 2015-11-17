@@ -129,6 +129,9 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_PrepareOutputDirectory_test) {
 	}
 	if (is_MPI_rank_0())
 		boost::filesystem::create_directory(natriumTmpDir);
+	// wait for directory to be created
+	sleep(1);
+	MPI_sync();
 	config.setOutputDirectory(outputDir.string());
 	config.prepareOutputDirectory();
 	MPI_sync();

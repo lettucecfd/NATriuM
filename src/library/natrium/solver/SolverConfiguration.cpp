@@ -330,8 +330,8 @@ void SolverConfiguration::prepareOutputDirectory() {
 				LOG(WARNING)
 						<< "Simulation might overwrite old data in output file."
 						<< endl;
-			}
-		}
+			} /* if/else user interaction */
+		} /* if not is restart at last checkpoint */
 		// Check writing permissions in directory (for every MPI process)
 		try {
 			/// try to create a single file
@@ -355,7 +355,7 @@ void SolverConfiguration::prepareOutputDirectory() {
 					<< " does not have writing access to your Output directory "
 					<< outputDir.string();
 			throw ConfigurationException(msg.str());
-		}
+		} /* catch */
 	} /* if is_MPI_rank_0() */
 }
 
