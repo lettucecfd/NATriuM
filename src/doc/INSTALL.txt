@@ -91,6 +91,8 @@ OPTION A (IF YOU JUST WANT TO USE THE CODE, e.g. on a compute cluster): SET UP N
    1) go to the directory NATriuM/bin
    2) cmake -DCMAKE_BUILD_TYPE=Release ../src/ -B. && make all
    3) Set the environment variable NATRIUM_HOME to the principal output directory (in .bashrc)
+   4) Set the environment varialbe NATRIUM_DIR to the natrium directory that contains src and bin
+      Both NATRIUM_HOME and NATRIUM_DIR must not have a / as last character
 
 
 OPTION B (IF YOU WANT TO CONTRIUBTE): SET UP NATRIUM CODE AS AN ECLIPSE PROJECT
@@ -112,6 +114,8 @@ OPTION B (IF YOU WANT TO CONTRIUBTE): SET UP NATRIUM CODE AS AN ECLIPSE PROJECT
    7) Repeat steps 1-6) for "bin_relase" instead of "bin" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
       All source files are accessible and changable via [Source directory] in the project tree
    8) Set the environment variable NATRIUM_HOME to the principal output directory (in .bashrc)
+   9) Set the environment varialbe NATRIUM_DIR to the natrium directory that contains src and bin 
+      Both NATRIUM_HOME and NATRIUM_DIR must not have a / as last character  
 
 
         

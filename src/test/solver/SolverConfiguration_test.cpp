@@ -84,11 +84,23 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 } /*CFDSolverConfiguration_CheckSet_test*/
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_ReadFromFile_test) {
+
+	pout << "CFDSolverConfiguration_CheckIfEnvironmentVariable_NATRIUM_DIR_IsSet_text" << endl;
+	std::stringstream name1;
+	name1 << getenv("NATRIUM_DIR");
+	BOOST_CHECK(name1.str().size() != 0);
+	pout << "done." << endl;
+
 	pout << "CFDSolverConfiguration_ReadFromFile_test..." << endl;
 	SolverConfiguration config;
+	name1 << "/src/preprocessing/NATriuM_parameters.xml";
+	std::stringstream name2;
+	name2 << getenv("NATRIUM_DIR");
+	name2 << "/src/test/solver/invalid_parameters.xml";
+
 
 	try {
-		config.readFromXMLFile("../src/preprocessing/NATriuM_parameters.xml");
+		config.readFromXMLFile(name1.str());
 	} catch (std::exception& e) {
 		pout << e.what()
 				<< "  Error! ARE YOU SURE THAT src/preprocessing/NATriuM_parameters.xml is up to date? "
@@ -96,7 +108,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_ReadFromFile_test) {
 				<< endl;
 	}
 	BOOST_CHECK_THROW(
-			config.readFromXMLFile("../src/test/solver/invalid_parameters.xml"),
+			config.readFromXMLFile(name2.str()),
 			ConfigurationException);
 
 	pout << "done" << endl;
