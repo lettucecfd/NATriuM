@@ -101,10 +101,9 @@ int main(int argc, char** argv) {
 			<< endl;
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
 			<< refinementLevel << " " << orderOfFiniteElement << " "
-			<< solver.getNumberOfDoFs() << time1 << " " << time2 << " "
-			<< time3 / nof_iterations << " " << clock() - timestart << lups
-			<< " "
-			<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
+			<< solver.getNumberOfDoFs() <<  " " << time1 << " " << time2 << " "
+			<< time3 / nof_iterations << " " << clock() - timestart << " " << lups
+			<< " "	<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
 			<< endl;
 	pout << "done." << endl;
 
