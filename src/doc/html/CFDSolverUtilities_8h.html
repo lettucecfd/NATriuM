@@ -58,6 +58,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolverUtilities_1_1CFDSolverUtilitiesException.html">natrium::CFDSolverUtilities::CFDSolverUtilitiesException</a></td></tr>
+<tr><td colspan="2"><h2>Namespaces</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html">natrium::CFDSolverUtilities</a></td></tr>
+
+<p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Some tools for the <a class="el" href="classnatrium_1_1CFDSolver.html" title="The central class for the CFD simulation based on the DBE.">CFDSolver</a> and its simple usage. </p>
+<br/></td></tr>
+</p>
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a3389fcb9cec2ab96fc0623040ac03c58"></a><!-- doxytag: member="CFDSolverUtilities.h::getMinimumDoFDistanceGLL" ref="a3389fcb9cec2ab96fc0623040ac03c58" args="(const Mesh&lt; dim &gt; &amp;tria, const size_t orderOfFiniteElement)" -->
 template&lt;size_t dim&gt; </td></tr>
@@ -72,6 +78,26 @@ template&lt;size_t dim&gt; </td></tr>
 template&lt;int dim&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html#adbcdda8cf5f7f3f0c835950a23e4c888">natrium::CFDSolverUtilities::mesh_info</a> (const Mesh&lt; dim &gt; &amp;tria, const std::string &amp;filename)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">stolen from Deal.II's step 49 tutorial <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html#a3719826384e1c13644bac00524f72a46">natrium::CFDSolverUtilities::get_integrator_by_id</a> (size_t id, TimeIntegratorName &amp;time_integrator, DealIntegratorName &amp;deal_integrator, std::string &amp;integrator_name)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Select an integrator by a specified id:</p>
+<ul>
+<li>1) RUNGE_KUTTA_5STAGE</li>
+<li>2) THETA_METHOD</li>
+<li>3) EXPONENTIAL</li>
+<li>4) FORWARD_EULER</li>
+<li>5) RK_THIRD_ORDER</li>
+<li>6) RK_CLASSIC_FOURTH_ORDER</li>
+<li>7) BACKWARD_EULER</li>
+<li>8) IMPLICIT_MIDPOINT</li>
+<li>9) CRANK_NICOLSON</li>
+<li>10) SDIRK_TWO_STAGES</li>
+<li>11) HEUN_EULER</li>
+<li>12) BOGACKI_SHAMPINE</li>
+<li>13) DOPRI</li>
+<li>14) FEHLBERG</li>
+<li>15) CASH_KARP. </li>
+</ul>
+ <a href="#a3719826384e1c13644bac00524f72a46"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>General utility functions for the CFD solver. </p>
@@ -92,7 +118,7 @@ template&lt;int dim&gt; </td></tr>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 18 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -18,6 +18,9 @@
 
 namespace natrium {
 
+/** @short
+ * Some tools for the CFDSolver and its simple usage.
+ */
 namespace CFDSolverUtilities {
 
 class CFDSolverUtilitiesException: public NATriuMException {

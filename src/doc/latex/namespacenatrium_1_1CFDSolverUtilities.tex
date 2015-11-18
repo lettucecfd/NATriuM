@@ -1,0 +1,90 @@
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities}{
+\section{natrium::CFDSolverUtilities Namespace Reference}
+\label{namespacenatrium_1_1CFDSolverUtilities}\index{natrium::CFDSolverUtilities@{natrium::CFDSolverUtilities}}
+}
+
+
+Some tools for the \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver} and its simple usage.  
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1CFDSolverUtilities_1_1CFDSolverUtilitiesException}{CFDSolverUtilitiesException}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a3389fcb9cec2ab96fc0623040ac03c58}{
+{\footnotesize template$<$size\_\-t dim$>$ }\\double {\bfseries getMinimumDoFDistanceGLL} (const Mesh$<$ dim $>$ \&tria, const size\_\-t orderOfFiniteElement)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a3389fcb9cec2ab96fc0623040ac03c58}
+
+\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a8f085f7c799843b1e70330b35ef6747d}{
+{\footnotesize template$<$size\_\-t dim$>$ }\\double {\bfseries getMinimumVertexDistance} (const Mesh$<$ dim $>$ \&tria)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a8f085f7c799843b1e70330b35ef6747d}
+
+\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a8b3dcb633547349d6e217692dccfbc58}{
+{\footnotesize template$<$size\_\-t dim$>$ }\\double {\bfseries calculateTimestep} (const Mesh$<$ dim $>$ \&tria, const size\_\-t orderOfFiniteElement, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, double cFL=0.4)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a8b3dcb633547349d6e217692dccfbc58}
+
+\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_adbcdda8cf5f7f3f0c835950a23e4c888}{
+{\footnotesize template$<$int dim$>$ }\\void \hyperlink{namespacenatrium_1_1CFDSolverUtilities_adbcdda8cf5f7f3f0c835950a23e4c888}{mesh\_\-info} (const Mesh$<$ dim $>$ \&tria, const std::string \&filename)}
+\label{namespacenatrium_1_1CFDSolverUtilities_adbcdda8cf5f7f3f0c835950a23e4c888}
+
+\begin{DoxyCompactList}\small\item\em stolen from Deal.II's step 49 tutorial \item\end{DoxyCompactList}\item 
+void \hyperlink{namespacenatrium_1_1CFDSolverUtilities_a3719826384e1c13644bac00524f72a46}{get\_\-integrator\_\-by\_\-id} (size\_\-t id, TimeIntegratorName \&time\_\-integrator, DealIntegratorName \&deal\_\-integrator, std::string \&integrator\_\-name)
+\begin{DoxyCompactList}\small\item\em Select an integrator by a specified id:
+\begin{DoxyItemize}
+\item 1) RUNGE\_\-KUTTA\_\-5STAGE
+\item 2) THETA\_\-METHOD
+\item 3) EXPONENTIAL
+\item 4) FORWARD\_\-EULER
+\item 5) RK\_\-THIRD\_\-ORDER
+\item 6) RK\_\-CLASSIC\_\-FOURTH\_\-ORDER
+\item 7) BACKWARD\_\-EULER
+\item 8) IMPLICIT\_\-MIDPOINT
+\item 9) CRANK\_\-NICOLSON
+\item 10) SDIRK\_\-TWO\_\-STAGES
+\item 11) HEUN\_\-EULER
+\item 12) BOGACKI\_\-SHAMPINE
+\item 13) DOPRI
+\item 14) FEHLBERG
+\item 15) CASH\_\-KARP. 
+\end{DoxyItemize}\item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Some tools for the \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver} and its simple usage. 
+
+\subsection{Function Documentation}
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a3719826384e1c13644bac00524f72a46}{
+\index{natrium::CFDSolverUtilities@{natrium::CFDSolverUtilities}!get\_\-integrator\_\-by\_\-id@{get\_\-integrator\_\-by\_\-id}}
+\index{get\_\-integrator\_\-by\_\-id@{get\_\-integrator\_\-by\_\-id}!natrium::CFDSolverUtilities@{natrium::CFDSolverUtilities}}
+\subsubsection[{get\_\-integrator\_\-by\_\-id}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::CFDSolverUtilities::get\_\-integrator\_\-by\_\-id (size\_\-t {\em id}, \/  TimeIntegratorName \& {\em time\_\-integrator}, \/  DealIntegratorName \& {\em deal\_\-integrator}, \/  std::string \& {\em integrator\_\-name})}}
+\label{namespacenatrium_1_1CFDSolverUtilities_a3719826384e1c13644bac00524f72a46}
+
+
+Select an integrator by a specified id:
+\begin{DoxyItemize}
+\item 1) RUNGE\_\-KUTTA\_\-5STAGE
+\item 2) THETA\_\-METHOD
+\item 3) EXPONENTIAL
+\item 4) FORWARD\_\-EULER
+\item 5) RK\_\-THIRD\_\-ORDER
+\item 6) RK\_\-CLASSIC\_\-FOURTH\_\-ORDER
+\item 7) BACKWARD\_\-EULER
+\item 8) IMPLICIT\_\-MIDPOINT
+\item 9) CRANK\_\-NICOLSON
+\item 10) SDIRK\_\-TWO\_\-STAGES
+\item 11) HEUN\_\-EULER
+\item 12) BOGACKI\_\-SHAMPINE
+\item 13) DOPRI
+\item 14) FEHLBERG
+\item 15) CASH\_\-KARP. 
+\end{DoxyItemize}
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em id}]Number of integrator \item[\mbox{$\rightarrow$} {\em time\_\-integrator}]Argument to be used in configuration-\/$>$setTimeIntegrator() \item[\mbox{$\rightarrow$} {\em deal\_\-integrator}]Argument to be used in configuration-\/$>$setDealIntegrator() \item[\mbox{$\rightarrow$} {\em integrator\_\-name}]The name of the integrator as a string. \end{DoxyParams}
+\begin{DoxyNote}{Note}
+Integrators 4-\/15 are Deal.II's built-\/in integrators 
+\end{DoxyNote}
