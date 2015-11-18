@@ -95,6 +95,8 @@ int main(int argc, char** argv) {
 	pout
 			<< "----------------------------------------------------------------------------------"
 			<< endl;
+	pout << "Runtime summary:" << endl;
+	solver.printRuntimeSummary();
 	pout << "all times in ms:" << endl;
 	pout
 			<< "1)n_mpi_proc  2)N  3)p   4)n_dofs  5)t_build_problem  6)t_build_solver  7)t_per_iteration   8)t_total  9)LUPS  10)LUPS/node"

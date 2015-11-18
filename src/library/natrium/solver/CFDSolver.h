@@ -11,6 +11,7 @@
 #include <exception>
 
 #include "deal.II/numerics/data_out.h"
+#include "deal.II/base/timer.h"
 
 #include "SolverConfiguration.h"
 #include "DistributionFunctions.h"
@@ -53,6 +54,7 @@ public:
 		return this->message.c_str();
 	}
 };
+
 
 /** @short The central class for the CFD simulation based on the DBE.
  *  @note  The CFDSolver itself is quite static but it contains interchangeable modules, e.g. for the
@@ -120,6 +122,10 @@ private:
 	// residuum
 	double m_residuumDensity;
 	double m_residuumVelocity;
+
+	// timer
+	std::ostringstream m_timerOut;
+	dealii::TimerOutput m_timer;
 
 protected:
 
@@ -297,6 +303,10 @@ public:
 
 	double getResiduumVelocity() const {
 		return m_residuumVelocity;
+	}
+
+	void printRuntimeSummary() const {
+		pout << m_timerOut.str() << endl;
 	}
 }
 ;

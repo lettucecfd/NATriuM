@@ -45,7 +45,9 @@ namespace natrium {
 
 template<size_t dim>
 CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
-		shared_ptr<ProblemDescription<dim> > problemDescription) {
+		shared_ptr<ProblemDescription<dim> > problemDescription) :
+		m_timer(MPI_COMM_WORLD, m_timerOut, TimerOutput::summary,
+				TimerOutput::wall_times) {
 
 	/// Create output directory
 	if (not configuration->isSwitchOutputOff()) {
@@ -98,6 +100,9 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// Build streaming data object
 	if (SEDG == configuration->getAdvectionScheme()) {
+		// start timer
+		TimerOutput::Scope timer_section(m_timer, "System assembly");
+
 		// if this string is "": matrix is reassembled and not read from file
 		string whereAreTheStoredMatrices;
 		if (configuration->isRestartAtLastCheckpoint()) {
@@ -361,6 +366,9 @@ template CFDSolver<3>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 template<size_t dim>
 void CFDSolver<dim>::stream() {
 
+	// start timer
+	TimerOutput::Scope timer_section(m_timer, "Streaming");
+
 	// no streaming in direction 0; begin with 1
 	distributed_block_vector& f = m_f.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
@@ -381,6 +389,10 @@ template void CFDSolver<3>::stream();
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
+
+	// start timer
+	TimerOutput::Scope timer_section(m_timer, "Collision");
+
 	try {
 		m_collisionModel->collideAll(m_f, m_density, m_velocity,
 				m_advectionOperator->getLocallyOwnedDofs(), false);
@@ -393,6 +405,10 @@ template void CFDSolver<3>::collide();
 
 template<size_t dim>
 void CFDSolver<dim>::reassemble() {
+
+	// start timer
+	TimerOutput::Scope timer_section(m_timer, "Reassemble");
+
 	try {
 		m_advectionOperator->reassemble();
 	} catch (AdvectionSolverException & e) {
@@ -415,13 +431,22 @@ void CFDSolver<dim>::run() {
 		collide();
 	}
 	output(m_i);
+
+	// Finalize
+	m_timer.print_summary();
 	LOG(BASIC) << "NATriuM run complete." << endl;
+	LOG(BASIC) << "Summary: " << endl;
+	LOG(BASIC) << m_timerOut.str() << endl;
 }
 template void CFDSolver<2>::run();
 template void CFDSolver<3>::run();
 
 template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
+
+	// start timer
+		TimerOutput::Scope timer_section(m_timer, "Check stop condition");
+
 	// Maximum number of iterations
 	size_t N = m_configuration->getNumberOfTimeSteps();
 	if (m_i >= N) {
@@ -463,6 +488,11 @@ template bool CFDSolver<3>::stopConditionMet();
 
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
+
+	// start timer
+	TimerOutput::Scope timer_section(m_timer, "Output");
+
+
 // output: vector fields as .vtu files
 	if (iteration == m_iterationStart) {
 		m_tstart = time(0);
@@ -848,7 +878,6 @@ double CFDSolver<dim>::getTau() const {
 }
 template double CFDSolver<2>::getTau() const;
 template double CFDSolver<3>::getTau() const;
-
 
 } /* namespace natrium */
 
