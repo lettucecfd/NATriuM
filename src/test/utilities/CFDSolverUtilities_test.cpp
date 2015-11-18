@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_getIntegratorByID_test){
 
 	TimeIntegratorName t;
 	DealIntegratorName d;
-	std:string n;
+	string n;
 	size_t id = 5;
 	CFDSolverUtilities::get_integrator_by_id(id, t, d, n);
 	BOOST_CHECK_EQUAL(t, OTHER);
