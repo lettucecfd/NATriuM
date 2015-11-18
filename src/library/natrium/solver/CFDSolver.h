@@ -66,18 +66,12 @@ template<size_t dim> class CFDSolver {
 private:
 	/// particle distribution functions
 	DistributionFunctions m_f;
-	/// particle distribution functions with ghost elements (required for streaming and output)
-	DistributionFunctions m_f_ghosted;
 
 	/// macroscopic density
 	distributed_vector m_density;
-	/// densities with ghost elements (required for output)
-	distributed_vector m_density_ghosted;
 
 	/// macroscopic velocity
 	vector<distributed_vector> m_velocity;
-	/// velocities with ghost elements (required for output)
-	vector<distributed_vector> m_velocity_ghosted;
 
 	/// macroscopic density
 	distributed_vector m_tmpDensity;
@@ -126,12 +120,6 @@ private:
 	// residuum
 	double m_residuumDensity;
 	double m_residuumVelocity;
-
-	// copy vectors to ghost vectors
-	void copyToGhosted();
-
-	// copy vectors from ghost vectors
-	void copyFromGhosted();
 
 protected:
 

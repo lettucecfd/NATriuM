@@ -164,21 +164,13 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
 	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
 	MPI_COMM_WORLD);
-	m_density_ghosted.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-			m_advectionOperator->getLocallyRelevantDofs(),
-			MPI_COMM_WORLD);
 	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
 	MPI_COMM_WORLD);
 	for (size_t i = 0; i < dim; i++) {
 		distributed_vector vi(m_advectionOperator->getLocallyOwnedDofs(),
 		MPI_COMM_WORLD);
-		distributed_vector vi_ghosted(
-				m_advectionOperator->getLocallyOwnedDofs(),
-				m_advectionOperator->getLocallyRelevantDofs(),
-				MPI_COMM_WORLD);
 		m_velocity.push_back(vi);
 		m_tmpVelocity.push_back(vi);
-		m_velocity_ghosted.push_back(vi_ghosted);
 	}
 #else
 	size_t numberOfDoFs = this->getNumberOfDoFs();
@@ -201,10 +193,6 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 #ifdef WITH_TRILINOS_MPI
 	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
 	MPI_COMM_WORLD);
-	m_f_ghosted.reinit(m_stencil->getQ(),
-			m_advectionOperator->getLocallyOwnedDofs(),
-			m_advectionOperator->getLocallyRelevantDofs(),
-			MPI_COMM_WORLD);
 #else
 	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
 #endif
@@ -350,9 +338,6 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 
-	// fill ghosted vectors
-	copyToGhosted();
-
 	// Create file for output table
 	if ((not configuration->isSwitchOutputOff())
 	/*and (configuration->getOutputTableInterval()
@@ -377,19 +362,12 @@ template<size_t dim>
 void CFDSolver<dim>::stream() {
 
 	// no streaming in direction 0; begin with 1
-	// using ghosted vector here works for 1 MPI process
-	// but throws incompatible dimensions error for multiple processes
-	// using completely local vector gives a false result for unsteady streaming
 	distributed_block_vector& f = m_f.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
 	const distributed_block_vector& systemVector =
 			m_advectionOperator->getSystemVector();
 
-	/*cout << "fsize" << f.block(0).local_size() << ", matrixsize" << systemMatrix.block(0,0).locally_owned_range_indices().n_elements()
-	 << "x" << systemMatrix.block(0,0).locally_owned_domain_indices().n_elements() <<
-	 " ,unghosted size" << m_f.getFStream().block(0).local_size() << endl;
-	 */
 	try {
 		m_time = m_timeIntegrator->step(f, systemMatrix, systemVector, m_time,
 				m_timeIntegrator->getTimeStepSize());
@@ -397,25 +375,18 @@ void CFDSolver<dim>::stream() {
 		natrium_errorexit(e.what());
 	}
 	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
-	copyToGhosted();
 }
 template void CFDSolver<2>::stream();
 template void CFDSolver<3>::stream();
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
-	// copy vectors from ghosted vectors in order to do collisions
-	copyFromGhosted();
-	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
 	try {
 		m_collisionModel->collideAll(m_f, m_density, m_velocity,
 				m_advectionOperator->getLocallyOwnedDofs(), false);
 	} catch (CollisionException& e) {
 		natrium_errorexit(e.what());
 	}
-	//m_f.compress(dealii::VectorOperation::add);
-	// copy vectors to ghosted vectors in order to do streaming and output
-	copyToGhosted();
 }
 template void CFDSolver<2>::collide();
 template void CFDSolver<3>::collide();
@@ -635,8 +606,6 @@ void CFDSolver<dim>::initializeDistributions() {
 			m_f.at(j)(i) = feq.at(j);
 		}
 	}
-
-	m_f_ghosted = m_f;
 
 	switch (m_configuration->getInitializationScheme()) {
 	case EQUILIBRIUM: {
@@ -880,23 +849,6 @@ double CFDSolver<dim>::getTau() const {
 template double CFDSolver<2>::getTau() const;
 template double CFDSolver<3>::getTau() const;
 
-template<size_t dim>
-void CFDSolver<dim>::copyToGhosted() {
-	m_f_ghosted = m_f;
-	m_velocity_ghosted = m_velocity;
-	m_density_ghosted = m_density;
-}
-template void CFDSolver<2>::copyToGhosted();
-template void CFDSolver<3>::copyToGhosted();
-
-template<size_t dim>
-void CFDSolver<dim>::copyFromGhosted() {
-	m_f = m_f_ghosted;
-	m_velocity = m_velocity_ghosted;
-	m_density = m_density_ghosted;
-}
-template void CFDSolver<2>::copyFromGhosted();
-template void CFDSolver<3>::copyFromGhosted();
 
 } /* namespace natrium */
 
