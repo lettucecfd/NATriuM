@@ -59,7 +59,6 @@ int main(int argc, char** argv) {
 
 	// in order to start from a continuous solution, do not start at t=0
 	const double startTime = 0.0;
-	const double nof_iterations = 200;
 
 	// time measurement variables
 	double time1, time2, time3, timestart;
