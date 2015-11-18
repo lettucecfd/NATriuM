@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 	// set spatial discretization
 	size_t refinementLevel = std::atoi(argv[1]);
 	size_t orderOfFiniteElement = std::atoi(argv[2]);
-	const double nof_iterations = 200;
+	size_t nof_iterations = 200;
 	if (argc >= 4){
 		nof_iterations = std::atoi(argv[3]);
 	}
