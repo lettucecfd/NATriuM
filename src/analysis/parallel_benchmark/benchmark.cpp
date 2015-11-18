@@ -30,11 +30,18 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
-	assert(argc == 3);
+	assert(argc >= 3);
 
 	// set spatial discretization
 	size_t refinementLevel = std::atoi(argv[1]);
 	size_t orderOfFiniteElement = std::atoi(argv[2]);
+	const double nof_iterations = 200;
+	if (argc >= 4){
+		nof_iterations = std::atoi(argv[3]);
+	}
+	if (argc == 5){
+		// TODO alternative integrators
+	}
 
 	pout << "Performance analysis with N=" << refinementLevel << " and p="
 			<< orderOfFiniteElement << endl;
@@ -52,7 +59,7 @@ int main(int argc, char** argv) {
 
 	// in order to start from a continuous solution, do not start at t=0
 	const double startTime = 0.0;
-	const double nof_iterations = 50;
+	const double nof_iterations = 200;
 
 	// time measurement variables
 	double time1, time2, time3, timestart;
