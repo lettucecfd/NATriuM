@@ -36,15 +36,24 @@ int main(int argc, char** argv) {
 	size_t refinementLevel = std::atoi(argv[1]);
 	size_t orderOfFiniteElement = std::atoi(argv[2]);
 	size_t nof_iterations = 200;
-	if (argc >= 4){
+	if (argc >= 4) {
 		nof_iterations = std::atoi(argv[3]);
 	}
-	if (argc == 5){
-		// TODO alternative integrators
+	size_t integrator_id = 1;
+	if (argc >= 5) {
+		integrator_id = std::atoi(argv[4]);
 	}
+
+	// get integrator
+	TimeIntegratorName time_integrator;
+	DealIntegratorName deal_integrator;
+	string integrator_name;
+	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
+			deal_integrator, integrator_name);
 
 	pout << "Performance analysis with N=" << refinementLevel << " and p="
 			<< orderOfFiniteElement << endl;
+	pout << "Integrator: " << integrator_name << endl;
 
 	bool isUnstructured = false;
 
@@ -83,6 +92,8 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
 	configuration->setTimeStepSize(timeStepSize);
+	configuration->setTimeIntegrator(time_integrator);
+	configuration->setDealIntegrator(deal_integrator);
 
 	time1 = clock() - timestart;
 	CFDSolver<2> solver(configuration, couetteProblem);
@@ -103,9 +114,10 @@ int main(int argc, char** argv) {
 			<< endl;
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
 			<< refinementLevel << " " << orderOfFiniteElement << " "
-			<< solver.getNumberOfDoFs() <<  " " << time1 << " " << time2 << " "
-			<< time3 / nof_iterations << " " << clock() - timestart << " " << lups
-			<< " "	<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
+			<< solver.getNumberOfDoFs() << " " << time1 << " " << time2 << " "
+			<< time3 / nof_iterations << " " << clock() - timestart << " "
+			<< lups << " "
+			<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
 			<< endl;
 	pout << "done." << endl;
 

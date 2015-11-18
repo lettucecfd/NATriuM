@@ -1048,7 +1048,7 @@ public:
 		enter_subsection("Deal.II integrator");
 		switch (integrator) {
 		case NONE: {
-			set("Runge Kutta scheme", "");
+			set("Runge Kutta scheme", "None");
 			break;
 		}
 		case FORWARD_EULER: {

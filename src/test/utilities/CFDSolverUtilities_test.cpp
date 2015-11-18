@@ -43,6 +43,22 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
 	pout << "done." << endl;
 }
 
+BOOST_AUTO_TEST_CASE(CFDSolverUtilities_getIntegratorByID_test){
+	pout << "CFDSolverUtilities_getIntegratorByID_test..." << endl;
+
+	TimeIntegratorName t;
+	DealIntegratorName d;
+	std:string n;
+	size_t id = 5;
+	CFDSolverUtilities::get_integrator_by_id(id, t, d, n);
+	BOOST_CHECK_EQUAL(t, OTHER);
+	BOOST_CHECK_EQUAL(d, RK_THIRD_ORDER);
+	BOOST_CHECK_EQUAL(n, "RK_THIRD_ORDER");
+
+	pout << "done." << endl;
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } /* namespace natrium */
