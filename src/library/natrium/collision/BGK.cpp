@@ -38,8 +38,8 @@ void BGK::collideSinglePoint(vector<double>& distributions) const {
 
 	// update distribution
 	for (size_t i = 0; i < Q; i++) {
-		distributions.at(i) = distributions.at(i) + getPrefactor()
-				* (distributions.at(i) - feq.at(i));
+		distributions.at(i) = distributions.at(i)
+				+ getPrefactor() * (distributions.at(i) - feq.at(i));
 	}
 
 } //collideSinglePoint
@@ -48,6 +48,12 @@ void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 		vector<distributed_vector>& velocities,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
+
+	LOG(WARNING)
+			<< "Warning: You are using a collision model that has no efficient implementation."
+					"Therefore, collisions can well be as costly as streaming."
+					"Providing an efficient implementation could give a speed-up of nearly 2."
+			<< endl;
 
 	size_t Q = getStencil()->getQ();
 	size_t D = getStencil()->getD();
@@ -66,11 +72,10 @@ void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 	}
 #endif
 
-
 	//for all degrees of freedom on current processor
 	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
-	for (; it != end; it++){
+	for (; it != end; it++) {
 		size_t i = *it;
 
 		// calculate density
@@ -90,8 +95,8 @@ void BGK::collideAll(DistributionFunctions& f, distributed_vector& densities,
 				velocities.at(j)(i) = 0;
 
 				for (size_t k = 0; k < Q; k++) {
-					velocities.at(j)(i) = velocities.at(j)(i) + f.at(k)(i)
-							* getStencil()->getDirection(k)(j);
+					velocities.at(j)(i) = velocities.at(j)(i)
+							+ f.at(k)(i) * getStencil()->getDirection(k)(j);
 				}
 				velocities.at(j)(i) = velocities.at(j)(i) / densities(i);
 			}
