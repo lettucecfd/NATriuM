@@ -17,11 +17,13 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 
 #include "natrium/stencils/D2Q9.h"
+#include "natrium/stencils/D3Q19.h"
 
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/BasicNames.h"
 
 #include "natrium/benchmarks/CouetteFlow2D.h"
+#include "natrium/benchmarks/CouetteFlow3D.h"
 
 using namespace natrium;
 
@@ -30,18 +32,31 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
+	pout << "Usage: ./benchmark <ref_level> <order_fe> <nof_replicates> "
+			"<is_3D=false> <nof_iter> <integrator_id>" << endl;
 	assert(argc >= 3);
 
 	// set spatial discretization
 	size_t refinementLevel = std::atoi(argv[1]);
 	size_t orderOfFiniteElement = std::atoi(argv[2]);
-	size_t nof_iterations = 200;
+	size_t replicates = 1;
 	if (argc >= 4) {
-		nof_iterations = std::atoi(argv[3]);
+		replicates = std::atoi(argv[3]);
+	}
+	bool dim_3 = false;
+	if (argc >= 5) {
+		dim_3 = std::atoi(argv[4]);
+		if (!dim_3) {
+			pout << "nof_replicates set to 1 in 2D" << endl;
+		}
+	}
+	size_t nof_iterations = 200;
+	if (argc >= 6) {
+		nof_iterations = std::atoi(argv[5]);
 	}
 	size_t integrator_id = 1;
-	if (argc >= 5) {
-		integrator_id = std::atoi(argv[4]);
+	if (argc >= 7) {
+		integrator_id = std::atoi(argv[6]);
 	}
 
 	// get integrator
@@ -54,6 +69,7 @@ int main(int argc, char** argv) {
 	pout << "Performance analysis with N=" << refinementLevel << " and p="
 			<< orderOfFiniteElement << endl;
 	pout << "Integrator: " << integrator_name << endl;
+	pout << "3D?: " << dim_3 << endl;
 
 	bool isUnstructured = false;
 
@@ -72,49 +88,86 @@ int main(int argc, char** argv) {
 	// time measurement variables
 	double time1, time2, time3, timestart;
 	timestart = clock();
-	shared_ptr<ProblemDescription<2> > couetteProblem = make_shared<
-			CouetteFlow2D>(viscosity, U, refinementLevel, 1.0, startTime,
-			isUnstructured);
+	shared_ptr<ProblemDescription<3> > couetteProblem3D;
+	shared_ptr<ProblemDescription<2> > couetteProblem2D;
 
 	// set small time step size
 	const double CFL = 0.4;
-	const double timeStepSize = CFDSolverUtilities::calculateTimestep<2>(
-			*(couetteProblem->getMesh()), orderOfFiniteElement, D2Q9(dqScaling),
-			CFL);
+	double delta_t;
+	if (dim_3) {
+		couetteProblem3D = make_shared<CouetteFlow3D>(viscosity, U,
+				refinementLevel, 1.0, startTime, isUnstructured, replicates);
+		delta_t = CFDSolverUtilities::calculateTimestep<3>(
+				*(couetteProblem3D->getMesh()), orderOfFiniteElement,
+				D3Q19(dqScaling), CFL);
+	} else {
+		couetteProblem2D = make_shared<CouetteFlow2D>(viscosity, U,
+				refinementLevel, 1.0, startTime, isUnstructured);
+		delta_t = CFDSolverUtilities::calculateTimestep<2>(
+				*(couetteProblem2D->getMesh()), orderOfFiniteElement,
+				D2Q9(dqScaling), CFL);
+	}
 
 	// configure solver
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	configuration->setRestartAtLastCheckpoint(false);
-	configuration->setSwitchOutputOff(true);
+	//configuration->setSwitchOutputOff(true);
+	configuration->setCommandLineVerbosity(ALL);
 	configuration->setUserInteraction(false);
 	configuration->setNumberOfTimeSteps(nof_iterations);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
-	configuration->setTimeStepSize(timeStepSize);
+	configuration->setTimeStepSize(delta_t);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 
-	time1 = clock() - timestart;
-	CFDSolver<2> solver(configuration, couetteProblem);
-	time2 = clock() - time1;
+	size_t n_dofs;
+	double lups;
+	if (dim_3) {
+		configuration->setStencil(Stencil_D3Q19);
+		time1 = clock() - timestart;
+		CFDSolver<3> solver(configuration, couetteProblem3D);
+		time2 = clock() - time1;
 
-	solver.run();
-	time3 = clock() - time2;
+		solver.run();
+		time3 = clock() - time2;
 
-	double lups = solver.getNumberOfDoFs() * nof_iterations / (time3 / 1000.0);
-	pout
-			<< "----------------------------------------------------------------------------------"
-			<< endl;
-	pout << "Runtime summary:" << endl;
-	solver.printRuntimeSummary();
+		lups = solver.getNumberOfDoFs() * nof_iterations
+				/ (time3 / 1000.0);
+		pout
+				<< "----------------------------------------------------------------------------------"
+				<< endl;
+		pout << "Runtime summary:" << endl;
+		solver.printRuntimeSummary();
+		n_dofs = solver.getNumberOfDoFs();
+
+	} else {
+		time1 = clock() - timestart;
+		CFDSolver<2> solver(configuration, couetteProblem2D);
+		time2 = clock() - time1;
+
+		solver.run();
+		time3 = clock() - time2;
+
+		lups = solver.getNumberOfDoFs() * nof_iterations
+				/ (time3 / 1000.0);
+		pout
+				<< "----------------------------------------------------------------------------------"
+				<< endl;
+		pout << "Runtime summary:" << endl;
+		solver.printRuntimeSummary();
+		n_dofs = solver.getNumberOfDoFs();
+	}
+
+	// final out
 	pout << "all times in ms:" << endl;
 	pout
 			<< "1)n_mpi_proc  2)N  3)p   4)n_dofs  5)t_build_problem  6)t_build_solver  7)t_per_iteration   8)t_total  9)LUPS  10)LUPS/node"
 			<< endl;
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
 			<< refinementLevel << " " << orderOfFiniteElement << " "
-			<< solver.getNumberOfDoFs() << " " << time1 << " " << time2 << " "
+			<< n_dofs << " " << time1 << " " << time2 << " "
 			<< time3 / nof_iterations << " " << clock() - timestart << " "
 			<< lups << " "
 			<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
