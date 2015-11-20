@@ -18,7 +18,7 @@
 
 #include "natrium/stencils/Stencil.h"
 #include "natrium/stencils/D2Q9.h"
-#include "natrium/stencils/D3Q15.h"
+#include "natrium/stencils/D3Q27.h"
 
 #include "natrium/utilities/CFDSolverUtilities.h"
 
@@ -495,11 +495,11 @@ TestResult ConvergenceTest3D() {
 	// Initialization
 	double dt = CFDSolverUtilities::calculateTimestep<3>(
 			*benchmark->getMesh(), orderOfFiniteElement,
-			D3Q15(scaling), CFL);
+			D3Q27(scaling), CFL);
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
-	configuration->setStencil(Stencil_D3Q15);
+	configuration->setStencil(Stencil_D3Q27);
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);

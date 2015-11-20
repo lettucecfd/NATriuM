@@ -22,8 +22,12 @@ enum StencilType {
 
 	/// D2Q9 stencil
 	Stencil_D2Q9,
+	// D3Q19 stencil
 	Stencil_D3Q19,
-	Stencil_D3Q15
+	// D3Q15 stencil
+	Stencil_D3Q15,
+	// D3Q27 stencil
+	Stencil_D3Q27
 
 };
 

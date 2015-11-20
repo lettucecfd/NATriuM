@@ -89,14 +89,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00047"></a>00047         LOG(ERROR) &lt;&lt; <span class="stringliteral">&quot;---------------------------------------------&quot;</span> &lt;&lt; endl;
 <a name="l00048"></a>00048         LOG(ERROR) &lt;&lt; <span class="stringliteral">&quot;Simulation failed&quot;</span> &lt;&lt; endl;
 <a name="l00049"></a>00049 
-<a name="l00050"></a>00050         <span class="comment">// Kill all MPI jobs</span>
-<a name="l00051"></a>00051         <span class="keywordflow">if</span> (dealii::Utilities::MPI::job_supports_mpi())
-<a name="l00052"></a>00052                 MPI_Abort(MPI_COMM_WORLD, 1);
-<a name="l00053"></a>00053 }
-<a name="l00054"></a>00054 
-<a name="l00055"></a>00055 } <span class="comment">/* namespace  natrium */</span>
+<a name="l00050"></a>00050         pout &lt;&lt; <span class="stringliteral">&quot;Error:&quot;</span> &lt;&lt; msg &lt;&lt; endl;
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052         <span class="comment">// Kill all MPI jobs</span>
+<a name="l00053"></a>00053         <span class="keywordflow">if</span> (dealii::Utilities::MPI::job_supports_mpi())
+<a name="l00054"></a>00054                 MPI_Abort(MPI_COMM_WORLD, 1);
+<a name="l00055"></a>00055 }
 <a name="l00056"></a>00056 
-<a name="l00057"></a>00057 <span class="preprocessor">#endif </span><span class="comment">/* NATRIUMEXCEPTION_H_ */</span>
+<a name="l00057"></a>00057 } <span class="comment">/* namespace  natrium */</span>
+<a name="l00058"></a>00058 
+<a name="l00059"></a>00059 <span class="preprocessor">#endif </span><span class="comment">/* NATRIUMEXCEPTION_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
