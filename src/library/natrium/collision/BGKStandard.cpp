@@ -276,8 +276,7 @@ void BGKStandard::collideAllD3Q19(DistributionFunctions& f,
 		// calculate density
 		rho_i = f_i[0] + f_i[1] + f_i[2] + f_i[3] + f_i[4] + f_i[5] + f_i[6]
 				+ f_i[7] + f_i[8] + f_i[9] + f_i[10] + f_i[11] + f_i[12]
-				+ f_i[13] + f_i[14] + f_i[15] + f_i[16] + f_i[17] + f_i[18]
-				+ f_i[19];
+				+ f_i[13] + f_i[14] + f_i[15] + f_i[16] + f_i[17] + f_i[18];
 		densities(i) = rho_i;
 		if (rho_i < 1e-10) {
 			throw CollisionException(
