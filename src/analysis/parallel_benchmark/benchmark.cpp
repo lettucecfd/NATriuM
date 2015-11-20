@@ -17,7 +17,7 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 
 #include "natrium/stencils/D2Q9.h"
-#include "natrium/stencils/D3Q19.h"
+#include "natrium/stencils/D3Q15.h"
 
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/BasicNames.h"
@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
 				refinementLevel, 1.0, startTime, isUnstructured, replicates);
 		delta_t = CFDSolverUtilities::calculateTimestep<3>(
 				*(couetteProblem3D->getMesh()), orderOfFiniteElement,
-				D3Q19(dqScaling), CFL);
+				D3Q15(dqScaling), CFL);
 	} else {
 		couetteProblem2D = make_shared<CouetteFlow2D>(viscosity, U,
 				refinementLevel, 1.0, startTime, isUnstructured);
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 	size_t n_dofs;
 	double lups;
 	if (dim_3) {
-		configuration->setStencil(Stencil_D3Q19);
+		configuration->setStencil(Stencil_D3Q15);
 		time1 = clock() - timestart;
 		CFDSolver<3> solver(configuration, couetteProblem3D);
 		time2 = clock() - time1;
