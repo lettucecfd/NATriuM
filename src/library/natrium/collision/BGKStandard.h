@@ -59,7 +59,29 @@ public:
 			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure = false) const;
 
+	/**
+	 * @short optimized version of collideAll for D2Q9 stencil
+	 */
+	void collideAllD2Q9(DistributionFunctions& f,
+			distributed_vector& densities, vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure) const;
 
+	/**
+	 * @short optimized version of collideAll for D3Q19 stencil
+	 */
+	void collideAllD3Q19(DistributionFunctions& f,
+			distributed_vector& densities, vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure) const;
+
+	/**
+	 * @short optimized version of collideAll for D3Q15 stencil
+	 */
+	void collideAllD3Q15(DistributionFunctions& f,
+			distributed_vector& densities, vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure) const;
 };
 
 

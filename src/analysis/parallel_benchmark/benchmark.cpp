@@ -32,8 +32,8 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
-	pout << "Usage: ./benchmark <ref_level> <order_fe> <nof_replicates> "
-			"<is_3D=false> <nof_iter> <integrator_id>" << endl;
+	pout << "Usage: ./benchmark <ref_level> <order_fe> <nof_replicates=1> "
+			"<is_3D=false> <nof_iter=200> <integrator_id=1>" << endl;
 	assert(argc >= 3);
 
 	// set spatial discretization
