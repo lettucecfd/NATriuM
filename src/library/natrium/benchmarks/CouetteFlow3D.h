@@ -40,7 +40,7 @@ public:
 	};
 
 	/// constructor
-	CouetteFlow3D(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false, size_t replicates = 1);
+	CouetteFlow3D(double viscosity, double topPlateVelocity, size_t refinementLevel, size_t L=1, double startTime=0.0, bool isUnstructured=false);
 
 	/// destructor
 	virtual ~CouetteFlow3D();
@@ -58,9 +58,10 @@ private:
 
 	/**
 	 * @short create triangulation for couette flow
+	 * @param[in] L length of domain in x-direction. Has to be a natural number.
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<3> > makeGrid(double L, size_t replicates);
+	shared_ptr<Mesh<3> > makeGrid(size_t L);
 
 	/**
 	 * @short create boundaries for couette flow

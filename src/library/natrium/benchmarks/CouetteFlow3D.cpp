@@ -21,8 +21,8 @@
 namespace natrium {
 
 CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
-		size_t refinementLevel, double L, double startTime, bool isUnstructured, size_t replicates) :
-		Benchmark<3>(makeGrid(L, replicates), viscosity,
+		size_t refinementLevel, size_t L, double startTime, bool isUnstructured) :
+		Benchmark<3>(makeGrid(L), viscosity,
 				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
@@ -45,7 +45,7 @@ CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 CouetteFlow3D::~CouetteFlow3D() {
 }
 
-shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L, size_t replicates) {
+shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(size_t L) {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
@@ -55,14 +55,14 @@ shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(double L, size_t replicates) {
 #endif
 
 	dealii::Point<3> x1(0,0,0);
-	dealii::Point<3> x2(replicates, 1, 1);
+	dealii::Point<3> x2(L, 1, 1);
 	std::vector<std::vector<double> > step_sizes;
 	step_sizes.push_back(std::vector<double>());
 	step_sizes.push_back(std::vector<double>());
 	step_sizes.push_back(std::vector<double>());
 	step_sizes.at(1).push_back( 1 );
 	step_sizes.at(2).push_back( 1 );
-	for (size_t i = 0; i < replicates; i++){
+	for (size_t i = 0; i < L; i++){
 		step_sizes.at(0).push_back( 1 );
 	}
 

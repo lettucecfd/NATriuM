@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
 	double delta_t;
 	if (dim_3) {
 		couetteProblem3D = make_shared<CouetteFlow3D>(viscosity, U,
-				refinementLevel, 1.0, startTime, isUnstructured, replicates);
+				refinementLevel, replicates, startTime, isUnstructured);
 		delta_t = CFDSolverUtilities::calculateTimestep<3>(
 				*(couetteProblem3D->getMesh()), orderOfFiniteElement,
 				D3Q15(dqScaling), CFL);
