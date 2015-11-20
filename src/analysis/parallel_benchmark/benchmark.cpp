@@ -25,6 +25,8 @@
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/CouetteFlow3D.h"
 
+#include "natrium/utilities/Info.h"
+
 using namespace natrium;
 
 // Main function
@@ -128,13 +130,29 @@ int main(int argc, char** argv) {
 		configuration->setStencil(Stencil_D3Q15);
 		time1 = clock() - timestart;
 		CFDSolver<3> solver(configuration, couetteProblem3D);
+
+		// info output
+		const vector<dealii::types::global_dof_index>& dofs_per_proc =
+				solver.getAdvectionOperator()->getDoFHandler()->n_locally_owned_dofs_per_processor();
+		for (size_t i = 0;
+				i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
+				i++) {
+			LOG(DETAILED) << "Process "
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< " has " << dofs_per_proc.at(i) << " grid points."
+					<< endl;
+			cout << "Process "
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< " is running on host " << Info::getHostName() << "."
+					<< endl;
+		}
+
 		time2 = clock() - time1;
 
 		solver.run();
 		time3 = clock() - time2;
 
-		lups = solver.getNumberOfDoFs() * nof_iterations
-				/ (time3 / 1000.0);
+		lups = solver.getNumberOfDoFs() * nof_iterations / (time3 / 1000.0);
 		pout
 				<< "----------------------------------------------------------------------------------"
 				<< endl;
@@ -145,13 +163,28 @@ int main(int argc, char** argv) {
 	} else {
 		time1 = clock() - timestart;
 		CFDSolver<2> solver(configuration, couetteProblem2D);
+
+		// info output
+		const vector<dealii::types::global_dof_index>& dofs_per_proc =
+				solver.getAdvectionOperator()->getDoFHandler()->n_locally_owned_dofs_per_processor();
+		for (size_t i = 0;
+				i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
+				i++) {
+			pout << "Process "
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< " has " << dofs_per_proc.at(i) << " grid points."
+					<< endl;
+		}
+		cout << "Process "
+				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+				<< " is running on host " << Info::getHostName() << "." << endl;
+
 		time2 = clock() - time1;
 
 		solver.run();
 		time3 = clock() - time2;
 
-		lups = solver.getNumberOfDoFs() * nof_iterations
-				/ (time3 / 1000.0);
+		lups = solver.getNumberOfDoFs() * nof_iterations / (time3 / 1000.0);
 		pout
 				<< "----------------------------------------------------------------------------------"
 				<< endl;
@@ -166,10 +199,9 @@ int main(int argc, char** argv) {
 			<< "1)n_mpi_proc  2)N  3)p   4)n_dofs  5)t_build_problem  6)t_build_solver  7)t_per_iteration   8)t_total  9)LUPS  10)LUPS/node"
 			<< endl;
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
-			<< refinementLevel << " " << orderOfFiniteElement << " "
-			<< n_dofs << " " << time1 << " " << time2 << " "
-			<< time3 / nof_iterations << " " << clock() - timestart << " "
-			<< lups << " "
+			<< refinementLevel << " " << orderOfFiniteElement << " " << n_dofs
+			<< " " << time1 << " " << time2 << " " << time3 / nof_iterations
+			<< " " << clock() - timestart << " " << lups << " "
 			<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
 			<< endl;
 	pout << "done." << endl;

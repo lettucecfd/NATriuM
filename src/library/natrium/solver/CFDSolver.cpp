@@ -337,11 +337,20 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			nofBoundaryNodes += 1;
 		}
 	}
-	LOG(DETAILED) << "Number of non-periodic boundary dofs: 9*"
+	LOG(DETAILED) << "Number of non-periodic boundary grid points: "
 			<< nofBoundaryNodes << endl;
-	LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs() << endl;
+	LOG(DETAILED) << "Number of total grid points: " << getNumberOfDoFs()
+			<< endl;
+	const vector<dealii::types::global_dof_index>& dofs_per_proc =
+			m_advectionOperator->getDoFHandler()->n_locally_owned_dofs_per_processor();
+	for (size_t i = 0;
+			i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); i++) {
+		LOG(DETAILED) << "Process "
+				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+				<< " has " << dofs_per_proc.at(i) << " grid points." << endl;
+	}
 
-	// Initialize distribution functions
+// Initialize distribution functions
 	if (configuration->isRestartAtLastCheckpoint()) {
 		loadDistributionFunctionsFromFiles(
 				m_configuration->getOutputDirectory());
@@ -349,7 +358,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 
-	// Create file for output table
+// Create file for output table
 	if ((not configuration->isSwitchOutputOff())
 	/*and (configuration->getOutputTableInterval()
 	 < configuration->getNumberOfTimeSteps())*/) {
@@ -372,10 +381,10 @@ template CFDSolver<3>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 template<size_t dim>
 void CFDSolver<dim>::stream() {
 
-	// start timer
+// start timer
 	TimerOutput::Scope timer_section(m_timer, "Streaming");
 
-	// no streaming in direction 0; begin with 1
+// no streaming in direction 0; begin with 1
 	distributed_block_vector& f = m_f.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
@@ -396,7 +405,7 @@ template void CFDSolver<3>::stream();
 template<size_t dim>
 void CFDSolver<dim>::collide() {
 
-	// start timer
+// start timer
 	TimerOutput::Scope timer_section(m_timer, "Collision");
 
 	try {
@@ -412,7 +421,7 @@ template void CFDSolver<3>::collide();
 template<size_t dim>
 void CFDSolver<dim>::reassemble() {
 
-	// start timer
+// start timer
 	TimerOutput::Scope timer_section(m_timer, "Reassemble");
 
 	try {
@@ -438,7 +447,7 @@ void CFDSolver<dim>::run() {
 	}
 	output(m_i);
 
-	// Finalize
+// Finalize
 	m_timer.print_summary();
 	LOG(BASIC) << "NATriuM run complete." << endl;
 	LOG(BASIC) << "Summary: " << endl;
@@ -450,10 +459,10 @@ template void CFDSolver<3>::run();
 template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
 
-	// start timer
-		TimerOutput::Scope timer_section(m_timer, "Check stop condition");
+// start timer
+	TimerOutput::Scope timer_section(m_timer, "Check stop condition");
 
-	// Maximum number of iterations
+// Maximum number of iterations
 	size_t N = m_configuration->getNumberOfTimeSteps();
 	if (m_i >= N) {
 		LOG(BASIC)
@@ -461,14 +470,14 @@ bool CFDSolver<dim>::stopConditionMet() {
 				<< m_i << "." << endl;
 		return true;
 	}
-	// End time
+// End time
 	const double end_time = m_configuration->getSimulationEndTime();
 	if (m_time >= end_time) {
 		LOG(BASIC) << "Stop condition: Simulation end time t_max=" << end_time
 				<< " reached in iteration " << m_i << "." << endl;
 		return true;
 	}
-	// Converged
+// Converged
 	const size_t check_interval = 10;
 	const double convergence_threshold =
 			m_configuration->getConvergenceThreshold();
@@ -495,9 +504,8 @@ template bool CFDSolver<3>::stopConditionMet();
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
 
-	// start timer
+// start timer
 	TimerOutput::Scope timer_section(m_timer, "Output");
-
 
 // output: vector fields as .vtu files
 	if (iteration == m_iterationStart) {
@@ -617,17 +625,17 @@ template void CFDSolver<3>::output(size_t iteration);
 
 template<size_t dim>
 void CFDSolver<dim>::initializeDistributions() {
-	// PRECONDITION: vectors already created with the right sizes
+// PRECONDITION: vectors already created with the right sizes
 
 	LOG(BASIC) << "Initialize distribution functions: ";
 	vector<double> feq(m_stencil->getQ());
 	numeric_vector u(dim);
 
-	// save starting time
+// save starting time
 	double t0 = m_time;
 
 // Initialize f with the equilibrium distribution functions
-	//for all degrees of freedom on current processor
+//for all degrees of freedom on current processor
 	const dealii::IndexSet& locally_owned_dofs =
 			m_advectionOperator->getLocallyOwnedDofs();
 	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
@@ -789,7 +797,7 @@ template<size_t dim>
 void natrium::CFDSolver<dim>::applyInitialDensities(
 		distributed_vector& initialDensities,
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
-	// get Function instance
+// get Function instance
 	const shared_ptr<dealii::Function<dim> >& f_rho =
 			m_problemDescription->getInitialRhoFunction();
 	const unsigned int dofs_per_cell =
@@ -827,7 +835,7 @@ template<size_t dim>
 void natrium::CFDSolver<dim>::applyInitialVelocities(
 		vector<distributed_vector>& initialVelocities,
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
-	// get Function instance
+// get Function instance
 	const shared_ptr<dealii::Function<dim> >& f_u =
 			m_problemDescription->getInitialUFunction();
 	const unsigned int dofs_per_cell =

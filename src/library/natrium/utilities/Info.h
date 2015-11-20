@@ -1,7 +1,6 @@
-#include <string>
-#include <algorithm>
-#include <iostream>
-#include <stdio.h>
+
+#ifndef NATRIUM_INFO_H_
+#define NATRIUM_INFO_H_
 
 #include <boost/filesystem.hpp>
 
@@ -11,48 +10,30 @@ namespace natrium {
 
 namespace Info {
 
-std::string exec(char const * cmd) {
-	FILE* pipe = popen(cmd, "r");
-	if (!pipe)
-		return "ERROR";
-	char buffer[128];
-	std::string result = "";
-	while (!feof(pipe)) {
-		if (fgets(buffer, 128, pipe) != NULL)
-			result += buffer;
-	}
-	pclose(pipe);
-	result.erase(std::remove(result.begin(), result.end(), '\n'), result.end());
-	return result;
-}
+/**
+ * @short execute a command on the command line
+ * @param[in] cmd A string that contains the command.
+ * @return A string that contains the response of the command line
+ */
+std::string exec(char const * cmd) ;
 
-boost::filesystem::path get_natrium_dir(){
-	std::string natrium_dir = getenv("NATRIUM_DIR");
-	if (0 == natrium_dir.size()){
-		perr << "You have to specify the environment variable NATRIUM_DIR. Error." << endl;
-		assert(false);
-	}
-	boost::filesystem::path result(natrium_dir);
-	return result;
-}
+/**
+ * @short get NATRIUM_DIR environment variable
+ * @note The environement variables NATRIUM_DIR and NATRIUM_HOME have to be set to make NATriuM work.
+ */
+boost::filesystem::path get_natrium_dir();
 
-// code has to be called from a git directory to make this function work
-std::string getGitSha() {
-		boost::filesystem::path working_dir( boost::filesystem::current_path() );
-		boost::filesystem::current_path( get_natrium_dir() );
-		std::string result = exec("git show --abbrev-commit 2> NULL | head -1 | awk '{print $2;}'");
-		boost::filesystem::current_path ( working_dir );
-		return result;
-}
+/**
+ * @short Return identifier for the current git commit.
+ */
+std::string getGitSha() ;
 
-std::string getUserName() {
-	return exec("whoami");
-}
+std::string getUserName();
 
-std::string getHostName() {
-	return exec("hostname");
-}
+std::string getHostName() ;
 
 } /* namespace Info */
 
 } /* namespace natrium*/
+
+#endif /* ifndef NATRIUM_INFO_H */
