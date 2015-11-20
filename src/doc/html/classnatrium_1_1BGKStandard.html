@@ -77,6 +77,15 @@ Inheritance diagram for natrium::BGKStandard:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for the calculation of the equilibrium distribution in the incompressible <a class="el" href="classnatrium_1_1D2Q9.html" title="D2Q9 Model.">D2Q9</a> model  <a href="#a3d45ef2fe5536bf14914f99297477754"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKStandard.html#a8e0493b063d56275d7ee607e25c4145e">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#a8e0493b063d56275d7ee607e25c4145e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaaad49afea2e7079645b49380d990254"></a><!-- doxytag: member="natrium::BGKStandard::collideAllD2Q9" ref="aaaad49afea2e7079645b49380d990254" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure) const " -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKStandard.html#aaaad49afea2e7079645b49380d990254">collideAllD2Q9</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">optimized version of collideAll for <a class="el" href="classnatrium_1_1D2Q9.html" title="D2Q9 Model.">D2Q9</a> stencil <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7362ff8603390301e8c4062ad348edd1"></a><!-- doxytag: member="natrium::BGKStandard::collideAllD3Q19" ref="a7362ff8603390301e8c4062ad348edd1" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure) const " -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKStandard.html#a7362ff8603390301e8c4062ad348edd1">collideAllD3Q19</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">optimized version of collideAll for <a class="el" href="classnatrium_1_1D3Q19.html" title="D3Q19 Model. The lattice velocities are: 0. 0.0 0.0 0.0.">D3Q19</a> stencil <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ffd7d81aef7a233dd44c46eb539e833"></a><!-- doxytag: member="natrium::BGKStandard::collideAllD3Q15" ref="a6ffd7d81aef7a233dd44c46eb539e833" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure) const " -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKStandard.html#a6ffd7d81aef7a233dd44c46eb539e833">collideAllD3Q15</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">optimized version of collideAll for D3Q15 stencil <br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Simple <a class="el" href="classnatrium_1_1BGK.html" title="Description of the BGK model for the transformed particle distributions, as described...">BGK</a> model. </p>
@@ -220,7 +229,7 @@ Inheritance diagram for natrium::BGKStandard:</div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 18 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

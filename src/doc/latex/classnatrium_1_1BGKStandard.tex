@@ -26,7 +26,22 @@ virtual \hyperlink{classnatrium_1_1BGKStandard_aa55035be79098a762cf4f0ef308d41e5
 virtual double \hyperlink{classnatrium_1_1BGKStandard_a3d45ef2fe5536bf14914f99297477754}{getEquilibriumDistribution} (size\_\-t i, const numeric\_\-vector \&u, const double rho=1) const 
 \begin{DoxyCompactList}\small\item\em function for the calculation of the equilibrium distribution in the incompressible \hyperlink{classnatrium_1_1D2Q9}{D2Q9} model \item\end{DoxyCompactList}\item 
 virtual void \hyperlink{classnatrium_1_1BGKStandard_a8e0493b063d56275d7ee607e25c4145e}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
-\begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGKStandard_aaaad49afea2e7079645b49380d990254}{
+void \hyperlink{classnatrium_1_1BGKStandard_aaaad49afea2e7079645b49380d990254}{collideAllD2Q9} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure) const }
+\label{classnatrium_1_1BGKStandard_aaaad49afea2e7079645b49380d990254}
+
+\begin{DoxyCompactList}\small\item\em optimized version of collideAll for \hyperlink{classnatrium_1_1D2Q9}{D2Q9} stencil \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGKStandard_a7362ff8603390301e8c4062ad348edd1}{
+void \hyperlink{classnatrium_1_1BGKStandard_a7362ff8603390301e8c4062ad348edd1}{collideAllD3Q19} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure) const }
+\label{classnatrium_1_1BGKStandard_a7362ff8603390301e8c4062ad348edd1}
+
+\begin{DoxyCompactList}\small\item\em optimized version of collideAll for \hyperlink{classnatrium_1_1D3Q19}{D3Q19} stencil \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGKStandard_a6ffd7d81aef7a233dd44c46eb539e833}{
+void \hyperlink{classnatrium_1_1BGKStandard_a6ffd7d81aef7a233dd44c46eb539e833}{collideAllD3Q15} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure) const }
+\label{classnatrium_1_1BGKStandard_a6ffd7d81aef7a233dd44c46eb539e833}
+
+\begin{DoxyCompactList}\small\item\em optimized version of collideAll for D3Q15 stencil \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

@@ -78,12 +78,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00059"></a>00059                         <span class="keyword">const</span> dealii::IndexSet&amp; locally_owned_dofs,
 <a name="l00060"></a>00060                         <span class="keywordtype">bool</span> inInitializationProcedure = <span class="keyword">false</span>) <span class="keyword">const</span>;
 <a name="l00061"></a>00061 
-<a name="l00062"></a>00062 
-<a name="l00063"></a>00063 };
-<a name="l00064"></a>00064 
-<a name="l00065"></a>00065 
-<a name="l00066"></a>00066 } <span class="comment">/* namespace natrium */</span>
-<a name="l00067"></a>00067 <span class="preprocessor">#endif </span><span class="comment">/* BGKSTANDARD_H_ */</span>
+<a name="l00065"></a>00065         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1BGKStandard.html#aaaad49afea2e7079645b49380d990254" title="optimized version of collideAll for D2Q9 stencil">collideAllD2Q9</a>(<a class="code" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a>&amp; f,
+<a name="l00066"></a>00066                         distributed_vector&amp; densities, vector&lt;distributed_vector&gt;&amp; velocities,
+<a name="l00067"></a>00067                         <span class="keyword">const</span> dealii::IndexSet&amp; locally_owned_dofs,
+<a name="l00068"></a>00068                         <span class="keywordtype">bool</span> inInitializationProcedure) <span class="keyword">const</span>;
+<a name="l00069"></a>00069 
+<a name="l00073"></a>00073         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1BGKStandard.html#a7362ff8603390301e8c4062ad348edd1" title="optimized version of collideAll for D3Q19 stencil">collideAllD3Q19</a>(<a class="code" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a>&amp; f,
+<a name="l00074"></a>00074                         distributed_vector&amp; densities, vector&lt;distributed_vector&gt;&amp; velocities,
+<a name="l00075"></a>00075                         <span class="keyword">const</span> dealii::IndexSet&amp; locally_owned_dofs,
+<a name="l00076"></a>00076                         <span class="keywordtype">bool</span> inInitializationProcedure) <span class="keyword">const</span>;
+<a name="l00077"></a>00077 
+<a name="l00081"></a>00081         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1BGKStandard.html#a6ffd7d81aef7a233dd44c46eb539e833" title="optimized version of collideAll for D3Q15 stencil">collideAllD3Q15</a>(<a class="code" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a>&amp; f,
+<a name="l00082"></a>00082                         distributed_vector&amp; densities, vector&lt;distributed_vector&gt;&amp; velocities,
+<a name="l00083"></a>00083                         <span class="keyword">const</span> dealii::IndexSet&amp; locally_owned_dofs,
+<a name="l00084"></a>00084                         <span class="keywordtype">bool</span> inInitializationProcedure) <span class="keyword">const</span>;
+<a name="l00085"></a>00085 };
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088 } <span class="comment">/* namespace natrium */</span>
+<a name="l00089"></a>00089 <span class="preprocessor">#endif </span><span class="comment">/* BGKSTANDARD_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -99,7 +112,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 18 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
