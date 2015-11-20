@@ -137,15 +137,15 @@ int main(int argc, char** argv) {
 		for (size_t i = 0;
 				i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
 				i++) {
-			LOG(DETAILED) << "Process "
+			pout << "Process "
 					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
 					<< " has " << dofs_per_proc.at(i) << " grid points."
 					<< endl;
-			cout << "Process "
-					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-					<< " is running on host " << Info::getHostName() << "."
-					<< endl;
 		}
+		cout << "Process "
+				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+				<< " is running on host " << Info::getHostName() << "."
+				<< endl;
 
 		time2 = clock() - time1;
 

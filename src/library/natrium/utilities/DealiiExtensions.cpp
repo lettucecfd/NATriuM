@@ -53,10 +53,13 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 
 		{
 
+#ifdef DEBUG
 	const types::global_dof_index n_dofs = dof.n_dofs();
 
 	AssertDimension(sparsity.n_rows(), n_dofs);
 	AssertDimension(sparsity.n_cols(), n_dofs);
+#endif
+
 	if (fe_face != NULL) {
 		Assert(fe_face->get_fe().has_support_points(),
 				ExcMessage ("Sparser flux sparsity pattern makes only sense for elements with support points"));
