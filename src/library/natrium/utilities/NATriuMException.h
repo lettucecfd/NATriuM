@@ -47,6 +47,8 @@ inline void natrium_errorexit(const char* msg) {
 	LOG(ERROR) << "---------------------------------------------" << endl;
 	LOG(ERROR) << "Simulation failed" << endl;
 
+	pout << "Error:" << msg << endl;
+
 	// Kill all MPI jobs
 	if (dealii::Utilities::MPI::job_supports_mpi())
 		MPI_Abort(MPI_COMM_WORLD, 1);

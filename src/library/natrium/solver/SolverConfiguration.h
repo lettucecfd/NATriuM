@@ -69,14 +69,7 @@ enum DealIntegratorName {
 };
 
 enum DealSolverName {
-	BICGSTAB,
-	CG,
-	FGMRES,
-	GMRES,
-	MINRES,
-	QMRS,
-	RELAXATION,
-	RICHARDSON
+	BICGSTAB, CG, FGMRES, GMRES, MINRES, QMRS, RELAXATION, RICHARDSON
 };
 
 /**
@@ -181,7 +174,7 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(shared_ptr<ProblemDescription<2> > ) {
+	void checkProblem(shared_ptr<ProblemDescription<2> >) {
 		//TODO: implement the checkProblem function
 	}
 
@@ -192,7 +185,7 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(shared_ptr<ProblemDescription<3> > ) {
+	void checkProblem(shared_ptr<ProblemDescription<3> >) {
 		//TODO: implement the checkProblem function
 	}
 
@@ -884,6 +877,8 @@ public:
 			return Stencil_D2Q9;
 		} else if ("D3Q19" == stencil) {
 			return Stencil_D3Q19;
+		} else if ("D3Q15" == stencil) {
+			return Stencil_D3Q15;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown Stencil with index " << stencil
@@ -902,6 +897,10 @@ public:
 		}
 		case Stencil_D3Q19: {
 			set("Stencil", "D3Q19");
+			break;
+		}
+		case Stencil_D3Q15: {
+			set("Stencil", "D3Q15");
 			break;
 		}
 		default: {
@@ -1114,225 +1113,224 @@ public:
 	}
 
 	DealSolverName getDealLinearSolver() {
-			enter_subsection("Advection");
-			enter_subsection("Deal.II linear solver");
-			string solver = get("Linear solver");
-			leave_subsection();
-			leave_subsection();
+		enter_subsection("Advection");
+		enter_subsection("Deal.II linear solver");
+		string solver = get("Linear solver");
+		leave_subsection();
+		leave_subsection();
 
+		if ("Bicgstab" == solver) {
 
-			if ("Bicgstab" == solver) {
-
-				return BICGSTAB;
-			} else if ("Cg" == solver) {
-				return CG;
-			} else if ("Fgmres" == solver) {
-				return FGMRES;
-			} else if ("Gmres" == solver) {
-				return GMRES;
-			} else if ("Minres" == solver) {
-				return MINRES;
-			} else if ("Qmrs" == solver) {
-				return QMRS;
-			} else if ("Relaxation" == solver) {
-				return RELAXATION;
-			} else if ("Richardson" == solver) {
-				return RICHARDSON;
-			} else {
-				std::stringstream msg;
-				msg << "Unknown Dealii linear solver with index " << solver
-						<< "in enum LinearSolverName. Check your configuration file. If everything is alright, "
-						<< "the implementation of DealSolverName might not be up-to-date.";
-				throw ConfigurationException(msg.str());
-			}
+			return BICGSTAB;
+		} else if ("Cg" == solver) {
+			return CG;
+		} else if ("Fgmres" == solver) {
+			return FGMRES;
+		} else if ("Gmres" == solver) {
+			return GMRES;
+		} else if ("Minres" == solver) {
+			return MINRES;
+		} else if ("Qmrs" == solver) {
+			return QMRS;
+		} else if ("Relaxation" == solver) {
+			return RELAXATION;
+		} else if ("Richardson" == solver) {
+			return RICHARDSON;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown Dealii linear solver with index " << solver
+					<< "in enum LinearSolverName. Check your configuration file. If everything is alright, "
+					<< "the implementation of DealSolverName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
 		}
-
-	void setDealLinearSolver(DealSolverName solver) {
-			enter_subsection("Advection");
-			enter_subsection("Deal.II linear solver");
-			switch (solver) {
-			case BICGSTAB: {
-				set("Linear solver", "Bicgstab");
-				break;
-			}
-			case CG: {
-				set("Linear solver", "Cg");
-				break;
-			}
-			case FGMRES: {
-				set("Linear solver", "Fgmres");
-				break;
-			}
-			case GMRES: {
-				set("Linear solver", "Gmres");
-				break;
-			}
-			case MINRES: {
-				set("Linear solver", "Minres");
-				break;
-			}
-			case QMRS: {
-				set("Linear solver", "Qmrs");
-				break;
-			}
-			case RELAXATION: {
-				set("Linear solver", "Relaxation");
-				break;
-			}
-			case RICHARDSON: {
-							set("Linear solver", "Richardson");
-							break;
-						}
-			default: {
-				std::stringstream msg;
-				msg << "Unknown Deal.II linear solver (Linear solver); index. "
-						<< solver
-						<< " in enum DealLinearSolverName. The constructor of SolverConfiguration might not be up-to-date.";
-				leave_subsection();
-				leave_subsection();
-				throw ConfigurationException(msg.str());
-			}
-			}
-			leave_subsection();
-			leave_subsection();
 	}
 
-	void setEmbeddedDealIntegratorParameters(double coarsen_param, double refine_param, double min_delta, double max_delta, double refine_tol, double coarsen_tol)
-		{
-			enter_subsection("Advection");
-			enter_subsection("Embedded Parameters");
-
-			set("Coarsen parameter", coarsen_param);
-			set("Refinement parameter", refine_param);
-			set("Minimum time step", min_delta);
-			set("Maximum time step", max_delta);
-			set("Refinement tolerance", refine_tol);
-			set("Coarsen tolerance", coarsen_tol);
-
-			leave_subsection();
-			leave_subsection();
+	void setDealLinearSolver(DealSolverName solver) {
+		enter_subsection("Advection");
+		enter_subsection("Deal.II linear solver");
+		switch (solver) {
+		case BICGSTAB: {
+			set("Linear solver", "Bicgstab");
+			break;
 		}
+		case CG: {
+			set("Linear solver", "Cg");
+			break;
+		}
+		case FGMRES: {
+			set("Linear solver", "Fgmres");
+			break;
+		}
+		case GMRES: {
+			set("Linear solver", "Gmres");
+			break;
+		}
+		case MINRES: {
+			set("Linear solver", "Minres");
+			break;
+		}
+		case QMRS: {
+			set("Linear solver", "Qmrs");
+			break;
+		}
+		case RELAXATION: {
+			set("Linear solver", "Relaxation");
+			break;
+		}
+		case RICHARDSON: {
+			set("Linear solver", "Richardson");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown Deal.II linear solver (Linear solver); index. "
+					<< solver
+					<< " in enum DealLinearSolverName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+		leave_subsection();
+	}
 
-		double getEmbeddedDealIntegratorCoarsenParameter()
-		{
-			enter_subsection("Advection");
-			enter_subsection("Embedded Parameters");
-			double coarsen_param;
-			try {
+	void setEmbeddedDealIntegratorParameters(double coarsen_param,
+			double refine_param, double min_delta, double max_delta,
+			double refine_tol, double coarsen_tol) {
+		enter_subsection("Advection");
+		enter_subsection("Embedded Parameters");
+
+		set("Coarsen parameter", coarsen_param);
+		set("Refinement parameter", refine_param);
+		set("Minimum time step", min_delta);
+		set("Maximum time step", max_delta);
+		set("Refinement tolerance", refine_tol);
+		set("Coarsen tolerance", coarsen_tol);
+
+		leave_subsection();
+		leave_subsection();
+	}
+
+	double getEmbeddedDealIntegratorCoarsenParameter() {
+		enter_subsection("Advection");
+		enter_subsection("Embedded Parameters");
+		double coarsen_param;
+		try {
 			coarsen_param = get_double("Coarsen parameter");
-			} catch (std::exception& e) {
-				std::stringstream msg;
-				msg << "Could not read parameter 'Coarsen parameter' from parameters: "
-						<< e.what();
-				leave_subsection();
-				leave_subsection();
-				throw ConfigurationException(msg.str());
-			}
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Coarsen parameter' from parameters: "
+					<< e.what();
 			leave_subsection();
 			leave_subsection();
-			return coarsen_param;
-			}
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return coarsen_param;
+	}
 
-		double getEmbeddedDealIntegratorRefinementParameter()
-		{
-			enter_subsection("Advection");
-			enter_subsection("Embedded Parameters");
-			double refine_param;
-			try {
+	double getEmbeddedDealIntegratorRefinementParameter() {
+		enter_subsection("Advection");
+		enter_subsection("Embedded Parameters");
+		double refine_param;
+		try {
 			refine_param = get_double("Refinement parameter");
-			} catch (std::exception& e) {
-				std::stringstream msg;
-				msg << "Could not read parameter 'Refinement parameter' from parameters: "
-						<< e.what();
-				leave_subsection();
-				leave_subsection();
-				throw ConfigurationException(msg.str());
-			}
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Refinement parameter' from parameters: "
+					<< e.what();
 			leave_subsection();
 			leave_subsection();
-			return refine_param;
-			}
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return refine_param;
+	}
 
-		double getEmbeddedDealIntegratorMinimumTimeStep()
-		{
-			enter_subsection("Advection");
-			enter_subsection("Embedded Parameters");
-			double min_delta;
-			try {
+	double getEmbeddedDealIntegratorMinimumTimeStep() {
+		enter_subsection("Advection");
+		enter_subsection("Embedded Parameters");
+		double min_delta;
+		try {
 			min_delta = get_double("Minimum time step");
-			} catch (std::exception& e) {
-				std::stringstream msg;
-				msg << "Could not read parameter 'Minimum time step' from parameters: "
-						<< e.what();
-				leave_subsection();
-				leave_subsection();
-				throw ConfigurationException(msg.str());
-			}
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Minimum time step' from parameters: "
+					<< e.what();
 			leave_subsection();
 			leave_subsection();
-			return min_delta;
-			}
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return min_delta;
+	}
 
-		double getEmbeddedDealIntegratorMaximumTimeStep()
-		{
-			enter_subsection("Advection");
-			enter_subsection("Embedded Parameters");
-			double max_delta;
-			try {
+	double getEmbeddedDealIntegratorMaximumTimeStep() {
+		enter_subsection("Advection");
+		enter_subsection("Embedded Parameters");
+		double max_delta;
+		try {
 			max_delta = get_double("Maximum time step");
-			} catch (std::exception& e) {
-				std::stringstream msg;
-				msg << "Could not read parameter 'Maximum time step' from parameters: "
-						<< e.what();
-				leave_subsection();
-				leave_subsection();
-				throw ConfigurationException(msg.str());
-			}
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Maximum time step' from parameters: "
+					<< e.what();
 			leave_subsection();
 			leave_subsection();
-			return max_delta;
-			}
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return max_delta;
+	}
 
-		double getEmbeddedDealIntegratorRefinementTolerance()
-			{
-				enter_subsection("Advection");
-				enter_subsection("Embedded Parameters");
-				double refine_tol = 1e-8;
-				try {
-				refine_tol = get_double("Refinement tolerance");
-				} catch (std::exception& e) {
-					std::stringstream msg;
-					msg << "Could not read parameter 'Refinement tolerance' from parameters: "
-							<< e.what();
-					leave_subsection();
-					leave_subsection();
-					throw ConfigurationException(msg.str());
-				}
-				leave_subsection();
-				leave_subsection();
-				return refine_tol;
-				}
+	double getEmbeddedDealIntegratorRefinementTolerance() {
+		enter_subsection("Advection");
+		enter_subsection("Embedded Parameters");
+		double refine_tol = 1e-8;
+		try {
+			refine_tol = get_double("Refinement tolerance");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Refinement tolerance' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return refine_tol;
+	}
 
-		double getEmbeddedDealIntegratorCoarsenTolerance()
-			{
-				enter_subsection("Advection");
-				enter_subsection("Embedded Parameters");
-				double coarsen_tol;
-				try {
-				coarsen_tol = get_double("Coarsen tolerance");
-				} catch (std::exception& e) {
-					std::stringstream msg;
-					msg << "Could not read parameter 'Coarsen tolerance' from parameters: "
-							<< e.what();
-					leave_subsection();
-					leave_subsection();
-					throw ConfigurationException(msg.str());
-				}
-				leave_subsection();
-				leave_subsection();
-				return coarsen_tol;
-				}
-
+	double getEmbeddedDealIntegratorCoarsenTolerance() {
+		enter_subsection("Advection");
+		enter_subsection("Embedded Parameters");
+		double coarsen_tol;
+		try {
+			coarsen_tol = get_double("Coarsen tolerance");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Coarsen tolerance' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return coarsen_tol;
+	}
 
 	double getTimeStepSize() {
 		enter_subsection("General");

@@ -23,6 +23,7 @@
 
 #include "../stencils/D2Q9.h"
 #include "../stencils/D3Q19.h"
+#include "../stencils/D3Q15.h"
 #include "../stencils/Stencil.h"
 
 #include "../collision/BGKStandard.h"
@@ -91,6 +92,8 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		m_stencil = make_shared<D2Q9>(configuration->getStencilScaling());
 	} else if (Stencil_D3Q19 == configuration->getStencil()) {
 		m_stencil = make_shared<D3Q19>(configuration->getStencilScaling());
+	} else if (Stencil_D3Q15 == configuration->getStencil()) {
+		m_stencil = make_shared<D3Q15>(configuration->getStencilScaling());
 	} else {
 		natrium_errorexit("Stencil not known to CFDSolver.");
 	}
