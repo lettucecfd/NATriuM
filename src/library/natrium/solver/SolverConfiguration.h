@@ -41,7 +41,8 @@ enum CollisionSchemeName {
 	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
 	BGK_STEADY_STATE, // Steady state preconditioning by Guo et al. (2004)
 	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
-	MRT_STANDARD // Multiple Relexation Time scheme by d'Humières (1992)
+	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
+	KBC_STANDARD // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014)
 };
 
 // StencilType defined in Stencil.h
@@ -279,6 +280,8 @@ public:
 			return BGK_INCOMPRESSIBLE;
 		} else if ("MRT standard" == collisionScheme) {
 			return MRT_STANDARD;
+		} else if ("KBC standard" == collisionScheme) {
+			return KBC_STANDARD;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown collision scheme '" << collisionScheme
@@ -309,6 +312,10 @@ public:
 		}
 		case MRT_STANDARD: {
 			set("Collision scheme", "MRT standard");
+			break;
+		}
+		case KBC_STANDARD: {
+			set("Collision scheme", "KBC standard");
 			break;
 		}
 		default: {

@@ -36,6 +36,11 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 
 		for (size_t i = 0; i < n_dofs; i++) {
 
+			// calculate density
+			densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
+					+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
+					+ f.at(8)(i);
+
 			if (not inInitializationProcedure) {
 
 				velocities.at(0)(i) = scaling / densities(i)
@@ -45,10 +50,7 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 						* (f.at(2)(i) + f.at(5)(i) + f.at(6)(i) - f.at(4)(i)
 								- f.at(7)(i) - f.at(8)(i));
 			}
-			// calculate density
-			densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
-					+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
-					+ f.at(8)(i);
+
 			if (i == 1) {
 			}
 
@@ -74,6 +76,7 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 			m.at(8) = f.at(5)(i) - f.at(6)(i) + f.at(7)(i) - f.at(8)(i);
 
 			// calculate the moment equilibrium distribution function
+
 			meq.at(0) = densities(i);
 			meq.at(1) = densities(i)
 					* (-2

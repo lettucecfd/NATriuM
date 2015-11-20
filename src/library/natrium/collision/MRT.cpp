@@ -9,9 +9,9 @@
 
 namespace natrium {
 
-MRT::MRT(double relaxationTime, double dt, const shared_ptr<Stencil> stencil) :
-		CollisionModel(stencil), m_relaxationTime(relaxationTime), m_prefactor(
-				(relaxationTime * 3 / dt + 0.5)), m_dt(dt) {
+MRT::MRT(double viscosity, double dt, const shared_ptr<Stencil> stencil) :
+		CollisionModel(stencil), m_viscosity(viscosity), m_prefactor(
+				-1. / (viscosity + 0.5)), m_dt(dt) {
 
 }
 

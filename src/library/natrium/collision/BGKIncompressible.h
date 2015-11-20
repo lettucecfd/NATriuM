@@ -19,10 +19,8 @@ namespace natrium {
 
 class BGKIncompressible: public BGK {
 private:
-
-double m_lambda = 1 / 3;
-double m_gamma = 1 / 12;
-
+	double m_lambda = 1.0 / 3.0;
+	double m_gamma = 1.0 / 12.0;
 public:
 
 

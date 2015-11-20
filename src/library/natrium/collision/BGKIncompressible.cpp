@@ -84,7 +84,6 @@ void BGKIncompressible::collideAll(DistributionFunctions& f,
 					+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
 					+ f.at(8)(i);
 
-
 			if (densities(i) < 1e-10) {
 				throw CollisionException(
 						"Densities too small (< 1e-10) for collisions. Decrease time step size.");

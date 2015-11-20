@@ -15,6 +15,7 @@
 #include <cassert>
 
 #include "../utilities/Math.h"
+
 namespace natrium {
 
 class MRTStandard: public MRT {
@@ -33,25 +34,25 @@ public:
 
 	vector<double> setMRTWeights() const {
 		vector<double> D(9);
-		D.at(0) = 9;
-		D.at(1) = 36;
-		D.at(2) = 36;
-		D.at(3) = 6;
-		D.at(4) = 12;
-		D.at(5) = 6;
-		D.at(6) = 12;
-		D.at(7) = 4;
-		D.at(8) = 4;
+		D.at(0) = 9.0;
+		D.at(1) = 36.0;
+		D.at(2) = 36.0;
+		D.at(3) = 6.0;
+		D.at(4) = 12.0;
+		D.at(5) = 6.0;
+		D.at(6) = 12.0;
+		D.at(7) = 4.0;
+		D.at(8) = 4.0;
 		return D;
 	}
 
 	vector<double> setRelaxationRates() const {
 		vector<double> s(9);
 		s.at(0) = s.at(3) = s.at(5) = 0;
-		s.at(7) = s.at(8) = 1 / getPrefactor();
-		s.at(4) = s.at(6) = 8 * (2 - s.at(7)) / (8 - s.at(7));
-		s.at(1) = 1.6;
-		s.at(2) = 1.8;
+		s.at(7) = s.at(8) = 1.0 / getPrefactor();
+		s.at(4) = s.at(6) = 8.0 * (2.0 - s.at(7)) / (8.0 - s.at(7));
+		s.at(1) = 1.0 / getPrefactor();
+		s.at(2) = 1.0 / getPrefactor();
 		return s;
 	}
 

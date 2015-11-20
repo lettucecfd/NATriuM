@@ -37,12 +37,12 @@
 
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
-
+//#define ONLY_PERIODIC
 using namespace natrium;
 
 // if this define statement is enabled: only the initialization time is regarded
 //#define MEASURE_ONLY_INIT_TIME
-// #define ONLY_PERIODIC
+//#define ONLY_PERIODIC
 
 // Main function
 int main() {
@@ -61,7 +61,7 @@ int main() {
 	const double Ma = 0.1;
 #else
 	const double Re = 2000;
-	const double Ma = 0.05;
+	const double Ma = 0.01;
 #endif
 
 	// Problem description
@@ -75,7 +75,7 @@ int main() {
 	const double L = 1;
 	// velocity of top plate
 	const double U = 1 / sqrt(3) * Ma;//5.773502691896258e-02/3.1415926;//0.02;
-	const double tmax = 10;
+	const double tmax = 1;
 #endif
 	// scaling of particle velocities
 	double scaling = sqrt(3) * U / Ma;
@@ -88,7 +88,7 @@ int main() {
 	size_t refinementLevel = 3;
 	size_t orderOfFiniteElement = 5;
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 2; i < 3; i++) {
 
 #ifndef ONLY_PERIODIC
 		// make problem object
@@ -122,8 +122,8 @@ int main() {
 			break;
 
 		case 2:
-			configuration->setCollisionScheme(MRT_STANDARD);
-			collisionScheme = "MRT_STANDARD";
+			configuration->setCollisionScheme(KBC_STANDARD);
+			collisionScheme = "KBC_STANDARD";
 			break;
 		}
 

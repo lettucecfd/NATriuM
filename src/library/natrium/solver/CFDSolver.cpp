@@ -28,6 +28,7 @@
 #include "../collision/BGKSteadyState.h"
 #include "../collision/BGKIncompressible.h"
 // #include "../collision/MRTStandard.h"
+#include "../collision/KBCStandard.h"
 
 #include "../problemdescription/BoundaryCollection.h"
 
@@ -153,9 +154,16 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				m_configuration->getTimeStepSize(), m_stencil);
 	} else if (MRT_STANDARD == configuration->getCollisionScheme()) {
 		tau = BGKStandard::calculateRelaxationParameter(
-						m_problemDescription->getViscosity(),
-						m_configuration->getTimeStepSize(), *m_stencil);
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = make_shared<MRTStandard>(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (KBC_STANDARD == configuration->getCollisionScheme()) {
+		tau = KBCStandard::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
+		m_collisionModel = make_shared<KBCStandard>(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), m_stencil);
 	}
@@ -251,7 +259,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< configuration->getStencilScaling() << endl;
 	LOG(WELCOME) << "Sound speed:              " << m_stencil->getSpeedOfSound()
 			<< endl;
-	//TODO propose optimal cfl based on time integrator
+//TODO propose optimal cfl based on time integrator
 	const double optimal_cfl = 0.4;
 	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
 			<< CFDSolverUtilities::calculateTimestep<dim>(
@@ -291,11 +299,15 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "tau:						" << tau << endl;
 		break;
 	}
+	case KBC_STANDARD: {
+		LOG(WELCOME) << "tau:						" << tau << endl;
+		break;
+	}
 
 	}
 	LOG(WELCOME) << "----------------------------" << endl;
 
-	// initialize boundary dof indicator
+// initialize boundary dof indicator
 	std::set<dealii::types::boundary_id> boundaryIndicators;
 	typename BoundaryCollection<dim>::ConstIterator it =
 			m_problemDescription->getBoundaries()->getBoundaries().begin();
@@ -319,7 +331,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 			<< nofBoundaryNodes << endl;
 	LOG(DETAILED) << "Number of total dofs: 9*" << getNumberOfDoFs() << endl;
 
-	// Initialize distribution functions
+// Initialize distribution functions
 	if (configuration->isRestartAtLastCheckpoint()) {
 		loadDistributionFunctionsFromFiles(
 				m_configuration->getOutputDirectory());
@@ -327,7 +339,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 
-	// Create file for output table
+// Create file for output table
 	if ((not configuration->isSwitchOutputOff())
 	/*and (configuration->getOutputTableInterval()
 	 < configuration->getNumberOfTimeSteps())*/) {
@@ -350,7 +362,7 @@ template CFDSolver<3>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 template<size_t dim>
 void CFDSolver<dim>::stream() {
 
-	// no streaming in direction 0; begin with 1
+// no streaming in direction 0; begin with 1
 	distributed_block_vector& f = m_f.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
@@ -367,7 +379,7 @@ template void CFDSolver<3>::stream();
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
-	//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
+//m_collisionModel->collideAll(m_f, m_density, m_velocity, m_isBoundary);
 	m_collisionModel->collideAll(m_f, m_density, m_velocity);
 }
 template void CFDSolver<2>::collide();
@@ -400,7 +412,7 @@ template void CFDSolver<3>::run();
 
 template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
-	// Maximum number of iterations
+// Maximum number of iterations
 	size_t N = m_configuration->getNumberOfTimeSteps();
 	if (m_i >= N) {
 		LOG(BASIC)
@@ -408,14 +420,14 @@ bool CFDSolver<dim>::stopConditionMet() {
 				<< m_i << "." << endl;
 		return true;
 	}
-	// End time
+// End time
 	const double end_time = m_configuration->getSimulationEndTime();
 	if (m_time >= end_time) {
 		LOG(BASIC) << "Stop condition: Simulation end time t_max=" << end_time
 				<< " reached in iteration " << m_i << "." << endl;
 		return true;
 	}
-	// Converged
+// Converged
 	const size_t check_interval = 10;
 	const double convergence_threshold =
 			m_configuration->getConvergenceThreshold();
@@ -523,7 +535,7 @@ void CFDSolver<dim>::initializeDistributions() {
 	vector<double> feq(m_stencil->getQ());
 	numeric_vector u(dim);
 
-	// save starting time
+// save starting time
 	double t0 = m_time;
 
 // Initialize f with the equilibrium distribution functions
