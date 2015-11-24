@@ -114,8 +114,8 @@ int main(int argc, char** argv) {
 	shared_ptr<SolverConfiguration> configuration = make_shared<
 			SolverConfiguration>();
 	configuration->setRestartAtLastCheckpoint(false);
-	//configuration->setSwitchOutputOff(true);
-	configuration->setCommandLineVerbosity(ALL);
+	configuration->setSwitchOutputOff(true);
+	//configuration->setCommandLineVerbosity(ALL);
 	configuration->setUserInteraction(false);
 	configuration->setNumberOfTimeSteps(nof_iterations);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
