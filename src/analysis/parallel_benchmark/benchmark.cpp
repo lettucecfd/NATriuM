@@ -134,14 +134,11 @@ int main(int argc, char** argv) {
 		// info output
 		const vector<dealii::types::global_dof_index>& dofs_per_proc =
 				solver.getAdvectionOperator()->getDoFHandler()->n_locally_owned_dofs_per_processor();
-		for (size_t i = 0;
-				i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
-				i++) {
-			pout << "Process "
-					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-					<< " has " << dofs_per_proc.at(i) << " grid points."
-					<< endl;
-		}
+
+		cout << "Process "
+				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+				<< " has " << solver.getAdvectionOperator()->getDoFHandler()->n_locally_owned_dofs() << " grid points."
+				<< endl;
 		cout << "Process "
 				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
 				<< " is running on host " << Info::getHostName() << "."
@@ -167,14 +164,11 @@ int main(int argc, char** argv) {
 		// info output
 		const vector<dealii::types::global_dof_index>& dofs_per_proc =
 				solver.getAdvectionOperator()->getDoFHandler()->n_locally_owned_dofs_per_processor();
-		for (size_t i = 0;
-				i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
-				i++) {
-			pout << "Process "
-					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-					<< " has " << dofs_per_proc.at(i) << " grid points."
-					<< endl;
-		}
+
+		cout << "Process "
+				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+				<< " has " << solver.getAdvectionOperator()->getDoFHandler()->n_locally_owned_dofs() << " grid points."
+				<< endl;
 		cout << "Process "
 				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
 				<< " is running on host " << Info::getHostName() << "." << endl;
