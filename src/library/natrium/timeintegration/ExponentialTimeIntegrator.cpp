@@ -9,6 +9,7 @@
 #include <cassert>
 
 #include "../utilities/Logging.h"
+#include "../utilities/Timing.h"
 
 namespace natrium {
 
@@ -103,23 +104,27 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	}
 
 	m_V.reinit(m_f, arnoldiSize + 1); // Orthonormal basis V_(m+1)
-
-	systemMatrix.vmult(m_w, f); 	// w = A*f + u
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		systemMatrix.vmult(m_w, f); 	// w = A*f + u
+	}
 	m_w += systemVector;		// w = A*f + u
 
 	double beta = m_w.l2_norm();
 
 	// the next two lines set m_V(i,0) =  m_w(i) / beta
 	// in a way that takes care about the individual blocks of block vectors
-		m_V.setColumn(0, m_w);
-		m_V.column(0) /= beta;
+	m_V.setColumn(0, m_w);
+	m_V.column(0) /= beta;
 
 	for (int j = 0; j < arnoldiSize; j++)  	// Arnoldi algorithm (second step)
 			{
 
 		m_V.getColumn(j, m_vj);
-
-		systemMatrix.vmult(m_w, m_vj);
+		{
+			TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+			systemMatrix.vmult(m_w, m_vj);
+		}
 
 		for (int i = 0; i <= j; i++) {
 
@@ -138,7 +143,7 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 			// the next two lines set m_V(k,j+1) = m_w(k) / m_H(j + 1, j)
 			// in a way that takes care about the individual blocks of block vectors
 			m_V.setColumn(j + 1, m_w);
-			m_V.column(j+1) /= m_H(j + 1, j);
+			m_V.column(j + 1) /= m_H(j + 1, j);
 		}
 		m_H(arnoldiSize + 1, arnoldiSize) = 1;
 
@@ -175,8 +180,10 @@ template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 	for (size_t i = 0; i < arnoldiSize + 1; i++) {
 		m_firstColumn(i) = m_phiExtended(i, 0);
 	}
-	m_V.vmult(m_f, m_firstColumn);
-
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult (V)");
+		m_V.vmult(m_f, m_firstColumn);
+	}
 	m_f *= (dt * beta);
 
 	f += m_f;

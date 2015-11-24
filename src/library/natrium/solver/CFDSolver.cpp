@@ -47,9 +47,7 @@ namespace natrium {
 
 template<size_t dim>
 CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
-		shared_ptr<ProblemDescription<dim> > problemDescription) :
-		m_timer(MPI_COMM_WORLD, m_timerOut, TimerOutput::summary,
-				TimerOutput::wall_times) {
+		shared_ptr<ProblemDescription<dim> > problemDescription) {
 
 	/// Create output directory
 	if (not configuration->isSwitchOutputOff()) {
@@ -107,7 +105,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 	/// Build streaming data object
 	if (SEDG == configuration->getAdvectionScheme()) {
 		// start timer
-		TimerOutput::Scope timer_section(m_timer, "System assembly");
+		TimerOutput::Scope timer_section(Timing::getTimer(), "System assembly");
 
 		// if this string is "": matrix is reassembled and not read from file
 		string whereAreTheStoredMatrices;
@@ -382,7 +380,7 @@ template<size_t dim>
 void CFDSolver<dim>::stream() {
 
 // start timer
-	TimerOutput::Scope timer_section(m_timer, "Streaming");
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Streaming");
 
 // no streaming in direction 0; begin with 1
 	distributed_block_vector& f = m_f.getFStream();
@@ -406,7 +404,7 @@ template<size_t dim>
 void CFDSolver<dim>::collide() {
 
 // start timer
-	TimerOutput::Scope timer_section(m_timer, "Collision");
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Collision");
 
 	try {
 		m_collisionModel->collideAll(m_f, m_density, m_velocity,
@@ -422,7 +420,7 @@ template<size_t dim>
 void CFDSolver<dim>::reassemble() {
 
 // start timer
-	TimerOutput::Scope timer_section(m_timer, "Reassemble");
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Reassemble");
 
 	try {
 		m_advectionOperator->reassemble();
@@ -448,10 +446,10 @@ void CFDSolver<dim>::run() {
 	output(m_i);
 
 // Finalize
-	m_timer.print_summary();
+	Timing::getTimer().print_summary();
 	LOG(BASIC) << "NATriuM run complete." << endl;
 	LOG(BASIC) << "Summary: " << endl;
-	LOG(BASIC) << m_timerOut.str() << endl;
+	LOG(BASIC) << Timing::getOutStream().str() << endl;
 }
 template void CFDSolver<2>::run();
 template void CFDSolver<3>::run();
@@ -460,7 +458,7 @@ template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
 
 // start timer
-	TimerOutput::Scope timer_section(m_timer, "Check stop condition");
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Check stop condition");
 
 // Maximum number of iterations
 	size_t N = m_configuration->getNumberOfTimeSteps();
@@ -505,7 +503,7 @@ template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
 
 // start timer
-	TimerOutput::Scope timer_section(m_timer, "Output");
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
 
 // output: vector fields as .vtu files
 	if (iteration == m_iterationStart) {

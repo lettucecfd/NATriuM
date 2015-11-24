@@ -11,6 +11,7 @@
 
 #include "../utilities/Logging.h"
 #include "../utilities/SemiParallelMatrix.h"
+#include "../utilities/Timing.h"
 
 namespace natrium {
 
@@ -52,7 +53,6 @@ template<> RungeKutta5LowStorage<sparse_block_matrix, block_vector>::RungeKutta5
 				prototype_vector.n_blocks(), prototype_vector.block(0).size()) {
 }
 
-
 template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR>::step(
 		VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector,
 		double t, double dt) {
@@ -74,7 +74,10 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 	// df = a*df + h*Af
 	// f = f + B* df
 	// make first step manually
-	systemMatrix.vmult(m_Af, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		systemMatrix.vmult(m_Af, f);
+	}
 	m_Af += systemVector;
 	m_Af *= this->getTimeStepSize();
 	m_df = m_Af;
@@ -82,7 +85,10 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 	f += m_df;
 	m_df /= m_b.at(0);
 	for (size_t i = 1; i < 5; i++) {
-		systemMatrix.vmult(m_Af, f);
+		{
+			TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+			systemMatrix.vmult(m_Af, f);
+		}
 		m_Af += systemVector;
 		m_Af *= this->getTimeStepSize();
 		m_df *= m_a.at(i);
@@ -96,21 +102,18 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 
 }
 template double RungeKutta5LowStorage<distributed_sparse_matrix,
-distributed_vector>::step(
-		distributed_vector& f, const distributed_sparse_matrix& systemMatrix, const distributed_vector& systemVector,
-		double t, double dt);
-template double RungeKutta5LowStorage<sparse_matrix,
-numeric_vector>::step(
-		numeric_vector& f, const sparse_matrix& systemMatrix, const numeric_vector& systemVector,
-		double t, double dt);
+		distributed_vector>::step(distributed_vector& f,
+		const distributed_sparse_matrix& systemMatrix,
+		const distributed_vector& systemVector, double t, double dt);
+template double RungeKutta5LowStorage<sparse_matrix, numeric_vector>::step(
+		numeric_vector& f, const sparse_matrix& systemMatrix,
+		const numeric_vector& systemVector, double t, double dt);
 template double RungeKutta5LowStorage<distributed_sparse_block_matrix,
-distributed_block_vector>::step(
-		distributed_block_vector& f, const distributed_sparse_block_matrix& systemMatrix, const distributed_block_vector& systemVector,
-		double t, double dt);
-template double RungeKutta5LowStorage<sparse_block_matrix,
-block_vector>::step(
-		block_vector& f, const sparse_block_matrix& systemMatrix, const block_vector& systemVector,
-		double t, double dt);
-
+		distributed_block_vector>::step(distributed_block_vector& f,
+		const distributed_sparse_block_matrix& systemMatrix,
+		const distributed_block_vector& systemVector, double t, double dt);
+template double RungeKutta5LowStorage<sparse_block_matrix, block_vector>::step(
+		block_vector& f, const sparse_block_matrix& systemMatrix,
+		const block_vector& systemVector, double t, double dt);
 
 } /* namespace natrium */

@@ -37,7 +37,10 @@ VECTOR natrium::DealIIWrapper<MATRIX, VECTOR>::evaluateF(const double,
 	VECTOR result = *m_systemVector;
 
 	// A*f(t) + b
-	m_systemMatrix->vmult_add(result, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_systemMatrix->vmult_add(result, f);
+	}
 
 	return result;
 }

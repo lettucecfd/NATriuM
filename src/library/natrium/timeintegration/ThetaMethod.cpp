@@ -22,6 +22,7 @@
 //#endif
 
 #include "../utilities/Logging.h"
+#include "../utilities/Timing.h"
 
 namespace natrium {
 
@@ -36,8 +37,8 @@ template<> ThetaMethod<sparse_matrix, numeric_vector>::ThetaMethod(
 }
 template<> ThetaMethod<distributed_sparse_matrix, distributed_vector>::ThetaMethod(
 		double timeStepSize, const distributed_vector&, double theta) :
-		TimeIntegrator<distributed_sparse_matrix, distributed_vector>(timeStepSize), m_theta(
-				theta) {
+		TimeIntegrator<distributed_sparse_matrix, distributed_vector>(
+				timeStepSize), m_theta(theta) {
 }
 template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector>::ThetaMethod(
 		double timeStepSize, const distributed_block_vector& prototype_vector,
@@ -51,11 +52,10 @@ template<> ThetaMethod<distributed_sparse_block_matrix, distributed_block_vector
 	m_tmpSystemVector.collect_sizes();
 }
 template<> ThetaMethod<sparse_block_matrix, block_vector>::ThetaMethod(
-		double timeStepSize, const block_vector& prototype_vector,
-		double theta) :
-		TimeIntegrator<sparse_block_matrix, block_vector>(
-				timeStepSize), m_theta(theta), m_tmpSystemVector(
-				prototype_vector.n_blocks(), prototype_vector.block(0).size()) {
+		double timeStepSize, const block_vector& prototype_vector, double theta) :
+		TimeIntegrator<sparse_block_matrix, block_vector>(timeStepSize), m_theta(
+				theta), m_tmpSystemVector(prototype_vector.n_blocks(),
+				prototype_vector.block(0).size()) {
 }
 
 template<> double ThetaMethod<distributed_sparse_matrix, distributed_vector>::step(
@@ -88,14 +88,20 @@ template<> double ThetaMethod<distributed_sparse_matrix, distributed_vector>::st
 	// dt*A*f(t) + dt*b
 	m_tmpMatrix.copy_from(systemMatrix);
 	m_tmpMatrix *= this->getTimeStepSize();
-	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	}
 	// I-theta*dt*A
 	m_tmpMatrix *= (-m_theta);
 	for (size_t i = 0; i < m_tmpMatrix.n(); i++) {
 		m_tmpMatrix.add(i, i, 1.0);
 	}
 	// (I-theta*dt*A)f(t) + dt*A*f(t) + dt*b
-	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	}
 
 	dealii::SolverControl solver_control(1000,
 			1e-6 * m_tmpSystemVector.l2_norm(), false, false);//* m_tmpSystemVector.l2_norm());
@@ -141,14 +147,20 @@ template<> double ThetaMethod<sparse_matrix, numeric_vector>::step(
 	// dt*A*f(t) + dt*b
 	m_tmpMatrix.copy_from(systemMatrix);
 	m_tmpMatrix *= this->getTimeStepSize();
-	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	}
 	// I-theta*dt*A
 	m_tmpMatrix *= (-m_theta);
 	for (size_t i = 0; i < m_tmpMatrix.n(); i++) {
 		m_tmpMatrix.add(i, i, 1.0);
 	}
 	// (I-theta*dt*A)f(t) + dt*A*f(t) + dt*b
-	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	}
 
 	dealii::SolverControl solver_control(1000,
 			1e-6 * m_tmpSystemVector.l2_norm(), false, false);//* m_tmpSystemVector.l2_norm());
@@ -205,7 +217,10 @@ template<> double ThetaMethod<distributed_sparse_block_matrix,
 		}
 	}
 	m_tmpMatrix *= this->getTimeStepSize();
-	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	}
 	// I-theta*dt*A
 	m_tmpMatrix *= (-m_theta);
 	for (size_t I = 0; I < m_tmpMatrix.n_block_cols(); I++) {
@@ -215,7 +230,10 @@ template<> double ThetaMethod<distributed_sparse_block_matrix,
 	}
 
 	// (I-theta*dt*A)f(t) + dt*A*f(t) + dt*b
-	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	}
 
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
 	dealii::SolverControl solver_control(1000,
@@ -267,7 +285,10 @@ template<> double ThetaMethod<sparse_block_matrix, block_vector>::step(
 		}
 	}
 	m_tmpMatrix *= this->getTimeStepSize();
-	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	}
 	// I-theta*dt*A
 	m_tmpMatrix *= (-m_theta);
 	for (size_t I = 0; I < m_tmpMatrix.n_block_cols(); I++) {
@@ -277,7 +298,10 @@ template<> double ThetaMethod<sparse_block_matrix, block_vector>::step(
 	}
 
 	// (I-theta*dt*A)f(t) + dt*A*f(t) + dt*b
-	m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
+		m_tmpMatrix.vmult_add(m_tmpSystemVector, f);
+	}
 
 	//dealii::PreconditionBlockSSOR<MATRIX> preconditioner(m_tmpMatrix);
 	dealii::SolverControl solver_control(1000,

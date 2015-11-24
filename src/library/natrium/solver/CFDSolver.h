@@ -11,7 +11,6 @@
 #include <exception>
 
 #include "deal.II/numerics/data_out.h"
-#include "deal.II/base/timer.h"
 
 #include "SolverConfiguration.h"
 #include "DistributionFunctions.h"
@@ -29,6 +28,7 @@
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
 #include "../utilities/NATriuMException.h"
+#include "../utilities/Timing.h"
 
 namespace natrium {
 
@@ -122,10 +122,6 @@ private:
 	// residuum
 	double m_residuumDensity;
 	double m_residuumVelocity;
-
-	// timer
-	std::ostringstream m_timerOut;
-	dealii::TimerOutput m_timer;
 
 protected:
 
@@ -306,7 +302,7 @@ public:
 	}
 
 	void printRuntimeSummary() const {
-		pout << m_timerOut.str() << endl;
+		pout << Timing::getOutStream().str() << endl;
 	}
 }
 ;
