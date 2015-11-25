@@ -423,23 +423,27 @@ void KBCStandard::collideAll(DistributionFunctions& f,
 			double sum_h = delta_h.at(0) + delta_h.at(1) + delta_h.at(2)
 					+ delta_h.at(3) + delta_h.at(4) + delta_h.at(5)
 					+ delta_h.at(6) + delta_h.at(7) + delta_h.at(8);
+
 			double sum_s = delta_s.at(0) + delta_s.at(1) + delta_s.at(2)
 					+ delta_s.at(3) + delta_s.at(4) + delta_s.at(5)
 					+ delta_s.at(6) + delta_s.at(7) + delta_s.at(8);
 
-			double viscosity = getViscosity();
-			cout << viscosity << endl;
-			double beta = 1. / (2 * viscosity / cs2 + 1);
-			cout << beta << endl;
+			double viscosity = getRelaxationParameter()*cs2;
+
+			double beta = 1. / (viscosity / cs2 + 0.5)/2;
+
 			double gamma = 1. / beta - (2 - 1 / beta) * sum_s / sum_h;
+
+			if (sum_h < 0.000001)
+			{
+				gamma = 1. / beta - (2 - 1 / beta);
+			}
 
 			for (int z = 0; z < 9; z++) {
 				feq.at(z) = k.at(z) + (2 * seq.at(z) - s.at(z))
 						+ ((1 - gamma) * h.at(z) + gamma * heq.at(z));
 			}
 
-			cout << f.at(0)(i) << endl;
-			cout << feq.at(0) << endl;
 
 			f.at(0)(i) = (1 - beta) * f.at(0)(i) + beta * feq.at(0);
 			f.at(1)(i) = (1 - beta) * f.at(1)(i) + beta * feq.at(1);
@@ -450,12 +454,6 @@ void KBCStandard::collideAll(DistributionFunctions& f,
 			f.at(6)(i) = (1 - beta) * f.at(6)(i) + beta * feq.at(6);
 			f.at(7)(i) = (1 - beta) * f.at(7)(i) + beta * feq.at(7);
 			f.at(8)(i) = (1 - beta) * f.at(8)(i) + beta * feq.at(8);
-
-			cout << f.at(0)(i) << endl;
-
-			cout << "Summe f_post = "
-								<< f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i) + f.at(4)(i) + f.at(5)(i)
-										+ f.at(6)(i) + f.at(7)(i) + f.at(8)(i) << endl;
 
 
 		}

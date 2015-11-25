@@ -18,13 +18,15 @@ class MRT: public CollisionModel {
 private:
 
 	/// relaxation time Tau
-	double m_viscosity;
+	double m_relaxationParameter;
 
 	/// prefactor of the collision
 	double m_prefactor;
 
 	// time step size
 	double m_dt;
+
+	double m_viscosity;
 
 public:
 	MRT(double relaxationParameter, double dt,
@@ -51,10 +53,10 @@ public:
 
 	void setTimeStep(double dt) {
 		assert(dt > 0);
-		double tau_times_dt = m_dt * m_viscosity;
+		double tau_times_dt = m_dt * m_relaxationParameter;
 		m_dt = dt;
-		m_viscosity = tau_times_dt / dt;
-		m_prefactor = -1. / (m_viscosity + 0.5);
+		m_relaxationParameter = tau_times_dt / dt;
+		m_prefactor = -1. / (m_relaxationParameter + 0.5);
 	}
 
 	double getTimeStep() const
@@ -70,9 +72,10 @@ public:
 		return m_prefactor;
 	}
 
-	double getViscosity() const {
-		return m_viscosity;
+	double getRelaxationParameter() const {
+		return m_relaxationParameter;
 	}
+
 
 };
 }
