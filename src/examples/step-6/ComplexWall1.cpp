@@ -33,11 +33,11 @@ ComplexWall1::ComplexWall1(double viscosity, double bottomVelocity,
 ComplexWall1::~ComplexWall1() {
 }
 
-shared_ptr<Mesh<2> > ComplexWall1::makeGrid(double L,
+boost::shared_ptr<Mesh<2> > ComplexWall1::makeGrid(double L,
 		size_t refinementLevel) {
 
 	//Creation of the principal domain
-	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >();
+	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 	dealii::Point<2> x1(0,0);
 	dealii::Point<2> x2(L,1);
 	std::vector<unsigned int> repetitions;
@@ -59,24 +59,24 @@ shared_ptr<Mesh<2> > ComplexWall1::makeGrid(double L,
 	return rect;
 }
 
-shared_ptr<BoundaryCollection<2> > ComplexWall1::makeBoundaries(
+boost::shared_ptr<BoundaryCollection<2> > ComplexWall1::makeBoundaries(
 		double bottomVelocity) {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
 	numeric_vector zeroVelocity(2);
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = bottomVelocity;
 
 	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(2, constantVelocity));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
+			boost::make_shared<MinLeeBoundary<2> >(2, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Mesh<2> > tria_pointer = getMesh();
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

@@ -62,7 +62,7 @@ private:
 	 * @param refinementLevel (denoted as N) The grid will have 2^n*2^n even-sized square cells
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel);
+	boost::shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel);
 
 	/**
 	 * @short create boundaries for lid-driven cavity flow
@@ -72,7 +72,7 @@ private:
 	 *       Here, we have four wall boundaries. One of them (the upper one)
 	 *       has a tangential speed.
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries();
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
 
 };
 

@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
 	const boost::filesystem::path natriumTmpDir("/tmp/natrium_test");
 	const boost::filesystem::path natriumTmpFile = natriumTmpDir
 			/ "test_errorstable.txt";
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<
 			SolverConfiguration>();
 	testConfiguration->setOutputDirectory(natriumTmpDir.c_str());
 	testConfiguration->setCommandLineVerbosity(SILENT);
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
 	testConfiguration->setNumberOfTimeSteps(10);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
-	shared_ptr<Benchmark<2> > testFlow = make_shared<TaylorGreenVortex2D>(
+	boost::shared_ptr<Benchmark<2> > testFlow = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel);
 	BenchmarkCFDSolver<2> solver(testConfiguration, testFlow);
 
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_FunctionsInSolverContext_test) {
 	pout << "ErrorStats_FunctionsInSolverContext_test..." << endl;
 	// make solver object
 	const boost::filesystem::path natriumTmpDir("/tmp/natrium_test");
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<
 			SolverConfiguration>();
 	testConfiguration->setOutputDirectory(natriumTmpDir.c_str());
 	testConfiguration->setCommandLineVerbosity(SILENT);
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_FunctionsInSolverContext_test) {
 	testConfiguration->setOutputTableInterval(1);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
-	shared_ptr<Benchmark<2> > testFlow = make_shared<TaylorGreenVortex2D>(
+	boost::shared_ptr<Benchmark<2> > testFlow = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel);
 	BenchmarkCFDSolver<2> solver(testConfiguration, testFlow);
 

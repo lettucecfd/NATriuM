@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 	const double viscosity = U / Re; // (because L = 1)
 
 	// load grid
-	shared_ptr<Cylinder2D> cylinder = make_shared<Cylinder2D>(
+	boost::shared_ptr<Cylinder2D> cylinder = boost::make_shared<Cylinder2D>(
 				viscosity, U);
 	D2Q9 stencil(dqScaling);
 	// set FE order and time step size
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 
 	// configure solver
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-9";
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 	//configuration->setDistributionInitType(Iterative);
 
 
-	shared_ptr<ProblemDescription<2> > couetteProblem = cylinder;
+	boost::shared_ptr<ProblemDescription<2> > couetteProblem = cylinder;
 	CFDSolver<2> solver(configuration, couetteProblem);
 
 	solver.run();

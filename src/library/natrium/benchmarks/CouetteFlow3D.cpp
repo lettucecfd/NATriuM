@@ -30,10 +30,10 @@ CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 	setBoundaries(makeBoundaries(topPlateVelocity));
 
 	/// apply initial values
-	setAnalyticU(make_shared<AnalyticVelocity>(this));
+	setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
 
 	// refine grid
-	shared_ptr<Mesh<3> > unitSquare = getMesh();
+	boost::shared_ptr<Mesh<3> > unitSquare = getMesh();
 	unitSquare->refine_global(refinementLevel);
 
 	// transform grid
@@ -45,13 +45,13 @@ CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 CouetteFlow3D::~CouetteFlow3D() {
 }
 
-shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(size_t L) {
+boost::shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(size_t L) {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
-	shared_ptr<Mesh<3> > rect = make_shared<Mesh<3> >(MPI_COMM_WORLD);
+	boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
 #else
-	shared_ptr<Mesh<3> > rect = make_shared<Mesh<3> >();
+	boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >();
 #endif
 
 	dealii::Point<3> x1(0,0,0);
@@ -74,24 +74,24 @@ shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(size_t L) {
 	return rect;
 }
 
-shared_ptr<BoundaryCollection<3> > CouetteFlow3D::makeBoundaries(
+boost::shared_ptr<BoundaryCollection<3> > CouetteFlow3D::makeBoundaries(
 		double topPlateVelocity) {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<3> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<3> > boundaries = boost::make_shared<
 			BoundaryCollection<3> >();
 	numeric_vector zeroVelocity(3);
 	numeric_vector constantVelocity(3);
 	constantVelocity(0) = topPlateVelocity;
 
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<3> >(4, zeroVelocity));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<3> >(4, zeroVelocity));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<3> >(5, constantVelocity));
+			boost::make_shared<MinLeeBoundary<3> >(5, constantVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Mesh<3> > tria_pointer = getMesh();
+	boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();
 
 	return boundaries;
 }

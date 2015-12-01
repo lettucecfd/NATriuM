@@ -24,13 +24,13 @@ public:
 
 	// kinetic energy
 	static double kineticEnergy(const vector<distributed_vector>& u, const distributed_vector& rho,
-			shared_ptr<AdvectionOperator<dim> > advection);
+			boost::shared_ptr<AdvectionOperator<dim> > advection);
 
 	/// Pressure
 	static double maximalPressure(const distributed_vector& rho, const double speedOfSound, double & minimalPressure);
 
 	/// Flow factor
-	static double meanVelocityX(const distributed_vector& ux, shared_ptr<AdvectionOperator<dim> > advection);
+	static double meanVelocityX(const distributed_vector& ux, boost::shared_ptr<AdvectionOperator<dim> > advection);
 
 };
 

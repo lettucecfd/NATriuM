@@ -39,7 +39,7 @@ int main() {
 	const double timeStepSize = 0.01;
 	// setup configuration
 
-	shared_ptr<SolverConfiguration> configuration = make_shared<SolverConfiguration>();
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/step-99";
 	configuration->setOutputDirectory(dirName.str());
@@ -57,8 +57,8 @@ int main() {
 	//configuration->setCollisionScheme(BGK_WITH_TRANSFORMED_DISTRIBUTION_FUNCTIONS) ;
 	//configuration->setStencil(Stencil_D2Q9) ;
 
-	shared_ptr<DensityFluctuation2D> DensityFluctuationFlow = make_shared<DensityFluctuation2D>(viscosity, refinementLevel);
-	shared_ptr<ProblemDescription<2> > DensityFluctuationProblem = DensityFluctuationFlow;
+	boost::shared_ptr<DensityFluctuation2D> DensityFluctuationFlow = boost::make_shared<DensityFluctuation2D>(viscosity, refinementLevel);
+	boost::shared_ptr<ProblemDescription<2> > DensityFluctuationProblem = DensityFluctuationFlow;
 	CFDSolver<2> solver(configuration, DensityFluctuationProblem);
 
 	solver.run();

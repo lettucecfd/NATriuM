@@ -28,14 +28,14 @@ PeriodicTestDomain3D::PeriodicTestDomain3D(size_t globalRefinementLevel) :
 PeriodicTestDomain3D::~PeriodicTestDomain3D() {
 }
 
-shared_ptr<Mesh<3> > PeriodicTestDomain3D::makeGrid() {
+boost::shared_ptr<Mesh<3> > PeriodicTestDomain3D::makeGrid() {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
-	shared_ptr<Mesh<3> > unitSquare = make_shared<Mesh<3> >(MPI_COMM_WORLD);
+	boost::shared_ptr<Mesh<3> > unitSquare = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
 
 #else
-	shared_ptr<Mesh<3> > unitSquare = make_shared<Mesh<3> >();
+	boost::shared_ptr<Mesh<3> > unitSquare = boost::make_shared<Mesh<3> >();
 #endif
 	dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
@@ -51,17 +51,17 @@ shared_ptr<Mesh<3> > PeriodicTestDomain3D::makeGrid() {
 	return unitSquare;
 }
 
-shared_ptr<BoundaryCollection<3> > PeriodicTestDomain3D::makeBoundaries() {
+boost::shared_ptr<BoundaryCollection<3> > PeriodicTestDomain3D::makeBoundaries() {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<3> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<3> > boundaries = boost::make_shared<
 			BoundaryCollection<3> >();
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(0,1,0,getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(2,3,1,getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(4,5,2,getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0,1,0,getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(2,3,1,getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(4,5,2,getMesh()));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Mesh<3> > tria_pointer = getMesh();
+	boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();
 
 	return boundaries;
 }

@@ -50,7 +50,7 @@ int main() {
 			orderOfFiniteElement++) {
 
 		// configure solver
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		std::stringstream dirname;
 		dirname << getenv("NATRIUM_HOME") << "/matrix-analysis/taylorgreen"
@@ -63,12 +63,12 @@ int main() {
 		configuration->setCommandLineVerbosity(0);
 
 		// create solver, with CFL = 1
-		shared_ptr<TaylorGreenVortex2D> tgv = make_shared<TaylorGreenVortex2D>(
+		boost::shared_ptr<TaylorGreenVortex2D> tgv = boost::make_shared<TaylorGreenVortex2D>(
 				viscosity, refinementLevel);
-		shared_ptr<Benchmark<2> > tgBenchmark = tgv;
+		boost::shared_ptr<Benchmark<2> > tgBenchmark = tgv;
 		configuration->setTimeStepSize(CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),orderOfFiniteElement,D2Q9(dqScaling),0.4));
 		pout << "dt = " << configuration->getTimeStepSize() << endl;
-		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
+		boost::shared_ptr<CFDSolver<2> > solver = boost::make_shared<BenchmarkCFDSolver<2> >(
 				configuration, tgBenchmark);
 
 		// analyze eigenvalues
@@ -101,7 +101,7 @@ int main() {
 			orderOfFiniteElement++) {
 
 		// configure solver
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		std::stringstream dirname;
 		dirname << getenv("NATRIUM_HOME") << "/matrix-analysis/couette"
@@ -114,16 +114,16 @@ int main() {
 		configuration->setCommandLineVerbosity(0);
 
 		// create solver, with CFL = 1
-		shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(
+		boost::shared_ptr<CouetteFlow2D> couetteFlow = boost::make_shared<CouetteFlow2D>(
 				viscosity, U, refinementLevel, 1.0, startTime);
-		shared_ptr<Benchmark<2> > couetteProblem = couetteFlow;
+		boost::shared_ptr<Benchmark<2> > couetteProblem = couetteFlow;
 		configuration->setTimeStepSize(
 				1.0 / dqScaling
 						* CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
 								*couetteFlow->getMesh(),
 								orderOfFiniteElement));
 		pout << "dt = " << configuration->getTimeStepSize() << endl;
-		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
+		boost::shared_ptr<CFDSolver<2> > solver = boost::make_shared<BenchmarkCFDSolver<2> >(
 				configuration, couetteProblem);
 
 		// analyze eigenvalues

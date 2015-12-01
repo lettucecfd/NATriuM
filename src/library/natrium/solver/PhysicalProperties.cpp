@@ -28,7 +28,7 @@ template<> PhysicalProperties<3>::~PhysicalProperties() {
 
 template<> double PhysicalProperties<2>::kineticEnergy(
 		const vector<distributed_vector>& u, const distributed_vector& rho,
-		shared_ptr<AdvectionOperator<2> > advection) {
+		boost::shared_ptr<AdvectionOperator<2> > advection) {
 	const size_t n_dofs = u.at(0).size();
 	assert(n_dofs == rho.size());
 	assert(n_dofs == u.at(1).size());
@@ -77,7 +77,7 @@ template<> double PhysicalProperties<2>::kineticEnergy(
 }
 template<> double PhysicalProperties<3>::kineticEnergy(
 		const vector<distributed_vector>& u, const distributed_vector& rho,
-		shared_ptr<AdvectionOperator<3> > advection) {
+		boost::shared_ptr<AdvectionOperator<3> > advection) {
 	const size_t n_dofs = u.at(0).size();
 	assert(n_dofs == rho.size());
 	assert(n_dofs == u.at(1).size());
@@ -142,7 +142,7 @@ double PhysicalProperties<3>::maximalPressure(const distributed_vector& rho,
 
 template<size_t dim>
 double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
-		shared_ptr<AdvectionOperator<dim> > advection) {
+		boost::shared_ptr<AdvectionOperator<dim> > advection) {
 
 	// Integrate ux over whole domain
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
@@ -182,9 +182,9 @@ double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
 }
 template double PhysicalProperties<2>::meanVelocityX(
 		const distributed_vector& ux,
-		shared_ptr<AdvectionOperator<2> > advection);
+		boost::shared_ptr<AdvectionOperator<2> > advection);
 template double PhysicalProperties<3>::meanVelocityX(
 		const distributed_vector& ux,
-		shared_ptr<AdvectionOperator<3> > advection);
+		boost::shared_ptr<AdvectionOperator<3> > advection);
 
 } /* namespace natrium */

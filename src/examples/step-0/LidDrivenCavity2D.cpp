@@ -52,10 +52,10 @@ void LidDrivenCavity2D::applyInitialVelocities(
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Mesh<2> > LidDrivenCavity2D::makeGrid(
+boost::shared_ptr<Mesh<2> > LidDrivenCavity2D::makeGrid(
 		size_t refinementLevel) {
 	//Creation of the principal domain
-	shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >();
+	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >();
 	dealii::GridGenerator::hyper_rectangle(*square, dealii::Point<2>(0, 0),
 			dealii::Point<2>(1, 1), false);
 
@@ -77,21 +77,21 @@ shared_ptr<Mesh<2> > LidDrivenCavity2D::makeGrid(
  * @return shared pointer to a vector of boundaries
  * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
  */
-shared_ptr<BoundaryCollection<2> > LidDrivenCavity2D::makeBoundaries() {
+boost::shared_ptr<BoundaryCollection<2> > LidDrivenCavity2D::makeBoundaries() {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
 	dealii::Vector<double> zeroVector(2);
 	dealii::Vector<double> xVelocity(2);
 	xVelocity(0) = topPlateVelocity;
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(0, zeroVector));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(1, zeroVector));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(2, zeroVector));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(3, xVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(0, zeroVector));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(1, zeroVector));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, zeroVector));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(3, xVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Mesh<2> > tria_pointer = getMesh();
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

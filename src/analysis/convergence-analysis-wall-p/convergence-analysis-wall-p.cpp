@@ -99,7 +99,7 @@ int main() {
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-wall-p/"
 				<< orderOfFiniteElement << "_" << refinementLevel << "_" << dt;
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
@@ -118,9 +118,9 @@ int main() {
 #endif
 
 		// make problem and solver objects; measure time
-		shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(
+		boost::shared_ptr<CouetteFlow2D> couette2D = boost::make_shared<CouetteFlow2D>(
 				viscosity, U, refinementLevel, L, t0);
-		shared_ptr<Benchmark<2> > benchmark = couette2D;
+		boost::shared_ptr<Benchmark<2> > benchmark = couette2D;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, benchmark);
 		time1 = clock() - timestart;

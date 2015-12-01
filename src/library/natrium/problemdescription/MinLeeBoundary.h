@@ -62,16 +62,16 @@ private:
 
 	size_t m_boundaryIndicator;
 
-	shared_ptr<dealii::Function<dim> > m_boundaryDensity;
+	boost::shared_ptr<dealii::Function<dim> > m_boundaryDensity;
 
-	shared_ptr<dealii::Function<dim> > m_boundaryVelocity;
+	boost::shared_ptr<dealii::Function<dim> > m_boundaryVelocity;
 
 public:
 
 	/// constructor
 	MinLeeBoundary(size_t boundaryIndicator,
-			shared_ptr<dealii::Function<dim> > boundaryDensity,
-			shared_ptr<dealii::Function<dim> > boundaryVelocity);
+			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
+			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity);
 
 	/// constructor
 	MinLeeBoundary(size_t boundaryIndicator,

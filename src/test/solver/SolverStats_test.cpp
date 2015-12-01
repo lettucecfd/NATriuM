@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(SolverStats_ConstructionAndFunctionality_test) {
 	const boost::filesystem::path natriumTmpDir("/tmp/natrium_test");
 	const boost::filesystem::path natriumTmpFile = natriumTmpDir
 			/ "testtable.txt";
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<
 			SolverConfiguration>();
 	testConfiguration->setOutputDirectory(natriumTmpDir.c_str());
 	testConfiguration->setCommandLineVerbosity(SILENT);
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(SolverStats_ConstructionAndFunctionality_test) {
 	testConfiguration->setNumberOfTimeSteps(10);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<
+	boost::shared_ptr<ProblemDescription<2> > testFlow = boost::make_shared<
 			SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 	CFDSolver<2> solver(testConfiguration, testFlow);
 
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(SolverStats_FunctionsInSolverContext_test) {
 	pout << "SolverStats_FunctionsInSolverContext_test..." << endl;
 	// make solver object
 	const boost::filesystem::path natriumTmpDir("/tmp/natrium_test");
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<
 			SolverConfiguration>();
 	testConfiguration->setOutputDirectory(natriumTmpDir.c_str());
 	testConfiguration->setCommandLineVerbosity(SILENT);
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(SolverStats_FunctionsInSolverContext_test) {
 	testConfiguration->setOutputTableInterval(1);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<
+	boost::shared_ptr<ProblemDescription<2> > testFlow = boost::make_shared<
 			SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 	CFDSolver<2> solver(testConfiguration, testFlow);
 

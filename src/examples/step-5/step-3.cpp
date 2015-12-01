@@ -49,7 +49,7 @@ int main() {
 	size_t orderOfFiniteElement = 2;
 	double viscosity = 0.0001/(sqrt(3));
 
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
@@ -69,9 +69,9 @@ int main() {
 	configuration->setDistributionInitType(Iterative);
 
 	// make problem and solver objects
-	shared_ptr<PoiseuilleFlow2D> poiseuilleFlow = make_shared<PoiseuilleFlow2D>(
+	boost::shared_ptr<PoiseuilleFlow2D> poiseuilleFlow = boost::make_shared<PoiseuilleFlow2D>(
 			viscosity, refinementLevel);
-	shared_ptr<ProblemDescription<2> > poiseuilleProblem = poiseuilleFlow;
+	boost::shared_ptr<ProblemDescription<2> > poiseuilleProblem = poiseuilleFlow;
 	CFDSolver<2> solver(configuration, poiseuilleProblem);
 
 	// File for max norms

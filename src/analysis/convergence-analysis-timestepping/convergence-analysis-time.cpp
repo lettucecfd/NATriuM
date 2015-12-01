@@ -82,14 +82,14 @@ int main() {
 
 #ifndef ONLY_PERIODIC
 	// make problem object
-	shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(viscosity,
+	boost::shared_ptr<CouetteFlow2D> couette2D = boost::make_shared<CouetteFlow2D>(viscosity,
 			U, refinementLevel, L, t0);
-	shared_ptr<Benchmark<2> > benchmark = couette2D;
+	boost::shared_ptr<Benchmark<2> > benchmark = couette2D;
 #else
 	// make problem object
-	shared_ptr<TaylorGreenVortex2D> tgv2D = make_shared<TaylorGreenVortex2D>(viscosity,
+	boost::shared_ptr<TaylorGreenVortex2D> tgv2D = boost::make_shared<TaylorGreenVortex2D>(viscosity,
 		refinementLevel);
-	shared_ptr<Benchmark<2> > benchmark = tgv2D;
+	boost::shared_ptr<Benchmark<2> > benchmark = tgv2D;
 #endif
 
 
@@ -123,7 +123,7 @@ int main() {
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-time/"
 				<< orderOfFiniteElement << "_" << refinementLevel << "_" << dt;
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());

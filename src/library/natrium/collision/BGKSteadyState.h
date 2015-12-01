@@ -46,7 +46,7 @@ public:
 	 *        the effective sound speed is decreased
 	 *
 	 */
-	BGKSteadyState(double relaxationParameter, double dt, const shared_ptr<Stencil> stencil, double preconditioning_parameter);
+	BGKSteadyState(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil, double preconditioning_parameter);
 
 
 	/// destructor

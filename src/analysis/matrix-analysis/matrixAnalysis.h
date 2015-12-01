@@ -21,12 +21,12 @@ namespace natrium {
 template<size_t dim>
 class matrixAnalysis {
 private:
-	shared_ptr<CFDSolver<dim> > m_solver;
+	boost::shared_ptr<CFDSolver<dim> > m_solver;
 
 public:
 
 	// constructor
-	matrixAnalysis(shared_ptr<CFDSolver<dim> > solver);
+	matrixAnalysis(boost::shared_ptr<CFDSolver<dim> > solver);
 
 	// destructor
 	virtual ~matrixAnalysis();

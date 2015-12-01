@@ -25,7 +25,7 @@ PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
 	// apply initial values / analytic solution
-	setAnalyticU(make_shared<AnalyticVelocity>(this));
+	setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
 
 	// refine global
 	getMesh()->refine_global(refinementLevel);
@@ -38,12 +38,12 @@ PoiseuilleFlow2D::~PoiseuilleFlow2D() {
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Mesh<2> > PoiseuilleFlow2D::makeGrid(double height, double length) {
+boost::shared_ptr<Mesh<2> > PoiseuilleFlow2D::makeGrid(double height, double length) {
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
-	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >(MPI_COMM_WORLD);
+	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
 #else
-	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >();
+	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	dealii::GridGenerator::hyper_rectangle(*rect, dealii::Point<2>(0, -height),
 			dealii::Point<2>(length, height), false);
@@ -64,7 +64,7 @@ shared_ptr<Mesh<2> > PoiseuilleFlow2D::makeGrid(double height, double length) {
  * @return shared pointer to a vector of boundaries
  * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
  */
-shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
+boost::shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 		bool is_periodic) {
 
 	if (is_periodic){
@@ -73,18 +73,18 @@ shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 
 	}
 	// make boundary description
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
 	dealii::Vector<double> zeroVector(2);
 	dealii::Vector<double> xVelocity(2);
 	xVelocity(0) = 0.1 / sqrt(3);
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(0, zeroVector));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(1, zeroVector));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(2, zeroVector));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(3, xVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(0, zeroVector));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(1, zeroVector));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, zeroVector));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(3, xVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Mesh<2> > tria_pointer = getMesh();
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

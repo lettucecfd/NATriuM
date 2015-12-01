@@ -29,8 +29,8 @@ extern dealii::ConditionalOStream pout;
  */
 class MPIGuard {
 private:
-	static shared_ptr<MPIGuard> m_privateInstance;
-	shared_ptr<dealii::Utilities::MPI::MPI_InitFinalize> m_mpi_initialization;
+	static boost::shared_ptr<MPIGuard> m_privateInstance;
+	boost::shared_ptr<dealii::Utilities::MPI::MPI_InitFinalize> m_mpi_initialization;
 
 	bool is_rank_0() {
 		int mpi_rank;
@@ -40,7 +40,7 @@ private:
 
 public:
 	/**
-	 * @short Constructor (should normally be private, but is not allowed by make_shared)
+	 * @short Constructor (should normally be private, but is not allowed by boost::make_shared)
 	 */
 	MPIGuard(int& argc, char**& argv);
 
@@ -51,13 +51,13 @@ public:
 	 * @argv Command line argument.Can be used to determine the number of parallel processes.
 	 * See documentation of  dealii::Utilities::MPI::MPI_InitFinalize(argc, argv) for details.
 	 */
-	static shared_ptr<MPIGuard> getInstance(int& argc, char**& argv);
+	static boost::shared_ptr<MPIGuard> getInstance(int& argc, char**& argv);
 
-	static shared_ptr<MPIGuard> getInstance();
+	static boost::shared_ptr<MPIGuard> getInstance();
 	/**
 	 * @short return dealii's MPI_InitFinalize object
 	 */
-	shared_ptr<dealii::Utilities::MPI::MPI_InitFinalize> getMPI_InitFinalize() {
+	boost::shared_ptr<dealii::Utilities::MPI::MPI_InitFinalize> getMPI_InitFinalize() {
 		return m_mpi_initialization;
 	}
 

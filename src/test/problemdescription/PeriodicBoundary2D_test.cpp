@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test) {
 	// SANITY TEST //
 	/////////////////
 	/// Valid set of points and triangulation
-	shared_ptr<Mesh<2> > triangulation = make_shared<Mesh<2> >(
+	boost::shared_ptr<Mesh<2> > triangulation = boost::make_shared<Mesh<2> >(
 #ifdef WITH_TRILINOS_MPI
 			MPI_COMM_WORLD
 #endif
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 	const size_t numberOfRefinementSteps = 2;
 
 	/// create triangulation
-	shared_ptr<Mesh<2> > triangulation = make_shared<Mesh<2> >(
+	boost::shared_ptr<Mesh<2> > triangulation = boost::make_shared<Mesh<2> >(
 #ifdef WITH_TRILINOS_MPI
 			MPI_COMM_WORLD
 #endif
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 	triangulation->refine_global(numberOfRefinementSteps);
 
 	// distribute dofs
-	shared_ptr<dealii::DoFHandler<2> > doFHandler = make_shared<
+	boost::shared_ptr<dealii::DoFHandler<2> > doFHandler = boost::make_shared<
 			dealii::DoFHandler<2> >(*triangulation);
 	dealii::QGaussLobatto<1> qGaussLobatto(2);
 	dealii::FE_DGQArbitraryNodes<2> fe(qGaussLobatto);

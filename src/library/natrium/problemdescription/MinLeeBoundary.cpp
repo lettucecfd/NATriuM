@@ -20,24 +20,24 @@ template class BoundaryVelocity<3> ;
 
 template<size_t dim> MinLeeBoundary<dim>::MinLeeBoundary(
 		size_t boundaryIndicator,
-		shared_ptr<dealii::Function<dim> > boundaryDensity,
-		shared_ptr<dealii::Function<dim> > boundaryVelocity) :
+		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
+		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity) :
 		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
 				boundaryDensity), m_boundaryVelocity(boundaryVelocity) {
 }
 template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator,
-		shared_ptr<dealii::Function<2> > boundaryDensity,
-		shared_ptr<dealii::Function<2> > boundaryVelocity);
+		boost::shared_ptr<dealii::Function<2> > boundaryDensity,
+		boost::shared_ptr<dealii::Function<2> > boundaryVelocity);
 template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
-		shared_ptr<dealii::Function<3> > boundaryDensity,
-		shared_ptr<dealii::Function<3> > boundaryVelocity);
+		boost::shared_ptr<dealii::Function<3> > boundaryDensity,
+		boost::shared_ptr<dealii::Function<3> > boundaryVelocity);
 
 template<size_t dim>
 MinLeeBoundary<dim>::MinLeeBoundary(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity) :
 		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
-				make_shared<BoundaryDensity<dim> >()), m_boundaryVelocity(
-				make_shared<BoundaryVelocity<dim> >(velocity)) {
+				boost::make_shared<BoundaryDensity<dim> >()), m_boundaryVelocity(
+				boost::make_shared<BoundaryVelocity<dim> >(velocity)) {
 }
 template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity);

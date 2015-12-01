@@ -14,7 +14,7 @@ namespace natrium {
 
 /// constructor
 BGKSteadyState::BGKSteadyState(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil, double preconditioning_parameter) :
+		const boost::shared_ptr<Stencil> stencil, double preconditioning_parameter) :
 		BGK(relaxationParameter, dt, stencil),
 		m_gamma (preconditioning_parameter) {
 	assert (preconditioning_parameter > 0);

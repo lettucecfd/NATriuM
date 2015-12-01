@@ -32,7 +32,7 @@ public:
 
 
 	/// constructor
-	BGKStandardTransformed(double relaxationParameter, double dt, const shared_ptr<Stencil> stencil);
+	BGKStandardTransformed(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil);
 
 
 	/// destructor

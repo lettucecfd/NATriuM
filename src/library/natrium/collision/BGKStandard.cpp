@@ -11,7 +11,7 @@ namespace natrium {
 
 /// constructor
 BGKStandard::BGKStandard(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil) :
+		const boost::shared_ptr<Stencil> stencil) :
 		BGK(relaxationParameter, dt, stencil) {
 } /// constructor
 
@@ -29,12 +29,12 @@ double BGKStandard::getEquilibriumDistribution(size_t i,
 	assert(u(1) < 1000000000000000.);
 
 	double prefactor = getStencil()->getWeight(i) * rho;
-	double uSquareTerm = -Math::scalar_product(u, u)
+	double uSquareTerm = - (u * u)
 			/ (2 * getStencil()->getSpeedOfSoundSquare());
 	if (0 == i) {
 		return prefactor * (1 + uSquareTerm);
 	}
-	double mixedTerm = Math::scalar_product(u, getStencil()->getDirection(i))
+	double mixedTerm = (u * getStencil()->getDirection(i))
 			/ getStencil()->getSpeedOfSoundSquare();
 	return prefactor * (1 + mixedTerm * (1 + 0.5 * (mixedTerm)) + uSquareTerm);
 

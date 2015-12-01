@@ -21,10 +21,10 @@ SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 				makeGrid(cell_aspect_ratio),
 				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(averageHeight), m_ampl(amplitude) {
 	setBoundaries(makeBoundaries(bottomVelocity));
-	this->setInitialRho(make_shared<InitialVelocity>(this));
+	this->setInitialRho(boost::make_shared<InitialVelocity>(this));
 
 	// refine grid
-	shared_ptr<Mesh<2> > rect = getMesh();
+	boost::shared_ptr<Mesh<2> > rect = getMesh();
 	rect->refine_global(refinementLevel);
 
 	// transform grid
@@ -39,11 +39,11 @@ SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 SinusoidalShear2D::~SinusoidalShear2D() {
 }
 
-shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double cell_aspect_ratio) {
+boost::shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double cell_aspect_ratio) {
 #ifdef WITH_TRILINOS_MPI
-	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >(MPI_COMM_WORLD);
+	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
 #else
-	shared_ptr<Mesh<2> > rect = make_shared<Mesh<2> >();
+	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	dealii::Point<2> x1(0,0);
 	dealii::Point<2> x2(1,1);
@@ -57,24 +57,24 @@ shared_ptr<Mesh<2> > SinusoidalShear2D::makeGrid(double cell_aspect_ratio) {
 	return rect;
 }
 
-shared_ptr<BoundaryCollection<2> > SinusoidalShear2D::makeBoundaries(
+boost::shared_ptr<BoundaryCollection<2> > SinusoidalShear2D::makeBoundaries(
 		double bottomVelocity) {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
 	numeric_vector zeroVelocity(2);
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = bottomVelocity;
 
 	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(2, constantVelocity));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
+			boost::make_shared<MinLeeBoundary<2> >(2, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Mesh<2> > tria_pointer = getMesh();
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

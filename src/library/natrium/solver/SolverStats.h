@@ -26,7 +26,7 @@ template<size_t dim> class SolverStats {
 private:
 
 	CFDSolver<dim> * m_solver;
-	shared_ptr<std::fstream> m_tableFile;
+	boost::shared_ptr<std::fstream> m_tableFile;
 	std::string m_filename;
 	const bool m_outputOff;
 
@@ -60,11 +60,11 @@ public:
 		if (not m_outputOff) {
 			// create file (if necessary)
 			if (m_solver->getIterationStart() > 0) {
-				m_tableFile = make_shared<std::fstream>(tableFileName,
+				m_tableFile = boost::make_shared<std::fstream>(tableFileName,
 						std::fstream::out | std::fstream::app);
 			} else {
 				if (is_MPI_rank_0()) {
-					m_tableFile = make_shared<std::fstream>(tableFileName,
+					m_tableFile = boost::make_shared<std::fstream>(tableFileName,
 							std::fstream::out);
 				}
 				printHeaderLine();
@@ -153,7 +153,7 @@ public:
 		return m_maxU;
 	}
 
-	shared_ptr<std::fstream> getTableFile() const {
+	boost::shared_ptr<std::fstream> getTableFile() const {
 		return m_tableFile;
 	}
 

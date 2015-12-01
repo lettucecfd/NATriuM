@@ -174,13 +174,13 @@ TestResult ConvergenceTestPeriodic() {
 	const double refinementLevel = 3;
 	const double CFL = 0.4;
 
-	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
+	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
 			CFL);
 
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
 	configuration->setRestartAtLastCheckpoint(false);
@@ -252,13 +252,13 @@ TestResult ConvergenceTestImplicitLBM() {
 	const double refinementLevel = 3;
 	const double CFL = 5.0;
 
-	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
+	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
 			CFL);
 
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
 	configuration->setRestartAtLastCheckpoint(false);
@@ -332,13 +332,13 @@ TestResult ConvergenceTestExponentialLBM() {
 	const double refinementLevel = 3;
 	const double CFL = 5.0;
 
-	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
+	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
 			CFL);
 
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
 	configuration->setRestartAtLastCheckpoint(false);
@@ -409,13 +409,13 @@ TestResult ConvergenceTestDealIIWrapper() {
 	const double refinementLevel = 3;
 	const double CFL = 5.0;
 
-	shared_ptr<Benchmark<2> > benchmark = make_shared<TaylorGreenVortex2D>(
+	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
 	double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
 			CFL);
 
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
 	configuration->setRestartAtLastCheckpoint(false);
@@ -488,7 +488,7 @@ TestResult ConvergenceTest3D() {
 	const double CFL = 1.0;
 	const double t0 = 1.0;
 
-	shared_ptr<Benchmark<3> > benchmark = make_shared<CouetteFlow3D>(viscosity,
+	boost::shared_ptr<Benchmark<3> > benchmark = boost::make_shared<CouetteFlow3D>(viscosity,
 			U, refinementLevel, L, t0);
 
 	size_t orderOfFiniteElement = 4;
@@ -496,7 +496,7 @@ TestResult ConvergenceTest3D() {
 	double dt = CFDSolverUtilities::calculateTimestep<3>(
 			*benchmark->getMesh(), orderOfFiniteElement,
 			D3Q27(scaling), CFL);
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
 	configuration->setStencil(Stencil_D3Q27);
@@ -565,7 +565,7 @@ TestResult ConvergenceTestMovingWall() {
 	const double CFL = 0.4;
 	const double t0 = 40.0;
 
-	shared_ptr<Benchmark<2> > benchmark = make_shared<CouetteFlow2D>(viscosity,
+	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<CouetteFlow2D>(viscosity,
 			U, refinementLevel, L, t0);
 
 	/*for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 12;
@@ -576,7 +576,7 @@ TestResult ConvergenceTestMovingWall() {
 		double dt = CFDSolverUtilities::calculateTimestep<2>(
 				*benchmark->getMesh(), orderOfFiniteElement,
 				D2Q9(scaling), CFL);
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
 		configuration->setRestartAtLastCheckpoint(false);

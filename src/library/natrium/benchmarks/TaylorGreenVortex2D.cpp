@@ -25,8 +25,8 @@ TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply initial and analytical solution
-	this->setAnalyticU(make_shared<AnalyticVelocity>(this));
-	this->setAnalyticRho(make_shared<AnalyticDensity>(this));
+	this->setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
+	this->setAnalyticRho(boost::make_shared<AnalyticDensity>(this));
 
 	// Refine grid
 	getMesh()->refine_global(refinementLevel);
@@ -64,12 +64,12 @@ double TaylorGreenVortex2D::AnalyticDensity::value(const dealii::Point<2>& x,
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid() {
+boost::shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid() {
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
-	shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >(MPI_COMM_WORLD);
+	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
 #else
-	shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >();
+	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >();
 #endif
 	dealii::GridGenerator::hyper_cube(*square, 0, 8 * atan(1));
 
@@ -89,16 +89,16 @@ shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid() {
  * @return shared pointer to a vector of boundaries
  * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
  */
-shared_ptr<BoundaryCollection<2> > TaylorGreenVortex2D::makeBoundaries() {
+boost::shared_ptr<BoundaryCollection<2> > TaylorGreenVortex2D::makeBoundaries() {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
-	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Mesh<2> > tria_pointer = getMesh();
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

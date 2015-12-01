@@ -61,14 +61,14 @@ private:
 	 * @param[in] L length of domain in x-direction. Has to be a natural number.
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<3> > makeGrid(size_t L);
+	boost::shared_ptr<Mesh<3> > makeGrid(size_t L);
 
 	/**
 	 * @short create boundaries for couette flow
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<3> > makeBoundaries(double topPlateVelocity);
+	boost::shared_ptr<BoundaryCollection<3> > makeBoundaries(double topPlateVelocity);
 
 	double getStartTime() const {
 		return m_startTime;

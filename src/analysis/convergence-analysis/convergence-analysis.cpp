@@ -146,7 +146,7 @@ int main(int argc, char* argv[]) {
 	// scaling of stencil
 	double scaling;
 	// Benchmark problem
-	shared_ptr<Benchmark<2> > benchmark;
+	boost::shared_ptr<Benchmark<2> > benchmark;
 	// dx
 	double dx;
 	// dt
@@ -218,14 +218,14 @@ int main(int argc, char* argv[]) {
 
 			// make benchmark problem
 			if (WALL) {
-				shared_ptr<CouetteFlow2D> couette2D =
-						make_shared<CouetteFlow2D>(viscosity, U,
+				boost::shared_ptr<CouetteFlow2D> couette2D =
+						boost::make_shared<CouetteFlow2D>(viscosity, U,
 								refinementLevel, L, 0.0);
 				benchmark = couette2D;
 				dx = CFDSolverUtilities::getMinimumVertexDistance<2>(
 						*couette2D->getMesh());
 			} else {
-				shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+				boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 						TaylorGreenVortex2D>(viscosity, refinementLevel);
 				benchmark = tgVortex;
 				dx = CFDSolverUtilities::getMinimumVertexDistance<2>(
@@ -257,7 +257,7 @@ int main(int argc, char* argv[]) {
 
 			// setup configuration
 			std::stringstream dirName;
-			shared_ptr<SolverConfiguration> configuration = make_shared<
+			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			configuration->setSwitchOutputOff(true);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);

@@ -11,7 +11,7 @@ namespace natrium {
 
 /// constructor
 BGKStandardTransformed::BGKStandardTransformed(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil) :
+		const boost::shared_ptr<Stencil> stencil) :
 		BGK(relaxationParameter, dt, stencil),
 		m_rho0 (1.0) {
 } /// constructor

@@ -49,7 +49,7 @@ int main() {
 	// chose scaling so that Ma is recovered
 	double scaling = sqrt(3) * 1 / Ma;
 
-	shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<TaylorGreenVortex2D>(
+	boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel);
 
 	// chose dt so that courant (advection) = 1 for the diagonal directions
@@ -65,7 +65,7 @@ int main() {
 	// setup configuration
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-kinE";
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
@@ -86,7 +86,7 @@ int main() {
 	configuration->setNumberOfTimeSteps(20.0 / dt);
 
 	// make problem and solver objects
-	shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+	boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 	//timestart = clock();
 	BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 	// get tau to test if the "constant value" is really constant

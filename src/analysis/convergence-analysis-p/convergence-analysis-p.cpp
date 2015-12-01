@@ -79,7 +79,7 @@ int main() {
 			orderOfFiniteElement += 2) {
 		pout << "order of FE = " << orderOfFiniteElement << endl;
 
-		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 						TaylorGreenVortex2D>(viscosity, refinementLevel);
 		double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(*tgVortex->getMesh(), orderOfFiniteElement);
 		// chose dt so that courant (advection) = 0.4
@@ -95,7 +95,7 @@ int main() {
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-p/"
 				<< orderOfFiniteElement << "_" << refinementLevel;
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
@@ -124,9 +124,9 @@ int main() {
 #endif
 
 		// make problem and solver objects; measure time
-		//shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+		//boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 		//		TaylorGreenVortex2D>(viscosity, refinementLevel);
-		shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+		boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 		time1 = clock() - timestart;

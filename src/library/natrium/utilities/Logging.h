@@ -46,9 +46,9 @@ private:
 	/// The Log file has different levels (through sections). This variables stores the current level of the parser.
 	size_t m_currentLevel;
 	/// the file stream has to be stored as a local variable in order to be not deleted
-	shared_ptr<std::ofstream> m_fileStream;
+	boost::shared_ptr<std::ofstream> m_fileStream;
 	/// this static object points to the default logstream. It can be accessed through the friend function LOG and LOGGER.
-	static shared_ptr<Logging> m_LOGGER;
+	static boost::shared_ptr<Logging> m_LOGGER;
 public:
 	/**
 	 * @short constructor
@@ -82,7 +82,7 @@ public:
 		if (has_file()) {
 			detach();
 		}
-		m_fileStream = make_shared<std::ofstream>(logFile);
+		m_fileStream = boost::make_shared<std::ofstream>(logFile);
 		attach(*m_fileStream);
 	}
 

@@ -24,25 +24,25 @@ namespace natrium {
 template<size_t dim> class Benchmark: public ProblemDescription<dim> {
 private:
 	/// function to define initial densities
-	shared_ptr<dealii::Function<dim> > m_analyticRho;
+	boost::shared_ptr<dealii::Function<dim> > m_analyticRho;
 
 	/// function to define initial velocities (u,v,w for x,y,z component)
-	shared_ptr<dealii::Function<dim> > m_analyticU;
+	boost::shared_ptr<dealii::Function<dim> > m_analyticU;
 
 protected:
-	void setAnalyticRho(shared_ptr<dealii::Function<dim> > ana_rho){
+	void setAnalyticRho(boost::shared_ptr<dealii::Function<dim> > ana_rho){
 		m_analyticRho = ana_rho;
 	}
-	void setAnalyticU(shared_ptr<dealii::Function<dim> > ana_u){
+	void setAnalyticU(boost::shared_ptr<dealii::Function<dim> > ana_u){
 		m_analyticU =  ana_u;
 	}
 public:
 	/// Constructor
-	Benchmark(shared_ptr<Mesh<dim> > triangulation,
+	Benchmark(boost::shared_ptr<Mesh<dim> > triangulation,
 			double viscosity, double characteristicLength):
 				ProblemDescription<dim>(triangulation, viscosity, characteristicLength){
-			m_analyticRho = make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
-			m_analyticU = make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
+			m_analyticRho = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
+			m_analyticU = boost::make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
 	}
 
 	/// Destructor
@@ -55,7 +55,7 @@ public:
 	 * It is not recommended to store the return value in any local object that is used
 	 * in more than one time step.
 	 */
-	const shared_ptr<dealii::Function<dim> >& getAnalyticRhoFunction(double time) const {
+	const boost::shared_ptr<dealii::Function<dim> >& getAnalyticRhoFunction(double time) const {
 		m_analyticRho->set_time(time);
 		return m_analyticRho;
 	}
@@ -66,7 +66,7 @@ public:
 	 * It is not recommended to store the return value in any local object that is used
 	 * in more than one time step.
 	 */
-	const shared_ptr<dealii::Function<dim> >& getAnalyticUFunction(double time) const {
+	const boost::shared_ptr<dealii::Function<dim> >& getAnalyticUFunction(double time) const {
 		m_analyticU->set_time(time);
 		return m_analyticU;
 	}
@@ -78,7 +78,7 @@ public:
 	 * It is not recommended to store the return value in any local object that is used
 	 * in more than one time step.
 	 */
-	virtual const shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
+	virtual const boost::shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
 		m_analyticRho->set_time(0);
 		return m_analyticRho;
 	}
@@ -90,7 +90,7 @@ public:
 	 * It is not recommended to store the return value in any local object that is used
 	 * in more than one time step.
 	 */
-	virtual const shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
+	virtual const boost::shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
 		m_analyticU->set_time(0);
 		return m_analyticU;
 	}

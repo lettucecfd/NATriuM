@@ -82,24 +82,24 @@ private:
 	vector<distributed_vector> m_tmpVelocity;
 
 	/// description of the CFD problem (boundraries, initial values, etc.)
-	shared_ptr<ProblemDescription<dim> > m_problemDescription;
+	boost::shared_ptr<ProblemDescription<dim> > m_problemDescription;
 
 	/// global streaming data
-	shared_ptr<AdvectionOperator<dim> > m_advectionOperator;
+	boost::shared_ptr<AdvectionOperator<dim> > m_advectionOperator;
 
 	/// DdQq Boltzmann model (e.g. D2Q9)
-	shared_ptr<Stencil> m_stencil;
+	boost::shared_ptr<Stencil> m_stencil;
 
 	/// Description of the collision algorithm
-	shared_ptr<CollisionModel> m_collisionModel;
+	boost::shared_ptr<CollisionModel> m_collisionModel;
 
 	/// Time Integrator for the solution of the ODE, which stems from the space discretization
-	shared_ptr<
+	boost::shared_ptr<
 			TimeIntegrator<distributed_sparse_block_matrix,
 					distributed_block_vector> > m_timeIntegrator;
 
 	/// Configuration of the solver
-	shared_ptr<SolverConfiguration> m_configuration;
+	boost::shared_ptr<SolverConfiguration> m_configuration;
 
 	/// the number of the first iteration (normally 0, except for restart at a checkpoint)
 	size_t m_iterationStart;
@@ -114,7 +114,7 @@ private:
 	size_t m_i;
 
 	/// table out
-	shared_ptr<SolverStats<dim> > m_solverStats;
+	boost::shared_ptr<SolverStats<dim> > m_solverStats;
 
 	// starting time
 	time_t m_tstart;
@@ -139,8 +139,8 @@ public:
 
 	/// constructor
 	/// @note: has to be inlined, if the template parameter is not made explicit
-	CFDSolver(shared_ptr<SolverConfiguration> configuration,
-			shared_ptr<ProblemDescription<dim> > problemDescription);
+	CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+			boost::shared_ptr<ProblemDescription<dim> > problemDescription);
 
 /// destructor
 	virtual ~CFDSolver() {
@@ -217,27 +217,27 @@ public:
 		return m_velocity;
 	}
 
-	const shared_ptr<AdvectionOperator<dim> >& getAdvectionOperator() const {
+	const boost::shared_ptr<AdvectionOperator<dim> >& getAdvectionOperator() const {
 		return m_advectionOperator;
 	}
 
-	const shared_ptr<Stencil>& getStencil() const {
+	const boost::shared_ptr<Stencil>& getStencil() const {
 		return m_stencil;
 	}
 
-	const shared_ptr<CollisionModel>& getCollisionModel() const {
+	const boost::shared_ptr<CollisionModel>& getCollisionModel() const {
 		return m_collisionModel;
 	}
 
-	const shared_ptr<SolverConfiguration>& getConfiguration() const {
+	const boost::shared_ptr<SolverConfiguration>& getConfiguration() const {
 		return m_configuration;
 	}
 
-	const shared_ptr<ProblemDescription<dim> >& getProblemDescription() const {
+	const boost::shared_ptr<ProblemDescription<dim> >& getProblemDescription() const {
 		return m_problemDescription;
 	}
 
-	const shared_ptr<
+	const boost::shared_ptr<
 			TimeIntegrator<distributed_vector, distributed_sparse_matrix> >& getTimeIntegrator() const {
 		return m_timeIntegrator;
 	}
@@ -287,7 +287,7 @@ public:
 		m_i = iteration;
 	}
 
-	const shared_ptr<SolverStats<dim> >& getSolverStats() const {
+	const boost::shared_ptr<SolverStats<dim> >& getSolverStats() const {
 		return m_solverStats;
 	}
 

@@ -24,9 +24,9 @@ namespace natrium {
 class Timing {
 private:
 	/// outstream to print not to cout but to Logfile
-	static shared_ptr<std::ostringstream> m_outStream;
+	static boost::shared_ptr<std::ostringstream> m_outStream;
 	/// TimerOutput is deal.II's class for time measurements
-	static shared_ptr<TimerOutput> m_timer;
+	static boost::shared_ptr<TimerOutput> m_timer;
 	/// private constructor
 	Timing() {
 	}

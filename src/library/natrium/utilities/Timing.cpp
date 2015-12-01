@@ -9,15 +9,15 @@
 
 namespace natrium {
 
-shared_ptr<TimerOutput> Timing::m_timer = NULL;
-shared_ptr<std::ostringstream> Timing::m_outStream = NULL;
+boost::shared_ptr<TimerOutput> Timing::m_timer = NULL;
+boost::shared_ptr<std::ostringstream> Timing::m_outStream = NULL;
 
 void Timing::makeInstance() {
 	if (m_timer == NULL) {
 		assert(m_outStream == NULL);
-		m_outStream = make_shared<std::ostringstream>();
+		m_outStream = boost::make_shared<std::ostringstream>();
 		std::ostringstream& out = *(m_outStream);
-		m_timer = make_shared<TimerOutput>(MPI_COMM_WORLD, out,
+		m_timer = boost::make_shared<TimerOutput>(MPI_COMM_WORLD, out,
 				TimerOutput::summary, TimerOutput::wall_times);
 
 	}

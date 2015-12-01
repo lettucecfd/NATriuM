@@ -140,10 +140,10 @@ int main(int argc, char* argv[]) {
 
 			double scaling = sqrt(3) * 1 / Ma;
 
-			shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+			boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 					TaylorGreenVortex2D>(viscosity, refinementLevel,
 					scaling / sqrt(3), (INIT_SCHEME == 3));
-			shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+			boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
 					*tgVortex->getMesh(), orderOfFiniteElement,
@@ -158,7 +158,7 @@ int main(int argc, char* argv[]) {
 			std::stringstream dirName2;
 			dirName2 << dirName.str() << Ma << "-ref" << refinementLevel << "-p"
 					<< orderOfFiniteElement;
-			shared_ptr<SolverConfiguration> configuration = make_shared<
+			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName2.str());

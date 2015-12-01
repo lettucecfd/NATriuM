@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	// in order to start from a continuous solution, do not start at t=0
 	const double startTime = 0.0;
 
-	shared_ptr<Benchmark<3> > couetteProblem = make_shared<CouetteFlow3D>(
+	boost::shared_ptr<Benchmark<3> > couetteProblem = boost::make_shared<CouetteFlow3D>(
 			viscosity, U, refinementLevel, 1.0, startTime, isUnstructured);
 
 	// set small time step size
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 
 	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-couette3D";

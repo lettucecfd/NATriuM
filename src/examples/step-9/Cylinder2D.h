@@ -41,14 +41,14 @@ private:
 	 * @short create triangulation for cylinder flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid();
+	boost::shared_ptr<Mesh<2> > makeGrid();
 
 	/**
 	 * @short create boundaries for cylinder flow
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries(double inletVelocity);
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(double inletVelocity);
 
 	/**
 	 * @short set initial densities

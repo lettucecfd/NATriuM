@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardConstruction_test) {
 	double tau = 0.9;
 	double dt = 0.1;
 
-	BOOST_CHECK_NO_THROW(BGKStandard bgkCollision(tau, dt, make_shared<D2Q9>()));
+	BOOST_CHECK_NO_THROW(BGKStandard bgkCollision(tau, dt, boost::make_shared<D2Q9>()));
 
 	pout << "done" << endl;
 } //BGKStandardConstruction_test
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardSetTimeStep_test) {
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
 	double dt = 0.1;
-	BGKStandard bgkCollision(tau, dt, make_shared<D2Q9>());
+	BGKStandard bgkCollision(tau, dt, boost::make_shared<D2Q9>());
 
 	// check if viscosity is untouched (viscosity ~ dt*tau)
 	double dt_times_tau = tau * dt;
@@ -76,9 +76,9 @@ BOOST_AUTO_TEST_CASE(BGKMoments_test) {
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
-	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D2Q9>());
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
@@ -153,9 +153,9 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	pout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
-	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D2Q9>());
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>(5.0);
 	double tau = 0.9;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
 	pout << "D2Q9IncompressibleModelAllEqDistributions_Scaled_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>(5.0);
 	double tau = 0.9;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardCollisionInvariants_test) {
 	pout << "BGKStandardCollisionInvariants_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
@@ -358,9 +358,9 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD2Q9_test) {
 	pout << "BGKStandardTransformed_collideAllD2Q9_test..." << endl;
 
 	// create collision model// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
-	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D2Q9>());
 
 	// vectors have to be distributed, because otherwise
 	// they are recognized as ghost vectors; and ghost
@@ -428,9 +428,9 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD3Q19_test) {
 	pout << "BGKStandard_collideAllD3Q19_test..." << endl;
 
 	// create collision model// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D3Q19>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D3Q19>();
 	double tau = 0.9;
-	BGKStandard bgk(tau, 0.1, make_shared<D3Q19>());
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D3Q19>());
 
 	// vectors have to be distributed, because otherwise
 	// they are recognized as ghost vectors; and ghost
@@ -510,9 +510,9 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD3Q15_test) {
 	pout << "BGKStandard_collideAllD3Q19_test..." << endl;
 
 	// create collision model// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D3Q15>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D3Q15>();
 	double tau = 0.9;
-	BGKStandard bgk(tau, 0.1, make_shared<D3Q15>());
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D3Q15>());
 
 	// vectors have to be distributed, because otherwise
 	// they are recognized as ghost vectors; and ghost

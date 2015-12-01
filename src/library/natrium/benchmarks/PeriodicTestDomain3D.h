@@ -36,14 +36,14 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<3> > makeGrid();
+	boost::shared_ptr<Mesh<3> > makeGrid();
 
 	/**
 	 * @short create boundaries for couette flow
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<3> > makeBoundaries();
+	boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
 };
 

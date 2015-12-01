@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
 	///////////////////////////////
 
 	// Benchmark problem
-	shared_ptr<ProblemDescription<2> > benchmark;
+	boost::shared_ptr<ProblemDescription<2> > benchmark;
 	// dt
 	double dt;
 	// number of time steps
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
 					<< orderOfFiniteElement << " ... " << endl;
 			// make benchmark problem
 
-			shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+			boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 					TaylorGreenVortex2D>(viscosity, refinementLevel);
 			benchmark = tgVortex;
 
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
 
 			// setup configuration
 			std::stringstream dirName;
-			shared_ptr<SolverConfiguration> configuration = make_shared<
+			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			configuration->setSwitchOutputOff(true);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);

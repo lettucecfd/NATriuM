@@ -645,13 +645,13 @@ natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
 	dealii::TimeStepping::runge_kutta_method rk =
 			static_cast<dealii::TimeStepping::runge_kutta_method>((int) rkScheme);
 	if (rkScheme < 3) {
-		m_dealIIRKStepper = make_shared<
+		m_dealIIRKStepper = boost::make_shared<
 				dealii::TimeStepping::ExplicitRungeKutta<VECTOR> >(rk);
 	} else if (rkScheme < 7) {
-		m_dealIIRKStepper = make_shared<
+		m_dealIIRKStepper = boost::make_shared<
 				dealii::TimeStepping::ImplicitRungeKutta<VECTOR> >(rk);
 	} else if (rkScheme < 12) {
-		m_dealIIRKEmbedded = make_shared<
+		m_dealIIRKEmbedded = boost::make_shared<
 				dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >(rk);
 		m_dealIIRKStepper = m_dealIIRKEmbedded;
 	};
@@ -669,7 +669,7 @@ natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,
 	assert(NONE != rkScheme);
 	dealii::TimeStepping::runge_kutta_method rk =
 			static_cast<dealii::TimeStepping::runge_kutta_method>((int) rkScheme);
-	m_dealIIRKEmbedded = make_shared<
+	m_dealIIRKEmbedded = boost::make_shared<
 			dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >(rk,
 			coarsen_param, refine_param, min_delta, max_delta, refine_tol,
 			coarsen_tol);

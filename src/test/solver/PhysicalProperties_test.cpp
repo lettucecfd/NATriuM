@@ -21,8 +21,8 @@ BOOST_AUTO_TEST_SUITE(PhysicalProperties_test)
 BOOST_AUTO_TEST_CASE(PhysicalProperties_MassFluxX_test) {
 	pout << "PhysicalProperties_MassFluxX_test..." << endl;
 
-	shared_ptr<ProblemDescription<2> > problem = make_shared<CouetteFlow2D> (1,1,2,1,40,true);
-	shared_ptr<SolverConfiguration> config  = make_shared<SolverConfiguration>();
+	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<CouetteFlow2D> (1,1,2,1,40,true);
+	boost::shared_ptr<SolverConfiguration> config  = boost::make_shared<SolverConfiguration>();
 	config->setConvergenceThreshold(1e-4);
 	config->setRestartAtLastCheckpoint(false);
 	config->setUserInteraction(false);

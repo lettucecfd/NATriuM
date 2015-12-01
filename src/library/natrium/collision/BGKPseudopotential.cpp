@@ -24,7 +24,7 @@ namespace natrium {
 
 /// constructor
 BGKPseudopotential::BGKPseudopotential(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil) :
+		const boost::shared_ptr<Stencil> stencil) :
 		BGK(relaxationParameter, dt, stencil) {
 
 	throw CollisionException("Pseudopotential model not implemented, yet.");

@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateConstruction_test) {
 	double dt = 0.1;
 	double gamma = 0.34;
 
-	BOOST_CHECK_NO_THROW(BGKSteadyState bgkCollision(tau, dt, make_shared<D2Q9>(), gamma));
+	BOOST_CHECK_NO_THROW(BGKSteadyState bgkCollision(tau, dt, boost::make_shared<D2Q9>(), gamma));
 
 	pout << "done" << endl;
 } //BGKSteadyStateConstruction_test
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateSetTimeStep_test) {
 	double dt = 0.1;
 	double gamma = 0.34;
 
-	BGKSteadyState bgkCollision(tau, dt, make_shared<D2Q9>(), gamma);
+	BGKSteadyState bgkCollision(tau, dt, boost::make_shared<D2Q9>(), gamma);
 
 	// check if viscosity is untouched (viscosity ~ dt*tau)
 	double dt_times_tau = tau * dt;
@@ -74,10 +74,10 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_test) {
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
 	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, make_shared<D2Q9>(), gamma);
+	BGKSteadyState bgk(tau, 0.1, boost::make_shared<D2Q9>(), gamma);
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
@@ -152,10 +152,10 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 	pout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
 	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, make_shared<D2Q9>(), gamma);
+	BGKSteadyState bgk(tau, 0.1, boost::make_shared<D2Q9>(), gamma);
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateMoments_Scaled_test) {
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>(5.0);
 	double tau = 0.9;
 	double gamma = 0.34;
 	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateAllEqDistributions_Scaled_test) {
 	pout << "BGKSteadyStateAllEqDistributions_Scaled_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>(5.0);
 	double tau = 0.9;
 	double gamma = 0.34;
 	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE(BGKSteadyStateInvariants_test) {
 	pout << "BGKSteadyStateInvariants_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
 	double gamma = 0.34;
 	BGKSteadyState bgk(tau, 0.1, dqmodel, gamma);
@@ -361,10 +361,10 @@ BOOST_AUTO_TEST_CASE(BGKStandardTransformed_collideAll_test) {
 	pout << "BGKStandardTransformed_collideAll_test..." << endl;
 
 	// create collision model// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
 	double gamma = 0.34;
-	BGKSteadyState bgk(tau, 0.1, make_shared<D2Q9>(), gamma);
+	BGKSteadyState bgk(tau, 0.1, boost::make_shared<D2Q9>(), gamma);
 
 	// vectors have to be distributed, because otherwise
 	// they are recognized as ghost vectors; and ghost

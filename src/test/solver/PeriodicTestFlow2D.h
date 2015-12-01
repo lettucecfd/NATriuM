@@ -41,7 +41,7 @@ public:
 	/// constructor
 	SteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
 			ProblemDescription<2>(makeGrid(), viscosity, 1) {
-		setInitialU(make_shared<InitialVelocity>());
+		setInitialU(boost::make_shared<InitialVelocity>());
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
 		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
@@ -60,9 +60,9 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid() {
+	boost::shared_ptr<Mesh<2> > makeGrid() {
 		//Creation of the principal domain
-		shared_ptr<Mesh<2> > unitSquare = make_shared<Mesh<2> >(
+		boost::shared_ptr<Mesh<2> > unitSquare = boost::make_shared<Mesh<2> >(
 #ifdef WITH_TRILINOS_MPI
 				MPI_COMM_WORLD
 #endif
@@ -84,15 +84,15 @@ private:
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries() {
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries() {
 
 		// make boundary description
-		shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+		boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 				BoundaryCollection<2> >();
 		boundaries->addBoundary(
-				make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+				boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 		boundaries->addBoundary(
-				make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
+				boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
 		return boundaries;
 	}
@@ -124,7 +124,7 @@ public:
 	/// constructor
 	UnsteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
 			SteadyPeriodicTestFlow2D(viscosity, refinementLevel) {
-		setInitialU(make_shared<UnsteadyInitialVelocity>());
+		setInitialU(boost::make_shared<UnsteadyInitialVelocity>());
 	}
 	/// destructor
 	virtual ~UnsteadyPeriodicTestFlow2D() {

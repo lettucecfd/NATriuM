@@ -49,7 +49,7 @@ int main() {
 
 	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-6-unsteady";
@@ -67,9 +67,9 @@ int main() {
 	//configuration->setDealIntegrator(CRANK_NICOLSON);
 	//configuration->setDistributionInitType(Iterative);
 
-	shared_ptr<ComplexWall1> complex = make_shared<ComplexWall1>(
+	boost::shared_ptr<ComplexWall1> complex = boost::make_shared<ComplexWall1>(
 			viscosity, U, refinementLevel, 7.0);
-	shared_ptr<ProblemDescription<2> > prob = complex;
+	boost::shared_ptr<ProblemDescription<2> > prob = complex;
 	CFDSolver<2> solver(configuration, prob);
 
 	solver.run();

@@ -14,18 +14,18 @@
 
 namespace natrium {
 
-shared_ptr<Logging> Logging::m_LOGGER;
+boost::shared_ptr<Logging> Logging::m_LOGGER;
 
 Logging& LOG(LogLevel level) {
 	if (0 == Logging::m_LOGGER) {
-		Logging::m_LOGGER = make_shared<Logging>();
+		Logging::m_LOGGER = boost::make_shared<Logging>();
 	}
 	return (*Logging::m_LOGGER)(level);
 }
 
 Logging& LOGGER() {
 	if (0 == Logging::m_LOGGER) {
-		Logging::m_LOGGER = make_shared<Logging>();
+		Logging::m_LOGGER = boost::make_shared<Logging>();
 	}
 	return *Logging::m_LOGGER;
 }

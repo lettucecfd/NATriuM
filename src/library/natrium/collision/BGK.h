@@ -41,7 +41,7 @@ public:
 	 * @short constructor
 	 * @param[in] relaxationParameter relaxation parameter tau
 	 */
-	BGK(double relaxationParameter, double dt, const shared_ptr<Stencil> stencil);
+	BGK(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil);
 
 	/// destructor
 	virtual ~BGK();

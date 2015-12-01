@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
 			/// create CFD problem
 			double cell_aspect_ratio = 0.25;
 			const double viscosity = u_a * h / Re;
-			shared_ptr<ProblemDescription<2> > sinusFlow = make_shared<
+			boost::shared_ptr<ProblemDescription<2> > sinusFlow = boost::make_shared<
 					SinusoidalShear2D>(viscosity, u_a, refinementLevel, Lx, h,
 					b, cell_aspect_ratio);
 			const double dt = CFDSolverUtilities::calculateTimestep<2>(
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
 			std::stringstream dirName;
 			dirName << getenv("NATRIUM_HOME") << "/Brenner/Ma-" << std::fixed << std::setprecision(5) << Ma << "-ref-" << std::fixed <<  std::setprecision(0) << refinementLevel << "/gamma-"
 					<< std::fixed <<  std::setprecision(4) << gamma << "_cfg-" << std::fixed <<  std::setprecision(0) << i;
-			shared_ptr<SolverConfiguration> configuration = make_shared<
+			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());

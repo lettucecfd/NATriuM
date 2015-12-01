@@ -11,7 +11,7 @@ namespace natrium {
 
 /// constructor
 BGK::BGK(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil) :
+		const boost::shared_ptr<Stencil> stencil) :
 		CollisionModel(stencil), m_relaxationParameter(relaxationParameter), m_prefactor(
 				-1. / (relaxationParameter + 0.5)), m_dt(dt) {
 

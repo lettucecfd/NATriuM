@@ -28,20 +28,20 @@ BOOST_AUTO_TEST_CASE(CFDSolver_CreateTestFlow_test) {
 
 BOOST_AUTO_TEST_CASE(CFDSolver_Construction_test) {
 	pout << "CFDSolver_Construction_test..." << endl;
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	testConfiguration->setCommandLineVerbosity(DETAILED);
 	testConfiguration->setUserInteraction(false);
 	size_t refinementLevel = 3;
 	double viscosity = 0.9;
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+	boost::shared_ptr<ProblemDescription<2> > testFlow = boost::make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 	CFDSolver<2> solver(testConfiguration, testFlow);
 	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 	pout << "CFDSolver_SteadyStreaming_test..." << endl;
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	size_t refinementLevel = 3;
 	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()));
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 	testConfiguration->setNumberOfTimeSteps(100);
 	// set viscosity so that tau = 1
 	double viscosity = 0.5*deltaX/3;
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+	boost::shared_ptr<ProblemDescription<2> > testFlow = boost::make_shared<SteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 
 	CFDSolver<2> solver(testConfiguration, testFlow);
 	solver.run();
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_SteadyStreaming_test) {
 
 BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	pout << "CFDSolver_UnsteadyStreaming_test..." << endl;
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	size_t refinementLevel = 3;
 	double deltaX = 1./(pow(2,refinementLevel)*(testConfiguration->getSedgOrderOfFiniteElement()));
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_UnsteadyStreaming_test) {
 	double viscosity = 1./5;
 	testConfiguration->setStencilScaling(sqrt(3*viscosity/(testConfiguration->getTimeStepSize())));
 
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+	boost::shared_ptr<ProblemDescription<2> > testFlow = boost::make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 
 	CFDSolver<2> solver(testConfiguration, testFlow);
 	solver.run();
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
 
 	// Solver configuration
 	string directory = "/tmp/test-restart";
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<SolverConfiguration>();
 	testConfiguration->setOutputDirectory(directory);
 	testConfiguration->setOutputCheckpointInterval(10);
 	size_t refinementLevel = 3;
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
 	testConfiguration->setStencilScaling(sqrt(3*viscosity/(testConfiguration->getTimeStepSize())));
 
 	// create problem and solver solver
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+	boost::shared_ptr<ProblemDescription<2> > testFlow = boost::make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 	testConfiguration->setUserInteraction(false);
 	testConfiguration->setCommandLineVerbosity(0);
 	CFDSolver<2> solver(testConfiguration, testFlow);
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_Restart_test) {
 
 BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
 	pout << "CFDSolver_IterativeInit_test..." << endl;
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	testConfiguration->setInitializationScheme(ITERATIVE);
 	testConfiguration->setIterativeInitializationNumberOfIterations(10);
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
 	double viscosity = 1./5;
 	testConfiguration->setStencilScaling(sqrt(3*viscosity/(testConfiguration->getTimeStepSize())));
 
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
+	boost::shared_ptr<ProblemDescription<2> > testFlow = boost::make_shared<UnsteadyPeriodicTestFlow2D>(viscosity, refinementLevel);
 
 	CFDSolver<2> solver(testConfiguration, testFlow);
 
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
 BOOST_AUTO_TEST_CASE(CFDSolver_StopCondition_test) {
 	pout << "CFDSolver_StopCondition_test..." << endl;
 
-	shared_ptr<SolverConfiguration> testConfiguration = make_shared<SolverConfiguration>();
+	boost::shared_ptr<SolverConfiguration> testConfiguration = boost::make_shared<SolverConfiguration>();
 	testConfiguration->setSwitchOutputOff(true);
 	testConfiguration->setUserInteraction(false);
 	testConfiguration->setSimulationEndTime(0.5);
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(CFDSolver_StopCondition_test) {
 	// set viscosity so that tau = 1
 	double viscosity = 1./5;
 
-	shared_ptr<ProblemDescription<2> > testFlow = make_shared<TaylorGreenVortex2D>(viscosity, refinementLevel);
+	boost::shared_ptr<ProblemDescription<2> > testFlow = boost::make_shared<TaylorGreenVortex2D>(viscosity, refinementLevel);
 	CFDSolver<2> solver(testConfiguration, testFlow);
 
 	solver.run();

@@ -23,14 +23,14 @@ struct TestResult {
 	vector<double> expected;
 	vector<double> threshold;
 	vector<double> outcome;
-	shared_ptr<std::stringstream> error_msg;
+	boost::shared_ptr<std::stringstream> error_msg;
 	double time;
 	bool success;
 	TestResult(){
 		id = 0;
 		time = 0;
 		success = 0;
-		error_msg = make_shared<std::stringstream>();
+		error_msg = boost::make_shared<std::stringstream>();
 	};
 	~TestResult(){};
 };

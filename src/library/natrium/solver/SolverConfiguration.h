@@ -174,7 +174,7 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(shared_ptr<ProblemDescription<2> >) {
+	void checkProblem(boost::shared_ptr<ProblemDescription<2> >) {
 		//TODO: implement the checkProblem function
 	}
 
@@ -185,7 +185,7 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(shared_ptr<ProblemDescription<3> >) {
+	void checkProblem(boost::shared_ptr<ProblemDescription<3> >) {
 		//TODO: implement the checkProblem function
 	}
 

@@ -108,9 +108,9 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Mesh<2> > makeGrid() {
+	boost::shared_ptr<Mesh<2> > makeGrid() {
 		//Creation of the principal domain
-		shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >(
+		boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >(
 #ifdef WITH_TRILINOS_MPI
 				MPI_COMM_WORLD
 #endif
@@ -133,18 +133,18 @@ private:
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries() {
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries() {
 
 		// make boundary description
-		shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+		boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 				BoundaryCollection<2> >();
 		boundaries->addBoundary(
-				make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+				boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 		boundaries->addBoundary(
-				make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
+				boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
 		// Get the triangulation object (which belongs to the parent class).
-		shared_ptr<Mesh<2> > tria_pointer = getMesh();
+		boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 		return boundaries;
 	}

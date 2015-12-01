@@ -27,7 +27,7 @@ template<size_t dim> class BenchmarkCFDSolver: public CFDSolver<dim> {
 
 private:
 	/// the problem description, pointed to explicitly as Benchmark
-	shared_ptr<Benchmark<dim> > m_benchmark;
+	boost::shared_ptr<Benchmark<dim> > m_benchmark;
 
 	/// support Point of DoFs, in the same order as the DoFs
 	map<dealii::types::global_dof_index, dealii::Point<dim> > m_supportPoints;
@@ -37,12 +37,12 @@ private:
 	vector<distributed_vector> m_analyticVelocity;
 
 	/// table out
-	shared_ptr<ErrorStats<dim> > m_errorStats;
+	boost::shared_ptr<ErrorStats<dim> > m_errorStats;
 
 public:
 	/// constructor
-	BenchmarkCFDSolver(shared_ptr<SolverConfiguration> configuration,
-			shared_ptr<Benchmark<dim> > problemDescription);
+	BenchmarkCFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+			boost::shared_ptr<Benchmark<dim> > problemDescription);
 
 
 	/**
@@ -91,7 +91,7 @@ public:
 	void applyInitialVelocities(vector<distributed_vector>& initialVelocities,
 			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
 
-	const shared_ptr<Benchmark<dim> >& getBenchmark() const {
+	const boost::shared_ptr<Benchmark<dim> >& getBenchmark() const {
 		return m_benchmark;
 	}
 
@@ -99,7 +99,7 @@ public:
 		return m_supportPoints;
 	}
 
-	const shared_ptr<ErrorStats<dim> >& getErrorStats() const {
+	const boost::shared_ptr<ErrorStats<dim> >& getErrorStats() const {
 		return m_errorStats;
 	}
 }

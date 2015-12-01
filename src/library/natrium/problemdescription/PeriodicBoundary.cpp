@@ -25,7 +25,7 @@ namespace natrium {
 // The template Parameter has to be made explicit in order for the code to compile
 template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 		size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction,
-		shared_ptr<Mesh<dim> > triangulation) :
+		boost::shared_ptr<Mesh<dim> > triangulation) :
 		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
 				boundaryIndicator2), m_direction(direction) {
 
@@ -87,10 +87,10 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 } /* Constructor 2 */
 template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
 		size_t boundaryIndicator2, size_t direction,
-		shared_ptr<Mesh<2> > triangulation);
+		boost::shared_ptr<Mesh<2> > triangulation);
 template PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
 		size_t boundaryIndicator2, size_t direction,
-		shared_ptr<Mesh<3> > triangulation);
+		boost::shared_ptr<Mesh<3> > triangulation);
 
 template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator &,

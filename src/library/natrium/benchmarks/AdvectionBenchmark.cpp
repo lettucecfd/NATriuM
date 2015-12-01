@@ -33,7 +33,7 @@ namespace natrium {
 
 template class SEDGMinLee<2> ;
 
-shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > make_integrator(
+boost::shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > make_integrator(
 		TimeIntegratorName integrator_name,
 		DealIntegratorName deal_integrator_name, double delta_t,
 		distributed_vector& f) {
@@ -41,18 +41,18 @@ shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > make_
 	/// Build time integrator
 	switch (integrator_name) {
 	case RUNGE_KUTTA_5STAGE: {
-		return make_shared<
+		return boost::make_shared<
 				RungeKutta5LowStorage<distributed_sparse_matrix,
 						distributed_vector> >(delta_t, f);
 	}
 	case THETA_METHOD: {
 		const double theta = 0.5;
-		return make_shared<
+		return boost::make_shared<
 				ThetaMethod<distributed_sparse_matrix, distributed_vector> >(
 				delta_t, f, theta);
 	}
 	case EXPONENTIAL: {
-		return make_shared<
+		return boost::make_shared<
 				ExponentialTimeIntegrator<distributed_sparse_matrix,
 						distributed_vector> >(delta_t);
 	}
@@ -60,11 +60,11 @@ shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > make_
 		// create configuration object to get standard preferences
 		SolverConfiguration config;
 		if (deal_integrator_name < 7) {
-			return make_shared<
+			return boost::make_shared<
 					DealIIWrapper<distributed_sparse_matrix, distributed_vector> >(
 					delta_t, deal_integrator_name, config.getDealLinearSolver());
 		} else if (deal_integrator_name < 12) {
-			return make_shared<
+			return boost::make_shared<
 					DealIIWrapper<distributed_sparse_matrix, distributed_vector> >(
 					delta_t, deal_integrator_name, config.getDealLinearSolver(),
 					config.getEmbeddedDealIntegratorCoarsenParameter(),
@@ -154,7 +154,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	// create problem and solver
 	PeriodicTestDomain2D periodic(refinementLevel);
 	SEDGMinLee<2> streaming(periodic.getMesh(), periodic.getBoundaries(),
-			fe_order, make_shared<D2Q9>(), "", useCentralFlux);
+			fe_order, boost::make_shared<D2Q9>(), "", useCentralFlux);
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
@@ -178,7 +178,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(matrices.block(0, 0));
 	advectionMatrix.copy_from(matrices.block(0, 0));
-	shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > time_stepper;
+	boost::shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > time_stepper;
 	time_stepper = make_integrator(integrator, deal_integrator, deltaT, f);
 
 #ifdef WITH_TRILINOS_MPI

@@ -10,8 +10,6 @@
 
 #include <exception>
 
-#include "boost/shared_ptr.hpp"
-
 #include "deal.II/base/index_set.h"
 
 #include "../stencils/Stencil.h"
@@ -48,9 +46,9 @@ public:
  */
 class CollisionModel {
 private:
-	shared_ptr<Stencil> m_stencil;
+	boost::shared_ptr<Stencil> m_stencil;
 public:
-	CollisionModel(const shared_ptr<Stencil> stencil) :
+	CollisionModel(const boost::shared_ptr<Stencil> stencil) :
 			m_stencil(stencil) {
 	}
 	;
@@ -65,7 +63,7 @@ public:
 
 	virtual void setTimeStep(double dt) = 0;
 
-	const shared_ptr<Stencil>& getStencil() const {
+	const boost::shared_ptr<Stencil>& getStencil() const {
 		return m_stencil;
 
 	}

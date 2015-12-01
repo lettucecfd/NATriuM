@@ -55,8 +55,8 @@ void DensityFluctuation2D::applyInitialVelocities(
 	}
 }
 
-shared_ptr<Mesh<2> > DensityFluctuation2D::makeGrid(size_t refinementLevel) {
-	shared_ptr<Mesh<2> > square = make_shared<Mesh<2> >();
+boost::shared_ptr<Mesh<2> > DensityFluctuation2D::makeGrid(size_t refinementLevel) {
+	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >();
 	dealii::GridGenerator::hyper_cube(*square,0,1.);
 	Mesh<2>::active_cell_iterator cell = square->begin_active();
 	cell->face(0)->set_all_boundary_ids(0);  // left
@@ -69,11 +69,11 @@ shared_ptr<Mesh<2> > DensityFluctuation2D::makeGrid(size_t refinementLevel) {
 	return square;
 }
 
-shared_ptr<BoundaryCollection<2> > DensityFluctuation2D::makeBoundaries() {
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<BoundaryCollection<2> >();
-	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
-	shared_ptr<Mesh<2> > tria_pointer = getMesh();
+boost::shared_ptr<BoundaryCollection<2> > DensityFluctuation2D::makeBoundaries() {
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<BoundaryCollection<2> >();
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 	return boundaries;
 }
 } /* namespace natrium */

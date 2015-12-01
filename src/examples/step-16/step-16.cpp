@@ -50,7 +50,7 @@ int main() {
   const double refinementLevel = 1;
 
 
-  shared_ptr<Benchmark<3> >  taylorGreen = make_shared<
+  boost::shared_ptr<Benchmark<3> >  taylorGreen = boost::make_shared<
      TaylorGreenVortex3D>(viscosity, refinementLevel);
 
 
@@ -67,7 +67,7 @@ int main() {
     // setup configuration
     std::stringstream dirName;
     dirName << getenv("NATRIUM_HOME") << "/step-16";
-    shared_ptr<SolverConfiguration> configuration = make_shared<
+    boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
         SolverConfiguration>();
     //configuration->setSwitchOutputOff(true);
     configuration->setOutputDirectory(dirName.str());

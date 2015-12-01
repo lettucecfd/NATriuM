@@ -34,8 +34,8 @@ public:
 
 private:
 
-	shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel);
-	shared_ptr<BoundaryCollection<2> > makeBoundaries();
+	boost::shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel);
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
 
 };
 } /* namespace natrium */

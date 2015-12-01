@@ -104,22 +104,22 @@ template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {
 private:
 
 	/// Mesh
-	shared_ptr<Mesh<dim> > m_tria;
+	boost::shared_ptr<Mesh<dim> > m_tria;
 
 	/// Boundary Description
-	shared_ptr<BoundaryCollection<dim> > m_boundaries;
+	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
 	/// integration on gauss lobatto nodes
-	shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
+	boost::shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
 
 	/// integration on boundary (with gauß lobatto nodes)
-	shared_ptr<dealii::QGaussLobatto<dim - 1> > m_faceQuadrature;
+	boost::shared_ptr<dealii::QGaussLobatto<dim - 1> > m_faceQuadrature;
 
 	/// Finite Element function on one cell
-	shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
+	boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
 
 	/// dealii::DoFHandler to distribute the degrees of freedom over the Mesh
-	shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
+	boost::shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
 
 	/// Sparsity Pattern of the sparse matrix
 	dealii::BlockSparsityPattern m_sparsityPattern;
@@ -133,7 +133,7 @@ private:
 	distributed_block_vector m_systemVector;
 
 	/// the DQ model (e.g. D2Q9)
-	shared_ptr<Stencil> m_stencil;
+	boost::shared_ptr<Stencil> m_stencil;
 
 	/// a map, which connects degrees of freedom with their respective quadrature nodes
 	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
@@ -283,10 +283,10 @@ public:
 	 * @param[in] orderOfFiniteElement The number of nodes element and dimension
 	 * @param[in] stencil the DQ model
 	 */
-	SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
-			shared_ptr<BoundaryCollection<dim> > boundaries,
+	SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
+			boost::shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement,
-			shared_ptr<Stencil> stencil, string inputDirectory = "", bool useCentralFlux =
+			boost::shared_ptr<Stencil> stencil, string inputDirectory = "", bool useCentralFlux =
 					false);
 
 	/// destructor
@@ -319,7 +319,7 @@ public:
 				supportPoints);
 	}
 
-	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
+	virtual const boost::shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
 		return m_doFHandler;
 	}
 
@@ -349,11 +349,11 @@ public:
 		return m_facedof_to_q_index;
 	}
 
-	const shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
+	const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
 
-	virtual const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
+	virtual const boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
 		return m_fe;
 	}
 
@@ -361,7 +361,7 @@ public:
 		return m_fe->dofs_per_cell;
 	}
 
-	virtual const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
+	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
 		return m_quadrature;
 	}
 

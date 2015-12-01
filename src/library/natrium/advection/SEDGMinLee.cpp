@@ -36,9 +36,9 @@ using namespace dealii;
 namespace natrium {
 
 template<size_t dim>
-SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
-		shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
+SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
+		boost::shared_ptr<BoundaryCollection<dim> > boundaries,
+		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux) :
 		m_tria(triangulation), m_boundaries(boundaries), m_mapping(
 				orderOfFiniteElement), m_stencil(Stencil), m_useCentralFlux(
@@ -48,12 +48,12 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 	assert(Stencil->getD() == dim);
 
 	// make dof handler
-	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement + 1);
-	m_faceQuadrature = make_shared<QGaussLobatto<dim - 1> >(
+	m_quadrature = boost::make_shared<QGaussLobatto<dim> >(orderOfFiniteElement + 1);
+	m_faceQuadrature = boost::make_shared<QGaussLobatto<dim - 1> >(
 			orderOfFiniteElement + 1);
-	m_fe = make_shared<FE_DGQArbitraryNodes<dim> >(
+	m_fe = boost::make_shared<FE_DGQArbitraryNodes<dim> >(
 			QGaussLobatto<1>(orderOfFiniteElement + 1));
-	m_doFHandler = make_shared<DoFHandler<dim> >(*triangulation);
+	m_doFHandler = boost::make_shared<DoFHandler<dim> >(*triangulation);
 
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
@@ -89,13 +89,13 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Mesh<dim> > triangulation,
 
 } /* SEDGMinLee<dim>::SEDGMinLee */
 /// The template parameter must be made explicit in order for the code to compile
-template SEDGMinLee<2>::SEDGMinLee(shared_ptr<Mesh<2> > triangulation,
-		shared_ptr<BoundaryCollection<2> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
+template SEDGMinLee<2>::SEDGMinLee(boost::shared_ptr<Mesh<2> > triangulation,
+		boost::shared_ptr<BoundaryCollection<2> > boundaries,
+		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux);
-template SEDGMinLee<3>::SEDGMinLee(shared_ptr<Mesh<3> > triangulation,
-		shared_ptr<BoundaryCollection<3> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
+template SEDGMinLee<3>::SEDGMinLee(boost::shared_ptr<Mesh<3> > triangulation,
+		boost::shared_ptr<BoundaryCollection<3> > boundaries,
+		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux);
 
 template<size_t dim>
@@ -461,7 +461,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 			size_t boundaryIndicator = cell->face(j)->boundary_id();
 			if (m_boundaries->isPeriodic(boundaryIndicator)) {
 				// Apply periodic boundaries
-				const shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
+				const boost::shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
 						m_boundaries->getPeriodicBoundary(boundaryIndicator);
 				assert(periodicBoundary->isFaceInBoundary(cell, j));
 				typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
@@ -475,7 +475,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 				// Apply other boundaries
 				if (typeid(*(m_boundaries->getBoundary(boundaryIndicator)))
 						== typeid(MinLeeBoundary<dim> )) {
-					const shared_ptr<MinLeeBoundary<dim> >& minLeeBoundary =
+					const boost::shared_ptr<MinLeeBoundary<dim> >& minLeeBoundary =
 							m_boundaries->getMinLeeBoundary(boundaryIndicator);
 					minLeeBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_stencil,

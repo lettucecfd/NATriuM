@@ -50,9 +50,9 @@ int main() {
 				orderOfFiniteElement += 2) {
 
 			// make problem object
-			shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+			boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 					TaylorGreenVortex2D>(viscosity, refinementLevel);
-			shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+			boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 
 			double dx = CFDSolverUtilities::getMinimumVertexDistance<2>(
 									*tgVortex->getMesh());
@@ -77,7 +77,7 @@ int main() {
 				dirName << "eq_init-";
 			}
 			dirName << "Re" << Re << "-p" << orderOfFiniteElement;
-			shared_ptr<SolverConfiguration> configuration = make_shared<
+			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());

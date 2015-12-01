@@ -70,8 +70,8 @@ int main(int argc, char* argv[]) {
 	const double orderOfFiniteElement = 4;
 	const double cellAspectRatio = 5;
 
-	shared_ptr<ProblemDescription<2> > sinusFlow =
-			make_shared<LubricationSine>(viscosity, bottomVelocity,
+	boost::shared_ptr<ProblemDescription<2> > sinusFlow =
+			boost::make_shared<LubricationSine>(viscosity, bottomVelocity,
 					refinementLevel, L, delta_radius, amplitude, cellAspectRatio, roughnessHeight, roughnessLengthRatio);
 	const double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*sinusFlow->getMesh(), orderOfFiniteElement,
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 	// setup configuration
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/lubrication-sine-0.5-smoothx";
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());

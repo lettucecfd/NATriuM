@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 
 	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-2";
@@ -66,9 +66,9 @@ int main(int argc, char** argv) {
 	configuration->setCommandLineVerbosity(7);
 	//configuration->setDistributionInitType(Iterative);
 
-	shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(
+	boost::shared_ptr<CouetteFlow2D> couetteFlow = boost::make_shared<CouetteFlow2D>(
 			viscosity, U, refinementLevel, 1.0, startTime, isUnstructured);
-	shared_ptr<Benchmark<2> > couetteProblem = couetteFlow;
+	boost::shared_ptr<Benchmark<2> > couetteProblem = couetteFlow;
 	BenchmarkCFDSolver<2> solver(configuration, couetteProblem);
 
 	solver.run();

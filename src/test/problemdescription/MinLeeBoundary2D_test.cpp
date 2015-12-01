@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_Construction_test) {
 	pout << "MinLeeBoundary2D_Construction_test..." << endl;
 
 	BOOST_CHECK_NO_THROW(
-			MinLeeBoundary<2> mlBound1(0, make_shared<BoundaryTestDensity>(), make_shared<BoundaryTestVelocity>()));
+			MinLeeBoundary<2> mlBound1(0, boost::make_shared<BoundaryTestDensity>(), boost::make_shared<BoundaryTestVelocity>()));
 	numeric_vector U(2);
 	BOOST_CHECK_NO_THROW(MinLeeBoundary<2> mlBound2(0, U); );
 
@@ -58,10 +58,10 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 	// The incoming particle distributions at the boundary must be affected by the opposite outgoing ones
 	// This means that diagonal entries must exist for the boundary dofs
 	// for all blocks (I,J) (I for incoming and J for their opposites)
-	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
+	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<WallTestDomain2D>(
 			1);
 	SEDGMinLee<2> advector(problem->getMesh(), problem->getBoundaries(), 2,
-			make_shared<D2Q9>());
+			boost::make_shared<D2Q9>());
 	vector<bool> isBoundary(advector.getNumberOfDoFs());
 	for (size_t i = 0; i < advector.getNumberOfDoFs(); i++) {
 		std::set<dealii::types::boundary_id> boundaryIndicators;
@@ -140,9 +140,9 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConservation_test) {
 	pout << "MinLeeBoundary2D_MassConservation_test..." << endl;
 
 	// make problem and solver
-	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
+	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<WallTestDomain2D>(
 			1);
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("/tmp");
 	configuration->setSwitchOutputOff(true);
@@ -165,9 +165,9 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConservation_test) {
 BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 	pout << "MinLeeBoundary2D_BoundaryVelocity_test..." << endl;
 
-	shared_ptr<ProblemDescription<2> > problem = make_shared<WallTestDomain2D>(
+	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<WallTestDomain2D>(
 			1);
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("/tmp");
 	configuration->setSwitchOutputOff(true);

@@ -30,10 +30,10 @@ template<size_t dim> class ProblemDescription {
 private:
 
 	/// computational grid
-	shared_ptr<Mesh<dim> > m_triangulation;
+	boost::shared_ptr<Mesh<dim> > m_triangulation;
 
 	/// boundary description
-	shared_ptr<BoundaryCollection<dim> > m_boundaries;
+	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
 	/// kinematic viscosity
 	double m_viscosity;
@@ -42,18 +42,18 @@ private:
 	double m_characteristicLength;
 
 	/// function to define initial densities
-	shared_ptr<dealii::Function<dim> > m_initialRho;
+	boost::shared_ptr<dealii::Function<dim> > m_initialRho;
 
 	/// function to define initial velocities
-	shared_ptr<dealii::Function<dim> > m_initialU;
+	boost::shared_ptr<dealii::Function<dim> > m_initialU;
 
 
 protected:
-	void setInitialRho(shared_ptr<dealii::Function<dim> > ini_rho){
+	void setInitialRho(boost::shared_ptr<dealii::Function<dim> > ini_rho){
 		m_initialRho = ini_rho;
 	}
 
-	void setInitialU(shared_ptr<dealii::Function<dim> > ini_u){
+	void setInitialU(boost::shared_ptr<dealii::Function<dim> > ini_u){
 		m_initialU = ini_u;
 	}
 
@@ -64,7 +64,7 @@ public:
 	/////////////////////////////////
 
 	/// constructor
-	ProblemDescription(shared_ptr<Mesh<dim> > triangulation, double viscosity,
+	ProblemDescription(boost::shared_ptr<Mesh<dim> > triangulation, double viscosity,
 			double characteristicLength);
 
 	///  destructor
@@ -75,19 +75,19 @@ public:
 	// GETTER     // SETTER        //
 	/////////////////////////////////
 
-	const shared_ptr<Mesh<dim> >& getMesh() const {
+	const boost::shared_ptr<Mesh<dim> >& getMesh() const {
 		return m_triangulation;
 	}
 
-	const shared_ptr<BoundaryCollection<dim> >& getBoundaries() const {
+	const boost::shared_ptr<BoundaryCollection<dim> >& getBoundaries() const {
 		return m_boundaries;
 	}
 
-	virtual const shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
+	virtual const boost::shared_ptr<dealii::Function<dim> >& getInitialRhoFunction() const {
 		return m_initialRho;
 	}
 
-	virtual const shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
+	virtual const boost::shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
 		return m_initialU;
 	}
 
@@ -135,11 +135,11 @@ public:
 		return result;
 	}
 
-	void setMesh(const shared_ptr<Mesh<dim> >& triangulation) {
+	void setMesh(const boost::shared_ptr<Mesh<dim> >& triangulation) {
 		m_triangulation = triangulation;
 	}
 
-	void setBoundaries(const shared_ptr<BoundaryCollection<dim> >& boundaries) {
+	void setBoundaries(const boost::shared_ptr<BoundaryCollection<dim> >& boundaries) {
 		m_boundaries = boundaries;
 	}
 
@@ -168,13 +168,13 @@ public:
 
 template<size_t dim>
 inline ProblemDescription<dim>::ProblemDescription(
-		shared_ptr<Mesh<dim> > triangulation, double viscosity,
+		boost::shared_ptr<Mesh<dim> > triangulation, double viscosity,
 		double characteristicLength) :
 		m_triangulation(triangulation), m_viscosity(viscosity), m_characteristicLength(
 				characteristicLength) {
 	// make default initial conditions (rho = 1, u = v = 0)
-	m_initialRho = make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
-	m_initialU = make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
+	m_initialRho = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
+	m_initialU = boost::make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
 #ifdef WITH_TRILINOS
 	/// Create MPI (if not done yet);
 	MPIGuard::getInstance();

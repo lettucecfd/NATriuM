@@ -66,7 +66,7 @@ int main() {
 		// setup configuration
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/step-1";
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
@@ -85,9 +85,9 @@ int main() {
 		configuration->setNumberOfTimeSteps(10);
 
 		// make problem and solver objects
-		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 				TaylorGreenVortex2D>(viscosity, refinementLevel);
-		shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+		boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 		time1 = clock() - timestart;

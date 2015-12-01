@@ -93,21 +93,21 @@ int main() {
 
 #ifndef ONLY_PERIODIC
 	// make problem object
-	shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(viscosity,
+	boost::shared_ptr<CouetteFlow2D> couette2D = boost::make_shared<CouetteFlow2D>(viscosity,
 			U, refinementLevel, L, t0, false);
-	shared_ptr<Benchmark<2> > benchmark = couette2D;
+	boost::shared_ptr<Benchmark<2> > benchmark = couette2D;
 #else
 	// make problem object
-	shared_ptr<TaylorGreenVortex2D> tgv2D = make_shared<TaylorGreenVortex2D>(
+	boost::shared_ptr<TaylorGreenVortex2D> tgv2D = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / sqrt(3.) / Ma);
-	shared_ptr<Benchmark<2> > benchmark = tgv2D;
+	boost::shared_ptr<Benchmark<2> > benchmark = tgv2D;
 #endif
 
 	// prepare time table file
 	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 
 	for (int integrator = 1; integrator < 10; integrator++) {
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 
 		//make time integrator

@@ -46,8 +46,8 @@
 namespace natrium {
 
 template<size_t dim>
-CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
-		shared_ptr<ProblemDescription<dim> > problemDescription) {
+CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+		boost::shared_ptr<ProblemDescription<dim> > problemDescription) {
 
 	/// Create output directory
 	if (not configuration->isSwitchOutputOff()) {
@@ -88,13 +88,13 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// Build boltzmann model
 	if (Stencil_D2Q9 == configuration->getStencil()) {
-		m_stencil = make_shared<D2Q9>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D2Q9>(configuration->getStencilScaling());
 	} else if (Stencil_D3Q19 == configuration->getStencil()) {
-		m_stencil = make_shared<D3Q19>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q19>(configuration->getStencilScaling());
 	} else if (Stencil_D3Q15 == configuration->getStencil()) {
-		m_stencil = make_shared<D3Q15>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q15>(configuration->getStencilScaling());
 	} else if (Stencil_D3Q27 == configuration->getStencil()) {
-		m_stencil = make_shared<D3Q27>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q27>(configuration->getStencilScaling());
 	} else {
 		natrium_errorexit("Stencil not known to CFDSolver.");
 	}
@@ -115,7 +115,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		// create SEDG MinLee by reading the system matrices from files or assembling
 		// TODO estimate time for assembly
 		try {
-			m_advectionOperator = make_shared<SEDGMinLee<dim> >(
+			m_advectionOperator = boost::make_shared<SEDGMinLee<dim> >(
 					m_problemDescription->getMesh(),
 					m_problemDescription->getBoundaries(),
 					configuration->getSedgOrderOfFiniteElement(), m_stencil,
@@ -149,21 +149,21 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		tau = BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil);
-		m_collisionModel = make_shared<BGKStandard>(tau,
+		m_collisionModel = boost::make_shared<BGKStandard>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
 	} else if (BGK_STEADY_STATE == configuration->getCollisionScheme()) {
 		gamma = configuration->getBGKSteadyStateGamma();
 		tau = BGKSteadyState::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil, gamma);
-		m_collisionModel = make_shared<BGKSteadyState>(tau,
+		m_collisionModel = boost::make_shared<BGKSteadyState>(tau,
 				m_configuration->getTimeStepSize(), m_stencil, gamma);
 	} else if (BGK_STANDARD_TRANSFORMED
 			== configuration->getCollisionScheme()) {
 		tau = BGKStandardTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil);
-		m_collisionModel = make_shared<BGKStandardTransformed>(tau,
+		m_collisionModel = boost::make_shared<BGKStandardTransformed>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
 	}
 
@@ -208,24 +208,24 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 
 	/// Build time integrator
 	if (RUNGE_KUTTA_5STAGE == configuration->getTimeIntegrator()) {
-		m_timeIntegrator = make_shared<
+		m_timeIntegrator = boost::make_shared<
 				RungeKutta5LowStorage<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), m_f.getFStream());
 	} else if (THETA_METHOD == configuration->getTimeIntegrator()) {
-		m_timeIntegrator = make_shared<
+		m_timeIntegrator = boost::make_shared<
 				ThetaMethod<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), m_f.getFStream(),
 				configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
-		m_timeIntegrator = make_shared<
+		m_timeIntegrator = boost::make_shared<
 				ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 						distributed_block_vector> >(
 				configuration->getTimeStepSize(), m_stencil->getQ() - 1);
 	} else if (OTHER == configuration->getTimeIntegrator()) {
 		if (configuration->getDealIntegrator() < 7) {
-			m_timeIntegrator = make_shared<
+			m_timeIntegrator = boost::make_shared<
 					DealIIWrapper<distributed_sparse_block_matrix,
 							distributed_block_vector> >(
 					configuration->getTimeStepSize(),
@@ -233,7 +233,7 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 					configuration->getDealLinearSolver());
 		} else if (configuration->getDealIntegrator() < 12) {
 			m_timeIntegrator =
-					make_shared<
+					boost::make_shared<
 							DealIIWrapper<distributed_sparse_block_matrix,
 									distributed_block_vector> >(
 							configuration->getTimeStepSize(),
@@ -364,17 +364,17 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		s << configuration->getOutputDirectory().c_str()
 				<< "/results_table.txt";
 		//create the SolverStats object which is responsible for the results table
-		m_solverStats = make_shared<SolverStats<dim> >(this, s.str());
+		m_solverStats = boost::make_shared<SolverStats<dim> >(this, s.str());
 	} else {
-		m_solverStats = make_shared<SolverStats<dim> >(this);
+		m_solverStats = boost::make_shared<SolverStats<dim> >(this);
 	}
 
 }
 /* Constructor */
-template CFDSolver<2>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
-		shared_ptr<ProblemDescription<2> > problemDescription);
-template CFDSolver<3>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
-		shared_ptr<ProblemDescription<3> > problemDescription);
+template CFDSolver<2>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+		boost::shared_ptr<ProblemDescription<2> > problemDescription);
+template CFDSolver<3>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+		boost::shared_ptr<ProblemDescription<3> > problemDescription);
 
 template<size_t dim>
 void CFDSolver<dim>::stream() {
@@ -796,7 +796,7 @@ void natrium::CFDSolver<dim>::applyInitialDensities(
 		distributed_vector& initialDensities,
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
 // get Function instance
-	const shared_ptr<dealii::Function<dim> >& f_rho =
+	const boost::shared_ptr<dealii::Function<dim> >& f_rho =
 			m_problemDescription->getInitialRhoFunction();
 	const unsigned int dofs_per_cell =
 			m_advectionOperator->getFe()->dofs_per_cell;
@@ -834,7 +834,7 @@ void natrium::CFDSolver<dim>::applyInitialVelocities(
 		vector<distributed_vector>& initialVelocities,
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
 // get Function instance
-	const shared_ptr<dealii::Function<dim> >& f_u =
+	const boost::shared_ptr<dealii::Function<dim> >& f_u =
 			m_problemDescription->getInitialUFunction();
 	const unsigned int dofs_per_cell =
 			m_advectionOperator->getFe()->dofs_per_cell;

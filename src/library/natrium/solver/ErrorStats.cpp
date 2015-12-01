@@ -27,10 +27,10 @@ ErrorStats<dim>::ErrorStats(BenchmarkCFDSolver<dim> * cfdsolver,
 
 	// create file (if necessary)
 	if (m_solver->getIterationStart() > 0) {
-		m_errorsTableFile = make_shared<std::fstream>(tableFileName,
+		m_errorsTableFile = boost::make_shared<std::fstream>(tableFileName,
 				std::fstream::out | std::fstream::app);
 	} else {
-		m_errorsTableFile = make_shared<std::fstream>(tableFileName,
+		m_errorsTableFile = boost::make_shared<std::fstream>(tableFileName,
 				std::fstream::out);
 		printHeaderLine();
 	}
