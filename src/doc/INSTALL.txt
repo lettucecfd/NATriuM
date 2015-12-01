@@ -7,7 +7,11 @@
     0.0) All boost libraries (sudo apt-get install libboost-all-dev)
     0.0a) (on cluster: module load gcc openmpi/gnu, boost)
     0.0a') (on cluster: if boost is not installed - get tar)
-    0.0b') (on cluster: tar xzvf .. ;  cd .. ; ./bootstrap --prefix .. ; ./b2)
+    0.0a') (on cluster: set BOOST_ROOT in ~/.bashrc to the directory you want boost installed in; source ~/.bashrc)
+    0.0b') (on cluster: tar xzvf boost_1_59_0.tar.gz ;  cd boost_1_59_0 ; ./bootstrap --prefix=$BOOST_ROOT; ./b2; ./b2 install)
+    0.0b') (on cluster: to shorten the installation time you can also call the bootstrap command with the option
+           --with-libraries=iostreams,serialization,thread,system,filesystem,test 
+           While deal.ii requires the first four of them, natrium requires the last three)
     0.0c') (on cluster: set BOOST_ROOT to the boost root directory)
     0.1) Install cmake download and untar tarball from cmake homepage; follow instructions
          (Version 2.8.8 required!)
@@ -51,6 +55,7 @@
     0.7) deal.ii
         0.7.1) download and untar tarball from deal.ii homepage
         	   (rename directory if it has the name of your target directory)
+        	   (to get newest dealii version: git clone git://git@github.org/dealii/dealii.git dealii-git)
         0.7.2) set environment variable DEAL_II_DIR to the path you want to install the library to
   		0.7.3a) (on cluster: execute the -> cmake command with -DDEAL_II_FORCE_BUNDLED_BOOST=OFF -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT)
   		        (This is important to prevent errors that occur from different/old versions of dynamic libraries that are normally preinstalled.)
