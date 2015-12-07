@@ -127,5 +127,8 @@ int main(int argc, char** argv) {
 	// FINAL OUTPUT
 	// ========================================================================
 	pout << "Flow converged" << endl;
+	pout << "Max velocity: " << solver.getMaxVelocityNorm()
+			<< " (while your convergence threshold was "
+			<< configuration->getConvergenceThreshold() << ")." << endl;
 	return 0;
 }
