@@ -88,13 +88,17 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 	/// Build boltzmann model
 	if (Stencil_D2Q9 == configuration->getStencil()) {
-		m_stencil = boost::make_shared<D2Q9>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D2Q9>(
+				configuration->getStencilScaling());
 	} else if (Stencil_D3Q19 == configuration->getStencil()) {
-		m_stencil = boost::make_shared<D3Q19>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q19>(
+				configuration->getStencilScaling());
 	} else if (Stencil_D3Q15 == configuration->getStencil()) {
-		m_stencil = boost::make_shared<D3Q15>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q15>(
+				configuration->getStencilScaling());
 	} else if (Stencil_D3Q27 == configuration->getStencil()) {
-		m_stencil = boost::make_shared<D3Q27>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q27>(
+				configuration->getStencilScaling());
 	} else {
 		natrium_errorexit("Stencil not known to CFDSolver.");
 	}
@@ -145,6 +149,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
 	double gamma = -1.0;
+	double G = -5;
 	if (BGK_STANDARD == configuration->getCollisionScheme()) {
 		tau = BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
@@ -165,6 +170,17 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = boost::make_shared<BGKStandardTransformed>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (BGK_MULTIPHASE == configuration->getCollisionScheme()) {
+		tau = BGKStandardTransformed::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
+		G = m_configuration->getBGKPseudopotentialG();
+		boost::shared_ptr<BGKPseudopotential<dim> > coll_tmp =
+				boost::make_shared<BGKPseudopotential<dim> >(tau,
+						m_configuration->getTimeStepSize(), m_stencil, G);
+		coll_tmp->setAdvectionOperator(m_advectionOperator);
+		m_collisionModel = coll_tmp;
+
 	}
 
 // initialize macroscopic variables
@@ -312,6 +328,11 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 		break;
 	}
+	case BGK_MULTIPHASE: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		LOG(WELCOME) << "G:                        " << G << endl;
+		break;
+	}
 	}
 	LOG(WELCOME) << "----------------------------" << endl;
 
@@ -371,9 +392,11 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 }
 /* Constructor */
-template CFDSolver<2>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+template CFDSolver<2>::CFDSolver(
+		boost::shared_ptr<SolverConfiguration> configuration,
 		boost::shared_ptr<ProblemDescription<2> > problemDescription);
-template CFDSolver<3>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+template CFDSolver<3>::CFDSolver(
+		boost::shared_ptr<SolverConfiguration> configuration,
 		boost::shared_ptr<ProblemDescription<3> > problemDescription);
 
 template<size_t dim>
@@ -458,7 +481,8 @@ template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
 
 // start timer
-	TimerOutput::Scope timer_section(Timing::getTimer(), "Check stop condition");
+	TimerOutput::Scope timer_section(Timing::getTimer(),
+			"Check stop condition");
 
 // Maximum number of iterations
 	size_t N = m_configuration->getNumberOfTimeSteps();

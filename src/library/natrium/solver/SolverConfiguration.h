@@ -39,7 +39,8 @@ enum AdvectionSchemeName {
 enum CollisionSchemeName {
 	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
 	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
-	BGK_STEADY_STATE // Steady state preconditioning by Guo et al. (2004)
+	BGK_STEADY_STATE, // Steady state preconditioning by Guo et al. (2004)
+	BGK_MULTIPHASE
 };
 
 // StencilType defined in Stencil.h
@@ -273,6 +274,8 @@ public:
 			return BGK_STANDARD_TRANSFORMED;
 		} else if ("BGK steady state" == collisionScheme) {
 			return BGK_STEADY_STATE;
+		} else if ("BGK multiphase" == collisionScheme) {
+				return BGK_MULTIPHASE;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown collision scheme '" << collisionScheme
@@ -295,6 +298,10 @@ public:
 		}
 		case BGK_STEADY_STATE: {
 			set("Collision scheme", "BGK steady state");
+			break;
+		}
+		case BGK_MULTIPHASE: {
+			set("Collision scheme", "BGK multiphase");
 			break;
 		}
 		default: {
@@ -344,6 +351,44 @@ public:
 		leave_subsection();
 		leave_subsection();
 	}
+
+	double getBGKPseudopotentialG() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		double G;
+		try {
+			G = get_double("Pseudopotential G");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Pseudopotential G' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return G;
+	}
+
+	void setBGKPseudopotentialG(double G) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		try {
+			set("Pseudopotential G", G);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << G
+					<< " to Pseudopotential G: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
 
 	size_t getCommandLineVerbosity() {
 		enter_subsection("Output");
