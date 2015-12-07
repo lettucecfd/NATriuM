@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/static-droplet";
 	configuration->setOutputDirectory(dirname.str());
-	configuration->setConvergenceThreshold(1e-5);
+	configuration->setConvergenceThreshold(1e-7);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
 	configuration->setTimeStepSize(delta_t);
@@ -127,7 +127,22 @@ int main(int argc, char** argv) {
 	// FINAL OUTPUT
 	// ========================================================================
 	pout << "Flow converged" << endl;
-	pout << "Max velocity: " << solver.getMaxVelocityNorm()
+	// To evaluate the spurious velocities we have to use an average of the pre- and post-
+	// collision velocities. These are evaluated in a final iteration step.
+	solver.stream();
+	distributed_vector u0( solver.getVelocity().at(0) );
+	distributed_vector u1( solver.getVelocity().at(1) );
+	solver.collide();
+	u0 += solver.getVelocity().at(0);
+	u1 += solver.getVelocity().at(1);
+	u0 *= 0.5;
+	u1 *= 0.5;
+	// calculate norm
+	u0.scale(u0);
+	u1.scale(u1);
+	u0 += u1;
+	double max_u_square = u0.linfty_norm();
+	pout << "Max velocity: " << std::sqrt(max_u_square)
 			<< " (while your convergence threshold was "
 			<< configuration->getConvergenceThreshold() << ")." << endl;
 	return 0;
