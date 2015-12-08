@@ -59,17 +59,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e07fafea3f7724d0d2dd9c106e1a44b"></a><!-- doxytag: member="natrium::MPIGuard::MPIGuard" ref="a1e07fafea3f7724d0d2dd9c106e1a44b" args="(int &amp;argc, char **&amp;argv)" -->
 &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MPIGuard.html#a1e07fafea3f7724d0d2dd9c106e1a44b">MPIGuard</a> (int &amp;argc, char **&amp;argv)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor (should normally be private, but is not allowed by make_shared). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab999564027da999d5038c67a4a313d78"></a><!-- doxytag: member="natrium::MPIGuard::getMPI_InitFinalize" ref="ab999564027da999d5038c67a4a313d78" args="()" -->
-shared_ptr<br class="typebreak"/>
-&lt; dealii::Utilities::MPI::MPI_InitFinalize &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MPIGuard.html#ab999564027da999d5038c67a4a313d78">getMPI_InitFinalize</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor (should normally be private, but is not allowed by boost::make_shared). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4df8a28efa88e97a77ee0dc9a74a1a17"></a><!-- doxytag: member="natrium::MPIGuard::getMPI_InitFinalize" ref="a4df8a28efa88e97a77ee0dc9a74a1a17" args="()" -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::Utilities::MPI::MPI_InitFinalize &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MPIGuard.html#a4df8a28efa88e97a77ee0dc9a74a1a17">getMPI_InitFinalize</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return dealii's MPI_InitFinalize object <br/></td></tr>
 <tr><td colspan="2"><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2633a4f3fdd0fb9959dc91ffca5f5232"></a><!-- doxytag: member="natrium::MPIGuard::getInstance" ref="a2633a4f3fdd0fb9959dc91ffca5f5232" args="(int &amp;argc, char **&amp;argv)" -->
-static shared_ptr&lt; <a class="el" href="classnatrium_1_1MPIGuard.html">MPIGuard</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MPIGuard.html#a2633a4f3fdd0fb9959dc91ffca5f5232">getInstance</a> (int &amp;argc, char **&amp;argv)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ff461f2c920911f2ac67b4ddc57ecdc"></a><!-- doxytag: member="natrium::MPIGuard::getInstance" ref="a1ff461f2c920911f2ac67b4ddc57ecdc" args="(int &amp;argc, char **&amp;argv)" -->
+static boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1MPIGuard.html">MPIGuard</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MPIGuard.html#a1ff461f2c920911f2ac67b4ddc57ecdc">getInstance</a> (int &amp;argc, char **&amp;argv)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Static constructor.  Command line argument. Can be used to determine the number of parallel processes. See documentation of dealii::Utilities::MPI::MPI_InitFinalize(argc, argv) for details.  Command line argument.Can be used to determine the number of parallel processes. See documentation of dealii::Utilities::MPI::MPI_InitFinalize(argc, argv) for details. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6593f7b33cd94f32dd4c6afa1dae6fc"></a><!-- doxytag: member="natrium::MPIGuard::getInstance" ref="ab6593f7b33cd94f32dd4c6afa1dae6fc" args="()" -->
-static shared_ptr&lt; <a class="el" href="classnatrium_1_1MPIGuard.html">MPIGuard</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getInstance</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5896abef9f379f89b746e71c4d3e68aa"></a><!-- doxytag: member="natrium::MPIGuard::getInstance" ref="a5896abef9f379f89b746e71c4d3e68aa" args="()" -->
+static boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1MPIGuard.html">MPIGuard</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getInstance</b> ()</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Singleton that encapsulates the MPI init and finalize calls so that they are called at most once per run. This class wraps the function dealii::Utilities::MPI::MPI_InitFinalize(argc, argv). </p>
@@ -92,7 +94,7 @@ static shared_ptr&lt; <a class="el" href="classnatrium_1_1MPIGuard.html">MPIGuar
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

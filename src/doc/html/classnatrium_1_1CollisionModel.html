@@ -71,14 +71,15 @@ Inheritance diagram for natrium::CollisionModel:</div>
 <p><a href="classnatrium_1_1CollisionModel-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e5254caec7f69000646886be11a34f8"></a><!-- doxytag: member="natrium::CollisionModel::CollisionModel" ref="a5e5254caec7f69000646886be11a34f8" args="(const shared_ptr&lt; Stencil &gt; stencil)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>CollisionModel</b> (const shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4443d1f7ca0cc11ef6d5cc340c1076c9"></a><!-- doxytag: member="natrium::CollisionModel::CollisionModel" ref="a4443d1f7ca0cc11ef6d5cc340c1076c9" args="(const boost::shared_ptr&lt; Stencil &gt; stencil)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>CollisionModel</b> (const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac6c6d95633d62209a04528af86807025"></a><!-- doxytag: member="natrium::CollisionModel::collideAll" ref="ac6c6d95633d62209a04528af86807025" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const =0" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>collideAll</b> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const =0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0df0674bc26821d037323ac184fb52b"></a><!-- doxytag: member="natrium::CollisionModel::setTimeStep" ref="aa0df0674bc26821d037323ac184fb52b" args="(double dt)=0" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setTimeStep</b> (double dt)=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a482808bab1832ee06892630b8ead7dde"></a><!-- doxytag: member="natrium::CollisionModel::getStencil" ref="a482808bab1832ee06892630b8ead7dde" args="() const " -->
-const shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStencil</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac10edd12e081a6eb48a36568f1bc1c0f"></a><!-- doxytag: member="natrium::CollisionModel::getStencil" ref="ac10edd12e081a6eb48a36568f1bc1c0f" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStencil</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#ae1c879c87ac210a227a8e3da2d0ac385">calculateDensity</a> (const vector&lt; double &gt; &amp;distributions) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">calculate macroscopic density  <a href="#ae1c879c87ac210a227a8e3da2d0ac385"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual numeric_vector&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a90428f4c29916641de3de872803dde0f">calculateVelocity</a> (const vector&lt; double &gt; &amp;distributions) const </td></tr>
@@ -303,7 +304,7 @@ const shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

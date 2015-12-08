@@ -83,8 +83,8 @@ Inheritance diagram for natrium::SEDGMinLee&lt; dim &gt;:</div>
 <p><a href="classnatrium_1_1SEDGMinLee-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#a6010ff397c7ea56751187084ad6e7ed0">SEDGMinLee</a> (shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt; boundaries, size_t orderOfFiniteElement, shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, string inputDirectory=&quot;&quot;, bool useCentralFlux=false)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a6010ff397c7ea56751187084ad6e7ed0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#a429930c197a9ab2a881ffc71aa0dd86b">SEDGMinLee</a> (boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt; boundaries, size_t orderOfFiniteElement, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, string inputDirectory=&quot;&quot;, bool useCentralFlux=false)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a429930c197a9ab2a881ffc71aa0dd86b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c55a31bc4cb0e314876af7251ad8ce3"></a><!-- doxytag: member="natrium::SEDGMinLee::~SEDGMinLee" ref="a6c55a31bc4cb0e314876af7251ad8ce3" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#a6c55a31bc4cb0e314876af7251ad8ce3">~SEDGMinLee</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -101,8 +101,9 @@ distributed_sparse_block_matrix &amp;&nbsp;</td><td class="memItemRight" valign=
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get global system matrix <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1f5ecd80111566dd53804b6db2a1cb3"></a><!-- doxytag: member="natrium::SEDGMinLee::mapDoFsToSupportPoints" ref="ac1f5ecd80111566dd53804b6db2a1cb3" args="(std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const " -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>mapDoFsToSupportPoints</b> (std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ffd3d7bc5aae9dbb5a021d7e4913f65"></a><!-- doxytag: member="natrium::SEDGMinLee::getDoFHandler" ref="a3ffd3d7bc5aae9dbb5a021d7e4913f65" args="() const " -->
-virtual const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd088667b6ff315c440d00cd0eb26840"></a><!-- doxytag: member="natrium::SEDGMinLee::getDoFHandler" ref="abd088667b6ff315c440d00cd0eb26840" args="() const " -->
+virtual const <br class="typebreak"/>
+boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::DoFHandler&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDoFHandler</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10acabaac20a992130e88fb9bd395d31"></a><!-- doxytag: member="natrium::SEDGMinLee::getBlockSparsityPattern" ref="a10acabaac20a992130e88fb9bd395d31" args="() const " -->
 const <br class="typebreak"/>
@@ -117,17 +118,19 @@ size_t &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCelld
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b7d94c90ccfa5e341d854059d883f57"></a><!-- doxytag: member="natrium::SEDGMinLee::getFacedofToQIndex" ref="a8b7d94c90ccfa5e341d854059d883f57" args="() const " -->
 const vector&lt; std::map&lt; size_t, <br class="typebreak"/>
 size_t &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFacedofToQIndex</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a653928dc9f0dd3715389b28196cab7bb"></a><!-- doxytag: member="natrium::SEDGMinLee::getFaceQuadrature" ref="a653928dc9f0dd3715389b28196cab7bb" args="() const " -->
-const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42897893820c9d12e9fea6f5518e3447"></a><!-- doxytag: member="natrium::SEDGMinLee::getFaceQuadrature" ref="a42897893820c9d12e9fea6f5518e3447" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::QGaussLobatto&lt; dim-1 &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFaceQuadrature</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7fd488e872e5cf9870be39f07a2dcd74"></a><!-- doxytag: member="natrium::SEDGMinLee::getFe" ref="a7fd488e872e5cf9870be39f07a2dcd74" args="() const " -->
-virtual const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7cd0a95e74da6d4d16ab2d174b17458"></a><!-- doxytag: member="natrium::SEDGMinLee::getFe" ref="ab7cd0a95e74da6d4d16ab2d174b17458" args="() const " -->
+virtual const <br class="typebreak"/>
+boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::FE_DGQArbitraryNodes<br class="typebreak"/>
 &lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFe</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5dac839ef4963af315dba5f201bd763c"></a><!-- doxytag: member="natrium::SEDGMinLee::getNumberOfDoFsPerCell" ref="a5dac839ef4963af315dba5f201bd763c" args="() const " -->
 virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getNumberOfDoFsPerCell</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4db0d2b4c857962d5425f755be3daf13"></a><!-- doxytag: member="natrium::SEDGMinLee::getQuadrature" ref="a4db0d2b4c857962d5425f755be3daf13" args="() const " -->
-virtual const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad36da36624c983cf84716d97442b1989"></a><!-- doxytag: member="natrium::SEDGMinLee::getQuadrature" ref="ad36da36624c983cf84716d97442b1989" args="() const " -->
+virtual const <br class="typebreak"/>
+boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::QGaussLobatto&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQuadrature</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a745a65de3ee72a250c0706e6c7fcc361"></a><!-- doxytag: member="natrium::SEDGMinLee::getOrderOfFiniteElement" ref="a745a65de3ee72a250c0706e6c7fcc361" args="() const " -->
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getOrderOfFiniteElement</b> () const </td></tr>
@@ -171,7 +174,7 @@ template&lt;&gt; </td></tr>
   </dd>
 </dl>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a6010ff397c7ea56751187084ad6e7ed0"></a><!-- doxytag: member="natrium::SEDGMinLee::SEDGMinLee" ref="a6010ff397c7ea56751187084ad6e7ed0" args="(shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, shared_ptr&lt; BoundaryCollection&lt; dim &gt; &gt; boundaries, size_t orderOfFiniteElement, shared_ptr&lt; Stencil &gt; stencil, string inputDirectory=&quot;&quot;, bool useCentralFlux=false)" -->
+<a class="anchor" id="a429930c197a9ab2a881ffc71aa0dd86b"></a><!-- doxytag: member="natrium::SEDGMinLee::SEDGMinLee" ref="a429930c197a9ab2a881ffc71aa0dd86b" args="(boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, boost::shared_ptr&lt; BoundaryCollection&lt; dim &gt; &gt; boundaries, size_t orderOfFiniteElement, boost::shared_ptr&lt; Stencil &gt; stencil, string inputDirectory=&quot;&quot;, bool useCentralFlux=false)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -180,13 +183,13 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classnatrium_1_1SEDGMinLee.html">natrium::SEDGMinLee</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1SEDGMinLee.html">SEDGMinLee</a> </td>
           <td>(</td>
-          <td class="paramtype">shared_ptr&lt; Mesh&lt; dim &gt; &gt;&nbsp;</td>
+          <td class="paramtype">boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt;&nbsp;</td>
           <td class="paramname"> <em>triangulation</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt;&nbsp;</td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt;&nbsp;</td>
           <td class="paramname"> <em>boundaries</em>, </td>
         </tr>
         <tr>
@@ -198,7 +201,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt;&nbsp;</td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt;&nbsp;</td>
           <td class="paramname"> <em>stencil</em>, </td>
         </tr>
         <tr>
@@ -338,7 +341,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

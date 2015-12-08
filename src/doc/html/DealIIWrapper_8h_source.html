@@ -76,9 +76,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00036"></a>00036 
 <a name="l00037"></a>00037         MATRIX m_tmpMatrix;
 <a name="l00038"></a>00038 
-<a name="l00040"></a>00040         shared_ptr&lt;dealii::TimeStepping::RungeKutta&lt;VECTOR&gt; &gt; m_dealIIRKStepper;
+<a name="l00040"></a>00040         boost::shared_ptr&lt;dealii::TimeStepping::RungeKutta&lt;VECTOR&gt; &gt; m_dealIIRKStepper;
 <a name="l00041"></a>00041 
-<a name="l00044"></a>00044         shared_ptr&lt;dealii::TimeStepping::EmbeddedExplicitRungeKutta&lt;VECTOR&gt; &gt; m_dealIIRKEmbedded;
+<a name="l00044"></a>00044         boost::shared_ptr&lt;dealii::TimeStepping::EmbeddedExplicitRungeKutta&lt;VECTOR&gt; &gt; m_dealIIRKEmbedded;
 <a name="l00045"></a>00045 
 <a name="l00046"></a>00046 
 <a name="l00050"></a>00050         VECTOR evaluateF(<span class="keyword">const</span> <span class="keywordtype">double</span> t, <span class="keyword">const</span> VECTOR &amp; f) <span class="keyword">const</span>;
@@ -100,11 +100,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00074"></a>00074 
 <a name="l00084"></a>00084         <span class="keyword">virtual</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1DealIIWrapper.html#a62621205ff77a46c4f3ef01c3aefb06d" title="make one time integration step on f: .">step</a>(VECTOR&amp; vector, <span class="keyword">const</span> MATRIX&amp; systemMatrix, <span class="keyword">const</span> VECTOR&amp; systemVector, <span class="keywordtype">double</span> t = 0, <span class="keywordtype">double</span> dt = <a class="code" href="classnatrium_1_1TimeIntegrator.html" title="Abstract class for time integration (solution of ordinary differential equations...">TimeIntegrator&lt;MATRIX,VECTOR&gt;::getTimeStepSize</a>());
 <a name="l00085"></a>00085 
-<a name="l00086"></a>00086         <span class="keyword">const</span> shared_ptr&lt;dealii::TimeStepping::EmbeddedExplicitRungeKutta&lt;VECTOR&gt; &gt;&amp; getDealIIEmbedded()<span class="keyword"> const </span>{
+<a name="l00086"></a>00086         <span class="keyword">const</span> boost::shared_ptr&lt;dealii::TimeStepping::EmbeddedExplicitRungeKutta&lt;VECTOR&gt; &gt;&amp; getDealIIEmbedded()<span class="keyword"> const </span>{
 <a name="l00087"></a>00087                 <span class="keywordflow">return</span> m_dealIIRKEmbedded;
 <a name="l00088"></a>00088         }
 <a name="l00089"></a>00089 
-<a name="l00090"></a>00090         <span class="keyword">const</span> shared_ptr&lt;dealii::TimeStepping::RungeKutta&lt;VECTOR&gt; &gt;&amp; getDealIIRKStepper()<span class="keyword"> const </span>{
+<a name="l00090"></a>00090         <span class="keyword">const</span> boost::shared_ptr&lt;dealii::TimeStepping::RungeKutta&lt;VECTOR&gt; &gt;&amp; getDealIIRKStepper()<span class="keyword"> const </span>{
 <a name="l00091"></a>00091                 <span class="keywordflow">return</span> m_dealIIRKStepper;
 <a name="l00092"></a>00092         }
 <a name="l00093"></a>00093 };
@@ -129,7 +129,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

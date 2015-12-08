@@ -85,8 +85,9 @@ distributed_sparse_block_matrix &amp;&nbsp;</td><td class="memItemRight" valign=
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1eb5cd5a2c1b6b3b8f6395bac67ef55"></a><!-- doxytag: member="natrium::AdvectionOperator::getSystemVector" ref="aa1eb5cd5a2c1b6b3b8f6395bac67ef55" args="() const =0" -->
 virtual const <br class="typebreak"/>
 distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSystemVector</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68f51edd8cc34b61f32ded0a8db82f7b"></a><!-- doxytag: member="natrium::AdvectionOperator::getDoFHandler" ref="a68f51edd8cc34b61f32ded0a8db82f7b" args="() const =0" -->
-virtual const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf18a849f6d7b81083d1fee462f87500"></a><!-- doxytag: member="natrium::AdvectionOperator::getDoFHandler" ref="acf18a849f6d7b81083d1fee462f87500" args="() const =0" -->
+virtual const <br class="typebreak"/>
+boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::DoFHandler&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDoFHandler</b> () const =0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6171b5c645167a5e81f56964f1b9ae6f"></a><!-- doxytag: member="natrium::AdvectionOperator::mapDoFsToSupportPoints" ref="a6171b5c645167a5e81f56964f1b9ae6f" args="(std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>mapDoFsToSupportPoints</b> (std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
@@ -97,12 +98,14 @@ virtual const dealii::MappingQ<br class="typebreak"/>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">save matrices and status to files  <a href="#aca14260bae100874b0050a2a96d7a564"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a251e21d1dd023926d4c5f7fd973b90bf"></a><!-- doxytag: member="natrium::AdvectionOperator::getNumberOfDoFs" ref="a251e21d1dd023926d4c5f7fd973b90bf" args="() const =0" -->
 virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getNumberOfDoFs</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7071fd06c15686000f95977e9032d8c6"></a><!-- doxytag: member="natrium::AdvectionOperator::getFe" ref="a7071fd06c15686000f95977e9032d8c6" args="() const =0" -->
-virtual const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad282440d7dbee0e78f6489e9878d1b41"></a><!-- doxytag: member="natrium::AdvectionOperator::getFe" ref="ad282440d7dbee0e78f6489e9878d1b41" args="() const =0" -->
+virtual const <br class="typebreak"/>
+boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::FE_DGQArbitraryNodes<br class="typebreak"/>
 &lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFe</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a818cfccb9b2d5e03afb367c5c39e495e"></a><!-- doxytag: member="natrium::AdvectionOperator::getQuadrature" ref="a818cfccb9b2d5e03afb367c5c39e495e" args="() const =0" -->
-virtual const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf5b566df5abc5ad2afa8977e83bb518"></a><!-- doxytag: member="natrium::AdvectionOperator::getQuadrature" ref="adf5b566df5abc5ad2afa8977e83bb518" args="() const =0" -->
+virtual const <br class="typebreak"/>
+boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::QGaussLobatto&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQuadrature</b> () const =0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88232d5ef52ce0db77133682e26a5760"></a><!-- doxytag: member="natrium::AdvectionOperator::getCelldofToQIndex" ref="a88232d5ef52ce0db77133682e26a5760" args="() const =0" -->
 virtual const std::map&lt; size_t, <br class="typebreak"/>
@@ -174,7 +177,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

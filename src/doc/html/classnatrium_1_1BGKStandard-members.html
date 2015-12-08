@@ -47,8 +47,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <h1>natrium::BGKStandard Member List</h1>This is the complete list of members for <a class="el" href="classnatrium_1_1BGKStandard.html">natrium::BGKStandard</a>, including all inherited members.<table>
-  <tr class="memlist"><td><a class="el" href="classnatrium_1_1BGK.html#acb5fcbbec625b60d7f2db05e9e66fbaa">BGK</a>(double relaxationParameter, double dt, const shared_ptr&lt; Stencil &gt; stencil)</td><td><a class="el" href="classnatrium_1_1BGK.html">natrium::BGK</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="classnatrium_1_1BGKStandard.html#a47cd5ef20c46be121f2e2306f2e6b05b">BGKStandard</a>(double relaxationParameter, double dt, const shared_ptr&lt; Stencil &gt; stencil)</td><td><a class="el" href="classnatrium_1_1BGKStandard.html">natrium::BGKStandard</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classnatrium_1_1BGK.html#adf78ea65d5b96f55dc719b7ab7beb86d">BGK</a>(double relaxationParameter, double dt, const boost::shared_ptr&lt; Stencil &gt; stencil)</td><td><a class="el" href="classnatrium_1_1BGK.html">natrium::BGK</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classnatrium_1_1BGKStandard.html#a4c2b17997ae6e88b1d6be7b93f210fe7">BGKStandard</a>(double relaxationParameter, double dt, const boost::shared_ptr&lt; Stencil &gt; stencil)</td><td><a class="el" href="classnatrium_1_1BGKStandard.html">natrium::BGKStandard</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classnatrium_1_1CollisionModel.html#ae1c879c87ac210a227a8e3da2d0ac385">calculateDensity</a>(const vector&lt; double &gt; &amp;distributions) const </td><td><a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classnatrium_1_1BGK.html#a430f5020b6101a64d89a0cc2a246260e">calculateRelaxationParameter</a>(double viscosity, double timeStepSize, const Stencil &amp;stencil, double=1.0)</td><td><a class="el" href="classnatrium_1_1BGK.html">natrium::BGK</a></td><td><code> [inline, static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classnatrium_1_1CollisionModel.html#a90428f4c29916641de3de872803dde0f">calculateVelocity</a>(const vector&lt; double &gt; &amp;distributions) const </td><td><a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a></td><td><code> [inline, virtual]</code></td></tr>
@@ -59,7 +59,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr class="memlist"><td><a class="el" href="classnatrium_1_1BGKStandard.html#a7362ff8603390301e8c4062ad348edd1">collideAllD3Q19</a>(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure) const </td><td><a class="el" href="classnatrium_1_1BGKStandard.html">natrium::BGKStandard</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>collideSingleDoF</b>(size_t doF, const vector&lt; double &gt; &amp;feq, DistributionFunctions &amp;f) const  (defined in <a class="el" href="classnatrium_1_1BGK.html">natrium::BGK</a>)</td><td><a class="el" href="classnatrium_1_1BGK.html">natrium::BGK</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classnatrium_1_1BGK.html#aebf6d64d5e537c2e352451667d9003d4">collideSinglePoint</a>(vector&lt; double &gt; &amp;distributions) const </td><td><a class="el" href="classnatrium_1_1BGK.html">natrium::BGK</a></td><td><code> [virtual]</code></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>CollisionModel</b>(const shared_ptr&lt; Stencil &gt; stencil) (defined in <a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a>)</td><td><a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a></td><td><code> [inline]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>CollisionModel</b>(const boost::shared_ptr&lt; Stencil &gt; stencil) (defined in <a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a>)</td><td><a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classnatrium_1_1BGKStandard.html#a3d45ef2fe5536bf14914f99297477754">getEquilibriumDistribution</a>(size_t i, const numeric_vector &amp;u, const double rho=1) const </td><td><a class="el" href="classnatrium_1_1BGKStandard.html">natrium::BGKStandard</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classnatrium_1_1CollisionModel.html#a296474961c4501bc23228be1d30ebf82">getEquilibriumDistributions</a>(vector&lt; double &gt; &amp;feq, const numeric_vector &amp;u, const double rho=1) const </td><td><a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a></td><td><code> [virtual]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>getPrefactor</b>() const  (defined in <a class="el" href="classnatrium_1_1BGK.html">natrium::BGK</a>)</td><td><a class="el" href="classnatrium_1_1BGK.html">natrium::BGK</a></td><td><code> [inline]</code></td></tr>
@@ -86,7 +86,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -67,8 +67,8 @@ Inheritance diagram for natrium::PeriodicBoundary&lt; dim &gt;:</div>
 <p><a href="classnatrium_1_1PeriodicBoundary-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#acafd6408c0c450dc2ce657a919aae545">PeriodicBoundary</a> (size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction, shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor; the periodic boundary is defined by two lines. The degrees of freedom on the first line are forced to be equal to the opposite one on the second line, respectively.  <a href="#acafd6408c0c450dc2ce657a919aae545"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#ad105994a331755f654822813875771d8">PeriodicBoundary</a> (size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction, boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor; the periodic boundary is defined by two lines. The degrees of freedom on the first line are forced to be equal to the opposite one on the second line, respectively.  <a href="#ad105994a331755f654822813875771d8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae71c1a8ea1f1f9e29be8ab6496125a5c"></a><!-- doxytag: member="natrium::PeriodicBoundary::~PeriodicBoundary" ref="ae71c1a8ea1f1f9e29be8ab6496125a5c" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#ae71c1a8ea1f1f9e29be8ab6496125a5c">~PeriodicBoundary</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -87,8 +87,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8523a2b22bfacc8aa299c5a9c238ffdd"></a><!-- doxytag: member="natrium::PeriodicBoundary::addToSparsityPattern" ref="a8523a2b22bfacc8aa299c5a9c238ffdd" args="(dealii::BlockDynamicSparsityPattern &amp;, size_t, size_t, size_t) const " -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a8523a2b22bfacc8aa299c5a9c238ffdd">addToSparsityPattern</a> (dealii::BlockDynamicSparsityPattern &amp;, size_t, size_t, size_t) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function does nothing; just to satisfy the interface. The Periodic <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> conditions are directly incorporated in make_sparser_flux_sparsity_pattern. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a660df6687c1b1d401654042186f2317f"></a><!-- doxytag: member="natrium::PeriodicBoundary::getMesh" ref="a660df6687c1b1d401654042186f2317f" args="() const " -->
-const shared_ptr&lt; Mesh&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMesh</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1351b925b9ae2008539a351a4baac3e0"></a><!-- doxytag: member="natrium::PeriodicBoundary::getMesh" ref="a1351b925b9ae2008539a351a4baac3e0" args="() const " -->
+const boost::shared_ptr&lt; Mesh<br class="typebreak"/>
+&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMesh</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aead325214d43693a03a5d24613f4fe14"></a><!-- doxytag: member="natrium::PeriodicBoundary::getBoundaryIndicator1" ref="aead325214d43693a03a5d24613f4fe14" args="() const " -->
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getBoundaryIndicator1</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af7e6f5b6028b0499df8335377156bc26"></a><!-- doxytag: member="natrium::PeriodicBoundary::getBoundaryIndicator2" ref="af7e6f5b6028b0499df8335377156bc26" args="() const " -->
@@ -97,8 +98,9 @@ size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getBoundaryIndicato
 const PeriodicCellMap&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCellMap</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a49e51f3612f67060f6189c3f92f64025"></a><!-- doxytag: member="natrium::PeriodicBoundary::getDirection" ref="a49e51f3612f67060f6189c3f92f64025" args="() const " -->
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDirection</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb9921fc031d1d8569742ba6459bafc0"></a><!-- doxytag: member="natrium::PeriodicBoundary::getTriangulation" ref="abb9921fc031d1d8569742ba6459bafc0" args="() const " -->
-const shared_ptr&lt; Mesh&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getTriangulation</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac02d8bae511dcb9d63d5da8478f2cb03"></a><!-- doxytag: member="natrium::PeriodicBoundary::getTriangulation" ref="ac02d8bae511dcb9d63d5da8478f2cb03" args="() const " -->
+const boost::shared_ptr&lt; Mesh<br class="typebreak"/>
+&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getTriangulation</b> () const </td></tr>
 <tr><td colspan="2"><h2>Friends</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92462e8f67aa8d5e91e018a1cce70842"></a><!-- doxytag: member="natrium::PeriodicBoundary::own_double_less_periodic" ref="a92462e8f67aa8d5e91e018a1cce70842" args="" -->
 class&nbsp;</td><td class="memItemRight" valign="bottom"><b>own_double_less_periodic</b></td></tr>
@@ -110,7 +112,7 @@ class&nbsp;</td><td class="memItemRight" valign="bottom"><b>own_double_less_peri
 <p>A periodic boundary condition. Periodic boundaries have to be set before the grid is refined! </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>First use in step-1 tutorial. </dd></dl>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="acafd6408c0c450dc2ce657a919aae545"></a><!-- doxytag: member="natrium::PeriodicBoundary::PeriodicBoundary" ref="acafd6408c0c450dc2ce657a919aae545" args="(size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction, shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation)" -->
+<a class="anchor" id="ad105994a331755f654822813875771d8"></a><!-- doxytag: member="natrium::PeriodicBoundary::PeriodicBoundary" ref="ad105994a331755f654822813875771d8" args="(size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction, boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -137,7 +139,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">shared_ptr&lt; Mesh&lt; dim &gt; &gt;&nbsp;</td>
+          <td class="paramtype">boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt;&nbsp;</td>
           <td class="paramname"> <em>triangulation</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -157,7 +159,7 @@ template&lt;size_t dim&gt; </div>
     <tr><td valign="top"></td><td valign="top"><em>beginLine1</em>&nbsp;</td><td>start point of line 1 </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>endLine1</em>&nbsp;</td><td>end point of line 1 </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>beginLine2</em>&nbsp;</td><td>start point of line 2 </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>endLine2</em>&nbsp;</td><td>end point of line 2 PeriodicBoundary1D(dealii::Point&lt;2&gt;&amp; beginLine1, dealii::Point&lt;2&gt;&amp; endLine1, dealii::Point&lt;2&gt;&amp; beginLine2, dealii::Point&lt;2&gt;&amp; endLine2, shared_ptr&lt;Mesh&lt;2&gt; &gt; triangulation); Constructor; the periodic boundary is defined by two lines. The degrees of freedom on the first line are forced to be equal to the opposite one on the second line, respectively. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>endLine2</em>&nbsp;</td><td>end point of line 2 PeriodicBoundary1D(dealii::Point&lt;2&gt;&amp; beginLine1, dealii::Point&lt;2&gt;&amp; endLine1, dealii::Point&lt;2&gt;&amp; beginLine2, dealii::Point&lt;2&gt;&amp; endLine2, boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; triangulation); Constructor; the periodic boundary is defined by two lines. The degrees of freedom on the first line are forced to be equal to the opposite one on the second line, respectively. </td></tr>
   </table>
   </dd>
 </dl>
@@ -298,7 +300,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

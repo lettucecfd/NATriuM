@@ -62,18 +62,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00026"></a>00026         <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim2&gt; <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classnatrium_1_1ErrorStats.html" title="Container for error statistics and table file; only for use with BenchmarkCFDSolver...">ErrorStats</a>;
 <a name="l00027"></a>00027 
 <a name="l00028"></a>00028 <span class="keyword">private</span>:
-<a name="l00030"></a>00030         shared_ptr&lt;Benchmark&lt;dim&gt; &gt; m_benchmark;
+<a name="l00030"></a>00030         boost::shared_ptr&lt;Benchmark&lt;dim&gt; &gt; m_benchmark;
 <a name="l00031"></a>00031 
 <a name="l00033"></a>00033         map&lt;dealii::types::global_dof_index, dealii::Point&lt;dim&gt; &gt; m_supportPoints;
 <a name="l00034"></a>00034 
 <a name="l00036"></a>00036         distributed_vector m_analyticDensity;
 <a name="l00037"></a>00037         vector&lt;distributed_vector&gt; m_analyticVelocity;
 <a name="l00038"></a>00038 
-<a name="l00040"></a>00040         shared_ptr&lt;ErrorStats&lt;dim&gt; &gt; m_errorStats;
+<a name="l00040"></a>00040         boost::shared_ptr&lt;ErrorStats&lt;dim&gt; &gt; m_errorStats;
 <a name="l00041"></a>00041 
 <a name="l00042"></a>00042 <span class="keyword">public</span>:
-<a name="l00044"></a>00044         <a class="code" href="classnatrium_1_1BenchmarkCFDSolver.html#ac43f8244c3408f367b192cced7be94ab" title="constructor">BenchmarkCFDSolver</a>(shared_ptr&lt;SolverConfiguration&gt; configuration,
-<a name="l00045"></a>00045                         shared_ptr&lt;<a class="code" href="classnatrium_1_1Benchmark.html">Benchmark&lt;dim&gt;</a> &gt; problemDescription);
+<a name="l00044"></a>00044         <a class="code" href="classnatrium_1_1BenchmarkCFDSolver.html#aa9cdc67e4218230f54d74b0182170705" title="constructor">BenchmarkCFDSolver</a>(boost::shared_ptr&lt;SolverConfiguration&gt; configuration,
+<a name="l00045"></a>00045                         boost::shared_ptr&lt;<a class="code" href="classnatrium_1_1Benchmark.html">Benchmark&lt;dim&gt;</a> &gt; problemDescription);
 <a name="l00046"></a>00046 
 <a name="l00047"></a>00047 
 <a name="l00051"></a>00051         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1BenchmarkCFDSolver.html#a9708132fc0cef4ae55e3453672891c81" title="create output data and write to file">output</a>(<span class="keywordtype">size_t</span> iteration);
@@ -106,7 +106,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00091"></a>00091         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1BenchmarkCFDSolver.html#a7883dcfd4469ae65ae62cad09ae5d160" title="set initial velocities">applyInitialVelocities</a>(vector&lt;distributed_vector&gt;&amp; initialVelocities,
 <a name="l00092"></a>00092                         <span class="keyword">const</span> map&lt;dealii::types::global_dof_index, dealii::Point&lt;dim&gt; &gt;&amp; supportPoints) <span class="keyword">const</span>;
 <a name="l00093"></a>00093 
-<a name="l00094"></a>00094         <span class="keyword">const</span> shared_ptr&lt;Benchmark&lt;dim&gt; &gt;&amp; getBenchmark()<span class="keyword"> const </span>{
+<a name="l00094"></a>00094         <span class="keyword">const</span> boost::shared_ptr&lt;Benchmark&lt;dim&gt; &gt;&amp; getBenchmark()<span class="keyword"> const </span>{
 <a name="l00095"></a>00095                 <span class="keywordflow">return</span> m_benchmark;
 <a name="l00096"></a>00096         }
 <a name="l00097"></a>00097 
@@ -114,7 +114,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00099"></a>00099                 <span class="keywordflow">return</span> m_supportPoints;
 <a name="l00100"></a>00100         }
 <a name="l00101"></a>00101 
-<a name="l00102"></a>00102         <span class="keyword">const</span> shared_ptr&lt;ErrorStats&lt;dim&gt; &gt;&amp; getErrorStats()<span class="keyword"> const </span>{
+<a name="l00102"></a>00102         <span class="keyword">const</span> boost::shared_ptr&lt;ErrorStats&lt;dim&gt; &gt;&amp; getErrorStats()<span class="keyword"> const </span>{
 <a name="l00103"></a>00103                 <span class="keywordflow">return</span> m_errorStats;
 <a name="l00104"></a>00104         }
 <a name="l00105"></a>00105 }
@@ -140,7 +140,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

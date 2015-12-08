@@ -72,8 +72,8 @@ Inheritance diagram for natrium::CouetteFlow3D:</div>
 <tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>UnstructuredGridFunc</b></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function to generate the unstructured mesh grid <br/></td></tr>
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlow3D.html#a8b290b81061a030b5984377c48b3f2cc">CouetteFlow3D</a> (double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false, size_t replicates=1)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a8b290b81061a030b5984377c48b3f2cc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlow3D.html#acf083268f4190ffe62b01f3dfc77d407">CouetteFlow3D</a> (double viscosity, double topPlateVelocity, size_t refinementLevel, size_t L=1, double startTime=0.0, bool isUnstructured=false)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#acf083268f4190ffe62b01f3dfc77d407"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2d1b9db247ba3e51ed092dab3637a657"></a><!-- doxytag: member="natrium::CouetteFlow3D::~CouetteFlow3D" ref="a2d1b9db247ba3e51ed092dab3637a657" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlow3D.html#a2d1b9db247ba3e51ed092dab3637a657">~CouetteFlow3D</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -84,7 +84,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCharacte
 <p>Description of a simple Couette Flow (regular channel flow in square domain). The domain is [0,1]^3. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>The analytic solution is obtained by a formula stated in Min and Lee (2011). </dd></dl>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a8b290b81061a030b5984377c48b3f2cc"></a><!-- doxytag: member="natrium::CouetteFlow3D::CouetteFlow3D" ref="a8b290b81061a030b5984377c48b3f2cc" args="(double viscosity, double topPlateVelocity, size_t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false, size_t replicates=1)" -->
+<a class="anchor" id="acf083268f4190ffe62b01f3dfc77d407"></a><!-- doxytag: member="natrium::CouetteFlow3D::CouetteFlow3D" ref="acf083268f4190ffe62b01f3dfc77d407" args="(double viscosity, double topPlateVelocity, size_t refinementLevel, size_t L=1, double startTime=0.0, bool isUnstructured=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -109,8 +109,8 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCharacte
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&nbsp;</td>
-          <td class="paramname"> <em>L</em> = <code>1.0</code>, </td>
+          <td class="paramtype">size_t&nbsp;</td>
+          <td class="paramname"> <em>L</em> = <code>1</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -122,13 +122,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCharacte
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>isUnstructured</em> = <code>false</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&nbsp;</td>
-          <td class="paramname"> <em>replicates</em> = <code>1</code></td><td>&nbsp;</td>
+          <td class="paramname"> <em>isUnstructured</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -166,7 +160,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCharacte
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -67,7 +67,7 @@ Inheritance diagram for natrium::CFDSolver&lt; dim &gt;:</div>
 <p><a href="classnatrium_1_1CFDSolver-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolver.html#a9d0e65b8a404ac3eaf80aee6c81945dc">CFDSolver</a> (shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverConfiguration.html">SolverConfiguration</a> &gt; configuration, shared_ptr&lt; <a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &gt; problemDescription)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolver.html#a47ca594a73dc5ab04e319ba588cda3dd">CFDSolver</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverConfiguration.html">SolverConfiguration</a> &gt; configuration, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &gt; problemDescription)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ca9bd709255ac87b34f869c984b913b"></a><!-- doxytag: member="natrium::CFDSolver::~CFDSolver" ref="a7ca9bd709255ac87b34f869c984b913b" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolver.html#a7ca9bd709255ac87b34f869c984b913b">~CFDSolver</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -104,22 +104,23 @@ const <a class="el" href="classnatrium_1_1DistributionFunctions.html">Distributi
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0e5ec3dc278216d5827410b7db82af59"></a><!-- doxytag: member="natrium::CFDSolver::getVelocity" ref="a0e5ec3dc278216d5827410b7db82af59" args="() const " -->
 const vector<br class="typebreak"/>
 &lt; distributed_vector &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getVelocity</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1aea207c81089c2e46092489557bb139"></a><!-- doxytag: member="natrium::CFDSolver::getAdvectionOperator" ref="a1aea207c81089c2e46092489557bb139" args="() const " -->
-const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a20e897531387c33b60a2e3c18e61c243"></a><!-- doxytag: member="natrium::CFDSolver::getAdvectionOperator" ref="a20e897531387c33b60a2e3c18e61c243" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1AdvectionOperator.html">AdvectionOperator</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getAdvectionOperator</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2006f7bbbf2336789a5cd74d329c2e60"></a><!-- doxytag: member="natrium::CFDSolver::getStencil" ref="a2006f7bbbf2336789a5cd74d329c2e60" args="() const " -->
-const shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStencil</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb4b632b524bd68afcdff7d54c2d3d97"></a><!-- doxytag: member="natrium::CFDSolver::getCollisionModel" ref="abb4b632b524bd68afcdff7d54c2d3d97" args="() const " -->
-const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5ef0f693bf6c7b72f17d8564b4069ce8"></a><!-- doxytag: member="natrium::CFDSolver::getStencil" ref="a5ef0f693bf6c7b72f17d8564b4069ce8" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStencil</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af573bd22cb7dff697dc5db99819f79c8"></a><!-- doxytag: member="natrium::CFDSolver::getCollisionModel" ref="af573bd22cb7dff697dc5db99819f79c8" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1CollisionModel.html">CollisionModel</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCollisionModel</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a413691491ac82f384a03293be2294de5"></a><!-- doxytag: member="natrium::CFDSolver::getConfiguration" ref="a413691491ac82f384a03293be2294de5" args="() const " -->
-const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a819a073ab7ac1d33a0968ca0ffc6eba4"></a><!-- doxytag: member="natrium::CFDSolver::getConfiguration" ref="a819a073ab7ac1d33a0968ca0ffc6eba4" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1SolverConfiguration.html">SolverConfiguration</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getConfiguration</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b1131e8fd6b022bea5ddce72469c289"></a><!-- doxytag: member="natrium::CFDSolver::getProblemDescription" ref="a8b1131e8fd6b022bea5ddce72469c289" args="() const " -->
-const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad728be4103a49d1801e3b26e0e15e944"></a><!-- doxytag: member="natrium::CFDSolver::getProblemDescription" ref="ad728be4103a49d1801e3b26e0e15e944" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getProblemDescription</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1b1ca6771029003bc9bac7cfe0b4d3c"></a><!-- doxytag: member="natrium::CFDSolver::getTimeIntegrator" ref="af1b1ca6771029003bc9bac7cfe0b4d3c" args="() const " -->
-const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8db6e33d26853a6de6a0c7735ce18a5"></a><!-- doxytag: member="natrium::CFDSolver::getTimeIntegrator" ref="ad8db6e33d26853a6de6a0c7735ce18a5" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a><br class="typebreak"/>
 &lt; distributed_vector, <br class="typebreak"/>
 distributed_sparse_matrix &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getTimeIntegrator</b> () const </td></tr>
@@ -137,9 +138,9 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getTime</b> () cons
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getIteration</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97546801de9259206f9611c14ce9ff1d"></a><!-- doxytag: member="natrium::CFDSolver::setIteration" ref="a97546801de9259206f9611c14ce9ff1d" args="(size_t iteration)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setIteration</b> (size_t iteration)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab40725ea85fde34033d92027d13a4b06"></a><!-- doxytag: member="natrium::CFDSolver::getSolverStats" ref="ab40725ea85fde34033d92027d13a4b06" args="() const " -->
-const shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverStats.html">SolverStats</a><br class="typebreak"/>
-&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSolverStats</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0a28a595e850dee1c40bc7ddec9b6ca"></a><!-- doxytag: member="natrium::CFDSolver::getSolverStats" ref="aa0a28a595e850dee1c40bc7ddec9b6ca" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1SolverStats.html">SolverStats</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSolverStats</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abcce31d3ba9b00e148780b6c855d189b"></a><!-- doxytag: member="natrium::CFDSolver::getTau" ref="abcce31d3ba9b00e148780b6c855d189b" args="() const " -->
 double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getTau</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a508263caff799245a183989efd6680"></a><!-- doxytag: member="natrium::CFDSolver::getResiduumDensity" ref="a1a508263caff799245a183989efd6680" args="() const " -->
@@ -178,7 +179,7 @@ class&nbsp;</td><td class="memItemRight" valign="bottom"><b>SolverStats</b></td>
 <p><a class="el" href="step-0_8cpp-example.html#_a3">step-0.cpp</a>.</p>
 </dd>
 </dl><hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a9d0e65b8a404ac3eaf80aee6c81945dc"></a><!-- doxytag: member="natrium::CFDSolver::CFDSolver" ref="a9d0e65b8a404ac3eaf80aee6c81945dc" args="(shared_ptr&lt; SolverConfiguration &gt; configuration, shared_ptr&lt; ProblemDescription&lt; dim &gt; &gt; problemDescription)" -->
+<a class="anchor" id="a47ca594a73dc5ab04e319ba588cda3dd"></a><!-- doxytag: member="natrium::CFDSolver::CFDSolver" ref="a47ca594a73dc5ab04e319ba588cda3dd" args="(boost::shared_ptr&lt; SolverConfiguration &gt; configuration, boost::shared_ptr&lt; ProblemDescription&lt; dim &gt; &gt; problemDescription)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -187,13 +188,13 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classnatrium_1_1CFDSolver.html">natrium::CFDSolver</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1CFDSolver.html">CFDSolver</a> </td>
           <td>(</td>
-          <td class="paramtype">shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverConfiguration.html">SolverConfiguration</a> &gt;&nbsp;</td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverConfiguration.html">SolverConfiguration</a> &gt;&nbsp;</td>
           <td class="paramname"> <em>configuration</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">shared_ptr&lt; <a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &gt;&nbsp;</td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &gt;&nbsp;</td>
           <td class="paramname"> <em>problemDescription</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -343,7 +344,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

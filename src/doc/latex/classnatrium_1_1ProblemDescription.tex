@@ -16,9 +16,9 @@ Abstract class for the description of a CFD problem. The description includes th
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_a98abafd1e3a7cf99c0a8125bf93b6127}{
-\hyperlink{classnatrium_1_1ProblemDescription_a98abafd1e3a7cf99c0a8125bf93b6127}{ProblemDescription} (shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation, double viscosity, double characteristicLength)}
-\label{classnatrium_1_1ProblemDescription_a98abafd1e3a7cf99c0a8125bf93b6127}
+\hypertarget{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}{
+\hyperlink{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}{ProblemDescription} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation, double viscosity, double characteristicLength)}
+\label{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}
 
 \begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}{
@@ -26,36 +26,36 @@ virtual \hyperlink{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292
 \label{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ProblemDescription_a8913fc4d53b76a5eb4f917a4c444c693}{
-const shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \& {\bfseries getMesh} () const }
-\label{classnatrium_1_1ProblemDescription_a8913fc4d53b76a5eb4f917a4c444c693}
+\hypertarget{classnatrium_1_1ProblemDescription_a16420fffc7d77b22611281b83c80664f}{
+const boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \& {\bfseries getMesh} () const }
+\label{classnatrium_1_1ProblemDescription_a16420fffc7d77b22611281b83c80664f}
 
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_abb061fe78c8d289fe2a4a9000015d842}{
-const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ \& {\bfseries getBoundaries} () const }
-\label{classnatrium_1_1ProblemDescription_abb061fe78c8d289fe2a4a9000015d842}
+\hypertarget{classnatrium_1_1ProblemDescription_ab42b3f2f0144d269bb38a4019e408209}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ \& {\bfseries getBoundaries} () const }
+\label{classnatrium_1_1ProblemDescription_ab42b3f2f0144d269bb38a4019e408209}
 
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_a32195b7133d6c00478e2db0c4ea9cd58}{
-virtual const shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ \& {\bfseries getInitialRhoFunction} () const }
-\label{classnatrium_1_1ProblemDescription_a32195b7133d6c00478e2db0c4ea9cd58}
+\hypertarget{classnatrium_1_1ProblemDescription_adaf831d77fae721f84c2a915976cb726}{
+virtual const boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ \& {\bfseries getInitialRhoFunction} () const }
+\label{classnatrium_1_1ProblemDescription_adaf831d77fae721f84c2a915976cb726}
 
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_aa2013706bd162531ad3cc6bc4b817fd4}{
-virtual const shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ \& {\bfseries getInitialUFunction} () const }
-\label{classnatrium_1_1ProblemDescription_aa2013706bd162531ad3cc6bc4b817fd4}
+\hypertarget{classnatrium_1_1ProblemDescription_a008bd19c317f7907229c5cab7a646ea0}{
+virtual const boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ \& {\bfseries getInitialUFunction} () const }
+\label{classnatrium_1_1ProblemDescription_a008bd19c317f7907229c5cab7a646ea0}
 
 \item 
 bool \hyperlink{classnatrium_1_1ProblemDescription_aed8ec93fcba6c0b78c04ef91b8703f7a}{checkBoundaryConditions} ()
 \begin{DoxyCompactList}\small\item\em check if boundary conditions are uniquely assigned to boundary indicator \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1ProblemDescription_a7c8fb092f2a3e80ba2a0dd3220cf1271}{
-void {\bfseries setMesh} (const shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \&triangulation)}
-\label{classnatrium_1_1ProblemDescription_a7c8fb092f2a3e80ba2a0dd3220cf1271}
+\hypertarget{classnatrium_1_1ProblemDescription_afeb7e2a712c3fb816d8491cb01d02156}{
+void {\bfseries setMesh} (const boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \&triangulation)}
+\label{classnatrium_1_1ProblemDescription_afeb7e2a712c3fb816d8491cb01d02156}
 
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_aadca2aac3953fa44bf9ce9cf43dc0417}{
-void {\bfseries setBoundaries} (const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ \&boundaries)}
-\label{classnatrium_1_1ProblemDescription_aadca2aac3953fa44bf9ce9cf43dc0417}
+\hypertarget{classnatrium_1_1ProblemDescription_a9078dc3c0da45f600e8b2375f321494e}{
+void {\bfseries setBoundaries} (const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ \&boundaries)}
+\label{classnatrium_1_1ProblemDescription_a9078dc3c0da45f600e8b2375f321494e}
 
 \item 
 \hypertarget{classnatrium_1_1ProblemDescription_a582ecf296837d78a8a00fd598de38de2}{
@@ -86,14 +86,14 @@ virtual double {\bfseries getCharacteristicVelocity} () const }
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_a71ca18f3f0cdeb37ce22b200336c8f06}{
-void {\bfseries setInitialRho} (shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ ini\_\-rho)}
-\label{classnatrium_1_1ProblemDescription_a71ca18f3f0cdeb37ce22b200336c8f06}
+\hypertarget{classnatrium_1_1ProblemDescription_a3b1f71cc4ec46691a29478049d851c8d}{
+void {\bfseries setInitialRho} (boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ ini\_\-rho)}
+\label{classnatrium_1_1ProblemDescription_a3b1f71cc4ec46691a29478049d851c8d}
 
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_a43da3bc535ee15b64f76d1d4cecf16a3}{
-void {\bfseries setInitialU} (shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ ini\_\-u)}
-\label{classnatrium_1_1ProblemDescription_a43da3bc535ee15b64f76d1d4cecf16a3}
+\hypertarget{classnatrium_1_1ProblemDescription_a1e173a98aaf7233b9b9e849b5d1f9efb}{
+void {\bfseries setInitialU} (boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ ini\_\-u)}
+\label{classnatrium_1_1ProblemDescription_a1e173a98aaf7233b9b9e849b5d1f9efb}
 
 \end{DoxyCompactItemize}
 

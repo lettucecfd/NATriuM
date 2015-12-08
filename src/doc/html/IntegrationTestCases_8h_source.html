@@ -68,14 +68,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00023"></a>00023         vector&lt;double&gt; expected;
 <a name="l00024"></a>00024         vector&lt;double&gt; threshold;
 <a name="l00025"></a>00025         vector&lt;double&gt; outcome;
-<a name="l00026"></a>00026         shared_ptr&lt;std::stringstream&gt; error_msg;
+<a name="l00026"></a>00026         boost::shared_ptr&lt;std::stringstream&gt; error_msg;
 <a name="l00027"></a>00027         <span class="keywordtype">double</span> time;
 <a name="l00028"></a>00028         <span class="keywordtype">bool</span> success;
 <a name="l00029"></a>00029         <a class="code" href="structnatrium_1_1IntegrationTestCases_1_1TestResult.html">TestResult</a>(){
 <a name="l00030"></a>00030                 <span class="keywordtype">id</span> = 0;
 <a name="l00031"></a>00031                 time = 0;
 <a name="l00032"></a>00032                 success = 0;
-<a name="l00033"></a>00033                 error_msg = make_shared&lt;std::stringstream&gt;();
+<a name="l00033"></a>00033                 error_msg = boost::make_shared&lt;std::stringstream&gt;();
 <a name="l00034"></a>00034         };
 <a name="l00035"></a>00035         ~<a class="code" href="structnatrium_1_1IntegrationTestCases_1_1TestResult.html">TestResult</a>(){};
 <a name="l00036"></a>00036 };
@@ -115,7 +115,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

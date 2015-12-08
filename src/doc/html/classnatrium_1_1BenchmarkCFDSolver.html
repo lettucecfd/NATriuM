@@ -67,8 +67,8 @@ Inheritance diagram for natrium::BenchmarkCFDSolver&lt; dim &gt;:</div>
 <p><a href="classnatrium_1_1BenchmarkCFDSolver-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac43f8244c3408f367b192cced7be94ab"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::BenchmarkCFDSolver" ref="ac43f8244c3408f367b192cced7be94ab" args="(shared_ptr&lt; SolverConfiguration &gt; configuration, shared_ptr&lt; Benchmark&lt; dim &gt; &gt; problemDescription)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#ac43f8244c3408f367b192cced7be94ab">BenchmarkCFDSolver</a> (shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverConfiguration.html">SolverConfiguration</a> &gt; configuration, shared_ptr&lt; <a class="el" href="classnatrium_1_1Benchmark.html">Benchmark</a>&lt; dim &gt; &gt; problemDescription)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa9cdc67e4218230f54d74b0182170705"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::BenchmarkCFDSolver" ref="aa9cdc67e4218230f54d74b0182170705" args="(boost::shared_ptr&lt; SolverConfiguration &gt; configuration, boost::shared_ptr&lt; Benchmark&lt; dim &gt; &gt; problemDescription)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#aa9cdc67e4218230f54d74b0182170705">BenchmarkCFDSolver</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverConfiguration.html">SolverConfiguration</a> &gt; configuration, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Benchmark.html">Benchmark</a>&lt; dim &gt; &gt; problemDescription)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9708132fc0cef4ae55e3453672891c81"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::output" ref="a9708132fc0cef4ae55e3453672891c81" args="(size_t iteration)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a9708132fc0cef4ae55e3453672891c81">output</a> (size_t iteration)</td></tr>
@@ -87,16 +87,16 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get full analytic solution for the density field at time t <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a7883dcfd4469ae65ae62cad09ae5d160">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">set initial velocities  <a href="#a7883dcfd4469ae65ae62cad09ae5d160"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5a174cf76431ba7b1721f1ce55df967"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::getBenchmark" ref="aa5a174cf76431ba7b1721f1ce55df967" args="() const " -->
-const shared_ptr&lt; <a class="el" href="classnatrium_1_1Benchmark.html">Benchmark</a><br class="typebreak"/>
-&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getBenchmark</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a767bb620c883abad0091a9e68aee4491"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::getBenchmark" ref="a767bb620c883abad0091a9e68aee4491" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1Benchmark.html">Benchmark</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getBenchmark</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a659524b149a3650b0f62186e59e385ec"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::getSupportPoints" ref="a659524b149a3650b0f62186e59e385ec" args="() const " -->
 const map<br class="typebreak"/>
 &lt; dealii::types::global_dof_index, <br class="typebreak"/>
 dealii::Point&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSupportPoints</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac015d170b19024e63ff43f4a2e516fef"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::getErrorStats" ref="ac015d170b19024e63ff43f4a2e516fef" args="() const " -->
-const shared_ptr&lt; <a class="el" href="classnatrium_1_1ErrorStats.html">ErrorStats</a><br class="typebreak"/>
-&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getErrorStats</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb3b4536d852415a4051c52507514ac2"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::getErrorStats" ref="abb3b4536d852415a4051c52507514ac2" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1ErrorStats.html">ErrorStats</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getErrorStats</b> () const </td></tr>
 <tr><td colspan="2"><h2>Friends</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a168e52694e19bf5c3e3136236b7b6888"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::ErrorStats" ref="a168e52694e19bf5c3e3136236b7b6888" args="" -->
 class&nbsp;</td><td class="memItemRight" valign="bottom"><b>ErrorStats</b></td></tr>
@@ -166,7 +166,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
