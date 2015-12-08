@@ -10,10 +10,9 @@
 
 namespace natrium {
 
-bool BoundaryTools::checkParallelLines(
-		const dealii::Point<2>& beginLine1, const dealii::Point<2>& endLine1,
-		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
-		std::string& errorMessage) {
+bool BoundaryTools::checkParallelLines(const dealii::Point<2>& beginLine1,
+		const dealii::Point<2>& endLine1, dealii::Point<2>& beginLine2,
+		dealii::Point<2>& endLine2, std::string& errorMessage) {
 
 	// check input
 	double lengthLine1 = beginLine1.distance(endLine1);
@@ -154,8 +153,10 @@ bool BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 }/* getInterfacialLinesByBoundaryIndicator */
 
 template<size_t dim>
-void BoundaryTools::CoupleDoFsAtBoundary(dealii::TrilinosWrappers::SparsityPattern& cSparse,
-		const dealii::DoFHandler<dim>& doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling) {
+void BoundaryTools::CoupleDoFsAtBoundary(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<dim>& doFHandler, size_t boundary_id,
+		PointCouplingAtBoundary coupling) {
 
 	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
 	const dealii::ConstraintMatrix constraints;
@@ -177,8 +178,7 @@ void BoundaryTools::CoupleDoFsAtBoundary(dealii::TrilinosWrappers::SparsityPatte
 			for (size_t i = 0; i < dealii::GeometryInfo<dim>::faces_per_cell;
 					i++) {
 				if (cell->face(i)->at_boundary()) {
-					if (cell->face(i)->boundary_id()
-							== boundary_id) {
+					if (cell->face(i)->boundary_id() == boundary_id) {
 						cell->get_dof_indices(dofs_on_this_cell);
 						dofs_on_this_face.clear();
 						for (size_t j = 0; j < n_dofs_per_cell; j++) {
@@ -189,28 +189,46 @@ void BoundaryTools::CoupleDoFsAtBoundary(dealii::TrilinosWrappers::SparsityPatte
 						}
 
 						// add
-						// couple only individual dofs with each other
-						std::vector<dealii::types::global_dof_index> dof_this(
-								1);
-						std::vector<dealii::types::global_dof_index> dof_this2(
-								1);
-						for (size_t i = 0; i < dofs_on_this_face.size(); i++) {
-							dof_this.at(0) = dofs_on_this_face.at(i);
-							dof_this2.at(0) = dofs_on_this_face.at(i);
-							// Add entries to sparsity pattern
+						if (COUPLE_ONLY_SINGLE_POINTS == coupling) {
+							// couple only individual dofs with each other
+							std::vector<dealii::types::global_dof_index> dof_this(
+									1);
+							for (size_t i = 0; i < dofs_on_this_face.size();
+									i++) {
+								dof_this.at(0) = dofs_on_this_face.at(i);
+								constraints.add_entries_local_to_global(
+										dof_this, cSparse, true);
+							}
+						} else if (COUPLE_WHOLE_FACE == coupling) {
+							// couple all dofs at a face
+							std::vector<dealii::types::global_dof_index> dof_this(
+									dofs_on_this_face.size());
+							for (size_t i = 0; i < dofs_on_this_face.size();
+									i++) {
+								dof_this.at(i) = dofs_on_this_face.at(i);
+							}
 							constraints.add_entries_local_to_global(dof_this,
-									dof_this2, cSparse, true);
+									cSparse, true);
+						} else {
+							throw BoundaryCollectionException(
+									"The coupling you specified is not implemented in "
+											"BoundaryTools::CoupleDoFsAtBoundary");
 						}
-					} /* end if boundary indicator */
+					}
+					/* end if boundary indicator */
 				} /* end if at boundary */
 			} /* end for all faces */
 		} /* end if is locally owned */
 	} /* end forall cells */
 
 } /* CoupleDoFsAtBoundary */
-template void BoundaryTools::CoupleDoFsAtBoundary<2>(dealii::TrilinosWrappers::SparsityPattern& cSparse,
-		const dealii::DoFHandler<2>& doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling);
-template void BoundaryTools::CoupleDoFsAtBoundary<3>(dealii::TrilinosWrappers::SparsityPattern& cSparse,
-		const dealii::DoFHandler<3>& doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling);
+template void BoundaryTools::CoupleDoFsAtBoundary<2>(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<2>& doFHandler, size_t boundary_id,
+		PointCouplingAtBoundary coupling);
+template void BoundaryTools::CoupleDoFsAtBoundary<3>(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<3>& doFHandler, size_t boundary_id,
+		PointCouplingAtBoundary coupling);
 
 } /* namespace natrium */
