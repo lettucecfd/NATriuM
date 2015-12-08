@@ -225,6 +225,8 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
 	TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyOwnedDofs,
 			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+	TrilinosWrappers::SparsityPattern cSparseNotOpposite(m_locallyOwnedDofs,
+			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
 	TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyOwnedDofs,
 			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
 	/*DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
@@ -258,12 +260,12 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	 cSparse.block(0, 0));*/
 
 	// add entries for non-periodic boundaries
-	for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =
+	for (typename BoundaryCollection<dim>::ConstDirichletIterator dirichlet_iterator =
 			m_boundaries->getDirichletBoundaries().begin();
-			minLeeIterator != m_boundaries->getDirichletBoundaries().end();
-			minLeeIterator++) {
-		minLeeIterator->second->addToSparsityPattern(cSparseOpposite,
-				*m_doFHandler, *m_stencil);
+			dirichlet_iterator != m_boundaries->getDirichletBoundaries().end();
+			dirichlet_iterator++) {
+		dirichlet_iterator->second->addToSparsityPattern(cSparseOpposite,
+				*m_doFHandler);
 	}
 	//reinitialize matrices
 	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block

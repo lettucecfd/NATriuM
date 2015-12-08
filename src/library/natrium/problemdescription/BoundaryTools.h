@@ -34,6 +34,22 @@ public:
 };
 
 /**
+ * @short enum to describe couplings at the boundary
+ */
+enum DistributionCouplingAtBoundary{
+	COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
+	COUPLE_ALL_DISTRIBUTIONS
+};
+
+/**
+ * @short enum to describe couplings at the boundary
+ */
+enum PointCouplingAtBoundary{
+	COUPLE_ONLY_SINGLE_POINTS,
+	COUPLE_WHOLE_FACE
+};
+
+/**
  * @short Check if two lines in a 2D plane are parallel and not equal to each other.
  *        If they are antiparallel, swap begin and end of the second line.
  *  @param[in] beginLine1 start point of line 1
@@ -69,8 +85,26 @@ bool getInterfacialLinesByBoundaryIndicator(size_t boundaryIndicator1,
 		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
 		std::string& errorMessage);
 
-}
 
-}
+
+/**
+ * @short This functions adds elements to the sparsity pattern to couple different distribution functions
+ * at the boundary.
+ * @param[in/out] cSparse The sparsity pattern to add to.
+ * @param[in] doFHandler The doFHandler
+ * @param[in] stencil The DQ stencil is required to identify the opposite distributions.
+ * @param[in] coupling Describes the point coupling that we apply at the boundary. The possibilities are:
+ *				 -# COUPLE_ONLY_SINGLE_POINTS: Couples the dofs that belong to the same integration point.
+ *				 -# COUPLE_WHOLE_FACE: Couples all dofs at the face with each other
+ *				    (is required when gradients are calculated at the boundary)
+ */
+template<size_t dim>
+void CoupleDoFsAtBoundary(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<dim>& doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling);
+
+} /* namespace BoundaryTools */
+
+} /* namespace natrium */
 
 #endif /* BOUNDARYTOOLS_H_ */

@@ -20,29 +20,37 @@ template class BoundaryVelocity<3> ;
 template<size_t dim> DirichletBoundary<dim>::DirichletBoundary(
 		size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
-		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity) :
+		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity,
+		BoundaryTools::DistributionCouplingAtBoundary distribution_coupling,
+		BoundaryTools::PointCouplingAtBoundary point_coupling) :
 		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
-				boundaryDensity), m_boundaryVelocity(boundaryVelocity) {
+				boundaryDensity), m_boundaryVelocity(boundaryVelocity),
+				m_distributionCoupling(distribution_coupling),
+				m_pointCoupling(point_coupling){
 }
-template DirichletBoundary<2>::DirichletBoundary(size_t boundaryIndicator,
-		boost::shared_ptr<dealii::Function<2> > boundaryDensity,
-		boost::shared_ptr<dealii::Function<2> > boundaryVelocity);
-template DirichletBoundary<3>::DirichletBoundary(size_t boundaryIndicator,
-		boost::shared_ptr<dealii::Function<3> > boundaryDensity,
-		boost::shared_ptr<dealii::Function<3> > boundaryVelocity);
 
 template<size_t dim>
 DirichletBoundary<dim>::DirichletBoundary(size_t boundaryIndicator,
-		const dealii::Vector<double>& velocity) :
+		const dealii::Vector<double>& velocity,
+		BoundaryTools::DistributionCouplingAtBoundary distribution_coupling,
+		BoundaryTools::PointCouplingAtBoundary point_coupling) :
 		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
 				boost::make_shared<BoundaryDensity<dim> >()), m_boundaryVelocity(
-				boost::make_shared<BoundaryVelocity<dim> >(velocity)) {
+				boost::make_shared<BoundaryVelocity<dim> >(velocity)),
+				m_distributionCoupling(distribution_coupling),
+				m_pointCoupling(point_coupling) {
 }
-template DirichletBoundary<2>::DirichletBoundary(size_t boundaryIndicator,
-		const dealii::Vector<double>& velocity);
-template DirichletBoundary<3>::DirichletBoundary(size_t boundaryIndicator,
-		const dealii::Vector<double>& velocity);
 
+
+template<size_t dim> void DirichletBoundary<dim>::addToSparsityPattern(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<dim>& doFHandler) const {
+	BoundaryTools::CoupleDoFsAtBoundary<dim>(cSparse,
+			doFHandler, m_boundaryIndicator, m_pointCoupling);
+}
+
+template class DirichletBoundary<2>;
+template class DirichletBoundary<3>;
 
 
 } /* namespace natrium */

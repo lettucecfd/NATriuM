@@ -60,8 +60,8 @@ public:
 
 	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::iterator Iterator;
 	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::const_iterator ConstIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<DirichletBoundary<dim> > >::iterator MinLeeIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<DirichletBoundary<dim> > >::const_iterator ConstMinLeeIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<DirichletBoundary<dim> > >::iterator DirichletIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<DirichletBoundary<dim> > >::const_iterator ConstDirichletIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::iterator PeriodicIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::const_iterator ConstPeriodicIterator;
 

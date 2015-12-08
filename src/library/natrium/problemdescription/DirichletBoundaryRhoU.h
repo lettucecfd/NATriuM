@@ -9,6 +9,7 @@
 #define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_DIRICHLETBOUNDARYRHOU_H_
 
 #include "DirichletBoundary.h"
+#include "BoundaryTools.h"
 
 namespace natrium {
 
@@ -19,6 +20,8 @@ namespace natrium {
  * 			For outgoing particle distribution functions the fluxes are set to 0.
  * 		  	For incoming particle distributions fluxes are set to
  * 		  	\f[ f_{\alpha} - f^{+}_{\alpha} = f_{\alpha} - f_{\alpha^{*}} - 2w_{\alpha} \rho_{0} (e_{\alpha}\cdot u_{b})/c^{2}_{s}\f]
+ * 		  	This formula shows that we have to couple only opposite distribution functions (COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS)
+ * 		  	at single points (COUPLE_ONLY_SINGLE_POINTS - as there are no gradients to be computed)
  * 		  	@note: The boundary has been proposed by Ladd in the standard LBM and has also been used by Min and Lee (2011)
  * 		  	when proposing the SEDG-LBM. It has been shown practically that it  supports the exponential convergence of the scheme.
  */
@@ -47,22 +50,24 @@ public:
 	virtual ~DirichletBoundaryRhoU();
 
 	/**
-	 * @short In order to include the boundary conditions into the integration
-	 * we have to expand the sparsity pattern. In concrete, we have to couple blocks at the boundary
-	 * that belong to different distribution functions \f[ f_{\alpha} \f] and \f[ f_{\beta} \f].
-	 * Here, we have to couple only the blocks of opposite distributions, as both density and velocity
-	 * are prescribed.
-	 */
-	virtual void addToSparsityPattern(
-			dealii::TrilinosWrappers::SparsityPattern& cSparse,
-			const dealii::DoFHandler<dim>& doFHandler, const Stencil&) const;
-
-	/**
 	 * @short This function defines the actual boundary condition. It calculates and assembles the fluxes at the
 	 * boundary. Note that this function has to be called only once at the beginning of a simulation
 	 * (or at reassembly, e.g. when the grid has changed).
 	 * While the simulation runs, there has to be no separate treatment of the boundary, as it is a part
 	 * of the linear ODE, already.
+	 * @param[in] alpha The index of the distribution function \f f_{\alpha} \f] for which the boundary is constructed.
+	 * @param[in] cell The current cell (assembly is done cell-by-cell)
+	 * @param[in] faceNumber The current face number.
+	 * @param[in] feFaceValues The dealii::FEFaceValues<dim> object, which has to be reinitialized right at the beginning
+	 *            of the assembleBoundary function (it can be empty, but is passed here as a function parameter to avoid
+	 *            construction of a new feFaceValues object).
+	 * @param[in] stencil The DQ stencil, which is required here to get the particle velocities.
+	 * @param[in] q_index_to_facedof Maps quadrature nodes to DoFs (only possible for GLL nodes)
+	 * @param[in] inverseLocalMassMatrix \f[ M^{-1} \f] is multiplied with the obtained boundary matrix at the end of the assembly.
+	 * @param[in/out] systemMatrix The global system matrix which is assembled to.
+	 * @param[in/out] systemVector The global system vector which is assembled to.
+	 * @param[in] useCentralFlux indicates whether to use a central instead of a Lax-Friedrichs flux. Should not be used,
+	 *            has not been tested thoroughly and yields bad results, usually.
 	 */
 	virtual void assembleBoundary(size_t alpha,
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,

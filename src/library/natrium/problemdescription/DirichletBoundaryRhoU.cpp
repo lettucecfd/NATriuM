@@ -14,7 +14,9 @@ DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity) :
 		DirichletBoundary<dim>(boundaryIndicator, boundaryDensity,
-				boundaryVelocity) {
+				boundaryVelocity,
+				BoundaryTools::COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
+				BoundaryTools::COUPLE_ONLY_SINGLE_POINTS) {
 
 }
 
@@ -22,67 +24,14 @@ DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
 template<size_t dim>
 DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity) :
-		DirichletBoundary<dim>(boundaryIndicator, velocity) {
+		DirichletBoundary<dim>(boundaryIndicator, velocity,
+				BoundaryTools::COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
+				BoundaryTools::COUPLE_ONLY_SINGLE_POINTS) {
 
 }
 
 template<size_t dim>
 DirichletBoundaryRhoU<dim>::~DirichletBoundaryRhoU() {
-}
-
-template<size_t dim> void DirichletBoundaryRhoU<dim>::addToSparsityPattern(
-		dealii::TrilinosWrappers::SparsityPattern& cSparse,
-		const dealii::DoFHandler<dim>& doFHandler, const Stencil&) const {
-
-	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
-	const dealii::ConstraintMatrix constraints;
-
-	size_t n_dofs_per_cell = doFHandler.get_fe().dofs_per_cell;
-	std::vector<dealii::types::global_dof_index> dofs_on_this_cell(
-			n_dofs_per_cell);
-	std::vector<dealii::types::global_dof_index> dofs_on_this_face;
-	dofs_on_this_face.reserve(n_dofs_per_cell);
-
-	// couple opposite distribution functions at boundaries
-	// iterate over all cells
-	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
-			doFHandler.begin_active();
-	typename dealii::DoFHandler<dim>::active_cell_iterator endc =
-			doFHandler.end();
-	for (; cell != endc; ++cell) {
-		if (cell->is_locally_owned()) {
-			for (size_t i = 0; i < dealii::GeometryInfo<dim>::faces_per_cell;
-					i++) {
-				if (cell->face(i)->at_boundary()) {
-					if (cell->face(i)->boundary_id()
-							== DirichletBoundary<dim>::getBoundaryIndicator()) {
-						cell->get_dof_indices(dofs_on_this_cell);
-						dofs_on_this_face.clear();
-						for (size_t j = 0; j < n_dofs_per_cell; j++) {
-							if (cell->get_fe().has_support_on_face(j, i)) {
-								dofs_on_this_face.push_back(
-										dofs_on_this_cell.at(j));
-							}
-						}
-
-						// add
-						// couple only individual dofs with each other
-						std::vector<dealii::types::global_dof_index> dof_this(
-								1);
-						std::vector<dealii::types::global_dof_index> dof_this2(
-								1);
-						for (size_t i = 0; i < dofs_on_this_face.size(); i++) {
-							dof_this.at(0) = dofs_on_this_face.at(i);
-							dof_this2.at(0) = dofs_on_this_face.at(i);
-							// Add entries to sparsity pattern
-							constraints.add_entries_local_to_global(dof_this,
-									dof_this2, cSparse, true);
-						}
-					} /* end if boundary indicator */
-				} /* end if at boundary */
-			} /* end for all faces */
-		} /* end if is locally owned */
-	} /* end forall cells */
 }
 
 template<size_t dim> void DirichletBoundaryRhoU<dim>::assembleBoundary(
