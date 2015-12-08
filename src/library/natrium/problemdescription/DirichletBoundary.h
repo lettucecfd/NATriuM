@@ -1,12 +1,12 @@
 /**
- * @file MinLeeBoundary.h
+ * @file DirichletBoundary.h
  * @short Description of a boundary as described by Min and Lee
  * @date 26.03.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#ifndef MINLEEBOUNDARY_H_
-#define MINLEEBOUNDARY_H_
+#ifndef DIRICHLETBOUNDARY_H_
+#define DIRICHLETBOUNDARY_H_
 
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include "deal.II/lac/trilinos_sparsity_pattern.h"
@@ -51,13 +51,10 @@ public:
 };
 
 /**
- * @short 	The boundary described by Min and Lee.
- * 			For outgoing particle distribution functions the fluxes are set to 0
- * 		  	For incoming particle distributions fluxes are set to
- * 		  	\f[ f_{\alpha} - f^{+}_{\alpha} = f_{\alpha} - f_{\alpha^{*}} - 2w_{\alpha} \rho_{0} (e_{\alpha}\cdot u_{b})/c^{2}_{s}\f]
- *
+ * @short 	Abstract class to describe Dirichlet boundary conditions.
+ * 			The virtual functions to be overriden are assembleBoundary and addToSparsityPattern.
  */
-template<size_t dim> class MinLeeBoundary: public Boundary<dim> {
+template<size_t dim> class DirichletBoundary: public Boundary<dim> {
 private:
 
 	size_t m_boundaryIndicator;
@@ -69,16 +66,16 @@ private:
 public:
 
 	/// constructor
-	MinLeeBoundary(size_t boundaryIndicator,
+	DirichletBoundary(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity);
 
 	/// constructor
-	MinLeeBoundary(size_t boundaryIndicator,
+	DirichletBoundary(size_t boundaryIndicator,
 			const dealii::Vector<double>& velocity);
 
 	/// destructor
-	virtual ~MinLeeBoundary() {
+	virtual ~DirichletBoundary() {
 	}
 	;
 
@@ -86,19 +83,13 @@ public:
 	 * @short modify sparsity pattern so that the fluxes over periodic boundary can be incorporated
 	 * @param cSparse the block-sparsity pattern
 	 */
-
-	void addToSparsityPattern(
-#ifdef WITH_TRILINOS_MPI
+	virtual void addToSparsityPattern(
 			dealii::TrilinosWrappers::SparsityPattern& cSparse,
-#else
-
-			dealii::DynamicSparsityPattern& cSparse,
-#endif
 			const dealii::DoFHandler<dim>& doFHandler,
-			const Stencil& ) const;
+			const Stencil& ) const = 0;
 
 	// assemble Min-Lee-Type boundary
-	void assembleBoundary(size_t alpha,
+	virtual void assembleBoundary(size_t alpha,
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 			const Stencil& stencil,
@@ -106,13 +97,21 @@ public:
 			const vector<double> & inverseLocalMassMatrix,
 			distributed_sparse_block_matrix& systemMatrix,
 			distributed_block_vector& systemVector,
-			bool useCentralFlux = false) const;
+			bool useCentralFlux = false) const = 0;
 
 	size_t getBoundaryIndicator() const {
 		return m_boundaryIndicator;
+	}
+
+	const boost::shared_ptr<dealii::Function<dim> >& getBoundaryDensity() const {
+		return m_boundaryDensity;
+	}
+
+	const boost::shared_ptr<dealii::Function<dim> >& getBoundaryVelocity() const {
+		return m_boundaryVelocity;
 	}
 };
 
 } /* namespace natrium */
 
-#endif /* MINLEEBOUNDARY_H_ */
+#endif /* DirichletBoundary_H_ */

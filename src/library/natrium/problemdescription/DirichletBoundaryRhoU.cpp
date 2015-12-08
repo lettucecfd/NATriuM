@@ -1,58 +1,38 @@
 /*
- * MinLeeBoundary.cpp
+ * DirichletBoundaryRhoU.cpp
  *
- *  Created on: 26.03.2014
- *      Author: kraemer
+ *  Created on: 08.12.2015
+ *      Author: akraem3m
  */
 
-#include "MinLeeBoundary.h"
-
-#include "deal.II/lac/compressed_sparsity_pattern.h"
-#include <deal.II/dofs/dof_handler.h>
-#include <deal.II/lac/constraint_matrix.h>
+#include "DirichletBoundaryRhoU.h"
 
 namespace natrium {
 
-template class BoundaryDensity<2> ;
-template class BoundaryDensity<3> ;
-template class BoundaryVelocity<2> ;
-template class BoundaryVelocity<3> ;
-
-template<size_t dim> MinLeeBoundary<dim>::MinLeeBoundary(
-		size_t boundaryIndicator,
+template<size_t dim>
+DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity) :
-		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
-				boundaryDensity), m_boundaryVelocity(boundaryVelocity) {
+		DirichletBoundary<dim>(boundaryIndicator, boundaryDensity,
+				boundaryVelocity) {
+
 }
-template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator,
-		boost::shared_ptr<dealii::Function<2> > boundaryDensity,
-		boost::shared_ptr<dealii::Function<2> > boundaryVelocity);
-template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
-		boost::shared_ptr<dealii::Function<3> > boundaryDensity,
-		boost::shared_ptr<dealii::Function<3> > boundaryVelocity);
+
+/// constructor
+template<size_t dim>
+DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
+		const dealii::Vector<double>& velocity) :
+		DirichletBoundary<dim>(boundaryIndicator, velocity) {
+
+}
 
 template<size_t dim>
-MinLeeBoundary<dim>::MinLeeBoundary(size_t boundaryIndicator,
-		const dealii::Vector<double>& velocity) :
-		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
-				boost::make_shared<BoundaryDensity<dim> >()), m_boundaryVelocity(
-				boost::make_shared<BoundaryVelocity<dim> >(velocity)) {
+DirichletBoundaryRhoU<dim>::~DirichletBoundaryRhoU() {
 }
-template MinLeeBoundary<2>::MinLeeBoundary(size_t boundaryIndicator,
-		const dealii::Vector<double>& velocity);
-template MinLeeBoundary<3>::MinLeeBoundary(size_t boundaryIndicator,
-		const dealii::Vector<double>& velocity);
 
-template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
-#ifdef WITH_TRILINOS_MPI
+template<size_t dim> void DirichletBoundaryRhoU<dim>::addToSparsityPattern(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
-#else
-
-		dealii::DynamicSparsityPattern& cSparse,
-#endif
-		const dealii::DoFHandler<dim>& doFHandler,
-		const Stencil& ) const {
+		const dealii::DoFHandler<dim>& doFHandler, const Stencil&) const {
 
 	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
 	const dealii::ConstraintMatrix constraints;
@@ -75,7 +55,7 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 					i++) {
 				if (cell->face(i)->at_boundary()) {
 					if (cell->face(i)->boundary_id()
-							== m_boundaryIndicator) {
+							== DirichletBoundary<dim>::getBoundaryIndicator()) {
 						cell->get_dof_indices(dofs_on_this_cell);
 						dofs_on_this_face.clear();
 						for (size_t j = 0; j < n_dofs_per_cell; j++) {
@@ -105,23 +85,8 @@ template<size_t dim> void MinLeeBoundary<dim>::addToSparsityPattern(
 	} /* end forall cells */
 }
 
-template void MinLeeBoundary<2>::addToSparsityPattern(
-#ifdef WITH_TRILINOS_MPI
-		dealii::TrilinosWrappers::SparsityPattern& cSparse,
-#else
-		dealii::DynamicSparsityPattern& cSparse,
-#endif
-		const dealii::DoFHandler<2>& doFHandler, const Stencil& ) const;
-template void MinLeeBoundary<3>::addToSparsityPattern(
-#ifdef WITH_TRILINOS_MPI
-		dealii::TrilinosWrappers::SparsityPattern& cSparse,
-#else
-		dealii::DynamicSparsityPattern& cSparse,
-#endif
-		const dealii::DoFHandler<3>& doFHandler, const Stencil& ) const;
-
-
-template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
+template<size_t dim> void DirichletBoundaryRhoU<dim>::assembleBoundary(
+		size_t alpha,
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 		const Stencil& stencil,
@@ -149,11 +114,11 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		size_t thisDoF = q_index_to_facedof.at(q);
 
 		// get density and velocity at boundary point
-		double density = m_boundaryDensity->value(
+		double density = DirichletBoundary<dim>::getBoundaryDensity()->value(
 				feFaceValues.quadrature_point(q));
 		dealii::Vector<double> velocity(dim);
-		m_boundaryVelocity->vector_value(feFaceValues.quadrature_point(q),
-				velocity);
+		DirichletBoundary<dim>::getBoundaryVelocity()->vector_value(
+				feFaceValues.quadrature_point(q), velocity);
 
 		// calculate matrix entries
 		double prefactor = JxW.at(q);
@@ -206,21 +171,9 @@ template<size_t dim> void MinLeeBoundary<dim>::assembleBoundary(size_t alpha,
 		}
 	}
 }
-template void MinLeeBoundary<2>::assembleBoundary(size_t alpha,
-		const typename dealii::DoFHandler<2>::active_cell_iterator& cell,
-		size_t faceNumber, dealii::FEFaceValues<2>& feFaceValues,
-		const Stencil& stencil,
-		const std::map<size_t, size_t>& q_index_to_facedof,
-		const vector<double> & inverseLocalMassMatrix,
-		distributed_sparse_block_matrix& systemMatrix,
-		distributed_block_vector& systemVector, bool useCentralFlux) const;
-template void MinLeeBoundary<3>::assembleBoundary(size_t alpha,
-		const typename dealii::DoFHandler<3>::active_cell_iterator& cell,
-		size_t faceNumber, dealii::FEFaceValues<3>& feFaceValues,
-		const Stencil& stencil,
-		const std::map<size_t, size_t>& q_index_to_facedof,
-		const vector<double> & inverseLocalMassMatrix,
-		distributed_sparse_block_matrix& systemMatrix,
-		distributed_block_vector& systemVector, bool useCentralFlux) const;
+
+// Explicit instantiation
+template class DirichletBoundaryRhoU<2> ;
+template class DirichletBoundaryRhoU<3> ;
 
 } /* namespace natrium */

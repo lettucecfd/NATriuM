@@ -25,7 +25,7 @@
 #include "deal.II/lac/constraint_matrix.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/MinLeeBoundary.h"
+#include "../problemdescription/DirichletBoundary.h"
 
 #include "../stencils/Stencil.h"
 
@@ -259,8 +259,8 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 
 	// add entries for non-periodic boundaries
 	for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =
-			m_boundaries->getMinLeeBoundaries().begin();
-			minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
+			m_boundaries->getDirichletBoundaries().begin();
+			minLeeIterator != m_boundaries->getDirichletBoundaries().end();
 			minLeeIterator++) {
 		minLeeIterator->second->addToSparsityPattern(cSparseOpposite,
 				*m_doFHandler, *m_stencil);
@@ -474,10 +474,10 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 			} else /* if is not periodic */{
 				// Apply other boundaries
 				if (typeid(*(m_boundaries->getBoundary(boundaryIndicator)))
-						== typeid(MinLeeBoundary<dim> )) {
-					const boost::shared_ptr<MinLeeBoundary<dim> >& minLeeBoundary =
-							m_boundaries->getMinLeeBoundary(boundaryIndicator);
-					minLeeBoundary->assembleBoundary(alpha, cell, j,
+						== typeid(DirichletBoundary<dim> )) {
+					const boost::shared_ptr<DirichletBoundary<dim> >& DirichletBoundary =
+							m_boundaries->getDirichletBoundary(boundaryIndicator);
+					DirichletBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_stencil,
 							m_q_index_to_facedof.at(j), inverseLocalMassMatrix,
 							m_systemMatrix, m_systemVector, m_useCentralFlux);

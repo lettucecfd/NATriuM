@@ -15,7 +15,7 @@
 #include "deal.II/base/geometry_info.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/MinLeeBoundary.h"
+#include "../problemdescription/DirichletBoundaryRhoU.h"
 
 #include "../utilities/Logging.h"
 #include "../utilities/MPIGuard.h"
@@ -57,12 +57,8 @@ CouetteFlow2D::~CouetteFlow2D() {
 boost::shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L) {
 
 	//Creation of the principal domain
-#ifdef WITH_TRILINOS_MPI
 	boost::shared_ptr<Mesh<2> > unitSquare =
 	boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
-#else
-	boost::shared_ptr<Mesh<2> > unitSquare = boost::make_shared<Mesh<2> >();
-#endif
 	dealii::GridGenerator::hyper_cube(*unitSquare, 0, L);
 
 	// Assign boundary indicators to the faces of the "parent cell"
@@ -86,9 +82,9 @@ boost::shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	constantVelocity(0) = topPlateVelocity;
 
 	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
-	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, zeroVelocity));
+	boundaries->addBoundary(boost::make_shared<DirichletBoundaryRhoU<2> >(2, zeroVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<MinLeeBoundary<2> >(3, constantVelocity));
+			boost::make_shared<DirichletBoundaryRhoU<2> >(3, constantVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

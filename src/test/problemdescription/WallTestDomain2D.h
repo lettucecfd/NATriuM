@@ -8,11 +8,11 @@
 #ifndef WallTestDomain2D_H_
 #define WallTestDomain2D_H_
 
+#include <natrium/problemdescription/DirichletBoundaryRhoU.h>
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_generator.h"
 
 #include "natrium/problemdescription/ProblemDescription.h"
-#include "natrium/problemdescription/MinLeeBoundary.h"
 #include "natrium/utilities/BasicNames.h"
 
 using namespace natrium;
@@ -58,15 +58,15 @@ private:
 		boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 				BoundaryCollection<2> >();
 		boundaries->addBoundary(
-				boost::make_shared<MinLeeBoundary<2> >(0, numeric_vector(2)));
+				boost::make_shared<DirichletBoundaryRhoU<2> >(0, numeric_vector(2)));
 		boundaries->addBoundary(
-				boost::make_shared<MinLeeBoundary<2> >(1, numeric_vector(2)));
+				boost::make_shared<DirichletBoundaryRhoU<2> >(1, numeric_vector(2)));
 		boundaries->addBoundary(
-				boost::make_shared<MinLeeBoundary<2> >(2, numeric_vector(2)));
+				boost::make_shared<DirichletBoundaryRhoU<2> >(2, numeric_vector(2)));
 		numeric_vector topPlateVelocity(2);
 		topPlateVelocity(0) = 0.01;
 		boundaries->addBoundary(
-				boost::make_shared<MinLeeBoundary<2> >(3, topPlateVelocity));
+				boost::make_shared<DirichletBoundaryRhoU<2> >(3, topPlateVelocity));
 
 		// Get the triangulation object (which belongs to the parent class).
 		boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

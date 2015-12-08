@@ -1,12 +1,11 @@
 /**
- * @file MinLeeBoundary2D_test.cpp
+ * @file DirichletBoundaryRhoU2D_test.cpp
  * @short
  * @date 25.10.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "natrium/problemdescription/MinLeeBoundary.h"
-
+#include <natrium/problemdescription/DirichletBoundaryRhoU.h>
 #include "boost/test/unit_test.hpp"
 
 #include "deal.II/base/function.h"
@@ -24,7 +23,7 @@
 
 namespace natrium {
 
-BOOST_AUTO_TEST_SUITE(MinLeeBoundary2D_test)
+BOOST_AUTO_TEST_SUITE(DirichletBoundaryRhoU2D_test)
 
 class BoundaryTestDensity: public dealii::Function<2> {
 public:
@@ -41,19 +40,19 @@ public:
 	}
 };
 
-BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_Construction_test) {
-	pout << "MinLeeBoundary2D_Construction_test..." << endl;
+BOOST_AUTO_TEST_CASE(DirichletBoundaryRhoU2D_Construction_test) {
+	pout << "DirichletBoundaryRhoU2D_Construction_test..." << endl;
 
 	BOOST_CHECK_NO_THROW(
-			MinLeeBoundary<2> mlBound1(0, boost::make_shared<BoundaryTestDensity>(), boost::make_shared<BoundaryTestVelocity>()));
+			DirichletBoundaryRhoU<2> mlBound1(0, boost::make_shared<BoundaryTestDensity>(), boost::make_shared<BoundaryTestVelocity>()));
 	numeric_vector U(2);
-	BOOST_CHECK_NO_THROW(MinLeeBoundary<2> mlBound2(0, U); );
+	BOOST_CHECK_NO_THROW(DirichletBoundaryRhoU<2> mlBound2(0, U); );
 
 	pout << "done" << endl;
-} /*MinLeeBoundary2D_Construction_test */
+} /*DirichletBoundaryRhoU2D_Construction_test */
 
-BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
-	pout << "MinLeeBoundary2D_SparsityPattern_test..." << endl;
+BOOST_AUTO_TEST_CASE(DirichletBoundaryRhoU2D_SparsityPattern_test) {
+	pout << "DirichletBoundaryRhoU2D_SparsityPattern_test..." << endl;
 
 	// The incoming particle distributions at the boundary must be affected by the opposite outgoing ones
 	// This means that diagonal entries must exist for the boundary dofs
@@ -134,10 +133,10 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_SparsityPattern_test) {
 	}
 
 	pout << "done" << endl;
-} /* MinLeeBoundary2D_SparsityPattern_test */
+} /* DirichletBoundaryRhoU2D_SparsityPattern_test */
 
-BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConservation_test) {
-	pout << "MinLeeBoundary2D_MassConservation_test..." << endl;
+BOOST_AUTO_TEST_CASE(DirichletBoundaryRhoU2D_MassConservation_test) {
+	pout << "DirichletBoundaryRhoU2D_MassConservation_test..." << endl;
 
 	// make problem and solver
 	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<WallTestDomain2D>(
@@ -160,10 +159,10 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_MassConservation_test) {
 	BOOST_CHECK_SMALL(mass - 1.0, 1e-10);
 
 	pout << "done" << endl;
-} /*MinLeeBoundary2D_MassConservation_test */
+} /*DirichletBoundaryRhoU2D_MassConservation_test */
 
-BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
-	pout << "MinLeeBoundary2D_BoundaryVelocity_test..." << endl;
+BOOST_AUTO_TEST_CASE(DirichletBoundaryRhoU2D_BoundaryVelocity_test) {
+	pout << "DirichletBoundaryRhoU2D_BoundaryVelocity_test..." << endl;
 
 	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<WallTestDomain2D>(
 			1);
@@ -199,8 +198,8 @@ BOOST_AUTO_TEST_CASE(MinLeeBoundary2D_BoundaryVelocity_test) {
 	 */
 
 	pout << "done" << endl;
-} /* MinLeeBoundary2D_BoundaryVelocity_test */
+} /* DirichletBoundaryRhoU2D_BoundaryVelocity_test */
 
-BOOST_AUTO_TEST_SUITE_END() /*MinLeeBoundary2D_test*/
+BOOST_AUTO_TEST_SUITE_END() /*DirichletBoundaryRhoU2D_test*/
 
 } /* namespace natrium */
