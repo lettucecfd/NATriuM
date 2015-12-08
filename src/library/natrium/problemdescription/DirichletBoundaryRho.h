@@ -1,54 +1,49 @@
 /*
- * DirichletBoundaryRhoU.h
+ * DirichletBoundaryRho.h
  *
  *  Created on: 08.12.2015
  *      Author: akraem3m
  */
 
-#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_DIRICHLETBOUNDARYRHOU_H_
-#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_DIRICHLETBOUNDARYRHOU_H_
+#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_DIRICHLETBOUNDARYRHO_H_
+#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_DIRICHLETBOUNDARYRHO_H_
 
 #include "DirichletBoundary.h"
 #include "BoundaryTools.h"
 
 namespace natrium {
 
-/*
- *			@short Boundary with fixed velocity (u) and density (\f[ \rho \f]).
+/**
+ *			@short Boundary with fixed and density (\f[ \rho \f]).
  *			This boundary condition bounces back the nonequilibrium parts of the distribution
  *			function, where the equilibrium distribution is constructed with the target values.
  * 			For outgoing particle distribution functions the fluxes are set to 0.
  * 		  	For incoming particle distributions fluxes are set to
- * 		  	\f[ f_{\alpha} - f^{+}_{\alpha} = f_{\alpha} - f_{\alpha^{*}} - 2w_{\alpha} \rho_{0} (e_{\alpha}\cdot u_{b})/c^{2}_{s}\f]
- * 		  	This formula shows that we have to couple only opposite distribution functions (COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS)
+ * 		  	\f[ f_{\alpha} - f^{+}_{\alpha} = f_{\alpha} - f_{\alpha^{*}} - \sum_{\beta=1}^{Q} 2w_{\alpha} \rho_{0} (e_{\alpha}\cdot e_{\beta})/c^{2}_{s}\f]
+ * 		  	This formula shows that we have to couple all distribution functions (COUPLE_ALL_DISTRIBUTIONS)
  * 		  	at single points (COUPLE_ONLY_SINGLE_POINTS - as there are no gradients to be computed)
- * 		  	@note: The boundary has been proposed by Ladd in the standard LBM and has also been used by Min and Lee (2011)
- * 		  	when proposing the SEDG-LBM. It has been shown practically that it  supports the exponential convergence of the scheme.
- */
+ **/
 template<size_t dim>
-class DirichletBoundaryRhoU: public DirichletBoundary<dim> {
+class DirichletBoundaryRho: public DirichletBoundary<dim> {
 public:
 	/** @short This constructor assigns the Boundary condition with arbitrary density and velocity
 	 *         to the boundary with the given boundary indicator.
 	 *  @param[in] boundaryIndicator the boundary indicator that is assigned to the target boundary.
 	 *  @param[in] boundaryDensity A dealii::Function<dim> that defines the prescribed density at the boundary.
-	 *  @param[in] boundaryVelocity A dealii::Function<dim> that defines the prescribed velocity at the boundary.
 	 */
-	DirichletBoundaryRhoU(size_t boundaryIndicator,
-			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
-			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity);
-
+	DirichletBoundaryRho(size_t boundaryIndicator,
+			boost::shared_ptr<dealii::Function<dim> > boundaryDensity);
 
 	/** @short This constructor assigns the Boundary condition with a constant fixed velocity and \f[ \rho = 1 \f]
 	 *  to the boundary with the given boundary indicator.
 	 *  @param[in] boundaryIndicator the boundary indicator that is assigned to the target boundary.
-	 *  @param[in] velocity Constant velocity vector at the boundary.
+	 *  @param[in] rho Constant density at the boundary.
 	 */
-	DirichletBoundaryRhoU(size_t boundaryIndicator,
-			const dealii::Vector<double>& velocity);
+	DirichletBoundaryRho(size_t boundaryIndicator,
+			double rho);
 
 	/// destructor
-	virtual ~DirichletBoundaryRhoU();
+	virtual ~DirichletBoundaryRho();
 
 	/**
 	 * @short This function defines the actual boundary condition. It calculates and assembles the fluxes at the

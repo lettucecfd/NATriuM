@@ -211,34 +211,20 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 		}
 	}
 
-#ifdef WITH_TRILINOS
 	//get locally owned and locally relevant dofs
 	m_locallyOwnedDofs = m_doFHandler->locally_owned_dofs();
 	DoFTools::extract_locally_relevant_dofs(*m_doFHandler,
 			m_locallyRelevantDofs);
-#endif
 
-#ifdef WITH_TRILINOS
-	// Trilinos can work with improved sparsity structures
-
-#ifdef WITH_TRILINOS_MPI
 	TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyOwnedDofs,
 			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
 	TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyOwnedDofs,
 			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
 	TrilinosWrappers::SparsityPattern cSparseNotOpposite(m_locallyOwnedDofs,
 			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
-	TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
 	/*DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
 	 DynamicSparsityPattern cSparseOpposite(m_locallyRelevantDofs);
 	 DynamicSparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
-#else
-	size_t n_dofs_per_block = m_doFHandler->n_dofs();
-	DynamicSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
-	DynamicSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
-	DynamicSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
-#endif
 
 	//reorder degrees of freedom
 	//DoFRenumbering::Cuthill_McKee(*m_doFHandler);
@@ -250,7 +236,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//as the numbering of the DoFs determines the partition (and thus the number of halo nodes
 	//for each MPI process). Furthermore, using implicit time integration schemes could bring
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
-
 	// make diagonal block 0,0 which can be copied to the other ones
 	ConstraintMatrix constraints;
 	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
@@ -267,13 +252,17 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 			dirichlet_iterator++) {
 		dirichlet_iterator->second->addToSparsityPattern(cSparseOpposite,
 				*m_doFHandler);
+		if (BoundaryTools::COUPLE_ALL_DISTRIBUTIONS
+				== dirichlet_iterator->second->m_distributionCoupling) {
+			dirichlet_iterator->second->addToSparsityPattern(cSparseNotOpposite,
+					*m_doFHandler);
+		}
 	}
 	//reinitialize matrices
 	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
-#ifdef WITH_TRILINOS_MPI
 	cSparseDiag.compress();
 	cSparseOpposite.compress();
-	cSparseEmpty.compress();
+	cSparseNotOpposite.compress();
 	/*SparsityTools::distribute_sparsity_pattern(cSparseDiag,
 	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
 	 m_locallyRelevantDofs);
@@ -286,25 +275,20 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	 */
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
-	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
+	size_t some_nonopposite = m_stencil->getIndexOfOppositeDirection(1);
+	assert(some_nonopposite <= n_blocks);
+	assert(some_nonopposite != first_opposite);
+	assert(some_nonopposite != 1);
 	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
-	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
+	m_systemMatrix.block(0, some_nonopposite).reinit(cSparseNotOpposite);
 	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
-#else
-	m_systemMatrix.reinit(n_blocks, n_blocks);
-	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
-	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
-	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
-	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
 
-	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
-#endif
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
 			if ((I == 0) and (J == 0)) {
 				continue;
 			}
-			if ((I == 0) and (J == some_empty)) {
+			if ((I == 0) and (J == some_nonopposite)) {
 				continue;
 			}
 			if ((I == 0) and (J == first_opposite)) {
@@ -320,73 +304,12 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 				continue;
 			} else {
 				m_systemMatrix.block(I, J).reinit(
-						m_systemMatrix.block(0, some_empty));
+						m_systemMatrix.block(0, some_nonopposite));
 			}
 
 		}
 	}
 	m_systemMatrix.collect_sizes();
-
-#else
-	BlockDynamicSparsityPattern cSparse(n_blocks, n_blocks);
-	// TODO do not initialize empty blocks?
-	for (size_t I = 0; I < n_blocks; I++) {
-		for (size_t J = 0; J < n_blocks; J++) {
-			cSparse.block(I, J).reinit(n_dofs_per_block, n_dofs_per_block);
-		}
-	}
-	cSparse.collect_sizes();
-
-	// THIS IS JUST A WORKAROUND
-	// TODO get sparser sparsity pattern working also for simulations without trilinos.
-	//DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-	//		cSparse.block(0, 0), *m_boundaries, feFaceValues);
-	delete feFaceValues;
-	DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
-			cSparse.block(0, 0));
-
-	// add periodic boundaries to intermediate flux sparsity pattern
-	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
-	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
-			m_boundaries->getPeriodicBoundaries().begin();
-			periodic != m_boundaries->getPeriodicBoundaries().end();
-			periodic++) {
-		// Periodic boundaries have two boundary indicators; (and are stored twice in the map)
-		// skip double execution of addToSparsityPattern
-		if (periodic->first == periodic->second->getBoundaryIndicator1()) {
-			periodic->second->createCellMap(*m_doFHandler);
-			size_t only_on_block_0_0 = 1;
-			periodic->second->addToSparsityPattern(cSparse, only_on_block_0_0,
-					n_dofs_per_block, dofs_per_cell);
-		}
-	}
-
-	// add entries for non-periodic boundaries
-	/*for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =
-	 m_boundaries->getMinLeeBoundaries().begin();
-	 minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
-	 minLeeIterator++) {
-	 minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler,
-	 *m_stencil);
-	 }*/
-
-	// initialize (static) sparsity pattern
-	m_sparsityPattern.reinit(n_blocks, n_blocks);
-	for (size_t I = 0; I < n_blocks; I++) {
-		for (size_t J = 0; J < n_blocks; J++) {
-			// the following distinction is valid because non-periodic boundaries
-			// do not affect the diagonal blocks
-			if ((I != J) or (I == 0)) {
-				m_sparsityPattern.block(I, J).copy_from(cSparse.block(I, J));
-			} else {
-				m_sparsityPattern.block(I, J).copy_from(cSparse.block(0, 0));
-			}
-		}
-	}
-	m_sparsityPattern.collect_sizes();
-	//reinitialize matrices
-	m_systemMatrix.reinit(m_sparsityPattern);
-#endif
 
 }
 /* updateSparsityPattern */

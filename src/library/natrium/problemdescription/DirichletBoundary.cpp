@@ -29,18 +29,6 @@ template<size_t dim> DirichletBoundary<dim>::DirichletBoundary(
 				m_pointCoupling(point_coupling){
 }
 
-template<size_t dim>
-DirichletBoundary<dim>::DirichletBoundary(size_t boundaryIndicator,
-		const dealii::Vector<double>& velocity,
-		BoundaryTools::DistributionCouplingAtBoundary distribution_coupling,
-		BoundaryTools::PointCouplingAtBoundary point_coupling) :
-		m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
-				boost::make_shared<BoundaryDensity<dim> >()), m_boundaryVelocity(
-				boost::make_shared<BoundaryVelocity<dim> >(velocity)),
-				m_distributionCoupling(distribution_coupling),
-				m_pointCoupling(point_coupling) {
-}
-
 
 template<size_t dim> void DirichletBoundary<dim>::addToSparsityPattern(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,

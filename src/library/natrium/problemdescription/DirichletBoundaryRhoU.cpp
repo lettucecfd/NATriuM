@@ -24,9 +24,9 @@ DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
 template<size_t dim>
 DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity) :
-		DirichletBoundary<dim>(boundaryIndicator, velocity,
-				BoundaryTools::COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
-				BoundaryTools::COUPLE_ONLY_SINGLE_POINTS) {
+		DirichletBoundaryRhoU(boundaryIndicator,
+				boost::make_shared<BoundaryDensity<dim> >(),
+				boost::make_shared<BoundaryVelocity<dim> >(velocity)) {
 
 }
 

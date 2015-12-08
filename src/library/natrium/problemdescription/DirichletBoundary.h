@@ -23,8 +23,11 @@ namespace natrium {
 
 template<size_t dim>
 class BoundaryDensity: public dealii::Function<dim> {
+private:
+	double m_density;
 public:
-	BoundaryDensity() {
+	BoundaryDensity(double rho = 1) {
+		m_density = rho;
 	}
 	;
 	virtual ~BoundaryDensity() {
@@ -32,7 +35,7 @@ public:
 	;
 	virtual double value(const dealii::Point<dim> &,
 			const unsigned int  = 0) const {
-		return 1;
+		return m_density;
 	}
 };
 template<size_t dim>
@@ -95,17 +98,6 @@ public:
 			BoundaryTools::DistributionCouplingAtBoundary distribution_coupling,
 			BoundaryTools::PointCouplingAtBoundary point_coupling);
 
-	/** @short This constructor assigns the Boundary condition with a constant fixed velocity and \f[ \rho = 1 \f]
-	 *  to the boundary with the given boundary indicator.
-	 *  @param[in] boundaryIndicator the boundary indicator that is assigned to the target boundary.
-	 *  @param[in] velocity Constant velocity vector at the boundary.
-	 *  @param[in] distribution_coupling See previous constructor.
-	 *  @param[in] point_coupling See previous constructor.
-	 */
-	DirichletBoundary(size_t boundaryIndicator,
-			const dealii::Vector<double>& velocity,
-			BoundaryTools::DistributionCouplingAtBoundary distribution_coupling,
-			BoundaryTools::PointCouplingAtBoundary point_coupling);
 
 	/// destructor
 	virtual ~DirichletBoundary() {
