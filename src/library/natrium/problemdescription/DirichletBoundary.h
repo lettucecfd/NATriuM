@@ -165,6 +165,12 @@ public:
 	const boost::shared_ptr<dealii::Function<dim> >& getBoundaryVelocity() const {
 		return m_boundaryVelocity;
 	}
+
+	/** @short is the boundary a dirichlet boundary ?
+	 */
+	virtual bool isDirichlet() const {
+		return true;
+	}
 };
 
 } /* namespace natrium */

@@ -48,7 +48,8 @@ SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
 	assert(Stencil->getD() == dim);
 
 	// make dof handler
-	m_quadrature = boost::make_shared<QGaussLobatto<dim> >(orderOfFiniteElement + 1);
+	m_quadrature = boost::make_shared<QGaussLobatto<dim> >(
+			orderOfFiniteElement + 1);
 	m_faceQuadrature = boost::make_shared<QGaussLobatto<dim - 1> >(
 			orderOfFiniteElement + 1);
 	m_fe = boost::make_shared<FE_DGQArbitraryNodes<dim> >(
@@ -274,15 +275,15 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	cSparseOpposite.compress();
 	cSparseEmpty.compress();
 	/*SparsityTools::distribute_sparsity_pattern(cSparseDiag,
-			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-			m_locallyRelevantDofs);
-	SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
-			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-			m_locallyRelevantDofs);
-	SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
-			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-			m_locallyRelevantDofs);
-	*/
+	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+	 m_locallyRelevantDofs);
+	 SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
+	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+	 m_locallyRelevantDofs);
+	 SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
+	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+	 m_locallyRelevantDofs);
+	 */
 	m_systemMatrix.reinit(n_blocks, n_blocks);
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
 	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
@@ -475,10 +476,10 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 						feNeighborFaceValues, inverseLocalMassMatrix);
 			} else /* if is not periodic */{
 				// Apply other boundaries
-				if (typeid(*(m_boundaries->getBoundary(boundaryIndicator)))
-						== typeid(DirichletBoundary<dim> )) {
+				if ((m_boundaries->getBoundary(boundaryIndicator)->isDirichlet())) {
 					const boost::shared_ptr<DirichletBoundary<dim> >& DirichletBoundary =
-							m_boundaries->getDirichletBoundary(boundaryIndicator);
+							m_boundaries->getDirichletBoundary(
+									boundaryIndicator);
 					DirichletBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_stencil,
 							m_q_index_to_facedof.at(j), inverseLocalMassMatrix,
@@ -798,8 +799,8 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 	try {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/checkpoint_system_vector." << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-		<< ".dat";
+		filename << directory << "/checkpoint_system_vector."
+				<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
 		std::ofstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
 		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
@@ -851,8 +852,8 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 	try {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/checkpoint_system_vector." << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-						<< ".dat";
+		filename << directory << "/checkpoint_system_vector."
+				<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
 		std::ifstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
 		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
@@ -878,7 +879,8 @@ template<size_t dim> void SEDGMinLee<dim>::writeStatus(
 //make file
 	std::stringstream filename;
 	filename << directory << "/checkpoint_status."
-			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
+			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+			<< ".dat";
 	std::ofstream outfile(filename.str().c_str());
 
 //write number of cells
@@ -910,7 +912,8 @@ template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
 //read file
 	std::stringstream filename;
 	filename << directory << "/checkpoint_status."
-			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
+			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+			<< ".dat";
 	std::ifstream infile(filename.str().c_str());
 
 // check if status file exists

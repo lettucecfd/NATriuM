@@ -18,6 +18,7 @@
 
 #include "natrium/stencils/Stencil.h"
 #include "natrium/stencils/D2Q9.h"
+#include "natrium/stencils/D3Q15.h"
 #include "natrium/stencils/D3Q27.h"
 
 #include "natrium/utilities/CFDSolverUtilities.h"
@@ -499,7 +500,7 @@ TestResult ConvergenceTest3D() {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
-	configuration->setStencil(Stencil_D3Q27);
+	configuration->setStencil(Stencil_D3Q15);
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
