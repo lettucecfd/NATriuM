@@ -25,7 +25,7 @@
 #include "deal.II/lac/constraint_matrix.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/DirichletBoundary.h"
+#include "../problemdescription/LinearBoundary.h"
 
 #include "../stencils/Stencil.h"
 
@@ -246,9 +246,9 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	 cSparse.block(0, 0));*/
 
 	// add entries for non-periodic boundaries
-	for (typename BoundaryCollection<dim>::ConstDirichletIterator dirichlet_iterator =
-			m_boundaries->getDirichletBoundaries().begin();
-			dirichlet_iterator != m_boundaries->getDirichletBoundaries().end();
+	for (typename BoundaryCollection<dim>::ConstLinearIterator dirichlet_iterator =
+			m_boundaries->getLinearBoundaries().begin();
+			dirichlet_iterator != m_boundaries->getLinearBoundaries().end();
 			dirichlet_iterator++) {
 		dirichlet_iterator->second->addToSparsityPattern(cSparseOpposite,
 				*m_doFHandler);
@@ -399,11 +399,11 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 						feNeighborFaceValues, inverseLocalMassMatrix);
 			} else /* if is not periodic */{
 				// Apply other boundaries
-				if ((m_boundaries->getBoundary(boundaryIndicator)->isDirichlet())) {
-					const boost::shared_ptr<DirichletBoundary<dim> >& DirichletBoundary =
-							m_boundaries->getDirichletBoundary(
+				if ((m_boundaries->getBoundary(boundaryIndicator)->isLinear())) {
+					const boost::shared_ptr<LinearBoundary<dim> >& LinearBoundary =
+							m_boundaries->getLinearBoundary(
 									boundaryIndicator);
-					DirichletBoundary->assembleBoundary(alpha, cell, j,
+					LinearBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_stencil,
 							m_q_index_to_facedof.at(j), inverseLocalMassMatrix,
 							m_systemMatrix, m_systemVector, m_useCentralFlux);

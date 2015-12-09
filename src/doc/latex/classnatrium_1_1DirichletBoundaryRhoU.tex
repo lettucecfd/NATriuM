@@ -1,47 +1,47 @@
-\hypertarget{classnatrium_1_1DirichletBoundaryRhoU}{
-\section{natrium::DirichletBoundaryRhoU$<$ dim $>$ Class Template Reference}
-\label{classnatrium_1_1DirichletBoundaryRhoU}\index{natrium::DirichletBoundaryRhoU@{natrium::DirichletBoundaryRhoU}}
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU}{
+\section{natrium::LinearBoundaryRhoU$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1LinearBoundaryRhoU}\index{natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}}
 }
-Inheritance diagram for natrium::DirichletBoundaryRhoU$<$ dim $>$::\begin{figure}[H]
+Inheritance diagram for natrium::LinearBoundaryRhoU$<$ dim $>$::\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3cm]{classnatrium_1_1DirichletBoundaryRhoU}
+\includegraphics[height=3cm]{classnatrium_1_1LinearBoundaryRhoU}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1DirichletBoundaryRhoU_a72588bbed7cb004e02aaa562083a5527}{DirichletBoundaryRhoU} (size\_\-t boundaryIndicator, boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ boundaryDensity, boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ boundaryVelocity)
+\hyperlink{classnatrium_1_1LinearBoundaryRhoU_a72588bbed7cb004e02aaa562083a5527}{LinearBoundaryRhoU} (size\_\-t boundaryIndicator, boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ boundaryDensity, boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ boundaryVelocity)
 \begin{DoxyCompactList}\small\item\em This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} condition with arbitrary density and velocity to the boundary with the given boundary indicator. \item\end{DoxyCompactList}\item 
-\hyperlink{classnatrium_1_1DirichletBoundaryRhoU_aefca829931a4c3e9c3f65e5889533c45}{DirichletBoundaryRhoU} (size\_\-t boundaryIndicator, const dealii::Vector$<$ double $>$ \&velocity)
+\hyperlink{classnatrium_1_1LinearBoundaryRhoU_aefca829931a4c3e9c3f65e5889533c45}{LinearBoundaryRhoU} (size\_\-t boundaryIndicator, const dealii::Vector$<$ double $>$ \&velocity)
 \begin{DoxyCompactList}\small\item\em This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} condition with a constant fixed velocity and \[ \rho = 1 \] to the boundary with the given boundary indicator. \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1DirichletBoundaryRhoU_a223e9b3e61033bcb30a3ad2a9d8994ea}{
-virtual \hyperlink{classnatrium_1_1DirichletBoundaryRhoU_a223e9b3e61033bcb30a3ad2a9d8994ea}{$\sim$DirichletBoundaryRhoU} ()}
-\label{classnatrium_1_1DirichletBoundaryRhoU_a223e9b3e61033bcb30a3ad2a9d8994ea}
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU_a223e9b3e61033bcb30a3ad2a9d8994ea}{
+virtual \hyperlink{classnatrium_1_1LinearBoundaryRhoU_a223e9b3e61033bcb30a3ad2a9d8994ea}{$\sim$LinearBoundaryRhoU} ()}
+\label{classnatrium_1_1LinearBoundaryRhoU_a223e9b3e61033bcb30a3ad2a9d8994ea}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1DirichletBoundaryRhoU_a9fecb00df16c4294d9852222ddbdb4ca}{assembleBoundary} (size\_\-t alpha, const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, size\_\-t faceNumber, dealii::FEFaceValues$<$ dim $>$ \&feFaceValues, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, const std::map$<$ size\_\-t, size\_\-t $>$ \&q\_\-index\_\-to\_\-facedof, const vector$<$ double $>$ \&inverseLocalMassMatrix, distributed\_\-sparse\_\-block\_\-matrix \&systemMatrix, distributed\_\-block\_\-vector \&systemVector, bool useCentralFlux=false) const 
+virtual void \hyperlink{classnatrium_1_1LinearBoundaryRhoU_a9fecb00df16c4294d9852222ddbdb4ca}{assembleBoundary} (size\_\-t alpha, const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, size\_\-t faceNumber, dealii::FEFaceValues$<$ dim $>$ \&feFaceValues, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, const std::map$<$ size\_\-t, size\_\-t $>$ \&q\_\-index\_\-to\_\-facedof, const vector$<$ double $>$ \&inverseLocalMassMatrix, distributed\_\-sparse\_\-block\_\-matrix \&systemMatrix, distributed\_\-block\_\-vector \&systemVector, bool useCentralFlux=false) const 
 \begin{DoxyCompactList}\small\item\em This function defines the actual boundary condition. It calculates and assembles the fluxes at the boundary. Note that this function has to be called only once at the beginning of a simulation (or at reassembly, e.g. when the grid has changed). While the simulation runs, there has to be no separate treatment of the boundary, as it is a part of the linear ODE, already. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
-\subsubsection*{template$<$size\_\-t dim$>$ class natrium::DirichletBoundaryRhoU$<$ dim $>$}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::LinearBoundaryRhoU$<$ dim $>$}
 
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1DirichletBoundaryRhoU_a72588bbed7cb004e02aaa562083a5527}{
-\index{natrium::DirichletBoundaryRhoU@{natrium::DirichletBoundaryRhoU}!DirichletBoundaryRhoU@{DirichletBoundaryRhoU}}
-\index{DirichletBoundaryRhoU@{DirichletBoundaryRhoU}!natrium::DirichletBoundaryRhoU@{natrium::DirichletBoundaryRhoU}}
-\subsubsection[{DirichletBoundaryRhoU}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::DirichletBoundaryRhoU}$<$ dim $>$::{\bf DirichletBoundaryRhoU} (size\_\-t {\em boundaryIndicator}, \/  boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ {\em boundaryDensity}, \/  boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ {\em boundaryVelocity})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classnatrium_1_1DirichletBoundaryRhoU_a72588bbed7cb004e02aaa562083a5527}
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU_a72588bbed7cb004e02aaa562083a5527}{
+\index{natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}!LinearBoundaryRhoU@{LinearBoundaryRhoU}}
+\index{LinearBoundaryRhoU@{LinearBoundaryRhoU}!natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}}
+\subsubsection[{LinearBoundaryRhoU}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::LinearBoundaryRhoU}$<$ dim $>$::{\bf LinearBoundaryRhoU} (size\_\-t {\em boundaryIndicator}, \/  boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ {\em boundaryDensity}, \/  boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ {\em boundaryVelocity})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundaryRhoU_a72588bbed7cb004e02aaa562083a5527}
 
 
 This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} condition with arbitrary density and velocity to the boundary with the given boundary indicator. 
 \begin{DoxyParams}{Parameters}
 \item[\mbox{$\leftarrow$} {\em boundaryIndicator}]the boundary indicator that is assigned to the target boundary. \item[\mbox{$\leftarrow$} {\em boundaryDensity}]A dealii::Function$<$dim$>$ that defines the prescribed density at the boundary. \item[\mbox{$\leftarrow$} {\em boundaryVelocity}]A dealii::Function$<$dim$>$ that defines the prescribed velocity at the boundary. \end{DoxyParams}
-\hypertarget{classnatrium_1_1DirichletBoundaryRhoU_aefca829931a4c3e9c3f65e5889533c45}{
-\index{natrium::DirichletBoundaryRhoU@{natrium::DirichletBoundaryRhoU}!DirichletBoundaryRhoU@{DirichletBoundaryRhoU}}
-\index{DirichletBoundaryRhoU@{DirichletBoundaryRhoU}!natrium::DirichletBoundaryRhoU@{natrium::DirichletBoundaryRhoU}}
-\subsubsection[{DirichletBoundaryRhoU}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::DirichletBoundaryRhoU}$<$ dim $>$::{\bf DirichletBoundaryRhoU} (size\_\-t {\em boundaryIndicator}, \/  const dealii::Vector$<$ double $>$ \& {\em velocity})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classnatrium_1_1DirichletBoundaryRhoU_aefca829931a4c3e9c3f65e5889533c45}
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU_aefca829931a4c3e9c3f65e5889533c45}{
+\index{natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}!LinearBoundaryRhoU@{LinearBoundaryRhoU}}
+\index{LinearBoundaryRhoU@{LinearBoundaryRhoU}!natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}}
+\subsubsection[{LinearBoundaryRhoU}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::LinearBoundaryRhoU}$<$ dim $>$::{\bf LinearBoundaryRhoU} (size\_\-t {\em boundaryIndicator}, \/  const dealii::Vector$<$ double $>$ \& {\em velocity})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundaryRhoU_aefca829931a4c3e9c3f65e5889533c45}
 
 
 This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} condition with a constant fixed velocity and \[ \rho = 1 \] to the boundary with the given boundary indicator. constructor
@@ -52,11 +52,11 @@ This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} cond
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1DirichletBoundaryRhoU_a9fecb00df16c4294d9852222ddbdb4ca}{
-\index{natrium::DirichletBoundaryRhoU@{natrium::DirichletBoundaryRhoU}!assembleBoundary@{assembleBoundary}}
-\index{assembleBoundary@{assembleBoundary}!natrium::DirichletBoundaryRhoU@{natrium::DirichletBoundaryRhoU}}
-\subsubsection[{assembleBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::DirichletBoundaryRhoU}$<$ dim $>$::assembleBoundary (size\_\-t {\em alpha}, \/  const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  size\_\-t {\em faceNumber}, \/  dealii::FEFaceValues$<$ dim $>$ \& {\em feFaceValues}, \/  const {\bf Stencil} \& {\em stencil}, \/  const std::map$<$ size\_\-t, size\_\-t $>$ \& {\em q\_\-index\_\-to\_\-facedof}, \/  const vector$<$ double $>$ \& {\em inverseLocalMassMatrix}, \/  distributed\_\-sparse\_\-block\_\-matrix \& {\em systemMatrix}, \/  distributed\_\-block\_\-vector \& {\em systemVector}, \/  bool {\em useCentralFlux} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
-\label{classnatrium_1_1DirichletBoundaryRhoU_a9fecb00df16c4294d9852222ddbdb4ca}
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU_a9fecb00df16c4294d9852222ddbdb4ca}{
+\index{natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}!assembleBoundary@{assembleBoundary}}
+\index{assembleBoundary@{assembleBoundary}!natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}}
+\subsubsection[{assembleBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::LinearBoundaryRhoU}$<$ dim $>$::assembleBoundary (size\_\-t {\em alpha}, \/  const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  size\_\-t {\em faceNumber}, \/  dealii::FEFaceValues$<$ dim $>$ \& {\em feFaceValues}, \/  const {\bf Stencil} \& {\em stencil}, \/  const std::map$<$ size\_\-t, size\_\-t $>$ \& {\em q\_\-index\_\-to\_\-facedof}, \/  const vector$<$ double $>$ \& {\em inverseLocalMassMatrix}, \/  distributed\_\-sparse\_\-block\_\-matrix \& {\em systemMatrix}, \/  distributed\_\-block\_\-vector \& {\em systemVector}, \/  bool {\em useCentralFlux} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundaryRhoU_a9fecb00df16c4294d9852222ddbdb4ca}
 
 
 This function defines the actual boundary condition. It calculates and assembles the fluxes at the boundary. Note that this function has to be called only once at the beginning of a simulation (or at reassembly, e.g. when the grid has changed). While the simulation runs, there has to be no separate treatment of the boundary, as it is a part of the linear ODE, already. 
@@ -66,9 +66,9 @@ This function defines the actual boundary condition. It calculates and assembles
 
 Distribute to global matrix 
 
-Implements \hyperlink{classnatrium_1_1DirichletBoundary_a4f6ff88796031a747cab3db1be4ac603}{natrium::DirichletBoundary$<$ dim $>$}.
+Implements \hyperlink{classnatrium_1_1LinearBoundary_a4f6ff88796031a747cab3db1be4ac603}{natrium::LinearBoundary$<$ dim $>$}.
 
 The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/DirichletBoundaryRhoU.h\item 
-/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/DirichletBoundaryRhoU.cpp\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundaryRhoU.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundaryRhoU.cpp\end{DoxyCompactItemize}

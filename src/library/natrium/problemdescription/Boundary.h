@@ -41,7 +41,7 @@ public:
 
 	/** @short is the boundary a dirichlet boundary ?
 	 */
-	virtual bool isDirichlet() const {
+	virtual bool isLinear() const {
 		return false;
 	}
 };

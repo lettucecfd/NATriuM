@@ -15,7 +15,7 @@
 #include "deal.II/base/geometry_info.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/DirichletBoundaryU.h"
+#include "../problemdescription/LinearBoundaryRhoU.h"
 
 #include "../utilities/Logging.h"
 #include "../utilities/MPIGuard.h"
@@ -82,9 +82,9 @@ boost::shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	constantVelocity(0) = topPlateVelocity;
 
 	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
-	boundaries->addBoundary(boost::make_shared<DirichletBoundaryU<2> >(2, zeroVelocity));
+	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(2, zeroVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<DirichletBoundaryU<2> >(3, constantVelocity));
+			boost::make_shared<LinearBoundaryRhoU<2> >(3, constantVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

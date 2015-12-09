@@ -1,14 +1,14 @@
 /*
- * DirichletBoundaryRhoU.h
+ * LinearBoundaryRhoU.h
  *
  *  Created on: 08.12.2015
  *      Author: akraem3m
  */
 
-#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_DIRICHLETBOUNDARYRHOU_H_
-#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_DIRICHLETBOUNDARYRHOU_H_
+#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARBOUNDARYRHOU_H_
+#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARBOUNDARYRHOU_H_
 
-#include "DirichletBoundary.h"
+#include "LinearBoundary.h"
 #include "BoundaryTools.h"
 
 namespace natrium {
@@ -26,7 +26,7 @@ namespace natrium {
  * 		  	when proposing the SEDG-LBM. It has been shown practically that it  supports the exponential convergence of the scheme.
  */
 template<size_t dim>
-class DirichletBoundaryRhoU: public DirichletBoundary<dim> {
+class LinearBoundaryRhoU: public LinearBoundary<dim> {
 public:
 	/** @short This constructor assigns the Boundary condition with arbitrary density and velocity
 	 *         to the boundary with the given boundary indicator.
@@ -34,7 +34,7 @@ public:
 	 *  @param[in] boundaryDensity A dealii::Function<dim> that defines the prescribed density at the boundary.
 	 *  @param[in] boundaryVelocity A dealii::Function<dim> that defines the prescribed velocity at the boundary.
 	 */
-	DirichletBoundaryRhoU(size_t boundaryIndicator,
+	LinearBoundaryRhoU(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity);
 
@@ -44,11 +44,11 @@ public:
 	 *  @param[in] boundaryIndicator the boundary indicator that is assigned to the target boundary.
 	 *  @param[in] velocity Constant velocity vector at the boundary.
 	 */
-	DirichletBoundaryRhoU(size_t boundaryIndicator,
+	LinearBoundaryRhoU(size_t boundaryIndicator,
 			const dealii::Vector<double>& velocity);
 
 	/// destructor
-	virtual ~DirichletBoundaryRhoU();
+	virtual ~LinearBoundaryRhoU();
 
 	/**
 	 * @short This function defines the actual boundary condition. It calculates and assembles the fluxes at the
@@ -84,4 +84,4 @@ public:
 
 } /* namespace natrium */
 
-#endif /* LIBRARY_NATRIUM_PROBLEMDESCRIPTION_DIRICHLETBOUNDARYRHOU_H_ */
+#endif /* LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARBOUNDARYRHOU_H_ */

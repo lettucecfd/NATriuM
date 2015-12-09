@@ -8,8 +8,8 @@
 #ifndef BOUNDARYCOLLECTION_H_
 #define BOUNDARYCOLLECTION_H_
 
-#include "DirichletBoundary.h"
 #include "Boundary.h"
+#include "LinearBoundary.h"
 #include "PeriodicBoundary.h"
 #include "deal.II/lac/constraint_matrix.h"
 
@@ -51,7 +51,7 @@ private:
 	std::map<size_t, boost::shared_ptr<Boundary<dim> > > m_boundaries;
 
 	/// vector to store boundaries in
-	std::map<size_t, boost::shared_ptr<DirichletBoundary<dim> > > m_dirichletBoundaries;
+	std::map<size_t, boost::shared_ptr<LinearBoundary<dim> > > m_dirichletBoundaries;
 
 	/// vector to store periodic boundaries in
 	std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > > m_periodicBoundaries;
@@ -60,8 +60,8 @@ public:
 
 	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::iterator Iterator;
 	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::const_iterator ConstIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<DirichletBoundary<dim> > >::iterator DirichletIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<DirichletBoundary<dim> > >::const_iterator ConstDirichletIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<LinearBoundary<dim> > >::iterator LinearIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<LinearBoundary<dim> > >::const_iterator ConstLinearIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::iterator PeriodicIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::const_iterator ConstPeriodicIterator;
 
@@ -96,7 +96,7 @@ public:
 	 * @param boundary a periodic boundary
 	 * @throws BoundaryCollectionError, e.g. if boundary indicators are not unique
 	 */
-	void addBoundary(boost::shared_ptr<DirichletBoundary<dim> > boundary) {
+	void addBoundary(boost::shared_ptr<LinearBoundary<dim> > boundary) {
 		bool success = m_boundaries.insert(
 				std::make_pair(boundary->getBoundaryIndicator(), boundary)).second;
 		if (not success) {
@@ -133,10 +133,10 @@ public:
 	 * @short get a specific MinLee boundary
 	 * @throws BoundaryCollectionError, if the specified boundary indicator does not exist
 	 */
-	const boost::shared_ptr<DirichletBoundary<dim> >& getDirichletBoundary(size_t boundaryIndicator) const{
+	const boost::shared_ptr<LinearBoundary<dim> >& getLinearBoundary(size_t boundaryIndicator) const{
 		assert (not isPeriodic(boundaryIndicator));
 		if (m_dirichletBoundaries.count(boundaryIndicator) == 0){
-			throw BoundaryCollectionException("in DirichletBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.");
+			throw BoundaryCollectionException("in LinearBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.");
 		}
 		return m_dirichletBoundaries.at(boundaryIndicator);
 	}
@@ -164,7 +164,7 @@ public:
 		return m_periodicBoundaries;
 	}
 
-	const std::map<size_t, boost::shared_ptr<DirichletBoundary<dim> > >& getDirichletBoundaries() const {
+	const std::map<size_t, boost::shared_ptr<LinearBoundary<dim> > >& getLinearBoundaries() const {
 		return m_dirichletBoundaries;
 	}
 };

@@ -1,19 +1,19 @@
 /*
- * DirichletBoundaryRhoU.cpp
+ * LinearBoundaryRhoU.cpp
  *
  *  Created on: 08.12.2015
  *      Author: akraem3m
  */
 
-#include "DirichletBoundaryRhoU.h"
+#include "LinearBoundaryRhoU.h"
 
 namespace natrium {
 
 template<size_t dim>
-DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
+LinearBoundaryRhoU<dim>::LinearBoundaryRhoU(size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity) :
-		DirichletBoundary<dim>(boundaryIndicator, boundaryDensity,
+		LinearBoundary<dim>(boundaryIndicator, boundaryDensity,
 				boundaryVelocity,
 				BoundaryTools::COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
 				BoundaryTools::COUPLE_ONLY_SINGLE_POINTS) {
@@ -22,19 +22,19 @@ DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
 
 /// constructor
 template<size_t dim>
-DirichletBoundaryRhoU<dim>::DirichletBoundaryRhoU(size_t boundaryIndicator,
+LinearBoundaryRhoU<dim>::LinearBoundaryRhoU(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity) :
-		DirichletBoundaryRhoU(boundaryIndicator,
+		LinearBoundaryRhoU(boundaryIndicator,
 				boost::make_shared<BoundaryDensity<dim> >(),
 				boost::make_shared<BoundaryVelocity<dim> >(velocity)) {
 
 }
 
 template<size_t dim>
-DirichletBoundaryRhoU<dim>::~DirichletBoundaryRhoU() {
+LinearBoundaryRhoU<dim>::~LinearBoundaryRhoU() {
 }
 
-template<size_t dim> void DirichletBoundaryRhoU<dim>::assembleBoundary(
+template<size_t dim> void LinearBoundaryRhoU<dim>::assembleBoundary(
 		size_t alpha,
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
@@ -63,10 +63,10 @@ template<size_t dim> void DirichletBoundaryRhoU<dim>::assembleBoundary(
 		size_t thisDoF = q_index_to_facedof.at(q);
 
 		// get density and velocity at boundary point
-		double density = DirichletBoundary<dim>::getBoundaryDensity()->value(
+		double density = LinearBoundary<dim>::getBoundaryDensity()->value(
 				feFaceValues.quadrature_point(q));
 		dealii::Vector<double> velocity(dim);
-		DirichletBoundary<dim>::getBoundaryVelocity()->vector_value(
+		LinearBoundary<dim>::getBoundaryVelocity()->vector_value(
 				feFaceValues.quadrature_point(q), velocity);
 
 		// calculate matrix entries
@@ -122,7 +122,7 @@ template<size_t dim> void DirichletBoundaryRhoU<dim>::assembleBoundary(
 }
 
 // Explicit instantiation
-template class DirichletBoundaryRhoU<2> ;
-template class DirichletBoundaryRhoU<3> ;
+template class LinearBoundaryRhoU<2> ;
+template class LinearBoundaryRhoU<3> ;
 
 } /* namespace natrium */

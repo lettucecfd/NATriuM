@@ -7,7 +7,7 @@
 
 #include "ComplexWall1.h"
 
-#include <natrium/problemdescription/DirichletBoundaryRhoU.h>
+#include <natrium/problemdescription/LinearBoundaryRhoU.h>
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/grid/grid_out.h"
@@ -71,8 +71,8 @@ boost::shared_ptr<BoundaryCollection<2> > ComplexWall1::makeBoundaries(
 	boundaries->addBoundary(
 			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
-			boost::make_shared<DirichletBoundaryRhoU<2> >(2, constantVelocity));
-	boundaries->addBoundary(boost::make_shared<DirichletBoundaryRhoU<2> >(3, zeroVelocity));
+			boost::make_shared<LinearBoundaryRhoU<2> >(2, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(3, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

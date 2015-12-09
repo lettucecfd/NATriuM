@@ -294,7 +294,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					* configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
-	LOG(WELCOME) << "== COLLSISION ==          " << endl;
+	LOG(WELCOME) << "== COLLISION ==          " << endl;
 	switch (configuration->getCollisionScheme()) {
 	case BGK_STANDARD: {
 		LOG(WELCOME) << "tau:                      " << tau << endl;

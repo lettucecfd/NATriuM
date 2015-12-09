@@ -1,14 +1,16 @@
 /*
- * DirichletBoundary.cpp
+ * LinearBoundary.cpp
  *
  *  Created on: 26.03.2014
  *      Author: kraemer
  */
 
+#include "LinearBoundary.h"
+
 #include "deal.II/lac/compressed_sparsity_pattern.h"
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/lac/constraint_matrix.h>
-#include "DirichletBoundary.h"
+
 
 namespace natrium {
 
@@ -17,7 +19,7 @@ template class BoundaryDensity<3> ;
 template class BoundaryVelocity<2> ;
 template class BoundaryVelocity<3> ;
 
-template<size_t dim> DirichletBoundary<dim>::DirichletBoundary(
+template<size_t dim> LinearBoundary<dim>::LinearBoundary(
 		size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity,
@@ -30,15 +32,15 @@ template<size_t dim> DirichletBoundary<dim>::DirichletBoundary(
 }
 
 
-template<size_t dim> void DirichletBoundary<dim>::addToSparsityPattern(
+template<size_t dim> void LinearBoundary<dim>::addToSparsityPattern(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler) const {
 	BoundaryTools::CoupleDoFsAtBoundary<dim>(cSparse,
 			doFHandler, m_boundaryIndicator, m_pointCoupling);
 }
 
-template class DirichletBoundary<2>;
-template class DirichletBoundary<3>;
+template class LinearBoundary<2>;
+template class LinearBoundary<3>;
 
 
 } /* namespace natrium */

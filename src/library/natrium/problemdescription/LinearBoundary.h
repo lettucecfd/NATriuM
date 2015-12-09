@@ -1,5 +1,5 @@
 /**
- * @file DirichletBoundary.h
+ * @file LinearBoundary.h
  * @short Description of a boundary as described by Min and Lee
  * @date 26.03.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
@@ -56,11 +56,11 @@ public:
 };
 
 /**
- * @short 	Abstract class to describe Dirichlet boundary conditions.
+ * @short 	Abstract class to describe Linear boundary conditions.
  * 			The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the
  * 			boundary have to be defined (see Documentation of the constructors).
  */
-template<size_t dim> class DirichletBoundary: public Boundary<dim> {
+template<size_t dim> class LinearBoundary: public Boundary<dim> {
 private:
 
 	size_t m_boundaryIndicator;
@@ -92,7 +92,7 @@ public:
 	 * 			  -#  \[ f_{\alpha} \f] depends on the distribution functions at other points at the face (e.g. when gradients
 	 * 			  are computed.) Then, this parameter has to be COUPLE_WHOLE_FACE.
 	 */
-	DirichletBoundary(size_t boundaryIndicator,
+	LinearBoundary(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity,
 			BoundaryTools::DistributionCouplingAtBoundary distribution_coupling,
@@ -100,7 +100,7 @@ public:
 
 
 	/// destructor
-	virtual ~DirichletBoundary() {
+	virtual ~LinearBoundary() {
 	}
 	;
 
@@ -160,11 +160,11 @@ public:
 
 	/** @short is the boundary a dirichlet boundary ?
 	 */
-	virtual bool isDirichlet() const {
+	virtual bool isLinear() const {
 		return true;
 	}
 };
 
 } /* namespace natrium */
 
-#endif /* DirichletBoundary_H_ */
+#endif /* LinearBoundary_H_ */

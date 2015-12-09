@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>NATriuM: natrium::DirichletBoundaryRhoU&lt; dim &gt; Class Template Reference</title>
+<title>NATriuM: natrium::LinearBoundaryRhoU&lt; dim &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javaScript" src="search/search.js"></script>
@@ -44,51 +44,51 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html">DirichletBoundaryRhoU</a>
+  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html">LinearBoundaryRhoU</a>
   </div>
 </div>
 <div class="contents">
-<h1>natrium::DirichletBoundaryRhoU&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::DirichletBoundaryRhoU" --><!-- doxytag: inherits="natrium::DirichletBoundary" --><div class="dynheader">
-Inheritance diagram for natrium::DirichletBoundaryRhoU&lt; dim &gt;:</div>
+<h1>natrium::LinearBoundaryRhoU&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::LinearBoundaryRhoU" --><!-- doxytag: inherits="natrium::LinearBoundary" --><div class="dynheader">
+Inheritance diagram for natrium::LinearBoundaryRhoU&lt; dim &gt;:</div>
 <div class="dynsection">
  <div class="center">
-  <img src="classnatrium_1_1DirichletBoundaryRhoU.gif" usemap="#natrium::DirichletBoundaryRhoU&lt; dim &gt;_map" alt=""/>
-  <map id="natrium::DirichletBoundaryRhoU&lt; dim &gt;_map" name="natrium::DirichletBoundaryRhoU&lt; dim &gt;_map">
-<area href="classnatrium_1_1DirichletBoundary.html" alt="natrium::DirichletBoundary&lt; dim &gt;" shape="rect" coords="0,56,234,80"/>
+  <img src="classnatrium_1_1LinearBoundaryRhoU.gif" usemap="#natrium::LinearBoundaryRhoU&lt; dim &gt;_map" alt=""/>
+  <map id="natrium::LinearBoundaryRhoU&lt; dim &gt;_map" name="natrium::LinearBoundaryRhoU&lt; dim &gt;_map">
+<area href="classnatrium_1_1LinearBoundary.html" alt="natrium::LinearBoundary&lt; dim &gt;" shape="rect" coords="0,56,234,80"/>
 <area href="classnatrium_1_1Boundary.html" alt="natrium::Boundary&lt; dim &gt;" shape="rect" coords="0,0,234,24"/>
 </map>
  </div>
 </div>
 
-<p><a href="classnatrium_1_1DirichletBoundaryRhoU-members.html">List of all members.</a></p>
+<p><a href="classnatrium_1_1LinearBoundaryRhoU-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html#a72588bbed7cb004e02aaa562083a5527">DirichletBoundaryRhoU</a> (size_t boundaryIndicator, boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryDensity, boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryVelocity)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html#a72588bbed7cb004e02aaa562083a5527">LinearBoundaryRhoU</a> (size_t boundaryIndicator, boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryDensity, boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryVelocity)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This constructor assigns the <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> condition with arbitrary density and velocity to the boundary with the given boundary indicator.  <a href="#a72588bbed7cb004e02aaa562083a5527"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html#aefca829931a4c3e9c3f65e5889533c45">DirichletBoundaryRhoU</a> (size_t boundaryIndicator, const dealii::Vector&lt; double &gt; &amp;velocity)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html#aefca829931a4c3e9c3f65e5889533c45">LinearBoundaryRhoU</a> (size_t boundaryIndicator, const dealii::Vector&lt; double &gt; &amp;velocity)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This constructor assigns the <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> condition with a constant fixed velocity and </p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\[ \rho = 1 \]" src="form_34.png"/>
 </p>
 <p> to the boundary with the given boundary indicator.  <a href="#aefca829931a4c3e9c3f65e5889533c45"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a223e9b3e61033bcb30a3ad2a9d8994ea"></a><!-- doxytag: member="natrium::DirichletBoundaryRhoU::~DirichletBoundaryRhoU" ref="a223e9b3e61033bcb30a3ad2a9d8994ea" args="()" -->
-virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html#a223e9b3e61033bcb30a3ad2a9d8994ea">~DirichletBoundaryRhoU</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a223e9b3e61033bcb30a3ad2a9d8994ea"></a><!-- doxytag: member="natrium::LinearBoundaryRhoU::~LinearBoundaryRhoU" ref="a223e9b3e61033bcb30a3ad2a9d8994ea" args="()" -->
+virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html#a223e9b3e61033bcb30a3ad2a9d8994ea">~LinearBoundaryRhoU</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html#a9fecb00df16c4294d9852222ddbdb4ca">assembleBoundary</a> (size_t alpha, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t faceNumber, dealii::FEFaceValues&lt; dim &gt; &amp;feFaceValues, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;stencil, const std::map&lt; size_t, size_t &gt; &amp;q_index_to_facedof, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, bool useCentralFlux=false) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html#a9fecb00df16c4294d9852222ddbdb4ca">assembleBoundary</a> (size_t alpha, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t faceNumber, dealii::FEFaceValues&lt; dim &gt; &amp;feFaceValues, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;stencil, const std::map&lt; size_t, size_t &gt; &amp;q_index_to_facedof, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, bool useCentralFlux=false) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function defines the actual boundary condition. It calculates and assembles the fluxes at the boundary. Note that this function has to be called only once at the beginning of a simulation (or at reassembly, e.g. when the grid has changed). While the simulation runs, there has to be no separate treatment of the boundary, as it is a part of the linear ODE, already.  <a href="#a9fecb00df16c4294d9852222ddbdb4ca"></a><br/></td></tr>
 </table>
 <h3>template&lt;size_t dim&gt;<br/>
- class natrium::DirichletBoundaryRhoU&lt; dim &gt;</h3>
+ class natrium::LinearBoundaryRhoU&lt; dim &gt;</h3>
 
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a72588bbed7cb004e02aaa562083a5527"></a><!-- doxytag: member="natrium::DirichletBoundaryRhoU::DirichletBoundaryRhoU" ref="a72588bbed7cb004e02aaa562083a5527" args="(size_t boundaryIndicator, boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryDensity, boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryVelocity)" -->
+<a class="anchor" id="a72588bbed7cb004e02aaa562083a5527"></a><!-- doxytag: member="natrium::LinearBoundaryRhoU::LinearBoundaryRhoU" ref="a72588bbed7cb004e02aaa562083a5527" args="(size_t boundaryIndicator, boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryDensity, boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; boundaryVelocity)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html">natrium::DirichletBoundaryRhoU</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html">DirichletBoundaryRhoU</a> </td>
+          <td class="memname"><a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html">natrium::LinearBoundaryRhoU</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html">LinearBoundaryRhoU</a> </td>
           <td>(</td>
           <td class="paramtype">size_t&nbsp;</td>
           <td class="paramname"> <em>boundaryIndicator</em>, </td>
@@ -126,14 +126,14 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="aefca829931a4c3e9c3f65e5889533c45"></a><!-- doxytag: member="natrium::DirichletBoundaryRhoU::DirichletBoundaryRhoU" ref="aefca829931a4c3e9c3f65e5889533c45" args="(size_t boundaryIndicator, const dealii::Vector&lt; double &gt; &amp;velocity)" -->
+<a class="anchor" id="aefca829931a4c3e9c3f65e5889533c45"></a><!-- doxytag: member="natrium::LinearBoundaryRhoU::LinearBoundaryRhoU" ref="aefca829931a4c3e9c3f65e5889533c45" args="(size_t boundaryIndicator, const dealii::Vector&lt; double &gt; &amp;velocity)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html">natrium::DirichletBoundaryRhoU</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html">DirichletBoundaryRhoU</a> </td>
+          <td class="memname"><a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html">natrium::LinearBoundaryRhoU</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html">LinearBoundaryRhoU</a> </td>
           <td>(</td>
           <td class="paramtype">size_t&nbsp;</td>
           <td class="paramname"> <em>boundaryIndicator</em>, </td>
@@ -170,14 +170,14 @@ template&lt;size_t dim&gt; </div>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a9fecb00df16c4294d9852222ddbdb4ca"></a><!-- doxytag: member="natrium::DirichletBoundaryRhoU::assembleBoundary" ref="a9fecb00df16c4294d9852222ddbdb4ca" args="(size_t alpha, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t faceNumber, dealii::FEFaceValues&lt; dim &gt; &amp;feFaceValues, const Stencil &amp;stencil, const std::map&lt; size_t, size_t &gt; &amp;q_index_to_facedof, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, bool useCentralFlux=false) const " -->
+<a class="anchor" id="a9fecb00df16c4294d9852222ddbdb4ca"></a><!-- doxytag: member="natrium::LinearBoundaryRhoU::assembleBoundary" ref="a9fecb00df16c4294d9852222ddbdb4ca" args="(size_t alpha, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t faceNumber, dealii::FEFaceValues&lt; dim &gt; &amp;feFaceValues, const Stencil &amp;stencil, const std::map&lt; size_t, size_t &gt; &amp;q_index_to_facedof, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, bool useCentralFlux=false) const " -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classnatrium_1_1DirichletBoundaryRhoU.html">natrium::DirichletBoundaryRhoU</a>&lt; dim &gt;::assembleBoundary </td>
+          <td class="memname">void <a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html">natrium::LinearBoundaryRhoU</a>&lt; dim &gt;::assembleBoundary </td>
           <td>(</td>
           <td class="paramtype">size_t&nbsp;</td>
           <td class="paramname"> <em>alpha</em>, </td>
@@ -268,13 +268,13 @@ template&lt;size_t dim&gt; </div>
 <p><p>Distribute to global matrix </p>
 </p>
 
-<p>Implements <a class="el" href="classnatrium_1_1DirichletBoundary.html#a4f6ff88796031a747cab3db1be4ac603">natrium::DirichletBoundary&lt; dim &gt;</a>.</p>
+<p>Implements <a class="el" href="classnatrium_1_1LinearBoundary.html#a4f6ff88796031a747cab3db1be4ac603">natrium::LinearBoundary&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/<a class="el" href="DirichletBoundaryRhoU_8h_source.html">DirichletBoundaryRhoU.h</a></li>
-<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/DirichletBoundaryRhoU.cpp</li>
+<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/<a class="el" href="LinearBoundaryRhoU_8h_source.html">LinearBoundaryRhoU.h</a></li>
+<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundaryRhoU.cpp</li>
 </ul>
 </div>
 <!--- window showing the filter options -->

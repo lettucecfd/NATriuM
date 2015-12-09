@@ -11,8 +11,7 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 
-#include "../problemdescription/DirichletBoundaryRhoU.h"
-
+#include "../problemdescription/LinearBoundaryRhoU.h"
 #include "../utilities/Math.h"
 
 namespace natrium {
@@ -78,10 +77,10 @@ boost::shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 	dealii::Vector<double> zeroVector(2);
 	dealii::Vector<double> xVelocity(2);
 	xVelocity(0) = 0.1 / sqrt(3);
-	boundaries->addBoundary(boost::make_shared<DirichletBoundaryRhoU<2> >(0, zeroVector));
-	boundaries->addBoundary(boost::make_shared<DirichletBoundaryRhoU<2> >(1, zeroVector));
-	boundaries->addBoundary(boost::make_shared<DirichletBoundaryRhoU<2> >(2, zeroVector));
-	boundaries->addBoundary(boost::make_shared<DirichletBoundaryRhoU<2> >(3, xVelocity));
+	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(0, zeroVector));
+	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(1, zeroVector));
+	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(2, zeroVector));
+	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(3, xVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

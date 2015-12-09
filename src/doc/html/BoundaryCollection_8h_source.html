@@ -53,8 +53,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00008"></a>00008 <span class="preprocessor">#ifndef BOUNDARYCOLLECTION_H_</span>
 <a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define BOUNDARYCOLLECTION_H_</span>
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
-<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;<a class="code" href="DirichletBoundary_8h.html" title="Description of a boundary as described by Min and Lee.">DirichletBoundary.h</a>&quot;</span>
-<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;<a class="code" href="Boundary_8h.html" title="Abstract class for Description of a Boundary object.">Boundary.h</a>&quot;</span>
+<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;<a class="code" href="Boundary_8h.html" title="Abstract class for Description of a Boundary object.">Boundary.h</a>&quot;</span>
+<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;<a class="code" href="LinearBoundary_8h.html" title="Description of a boundary as described by Min and Lee.">LinearBoundary.h</a>&quot;</span>
 <a name="l00013"></a>00013 <span class="preprocessor">#include &quot;<a class="code" href="PeriodicBoundary_8h.html" title="Description of a periodic boundary on a line.">PeriodicBoundary.h</a>&quot;</span>
 <a name="l00014"></a>00014 <span class="preprocessor">#include &quot;deal.II/lac/constraint_matrix.h&quot;</span>
 <a name="l00015"></a>00015 
@@ -85,7 +85,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00049"></a>00049 <span class="keyword">private</span>:
 <a name="l00051"></a>00051         std::map&lt;size_t, boost::shared_ptr&lt;Boundary&lt;dim&gt; &gt; &gt; m_boundaries;
 <a name="l00052"></a>00052 
-<a name="l00054"></a>00054         std::map&lt;size_t, boost::shared_ptr&lt;DirichletBoundary&lt;dim&gt; &gt; &gt; m_dirichletBoundaries;
+<a name="l00054"></a>00054         std::map&lt;size_t, boost::shared_ptr&lt;LinearBoundary&lt;dim&gt; &gt; &gt; m_dirichletBoundaries;
 <a name="l00055"></a>00055 
 <a name="l00057"></a>00057         std::map&lt;size_t, boost::shared_ptr&lt;PeriodicBoundary&lt;dim&gt; &gt; &gt; m_periodicBoundaries;
 <a name="l00058"></a>00058 
@@ -93,8 +93,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00060"></a>00060 
 <a name="l00061"></a>00061         <span class="keyword">typedef</span> <span class="keyword">typename</span> std::map&lt;size_t, boost::shared_ptr&lt;Boundary&lt;dim&gt; &gt; &gt;::iterator Iterator;
 <a name="l00062"></a>00062         <span class="keyword">typedef</span> <span class="keyword">typename</span> std::map&lt;size_t, boost::shared_ptr&lt;Boundary&lt;dim&gt; &gt; &gt;::const_iterator ConstIterator;
-<a name="l00063"></a>00063         <span class="keyword">typedef</span> <span class="keyword">typename</span> std::map&lt;size_t, boost::shared_ptr&lt;DirichletBoundary&lt;dim&gt; &gt; &gt;::iterator DirichletIterator;
-<a name="l00064"></a>00064         <span class="keyword">typedef</span> <span class="keyword">typename</span> std::map&lt;size_t, boost::shared_ptr&lt;DirichletBoundary&lt;dim&gt; &gt; &gt;::const_iterator ConstDirichletIterator;
+<a name="l00063"></a>00063         <span class="keyword">typedef</span> <span class="keyword">typename</span> std::map&lt;size_t, boost::shared_ptr&lt;LinearBoundary&lt;dim&gt; &gt; &gt;::iterator LinearIterator;
+<a name="l00064"></a>00064         <span class="keyword">typedef</span> <span class="keyword">typename</span> std::map&lt;size_t, boost::shared_ptr&lt;LinearBoundary&lt;dim&gt; &gt; &gt;::const_iterator ConstLinearIterator;
 <a name="l00065"></a>00065         <span class="keyword">typedef</span> <span class="keyword">typename</span> std::map&lt;size_t, boost::shared_ptr&lt;PeriodicBoundary&lt;dim&gt; &gt; &gt;::iterator PeriodicIterator;
 <a name="l00066"></a>00066         <span class="keyword">typedef</span> <span class="keyword">typename</span> std::map&lt;size_t, boost::shared_ptr&lt;PeriodicBoundary&lt;dim&gt; &gt; &gt;::const_iterator ConstPeriodicIterator;
 <a name="l00067"></a>00067 
@@ -117,7 +117,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00091"></a>00091                 m_periodicBoundaries.insert(std::make_pair(boundary-&gt;getBoundaryIndicator2(), boundary));
 <a name="l00092"></a>00092         }
 <a name="l00093"></a>00093 
-<a name="l00099"></a><a class="code" href="classnatrium_1_1BoundaryCollection.html#a907b7a9a09cf2f2affae1ccd66c3d79d">00099</a>         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1BoundaryCollection.html#a907b7a9a09cf2f2affae1ccd66c3d79d" title="Add a boundary to the flow definition.">addBoundary</a>(boost::shared_ptr&lt;<a class="code" href="classnatrium_1_1DirichletBoundary.html" title="Abstract class to describe Dirichlet boundary conditions. The virtual function to...">DirichletBoundary&lt;dim&gt;</a> &gt; boundary) {
+<a name="l00099"></a><a class="code" href="classnatrium_1_1BoundaryCollection.html#a34251a8325b51b6a7c82414a08a79914">00099</a>         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1BoundaryCollection.html#a34251a8325b51b6a7c82414a08a79914" title="Add a boundary to the flow definition.">addBoundary</a>(boost::shared_ptr&lt;<a class="code" href="classnatrium_1_1LinearBoundary.html" title="Abstract class to describe Linear boundary conditions. The virtual function to be...">LinearBoundary&lt;dim&gt;</a> &gt; boundary) {
 <a name="l00100"></a>00100                 <span class="keywordtype">bool</span> success = m_boundaries.insert(
 <a name="l00101"></a>00101                                 std::make_pair(boundary-&gt;getBoundaryIndicator(), boundary)).second;
 <a name="l00102"></a>00102                 <span class="keywordflow">if</span> (not success) {
@@ -142,10 +142,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00129"></a>00129                 <span class="keywordflow">return</span> m_periodicBoundaries.at(boundaryIndicator);
 <a name="l00130"></a>00130         }
 <a name="l00131"></a>00131 
-<a name="l00136"></a><a class="code" href="classnatrium_1_1BoundaryCollection.html#a26c06388387177b5272425c53d00fefa">00136</a>         <span class="keyword">const</span> boost::shared_ptr&lt;DirichletBoundary&lt;dim&gt; &gt;&amp; <a class="code" href="classnatrium_1_1BoundaryCollection.html#a26c06388387177b5272425c53d00fefa" title="get a specific MinLee boundary">getDirichletBoundary</a>(<span class="keywordtype">size_t</span> boundaryIndicator)<span class="keyword"> const</span>{
+<a name="l00136"></a><a class="code" href="classnatrium_1_1BoundaryCollection.html#a1f2d415af1d71df84bbbcad218ccc79b">00136</a>         <span class="keyword">const</span> boost::shared_ptr&lt;LinearBoundary&lt;dim&gt; &gt;&amp; <a class="code" href="classnatrium_1_1BoundaryCollection.html#a1f2d415af1d71df84bbbcad218ccc79b" title="get a specific MinLee boundary">getLinearBoundary</a>(<span class="keywordtype">size_t</span> boundaryIndicator)<span class="keyword"> const</span>{
 <a name="l00137"></a>00137                 assert (not <a class="code" href="classnatrium_1_1BoundaryCollection.html#aec4a9de4aaccaa7a49e5308bf9812c66" title="test if the boundary with the given boundary indicator is periodic">isPeriodic</a>(boundaryIndicator));
 <a name="l00138"></a>00138                 <span class="keywordflow">if</span> (m_dirichletBoundaries.count(boundaryIndicator) == 0){
-<a name="l00139"></a>00139                         <span class="keywordflow">throw</span> <a class="code" href="classnatrium_1_1BoundaryCollectionException.html" title="Exception class for Boundaries.">BoundaryCollectionException</a>(<span class="stringliteral">&quot;in DirichletBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.&quot;</span>);
+<a name="l00139"></a>00139                         <span class="keywordflow">throw</span> <a class="code" href="classnatrium_1_1BoundaryCollectionException.html" title="Exception class for Boundaries.">BoundaryCollectionException</a>(<span class="stringliteral">&quot;in LinearBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.&quot;</span>);
 <a name="l00140"></a>00140                 }
 <a name="l00141"></a>00141                 <span class="keywordflow">return</span> m_dirichletBoundaries.at(boundaryIndicator);
 <a name="l00142"></a>00142         }
@@ -170,7 +170,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00164"></a>00164                 <span class="keywordflow">return</span> m_periodicBoundaries;
 <a name="l00165"></a>00165         }
 <a name="l00166"></a>00166 
-<a name="l00167"></a>00167         <span class="keyword">const</span> std::map&lt;size_t, boost::shared_ptr&lt;DirichletBoundary&lt;dim&gt; &gt; &gt;&amp; getDirichletBoundaries()<span class="keyword"> const </span>{
+<a name="l00167"></a>00167         <span class="keyword">const</span> std::map&lt;size_t, boost::shared_ptr&lt;LinearBoundary&lt;dim&gt; &gt; &gt;&amp; getLinearBoundaries()<span class="keyword"> const </span>{
 <a name="l00168"></a>00168                 <span class="keywordflow">return</span> m_dirichletBoundaries;
 <a name="l00169"></a>00169         }
 <a name="l00170"></a>00170 };
@@ -193,7 +193,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 8 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
