@@ -38,20 +38,18 @@ template<size_t dim> void DirichletBoundaryU<dim>::assembleBoundary(
 		const std::map<size_t, size_t>& q_index_to_facedof,
 		const vector<double> & inverseLocalMassMatrix,
 		distributed_sparse_block_matrix& systemMatrix,
-		distributed_block_vector& systemVector, bool useCentralFlux) const {
+		distributed_block_vector& , bool useCentralFlux) const {
 	// let the feFaceValues object calculate all the values needed at the boundary
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
 	const vector<dealii::Tensor<1, dim> > &normals =
 			feFaceValues.get_all_normal_vectors();
 
-	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
 	dealii::FullMatrix<double> anotherDirectionCellFaceMatrix(
 			feFaceValues.dofs_per_cell);
 
-	for (size_t beta = 0; beta < stencil.getQ(); beta++) {
+	for (size_t beta = 1; beta < stencil.getQ(); beta++) {
 
-		cellFaceMatrix = 0;
 		anotherDirectionCellFaceMatrix = 0;
 
 		// calculate prefactor
@@ -78,14 +76,13 @@ template<size_t dim> void DirichletBoundaryU<dim>::assembleBoundary(
 			if (useCentralFlux) {
 				assert(false);
 			} else if (exn < 0) {
-				cellFaceMatrix(thisDoF, thisDoF) = prefactor
-						* 2 * stencil.getWeight(alpha) * ea_x_u
-						/ stencil.getSpeedOfSoundSquare();
 				anotherDirectionCellFaceMatrix(thisDoF, thisDoF) = -prefactor
 						* 2 * stencil.getWeight(alpha) * ea_x_u
 						/ stencil.getSpeedOfSoundSquare();
 				if (beta == stencil.getIndexOfOppositeDirection(alpha))
-					anotherDirectionCellFaceMatrix(thisDoF, thisDoF) -= prefactor;
+					anotherDirectionCellFaceMatrix(thisDoF, thisDoF) = anotherDirectionCellFaceMatrix(thisDoF, thisDoF) - prefactor;
+				if (beta == alpha)
+					anotherDirectionCellFaceMatrix(thisDoF, thisDoF) = anotherDirectionCellFaceMatrix(thisDoF, thisDoF) + prefactor;
 			}
 		}
 
@@ -96,11 +93,8 @@ template<size_t dim> void DirichletBoundaryU<dim>::assembleBoundary(
 		/// Distribute to global matrix
 		for (size_t i = 0; i < feFaceValues.dofs_per_cell; i++) {
 			if (cell->get_fe().has_support_on_face(i, faceNumber)) {
-				systemMatrix.block(alpha - 1, alpha - 1).add(localDoFIndices[i],
-						localDoFIndices[i],
-						cellFaceMatrix(i, i) * inverseLocalMassMatrix.at(i));
 				systemMatrix.block(alpha - 1,
-						stencil.getIndexOfOppositeDirection(alpha) - 1).add(
+						beta - 1).add(
 						localDoFIndices[i], localDoFIndices[i],
 						anotherDirectionCellFaceMatrix(i, i)
 								* inverseLocalMassMatrix.at(i));

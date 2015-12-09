@@ -9,6 +9,7 @@
 #define WallTestDomain2D_H_
 
 #include <natrium/problemdescription/DirichletBoundaryRhoU.h>
+#include <natrium/problemdescription/DirichletBoundaryU.h>
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_generator.h"
 
@@ -44,7 +45,6 @@ private:
 		cell->face(2)->set_all_boundary_ids(2);  // top
 		cell->face(3)->set_all_boundary_ids(3);  // bottom
 
-
 		return unitSquare;
 	}
 
@@ -53,20 +53,42 @@ private:
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries() {
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(
+			bool use_u_boundary) {
 		// make boundary description
-		boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
-				BoundaryCollection<2> >();
-		boundaries->addBoundary(
-				boost::make_shared<DirichletBoundaryRhoU<2> >(0, numeric_vector(2)));
-		boundaries->addBoundary(
-				boost::make_shared<DirichletBoundaryRhoU<2> >(1, numeric_vector(2)));
-		boundaries->addBoundary(
-				boost::make_shared<DirichletBoundaryRhoU<2> >(2, numeric_vector(2)));
-		numeric_vector topPlateVelocity(2);
-		topPlateVelocity(0) = 0.01;
-		boundaries->addBoundary(
-				boost::make_shared<DirichletBoundaryRhoU<2> >(3, topPlateVelocity));
+		boost::shared_ptr<BoundaryCollection<2> > boundaries =
+				boost::make_shared<BoundaryCollection<2> >();
+		if (use_u_boundary) {
+			boundaries->addBoundary(
+					boost::make_shared<DirichletBoundaryU<2> >(0,
+							numeric_vector(2)));
+			boundaries->addBoundary(
+					boost::make_shared<DirichletBoundaryU<2> >(1,
+							numeric_vector(2)));
+			boundaries->addBoundary(
+					boost::make_shared<DirichletBoundaryU<2> >(2,
+							numeric_vector(2)));
+			numeric_vector topPlateVelocity(2);
+			topPlateVelocity(0) = 0.01;
+			boundaries->addBoundary(
+					boost::make_shared<DirichletBoundaryU<2> >(3,
+							topPlateVelocity));
+		} else {
+			boundaries->addBoundary(
+					boost::make_shared<DirichletBoundaryRhoU<2> >(0,
+							numeric_vector(2)));
+			boundaries->addBoundary(
+					boost::make_shared<DirichletBoundaryRhoU<2> >(1,
+							numeric_vector(2)));
+			boundaries->addBoundary(
+					boost::make_shared<DirichletBoundaryRhoU<2> >(2,
+							numeric_vector(2)));
+			numeric_vector topPlateVelocity(2);
+			topPlateVelocity(0) = 0.01;
+			boundaries->addBoundary(
+					boost::make_shared<DirichletBoundaryRhoU<2> >(3,
+							topPlateVelocity));
+		}
 
 		// Get the triangulation object (which belongs to the parent class).
 		boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
@@ -77,10 +99,10 @@ private:
 public:
 
 	/// constructor
-	WallTestDomain2D(size_t refineLevel) :
+	WallTestDomain2D(size_t refineLevel, bool use_u_boundary = false) :
 			ProblemDescription<2>(makeGrid(), 1.0, 1) {
 		/// apply boundary values
-		setBoundaries(makeBoundaries());
+		setBoundaries(makeBoundaries(use_u_boundary));
 
 		// Refine grid to 2x2 = 4 cells
 		getMesh()->refine_global(refineLevel);
@@ -97,7 +119,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >&) const {
 		for (size_t i = 0; i < initialDensities.size(); i++) {
 			initialDensities(i) = 1.0;
 		}
@@ -109,7 +131,7 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >&) const {
 		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
 			initialVelocities.at(0)(i) = 0.0;
 			initialVelocities.at(1)(i) = 0.0;
