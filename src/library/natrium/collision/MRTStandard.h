@@ -48,11 +48,11 @@ public:
 
 	vector<double> setRelaxationRates() const {
 		vector<double> s(9);
-		s.at(0) = s.at(3) = s.at(5) = 0;
-		s.at(7) = s.at(8) = 1.0 / getPrefactor();
+		s.at(0) = s.at(3) = s.at(5) = 0.0;
+		s.at(7) = s.at(8) = - 1.0 / getPrefactor();
 		s.at(4) = s.at(6) = 8.0 * (2.0 - s.at(7)) / (8.0 - s.at(7));
-		s.at(1) = 1.0 / getPrefactor();
-		s.at(2) = 1.0 / getPrefactor();
+		s.at(1) = - 1.0 / getPrefactor();
+		s.at(2) = - 1.0 / getPrefactor();
 		return s;
 	}
 

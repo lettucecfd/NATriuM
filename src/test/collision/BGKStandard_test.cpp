@@ -391,9 +391,9 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAll_test) {
 		for (size_t j = 0; j < dqmodel->getQ(); j++) {
 			localF.at(j) = f.at(j)(i);
 		}
-		cout << "LocalF before: " << localF.at(1) << endl;
+
 		bgk.collideSinglePoint(localF);
-		cout  << "LocalF after " << localF.at(1) << endl;
+
 		for (size_t j = 0; j < dqmodel->getQ(); j++) {
 			//cout << i << " " << j << endl;
 			BOOST_CHECK(fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-15);

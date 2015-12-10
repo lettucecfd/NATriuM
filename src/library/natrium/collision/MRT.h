@@ -26,8 +26,6 @@ private:
 	// time step size
 	double m_dt;
 
-	double m_viscosity;
-
 public:
 	MRT(double relaxationParameter, double dt,
 			const shared_ptr<Stencil> stencil);

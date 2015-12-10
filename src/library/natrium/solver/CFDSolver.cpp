@@ -27,7 +27,7 @@
 #include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
 #include "../collision/BGKIncompressible.h"
-// #include "../collision/MRTStandard.h"
+#include "../collision/MRTStandard.h"
 #include "../collision/KBCStandard.h"
 
 #include "../problemdescription/BoundaryCollection.h"
@@ -132,7 +132,6 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = make_shared<BGKStandard>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
-		cout << "BGK tau: " <<  tau << endl;
 	} else if (BGK_STEADY_STATE == configuration->getCollisionScheme()) {
 		gamma = configuration->getBGKSteadyStateGamma();
 		tau = BGKSteadyState::calculateRelaxationParameter(
@@ -167,7 +166,6 @@ CFDSolver<dim>::CFDSolver(shared_ptr<SolverConfiguration> configuration,
 		m_collisionModel = make_shared<KBCStandard>(
 				tau,
 				m_configuration->getTimeStepSize(), m_stencil);
-		cout << "KBC tau: " <<  tau << endl;
 	}
 
 /// Build time integrator

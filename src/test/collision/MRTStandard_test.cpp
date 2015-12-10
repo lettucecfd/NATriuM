@@ -56,24 +56,22 @@ BOOST_AUTO_TEST_CASE(MRTStandard_collideAll_test) {
 	}
 
 	// collide and compare to previous collision function
-	DistributionFunctions fAfterCollision(f);
-	mrt.collideAll(fAfterCollision, rho, u, false);
-	for (size_t i = 0; i < 10; i++) {
-		vector<double> localF(dqmodel->getQ());
-		for (size_t j = 0; j < dqmodel->getQ(); j++) {
-			localF.at(j) = f.at(j)(i);
-			if (i == 1)
-				cout << "Lokales f(" << j << ") =  " << localF.at(j)
-						<< " Lokales f_1(" << j << ") = " << endl;
-		}
-		cout << "Lokales f(1) =  " << localF.at(1) << " Lokales f_1(1) = "
-				<< fAfterCollision.at(1)(i) << endl;
-		bgk.collideSinglePoint(localF);
-		for (size_t j = 0; j < dqmodel->getQ(); j++) {
-			//cout << i << " " << j << endl;
-			//BOOST_CHECK(fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-5);
-		}
+	DistributionFunctions fAfterCollisionkbc(f);
+	DistributionFunctions fAfterCollisionbgk(f);
+	mrt.collideAll(fAfterCollisionkbc, rho, u, false);
+	bgk.collideAll(fAfterCollisionbgk, rho, u, false);
+
+	double rho_bgk=0,rho_mrt=0;
+
+	for (int g=0;g<9;g++)
+	{
+		rho_bgk = rho_bgk + fAfterCollisionbgk.at(g)(0);
+		rho_mrt = rho_mrt + fAfterCollisionbgk.at(g)(0);
 	}
+
+	BOOST_CHECK_SMALL(rho_bgk-rho_mrt, 1e-2);
+
+
 
 	cout << "done" << endl;
 }

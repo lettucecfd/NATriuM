@@ -51,6 +51,9 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 								- f.at(7)(i) - f.at(8)(i));
 			}
 
+			double ux = velocities.at(0)(i) / scaling;
+			double uy = velocities.at(1)(i) / scaling;
+
 			if (i == 1) {
 			}
 
@@ -78,27 +81,14 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 			// calculate the moment equilibrium distribution function
 
 			meq.at(0) = densities(i);
-			meq.at(1) = densities(i)
-					* (-2
-							+ 3
-									* (velocities.at(0)(i) * velocities.at(0)(i)
-											+ velocities.at(1)(i)
-													* velocities.at(1)(i)));
-			meq.at(2) = densities(i)
-					* (1
-							- 3
-									* (velocities.at(0)(i) * velocities.at(0)(i)
-											+ velocities.at(1)(i)
-													* velocities.at(1)(i)));
-			meq.at(3) = densities(i) * velocities.at(0)(i);
-			meq.at(4) = -densities(i) * velocities.at(0)(i);
-			meq.at(5) = densities(i) * velocities.at(1)(i);
-			meq.at(6) = -densities(i) * velocities.at(1)(i);
-			meq.at(7) = densities(i)
-					* (velocities.at(0)(i) * velocities.at(0)(i)
-							- velocities.at(1)(i) * velocities.at(1)(i));
-			meq.at(8) = densities(i) * velocities.at(0)(i)
-					* velocities.at(1)(i);
+			meq.at(1) = densities(i) * (-2 + 3 * (ux * ux + uy * uy));
+			meq.at(2) = densities(i) * (1 - 3 * (ux * ux + uy * uy));
+			meq.at(3) = densities(i) * ux;
+			meq.at(4) = -densities(i) * ux;
+			meq.at(5) = densities(i) * uy;
+			meq.at(6) = -densities(i) * uy;
+			meq.at(7) = densities(i) * (ux * ux - uy * uy);
+			meq.at(8) = densities(i) * ux * uy;
 
 			//relax and rescale the moments
 			for (size_t j = 0; j < Q; j++) {
