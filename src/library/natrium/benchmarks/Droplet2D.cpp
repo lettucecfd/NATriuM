@@ -13,6 +13,8 @@
 #include "deal.II/grid/grid_out.h"
 #include "deal.II/grid/grid_tools.h"
 
+#include "../problemdescription/MinLeeBoundary.h"
+
 namespace natrium {
 
 Droplet2D::Droplet2D(double viscosity, size_t refinementLevel, double L,
@@ -60,7 +62,14 @@ boost::shared_ptr<BoundaryCollection<2> > Droplet2D::makeBoundaries() {
 	// make boundary description
 	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
-
+/*	numeric_vector zeroVelocity(2);
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(0, zeroVelocity));
+	boundaries->addBoundary(
+			boost::make_shared<MinLeeBoundary<2> >(1, zeroVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, zeroVelocity));
+	boundaries->addBoundary(
+			boost::make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
+*/
 	boundaries->addBoundary(
 			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
@@ -79,11 +88,11 @@ double Droplet2D::InitialDensity::value(const dealii::Point<2>& x,
 	double L = m_flow->getL();
 
 	double dist = std::sqrt(
-			std::pow(x(0) - 0.5 * L, 2) + std::pow(x(1) - 0.5 * L, 2));
-	double arg_tanh = (dist - R0) / W;
-	return 0.5 * (rho_l + rho_g)
-			- 0.5 * (rho_l - rho_g) * std::sinh(arg_tanh) / std::cosh(arg_tanh);
+			std::pow(x(0) - 0.5*L, 2) + std::pow(x(1) - 0.5*L, 2));
+	double arg_tanh = (dist - R0) / W ;
 
+	return 0.5 * (rho_l + rho_g)
+			- 0.5 * (rho_l - rho_g) * std::sinh(arg_tanh) / std::cosh(arg_tanh) ;
 }
 
 } /* namespace natrium */

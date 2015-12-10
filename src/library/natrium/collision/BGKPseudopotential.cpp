@@ -203,6 +203,7 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			// it uses the relation grad(rho)(x_i) = grad( sum_alpha f_alpha(x_i))  = grad ( sum_alpha(sum_k(dof_{alpha,k} phi_k(x_i))))
 			//                                     = sum_k ((sum_alpha dof_{alpha,k}) grad(phi_k(x_i))) = sum_k (rho_k grad(phi_k(x_i)))
 			double rho_k;
+			density_gradient = 0;
 			for (size_t k = 0; k < dofs_per_cell; k++) {
 				rho_k = densities(localDoFIndices.at(k));
 				density_gradient += (feValues.shape_grad(k,
@@ -219,6 +220,44 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 				velocities.at(0)(i) = u_0_i;
 				velocities.at(1)(i) = u_1_i;
 			}
+
+			// ===
+			// Calculate Interaction Force
+			// ===
+
+			// Psi = 1-exp(-rho)
+//			double psi = (double)1 - exp(-rho_i) ;
+//			double forceX = -m_G * psi * exp(-rho_i) * density_gradient[0] ;
+//			double forceY = -m_G * psi * exp(-rho_i) * density_gradient[1] ;
+
+			// Psi = psi0 * exp(-rho/rho0)
+/*			double psi0 = (double) 4 ;
+			double rho0 = (double) 200 ;
+			double psi = (double)psi0 * exp(-rho_i/rho0) ;
+			double forceX = -m_G * psi * (-psi0/rho0) * exp(-rho_i/rho0) * density_gradient[0] ;
+			double forceY = -m_G * psi * (-psi0/rho0) * exp(-rho_i/rho0) * density_gradient[1] ;
+*/
+////
+			// Psi Carnahan Starling
+			double T = 0.0848997582*cs2 ;
+			double pCS = rho_i * T * (1.+rho_i+pow(rho_i,2.)-pow(rho_i,3.)) / pow(1.-rho_i,3.) - pow(rho_i,2.) ;
+			double psi = sqrt(2.*(pCS-cs2*rho_i)/m_G) ;
+			double grad_pCS_X = density_gradient[0] * ( (T*(1+4*rho_i+4*pow(rho_i,2.)-4*pow(rho_i,3.)+pow(rho_i,4.))/pow(1.-rho_i,4.))
+					- (2.*rho_i) ) ;
+			double grad_pCS_Y = density_gradient[1] * ( (T*(1+4*rho_i+4*pow(rho_i,2.)-4*pow(rho_i,3.)+pow(rho_i,4.))/pow(1.-rho_i,4.))
+					- (2.*rho_i) ) ;
+			double gradPsiX = grad_pCS_X - cs2*density_gradient[0] / (2.*m_G*(pCS-cs2*rho_i)) ;
+			double gradPsiY = grad_pCS_Y - cs2*density_gradient[1] / (2.*m_G*(pCS-cs2*rho_i)) ;
+
+			double forceX = -m_G*psi*gradPsiX ;
+			double forceY = -m_G*psi*gradPsiY ;
+////
+
+			// Shift velocities
+			u_0_i += -(double)1/relax_factor * forceX * getDt() / rho_i ;
+			u_1_i += -(double)1/relax_factor * forceY * getDt() / rho_i ;
+
+			//pout << forceX << " " << forceY << " " << u_0_i << " " << u_1_i << endl ;
 
 			// calculate equilibrium distribution
 			// TODO (Knut): use density gradient for PP model

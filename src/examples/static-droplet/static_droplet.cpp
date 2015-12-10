@@ -77,13 +77,13 @@ int main(int argc, char** argv) {
 	// MAKE FLOW PROBLEM
 	// ========================================================================
 	const double stencil_scaling = 1.0;
-	const double CFL = 1.;
-	const double R0 = 0.25;
-	const double W = 0.1;
-	const double rho_l = 1.3; //1.93;
-	const double rho_g = 0.7; //0.15;
+	const double CFL = .4;
+	const double R0 = 0.125;
+	const double W = 0.05;
+	const double rho_l = 2.470937e-01 ;//1.9;//3; //1.93;
+	const double rho_g = 4.297662e-02 ;//1; //0.15;
 
-	// not the real value, is overwritten later (just needed for initialization at this point)
+	// not the real value, is oveerwritten later (just needed for initialization at this point)
 	double viscosity = 1.0;
 
 	boost::shared_ptr<ProblemDescription<2> > droplet2D = boost::make_shared<
@@ -103,8 +103,8 @@ int main(int argc, char** argv) {
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(true);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setOutputTableInterval(10);
-	configuration->setOutputSolutionInterval(10);
+	configuration->setOutputTableInterval(1);
+	configuration->setOutputSolutionInterval(10); //10
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/static-droplet";
 	configuration->setOutputDirectory(dirname.str());
