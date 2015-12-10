@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(false);
-	configuration->setUserInteraction(true);
+	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(1);
 	configuration->setOutputSolutionInterval(10); //10

@@ -221,9 +221,9 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 				velocities.at(1)(i) = u_1_i;
 			}
 
-			// ===
+			// =============================
 			// Calculate Interaction Force
-			// ===
+			// =============================
 
 			// Psi = 1-exp(-rho)
 			double psi = (double)1 - exp(-rho_i) ;
@@ -253,11 +253,53 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			double forceY = -m_G*psi*gradPsiY ;*/
 ////
 
-			// Shift velocities
+			// =================================
+			// Incorporate via shifting velocity
+			// =================================
 			u_0_i += -(double)1/relax_factor * forceX * getDt() / rho_i ;
 			u_1_i += -(double)1/relax_factor * forceY * getDt() / rho_i ;
 
-			//pout << forceX << " " << forceY << " " << u_0_i << " " << u_1_i << endl ;
+			// =======================================
+			// Incorporate via exact difference method
+			// =======================================
+/*			double s_i[9] ;
+
+			// Exact Difference Method Force Incorporation
+			double deltaU_0 = forceX * getDt() / rho_i ;
+			double deltaU_1 = forceY * getDt() / rho_i ;
+			double uEQshifted0 = u_0_i + deltaU_0 ;
+			double uEQshifted1 = u_1_i + deltaU_1 ;
+
+
+			double scalar_product_eq = u_0_i * u_0_i + u_1_i * u_1_i;
+			double uSquareTerm_eq = -scalar_product_eq / (2 * cs2);
+			double scalar_product_eq_shifted = uEQshifted0 * uEQshifted0 + uEQshifted1 * uEQshifted1 ;
+			double uSquareTerm_eq_shifted = -scalar_product_eq_shifted / (2*cs2) ;
+			// direction 0
+			weighting = 4. / 9. * rho_i;
+			s_i[0] = weighting * (1 + uSquareTerm_eq_shifted)
+					- weighting * (1 + uSquareTerm_eq) ;
+			// directions 1-4
+			weighting = 1. / 9. * rho_i;
+			mixedTerm = prefactor * (uEQshifted0);
+			s_i[1] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
+			s_i[3] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
+			mixedTerm = prefactor * (uEQshifted1);
+			s_i[2] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
+			s_i[4] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
+			// directions 5-8
+			weighting = 1. / 36. * rho_i;
+			mixedTerm = prefactor * (uEQshifted0 + uEQshifted1);
+			s_i[5] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
+			s_i[7] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
+			mixedTerm = prefactor * (-uEQshifted0 + uEQshifted1);
+			s_i[6] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
+			s_i[8] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
+*/
+
+			// =======================================
+			// Collide
+			// =======================================
 
 			// calculate equilibrium distribution
 			// TODO (Knut): use density gradient for PP model
@@ -302,37 +344,8 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			f7(i) += relax_factor * (f_i[7] - feq[7]);
 			f8(i) += relax_factor * (f_i[8] - feq[8]);
 
-			// Exact Difference Method Force Incorporation
-/*			double deltaU_0 = forceX * getDt() / rho_i ;
-			double deltaU_1 = forceY * getDt() / rho_i ;
-			double uEQshifted0 = u_0_i + deltaU_0 ;
-			double uEQshifted1 = u_1_i + deltaU_1 ;
 
 
-			double scalar_product_eq = u_0_i * u_0_i + u_1_i * u_1_i;
-			double uSquareTerm_eq = -scalar_product_eq / (2 * cs2);
-			double scalar_product_eq_shifted = uEQshifted0 * uEQshifted0 + uEQshifted1 * uEQshifted1 ;
-			double uSquareTerm_eq_shifted = -scalar_product_eq_shifted / (2*cs2) ;
-			// direction 0
-			weighting = 4. / 9. * rho_i;
-			feq[0] = weighting * (1 + uSquareTerm_eq_shifted);
-			// directions 1-4
-			weighting = 1. / 9. * rho_i;
-			mixedTerm = prefactor * (uEQshifted0);
-			feq[1] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
-			feq[3] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
-			mixedTerm = prefactor * (uEQshifted1);
-			feq[2] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
-			feq[4] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
-			// directions 5-8
-			weighting = 1. / 36. * rho_i;
-			mixedTerm = prefactor * (uEQshifted0 + uEQshifted1);
-			feq[5] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
-			feq[7] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
-			mixedTerm = prefactor * (-uEQshifted0 + uEQshifted1);
-			feq[6] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
-			feq[8] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm_eq_shifted);
-*/
 		} /* for all dofs */
 	} /* for all cells */
 } /* collideAllD2Q9 */
