@@ -70,8 +70,8 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 	size_t Q = 9;
 	size_t D = 2;
 	double scaling = getStencil()->getScaling();
-	double cs2 = getStencil()->getSpeedOfSoundSquare();
-	double prefactor = scaling / cs2;
+	double cs2 = getStencil()->getSpeedOfSoundSquare()/(scaling * scaling);
+	double prefactor = 1.0 / cs2;
 	double relax_factor = getPrefactor();
 
 	assert(f.size() == Q);
@@ -138,12 +138,12 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 		if (not inInitializationProcedure) {
 			// calculate velocity
 			// for all velocity components
-			u_0_i = scaling / rho_i
+			u_0_i = 1.0 / rho_i
 					* (f_i[1] + f_i[5] + f_i[8] - f_i[3] - f_i[6] - f_i[7]);
-			u_1_i = scaling / rho_i
+			u_1_i = 1.0 / rho_i
 					* (f_i[2] + f_i[5] + f_i[6] - f_i[4] - f_i[7] - f_i[8]);
-			velocities.at(0)(i) = u_0_i;
-			velocities.at(1)(i) = u_1_i;
+			velocities.at(0)(i) = scaling * u_0_i;
+			velocities.at(1)(i) = scaling * u_1_i;
 		}
 
 		// calculate equilibrium distribution
