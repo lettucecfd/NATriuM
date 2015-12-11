@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <exception>
 #include <ctime>
+#include <iomanip>
 
 #include "deal.II/numerics/data_out.h"
 
@@ -31,14 +32,25 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout << "Starting analysis of sinusoidal shear flow ...." << endl;
+	MPIGuard::getInstance(argc, argv);
 
-	const double Ma = 5e-4;
-	const double Re = 1.0;
-	const double cFL = 5.0;
-	const double refinementLevel = 4 ;
-	const double orderOfFiniteElement = 3 ;
-	const double tmax = 5.0;
+	pout << "Starting analysis of sinusoidal shear flow ...." << endl;
+	pout << "Usage: compare-Brenner <Ma-Number> <Gamma> <Refinement level>" << endl;
+
+	double cFL = 10;
+	bool automatic_decrease = true;
+	if (argc != 4){
+		assert (argc == 5);
+		cFL = atof(argv[4]);
+		automatic_decrease = false;
+	}
+
+	const double Ma = atof (argv[1]);
+	const double gamma = atof (argv[2]);
+	const double refinementLevel = atoi (argv[3]);
+	pout << "Ma = " << Ma << ", gamma = " << gamma << endl;
+	const double Re = 1;
+	const double orderOfFiniteElement = 2 ;
 
 	// parameterization by Brenner:
 	// - average height: h
@@ -64,18 +76,19 @@ int main(int argc, char* argv[]) {
 			0.3, 0, 0.05 } };
 
 	std::stringstream fName;
-	fName << getenv("NATRIUM_HOME") << "/sinus-shear-Brenner2/result.txt";
+	fName << getenv("NATRIUM_HOME") << "/Brenner/Ma-" << std::fixed << std::setprecision(5) << Ma << "-ref-" << std::fixed << std::setprecision(0) << refinementLevel << "/result.txt";
+	pout << fName.str().c_str();
 	std::ofstream resultFile(fName.str().c_str());
 	resultFile
-			<< "#gamma   no    eps     alpha      Lx       h       a        b     u_mean    sigma    Psi_s"
+			<< "#gamma   no    eps     alpha      Lx       h       a        b     u_mean    sigma  tau   Psi_s"
 			<< endl;
 
 	/// for all configurations
 	for (size_t i = 1; i < n_cfg; i++) {
-		double gamma = 5e-4;
+		// Gamma falsifies the velocity field (flow factor drops)
 		//for (double gamma = 0.005; gamma <= 1; gamma += 0.15) {
 			//size_t i = 0;
-			cout << "Starting configuration " << i << "..." << endl;
+			pout << "Starting configuration " << i << "..." << endl;
 
 			/// get geometry parameters
 			double Lx = configurations[i][0];
@@ -90,40 +103,55 @@ int main(int argc, char* argv[]) {
 			/// create CFD problem
 			double cell_aspect_ratio = 0.25;
 			const double viscosity = u_a * h / Re;
-			shared_ptr<ProblemDescription<2> > sinusFlow = make_shared<
+			boost::shared_ptr<ProblemDescription<2> > sinusFlow = boost::make_shared<
 					SinusoidalShear2D>(viscosity, u_a, refinementLevel, Lx, h,
 					b, cell_aspect_ratio);
 			const double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*sinusFlow->getTriangulation(), orderOfFiniteElement,
+					*sinusFlow->getMesh(), orderOfFiniteElement,
 					D2Q9(scaling), cFL);
 
 			/// setup configuration
 			std::stringstream dirName;
-			dirName << getenv("NATRIUM_HOME") << "/sinus-shear-Brenner2/gamma-"
-					<< gamma << "_cfg-" << i;
-			shared_ptr<SolverConfiguration> configuration = make_shared<
+			dirName << getenv("NATRIUM_HOME") << "/Brenner/Ma-" << std::fixed << std::setprecision(5) << Ma << "-ref-" << std::fixed <<  std::setprecision(0) << refinementLevel << "/gamma-"
+					<< std::fixed <<  std::setprecision(4) << gamma << "_cfg-" << std::fixed <<  std::setprecision(0) << i;
+			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());
 			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(1);
-			configuration->setOutputCheckpointInterval(1000);
-			configuration->setOutputSolutionInterval(100);
+			configuration->setOutputCheckpointInterval(100000000);
+			configuration->setOutputSolutionInterval(1000000);
+			configuration->setCommandLineVerbosity(WELCOME);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(ALL);
 			configuration->setTimeStepSize(dt);
+			double tau = viscosity/(dt*(scaling*scaling)/3.0);
+
+			if ((tau < 0.5) and (automatic_decrease)) {
+				double new_dt  = viscosity/(scaling*scaling/3.0);
+				tau = viscosity/(new_dt*(scaling*scaling)/3.0);
+				configuration->setTimeStepSize(new_dt);
+				pout << "Config " << i <<": tau too small. Automatic decrease of time step size (now CFL = " << cFL * new_dt / dt << " , tau = " << tau << ")." << endl;
+
+			}
+
+
+
 			configuration->setTimeIntegrator(OTHER);
 			configuration->setDealIntegrator(CRANK_NICOLSON);
 
-			configuration->setInitializationScheme(ITERATIVE);
-			configuration->setIterativeInitializationNumberOfIterations(10);
-			configuration->setIterativeInitializationResidual(1e-15);
+			//configuration->setInitializationScheme(ITERATIVE);
+			//configuration->setIterativeInitializationNumberOfIterations(100);
+			//configuration->setIterativeInitializationResidual(1e-15);
 
-			configuration->setConvergenceThreshold(1e-8);
-			configuration->setCollisionScheme(BGK_STEADY_STATE);
-			configuration->setBGKSteadyStateGamma(gamma);
+			configuration->setConvergenceThreshold(1e-5*Ma/sqrt(gamma));
+			if (gamma < 1 - 1e-5){
+				configuration->setCollisionScheme(BGK_STEADY_STATE);
+				configuration->setBGKSteadyStateGamma(gamma);
+			}
 
 			// make solver object and run simulation
 			CFDSolver<2> solver(configuration, sinusFlow);
@@ -132,14 +160,15 @@ int main(int argc, char* argv[]) {
 			// calculate and put out flow factors
 			const distributed_vector & ux = solver.getVelocity().at(0);
 			// flow factor
-			double qx = u_a*h - PhysicalProperties<2>::massFluxX(ux, solver.getAdvectionOperator(), Lx);
+			double qx = u_a*h - PhysicalProperties<2>::meanVelocityX(ux, solver.getAdvectionOperator())*h;
 			double Psi_s = 2*qx / (sigma * u_a) - h / sigma;
 			resultFile << gamma << "  " << i << "  " << epsilon << "   "
 					<< alpha << "   " << Lx << "   " << h << "   " << a << "   "
-					<< b << "   " << qx/h << "   " << sigma << "  " << Psi_s << endl;
+					<< b << "   " << qx/h << "   " << sigma << "   " << tau << "  " << Psi_s  << endl;
+			pout << "Flow factor " << Psi_s << endl;
 		//}
 	}
-	cout << "Analysis finished." << endl;
+	pout << "Analysis finished." << endl;
 
 	return 0;
 }

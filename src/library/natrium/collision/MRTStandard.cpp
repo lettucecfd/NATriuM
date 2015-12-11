@@ -10,7 +10,7 @@
 namespace natrium {
 
 MRTStandard::MRTStandard(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil) :
+		const boost::shared_ptr<Stencil> stencil) :
 		MRT(relaxationParameter, dt, stencil), m_D(setMRTWeights()), m_S(
 				setRelaxationRates()) {
 
@@ -21,12 +21,30 @@ MRTStandard::~MRTStandard() {
 
 void MRTStandard::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
-		bool inInitializationProcedure = false) const {
+		const dealii::IndexSet& locally_owned_dofs,
+		bool inInitializationProcedure) const {
 
-	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
-		// No MRT collision for other StencilTypes than D2Q9
+	if (Stencil_D2Q9 == getStencil()->getStencilType()) {
+		collideAllD2Q9(f, densities, velocities, locally_owned_dofs,
+				inInitializationProcedure);
+	} /*else if (Stencil_D3Q19 == getStencil()->getStencilType()) {
+		collideAllD3Q19(f, densities, velocities, locally_owned_dofs,
+				inInitializationProcedure);
+	} else if (Stencil_D3Q15 == getStencil()->getStencilType()) {
+		collideAllD3Q15(f, densities, velocities, locally_owned_dofs,
+				inInitializationProcedure);
+	} */else {
 		throw CollisionException("MRT only implemented for D2Q9");
-	} else {
+		// Inefficient collision
+		//BGK::collideAll(f, densities, velocities, locally_owned_dofs,
+		//		inInitializationProcedure);
+	}
+}
+
+void MRTStandard::collideAllD2Q9(DistributionFunctions& f,
+		distributed_vector& densities, vector<distributed_vector>& velocities,
+		const dealii::IndexSet& locally_owned_dofs,
+		bool inInitializationProcedure) const {
 
 		size_t n_dofs = f.at(0).size();
 		size_t Q = getQ();
@@ -34,7 +52,11 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 		vector<double> meq(Q); 	// moment equilibrium distribution functions
 		vector<double> m(Q);   	// moment distribution
 
-		for (size_t i = 0; i < n_dofs; i++) {
+		//for all degrees of freedom on current processor
+		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+		for (it = locally_owned_dofs.begin(); it != end; it++) {
+			size_t i = *it;
 
 			// calculate density
 			densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
@@ -117,7 +139,5 @@ void MRTStandard::collideAll(DistributionFunctions& f,
 
 		}
 	}
-}   	// if - else
-}
-// namespace natrium
+} // namespace natrium
 

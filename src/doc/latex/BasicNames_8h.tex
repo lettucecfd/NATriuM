@@ -1,60 +1,107 @@
-\hypertarget{BasicNames_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Basic\-Names.h File Reference}
-\label{BasicNames_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Basic\-Names.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Basic\-Names.\-h}}
+\hypertarget{BasicNames_8h}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/BasicNames.h File Reference}
+\label{BasicNames_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/BasicNames.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/BasicNames.h}}
 }
 
 
 Definition of the basic typedefs and names used in the Code;.  
+{\ttfamily \#include $<$vector$>$}\par
+{\ttfamily \#include $<$map$>$}\par
+{\ttfamily \#include $<$iostream$>$}\par
+{\ttfamily \#include $<$math.h$>$}\par
+{\ttfamily \#include $<$mpi.h$>$}\par
+{\ttfamily \#include \char`\"{}boost/shared\_\-ptr.hpp\char`\"{}}\par
+{\ttfamily \#include \char`\"{}boost/make\_\-shared.hpp\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/point.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/numerics/vector\_\-tools.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/block\_\-sparse\_\-matrix.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/types.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/conditional\_\-ostream.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/distributed/tria.h\char`\"{}}\par
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{BasicNames_8h_ae56590d1e05b212f7bb7b43baf3ab502}{
+\#define {\bfseries WITH\_\-TRILINOS\_\-MPI}}
+\label{BasicNames_8h_ae56590d1e05b212f7bb7b43baf3ab502}
 
+\item 
+\hypertarget{BasicNames_8h_ae2a281b5d4e54b28ed0e5a6c57df3138}{
+\#define {\bfseries UNDISTRIBUTED\_\-VECTOR}(name, size)~distributed\_\-vector (name) (dealii::complete\_\-index\_\-set(size), MPI\_\-COMM\_\-WORLD)}
+\label{BasicNames_8h_ae2a281b5d4e54b28ed0e5a6c57df3138}
 
-{\ttfamily \#include $<$vector$>$}\\*
-{\ttfamily \#include $<$iostream$>$}\\*
-{\ttfamily \#include $<$math.\-h$>$}\\*
-{\ttfamily \#include \char`\"{}boost/shared\-\_\-ptr.\-hpp\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}boost/make\-\_\-shared.\-hpp\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/base/point.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/numerics/vector\-\_\-tools.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/block\-\_\-sparse\-\_\-matrix.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/trilinos\-\_\-vector.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/trilinos\-\_\-block\-\_\-vector.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/trilinos\-\_\-sparse\-\_\-matrix.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/lac/trilinos\-\_\-block\-\_\-sparse\-\_\-matrix.\-h\char`\"{}}\\*
+\end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{typedef dealii\-::\-Vector$<$ double $>$ {\bfseries natrium\-::numeric\-\_\-vector}}\label{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}
+\hypertarget{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{
+typedef dealii::Vector$<$ double $>$ \hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{natrium::numeric\_\-vector}}
+\label{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}
 
-\begin{DoxyCompactList}\small\item\em vector for numeric operations \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_af033b61eba66ee890834d17f01c2ecb3}{typedef dealii\-::\-Block\-Vector\\*
-$<$ double $>$ {\bfseries natrium\-::block\-\_\-vector}}\label{namespacenatrium_af033b61eba66ee890834d17f01c2ecb3}
-
-\item 
-\hypertarget{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}{typedef dealii\-::\-Full\-Matrix\\*
-$<$ double $>$ {\bfseries natrium\-::numeric\-\_\-matrix}}\label{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}
-
-\begin{DoxyCompactList}\small\item\em matrix for numeric operations \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}{typedef \\*
-dealii\-::\-Block\-Sparse\-Matrix\\*
-$<$ double $>$ {\bfseries natrium\-::sparse\-\_\-block\-\_\-matrix}}\label{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}
-
-\begin{DoxyCompactList}\small\item\em sparse matrix \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}{typedef dealii\-::\-Sparse\-Matrix\\*
-$<$ double $>$ {\bfseries natrium\-::sparse\-\_\-matrix}}\label{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}
+\begin{DoxyCompactList}\small\item\em vector for numeric operations \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_af033b61eba66ee890834d17f01c2ecb3}{
+typedef dealii::BlockVector$<$ double $>$ {\bfseries natrium::block\_\-vector}}
+\label{namespacenatrium_af033b61eba66ee890834d17f01c2ecb3}
 
 \item 
-\hypertarget{namespacenatrium_a5e4c0f4afd1e514e58cee155d521598e}{typedef \\*
-dealii\-::\-Trilinos\-Wrappers\-::\-Vector {\bfseries natrium\-::distributed\-\_\-vector}}\label{namespacenatrium_a5e4c0f4afd1e514e58cee155d521598e}
+\hypertarget{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}{
+typedef dealii::FullMatrix$<$ double $>$ \hyperlink{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}{natrium::numeric\_\-matrix}}
+\label{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}
+
+\begin{DoxyCompactList}\small\item\em matrix for numeric operations \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}{
+typedef dealii::BlockSparseMatrix$<$ double $>$ \hyperlink{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}{natrium::sparse\_\-block\_\-matrix}}
+\label{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}
+
+\begin{DoxyCompactList}\small\item\em sparse matrix \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}{
+typedef dealii::SparseMatrix$<$ double $>$ {\bfseries natrium::sparse\_\-matrix}}
+\label{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}
 
 \item 
-\hypertarget{namespacenatrium_a840604dc7193c966535692c2825a6a55}{typedef \\*
-dealii\-::\-Trilinos\-Wrappers\-::\-Block\-Vector {\bfseries natrium\-::distributed\-\_\-block\-\_\-vector}}\label{namespacenatrium_a840604dc7193c966535692c2825a6a55}
+\hypertarget{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}{
+typedef sparse\_\-matrix \hyperlink{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}{natrium::distributed\_\-sparse\_\-matrix}}
+\label{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}
+
+\begin{DoxyCompactList}\small\item\em matrix which can be distributed over different cores \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_a70f1738fc69761e34e1df08e0708d2f3}{
+typedef sparse\_\-block\_\-matrix {\bfseries natrium::distributed\_\-sparse\_\-block\_\-matrix}}
+\label{namespacenatrium_a70f1738fc69761e34e1df08e0708d2f3}
 
 \item 
-\hypertarget{namespacenatrium_a8dd7c05bcf8179eb2ce78b9b2dab02cf}{typedef \\*
-dealii\-::\-Trilinos\-Wrappers\-::\-Sparse\-Matrix {\bfseries natrium\-::distributed\-\_\-sparse\-\_\-matrix}}\label{namespacenatrium_a8dd7c05bcf8179eb2ce78b9b2dab02cf}
+\hypertarget{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{
+typedef dealii::TrilinosWrappers::MPI::Vector \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{natrium::distributed\_\-vector}}
+\label{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}
+
+\begin{DoxyCompactList}\small\item\em vectors which can be distributed over multiple cores \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_ac1e32e729ff6f86147e9b109bbe41b48}{
+typedef dealii::TrilinosWrappers::MPI::BlockVector {\bfseries natrium::distributed\_\-block\_\-vector}}
+\label{namespacenatrium_ac1e32e729ff6f86147e9b109bbe41b48}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_a31c41694ea4808b3e801fd586bc10fef}{
+void {\bfseries natrium::REINIT\_\-UNDISTRIBUTED\_\-BLOCK\_\-VECTOR} (distributed\_\-block\_\-vector \&bv, size\_\-t n\_\-blocks, size\_\-t block\_\-size)}
+\label{namespacenatrium_a31c41694ea4808b3e801fd586bc10fef}
 
 \item 
-\hypertarget{namespacenatrium_a46b3f17aace42dedfb46dfade71a3fbb}{typedef \\*
-dealii\-::\-Trilinos\-Wrappers\-::\-Block\-Sparse\-Matrix {\bfseries natrium\-::distributed\-\_\-sparse\-\_\-block\-\_\-matrix}}\label{namespacenatrium_a46b3f17aace42dedfb46dfade71a3fbb}
+\hypertarget{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}{
+void \hyperlink{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}{natrium::MPI\_\-sync} ()}
+\label{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}
+
+\begin{DoxyCompactList}\small\item\em Synchronize all MPI processes. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacenatrium_a791202a0d8b6bdac2c62f3ae63905a36}{natrium::is\_\-MPI\_\-rank\_\-0} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+dealii::ConditionalOStream \hyperlink{namespacenatrium_a3cedd4d2c74ed3a6e0f61166ddff40d1}{natrium::perr}
+\item 
+\hypertarget{namespacenatrium_ae1c1457daa96180a3ee2057cf5f7f9e3}{
+dealii::ConditionalOStream {\bfseries natrium::pout}}
+\label{namespacenatrium_ae1c1457daa96180a3ee2057cf5f7f9e3}
 
 \end{DoxyCompactItemize}
 
@@ -64,8 +111,8 @@ Definition of the basic typedefs and names used in the Code;. \begin{DoxyNote}{N
 As this file is used by most of the others it can contain different compiler flags and other global settings 
 \end{DoxyNote}
 \begin{DoxyDate}{Date}
-30.\-08.\-2013 
+30.08.2013 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
-Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

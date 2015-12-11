@@ -22,7 +22,7 @@
  *    Second, the three classes mentioned above are implemented in CFDSolver.h,
  *    SolverConfiguration.h, and ProblemDescription.h.
  *    Third, BasicNames.h contains some general typedefs used throughout NATriuM and
- *    automatically enables using certain std and boost types and functions (e.g. shared_ptr).
+ *    automatically enables using certain std and boost types and functions (e.g. boost::shared_ptr).
  *    It has to be included in basically every file that is part of or uses NATriuM.
  *    Finally, we include LidDrivenCavity2D.h. It contains the class LidDrivenCavity2D,
  *    which defines the concrete flow we want to simulate.
@@ -69,7 +69,7 @@
  *    		@snippet step-0.cpp Configuration
  *
  *	  Similarly, we create the flow object. It is inherited of ProblemDescription and needed to be assigned to
- *	  a shared_ptr<ProblemDescription>.
+ *	  a boost::shared_ptr<ProblemDescription>.
  *    		@snippet step-0.cpp Problem
  *
  *	  Finally, we are ready to create the CFD solver and run the simulation.
@@ -104,8 +104,11 @@ using namespace natrium;
 
 //! [Main function]
 int main() {
+	// TODO Documentation
+	MPIGuard::getInstance();
 
-	cout << "Starting NATriuM step-0..." << endl;
+	// TODO Documentation
+	pout << "Starting NATriuM step-0..." << endl;
 
 	// set Reynolds and Mach number
 	const double Re = 1000;
@@ -131,7 +134,7 @@ int main() {
 	//! [Definition]
 
 	//! [Configuration]
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
@@ -144,16 +147,16 @@ int main() {
 
 	//! [Problem]
 	// make problem and solver objects
-	shared_ptr<LidDrivenCavity2D> lidDrivenCavity = make_shared<
+	boost::shared_ptr<LidDrivenCavity2D> lidDrivenCavity = boost::make_shared<
 			LidDrivenCavity2D>(U, viscosity, refinementLevel);
-	shared_ptr<ProblemDescription<2> > ldCavityProblem = lidDrivenCavity;
+	boost::shared_ptr<ProblemDescription<2> > ldCavityProblem = lidDrivenCavity;
 	//! [Problem]
 
 	//! [Solver]
 	CFDSolver<2> solver(configuration, ldCavityProblem);
 	solver.run();
 
-	cout << "NATriuM step-0 terminated." << endl;
+	pout << "NATriuM step-0 terminated." << endl;
 
 	return 0;
 }

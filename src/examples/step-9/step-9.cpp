@@ -27,7 +27,9 @@ using namespace natrium;
 // Main function
 int main(int argc, char** argv) {
 
-	cout << "Starting NATriuM step-9..." << endl;
+	MPIGuard::getInstance(argc, argv);
+
+	pout << "Starting NATriuM step-9..." << endl;
 #ifdef WITH_TRILINOS
 	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
 #endif
@@ -42,21 +44,21 @@ int main(int argc, char** argv) {
 	const double viscosity = U / Re; // (because L = 1)
 
 	// load grid
-	shared_ptr<Cylinder2D> cylinder = make_shared<Cylinder2D>(
+	boost::shared_ptr<Cylinder2D> cylinder = boost::make_shared<Cylinder2D>(
 				viscosity, U);
 	D2Q9 stencil(dqScaling);
 	// set FE order and time step size
 	const size_t orderOfFiniteElement = 2;
 	const double cfl=1.5;
 
-	const double timeStepSize = CFDSolverUtilities::calculateTimestep<2>(*cylinder->getTriangulation(),
+	const double timeStepSize = CFDSolverUtilities::calculateTimestep<2>(*cylinder->getMesh(),
 			orderOfFiniteElement, stencil, cfl);
 
 
-	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
+	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 
 	// configure solver
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-9";
@@ -74,14 +76,14 @@ int main(int argc, char** argv) {
 	//configuration->setDistributionInitType(Iterative);
 
 
-	shared_ptr<ProblemDescription<2> > couetteProblem = cylinder;
+	boost::shared_ptr<ProblemDescription<2> > couetteProblem = cylinder;
 	CFDSolver<2> solver(configuration, couetteProblem);
 
 	solver.run();
 
 
 
-	cout << "NATriuM step-9 terminated." << endl;
+	pout << "NATriuM step-9 terminated." << endl;
 
 	return 0;
 }

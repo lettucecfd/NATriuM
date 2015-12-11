@@ -16,17 +16,18 @@
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
+#include "../utilities/Logging.h"
 
 #include "BoundaryTools.h"
 
 namespace natrium {
 
 // The template Parameter has to be made explicit in order for the code to compile
-template<> PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
-		size_t boundaryIndicator2,
-		shared_ptr<dealii::Triangulation<2> > triangulation) :
+template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
+		size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction,
+		boost::shared_ptr<Mesh<dim> > triangulation) :
 		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
-				boundaryIndicator2) {
+				boundaryIndicator2), m_direction(direction) {
 
 	// check if boundary indcators are different
 	if (boundaryIndicator1 == boundaryIndicator2) {
@@ -35,60 +36,73 @@ template<> PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
 	}
 
 	m_triangulation = triangulation;
+	m_doFHandler = NULL;
 
-	// create vertex points
-	dealii::Point<2> beginLine1(0.0, 0.0);
-	dealii::Point<2> endLine1(0.0, 0.0);
-	dealii::Point<2> beginLine2(0.0, 0.0);
-	dealii::Point<2> endLine2(0.0, 0.0);
+	// collect periodic faces and extend halo layer of ghost cells across periodic boundaries
+	// take care: collect_periodic_faces must not be called for a refined grid
+	if (m_triangulation->n_levels() > 1) {
+		throw PeriodicBoundaryNotPossible(
+				"The periodic boundaries have to be set before the refinement.");
+	}
+	std::vector<
+			dealii::GridTools::PeriodicFacePair<
+					typename Mesh<dim>::cell_iterator> > matched_pairs;
+	dealii::GridTools::collect_periodic_faces(*m_triangulation,
+			m_boundaryIndicator1, m_boundaryIndicator2, m_direction,
+			matched_pairs);
+	// check if the boundary has neighbors
+	if (matched_pairs.at(0).cell[0]->neighbor_index(
+			matched_pairs.at(0).face_idx[0]) != -1) {
+		throw PeriodicBoundaryNotPossible(
+				"Cell at periodic boundary had neighbor. That is not allowed.");
+	}
+	// check if the boundary has already been created by setting user flags.
+	// Somehow, this test does not work properly. The code crashes without
+	// an error message in case you try to create a single Periodic Boundary
+	// twice. I could not figure out why this does not work, but it should not
+	// be so much of a problem, because normally the boundary collection will
+	// already throw an error if you try to assign a boundary indicator to two
+	// different objects in the boundary collection.
+	for (size_t i = 0; i < matched_pairs.size(); i++) {
+		size_t face_nr_1 = matched_pairs.at(i).face_idx[0];
+		size_t face_nr_2 = matched_pairs.at(i).face_idx[1];
+		if ((matched_pairs.at(i).cell[0]->face(face_nr_1)->user_flag_set())
+				or (matched_pairs.at(i).cell[1]->face(face_nr_2)->user_flag_set())) {
+			throw PeriodicBoundaryNotPossible(
+					"You're trying to create a PeriodicBoundary, where another one "
+							"has already been created. That does not work.");
+		} else {
+			matched_pairs.at(i).cell[0]->face(face_nr_1)->set_user_flag();
+			matched_pairs.at(i).cell[1]->face(face_nr_2)->set_user_flag();
+		}
+	}
 
-	// calculate the positions of the vertex points(
-	std::string errorMessage1;
-	bool areLines = BoundaryTools::getInterfacialLinesByBoundaryIndicator(
-			boundaryIndicator1, boundaryIndicator2, triangulation, beginLine1,
-			endLine1, beginLine2, endLine2, errorMessage1);
-	if (not areLines)
-		throw PeriodicBoundaryNotPossible(errorMessage1);
-
-	m_beginLine1 = beginLine1;
-	m_beginLine2 = beginLine2;
-	m_endLine1 = endLine1;
-	m_endLine2 = endLine2;
-
-	// check if positions of the interfaces are OK;
-	// else throw PeriodicBoundaryNotPossible
-	std::string errorMessage2;
-	bool isParallel = BoundaryTools::checkParallelLines(m_beginLine1,
-			m_endLine1, m_beginLine2, m_endLine2, errorMessage2);
-	if (not isParallel)
-		throw PeriodicBoundaryNotPossible(errorMessage2);
+	LOG(DETAILED)
+			<< "add periodicity to mesh... (if it succeeds, it will be displayed), in total "
+			<< matched_pairs.size() << " matched pair(s) between boundaries "
+			<< m_boundaryIndicator1 << " and  " << m_boundaryIndicator2 << endl;
+	m_triangulation->add_periodicity(matched_pairs);
+	LOG(DETAILED) << "...success" << endl;
 
 } /* Constructor 2 */
-template<> PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
-		size_t boundaryIndicator2,
-		shared_ptr<dealii::Triangulation<3> > triangulation) :
-		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
-				boundaryIndicator2) {
-
-	// check if boundary indcators are different
-	if (boundaryIndicator1 == boundaryIndicator2) {
-		throw PeriodicBoundaryNotPossible(
-				"The boundary indicators defining the periodic boundaries must not be equal to each other.");
-	}
-
-	// TODO Meaningfully check if the boundaries are parallel
-
-	m_triangulation = triangulation;
-}
+template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
+		size_t boundaryIndicator2, size_t direction,
+		boost::shared_ptr<Mesh<2> > triangulation);
+template PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
+		size_t boundaryIndicator2, size_t direction,
+		boost::shared_ptr<Mesh<3> > triangulation);
 
 template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
-		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+		const typename dealii::DoFHandler<dim>::active_cell_iterator &,
 		size_t faceBoundaryIndicator) const {
-	// first condition: cell map has a key <cell>
-	if (m_cells.count(cell) == 0) {
-		return false;
-	}
-	// second condition: the face has the right boundary indicator
+	/*
+	 // first condition: cell map has a key <cell>
+	 if (m_cells.count(cell) == 0) {
+	 return false;
+	 }
+	 // second condition: the face has the right boundary indicator
+	 */
+	// assert(m_cells.count(cell) != 0);
 	if (faceBoundaryIndicator == m_boundaryIndicator1) {
 		return true;
 	}
@@ -99,10 +113,10 @@ template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 }
 // The template Parameter has to be made explicit in order for the code to compile
 template bool PeriodicBoundary<2>::isFaceInBoundary(
-		const typename dealii::DoFHandler<2>::active_cell_iterator & cell,
+		const typename dealii::DoFHandler<2>::active_cell_iterator &,
 		size_t faceBoundaryIndicator) const;
 template bool PeriodicBoundary<3>::isFaceInBoundary(
-		const typename dealii::DoFHandler<3>::active_cell_iterator & cell,
+		const typename dealii::DoFHandler<3>::active_cell_iterator &,
 		size_t faceBoundaryIndicator) const;
 
 template<size_t dim> PeriodicBoundary<dim>::~PeriodicBoundary() {
@@ -111,232 +125,47 @@ template<size_t dim> PeriodicBoundary<dim>::~PeriodicBoundary() {
 template PeriodicBoundary<2>::~PeriodicBoundary();
 template PeriodicBoundary<3>::~PeriodicBoundary();
 
-template<> void PeriodicBoundary<2>::createCellMap(
-		const dealii::DoFHandler<2>& doFHandler) {
+template<size_t dim> void PeriodicBoundary<dim>::createCellMap(
+		const dealii::DoFHandler<dim>& doFHandler) {
+	m_doFHandler = &doFHandler;
 
-	// Make iterators over active faces
-	dealii::DoFHandler<2>::active_cell_iterator currentCell =
-			doFHandler.begin_active();
-	dealii::DoFHandler<2>::active_cell_iterator lastCell = doFHandler.end();
+	DealIIExtensions::make_periodicity_map_dg(doFHandler, m_boundaryIndicator1,
+			m_boundaryIndicator2, m_direction, m_cells);
 
-	// The key of these cells is the distance from the begin point of the respective line.
-	// The second element of the value pair is the local face id of the face which belongs to the boundary.
-	std::map<double,
-			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t>,
-			own_double_less> cellsAtBoundary1;
-	std::map<double, std::pair<dealii::DoFHandler<2>::cell_iterator, size_t>,
-			own_double_less> cellsAtBoundary2;
-
-	// iterate over all active cells and sort them
-	for (; currentCell != lastCell; ++currentCell) {
-		if (currentCell->at_boundary()) {
-			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
-					i++) {
-				if (currentCell->face(i)->boundary_indicator()
-						== m_boundaryIndicator1) {
-					double key = (currentCell->face(i))->center().distance(
-							m_beginLine1);
-					if (cellsAtBoundary1.find(key) != cellsAtBoundary1.end()) {
-						std::stringstream s;
-						s
-								<< "Minimum vertex distance < 1e-6; but the periodic boundary detection "
-										"tests for cells distances < 1e-6 in own_double_less. That might cause "
-										"serious problems." << endl;
-						throw PeriodicBoundaryNotPossible(
-								"Error in Periodic Boundary: Cells on opposite boundaries not unique."
-										"The cell diameter might be < 1e-6, which is not allowed by the function own_double_less.",
-								s);
-					}
-					cellsAtBoundary1.insert(
-							std::make_pair(key,
-									std::make_pair(currentCell,
-											dealii::GeometryInfo<2>::opposite_face[i])));
-				}
-				if (currentCell->face(i)->boundary_indicator()
-						== m_boundaryIndicator2) {
-					double key = (currentCell->face(i))->center().distance(
-							m_beginLine2);
-
-					if (cellsAtBoundary2.find(key) != cellsAtBoundary2.end()) {
-						std::stringstream s;
-						s
-								<< "Vertex distance < 1e-6; but the periodic boundary detection "
-										"tests for cells distances < 1e-6 in own_double_less. That might cause "
-										"serious problems." << endl;
-						throw PeriodicBoundaryNotPossible(
-								"Error in Periodic Boundary: Cells on opposite boundaries not unique."
-										"The cell diameter might be < 1e-6, which is not allowed by the function own_double_less.",
-								s);
-					}
-					cellsAtBoundary2.insert(
-							std::make_pair(key,
-									std::make_pair(currentCell,
-											dealii::GeometryInfo<2>::opposite_face[i])));
-				}
-			}
-		}
-	}
-
-	// make sure that both boundaries have the same number of adjacent cells
-	if (cellsAtBoundary1.size() != cellsAtBoundary2.size()) {
-		throw PeriodicBoundaryNotPossible(
-				"The boundaries do not have the same number of adjacent cells.");
-	}
-
-	// store the cell ids and their respective opposite cell in map
-	m_cells.clear();
-	std::map<double,
-			std::pair<dealii::DoFHandler<2>::active_cell_iterator, size_t> >::iterator atBoundary1 =
-			cellsAtBoundary1.begin();
-	std::map<double, std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> >::iterator atBoundary2 =
-			cellsAtBoundary2.begin();
-	for (; atBoundary1 != cellsAtBoundary1.end(); atBoundary1++) {
-		// assert that the face discretizations on both lines are equal
-		if (cellsAtBoundary2.count(atBoundary1->first) == 0) {
-			// Generate lengthy error message
-			std::stringstream info;
-			info << "Face centers for boundaries " << m_boundaryIndicator1
-					<< " (left column) and " << m_boundaryIndicator2
-					<< " (right column):" << endl;
-			std::map<double,
-					std::pair<dealii::DoFHandler<2>::active_cell_iterator,
-							size_t> >::iterator it1 = cellsAtBoundary1.begin();
-			std::map<double,
-					std::pair<dealii::DoFHandler<2>::cell_iterator, size_t> >::iterator it2 =
-					cellsAtBoundary2.begin();
-			while ((it1 != cellsAtBoundary1.end())
-					or (it2 != cellsAtBoundary2.end())) {
-				if (it1 != cellsAtBoundary1.end()) {
-					info << it1->first << "  ";
-					it1++;
-				} else {
-					info << "          ";
-				}
-				if (it2 != cellsAtBoundary2.end()) {
-					info << it2->first;
-					it2++;
-				}
-				info << endl;
-			}
-			throw PeriodicBoundaryNotPossible(
-					"The discretizations of opposite periodic boundaries do not coincide. "
-							"This version of the NATriuM solver does only work with equal discretizations. ",
-					info);
-		}
-		// add to cells
-		m_cells.insert(
-				std::make_pair(atBoundary1->second.first, atBoundary2->second));
-		m_cells.insert(
-				std::make_pair(atBoundary2->second.first, atBoundary1->second));
-		atBoundary2++;
-	}
+	checkCellMap();
 
 } /* createMap */
+template void PeriodicBoundary<2>::createCellMap(
+		const dealii::DoFHandler<2>& doFHandler);
+template void PeriodicBoundary<3>::createCellMap(
+		const dealii::DoFHandler<3>& doFHandler);
 
-template<> void PeriodicBoundary<3>::createCellMap(
-		const dealii::DoFHandler<3>& doFHandler) {
-	// Make iterators over active faces
-	dealii::DoFHandler<3>::active_cell_iterator currentCell =
-			doFHandler.begin_active();
-	dealii::DoFHandler<3>::active_cell_iterator lastCell = doFHandler.end();
-	// The key of these cells is a 2D point derived from the center point of each cell belonging to the boundary.
-	// all the points in the respective boundaries have at least two coordinate components in common.  a dim-1 point
-	//is derived from these common components and sorted in a way that a map can be made to connect the relative boundary cells.
-	// the point_sorter class will enable us to order the key values in a specific fashion and the adjacent boundary cells
-	//will be coupled to the same key values in the maps namely "cellsAtBoundary1" and "cellsAtBoundary2".
-	// The second element of the value pair is the local face id of the face which belongs to the boundary.
-	std::map<dealii::Point<2>,
-			std::pair<dealii::DoFHandler<3>::active_cell_iterator, size_t>,
-			BoundaryTools::point_sorter> cellsAtBoundary1;
-	std::map<dealii::Point<2>,
-			std::pair<dealii::DoFHandler<3>::cell_iterator, size_t>,
-			BoundaryTools::point_sorter> cellsAtBoundary2;
+template<size_t dim> void PeriodicBoundary<dim>::checkCellMap() {
+	typename PeriodicCellMap<dim>::const_iterator it, end = m_cells.end();
+	size_t face_nr_1, face_nr_2, boundary_id_1, boundary_id_2;
+	for (it = m_cells.begin(); it != end; it++) {
+		face_nr_1 = it->second.face_idx[0];
+		face_nr_2 = it->second.face_idx[1];
+		boundary_id_1 = it->second.cell[0]->face(face_nr_1)->boundary_id();
+		boundary_id_2 = it->second.cell[1]->face(face_nr_2)->boundary_id();
+		assert(
+				(boundary_id_1 == m_boundaryIndicator1)
+						or (boundary_id_1 == m_boundaryIndicator2));
+		assert(
+				(boundary_id_2 == m_boundaryIndicator1)
+						or (boundary_id_2 == m_boundaryIndicator2));
+		assert(not it->second.cell[0]->is_artificial());
+		assert(not it->second.cell[1]->is_artificial());
+		assert(it->second.cell[0]->active());
+		assert(it->second.cell[1]->active());
+		assert(
+				(it->first == it->second.cell[0])
+						or (it->first == it->second.cell[1]));
 
-	dealii::Point<2> key;
-
-	// iterate over all active cells and sort them
-	for (; currentCell != lastCell; ++currentCell) {
-		if (currentCell->at_boundary()) {
-			for (size_t i = 0; i < dealii::GeometryInfo<3>::faces_per_cell;
-					i++) {
-				if (currentCell->face(i)->boundary_indicator()
-						== m_boundaryIndicator1) {
-					//check if the face's normal vector is in X direction
-					if ((dealii::GeometryInfo<3>::unit_normal_direction[i])
-							== 0) {
-						key[0] = (currentCell->face(i))->center()[1];
-						key[1] = (currentCell->face(i))->center()[2];
-					}
-					// check if the face's normal vector is in Y direction
-					else if (dealii::GeometryInfo<3>::unit_normal_direction[i]
-							== 1) {
-						key[0] = (currentCell->face(i))->center()[0];
-						key[1] = (currentCell->face(i))->center()[2];
-					} else {
-						// if the normal vector is not in x or y direction then it must be in Z direction
-						assert( (dealii::GeometryInfo<3>::unit_normal_direction[i])	== 2 );
-						key[0] = (currentCell->face(i))->center()[0];
-						key[1] = (currentCell->face(i))->center()[1];
-					}
-
-					cellsAtBoundary1.insert(
-							std::make_pair(key,
-									std::make_pair(currentCell,
-											dealii::GeometryInfo<3>::opposite_face[i])));
-
-				}
-				if (currentCell->face(i)->boundary_indicator()
-						== m_boundaryIndicator2) {
-					if (dealii::GeometryInfo<3>::unit_normal_direction[i]
-							== 0) {
-						key[0] = (currentCell->face(i))->center()[1];
-						key[1] = (currentCell->face(i))->center()[2];
-					} else if (dealii::GeometryInfo<3>::unit_normal_direction[i]
-							== 1) {
-						key[0] = (currentCell->face(i))->center()[0];
-						key[1] = (currentCell->face(i))->center()[2];
-					} else {
-						key[0] = (currentCell->face(i))->center()[0];
-						key[1] = (currentCell->face(i))->center()[1];
-					}
-					cellsAtBoundary2.insert(
-							std::make_pair(key,
-									std::make_pair(currentCell,
-											dealii::GeometryInfo<3>::opposite_face[i])));
-
-				}
-			}
-		}
 	}
-
-	// make sure that both boundaries have the same number of adjacent cells
-	if (cellsAtBoundary1.size() != cellsAtBoundary2.size()) {
-		throw PeriodicBoundaryNotPossible(
-				"The boundaries do not have the same number of adjacent cells.");
-	}
-	// store the cell ids and their respective opposite cell in map
-	m_cells.clear();
-	std::map<dealii::Point<2>,
-			std::pair<dealii::DoFHandler<3>::active_cell_iterator, size_t> >::iterator atBoundary1 =
-			cellsAtBoundary1.begin();
-	std::map<dealii::Point<2>,
-			std::pair<dealii::DoFHandler<3>::cell_iterator, size_t> >::iterator atBoundary2 =
-			cellsAtBoundary2.begin();
-	for (; atBoundary1 != cellsAtBoundary1.end(); atBoundary1++) {
-		// assert that the face discretizations on both lines are equal
-		if (cellsAtBoundary2.count(atBoundary1->first) == 0) {
-			throw PeriodicBoundaryNotPossible(
-					"The discretizations of opposite periodic boundaries do not coincide. This version of the NATriuM solver does only work with equal discretizations.");
-		}
-		// add to cells
-		m_cells.insert(
-				std::make_pair(atBoundary1->second.first, atBoundary2->second));
-		m_cells.insert(
-				std::make_pair(atBoundary2->second.first, atBoundary1->second));
-		atBoundary2++;
-	}
-
 }
+template void PeriodicBoundary<2>::checkCellMap();
+template void PeriodicBoundary<3>::checkCellMap();
 
 template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoundary(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
@@ -344,16 +173,27 @@ template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoun
 
 	if (m_cells.size() == 0) {
 		throw PeriodicBoundaryNotPossible(
-				"CreateMap has to be called before getOppositeCellAtPeriodicBoundary.");
+				"CreateCellMap has to be called before getOppositeCellAtPeriodicBoundary.");
 	}
 // assert that the given cell is at the boundary
 	if (m_cells.count(cell) == 0) {
 		throw PeriodicBoundaryNotPossible(
 				"The cell does not belong to the boundary.");
 	}
-
-	neighborCell = m_cells.at(cell).first;
-	return m_cells.at(neighborCell).second;
+	//initialize neighbor cell so that the dof handler is set properly,
+	//in this way, m_cells can contain arbitrary TriaIterators and still return a DofAccessor
+	//If this is left out we get an error in setting the neighbor cell
+	neighborCell = m_doFHandler->begin_active();
+	// return cell and face id
+	FacePair<dim> face_pair = m_cells.at(cell);
+	if (face_pair.cell[0] == cell) {
+		neighborCell = face_pair.cell[1];
+		return face_pair.face_idx[1];
+	} else {
+		assert(face_pair.cell[1] == cell);
+		neighborCell = face_pair.cell[0];
+		return face_pair.face_idx[0];
+	}
 }
 // The template parameter has to be made explicit in order for the code to compile
 template size_t PeriodicBoundary<2>::getOppositeCellAtPeriodicBoundary(
@@ -364,49 +204,14 @@ template size_t PeriodicBoundary<3>::getOppositeCellAtPeriodicBoundary(
 		dealii::DoFHandler<3>::cell_iterator & neighborCell) const;
 
 template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
-		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
-		size_t n_dofs_per_block, size_t dofs_per_cell) const {
+		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const {
 
 	// THIS FUNCTION IS NOT USED!!! See DealIIExtensions module for details
-
-	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
-	const dealii::ConstraintMatrix constraints;
-
-// add periodic boundaries to intermediate flux sparsity pattern
-	vector<dealii::types::global_dof_index> doFIndicesAtCell1(dofs_per_cell);
-	vector<dealii::types::global_dof_index> doFIndicesAtCell2(dofs_per_cell);
-	// for all blocks (it is important to have this loop in the outer part
-	// because otherwise it is very Cache-inefficient)
-	for (size_t I = 0; I < n_blocks; I++) {
-		//minimize calls of block(), because expensive
-		dealii::CompressedSparsityPattern& block = cSparse.block(I, I);
-		typename std::map<
-				typename dealii::DoFHandler<dim>::active_cell_iterator,
-				std::pair<typename dealii::DoFHandler<dim>::cell_iterator,
-						size_t> >::const_iterator element = m_cells.begin();
-		// for each cells belonging to the periodic boundary
-		for (; element != m_cells.end(); element++) {
-			element->first->get_dof_indices(doFIndicesAtCell1);
-			element->second.first->get_dof_indices(doFIndicesAtCell2);
-			// couple all dofs at boundary 1 with dofs at boundary 2
-			constraints.add_entries_local_to_global(doFIndicesAtCell1,
-					doFIndicesAtCell2, block, true);
-			// TODO only couple the ones which are nonzero at the face
-			// TODO remove the INVARIANT "discretization at boundary 1 = discretization at boundary 2"
-			//      e.g. by mapping, allowing more than one periodic neighbor, ...
-			// iterate over rows
-			//for (size_t j = 0; j < dofs_per_cell; j++) {
-			//	block.add_entries (doFIndicesAtCell1[j], doFIndicesAtCell2.begin(), doFIndicesAtCell2.end());
-			//}
-		}
-	}
-
+	assert(false);
 }
 template void PeriodicBoundary<2>::addToSparsityPattern(
-		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
-		size_t n_dofs_per_block, size_t dofs_per_cell) const;
+		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const;
 template void PeriodicBoundary<3>::addToSparsityPattern(
-		dealii::BlockCompressedSparsityPattern& cSparse, size_t n_blocks,
-		size_t n_dofs_per_block, size_t dofs_per_cell) const;
+		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const;
 
 } /* namespace natrium */

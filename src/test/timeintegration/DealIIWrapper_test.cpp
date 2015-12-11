@@ -14,43 +14,46 @@
 
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/benchmarks/AdvectionBenchmark.h"
 
 namespace natrium {
 
 BOOST_AUTO_TEST_SUITE(DealIIWrapper_test)
 
+		// This unit test module ensures that the time integrator work
+		// for the vector classes numeric_vector, block_vector and distributed_vector.
+		// A test for distributed_block_vector is provided by the integration test.
+
 BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
-	cout << "DealIIWrapper_Convergence_test..." << endl;
+	pout << "DealIIWrapper_Convergence_test..." << endl;
 
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
-		cout << "  - Integrator " << n << "...";
+		pout << "  - Integrator " << n << "...";
 		// solve ODE F(f) = lambda*f
 		// with initial value f0 = 1
 		// analytic solution: f(x) = e^(lambda*x)
 		double tmax = 1;
 		double dt = 0.001;
-		const size_t numberOfSteps = 1000;
 		const double lambda = -2.0;
-		distributed_vector g(1);
+		numeric_vector g(1);
 		g(0) = 0;
 		// build the 1x1 matrix [[lambda]]
-		dealii::CompressedSparsityPattern compressedSparsityPattern(1, 1);
+		dealii::DynamicSparsityPattern compressedSparsityPattern(1, 1);
 		compressedSparsityPattern.add(0, 0);
 		dealii::SparsityPattern sparsityPattern;
 		sparsityPattern.copy_from(compressedSparsityPattern);
-		distributed_sparse_matrix A;
+		sparse_matrix A;
 		A.reinit(sparsityPattern);
 		A.set(0, 0, lambda);
 
-		DealIIWrapper<distributed_sparse_matrix, distributed_vector> tm(dt,
-				name,MINRES);
+		DealIIWrapper<sparse_matrix, numeric_vector> tm(dt, name, MINRES);
 
-		distributed_vector f(1);
+		numeric_vector f(1);
 		f(0) = 1;
 		double t = 0;
 		unsigned int n_steps = 0;
-		if (7 == n){
+		if (7 == n) {
 			tmax = 0.1;
 		}
 		while (t < tmax) {
@@ -64,17 +67,17 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_Convergence_test) {
 		}
 		BOOST_CHECK_CLOSE((double ) f(0), exp(lambda * t), 1);
 
-		cout << " " << n_steps << " steps. done." << endl;
+		pout << " " << n_steps << " steps. done." << endl;
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 }
 
 BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
-	cout << "DealIIWrapper_MultiBlock_test..." << endl;
+	pout << "DealIIWrapper_MultiBlock_test..." << endl;
 
 	for (int n = 0; n < 12; n++) {
 		DealIntegratorName name = static_cast<DealIntegratorName>(n);
-		cout << "  - Integrator " << n << "...";
+		pout << "  - Integrator " << n << "...";
 
 		// solve ODE F(f) = A*f
 		// with initial value f0 = [ 1 2 ]
@@ -82,20 +85,9 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		// analytic solution: f(x) = e^(A*x)
 		double tmax = 1;
 		double dt = 0.001;
-		const size_t numberOfSteps = 1000;
 		// build matrix
-		distributed_sparse_block_matrix A;
-#ifdef WITH_TRILINOS
-		dealii::CompressedSparsityPattern compressedSparsityPattern(1, 1);
-		compressedSparsityPattern.add(0, 0);
-		A.reinit(2, 2);
-		A.block(0, 0).reinit(compressedSparsityPattern);
-		A.block(0, 1).reinit(A.block(0, 0));
-		A.block(1, 0).reinit(A.block(0, 0));
-		A.block(1, 1).reinit(A.block(0, 0));
-		A.collect_sizes();
-#else
-		dealii::BlockCompressedSparsityPattern cSparse(2, 2);
+		sparse_block_matrix A;
+		dealii::BlockDynamicSparsityPattern cSparse(2, 2);
 		for (size_t iI = 0; iI < 2; iI++) {
 			for (size_t J = 0; J < 2; J++) {
 				cSparse.block(iI, J).reinit(1, 1);
@@ -110,33 +102,15 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		}
 		sparse.collect_sizes();
 		A.reinit(sparse);
-#endif
 		A.set(0, 0, 1);
 		A.set(0, 1, -1);
 		A.set(1, 0, 0);
 		A.set(1, 1, 3);
 
-		DealIIWrapper<distributed_sparse_block_matrix, distributed_block_vector> tm(
-				dt, name,MINRES);
+		DealIIWrapper<sparse_block_matrix, block_vector> tm(dt, name, MINRES);
 		// initialize block vectors
-		distributed_block_vector f;
-		distributed_block_vector b;
-#ifdef WITH_TRILINOS
-		f.reinit(2);
-		for (size_t i = 0; i < 2; i++) {
-			f.block(i).reinit(1);
-		}
-		f.collect_sizes();
-		//b
-		b.reinit(2);
-		for (size_t i = 0; i < 2; i++) {
-			b.block(i).reinit(1);
-		}
-		b.collect_sizes();
-#else
-		f.reinit(2, 1);
-		b.reinit(2, 1);
-#endif
+		block_vector f(2, 1);
+		block_vector b(2, 1);
 		f(0) = 1;
 		f(1) = 2;
 		b(0) = 0;
@@ -145,7 +119,7 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 		double c1 = f(1);
 		double t = 0;
 
-		if (7 == n){
+		if (7 == n) {
 			tmax = 0.1;
 		}
 		unsigned int n_steps = 0;
@@ -171,11 +145,55 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MultiBlock_test) {
 
 		A.clear();
 
-		cout << " " << n_steps << " steps. done." << endl;
+		pout << " " << n_steps << " steps. done." << endl;
 
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* DealIIWrapper_MultiBlock_test */
+
+BOOST_AUTO_TEST_CASE(DealIIWrapper_MPI_test) {
+	pout << "DealIIWrapper_MPI_test..." << endl;
+
+	// Advection benchmark
+
+	for (int n = 0; n < 12; n++) {
+		DealIntegratorName integrator_name = static_cast<DealIntegratorName>(n);
+		pout << "  - Integrator " << n << "...";
+
+		size_t N = 2;	// refinement level
+		size_t p = 4;	// fe order
+		bool is_smooth = true;
+
+		double delta_x = 1. / (pow(2, N));
+		double CFL;
+		if ((0 == n)) { // expl. Euler
+			CFL = 0.1;
+		} else if ((3 <= n) and (n <= 4)) { // impl. Euler + impl. Midpoint
+			CFL = 0.2;
+		} else  {
+			CFL = 0.4;
+		}
+		double delta_t = CFL * pow(0.5, N) / ((p + 1) * (p + 1));
+
+		double t_end = 0.1;
+		size_t numberOfTimeSteps = t_end / delta_t;
+		if (numberOfTimeSteps <= 5) {
+			continue;
+		}
+		AdvectionBenchmark::AdvectionResult advectionResult =
+				AdvectionBenchmark::oneTest(N, p, delta_t, t_end,
+						OTHER, integrator_name, is_smooth, false, false);
+
+		double result = std::log10(advectionResult.normSup);
+		// taken from the integration test
+		double expected = std::log10(400 * std::pow(0.3 * delta_x, p + 1));
+
+		BOOST_CHECK_SMALL(result - expected, 0.8);
+
+		pout << " done." << endl;
+	}
+	pout << "done." << endl;
+}/* DealIIWrapper_MPI_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 

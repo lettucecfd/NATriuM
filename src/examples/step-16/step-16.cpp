@@ -28,7 +28,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-  cout << "Starting NATriuM step-16 ..." << endl;
+  MPIGuard::getInstance();
+
+  pout << "Starting NATriuM step-16 ..." << endl;
 
   /////////////////////////////////////////////////
   // set parameters, set up configuration object
@@ -48,16 +50,16 @@ int main() {
   const double refinementLevel = 1;
 
 
-  shared_ptr<Benchmark<3> >  taylorGreen = make_shared<
+  boost::shared_ptr<Benchmark<3> >  taylorGreen = boost::make_shared<
      TaylorGreenVortex3D>(viscosity, refinementLevel);
 
 
     // the scaling has to be orders of magnitude greater than the boundary velocity
     double dt = CFDSolverUtilities::calculateTimestep<3>(
-					*taylorGreen->getTriangulation(), orderOfFiniteElement,
+					*taylorGreen->getMesh(), orderOfFiniteElement,
 					D3Q19(scaling), 0.4);
 
-    cout << "dt = " << dt << " ...";
+    pout << "dt = " << dt << " ...";
 
     // time measurement variables
     double time1, time2, timestart;
@@ -65,7 +67,7 @@ int main() {
     // setup configuration
     std::stringstream dirName;
     dirName << getenv("NATRIUM_HOME") << "/step-16";
-    shared_ptr<SolverConfiguration> configuration = make_shared<
+    boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
         SolverConfiguration>();
     //configuration->setSwitchOutputOff(true);
     configuration->setOutputDirectory(dirName.str());
@@ -82,7 +84,7 @@ int main() {
     //configuration->setCommandLineVerbosity(BASIC);
     configuration->setTimeStepSize(dt);
     if (dt > 0.1) {
-      cout << "Timestep too big." << endl;
+      pout << "Timestep too big." << endl;
     }
 
     //configuration->setNumberOfTimeSteps(1.0 / dt);
@@ -96,12 +98,12 @@ int main() {
       time2 = clock() - time1 - timestart;
       time1 /= CLOCKS_PER_SEC;
       time2 /= CLOCKS_PER_SEC;
-      cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+      pout << " OK ... Init: " << time1 << " sec; Run: " << time2
           << " sec." << endl;
 
 
 
-  cout << "step-1 terminated." << endl;
+  pout << "step-1 terminated." << endl;
 
   return 0;
 

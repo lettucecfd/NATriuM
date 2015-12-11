@@ -100,7 +100,7 @@ public:
 		return m_scaling*sqrt(2);
 	}
 
-	virtual const double getScaling() const {
+	virtual double getScaling() const {
 		return m_scaling;
 	}
 };

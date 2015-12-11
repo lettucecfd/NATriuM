@@ -23,6 +23,8 @@ using namespace natrium;
 
 int main() {
 
+	MPIGuard::getInstance();
+
 	// ----------------------------------------------------------------------------------------------------
 
 	// set Reynolds and Mach number
@@ -36,7 +38,7 @@ int main() {
 	// ----------------------------------------------------------------------------------------------------
 
 	//PERIODIC BOUNDARIES
-	cout
+	pout
 			<< "Only periodic Boundaries: Calculating spectrum + pseudospectrum of streaming matrix..."
 			<< endl;
 	// set Problem so that the right Re and Ma are achieved
@@ -48,7 +50,7 @@ int main() {
 			orderOfFiniteElement++) {
 
 		// configure solver
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		std::stringstream dirname;
 		dirname << getenv("NATRIUM_HOME") << "/matrix-analysis/taylorgreen"
@@ -61,28 +63,28 @@ int main() {
 		configuration->setCommandLineVerbosity(0);
 
 		// create solver, with CFL = 1
-		shared_ptr<TaylorGreenVortex2D> tgv = make_shared<TaylorGreenVortex2D>(
+		boost::shared_ptr<TaylorGreenVortex2D> tgv = boost::make_shared<TaylorGreenVortex2D>(
 				viscosity, refinementLevel);
-		shared_ptr<Benchmark<2> > tgBenchmark = tgv;
-		configuration->setTimeStepSize(CFDSolverUtilities::calculateTimestep<2>(*(tgv->getTriangulation()),orderOfFiniteElement,D2Q9(dqScaling),0.4));
-		cout << "dt = " << configuration->getTimeStepSize() << endl;
-		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
+		boost::shared_ptr<Benchmark<2> > tgBenchmark = tgv;
+		configuration->setTimeStepSize(CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),orderOfFiniteElement,D2Q9(dqScaling),0.4));
+		pout << "dt = " << configuration->getTimeStepSize() << endl;
+		boost::shared_ptr<CFDSolver<2> > solver = boost::make_shared<BenchmarkCFDSolver<2> >(
 				configuration, tgBenchmark);
 
 		// analyze eigenvalues
 		matrixAnalysis<2> analyzer(solver);
 		vector<std::complex<double> > eigenvalues;
-		cout << "abs max: " << configuration->getTimeStepSize() * analyzer.computeSpectrum(solver->getAdvectionOperator()->getSystemMatrix(),eigenvalues, 0.0) << endl;
+		pout << "abs max: " << configuration->getTimeStepSize() * analyzer.computeSpectrum(solver->getAdvectionOperator()->getSystemMatrix(),eigenvalues, 0.0) << endl;
 		//analyzer.writeSpectrum();
 		//analyzer.writePseudospectrum();
 
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 
 	// ----------------------------------------------------------------------------------------------------
 /*
 	//WALL BOUNDARIES
-	cout
+	pout
 			<< "With wall Boundaries: Calculating spectrum + pseudospectrum of streaming matrix..."
 			<< endl;
 
@@ -99,7 +101,7 @@ int main() {
 			orderOfFiniteElement++) {
 
 		// configure solver
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		std::stringstream dirname;
 		dirname << getenv("NATRIUM_HOME") << "/matrix-analysis/couette"
@@ -112,16 +114,16 @@ int main() {
 		configuration->setCommandLineVerbosity(0);
 
 		// create solver, with CFL = 1
-		shared_ptr<CouetteFlow2D> couetteFlow = make_shared<CouetteFlow2D>(
+		boost::shared_ptr<CouetteFlow2D> couetteFlow = boost::make_shared<CouetteFlow2D>(
 				viscosity, U, refinementLevel, 1.0, startTime);
-		shared_ptr<Benchmark<2> > couetteProblem = couetteFlow;
+		boost::shared_ptr<Benchmark<2> > couetteProblem = couetteFlow;
 		configuration->setTimeStepSize(
 				1.0 / dqScaling
 						* CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
-								*couetteFlow->getTriangulation(),
+								*couetteFlow->getMesh(),
 								orderOfFiniteElement));
-		cout << "dt = " << configuration->getTimeStepSize() << endl;
-		shared_ptr<CFDSolver<2> > solver = make_shared<BenchmarkCFDSolver<2> >(
+		pout << "dt = " << configuration->getTimeStepSize() << endl;
+		boost::shared_ptr<CFDSolver<2> > solver = boost::make_shared<BenchmarkCFDSolver<2> >(
 				configuration, couetteProblem);
 
 		// analyze eigenvalues
@@ -130,7 +132,7 @@ int main() {
 		analyzer.writePseudospectrum();
 
 	}
-	cout << "done." << endl;
+	pout << "done." << endl;
 */
 	// ----------------------------------------------------------------------------------------------------
 

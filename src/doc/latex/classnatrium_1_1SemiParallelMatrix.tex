@@ -1,0 +1,133 @@
+\hypertarget{classnatrium_1_1SemiParallelMatrix}{
+\section{natrium::SemiParallelMatrix$<$ VECTOR $>$ Class Template Reference}
+\label{classnatrium_1_1SemiParallelMatrix}\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+}
+
+
+Class that describes a matrix with parallelized columns and non-\/parallelized rows.  
+
+
+{\ttfamily \#include $<$SemiParallelMatrix.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1SemiParallelMatrix_a0599a2569143e3c5c4674f9d0ebf7dd8}{
+\hyperlink{classnatrium_1_1SemiParallelMatrix_a0599a2569143e3c5c4674f9d0ebf7dd8}{SemiParallelMatrix} ()}
+\label{classnatrium_1_1SemiParallelMatrix_a0599a2569143e3c5c4674f9d0ebf7dd8}
+
+\begin{DoxyCompactList}\small\item\em empty constructor \item\end{DoxyCompactList}\item 
+\hyperlink{classnatrium_1_1SemiParallelMatrix_a6c8fff84bcf91369e0323eb0a762fd65}{SemiParallelMatrix} (const VECTOR \&prototype, size\_\-t n)
+\begin{DoxyCompactList}\small\item\em Constructor from prototype vector. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SemiParallelMatrix_ae84190bdc4b753f6dc874d229d0b11a7}{reinit} (const VECTOR \&prototype, size\_\-t n)
+\begin{DoxyCompactList}\small\item\em Reinitialize from prototype vector. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SemiParallelMatrix_a232fbaa6ca412b4f98d9c6aab19254de}{set} (size\_\-t i, size\_\-t j, double value)
+\begin{DoxyCompactList}\small\item\em set element (i,j) to value \item\end{DoxyCompactList}\item 
+double \hyperlink{classnatrium_1_1SemiParallelMatrix_afb8ed4b8c4a62a0271ea7b512f275555}{operator()} (size\_\-t i, size\_\-t j) const 
+\begin{DoxyCompactList}\small\item\em Return matrix element. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SemiParallelMatrix_a544535d18e218d58541bf4a275ee96b2}{vmult} (VECTOR \&dst, const numeric\_\-vector \&src) const 
+\begin{DoxyCompactList}\small\item\em Multiply by vector dst = A$\ast$src. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SemiParallelMatrix_a573e34e163358f87aee0f22742deda66}{getColumn} (size\_\-t j, VECTOR \&dst) const 
+\begin{DoxyCompactList}\small\item\em extract j-\/th column of the matrix \item\end{DoxyCompactList}\item 
+VECTOR \& \hyperlink{classnatrium_1_1SemiParallelMatrix_ae9deace949ec09098404defd48f78ccc}{column} (size\_\-t j)
+\begin{DoxyCompactList}\small\item\em get reference to j-\/th column of the matrix \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SemiParallelMatrix_a240c0cfc6958a66f49edc7ce205664c8}{setColumn} (size\_\-t j, const VECTOR \&src)
+\begin{DoxyCompactList}\small\item\em set j-\/th column of the matrix \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class VECTOR$>$ class natrium::SemiParallelMatrix$<$ VECTOR $>$}
+
+Class that describes a matrix with parallelized columns and non-\/parallelized rows. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1SemiParallelMatrix_a6c8fff84bcf91369e0323eb0a762fd65}{
+\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}!SemiParallelMatrix@{SemiParallelMatrix}}
+\index{SemiParallelMatrix@{SemiParallelMatrix}!natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+\subsubsection[{SemiParallelMatrix}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ {\bf natrium::SemiParallelMatrix}$<$ VECTOR $>$::{\bf SemiParallelMatrix} (const VECTOR \& {\em prototype}, \/  size\_\-t {\em n})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiParallelMatrix_a6c8fff84bcf91369e0323eb0a762fd65}
+
+
+Constructor from prototype vector. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em prototype}]A prototype for the matrix columns. Can be dealii::TrilinosWrappers::MPI::Vector distribute the matrix columns over many cores. \item[\mbox{$\leftarrow$} {\em n}]The number of columns \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1SemiParallelMatrix_ae9deace949ec09098404defd48f78ccc}{
+\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}!column@{column}}
+\index{column@{column}!natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+\subsubsection[{column}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ VECTOR \& {\bf natrium::SemiParallelMatrix}$<$ VECTOR $>$::column (size\_\-t {\em j})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiParallelMatrix_ae9deace949ec09098404defd48f78ccc}
+
+
+get reference to j-\/th column of the matrix 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em j}]column index \item[\mbox{$\rightarrow$} {\em return}]reference to j-\/th column \end{DoxyParams}
+\hypertarget{classnatrium_1_1SemiParallelMatrix_a573e34e163358f87aee0f22742deda66}{
+\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}!getColumn@{getColumn}}
+\index{getColumn@{getColumn}!natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+\subsubsection[{getColumn}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ void {\bf natrium::SemiParallelMatrix}$<$ VECTOR $>$::getColumn (size\_\-t {\em j}, \/  VECTOR \& {\em dst}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiParallelMatrix_a573e34e163358f87aee0f22742deda66}
+
+
+extract j-\/th column of the matrix 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em j}]column index \item[\mbox{$\rightarrow$} {\em dst}]result (column j) \end{DoxyParams}
+\hypertarget{classnatrium_1_1SemiParallelMatrix_afb8ed4b8c4a62a0271ea7b512f275555}{
+\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}!operator()@{operator()}}
+\index{operator()@{operator()}!natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+\subsubsection[{operator()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ double {\bf natrium::SemiParallelMatrix}$<$ VECTOR $>$::operator() (size\_\-t {\em i}, \/  size\_\-t {\em j}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiParallelMatrix_afb8ed4b8c4a62a0271ea7b512f275555}
+
+
+Return matrix element. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em i}]Row index \item[\mbox{$\leftarrow$} {\em j}]Column index \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value Value 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1SemiParallelMatrix_ae84190bdc4b753f6dc874d229d0b11a7}{
+\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}!reinit@{reinit}}
+\index{reinit@{reinit}!natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+\subsubsection[{reinit}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ void {\bf natrium::SemiParallelMatrix}$<$ VECTOR $>$::reinit (const VECTOR \& {\em prototype}, \/  size\_\-t {\em n})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiParallelMatrix_ae84190bdc4b753f6dc874d229d0b11a7}
+
+
+Reinitialize from prototype vector. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em prototype}]A prototype for the matrix columns. Can be dealii::TrilinosWrappers::MPI::Vector distribute the matrix columns over many cores. \item[\mbox{$\leftarrow$} {\em n}]The number of columns \end{DoxyParams}
+\hypertarget{classnatrium_1_1SemiParallelMatrix_a232fbaa6ca412b4f98d9c6aab19254de}{
+\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}!set@{set}}
+\index{set@{set}!natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+\subsubsection[{set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ void {\bf natrium::SemiParallelMatrix}$<$ VECTOR $>$::set (size\_\-t {\em i}, \/  size\_\-t {\em j}, \/  double {\em value})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiParallelMatrix_a232fbaa6ca412b4f98d9c6aab19254de}
+
+
+set element (i,j) to value 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em i}]Row index \item[\mbox{$\leftarrow$} {\em j}]Column index \item[\mbox{$\leftarrow$} {\em value}]Value \end{DoxyParams}
+\hypertarget{classnatrium_1_1SemiParallelMatrix_a240c0cfc6958a66f49edc7ce205664c8}{
+\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}!setColumn@{setColumn}}
+\index{setColumn@{setColumn}!natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+\subsubsection[{setColumn}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ void {\bf natrium::SemiParallelMatrix}$<$ VECTOR $>$::setColumn (size\_\-t {\em j}, \/  const VECTOR \& {\em src})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiParallelMatrix_a240c0cfc6958a66f49edc7ce205664c8}
+
+
+set j-\/th column of the matrix 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em j}]column index \item[\mbox{$\leftarrow$} {\em src}]new column j \end{DoxyParams}
+\hypertarget{classnatrium_1_1SemiParallelMatrix_a544535d18e218d58541bf4a275ee96b2}{
+\index{natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}!vmult@{vmult}}
+\index{vmult@{vmult}!natrium::SemiParallelMatrix@{natrium::SemiParallelMatrix}}
+\subsubsection[{vmult}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ void {\bf natrium::SemiParallelMatrix}$<$ VECTOR $>$::vmult (VECTOR \& {\em dst}, \/  const numeric\_\-vector \& {\em src}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiParallelMatrix_a544535d18e218d58541bf4a275ee96b2}
+
+
+Multiply by vector dst = A$\ast$src. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\rightarrow$} {\em dst}]Result vector. Has the same structure as the columns. \item[\mbox{$\leftarrow$} {\em src}]Vector to be multiplied with. Is not parallelized. \end{DoxyParams}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/SemiParallelMatrix.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/SemiParallelMatrix.cpp\end{DoxyCompactItemize}

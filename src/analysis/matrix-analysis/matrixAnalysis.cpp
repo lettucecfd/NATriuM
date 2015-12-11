@@ -15,11 +15,11 @@
 namespace natrium {
 
 // constructor/destructor
-template<> matrixAnalysis<2>::matrixAnalysis(shared_ptr<CFDSolver<2> > solver) :
+template<> matrixAnalysis<2>::matrixAnalysis(boost::shared_ptr<CFDSolver<2> > solver) :
 		m_solver(solver) {
 
 }
-template<> matrixAnalysis<3>::matrixAnalysis(shared_ptr<CFDSolver<3> > solver) :
+template<> matrixAnalysis<3>::matrixAnalysis(boost::shared_ptr<CFDSolver<3> > solver) :
 		m_solver(solver) {
 
 }

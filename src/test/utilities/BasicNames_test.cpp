@@ -17,15 +17,16 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(BasicNames_test)
 
 
-#ifdef WITH_PETSC
-BOOST_AUTO_TEST_CASE(BasicNames_ParallelPETSc_Test){
-	cout << "BasicNames_ParallelPETSc_Test..." << endl;
+BOOST_AUTO_TEST_CASE(BasicNames_pout_Test){
+	cout << "BasicNames_pout_Test..." << endl;
 
-	distributed_vector vector;
+	int mpi_rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+	BOOST_CHECK( ((bool) mpi_rank ) != perr.is_active());
+	BOOST_CHECK( ((bool) mpi_rank ) != pout.is_active());
 
-	cout << "done..." << endl;
-} /* BasicNames_ParallelPETSc_Test */
-#endif
+	cout << "done." << endl;
+} /* BasicNames_pout_Test */
 
 
 BOOST_AUTO_TEST_SUITE_END()

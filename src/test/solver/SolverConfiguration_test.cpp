@@ -17,18 +17,18 @@
 
 namespace natrium {
 
-#define TEST_USER_INTERACTION_CIN
+//#define TEST_USER_INTERACTION_CIN
 
 BOOST_AUTO_TEST_SUITE(CFDSolverConfiguration_test)
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_Construction_test) {
-	cout << "CFDSolverConfiguration_Construction_test..." << endl;
+	pout << "CFDSolverConfiguration_Construction_test..." << endl;
 	SolverConfiguration config;
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CreateParameterFiles_test) {
-	cout << "CFDSolverConfiguration_CreateXMLFile_test..." << endl;
+	pout << "CFDSolverConfiguration_CreateXMLFile_test..." << endl;
 	SolverConfiguration config;
 
 	std::stringstream name1;
@@ -47,27 +47,28 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CreateParameterFiles_test) {
 	config.print_parameters(paraOutFile3,
 			dealii::ParameterHandler::Description);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
-	cout << "CFDSolverConfiguration_CheckSet_test..." << endl;
+	pout << "CFDSolverConfiguration_CheckSet_test..." << endl;
 	SolverConfiguration config;
 
 	// Set parameter
 	config.setInitializationScheme(ITERATIVE);
 	BOOST_CHECK(config.getInitializationScheme() == ITERATIVE);
 	config.setIterativeInitializationNumberOfIterations(10);
-	BOOST_CHECK_EQUAL(config.getIterativeInitializationNumberOfIterations(),10);
+	BOOST_CHECK_EQUAL(config.getIterativeInitializationNumberOfIterations(),
+			(size_t ) 10);
 	config.setIterativeInitializationResidual(0.001);
-	BOOST_CHECK(0.001  == config.getIterativeInitializationResidual());
+	BOOST_CHECK(0.001 == config.getIterativeInitializationResidual());
 
 	config.setSimulationEndTime(10.0);
-	BOOST_CHECK_CLOSE(config.getSimulationEndTime(),10.0,1e-10);
+	BOOST_CHECK_CLOSE(config.getSimulationEndTime(), 10.0, 1e-10);
 	config.setNumberOfTimeSteps(100);
-	BOOST_CHECK_EQUAL(config.getNumberOfTimeSteps(),100);
+	BOOST_CHECK_EQUAL(config.getNumberOfTimeSteps(), (size_t ) 100);
 	config.setConvergenceThreshold(1e-12);
-	BOOST_CHECK_CLOSE(config.getConvergenceThreshold(),1e-12,1e-5);
+	BOOST_CHECK_CLOSE(config.getConvergenceThreshold(), 1e-12, 1e-5);
 	config.setBGKSteadyStateGamma(0.1);
 	BOOST_CHECK_CLOSE(config.getBGKSteadyStateGamma(), 0.1, 1e-5);
 	config.setCollisionScheme(BGK_STEADY_STATE);
@@ -76,32 +77,45 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	/// Failure test
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);
 	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-0.1), ConfigurationException);
-	BOOST_CHECK_THROW(config.setBGKSteadyStateGamma(-0.1), ConfigurationException);
+	BOOST_CHECK_THROW(config.setBGKSteadyStateGamma(-0.1),
+			ConfigurationException);
 
-
-
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /*CFDSolverConfiguration_CheckSet_test*/
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_ReadFromFile_test) {
-	cout << "CFDSolverConfiguration_ReadFromFile_test..." << endl;
+
+	pout << "CFDSolverConfiguration_CheckIfEnvironmentVariable_NATRIUM_DIR_IsSet_text" << endl;
+	std::stringstream name1;
+	name1 << getenv("NATRIUM_DIR");
+	BOOST_CHECK(name1.str().size() != 0);
+	pout << "done." << endl;
+
+	pout << "CFDSolverConfiguration_ReadFromFile_test..." << endl;
 	SolverConfiguration config;
+	name1 << "/src/preprocessing/NATriuM_parameters.xml";
+	std::stringstream name2;
+	name2 << getenv("NATRIUM_DIR");
+	name2 << "/src/test/solver/invalid_parameters.xml";
+
 
 	try {
-		config.readFromXMLFile("../src/preprocessing/NATriuM_parameters.xml");
+		config.readFromXMLFile(name1.str());
 	} catch (std::exception& e) {
-		cout << e.what()
-				<< "  Error! ARE YOU SURE THAT src/preprocessing/NATriuM_parameters.xml is up to date. Try to replace it by results/NATriuM_parameters.xml";
+		pout << e.what()
+				<< "  Error! ARE YOU SURE THAT src/preprocessing/NATriuM_parameters.xml is up to date? "
+						"Try to replace it by results/NATriuM_parameters.xml"
+				<< endl;
 	}
 	BOOST_CHECK_THROW(
-			config.readFromXMLFile("../src/test/solver/invalid_parameters.xml"),
+			config.readFromXMLFile(name2.str()),
 			ConfigurationException);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /*CFDSolverConfiguration_ReadFromFile_test*/
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_PrepareOutputDirectory_test) {
-	cout << "CFDSolverConfiguration_PrepareOutputDirectory_test..." << endl;
+	pout << "CFDSolverConfiguration_PrepareOutputDirectory_test..." << endl;
 	SolverConfiguration config;
 
 	const boost::filesystem::path natriumTmpDir("/tmp/natrium");
@@ -113,58 +127,75 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_PrepareOutputDirectory_test) {
 	if (boost::filesystem::is_directory(natriumTmpDir)) {
 		boost::filesystem::remove_all(natriumTmpDir);
 	}
-	boost::filesystem::create_directory(natriumTmpDir);
+	if (is_MPI_rank_0())
+		boost::filesystem::create_directory(natriumTmpDir);
+	// wait for directory to be created
+	sleep(1);
+	MPI_sync();
 	config.setOutputDirectory(outputDir.string());
 	config.prepareOutputDirectory();
+	MPI_sync();
 	BOOST_CHECK(boost::filesystem::exists(outputDir));
 	BOOST_CHECK_NO_THROW(config.prepareOutputDirectory());
-	std::ofstream outstream((outputDir / "test.txt").string().c_str());
-	outstream << "";
+	if (is_MPI_rank_0()) {
+		std::ofstream outstream((outputDir / "test.txt").string().c_str());
+		outstream << "";
+		outstream.close();
+	}
+	config.prepareOutputDirectory();
+	MPI_sync();
 	BOOST_CHECK_NO_THROW(config.prepareOutputDirectory());
 
-	// Failure test
-	boost::filesystem::remove_all(natriumTmpDir);
-	// Parent path not existent
-	BOOST_CHECK_THROW(config.prepareOutputDirectory(), ConfigurationException);
-	boost::filesystem::create_directory(natriumTmpDir);
-	// No writing permissions
-	boost::filesystem::perms onlyReading = boost::filesystem::others_read
-			| boost::filesystem::owner_read;
-	boost::filesystem::perms allPermissions = boost::filesystem::all_all;
-	boost::filesystem::permissions(natriumTmpDir, onlyReading);
-	// ... on parent
-	BOOST_CHECK_THROW(config.prepareOutputDirectory(), ConfigurationException);
-	boost::filesystem::permissions(natriumTmpDir, allPermissions);
-	boost::filesystem::create_directory(outputDir);
-	boost::filesystem::permissions(outputDir, onlyReading);
-	// ... on output dir
-	BOOST_CHECK_THROW(config.prepareOutputDirectory(), ConfigurationException);
-	boost::filesystem::permissions(outputDir, allPermissions);
-	boost::filesystem::create_directory(outputDir);
-	std::ofstream outstream2((outputDir / "test2.txt").string().c_str());
-	outstream2 << "";
-	BOOST_CHECK(boost::filesystem::exists(outputDir / "test2.txt"));
-	boost::filesystem::permissions(outputDir / "test2.txt", onlyReading);
-	std::ofstream a((outputDir / "test2.txt").c_str());
-	// .. on file in output dir
-	BOOST_CHECK_THROW(config.prepareOutputDirectory(), ConfigurationException);
-	boost::filesystem::permissions(outputDir, allPermissions);
-	a.close();
-	boost::filesystem::remove((outputDir / "test2.txt").c_str());
-	// check cin
-#ifdef TEST_USER_INTERACTION_CIN
-	config.setRestartAtLastCheckpoint(false);
-	config.setUserInteraction(true);
-	config.prepareOutputDirectory();
-#endif
-	//clean up
-	boost::filesystem::remove_all(natriumTmpDir);
+	// Failure test (failures are only detected in rank 0)
+	if (is_MPI_rank_0()) {
+		boost::filesystem::remove_all(natriumTmpDir);
+		// Parent path not existent
+		BOOST_CHECK_THROW(config.prepareOutputDirectory(),
+				ConfigurationException);
+		boost::filesystem::create_directory(natriumTmpDir);
+		// No writing permissions
+		boost::filesystem::perms onlyReading = boost::filesystem::others_read
+				| boost::filesystem::owner_read;
+		boost::filesystem::perms allPermissions = boost::filesystem::all_all;
+		boost::filesystem::permissions(natriumTmpDir, onlyReading);
+		// ... on parent
+		BOOST_CHECK_THROW(config.prepareOutputDirectory(),
+				ConfigurationException);
+		boost::filesystem::permissions(natriumTmpDir, allPermissions);
+		boost::filesystem::create_directory(outputDir);
+		boost::filesystem::permissions(outputDir, onlyReading);
 
-	cout << "done" << endl;
+		// ... on output dir
+		BOOST_CHECK_THROW(config.prepareOutputDirectory(),
+				ConfigurationException);
+		boost::filesystem::permissions(outputDir, allPermissions);
+		boost::filesystem::create_directory(outputDir);
+		std::ofstream outstream2((outputDir / "test2.txt").string().c_str());
+		outstream2 << "";
+		outstream2.close();
+		BOOST_CHECK(boost::filesystem::exists(outputDir / "test2.txt"));
+		boost::filesystem::permissions(outputDir / "test2.txt", onlyReading);
+		// .. on file in output dir
+		std::ofstream a((outputDir / "test2.txt").c_str());
+		BOOST_CHECK_THROW(config.prepareOutputDirectory(),
+				ConfigurationException);
+		boost::filesystem::permissions(outputDir, allPermissions);
+		a.close();
+		boost::filesystem::remove((outputDir / "test2.txt").c_str());
+		// check cin
+#ifdef TEST_USER_INTERACTION_CIN
+		config.setRestartAtLastCheckpoint(false);
+		config.setUserInteraction(true);
+		config.prepareOutputDirectory();
+#endif
+		//clean up
+		boost::filesystem::remove_all(natriumTmpDir);
+	}
+	pout << "done" << endl;
 } /*CFDSolverConfiguration_PrepareOutputDirectory_test*/
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_OutputFlags_test) {
-	cout << "CFDSolverConfiguration_OutputFlags_test..." << endl;
+	pout << "CFDSolverConfiguration_OutputFlags_test..." << endl;
 	SolverConfiguration cfg;
 
 	// Check implications
@@ -178,7 +209,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_OutputFlags_test) {
 	 BOOST_CHECK((out_CommandLineError & cfg.getOutputFlags()) != 0);
 	 BOOST_CHECK((out_CommandLineFull & cfg.getOutputFlags()) != 0);
 	 */
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

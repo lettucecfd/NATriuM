@@ -14,7 +14,31 @@
 
 namespace natrium {
 
-  /** @short D3Q19 Model
+  /** @short D3Q19 Model. The lattice velocities are: 0. 0.0 0.0 0.0
+   *
+	  -# scaling , 0.0, 0.0
+	  -# 0.0 , 0.0, scaling
+	  -# -scaling, 0.0 , 0.0
+	  -# 0.0, 0.0 , -scaling
+	  -# 0.0, -scaling , 0.0
+	  -# 0.0, scaling , 0.0
+	  -# scaling, 0.0 , scaling
+	  -# -scaling , 0.0 , scaling
+	  -# -scaling , 0.0 , -scaling
+	  -# scaling , 0.0 , -scaling
+	  -# scaling, -scaling, 0.0
+	  -# scaling, scaling , 0.0
+	  -# -scaling, scaling , 0.0
+	  -# -scaling, -scaling , 0.0
+	  -# 0.0, -scaling , scaling
+	  -# 0.0, scaling , scaling
+	  -# 0.0, scaling , -scaling
+	  -# 0.0, -scaling , -scaling
+   *
+   * The weights are:
+   * - 0) 1./3.
+   * - 1-6) 1./18.
+   * - 7-18) 1./36.
    */
   class D3Q19: public Stencil {
 
@@ -130,7 +154,7 @@ namespace natrium {
         return m_scaling*sqrt(2);
       }
 
-      const double getScaling() const {
+      virtual double getScaling() const {
         return m_scaling;
       }
 

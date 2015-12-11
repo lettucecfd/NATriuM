@@ -13,7 +13,7 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 using namespace natrium;
 
 
@@ -25,11 +25,13 @@ public:
 
 	/// constructor
 	TaylorGreenTest2D(double viscosity, size_t refinementLevel) :
-			ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1) {
+			ProblemDescription<2>(makeGrid(), viscosity, 1) {
 
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
 
+		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
+		getMesh()->refine_global(refinementLevel);
 	}
 
 	/// destructor
@@ -60,7 +62,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
 		for (size_t i = 0; i < initialDensities.size(); i++) {
 			initialDensities(i) = 1.0;
 		}
@@ -73,7 +75,7 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const {
 		assert(
 				initialVelocities.at(0).size()
 						== initialVelocities.at(1).size());
@@ -106,20 +108,22 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(size_t refinementLevel) {
+	boost::shared_ptr<Mesh<2> > makeGrid() {
 		//Creation of the principal domain
-		shared_ptr<Triangulation<2> > square = make_shared<Triangulation<2> >();
+		boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >(
+#ifdef WITH_TRILINOS_MPI
+				MPI_COMM_WORLD
+#endif
+				);
 		dealii::GridGenerator::hyper_cube(*square, 0, 2 * Math::PI);
 
 		// Assign boundary indicators to the faces of the "parent cell"
-		Triangulation<2>::active_cell_iterator cell = square->begin_active();
-		cell->face(0)->set_all_boundary_indicators(0);  // left
-		cell->face(1)->set_all_boundary_indicators(1);  // right
-		cell->face(2)->set_all_boundary_indicators(2);  // top
-		cell->face(3)->set_all_boundary_indicators(3);  // bottom
+		Mesh<2>::active_cell_iterator cell = square->begin_active();
+		cell->face(0)->set_all_boundary_ids(0);  // left
+		cell->face(1)->set_all_boundary_ids(1);  // right
+		cell->face(2)->set_all_boundary_ids(2);  // top
+		cell->face(3)->set_all_boundary_ids(3);  // bottom
 
-		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-		square->refine_global(refinementLevel);
 
 		return square;
 	}
@@ -129,18 +133,18 @@ private:
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries() {
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries() {
 
 		// make boundary description
-		shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+		boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 				BoundaryCollection<2> >();
 		boundaries->addBoundary(
-				make_shared<PeriodicBoundary<2> >(0, 1, getTriangulation()));
+				boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 		boundaries->addBoundary(
-				make_shared<PeriodicBoundary<2> >(2, 3, getTriangulation()));
+				boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
 		// Get the triangulation object (which belongs to the parent class).
-		shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
+		boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 		return boundaries;
 	}

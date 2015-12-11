@@ -26,7 +26,7 @@ template<size_t dim> class SolverStats {
 private:
 
 	CFDSolver<dim> * m_solver;
-	shared_ptr<std::fstream> m_tableFile;
+	boost::shared_ptr<std::fstream> m_tableFile;
 	std::string m_filename;
 	const bool m_outputOff;
 
@@ -37,6 +37,7 @@ private:
 	double m_kinE;
 	double m_maxP;
 	double m_minP;
+	double m_meanVelocityX;
 
 public:
 	/**
@@ -59,20 +60,27 @@ public:
 		if (not m_outputOff) {
 			// create file (if necessary)
 			if (m_solver->getIterationStart() > 0) {
-				m_tableFile = make_shared<std::fstream>(tableFileName,
+				m_tableFile = boost::make_shared<std::fstream>(tableFileName,
 						std::fstream::out | std::fstream::app);
 			} else {
-				m_tableFile = make_shared<std::fstream>(tableFileName,
-						std::fstream::out);
+				if (is_MPI_rank_0()) {
+					m_tableFile = boost::make_shared<std::fstream>(tableFileName,
+							std::fstream::out);
+				}
 				printHeaderLine();
 			}
 		}
+
+		// sync all MPI processes (barrier)
+		MPI_sync();
 	}
 	void printHeaderLine() {
 		assert(not m_outputOff);
-		(*m_tableFile)
-				<< "#  i      t      max |u_numeric|    kinE    maxP     minP    residuum(rho)   residuum(u)"
-				<< endl;
+		if (is_MPI_rank_0()) {
+			(*m_tableFile)
+					<< "#  i      t      max |u_numeric|    kinE    maxP     minP    residuum(rho)   residuum(u)    mean(ux)"
+					<< endl;
+		}
 	}
 	void update() {
 		if (isUpToDate()) {
@@ -82,14 +90,16 @@ public:
 		m_time = m_solver->getTime();
 		m_maxU = m_solver->getMaxVelocityNorm();
 		m_kinE = PhysicalProperties<dim>::kineticEnergy(m_solver->getVelocity(),
-				m_solver->getDensity());
+				m_solver->getDensity(), m_solver->getAdvectionOperator());
 		m_maxP = PhysicalProperties<dim>::maximalPressure(
 				m_solver->getDensity(),
 				m_solver->getStencil()->getSpeedOfSound(), m_minP);
+		m_meanVelocityX = PhysicalProperties<dim>::meanVelocityX(
+				m_solver->m_velocity.at(0), m_solver->getAdvectionOperator());
 		// Residuals must not be calculated because they have to be determined every 10th time steps
 	}
 
-	void calulateResiduals(size_t iteration){
+	void calulateResiduals(size_t iteration) {
 		assert(iteration % 10 == 0);
 		if (not (m_solver->m_i - m_solver->m_iterationStart < 100)) {
 			// i.e. not first visit of this if-statement
@@ -122,10 +132,13 @@ public:
 		if (not isUpToDate()) {
 			update();
 		}
-		(*m_tableFile) << m_iterationNumber << " " << m_time << " " << m_maxU
-				<< " " << m_kinE << " " << m_maxP << " " << m_minP << " "
-				<< m_solver->m_residuumDensity << " "
-				<< m_solver->m_residuumVelocity << endl;
+		if (is_MPI_rank_0()) {
+			(*m_tableFile) << m_iterationNumber << " " << m_time << " "
+					<< m_maxU << " " << m_kinE << " " << m_maxP << " " << m_minP
+					<< " " << m_solver->m_residuumDensity << " "
+					<< m_solver->m_residuumVelocity << " " << m_meanVelocityX
+					<< endl;
+		}
 	}
 
 	size_t getIterationNumber() const {
@@ -140,7 +153,7 @@ public:
 		return m_maxU;
 	}
 
-	shared_ptr<std::fstream> getTableFile() const {
+	boost::shared_ptr<std::fstream> getTableFile() const {
 		return m_tableFile;
 	}
 
@@ -164,9 +177,11 @@ public:
 		return m_minP;
 	}
 
+	double getMeanVelocityX() const {
+		return m_meanVelocityX;
+	}
 };
 
 } /* namespace natrium */
-
 
 #endif /* SOLVERSTATS_H_ */

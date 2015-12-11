@@ -12,6 +12,8 @@
 
 #include "CollisionModel.h"
 
+#include "deal.II/base/index_set.h"
+
 #include "../utilities/BasicNames.h"
 
 #include "../solver/DistributionFunctions.h"
@@ -39,7 +41,7 @@ public:
 	 * @short constructor
 	 * @param[in] relaxationParameter relaxation parameter tau
 	 */
-	BGK(double relaxationParameter, double dt, const shared_ptr<Stencil> stencil);
+	BGK(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil);
 
 	/// destructor
 	virtual ~BGK();
@@ -54,6 +56,7 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure = false) const;
 
 	/* @short virtual function for collision
@@ -78,7 +81,7 @@ public:
 	 * @note preconditioning_parameter is only used for steady state
 	 */
 	static double calculateRelaxationParameter(double viscosity,
-			double timeStepSize, const Stencil& stencil, double preconditioning_parameter = 1.0) {
+			double timeStepSize, const Stencil& stencil, double = 1.0) {
 		assert(viscosity > 0.0);
 		assert(timeStepSize > 0.0);
 		return (viscosity) / (timeStepSize * stencil.getSpeedOfSoundSquare());

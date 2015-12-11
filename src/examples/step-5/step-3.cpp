@@ -40,14 +40,16 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution1,
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-2..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM step-2..." << endl;
 
 	// set parameters, set up configuration object
 	size_t refinementLevel = 5;
 	size_t orderOfFiniteElement = 2;
 	double viscosity = 0.0001/(sqrt(3));
 
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	double deltaX = 1.
 			/ (pow(2, refinementLevel)
@@ -67,9 +69,9 @@ int main() {
 	configuration->setDistributionInitType(Iterative);
 
 	// make problem and solver objects
-	shared_ptr<PoiseuilleFlow2D> poiseuilleFlow = make_shared<PoiseuilleFlow2D>(
+	boost::shared_ptr<PoiseuilleFlow2D> poiseuilleFlow = boost::make_shared<PoiseuilleFlow2D>(
 			viscosity, refinementLevel);
-	shared_ptr<ProblemDescription<2> > poiseuilleProblem = poiseuilleFlow;
+	boost::shared_ptr<ProblemDescription<2> > poiseuilleProblem = poiseuilleFlow;
 	CFDSolver<2> solver(configuration, poiseuilleProblem);
 
 	// File for max norms
@@ -104,7 +106,7 @@ int main() {
 	 size_t N = configuration->getNumberOfTimeSteps();
 	 for (size_t i = solver.getIterationStart(); i < N; i++) {
 	 if (i % 100 == 0) {
-	 cout << "Iteration " << i << endl;
+	 pout << "Iteration " << i << endl;
 	 }
 	 // Stream and collide
 	 solver.output(i);
@@ -140,7 +142,7 @@ int main() {
 
 	 */
 
-	cout << "NATriuM step-2 terminated." << endl;
+	pout << "NATriuM step-2 terminated." << endl;
 
 	return 0;
 }

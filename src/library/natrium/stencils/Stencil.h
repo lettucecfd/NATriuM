@@ -22,7 +22,12 @@ enum StencilType {
 
 	/// D2Q9 stencil
 	Stencil_D2Q9,
-	Stencil_D3Q19
+	// D3Q19 stencil
+	Stencil_D3Q19,
+	// D3Q15 stencil
+	Stencil_D3Q15,
+	// D3Q27 stencil
+	Stencil_D3Q27
 
 };
 
@@ -119,7 +124,7 @@ public:
 	/** @short get stencil type
 	 *  @return stencil type, e.g. D2Q9
 	 */
-	const StencilType getStencilType() const {
+	const StencilType& getStencilType() const {
 		return m_stencilType;
 	}
 
@@ -130,7 +135,7 @@ public:
 	virtual double getSpeedOfSoundSquare() const = 0;
 	virtual double getMaxParticleVelocityMagnitude() const = 0;
 
-	virtual const double getScaling() const {
+	virtual double getScaling() const {
 		return 1.0;
 	}
 

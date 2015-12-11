@@ -25,7 +25,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM step-1 ..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM step-1 ..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -43,10 +45,10 @@ int main() {
 	double scaling = sqrt(3) * 1 / Ma;
 
 	const double refinementLevel = 5;
-		cout << "refinement Level = " << refinementLevel << endl;
+		pout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
-//			cout << "FE order = " << orderOfFiniteElement << endl;
+//			pout << "FE order = " << orderOfFiniteElement << endl;
 		// the scaling has to be orders of magnitude greater than the boundary velocity
 
 		// calculate distance between quadrature nodes
@@ -56,7 +58,7 @@ int main() {
 		//double dt = 0.4*dx / (scaling * sqrt(2));
 		double dt = 0.0005;
 
-		cout << "dt = " << dt << " ...";
+		pout << "dt = " << dt << " ...";
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -64,7 +66,7 @@ int main() {
 		// setup configuration
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/step-1";
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
@@ -77,15 +79,15 @@ int main() {
 		configuration->setCommandLineVerbosity(ALL);
 		configuration->setTimeStepSize(dt);
 		if (dt > 0.1) {
-			cout << "Timestep too big." << endl;
+			pout << "Timestep too big." << endl;
 		}
 
 		configuration->setNumberOfTimeSteps(10);
 
 		// make problem and solver objects
-		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 				TaylorGreenVortex2D>(viscosity, refinementLevel);
-		shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+		boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 		time1 = clock() - timestart;
@@ -95,13 +97,13 @@ int main() {
 			time2 = clock() - time1 - timestart;
 			time1 /= CLOCKS_PER_SEC;
 			time2 /= CLOCKS_PER_SEC;
-			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+			pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
 		} catch (std::exception& e) {
-			cout << " Error" << endl;
+			pout << " Error" << endl;
 		}
 
-	cout << "step-1 terminated." << endl;
+	pout << "step-1 terminated." << endl;
 
 	return 0;
 }

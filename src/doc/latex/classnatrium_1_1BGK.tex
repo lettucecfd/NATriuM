@@ -1,0 +1,115 @@
+\hypertarget{classnatrium_1_1BGK}{
+\section{natrium::BGK Class Reference}
+\label{classnatrium_1_1BGK}\index{natrium::BGK@{natrium::BGK}}
+}
+
+
+Description of the \hyperlink{classnatrium_1_1BGK}{BGK} model for the transformed particle distributions, as described in Global data which is used by Min and Lee (2011): A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-\/259.  
+
+
+{\ttfamily \#include $<$BGK.h$>$}Inheritance diagram for natrium::BGK::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.96262cm]{classnatrium_1_1BGK}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1BGK_acb5fcbbec625b60d7f2db05e9e66fbaa}{BGK} (double relaxationParameter, double dt, const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGK_a1029401a72788a6538e4e1941c305ab4}{
+virtual \hyperlink{classnatrium_1_1BGK_a1029401a72788a6538e4e1941c305ab4}{$\sim$BGK} ()}
+\label{classnatrium_1_1BGK_a1029401a72788a6538e4e1941c305ab4}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
+\begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGK_ab82471c249d19fdc62005fb8b7e03190}{
+void {\bfseries collideSingleDoF} (size\_\-t doF, const vector$<$ double $>$ \&feq, \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f) const }
+\label{classnatrium_1_1BGK_ab82471c249d19fdc62005fb8b7e03190}
+
+\item 
+\hypertarget{classnatrium_1_1BGK_aebf6d64d5e537c2e352451667d9003d4}{
+virtual void \hyperlink{classnatrium_1_1BGK_aebf6d64d5e537c2e352451667d9003d4}{collideSinglePoint} (vector$<$ double $>$ \&distributions) const }
+\label{classnatrium_1_1BGK_aebf6d64d5e537c2e352451667d9003d4}
+
+\begin{DoxyCompactList}\small\item\em only for testing purposes; do not use in code, because this function is very inefficient \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGK_acf54bde642d2dc1f83d700fc0a73d575}{
+void {\bfseries setRelaxationParameter} (double tau, double dt)}
+\label{classnatrium_1_1BGK_acf54bde642d2dc1f83d700fc0a73d575}
+
+\item 
+\hypertarget{classnatrium_1_1BGK_a67554c50c9f32d3b51f075988b809b4d}{
+double {\bfseries getPrefactor} () const }
+\label{classnatrium_1_1BGK_a67554c50c9f32d3b51f075988b809b4d}
+
+\item 
+\hypertarget{classnatrium_1_1BGK_a0bbb2526cbfc13c361333a9c32beb0a0}{
+void \hyperlink{classnatrium_1_1BGK_a0bbb2526cbfc13c361333a9c32beb0a0}{setTimeStep} (double dt)}
+\label{classnatrium_1_1BGK_a0bbb2526cbfc13c361333a9c32beb0a0}
+
+\begin{DoxyCompactList}\small\item\em changes time step and relaxation time at constant velocity and speed of sound \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGK_ab3069be02b1836b1e55c76054c4433a8}{
+size\_\-t {\bfseries getQ} () const }
+\label{classnatrium_1_1BGK_ab3069be02b1836b1e55c76054c4433a8}
+
+\item 
+\hypertarget{classnatrium_1_1BGK_adac002cf79a455f6b053b51210f39acb}{
+double {\bfseries getRelaxationParameter} () const }
+\label{classnatrium_1_1BGK_adac002cf79a455f6b053b51210f39acb}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \hyperlink{classnatrium_1_1BGK_a430f5020b6101a64d89a0cc2a246260e}{calculateRelaxationParameter} (double viscosity, double timeStepSize, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, double=1.0)
+\begin{DoxyCompactList}\small\item\em calculate relaxation parameter \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of the \hyperlink{classnatrium_1_1BGK}{BGK} model for the transformed particle distributions, as described in Global data which is used by Min and Lee (2011): A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-\/259. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1BGK_acb5fcbbec625b60d7f2db05e9e66fbaa}{
+\index{natrium::BGK@{natrium::BGK}!BGK@{BGK}}
+\index{BGK@{BGK}!natrium::BGK@{natrium::BGK}}
+\subsubsection[{BGK}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BGK::BGK (double {\em relaxationParameter}, \/  double {\em dt}, \/  const shared\_\-ptr$<$ {\bf Stencil} $>$ {\em stencil})}}
+\label{classnatrium_1_1BGK_acb5fcbbec625b60d7f2db05e9e66fbaa}
+
+
+constructor 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em relaxationParameter}]relaxation parameter tau \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1BGK_a430f5020b6101a64d89a0cc2a246260e}{
+\index{natrium::BGK@{natrium::BGK}!calculateRelaxationParameter@{calculateRelaxationParameter}}
+\index{calculateRelaxationParameter@{calculateRelaxationParameter}!natrium::BGK@{natrium::BGK}}
+\subsubsection[{calculateRelaxationParameter}]{\setlength{\rightskip}{0pt plus 5cm}static double natrium::BGK::calculateRelaxationParameter (double {\em viscosity}, \/  double {\em timeStepSize}, \/  const {\bf Stencil} \& {\em stencil}, \/  double = {\ttfamily 1.0})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, static\mbox{]}}}}
+\label{classnatrium_1_1BGK_a430f5020b6101a64d89a0cc2a246260e}
+
+
+calculate relaxation parameter \begin{DoxyNote}{Note}
+preconditioning\_\-parameter is only used for steady state 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classnatrium_1_1BGKSteadyState_a2cd6628c71475663e204656147de99b8}{natrium::BGKSteadyState}.\hypertarget{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{
+\index{natrium::BGK@{natrium::BGK}!collideAll@{collideAll}}
+\index{collideAll@{collideAll}!natrium::BGK@{natrium::BGK}}
+\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGK::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}
+
+
+function for collision f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components \mbox{[} \mbox{[}u\_\-1x, u\_\-2x, ...\mbox{]}, \mbox{[}u\_\-1y, u\_\-2y, ...\mbox{]} \mbox{]} inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false 
+
+Implements \hyperlink{classnatrium_1_1CollisionModel}{natrium::CollisionModel}.
+
+Reimplemented in \hyperlink{classnatrium_1_1BGKPseudopotential_a5f40f5076273f9ec38f3078c891b453c}{natrium::BGKPseudopotential}, \hyperlink{classnatrium_1_1BGKStandard_a8e0493b063d56275d7ee607e25c4145e}{natrium::BGKStandard}, \hyperlink{classnatrium_1_1BGKStandardTransformed_aaa2e752c6aa2294f1ebeb9d326ba9eb8}{natrium::BGKStandardTransformed}, and \hyperlink{classnatrium_1_1BGKSteadyState_a8554fb624c5a3abe01651747b3d9aeb7}{natrium::BGKSteadyState}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/\hyperlink{BGK_8h}{BGK.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/\hyperlink{BGK_8cpp}{BGK.cpp}\end{DoxyCompactItemize}

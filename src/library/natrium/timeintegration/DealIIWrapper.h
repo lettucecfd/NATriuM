@@ -37,11 +37,11 @@ private:
 	MATRIX m_tmpMatrix;
 
 	/// time stepping scheme in dealii
-	shared_ptr<dealii::TimeStepping::RungeKutta<VECTOR> > m_dealIIRKStepper;
+	boost::shared_ptr<dealii::TimeStepping::RungeKutta<VECTOR> > m_dealIIRKStepper;
 
 	/// time stepping scheme, for embedded RK methods, additional methods need to be called,
 	/// which requires an extra pointer
-	shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> > m_dealIIRKEmbedded;
+	boost::shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> > m_dealIIRKEmbedded;
 
 
 	/**
@@ -83,11 +83,11 @@ public:
 	 */
 	virtual double step(VECTOR& vector, const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = TimeIntegrator<MATRIX,VECTOR>::getTimeStepSize());
 
-	const shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >& getDealIIEmbedded() const {
+	const boost::shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >& getDealIIEmbedded() const {
 		return m_dealIIRKEmbedded;
 	}
 
-	const shared_ptr<dealii::TimeStepping::RungeKutta<VECTOR> >& getDealIIRKStepper() const {
+	const boost::shared_ptr<dealii::TimeStepping::RungeKutta<VECTOR> >& getDealIIRKStepper() const {
 		return m_dealIIRKStepper;
 	}
 };

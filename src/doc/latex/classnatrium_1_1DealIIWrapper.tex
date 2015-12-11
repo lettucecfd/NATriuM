@@ -1,29 +1,114 @@
-\hypertarget{classnatrium_1_1DealIIWrapper}{\section{natrium\-:\-:Deal\-I\-I\-Wrapper$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$ Class Template Reference}
-\label{classnatrium_1_1DealIIWrapper}\index{natrium\-::\-Deal\-I\-I\-Wrapper$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$@{natrium\-::\-Deal\-I\-I\-Wrapper$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$}}
+\hypertarget{classnatrium_1_1DealIIWrapper}{
+\section{natrium::DealIIWrapper$<$ MATRIX, VECTOR $>$ Class Template Reference}
+\label{classnatrium_1_1DealIIWrapper}\index{natrium::DealIIWrapper@{natrium::DealIIWrapper}}
 }
 
 
-not yet implemented  
+Wrapper class to deal.II's built-\/in time stepping routines.  
 
 
-
-
-{\ttfamily \#include $<$Deal\-I\-I\-Wrapper.\-h$>$}
-
+{\ttfamily \#include $<$DealIIWrapper.h$>$}Inheritance diagram for natrium::DealIIWrapper$<$ MATRIX, VECTOR $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classnatrium_1_1DealIIWrapper}
+\end{center}
+\end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1DealIIWrapper_a879ff25fa485bdffecbdf6083d0c3d45}{virtual void {\bfseries step} (V\-E\-C\-T\-O\-R \&vector, const M\-A\-T\-R\-I\-X \&system\-Matrix, const V\-E\-C\-T\-O\-R \&system\-Vector)}\label{classnatrium_1_1DealIIWrapper_a879ff25fa485bdffecbdf6083d0c3d45}
+\hypertarget{classnatrium_1_1DealIIWrapper_a19bdd1ce28caf67d223d809d28359a02}{
+\hyperlink{classnatrium_1_1DealIIWrapper_a19bdd1ce28caf67d223d809d28359a02}{DealIIWrapper} (const double timeStepSize, const DealIntegratorName rkScheme, const DealSolverName linearSolver)}
+\label{classnatrium_1_1DealIIWrapper_a19bdd1ce28caf67d223d809d28359a02}
+
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_a8f960bc0009457b1861f22273f331a01}{
+{\bfseries DealIIWrapper} (const double timeStepSize, const DealIntegratorName rkScheme, const DealSolverName linearSolver, double coarsen\_\-param, double refine\_\-param, double min\_\-delta, double max\_\-delta, double refine\_\-tol, double coarsen\_\-tol)}
+\label{classnatrium_1_1DealIIWrapper_a8f960bc0009457b1861f22273f331a01}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_a193b75fd9e4734d14988927c21312c8a}{
+virtual \hyperlink{classnatrium_1_1DealIIWrapper_a193b75fd9e4734d14988927c21312c8a}{$\sim$DealIIWrapper} ()}
+\label{classnatrium_1_1DealIIWrapper_a193b75fd9e4734d14988927c21312c8a}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+virtual double \hyperlink{classnatrium_1_1DealIIWrapper_a62621205ff77a46c4f3ef01c3aefb06d}{step} (VECTOR \&vector, const MATRIX \&systemMatrix, const VECTOR \&systemVector, double t=0, double dt=\hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ MATRIX, VECTOR $>$::getTimeStepSize())
+\begin{DoxyCompactList}\small\item\em make one time integration step on f: \[ \frac{df}{dt} = Af+b \]. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_ac96390fe645fb8e08b482c52f6e335b9}{
+const shared\_\-ptr$<$ dealii::TimeStepping::EmbeddedExplicitRungeKutta$<$ VECTOR $>$ $>$ \& {\bfseries getDealIIEmbedded} () const }
+\label{classnatrium_1_1DealIIWrapper_ac96390fe645fb8e08b482c52f6e335b9}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_ad5a2afa2b03697767272036a6acd51ff}{
+const shared\_\-ptr$<$ dealii::TimeStepping::RungeKutta$<$ VECTOR $>$ $>$ \& {\bfseries getDealIIRKStepper} () const }
+\label{classnatrium_1_1DealIIWrapper_ad5a2afa2b03697767272036a6acd51ff}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_ad9f669169c770a15fc9edf5e93030b1f}{
+{\footnotesize template$<$$>$ }\\distributed\_\-vector {\bfseries evaluateJInverse} (const double, const double, const distributed\_\-vector \&f) const}
+\label{classnatrium_1_1DealIIWrapper_ad9f669169c770a15fc9edf5e93030b1f}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_a83a7d57a68f35158263bf74c0a4d5aed}{
+{\footnotesize template$<$$>$ }\\numeric\_\-vector {\bfseries evaluateJInverse} (const double, const double, const numeric\_\-vector \&f) const}
+\label{classnatrium_1_1DealIIWrapper_a83a7d57a68f35158263bf74c0a4d5aed}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_a43b19df161e01db3b99489877eaf6451}{
+{\footnotesize template$<$$>$ }\\distributed\_\-block\_\-vector {\bfseries evaluateJInverse} (const double, const double, const distributed\_\-block\_\-vector \&f) const}
+\label{classnatrium_1_1DealIIWrapper_a43b19df161e01db3b99489877eaf6451}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_a389c33cc682c761e63adb08fd4f68031}{
+{\footnotesize template$<$$>$ }\\block\_\-vector {\bfseries evaluateJInverse} (const double, const double, const block\_\-vector \&f) const}
+\label{classnatrium_1_1DealIIWrapper_a389c33cc682c761e63adb08fd4f68031}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_ab0e57073c150e04e063dc621bf9b94f5}{
+{\footnotesize template$<$$>$ }\\distributed\_\-vector {\bfseries evaluateIdMinusTauJInverse} (const double, const double tau, const distributed\_\-vector \&f)}
+\label{classnatrium_1_1DealIIWrapper_ab0e57073c150e04e063dc621bf9b94f5}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_a9a50370a5fbdce709aab87a4c38d5247}{
+{\footnotesize template$<$$>$ }\\numeric\_\-vector {\bfseries evaluateIdMinusTauJInverse} (const double, const double tau, const numeric\_\-vector \&f)}
+\label{classnatrium_1_1DealIIWrapper_a9a50370a5fbdce709aab87a4c38d5247}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_aea3a4ef30de64fa1c771ff8df4a7c358}{
+{\footnotesize template$<$$>$ }\\distributed\_\-block\_\-vector {\bfseries evaluateIdMinusTauJInverse} (const double, const double tau, const distributed\_\-block\_\-vector \&f)}
+\label{classnatrium_1_1DealIIWrapper_aea3a4ef30de64fa1c771ff8df4a7c358}
+
+\item 
+\hypertarget{classnatrium_1_1DealIIWrapper_a4446840f5a8e7eaad5f96d416b7f4f66}{
+{\footnotesize template$<$$>$ }\\block\_\-vector {\bfseries evaluateIdMinusTauJInverse} (const double, const double tau, const block\_\-vector \&f)}
+\label{classnatrium_1_1DealIIWrapper_a4446840f5a8e7eaad5f96d416b7f4f66}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\subsubsection*{template$<$class M\-A\-T\-R\-I\-X, class V\-E\-C\-T\-O\-R$>$class natrium\-::\-Deal\-I\-I\-Wrapper$<$ M\-A\-T\-R\-I\-X, V\-E\-C\-T\-O\-R $>$}
+\subsubsection*{template$<$class MATRIX, class VECTOR$>$ class natrium::DealIIWrapper$<$ MATRIX, VECTOR $>$}
 
-not yet implemented 
+Wrapper class to deal.II's built-\/in time stepping routines. This implementation supports all time stepping schemes in deal Release 8.2.1, which includes Explicit, Implicit and Embedded explicit Runge Kutta methods. 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1DealIIWrapper_a62621205ff77a46c4f3ef01c3aefb06d}{
+\index{natrium::DealIIWrapper@{natrium::DealIIWrapper}!step@{step}}
+\index{step@{step}!natrium::DealIIWrapper@{natrium::DealIIWrapper}}
+\subsubsection[{step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class MATRIX , class VECTOR $>$ double {\bf natrium::DealIIWrapper}$<$ MATRIX, VECTOR $>$::step (VECTOR \& {\em vector}, \/  const MATRIX \& {\em systemMatrix}, \/  const VECTOR \& {\em systemVector}, \/  double {\em t} = {\ttfamily 0}, \/  double {\em dt} = {\ttfamily {\bf TimeIntegrator}$<$MATRIX,VECTOR$>$::getTimeStepSize()})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1DealIIWrapper_a62621205ff77a46c4f3ef01c3aefb06d}
+
+
+make one time integration step on f: \[ \frac{df}{dt} = Af+b \]. 
+\begin{DoxyParams}{Parameters}
+\item[{\em in/out\mbox{]}}]f Vector of degrees of freedom \item[\mbox{$\leftarrow$} {\em systemMatrix}]Matrix A \item[\mbox{$\leftarrow$} {\em systemVector}]Vector b \item[\mbox{$\leftarrow$} {\em double}]t global time \item[\mbox{$\leftarrow$} {\em double}]dt time step size. Required to interface deal.II's embedded RK methods \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+new global time t + dt 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classnatrium_1_1TimeIntegrator_a1c438e41d183d172d524aa5dc97785fb}{natrium::TimeIntegrator$<$ MATRIX, VECTOR $>$}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/timeintegration/Deal\-I\-I\-Wrapper.\-h\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/timeintegration/Deal\-I\-I\-Wrapper.\-cpp\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/timeintegration/DealIIWrapper.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/timeintegration/DealIIWrapper.cpp\end{DoxyCompactItemize}

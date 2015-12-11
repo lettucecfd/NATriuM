@@ -20,7 +20,7 @@ Stencil::Stencil(size_t d, size_t q,
 	assert(d > (size_t) 1);
 	assert(d < (size_t) 4);
 	assert(q > (size_t) 0);
-	//assert(directions.size() - q == 0);
+	assert(directions.size() - q == 0);
 	assert(weights.size() - q == 0);
 	//for (size_t i = 0; i < q; i++){
 	//	assert(directions.at(i).size() - d == 0);

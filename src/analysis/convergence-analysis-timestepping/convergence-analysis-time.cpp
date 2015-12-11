@@ -43,7 +43,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout
+	MPIGuard::getInstance();
+
+	pout
 			<< "Starting NATriuM convergence analysis with moving wall boundaries (various p) ..."
 			<< endl;
 
@@ -80,14 +82,14 @@ int main() {
 
 #ifndef ONLY_PERIODIC
 	// make problem object
-	shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(viscosity,
+	boost::shared_ptr<CouetteFlow2D> couette2D = boost::make_shared<CouetteFlow2D>(viscosity,
 			U, refinementLevel, L, t0);
-	shared_ptr<Benchmark<2> > benchmark = couette2D;
+	boost::shared_ptr<Benchmark<2> > benchmark = couette2D;
 #else
 	// make problem object
-	shared_ptr<TaylorGreenVortex2D> tgv2D = make_shared<TaylorGreenVortex2D>(viscosity,
+	boost::shared_ptr<TaylorGreenVortex2D> tgv2D = boost::make_shared<TaylorGreenVortex2D>(viscosity,
 		refinementLevel);
-	shared_ptr<Benchmark<2> > benchmark = tgv2D;
+	boost::shared_ptr<Benchmark<2> > benchmark = tgv2D;
 #endif
 
 
@@ -112,7 +114,7 @@ int main() {
 			<< endl;
 
 	for (double dt = 0.5; dt >= 0.00001; dt /= 2.) {
-		cout << "dt = " << dt << endl;
+		pout << "dt = " << dt << endl;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -121,7 +123,7 @@ int main() {
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-time/"
 				<< orderOfFiniteElement << "_" << refinementLevel << "_" << dt;
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
@@ -149,7 +151,7 @@ int main() {
 			time2 = clock() - time1 - timestart;
 			time1 /= CLOCKS_PER_SEC;
 			time2 /= CLOCKS_PER_SEC;
-			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+			pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
 			// put out runtime
 			timeFile << orderOfFiniteElement << "         " << dt << "      "
@@ -165,12 +167,12 @@ int main() {
 					<< solver.getErrorStats()->getL2VelocityError() << " "
 					<< solver.getErrorStats()->getL2DensityError() << endl;
 		} catch (std::exception& e) {
-			cout << " Error: " << e.what() << endl;
+			pout << " Error: " << e.what() << endl;
 		}
 
 	} /* for time step*/
 
-	cout << "Convergence analysis of dt convergence terminated." << endl;
+	pout << "Convergence analysis of dt convergence terminated." << endl;
 
 	return 0;
 }

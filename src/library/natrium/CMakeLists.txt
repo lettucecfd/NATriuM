@@ -16,13 +16,13 @@ file(   GLOB_RECURSE
         utilities/* 
         )
   
- 
+   
  
 #
 # Create natrium library
 #
-add_library( natrium ${SRC_FILES} )
-
+add_library( natrium SHARED ${SRC_FILES} )
+ 
 
 
 #

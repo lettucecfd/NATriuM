@@ -28,7 +28,7 @@ class ErrorStats {
 private:
 
 	BenchmarkCFDSolver<dim> * m_solver;
-	shared_ptr<std::fstream> m_errorsTableFile;
+	boost::shared_ptr<std::fstream> m_errorsTableFile;
 	std::string m_filename;
 	const bool m_outputOff;
 
@@ -73,7 +73,7 @@ public:
 		return (m_iterationNumber == m_solver->getIteration());
 	}
 
-	const shared_ptr<std::fstream>& getErrorsTableFile() const {
+	const boost::shared_ptr<std::fstream>& getErrorsTableFile() const {
 		return m_errorsTableFile;
 	}
 

@@ -14,7 +14,7 @@ namespace natrium {
 
 /// constructor
 BGKSteadyState::BGKSteadyState(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil, double preconditioning_parameter) :
+		const boost::shared_ptr<Stencil> stencil, double preconditioning_parameter) :
 		BGK(relaxationParameter, dt, stencil),
 		m_gamma (preconditioning_parameter) {
 	assert (preconditioning_parameter > 0);
@@ -30,7 +30,6 @@ double BGKSteadyState::getEquilibriumDistribution(size_t i,
 
 	assert(i < getStencil()->getQ());
 	assert(rho > 0);
-	assert(i >= 0);
 	assert(u.size() == getStencil()->getD());
 	assert(u(0) < 1000000000000000.);
 	assert(u(1) < 1000000000000000.);
@@ -49,14 +48,14 @@ double BGKSteadyState::getEquilibriumDistribution(size_t i,
 
 void BGKSteadyState::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
+		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
 	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
 		// Inefficient collision for other than D2Q9
-		BGK::collideAll(f, densities, velocities, inInitializationProcedure);
+		BGK::collideAll(f, densities, velocities, locally_owned_dofs, inInitializationProcedure);
 	} else {
 		// Efficient collision for D2Q9
-		size_t n_dofs = f.at(0).size();
 		size_t Q = 9;
 		size_t D = 2;
 		double scaling = getStencil()->getScaling();
@@ -68,6 +67,7 @@ void BGKSteadyState::collideAll(DistributionFunctions& f,
 		assert(velocities.size() == D);
 
 #ifdef DEBUG
+		size_t n_dofs = f.at(0).size();
 		for (size_t i = 0; i < Q; i++) {
 			assert (f.at(i).size() == n_dofs);
 		}
@@ -85,8 +85,11 @@ void BGKSteadyState::collideAll(DistributionFunctions& f,
 		double weighting;
 		double one_by_2gamma = 0.5/m_gamma;
 
-		// for all dofs
-		for (size_t i = 0; i < n_dofs; i++) {
+		//for all degrees of freedom on current processor
+		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+		for (it = locally_owned_dofs.begin(); it != end; it++){
+			size_t i = *it;
 
 			// calculate density
 			densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)

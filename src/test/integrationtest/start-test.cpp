@@ -11,13 +11,16 @@
 
 #include "IntegrationTestCases.h"
 
+#include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/HtmlTrace.h"
+#include "natrium/utilities/MPIGuard.h"
 
 using namespace natrium;
 
 void print_line_html(IntegrationTestCases::TestResult& result,
 		std::ofstream& html) {
 
+	if (is_MPI_rank_0()){
 //////////////////////
 // Print html trace //
 //////////////////////
@@ -77,96 +80,112 @@ void print_line_html(IntegrationTestCases::TestResult& result,
 		html << "  </tr>\n";
 	}
 	html.flush();
+	} /*	if (0 == dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)) */
 
 }
 
 // Main function
-int main() {
+int main(int argc, char **argv) {
 
-	cout << "Start integration tests. This will take a few minutes..." << endl;
+	MPIGuard::getInstance(argc, argv);
+
+	pout << "Start integration tests. This will take a few minutes..." << endl;
+
 	bool errors = false;
-	HtmlTrace htmlTrace;
+	HtmlTrace htmlTrace(is_MPI_rank_0());
+	IntegrationTestCases::TestResult result;
 
-	// Test 1: Convergence Periodic Walls
-	IntegrationTestCases::TestResult result =
-			IntegrationTestCases::ConvergenceTestPeriodic();
-	print_line_html(result, htmlTrace.getHtml());
-	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
-	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
-				<< result.error_msg->str().c_str()
-				<< " See natrium.html for details." << endl;
-		errors = true;
-	}
-
-	// Test 2: Convergence Implicit LBM
-	result = IntegrationTestCases::ConvergenceTestImplicitLBM();
-	print_line_html(result, htmlTrace.getHtml());
-	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
-	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
-				<< result.error_msg->str().c_str()
-				<< " See natrium.html for details." << endl;
-		errors = true;
-	}
-
-	// Test 3: Convergence Moving Walls
-	result = IntegrationTestCases::ConvergenceTestMovingWall();
-	print_line_html(result, htmlTrace.getHtml());
-	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
-	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
-				<< result.error_msg->str().c_str()
-				<< " See natrium.html for details." << endl;
-		errors = true;
-	}
-
-	// Test 4: Convergence Exponential LBM
-	result = IntegrationTestCases::ConvergenceTestExponentialLBM();
-	print_line_html(result, htmlTrace.getHtml());
-	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
-	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
-				<< result.error_msg->str().c_str()
-				<< " See natrium.html for details." << endl;
-		errors = true;
-	}
-
-	// Test 5: Convergence 3D LBM
-	result = IntegrationTestCases::ConvergenceTest3D();
-	print_line_html(result, htmlTrace.getHtml());
-	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
-	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
-				<< result.error_msg->str().c_str()
-				<< " See natrium.html for details." << endl;
-		errors = true;
-	}
-
-	// Test 6: Convergence Pure Linear Advection (smooth)
+	// Test 1: Convergence Pure Linear Advection (smooth)
 	result = IntegrationTestCases::ConvergencePureLinearAdvectionSmooth();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
 	}
 
-	// Test 7: Convergence Pure Linear Advection (non-smooth)
+	// Test 2: Convergence Pure Linear Advection (non-smooth)
 	result = IntegrationTestCases::ConvergencePureLinearAdvectionNonsmooth();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
-		cout << "-  " << result.name << " ... " << "OK." << endl;
+		pout << "-  " << result.name << " ... " << "OK." << endl;
 	} else {
-		cout << "-  " << result.name << " ... " << "Error: "
+		pout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
+	// Test 3: Convergence Periodic Walls
+	result = IntegrationTestCases::ConvergenceTestPeriodic();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		pout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		pout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
+	// Test 4: Convergence Implicit LBM
+	result = IntegrationTestCases::ConvergenceTestImplicitLBM();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		pout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		pout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
+	// Test 5: Convergence Exponential LBM
+	result = IntegrationTestCases::ConvergenceTestExponentialLBM();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		pout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		pout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
+	// Test 6: Convergence DealIIWrapper
+	result = IntegrationTestCases::ConvergenceTestDealIIWrapper();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		pout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		pout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
+	// Test 7: Convergence 3D flow
+	result = IntegrationTestCases::ConvergenceTest3D();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		pout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		pout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
+	// Test 8: Convergence Moving Walls
+	result = IntegrationTestCases::ConvergenceTestMovingWall();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		pout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		pout << "-  " << result.name << " ... " << "Error: "
 				<< result.error_msg->str().c_str()
 				<< " See natrium.html for details." << endl;
 		errors = true;
@@ -174,10 +193,10 @@ int main() {
 
 	// FINALIZE
 	if (errors) {
-		cout << "Done. Errors occured in tests. See natrium.html for details."
+		pout << "Done. Errors occured in tests. See natrium.html for details."
 				<< endl;
 	} else {
-		cout << "All tests passed. No errors detected." << endl;
+		pout << "All tests passed. No errors detected." << endl;
 	}
 	return 0;
 }

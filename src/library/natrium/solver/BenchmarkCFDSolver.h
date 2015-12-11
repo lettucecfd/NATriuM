@@ -27,22 +27,22 @@ template<size_t dim> class BenchmarkCFDSolver: public CFDSolver<dim> {
 
 private:
 	/// the problem description, pointed to explicitly as Benchmark
-	shared_ptr<Benchmark<dim> > m_benchmark;
+	boost::shared_ptr<Benchmark<dim> > m_benchmark;
 
 	/// support Point of DoFs, in the same order as the DoFs
-	vector<dealii::Point<dim> > m_supportPoints;
+	map<dealii::types::global_dof_index, dealii::Point<dim> > m_supportPoints;
 
 	/// in order to save allocation time, allocate memory for analytic solution and errors
 	distributed_vector m_analyticDensity;
 	vector<distributed_vector> m_analyticVelocity;
 
 	/// table out
-	shared_ptr<ErrorStats<dim> > m_errorStats;
+	boost::shared_ptr<ErrorStats<dim> > m_errorStats;
 
 public:
 	/// constructor
-	BenchmarkCFDSolver(shared_ptr<SolverConfiguration> configuration,
-			shared_ptr<Benchmark<dim> > problemDescription);
+	BenchmarkCFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+			boost::shared_ptr<Benchmark<dim> > problemDescription);
 
 
 	/**
@@ -52,8 +52,8 @@ public:
 
 /// gives the possibility for Benchmark instances to add the analytic solution to output
 	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& data_out) {
-		m_benchmark->getAllAnalyticVelocities(this->getTime(), m_analyticVelocity, m_supportPoints);
-		m_benchmark->getAllAnalyticDensities(this->getTime(), m_analyticDensity, m_supportPoints);
+		getAllAnalyticVelocities(this->getTime(), m_analyticVelocity, m_supportPoints);
+		getAllAnalyticDensities(this->getTime(), m_analyticDensity, m_supportPoints);
 		data_out.add_data_vector(m_analyticDensity, "rho_analytic");
 		if (dim == 2) {
 			data_out.add_data_vector(m_analyticVelocity.at(0), "ux_analytic");
@@ -70,31 +70,36 @@ public:
 
 	}
 
-	const distributed_vector& getAnalyticDensity() const {
-		// check marker value
-		if (m_analyticVelocity.at(1)(0) == 31415926){
-			throw ConfigurationException("You have to call getAnalyticDensity() before calling getErrors() in a iteration. getErrors() corrupts the analytic density.");
-		}
-		return m_analyticDensity;
-	}
+	/**
+	 * @short get full analytic solution for the density field at time t
+	 */
+	void getAllAnalyticDensities(double time, distributed_vector& analyticDensities,
+			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
 
-	const vector<distributed_vector>& getAnalyticVelocity() const {
-		// check marker value
-		if (m_analyticVelocity.at(1)(0) == 31415926){
-			throw ConfigurationException("You have to call getAnalyticVelocity() before calling getErrors() in a iteration. getErrors() corrupts the analytic velocity.");
-		}
-		return m_analyticVelocity;
-	}
+	/**
+	 * @short get full analytic solution for the density field at time t
+	 */
+	void getAllAnalyticVelocities(double time, vector<distributed_vector>& analyticVelocities,
+			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
 
-	const shared_ptr<Benchmark<dim> >& getBenchmark() const {
+
+	/**
+	 * @short set initial velocities
+	 * @param[out] initialVelocities vector of velocities; to be filled
+	 * @param[in] supportPoints the coordinates associated with each degree of freedom
+	 */
+	void applyInitialVelocities(vector<distributed_vector>& initialVelocities,
+			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
+
+	const boost::shared_ptr<Benchmark<dim> >& getBenchmark() const {
 		return m_benchmark;
 	}
 
-	const vector<dealii::Point<2> >& getSupportPoints() const {
+	const map<dealii::types::global_dof_index, dealii::Point<dim> >& getSupportPoints() const {
 		return m_supportPoints;
 	}
 
-	const shared_ptr<ErrorStats<dim> >& getErrorStats() const {
+	const boost::shared_ptr<ErrorStats<dim> >& getErrorStats() const {
 		return m_errorStats;
 	}
 }

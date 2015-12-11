@@ -1,41 +1,42 @@
-\hypertarget{advectionConvergence_8cpp}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/analysis/convergence-\/analysis-\/advection-\/solver/advection\-Convergence.cpp File Reference}
-\label{advectionConvergence_8cpp}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/analysis/convergence-\/analysis-\/advection-\/solver/advection\-Convergence.\-cpp@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/analysis/convergence-\/analysis-\/advection-\/solver/advection\-Convergence.\-cpp}}
+\hypertarget{advectionConvergence_8cpp}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/analysis/convergence-\/analysis-\/advection-\/solver/advectionConvergence.cpp File Reference}
+\label{advectionConvergence_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/analysis/convergence-\/analysis-\/advection-\/solver/advectionConvergence.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/analysis/convergence-\/analysis-\/advection-\/solver/advectionConvergence.cpp}}
 }
 
 
-Checks the convergence of the S\-E\-D\-G advection solver, analyzes the local discretization error in dependence of dt, dx and fe\-\_\-order.  
-
-
-{\ttfamily \#include $<$fstream$>$}\\*
-{\ttfamily \#include $<$dirent.\-h$>$}\\*
-{\ttfamily \#include $<$sys/stat.\-h$>$}\\*
-{\ttfamily \#include $<$stdlib.\-h$>$}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/numerics/data\-\_\-out.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}advection/\-S\-E\-D\-G\-Min\-Lee.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}problemdescription/\-Problem\-Description.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}timeintegration/\-Runge\-Kutta5\-Low\-Storage.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}boltzmannmodels/\-D2\-Q9\-Incompressible\-Model.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}utilities/\-Basic\-Names.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}utilities/\-Math.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}Periodic\-Test\-Domain2\-D.\-h\char`\"{}}\\*
+Checks the convergence of the SEDG advection solver, analyzes the local discretization error in dependence of dt, dx and fe\_\-order.  
+{\ttfamily \#include $<$fstream$>$}\par
+{\ttfamily \#include $<$dirent.h$>$}\par
+{\ttfamily \#include $<$sys/stat.h$>$}\par
+{\ttfamily \#include $<$stdlib.h$>$}\par
+{\ttfamily \#include \char`\"{}natrium/benchmarks/AdvectionBenchmark.h\char`\"{}}\par
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{advectionConvergence_8cpp_abd57c02428c2bb57f6490554bf755ba4}{void {\bfseries get\-Analytic\-Solution} (double time, distributed\-\_\-vector \&analytic\-Solution, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points)}\label{advectionConvergence_8cpp_abd57c02428c2bb57f6490554bf755ba4}
+\hypertarget{advectionConvergence_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{
+int {\bfseries main} ()}
+\label{advectionConvergence_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}
+
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{advectionConvergence_8cpp_a51723df66b6d2d73c6a170e78775ae94}{
+const bool {\bfseries OUTPUT} = false}
+\label{advectionConvergence_8cpp_a51723df66b6d2d73c6a170e78775ae94}
 
 \item 
-\hypertarget{advectionConvergence_8cpp_a172e1b37d09ae4272e92fbc189bc78d2}{std\-::string {\bfseries one\-Test} (size\-\_\-t refinement\-Level, size\-\_\-t fe\-\_\-order, double delta\-T, size\-\_\-t number\-Of\-Time\-Steps, bool use\-Central\-Flux=false)}\label{advectionConvergence_8cpp_a172e1b37d09ae4272e92fbc189bc78d2}
-
-\item 
-\hypertarget{advectionConvergence_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{int {\bfseries main} ()}\label{advectionConvergence_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}
+\hypertarget{advectionConvergence_8cpp_a4cc6e74830c62cdcf030d4548e929d7a}{
+const bool {\bfseries SMOOTH} = true}
+\label{advectionConvergence_8cpp_a4cc6e74830c62cdcf030d4548e929d7a}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Checks the convergence of the S\-E\-D\-G advection solver, analyzes the local discretization error in dependence of dt, dx and fe\-\_\-order. \begin{DoxyDate}{Date}
-13.\-02.\-2014 
+Checks the convergence of the SEDG advection solver, analyzes the local discretization error in dependence of dt, dx and fe\_\-order. \begin{DoxyDate}{Date}
+13.02.2014 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
-Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

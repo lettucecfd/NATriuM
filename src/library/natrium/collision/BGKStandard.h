@@ -10,9 +10,11 @@
 
 #include "BGK.h"
 
-#include "../utilities/BasicNames.h"
-
 #include <cassert>
+
+#include "deal.II/base/index_set.h"
+
+#include "../utilities/BasicNames.h"
 
 #include "../utilities/Math.h"
 
@@ -26,7 +28,7 @@ public:
 
 
 	/// constructor
-	BGKStandard(double relaxationParameter, double dt, const shared_ptr<Stencil> stencil);
+	BGKStandard(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil);
 
 
 	/// destructor
@@ -54,9 +56,32 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure = false) const;
 
+	/**
+	 * @short optimized version of collideAll for D2Q9 stencil
+	 */
+	void collideAllD2Q9(DistributionFunctions& f,
+			distributed_vector& densities, vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure) const;
 
+	/**
+	 * @short optimized version of collideAll for D3Q19 stencil
+	 */
+	void collideAllD3Q19(DistributionFunctions& f,
+			distributed_vector& densities, vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure) const;
+
+	/**
+	 * @short optimized version of collideAll for D3Q15 stencil
+	 */
+	void collideAllD3Q15(DistributionFunctions& f,
+			distributed_vector& densities, vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure) const;
 };
 
 

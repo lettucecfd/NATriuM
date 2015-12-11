@@ -13,7 +13,7 @@
 #include "../problemdescription/ProblemDescription.h"
 #include "../utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 
 namespace natrium {
 
@@ -29,26 +29,6 @@ public:
 	/// destructor
 	virtual ~PeriodicTestDomain3D();
 
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<3> >& supportPoints) const {
-	}
-	;
-
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<3> >& supportPoints) const {
-	}
-	;
 
 private:
 
@@ -56,14 +36,14 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<3> > makeGrid(size_t globalRefinementLevel);
+	boost::shared_ptr<Mesh<3> > makeGrid();
 
 	/**
 	 * @short create boundaries for couette flow
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<3> > makeBoundaries();
+	boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
 };
 

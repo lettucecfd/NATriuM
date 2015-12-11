@@ -1,8 +1,8 @@
 #
 # CMake File for NATriuM test
 #    
-
- 
+  
+    
 #
 # It is good practise to specify a version requirement:
 #
@@ -19,14 +19,14 @@ find_package(   deal.II 8.0 REQUIRED
 # Initialize Deal variables (has to be called before "project")
 #
 DEAL_II_INITIALIZE_CACHED_VARIABLES() 
-
+ 
 #
 # PROJECT has to be called after DEAL_II_INITIALIZE_CACHED_VARIABLES
 # otherwise CMake will have already set the compiler and compiler
 # flags.
 #
 project( NATriuM )
-
+ 
 #
 # include boost
 #
@@ -46,7 +46,7 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 #
 add_subdirectory( library )
 add_subdirectory( test )
-add_subdirectory( examples )
+#add_subdirectory( examples )
 add_subdirectory( analysis )
  
 #

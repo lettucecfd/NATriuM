@@ -16,6 +16,11 @@
 #include "natrium/utilities/Math.h"
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/stencils/D2Q9.h"
+#include "natrium/stencils/D3Q19.h"
+#include "natrium/stencils/D3Q15.h"
+
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
+#include "natrium/benchmarks/PeriodicTestDomain3D.h"
 
 using std::exception;
 
@@ -24,25 +29,25 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(BGKStandard_test)
 
 BOOST_AUTO_TEST_CASE(BGKStandardConstruction_test) {
-	cout << "BGKStandardConstruction_test..." << endl;
+	pout << "BGKStandardConstruction_test..." << endl;
 
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
 	double dt = 0.1;
 
-	BOOST_CHECK_NO_THROW(BGKStandard bgkCollision(tau, dt, make_shared<D2Q9>()));
+	BOOST_CHECK_NO_THROW(BGKStandard bgkCollision(tau, dt, boost::make_shared<D2Q9>()));
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardConstruction_test
 
 
 BOOST_AUTO_TEST_CASE(BGKStandardSetTimeStep_test) {
-	cout << "BGKStandardSetTimeStep_test..." << endl;
+	pout << "BGKStandardSetTimeStep_test..." << endl;
 
 	// create Boltzmann model and set relaxation parameter
 	double tau = 0.9;
 	double dt = 0.1;
-	BGKStandard bgkCollision(tau, dt, make_shared<D2Q9>());
+	BGKStandard bgkCollision(tau, dt, boost::make_shared<D2Q9>());
 
 	// check if viscosity is untouched (viscosity ~ dt*tau)
 	double dt_times_tau = tau * dt;
@@ -50,7 +55,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardSetTimeStep_test) {
 	BOOST_CHECK_CLOSE(dt_times_tau, bgkCollision.getRelaxationParameter() * 0.2,
 			1e-10);
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardSetTimeStep_test
 
 
@@ -60,7 +65,7 @@ BOOST_AUTO_TEST_CASE(BGKStandardSetTimeStep_test) {
 ///////////////////////////////////
 
 BOOST_AUTO_TEST_CASE(BGKMoments_test) {
-	cout << "BGKMoments_test..." << endl;
+	pout << "BGKMoments_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -71,10 +76,9 @@ BOOST_AUTO_TEST_CASE(BGKMoments_test) {
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
-	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D2Q9>());
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
@@ -92,14 +96,14 @@ BOOST_AUTO_TEST_CASE(BGKMoments_test) {
 				macroscopicVelocity, macroscopicDensity);
 	}
 
-	// test first order moment (=density)
+	// test zeroth order moment (=density)
 	double moment1 = 0.0;
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
 		moment1 += eqDistributions.at(i);
 	}
 	BOOST_CHECK_SMALL(moment1 - macroscopicDensity, TOLERANCE);
 
-	// test second order moments (=impulse)
+	// test first order moments (=impulse)
 	numeric_vector moment2(dqmodel->getD());
 	BOOST_CHECK(moment2(0) == 0);
 	BOOST_CHECK(moment2(1) == 0);
@@ -142,17 +146,16 @@ BOOST_AUTO_TEST_CASE(BGKMoments_test) {
 		}
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKMoments_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
-	cout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
+	pout << "D2Q9IncompressibleModelAllEqDistributions_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
-	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D2Q9>());
 
 	// Define macroscopic entities
 	double macroscopicDensity = 1.45;
@@ -175,11 +178,11 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_test) {
 				1e-30);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelAllEqDistributions_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
-	cout << "D2Q9IncompressibleModelMoments_Scaled_test..." << endl;
+	pout << "D2Q9IncompressibleModelMoments_Scaled_test..." << endl;
 
 	/////////////////
 	// SANITY TEST //
@@ -190,9 +193,8 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
 	// TODO rounding errors are probably too big -> more stable implementation of the eq distribution
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>(5.0);
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
 	// Define macroscopic entities
@@ -261,16 +263,15 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelMoments_Scaled_test) {
 		}
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelMoments_Scaled_test
 
 BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
-	cout << "D2Q9IncompressibleModelAllEqDistributions_Scaled_test..." << endl;
+	pout << "D2Q9IncompressibleModelAllEqDistributions_Scaled_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>(5.0);
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
 
@@ -295,7 +296,7 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
 				1e-30);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //D2Q9IncompressibleModelAllEqDistributions_Scaled_test
 
 
@@ -306,12 +307,11 @@ BOOST_AUTO_TEST_CASE(D2Q9IncompressibleModelAllEqDistributions_Scaled_test) {
 
 
 BOOST_AUTO_TEST_CASE(BGKStandardCollisionInvariants_test) {
-	cout << "BGKStandardCollisionInvariants_test..." << endl;
+	pout << "BGKStandardCollisionInvariants_test..." << endl;
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
 	BGKStandard bgk(tau, 0.1, dqmodel);
 
 	// initialize distributions with arbitrary components
@@ -350,59 +350,240 @@ BOOST_AUTO_TEST_CASE(BGKStandardCollisionInvariants_test) {
 		BOOST_CHECK_SMALL(feq.at(i) - feqAfterCollision.at(i), 1e-15);
 	}
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } //BGKStandardCollisionInvariants_test
 
-BOOST_AUTO_TEST_CASE(BGKStandard_collideAll_test) {
+BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD2Q9_test) {
 
-	cout << "BGKStandard_collideAll_test..." << endl;
+	pout << "BGKStandardTransformed_collideAllD2Q9_test..." << endl;
 
 	// create collision model// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>();
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
-	double dt = 0.1;
-	BGKStandard bgk(tau, 0.1, make_shared<D2Q9>());
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D2Q9>());
+
+	// vectors have to be distributed, because otherwise
+	// they are recognized as ghost vectors; and ghost
+	// do not support writing on individual elements
+	PeriodicTestDomain2D test_domain(3);
+	dealii::QGaussLobatto<1> quadrature(2);
+	dealii::FE_DGQArbitraryNodes<2> fe(quadrature);
+	dealii::DoFHandler<2> dof_handler(*(test_domain.getMesh()));
+	dof_handler.distribute_dofs(fe);
 
 	// initialize distributions with arbitrary components
 	vector<distributed_vector> f;
-	distributed_vector rho(10);
+	distributed_vector rho;
+	rho.reinit((dof_handler.locally_owned_dofs()), MPI_COMM_WORLD);
+	rho.compress(dealii::VectorOperation::add);
 	vector<distributed_vector> u;
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
-		distributed_vector f_i(10);
-		for (size_t j = 0; j < 10; j++) {
-			f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
-					+ pow((0.5 * cos(j)), 2);
+		distributed_vector f_i(rho);
+		for (size_t j = 0; j < dof_handler.n_dofs(); j++) {
+			if (rho.in_local_range(j)) {
+				f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
+						+ pow((0.5 * cos(j)), 2);
+			}
 		}
+		f_i.compress(dealii::VectorOperation::add);
 		f.push_back(f_i);
 	}
 	for (size_t i = 0; i < dqmodel->getD(); i++) {
-		distributed_vector u_i(10);
+		distributed_vector u_i(rho);
 		for (size_t j = 0; j < 10; j++) {
 			u_i(j) = 0;
 		}
+		u_i.compress(dealii::VectorOperation::add);
 		u.push_back(u_i);
 	}
 
 	// collide and compare to previous collision function
 	DistributionFunctions fAfterCollision(f);
-	bgk.collideAll(fAfterCollision, rho, u);
-	for (size_t i = 0; i < 10; i++) {
-		vector<double> localF(dqmodel->getQ());
-		for (size_t j = 0; j < dqmodel->getQ(); j++) {
-			localF.at(j) = f.at(j)(i);
-		}
+	bgk.collideAll(fAfterCollision, rho, u, dof_handler.locally_owned_dofs());
+	for (size_t i = 0; i < dof_handler.n_dofs(); i++) {
+		if (rho.in_local_range(i)) {
+			vector<double> localF(dqmodel->getQ());
+			for (size_t j = 0; j < dqmodel->getQ(); j++) {
+				localF.at(j) = f.at(j)(i);
+			}
+			bgk.collideSinglePoint(localF);
+			BOOST_CHECK_CLOSE(localF.at(0), 0.0 + fAfterCollision.at(0)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(1), 0.0 + fAfterCollision.at(1)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(2), 0.0 + fAfterCollision.at(2)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(3), 0.0 + fAfterCollision.at(3)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(4), 0.0 + fAfterCollision.at(4)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(5), 0.0 + fAfterCollision.at(5)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(6), 0.0 + fAfterCollision.at(6)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(7), 0.0 + fAfterCollision.at(7)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(8), 0.0 + fAfterCollision.at(8)(i), 1e-10);
+		} /* if in local range */
+	} /* for all dofs */
 
-		bgk.collideSinglePoint(localF);
+	pout << "done." << endl;
+} /* BGKStandard_collideAllD2Q9_test*/
 
-		for (size_t j = 0; j < dqmodel->getQ(); j++) {
-			//cout << i << " " << j << endl;
-			BOOST_CHECK(fabs(localF.at(j) - fAfterCollision.at(j)(i)) < 1e-15);
+
+BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD3Q19_test) {
+
+	pout << "BGKStandard_collideAllD3Q19_test..." << endl;
+
+	// create collision model// create collision model
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D3Q19>();
+	double tau = 0.9;
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D3Q19>());
+
+	// vectors have to be distributed, because otherwise
+	// they are recognized as ghost vectors; and ghost
+	// do not support writing on individual elements
+	PeriodicTestDomain3D test_domain(3);
+	dealii::QGaussLobatto<1> quadrature(2);
+	dealii::FE_DGQArbitraryNodes<3> fe(quadrature);
+	dealii::DoFHandler<3> dof_handler(*(test_domain.getMesh()));
+	dof_handler.distribute_dofs(fe);
+
+	// initialize distributions with arbitrary components
+	vector<distributed_vector> f;
+	distributed_vector rho;
+	rho.reinit((dof_handler.locally_owned_dofs()), MPI_COMM_WORLD);
+	rho.compress(dealii::VectorOperation::add);
+	vector<distributed_vector> u;
+	for (size_t i = 0; i < dqmodel->getQ(); i++) {
+		distributed_vector f_i(rho);
+		for (size_t j = 0; j < dof_handler.n_dofs(); j++) {
+			if (rho.in_local_range(j)) {
+				f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
+						+ pow((0.5 * cos(j)), 2);
+			}
 		}
-		cout <<"fAfterCollision: " <<  fAfterCollision.at(1)(i) << endl;
+		f_i.compress(dealii::VectorOperation::add);
+		f.push_back(f_i);
+	}
+	for (size_t i = 0; i < dqmodel->getD(); i++) {
+		distributed_vector u_i(rho);
+		for (size_t j = 0; j < 10; j++) {
+			u_i(j) = 0;
+		}
+		u_i.compress(dealii::VectorOperation::add);
+		u.push_back(u_i);
 	}
 
-	cout << "done." << endl;
-} /* BGKStandard_collideAll_test*/
+	// collide and compare to previous collision function
+	DistributionFunctions fAfterCollision(f);
+	bgk.collideAll(fAfterCollision, rho, u, dof_handler.locally_owned_dofs());
+	for (size_t i = 0; i < dof_handler.n_dofs(); i++) {
+		if (rho.in_local_range(i)) {
+			vector<double> localF(dqmodel->getQ());
+			for (size_t j = 0; j < dqmodel->getQ(); j++) {
+				localF.at(j) = f.at(j)(i);
+			}
+			bgk.collideSinglePoint(localF);
+
+			// individual calls for detailed error detection
+			BOOST_CHECK_CLOSE(localF.at(0), 0.0 + fAfterCollision.at(0)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(1), 0.0 + fAfterCollision.at(1)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(2), 0.0 + fAfterCollision.at(2)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(3), 0.0 + fAfterCollision.at(3)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(4), 0.0 + fAfterCollision.at(4)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(5), 0.0 + fAfterCollision.at(5)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(6), 0.0 + fAfterCollision.at(6)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(7), 0.0 + fAfterCollision.at(7)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(8), 0.0 + fAfterCollision.at(8)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(9), 0.0 + fAfterCollision.at(9)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(10), 0.0 + fAfterCollision.at(10)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(11), 0.0 + fAfterCollision.at(11)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(12), 0.0 + fAfterCollision.at(12)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(13), 0.0 + fAfterCollision.at(13)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(14), 0.0 + fAfterCollision.at(14)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(15), 0.0 + fAfterCollision.at(15)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(16), 0.0 + fAfterCollision.at(16)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(17), 0.0 + fAfterCollision.at(17)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(18), 0.0 + fAfterCollision.at(18)(i), 1e-10);
+
+		} /* if in local range */
+	} /* for all dofs */
+
+	pout << "done." << endl;
+} /* BGKStandard_collideAllD3Q19_test*/
+
+BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD3Q15_test) {
+
+	pout << "BGKStandard_collideAllD3Q19_test..." << endl;
+
+	// create collision model// create collision model
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D3Q15>();
+	double tau = 0.9;
+	BGKStandard bgk(tau, 0.1, boost::make_shared<D3Q15>());
+
+	// vectors have to be distributed, because otherwise
+	// they are recognized as ghost vectors; and ghost
+	// do not support writing on individual elements
+	PeriodicTestDomain3D test_domain(3);
+	dealii::QGaussLobatto<1> quadrature(2);
+	dealii::FE_DGQArbitraryNodes<3> fe(quadrature);
+	dealii::DoFHandler<3> dof_handler(*(test_domain.getMesh()));
+	dof_handler.distribute_dofs(fe);
+
+	// initialize distributions with arbitrary components
+	vector<distributed_vector> f;
+	distributed_vector rho;
+	rho.reinit((dof_handler.locally_owned_dofs()), MPI_COMM_WORLD);
+	rho.compress(dealii::VectorOperation::add);
+	vector<distributed_vector> u;
+	for (size_t i = 0; i < dqmodel->getQ(); i++) {
+		distributed_vector f_i(rho);
+		for (size_t j = 0; j < dof_handler.n_dofs(); j++) {
+			if (rho.in_local_range(j)) {
+				f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
+						+ pow((0.5 * cos(j)), 2);
+			}
+		}
+
+		f_i.compress(dealii::VectorOperation::add);
+		f.push_back(f_i);
+	}
+	for (size_t i = 0; i < dqmodel->getD(); i++) {
+		distributed_vector u_i(rho);
+		for (size_t j = 0; j < 10; j++) {
+			u_i(j) = 0;
+		}
+		u_i.compress(dealii::VectorOperation::add);
+		u.push_back(u_i);
+
+	}
+
+	// collide and compare to previous collision function
+	DistributionFunctions fAfterCollision(f);
+	bgk.collideAll(fAfterCollision, rho, u, dof_handler.locally_owned_dofs());
+	for (size_t i = 0; i < dof_handler.n_dofs(); i++) {
+		if (rho.in_local_range(i)) {
+			vector<double> localF(dqmodel->getQ());
+			for (size_t j = 0; j < dqmodel->getQ(); j++) {
+				localF.at(j) = f.at(j)(i);
+			}
+			bgk.collideSinglePoint(localF);
+
+			// individual calls for detailed error detection
+			BOOST_CHECK_CLOSE(localF.at(0), 0.0 + fAfterCollision.at(0)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(1), 0.0 + fAfterCollision.at(1)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(2), 0.0 + fAfterCollision.at(2)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(3), 0.0 + fAfterCollision.at(3)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(4), 0.0 + fAfterCollision.at(4)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(5), 0.0 + fAfterCollision.at(5)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(6), 0.0 + fAfterCollision.at(6)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(7), 0.0 + fAfterCollision.at(7)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(8), 0.0 + fAfterCollision.at(8)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(9), 0.0 + fAfterCollision.at(9)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(10), 0.0 + fAfterCollision.at(10)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(11), 0.0 + fAfterCollision.at(11)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(12), 0.0 + fAfterCollision.at(12)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(13), 0.0 + fAfterCollision.at(13)(i), 1e-10);
+			BOOST_CHECK_CLOSE(localF.at(14), 0.0 + fAfterCollision.at(14)(i), 1e-10);
+
+		} /* if in local range */
+	} /* for all dofs */
+
+	pout << "done." << endl;
+} /* BGKStandard_collideAllD3Q15_test*/
 
 BOOST_AUTO_TEST_SUITE_END()
 

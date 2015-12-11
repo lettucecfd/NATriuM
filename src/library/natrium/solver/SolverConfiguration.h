@@ -151,7 +151,7 @@ public:
 	 * @short wrapper function for ParameterHandler::read_input; directing cerr into a C++-Exception
 	 **/
 	void readFromTextFile(const std::string & filename, const bool optional =
-			false, const bool write_stripped_file = false);
+			true, const bool write_stripped_file = false);
 
 	/**
 	 * @short wrapper function for ParameterHandler::read_input_from_xml; directing cerr into a C++-Exception
@@ -177,7 +177,7 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(shared_ptr<ProblemDescription<2> > cFDProblem) {
+	void checkProblem(boost::shared_ptr<ProblemDescription<2> >) {
 		//TODO: implement the checkProblem function
 	}
 
@@ -188,7 +188,7 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(shared_ptr<ProblemDescription<3> > cFDProblem) {
+	void checkProblem(boost::shared_ptr<ProblemDescription<3> >) {
 		//TODO: implement the checkProblem function
 	}
 
@@ -898,6 +898,10 @@ public:
 			return Stencil_D2Q9;
 		} else if ("D3Q19" == stencil) {
 			return Stencil_D3Q19;
+		} else if ("D3Q15" == stencil) {
+			return Stencil_D3Q15;
+		} else if ("D3Q27" == stencil) {
+			return Stencil_D3Q27;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown Stencil with index " << stencil
@@ -916,6 +920,14 @@ public:
 		}
 		case Stencil_D3Q19: {
 			set("Stencil", "D3Q19");
+			break;
+		}
+		case Stencil_D3Q15: {
+			set("Stencil", "D3Q15");
+			break;
+		}
+		case Stencil_D3Q27: {
+			set("Stencil", "D3Q27");
 			break;
 		}
 		default: {
@@ -1062,7 +1074,7 @@ public:
 		enter_subsection("Deal.II integrator");
 		switch (integrator) {
 		case NONE: {
-			set("Runge Kutta scheme", "");
+			set("Runge Kutta scheme", "None");
 			break;
 		}
 		case FORWARD_EULER: {
@@ -1307,6 +1319,7 @@ public:
 		return max_delta;
 	}
 
+
 	double getEmbeddedDealIntegratorRefinementTolerance() {
 		enter_subsection("Advection");
 		enter_subsection("Embedded Parameters");
@@ -1326,6 +1339,7 @@ public:
 		leave_subsection();
 		return refine_tol;
 	}
+
 
 	double getEmbeddedDealIntegratorCoarsenTolerance() {
 		enter_subsection("Advection");

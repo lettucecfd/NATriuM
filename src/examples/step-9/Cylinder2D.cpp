@@ -33,10 +33,10 @@ Cylinder2D::Cylinder2D(double viscosity, double inletVelocity) :
 Cylinder2D::~Cylinder2D() {
 }
 
-shared_ptr<Triangulation<2> > Cylinder2D::makeGrid() {
+boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 
 	//Creation of the principal domain
-	shared_ptr<Triangulation<2> > tria = make_shared<Triangulation<2> >();
+	boost::shared_ptr<Mesh<2> > tria = boost::make_shared<Mesh<2> >();
 	dealii::GridIn<2> gridin;
 	gridin.attach_triangulation(*tria);
 	// !!! When including unv meshes from Salome, the first two blocks have to be deleted manually (compare Original_Mesh_1.unv to Mesh_1.unv)
@@ -48,25 +48,25 @@ shared_ptr<Triangulation<2> > Cylinder2D::makeGrid() {
 	return tria;
 }
 
-shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
+boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 		double inletVelocity) {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
 	numeric_vector zeroVelocity(2);
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = inletVelocity;
 
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(0, constantVelocity));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(1, constantVelocity));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(2, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(0, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(1, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, constantVelocity));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(3, constantVelocity));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(4, zeroVelocity));
+			boost::make_shared<MinLeeBoundary<2> >(3, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(4, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

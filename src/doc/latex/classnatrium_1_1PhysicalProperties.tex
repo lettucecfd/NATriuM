@@ -1,29 +1,53 @@
-\hypertarget{classnatrium_1_1PhysicalProperties}{\section{natrium\-:\-:Physical\-Properties$<$ dim $>$ Class Template Reference}
-\label{classnatrium_1_1PhysicalProperties}\index{natrium\-::\-Physical\-Properties$<$ dim $>$@{natrium\-::\-Physical\-Properties$<$ dim $>$}}
+\hypertarget{classnatrium_1_1PhysicalProperties}{
+\section{natrium::PhysicalProperties$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1PhysicalProperties}\index{natrium::PhysicalProperties@{natrium::PhysicalProperties}}
 }
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1PhysicalProperties_a5047491de09441e2aae00f6ba838f99e}{\hyperlink{classnatrium_1_1PhysicalProperties_a5047491de09441e2aae00f6ba838f99e}{Physical\-Properties} ()}\label{classnatrium_1_1PhysicalProperties_a5047491de09441e2aae00f6ba838f99e}
+\hypertarget{classnatrium_1_1PhysicalProperties_a5047491de09441e2aae00f6ba838f99e}{
+\hyperlink{classnatrium_1_1PhysicalProperties_a5047491de09441e2aae00f6ba838f99e}{PhysicalProperties} ()}
+\label{classnatrium_1_1PhysicalProperties_a5047491de09441e2aae00f6ba838f99e}
 
-\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1PhysicalProperties_a1089bbb66f56e8c31cdb2908d5b08757}{virtual \hyperlink{classnatrium_1_1PhysicalProperties_a1089bbb66f56e8c31cdb2908d5b08757}{$\sim$\-Physical\-Properties} ()}\label{classnatrium_1_1PhysicalProperties_a1089bbb66f56e8c31cdb2908d5b08757}
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1PhysicalProperties_a1089bbb66f56e8c31cdb2908d5b08757}{
+virtual \hyperlink{classnatrium_1_1PhysicalProperties_a1089bbb66f56e8c31cdb2908d5b08757}{$\sim$PhysicalProperties} ()}
+\label{classnatrium_1_1PhysicalProperties_a1089bbb66f56e8c31cdb2908d5b08757}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1PhysicalProperties_a2afe3d56305d9014017f23846b376e9c}{{\footnotesize template$<$$>$ }\\double {\bfseries kinetic\-Energy} (const vector$<$ distributed\-\_\-vector $>$ \&u, const distributed\-\_\-vector \&rho)}\label{classnatrium_1_1PhysicalProperties_a2afe3d56305d9014017f23846b376e9c}
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1PhysicalProperties_a1a76b0dd1a88cfc037b85771c3166af7}{
+{\footnotesize template$<$$>$ }\\double {\bfseries kineticEnergy} (const vector$<$ distributed\_\-vector $>$ \&u, const distributed\_\-vector \&rho, shared\_\-ptr$<$ \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}$<$ 2 $>$ $>$ advection)}
+\label{classnatrium_1_1PhysicalProperties_a1a76b0dd1a88cfc037b85771c3166af7}
 
 \item 
-\hypertarget{classnatrium_1_1PhysicalProperties_ad184e3f45c0ce6b3d2ce499385ba38a1}{{\footnotesize template$<$$>$ }\\double {\bfseries kinetic\-Energy} (const vector$<$ distributed\-\_\-vector $>$ \&u, const distributed\-\_\-vector \&rho)}\label{classnatrium_1_1PhysicalProperties_ad184e3f45c0ce6b3d2ce499385ba38a1}
+\hypertarget{classnatrium_1_1PhysicalProperties_abeda6e133c618f7eec4ccbeb08ef452e}{
+{\footnotesize template$<$$>$ }\\double {\bfseries kineticEnergy} (const vector$<$ distributed\_\-vector $>$ \&u, const distributed\_\-vector \&rho, shared\_\-ptr$<$ \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}$<$ 3 $>$ $>$ advection)}
+\label{classnatrium_1_1PhysicalProperties_abeda6e133c618f7eec4ccbeb08ef452e}
 
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1PhysicalProperties_accf6bf858e7719b7a82ed321059f1450}{static double {\bfseries kinetic\-Energy} (const vector$<$ distributed\-\_\-vector $>$ \&u, const distributed\-\_\-vector \&rho)}\label{classnatrium_1_1PhysicalProperties_accf6bf858e7719b7a82ed321059f1450}
+\hypertarget{classnatrium_1_1PhysicalProperties_ab813391c2437bca3edd626aac09a449f}{
+static double {\bfseries kineticEnergy} (const vector$<$ distributed\_\-vector $>$ \&u, const distributed\_\-vector \&rho, shared\_\-ptr$<$ \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}$<$ dim $>$ $>$ advection)}
+\label{classnatrium_1_1PhysicalProperties_ab813391c2437bca3edd626aac09a449f}
 
-\end{DoxyCompactItemize}
-
-
-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/Physical\-Properties.\-h\end{DoxyCompactItemize}
+\hypertarget{classnatrium_1_1PhysicalProperties_a9041e6fc4bebe07da63c6f0b25aabc0d}{
+static double \hyperlink{classnatrium_1_1PhysicalProperties_a9041e6fc4bebe07da63c6f0b25aabc0d}{maximalPressure} (const distributed\_\-vector \&rho, const double speedOfSound, double \&minimalPressure)}
+\label{classnatrium_1_1PhysicalProperties_a9041e6fc4bebe07da63c6f0b25aabc0d}
+
+\begin{DoxyCompactList}\small\item\em Pressure. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1PhysicalProperties_a34720f497e9659794dfe8e0ca2554f3a}{
+static double \hyperlink{classnatrium_1_1PhysicalProperties_a34720f497e9659794dfe8e0ca2554f3a}{meanVelocityX} (const distributed\_\-vector \&ux, shared\_\-ptr$<$ \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}$<$ dim $>$ $>$ advection)}
+\label{classnatrium_1_1PhysicalProperties_a34720f497e9659794dfe8e0ca2554f3a}
+
+\begin{DoxyCompactList}\small\item\em Flow factor. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::PhysicalProperties$<$ dim $>$}
+
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/PhysicalProperties.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/\hyperlink{PhysicalProperties_8cpp}{PhysicalProperties.cpp}\end{DoxyCompactItemize}

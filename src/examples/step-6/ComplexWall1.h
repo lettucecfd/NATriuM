@@ -13,7 +13,7 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 
 namespace natrium {
 
@@ -43,14 +43,14 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(double L, size_t refinementLevel);
+	boost::shared_ptr<Mesh<2> > makeGrid(double L, size_t refinementLevel);
 
 	/**
 	 * @short create boundaries for couette flow
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries(double bottomVelocity);
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(double bottomVelocity);
 
 	/**
 	 * @short set initial densities
@@ -73,23 +73,35 @@ private:
 	/**
 	 * @short function to generate the unstructured mesh grid
 	 */
-	struct UnstructuredGridFunc
-	{
-		double refineBoundary (const double y) const {
-			return 0.5*(1+std::tanh(y-1));
+	/**
+	 * @short function to generate the unstructured mesh grid
+	 */
+	struct UnstructuredGridFunc {
+		double m_L;
+		double refineBoundaryY(const double y) const {
+			// a smooth curve with gradients that are not 0 or infinity
+			// less steepness on the boundaries leads to fine resolution
+			// of the boundary
+			return 1 * (0.5 + 0.5*tanh((y / 1 -0.5)*4*atan(1))/tanh((0.5)*4*atan(1)));
 		}
-	  double trans(const double x, const double y) const
-	  {
-		  double h = 0.7;
-		  double k = 6;
-	    double upper = 1-h*pow(std::sin(k*4*std::atan(1)*x),2);
-	    return y*upper;
-	  }
-	  dealii::Point<2> operator() (const dealii::Point<2> &in) const
-	  {
-	    return dealii::Point<2> (in(0),
-	                     trans(in(0),refineBoundary(in(1))));
-	  }
+		double refineBoundaryX(const double x) const {
+			// found this formula by analysis with gnuplot;
+			// aim: reduce aspect ratio of cells
+			//return  x - 0.019 * m_ampl / 0.49 * sin( 16 * atan(1) * x );
+			// dx ~ local height
+			return x;
+		}
+		double trans(const double x, const double y) const {
+			double upper = 1 +  0.3 * cos(8 * atan(1) * x / (m_L*1)) + 0.1 * pow(cos(8.0 * atan(1) * x / (m_L / 6.0)),3) + 0.4 * cos(1 + 8.0 * atan(1) * x / (m_L / 2.0)) + 0.1 * cos(0.12 + 8.0 * atan(1) * x / (m_L / 5.0));
+
+			return y * upper;
+		}
+		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
+			return dealii::Point<2>(refineBoundaryX(in(0)), trans(refineBoundaryX(in(0)), refineBoundaryY(in(1))));
+		}
+		UnstructuredGridFunc(double L){
+			m_L = L;
+		}
 	};
 
 };

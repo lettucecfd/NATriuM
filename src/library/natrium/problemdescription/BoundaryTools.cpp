@@ -38,8 +38,8 @@ bool natrium::BoundaryTools::checkParallelLines(
 	}
 
 	// assert that interfaces are parallel (anything else would need different handling)
-	dealii::Point<2> differenceVector1 = endLine1 - beginLine1;
-	dealii::Point<2> differenceVector2 = endLine2 - beginLine2;
+	dealii::Tensor<1,2> differenceVector1 = endLine1 - beginLine1;
+	dealii::Tensor<1,2> differenceVector2 = endLine2 - beginLine2;
 
 	if (not Math::is_angle_small(differenceVector1, differenceVector2)) {
 		// try to fix the problem by swapping begin and end
@@ -62,15 +62,15 @@ bool natrium::BoundaryTools::checkParallelLines(
 
 bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 		size_t boundaryIndicator1, size_t boundaryIndicator2,
-		shared_ptr<dealii::Triangulation<2> > triangulation,
+		boost::shared_ptr<Mesh<2> > triangulation,
 		dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
 		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
 				std::string& errorMessage) {
 
 	// Make iterators over active faces
-	dealii::Triangulation<2>::active_cell_iterator currentCell =
+	Mesh<2>::active_cell_iterator currentCell =
 			triangulation->begin_active();
-	dealii::Triangulation<2>::active_cell_iterator lastCell =
+	Mesh<2>::active_cell_iterator lastCell =
 			triangulation->end();
 
 	// Make containers for all vertices at the boundary
@@ -86,7 +86,7 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 		if (currentCell->at_boundary()) {
 			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
 					i++) {
-				if (currentCell->face(i)->boundary_indicator()
+				if (currentCell->face(i)->boundary_id()
 						== boundaryIndicator1) {
 					for (size_t j = 0;
 							j < dealii::GeometryInfo<2>::vertices_per_face;
@@ -98,7 +98,7 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 										currentCell->face(i)->vertex(j)));
 					}
 				} else {
-					if (currentCell->face(i)->boundary_indicator()
+					if (currentCell->face(i)->boundary_id()
 							== boundaryIndicator2) {
 						for (size_t j = 0;
 								j < dealii::GeometryInfo<2>::vertices_per_face;
@@ -128,8 +128,8 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 	for (element = ++pointsAtBoundary1.begin();
 			element != --pointsAtBoundary1.end(); ++element) {
 		// check if the vertex is really on  line 1
-		dealii::Point<2> line = endLine1 - beginLine1;
-		dealii::Point<2> toPoint = element->second - beginLine1;
+		dealii::Tensor<1,2> line = endLine1 - beginLine1;
+		dealii::Tensor<1,2> toPoint = element->second - beginLine1;
 		if (not Math::is_angle_small(line, toPoint)) {
 			std::stringstream s;
 			s << "Not all points with boundary indicator "
@@ -141,8 +141,8 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 	for (element = ++pointsAtBoundary2.begin();
 			element != --pointsAtBoundary2.end(); ++element) {
 		// check if the vertex is really on line
-		dealii::Point<2> line = endLine2 - beginLine2;
-		dealii::Point<2> toPoint = element->second - beginLine2;
+		dealii::Tensor<1,2> line = endLine2 - beginLine2;
+		dealii::Tensor<1,2> toPoint = element->second - beginLine2;
 		if (not Math::is_angle_small(line, toPoint)) {
 			std::stringstream s;
 			s << "Not all points with boundary indicator "

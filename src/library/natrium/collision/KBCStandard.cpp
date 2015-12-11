@@ -10,7 +10,7 @@
 namespace natrium {
 
 KBCStandard::KBCStandard(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil) :
+		const boost::shared_ptr<Stencil> stencil) :
 		MRT(relaxationParameter, dt, stencil) {
 
 }
@@ -21,14 +21,30 @@ KBCStandard::~KBCStandard() {
 
 void KBCStandard::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
-		bool inInitializationProcedure = false) const {
+		const dealii::IndexSet& locally_owned_dofs,
+		bool inInitializationProcedure) const {
 
-	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
-		// No MRT collision for other StencilTypes than D2Q9
-		throw CollisionException("MRT only implemented for D2Q9");
-	} else {
+	if (Stencil_D2Q9 == getStencil()->getStencilType()) {
+		collideAllD2Q9(f, densities, velocities, locally_owned_dofs,
+				inInitializationProcedure);
+	} /*else if (Stencil_D3Q19 == getStencil()->getStencilType()) {
+		collideAllD3Q19(f, densities, velocities, locally_owned_dofs,
+				inInitializationProcedure);
+	} else if (Stencil_D3Q15 == getStencil()->getStencilType()) {
+		collideAllD3Q15(f, densities, velocities, locally_owned_dofs,
+				inInitializationProcedure);
+	} */else {
+		throw CollisionException("KBC only implemented for D2Q9");
+		// Inefficient collision
+		//BGK::collideAll(f, densities, velocities, locally_owned_dofs,
+		//		inInitializationProcedure);
+	}
+}
 
-		size_t n_dofs = f.at(0).size();
+void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
+		distributed_vector& densities, vector<distributed_vector>& velocities,
+		const dealii::IndexSet& locally_owned_dofs,
+		bool inInitializationProcedure) const {
 
 		size_t Q = getQ();
 
@@ -36,7 +52,12 @@ void KBCStandard::collideAll(DistributionFunctions& f,
 		double cs2 = getStencil()->getSpeedOfSoundSquare()
 				/ (scaling * scaling);
 
-		for (size_t i = 0; i < n_dofs; i++) {
+		//for all degrees of freedom on current processor
+		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+		for (it = locally_owned_dofs.begin(); it != end; it++) {
+			size_t i = *it;
+
 
 			// calculate density
 			densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
@@ -327,7 +348,4 @@ void KBCStandard::collideAll(DistributionFunctions& f,
 		}
 
 	}
-}
-}
-
-/* namespace natrium */
+} /* namespace natrium */

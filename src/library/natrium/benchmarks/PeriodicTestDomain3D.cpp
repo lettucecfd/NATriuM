@@ -16,48 +16,52 @@
 namespace natrium {
 
 PeriodicTestDomain3D::PeriodicTestDomain3D(size_t globalRefinementLevel) :
-		ProblemDescription<3>(makeGrid(globalRefinementLevel), 1.0, 1) {
+		ProblemDescription<3>(makeGrid(), 1.0, 1) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 
+	// Refine grid
+	getMesh()->refine_global(globalRefinementLevel);
 }
 
 PeriodicTestDomain3D::~PeriodicTestDomain3D() {
 }
 
-shared_ptr<Triangulation<3> > PeriodicTestDomain3D::makeGrid(size_t globalRefinementLevel) {
+boost::shared_ptr<Mesh<3> > PeriodicTestDomain3D::makeGrid() {
 
 	//Creation of the principal domain
-	shared_ptr<Triangulation<3> > unitSquare = make_shared<Triangulation<3> >();
+#ifdef WITH_TRILINOS_MPI
+	boost::shared_ptr<Mesh<3> > unitSquare = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+
+#else
+	boost::shared_ptr<Mesh<3> > unitSquare = boost::make_shared<Mesh<3> >();
+#endif
 	dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
 
 	// Assign boundary indicators to the faces of the "parent cell"
-	Triangulation<3>::active_cell_iterator cell = unitSquare->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // fron
-	cell->face(3)->set_all_boundary_indicators(3);  // back
-	cell->face(4)->set_all_boundary_indicators(4);  // bottom
-	cell->face(5)->set_all_boundary_indicators(5);  // top
-
-	// Refine grid to 2x2 = 4 cells
-	unitSquare->refine_global(globalRefinementLevel);
+	Mesh<3>::active_cell_iterator cell = unitSquare->begin_active();
+	cell->face(0)->set_all_boundary_ids(0);  // left
+	cell->face(1)->set_all_boundary_ids(1);  // right
+	cell->face(2)->set_all_boundary_ids(2);  // fron
+	cell->face(3)->set_all_boundary_ids(3);  // back
+	cell->face(4)->set_all_boundary_ids(4);  // bottom
+	cell->face(5)->set_all_boundary_ids(5);  // top
 
 	return unitSquare;
 }
 
-shared_ptr<BoundaryCollection<3> > PeriodicTestDomain3D::makeBoundaries() {
+boost::shared_ptr<BoundaryCollection<3> > PeriodicTestDomain3D::makeBoundaries() {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<3> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<3> > boundaries = boost::make_shared<
 			BoundaryCollection<3> >();
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(0,1,getTriangulation()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(2,3,getTriangulation()));
-	boundaries->addBoundary(make_shared<PeriodicBoundary<3> >(4,5,getTriangulation()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0,1,0,getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(2,3,1,getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(4,5,2,getMesh()));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Triangulation<3> > tria_pointer = getTriangulation();
+	boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();
 
 	return boundaries;
 }

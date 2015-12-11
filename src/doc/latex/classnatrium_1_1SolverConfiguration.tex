@@ -1,294 +1,440 @@
-\hypertarget{classnatrium_1_1SolverConfiguration}{\section{natrium\-:\-:Solver\-Configuration Class Reference}
-\label{classnatrium_1_1SolverConfiguration}\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}}
+\hypertarget{classnatrium_1_1SolverConfiguration}{
+\section{natrium::SolverConfiguration Class Reference}
+\label{classnatrium_1_1SolverConfiguration}\index{natrium::SolverConfiguration@{natrium::SolverConfiguration}}
 }
 
 
-Class that stores the configuration for a C\-F\-D simulation based on the Discrete Boltzmann Equation (D\-B\-E).  
+Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE).  
 
 
-
-
-{\ttfamily \#include $<$Solver\-Configuration.\-h$>$}
-
-Inheritance diagram for natrium\-:\-:Solver\-Configuration\-:\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[height=2.000000cm]{classnatrium_1_1SolverConfiguration}
-\end{center}
-\end{figure}
-\subsection*{Public Member Functions}
+{\ttfamily \#include $<$SolverConfiguration.h$>$}\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a9aa7109e2eac9b8a7b424a35509ccdb0}{\hyperlink{classnatrium_1_1SolverConfiguration_a9aa7109e2eac9b8a7b424a35509ccdb0}{Solver\-Configuration} ()}\label{classnatrium_1_1SolverConfiguration_a9aa7109e2eac9b8a7b424a35509ccdb0}
+\hypertarget{classnatrium_1_1SolverConfiguration_a9aa7109e2eac9b8a7b424a35509ccdb0}{
+\hyperlink{classnatrium_1_1SolverConfiguration_a9aa7109e2eac9b8a7b424a35509ccdb0}{SolverConfiguration} ()}
+\label{classnatrium_1_1SolverConfiguration_a9aa7109e2eac9b8a7b424a35509ccdb0}
 
-\begin{DoxyCompactList}\small\item\em Constructor -- initializes parameters with their default values. \end{DoxyCompactList}\item 
-\hyperlink{classnatrium_1_1SolverConfiguration_a062fa86eca607f830540ef4f2c06f0b3}{Solver\-Configuration} (const std\-::string \&X\-M\-Lfilename)
-\begin{DoxyCompactList}\small\item\em Constructor -- initializes parameters from an xmlfile. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ac1b521d8c205b8774dbb7c038304336d}{virtual \hyperlink{classnatrium_1_1SolverConfiguration_ac1b521d8c205b8774dbb7c038304336d}{$\sim$\-Solver\-Configuration} ()}\label{classnatrium_1_1SolverConfiguration_ac1b521d8c205b8774dbb7c038304336d}
+\begin{DoxyCompactList}\small\item\em Constructor -\/-\/ initializes parameters with their default values. \item\end{DoxyCompactList}\item 
+\hyperlink{classnatrium_1_1SolverConfiguration_a062fa86eca607f830540ef4f2c06f0b3}{SolverConfiguration} (const std::string \&XMLfilename)
+\begin{DoxyCompactList}\small\item\em Constructor -\/-\/ initializes parameters from an xmlfile. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_ac1b521d8c205b8774dbb7c038304336d}{
+virtual \hyperlink{classnatrium_1_1SolverConfiguration_ac1b521d8c205b8774dbb7c038304336d}{$\sim$SolverConfiguration} ()}
+\label{classnatrium_1_1SolverConfiguration_ac1b521d8c205b8774dbb7c038304336d}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a2900baca8d49d3a1d48926b8c8c39b71}{void \hyperlink{classnatrium_1_1SolverConfiguration_a2900baca8d49d3a1d48926b8c8c39b71}{read\-From\-Text\-File} (const std\-::string \&filename, const bool optional=false, const bool write\-\_\-stripped\-\_\-file=false)}\label{classnatrium_1_1SolverConfiguration_a2900baca8d49d3a1d48926b8c8c39b71}
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a03f1592b0ef8c53729c5bbb9b17e5eb4}{
+void \hyperlink{classnatrium_1_1SolverConfiguration_a03f1592b0ef8c53729c5bbb9b17e5eb4}{readFromTextFile} (const std::string \&filename, const bool optional=true, const bool write\_\-stripped\_\-file=false)}
+\label{classnatrium_1_1SolverConfiguration_a03f1592b0ef8c53729c5bbb9b17e5eb4}
 
-\begin{DoxyCompactList}\small\item\em wrapper function for Parameter\-Handler\-::read\-\_\-input; directing cerr into a C++-\/\-Exception \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}{void \hyperlink{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}{read\-From\-X\-M\-L\-File} (const std\-::string \&filename)}\label{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}
+\begin{DoxyCompactList}\small\item\em wrapper function for ParameterHandler::read\_\-input; directing cerr into a C++-\/Exception \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}{
+void \hyperlink{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}{readFromXMLFile} (const std::string \&filename)}
+\label{classnatrium_1_1SolverConfiguration_a18c63509007270fa96212fef36a2c172}
 
-\begin{DoxyCompactList}\small\item\em wrapper function for Parameter\-Handler\-::read\-\_\-input\-\_\-from\-\_\-xml; directing cerr into a C++-\/\-Exception \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}{void \hyperlink{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}{is\-Consistent} ()}\label{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}
+\begin{DoxyCompactList}\small\item\em wrapper function for ParameterHandler::read\_\-input\_\-from\_\-xml; directing cerr into a C++-\/Exception \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}{
+void \hyperlink{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}{isConsistent} ()}
+\label{classnatrium_1_1SolverConfiguration_a90f8fb87f504897d3bbbc746749d2967}
 
-\begin{DoxyCompactList}\small\item\em Check if the configuration is consistent. \end{DoxyCompactList}\item 
-void \hyperlink{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}{prepare\-Output\-Directory} ()
-\begin{DoxyCompactList}\small\item\em prepare the Output directory \end{DoxyCompactList}\item 
-void \hyperlink{classnatrium_1_1SolverConfiguration_a49e6c9cd57689289c79b47a6104b483a}{check\-Problem} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{Problem\-Description}$<$ 2 $>$ $>$ c\-F\-D\-Problem)
-\begin{DoxyCompactList}\small\item\em Check if the problem definition is in accordance with the solver configuration. \end{DoxyCompactList}\item 
-void \hyperlink{classnatrium_1_1SolverConfiguration_af13da3022a9f995ce09b0918092da0c9}{check\-Problem} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{Problem\-Description}$<$ 3 $>$ $>$ c\-F\-D\-Problem)
-\begin{DoxyCompactList}\small\item\em Check if the problem definition is in accordance with the solver configuration. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_aaf32180358f99d78d56b3435dff11a11}{Advection\-Scheme\-Name {\bfseries get\-Advection\-Scheme} ()}\label{classnatrium_1_1SolverConfiguration_aaf32180358f99d78d56b3435dff11a11}
-
-\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a4fef165cd5a17247203af08846ec0f31}{void {\bfseries set\-Advection\-Scheme} (Advection\-Scheme\-Name advection\-Scheme)}\label{classnatrium_1_1SolverConfiguration_a4fef165cd5a17247203af08846ec0f31}
-
-\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a8a0bc2d24b247244790f1d50323ace4c}{bool {\bfseries is\-Collision\-On\-Boundary\-Nodes} ()}\label{classnatrium_1_1SolverConfiguration_a8a0bc2d24b247244790f1d50323ace4c}
-
-\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a12179b09400d5502f70c79060e0235bb}{void {\bfseries set\-Collision\-On\-Boundary\-Nodes} (bool collision\-On\-Boundary\-Nodes)}\label{classnatrium_1_1SolverConfiguration_a12179b09400d5502f70c79060e0235bb}
-
-\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a90e61c6fa9387a1cbf5943674bf307a8}{Collision\-Scheme\-Name {\bfseries get\-Collision\-Scheme} ()}\label{classnatrium_1_1SolverConfiguration_a90e61c6fa9387a1cbf5943674bf307a8}
-
-\item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a5e7241337aa70cbe4b8af29c9cb5cfe8}{void {\bfseries set\-Collision\-Scheme} (Collision\-Scheme\-Name collision\-Scheme)}\label{classnatrium_1_1SolverConfiguration_a5e7241337aa70cbe4b8af29c9cb5cfe8}
+\begin{DoxyCompactList}\small\item\em Check if the configuration is consistent. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}{prepareOutputDirectory} ()
+\begin{DoxyCompactList}\small\item\em prepare the Output directory \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SolverConfiguration_a5299ddfbe762f89f2cd0dfa01bc70685}{checkProblem} (shared\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ 2 $>$ $>$)
+\begin{DoxyCompactList}\small\item\em Check if the problem definition is in accordance with the solver configuration. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SolverConfiguration_ae889a75ea132979964b8c9dcf631956b}{checkProblem} (shared\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ 3 $>$ $>$)
+\begin{DoxyCompactList}\small\item\em Check if the problem definition is in accordance with the solver configuration. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_aaf32180358f99d78d56b3435dff11a11}{
+AdvectionSchemeName {\bfseries getAdvectionScheme} ()}
+\label{classnatrium_1_1SolverConfiguration_aaf32180358f99d78d56b3435dff11a11}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ac1954ee6d225807f947222c437fcd6a4}{size\-\_\-t {\bfseries get\-Command\-Line\-Verbosity} ()}\label{classnatrium_1_1SolverConfiguration_ac1954ee6d225807f947222c437fcd6a4}
+\hypertarget{classnatrium_1_1SolverConfiguration_a4fef165cd5a17247203af08846ec0f31}{
+void {\bfseries setAdvectionScheme} (AdvectionSchemeName advectionScheme)}
+\label{classnatrium_1_1SolverConfiguration_a4fef165cd5a17247203af08846ec0f31}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a906afb09b544bf2137c0d3bf9214b4a5}{void {\bfseries set\-Command\-Line\-Verbosity} (long int command\-Line\-Verbosity)}\label{classnatrium_1_1SolverConfiguration_a906afb09b544bf2137c0d3bf9214b4a5}
+\hypertarget{classnatrium_1_1SolverConfiguration_a90e61c6fa9387a1cbf5943674bf307a8}{
+CollisionSchemeName {\bfseries getCollisionScheme} ()}
+\label{classnatrium_1_1SolverConfiguration_a90e61c6fa9387a1cbf5943674bf307a8}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a43270017646e2efa400ae84d644ac897}{bool {\bfseries has\-Analytic\-Solution} ()}\label{classnatrium_1_1SolverConfiguration_a43270017646e2efa400ae84d644ac897}
+\hypertarget{classnatrium_1_1SolverConfiguration_a5e7241337aa70cbe4b8af29c9cb5cfe8}{
+void {\bfseries setCollisionScheme} (CollisionSchemeName collisionScheme)}
+\label{classnatrium_1_1SolverConfiguration_a5e7241337aa70cbe4b8af29c9cb5cfe8}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ae23ef2513c7b4ed3eacd678e38ff146f}{void {\bfseries set\-Has\-Analytic\-Solution} (bool has\-Analytic\-Solution)}\label{classnatrium_1_1SolverConfiguration_ae23ef2513c7b4ed3eacd678e38ff146f}
+\hypertarget{classnatrium_1_1SolverConfiguration_a4ebcfcb30f5cb6efb0d9fb3978b9b90f}{
+double {\bfseries getBGKSteadyStateGamma} ()}
+\label{classnatrium_1_1SolverConfiguration_a4ebcfcb30f5cb6efb0d9fb3978b9b90f}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_afe9fd2087df0ab6066f260bf6bfd03ac}{Initialization\-Scheme\-Name {\bfseries get\-Initialization\-Scheme} ()}\label{classnatrium_1_1SolverConfiguration_afe9fd2087df0ab6066f260bf6bfd03ac}
+\hypertarget{classnatrium_1_1SolverConfiguration_a040a4e68a3ce9502e39deb343586d62b}{
+void {\bfseries setBGKSteadyStateGamma} (double gamma)}
+\label{classnatrium_1_1SolverConfiguration_a040a4e68a3ce9502e39deb343586d62b}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a4d867b8b8c0c08fc68b95f1a1a52c95d}{void {\bfseries set\-Initialization\-Scheme} (Initialization\-Scheme\-Name initialization\-Scheme)}\label{classnatrium_1_1SolverConfiguration_a4d867b8b8c0c08fc68b95f1a1a52c95d}
+\hypertarget{classnatrium_1_1SolverConfiguration_ac1954ee6d225807f947222c437fcd6a4}{
+size\_\-t {\bfseries getCommandLineVerbosity} ()}
+\label{classnatrium_1_1SolverConfiguration_ac1954ee6d225807f947222c437fcd6a4}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_aa12123336ffa7489780baa45d99569b1}{size\-\_\-t {\bfseries get\-Iterative\-Initialization\-Number\-Of\-Iterations} ()}\label{classnatrium_1_1SolverConfiguration_aa12123336ffa7489780baa45d99569b1}
+\hypertarget{classnatrium_1_1SolverConfiguration_a906afb09b544bf2137c0d3bf9214b4a5}{
+void {\bfseries setCommandLineVerbosity} (long int commandLineVerbosity)}
+\label{classnatrium_1_1SolverConfiguration_a906afb09b544bf2137c0d3bf9214b4a5}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ac4188dce03b129130f153f7028c3f79e}{void {\bfseries set\-Iterative\-Initialization\-Number\-Of\-Iterations} (long int iterative\-Initialization\-Number\-Of\-Iterations)}\label{classnatrium_1_1SolverConfiguration_ac4188dce03b129130f153f7028c3f79e}
+\hypertarget{classnatrium_1_1SolverConfiguration_a43270017646e2efa400ae84d644ac897}{
+bool {\bfseries hasAnalyticSolution} ()}
+\label{classnatrium_1_1SolverConfiguration_a43270017646e2efa400ae84d644ac897}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a966eee9da52af6fbd1f8d5fad2b8427a}{double {\bfseries get\-Iterative\-Initialization\-Residual} ()}\label{classnatrium_1_1SolverConfiguration_a966eee9da52af6fbd1f8d5fad2b8427a}
+\hypertarget{classnatrium_1_1SolverConfiguration_ae23ef2513c7b4ed3eacd678e38ff146f}{
+void {\bfseries setHasAnalyticSolution} (bool hasAnalyticSolution)}
+\label{classnatrium_1_1SolverConfiguration_ae23ef2513c7b4ed3eacd678e38ff146f}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ad9551932a38bda46c8ca2ef88a73e754}{void {\bfseries set\-Iterative\-Initialization\-Residual} (double iterative\-Initialization\-Residual)}\label{classnatrium_1_1SolverConfiguration_ad9551932a38bda46c8ca2ef88a73e754}
+\hypertarget{classnatrium_1_1SolverConfiguration_afe9fd2087df0ab6066f260bf6bfd03ac}{
+InitializationSchemeName {\bfseries getInitializationScheme} ()}
+\label{classnatrium_1_1SolverConfiguration_afe9fd2087df0ab6066f260bf6bfd03ac}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a13121a202636553339d5b1f83d196fd7}{size\-\_\-t {\bfseries get\-Number\-Of\-Time\-Steps} ()}\label{classnatrium_1_1SolverConfiguration_a13121a202636553339d5b1f83d196fd7}
+\hypertarget{classnatrium_1_1SolverConfiguration_a4d867b8b8c0c08fc68b95f1a1a52c95d}{
+void {\bfseries setInitializationScheme} (InitializationSchemeName initializationScheme)}
+\label{classnatrium_1_1SolverConfiguration_a4d867b8b8c0c08fc68b95f1a1a52c95d}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a50c43893f5c6ed0d73fcccd64f523053}{void {\bfseries set\-Number\-Of\-Time\-Steps} (long int number\-Of\-Time\-Steps)}\label{classnatrium_1_1SolverConfiguration_a50c43893f5c6ed0d73fcccd64f523053}
+\hypertarget{classnatrium_1_1SolverConfiguration_aa12123336ffa7489780baa45d99569b1}{
+size\_\-t {\bfseries getIterativeInitializationNumberOfIterations} ()}
+\label{classnatrium_1_1SolverConfiguration_aa12123336ffa7489780baa45d99569b1}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a7b7ffc9156ba827ab74ff6f1d7bd9151}{size\-\_\-t {\bfseries get\-Output\-Checkpoint\-Interval} ()}\label{classnatrium_1_1SolverConfiguration_a7b7ffc9156ba827ab74ff6f1d7bd9151}
+\hypertarget{classnatrium_1_1SolverConfiguration_ac4188dce03b129130f153f7028c3f79e}{
+void {\bfseries setIterativeInitializationNumberOfIterations} (long int iterativeInitializationNumberOfIterations)}
+\label{classnatrium_1_1SolverConfiguration_ac4188dce03b129130f153f7028c3f79e}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ab7a39dfb46cb1b0c7b54b92700fd7360}{void {\bfseries set\-Output\-Checkpoint\-Interval} (long int output\-Checkpoint\-Interval)}\label{classnatrium_1_1SolverConfiguration_ab7a39dfb46cb1b0c7b54b92700fd7360}
+\hypertarget{classnatrium_1_1SolverConfiguration_a966eee9da52af6fbd1f8d5fad2b8427a}{
+double {\bfseries getIterativeInitializationResidual} ()}
+\label{classnatrium_1_1SolverConfiguration_a966eee9da52af6fbd1f8d5fad2b8427a}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a6c0fb63902a6828c06c48918402375bb}{size\-\_\-t {\bfseries get\-Output\-Table\-Interval} ()}\label{classnatrium_1_1SolverConfiguration_a6c0fb63902a6828c06c48918402375bb}
+\hypertarget{classnatrium_1_1SolverConfiguration_ad9551932a38bda46c8ca2ef88a73e754}{
+void {\bfseries setIterativeInitializationResidual} (double iterativeInitializationResidual)}
+\label{classnatrium_1_1SolverConfiguration_ad9551932a38bda46c8ca2ef88a73e754}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a207c38e009015be45e74eaa86f9db7ad}{void {\bfseries set\-Output\-Table\-Interval} (long int output\-Table\-Interval)}\label{classnatrium_1_1SolverConfiguration_a207c38e009015be45e74eaa86f9db7ad}
+\hypertarget{classnatrium_1_1SolverConfiguration_a13121a202636553339d5b1f83d196fd7}{
+size\_\-t {\bfseries getNumberOfTimeSteps} ()}
+\label{classnatrium_1_1SolverConfiguration_a13121a202636553339d5b1f83d196fd7}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a2a0444878a5fb512772e024bc03ec076}{const std\-::string {\bfseries get\-Output\-Directory} ()}\label{classnatrium_1_1SolverConfiguration_a2a0444878a5fb512772e024bc03ec076}
+\hypertarget{classnatrium_1_1SolverConfiguration_a50c43893f5c6ed0d73fcccd64f523053}{
+void {\bfseries setNumberOfTimeSteps} (long int numberOfTimeSteps)}
+\label{classnatrium_1_1SolverConfiguration_a50c43893f5c6ed0d73fcccd64f523053}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_acd249488bb83773514c4d6917b5bfc3a}{void {\bfseries set\-Output\-Directory} (const std\-::string \&output\-Directory)}\label{classnatrium_1_1SolverConfiguration_acd249488bb83773514c4d6917b5bfc3a}
+\hypertarget{classnatrium_1_1SolverConfiguration_aa0d9cd3a8d2e6e04fc33e3b4fb8785d9}{
+double {\bfseries getSimulationEndTime} ()}
+\label{classnatrium_1_1SolverConfiguration_aa0d9cd3a8d2e6e04fc33e3b4fb8785d9}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_aa7fdb1358469be8faf1cc14c64538927}{size\-\_\-t {\bfseries get\-Output\-Solution\-Interval} ()}\label{classnatrium_1_1SolverConfiguration_aa7fdb1358469be8faf1cc14c64538927}
+\hypertarget{classnatrium_1_1SolverConfiguration_a0d64bd79313ae1aa022d9a2c0e6bc3fd}{
+void {\bfseries setSimulationEndTime} (double end\_\-time)}
+\label{classnatrium_1_1SolverConfiguration_a0d64bd79313ae1aa022d9a2c0e6bc3fd}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ab49c72f19d58f7408eb14ac7fd865b78}{void {\bfseries set\-Output\-Solution\-Interval} (long int output\-Solution\-Interval)}\label{classnatrium_1_1SolverConfiguration_ab49c72f19d58f7408eb14ac7fd865b78}
+\hypertarget{classnatrium_1_1SolverConfiguration_a221b5a32cb4cc871536f68a26e14b3c8}{
+double {\bfseries getConvergenceThreshold} ()}
+\label{classnatrium_1_1SolverConfiguration_a221b5a32cb4cc871536f68a26e14b3c8}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a6ca256e404b94f7201ecace9307ef1df}{bool {\bfseries is\-Restart\-At\-Last\-Checkpoint} ()}\label{classnatrium_1_1SolverConfiguration_a6ca256e404b94f7201ecace9307ef1df}
+\hypertarget{classnatrium_1_1SolverConfiguration_a8e7af89ae281933e0f70771ef09147b0}{
+void {\bfseries setConvergenceThreshold} (double threshold)}
+\label{classnatrium_1_1SolverConfiguration_a8e7af89ae281933e0f70771ef09147b0}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_af6077ef11412e53eb16c013b4362410e}{void {\bfseries set\-Restart\-At\-Last\-Checkpoint} (bool restart\-At\-Last\-Checkpoint)}\label{classnatrium_1_1SolverConfiguration_af6077ef11412e53eb16c013b4362410e}
+\hypertarget{classnatrium_1_1SolverConfiguration_a7b7ffc9156ba827ab74ff6f1d7bd9151}{
+size\_\-t {\bfseries getOutputCheckpointInterval} ()}
+\label{classnatrium_1_1SolverConfiguration_a7b7ffc9156ba827ab74ff6f1d7bd9151}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_aecc2a87bc6e50d6e09ea035678478c4f}{Flux\-Type\-Name {\bfseries get\-Sedg\-Flux\-Type} ()}\label{classnatrium_1_1SolverConfiguration_aecc2a87bc6e50d6e09ea035678478c4f}
+\hypertarget{classnatrium_1_1SolverConfiguration_ab7a39dfb46cb1b0c7b54b92700fd7360}{
+void {\bfseries setOutputCheckpointInterval} (long int outputCheckpointInterval)}
+\label{classnatrium_1_1SolverConfiguration_ab7a39dfb46cb1b0c7b54b92700fd7360}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a331256f91794e32be618b1162c321bdd}{void {\bfseries set\-Sedg\-Flux\-Type} (Flux\-Type\-Name sedg\-Flux\-Type)}\label{classnatrium_1_1SolverConfiguration_a331256f91794e32be618b1162c321bdd}
+\hypertarget{classnatrium_1_1SolverConfiguration_a6c0fb63902a6828c06c48918402375bb}{
+size\_\-t {\bfseries getOutputTableInterval} ()}
+\label{classnatrium_1_1SolverConfiguration_a6c0fb63902a6828c06c48918402375bb}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a1fad5bbbc062b1aad018da73e90033b2}{size\-\_\-t {\bfseries get\-Sedg\-Order\-Of\-Finite\-Element} ()}\label{classnatrium_1_1SolverConfiguration_a1fad5bbbc062b1aad018da73e90033b2}
+\hypertarget{classnatrium_1_1SolverConfiguration_a207c38e009015be45e74eaa86f9db7ad}{
+void {\bfseries setOutputTableInterval} (long int outputTableInterval)}
+\label{classnatrium_1_1SolverConfiguration_a207c38e009015be45e74eaa86f9db7ad}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a2a9ab8b6b6dcb47ad4bb85ef06e15dea}{void {\bfseries set\-Sedg\-Order\-Of\-Finite\-Element} (long int sedg\-Order\-Of\-Finite\-Element)}\label{classnatrium_1_1SolverConfiguration_a2a9ab8b6b6dcb47ad4bb85ef06e15dea}
+\hypertarget{classnatrium_1_1SolverConfiguration_a2a0444878a5fb512772e024bc03ec076}{
+const std::string {\bfseries getOutputDirectory} ()}
+\label{classnatrium_1_1SolverConfiguration_a2a0444878a5fb512772e024bc03ec076}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_adb7b45c43f97f0ce2ca288f92a32b577}{double {\bfseries get\-Stencil\-Scaling} ()}\label{classnatrium_1_1SolverConfiguration_adb7b45c43f97f0ce2ca288f92a32b577}
+\hypertarget{classnatrium_1_1SolverConfiguration_acd249488bb83773514c4d6917b5bfc3a}{
+void {\bfseries setOutputDirectory} (const std::string \&outputDirectory)}
+\label{classnatrium_1_1SolverConfiguration_acd249488bb83773514c4d6917b5bfc3a}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a1dff19c0a3cc7386bd629dd72e59ac42}{void {\bfseries set\-Stencil\-Scaling} (double stencil\-Scaling)}\label{classnatrium_1_1SolverConfiguration_a1dff19c0a3cc7386bd629dd72e59ac42}
+\hypertarget{classnatrium_1_1SolverConfiguration_aa7fdb1358469be8faf1cc14c64538927}{
+size\_\-t {\bfseries getOutputSolutionInterval} ()}
+\label{classnatrium_1_1SolverConfiguration_aa7fdb1358469be8faf1cc14c64538927}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a962af94c9599c393d8a16d7f5ae04d6c}{Stencil\-Type {\bfseries get\-Stencil} ()}\label{classnatrium_1_1SolverConfiguration_a962af94c9599c393d8a16d7f5ae04d6c}
+\hypertarget{classnatrium_1_1SolverConfiguration_ab49c72f19d58f7408eb14ac7fd865b78}{
+void {\bfseries setOutputSolutionInterval} (long int outputSolutionInterval)}
+\label{classnatrium_1_1SolverConfiguration_ab49c72f19d58f7408eb14ac7fd865b78}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_afa50192447fb027d0250a29b1ea86d1a}{void {\bfseries set\-Stencil} (Stencil\-Type stencil)}\label{classnatrium_1_1SolverConfiguration_afa50192447fb027d0250a29b1ea86d1a}
+\hypertarget{classnatrium_1_1SolverConfiguration_a6ca256e404b94f7201ecace9307ef1df}{
+bool {\bfseries isRestartAtLastCheckpoint} ()}
+\label{classnatrium_1_1SolverConfiguration_a6ca256e404b94f7201ecace9307ef1df}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ac7e6189aaa1b54016993e852999376eb}{Time\-Integrator\-Name {\bfseries get\-Time\-Integrator} ()}\label{classnatrium_1_1SolverConfiguration_ac7e6189aaa1b54016993e852999376eb}
+\hypertarget{classnatrium_1_1SolverConfiguration_af6077ef11412e53eb16c013b4362410e}{
+void {\bfseries setRestartAtLastCheckpoint} (bool restartAtLastCheckpoint)}
+\label{classnatrium_1_1SolverConfiguration_af6077ef11412e53eb16c013b4362410e}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ac58399f50e64bc8b0efde5b51e246aeb}{void {\bfseries set\-Time\-Integrator} (Time\-Integrator\-Name time\-Integrator)}\label{classnatrium_1_1SolverConfiguration_ac58399f50e64bc8b0efde5b51e246aeb}
+\hypertarget{classnatrium_1_1SolverConfiguration_aecc2a87bc6e50d6e09ea035678478c4f}{
+FluxTypeName {\bfseries getSedgFluxType} ()}
+\label{classnatrium_1_1SolverConfiguration_aecc2a87bc6e50d6e09ea035678478c4f}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a0e2606b5c10964a08e7107dbe079a1ed}{double {\bfseries get\-Theta\-Method\-Theta} ()}\label{classnatrium_1_1SolverConfiguration_a0e2606b5c10964a08e7107dbe079a1ed}
+\hypertarget{classnatrium_1_1SolverConfiguration_a331256f91794e32be618b1162c321bdd}{
+void {\bfseries setSedgFluxType} (FluxTypeName sedgFluxType)}
+\label{classnatrium_1_1SolverConfiguration_a331256f91794e32be618b1162c321bdd}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_acb2153b276dfc0e28bb2cabf8855acd0}{void {\bfseries set\-Theta\-Method\-Theta} (double theta)}\label{classnatrium_1_1SolverConfiguration_acb2153b276dfc0e28bb2cabf8855acd0}
+\hypertarget{classnatrium_1_1SolverConfiguration_a1fad5bbbc062b1aad018da73e90033b2}{
+size\_\-t {\bfseries getSedgOrderOfFiniteElement} ()}
+\label{classnatrium_1_1SolverConfiguration_a1fad5bbbc062b1aad018da73e90033b2}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ae446f5d60a09f30a43258a5ec2bebbbf}{double {\bfseries get\-Time\-Step\-Size} ()}\label{classnatrium_1_1SolverConfiguration_ae446f5d60a09f30a43258a5ec2bebbbf}
+\hypertarget{classnatrium_1_1SolverConfiguration_a2a9ab8b6b6dcb47ad4bb85ef06e15dea}{
+void {\bfseries setSedgOrderOfFiniteElement} (long int sedgOrderOfFiniteElement)}
+\label{classnatrium_1_1SolverConfiguration_a2a9ab8b6b6dcb47ad4bb85ef06e15dea}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_aab0d1b737708c92e83ebe3424b3bed4d}{void {\bfseries set\-Time\-Step\-Size} (double time\-Step\-Size)}\label{classnatrium_1_1SolverConfiguration_aab0d1b737708c92e83ebe3424b3bed4d}
+\hypertarget{classnatrium_1_1SolverConfiguration_adb7b45c43f97f0ce2ca288f92a32b577}{
+double {\bfseries getStencilScaling} ()}
+\label{classnatrium_1_1SolverConfiguration_adb7b45c43f97f0ce2ca288f92a32b577}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ac97dc43684f8a690de0f3e9c132dda02}{bool {\bfseries is\-Write\-A\-Log\-File} ()}\label{classnatrium_1_1SolverConfiguration_ac97dc43684f8a690de0f3e9c132dda02}
+\hypertarget{classnatrium_1_1SolverConfiguration_a1dff19c0a3cc7386bd629dd72e59ac42}{
+void {\bfseries setStencilScaling} (double stencilScaling)}
+\label{classnatrium_1_1SolverConfiguration_a1dff19c0a3cc7386bd629dd72e59ac42}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a6e50f8fc372b4346ba9f309d5d5f47b3}{void {\bfseries set\-Write\-A\-Log\-File} (bool write\-A\-Log\-File)}\label{classnatrium_1_1SolverConfiguration_a6e50f8fc372b4346ba9f309d5d5f47b3}
+\hypertarget{classnatrium_1_1SolverConfiguration_a962af94c9599c393d8a16d7f5ae04d6c}{
+StencilType {\bfseries getStencil} ()}
+\label{classnatrium_1_1SolverConfiguration_a962af94c9599c393d8a16d7f5ae04d6c}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ae4852378b026ccc913732eb8b20eca74}{bool {\bfseries is\-Switch\-Output\-Off} ()}\label{classnatrium_1_1SolverConfiguration_ae4852378b026ccc913732eb8b20eca74}
+\hypertarget{classnatrium_1_1SolverConfiguration_afa50192447fb027d0250a29b1ea86d1a}{
+void {\bfseries setStencil} (StencilType stencil)}
+\label{classnatrium_1_1SolverConfiguration_afa50192447fb027d0250a29b1ea86d1a}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_afcae7f43456c2a127c242b230ea3a8a2}{void {\bfseries set\-Switch\-Output\-Off} (bool switch\-Output\-Off)}\label{classnatrium_1_1SolverConfiguration_afcae7f43456c2a127c242b230ea3a8a2}
+\hypertarget{classnatrium_1_1SolverConfiguration_ac7e6189aaa1b54016993e852999376eb}{
+TimeIntegratorName {\bfseries getTimeIntegrator} ()}
+\label{classnatrium_1_1SolverConfiguration_ac7e6189aaa1b54016993e852999376eb}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_a6e41f8ce5da4ecafe2e4326997e79f3d}{bool {\bfseries is\-User\-Interaction} ()}\label{classnatrium_1_1SolverConfiguration_a6e41f8ce5da4ecafe2e4326997e79f3d}
+\hypertarget{classnatrium_1_1SolverConfiguration_ac58399f50e64bc8b0efde5b51e246aeb}{
+void {\bfseries setTimeIntegrator} (TimeIntegratorName timeIntegrator)}
+\label{classnatrium_1_1SolverConfiguration_ac58399f50e64bc8b0efde5b51e246aeb}
 
 \item 
-\hypertarget{classnatrium_1_1SolverConfiguration_ad013b9240ee7ae0d5cc43ff5f588c3f3}{void {\bfseries set\-User\-Interaction} (bool user\-Interact)}\label{classnatrium_1_1SolverConfiguration_ad013b9240ee7ae0d5cc43ff5f588c3f3}
+\hypertarget{classnatrium_1_1SolverConfiguration_a0e2606b5c10964a08e7107dbe079a1ed}{
+double {\bfseries getThetaMethodTheta} ()}
+\label{classnatrium_1_1SolverConfiguration_a0e2606b5c10964a08e7107dbe079a1ed}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_acb2153b276dfc0e28bb2cabf8855acd0}{
+void {\bfseries setThetaMethodTheta} (double theta)}
+\label{classnatrium_1_1SolverConfiguration_acb2153b276dfc0e28bb2cabf8855acd0}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a5ba156b86d81572776d8c20b04f21dcc}{
+DealIntegratorName {\bfseries getDealIntegrator} ()}
+\label{classnatrium_1_1SolverConfiguration_a5ba156b86d81572776d8c20b04f21dcc}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_acf54eacaa0135343d69a31f0bbc8031c}{
+void {\bfseries setDealIntegrator} (DealIntegratorName integrator)}
+\label{classnatrium_1_1SolverConfiguration_acf54eacaa0135343d69a31f0bbc8031c}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a0678dd0f89508e37c5c555413d5dc258}{
+DealSolverName {\bfseries getDealLinearSolver} ()}
+\label{classnatrium_1_1SolverConfiguration_a0678dd0f89508e37c5c555413d5dc258}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a63ab4a5ff44381dfff6558c030fa3665}{
+void {\bfseries setDealLinearSolver} (DealSolverName solver)}
+\label{classnatrium_1_1SolverConfiguration_a63ab4a5ff44381dfff6558c030fa3665}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a7a017f7078ef42c350efbfca51d9681c}{
+void {\bfseries setEmbeddedDealIntegratorParameters} (double coarsen\_\-param, double refine\_\-param, double min\_\-delta, double max\_\-delta, double refine\_\-tol, double coarsen\_\-tol)}
+\label{classnatrium_1_1SolverConfiguration_a7a017f7078ef42c350efbfca51d9681c}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a0e233c5ac8c6387bf31923700fd95b56}{
+double {\bfseries getEmbeddedDealIntegratorCoarsenParameter} ()}
+\label{classnatrium_1_1SolverConfiguration_a0e233c5ac8c6387bf31923700fd95b56}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a9f8fda7b80e405dab21388cdb0eacbbe}{
+double {\bfseries getEmbeddedDealIntegratorRefinementParameter} ()}
+\label{classnatrium_1_1SolverConfiguration_a9f8fda7b80e405dab21388cdb0eacbbe}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a42688d5882305d75929798685dcd3b0b}{
+double {\bfseries getEmbeddedDealIntegratorMinimumTimeStep} ()}
+\label{classnatrium_1_1SolverConfiguration_a42688d5882305d75929798685dcd3b0b}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a01efc16a1f7c548ef83acdf4bb5bdaf4}{
+double {\bfseries getEmbeddedDealIntegratorMaximumTimeStep} ()}
+\label{classnatrium_1_1SolverConfiguration_a01efc16a1f7c548ef83acdf4bb5bdaf4}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a2c6da5cc4bcfc653c0f3b93b57a4ddf5}{
+double {\bfseries getEmbeddedDealIntegratorRefinementTolerance} ()}
+\label{classnatrium_1_1SolverConfiguration_a2c6da5cc4bcfc653c0f3b93b57a4ddf5}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_afedfb3328b78940a7e929214c6d08741}{
+double {\bfseries getEmbeddedDealIntegratorCoarsenTolerance} ()}
+\label{classnatrium_1_1SolverConfiguration_afedfb3328b78940a7e929214c6d08741}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_ae446f5d60a09f30a43258a5ec2bebbbf}{
+double {\bfseries getTimeStepSize} ()}
+\label{classnatrium_1_1SolverConfiguration_ae446f5d60a09f30a43258a5ec2bebbbf}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_aab0d1b737708c92e83ebe3424b3bed4d}{
+void {\bfseries setTimeStepSize} (double timeStepSize)}
+\label{classnatrium_1_1SolverConfiguration_aab0d1b737708c92e83ebe3424b3bed4d}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_ac97dc43684f8a690de0f3e9c132dda02}{
+bool {\bfseries isWriteALogFile} ()}
+\label{classnatrium_1_1SolverConfiguration_ac97dc43684f8a690de0f3e9c132dda02}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a6e50f8fc372b4346ba9f309d5d5f47b3}{
+void {\bfseries setWriteALogFile} (bool writeALogFile)}
+\label{classnatrium_1_1SolverConfiguration_a6e50f8fc372b4346ba9f309d5d5f47b3}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_ae4852378b026ccc913732eb8b20eca74}{
+bool {\bfseries isSwitchOutputOff} ()}
+\label{classnatrium_1_1SolverConfiguration_ae4852378b026ccc913732eb8b20eca74}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_afcae7f43456c2a127c242b230ea3a8a2}{
+void {\bfseries setSwitchOutputOff} (bool switchOutputOff)}
+\label{classnatrium_1_1SolverConfiguration_afcae7f43456c2a127c242b230ea3a8a2}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_a6e41f8ce5da4ecafe2e4326997e79f3d}{
+bool {\bfseries isUserInteraction} ()}
+\label{classnatrium_1_1SolverConfiguration_a6e41f8ce5da4ecafe2e4326997e79f3d}
+
+\item 
+\hypertarget{classnatrium_1_1SolverConfiguration_ad013b9240ee7ae0d5cc43ff5f588c3f3}{
+void {\bfseries setUserInteraction} (bool userInteract)}
+\label{classnatrium_1_1SolverConfiguration_ad013b9240ee7ae0d5cc43ff5f588c3f3}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Class that stores the configuration for a C\-F\-D simulation based on the Discrete Boltzmann Equation (D\-B\-E). 
+Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE). \begin{DoxyNote}{Note}
+The class is a subclass of dealii::ParameterHandler and functions as a wrapper. 
 
-\begin{DoxyNote}{Note}
-The class is a subclass of dealii\-::\-Parameter\-Handler and functions as a wrapper. 
-
-To integrate new parameter into the framework, you have to declare the paramters in the constructor and write the getter and setter. The setter and getter have to navigate through the sections of the Parameter handler and catch the exceptions thrown by the Parameter handler. Finally you have to update the preprocessor/\-N\-A\-Triu\-M\-\_\-parameters.\-xml file, most easily run the Unit\-Tests and copy results/\-N\-A\-Triu\-M\-\_\-parameters.\-xml there. The latter file is automatically created according to the declared parameters. Every selection-\/type parameter (e.\-g. Advection scheme) is implemented as an enum for better handling through the command line. 
+To integrate new parameter into the framework, you have to declare the paramters in the constructor and write the getter and setter. The setter and getter have to navigate through the sections of the Parameter handler and catch the exceptions thrown by the Parameter handler. Finally you have to update the preprocessor/NATriuM\_\-parameters.xml file, most easily run the UnitTests and copy results/NATriuM\_\-parameters.xml there. The latter file is automatically created according to the declared parameters. Every selection-\/type parameter (e.g. Advection scheme) is implemented as an enum for better handling through the command line. 
 \end{DoxyNote}
 \begin{Desc}
-\item[Examples\-: ]\par
-\hyperlink{step-0_8cpp-example}{step-\/0.\-cpp}.\end{Desc}
+\item[Examples: ]\par
+
+
+\hyperlink{step-0_8cpp-example}{step-\/0.cpp}.\end{Desc}
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1SolverConfiguration_a062fa86eca607f830540ef4f2c06f0b3}{\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}!Solver\-Configuration@{Solver\-Configuration}}
-\index{Solver\-Configuration@{Solver\-Configuration}!natrium::SolverConfiguration@{natrium\-::\-Solver\-Configuration}}
-\subsubsection[{Solver\-Configuration}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Solver\-Configuration\-::\-Solver\-Configuration (
-\begin{DoxyParamCaption}
-\item[{const std\-::string \&}]{X\-M\-Lfilename}
-\end{DoxyParamCaption}
-)}}\label{classnatrium_1_1SolverConfiguration_a062fa86eca607f830540ef4f2c06f0b3}
+\hypertarget{classnatrium_1_1SolverConfiguration_a062fa86eca607f830540ef4f2c06f0b3}{
+\index{natrium::SolverConfiguration@{natrium::SolverConfiguration}!SolverConfiguration@{SolverConfiguration}}
+\index{SolverConfiguration@{SolverConfiguration}!natrium::SolverConfiguration@{natrium::SolverConfiguration}}
+\subsubsection[{SolverConfiguration}]{\setlength{\rightskip}{0pt plus 5cm}natrium::SolverConfiguration::SolverConfiguration (const std::string \& {\em XMLfilename})}}
+\label{classnatrium_1_1SolverConfiguration_a062fa86eca607f830540ef4f2c06f0b3}
 
 
-Constructor -- initializes parameters from an xmlfile. 
-
-
+Constructor -\/-\/ initializes parameters from an xmlfile. 
 \begin{DoxyExceptions}{Exceptions}
-{\em \hyperlink{classnatrium_1_1ConfigurationException}{Configuration\-Exception}} & if the X\-M\-L file has wrong format \\
-\hline
-\end{DoxyExceptions}
+\item[{\em \hyperlink{classnatrium_1_1ConfigurationException}{ConfigurationException}}]if the XML file has wrong format \end{DoxyExceptions}
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1SolverConfiguration_a49e6c9cd57689289c79b47a6104b483a}{\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}!check\-Problem@{check\-Problem}}
-\index{check\-Problem@{check\-Problem}!natrium::SolverConfiguration@{natrium\-::\-Solver\-Configuration}}
-\subsubsection[{check\-Problem}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Solver\-Configuration\-::check\-Problem (
-\begin{DoxyParamCaption}
-\item[{shared\-\_\-ptr$<$ {\bf Problem\-Description}$<$ 2 $>$ $>$}]{c\-F\-D\-Problem}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1SolverConfiguration_a49e6c9cd57689289c79b47a6104b483a}
+\hypertarget{classnatrium_1_1SolverConfiguration_ae889a75ea132979964b8c9dcf631956b}{
+\index{natrium::SolverConfiguration@{natrium::SolverConfiguration}!checkProblem@{checkProblem}}
+\index{checkProblem@{checkProblem}!natrium::SolverConfiguration@{natrium::SolverConfiguration}}
+\subsubsection[{checkProblem}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::SolverConfiguration::checkProblem (shared\_\-ptr$<$ {\bf ProblemDescription}$<$ 3 $>$ $>$)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SolverConfiguration_ae889a75ea132979964b8c9dcf631956b}
 
 
 Check if the problem definition is in accordance with the solver configuration. 
-
-
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em c\-F\-D\-Problem} & Shared pointer to a problem description\\
-\hline
-\end{DoxyParams}
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em cFDProblem}]Shared pointer to a problem description\end{DoxyParams}
 
 \begin{DoxyExceptions}{Exceptions}
-{\em ...} & //\-T\-O\-D\-O implement custom exception \\
-\hline
-\end{DoxyExceptions}
-\hypertarget{classnatrium_1_1SolverConfiguration_af13da3022a9f995ce09b0918092da0c9}{\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}!check\-Problem@{check\-Problem}}
-\index{check\-Problem@{check\-Problem}!natrium::SolverConfiguration@{natrium\-::\-Solver\-Configuration}}
-\subsubsection[{check\-Problem}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Solver\-Configuration\-::check\-Problem (
-\begin{DoxyParamCaption}
-\item[{shared\-\_\-ptr$<$ {\bf Problem\-Description}$<$ 3 $>$ $>$}]{c\-F\-D\-Problem}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1SolverConfiguration_af13da3022a9f995ce09b0918092da0c9}
+\item[{\em ...}]//TODO implement custom exception \end{DoxyExceptions}
+\hypertarget{classnatrium_1_1SolverConfiguration_a5299ddfbe762f89f2cd0dfa01bc70685}{
+\index{natrium::SolverConfiguration@{natrium::SolverConfiguration}!checkProblem@{checkProblem}}
+\index{checkProblem@{checkProblem}!natrium::SolverConfiguration@{natrium::SolverConfiguration}}
+\subsubsection[{checkProblem}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::SolverConfiguration::checkProblem (shared\_\-ptr$<$ {\bf ProblemDescription}$<$ 2 $>$ $>$)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SolverConfiguration_a5299ddfbe762f89f2cd0dfa01bc70685}
 
 
 Check if the problem definition is in accordance with the solver configuration. 
-
-
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em c\-F\-D\-Problem} & Shared pointer to a problem description\\
-\hline
-\end{DoxyParams}
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em cFDProblem}]Shared pointer to a problem description\end{DoxyParams}
 
 \begin{DoxyExceptions}{Exceptions}
-{\em ...} & //\-T\-O\-D\-O implement custom exception \\
-\hline
-\end{DoxyExceptions}
-\hypertarget{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}{\index{natrium\-::\-Solver\-Configuration@{natrium\-::\-Solver\-Configuration}!prepare\-Output\-Directory@{prepare\-Output\-Directory}}
-\index{prepare\-Output\-Directory@{prepare\-Output\-Directory}!natrium::SolverConfiguration@{natrium\-::\-Solver\-Configuration}}
-\subsubsection[{prepare\-Output\-Directory}]{\setlength{\rightskip}{0pt plus 5cm}void natrium\-::\-Solver\-Configuration\-::prepare\-Output\-Directory (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}
+\item[{\em ...}]//TODO implement custom exception \end{DoxyExceptions}
+\hypertarget{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}{
+\index{natrium::SolverConfiguration@{natrium::SolverConfiguration}!prepareOutputDirectory@{prepareOutputDirectory}}
+\index{prepareOutputDirectory@{prepareOutputDirectory}!natrium::SolverConfiguration@{natrium::SolverConfiguration}}
+\subsubsection[{prepareOutputDirectory}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::SolverConfiguration::prepareOutputDirectory ()}}
+\label{classnatrium_1_1SolverConfiguration_a69c009fd87690677b66ab10a000d07f6}
 
 
-prepare the Output directory 
-
-\begin{DoxyNote}{Note}
+prepare the Output directory \begin{DoxyNote}{Note}
 If 'User interaction' is enabled, user input is requested in case of possible overwriting 
 \end{DoxyNote}
 
 \begin{DoxyExceptions}{Exceptions}
-{\em Solver\-Configuration\-Error,if} & it was not possible \\
-\hline
-\end{DoxyExceptions}
+\item[{\em SolverConfigurationError,if}]it was not possible \end{DoxyExceptions}
+
+
 If not exists, try to create output directory
 
-try to create a single file
+try to open all files
 
-try to open all files 
+try to create a single file 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\hyperlink{SolverConfiguration_8h}{Solver\-Configuration.\-h}\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\hyperlink{SolverConfiguration_8cpp}{Solver\-Configuration.\-cpp}\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/\hyperlink{SolverConfiguration_8h}{SolverConfiguration.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/\hyperlink{SolverConfiguration_8cpp}{SolverConfiguration.cpp}\end{DoxyCompactItemize}

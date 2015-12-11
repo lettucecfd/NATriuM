@@ -103,23 +103,23 @@ template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {
 
 private:
 
-	/// Triangulation
-	shared_ptr<dealii::Triangulation<dim> > m_tria;
+	/// Mesh
+	boost::shared_ptr<Mesh<dim> > m_tria;
 
 	/// Boundary Description
-	shared_ptr<BoundaryCollection<dim> > m_boundaries;
+	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
 	/// integration on gauss lobatto nodes
-	shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
+	boost::shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
 
 	/// integration on boundary (with gauß lobatto nodes)
-	shared_ptr<dealii::QGaussLobatto<dim - 1> > m_faceQuadrature;
+	boost::shared_ptr<dealii::QGaussLobatto<dim - 1> > m_faceQuadrature;
 
 	/// Finite Element function on one cell
-	shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
+	boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
 
-	/// dealii::DoFHandler to distribute the degrees of freedom over the Triangulation
-	shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
+	/// dealii::DoFHandler to distribute the degrees of freedom over the Mesh
+	boost::shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
 
 	/// Sparsity Pattern of the sparse matrix
 	dealii::BlockSparsityPattern m_sparsityPattern;
@@ -133,7 +133,7 @@ private:
 	distributed_block_vector m_systemVector;
 
 	/// the DQ model (e.g. D2Q9)
-	shared_ptr<Stencil> m_stencil;
+	boost::shared_ptr<Stencil> m_stencil;
 
 	/// a map, which connects degrees of freedom with their respective quadrature nodes
 	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
@@ -152,6 +152,13 @@ private:
 	/// central flux or Lax-Friedrichs flux (default)
 	const bool m_useCentralFlux;
 
+#ifdef WITH_TRILINOS
+	// locally owned degrees of freedom (for MPI parallelization)
+	dealii::IndexSet m_locallyOwnedDofs;
+	// locally relevant degrees of freedom (i.e. ghost layer cells)
+	dealii::IndexSet m_locallyRelevantDofs;
+#endif
+
 	/**
 	 * @short update the sparsity pattern of the system matrix
 	 */
@@ -165,8 +172,7 @@ private:
 	 */
 	// TODO SEDG implemenation with fully diagonal mass matrix
 	void assembleLocalMassMatrix(const dealii::FEValues<dim>& feValues,
-			size_t dofs_per_cell, size_t n_q_points, vector<double> &massMatrix,
-			const std::vector<dealii::types::global_dof_index>& globalDoFs);
+			size_t dofs_per_cell, vector<double> &massMatrix);
 
 	/**
 	 * @short assemble the \f$\alpha\f$-th local derivative matrix
@@ -174,7 +180,7 @@ private:
 	 * @param[out] derivativeMatrix The i-th derivative matrix <D_i phi_j, phi_k>
 	 */
 	void assembleLocalDerivativeMatrices(const dealii::FEValues<dim>& feValues,
-			size_t dofs_per_cell, size_t n_q_points,
+			size_t dofs_per_cell,
 			vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 	/**
@@ -186,9 +192,7 @@ private:
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
-			dealii::FEFaceValues<dim>& feNeighborFaceValues,
-			size_t dofs_per_cell, size_t n_q_points,
-			dealii::FullMatrix<double> &faceMatrix, const vector<double>& inverseLocalMassMatrix);
+			dealii::FEFaceValues<dim>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
 
 	/**
 	 * @short calculate system diagonal block matrix  (Dx*eix + Dy*eiy)
@@ -279,10 +283,10 @@ public:
 	 * @param[in] orderOfFiniteElement The number of nodes element and dimension
 	 * @param[in] stencil the DQ model
 	 */
-	SEDGMinLee(shared_ptr<dealii::Triangulation<dim> > triangulation,
-			shared_ptr<BoundaryCollection<dim> > boundaries,
+	SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
+			boost::shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement,
-			shared_ptr<Stencil> stencil, string inputDirectory = "", bool useCentralFlux =
+			boost::shared_ptr<Stencil> stencil, string inputDirectory = "", bool useCentralFlux =
 					false);
 
 	/// destructor
@@ -309,13 +313,13 @@ public:
 	}
 
 	virtual void mapDoFsToSupportPoints(
-			vector<dealii::Point<dim> >& supportPoints) const {
-		assert(supportPoints.size() == this->getNumberOfDoFs());
+			std::map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
+		//assert(supportPoints.size() == this->getNumberOfDoFs());
 		dealii::DoFTools::map_dofs_to_support_points(m_mapping, *m_doFHandler,
 				supportPoints);
 	}
 
-	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
+	virtual const boost::shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
 		return m_doFHandler;
 	}
 
@@ -345,11 +349,11 @@ public:
 		return m_facedof_to_q_index;
 	}
 
-	const shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
+	const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
 
-	virtual const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
+	virtual const boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
 		return m_fe;
 	}
 
@@ -357,7 +361,7 @@ public:
 		return m_fe->dofs_per_cell;
 	}
 
-	virtual const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
+	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
 		return m_quadrature;
 	}
 
@@ -372,6 +376,16 @@ public:
 	virtual const distributed_block_vector& getSystemVector() const {
 		return m_systemVector;
 	}
+
+#ifdef WITH_TRILINOS
+	const dealii::IndexSet& getLocallyOwnedDofs() {
+		return m_locallyOwnedDofs;
+	}
+	const dealii::IndexSet& getLocallyRelevantDofs() {
+		return m_locallyRelevantDofs;
+	}
+#endif
+
 };
 
 } /* namespace natrium */

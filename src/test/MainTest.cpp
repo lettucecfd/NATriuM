@@ -14,24 +14,36 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/MPIGuard.h"
 
-
-using std::cout;
-using std::endl;
+namespace natrium {
 
 
 BOOST_AUTO_TEST_SUITE(Boost_test)
 
+/* MPI has to be initialized before MPI_COMM_WORLD is duplicated
+ * That happens quite often in the code, so we have to make sure
+ * that MPIInitFinalize has been called before the tests start.
+ * This is done by a global fixture:
+ */
+struct InitMPI {
+	InitMPI()   {
+#ifdef WITH_TRILINOS
+    	std::cout << "Global fixture: MPI Init\n" << endl;
+    	natrium::MPIGuard::getInstance();
+#endif
+    }
+    ~InitMPI()  {  }
+};
+BOOST_GLOBAL_FIXTURE( InitMPI )
+
 
 // Test if Boost unit test framework is running properly
 BOOST_AUTO_TEST_CASE(Boost_test) {
-	cout << "Boost_test..." << endl;
-
-#ifdef WITH_TRILINOS
-	natrium::MPIGuard::getInstance();
-#endif
+	pout << "Boost_test..." << endl;
 
 	BOOST_CHECK(1 == 1);
-	cout << "done" << endl;
+	pout << "done" << endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+} /* namespace natrium */

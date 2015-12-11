@@ -1,48 +1,111 @@
-\hypertarget{namespacenatrium_1_1Math}{\section{natrium\-:\-:Math Namespace Reference}
-\label{namespacenatrium_1_1Math}\index{natrium\-::\-Math@{natrium\-::\-Math}}
+\hypertarget{namespacenatrium_1_1Math}{
+\section{natrium::Math Namespace Reference}
+\label{namespacenatrium_1_1Math}\index{natrium::Math@{natrium::Math}}
 }
 
 
 namespace which contains basic math functions  
-
-
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespacenatrium_1_1Math_a60a79394533003516ee1895b0cb93c73}{double \hyperlink{namespacenatrium_1_1Math_a60a79394533003516ee1895b0cb93c73}{scalar\-\_\-product} (const numeric\-\_\-vector \&x, const numeric\-\_\-vector \&y)}\label{namespacenatrium_1_1Math_a60a79394533003516ee1895b0cb93c73}
-
-\begin{DoxyCompactList}\small\item\em scalar product \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_1_1Math_a951fe967a78de6add632ac1944465bf3}{void \hyperlink{namespacenatrium_1_1Math_a951fe967a78de6add632ac1944465bf3}{scale\-\_\-vector} (double a, numeric\-\_\-vector \&x)}\label{namespacenatrium_1_1Math_a951fe967a78de6add632ac1944465bf3}
-
-\begin{DoxyCompactList}\small\item\em scale existing vector \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_1_1Math_af6c85a423e8c6ec87858a3d48669a271}{numeric\-\_\-vector \hyperlink{namespacenatrium_1_1Math_af6c85a423e8c6ec87858a3d48669a271}{scalar\-\_\-vector} (double a, const numeric\-\_\-vector \&x)}\label{namespacenatrium_1_1Math_af6c85a423e8c6ec87858a3d48669a271}
-
-\begin{DoxyCompactList}\small\item\em scalar times vector \end{DoxyCompactList}\item 
-\hypertarget{namespacenatrium_1_1Math_adce2097ce0c14661aac3eaff3a03e183}{void {\bfseries add\-\_\-vector} (numeric\-\_\-vector \&x, const numeric\-\_\-vector \&y)}\label{namespacenatrium_1_1Math_adce2097ce0c14661aac3eaff3a03e183}
+\hypertarget{namespacenatrium_1_1Math_a679e2186fce3ecd63b28f12abe85d6c8}{
+template double {\bfseries maxVelocityNorm$<$ numeric\_\-vector $>$} (const vector$<$ numeric\_\-vector $>$ \&velocity, const dealii::IndexSet \&locally\_\-owned\_\-dofs)}
+\label{namespacenatrium_1_1Math_a679e2186fce3ecd63b28f12abe85d6c8}
 
 \item 
-\hypertarget{namespacenatrium_1_1Math_aa836548ce124ae68fe267d0c988add9b}{void {\bfseries subtract\-\_\-vector} (numeric\-\_\-vector \&x, const numeric\-\_\-vector \&y)}\label{namespacenatrium_1_1Math_aa836548ce124ae68fe267d0c988add9b}
+\hypertarget{namespacenatrium_1_1Math_a2e30b25874b35438b936980fded05cea}{
+{\footnotesize template$<$$>$ }\\double {\bfseries velocity2Norm$<$ numeric\_\-vector $>$} (const vector$<$ numeric\_\-vector $>$ \&velocity, const dealii::IndexSet \&locally\_\-owned\_\-dofs)}
+\label{namespacenatrium_1_1Math_a2e30b25874b35438b936980fded05cea}
 
 \item 
-\hypertarget{namespacenatrium_1_1Math_a3fbf64e851a081a568d1fce928380074}{double {\bfseries euclidean\-\_\-norm} (numeric\-\_\-vector \&x)}\label{namespacenatrium_1_1Math_a3fbf64e851a081a568d1fce928380074}
+\hypertarget{namespacenatrium_1_1Math_a5d090f1b2fa0e48d746ec70877178a8f}{
+template double {\bfseries maxVelocityNorm$<$ distributed\_\-vector $>$} (const vector$<$ distributed\_\-vector $>$ \&velocity, const dealii::IndexSet \&locally\_\-owned\_\-dofs)}
+\label{namespacenatrium_1_1Math_a5d090f1b2fa0e48d746ec70877178a8f}
 
 \item 
-\hypertarget{namespacenatrium_1_1Math_a55469b55d9a0f80edfed2aecb95fe73d}{bool {\bfseries is\-\_\-angle\-\_\-small} (dealii\-::\-Point$<$ 2 $>$ vector1, dealii\-::\-Point$<$ 2 $>$ vector2, double threshold\-Degrees=0.\-0)}\label{namespacenatrium_1_1Math_a55469b55d9a0f80edfed2aecb95fe73d}
+\hypertarget{namespacenatrium_1_1Math_a2e8a1b8caedd5cd6c1140bdc1f4cf2d5}{
+{\footnotesize template$<$$>$ }\\double {\bfseries velocity2Norm$<$ distributed\_\-vector $>$} (const vector$<$ distributed\_\-vector $>$ \&velocity, const dealii::IndexSet \&locally\_\-owned\_\-dofs)}
+\label{namespacenatrium_1_1Math_a2e8a1b8caedd5cd6c1140bdc1f4cf2d5}
 
 \item 
-\hypertarget{namespacenatrium_1_1Math_a9e700098d3aab2d0e0ed0b5be4b1137a}{double {\bfseries max\-Velocity\-Norm} (const vector$<$ distributed\-\_\-vector $>$ \&velocity)}\label{namespacenatrium_1_1Math_a9e700098d3aab2d0e0ed0b5be4b1137a}
+\hypertarget{namespacenatrium_1_1Math_a60a79394533003516ee1895b0cb93c73}{
+double \hyperlink{namespacenatrium_1_1Math_a60a79394533003516ee1895b0cb93c73}{scalar\_\-product} (const numeric\_\-vector \&x, const numeric\_\-vector \&y)}
+\label{namespacenatrium_1_1Math_a60a79394533003516ee1895b0cb93c73}
+
+\begin{DoxyCompactList}\small\item\em scalar product \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1Math_a951fe967a78de6add632ac1944465bf3}{
+void \hyperlink{namespacenatrium_1_1Math_a951fe967a78de6add632ac1944465bf3}{scale\_\-vector} (double a, numeric\_\-vector \&x)}
+\label{namespacenatrium_1_1Math_a951fe967a78de6add632ac1944465bf3}
+
+\begin{DoxyCompactList}\small\item\em scale existing vector \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1Math_af6c85a423e8c6ec87858a3d48669a271}{
+numeric\_\-vector \hyperlink{namespacenatrium_1_1Math_af6c85a423e8c6ec87858a3d48669a271}{scalar\_\-vector} (double a, const numeric\_\-vector \&x)}
+\label{namespacenatrium_1_1Math_af6c85a423e8c6ec87858a3d48669a271}
+
+\begin{DoxyCompactList}\small\item\em scalar times vector \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1Math_adce2097ce0c14661aac3eaff3a03e183}{
+void {\bfseries add\_\-vector} (numeric\_\-vector \&x, const numeric\_\-vector \&y)}
+\label{namespacenatrium_1_1Math_adce2097ce0c14661aac3eaff3a03e183}
 
 \item 
-\hypertarget{namespacenatrium_1_1Math_a4d98cdb7fc5423722f75bf6e6440a1d3}{double {\bfseries velocity2\-Norm} (const vector$<$ distributed\-\_\-vector $>$ \&velocity)}\label{namespacenatrium_1_1Math_a4d98cdb7fc5423722f75bf6e6440a1d3}
+\hypertarget{namespacenatrium_1_1Math_aa836548ce124ae68fe267d0c988add9b}{
+void {\bfseries subtract\_\-vector} (numeric\_\-vector \&x, const numeric\_\-vector \&y)}
+\label{namespacenatrium_1_1Math_aa836548ce124ae68fe267d0c988add9b}
 
-\end{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_1_1Math_a3fbf64e851a081a568d1fce928380074}{
+double {\bfseries euclidean\_\-norm} (numeric\_\-vector \&x)}
+\label{namespacenatrium_1_1Math_a3fbf64e851a081a568d1fce928380074}
+
+\item 
+\hypertarget{namespacenatrium_1_1Math_a5e27b57b0c8ef5db261c6fd6cc7f8b08}{
+bool {\bfseries is\_\-angle\_\-small} (dealii::Tensor$<$ 1, 2 $>$ vector1, dealii::Tensor$<$ 1, 2 $>$ vector2, double thresholdDegrees=0.0)}
+\label{namespacenatrium_1_1Math_a5e27b57b0c8ef5db261c6fd6cc7f8b08}
+
+\item 
+{\footnotesize template$<$class VECTOR $>$ }\\double \hyperlink{namespacenatrium_1_1Math_afdfb0b93daae2db1221dc22e268c631d}{maxVelocityNorm} (const vector$<$ VECTOR $>$ \&velocity, const dealii::IndexSet \&locally\_\-owned\_\-dofs)
+\begin{DoxyCompactList}\small\item\em Calculate the maximum of the euclidean velocity norm. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$class VECTOR $>$ }\\double \hyperlink{namespacenatrium_1_1Math_ac6abc916cc66dda84a4e5c28e61be560}{velocity2Norm} (const vector$<$ VECTOR $>$ \&velocity, const dealii::IndexSet \&locally\_\-owned\_\-dofs)
+\begin{DoxyCompactList}\small\item\em Calculate the euclidean norm of the velocity over all points (not in the finite element space, but element-\/wise). \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespacenatrium_1_1Math_a1ef5edf004cf147f3b3e9d36a7af4b00}{const double {\bfseries P\-I} = 3.\-141592653589793238462}\label{namespacenatrium_1_1Math_a1ef5edf004cf147f3b3e9d36a7af4b00}
+\hypertarget{namespacenatrium_1_1Math_a1ef5edf004cf147f3b3e9d36a7af4b00}{
+const double {\bfseries PI} = 3.141592653589793238462}
+\label{namespacenatrium_1_1Math_a1ef5edf004cf147f3b3e9d36a7af4b00}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 namespace which contains basic math functions 
+
+\subsection{Function Documentation}
+\hypertarget{namespacenatrium_1_1Math_afdfb0b93daae2db1221dc22e268c631d}{
+\index{natrium::Math@{natrium::Math}!maxVelocityNorm@{maxVelocityNorm}}
+\index{maxVelocityNorm@{maxVelocityNorm}!natrium::Math@{natrium::Math}}
+\subsubsection[{maxVelocityNorm}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ double natrium::Math::maxVelocityNorm (const vector$<$ VECTOR $>$ \& {\em velocity}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_1_1Math_afdfb0b93daae2db1221dc22e268c631d}
+
+
+Calculate the maximum of the euclidean velocity norm. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em velocity}]Velocity vector. \item[\mbox{$\leftarrow$} {\em locally\_\-owned\_\-dofs}]Index set that contains the locally owned degrees of freedom. \end{DoxyParams}
+\begin{DoxyNote}{Note}
+not implemented for block vectors, because the velocity should not come as a block vector in natrium 
+\end{DoxyNote}
+\hypertarget{namespacenatrium_1_1Math_ac6abc916cc66dda84a4e5c28e61be560}{
+\index{natrium::Math@{natrium::Math}!velocity2Norm@{velocity2Norm}}
+\index{velocity2Norm@{velocity2Norm}!natrium::Math@{natrium::Math}}
+\subsubsection[{velocity2Norm}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ double natrium::Math::velocity2Norm (const vector$<$ VECTOR $>$ \& {\em velocity}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_1_1Math_ac6abc916cc66dda84a4e5c28e61be560}
+
+
+Calculate the euclidean norm of the velocity over all points (not in the finite element space, but element-\/wise). 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em velocity}]Velocity vector. \item[\mbox{$\leftarrow$} {\em locally\_\-owned\_\-dofs}]Index set that contains the locally owned degrees of freedom. \end{DoxyParams}
+\begin{DoxyNote}{Note}
+not implemented for block vectors, because the velocity should not come as a block vector in natrium 
+
+In contrast to maxVelocityNorm, this function is seperately implemented for distributed vectors, (specialized template instantiation) because a global sum would corrupt the solution, when using local vectors. This does not allow to declare the function as inline. 
+\end{DoxyNote}

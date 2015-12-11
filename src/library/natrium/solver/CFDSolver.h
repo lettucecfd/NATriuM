@@ -28,13 +28,12 @@
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
 #include "../utilities/NATriuMException.h"
+#include "../utilities/Timing.h"
 
 namespace natrium {
 
 /* forward declarations */
 class Stencil;
-
-
 
 /**
  * @short Exception class for CFDSolver
@@ -55,6 +54,7 @@ public:
 		return this->message.c_str();
 	}
 };
+
 
 /** @short The central class for the CFD simulation based on the DBE.
  *  @note  The CFDSolver itself is quite static but it contains interchangeable modules, e.g. for the
@@ -82,24 +82,24 @@ private:
 	vector<distributed_vector> m_tmpVelocity;
 
 	/// description of the CFD problem (boundraries, initial values, etc.)
-	shared_ptr<ProblemDescription<dim> > m_problemDescription;
+	boost::shared_ptr<ProblemDescription<dim> > m_problemDescription;
 
 	/// global streaming data
-	shared_ptr<AdvectionOperator<dim> > m_advectionOperator;
+	boost::shared_ptr<AdvectionOperator<dim> > m_advectionOperator;
 
 	/// DdQq Boltzmann model (e.g. D2Q9)
-	shared_ptr<Stencil> m_stencil;
+	boost::shared_ptr<Stencil> m_stencil;
 
 	/// Description of the collision algorithm
-	shared_ptr<CollisionModel> m_collisionModel;
+	boost::shared_ptr<CollisionModel> m_collisionModel;
 
 	/// Time Integrator for the solution of the ODE, which stems from the space discretization
-	shared_ptr<
+	boost::shared_ptr<
 			TimeIntegrator<distributed_sparse_block_matrix,
 					distributed_block_vector> > m_timeIntegrator;
 
 	/// Configuration of the solver
-	shared_ptr<SolverConfiguration> m_configuration;
+	boost::shared_ptr<SolverConfiguration> m_configuration;
 
 	/// the number of the first iteration (normally 0, except for restart at a checkpoint)
 	size_t m_iterationStart;
@@ -114,7 +114,7 @@ private:
 	size_t m_i;
 
 	/// table out
-	shared_ptr<SolverStats<dim> > m_solverStats;
+	boost::shared_ptr<SolverStats<dim> > m_solverStats;
 
 	// starting time
 	time_t m_tstart;
@@ -132,15 +132,15 @@ protected:
 	void loadDistributionFunctionsFromFiles(const string& directory);
 
 	/// gives the possibility for Benchmark instances to add the analytic solution to output
-	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& data_out) {
+	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>&) {
 	}
 
 public:
 
 	/// constructor
 	/// @note: has to be inlined, if the template parameter is not made explicit
-	CFDSolver(shared_ptr<SolverConfiguration> configuration,
-			shared_ptr<ProblemDescription<dim> > problemDescription);
+	CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+			boost::shared_ptr<ProblemDescription<dim> > problemDescription);
 
 /// destructor
 	virtual ~CFDSolver() {
@@ -178,6 +178,22 @@ public:
 	bool stopConditionMet();
 
 	/**
+	 * @short set initial densities
+	 * @param[out] initialDensities vector of densities; to be filled
+	 * @param[in] supportPoints the coordinates associated with each degree of freedom
+	 */
+	void applyInitialDensities(distributed_vector& initialDensities,
+			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
+
+	/**
+	 * @short set initial velocities
+	 * @param[out] initialVelocities vector of velocities; to be filled
+	 * @param[in] supportPoints the coordinates associated with each degree of freedom
+	 */
+	void applyInitialVelocities(vector<distributed_vector>& initialVelocities,
+			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
+
+	/**
 	 * @short create output data and write to file
 	 */
 	virtual void output(size_t iteration);
@@ -185,7 +201,7 @@ public:
 	/**
 	 *
 	 */
-	bool hasGeometryChanged(){
+	bool hasGeometryChanged() {
 		return false;
 	}
 
@@ -201,27 +217,27 @@ public:
 		return m_velocity;
 	}
 
-	const shared_ptr<AdvectionOperator<dim> >& getAdvectionOperator() const {
+	const boost::shared_ptr<AdvectionOperator<dim> >& getAdvectionOperator() const {
 		return m_advectionOperator;
 	}
 
-	const shared_ptr<Stencil>& getStencil() const {
+	const boost::shared_ptr<Stencil>& getStencil() const {
 		return m_stencil;
 	}
 
-	const shared_ptr<CollisionModel>& getCollisionModel() const {
+	const boost::shared_ptr<CollisionModel>& getCollisionModel() const {
 		return m_collisionModel;
 	}
 
-	const shared_ptr<SolverConfiguration>& getConfiguration() const {
+	const boost::shared_ptr<SolverConfiguration>& getConfiguration() const {
 		return m_configuration;
 	}
 
-	const shared_ptr<ProblemDescription<dim> >& getProblemDescription() const {
+	const boost::shared_ptr<ProblemDescription<dim> >& getProblemDescription() const {
 		return m_problemDescription;
 	}
 
-	const shared_ptr<
+	const boost::shared_ptr<
 			TimeIntegrator<distributed_vector, distributed_sparse_matrix> >& getTimeIntegrator() const {
 		return m_timeIntegrator;
 	}
@@ -230,7 +246,18 @@ public:
 		return m_advectionOperator->getNumberOfDoFs();
 	}
 	double getMaxVelocityNorm() const {
-		return Math::maxVelocityNorm(m_velocity);
+		double max = m_velocity.at(0).linfty_norm();
+		double comp2 = m_velocity.at(1).linfty_norm();
+		if (comp2 > max){
+			max = comp2;
+		}
+		double comp3 = 0;
+		if (dim == 3)
+			comp3 = m_velocity.at(2).linfty_norm();
+		if (comp3 > max){
+			max = comp3;
+		}
+		return max;
 	}
 
 	double getMaxDensityDeviationFrom(double referenceDensity) const {
@@ -256,7 +283,11 @@ public:
 		return m_i;
 	}
 
-	const shared_ptr<SolverStats<dim> >& getSolverStats() const {
+	void setIteration(size_t iteration) {
+		m_i = iteration;
+	}
+
+	const boost::shared_ptr<SolverStats<dim> >& getSolverStats() const {
 		return m_solverStats;
 	}
 
@@ -268,6 +299,10 @@ public:
 
 	double getResiduumVelocity() const {
 		return m_residuumVelocity;
+	}
+
+	void printRuntimeSummary() const {
+		pout << Timing::getOutStream().str() << endl;
 	}
 }
 ;

@@ -1,0 +1,46 @@
+# format1
+
+#################################################
+# Gnuplot script file for plotting data in files#
+#################################################
+#  1           2       3        4     5     6      7         8         9    10        11                  12               13                14             15               16
+# refinement   p      dx    #dofs    dt   #steps   tmax    scaling    Ma    tau    max |u_analytic|  ||u_analytic||_2   max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2       
+#     17                         18                               19
+# init time (sec)             loop time (sec)         time for one iteration (sec)
+
+
+reset
+set term postscript eps color enhanced "Helvetica" 28
+set size 1.2, 0.8
+set rmargin at screen 0.7
+set key right outside title "Preconditioning `echo $Gamma`"
+
+# LINESTYLE DEFINITIONS
+set style line 1  linetype 1 linecolor rgb "dark-red"  linewidth 7 pointtype 4 pointsize 2# pointinterval 10
+set style line 2  linetype 1 linecolor rgb "dark-orange"  linewidth 7 pointtype 6 pointsize 2#pointinterval 10
+set style line 3  linetype 1 linecolor rgb "dark-goldenrod"  linewidth 7 pointtype 8 pointsize 2# pointinterval 10
+set style line 4  linetype 2 linecolor rgb "dark-green"  linewidth 7.000 pointtype 12 pointsize 2# pointinterval 10
+set style line 5  linetype 1 linecolor rgb "violet"  linewidth 7.000 pointtype 3 pointsize 2# pointinterval 10
+set style line 6  linetype 1 linecolor rgb "dark-blue"  linewidth 7.000 pointtype 7 pointsize 2# pointinterval 10
+set style line 7  linetype 1 linecolor rgb "cyan"  linewidth 7.000 pointtype 11 pointsize 2# pointinterval 10
+
+set xlabel 'Iteration'
+set ylabel 'Psi_x'
+set yrange [0:1.5]
+set format x "10^%L"
+
+set logscale x
+
+set output "flow_factor_evolution.eps"
+
+A(eps) = sqrt(2)/(eps+sqrt(2))
+Psi(eps) = 6*(eps+sqrt(2))/(2*(eps+sqrt(2))**2+2)
+
+plot 	"../ref`echo $Refinement`-p`echo $orderFE`-cfg`echo 1`/results_table.txt" u 1:(((0.1-$9)*2/0.1-1)*0.3/0.0707107) title "Config 1"  lc 1,\
+	"../ref`echo $Refinement`-p`echo $orderFE`-cfg`echo 2`/results_table.txt" u 1:(((0.1-$9)*2/0.1-1)*0.3/0.0707107) title "Config 2"  lc 2 ,\
+	"../ref`echo $Refinement`-p`echo $orderFE`-cfg`echo 3`/results_table.txt" u 1:(((0.1-$9)*2/0.1-1)*0.3/0.205061) title "Config 3"  lc 3,\
+	"../ref`echo $Refinement`-p`echo $orderFE`-cfg`echo 4`/results_table.txt" u 1:(((0.1-$9)*2/0.1-1)*0.3/0.0353553) title "Config 4"   lc 4,\
+	"../ref`echo $Refinement`-p`echo $orderFE`-cfg`echo 5`/results_table.txt" u 1:(((0.1-$9)*2/0.1-1)*0.3/0.0353553) title "Config 5" lc 5,\
+        Psi(2.82843) title "Letalleur (1,2)" w l lw 2 lc 2,\
+	Psi(0.048766) title "Letalleur (3)  " w l lw 2 lc 3,\
+	Psi(7.07107) title "Letalleur (4,5)" w l lw 2 lc 5

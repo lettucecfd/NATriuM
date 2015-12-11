@@ -49,22 +49,22 @@ public:
 template<size_t dim> class BoundaryCollection {
 private:
 	/// vector to store boundaries in
-	std::map<size_t, shared_ptr<Boundary<dim> > > m_boundaries;
+	std::map<size_t, boost::shared_ptr<Boundary<dim> > > m_boundaries;
 
 	/// vector to store boundaries in
-	std::map<size_t, shared_ptr<MinLeeBoundary<dim> > > m_minLeeBoundaries;
+	std::map<size_t, boost::shared_ptr<MinLeeBoundary<dim> > > m_minLeeBoundaries;
 
 	/// vector to store periodic boundaries in
-	std::map<size_t, shared_ptr<PeriodicBoundary<dim> > > m_periodicBoundaries;
+	std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > > m_periodicBoundaries;
 
 public:
 
-	typedef typename std::map<size_t, shared_ptr<Boundary<dim> > >::iterator Iterator;
-	typedef typename std::map<size_t, shared_ptr<Boundary<dim> > >::const_iterator ConstIterator;
-	typedef typename std::map<size_t, shared_ptr<MinLeeBoundary<dim> > >::iterator MinLeeIterator;
-	typedef typename std::map<size_t, shared_ptr<MinLeeBoundary<dim> > >::const_iterator ConstMinLeeIterator;
-	typedef typename std::map<size_t, shared_ptr<PeriodicBoundary<dim> > >::iterator PeriodicIterator;
-	typedef typename std::map<size_t, shared_ptr<PeriodicBoundary<dim> > >::const_iterator ConstPeriodicIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::iterator Iterator;
+	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::const_iterator ConstIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<MinLeeBoundary<dim> > >::iterator MinLeeIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<MinLeeBoundary<dim> > >::const_iterator ConstMinLeeIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::iterator PeriodicIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::const_iterator ConstPeriodicIterator;
 
 	BoundaryCollection() {
 	}
@@ -79,7 +79,7 @@ public:
 	 * @param boundary a periodic boundary
 	 * @throws BoundaryCollectionError, e.g. if boundary indicators are not unique
 	 */
-	void addBoundary(shared_ptr<PeriodicBoundary<dim> > boundary) {
+	void addBoundary(boost::shared_ptr<PeriodicBoundary<dim> > boundary) {
 		bool success1 = m_boundaries.insert(
 				std::make_pair(boundary->getBoundaryIndicator1(), boundary)).second;
 		bool success2 = m_boundaries.insert(
@@ -97,7 +97,7 @@ public:
 	 * @param boundary a periodic boundary
 	 * @throws BoundaryCollectionError, e.g. if boundary indicators are not unique
 	 */
-	void addBoundary(shared_ptr<MinLeeBoundary<dim> > boundary) {
+	void addBoundary(boost::shared_ptr<MinLeeBoundary<dim> > boundary) {
 		bool success = m_boundaries.insert(
 				std::make_pair(boundary->getBoundaryIndicator(), boundary)).second;
 		if (not success) {
@@ -111,7 +111,7 @@ public:
 	 * @short get a specific boundary
 	 * @throws BoundaryCollectionError, if the specified boundary indicator does not exist
 	 */
-	const shared_ptr<Boundary<dim> >& getBoundary(size_t boundaryIndicator) const{
+	const boost::shared_ptr<Boundary<dim> >& getBoundary(size_t boundaryIndicator) const{
 		if (m_boundaries.count(boundaryIndicator) == 0){
 			throw BoundaryCollectionException("in getBoundary: This boundary collection does not contain a boundary with the specified boundary indicator.");
 		}
@@ -122,7 +122,7 @@ public:
 	 * @short get a specific periodic boundary
 	 * @throws BoundaryCollectionError, if the specified boundary indicator does not exist
 	 */
-	const shared_ptr<PeriodicBoundary<dim> >& getPeriodicBoundary(size_t boundaryIndicator) const {
+	const boost::shared_ptr<PeriodicBoundary<dim> >& getPeriodicBoundary(size_t boundaryIndicator) const {
 		assert (isPeriodic(boundaryIndicator));
 		if (m_periodicBoundaries.count(boundaryIndicator) == 0){
 			throw BoundaryCollectionException("in getPeriodicBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.");
@@ -134,7 +134,7 @@ public:
 	 * @short get a specific MinLee boundary
 	 * @throws BoundaryCollectionError, if the specified boundary indicator does not exist
 	 */
-	const shared_ptr<MinLeeBoundary<dim> >& getMinLeeBoundary(size_t boundaryIndicator) const{
+	const boost::shared_ptr<MinLeeBoundary<dim> >& getMinLeeBoundary(size_t boundaryIndicator) const{
 		assert (not isPeriodic(boundaryIndicator));
 		if (m_minLeeBoundaries.count(boundaryIndicator) == 0){
 			throw BoundaryCollectionException("in minLeeBoundary: This boundary collection does not contain a periodic boundary with the specified boundary indicator.");
@@ -149,23 +149,23 @@ public:
 		return getBoundary(boundaryIndicator)->isPeriodic();
 	}
 
-	const size_t numberOfBoundaries() const {
+	size_t numberOfBoundaries() const {
 		return m_boundaries.size();
 	}
 
-	const size_t numberOfPeriodicBoundaries() const {
+	size_t numberOfPeriodicBoundaries() const {
 		return m_periodicBoundaries.size();
 	}
 
-	const std::map<size_t, shared_ptr<Boundary<dim> > >& getBoundaries() const {
+	const std::map<size_t, boost::shared_ptr<Boundary<dim> > >& getBoundaries() const {
 		return m_boundaries;
 	}
 
-	const std::map<size_t, shared_ptr<PeriodicBoundary<dim> > >& getPeriodicBoundaries() const {
+	const std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >& getPeriodicBoundaries() const {
 		return m_periodicBoundaries;
 	}
 
-	const std::map<size_t, shared_ptr<MinLeeBoundary<dim> > >& getMinLeeBoundaries() const {
+	const std::map<size_t, boost::shared_ptr<MinLeeBoundary<dim> > >& getMinLeeBoundaries() const {
 		return m_minLeeBoundaries;
 	}
 };

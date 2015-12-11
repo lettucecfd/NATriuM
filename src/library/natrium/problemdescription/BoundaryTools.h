@@ -64,7 +64,7 @@ bool checkParallelLines(const dealii::Point<2>& beginLine1,
  */
 bool getInterfacialLinesByBoundaryIndicator(size_t boundaryIndicator1,
 		size_t boundaryIndicator2,
-		shared_ptr<dealii::Triangulation<2> > triangulation,
+		boost::shared_ptr<Mesh<2> > triangulation,
 		dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
 		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
 		std::string& errorMessage);

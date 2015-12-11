@@ -35,56 +35,60 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout
-			<< "Starting NATriuM convergence analysis (Ma-dependency)..."
-			<< endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM convergence analysis (Ma-dependency)..." << endl;
 
 	// PARSE INPUT
-	cout
+	pout
 			<< "To use incompressible scheme, pass 1st cmd line parameter 1 (standard), 2 (trafo) or 3 (incompressible)."
 			<< endl;
-	cout
+	pout
 			<< "To specify initialization, pass 2nd cmd line parameter 1 (rho=1), 2 (iterative) or 3 (analytic)."
+			<< endl;
+	pout
+			<< "To specify a CFL number other than 0.4, pass CFL number as 3rd cmd line parameter."
 			<< endl;
 	int BGK_SCHEME = 1;
 	int INIT_SCHEME = 1;
+	double CFL = 0.4;
 	if (argc > 0) {
 		if (std::atoi(argv[1]) == 1) {
-			cout << "Standard BGK"
-					<< endl;
+			pout << "Standard BGK" << endl;
 			BGK_SCHEME = 1;
 		} else if (std::atoi(argv[1]) == 2) {
-			cout << "Transformed BGK"
-					<< endl;
+			pout << "Transformed BGK" << endl;
 			BGK_SCHEME = 2;
 		} else if (std::atoi(argv[1]) == 3) {
-			cout << "Incompressible scheme by He and Luo"
-					<< endl;
+			pout << "Incompressible scheme by He and Luo" << endl;
 			BGK_SCHEME = 3;
 		} else {
-			cout << "Did not understand collision scheme." << endl;
+			pout << "Did not understand collision scheme." << endl;
 		}
 	}
 	if (argc > 1) {
 		if (std::atoi(argv[2]) == 1) {
-			cout << "Init with rho = 1" << endl;
+			pout << "Init with rho = 1" << endl;
 			INIT_SCHEME = 1;
 		} else if (std::atoi(argv[2]) == 2) {
-			cout<< "Init with iterative scheme" << endl;
+			pout << "Init with iterative scheme" << endl;
 			INIT_SCHEME = 2;
 		} else if (std::atoi(argv[2]) == 3) {
-			cout << "Init with analytic pressure" << endl;
+			pout << "Init with analytic pressure" << endl;
 			INIT_SCHEME = 3;
 		} else {
-			cout << "Did not understand init scheme." << endl;
+			pout << "Did not understand init scheme." << endl;
 		}
 	}
+	if (argc > 2) {
+		CFL = std::atof(argv[3]);
+	}
 
-	/////////////////////////////////////////////////
-	// set parameters, set up configuration object
-	//////////////////////////////////////////////////
+/////////////////////////////////////////////////
+// set parameters, set up configuration object
+//////////////////////////////////////////////////
 
-	// setup configuration
+// setup configuration
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-Ma/";
 	if (1 == BGK_SCHEME) {
@@ -95,21 +99,22 @@ int main(int argc, char* argv[]) {
 		dirName << "inc";
 	}
 	if (1 == INIT_SCHEME) {
-		dirName << "_rho1/";
+		dirName << "_rho1";
 	} else if (2 == INIT_SCHEME) {
-		dirName << "_iter/";
+		dirName << "_iter";
 	} else if (3 == INIT_SCHEME) {
-		dirName << "_ana/";
+		dirName << "_ana";
 	}
+	dirName << "_cfl" << CFL << "/";
 	boost::filesystem::create_directory(dirName.str().c_str());
 
 	const double viscosity = 1.;
 
-	// zunaechst: fixed order of FE
+// zunaechst: fixed order of FE
 	const size_t refinementLevel = 4;
 
-	// prepare time table file
-	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
+// prepare time table file
+// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 	std::stringstream filename;
 	filename << dirName.str() << "table_runtime.txt";
 	std::ofstream timeFile(filename.str().c_str());
@@ -117,42 +122,43 @@ int main(int argc, char* argv[]) {
 			<< "#refinement Level    FE order     dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
 			<< endl;
 
-	// prepare error table file
+// prepare error table file
 	std::stringstream filename2;
 	filename2 << dirName.str() << "table_order.txt";
 	std::ofstream orderFile(filename2.str().c_str());
-	//orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
+//orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 	orderFile
 			<< "#  refinementlevel  FE order    Ma    dt    tau    i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
 	for (size_t orderOfFiniteElement = 1; orderOfFiniteElement < 5;
 			orderOfFiniteElement++) {
-		cout << "refinement Level = " << refinementLevel << endl;
+		pout << "refinement Level = " << refinementLevel << endl;
 
 		for (double Ma = 0.3; Ma > 5e-4; Ma /= 2) {
-			cout << "Ma = " << Ma << endl;
+			pout << "Ma = " << Ma << endl;
 
 			double scaling = sqrt(3) * 1 / Ma;
 
-			shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+			boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 					TaylorGreenVortex2D>(viscosity, refinementLevel,
 					scaling / sqrt(3), (INIT_SCHEME == 3));
-			shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+			boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*tgVortex->getTriangulation(), orderOfFiniteElement,
-					D2Q9(scaling));
+					*tgVortex->getMesh(), orderOfFiniteElement,
+					D2Q9(scaling), CFL);
 
-			cout << "dt = " << dt << " ...";
+			pout << "dt = " << dt << " ...";
 
 			// time measurement variables
 			double time1, time2, timestart;
 
 			// setup configuration
 			std::stringstream dirName2;
-			dirName2 << dirName.str() << Ma << "_" << refinementLevel;
-			shared_ptr<SolverConfiguration> configuration = make_shared<
+			dirName2 << dirName.str() << Ma << "-ref" << refinementLevel << "-p"
+					<< orderOfFiniteElement;
+			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName2.str());
@@ -176,12 +182,12 @@ int main(int argc, char* argv[]) {
 			if (2 == BGK_SCHEME) {
 				configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 			} else if (3 == BGK_SCHEME) {
-				cout << "Not yet implemented" << endl;
+				pout << "Not yet implemented" << endl;
 				continue;
 			}
 			configuration->setTimeStepSize(dt);
 			if (dt > 0.1) {
-				cout << "Timestep too big." << endl;
+				pout << "Timestep too big." << endl;
 				continue;
 
 			}
@@ -201,7 +207,7 @@ int main(int argc, char* argv[]) {
 				time2 = clock() - time1 - timestart;
 				time1 /= CLOCKS_PER_SEC;
 				time2 /= CLOCKS_PER_SEC;
-				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+				pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << endl;
 				// put out runtime
 				timeFile << refinementLevel << "     " << orderOfFiniteElement
@@ -221,7 +227,7 @@ int main(int argc, char* argv[]) {
 						<< solver.getErrorStats()->getL2VelocityError() << " "
 						<< solver.getErrorStats()->getL2DensityError() << endl;
 			} catch (std::exception& e) {
-				cout << " Error" << endl;
+				pout << " Error" << endl;
 			}
 		} /* for Ma */
 
@@ -230,7 +236,7 @@ int main(int argc, char* argv[]) {
 
 	} /* for refinement level */
 
-	cout << "Convergence analysis (Ma) terminated." << endl;
+	pout << "Convergence analysis (Ma) terminated." << endl;
 
 	return 0;
 }

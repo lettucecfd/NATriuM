@@ -31,7 +31,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout << "Starting NATriuM convergence analysis (linear scaling)..." << endl;
+	MPIGuard::getInstance();
+
+	pout << "Starting NATriuM convergence analysis (linear scaling)..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -68,7 +70,7 @@ int main() {
 			<< endl;
 
 	for (size_t refinementLevel = 2; refinementLevel < 12; refinementLevel++) {
-		cout << "refinement Level = " << refinementLevel << endl;
+		pout << "refinement Level = " << refinementLevel << endl;
 
 		double dx = 2 * 3.1415926
 				/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
@@ -77,7 +79,7 @@ int main() {
 		//chose CFL = 0.4
 		double dt = 0.4 * dx / scaling;
 
-		cout << "dt = " << dt << " ...";
+		pout << "dt = " << dt << " ...";
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -86,7 +88,7 @@ int main() {
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-basic/"
 				<< orderOfFiniteElement << "_" << refinementLevel;
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
@@ -99,7 +101,7 @@ int main() {
 		configuration->setCommandLineVerbosity(0);
 		configuration->setTimeStepSize(dt);
 		if (dt > 0.1) {
-			cout << "Timestep too big." << endl;
+			pout << "Timestep too big." << endl;
 			continue;
 
 		}
@@ -110,9 +112,9 @@ int main() {
 #endif
 
 		// make problem and solver objects; measure time
-		shared_ptr<TaylorGreenVortex2D> tgVortex = make_shared<
+		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 				TaylorGreenVortex2D>(viscosity, refinementLevel);
-		shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+		boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
 		time1 = clock() - timestart;
@@ -122,7 +124,7 @@ int main() {
 			time2 = clock() - time1 - timestart;
 			time1 /= CLOCKS_PER_SEC;
 			time2 /= CLOCKS_PER_SEC;
-			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+			pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
 			// put out runtime
 			timeFile << refinementLevel << "         " << dt << "      "
@@ -138,12 +140,12 @@ int main() {
 					<< solver.getErrorStats()->getL2VelocityError() << " "
 					<< solver.getErrorStats()->getL2DensityError() << endl;
 		} catch (std::exception& e) {
-			cout << " Error" << endl;
+			pout << " Error" << endl;
 		}
 
 	} /* for refinement level */
 
-	cout << "Convergence analysis (basic) terminated." << endl;
+	pout << "Convergence analysis (basic) terminated." << endl;
 
 	return 0;
 }

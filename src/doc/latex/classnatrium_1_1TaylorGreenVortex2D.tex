@@ -1,64 +1,53 @@
-\hypertarget{classnatrium_1_1TaylorGreenVortex2D}{\section{natrium\-:\-:Taylor\-Green\-Vortex2\-D Class Reference}
-\label{classnatrium_1_1TaylorGreenVortex2D}\index{natrium\-::\-Taylor\-Green\-Vortex2\-D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}}
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D}{
+\section{natrium::TaylorGreenVortex2D Class Reference}
+\label{classnatrium_1_1TaylorGreenVortex2D}\index{natrium::TaylorGreenVortex2D@{natrium::TaylorGreenVortex2D}}
 }
 
 
 Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  
 
 
-
-
-{\ttfamily \#include $<$Taylor\-Green\-Vortex2\-D.\-h$>$}
-
-Inheritance diagram for natrium\-:\-:Taylor\-Green\-Vortex2\-D\-:\begin{figure}[H]
+{\ttfamily \#include $<$TaylorGreenVortex2D.h$>$}Inheritance diagram for natrium::TaylorGreenVortex2D::\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3.000000cm]{classnatrium_1_1TaylorGreenVortex2D}
+\includegraphics[height=3cm]{classnatrium_1_1TaylorGreenVortex2D}
 \end{center}
 \end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1TaylorGreenVortex2D_1_1AnalyticDensity}{AnalyticDensity}
+\begin{DoxyCompactList}\small\item\em class to describe the y-\/component of the analytic solution \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1TaylorGreenVortex2D_1_1AnalyticVelocity}{AnalyticVelocity}
+\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}{Taylor\-Green\-Vortex2\-D} (double viscosity, size\-\_\-t refinement\-Level)
-\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}{virtual \hyperlink{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}{$\sim$\-Taylor\-Green\-Vortex2\-D} ()}\label{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}
+\hyperlink{classnatrium_1_1TaylorGreenVortex2D_a48410d029b8a0f9801b66efda45aa77f}{TaylorGreenVortex2D} (double viscosity, size\_\-t refinementLevel, double cs=0.57735026919, bool init\_\-rho\_\-analytically=false)
+\begin{DoxyCompactList}\small\item\em constructor (with default cs=1/sqrt(3)) \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}{
+virtual \hyperlink{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}{$\sim$TaylorGreenVortex2D} ()}
+\label{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1TaylorGreenVortex2D_abcc4319daac776f359408b7a1af5eb29}{virtual void \hyperlink{classnatrium_1_1TaylorGreenVortex2D_abcc4319daac776f359408b7a1af5eb29}{get\-Analytic\-Velocity} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t, dealii\-::\-Point$<$ 2 $>$ \&velocity) const }\label{classnatrium_1_1TaylorGreenVortex2D_abcc4319daac776f359408b7a1af5eb29}
-
-\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}{\hyperlink{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}{Taylor\-Green\-Vortex2\-D} (double viscosity, size\-\_\-t refinement\-Level)}\label{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}
-
-\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a4e2a315c38f607f4fe6008dd270f3b81}{virtual \hyperlink{classnatrium_1_1TaylorGreenVortex2D_a4e2a315c38f607f4fe6008dd270f3b81}{$\sim$\-Taylor\-Green\-Vortex2\-D} ()}\label{classnatrium_1_1TaylorGreenVortex2D_a4e2a315c38f607f4fe6008dd270f3b81}
-
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a6a0c936a021fbe66255e2b0611c0668a}{virtual void \hyperlink{classnatrium_1_1TaylorGreenVortex2D_a6a0c936a021fbe66255e2b0611c0668a}{get\-Analytic\-Velocity} (const dealii\-::\-Point$<$ 2 $>$ \&x, double t, dealii\-::\-Point$<$ 2 $>$ \&velocity) const }\label{classnatrium_1_1TaylorGreenVortex2D_a6a0c936a021fbe66255e2b0611c0668a}
-
-\begin{DoxyCompactList}\small\item\em analytic solution of the Taylor-\/\-Green vortex \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}{\index{natrium\-::\-Taylor\-Green\-Vortex2\-D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}!Taylor\-Green\-Vortex2\-D@{Taylor\-Green\-Vortex2\-D}}
-\index{Taylor\-Green\-Vortex2\-D@{Taylor\-Green\-Vortex2\-D}!natrium::TaylorGreenVortex2D@{natrium\-::\-Taylor\-Green\-Vortex2\-D}}
-\subsubsection[{Taylor\-Green\-Vortex2\-D}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Taylor\-Green\-Vortex2\-D\-::\-Taylor\-Green\-Vortex2\-D (
-\begin{DoxyParamCaption}
-\item[{double}]{viscosity, }
-\item[{size\-\_\-t}]{refinement\-Level}
-\end{DoxyParamCaption}
-)}}\label{classnatrium_1_1TaylorGreenVortex2D_a6160a6776bc13cd049945a9bbb502b6f}
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a48410d029b8a0f9801b66efda45aa77f}{
+\index{natrium::TaylorGreenVortex2D@{natrium::TaylorGreenVortex2D}!TaylorGreenVortex2D@{TaylorGreenVortex2D}}
+\index{TaylorGreenVortex2D@{TaylorGreenVortex2D}!natrium::TaylorGreenVortex2D@{natrium::TaylorGreenVortex2D}}
+\subsubsection[{TaylorGreenVortex2D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::TaylorGreenVortex2D::TaylorGreenVortex2D (double {\em viscosity}, \/  size\_\-t {\em refinementLevel}, \/  double {\em cs} = {\ttfamily 0.57735026919}, \/  bool {\em init\_\-rho\_\-analytically} = {\ttfamily false})}}
+\label{classnatrium_1_1TaylorGreenVortex2D_a48410d029b8a0f9801b66efda45aa77f}
 
 
-constructor 
-
-apply boundary values
+constructor (with default cs=1/sqrt(3)) 
 
 apply boundary values 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/1/Taylor\-Green\-Vortex2\-D.\-h\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/examples/step-\/1/Taylor\-Green\-Vortex2\-D.\-cpp\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{TaylorGreenVortex2D_8h}{TaylorGreenVortex2D.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{TaylorGreenVortex2D_8cpp}{TaylorGreenVortex2D.cpp}\end{DoxyCompactItemize}

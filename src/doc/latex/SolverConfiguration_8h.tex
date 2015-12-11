@@ -1,56 +1,90 @@
-\hypertarget{SolverConfiguration_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-Solver\-Configuration.h File Reference}
-\label{SolverConfiguration_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-Solver\-Configuration.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-Solver\-Configuration.\-h}}
+\hypertarget{SolverConfiguration_8h}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/SolverConfiguration.h File Reference}
+\label{SolverConfiguration_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/SolverConfiguration.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/SolverConfiguration.h}}
 }
 
 
 Calculation of physical properties.  
-
-
-{\ttfamily \#include $<$ctime$>$}\\*
-{\ttfamily \#include $<$fstream$>$}\\*
-{\ttfamily \#include $<$sstream$>$}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/base/parameter\-\_\-handler.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../problemdescription/\-Problem\-Description.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../boltzmannmodels/\-Boltzmann\-Model.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../utilities/\-Basic\-Names.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../utilities/\-Logging.\-h\char`\"{}}\\*
+{\ttfamily \#include $<$ctime$>$}\par
+{\ttfamily \#include $<$fstream$>$}\par
+{\ttfamily \#include $<$sstream$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/base/parameter\_\-handler.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../problemdescription/ProblemDescription.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/Logging.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/NATriuMException.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{classnatrium_1_1ConfigurationException}{natrium\-::\-Configuration\-Exception}
-\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}. \end{DoxyCompactList}\item 
-class \hyperlink{classnatrium_1_1SolverConfiguration}{natrium\-::\-Solver\-Configuration}
-\begin{DoxyCompactList}\small\item\em Class that stores the configuration for a C\-F\-D simulation based on the Discrete Boltzmann Equation (D\-B\-E). \end{DoxyCompactList}\end{DoxyCompactItemize}
+class \hyperlink{classnatrium_1_1ConfigurationException}{natrium::ConfigurationException}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SolverConfiguration}{natrium::SolverConfiguration}
+\begin{DoxyCompactList}\small\item\em Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE). \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum {\bfseries Advection\-Scheme\-Name} \{ {\bfseries S\-E\-D\-G}
+enum {\bfseries AdvectionSchemeName} \{ {\bfseries SEDG}
  \}
-\begin{DoxyCompactList}\small\item\em Implemented streaming data types. \end{DoxyCompactList}\item 
-enum {\bfseries Collision\-Scheme\-Name} \{ {\bfseries B\-G\-K\-\_\-\-W\-I\-T\-H\-\_\-\-T\-R\-A\-N\-S\-F\-O\-R\-M\-E\-D\-\_\-\-D\-I\-S\-T\-R\-I\-B\-U\-T\-I\-O\-N\-\_\-\-F\-U\-N\-C\-T\-I\-O\-N\-S}
+\begin{DoxyCompactList}\small\item\em Implemented streaming data types. \item\end{DoxyCompactList}\item 
+enum {\bfseries CollisionSchemeName} \{ {\bfseries BGK\_\-STANDARD}, 
+{\bfseries BGK\_\-STANDARD\_\-TRANSFORMED}, 
+{\bfseries BGK\_\-STEADY\_\-STATE}
  \}
-\begin{DoxyCompactList}\small\item\em Implemented collision models. \end{DoxyCompactList}\item 
-enum {\bfseries Time\-Integrator\-Name} \{ {\bfseries R\-U\-N\-G\-E\-\_\-\-K\-U\-T\-T\-A\-\_\-5\-S\-T\-A\-G\-E}, 
-{\bfseries T\-H\-E\-T\-A\-\_\-\-M\-E\-T\-H\-O\-D}, 
-{\bfseries E\-X\-P\-O\-N\-E\-N\-T\-I\-A\-L}
+\begin{DoxyCompactList}\small\item\em Implemented collision models. \item\end{DoxyCompactList}\item 
+enum {\bfseries TimeIntegratorName} \{ {\bfseries RUNGE\_\-KUTTA\_\-5STAGE}, 
+{\bfseries THETA\_\-METHOD}, 
+{\bfseries EXPONENTIAL}, 
+{\bfseries OTHER}
  \}
-\begin{DoxyCompactList}\small\item\em Implemented time integrators. \end{DoxyCompactList}\item 
-enum {\bfseries Flux\-Type\-Name} \{ {\bfseries L\-A\-X\-\_\-\-F\-R\-I\-E\-D\-R\-I\-C\-H\-S}, 
-{\bfseries C\-E\-N\-T\-R\-A\-L}
+\begin{DoxyCompactList}\small\item\em Implemented time integrators. \item\end{DoxyCompactList}\item 
+enum {\bfseries DealIntegratorName} \{ \par
+{\bfseries FORWARD\_\-EULER}, 
+{\bfseries RK\_\-THIRD\_\-ORDER}, 
+{\bfseries RK\_\-CLASSIC\_\-FOURTH\_\-ORDER}, 
+{\bfseries BACKWARD\_\-EULER}, 
+\par
+{\bfseries IMPLICIT\_\-MIDPOINT}, 
+{\bfseries CRANK\_\-NICOLSON}, 
+{\bfseries SDIRK\_\-TWO\_\-STAGES}, 
+{\bfseries HEUN\_\-EULER}, 
+\par
+{\bfseries BOGACKI\_\-SHAMPINE}, 
+{\bfseries DOPRI}, 
+{\bfseries FEHLBERG}, 
+{\bfseries CASH\_\-KARP}, 
+\par
+{\bfseries NONE}
  \}
-\begin{DoxyCompactList}\small\item\em the numerical flux used to calculate the advection operator \end{DoxyCompactList}\item 
-enum {\bfseries Initialization\-Scheme\-Name} \{ {\bfseries E\-Q\-U\-I\-L\-I\-B\-R\-I\-U\-M}, 
-{\bfseries I\-T\-E\-R\-A\-T\-I\-V\-E}
+\item 
+enum {\bfseries DealSolverName} \{ \par
+{\bfseries BICGSTAB}, 
+{\bfseries CG}, 
+{\bfseries FGMRES}, 
+{\bfseries GMRES}, 
+\par
+{\bfseries MINRES}, 
+{\bfseries QMRS}, 
+{\bfseries RELAXATION}, 
+{\bfseries RICHARDSON}
  \}
-\begin{DoxyCompactList}\small\item\em the initialization procedure for the distribution functions \end{DoxyCompactList}\end{DoxyCompactItemize}
+\item 
+enum {\bfseries FluxTypeName} \{ {\bfseries LAX\_\-FRIEDRICHS}, 
+{\bfseries CENTRAL}
+ \}
+\begin{DoxyCompactList}\small\item\em the numerical flux used to calculate the advection operator \item\end{DoxyCompactList}\item 
+enum {\bfseries InitializationSchemeName} \{ {\bfseries EQUILIBRIUM}, 
+{\bfseries ITERATIVE}
+ \}
+\begin{DoxyCompactList}\small\item\em the initialization procedure for the distribution functions \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Calculation of physical properties. Class that stores the configuration for a C\-F\-D simulation based on the Discrete Boltzmann Equation (D\-B\-E).
+Calculation of physical properties. Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE).
 
 \begin{DoxyDate}{Date}
-29.\-05.\-2013 
+29.05.2013 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
-Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

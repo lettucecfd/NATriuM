@@ -19,33 +19,42 @@ namespace natrium {
 
 TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
 		size_t refinementLevel, double cs, bool init_rho_analytically) :
-		Benchmark<2>(makeGrid(refinementLevel), viscosity, 8 * atan(1)), m_cs(
+		Benchmark<2>(makeGrid(), viscosity, 8 * atan(1)), m_cs(
 				cs), m_analyticInit(init_rho_analytically) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
+	// apply initial and analytical solution
+	this->setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
+	this->setAnalyticRho(boost::make_shared<AnalyticDensity>(this));
 
+	// Refine grid
+	getMesh()->refine_global(refinementLevel);
 }
 
 TaylorGreenVortex2D::~TaylorGreenVortex2D() {
 }
 
-void TaylorGreenVortex2D::getAnalyticVelocity(const dealii::Point<2>& x,
-		double t, dealii::Point<2>& velocity) const {
-	velocity(0) = sin(x(0)) * cos(x(1)) * exp(-2 * getViscosity() * t);
-	velocity(1) = -cos(x(0)) * sin(x(1)) * exp(-2 * getViscosity() * t);
+double TaylorGreenVortex2D::AnalyticVelocity::value(const dealii::Point<2>& x,
+		const unsigned int component) const {
+	assert(component < 2);
+	if (component == 0) {
+		return sin(x(0)) * cos(x(1))
+				* exp(-2 * m_flow->getViscosity() * this->get_time());
+	} else {
+		return -cos(x(0)) * sin(x(1))
+				* exp(-2 * m_flow->getViscosity() * this->get_time());
+	}
 }
 
-/**
- * @short get Analytic density at one point in space and time
- */
-double TaylorGreenVortex2D::getAnalyticDensity(const dealii::Point<2>& x,
-		double t) const {
-	if (m_analyticInit) {
-		 double rho0 = 1;
-		 double p0 = 0;
-		 double p = rho0/4.* (cos(2*x(0)) + cos(2*x(1))) * exp(-4 * getViscosity() * t);
-		 return rho0 + p / (m_cs*m_cs) ;
+double TaylorGreenVortex2D::AnalyticDensity::value(const dealii::Point<2>& x,
+		const unsigned int component) const {
+	assert (component == 0);
+	if (m_flow->m_analyticInit) {
+		double rho0 = 1;
+		double p = rho0 / 4. * (cos(2 * x(0)) + cos(2 * x(1)))
+				* exp(-4 * m_flow->getViscosity() * this->get_time());
+		return rho0 + p / (m_flow->m_cs * m_flow->m_cs);
 	} else {
 		return 1.0;
 	}
@@ -55,21 +64,22 @@ double TaylorGreenVortex2D::getAnalyticDensity(const dealii::Point<2>& x,
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-shared_ptr<Triangulation<2> > TaylorGreenVortex2D::makeGrid(
-		size_t refinementLevel) {
+boost::shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid() {
 	//Creation of the principal domain
-	shared_ptr<Triangulation<2> > square = make_shared<Triangulation<2> >();
+#ifdef WITH_TRILINOS_MPI
+	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
+#else
+	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >();
+#endif
 	dealii::GridGenerator::hyper_cube(*square, 0, 8 * atan(1));
 
 	// Assign boundary indicators to the faces of the "parent cell"
-	Triangulation<2>::active_cell_iterator cell = square->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // top
-	cell->face(3)->set_all_boundary_indicators(3);  // bottom
+	Mesh<2>::active_cell_iterator cell = square->begin_active();
+	cell->face(0)->set_all_boundary_ids(0);  // left
+	cell->face(1)->set_all_boundary_ids(1);  // right
+	cell->face(2)->set_all_boundary_ids(2);  // top
+	cell->face(3)->set_all_boundary_ids(3);  // bottom
 
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	square->refine_global(refinementLevel);
 
 	return square;
 }
@@ -79,18 +89,16 @@ shared_ptr<Triangulation<2> > TaylorGreenVortex2D::makeGrid(
  * @return shared pointer to a vector of boundaries
  * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
  */
-shared_ptr<BoundaryCollection<2> > TaylorGreenVortex2D::makeBoundaries() {
+boost::shared_ptr<BoundaryCollection<2> > TaylorGreenVortex2D::makeBoundaries() {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
-	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, getTriangulation()));
-	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(2, 3, getTriangulation()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

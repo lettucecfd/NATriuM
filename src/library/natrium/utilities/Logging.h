@@ -10,9 +10,10 @@
 
 #include <fstream>
 #include <iostream>
-
+#include <mpi.h>
 
 #include "deal.II/base/logstream.h"
+#include "deal.II/base/conditional_ostream.h"
 
 #include "BasicNames.h"
 
@@ -45,9 +46,9 @@ private:
 	/// The Log file has different levels (through sections). This variables stores the current level of the parser.
 	size_t m_currentLevel;
 	/// the file stream has to be stored as a local variable in order to be not deleted
-	shared_ptr<std::ofstream> m_fileStream;
+	boost::shared_ptr<std::ofstream> m_fileStream;
 	/// this static object points to the default logstream. It can be accessed through the friend function LOG and LOGGER.
-	static shared_ptr<Logging> m_LOGGER;
+	static boost::shared_ptr<Logging> m_LOGGER;
 public:
 	/**
 	 * @short constructor
@@ -57,6 +58,10 @@ public:
 		pop();
 		setConsoleLevel(BASIC);
 		setFileLevel(ALL);
+		if (!is_MPI_rank_0()) {
+			setConsoleLevel(SILENT);
+			setFileLevel(SILENT);
+		}
 	}
 
 	/// set log level for command line output
@@ -77,12 +82,12 @@ public:
 		if (has_file()) {
 			detach();
 		}
-		m_fileStream = make_shared<std::ofstream>(logFile);
+		m_fileStream = boost::make_shared<std::ofstream>(logFile);
 		attach(*m_fileStream);
 	}
 
 	/// detach log file
-	void unsetLogFile(string logFile) {
+	void unsetLogFile() {
 		if (has_file()) {
 			detach();
 		}
@@ -90,12 +95,23 @@ public:
 
 	/// set the level of console output
 	LogLevel setConsoleLevel(LogLevel level) {
-		return LogLevel(depth_console(level));
+		if ((dealii::Utilities::MPI::job_supports_mpi())
+				and (0
+						!= dealii::Utilities::MPI::this_mpi_process(
+								MPI_COMM_WORLD))) {
+			return LogLevel(depth_console(SILENT));
+		} else {
+			return LogLevel(depth_console(level));
+		}
 	}
 
 	/// set the level of file output
 	LogLevel setFileLevel(LogLevel level) {
-		return LogLevel(depth_file(level));
+		if (!is_MPI_rank_0()) {
+			return LogLevel(depth_file(SILENT));
+		} else {
+			return LogLevel(depth_file(level));
+		}
 	}
 
 };

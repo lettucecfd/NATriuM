@@ -1,27 +1,41 @@
-\hypertarget{CFDSolver_8cpp}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-C\-F\-D\-Solver.cpp File Reference}
-\label{CFDSolver_8cpp}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-C\-F\-D\-Solver.\-cpp@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/solver/\-C\-F\-D\-Solver.\-cpp}}
+\hypertarget{CFDSolver_8cpp}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/CFDSolver.cpp File Reference}
+\label{CFDSolver_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/CFDSolver.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/CFDSolver.cpp}}
 }
-{\ttfamily \#include \char`\"{}C\-F\-D\-Solver.\-h\char`\"{}}\\*
-{\ttfamily \#include $<$fstream$>$}\\*
-{\ttfamily \#include $<$sstream$>$}\\*
-{\ttfamily \#include $<$boost/filesystem.\-hpp$>$}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/numerics/data\-\_\-out.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/fe/component\-\_\-mask.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/base/logstream.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/grid/grid\-\_\-tools.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}Physical\-Properties.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../problemdescription/\-Boundary\-Collection.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../timeintegration/\-Theta\-Method.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../timeintegration/\-Runge\-Kutta5\-Low\-Storage.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../utilities/\-Logging.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../utilities/\-C\-F\-D\-Solver\-Utilities.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../utilities/\-M\-P\-I\-Guard.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}CFDSolver.h\char`\"{}}\par
+{\ttfamily \#include $<$fstream$>$}\par
+{\ttfamily \#include $<$sstream$>$}\par
+{\ttfamily \#include $<$boost/filesystem.hpp$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/numerics/data\_\-out.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/fe/component\_\-mask.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/logstream.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/grid/grid\_\-tools.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/constraint\_\-matrix.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/index\_\-set.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}PhysicalProperties.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/D2Q9.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/D3Q19.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/D3Q15.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/D3Q27.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../collision/BGKStandard.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../collision/BGKStandardTransformed.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../collision/BGKSteadyState.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../problemdescription/BoundaryCollection.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../timeintegration/ThetaMethod.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../timeintegration/RungeKutta5LowStorage.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../timeintegration/ExponentialTimeIntegrator.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../timeintegration/DealIIWrapper.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/Logging.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/CFDSolverUtilities.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/MPIGuard.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/Info.h\char`\"{}}\par
 
 
 \subsection{Detailed Description}
 \begin{DoxyDate}{Date}
-29.\-05.\-2013 
+29.05.2013 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
-Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

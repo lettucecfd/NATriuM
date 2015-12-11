@@ -23,13 +23,15 @@ public:
 	virtual ~PhysicalProperties();
 
 	// kinetic energy
-	static double kineticEnergy(const vector<distributed_vector>& u, const distributed_vector& rho);
+	static double kineticEnergy(const vector<distributed_vector>& u, const distributed_vector& rho,
+			boost::shared_ptr<AdvectionOperator<dim> > advection);
 
 	/// Pressure
 	static double maximalPressure(const distributed_vector& rho, const double speedOfSound, double & minimalPressure);
 
 	/// Flow factor
-	static double massFluxX(const distributed_vector& ux, shared_ptr<AdvectionOperator<dim> > advection, double Lx);
+	static double meanVelocityX(const distributed_vector& ux, boost::shared_ptr<AdvectionOperator<dim> > advection);
+
 };
 
 } /* namespace natrium */

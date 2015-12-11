@@ -31,7 +31,9 @@ using namespace natrium;
 // Main function
 int main() {
 
-	cout
+	MPIGuard::getInstance();
+
+	pout
 			<< "Starting NATriuM convergence analysis with moving wall boundaries (various p) ..."
 			<< endl;
 
@@ -82,13 +84,13 @@ int main() {
 			orderOfFiniteElement += 2) {
 		timeFile << endl << "# order FE = " << orderOfFiniteElement << endl;
 		orderFile << endl << "# order FE = " << orderOfFiniteElement << endl;
-		cout << endl << "order FE = " << orderOfFiniteElement << endl;
+		pout << endl << "order FE = " << orderOfFiniteElement << endl;
 
 		double dt = 0.0005;
 		//for (double dt = 0.1; dt >= 0.00001; dt /= 2.) {
 		timeFile << "# dt = " << dt << endl;
 		orderFile << "# dt = " << dt << endl;
-		cout << "dt = " << dt << endl;
+		pout << "dt = " << dt << endl;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -97,7 +99,7 @@ int main() {
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-wall-p/"
 				<< orderOfFiniteElement << "_" << refinementLevel << "_" << dt;
-		shared_ptr<SolverConfiguration> configuration = make_shared<
+		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
@@ -116,9 +118,9 @@ int main() {
 #endif
 
 		// make problem and solver objects; measure time
-		shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(
+		boost::shared_ptr<CouetteFlow2D> couette2D = boost::make_shared<CouetteFlow2D>(
 				viscosity, U, refinementLevel, L, t0);
-		shared_ptr<Benchmark<2> > benchmark = couette2D;
+		boost::shared_ptr<Benchmark<2> > benchmark = couette2D;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, benchmark);
 		time1 = clock() - timestart;
@@ -128,7 +130,7 @@ int main() {
 			time2 = clock() - time1 - timestart;
 			time1 /= CLOCKS_PER_SEC;
 			time2 /= CLOCKS_PER_SEC;
-			cout << " OK ... Init: " << time1 << " sec; Run: " << time2
+			pout << " OK ... Init: " << time1 << " sec; Run: " << time2
 					<< " sec." << endl;
 			// put out runtime
 			timeFile << orderOfFiniteElement << "         " << dt << "      "
@@ -144,7 +146,7 @@ int main() {
 					<< solver.getErrorStats()->getL2VelocityError() << " "
 					<< solver.getErrorStats()->getL2DensityError() << endl;
 		} catch (std::exception& e) {
-			cout << " Error" << endl;
+			pout << " Error" << endl;
 		}
 
 		//} /* for time step*/
@@ -152,7 +154,7 @@ int main() {
 		orderFile << endl;
 	} /* for refinement level */
 
-	cout << "Convergence analysis with moving walls terminated." << endl;
+	pout << "Convergence analysis with moving walls terminated." << endl;
 
 	return 0;
 }

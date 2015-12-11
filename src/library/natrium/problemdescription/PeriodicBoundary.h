@@ -15,11 +15,13 @@
 #include "deal.II/base/point.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
+#include "deal.II/grid/grid_tools.h"
 #include "deal.II/dofs/dof_handler.h"
-#include <deal.II/lac/compressed_sparsity_pattern.h>
+#include "deal.II/lac/compressed_sparsity_pattern.h"
 
 #include "../utilities/NATriuMException.h"
 #include "../utilities/Logging.h"
+#include "../utilities/DealiiExtensions.h"
 
 #include "Boundary.h"
 
@@ -52,9 +54,8 @@ public:
 };
 
 
-
 /**
- * @short  A periodic boundary condition,
+ * @short  A periodic boundary condition. Periodic boundaries have to be set before the grid is refined!
  * @note   First use in step-1 tutorial.
  */
 template<size_t dim>
@@ -63,7 +64,7 @@ class PeriodicBoundary: public Boundary<dim> {
 private:
 
 	/// triangulation object
-	shared_ptr<dealii::Triangulation<dim> > m_triangulation;
+	boost::shared_ptr<Mesh<dim> > m_triangulation;
 
 	/// boundary indicator of first interfacial line
 	size_t m_boundaryIndicator1;
@@ -71,25 +72,14 @@ private:
 	/// boundary indicator of second interfacial line
 	size_t m_boundaryIndicator2;
 
-	//////////////////////////
-	// ONLY RELEVANT FOR 2D //
-	//////////////////////////
-	/// start point of line 1
-	dealii::Point<dim> m_beginLine1;
-
-	/// end point of line 1
-	dealii::Point<dim> m_endLine1;
-
-	/// start point of line 2
-	dealii::Point<dim> m_beginLine2;
-
-	/// end point of line 2
-	dealii::Point<dim> m_endLine2;
+	/// direction of the boundary
+	size_t m_direction;
 
 	/// Container for all cells that belong to this boundary
 	/// stored as <accessor to cell, (accessor to opposite cell, boundary face at opposite cell) > /
-	std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
-			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> > m_cells;
+	PeriodicCellMap<dim> m_cells;
+
+	dealii::DoFHandler<dim> const * m_doFHandler;
 
 	/**
 	 * @short Check if the two lines are OK (right positions, lengths, etc).
@@ -119,7 +109,7 @@ public:
 	 *  @param endLine2 end point of line 2
 	 PeriodicBoundary1D(dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
 	 dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
-	 shared_ptr<dealii::Triangulation<2> > triangulation);
+	 boost::shared_ptr<Mesh<2> > triangulation);
 	 */
 
 	/** @short Constructor; the periodic boundary is defined by two lines. The degrees of freedom on
@@ -132,8 +122,8 @@ public:
 	 *  @param boundaryIndicator2 boundary indicator of interface line 2
 	 *  @param triangulation A (shared ptr to a) triangulation object (the mesh)
 	 */
-	PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2,
-			shared_ptr<dealii::Triangulation<dim> > triangulation);
+	PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction,
+			boost::shared_ptr<Mesh<dim> > triangulation);
 
 	/// destructor
 	virtual ~PeriodicBoundary();
@@ -157,7 +147,7 @@ public:
 	 *
 	 */
 	bool isFaceInBoundary(
-			const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+			const typename dealii::DoFHandler<dim>::active_cell_iterator &,
 			size_t faceBoundaryIndicator) const;
 
 	virtual bool isPeriodic() const {
@@ -170,37 +160,25 @@ public:
 	 */
 	void createCellMap(const dealii::DoFHandler<dim>& doFHandler);
 
-	/**
-	 * @short modify sparsity pattern so that the fluxes over periodic boundary can be incorporated
-	 * @param cSparse the block-sparsity pattern
-	 * @param n_blocks the number of blocks in cSparse
-	 * @param n_dofs_per_row number of degrees of freedom per block (normally: overall degrees of freedom on grid)
-	 * @param dofs_per_cell number of degrees of freedom per cell
+
+	/** @short
+	 * check if all cells in the cell map have appropriate boundary indicators
 	 */
-	void addToSparsityPattern(dealii::BlockCompressedSparsityPattern& cSparse,
-			size_t n_blocks, size_t n_dofs_per_block,
-			size_t dofs_per_cell) const;
+	void checkCellMap();
+
+	/**
+	 * @short This function does nothing; just to satisfy the interface.
+	 * 		  The Periodic Boundary conditions are directly incorporated in make_sparser_flux_sparsity_pattern
+	 */
+	void addToSparsityPattern(dealii::BlockDynamicSparsityPattern& ,
+			size_t , size_t ,
+			size_t ) const;
 
 	/////////////////////////////////
 	// GETTER     // SETTER        //
 	/////////////////////////////////
-	const dealii::Point<dim>& getBeginLine1() const {
-		return m_beginLine1;
-	}
 
-	const dealii::Point<dim>& getBeginLine2() const {
-		return m_beginLine2;
-	}
-
-	const dealii::Point<dim>& getEndLine1() const {
-		return m_endLine1;
-	}
-
-	const dealii::Point<dim>& getEndLine2() const {
-		return m_endLine2;
-	}
-
-	const shared_ptr<dealii::Triangulation<dim> >& getTriangulation() const {
+	const boost::shared_ptr<Mesh<dim> >& getMesh() const {
 		return m_triangulation;
 	}
 
@@ -212,11 +190,17 @@ public:
 		return m_boundaryIndicator2;
 	}
 
-	const std::map<typename dealii::DoFHandler<dim>::active_cell_iterator,
-			std::pair<typename dealii::DoFHandler<dim>::cell_iterator, size_t> >& getCellMap() const {
+	const PeriodicCellMap<dim>& getCellMap() const {
 		return m_cells;
 	}
 
+	size_t getDirection() const {
+		return m_direction;
+	}
+
+	const boost::shared_ptr<Mesh<dim> >& getTriangulation() const {
+		return m_triangulation;
+	}
 };
 /* PeriodicBoundary1D */
 

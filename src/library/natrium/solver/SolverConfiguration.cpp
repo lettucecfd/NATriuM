@@ -18,7 +18,8 @@ SolverConfiguration::SolverConfiguration() {
 	{
 		declare_entry("Time step size", "0.2", dealii::Patterns::Double(1e-10),
 				"Size of the (initial) time step.");
-		declare_entry("Stencil", "D2Q9", dealii::Patterns::Selection("D2Q9|D3Q19"),
+		declare_entry("Stencil", "D2Q9",
+				dealii::Patterns::Selection("D2Q9|D3Q19|D3Q15|D3Q27"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
 		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
@@ -66,47 +67,51 @@ SolverConfiguration::SolverConfiguration() {
 		leave_subsection();
 		enter_subsection("Deal.II linear solver");
 		{
-					declare_entry("Linear solver", "Bicgstab",
-							dealii::Patterns::Selection(
-									"Bicgstab|Cg|Fgmres|Gmres|Minres|Qmrs|Relaxation|Richardson"),
-							"Deal.ii built-in linear solvers.");
+			declare_entry("Linear solver", "Bicgstab",
+					dealii::Patterns::Selection(
+							"Bicgstab|Cg|Fgmres|Gmres|Minres|Qmrs|Relaxation|Richardson"),
+					"Deal.ii built-in linear solvers.");
 		}
 		leave_subsection();
 		enter_subsection("Embedded Parameters");
 		{
-			declare_entry("Coarsen parameter", "1.2", dealii::Patterns::Double(1,1000),
-								"Parameter for the embedded deal.II methods. This parameter is the factor (>1) by which the time step is multiplied when the time stepping can be coarsen.");
-			declare_entry("Refinement parameter", "0.8", dealii::Patterns::Double(0,1),
-								"Parameter for the embedded deal.II methods. This parameter is the factor (<1) by which the time step is multiplied when the time stepping must be refined.");
-			declare_entry("Minimum time step", "1e-14", dealii::Patterns::Double(),
-								"Parameter for the embedded deal.II methods. Smallest time step allowed.");
-			declare_entry("Maximum time step", "1e100", dealii::Patterns::Double(),
-								"Parameter for the embedded deal.II methods. Largest time step allowed.");
-			declare_entry("Refinement tolerance", "1e-8", dealii::Patterns::Double(),
-								"Parameter for the embedded deal.II methods. Refinement tolerance: if the error estimate is larger than refine_tol, the time step is refined.");
-			declare_entry("Coarsen tolerance", "1e-12", dealii::Patterns::Double(),
-								"Parameter for the embedded deal.II methods. Coarsening tolerance: if the error estimate is smaller than coarse_tol, the time step is coarsen.");
+			declare_entry("Coarsen parameter", "1.2",
+					dealii::Patterns::Double(1, 1000),
+					"Parameter for the embedded deal.II methods. This parameter is the factor (>1) by which the time step is multiplied when the time stepping can be coarsen.");
+			declare_entry("Refinement parameter", "0.8",
+					dealii::Patterns::Double(0, 1),
+					"Parameter for the embedded deal.II methods. This parameter is the factor (<1) by which the time step is multiplied when the time stepping must be refined.");
+			declare_entry("Minimum time step", "1e-14",
+					dealii::Patterns::Double(),
+					"Parameter for the embedded deal.II methods. Smallest time step allowed.");
+			declare_entry("Maximum time step", "1e100",
+					dealii::Patterns::Double(),
+					"Parameter for the embedded deal.II methods. Largest time step allowed.");
+			declare_entry("Refinement tolerance", "1e-8",
+					dealii::Patterns::Double(),
+					"Parameter for the embedded deal.II methods. Refinement tolerance: if the error estimate is larger than refine_tol, the time step is refined.");
+			declare_entry("Coarsen tolerance", "1e-12",
+					dealii::Patterns::Double(),
+					"Parameter for the embedded deal.II methods. Coarsening tolerance: if the error estimate is smaller than coarse_tol, the time step is coarsen.");
 		}
 		leave_subsection();
 	}
 	leave_subsection();
 	enter_subsection("Collision");
 	{
-		declare_entry("Collision scheme",
-				"BGK standard",
+		declare_entry("Collision scheme", "BGK standard",
 				dealii::Patterns::Selection(
 						"BGK standard|BGK steady state|BGK standard transformed|BGK incompressible|MRT standard|KBC standard"),
 				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards "
-				"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
-				"The standard");
+						"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
+						"The standard");
 		enter_subsection("BGK parameters");
 		{
-			declare_entry("Steady state gamma",
-					"0.25",
-					dealii::Patterns::Double(0,1+1e-50),
+			declare_entry("Steady state gamma", "0.25",
+					dealii::Patterns::Double(0, 1 + 1e-50),
 					"The parameter of the steady state preconditioner. For gamma = 1, the scheme is equivalent to the standard BGK"
-					"For gamma -> 0, the convergence to steady states is speed up and the effective Mach number is lowered, which"
-					"gives nearly incompressible results.");
+							"For gamma -> 0, the convergence to steady states is speed up and the effective Mach number is lowered, which"
+							"gives nearly incompressible results.");
 		}
 		leave_subsection();
 	}
@@ -139,12 +144,12 @@ SolverConfiguration::SolverConfiguration() {
 				dealii::Patterns::Integer(1),
 				"The maximum number of time steps.");
 		declare_entry("Simulation end time", "100000000.0",
-						dealii::Patterns::Double(0),
-						"The end time of the simulation. "
+				dealii::Patterns::Double(0),
+				"The end time of the simulation. "
 						"Especially for adaptive time stepping schemes, number of steps is not an appropriate stop condition");
-		declare_entry("Convergence threshold", "1e-7",
-						dealii::Patterns::Double(),
-						"The codes stops when the maximum velocity and density variations are below this threshold in 10 iterations.");
+		declare_entry("Convergence threshold", "1e-30",
+				dealii::Patterns::Double(),
+				"The codes stops when the maximum velocity variation is below this threshold in 10 iterations.");
 	}
 	leave_subsection();
 
@@ -221,112 +226,137 @@ void SolverConfiguration::readFromXMLFile(const std::string & filename) {
 } /* readFromXMLFile */
 
 void SolverConfiguration::prepareOutputDirectory() {
-	/// If not exists, try to create output directory
+	// make sure that the code is compiled with mpi
+	assert(dealii::Utilities::MPI::job_supports_mpi());
+
+	// Everything is checked by process 0.
+
 	//  ((Using boost::filesystem provides a cross-platform solution))
 	boost::filesystem::path outputDir(getOutputDirectory());
-	boost::filesystem::path parentDir(outputDir.branch_path());
-	if (not boost::filesystem::is_directory(parentDir)) {
-		std::stringstream msg;
-		msg << "You want to put your output directory into "
-				<< parentDir.string()
-				<< ", but this parent directory does not even exist.";
-		throw ConfigurationException(msg.str());
-	}
+
 	// Make output directory
-	try {
-		//create_directory throws basic_filesystem_error<Path>, if fail other than that the directory already existed
-		//returns false, if directory already existed
-		bool newlyCreated = boost::filesystem::create_directory(outputDir);
-		if (newlyCreated) {
-			return;
+	if (is_MPI_rank_0()) {
+		/// If not exists, try to create output directory
+		boost::filesystem::path parentDir(outputDir.branch_path());
+		if (not boost::filesystem::is_directory(parentDir)) {
+			std::stringstream msg;
+			msg << "You want to put your output directory into "
+					<< parentDir.string()
+					<< ", but this parent directory does not even exist.";
+			throw ConfigurationException(msg.str());
 		}
-	} catch (std::exception& e) {
-		std::stringstream msg;
-		msg << "You want to put your output directory into "
-				<< parentDir.string()
-				<< ", but you seem to have no writing permissions.";
-		throw ConfigurationException(msg.str());
-	}
-	// Postcondition: directory exists
-	// Check writing permissions in directory
-	try {
-		/// try to create a single file
-		std::ofstream filestream;
-		filestream.open((outputDir / "testtatata.txt").string().c_str());
-		filestream << " ";
-		filestream.close();
-		boost::filesystem::remove(
-				(outputDir / "testtatata.txt").string().c_str());
-		/// try to open all files
-		boost::filesystem::directory_iterator it(outputDir), eod;
-		BOOST_FOREACH(boost::filesystem::path const &p, std::make_pair(it, eod)) {
-			if (not boost::filesystem::is_directory(p)) {
-				std::fstream filestream;
-				filestream.open(p.string().c_str(),
-						std::fstream::app | std::fstream::out);
-				// throw exception if file is not opened
-				if (not filestream.is_open()) {
-					throw std::exception();
-				}
-			}
+		try {
+			//create_directory throws basic_filesystem_error<Path>, if fail (= no writing permissions)
+			//returns false, if directory already existed
+			boost::filesystem::create_directory(outputDir);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "You want to put your output directory into "
+					<< parentDir.string()
+					<< ", but you seem to have no writing permissions.";
+			throw ConfigurationException(msg.str());
 		}
-	} catch (std::exception& e) {
-		std::stringstream msg;
-		msg
-				<< "You don't have writing access to the files which are already existing in your Output directory "
-				<< outputDir.string();
-		throw ConfigurationException(msg.str());
-	}
-	// check if something is possibly going to be overwritten
-	clock_t begin = clock();
-	if ((not isRestartAtLastCheckpoint())
-			and (not boost::filesystem::is_empty(outputDir))) {
-		if (isUserInteraction()) {
-			// Request user input
-			cout
-					<< "'Restart at last checkpoint' is disabled, but Output directory is not empty. The simulation might overwrite old data. Do you really want to continue?"
-					<< endl;
-			size_t yes1_or_no2 = 0; // = 1 for yes; = 2 for no
-			string input = "";
-			for (size_t i = 0; true; i++) {
-				cout << "Please enter 'y' or 'n':" << endl;
-				getline(std::cin, input);
-				// check for yes
-				if ("y" == input) {
-					yes1_or_no2 = 1;
-					break;
-					// check for no
-				} else if ("n" == input) {
-					yes1_or_no2 = 2;
-					break;
+		// Postcondition: directory exists
+		try {
+			/// try to open all files
+			boost::filesystem::directory_iterator it(outputDir), eod;
+			BOOST_FOREACH(boost::filesystem::path const &p, std::make_pair(it, eod)) {
+				if (not boost::filesystem::is_directory(p)) {
+					std::fstream filestream;
+					filestream.open(p.string().c_str(),
+							std::fstream::app | std::fstream::out);
+					// throw exception if file is not opened
+					if (not filestream.is_open()) {
+						throw std::exception();
+					}
 				}
-				// check for too many tries
-				if (i > 5) {
-					break;
-				}
-				// check for timeout
-				clock_t end = clock();
-				double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-				if (elapsed_secs > 30) {
-					break;
-				}
-				cout << "Your input was not understood. ";
+
 			}
-			// no sound input
-			if (0 == yes1_or_no2) {
-				throw ConfigurationException(
-						"Requested user input, but did not get meaningful answer.");
-			} else if (2 == yes1_or_no2) {
-				throw ConfigurationException(
-						"Execution stopped due to user's intervention.");
-			}
-		} else {
-			LOG(BASIC) << "Starting NATriuM..." << endl;
-			LOG(WARNING)
-					<< "Simulation might overwrite old data in output file."
-					<< endl;
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "You don't have writing access to the files which are already existing in your Output directory "
+					<< outputDir.string();
+			throw ConfigurationException(msg.str());
 		}
-	}
+		// check if something is possibly going to be overwritten
+		clock_t begin = clock();
+		if ((not isRestartAtLastCheckpoint())
+				and (not boost::filesystem::is_empty(outputDir))) {
+			if (isUserInteraction()) {
+				// Request user input
+				pout
+						<< "'Restart at last checkpoint' is disabled, but Output directory is not empty. "
+								"The simulation might overwrite old data. Do you really want to continue?"
+								"If you are running your simulation in a parallel environment, you might want to "
+								"switch user interaction off (which can be done by the corresponding option in SolverConfiguration"
+								"or in the parameter file)." << endl;
+				size_t yes1_or_no2 = 0; // = 1 for yes; = 2 for no
+				string input = "";
+				for (size_t i = 0; true; i++) {
+					pout << "Please enter 'y' or 'n':" << endl;
+					getline(std::cin, input);
+					// check for yes
+					if ("y" == input) {
+						yes1_or_no2 = 1;
+						break;
+						// check for no
+					} else if ("n" == input) {
+						yes1_or_no2 = 2;
+						break;
+					}
+					// check for too many tries
+					if (i > 5) {
+						break;
+					}
+					// check for timeout
+					clock_t end = clock();
+					double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+					if (elapsed_secs > 30) {
+						break;
+					}
+					pout << "Your input was not understood. ";
+				}
+				// no sound input
+				if (0 == yes1_or_no2) {
+					throw ConfigurationException(
+							"Requested user input, but did not get meaningful answer.");
+				} else if (2 == yes1_or_no2) {
+					throw ConfigurationException(
+							"Execution stopped due to user's intervention.");
+				}
+			} else {
+				LOG(BASIC) << "Starting NATriuM..." << endl;
+				LOG(WARNING)
+						<< "Simulation might overwrite old data in output file."
+						<< endl;
+			} /* if/else user interaction */
+		} /* if not is restart at last checkpoint */
+		// Check writing permissions in directory (for every MPI process)
+		try {
+			/// try to create a single file
+			std::ofstream filestream;
+			std::stringstream filename;
+			filename << "testfile_process."
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< ".txt";
+			filestream.open(
+					(outputDir / filename.str().c_str()).string().c_str());
+			filestream << " ";
+			filestream.close();
+			boost::filesystem::remove(
+					(outputDir / filename.str().c_str()).string().c_str());
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Process "
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< " running on host "
+					<< dealii::Utilities::System::get_hostname()
+					<< " does not have writing access to your Output directory "
+					<< outputDir.string();
+			throw ConfigurationException(msg.str());
+		} /* catch */
+	} /* if is_MPI_rank_0() */
 }
 
 void SolverConfiguration::isConsistent() {
@@ -343,7 +373,22 @@ void SolverConfiguration::isConsistent() {
 		// Warn if the Deal.II integrator setting will not be applied
 		LOG(WARNING)
 				<< "Did not understand setting of Deal.II integrator. If you want to use the Deal.II "
-						"time integration schemes, you will have to set Time integrator to 'OTHER'." << endl;
+						"time integration schemes, you will have to set Time integrator to 'OTHER'."
+				<< endl;
+	}
+
+	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) > 1) {
+		if (this->isUserInteraction()) {
+			std::stringstream msg;
+			msg
+					<< "UserInteraction is switched on in the solver configuration. "
+					<< "As that might be very dangerous when working on multiple MPI processes, "
+					<< "I am throwing an exception (Safety first!) Please change your solver "
+					<< "configuration (either in the parameter file or in natrium::SolverConfiguration.)"
+					<< "It might be a good idea to make sure (manually) that you are not overwriting anything. ";
+			LOG(ERROR) << msg.str() << endl;
+			throw ConfigurationException(msg.str());
+		}
 	}
 }
 

@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(BGKPseudopotential_collideAll_test) {
 
 
 	// create collision model
-	shared_ptr<Stencil> dqmodel = make_shared<D2Q9>(5.0);
+	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>(5.0);
 	double tau = 0.9;
 	double dt = 0.1;
 	BGKPseudopotential bgk(tau, 0.1, dqmodel);
@@ -36,8 +36,8 @@ BOOST_AUTO_TEST_CASE(BGKPseudopotential_collideAll_test) {
 	const size_t refinementLevel = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	// advection operator is assigned later as it has to be created, first
-	shared_ptr<SEDGMinLee<2> > sedgMinLee = make_shared<SEDGMinLee<2> >(
-			periodic.getTriangulation(), periodic.getBoundaries(),
+	boost::shared_ptr<SEDGMinLee<2> > sedgMinLee = boost::make_shared<SEDGMinLee<2> >(
+			periodic.getMesh(), periodic.getBoundaries(),
 			orderOfFiniteElement, dqmodel);
 
 	bgk.setAdvectionOperator(sedgMinLee);

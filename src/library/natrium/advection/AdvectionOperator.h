@@ -8,11 +8,13 @@
 #ifndef ADVECTIONOPERATOR_H_
 #define ADVECTIONOPERATOR_H_
 
+#include "../utilities/BasicNames.h"
+
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/base/quadrature_lib.h"
+#include "deal.II/base/index_set.h"
 
-#include "../utilities/BasicNames.h"
 
 namespace natrium {
 
@@ -20,6 +22,7 @@ namespace natrium {
  *  @tparam dim The dimension of the flow (2 or 3).
  */
 template<size_t dim> class AdvectionOperator {
+
 
 public:
 
@@ -44,10 +47,10 @@ public:
 
 	virtual const distributed_block_vector& getSystemVector() const = 0;
 
-	virtual const shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const = 0;
+	virtual const boost::shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const = 0;
 
 	virtual void mapDoFsToSupportPoints(
-			vector<dealii::Point<dim> >& supportPoints) const = 0;
+			std::map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const = 0;
 
 	virtual const dealii::MappingQ<dim>& getMapping() const = 0;
 
@@ -59,12 +62,17 @@ public:
 
 	virtual size_t getNumberOfDoFs() const = 0;
 
-	virtual const shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const = 0;
+	virtual const boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const = 0;
 
 	//virtual size_t getNumberOfDoFsPerCell() const = 0;
-	virtual const shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const  = 0;
+	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const = 0;
 
 	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const = 0;
+
+#ifdef WITH_TRILINOS
+	virtual const dealii::IndexSet& getLocallyOwnedDofs() = 0;
+	virtual const dealii::IndexSet& getLocallyRelevantDofs() = 0;
+#endif
 };
 
 } /* namespace natrium */

@@ -1,41 +1,75 @@
-\hypertarget{CFDSolverUtilities_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-C\-F\-D\-Solver\-Utilities.h File Reference}
-\label{CFDSolverUtilities_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-C\-F\-D\-Solver\-Utilities.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-C\-F\-D\-Solver\-Utilities.\-h}}
+\hypertarget{CFDSolverUtilities_8h}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/CFDSolverUtilities.h File Reference}
+\label{CFDSolverUtilities_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/CFDSolverUtilities.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/CFDSolverUtilities.h}}
 }
 
 
-General utility functions for the C\-F\-D solver.  
-
-
-{\ttfamily \#include \char`\"{}deal.\-I\-I/grid/tria.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/base/quadrature\-\_\-lib.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../boltzmannmodels/\-Boltzmann\-Model.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}../utilities/\-Basic\-Names.\-h\char`\"{}}\\*
+General utility functions for the CFD solver.  
+{\ttfamily \#include \char`\"{}deal.II/grid/tria.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/quadrature\_\-lib.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/NATriuMException.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{classnatrium_1_1CFDSolverUtilities_1_1CFDSolverUtilitiesException}{natrium\-::\-C\-F\-D\-Solver\-Utilities\-::\-C\-F\-D\-Solver\-Utilities\-Exception}
+class \hyperlink{classnatrium_1_1CFDSolverUtilities_1_1CFDSolverUtilitiesException}{natrium::CFDSolverUtilities::CFDSolverUtilitiesException}
 \end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium_1_1CFDSolverUtilities}{natrium::CFDSolverUtilities}
+
+
+\begin{DoxyCompactList}\small\item\em Some tools for the \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver} and its simple usage. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a48b631fb44a1a7f9da997746cb302798}{{\footnotesize template$<$size\-\_\-t dim$>$ }\\double {\bfseries natrium\-::\-C\-F\-D\-Solver\-Utilities\-::get\-Minimum\-Do\-F\-Distance\-G\-L\-L} (const dealii\-::\-Triangulation$<$ dim $>$ \&tria, const size\-\_\-t order\-Of\-Finite\-Element)}\label{namespacenatrium_1_1CFDSolverUtilities_a48b631fb44a1a7f9da997746cb302798}
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a3389fcb9cec2ab96fc0623040ac03c58}{
+{\footnotesize template$<$size\_\-t dim$>$ }\\double {\bfseries natrium::CFDSolverUtilities::getMinimumDoFDistanceGLL} (const Mesh$<$ dim $>$ \&tria, const size\_\-t orderOfFiniteElement)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a3389fcb9cec2ab96fc0623040ac03c58}
 
 \item 
-\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a2a8bf03864f7f97ffbb350db1ba6f903}{{\footnotesize template$<$size\-\_\-t dim$>$ }\\double {\bfseries natrium\-::\-C\-F\-D\-Solver\-Utilities\-::get\-Minimum\-Vertex\-Distance} (const dealii\-::\-Triangulation$<$ dim $>$ \&tria)}\label{namespacenatrium_1_1CFDSolverUtilities_a2a8bf03864f7f97ffbb350db1ba6f903}
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a8f085f7c799843b1e70330b35ef6747d}{
+{\footnotesize template$<$size\_\-t dim$>$ }\\double {\bfseries natrium::CFDSolverUtilities::getMinimumVertexDistance} (const Mesh$<$ dim $>$ \&tria)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a8f085f7c799843b1e70330b35ef6747d}
 
 \item 
-\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a0b55ad9be8fbf2304bd3a3953ae2921a}{{\footnotesize template$<$size\-\_\-t dim$>$ }\\double {\bfseries natrium\-::\-C\-F\-D\-Solver\-Utilities\-::calculate\-Timestep} (const dealii\-::\-Triangulation$<$ dim $>$ \&tria, const size\-\_\-t order\-Of\-Finite\-Element, const Boltzmann\-Model \&boltzmann\-Model, double c\-F\-L=0.\-4)}\label{namespacenatrium_1_1CFDSolverUtilities_a0b55ad9be8fbf2304bd3a3953ae2921a}
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a8b3dcb633547349d6e217692dccfbc58}{
+{\footnotesize template$<$size\_\-t dim$>$ }\\double {\bfseries natrium::CFDSolverUtilities::calculateTimestep} (const Mesh$<$ dim $>$ \&tria, const size\_\-t orderOfFiniteElement, const Stencil \&stencil, double cFL=0.4)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a8b3dcb633547349d6e217692dccfbc58}
 
 \item 
-\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a5f5e899a1a8bd6bad9a38025e4baa6a5}{{\footnotesize template$<$int dim$>$ }\\void {\bfseries natrium\-::\-C\-F\-D\-Solver\-Utilities\-::mesh\-\_\-info} (const dealii\-::\-Triangulation$<$ dim $>$ \&tria, const std\-::string \&filename)}\label{namespacenatrium_1_1CFDSolverUtilities_a5f5e899a1a8bd6bad9a38025e4baa6a5}
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_adbcdda8cf5f7f3f0c835950a23e4c888}{
+{\footnotesize template$<$int dim$>$ }\\void \hyperlink{namespacenatrium_1_1CFDSolverUtilities_adbcdda8cf5f7f3f0c835950a23e4c888}{natrium::CFDSolverUtilities::mesh\_\-info} (const Mesh$<$ dim $>$ \&tria, const std::string \&filename)}
+\label{namespacenatrium_1_1CFDSolverUtilities_adbcdda8cf5f7f3f0c835950a23e4c888}
 
-\begin{DoxyCompactList}\small\item\em stolen from Deal.\-I\-I's step 49 tutorial \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em stolen from Deal.II's step 49 tutorial \item\end{DoxyCompactList}\item 
+void \hyperlink{namespacenatrium_1_1CFDSolverUtilities_a3719826384e1c13644bac00524f72a46}{natrium::CFDSolverUtilities::get\_\-integrator\_\-by\_\-id} (size\_\-t id, TimeIntegratorName \&time\_\-integrator, DealIntegratorName \&deal\_\-integrator, std::string \&integrator\_\-name)
+\begin{DoxyCompactList}\small\item\em Select an integrator by a specified id:
+\begin{DoxyItemize}
+\item 1) RUNGE\_\-KUTTA\_\-5STAGE
+\item 2) THETA\_\-METHOD
+\item 3) EXPONENTIAL
+\item 4) FORWARD\_\-EULER
+\item 5) RK\_\-THIRD\_\-ORDER
+\item 6) RK\_\-CLASSIC\_\-FOURTH\_\-ORDER
+\item 7) BACKWARD\_\-EULER
+\item 8) IMPLICIT\_\-MIDPOINT
+\item 9) CRANK\_\-NICOLSON
+\item 10) SDIRK\_\-TWO\_\-STAGES
+\item 11) HEUN\_\-EULER
+\item 12) BOGACKI\_\-SHAMPINE
+\item 13) DOPRI
+\item 14) FEHLBERG
+\item 15) CASH\_\-KARP. 
+\end{DoxyItemize}\item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-General utility functions for the C\-F\-D solver. \begin{DoxyDate}{Date}
-04.\-08.\-2014 
+General utility functions for the CFD solver. \begin{DoxyDate}{Date}
+04.08.2014 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
-Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

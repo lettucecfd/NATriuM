@@ -1,35 +1,132 @@
-\hypertarget{classnatrium_1_1CollisionModel}{\section{natrium\-:\-:Collision\-Model Class Reference}
-\label{classnatrium_1_1CollisionModel}\index{natrium\-::\-Collision\-Model@{natrium\-::\-Collision\-Model}}
+\hypertarget{classnatrium_1_1CollisionModel}{
+\section{natrium::CollisionModel Class Reference}
+\label{classnatrium_1_1CollisionModel}\index{natrium::CollisionModel@{natrium::CollisionModel}}
 }
 
 
-Abstract collision model. Required to have a common parent of all template specializations of \hyperlink{classnatrium_1_1Collision}{Collision}.  
+Abstract collision model. Required to have a common parent of all template specializations of Collision.  
 
 
-
-
-{\ttfamily \#include $<$Collision.\-h$>$}
-
-Inheritance diagram for natrium\-:\-:Collision\-Model\-:\begin{figure}[H]
+{\ttfamily \#include $<$CollisionModel.h$>$}Inheritance diagram for natrium::CollisionModel::\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classnatrium_1_1CollisionModel}
+\includegraphics[height=1.96262cm]{classnatrium_1_1CollisionModel}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1CollisionModel_a97aeb4fa9513c45785fe9153ef062062}{virtual void {\bfseries collide\-All} (\hyperlink{classnatrium_1_1DistributionFunctions}{Distribution\-Functions} \&f, distributed\-\_\-vector \&densities, vector$<$ distributed\-\_\-vector $>$ \&velocities, const vector$<$ bool $>$ \&is\-Boundary, bool in\-Initialization\-Procedure=false) const =0}\label{classnatrium_1_1CollisionModel_a97aeb4fa9513c45785fe9153ef062062}
+\hypertarget{classnatrium_1_1CollisionModel_a5e5254caec7f69000646886be11a34f8}{
+{\bfseries CollisionModel} (const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil)}
+\label{classnatrium_1_1CollisionModel_a5e5254caec7f69000646886be11a34f8}
 
 \item 
-\hypertarget{classnatrium_1_1CollisionModel_ac7443a320a4badab46185915b78d002f}{virtual void {\bfseries collide\-All} (\hyperlink{classnatrium_1_1DistributionFunctions}{Distribution\-Functions} \&f, distributed\-\_\-vector \&densities, vector$<$ distributed\-\_\-vector $>$ \&velocities, bool in\-Initialization\-Procedure=false) const =0}\label{classnatrium_1_1CollisionModel_ac7443a320a4badab46185915b78d002f}
+\hypertarget{classnatrium_1_1CollisionModel_ac6c6d95633d62209a04528af86807025}{
+virtual void {\bfseries collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const =0}
+\label{classnatrium_1_1CollisionModel_ac6c6d95633d62209a04528af86807025}
 
-\end{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1CollisionModel_aa0df0674bc26821d037323ac184fb52b}{
+virtual void {\bfseries setTimeStep} (double dt)=0}
+\label{classnatrium_1_1CollisionModel_aa0df0674bc26821d037323ac184fb52b}
+
+\item 
+\hypertarget{classnatrium_1_1CollisionModel_a482808bab1832ee06892630b8ead7dde}{
+const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ \& {\bfseries getStencil} () const }
+\label{classnatrium_1_1CollisionModel_a482808bab1832ee06892630b8ead7dde}
+
+\item 
+virtual double \hyperlink{classnatrium_1_1CollisionModel_ae1c879c87ac210a227a8e3da2d0ac385}{calculateDensity} (const vector$<$ double $>$ \&distributions) const 
+\begin{DoxyCompactList}\small\item\em calculate macroscopic density \item\end{DoxyCompactList}\item 
+virtual numeric\_\-vector \hyperlink{classnatrium_1_1CollisionModel_a90428f4c29916641de3de872803dde0f}{calculateVelocity} (const vector$<$ double $>$ \&distributions) const 
+\begin{DoxyCompactList}\small\item\em calculate macroscopic velocity \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1CollisionModel_a667f0e36da1bfb1c5102adb8f3afdcde}{calculateVelocity} (const vector$<$ double $>$ \&distributions, const double rho, numeric\_\-vector \&u) const 
+\begin{DoxyCompactList}\small\item\em calculate macroscopic velocity; saves the double calculation of the density \item\end{DoxyCompactList}\item 
+virtual double \hyperlink{classnatrium_1_1CollisionModel_a88b382d63da80e950bc58e8afad769a6}{getEquilibriumDistribution} (size\_\-t i, const numeric\_\-vector \&u, const double rho=1) const =0
+\begin{DoxyCompactList}\small\item\em virtual function for the calculation of the equilibrium distribution \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1CollisionModel_a296474961c4501bc23228be1d30ebf82}{getEquilibriumDistributions} (vector$<$ double $>$ \&feq, const numeric\_\-vector \&u, const double rho=1) const 
+\begin{DoxyCompactList}\small\item\em function for the calculation of all equilibrium distributions \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Abstract collision model. Required to have a common parent of all template specializations of \hyperlink{classnatrium_1_1Collision}{Collision}. 
+Abstract collision model. Required to have a common parent of all template specializations of Collision. 
 
-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1CollisionModel_ae1c879c87ac210a227a8e3da2d0ac385}{
+\index{natrium::CollisionModel@{natrium::CollisionModel}!calculateDensity@{calculateDensity}}
+\index{calculateDensity@{calculateDensity}!natrium::CollisionModel@{natrium::CollisionModel}}
+\subsubsection[{calculateDensity}]{\setlength{\rightskip}{0pt plus 5cm}virtual double natrium::CollisionModel::calculateDensity (const vector$<$ double $>$ \& {\em distributions}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1CollisionModel_ae1c879c87ac210a227a8e3da2d0ac385}
+
+
+calculate macroscopic density 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em distributions}]particle distribution functions at a given point \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+macroscopic density (sum of all distributions) 
+\end{DoxyReturn}
+
+
+Reimplemented in \hyperlink{classnatrium_1_1BGKStandardTransformed_a58c4dc0c67ff4898c6555b614afc1ace}{natrium::BGKStandardTransformed}.\hypertarget{classnatrium_1_1CollisionModel_a667f0e36da1bfb1c5102adb8f3afdcde}{
+\index{natrium::CollisionModel@{natrium::CollisionModel}!calculateVelocity@{calculateVelocity}}
+\index{calculateVelocity@{calculateVelocity}!natrium::CollisionModel@{natrium::CollisionModel}}
+\subsubsection[{calculateVelocity}]{\setlength{\rightskip}{0pt plus 5cm}virtual void natrium::CollisionModel::calculateVelocity (const vector$<$ double $>$ \& {\em distributions}, \/  const double {\em rho}, \/  numeric\_\-vector \& {\em u}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1CollisionModel_a667f0e36da1bfb1c5102adb8f3afdcde}
+
+
+calculate macroscopic velocity; saves the double calculation of the density \begin{DoxyNote}{Note}
+more efficient 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em distributions}]particle distribution functions at a given point \item[\mbox{$\leftarrow$} {\em rho}]macroscopic density \item[\mbox{$\rightarrow$} {\em u}]macroscopic velocity \end{DoxyParams}
+\hypertarget{classnatrium_1_1CollisionModel_a90428f4c29916641de3de872803dde0f}{
+\index{natrium::CollisionModel@{natrium::CollisionModel}!calculateVelocity@{calculateVelocity}}
+\index{calculateVelocity@{calculateVelocity}!natrium::CollisionModel@{natrium::CollisionModel}}
+\subsubsection[{calculateVelocity}]{\setlength{\rightskip}{0pt plus 5cm}virtual numeric\_\-vector natrium::CollisionModel::calculateVelocity (const vector$<$ double $>$ \& {\em distributions}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1CollisionModel_a90428f4c29916641de3de872803dde0f}
+
+
+calculate macroscopic velocity 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em distributions}]particle distribution functions at a given point \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+macroscopic velocity 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1CollisionModel_a88b382d63da80e950bc58e8afad769a6}{
+\index{natrium::CollisionModel@{natrium::CollisionModel}!getEquilibriumDistribution@{getEquilibriumDistribution}}
+\index{getEquilibriumDistribution@{getEquilibriumDistribution}!natrium::CollisionModel@{natrium::CollisionModel}}
+\subsubsection[{getEquilibriumDistribution}]{\setlength{\rightskip}{0pt plus 5cm}virtual double natrium::CollisionModel::getEquilibriumDistribution (size\_\-t {\em i}, \/  const numeric\_\-vector \& {\em u}, \/  const double {\em rho} = {\ttfamily 1}) const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classnatrium_1_1CollisionModel_a88b382d63da80e950bc58e8afad769a6}
+
+
+virtual function for the calculation of the equilibrium distribution 
+\begin{DoxyParams}{Parameters}
+\item[{\em i}]index of the direction \item[{\em u}]macroscopic velocity \item[{\em rho}]macroscopic density \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value of the equilibrium distribution 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+The calculation can surely be done more efficiently by passing different arguments, e.g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+
+
+Implemented in \hyperlink{classnatrium_1_1BGKPseudopotential_a63ce98e44a07466963fb123cac9dd905}{natrium::BGKPseudopotential}, \hyperlink{classnatrium_1_1BGKStandard_a3d45ef2fe5536bf14914f99297477754}{natrium::BGKStandard}, \hyperlink{classnatrium_1_1BGKStandardTransformed_a870465cc026f92c8ffba899af6f95634}{natrium::BGKStandardTransformed}, and \hyperlink{classnatrium_1_1BGKSteadyState_ad99d9159cc14b5897bea7f145c3b39ca}{natrium::BGKSteadyState}.\hypertarget{classnatrium_1_1CollisionModel_a296474961c4501bc23228be1d30ebf82}{
+\index{natrium::CollisionModel@{natrium::CollisionModel}!getEquilibriumDistributions@{getEquilibriumDistributions}}
+\index{getEquilibriumDistributions@{getEquilibriumDistributions}!natrium::CollisionModel@{natrium::CollisionModel}}
+\subsubsection[{getEquilibriumDistributions}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::CollisionModel::getEquilibriumDistributions (vector$<$ double $>$ \& {\em feq}, \/  const numeric\_\-vector \& {\em u}, \/  const double {\em rho} = {\ttfamily 1}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1CollisionModel_a296474961c4501bc23228be1d30ebf82}
+
+
+function for the calculation of all equilibrium distributions 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\rightarrow$} {\em feq}]vector of all equality distributions, must have size Q \item[\mbox{$\leftarrow$} {\em u}]macroscopic velocity \item[\mbox{$\leftarrow$} {\em rho}]macroscopic density \end{DoxyParams}
+\begin{DoxyNote}{Note}
+The calculation can surely be done more efficiently by passing different arguments, e.g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/collision/Collision.\-h\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/\hyperlink{CollisionModel_8h}{CollisionModel.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/\hyperlink{CollisionModel_8cpp}{CollisionModel.cpp}\end{DoxyCompactItemize}

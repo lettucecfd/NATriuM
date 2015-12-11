@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<!-- Configuration parameters for my simulation -->
+
+<Analysis>
+	<errorMeasuring> true </errorMeasuring> 
+	<timeMeasuring> true </timeMeasuring>
+</Analysis>
+
+<Data>
+	<outputFolder> /home/akraem3m/compare_plb_NTrM/ </outputFolder>
+	<resultFile> result.dat </resultFile>
+</Data>
+	
+<Geometry>
+   
+    <size>
+    <!-- Number of lattice nodes in each space direction (k*2^n) -->
+        <n_min> 2 </n_min>
+        <n_max> 7 </n_max>
+        <k_min> 2 </k_min>
+        <k_max> 10 </k_max>
+     	<physicalSize> 6.283185307179586476925286766559 </physicalSize>
+     </size>
+    
+    <reynolds> 6.283185307179586476925286766559</reynolds>
+    
+    <time> 1 </time>
+    
+   
+    
+    <diffusiveScaling> false  </diffusiveScaling>
+
+    <u_max>
+    <!-- Maximum velocity in lattice units. -->
+        0.0288675134594812882254574390251
+    </u_max>
+</Geometry>

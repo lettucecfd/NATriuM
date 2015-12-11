@@ -19,7 +19,7 @@
 #include "../problemdescription/Benchmark.h"
 #include "../utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 
 namespace natrium {
 
@@ -30,6 +30,20 @@ namespace natrium {
 class TaylorGreenVortex3D: public Benchmark<3> {
 public:
 
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class AnalyticVelocity: public dealii::Function<3> {
+	private:
+		TaylorGreenVortex3D* m_flow;
+	public:
+		AnalyticVelocity(TaylorGreenVortex3D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+	};
+
   /// constructor
   TaylorGreenVortex3D(double viscosity,
       size_t refinementLevel);
@@ -37,26 +51,20 @@ public:
   /// destructor
   virtual ~TaylorGreenVortex3D();
 
-  /**
-   * @short analytic solution of the Taylor-Green vortex
-   */
-  virtual void getAnalyticVelocity(const dealii::Point<3>& x, double t, dealii::Point<3>& velocity) const;
-
-
 private:
 
   /**
    * @short create triangulation for couette flow
    * @return shared pointer to a triangulation instance
    */
-  shared_ptr<Triangulation<3> > makeGrid(size_t refinementLevel);
+  boost::shared_ptr<Mesh<3> > makeGrid();
 
   /**
    * @short create boundaries for couette flow
    * @return shared pointer to a vector of boundaries
    * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
    */
-  shared_ptr<BoundaryCollection<3> > makeBoundaries();
+  boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
 };
 

@@ -31,7 +31,9 @@ using namespace natrium;
 // Main function
 int main(int argc, char* argv[]) {
 
-	cout << "Starting analysis of sinusoidal shear flow ..." << endl;
+	MPIGuard::getInstance(argc, argv);
+
+	pout << "Starting analysis of sinusoidal shear flow ..." << endl;
 
 	const double Ma = 0.05;
 	const double cFL = 10;
@@ -60,25 +62,25 @@ int main(int argc, char* argv[]) {
 	const double scaling = sqrt(3) * bottomVelocity / Ma;
 	const double Re = bottomVelocity * delta_radius / viscosity;
 	const double Re_phys = 50.0 * 0.004 * 0.005 / (0.032/850);
-	cout << "Physical and dimensionless Reynolds number should agree: " << Re_phys << " " << Re << endl ;
-	cout << "epsilon = "  << epsilon << endl;
+	pout << "Physical and dimensionless Reynolds number should agree: " << Re_phys << " " << Re << endl ;
+	pout << "epsilon = "  << epsilon << endl;
 	// calculation of pressure from simulated density: p - p0 = ( rho - rho0) cs**2 /RhoPhysToSim * TPhysToSim**2 / LPhysToSim**2
 	// Solver Definition
 	const double refinementLevel = 2;
 	const double orderOfFiniteElement = 4;
 	const double cellAspectRatio = 5;
 
-	shared_ptr<ProblemDescription<2> > sinusFlow =
-			make_shared<LubricationSine>(viscosity, bottomVelocity,
+	boost::shared_ptr<ProblemDescription<2> > sinusFlow =
+			boost::make_shared<LubricationSine>(viscosity, bottomVelocity,
 					refinementLevel, L, delta_radius, amplitude, cellAspectRatio, roughnessHeight, roughnessLengthRatio);
 	const double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*sinusFlow->getTriangulation(), orderOfFiniteElement,
+			*sinusFlow->getMesh(), orderOfFiniteElement,
 			D2Q9(scaling), cFL);
 
 	// setup configuration
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/lubrication-sine-0.5-smoothx";
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
@@ -99,7 +101,7 @@ int main(int argc, char* argv[]) {
 	//configuration->setIterativeInitializationResidual(1e-15);
 
 	if (dt > 0.1) {
-		cout << "Timestep too big." << endl;
+		pout << "Timestep too big." << endl;
 	}
 
 	configuration->setNumberOfTimeSteps(80000000);
@@ -108,7 +110,7 @@ int main(int argc, char* argv[]) {
 	CFDSolver<2> solver(configuration, sinusFlow);
 
 	solver.run();
-	cout << "Analysis finished." << endl;
+	pout << "Analysis finished." << endl;
 
 	return 0;
 }

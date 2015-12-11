@@ -13,7 +13,7 @@
 #include "../problemdescription/Benchmark.h"
 #include "../utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 
 namespace natrium {
 
@@ -24,6 +24,32 @@ namespace natrium {
 class TaylorGreenVortex2D: public Benchmark<2> {
 public:
 
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 */
+	class AnalyticVelocity: public dealii::Function<2> {
+	private:
+		TaylorGreenVortex2D* m_flow;
+	public:
+		AnalyticVelocity(TaylorGreenVortex2D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
+	};
+
+	/**
+	 * @short class to describe the y-component of the analytic solution
+	 */
+	class AnalyticDensity: public dealii::Function<2> {
+	private:
+		TaylorGreenVortex2D* m_flow;
+	public:
+		AnalyticDensity(TaylorGreenVortex2D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
+	};
+
 	/// constructor (with default cs=1/sqrt(3))
 	TaylorGreenVortex2D(double viscosity,
 			size_t refinementLevel, double cs = 0.57735026919, bool init_rho_analytically = false);
@@ -31,19 +57,6 @@ public:
 	/// destructor
 	virtual ~TaylorGreenVortex2D();
 
-	/**
-	 * @short analytic solution of the Taylor-Green vortex
-	 */
-	virtual void getAnalyticVelocity(const dealii::Point<2>& x, double t, dealii::Point<2>& velocity) const;
-
-
-	/**
-	 * @short get Analytic density at one point in space and time
-	 * @note Lattice Boltzmann uses an ideal EOS to couple density and pressure. In that sense, the analytic
-	 * density here is rather a pressure, and as such calculated from the analytic solution for p.
-	 */
-	virtual double getAnalyticDensity(const dealii::Point<2>& x,
-			double t) const ;
 
 private:
 	/// speed of sound
@@ -56,14 +69,14 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(size_t refinementLevel);
+	boost::shared_ptr<Mesh<2> > makeGrid();
 
 	/**
 	 * @short create boundaries for couette flow
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries();
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
 
 };
 

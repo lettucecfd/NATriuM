@@ -1,0 +1,78 @@
+\hypertarget{classnatrium_1_1BGKPseudopotential}{
+\section{natrium::BGKPseudopotential Class Reference}
+\label{classnatrium_1_1BGKPseudopotential}\index{natrium::BGKPseudopotential@{natrium::BGKPseudopotential}}
+}
+Inheritance diagram for natrium::BGKPseudopotential::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1BGKPseudopotential}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1BGKPseudopotential_a47344e97049c04a1e28a43474d5b04ca}{
+\hyperlink{classnatrium_1_1BGKPseudopotential_a47344e97049c04a1e28a43474d5b04ca}{BGKPseudopotential} (double relaxationParameter, double dt, const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil)}
+\label{classnatrium_1_1BGKPseudopotential_a47344e97049c04a1e28a43474d5b04ca}
+
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGKPseudopotential_ac60f2eeed9c101141b29dd0cbee40932}{
+virtual \hyperlink{classnatrium_1_1BGKPseudopotential_ac60f2eeed9c101141b29dd0cbee40932}{$\sim$BGKPseudopotential} ()}
+\label{classnatrium_1_1BGKPseudopotential_ac60f2eeed9c101141b29dd0cbee40932}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+virtual double \hyperlink{classnatrium_1_1BGKPseudopotential_a63ce98e44a07466963fb123cac9dd905}{getEquilibriumDistribution} (size\_\-t i, const numeric\_\-vector \&u, const double rho=1) const 
+\begin{DoxyCompactList}\small\item\em virtual function for the calculation of the equilibrium distribution \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1BGKPseudopotential_a5f40f5076273f9ec38f3078c891b453c}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
+\begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BGKPseudopotential_a7129a321a07b85ac6245d71190eeeedd}{
+void {\bfseries getInteractionForce} (const vector$<$ double $>$ \&distributions, numeric\_\-vector \&interactionForce, const double rho=1)}
+\label{classnatrium_1_1BGKPseudopotential_a7129a321a07b85ac6245d71190eeeedd}
+
+\item 
+\hypertarget{classnatrium_1_1BGKPseudopotential_ab326d9268e46a37af8d0e5ffaaa3efc9}{
+const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SEDGMinLee}{SEDGMinLee}$<$ 2 $>$ $>$ {\bfseries getAdvectionOperator} () const }
+\label{classnatrium_1_1BGKPseudopotential_ab326d9268e46a37af8d0e5ffaaa3efc9}
+
+\item 
+\hypertarget{classnatrium_1_1BGKPseudopotential_a737f9bbffc442233a0be88caf584c088}{
+void {\bfseries setAdvectionOperator} (const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SEDGMinLee}{SEDGMinLee}$<$ 2 $>$ $>$ \&advectionOperator)}
+\label{classnatrium_1_1BGKPseudopotential_a737f9bbffc442233a0be88caf584c088}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1BGKPseudopotential_a5f40f5076273f9ec38f3078c891b453c}{
+\index{natrium::BGKPseudopotential@{natrium::BGKPseudopotential}!collideAll@{collideAll}}
+\index{collideAll@{collideAll}!natrium::BGKPseudopotential@{natrium::BGKPseudopotential}}
+\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGKPseudopotential::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGKPseudopotential_a5f40f5076273f9ec38f3078c891b453c}
+
+
+function for collision f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components \mbox{[} \mbox{[}u\_\-1x, u\_\-2x, ...\mbox{]}, \mbox{[}u\_\-1y, u\_\-2y, ...\mbox{]} \mbox{]} inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false 
+
+Reimplemented from \hyperlink{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{natrium::BGK}.\hypertarget{classnatrium_1_1BGKPseudopotential_a63ce98e44a07466963fb123cac9dd905}{
+\index{natrium::BGKPseudopotential@{natrium::BGKPseudopotential}!getEquilibriumDistribution@{getEquilibriumDistribution}}
+\index{getEquilibriumDistribution@{getEquilibriumDistribution}!natrium::BGKPseudopotential@{natrium::BGKPseudopotential}}
+\subsubsection[{getEquilibriumDistribution}]{\setlength{\rightskip}{0pt plus 5cm}double natrium::BGKPseudopotential::getEquilibriumDistribution (size\_\-t {\em i}, \/  const numeric\_\-vector \& {\em u}, \/  const double {\em rho} = {\ttfamily 1}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1BGKPseudopotential_a63ce98e44a07466963fb123cac9dd905}
+
+
+virtual function for the calculation of the equilibrium distribution 
+\begin{DoxyParams}{Parameters}
+\item[{\em i}]index of the direction \item[{\em u}]macroscopic velocity \item[{\em rho}]macroscopic density \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value of the equilibrium distribution 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+The calculation can surely be done more efficiently by passing different arguments, e.g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classnatrium_1_1CollisionModel_a88b382d63da80e950bc58e8afad769a6}{natrium::CollisionModel}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/BGKPseudopotential.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/BGKPseudopotential.cpp\end{DoxyCompactItemize}

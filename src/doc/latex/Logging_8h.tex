@@ -1,57 +1,62 @@
-\hypertarget{Logging_8h}{\section{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Logging.h File Reference}
-\label{Logging_8h}\index{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Logging.\-h@{/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/natrium/utilities/\-Logging.\-h}}
+\hypertarget{Logging_8h}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/Logging.h File Reference}
+\label{Logging_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/Logging.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/Logging.h}}
 }
 
 
 Definition of logging output streams.  
-
-
-{\ttfamily \#include $<$fstream$>$}\\*
-{\ttfamily \#include $<$iostream$>$}\\*
-{\ttfamily \#include $<$boost/shared\-\_\-ptr.\-hpp$>$}\\*
-{\ttfamily \#include \char`\"{}deal.\-I\-I/base/logstream.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}Basic\-Names.\-h\char`\"{}}\\*
+{\ttfamily \#include $<$fstream$>$}\par
+{\ttfamily \#include $<$iostream$>$}\par
+{\ttfamily \#include $<$mpi.h$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/base/logstream.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/conditional\_\-ostream.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}BasicNames.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{classnatrium_1_1Logging}{natrium\-::\-Logging}
-\begin{DoxyCompactList}\small\item\em this class is responsible for output streams to the command line and log file \end{DoxyCompactList}\end{DoxyCompactItemize}
+class \hyperlink{classnatrium_1_1Logging}{natrium::Logging}
+\begin{DoxyCompactList}\small\item\em this class is responsible for output streams to the command line and log file \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum {\bfseries Log\-Level} \{ \\*
-{\bfseries S\-I\-L\-E\-N\-T}, 
-{\bfseries E\-R\-R\-O\-R}, 
-{\bfseries W\-A\-R\-N\-I\-N\-G}, 
-{\bfseries W\-E\-L\-C\-O\-M\-E}, 
-\\*
-{\bfseries B\-A\-S\-I\-C}, 
-{\bfseries D\-E\-T\-A\-I\-L\-E\-D}, 
-{\bfseries D\-E\-A\-L\-\_\-\-I\-I\-\_\-\-B\-A\-S\-I\-C}, 
-{\bfseries D\-E\-A\-L\-\_\-\-I\-I\-\_\-\-D\-E\-T\-A\-I\-L\-E\-D}, 
-\\*
-{\bfseries A\-L\-L}
+enum {\bfseries LogLevel} \{ \par
+{\bfseries SILENT}, 
+{\bfseries ERROR}, 
+{\bfseries WARNING}, 
+{\bfseries WELCOME}, 
+\par
+{\bfseries BASIC}, 
+{\bfseries DETAILED}, 
+{\bfseries DEAL\_\-II\_\-BASIC}, 
+{\bfseries DEAL\_\-II\_\-DETAILED}, 
+\par
+{\bfseries ALL}
  \}
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-Logging \& {\bfseries natrium\-::\-L\-O\-G} (Log\-Level level)
-\begin{DoxyCompactList}\small\item\em can be used like \char`\"{}\-L\-O\-G(\-E\-R\-R\-O\-R) $<$$<$ ...;\char`\"{}, to write output to the log file and command line \end{DoxyCompactList}\item 
-Logging \& {\bfseries natrium\-::\-L\-O\-G\-G\-E\-R} ()
-\begin{DoxyCompactList}\small\item\em is used to access the default logging instance m\-\_\-\-L\-O\-G\-G\-E\-R; e.\-g. L\-O\-G\-G\-E\-R().set\-Log\-File(...) \end{DoxyCompactList}\end{DoxyCompactItemize}
+Logging \& \hyperlink{namespacenatrium_ad2838e1bab766ae66a68aa1ac6f2f7cb}{natrium::LOG} (LogLevel level)
+\begin{DoxyCompactList}\small\item\em can be used like \char`\"{}LOG(ERROR) $<$$<$ ...;\char`\"{}, to write output to the log file and command line \item\end{DoxyCompactList}\item 
+Logging \& \hyperlink{namespacenatrium_addbc7112675b740db86c1c775fce7b1d}{natrium::LOGGER} ()
+\begin{DoxyCompactList}\small\item\em is used to access the default logging instance m\_\-LOGGER; e.g. LOGGER().setLogFile(...) \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_acdc05b9a9596bba608cb1af116a15538}{
+const std::string {\bfseries natrium::currentDateTime} ()}
+\label{namespacenatrium_acdc05b9a9596bba608cb1af116a15538}
+
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Definition of logging output streams. \begin{DoxyDate}{Date}
-19.\-02.\-2014 
+19.02.2014 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
-Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin
 \end{DoxyAuthor}
 \begin{DoxyDate}{Date}
-18.\-02.\-2014 
+18.02.2014 
 \end{DoxyDate}
 \begin{DoxyAuthor}{Author}
-Andreas Kraemer, Bonn-\/\-Rhein-\/\-Sieg University of Applied Sciences, Sankt Augustin 
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
 \end{DoxyAuthor}

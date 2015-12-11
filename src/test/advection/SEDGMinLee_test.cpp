@@ -47,21 +47,22 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(SEDGMinLee_test)
 
 BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
-	cout << "SEDGMinLee_Construction_test..." << endl;
+
+	pout << "SEDGMinLee_Construction_test..." << endl;
 
 	size_t fe_order = 1;
 	size_t refinementLevel = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	BOOST_CHECK_NO_THROW(
-			SEDGMinLee<2> streaming(periodic.getTriangulation(), periodic.getBoundaries(), fe_order, make_shared<D2Q9>()));
+			SEDGMinLee<2> streaming(periodic.getMesh(), periodic.getBoundaries(), fe_order, boost::make_shared<D2Q9>()));
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* SEDGMinLee_Construction_test */
 
 #ifndef WITH_TRILINOS
 
 BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
-	cout << "SEDGMinLee_systemMatrix_test..." << endl;
+	pout << "SEDGMinLee_systemMatrix_test..." << endl;
 
 	bool useLaxFlux = true;
 	do { // useCentralFlux = true/false
@@ -94,7 +95,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 			maxEigenvalueFilename << "/maxeigenvalue_laxflux_";
 		}
 		maxEigenvalueFilename << "feorder_" << fe_order << ".dat";
-		cout << maxEigenvalueFilename.str().c_str() << "..." << endl;
+		pout << maxEigenvalueFilename.str().c_str() << "..." << endl;
 		std::ofstream normOut(maxEigenvalueFilename.str().c_str());
 #else
 		for (size_t fe_order = 1; fe_order < 2; fe_order++) {
@@ -102,9 +103,9 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 			for (size_t refinementLevel = 1; refinementLevel < 3;
 					refinementLevel++) {
 				PeriodicTestDomain2D periodic(refinementLevel);
-				SEDGMinLee<2> streaming(periodic.getTriangulation(),
+				SEDGMinLee<2> streaming(periodic.getMesh(),
 						periodic.getBoundaries(), fe_order,
-						make_shared<D2Q9>(), "",
+						boost::make_shared<D2Q9>(), "",
 						!useLaxFlux);
 
 				const distributed_sparse_block_matrix& matrices =
@@ -114,8 +115,8 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 				BOOST_CHECK(matrices.n_block_rows() == D2Q9::Q-1);
 #ifdef PRINT_SYSTEM_MATRIX
 				for (size_t i = 0; i < 2; i++) { //D2Q9::Q; i++){
-					cout << "Matrix " << i << ": " << endl;
-					matrices.block(i,i).print_formatted(cout);
+					pout << "Matrix " << i << ": " << endl;
+					matrices.block(i,i).print_formatted(pout);
 				}
 #endif
 				//BOOST_CHECK()
@@ -134,7 +135,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 					}
 					filename << "refine_" << refinementLevel << "_order_"
 					<< fe_order << "_matrix_" << i << "_spectrum.dat";
-					cout << filename.str().c_str() << "..." << endl;
+					pout << filename.str().c_str() << "..." << endl;
 					std::ofstream spectrumOut(filename.str().c_str());
 #endif
 					// compute eigenvalues
@@ -187,20 +188,20 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_systemMatrix_test) {
 		useLaxFlux = !useLaxFlux;
 	} while (!useLaxFlux);
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 }
 /* SEDGMinLee_systemMatrix_test */
 
 BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
-	cout << "SEDGMinLee_steadyStreaming_test..." << endl;
+	pout << "SEDGMinLee_steadyStreaming_test..." << endl;
 
 	size_t refinementLevel = 3;
 	size_t fe_order = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9>());
+			boost::make_shared<D2Q9>());
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time
@@ -234,19 +235,19 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_steadyStreaming_test) {
 
 	}
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* SEDGMinLee_steadyStreaming_test */
 
 BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
-	cout << "SEDGMinLee_streaming_test..." << endl;
+	pout << "SEDGMinLee_streaming_test..." << endl;
 
 	size_t refinementLevel = 3;
 	size_t fe_order = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9>());
+			boost::make_shared<D2Q9>());
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 	// choose time step and number of time steps so dx = dt and the bump passes the domain one time
@@ -325,31 +326,31 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
 	BOOST_CHECK(fabs(mass - initialMass) / mass < 0.05);
 	// NOTE: mass is not conserved exactly for explicit euler (but up to 5 percent)
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* SEDGMinLee_streaming_test */
 
 /*
  BOOST_AUTO_TEST_CASE(SEDGMinLee_unique_dofs_test) {
  // Test if the unique relation between degrees of freedom and quadrature nodes is OK
 
- cout << "SEDGMinLee_unique_dofs_test..." << endl;
+ pout << "SEDGMinLee_unique_dofs_test..." << endl;
  // Create problem
  size_t refinementLevel = 1;
  size_t fe_order = 3;
  PeriodicTestDomain2D periodic(refinementLevel);
- SEDGMinLee<2> streaming(periodic.getTriangulation(),
+ SEDGMinLee<2> streaming(periodic.getMesh(),
  periodic.getBoundaries(), fe_order,
- make_shared<D2Q9>());
+ boost::make_shared<D2Q9>());
 
  // Test if fi(q) == 1 for the given pairs
  dealii::MappingQ1<2> mapping;
  /// integration on gauss lobatto nodes
- shared_ptr<dealii::QGaussLobatto<2> > quadrature = make_shared<
+ boost::shared_ptr<dealii::QGaussLobatto<2> > quadrature = boost::make_shared<
  dealii::QGaussLobatto<2> >(streaming.getOrderOfFiniteElement());
  /// integration on boundary (with gauß lobatto nodes)
- shared_ptr<dealii::QGaussLobatto<1> > faceQuadrature = make_shared<
+ boost::shared_ptr<dealii::QGaussLobatto<1> > faceQuadrature = boost::make_shared<
  dealii::QGaussLobatto<1> >(streaming.getOrderOfFiniteElement());
- shared_ptr<dealii::FE_DGQArbitraryNodes<2> > fe = make_shared<
+ boost::shared_ptr<dealii::FE_DGQArbitraryNodes<2> > fe = boost::make_shared<
  dealii::FE_DGQArbitraryNodes<2> >(
  dealii::QGaussLobatto<1>(streaming.getOrderOfFiniteElement()));
 
@@ -380,11 +381,11 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_streaming_test) {
  }
  }
 
- cout << "done" << endl;
+ pout << "done" << endl;
  }  SEDGMinLee_unique_dofs_test */
 
 BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
-	cout << "SEDGMinLee_RKstreaming_test..." << endl;
+	pout << "SEDGMinLee_RKstreaming_test..." << endl;
 /// THIS WILL SHOW, if streaming is really correct
 
 	/// relaxationParamter and velocity have no impact; just needed for construction
@@ -393,9 +394,9 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
 
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9>(), "", useCentralFlux);
+			boost::make_shared<D2Q9>(), "", useCentralFlux);
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
@@ -511,12 +512,12 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_RKstreaming_test) {
 	double distToInitialMidPoint = supportPoints.at(index).distance(midPoint);
 	BOOST_CHECK(distToInitialMidPoint < 0.15);
 
-	cout << "done." << endl;
+	pout << "done." << endl;
 } /* SEDGMinLee_RKstreaming_test */
 
 
 BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
-	cout << "SEDGMinLee_SaveAndLoadCheckpoints_test..." << endl;
+	pout << "SEDGMinLee_SaveAndLoadCheckpoints_test..." << endl;
 
 	std::stringstream directory;
 	directory << getenv("NATRIUM_HOME") << "/test-restart";
@@ -526,36 +527,36 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 	size_t fe_order = 1;
 	bool useCentralFlux = false;
 	PeriodicTestDomain2D periodic(refinementLevel);
-	SEDGMinLee<2> streaming(periodic.getTriangulation(),
+	SEDGMinLee<2> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9>(), "", useCentralFlux);
+			boost::make_shared<D2Q9>(), "", useCentralFlux);
 	streaming.saveCheckpoint(directory.str());
 
 	/////// SANITY TEST //////////
-	BOOST_CHECK_NO_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+	BOOST_CHECK_NO_THROW(SEDGMinLee<2>(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9>(), "", useCentralFlux));
+			boost::make_shared<D2Q9>(), "", useCentralFlux));
 
 	/////// FAILURE TEST ////////
 	PeriodicTestDomain2D periodic2(4);
-	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic2.getTriangulation(),
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic2.getMesh(),
 			periodic2.getBoundaries(), fe_order,
-			make_shared<D2Q9>(), directory.str(), useCentralFlux), AdvectionSolverException);
+			boost::make_shared<D2Q9>(), directory.str(), useCentralFlux), AdvectionSolverException);
 
-	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9>(), "gubaguba", useCentralFlux), AdvectionSolverException);
+			boost::make_shared<D2Q9>(), "gubaguba", useCentralFlux), AdvectionSolverException);
 
-	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order+1,
-			make_shared<D2Q9>(), directory.str(), useCentralFlux), AdvectionSolverException);
+			boost::make_shared<D2Q9>(), directory.str(), useCentralFlux), AdvectionSolverException);
 
-	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getTriangulation(),
+	BOOST_CHECK_THROW(SEDGMinLee<2>(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
-			make_shared<D2Q9>(), directory.str(), not useCentralFlux), AdvectionSolverException);
+			boost::make_shared<D2Q9>(), directory.str(), not useCentralFlux), AdvectionSolverException);
 
 
-	cout << "done" << endl;
+	pout << "done" << endl;
 } /*SEDGMinLee_SaveAndLoadCheckpoints_test*/
 
 //TODO Make tests available for Trilinos

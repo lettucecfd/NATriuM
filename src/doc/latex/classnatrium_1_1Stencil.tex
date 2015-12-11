@@ -1,0 +1,165 @@
+\hypertarget{classnatrium_1_1Stencil}{
+\section{natrium::Stencil Class Reference}
+\label{classnatrium_1_1Stencil}\index{natrium::Stencil@{natrium::Stencil}}
+}
+
+
+Abstract class for the description of a boltzmann model, e.g. \hyperlink{classnatrium_1_1D2Q9}{D2Q9}.  
+
+
+{\ttfamily \#include $<$Stencil.h$>$}Inheritance diagram for natrium::Stencil::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classnatrium_1_1Stencil}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1Stencil_a5a65aa1dbfeceb278bd70c3c760c14fd}{Stencil} (size\_\-t d, size\_\-t q, const vector$<$ numeric\_\-vector $>$ \&directions, const vector$<$ double $>$ \&weights, StencilType stencilType)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Stencil_aff8956ea1dca43ed70f513baa755331f}{
+virtual \hyperlink{classnatrium_1_1Stencil_aff8956ea1dca43ed70f513baa755331f}{$\sim$Stencil} ()}
+\label{classnatrium_1_1Stencil_aff8956ea1dca43ed70f513baa755331f}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+const vector$<$ numeric\_\-vector $>$ \& \hyperlink{classnatrium_1_1Stencil_a02dbfdb70b94a32f477a6ac57ed14f5e}{getDirections} () const 
+\begin{DoxyCompactList}\small\item\em get a reference to the vector of directions \item\end{DoxyCompactList}\item 
+const numeric\_\-vector \& \hyperlink{classnatrium_1_1Stencil_a76b179032543b3436dea199beceab000}{getDirection} (size\_\-t i) const 
+\begin{DoxyCompactList}\small\item\em get the i-\/th direction \item\end{DoxyCompactList}\item 
+size\_\-t \hyperlink{classnatrium_1_1Stencil_a9c42c1e1fbc5308a8ba1281eb5e4be18}{getQ} () const 
+\begin{DoxyCompactList}\small\item\em get q, the number of directions in the DdQq-\/stencil \item\end{DoxyCompactList}\item 
+size\_\-t \hyperlink{classnatrium_1_1Stencil_a55ee00e8c03b266c7eeed3964d2c93bf}{getD} () const 
+\begin{DoxyCompactList}\small\item\em get d, the dimension of the DdQq-\/stencil \item\end{DoxyCompactList}\item 
+const vector$<$ double $>$ \& \hyperlink{classnatrium_1_1Stencil_a35c26427afdd33c3477b60be157e5bc8}{getWeights} () const 
+\begin{DoxyCompactList}\small\item\em get the weights of the equilibrium distributions \item\end{DoxyCompactList}\item 
+double \hyperlink{classnatrium_1_1Stencil_ae5cb8bd1a305ed29c779725f489bb855}{getWeight} (size\_\-t i) const 
+\begin{DoxyCompactList}\small\item\em get the weight belonging to a certain direction \item\end{DoxyCompactList}\item 
+const StencilType \& \hyperlink{classnatrium_1_1Stencil_af4dbee6d83d5d749f02f771633d54db2}{getStencilType} () const 
+\begin{DoxyCompactList}\small\item\em get stencil type \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Stencil_ac63de1be258c896319cb2c6dba515270}{
+virtual size\_\-t {\bfseries getIndexOfOppositeDirection} (size\_\-t index) const =0}
+\label{classnatrium_1_1Stencil_ac63de1be258c896319cb2c6dba515270}
+
+\item 
+\hypertarget{classnatrium_1_1Stencil_af2d6d874693082b4862c5dfa1c3eea59}{
+virtual double {\bfseries getSpeedOfSound} () const =0}
+\label{classnatrium_1_1Stencil_af2d6d874693082b4862c5dfa1c3eea59}
+
+\item 
+\hypertarget{classnatrium_1_1Stencil_ade22cd249828046d828b9e8f9ee63b6e}{
+virtual double {\bfseries getSpeedOfSoundSquare} () const =0}
+\label{classnatrium_1_1Stencil_ade22cd249828046d828b9e8f9ee63b6e}
+
+\item 
+\hypertarget{classnatrium_1_1Stencil_a4ad65f3c998ac0a7242fa80bb440d38c}{
+virtual double {\bfseries getMaxParticleVelocityMagnitude} () const =0}
+\label{classnatrium_1_1Stencil_a4ad65f3c998ac0a7242fa80bb440d38c}
+
+\item 
+\hypertarget{classnatrium_1_1Stencil_aa4b312a36671c30499d129bb91052f8c}{
+virtual double {\bfseries getScaling} () const }
+\label{classnatrium_1_1Stencil_aa4b312a36671c30499d129bb91052f8c}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Abstract class for the description of a boltzmann model, e.g. \hyperlink{classnatrium_1_1D2Q9}{D2Q9}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1Stencil_a5a65aa1dbfeceb278bd70c3c760c14fd}{
+\index{natrium::Stencil@{natrium::Stencil}!Stencil@{Stencil}}
+\index{Stencil@{Stencil}!natrium::Stencil@{natrium::Stencil}}
+\subsubsection[{Stencil}]{\setlength{\rightskip}{0pt plus 5cm}natrium::Stencil::Stencil (size\_\-t {\em d}, \/  size\_\-t {\em q}, \/  const vector$<$ numeric\_\-vector $>$ \& {\em directions}, \/  const vector$<$ double $>$ \& {\em weights}, \/  StencilType {\em stencilType})}}
+\label{classnatrium_1_1Stencil_a5a65aa1dbfeceb278bd70c3c760c14fd}
+
+
+constructor 
+\begin{DoxyParams}{Parameters}
+\item[{\em d}]dimension \item[{\em q}]number of directions \item[{\em directions}]the directions of the stencil \item[{\em weights}]the weights of the equilibrium distribution \item[{\em stencilType}]type of the stencil (e.g. \hyperlink{classnatrium_1_1D2Q9}{D2Q9}) \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1Stencil_a55ee00e8c03b266c7eeed3964d2c93bf}{
+\index{natrium::Stencil@{natrium::Stencil}!getD@{getD}}
+\index{getD@{getD}!natrium::Stencil@{natrium::Stencil}}
+\subsubsection[{getD}]{\setlength{\rightskip}{0pt plus 5cm}size\_\-t natrium::Stencil::getD () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Stencil_a55ee00e8c03b266c7eeed3964d2c93bf}
+
+
+get d, the dimension of the DdQq-\/stencil \begin{DoxyReturn}{Returns}
+d 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1Stencil_a76b179032543b3436dea199beceab000}{
+\index{natrium::Stencil@{natrium::Stencil}!getDirection@{getDirection}}
+\index{getDirection@{getDirection}!natrium::Stencil@{natrium::Stencil}}
+\subsubsection[{getDirection}]{\setlength{\rightskip}{0pt plus 5cm}const numeric\_\-vector\& natrium::Stencil::getDirection (size\_\-t {\em i}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Stencil_a76b179032543b3436dea199beceab000}
+
+
+get the i-\/th direction 
+\begin{DoxyParams}{Parameters}
+\item[{\em i}]index i \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a reference to the i-\/th direction of the DdQq-\/stencil 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1Stencil_a02dbfdb70b94a32f477a6ac57ed14f5e}{
+\index{natrium::Stencil@{natrium::Stencil}!getDirections@{getDirections}}
+\index{getDirections@{getDirections}!natrium::Stencil@{natrium::Stencil}}
+\subsubsection[{getDirections}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$numeric\_\-vector$>$\& natrium::Stencil::getDirections () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Stencil_a02dbfdb70b94a32f477a6ac57ed14f5e}
+
+
+get a reference to the vector of directions \begin{DoxyReturn}{Returns}
+a ublas\_\-vector, which contains the directions of the DdQq-\/stencil as ublas\_\-vectors 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1Stencil_a9c42c1e1fbc5308a8ba1281eb5e4be18}{
+\index{natrium::Stencil@{natrium::Stencil}!getQ@{getQ}}
+\index{getQ@{getQ}!natrium::Stencil@{natrium::Stencil}}
+\subsubsection[{getQ}]{\setlength{\rightskip}{0pt plus 5cm}size\_\-t natrium::Stencil::getQ () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Stencil_a9c42c1e1fbc5308a8ba1281eb5e4be18}
+
+
+get q, the number of directions in the DdQq-\/stencil \begin{DoxyReturn}{Returns}
+q 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1Stencil_af4dbee6d83d5d749f02f771633d54db2}{
+\index{natrium::Stencil@{natrium::Stencil}!getStencilType@{getStencilType}}
+\index{getStencilType@{getStencilType}!natrium::Stencil@{natrium::Stencil}}
+\subsubsection[{getStencilType}]{\setlength{\rightskip}{0pt plus 5cm}const StencilType\& natrium::Stencil::getStencilType () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Stencil_af4dbee6d83d5d749f02f771633d54db2}
+
+
+get stencil type \begin{DoxyReturn}{Returns}
+stencil type, e.g. \hyperlink{classnatrium_1_1D2Q9}{D2Q9} 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1Stencil_ae5cb8bd1a305ed29c779725f489bb855}{
+\index{natrium::Stencil@{natrium::Stencil}!getWeight@{getWeight}}
+\index{getWeight@{getWeight}!natrium::Stencil@{natrium::Stencil}}
+\subsubsection[{getWeight}]{\setlength{\rightskip}{0pt plus 5cm}double natrium::Stencil::getWeight (size\_\-t {\em i}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Stencil_ae5cb8bd1a305ed29c779725f489bb855}
+
+
+get the weight belonging to a certain direction 
+\begin{DoxyParams}{Parameters}
+\item[{\em i}]index i of the direction (1 $<$= i $<$= q) \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the i-\/th weight 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1Stencil_a35c26427afdd33c3477b60be157e5bc8}{
+\index{natrium::Stencil@{natrium::Stencil}!getWeights@{getWeights}}
+\index{getWeights@{getWeights}!natrium::Stencil@{natrium::Stencil}}
+\subsubsection[{getWeights}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$double$>$\& natrium::Stencil::getWeights () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Stencil_a35c26427afdd33c3477b60be157e5bc8}
+
+
+get the weights of the equilibrium distributions \begin{DoxyReturn}{Returns}
+a reference to the vector of weights 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/stencils/\hyperlink{Stencil_8h}{Stencil.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/stencils/\hyperlink{Stencil_8cpp}{Stencil.cpp}\end{DoxyCompactItemize}

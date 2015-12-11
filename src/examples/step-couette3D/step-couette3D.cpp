@@ -27,7 +27,9 @@ using namespace natrium;
 // Main function
 int main(int argc, char** argv) {
 
-	cout << "Starting NATriuM step-couette3D..." << endl;
+	MPIGuard::getInstance(argc, argv);
+
+	pout << "Starting NATriuM step-couette3D..." << endl;
 
 	// set Reynolds and Mach number
 	const double Re = 550;
@@ -46,17 +48,17 @@ int main(int argc, char** argv) {
 	// in order to start from a continuous solution, do not start at t=0
 	const double startTime = 0.0;
 
-	shared_ptr<Benchmark<3> > couetteProblem = make_shared<CouetteFlow3D>(
+	boost::shared_ptr<Benchmark<3> > couetteProblem = boost::make_shared<CouetteFlow3D>(
 			viscosity, U, refinementLevel, 1.0, startTime, isUnstructured);
 
 	// set small time step size
 	const double timeStepSize = CFDSolverUtilities::calculateTimestep<3>(
-					*couetteProblem->getTriangulation(), orderOfFiniteElement,
+					*couetteProblem->getMesh(), orderOfFiniteElement,
 					D3Q19(dqScaling), 0.4);
 
-	cout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
+	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
-	shared_ptr<SolverConfiguration> configuration = make_shared<
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-couette3D";
@@ -77,7 +79,7 @@ int main(int argc, char** argv) {
 
 	solver.run();
 
-	cout << "NATriuM step-2 terminated." << endl;
+	pout << "NATriuM step-2 terminated." << endl;
 
 	return 0;
 }

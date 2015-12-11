@@ -1,0 +1,35 @@
+\hypertarget{performance-analysis_8cpp}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/analysis/performance-\/analysis/performance-\/analysis.cpp File Reference}
+\label{performance-analysis_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/analysis/performance-\/analysis/performance-\/analysis.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/analysis/performance-\/analysis/performance-\/analysis.cpp}}
+}
+
+
+The convergence of the NATriuM solver is analyzed by application to the Taylor-\/Green vortex in 2D (only periodic walls). This script uses a linear scaling (= constant Mach number). Thus, there is a general compressibily error, which destroys the convergence for the finer meshes. To analyze the results, move the table\_\-order.txt and table\_\-results.txt files to NATriuM/src/analysis/convergence\_\-analysis\_\-basic/ and execute the gnuplot scripts.  
+{\ttfamily \#include $<$fstream$>$}\par
+{\ttfamily \#include $<$time.h$>$}\par
+{\ttfamily \#include $<$stdlib.h$>$}\par
+{\ttfamily \#include $<$exception$>$}\par
+{\ttfamily \#include $<$ctime$>$}\par
+{\ttfamily \#include \char`\"{}natrium/stencils/D2Q9.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/solver/CFDSolver.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/solver/SolverConfiguration.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/utilities/CFDSolverUtilities.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/problemdescription/ProblemDescription.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/benchmarks/TaylorGreenVortex2D.h\char`\"{}}\par
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{performance-analysis_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{
+int {\bfseries main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})}
+\label{performance-analysis_8cpp_a0ddf1224851353fc92bfbff6f499fa97}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The convergence of the NATriuM solver is analyzed by application to the Taylor-\/Green vortex in 2D (only periodic walls). This script uses a linear scaling (= constant Mach number). Thus, there is a general compressibily error, which destroys the convergence for the finer meshes. To analyze the results, move the table\_\-order.txt and table\_\-results.txt files to NATriuM/src/analysis/convergence\_\-analysis\_\-basic/ and execute the gnuplot scripts. \begin{DoxyDate}{Date}
+05.06.2014 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}

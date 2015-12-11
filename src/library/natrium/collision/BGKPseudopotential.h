@@ -26,12 +26,12 @@ class Stencil;
 
 class BGKPseudopotential: public BGK {
 private:
-	shared_ptr<SEDGMinLee<2> > m_advectionOperator;
+	boost::shared_ptr<SEDGMinLee<2> > m_advectionOperator;
 
 public:
 
 	/// constructor
-	BGKPseudopotential(double relaxationParameter, double dt, const shared_ptr<Stencil> stencil);
+	BGKPseudopotential(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil);
 
 	/// destructor
 	virtual ~BGKPseudopotential();
@@ -49,17 +49,18 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure = false) const;
 
 	void getInteractionForce(const vector<double>& distributions,
 			numeric_vector & interactionForce, const double rho = 1);
 
-	const shared_ptr<SEDGMinLee<2> > getAdvectionOperator() const {
+	const boost::shared_ptr<SEDGMinLee<2> > getAdvectionOperator() const {
 		return m_advectionOperator;
 	}
 
 	void setAdvectionOperator(
-			const shared_ptr<SEDGMinLee<2> >& advectionOperator) {
+			const boost::shared_ptr<SEDGMinLee<2> >& advectionOperator) {
 		m_advectionOperator = advectionOperator;
 	}
 };

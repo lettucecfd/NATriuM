@@ -14,31 +14,32 @@
 
 namespace natrium {
 
-shared_ptr<Logging> Logging::m_LOGGER;
+boost::shared_ptr<Logging> Logging::m_LOGGER;
 
-Logging& LOG(LogLevel level){
-	if (0 == Logging::m_LOGGER){
-		Logging::m_LOGGER = make_shared<Logging>();
+Logging& LOG(LogLevel level) {
+	if (0 == Logging::m_LOGGER) {
+		Logging::m_LOGGER = boost::make_shared<Logging>();
 	}
 	return (*Logging::m_LOGGER)(level);
 }
-Logging& LOGGER(){
-	if (0 == Logging::m_LOGGER){
-		Logging::m_LOGGER = make_shared<Logging>();
+
+Logging& LOGGER() {
+	if (0 == Logging::m_LOGGER) {
+		Logging::m_LOGGER = boost::make_shared<Logging>();
 	}
 	return *Logging::m_LOGGER;
 }
 
 const std::string currentDateTime() {
-    time_t     now = time(0);
-    struct tm  tstruct;
-    char       buf[80];
-    tstruct = *localtime(&now);
-    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-    // for more information about date/time format
-    strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
+	time_t now = time(0);
+	struct tm tstruct;
+	char buf[80];
+	tstruct = *localtime(&now);
+	// Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+	// for more information about date/time format
+	strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
 
-    return buf;
+	return buf;
 }
 
 } /* namespace natrium */

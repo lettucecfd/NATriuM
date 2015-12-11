@@ -13,12 +13,26 @@
 #include "../problemdescription/ProblemDescription.h"
 #include "../utilities/BasicNames.h"
 
-using dealii::Triangulation;
+
 
 namespace natrium {
 
 class LubricationSine: public ProblemDescription<2> {
 public:
+
+	/**
+	 * @short class to describe the x-component of the analytic solution
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class InitialVelocity: public dealii::Function<2> {
+	private:
+		LubricationSine* m_flow;
+	public:
+		InitialVelocity(LubricationSine* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
+	};
 
 	/// constructor
 	LubricationSine(double viscosity, double bottomVelocity,
@@ -37,37 +51,20 @@ private:
 	const double m_bottomVelocity;
 	double m_height;
 	double m_ampl;
+	const double m_length;
 
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	shared_ptr<Triangulation<2> > makeGrid(double L, size_t refinementLevel,
-			double averageHeight, double amplitude, double cellAspectRatio,  double roughnessHeight, size_t roughnessLengthRatio);
+	boost::shared_ptr<Mesh<2> > makeGrid(double L, double averageHeight, double cellAspectRatio);
 
 	/**
 	 * @short create boundaries for couette flow
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	shared_ptr<BoundaryCollection<2> > makeBoundaries(double bottomVelocity);
-
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const;
-
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const;
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(double bottomVelocity);
 
 	/**
 	 * @short function to generate the unstructured mesh grid

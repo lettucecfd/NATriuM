@@ -28,7 +28,7 @@ private:
 
 public:
 	MRT(double relaxationParameter, double dt,
-			const shared_ptr<Stencil> stencil);
+			const boost::shared_ptr<Stencil> stencil);
 	virtual ~MRT();
 
 	// virtual void collideSinglePoint(vector<double>& distributions) const;
@@ -36,14 +36,10 @@ public:
 	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
 			const double rho) const;
 
-	virtual void collideAll(DistributionFunctions& f,
-			distributed_vector& densities,
-			vector<distributed_vector>& velocities,
-			bool inInitializationProcedure = false) const = 0;
-
 	static double calculateRelaxationParameter(double viscosity,
-			double timeStepSize, const Stencil& stencil,
-			double preconditioning_parameter = 1.0) {
+			double timeStepSize, const Stencil& stencil
+			//,double preconditioning_parameter = 1.0
+			) {
 		assert(viscosity > 0.0);
 		assert(timeStepSize > 0.0);
 		return (viscosity) / (timeStepSize * stencil.getSpeedOfSoundSquare());

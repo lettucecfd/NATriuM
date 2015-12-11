@@ -24,8 +24,10 @@ namespace natrium {
 
 /// constructor
 BGKPseudopotential::BGKPseudopotential(double relaxationParameter, double dt,
-		const shared_ptr<Stencil> stencil) :
+		const boost::shared_ptr<Stencil> stencil) :
 		BGK(relaxationParameter, dt, stencil) {
+
+	throw CollisionException("Pseudopotential model not implemented, yet.");
 
 }
 
@@ -37,12 +39,11 @@ BGKPseudopotential::~BGKPseudopotential() {
 double BGKPseudopotential::getEquilibriumDistribution(size_t i,
 		const numeric_vector& u, const double rho) const {
 
-	cout << "Function not implemented, yet." << endl;
+	pout << "Function not implemented, yet." << endl;
 	assert(false);
 
 	assert(i < getStencil()->getQ());
 	assert(rho > 0);
-	assert(i >= 0);
 	assert(u.size() == getStencil()->getD());
 	assert(u(0) < 1000000000000000.);
 	assert(u(1) < 1000000000000000.);
@@ -60,7 +61,7 @@ double BGKPseudopotential::getEquilibriumDistribution(size_t i,
 
 // getInteractionForce
 void BGKPseudopotential::getInteractionForce(
-		const vector<double>& distributions, numeric_vector & interactionForce,
+		const vector<double>& , numeric_vector & interactionForce,
 		const double rho) {
 
 	const double G = -4.4;
@@ -80,13 +81,13 @@ void BGKPseudopotential::getInteractionForce(
 /////////////////////////////
 void BGKPseudopotential::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
+		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
 	if (Stencil_D2Q9 != getStencil()->getStencilType()) {
 		// Inefficient collision for other than D2Q9
-		BGK::collideAll(f, densities, velocities, inInitializationProcedure);
+		BGK::collideAll(f, densities, velocities, locally_owned_dofs, inInitializationProcedure);
 	} else {
-		size_t n_dofs = f.at(0).size();
 		size_t Q = 9;
 		size_t D = 2;
 		double scaling = getStencil()->getScaling();
@@ -98,6 +99,7 @@ void BGKPseudopotential::collideAll(DistributionFunctions& f,
 		assert(velocities.size() == D);
 
 #ifdef DEBUG
+		size_t n_dofs = f.at(0).size();
 		for (size_t i = 0; i < Q; i++) {
 			assert (f.at(i).size() == n_dofs);
 		}
@@ -137,6 +139,9 @@ void BGKPseudopotential::collideAll(DistributionFunctions& f,
 				dof_handler.begin_active(), endc = dof_handler.end();
 		for (; cell != endc; ++cell) {
 
+			if (! cell->is_locally_owned())
+				continue;
+
 			// get global degrees of freedom
 			cell->get_dof_indices(localDoFIndices);
 
@@ -162,8 +167,9 @@ void BGKPseudopotential::collideAll(DistributionFunctions& f,
 				// it uses the relation grad(rho)(x_i) = grad( sum_alpha f_alpha(x_i))  = grad ( sum_alpha(sum_k(dof_{alpha,k} phi_k(x_i))))
 				//                                     = sum_k ((sum_alpha dof_{alpha,k}) grad(phi_k(x_i))) = sum_k (rho_k grad(phi_k(x_i)))
 				for (size_t k = 0; k < dofs_per_cell; k++) {
-					density_gradient += densities(localDoFIndices.at(k))
-							* feValues.shape_grad(k, celldofToQIndex.at(j));
+					// TODO: make this line work
+				//	density_gradient += densities(localDoFIndices.at(k))
+				//			* feValues.shape_grad(k, celldofToQIndex.at(j));
 				}
 
 				// iterative initialization scheme (solve poisson equation indirectly)

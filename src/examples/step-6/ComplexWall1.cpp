@@ -33,49 +33,50 @@ ComplexWall1::ComplexWall1(double viscosity, double bottomVelocity,
 ComplexWall1::~ComplexWall1() {
 }
 
-shared_ptr<Triangulation<2> > ComplexWall1::makeGrid(double L,
+boost::shared_ptr<Mesh<2> > ComplexWall1::makeGrid(double L,
 		size_t refinementLevel) {
 
 	//Creation of the principal domain
-	shared_ptr<Triangulation<2> > unitSquare = make_shared<Triangulation<2> >();
-	dealii::GridGenerator::hyper_cube(*unitSquare, 0, L);
-
-	// Assign boundary indicators to the faces of the "parent cell"
-	Triangulation<2>::active_cell_iterator cell = unitSquare->begin_active();
-	cell->face(0)->set_all_boundary_indicators(0);  // left
-	cell->face(1)->set_all_boundary_indicators(1);  // right
-	cell->face(2)->set_all_boundary_indicators(2);  // bottom
-	cell->face(3)->set_all_boundary_indicators(3);  // top
+	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
+	dealii::Point<2> x1(0,0);
+	dealii::Point<2> x2(L,1);
+	std::vector<unsigned int> repetitions;
+	repetitions.push_back(10);
+	repetitions.push_back( 1 );
+	bool colorize = true; 	// set boundary ids automatically to
+							// 0:left; 1:right; 2:bottom; 3:top
+	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1, x2, colorize);
 
 	// refine grid
-	unitSquare->refine_global(refinementLevel);
+	rect->refine_global(refinementLevel);
 
 	// transform grid
-		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
-		  std::ofstream out ("grid-2.eps");
-		  dealii::GridOut grid_out;
-		  grid_out.write_eps ( *unitSquare, out);
-		return unitSquare;
+	dealii::GridTools::transform(UnstructuredGridFunc(L),
+			*rect);
+	std::ofstream out("grid-2.eps");
+	dealii::GridOut grid_out;
+	grid_out.write_eps(*rect, out);
+	return rect;
 }
 
-shared_ptr<BoundaryCollection<2> > ComplexWall1::makeBoundaries(
+boost::shared_ptr<BoundaryCollection<2> > ComplexWall1::makeBoundaries(
 		double bottomVelocity) {
 
 	// make boundary description
-	shared_ptr<BoundaryCollection<2> > boundaries = make_shared<
+	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
 	numeric_vector zeroVelocity(2);
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = bottomVelocity;
 
 	boundaries->addBoundary(
-			make_shared<PeriodicBoundary<2> >(0, 1, getTriangulation()));
-	boundaries->addBoundary(make_shared<MinLeeBoundary<2> >(2, constantVelocity));
+			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
-			make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
+			boost::make_shared<MinLeeBoundary<2> >(2, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(3, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
-	shared_ptr<Triangulation<2> > tria_pointer = getTriangulation();
+	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 	return boundaries;
 }

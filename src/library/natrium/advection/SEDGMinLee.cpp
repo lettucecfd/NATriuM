@@ -7,14 +7,22 @@
 
 #include "SEDGMinLee.h"
 
-#include "fstream"
+#include <fstream>
 
-#include "deal.II/lac/compressed_sparsity_pattern.h"
+#ifdef WITH_TRILINOS
+#include "deal.II/lac/trilinos_sparsity_pattern.h"
+#else
+#include "deal.II/lac/dynamic_sparsity_pattern.h"
+#endif
+
 #include "deal.II/dofs/dof_renumbering.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/fe/fe_update_flags.h"
 #include "deal.II/lac/matrix_iterator.h"
+#include "deal.II/lac/sparsity_tools.h"
+#include "deal.II/base/utilities.h"
+#include "deal.II/lac/constraint_matrix.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
 #include "../problemdescription/MinLeeBoundary.h"
@@ -28,26 +36,28 @@ using namespace dealii;
 namespace natrium {
 
 template<size_t dim>
-SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
-		shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
+SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
+		boost::shared_ptr<BoundaryCollection<dim> > boundaries,
+		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux) :
-		m_tria(triangulation), m_boundaries(boundaries), m_mapping(orderOfFiniteElement), m_stencil(
-				Stencil), m_useCentralFlux(useCentralFlux) {
+		m_tria(triangulation), m_boundaries(boundaries), m_mapping(
+				orderOfFiniteElement), m_stencil(Stencil), m_useCentralFlux(
+				useCentralFlux) {
 	// assertions
 	assert(orderOfFiniteElement >= 1);
 	assert(Stencil->getD() == dim);
 
 	// make dof handler
-	m_quadrature = make_shared<QGaussLobatto<dim> >(orderOfFiniteElement + 1);
-	m_faceQuadrature = make_shared<QGaussLobatto<dim - 1> >(
+	m_quadrature = boost::make_shared<QGaussLobatto<dim> >(orderOfFiniteElement + 1);
+	m_faceQuadrature = boost::make_shared<QGaussLobatto<dim - 1> >(
 			orderOfFiniteElement + 1);
-	m_fe = make_shared<FE_DGQArbitraryNodes<dim> >(
+	m_fe = boost::make_shared<FE_DGQArbitraryNodes<dim> >(
 			QGaussLobatto<1>(orderOfFiniteElement + 1));
-	m_doFHandler = make_shared<DoFHandler<dim> >(*triangulation);
+	m_doFHandler = boost::make_shared<DoFHandler<dim> >(*triangulation);
 
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
+
 	updateSparsityPattern();
 
 	// define relation between dofs and quadrature nodes
@@ -59,9 +69,14 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 #ifdef WITH_TRILINOS
 	m_systemVector.reinit(m_stencil->getQ() - 1);
 	for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
+#ifdef WITH_TRILINOS_MPI
+		m_systemVector.block(i).reinit(m_locallyOwnedDofs,
+		MPI_COMM_WORLD);
+		m_systemVector.collect_sizes();
+#else
 		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
+#endif
 	}
-	m_systemVector.collect_sizes();
 #else
 	m_systemVector.reinit(m_stencil->getQ() - 1, m_doFHandler->n_dofs());
 #endif
@@ -74,18 +89,18 @@ SEDGMinLee<dim>::SEDGMinLee(shared_ptr<Triangulation<dim> > triangulation,
 
 } /* SEDGMinLee<dim>::SEDGMinLee */
 /// The template parameter must be made explicit in order for the code to compile
-template SEDGMinLee<2>::SEDGMinLee(shared_ptr<Triangulation<2> > triangulation,
-		shared_ptr<BoundaryCollection<2> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
+template SEDGMinLee<2>::SEDGMinLee(boost::shared_ptr<Mesh<2> > triangulation,
+		boost::shared_ptr<BoundaryCollection<2> > boundaries,
+		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux);
-template SEDGMinLee<3>::SEDGMinLee(shared_ptr<Triangulation<3> > triangulation,
-		shared_ptr<BoundaryCollection<3> > boundaries,
-		size_t orderOfFiniteElement, shared_ptr<Stencil> Stencil,
+template SEDGMinLee<3>::SEDGMinLee(boost::shared_ptr<Mesh<3> > triangulation,
+		boost::shared_ptr<BoundaryCollection<3> > boundaries,
+		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
 		string inputDirectory, bool useCentralFlux);
 
 template<size_t dim>
 void SEDGMinLee<dim>::reassemble() {
-// TODO: if Triangulation changed: reinit dof-handler and sparsity pattern in some way
+// TODO: if Mesh changed: reinit dof-handler and sparsity pattern in some way
 
 /////////////////////////////////
 // Initialize Finite Element ////
@@ -95,7 +110,8 @@ void SEDGMinLee<dim>::reassemble() {
 
 	| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
 	const dealii::UpdateFlags faceUpdateFlags = update_values
-	| update_quadrature_points | update_JxW_values | update_normal_vectors;
+			| update_quadrature_points | update_JxW_values
+			| update_normal_vectors;
 	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
 			| update_JxW_values | update_normal_vectors;
 // Finite Element
@@ -109,7 +125,6 @@ void SEDGMinLee<dim>::reassemble() {
 			*m_faceQuadrature, neighborFaceUpdateFlags);
 
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
-	const size_t n_quadrature_points = m_quadrature->size();
 
 // Initialize matrices
 	vector<double> localMassMatrix(dofs_per_cell);
@@ -121,7 +136,7 @@ void SEDGMinLee<dim>::reassemble() {
 	}
 	dealii::FullMatrix<double> localFaceMatrix(dofs_per_cell, dofs_per_cell);
 	dealii::FullMatrix<double> localSystemMatrix(dofs_per_cell, dofs_per_cell);
-	std::vector<types::global_dof_index> localDoFIndices(dofs_per_cell);
+	std::vector<dealii::types::global_dof_index> localDoFIndices(dofs_per_cell);
 
 ///////////////
 // MAIN LOOP //
@@ -129,35 +144,39 @@ void SEDGMinLee<dim>::reassemble() {
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			m_doFHandler->begin_active(), endc = m_doFHandler->end();
 	for (; cell != endc; ++cell) {
-		// calculate the fe values for the cell
-		feCellValues.reinit(cell);
+		if (cell->is_locally_owned()) {
+			// calculate the fe values for the cell
+			feCellValues.reinit(cell);
 
-		// get global degrees of freedom
-		cell->get_dof_indices(localDoFIndices);
+			// get global degrees of freedom
+			cell->get_dof_indices(localDoFIndices);
 
-		// assemble local cell matrices
-		assembleLocalMassMatrix(feCellValues, dofs_per_cell,
-				n_quadrature_points, localMassMatrix, localDoFIndices);
-		assembleLocalDerivativeMatrices(feCellValues, dofs_per_cell,
-				n_quadrature_points, localDerivativeMatrices);
+			// assemble local cell matrices
+			assembleLocalMassMatrix(feCellValues, dofs_per_cell,
+					localMassMatrix);
+			assembleLocalDerivativeMatrices(feCellValues, dofs_per_cell,
+					localDerivativeMatrices);
 
-		// invert local mass matrix
-		for (size_t i = 0; i < dofs_per_cell; i++){
-			inverseLocalMassMatrix.at(i) = 1./localMassMatrix.at(i);
-		}
+			// invert local mass matrix
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				inverseLocalMassMatrix.at(i) = 1. / localMassMatrix.at(i);
+			}
 
-		// assemble faces and put together
-		for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
+			// assemble faces and put together
+			for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
 // calculate local diagonal block (cell) matrix -D
-			calculateAndDistributeLocalStiffnessMatrix(alpha,
-					localDerivativeMatrices, localSystemMatrix, inverseLocalMassMatrix, localDoFIndices,
-					dofs_per_cell);
+				calculateAndDistributeLocalStiffnessMatrix(alpha,
+						localDerivativeMatrices, localSystemMatrix,
+						inverseLocalMassMatrix, localDoFIndices, dofs_per_cell);
 // calculate face contributions  R
-			assembleAndDistributeLocalFaceMatrices(alpha, cell, feFaceValues,
-					feSubfaceValues, feNeighborFaceValues, dofs_per_cell,
-					n_quadrature_points, localFaceMatrix, inverseLocalMassMatrix);
+				assembleAndDistributeLocalFaceMatrices(alpha, cell,
+						feFaceValues, feSubfaceValues, feNeighborFaceValues,
+						inverseLocalMassMatrix);
+			}
 		}
 	}
+	m_systemVector.compress(dealii::VectorOperation::add);
+	m_systemMatrix.compress(dealii::VectorOperation::add);
 
 //#endif
 
@@ -174,20 +193,10 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	///////////////////////////////////////////////////////
 	// allocate sizes
 	size_t n_blocks = m_stencil->getQ() - 1;
-	size_t n_dofs_per_block = m_doFHandler->n_dofs();
-	
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
 	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping,
 			*m_fe, *m_faceQuadrature, faceUpdateFlags);
-
-#ifdef WITH_TRILINOS
-	// Trilinos can work with improved sparsity structures
-	CompressedSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
-	CompressedSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
-	CompressedSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
-
-
 
 	// create cell maps for periodic boundary
 	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
@@ -201,6 +210,33 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 		}
 	}
 
+#ifdef WITH_TRILINOS
+	//get locally owned and locally relevant dofs
+	m_locallyOwnedDofs = m_doFHandler->locally_owned_dofs();
+	DoFTools::extract_locally_relevant_dofs(*m_doFHandler,
+			m_locallyRelevantDofs);
+#endif
+
+#ifdef WITH_TRILINOS
+	// Trilinos can work with improved sparsity structures
+
+#ifdef WITH_TRILINOS_MPI
+	TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyOwnedDofs,
+			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+	TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyOwnedDofs,
+			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+	TrilinosWrappers::SparsityPattern cSparseEmpty(m_locallyOwnedDofs,
+			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+	/*DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
+	 DynamicSparsityPattern cSparseOpposite(m_locallyRelevantDofs);
+	 DynamicSparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
+#else
+	size_t n_dofs_per_block = m_doFHandler->n_dofs();
+	DynamicSparsityPattern cSparseDiag(n_dofs_per_block, n_dofs_per_block);
+	DynamicSparsityPattern cSparseOpposite(n_dofs_per_block, n_dofs_per_block);
+	DynamicSparsityPattern cSparseEmpty(n_dofs_per_block, n_dofs_per_block);
+#endif
+
 	//reorder degrees of freedom
 	//DoFRenumbering::Cuthill_McKee(*m_doFHandler);
 	//The Renumbering operation is commented out because of its quadratic complexity.
@@ -213,8 +249,10 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 
 	// make diagonal block 0,0 which can be copied to the other ones
+	ConstraintMatrix constraints;
 	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-			cSparseDiag, *m_boundaries, feFaceValues);
+			cSparseDiag, constraints, *m_boundaries, feFaceValues, true,
+			dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
 	delete feFaceValues;
 	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
 	 cSparse.block(0, 0));*/
@@ -227,15 +265,37 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 		minLeeIterator->second->addToSparsityPattern(cSparseOpposite,
 				*m_doFHandler, *m_stencil);
 	}
-
 	//reinitialize matrices
 	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
+#ifdef WITH_TRILINOS_MPI
+	cSparseDiag.compress();
+	cSparseOpposite.compress();
+	cSparseEmpty.compress();
+	/*SparsityTools::distribute_sparsity_pattern(cSparseDiag,
+			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+			m_locallyRelevantDofs);
+	SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
+			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+			m_locallyRelevantDofs);
+	SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
+			m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
+			m_locallyRelevantDofs);
+	*/
 	m_systemMatrix.reinit(n_blocks, n_blocks);
-	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
 	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
 	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
+	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
 	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
 	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
+#else
+	m_systemMatrix.reinit(n_blocks, n_blocks);
+	size_t some_empty = m_stencil->getIndexOfOppositeDirection(1);
+	m_systemMatrix.block(0, some_empty).reinit(cSparseEmpty);
+	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
+	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
+
+	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
+#endif
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
 			if ((I == 0) and (J == 0)) {
@@ -252,10 +312,12 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 				continue;
 			}
 			if (I == m_stencil->getIndexOfOppositeDirection(J + 1) - 1) {
-				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, first_opposite));
+				m_systemMatrix.block(I, J).reinit(
+						m_systemMatrix.block(0, first_opposite));
 				continue;
 			} else {
-				m_systemMatrix.block(I,J).reinit(m_systemMatrix.block(0,some_empty));
+				m_systemMatrix.block(I, J).reinit(
+						m_systemMatrix.block(0, some_empty));
 			}
 
 		}
@@ -263,7 +325,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	m_systemMatrix.collect_sizes();
 
 #else
-	BlockCompressedSparsityPattern cSparse(n_blocks, n_blocks);
+	BlockDynamicSparsityPattern cSparse(n_blocks, n_blocks);
 	// TODO do not initialize empty blocks?
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
@@ -276,9 +338,9 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	// TODO get sparser sparsity pattern working also for simulations without trilinos.
 	//DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
 	//		cSparse.block(0, 0), *m_boundaries, feFaceValues);
-	delete feFaceValues ;
+	delete feFaceValues;
 	DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
-	 cSparse.block(0, 0));
+			cSparse.block(0, 0));
 
 	// add periodic boundaries to intermediate flux sparsity pattern
 	size_t dofs_per_cell = m_doFHandler->get_fe().dofs_per_cell;
@@ -298,12 +360,12 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 
 	// add entries for non-periodic boundaries
 	/*for (typename BoundaryCollection<dim>::ConstMinLeeIterator minLeeIterator =
-			m_boundaries->getMinLeeBoundaries().begin();
-			minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
-			minLeeIterator++) {
-		minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler,
-				*m_stencil);
-	}*/
+	 m_boundaries->getMinLeeBoundaries().begin();
+	 minLeeIterator != m_boundaries->getMinLeeBoundaries().end();
+	 minLeeIterator++) {
+	 minLeeIterator->second->addToSparsityPattern(cSparse, *m_doFHandler,
+	 *m_stencil);
+	 }*/
 
 	// initialize (static) sparsity pattern
 	m_sparsityPattern.reinit(n_blocks, n_blocks);
@@ -323,7 +385,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	m_systemMatrix.reinit(m_sparsityPattern);
 #endif
 
-
 }
 /* updateSparsityPattern */
 // The template parameter has to be made expicit in order for the code to compile
@@ -334,8 +395,7 @@ template void SEDGMinLee<2>::updateSparsityPattern();
 template<size_t dim>
 void SEDGMinLee<dim>::assembleLocalMassMatrix(
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, vector<double> &massMatrix,
-		const std::vector<dealii::types::global_dof_index>& globalDoFs) {
+		vector<double> &massMatrix) {
 // initialize with zeros
 	std::fill(massMatrix.begin(), massMatrix.end(), 0.0);
 
@@ -350,17 +410,14 @@ void SEDGMinLee<dim>::assembleLocalMassMatrix(
 // The template parameter must be made explicit in order for the code to compile.
 template void SEDGMinLee<2>::assembleLocalMassMatrix(
 		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, vector<double> &massMatrix,
-		const std::vector<dealii::types::global_dof_index>& globalDoFs);
+		vector<double> &massMatrix);
 template void SEDGMinLee<3>::assembleLocalMassMatrix(
 		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
-		size_t n_q_points, vector<double> &massMatrix,
-		const std::vector<dealii::types::global_dof_index>& globalDoFs);
+		vector<double> &massMatrix);
 
 template<size_t dim>
 void SEDGMinLee<dim>::assembleLocalDerivativeMatrices(
 		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
-		size_t n_q_points,
 		vector<dealii::FullMatrix<double> >&derivativeMatrix) const {
 	for (size_t i = 0; i < dim; i++) {
 		derivativeMatrix.at(i) = 0;
@@ -384,11 +441,9 @@ void SEDGMinLee<dim>::assembleLocalDerivativeMatrices(
 // The template parameter must be made explicit in order for the code to compile.
 template void SEDGMinLee<2>::assembleLocalDerivativeMatrices(
 		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
-		size_t n_q_points,
 		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 template void SEDGMinLee<3>::assembleLocalDerivativeMatrices(
 		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
-		size_t n_q_points,
 		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 template<size_t dim>
@@ -396,17 +451,17 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
-		dealii::FEFaceValues<dim>& feNeighborFaceValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix, const vector<double>& inverseLocalMassMatrix) {
+		dealii::FEFaceValues<dim>& feNeighborFaceValues,
+		const vector<double>& inverseLocalMassMatrix) {
 
 // loop over all faces
 	for (size_t j = 0; j < dealii::GeometryInfo<dim>::faces_per_cell; j++) {
 		//Faces at boundary
 		if (cell->face(j)->at_boundary()) {
-			size_t boundaryIndicator = cell->face(j)->boundary_indicator();
+			size_t boundaryIndicator = cell->face(j)->boundary_id();
 			if (m_boundaries->isPeriodic(boundaryIndicator)) {
 				// Apply periodic boundaries
-				const shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
+				const boost::shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
 						m_boundaries->getPeriodicBoundary(boundaryIndicator);
 				assert(periodicBoundary->isFaceInBoundary(cell, j));
 				typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
@@ -420,12 +475,12 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 				// Apply other boundaries
 				if (typeid(*(m_boundaries->getBoundary(boundaryIndicator)))
 						== typeid(MinLeeBoundary<dim> )) {
-					const shared_ptr<MinLeeBoundary<dim> >& minLeeBoundary =
+					const boost::shared_ptr<MinLeeBoundary<dim> >& minLeeBoundary =
 							m_boundaries->getMinLeeBoundary(boundaryIndicator);
 					minLeeBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_stencil,
-							m_q_index_to_facedof.at(j), inverseLocalMassMatrix, m_systemMatrix,
-							m_systemVector, m_useCentralFlux);
+							m_q_index_to_facedof.at(j), inverseLocalMassMatrix,
+							m_systemMatrix, m_systemVector, m_useCentralFlux);
 				}
 			} /* endif isPeriodic */
 
@@ -434,8 +489,8 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 			typename DoFHandler<dim>::cell_iterator neighbor = cell->neighbor(
 					j);
 			assembleAndDistributeInternalFace(alpha, cell, j, neighbor,
-					cell->neighbor_face_no(j), feFaceValues,
-					feSubfaceValues, feNeighborFaceValues, inverseLocalMassMatrix);
+					cell->neighbor_face_no(j), feFaceValues, feSubfaceValues,
+					feNeighborFaceValues, inverseLocalMassMatrix);
 		} /* endif is face at boundary*/
 
 	}
@@ -447,20 +502,21 @@ template void SEDGMinLee<2>::assembleAndDistributeLocalFaceMatrices(
 		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
-		dealii::FEFaceValues<2>& feNeighborFaceValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix, const vector<double>& inverseLocalMassMatrix);
+		dealii::FEFaceValues<2>& feNeighborFaceValues,
+		const vector<double>& inverseLocalMassMatrix);
 template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(
 		size_t alpha,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
-		dealii::FEFaceValues<3>& feNeighborFaceValues, size_t dofs_per_cell,
-		size_t n_q_points, dealii::FullMatrix<double>& faceMatrix, const vector<double>& inverseLocalMassMatrix);
+		dealii::FEFaceValues<3>& feNeighborFaceValues,
+		const vector<double>& inverseLocalMassMatrix);
 
 template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
 		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
-		dealii::FullMatrix<double> &systemMatrix, const vector<double>& inverseLocalMassMatrix,
+		dealii::FullMatrix<double> &systemMatrix,
+		const vector<double>& inverseLocalMassMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
@@ -475,13 +531,15 @@ template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 			alpha - 1);
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++) {
-			block.add(globalDoFs[j], globalDoFs[k], systemMatrix(j, k) * inverseLocalMassMatrix.at(j));
+			block.add(globalDoFs[j], globalDoFs[k],
+					systemMatrix(j, k) * inverseLocalMassMatrix.at(j));
 		}
 }
 template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
 		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
-		dealii::FullMatrix<double> &systemMatrix, const vector<double>& inverseLocalMassMatrix,
+		dealii::FullMatrix<double> &systemMatrix,
+		const vector<double>& inverseLocalMassMatrix,
 		const std::vector<dealii::types::global_dof_index>& globalDoFs,
 		size_t dofsPerCell) {
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
@@ -496,7 +554,8 @@ template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 			alpha - 1);
 	for (unsigned int j = 0; j < dofsPerCell; j++)
 		for (unsigned int k = 0; k < dofsPerCell; k++)
-			block.add(globalDoFs[j], globalDoFs[k], systemMatrix(j, k) * inverseLocalMassMatrix.at(j));
+			block.add(globalDoFs[j], globalDoFs[k],
+					systemMatrix(j, k) * inverseLocalMassMatrix.at(j));
 }
 
 template<size_t dim>
@@ -506,13 +565,15 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 		typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 		dealii::FESubfaceValues<dim>& feSubfaceValues,
-		dealii::FEFaceValues<dim>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix) {
+		dealii::FEFaceValues<dim>& feNeighborFaceValues,
+		const vector<double>& inverseLocalMassMatrix) {
 // get the required FE Values for the local cell
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
-	const vector<Point<dim> > &normals = feFaceValues.get_normal_vectors();
+	const vector<Tensor<1, dim> > &normals =
+			feFaceValues.get_all_normal_vectors();
 
-	if (4 == alpha){
+	if (4 == alpha) {
 
 	}
 // get the required dofs of the neighbor cell
@@ -534,9 +595,9 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 // loop over all quadrature points at the face
 	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
 		size_t thisDoF = m_q_index_to_facedof.at(faceNumber).at(q);
-		assert (feFaceValues.shape_value(thisDoF, q) > 0);
+		assert(feFaceValues.shape_value(thisDoF, q) > 0);
 		size_t neighborDoF = m_q_index_to_facedof.at(neighborFaceNumber).at(q);
-		assert (feNeighborFaceValues.shape_value(neighborDoF, q) > 0);
+		assert(feNeighborFaceValues.shape_value(neighborDoF, q) > 0);
 
 		double cell_entry = 0.0;
 		double neighbor_entry = 0.0;
@@ -547,7 +608,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
-			exn += normals.at(q)(i) * m_stencil->getDirection(alpha)(i);
+			exn += normals.at(q)[i] * m_stencil->getDirection(alpha)(i);
 		}
 		prefactor *= exn;
 
@@ -580,14 +641,16 @@ template void SEDGMinLee<2>::assembleAndDistributeInternalFace(size_t direction,
 		typename dealii::DoFHandler<2>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<2>& feFaceValues,
 		dealii::FESubfaceValues<2>& feSubfaceValues,
-		dealii::FEFaceValues<2>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
+		dealii::FEFaceValues<2>& feNeighborFaceValues,
+		const vector<double>& inverseLocalMassMatrix);
 template void SEDGMinLee<3>::assembleAndDistributeInternalFace(size_t direction,
 		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		size_t faceNumber,
 		typename dealii::DoFHandler<3>::cell_iterator& neighborCell,
 		size_t neighborFaceNumber, dealii::FEFaceValues<3>& feFaceValues,
 		dealii::FESubfaceValues<3>& feSubfaceValues,
-		dealii::FEFaceValues<3>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
+		dealii::FEFaceValues<3>& feNeighborFaceValues,
+		const vector<double>& inverseLocalMassMatrix);
 
 template<size_t dim>
 std::map<size_t, size_t> SEDGMinLee<dim>::map_celldofs_to_q_index() const {
@@ -708,7 +771,13 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 				// filename
 				std::stringstream filename;
 				filename << directory << "/checkpoint_system_matrix_" << i
-						<< "_" << j << ".dat";
+#ifdef WITH_TRILINOS_MPI
+						<< "_" << j << "_"
+						<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+						<< ".dat";
+#else
+				<< "_" << j << ".dat";
+#endif
 				std::ofstream file(filename.str().c_str());
 #ifndef WITH_TRILINOS
 				m_systemMatrix.block(i, j).block_write(file);
@@ -727,7 +796,8 @@ void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
 	try {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/checkpoint_system_vector.dat";
+		filename << directory << "/checkpoint_system_vector." << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+		<< ".dat";
 		std::ofstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
 		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
@@ -754,7 +824,13 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 				// filename
 				std::stringstream filename;
 				filename << directory << "/checkpoint_system_matrix_" << i
-						<< "_" << j << ".dat";
+#ifdef WITH_TRILINOS_MPI
+						<< "_" << j << "_"
+						<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+						<< ".dat";
+#else
+				<< "_" << j << ".dat";
+#endif
 				std::ifstream file(filename.str().c_str());
 #ifndef WITH_TRILINOS
 				m_systemMatrix.block(i, j).block_read(file);
@@ -773,7 +849,8 @@ void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
 	try {
 		// filename
 		std::stringstream filename;
-		filename << directory << "/checkpoint_system_vector.dat";
+		filename << directory << "/checkpoint_system_vector." << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+						<< ".dat";
 		std::ifstream file(filename.str().c_str());
 #ifdef WITH_TRILINOS
 		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
@@ -798,7 +875,8 @@ template<size_t dim> void SEDGMinLee<dim>::writeStatus(
 		const string& directory) const {
 //make file
 	std::stringstream filename;
-	filename << directory << "/checkpoint_status.dat";
+	filename << directory << "/checkpoint_status."
+			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
 	std::ofstream outfile(filename.str().c_str());
 
 //write number of cells
@@ -829,7 +907,8 @@ template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
 		string& message) const {
 //read file
 	std::stringstream filename;
-	filename << directory << "/checkpoint_status.dat";
+	filename << directory << "/checkpoint_status."
+			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
 	std::ifstream infile(filename.str().c_str());
 
 // check if status file exists
@@ -872,7 +951,7 @@ template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
 	double dtmp;
 	infile >> dtmp;
 	if (fabs(dtmp - calcMagicNumber()) > 1e-1) {
-		message = "Triangulation (or at least its magic number) not equal.";
+		message = "Mesh (or at least its magic number) not equal.";
 		return false;
 	}
 // dqScaling1
@@ -910,19 +989,7 @@ template bool SEDGMinLee<3>::isStatusOK(const string& directory,
 
 template<size_t dim>
 double SEDGMinLee<dim>::calcMagicNumber() const {
-
-	double magicNumber = m_fe->get_degree() / m_tria->n_cells();
-
-	vector<dealii::Point<dim> > supportPoints(this->getNumberOfDoFs());
-	mapDoFsToSupportPoints(supportPoints);
-	for (size_t i = 0; i < supportPoints.size();
-			i += std::max(1., supportPoints.size() / 100.)) {
-		magicNumber += (1 + (i % 1000)) / (1 + i) * 1.
-				/ (supportPoints.at(i)(0) + 1) * 1.
-				/ (1 + supportPoints.at(i)(1)) * 1.
-				/ (1 + supportPoints.at(i)(dim - 1));
-	}
-	return magicNumber;
+	return 0;
 }
 
 template double SEDGMinLee<2>::calcMagicNumber() const;

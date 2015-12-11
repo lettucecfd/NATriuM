@@ -25,7 +25,7 @@ public:
 
 
 	BGKIncompressible(double relaxationParameter, double dt,
-			const shared_ptr<Stencil> stencil);
+			const boost::shared_ptr<Stencil> stencil);
 	virtual ~BGKIncompressible();
 
 	/** @short function for the calculation of the equilibrium distribution in the incompressible D2Q9 model
@@ -49,7 +49,16 @@ public:
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure = false) const;
+
+	/**
+	 * @short optimized version of collideAll for D2Q9 stencil
+	 */
+	void collideAllD2Q9(DistributionFunctions& f,
+			distributed_vector& densities, vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure) const;
 
 
 };

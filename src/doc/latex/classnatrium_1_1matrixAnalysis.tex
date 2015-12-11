@@ -1,110 +1,91 @@
-\hypertarget{classnatrium_1_1matrixAnalysis}{\section{natrium\-:\-:matrix\-Analysis$<$ dim $>$ Class Template Reference}
-\label{classnatrium_1_1matrixAnalysis}\index{natrium\-::matrix\-Analysis$<$ dim $>$@{natrium\-::matrix\-Analysis$<$ dim $>$}}
+\hypertarget{classnatrium_1_1matrixAnalysis}{
+\section{natrium::matrixAnalysis$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1matrixAnalysis}\index{natrium::matrixAnalysis@{natrium::matrixAnalysis}}
 }
 
 
 Calculation of spectra and pseudospectra of streaming matrices.  
 
 
-
-
-{\ttfamily \#include $<$matrix\-Analysis.\-h$>$}
-
-\subsection*{Public Member Functions}
+{\ttfamily \#include $<$matrixAnalysis.h$>$}\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1matrixAnalysis_ab1434eb6a7256560cbeaf2f3869709ed}{{\bfseries matrix\-Analysis} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}$<$ dim $>$ $>$ solver)}\label{classnatrium_1_1matrixAnalysis_ab1434eb6a7256560cbeaf2f3869709ed}
+\hypertarget{classnatrium_1_1matrixAnalysis_ab1434eb6a7256560cbeaf2f3869709ed}{
+{\bfseries matrixAnalysis} (shared\_\-ptr$<$ \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}$<$ dim $>$ $>$ solver)}
+\label{classnatrium_1_1matrixAnalysis_ab1434eb6a7256560cbeaf2f3869709ed}
 
 \item 
-void \hyperlink{classnatrium_1_1matrixAnalysis_af83535a0c1c83db223649b958c245df1}{write\-Spectrum} ()
-\begin{DoxyCompactList}\small\item\em Write the spectrum of the \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}'s streaming matrix to the file spectrum.\-txt in the Output\-Directory. \end{DoxyCompactList}\item 
-void \hyperlink{classnatrium_1_1matrixAnalysis_a2c18eb04461c90bfdf3f301e8c9dfc1b}{write\-Pseudospectrum} (size\-\_\-t number\-Of\-Cycles=10, double perturbation=0.\-1)
-\begin{DoxyCompactList}\small\item\em Write the pseudospectrum of the \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}'s streaming matrix to the file pseudospectrum.\-txt in the Output\-Directory. The pseudospectrum contains the eigenvalues of all matrices that are \char`\"{}close to the matrix A\char`\"{}, i.\-e. all entries can be perturbed by a small number. \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1matrixAnalysis_af859304140aa0d5e5429bacdd6341d3e}{{\footnotesize template$<$$>$ }\\{\bfseries matrix\-Analysis} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}$<$ 2 $>$ $>$ solver)}\label{classnatrium_1_1matrixAnalysis_af859304140aa0d5e5429bacdd6341d3e}
+void \hyperlink{classnatrium_1_1matrixAnalysis_af83535a0c1c83db223649b958c245df1}{writeSpectrum} ()
+\begin{DoxyCompactList}\small\item\em Write the spectrum of the CFDSolver's streaming matrix to the file spectrum.txt in the OutputDirectory. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1matrixAnalysis_a2c18eb04461c90bfdf3f301e8c9dfc1b}{writePseudospectrum} (size\_\-t numberOfCycles=10, double perturbation=0.1)
+\begin{DoxyCompactList}\small\item\em Write the pseudospectrum of the CFDSolver's streaming matrix to the file pseudospectrum.txt in the OutputDirectory. The pseudospectrum contains the eigenvalues of all matrices that are \char`\"{}close to the matrix A\char`\"{}, i.e. all entries can be perturbed by a small number. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1matrixAnalysis_add02c431de70315545299e44eba1eaf5}{
+{\footnotesize template$<$$>$ }\\{\bfseries matrixAnalysis} (shared\_\-ptr$<$ \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}$<$ 2 $>$ $>$ solver)}
+\label{classnatrium_1_1matrixAnalysis_add02c431de70315545299e44eba1eaf5}
 
 \item 
-\hypertarget{classnatrium_1_1matrixAnalysis_a4ef4d76dd9e24c90a6844edeef6de313}{{\footnotesize template$<$$>$ }\\{\bfseries matrix\-Analysis} (shared\-\_\-ptr$<$ \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}$<$ 3 $>$ $>$ solver)}\label{classnatrium_1_1matrixAnalysis_a4ef4d76dd9e24c90a6844edeef6de313}
+\hypertarget{classnatrium_1_1matrixAnalysis_a53e5e6b7c952ead585c1c5b28a1e2cac}{
+{\footnotesize template$<$$>$ }\\{\bfseries matrixAnalysis} (shared\_\-ptr$<$ \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}$<$ 3 $>$ $>$ solver)}
+\label{classnatrium_1_1matrixAnalysis_a53e5e6b7c952ead585c1c5b28a1e2cac}
 
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static void \hyperlink{classnatrium_1_1matrixAnalysis_a78f3d3996a02982e4b465b627a9b999f}{compute\-Spectrum} (const distributed\-\_\-sparse\-\_\-block\-\_\-matrix \&matrix, vector$<$ std\-::complex$<$ double $>$ $>$ \&eigenvalues, double perturbation=0.\-0)
-\begin{DoxyCompactList}\small\item\em Compute the eigenvalues of a sparse block matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+static double \hyperlink{classnatrium_1_1matrixAnalysis_a03a05223c2dc32a674f8b3ec2f6e6659}{computeSpectrum} (const distributed\_\-sparse\_\-block\_\-matrix \&matrix, vector$<$ std::complex$<$ double $>$ $>$ \&eigenvalues, double perturbation=0.0)
+\begin{DoxyCompactList}\small\item\em Compute the eigenvalues of a sparse block matrix. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\subsubsection*{template$<$size\-\_\-t dim$>$class natrium\-::matrix\-Analysis$<$ dim $>$}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::matrixAnalysis$<$ dim $>$}
 
 Calculation of spectra and pseudospectra of streaming matrices. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1matrixAnalysis_a78f3d3996a02982e4b465b627a9b999f}{\index{natrium\-::matrix\-Analysis@{natrium\-::matrix\-Analysis}!compute\-Spectrum@{compute\-Spectrum}}
-\index{compute\-Spectrum@{compute\-Spectrum}!natrium::matrixAnalysis@{natrium\-::matrix\-Analysis}}
-\subsubsection[{compute\-Spectrum}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::matrix\-Analysis}$<$ dim $>$\-::compute\-Spectrum (
-\begin{DoxyParamCaption}
-\item[{const distributed\-\_\-sparse\-\_\-block\-\_\-matrix \&}]{matrix, }
-\item[{vector$<$ std\-::complex$<$ double $>$ $>$ \&}]{eigenvalues, }
-\item[{double}]{perturbation = {\ttfamily 0.0}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [static]}}}\label{classnatrium_1_1matrixAnalysis_a78f3d3996a02982e4b465b627a9b999f}
+\hypertarget{classnatrium_1_1matrixAnalysis_a03a05223c2dc32a674f8b3ec2f6e6659}{
+\index{natrium::matrixAnalysis@{natrium::matrixAnalysis}!computeSpectrum@{computeSpectrum}}
+\index{computeSpectrum@{computeSpectrum}!natrium::matrixAnalysis@{natrium::matrixAnalysis}}
+\subsubsection[{computeSpectrum}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ template double {\bf natrium::matrixAnalysis}$<$ dim $>$::computeSpectrum (const distributed\_\-sparse\_\-block\_\-matrix \& {\em matrix}, \/  vector$<$ std::complex$<$ double $>$ $>$ \& {\em eigenvalues}, \/  double {\em perturbation} = {\ttfamily 0.0})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, static\mbox{]}}}}
+\label{classnatrium_1_1matrixAnalysis_a03a05223c2dc32a674f8b3ec2f6e6659}
 
 
 Compute the eigenvalues of a sparse block matrix. 
-
-
 \begin{DoxyParams}{Parameters}
-{\em matrix} & the matrix \\
-\hline
-{\em eigenvalues} & Vector of eigenvalues. Is automatically resized by the method. \\
-\hline
-{\em perturbation} & Can be used to perturb all matrix entries by a random number in the interval \mbox{[}-\/perturbation, perturbation\mbox{]}. This is required for the calculation of pseudospectra. Default\-: 0.\-0 (no perturbation). \\
-\hline
-\end{DoxyParams}
+\item[{\em matrix}]the matrix \item[{\em eigenvalues}]Vector of eigenvalues. Is automatically resized by the method. \item[{\em perturbation}]Can be used to perturb all matrix entries by a random number in the interval \mbox{[}-\/perturbation, perturbation\mbox{]}. This is required for the calculation of pseudospectra. Default: 0.0 (no perturbation). \end{DoxyParams}
 \begin{DoxyNote}{Note}
 Only practicable for small matrices, as the sparse matrix is turned into a full matrix. 
 \end{DoxyNote}
-\hypertarget{classnatrium_1_1matrixAnalysis_a2c18eb04461c90bfdf3f301e8c9dfc1b}{\index{natrium\-::matrix\-Analysis@{natrium\-::matrix\-Analysis}!write\-Pseudospectrum@{write\-Pseudospectrum}}
-\index{write\-Pseudospectrum@{write\-Pseudospectrum}!natrium::matrixAnalysis@{natrium\-::matrix\-Analysis}}
-\subsubsection[{write\-Pseudospectrum}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::matrix\-Analysis}$<$ dim $>$\-::write\-Pseudospectrum (
-\begin{DoxyParamCaption}
-\item[{size\-\_\-t}]{number\-Of\-Cycles = {\ttfamily 10}, }
-\item[{double}]{perturbation = {\ttfamily 0.1}}
-\end{DoxyParamCaption}
-)}}\label{classnatrium_1_1matrixAnalysis_a2c18eb04461c90bfdf3f301e8c9dfc1b}
+\begin{DoxyReturn}{Returns}
+maximum of absolute eigenvalues 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1matrixAnalysis_a2c18eb04461c90bfdf3f301e8c9dfc1b}{
+\index{natrium::matrixAnalysis@{natrium::matrixAnalysis}!writePseudospectrum@{writePseudospectrum}}
+\index{writePseudospectrum@{writePseudospectrum}!natrium::matrixAnalysis@{natrium::matrixAnalysis}}
+\subsubsection[{writePseudospectrum}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ template void {\bf natrium::matrixAnalysis}$<$ dim $>$::writePseudospectrum (size\_\-t {\em numberOfCycles} = {\ttfamily 10}, \/  double {\em perturbation} = {\ttfamily 0.1})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1matrixAnalysis_a2c18eb04461c90bfdf3f301e8c9dfc1b}
 
 
-Write the pseudospectrum of the \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}'s streaming matrix to the file pseudospectrum.\-txt in the Output\-Directory. The pseudospectrum contains the eigenvalues of all matrices that are \char`\"{}close to the matrix A\char`\"{}, i.\-e. all entries can be perturbed by a small number. 
-
-
+Write the pseudospectrum of the CFDSolver's streaming matrix to the file pseudospectrum.txt in the OutputDirectory. The pseudospectrum contains the eigenvalues of all matrices that are \char`\"{}close to the matrix A\char`\"{}, i.e. all entries can be perturbed by a small number. 
 \begin{DoxyParams}{Parameters}
-{\em number\-Of\-Cycles} & The number of matrices \char`\"{}close to A\char`\"{}, whose eigenvalues will be calculated. Default\-: 10. \\
-\hline
-{\em perturbation} & Maximal perturbation of the matrix entries. Default\-: 0.\-1. \\
-\hline
-\end{DoxyParams}
+\item[{\em numberOfCycles}]The number of matrices \char`\"{}close to A\char`\"{}, whose eigenvalues will be calculated. Default: 10. \item[{\em perturbation}]Maximal perturbation of the matrix entries. Default: 0.1. \end{DoxyParams}
 \begin{DoxyNote}{Note}
-If the output directory does not exist\-: Write to /tmp/\-N\-A\-Trium\-\_\-pseudospectrum.txt 
+If the output directory does not exist: Write to /tmp/NATrium\_\-pseudospectrum.txt 
 \end{DoxyNote}
-\hypertarget{classnatrium_1_1matrixAnalysis_af83535a0c1c83db223649b958c245df1}{\index{natrium\-::matrix\-Analysis@{natrium\-::matrix\-Analysis}!write\-Spectrum@{write\-Spectrum}}
-\index{write\-Spectrum@{write\-Spectrum}!natrium::matrixAnalysis@{natrium\-::matrix\-Analysis}}
-\subsubsection[{write\-Spectrum}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\-\_\-t dim$>$ template void {\bf natrium\-::matrix\-Analysis}$<$ dim $>$\-::write\-Spectrum (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classnatrium_1_1matrixAnalysis_af83535a0c1c83db223649b958c245df1}
+\hypertarget{classnatrium_1_1matrixAnalysis_af83535a0c1c83db223649b958c245df1}{
+\index{natrium::matrixAnalysis@{natrium::matrixAnalysis}!writeSpectrum@{writeSpectrum}}
+\index{writeSpectrum@{writeSpectrum}!natrium::matrixAnalysis@{natrium::matrixAnalysis}}
+\subsubsection[{writeSpectrum}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ template void {\bf natrium::matrixAnalysis}$<$ dim $>$::writeSpectrum ()\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1matrixAnalysis_af83535a0c1c83db223649b958c245df1}
 
 
-Write the spectrum of the \hyperlink{classnatrium_1_1CFDSolver}{C\-F\-D\-Solver}'s streaming matrix to the file spectrum.\-txt in the Output\-Directory. 
-
-\begin{DoxyNote}{Note}
-If the output directory does not exist\-: Write to /tmp/\-N\-A\-Trium\-\_\-spectrum.txt 
+Write the spectrum of the CFDSolver's streaming matrix to the file spectrum.txt in the OutputDirectory. \begin{DoxyNote}{Note}
+If the output directory does not exist: Write to /tmp/NATrium\_\-spectrum.txt 
 
 The result differs from the spectrum in Min and Lees Paper, because we consider here the full streaming matrix, which includes all streaming directions. 
 \end{DoxyNote}
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/analysis/matrix-\/analysis/\hyperlink{matrixAnalysis_8h}{matrix\-Analysis.\-h}\item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/analysis/matrix-\/analysis/\hyperlink{matrixAnalysis_8cpp}{matrix\-Analysis.\-cpp}\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/analysis/matrix-\/analysis/\hyperlink{matrixAnalysis_8h}{matrixAnalysis.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/analysis/matrix-\/analysis/\hyperlink{matrixAnalysis_8cpp}{matrixAnalysis.cpp}\end{DoxyCompactItemize}

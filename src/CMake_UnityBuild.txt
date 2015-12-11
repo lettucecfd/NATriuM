@@ -2,7 +2,7 @@
 # Compiles one huge (temporary) cpp file instead of all the small ones
 # This saves a lot of computation time
 
-
+ 
 function(enable_unity_build UB_SUFFIX SOURCE_VARIABLE_NAME)
   set(files ${${SOURCE_VARIABLE_NAME}})
   # Generate a unique filename for the unity build translation unit

@@ -17,11 +17,15 @@ namespace natrium{
 BOOST_AUTO_TEST_SUITE(CFDSolverUtilities_test)
 
 BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
-	cout << "CFDSolverUtilities_DoFDistance_test..." << endl;
+	pout << "CFDSolverUtilities_DoFDistance_test..." << endl;
 
 	// make grid
 	const double PI = 4*std::atan(1);
-	dealii::Triangulation<2> square;
+#ifdef WITH_TRILINOS_MPI
+	Mesh<2> square(MPI_COMM_WORLD);
+#else
+	Mesh<2> square;
+#endif
 	dealii::GridGenerator::hyper_cube(square, 0.0, 2*PI);
 
 	// test for different refinement levels
@@ -36,8 +40,24 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_DoFDistance_test){
 	// test for order 4 (distances not regular any more)
 	BOOST_CHECK_GT(2.0*PI/(4*3), CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(square, 3 ));
 
-	cout << endl;
+	pout << "done." << endl;
 }
+
+BOOST_AUTO_TEST_CASE(CFDSolverUtilities_getIntegratorByID_test){
+	pout << "CFDSolverUtilities_getIntegratorByID_test..." << endl;
+
+	TimeIntegratorName t;
+	DealIntegratorName d;
+	string n;
+	size_t id = 5;
+	CFDSolverUtilities::get_integrator_by_id(id, t, d, n);
+	BOOST_CHECK_EQUAL(t, OTHER);
+	BOOST_CHECK_EQUAL(d, RK_THIRD_ORDER);
+	BOOST_CHECK_EQUAL(n, "RK_THIRD_ORDER");
+
+	pout << "done." << endl;
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

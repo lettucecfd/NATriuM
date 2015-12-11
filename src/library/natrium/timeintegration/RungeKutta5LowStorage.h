@@ -65,15 +65,8 @@ public:
 	 * @param timeStepSize The initial time step size
 	 * @param problemSize the number of degrees of freedom
 	 */
-	RungeKutta5LowStorage(double timeStepSize, size_t problemSize);
+	RungeKutta5LowStorage(double timeStepSize, const VECTOR& prototype_vector);
 
-	/**
-	 * @short Constructor
-	 * @param timeStepSize The initial time step size
-	 * @param problemSize the number of degrees of freedom
-	 * @param numberOfBlocks the number of blocks of the block vectors
-	 */
-	RungeKutta5LowStorage(double timeStepSize, size_t problemSize, size_t numberOfBlocks);
 
 	/// destructor
 	virtual ~RungeKutta5LowStorage(){};

@@ -1,102 +1,50 @@
-\hypertarget{classnatrium_1_1SteadyPeriodicTestFlow2D}{\section{natrium\-:\-:Steady\-Periodic\-Test\-Flow2\-D Class Reference}
-\label{classnatrium_1_1SteadyPeriodicTestFlow2D}\index{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D@{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D}}
+\hypertarget{classnatrium_1_1SteadyPeriodicTestFlow2D}{
+\section{natrium::SteadyPeriodicTestFlow2D Class Reference}
+\label{classnatrium_1_1SteadyPeriodicTestFlow2D}\index{natrium::SteadyPeriodicTestFlow2D@{natrium::SteadyPeriodicTestFlow2D}}
 }
 
 
 Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  
 
 
-
-
-{\ttfamily \#include $<$Periodic\-Test\-Flow2\-D.\-h$>$}
-
-Inheritance diagram for natrium\-:\-:Steady\-Periodic\-Test\-Flow2\-D\-:\begin{figure}[H]
+{\ttfamily \#include $<$PeriodicTestFlow2D.h$>$}Inheritance diagram for natrium::SteadyPeriodicTestFlow2D::\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3.000000cm]{classnatrium_1_1SteadyPeriodicTestFlow2D}
+\includegraphics[height=3cm]{classnatrium_1_1SteadyPeriodicTestFlow2D}
 \end{center}
 \end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1SteadyPeriodicTestFlow2D_1_1InitialVelocity}{InitialVelocity}
+\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1SteadyPeriodicTestFlow2D_a7db4598e86b34158612497ea2ff0ca74}{Steady\-Periodic\-Test\-Flow2\-D} (double viscosity, size\-\_\-t refinement\-Level)
-\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SteadyPeriodicTestFlow2D_a7344b71a404f2c4bbc73c1c738fdfa22}{virtual \hyperlink{classnatrium_1_1SteadyPeriodicTestFlow2D_a7344b71a404f2c4bbc73c1c738fdfa22}{$\sim$\-Steady\-Periodic\-Test\-Flow2\-D} ()}\label{classnatrium_1_1SteadyPeriodicTestFlow2D_a7344b71a404f2c4bbc73c1c738fdfa22}
+\hyperlink{classnatrium_1_1SteadyPeriodicTestFlow2D_a7db4598e86b34158612497ea2ff0ca74}{SteadyPeriodicTestFlow2D} (double viscosity, size\_\-t refinementLevel)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SteadyPeriodicTestFlow2D_a7344b71a404f2c4bbc73c1c738fdfa22}{
+virtual \hyperlink{classnatrium_1_1SteadyPeriodicTestFlow2D_a7344b71a404f2c4bbc73c1c738fdfa22}{$\sim$SteadyPeriodicTestFlow2D} ()}
+\label{classnatrium_1_1SteadyPeriodicTestFlow2D_a7344b71a404f2c4bbc73c1c738fdfa22}
 
-\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1SteadyPeriodicTestFlow2D_a29474cd6d454c3f600693ae2c362cba2}{apply\-Initial\-Densities} (distributed\-\_\-vector \&initial\-Densities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
-\begin{DoxyCompactList}\small\item\em set initial densities \end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1SteadyPeriodicTestFlow2D_ae0b3291a91029f62b41fd96a128f645a}{apply\-Initial\-Velocities} (vector$<$ distributed\-\_\-vector $>$ \&initial\-Velocities, const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&support\-Points) const 
-\begin{DoxyCompactList}\small\item\em set initial velocities \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1SteadyPeriodicTestFlow2D_a7db4598e86b34158612497ea2ff0ca74}{\index{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D@{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D}!Steady\-Periodic\-Test\-Flow2\-D@{Steady\-Periodic\-Test\-Flow2\-D}}
-\index{Steady\-Periodic\-Test\-Flow2\-D@{Steady\-Periodic\-Test\-Flow2\-D}!natrium::SteadyPeriodicTestFlow2D@{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D}}
-\subsubsection[{Steady\-Periodic\-Test\-Flow2\-D}]{\setlength{\rightskip}{0pt plus 5cm}natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D\-::\-Steady\-Periodic\-Test\-Flow2\-D (
-\begin{DoxyParamCaption}
-\item[{double}]{viscosity, }
-\item[{size\-\_\-t}]{refinement\-Level}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classnatrium_1_1SteadyPeriodicTestFlow2D_a7db4598e86b34158612497ea2ff0ca74}
+\hypertarget{classnatrium_1_1SteadyPeriodicTestFlow2D_a7db4598e86b34158612497ea2ff0ca74}{
+\index{natrium::SteadyPeriodicTestFlow2D@{natrium::SteadyPeriodicTestFlow2D}!SteadyPeriodicTestFlow2D@{SteadyPeriodicTestFlow2D}}
+\index{SteadyPeriodicTestFlow2D@{SteadyPeriodicTestFlow2D}!natrium::SteadyPeriodicTestFlow2D@{natrium::SteadyPeriodicTestFlow2D}}
+\subsubsection[{SteadyPeriodicTestFlow2D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::SteadyPeriodicTestFlow2D::SteadyPeriodicTestFlow2D (double {\em viscosity}, \/  size\_\-t {\em refinementLevel})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SteadyPeriodicTestFlow2D_a7db4598e86b34158612497ea2ff0ca74}
 
 
 constructor 
 
 apply boundary values 
 
-\subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1SteadyPeriodicTestFlow2D_a29474cd6d454c3f600693ae2c362cba2}{\index{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D@{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D}!apply\-Initial\-Densities@{apply\-Initial\-Densities}}
-\index{apply\-Initial\-Densities@{apply\-Initial\-Densities}!natrium::SteadyPeriodicTestFlow2D@{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D}}
-\subsubsection[{apply\-Initial\-Densities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D\-::apply\-Initial\-Densities (
-\begin{DoxyParamCaption}
-\item[{distributed\-\_\-vector \&}]{initial\-Densities, }
-\item[{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classnatrium_1_1SteadyPeriodicTestFlow2D_a29474cd6d454c3f600693ae2c362cba2}
-
-
-set initial densities 
-
-
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt out}  & {\em initial\-Densities} & vector of densities; to be filled \\
-\hline
-\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
-\hline
-\end{DoxyParams}
-
-
-Reimplemented in \hyperlink{classnatrium_1_1UnsteadyPeriodicTestFlow2D_a089ab3cde76dfade1eb8705051af123f}{natrium\-::\-Unsteady\-Periodic\-Test\-Flow2\-D}.
-
-\hypertarget{classnatrium_1_1SteadyPeriodicTestFlow2D_ae0b3291a91029f62b41fd96a128f645a}{\index{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D@{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D}!apply\-Initial\-Velocities@{apply\-Initial\-Velocities}}
-\index{apply\-Initial\-Velocities@{apply\-Initial\-Velocities}!natrium::SteadyPeriodicTestFlow2D@{natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D}}
-\subsubsection[{apply\-Initial\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}virtual void natrium\-::\-Steady\-Periodic\-Test\-Flow2\-D\-::apply\-Initial\-Velocities (
-\begin{DoxyParamCaption}
-\item[{vector$<$ distributed\-\_\-vector $>$ \&}]{initial\-Velocities, }
-\item[{const vector$<$ dealii\-::\-Point$<$ 2 $>$ $>$ \&}]{support\-Points}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classnatrium_1_1SteadyPeriodicTestFlow2D_ae0b3291a91029f62b41fd96a128f645a}
-
-
-set initial velocities 
-
-
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt out}  & {\em initial\-Velocities} & vector of velocities; to be filled \\
-\hline
-\mbox{\tt in}  & {\em support\-Points} & the coordinates associated with each degree of freedom \\
-\hline
-\end{DoxyParams}
-
-
-Reimplemented in \hyperlink{classnatrium_1_1UnsteadyPeriodicTestFlow2D_a5755fda1ff3726ffc543cf86b618d71e}{natrium\-::\-Unsteady\-Periodic\-Test\-Flow2\-D}.
-
-
-
-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 
-/home/kraemer/eclipse\-\_\-workspace/\-N\-A\-Triu\-M/src/test/solver/\hyperlink{PeriodicTestFlow2D_8h}{Periodic\-Test\-Flow2\-D.\-h}\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/test/solver/\hyperlink{PeriodicTestFlow2D_8h}{PeriodicTestFlow2D.h}\end{DoxyCompactItemize}
