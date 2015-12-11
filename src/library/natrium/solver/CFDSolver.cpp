@@ -309,6 +309,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					* configuration->getSedgOrderOfFiniteElement()
 					* configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
+	LOG(WELCOME) << "Order of finite element:  "
+			<< configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLSISION ==          " << endl;
 	switch (configuration->getCollisionScheme()) {
@@ -556,9 +558,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
-					<< iteration << "."
 					<< m_problemDescription->getMesh()->locally_owned_subdomain()
-					<< ".vtu";
+					<< "." << iteration << ".vtu";
 			std::string filename = str.str();
 			std::ofstream vtu_output(filename.c_str());
 			dealii::DataOut<dim> data_out;
@@ -594,9 +595,9 @@ void CFDSolver<dim>::output(size_t iteration) {
 				// generate .pvtu filename
 				std::stringstream pvtu_filename;
 				pvtu_filename << m_configuration->getOutputDirectory().c_str()
-						<< "/t_" << iteration << "."
+						<< "/t_"
 						<< m_problemDescription->getMesh()->locally_owned_subdomain()
-						<< ".pvtu";
+						<< "." << iteration << ".pvtu";
 				std::ofstream pvtu_output(pvtu_filename.str().c_str());
 
 				// generate all other filenames
@@ -607,9 +608,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 					std::stringstream vtu_filename_i;
 					vtu_filename_i
 							<< m_configuration->getOutputDirectory().c_str()
-							<< "/t_" << iteration << "."
-							<< m_problemDescription->getMesh()->locally_owned_subdomain()
-							<< ".vtu";
+							<< "/t_" << i << "." << iteration << ".vtu";
 					filenames.push_back(vtu_filename_i.str());
 				}
 				data_out.write_pvtu_record(pvtu_output, filenames);
