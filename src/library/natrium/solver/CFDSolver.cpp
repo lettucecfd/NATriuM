@@ -88,13 +88,17 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 	/// Build boltzmann model
 	if (Stencil_D2Q9 == configuration->getStencil()) {
-		m_stencil = boost::make_shared<D2Q9>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D2Q9>(
+				configuration->getStencilScaling());
 	} else if (Stencil_D3Q19 == configuration->getStencil()) {
-		m_stencil = boost::make_shared<D3Q19>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q19>(
+				configuration->getStencilScaling());
 	} else if (Stencil_D3Q15 == configuration->getStencil()) {
-		m_stencil = boost::make_shared<D3Q15>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q15>(
+				configuration->getStencilScaling());
 	} else if (Stencil_D3Q27 == configuration->getStencil()) {
-		m_stencil = boost::make_shared<D3Q27>(configuration->getStencilScaling());
+		m_stencil = boost::make_shared<D3Q27>(
+				configuration->getStencilScaling());
 	} else {
 		natrium_errorexit("Stencil not known to CFDSolver.");
 	}
@@ -293,6 +297,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					* configuration->getSedgOrderOfFiniteElement()
 					* configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
+	LOG(WELCOME) << "Order of finite element:  "
+			<< configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLISION ==          " << endl;
 	switch (configuration->getCollisionScheme()) {
@@ -371,9 +377,11 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 }
 /* Constructor */
-template CFDSolver<2>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+template CFDSolver<2>::CFDSolver(
+		boost::shared_ptr<SolverConfiguration> configuration,
 		boost::shared_ptr<ProblemDescription<2> > problemDescription);
-template CFDSolver<3>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+template CFDSolver<3>::CFDSolver(
+		boost::shared_ptr<SolverConfiguration> configuration,
 		boost::shared_ptr<ProblemDescription<3> > problemDescription);
 
 template<size_t dim>
@@ -458,7 +466,8 @@ template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
 
 // start timer
-	TimerOutput::Scope timer_section(Timing::getTimer(), "Check stop condition");
+	TimerOutput::Scope timer_section(Timing::getTimer(),
+			"Check stop condition");
 
 // Maximum number of iterations
 	size_t N = m_configuration->getNumberOfTimeSteps();
@@ -532,9 +541,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
-					<< iteration << "."
 					<< m_problemDescription->getMesh()->locally_owned_subdomain()
-					<< ".vtu";
+					<< "." << iteration << ".vtu";
 			std::string filename = str.str();
 			std::ofstream vtu_output(filename.c_str());
 			dealii::DataOut<dim> data_out;
@@ -570,9 +578,9 @@ void CFDSolver<dim>::output(size_t iteration) {
 				// generate .pvtu filename
 				std::stringstream pvtu_filename;
 				pvtu_filename << m_configuration->getOutputDirectory().c_str()
-						<< "/t_" << iteration << "."
+						<< "/t_"
 						<< m_problemDescription->getMesh()->locally_owned_subdomain()
-						<< ".pvtu";
+						<< "." << iteration << ".pvtu";
 				std::ofstream pvtu_output(pvtu_filename.str().c_str());
 
 				// generate all other filenames
@@ -583,9 +591,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 					std::stringstream vtu_filename_i;
 					vtu_filename_i
 							<< m_configuration->getOutputDirectory().c_str()
-							<< "/t_" << iteration << "."
-							<< m_problemDescription->getMesh()->locally_owned_subdomain()
-							<< ".vtu";
+							<< "/t_" << i << "." << iteration << ".vtu";
 					filenames.push_back(vtu_filename_i.str());
 				}
 				data_out.write_pvtu_record(pvtu_output, filenames);
