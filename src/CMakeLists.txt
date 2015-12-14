@@ -45,9 +45,9 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 # descend into subdirectories (build natrium library in src and unit tests in test as well as examples)
 #
 add_subdirectory( library )
-add_subdirectory( test )
-#add_subdirectory( examples )
-add_subdirectory( analysis )
+#add_subdirectory( test )
+add_subdirectory( examples )
+#add_subdirectory( analysis )
  
 #
 # set variable NATRIUM_TARGET (only used in this file)
