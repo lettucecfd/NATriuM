@@ -123,6 +123,9 @@ private:
 	double m_residuumDensity;
 	double m_residuumVelocity;
 
+	// vector for nonlinear boundary conditions
+	distributed_vector m_nonlinearBoundaryVector;
+
 protected:
 
 	/// save the distribution functions to files for checkpointing

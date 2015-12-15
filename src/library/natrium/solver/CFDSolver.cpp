@@ -32,6 +32,7 @@
 #include "../collision/BGKSteadyState.h"
 
 #include "../problemdescription/BoundaryCollection.h"
+#include "../problemdescription/NonlinearBoundary.h"
 
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
@@ -361,6 +362,11 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	} else {
 		initializeDistributions();
 	}
+	// initialize nonlinear boundaries
+	m_nonlinearBoundaryVector.reinit(m_f.at(0));
+	m_problemDescription->getBoundaries()->initializeNonlinearBoundaries(
+			m_advectionOperator, m_stencil, &m_density, &m_velocity, &m_f,
+			&m_nonlinearBoundaryVector);
 
 // Create file for output table
 	if ((not configuration->isSwitchOutputOff())

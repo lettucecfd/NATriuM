@@ -5,8 +5,8 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#ifndef DIRICHLETBOUNDARY_H_
-#define DIRICHLETBOUNDARY_H_
+#ifndef LINEARBOUNDARY_H_
+#define LINEARBOUNDARY_H_
 
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include "deal.II/lac/trilinos_sparsity_pattern.h"
@@ -20,40 +20,6 @@
 
 namespace natrium {
 
-
-template<size_t dim>
-class BoundaryDensity: public dealii::Function<dim> {
-private:
-	double m_density;
-public:
-	BoundaryDensity(double rho = 1) {
-		m_density = rho;
-	}
-	;
-	virtual ~BoundaryDensity() {
-	}
-	;
-	virtual double value(const dealii::Point<dim> &,
-			const unsigned int  = 0) const {
-		return m_density;
-	}
-};
-template<size_t dim>
-class BoundaryVelocity: public dealii::Function<dim> {
-private:
-	dealii::Vector<double> m_Velocity;
-public:
-	BoundaryVelocity(const dealii::Vector<double>& velocity) :
-			m_Velocity(velocity) {
-	}
-	virtual ~BoundaryVelocity() {
-	}
-	;
-	virtual void vector_value(const dealii::Point<dim> &,
-			dealii::Vector<double> &values) const {
-		values = m_Velocity;
-	}
-};
 
 /**
  * @short 	Abstract class to describe Linear boundary conditions.

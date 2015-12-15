@@ -69,6 +69,8 @@ public:
 
 	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const = 0;
 
+	virtual const vector<std::map<size_t, size_t> >& getQIndexToFacedof() const = 0;
+
 #ifdef WITH_TRILINOS
 	virtual const dealii::IndexSet& getLocallyOwnedDofs() = 0;
 	virtual const dealii::IndexSet& getLocallyRelevantDofs() = 0;

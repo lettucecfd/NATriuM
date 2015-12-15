@@ -10,6 +10,12 @@
 
 namespace natrium {
 
+
+template class BoundaryDensity<2> ;
+template class BoundaryDensity<3> ;
+template class BoundaryVelocity<2> ;
+template class BoundaryVelocity<3> ;
+
 bool BoundaryTools::checkParallelLines(const dealii::Point<2>& beginLine1,
 		const dealii::Point<2>& endLine1, dealii::Point<2>& beginLine2,
 		dealii::Point<2>& endLine2, std::string& errorMessage) {

@@ -18,6 +18,40 @@ namespace natrium {
 
 namespace BoundaryTools {
 
+template<size_t dim>
+class BoundaryDensity: public dealii::Function<dim> {
+private:
+	double m_density;
+public:
+	BoundaryDensity(double rho = 1) {
+		m_density = rho;
+	}
+	;
+	virtual ~BoundaryDensity() {
+	}
+	;
+	virtual double value(const dealii::Point<dim> &,
+			const unsigned int  = 0) const {
+		return m_density;
+	}
+};
+template<size_t dim>
+class BoundaryVelocity: public dealii::Function<dim> {
+private:
+	dealii::Vector<double> m_Velocity;
+public:
+	BoundaryVelocity(const dealii::Vector<double>& velocity) :
+			m_Velocity(velocity) {
+	}
+	virtual ~BoundaryVelocity() {
+	}
+	;
+	virtual void vector_value(const dealii::Point<dim> &,
+			dealii::Vector<double> &values) const {
+		values = m_Velocity;
+	}
+};
+
 /**
  * @short function to compare points as map keys;
  *        the points with smaller x components fall before others. in case of equal x,
@@ -48,6 +82,7 @@ enum PointCouplingAtBoundary{
 	COUPLE_ONLY_SINGLE_POINTS,
 	COUPLE_WHOLE_FACE
 };
+
 
 /**
  * @short Check if two lines in a 2D plane are parallel and not equal to each other.
