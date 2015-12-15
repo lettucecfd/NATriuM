@@ -14,10 +14,6 @@
 
 namespace natrium {
 
-template class BoundaryDensity<2> ;
-template class BoundaryDensity<3> ;
-template class BoundaryVelocity<2> ;
-template class BoundaryVelocity<3> ;
 
 template<size_t dim> LinearBoundary<dim>::LinearBoundary(
 		size_t boundaryIndicator,

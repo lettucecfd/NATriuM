@@ -349,6 +349,7 @@ public:
 		return m_facedof_to_q_index;
 	}
 
+
 	const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
@@ -377,15 +378,16 @@ public:
 		return m_systemVector;
 	}
 
-#ifdef WITH_TRILINOS
 	const dealii::IndexSet& getLocallyOwnedDofs() {
 		return m_locallyOwnedDofs;
 	}
 	const dealii::IndexSet& getLocallyRelevantDofs() {
 		return m_locallyRelevantDofs;
 	}
-#endif
 
+	virtual const vector<std::map<size_t, size_t> >& getQIndexToFacedof() const {
+		return m_q_index_to_facedof;
+	}
 };
 
 } /* namespace natrium */
