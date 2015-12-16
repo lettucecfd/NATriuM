@@ -13,10 +13,31 @@
 #include "deal.II/base/point.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
 namespace BoundaryTools {
+
+/**
+ * @short Exception class for Boundaries
+ */
+class BoundaryException: public NATriuMException {
+private:
+	std::string message;
+public:
+	BoundaryException(const char *msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	BoundaryException(const string& msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	~BoundaryException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
 
 template<size_t dim>
 class BoundaryDensity: public dealii::Function<dim> {
