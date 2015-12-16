@@ -72,7 +72,7 @@ private:
 	distributed_vector const * m_rho;
 	vector<distributed_vector> const * m_u;
 	DistributionFunctions const * m_f;
-	distributed_vector* m_boundaryVector;
+	distributed_block_vector* m_boundaryVector;
 
 public:
 
@@ -95,7 +95,7 @@ public:
 
 	void initialize(boost::shared_ptr<AdvectionOperator<dim> > advection_operator, boost::shared_ptr<Stencil> stencil, const distributed_vector* rho,
 			const vector<distributed_vector>* u, const DistributionFunctions* f,
-			distributed_vector* boundary_vector);
+			distributed_block_vector* boundary_vector);
 
 	size_t getBoundaryIndicator() const {
 		return m_boundaryIndicator;
@@ -111,7 +111,7 @@ public:
 		return *m_advectionOperator;
 	}
 
-	distributed_vector& getBoundaryVector() {
+	distributed_block_vector& getBoundaryVector() {
 		return *m_boundaryVector;
 	}
 

@@ -363,7 +363,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 	// initialize nonlinear boundaries
-	m_nonlinearBoundaryVector.reinit(m_f.at(0));
+	m_nonlinearBoundaryVector.reinit(m_f.getFStream());
 	m_problemDescription->getBoundaries()->initializeNonlinearBoundaries(
 			m_advectionOperator, m_stencil, &m_density, &m_velocity, &m_f,
 			&m_nonlinearBoundaryVector);

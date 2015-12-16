@@ -24,7 +24,7 @@ void BoundaryCollection<dim>::initializeNonlinearBoundaries(
 		boost::shared_ptr<AdvectionOperator<dim> > advection_operator,
 		boost::shared_ptr<Stencil> stencil, distributed_vector const * rho,
 		vector<distributed_vector> const* u, DistributionFunctions const * f,
-		distributed_vector* boundary_vector) {
+		distributed_block_vector* boundary_vector) {
 	BoundaryCollection<dim>::NonlinearIterator it;
 	BoundaryCollection<dim>::NonlinearIterator end =
 			m_nonlinearBoundaries.end();

@@ -24,7 +24,7 @@ void NonlinearBoundary<dim>::initialize(
 		boost::shared_ptr<AdvectionOperator<dim> > advection_operator,
 		boost::shared_ptr<Stencil> stencil,
 		distributed_vector const * rho, vector<distributed_vector> const* u,
-		DistributionFunctions const * f, distributed_vector* boundary_vector) {
+		DistributionFunctions const * f, distributed_block_vector* boundary_vector) {
 	m_advectionOperator = advection_operator;
 	m_stencil = stencil;
 	m_rho = rho;
