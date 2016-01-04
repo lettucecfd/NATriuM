@@ -13,7 +13,7 @@
 #include "deal.II/grid/grid_out.h"
 #include "deal.II/grid/grid_tools.h"
 
-#include "../problemdescription/MinLeeBoundary.h"
+#include "../problemdescription/LinearBoundaryRhoU.h"
 
 namespace natrium {
 
@@ -87,8 +87,8 @@ boost::shared_ptr<BoundaryCollection<2> > Droplet2D::makeBoundaries() {
 //			boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
 	dealii::Vector<double> zeroVelocity(2);
-	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, zeroVelocity)) ;
-	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(3, zeroVelocity)) ;
+	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(2, zeroVelocity)) ;
+	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(3, zeroVelocity)) ;
 
 //	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh() ;
 
