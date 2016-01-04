@@ -37,26 +37,23 @@
 
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
-
+//#define ONLY_PERIODIC
 using namespace natrium;
 
 // if this define statement is enabled: only the initialization time is regarded
 //#define MEASURE_ONLY_INIT_TIME
-// #define ONLY_PERIODIC
+//#define ONLY_PERIODIC
 
 // Main function
 int main() {
 
-	MPIGuard::getInstance();
-
-	pout
-			<< "Starting NATriuM time integrator analysis with moving wall boundaries..."
+	cout
+			<< "Starting NATriuM Collision Scheme analysis with moving wall boundaries..."
 			<< endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
-
 #ifdef ONLY_PERIODIC
 	// specify Reynolds number
 	const double Re = 8 * atan(1); // = 2 pi
@@ -64,16 +61,16 @@ int main() {
 	const double Ma = 0.1;
 #else
 	const double Re = 2000;
-	const double Ma = 0.05;
+	const double Ma = 0.01;
 #endif
 
 	// Problem description
 	// -------------------
 #ifdef ONLY_PERIODIC
 	// length of quadratic domain
-	const double L =  8 * atan(1); // = 2 pi
+	const double L = 8 * atan(1); // = 2 pi
 	const double U = 1;
-	const double tmax = 0.01;
+	const double tmax = 1;
 #else
 	const double L = 1;
 	// velocity of top plate
@@ -86,82 +83,63 @@ int main() {
 	const double viscosity = U * L / Re;
 	// starting time
 	//const double t0 = 30.0;
-	const double t0 = 1.0; 	// analytic solution won't converge for t0 = 0.0 and adaptive timesteps
+	const double t0 = 1.0; // analytic solution won't converge for t0 = 0.0 and adaptive timesteps
 
 	size_t refinementLevel = 3;
 	size_t orderOfFiniteElement = 5;
 
+	for (int i = 2; i < 3; i++) {
+
 #ifndef ONLY_PERIODIC
-	// make problem object
-	boost::shared_ptr<CouetteFlow2D> couette2D = boost::make_shared<CouetteFlow2D>(viscosity,
-			U, refinementLevel, L, t0, false);
-	boost::shared_ptr<Benchmark<2> > benchmark = couette2D;
+		// make problem object
+		shared_ptr<CouetteFlow2D> couette2D = make_shared<CouetteFlow2D>(
+				viscosity, U, refinementLevel, L, t0, false);
+		shared_ptr<Benchmark<2> > benchmark = couette2D;
 #else
-	// make problem object
-	boost::shared_ptr<TaylorGreenVortex2D> tgv2D = boost::make_shared<TaylorGreenVortex2D>(
-			viscosity, refinementLevel, 1. / sqrt(3.) / Ma);
-	boost::shared_ptr<Benchmark<2> > benchmark = tgv2D;
+		// make problem object
+		shared_ptr<TaylorGreenVortex2D> tgv2D =
+				make_shared<TaylorGreenVortex2D>(viscosity, refinementLevel,
+						1. / sqrt(3.) / Ma);
+		shared_ptr<Benchmark<2> > benchmark = tgv2D;
 #endif
 
-	// prepare time table file
-	// the output is written to the standard output directory (e.g. NATriuM/results or similar)
+		// prepare time table file
+		// the output is written to the standard output directory (e.g. NATriuM/results or similar)
 
-	for (int solver = 1; solver < 7; solver++) {
 		shared_ptr<SolverConfiguration> configuration = make_shared<
-
 				SolverConfiguration>();
-		std::string linearsolver = "test";
+		std::string collisionScheme = "test";
 
-		configuration->setTimeIntegrator(OTHER);
-		configuration->setDealIntegrator(IMPLICIT_MIDPOINT);
+		switch (i) {
+		case 0:
+			configuration->setCollisionScheme(BGK_STANDARD);
+			collisionScheme = "BGK_STANDARD";
+			break;
 
-		switch (solver) {
 		case 1:
-			configuration->setDealLinearSolver(BICGSTAB);
-			linearsolver = "BICGSTAB";
+			configuration->setCollisionScheme(BGK_INCOMPRESSIBLE);
+			collisionScheme = "BGK_INCOMPRESSIBLE";
 			break;
 
 		case 2:
-			configuration->setDealLinearSolver(CG);
-			linearsolver = "CG";
+			configuration->setCollisionScheme(KBC_STANDARD);
+			collisionScheme = "KBC_STANDARD";
 			break;
-
-		case 3:
-			configuration->setDealLinearSolver(FGMRES);
-			linearsolver = "FGMRES";
-			break;
-
-		case 4:
-			configuration->setDealLinearSolver(GMRES);
-			linearsolver = "GMRES";
-			break;
-
-		case 5:
-			configuration->setDealLinearSolver(MINRES);
-			linearsolver = "MINRES";
-			break;
-
-		case 6:
-			configuration->setDealLinearSolver(QMRS);
-			linearsolver = "QMRS";
-			break;
-
-		case 7:
-			configuration->setDealLinearSolver(RICHARDSON);
-			linearsolver = "RICHARDSON";
-			break;
-
-/*		case 8: {
-		//	configuration->setDealLinearSolver(RELAXATION);
-		//	linearsolver = "RELAXATION";
-			break;
-
-*/		//}
 		}
 
+		std::stringstream filename_parameter;
+		filename_parameter << getenv("NATRIUM_HOME") << "/collision-analysis/"
+				<< "parameter.txt";
+		std::ofstream parameterFile(filename_parameter.str().c_str());
+		parameterFile << "Ma: " << Ma << endl << "Re: " << Re << endl << "L: "
+				<< L << endl << "U: " << U << endl << "Viscosity: " << viscosity
+				<< endl << "t0: " << t0 << endl << "tmax:" << tmax << endl
+				<< "RefinementLevel: " << refinementLevel << endl
+				<< "Order of Finite Element : " << orderOfFiniteElement << endl;
+
 		std::stringstream filename;
-		filename << getenv("NATRIUM_HOME")  << "/timeintegration-analysis/"
-				<< linearsolver.c_str() << "_table.txt";
+		filename << getenv("NATRIUM_HOME") << "/collision-analysis/"
+				<< collisionScheme.c_str() << "_table.txt";
 		std::ofstream timeFile(filename.str().c_str());
 		timeFile
 				<< "# order of FE   dt        init time (sec)             loop time (sec)         time for one iteration (sec)"
@@ -169,25 +147,25 @@ int main() {
 
 		// prepare error table file
 		std::stringstream filename2;
-		filename2 << getenv("NATRIUM_HOME") << "/timeintegration-analysis/"
-				<< linearsolver.c_str() << "_error.txt";
+		filename2 << getenv("NATRIUM_HOME") << "/collision-analysis/"
+				<< collisionScheme.c_str() << "_error.txt";
 		std::ofstream orderFile(filename2.str().c_str());
 		orderFile << "# visc = " << viscosity << "; Ma = " << Ma << endl;
 		orderFile
 				<< "#  dt  i      CFL         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   "
 						"||error_rho||_2	runtime" << endl;
 
-		pout << "Linear solver: " << linearsolver.c_str() << endl;
+		cout << "CollisionScheme: " << collisionScheme.c_str() << endl;
 
-		for (double CFL = 0.4; CFL <= 50; CFL = CFL *2) {
+		for (double CFL = 0.1; CFL <= 12.8; CFL *= 2.) {
 
 			double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*benchmark->getMesh(), orderOfFiniteElement,
+					*benchmark->getTriangulation(), orderOfFiniteElement,
 					D2Q9(scaling), CFL);
 
-			pout << "CFL = " << CFL << endl;
-			if (tmax/ dt < 2) {
-				pout << "time step too big." << endl;
+			cout << "CFL = " << CFL << endl;
+			if (tmax / dt < 2) {
+				cout << "time step too big." << endl;
 				continue;
 			}
 
@@ -196,15 +174,15 @@ int main() {
 
 			// setup configuration
 			std::stringstream dirName;
-			dirName << getenv("NATRIUM_HOME") << "/timeintegration-analysis/"
-					<< linearsolver << "_" << CFL << "_"
-					<< dt;
-
+			dirName << getenv("NATRIUM_HOME") << "/collision-analysis/"
+					<< collisionScheme << "_" << CFL << "_" << dt;
+			configuration->setTimeIntegrator(RUNGE_KUTTA_5STAGE);
+			//configuration->setDealIntegrator(DOPRI);
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());
 			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
-			configuration->setOutputTableInterval(10);
+			configuration->setOutputTableInterval(10000000);
 
 			//configuration->setOutputCheckpointInterval(1000);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -212,8 +190,6 @@ int main() {
 			configuration->setCommandLineVerbosity(BASIC);
 			configuration->setTimeStepSize(dt);
 			configuration->setSimulationEndTime(tmax);
-			//configuration->setCollisionScheme(BGK_INCOMPRESSIBLE);
-
 
 #ifdef MEASURE_ONLY_INIT_TIME
 			configuration->setNumberOfTimeSteps(1);
@@ -231,8 +207,11 @@ int main() {
 				time2 /= CLOCKS_PER_SEC;
 				solver.getErrorStats()->update();
 
+				/*if (solver.getErrorStats()->getMaxVelocityError()
+				 > solver.getErrorStats()->getMaxUAnalytic())
+				 break;*/
 
-				pout << " OK ... Init: " << time1 << " sec; Run: " << time2
+				cout << " OK ... Init: " << time1 << " sec; Run: " << time2
 						<< " sec." << " Max Error U_analytic: "
 						<< solver.getErrorStats()->getMaxVelocityError()
 						<< endl;
@@ -243,21 +222,20 @@ int main() {
 						<< endl;
 				// put out final errors
 				solver.getErrorStats()->update();
-				orderFile << dt << " " << solver.getIteration() << " "
-						<< CFL << " "
-						<< solver.getErrorStats()->getMaxUAnalytic() << " "
-						<< solver.getErrorStats()->getMaxVelocityError() << " "
-						<< solver.getErrorStats()->getMaxDensityError() << " "
-						<< solver.getErrorStats()->getL2VelocityError() << " "
-						<< solver.getErrorStats()->getL2DensityError() << " "
-						<< time2 << endl;
+				orderFile << dt << " " << solver.getIteration() << " " << CFL
+						<< " " << solver.getErrorStats()->getMaxUAnalytic()
+						<< " " << solver.getErrorStats()->getMaxVelocityError()
+						<< " " << solver.getErrorStats()->getMaxDensityError()
+						<< " " << solver.getErrorStats()->getL2VelocityError()
+						<< " " << solver.getErrorStats()->getL2DensityError()
+						<< " " << time2 << endl;
 			} catch (std::exception& e) {
-				pout << " Error: " << e.what() << endl;
+				cout << " Error: " << e.what() << endl;
 			}
 
 		} /* for time step*/
-	} /* for integrator */
-	pout << "Time integration analysis terminated." << endl;
+	}
+	cout << "Collision analysis terminated." << endl;
 
 	return 0;
 }
