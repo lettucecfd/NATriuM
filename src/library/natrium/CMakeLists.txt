@@ -6,7 +6,7 @@
 
 file(   GLOB_RECURSE
         SRC_FILES
-        benchmarks/*
+        benchmarks/* 
         boltzmannmodels/*
         collision/*
         problemdescription/* 

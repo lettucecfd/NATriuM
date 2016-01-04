@@ -30,6 +30,9 @@
 #include "../collision/BGKStandard.h"
 #include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
+#include "../collision/BGKIncompressible.h"
+#include "../collision/MRTStandard.h"
+#include "../collision/KBCStandard.h"
 
 #include "../problemdescription/BoundaryCollection.h"
 
@@ -168,6 +171,25 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = boost::make_shared<BGKStandardTransformed>(tau,
+				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (BGK_INCOMPRESSIBLE == configuration->getCollisionScheme()) {
+		tau = BGKIncompressible::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
+		m_collisionModel = boost::make_shared<BGKIncompressible>(tau,
+				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (MRT_STANDARD == configuration->getCollisionScheme()) {
+		tau = BGKStandard::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
+		m_collisionModel = boost::make_shared<MRTStandard>(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (KBC_STANDARD == configuration->getCollisionScheme()) {
+		tau = KBCStandard::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
+		m_collisionModel = boost::make_shared<KBCStandard>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
 	}
 
@@ -316,6 +338,18 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "Effective Ma:             " << Ma / sqrt(gamma)
 				<< endl;
 
+		break;
+	}
+	case BGK_INCOMPRESSIBLE: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
+	case MRT_STANDARD: {
+		LOG(WELCOME) << "tau:						" << tau << endl;
+		break;
+	}
+	case KBC_STANDARD: {
+		LOG(WELCOME) << "tau:						" << tau << endl;
 		break;
 	}
 	}
