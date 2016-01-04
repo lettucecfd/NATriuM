@@ -6,7 +6,7 @@
 #add_subdirectory(step-6)
 add_subdirectory(step-grid-in)
 #add_subdirectory(step-3DHill1)
-
+add_subdirectory(static-droplet)
 #add_subdirectory(step-9)
 #add_subdirectory(step-sinusoidal)
 #add_subdirectory(step-16)

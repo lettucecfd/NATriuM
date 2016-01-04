@@ -150,6 +150,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
 	double gamma = -1.0;
+	double G = -5;
 	if (BGK_STANDARD == configuration->getCollisionScheme()) {
 		tau = BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
@@ -170,6 +171,17 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = boost::make_shared<BGKStandardTransformed>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (BGK_MULTIPHASE == configuration->getCollisionScheme()) {
+		tau = BGKStandardTransformed::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(),
+				m_configuration->getTimeStepSize(), *m_stencil);
+		G = m_configuration->getBGKPseudopotentialG();
+		boost::shared_ptr<BGKPseudopotential<dim> > coll_tmp =
+				boost::make_shared<BGKPseudopotential<dim> >(tau,
+						m_configuration->getTimeStepSize(), m_stencil, G);
+		coll_tmp->setAdvectionOperator(m_advectionOperator);
+		m_collisionModel = coll_tmp;
+
 	}
 
 // initialize macroscopic variables
@@ -317,6 +329,11 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "Effective Ma:             " << Ma / sqrt(gamma)
 				<< endl;
 
+		break;
+	}
+	case BGK_MULTIPHASE: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		LOG(WELCOME) << "G:                        " << G << endl;
 		break;
 	}
 	}

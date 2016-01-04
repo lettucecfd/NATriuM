@@ -101,7 +101,7 @@ SolverConfiguration::SolverConfiguration() {
 	{
 		declare_entry("Collision scheme", "BGK standard",
 				dealii::Patterns::Selection(
-						"BGK standard|BGK steady state|BGK standard transformed"),
+						"BGK standard|BGK steady state|BGK standard transformed|BGK multiphase"),
 				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards "
 						"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
 						"The standard");
@@ -112,6 +112,10 @@ SolverConfiguration::SolverConfiguration() {
 					"The parameter of the steady state preconditioner. For gamma = 1, the scheme is equivalent to the standard BGK"
 							"For gamma -> 0, the convergence to steady states is speed up and the effective Mach number is lowered, which"
 							"gives nearly incompressible results.");
+			declare_entry("Pseudopotential G", "-5",
+					dealii::Patterns::Double(-1e10, 1e10),
+					"The parameter that describes the interaction strength in the Pseudopotential model.");
+
 		}
 		leave_subsection();
 	}
