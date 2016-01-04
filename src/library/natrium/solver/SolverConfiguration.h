@@ -40,7 +40,10 @@ enum CollisionSchemeName {
 	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
 	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
 	BGK_STEADY_STATE, // Steady state preconditioning by Guo et al. (2004)
-	BGK_MULTIPHASE
+	BGK_MULTIPHASE,
+	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
+	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
+	KBC_STANDARD // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014)
 };
 
 // StencilType defined in Stencil.h
@@ -229,7 +232,7 @@ public:
 	//////////////////////////////////
 	// GETTER AND SETTER -------  ////
 	// WRAPPED AROUND THE DEAL.II ////
-	// PARMETER HANDLER CLASS     ////
+	// PARAMETER HANDLER CLASS     ////
 	//////////////////////////////////
 	AdvectionSchemeName getAdvectionScheme() {
 		enter_subsection("Advection");
@@ -275,7 +278,13 @@ public:
 		} else if ("BGK steady state" == collisionScheme) {
 			return BGK_STEADY_STATE;
 		} else if ("BGK multiphase" == collisionScheme) {
-				return BGK_MULTIPHASE;
+			return BGK_MULTIPHASE;
+		} else if ("BGK incompressible" == collisionScheme) {
+			return BGK_INCOMPRESSIBLE;
+		} else if ("MRT standard" == collisionScheme) {
+			return MRT_STANDARD;
+		} else if ("KBC standard" == collisionScheme) {
+			return KBC_STANDARD;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown collision scheme '" << collisionScheme
@@ -302,6 +311,18 @@ public:
 		}
 		case BGK_MULTIPHASE: {
 			set("Collision scheme", "BGK multiphase");
+			break;
+		}
+		case BGK_INCOMPRESSIBLE: {
+			set("Collision scheme", "BGK incompressible");
+			break;
+		}
+		case MRT_STANDARD: {
+			set("Collision scheme", "MRT standard");
+			break;
+		}
+		case KBC_STANDARD: {
+			set("Collision scheme", "KBC standard");
 			break;
 		}
 		default: {
@@ -1343,6 +1364,7 @@ public:
 		return max_delta;
 	}
 
+
 	double getEmbeddedDealIntegratorRefinementTolerance() {
 		enter_subsection("Advection");
 		enter_subsection("Embedded Parameters");
@@ -1362,6 +1384,7 @@ public:
 		leave_subsection();
 		return refine_tol;
 	}
+
 
 	double getEmbeddedDealIntegratorCoarsenTolerance() {
 		enter_subsection("Advection");

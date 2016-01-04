@@ -537,6 +537,7 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD3Q15_test) {
 						+ pow((0.5 * cos(j)), 2);
 			}
 		}
+
 		f_i.compress(dealii::VectorOperation::add);
 		f.push_back(f_i);
 	}
@@ -547,6 +548,7 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD3Q15_test) {
 		}
 		u_i.compress(dealii::VectorOperation::add);
 		u.push_back(u_i);
+
 	}
 
 	// collide and compare to previous collision function
