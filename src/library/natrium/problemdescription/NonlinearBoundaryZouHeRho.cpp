@@ -14,12 +14,13 @@
 namespace natrium {
 
 template<size_t dim>
-NonlinearBoundaryZouHeRho<dim>::NonlinearBoundaryZouHeRho(
+NonlinearBoundaryZouHeRho<dim>::NonlinearBoundaryZouHeRho(size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundary_pressure,
 		size_t direction) :
+		NonlinearBoundary<dim>(boundaryIndicator),
 		m_boundaryPressure(boundary_pressure), m_direction(direction) {
 	m_outwardNormal = dealii::Tensor<1, dim>();
-	m_outwardNormal(dealii::GeometryInfo<dim>::unit_normal_direction[direction]) =
+	m_outwardNormal[dealii::GeometryInfo<dim>::unit_normal_direction[direction]] =
 			dealii::GeometryInfo<dim>::unit_normal_orientation[direction];
 	m_sign = dealii::GeometryInfo<dim>::unit_normal_orientation[direction];
 }
@@ -51,7 +52,7 @@ void NonlinearBoundaryZouHeRho<dim>::updateNonlinearBoundaryValues() const {
 	const size_t faces_per_cell = dealii::GeometryInfo<dim>::faces_per_cell;
 	std::vector<dealii::types::global_dof_index> localDoFIndices(dofs_per_cell);
 	const vector<std::map<size_t, size_t> >& q_index_to_facedof =
-			*(NonlinearBoundary<dim>::getAdvectionOperator().getQIndexToFacedof());
+			NonlinearBoundary<dim>::getAdvectionOperator().getQIndexToFacedof();
 
 	const vector<numeric_vector>& e = stencil.getDirections();
 	const double scaling = stencil.getScaling();
@@ -61,7 +62,7 @@ void NonlinearBoundaryZouHeRho<dim>::updateNonlinearBoundaryValues() const {
 	// LOOP OVER ALL BOUNDARY FACES //
 	//////////////////////////////////
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
-			dof_handler->begin_active(), endc = dof_handler->end();
+			dof_handler.begin_active(), endc = dof_handler.end();
 	for (; cell != endc; ++cell) {
 		if (!cell->is_locally_owned()) {
 			continue;
@@ -76,7 +77,7 @@ void NonlinearBoundaryZouHeRho<dim>::updateNonlinearBoundaryValues() const {
 				continue;
 			}
 			// calculate the fe values for the cell
-			fe_values.reinit(cell, i);
+			fe_values.reinit(cell);
 			cell->get_dof_indices(localDoFIndices);
 
 			// get data
@@ -92,7 +93,7 @@ void NonlinearBoundaryZouHeRho<dim>::updateNonlinearBoundaryValues() const {
 				assert(fe_values.shape_value(this_dof, q) > 0);
 
 				// calculate velocity
-				double p_in = m_boundaryPressure(points.at(this_dof));
+				double p_in = m_boundaryPressure->value(points.at(this_dof));
 				double rho_in = 1 + p_in / stencil.getSpeedOfSoundSquare();
 				double u = 0;
 				for (size_t j = 0; j < Q; j++) {
