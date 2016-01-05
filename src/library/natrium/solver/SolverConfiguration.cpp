@@ -112,9 +112,16 @@ SolverConfiguration::SolverConfiguration() {
 					"The parameter of the steady state preconditioner. For gamma = 1, the scheme is equivalent to the standard BGK"
 							"For gamma -> 0, the convergence to steady states is speed up and the effective Mach number is lowered, which"
 							"gives nearly incompressible results.");
+			declare_entry("Pseudopotential type", "ShanChen",
+							dealii::Patterns::Selection(
+									"ShanChen|Sukop|CarnahanStarling"),
+							"The functional form of the pseudopotential in multiphase simulations.");
 			declare_entry("Pseudopotential G", "-5",
 					dealii::Patterns::Double(-1e10, 1e10),
-					"The parameter that describes the interaction strength in the Pseudopotential model.");
+					"The parameter that describes the interaction strength in the Pseudopotential multiphase model.");
+			declare_entry("Pseudopotential T", "0.0848997582",
+					dealii::Patterns::Double(-1e10, 1e10),
+					"The parameter that describes the temperature in the Pseudopotential multiphase model (only for Carnahan-Starling EOS).");
 
 		}
 		leave_subsection();

@@ -8,26 +8,32 @@
 #include "BGKPseudopotential.h"
 
 #include <cmath>
+#include <cassert>
+
 #include "deal.II/dofs/dof_handler.h"
-
 #include "deal.II/fe/fe_update_flags.h"
-#include "../advection/SEDGMinLee.h"
-
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 
-#include <cassert>
-
+#include "ExternalForceFunctions.h"
 #include "../utilities/Math.h"
+#include "../advection/SEDGMinLee.h"
 
 namespace natrium {
 
 /// constructor
 template<size_t dim>
 BGKPseudopotential<dim>::BGKPseudopotential(double relaxationParameter,
-		double dt, const boost::shared_ptr<Stencil> stencil, double G) :
-		BGK(relaxationParameter, dt, stencil), m_G(G) {
+		double dt, const boost::shared_ptr<Stencil> stencil, PseudopotentialParameters parameters) :
+		BGK(relaxationParameter, dt, stencil), m_pseudopotentialParameters(parameters) {
+	assert (parameters.G != 0);
+	if (m_pseudopotentialParameters.pseudopotentialType == SHAN_CHEN){
 
+	} else if (m_pseudopotentialParameters.pseudopotentialType == SUKOP){
+
+	} else if (m_pseudopotentialParameters.pseudopotentialType == CARNAHAN_STARLING) {
+		assert (parameters.T != 0);
+	}
 }
 
 // destructor
@@ -109,10 +115,17 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 	double cs2 = getStencil()->getSpeedOfSoundSquare();
 	double prefactor = scaling / cs2;
 	double relax_factor = getPrefactor();
+	double dt = getDt();
 
 	assert(f.size() == Q);
 	assert(velocities.size() == D);
 	assert(dim == 2);
+
+	// External force information
+	ForceType force_type = getForceType();
+	double ext_force_x = getForceX();
+	double ext_force_y = getForceY();
+	assert(force_type != NO_FORCING);
 
 #ifdef DEBUG
 	size_t n_dofs = f.at(0).size();
@@ -210,17 +223,6 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 						celldofToQIndex.at(j)) * rho_k);
 			}
 
-			if (not inInitializationProcedure) {
-				// calculate velocity
-				// for all velocity components
-				u_0_i = scaling / rho_i
-						* (f_i[1] + f_i[5] + f_i[8] - f_i[3] - f_i[6] - f_i[7]);
-				u_1_i = scaling / rho_i
-						* (f_i[2] + f_i[5] + f_i[6] - f_i[4] - f_i[7] - f_i[8]);
-				velocities.at(0)(i) = u_0_i;
-				velocities.at(1)(i) = u_1_i;
-			}
-
 			// =============================
 			// Calculate Interaction Force
 			// =============================
@@ -229,231 +231,134 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 //			double forceX = 16e-5;			//7.92*(1e-6) ;
 ///			double forceY = (double) 0;
 
-			// Psi = 1-exp(-rho)
-			double psi = (double)1 - exp(-rho_i) ;
-			double forceX = -m_G * psi * exp(-rho_i) * density_gradient[0] ;
-			double forceY = -m_G * psi * exp(-rho_i) * density_gradient[1] ;
-
-			// Psi = psi0 * exp(-rho/rho0)
-			/*			double psi0 = (double) 4 ;
-			 double rho0 = (double) 200 ;
-			 double psi = (double)psi0 * exp(-rho_i/rho0) ;
-			 double forceX = -m_G * psi * (-psi0/rho0) * exp(-rho_i/rho0) * density_gradient[0] ;
-			 double forceY = -m_G * psi * (-psi0/rho0) * exp(-rho_i/rho0) * density_gradient[1] ;
-			 */
-////
-			// Psi Carnahan Starling
-			/*			double T = 0.0848997582*cs2 ;
-			 double pCS = rho_i * T * (1.+rho_i+pow(rho_i,2.)-pow(rho_i,3.)) / pow(1.-rho_i,3.) - pow(rho_i,2.) ;
-			 double psi = sqrt(2.*(pCS-cs2*rho_i)/m_G) ;
-			 double grad_pCS_X = density_gradient[0] * ( (T*(1+4*rho_i+4*pow(rho_i,2.)-4*pow(rho_i,3.)+pow(rho_i,4.))/pow(1.-rho_i,4.))
-			 - (2.*rho_i) ) ;
-			 double grad_pCS_Y = density_gradient[1] * ( (T*(1+4*rho_i+4*pow(rho_i,2.)-4*pow(rho_i,3.)+pow(rho_i,4.))/pow(1.-rho_i,4.))
-			 - (2.*rho_i) ) ;
-			 double gradPsiX = grad_pCS_X - cs2*density_gradient[0] / (2.*m_G*(pCS-cs2*rho_i)) ;
-			 double gradPsiY = grad_pCS_Y - cs2*density_gradient[1] / (2.*m_G*(pCS-cs2*rho_i)) ;
-
-			 double forceX = -m_G*psi*gradPsiX ;
-			 double forceY = -m_G*psi*gradPsiY ;*/
-////
+			double force_x = 0;
+			double force_y = 0;
+			if (SHAN_CHEN == m_pseudopotentialParameters.pseudopotentialType) {
+				// Psi = 1-exp(-rho)
+				double psi = (double) 1 - exp(-rho_i);
+				double G = m_pseudopotentialParameters.G;
+				force_x = -G * psi * exp(-rho_i) * density_gradient[0]
+						+ ext_force_x;
+				force_y = -G * psi * exp(-rho_i) * density_gradient[1]
+						+ ext_force_y;
+			} else if (SUKOP == m_pseudopotentialParameters.pseudopotentialType) {
+				// Psi = psi0 * exp(-rho/rho0)
+				 double G = m_pseudopotentialParameters.G;
+				 double psi0 = (double) 4 ;
+				 double rho0 = (double) 200 ;
+				 double psi = (double)psi0 * exp(-rho_i/rho0) ;
+				 force_x = -G * psi * (-psi0/rho0) * exp(-rho_i/rho0) * density_gradient[0] + ext_force_x;
+				 force_y = -G * psi * (-psi0/rho0) * exp(-rho_i/rho0) * density_gradient[1] + ext_force_y;
+			} else if (CARNAHAN_STARLING == m_pseudopotentialParameters.pseudopotentialType) {
+				// Psi Carnahan Starling
+				 double G = m_pseudopotentialParameters.G;
+				 double T = m_pseudopotentialParameters.T*cs2 ;
+				 double pCS = rho_i * T * (1.+rho_i+pow(rho_i,2.)-pow(rho_i,3.)) / pow(1.-rho_i,3.) - pow(rho_i,2.) ;
+				 double psi = sqrt(2.*(pCS-cs2*rho_i)/G) ;
+				 double grad_pCS_X = density_gradient[0] * ( (T*(1+4*rho_i+4*pow(rho_i,2.)-4*pow(rho_i,3.)+pow(rho_i,4.))/pow(1.-rho_i,4.))
+				 - (2.*rho_i) ) ;
+				 double grad_pCS_Y = density_gradient[1] * ( (T*(1+4*rho_i+4*pow(rho_i,2.)-4*pow(rho_i,3.)+pow(rho_i,4.))/pow(1.-rho_i,4.))
+				 - (2.*rho_i) ) ;
+				 double gradPsiX = grad_pCS_X - cs2*density_gradient[0] / (2.*G*(pCS-cs2*rho_i)) ;
+				 double gradPsiY = grad_pCS_Y - cs2*density_gradient[1] / (2.*G*(pCS-cs2*rho_i)) ;
+				 force_x = -G*psi*gradPsiX + ext_force_x;
+				 force_y = -G*psi*gradPsiY + ext_force_y;
+			}
 			// With Tuneable surface tension (Kupershtokh)
 //			double A = 0.0 ;
 //			double psi = 1-exp(-rho_i) ;
-//			double forceX = -m_G*(2*A*exp(-rho_i)*density_gradient[0] + (1-A)*psi*exp(-rho_i)*density_gradient[0]) ;
-//			double forceY = -m_G*(2*A*exp(-rho_i)*density_gradient[1] + (1-A)*psi*exp(-rho_i)*density_gradient[1]) ;
-//			double forceX = -m_G * 0.5 * density_gradient[0] * exp(-rho_i) * (1-exp(-rho_i)) * (A+1) ;
-//			double forceY = -m_G * 0.5 * density_gradient[1] * exp(-rho_i) * (1-exp(-rho_i)) * (A+1) ;
+//			double force_x = -m_G*(2*A*exp(-rho_i)*density_gradient[0] + (1-A)*psi*exp(-rho_i)*density_gradient[0]) + ext_force_x;
+//			double force_y = -m_G*(2*A*exp(-rho_i)*density_gradient[1] + (1-A)*psi*exp(-rho_i)*density_gradient[1]) + ext_force_y;
+//			double force_x = -m_G * 0.5 * density_gradient[0] * exp(-rho_i) * (1-exp(-rho_i)) * (A+1) + ext_force_x;
+//			double force_y = -m_G * 0.5 * density_gradient[1] * exp(-rho_i) * (1-exp(-rho_i)) * (A+1) + ext_force_y;
 
+			if (not inInitializationProcedure) {
+				// calculate macroscopic velocity (velocities.at()(i)) and equilibrium velocity (u_0_i, u_1_i)
+				// for all velocity components
+				u_0_i = scaling / rho_i
+						* (f_i[1] + f_i[5] + f_i[8] - f_i[3] - f_i[6] - f_i[7]);
+				u_1_i = scaling / rho_i
+						* (f_i[2] + f_i[5] + f_i[6] - f_i[4] - f_i[7] - f_i[8]);
+				if (force_type == NO_FORCING) {
+					velocities.at(0)(i) = u_0_i;
+					velocities.at(1)(i) = u_1_i;
+				} else if (force_type == SHIFTING_VELOCITY) {
+					velocities.at(0)(i) = u_0_i + 0.5 * dt * force_x / rho_i;
+					velocities.at(1)(i) = u_1_i + 0.5 * dt * force_y / rho_i;
+					u_0_i -= (double) 1 / relax_factor * dt * force_x / rho_i;
+					u_1_i -= (double) 1 / relax_factor * dt * force_y / rho_i;
+				} else if (force_type == EXACT_DIFFERENCE) {
+					velocities.at(0)(i) = u_0_i + 0.5 * dt * force_x / rho_i;
+					velocities.at(1)(i) = u_1_i + 0.5 * dt * force_y / rho_i;
+				} else { // GUO
+					u_0_i += 0.5 * dt * force_x / rho_i;
+					u_1_i += 0.5 * dt * force_y / rho_i;
+					velocities.at(0)(i) = u_0_i;
+					velocities.at(1)(i) = u_1_i;
+				}
+			}
 
-			// ===================
-			// Force Incorporation
-			// ===================
-			// 1 : Shifting velocity
-			// 2 : Exact Difference Method
-			// 3 : Guo
-			int forcingScheme = 1;
+			// Calculate equilibrium distribution
+			scalar_product = u_0_i * u_0_i + u_1_i * u_1_i;
+			uSquareTerm = -scalar_product / (2 * cs2);
+			// direction 0
+			weighting = 4. / 9. * rho_i;
+			feq[0] = weighting * (1 + uSquareTerm);
+			// directions 1-4
+			weighting = 1. / 9. * rho_i;
+			mixedTerm = prefactor * (u_0_i);
+			feq[1] = weighting
+					* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+			feq[3] = weighting
+					* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+			mixedTerm = prefactor * (u_1_i);
+			feq[2] = weighting
+					* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+			feq[4] = weighting
+					* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+			// directions 5-8
+			weighting = 1. / 36. * rho_i;
+			mixedTerm = prefactor * (u_0_i + u_1_i);
+			feq[5] = weighting
+					* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+			feq[7] = weighting
+					* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+			mixedTerm = prefactor * (-u_0_i + u_1_i);
+			feq[6] = weighting
+					* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+			feq[8] = weighting
+					* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
 
-			// Shifting Velocity Method
-			if (forcingScheme == 1) {
-				// Shift velocities
-				u_0_i -= (double) 1 / relax_factor * getDt() * forceX / rho_i;
-				u_1_i -= (double) 1 / relax_factor * getDt() * forceY / rho_i;
-//				u_1_i -= (double)1/relax_factor*/ * forceY / rho_i ;
+			// BGK collision
+			f_i[0] += relax_factor * (f_i[0] - feq[0]);
+			f_i[1] += relax_factor * (f_i[1] - feq[1]);
+			f_i[2] += relax_factor * (f_i[2] - feq[2]);
+			f_i[3] += relax_factor * (f_i[3] - feq[3]);
+			f_i[4] += relax_factor * (f_i[4] - feq[4]);
+			f_i[5] += relax_factor * (f_i[5] - feq[5]);
+			f_i[6] += relax_factor * (f_i[6] - feq[6]);
+			f_i[7] += relax_factor * (f_i[7] - feq[7]);
+			f_i[8] += relax_factor * (f_i[8] - feq[8]);
 
-				// Standard collision with shifted velocities
-				scalar_product = u_0_i * u_0_i + u_1_i * u_1_i;
-				uSquareTerm = -scalar_product / (2 * cs2);
-				// direction 0
-				weighting = 4. / 9. * rho_i;
-				feq[0] = weighting * (1 + uSquareTerm);
-				// directions 1-4
-				weighting = 1. / 9. * rho_i;
-				mixedTerm = prefactor * (u_0_i);
-				feq[1] = weighting
-						* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-				feq[3] = weighting
-						* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-				mixedTerm = prefactor * (u_1_i);
-				feq[2] = weighting
-						* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-				feq[4] = weighting
-						* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-				// directions 5-8
-				weighting = 1. / 36. * rho_i;
-				mixedTerm = prefactor * (u_0_i + u_1_i);
-				feq[5] = weighting
-						* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-				feq[7] = weighting
-						* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-				mixedTerm = prefactor * (-u_0_i + u_1_i);
-				feq[6] = weighting
-						* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-				feq[8] = weighting
-						* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-
-				// BGK collision
-				f0(i) += relax_factor * (f_i[0] - feq[0]);
-				f1(i) += relax_factor * (f_i[1] - feq[1]);
-				f2(i) += relax_factor * (f_i[2] - feq[2]);
-				f3(i) += relax_factor * (f_i[3] - feq[3]);
-				f4(i) += relax_factor * (f_i[4] - feq[4]);
-				f5(i) += relax_factor * (f_i[5] - feq[5]);
-				f6(i) += relax_factor * (f_i[6] - feq[6]);
-				f7(i) += relax_factor * (f_i[7] - feq[7]);
-				f8(i) += relax_factor * (f_i[8] - feq[8]);
-
-			} // end scheme 1 shifting velocity
-
+			// Add Source term
 			// Exact difference method (Kupershtokh)
-			if (forcingScheme == 2) {
-				double mixedTermShifted;
-				double mixedTermEq;
-				double s_i[9];
+			if (force_type == EXACT_DIFFERENCE) {
+				ExternalForceFunctions::applyExactDifferenceForcingD2Q9(f_i,
+						force_x, force_y, u_0_i, u_1_i, rho_i, getDt(), cs2,
+						prefactor);
+			}
+			// TODO add source term guo
 
-				// Calculate velocity shift
-				double deltaU_0 = forceX * getDt() / rho_i;
-				double deltaU_1 = forceY * getDt() / rho_i;
-
-				double uEQshifted0 = u_0_i + deltaU_0;
-				double uEQshifted1 = u_1_i + deltaU_1;
-
-				double scalar_product_eq_shifted = uEQshifted0 * uEQshifted0
-						+ uEQshifted1 * uEQshifted1;
-				double uSquareTerm_eq_shifted = -scalar_product_eq_shifted
-						/ (2 * cs2);
-
-				double scalar_product_eq = u_0_i * u_0_i + u_1_i * u_1_i;
-				double uSquareTerm_eq = -scalar_product_eq / (2 * cs2);
-
-				// Calculate source term
-				// direction 0
-				weighting = 4. / 9. * rho_i;
-				s_i[0] = weighting * (1 + uSquareTerm_eq_shifted)
-						- weighting * (1 + uSquareTerm_eq);
-
-				// directions 1-4
-				weighting = 1. / 9. * rho_i;
-				mixedTermShifted = prefactor * (uEQshifted0);
-				mixedTermEq = prefactor * (u_0_i);
-				s_i[1] = weighting
-						* (1 + mixedTermShifted * (1 + 0.5 * mixedTermShifted)
-								+ uSquareTerm_eq_shifted)
-						- weighting
-								* (1 + mixedTermEq * (1 + 0.5 * mixedTermEq)
-										+ uSquareTerm_eq);
-				s_i[3] = weighting
-						* (1 - mixedTermShifted * (1 - 0.5 * mixedTermShifted)
-								+ uSquareTerm_eq_shifted)
-						- weighting
-								* (1 - mixedTermEq * (1 - 0.5 * mixedTermEq)
-										+ uSquareTerm_eq);
-				mixedTermShifted = prefactor * (uEQshifted1);
-				mixedTermEq = prefactor * (u_1_i);
-				s_i[2] = weighting
-						* (1 + mixedTermShifted * (1 + 0.5 * mixedTermShifted)
-								+ uSquareTerm_eq_shifted)
-						- weighting
-								* (1 + mixedTermEq * (1 + 0.5 * mixedTermEq)
-										+ uSquareTerm_eq);
-				s_i[4] = weighting
-						* (1 - mixedTermShifted * (1 - 0.5 * mixedTermShifted)
-								+ uSquareTerm_eq_shifted)
-						- weighting
-								* (1 - mixedTermEq * (1 - 0.5 * mixedTermEq)
-										+ uSquareTerm_eq);
-				// directions 5-8
-				weighting = 1. / 36. * rho_i;
-				mixedTermShifted = prefactor * (uEQshifted0 + uEQshifted1);
-				mixedTermEq = prefactor * (u_0_i + u_1_i);
-				s_i[5] = weighting
-						* (1 + mixedTermShifted * (1 + 0.5 * mixedTermShifted)
-								+ uSquareTerm_eq_shifted)
-						- weighting
-								* (1 + mixedTermEq * (1 + 0.5 * mixedTermEq)
-										+ uSquareTerm_eq);
-				s_i[7] = weighting
-						* (1 - mixedTermShifted * (1 - 0.5 * mixedTermShifted)
-								+ uSquareTerm_eq_shifted)
-						- weighting
-								* (1 - mixedTermEq * (1 - 0.5 * mixedTermEq)
-										+ uSquareTerm_eq);
-				mixedTermShifted = prefactor * (-uEQshifted0 + uEQshifted1);
-				mixedTermEq = prefactor * (-u_0_i + u_1_i);
-				s_i[6] = weighting
-						* (1 + mixedTermShifted * (1 + 0.5 * mixedTermShifted)
-								+ uSquareTerm_eq_shifted)
-						- weighting
-								* (1 + mixedTermEq * (1 + 0.5 * mixedTermEq)
-										+ uSquareTerm_eq);
-				s_i[8] = weighting
-						* (1 - mixedTermShifted * (1 - 0.5 * mixedTermShifted)
-								+ uSquareTerm_eq_shifted)
-						- weighting
-								* (1 - mixedTermEq * (1 - 0.5 * mixedTermEq)
-										+ uSquareTerm_eq);
-
-				// Standard collision
-				scalar_product = u_0_i * u_0_i + u_1_i * u_1_i;
-				uSquareTerm = -scalar_product / (2 * cs2);
-				// direction 0
-				weighting = 4. / 9. * rho_i;
-				feq[0] = weighting * (1 + uSquareTerm);
-				// directions 1-4
-				weighting = 1. / 9. * rho_i;
-				mixedTerm = prefactor * (u_0_i);
-				feq[1] = weighting
-						* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-				feq[3] = weighting
-						* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-				mixedTerm = prefactor * (u_1_i);
-				feq[2] = weighting
-						* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-				feq[4] = weighting
-						* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-				// directions 5-8
-				weighting = 1. / 36. * rho_i;
-				mixedTerm = prefactor * (u_0_i + u_1_i);
-				feq[5] = weighting
-						* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-				feq[7] = weighting
-						* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-				mixedTerm = prefactor * (-u_0_i + u_1_i);
-				feq[6] = weighting
-						* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-				feq[8] = weighting
-						* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-
-				// Add Source term
-				f0(i) += relax_factor * (f_i[0] - feq[0]) + s_i[0];
-				f1(i) += relax_factor * (f_i[1] - feq[1]) + s_i[1];
-				f2(i) += relax_factor * (f_i[2] - feq[2]) + s_i[2];
-				f3(i) += relax_factor * (f_i[3] - feq[3]) + s_i[3];
-				f4(i) += relax_factor * (f_i[4] - feq[4]) + s_i[4];
-				f5(i) += relax_factor * (f_i[5] - feq[5]) + s_i[5];
-				f6(i) += relax_factor * (f_i[6] - feq[6]) + s_i[6];
-				f7(i) += relax_factor * (f_i[7] - feq[7]) + s_i[7];
-				f8(i) += relax_factor * (f_i[8] - feq[8]) + s_i[8];
-			} // end scheme 2 (EDM)
+			// copy to global variables
+			f0(i) = f_i[0];
+			f1(i) = f_i[1];
+			f2(i) = f_i[2];
+			f3(i) = f_i[3];
+			f4(i) = f_i[4];
+			f5(i) = f_i[5];
+			f6(i) = f_i[6];
+			f7(i) = f_i[7];
+			f8(i) = f_i[8];
 
 		} /* for all dofs */
 	} /* for all cells */
