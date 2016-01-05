@@ -30,7 +30,7 @@ public:
 		m_force = force;
 		m_forceType = force_type;
 	}
-	virtual ~ConstantExternalForce();
+	virtual ~ConstantExternalForce(){};
 
 	const dealii::Tensor<1, dim>& getForce() const {
 		return m_force;

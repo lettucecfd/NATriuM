@@ -30,8 +30,7 @@ double BGKStandard::getEquilibriumDistribution(size_t i,
 	assert(u(1) < 1000000000000000.);
 
 	double prefactor = getStencil()->getWeight(i) * rho;
-	double uSquareTerm = - (u * u)
-			/ (2 * getStencil()->getSpeedOfSoundSquare());
+	double uSquareTerm = -(u * u) / (2 * getStencil()->getSpeedOfSoundSquare());
 	if (0 == i) {
 		return prefactor * (1 + uSquareTerm);
 	}
@@ -74,6 +73,7 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 	double cs2 = getStencil()->getSpeedOfSoundSquare();
 	double prefactor = scaling / cs2;
 	double relax_factor = getPrefactor();
+	double dt = getDt();
 
 	// External force information
 	ForceType force_type = getForceType();
@@ -93,7 +93,6 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 		assert (velocities.at(i).size() == n_dofs);
 	}
 #endif
-
 
 	// allocation
 	double feq[9] = { };
@@ -143,14 +142,29 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 		}
 
 		if (not inInitializationProcedure) {
-			// calculate velocity
+			// calculate macroscopic velocity (velocities.at()(i)) and equilibrium velocity (u_0_i, u_1_i)
 			// for all velocity components
 			u_0_i = scaling / rho_i
 					* (f_i[1] + f_i[5] + f_i[8] - f_i[3] - f_i[6] - f_i[7]);
 			u_1_i = scaling / rho_i
 					* (f_i[2] + f_i[5] + f_i[6] - f_i[4] - f_i[7] - f_i[8]);
-			velocities.at(0)(i) = u_0_i;
-			velocities.at(1)(i) = u_1_i;
+			if (force_type == NO_FORCING) {
+				velocities.at(0)(i) = u_0_i;
+				velocities.at(1)(i) = u_1_i;
+			} else if (force_type == SHIFTING_VELOCITY) {
+				velocities.at(0)(i) = u_0_i + 0.5 * dt * force_x / rho_i;
+				velocities.at(1)(i) = u_1_i + 0.5 * dt * force_y / rho_i;
+				u_0_i -= (double) 1 / relax_factor * dt * force_x / rho_i;
+				u_1_i -= (double) 1 / relax_factor * dt * force_y / rho_i;
+			} else if (force_type == EXACT_DIFFERENCE) {
+				velocities.at(0)(i) = u_0_i + 0.5 * dt * force_x / rho_i;
+				velocities.at(1)(i) = u_1_i + 0.5 * dt * force_y / rho_i;
+			} else { // GUO
+				u_0_i += 0.5 * dt * force_x / rho_i;
+				u_1_i += 0.5 * dt * force_y / rho_i;
+				velocities.at(0)(i) = u_0_i;
+				velocities.at(1)(i) = u_1_i;
+			}
 		}
 
 		// calculate equilibrium distribution
@@ -185,15 +199,36 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
 
 		// BGK collision
-		f0(i) += relax_factor * (f_i[0] - feq[0]);
-		f1(i) += relax_factor * (f_i[1] - feq[1]);
-		f2(i) += relax_factor * (f_i[2] - feq[2]);
-		f3(i) += relax_factor * (f_i[3] - feq[3]);
-		f4(i) += relax_factor * (f_i[4] - feq[4]);
-		f5(i) += relax_factor * (f_i[5] - feq[5]);
-		f6(i) += relax_factor * (f_i[6] - feq[6]);
-		f7(i) += relax_factor * (f_i[7] - feq[7]);
-		f8(i) += relax_factor * (f_i[8] - feq[8]);
+		f_i[0] += relax_factor * (f_i[0] - feq[0]);
+		f_i[1] += relax_factor * (f_i[1] - feq[1]);
+		f_i[2] += relax_factor * (f_i[2] - feq[2]);
+		f_i[3] += relax_factor * (f_i[3] - feq[3]);
+		f_i[4] += relax_factor * (f_i[4] - feq[4]);
+		f_i[5] += relax_factor * (f_i[5] - feq[5]);
+		f_i[6] += relax_factor * (f_i[6] - feq[6]);
+		f_i[7] += relax_factor * (f_i[7] - feq[7]);
+		f_i[8] += relax_factor * (f_i[8] - feq[8]);
+
+		// Add Source term
+		// Exact difference method (Kupershtokh)
+		if (force_type == EXACT_DIFFERENCE) {
+			ExternalForceFunctions::applyExactDifferenceForcingD2Q9(f_i,
+					force_x, force_y, u_0_i, u_1_i, rho_i, getDt(), cs2,
+					prefactor);
+		}
+		// TODO add source term guo
+
+		// copy to global variables
+		f0(i) = f_i[0];
+		f1(i) = f_i[1];
+		f2(i) = f_i[2];
+		f3(i) = f_i[3];
+		f4(i) = f_i[4];
+		f5(i) = f_i[5];
+		f6(i) = f_i[6];
+		f7(i) = f_i[7];
+		f8(i) = f_i[8];
+
 	} /* for all dofs */
 } /* collideAllD2Q9 */
 
@@ -500,7 +535,7 @@ void BGKStandard::collideAllD3Q15(DistributionFunctions& f,
 		scalar_product = u_0_i * u_0_i + u_1_i * u_1_i + u_2_i * u_2_i;
 		uSquareTerm = -scalar_product / (2 * cs2);
 		// direction 0
-		weighting = 2./9. * rho_i;
+		weighting = 2. / 9. * rho_i;
 		feq[0] = weighting * (1 + uSquareTerm);
 		// directions 1-6 (The mixed term is (e_i *u)^2 / (2c_s^4)
 		weighting = 1. / 9. * rho_i;
