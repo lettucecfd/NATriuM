@@ -124,7 +124,7 @@ private:
 	double m_residuumVelocity;
 
 	// vector for nonlinear boundary conditions
-	distributed_block_vector m_nonlinearBoundaryVector;
+	distributed_block_vector m_boundaryVector;
 
 protected:
 

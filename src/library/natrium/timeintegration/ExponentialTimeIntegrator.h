@@ -56,7 +56,7 @@ public:
 	/// destructor
 	virtual ~ExponentialTimeIntegrator(){};
 
-	virtual double step(VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = 0);
+	virtual double step(VECTOR& f, const MATRIX& systemMatrix, VECTOR& systemVector, double t = 0, double dt = 0);
 
 
 };

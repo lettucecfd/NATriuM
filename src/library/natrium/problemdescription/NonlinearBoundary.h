@@ -134,6 +134,10 @@ public:
 	const Stencil& getStencil() const {
 		return *m_stencil;
 	}
+
+	void resetBoundaryVector() {
+		*m_boundaryVector = m_advectionOperator->getSystemVector();
+	}
 };
 
 } /* namespace natrium */

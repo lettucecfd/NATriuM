@@ -11,9 +11,14 @@ namespace natrium {
 
 template<size_t dim>
 void BoundaryCollection<dim>::updateNonlinearBoundaryValues() {
+	if (!hasNonlinearBoundaries()){
+		return;
+	}
 	BoundaryCollection<dim>::NonlinearIterator it;
 	BoundaryCollection<dim>::NonlinearIterator end =
 			m_nonlinearBoundaries.end();
+	// reset boundary vector to constant (linear) boundary vector
+	m_nonlinearBoundaries.begin()->second->resetBoundaryVector();
 	for (it = m_nonlinearBoundaries.begin(); it != end; it++) {
 		it->second->updateNonlinearBoundaryValues();
 	}

@@ -62,7 +62,7 @@ template<> ExponentialTimeIntegrator<sparse_block_matrix, block_vector>::Exponen
 
 template<class MATRIX, class VECTOR> double ExponentialTimeIntegrator<MATRIX,
 		VECTOR>::step(VECTOR& f, const MATRIX& systemMatrix,
-		const VECTOR& systemVector, double t, double dt) {
+		VECTOR& systemVector, double t, double dt) {
 
 	// Test all dimensions and change, if necessary
 	assert(systemMatrix.n() == systemMatrix.m());
@@ -336,11 +336,11 @@ template<class MATRIX, class VECTOR> void ExponentialTimeIntegrator<MATRIX,
 template double ExponentialTimeIntegrator<distributed_sparse_matrix,
 		distributed_vector>::step(distributed_vector& f,
 		const distributed_sparse_matrix& systemMatrix,
-		const distributed_vector& systemVector, double t, double dt);
+		distributed_vector& systemVector, double t, double dt);
 template double ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 		distributed_block_vector>::step(distributed_block_vector& f,
 		const distributed_sparse_block_matrix& systemMatrix,
-		const distributed_block_vector& systemVector, double t, double dt);
+		distributed_block_vector& systemVector, double t, double dt);
 
 template<>
 dealii::IndexSet ExponentialTimeIntegrator<distributed_sparse_matrix,
