@@ -6,6 +6,7 @@
  */
 
 #include "BGKStandard.h"
+#include "ExternalForceFunctions.h"
 
 namespace natrium {
 
@@ -74,6 +75,11 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 	double prefactor = scaling / cs2;
 	double relax_factor = getPrefactor();
 
+	// External force information
+	ForceType force_type = getForceType();
+	double force_x = getForceX();
+	double force_y = getForceY();
+
 	assert(f.size() == Q);
 	assert(velocities.size() == D);
 
@@ -87,6 +93,7 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 		assert (velocities.at(i).size() == n_dofs);
 	}
 #endif
+
 
 	// allocation
 	double feq[9] = { };

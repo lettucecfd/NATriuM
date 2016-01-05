@@ -91,6 +91,14 @@ enum InitializationSchemeName {
 	ITERATIVE // Distribute with iterative procedure; enforces consistent initial conditions
 };
 
+
+enum PseudopotentialType {
+	SHAN_CHEN,
+	SUKOP,
+	CARNAHAN_STARLING
+};
+
+
 //////////////////////////////
 // EXCEPTION CLASS        ////
 //////////////////////////////
@@ -373,6 +381,56 @@ public:
 		leave_subsection();
 	}
 
+	PseudopotentialType getPseudopotentialType() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		string pp_type = get("Pseudopotential type");
+		leave_subsection();
+		leave_subsection();
+		if ("ShanChen" == pp_type) {
+			return SHAN_CHEN;
+		} else if ("Sukop" == pp_type) {
+			return SUKOP;
+		} else if ("CarnahanStarling" == pp_type) {
+			return CARNAHAN_STARLING;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown pseudopotential type '" << pp_type
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of PseudopotentialType might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setPseudopotentialType(PseudopotentialType pp_type) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		switch (pp_type) {
+		case BGK_STANDARD: {
+			set("Pseudopotential type", "ShanChen");
+			break;
+		}
+		case BGK_STANDARD_TRANSFORMED: {
+			set("Pseudopotential type", "Sukop");
+			break;
+		}
+		case BGK_STEADY_STATE: {
+			set("Pseudopotential type", "CarnahanStarling");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown pseudopotential type; index. " << pp_type
+					<< " in enum PseudopotentialType. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
 	double getBGKPseudopotentialG() {
 		enter_subsection("Collision");
 		enter_subsection("BGK parameters");
@@ -410,6 +468,42 @@ public:
 		leave_subsection();
 	}
 
+	double getBGKPseudopotentialT() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		double G;
+		try {
+			G = get_double("Pseudopotential T");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Pseudopotential T' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return G;
+	}
+
+	void setBGKPseudopotentialT(double T) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		try {
+			set("Pseudopotential T", T);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << T
+					<< " to Pseudopotential T: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
 
 	size_t getCommandLineVerbosity() {
 		enter_subsection("Output");

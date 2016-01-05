@@ -178,10 +178,14 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		tau = BGKStandardTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
 				m_configuration->getTimeStepSize(), *m_stencil);
+		PseudopotentialParameters pp_para(
+				m_configuration->getPseudopotentialType(),
+				m_configuration->getBGKPseudopotentialG(),
+				m_configuration->getBGKPseudopotentialT());
 		G = m_configuration->getBGKPseudopotentialG();
 		boost::shared_ptr<BGKPseudopotential<dim> > coll_tmp =
 				boost::make_shared<BGKPseudopotential<dim> >(tau,
-						m_configuration->getTimeStepSize(), m_stencil, G);
+						m_configuration->getTimeStepSize(), m_stencil, pp_para);
 		coll_tmp->setAdvectionOperator(m_advectionOperator);
 		m_collisionModel = coll_tmp;
 	} else if (BGK_INCOMPRESSIBLE == configuration->getCollisionScheme()) {
@@ -203,6 +207,11 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = boost::make_shared<KBCStandard>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
+	}
+	// apply external force
+	if (m_problemDescription->hasExternalForce()) {
+		m_collisionModel->setExternalForce(
+				*(m_problemDescription->getExternalForce()));
 	}
 
 // initialize macroscopic variables

@@ -13,6 +13,7 @@
 #include "deal.II/base/function.h"
 
 #include "BoundaryCollection.h"
+#include "ConstantExternalForce.h"
 
 #include "../utilities/Logging.h"
 #include "../utilities/BasicNames.h"
@@ -34,6 +35,9 @@ private:
 
 	/// boundary description
 	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
+
+	/// constant external force
+	boost::shared_ptr<ConstantExternalForce<dim> > m_externalForce;
 
 	/// kinematic viscosity
 	double m_viscosity;
@@ -143,6 +147,24 @@ public:
 		m_boundaries = boundaries;
 	}
 
+	void setExternalForce(const boost::shared_ptr<ConstantExternalForce<dim> >& force) {
+		m_externalForce = force;
+	}
+
+	const boost::shared_ptr<ConstantExternalForce<dim> >& getExternalForce() const {
+		return m_externalForce;
+	}
+
+	bool hasExternalForce() const {
+		if (m_externalForce == NULL){
+			return false;
+		}
+		if (m_externalForce->getForceType() == NO_FORCING){
+			return false;
+		}
+		return true;
+	}
+
 	double getViscosity() const {
 		return m_viscosity;
 	}
@@ -163,6 +185,8 @@ public:
 	virtual double getCharacteristicVelocity() const {
 		return 0.0;
 	}
+
+
 };
 /* class ProblemDescription */
 
@@ -175,10 +199,8 @@ inline ProblemDescription<dim>::ProblemDescription(
 	// make default initial conditions (rho = 1, u = v = 0)
 	m_initialRho = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
 	m_initialU = boost::make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
-#ifdef WITH_TRILINOS
 	/// Create MPI (if not done yet);
 	MPIGuard::getInstance();
-#endif
 }
 
 } /* namespace natrium */

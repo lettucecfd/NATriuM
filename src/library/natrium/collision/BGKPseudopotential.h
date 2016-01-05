@@ -13,9 +13,8 @@
 #include "deal.II/grid/tria.h"
 #include "deal.II/numerics/vector_tools.h"
 
-//#include "../advection/SEDGMinLee.h"
-
 #include "../utilities/BasicNames.h"
+#include "../solver/SolverConfiguration.h"
 
 namespace natrium {
 
@@ -24,16 +23,25 @@ template<size_t dim>
 class AdvectionOperator;
 class Stencil;
 
+struct PseudopotentialParameters {
+	PseudopotentialType pseudopotentialType;
+	double G;
+	double T;
+	PseudopotentialParameters(PseudopotentialType pp, double g, double t):
+		pseudopotentialType(pp), G(g), T(t){}
+};
+
+
 template <size_t dim>
 class BGKPseudopotential: public BGK {
 private:
 	boost::shared_ptr<AdvectionOperator<dim> > m_advectionOperator;
-	const double m_G;
+	PseudopotentialParameters m_pseudopotentialParameters;
 
 public:
 
 	/// constructor
-	BGKPseudopotential(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil, const double G);
+	BGKPseudopotential(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil, PseudopotentialParameters parameters);
 
 	/// destructor
 	virtual ~BGKPseudopotential();
