@@ -227,6 +227,10 @@ public:
 
 	void updateNonlinearBoundaryValues();
 
+	bool hasNonlinearBoundaries(){
+		return m_nonlinearBoundaries.size() != 0;
+	}
+
 	void initializeNonlinearBoundaries(boost::shared_ptr<AdvectionOperator<dim> > advection_operator, boost::shared_ptr<Stencil> stencil, distributed_vector const * rho,
 			vector<distributed_vector> const* u, DistributionFunctions const * f,
 			distributed_block_vector* boundary_vector);

@@ -9,6 +9,7 @@
 #define TIMEINTEGRATOR_H_
 
 #include "../utilities/BasicNames.h"
+#include "../problemdescription/BoundaryCollection.h"
 
 namespace natrium {
 
@@ -19,11 +20,15 @@ namespace natrium {
  *         The only remaining derivative is then the time derivative, which makes the equation an ODE.
  *         The latter can be solved using classical time integration methods like Runge-Kutta or Adams-Moulton.
  */
-template <class MATRIX, class VECTOR> class TimeIntegrator {
+template<class MATRIX, class VECTOR> class TimeIntegrator {
 private:
 
 	/// size of the time step
 	double m_timeStepSize;
+
+	/// boundary collection - is required when nonlinear boundaries are present
+	boost::shared_ptr<BoundaryCollection<2> > m_boundaries2D;
+	boost::shared_ptr<BoundaryCollection<3> > m_boundaries3D;
 
 public:
 
@@ -31,7 +36,7 @@ public:
 	TimeIntegrator(double timeStepSize);
 
 	/// destructor
-	virtual ~TimeIntegrator(){
+	virtual ~TimeIntegrator() {
 
 	}
 
@@ -54,7 +59,27 @@ public:
 	 * @return new global time
 	 * @note fully virtual method. Overloaded by subclasses.
 	 */
-	virtual double step(VECTOR& f, const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = 0) = 0;
+	virtual double step(VECTOR& f, const MATRIX& systemMatrix,
+			VECTOR& systemVector, double t = 0, double dt = 0) = 0;
+
+	void setBoundaryCollection(
+			boost::shared_ptr<BoundaryCollection<2> > boundaries) {
+		m_boundaries2D = boundaries;
+	}
+	void setBoundaryCollection(
+			boost::shared_ptr<BoundaryCollection<3> > boundaries) {
+		m_boundaries3D = boundaries;
+	}
+	bool hasBoundary(){
+		return ( (m_boundaries3D != NULL) or (m_boundaries2D != NULL) );
+	}
+	void updateSystemVector(){
+		if (m_boundaries2D != NULL) {
+			m_boundaries2D->updateNonlinearBoundaryValues();
+		} else if (m_boundaries3D != NULL) {
+			m_boundaries3D->updateNonlinearBoundaryValues();
+		}
+	}
 };
 
 } /* namespace natrium */

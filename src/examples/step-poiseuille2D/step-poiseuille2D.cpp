@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 	const double orderOfFiniteElement = 2;
 	const double Ma = atof(argv[1]);
 	const double refinement_level = atoi(argv[2]);
-	bool is_periodic = true;
+	bool is_periodic = false;
 
 	/// create CFD problem
 	const double viscosity = u_bulk * height / Re;
@@ -58,9 +58,9 @@ int main(int argc, char** argv) {
 	configuration->setOutputDirectory(dirName.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
-	configuration->setOutputTableInterval(1);
+	configuration->setOutputTableInterval(10);
 	configuration->setOutputCheckpointInterval(100000000);
-	configuration->setOutputSolutionInterval(1000000);
+	configuration->setOutputSolutionInterval(100);
 	configuration->setCommandLineVerbosity(WELCOME);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
