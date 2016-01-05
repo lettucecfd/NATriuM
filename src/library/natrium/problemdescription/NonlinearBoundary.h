@@ -111,7 +111,7 @@ public:
 		return *m_advectionOperator;
 	}
 
-	distributed_block_vector& getBoundaryVector() {
+	distributed_block_vector& getBoundaryVector() const {
 		return *m_boundaryVector;
 	}
 

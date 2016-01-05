@@ -15,7 +15,7 @@
 namespace natrium {
 
 template<size_t dim>
-class NonlinearBoundaryZouHeRho {
+class NonlinearBoundaryZouHeRho: public NonlinearBoundary<dim> {
 private:
 	boost::shared_ptr<dealii::Function<dim> > m_boundaryPressure;
 	size_t m_direction;
@@ -38,7 +38,7 @@ public:
 	 * 		- 4) front
 	 * 		- 5) back
 	 */
-	NonlinearBoundaryZouHeRho(
+	NonlinearBoundaryZouHeRho(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundary_pressure,
 			size_t direction);
 	virtual ~NonlinearBoundaryZouHeRho() {
