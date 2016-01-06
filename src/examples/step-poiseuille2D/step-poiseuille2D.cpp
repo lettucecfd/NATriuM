@@ -31,23 +31,26 @@ int main(int argc, char** argv) {
 	pout << "Starting NATriuM step-poiseuille2D..." << endl;
 
 	const double CFL = 1;
-	const double Re = 1;
-	const double u_bulk = 1.0;
+	//const double Re = 1;
+	const double u_bulk = 0.0001 / 1.5; //1.0;
 	const double height = 1.0;
 	const double length = 2.0;
 	const double orderOfFiniteElement = 2;
 	const double Ma = atof(argv[1]);
 	const double refinement_level = atoi(argv[2]);
-	bool is_periodic = false;
+	bool is_periodic = true;
 
 	/// create CFD problem
-	const double viscosity = u_bulk * height / Re;
-	const double scaling = sqrt(3) * 1.5 * u_bulk / Ma;
+	double viscosity  = 1.0;
+	const double scaling = 1.0; //sqrt(3) * 1.5 * u_bulk / Ma;
 	boost::shared_ptr<ProblemDescription<2> > poiseuille2D = boost::make_shared<
 			PoiseuilleFlow2D>(viscosity, refinement_level, u_bulk, height,
 			length, is_periodic);
 	const double dt = CFDSolverUtilities::calculateTimestep<2>(
 			*poiseuille2D->getMesh(), orderOfFiniteElement, D2Q9(scaling), CFL);
+	viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
+	poiseuille2D->setViscosity(viscosity);
+
 
 	/// setup configuration
 	std::stringstream dirName;

@@ -294,8 +294,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 							configuration->getEmbeddedDealIntegratorCoarsenTolerance());
 		};
 	}
-	if (m_problemDescription->getBoundaries()->hasNonlinearBoundaries()){
-		m_timeIntegrator->setBoundaryCollection(m_problemDescription->getBoundaries());
+	if (m_problemDescription->getBoundaries()->hasNonlinearBoundaries()) {
+		m_timeIntegrator->setBoundaryCollection(
+				m_problemDescription->getBoundaries());
 	}
 
 // OUTPUT
@@ -425,6 +426,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 	// initialize nonlinear boundaries
+	m_boundaryVector.reinit(m_advectionOperator->getSystemVector());
 	m_boundaryVector = m_advectionOperator->getSystemVector();
 	m_problemDescription->getBoundaries()->initializeNonlinearBoundaries(
 			m_advectionOperator, m_stencil, &m_density, &m_velocity, &m_f,
@@ -462,12 +464,18 @@ void CFDSolver<dim>::stream() {
 	distributed_block_vector& f = m_f.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
-	try {
-		m_time = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector, m_time,
-				m_timeIntegrator->getTimeStepSize());
-	} catch (std::exception& e) {
-		natrium_errorexit(e.what());
-	}
+
+	//const distributed_block_vector& systemVector =
+	//		m_advectionOperator->getSystemVector();
+	//TODO has to be replaced by boundaryVector
+	m_boundaryVector = m_advectionOperator->getSystemVector();
+
+	//try {
+		m_time = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector,
+				m_time, m_timeIntegrator->getTimeStepSize());
+	//} catch (std::exception& e) {
+	//	natrium_errorexit(e.what());
+	//}
 	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
 }
 template void CFDSolver<2>::stream();
