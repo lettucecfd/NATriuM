@@ -39,6 +39,9 @@ public:
 	ForceType getForceType() const {
 		return m_forceType;
 	}
+	void scale(double factor) {
+		m_force *= factor;
+	}
 };
 
 } /* namespace natrium */

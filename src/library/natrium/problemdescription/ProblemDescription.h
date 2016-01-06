@@ -151,7 +151,7 @@ public:
 		m_externalForce = force;
 	}
 
-	const boost::shared_ptr<ConstantExternalForce<dim> >& getExternalForce() const {
+	boost::shared_ptr<ConstantExternalForce<dim> > getExternalForce() const {
 		return m_externalForce;
 	}
 
