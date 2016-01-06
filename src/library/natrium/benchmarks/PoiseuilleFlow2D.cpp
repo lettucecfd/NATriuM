@@ -38,7 +38,7 @@ PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 		F[0] = Fx;
 		setExternalForce(
 				boost::make_shared<ConstantExternalForce<2> >(F,
-						SHIFTING_VELOCITY));
+						EXACT_DIFFERENCE));
 	}
 
 	// refine global
