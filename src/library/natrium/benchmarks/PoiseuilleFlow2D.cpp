@@ -33,11 +33,12 @@ PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 	if (is_periodic) {
 		// add external force
 		double Fx = 8 * length * m_uMax * viscosity;
+		pout << "F: " << Fx << endl;
 		dealii::Tensor<1, 2> F;
 		F[0] = Fx;
 		setExternalForce(
 				boost::make_shared<ConstantExternalForce<2> >(F,
-						EXACT_DIFFERENCE));
+						GUO));
 	}
 
 	// refine global
@@ -57,7 +58,7 @@ boost::shared_ptr<Mesh<2> > PoiseuilleFlow2D::makeGrid(double height,
 
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >(
 	MPI_COMM_WORLD);
-	dealii::GridGenerator::hyper_rectangle(*rect, dealii::Point<2>(0, -height),
+	dealii::GridGenerator::hyper_rectangle(*rect, dealii::Point<2>(0, 0.0),
 			dealii::Point<2>(length, height), false);
 
 	// Assign boundary indicators to the faces of the "parent cell"

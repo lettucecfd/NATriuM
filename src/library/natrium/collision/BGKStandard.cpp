@@ -213,10 +213,12 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 		// Exact difference method (Kupershtokh)
 		if (force_type == EXACT_DIFFERENCE) {
 			ExternalForceFunctions::applyExactDifferenceForcingD2Q9(f_i,
-					force_x, force_y, u_0_i, u_1_i, rho_i, getDt(), cs2,
+					force_x, force_y, u_0_i, u_1_i, rho_i, getDt(),
 					prefactor);
+		} else if (force_type == GUO) {
+			ExternalForceFunctions::applyGuoForcingD2Q9(f_i, force_x, force_y,
+					u_0_i, u_1_i, -relax_factor, prefactor, dt);
 		}
-		// TODO add source term guo
 
 		// copy to global variables
 		f0(i) = f_i[0];
