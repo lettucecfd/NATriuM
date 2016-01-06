@@ -78,7 +78,7 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 		TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
 		systemMatrix.vmult(m_Af, f);
 	}
-	this->updateSystemVector();
+	//this->updateSystemVector();
 	m_Af += systemVector;
 	m_Af *= this->getTimeStepSize();
 	m_df = m_Af;
@@ -90,7 +90,7 @@ template<class MATRIX, class VECTOR> double RungeKutta5LowStorage<MATRIX, VECTOR
 			TimerOutput::Scope timer_section(Timing::getTimer(), "vmult");
 			systemMatrix.vmult(m_Af, f);
 		}
-		this->updateSystemVector();
+		//this->updateSystemVector();
 		m_Af += systemVector;
 		m_Af *= this->getTimeStepSize();
 		m_df *= m_a.at(i);
