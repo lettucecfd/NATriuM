@@ -32,13 +32,13 @@ PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 
 	if (is_periodic) {
 		// add external force
-		double Fx = 8 * length * m_uMax * viscosity;
-		pout << "F: " << Fx << endl;
+		double Fx = 8 * m_uMax * viscosity / (height * height);
+		//pout << "F: " << Fx << endl;
 		dealii::Tensor<1, 2> F;
 		F[0] = Fx;
 		setExternalForce(
 				boost::make_shared<ConstantExternalForce<2> >(F,
-						GUO));
+						SHIFTING_VELOCITY));
 	}
 
 	// refine global
@@ -115,9 +115,10 @@ boost::shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 double PoiseuilleFlow2D::AnalyticVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {
 	assert(component < 2);
+	double h = m_flow->getCharacteristicLength();
 	if (component == 0) {
-		return m_flow->m_uMax
-				* (1 - pow(x(1) / m_flow->getCharacteristicLength(), 2));
+		return (- 4 * m_flow->m_uMax *
+				(x(1) - h) * x(1) / (h*h) );
 	} else {
 		return 0.0;
 	}
