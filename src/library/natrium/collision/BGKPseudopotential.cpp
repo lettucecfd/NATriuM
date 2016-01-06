@@ -344,8 +344,7 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			// Exact difference method (Kupershtokh)
 			if (force_type == EXACT_DIFFERENCE) {
 				ExternalForceFunctions::applyExactDifferenceForcingD2Q9(f_i,
-						force_x, force_y, u_0_i, u_1_i, rho_i, getDt(), cs2,
-						prefactor);
+						force_x, force_y, u_0_i, u_1_i, rho_i, getDt(), prefactor);
 			}
 			// TODO add source term guo
 

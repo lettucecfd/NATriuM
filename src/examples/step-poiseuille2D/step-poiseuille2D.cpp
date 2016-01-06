@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
 	pout << "Starting NATriuM step-poiseuille2D..." << endl;
 
-	const double CFL = 1;
+	const double CFL = 0.4;
 	//const double Re = 1;
 	const double u_bulk = 0.0001 / 1.5; //1.0;
 	const double height = 1.0;
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 	bool is_periodic = true;
 
 	/// create CFD problem
-	double viscosity  = 1.0;
+	double viscosity  = 0.00294628;
 	const double scaling = 1.0; //sqrt(3) * 1.5 * u_bulk / Ma;
 	boost::shared_ptr<ProblemDescription<2> > poiseuille2D = boost::make_shared<
 			PoiseuilleFlow2D>(viscosity, refinement_level, u_bulk, height,
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 	//configuration->setIterativeInitializationNumberOfIterations(100);
 	//configuration->setIterativeInitializationResidual(1e-15);
 
-	configuration->setConvergenceThreshold(1e-5);
+	configuration->setConvergenceThreshold(1e-10);
 
 	// make solver object and run simulation
 	CFDSolver<2> solver(configuration, poiseuille2D);

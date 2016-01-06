@@ -12,9 +12,13 @@ namespace natrium {
 
 namespace ExternalForceFunctions {
 
-inline void applyExactDifferenceForcingD2Q9(double f_i[9], double force_x, double force_y,
-		double u_0_i, double u_1_i, double rho_i, double dt, double cs2,
-		double prefactor) {
+/**
+ * @short Calculate source term for exact difference forcing (Kupershtokh et. al.)
+ * @note See Phys.Rev. E 84, 046710 (2011), Scheme V
+ */
+inline void applyExactDifferenceForcingD2Q9(double f_i[9], double force_x,
+		double force_y, double u_0_i, double u_1_i, double rho_i, double dt,
+	    double prefactor) {
 	double mixed_term_shifted;
 	double mixed_term_eq;
 	double s_i[9];
@@ -28,10 +32,10 @@ inline void applyExactDifferenceForcingD2Q9(double f_i[9], double force_x, doubl
 
 	double scalar_product_eq_shifted = u_eq_shifted0 * u_eq_shifted0
 			+ u_eq_shifted1 * u_eq_shifted1;
-	double uSquareTerm_eq_shifted = -scalar_product_eq_shifted / (2 * cs2);
+	double uSquareTerm_eq_shifted = - 0.5 * prefactor * scalar_product_eq_shifted;
 
 	double scalar_product_eq = u_0_i * u_0_i + u_1_i * u_1_i;
-	double u_square_term_eq = -scalar_product_eq / (2 * cs2);
+	double u_square_term_eq = - 0.5 * prefactor * scalar_product_eq;
 
 	// Calculate source term
 	// direction 0
@@ -109,6 +113,86 @@ inline void applyExactDifferenceForcingD2Q9(double f_i[9], double force_x, doubl
 	f_i[6] += s_i[6];
 	f_i[7] += s_i[7];
 	f_i[8] += s_i[8];
+}
+
+inline void applyGuoForcingD2Q9(double f_i[9], double force_x, double force_y,
+		double u_0_i, double u_1_i, double omega, double prefactor, double dt) {
+
+	double s_i[9];
+
+	double eia_ua;
+	double eig_fg;
+	double ug_fg = u_0_i * force_x + u_1_i * force_y;
+
+	double wi_one_min_omega_half;
+	double one_min_omega_half = 1 - 0.5 * omega;
+
+	//f0
+	eia_ua = 0;
+	eig_fg = 0;
+	wi_one_min_omega_half = 4. / 9. * one_min_omega_half;
+	s_i[0] = wi_one_min_omega_half * (prefactor * (eig_fg - ug_fg));
+	//f1
+	wi_one_min_omega_half = 1. / 9.* one_min_omega_half;
+	eia_ua = u_0_i;
+	eig_fg = force_x;
+	s_i[1] = wi_one_min_omega_half
+			* (prefactor * (eig_fg - ug_fg)
+					+ prefactor * prefactor * (eia_ua * eig_fg));
+	//f2
+	eia_ua = u_1_i;
+	eig_fg = force_y;
+	s_i[2] = wi_one_min_omega_half
+			* (prefactor * (eig_fg - ug_fg)
+					+ prefactor * prefactor * (eia_ua * eig_fg));
+	//f3
+	eia_ua = -u_0_i;
+	eig_fg = -force_x;
+	s_i[3] = wi_one_min_omega_half
+			* (prefactor * (eig_fg - ug_fg)
+					+ prefactor * prefactor * (eia_ua * eig_fg));
+	//f4
+	eia_ua = -u_1_i;
+	eig_fg = -force_y;
+	s_i[4] = wi_one_min_omega_half
+			* (prefactor * (eig_fg - ug_fg)
+					+ prefactor * prefactor * (eia_ua * eig_fg));
+	//f5
+	wi_one_min_omega_half = 1. / 36.* one_min_omega_half;
+	eia_ua = u_0_i + u_1_i;
+	eig_fg = force_x + force_y;
+	s_i[5] = wi_one_min_omega_half
+			* (prefactor * (eig_fg - ug_fg)
+					+ prefactor * prefactor * (eia_ua * eig_fg));
+	//f6
+	eia_ua = -u_0_i + u_1_i;
+	eig_fg = -force_x + force_y;
+	s_i[6] = wi_one_min_omega_half
+			* (prefactor * (eig_fg - ug_fg)
+					+ prefactor * prefactor * (eia_ua * eig_fg));
+	//f7
+	eia_ua = -u_0_i - u_1_i;
+	eig_fg = -force_x - force_y;
+	s_i[7] = wi_one_min_omega_half
+			* (prefactor * (eig_fg - ug_fg)
+					+ prefactor * prefactor * (eia_ua * eig_fg));
+	//f8
+	eia_ua = u_0_i - u_1_i;
+	eig_fg = force_x - force_y;
+	s_i[8] = wi_one_min_omega_half
+			* (prefactor * (eig_fg - ug_fg)
+					+ prefactor * prefactor * (eia_ua * eig_fg));
+
+	// Add Source term
+	f_i[0] += dt * s_i[0];
+	f_i[1] += dt * s_i[1];
+	f_i[2] += dt * s_i[2];
+	f_i[3] += dt * s_i[3];
+	f_i[4] += dt * s_i[4];
+	f_i[5] += dt * s_i[5];
+	f_i[6] += dt * s_i[6];
+	f_i[7] += dt * s_i[7];
+	f_i[8] += dt * s_i[8];
 }
 
 } /* namespace ExternalForceFunctions */
