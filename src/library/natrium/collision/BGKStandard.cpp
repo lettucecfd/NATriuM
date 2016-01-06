@@ -246,9 +246,17 @@ void BGKStandard::collideAllD3Q19(DistributionFunctions& f,
 	double cs2 = getStencil()->getSpeedOfSoundSquare();
 	double prefactor = scaling / cs2;
 	double relax_factor = getPrefactor();
+	double dt = getDt();
 
 	assert(f.size() == Q);
 	assert(velocities.size() == D);
+
+	// External force information
+	ForceType force_type = getForceType();
+	double force_x = getForceX();
+	double force_y = getForceY();
+	double force_z = getForceZ();
+
 
 #ifdef DEBUG
 	size_t n_dofs = f.at(0).size();
@@ -342,9 +350,30 @@ void BGKStandard::collideAllD3Q19(DistributionFunctions& f,
 			u_2_i = scaling / rho_i
 					* (f_i[2] - f_i[4] + f_i[7] + f_i[8] - f_i[9] - f_i[10]
 							+ f_i[15] + f_i[16] - f_i[17] - f_i[18]);
-			velocities.at(0)(i) = u_0_i;
-			velocities.at(1)(i) = u_1_i;
-			velocities.at(2)(i) = u_2_i;
+			if (force_type == NO_FORCING) {
+				velocities.at(0)(i) = u_0_i;
+				velocities.at(1)(i) = u_1_i;
+				velocities.at(2)(i) = u_2_i;
+
+			} else if (force_type == SHIFTING_VELOCITY) {
+				velocities.at(0)(i) = u_0_i + 0.5 * dt * force_x / rho_i;
+				velocities.at(1)(i) = u_1_i + 0.5 * dt * force_y / rho_i;
+				velocities.at(2)(i) = u_2_i + 0.5 * dt * force_z / rho_i;
+				u_0_i -= (double) 1 / relax_factor * dt * force_x / rho_i;
+				u_1_i -= (double) 1 / relax_factor * dt * force_y / rho_i;
+				u_2_i -= (double) 1 / relax_factor * dt * force_z / rho_i;
+			} else if (force_type == EXACT_DIFFERENCE) {
+				velocities.at(0)(i) = u_0_i + 0.5 * dt * force_x / rho_i;
+				velocities.at(1)(i) = u_1_i + 0.5 * dt * force_y / rho_i;
+				velocities.at(2)(i) = u_2_i + 0.5 * dt * force_z / rho_i;
+			} else { // GUO
+				u_0_i += 0.5 * dt * force_x / rho_i;
+				u_1_i += 0.5 * dt * force_y / rho_i;
+				u_2_i += 0.5 * dt * force_z / rho_i;
+				velocities.at(0)(i) = u_0_i;
+				velocities.at(1)(i) = u_1_i;
+				velocities.at(2)(i) = u_2_i;
+			}
 		}
 
 		// calculate equilibrium distribution
@@ -423,6 +452,17 @@ void BGKStandard::collideAllD3Q19(DistributionFunctions& f,
 		f16(i) += relax_factor * (f_i[16] - feq[16]);
 		f17(i) += relax_factor * (f_i[17] - feq[17]);
 		f18(i) += relax_factor * (f_i[18] - feq[18]);
+
+		// Add Source term
+		// Exact difference method (Kupershtokh)
+		if (force_type == EXACT_DIFFERENCE) {
+			ExternalForceFunctions::applyExactDifferenceForcingD3Q19(f_i,
+					force_x, force_y, force_z, u_0_i, u_1_i, u_2_i, rho_i, dt,
+					prefactor);
+		} else if (force_type == GUO) {
+			ExternalForceFunctions::applyGuoForcingD3Q19(f_i, force_x, force_y, force_z,
+					u_0_i, u_1_i, u_2_i, -relax_factor, prefactor, dt);
+		}
 
 	} /* for all dofs */
 

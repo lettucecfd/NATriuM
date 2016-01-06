@@ -140,4 +140,7 @@ void NonlinearBoundaryZouHeRho<dim>::updateNonlinearBoundaryValues() const {
 	} /* for all cells */
 }
 
+template class NonlinearBoundaryZouHeRho<2>;
+template class NonlinearBoundaryZouHeRho<3>;
+
 } /* namespace natrium */
