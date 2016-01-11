@@ -32,7 +32,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 
 	if (is_periodic) {
 		// add external force
-		double Fx = 8 * 1.5 * m_uBulk * viscosity / (height * height) / width;
+		double Fx = 8 * 1.5 * m_uBulk * viscosity / (height * height);
 		//pout << "F: " << Fx << endl;
 		dealii::Tensor<1, 3> F;
 		F[0] = Fx;
