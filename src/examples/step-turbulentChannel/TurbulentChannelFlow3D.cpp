@@ -22,8 +22,8 @@ namespace natrium {
 
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel, double u_bulk,
 		double U_in, double height, double length, double width, bool is_periodic ) :
-		ProblemDescription<3>(makeGrid(height, length, width), viscosity, height), m_uBulk(
-				u_bulk) {
+		ProblemDescription<3>(makeGrid(height, length, width), viscosity, height),
+		m_refinementLevel(refinementLevel), m_uBulk(u_bulk), m_Uin(U_in){
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
@@ -132,11 +132,11 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Selectable variables
-	// TODO: These variables has to be made selectable from a property file or similar
+	// TODO: These variables have to be made selectable from a property file or similar
 
 	double 	h = m_flow->getCharacteristicLength();				// characteristic flow length scale, here: full channel height
 	double	qm 					= 4.0;							// turbulent kinetic energy
-	double	delta 				= 0.5*h;        				// inlet boundary layer thickness. Only if the boundary layer
+	double	delta 				= 5./32*h;	        			// inlet boundary layer thickness. Only if the boundary layer
 																// at inlet is not fully developed
 	//double 	uTau 				= 1/25.0;						// inlet shear velocity, suTau = Urms [Ref2]
 
@@ -155,22 +155,254 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	up 					= sqrt(2*qm/3);					// turbulent velocity scale
 	double	epsm 				= pow(qm,1.5)/sli;				// dissipation rate
 
+	//TODO: p - 1
+	double	inletCellLength		= h/(3*pow(2, m_flow->getRefinementLevel()));
+	double	wnrn				= 2*M_PI/inletCellLength;		// highest wave number // min cell length
+	double	wnre				= 9*M_PI*amp/(55*sli);			// k_e (related to peak energy wave number)
+	double	wnreta 				= pow((epsm/pow(m_flow->getViscosity(),3)), .25);
+																// wavenumber used in the viscous expression (high wavenumbers)
+																// 	in the von Karman spectrum
+	double	wnr1 				= wnre/wew1fct;					// smallest wavenumber
+	double	dkl 				= (wnrn-wnr1)/nmodes;			// wavenumber step
 
+	// Create a seed from current time (must be negative).
+	// 	A seed is a random input value for the algorithm generating
+	// 	the random angles and is created once the code has started.
+	int 	iseed	= -50;
 
+	vector<double> 		fi(nmodes), psi(nmodes), alfa(nmodes), teta(nmodes);
+	vector<int> 		iv(32);		// eq. to ntab in randf_2()
+	int 				iy = 0;
+
+	//TODO: show case details
+
+	vector<double>		wnrf(nmodes), wnr(nmodes), dkn(nmodes);
+	vector<double>		kxio(nmodes), kyio(nmodes), kzio(nmodes);
+	vector<double>		sxio(nmodes), syio(nmodes), szio(nmodes);
+
+	double				utrp, vtrp, wtrp;							// turbulent preturbation (fluctuation) in x, y and z direction
+	double				kxi, kyi, kzi;
+	double				sx, sy, sz, kx, ky, kz, rk;
+	double				arg, tfunk, e, utn;
+
+	double				minDist, fBlend;		 					// distance to the nearest wall
+
+	//------------------------------------------------------------------------------------------------------------------------------------------------------
+	// Wavenumber generation
+
+	// Compute random angles
+	m_flow->angles(nmodes, iseed, iy, iv, fi, psi, alfa, teta);
+
+	// Wavenumber at faces
+	for (int m = 0; m <= nmodes; ++m)
+	{
+	wnrf[m] = wnr1+dkl*m;
+	}
+
+	// Wavenumber at cell centers
+	for (int m = 0; m <= nmodes-1; ++m)
+	{
+	wnr[m] = 0.5*(wnrf[m+1]+wnrf[m]);
+	dkn[m] = wnrf[m+1]-wnrf[m];
+	}
+
+	// Wavenumber vector from random angles
+	for (int m = 0; m <= nmodes-1; ++m)
+	{
+	kxio[m]=sin(teta[m])*cos(fi[m]);
+	kyio[m]=sin(teta[m])*sin(fi[m]);
+	kzio[m]=cos(teta[m]);
+
+	// sigma (s=sigma) from random angles. sigma is the unit direction which gives the direction
+	// of the synthetic velocity vector (u, v, w)
+	  sxio[m]=cos(fi[m])*cos(teta[m])*cos(alfa[m])-sin(fi[m])*sin(alfa[m]);
+	  syio[m]=sin(fi[m])*cos(teta[m])*cos(alfa[m])+cos(fi[m])*sin(alfa[m]);
+	  szio[m]=-sin(teta[m])*cos(alfa[m]);
+	}
+
+    // Set the turbulent velocities to zero for initialisation
+    utrp = 0;
+    vtrp = 0;
+    wtrp = 0;
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------
+    // Loop over all wavenumbers
+
+    for (int m = 0; m <= nmodes-1; ++m)
+    {
+  	kxi = kxio[m];
+  	kyi = kyio[m];
+  	kzi = kzio[m];
+
+  	sx = sxio[m];
+  	sy = syio[m];
+  	sz = szio[m];
+
+  	kx = kxi*wnr[m];
+  	ky = kyi*wnr[m];
+  	kz = kzi*wnr[m];
+  	rk = sqrt(pow(kx,2)+pow(ky,2)+pow(kz,2));
+
+  	// If the wavenumber, rk, is smaller than the largest wavenumber, then create fluctuations
+		if (rk < wnrn)
+		{
+		  arg = kx*x[0]+ky*x[1]+kz*x[2]+psi[m];
+		  tfunk = cos(arg);
+
+		  // Von Karman spectrum
+		  e = amp/wnre*pow(wnr[m]/wnre,4)/pow(1+pow(wnr[m]/wnre,2),17./6.)*exp(-2*pow(wnr[m]/wnreta,2));
+
+		  utn = sqrt(e*pow(up,2)*dkn[m]);
+
+		  // Synthetic velocity field (fluctuations)
+		  utrp += 2*utn*tfunk*sx;
+		  vtrp += 2*utn*tfunk*sy;
+		  wtrp += 2*utn*tfunk*sz;
+		}  // end of if (int rk < wnrn)
+	  }  // end of for (int m = 0; m <= nmodes-1; ++m)
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------
+    // Blending function
+    //------------------------------------------------------------------------------------------------------------------------------------------------------
+    // ATTENTION: Currently works only for plane walls perpendicular to the y-axis.
+    // TODO: Linear blending for viscous sublayer
+
+    // Distance to the nearest wall, TODO:not valid for the cell centres
+    minDist = std::min(x[2], h-x[2]);
+
+    // Manipulated hyperbolic function, freeStreamTurb prescribes a free-stream turbulence
+    //	by preventing the blending function from dropping below the set value
+    fBlend = std::max(0.5*(1 - tanh((minDist - delta)/blendDist)), freeStreamTurb);
+
+    // Vin & Win are assumed to be 0.
+	if (component == 0) {
+		return ( m_flow->getInletVelocity() + fBlend*utrp );
+	}
+	else if (component == 1) {
+		return ( fBlend*vtrp );
+	}
+	else { // component == 2
+		return ( fBlend*wtrp );
+	}
+
+    /*
+    // TODO: add initialisation cases
 	if (component == 0) {
 		// exponential law profile
 		if (x(2) <= h/2)
 			return ( m_flow->m_uBulk * std::pow(2*x(2)/h, 1./7.) );
 		else
 			return ( m_flow->m_uBulk * std::pow(2*(1-x(2)/h), 1./7.) );
-		/*
+
 		// parabolic profile
 		return (- 4 * m_flow->m_uBulk * 1.5 *
 				(x(2) - h) * x(2) / (h*h) );
 		*/
-	} else {
-		return 0.0;
+} // end of InitialVelocity
+
+
+//============================ MEAN ===========================
+
+inline void TurbulentChannelFlow3D::mean(vector<vector<double> > &matrix, double &avg){
+
+	int 				i = matrix.size(), j = matrix[0].size();
+	vector<double> 		sum(i);
+
+	for (int k = 0; k <= i-1; ++k){
+		sum[k] = accumulate(matrix[k].begin(), matrix[k].end(), 0.0);
 	}
+	avg = accumulate(sum.begin(), sum.end(), 0.0) / (i*j);
+}
+
+
+//========================== ANGLES ===========================
+
+inline void TurbulentChannelFlow3D::angles(int nmodes, int &iseed, int &iy, vector<int> &iv, vector<double> &fi,
+		vector<double> &psi, vector<double> &alfa, vector<double> &teta){
+
+vector<double> ang(nmodes);
+
+randf_1(nmodes, 0, 2*M_PI, iseed, iy, iv, fi, iseed);
+randf_1(nmodes, 0, 2*M_PI, iseed, iy, iv, psi, iseed);
+randf_1(nmodes, 0, 2*M_PI, iseed, iy, iv, alfa, iseed);
+randf_1(nmodes, 0, 1, iseed, iy, iv, ang, iseed);
+
+for (int m = 0; m <= nmodes-1; ++m){
+	teta[m] = acos(1-ang[m]/0.5);
+}
+}
+
+
+//========================== RANDF_1 ===========================
+
+inline void TurbulentChannelFlow3D::randf_1(int nmd, int alow, double ahigh, int idum, int &iy, vector<int> &iv,
+		vector<double> &out, int &iseed){
+
+double 	ran1 	= 0;
+
+for (int j = 0; j <= nmd-1; ++j){
+	randf_2(idum, iy, iv, ran1, iseed);
+	idum = iseed;
+	out[j] = (ran1*(ahigh-alow))+alow;
+}
+}
+
+
+//========================== RANDF_2 ===========================
+
+/* Generates a random number 0 < x < 1
+
+   Minimal random number generator of Park and Miller with Bays-Durham shuffle and
+   added safeguards. Returns a uniform random deviate between 0.0 and 1.0 (exclusive of
+	inline void timeNow(int &iseed);   the endpoint values). Call with idum a negative integer to initialize; thereafter, do not
+   alter idum between successive deviates in a sequence. RNMX should approximate the largest
+   floating value that is less than 1.
+
+   Park, S.K., and Miller, K.W. 1988, Communications of the ACM, vol. 31, pp. 1192-1201.
+*/
+
+inline void TurbulentChannelFlow3D::randf_2(int idum, int &iy, vector<int> &iv, double &ran1, int &iseed){
+
+int			ia		= 16807;
+double		im 		= 2147483647;
+double		am		= 1/im;
+int 		iq		= 127773;
+int 		ir		= 2836;
+int 		ntab	= 32;
+double 		ndiv	= 1+(im-1)/ntab;
+double 		eps		= 1.2e-7;
+double		rnmx	= 1-eps;
+
+int 			j, k;
+
+//initial iseed (idum) is negative
+if (idum <= 0 || iy == 0){
+	idum = std::max(-idum, 1);
+   	for (int j = ntab+8; j >=1; --j){
+      		k = floor(idum/iq);
+      		idum = ia*(idum-k*iq)-ir*k;
+      		if (idum < 0){
+         		idum = idum+im;
+      		}
+      		if (j <= ntab){
+         		iv[j-1] = idum;
+		}
+	}
+	iy = iv[0];
+}
+
+k 		= floor(idum/iq);
+idum 	= ia*(idum-k*iq)-ir*k;
+
+if  (idum <= 0){
+	idum = idum+im;
+}
+
+j 		= floor(iy/ndiv);
+iy 		= iv[j];
+iv[j]	= idum;
+iseed	= idum;
+ran1	= std::min(am*iy,rnmx);
 }
 
 } /* namespace natrium */
