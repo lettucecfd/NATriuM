@@ -38,7 +38,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		F[0] = Fx;
 		setExternalForce(
 				boost::make_shared<ConstantExternalForce<3> >(F,
-						GUO));
+						SHIFTING_VELOCITY));
 	}
 
 	// refine global
@@ -122,8 +122,14 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	assert(component < 3);
 	double h = m_flow->getCharacteristicLength();
 	if (component == 0) {
+		if (x(2) <= h/2)
+			return ( m_flow->m_uBulk * std::pow(2*x(2)/h, 1./7.) );
+		else
+			return ( m_flow->m_uBulk * std::pow(2*(1-x(2)/h), 1./7.) );
+		/*
 		return (- 4 * m_flow->m_uBulk * 1.5 *
 				(x(2) - h) * x(2) / (h*h) );
+		*/
 	} else {
 		return 0.0;
 	}
