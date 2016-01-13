@@ -21,7 +21,7 @@
 namespace natrium {
 
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel, double u_bulk,
-		double height, double length, double width, bool is_periodic ) :
+		double U_in, double height, double length, double width, bool is_periodic ) :
 		ProblemDescription<3>(makeGrid(height, length, width), viscosity, height), m_uBulk(
 				u_bulk) {
 
@@ -118,15 +118,53 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 		const unsigned int component) const {
 
-	// TODO add synthetic turbulence
+	// Synthetic turbulence generation due to Davidson et al.
+	// [1] Using isotropic...
+	// [2]
+	/*
+	charLength -> h
+	visc -> viscosity
+	*/
+	// turbulent kinetic energy to be set properly
+	//
+
 	assert(component < 3);
-	double h = m_flow->getCharacteristicLength();
+
+	//------------------------------------------------------------------------------------------------------------------------------------------------------
+	// Selectable variables
+	// TODO: These variables has to be made selectable from a property file or similar
+
+	double 	h = m_flow->getCharacteristicLength();				// characteristic flow length scale, here: full channel height
+	double	qm 					= 4.0;							// turbulent kinetic energy
+	double	delta 				= 0.5*h;        				// inlet boundary layer thickness. Only if the boundary layer
+																// at inlet is not fully developed
+	//double 	uTau 				= 1/25.0;						// inlet shear velocity, suTau = Urms [Ref2]
+
+	// blending function parameters
+	double	blendDist 			= 0.1*h;						// distance over which fBlend goes from 0 to 1
+	double	freeStreamTurb 		= 0.1;							// parameter does not let fBlend drop below the prescribed value
+
+	int 	nmodes 				= 150;							// number of Fourier modes
+	double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
+
+	// Constants
+	double 	amp 				= 1.452762113;					// alpha in [Ref2]
+
+	// Calculated
+	double	sli 				= 0.1*delta;    				// length scale
+	double	up 					= sqrt(2*qm/3);					// turbulent velocity scale
+	double	epsm 				= pow(qm,1.5)/sli;				// dissipation rate
+
+
+
 	if (component == 0) {
+		// exponential law profile
 		if (x(2) <= h/2)
 			return ( m_flow->m_uBulk * std::pow(2*x(2)/h, 1./7.) );
 		else
 			return ( m_flow->m_uBulk * std::pow(2*(1-x(2)/h), 1./7.) );
 		/*
+		// parabolic profile
 		return (- 4 * m_flow->m_uBulk * 1.5 *
 				(x(2) - h) * x(2) / (h*h) );
 		*/
