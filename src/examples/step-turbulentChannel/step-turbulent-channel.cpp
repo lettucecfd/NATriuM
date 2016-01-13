@@ -33,7 +33,10 @@ int main(int argc, char** argv) {
 
 	const double CFL = 0.4;
 	const double Re = 100;
-	const double u_bulk = 0.0001 / 1.5; //1.0;
+	const double u_bulk = 10 / 1.5; //1.0; // laminar: 0.0001
+	const double U_in = 27.5; // center line velocity in streamwise direction
+	//TODO: smooth increase of the inlet velocity up to the initTime is reached
+	//  	e.g. Uin = U*(F1B2 - F1B2 * cos(PI / (initTime * globalTimeStep)) ;
 	const double height = 1.0;
 	const double length = 10.0;
 	const double width = 3.0;
@@ -46,7 +49,7 @@ int main(int argc, char** argv) {
 	double viscosity  = u_bulk * height / Re;
 	const double scaling = sqrt(3) * 1.5 * u_bulk / Ma;
 	boost::shared_ptr<ProblemDescription<3> > channel3D = boost::make_shared<
-			TurbulentChannelFlow3D>(viscosity, refinement_level, u_bulk, height,
+			TurbulentChannelFlow3D>(viscosity, refinement_level, u_bulk, U_in, height,
 			length, width, is_periodic);
 	const double dt = CFDSolverUtilities::calculateTimestep<3>(
 			*channel3D->getMesh(), orderOfFiniteElement, D3Q19(scaling), CFL);
@@ -80,7 +83,9 @@ int main(int argc, char** argv) {
 	//configuration->setIterativeInitializationNumberOfIterations(100);
 	//configuration->setIterativeInitializationResidual(1e-15);
 
-	configuration->setConvergenceThreshold(1e-10);
+	//configuration->setConvergenceThreshold(1e-10);
+	configuration->setNumberOfTimeSteps(100);
+	//configuration->setSimulationEndTime(); // unit [s]
 
 	// make solver object and run simulation
 	CFDSolver<3> solver(configuration, channel3D);
