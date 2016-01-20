@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 	const double Re = 100;
 	const double u_bulk = 10 / 1.5; // default 1.0;
 	const double U_in = 27.5; // center line velocity in streamwise direction, default 1.0;
-	//TODO: smooth increase of the inlet velocity up to the initTime is reached
+	//TODO: smooth increase of the inlet velocity untill the initTime is reached
 	//  	e.g. Uin = U*(F1B2 - F1B2 * cos(PI / (initTime * globalTimeStep)) ;
 	const double height = 1.0;
 	const double length = 10.0;
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	/// create CFD problem
 	double viscosity  = u_bulk * height / Re;
 	const double scaling = sqrt(3) * 1.5 * u_bulk / Ma;
-	boost::shared_ptr<ProblemDescription<3> > channel3D = boost::make_shared<
+	boost::shared_ptr<TurbulentChannelFlow3D> channel3D = boost::make_shared<
 			TurbulentChannelFlow3D>(viscosity, refinement_level, u_bulk, U_in , height,
 			length, width, is_periodic);
 	const double dt = CFDSolverUtilities::calculateTimestep<3>(
@@ -57,6 +57,54 @@ int main(int argc, char** argv) {
 	//poiseuille2D->setViscosity(viscosity);
 	//poiseuille2D->getExternalForce()->scale(viscosity);
 
+	// -----------------------------------------------------------------------------------------------------------------------
+
+	// create a separate object for the initial velocity function (Constructor has to get the "flow" object or a pointer to it or something)
+	TurbulentChannelFlow3D::InitialVelocity test_velocity(channel3D.get());
+	cout << "Divergence check... " << endl;
+
+	//srand(1);
+
+	// increment
+	for (size_t i = 0; i < 30; i++) {
+
+		double div = 0.0;
+
+		// create random point in the flow domain and calculate f
+		dealii::Point<3> x;
+
+		x(0) = (double) random() / RAND_MAX * length;
+		x(1) = (double) random() / RAND_MAX * width;
+		x(2) = (double) random() / RAND_MAX * height;
+
+		// Calculate div(U):
+		double h = 1e-6;
+
+		// du / dx
+		dealii::Point<3> x_plus_h(x);
+		x_plus_h(0) = x(0) + h;
+		double f = test_velocity.value(x,0); // component 0 -> u
+		double f_h = test_velocity.value(x_plus_h, 0);
+		div += ( (f_h - f) / h );
+		x_plus_h(0) = x(0);
+
+		// dv / dy
+		x_plus_h(1) = x(1) + h;
+		f = test_velocity.value(x,1);	// component 1 -> v
+		f_h = test_velocity.value(x_plus_h, 1);
+		div += ( (f_h - f) / h );
+		x_plus_h(1) = x(1);
+
+
+		// dw / dz
+		x_plus_h(2) = x(2) + h;
+		f = test_velocity.value(x,2);	// component 2 -> w
+		f_h = test_velocity.value(x_plus_h, 2);
+		div += ( (f_h - f) / h );
+
+		// check div small (could also be done with asserts)
+		pout << "... div u at point " << i << ", z-coord " << x(2) << ": "<< div << endl;
+	}
 
 	/// setup configuration
 	std::stringstream dirName;
@@ -84,7 +132,7 @@ int main(int argc, char** argv) {
 	//configuration->setIterativeInitializationResidual(1e-15);
 
 	//configuration->setConvergenceThreshold(1e-10);
-	configuration->setNumberOfTimeSteps(100);
+	configuration->setNumberOfTimeSteps(1);
 	//configuration->setSimulationEndTime(); // unit [s]
 
 	// make solver object and run simulation
