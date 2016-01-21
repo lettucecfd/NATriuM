@@ -115,6 +115,7 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 	return boundaries;
 }
 
+
 double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 		const unsigned int component) const {
 
@@ -156,7 +157,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	epsm 				= pow(qm,1.5)/sli;				// dissipation rate
 
 	//TODO: p - 1
-	double	inletCellLength		= h/(3*pow(2, m_flow->getRefinementLevel()));
+	double	inletCellLength		= h/(3*pow(2, m_flow->getRefinementLevel())); //TODO: order p neglected
 	double	wnrn				= 2*M_PI/inletCellLength;		// highest wave number // min cell length
 	double	wnre				= 9*M_PI*amp/(55*sli);			// k_e (related to peak energy wave number)
 	double	wnreta 				= pow((epsm/pow(m_flow->getViscosity(),3)), .25);
@@ -180,7 +181,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	vector<double>		kxio(nmodes), kyio(nmodes), kzio(nmodes);
 	vector<double>		sxio(nmodes), syio(nmodes), szio(nmodes);
 
-	double				utrp, vtrp, wtrp;							// turbulent preturbation (fluctuation) in x, y and z direction
+	//double				utrp, vtrp, wtrp;							// turbulent perturbation (fluctuation) in x, y and z direction
 	double				kxi, kyi, kzi;
 	double				sx, sy, sz, kx, ky, kz, rk;
 	double				arg, tfunk, e, utn;
@@ -192,6 +193,9 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
 	// Compute random angles
 	m_flow->angles(nmodes, iseed, iy, iv, fi, psi, alfa, teta);
+
+	for (int i = 0; i < 10; i++)
+		cout << fi[i] << endl;
 
 	// Wavenumber at faces
 	for (int m = 0; m <= nmodes; ++m)
@@ -220,46 +224,65 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	  szio[m]=-sin(teta[m])*cos(alfa[m]);
 	}
 
-    // Set the turbulent velocities to zero for initialisation
-    utrp = 0;
-    vtrp = 0;
-    wtrp = 0;
+	//TODO: declare at the top
+	//  number of method stencil points ("Differenzsternpunkte")
+	int 			noStencilPoints = 3;
+	// dimension
+	int 			dim = 3;
+	// increment
+	double 			d = 1e-6;
+	// turbulent perturbations
+    vector<double> 	utrp(noStencilPoints + 1);
+    vector<double> 	vtrp(noStencilPoints + 1);
+    vector<double> 	wtrp(noStencilPoints + 1);
 
-    //------------------------------------------------------------------------------------------------------------------------------------------------------
-    // Loop over all wavenumbers
+    // Loop over all stencil points
+	for (int i = 0; i <= noStencilPoints; i++)
+	{
+		vector<double> 	p(dim);	// copy x to p, since x not modifiable
+		p[0] = x[0];
+		p[1] = x[1];
+		p[2] = x[2];
 
-    for (int m = 0; m <= nmodes-1; ++m)
-    {
-  	kxi = kxio[m];
-  	kyi = kyio[m];
-  	kzi = kzio[m];
-
-  	sx = sxio[m];
-  	sy = syio[m];
-  	sz = szio[m];
-
-  	kx = kxi*wnr[m];
-  	ky = kyi*wnr[m];
-  	kz = kzi*wnr[m];
-  	rk = sqrt(pow(kx,2)+pow(ky,2)+pow(kz,2));
-
-  	// If the wavenumber, rk, is smaller than the largest wavenumber, then create fluctuations
-		if (rk < wnrn)
+		if ( i != 0 )
 		{
-		  arg = kx*x[0]+ky*x[1]+kz*x[2]+psi[m];
-		  tfunk = cos(arg);
+		p[i-1] += d;
+		}
 
-		  // Von Karman spectrum
-		  e = amp/wnre*pow(wnr[m]/wnre,4)/pow(1+pow(wnr[m]/wnre,2),17./6.)*exp(-2*pow(wnr[m]/wnreta,2));
+	    // Loop over all wavenumbers
+	    for (int m = 0; m <= nmodes-1; ++m)
+		{
+			kxi = kxio[m];
+			kyi = kyio[m];
+			kzi = kzio[m];
 
-		  utn = sqrt(e*pow(up,2)*dkn[m]);
+			sx = sxio[m];
+			sy = syio[m];
+			sz = szio[m];
 
-		  // Synthetic velocity field (fluctuations)
-		  utrp += 2*utn*tfunk*sx;
-		  vtrp += 2*utn*tfunk*sy;
-		  wtrp += 2*utn*tfunk*sz;
-		}  // end of if (int rk < wnrn)
-	  }  // end of for (int m = 0; m <= nmodes-1; ++m)
+			kx = kxi*wnr[m];
+			ky = kyi*wnr[m];
+			kz = kzi*wnr[m];
+			rk = sqrt(pow(kx,2)+pow(ky,2)+pow(kz,2));
+
+			// if the wavenumber, rk, is smaller than the largest wavenumber, then create fluctuations
+			if (rk < wnrn)
+			{
+				arg = kx*p[0]+ky*p[1]+kz*p[2]+psi[m];
+				tfunk = cos(arg);
+
+				// modified von Karman spectrum
+				e = amp/wnre*pow(wnr[m]/wnre,4)/pow(1+pow(wnr[m]/wnre,2),17./6.)*exp(-2*pow(wnr[m]/wnreta,2));
+
+				utn = sqrt(e*pow(up,2)*dkn[m]);
+
+				// turbulent perturbations
+				utrp[i] += 2*utn*tfunk*sx;
+				vtrp[i] += 2*utn*tfunk*sy;
+				wtrp[i] += 2*utn*tfunk*sz;
+			}  // end of if (int rk < wnrn)
+		}  // end of for (int m = 0; m <= nmodes-1; ++m)
+	}
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // Blending function
@@ -273,20 +296,65 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
     // Manipulated hyperbolic function, freeStreamTurb prescribes a free-stream turbulence
     //	by preventing the blending function from dropping below the set value
     fBlend = std::max(0.5*(1 - tanh((minDist - delta)/blendDist)), freeStreamTurb);
+    fBlend = 1;
+
+	for (int i = 0; i <= noStencilPoints; i++)
+	{
+		utrp[i] *= fBlend;
+		vtrp[i] *= fBlend;
+		wtrp[i] *= fBlend;
+	}
+
+	//------------------------------------------------------------------------------------------------------------------------------------------------------
+	// Make perturbation field divergence free (incompressible)
+	//------------------------------------------------------------------------------------------------------------------------------------------------------
+	//TODO: declare at the top
+	vector<double>	gradU(dim), gradV(dim), gradW(dim);
+
+	// Calculate gradients
+	for (int i = 0; i < dim; i++)
+	{
+	// gradU
+		double f = utrp[0];
+		double f_d = utrp[i+1];
+		gradU[i] = ( (f_d - f) / d );
+	// gradV
+		f = vtrp[0];
+		f_d = vtrp[i+1];
+		gradV[i] = ( (f_d - f) / d );
+	// gradW
+		f = wtrp[0];
+		f_d = wtrp[i+1];
+		gradW[i] = ( (f_d - f) / d );
+	}
+
+	double utrp_inc, vtrp_inc, wtrp_inc; // incompressible turbulent perturbations
+
+	utrp_inc = gradW[1] - gradV[2]; // dW/dy - dV/dz
+	vtrp_inc = gradU[2] - gradW[0]; // dU/dz - dW/dx
+	wtrp_inc = gradV[0] - gradU[1]; // dV/dx - dU/dy
+
 
     // Vin & Win are assumed to be 0.
-	if (component == 0) {
-		return ( m_flow->getInletVelocity() + fBlend*utrp );
+	if (component == 0)
+	{
+		//return ( m_flow->getInletVelocity() + fBlend*utrp );
+		return ( m_flow->getInletVelocity() + utrp_inc );
+		//return ( m_flow->getInletVelocity() * std::pow(2*x(2)/h, 1./7.) + fBlend*utrp );
 	}
-	else if (component == 1) {
-		return ( fBlend*vtrp );
+	else if (component == 1)
+	{
+		//return ( fBlend*vtrp );
+		return ( vtrp_inc );
 	}
-	else { // component == 2
-		return ( fBlend*wtrp );
+	else // component == 2
+	{
+		//return ( fBlend*wtrp );
+		return ( wtrp_inc );
 	}
 
     /*
-    // TODO: add initialisation cases
+    // TODO: add initialisation cases: InletBC_id
 	if (component == 0) {
 		// exponential law profile
 		if (x(2) <= h/2)
@@ -299,6 +367,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 				(x(2) - h) * x(2) / (h*h) );
 		*/
 } // end of InitialVelocity
+
 
 
 //============================ MEAN ===========================
