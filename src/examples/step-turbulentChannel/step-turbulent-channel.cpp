@@ -33,24 +33,24 @@ int main(int argc, char** argv) {
 
 	const double CFL = 0.4;
 	const double Re = 100;
-	const double u_bulk = 10 / 1.5; // default 1.0;
+	const double u_bulk = 20 / 1.5; // default 1.0;
 	const double U_in = 27.5; // center line velocity in streamwise direction, default 1.0;
 	//TODO: smooth increase of the inlet velocity untill the initTime is reached
 	//  	e.g. Uin = U*(F1B2 - F1B2 * cos(PI / (initTime * globalTimeStep)) ;
-	const double height = 1.0;
-	const double length = 10.0;
-	const double width = 3.0;
+	const double height = 3.2; //1.0;
+	const double length = 19.8; //10.0;
+	const double width = 11.7; //3.0;
 	const double orderOfFiniteElement = 2;
 	const double Ma = atof(argv[1]);
 	const double refinement_level = atoi(argv[2]);
 	bool is_periodic = true;
 
 	/// create CFD problem
-	double viscosity  = u_bulk * height / Re;
+	double viscosity  = 1./6000; //u_bulk * height / Re;
 	const double scaling = sqrt(3) * 1.5 * u_bulk / Ma;
 	boost::shared_ptr<TurbulentChannelFlow3D> channel3D = boost::make_shared<
 			TurbulentChannelFlow3D>(viscosity, refinement_level, u_bulk, U_in , height,
-			length, width, is_periodic);
+			length, width, orderOfFiniteElement, is_periodic);
 	const double dt = CFDSolverUtilities::calculateTimestep<3>(
 			*channel3D->getMesh(), orderOfFiniteElement, D3Q19(scaling), CFL);
 	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
@@ -63,34 +63,33 @@ int main(int argc, char** argv) {
 	TurbulentChannelFlow3D::InitialVelocity test_velocity(channel3D.get());
 	cout << "Divergence check... " << endl;
 
-	//srand(1);
-
-	// increment
+	srand(1);
 	for (size_t i = 0; i < 30; i++) {
 
 		double div = 0.0;
 
 		// create random point in the flow domain and calculate f
 		dealii::Point<3> x;
-
 		x(0) = (double) random() / RAND_MAX * length;
 		x(1) = (double) random() / RAND_MAX * width;
 		x(2) = (double) random() / RAND_MAX * height;
 
 		// Calculate div(U):
+
+		// increment
 		double h = 1e-6;
+		dealii::Point<3> x_plus_h(x);
 
 		// du / dx
-		dealii::Point<3> x_plus_h(x);
 		x_plus_h(0) = x(0) + h;
-		double f = test_velocity.value(x,0); // component 0 -> u
+		double f = test_velocity.value(x, 0); // component 0 -> u
 		double f_h = test_velocity.value(x_plus_h, 0);
 		div += ( (f_h - f) / h );
 		x_plus_h(0) = x(0);
 
 		// dv / dy
 		x_plus_h(1) = x(1) + h;
-		f = test_velocity.value(x,1);	// component 1 -> v
+		f = test_velocity.value(x, 1);	// component 1 -> v
 		f_h = test_velocity.value(x_plus_h, 1);
 		div += ( (f_h - f) / h );
 		x_plus_h(1) = x(1);
@@ -98,13 +97,15 @@ int main(int argc, char** argv) {
 
 		// dw / dz
 		x_plus_h(2) = x(2) + h;
-		f = test_velocity.value(x,2);	// component 2 -> w
+		f = test_velocity.value(x, 2);	// component 2 -> w
 		f_h = test_velocity.value(x_plus_h, 2);
 		div += ( (f_h - f) / h );
 
 		// check div small (could also be done with asserts)
 		pout << "... div u at point " << i << ", z-coord " << x(2) << ": "<< div << endl;
 	}
+
+
 
 	/// setup configuration
 	std::stringstream dirName;
