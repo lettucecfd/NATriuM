@@ -30,18 +30,18 @@ public:
 	 */
 	class InitialVelocity: public dealii::Function<3> {
 	private:
-		TurbulentChannelFlow3D* m_flow;
+		TurbulentChannelFlow3D *m_flow;
 	public:
-		InitialVelocity(TurbulentChannelFlow3D* flow) :
+		InitialVelocity(TurbulentChannelFlow3D *flow) :
 				m_flow(flow) {
 		}
 		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
-
 	};
 
 	/// constructor
-	TurbulentChannelFlow3D(double viscosity, size_t refinementLevel, double u_bulk = 1.0, double U_in = 1.0,
-			double height = 1.0, double length = 10.0, double width = 3.0, bool is_periodic = true);
+	TurbulentChannelFlow3D(double viscosity, size_t refinementLevel, double u_bulk = 1.0,
+			double U_in = 1.0, double height = 1.0, double length = 10.0, double width = 3.0,
+			double orderOfFiniteElement = 2, bool is_periodic = true);
 
 	/// destructor
 	virtual ~TurbulentChannelFlow3D();
@@ -57,6 +57,9 @@ public:
 	double getInletVelocity() const {
 		return m_Uin;
 	}
+	double getOrderOfFiniteElement() const {
+		return m_OFE;
+	}
 
 	// Functions used by synthetic turbulence generator
 	inline void mean(vector<vector<double> > &matrix, double &avg);
@@ -71,6 +74,7 @@ private:
 	double m_refinementLevel;
 	double m_uBulk;
 	double m_Uin;
+	double m_OFE;
 
 	/**
 	 * @short create triangulation for couette flow
