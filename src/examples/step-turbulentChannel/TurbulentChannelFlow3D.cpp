@@ -20,10 +20,12 @@
 
 namespace natrium {
 
-TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel, double u_bulk,
-		double U_in, double height, double length, double width, bool is_periodic ) :
+TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
+		double u_bulk, double U_in, double height, double length, double width,
+		double orderOfFiniteElement, bool is_periodic ) :
 		ProblemDescription<3>(makeGrid(height, length, width), viscosity, height),
-		m_refinementLevel(refinementLevel), m_uBulk(u_bulk), m_Uin(U_in){
+		m_refinementLevel(refinementLevel), m_uBulk(u_bulk), m_Uin(U_in),
+		m_OFE(orderOfFiniteElement){
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
@@ -128,6 +130,10 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	*/
 	// turbulent kinetic energy to be set properly
 	//
+	//TODO: temporary variable
+	//dealii::Tensor<1, 3> F = m_flow->getExternalForce();
+	//cout << "External force" << F << endl;
+	double ReTau = 7300;
 
 	assert(component < 3);
 
@@ -136,6 +142,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	// TODO: These variables have to be made selectable from a property file or similar
 
 	double 	h = m_flow->getCharacteristicLength();				// characteristic flow length scale, here: full channel height
+	double  visc = m_flow->getViscosity();						// kinematic viscosity
 	double	qm 					= 4.0;							// turbulent kinetic energy
 	double	delta 				= 5./32*h;	        			// inlet boundary layer thickness. Only if the boundary layer
 																// at inlet is not fully developed
@@ -156,11 +163,11 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	up 					= sqrt(2*qm/3);					// turbulent velocity scale
 	double	epsm 				= pow(qm,1.5)/sli;				// dissipation rate
 
-	//TODO: p - 1
-	double	inletCellLength		= h/(3*pow(2, m_flow->getRefinementLevel())); //TODO: order p neglected
+	double 	OFE					= m_flow->getOrderOfFiniteElement();
+	double	inletCellLength		= h/( (OFE + 1) * pow(2, m_flow->getRefinementLevel()) );
 	double	wnrn				= 2*M_PI/inletCellLength;		// highest wave number // min cell length
 	double	wnre				= 9*M_PI*amp/(55*sli);			// k_e (related to peak energy wave number)
-	double	wnreta 				= pow((epsm/pow(m_flow->getViscosity(),3)), .25);
+	double	wnreta 				= pow((epsm/pow(visc, 3)), .25);
 																// wavenumber used in the viscous expression (high wavenumbers)
 																// 	in the von Karman spectrum
 	double	wnr1 				= wnre/wew1fct;					// smallest wavenumber
@@ -181,7 +188,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	vector<double>		kxio(nmodes), kyio(nmodes), kzio(nmodes);
 	vector<double>		sxio(nmodes), syio(nmodes), szio(nmodes);
 
-	//double				utrp, vtrp, wtrp;							// turbulent perturbation (fluctuation) in x, y and z direction
+	double				utrp, vtrp, wtrp;							// turbulent perturbation (fluctuation) in x, y and z direction
 	double				kxi, kyi, kzi;
 	double				sx, sy, sz, kx, ky, kz, rk;
 	double				arg, tfunk, e, utn;
@@ -194,8 +201,9 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	// Compute random angles
 	m_flow->angles(nmodes, iseed, iy, iv, fi, psi, alfa, teta);
 
-	for (int i = 0; i < 10; i++)
-		cout << fi[i] << endl;
+// DEBUG
+//	for (int i = 0; i < 10; i++)
+//		cout << fi[i] << endl;
 
 	// Wavenumber at faces
 	for (int m = 0; m <= nmodes; ++m)
@@ -224,30 +232,39 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	  szio[m]=-sin(teta[m])*cos(alfa[m]);
 	}
 
-	//TODO: declare at the top
-	//  number of method stencil points ("Differenzsternpunkte")
-	int 			noStencilPoints = 3;
-	// dimension
+//	#makeFieldInc
+//	//TODO: declare at the top
+//	//  number of method stencil points ("Differenzsternpunkte")
+//	int 			noStencilPoints = 3;
+//	// dimension
 	int 			dim = 3;
-	// increment
-	double 			d = 1e-6;
-	// turbulent perturbations
-    vector<double> 	utrp(noStencilPoints + 1);
-    vector<double> 	vtrp(noStencilPoints + 1);
-    vector<double> 	wtrp(noStencilPoints + 1);
-
-    // Loop over all stencil points
-	for (int i = 0; i <= noStencilPoints; i++)
-	{
+//	// increment
+//	double 			d = 1e-6;
+//	// turbulent perturbations
+//    vector<double> 	utrp(noStencilPoints + 1);
+//    vector<double> 	vtrp(noStencilPoints + 1);
+//    vector<double> 	wtrp(noStencilPoints + 1);
+//
+//    // Loop over all stencil points
+//	for (int i = 0; i <= noStencilPoints; i++)
+//	{
 		vector<double> 	p(dim);	// copy x to p, since x not modifiable
 		p[0] = x[0];
 		p[1] = x[1];
 		p[2] = x[2];
 
-		if ( i != 0 )
-		{
-		p[i-1] += d;
-		}
+//		#makeFieldInc
+//		if ( i != 0 )
+//		{
+//		p[i-1] += d;
+//		}
+
+		// Set the turbulent velocities to zero for initialisation
+		// TODO: #makeFieldInc was not included!!!
+		utrp = 0;
+		vtrp = 0;
+		wtrp = 0;
+
 
 	    // Loop over all wavenumbers
 	    for (int m = 0; m <= nmodes-1; ++m)
@@ -277,18 +294,35 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 				utn = sqrt(e*pow(up,2)*dkn[m]);
 
 				// turbulent perturbations
-				utrp[i] += 2*utn*tfunk*sx;
-				vtrp[i] += 2*utn*tfunk*sy;
-				wtrp[i] += 2*utn*tfunk*sz;
+				utrp += 2*utn*tfunk*sx;
+				vtrp += 2*utn*tfunk*sy;
+				wtrp += 2*utn*tfunk*sz;
+
+//				#makeFieldInc
+//				// turbulent perturbations
+//				utrp[i] += 2*utn*tfunk*sx;
+//				vtrp[i] += 2*utn*tfunk*sy;
+//				wtrp[i] += 2*utn*tfunk*sz;
 			}  // end of if (int rk < wnrn)
 		}  // end of for (int m = 0; m <= nmodes-1; ++m)
-	}
+//	} #makeFieldInc
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // Blending function
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // ATTENTION: Currently works only for plane walls perpendicular to the y-axis.
-    // TODO: Linear blending for viscous sublayer
+
+//	// Linear blending for viscous sublayer
+//	double uPlus_trp, vPlus_trp, wPlus_trp;
+//	double yPlus = x[1] * ( ReTau / h );
+//
+//	if ( yPlus <= 5 )
+//	{
+//		uPlus_trp = yPlus;
+//		utrp = uPlus_trp * ( ReTau * visc / h );
+//		vtrp = uPlus_trp * ( ReTau * visc / h );
+//		wtrp = uPlus_trp * ( ReTau * visc / h );
+//	}
 
     // Distance to the nearest wall, TODO:not valid for the cell centres
     minDist = std::min(x[2], h-x[2]);
@@ -298,59 +332,86 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
     fBlend = std::max(0.5*(1 - tanh((minDist - delta)/blendDist)), freeStreamTurb);
     fBlend = 1;
 
-	for (int i = 0; i <= noStencilPoints; i++)
+//  #makeFieldInc
+//	for (int i = 0; i <= noStencilPoints; i++)
+//	{
+//		utrp[i] *= fBlend;
+//		vtrp[i] *= fBlend;
+//		wtrp[i] *= fBlend;
+//	}
+//
+//	//------------------------------------------------------------------------------------------------------------------------------------------------------
+//	// Make perturbation field divergence free (incompressible)
+//	//------------------------------------------------------------------------------------------------------------------------------------------------------
+//	//TODO: declare at the top
+//	vector<double>	gradU(dim), gradV(dim), gradW(dim);
+//
+//	// Calculate gradients
+//	for (int i = 0; i < dim; i++)
+//	{
+//	// gradU
+//		double f = utrp[0];
+//		double f_d = utrp[i+1];
+//		gradU[i] = ( (f_d - f) / d );
+//	// gradV
+//		f = vtrp[0];
+//		f_d = vtrp[i+1];
+//		gradV[i] = ( (f_d - f) / d );
+//	// gradW
+//		f = wtrp[0];
+//		f_d = wtrp[i+1];
+//		gradW[i] = ( (f_d - f) / d );
+//	}
+//
+//	double utrp_inc, vtrp_inc, wtrp_inc; // incompressible turbulent perturbations
+//
+//	utrp_inc = gradW[1] - gradV[2]; // dW/dy - dV/dz
+//	vtrp_inc = gradU[2] - gradW[0]; // dU/dz - dW/dx
+//	wtrp_inc = gradV[0] - gradU[1]; // dV/dx - dU/dy
+
+    double Uin = m_flow->getInletVelocity();
+	double uPlus_in;
+	double h_half = h/2;
+	double yPlus; // ReTau = y*(ReTau/h_half);
+
+	// yPlus for center line and upper & lower channel part
+	if ( x[2] == h_half)
 	{
-		utrp[i] *= fBlend;
-		vtrp[i] *= fBlend;
-		wtrp[i] *= fBlend;
+		yPlus = ReTau;
 	}
-
-	//------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Make perturbation field divergence free (incompressible)
-	//------------------------------------------------------------------------------------------------------------------------------------------------------
-	//TODO: declare at the top
-	vector<double>	gradU(dim), gradV(dim), gradW(dim);
-
-	// Calculate gradients
-	for (int i = 0; i < dim; i++)
+	else
 	{
-	// gradU
-		double f = utrp[0];
-		double f_d = utrp[i+1];
-		gradU[i] = ( (f_d - f) / d );
-	// gradV
-		f = vtrp[0];
-		f_d = vtrp[i+1];
-		gradV[i] = ( (f_d - f) / d );
-	// gradW
-		f = wtrp[0];
-		f_d = wtrp[i+1];
-		gradW[i] = ( (f_d - f) / d );
+		yPlus = minDist * ( ReTau / h_half );
 	}
-
-	double utrp_inc, vtrp_inc, wtrp_inc; // incompressible turbulent perturbations
-
-	utrp_inc = gradW[1] - gradV[2]; // dW/dy - dV/dz
-	vtrp_inc = gradU[2] - gradW[0]; // dU/dz - dW/dx
-	wtrp_inc = gradV[0] - gradU[1]; // dV/dx - dU/dy
-
+	// mean inlet velocity profile towards walls
+	if ( yPlus <= 5 )
+	{
+		uPlus_in = yPlus;
+	}
+	else if ( yPlus > 5 && yPlus < 30)
+	{
+		uPlus_in = -3.05 + 5. * log(yPlus);
+	}
+	else
+	{
+		uPlus_in = 1./0.4 * log(yPlus) + 5.2;
+	}
+	Uin = uPlus_in * ( ReTau * visc / h_half );
 
     // Vin & Win are assumed to be 0.
 	if (component == 0)
 	{
-		//return ( m_flow->getInletVelocity() + fBlend*utrp );
-		return ( m_flow->getInletVelocity() + utrp_inc );
-		//return ( m_flow->getInletVelocity() * std::pow(2*x(2)/h, 1./7.) + fBlend*utrp );
+		return ( Uin + fBlend*utrp );
 	}
 	else if (component == 1)
 	{
-		//return ( fBlend*vtrp );
-		return ( vtrp_inc );
+		return ( fBlend*vtrp );
+		//return ( vtrp );
 	}
 	else // component == 2
 	{
-		//return ( fBlend*wtrp );
-		return ( wtrp_inc );
+		return ( fBlend*wtrp );
+		//return ( wtrp );
 	}
 
     /*
