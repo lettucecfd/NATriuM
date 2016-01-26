@@ -31,7 +31,7 @@ namespace natrium {
 BOOST_AUTO_TEST_SUITE(KBCStandard_test)
 BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 
-	pout << "KBCStandard_collideAll_test..." << endl;
+	pout << "KBCStandard_collideAll_D2Q9_test..." << endl;
 
 	// create collision model// create collision model
 	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
@@ -85,6 +85,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 			false);
 
 
+
 	for (size_t i = 0; i < dof_handler.n_dofs(); i++) {
 		double rho_bgk = 0, rho_kbc = 0;
 		if (rho.in_local_range(i)) {
@@ -93,82 +94,13 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 				rho_kbc = rho_kbc + fAfterCollisionkbc.at(g)(i);
 			}
 
-			BOOST_CHECK_SMALL(rho_bgk - rho_kbc, 1e-2);
+
+			BOOST_CHECK_SMALL(rho_bgk - rho_kbc, 1e-5);
 		}
 	}
 
 	pout << "done" << endl;
 }
 
-BOOST_AUTO_TEST_CASE(KBCStandard_TGV_test) {
-
-	pout << "KBCStandard_TGV_test..." << endl;
-	const double Re = 800 * atan(1);
-	const double Ma = 0.20;
-
-	const double L = 8 * atan(1); // = 2 pi
-	const double U = 1;
-	const double tmax = 1;
-
-	// scaling of particle velocities
-	double scaling = sqrt(3) * U / Ma;
-	// Viscosity
-	const double viscosity = U * L / Re;
-	// starting time
-	//const double t0 = 30.0;
-	const double t0 = 1.0;// analytic solution won't converge for t0 = 0.0 and adaptive timesteps
-
-	size_t refinementLevel = 3;
-	size_t orderOfFiniteElement = 5;
-
-	boost::shared_ptr<TaylorGreenVortex2D> tgv2D = boost::make_shared<
-			TaylorGreenVortex2D>(viscosity, refinementLevel,
-			1. / sqrt(3.) / Ma);
-	boost::shared_ptr<Benchmark<2> > benchmark = tgv2D;
-
-	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
-			SolverConfiguration>();
-
-	configuration->setCollisionScheme(KBC_STANDARD);
-
-	double dt = CFDSolverUtilities::calculateTimestep<2>(*benchmark->getMesh(),
-			orderOfFiniteElement, D2Q9(scaling), 0.2);
-
-	configuration->setTimeIntegrator(RUNGE_KUTTA_5STAGE);
-
-	configuration->setTimeStepSize(dt);
-	configuration->setSimulationEndTime(tmax);
-	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setStencilScaling(scaling);
-	configuration->setRestartAtLastCheckpoint(false);
-	configuration->setUserInteraction(false);
-	configuration->setSwitchOutputOff(true);
-
-	BenchmarkCFDSolver<2> solverKBC(configuration, benchmark);
-
-	configuration->setCollisionScheme(BGK_STANDARD);
-
-	BenchmarkCFDSolver<2> solverBGK(configuration, benchmark);
-
-	try {
-
-		solverBGK.run();
-		solverBGK.getErrorStats()->update();
-
-		solverKBC.run();
-		solverKBC.getErrorStats()->update();
-
-		BOOST_CHECK_SMALL(
-				solverBGK.getErrorStats()->getMaxVelocityError()
-						- solverKBC.getErrorStats()->getMaxVelocityError(),
-				1e-2);
-
-		pout << "done" << endl;
-
-	} catch (std::exception& e) {
-		pout << " Error: " << e.what() << endl;
-	}
-
-}
 BOOST_AUTO_TEST_SUITE_END()}
 
