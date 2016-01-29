@@ -10,6 +10,7 @@
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
+#include "deal.II/grid/grid_tools.h"
 #include "deal.II/base/tensor.h"
 
 #include "natrium/problemdescription/LinearBoundaryRhoU.h"
@@ -21,21 +22,40 @@
 namespace natrium {
 
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
-		double u_bulk, double U_in, double height, double length, double width,
-		double orderOfFiniteElement, bool is_periodic ) :
+		double ReTau, double ReCl, double u_bulk, double height, double length, double width,
+		double orderOfFiniteElement, bool is_periodic) :
 		ProblemDescription<3>(makeGrid(height, length, width), viscosity, height),
-		m_refinementLevel(refinementLevel), m_uBulk(u_bulk), m_Uin(U_in),
-		m_OFE(orderOfFiniteElement){
+		m_refinementLevel(refinementLevel), m_ReTau(ReTau), m_ReCl(ReCl), m_uBulk(u_bulk),
+		m_ofe(orderOfFiniteElement), m_height(height), m_length(length), m_width(width),
+		m_maxUtrp(0.0), m_maxIncUtrp(0.0) {
+
+	// Recommendations for CPU use
+	cout << "-------------------------------------------------------------" << endl;
+	cout << "**** Recommendations for CPU use ****" << endl;
+	double noCube = ( width/height ) * ( length/height );
+	double noGridPoints = pow( (orderOfFiniteElement + 1), 3 ) * pow(8, refinementLevel) * noCube;
+	cout << "... Computation node details: " << endl;
+	cout << "    - #CPU per node: 12 " << endl;
+	cout << "    - memory per node: 4000 MB " << endl;
+	cout << "... Predicted number of total grid points: " << noGridPoints << endl;
+	cout << "... Recommended number of total grid points per node: 10e+6" << endl;
+	cout << "... Recommended number of nodes: " << ceil(noGridPoints/10e+6) << endl;
+	cout << "------------------------------------------------------------" << endl;
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
 	// apply initial values / analytic solution
-	setInitialU(boost::make_shared<InitialVelocity>(this));
+	setInitialU(boost::make_shared<IncompressibleU>(this));
 
 	if (is_periodic) {
 		// add external force
-		double Fx = 8 * 1.5 * m_uBulk * viscosity / (height * height);
-		//pout << "F: " << Fx << endl;
+		// turbulent flow
+		double rho = 1;
+		double h_half = 0.5 * height;
+		double Fx = pow( ReTau * viscosity / h_half, 2) * rho / h_half;
+		// laminar flow
+		//double Fx = 8 * 1.5 * m_uBulk * viscosity / (height * height);
+		cout << " >>>> Body force F = " << Fx << endl;
 		dealii::Tensor<1, 3> F;
 		F[0] = Fx;
 		setExternalForce(
@@ -45,6 +65,8 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 
 	// refine global
 	getMesh()->refine_global(refinementLevel);
+	// transform grid to unstructured grid
+	dealii::GridTools::transform(UnstructuredGridFunc(height), *getMesh());
 }
 
 TurbulentChannelFlow3D::~TurbulentChannelFlow3D() {
@@ -64,12 +86,12 @@ boost::shared_ptr<Mesh<3> > TurbulentChannelFlow3D::makeGrid(double height,
 	std::vector<unsigned int> repetitions(3);
 	bool colorize = true; 	// do not set boundary ids automatically to
 							// 0:left; 1:right; 2:bottom; 3:top
-	repetitions.at(0) = length / height;
-	repetitions.at(1) = width / height;
-	repetitions.at(2) = height;
+	repetitions.at(0) = (int) length / height;
+	repetitions.at(1) = (int) height;
+	repetitions.at(2) = (int) width / height;
 	dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, repetitions,
 			dealii::Point<3>(0.0, 0.0, 0.0),
-			dealii::Point<3>(length, width, height), colorize);
+			dealii::Point<3>(length, height, width), colorize);
 
 	return mesh;
 }
@@ -87,53 +109,157 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 			BoundaryCollection<3> >();
 	dealii::Vector<double> zeroVector(3);
 
+	//cout << "**** Set boundary conditions ****" << endl;
 	if (is_periodic) {
 		boundaries->addBoundary(
-				boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
+				boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh())); // TODO: damn, comment it!
+		//cout << " > periodic: inlet/outlet" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
+				boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
+		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<3> >(4, zeroVector));
+				boost::make_shared<LinearBoundaryRhoU<3> >(2, zeroVector));
+		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<3> >(5, zeroVector));
+				boost::make_shared<LinearBoundaryRhoU<3> >(3, zeroVector));
+		//cout << " > no-slip: bottom" << endl;
+
 	} else {
 		boundaries->addBoundary(
 				boost::make_shared<LinearBoundaryRhoU<3> >(0,
 						boost::make_shared<dealii::ConstantFunction<3> >(1.0),
-						boost::make_shared<TurbulentChannelFlow3D::InitialVelocity>(
-								this)));
+						boost::make_shared<TurbulentChannelFlow3D::InitialVelocity>(this)));
 		boundaries->addBoundary(
 				boost::make_shared<NonlinearBoundaryZouHeRho<3> >(1,
-						boost::make_shared<dealii::ConstantFunction<3> >(-1.0),
-						1));
+						boost::make_shared<dealii::ConstantFunction<3> >(-1.0), 1));
 		boundaries->addBoundary(
-						boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
+						boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<3> >(4, zeroVector));
+				boost::make_shared<LinearBoundaryRhoU<3> >(2, zeroVector));
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<3> >(5, zeroVector));
+				boost::make_shared<LinearBoundaryRhoU<3> >(3, zeroVector));
 	}
 
 	return boundaries;
 }
 
 
+double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>& x,
+		const unsigned int component) const{
+
+	//return m_initialIncompressibleU.value(x, component);
+
+	double visc 	= m_flow->getViscosity();
+    double ReTau 	= m_flow->getFrictionReNumber();
+	double ReCl 	= m_flow->getCenterLineReNumber();
+	double height 	= m_flow->getCharacteristicLength();
+
+    double Uin = ReCl * 2 * visc / height;
+	double uPlus_in;
+
+    double minDist = std::min(x[1], height - x[1]);
+	double h_half = 0.5 * height; // half channel height
+
+	// yPlus towards upper & lower channel wall
+	double yPlus = ReTau * ( minDist / h_half );
+
+	// mean inlet velocity profile towards walls
+	if ( yPlus <= 5 )
+	{
+		uPlus_in = yPlus;
+	}
+	else if ( yPlus > 5 && yPlus < 30)
+	{
+		uPlus_in = -3.05 + 5. * log(yPlus);
+	}
+	else
+	{
+		uPlus_in = 1./0.4 * log(yPlus) + 5.2;
+	}
+	Uin = uPlus_in * ( ReTau * visc / h_half );
+
+    // mean velocities <Vin> & <Win> are assumed to be 0.
+	if (component == 0)
+	{
+		return Uin;
+		//return ( Uin + m_initialIncompressibleU.value(x, component) );
+	}
+	else // component 1 & 2
+	{
+		return 0;
+		//return ( m_initialIncompressibleU.value(x, component) );
+	}
+}
+
+
+double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
+		const unsigned int component) const{
+
+	//return m_initialU.value(x, component);
+
+	//---------------------------------------------------------
+	// Make perturbation field divergence free (incompressible)
+	//---------------------------------------------------------
+	const int		dim = 3; // TODO: applicable both to 3D and 2D
+	vector<double> 	gradU(dim, 0.0), gradV(dim, 0.0), gradW(dim, 0.0);
+
+	dealii::Point<dim>	x_h = x;
+
+	// Calculate gradients
+	for (int componentID = 0; componentID < dim; componentID++)
+	{
+		x_h[componentID] = x[componentID] + m_increment;
+	// gradU
+		double f = m_initialU.value(x, 0);
+		double f_h = m_initialU.value(x_h, 0);
+		gradU[componentID] = ( (f_h - f) / m_increment );
+	// gradV
+		f = m_initialU.value(x, 1);
+		f_h = m_initialU.value(x_h, 1);
+		gradV[componentID] = ( (f_h - f) / m_increment );
+	// gradW
+		f = m_initialU.value(x, 2); // z is the height coordinate!
+		f_h = m_initialU.value(x_h, 2);
+		gradW[componentID] = ( (f_h- f) / m_increment );
+
+		x_h[componentID] = x[componentID];
+	}
+
+	// incompressible turbulent perturbations
+	double utrp_inc = gradW[1] - gradV[2]; // dW/dy - dV/dz
+	double vtrp_inc = gradU[2] - gradW[0]; // dU/dz - dW/dx
+	double wtrp_inc = gradV[0] - gradU[1]; // dV/dx - dU/dy
+
+	if ( utrp_inc > m_flow->m_maxIncUtrp )
+	{
+		m_flow->m_maxIncUtrp = utrp_inc;
+		//cout << "maxIncUtrp = "<< m_flow->m_maxIncUtrp << endl;
+	}
+
+	if (component == 0)
+	{
+		return ( utrp_inc );
+	}
+	else if (component == 1)
+	{
+		return ( vtrp_inc );
+	}
+	else // component == 2
+	{
+		return ( wtrp_inc );
+	}
+}
+
 double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 		const unsigned int component) const {
+
+	//pout << "here" << endl;
 
 	// Synthetic turbulence generation due to Davidson et al.
 	// [1] Using isotropic...
 	// [2]
-	/*
-	charLength -> h
-	visc -> viscosity
-	*/
+
 	// turbulent kinetic energy to be set properly
-	//
-	//TODO: temporary variable
-	//dealii::Tensor<1, 3> F = m_flow->getExternalForce();
-	//cout << "External force" << F << endl;
-	double ReTau = 7300;
 
 	assert(component < 3);
 
@@ -141,18 +267,19 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	// Selectable variables
 	// TODO: These variables have to be made selectable from a property file or similar
 
-	double 	h = m_flow->getCharacteristicLength();				// characteristic flow length scale, here: full channel height
+	double 	height = m_flow->getCharacteristicLength();				// characteristic flow length scale, here: full channel height
 	double  visc = m_flow->getViscosity();						// kinematic viscosity
+	//double	ReTau = m_flow->getFrictionReNumber();
 	double	qm 					= 4.0;							// turbulent kinetic energy
-	double	delta 				= 5./32*h;	        			// inlet boundary layer thickness. Only if the boundary layer
+	double	delta 				= 5./32 * height;	        			// inlet boundary layer thickness. Only if the boundary layer
 																// at inlet is not fully developed
 	//double 	uTau 				= 1/25.0;						// inlet shear velocity, suTau = Urms [Ref2]
 
 	// blending function parameters
-	double	blendDist 			= 0.1*h;						// distance over which fBlend goes from 0 to 1
+	double	blendDist 			= 0.1 * height;						// distance over which fBlend goes from 0 to 1
 	double	freeStreamTurb 		= 0.1;							// parameter does not let fBlend drop below the prescribed value
 
-	int 	nmodes 				= 150;							// number of Fourier modes
+	int 	nmodes 				= 32;							// number of Fourier modes
 	double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
 
 	// Constants
@@ -160,11 +287,11 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
 	// Calculated
 	double	sli 				= 0.1*delta;    				// length scale
-	double	up 					= sqrt(2*qm/3);					// turbulent velocity scale
+	double	urms	 			= sqrt(2*qm/3);					// turbulent velocity scale
 	double	epsm 				= pow(qm,1.5)/sli;				// dissipation rate
 
-	double 	OFE					= m_flow->getOrderOfFiniteElement();
-	double	inletCellLength		= h/( (OFE + 1) * pow(2, m_flow->getRefinementLevel()) );
+	double 	ofe					= m_flow->getOrderOfFiniteElement();
+	double	inletCellLength		= height/( (ofe + 1) * pow(2, m_flow->getRefinementLevel()) );
 	double	wnrn				= 2*M_PI/inletCellLength;		// highest wave number // min cell length
 	double	wnre				= 9*M_PI*amp/(55*sli);			// k_e (related to peak energy wave number)
 	double	wnreta 				= pow((epsm/pow(visc, 3)), .25);
@@ -232,201 +359,100 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	  szio[m]=-sin(teta[m])*cos(alfa[m]);
 	}
 
-//	#makeFieldInc
-//	//TODO: declare at the top
-//	//  number of method stencil points ("Differenzsternpunkte")
-//	int 			noStencilPoints = 3;
-//	// dimension
-	int 			dim = 3;
-//	// increment
-//	double 			d = 1e-6;
-//	// turbulent perturbations
-//    vector<double> 	utrp(noStencilPoints + 1);
-//    vector<double> 	vtrp(noStencilPoints + 1);
-//    vector<double> 	wtrp(noStencilPoints + 1);
-//
-//    // Loop over all stencil points
-//	for (int i = 0; i <= noStencilPoints; i++)
-//	{
-		vector<double> 	p(dim);	// copy x to p, since x not modifiable
-		p[0] = x[0];
-		p[1] = x[1];
-		p[2] = x[2];
+	// Set the turbulent velocities to zero for initialisation
+	utrp = 0;
+	vtrp = 0;
+	wtrp = 0;
 
-//		#makeFieldInc
-//		if ( i != 0 )
-//		{
-//		p[i-1] += d;
-//		}
+	// Loop over all wavenumbers
+	for (int m = 0; m <= nmodes-1; ++m)
+	{
+		kxi = kxio[m];
+		kyi = kyio[m];
+		kzi = kzio[m];
 
-		// Set the turbulent velocities to zero for initialisation
-		// TODO: #makeFieldInc was not included!!!
-		utrp = 0;
-		vtrp = 0;
-		wtrp = 0;
+		sx = sxio[m];
+		sy = syio[m];
+		sz = szio[m];
 
+		kx = kxi*wnr[m];
+		ky = kyi*wnr[m];
+		kz = kzi*wnr[m];
+		rk = sqrt( pow(kx, 2) + pow(ky, 2) + pow(kz, 2) );
 
-	    // Loop over all wavenumbers
-	    for (int m = 0; m <= nmodes-1; ++m)
+		// if the wavenumber, rk, is smaller than the largest wavenumber, then create fluctuations
+		if (rk < wnrn)
 		{
-			kxi = kxio[m];
-			kyi = kyio[m];
-			kzi = kzio[m];
+			arg = kx*x[0] + ky*x[1] + kz*x[2] + psi[m];
+			tfunk = cos(arg);
 
-			sx = sxio[m];
-			sy = syio[m];
-			sz = szio[m];
+			// modified von Karman spectrum
+			e = amp/wnre * pow( wnr[m]/wnre, 4 ) / pow( 1 + pow( wnr[m]/wnre, 2 ), 17./6. )
+					* exp( -2 * pow( wnr[m]/wnreta , 2 ) );
 
-			kx = kxi*wnr[m];
-			ky = kyi*wnr[m];
-			kz = kzi*wnr[m];
-			rk = sqrt(pow(kx,2)+pow(ky,2)+pow(kz,2));
+			utn = urms * sqrt( e * dkn[m] );
 
-			// if the wavenumber, rk, is smaller than the largest wavenumber, then create fluctuations
-			if (rk < wnrn)
-			{
-				arg = kx*p[0]+ky*p[1]+kz*p[2]+psi[m];
-				tfunk = cos(arg);
+			// turbulent perturbations
+			utrp += 2 * utn * tfunk * sx;
+			vtrp += 2 * utn * tfunk * sy;
+			wtrp += 2 * utn * tfunk * sz;
+		}  // end of if (int rk < wnrn)
+	}  // end of for (int m = 0; m <= nmodes-1; ++m)
 
-				// modified von Karman spectrum
-				e = amp/wnre*pow(wnr[m]/wnre,4)/pow(1+pow(wnr[m]/wnre,2),17./6.)*exp(-2*pow(wnr[m]/wnreta,2));
+	// seek max(utrp);
+	if ( utrp > m_flow->m_maxUtrp )
+	{
+		m_flow->m_maxUtrp = utrp;
+		//cout << "maxUtrp = "<< m_flow->m_maxUtrp << endl;
+	}
 
-				utn = sqrt(e*pow(up,2)*dkn[m]);
-
-				// turbulent perturbations
-				utrp += 2*utn*tfunk*sx;
-				vtrp += 2*utn*tfunk*sy;
-				wtrp += 2*utn*tfunk*sz;
-
-//				#makeFieldInc
-//				// turbulent perturbations
-//				utrp[i] += 2*utn*tfunk*sx;
-//				vtrp[i] += 2*utn*tfunk*sy;
-//				wtrp[i] += 2*utn*tfunk*sz;
-			}  // end of if (int rk < wnrn)
-		}  // end of for (int m = 0; m <= nmodes-1; ++m)
-//	} #makeFieldInc
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // Blending function
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // ATTENTION: Currently works only for plane walls perpendicular to the y-axis.
 
-//	// Linear blending for viscous sublayer
-//	double uPlus_trp, vPlus_trp, wPlus_trp;
-//	double yPlus = x[1] * ( ReTau / h );
-//
-//	if ( yPlus <= 5 )
-//	{
-//		uPlus_trp = yPlus;
-//		utrp = uPlus_trp * ( ReTau * visc / h );
-//		vtrp = uPlus_trp * ( ReTau * visc / h );
-//		wtrp = uPlus_trp * ( ReTau * visc / h );
-//	}
-
     // Distance to the nearest wall, TODO:not valid for the cell centres
-    minDist = std::min(x[2], h-x[2]);
+    minDist = std::min(x[1], height - x[1]);
+
+/*
+    // Linear blending for viscous sublayer
+	double h_half = 0.5 * height; // half channel height
+	double yPlus = ReTau * ( minDist / h_half );
+
+	// TODO: min(1,1) = ?;
+
+	if ( yPlus <= 5 )
+	{
+		double uPlus_trp = yPlus;
+		utrp = uPlus_trp * ( ReTau * visc / h_half );
+		vtrp = uPlus_trp * ( ReTau * visc / h_half );
+		wtrp = uPlus_trp * ( ReTau * visc / h_half );
+	}
+*/
 
     // Manipulated hyperbolic function, freeStreamTurb prescribes a free-stream turbulence
     //	by preventing the blending function from dropping below the set value
-    fBlend = std::max(0.5*(1 - tanh((minDist - delta)/blendDist)), freeStreamTurb);
-    fBlend = 1;
+    fBlend = std::max( 0.5 * ( 1 - tanh( (minDist - delta)/blendDist ) ), freeStreamTurb);
+    //fBlend = 1;
 
-//  #makeFieldInc
-//	for (int i = 0; i <= noStencilPoints; i++)
-//	{
-//		utrp[i] *= fBlend;
-//		vtrp[i] *= fBlend;
-//		wtrp[i] *= fBlend;
-//	}
-//
-//	//------------------------------------------------------------------------------------------------------------------------------------------------------
-//	// Make perturbation field divergence free (incompressible)
-//	//------------------------------------------------------------------------------------------------------------------------------------------------------
-//	//TODO: declare at the top
-//	vector<double>	gradU(dim), gradV(dim), gradW(dim);
-//
-//	// Calculate gradients
-//	for (int i = 0; i < dim; i++)
-//	{
-//	// gradU
-//		double f = utrp[0];
-//		double f_d = utrp[i+1];
-//		gradU[i] = ( (f_d - f) / d );
-//	// gradV
-//		f = vtrp[0];
-//		f_d = vtrp[i+1];
-//		gradV[i] = ( (f_d - f) / d );
-//	// gradW
-//		f = wtrp[0];
-//		f_d = wtrp[i+1];
-//		gradW[i] = ( (f_d - f) / d );
-//	}
-//
-//	double utrp_inc, vtrp_inc, wtrp_inc; // incompressible turbulent perturbations
-//
-//	utrp_inc = gradW[1] - gradV[2]; // dW/dy - dV/dz
-//	vtrp_inc = gradU[2] - gradW[0]; // dU/dz - dW/dx
-//	wtrp_inc = gradV[0] - gradU[1]; // dV/dx - dU/dy
-
-    double Uin = m_flow->getInletVelocity();
-	double uPlus_in;
-	double h_half = h/2;
-	double yPlus; // ReTau = y*(ReTau/h_half);
-
-	// yPlus for center line and upper & lower channel part
-	if ( x[2] == h_half)
-	{
-		yPlus = ReTau;
-	}
-	else
-	{
-		yPlus = minDist * ( ReTau / h_half );
-	}
-	// mean inlet velocity profile towards walls
-	if ( yPlus <= 5 )
-	{
-		uPlus_in = yPlus;
-	}
-	else if ( yPlus > 5 && yPlus < 30)
-	{
-		uPlus_in = -3.05 + 5. * log(yPlus);
-	}
-	else
-	{
-		uPlus_in = 1./0.4 * log(yPlus) + 5.2;
-	}
-	Uin = uPlus_in * ( ReTau * visc / h_half );
+    // DEBUG: for mean velocity profile check
+    //return 0;
 
     // Vin & Win are assumed to be 0.
 	if (component == 0)
 	{
-		return ( Uin + fBlend*utrp );
+		return ( fBlend*utrp );
 	}
 	else if (component == 1)
 	{
 		return ( fBlend*vtrp );
-		//return ( vtrp );
 	}
 	else // component == 2
 	{
 		return ( fBlend*wtrp );
-		//return ( wtrp );
 	}
 
-    /*
-    // TODO: add initialisation cases: InletBC_id
-	if (component == 0) {
-		// exponential law profile
-		if (x(2) <= h/2)
-			return ( m_flow->m_uBulk * std::pow(2*x(2)/h, 1./7.) );
-		else
-			return ( m_flow->m_uBulk * std::pow(2*(1-x(2)/h), 1./7.) );
-
-		// parabolic profile
-		return (- 4 * m_flow->m_uBulk * 1.5 *
-				(x(2) - h) * x(2) / (h*h) );
-		*/
 } // end of InitialVelocity
 
 
