@@ -14,8 +14,6 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-
-
 namespace natrium {
 
 /** @short Description of a turbulent Channel Flow
@@ -25,62 +23,170 @@ class TurbulentChannelFlow3D: public ProblemDescription<3> {
 public:
 
 	/**
+	 * TODO: edit description
 	 * @short class to describe the x-component of the analytic solution
-	 * @note other are default (v0=w0=0, rho0=1)
+	 * @note other are default (v0 = w0 = 0, rho0 = 1)
 	 */
 	class InitialVelocity: public dealii::Function<3> {
 	private:
 		TurbulentChannelFlow3D *m_flow;
 	public:
+		//double *m_maxUtrp;
 		InitialVelocity(TurbulentChannelFlow3D *flow) :
-				m_flow(flow) {
+				m_flow(flow){
+			//m_maxUtrp = new double (0.0);
 		}
-		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+//		~InitialVelocity(){
+//			delete m_maxUtrp;
+//		}
+
+		virtual double value(const dealii::Point<3>& x,
+				const unsigned int component = 0) const;
 	};
 
+
+	class IncompressibleU: public dealii::Function<3> {
+	private:
+		TurbulentChannelFlow3D *m_flow;
+		InitialVelocity m_initialU;
+		double m_increment;
+	public:
+		//double *m_maxIncUtrp;
+		IncompressibleU(TurbulentChannelFlow3D *flow) :
+				m_flow(flow), m_initialU(flow), m_increment(1e-6) {
+			//m_maxIncUtrp = new double (0.0);
+		}
+//		~IncompressibleU(){
+//		        delete m_maxIncUtrp;
+//		}
+
+		virtual double value(const dealii::Point<3>& x,
+				const unsigned int component = 0) const;
+	};
+
+
+	class MeanVelocityProfile: public dealii::Function<3> {
+	private:
+		TurbulentChannelFlow3D *m_flow;
+		IncompressibleU m_initialIncompressibleU;
+	public:
+		MeanVelocityProfile(TurbulentChannelFlow3D *flow) :
+				m_flow(flow), m_initialIncompressibleU(flow){
+		}
+		virtual double value(const dealii::Point<3>& x,
+				const unsigned int component = 0) const;
+	};
+
+	/**
+	 * @short function to generate the unstructured mesh grid
+	 */
+	struct UnstructuredGridFunc {
+		double m_height;
+		UnstructuredGridFunc(double height) :
+			m_height(height){
+		}
+		double trans(const double y) const {
+			double new_y = y;
+			new_y 	/= m_height;			// normalise y/h
+			new_y 	*= M_PI; 				// 4*atan(1); // pi
+			new_y 	 = -cos(new_y); 		// cos in [-1, 1]
+			new_y 	+= 1;					// shift cos in [0, 2]
+			new_y 	*= ( m_height / 2.0 );	// set final y
+			return new_y;
+			//return std::tanh(4 * (y - 0.5)) / tanh(2) / 2 + 0.5;
+		}
+		dealii::Point<3> operator()(const dealii::Point<3> &in) const {
+			return dealii::Point<3>(in(0), trans(in(1)), in(2));
+		}
+	};
+
+
+	/////////////////////////////////
+	// CONSTRUCTION // DESTRUCTION //
+	/////////////////////////////////
+
 	/// constructor
-	TurbulentChannelFlow3D(double viscosity, size_t refinementLevel, double u_bulk = 1.0,
-			double U_in = 1.0, double height = 1.0, double length = 10.0, double width = 3.0,
+	TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
+			double ReTau = 180.0, double ReCl = 3300, double u_bulk = 1.0,
+			double height = 1.0, double length = 10.0, double width = 3.0,
 			double orderOfFiniteElement = 2, bool is_periodic = true);
 
 	/// destructor
 	virtual ~TurbulentChannelFlow3D();
 
 
-	virtual double getCharacteristicVelocity() const {
-		return m_uBulk;
-	}
-	//TODO: do we really need this?!
+	/////////////////////////////////
+	// GETTER     // SETTER        //
+	/////////////////////////////////
+
 	double getRefinementLevel() const {
 		return m_refinementLevel;
 	}
-	double getInletVelocity() const {
-		return m_Uin;
+
+	double getFrictionReNumber() const {
+		return m_ReTau;
 	}
+
+	double getCenterLineReNumber() const {
+		return m_ReCl;
+	}
+
+	double getMeanVelocity() const {
+		return m_uBulk;
+	}
+
 	double getOrderOfFiniteElement() const {
-		return m_OFE;
+		return m_ofe;
+	}
+
+	double getHeight() const {
+		return m_height;
+	}
+
+	double getLength() const {
+		return m_length;
+	}
+
+	double getWidth() const {
+		return m_width;
+	}
+
+	double getMaxUtrp() const {
+		return m_maxUtrp;
+	}
+	double getMaxIncUtrp() const {
+		return m_maxIncUtrp;
 	}
 
 	// Functions used by synthetic turbulence generator
 	inline void mean(vector<vector<double> > &matrix, double &avg);
-	inline void angles(int nmodes, int &iseed, int &iy, vector<int> &iv, vector<double> &fi,
-		vector<double> &psi, vector<double> &alfa, vector<double> &teta);
-	inline void randf_1(int nmd, int alow, double ahigh, int idum, int &iy, vector<int> &iv,
-		vector<double> &out, int &iseed);
-	inline void randf_2(int idum, int &iy, vector<int> &iv, double &ran1, int &iseed);
+	inline void angles(int nmodes, int &iseed, int &iy, vector<int> &iv,
+			vector<double> &fi, vector<double> &psi, vector<double> &alfa,
+			vector<double> &teta);
+	inline void randf_1(int nmd, int alow, double ahigh, int idum, int &iy,
+			vector<int> &iv, vector<double> &out, int &iseed);
+	inline void randf_2(int idum, int &iy, vector<int> &iv, double &ran1,
+			int &iseed);
 
 private:
 
 	double m_refinementLevel;
+	double m_ReTau;
+	double m_ReCl;
 	double m_uBulk;
-	double m_Uin;
-	double m_OFE;
+	double m_ofe;
+	double m_height;
+	double m_length;
+	double m_width;
+	double m_maxUtrp;
+	double m_maxIncUtrp;
 
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	boost::shared_ptr<Mesh<3> > makeGrid(double height, double length, double width);
+	boost::shared_ptr<Mesh<3> > makeGrid(double height, double length,
+			double width);
 
 	/**
 	 * @short create boundaries for couette flow
