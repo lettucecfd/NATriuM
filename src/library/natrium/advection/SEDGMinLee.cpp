@@ -819,9 +819,9 @@ template<size_t dim> void SEDGMinLee<dim>::writeStatus(
 //write magic number of cell geometry
 	outfile << calcMagicNumber() << endl;
 //write dqScaling1
-	outfile << m_stencil->getDirection(1)(0) << endl;
+	outfile << std::setprecision(20) << m_stencil->getDirection(1)(0) << endl;
 //write dqScaling2
-	outfile << m_stencil->getDirection(1)(1) << endl;
+	outfile << std::setprecision(20) << m_stencil->getDirection(1)(1) << endl;
 //write fluxType
 	outfile << m_useCentralFlux << endl;
 //write advectionType
@@ -884,13 +884,13 @@ template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
 	}
 // dqScaling1
 	infile >> dtmp;
-	if (fabs(dtmp - m_stencil->getDirection(1)(0)) > 1e-5) {
+	if (fabs(dtmp - m_stencil->getDirection(1)(0))/dtmp > 1e-2) {
 		message = "Scaling of Stencil (1st coordinate) not equal.";
 		return false;
 	}
 // dqScaling2
 	infile >> dtmp;
-	if (fabs(dtmp - m_stencil->getDirection(1)(1)) > 1e-5) {
+	if (fabs(dtmp - m_stencil->getDirection(1)(1))/dtmp > 1e-2) {
 		message = "Scaling of Stencil (2nd) not equal.";
 		return false;
 	}
