@@ -30,17 +30,17 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		m_maxUtrp(0.0), m_maxIncUtrp(0.0) {
 
 	// Recommendations for CPU use
-	cout << "-------------------------------------------------------------" << endl;
-	cout << "**** Recommendations for CPU use ****" << endl;
+	pout << "-------------------------------------------------------------" << endl;
+	pout << "**** Recommendations for CPU use ****" << endl;
 	double noCube = ( width/height ) * ( length/height );
 	double noGridPoints = pow( (orderOfFiniteElement + 1), 3 ) * pow(8, refinementLevel) * noCube;
-	cout << "... Computation node details: " << endl;
-	cout << "    - #CPU per node: 12 " << endl;
-	cout << "    - memory per node: 4000 MB " << endl;
-	cout << "... Predicted number of total grid points: " << noGridPoints << endl;
-	cout << "... Recommended number of total grid points per node: 10e+6" << endl;
-	cout << "... Recommended number of nodes: " << ceil(noGridPoints/10e+6) << endl;
-	cout << "------------------------------------------------------------" << endl;
+	pout << "... Computation node details: " << endl;
+	pout << "    - #CPU per node: 12 " << endl;
+	pout << "    - memory per node: 4000 MB " << endl;
+	pout << "... Predicted number of total grid points: " << noGridPoints << endl;
+	pout << "... Recommended number of total grid points per node: 10e+6" << endl;
+	pout << "... Recommended number of nodes: " << ceil(noGridPoints/10e+6) << endl;
+	pout << "------------------------------------------------------------" << endl;
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
@@ -55,7 +55,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		double Fx = pow( ReTau * viscosity / h_half, 2) * rho / h_half;
 		// laminar flow
 		//double Fx = 8 * 1.5 * m_uBulk * viscosity / (height * height);
-		cout << " >>>> Body force F = " << Fx << endl;
+		pout << " >>>> Body force F = " << Fx << endl;
 		dealii::Tensor<1, 3> F;
 		F[0] = Fx;
 		setExternalForce(
@@ -92,7 +92,6 @@ boost::shared_ptr<Mesh<3> > TurbulentChannelFlow3D::makeGrid(double height,
 	dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, repetitions,
 			dealii::Point<3>(0.0, 0.0, 0.0),
 			dealii::Point<3>(length, height, width), colorize);
-
 	return mesh;
 }
 
