@@ -29,7 +29,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		m_ofe(orderOfFiniteElement), m_height(height), m_length(length), m_width(width),
 		m_maxUtrp(0.0), m_maxIncUtrp(0.0) {
 
-	// Recommendations for CPU use
+	// **** Recommendations for CPU use ****
 	pout << "-------------------------------------------------------------" << endl;
 	pout << "**** Recommendations for CPU use ****" << endl;
 	double noCube = ( width/height ) * ( length/height );
@@ -37,12 +37,44 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 	pout << "... Computation node details: " << endl;
 	pout << "    - #CPU per node: 12 " << endl;
 	pout << "    - memory per node: 4000 MB " << endl;
-	pout << "... Predicted number of total grid points: " << noGridPoints << endl;
+	pout << "... Number of total grid points: " << noGridPoints << endl;
 	pout << "... Recommended number of total grid points per node: 10e+6" << endl;
 	pout << "... Recommended number of nodes: " << ceil(noGridPoints/10e+6) << endl;
 	pout << "------------------------------------------------------------" << endl;
 
-	/// apply boundary values
+	// **** Grid properties ****
+	pout << "**** Grid properties ****" << endl;
+	int 	noCellsInYDir	= (orderOfFiniteElement + 1) * pow(2, refinementLevel);
+	double  h_half = 0.5 * height;
+
+	UnstructuredGridFunc Eq2NonEq(height);
+
+	/// y^+ calculation
+	// holds coordinates of the first point away from the wall in y-direction
+	// for the equidistant grid, before stretching
+	double 	eqDistY 		= height/noCellsInYDir;
+	// holds coordinates of the first point away from the wall in y-direction
+	// for the non-equidistant grid, after stretching
+	double 	minNonEqDistY	= Eq2NonEq.trans(eqDistY);
+
+	double	minYPlus		= minNonEqDistY * ReTau / h_half;
+	pout << "... y^+ of the first mesh point away from the wall: " << minYPlus << endl;
+
+	/// max spacing
+	double 	y_down = 0;
+	if ( noCellsInYDir % 2 == 0 ){ // odd number of cells in y-direction
+		y_down = noCellsInYDir/2 * eqDistY;
+	}
+	else { // even number of cells in y-direction
+		y_down = ( noCellsInYDir - 1 )/2 * eqDistY;
+	}
+	double	y_up			= y_down + eqDistY;
+	double 	maxDeltaY 		= Eq2NonEq.trans(y_up) - Eq2NonEq.trans(y_down);
+	double 	maxDeltaYPlus 	= maxDeltaY * ReTau / h_half;
+	pout << "... Max spacing in y-direction: " << maxDeltaYPlus << endl;
+	pout << "------------------------------------------------------------" << endl;
+
+	// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
 	// apply initial values / analytic solution
 	setInitialU(boost::make_shared<IncompressibleU>(this));
@@ -51,7 +83,6 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		// add external force
 		// turbulent flow
 		double rho = 1;
-		double h_half = 0.5 * height;
 		double Fx = pow( ReTau * viscosity / h_half, 2) * rho / h_half;
 		// laminar flow
 		//double Fx = 8 * 1.5 * m_uBulk * viscosity / (height * height);
@@ -269,8 +300,11 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double 	height = m_flow->getCharacteristicLength();				// characteristic flow length scale, here: full channel height
 	double  visc = m_flow->getViscosity();						// kinematic viscosity
 	//double	ReTau = m_flow->getFrictionReNumber();
-	double	qm 					= 4.0;							// turbulent kinetic energy
-	double	delta 				= 5./32 * height;	        			// inlet boundary layer thickness. Only if the boundary layer
+	double	u_bulk 				= m_flow->getMeanVelocity();	// turbulent velocity scale
+	double  ti					= 0.05;							// turbulence intensity I = u'/U
+	double	urms 				= ti * u_bulk;
+	double	tke 				= 3./2 * pow(urms, 2);			// turbulent kinetic energy
+	double	delta 				= 5./32 * height;	        	// inlet boundary layer thickness. Only if the boundary layer
 																// at inlet is not fully developed
 	//double 	uTau 				= 1/25.0;						// inlet shear velocity, suTau = Urms [Ref2]
 
@@ -286,8 +320,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
 	// Calculated
 	double	sli 				= 0.1*delta;    				// length scale
-	double	urms	 			= sqrt(2*qm/3);					// turbulent velocity scale
-	double	epsm 				= pow(qm,1.5)/sli;				// dissipation rate
+	double	epsm 				= pow(tke,1.5)/sli;				// dissipation rate
 
 	double 	ofe					= m_flow->getOrderOfFiniteElement();
 	double	inletCellLength		= height/( (ofe + 1) * pow(2, m_flow->getRefinementLevel()) );
