@@ -34,6 +34,7 @@ BGKPseudopotential<dim>::BGKPseudopotential(double relaxationParameter,
 	} else if (m_pseudopotentialParameters.pseudopotentialType == CARNAHAN_STARLING) {
 		assert (parameters.T != 0);
 	}
+	
 }
 
 // destructor
@@ -92,7 +93,7 @@ void BGKPseudopotential<dim>::collideAll(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
-	//pout << "stencil type:" << getStencil()->getStencilType() << endl;
+	assert(getForceType() != NO_FORCING);
 
 	if (Stencil_D2Q9 == getStencil()->getStencilType()) {
 		collideAllD2Q9(f, densities, velocities, inInitializationProcedure);
@@ -125,7 +126,6 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 	ForceType force_type = getForceType();
 	double ext_force_x = getForceX();
 	double ext_force_y = getForceY();
-	assert(force_type != NO_FORCING);
 
 #ifdef DEBUG
 	size_t n_dofs = f.at(0).size();

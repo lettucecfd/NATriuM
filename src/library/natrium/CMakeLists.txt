@@ -16,8 +16,7 @@ file(   GLOB_RECURSE
         utilities/*  
         )
      
-    
- 
+     
 #
 # Create natrium library
 #

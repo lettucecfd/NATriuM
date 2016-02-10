@@ -120,6 +120,7 @@ int main(int argc, char** argv) {
 	configuration->setTimeStepSize(delta_t);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
+	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setCollisionScheme(BGK_MULTIPHASE);
 	configuration->setBGKPseudopotentialG(G);
 

@@ -245,15 +245,15 @@ private:
 	 */
 	double calcMagicNumber() const;
 
-	/** @short save matrices to files
-	 *  @param[in] directory directory to save the matrix files to
-	 */
-	void saveMatricesToFiles(const string& directory) const;
-
-	/** @short load matrices from files
-	 *  @param[in] directory directory to load the matrix files from
-	 */
-	void loadMatricesFromFiles(const string& directory);
+//	/** @short save matrices to files
+//	 *  @param[in] directory directory to save the matrix files to
+//	 */
+//	void saveMatricesToFiles(const string& directory) const;
+//
+//	/** @short load matrices from files
+//	 *  @param[in] directory directory to load the matrix files from
+//	 */
+//	void loadMatricesFromFiles(const string& directory);
 
 	/**
 	 * @short A function to write the status of the solver, mesh, etc at checkpoint time in order to prevent corrupt restarts of a simulation

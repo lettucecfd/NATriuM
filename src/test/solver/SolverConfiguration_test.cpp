@@ -73,6 +73,14 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_CLOSE(config.getBGKSteadyStateGamma(), 0.1, 1e-5);
 	config.setCollisionScheme(BGK_STEADY_STATE);
 	BOOST_CHECK_EQUAL(config.getCollisionScheme(), BGK_STEADY_STATE);
+	BOOST_CHECK_EQUAL(config.getForcingScheme(), NO_FORCING);
+	config.setForcingScheme(SHIFTING_VELOCITY);
+	BOOST_CHECK_EQUAL(config.getForcingScheme(), SHIFTING_VELOCITY);
+	config.setForcingScheme(EXACT_DIFFERENCE);
+	BOOST_CHECK_EQUAL(config.getForcingScheme(), EXACT_DIFFERENCE);
+	config.setForcingScheme(GUO);
+	BOOST_CHECK_EQUAL(config.getForcingScheme(), GUO);
+
 
 	/// Failure test
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);

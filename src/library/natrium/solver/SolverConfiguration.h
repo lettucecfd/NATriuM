@@ -91,13 +91,16 @@ enum InitializationSchemeName {
 	ITERATIVE // Distribute with iterative procedure; enforces consistent initial conditions
 };
 
-
 enum PseudopotentialType {
-	SHAN_CHEN,
-	SUKOP,
-	CARNAHAN_STARLING
+	SHAN_CHEN, SUKOP, CARNAHAN_STARLING
 };
 
+enum ForceType {
+	NO_FORCING, 	// No external force
+	SHIFTING_VELOCITY,  // Shifting velocity method
+	EXACT_DIFFERENCE,   // Exact difference method by Kuppershtokh
+	GUO
+};
 
 //////////////////////////////
 // EXCEPTION CLASS        ////
@@ -458,8 +461,8 @@ public:
 			set("Pseudopotential G", G);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value " << G
-					<< " to Pseudopotential G: " << e.what();
+			msg << "Could not assign value " << G << " to Pseudopotential G: "
+					<< e.what();
 			leave_subsection();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
@@ -495,11 +498,66 @@ public:
 			set("Pseudopotential T", T);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value " << T
-					<< " to Pseudopotential T: " << e.what();
+			msg << "Could not assign value " << T << " to Pseudopotential T: "
+					<< e.what();
 			leave_subsection();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
+	ForceType getForcingScheme() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		string forcing_scheme = get("Forcing scheme");
+		leave_subsection();
+		leave_subsection();
+		if ("No Forcing" == forcing_scheme) {
+			return NO_FORCING;
+		} else if ("Shifting Velocity" == forcing_scheme) {
+			return SHIFTING_VELOCITY;
+		} else if ("Exact Difference" == forcing_scheme) {
+			return EXACT_DIFFERENCE;
+		} else if ("Guo" == forcing_scheme) {
+			return GUO;
+		}
+		std::stringstream msg;
+		msg << "Unknown forcing scheme '" << forcing_scheme
+				<< " '. Check your configuration file. If everything is alright, "
+				<< "the implementation of ForceType might not be up-to-date.";
+		throw ConfigurationException(msg.str());
+	}
+
+	void setForcingScheme(ForceType forcing_scheme) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		switch (forcing_scheme) {
+		case NO_FORCING: {
+			set("Forcing scheme", "No Forcing");
+			break;
+		}
+		case SHIFTING_VELOCITY: {
+			set("Forcing scheme", "Shifting Velocity");
+			break;
+		}
+		case EXACT_DIFFERENCE: {
+			set("Forcing scheme", "Exact Difference");
+			break;
+		}
+		case GUO: {
+			set("Forcing scheme", "Guo");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown forcing scheme; index. " << forcing_scheme
+					<< " in enum ForceType. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
 		}
 		leave_subsection();
 		leave_subsection();
@@ -1458,7 +1516,6 @@ public:
 		return max_delta;
 	}
 
-
 	double getEmbeddedDealIntegratorRefinementTolerance() {
 		enter_subsection("Advection");
 		enter_subsection("Embedded Parameters");
@@ -1478,7 +1535,6 @@ public:
 		leave_subsection();
 		return refine_tol;
 	}
-
 
 	double getEmbeddedDealIntegratorCoarsenTolerance() {
 		enter_subsection("Advection");

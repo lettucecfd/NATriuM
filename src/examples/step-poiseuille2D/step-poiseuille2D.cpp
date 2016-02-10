@@ -70,6 +70,7 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setTimeStepSize(dt);
+	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(CRANK_NICOLSON);
 

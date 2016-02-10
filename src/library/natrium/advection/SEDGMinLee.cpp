@@ -86,6 +86,7 @@ SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
 		reassemble();
 	} else {
 		loadCheckpoint(inputDirectory);
+		reassemble();
 	}
 
 } /* SEDGMinLee<dim>::SEDGMinLee */
@@ -688,114 +689,114 @@ void SEDGMinLee<dim>::stream() {
 template void SEDGMinLee<2>::stream();
 template void SEDGMinLee<3>::stream();
 
-template<size_t dim>
-void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
-// write system matrices to files
-	try {
-		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-			for (size_t j = 0; j < m_stencil->getQ() - 1; j++) {
-				// filename
-				std::stringstream filename;
-				filename << directory << "/checkpoint_system_matrix_" << i
-#ifdef WITH_TRILINOS_MPI
-						<< "_" << j << "_"
-						<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-						<< ".dat";
-#else
-				<< "_" << j << ".dat";
-#endif
-				std::ofstream file(filename.str().c_str());
-#ifndef WITH_TRILINOS
-				m_systemMatrix.block(i, j).block_write(file);
-#else
-				// TODO use trilinos functions for read and write. This here is really bad
-#endif
-			}
-		}
-
-	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-		throw AdvectionSolverException(
-				"An error occurred while writing the system matrices to files: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
-	}
-
-// Write the system vector
-	try {
-		// filename
-		std::stringstream filename;
-		filename << directory << "/checkpoint_system_vector."
-				<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
-		std::ofstream file(filename.str().c_str());
-#ifdef WITH_TRILINOS
-		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-			numeric_vector tmp(m_systemVector.block(i));
-			tmp.block_write(file);
-		}
-#else
-		m_systemVector.block_write(file);
-#endif
-	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-		throw AdvectionSolverException(
-				"An error occurred while writing the system vector to file: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
-	}
-}
-template void SEDGMinLee<2>::saveMatricesToFiles(const string& directory) const;
-template void SEDGMinLee<3>::saveMatricesToFiles(const string& directory) const;
-
-template<size_t dim>
-void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
-// read the system matrices from file
-	try {
-		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-			for (size_t j = 0; j < m_stencil->getQ() - 1; j++) {
-				// filename
-				std::stringstream filename;
-				filename << directory << "/checkpoint_system_matrix_" << i
-#ifdef WITH_TRILINOS_MPI
-						<< "_" << j << "_"
-						<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-						<< ".dat";
-#else
-				<< "_" << j << ".dat";
-#endif
-				std::ifstream file(filename.str().c_str());
-#ifndef WITH_TRILINOS
-				m_systemMatrix.block(i, j).block_read(file);
-#else
-				// TODO use trilinos functions for read and write. This here is really bad
-#endif
-			}
-		}
-
-	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-		throw AdvectionSolverException(
-				"An error occurred while reading the system matrices from file: Please switch off the restart option to start the simulation from the beginning.");
-	}
-
-// Read the system vector
-	try {
-		// filename
-		std::stringstream filename;
-		filename << directory << "/checkpoint_system_vector."
-				<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
-		std::ifstream file(filename.str().c_str());
-#ifdef WITH_TRILINOS
-		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-			numeric_vector tmp(m_systemVector.block(i));
-			tmp.block_read(file);
-			m_systemVector.block(i) = tmp;
-		}
-#else
-
-		m_systemVector.block_read(file);
-#endif
-	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-		throw AdvectionSolverException(
-				"An error occurred while reading the systemVector from file: Please switch off the restart option to start the simulation from the beginning.");
-	}
-// TODO Test: Is the matrix OK?
-}
-template void SEDGMinLee<2>::loadMatricesFromFiles(const string& directory);
-template void SEDGMinLee<3>::loadMatricesFromFiles(const string& directory);
+//template<size_t dim>
+//void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
+//// write system matrices to files
+//	try {
+//		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
+//			for (size_t j = 0; j < m_stencil->getQ() - 1; j++) {
+//				// filename
+//				std::stringstream filename;
+//				filename << directory << "/checkpoint_system_matrix_" << i
+//#ifdef WITH_TRILINOS_MPI
+//						<< "_" << j << "_"
+//						<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+//						<< ".dat";
+//#else
+//				<< "_" << j << ".dat";
+//#endif
+//				std::ofstream file(filename.str().c_str());
+//#ifndef WITH_TRILINOS
+//				m_systemMatrix.block(i, j).block_write(file);
+//#else
+//				// TODO use trilinos functions for read and write. This here is really bad
+//#endif
+//			}
+//		}
+//
+//	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+//		throw AdvectionSolverException(
+//				"An error occurred while writing the system matrices to files: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
+//	}
+//
+//// Write the system vector
+//	//try {
+//		// filename
+//		std::stringstream filename;
+//		filename << directory << "/checkpoint_system_vector."
+//				<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
+//		std::ofstream file(filename.str().c_str());
+//#ifdef WITH_TRILINOS
+//		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
+//			numeric_vector tmp(m_systemVector.block(i));
+//			tmp.block_write(file);
+//		}
+//#else
+//		m_systemVector.block_write(file);
+//#endif
+//	/*} catch (dealii::StandardExceptions::ExcIO& excIO) {
+//		throw AdvectionSolverException(
+//				"An error occurred while writing the system vector to file: Please make sure you have writing permission. ");
+//	}*/
+//}
+//template void SEDGMinLee<2>::saveMatricesToFiles(const string& directory) const;
+//template void SEDGMinLee<3>::saveMatricesToFiles(const string& directory) const;
+//
+//template<size_t dim>
+//void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
+//// read the system matrices from file
+//	try {
+//		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
+//			for (size_t j = 0; j < m_stencil->getQ() - 1; j++) {
+//				// filename
+//				std::stringstream filename;
+//				filename << directory << "/checkpoint_system_matrix_" << i
+//#ifdef WITH_TRILINOS_MPI
+//						<< "_" << j << "_"
+//						<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+//						<< ".dat";
+//#else
+//				<< "_" << j << ".dat";
+//#endif
+//				std::ifstream file(filename.str().c_str());
+//#ifndef WITH_TRILINOS
+//				m_systemMatrix.block(i, j).block_read(file);
+//#else
+//				// TODO use trilinos functions for read and write. This here is really bad
+//#endif
+//			}
+//		}
+//
+//	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+//		throw AdvectionSolverException(
+//				"An error occurred while reading the system matrices from file: Please switch off the restart option to start the simulation from the beginning.");
+//	}
+//
+//// Read the system vector
+//	try {
+//		// filename
+//		std::stringstream filename;
+//		filename << directory << "/checkpoint_system_vector."
+//				<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
+//		std::ifstream file(filename.str().c_str());
+//#ifdef WITH_TRILINOS
+//		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
+//			numeric_vector tmp(m_systemVector.block(i));
+//			tmp.block_read(file);
+//			m_systemVector.block(i) = tmp;
+//		}
+//#else
+//
+//		m_systemVector.block_read(file);
+//#endif
+//	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+//		throw AdvectionSolverException(
+//				"An error occurred while reading the systemVector from file: Please switch off the restart option to start the simulation from the beginning.");
+//	}
+//// TODO Test: Is the matrix OK?
+//}
+//template void SEDGMinLee<2>::loadMatricesFromFiles(const string& directory);
+//template void SEDGMinLee<3>::loadMatricesFromFiles(const string& directory);
 
 template<size_t dim> void SEDGMinLee<dim>::writeStatus(
 		const string& directory) const {
@@ -928,7 +929,7 @@ void SEDGMinLee<dim>::loadCheckpoint(const string& directory) {
 // check if stuff can be read from file. Else throw exception
 	string message;
 	if (isStatusOK(directory, message)) {
-		loadMatricesFromFiles(directory);
+		//loadMatricesFromFiles(directory);
 	} else {
 		std::stringstream errorMessage;
 		errorMessage << "Restart not possible. " << message;
@@ -941,7 +942,7 @@ template void SEDGMinLee<3>::loadCheckpoint(const string& directory);
 template<size_t dim>
 void SEDGMinLee<dim>::saveCheckpoint(const string& directory) const {
 	writeStatus(directory);
-	saveMatricesToFiles(directory);
+	//saveMatricesToFiles(directory);
 }
 template void SEDGMinLee<2>::saveCheckpoint(const string& directory) const;
 template void SEDGMinLee<3>::saveCheckpoint(const string& directory) const;

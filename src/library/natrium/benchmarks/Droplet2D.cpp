@@ -105,7 +105,7 @@ double Droplet2D::InitialDensity::value(const dealii::Point<2>& x,
 	double length = m_flow->getLength() ;
 	double height = m_flow->getHeight() ;
 
-	double fluctuation = rho_l*(1e-4) ;
+	//double fluctuation = rho_l*(1e-4) ;
 
 /*	if ( (x(0)>length/4) && (x(0)<length/2) && (x(1)>height/4) && (x(1)<height/2) ){
 //		return rho_l + fluctuation ;
@@ -125,7 +125,7 @@ double Droplet2D::InitialDensity::value(const dealii::Point<2>& x,
 
 }
 
-double Droplet2D::InitialVelocity::value(const dealii::Point<2>& x,
+double Droplet2D::InitialVelocity::value(const dealii::Point<2>& ,
 		const unsigned int component) const {
 	assert(component < 2);
 	// Initialize with poiseuille velocity profile
