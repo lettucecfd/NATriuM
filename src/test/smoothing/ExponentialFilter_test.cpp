@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(ExponentialFilter_TestFiltering_test) {
 			m_NModes++;
 		}
 		virtual double value(const dealii::Point<2>& x,
-				const unsigned int component) const {
+				const unsigned int ) const {
 			double result = 0.0;
 			for (size_t i = 0; i < m_NModes; i++) {
 				result += m_amplitudes.at(i)

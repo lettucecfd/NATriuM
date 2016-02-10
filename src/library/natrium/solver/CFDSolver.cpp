@@ -118,7 +118,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		// if this string is "": matrix is reassembled and not read from file
 		string whereAreTheStoredMatrices;
 		if (configuration->isRestartAtLastCheckpoint()) {
-			whereAreTheStoredMatrices = configuration->getOutputDirectory();
+			boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
+			boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
+			whereAreTheStoredMatrices = checkpoint_dir.string();
 		}
 		// create SEDG MinLee by reading the system matrices from files or assembling
 		// TODO estimate time for assembly
@@ -134,11 +136,13 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		}
 	}
 
+
+
 	if (configuration->isRestartAtLastCheckpoint()) {
 		// read iteration number and time from file
-		std::stringstream filename;
-		filename << m_configuration->getOutputDirectory() << "/checkpoint.dat";
-		std::ifstream ifile(filename.str().c_str());
+		boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
+		boost::filesystem::path filename(out_dir / "checkpoint" / "checkpoint.dat");
+		std::ifstream ifile(filename.string());
 		ifile >> m_iterationStart;
 		ifile >> m_time;
 		// print out message
@@ -210,6 +214,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 	// apply external force
 	if (m_problemDescription->hasExternalForce()) {
+		m_collisionModel->setForceType(m_configuration->getForcingScheme());
 		m_collisionModel->setExternalForce(
 				*(m_problemDescription->getExternalForce()));
 	}
@@ -420,8 +425,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 // Initialize distribution functions
 	if (configuration->isRestartAtLastCheckpoint()) {
-		loadDistributionFunctionsFromFiles(
-				m_configuration->getOutputDirectory());
+		boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
+		boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
+		loadDistributionFunctionsFromFiles(checkpoint_dir.string());
 	} else {
 		initializeDistributions();
 	}
@@ -471,8 +477,8 @@ void CFDSolver<dim>::stream() {
 	m_boundaryVector = m_advectionOperator->getSystemVector();
 
 	//try {
-		m_time = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector,
-				m_time, m_timeIntegrator->getTimeStepSize());
+	m_time = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector, m_time,
+			m_timeIntegrator->getTimeStepSize());
 	//} catch (std::exception& e) {
 	//	natrium_errorexit(e.what());
 	//}
@@ -514,6 +520,11 @@ template void CFDSolver<3>::reassemble();
 
 template<size_t dim>
 void CFDSolver<dim>::run() {
+	size_t alpha = 10;
+	size_t s = 4;
+	ExponentialFilter<dim> filter(alpha, s,
+			*m_advectionOperator->getQuadrature(),
+			*m_advectionOperator->getFe());
 	m_i = m_iterationStart;
 	while (true) {
 		if (stopConditionMet()) {
@@ -522,6 +533,9 @@ void CFDSolver<dim>::run() {
 		output(m_i);
 		m_i++;
 		stream();
+		/*for (size_t i = 0; i < m_stencil->getQ(); i++){
+		 filter.applyFilter(*m_advectionOperator->getDoFHandler(), m_f.at(i));
+		 }*/
 		collide();
 	}
 	output(m_i);
@@ -680,17 +694,15 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 		// output: checkpoint
 		if (iteration % m_configuration->getOutputCheckpointInterval() == 0) {
+			boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
+			boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
 			// advection matrices
-			m_advectionOperator->saveCheckpoint(
-					m_configuration->getOutputDirectory());
+			m_advectionOperator->saveCheckpoint(checkpoint_dir.string());
 			// distribution functions
-			saveDistributionFunctionsToFiles(
-					m_configuration->getOutputDirectory());
+			saveDistributionFunctionsToFiles(checkpoint_dir.string());
 			// iteration
-			std::stringstream filename;
-			filename << m_configuration->getOutputDirectory()
-					<< "/checkpoint.dat";
-			std::ofstream outfile(filename.str().c_str());
+			boost::filesystem::path filename = checkpoint_dir / "checkpoint.dat";
+			std::ofstream outfile(filename.string());
 			outfile << iteration << endl;
 			// time
 			outfile << m_time << endl;
