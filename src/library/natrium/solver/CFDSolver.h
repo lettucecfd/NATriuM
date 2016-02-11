@@ -23,6 +23,8 @@
 
 #include "../collision/CollisionModel.h"
 
+#include "../smoothing/Filter.h"
+
 #include "../timeintegration/TimeIntegrator.h"
 
 #include "../utilities/BasicNames.h"
@@ -101,6 +103,9 @@ private:
 	/// Configuration of the solver
 	boost::shared_ptr<SolverConfiguration> m_configuration;
 
+	/// Filtering scheme
+	boost::shared_ptr<Filter<dim> > m_filter;
+
 	/// the number of the first iteration (normally 0, except for restart at a checkpoint)
 	size_t m_iterationStart;
 
@@ -177,6 +182,11 @@ public:
 	 * @short run CFD solver
 	 */
 	void run();
+
+	/**
+	 * @short filter solution
+	 */
+	void filter();
 
 	/**
 	 * @short test for stop conditions

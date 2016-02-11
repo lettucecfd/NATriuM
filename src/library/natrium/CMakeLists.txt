@@ -1,4 +1,3 @@
-
  
 #
 # Store all library files in environment variable SRC_FILES
@@ -10,14 +9,14 @@ file(   GLOB_RECURSE
         boltzmannmodels/*
         collision/*
         problemdescription/* 
+        smoothing/*
         solver/*
         advection/*
         timeintegration/*
-        utilities/* 
+        utilities/*  
         )
-  
-   
- 
+     
+     
 #
 # Create natrium library
 #

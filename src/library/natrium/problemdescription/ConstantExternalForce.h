@@ -12,23 +12,14 @@
 
 namespace natrium {
 
-enum ForceType {
-	NO_FORCING, 	// No external force
-	SHIFTING_VELOCITY,  // Shifting velocity method
-	EXACT_DIFFERENCE,   // Exact difference method by Kuppershtokh
-	GUO
-};
 
 template<size_t dim>
 class ConstantExternalForce {
 private:
 	dealii::Tensor<1, dim> m_force;
-	ForceType m_forceType;
 public:
-	ConstantExternalForce(dealii::Tensor<1, dim> force,
-	ForceType force_type){
+	ConstantExternalForce(dealii::Tensor<1, dim> force){
 		m_force = force;
-		m_forceType = force_type;
 	}
 	virtual ~ConstantExternalForce(){};
 
@@ -36,9 +27,6 @@ public:
 		return m_force;
 	}
 
-	ForceType getForceType() const {
-		return m_forceType;
-	}
 	void scale(double factor) {
 		m_force *= factor;
 	}
