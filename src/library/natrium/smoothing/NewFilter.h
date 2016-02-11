@@ -1,25 +1,26 @@
 /*
- * ExponentialFilter.h
+ * NewFilter.h
  *
  *  Created on: 01.02.2016
  *      Author: akraem3m
  */
 
-#ifndef LIBRARY_NATRIUM_SMOOTHING_EXPONENTIALFILTER_H_
-#define LIBRARY_NATRIUM_SMOOTHING_EXPONENTIALFILTER_H_
+#ifndef LIBRARY_NATRIUM_SMOOTHING_NewFilter_H_
+#define LIBRARY_NATRIUM_SMOOTHING_NewFilter_H_
 
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/fe/fe_base.h"
 #include "deal.II/base/quadrature_lib.h"
 #include "deal.II/dofs/dof_handler.h"
 
-#include "../utilities/BasicNames.h"
 #include "Filter.h"
+
+#include "../utilities/BasicNames.h"
 
 namespace natrium {
 
 template <size_t dim>
-class ExponentialFilter: public Filter<dim> {
+class NewFilter: public Filter<dim> {
 private:
 	double m_alpha;
 	double m_s;
@@ -53,9 +54,9 @@ private:
 
 
 public:
-	ExponentialFilter(double alpha, double s, const dealii::Quadrature<dim>& quadrature, const dealii::FE_DGQ<dim>& fe);
-	virtual ~ExponentialFilter(){};
-	virtual void applyFilter(const dealii::DoFHandler<dim>& dof_handler, distributed_vector& dof_vector);
+	NewFilter(double alpha, double s, const dealii::Quadrature<dim>& quadrature, const dealii::FE_DGQ<dim>& fe);
+	virtual ~NewFilter(){};
+	void applyFilter(const dealii::DoFHandler<dim>& dof_handler, distributed_vector& dof_vector);
 
 	double getAlpha() const {
 		return m_alpha;
@@ -89,4 +90,4 @@ public:
 } /* namespace natrium */
 
 
-#endif /* LIBRARY_NATRIUM_SMOOTHING_EXPONENTIALFILTER_H_ */
+#endif /* LIBRARY_NATRIUM_SMOOTHING_NewFilter_H_ */

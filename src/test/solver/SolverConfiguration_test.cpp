@@ -80,6 +80,18 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.getForcingScheme(), EXACT_DIFFERENCE);
 	config.setForcingScheme(GUO);
 	BOOST_CHECK_EQUAL(config.getForcingScheme(), GUO);
+	BOOST_CHECK_EQUAL(config.isFiltering(), false);
+	config.setFiltering(true);
+	BOOST_CHECK_EQUAL(config.isFiltering(), true);
+	BOOST_CHECK_EQUAL(config.getFilteringScheme(), EXPONENTIAL_FILTER);
+	config.setFilteringScheme(NEW_FILTER);
+	BOOST_CHECK_EQUAL(config.getFilteringScheme(), NEW_FILTER);
+	BOOST_CHECK_EQUAL(config.getExponentialFilterAlpha(), 10.0);
+	config.setExponentialFilterAlpha(2.0);
+	BOOST_CHECK_EQUAL(config.getExponentialFilterAlpha(), 2.0);
+	BOOST_CHECK_EQUAL(config.getExponentialFilterS(), 20.0);
+	config.setExponentialFilterS(2.0);
+	BOOST_CHECK_EQUAL(config.getExponentialFilterS(), 2.0);
 
 
 	/// Failure test
