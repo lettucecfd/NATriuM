@@ -21,8 +21,6 @@
 
 namespace natrium {
 
-
-
 /** @short Abstract class for the description of a CFD problem. The description includes the computational mesh,
  *         boundary description, viscosity and initial values.
  *  @tparam dim The dimension of the flow (2 or 3).
@@ -51,13 +49,12 @@ private:
 	/// function to define initial velocities
 	boost::shared_ptr<dealii::Function<dim> > m_initialU;
 
-
 protected:
-	void setInitialRho(boost::shared_ptr<dealii::Function<dim> > ini_rho){
+	void setInitialRho(boost::shared_ptr<dealii::Function<dim> > ini_rho) {
 		m_initialRho = ini_rho;
 	}
 
-	void setInitialU(boost::shared_ptr<dealii::Function<dim> > ini_u){
+	void setInitialU(boost::shared_ptr<dealii::Function<dim> > ini_u) {
 		m_initialU = ini_u;
 	}
 
@@ -68,8 +65,8 @@ public:
 	/////////////////////////////////
 
 	/// constructor
-	ProblemDescription(boost::shared_ptr<Mesh<dim> > triangulation, double viscosity,
-			double characteristicLength);
+	ProblemDescription(boost::shared_ptr<Mesh<dim> > triangulation,
+			double viscosity, double characteristicLength);
 
 	///  destructor
 	virtual ~ProblemDescription() {
@@ -94,7 +91,6 @@ public:
 	virtual const boost::shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
 		return m_initialU;
 	}
-
 
 	/**
 	 * @short check if boundary conditions are uniquely assigned to boundary indicator
@@ -143,11 +139,13 @@ public:
 		m_triangulation = triangulation;
 	}
 
-	void setBoundaries(const boost::shared_ptr<BoundaryCollection<dim> >& boundaries) {
+	void setBoundaries(
+			const boost::shared_ptr<BoundaryCollection<dim> >& boundaries) {
 		m_boundaries = boundaries;
 	}
 
-	void setExternalForce(const boost::shared_ptr<ConstantExternalForce<dim> >& force) {
+	void setExternalForce(
+			const boost::shared_ptr<ConstantExternalForce<dim> >& force) {
 		m_externalForce = force;
 	}
 
@@ -156,13 +154,21 @@ public:
 	}
 
 	bool hasExternalForce() const {
-		if (m_externalForce == NULL){
+		if (m_externalForce == NULL) {
 			return false;
 		}
-		if (m_externalForce->getForceType() == NO_FORCING){
-			return false;
+		if (m_externalForce->getForce()[0] != 0) {
+			return true;
 		}
-		return true;
+		if (m_externalForce->getForce()[1] != 0) {
+			return true;
+		}
+		if (3 == dim) {
+			if (m_externalForce->getForce()[2] != 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	double getViscosity() const {
@@ -185,7 +191,6 @@ public:
 	virtual double getCharacteristicVelocity() const {
 		return 0.0;
 	}
-
 
 };
 /* class ProblemDescription */

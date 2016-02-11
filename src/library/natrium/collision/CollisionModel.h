@@ -15,11 +15,13 @@
 #include "../stencils/Stencil.h"
 
 #include "../solver/DistributionFunctions.h"
+#include "../solver/SolverConfiguration.h"
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
 
 #include "../problemdescription/ConstantExternalForce.h"
+
 
 namespace natrium {
 
@@ -54,9 +56,9 @@ private:
 	double m_forceY;
 	double m_forceZ;
 public:
-	CollisionModel(const boost::shared_ptr<Stencil> stencil) :
+	CollisionModel(const boost::shared_ptr<Stencil> stencil, ForceType force_type = NO_FORCING) :
 			m_stencil(stencil),
-			m_forceType(NO_FORCING),
+			m_forceType(force_type),
 			m_forceX(0),
 			m_forceY(0),
 			m_forceZ(0){
@@ -169,19 +171,18 @@ public:
 	void setExternalForce(const ConstantExternalForce<2>& external_force){
 		m_forceX = external_force.getForce()[0];
 		m_forceY = external_force.getForce()[1];
-		m_forceType = external_force.getForceType();
 	}
 	void setExternalForce(const ConstantExternalForce<3>& external_force){
 		m_forceX = external_force.getForce()[0];
 		m_forceY = external_force.getForce()[1];
 		m_forceZ = external_force.getForce()[2];
-		m_forceType = external_force.getForceType();
 
 	}
 
 	ForceType getForceType() const {
 		return m_forceType;
 	}
+
 
 	double getForceX() const {
 		return m_forceX;
@@ -193,6 +194,10 @@ public:
 
 	double getForceZ() const {
 		return m_forceZ;
+	}
+
+	void setForceType(ForceType forceType) {
+		m_forceType = forceType;
 	}
 };
 
