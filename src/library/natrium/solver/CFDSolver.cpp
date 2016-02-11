@@ -34,6 +34,9 @@
 #include "../collision/MRTStandard.h"
 #include "../collision/KBCStandard.h"
 
+#include "../smoothing/ExponentialFilter.h"
+#include "../smoothing/NewFilter.h"
+
 #include "../problemdescription/BoundaryCollection.h"
 #include "../problemdescription/NonlinearBoundary.h"
 
@@ -118,7 +121,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		// if this string is "": matrix is reassembled and not read from file
 		string whereAreTheStoredMatrices;
 		if (configuration->isRestartAtLastCheckpoint()) {
-			whereAreTheStoredMatrices = configuration->getOutputDirectory();
+			boost::filesystem::path out_dir(
+					m_configuration->getOutputDirectory());
+			boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
+			whereAreTheStoredMatrices = checkpoint_dir.string();
 		}
 		// create SEDG MinLee by reading the system matrices from files or assembling
 		// TODO estimate time for assembly
@@ -136,9 +142,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 	if (configuration->isRestartAtLastCheckpoint()) {
 		// read iteration number and time from file
-		std::stringstream filename;
-		filename << m_configuration->getOutputDirectory() << "/checkpoint.dat";
-		std::ifstream ifile(filename.str().c_str());
+		boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
+		boost::filesystem::path filename(
+				out_dir / "checkpoint" / "checkpoint.dat");
+		std::ifstream ifile(filename.string());
 		ifile >> m_iterationStart;
 		ifile >> m_time;
 		// print out message
@@ -210,6 +217,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 	// apply external force
 	if (m_problemDescription->hasExternalForce()) {
+		m_collisionModel->setForceType(m_configuration->getForcingScheme());
 		m_collisionModel->setExternalForce(
 				*(m_problemDescription->getExternalForce()));
 	}
@@ -296,6 +304,23 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	if (m_problemDescription->getBoundaries()->hasNonlinearBoundaries()) {
 		m_timeIntegrator->setBoundaryCollection(
 				m_problemDescription->getBoundaries());
+	}
+
+	// build filter
+	if (m_configuration->isFiltering() == true) {
+		if (m_configuration->getFilteringScheme() == EXPONENTIAL_FILTER) {
+			m_filter = boost::make_shared<ExponentialFilter<dim> >(
+					m_configuration->getExponentialFilterAlpha(),
+					m_configuration->getExponentialFilterS(),
+					*m_advectionOperator->getQuadrature(),
+					*m_advectionOperator->getFe());
+		} else if (m_configuration->getFilteringScheme() == NEW_FILTER) {
+			m_filter = boost::make_shared<NewFilter<dim> >(
+					m_configuration->getExponentialFilterAlpha(),
+					m_configuration->getExponentialFilterS(),
+					*m_advectionOperator->getQuadrature(),
+					*m_advectionOperator->getFe());
+		}
 	}
 
 // OUTPUT
@@ -419,8 +444,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 // Initialize distribution functions
 	if (configuration->isRestartAtLastCheckpoint()) {
-		loadDistributionFunctionsFromFiles(
-				m_configuration->getOutputDirectory());
+		boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
+		boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
+		loadDistributionFunctionsFromFiles(checkpoint_dir.string());
 	} else {
 		initializeDistributions();
 	}
@@ -512,6 +538,22 @@ template void CFDSolver<2>::reassemble();
 template void CFDSolver<3>::reassemble();
 
 template<size_t dim>
+void CFDSolver<dim>::filter() {
+
+// start timer
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Filter");
+
+	if (m_configuration->isFiltering()) {
+		for (size_t i = 0; i < m_stencil->getQ(); i++) {
+			m_filter->applyFilter(*m_advectionOperator->getDoFHandler(),
+					m_f.at(i));
+		}
+	}
+}
+template void CFDSolver<2>::filter();
+template void CFDSolver<3>::filter();
+
+template<size_t dim>
 void CFDSolver<dim>::run() {
 	m_i = m_iterationStart;
 	while (true) {
@@ -521,6 +563,7 @@ void CFDSolver<dim>::run() {
 		output(m_i);
 		m_i++;
 		stream();
+		filter();
 		collide();
 	}
 	output(m_i);
@@ -679,17 +722,17 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 		// output: checkpoint
 		if (iteration % m_configuration->getOutputCheckpointInterval() == 0) {
+			boost::filesystem::path out_dir(
+					m_configuration->getOutputDirectory());
+			boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
 			// advection matrices
-			m_advectionOperator->saveCheckpoint(
-					m_configuration->getOutputDirectory());
+			m_advectionOperator->saveCheckpoint(checkpoint_dir.string());
 			// distribution functions
-			saveDistributionFunctionsToFiles(
-					m_configuration->getOutputDirectory());
+			saveDistributionFunctionsToFiles(checkpoint_dir.string());
 			// iteration
-			std::stringstream filename;
-			filename << m_configuration->getOutputDirectory()
-					<< "/checkpoint.dat";
-			std::ofstream outfile(filename.str().c_str());
+			boost::filesystem::path filename = checkpoint_dir
+					/ "checkpoint.dat";
+			std::ofstream outfile(filename.string());
 			outfile << iteration << endl;
 			// time
 			outfile << m_time << endl;
