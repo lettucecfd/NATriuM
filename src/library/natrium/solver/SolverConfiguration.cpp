@@ -132,6 +132,21 @@ SolverConfiguration::SolverConfiguration() {
 	}
 	leave_subsection();
 
+	enter_subsection("Filtering");
+	{
+		declare_entry("Apply filtering?", "false", dealii::Patterns::Bool());
+		declare_entry("Filtering scheme", "Exponential",
+				dealii::Patterns::Selection("Exponential|New"),
+				"A filter that dampens the high-frequent oscillations from the distribution functions.");
+		enter_subsection("Filter parameters");
+		{
+			declare_entry("Exponential alpha", "10.0", dealii::Patterns::Double(0,1e10), "The exponential filter is defined exp(-alpha * poly_degree ^ s");
+			declare_entry("Exponential s", "20.0", dealii::Patterns::Double(0,1e10), "The exponential filter is defined exp(-alpha * poly_degree ^ s");
+		}
+		leave_subsection();
+	}
+	leave_subsection();
+
 	enter_subsection("Initialization");
 	{
 		declare_entry("Restart at last checkpoint?", "false",
@@ -393,8 +408,8 @@ void SolverConfiguration::isConsistent() {
 				<< endl;
 	}
 	// check if a forcing scheme is set to perform pseudopotential collisions
-	if (BGK_MULTIPHASE == getCollisionScheme()){
-		if (NO_FORCING == getForcingScheme()){
+	if (BGK_MULTIPHASE == getCollisionScheme()) {
+		if (NO_FORCING == getForcingScheme()) {
 			std::stringstream msg1;
 			msg1
 					<< "If you use the BGK Multiphase model you will need to specify a forcing scheme. Found 'No Forcing'.";

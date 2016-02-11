@@ -102,6 +102,10 @@ enum ForceType {
 	GUO
 };
 
+enum FilteringSchemeName {
+	EXPONENTIAL_FILTER, NEW_FILTER
+};
+
 //////////////////////////////
 // EXCEPTION CLASS        ////
 //////////////////////////////
@@ -615,6 +619,136 @@ public:
 		enter_subsection("General");
 		set("Has analytic solution?", hasAnalyticSolution);
 		leave_subsection();
+	}
+
+	void setFiltering(bool filtering) {
+		enter_subsection("Filtering");
+		set("Apply filtering?", filtering);
+		leave_subsection();
+	}
+	bool isFiltering() {
+		enter_subsection("Filtering");
+		bool is_filter;
+		try {
+			is_filter = get_bool("Apply filtering?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Apply filtering?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return is_filter;
+	}
+	void setFilteringScheme(FilteringSchemeName filtering_scheme) {
+		enter_subsection("Filtering");
+		switch (filtering_scheme) {
+		case EXPONENTIAL_FILTER: {
+			set("Filtering scheme", "Exponential");
+			break;
+		}
+		case NEW_FILTER: {
+			set("Filtering scheme", "New");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown initialization scheme scheme; index. "
+					<< filtering_scheme
+					<< " in enum InitializationSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+	}
+	FilteringSchemeName getFilteringScheme() {
+		enter_subsection("Filtering");
+		string filtering_scheme = get("Filtering scheme");
+		leave_subsection();
+		if ("Exponential" == filtering_scheme) {
+			return EXPONENTIAL_FILTER;
+		} else if ("New" == filtering_scheme) {
+			return NEW_FILTER;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown filtering scheme '" << filtering_scheme
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of InitilizationSchemeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+
+	}
+	void setExponentialFilterAlpha(double alpha) {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		try {
+			set("Exponential alpha", alpha);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << alpha
+					<< " to Exponential alpha: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+	double getExponentialFilterAlpha() {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		double alpha;
+		try {
+			alpha = get_double("Exponential alpha");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Exponential alpha' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return alpha;
+	}
+	void setExponentialFilterS(double s) {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		try {
+			set("Exponential s", s);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << s << " to Exponential s: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+	double getExponentialFilterS() {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		double s;
+		try {
+			s = get_double("Exponential s");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not read parameter 'Exponential s' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return s;
 	}
 
 	InitializationSchemeName getInitializationScheme() {
