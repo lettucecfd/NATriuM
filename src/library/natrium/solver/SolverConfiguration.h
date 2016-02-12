@@ -11,6 +11,9 @@
 #include <ctime>
 #include <fstream>
 #include <sstream>
+#include <stdlib.h>
+
+//#include "boost/algorithm/string.hpp"
 
 #include "deal.II/base/parameter_handler.h"
 
@@ -1763,6 +1766,127 @@ public:
 	void setSwitchOutputOff(bool switchOutputOff) {
 		enter_subsection("Output");
 		set("Switch output off?", switchOutputOff);
+		leave_subsection();
+	}
+
+	bool isOutputTurbulenceStatistics() {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		bool turbulence_output;
+		try {
+			turbulence_output = get_bool("Output turbulence statistics?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Output turbulence statistics?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return turbulence_output;
+	}
+
+	void setOutputTurbulenceStatistics(bool output_turbulence) {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		set("Output turbulence statistics?", output_turbulence);
+		leave_subsection();
+		leave_subsection();
+	}
+
+	size_t getWallNormalDirection() {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		size_t wall_normal_direction;
+		try {
+			wall_normal_direction = get_integer("Wall normal direction");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Wall normal direction' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return wall_normal_direction;
+	}
+
+	void setWallNormalDirection(long int wall_normal_direction) {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		try {
+			set("Wall normal direction", wall_normal_direction);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << wall_normal_direction
+					<< " to Wall normal direction: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
+	vector<double> getWallNormalCoordinates() {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		vector<double> wall_normal_coordinates;
+		string full_string;
+		try {
+			full_string = get("Wall normal coordinates");
+			// comma-seperated string to vector<double>
+		    std::stringstream ss(full_string);
+		    double i;
+		    while (ss >> i)
+		    {
+		        wall_normal_coordinates.push_back(i);
+
+		        if (ss.peek() == ',' || ss.peek() == ' ')
+		            ss.ignore();
+		    }
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Wall normal coordinates' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return wall_normal_coordinates;
+	}
+
+	void setWallNormalCoordinates(vector<double> wall_normal_coordinates) {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		std::stringstream s;
+		try {
+			size_t n = wall_normal_coordinates.size();
+			for (size_t i = 0; i < n - 1; i++) {
+				s << wall_normal_coordinates.at(i) << ",";
+			}
+			if (n != 0) {
+				s << wall_normal_coordinates.at(n - 1);
+			}
+			set("Wall normal coordinates", s.str());
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << s.str()
+					<< " to Wall normal coordinates: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 		leave_subsection();
 	}
 

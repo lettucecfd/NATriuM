@@ -36,9 +36,8 @@ int main(int argc, char** argv) {
 	// READ COMMAND LINE PARAMETERS
 	// ========================================================================
 	pout
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <integrator_id = 1>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id (BGK: 0, KBC: 1)> <integrator-id>"
 			<< endl;
-
 
 	size_t refinement_level = 3;
 	if (argc >= 2) {
@@ -52,9 +51,15 @@ int main(int argc, char** argv) {
 	}
 	pout << "... p:    " << p << endl;
 
-	size_t integrator_id = 1;
+	size_t collision_id = 1;
 	if (argc >= 4) {
-		integrator_id = std::atoi(argv[3]);
+		collision_id = std::atoi(argv[3]);
+	}
+	pout << "... Coll:  " << collision_id << endl;
+
+	size_t integrator_id = 1;
+	if (argc >= 5) {
+		integrator_id = std::atoi(argv[4]);
 	}
 	pout << "... Int:  " << integrator_id << endl;
 
@@ -71,14 +76,19 @@ int main(int argc, char** argv) {
 	// MAKE FLOW PROBLEM
 	// ========================================================================
 	const double stencil_scaling = 1.0;
-	const double CFL = .4 ;
+	double CFL = .4;
+	if (integrator_id == 3)
+		CFL = 3.;
+	if (integrator_id == 10)
+		CFL = 5.;
 	const double u0 = 0.04;
 	const double kappa = 80;
 	const double Re = 30000;
 	double viscosity = u0 * 1.0 / Re;
+	const double t_c = 1.0 / u0; //eddy turnover time
 
-	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<ShearLayer2D>(viscosity,
-			refinement_level, u0, kappa);
+	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
+			ShearLayer2D>(viscosity, refinement_level, u0, kappa);
 	double delta_t = CFDSolverUtilities::calculateTimestep<2>(
 			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);
 	// ========================================================================
@@ -89,19 +99,28 @@ int main(int argc, char** argv) {
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(true);
+	configuration->setFiltering(true);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setOutputTableInterval(10);//10
+	configuration->setOutputTableInterval(10);	//10
 	configuration->setOutputSolutionInterval(100); //10
+	configuration->setOutputCheckpointInterval(100);
 	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/shear-layer";
+	dirname << getenv("NATRIUM_HOME") << "/shear-layer-N" << refinement_level
+			<< "-p" << p << "-coll" << collision_id << "-int" << integrator_id;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
 	configuration->setTimeStepSize(delta_t);
+	configuration->setSimulationEndTime(10 * t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
+	configuration->setOutputTurbulenceStatistics(true);
+	if (collision_id == 1) {
+		configuration->setCollisionScheme(KBC_STANDARD);
+	}
 
+	pout << "Simulation end time will be t_c = " << t_c << endl;
 	// ========================================================================
 	// RUN SOLVER
 	// ========================================================================

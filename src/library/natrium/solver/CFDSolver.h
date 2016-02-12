@@ -15,6 +15,7 @@
 #include "SolverConfiguration.h"
 #include "DistributionFunctions.h"
 #include "SolverStats.h"
+#include "TurbulenceStats.h"
 
 #include "../problemdescription/ProblemDescription.h"
 
@@ -66,6 +67,7 @@ public:
  */
 template<size_t dim> class CFDSolver {
 	template<size_t dim2> friend class SolverStats;
+	template<size_t dim3> friend class TurbulenceStats;
 
 private:
 	/// particle distribution functions
@@ -120,6 +122,7 @@ private:
 
 	/// table out
 	boost::shared_ptr<SolverStats<dim> > m_solverStats;
+	boost::shared_ptr<TurbulenceStats<dim> > m_turbulenceStats;
 
 	// starting time
 	time_t m_tstart;
@@ -130,6 +133,9 @@ private:
 
 	// vector for nonlinear boundary conditions
 	distributed_block_vector m_boundaryVector;
+
+	// vector of grid points
+	map<dealii::types::global_dof_index, dealii::Point<dim> > m_supportPoints;
 
 protected:
 

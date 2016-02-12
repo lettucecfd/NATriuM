@@ -118,13 +118,12 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		// start timer
 		TimerOutput::Scope timer_section(Timing::getTimer(), "System assembly");
 
-		// if this string is "": matrix is reassembled and not read from file
-		string whereAreTheStoredMatrices;
+		string check_dir;
 		if (configuration->isRestartAtLastCheckpoint()) {
 			boost::filesystem::path out_dir(
 					m_configuration->getOutputDirectory());
 			boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
-			whereAreTheStoredMatrices = checkpoint_dir.string();
+			check_dir = checkpoint_dir.string();
 		}
 		// create SEDG MinLee by reading the system matrices from files or assembling
 		// TODO estimate time for assembly
@@ -133,8 +132,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					m_problemDescription->getMesh(),
 					m_problemDescription->getBoundaries(),
 					configuration->getSedgOrderOfFiniteElement(), m_stencil,
-					whereAreTheStoredMatrices,
-					(CENTRAL == configuration->getSedgFluxType()));
+					check_dir, (CENTRAL == configuration->getSedgFluxType()));
 		} catch (AdvectionSolverException & e) {
 			natrium_errorexit(e.what());
 		}
@@ -223,9 +221,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 // initialize macroscopic variables
-#ifdef WITH_TRILINOS_MPI
-	map<dealii::types::global_dof_index, dealii::Point<dim> > supportPoints;
-	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
+	m_advectionOperator->mapDoFsToSupportPoints(m_supportPoints);
 	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
 	MPI_COMM_WORLD);
 	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
@@ -236,20 +232,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_velocity.push_back(vi);
 		m_tmpVelocity.push_back(vi);
 	}
-#else
-	size_t numberOfDoFs = this->getNumberOfDoFs();
-	map<dealii::types::global_dof_index, dealii::Point<dim> > supportPoints;
-	m_advectionOperator->mapDoFsToSupportPoints(supportPoints);
-	m_density.reinit(numberOfDoFs);
-	m_tmpDensity.reinit(numberOfDoFs);
-	for (size_t i = 0; i < dim; i++) {
-		distributed_vector vi(numberOfDoFs);
-		m_velocity.push_back(vi);
-		m_tmpVelocity.push_back(vi);
-	}
-#endif
-	applyInitialDensities(m_density, supportPoints);
-	applyInitialVelocities(m_velocity, supportPoints);
+	applyInitialDensities(m_density, m_supportPoints);
+	applyInitialVelocities(m_velocity, m_supportPoints);
 	m_residuumDensity = 1.0;
 	m_residuumVelocity = 1.0;
 
@@ -467,8 +451,18 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				<< "/results_table.txt";
 		//create the SolverStats object which is responsible for the results table
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this, s.str());
+		//create the TurbulenceStats object which is responsible for the turbulence table
+		if (configuration->isOutputTurbulenceStatistics()) {
+			std::stringstream s2;
+			s2 << configuration->getOutputDirectory().c_str()
+					<< "/turbulence_table.txt";
+			m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this,
+					m_configuration->getWallNormalDirection(),
+					m_configuration->getWallNormalCoordinates(), s2.str());
+		}
 	} else {
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this);
+		//m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this);
 	}
 
 }
@@ -706,8 +700,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 						MPI_COMM_WORLD); ++i) {
 					std::stringstream vtu_filename_i;
 					vtu_filename_i
-							<< m_configuration->getOutputDirectory().c_str()
-							<< "/t_" << i << "." << iteration << ".vtu";
+					//<< m_configuration->getOutputDirectory().c_str() << "/"
+					<< "t_" << i << "." << iteration << ".vtu";
 					filenames.push_back(vtu_filename_i.str());
 				}
 				data_out.write_pvtu_record(pvtu_output, filenames);
@@ -719,6 +713,9 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 		if (iteration % m_configuration->getOutputTableInterval() == 0) {
 			m_solverStats->printNewLine();
+			if (m_configuration->isOutputTurbulenceStatistics()) {
+				m_turbulenceStats->printNewLine();
+			}
 		}
 
 		// output: checkpoint
