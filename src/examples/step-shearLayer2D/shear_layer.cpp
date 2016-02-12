@@ -99,7 +99,6 @@ int main(int argc, char** argv) {
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(true);
-	configuration->setFiltering(true);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(10);	//10
 	configuration->setOutputSolutionInterval(100); //10
@@ -119,6 +118,7 @@ int main(int argc, char** argv) {
 	if (collision_id == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
 	}
+	//configuration->setFiltering(true);
 
 	pout << "Simulation end time will be t_c = " << t_c << endl;
 	// ========================================================================
