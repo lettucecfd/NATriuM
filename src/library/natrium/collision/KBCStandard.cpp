@@ -27,13 +27,13 @@ void KBCStandard::collideAll(DistributionFunctions& f,
 	if (Stencil_D2Q9 == getStencil()->getStencilType()) {
 		collideAllD2Q9(f, densities, velocities, locally_owned_dofs,
 				inInitializationProcedure);
-	} /*else if (Stencil_D3Q19 == getStencil()->getStencilType()) {
-	 collideAllD3Q19(f, densities, velocities, locally_owned_dofs,
-	 inInitializationProcedure);
-	 } else if (Stencil_D3Q15 == getStencil()->getStencilType()) {
-	 collideAllD3Q15(f, densities, velocities, locally_owned_dofs,
-	 inInitializationProcedure);
-	 } */else {
+		/*else if (Stencil_D3Q19 == getStencil()->getStencilType()) {
+		 collideAllD3Q19(f, densities, velocities, locally_owned_dofs,
+		 inInitializationProcedure);*/
+	} else if (Stencil_D3Q15 == getStencil()->getStencilType()) {
+		collideAllD3Q15(f, densities, velocities, locally_owned_dofs,
+				inInitializationProcedure);
+	} else {
 		throw CollisionException("KBC only implemented for D2Q9");
 		// Inefficient collision
 		//BGK::collideAll(f, densities, velocities, locally_owned_dofs,
@@ -80,7 +80,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		double scalar_product = ux * ux + uy * uy;
 
 		// moment representation of the populations
-		double T = 0, N = 0, Pi_xy = 0, Q_xyy = 0, Q_xxy = 0, Q_yxx = 0, A = 0;
+		double T = 0, N = 0, Pi_xy = 0, Q_xyy = 0, Q_yxx = 0, A = 0;
 
 		// calculate the trace of the pressure tensor at unit density (T)
 		T = f.at(1)(i) + f.at(2)(i) + f.at(3)(i) + f.at(4)(i)
@@ -335,6 +335,503 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 	}
 
+}
+
+void KBCStandard::collideAllD3Q15(DistributionFunctions& f,
+		distributed_vector& densities, vector<distributed_vector>& velocities,
+		const dealii::IndexSet& locally_owned_dofs,
+		bool inInitializationProcedure) const {
+
+	// Efficient collision for D2Q9
+	size_t Q = 15;
+	size_t D = 3;
+	double scaling = getStencil()->getScaling();
+	double cs2 = getStencil()->getSpeedOfSoundSquare();
+	double prefactor = scaling / cs2;
+	double relax_factor = getPrefactor();
+
+	assert(f.size() == Q);
+	assert(velocities.size() == D);
+
+#ifdef DEBUG
+	size_t n_dofs = f.at(0).size();
+	for (size_t i = 0; i < Q; i++) {
+		assert (f.at(i).size() == n_dofs);
+	}
+	assert (densities.size() == n_dofs);
+	for (size_t i = 0; i < D; i++) {
+		assert (velocities.at(i).size() == n_dofs);
+	}
+#endif
+
+	// allocation
+
+	double scalar_product;
+	double uSquareTerm;
+	double mixedTerm;
+	double weighting;
+	double rho;
+	double ux;
+	double uy;
+	double uz;
+	double T;
+	double N_xz;
+	double N_yz;
+	double Pi_xy;
+	double Pi_xz;
+	double Pi_yz;
+	double Q_xxy, Q_xxz, Q_xyy, Q_xyz, Q_xzz;
+	double A;
+	double sum_s = 0;
+	double sum_h = 0;
+	vector<double> feq(Q);
+	vector<double> k(Q);
+	vector<double> s(Q);
+	vector<double> h(Q);
+	vector<double> heq(Q);
+	vector<double> seq(Q);
+	vector<double> delta_s(Q);
+	vector<double> delta_h(Q);
+	vector<double> delta_seq(Q);
+	vector<double> delta_heq(Q);
+
+	//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+	for (it = locally_owned_dofs.begin(); it != end; it++) {
+		size_t i = *it;
+
+		// calculate density
+		rho = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i) + f.at(4)(i)
+				+ f.at(5)(i) + f.at(6)(i) + f.at(7)(i) + f.at(8)(i) + f.at(9)(i)
+				+ f.at(10)(i) + f.at(11)(i) + f.at(12)(i) + f.at(13)(i)
+				+ f.at(14)(i);
+		densities(i) = rho;
+		if (rho < 1e-10) {
+			throw CollisionException(
+					"Densities too small (< 1e-10) for collisions. Decrease time step size.");
+		}
+
+		if (not inInitializationProcedure) {
+			// calculate velocity
+			// for all velocity components
+			velocities.at(0)(i) = scaling / rho
+					* (f.at(1)(i) - f.at(2)(i) + f.at(7)(i) - f.at(8)(i)
+							+ f.at(9)(i) - f.at(10)(i) + f.at(11)(i)
+							- f.at(12)(i) + f.at(13)(i) - f.at(14)(i));
+			velocities.at(1)(i) = scaling / rho
+					* (f.at(3)(i) - f.at(4)(i) + f.at(7)(i) - f.at(8)(i)
+							+ f.at(9)(i) - f.at(10)(i) - f.at(11)(i)
+							+ f.at(12)(i) - f.at(13)(i) + f.at(14)(i));
+			velocities.at(2)(i) = scaling / rho
+					* (f.at(5)(i) - f.at(6)(i) + f.at(7)(i) - f.at(8)(i)
+							- f.at(9)(i) + f.at(10)(i) + f.at(11)(i)
+							- f.at(12)(i) - f.at(13)(i) + f.at(14)(i));
+			ux = velocities.at(0)(i) / scaling;
+			uy = velocities.at(1)(i) / scaling;
+			uz = velocities.at(2)(i) / scaling;
+		}
+
+		T = f.at(1)(i) + f.at(2)(i) + f.at(3)(i) + f.at(4)(i) + f.at(5)(i)
+				+ f.at(6)(i) + 3 * f.at(7)(i) + 3 * f.at(8)(i) + 3 * f.at(9)(i)
+				+ 3 * f.at(10)(i) + 3 * f.at(11)(i) + 3 * f.at(12)(i)
+				+ 3 * f.at(13)(i) + 3 * f.at(14)(i);
+		T /= rho;
+
+		//calculate the normal stress difference at unit density (N)
+		N_xz = f.at(1)(i) + f.at(2)(i) - f.at(5)(i) - f.at(6)(i);
+		N_xz /= rho;
+
+		N_yz = f.at(3)(i) + f.at(4)(i) - f.at(5)(i) - f.at(6)(i);
+		N_yz /= rho;
+
+		//calculate the off-diagonal component of the pressure tensor at unit density
+		Pi_xy = f.at(7)(i) + f.at(8)(i) + f.at(9)(i) + f.at(10)(i) - f.at(11)(i)
+				- f.at(12)(i) - f.at(13)(i) - f.at(14)(i);
+		Pi_xy /= rho;
+
+		Pi_xz = f.at(7)(i) + f.at(8)(i) - f.at(9)(i) - f.at(10)(i) + f.at(11)(i)
+				+ f.at(12)(i) - f.at(13)(i) - f.at(14)(i);
+		Pi_xz /= rho;
+
+		Pi_yz = f.at(7)(i) + f.at(8)(i) - f.at(9)(i) - f.at(10)(i) - f.at(11)(i)
+				- f.at(12)(i) + f.at(13)(i) + f.at(14)(i);
+		Pi_yz /= rho;
+
+		//calculate moments of third order
+		Q_xxy = f.at(7)(i) - f.at(8)(i) + f.at(9)(i) - f.at(10)(i) - f.at(11)(i)
+				+ f.at(12)(i) - f.at(13)(i) + f.at(14)(i);
+		Q_xxy /= rho;
+
+		Q_xxz = f.at(7)(i) - f.at(8)(i) - f.at(9)(i) + f.at(10)(i) + f.at(11)(i)
+				- f.at(12)(i) - f.at(13)(i) + f.at(14)(i);
+		Q_xxz /= rho;
+
+		Q_xzz = f.at(7)(i) - f.at(8)(i) + f.at(9)(i) - f.at(10)(i) + f.at(11)(i)
+				- f.at(12)(i) + f.at(13)(i) - f.at(14)(i);
+		Q_xzz /= rho;
+
+		Q_xyy = f.at(7)(i) - f.at(8)(i) + f.at(9)(i) - f.at(10)(i) + f.at(11)(i)
+				- f.at(12)(i) + f.at(13)(i) - f.at(14)(i);
+		Q_xyy /= rho;
+
+		Q_xyz = f.at(7)(i) - f.at(8)(i) - f.at(9)(i) + f.at(10)(i) - f.at(11)(i)
+				+ f.at(12)(i) + f.at(13)(i) - f.at(14)(i);
+		Q_xyz /= rho;
+
+		// calculate moments of forth order
+		A = f.at(7)(i) + f.at(8)(i) + f.at(9)(i) + f.at(10)(i) + f.at(11)(i)
+				+ f.at(12)(i) + f.at(13)(i) + f.at(14)(i);
+		A = A / rho;
+
+		// kinematic part vector k
+		k.at(0) = rho;
+		k.at(1) = rho / 6 * (3 * ux);
+		k.at(2) = rho / 6 * (3 * -ux);
+		k.at(3) = rho / 6 * (3 * uy);
+		k.at(4) = rho / 6 * (3 * -uy);
+		k.at(5) = rho / 6 * (3 * uz);
+		k.at(6) = rho / 6 * (3 * -uz);
+		k.at(7) = 0;
+		k.at(8) = 0;
+		k.at(9) = 0;
+		k.at(10) = 0;
+		k.at(11) = 0;
+		k.at(12) = 0;
+		k.at(13) = 0;
+		k.at(14) = 0;
+
+		// shear part vector s
+		s.at(0) = rho * -T;
+		s.at(1) = 1. / 6. * rho * (2 * N_xz - N_yz + T);
+		s.at(2) = s.at(1);
+		s.at(3) = 1. / 6. * rho * (-N_xz + 2 * N_yz + T);
+		s.at(4) = s.at(3);
+		s.at(5) = 1. / 6. * rho * (-N_xz - N_yz + T);
+		s.at(6) = s.at(5);
+		s.at(7) = 1. / 8. * rho * Q_xyz;
+		s.at(8) = -s.at(7);
+		s.at(9) = -s.at(7);
+		s.at(10) = s.at(7);
+		s.at(11) = -s.at(7);
+		s.at(12) = s.at(7);
+		s.at(13) = s.at(7);
+		s.at(14) = -s.at(7);
+
+		// higher order part vector h
+		h.at(0) = 2. * A * rho;
+		h.at(1) = 1. / 6. * rho * 3 * (-Q_xyy - A);
+		h.at(2) = 1. / 6. * rho * 3 * (Q_xyy - A);
+		h.at(3) = 1. / 6. * rho * 3 * (-Q_xxy - A);
+		h.at(4) = 1. / 6. * rho * 3 * (Q_xxy - A);
+		h.at(5) = 1. / 6. * rho * 3 * (-Q_xxz - A);
+		h.at(6) = 1. / 6. * rho * 3 * (Q_xxz - A);
+		h.at(7) = 1. / 8. * rho
+				* (Q_xzz + Q_xxy + Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
+		h.at(8) = 1. / 8. * rho
+				* (-Q_xzz - Q_xxy - Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
+
+		h.at(9) = 1. / 8. * rho
+				* (1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + 1 * 1 * Pi_xy
+						+ 1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
+		h.at(10) = 1. / 8. * rho
+				* (-1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + -1 * -1 * Pi_xy
+						+ -1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
+		h.at(11) = 1. / 8. * rho
+				* (1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + 1 * -1 * Pi_xy
+						+ 1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
+		h.at(12) = 1. / 8. * rho
+				* (-1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + -1 * 1 * Pi_xy
+						+ -1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
+		h.at(13) = 1. / 8. * rho
+				* (1 * Q_xzz + -1 * Q_xxy + -1 * Q_xxz + 1 * -1 * Pi_xy
+						+ 1 * -1 * Pi_xz + -1 * -1 * Pi_yz + A);
+
+		h.at(14) = 1. / 8. * rho
+				* (-1 * Q_xzz + 1 * Q_xxy + 1 * Q_xxz + -1 * 1 * Pi_xy
+						+ -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);
+
+		// calculate equilibrium distribution
+		scalar_product = ux * ux + uy * uy + uz * uz;
+		uSquareTerm = -scalar_product / (2 * cs2);
+		// direction 0
+		weighting = 2. / 9. * rho;
+		feq.at(0) = weighting * (1 + uSquareTerm);
+		// directions 1-6 (The mixed term is (e_i *u)^2 / (2c_s^4)
+		weighting = 1. / 9. * rho;
+		mixedTerm = prefactor * (velocities.at(0)(i));
+		feq.at(1) = weighting
+				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+		feq.at(2) = weighting
+				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+		mixedTerm = prefactor * ((velocities.at(1)(i)));
+		feq.at(3) = weighting
+				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+		feq.at(4) = weighting
+				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+		mixedTerm = prefactor * ((velocities.at(2)(i)));
+		feq.at(5) = weighting
+				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+		feq.at(6) = weighting
+				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+		// directions 7-18
+		weighting = 1. / 72. * rho;
+		mixedTerm = prefactor
+				* ((velocities.at(0)(i)) + (velocities.at(1)(i))
+						+ (velocities.at(2)(i)));
+		feq.at(7) = weighting
+				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+		feq.at(8) = weighting
+				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+		mixedTerm = prefactor
+				* ((velocities.at(0)(i)) + (velocities.at(1)(i))
+						- (velocities.at(2)(i)));
+		feq.at(9) = weighting
+				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+		feq.at(10) = weighting
+				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+		mixedTerm = prefactor
+				* ((velocities.at(0)(i)) - (velocities.at(1)(i))
+						+ (velocities.at(2)(i)));
+		feq.at(11) = weighting
+				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+		feq.at(12) = weighting
+				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+		mixedTerm = prefactor
+				* ((velocities.at(0)(i)) - (velocities.at(1)(i))
+						- (velocities.at(2)(i)));
+		feq.at(13) = weighting
+				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
+		feq.at(14) = weighting
+				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+
+		// calculate all moments for the equilibrium distribution function again
+
+		//calculate the trace of the pressure tensor at unit density (T)
+		T = feq.at(1) + feq.at(2) + feq.at(3) + feq.at(4) + feq.at(5)
+				+ feq.at(6) + 3 * feq.at(7) + 3 * feq.at(8) + 3 * feq.at(9)
+				+ 3 * feq.at(10) + 3 * feq.at(11) + 3 * feq.at(12)
+				+ 3 * feq.at(13) + 3 * feq.at(14);
+		T /= rho;
+
+		//calculate the normal stress difference at unit density (N)
+		N_xz = feq.at(1) + feq.at(2) - feq.at(5) - feq.at(6);
+		N_xz /= rho;
+
+		N_yz = feq.at(3) + feq.at(4) - feq.at(5) - feq.at(6);
+		N_yz /= rho;
+
+		//calculate the off-diagonal component of the pressure tensor at unit density
+		Pi_xy = feq.at(7) + feq.at(8) + feq.at(9) + feq.at(10) - feq.at(11)
+				- feq.at(12) - feq.at(13) - feq.at(14);
+		Pi_xy /= rho;
+
+		Pi_xz = feq.at(7) + feq.at(8) - feq.at(9) - feq.at(10) + feq.at(11)
+				+ feq.at(12) - feq.at(13) - feq.at(14);
+		Pi_xz /= rho;
+
+		Pi_yz = feq.at(7) + feq.at(8) - feq.at(9) - feq.at(10) - feq.at(11)
+				- feq.at(12) + feq.at(13) + feq.at(14);
+		Pi_yz /= rho;
+
+		//calculate moments of third order
+		Q_xxy = feq.at(7) - feq.at(8) + feq.at(9) - feq.at(10) - feq.at(11)
+				+ feq.at(12) - feq.at(13) + feq.at(14);
+		Q_xxy /= rho;
+
+		Q_xxz = feq.at(7) - feq.at(8) - feq.at(9) + feq.at(10) + feq.at(11)
+				- feq.at(12) - feq.at(13) + feq.at(14);
+		Q_xxz /= rho;
+
+		Q_xzz = feq.at(7) - feq.at(8) + feq.at(9) - feq.at(10) + feq.at(11)
+				- feq.at(12) + feq.at(13) - feq.at(14);
+		Q_xzz /= rho;
+
+		Q_xyy = feq.at(7) - feq.at(8) + feq.at(9) - feq.at(10) + feq.at(11)
+				- feq.at(12) + feq.at(13) - feq.at(14);
+		Q_xyy /= rho;
+
+		Q_xyz = feq.at(7) - feq.at(8) - feq.at(9) + feq.at(10) - feq.at(11)
+				+ feq.at(12) + feq.at(13) - feq.at(14);
+		Q_xyz /= rho;
+
+		A = feq.at(7) + feq.at(8) + feq.at(9) + feq.at(10) + feq.at(11)
+				+ feq.at(12) + feq.at(13) + feq.at(14);
+		A = A / rho;
+
+		// calculate shear equilibrium
+		seq.at(0) = rho * -T;
+		seq.at(1) = 1. / 6. * rho * (2 * N_xz - N_yz + T);
+		seq.at(2) = seq.at(1);
+		seq.at(3) = 1. / 6. * rho * (-N_xz + 2 * N_yz + T);
+		seq.at(4) = seq.at(3);
+		seq.at(5) = 1. / 6. * rho * (-N_xz - N_yz + T);
+		seq.at(6) = seq.at(5);
+		seq.at(7) = 1. / 8. * rho * Q_xyz;
+		seq.at(8) = -seq.at(7);
+		seq.at(9) = -seq.at(7);
+		seq.at(10) = seq.at(7);
+		seq.at(11) = -seq.at(7);
+		seq.at(12) = seq.at(7);
+		seq.at(13) = seq.at(7);
+		seq.at(14) = -seq.at(7);
+
+		// calculate higher order equilibrium
+		heq.at(0) = 2. * A * rho;
+		heq.at(1) = 1. / 6. * rho * 3 * (-Q_xyy - A);
+		heq.at(2) = 1. / 6. * rho * 3 * (Q_xyy - A);
+		heq.at(3) = 1. / 6. * rho * 3 * (-Q_xxy - A);
+		heq.at(4) = 1. / 6. * rho * 3 * (Q_xxy - A);
+		heq.at(5) = 1. / 6. * rho * 3 * (-Q_xxz - A);
+		heq.at(6) = 1. / 6. * rho * 3 * (Q_xxz - A);
+		heq.at(7) = 1. / 8. * rho
+				* (Q_xzz + Q_xxy + Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
+		heq.at(8) = 1. / 8. * rho
+				* (-Q_xzz - Q_xxy - Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
+
+		heq.at(9) = 1. / 8. * rho
+				* (1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + 1 * 1 * Pi_xy
+						+ 1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
+		heq.at(10) = 1. / 8. * rho
+				* (-1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + -1 * -1 * Pi_xy
+						+ -1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
+		heq.at(11) = 1. / 8. * rho
+				* (1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + 1 * -1 * Pi_xy
+						+ 1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
+		heq.at(12) = 1. / 8. * rho
+				* (-1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + -1 * 1 * Pi_xy
+						+ -1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
+		heq.at(13) = 1. / 8. * rho
+				* (1 * Q_xzz + -1 * Q_xxy + -1 * Q_xxz + 1 * -1 * Pi_xy
+						+ 1 * -1 * Pi_xz + -1 * -1 * Pi_yz + A);
+
+		heq.at(14) = 1. / 8. * rho
+				* (-1 * Q_xzz + 1 * Q_xxy + 1 * Q_xxz + -1 * 1 * Pi_xy
+						+ -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);
+
+		// needed expressions for the calculation of gamma
+		delta_s.at(0) = s.at(0) - seq.at(0);
+		delta_s.at(1) = s.at(1) - seq.at(1);
+		delta_s.at(2) = s.at(2) - seq.at(2);
+		delta_s.at(3) = s.at(3) - seq.at(3);
+		delta_s.at(4) = s.at(4) - seq.at(4);
+		delta_s.at(5) = s.at(5) - seq.at(5);
+		delta_s.at(6) = s.at(6) - seq.at(6);
+		delta_s.at(7) = s.at(7) - seq.at(7);
+		delta_s.at(8) = s.at(8) - seq.at(8);
+		delta_s.at(9) = s.at(9) - seq.at(9);
+		delta_s.at(10) = s.at(10) - seq.at(10);
+		delta_s.at(11) = s.at(11) - seq.at(11);
+		delta_s.at(12) = s.at(12) - seq.at(12);
+		delta_s.at(13) = s.at(13) - seq.at(13);
+		delta_s.at(14) = s.at(14) - seq.at(14);
+
+		delta_h.at(0) = h.at(0) - heq.at(0);
+		delta_h.at(1) = h.at(1) - heq.at(1);
+		delta_h.at(2) = h.at(2) - heq.at(2);
+		delta_h.at(3) = h.at(3) - heq.at(3);
+		delta_h.at(4) = h.at(4) - heq.at(4);
+		delta_h.at(5) = h.at(5) - heq.at(5);
+		delta_h.at(6) = h.at(6) - heq.at(6);
+		delta_h.at(7) = h.at(7) - heq.at(7);
+		delta_h.at(8) = h.at(8) - heq.at(8);
+		delta_h.at(9) = h.at(9) - heq.at(9);
+		delta_h.at(10) = h.at(10) - heq.at(10);
+		delta_h.at(11) = h.at(11) - heq.at(11);
+		delta_h.at(12) = h.at(12) - heq.at(12);
+		delta_h.at(13) = h.at(13) - heq.at(13);
+		delta_h.at(14) = h.at(14) - heq.at(14);
+
+		delta_seq.at(0) = delta_s.at(0) * delta_h.at(0) / feq.at(0);
+		delta_seq.at(1) = delta_s.at(1) * delta_h.at(1) / feq.at(1);
+		delta_seq.at(2) = delta_s.at(2) * delta_h.at(2) / feq.at(2);
+		delta_seq.at(3) = delta_s.at(3) * delta_h.at(3) / feq.at(3);
+		delta_seq.at(4) = delta_s.at(4) * delta_h.at(4) / feq.at(4);
+		delta_seq.at(5) = delta_s.at(5) * delta_h.at(5) / feq.at(5);
+		delta_seq.at(6) = delta_s.at(6) * delta_h.at(6) / feq.at(6);
+		delta_seq.at(7) = delta_s.at(7) * delta_h.at(7) / feq.at(7);
+		delta_seq.at(8) = delta_s.at(8) * delta_h.at(8) / feq.at(8);
+		delta_seq.at(9) = delta_s.at(9) * delta_h.at(9) / feq.at(9);
+		delta_seq.at(10) = delta_s.at(10) * delta_h.at(10) / feq.at(10);
+		delta_seq.at(11) = delta_s.at(11) * delta_h.at(11) / feq.at(11);
+		delta_seq.at(12) = delta_s.at(12) * delta_h.at(12) / feq.at(12);
+		delta_seq.at(13) = delta_s.at(13) * delta_h.at(13) / feq.at(13);
+		delta_seq.at(14) = delta_s.at(14) * delta_h.at(14) / feq.at(14);
+
+		delta_heq.at(0) = delta_h.at(0) * delta_h.at(0) / feq.at(0);
+		delta_heq.at(1) = delta_h.at(1) * delta_h.at(1) / feq.at(1);
+		delta_heq.at(2) = delta_h.at(2) * delta_h.at(2) / feq.at(2);
+		delta_heq.at(3) = delta_h.at(3) * delta_h.at(3) / feq.at(3);
+		delta_heq.at(4) = delta_h.at(4) * delta_h.at(4) / feq.at(4);
+		delta_heq.at(5) = delta_h.at(5) * delta_h.at(5) / feq.at(5);
+		delta_heq.at(6) = delta_h.at(6) * delta_h.at(6) / feq.at(6);
+		delta_heq.at(7) = delta_h.at(7) * delta_h.at(7) / feq.at(7);
+		delta_heq.at(8) = delta_h.at(8) * delta_h.at(8) / feq.at(8);
+		delta_heq.at(9) = delta_h.at(9) * delta_h.at(9) / feq.at(9);
+		delta_heq.at(10) = delta_h.at(10) * delta_h.at(10) / feq.at(10);
+		delta_heq.at(11) = delta_h.at(11) * delta_h.at(11) / feq.at(11);
+		delta_heq.at(12) = delta_h.at(12) * delta_h.at(12) / feq.at(12);
+		delta_heq.at(13) = delta_h.at(13) * delta_h.at(13) / feq.at(13);
+		delta_heq.at(14) = delta_h.at(14) * delta_h.at(14) / feq.at(14);
+
+		// sum of all entropic scalar products of s
+		sum_s = delta_seq.at(0) + delta_seq.at(1) + delta_seq.at(2)
+				+ delta_seq.at(3) + delta_seq.at(4) + delta_seq.at(5)
+				+ delta_seq.at(6) + delta_seq.at(7) + delta_seq.at(8)
+				+ delta_seq.at(9) + delta_seq.at(10) + delta_seq.at(11)
+				+ delta_seq.at(12) + delta_seq.at(13) + delta_seq.at(14);
+
+		// sum of all entropic scalar products of h
+		sum_h = delta_heq.at(0) + delta_heq.at(1) + delta_heq.at(2)
+				+ delta_heq.at(3) + delta_heq.at(4) + delta_heq.at(5)
+				+ delta_heq.at(6) + delta_heq.at(7) + delta_heq.at(8)
+				+ delta_heq.at(9) + delta_heq.at(10) + delta_heq.at(11)
+				+ delta_heq.at(12) + delta_heq.at(13) + delta_heq.at(14);
+
+		// relaxation parameter (2*beta = omega of BGK)
+		double beta = 1. / (getRelaxationParameter() + 0.5) / 2;
+
+		// stabilizer of KBC model
+		double gamma = 1. / beta - (2 - 1. / beta) * sum_s / sum_h;
+
+		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
+		if (sum_h < 1e-20) {
+			gamma = 2;
+		}
+
+		// calculate new f
+		f.at(0)(i) = f.at(0)(i)
+				- beta * (2 * delta_s.at(0) + gamma * delta_h.at(0));
+		f.at(1)(i) = f.at(1)(i)
+				- beta * (2 * delta_s.at(1) + gamma * delta_h.at(1));
+		f.at(2)(i) = f.at(2)(i)
+				- beta * (2 * delta_s.at(2) + gamma * delta_h.at(2));
+		f.at(3)(i) = f.at(3)(i)
+				- beta * (2 * delta_s.at(3) + gamma * delta_h.at(3));
+		f.at(4)(i) = f.at(4)(i)
+				- beta * (2 * delta_s.at(4) + gamma * delta_h.at(4));
+		f.at(5)(i) = f.at(5)(i)
+				- beta * (2 * delta_s.at(5) + gamma * delta_h.at(5));
+		f.at(6)(i) = f.at(6)(i)
+				- beta * (2 * delta_s.at(6) + gamma * delta_h.at(6));
+		f.at(7)(i) = f.at(7)(i)
+				- beta * (2 * delta_s.at(7) + gamma * delta_h.at(7));
+		f.at(8)(i) = f.at(8)(i)
+				- beta * (2 * delta_s.at(8) + gamma * delta_h.at(8));
+		f.at(9)(i) = f.at(9)(i)
+				- beta * (2 * delta_s.at(9) + gamma * delta_h.at(9));
+		f.at(10)(i) = f.at(10)(i)
+				- beta * (2 * delta_s.at(10) + gamma * delta_h.at(10));
+		f.at(11)(i) = f.at(11)(i)
+				- beta * (2 * delta_s.at(11) + gamma * delta_h.at(11));
+		f.at(12)(i) = f.at(12)(i)
+				- beta * (2 * delta_s.at(12) + gamma * delta_h.at(12));
+		f.at(13)(i) = f.at(13)(i)
+				- beta * (2 * delta_s.at(13) + gamma * delta_h.at(13));
+		f.at(14)(i) = f.at(14)(i)
+				- beta * (2 * delta_s.at(14) + gamma * delta_h.at(14));
+
+	}
 }
 }
 /* namespace natrium */
