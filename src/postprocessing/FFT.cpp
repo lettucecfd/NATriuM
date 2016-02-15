@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <assert.h>
 #include "math.h"
 
 #include "fftw3.h"
@@ -17,18 +18,22 @@ using namespace std;
 
 int main(int argc, char** argv) {
 	cout << "Fourier transform with fftw3" << endl;
-	cout << "Usage: fft <dim> <number of points in each direction> <filename_in> <filename_out>" << endl;
+	cout << "Usage: fft <dim> <number of points in x direction> <.. in y> <.. in z> <filename_in> <filename_out>" << endl;
+	int Ns[3];
 	size_t dim = atoi(argv[1]);
-	size_t N = atoi(argv[2]);
-	string filename_in(argv[3]);
-	string filename_out(argv[4]);
+	Ns[0] = atoi(argv[2]);
+	Ns[1] = atoi(argv[3]);
+	Ns[2] = atoi(argv[4]);
+	string filename_in(argv[5]);
+	string filename_out(argv[6]);
 
+	if (dim == 2){
+		assert ( Ns[2] == 1);
+	}
 	// allocate
-	size_t array_size = pow(N,dim);
+	size_t array_size = Ns[0]*Ns[1]*Ns[2];
 	fftw_complex* in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * array_size);
 	fftw_complex* out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * array_size);
-	int Ns[dim];
-	std::fill_n(Ns, dim, N);
 	fftw_plan p = fftw_plan_dft(dim, Ns, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
 	// initialize input (has to be done after creating the plan)
@@ -45,7 +50,7 @@ int main(int argc, char** argv) {
 		  if ( i>=array_size ) {
 			  break;
 		  }
-	      cout << stod(line) << '\n';
+	      // cout << stod(line) << '\n';
 	      in[i][0] =  stod(line); //Re
 	      in[i][1] =  0.00000000; //Im
 	      i++;
@@ -64,8 +69,9 @@ int main(int argc, char** argv) {
 	cout << "Write output to " << filename_out << endl;
 	std::ofstream outfile;
 	outfile.open(filename_out.c_str(), ios::out);
+	outfile << "#kx" << " " << "ky" << " " << "kz" << " " << "Re"  << " " <<  "Im" << endl;
 	for (size_t i = 0; i < array_size; i++){
-		outfile << i % N << " " << i / N << " " << out[i][0]  << " " <<  out[i][1] << endl;
+		outfile << i / Ns[2] / Ns[1] << " " << (i / Ns[2]) % Ns[1]<< " " <<  i%Ns[2] << " " << out[i][0]  << " " <<  out[i][1] << endl;
 	}
 
 	// clean up
