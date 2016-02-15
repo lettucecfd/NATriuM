@@ -14,23 +14,23 @@ Singleton that encapsulates the MPI init and finalize calls so that they are cal
 \hyperlink{classnatrium_1_1MPIGuard_a1e07fafea3f7724d0d2dd9c106e1a44b}{MPIGuard} (int \&argc, char $\ast$$\ast$\&argv)}
 \label{classnatrium_1_1MPIGuard_a1e07fafea3f7724d0d2dd9c106e1a44b}
 
-\begin{DoxyCompactList}\small\item\em Constructor (should normally be private, but is not allowed by make\_\-shared). \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1MPIGuard_ab999564027da999d5038c67a4a313d78}{
-shared\_\-ptr$<$ dealii::Utilities::MPI::MPI\_\-InitFinalize $>$ \hyperlink{classnatrium_1_1MPIGuard_ab999564027da999d5038c67a4a313d78}{getMPI\_\-InitFinalize} ()}
-\label{classnatrium_1_1MPIGuard_ab999564027da999d5038c67a4a313d78}
+\begin{DoxyCompactList}\small\item\em Constructor (should normally be private, but is not allowed by boost::make\_\-shared). \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1MPIGuard_a4df8a28efa88e97a77ee0dc9a74a1a17}{
+boost::shared\_\-ptr$<$ dealii::Utilities::MPI::MPI\_\-InitFinalize $>$ \hyperlink{classnatrium_1_1MPIGuard_a4df8a28efa88e97a77ee0dc9a74a1a17}{getMPI\_\-InitFinalize} ()}
+\label{classnatrium_1_1MPIGuard_a4df8a28efa88e97a77ee0dc9a74a1a17}
 
 \begin{DoxyCompactList}\small\item\em return dealii's MPI\_\-InitFinalize object \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1MPIGuard_a2633a4f3fdd0fb9959dc91ffca5f5232}{
-static shared\_\-ptr$<$ \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard} $>$ \hyperlink{classnatrium_1_1MPIGuard_a2633a4f3fdd0fb9959dc91ffca5f5232}{getInstance} (int \&argc, char $\ast$$\ast$\&argv)}
-\label{classnatrium_1_1MPIGuard_a2633a4f3fdd0fb9959dc91ffca5f5232}
+\hypertarget{classnatrium_1_1MPIGuard_a1ff461f2c920911f2ac67b4ddc57ecdc}{
+static boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard} $>$ \hyperlink{classnatrium_1_1MPIGuard_a1ff461f2c920911f2ac67b4ddc57ecdc}{getInstance} (int \&argc, char $\ast$$\ast$\&argv)}
+\label{classnatrium_1_1MPIGuard_a1ff461f2c920911f2ac67b4ddc57ecdc}
 
 \begin{DoxyCompactList}\small\item\em Static constructor.  Command line argument. Can be used to determine the number of parallel processes. See documentation of dealii::Utilities::MPI::MPI\_\-InitFinalize(argc, argv) for details.  Command line argument.Can be used to determine the number of parallel processes. See documentation of dealii::Utilities::MPI::MPI\_\-InitFinalize(argc, argv) for details. \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1MPIGuard_ab6593f7b33cd94f32dd4c6afa1dae6fc}{
-static shared\_\-ptr$<$ \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard} $>$ {\bfseries getInstance} ()}
-\label{classnatrium_1_1MPIGuard_ab6593f7b33cd94f32dd4c6afa1dae6fc}
+\hypertarget{classnatrium_1_1MPIGuard_a5896abef9f379f89b746e71c4d3e68aa}{
+static boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard} $>$ {\bfseries getInstance} ()}
+\label{classnatrium_1_1MPIGuard_a5896abef9f379f89b746e71c4d3e68aa}
 
 \end{DoxyCompactItemize}
 

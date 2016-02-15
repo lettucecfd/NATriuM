@@ -54,11 +54,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td colspan="2"><h2>Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTools_1_1point__sorter.html">natrium::BoundaryTools::point_sorter</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function to compare points as map keys; the points with smaller x components fall before others. in case of equal x, the points with smaller y components will be placed first.  <a href="classnatrium_1_1BoundaryTools_1_1point__sorter.html#_details">More...</a><br/></td></tr>
+<tr><td colspan="2"><h2>Enumerations</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>DistributionCouplingAtBoundary</b> { <b>COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS</b>, 
+<b>COUPLE_ALL_DISTRIBUTIONS</b>
+ }</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>enum to describe couplings at the boundary </p>
+<br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>PointCouplingAtBoundary</b> { <b>COUPLE_ONLY_SINGLE_POINTS</b>, 
+<b>COUPLE_WHOLE_FACE</b>
+ }</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>enum to describe couplings at the boundary </p>
+<br/></td></tr>
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1BoundaryTools.html#a64669bd0ddcea4f0eb21121beebcf76f">natrium::BoundaryTools::checkParallelLines</a> (const dealii::Point&lt; 2 &gt; &amp;beginLine1, const dealii::Point&lt; 2 &gt; &amp;endLine1, dealii::Point&lt; 2 &gt; &amp;beginLine2, dealii::Point&lt; 2 &gt; &amp;endLine2, std::string &amp;errorMessage)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check if two lines in a 2D plane are parallel and not equal to each other. If they are antiparallel, swap begin and end of the second line.  <a href="#a64669bd0ddcea4f0eb21121beebcf76f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1BoundaryTools.html#a4e8c575691fa9a235b59807cc3d2686a">natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator</a> (size_t boundaryIndicator1, size_t boundaryIndicator2, shared_ptr&lt; Mesh&lt; 2 &gt; &gt; triangulation, dealii::Point&lt; 2 &gt; &amp;beginLine1, dealii::Point&lt; 2 &gt; &amp;endLine1, dealii::Point&lt; 2 &gt; &amp;beginLine2, dealii::Point&lt; 2 &gt; &amp;endLine2, std::string &amp;errorMessage)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the positions of the lines that define interfaces from the defining <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> indicators.  <a href="#a4e8c575691fa9a235b59807cc3d2686a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1BoundaryTools.html#a4a6b2ff032061b8ebac2955d09630240">natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator</a> (size_t boundaryIndicator1, size_t boundaryIndicator2, boost::shared_ptr&lt; Mesh&lt; 2 &gt; &gt; triangulation, dealii::Point&lt; 2 &gt; &amp;beginLine1, dealii::Point&lt; 2 &gt; &amp;endLine1, dealii::Point&lt; 2 &gt; &amp;beginLine2, dealii::Point&lt; 2 &gt; &amp;endLine2, std::string &amp;errorMessage)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the positions of the lines that define interfaces from the defining <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> indicators.  <a href="#a4a6b2ff032061b8ebac2955d09630240"></a><br/></td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1BoundaryTools.html#a89cbacd10c5ed2e0d49eb2c72b57fc4b">natrium::BoundaryTools::CoupleDoFsAtBoundary</a> (dealii::TrilinosWrappers::SparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; dim &gt; &amp;doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This functions adds elements to the sparsity pattern to couple different distribution functions at the boundary.  <a href="#a89cbacd10c5ed2e0d49eb2c72b57fc4b"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <dl class="date"><dt><b>Date:</b></dt><dd>14.11.2013 </dd></dl>
@@ -78,7 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -62,29 +62,31 @@ Inheritance diagram for natrium::Benchmark&lt; dim &gt;:</div>
 <p><a href="classnatrium_1_1Benchmark-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afad7bc0117bd13bf116d8b00518b774e"></a><!-- doxytag: member="natrium::Benchmark::Benchmark" ref="afad7bc0117bd13bf116d8b00518b774e" args="(shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Benchmark.html#afad7bc0117bd13bf116d8b00518b774e">Benchmark</a> (shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae6a264a86ce3a7ca25cb2685e71d6075"></a><!-- doxytag: member="natrium::Benchmark::Benchmark" ref="ae6a264a86ce3a7ca25cb2685e71d6075" args="(boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Benchmark.html#ae6a264a86ce3a7ca25cb2685e71d6075">Benchmark</a> (boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9560e49a097a369ec972b72fb2873a2e"></a><!-- doxytag: member="natrium::Benchmark::~Benchmark" ref="a9560e49a097a369ec972b72fb2873a2e" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Benchmark.html#a9560e49a097a369ec972b72fb2873a2e">~Benchmark</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21e67666e47f219a441bb80697e23b63"></a><!-- doxytag: member="natrium::Benchmark::getAnalyticRhoFunction" ref="a21e67666e47f219a441bb80697e23b63" args="(double time) const " -->
-const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac3dcec8fee0573c9a9a2a951cc4e5cab"></a><!-- doxytag: member="natrium::Benchmark::getAnalyticRhoFunction" ref="ac3dcec8fee0573c9a9a2a951cc4e5cab" args="(double time) const " -->
+const boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::Function&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getAnalyticRhoFunction</b> (double time) const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a398e571355ecd6a95c7f7d40cf19c783"></a><!-- doxytag: member="natrium::Benchmark::getAnalyticUFunction" ref="a398e571355ecd6a95c7f7d40cf19c783" args="(double time) const " -->
-const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13f863e6c53b1872b5ce622a13f3029f"></a><!-- doxytag: member="natrium::Benchmark::getAnalyticUFunction" ref="a13f863e6c53b1872b5ce622a13f3029f" args="(double time) const " -->
+const boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::Function&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getAnalyticUFunction</b> (double time) const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a720202a91c6777d3196415fe0c1f86ea"></a><!-- doxytag: member="natrium::Benchmark::getInitialRhoFunction" ref="a720202a91c6777d3196415fe0c1f86ea" args="() const " -->
-virtual const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0e6506ff88d1612a0277b6ceab77682d"></a><!-- doxytag: member="natrium::Benchmark::getInitialRhoFunction" ref="a0e6506ff88d1612a0277b6ceab77682d" args="() const " -->
+virtual const <br class="typebreak"/>
+boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::Function&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getInitialRhoFunction</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2b476e376bd1d87f754e0acdfdc1e0e"></a><!-- doxytag: member="natrium::Benchmark::getInitialUFunction" ref="ae2b476e376bd1d87f754e0acdfdc1e0e" args="() const " -->
-virtual const shared_ptr<br class="typebreak"/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41d01e18167c6381bc08363d4f26989b"></a><!-- doxytag: member="natrium::Benchmark::getInitialUFunction" ref="a41d01e18167c6381bc08363d4f26989b" args="() const " -->
+virtual const <br class="typebreak"/>
+boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::Function&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getInitialUFunction</b> () const </td></tr>
 <tr><td colspan="2"><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5232102078b3d709cf9c8a79be391ddf"></a><!-- doxytag: member="natrium::Benchmark::setAnalyticRho" ref="a5232102078b3d709cf9c8a79be391ddf" args="(shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; ana_rho)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAnalyticRho</b> (shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; ana_rho)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac61be28bab79a44b4ff32c20f6d92483"></a><!-- doxytag: member="natrium::Benchmark::setAnalyticU" ref="ac61be28bab79a44b4ff32c20f6d92483" args="(shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; ana_u)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAnalyticU</b> (shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; ana_u)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8fc5c100f71b53f4fce3e91729dc49c1"></a><!-- doxytag: member="natrium::Benchmark::setAnalyticRho" ref="a8fc5c100f71b53f4fce3e91729dc49c1" args="(boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; ana_rho)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAnalyticRho</b> (boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; ana_rho)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa57db8a63eca5066c0749ab66186d622"></a><!-- doxytag: member="natrium::Benchmark::setAnalyticU" ref="aa57db8a63eca5066c0749ab66186d622" args="(boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; ana_u)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAnalyticU</b> (boost::shared_ptr&lt; dealii::Function&lt; dim &gt; &gt; ana_u)</td></tr>
 </table>
 <h3>template&lt;size_t dim&gt;<br/>
  class natrium::Benchmark&lt; dim &gt;</h3>
@@ -107,7 +109,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setAnalyticU</b> (sha
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

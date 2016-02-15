@@ -67,7 +67,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00026"></a>00026 <span class="keyword">private</span>:
 <a name="l00027"></a>00027 
 <a name="l00028"></a>00028         <a class="code" href="classnatrium_1_1CFDSolver.html" title="The central class for the CFD simulation based on the DBE.">CFDSolver&lt;dim&gt;</a> * m_solver;
-<a name="l00029"></a>00029         shared_ptr&lt;std::fstream&gt; m_tableFile;
+<a name="l00029"></a>00029         boost::shared_ptr&lt;std::fstream&gt; m_tableFile;
 <a name="l00030"></a>00030         std::string m_filename;
 <a name="l00031"></a>00031         <span class="keyword">const</span> <span class="keywordtype">bool</span> m_outputOff;
 <a name="l00032"></a>00032 
@@ -98,11 +98,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00060"></a>00060                 <span class="keywordflow">if</span> (not m_outputOff) {
 <a name="l00061"></a>00061                         <span class="comment">// create file (if necessary)</span>
 <a name="l00062"></a>00062                         <span class="keywordflow">if</span> (m_solver-&gt;getIterationStart() &gt; 0) {
-<a name="l00063"></a>00063                                 m_tableFile = make_shared&lt;std::fstream&gt;(tableFileName,
+<a name="l00063"></a>00063                                 m_tableFile = boost::make_shared&lt;std::fstream&gt;(tableFileName,
 <a name="l00064"></a>00064                                                 std::fstream::out | std::fstream::app);
 <a name="l00065"></a>00065                         } <span class="keywordflow">else</span> {
 <a name="l00066"></a>00066                                 <span class="keywordflow">if</span> (is_MPI_rank_0()) {
-<a name="l00067"></a>00067                                         m_tableFile = make_shared&lt;std::fstream&gt;(tableFileName,
+<a name="l00067"></a>00067                                         m_tableFile = boost::make_shared&lt;std::fstream&gt;(tableFileName,
 <a name="l00068"></a>00068                                                         std::fstream::out);
 <a name="l00069"></a>00069                                 }
 <a name="l00070"></a>00070                                 printHeaderLine();
@@ -189,7 +189,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00153"></a>00153                 <span class="keywordflow">return</span> m_maxU;
 <a name="l00154"></a>00154         }
 <a name="l00155"></a>00155 
-<a name="l00156"></a>00156         shared_ptr&lt;std::fstream&gt; getTableFile()<span class="keyword"> const </span>{
+<a name="l00156"></a>00156         boost::shared_ptr&lt;std::fstream&gt; getTableFile()<span class="keyword"> const </span>{
 <a name="l00157"></a>00157                 <span class="keywordflow">return</span> m_tableFile;
 <a name="l00158"></a>00158         }
 <a name="l00159"></a>00159 
@@ -236,7 +236,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

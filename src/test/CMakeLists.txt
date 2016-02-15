@@ -6,13 +6,14 @@ file(   GLOB_RECURSE
         advection/*.cpp
         collision/*.cpp
         problemdescription/*.cpp
+        smoothing/*.cpp
         solver/*.cpp
         stencils/*.cpp
         timeintegration/*.cpp
         utilities/*.cpp
         )
  
-   
+    
 #
 # set variable TEST_TARGET (only used in this file)
 #

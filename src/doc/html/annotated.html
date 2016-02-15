@@ -104,14 +104,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1SinusoidalShear2D_1_1InitialVelocity.html">natrium::SinusoidalShear2D::InitialVelocity</a></td><td class="indexvalue">Class to describe the x-component of the analytic solution </td></tr>
   <tr><td class="indexkey"><a class="el" href="structnatrium_1_1InitMPI.html">natrium::InitMPI</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1LidDrivenCavity2D.html">natrium::LidDrivenCavity2D</a></td><td class="indexvalue">Description of a lid-driven cavity flow </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classnatrium_1_1LinearBoundary.html">natrium::LinearBoundary&lt; dim &gt;</a></td><td class="indexvalue">Abstract class to describe Linear boundary conditions. The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the boundary have to be defined (see Documentation of the constructors) </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classnatrium_1_1LinearBoundaryRhoU.html">natrium::LinearBoundaryRhoU&lt; dim &gt;</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1Logging.html">natrium::Logging</a></td><td class="indexvalue">This class is responsible for output streams to the command line and log file </td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1LubricationSine.html">natrium::LubricationSine</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1matrixAnalysis.html">natrium::matrixAnalysis&lt; dim &gt;</a></td><td class="indexvalue">Calculation of spectra and pseudospectra of streaming matrices </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classnatrium_1_1MinLeeBoundary.html">natrium::MinLeeBoundary&lt; dim &gt;</a></td><td class="indexvalue">The boundary described by Min and Lee. For outgoing particle distribution functions the fluxes are set to 0 For incoming particle distributions fluxes are set to </p>
-<p class="formulaDsp">
-<img class="formulaDsp" alt="\[ f_{\alpha} - f^{+}_{\alpha} = f_{\alpha} - f_{\alpha^{*}} - 2w_{\alpha} \rho_{0} (e_{\alpha}\cdot u_{b})/c^{2}_{s}\]" src="form_17.png"/>
-</p>
- </td></tr>
   <tr><td class="indexkey"><a class="el" href="classplb_1_1ModIncomprFlowParam.html">plb::ModIncomprFlowParam&lt; T &gt;</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1MPIGuard.html">natrium::MPIGuard</a></td><td class="indexvalue">Singleton that encapsulates the MPI init and finalize calls so that they are called at most once per run. This class wraps the function dealii::Utilities::MPI::MPI_InitFinalize(argc, argv) </td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1NATriuMException.html">natrium::NATriuMException</a></td><td class="indexvalue">Exception class for <a class="el" href="classnatrium_1_1CFDSolver.html" title="The central class for the CFD simulation based on the DBE.">CFDSolver</a> </td></tr>
@@ -155,6 +152,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="structnatrium_1_1IntegrationTestCases_1_1TestResult.html">natrium::IntegrationTestCases::TestResult</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1ThetaMethod.html">natrium::ThetaMethod&lt; MATRIX, VECTOR &gt;</a></td><td class="indexvalue">Implementation of the Theta method for time integration </td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1TimeIntegrator.html">natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;</a></td><td class="indexvalue">Abstract class for time integration (solution of ordinary differential equations (ODE)) </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classnatrium_1_1Timing.html">natrium::Timing</a></td><td class="indexvalue">Kind of a singleton for Runtime measurements </td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D_1_1UnsteadyInitialVelocity.html">natrium::UnsteadyPeriodicTestFlow2D::UnsteadyInitialVelocity</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html">natrium::UnsteadyPeriodicTestFlow2D</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classWallTestDomain2D.html">WallTestDomain2D</a></td><td class="indexvalue">Description of a simple Flow with wall boundaries (flow in square domain). The domain is [0,1]^2. The domain consists of 4 elements </td></tr>
@@ -174,7 +172,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

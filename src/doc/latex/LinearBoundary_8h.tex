@@ -1,0 +1,33 @@
+\hypertarget{LinearBoundary_8h}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundary.h File Reference}
+\label{LinearBoundary_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundary.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundary.h}}
+}
+
+
+Description of a boundary as described by Min and Lee.  
+{\ttfamily \#include $<$deal.II/lac/dynamic\_\-sparsity\_\-pattern.h$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/trilinos\_\-sparsity\_\-pattern.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/dofs/dof\_\-handler.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/function.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}Boundary.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}BoundaryTools.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1BoundaryDensity}{natrium::BoundaryDensity$<$ dim $>$}
+\item 
+class \hyperlink{classnatrium_1_1BoundaryVelocity}{natrium::BoundaryVelocity$<$ dim $>$}
+\item 
+class \hyperlink{classnatrium_1_1LinearBoundary}{natrium::LinearBoundary$<$ dim $>$}
+\begin{DoxyCompactList}\small\item\em Abstract class to describe Linear boundary conditions. The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the boundary have to be defined (see Documentation of the constructors). \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a boundary as described by Min and Lee. \begin{DoxyDate}{Date}
+26.03.2014 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}

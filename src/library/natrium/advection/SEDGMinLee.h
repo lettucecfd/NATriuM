@@ -245,15 +245,15 @@ private:
 	 */
 	double calcMagicNumber() const;
 
-	/** @short save matrices to files
-	 *  @param[in] directory directory to save the matrix files to
-	 */
-	void saveMatricesToFiles(const string& directory) const;
-
-	/** @short load matrices from files
-	 *  @param[in] directory directory to load the matrix files from
-	 */
-	void loadMatricesFromFiles(const string& directory);
+//	/** @short save matrices to files
+//	 *  @param[in] directory directory to save the matrix files to
+//	 */
+//	void saveMatricesToFiles(const string& directory) const;
+//
+//	/** @short load matrices from files
+//	 *  @param[in] directory directory to load the matrix files from
+//	 */
+//	void loadMatricesFromFiles(const string& directory);
 
 	/**
 	 * @short A function to write the status of the solver, mesh, etc at checkpoint time in order to prevent corrupt restarts of a simulation
@@ -349,6 +349,7 @@ public:
 		return m_facedof_to_q_index;
 	}
 
+
 	const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
@@ -365,7 +366,7 @@ public:
 		return m_quadrature;
 	}
 
-	size_t getOrderOfFiniteElement() const {
+	virtual size_t getOrderOfFiniteElement() const {
 		return m_orderOfFiniteElement;
 	}
 
@@ -377,15 +378,16 @@ public:
 		return m_systemVector;
 	}
 
-#ifdef WITH_TRILINOS
 	const dealii::IndexSet& getLocallyOwnedDofs() {
 		return m_locallyOwnedDofs;
 	}
 	const dealii::IndexSet& getLocallyRelevantDofs() {
 		return m_locallyRelevantDofs;
 	}
-#endif
 
+	virtual const vector<std::map<size_t, size_t> >& getQIndexToFacedof() const {
+		return m_q_index_to_facedof;
+	}
 };
 
 } /* namespace natrium */

@@ -75,8 +75,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00044"></a>00044         <span class="keyword">friend</span> <a class="code" href="classnatrium_1_1Logging.html" title="this class is responsible for output streams to the command line and log file">Logging</a>&amp; <a class="code" href="classnatrium_1_1Logging.html#a9339ce5458ee8cadf69734faf310c21b" title="friend function; is used to access the default logging instance; e.g. LOGGER().setLogFile(...">LOGGER</a>();
 <a name="l00045"></a>00045 <span class="keyword">private</span>:
 <a name="l00047"></a>00047         <span class="keywordtype">size_t</span> m_currentLevel;
-<a name="l00049"></a>00049         shared_ptr&lt;std::ofstream&gt; m_fileStream;
-<a name="l00051"></a>00051         <span class="keyword">static</span> shared_ptr&lt;Logging&gt; m_LOGGER;
+<a name="l00049"></a>00049         boost::shared_ptr&lt;std::ofstream&gt; m_fileStream;
+<a name="l00051"></a>00051         <span class="keyword">static</span> boost::shared_ptr&lt;Logging&gt; m_LOGGER;
 <a name="l00052"></a>00052 <span class="keyword">public</span>:
 <a name="l00056"></a><a class="code" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3">00056</a>         <a class="code" href="classnatrium_1_1Logging.html#a255455c6e8a6c109a8e7e905bdd57ea3" title="constructor">Logging</a>() {
 <a name="l00057"></a>00057                 m_currentLevel = 0;
@@ -105,7 +105,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00082"></a>00082                 <span class="keywordflow">if</span> (has_file()) {
 <a name="l00083"></a>00083                         detach();
 <a name="l00084"></a>00084                 }
-<a name="l00085"></a>00085                 m_fileStream = make_shared&lt;std::ofstream&gt;(logFile);
+<a name="l00085"></a>00085                 m_fileStream = boost::make_shared&lt;std::ofstream&gt;(logFile);
 <a name="l00086"></a>00086                 attach(*m_fileStream);
 <a name="l00087"></a>00087         }
 <a name="l00088"></a>00088 
@@ -160,7 +160,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

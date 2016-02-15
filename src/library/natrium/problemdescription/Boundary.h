@@ -38,6 +38,12 @@ public:
 	virtual bool isPeriodic() const {
 		return false;
 	}
+
+	/** @short is the boundary a dirichlet boundary ?
+	 */
+	virtual bool isLinear() const {
+		return false;
+	}
 };
 
 template<size_t dim>

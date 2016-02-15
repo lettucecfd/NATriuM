@@ -16,7 +16,7 @@ This class solves the linear advection equations by a scheme which is used, e.g.
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1SEDGMinLee_a6010ff397c7ea56751187084ad6e7ed0}{SEDGMinLee} (shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation, shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ boundaries, size\_\-t orderOfFiniteElement, shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil, string inputDirectory=\char`\"{}\char`\"{}, bool useCentralFlux=false)
+\hyperlink{classnatrium_1_1SEDGMinLee_a429930c197a9ab2a881ffc71aa0dd86b}{SEDGMinLee} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ boundaries, size\_\-t orderOfFiniteElement, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil, string inputDirectory=\char`\"{}\char`\"{}, bool useCentralFlux=false)
 \begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1SEDGMinLee_a6c55a31bc4cb0e314876af7251ad8ce3}{
 virtual \hyperlink{classnatrium_1_1SEDGMinLee_a6c55a31bc4cb0e314876af7251ad8ce3}{$\sim$SEDGMinLee} ()}
@@ -42,9 +42,9 @@ virtual void {\bfseries mapDoFsToSupportPoints} (std::map$<$ dealii::types::glob
 \label{classnatrium_1_1SEDGMinLee_ac1f5ecd80111566dd53804b6db2a1cb3}
 
 \item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a3ffd3d7bc5aae9dbb5a021d7e4913f65}{
-virtual const shared\_\-ptr$<$ dealii::DoFHandler$<$ dim $>$ $>$ \& {\bfseries getDoFHandler} () const }
-\label{classnatrium_1_1SEDGMinLee_a3ffd3d7bc5aae9dbb5a021d7e4913f65}
+\hypertarget{classnatrium_1_1SEDGMinLee_abd088667b6ff315c440d00cd0eb26840}{
+virtual const boost::shared\_\-ptr$<$ dealii::DoFHandler$<$ dim $>$ $>$ \& {\bfseries getDoFHandler} () const }
+\label{classnatrium_1_1SEDGMinLee_abd088667b6ff315c440d00cd0eb26840}
 
 \item 
 \hypertarget{classnatrium_1_1SEDGMinLee_a10acabaac20a992130e88fb9bd395d31}{
@@ -69,14 +69,14 @@ const vector$<$ std::map$<$ size\_\-t, size\_\-t $>$ $>$ \& {\bfseries getFacedo
 \label{classnatrium_1_1SEDGMinLee_a8b7d94c90ccfa5e341d854059d883f57}
 
 \item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a653928dc9f0dd3715389b28196cab7bb}{
-const shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim-\/1 $>$ $>$ \& {\bfseries getFaceQuadrature} () const }
-\label{classnatrium_1_1SEDGMinLee_a653928dc9f0dd3715389b28196cab7bb}
+\hypertarget{classnatrium_1_1SEDGMinLee_a42897893820c9d12e9fea6f5518e3447}{
+const boost::shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim-\/1 $>$ $>$ \& {\bfseries getFaceQuadrature} () const }
+\label{classnatrium_1_1SEDGMinLee_a42897893820c9d12e9fea6f5518e3447}
 
 \item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a7fd488e872e5cf9870be39f07a2dcd74}{
-virtual const shared\_\-ptr$<$ dealii::FE\_\-DGQArbitraryNodes$<$ dim $>$ $>$ \& {\bfseries getFe} () const }
-\label{classnatrium_1_1SEDGMinLee_a7fd488e872e5cf9870be39f07a2dcd74}
+\hypertarget{classnatrium_1_1SEDGMinLee_ab7cd0a95e74da6d4d16ab2d174b17458}{
+virtual const boost::shared\_\-ptr$<$ dealii::FE\_\-DGQArbitraryNodes$<$ dim $>$ $>$ \& {\bfseries getFe} () const }
+\label{classnatrium_1_1SEDGMinLee_ab7cd0a95e74da6d4d16ab2d174b17458}
 
 \item 
 \hypertarget{classnatrium_1_1SEDGMinLee_a5dac839ef4963af315dba5f201bd763c}{
@@ -84,9 +84,9 @@ virtual size\_\-t {\bfseries getNumberOfDoFsPerCell} () const }
 \label{classnatrium_1_1SEDGMinLee_a5dac839ef4963af315dba5f201bd763c}
 
 \item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a4db0d2b4c857962d5425f755be3daf13}{
-virtual const shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim $>$ $>$ \& {\bfseries getQuadrature} () const }
-\label{classnatrium_1_1SEDGMinLee_a4db0d2b4c857962d5425f755be3daf13}
+\hypertarget{classnatrium_1_1SEDGMinLee_ad36da36624c983cf84716d97442b1989}{
+virtual const boost::shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim $>$ $>$ \& {\bfseries getQuadrature} () const }
+\label{classnatrium_1_1SEDGMinLee_ad36da36624c983cf84716d97442b1989}
 
 \item 
 \hypertarget{classnatrium_1_1SEDGMinLee_a745a65de3ee72a250c0706e6c7fcc361}{
@@ -125,11 +125,11 @@ This class solves the linear advection equations by a scheme which is used, e.g.
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1SEDGMinLee_a6010ff397c7ea56751187084ad6e7ed0}{
+\hypertarget{classnatrium_1_1SEDGMinLee_a429930c197a9ab2a881ffc71aa0dd86b}{
 \index{natrium::SEDGMinLee@{natrium::SEDGMinLee}!SEDGMinLee@{SEDGMinLee}}
 \index{SEDGMinLee@{SEDGMinLee}!natrium::SEDGMinLee@{natrium::SEDGMinLee}}
-\subsubsection[{SEDGMinLee}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::SEDGMinLee}$<$ dim $>$::{\bf SEDGMinLee} (shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ {\em triangulation}, \/  shared\_\-ptr$<$ {\bf BoundaryCollection}$<$ dim $>$ $>$ {\em boundaries}, \/  size\_\-t {\em orderOfFiniteElement}, \/  shared\_\-ptr$<$ {\bf Stencil} $>$ {\em stencil}, \/  string {\em inputDirectory} = {\ttfamily \char`\"{}\char`\"{}}, \/  bool {\em useCentralFlux} = {\ttfamily false})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classnatrium_1_1SEDGMinLee_a6010ff397c7ea56751187084ad6e7ed0}
+\subsubsection[{SEDGMinLee}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::SEDGMinLee}$<$ dim $>$::{\bf SEDGMinLee} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ {\em triangulation}, \/  boost::shared\_\-ptr$<$ {\bf BoundaryCollection}$<$ dim $>$ $>$ {\em boundaries}, \/  size\_\-t {\em orderOfFiniteElement}, \/  boost::shared\_\-ptr$<$ {\bf Stencil} $>$ {\em stencil}, \/  string {\em inputDirectory} = {\ttfamily \char`\"{}\char`\"{}}, \/  bool {\em useCentralFlux} = {\ttfamily false})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SEDGMinLee_a429930c197a9ab2a881ffc71aa0dd86b}
 
 
 constructor Constructor 

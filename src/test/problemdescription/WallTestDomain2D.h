@@ -8,11 +8,11 @@
 #ifndef WallTestDomain2D_H_
 #define WallTestDomain2D_H_
 
+#include <natrium/problemdescription/LinearBoundaryRhoU.h>
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_generator.h"
 
 #include "natrium/problemdescription/ProblemDescription.h"
-#include "natrium/problemdescription/MinLeeBoundary.h"
 #include "natrium/utilities/BasicNames.h"
 
 using namespace natrium;
@@ -44,7 +44,6 @@ private:
 		cell->face(2)->set_all_boundary_ids(2);  // top
 		cell->face(3)->set_all_boundary_ids(3);  // bottom
 
-
 		return unitSquare;
 	}
 
@@ -55,18 +54,22 @@ private:
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries() {
 		// make boundary description
-		boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
-				BoundaryCollection<2> >();
+		boost::shared_ptr<BoundaryCollection<2> > boundaries =
+				boost::make_shared<BoundaryCollection<2> >();
 		boundaries->addBoundary(
-				boost::make_shared<MinLeeBoundary<2> >(0, numeric_vector(2)));
+				boost::make_shared<LinearBoundaryRhoU<2> >(0,
+						numeric_vector(2)));
 		boundaries->addBoundary(
-				boost::make_shared<MinLeeBoundary<2> >(1, numeric_vector(2)));
+				boost::make_shared<LinearBoundaryRhoU<2> >(1,
+						numeric_vector(2)));
 		boundaries->addBoundary(
-				boost::make_shared<MinLeeBoundary<2> >(2, numeric_vector(2)));
+				boost::make_shared<LinearBoundaryRhoU<2> >(2,
+						numeric_vector(2)));
 		numeric_vector topPlateVelocity(2);
 		topPlateVelocity(0) = 0.01;
 		boundaries->addBoundary(
-				boost::make_shared<MinLeeBoundary<2> >(3, topPlateVelocity));
+				boost::make_shared<LinearBoundaryRhoU<2> >(3,
+						topPlateVelocity));
 
 		// Get the triangulation object (which belongs to the parent class).
 		boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
@@ -97,7 +100,7 @@ public:
 	 * @param[in] supportPoints the coordinates associated with each degree of freedom
 	 */
 	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >&) const {
 		for (size_t i = 0; i < initialDensities.size(); i++) {
 			initialDensities(i) = 1.0;
 		}
@@ -109,7 +112,7 @@ public:
 	 */
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >& ) const {
+			const map<dealii::types::global_dof_index, dealii::Point<2> >&) const {
 		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
 			initialVelocities.at(0)(i) = 0.0;
 			initialVelocities.at(1)(i) = 0.0;

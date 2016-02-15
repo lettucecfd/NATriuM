@@ -15,6 +15,7 @@
 #include "SolverConfiguration.h"
 #include "DistributionFunctions.h"
 #include "SolverStats.h"
+#include "TurbulenceStats.h"
 
 #include "../problemdescription/ProblemDescription.h"
 
@@ -22,6 +23,8 @@
 #include "../advection/SEDGMinLee.h"
 
 #include "../collision/CollisionModel.h"
+
+#include "../smoothing/Filter.h"
 
 #include "../timeintegration/TimeIntegrator.h"
 
@@ -64,6 +67,7 @@ public:
  */
 template<size_t dim> class CFDSolver {
 	template<size_t dim2> friend class SolverStats;
+	template<size_t dim3> friend class TurbulenceStats;
 
 private:
 	/// particle distribution functions
@@ -101,6 +105,9 @@ private:
 	/// Configuration of the solver
 	boost::shared_ptr<SolverConfiguration> m_configuration;
 
+	/// Filtering scheme
+	boost::shared_ptr<Filter<dim> > m_filter;
+
 	/// the number of the first iteration (normally 0, except for restart at a checkpoint)
 	size_t m_iterationStart;
 
@@ -115,6 +122,7 @@ private:
 
 	/// table out
 	boost::shared_ptr<SolverStats<dim> > m_solverStats;
+	boost::shared_ptr<TurbulenceStats<dim> > m_turbulenceStats;
 
 	// starting time
 	time_t m_tstart;
@@ -122,6 +130,12 @@ private:
 	// residuum
 	double m_residuumDensity;
 	double m_residuumVelocity;
+
+	// vector for nonlinear boundary conditions
+	distributed_block_vector m_boundaryVector;
+
+	// vector of grid points
+	map<dealii::types::global_dof_index, dealii::Point<dim> > m_supportPoints;
 
 protected:
 
@@ -171,6 +185,11 @@ public:
 	 * @short run CFD solver
 	 */
 	void run();
+
+	/**
+	 * @short filter solution
+	 */
+	void filter();
 
 	/**
 	 * @short test for stop conditions
@@ -303,6 +322,18 @@ public:
 
 	void printRuntimeSummary() const {
 		pout << Timing::getOutStream().str() << endl;
+	}
+
+	void addToVelocity(boost::shared_ptr<dealii::Function<dim> > function);
+
+	void scaleVelocity(double scaling_factor);
+
+	const map<dealii::types::global_dof_index, dealii::Point<dim> >& getSupportPoints() const {
+		return m_supportPoints;
+	}
+
+	void setVelocity(const vector<distributed_vector>& velocity) {
+		m_velocity = velocity;
 	}
 }
 ;

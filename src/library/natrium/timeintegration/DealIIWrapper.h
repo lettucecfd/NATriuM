@@ -81,7 +81,7 @@ public:
 	 * @param[in] double dt time step size. Required to interface deal.II's embedded RK methods
 	 * @return new global time t + dt
 	 */
-	virtual double step(VECTOR& vector, const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = TimeIntegrator<MATRIX,VECTOR>::getTimeStepSize());
+	virtual double step(VECTOR& vector, const MATRIX& systemMatrix, VECTOR& systemVector, double t = 0, double dt = TimeIntegrator<MATRIX,VECTOR>::getTimeStepSize());
 
 	const boost::shared_ptr<dealii::TimeStepping::EmbeddedExplicitRungeKutta<VECTOR> >& getDealIIEmbedded() const {
 		return m_dealIIRKEmbedded;

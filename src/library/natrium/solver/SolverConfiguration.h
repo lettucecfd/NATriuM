@@ -11,6 +11,9 @@
 #include <ctime>
 #include <fstream>
 #include <sstream>
+#include <stdlib.h>
+
+//#include "boost/algorithm/string.hpp"
 
 #include "deal.II/base/parameter_handler.h"
 
@@ -40,6 +43,7 @@ enum CollisionSchemeName {
 	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
 	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
 	BGK_STEADY_STATE, // Steady state preconditioning by Guo et al. (2004)
+	BGK_MULTIPHASE,
 	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
 	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
 	KBC_STANDARD // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014)
@@ -88,6 +92,21 @@ enum FluxTypeName {
 enum InitializationSchemeName {
 	EQUILIBRIUM, // Distribute with equilibrium functions
 	ITERATIVE // Distribute with iterative procedure; enforces consistent initial conditions
+};
+
+enum PseudopotentialType {
+	SHAN_CHEN, SUKOP, CARNAHAN_STARLING
+};
+
+enum ForceType {
+	NO_FORCING, 	// No external force
+	SHIFTING_VELOCITY,  // Shifting velocity method
+	EXACT_DIFFERENCE,   // Exact difference method by Kuppershtokh
+	GUO
+};
+
+enum FilteringSchemeName {
+	EXPONENTIAL_FILTER, NEW_FILTER
 };
 
 //////////////////////////////
@@ -276,6 +295,8 @@ public:
 			return BGK_STANDARD_TRANSFORMED;
 		} else if ("BGK steady state" == collisionScheme) {
 			return BGK_STEADY_STATE;
+		} else if ("BGK multiphase" == collisionScheme) {
+			return BGK_MULTIPHASE;
 		} else if ("BGK incompressible" == collisionScheme) {
 			return BGK_INCOMPRESSIBLE;
 		} else if ("MRT standard" == collisionScheme) {
@@ -304,6 +325,10 @@ public:
 		}
 		case BGK_STEADY_STATE: {
 			set("Collision scheme", "BGK steady state");
+			break;
+		}
+		case BGK_MULTIPHASE: {
+			set("Collision scheme", "BGK multiphase");
 			break;
 		}
 		case BGK_INCOMPRESSIBLE: {
@@ -366,6 +391,185 @@ public:
 		leave_subsection();
 	}
 
+	PseudopotentialType getPseudopotentialType() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		string pp_type = get("Pseudopotential type");
+		leave_subsection();
+		leave_subsection();
+		if ("ShanChen" == pp_type) {
+			return SHAN_CHEN;
+		} else if ("Sukop" == pp_type) {
+			return SUKOP;
+		} else if ("CarnahanStarling" == pp_type) {
+			return CARNAHAN_STARLING;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown pseudopotential type '" << pp_type
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of PseudopotentialType might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setPseudopotentialType(PseudopotentialType pp_type) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		switch (pp_type) {
+		case BGK_STANDARD: {
+			set("Pseudopotential type", "ShanChen");
+			break;
+		}
+		case BGK_STANDARD_TRANSFORMED: {
+			set("Pseudopotential type", "Sukop");
+			break;
+		}
+		case BGK_STEADY_STATE: {
+			set("Pseudopotential type", "CarnahanStarling");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown pseudopotential type; index. " << pp_type
+					<< " in enum PseudopotentialType. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
+	double getBGKPseudopotentialG() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		double G;
+		try {
+			G = get_double("Pseudopotential G");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Pseudopotential G' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return G;
+	}
+
+	void setBGKPseudopotentialG(double G) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		try {
+			set("Pseudopotential G", G);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << G << " to Pseudopotential G: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
+	double getBGKPseudopotentialT() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		double G;
+		try {
+			G = get_double("Pseudopotential T");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Pseudopotential T' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return G;
+	}
+
+	void setBGKPseudopotentialT(double T) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		try {
+			set("Pseudopotential T", T);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << T << " to Pseudopotential T: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
+	ForceType getForcingScheme() {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		string forcing_scheme = get("Forcing scheme");
+		leave_subsection();
+		leave_subsection();
+		if ("No Forcing" == forcing_scheme) {
+			return NO_FORCING;
+		} else if ("Shifting Velocity" == forcing_scheme) {
+			return SHIFTING_VELOCITY;
+		} else if ("Exact Difference" == forcing_scheme) {
+			return EXACT_DIFFERENCE;
+		} else if ("Guo" == forcing_scheme) {
+			return GUO;
+		}
+		std::stringstream msg;
+		msg << "Unknown forcing scheme '" << forcing_scheme
+				<< " '. Check your configuration file. If everything is alright, "
+				<< "the implementation of ForceType might not be up-to-date.";
+		throw ConfigurationException(msg.str());
+	}
+
+	void setForcingScheme(ForceType forcing_scheme) {
+		enter_subsection("Collision");
+		enter_subsection("BGK parameters");
+		switch (forcing_scheme) {
+		case NO_FORCING: {
+			set("Forcing scheme", "No Forcing");
+			break;
+		}
+		case SHIFTING_VELOCITY: {
+			set("Forcing scheme", "Shifting Velocity");
+			break;
+		}
+		case EXACT_DIFFERENCE: {
+			set("Forcing scheme", "Exact Difference");
+			break;
+		}
+		case GUO: {
+			set("Forcing scheme", "Guo");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown forcing scheme; index. " << forcing_scheme
+					<< " in enum ForceType. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
 	size_t getCommandLineVerbosity() {
 		enter_subsection("Output");
 		size_t commandLineVerbosity;
@@ -418,6 +622,136 @@ public:
 		enter_subsection("General");
 		set("Has analytic solution?", hasAnalyticSolution);
 		leave_subsection();
+	}
+
+	void setFiltering(bool filtering) {
+		enter_subsection("Filtering");
+		set("Apply filtering?", filtering);
+		leave_subsection();
+	}
+	bool isFiltering() {
+		enter_subsection("Filtering");
+		bool is_filter;
+		try {
+			is_filter = get_bool("Apply filtering?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Apply filtering?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return is_filter;
+	}
+	void setFilteringScheme(FilteringSchemeName filtering_scheme) {
+		enter_subsection("Filtering");
+		switch (filtering_scheme) {
+		case EXPONENTIAL_FILTER: {
+			set("Filtering scheme", "Exponential");
+			break;
+		}
+		case NEW_FILTER: {
+			set("Filtering scheme", "New");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown initialization scheme scheme; index. "
+					<< filtering_scheme
+					<< " in enum InitializationSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+	}
+	FilteringSchemeName getFilteringScheme() {
+		enter_subsection("Filtering");
+		string filtering_scheme = get("Filtering scheme");
+		leave_subsection();
+		if ("Exponential" == filtering_scheme) {
+			return EXPONENTIAL_FILTER;
+		} else if ("New" == filtering_scheme) {
+			return NEW_FILTER;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown filtering scheme '" << filtering_scheme
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of InitilizationSchemeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+
+	}
+	void setExponentialFilterAlpha(double alpha) {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		try {
+			set("Exponential alpha", alpha);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << alpha
+					<< " to Exponential alpha: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+	double getExponentialFilterAlpha() {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		double alpha;
+		try {
+			alpha = get_double("Exponential alpha");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Exponential alpha' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return alpha;
+	}
+	void setExponentialFilterS(double s) {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		try {
+			set("Exponential s", s);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << s << " to Exponential s: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+	double getExponentialFilterS() {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		double s;
+		try {
+			s = get_double("Exponential s");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not read parameter 'Exponential s' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return s;
 	}
 
 	InitializationSchemeName getInitializationScheme() {
@@ -1319,7 +1653,6 @@ public:
 		return max_delta;
 	}
 
-
 	double getEmbeddedDealIntegratorRefinementTolerance() {
 		enter_subsection("Advection");
 		enter_subsection("Embedded Parameters");
@@ -1339,7 +1672,6 @@ public:
 		leave_subsection();
 		return refine_tol;
 	}
-
 
 	double getEmbeddedDealIntegratorCoarsenTolerance() {
 		enter_subsection("Advection");
@@ -1434,6 +1766,127 @@ public:
 	void setSwitchOutputOff(bool switchOutputOff) {
 		enter_subsection("Output");
 		set("Switch output off?", switchOutputOff);
+		leave_subsection();
+	}
+
+	bool isOutputTurbulenceStatistics() {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		bool turbulence_output;
+		try {
+			turbulence_output = get_bool("Output turbulence statistics?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Output turbulence statistics?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return turbulence_output;
+	}
+
+	void setOutputTurbulenceStatistics(bool output_turbulence) {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		set("Output turbulence statistics?", output_turbulence);
+		leave_subsection();
+		leave_subsection();
+	}
+
+	size_t getWallNormalDirection() {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		size_t wall_normal_direction;
+		try {
+			wall_normal_direction = get_integer("Wall normal direction");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Wall normal direction' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return wall_normal_direction;
+	}
+
+	void setWallNormalDirection(long int wall_normal_direction) {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		try {
+			set("Wall normal direction", wall_normal_direction);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << wall_normal_direction
+					<< " to Wall normal direction: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
+	vector<double> getWallNormalCoordinates() {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		vector<double> wall_normal_coordinates;
+		string full_string;
+		try {
+			full_string = get("Wall normal coordinates");
+			// comma-seperated string to vector<double>
+		    std::stringstream ss(full_string);
+		    double i;
+		    while (ss >> i)
+		    {
+		        wall_normal_coordinates.push_back(i);
+
+		        if (ss.peek() == ',' || ss.peek() == ' ')
+		            ss.ignore();
+		    }
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Wall normal coordinates' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return wall_normal_coordinates;
+	}
+
+	void setWallNormalCoordinates(vector<double> wall_normal_coordinates) {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		std::stringstream s;
+		try {
+			size_t n = wall_normal_coordinates.size();
+			for (size_t i = 0; i < n - 1; i++) {
+				s << wall_normal_coordinates.at(i) << ",";
+			}
+			if (n != 0) {
+				s << wall_normal_coordinates.at(n - 1);
+			}
+			set("Wall normal coordinates", s.str());
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << s.str()
+					<< " to Wall normal coordinates: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
 		leave_subsection();
 	}
 

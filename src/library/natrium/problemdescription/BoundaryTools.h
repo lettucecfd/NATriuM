@@ -13,10 +13,65 @@
 #include "deal.II/base/point.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
 namespace BoundaryTools {
+
+/**
+ * @short Exception class for Boundaries
+ */
+class BoundaryException: public NATriuMException {
+private:
+	std::string message;
+public:
+	BoundaryException(const char *msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	BoundaryException(const string& msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	~BoundaryException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
+template<size_t dim>
+class BoundaryDensity: public dealii::Function<dim> {
+private:
+	double m_density;
+public:
+	BoundaryDensity(double rho = 1) {
+		m_density = rho;
+	}
+	;
+	virtual ~BoundaryDensity() {
+	}
+	;
+	virtual double value(const dealii::Point<dim> &,
+			const unsigned int  = 0) const {
+		return m_density;
+	}
+};
+template<size_t dim>
+class BoundaryVelocity: public dealii::Function<dim> {
+private:
+	dealii::Vector<double> m_Velocity;
+public:
+	BoundaryVelocity(const dealii::Vector<double>& velocity) :
+			m_Velocity(velocity) {
+	}
+	virtual ~BoundaryVelocity() {
+	}
+	;
+	virtual void vector_value(const dealii::Point<dim> &,
+			dealii::Vector<double> &values) const {
+		values = m_Velocity;
+	}
+};
 
 /**
  * @short function to compare points as map keys;
@@ -32,6 +87,23 @@ public:
     else  return false;
         }
 };
+
+/**
+ * @short enum to describe couplings at the boundary
+ */
+enum DistributionCouplingAtBoundary{
+	COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
+	COUPLE_ALL_DISTRIBUTIONS
+};
+
+/**
+ * @short enum to describe couplings at the boundary
+ */
+enum PointCouplingAtBoundary{
+	COUPLE_ONLY_SINGLE_POINTS,
+	COUPLE_WHOLE_FACE
+};
+
 
 /**
  * @short Check if two lines in a 2D plane are parallel and not equal to each other.
@@ -69,8 +141,26 @@ bool getInterfacialLinesByBoundaryIndicator(size_t boundaryIndicator1,
 		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
 		std::string& errorMessage);
 
-}
 
-}
+
+/**
+ * @short This functions adds elements to the sparsity pattern to couple different distribution functions
+ * at the boundary.
+ * @param[in/out] cSparse The sparsity pattern to add to.
+ * @param[in] doFHandler The doFHandler
+ * @param[in] stencil The DQ stencil is required to identify the opposite distributions.
+ * @param[in] coupling Describes the point coupling that we apply at the boundary. The possibilities are:
+ *				 -# COUPLE_ONLY_SINGLE_POINTS: Couples the dofs that belong to the same integration point.
+ *				 -# COUPLE_WHOLE_FACE: Couples all dofs at the face with each other
+ *				    (is required when gradients are calculated at the boundary)
+ */
+template<size_t dim>
+void CoupleDoFsAtBoundary(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<dim>& doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling);
+
+} /* namespace BoundaryTools */
+
+} /* namespace natrium */
 
 #endif /* BOUNDARYTOOLS_H_ */

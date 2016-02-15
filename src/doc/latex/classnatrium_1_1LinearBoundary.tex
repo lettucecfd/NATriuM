@@ -1,0 +1,125 @@
+\hypertarget{classnatrium_1_1LinearBoundary}{
+\section{natrium::LinearBoundary$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1LinearBoundary}\index{natrium::LinearBoundary@{natrium::LinearBoundary}}
+}
+
+
+Abstract class to describe Linear boundary conditions. The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the boundary have to be defined (see Documentation of the constructors).  
+
+
+{\ttfamily \#include $<$LinearBoundary.h$>$}Inheritance diagram for natrium::LinearBoundary$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1LinearBoundary}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1LinearBoundary_a2f11c187ef26ee7e3f6a13ad94876a4e}{LinearBoundary} (size\_\-t boundaryIndicator, boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ boundaryDensity, boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ boundaryVelocity, BoundaryTools::DistributionCouplingAtBoundary distribution\_\-coupling, BoundaryTools::PointCouplingAtBoundary point\_\-coupling)
+\item 
+\hypertarget{classnatrium_1_1LinearBoundary_a00ee44af34692e1dae616beadf78a8d9}{
+virtual \hyperlink{classnatrium_1_1LinearBoundary_a00ee44af34692e1dae616beadf78a8d9}{$\sim$LinearBoundary} ()}
+\label{classnatrium_1_1LinearBoundary_a00ee44af34692e1dae616beadf78a8d9}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1LinearBoundary_a649995519912eb058d6ce07939b6e719}{addToSparsityPattern} (dealii::TrilinosWrappers::SparsityPattern \&cSparse, const dealii::DoFHandler$<$ dim $>$ \&doFHandler) const 
+\begin{DoxyCompactList}\small\item\em In order to include the boundary conditions into the integration we have to expand the sparsity pattern. In concrete, we have to couple blocks at the boundary that belong to different distribution functions \[ f_{\alpha} \] and \[ f_{\beta} \]. The concrete coupling depends on m\_\-pointCoupling. If this is
+\begin{DoxyItemize}
+\item COUPLE\_\-ONLY\_\-SINGLE\_\-POINTS: only the DoFs belonging to the same point are coupled
+\item COUPLE\_\-WHOLE\_\-FACE: all DoFs at the face are coupled, e.g. if \[ \partial_{x}f_{\beta} \] is required to calculate \[ f_{\alpha} \] at the boundary. 
+\end{DoxyItemize}\item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1LinearBoundary_a669905b997cb9f78f8789254e28ec538}{assembleBoundary} (size\_\-t alpha, const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, size\_\-t faceNumber, dealii::FEFaceValues$<$ dim $>$ \&feFaceValues, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, const std::map$<$ size\_\-t, size\_\-t $>$ \&q\_\-index\_\-to\_\-facedof, const vector$<$ double $>$ \&inverseLocalMassMatrix, distributed\_\-sparse\_\-block\_\-matrix \&systemMatrix, distributed\_\-block\_\-vector \&systemVector, bool useCentralFlux=false) const =0
+\begin{DoxyCompactList}\small\item\em Pure virtual function for the concrete assembly of the boundary. The child classes have to override this function for each specific boundary. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1LinearBoundary_a5c175865c4e6ab3907fd90f99c80d989}{
+size\_\-t {\bfseries getBoundaryIndicator} () const }
+\label{classnatrium_1_1LinearBoundary_a5c175865c4e6ab3907fd90f99c80d989}
+
+\item 
+\hypertarget{classnatrium_1_1LinearBoundary_a4ab782e9dbe542a24267f157d8af697d}{
+const boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ \& {\bfseries getBoundaryDensity} () const }
+\label{classnatrium_1_1LinearBoundary_a4ab782e9dbe542a24267f157d8af697d}
+
+\item 
+\hypertarget{classnatrium_1_1LinearBoundary_a5b8333175d95f42872795fb8a5c261a7}{
+const boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ \& {\bfseries getBoundaryVelocity} () const }
+\label{classnatrium_1_1LinearBoundary_a5b8333175d95f42872795fb8a5c261a7}
+
+\item 
+\hypertarget{classnatrium_1_1LinearBoundary_a80639c46ec11a51db8a2ff33f3ab3bf7}{
+virtual bool \hyperlink{classnatrium_1_1LinearBoundary_a80639c46ec11a51db8a2ff33f3ab3bf7}{isLinear} () const }
+\label{classnatrium_1_1LinearBoundary_a80639c46ec11a51db8a2ff33f3ab3bf7}
+
+\begin{DoxyCompactList}\small\item\em is the boundary a dirichlet boundary ? \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1LinearBoundary_ab77872e8f33340311322ff7609565b99}{
+const BoundaryTools::DistributionCouplingAtBoundary {\bfseries m\_\-distributionCoupling}}
+\label{classnatrium_1_1LinearBoundary_ab77872e8f33340311322ff7609565b99}
+
+\item 
+\hypertarget{classnatrium_1_1LinearBoundary_acadcd1c87647831d7e45228df016ed46}{
+const BoundaryTools::PointCouplingAtBoundary {\bfseries m\_\-pointCoupling}}
+\label{classnatrium_1_1LinearBoundary_acadcd1c87647831d7e45228df016ed46}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::LinearBoundary$<$ dim $>$}
+
+Abstract class to describe Linear boundary conditions. The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the boundary have to be defined (see Documentation of the constructors). 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1LinearBoundary_a2f11c187ef26ee7e3f6a13ad94876a4e}{
+\index{natrium::LinearBoundary@{natrium::LinearBoundary}!LinearBoundary@{LinearBoundary}}
+\index{LinearBoundary@{LinearBoundary}!natrium::LinearBoundary@{natrium::LinearBoundary}}
+\subsubsection[{LinearBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::LinearBoundary}$<$ dim $>$::{\bf LinearBoundary} (size\_\-t {\em boundaryIndicator}, \/  boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ {\em boundaryDensity}, \/  boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ {\em boundaryVelocity}, \/  BoundaryTools::DistributionCouplingAtBoundary {\em distribution\_\-coupling}, \/  BoundaryTools::PointCouplingAtBoundary {\em point\_\-coupling})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundary_a2f11c187ef26ee7e3f6a13ad94876a4e}
+Constructor 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em boundaryIndicator}]the boundary indicator that is assigned to the target boundary. \item[\mbox{$\leftarrow$} {\em boundaryDensity}]A dealii::Function$<$dim$>$ that defines the prescribed density at the boundary. \item[\mbox{$\leftarrow$} {\em boundaryVelocity}]A dealii::Function$<$dim$>$ that defines the prescribed velocity at the boundary. \item[\mbox{$\leftarrow$} {\em distribution\_\-coupling}]Indicates which distributions are coupled at the boundary. There are two possibilities:
+\begin{DoxyEnumerate}
+\item $\backslash$\mbox{[} f\_\-\{\} \mbox{]} depends only on the opposite distribution function $\backslash$\mbox{[} f\_\-\{$^\wedge$\{\}\} \mbox{]}. Then this parameter has to be COUPLE\_\-ONLY\_\-OPPOSITE\_\-DISTRIBUTIONS.
+\item $\backslash$\mbox{[} f\_\-\{\} \mbox{]} depens on all distribution functions (e.g. when the density or velocity is used for the boundary condition (the calculated on, not the prescribed one). Then, this parameter has to be COUPLE\_\-ALL\_\-DISTRIBUTIONS. 
+\end{DoxyEnumerate}\item[\mbox{$\leftarrow$} {\em point\_\-coupling}]Indicates which DoFs are coupled at the boundary. There are two cases:
+\begin{DoxyEnumerate}
+\item $\backslash$\mbox{[} f\_\-\{\} \mbox{]} depends only on the distribution functions at a given point (and possibly some other data, but no distribution functions at other points). Then, this parameter has to be COUPLE\_\-ONLY\_\-SINGLE\_\-POINTS.
+\item $\backslash$\mbox{[} f\_\-\{\} \mbox{]} depends on the distribution functions at other points at the face (e.g. when gradients are computed.) Then, this parameter has to be COUPLE\_\-WHOLE\_\-FACE. 
+\end{DoxyEnumerate}\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1LinearBoundary_a649995519912eb058d6ce07939b6e719}{
+\index{natrium::LinearBoundary@{natrium::LinearBoundary}!addToSparsityPattern@{addToSparsityPattern}}
+\index{addToSparsityPattern@{addToSparsityPattern}!natrium::LinearBoundary@{natrium::LinearBoundary}}
+\subsubsection[{addToSparsityPattern}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::LinearBoundary}$<$ dim $>$::addToSparsityPattern (dealii::TrilinosWrappers::SparsityPattern \& {\em cSparse}, \/  const dealii::DoFHandler$<$ dim $>$ \& {\em doFHandler}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundary_a649995519912eb058d6ce07939b6e719}
+
+
+In order to include the boundary conditions into the integration we have to expand the sparsity pattern. In concrete, we have to couple blocks at the boundary that belong to different distribution functions \[ f_{\alpha} \] and \[ f_{\beta} \]. The concrete coupling depends on m\_\-pointCoupling. If this is
+\begin{DoxyItemize}
+\item COUPLE\_\-ONLY\_\-SINGLE\_\-POINTS: only the DoFs belonging to the same point are coupled
+\item COUPLE\_\-WHOLE\_\-FACE: all DoFs at the face are coupled, e.g. if \[ \partial_{x}f_{\beta} \] is required to calculate \[ f_{\alpha} \] at the boundary. 
+\end{DoxyItemize}
+\begin{DoxyParams}{Parameters}
+\item[{\em in/out\mbox{]}}]doFHandler the DoFHandler \end{DoxyParams}
+\hypertarget{classnatrium_1_1LinearBoundary_a669905b997cb9f78f8789254e28ec538}{
+\index{natrium::LinearBoundary@{natrium::LinearBoundary}!assembleBoundary@{assembleBoundary}}
+\index{assembleBoundary@{assembleBoundary}!natrium::LinearBoundary@{natrium::LinearBoundary}}
+\subsubsection[{assembleBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual void {\bf natrium::LinearBoundary}$<$ dim $>$::assembleBoundary (size\_\-t {\em alpha}, \/  const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  size\_\-t {\em faceNumber}, \/  dealii::FEFaceValues$<$ dim $>$ \& {\em feFaceValues}, \/  const {\bf Stencil} \& {\em stencil}, \/  const std::map$<$ size\_\-t, size\_\-t $>$ \& {\em q\_\-index\_\-to\_\-facedof}, \/  const vector$<$ double $>$ \& {\em inverseLocalMassMatrix}, \/  distributed\_\-sparse\_\-block\_\-matrix \& {\em systemMatrix}, \/  distributed\_\-block\_\-vector \& {\em systemVector}, \/  bool {\em useCentralFlux} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundary_a669905b997cb9f78f8789254e28ec538}
+
+
+Pure virtual function for the concrete assembly of the boundary. The child classes have to override this function for each specific boundary. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em alpha}]The index of the distribution function  f\_\-\{\} \mbox{]} for which the boundary is constructed. \item[\mbox{$\leftarrow$} {\em cell}]The current cell (assembly is done cell-\/by-\/cell) \item[\mbox{$\leftarrow$} {\em faceNumber}]The current face number. \item[\mbox{$\leftarrow$} {\em feFaceValues}]The dealii::FEFaceValues$<$dim$>$ object, which has to be reinitialized right at the beginning of the assembleBoundary function (it can be empty, but is passed here as a function parameter to avoid construction of a new feFaceValues object). \item[\mbox{$\leftarrow$} {\em stencil}]The DQ stencil, which is required here to get the particle velocities. \item[\mbox{$\leftarrow$} {\em q\_\-index\_\-to\_\-facedof}]Maps quadrature nodes to DoFs (only possible for GLL nodes) \item[\mbox{$\leftarrow$} {\em inverseLocalMassMatrix}]\[ M^{-1} \] is multiplied with the obtained boundary matrix at the end of the assembly. \item[{\em in/out\mbox{]}}]systemMatrix The global system matrix which is assembled to. \item[{\em in/out\mbox{]}}]systemVector The global system vector which is assembled to. \item[\mbox{$\leftarrow$} {\em useCentralFlux}]indicates whether to use a central instead of a Lax-\/Friedrichs flux. Should not be used, has not been tested thoroughly and yields bad results, usually. \end{DoxyParams}
+
+
+Implemented in \hyperlink{classnatrium_1_1LinearBoundaryRhoU_a5e8291245a4d0a81ed8a7545e0ffbe96}{natrium::LinearBoundaryRhoU$<$ dim $>$}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/\hyperlink{LinearBoundary_8h}{LinearBoundary.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundary.cpp\end{DoxyCompactItemize}
