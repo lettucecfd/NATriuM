@@ -98,13 +98,13 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(false);
-	configuration->setUserInteraction(true);
+	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(10);	//10
 	configuration->setOutputSolutionInterval(100); //10
 	configuration->setOutputCheckpointInterval(100);
 	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/shear-layer-N" << refinement_level
+	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
 			<< "-p" << p << "-coll" << collision_id << "-int" << integrator_id;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);

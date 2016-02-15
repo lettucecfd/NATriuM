@@ -680,7 +680,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 			// Write vtu file
 			data_out.build_patches(
-					m_configuration->getSedgOrderOfFiniteElement() + 1);
+					m_configuration->getSedgOrderOfFiniteElement()*2);
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)
@@ -708,12 +708,13 @@ void CFDSolver<dim>::output(size_t iteration) {
 			}
 		}
 
+
 		// output: table
 		// calculate information + physical properties
-
 		if (iteration % m_configuration->getOutputTableInterval() == 0) {
 			m_solverStats->printNewLine();
 			if (m_configuration->isOutputTurbulenceStatistics()) {
+				assert (m_turbulenceStats);
 				m_turbulenceStats->printNewLine();
 			}
 		}
