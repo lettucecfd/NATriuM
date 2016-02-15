@@ -29,7 +29,7 @@
         0.4.3) Download and untar
         0.4.7) set environment variable TRILINOS_DIR to a path of your choice (e.g. ~/NATriuM/trilinos-11.10.2)
         0.4.4) cd trilinos-11.10.2; mkdir build; cd build
-        0.4.5) Cmake: (on cluster: add option	-D TPL_ENABLE_Pthread = OFF as including threads leads to a segmentation fault in the natrium executables)
+        0.4.5) Cmake: (on cluster: add option	-D TPL_ENABLE_Pthread=OFF as including threads leads to a segmentation fault in the natrium executables)
 	cmake -D Trilinos_ENABLE_Sacado=ON \
 	-D Trilinos_ENABLE_Stratimikos=ON \
 	-D CMAKE_BUILD_TYPE=RELEASE \

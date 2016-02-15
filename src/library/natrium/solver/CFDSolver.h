@@ -323,6 +323,18 @@ public:
 	void printRuntimeSummary() const {
 		pout << Timing::getOutStream().str() << endl;
 	}
+
+	void addToVelocity(boost::shared_ptr<dealii::Function<dim> > function);
+
+	void scaleVelocity(double scaling_factor);
+
+	const map<dealii::types::global_dof_index, dealii::Point<dim> >& getSupportPoints() const {
+		return m_supportPoints;
+	}
+
+	void setVelocity(const vector<distributed_vector>& velocity) {
+		m_velocity = velocity;
+	}
 }
 ;
 
