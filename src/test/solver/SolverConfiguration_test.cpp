@@ -92,7 +92,21 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.getExponentialFilterS(), 20.0);
 	config.setExponentialFilterS(2.0);
 	BOOST_CHECK_EQUAL(config.getExponentialFilterS(), 2.0);
-
+	BOOST_CHECK_EQUAL(config.isOutputTurbulenceStatistics(), false);
+	config.setOutputTurbulenceStatistics(true);
+	BOOST_CHECK_EQUAL(config.isOutputTurbulenceStatistics(), true);
+	BOOST_CHECK_EQUAL(config.getWallNormalDirection(), size_t(1));
+	config.setWallNormalDirection(0);
+	BOOST_CHECK_EQUAL(config.getWallNormalDirection(), size_t(0));
+	vector<double> coord = config.getWallNormalCoordinates();
+	BOOST_CHECK_EQUAL(coord.size(), size_t(3));
+	BOOST_CHECK_CLOSE(coord.at(0), 0.1, 1e-4);
+	BOOST_CHECK_CLOSE(coord.at(1), 0.2, 1e-4);
+	BOOST_CHECK_CLOSE(coord.at(2), 0.5, 1e-4);
+	coord.at(0) = 0.05;
+	config.setWallNormalCoordinates(coord);
+	vector<double> coord2 = config.getWallNormalCoordinates();
+	BOOST_CHECK_CLOSE(coord2.at(0), 0.05, 1e-8);
 
 	/// Failure test
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);
