@@ -366,7 +366,7 @@ public:
 		return m_quadrature;
 	}
 
-	size_t getOrderOfFiniteElement() const {
+	virtual size_t getOrderOfFiniteElement() const {
 		return m_orderOfFiniteElement;
 	}
 
