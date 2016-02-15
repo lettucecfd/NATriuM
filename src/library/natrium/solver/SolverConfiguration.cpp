@@ -140,8 +140,12 @@ SolverConfiguration::SolverConfiguration() {
 				"A filter that dampens the high-frequent oscillations from the distribution functions.");
 		enter_subsection("Filter parameters");
 		{
-			declare_entry("Exponential alpha", "10.0", dealii::Patterns::Double(0,1e10), "The exponential filter is defined exp(-alpha * poly_degree ^ s");
-			declare_entry("Exponential s", "20.0", dealii::Patterns::Double(0,1e10), "The exponential filter is defined exp(-alpha * poly_degree ^ s");
+			declare_entry("Exponential alpha", "10.0",
+					dealii::Patterns::Double(0, 1e10),
+					"The exponential filter is defined exp(-alpha * poly_degree ^ s");
+			declare_entry("Exponential s", "20.0",
+					dealii::Patterns::Double(0, 1e10),
+					"The exponential filter is defined exp(-alpha * poly_degree ^ s");
 		}
 		leave_subsection();
 	}
@@ -206,6 +210,19 @@ SolverConfiguration::SolverConfiguration() {
 				"The amount of command line output.");
 		declare_entry("Write a log file?", "true", dealii::Patterns::Bool(),
 				"Specifies if log is written to a file.");
+		enter_subsection("Turbulence Statistics");
+		{
+			declare_entry("Output turbulence statistics?", "false",
+					dealii::Patterns::Bool(),
+					"Specifies if turbulence statistics should be monitored.");
+			declare_entry("Wall normal direction", "1",
+					dealii::Patterns::Integer(0,3),
+					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");
+			declare_entry("Wall normal coordinates", "1e-1, 2e-1, 5e-1",
+					dealii::Patterns::List(dealii::Patterns::Double(-1e10, 1e10)),
+					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. This comma-separated list of decimal numbers specifies their wall-normal coordinates.");
+		}
+		leave_subsection();
 	}
 	leave_subsection();
 
@@ -315,6 +332,7 @@ void SolverConfiguration::prepareOutputDirectory() {
 		clock_t begin = clock();
 		if ((not isRestartAtLastCheckpoint())
 				and (not boost::filesystem::is_empty(outputDir))) {
+			// TODO check muss cleverer sein (wegen checkpoint verzeichnis kommt diese warnung immer)
 			if (isUserInteraction()) {
 				// Request user input
 				pout
