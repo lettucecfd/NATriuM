@@ -22,18 +22,20 @@
 namespace natrium {
 
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
-		double ReTau, double ReCl, double u_bulk, double height, double length, double width,
+		std::vector<unsigned int> repetitions, double ReTau, double ReCl, double u_bulk,
+		double height, double length, double width,
 		double orderOfFiniteElement, bool is_periodic) :
-		ProblemDescription<3>(makeGrid(height, length, width), viscosity, height),
-		m_refinementLevel(refinementLevel), m_ReTau(ReTau), m_ReCl(ReCl), m_uBulk(u_bulk),
-		m_ofe(orderOfFiniteElement), m_height(height), m_length(length), m_width(width),
+		ProblemDescription<3>(makeGrid(repetitions), viscosity, height),
+		m_refinementLevel(refinementLevel), m_repetitions(repetitions),
+		m_ReTau(ReTau), m_ReCl(ReCl), m_uBulk(u_bulk), m_ofe(orderOfFiniteElement),
+		m_height(height), m_length(length), m_width(width),
 		m_maxUtrp(0.0), m_maxIncUtrp(0.0) {
 
 	// **** Recommendations for CPU use ****
 	pout << "-------------------------------------------------------------" << endl;
 	pout << "**** Recommendations for CPU use ****" << endl;
-	double noCube = ( width/height ) * ( length/height );
-	double noGridPoints = pow( (orderOfFiniteElement + 1), 3 ) * pow(8, refinementLevel) * noCube;
+	double noRepetitions3D = repetitions.at(0) * repetitions.at(1) * repetitions.at(2);
+	double noGridPoints = pow( (orderOfFiniteElement + 1), 3 ) * pow(8, refinementLevel) * noRepetitions3D;
 	pout << "... Computation node details: " << endl;
 	pout << "    - #CPU per node: 12 " << endl;
 	pout << "    - memory per node: 4000 MB " << endl;
@@ -44,10 +46,10 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 
 	// **** Grid properties ****
 	pout << "**** Grid properties ****" << endl;
-	int 	noCellsInYDir	= (orderOfFiniteElement + 1) * pow(2, refinementLevel);
+	int 	noCellsInYDir	= (orderOfFiniteElement + 1) * pow(2, refinementLevel) * repetitions.at(1);
 	double  h_half = 0.5 * height;
 
-	UnstructuredGridFunc Eq2NonEq(height);
+	UnstructuredGridFunc Eq2NonEq(length, height, width);
 
 	/// y^+ calculation
 	// holds coordinates of the first point away from the wall in y-direction
@@ -90,14 +92,13 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		dealii::Tensor<1, 3> F;
 		F[0] = Fx;
 		setExternalForce(
-				boost::make_shared<ConstantExternalForce<3> >(F,
-						SHIFTING_VELOCITY));
+				boost::make_shared<ConstantExternalForce<3> >(F));
 	}
 
 	// refine global
 	getMesh()->refine_global(refinementLevel);
 	// transform grid to unstructured grid
-	dealii::GridTools::transform(UnstructuredGridFunc(height), *getMesh());
+	dealii::GridTools::transform(UnstructuredGridFunc(length,height,width), *getMesh());
 }
 
 TurbulentChannelFlow3D::~TurbulentChannelFlow3D() {
@@ -107,22 +108,35 @@ TurbulentChannelFlow3D::~TurbulentChannelFlow3D() {
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-boost::shared_ptr<Mesh<3> > TurbulentChannelFlow3D::makeGrid(double height,
-		double length, double width) {
+//boost::shared_ptr<Mesh<3> > TurbulentChannelFlow3D::makeGrid(double ,
+//		double , double ) {
+//	//Creation of the principal domain
+//
+//	boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(
+//	MPI_COMM_WORLD);
+//
+//	std::vector<unsigned int> repetitions(3);
+//	bool colorize = true; 	// do not set boundary ids automatically to
+//							// 0:left; 1:right; 2:bottom; 3:top
+//	repetitions.at(0) = 6;
+//	repetitions.at(1) = 4;
+//	repetitions.at(2) = 5;
+//	dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, repetitions,
+//			dealii::Point<3>(0.0, 0.0, 0.0),
+//			dealii::Point<3>(1, 1, 1), colorize);
+//	return mesh;
+//}
+boost::shared_ptr<Mesh<3> > TurbulentChannelFlow3D::makeGrid(std::vector<unsigned int> repetitions) {
 	//Creation of the principal domain
 
 	boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(
 	MPI_COMM_WORLD);
 
-	std::vector<unsigned int> repetitions(3);
 	bool colorize = true; 	// do not set boundary ids automatically to
 							// 0:left; 1:right; 2:bottom; 3:top
-	repetitions.at(0) = (int) length / height;
-	repetitions.at(1) = (int) height;
-	repetitions.at(2) = (int) width / height;
 	dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, repetitions,
 			dealii::Point<3>(0.0, 0.0, 0.0),
-			dealii::Point<3>(length, height, width), colorize);
+			dealii::Point<3>(1, 1, 1), colorize);
 	return mesh;
 }
 
@@ -313,7 +327,9 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	freeStreamTurb 		= 0.1;							// parameter does not let fBlend drop below the prescribed value
 
 	int 	nmodes 				= 32;							// number of Fourier modes
-	double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
+	//double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
+	//changed by Andreas after talking to Holger
+	double	wew1fct				= 5;							// ratio of ke and kmin (in wavenumber)
 
 	// Constants
 	double 	amp 				= 1.452762113;					// alpha in [Ref2]
@@ -323,7 +339,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	epsm 				= pow(tke,1.5)/sli;				// dissipation rate
 
 	double 	ofe					= m_flow->getOrderOfFiniteElement();
-	double	inletCellLength		= height/( (ofe + 1) * pow(2, m_flow->getRefinementLevel()) );
+	double	inletCellLength		= height/( (ofe + 1) * pow(2, m_flow->getRefinementLevel()) * m_flow->getRepetitions().at(1));
 	double	wnrn				= 2*M_PI/inletCellLength;		// highest wave number // min cell length
 	double	wnre				= 9*M_PI*amp/(55*sli);			// k_e (related to peak energy wave number)
 	double	wnreta 				= pow((epsm/pow(visc, 3)), .25);
@@ -419,8 +435,12 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 			tfunk = cos(arg);
 
 			// modified von Karman spectrum
-			e = amp/wnre * pow( wnr[m]/wnre, 4 ) / pow( 1 + pow( wnr[m]/wnre, 2 ), 17./6. )
+			//changed by Andreas after talking to Holger
+			// k^3 instead of k^4
+			e = amp/wnre * pow( wnr[m]/wnre, 3 ) / pow( 1 + pow( wnr[m]/wnre, 2 ), 17./6. )
 					* exp( -2 * pow( wnr[m]/wnreta , 2 ) );
+			//e = amp/wnre * pow( wnr[m]/wnre, 4 ) / pow( 1 + pow( wnr[m]/wnre, 2 ), 17./6. )
+			//					* exp( -2 * pow( wnr[m]/wnreta , 2 ) );
 
 			utn = urms * sqrt( e * dkn[m] );
 
