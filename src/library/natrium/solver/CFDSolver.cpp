@@ -647,6 +647,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 		 << string(asctime(ltm)) << endl;
 		 }
 		 }*/
+		if (m_configuration->isOutputTurbulenceStatistics())
+				m_turbulenceStats->addToReynoldsStatistics(m_velocity);
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			// save local part of the solution
 			std::stringstream str;
@@ -669,6 +671,10 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 			/// For Benchmarks: add analytic solution
 			addAnalyticSolutionToOutput(data_out);
+			/// For turbulent flows: add turbulent statistics
+			if (m_configuration->isOutputTurbulenceStatistics()){
+				m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
+			}
 
 			// tell the data processor the locally owned cells
 			dealii::Vector<float> subdomain(
