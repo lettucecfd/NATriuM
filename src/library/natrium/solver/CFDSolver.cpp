@@ -1011,5 +1011,58 @@ double CFDSolver<dim>::getTau() const {
 template double CFDSolver<2>::getTau() const;
 template double CFDSolver<3>::getTau() const;
 
+template<size_t dim>
+void CFDSolver<dim>::addToVelocity(
+		boost::shared_ptr<dealii::Function<dim> > function) {
+	// get Function instance
+	const unsigned int dofs_per_cell =
+			m_advectionOperator->getFe()->dofs_per_cell;
+	vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+			m_advectionOperator->getDoFHandler()->begin_active(), endc =
+			m_advectionOperator->getDoFHandler()->end();
+	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
+			cell->get_dof_indices(local_dof_indices);
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				assert(
+						m_velocity.at(0).in_local_range(
+								local_dof_indices.at(i)));
+				assert(
+						m_velocity.at(1).in_local_range(
+								local_dof_indices.at(i)));
+				assert(
+						m_supportPoints.find(local_dof_indices.at(i))
+								!= m_supportPoints.end());
+				for (size_t component = 0; component < dim; component++) {
+					m_velocity.at(component)(local_dof_indices.at(i)) =
+							m_velocity.at(component)(local_dof_indices.at(i))
+									+ function->value(
+											m_supportPoints.at(
+													local_dof_indices.at(i)),
+											component);
+				}
+			}
+		} /* if is locally owned */
+	} /* for all cells */
+	initializeDistributions();
+}
+template void CFDSolver<2>::addToVelocity(
+		boost::shared_ptr<dealii::Function<2> > function);
+template void CFDSolver<3>::addToVelocity(
+		boost::shared_ptr<dealii::Function<3> > function);
+
+template<size_t dim>
+void CFDSolver<dim>::scaleVelocity(double scaling_factor) {
+	m_velocity.at(0) *= scaling_factor;
+	m_velocity.at(1) *= scaling_factor;
+	if (dim == 3) {
+		m_velocity.at(2) *= scaling_factor;
+	}
+	initializeDistributions();
+}
+template void CFDSolver<2>::scaleVelocity(double scaling_factor);
+template void CFDSolver<3>::scaleVelocity(double scaling_factor);
+
 } /* namespace natrium */
 

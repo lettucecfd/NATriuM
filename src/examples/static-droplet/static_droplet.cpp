@@ -22,7 +22,7 @@
 #include "natrium/utilities/BasicNames.h"
 
 #include "natrium/benchmarks/Droplet2D.h"
-#include "natriuM/benchmarks/PoiseuilleFlow2D.h"
+#include "natrium/benchmarks/PoiseuilleFlow2D.h"
 
 #include "natrium/utilities/Info.h"
 
