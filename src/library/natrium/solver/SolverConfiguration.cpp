@@ -101,7 +101,7 @@ SolverConfiguration::SolverConfiguration() {
 	{
 		declare_entry("Collision scheme", "BGK standard",
 				dealii::Patterns::Selection(
-						"BGK standard|BGK steady state|BGK standard transformed|BGK incompressible|MRT standard|KBC standard"),
+						"BGK standard|BGK steady state|BGK standard transformed|BGK multiphase|BGK incompressible|MRT standard|KBC standard"),
 				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards "
 						"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
 						"The standard");
@@ -112,6 +112,40 @@ SolverConfiguration::SolverConfiguration() {
 					"The parameter of the steady state preconditioner. For gamma = 1, the scheme is equivalent to the standard BGK"
 							"For gamma -> 0, the convergence to steady states is speed up and the effective Mach number is lowered, which"
 							"gives nearly incompressible results.");
+			declare_entry("Pseudopotential type", "ShanChen",
+					dealii::Patterns::Selection(
+							"ShanChen|Sukop|CarnahanStarling"),
+					"The functional form of the pseudopotential in multiphase simulations.");
+			declare_entry("Pseudopotential G", "-5",
+					dealii::Patterns::Double(-1e10, 1e10),
+					"The parameter that describes the interaction strength in the Pseudopotential multiphase model.");
+			declare_entry("Pseudopotential T", "0.0848997582",
+					dealii::Patterns::Double(-1e10, 1e10),
+					"The parameter that describes the temperature in the Pseudopotential multiphase model (only for Carnahan-Starling EOS).");
+			declare_entry("Forcing scheme", "No Forcing",
+					dealii::Patterns::Selection(
+							"No Forcing|Shifting Velocity|Exact Difference|Guo"),
+					"The way to incorporate the force into the LBGK equation.");
+
+		}
+		leave_subsection();
+	}
+	leave_subsection();
+
+	enter_subsection("Filtering");
+	{
+		declare_entry("Apply filtering?", "false", dealii::Patterns::Bool());
+		declare_entry("Filtering scheme", "Exponential",
+				dealii::Patterns::Selection("Exponential|New"),
+				"A filter that dampens the high-frequent oscillations from the distribution functions.");
+		enter_subsection("Filter parameters");
+		{
+			declare_entry("Exponential alpha", "10.0",
+					dealii::Patterns::Double(0, 1e10),
+					"The exponential filter is defined exp(-alpha * poly_degree ^ s");
+			declare_entry("Exponential s", "20.0",
+					dealii::Patterns::Double(0, 1e10),
+					"The exponential filter is defined exp(-alpha * poly_degree ^ s");
 		}
 		leave_subsection();
 	}
@@ -176,6 +210,19 @@ SolverConfiguration::SolverConfiguration() {
 				"The amount of command line output.");
 		declare_entry("Write a log file?", "true", dealii::Patterns::Bool(),
 				"Specifies if log is written to a file.");
+		enter_subsection("Turbulence Statistics");
+		{
+			declare_entry("Output turbulence statistics?", "false",
+					dealii::Patterns::Bool(),
+					"Specifies if turbulence statistics should be monitored.");
+			declare_entry("Wall normal direction", "1",
+					dealii::Patterns::Integer(0,3),
+					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");
+			declare_entry("Wall normal coordinates", "1e-1, 2e-1, 5e-1",
+					dealii::Patterns::List(dealii::Patterns::Double(-1e10, 1e10)),
+					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. This comma-separated list of decimal numbers specifies their wall-normal coordinates.");
+		}
+		leave_subsection();
 	}
 	leave_subsection();
 
@@ -249,6 +296,8 @@ void SolverConfiguration::prepareOutputDirectory() {
 			//create_directory throws basic_filesystem_error<Path>, if fail (= no writing permissions)
 			//returns false, if directory already existed
 			boost::filesystem::create_directory(outputDir);
+			boost::filesystem::path checkpoint_dir(outputDir / "checkpoint");
+			boost::filesystem::create_directory(checkpoint_dir);
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg << "You want to put your output directory into "
@@ -283,6 +332,7 @@ void SolverConfiguration::prepareOutputDirectory() {
 		clock_t begin = clock();
 		if ((not isRestartAtLastCheckpoint())
 				and (not boost::filesystem::is_empty(outputDir))) {
+			// TODO check muss cleverer sein (wegen checkpoint verzeichnis kommt diese warnung immer)
 			if (isUserInteraction()) {
 				// Request user input
 				pout
@@ -338,8 +388,8 @@ void SolverConfiguration::prepareOutputDirectory() {
 			std::ofstream filestream;
 			std::stringstream filename;
 			filename << "testfile_process."
-					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-					<< ".txt";
+					<< dealii::Utilities::MPI::this_mpi_process(
+					MPI_COMM_WORLD) << ".txt";
 			filestream.open(
 					(outputDir / filename.str().c_str()).string().c_str());
 			filestream << " ";
@@ -348,9 +398,8 @@ void SolverConfiguration::prepareOutputDirectory() {
 					(outputDir / filename.str().c_str()).string().c_str());
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Process "
-					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-					<< " running on host "
+			msg << "Process " << dealii::Utilities::MPI::this_mpi_process(
+			MPI_COMM_WORLD) << " running on host "
 					<< dealii::Utilities::System::get_hostname()
 					<< " does not have writing access to your Output directory "
 					<< outputDir.string();
@@ -375,6 +424,16 @@ void SolverConfiguration::isConsistent() {
 				<< "Did not understand setting of Deal.II integrator. If you want to use the Deal.II "
 						"time integration schemes, you will have to set Time integrator to 'OTHER'."
 				<< endl;
+	}
+	// check if a forcing scheme is set to perform pseudopotential collisions
+	if (BGK_MULTIPHASE == getCollisionScheme()) {
+		if (NO_FORCING == getForcingScheme()) {
+			std::stringstream msg1;
+			msg1
+					<< "If you use the BGK Multiphase model you will need to specify a forcing scheme. Found 'No Forcing'.";
+			LOG(ERROR) << msg1.str().c_str() << endl;
+			throw ConfigurationException(msg1.str());
+		}
 	}
 
 	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) > 1) {

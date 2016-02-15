@@ -15,7 +15,7 @@
 #include "deal.II/base/geometry_info.h"
 
 #include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/MinLeeBoundary.h"
+#include "../problemdescription/LinearBoundaryRhoU.h"
 
 #include "../utilities/Logging.h"
 #include "../utilities/MPIGuard.h"
@@ -24,8 +24,8 @@ namespace natrium {
 
 CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, double L, double startTime, bool isUnstructured) :
-		Benchmark<2>(makeGrid(L), viscosity,
-				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
+		Benchmark<2>(makeGrid(L), viscosity, L), m_topPlateVelocity(
+				topPlateVelocity), m_startTime(startTime) {
 	setCharacteristicLength(L);
 
 	//applyInitialValues
@@ -57,12 +57,8 @@ CouetteFlow2D::~CouetteFlow2D() {
 boost::shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L) {
 
 	//Creation of the principal domain
-#ifdef WITH_TRILINOS_MPI
-	boost::shared_ptr<Mesh<2> > unitSquare =
-	boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
-#else
-	boost::shared_ptr<Mesh<2> > unitSquare = boost::make_shared<Mesh<2> >();
-#endif
+	boost::shared_ptr<Mesh<2> > unitSquare = boost::make_shared<Mesh<2> >(
+			MPI_COMM_WORLD);
 	dealii::GridGenerator::hyper_cube(*unitSquare, 0, L);
 
 	// Assign boundary indicators to the faces of the "parent cell"
@@ -77,30 +73,48 @@ boost::shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L) {
 
 boost::shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 		double topPlateVelocity) {
+	/*
+	 // make boundary description
+	 boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
+	 BoundaryCollection<2> >();
+	 numeric_vector zeroVelocity(2);
+	 numeric_vector constantVelocity(2);
+	 constantVelocity(0) = topPlateVelocity;
 
+	 boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+	 boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, zeroVelocity));
+	 boundaries->addBoundary(
+	 boost::make_shared<MinLeeBoundary<2> >(3, constantVelocity));
+
+	 // Get the triangulation object (which belongs to the parent class).
+	 boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
+	 */
 	// make boundary description
 	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
+
 	numeric_vector zeroVelocity(2);
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = topPlateVelocity;
 
-	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
-	boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, zeroVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<MinLeeBoundary<2> >(3, constantVelocity));
+			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(
+			boost::make_shared<LinearBoundaryRhoU<2> >(2, zeroVelocity));
+	boundaries->addBoundary(
+			boost::make_shared<LinearBoundaryRhoU<2> >(3, constantVelocity));
+
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
-
 	return boundaries;
 }
 
 double CouetteFlow2D::AnalyticVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {
-	assert (component < 2);
+	assert(component < 2);
 	// the analytic solution is given by an asymptotic series
-	if (component == 0){
+	if (component == 0) {
 		double t = this->get_time();
 		double U = m_benchmark->getCharacteristicVelocity();
 		double L = m_benchmark->getCharacteristicLength();

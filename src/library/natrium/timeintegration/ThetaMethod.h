@@ -50,7 +50,7 @@ public:
 	 * @return new global time t+dt
 	 */
 	 virtual double step(VECTOR& vector,
-			const MATRIX& systemMatrix, const VECTOR& systemVector, double t = 0, double dt = 0);
+			const MATRIX& systemMatrix, VECTOR& systemVector, double t = 0, double dt = 0);
 
 };
 

@@ -13,14 +13,13 @@
 #include "deal.II/base/function.h"
 
 #include "BoundaryCollection.h"
+#include "ConstantExternalForce.h"
 
 #include "../utilities/Logging.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/MPIGuard.h"
 
 namespace natrium {
-
-
 
 /** @short Abstract class for the description of a CFD problem. The description includes the computational mesh,
  *         boundary description, viscosity and initial values.
@@ -35,6 +34,9 @@ private:
 	/// boundary description
 	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
+	/// constant external force
+	boost::shared_ptr<ConstantExternalForce<dim> > m_externalForce;
+
 	/// kinematic viscosity
 	double m_viscosity;
 
@@ -47,13 +49,12 @@ private:
 	/// function to define initial velocities
 	boost::shared_ptr<dealii::Function<dim> > m_initialU;
 
-
 protected:
-	void setInitialRho(boost::shared_ptr<dealii::Function<dim> > ini_rho){
+	void setInitialRho(boost::shared_ptr<dealii::Function<dim> > ini_rho) {
 		m_initialRho = ini_rho;
 	}
 
-	void setInitialU(boost::shared_ptr<dealii::Function<dim> > ini_u){
+	void setInitialU(boost::shared_ptr<dealii::Function<dim> > ini_u) {
 		m_initialU = ini_u;
 	}
 
@@ -64,8 +65,8 @@ public:
 	/////////////////////////////////
 
 	/// constructor
-	ProblemDescription(boost::shared_ptr<Mesh<dim> > triangulation, double viscosity,
-			double characteristicLength);
+	ProblemDescription(boost::shared_ptr<Mesh<dim> > triangulation,
+			double viscosity, double characteristicLength);
 
 	///  destructor
 	virtual ~ProblemDescription() {
@@ -90,7 +91,6 @@ public:
 	virtual const boost::shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
 		return m_initialU;
 	}
-
 
 	/**
 	 * @short check if boundary conditions are uniquely assigned to boundary indicator
@@ -139,8 +139,36 @@ public:
 		m_triangulation = triangulation;
 	}
 
-	void setBoundaries(const boost::shared_ptr<BoundaryCollection<dim> >& boundaries) {
+	void setBoundaries(
+			const boost::shared_ptr<BoundaryCollection<dim> >& boundaries) {
 		m_boundaries = boundaries;
+	}
+
+	void setExternalForce(
+			const boost::shared_ptr<ConstantExternalForce<dim> >& force) {
+		m_externalForce = force;
+	}
+
+	boost::shared_ptr<ConstantExternalForce<dim> > getExternalForce() const {
+		return m_externalForce;
+	}
+
+	bool hasExternalForce() const {
+		if (m_externalForce == NULL) {
+			return false;
+		}
+		if (m_externalForce->getForce()[0] != 0) {
+			return true;
+		}
+		if (m_externalForce->getForce()[1] != 0) {
+			return true;
+		}
+		if (3 == dim) {
+			if (m_externalForce->getForce()[2] != 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	double getViscosity() const {
@@ -163,6 +191,7 @@ public:
 	virtual double getCharacteristicVelocity() const {
 		return 0.0;
 	}
+
 };
 /* class ProblemDescription */
 
@@ -175,10 +204,8 @@ inline ProblemDescription<dim>::ProblemDescription(
 	// make default initial conditions (rho = 1, u = v = 0)
 	m_initialRho = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
 	m_initialU = boost::make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
-#ifdef WITH_TRILINOS
 	/// Create MPI (if not done yet);
 	MPIGuard::getInstance();
-#endif
 }
 
 } /* namespace natrium */

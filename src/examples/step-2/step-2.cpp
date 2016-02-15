@@ -29,12 +29,12 @@ int main(int argc, char** argv) {
 	pout << "Starting NATriuM step-2..." << endl;
 
 	// set Reynolds and Mach number
-	const double Re = 10;
-	const double Ma = 0.1;
+	const double Re = 2000;
+	const double Ma = 0.05;
 
 	// set spatial discretization
 	size_t refinementLevel = 1;
-	size_t orderOfFiniteElement = 1;
+	size_t orderOfFiniteElement = 5;
 	bool isUnstructured = false;
 
 	// set Problem so that the right Re and Ma are achieved
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
 	const double viscosity = U / Re; // (because L = 1)
 
 	// in order to start from a continuous solution, do not start at t=0
-	const double startTime = 0.0;
+	const double startTime = 40.0;
 
 	// set small time step size
 	const double timeStepSize = 0.0001;
@@ -57,9 +57,9 @@ int main(int argc, char** argv) {
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);
-	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputSolutionInterval(1);
 	configuration->setOutputTableInterval(100);
-	configuration->setNumberOfTimeSteps(1000);
+	configuration->setNumberOfTimeSteps(2000);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
 	configuration->setTimeStepSize(timeStepSize);
@@ -73,7 +73,9 @@ int main(int argc, char** argv) {
 
 	solver.run();
 
+
 	pout << "NATriuM step-2 terminated." << endl;
+	pout << "Error: " << solver.getErrorStats()->getMaxVelocityError() << endl;
 
 	return 0;
 }

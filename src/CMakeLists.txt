@@ -2,7 +2,7 @@
 # CMake File for NATriuM test
 #    
   
-    
+   
 #
 # It is good practise to specify a version requirement:
 #
@@ -26,7 +26,7 @@ DEAL_II_INITIALIZE_CACHED_VARIABLES()
 # flags.
 #
 project( NATriuM )
- 
+    
 #
 # include boost
 #
@@ -46,8 +46,8 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 #
 add_subdirectory( library )
 add_subdirectory( test )
-#add_subdirectory( examples )
-add_subdirectory( analysis )
+add_subdirectory( examples )
+#add_subdirectory( analysis )
  
 #
 # set variable NATRIUM_TARGET (only used in this file)

@@ -76,8 +76,8 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 <p><a href="classnatrium_1_1BGKSteadyState-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#aa8521523f8603fdc5a391d6e6388667c">BGKSteadyState</a> (double relaxationParameter, double dt, const shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, double preconditioning_parameter)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor.  <a href="#aa8521523f8603fdc5a391d6e6388667c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#a36e281915902e8ac1e347a22e382ac3f">BGKSteadyState</a> (double relaxationParameter, double dt, const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, double preconditioning_parameter)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor.  <a href="#a36e281915902e8ac1e347a22e382ac3f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#ab2c58f1d6b964179a2abeb5f54aa5edc">~BGKSteadyState</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor  <a href="#ab2c58f1d6b964179a2abeb5f54aa5edc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">getEquilibriumDistribution</a> (size_t i, const numeric_vector &amp;u, const double rho=1) const </td></tr>
@@ -99,7 +99,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 </p>
 <p> term. The hydrodynamic equations of the Steady State <a class="el" href="classnatrium_1_1BGK.html" title="Description of the BGK model for the transformed particle distributions, as described...">BGK</a> can be derived by the Chapman-Enskog analysis. Except for the temporal derivative, the compressible Navier-Stokes equation is found, but with a much better eigenvalue system. This makes the preconditioned <a class="el" href="classnatrium_1_1BGK.html" title="Description of the BGK model for the transformed particle distributions, as described...">BGK</a> perfect for steady flows, although not physical for unsteady flows. </p>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="aa8521523f8603fdc5a391d6e6388667c"></a><!-- doxytag: member="natrium::BGKSteadyState::BGKSteadyState" ref="aa8521523f8603fdc5a391d6e6388667c" args="(double relaxationParameter, double dt, const shared_ptr&lt; Stencil &gt; stencil, double preconditioning_parameter)" -->
+<a class="anchor" id="a36e281915902e8ac1e347a22e382ac3f"></a><!-- doxytag: member="natrium::BGKSteadyState::BGKSteadyState" ref="a36e281915902e8ac1e347a22e382ac3f" args="(double relaxationParameter, double dt, const boost::shared_ptr&lt; Stencil &gt; stencil, double preconditioning_parameter)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -118,7 +118,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt;&nbsp;</td>
+          <td class="paramtype">const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt;&nbsp;</td>
           <td class="paramname"> <em>stencil</em>, </td>
         </tr>
         <tr>
@@ -342,7 +342,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

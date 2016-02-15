@@ -609,7 +609,7 @@ block_vector natrium::DealIIWrapper<sparse_block_matrix, block_vector>::evaluate
 
 template<class MATRIX, class VECTOR>
 double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
-		const MATRIX& systemMatrix, const VECTOR& systemVector, double t,
+		const MATRIX& systemMatrix, VECTOR& systemVector, double t,
 		double dt) {
 
 	if ((0.0 != dt) and dt != this->getTimeStepSize()) {

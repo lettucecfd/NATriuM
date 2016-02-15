@@ -118,6 +118,10 @@ public:
 	double getRelaxationParameter() const {
 		return m_relaxationParameter;
 	}
+
+	double getDt() const {
+		return m_dt;
+	}
 };
 
 } /* namespace natrium */

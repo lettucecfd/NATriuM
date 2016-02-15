@@ -8,10 +8,17 @@
 #include "BoundaryTools.h"
 #include "../utilities/Math.h"
 
-bool natrium::BoundaryTools::checkParallelLines(
-		const dealii::Point<2>& beginLine1, const dealii::Point<2>& endLine1,
-		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
-		std::string& errorMessage) {
+namespace natrium {
+
+
+template class BoundaryDensity<2> ;
+template class BoundaryDensity<3> ;
+template class BoundaryVelocity<2> ;
+template class BoundaryVelocity<3> ;
+
+bool BoundaryTools::checkParallelLines(const dealii::Point<2>& beginLine1,
+		const dealii::Point<2>& endLine1, dealii::Point<2>& beginLine2,
+		dealii::Point<2>& endLine2, std::string& errorMessage) {
 
 	// check input
 	double lengthLine1 = beginLine1.distance(endLine1);
@@ -38,8 +45,8 @@ bool natrium::BoundaryTools::checkParallelLines(
 	}
 
 	// assert that interfaces are parallel (anything else would need different handling)
-	dealii::Tensor<1,2> differenceVector1 = endLine1 - beginLine1;
-	dealii::Tensor<1,2> differenceVector2 = endLine2 - beginLine2;
+	dealii::Tensor<1, 2> differenceVector1 = endLine1 - beginLine1;
+	dealii::Tensor<1, 2> differenceVector2 = endLine2 - beginLine2;
 
 	if (not Math::is_angle_small(differenceVector1, differenceVector2)) {
 		// try to fix the problem by swapping begin and end
@@ -59,19 +66,15 @@ bool natrium::BoundaryTools::checkParallelLines(
 	return true;
 }
 
-
-bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
+bool BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 		size_t boundaryIndicator1, size_t boundaryIndicator2,
-		boost::shared_ptr<Mesh<2> > triangulation,
-		dealii::Point<2>& beginLine1, dealii::Point<2>& endLine1,
-		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
-				std::string& errorMessage) {
+		boost::shared_ptr<Mesh<2> > triangulation, dealii::Point<2>& beginLine1,
+		dealii::Point<2>& endLine1, dealii::Point<2>& beginLine2,
+		dealii::Point<2>& endLine2, std::string& errorMessage) {
 
 	// Make iterators over active faces
-	Mesh<2>::active_cell_iterator currentCell =
-			triangulation->begin_active();
-	Mesh<2>::active_cell_iterator lastCell =
-			triangulation->end();
+	Mesh<2>::active_cell_iterator currentCell = triangulation->begin_active();
+	Mesh<2>::active_cell_iterator lastCell = triangulation->end();
 
 	// Make containers for all vertices at the boundary
 	// maps are by default sorted by key;
@@ -86,8 +89,7 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 		if (currentCell->at_boundary()) {
 			for (size_t i = 0; i < dealii::GeometryInfo<2>::faces_per_cell;
 					i++) {
-				if (currentCell->face(i)->boundary_id()
-						== boundaryIndicator1) {
+				if (currentCell->face(i)->boundary_id() == boundaryIndicator1) {
 					for (size_t j = 0;
 							j < dealii::GeometryInfo<2>::vertices_per_face;
 							j++) {
@@ -128,12 +130,12 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 	for (element = ++pointsAtBoundary1.begin();
 			element != --pointsAtBoundary1.end(); ++element) {
 		// check if the vertex is really on  line 1
-		dealii::Tensor<1,2> line = endLine1 - beginLine1;
-		dealii::Tensor<1,2> toPoint = element->second - beginLine1;
+		dealii::Tensor<1, 2> line = endLine1 - beginLine1;
+		dealii::Tensor<1, 2> toPoint = element->second - beginLine1;
 		if (not Math::is_angle_small(line, toPoint)) {
 			std::stringstream s;
-			s << "Not all points with boundary indicator "
-					<< boundaryIndicator1 << " are on a line.";
+			s << "Not all points with boundary indicator " << boundaryIndicator1
+					<< " are on a line.";
 			errorMessage = s.str();
 			return false;
 		}
@@ -141,12 +143,12 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 	for (element = ++pointsAtBoundary2.begin();
 			element != --pointsAtBoundary2.end(); ++element) {
 		// check if the vertex is really on line
-		dealii::Tensor<1,2> line = endLine2 - beginLine2;
-		dealii::Tensor<1,2> toPoint = element->second - beginLine2;
+		dealii::Tensor<1, 2> line = endLine2 - beginLine2;
+		dealii::Tensor<1, 2> toPoint = element->second - beginLine2;
 		if (not Math::is_angle_small(line, toPoint)) {
 			std::stringstream s;
-			s << "Not all points with boundary indicator "
-					<< boundaryIndicator2 << " are on a line.";
+			s << "Not all points with boundary indicator " << boundaryIndicator2
+					<< " are on a line.";
 			errorMessage = s.str();
 			return false;
 		}
@@ -155,3 +157,84 @@ bool natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 	return true;
 
 }/* getInterfacialLinesByBoundaryIndicator */
+
+template<size_t dim>
+void BoundaryTools::CoupleDoFsAtBoundary(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<dim>& doFHandler, size_t boundary_id,
+		PointCouplingAtBoundary coupling) {
+
+	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
+	const dealii::ConstraintMatrix constraints;
+
+	size_t n_dofs_per_cell = doFHandler.get_fe().dofs_per_cell;
+	std::vector<dealii::types::global_dof_index> dofs_on_this_cell(
+			n_dofs_per_cell);
+	std::vector<dealii::types::global_dof_index> dofs_on_this_face;
+	dofs_on_this_face.reserve(n_dofs_per_cell);
+
+	// couple opposite distribution functions at boundaries
+	// iterate over all cells
+	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+			doFHandler.begin_active();
+	typename dealii::DoFHandler<dim>::active_cell_iterator endc =
+			doFHandler.end();
+	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
+			for (size_t i = 0; i < dealii::GeometryInfo<dim>::faces_per_cell;
+					i++) {
+				if (cell->face(i)->at_boundary()) {
+					if (cell->face(i)->boundary_id() == boundary_id) {
+						cell->get_dof_indices(dofs_on_this_cell);
+						dofs_on_this_face.clear();
+						for (size_t j = 0; j < n_dofs_per_cell; j++) {
+							if (cell->get_fe().has_support_on_face(j, i)) {
+								dofs_on_this_face.push_back(
+										dofs_on_this_cell.at(j));
+							}
+						}
+
+						// add
+						if (COUPLE_ONLY_SINGLE_POINTS == coupling) {
+							// couple only individual dofs with each other
+							std::vector<dealii::types::global_dof_index> dof_this(
+									1);
+							for (size_t i = 0; i < dofs_on_this_face.size();
+									i++) {
+								dof_this.at(0) = dofs_on_this_face.at(i);
+								constraints.add_entries_local_to_global(
+										dof_this, cSparse, true);
+							}
+						} else if (COUPLE_WHOLE_FACE == coupling) {
+							// couple all dofs at a face
+							std::vector<dealii::types::global_dof_index> dof_this(
+									dofs_on_this_face.size());
+							for (size_t i = 0; i < dofs_on_this_face.size();
+									i++) {
+								dof_this.at(i) = dofs_on_this_face.at(i);
+							}
+							constraints.add_entries_local_to_global(dof_this,
+									cSparse, true);
+						} else {
+							throw BoundaryCollectionException(
+									"The coupling you specified is not implemented in "
+											"BoundaryTools::CoupleDoFsAtBoundary");
+						}
+					}
+					/* end if boundary indicator */
+				} /* end if at boundary */
+			} /* end for all faces */
+		} /* end if is locally owned */
+	} /* end forall cells */
+
+} /* CoupleDoFsAtBoundary */
+template void BoundaryTools::CoupleDoFsAtBoundary<2>(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<2>& doFHandler, size_t boundary_id,
+		PointCouplingAtBoundary coupling);
+template void BoundaryTools::CoupleDoFsAtBoundary<3>(
+		dealii::TrilinosWrappers::SparsityPattern& cSparse,
+		const dealii::DoFHandler<3>& doFHandler, size_t boundary_id,
+		PointCouplingAtBoundary coupling);
+
+} /* namespace natrium */

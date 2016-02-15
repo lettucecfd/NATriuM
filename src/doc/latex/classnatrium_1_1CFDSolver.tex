@@ -16,7 +16,7 @@ The central class for the CFD simulation based on the DBE.
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1CFDSolver_a9d0e65b8a404ac3eaf80aee6c81945dc}{CFDSolver} (shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SolverConfiguration}{SolverConfiguration} $>$ configuration, shared\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ $>$ problemDescription)
+\hyperlink{classnatrium_1_1CFDSolver_a47ca594a73dc5ab04e319ba588cda3dd}{CFDSolver} (boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SolverConfiguration}{SolverConfiguration} $>$ configuration, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ $>$ problemDescription)
 \item 
 \hypertarget{classnatrium_1_1CFDSolver_a7ca9bd709255ac87b34f869c984b913b}{
 virtual \hyperlink{classnatrium_1_1CFDSolver_a7ca9bd709255ac87b34f869c984b913b}{$\sim$CFDSolver} ()}
@@ -79,34 +79,34 @@ const vector$<$ distributed\_\-vector $>$ \& {\bfseries getVelocity} () const }
 \label{classnatrium_1_1CFDSolver_a0e5ec3dc278216d5827410b7db82af59}
 
 \item 
-\hypertarget{classnatrium_1_1CFDSolver_a1aea207c81089c2e46092489557bb139}{
-const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}$<$ dim $>$ $>$ \& {\bfseries getAdvectionOperator} () const }
-\label{classnatrium_1_1CFDSolver_a1aea207c81089c2e46092489557bb139}
+\hypertarget{classnatrium_1_1CFDSolver_a20e897531387c33b60a2e3c18e61c243}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}$<$ dim $>$ $>$ \& {\bfseries getAdvectionOperator} () const }
+\label{classnatrium_1_1CFDSolver_a20e897531387c33b60a2e3c18e61c243}
 
 \item 
-\hypertarget{classnatrium_1_1CFDSolver_a2006f7bbbf2336789a5cd74d329c2e60}{
-const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ \& {\bfseries getStencil} () const }
-\label{classnatrium_1_1CFDSolver_a2006f7bbbf2336789a5cd74d329c2e60}
+\hypertarget{classnatrium_1_1CFDSolver_a5ef0f693bf6c7b72f17d8564b4069ce8}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ \& {\bfseries getStencil} () const }
+\label{classnatrium_1_1CFDSolver_a5ef0f693bf6c7b72f17d8564b4069ce8}
 
 \item 
-\hypertarget{classnatrium_1_1CFDSolver_abb4b632b524bd68afcdff7d54c2d3d97}{
-const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1CollisionModel}{CollisionModel} $>$ \& {\bfseries getCollisionModel} () const }
-\label{classnatrium_1_1CFDSolver_abb4b632b524bd68afcdff7d54c2d3d97}
+\hypertarget{classnatrium_1_1CFDSolver_af573bd22cb7dff697dc5db99819f79c8}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1CollisionModel}{CollisionModel} $>$ \& {\bfseries getCollisionModel} () const }
+\label{classnatrium_1_1CFDSolver_af573bd22cb7dff697dc5db99819f79c8}
 
 \item 
-\hypertarget{classnatrium_1_1CFDSolver_a413691491ac82f384a03293be2294de5}{
-const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SolverConfiguration}{SolverConfiguration} $>$ \& {\bfseries getConfiguration} () const }
-\label{classnatrium_1_1CFDSolver_a413691491ac82f384a03293be2294de5}
+\hypertarget{classnatrium_1_1CFDSolver_a819a073ab7ac1d33a0968ca0ffc6eba4}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SolverConfiguration}{SolverConfiguration} $>$ \& {\bfseries getConfiguration} () const }
+\label{classnatrium_1_1CFDSolver_a819a073ab7ac1d33a0968ca0ffc6eba4}
 
 \item 
-\hypertarget{classnatrium_1_1CFDSolver_a8b1131e8fd6b022bea5ddce72469c289}{
-const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ $>$ \& {\bfseries getProblemDescription} () const }
-\label{classnatrium_1_1CFDSolver_a8b1131e8fd6b022bea5ddce72469c289}
+\hypertarget{classnatrium_1_1CFDSolver_ad728be4103a49d1801e3b26e0e15e944}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ $>$ \& {\bfseries getProblemDescription} () const }
+\label{classnatrium_1_1CFDSolver_ad728be4103a49d1801e3b26e0e15e944}
 
 \item 
-\hypertarget{classnatrium_1_1CFDSolver_af1b1ca6771029003bc9bac7cfe0b4d3c}{
-const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ distributed\_\-vector, distributed\_\-sparse\_\-matrix $>$ $>$ \& {\bfseries getTimeIntegrator} () const }
-\label{classnatrium_1_1CFDSolver_af1b1ca6771029003bc9bac7cfe0b4d3c}
+\hypertarget{classnatrium_1_1CFDSolver_ad8db6e33d26853a6de6a0c7735ce18a5}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ distributed\_\-vector, distributed\_\-sparse\_\-matrix $>$ $>$ \& {\bfseries getTimeIntegrator} () const }
+\label{classnatrium_1_1CFDSolver_ad8db6e33d26853a6de6a0c7735ce18a5}
 
 \item 
 \hypertarget{classnatrium_1_1CFDSolver_a74d459ef4f43d42e04ceb2178bb006f4}{
@@ -144,9 +144,9 @@ void {\bfseries setIteration} (size\_\-t iteration)}
 \label{classnatrium_1_1CFDSolver_a97546801de9259206f9611c14ce9ff1d}
 
 \item 
-\hypertarget{classnatrium_1_1CFDSolver_ab40725ea85fde34033d92027d13a4b06}{
-const shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SolverStats}{SolverStats}$<$ dim $>$ $>$ \& {\bfseries getSolverStats} () const }
-\label{classnatrium_1_1CFDSolver_ab40725ea85fde34033d92027d13a4b06}
+\hypertarget{classnatrium_1_1CFDSolver_aa0a28a595e850dee1c40bc7ddec9b6ca}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SolverStats}{SolverStats}$<$ dim $>$ $>$ \& {\bfseries getSolverStats} () const }
+\label{classnatrium_1_1CFDSolver_aa0a28a595e850dee1c40bc7ddec9b6ca}
 
 \item 
 \hypertarget{classnatrium_1_1CFDSolver_abcce31d3ba9b00e148780b6c855d189b}{
@@ -214,11 +214,11 @@ The \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver} itself is quite static but 
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1CFDSolver_a9d0e65b8a404ac3eaf80aee6c81945dc}{
+\hypertarget{classnatrium_1_1CFDSolver_a47ca594a73dc5ab04e319ba588cda3dd}{
 \index{natrium::CFDSolver@{natrium::CFDSolver}!CFDSolver@{CFDSolver}}
 \index{CFDSolver@{CFDSolver}!natrium::CFDSolver@{natrium::CFDSolver}}
-\subsubsection[{CFDSolver}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::CFDSolver}$<$ dim $>$::{\bf CFDSolver} (shared\_\-ptr$<$ {\bf SolverConfiguration} $>$ {\em configuration}, \/  shared\_\-ptr$<$ {\bf ProblemDescription}$<$ dim $>$ $>$ {\em problemDescription})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classnatrium_1_1CFDSolver_a9d0e65b8a404ac3eaf80aee6c81945dc}
+\subsubsection[{CFDSolver}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::CFDSolver}$<$ dim $>$::{\bf CFDSolver} (boost::shared\_\-ptr$<$ {\bf SolverConfiguration} $>$ {\em configuration}, \/  boost::shared\_\-ptr$<$ {\bf ProblemDescription}$<$ dim $>$ $>$ {\em problemDescription})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1CFDSolver_a47ca594a73dc5ab04e319ba588cda3dd}
 constructor \begin{DoxyNote}{Note}
 : has to be inlined, if the template parameter is not made explicit 
 \end{DoxyNote}

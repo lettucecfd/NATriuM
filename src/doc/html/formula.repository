@@ -32,3 +32,8 @@
 \form#31:\[ \gamma = 1 \]
 \form#32:\[ \gamma \leftarrow 0 \]
 \form#33:\[ \frac{df}{dt} = Af+b \]
+\form#34:\[ \rho = 1 \]
+\form#35:\[ f_{\alpha} \]
+\form#36:\[ f_{\beta} \]
+\form#37:\[ \partial_{x}f_{\beta} \]
+\form#38:\[ M^{-1} \]

@@ -67,22 +67,39 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00033"></a>00033         }
 <a name="l00034"></a>00034 };
 <a name="l00035"></a>00035 
-<a name="l00046"></a>00046 <span class="keywordtype">bool</span> checkParallelLines(<span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; beginLine1,
-<a name="l00047"></a>00047                 <span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; endLine1, dealii::Point&lt;2&gt;&amp; beginLine2,
-<a name="l00048"></a>00048                 dealii::Point&lt;2&gt;&amp; endLine2, std::string&amp; errorMessage);
-<a name="l00049"></a>00049 
-<a name="l00065"></a>00065 <span class="keywordtype">bool</span> getInterfacialLinesByBoundaryIndicator(<span class="keywordtype">size_t</span> boundaryIndicator1,
-<a name="l00066"></a>00066                 <span class="keywordtype">size_t</span> boundaryIndicator2,
-<a name="l00067"></a>00067                 shared_ptr&lt;Mesh&lt;2&gt; &gt; triangulation,
-<a name="l00068"></a>00068                 dealii::Point&lt;2&gt;&amp; beginLine1, dealii::Point&lt;2&gt;&amp; endLine1,
-<a name="l00069"></a>00069                 dealii::Point&lt;2&gt;&amp; beginLine2, dealii::Point&lt;2&gt;&amp; endLine2,
-<a name="l00070"></a>00070                 std::string&amp; errorMessage);
-<a name="l00071"></a>00071 
-<a name="l00072"></a>00072 }
-<a name="l00073"></a>00073 
-<a name="l00074"></a>00074 }
-<a name="l00075"></a>00075 
-<a name="l00076"></a>00076 <span class="preprocessor">#endif </span><span class="comment">/* BOUNDARYTOOLS_H_ */</span>
+<a name="l00039"></a>00039 <span class="keyword">enum</span> DistributionCouplingAtBoundary{
+<a name="l00040"></a>00040         COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
+<a name="l00041"></a>00041         COUPLE_ALL_DISTRIBUTIONS
+<a name="l00042"></a>00042 };
+<a name="l00043"></a>00043 
+<a name="l00047"></a>00047 <span class="keyword">enum</span> PointCouplingAtBoundary{
+<a name="l00048"></a>00048         COUPLE_ONLY_SINGLE_POINTS,
+<a name="l00049"></a>00049         COUPLE_WHOLE_FACE
+<a name="l00050"></a>00050 };
+<a name="l00051"></a>00051 
+<a name="l00062"></a>00062 <span class="keywordtype">bool</span> checkParallelLines(<span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; beginLine1,
+<a name="l00063"></a>00063                 <span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; endLine1, dealii::Point&lt;2&gt;&amp; beginLine2,
+<a name="l00064"></a>00064                 dealii::Point&lt;2&gt;&amp; endLine2, std::string&amp; errorMessage);
+<a name="l00065"></a>00065 
+<a name="l00081"></a>00081 <span class="keywordtype">bool</span> getInterfacialLinesByBoundaryIndicator(<span class="keywordtype">size_t</span> boundaryIndicator1,
+<a name="l00082"></a>00082                 <span class="keywordtype">size_t</span> boundaryIndicator2,
+<a name="l00083"></a>00083                 boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; triangulation,
+<a name="l00084"></a>00084                 dealii::Point&lt;2&gt;&amp; beginLine1, dealii::Point&lt;2&gt;&amp; endLine1,
+<a name="l00085"></a>00085                 dealii::Point&lt;2&gt;&amp; beginLine2, dealii::Point&lt;2&gt;&amp; endLine2,
+<a name="l00086"></a>00086                 std::string&amp; errorMessage);
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089 
+<a name="l00101"></a>00101 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00102"></a>00102 <span class="keywordtype">void</span> CoupleDoFsAtBoundary(
+<a name="l00103"></a>00103                 dealii::TrilinosWrappers::SparsityPattern&amp; cSparse,
+<a name="l00104"></a>00104                 <span class="keyword">const</span> dealii::DoFHandler&lt;dim&gt;&amp; doFHandler, <span class="keywordtype">size_t</span> boundary_id, PointCouplingAtBoundary coupling);
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106 } <span class="comment">/* namespace BoundaryTools */</span>
+<a name="l00107"></a>00107 
+<a name="l00108"></a>00108 } <span class="comment">/* namespace natrium */</span>
+<a name="l00109"></a>00109 
+<a name="l00110"></a>00110 <span class="preprocessor">#endif </span><span class="comment">/* BOUNDARYTOOLS_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -98,7 +115,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Nov 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

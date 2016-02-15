@@ -1,0 +1,74 @@
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU}{
+\section{natrium::LinearBoundaryRhoU$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1LinearBoundaryRhoU}\index{natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}}
+}
+Inheritance diagram for natrium::LinearBoundaryRhoU$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1LinearBoundaryRhoU}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1LinearBoundaryRhoU_a14a9b89c500915afd7945ff151e16b7a}{LinearBoundaryRhoU} (size\_\-t boundaryIndicator, boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ boundaryDensity, boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ boundaryVelocity)
+\begin{DoxyCompactList}\small\item\em This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} condition with arbitrary density and velocity to the boundary with the given boundary indicator. \item\end{DoxyCompactList}\item 
+\hyperlink{classnatrium_1_1LinearBoundaryRhoU_a1c95f6068da74cc69e58611d82f2eee4}{LinearBoundaryRhoU} (size\_\-t boundaryIndicator, const dealii::Vector$<$ double $>$ \&velocity)
+\begin{DoxyCompactList}\small\item\em This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} condition with a constant fixed velocity and \[ \rho = 1 \] to the boundary with the given boundary indicator. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU_ad104a8a9608daf894fd708e4cb20bdef}{
+virtual \hyperlink{classnatrium_1_1LinearBoundaryRhoU_ad104a8a9608daf894fd708e4cb20bdef}{$\sim$LinearBoundaryRhoU} ()}
+\label{classnatrium_1_1LinearBoundaryRhoU_ad104a8a9608daf894fd708e4cb20bdef}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1LinearBoundaryRhoU_a5e8291245a4d0a81ed8a7545e0ffbe96}{assembleBoundary} (size\_\-t alpha, const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, size\_\-t faceNumber, dealii::FEFaceValues$<$ dim $>$ \&feFaceValues, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, const std::map$<$ size\_\-t, size\_\-t $>$ \&q\_\-index\_\-to\_\-facedof, const vector$<$ double $>$ \&inverseLocalMassMatrix, distributed\_\-sparse\_\-block\_\-matrix \&systemMatrix, distributed\_\-block\_\-vector \&systemVector, bool useCentralFlux=false) const 
+\begin{DoxyCompactList}\small\item\em This function defines the actual boundary condition. It calculates and assembles the fluxes at the boundary. Note that this function has to be called only once at the beginning of a simulation (or at reassembly, e.g. when the grid has changed). While the simulation runs, there has to be no separate treatment of the boundary, as it is a part of the linear ODE, already. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::LinearBoundaryRhoU$<$ dim $>$}
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU_a14a9b89c500915afd7945ff151e16b7a}{
+\index{natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}!LinearBoundaryRhoU@{LinearBoundaryRhoU}}
+\index{LinearBoundaryRhoU@{LinearBoundaryRhoU}!natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}}
+\subsubsection[{LinearBoundaryRhoU}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::LinearBoundaryRhoU}$<$ dim $>$::{\bf LinearBoundaryRhoU} (size\_\-t {\em boundaryIndicator}, \/  boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ {\em boundaryDensity}, \/  boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ {\em boundaryVelocity})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundaryRhoU_a14a9b89c500915afd7945ff151e16b7a}
+
+
+This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} condition with arbitrary density and velocity to the boundary with the given boundary indicator. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em boundaryIndicator}]the boundary indicator that is assigned to the target boundary. \item[\mbox{$\leftarrow$} {\em boundaryDensity}]A dealii::Function$<$dim$>$ that defines the prescribed density at the boundary. \item[\mbox{$\leftarrow$} {\em boundaryVelocity}]A dealii::Function$<$dim$>$ that defines the prescribed velocity at the boundary. \end{DoxyParams}
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU_a1c95f6068da74cc69e58611d82f2eee4}{
+\index{natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}!LinearBoundaryRhoU@{LinearBoundaryRhoU}}
+\index{LinearBoundaryRhoU@{LinearBoundaryRhoU}!natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}}
+\subsubsection[{LinearBoundaryRhoU}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::LinearBoundaryRhoU}$<$ dim $>$::{\bf LinearBoundaryRhoU} (size\_\-t {\em boundaryIndicator}, \/  const dealii::Vector$<$ double $>$ \& {\em velocity})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundaryRhoU_a1c95f6068da74cc69e58611d82f2eee4}
+
+
+This constructor assigns the \hyperlink{classnatrium_1_1Boundary}{Boundary} condition with a constant fixed velocity and \[ \rho = 1 \] to the boundary with the given boundary indicator. constructor
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em boundaryIndicator}]the boundary indicator that is assigned to the target boundary. \item[\mbox{$\leftarrow$} {\em velocity}]Constant velocity vector at the boundary. \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1LinearBoundaryRhoU_a5e8291245a4d0a81ed8a7545e0ffbe96}{
+\index{natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}!assembleBoundary@{assembleBoundary}}
+\index{assembleBoundary@{assembleBoundary}!natrium::LinearBoundaryRhoU@{natrium::LinearBoundaryRhoU}}
+\subsubsection[{assembleBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::LinearBoundaryRhoU}$<$ dim $>$::assembleBoundary (size\_\-t {\em alpha}, \/  const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  size\_\-t {\em faceNumber}, \/  dealii::FEFaceValues$<$ dim $>$ \& {\em feFaceValues}, \/  const {\bf Stencil} \& {\em stencil}, \/  const std::map$<$ size\_\-t, size\_\-t $>$ \& {\em q\_\-index\_\-to\_\-facedof}, \/  const vector$<$ double $>$ \& {\em inverseLocalMassMatrix}, \/  distributed\_\-sparse\_\-block\_\-matrix \& {\em systemMatrix}, \/  distributed\_\-block\_\-vector \& {\em systemVector}, \/  bool {\em useCentralFlux} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1LinearBoundaryRhoU_a5e8291245a4d0a81ed8a7545e0ffbe96}
+
+
+This function defines the actual boundary condition. It calculates and assembles the fluxes at the boundary. Note that this function has to be called only once at the beginning of a simulation (or at reassembly, e.g. when the grid has changed). While the simulation runs, there has to be no separate treatment of the boundary, as it is a part of the linear ODE, already. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em alpha}]The index of the distribution function  f\_\-\{\} \mbox{]} for which the boundary is constructed. \item[\mbox{$\leftarrow$} {\em cell}]The current cell (assembly is done cell-\/by-\/cell) \item[\mbox{$\leftarrow$} {\em faceNumber}]The current face number. \item[\mbox{$\leftarrow$} {\em feFaceValues}]The dealii::FEFaceValues$<$dim$>$ object, which has to be reinitialized right at the beginning of the assembleBoundary function (it can be empty, but is passed here as a function parameter to avoid construction of a new feFaceValues object). \item[\mbox{$\leftarrow$} {\em stencil}]The DQ stencil, which is required here to get the particle velocities. \item[\mbox{$\leftarrow$} {\em q\_\-index\_\-to\_\-facedof}]Maps quadrature nodes to DoFs (only possible for GLL nodes) \item[\mbox{$\leftarrow$} {\em inverseLocalMassMatrix}]\[ M^{-1} \] is multiplied with the obtained boundary matrix at the end of the assembly. \item[{\em in/out\mbox{]}}]systemMatrix The global system matrix which is assembled to. \item[{\em in/out\mbox{]}}]systemVector The global system vector which is assembled to. \item[\mbox{$\leftarrow$} {\em useCentralFlux}]indicates whether to use a central instead of a Lax-\/Friedrichs flux. Should not be used, has not been tested thoroughly and yields bad results, usually. \end{DoxyParams}
+
+
+Distribute to global matrix 
+
+Implements \hyperlink{classnatrium_1_1LinearBoundary_a669905b997cb9f78f8789254e28ec538}{natrium::LinearBoundary$<$ dim $>$}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundaryRhoU.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/LinearBoundaryRhoU.cpp\end{DoxyCompactItemize}

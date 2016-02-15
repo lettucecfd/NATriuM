@@ -56,7 +56,7 @@ void channelSetup (
 
     // Moving bottom wall
     Box2D bottomWall(0, nx, 0, 0);
-    boundaryCondition.setVelocityConditionOnBlockBoundaries ( lattice, bottomWall );	// Dirichlet condition on the bottom wall
+    boundaryCondition.setVelocityConditionOnBlockBoundaries ( lattice, bottomWall );	// Linear condition on the bottom wall
     setBoundaryVelocity (lattice, bottomWall, u);
 
     // Sinus Profile

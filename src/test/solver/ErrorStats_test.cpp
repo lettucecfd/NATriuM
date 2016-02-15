@@ -47,6 +47,7 @@ BOOST_AUTO_TEST_CASE(ErrorStats_ConstructionAndFunctionality_test) {
 			boost::filesystem::remove_all(natriumTmpDir);
 		}
 		boost::filesystem::create_directory(natriumTmpDir);
+		boost::filesystem::create_directory(natriumTmpDir / "checkpoint");
 	}
 	ErrorStats<2> stats(&solver, natriumTmpFile.c_str());
 	BOOST_CHECK(boost::filesystem::exists(natriumTmpFile));

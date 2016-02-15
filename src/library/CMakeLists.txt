@@ -9,31 +9,31 @@ file( GLOB_RECURSE
       INCLUDES
       natrium/*.h
       )
-  
+   
 file(   GLOB_RECURSE
         SRC_FILES
         natrium/advection/*.cpp 
         natrium/benchmarks/*.cpp
         natrium/collision/*.cpp
         natrium/problemdescription/*.cpp
+        natrium/smoothing/*.cpp
         natrium/solver/*.cpp
         natrium/stencils/*.cpp
         natrium/timeintegration/*.cpp 
         natrium/utilities/*.cpp
         )
- 
-  
-           
+        
+        
 enable_unity_build(natrium SRC_FILES)
-  
- 
- 
+    
+    
+
 #
 # Create natrium library
 #
 add_library( natrium ${INCLUDES} ${SRC_FILES} )
  
-
+ 
 
 #
 # Make library

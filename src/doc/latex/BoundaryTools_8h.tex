@@ -10,13 +10,26 @@
 \item 
 class \hyperlink{classnatrium_1_1BoundaryTools_1_1point__sorter}{natrium::BoundaryTools::point\_\-sorter}
 \begin{DoxyCompactList}\small\item\em function to compare points as map keys; the points with smaller x components fall before others. in case of equal x, the points with smaller y components will be placed first. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries DistributionCouplingAtBoundary} \{ {\bfseries COUPLE\_\-ONLY\_\-OPPOSITE\_\-DISTRIBUTIONS}, 
+{\bfseries COUPLE\_\-ALL\_\-DISTRIBUTIONS}
+ \}
+\begin{DoxyCompactList}\small\item\em enum to describe couplings at the boundary \item\end{DoxyCompactList}\item 
+enum {\bfseries PointCouplingAtBoundary} \{ {\bfseries COUPLE\_\-ONLY\_\-SINGLE\_\-POINTS}, 
+{\bfseries COUPLE\_\-WHOLE\_\-FACE}
+ \}
+\begin{DoxyCompactList}\small\item\em enum to describe couplings at the boundary \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 bool \hyperlink{namespacenatrium_1_1BoundaryTools_a64669bd0ddcea4f0eb21121beebcf76f}{natrium::BoundaryTools::checkParallelLines} (const dealii::Point$<$ 2 $>$ \&beginLine1, const dealii::Point$<$ 2 $>$ \&endLine1, dealii::Point$<$ 2 $>$ \&beginLine2, dealii::Point$<$ 2 $>$ \&endLine2, std::string \&errorMessage)
 \begin{DoxyCompactList}\small\item\em Check if two lines in a 2D plane are parallel and not equal to each other. If they are antiparallel, swap begin and end of the second line. \item\end{DoxyCompactList}\item 
-bool \hyperlink{namespacenatrium_1_1BoundaryTools_a4e8c575691fa9a235b59807cc3d2686a}{natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator} (size\_\-t boundaryIndicator1, size\_\-t boundaryIndicator2, shared\_\-ptr$<$ Mesh$<$ 2 $>$ $>$ triangulation, dealii::Point$<$ 2 $>$ \&beginLine1, dealii::Point$<$ 2 $>$ \&endLine1, dealii::Point$<$ 2 $>$ \&beginLine2, dealii::Point$<$ 2 $>$ \&endLine2, std::string \&errorMessage)
-\begin{DoxyCompactList}\small\item\em Get the positions of the lines that define interfaces from the defining \hyperlink{classnatrium_1_1Boundary}{Boundary} indicators. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+bool \hyperlink{namespacenatrium_1_1BoundaryTools_a4a6b2ff032061b8ebac2955d09630240}{natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator} (size\_\-t boundaryIndicator1, size\_\-t boundaryIndicator2, boost::shared\_\-ptr$<$ Mesh$<$ 2 $>$ $>$ triangulation, dealii::Point$<$ 2 $>$ \&beginLine1, dealii::Point$<$ 2 $>$ \&endLine1, dealii::Point$<$ 2 $>$ \&beginLine2, dealii::Point$<$ 2 $>$ \&endLine2, std::string \&errorMessage)
+\begin{DoxyCompactList}\small\item\em Get the positions of the lines that define interfaces from the defining \hyperlink{classnatrium_1_1Boundary}{Boundary} indicators. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$size\_\-t dim$>$ }\\void \hyperlink{namespacenatrium_1_1BoundaryTools_a89cbacd10c5ed2e0d49eb2c72b57fc4b}{natrium::BoundaryTools::CoupleDoFsAtBoundary} (dealii::TrilinosWrappers::SparsityPattern \&cSparse, const dealii::DoFHandler$<$ dim $>$ \&doFHandler, size\_\-t boundary\_\-id, PointCouplingAtBoundary coupling)
+\begin{DoxyCompactList}\small\item\em This functions adds elements to the sparsity pattern to couple different distribution functions at the boundary. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

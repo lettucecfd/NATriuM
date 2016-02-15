@@ -18,6 +18,7 @@
 
 #include "natrium/stencils/Stencil.h"
 #include "natrium/stencils/D2Q9.h"
+#include "natrium/stencils/D3Q15.h"
 #include "natrium/stencils/D3Q27.h"
 
 #include "natrium/utilities/CFDSolverUtilities.h"
