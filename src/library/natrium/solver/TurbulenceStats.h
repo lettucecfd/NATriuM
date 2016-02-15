@@ -73,13 +73,16 @@ private:
 	size_t m_iterationNumber;
 
 	// Reynolds statistics
+
 	vector<distributed_vector> u_average;
+
 	//vector<distributed_vector> u_;
 
 	// Convergence statistics
 	size_t m_wallNormalDirection;
 	vector<double> m_wallNormalCoordinates;
 	vector<vector<double> > m_averages;
+
 	vector<vector<double> > m_rms;
 	vector<StatsInPlane<dim> > m_planes;
 
@@ -92,6 +95,8 @@ public:
 	void printHeaderLine();
 
 	void update();
+
+	void addToReynoldsStatistics();
 
 	void printNewLine();
 
