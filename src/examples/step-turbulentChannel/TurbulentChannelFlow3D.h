@@ -81,9 +81,11 @@ public:
 	 * @short function to generate the unstructured mesh grid
 	 */
 	struct UnstructuredGridFunc {
+		double m_length;
 		double m_height;
-		UnstructuredGridFunc(double height) :
-			m_height(height){
+		double m_width;
+		UnstructuredGridFunc(double length, double height, double width) :
+			m_length(length), m_height(height), m_width(width){
 		}
 		double trans(const double y) const {
 			double new_y = y;
@@ -96,7 +98,7 @@ public:
 			//return std::tanh(4 * (y - 0.5)) / tanh(2) / 2 + 0.5;
 		}
 		dealii::Point<3> operator()(const dealii::Point<3> &in) const {
-			return dealii::Point<3>(in(0), trans(in(1)), in(2));
+			return dealii::Point<3>(m_length*in(0), trans(in(1)), m_width*in(2));
 		}
 	};
 
@@ -107,6 +109,7 @@ public:
 
 	/// constructor
 	TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
+			std::vector<unsigned int> repetitions,
 			double ReTau = 180.0, double ReCl = 3300, double u_bulk = 1.0,
 			double height = 1.0, double length = 10.0, double width = 3.0,
 			double orderOfFiniteElement = 2, bool is_periodic = true);
@@ -121,6 +124,10 @@ public:
 
 	double getRefinementLevel() const {
 		return m_refinementLevel;
+	}
+
+	std::vector<unsigned int> getRepetitions() const {
+		return m_repetitions;
 	}
 
 	double getFrictionReNumber() const {
@@ -171,6 +178,7 @@ public:
 private:
 
 	double m_refinementLevel;
+	std::vector<unsigned int> m_repetitions;
 	double m_ReTau;
 	double m_ReCl;
 	double m_uBulk;
@@ -181,12 +189,12 @@ private:
 	double m_maxUtrp;
 	double m_maxIncUtrp;
 
+
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	boost::shared_ptr<Mesh<3> > makeGrid(double height, double length,
-			double width);
+	boost::shared_ptr<Mesh<3> > makeGrid(std::vector<unsigned int> repetitions);
 
 	/**
 	 * @short create boundaries for couette flow
