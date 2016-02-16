@@ -647,6 +647,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 		 << string(asctime(ltm)) << endl;
 		 }
 		 }*/
+		if (m_configuration->isOutputTurbulenceStatistics())
+				m_turbulenceStats->addToReynoldsStatistics(m_velocity);
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			// save local part of the solution
 			std::stringstream str;
@@ -669,6 +671,10 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 			/// For Benchmarks: add analytic solution
 			addAnalyticSolutionToOutput(data_out);
+			/// For turbulent flows: add turbulent statistics
+			if (m_configuration->isOutputTurbulenceStatistics()){
+				m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
+			}
 
 			// tell the data processor the locally owned cells
 			dealii::Vector<float> subdomain(
@@ -680,7 +686,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 			// Write vtu file
 			data_out.build_patches(
-					m_configuration->getSedgOrderOfFiniteElement() + 1);
+					m_configuration->getSedgOrderOfFiniteElement()*2);
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)
@@ -708,12 +714,13 @@ void CFDSolver<dim>::output(size_t iteration) {
 			}
 		}
 
+
 		// output: table
 		// calculate information + physical properties
-
 		if (iteration % m_configuration->getOutputTableInterval() == 0) {
 			m_solverStats->printNewLine();
 			if (m_configuration->isOutputTurbulenceStatistics()) {
+				assert (m_turbulenceStats);
 				m_turbulenceStats->printNewLine();
 			}
 		}
