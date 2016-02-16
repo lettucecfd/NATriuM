@@ -41,6 +41,14 @@ void StatsInPlane<dim>::calculate(vector<double>& u_average,
 	size_t n = m_planeIndices.n_elements();
 	u_average.resize(dim);
 	u_rms.resize(dim);
+	u_average.at(0) = 0;
+	u_rms.at(0) = 0;
+	u_average.at(1) = 0;
+	u_rms.at(1) = 0;
+	if (dim == 3) {
+		u_average.at(2) = 0;
+		u_rms.at(2) = 0;
+	}
 
 	// Average
 	dealii::IndexSet::ElementIterator it(m_planeIndices.begin());
@@ -68,7 +76,7 @@ void StatsInPlane<dim>::calculate(vector<double>& u_average,
 		u_rms[0] += pow(m_u[0][i] - u_average[0], 2);
 		u_rms[1] += pow(m_u[1][i] - u_average[1], 2);
 		if (dim == 3)
-			u_rms[2] += pow(m_u[1][i] - u_average[1], 2);
+			u_rms[2] += pow(m_u[2][i] - u_average[2], 2);
 	}
 	// MPI sync
 	vector<double> u_rms_mpi(dim);
@@ -90,15 +98,17 @@ TurbulenceStats<dim>::TurbulenceStats(CFDSolver<dim> * solver,
 		const vector<double>& wall_normal_coordinates,
 		const std::string table_file_name) :
 		m_solver(solver), m_filename(table_file_name), m_outputOff(
-				table_file_name == ""), m_wallNormalDirection(
+				table_file_name == ""), m_statSize(0) , m_wallNormalDirection(
 				wall_normal_direction), m_wallNormalCoordinates(
-				wall_normal_coordinates) {
+				wall_normal_coordinates){
 
 	if (not m_outputOff) {
 		// create file (if necessary)
 		if (m_solver->getIterationStart() > 0) {
-			m_tableFile = boost::make_shared<std::fstream>(table_file_name,
-					std::fstream::out | std::fstream::app);
+			if (is_MPI_rank_0()) {
+				m_tableFile = boost::make_shared<std::fstream>(table_file_name,
+						std::fstream::out | std::fstream::app);
+			}
 		} else {
 			if (is_MPI_rank_0()) {
 				m_tableFile = boost::make_shared<std::fstream>(table_file_name,
@@ -119,6 +129,15 @@ TurbulenceStats<dim>::TurbulenceStats(CFDSolver<dim> * solver,
 		plane.updatePlaneIndices(solver->m_supportPoints,
 				m_solver->m_advectionOperator->getLocallyOwnedDofs(), tol);
 		m_planes.push_back(plane);
+	}
+	m_iterationNumber = -1000;
+
+	// create average vector
+	m_uAverage.clear();
+	for (size_t i = 0; i < dim; i++) {
+		distributed_vector ux_av;
+		ux_av.reinit(m_solver->m_velocity.at(0));
+		m_uAverage.push_back(ux_av);
 	}
 
 	// sync all MPI processes (barrier)
@@ -168,7 +187,8 @@ void TurbulenceStats<dim>::printNewLine() {
 		update();
 	}
 	if (is_MPI_rank_0()) {
-		(*m_tableFile) << m_iterationNumber << " " << m_solver->getTime() << " " ;
+		(*m_tableFile) << m_iterationNumber << " " << m_solver->getTime()
+				<< " ";
 		for (size_t i = 0; i < m_wallNormalCoordinates.size(); i++) {
 			for (size_t j = 0; j < dim; j++) {
 				(*m_tableFile) << m_averages.at(i).at(j) << "  ";
@@ -185,6 +205,7 @@ void TurbulenceStats<dim>::printNewLine() {
 
 template<size_t dim>
 void TurbulenceStats<dim>::update() {
+	m_iterationNumber = m_solver->getIteration();
 	size_t n_planes = m_planes.size();
 	m_rms.clear();
 	m_averages.clear();
@@ -195,7 +216,32 @@ void TurbulenceStats<dim>::update() {
 		m_averages.push_back(av_i);
 		m_rms.push_back(rms_i);
 	}
-	m_iterationNumber = m_solver->getIteration();
+}
+
+template<size_t dim>
+void TurbulenceStats<dim>::addToReynoldsStatistics(
+		const vector<distributed_vector>& u) {
+	m_uAverage.at(0) *= m_statSize;
+	m_uAverage.at(1) *= m_statSize;
+	if (3 == dim)
+		m_uAverage.at(2) *= m_statSize;
+	m_uAverage.at(0).add(u.at(0));
+	m_uAverage.at(1).add(u.at(1));
+	if (3 == dim)
+		m_uAverage.at(2).add(u.at(2));
+	m_statSize++;
+	m_uAverage.at(0) *= (1.0/m_statSize);
+	m_uAverage.at(1) *= (1.0/m_statSize);
+	if (3 == dim)
+		m_uAverage.at(2) *= (1.0/m_statSize);
+}
+
+template<size_t dim>
+void TurbulenceStats<dim>::addReynoldsStatisticsToOutput(dealii::DataOut<dim>& data_out) {
+	data_out.add_data_vector(m_uAverage.at(0), "ux_average");
+	data_out.add_data_vector(m_uAverage.at(1), "uy_average");
+	if (3 == dim)
+		data_out.add_data_vector(m_uAverage.at(2), "uz_average");
 }
 
 // explicit instantiations
