@@ -108,24 +108,6 @@ TurbulentChannelFlow3D::~TurbulentChannelFlow3D() {
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-//boost::shared_ptr<Mesh<3> > TurbulentChannelFlow3D::makeGrid(double ,
-//		double , double ) {
-//	//Creation of the principal domain
-//
-//	boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(
-//	MPI_COMM_WORLD);
-//
-//	std::vector<unsigned int> repetitions(3);
-//	bool colorize = true; 	// do not set boundary ids automatically to
-//							// 0:left; 1:right; 2:bottom; 3:top
-//	repetitions.at(0) = 6;
-//	repetitions.at(1) = 4;
-//	repetitions.at(2) = 5;
-//	dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, repetitions,
-//			dealii::Point<3>(0.0, 0.0, 0.0),
-//			dealii::Point<3>(1, 1, 1), colorize);
-//	return mesh;
-//}
 boost::shared_ptr<Mesh<3> > TurbulentChannelFlow3D::makeGrid(std::vector<unsigned int> repetitions) {
 	//Creation of the principal domain
 
@@ -315,7 +297,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double  visc = m_flow->getViscosity();						// kinematic viscosity
 	//double	ReTau = m_flow->getFrictionReNumber();
 	double	u_bulk 				= m_flow->getMeanVelocity();	// turbulent velocity scale
-	double  ti					= 0.05;							// turbulence intensity I = u'/U
+	double  ti					= 0.1;							// turbulence intensity I = u'/U
 	double	urms 				= ti * u_bulk;
 	double	tke 				= 3./2 * pow(urms, 2);			// turbulent kinetic energy
 	double	delta 				= 5./32 * height;	        	// inlet boundary layer thickness. Only if the boundary layer
@@ -326,7 +308,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	blendDist 			= 0.1 * height;						// distance over which fBlend goes from 0 to 1
 	double	freeStreamTurb 		= 0.1;							// parameter does not let fBlend drop below the prescribed value
 
-	int 	nmodes 				= 32;							// number of Fourier modes
+	int 	nmodes 				= 150;							// number of Fourier modes
 	//double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
 	//changed by Andreas after talking to Holger
 	double	wew1fct				= 5;							// ratio of ke and kmin (in wavenumber)
