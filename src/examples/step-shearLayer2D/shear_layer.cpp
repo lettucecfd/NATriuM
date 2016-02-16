@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 	// READ COMMAND LINE PARAMETERS
 	// ========================================================================
 	pout
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id (BGK: 0, KBC: 1)> <integrator-id>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id>"
 			<< endl;
 
 	size_t refinement_level = 3;
@@ -51,15 +51,22 @@ int main(int argc, char** argv) {
 	}
 	pout << "... p:    " << p << endl;
 
-	size_t collision_id = 1;
+	size_t collision_id = 0;
 	if (argc >= 4) {
 		collision_id = std::atoi(argv[3]);
 	}
 	pout << "... Coll:  " << collision_id << endl;
 
-	size_t integrator_id = 1;
+	size_t filter_id = 0;
 	if (argc >= 5) {
-		integrator_id = std::atoi(argv[4]);
+		filter_id = std::atoi(argv[4]);
+	}
+	pout << "... Filter:  " << filter_id << endl;
+
+
+	size_t integrator_id = 1;
+	if (argc >= 6) {
+		integrator_id = std::atoi(argv[5]);
 	}
 	pout << "... Int:  " << integrator_id << endl;
 
@@ -98,13 +105,13 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(false);
-	configuration->setUserInteraction(true);
+	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(10);	//10
 	configuration->setOutputSolutionInterval(100); //10
 	configuration->setOutputCheckpointInterval(100);
 	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/shear-layer-N" << refinement_level
+	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
 			<< "-p" << p << "-coll" << collision_id << "-int" << integrator_id;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
@@ -117,6 +124,14 @@ int main(int argc, char** argv) {
 	configuration->setOutputTurbulenceStatistics(true);
 	if (collision_id == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
+	}
+	if (filter_id == 1) {
+		configuration->setFiltering(true);
+		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
+
+	} else if (filter_id == 2){
+		configuration->setFiltering(true);
+		configuration->setFilteringScheme(NEW_FILTER);
 	}
 	//configuration->setFiltering(true);
 

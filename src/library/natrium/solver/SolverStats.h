@@ -60,12 +60,15 @@ public:
 		if (not m_outputOff) {
 			// create file (if necessary)
 			if (m_solver->getIterationStart() > 0) {
-				m_tableFile = boost::make_shared<std::fstream>(tableFileName,
-						std::fstream::out | std::fstream::app);
+				if (is_MPI_rank_0()) {
+					m_tableFile = boost::make_shared<std::fstream>(
+							tableFileName,
+							std::fstream::out | std::fstream::app);
+				}
 			} else {
 				if (is_MPI_rank_0()) {
-					m_tableFile = boost::make_shared<std::fstream>(tableFileName,
-							std::fstream::out);
+					m_tableFile = boost::make_shared<std::fstream>(
+							tableFileName, std::fstream::out);
 				}
 				printHeaderLine();
 			}
