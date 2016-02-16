@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
 	pout << "Starting NATriuM step-turbulent-channel..." << endl;
 
 	//**** User Input ****
+	// Flow variables / grid properties
 	const double CFL 					= 0.4;
 	const double ReTau 					= 180;
 	const double ReCl 					= 3300;
@@ -40,6 +41,7 @@ int main(int argc, char** argv) {
 	const double height 				= 1;
 	const double length 				= 2* M_PI * height;
 	const double width 					= M_PI * height;
+
 	// Grid resolution
 	std::vector<unsigned int> 	repetitions(3);
 	repetitions.at(0) = 6;
@@ -51,6 +53,17 @@ int main(int argc, char** argv) {
 	const double Ma 					= 0.1;
 	bool is_periodic 					= true;
 
+	// Turbulence statistics
+	int noSamplePoints					= 3;
+	std::vector<double> samplePointCoordinates(noSamplePoints);
+
+	samplePointCoordinates[0] = 8./16;
+	samplePointCoordinates[1] = 4./16;
+	samplePointCoordinates[2] = 1./16;
+
+	for (int i = 0; i < noSamplePoints; i++){
+		samplePointCoordinates[i] = 0.5 * height * ( 1 - cos( M_PI/height * samplePointCoordinates[i] ) );
+	}
 
 	//**** Calculated ****
 	// approximate air viscosity at room temperature (275K): 1.3e-5 [m^2/s]
@@ -81,7 +94,7 @@ int main(int argc, char** argv) {
 	configuration->setRestartAtLastCheckpoint(is_restarted);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(100);
-	configuration->setOutputCheckpointInterval(100);
+	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setCommandLineVerbosity(WELCOME);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -90,11 +103,15 @@ int main(int argc, char** argv) {
 	configuration->setTimeStepSize(dt);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
-	configuration->setFiltering(true);
-	configuration->setFilteringScheme(NEW_FILTER);
+	configuration->setFiltering(false);
+	//configuration->setFilteringScheme(NEW_FILTER);
+
+	configuration->setOutputTurbulenceStatistics(true);
+	configuration->setWallNormalDirection(1);
+	configuration->setWallNormalCoordinates(samplePointCoordinates);
+
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(CRANK_NICOLSON);
-
 	//configuration->setInitializationScheme(ITERATIVE);
 	//configuration->setIterativeInitializationNumberOfIterations(100);
 	//configuration->setIterativeInitializationResidual(1e-15);
