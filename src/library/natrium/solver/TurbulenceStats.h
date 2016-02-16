@@ -11,6 +11,7 @@
 #include <math.h>
 
 #include "../utilities/BasicNames.h"
+#include "deal.II/base/data_out_base.h"
 
 namespace natrium {
 
@@ -73,13 +74,16 @@ private:
 	size_t m_iterationNumber;
 
 	// Reynolds statistics
-	vector<distributed_vector> u_average;
+	size_t m_statSize;
+	vector<distributed_vector> m_uAverage;
+
 	//vector<distributed_vector> u_;
 
 	// Convergence statistics
 	size_t m_wallNormalDirection;
 	vector<double> m_wallNormalCoordinates;
 	vector<vector<double> > m_averages;
+
 	vector<vector<double> > m_rms;
 	vector<StatsInPlane<dim> > m_planes;
 
@@ -98,6 +102,10 @@ public:
 	bool isUpToDate() const {
 		return (m_iterationNumber == m_solver->getIteration());
 	}
+
+
+	void addToReynoldsStatistics(const vector<distributed_vector>& u);
+	void addReynoldsStatisticsToOutput(dealii::DataOut<dim>& data_out);
 };
 
 } /* namespace natrium */
