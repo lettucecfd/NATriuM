@@ -71,13 +71,13 @@ int main(int argc, char** argv) {
 
 	double CFL = .4;
 	if (argc >= 7) {
-		CFL = std::atoi(argv[6]);
+		CFL = std::atof(argv[6]);
 	}
 	pout << "... CFL:  " << CFL << endl;
 
 	double stencil_scaling = 1.0;
 	if (argc >= 8) {
-		stencil_scaling = std::atoi(argv[7]);
+		stencil_scaling = std::atof(argv[7]);
 	}
 	pout << "... stencil_scaling:  " << stencil_scaling << endl;
 
