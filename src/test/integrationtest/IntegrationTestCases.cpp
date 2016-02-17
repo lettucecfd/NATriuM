@@ -190,7 +190,8 @@ TestResult ConvergenceTestPeriodic() {
 	configuration->setStencilScaling(scaling);
 	configuration->setTimeStepSize(dt);
 	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
-	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(KBC_STANDARD);
 
 	// Simulation
 	BenchmarkCFDSolver<2> solver(configuration, benchmark);
@@ -272,6 +273,8 @@ TestResult ConvergenceTestImplicitLBM() {
 	//configuration->setThetaMethodTheta(0.5);
 	configuration->setDealIntegrator(SDIRK_TWO_STAGES);
 	configuration->setTimeIntegrator(OTHER);
+	//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(KBC_STANDARD);
 
 	// Simulation
 	BenchmarkCFDSolver<2> solver(configuration, benchmark);
@@ -349,6 +352,8 @@ TestResult ConvergenceTestExponentialLBM() {
 	configuration->setTimeStepSize(dt);
 	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
 	configuration->setTimeIntegrator(EXPONENTIAL);
+	//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(KBC_STANDARD);
 
 	// Simulation
 	BenchmarkCFDSolver<2> solver(configuration, benchmark);
@@ -427,6 +432,8 @@ TestResult ConvergenceTestDealIIWrapper() {
 	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
 	configuration->setTimeIntegrator(OTHER);
 	configuration->setDealIntegrator(SDIRK_TWO_STAGES);
+	//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(KBC_STANDARD);
 
 	// Simulation
 	BenchmarkCFDSolver<2> solver(configuration, benchmark);
@@ -587,6 +594,8 @@ TestResult ConvergenceTestMovingWall() {
 		configuration->setTimeStepSize(dt);
 		configuration->setTimeIntegrator(RUNGE_KUTTA_5STAGE);
 		configuration->setNumberOfTimeSteps(1.0 / dt);
+		//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+		configuration->setCollisionScheme(KBC_STANDARD);
 
 		// Simulation (simulate 1 time unit from t=40.0)
 		BenchmarkCFDSolver<2> solver(configuration, benchmark);
