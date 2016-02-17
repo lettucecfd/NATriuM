@@ -153,6 +153,6 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	// FINAL OUTPUT
 	// ========================================================================
-	pout << "Flow converged" << endl;
+	pout << "Simulation successful" << endl;
 	return 0;
 }
