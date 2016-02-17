@@ -190,7 +190,7 @@ TestResult ConvergenceTestPeriodic() {
 	configuration->setStencilScaling(scaling);
 	configuration->setTimeStepSize(dt);
 	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
-	//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 	//configuration->setCollisionScheme(KBC_STANDARD);
 
 	// Simulation
