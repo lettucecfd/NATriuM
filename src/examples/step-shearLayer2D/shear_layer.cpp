@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
 	const double kappa = 80;
 	const double Re = 30000;
 	double viscosity = u0 * 1.0 / Re;
-	const double t_c = 1.0 / u0; //eddy turnover time
+	const double t_c = 2.0 / u0; //twice the eddy turnover time
 
 	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
 			ShearLayer2D>(viscosity, refinement_level, u0, kappa);
@@ -118,13 +118,14 @@ int main(int argc, char** argv) {
 	configuration->setOutputCheckpointInterval(100);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
-			<< "-p" << p << "-coll" << collision_id << "-int" << integrator_id;
+			<< "-p" << p << "-coll" << collision_id << "-int" << integrator_id
+			<< "-CFL" << CFL << "-scaling" << stencil_scaling;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
 	configuration->setTimeStepSize(delta_t);
-	configuration->setSimulationEndTime(2 * t_c);
+	configuration->setSimulationEndTime(t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 	configuration->setOutputTurbulenceStatistics(true);
