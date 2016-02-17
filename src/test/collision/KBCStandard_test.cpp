@@ -177,7 +177,6 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAllD3Q15_test) {
 			BOOST_CHECK_SMALL(rho_bgk - rho_kbc, 1e-5);
 		}
 	}
-
 	pout << "done" << endl;
 } /* BGKStandard_collideAllD3Q15_test*/
 

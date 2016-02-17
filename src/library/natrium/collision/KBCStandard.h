@@ -45,10 +45,13 @@ public:
 			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure) const;
 
-	void collideAllD3Q15(DistributionFunctions& f,
-			distributed_vector& densities, vector<distributed_vector>& velocities,
-			const dealii::IndexSet& locally_owned_dofs,
-			bool inInitializationProcedure) const;
+	/**
+		 * @short optimized version of collideAll for D2Q9 stencil
+		 */
+		void collideAllD3Q15(DistributionFunctions& f,
+				distributed_vector& densities, vector<distributed_vector>& velocities,
+				const dealii::IndexSet& locally_owned_dofs,
+				bool inInitializationProcedure) const;
 
 };
 } /* namespace natrium */
