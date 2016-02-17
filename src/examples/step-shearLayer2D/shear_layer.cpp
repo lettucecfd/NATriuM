@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 	// READ COMMAND LINE PARAMETERS
 	// ========================================================================
 	pout
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0>"
 			<< endl;
 
 	size_t refinement_level = 3;
@@ -63,12 +63,23 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Filter:  " << filter_id << endl;
 
-
 	size_t integrator_id = 1;
 	if (argc >= 6) {
 		integrator_id = std::atoi(argv[5]);
 	}
 	pout << "... Int:  " << integrator_id << endl;
+
+	double CFL = .4;
+	if (argc >= 7) {
+		CFL = std::atoi(argv[6]);
+	}
+	pout << "... CFL:  " << CFL << endl;
+
+	double stencil_scaling = 1.0;
+	if (argc >= 8) {
+		stencil_scaling = std::atoi(argv[7]);
+	}
+	pout << "... stencil_scaling:  " << stencil_scaling << endl;
 
 	// get integrator
 	TimeIntegratorName time_integrator;
@@ -82,12 +93,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	// MAKE FLOW PROBLEM
 	// ========================================================================
-	const double stencil_scaling = 1.0;
-	double CFL = .4;
-	if (integrator_id == 3)
-		CFL = 3.;
-	if (integrator_id == 10)
-		CFL = 5.;
+
 	const double u0 = 0.04;
 	const double kappa = 80;
 	const double Re = 30000;
@@ -118,7 +124,7 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
 	configuration->setTimeStepSize(delta_t);
-	configuration->setSimulationEndTime(10 * t_c);
+	configuration->setSimulationEndTime(2 * t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 	configuration->setOutputTurbulenceStatistics(true);
@@ -129,7 +135,7 @@ int main(int argc, char** argv) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
 
-	} else if (filter_id == 2){
+	} else if (filter_id == 2) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(NEW_FILTER);
 	}
