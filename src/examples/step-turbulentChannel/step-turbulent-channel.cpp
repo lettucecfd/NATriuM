@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 	pout << "Starting NATriuM step-turbulent-channel..." << endl;
 
 	//**** User Input ****
-	const double CFL 					= 0.4;
+	const double CFL 					= 3.0;
 	const double ReTau 					= 180;
 	const double ReCl 					= 3300;
 	const double Re_bulk 				= 5600;
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	bool is_restarted 					= atoi(argv[1]);
 	const double refinement_level 		= atoi(argv[2]);
 	const double orderOfFiniteElement 	= atoi(argv[3]);
-	const double Ma 					= 0.1;
+	const double Ma 					= 0.05;
 	bool is_periodic 					= true;
 
 
@@ -80,8 +80,8 @@ int main(int argc, char** argv) {
 	configuration->setOutputDirectory(dirName.str());
 	configuration->setRestartAtLastCheckpoint(is_restarted);
 	configuration->setUserInteraction(false);
-	configuration->setOutputTableInterval(100);
-	configuration->setOutputCheckpointInterval(100);
+	configuration->setOutputTableInterval(10);
+	configuration->setOutputCheckpointInterval(500);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setCommandLineVerbosity(WELCOME);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -90,8 +90,20 @@ int main(int argc, char** argv) {
 	configuration->setTimeStepSize(dt);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
-	configuration->setFiltering(true);
-	configuration->setFilteringScheme(NEW_FILTER);
+	configuration->setOutputTurbulenceStatistics(true);
+	vector<double> wall_normal_coordinates;
+	wall_normal_coordinates.push_back(0.5);
+	wall_normal_coordinates.push_back(0.25);
+	wall_normal_coordinates.push_back(0.125);
+	wall_normal_coordinates.push_back(0.0625);
+	TurbulentChannelFlow3D::UnstructuredGridFunc trafo(length, height, width);
+	for (size_t i = 0; i < wall_normal_coordinates.size(); i++){
+		wall_normal_coordinates.at(i) = trafo.trans(wall_normal_coordinates.at(i));
+	}
+	configuration->setWallNormalCoordinates(wall_normal_coordinates);
+	//configuration->setFiltering(true);
+	//configuration->setFilteringScheme(NEW_FILTER);
+	configuration->setTimeIntegrator(EXPONENTIAL);
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(CRANK_NICOLSON);
 
@@ -99,7 +111,7 @@ int main(int argc, char** argv) {
 	//configuration->setIterativeInitializationNumberOfIterations(100);
 	//configuration->setIterativeInitializationResidual(1e-15);
 
-	configuration->setConvergenceThreshold(1e-10);
+	//configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(100);
 	//configuration->setSimulationEndTime(); // unit [s]
 
