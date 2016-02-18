@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 	pout << "Starting NATriuM step-turbulent-channel..." << endl;
 
 	//**** User Input ****
-	const double CFL 					= 3.0;
+	const double CFL 					= 1.2;
 	const double ReTau 					= 180;
 	const double ReCl 					= 3300;
 	const double Re_bulk 				= 5600;
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 
 	/// setup configuration
 	std::stringstream dirName;
-	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D-N" << refinement_level << "-p" << orderOfFiniteElement;
+	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D/N" << refinement_level << "-p" << orderOfFiniteElement;
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
 	configuration->setWallNormalCoordinates(wall_normal_coordinates);
 	//configuration->setFiltering(true);
 	//configuration->setFilteringScheme(NEW_FILTER);
-	configuration->setTimeIntegrator(EXPONENTIAL);
+	configuration->setTimeIntegrator(RUNGE_KUTTA_5STAGE);
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(CRANK_NICOLSON);
 
