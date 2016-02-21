@@ -29,28 +29,53 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
+	//pout << "Usage: ./turbulent-channel3D <is_restarted (false: 0, true: 1) <refinementLevel> <p> <filterID (no: 0, exp: 1, new: 2)>" << endl;
 	pout << "Starting NATriuM step-turbulent-channel..." << endl;
 
 	//**** User Input ****
-	// Flow variables / grid properties
-	const double CFL 					= 0.4;
-	const double ReTau 					= 180;
-	const double ReCl 					= 3300;
-	const double Re_bulk 				= 5600;
-	const double u_bulk					= 10;
-	const double height 				= 1;
-	const double length 				= 2* M_PI * height;
-	const double width 					= M_PI * height;
+	/**
+	 * @ Simulation setup due to KMM (AIP 1998)
+	 *  					| case #1			| case #2			| case #3
+	 *  ==========================================================================
+	 *  ReTau 				| 180				| 395				| 590
+	 *  u_cl				| 10				| 10				| 10
+	 *  uCl2uTauRatio		| 18.3				| 20.1332			| 21.2631
+	 *
+	 *  height				| 1					| 1					| 1
+	 *  length				| 4					| 2					| 2
+	 *  width				| 4/3				| 1					| 1
+	 *
+	 *  repetitions.at(0)	| 1					| 4					| 3
+	 *  repetitions.at(1)	| 1					| 3					| 2
+	 *  repetitions.at(2)	| 1					| 3					| 3
+	 *
+	 *  Ma					| 0.05;				| 0.05				| 0.05
+	 */
+
+	// Flow variables
+	const double CFL 					= 1.0;
+	const double ReTau 					= atof(argv[1]);
+	const double u_cl 					= atof(argv[2]);
+	const double uCl2uTauRatio			= atof(argv[3]);
+
+	// Computational domain
+	const double height 				= atof(argv[4]);
+	const double length 				= atof(argv[5]) * M_PI * height/2;
+	const double width 					= atof(argv[6]) * M_PI * height/2;
 
 	// Grid resolution
 	std::vector<unsigned int> 	repetitions(3);
-	repetitions.at(0) = 6;
-	repetitions.at(1) = 4;
-	repetitions.at(2) = 5;
-	bool is_restarted 					= atoi(argv[1]);
-	const double refinement_level 		= atoi(argv[2]);
-	const double orderOfFiniteElement 	= atoi(argv[3]);
-	const double Ma 					= 0.1;
+	repetitions.at(0) 					= atoi(argv[7]);
+	repetitions.at(1) 					= atoi(argv[8]);
+	repetitions.at(2) 					= atoi(argv[9]);
+
+	const double Ma 					= atof(argv[10]);		// lower Ma => reduction in numerical compressibility
+
+	const int refinementLevel 			= atoi(argv[11]);
+	const int orderOfFiniteElement 		= atoi(argv[12]);
+	const int filterID					= atoi(argv[13]);
+
+	bool is_restarted 					= atoi(argv[14]);
 	bool is_periodic 					= true;
 
 	// Turbulence statistics
@@ -67,16 +92,39 @@ int main(int argc, char** argv) {
 
 	//**** Calculated ****
 	// approximate air viscosity at room temperature (275K): 1.3e-5 [m^2/s]
-	double viscosity  = u_bulk * height / Re_bulk;
-
+	double viscosity  = u_cl * height/2 / ( ReTau * uCl2uTauRatio );
 	//TODO: smooth increase of the inlet velocity until the initTime is reached
 	//  	e.g. u_cl_init = u_cl*(F1B2 - F1B2 * cos(PI / (initTime * globalTimeStep)) ;
 
+	const double scaling = sqrt(3) * u_cl / Ma;
+
+	// Display user input
+	pout << "=============================================================" 	<< "\n" <<
+			" READ COMMAND LINE PARAMETERS " 									<< "\n" <<
+			"=============================================================" 	<< "\n" <<
+			" |  Parameter \t\t\t\t| Value"										<< "\n" <<
+			" +--------------------------------------+------------------- "		<< "\n" <<
+			" |  Friction Reynolds number ReTau \t| "	<< ReTau 				<< "\n" <<
+			" |  Mean centerline velocity u_cl \t| "	<< u_cl					<< "\n" <<
+			" |  Center line velocity to \t\t| " 	 					 		<< "\n" <<
+			" |  ... friction velocity ratio \t| "		<< uCl2uTauRatio		<< "\n" <<
+			" |  \t\t\t\t\t| " 													<< "\n" <<
+			" |  Channel height \t\t\t| " 				<< height				<< "\n" <<
+			" |  Channel length \t\t\t| " 				<< length 				<< "\n" <<
+			" |  Channel width \t\t\t| " 				<< width 				<< "\n" <<
+			" |  \t\t\t\t\t| " 													<< "\n" <<
+			" |  Mach number Ma \t\t\t| " 				<< Ma 					<< "\n" <<
+			" |  Repetitions at x \t\t\t| " 			<< repetitions.at(0)	<< "\n" <<
+			" |  Repetitions at y \t\t\t| " 			<< repetitions.at(1)	<< "\n" <<
+			" |  Repetitions at z \t\t\t| " 			<< repetitions.at(2)	<< "\n" <<
+			" |  Refinement level N \t\t\t| "			<< refinementLevel		<< "\n" <<
+			" |  Order of finite element p \t\t| "		<< orderOfFiniteElement	<< endl;
+
+
 	///**** Create CFD problem ****
-	const double scaling = sqrt(3) * 1.16 * u_bulk / Ma; //TODO: not laminar!
 	boost::shared_ptr<TurbulentChannelFlow3D> channel3D =
-			boost::make_shared<TurbulentChannelFlow3D>(viscosity, refinement_level, repetitions,
-					ReTau, ReCl, u_bulk, height, length, width, orderOfFiniteElement, is_periodic);
+			boost::make_shared<TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
+					ReTau, u_cl, height, length, width, orderOfFiniteElement, is_periodic);
 	const double dt = CFDSolverUtilities::calculateTimestep<3>(
 			*channel3D->getMesh(), orderOfFiniteElement, D3Q19(scaling), CFL);
 
@@ -86,7 +134,8 @@ int main(int argc, char** argv) {
 
 	/// setup configuration
 	std::stringstream dirName;
-	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D-N" << refinement_level << "-p" << orderOfFiniteElement;
+	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D/Re" << ReTau << "-N" << refinementLevel
+			<< "-p" << orderOfFiniteElement << "-filt" << filterID;
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
@@ -94,8 +143,8 @@ int main(int argc, char** argv) {
 	configuration->setRestartAtLastCheckpoint(is_restarted);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(100);
-	configuration->setOutputCheckpointInterval(10000);
-	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputCheckpointInterval(1000);
+	configuration->setOutputSolutionInterval(1000);
 	configuration->setCommandLineVerbosity(WELCOME);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
@@ -103,8 +152,15 @@ int main(int argc, char** argv) {
 	configuration->setTimeStepSize(dt);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
-	configuration->setFiltering(false);
-	//configuration->setFilteringScheme(NEW_FILTER);
+
+	if (filterID == 1) {
+		configuration->setFiltering(true);
+		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
+	}
+	else if (filterID == 2) {
+		configuration->setFiltering(true);
+		configuration->setFilteringScheme(NEW_FILTER);
+	}
 
 	configuration->setOutputTurbulenceStatistics(true);
 	configuration->setWallNormalDirection(1);
@@ -120,8 +176,8 @@ int main(int argc, char** argv) {
 	//configuration->setNumberOfTimeSteps(100);
 	//configuration->setSimulationEndTime(); // unit [s]
 
-	// -----------------------------------------------------------------------------------------------------------------------
-	// create a separate object for the initial velocity function (Constructor has to get the "flow" object or a pointer to it or something)
+	// ----------------------------------------------------------
+	// create a separate object for the initial velocity function
 	TurbulentChannelFlow3D::IncompressibleU test_velocity(channel3D.get());
 
 	if ( not is_restarted )
@@ -190,7 +246,7 @@ int main(int argc, char** argv) {
 	solver.run();
 
 	pout << "Max Velocity  " <<
-			solver.getMaxVelocityNorm() << "   (laminar: "<< 1.5*u_bulk << ")" <<  endl;
+			solver.getMaxVelocityNorm() << endl; //"   (laminar: "<< 1.5*u_bulk << ")" <<  endl;
 
 	pout << "NATriuM step-turbulent-channel terminated." << endl;
 
