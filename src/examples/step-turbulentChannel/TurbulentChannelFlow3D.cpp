@@ -22,12 +22,12 @@
 namespace natrium {
 
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
-		std::vector<unsigned int> repetitions, double ReTau, double ReCl, double u_bulk,
+		std::vector<unsigned int> repetitions, double ReTau, double u_cl,
 		double height, double length, double width,
 		double orderOfFiniteElement, bool is_periodic) :
 		ProblemDescription<3>(makeGrid(repetitions), viscosity, height),
 		m_refinementLevel(refinementLevel), m_repetitions(repetitions),
-		m_ReTau(ReTau), m_ReCl(ReCl), m_uBulk(u_bulk), m_ofe(orderOfFiniteElement),
+		m_ReTau(ReTau), m_uCl(u_cl), m_ofe(orderOfFiniteElement),
 		m_height(height), m_length(length), m_width(width),
 		m_maxUtrp(0.0), m_maxIncUtrp(0.0) {
 
@@ -35,19 +35,22 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 	pout << "-------------------------------------------------------------" << endl;
 	pout << "**** Recommendations for CPU use ****" << endl;
 	double noRepetitions3D = repetitions.at(0) * repetitions.at(1) * repetitions.at(2);
-	double noGridPoints = pow( (orderOfFiniteElement + 1), 3 ) * pow(8, refinementLevel) * noRepetitions3D;
+	double noGridPoints = pow( orderOfFiniteElement, 3 ) * pow( 8, refinementLevel +1 ) * noRepetitions3D;
 	pout << "... Computation node details: " << endl;
 	pout << "    - #CPU per node: 12 " << endl;
 	pout << "    - memory per node: 4000 MB " << endl;
-	pout << "... Number of total grid points: " << noGridPoints << endl;
 	pout << "... Recommended number of total grid points per node: 10e+6" << endl;
 	pout << "... Recommended number of nodes: " << ceil(noGridPoints/10e+6) << endl;
 	pout << "------------------------------------------------------------" << endl;
 
 	// **** Grid properties ****
 	pout << "**** Grid properties ****" << endl;
-	int 	noCellsInYDir	= (orderOfFiniteElement + 1) * pow(2, refinementLevel) * repetitions.at(1);
-	double  h_half = 0.5 * height;
+	int 	noCellsInXDir	= orderOfFiniteElement * pow( 2, refinementLevel + 1 ) * repetitions.at(0);
+	int 	noCellsInYDir	= orderOfFiniteElement * pow( 2, refinementLevel + 1 ) * repetitions.at(1);
+	int 	noCellsInZDir	= orderOfFiniteElement * pow( 2, refinementLevel + 1 ) * repetitions.at(2);
+	pout << "... Mesh resolution: " << noCellsInXDir << "x" << noCellsInYDir << "x" << noCellsInZDir << endl;
+	pout << "... Number of total grid points: " << noGridPoints << endl;
+	double  h_half = height/2;
 
 	UnstructuredGridFunc Eq2NonEq(length, height, width);
 
@@ -85,9 +88,9 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		// add external force
 		// turbulent flow
 		double rho = 1;
-		double Fx = pow( ReTau * viscosity / h_half, 2) * rho / h_half;
+		double Fx = pow( ReTau * viscosity / h_half, 2) * rho / height;
 		// laminar flow
-		//double Fx = 8 * 1.5 * m_uBulk * viscosity / (height * height);
+		//double Fx = 8 * m_uCl * viscosity / (height * height); // m_uCl = 1.5*u_bulk
 		pout << " >>>> Body force F = " << Fx << endl;
 		dealii::Tensor<1, 3> F;
 		F[0] = Fx;
@@ -175,16 +178,14 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
 
 	//return m_initialIncompressibleU.value(x, component);
 
-	double visc 	= m_flow->getViscosity();
-    double ReTau 	= m_flow->getFrictionReNumber();
-	double ReCl 	= m_flow->getCenterLineReNumber();
 	double height 	= m_flow->getCharacteristicLength();
+    double ReTau 	= m_flow->getFrictionReNumber();
+	double visc 	= m_flow->getViscosity();
 
-    double Uin = ReCl * 2 * visc / height;
 	double uPlus_in;
 
     double minDist = std::min(x[1], height - x[1]);
-	double h_half = 0.5 * height; // half channel height
+	double h_half = height/2; // half channel height
 
 	// yPlus towards upper & lower channel wall
 	double yPlus = ReTau * ( minDist / h_half );
@@ -202,7 +203,7 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
 	{
 		uPlus_in = 1./0.4 * log(yPlus) + 5.2;
 	}
-	Uin = uPlus_in * ( ReTau * visc / h_half );
+	double Uin = uPlus_in * ( ReTau * visc / h_half );
 
     // mean velocities <Vin> & <Win> are assumed to be 0.
 	if (component == 0)
@@ -293,12 +294,13 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	// Selectable variables
 	// TODO: These variables have to be made selectable from a property file or similar
 
-	double 	height = m_flow->getCharacteristicLength();				// characteristic flow length scale, here: full channel height
-	double  visc = m_flow->getViscosity();						// kinematic viscosity
-	//double	ReTau = m_flow->getFrictionReNumber();
-	double	u_bulk 				= m_flow->getMeanVelocity();	// turbulent velocity scale
-	double  ti					= 0.1;							// turbulence intensity I = u'/U
-	double	urms 				= ti * u_bulk;
+	double 	height 				= m_flow->getCharacteristicLength();	// characteristic flow length scale, here: full channel height
+	double  visc	 			= m_flow->getViscosity();				// kinematic viscosity
+	//double	ReTau 				= m_flow->getFrictionReNumber();		// friction Reynolds number
+
+	double	u_cl				= m_flow->getCenterLineVelocity(); 		// mean centerline velocity
+	double  ti					= 0.05;							// turbulence intensity I = u'/U
+	double	urms 				= ti * u_cl;					// turbulent velocity scale
 	double	tke 				= 3./2 * pow(urms, 2);			// turbulent kinetic energy
 	double	delta 				= 5./32 * height;	        	// inlet boundary layer thickness. Only if the boundary layer
 																// at inlet is not fully developed
@@ -308,7 +310,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	blendDist 			= 0.1 * height;						// distance over which fBlend goes from 0 to 1
 	double	freeStreamTurb 		= 0.1;							// parameter does not let fBlend drop below the prescribed value
 
-	int 	nmodes 				= 150;							// number of Fourier modes
+	int 	nmodes 				= 300;							// number of Fourier modes
 	//double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
 	//changed by Andreas after talking to Holger
 	double	wew1fct				= 5;							// ratio of ke and kmin (in wavenumber)
