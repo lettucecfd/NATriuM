@@ -110,8 +110,8 @@ public:
 	/// constructor
 	TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
 			std::vector<unsigned int> repetitions,
-			double ReTau = 180.0, double ReCl = 3300, double u_bulk = 1.0,
-			double height = 1.0, double length = 10.0, double width = 3.0,
+			double ReTau = 180.0, double u_cl = 10,
+			double height = 1.0, double length = 6.0, double width = 3.0,
 			double orderOfFiniteElement = 2, bool is_periodic = true);
 
 	/// destructor
@@ -134,12 +134,8 @@ public:
 		return m_ReTau;
 	}
 
-	double getCenterLineReNumber() const {
-		return m_ReCl;
-	}
-
-	double getMeanVelocity() const {
-		return m_uBulk;
+	double getCenterLineVelocity() const {
+		return m_uCl;
 	}
 
 	double getOrderOfFiniteElement() const {
@@ -180,8 +176,7 @@ private:
 	double m_refinementLevel;
 	std::vector<unsigned int> m_repetitions;
 	double m_ReTau;
-	double m_ReCl;
-	double m_uBulk;
+	double m_uCl;
 	double m_ofe;
 	double m_height;
 	double m_length;
