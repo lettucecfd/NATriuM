@@ -16,13 +16,14 @@
 namespace natrium {
 
 TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
-		size_t refinementLevel) :
-		Benchmark<3>(makeGrid(), viscosity, 1) {
+		size_t refinementLevel, double u, double cs) :
+		ProblemDescription<3>(makeGrid(), viscosity, 1) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply analytic solution
-	this->setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
+	this->setInitialU(boost::make_shared<InitialVelocity>(this, u));
+	this->setInitialRho(boost::make_shared<InitialDensity>(this, cs));
 
 	// Refine grid
 	getMesh()->refine_global(refinementLevel);
@@ -32,18 +33,23 @@ TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
 TaylorGreenVortex3D::~TaylorGreenVortex3D() {
 }
 
-double TaylorGreenVortex3D::AnalyticVelocity::value(const dealii::Point<3>& x,
+double TaylorGreenVortex3D::InitialVelocity::value(const dealii::Point<3>& x,
 		const unsigned int component) const {
 	assert(component < 3);
 	if (component == 0) {
-		return sin(x(0)) * cos(x(1)) * cos(x(2))
-				* exp(-2 * m_flow->getViscosity() * this->get_time());
+		return m_U * sin(x(0)) * cos(x(1)) * cos(x(2));
 	} else if (component == 1) {
-		return -cos(x(0)) * sin(x(1)) * cos(x(2))
-				* exp(-2 * m_flow->getViscosity() * this->get_time());
+		return - m_U * cos(x(0)) * sin(x(1)) * cos(x(2));
 	} else {
 		return 0;
 	}
+}
+
+double TaylorGreenVortex3D::InitialDensity::value(const dealii::Point<3>& x,
+		const unsigned int component) const {
+	assert(component == 0);
+	return 1.0 + 1./(16.*m_csSquare) * (cos(2*x(0)) + cos(2*x(1))) * (cos(2*x(2)) +2);
+
 }
 
 /**
@@ -52,12 +58,9 @@ double TaylorGreenVortex3D::AnalyticVelocity::value(const dealii::Point<3>& x,
  */
 boost::shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid() {
 	//Creation of the principal domain
-#ifdef WITH_TRILINOS_MPI
+
 	boost::shared_ptr<Mesh<3> > square =
 	boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-#else
-	boost::shared_ptr<Mesh<3> > square = boost::make_shared<Mesh<3> >();
-#endif
 	dealii::GridGenerator::hyper_cube(*square, 0, 8 * atan(1));
 
 	// Assign boundary indicators to the faces of the "parent cell"

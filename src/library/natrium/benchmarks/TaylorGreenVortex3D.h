@@ -16,7 +16,7 @@
 
 #include "deal.II/grid/tria.h"
 
-#include "../problemdescription/Benchmark.h"
+#include "../problemdescription/ProblemDescription.h"
 #include "../utilities/BasicNames.h"
 
 
@@ -27,26 +27,42 @@ namespace natrium {
  *  The domain is [0,1]^2. The domain consists of
  *  8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).
  */
-class TaylorGreenVortex3D: public Benchmark<3> {
+class TaylorGreenVortex3D: public ProblemDescription<3> {
 public:
 
 	/**
-	 * @short class to describe the x-component of the analytic solution
+	 * @short class to describe the x-component of the initial velocity
 	 * @note other are default (v0=w0=0, rho0=1)
 	 */
-	class AnalyticVelocity: public dealii::Function<3> {
+	class InitialVelocity: public dealii::Function<3> {
 	private:
 		TaylorGreenVortex3D* m_flow;
+		double m_U;
 	public:
-		AnalyticVelocity(TaylorGreenVortex3D* flow) :
-				m_flow(flow) {
+		InitialVelocity(TaylorGreenVortex3D* flow, double u) :
+				m_flow(flow), m_U(u) {
+		}
+		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+	};
+
+	/**
+	 * @short class to describe the initial density (i.e. the initial pressure in LBM)
+	 * @note other are default (v0=w0=0, rho0=1)
+	 */
+	class InitialDensity: public dealii::Function<3> {
+	private:
+		TaylorGreenVortex3D* m_flow;
+		double m_csSquare;
+	public:
+		InitialDensity(TaylorGreenVortex3D* flow, double cs) :
+				m_flow(flow), m_csSquare(cs*cs) {
 		}
 		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
 	};
 
   /// constructor
-  TaylorGreenVortex3D(double viscosity,
-      size_t refinementLevel);
+	TaylorGreenVortex3D(double viscosity,
+			size_t refinementLevel, double u, double cs);
 
   /// destructor
   virtual ~TaylorGreenVortex3D();
