@@ -11,12 +11,12 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 
 #include "natrium/stencils/D3Q19.h"
 
-#include "natrium/problemdescription/Benchmark.h"
+#include "natrium/problemdescription/ProblemDescription.h"
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
@@ -26,85 +26,134 @@
 using namespace natrium;
 
 // Main function
-int main() {
+int main(int argc, char** argv) {
 
-  MPIGuard::getInstance();
+	MPIGuard::getInstance();
 
-  pout << "Starting NATriuM step-16 ..." << endl;
+	pout << "Starting NATriuM step-16 ..." << endl;
 
-  /////////////////////////////////////////////////
-  // set parameters, set up configuration object
-  //////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	// read from command line
+	//////////////////////////////////////////////////
 
-  // Re = viscosity/(2*pi)
-  const double viscosity = 1;
-  // C-E-approach: constant stencil scaling
-  // specify Mach number
-  const double Ma = 0.1;
-  // zunaechst: fixed order of FE
-  const double orderOfFiniteElement = 6;
+	pout
+			<< "Usage: ./step-16 <Re=800> <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=1.0>"
+			<< endl;
 
-  // chose scaling so that the right Ma-number is achieved
-  double scaling = sqrt(3) * 1 / Ma;
+	double Re = 800;
+	if (argc >= 2) {
+		Re = std::atof(argv[1]);
+	}
+	pout << "... Re:  " << Re << endl;
 
-  const double refinementLevel = 1;
+	size_t refinement_level = 3;
+	if (argc >= 3) {
+		refinement_level = std::atoi(argv[2]);
+	}
+	pout << "... N:    " << refinement_level << endl;
 
+	size_t p = 4;
+	if (argc >= 4) {
+		p = std::atoi(argv[3]);
+	}
+	pout << "... p:    " << p << endl;
 
-  boost::shared_ptr<Benchmark<3> >  taylorGreen = boost::make_shared<
-     TaylorGreenVortex3D>(viscosity, refinementLevel);
+	size_t collision_id = 0;
+	if (argc >= 5) {
+		collision_id = std::atoi(argv[4]);
+	}
+	pout << "... Coll:  " << collision_id << endl;
 
+	size_t filter_id = 0;
+	if (argc >= 6) {
+		filter_id = std::atoi(argv[5]);
+	}
+	pout << "... Filter:  " << filter_id << endl;
 
-    // the scaling has to be orders of magnitude greater than the boundary velocity
-    double dt = CFDSolverUtilities::calculateTimestep<3>(
-					*taylorGreen->getMesh(), orderOfFiniteElement,
-					D3Q19(scaling), 0.4);
+	size_t integrator_id = 1;
+	if (argc >= 7) {
+		integrator_id = std::atoi(argv[6]);
+	}
+	pout << "... Int:  " << integrator_id << endl;
+	// get integrator
+	TimeIntegratorName time_integrator;
+	DealIntegratorName deal_integrator;
+	string integrator_name;
+	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
+			deal_integrator, integrator_name);
+	pout << "... that is the " << integrator_name << endl;
+	pout << "----------------" << endl;
 
-    pout << "dt = " << dt << " ...";
+	double CFL = .4;
+	if (argc >= 8) {
+		CFL = std::atof(argv[7]);
+	}
+	pout << "... CFL:  " << CFL << endl;
 
-    // time measurement variables
-    double time1, time2, timestart;
+	/////////////////////////////////////////////////
+	// set parameters, set up configuration object
+	//////////////////////////////////////////////////
 
-    // setup configuration
-    std::stringstream dirName;
-    dirName << getenv("NATRIUM_HOME") << "/step-16";
-    boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
-        SolverConfiguration>();
-    //configuration->setSwitchOutputOff(true);
-    configuration->setOutputDirectory(dirName.str());
-    configuration->setRestartAtLastCheckpoint(false);
-    configuration->setUserInteraction(false);
-    configuration->setOutputTableInterval(10);
-    configuration->setOutputCheckpointInterval(1000);
-    configuration->setOutputSolutionInterval(10);
-    configuration->setNumberOfTimeSteps(10000000);
-    configuration->setInitializationScheme(EQUILIBRIUM);
-    configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
-    configuration->setStencilScaling(scaling);
-    configuration->setStencil(Stencil_D3Q19);
-    //configuration->setCommandLineVerbosity(BASIC);
-    configuration->setTimeStepSize(dt);
-    if (dt > 0.1) {
-      pout << "Timestep too big." << endl;
-    }
+	// Re = viscosity/(2*pi)
+	const double U = 2 * M_PI;
+	const double viscosity = 1. / Re;
+	// C-E-approach: constant stencil scaling
+	// specify Mach number
+	const double Ma = 0.1;
+	const double cs = U / Ma;
+	// zunaechst: fixed order of FE
 
-    //configuration->setNumberOfTimeSteps(1.0 / dt);
+	// chose scaling so that the right Ma-number is achieved
+	const double scaling = sqrt(3) * U / Ma;
 
-    timestart = clock();
-    BenchmarkCFDSolver<3> solver(configuration, taylorGreen);
-    time1 = clock() - timestart;
+	boost::shared_ptr<ProblemDescription<3> > taylorGreen = boost::make_shared<
+			TaylorGreenVortex3D>(viscosity, refinement_level, U, cs);
 
+	// the scaling has to be orders of magnitude greater than the boundary velocity
+	double dt = CFDSolverUtilities::calculateTimestep<3>(
+			*taylorGreen->getMesh(), p, D3Q19(scaling), 1.0);
 
-      solver.run();
-      time2 = clock() - time1 - timestart;
-      time1 /= CLOCKS_PER_SEC;
-      time2 /= CLOCKS_PER_SEC;
-      pout << " OK ... Init: " << time1 << " sec; Run: " << time2
-          << " sec." << endl;
+	// setup configuration
+	std::stringstream dirName;
+	dirName << getenv("NATRIUM_HOME") << "/step-TGV3D/Re" << Re << "-ref"
+			<< refinement_level << "-p" << p << "-coll" << collision_id << "-f"
+			<< filter_id << "-int" << integrator_id << "-CFL" << CFL;
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
+			SolverConfiguration>();
+	//configuration->setSwitchOutputOff(true);
+	configuration->setOutputDirectory(dirName.str());
+	configuration->setRestartAtLastCheckpoint(false);
+	configuration->setUserInteraction(false);
+	configuration->setOutputTableInterval(10);
+	configuration->setOutputCheckpointInterval(1000);
+	configuration->setOutputSolutionInterval(100);
+	configuration->setSimulationEndTime(10.0);
+	configuration->setInitializationScheme(EQUILIBRIUM);
+	configuration->setSedgOrderOfFiniteElement(p);
+	configuration->setStencilScaling(scaling);
+	configuration->setStencil(Stencil_D3Q19);
+	//configuration->setCommandLineVerbosity(BASIC);
+	configuration->setTimeStepSize(dt);
+	if (dt > 0.1) {
+		pout << "Timestep too big." << endl;
+	}
+	if (collision_id == 1){
+		configuration->setCollisionScheme(KBC_STANDARD);
+	}
+	configuration->setTimeIntegrator(time_integrator);
+	configuration->setDealIntegrator(deal_integrator);
+	if (filter_id == 1){
+		configuration->setFiltering(EXPONENTIAL_FILTER);
+	}
 
+	//configuration->setNumberOfTimeSteps(1.0 / dt);
 
+	CFDSolver<3> solver(configuration, taylorGreen);
 
-  pout << "step-1 terminated." << endl;
+	solver.run();
 
-  return 0;
+	pout << "step-16 terminated." << endl;
+
+	return 0;
 
 }
