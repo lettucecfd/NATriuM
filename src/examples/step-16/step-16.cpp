@@ -37,7 +37,8 @@ int main(int argc, char** argv) {
 	//////////////////////////////////////////////////
 
 	pout
-			<< "Usage: ./step-16 <Re=800> <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=1.0>"
+			<< "Usage: ./step-16 <Re=800> <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> "
+					"<filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=1.0> <stencil-id = 0 (D3Q15; 1=D3Q19; 2=D3Q27)>"
 			<< endl;
 
 	double Re = 800;
@@ -90,6 +91,12 @@ int main(int argc, char** argv) {
 	}
 	pout << "... CFL:  " << CFL << endl;
 
+	size_t stencil_id = 0;
+	if (argc >= 9) {
+		stencil_id = std::atoi(argv[8]);
+	}
+	pout << "... Sten:  " << integrator_id << endl;
+
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
@@ -117,7 +124,7 @@ int main(int argc, char** argv) {
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/step-TGV3D/Re" << Re << "-ref"
 			<< refinement_level << "-p" << p << "-coll" << collision_id << "-f"
-			<< filter_id << "-int" << integrator_id << "-CFL" << CFL;
+			<< filter_id << "-int" << integrator_id << "-CFL" << CFL << "-sten" << stencil_id;
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
@@ -125,24 +132,29 @@ int main(int argc, char** argv) {
 	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(10);
-	configuration->setOutputCheckpointInterval(1000);
-	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputCheckpointInterval(10000);
+	configuration->setOutputSolutionInterval(1000);
 	configuration->setSimulationEndTime(10.0);
 	configuration->setInitializationScheme(EQUILIBRIUM);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(scaling);
-	configuration->setStencil(Stencil_D3Q19);
+	configuration->setStencil(Stencil_D3Q15);
+	if (stencil_id == 1){
+		configuration->setStencil(Stencil_D3Q19);
+	} else if (stencil_id == 2){
+		configuration->setStencil(Stencil_D3Q27);
+	}
 	//configuration->setCommandLineVerbosity(BASIC);
 	configuration->setTimeStepSize(dt);
 	if (dt > 0.1) {
 		pout << "Timestep too big." << endl;
 	}
-	if (collision_id == 1){
+	if (collision_id == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
 	}
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
-	if (filter_id == 1){
+	if (filter_id == 1) {
 		configuration->setFiltering(EXPONENTIAL_FILTER);
 	}
 
