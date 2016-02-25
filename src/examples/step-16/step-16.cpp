@@ -28,7 +28,7 @@ using namespace natrium;
 // Main function
 int main(int argc, char** argv) {
 
-	MPIGuard::getInstance();
+	MPIGuard::getInstance(argc, argv);
 
 	pout << "Starting NATriuM step-16 ..." << endl;
 
