@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
 	if (argc >= 9) {
 		stencil_id = std::atoi(argv[8]);
 	}
-	pout << "... Sten:  " << integrator_id << endl;
+	pout << "... Sten:  " << stencil_id << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
