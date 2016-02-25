@@ -14,7 +14,10 @@
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 
+#include "natrium/stencils/Stencil.h"
+#include "natrium/stencils/D3Q15.h"
 #include "natrium/stencils/D3Q19.h"
+#include "natrium/stencils/D3Q27.h"
 
 #include "natrium/problemdescription/ProblemDescription.h"
 
@@ -38,7 +41,7 @@ int main(int argc, char** argv) {
 
 	pout
 			<< "Usage: ./step-16 <Re=800> <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> "
-					"<filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=1.0> <stencil-id = 0 (D3Q15; 1=D3Q19; 2=D3Q27)>"
+					"<filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=1.0> <stencil-id=0 (D3Q15: 0; D3Q19: 1; D3Q27: 2)>"
 			<< endl;
 
 	double Re = 800;
@@ -85,7 +88,7 @@ int main(int argc, char** argv) {
 	pout << "... that is the " << integrator_name << endl;
 	pout << "----------------" << endl;
 
-	double CFL = .4;
+	double CFL = 1.0;
 	if (argc >= 8) {
 		CFL = std::atof(argv[7]);
 	}
@@ -117,8 +120,16 @@ int main(int argc, char** argv) {
 			TaylorGreenVortex3D>(viscosity, refinement_level, U, cs);
 
 	// the scaling has to be orders of magnitude greater than the boundary velocity
+	boost::shared_ptr<Stencil> st;
+	if (stencil_id == 0){
+		st = boost::make_shared<D3Q15>(scaling);
+	} else if (stencil_id == 1){
+		st = boost::make_shared<D3Q19>(scaling);
+	} else if (stencil_id == 2){
+		st = boost::make_shared<D3Q27>(scaling);
+	}
 	double dt = CFDSolverUtilities::calculateTimestep<3>(
-			*taylorGreen->getMesh(), p, D3Q19(scaling), 1.0);
+			*taylorGreen->getMesh(), p, *st, CFL);
 
 	// setup configuration
 	std::stringstream dirName;
