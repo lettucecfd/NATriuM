@@ -310,7 +310,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	blendDist 			= 0.1 * height;						// distance over which fBlend goes from 0 to 1
 	double	freeStreamTurb 		= 0.1;							// parameter does not let fBlend drop below the prescribed value
 
-	int 	nmodes 				= 300;							// number of Fourier modes
+	int 	nmodes 				= 600;							// number of Fourier modes
 	//double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
 	//changed by Andreas after talking to Holger
 	double	wew1fct				= 5;							// ratio of ke and kmin (in wavenumber)
