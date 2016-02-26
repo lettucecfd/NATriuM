@@ -140,12 +140,21 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 	if (configuration->isRestartAtLastCheckpoint()) {
 		// read iteration number and time from file
-		boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
-		boost::filesystem::path filename(
-				out_dir / "checkpoint" / "checkpoint.dat");
-		std::ifstream ifile(filename.string());
-		ifile >> m_iterationStart;
-		ifile >> m_time;
+		double time = 0.0;
+		size_t iteration_start = 0;
+		if (is_MPI_rank_0()) {
+			boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
+			boost::filesystem::path filename(
+					out_dir / "checkpoint" / "checkpoint.dat");
+			std::ifstream ifile(filename.string());
+			ifile >> iteration_start;
+			ifile >> time;
+			ifile.close();
+		}
+		// transfer iteration start and time to all mpi processes
+		m_time = dealii::Utilities::MPI::min_max_avg(time, MPI_COMM_WORLD).max;
+		m_iterationStart = dealii::Utilities::MPI::min_max_avg(iteration_start, MPI_COMM_WORLD).max;
+
 		// print out message
 		LOG(BASIC) << "Restart at iteration " << m_iterationStart
 				<< " (simulation time = " << m_time << " s)." << endl;
@@ -620,9 +629,12 @@ template bool CFDSolver<3>::stopConditionMet();
 
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
-
+	
 // start timer
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
+
+// sync MPI processes
+	MPI_sync();
 
 // output: vector fields as .vtu files
 	if (iteration == m_iterationStart) {
@@ -735,14 +747,17 @@ void CFDSolver<dim>::output(size_t iteration) {
 			// distribution functions
 			saveDistributionFunctionsToFiles(checkpoint_dir.string());
 			// iteration
-			boost::filesystem::path filename = checkpoint_dir
-					/ "checkpoint.dat";
-			std::ofstream outfile(filename.string());
-			outfile << iteration << endl;
-			// time
-			outfile << m_time << endl;
-		}
-	}
+			if (is_MPI_rank_0()) {
+				boost::filesystem::path filename = checkpoint_dir
+						/ "checkpoint.dat";
+				std::ofstream outfile(filename.string());
+				outfile << iteration << endl;
+				// time
+				outfile << m_time << endl;
+				outfile.close();
+			} /*if rank 0*/
+		} /*if checkpoint interval*/
+	} /*if not output off*/
 }
 template void CFDSolver<2>::output(size_t iteration);
 template void CFDSolver<3>::output(size_t iteration);
