@@ -153,6 +153,7 @@ int main(int argc, char** argv) {
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
 
+
 	if (filterID == 1) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
@@ -179,6 +180,7 @@ int main(int argc, char** argv) {
 	// ----------------------------------------------------------
 	// create a separate object for the initial velocity function
 	TurbulentChannelFlow3D::IncompressibleU test_velocity(channel3D.get());
+
 
 	if ( not is_restarted )
 	{
