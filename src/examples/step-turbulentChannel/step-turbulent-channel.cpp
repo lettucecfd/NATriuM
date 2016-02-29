@@ -82,9 +82,19 @@ int main(int argc, char** argv) {
 	int noSamplePoints					= 3;
 	std::vector<double> samplePointCoordinates(noSamplePoints);
 
-	samplePointCoordinates[0] = 8./16;
-	samplePointCoordinates[1] = 4./16;
-	samplePointCoordinates[2] = 1./16;
+	if (ReTau == 180)
+	{
+		samplePointCoordinates[0] = 8./16;
+		samplePointCoordinates[1] = 4./16;
+		samplePointCoordinates[2] = 1./16;
+	}
+	else if (ReTau == 395)
+	{
+		samplePointCoordinates[0] = 12./24;
+		samplePointCoordinates[1] = 6./24;
+		samplePointCoordinates[2] = 1./24;
+	}
+
 
 	for (int i = 0; i < noSamplePoints; i++){
 		samplePointCoordinates[i] = 0.5 * height * ( 1 - cos( M_PI/height * samplePointCoordinates[i] ) );
@@ -174,7 +184,7 @@ int main(int argc, char** argv) {
 	//configuration->setIterativeInitializationResidual(1e-15);
 
 	configuration->setConvergenceThreshold(1e-10);
-	//configuration->setNumberOfTimeSteps(100);
+	//configuration->setNumberOfTimeSteps(1);
 	//configuration->setSimulationEndTime(); // unit [s]
 
 	// ----------------------------------------------------------

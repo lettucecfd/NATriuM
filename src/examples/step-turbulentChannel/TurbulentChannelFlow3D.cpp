@@ -88,7 +88,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		// add external force
 		// turbulent flow
 		double rho = 1;
-		double Fx = pow( ReTau * viscosity / h_half, 2) * rho / height;
+		double Fx = pow( ReTau * viscosity / h_half, 2.) * rho / height;
 		// laminar flow
 		//double Fx = 8 * m_uCl * viscosity / (height * height); // m_uCl = 1.5*u_bulk
 		pout << " >>>> Body force F = " << Fx << endl;
@@ -176,42 +176,141 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>& x,
 		const unsigned int component) const{
 
+	// DEBUG:
 	//return m_initialIncompressibleU.value(x, component);
+	int meanVelocityMethodID = 1;
 
 	double height 	= m_flow->getCharacteristicLength();
     double ReTau 	= m_flow->getFrictionReNumber();
 	double visc 	= m_flow->getViscosity();
+	double rho 		= 1;
 
-	double uPlus_in;
+	double uPlus;
 
     double minDist = std::min(x[1], height - x[1]);
 	double h_half = height/2; // half channel height
+
+	// adverse pressure gradient in x-direction =^ body force
+	double p_x 		= pow( ReTau * visc / h_half, 2.) * rho / height;
 
 	// yPlus towards upper & lower channel wall
 	double yPlus = ReTau * ( minDist / h_half );
 
 	// mean inlet velocity profile towards walls
-	if ( yPlus <= 5 )
+	// ID = 1: Davidson (2007)
+	// ID = 2: Weyburne (2009)
+	switch (meanVelocityMethodID)
 	{
-		uPlus_in = yPlus;
+	case 1:
+		if ( yPlus <= 5 )
+		{// linear viscous sublayer
+			uPlus = yPlus;
+		}
+		else if ( yPlus > 5 && yPlus < 30)
+		{// buffer layer
+			uPlus = -3.05 + 5. * log(yPlus);
+		}
+		else
+		{// log region
+			uPlus = 1./0.4 * log(yPlus) + 5.2;
+		}
+		break;
+	case 2:
+		// constants
+		double a 		= 0.1;			// constant in adverse pressure gradient correction function uPlusDelta
+										// 		determined from comparison wiht DNS results, Weyburne (2009)
+		double k 		= 0.41;			// von Karman constant for the log region: k*yPlus = nu_t/nu
+		double kPOW3 	= pow(k, 3.);
+		double kPOWF3B2 = pow(k, 3./2);
+		double C 		= 0.001093;		// Musker constant for the near wall region: C*yPlus^3 = nu_t/nu
+		double F1B3 	= 1./3;
+		double F2POWF1B3 = pow(2, F1B3);
+		double CPOWF1B3 = pow(C, F1B3);
+		double F2B3 	= 2./3;
+		double F2POWF2B3 = pow(2, F2B3);
+		double CPOWF2B3 = pow(C, F2B3);
+		double SQRT3 	= sqrt(3);
+		double C1 		= sqrt( 12*C + 81*kPOW3 );
+		double C2 		= pow( 2*C + 27*kPOW3 - 3*kPOWF3B2*C1, F1B3 );
+		double C3 		= pow( 2*C + 27*kPOW3 + 3*kPOWF3B2*C1, F1B3 );
+		double C4 		= pow( 2*C + 27*kPOW3 - 3*kPOWF3B2*C1, F2B3 );
+		double C5 		= pow( 2*C + 27*kPOW3 + 3*kPOWF3B2*C1, F2B3 );
+		double C6 		= 1 + 3*k*yPlus;
+		double C6POW2 	= pow(C6, 2.);
+
+		// Approximate Musker velocity profile due to Weyburne (2009).
+		// Works well for zero pressure gradient boundary layer.
+		uPlus =
+		(
+		- 2*SQRT3*(-(F2POWF2B3*C*(C2 + C3)) - 9*F2POWF2B3*kPOW3*(C2 + C3)
+		  - CPOWF1B3*C2*C3*(C2 + C3) + 2*F2POWF1B3*CPOWF2B3*(C4 + C5))
+			* atan((-2*F2POWF1B3*CPOWF1B3 + C2 + C3)/(SQRT3*sqrt(pow(C2 - C3, 2.))))
+		+ 2*SQRT3*(-(F2POWF2B3*C*(C2 + C3)) - 9*F2POWF2B3*kPOW3*(C2 + C3)
+		  - CPOWF1B3*C2*C3*(C2 + C3) + 2*F2POWF1B3*CPOWF2B3*(C4 + C5))
+		 	 * atan((C2 + C3 - 2*F2POWF1B3*CPOWF1B3*C6)/(SQRT3*sqrt(pow(C2 - C3, 2.))))
+		+ sqrt(pow(C2 - C3, 2)) *
+			(
+			- 2*CPOWF1B3
+				* pow(F2POWF1B3*CPOWF1B3 + C2 + C3, 2)
+		 	 	* log(F2POWF1B3*CPOWF1B3 + C2 + C3)
+		 	+ (F2POWF2B3*C + 9*F2POWF2B3*kPOW3 + 2*F2POWF1B3*CPOWF2B3*(C2 + C3) - CPOWF1B3*(2*C4 + C2*C3 + 2*C5))
+		 		* log(F2POWF2B3*CPOWF2B3 + C4 - F2POWF1B3*CPOWF1B3*C3 + C5 - C2*(F2POWF1B3*CPOWF1B3 + C3))
+		 	+ 2*F2POWF2B3*C
+		 	 	* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
+		 	+ 4*CPOWF2B3
+		 	 	* pow(4*C + 54*kPOW3 - 6*kPOWF3B2*C1, F1B3)
+				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
+			+ 2*CPOWF1B3*C4
+				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
+			+ 4*CPOWF1B3*C2*C3
+				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
+			+ 2*CPOWF1B3*C5
+				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
+			+ 4*CPOWF2B3
+				* pow(4*C + 54*kPOW3 + 6*kPOWF3B2*C1, F1B3)
+				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
+			- F2POWF2B3*C
+				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
+			- 2*CPOWF2B3
+				* pow(4*C + 54*kPOW3 - 6*kPOWF3B2*C1, F1B3)
+				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
+			+ 2*CPOWF1B3*C4
+				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
+			+ CPOWF1B3*C2*C3
+				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
+			+ 2*CPOWF1B3*C5
+				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
+			- 2*CPOWF2B3
+				* pow(4*C + 54*kPOW3 + 6*kPOWF3B2*C1, F1B3)
+				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
+			- 9*F2POWF2B3*kPOW3
+				* log(
+						(
+						pow(F2POWF1B3*CPOWF1B3 + C2 + C3, 2.)
+						* (C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
+						)
+						/ pow(C2 + C3 + F2POWF1B3*CPOWF1B3*C6, 2.)
+					 )
+			)
+		)
+		/(6.*CPOWF1B3*k*sqrt(pow(C2 - C3, 2.))*(C4 + C2*C3 + C5));
+
+		// Correction function for adverse pressure gradient boundary layer
+		// due to Weyburne (2009).
+		double uPlusDelta =  p_x * 1/(2*a) * ( 1 - exp(-a * pow(yPlus, 2.)) );
+		//double uPlusDelta = 0;
+		uPlus = uPlus + uPlusDelta;
+		break;
 	}
-	else if ( yPlus > 5 && yPlus < 30)
-	{
-		uPlus_in = -3.05 + 5. * log(yPlus);
-	}
-	else
-	{
-		uPlus_in = 1./0.4 * log(yPlus) + 5.2;
-	}
-	double Uin = uPlus_in * ( ReTau * visc / h_half );
+	double U = uPlus * ( ReTau * visc / h_half );
 
     // mean velocities <Vin> & <Win> are assumed to be 0.
 	if (component == 0)
 	{
-		return Uin;
+		return U;
 		//return ( Uin + m_initialIncompressibleU.value(x, component) );
 	}
-	else // component 1 & 2
+	else // component 1, 2
 	{
 		return 0;
 		//return ( m_initialIncompressibleU.value(x, component) );
@@ -222,7 +321,8 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
 double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 		const unsigned int component) const{
 
-	//return m_initialU.value(x, component);
+	// DEBUG:
+	return m_initialU.value(x, component);
 
 	//---------------------------------------------------------
 	// Make perturbation field divergence free (incompressible)
@@ -280,13 +380,9 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 		const unsigned int component) const {
 
-	//pout << "here" << endl;
-
 	// Synthetic turbulence generation due to Davidson et al.
 	// [1] Using isotropic...
 	// [2]
-
-	// turbulent kinetic energy to be set properly
 
 	assert(component < 3);
 
@@ -301,7 +397,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	u_cl				= m_flow->getCenterLineVelocity(); 		// mean centerline velocity
 	double  ti					= 0.05;							// turbulence intensity I = u'/U
 	double	urms 				= ti * u_cl;					// turbulent velocity scale
-	double	tke 				= 3./2 * pow(urms, 2);			// turbulent kinetic energy
+	double	tke 				= 3./2 * pow(urms, 2.);			// turbulent kinetic energy
 	double	delta 				= 5./32 * height;	        	// inlet boundary layer thickness. Only if the boundary layer
 																// at inlet is not fully developed
 	//double 	uTau 				= 1/25.0;						// inlet shear velocity, suTau = Urms [Ref2]
@@ -311,6 +407,8 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	freeStreamTurb 		= 0.1;							// parameter does not let fBlend drop below the prescribed value
 
 	int 	nmodes 				= 600;							// number of Fourier modes
+	//pout << " >>>> Number of Fourier modes = " << nmodes << endl;
+	
 	//double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
 	//changed by Andreas after talking to Holger
 	double	wew1fct				= 5;							// ratio of ke and kmin (in wavenumber)
@@ -320,13 +418,13 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
 	// Calculated
 	double	sli 				= 0.1*delta;    				// length scale
-	double	epsm 				= pow(tke,1.5)/sli;				// dissipation rate
+	double	epsm 				= pow(tke, 1.5)/sli;				// dissipation rate
 
 	double 	ofe					= m_flow->getOrderOfFiniteElement();
 	double	inletCellLength		= height/( (ofe + 1) * pow(2, m_flow->getRefinementLevel()) * m_flow->getRepetitions().at(1));
 	double	wnrn				= 2*M_PI/inletCellLength;		// highest wave number // min cell length
 	double	wnre				= 9*M_PI*amp/(55*sli);			// k_e (related to peak energy wave number)
-	double	wnreta 				= pow((epsm/pow(visc, 3)), .25);
+	double	wnreta 				= pow((epsm/pow(visc, 3.)), .25);
 																// wavenumber used in the viscous expression (high wavenumbers)
 																// 	in the von Karman spectrum
 	double	wnr1 				= wnre/wew1fct;					// smallest wavenumber
@@ -410,7 +508,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 		kx = kxi*wnr[m];
 		ky = kyi*wnr[m];
 		kz = kzi*wnr[m];
-		rk = sqrt( pow(kx, 2) + pow(ky, 2) + pow(kz, 2) );
+		rk = sqrt( pow(kx, 2.) + pow(ky, 2.) + pow(kz, 2.) );
 
 		// if the wavenumber, rk, is smaller than the largest wavenumber, then create fluctuations
 		if (rk < wnrn)
@@ -421,10 +519,10 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 			// modified von Karman spectrum
 			//changed by Andreas after talking to Holger
 			// k^3 instead of k^4
-			e = amp/wnre * pow( wnr[m]/wnre, 3 ) / pow( 1 + pow( wnr[m]/wnre, 2 ), 17./6. )
-					* exp( -2 * pow( wnr[m]/wnreta , 2 ) );
-			//e = amp/wnre * pow( wnr[m]/wnre, 4 ) / pow( 1 + pow( wnr[m]/wnre, 2 ), 17./6. )
-			//					* exp( -2 * pow( wnr[m]/wnreta , 2 ) );
+			e = amp/wnre * pow( wnr[m]/wnre, 3. ) / pow( 1 + pow( wnr[m]/wnre, 2. ), 17./6. )
+					* exp( -2 * pow( wnr[m]/wnreta , 2. ) );
+			//e = amp/wnre * pow( wnr[m]/wnre, 4. ) / pow( 1 + pow( wnr[m]/wnre, 2. ), 17./6. )
+			//					* exp( -2 * pow( wnr[m]/wnreta , 2. ) );
 
 			utn = urms * sqrt( e * dkn[m] );
 
@@ -451,21 +549,21 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
     // Distance to the nearest wall, TODO:not valid for the cell centres
     minDist = std::min(x[1], height - x[1]);
 
-/*
-    // Linear blending for viscous sublayer
-	double h_half = 0.5 * height; // half channel height
-	double yPlus = ReTau * ( minDist / h_half );
 
-	// TODO: min(1,1) = ?;
+//    // Linear blending for viscous sublayer
+//	double h_half = 0.5 * height; // half channel height
+//	double yPlus = ReTau * ( minDist / h_half );
+//
+//	// TODO: min(1,1) = ?;
+//
+//	if ( yPlus <= 5 )
+//	{
+//		double uPlus_trp = yPlus;
+//		utrp = uPlus_trp * ( ReTau * visc / h_half );
+//		vtrp = uPlus_trp * ( ReTau * visc / h_half );
+//		wtrp = uPlus_trp * ( ReTau * visc / h_half );
+//	}
 
-	if ( yPlus <= 5 )
-	{
-		double uPlus_trp = yPlus;
-		utrp = uPlus_trp * ( ReTau * visc / h_half );
-		vtrp = uPlus_trp * ( ReTau * visc / h_half );
-		wtrp = uPlus_trp * ( ReTau * visc / h_half );
-	}
-*/
 
     // Manipulated hyperbolic function, freeStreamTurb prescribes a free-stream turbulence
     //	by preventing the blending function from dropping below the set value
@@ -479,14 +577,17 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	if (component == 0)
 	{
 		return ( fBlend*utrp );
+		//return 0;
 	}
 	else if (component == 1)
 	{
 		return ( fBlend*vtrp );
+		//return 0;
 	}
 	else // component == 2
 	{
 		return ( fBlend*wtrp );
+		//return 0;
 	}
 
 } // end of InitialVelocity
