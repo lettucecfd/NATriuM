@@ -322,7 +322,7 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 		const unsigned int component) const{
 
 	// DEBUG:
-	return m_initialU.value(x, component);
+	//return m_initialU.value(x, component);
 
 	//---------------------------------------------------------
 	// Make perturbation field divergence free (incompressible)
