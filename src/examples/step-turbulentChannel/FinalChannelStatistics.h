@@ -12,12 +12,12 @@
 #include "natrium/dataprocessors/DataProcessor.h"
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/utilities/BasicNames.h"
-
+#include "natrium/utilities/Math.h"
 #include "boost/filesystem.hpp"
 
 
-namespace natrium {
 
+namespace natrium {
 
 
 class FinalChannelStatistics: public DataProcessor<3>{
@@ -30,7 +30,7 @@ private:
 
 	// Data
 	std::vector<double> m_yCoordinates;
-	std::map<double, size_t> m_yCoordinateToIndex;
+	std::map<double, size_t, own_double_less> m_yCoordinateToIndex;
 	// One point statistics
 	size_t m_nofObservables;
 	vector<string> m_names;

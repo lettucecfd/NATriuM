@@ -17,6 +17,8 @@
 #include "SolverStats.h"
 #include "TurbulenceStats.h"
 
+#include "../dataprocessors/DataProcessor.h"
+
 #include "../problemdescription/ProblemDescription.h"
 
 #include "../advection/AdvectionOperator.h"
@@ -37,7 +39,6 @@ namespace natrium {
 
 /* forward declarations */
 class Stencil;
-template <size_t dim> class DataProcessor;
 
 /**
  * @short Exception class for CFDSolver
