@@ -569,6 +569,9 @@ void CFDSolver<dim>::run() {
 		stream();
 		filter();
 		collide();
+		for (size_t i = 0; i < m_dataProcessors.size(); i++){
+			m_dataProcessors.at(i)->apply();
+		}
 	}
 	output(m_i);
 

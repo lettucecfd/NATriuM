@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "TurbulentChannelFlow3D.h"
+#include "FinalChannelStatistics.h"
 
 #include "deal.II/numerics/data_out.h"
 
@@ -53,88 +54,84 @@ int main(int argc, char** argv) {
 	 */
 
 	// Flow variables
-	const double CFL 					= 1.0;
-	const double ReTau 					= atof(argv[1]);
-	const double u_cl 					= atof(argv[2]);
-	const double uCl2uTauRatio			= atof(argv[3]);
+	const double CFL = 1.0;
+	const double ReTau = atof(argv[1]);
+	const double u_cl = atof(argv[2]);
+	const double uCl2uTauRatio = atof(argv[3]);
 
 	// Computational domain
-	const double height 				= atof(argv[4]);
-	const double length 				= atof(argv[5]) * M_PI * height/2;
-	const double width 					= atof(argv[6]) * M_PI * height/2;
+	const double height = atof(argv[4]);
+	const double length = atof(argv[5]) * M_PI * height / 2;
+	const double width = atof(argv[6]) * M_PI * height / 2;
 
 	// Grid resolution
-	std::vector<unsigned int> 	repetitions(3);
-	repetitions.at(0) 					= atoi(argv[7]);
-	repetitions.at(1) 					= atoi(argv[8]);
-	repetitions.at(2) 					= atoi(argv[9]);
+	std::vector<unsigned int> repetitions(3);
+	repetitions.at(0) = atoi(argv[7]);
+	repetitions.at(1) = atoi(argv[8]);
+	repetitions.at(2) = atoi(argv[9]);
 
-	const double Ma 					= atof(argv[10]);		// lower Ma => reduction in numerical compressibility
+	const double Ma = atof(argv[10]);// lower Ma => reduction in numerical compressibility
 
-	const int refinementLevel 			= atoi(argv[11]);
-	const int orderOfFiniteElement 		= atoi(argv[12]);
-	const int filterID					= atoi(argv[13]);
+	const int refinementLevel = atoi(argv[11]);
+	const int orderOfFiniteElement = atoi(argv[12]);
+	const int filterID = atoi(argv[13]);
 
-	bool is_restarted 					= atoi(argv[14]);
-	bool is_periodic 					= true;
+	bool is_restarted = atoi(argv[14]);
+	bool is_periodic = true;
 
 	// Turbulence statistics
-	int noSamplePoints					= 3;
+	int noSamplePoints = 3;
 	std::vector<double> samplePointCoordinates(noSamplePoints);
 
-	if (ReTau == 180)
-	{
-		samplePointCoordinates[0] = 8./16;
-		samplePointCoordinates[1] = 4./16;
-		samplePointCoordinates[2] = 1./16;
-	}
-	else if (ReTau == 395)
-	{
-		samplePointCoordinates[0] = 12./24;
-		samplePointCoordinates[1] = 6./24;
-		samplePointCoordinates[2] = 1./24;
+	if (ReTau == 180) {
+		samplePointCoordinates[0] = 8. / 16;
+		samplePointCoordinates[1] = 4. / 16;
+		samplePointCoordinates[2] = 1. / 16;
+	} else if (ReTau == 395) {
+		samplePointCoordinates[0] = 12. / 24;
+		samplePointCoordinates[1] = 6. / 24;
+		samplePointCoordinates[2] = 1. / 24;
 	}
 
-
-	for (int i = 0; i < noSamplePoints; i++){
-		samplePointCoordinates[i] = 0.5 * height * ( 1 - cos( M_PI/height * samplePointCoordinates[i] ) );
+	for (int i = 0; i < noSamplePoints; i++) {
+		samplePointCoordinates[i] = 0.5 * height
+				* (1 - cos( M_PI / height * samplePointCoordinates[i]));
 	}
 
 	//**** Calculated ****
 	// approximate air viscosity at room temperature (275K): 1.3e-5 [m^2/s]
-	double viscosity  = u_cl * height/2 / ( ReTau * uCl2uTauRatio );
+	double viscosity = u_cl * height / 2 / (ReTau * uCl2uTauRatio);
 	//TODO: smooth increase of the inlet velocity until the initTime is reached
 	//  	e.g. u_cl_init = u_cl*(F1B2 - F1B2 * cos(PI / (initTime * globalTimeStep)) ;
 
 	const double scaling = sqrt(3) * u_cl / Ma;
 
 	// Display user input
-	pout << "=============================================================" 	<< "\n" <<
-			" READ COMMAND LINE PARAMETERS " 									<< "\n" <<
-			"=============================================================" 	<< "\n" <<
-			" |  Parameter \t\t\t\t| Value"										<< "\n" <<
-			" +--------------------------------------+------------------- "		<< "\n" <<
-			" |  Friction Reynolds number ReTau \t| "	<< ReTau 				<< "\n" <<
-			" |  Mean centerline velocity u_cl \t| "	<< u_cl					<< "\n" <<
-			" |  Center line velocity to \t\t| " 	 					 		<< "\n" <<
-			" |  ... friction velocity ratio \t| "		<< uCl2uTauRatio		<< "\n" <<
-			" |  \t\t\t\t\t| " 													<< "\n" <<
-			" |  Channel height \t\t\t| " 				<< height				<< "\n" <<
-			" |  Channel length \t\t\t| " 				<< length 				<< "\n" <<
-			" |  Channel width \t\t\t| " 				<< width 				<< "\n" <<
-			" |  \t\t\t\t\t| " 													<< "\n" <<
-			" |  Mach number Ma \t\t\t| " 				<< Ma 					<< "\n" <<
-			" |  Repetitions at x \t\t\t| " 			<< repetitions.at(0)	<< "\n" <<
-			" |  Repetitions at y \t\t\t| " 			<< repetitions.at(1)	<< "\n" <<
-			" |  Repetitions at z \t\t\t| " 			<< repetitions.at(2)	<< "\n" <<
-			" |  Refinement level N \t\t\t| "			<< refinementLevel		<< "\n" <<
-			" |  Order of finite element p \t\t| "		<< orderOfFiniteElement	<< endl;
-
+	pout << "============================================================="
+			<< "\n" << " READ COMMAND LINE PARAMETERS " << "\n"
+			<< "============================================================="
+			<< "\n" << " |  Parameter \t\t\t\t| Value" << "\n"
+			<< " +--------------------------------------+------------------- "
+			<< "\n" << " |  Friction Reynolds number ReTau \t| " << ReTau
+			<< "\n" << " |  Mean centerline velocity u_cl \t| " << u_cl << "\n"
+			<< " |  Center line velocity to \t\t| " << "\n"
+			<< " |  ... friction velocity ratio \t| " << uCl2uTauRatio << "\n"
+			<< " |  \t\t\t\t\t| " << "\n" << " |  Channel height \t\t\t| "
+			<< height << "\n" << " |  Channel length \t\t\t| " << length << "\n"
+			<< " |  Channel width \t\t\t| " << width << "\n"
+			<< " |  \t\t\t\t\t| " << "\n" << " |  Mach number Ma \t\t\t| " << Ma
+			<< "\n" << " |  Repetitions at x \t\t\t| " << repetitions.at(0)
+			<< "\n" << " |  Repetitions at y \t\t\t| " << repetitions.at(1)
+			<< "\n" << " |  Repetitions at z \t\t\t| " << repetitions.at(2)
+			<< "\n" << " |  Refinement level N \t\t\t| " << refinementLevel
+			<< "\n" << " |  Order of finite element p \t\t| "
+			<< orderOfFiniteElement << endl;
 
 	///**** Create CFD problem ****
-	boost::shared_ptr<TurbulentChannelFlow3D> channel3D =
-			boost::make_shared<TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
-					ReTau, u_cl, height, length, width, orderOfFiniteElement, is_periodic);
+	boost::shared_ptr<TurbulentChannelFlow3D> channel3D = boost::make_shared<
+			TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
+			ReTau, u_cl, height, length, width, orderOfFiniteElement,
+			is_periodic);
 	const double dt = CFDSolverUtilities::calculateTimestep<3>(
 			*channel3D->getMesh(), orderOfFiniteElement, D3Q19(scaling), CFL);
 
@@ -144,8 +141,9 @@ int main(int argc, char** argv) {
 
 	/// setup configuration
 	std::stringstream dirName;
-	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D/Re" << ReTau << "-N" << refinementLevel
-			<< "-p" << orderOfFiniteElement << "-filt" << filterID;
+	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D/Re" << ReTau
+			<< "-N" << refinementLevel << "-p" << orderOfFiniteElement
+			<< "-filt" << filterID;
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
@@ -163,12 +161,10 @@ int main(int argc, char** argv) {
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
 
-
 	if (filterID == 1) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
-	}
-	else if (filterID == 2) {
+	} else if (filterID == 2) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(NEW_FILTER);
 	}
@@ -191,9 +187,7 @@ int main(int argc, char** argv) {
 	// create a separate object for the initial velocity function
 	TurbulentChannelFlow3D::IncompressibleU test_velocity(channel3D.get());
 
-
-	if ( not is_restarted )
-	{
+	if (not is_restarted) {
 		// Divergence check
 		pout << "**** Divergence check ****" << endl;
 		//srand(1);
@@ -217,48 +211,53 @@ int main(int argc, char** argv) {
 			x_plus_h(0) = x(0) + h;
 			double f = test_velocity.value(x, 0); // component 0 -> u
 			double f_h = test_velocity.value(x_plus_h, 0);
-			div += ( (f_h - f) / h );
+			div += ((f_h - f) / h);
 			x_plus_h(0) = x(0);
 
 			// dv / dy
 			x_plus_h(1) = x(1) + h;
 			f = test_velocity.value(x, 1);	// component 1 -> v
 			f_h = test_velocity.value(x_plus_h, 1);
-			div += ( (f_h - f) / h );
+			div += ((f_h - f) / h);
 			x_plus_h(1) = x(1);
-
 
 			// dw / dz
 			x_plus_h(2) = x(2) + h;
 			f = test_velocity.value(x, 2);	// component 2 -> w
 			f_h = test_velocity.value(x_plus_h, 2);
-			div += ( (f_h - f) / h );
+			div += ((f_h - f) / h);
 
 			// check div small (could also be done with asserts)
-			pout << "... div u at point " << i << ", y-coord " << x(2) << ": "<< div << endl;
+			pout << "... div u at point " << i << ", y-coord " << x(2) << ": "
+					<< div << endl;
 		}
 	}
 
 	// make solver object and run simulation
 	CFDSolver<3> solver(configuration, channel3D);
 
-	if ( not is_restarted )
-	{
+	if (not is_restarted) {
 		double utrp_max = channel3D.get()->getMaxUtrp();
 		double utrp_inc_max = channel3D.get()->getMaxIncUtrp();
 		double scalingFactor = utrp_max / utrp_inc_max;
 
 		pout << " >>>> Max. Velocity Perturbation: " << utrp_max << endl;
-		pout << " >>>> Max. Incompressible Velocity Perturbation:  " << utrp_inc_max << endl;
+		pout << " >>>> Max. Incompressible Velocity Perturbation:  "
+				<< utrp_inc_max << endl;
 		pout << " >>>> Scaling Factor:  " << scalingFactor << endl;
 
 		solver.scaleVelocity(scalingFactor);
-		solver.addToVelocity(boost::make_shared<TurbulentChannelFlow3D::MeanVelocityProfile>( channel3D.get() ) );
+		solver.addToVelocity(
+				boost::make_shared<TurbulentChannelFlow3D::MeanVelocityProfile>(
+						channel3D.get()));
+	} else {
+		solver.appendDataProcessor(
+				boost::make_shared<FinalChannelStatistics>(solver,
+						configuration->getOutputDirectory()));
 	}
 	solver.run();
 
-	pout << "Max Velocity  " <<
-			solver.getMaxVelocityNorm() << endl; //"   (laminar: "<< 1.5*u_bulk << ")" <<  endl;
+	pout << "Max Velocity  " << solver.getMaxVelocityNorm() << endl; //"   (laminar: "<< 1.5*u_bulk << ")" <<  endl;
 
 	pout << "NATriuM step-turbulent-channel terminated." << endl;
 

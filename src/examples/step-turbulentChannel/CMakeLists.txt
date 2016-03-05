@@ -8,13 +8,15 @@ set(    TARGET
         )
 
 
-#
+# 
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
                 step-turbulent-channel.cpp
                 TurbulentChannelFlow3D.h   
                 TurbulentChannelFlow3D.cpp
+                FinalChannelStatistics.h
+                FinalChannelStatistics.cpp
                )
 #
 # link natrium library to executable

@@ -8,6 +8,7 @@ file(   GLOB_RECURSE
         benchmarks/* 
         boltzmannmodels/*
         collision/*
+        dataprocessors/*
         problemdescription/* 
         smoothing/*
         solver/*

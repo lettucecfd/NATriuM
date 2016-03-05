@@ -37,6 +37,7 @@ namespace natrium {
 
 /* forward declarations */
 class Stencil;
+template <size_t dim> class DataProcessor;
 
 /**
  * @short Exception class for CFDSolver
@@ -124,6 +125,9 @@ private:
 	boost::shared_ptr<SolverStats<dim> > m_solverStats;
 	boost::shared_ptr<TurbulenceStats<dim> > m_turbulenceStats;
 
+	// vector of data processors
+	vector< boost::shared_ptr<DataProcessor<dim> > > m_dataProcessors;
+
 	// starting time
 	time_t m_tstart;
 
@@ -136,6 +140,9 @@ private:
 
 	// vector of grid points
 	map<dealii::types::global_dof_index, dealii::Point<dim> > m_supportPoints;
+
+
+
 
 protected:
 
@@ -334,6 +341,10 @@ public:
 
 	void setVelocity(const vector<distributed_vector>& velocity) {
 		m_velocity = velocity;
+	}
+
+	void appendDataProcessor( boost::shared_ptr<DataProcessor<dim> > proc){
+		m_dataProcessors.push_back(proc);
 	}
 }
 ;
