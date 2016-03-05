@@ -8,13 +8,13 @@
 #ifndef LIBRARY_NATRIUM_DATAPROCESSORS_DATAPROCESSOR_H_
 #define LIBRARY_NATRIUM_DATAPROCESSORS_DATAPROCESSOR_H_
 
-#include "../solver/CFDSolver.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
 
 // forward declaration
-
+template <size_t dim>
+class CFDSolver;
 
 
 template <size_t dim>
