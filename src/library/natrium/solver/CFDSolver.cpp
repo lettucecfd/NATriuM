@@ -143,7 +143,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		double time = 0.0;
 		size_t iteration_start = 0;
 		if (is_MPI_rank_0()) {
-			boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
+			boost::filesystem::path out_dir(
+					m_configuration->getOutputDirectory());
 			boost::filesystem::path filename(
 					out_dir / "checkpoint" / "checkpoint.dat");
 			std::ifstream ifile(filename.string());
@@ -153,7 +154,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		}
 		// transfer iteration start and time to all mpi processes
 		m_time = dealii::Utilities::MPI::min_max_avg(time, MPI_COMM_WORLD).max;
-		m_iterationStart = dealii::Utilities::MPI::min_max_avg(iteration_start, MPI_COMM_WORLD).max;
+		m_iterationStart = dealii::Utilities::MPI::min_max_avg(iteration_start,
+				MPI_COMM_WORLD).max;
 
 		// print out message
 		LOG(BASIC) << "Restart at iteration " << m_iterationStart
@@ -431,9 +433,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			m_advectionOperator->getDoFHandler()->n_locally_owned_dofs_per_processor();
 	for (size_t i = 0;
 			i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); i++) {
-		LOG(DETAILED) << "Process "
-				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-				<< " has " << dofs_per_proc.at(i) << " grid points." << endl;
+		LOG(DETAILED) << "Process " << i << " has " << dofs_per_proc.at(i)
+				<< " grid points." << endl;
 	}
 
 // Initialize distribution functions
@@ -569,7 +570,7 @@ void CFDSolver<dim>::run() {
 		stream();
 		filter();
 		collide();
-		for (size_t i = 0; i < m_dataProcessors.size(); i++){
+		for (size_t i = 0; i < m_dataProcessors.size(); i++) {
 			m_dataProcessors.at(i)->apply();
 		}
 	}
@@ -632,7 +633,7 @@ template bool CFDSolver<3>::stopConditionMet();
 
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
-	
+
 // start timer
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
 
@@ -663,7 +664,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 		 }
 		 }*/
 		if (m_configuration->isOutputTurbulenceStatistics())
-				m_turbulenceStats->addToReynoldsStatistics(m_velocity);
+			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			// save local part of the solution
 			std::stringstream str;
@@ -687,7 +688,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 			/// For Benchmarks: add analytic solution
 			addAnalyticSolutionToOutput(data_out);
 			/// For turbulent flows: add turbulent statistics
-			if (m_configuration->isOutputTurbulenceStatistics()){
+			if (m_configuration->isOutputTurbulenceStatistics()) {
 				m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
 			}
 
@@ -701,7 +702,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 			// Write vtu file
 			data_out.build_patches(
-					m_configuration->getSedgOrderOfFiniteElement()*2);
+					m_configuration->getSedgOrderOfFiniteElement() * 2);
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)
@@ -729,13 +730,12 @@ void CFDSolver<dim>::output(size_t iteration) {
 			}
 		}
 
-
 		// output: table
 		// calculate information + physical properties
 		if (iteration % m_configuration->getOutputTableInterval() == 0) {
 			m_solverStats->printNewLine();
 			if (m_configuration->isOutputTurbulenceStatistics()) {
-				assert (m_turbulenceStats);
+				assert(m_turbulenceStats);
 				m_turbulenceStats->printNewLine();
 			}
 		}
