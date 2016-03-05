@@ -15,6 +15,7 @@ file(   GLOB_RECURSE
         natrium/advection/*.cpp 
         natrium/benchmarks/*.cpp
         natrium/collision/*.cpp
+        natrium/dataprocessors/*.cpp
         natrium/problemdescription/*.cpp
         natrium/smoothing/*.cpp
         natrium/solver/*.cpp
