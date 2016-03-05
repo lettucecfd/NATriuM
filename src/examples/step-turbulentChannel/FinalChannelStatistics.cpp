@@ -146,7 +146,7 @@ void FinalChannelStatistics::updateYValues() {
 		m_EX3.at(i).resize(m_nofCoordinates);
 		m_EX4.at(i).resize(m_nofCoordinates);
 		for (size_t j = 0; j <= i; j++) {
-			m_correlations.at(i).at(j).resize(m_nofObservables);
+			m_correlations.at(i).at(j).resize(m_nofCoordinates);
 		}
 	}
 	m_number.resize(m_nofCoordinates);
@@ -156,7 +156,7 @@ void FinalChannelStatistics::updateYValues() {
 		m_EX3_time.at(i).resize(m_nofCoordinates);
 		m_EX4_time.at(i).resize(m_nofCoordinates);
 		for (size_t j = 0; j <= i; j++) {
-			m_correlations_time.at(i).at(j).resize(m_nofObservables);
+			m_correlations_time.at(i).at(j).resize(m_nofCoordinates);
 		}
 	}
 
@@ -186,7 +186,7 @@ void FinalChannelStatistics::updateAverages() {
 		l_EX3.at(i).resize(m_nofCoordinates);
 		l_EX4.at(i).resize(m_nofCoordinates);
 		for (size_t j = 0; j <= i; j++) {
-			l_correlations.at(i).at(j).resize(m_nofObservables);
+			l_correlations.at(i).at(j).resize(m_nofCoordinates);
 		}
 	}
 	l_number.resize(m_nofCoordinates);
