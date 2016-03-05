@@ -18,7 +18,6 @@ FinalChannelStatistics::FinalChannelStatistics(const CFDSolver<3> & solver,
 		DataProcessor<3>(solver), m_outDir(outdir), m_u(solver.getVelocity()), m_rho(
 				solver.getDensity()) {
 
-	cout << "Initialize FinalChannelStatistics" << endl;
 	m_names.push_back("rho");
 	m_names.push_back("drho/dx");
 	m_names.push_back("drho/dy");
@@ -57,7 +56,6 @@ FinalChannelStatistics::FinalChannelStatistics(const CFDSolver<3> & solver,
 	}
 	n_steps = 0;
 	m_nofCoordinates = 0;
-	cout << "end construction" << endl;
 }
 
 void FinalChannelStatistics::update() {
@@ -68,7 +66,6 @@ void FinalChannelStatistics::update() {
 
 }
 void FinalChannelStatistics::updateYValues() {
-	cout << "Updating y values" << endl;
 	boost::shared_ptr<AdvectionOperator<3> > advection =
 			m_solver.getAdvectionOperator();
 	m_yCoordsUpToDate = true;
@@ -163,19 +160,11 @@ void FinalChannelStatistics::updateYValues() {
 		}
 	}
 
-	cout << "end updating y values." << endl;
-	cout << "Y values: " << endl;
-	assert (m_nofCoordinates > 0);
-	for (size_t i = 0; i < m_nofCoordinates; i++){
-		cout << " " << m_yCoordinates.at(i);
-	}
-	cout << endl;
 }
 
 void FinalChannelStatistics::updateAverages() {
 	boost::shared_ptr<AdvectionOperator<3> > advection =
 			m_solver.getAdvectionOperator();
-	cout << "Updating averages" << endl;
 
 	// prepare local vectors
 	vector<size_t> l_number;
@@ -314,12 +303,10 @@ void FinalChannelStatistics::updateAverages() {
 			}
 		}
 	}
-	cout << "end updating averages" << endl;
 }
 
 void FinalChannelStatistics::write_to_file() {
 
-	cout << "Write to file " << endl;
 	if (is_MPI_rank_0()) {
 		// averages
 		std::stringstream av_name;
@@ -406,7 +393,6 @@ void FinalChannelStatistics::write_to_file() {
 		file4.close();
 
 	} /* is mpi rank 0 */
-	cout << "end write to file" << endl;
 }
 
 void FinalChannelStatistics::apply() {
@@ -421,7 +407,6 @@ void FinalChannelStatistics::apply() {
 }
 
 void FinalChannelStatistics::addToTemporalAverages() {
-	cout << "add to temporal" << endl;
 	for (size_t i = 0; i < m_nofObservables; i++) {
 		for (size_t j = 0; j < m_nofCoordinates; j++) {
 			m_averages_time.at(i).at(j) *= n_steps;
@@ -447,7 +432,6 @@ void FinalChannelStatistics::addToTemporalAverages() {
 	}
 
 	n_steps++;
-	cout << "end add to temporal" << endl;
 }
 
 FinalChannelStatistics::~FinalChannelStatistics() {
