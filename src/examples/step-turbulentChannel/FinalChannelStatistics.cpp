@@ -266,7 +266,7 @@ void FinalChannelStatistics::updateAverages() {
 				// add to correlations
 				for (size_t j = 0; j < m_nofObservables; j++) {
 					for (size_t k = 0; k < j + 1; k++) {
-						l_correlations.at(j).at(j).at(y_ind) += (l_values.at(j)
+						l_correlations.at(j).at(k).at(y_ind) += (l_values.at(j)
 								* l_values.at(k));
 					}
 				}
