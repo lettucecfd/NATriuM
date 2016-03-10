@@ -501,8 +501,10 @@ void CFDSolver<dim>::stream() {
 	m_boundaryVector = m_advectionOperator->getSystemVector();
 
 	//try {
-	m_time = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector, m_time,
+	double new_dt = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector, 0.0,
 			m_timeIntegrator->getTimeStepSize());
+	m_timeIntegrator->setTimeStepSize(new_dt);
+	m_time += new_dt;
 	//} catch (std::exception& e) {
 	//	natrium_errorexit(e.what());
 	//}
