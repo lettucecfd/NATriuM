@@ -11,4 +11,5 @@
 #add_subdirectory(matrix-analysis)
 #add_subdirectory(sinusoidal)
 #add_subdirectory(performance-analysis)
-add_subdirectory(parallel_benchmark)
+#add_subdirectory(parallel_benchmark)
+add_subdirectory(tgv-convergence)
