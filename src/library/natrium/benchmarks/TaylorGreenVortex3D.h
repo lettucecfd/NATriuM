@@ -16,7 +16,7 @@
 
 #include "deal.II/grid/tria.h"
 
-#include "../problemdescription/Benchmark.h"
+#include "../problemdescription/ProblemDescription.h"
 #include "../utilities/BasicNames.h"
 
 
@@ -27,31 +27,46 @@ namespace natrium {
  *  The domain is [0,1]^2. The domain consists of
  *  8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).
  */
-class TaylorGreenVortex3D: public Benchmark<3> {
+class TaylorGreenVortex3D: public ProblemDescription<3> {
 public:
 
 	/**
 	 * @short class to describe the x-component of the analytic solution
 	 * @note other are default (v0=w0=0, rho0=1)
 	 */
-	class AnalyticVelocity: public dealii::Function<3> {
+	class InitialVelocity: public dealii::Function<3> {
 	private:
 		TaylorGreenVortex3D* m_flow;
 	public:
-		AnalyticVelocity(TaylorGreenVortex3D* flow) :
+		InitialVelocity(TaylorGreenVortex3D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+	};
+	class InitialDensity: public dealii::Function<3> {
+	private:
+		TaylorGreenVortex3D* m_flow;
+	public:
+		InitialDensity(TaylorGreenVortex3D* flow) :
 				m_flow(flow) {
 		}
 		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
 	};
 
+
   /// constructor
   TaylorGreenVortex3D(double viscosity,
-      size_t refinementLevel);
+      size_t refinementLevel,  double cs = 0.57735026919, bool init_rho_analytically = false);
 
   /// destructor
   virtual ~TaylorGreenVortex3D();
 
 private:
+	/// speed of sound
+	double m_cs;
+
+	/// initialization with analytic pressure
+	bool m_analyticInit;
 
   /**
    * @short create triangulation for couette flow
