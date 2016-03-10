@@ -31,7 +31,7 @@ class TaylorGreenVortex3D: public ProblemDescription<3> {
 public:
 
 	/**
-	 * @short class to describe the x-component of the analytic solution
+	 * @short class to describe the x-component of the initial velocity
 	 * @note other are default (v0=w0=0, rho0=1)
 	 */
 	class InitialVelocity: public dealii::Function<3> {
@@ -57,6 +57,7 @@ public:
   /// constructor
   TaylorGreenVortex3D(double viscosity,
       size_t refinementLevel,  double cs = 0.57735026919, bool init_rho_analytically = false);
+
 
   /// destructor
   virtual ~TaylorGreenVortex3D();

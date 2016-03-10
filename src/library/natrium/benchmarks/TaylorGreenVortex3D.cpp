@@ -20,6 +20,7 @@ TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
 		ProblemDescription<3>(makeGrid(), viscosity, 1), m_cs(cs), m_analyticInit(
 				init_rho_analytically) {
 
+
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply analytic solution
@@ -64,12 +65,10 @@ double TaylorGreenVortex3D::InitialDensity::value(const dealii::Point<3>& x,
  */
 boost::shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid() {
 	//Creation of the principal domain
-#ifdef WITH_TRILINOS_MPI
-	boost::shared_ptr<Mesh<3> > square = boost::make_shared<Mesh<3> >(
-			MPI_COMM_WORLD);
-#else
-	boost::shared_ptr<Mesh<3> > square = boost::make_shared<Mesh<3> >();
-#endif
+
+	boost::shared_ptr<Mesh<3> > square =
+	boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+
 	dealii::GridGenerator::hyper_cube(*square, 0, 8 * atan(1));
 
 	// Assign boundary indicators to the faces of the "parent cell"
