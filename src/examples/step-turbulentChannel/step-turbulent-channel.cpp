@@ -93,6 +93,7 @@ int main(int argc, char** argv) {
 		samplePointCoordinates[2] = 1. / 24;
 	}
 
+
 	for (int i = 0; i < noSamplePoints; i++) {
 		samplePointCoordinates[i] = 0.5 * height
 				* (1 - cos( M_PI / height * samplePointCoordinates[i]));
@@ -144,6 +145,7 @@ int main(int argc, char** argv) {
 	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D/Re" << ReTau
 			<< "-N" << refinementLevel << "-p" << orderOfFiniteElement
 			<< "-filt" << filterID;
+
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
@@ -160,6 +162,7 @@ int main(int argc, char** argv) {
 	configuration->setTimeStepSize(dt);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
+
 
 	if (filterID == 1) {
 		configuration->setFiltering(true);
@@ -178,9 +181,9 @@ int main(int argc, char** argv) {
 	//configuration->setInitializationScheme(ITERATIVE);
 	//configuration->setIterativeInitializationNumberOfIterations(100);
 	//configuration->setIterativeInitializationResidual(1e-15);
-
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(1);
+
 	//configuration->setSimulationEndTime(); // unit [s]
 
 	// ----------------------------------------------------------
