@@ -91,7 +91,10 @@ int main(int argc, char** argv) {
 	BenchmarkCFDSolver<2> solver(configuration, tgv);
 
 	try {
+
+		double timestart = clock();
 		solver.run();
+		double runtime = clock() - timestart;
 		solver.getErrorStats()->update();
 		solver.getSolverStats()->update();
 		double kinE_num = solver.getSolverStats()->getKinE();
@@ -102,15 +105,15 @@ int main(int argc, char** argv) {
 		double u_error = solver.getErrorStats()->getL2VelocityError();
 		double rho_error = solver.getErrorStats()->getL2DensityError();
 		pout
-				<< "N p Ma Re integrator CFL collision init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu"
+				<< "N p Ma Re integrator CFL collision init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu  runtime"
 				<< endl;
 		pout << N << " " << p << " " << Ma << " " << Re << " " << integrator
 				<< " " << CFL << " " << collision << " "
 				<< init_rho_analytically << " " << " " << solver.getIteration() << " "
-				<< configuration->getSimulationEndTime() / solver.getIteration()
+				<< solver.getTime() / solver.getIteration()
 						/ delta_t * CFL << " "
 				<< rho_error * (U / Ma) * (U / Ma) << " " << u_error << " "
-				<< numerical_viscosity / viscosity << endl;
+				<< numerical_viscosity / viscosity << " " << runtime << endl;
 
 	} catch (std::exception& e) {
 		pout << " Error" << endl;
