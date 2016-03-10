@@ -406,18 +406,24 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double	blendDist 			= 0.1 * height;						// distance over which fBlend goes from 0 to 1
 	double	freeStreamTurb 		= 0.1;							// parameter does not let fBlend drop below the prescribed value
 
-	int 	nmodes 				= 600;							// number of Fourier modes
+	//int 	nmodes 				= 600;							// number of Fourier modes
+	//changed by Andreas
+	int nmodes = 50;
 	//pout << " >>>> Number of Fourier modes = " << nmodes << endl;
 	
 	//double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
 	//changed by Andreas after talking to Holger
-	double	wew1fct				= 5;							// ratio of ke and kmin (in wavenumber)
+	//	double	wew1fct				= 5;							// ratio of ke and kmin (in wavenumber)
+	// changed by Andreas
+	double wew1fct = 1;
 
 	// Constants
 	double 	amp 				= 1.452762113;					// alpha in [Ref2]
 
 	// Calculated
-	double	sli 				= 0.1*delta;    				// length scale
+	//double	sli 				= 0.1*delta;    				// length scale
+	// changed by Andreas
+	double sli = delta;
 	double	epsm 				= pow(tke, 1.5)/sli;				// dissipation rate
 
 	double 	ofe					= m_flow->getOrderOfFiniteElement();
