@@ -102,18 +102,15 @@ int main(int argc, char** argv) {
 		double u_error = solver.getErrorStats()->getL2VelocityError();
 		double rho_error = solver.getErrorStats()->getL2DensityError();
 		pout
-				<< "N p Ma Re integrator CFL collision init_rho_analytically ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu"
+				<< "N p Ma Re integrator CFL collision init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu"
 				<< endl;
 		pout << N << " " << p << " " << Ma << " " << Re << " " << integrator
 				<< " " << CFL << " " << collision << " "
-				<< init_rho_analytically << " "
+				<< init_rho_analytically << " " << " " << solver.getIteration() << " "
+				<< configuration->getSimulationEndTime() / solver.getIteration()
+						/ delta_t * CFL << " "
 				<< rho_error * (U / Ma) * (U / Ma) << " " << u_error << " "
 				<< numerical_viscosity / viscosity << endl;
-		pout << "Final_CFL #steps Mean_CFL       " << endl
-				<< solver.getTimeIntegrator()->getTimeStepSize() / delta_t * CFL
-				<< " " << solver.getIteration() << " "
-				<< configuration->getSimulationEndTime() / solver.getIteration()
-						/ delta_t * CFL << endl;
 
 	} catch (std::exception& e) {
 		pout << " Error" << endl;

@@ -115,9 +115,10 @@ int main(int argc, char** argv) {
 
 	// chose scaling so that the right Ma-number is achieved
 	const double scaling = sqrt(3) * U / Ma;
+	const bool init_rho_analytically = true;
 
 	boost::shared_ptr<ProblemDescription<3> > taylorGreen = boost::make_shared<
-			TaylorGreenVortex3D>(viscosity, refinement_level, U, cs);
+			TaylorGreenVortex3D>(viscosity, refinement_level, cs, init_rho_analytically);
 
 	// the scaling has to be orders of magnitude greater than the boundary velocity
 	boost::shared_ptr<Stencil> st;
