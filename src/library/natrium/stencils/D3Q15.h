@@ -52,6 +52,8 @@ namespace natrium {
      */
     vector<double> makeWeights();
 
+    numeric_matrix makeMomentBasis(vector<numeric_vector> e);
+
   protected:
 
     /// speed of sound
