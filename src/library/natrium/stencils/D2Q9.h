@@ -30,6 +30,8 @@ private:
 	 */
 	vector<double> makeWeights();
 
+	numeric_matrix makeMomentBasis(vector<numeric_vector> e);
+
 protected:
 
 	/// speed of sound
@@ -103,6 +105,7 @@ public:
 	virtual double getScaling() const {
 		return m_scaling;
 	}
+
 };
 
 } /* namespace natrium */
