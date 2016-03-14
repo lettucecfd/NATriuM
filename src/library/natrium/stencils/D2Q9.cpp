@@ -66,9 +66,29 @@ vector<numeric_vector> D2Q9::makeDirections(double scaling) {
 
 numeric_matrix D2Q9::makeMomentBasis(vector<numeric_vector> e) {
 	numeric_matrix m(Q);
-	// as in KBC (Boesch et al. (2014)
+	// from Bachelor thesis Christoph Rettinger (Fluid flow simulatios using the LBM with MRT)
 	for (size_t alpha = 0; alpha < Q; alpha++) {
-		// density
+		double ealpha_normsq = e[alpha](0)*e[alpha](0) + e[alpha](1)*e[alpha](1) ;
+		// rho
+		m(0, alpha) = 1.0;
+		// e
+		m(1, alpha) = -4 + 3*ealpha_normsq;
+		// eps
+		m(2, alpha) = 4 - 21./2. * ealpha_normsq + 9./2. * ealpha_normsq * ealpha_normsq;
+		// jx
+		m(3, alpha) = e[alpha](0);
+		// qx
+		m(4, alpha) = (-5 + 3 * ealpha_normsq) * e[alpha](0)* e[alpha](0);
+		// jy
+		m(5, alpha) = e[alpha](1);
+		// qy
+		m(6, alpha) = (-5 + 3 * ealpha_normsq) * e[alpha](1)* e[alpha](1);
+		// pxx
+		m(7, alpha) = e[alpha](0)*e[alpha](0)-e[alpha](1)*e[alpha](1);
+		// pxy
+		m(8, alpha) = e[alpha](0)*e[alpha](1);
+
+		/*// density
 		m(0, alpha) = 1.0;
 		// velocity
 		m(1, alpha) = e[alpha](0);
@@ -83,8 +103,10 @@ numeric_matrix D2Q9::makeMomentBasis(vector<numeric_vector> e) {
 		// 3 0
 		// 0 3
 		// fourth order moment
-		m(8, alpha) = e[alpha](0) * e[alpha](0) * e[alpha](1) * e[alpha](1); // 2 2
+		m(8, alpha) = e[alpha](0) * e[alpha](0) * e[alpha](1) * e[alpha](1); // 2 2*/
 	}
+	cout << "D2Q9:" << endl;
+	m.print(cout);
 	return m;
 }
 
