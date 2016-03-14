@@ -257,6 +257,48 @@ BOOST_AUTO_TEST_CASE(D2Q9Getter_Scaled_test) {
 	pout << "done" << endl;
 } //D2Q9Getter_Scaled_test
 
+BOOST_AUTO_TEST_CASE(D2Q9MomentTrafo_test) {
+	pout << "D2Q9MomentTrafo_test..." << endl;
+
+	/////////////////
+	// SANITY TEST //
+	/////////////////
+
+	// standard scaling
+	D2Q9 dqmodel(1.0);
+
+	numeric_matrix f_to_m(9);
+	numeric_matrix m_to_f(9);
+	dqmodel.getMomentBasis(f_to_m);
+	dqmodel.getInverseMomentBasis(m_to_f);
+	numeric_matrix Ident(9);
+	m_to_f.mmult(Ident, f_to_m);
+	for (size_t i = 0; i < 9; i++){
+		for (size_t j = 0; j< 9; j++){
+			if (i != j)
+				BOOST_CHECK_SMALL(Ident(i,j), 1e-10);
+			else
+				BOOST_CHECK_SMALL(Ident(i,j)-1.0, 1e-10);
+		}
+	}
+
+	D2Q9 dqmodel2(1000.0);
+
+	dqmodel.getMomentBasis(f_to_m);
+	dqmodel.getInverseMomentBasis(m_to_f);
+	m_to_f.mmult(Ident, f_to_m);
+	for (size_t i = 0; i < 9; i++){
+		for (size_t j = 0; j< 9; j++){
+			if (i != j)
+				BOOST_CHECK_SMALL(Ident(i,j), 1e-10);
+			else
+				BOOST_CHECK_SMALL(Ident(i,j)-1.0, 1e-10);
+		}
+	}
+
+
+	pout << "done" << endl;
+} //D2Q9MomentTrafo_test
 
 
 BOOST_AUTO_TEST_SUITE_END()
