@@ -169,7 +169,7 @@ numeric_matrix D3Q15::makeMomentBasis(vector<numeric_vector> e) {
 		 // 1 2 1
 		 // 2 1 1
 		 // fifth order moments
-		 /*m(20, alpha) = e[alpha](0) * e[alpha](1)
+		 m(20, alpha) = e[alpha](0) * e[alpha](1)
 		 * e[alpha](1) * e[alpha](1); // 2 1 1
 		 m(21, alpha) = e[alpha](0) * e[alpha](0)
 		 * e[alpha](1) * e[alpha](1); // 1 1 2
