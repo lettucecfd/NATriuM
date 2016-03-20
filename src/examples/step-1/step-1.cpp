@@ -15,23 +15,77 @@
 #include "natrium/solver/SolverConfiguration.h"
 
 #include "natrium/problemdescription/Benchmark.h"
-
+#include "natrium/stencils/D2Q9.h"
 #include "natrium/utilities/BasicNames.h"
-
+#include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 using namespace natrium;
 
 // Main function
-int main() {
+int main(int argc, char** argv) {
 
-	MPIGuard::getInstance();
+	MPIGuard::getInstance(argc, argv);
 
-	pout << "Starting NATriuM step-1 ..." << endl;
+	// ========================================================================
+	// READ COMMAND LINE PARAMETERS
+	// ========================================================================
+	pout
+			<< "Usage: ./step-1 <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0>"
+			<< endl;
+
+	size_t refinement_level = 2;
+	if (argc >= 2) {
+		refinement_level = std::atoi(argv[1]);
+	}
+	pout << "... N:    " << refinement_level << endl;
+
+	size_t p = 2;
+	if (argc >= 3) {
+		p = std::atoi(argv[2]);
+	}
+	pout << "... p:    " << p << endl;
+
+	size_t collision_id = 0;
+	if (argc >= 4) {
+		collision_id = std::atoi(argv[3]);
+	}
+	pout << "... Coll:  " << collision_id << endl;
+
+	size_t filter_id = 0;
+	if (argc >= 5) {
+		filter_id = std::atoi(argv[4]);
+	}
+	pout << "... Filter:  " << filter_id << endl;
+
+	size_t integrator_id = 1;
+	if (argc >= 6) {
+		integrator_id = std::atoi(argv[5]);
+	}
+	pout << "... Int:  " << integrator_id << endl;
+
+	double CFL = .1;
+	if (argc >= 7) {
+		CFL = std::atof(argv[6]);
+	}
+	pout << "... CFL:  " << CFL << endl;
+
+	double stencil_scaling = 1.0;
+	if (argc >= 8) {
+		stencil_scaling = std::atof(argv[7]);
+	}
+	pout << "... stencil_scaling:  " << stencil_scaling << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
+
+	// get integrator
+	TimeIntegratorName time_integrator;
+	DealIntegratorName deal_integrator;
+	string integrator_name;
+	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
+			deal_integrator, integrator_name);
 
 	// Re = viscosity/(2*pi)
 	const double viscosity = 1;
@@ -39,12 +93,13 @@ int main() {
 	// specify Mach number
 	const double Ma = 0.05;
 	// zunaechst: fixed order of FE
-	const double orderOfFiniteElement = 4;
+	const double orderOfFiniteElement = p;
 
 	// chose scaling so that the right Ma-number is achieved
 	double scaling = sqrt(3) * 1 / Ma;
+	CFL /=scaling;
 
-	const double refinementLevel = 4;
+	const double refinementLevel = refinement_level;
 		pout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
@@ -56,9 +111,11 @@ int main() {
 		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		//double dt = dx / (scaling * sqrt(2));
+
+
 		double dt = 0.001;
 
-		pout << "dt = " << dt << " ...";
+
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -78,21 +135,33 @@ int main() {
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(ALL);
-		configuration->setTimeStepSize(dt);
+		configuration->setTimeIntegrator(time_integrator);
+		configuration->setDealIntegrator(deal_integrator);
+
+		configuration->setCollisionScheme(BGK_STANDARD);
+		if (collision_id == 1) {
+			configuration->setCollisionScheme(KBC_STANDARD);
+		}
 
 		//configuration->setInitializationScheme(ITERATIVE);
 		//configuration->setIterativeInitializationNumberOfIterations(1000);
 		//configuration->setIterativeInitializationResidual(1e-15);
 
-		if (dt > 0.1) {
-			pout << "Timestep too big." << endl;
-		}
 
-		configuration->setNumberOfTimeSteps(10.0 / dt);
+
+
 
 		// make problem and solver objects
 		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 				TaylorGreenVortex2D>(viscosity, refinementLevel, 1./Ma);
+		dt = CFDSolverUtilities::calculateTimestep<2>(
+					*(tgVortex->getMesh()), p, D2Q9(stencil_scaling), CFL);
+		if (dt > 0.1) {
+			pout << "Timestep too big." << endl;
+		}
+		pout << "dt = " << dt << " ...";
+		configuration->setTimeStepSize(dt);
+		configuration->setNumberOfTimeSteps(10.0 / dt);
 		boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);

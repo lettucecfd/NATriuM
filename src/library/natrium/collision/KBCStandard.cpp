@@ -10,8 +10,8 @@
 namespace natrium {
 
 KBCStandard::KBCStandard(double relaxationParameter, double dt,
-		const boost::shared_ptr<Stencil> stencil) :
-		MRT(relaxationParameter, dt, stencil) {
+		const boost::shared_ptr<Stencil> stencil) : counter(0),
+		MRT(relaxationParameter, dt, stencil),parameterFile("deviation.txt") {
 
 }
 
@@ -48,12 +48,19 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 	size_t Q = getQ();
 
+
+	stabilizer gamma(locally_owned_dofs.size());
+	stabilizer entropy(locally_owned_dofs.size());
+
+	//vector<double> gamma(locally_owned_dofs.size());
+
 	double scaling = getStencil()->getScaling();
 	double cs2 = getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
 
 	//for all degrees of freedom on current processor
 	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+
 	for (it = locally_owned_dofs.begin(); it != end; it++) {
 		size_t i = *it;
 
@@ -155,33 +162,33 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		double uSquareTerm;
 		double mixedTerm;
 		double weighting;
-		double prefactor = scaling / getStencil()->getSpeedOfSoundSquare();
+		double prefactor = 1/cs2;
 
 		uSquareTerm = -scalar_product
-				/ (2 * getStencil()->getSpeedOfSoundSquare());
+				/ (2 * cs2);
 		// direction 0
 		weighting = 4. / 9. * rho;
 		feq.at(0) = weighting * (1 + uSquareTerm);
 		// directions 1-4
 		weighting = 1. / 9. * rho;
-		mixedTerm = prefactor * (velocities.at(0)(i));
+		mixedTerm = prefactor * (ux);
 		feq.at(1) = weighting
 				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 		feq.at(3) = weighting
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		mixedTerm = prefactor * (velocities.at(1)(i));
+		mixedTerm = prefactor * (uy);
 		feq.at(2) = weighting
 				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 		feq.at(4) = weighting
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
 		// directions 5-8
 		weighting = 1. / 36. * rho;
-		mixedTerm = prefactor * (velocities.at(0)(i) + velocities.at(1)(i));
+		mixedTerm = prefactor * (ux + uy);
 		feq.at(5) = weighting
 				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 		feq.at(7) = weighting
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		mixedTerm = prefactor * (-velocities.at(0)(i) + velocities.at(1)(i));
+		mixedTerm = prefactor * (-ux + uy);
 		feq.at(6) = weighting
 				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 		feq.at(8) = weighting
@@ -302,38 +309,43 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		double beta = 1. / (getRelaxationParameter() + 0.5) / 2;
 
 		// stabilizer of KBC model
-		double gamma = 1. / beta - (2 - 1. / beta) * sum_s / sum_h;
+		gamma.value.at(i) = 1. / beta - (2 - 1. / beta) * (sum_s / sum_h);
 
 		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
-		if (sum_h < 1e-20) {
-			gamma = 2;
+		if (sum_h < 1e-16) {
+		gamma.value.at(i) = 2;
+
 		}
+
+		entropy.value.at(i) = -(f.at(0)(i)*log(f.at(0)(i)/(4./9.))+f.at(1)(i)*log(f.at(1)(i)/(1./9.))+f.at(2)(i)*log(f.at(2)(i)/(1./9.))+f.at(3)(i)*log(f.at(3)(i)/(1./9.))+f.at(4)(i)*log(f.at(4)(i)/(1./9.))+f.at(5)(i)*log(f.at(5)(i)/(1./36.))+f.at(6)(i)*log(f.at(6)(i)/(1./36.))+f.at(7)(i)*log(f.at(7)(i)/(1./36.))+f.at(8)(i)*log(f.at(8)(i)/(1./36.)));
+
+
+
 
 		// calculate new f
 		f.at(0)(i) = f.at(0)(i)
-				- beta * (2 * delta_s.at(0) + gamma * delta_h.at(0));
+				- beta * (2 * delta_s.at(0) + gamma.value.at(i) * delta_h.at(0));
 		f.at(1)(i) = f.at(1)(i)
-				- beta * (2 * delta_s.at(1) + gamma * delta_h.at(1));
+				- beta * (2 * delta_s.at(1) + gamma.value.at(i) * delta_h.at(1));
 		f.at(2)(i) = f.at(2)(i)
-				- beta * (2 * delta_s.at(2) + gamma * delta_h.at(2));
+				- beta * (2 * delta_s.at(2) + gamma.value.at(i) * delta_h.at(2));
 		f.at(3)(i) = f.at(3)(i)
-				- beta * (2 * delta_s.at(3) + gamma * delta_h.at(3));
+				- beta * (2 * delta_s.at(3) + gamma.value.at(i) * delta_h.at(3));
 		f.at(4)(i) = f.at(4)(i)
-				- beta * (2 * delta_s.at(4) + gamma * delta_h.at(4));
+				- beta * (2 * delta_s.at(4) + gamma.value.at(i) * delta_h.at(4));
 		f.at(5)(i) = f.at(5)(i)
-				- beta * (2 * delta_s.at(5) + gamma * delta_h.at(5));
+				- beta * (2 * delta_s.at(5) + gamma.value.at(i) * delta_h.at(5));
 		f.at(6)(i) = f.at(6)(i)
-				- beta * (2 * delta_s.at(6) + gamma * delta_h.at(6));
+				- beta * (2 * delta_s.at(6) + gamma.value.at(i) * delta_h.at(6));
 		f.at(7)(i) = f.at(7)(i)
-				- beta * (2 * delta_s.at(7) + gamma * delta_h.at(7));
+				- beta * (2 * delta_s.at(7) + gamma.value.at(i) * delta_h.at(7));
 		f.at(8)(i) = f.at(8)(i)
-				- beta * (2 * delta_s.at(8) + gamma * delta_h.at(8));
+				- beta * (2 * delta_s.at(8) + gamma.value.at(i) * delta_h.at(8));
 
-		if (gamma != 2) {
-
-		}
 
 	}
+
+writeDeviation(gamma.getAverage(),gamma.getDeviation(),entropy.getAverage(),entropy.getDeviation());
 
 }
 
