@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
 			<< "-p" << p << "-coll" << collision_id << "-int" << integrator_id
 			<< "-CFL" << CFL << "-scaling" << stencil_scaling;
-	configuration->setOutputDirectory(dirname.str());
+	configuration->setOutputDirectory("./parameters");
 	configuration->setConvergenceThreshold(1e-10);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
@@ -149,6 +149,12 @@ int main(int argc, char** argv) {
 	CFDSolver<2> solver(configuration, shear_layer);
 
 	solver.run();
+
+/*	configuration->setTimeStepSize(3*delta_t);
+	configuration->setRestartAtLastCheckpoint(false);
+	configuration->setSimulationEndTime(t_c*(1-1./10));
+	CFDSolver<2> solver2(configuration, shear_layer);
+	solver2.run();*/
 
 	// ========================================================================
 	// FINAL OUTPUT
