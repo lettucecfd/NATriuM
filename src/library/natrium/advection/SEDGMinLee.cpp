@@ -39,8 +39,8 @@ template<size_t dim>
 SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
 		boost::shared_ptr<BoundaryCollection<dim> > boundaries,
 		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
-		string inputDirectory, bool useCentralFlux) :
-		m_tria(triangulation), m_boundaries(boundaries), m_mapping(
+		bool useCentralFlux) :
+		m_mesh(triangulation), m_boundaries(boundaries), m_mapping(
 				orderOfFiniteElement), m_stencil(Stencil), m_useCentralFlux(
 				useCentralFlux) {
 	// assertions
@@ -56,6 +56,11 @@ SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
 			QGaussLobatto<1>(orderOfFiniteElement + 1));
 	m_doFHandler = boost::make_shared<DoFHandler<dim> >(*triangulation);
 
+} /* SEDGMinLee<dim>::SEDGMinLee */
+
+template<size_t dim>
+void SEDGMinLee<dim>::setupDoFs() {
+
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
 
@@ -66,39 +71,14 @@ SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
 	m_celldof_to_q_index = map_celldofs_to_q_index();
 	m_q_index_to_facedof = map_q_index_to_facedofs();
 
-	// set size for the system vector
-#ifdef WITH_TRILINOS
+	// set size for the system vector	
 	m_systemVector.reinit(m_stencil->getQ() - 1);
 	for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-#ifdef WITH_TRILINOS_MPI
-		m_systemVector.block(i).reinit(m_locallyOwnedDofs,
-		MPI_COMM_WORLD);
+		m_systemVector.block(i).reinit(m_locallyOwnedDofs, MPI_COMM_WORLD);
 		m_systemVector.collect_sizes();
-#else
-		m_systemVector.block(i).reinit(m_doFHandler->n_dofs());
-#endif
-	}
-#else
-	m_systemVector.reinit(m_stencil->getQ() - 1, m_doFHandler->n_dofs());
-#endif
-	// reassemble or read file
-	if (inputDirectory.empty()) {
-		reassemble();
-	} else {
-		loadCheckpoint(inputDirectory);
-		reassemble();
 	}
 
-} /* SEDGMinLee<dim>::SEDGMinLee */
-/// The template parameter must be made explicit in order for the code to compile
-template SEDGMinLee<2>::SEDGMinLee(boost::shared_ptr<Mesh<2> > triangulation,
-		boost::shared_ptr<BoundaryCollection<2> > boundaries,
-		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
-		string inputDirectory, bool useCentralFlux);
-template SEDGMinLee<3>::SEDGMinLee(boost::shared_ptr<Mesh<3> > triangulation,
-		boost::shared_ptr<BoundaryCollection<3> > boundaries,
-		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
-		string inputDirectory, bool useCentralFlux);
+}
 
 template<size_t dim>
 void SEDGMinLee<dim>::reassemble() {
@@ -183,9 +163,6 @@ void SEDGMinLee<dim>::reassemble() {
 //#endif
 
 } /* reassemble */
-/// The template parameter must be made explicit in order for the code to compile
-template void SEDGMinLee<2>::reassemble();
-template void SEDGMinLee<3>::reassemble();
 
 template<size_t dim>
 void SEDGMinLee<dim>::updateSparsityPattern() {
@@ -314,10 +291,6 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 
 }
 /* updateSparsityPattern */
-// The template parameter has to be made expicit in order for the code to compile
-template void SEDGMinLee<2>::updateSparsityPattern();
-//TODO generalize to 3D
-//template void SEDGMinLee<3>::updateSparsityPattern();
 
 template<size_t dim>
 void SEDGMinLee<dim>::assembleLocalMassMatrix(
@@ -334,13 +307,6 @@ void SEDGMinLee<dim>::assembleLocalMassMatrix(
 	}
 
 } /*assembleLocalMassMatrix*/
-// The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::assembleLocalMassMatrix(
-		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
-		vector<double> &massMatrix);
-template void SEDGMinLee<3>::assembleLocalMassMatrix(
-		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
-		vector<double> &massMatrix);
 
 template<size_t dim>
 void SEDGMinLee<dim>::assembleLocalDerivativeMatrices(
@@ -365,13 +331,6 @@ void SEDGMinLee<dim>::assembleLocalDerivativeMatrices(
 	}
 
 } /* assembleLocalDerivativeMatrix */
-// The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::assembleLocalDerivativeMatrices(
-		const dealii::FEValues<2>& feValues, size_t dofs_per_cell,
-		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
-template void SEDGMinLee<3>::assembleLocalDerivativeMatrices(
-		const dealii::FEValues<3>& feValues, size_t dofs_per_cell,
-		vector<dealii::FullMatrix<double> > &derivativeMatrix) const;
 
 template<size_t dim>
 void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
@@ -402,8 +361,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 				// Apply other boundaries
 				if ((m_boundaries->getBoundary(boundaryIndicator)->isLinear())) {
 					const boost::shared_ptr<LinearBoundary<dim> >& LinearBoundary =
-							m_boundaries->getLinearBoundary(
-									boundaryIndicator);
+							m_boundaries->getLinearBoundary(boundaryIndicator);
 					LinearBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_stencil,
 							m_q_index_to_facedof.at(j), inverseLocalMassMatrix,
@@ -423,21 +381,6 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 	}
 
 } /* assembleLocalFaceMatrix */
-// The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::assembleAndDistributeLocalFaceMatrices(
-		size_t alpha,
-		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
-		dealii::FEFaceValues<2>& feFaceValues,
-		dealii::FESubfaceValues<2>& feSubfaceValues,
-		dealii::FEFaceValues<2>& feNeighborFaceValues,
-		const vector<double>& inverseLocalMassMatrix);
-template void SEDGMinLee<3>::assembleAndDistributeLocalFaceMatrices(
-		size_t alpha,
-		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
-		dealii::FEFaceValues<3>& feFaceValues,
-		dealii::FESubfaceValues<3>& feSubfaceValues,
-		dealii::FEFaceValues<3>& feNeighborFaceValues,
-		const vector<double>& inverseLocalMassMatrix);
 
 template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
@@ -561,23 +504,6 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 // TODO Implement local refinement
 
 } /* assembleAndDistributeInternalFace */
-// The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::assembleAndDistributeInternalFace(size_t direction,
-		typename dealii::DoFHandler<2>::active_cell_iterator& cell,
-		size_t faceNumber,
-		typename dealii::DoFHandler<2>::cell_iterator& neighborCell,
-		size_t neighborFaceNumber, dealii::FEFaceValues<2>& feFaceValues,
-		dealii::FESubfaceValues<2>& feSubfaceValues,
-		dealii::FEFaceValues<2>& feNeighborFaceValues,
-		const vector<double>& inverseLocalMassMatrix);
-template void SEDGMinLee<3>::assembleAndDistributeInternalFace(size_t direction,
-		typename dealii::DoFHandler<3>::active_cell_iterator& cell,
-		size_t faceNumber,
-		typename dealii::DoFHandler<3>::cell_iterator& neighborCell,
-		size_t neighborFaceNumber, dealii::FEFaceValues<3>& feFaceValues,
-		dealii::FESubfaceValues<3>& feSubfaceValues,
-		dealii::FEFaceValues<3>& feNeighborFaceValues,
-		const vector<double>& inverseLocalMassMatrix);
 
 template<size_t dim>
 std::map<size_t, size_t> SEDGMinLee<dim>::map_celldofs_to_q_index() const {
@@ -608,9 +534,6 @@ std::map<size_t, size_t> SEDGMinLee<dim>::map_celldofs_to_q_index() const {
 	}
 	return result;
 }
-// The template parameter must be made explicit in order for the code to compile.
-template std::map<size_t, size_t> SEDGMinLee<2>::map_celldofs_to_q_index() const;
-template std::map<size_t, size_t> SEDGMinLee<3>::map_celldofs_to_q_index() const;
 
 template<size_t dim>
 vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_facedofs_to_q_index() const {
@@ -643,9 +566,6 @@ vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_facedofs_to_q_index() con
 	}
 	return result;
 }
-// The template parameter must be made explicit in order for the code to compile.
-template vector<std::map<size_t, size_t> > SEDGMinLee<2>::map_facedofs_to_q_index() const;
-template vector<std::map<size_t, size_t> > SEDGMinLee<3>::map_facedofs_to_q_index() const;
 
 template<size_t dim>
 vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_q_index_to_facedofs() const {
@@ -678,273 +598,12 @@ vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_q_index_to_facedofs() con
 	}
 	return result;
 } /* map_q_index_to_facedofs */
-// The template parameter must be made explicit in order for the code to compile.
-template vector<std::map<size_t, size_t> > SEDGMinLee<2>::map_q_index_to_facedofs() const;
-template vector<std::map<size_t, size_t> > SEDGMinLee<3>::map_q_index_to_facedofs() const;
 
 template<size_t dim>
 void SEDGMinLee<dim>::stream() {
 }
-// The template parameter must be made explicit in order for the code to compile.
-template void SEDGMinLee<2>::stream();
-template void SEDGMinLee<3>::stream();
 
-//template<size_t dim>
-//void SEDGMinLee<dim>::saveMatricesToFiles(const string& directory) const {
-//// write system matrices to files
-//	try {
-//		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-//			for (size_t j = 0; j < m_stencil->getQ() - 1; j++) {
-//				// filename
-//				std::stringstream filename;
-//				filename << directory << "/checkpoint_system_matrix_" << i
-//#ifdef WITH_TRILINOS_MPI
-//						<< "_" << j << "_"
-//						<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-//						<< ".dat";
-//#else
-//				<< "_" << j << ".dat";
-//#endif
-//				std::ofstream file(filename.str().c_str());
-//#ifndef WITH_TRILINOS
-//				m_systemMatrix.block(i, j).block_write(file);
-//#else
-//				// TODO use trilinos functions for read and write. This here is really bad
-//#endif
-//			}
-//		}
-//
-//	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-//		throw AdvectionSolverException(
-//				"An error occurred while writing the system matrices to files: Please make sure you have writing permission. Quick fix: Remove StreamingMatrices from OutputFlags");
-//	}
-//
-//// Write the system vector
-//	//try {
-//		// filename
-//		std::stringstream filename;
-//		filename << directory << "/checkpoint_system_vector."
-//				<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
-//		std::ofstream file(filename.str().c_str());
-//#ifdef WITH_TRILINOS
-//		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-//			numeric_vector tmp(m_systemVector.block(i));
-//			tmp.block_write(file);
-//		}
-//#else
-//		m_systemVector.block_write(file);
-//#endif
-//	/*} catch (dealii::StandardExceptions::ExcIO& excIO) {
-//		throw AdvectionSolverException(
-//				"An error occurred while writing the system vector to file: Please make sure you have writing permission. ");
-//	}*/
-//}
-//template void SEDGMinLee<2>::saveMatricesToFiles(const string& directory) const;
-//template void SEDGMinLee<3>::saveMatricesToFiles(const string& directory) const;
-//
-//template<size_t dim>
-//void SEDGMinLee<dim>::loadMatricesFromFiles(const string& directory) {
-//// read the system matrices from file
-//	try {
-//		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-//			for (size_t j = 0; j < m_stencil->getQ() - 1; j++) {
-//				// filename
-//				std::stringstream filename;
-//				filename << directory << "/checkpoint_system_matrix_" << i
-//#ifdef WITH_TRILINOS_MPI
-//						<< "_" << j << "_"
-//						<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-//						<< ".dat";
-//#else
-//				<< "_" << j << ".dat";
-//#endif
-//				std::ifstream file(filename.str().c_str());
-//#ifndef WITH_TRILINOS
-//				m_systemMatrix.block(i, j).block_read(file);
-//#else
-//				// TODO use trilinos functions for read and write. This here is really bad
-//#endif
-//			}
-//		}
-//
-//	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-//		throw AdvectionSolverException(
-//				"An error occurred while reading the system matrices from file: Please switch off the restart option to start the simulation from the beginning.");
-//	}
-//
-//// Read the system vector
-//	try {
-//		// filename
-//		std::stringstream filename;
-//		filename << directory << "/checkpoint_system_vector."
-//				<< Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) << ".dat";
-//		std::ifstream file(filename.str().c_str());
-//#ifdef WITH_TRILINOS
-//		for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-//			numeric_vector tmp(m_systemVector.block(i));
-//			tmp.block_read(file);
-//			m_systemVector.block(i) = tmp;
-//		}
-//#else
-//
-//		m_systemVector.block_read(file);
-//#endif
-//	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-//		throw AdvectionSolverException(
-//				"An error occurred while reading the systemVector from file: Please switch off the restart option to start the simulation from the beginning.");
-//	}
-//// TODO Test: Is the matrix OK?
-//}
-//template void SEDGMinLee<2>::loadMatricesFromFiles(const string& directory);
-//template void SEDGMinLee<3>::loadMatricesFromFiles(const string& directory);
-
-template<size_t dim> void SEDGMinLee<dim>::writeStatus(
-		const string& directory) const {
-//make file
-	std::stringstream filename;
-	filename << directory << "/checkpoint_status."
-			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-			<< ".dat";
-	std::ofstream outfile(filename.str().c_str());
-
-//write number of cells
-	outfile << m_tria->n_cells() << endl;
-//write order of fe
-	outfile << m_fe->get_degree() << endl;
-//write number of dofs
-	outfile << this->getNumberOfDoFs() << endl;
-//write D
-	outfile << m_stencil->getD() << endl;
-//write Q
-	outfile << m_stencil->getQ() << endl;
-//write magic number of cell geometry
-	outfile << calcMagicNumber() << endl;
-//write dqScaling1
-	outfile << std::setprecision(20) << m_stencil->getDirection(1)(0) << endl;
-//write dqScaling2
-	outfile << std::setprecision(20) << m_stencil->getDirection(1)(1) << endl;
-//write fluxType
-	outfile << m_useCentralFlux << endl;
-//write advectionType
-	outfile << "SEDGMinLee" << endl;
-}
-template void SEDGMinLee<2>::writeStatus(const string& directory) const;
-template void SEDGMinLee<3>::writeStatus(const string& directory) const;
-
-template<size_t dim> bool SEDGMinLee<dim>::isStatusOK(const string& directory,
-		string& message) const {
-//read file
-	std::stringstream filename;
-	filename << directory << "/checkpoint_status."
-			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-			<< ".dat";
-	std::ifstream infile(filename.str().c_str());
-
-// check if status file exists
-	if (not infile) {
-		message = "No checkpoint found. Please disable restart option.";
-		return false;
-	}
-//number of cells
-	size_t tmp;
-	infile >> tmp;
-	if (tmp != m_tria->n_cells()) {
-		message = "Number of cells not equal.";
-		return false;
-	}
-// order of fe
-	infile >> tmp;
-	if (tmp != m_fe->get_degree()) {
-		message = "Order of finite element not equal.";
-		return false;
-	}
-// number of dofs
-	infile >> tmp;
-	if (tmp != this->getNumberOfDoFs()) {
-		message = "Number of degrees of freedom not equal.";
-		return false;
-	}
-// D
-	infile >> tmp;
-	if (tmp != m_stencil->getD()) {
-		message = "Dimension not equal.";
-		return false;
-	}
-// Q
-	infile >> tmp;
-	if (tmp != m_stencil->getQ()) {
-		message = "Number of particle velocities not equal.";
-		return false;
-	}
-// magic number of cell geometry
-	double dtmp;
-	infile >> dtmp;
-	if (fabs(dtmp - calcMagicNumber()) > 1e-1) {
-		message = "Mesh (or at least its magic number) not equal.";
-		return false;
-	}
-// dqScaling1
-	infile >> dtmp;
-	if (fabs(dtmp - m_stencil->getDirection(1)(0))/dtmp > 1e-2) {
-		message = "Scaling of Stencil (1st coordinate) not equal.";
-		return false;
-	}
-// dqScaling2
-	infile >> dtmp;
-	if (fabs(dtmp - m_stencil->getDirection(1)(1))/dtmp > 1e-2) {
-		message = "Scaling of Stencil (2nd) not equal.";
-		return false;
-	}
-// fluxType
-	infile >> tmp;
-	if (tmp != m_useCentralFlux) {
-		message = "Flux not equal.";
-		return false;
-	}
-// advectionType
-	string stmp;
-	infile >> stmp;
-	if (stmp != "SEDGMinLee") {
-		message = "AdvectionOperator Type not equal.";
-		return false;
-	}
-
-	return true;
-}
-template bool SEDGMinLee<2>::isStatusOK(const string& directory,
-		string& message) const;
-template bool SEDGMinLee<3>::isStatusOK(const string& directory,
-		string& message) const;
-
-template<size_t dim>
-double SEDGMinLee<dim>::calcMagicNumber() const {
-	return 0;
-}
-
-template double SEDGMinLee<2>::calcMagicNumber() const;
-template double SEDGMinLee<3>::calcMagicNumber() const;
-
-template<size_t dim>
-void SEDGMinLee<dim>::loadCheckpoint(const string& directory) {
-// check if stuff can be read from file. Else throw exception
-	string message;
-	if (isStatusOK(directory, message)) {
-		//loadMatricesFromFiles(directory);
-	} else {
-		std::stringstream errorMessage;
-		errorMessage << "Restart not possible. " << message;
-		throw AdvectionSolverException(errorMessage.str().c_str());
-	}
-}
-template void SEDGMinLee<2>::loadCheckpoint(const string& directory);
-template void SEDGMinLee<3>::loadCheckpoint(const string& directory);
-
-template<size_t dim>
-void SEDGMinLee<dim>::saveCheckpoint(const string& directory) const {
-	writeStatus(directory);
-	//saveMatricesToFiles(directory);
-}
-template void SEDGMinLee<2>::saveCheckpoint(const string& directory) const;
-template void SEDGMinLee<3>::saveCheckpoint(const string& directory) const;
+template class SEDGMinLee<2> ;
+template class SEDGMinLee<3> ;
 
 } /* namespace natrium */

@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 	const int orderOfFiniteElement = atoi(argv[12]);
 	const int filterID = atoi(argv[13]);
 
-	bool is_restarted = atoi(argv[14]);
+	bool restart_iteration = atoi(argv[14]);
 	bool is_periodic = true;
 
 	// Turbulence statistics
@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtLastCheckpoint(is_restarted);
+	configuration->setRestartAtIteration(restart_iteration);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(100);
 	configuration->setOutputCheckpointInterval(1000);
@@ -190,7 +190,7 @@ int main(int argc, char** argv) {
 	// create a separate object for the initial velocity function
 	TurbulentChannelFlow3D::IncompressibleU test_velocity(channel3D.get());
 
-	if (not is_restarted) {
+	if (restart_iteration == 0) {
 		// Divergence check
 		pout << "**** Divergence check ****" << endl;
 		//srand(1);
@@ -239,7 +239,7 @@ int main(int argc, char** argv) {
 	// make solver object and run simulation
 	CFDSolver<3> solver(configuration, channel3D);
 
-	if (not is_restarted) {
+	if (restart_iteration == 0) {
 		double utrp_max = channel3D.get()->getMaxUtrp();
 		double utrp_inc_max = channel3D.get()->getMaxIncUtrp();
 		double scalingFactor = utrp_max / utrp_inc_max;

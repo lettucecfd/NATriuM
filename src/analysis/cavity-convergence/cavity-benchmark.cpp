@@ -10,17 +10,19 @@
 #include <stdlib.h>
 
 #include "deal.II/numerics/data_out.h"
+#include "deal.II/grid/grid_out.h"
 
-#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/stencils/D2Q9.h"
 
-#include "natrium/problemdescription/Benchmark.h"
+#include "natrium/problemdescription/ProblemDescription.h"
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 
-#include "natrium/benchmarks/TaylorGreenVortex2D.h"
+#include "CompareToGhia.h"
+#include "../../examples/step-0/LidDrivenCavity2D.h"
 
 using namespace natrium;
 
@@ -29,16 +31,15 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
-	//pout << "Starting NATriuM step-1 ..." << endl;
+	//pout << "Starting NATriuM  ..." << endl;
 
 	const double N = atoi(argv[1]);
 	const double p = atoi(argv[2]);
 	const double Ma = atof(argv[3]);
-	const double Re = atof(argv[4]);
+	const size_t Re = atoi(argv[4]);
 	const double integrator = atoi(argv[5]);
 	const double CFL = atof(argv[6]);
 	const double collision = atoi(argv[7]);
-	const double init_rho_analytically = atoi(argv[8]);
 	double refine_tol = 1e-7;
 	double coarsen_tol = 1e-8;
 	if (argc > 9) {
@@ -62,17 +63,26 @@ int main(int argc, char** argv) {
 			deal_integrator, integrator_name);
 	pout << "... that is the " << integrator_name << endl;
 	pout << "-------------------------------------" << endl;
-	boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
-			TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
+	boost::shared_ptr<ProblemDescription<2> > tgv = boost::make_shared<
+			LidDrivenCavity2D>(U, viscosity, N);
 
 	double delta_t = CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),
 			p, D2Q9(scaling), CFL);
 
 	// setup configuration
+	std::stringstream outdir;
+	outdir << getenv("NATRIUM_HOME") << "/cavity-benchmark/Re" << Re << "_N"
+			<< N << "_p" << p << "_Ma" << Ma << "_int" << integrator << "_CFL"
+			<< CFL << "_coll" << collision ;
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setSwitchOutputOff(true);
-	configuration->setRestartAtIteration(0);
+	configuration->setOutputDirectory(outdir.str());
+	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputCheckpointInterval(100000);
+	configuration->setOutputTableInterval(1000);
+	//configuration->setSwitchOutputOff(true);
+	//configuration->setRestartAtLastCheckpoint(false);
+	configuration->setCommandLineVerbosity(BASIC);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(scaling);
@@ -87,33 +97,45 @@ int main(int argc, char** argv) {
 			delta_t, refine_tol, coarsen_tol);
 	// end after Dissipation by one order of magnitude
 	// exp(-2vt) = 1/10
-	configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
-	BenchmarkCFDSolver<2> solver(configuration, tgv);
-
+	//configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
+	configuration->setSimulationEndTime(50);
+	configuration->setConvergenceThreshold(1e-10);
+	CFDSolver<2> solver(configuration, tgv);
+	std::stringstream outfile;
+	outfile << getenv("NATRIUM_HOME") << "/cavity-benchmark/Re" << Re << "_N"
+			<< N << "_p" << p << "_Ma" << Ma << "_int" << integrator << "_CFL"
+			<< CFL << "_coll" << collision << ".dat";
+	boost::shared_ptr<CompareToGhia> ghia = boost::make_shared<CompareToGhia>(
+			solver, Re, outfile.str());
+	solver.appendDataProcessor(ghia);
+	// put out grid
+	std::stringstream gridfile;
+	gridfile << getenv("NATRIUM_HOME") << "/cavity-benchmark/grid_N"
+			<< N << "_p" << p << ".eps";
+	std::ofstream gout(gridfile.str());
+	dealii::GridOut grid_out;
+	grid_out.write_eps(*tgv->getMesh(), gout);
+	gout.close();
+	// run simulation
 	try {
 
 		double timestart = clock();
 		solver.run();
 		double runtime = clock() - timestart;
-		solver.getErrorStats()->update();
 		solver.getSolverStats()->update();
-		double kinE_num = solver.getSolverStats()->getKinE();
-		//double kinE_ana = M_PI*M_PI*exp(-4*viscosity*solver.getTime());
-		double simulated_viscosity = -1.0 / (4 * solver.getTime())
-				* log(kinE_num / (M_PI * M_PI));
-		double numerical_viscosity = simulated_viscosity - viscosity;
-		double u_error = solver.getErrorStats()->getL2VelocityError();
-		double rho_error = solver.getErrorStats()->getL2DensityError();
+		ghia->apply();
+		ghia->printFinalVelocities();
+		double u_error = ghia->getUError();
+		double v_error = ghia->getVError();
 		pout
-				<< "N p Ma Re integrator CFL collision init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu  runtime"
+				<< "N p Ma Re integrator CFL collision  #steps Mean_CFL u_error v_error  runtime"
 				<< endl;
 		pout << N << " " << p << " " << Ma << " " << Re << " " << integrator
 				<< " " << CFL << " " << collision << " "
-				<< init_rho_analytically << " " << " " << solver.getIteration() << " "
-				<< solver.getTime() / solver.getIteration()
-						/ delta_t * CFL << " "
-				<< rho_error * (U / Ma) * (U / Ma) << " " << u_error << " "
-				<< numerical_viscosity / viscosity << " " << runtime << endl;
+				<< solver.getIteration() << " "
+				<< solver.getTime() / solver.getIteration() / delta_t * CFL
+				<< " " << u_error << " " << v_error << " " << " " << runtime
+				<< endl;
 
 	} catch (std::exception& e) {
 		pout << " Error" << endl;
@@ -121,7 +143,6 @@ int main(int argc, char** argv) {
 
 	LOG(BASIC) << "NATriuM run complete." << endl;
 
-	pout << "step-1 terminated." << endl;
 
 	return 0;
 }

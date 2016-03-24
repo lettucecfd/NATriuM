@@ -20,9 +20,9 @@ class CFDSolver;
 template <size_t dim>
 class DataProcessor{
 protected:
-	const CFDSolver<3> & m_solver;
+	const CFDSolver<dim> & m_solver;
 public:
-	DataProcessor(const CFDSolver<3> & solver):
+	DataProcessor(const CFDSolver<dim> & solver):
 		m_solver(solver){
 	}
 	virtual ~DataProcessor(){

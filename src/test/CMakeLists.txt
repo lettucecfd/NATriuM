@@ -7,12 +7,12 @@ file(   GLOB_RECURSE
         collision/*.cpp
         problemdescription/*.cpp
         smoothing/*.cpp
-        solver/*.cpp
+        #solver/*.cpp
         stencils/*.cpp
         timeintegration/*.cpp
         utilities/*.cpp
         )
- 
+   
     
 #
 # set variable TEST_TARGET (only used in this file)
@@ -23,7 +23,7 @@ set(    TEST_TARGET
         
 set(    INTEGRATION_TEST_TARGET 
         NATriuM_Test
-        )
+        ) 
  
 
 

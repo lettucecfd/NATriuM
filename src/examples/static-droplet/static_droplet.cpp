@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(true);
 	configuration->setCommandLineVerbosity(ALL);

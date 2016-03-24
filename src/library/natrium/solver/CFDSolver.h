@@ -39,7 +39,7 @@ namespace natrium {
 
 /* forward declarations */
 class Stencil;
-
+template <size_t dim> class GridInterpolation;
 /**
  * @short Exception class for CFDSolver
  */
@@ -69,6 +69,7 @@ public:
 template<size_t dim> class CFDSolver {
 	template<size_t dim2> friend class SolverStats;
 	template<size_t dim3> friend class TurbulenceStats;
+	template<size_t dim3> friend class GridInterpolation;
 
 private:
 	/// particle distribution functions
@@ -143,17 +144,12 @@ private:
 
 protected:
 
-	/// save the distribution functions to files for checkpointing
-	void saveDistributionFunctionsToFiles(const string& directory);
-
-	/// load the distribution functions from files for checkpointing
-	void loadDistributionFunctionsFromFiles(const string& directory);
-
 	/// gives the possibility for Benchmark instances to add the analytic solution to output
 	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>&) {
 	}
 
 public:
+
 
 	/// constructor
 	/// @note: has to be inlined, if the template parameter is not made explicit
@@ -215,6 +211,13 @@ public:
 	 */
 	void applyInitialVelocities(vector<distributed_vector>& initialVelocities,
 			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
+
+
+	/// save the distribution functions to files for checkpointing
+	void saveDistributionFunctionsToFiles(const string& directory);
+
+	/// load the distribution functions from files for checkpointing
+	void loadDistributionFunctionsFromFiles(const string& directory);
 
 	/**
 	 * @short create output data and write to file
@@ -344,9 +347,12 @@ public:
 	void appendDataProcessor(boost::shared_ptr<DataProcessor<dim> > proc) {
 		m_dataProcessors.push_back(proc);
 	}
+
+	void calculateDensitiesAndVelocities();
 }
 ;
 
 } /* namespace natrium */
+
 
 #endif /* CFDSOLVER_H_ */

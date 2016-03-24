@@ -61,6 +61,8 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_SparsityPattern_test) {
 			1);
 	SEDGMinLee<2> advector(problem->getMesh(), problem->getBoundaries(), 2,
 			boost::make_shared<D2Q9>());
+	advector.setupDoFs();
+	advector.reassemble();
 	vector<bool> isBoundary(advector.getNumberOfDoFs());
 	for (size_t i = 0; i < advector.getNumberOfDoFs(); i++) {
 		std::set<dealii::types::boundary_id> boundaryIndicators;
