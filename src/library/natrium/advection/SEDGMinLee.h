@@ -104,7 +104,7 @@ template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {
 private:
 
 	/// Mesh
-	boost::shared_ptr<Mesh<dim> > m_tria;
+	boost::shared_ptr<Mesh<dim> > m_mesh;
 
 	/// Boundary Description
 	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
@@ -240,39 +240,7 @@ private:
 	 */
 	vector<std::map<size_t, size_t> > map_q_index_to_facedofs() const;
 
-	/**
-	 * calculate a 'magic number' which helps to test whether two triangulations are equal
-	 */
-	double calcMagicNumber() const;
 
-//	/** @short save matrices to files
-//	 *  @param[in] directory directory to save the matrix files to
-//	 */
-//	void saveMatricesToFiles(const string& directory) const;
-//
-//	/** @short load matrices from files
-//	 *  @param[in] directory directory to load the matrix files from
-//	 */
-//	void loadMatricesFromFiles(const string& directory);
-
-	/**
-	 * @short A function to write the status of the solver, mesh, etc at checkpoint time in order to prevent corrupt restarts of a simulation
-	 * @param[in] directory the output directory of a simulation
-	 */
-	void writeStatus(const string& directory) const;
-
-	/**
-	 * @short A function to write the status of the solver, mesh, etc at checkpoint time in order to prevent corrupt restarts of a simulation
-	 * @param[in] directory the output directory of a simulation
-	 * @param[out] if not OK, the message indicates what is not OK
-	 */
-	bool isStatusOK(const string& directory, string& message) const;
-
-	/** @short load matrices and status from files
-	 *  @param[in] directory directory to load the matrix files from
-	 *  @throws AdvectionSolverException
-	 */
-	void loadCheckpoint(const string& directory);
 
 public:
 
@@ -286,7 +254,7 @@ public:
 	SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
 			boost::shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement,
-			boost::shared_ptr<Stencil> stencil, string inputDirectory = "", bool useCentralFlux =
+			boost::shared_ptr<Stencil> stencil,  bool useCentralFlux =
 					false);
 
 	/// destructor
@@ -298,14 +266,10 @@ public:
 	/// function to (re-)assemble linear system
 	virtual void reassemble();
 
+	virtual  void setupDoFs();
+
 	/// make streaming step
 	virtual void stream();
-
-	/** @short save matrices and status to files
-	 *  @param[in] directory directory to save the matrix files to
-	 *  @throws AdvectionSolverException
-	 */
-	virtual void saveCheckpoint(const string& directory) const;
 
 	/// get global system matrix
 	virtual const distributed_sparse_block_matrix& getSystemMatrix() const {
@@ -387,6 +351,14 @@ public:
 
 	virtual const vector<std::map<size_t, size_t> >& getQIndexToFacedof() const {
 		return m_q_index_to_facedof;
+	}
+
+	virtual const boost::shared_ptr<Mesh<dim> >& getMesh() const {
+		return m_mesh;
+	}
+
+	virtual const boost::shared_ptr<Stencil>& getStencil() const {
+		return m_stencil;
 	}
 };
 

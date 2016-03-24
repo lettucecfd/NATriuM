@@ -601,6 +601,37 @@ public:
 		leave_subsection();
 	}
 
+	size_t setRefinementLevel() {
+		enter_subsection("General");
+		size_t ref_level;
+		try {
+			ref_level = get_integer("Refinement level");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Refinement level' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return ref_level;
+	}
+
+	void getRefinementLevel(long int ref_level) {
+		enter_subsection("General");
+		try {
+			set("Refinement level", ref_level);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << ref_level
+					<< " to refinement level: " << e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+	}
+
 	bool hasAnalyticSolution() {
 		enter_subsection("General");
 		bool hasAnalytic;
@@ -1089,26 +1120,26 @@ public:
 		leave_subsection();
 	}
 
-	bool isRestartAtLastCheckpoint() {
+	size_t getRestartAtIteration() {
 		enter_subsection("Initialization");
-		bool restartAtLastCheckpoint;
+		size_t restart_it;
 		try {
-			restartAtLastCheckpoint = get_bool("Restart at last checkpoint?");
+			restart_it = get_integer("Restart at iteration");
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg
-					<< "Could not read parameter 'Restart at last checkpoint?' from parameters: "
+					<< "Could not read parameter 'Restart at iteration' from parameters: "
 					<< e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}
 		leave_subsection();
-		return restartAtLastCheckpoint;
+		return restart_it;
 	}
 
-	void setRestartAtLastCheckpoint(bool restartAtLastCheckpoint) {
+	void setRestartAtIteration(long int restart_it) {
 		enter_subsection("Initialization");
-		set("Restart at last checkpoint?", restartAtLastCheckpoint);
+		set("Restart at iteration", restart_it);
 		leave_subsection();
 	}
 
@@ -1842,15 +1873,14 @@ public:
 		try {
 			full_string = get("Wall normal coordinates");
 			// comma-seperated string to vector<double>
-		    std::stringstream ss(full_string);
-		    double i;
-		    while (ss >> i)
-		    {
-		        wall_normal_coordinates.push_back(i);
+			std::stringstream ss(full_string);
+			double i;
+			while (ss >> i) {
+				wall_normal_coordinates.push_back(i);
 
-		        if (ss.peek() == ',' || ss.peek() == ' ')
-		            ss.ignore();
-		    }
+				if (ss.peek() == ',' || ss.peek() == ' ')
+					ss.ignore();
+			}
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg

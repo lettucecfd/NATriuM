@@ -184,7 +184,7 @@ TestResult ConvergenceTestPeriodic() {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
@@ -263,7 +263,7 @@ TestResult ConvergenceTestImplicitLBM() {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
@@ -345,7 +345,7 @@ TestResult ConvergenceTestExponentialLBM() {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
@@ -424,7 +424,7 @@ TestResult ConvergenceTestDealIIWrapper() {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
@@ -508,7 +508,7 @@ TestResult ConvergenceTest3D() {
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
 	configuration->setStencil(Stencil_D3Q15);
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
@@ -587,7 +587,7 @@ TestResult ConvergenceTestMovingWall() {
 		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
-		configuration->setRestartAtLastCheckpoint(false);
+		//configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
