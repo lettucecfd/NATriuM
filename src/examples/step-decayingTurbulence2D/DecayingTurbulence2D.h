@@ -49,7 +49,14 @@ public:
 		return 1;
 	}
 
+	virtual void refineAndTransform() {
+		// refine global
+		getMesh()->refine_global(m_refinementLevel);
+	}
+
 private:
+
+	const size_t m_refinementLevel;
 
 	/**
 	 * @short create triangulation for couette flow
@@ -63,6 +70,7 @@ private:
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
+
 
 };
 

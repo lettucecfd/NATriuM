@@ -18,7 +18,7 @@ namespace natrium {
 TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
 		size_t refinementLevel, double cs, bool init_rho_analytically) :
 		ProblemDescription<3>(makeGrid(), viscosity, 1), m_cs(cs), m_analyticInit(
-				init_rho_analytically) {
+				init_rho_analytically), m_refinementLevel(refinementLevel) {
 
 
 	/// apply boundary values
@@ -26,9 +26,6 @@ TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
 	// apply analytic solution
 	this->setInitialU(boost::make_shared<InitialVelocity>(this));
 	this->setInitialRho(boost::make_shared<InitialDensity>(this));
-
-	// Refine grid
-	getMesh()->refine_global(refinementLevel);
 
 }
 

@@ -12,7 +12,7 @@ namespace natrium {
 
 template<size_t dim>
 Checkpoint<dim>::Checkpoint(size_t iteration,
-		boost::filesystem::path checkpoint_dir)	{
+		boost::filesystem::path checkpoint_dir) {
 	std::stringstream status_name;
 	std::stringstream data_name;
 	status_name << "checkpoint_" << iteration << ".stat";
@@ -61,7 +61,8 @@ void Checkpoint<dim>::write(const Mesh<dim>& mesh,
 
 template<size_t dim>
 void Checkpoint<dim>::load(DistributionFunctions& f,
-		AdvectionOperator<dim>& advection, CheckpointStatus& status) {
+		ProblemDescription<dim>& problem, AdvectionOperator<dim>& advection,
+		CheckpointStatus& status) {
 
 	dealii::DoFHandler<dim>& dof_handler = *advection.getDoFHandler();
 	boost::shared_ptr<Stencil> new_stencil = advection.getStencil();
@@ -90,11 +91,14 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 
 	// load mesh and solution
 	try {
-		// load triangulation
+		// load triangulation (must not be done with refined grid)
 		mesh.load(m_dataFile.c_str());
+		problem.refineAndTransform();
+		// apply refinement
 		// distribute dofs
 		advection.setupDoFs();
-		f.reinit(new_stencil->getQ(), advection.getLocallyOwnedDofs(), MPI_COMM_WORLD);
+		f.reinit(new_stencil->getQ(), advection.getLocallyOwnedDofs(),
+		MPI_COMM_WORLD);
 		// read old solution
 		dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
 				> sol_trans(dof_handler);
@@ -119,123 +123,110 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 } /* load */
 
 template<size_t dim>
-void Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(
-		Mesh<dim>& mesh, DistributionFunctions& f,
-		const dealii::DoFHandler<dim>& dof_handler, CheckpointStatus& status, string& directory) {
-
+void Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(Mesh<dim>& mesh,
+		DistributionFunctions& f, const dealii::DoFHandler<dim>& dof_handler,
+		CheckpointStatus& status, string& directory) {
 /*
-	 //read file
-	 std::stringstream filename;
-	 filename << directory << "/checkpoint_status."
-	 << dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-	 << ".dat";
-	 std::ifstream infile(filename.str().c_str());
+	//read file
+	std::stringstream filename;
+	filename << directory << "/checkpoint_status."
+			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+			<< ".dat";
+	std::ifstream infile(filename.str().c_str());
 
-	 // check if status file exists
-	 if (not infile) {
-	 message = "No checkpoint found. Please disable restart option.";
-	 return false;
-	 }
-	 //number of cells
-	 size_t tmp;
-	 infile >> tmp;
-	 if (tmp != m_tria->n_cells()) {
-	 message = "Number of cells not equal.";
-	 return false;
-	 }
-	 // order of fe
-	 infile >> tmp;
-	 if (tmp != m_fe->get_degree()) {
-	 message = "Order of finite element not equal.";
-	 return false;
-	 }
-	 // number of dofs
-	 infile >> tmp;
-	 if (tmp != this->getNumberOfDoFs()) {
-	 message = "Number of degrees of freedom not equal.";
-	 return false;
-	 }
-	 // D
-	 infile >> tmp;
-	 if (tmp != m_stencil->getD()) {
-	 message = "Dimension not equal.";
-	 return false;
-	 }
-	 // Q
-	 infile >> tmp;
-	 if (tmp != m_stencil->getQ()) {
-	 message = "Number of particle velocities not equal.";
-	 return false;
-	 }
-	 // magic number of cell geometry
-	 double dtmp;
-	 infile >> dtmp;
-	 if (fabs(dtmp - calcMagicNumber()) > 1e-1) {
-	 message = "Mesh (or at least its magic number) not equal.";
-	 return false;
-	 }
-	 // dqScaling1
-	 infile >> dtmp;
-	 if (fabs(dtmp - m_stencil->getDirection(1)(0))/dtmp > 1e-2) {
-	 message = "Scaling of Stencil (1st coordinate) not equal.";
-	 return false;
-	 }
-	 // dqScaling2
-	 infile >> dtmp;
-	 if (fabs(dtmp - m_stencil->getDirection(1)(1))/dtmp > 1e-2) {
-	 message = "Scaling of Stencil (2nd) not equal.";
-	 return false;
-	 }
-	 // fluxType
-	 infile >> tmp;
-	 if (tmp != m_useCentralFlux) {
-	 message = "Flux not equal.";
-	 return false;
-	 }
-	 // advectionType
-	 string stmp;
-	 infile >> stmp;
-	 if (stmp != "SEDGMinLee") {
-	 message = "AdvectionOperator Type not equal.";
-	 return false;
-	 }
+	// check if status file exists
+	if (not infile) {
+		message = "No checkpoint found. Please disable restart option.";
+		return false;
+	}
+	//number of cells
+	size_t tmp;
+	infile >> tmp;
+	if (tmp != m_tria->n_cells()) {
+		message = "Number of cells not equal.";
+		return false;
+	}
+	// order of fe
+	infile >> tmp;
+	if (tmp != m_fe->get_degree()) {
+		message = "Order of finite element not equal.";
+		return false;
+	}
+	// number of dofs
+	infile >> tmp;
+	if (tmp != this->getNumberOfDoFs()) {
+		message = "Number of degrees of freedom not equal.";
+		return false;
+	}
+	// D
+	infile >> tmp;
+	if (tmp != m_stencil->getD()) {
+		message = "Dimension not equal.";
+		return false;
+	}
+	// Q
+	infile >> tmp;
+	if (tmp != m_stencil->getQ()) {
+		message = "Number of particle velocities not equal.";
+		return false;
+	}
+	// magic number of cell geometry
+	double dtmp;
+	infile >> dtmp;
+	if (fabs(dtmp - calcMagicNumber()) > 1e-1) {
+		message = "Mesh (or at least its magic number) not equal.";
+		return false;
+	}
+	// dqScaling1
+	infile >> dtmp;
+	if (fabs(dtmp - m_stencil->getDirection(1)(0)) / dtmp > 1e-2) {
+		message = "Scaling of Stencil (1st coordinate) not equal.";
+		return false;
+	}
+	// dqScaling2
+	infile >> dtmp;
+	if (fabs(dtmp - m_stencil->getDirection(1)(1)) / dtmp > 1e-2) {
+		message = "Scaling of Stencil (2nd) not equal.";
+		return false;
+	}
+	// fluxType
+	infile >> tmp;
+	if (tmp != m_useCentralFlux) {
+		message = "Flux not equal.";
+		return false;
+	}
+	// advectionType
+	string stmp;
+	infile >> stmp;
+	if (stmp != "SEDGMinLee") {
+		message = "AdvectionOperator Type not equal.";
+		return false;
+	}
 
-	 return true;
-	 }*/
+// PRECONDITION: vectors already created with the right sizes
+// read the distribution functions from file
+	try {
+		for (size_t i = 0; i < m_stencil->getQ(); i++) {
+			// filename
+			std::stringstream filename;
+			filename << directory << "/checkpoint_f_" << i << "."
+					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+					<< ".dat";
+			std::ifstream file(filename.str().c_str());
 
-	/*
-	 template<size_t dim>
-	 void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
-	 const string& directory) {
-	 // PRECONDITION: vectors already created with the right sizes
-	 // read the distribution functions from file
-	 try {
-	 for (size_t i = 0; i < m_stencil->getQ(); i++) {
-	 // filename
-	 std::stringstream filename;
-	 filename << directory << "/checkpoint_f_" << i
-	 #ifdef WITH_TRILINOS_MPI
-	 << "."
-	 << dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-	 #endif
-	 << ".dat";
-	 std::ifstream file(filename.str().c_str());
-	 #ifndef WITH_TRILINOS
-	 m_f.at(i).block_read(file);
-	 #else
-	 // TODO Write and read functions for Trilinos vectors. This here is really bad.
-	 numeric_vector tmp(m_f.at(i));
-	 tmp.block_read(file);
-	 m_f.at(i) = tmp;
+			// TODO Write and read functions for Trilinos vectors. This here is really bad.
+			numeric_vector tmp(f.at(i));
+			tmp.block_read(file);
+			f.at(i) = tmp;
 
-	 #endif
-	 }
-	 } catch (dealii::StandardExceptions::ExcIO& excIO) {
-	 natrium_errorexit(
-	 "An error occurred while reading the distribution functions from file: Please switch off the restart option to start the simulation from the beginning.");
-	 }
-	 }*/
-} /* load from deprecated checkpoint version */
+		}
+	} catch (dealii::StandardExceptions::ExcIO& excIO) {
+		natrium_errorexit(
+				"An error occurred while reading the distribution functions from file: Please switch off the restart option to start the simulation from the beginning.");
+	}
+*/
+}
+/* load from deprecated checkpoint version */
 
 template<size_t dim>
 Checkpoint<dim>::~Checkpoint() {

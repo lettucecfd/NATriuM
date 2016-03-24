@@ -45,7 +45,7 @@ int main() {
 	const double viscosity = U / Re; // (because L = 1)
 
 	// set small time step size
-	const double timeStepSize = 0.001;
+	const double CFL = 0.4;
 
 	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
@@ -54,14 +54,13 @@ int main() {
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-6-unsteady";
 	configuration->setOutputDirectory(dirname.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
-	configuration->setNumberOfTimeSteps(20./timeStepSize);
+	configuration->setSimulationEndTime(20);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
-	configuration->setTimeStepSize(timeStepSize);
+	configuration->setCFL(CFL);
 	configuration->setCommandLineVerbosity(7);
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(CRANK_NICOLSON);

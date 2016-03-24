@@ -23,7 +23,7 @@ namespace natrium {
 PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 		double u_bulk, double height, double length, bool is_periodic) :
 		Benchmark<2>(makeGrid(height, length), viscosity, height), m_uBulk(
-				u_bulk), m_uMax(3. / 2. * u_bulk) {
+				u_bulk), m_uMax(3. / 2. * u_bulk), m_refinementLevel(refinementLevel) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
@@ -40,8 +40,6 @@ PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 				boost::make_shared<ConstantExternalForce<2> >(F));
 	}
 
-	// refine global
-	getMesh()->refine_global(refinementLevel);
 }
 
 PoiseuilleFlow2D::~PoiseuilleFlow2D() {

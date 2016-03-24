@@ -33,6 +33,10 @@ public:
 		return m_inletVelocity;
 	}
 
+	virtual void refineAndTransform() {
+
+	}
+
 private:
 
 	const double m_inletVelocity;
@@ -67,7 +71,9 @@ private:
 			vector<distributed_vector>& initialVelocities,
 			const vector<dealii::Point<2> >& supportPoints) const;
 
+
 };
+
 
 } /* namespace natrium */
 #endif /* CYLINDER2D_H_ */

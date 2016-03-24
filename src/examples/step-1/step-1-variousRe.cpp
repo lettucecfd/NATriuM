@@ -58,11 +58,9 @@ int main() {
 									*tgVortex->getMesh());
 			double tmp_Ma = Ma * sqrt(dx) / L / orderOfFiniteElement;
 			scaling = sqrt(3) * 1 / tmp_Ma;
+			double CFL = 0.4;
 
-			double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*tgVortex->getMesh(), orderOfFiniteElement,
-					D2Q9IncompressibleModel(scaling), 0.4);
-			pout << "p = " << orderOfFiniteElement << "; dt = " << dt << " ..."
+			pout << "p = " << orderOfFiniteElement << "; CFL = " << CFL << " ..."
 					<< endl;
 
 			// time measurement variables
@@ -81,7 +79,6 @@ int main() {
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());
-			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(1);
 			configuration->setOutputCheckpointInterval(1e9);
@@ -89,7 +86,7 @@ int main() {
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(WARNING);
-			configuration->setTimeStepSize(dt);
+			configuration->setCFL(CFL);
 
 			if (iterativeInitialization) {
 				configuration->setInitializationScheme(ITERATIVE);
@@ -98,11 +95,7 @@ int main() {
 				configuration->setIterativeInitializationResidual(1e-15);
 			}
 
-			if (dt > 0.1) {
-				pout << "Timestep too big." << endl;
-			}
-
-			configuration->setNumberOfTimeSteps(2.0 / dt);
+			configuration->setSimulationEndTime(2.0);
 
 			timestart = clock();
 			BenchmarkCFDSolver<2> solver(configuration, taylorGreen);

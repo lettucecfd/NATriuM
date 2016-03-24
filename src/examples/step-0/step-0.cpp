@@ -121,7 +121,7 @@ int main() {
 	size_t orderOfFiniteElement = 5;
 
 	// set temporal discretization
-	double dt = 0.0001;
+	double CFL = 0.4;
 	//! [Discretization]
 
 	//! [Definition]
@@ -137,11 +137,10 @@ int main() {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(dirname.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(1000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	configuration->setNumberOfTimeSteps(200000);
 	//! [Configuration]
 

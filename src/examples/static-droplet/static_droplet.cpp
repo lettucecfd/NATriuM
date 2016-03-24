@@ -91,11 +91,13 @@ int main(int argc, char** argv) {
 	double viscosity = 1e-1 ;
 //	double viscosity = 1e-6 ;
 
+
 //	boost::shared_ptr<ProblemDescription<2> > droplet2D = boost::make_shared<Droplet2D>(viscosity, refinement_level, 1.0, rho_l, rho_g, W, R0);
 	boost::shared_ptr<ProblemDescription<2> > droplet2D = boost::make_shared<Droplet2D>(viscosity,
 			refinement_level, length, height, rho_l, rho_g, W, R0);
 	double delta_t = CFDSolverUtilities::calculateTimestep<2>(
-			*(droplet2D->getMesh()), p, D2Q9(stencil_scaling), CFL);
+					*(droplet2D->getMesh()),
+					p, D2Q9(stencil_scaling), CFL);
 	droplet2D->setViscosity(
 			(tau - 0.5) * delta_t
 					* D2Q9(stencil_scaling).getSpeedOfSoundSquare());
@@ -117,7 +119,7 @@ int main(int argc, char** argv) {
 	configuration->setConvergenceThreshold(1e-10);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
-	configuration->setTimeStepSize(delta_t);
+	configuration->setCFL(CFL);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);

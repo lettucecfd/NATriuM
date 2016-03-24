@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
 		configuration->setStencil(Stencil_D3Q27);
 	}
 	//configuration->setCommandLineVerbosity(BASIC);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	if (dt > 0.1) {
 		pout << "Timestep too big." << endl;
 	}

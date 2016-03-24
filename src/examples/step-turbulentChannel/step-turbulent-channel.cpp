@@ -133,8 +133,6 @@ int main(int argc, char** argv) {
 			TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
 			ReTau, u_cl, height, length, width, orderOfFiniteElement,
 			is_periodic);
-	const double dt = CFDSolverUtilities::calculateTimestep<3>(
-			*channel3D->getMesh(), orderOfFiniteElement, D3Q19(scaling), CFL);
 
 	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
 	//poiseuille2D->setViscosity(viscosity);
@@ -159,7 +157,7 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
 

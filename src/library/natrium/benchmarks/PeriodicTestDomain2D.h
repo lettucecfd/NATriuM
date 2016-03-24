@@ -29,8 +29,14 @@ public:
 	/// destructor
 	virtual ~PeriodicTestDomain2D();
 
+	virtual void refineAndTransform(){
+		// Refine grid
+		getMesh()->refine_global(m_refinementLevel);
+	}
 
 private:
+
+	size_t m_refinementLevel;
 
 	/**
 	 * @short create triangulation for periodic domain
@@ -44,6 +50,7 @@ private:
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
+
 
 };
 

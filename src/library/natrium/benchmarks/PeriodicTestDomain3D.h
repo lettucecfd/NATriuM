@@ -32,6 +32,8 @@ public:
 
 private:
 
+	size_t m_refinementLevel;
+
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
@@ -44,6 +46,11 @@ private:
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
 	boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
+
+	virtual void refineAndTransform(){
+		// Refine grid
+		getMesh()->refine_global(m_refinementLevel);
+	}
 
 };
 

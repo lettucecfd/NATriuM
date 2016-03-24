@@ -23,7 +23,7 @@ namespace natrium {
 ComplexWall1::ComplexWall1(double viscosity, double bottomVelocity,
 		size_t refinementLevel, double L) :
 		ProblemDescription<2>(makeGrid(L, refinementLevel), viscosity, L), m_bottomVelocity(
-				bottomVelocity) {
+				bottomVelocity), m_refinementLevel(refinementLevel), m_L(L) {
 	setCharacteristicLength(L);
 
 	/// apply boundary values
@@ -45,9 +45,13 @@ boost::shared_ptr<Mesh<2> > ComplexWall1::makeGrid(double L,
 	bool colorize = true; 	// set boundary ids automatically to
 							// 0:left; 1:right; 2:bottom; 3:top
 	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, repetitions, x1, x2, colorize);
+	return rect;
 
+}
+
+virtual void ComplexWall1::refineAndTransform() {
 	// refine grid
-	rect->refine_global(refinementLevel);
+	rect->refine_global(m_refinementLevel);
 
 	// transform grid
 	dealii::GridTools::transform(UnstructuredGridFunc(L),

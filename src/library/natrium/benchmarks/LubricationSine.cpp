@@ -5,7 +5,6 @@
  *      Author: kraemer
  */
 
-
 #include "LubricationSine.h"
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/grid_out.h"
@@ -18,34 +17,25 @@ LubricationSine::LubricationSine(double viscosity, double bottomVelocity,
 		size_t refinementLevel, double L, double averageHeight,
 		double amplitude, double cellAspectRatio, double roughnessHeight,
 		size_t roughnessLengthRatio) :
-		ProblemDescription<2>(
-				makeGrid(L,  averageHeight, cellAspectRatio),
+		ProblemDescription<2>(makeGrid(L, averageHeight, cellAspectRatio),
 				viscosity, averageHeight), m_bottomVelocity(bottomVelocity), m_height(
-				averageHeight), m_ampl(amplitude), m_length(L) {
+				averageHeight), m_ampl(amplitude), m_length(L), m_roughnessHeight(
+				roughnessHeight), m_roughnessLengthRatio(roughnessLengthRatio), m_refinementLevel(
+				refinementLevel) {
 	setBoundaries(makeBoundaries(bottomVelocity));
 	setInitialU(boost::make_shared<InitialVelocity>(this));
-
-	// refine grid
-	boost::shared_ptr<Mesh<2> > rect = getMesh();
-	rect->refine_global(refinementLevel);
-
-	// transform grid
-	dealii::GridTools::transform(
-			UnstructuredGridFunc(averageHeight, amplitude, L, roughnessHeight,
-					roughnessLengthRatio), *rect);
-	std::ofstream out("grid-2.eps");
-	dealii::GridOut grid_out;
-	grid_out.write_eps(*rect, out);
 }
 
 LubricationSine::~LubricationSine() {
 }
 
-boost::shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L, double averageHeight, double cellAspectRatio) {
+boost::shared_ptr<Mesh<2> > LubricationSine::makeGrid(double L,
+		double averageHeight, double cellAspectRatio) {
 
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
-	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
+	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >(
+	MPI_COMM_WORLD);
 #else
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
@@ -72,10 +62,12 @@ boost::shared_ptr<BoundaryCollection<2> > LubricationSine::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = bottomVelocity;
 
-	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(
+			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
 			boost::make_shared<LinearBoundaryRhoU<2> >(2, constantVelocity));
-	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(3, zeroVelocity));
+	boundaries->addBoundary(
+			boost::make_shared<LinearBoundaryRhoU<2> >(3, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
@@ -92,6 +84,20 @@ double LubricationSine::InitialVelocity::value(const dealii::Point<2>& x,
 	} else {
 		return 0.0;
 	}
+}
+
+void LubricationSine::refineAndTransform() {
+	// refine grid
+	boost::shared_ptr<Mesh<2> > rect = getMesh();
+	rect->refine_global(m_refinementLevel);
+
+	// transform grid
+	dealii::GridTools::transform(
+			UnstructuredGridFunc(m_height, m_ampl, m_length,
+					m_roughnessHeight, m_roughnessLengthRatio), *rect);
+	std::ofstream out("grid-2.eps");
+	dealii::GridOut grid_out;
+	grid_out.write_eps(*rect, out);
 }
 
 } /* namespace natrium */

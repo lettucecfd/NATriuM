@@ -24,20 +24,9 @@ BackwardFacingStep2D::BackwardFacingStep2D(double viscosity,
 		double L_step, double h_domain, double h_step) :
 		ProblemDescription<2>(makeGrid(), viscosity, h_domain), m_inflowVelocity(
 				inflow_velocity), m_LDomain(L_domain), m_LStep(L_step), m_HDomain(
-				h_domain), m_HStep(h_step) {
+				h_domain), m_HStep(h_step), m_refinementLevel(refinement_level) {
 	setBoundaries(makeBoundaries(inflow_velocity));
 	this->setInitialRho(boost::make_shared<InitialVelocity>(this));
-
-	// refine grid
-	boost::shared_ptr<Mesh<2> > rect = getMesh();
-	rect->refine_global(refinement_level);
-
-	// transform grid
-	//dealii::GridTools::transform(
-	//		UnstructuredGridFunc(averageHeight, amplitude, L), *rect);
-	std::ofstream out("grid-2.eps");
-	dealii::GridOut grid_out;
-	grid_out.write_eps(*rect, out);
 
 }
 
@@ -133,6 +122,19 @@ boost::shared_ptr<BoundaryCollection<2> > BackwardFacingStep2D::makeBoundaries(
 
 	return boundaries;
 }
+
+void BackwardFacingStep2D::refineAndTransform(){
+	// Refine grid
+	getMesh()->refine_global(m_refinementLevel);
+
+	// transform grid
+	//dealii::GridTools::transform(
+	//		UnstructuredGridFunc(averageHeight, amplitude, L), *rect);
+	std::ofstream out("grid-2.eps");
+	dealii::GridOut grid_out;
+	grid_out.write_eps(*getMesh(), out);
+}
+
 
 double BackwardFacingStep2D::InflowVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {

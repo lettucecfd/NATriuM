@@ -83,7 +83,8 @@ int main() {
 						TaylorGreenVortex2D>(viscosity, refinementLevel);
 		double dx = CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(*tgVortex->getMesh(), orderOfFiniteElement);
 		// chose dt so that courant (advection) = 0.4
-		double dt = 0.4 *  dx / scaling;
+		double CFL = 0.4;
+		double dt = CFL *  dx / scaling;
 		//double dt = 0.00001;
 
 		pout << "dt = " << dt << " ...";
@@ -99,14 +100,14 @@ int main() {
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
-		configuration->setRestartAtLastCheckpoint(false);
+		//configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
 		configuration->setOutputTableInterval(10);
 		//configuration->setOutputCheckpointInterval(1000);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(WARNING);
-		configuration->setTimeStepSize(dt);
+		configuration->setCFL(CFL);
 		if (dt > 0.1) {
 			pout << "Timestep too big." << endl;
 			continue;

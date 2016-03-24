@@ -69,6 +69,8 @@ private:
 	/// initialization with analytic pressure
 	bool m_analyticInit;
 
+	size_t m_refinementLevel;
+
   /**
    * @short create triangulation for couette flow
    * @return shared pointer to a triangulation instance
@@ -82,6 +84,10 @@ private:
    */
   boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
+	virtual void refineAndTransform(){
+		// Refine grid
+		getMesh()->refine_global(m_refinementLevel);
+	}
 };
 
 } /* namespace natrium */

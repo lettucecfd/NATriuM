@@ -35,9 +35,13 @@ public:
 		return m_bottomVelocity;
 	}
 
+	virtual void refineAndTransform();
+
 private:
 
 	const double m_bottomVelocity;
+	const size_t m_refinementLevel;
+	const double m_L;
 
 	/**
 	 * @short create triangulation for couette flow

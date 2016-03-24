@@ -47,11 +47,15 @@ public:
 		return m_bottomVelocity;
 	}
 
+	virtual void refineAndTransform();
+
 private:
 
 	const double m_bottomVelocity;
 	double m_height;
 	double m_ampl;
+	size_t m_refinementLevel;
+	double m_L;
 
 	/**
 	 * @short create triangulation for couette flow
@@ -65,6 +69,7 @@ private:
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(double bottomVelocity);
+
 
 	/**
 	 * @short function to generate the unstructured mesh grid

@@ -50,11 +50,18 @@ public:
 		return m_uBulk;
 	}
 
+	virtual void refineAndTransform(){
+		// Refine grid
+		getMesh()->refine_global(m_refinementLevel);
+	}
+
 private:
 
 	double m_uBulk;
 
 	double m_uMax;
+
+	size_t m_refinementLevel;
 
 	/**
 	 * @short create triangulation for couette flow
@@ -68,6 +75,8 @@ private:
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(bool is_periodic);
+
+
 
 };
 

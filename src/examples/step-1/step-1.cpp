@@ -56,9 +56,7 @@ int main() {
 		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		//double dt = dx / (scaling * sqrt(2));
-		double dt = 0.001;
-
-		pout << "dt = " << dt << " ...";
+		double CFL=0.4;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -70,7 +68,6 @@ int main() {
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
-		configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
 		configuration->setOutputTableInterval(10);
 		configuration->setOutputCheckpointInterval(1000);
@@ -78,17 +75,13 @@ int main() {
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(ALL);
-		configuration->setTimeStepSize(dt);
+		configuration->setCFL(CFL);
 
 		//configuration->setInitializationScheme(ITERATIVE);
 		//configuration->setIterativeInitializationNumberOfIterations(1000);
 		//configuration->setIterativeInitializationResidual(1e-15);
 
-		if (dt > 0.1) {
-			pout << "Timestep too big." << endl;
-		}
-
-		configuration->setNumberOfTimeSteps(10.0 / dt);
+		configuration->setSimulationEndTime(10.0);
 
 		// make problem and solver objects
 		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<

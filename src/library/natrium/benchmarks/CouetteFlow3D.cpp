@@ -23,7 +23,7 @@ namespace natrium {
 CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, size_t L, double startTime, bool isUnstructured) :
 		Benchmark<3>(makeGrid(L), viscosity,
-				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime) {
+				L), m_topPlateVelocity(topPlateVelocity), m_startTime(startTime), m_refinementLevel(refinementLevel), m_isUnstructured(isUnstructured) {
 	setCharacteristicLength(L);
 
 	/// apply boundary values
@@ -32,17 +32,20 @@ CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 	/// apply initial values
 	setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
 
-	// refine grid
-	boost::shared_ptr<Mesh<3> > unitSquare = getMesh();
-	unitSquare->refine_global(refinementLevel);
-
-	// transform grid
-	if (isUnstructured) {
-		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
-	}
 }
 
 CouetteFlow3D::~CouetteFlow3D() {
+}
+
+void CouetteFlow3D::refineAndTransform(){
+	// refine grid
+	boost::shared_ptr<Mesh<3> > unitSquare = getMesh();
+	unitSquare->refine_global(m_refinementLevel);
+
+	// transform grid
+	if (m_isUnstructured) {
+		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
+	}
 }
 
 boost::shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(size_t L) {

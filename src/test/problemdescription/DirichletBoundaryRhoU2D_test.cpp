@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_MassConservation_test) {
 	configuration->setSwitchOutputOff(true);
 	configuration->setNumberOfTimeSteps(100);
 	configuration->setSedgOrderOfFiniteElement(1);
-	configuration->setTimeStepSize(0.01);
+	configuration->setCFL(0.4);
 
 	CFDSolver<2> solver(configuration, problem);
 
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_BoundaryVelocity_test) {
 	configuration->setSwitchOutputOff(true);
 	configuration->setNumberOfTimeSteps(1);
 	configuration->setSedgOrderOfFiniteElement(9);
-	configuration->setTimeStepSize(0.0001);
+	configuration->setCFL(0.4);
 
 	CFDSolver<2> solver(configuration, problem);
 	solver.run();

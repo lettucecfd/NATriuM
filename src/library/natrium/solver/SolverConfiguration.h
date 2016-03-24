@@ -601,37 +601,6 @@ public:
 		leave_subsection();
 	}
 
-	size_t setRefinementLevel() {
-		enter_subsection("General");
-		size_t ref_level;
-		try {
-			ref_level = get_integer("Refinement level");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Refinement level' from parameters: "
-					<< e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		return ref_level;
-	}
-
-	void getRefinementLevel(long int ref_level) {
-		enter_subsection("General");
-		try {
-			set("Refinement level", ref_level);
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg << "Could not assign value " << ref_level
-					<< " to refinement level: " << e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-	}
-
 	bool hasAnalyticSolution() {
 		enter_subsection("General");
 		bool hasAnalytic;
@@ -1595,8 +1564,8 @@ public:
 
 		set("Coarsen parameter", coarsen_param);
 		set("Refinement parameter", refine_param);
-		set("Minimum time step", min_delta);
-		set("Maximum time step", max_delta);
+		set("Minimum CFL", min_delta);
+		set("Maximum CFL", max_delta);
 		set("Refinement tolerance", refine_tol);
 		set("Coarsen tolerance", coarsen_tol);
 
@@ -1644,12 +1613,12 @@ public:
 		return refine_param;
 	}
 
-	double getEmbeddedDealIntegratorMinimumTimeStep() {
+	double getEmbeddedDealIntegratorMinimumCFL() {
 		enter_subsection("Advection");
 		enter_subsection("Embedded Parameters");
 		double min_delta;
 		try {
-			min_delta = get_double("Minimum time step");
+			min_delta = get_double("Minimum CFL");
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg
@@ -1664,12 +1633,12 @@ public:
 		return min_delta;
 	}
 
-	double getEmbeddedDealIntegratorMaximumTimeStep() {
+	double getEmbeddedDealIntegratorMaximumCFL() {
 		enter_subsection("Advection");
 		enter_subsection("Embedded Parameters");
 		double max_delta;
 		try {
-			max_delta = get_double("Maximum time step");
+			max_delta = get_double("Maximum CFL");
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg
@@ -1724,30 +1693,30 @@ public:
 		return coarsen_tol;
 	}
 
-	double getTimeStepSize() {
+	double getCFL() {
 		enter_subsection("General");
-		double stepSize;
+		double cfl;
 		try {
-			stepSize = get_double("Time step size");
+			cfl = get_double("CFL");
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not read parameter 'Time step size' from parameters: "
+			msg << "Could not read parameter 'CFL' from parameters: "
 					<< e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}
 		leave_subsection();
-		return stepSize;
+		return cfl;
 	}
 
-	void setTimeStepSize(double timeStepSize) {
+	void setCFL(double cfl) {
 		enter_subsection("General");
 		try {
-			set("Time step size", timeStepSize);
+			set("CFL", cfl);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value " << timeStepSize
-					<< " to Time step size: " << e.what();
+			msg << "Could not assign value " << cfl
+					<< " to CFL: " << e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}

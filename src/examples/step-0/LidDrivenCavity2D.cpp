@@ -21,18 +21,20 @@ namespace natrium {
 LidDrivenCavity2D::LidDrivenCavity2D(double velocity, double viscosity,
 		size_t refinementLevel) :
 		ProblemDescription<2>(makeGrid(), viscosity, 1.0), topPlateVelocity(
-				velocity) {
+				velocity), m_refinementLevel(refinementLevel) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	getMesh()->refine_global(refinementLevel);
-	//dealii::GridTools::transform(UnstructuredGridFunc(), *getMesh());
 }
 
 LidDrivenCavity2D::~LidDrivenCavity2D() {
 }
 
+void LidDrivenCavity2D::refineAndTransform(){
+	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
+	getMesh()->refine_global(m_refinementLevel);
+	//dealii::GridTools::transform(UnstructuredGridFunc(), *getMesh());
+}
 
 /**
  * @short create triangulation for couette flow

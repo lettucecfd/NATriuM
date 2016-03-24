@@ -135,9 +135,6 @@ int main(int argc, char* argv[]) {
 			benchmark = tgVortex;
 
 			double CFL = 0.4;
-			dt = CFDSolverUtilities::calculateTimestep<2>(
-					*benchmark->getMesh(), orderOfFiniteElement,
-					D2Q9(scaling), CFL);
 
 			/////////////////////////////
 			// run benchmark problem ////
@@ -154,7 +151,7 @@ int main(int argc, char* argv[]) {
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(WARNING);
-			configuration->setTimeStepSize(dt);
+			configuration->setCFL(CFL);
 			configuration->setNumberOfTimeSteps(20);
 			timestart = clock();
 			CFDSolver<2> solver(configuration, benchmark);
