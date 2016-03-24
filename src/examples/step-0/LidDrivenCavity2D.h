@@ -38,7 +38,11 @@ public:
 		return topPlateVelocity;
 	}
 
+	virtual void refineAndTransform();
+
 private:
+
+	const size_t m_refinementLevel;
 
 	/**
 	 * @short create triangulation for lid-driven cavity flow.
@@ -68,6 +72,7 @@ private:
 		UnstructuredGridFunc() {
 		}
 	};
+
 
 };
 

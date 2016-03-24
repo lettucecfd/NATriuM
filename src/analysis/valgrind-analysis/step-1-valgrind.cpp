@@ -52,13 +52,7 @@ int main() {
 		// the scaling has to be orders of magnitude greater than the boundary velocity
 
 		// calculate distance between quadrature nodes
-		double dx = 2 * 3.1415926
-				/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
-		// chose dt so that courant (advection) = 1 for the diagonal directions
-		//double dt = 0.4*dx / (scaling * sqrt(2));
-		double dt = 0.0005;
-
-		pout << "dt = " << dt << " ...";
+		double CFL = 0.4;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -70,17 +64,13 @@ int main() {
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
-		configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
 		configuration->setOutputTableInterval(10);
 		configuration->setOutputCheckpointInterval(1000);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(ALL);
-		configuration->setTimeStepSize(dt);
-		if (dt > 0.1) {
-			pout << "Timestep too big." << endl;
-		}
+		configuration->setCFL(CFL);
 
 		configuration->setNumberOfTimeSteps(10);
 

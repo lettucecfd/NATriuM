@@ -36,21 +36,20 @@ int main() {
 	const double dqScaling = 1;
 	const double viscosity = 0.003 ;
 	const double startTime = 0.0;
-	const double timeStepSize = 0.01;
+	const double CFL = 0.4;
 	// setup configuration
 
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/step-99";
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(1);
 	configuration->setOutputTableInterval(100);
-	configuration->setNumberOfTimeSteps(5./timeStepSize);
+	configuration->setSimulationEndTime(5);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
-	configuration->setTimeStepSize(timeStepSize);
+	configuration->setCFL(CFL);
 	configuration->setCommandLineVerbosity(7);
 
 	//configuration->setAdvectionScheme(SEDG) ;

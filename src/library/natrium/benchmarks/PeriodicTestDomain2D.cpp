@@ -16,7 +16,7 @@
 namespace natrium {
 
 PeriodicTestDomain2D::PeriodicTestDomain2D(size_t globalRefinementLevel) :
-		ProblemDescription<2>(makeGrid(), 1.0, 1) {
+		ProblemDescription<2>(makeGrid(), 1.0, 1), m_refinementLevel(globalRefinementLevel) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());

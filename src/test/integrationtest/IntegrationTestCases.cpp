@@ -177,9 +177,6 @@ TestResult ConvergenceTestPeriodic() {
 
 	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
-	double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
-			CFL);
 
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
@@ -188,8 +185,8 @@ TestResult ConvergenceTestPeriodic() {
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
-	configuration->setTimeStepSize(dt);
-	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
+	configuration->setCFL(CFL);
+	configuration->setSimulationEndTime(1.0 / (2 * viscosity));
 	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 	//configuration->setCollisionScheme(KBC_STANDARD);
 
@@ -256,9 +253,6 @@ TestResult ConvergenceTestImplicitLBM() {
 
 	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
-	double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
-			CFL);
 
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
@@ -267,8 +261,8 @@ TestResult ConvergenceTestImplicitLBM() {
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
-	configuration->setTimeStepSize(dt);
-	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
+	configuration->setCFL(CFL);
+	configuration->setSimulationEndTime(1.0 / (2 * viscosity) );
 	//configuration->setTimeIntegrator(THETA_METHOD);
 	//configuration->setThetaMethodTheta(0.5);
 	configuration->setDealIntegrator(SDIRK_TWO_STAGES);
@@ -338,9 +332,6 @@ TestResult ConvergenceTestExponentialLBM() {
 
 	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
-	double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
-			CFL);
 
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
@@ -349,8 +340,8 @@ TestResult ConvergenceTestExponentialLBM() {
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
-	configuration->setTimeStepSize(dt);
-	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
+	configuration->setCFL(CFL);
+	configuration->setSimulationEndTime(1.0 / (2 * viscosity));
 	configuration->setTimeIntegrator(EXPONENTIAL);
 	//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 	//configuration->setCollisionScheme(KBC_STANDARD);
@@ -417,9 +408,6 @@ TestResult ConvergenceTestDealIIWrapper() {
 
 	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<TaylorGreenVortex2D>(
 			viscosity, refinementLevel, 1. / Ma);
-	double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
-			CFL);
 
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
@@ -428,8 +416,8 @@ TestResult ConvergenceTestDealIIWrapper() {
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
-	configuration->setTimeStepSize(dt);
-	configuration->setNumberOfTimeSteps(1.0 / (2 * viscosity) / dt);
+	configuration->setCFL(CFL);
+	configuration->setSimulationEndTime(1.0 / (2 * viscosity));
 	configuration->setTimeIntegrator(OTHER);
 	configuration->setDealIntegrator(SDIRK_TWO_STAGES);
 	//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
@@ -501,9 +489,6 @@ TestResult ConvergenceTest3D() {
 
 	size_t orderOfFiniteElement = 4;
 	// Initialization
-	double dt = CFDSolverUtilities::calculateTimestep<3>(
-			*benchmark->getMesh(), orderOfFiniteElement,
-			D3Q27(scaling), CFL);
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
@@ -512,7 +497,7 @@ TestResult ConvergenceTest3D() {
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	configuration->setTimeIntegrator(RUNGE_KUTTA_5STAGE);
 	configuration->setConvergenceThreshold(1e-3);
 
@@ -581,9 +566,6 @@ TestResult ConvergenceTestMovingWall() {
 	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 10;
 			orderOfFiniteElement += 2) {
 		// Initialization
-		double dt = CFDSolverUtilities::calculateTimestep<2>(
-				*benchmark->getMesh(), orderOfFiniteElement,
-				D2Q9(scaling), CFL);
 		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
@@ -591,9 +573,9 @@ TestResult ConvergenceTestMovingWall() {
 		configuration->setUserInteraction(false);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
-		configuration->setTimeStepSize(dt);
+		configuration->setCFL(CFL);
 		configuration->setTimeIntegrator(RUNGE_KUTTA_5STAGE);
-		configuration->setNumberOfTimeSteps(1.0 / dt);
+		configuration->setSimulationEndTime(1.0);
 		//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 		//configuration->setCollisionScheme(KBC_STANDARD);
 

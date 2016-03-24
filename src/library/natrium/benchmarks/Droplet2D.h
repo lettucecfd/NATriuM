@@ -80,6 +80,10 @@ public:
 		return m_W;
 	}
 
+	virtual void refineAndTransform(){
+		// Refine grid
+		getMesh()->refine_global(m_refinementLevel);
+	}
 private:
 
 	const double m_length;
@@ -88,6 +92,7 @@ private:
 	const double m_rhoG;
 	const double m_W;
 	const double m_R0;
+	const size_t m_refinementLevel;
 
 	/**
 	 * @short create triangulation for couette flow

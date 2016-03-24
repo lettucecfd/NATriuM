@@ -25,7 +25,7 @@ namespace natrium {
 CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 		size_t refinementLevel, double L, double startTime, bool isUnstructured) :
 		Benchmark<2>(makeGrid(L), viscosity, L), m_topPlateVelocity(
-				topPlateVelocity), m_startTime(startTime) {
+				topPlateVelocity), m_startTime(startTime), m_refinementLevel(refinementLevel), m_isUnstructured(isUnstructured) {
 	setCharacteristicLength(L);
 
 	//applyInitialValues
@@ -34,25 +34,26 @@ CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 	/// apply boundary values
 	setBoundaries(makeBoundaries(topPlateVelocity));
 
-	/// refinement
+}
 
+CouetteFlow2D::~CouetteFlow2D() {
+}
+
+void CouetteFlow2D::refineAndTransform(){
 	// refine grid
 	boost::shared_ptr<Mesh<2> > unitSquare = getMesh();
-	unitSquare->refine_global(refinementLevel);
+	unitSquare->refine_global(m_refinementLevel);
 
 	// transform grid
-	if (isUnstructured) {
+	if (m_isUnstructured) {
 		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
 	}
 
 	std::ofstream out("grid-couette.eps");
 	dealii::GridOut grid_out;
 	grid_out.write_eps(*unitSquare, out);
-
 }
 
-CouetteFlow2D::~CouetteFlow2D() {
-}
 
 boost::shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L) {
 

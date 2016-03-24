@@ -65,9 +65,9 @@ int main(int argc, char** argv) {
 	pout << "-------------------------------------" << endl;
 	boost::shared_ptr<ProblemDescription<2> > tgv = boost::make_shared<
 			LidDrivenCavity2D>(U, viscosity, N);
-
 	double delta_t = CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),
 			p, D2Q9(scaling), CFL);
+
 
 	// setup configuration
 	std::stringstream outdir;
@@ -87,14 +87,14 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setTimeStepSize(delta_t);
+	configuration->setCFL(CFL);
 	if (collision == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
 	}
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
-	configuration->setEmbeddedDealIntegratorParameters(1.2, 0.8, 0.05 * delta_t,
-			delta_t, refine_tol, coarsen_tol);
+	configuration->setEmbeddedDealIntegratorParameters(1.2, 0.8, 0.05,
+			CFL, refine_tol, coarsen_tol);
 	// end after Dissipation by one order of magnitude
 	// exp(-2vt) = 1/10
 	//configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));

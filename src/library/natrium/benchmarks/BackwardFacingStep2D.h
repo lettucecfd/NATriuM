@@ -58,6 +58,8 @@ public:
 		return m_inflowVelocity;
 	}
 
+	virtual void refineAndTransform();
+
 private:
 
 	const double m_inflowVelocity;
@@ -65,6 +67,7 @@ private:
 	const double m_LStep;
 	const double m_HDomain;
 	const double m_HStep;
+	const size_t m_refinementLevel;
 
 	/**
 	 * @short create triangulation for couette flow

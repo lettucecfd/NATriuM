@@ -19,7 +19,7 @@ namespace natrium {
 
 
 DensityFluctuation2D::DensityFluctuation2D(double viscosity, size_t refinementLevel) :
-		ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1.0) {
+		ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1.0), m_refinementLevel(refinementLevel) {
 
 	setBoundaries(makeBoundaries());
 
@@ -63,8 +63,6 @@ boost::shared_ptr<Mesh<2> > DensityFluctuation2D::makeGrid(size_t refinementLeve
 	cell->face(1)->set_all_boundary_ids(1);  // right
 	cell->face(2)->set_all_boundary_ids(2);  // top
 	cell->face(3)->set_all_boundary_ids(3);  // bottom
-
-	square->refine_global(refinementLevel);
 
 	return square;
 }

@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
 	//configuration->setNumberOfTimeSteps(500000);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
-	configuration->setTimeStepSize(delta_t);
+	configuration->setCFL(CFL);
 	configuration->setSimulationEndTime(t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);

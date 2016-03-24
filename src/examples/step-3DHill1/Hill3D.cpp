@@ -22,13 +22,11 @@ namespace natrium {
 Hill3D::Hill3D(double velocity, double viscosity,
 		size_t refinementLevel) :
 		ProblemDescription<3>(makeGrid(refinementLevel), viscosity, 1.0), m_meanInflowVelocity(
-				velocity) {
+				velocity), m_refinementLevel(refinementLevel) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	getMesh()->refine_global(refinementLevel);
 
 }
 

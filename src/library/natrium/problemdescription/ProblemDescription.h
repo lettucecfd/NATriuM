@@ -92,6 +92,8 @@ public:
 		return m_initialU;
 	}
 
+	virtual void refineAndTransform() = 0;
+
 	/**
 	 * @short check if boundary conditions are uniquely assigned to boundary indicator
 	 * @return true, if boundaries OK

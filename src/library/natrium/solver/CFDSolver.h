@@ -306,6 +306,10 @@ public:
 		return m_time;
 	}
 
+	double getTimeStepSize() const{
+		return m_timeIntegrator->getTimeStepSize();
+	}
+
 	size_t getIteration() const {
 		return m_i;
 	}

@@ -73,7 +73,7 @@ public:
 	/**
 	 * @short load
 	 */
-	void load(DistributionFunctions& f, AdvectionOperator<dim>& advection,
+	void load(DistributionFunctions& f, ProblemDescription<dim>& problem, AdvectionOperator<dim>& advection,
 			CheckpointStatus& status);
 	void loadFromDeprecatedCheckpointVersion(Mesh<dim>& mesh,
 			DistributionFunctions& f,

@@ -20,7 +20,7 @@ namespace natrium {
 Droplet2D::Droplet2D(double viscosity, size_t refinementLevel, double length, double height,
 		double rho_l, double rho_g, double W, double R0) :
 		ProblemDescription<2>(makeGrid(length,height), viscosity, height), m_length(length),
-		m_height(height), m_rhoL(rho_l), m_rhoG(rho_g), m_W(W), m_R0(R0) {
+		m_height(height), m_rhoL(rho_l), m_rhoG(rho_g), m_W(W), m_R0(R0), m_refinementLevel(refinementLevel) {
 //	assert(rho_l > rho_g);
 //	assert(W > 0);
 //	assert(W < 0.25 * L);
@@ -30,10 +30,6 @@ Droplet2D::Droplet2D(double viscosity, size_t refinementLevel, double length, do
 	setBoundaries(makeBoundaries());
 	setInitialRho(boost::make_shared<InitialDensity>(this));
 	setInitialU(boost::make_shared<InitialVelocity>(this));
-
-	// refine grid
-	boost::shared_ptr<Mesh<2> > rect = getMesh();
-	rect->refine_global(refinementLevel);
 
 }
 

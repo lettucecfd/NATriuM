@@ -52,9 +52,7 @@ int main(int argc, char** argv) {
 			viscosity, U, refinementLevel, 1.0, startTime, isUnstructured);
 
 	// set small time step size
-	const double timeStepSize = CFDSolverUtilities::calculateTimestep<3>(
-					*couetteProblem->getMesh(), orderOfFiniteElement,
-					D3Q19(dqScaling), 0.4);
+	const double CFL = 0.4;
 
 	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 	// configure solver
@@ -64,14 +62,13 @@ int main(int argc, char** argv) {
 	dirname << getenv("NATRIUM_HOME") << "/step-couette3D";
 	configuration->setStencil(Stencil_D3Q19);
 	configuration->setOutputDirectory(dirname.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
 	configuration->setNumberOfTimeSteps(1000);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
-	configuration->setTimeStepSize(timeStepSize);
+	configuration->setCFL(CFL);
 	configuration->setCommandLineVerbosity(7);
 	//configuration->setDistributionInitType(Iterative);
 

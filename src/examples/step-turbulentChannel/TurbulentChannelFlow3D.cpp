@@ -97,11 +97,6 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		setExternalForce(
 				boost::make_shared<ConstantExternalForce<3> >(F));
 	}
-
-	// refine global
-	getMesh()->refine_global(refinementLevel);
-	// transform grid to unstructured grid
-	dealii::GridTools::transform(UnstructuredGridFunc(length,height,width), *getMesh());
 }
 
 TurbulentChannelFlow3D::~TurbulentChannelFlow3D() {

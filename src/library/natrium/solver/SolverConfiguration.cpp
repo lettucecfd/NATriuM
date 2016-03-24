@@ -16,11 +16,8 @@ SolverConfiguration::SolverConfiguration() {
 	// Declare structure of the parameter file
 	enter_subsection("General");
 	{
-		declare_entry("Time step size", "0.2", dealii::Patterns::Double(1e-10),
-				"Size of the (initial) time step.");
-		declare_entry("Refinement level", "0",
-				dealii::Patterns::Integer(0, 100),
-				"Global refinement of computational mesh.");
+		declare_entry("CFL", "0.4", dealii::Patterns::Double(1e-10),
+				"CFL number. Determines the size of the (initial) time step. The CFL number is defined as stencil_scaling/(dx*(p+1)^2).");
 		declare_entry("Stencil", "D2Q9",
 				dealii::Patterns::Selection("D2Q9|D3Q19|D3Q15|D3Q27"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
@@ -84,12 +81,12 @@ SolverConfiguration::SolverConfiguration() {
 			declare_entry("Refinement parameter", "0.8",
 					dealii::Patterns::Double(0, 1),
 					"Parameter for the embedded deal.II methods. This parameter is the factor (<1) by which the time step is multiplied when the time stepping must be refined.");
-			declare_entry("Minimum time step", "1e-14",
+			declare_entry("Minimum CFL", "10",
 					dealii::Patterns::Double(),
-					"Parameter for the embedded deal.II methods. Smallest time step allowed.");
-			declare_entry("Maximum time step", "1e100",
+					"Parameter for the embedded deal.II methods. Smallest CFL allowed.");
+			declare_entry("Maximum CFL", "0.05",
 					dealii::Patterns::Double(),
-					"Parameter for the embedded deal.II methods. Largest time step allowed.");
+					"Parameter for the embedded deal.II methods. Largest CFL allowed.");
 			declare_entry("Refinement tolerance", "1e-8",
 					dealii::Patterns::Double(),
 					"Parameter for the embedded deal.II methods. Refinement tolerance: if the error estimate is larger than refine_tol, the time step is refined.");

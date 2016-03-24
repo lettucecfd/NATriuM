@@ -113,8 +113,8 @@ int main() {
 			<< "#  orderOfFe  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2"
 			<< endl;
 
-	for (double dt = 0.5; dt >= 0.00001; dt /= 2.) {
-		pout << "dt = " << dt << endl;
+	for (double CFL = 3.5; CFL >= 0.00001; CFL /= 2.) {
+		pout << "CFL = " << CFL << endl;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -122,20 +122,21 @@ int main() {
 		// setup configuration
 		std::stringstream dirName;
 		dirName << getenv("NATRIUM_HOME") << "/convergence-analysis-time/"
-				<< orderOfFiniteElement << "_" << refinementLevel << "_" << dt;
+				<< orderOfFiniteElement << "_" << refinementLevel << "_" << CFL;
 		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
-		configuration->setRestartAtLastCheckpoint(false);
+		//configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
 		configuration->setOutputTableInterval(10000000);
 		//configuration->setOutputCheckpointInterval(1000);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(0);
-		configuration->setTimeStepSize(dt);
-		configuration->setNumberOfTimeSteps(1.0 / dt);
+		configuration->setCFL(CFL);
+		configuration->setSimulationEndTime(1);
+		//configuration->setNumberOfTimeSteps(1.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME
 		configuration->setNumberOfTimeSteps(1);

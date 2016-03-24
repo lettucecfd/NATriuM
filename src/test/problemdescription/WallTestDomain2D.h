@@ -119,6 +119,8 @@ public:
 		}
 	}
 
+	virtual void refineAndTransform(){};
+
 };
 
 #endif /* WallTestDomain2D_H_ */
