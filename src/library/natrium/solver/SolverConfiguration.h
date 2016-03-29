@@ -196,8 +196,14 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(boost::shared_ptr<ProblemDescription<2> >) {
-		//TODO: implement the checkProblem function
+	void checkProblem(boost::shared_ptr<ProblemDescription<2> > problem) {
+		// make sure that the mesh does not have refined cells, refinement has to be done via ProblemDescription::refineAndTransform()
+		if (problem->getMesh()->n_levels() != 1){
+			throw ConfigurationException("The mesh in your ProblemDescription must not have refined cells "
+					"upon initialization of the solver. Please implement the initial mesh refinement only by "
+					"overriding the virtual function void ProblemDescription::refineAndTransform().");
+		}
+
 	}
 
 	/**
@@ -207,8 +213,13 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(boost::shared_ptr<ProblemDescription<3> >) {
-		//TODO: implement the checkProblem function
+	void checkProblem(boost::shared_ptr<ProblemDescription<3> > problem) {
+		// make sure that the mesh does not have refined cells, refinement has to be done via ProblemDescription::refineAndTransform()
+		if (problem->getMesh()->n_levels() != 1){
+			throw ConfigurationException("The mesh in your ProblemDescription must not have refined cells "
+					"upon initialization of the solver. Please implement the initial mesh refinement only by "
+					"overriding the virtual function void ProblemDescription::refineAndTransform().");
+		}
 	}
 
 	/*void setOutputFlags(int outputFlags) {

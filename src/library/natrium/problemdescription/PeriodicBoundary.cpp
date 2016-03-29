@@ -132,7 +132,7 @@ template<size_t dim> void PeriodicBoundary<dim>::createCellMap(
 	DealIIExtensions::make_periodicity_map_dg(doFHandler, m_boundaryIndicator1,
 			m_boundaryIndicator2, m_direction, m_cells);
 
-	checkCellMap();
+	//checkCellMap();
 
 } /* createMap */
 template void PeriodicBoundary<2>::createCellMap(

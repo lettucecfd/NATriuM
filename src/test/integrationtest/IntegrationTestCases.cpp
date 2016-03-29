@@ -558,14 +558,15 @@ TestResult ConvergenceTestMovingWall() {
 	const double CFL = 0.4;
 	const double t0 = 40.0;
 
-	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<CouetteFlow2D>(viscosity,
-			U, refinementLevel, L, t0);
+
 
 	/*for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 12;
 	 orderOfFiniteElement += 2) {*/
 	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 10;
 			orderOfFiniteElement += 2) {
 		// Initialization
+		boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<CouetteFlow2D>(viscosity,
+				U, refinementLevel, L, t0);
 		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);

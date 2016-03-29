@@ -41,8 +41,8 @@ SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
 		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
 		bool useCentralFlux) :
 		m_mesh(triangulation), m_boundaries(boundaries), m_mapping(
-				orderOfFiniteElement), m_stencil(Stencil), m_useCentralFlux(
-				useCentralFlux) {
+				orderOfFiniteElement), m_stencil(Stencil), m_orderOfFiniteElement(
+				orderOfFiniteElement), m_useCentralFlux(useCentralFlux) {
 	// assertions
 	assert(orderOfFiniteElement >= 1);
 	assert(Stencil->getD() == dim);
