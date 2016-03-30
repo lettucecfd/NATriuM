@@ -33,6 +33,7 @@
 #include "../collision/BGKIncompressible.h"
 #include "../collision/MRTStandard.h"
 #include "../collision/KBCStandard.h"
+#include "../collision/KBCCentral.h"
 
 #include "../smoothing/ExponentialFilter.h"
 #include "../smoothing/NewFilter.h"
@@ -212,6 +213,12 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_configuration->getTimeStepSize(), *m_stencil);
 		m_collisionModel = boost::make_shared<KBCStandard>(tau,
 				m_configuration->getTimeStepSize(), m_stencil);
+	} else if (KBC_CENTRAL == configuration->getCollisionScheme()) {
+			tau = KBCCentral::calculateRelaxationParameter(
+					m_problemDescription->getViscosity(),
+					m_configuration->getTimeStepSize(), *m_stencil);
+			m_collisionModel = boost::make_shared<KBCCentral>(tau,
+					m_configuration->getTimeStepSize(), m_stencil);
 	}
 	// apply external force
 	if (m_problemDescription->hasExternalForce()) {
@@ -388,6 +395,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		break;
 	}
 	case KBC_STANDARD: {
+		LOG(WELCOME) << "tau:						" << tau << endl;
+		break;
+	}
+	case KBC_CENTRAL: {
 		LOG(WELCOME) << "tau:						" << tau << endl;
 		break;
 	}
