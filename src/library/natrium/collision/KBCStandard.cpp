@@ -46,6 +46,8 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
+#define KBC_D
+
 	size_t Q = getQ();
 
 
@@ -129,6 +131,8 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		// shear part vector s
 		vector<double> s(Q);
 
+#ifdef KBC_C
+
 		s.at(0) = -rho * T;
 		s.at(1) = 0.5 * rho * 0.5 * (T + N);
 		s.at(2) = 0.5 * rho * 0.5 * (T - N);
@@ -139,9 +143,24 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		s.at(7) = 0.25 * rho * Pi_xy;
 		s.at(8) = 0.25 * rho * -Pi_xy;
 
+#else
+		s.at(0) = 0;
+		s.at(1) = 0.5 * rho * 0.5 * (+ N);
+		s.at(2) = 0.5 * rho * 0.5 * (- N);
+		s.at(3) = 0.5 * rho * 0.5 * (+ N);
+		s.at(4) = 0.5 * rho * 0.5 * (- N);
+		s.at(5) = 0.25 * rho * Pi_xy;
+		s.at(6) = 0.25 * rho * -Pi_xy;
+		s.at(7) = 0.25 * rho * Pi_xy;
+		s.at(8) = 0.25 * rho * -Pi_xy;
+
+
+#endif
+
+
 		// higher order part vector h
 		vector<double> h(Q);
-
+#ifdef KBC_C
 		h.at(0) = rho * A;
 		h.at(1) = -0.5 * rho * (1 * Q_xyy + A);
 		h.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
@@ -151,6 +170,17 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
 		h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
 		h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+#else
+		h.at(0) = rho * (A - T);
+		h.at(1) = -0.5 * rho * (1 * Q_xyy + A - T);
+		h.at(3) = -0.5 * rho * (-1 * Q_xyy + A - T);
+		h.at(2) = -0.5 * rho * (1 * Q_yxx + A - T);
+		h.at(4) = -0.5 * rho * (-1 * Q_yxx + A - T);
+		h.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
+		h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
+		h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
+		h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+#endif
 
 		// equilibrium vectors for shear vector
 		vector<double> seq(Q);
@@ -221,6 +251,8 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		A = A / rho;
 
 		// calculate shear equilibrium
+#ifdef KBC_C
+
 		seq.at(0) = -rho * T;
 		seq.at(1) = 0.5 * rho * 0.5 * (T + N);
 		seq.at(3) = 0.5 * rho * 0.5 * (T + N);
@@ -231,7 +263,21 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		seq.at(7) = 0.25 * rho * Pi_xy;
 		seq.at(8) = 0.25 * rho * -Pi_xy;
 
+#else
+		seq.at(0) = 0;
+		seq.at(1) = 0.5 * rho * 0.5 * (+ N);
+		seq.at(3) = 0.5 * rho * 0.5 * (+ N);
+		seq.at(2) = 0.5 * rho * 0.5 * (- N);
+		seq.at(4) = 0.5 * rho * 0.5 * (- N);
+		seq.at(5) = 0.25 * rho * Pi_xy;
+		seq.at(6) = 0.25 * rho * -Pi_xy;
+		seq.at(7) = 0.25 * rho * Pi_xy;
+		seq.at(8) = 0.25 * rho * -Pi_xy;
+#endif
+
 		// calculate higher order equilibrium
+#ifdef KBC_C
+
 		heq.at(0) = rho * A;
 		heq.at(1) = -0.5 * rho * (1 * Q_xyy + A);
 		heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
@@ -241,6 +287,18 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
 		heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
 		heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+
+#else
+		heq.at(0) = rho * (A - T);
+		heq.at(1) = -0.5 * rho * (1 * Q_xyy + A - T);
+		heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A - T);
+		heq.at(2) = -0.5 * rho * (1 * Q_yxx + A - T);
+		heq.at(4) = -0.5 * rho * (-1 * Q_yxx + A - T);
+		heq.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
+		heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
+		heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
+		heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+#endif
 
 		//deviation of the shear parts
 		vector<double> delta_s(Q);
