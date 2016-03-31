@@ -149,9 +149,12 @@ private:
 		return boundaries;
 	}
 
-	virtual void refineAndTransform(){
-		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
+	virtual void refine(){
 		getMesh()->refine_global(m_refinementLevel);
+	}
+
+	virtual void transform(Mesh<2>& mesh) {
+
 	}
 }
 ;

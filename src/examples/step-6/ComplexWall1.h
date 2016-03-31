@@ -35,7 +35,9 @@ public:
 		return m_bottomVelocity;
 	}
 
-	virtual void refineAndTransform();
+	virtual void refine();
+
+	virtual void transform(Mesh<2>& mesh);
 
 private:
 

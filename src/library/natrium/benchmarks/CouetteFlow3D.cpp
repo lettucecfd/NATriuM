@@ -37,16 +37,19 @@ CouetteFlow3D::CouetteFlow3D(double viscosity, double topPlateVelocity,
 CouetteFlow3D::~CouetteFlow3D() {
 }
 
-void CouetteFlow3D::refineAndTransform(){
+void CouetteFlow3D::refine(){
 	// refine grid
 	boost::shared_ptr<Mesh<3> > unitSquare = getMesh();
 	unitSquare->refine_global(m_refinementLevel);
+}
 
+void CouetteFlow3D::transform(Mesh<3>& mesh){
 	// transform grid
 	if (m_isUnstructured) {
-		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
+		dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
 	}
 }
+
 
 boost::shared_ptr<Mesh<3> > CouetteFlow3D::makeGrid(size_t L) {
 

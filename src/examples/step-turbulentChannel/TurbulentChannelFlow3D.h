@@ -30,6 +30,7 @@ public:
 	class InitialVelocity: public dealii::Function<3> {
 	private:
 		TurbulentChannelFlow3D *m_flow;
+
 	public:
 		//double *m_maxUtrp;
 		InitialVelocity(TurbulentChannelFlow3D *flow) :
@@ -168,12 +169,14 @@ public:
 	inline void randf_2(int idum, int &iy, vector<int> &iv, double &ran1,
 			int &iseed);
 
-	virtual void refineAndTransform() {
+	virtual void refine() {
 		// refine global
 		getMesh()->refine_global(m_refinementLevel);
+	}
+	virtual void transform(Mesh<3>& mesh) {
 		// transform grid to unstructured grid
 		dealii::GridTools::transform(
-				UnstructuredGridFunc(m_length, m_height, m_width), *getMesh());
+				UnstructuredGridFunc(m_length, m_height, m_width), mesh);
 	}
 
 private:

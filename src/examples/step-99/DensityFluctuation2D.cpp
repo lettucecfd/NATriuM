@@ -55,7 +55,7 @@ void DensityFluctuation2D::applyInitialVelocities(
 	}
 }
 
-boost::shared_ptr<Mesh<2> > DensityFluctuation2D::makeGrid(size_t refinementLevel) {
+boost::shared_ptr<Mesh<2> > DensityFluctuation2D::makeGrid() {
 	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >();
 	dealii::GridGenerator::hyper_cube(*square,0,1.);
 	Mesh<2>::active_cell_iterator cell = square->begin_active();

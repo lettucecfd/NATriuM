@@ -86,18 +86,20 @@ double LubricationSine::InitialVelocity::value(const dealii::Point<2>& x,
 	}
 }
 
-void LubricationSine::refineAndTransform() {
+void LubricationSine::refine() {
 	// refine grid
 	boost::shared_ptr<Mesh<2> > rect = getMesh();
 	rect->refine_global(m_refinementLevel);
+}
 
+void LubricationSine::transform(Mesh<2>& mesh){
 	// transform grid
 	dealii::GridTools::transform(
 			UnstructuredGridFunc(m_height, m_ampl, m_length,
-					m_roughnessHeight, m_roughnessLengthRatio), *rect);
+					m_roughnessHeight, m_roughnessLengthRatio), mesh);
 	std::ofstream out("grid-2.eps");
 	dealii::GridOut grid_out;
-	grid_out.write_eps(*rect, out);
+	grid_out.write_eps(mesh, out);
 }
 
 } /* namespace natrium */

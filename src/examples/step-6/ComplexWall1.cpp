@@ -49,17 +49,18 @@ boost::shared_ptr<Mesh<2> > ComplexWall1::makeGrid(double L,
 
 }
 
-virtual void ComplexWall1::refineAndTransform() {
+void ComplexWall1::refine() {
 	// refine grid
 	rect->refine_global(m_refinementLevel);
+}
 
+void ComplexWall1::transform(Mesh<2>& mesh){
 	// transform grid
 	dealii::GridTools::transform(UnstructuredGridFunc(L),
-			*rect);
+			mesh);
 	std::ofstream out("grid-2.eps");
 	dealii::GridOut grid_out;
-	grid_out.write_eps(*rect, out);
-	return rect;
+	grid_out.write_eps(mesh, out);
 }
 
 boost::shared_ptr<BoundaryCollection<2> > ComplexWall1::makeBoundaries(

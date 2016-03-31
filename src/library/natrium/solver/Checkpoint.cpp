@@ -105,12 +105,15 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 	try {
 		// copy triangulation
 		Mesh<dim> old_mesh(MPI_COMM_WORLD);
+		// copy mesh
 		old_mesh.copy_triangulation(mesh);
 
 		LOG(DETAILED) << "Read old solution" << endl;
 		// Prepare read old solution
 		// load mesh (must not be done with refined grid)
 		old_mesh.load(m_dataFile.c_str());
+		// transform old mesh
+		problem.transform(old_mesh);
 		cout << "Make old dof handler" << endl;
 		// on calling load(), the old mesh has been refined, as before saving
 		dealii::DoFHandler<dim> old_dof_handler(old_mesh);
@@ -136,10 +139,9 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		cout << "deserialize" << endl;
 		sol_trans.deserialize(to_load);
 
-		// Refine new mesh
-		cout << "Refine and transform" << endl;
+		// Refine and transform new mesh
+		cout << "Refine" << endl;
 		problem.refineAndTransform();
-
 		LOG(DETAILED) << "Interpolate to new grid" << endl;
 		// dof handler with old fe on new mesh
 		cout << mesh.n_levels() << " " << old_mesh.n_levels() << endl;
@@ -163,7 +165,7 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		}
 		old_f = f;
 
-		LOG(DETAILED) << "Interpolate to new fe " << endl;
+		LOG(DETAILED) << "Interpolate to new finite element " << endl;
 		// make transfer matrix for interpolating from old fe to new fe
 		dealii::FullMatrix<double> transfer(
 				pow(advection.getOrderOfFiniteElement() + 1, dim),
@@ -192,6 +194,7 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 						"Please switch off the restart option to start the simulation from the beginning.");
 	}
 
+	LOG(DETAILED) << "Transfer to new scaling" << endl;
 	// transfer to current stencil scaling, if required
 	boost::shared_ptr<Stencil> old_stencil = CFDSolverUtilities::make_stencil(
 			new_stencil->getD(), new_stencil->getQ(), status.stencilScaling);

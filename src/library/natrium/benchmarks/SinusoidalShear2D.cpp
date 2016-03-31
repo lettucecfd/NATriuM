@@ -90,16 +90,18 @@ double SinusoidalShear2D::InitialVelocity::value(const dealii::Point<2>&,
 #endif
 }
 
-void SinusoidalShear2D::refineAndTransform(){
+void SinusoidalShear2D::refine(){
 	// Refine grid
 	getMesh()->refine_global(m_refinementLevel);
+}
 
+void SinusoidalShear2D::transform(Mesh<2>& mesh){
 	// transform grid
 	dealii::GridTools::transform(
-			UnstructuredGridFunc(m_height, m_ampl, m_L), *getMesh());
+			UnstructuredGridFunc(m_height, m_ampl, m_L), mesh);
 	std::ofstream out("grid-2.eps");
 	dealii::GridOut grid_out;
-	grid_out.write_eps(*getMesh(), out);
+	grid_out.write_eps(mesh, out);
 
 }
 

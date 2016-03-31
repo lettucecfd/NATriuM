@@ -47,11 +47,14 @@ private:
 	 */
 	boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
-	virtual void refineAndTransform(){
+	virtual void refine(){
 		// Refine grid
 		getMesh()->refine_global(m_refinementLevel);
 	}
 
+	virtual void transform(Mesh<3>& mesh){
+
+	}
 };
 
 } /* namespace natrium */

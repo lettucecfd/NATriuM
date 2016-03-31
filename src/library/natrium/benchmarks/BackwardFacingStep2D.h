@@ -58,7 +58,9 @@ public:
 		return m_inflowVelocity;
 	}
 
-	virtual void refineAndTransform();
+	virtual void refine();
+
+	virtual void transform(Mesh<2>& mesh);
 
 private:
 
