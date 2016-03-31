@@ -353,6 +353,8 @@ public:
 	}
 
 	void calculateDensitiesAndVelocities();
+
+	void convertDeprecatedCheckpoint();
 }
 ;
 

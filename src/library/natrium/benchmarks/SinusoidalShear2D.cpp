@@ -23,11 +23,10 @@ SinusoidalShear2D::SinusoidalShear2D(double viscosity, double bottomVelocity,
 				averageHeight), m_ampl(amplitude), m_refinementLevel(
 				refinementLevel), m_L(L) {
 	setBoundaries(makeBoundaries(bottomVelocity));
-	this->setInitialRho(boost::make_shared<InitialVelocity>(this));
+	this->setInitialU(boost::make_shared<InitialVelocity>(this));
 
 	// refine grid
 	boost::shared_ptr<Mesh<2> > rect = getMesh();
-	rect->refine_global(refinementLevel);
 
 }
 

@@ -208,7 +208,9 @@ void CFDSolverUtilities::get_integrator_by_id(size_t id,
 		break;
 	}
 	default: {
-		LOG(ERROR) << "Time integrator not set properly in CFDSolverUtilities::get_integrator_by_id()." << endl;
+		LOG(ERROR)
+				<< "Time integrator not set properly in CFDSolverUtilities::get_integrator_by_id()."
+				<< endl;
 		break;
 	}
 	}
@@ -216,7 +218,7 @@ void CFDSolverUtilities::get_integrator_by_id(size_t id,
 
 boost::shared_ptr<Stencil> CFDSolverUtilities::make_stencil(size_t d, size_t q,
 		size_t scaling) {
-	 {
+	{
 		std::stringstream msg;
 		msg << "Could not create stencil with d=" << d << ", q=" << q << ".";
 		if (2 == d) {

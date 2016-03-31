@@ -23,6 +23,8 @@ using namespace natrium;
 class WallTestDomain2D: public ProblemDescription<2> {
 private:
 
+	size_t m_refinementLevel;
+
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
@@ -81,12 +83,10 @@ public:
 
 	/// constructor
 	WallTestDomain2D(size_t refineLevel) :
-			ProblemDescription<2>(makeGrid(), 1.0, 1) {
+			ProblemDescription<2>(makeGrid(), 1.0, 1), m_refinementLevel(
+					refineLevel) {
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
-
-		// Refine grid to 2x2 = 4 cells
-		getMesh()->refine_global(refineLevel);
 	}
 
 	/// destructor
@@ -119,7 +119,10 @@ public:
 		}
 	}
 
-	virtual void refineAndTransform(){};
+	virtual void refineAndTransform() {
+		// Refine grid to 2x2 = 4 cells
+		getMesh()->refine_global(m_refinementLevel);
+	}
 
 };
 

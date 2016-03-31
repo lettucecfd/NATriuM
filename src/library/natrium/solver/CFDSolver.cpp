@@ -136,7 +136,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					<< ", but I could not find the required checkpoint files "
 					<< checkpoint->getStatusFile().string() << " and "
 					<< checkpoint->getDataFile().string() << ".";
-			throw CFDSolverException(msg.str());
+			natrium_errorexit(msg.str().c_str());
 		} else {
 			LOG(BASIC) << "Restart at iteration " << restart_i << endl;
 		}
@@ -159,7 +159,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 	// Refine mesh, Build DoF system (by reading from restart file)
 	if (checkpoint) {
-		checkpoint->load(m_f, *m_problemDescription, *m_advectionOperator, checkpoint_status);
+		checkpoint->load(m_f, *m_problemDescription, *m_advectionOperator,
+				checkpoint_status);
 		m_iterationStart = checkpoint_status.iterationNumber;
 		m_time = checkpoint_status.time;
 	} else {
@@ -729,6 +730,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 			checkpoint_status.iterationNumber = m_i;
 			checkpoint_status.stencilScaling = m_stencil->getScaling();
 			checkpoint_status.time = m_time;
+			checkpoint_status.feOrder = m_configuration->getSedgOrderOfFiniteElement();
 			checkpoint.write(*m_problemDescription->getMesh(), m_f,
 					*m_advectionOperator->getDoFHandler(), checkpoint_status);
 		} /*if checkpoint interval*/
@@ -1016,6 +1018,21 @@ void CFDSolver<dim>::calculateDensitiesAndVelocities() {
 			m_velocity[j](i) = m_velocity[j](i) * one_by_rho_i;
 		}
 	}
+}
+
+template<size_t dim>
+void CFDSolver<dim>::convertDeprecatedCheckpoint() {
+	// load
+	boost::filesystem::path checkpoint_dir(	m_configuration->getOutputDirectory());
+	checkpoint_dir /= "checkpoint";
+	CheckpointStatus checkpoint_status;
+	Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(m_f,
+			*m_advectionOperator, checkpoint_dir.string(), checkpoint_status);
+
+	// save
+	Checkpoint<dim> checkpoint(checkpoint_status.iterationNumber, checkpoint_dir);
+	checkpoint.write(*m_problemDescription->getMesh(), m_f,
+			*m_advectionOperator->getDoFHandler(), checkpoint_status);
 }
 
 template class CFDSolver<2> ;
