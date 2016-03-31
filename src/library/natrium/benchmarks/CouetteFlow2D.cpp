@@ -39,19 +39,23 @@ CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 CouetteFlow2D::~CouetteFlow2D() {
 }
 
-void CouetteFlow2D::refineAndTransform(){
+void CouetteFlow2D::refine(){
 	// refine grid
 	boost::shared_ptr<Mesh<2> > unitSquare = getMesh();
 	unitSquare->refine_global(m_refinementLevel);
 
+}
+
+void CouetteFlow2D::transform(Mesh<2>& mesh){
+
 	// transform grid
 	if (m_isUnstructured) {
-		dealii::GridTools::transform(UnstructuredGridFunc(), *unitSquare);
+		dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
 	}
 
 	std::ofstream out("grid-couette.eps");
 	dealii::GridOut grid_out;
-	grid_out.write_eps(*unitSquare, out);
+	grid_out.write_eps(mesh, out);
 }
 
 

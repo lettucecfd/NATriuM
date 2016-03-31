@@ -29,9 +29,12 @@ public:
 	/// destructor
 	virtual ~PeriodicTestDomain2D();
 
-	virtual void refineAndTransform(){
+	virtual void refine(){
 		// Refine grid
 		getMesh()->refine_global(m_refinementLevel);
+	}
+	virtual void transform(Mesh<2>& mesh){
+
 	}
 
 private:

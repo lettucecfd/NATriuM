@@ -30,11 +30,15 @@ LidDrivenCavity2D::LidDrivenCavity2D(double velocity, double viscosity,
 LidDrivenCavity2D::~LidDrivenCavity2D() {
 }
 
-void LidDrivenCavity2D::refineAndTransform(){
+void LidDrivenCavity2D::refine(){
 	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
 	getMesh()->refine_global(m_refinementLevel);
-	//dealii::GridTools::transform(UnstructuredGridFunc(), *getMesh());
 }
+
+void LidDrivenCavity2D::transform(Mesh<2>& ){
+	//dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
+}
+
 
 /**
  * @short create triangulation for couette flow

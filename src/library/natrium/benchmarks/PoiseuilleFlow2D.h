@@ -50,9 +50,13 @@ public:
 		return m_uBulk;
 	}
 
-	virtual void refineAndTransform(){
+	virtual void refine(){
 		// Refine grid
 		getMesh()->refine_global(m_refinementLevel);
+	}
+
+	virtual void transform(Mesh<2>& mesh){
+
 	}
 
 private:

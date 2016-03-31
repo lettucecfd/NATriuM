@@ -49,7 +49,8 @@ public:
 		return m_topPlateVelocity;
 	}
 
-	virtual void refineAndTransform();
+	virtual void refine();
+	virtual void transform(Mesh<2>& mesh);
 
 private:
 

@@ -123,16 +123,17 @@ boost::shared_ptr<BoundaryCollection<2> > BackwardFacingStep2D::makeBoundaries(
 	return boundaries;
 }
 
-void BackwardFacingStep2D::refineAndTransform(){
+void BackwardFacingStep2D::refine(){
 	// Refine grid
 	getMesh()->refine_global(m_refinementLevel);
-
+}
+void BackwardFacingStep2D::transform(Mesh<2>& mesh){
 	// transform grid
 	//dealii::GridTools::transform(
-	//		UnstructuredGridFunc(averageHeight, amplitude, L), *rect);
+	//		UnstructuredGridFunc(averageHeight, amplitude, L), mesh);
 	std::ofstream out("grid-2.eps");
 	dealii::GridOut grid_out;
-	grid_out.write_eps(*getMesh(), out);
+	grid_out.write_eps(mesh, out);
 }
 
 

@@ -49,11 +49,14 @@ public:
 		return 1;
 	}
 
-	virtual void refineAndTransform() {
+	virtual void refine() {
 		// refine global
 		getMesh()->refine_global(m_refinementLevel);
 	}
 
+	virtual void transform(Mesh<2>& mesh){
+
+	}
 private:
 
 	const size_t m_refinementLevel;
