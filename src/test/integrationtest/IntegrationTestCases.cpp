@@ -480,18 +480,19 @@ TestResult ConvergenceTest3D() {
 	const double U = scaling * Ma / sqrt(3);
 	const double L = 1.0;
 	const double viscosity = U * L / Re;
-	const double refinementLevel = 1;
+	const double refinementLevel = 2;
 	const double CFL = 1.0;
 	const double t0 = 1.0;
 
 	boost::shared_ptr<Benchmark<3> > benchmark = boost::make_shared<CouetteFlow3D>(viscosity,
 			U, refinementLevel, L, t0);
 
-	size_t orderOfFiniteElement = 4;
+	size_t orderOfFiniteElement = 2;
 	// Initialization
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
+	//configuration->setCommandLineVerbosity(ALL);
 	configuration->setStencil(Stencil_D3Q15);
 	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);

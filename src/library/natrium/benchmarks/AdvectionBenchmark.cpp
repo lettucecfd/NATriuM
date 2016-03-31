@@ -153,6 +153,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 	// create problem and solver
 	PeriodicTestDomain2D periodic(refinementLevel);
+	periodic.refineAndTransform();
 	SEDGMinLee<2> streaming(periodic.getMesh(), periodic.getBoundaries(),
 			fe_order, boost::make_shared<D2Q9>(),useCentralFlux);
 	streaming.setupDoFs();

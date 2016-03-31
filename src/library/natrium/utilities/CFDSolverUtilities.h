@@ -93,6 +93,7 @@ void get_integrator_by_id(size_t id, TimeIntegratorName& time_integrator,
 
 boost::shared_ptr<Stencil> make_stencil(size_t d, size_t q, size_t scaling);
 
+
 } /* CFDSolverUtilities */
 } /* namespace natrium */
 

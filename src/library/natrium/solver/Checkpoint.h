@@ -25,6 +25,27 @@ struct CheckpointStatus {
 	double time;
 	size_t iterationNumber;
 	double stencilScaling;
+	size_t feOrder;
+};
+
+/**
+ * @short Exception class for CFDSolver
+ */
+class CheckpointException: public NATriuMException {
+private:
+	std::string message;
+public:
+	CheckpointException(const char *msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	CheckpointException(const string& msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	~CheckpointException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
 };
 
 /**
@@ -73,12 +94,10 @@ public:
 	/**
 	 * @short load
 	 */
-	void load(DistributionFunctions& f, ProblemDescription<dim>& problem, AdvectionOperator<dim>& advection,
-			CheckpointStatus& status);
-	void loadFromDeprecatedCheckpointVersion(Mesh<dim>& mesh,
-			DistributionFunctions& f,
-			const dealii::DoFHandler<dim>& dof_handler,
-			CheckpointStatus& status, string& directory);
+	void load(DistributionFunctions& f, ProblemDescription<dim>& problem,
+			AdvectionOperator<dim>& advection, CheckpointStatus& status);
+	static void loadFromDeprecatedCheckpointVersion(DistributionFunctions& f,
+			AdvectionOperator<dim>& advection, string directory, CheckpointStatus& status);
 	virtual ~Checkpoint();
 
 	const boost::filesystem::path& getDataFile() const {
