@@ -287,7 +287,7 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 
 		for (int d = 0; d < 9; d++) {
 			direction_x[d] = getStencil()->getDirection(d)(0) / scaling;
-			direction_x[d] = getStencil()->getDirection(d)(1) / scaling;
+			direction_y[d] = getStencil()->getDirection(d)(1) / scaling;
 		}
 		for (int j = 0; j < 9; j++) {
 			for (int p = 0; p < 3; p++) {
