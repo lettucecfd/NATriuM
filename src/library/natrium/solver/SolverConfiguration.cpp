@@ -16,8 +16,8 @@ SolverConfiguration::SolverConfiguration() {
 	// Declare structure of the parameter file
 	enter_subsection("General");
 	{
-		declare_entry("Time step size", "0.2", dealii::Patterns::Double(1e-10),
-				"Size of the (initial) time step.");
+		declare_entry("CFL", "0.4", dealii::Patterns::Double(1e-10),
+				"CFL number. Determines the size of the (initial) time step. The CFL number is defined as stencil_scaling/(dx*(p+1)^2).");
 		declare_entry("Stencil", "D2Q9",
 				dealii::Patterns::Selection("D2Q9|D3Q19|D3Q15|D3Q27"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
@@ -81,12 +81,12 @@ SolverConfiguration::SolverConfiguration() {
 			declare_entry("Refinement parameter", "0.8",
 					dealii::Patterns::Double(0, 1),
 					"Parameter for the embedded deal.II methods. This parameter is the factor (<1) by which the time step is multiplied when the time stepping must be refined.");
-			declare_entry("Minimum time step", "1e-14",
+			declare_entry("Minimum CFL", "10",
 					dealii::Patterns::Double(),
-					"Parameter for the embedded deal.II methods. Smallest time step allowed.");
-			declare_entry("Maximum time step", "1e100",
+					"Parameter for the embedded deal.II methods. Smallest CFL allowed.");
+			declare_entry("Maximum CFL", "0.05",
 					dealii::Patterns::Double(),
-					"Parameter for the embedded deal.II methods. Largest time step allowed.");
+					"Parameter for the embedded deal.II methods. Largest CFL allowed.");
 			declare_entry("Refinement tolerance", "1e-8",
 					dealii::Patterns::Double(),
 					"Parameter for the embedded deal.II methods. Refinement tolerance: if the error estimate is larger than refine_tol, the time step is refined.");
@@ -153,9 +153,10 @@ SolverConfiguration::SolverConfiguration() {
 
 	enter_subsection("Initialization");
 	{
-		declare_entry("Restart at last checkpoint?", "false",
-				dealii::Patterns::Bool(),
-				"The solver can be restarted at the last stored checkpoint, in case that an old run had been aborted at some point of time.");
+		declare_entry("Restart at iteration", "0", dealii::Patterns::Integer(0),
+				"The solver can be restarted at a stored checkpoint, in case that an old run had been aborted at some point of time."
+						"The iteration at which the solver is to be restarted."
+						" You have to make sure that a checkpoint file corresponding to that iteration exists.");
 		declare_entry("Initialization scheme", "Equilibrium",
 				dealii::Patterns::Selection("Equilibrium|Iterative"),
 				"The initial particle distribution functions are normally assumed to be in local equilibrium. A more stable (and costly) scheme is to do some streaming steps on the density field but not on the velocity field, before starting the actual simulations (see e.g. the Book of Guo and Shu).");
@@ -216,10 +217,11 @@ SolverConfiguration::SolverConfiguration() {
 					dealii::Patterns::Bool(),
 					"Specifies if turbulence statistics should be monitored.");
 			declare_entry("Wall normal direction", "1",
-					dealii::Patterns::Integer(0,3),
+					dealii::Patterns::Integer(0, 3),
 					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");
 			declare_entry("Wall normal coordinates", "1e-1, 2e-1, 5e-1",
-					dealii::Patterns::List(dealii::Patterns::Double(-1e10, 1e10)),
+					dealii::Patterns::List(
+							dealii::Patterns::Double(-1e10, 1e10)),
 					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. This comma-separated list of decimal numbers specifies their wall-normal coordinates.");
 		}
 		leave_subsection();
@@ -296,8 +298,6 @@ void SolverConfiguration::prepareOutputDirectory() {
 			//create_directory throws basic_filesystem_error<Path>, if fail (= no writing permissions)
 			//returns false, if directory already existed
 			boost::filesystem::create_directory(outputDir);
-			boost::filesystem::path checkpoint_dir(outputDir / "checkpoint");
-			boost::filesystem::create_directory(checkpoint_dir);
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg << "You want to put your output directory into "
@@ -330,13 +330,12 @@ void SolverConfiguration::prepareOutputDirectory() {
 		}
 		// check if something is possibly going to be overwritten
 		clock_t begin = clock();
-		if ((not isRestartAtLastCheckpoint())
+		if ((0 == getRestartAtIteration())
 				and (not boost::filesystem::is_empty(outputDir))) {
-			// TODO check muss cleverer sein (wegen checkpoint verzeichnis kommt diese warnung immer)
 			if (isUserInteraction()) {
 				// Request user input
 				pout
-						<< "'Restart at last checkpoint' is disabled, but Output directory is not empty. "
+						<< "'Restart at checkpoint' is disabled, but Output directory is not empty. "
 								"The simulation might overwrite old data. Do you really want to continue?"
 								"If you are running your simulation in a parallel environment, you might want to "
 								"switch user interaction off (which can be done by the corresponding option in SolverConfiguration"
@@ -381,7 +380,7 @@ void SolverConfiguration::prepareOutputDirectory() {
 						<< "Simulation might overwrite old data in output file."
 						<< endl;
 			} /* if/else user interaction */
-		} /* if not is restart at last checkpoint */
+		} /* if not is restart at checkpoint */
 		// Check writing permissions in directory (for every MPI process)
 		try {
 			/// try to create a single file
@@ -405,6 +404,17 @@ void SolverConfiguration::prepareOutputDirectory() {
 					<< outputDir.string();
 			throw ConfigurationException(msg.str());
 		} /* catch */
+		// make checkpoint dir
+		try {
+			boost::filesystem::path checkpoint_dir(outputDir / "checkpoint");
+			boost::filesystem::create_directory(checkpoint_dir);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "You want to put your checkpoint directory into "
+					<< outputDir.string()
+					<< ", but you seem to have no writing permissions.";
+			throw ConfigurationException(msg.str());
+		}
 	} /* if is_MPI_rank_0() */
 }
 

@@ -152,23 +152,19 @@ int main(int argc, char** argv) {
 			DiamondObstacle2D>(U, viscosity, refinementLevel);
 	//! [Problem]
 
-	// set temporal discretization
-	double dt = CFDSolverUtilities::calculateTimestep<2>(*(obstacle_flow->getMesh()), orderOfFiniteElement, D2Q9(scaling), CFL );
-
 	//! [Configuration]
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-grid-in";
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(dirname.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	configuration->setNumberOfTimeSteps(200000);
 	//! [Configuration]
 

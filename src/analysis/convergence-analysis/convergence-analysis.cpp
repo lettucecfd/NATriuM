@@ -238,9 +238,6 @@ int main(int argc, char* argv[]) {
 				scaling = sqrt(3) * 1 / tmp_Ma;
 			}
 			double CFL = 0.4;
-			dt = CFDSolverUtilities::calculateTimestep<2>(
-					*benchmark->getMesh(), orderOfFiniteElement,
-					D2Q9(scaling), CFL);
 
 			// avoid too expensive runs
 			// individual jobs should take < 1h
@@ -263,7 +260,7 @@ int main(int argc, char* argv[]) {
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(WARNING);
-			configuration->setTimeStepSize(dt);
+			configuration->setCFL(CFL);
 			if (int(tmax / dt) == 0) {
 				continue;
 			}

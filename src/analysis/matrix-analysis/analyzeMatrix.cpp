@@ -66,15 +66,14 @@ int main() {
 		boost::shared_ptr<TaylorGreenVortex2D> tgv = boost::make_shared<TaylorGreenVortex2D>(
 				viscosity, refinementLevel);
 		boost::shared_ptr<Benchmark<2> > tgBenchmark = tgv;
-		configuration->setTimeStepSize(CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),orderOfFiniteElement,D2Q9(dqScaling),0.4));
-		pout << "dt = " << configuration->getTimeStepSize() << endl;
 		boost::shared_ptr<CFDSolver<2> > solver = boost::make_shared<BenchmarkCFDSolver<2> >(
 				configuration, tgBenchmark);
+		pout << "dt = " << solver->getTimeStepSize() << endl;
 
 		// analyze eigenvalues
 		matrixAnalysis<2> analyzer(solver);
 		vector<std::complex<double> > eigenvalues;
-		pout << "abs max: " << configuration->getTimeStepSize() * analyzer.computeSpectrum(solver->getAdvectionOperator()->getSystemMatrix(),eigenvalues, 0.0) << endl;
+		pout << "abs max: " << solver->getTimeStepSize() * analyzer.computeSpectrum(solver->getAdvectionOperator()->getSystemMatrix(),eigenvalues, 0.0) << endl;
 		//analyzer.writeSpectrum();
 		//analyzer.writePseudospectrum();
 

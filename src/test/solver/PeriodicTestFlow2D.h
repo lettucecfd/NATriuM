@@ -24,6 +24,8 @@ namespace natrium {
  *  8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).
  */
 class SteadyPeriodicTestFlow2D: public ProblemDescription<2> {
+private:
+	size_t m_refinementLevel;
 public:
 	// class that represents the initial velocity
 	class InitialVelocity: public dealii::Function<2> {
@@ -40,17 +42,24 @@ public:
 
 	/// constructor
 	SteadyPeriodicTestFlow2D(double viscosity, size_t refinementLevel) :
-			ProblemDescription<2>(makeGrid(), viscosity, 1) {
+			ProblemDescription<2>(makeGrid(), viscosity, 1), m_refinementLevel(refinementLevel) {
 		setInitialU(boost::make_shared<InitialVelocity>());
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
 		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-		getMesh()->refine_global(refinementLevel);
+
 
 	}
 
 	/// destructor
 	virtual ~SteadyPeriodicTestFlow2D() {
+	}
+	virtual void refine(){
+		getMesh()->refine_global(m_refinementLevel);
+
+	}
+	virtual void transform(Mesh<2>& mesh){
+
 	}
 
 

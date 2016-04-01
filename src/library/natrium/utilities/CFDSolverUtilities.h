@@ -12,6 +12,10 @@
 #include "deal.II/base/quadrature_lib.h"
 
 #include "../stencils/Stencil.h"
+#include "../stencils/D2Q9.h"
+#include "../stencils/D3Q15.h"
+#include "../stencils/D3Q19.h"
+#include "../stencils/D3Q27.h"
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
@@ -28,10 +32,10 @@ private:
 	std::string message;
 public:
 	CFDSolverUtilitiesException(const char *msg) :
-		NATriuMException(msg), message(msg) {
+			NATriuMException(msg), message(msg) {
 	}
 	CFDSolverUtilitiesException(const string& msg) :
-		NATriuMException(msg), message(msg) {
+			NATriuMException(msg), message(msg) {
 	}
 	~CFDSolverUtilitiesException() throw () {
 	}
@@ -52,15 +56,14 @@ double getMinimumVertexDistance(const Mesh<dim>& tria);
 
 template<size_t dim>
 double calculateTimestep(const Mesh<dim>& tria,
-		const size_t orderOfFiniteElement, const Stencil& stencil,
-		double cFL = 0.4);
+		const size_t orderOfFiniteElement, const Stencil& stencil, double cFL =
+				0.4);
 
 /**
  * @short stolen from Deal.II's step 49 tutorial
  */
 template<int dim>
-void mesh_info(const Mesh<dim> &tria,
-		const std::string &filename);
+void mesh_info(const Mesh<dim> &tria, const std::string &filename);
 
 /**
  * @short Select an integrator by a specified id:
@@ -85,9 +88,11 @@ void mesh_info(const Mesh<dim> &tria,
  *  @param[out] integrator_name The name of the integrator as a string.
  *  @note Integrators 4-15 are Deal.II's built-in integrators
  */
-void get_integrator_by_id(size_t id,
-		TimeIntegratorName& time_integrator,
+void get_integrator_by_id(size_t id, TimeIntegratorName& time_integrator,
 		DealIntegratorName& deal_integrator, std::string& integrator_name);
+
+boost::shared_ptr<Stencil> make_stencil(size_t d, size_t q, size_t scaling);
+
 
 } /* CFDSolverUtilities */
 } /* namespace natrium */

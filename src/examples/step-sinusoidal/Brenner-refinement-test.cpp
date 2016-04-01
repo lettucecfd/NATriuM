@@ -108,6 +108,7 @@ int main(int argc, char* argv[]) {
 	double sigma = sqrt(0.5 * b * b);
 	double epsilon = (h - b) / sigma;
 	double alpha = h / Lx;
+	double CFL = 0.4;
 
 	/// create CFD problem
 	double cell_aspect_ratio = 0.25;
@@ -126,7 +127,6 @@ int main(int argc, char* argv[]) {
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(10);
 	configuration->setOutputCheckpointInterval(100000000);
@@ -135,20 +135,20 @@ int main(int argc, char* argv[]) {
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	double tau = viscosity / (dt * (scaling * scaling) / 3.0);
 
 	// automatic decrease of timestep to get tau = 0.5
-	if ((tau < 0.5) and (automatic_decrease)) {
+	/*if ((tau < 0.5) and (automatic_decrease)) {
 		double new_dt = viscosity / (scaling * scaling / 3.0);
-		tau = viscosity / (new_dt * (scaling * scaling) / 3.0);
-		configuration->setTimeStepSize(new_dt);
+		tau = viscosity / (new_dt * (scaling * scaling) / 3.0);+
+		configuration->setCFL(CFL);
 		pout << "Config " << cfg << ": tau too small ("
 				<< viscosity / (dt * (scaling * scaling) / 3.0)
 				<< "). Automatic decrease of time step size (now CFL = "
 				<< cFL * new_dt / dt << " , tau = " << tau << ")." << endl;
 
-	}
+	}*/
 
 	if (integrator_id < 12){
 		configuration->setTimeIntegrator(OTHER);

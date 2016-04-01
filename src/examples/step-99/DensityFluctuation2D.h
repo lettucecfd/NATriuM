@@ -31,11 +31,22 @@ public:
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
 			const vector<dealii::Point<2> >& supportPoints) const;
+	virtual void refine() {
+
+		getMesh()->refine_global(m_refinementLevel);
+	}
+	virtual void transform(Mesh<2>& mesh){
+
+	}
 
 private:
 
-	boost::shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel);
+	size_t m_refinementLevel;
+
+	boost::shared_ptr<Mesh<2> > makeGrid();
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
+
+
 
 };
 } /* namespace natrium */

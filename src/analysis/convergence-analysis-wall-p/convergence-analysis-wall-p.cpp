@@ -103,14 +103,15 @@ int main() {
 				SolverConfiguration>();
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
-		configuration->setRestartAtLastCheckpoint(false);
+		//configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
 		configuration->setOutputTableInterval(1000);
 		//configuration->setOutputCheckpointInterval(1000);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(0);
-		configuration->setTimeStepSize(dt);
+		// DO NOT USE!!!!
+		configuration->setCFL(0.4);
 		configuration->setNumberOfTimeSteps(40.0 / dt);
 
 #ifdef MEASURE_ONLY_INIT_TIME

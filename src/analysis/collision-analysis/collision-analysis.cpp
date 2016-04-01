@@ -156,10 +156,6 @@ int main() {
 
 		for (double CFL = 0.1; CFL <= 12.8; CFL *= 2.) {
 
-			double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*benchmark->getMesh(), orderOfFiniteElement,
-					D2Q9(scaling), CFL);
-
 			pout << "CFL = " << CFL << endl;
 			if (tmax / dt < 2) {
 				pout << "time step too big." << endl;
@@ -177,7 +173,6 @@ int main() {
 			//configuration->setDealIntegrator(DOPRI);
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());
-			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(10000000);
 
@@ -185,7 +180,7 @@ int main() {
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(BASIC);
-			configuration->setTimeStepSize(dt);
+			configuration->setCFL(CFL);
 			configuration->setSimulationEndTime(tmax);
 
 #ifdef MEASURE_ONLY_INIT_TIME

@@ -107,12 +107,19 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	config.setWallNormalCoordinates(coord);
 	vector<double> coord2 = config.getWallNormalCoordinates();
 	BOOST_CHECK_CLOSE(coord2.at(0), 0.05, 1e-8);
-
+	BOOST_CHECK_CLOSE(config.getCFL(), 0.4, 1e-10);
+	config.setCFL(10);
+	BOOST_CHECK_CLOSE(config.getCFL(), 10, 1e-10);
+	BOOST_CHECK_CLOSE(config.getRestartAtIteration(), 0, 1e-10);
+	config.setRestartAtIteration(1);
+	BOOST_CHECK_CLOSE(config.getRestartAtIteration(), 1, 1e-10);
 	/// Failure test
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);
 	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-0.1), ConfigurationException);
 	BOOST_CHECK_THROW(config.setBGKSteadyStateGamma(-0.1),
 			ConfigurationException);
+	BOOST_CHECK_THROW(config.setCFL(-1.0), ConfigurationException);
+	BOOST_CHECK_THROW(config.setRestartAtIteration(-10), ConfigurationException);
 
 	pout << "done" << endl;
 } /*CFDSolverConfiguration_CheckSet_test*/
@@ -156,7 +163,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_PrepareOutputDirectory_test) {
 	const boost::filesystem::path outputDir(natriumTmpDir / "test_outputDir");
 
 	// Sanity test
-	config.setRestartAtLastCheckpoint(true);
+	config.setRestartAtIteration(1);
 	config.setUserInteraction(false);
 	if (boost::filesystem::is_directory(natriumTmpDir)) {
 		boost::filesystem::remove_all(natriumTmpDir);
@@ -218,7 +225,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_PrepareOutputDirectory_test) {
 		boost::filesystem::remove((outputDir / "test2.txt").c_str());
 		// check cin
 #ifdef TEST_USER_INTERACTION_CIN
-		config.setRestartAtLastCheckpoint(false);
+		config.setRestartAtIteration(0);
 		config.setUserInteraction(true);
 		config.prepareOutputDirectory();
 #endif

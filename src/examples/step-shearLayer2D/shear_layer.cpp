@@ -103,8 +103,8 @@ int main(int argc, char** argv) {
 
 	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
 			ShearLayer2D>(viscosity, refinement_level, u0, kappa);
-	double delta_t = CFDSolverUtilities::calculateTimestep<2>(
-			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);
+	/*double delta_t = CFDSolverUtilities::calculateTimestep<2>(
+			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
 
 	// **** Grid properties ****
 	pout << "**** Grid properties ****" << endl;
@@ -118,7 +118,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setRestartAtLastCheckpoint(true);
+	configuration->setRestartAtIteration(500);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
 	//configuration->setNumberOfTimeSteps(500000);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
-	configuration->setTimeStepSize(delta_t);
+	configuration->setCFL(CFL);
 	configuration->setSimulationEndTime(t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);

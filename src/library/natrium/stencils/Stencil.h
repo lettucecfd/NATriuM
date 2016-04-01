@@ -52,6 +52,12 @@ private:
 	/// DdQq type (id)
 	const StencilType m_stencilType;
 
+	// transformation matrix to project the distribution functions
+	// onto an appropriate Q-dimensional subspace of the moment space
+	numeric_matrix m_momentBasis;
+	numeric_matrix m_inverseMomentBasis;
+
+
 public:
 
 //////////////////////////////////
@@ -66,7 +72,7 @@ public:
 	 *  @param stencilType type of the stencil (e.g. D2Q9)
 	 */
 	Stencil(size_t d, size_t q, const vector<numeric_vector>& directions,
-			const vector<double>& weights, StencilType stencilType);
+			const vector<double>& weights, StencilType stencilType, const numeric_matrix& moment_basis);
 
 	/// destructor
 	virtual ~Stencil();
@@ -134,6 +140,13 @@ public:
 	virtual double getSpeedOfSound() const = 0;
 	virtual double getSpeedOfSoundSquare() const = 0;
 	virtual double getMaxParticleVelocityMagnitude() const = 0;
+
+	void getMomentBasis(numeric_matrix& m) const{
+		m = m_momentBasis;
+	}
+	void getInverseMomentBasis(numeric_matrix& m_inv) const {
+		m_inv = m_inverseMomentBasis;
+	}
 
 	virtual double getScaling() const {
 		return 1.0;

@@ -23,13 +23,10 @@ namespace natrium {
 DiamondObstacle2D::DiamondObstacle2D(double velocity, double viscosity,
 		size_t refinementLevel) :
 		ProblemDescription<2>(makeGrid(refinementLevel), viscosity, 1.0), m_meanInflowVelocity(
-				velocity) {
+				velocity), m_refinementLevel(refinementLevel) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
-
-	// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-	getMesh()->refine_global(refinementLevel);
 
 }
 
