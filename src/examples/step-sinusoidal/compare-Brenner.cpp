@@ -38,11 +38,11 @@ int main(int argc, char* argv[]) {
 	pout << "Usage: compare-Brenner <Ma-Number> <Gamma> <Refinement level>" << endl;
 
 	double cFL = 10;
-	bool automatic_decrease = true;
+	//bool automatic_decrease = true;
 	if (argc != 4){
 		assert (argc == 5);
 		cFL = atof(argv[4]);
-		automatic_decrease = false;
+		//automatic_decrease = false;
 	}
 
 	const double Ma = atof (argv[1]);
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 	const double refinementLevel = atoi (argv[3]);
 	pout << "Ma = " << Ma << ", gamma = " << gamma << endl;
 	const double Re = 1;
-	const double orderOfFiniteElement = 2 ;
+	const double orderOfFiniteElement = 2;
 
 	// parameterization by Brenner:
 	// - average height: h
@@ -114,11 +114,12 @@ int main(int argc, char* argv[]) {
 			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
+			//configuration->setRestartAtIteration(100);
 			configuration->setOutputDirectory(dirName.str());
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(1);
-			configuration->setOutputCheckpointInterval(100000000);
-			configuration->setOutputSolutionInterval(1000000);
+			configuration->setOutputCheckpointInterval(100);
+			configuration->setOutputSolutionInterval(10);
 			configuration->setCommandLineVerbosity(WELCOME);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
