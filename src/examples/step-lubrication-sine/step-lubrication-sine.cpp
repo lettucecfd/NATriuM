@@ -73,9 +73,6 @@ int main(int argc, char* argv[]) {
 	boost::shared_ptr<ProblemDescription<2> > sinusFlow =
 			boost::make_shared<LubricationSine>(viscosity, bottomVelocity,
 					refinementLevel, L, delta_radius, amplitude, cellAspectRatio, roughnessHeight, roughnessLengthRatio);
-	const double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*sinusFlow->getMesh(), orderOfFiniteElement,
-			D2Q9(scaling), cFL);
 
 	// setup configuration
 	std::stringstream dirName;
@@ -84,7 +81,6 @@ int main(int argc, char* argv[]) {
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(1000);
 	configuration->setOutputCheckpointInterval(1e9);
@@ -94,15 +90,12 @@ int main(int argc, char* argv[]) {
 	configuration->setThetaMethodTheta(0.5);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(cFL);
 
 	//configuration->setInitializationScheme(ITERATIVE);
 	//configuration->setIterativeInitializationNumberOfIterations(100);
 	//configuration->setIterativeInitializationResidual(1e-15);
 
-	if (dt > 0.1) {
-		pout << "Timestep too big." << endl;
-	}
 
 	configuration->setNumberOfTimeSteps(80000000);
 

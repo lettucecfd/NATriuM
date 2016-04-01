@@ -43,8 +43,6 @@ int main(int argc, char** argv) {
 	const double scaling = sqrt(3) * 1.5 * u_bulk / Ma;
 	boost::shared_ptr<ProblemDescription<2> > decaying = boost::make_shared<
 			DecayingTurbulence2D>(viscosity, refinement_level);
-	const double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*decaying->getMesh(), orderOfFiniteElement, D2Q9(scaling), CFL);
 	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
 	//poiseuille2D->setViscosity(viscosity);
 	//poiseuille2D->getExternalForce()->scale(viscosity);
@@ -57,7 +55,6 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(10);
 	configuration->setOutputCheckpointInterval(100000000);
@@ -66,7 +63,7 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(CRANK_NICOLSON);
 

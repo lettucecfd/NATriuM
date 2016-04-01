@@ -30,10 +30,11 @@ public:
 	class InitialVelocity: public dealii::Function<3> {
 	private:
 		TurbulentChannelFlow3D *m_flow;
+
 	public:
 		//double *m_maxUtrp;
 		InitialVelocity(TurbulentChannelFlow3D *flow) :
-				m_flow(flow){
+				m_flow(flow) {
 			//m_maxUtrp = new double (0.0);
 		}
 //		~InitialVelocity(){
@@ -43,7 +44,6 @@ public:
 		virtual double value(const dealii::Point<3>& x,
 				const unsigned int component = 0) const;
 	};
-
 
 	class IncompressibleU: public dealii::Function<3> {
 	private:
@@ -64,14 +64,13 @@ public:
 				const unsigned int component = 0) const;
 	};
 
-
 	class MeanVelocityProfile: public dealii::Function<3> {
 	private:
 		TurbulentChannelFlow3D *m_flow;
 		IncompressibleU m_initialIncompressibleU;
 	public:
 		MeanVelocityProfile(TurbulentChannelFlow3D *flow) :
-				m_flow(flow), m_initialIncompressibleU(flow){
+				m_flow(flow), m_initialIncompressibleU(flow) {
 		}
 		virtual double value(const dealii::Point<3>& x,
 				const unsigned int component = 0) const;
@@ -85,23 +84,23 @@ public:
 		double m_height;
 		double m_width;
 		UnstructuredGridFunc(double length, double height, double width) :
-			m_length(length), m_height(height), m_width(width){
+				m_length(length), m_height(height), m_width(width) {
 		}
 		double trans(const double y) const {
 			double new_y = y;
-			new_y 	/= m_height;			// normalise y/h
-			new_y 	*= M_PI; 				// 4*atan(1); // pi
-			new_y 	 = -cos(new_y); 		// cos in [-1, 1]
-			new_y 	+= 1;					// shift cos in [0, 2]
-			new_y 	*= ( m_height / 2.0 );	// set final y
+			new_y /= m_height;			// normalise y/h
+			new_y *= M_PI; 				// 4*atan(1); // pi
+			new_y = -cos(new_y); 		// cos in [-1, 1]
+			new_y += 1;					// shift cos in [0, 2]
+			new_y *= (m_height / 2.0);	// set final y
 			return new_y;
 			//return std::tanh(4 * (y - 0.5)) / tanh(2) / 2 + 0.5;
 		}
 		dealii::Point<3> operator()(const dealii::Point<3> &in) const {
-			return dealii::Point<3>(m_length*in(0), trans(in(1)), m_width*in(2));
+			return dealii::Point<3>(m_length * in(0), trans(in(1)),
+					m_width * in(2));
 		}
 	};
-
 
 	/////////////////////////////////
 	// CONSTRUCTION // DESTRUCTION //
@@ -109,14 +108,13 @@ public:
 
 	/// constructor
 	TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
-			std::vector<unsigned int> repetitions,
-			double ReTau = 180.0, double u_cl = 10,
-			double height = 1.0, double length = 6.0, double width = 3.0,
-			double orderOfFiniteElement = 2, bool is_periodic = true);
+			std::vector<unsigned int> repetitions, double ReTau = 180.0,
+			double u_cl = 10, double height = 1.0, double length = 6.0,
+			double width = 3.0, double orderOfFiniteElement = 2,
+			bool is_periodic = true);
 
 	/// destructor
 	virtual ~TurbulentChannelFlow3D();
-
 
 	/////////////////////////////////
 	// GETTER     // SETTER        //
@@ -171,6 +169,16 @@ public:
 	inline void randf_2(int idum, int &iy, vector<int> &iv, double &ran1,
 			int &iseed);
 
+	virtual void refine() {
+		// refine global
+		getMesh()->refine_global(m_refinementLevel);
+	}
+	virtual void transform(Mesh<3>& mesh) {
+		// transform grid to unstructured grid
+		dealii::GridTools::transform(
+				UnstructuredGridFunc(m_length, m_height, m_width), mesh);
+	}
+
 private:
 
 	double m_refinementLevel;
@@ -183,7 +191,6 @@ private:
 	double m_width;
 	double m_maxUtrp;
 	double m_maxIncUtrp;
-
 
 	/**
 	 * @short create triangulation for couette flow

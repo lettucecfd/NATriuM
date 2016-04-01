@@ -39,7 +39,7 @@ namespace natrium {
 
 /* forward declarations */
 class Stencil;
-
+template <size_t dim> class GridInterpolation;
 /**
  * @short Exception class for CFDSolver
  */
@@ -60,7 +60,6 @@ public:
 	}
 };
 
-
 /** @short The central class for the CFD simulation based on the DBE.
  *  @note  The CFDSolver itself is quite static but it contains interchangeable modules, e.g. for the
  *         Stencil or the time integrator. By these means, a variety of different simulation
@@ -70,6 +69,7 @@ public:
 template<size_t dim> class CFDSolver {
 	template<size_t dim2> friend class SolverStats;
 	template<size_t dim3> friend class TurbulenceStats;
+	template<size_t dim3> friend class GridInterpolation;
 
 private:
 	/// particle distribution functions
@@ -127,7 +127,7 @@ private:
 	boost::shared_ptr<TurbulenceStats<dim> > m_turbulenceStats;
 
 	// vector of data processors
-	vector< boost::shared_ptr<DataProcessor<dim> > > m_dataProcessors;
+	vector<boost::shared_ptr<DataProcessor<dim> > > m_dataProcessors;
 
 	// starting time
 	time_t m_tstart;
@@ -142,22 +142,14 @@ private:
 	// vector of grid points
 	map<dealii::types::global_dof_index, dealii::Point<dim> > m_supportPoints;
 
-
-
-
 protected:
-
-	/// save the distribution functions to files for checkpointing
-	void saveDistributionFunctionsToFiles(const string& directory);
-
-	/// load the distribution functions from files for checkpointing
-	void loadDistributionFunctionsFromFiles(const string& directory);
 
 	/// gives the possibility for Benchmark instances to add the analytic solution to output
 	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>&) {
 	}
 
 public:
+
 
 	/// constructor
 	/// @note: has to be inlined, if the template parameter is not made explicit
@@ -265,7 +257,8 @@ public:
 	}
 
 	const boost::shared_ptr<
-			TimeIntegrator<distributed_vector, distributed_sparse_matrix> >& getTimeIntegrator() const {
+			TimeIntegrator<distributed_sparse_block_matrix,
+					distributed_block_vector> >& getTimeIntegrator() const {
 		return m_timeIntegrator;
 	}
 
@@ -275,13 +268,13 @@ public:
 	double getMaxVelocityNorm() const {
 		double max = m_velocity.at(0).linfty_norm();
 		double comp2 = m_velocity.at(1).linfty_norm();
-		if (comp2 > max){
+		if (comp2 > max) {
 			max = comp2;
 		}
 		double comp3 = 0;
 		if (dim == 3)
 			comp3 = m_velocity.at(2).linfty_norm();
-		if (comp3 > max){
+		if (comp3 > max) {
 			max = comp3;
 		}
 		return max;
@@ -304,6 +297,10 @@ public:
 
 	double getTime() const {
 		return m_time;
+	}
+
+	double getTimeStepSize() const{
+		return m_timeIntegrator->getTimeStepSize();
 	}
 
 	size_t getIteration() const {
@@ -344,12 +341,17 @@ public:
 		m_velocity = velocity;
 	}
 
-	void appendDataProcessor( boost::shared_ptr<DataProcessor<dim> > proc){
+	void appendDataProcessor(boost::shared_ptr<DataProcessor<dim> > proc) {
 		m_dataProcessors.push_back(proc);
 	}
+
+	void calculateDensitiesAndVelocities();
+
+	void convertDeprecatedCheckpoint();
 }
 ;
 
 } /* namespace natrium */
+
 
 #endif /* CFDSOLVER_H_ */

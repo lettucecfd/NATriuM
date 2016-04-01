@@ -77,9 +77,6 @@ int main() {
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		//double dt = dx / (scaling * sqrt(2));
 		//chose CFL = 0.4
-		double dt = 0.4 * dx / scaling;
-
-		pout << "dt = " << dt << " ...";
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -92,14 +89,14 @@ int main() {
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
-		configuration->setRestartAtLastCheckpoint(false);
+		//configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
 		//configuration->setOutputTableInterval(10);
 		//configuration->setOutputCheckpointInterval(1000);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(0);
-		configuration->setTimeStepSize(dt);
+		configuration->setCFL(0.4);
 		if (dt > 0.1) {
 			pout << "Timestep too big." << endl;
 			continue;

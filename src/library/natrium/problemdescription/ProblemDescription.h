@@ -92,6 +92,14 @@ public:
 		return m_initialU;
 	}
 
+	virtual void refine () = 0;
+	virtual void transform (Mesh<dim>& mesh) = 0;
+
+	void refineAndTransform(){
+		refine();
+		transform(*getMesh());
+	}
+
 	/**
 	 * @short check if boundary conditions are uniquely assigned to boundary indicator
 	 * @return true, if boundaries OK

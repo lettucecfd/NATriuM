@@ -33,36 +33,24 @@ public:
 	/// destructor
 	virtual ~LidDrivenCavity2D();
 
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled;
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 * @note Usually, the densities are set to unity.
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const;
-
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const;
 
 	virtual double getCharacteristicVelocity() const {
 		return topPlateVelocity;
 	}
 
+	virtual void refine();
+	virtual void transform(Mesh<2>& mesh);
+
 private:
+
+	const size_t m_refinementLevel;
 
 	/**
 	 * @short create triangulation for lid-driven cavity flow.
 	 * @param refinementLevel (denoted as N) The grid will have 2^n*2^n even-sized square cells
 	 * @return shared pointer to a triangulation instance
 	 */
-	boost::shared_ptr<Mesh<2> > makeGrid(size_t refinementLevel);
+	boost::shared_ptr<Mesh<2> > makeGrid();
 
 	/**
 	 * @short create boundaries for lid-driven cavity flow
@@ -73,6 +61,19 @@ private:
 	 *       has a tangential speed.
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
+
+
+	/**
+	 * @short function to generate the unstructured mesh grid
+	 */
+	struct UnstructuredGridFunc {
+		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
+			return dealii::Point<2>(0.5*(pow(sin(M_PI*(in(0)-0.5)),1)+1), 0.5*(pow(sin(M_PI*(in(1)-0.5)),1)+1));
+		}
+		UnstructuredGridFunc() {
+		}
+	};
+
 
 };
 

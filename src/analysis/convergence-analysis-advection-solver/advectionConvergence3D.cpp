@@ -78,7 +78,9 @@ std::string oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	PeriodicTestDomain3D periodic(refinementLevel);
 	SEDGMinLee<3> streaming(periodic.getMesh(),
 			periodic.getBoundaries(), fe_order,
-			boost::make_shared<D3Q19>(), "", useCentralFlux);
+			boost::make_shared<D3Q19>(), useCentralFlux);
+	streaming.setupDoFs();
+	streaming.reassemble();
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 

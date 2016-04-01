@@ -46,8 +46,6 @@ int main(int argc, char** argv) {
 	boost::shared_ptr<ProblemDescription<2> > poiseuille2D = boost::make_shared<
 			PoiseuilleFlow2D>(viscosity, refinement_level, u_bulk, height,
 			length, is_periodic);
-	const double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*poiseuille2D->getMesh(), orderOfFiniteElement, D2Q9(scaling), CFL);
 	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
 	//poiseuille2D->setViscosity(viscosity);
 	//poiseuille2D->getExternalForce()->scale(viscosity);
@@ -60,7 +58,7 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(10);
 	configuration->setOutputCheckpointInterval(100000000);
@@ -69,7 +67,7 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(CRANK_NICOLSON);

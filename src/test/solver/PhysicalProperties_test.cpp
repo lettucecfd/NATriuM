@@ -24,15 +24,12 @@ BOOST_AUTO_TEST_CASE(PhysicalProperties_MassFluxX_test) {
 	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<CouetteFlow2D> (1,1,2,1,40,true);
 	boost::shared_ptr<SolverConfiguration> config  = boost::make_shared<SolverConfiguration>();
 	config->setConvergenceThreshold(1e-4);
-	config->setRestartAtLastCheckpoint(false);
 	config->setUserInteraction(false);
 	config->setSwitchOutputOff(true);
 	config->setStencilScaling(1);
 	config->setSedgOrderOfFiniteElement(2);
-	const double dt = CFDSolverUtilities::calculateTimestep<2>(
-			*problem->getMesh(), 2,
-			D2Q9(1));
-	config->setTimeStepSize(dt);
+
+	config->setCFL(0.4);
 
 	CFDSolver<2> solver(config, problem);
 	solver.run();

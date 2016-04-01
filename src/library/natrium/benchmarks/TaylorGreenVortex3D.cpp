@@ -16,33 +16,43 @@
 namespace natrium {
 
 TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
-		size_t refinementLevel) :
-		Benchmark<3>(makeGrid(), viscosity, 1) {
+		size_t refinementLevel, double cs, bool init_rho_analytically) :
+		ProblemDescription<3>(makeGrid(), viscosity, 1), m_cs(cs), m_analyticInit(
+				init_rho_analytically), m_refinementLevel(refinementLevel) {
+
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply analytic solution
-	this->setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
-
-	// Refine grid
-	getMesh()->refine_global(refinementLevel);
+	this->setInitialU(boost::make_shared<InitialVelocity>(this));
+	this->setInitialRho(boost::make_shared<InitialDensity>(this));
 
 }
 
 TaylorGreenVortex3D::~TaylorGreenVortex3D() {
 }
 
-double TaylorGreenVortex3D::AnalyticVelocity::value(const dealii::Point<3>& x,
+double TaylorGreenVortex3D::InitialVelocity::value(const dealii::Point<3>& x,
 		const unsigned int component) const {
 	assert(component < 3);
 	if (component == 0) {
-		return sin(x(0)) * cos(x(1)) * cos(x(2))
-				* exp(-2 * m_flow->getViscosity() * this->get_time());
+		return sin(x(0)) * cos(x(1)) * cos(x(2));
 	} else if (component == 1) {
-		return -cos(x(0)) * sin(x(1)) * cos(x(2))
-				* exp(-2 * m_flow->getViscosity() * this->get_time());
+		return -cos(x(0)) * sin(x(1)) * cos(x(2));
 	} else {
 		return 0;
+	}
+}
+
+double TaylorGreenVortex3D::InitialDensity::value(const dealii::Point<3>& x,
+		const unsigned int component) const {
+	assert(component == 0);
+	if (m_flow->m_analyticInit) {
+		double rho0 = 1;
+		double p = rho0 / 16. * (cos(2 * x(0)) + cos(2 * x(1))) * (cos (2* x(2)) + 2);
+		return rho0 + p / (m_flow->m_cs * m_flow->m_cs);
+	} else {
+		return 1.0;
 	}
 }
 
@@ -52,12 +62,10 @@ double TaylorGreenVortex3D::AnalyticVelocity::value(const dealii::Point<3>& x,
  */
 boost::shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid() {
 	//Creation of the principal domain
-#ifdef WITH_TRILINOS_MPI
+
 	boost::shared_ptr<Mesh<3> > square =
 	boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-#else
-	boost::shared_ptr<Mesh<3> > square = boost::make_shared<Mesh<3> >();
-#endif
+
 	dealii::GridGenerator::hyper_cube(*square, 0, 8 * atan(1));
 
 	// Assign boundary indicators to the faces of the "parent cell"
@@ -82,9 +90,12 @@ boost::shared_ptr<BoundaryCollection<3> > TaylorGreenVortex3D::makeBoundaries() 
 	// make boundary description
 	boost::shared_ptr<BoundaryCollection<3> > boundaries = boost::make_shared<
 			BoundaryCollection<3> >();
-	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
-	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
-	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
+	boundaries->addBoundary(
+			boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
+	boundaries->addBoundary(
+			boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
+	boundaries->addBoundary(
+			boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();

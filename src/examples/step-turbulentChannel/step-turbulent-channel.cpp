@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 	const int orderOfFiniteElement = atoi(argv[12]);
 	const int filterID = atoi(argv[13]);
 
-	bool is_restarted = atoi(argv[14]);
+	bool restart_iteration = atoi(argv[14]);
 	bool is_periodic = true;
 
 	// Turbulence statistics
@@ -92,6 +92,7 @@ int main(int argc, char** argv) {
 		samplePointCoordinates[1] = 6. / 24;
 		samplePointCoordinates[2] = 1. / 24;
 	}
+
 
 	for (int i = 0; i < noSamplePoints; i++) {
 		samplePointCoordinates[i] = 0.5 * height
@@ -132,8 +133,6 @@ int main(int argc, char** argv) {
 			TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
 			ReTau, u_cl, height, length, width, orderOfFiniteElement,
 			is_periodic);
-	const double dt = CFDSolverUtilities::calculateTimestep<3>(
-			*channel3D->getMesh(), orderOfFiniteElement, D3Q19(scaling), CFL);
 
 	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
 	//poiseuille2D->setViscosity(viscosity);
@@ -144,11 +143,12 @@ int main(int argc, char** argv) {
 	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D/Re" << ReTau
 			<< "-N" << refinementLevel << "-p" << orderOfFiniteElement
 			<< "-filt" << filterID;
+
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtLastCheckpoint(is_restarted);
+	configuration->setRestartAtIteration(restart_iteration);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(100);
 	configuration->setOutputCheckpointInterval(1000);
@@ -157,9 +157,10 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
+
 
 	if (filterID == 1) {
 		configuration->setFiltering(true);
@@ -178,16 +179,16 @@ int main(int argc, char** argv) {
 	//configuration->setInitializationScheme(ITERATIVE);
 	//configuration->setIterativeInitializationNumberOfIterations(100);
 	//configuration->setIterativeInitializationResidual(1e-15);
-
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(1);
+
 	//configuration->setSimulationEndTime(); // unit [s]
 
 	// ----------------------------------------------------------
 	// create a separate object for the initial velocity function
 	TurbulentChannelFlow3D::IncompressibleU test_velocity(channel3D.get());
 
-	if (not is_restarted) {
+	if (restart_iteration == 0) {
 		// Divergence check
 		pout << "**** Divergence check ****" << endl;
 		//srand(1);
@@ -236,7 +237,7 @@ int main(int argc, char** argv) {
 	// make solver object and run simulation
 	CFDSolver<3> solver(configuration, channel3D);
 
-	if (not is_restarted) {
+	if (restart_iteration == 0) {
 		double utrp_max = channel3D.get()->getMaxUtrp();
 		double utrp_inc_max = channel3D.get()->getMaxIncUtrp();
 		double scalingFactor = utrp_max / utrp_inc_max;

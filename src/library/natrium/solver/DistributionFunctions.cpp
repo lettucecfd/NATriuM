@@ -23,7 +23,7 @@ DistributionFunctions::DistributionFunctions(
 	}
 	m_fStream.collect_sizes();
 	for (size_t i = 1; i < m_Q; i++) {
-		m_fStream.block(i-1) = f.at(i);
+		m_fStream.block(i - 1) = f.at(i);
 	}
 }
 
@@ -92,9 +92,60 @@ void DistributionFunctions::compress(
 
 }
 
-void DistributionFunctions::operator=(const DistributionFunctions& other){
+void DistributionFunctions::operator=(const DistributionFunctions& other) {
 	m_f0 = other.getF0();
 	m_fStream = other.getFStream();
+}
+
+void DistributionFunctions::transferFromOtherScaling(const Stencil& old_stencil,
+		const Stencil& new_stencil,
+		const dealii::IndexSet& locally_owned_dofs) {
+
+	assert(new_stencil.getQ() == m_Q);
+	assert(old_stencil.getQ() == m_Q);
+	assert(old_stencil.getD() == new_stencil.getD());
+
+	if (abs(old_stencil.getSpeedOfSound() - new_stencil.getSpeedOfSound())
+			< 1e-5) {
+		return;
+	}
+
+	// vectors and matrices for transformations
+	numeric_vector old_f(m_Q);
+	numeric_vector new_f(m_Q);
+	numeric_matrix old_f_to_M(m_Q);
+	numeric_matrix M_to_new_f(m_Q);
+	numeric_matrix T(m_Q); // trafo matrix
+	// avoid calls to block() // avoid calls to getDirections
+	std::vector<distributed_vector*> f;
+	for (size_t i = 0; i < m_Q; i++) {
+		distributed_vector* fi = &at(i);
+		f.push_back(fi);
+	}
+	// get transformation matrices
+	old_stencil.getMomentBasis(old_f_to_M);
+	new_stencil.getInverseMomentBasis(M_to_new_f);
+	M_to_new_f.mmult(T, old_f_to_M);
+
+
+
+	//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+	for (; it != end; it++) {
+		size_t i = *it;
+
+		// fill old_f
+		for (size_t j = 0; j < m_Q; j++){
+			old_f(j) = (*f[j])(i);
+		}
+		// Trafo
+		T.vmult(new_f, old_f);
+		// assign back to global dofs
+		for (size_t j = 0; j < m_Q; j++){
+			(*f[j])(i) = new_f(j);
+		}
+	}
 }
 
 } /* namespace natrium */

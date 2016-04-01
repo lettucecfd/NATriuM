@@ -16,13 +16,10 @@
 namespace natrium {
 
 PeriodicTestDomain3D::PeriodicTestDomain3D(size_t globalRefinementLevel) :
-		ProblemDescription<3>(makeGrid(), 1.0, 1) {
+		ProblemDescription<3>(makeGrid(), 1.0, 1), m_refinementLevel(globalRefinementLevel) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
-
-	// Refine grid
-	getMesh()->refine_global(globalRefinementLevel);
 }
 
 PeriodicTestDomain3D::~PeriodicTestDomain3D() {

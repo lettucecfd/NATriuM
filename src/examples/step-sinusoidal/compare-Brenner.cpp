@@ -38,11 +38,11 @@ int main(int argc, char* argv[]) {
 	pout << "Usage: compare-Brenner <Ma-Number> <Gamma> <Refinement level>" << endl;
 
 	double cFL = 10;
-	bool automatic_decrease = true;
+	//bool automatic_decrease = true;
 	if (argc != 4){
 		assert (argc == 5);
 		cFL = atof(argv[4]);
-		automatic_decrease = false;
+		//automatic_decrease = false;
 	}
 
 	const double Ma = atof (argv[1]);
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 	const double refinementLevel = atoi (argv[3]);
 	pout << "Ma = " << Ma << ", gamma = " << gamma << endl;
 	const double Re = 1;
-	const double orderOfFiniteElement = 2 ;
+	const double orderOfFiniteElement = 2;
 
 	// parameterization by Brenner:
 	// - average height: h
@@ -106,9 +106,6 @@ int main(int argc, char* argv[]) {
 			boost::shared_ptr<ProblemDescription<2> > sinusFlow = boost::make_shared<
 					SinusoidalShear2D>(viscosity, u_a, refinementLevel, Lx, h,
 					b, cell_aspect_ratio);
-			const double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*sinusFlow->getMesh(), orderOfFiniteElement,
-					D2Q9(scaling), cFL);
 
 			/// setup configuration
 			std::stringstream dirName;
@@ -117,26 +114,27 @@ int main(int argc, char* argv[]) {
 			boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
+			//configuration->setRestartAtIteration(100);
 			configuration->setOutputDirectory(dirName.str());
-			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(1);
-			configuration->setOutputCheckpointInterval(100000000);
-			configuration->setOutputSolutionInterval(1000000);
+			configuration->setOutputCheckpointInterval(100);
+			configuration->setOutputSolutionInterval(10);
 			configuration->setCommandLineVerbosity(WELCOME);
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(ALL);
-			configuration->setTimeStepSize(dt);
-			double tau = viscosity/(dt*(scaling*scaling)/3.0);
+			configuration->setCFL(cFL);
+			//double tau = viscosity/(dt*(scaling*scaling)/3.0);
 
+			/*
 			if ((tau < 0.5) and (automatic_decrease)) {
 				double new_dt  = viscosity/(scaling*scaling/3.0);
 				tau = viscosity/(new_dt*(scaling*scaling)/3.0);
 				configuration->setTimeStepSize(new_dt);
 				pout << "Config " << i <<": tau too small. Automatic decrease of time step size (now CFL = " << cFL * new_dt / dt << " , tau = " << tau << ")." << endl;
 
-			}
+			}*/
 
 
 
@@ -164,7 +162,7 @@ int main(int argc, char* argv[]) {
 			double Psi_s = 2*qx / (sigma * u_a) - h / sigma;
 			resultFile << gamma << "  " << i << "  " << epsilon << "   "
 					<< alpha << "   " << Lx << "   " << h << "   " << a << "   "
-					<< b << "   " << qx/h << "   " << sigma << "   " << tau << "  " << Psi_s  << endl;
+					<< b << "   " << qx/h << "   " << sigma << "   " << solver.getTau() << "  " << Psi_s  << endl;
 			pout << "Flow factor " << Psi_s << endl;
 		//}
 	}
