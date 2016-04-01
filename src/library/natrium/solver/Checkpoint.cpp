@@ -81,7 +81,7 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 	double phys_time = 0.0;
 	size_t iteration_start = 0;
 	double stencil_scaling = 0.0;
-	size_t fe_order;
+	size_t fe_order = 0;
 	if (is_MPI_rank_0()) {
 		std::ifstream ifile(m_statusFile.string());
 		ifile >> iteration_start;
@@ -97,9 +97,9 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			iteration_start,
 			MPI_COMM_WORLD).max;
 	status.stencilScaling = dealii::Utilities::MPI::min_max_avg(stencil_scaling,
-	MPI_COMM_WORLD).max;
+			MPI_COMM_WORLD).max;
 	status.feOrder = dealii::Utilities::MPI::min_max_avg(fe_order,
-	MPI_COMM_WORLD).max;
+			MPI_COMM_WORLD).max;
 
 	// load mesh and solution
 	try {
@@ -120,11 +120,8 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		cout << "Make solution transfer" << endl;
 		dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
 				> sol_trans(old_dof_handler);
-		cout << "Create old fe" << endl;
-		dealii::FE_DGQArbitraryNodes<dim> old_fe(
-				dealii::QGaussLobatto<1>(status.feOrder + 1));
 		cout << "Distribute dofs" << endl;
-		old_dof_handler.distribute_dofs(old_fe);
+		old_dof_handler.distribute_dofs(*advection.getFe());
 		cout << "Make distribution functions" << endl;
 		DistributionFunctions old_f;
 		cout << "Reinit" << endl;
@@ -144,7 +141,7 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		problem.refineAndTransform();
 		LOG(DETAILED) << "Interpolate to new grid" << endl;
 		// dof handler with old fe on new mesh
-		cout << mesh.n_levels() << " " << old_mesh.n_levels() << endl;
+		/*cout << mesh.n_levels() << " " << old_mesh.n_levels() << endl;
 		cout << mesh.n_cells(0) << " " << old_mesh.n_cells(0) << endl;
 		typename Mesh<dim>::cell_iterator cell_1 = mesh.begin(0), cell_2 =
 				old_mesh.begin(0), endc = mesh.end(0);
@@ -153,39 +150,19 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 					v < dealii::GeometryInfo<dim>::vertices_per_cell; ++v)
 				if (cell_1->vertex(v) != cell_2->vertex(v))
 					cout << "vertex " << v << "does not agree on cells" << cell_1->id() << ", " << cell_2->id();
-		dealii::DoFHandler<dim> dof_handler_old_fe(mesh);
-		dof_handler_old_fe.distribute_dofs(old_fe);
-		f.reinit(new_stencil->getQ(), dof_handler_old_fe.locally_owned_dofs(),
+		*/
+		//dealii::DoFHandler<dim> dof_handler_old_fe(mesh);
+		advection.setupDoFs();
+		f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
 		MPI_COMM_WORLD);
 		// interpolate from old to new mesh
 		for (size_t i = 0; i < new_stencil->getQ(); i++) {
 			cout << "interpolate to new mesh " << i << endl;
 			dealii::VectorTools::interpolate_to_different_mesh(old_dof_handler,
-					old_f.at(i), dof_handler_old_fe, f.at(i));
-		}
-		old_f = f;
-
-		LOG(DETAILED) << "Interpolate to new finite element " << endl;
-		// make transfer matrix for interpolating from old fe to new fe
-		dealii::FullMatrix<double> transfer(
-				pow(advection.getOrderOfFiniteElement() + 1, dim),
-				pow(status.feOrder + 1, dim));
-		cout << "Get interpolation matrix" << endl;
-		advection.getFe()->get_interpolation_matrix(old_fe, transfer);
-		cout << "setup dofs" << endl;
-		// distribute dofs
-		advection.setupDoFs();
-		cout << "reinit f" << endl;
-		f.reinit(new_stencil->getQ(), advection.getLocallyOwnedDofs(),
-		MPI_COMM_WORLD);
-		for (size_t i = 0; i < new_stencil->getQ(); i++) {
-			cout << "interpolate to new fe " << i << endl;
-			dealii::VectorTools::interpolate(dof_handler_old_fe, dof_handler,
-					transfer, old_f.at(i), f.at(i));
+					old_f.at(i), dof_handler, f.at(i));
 		}
 
 		// clear old dof handler to enable deletion of automatic variable old_fe
-		dof_handler_old_fe.clear();
 		old_dof_handler.clear();
 
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
@@ -194,12 +171,16 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 						"Please switch off the restart option to start the simulation from the beginning.");
 	}
 
+
+	// TODO Enable transfer to new scaling
 	LOG(DETAILED) << "Transfer to new scaling" << endl;
 	// transfer to current stencil scaling, if required
 	boost::shared_ptr<Stencil> old_stencil = CFDSolverUtilities::make_stencil(
 			new_stencil->getD(), new_stencil->getQ(), status.stencilScaling);
 	f.transferFromOtherScaling(*old_stencil, *new_stencil,
 			dof_handler.locally_owned_dofs());
+
+	LOG(DETAILED) << "Restart successful" << endl;
 
 } /* load */
 

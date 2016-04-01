@@ -55,7 +55,7 @@ public:
 		getMesh()->refine_global(m_refinementLevel);
 	}
 
-	virtual void transform(Mesh<2>& mesh){
+	virtual void transform(Mesh<2>& ){
 
 	}
 
