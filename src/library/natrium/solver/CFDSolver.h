@@ -212,13 +212,6 @@ public:
 	void applyInitialVelocities(vector<distributed_vector>& initialVelocities,
 			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
 
-
-	/// save the distribution functions to files for checkpointing
-	void saveDistributionFunctionsToFiles(const string& directory);
-
-	/// load the distribution functions from files for checkpointing
-	void loadDistributionFunctionsFromFiles(const string& directory);
-
 	/**
 	 * @short create output data and write to file
 	 */

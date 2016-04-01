@@ -841,24 +841,6 @@ void CFDSolver<dim>::initializeDistributions() {
 	LOG(BASIC) << "Initialize distribution functions: done." << endl;
 }
 
-template<size_t dim>
-void CFDSolver<dim>::saveDistributionFunctionsToFiles(const string& directory) {
-	for (size_t i = 0; i < m_stencil->getQ(); i++) {
-		// filename
-		std::stringstream filename;
-		filename << directory << "/checkpoint_f_" << i << getIteration()
-				<< ".dat";
-
-	}
-}
-
-template<size_t dim>
-void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
-		const string& directory) {
-// PRECONDITION: vectors already created with the right sizes
-// read the distribution functions from file
-
-}
 
 template<size_t dim>
 void natrium::CFDSolver<dim>::applyInitialDensities(
