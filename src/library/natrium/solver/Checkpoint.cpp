@@ -101,6 +101,13 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 	status.feOrder = dealii::Utilities::MPI::min_max_avg(fe_order,
 			MPI_COMM_WORLD).max;
 
+	if (status.feOrder != advection.getOrderOfFiniteElement()){
+		std::stringstream msg;
+		msg << "You are not allowed to restart the simulation with other order of finite element."
+				"Previously: " << status.feOrder << "; Now: " << advection.getOrderOfFiniteElement() << endl;
+		natrium_errorexit(msg.str().c_str());
+	}
+
 	// load mesh and solution
 	try {
 		// copy triangulation
@@ -112,52 +119,39 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		// Prepare read old solution
 		// load mesh (must not be done with refined grid)
 		old_mesh.load(m_dataFile.c_str());
+		// on calling load(), the old mesh has been refined, as before saving
 		// transform old mesh
 		problem.transform(old_mesh);
-		cout << "Make old dof handler" << endl;
-		// on calling load(), the old mesh has been refined, as before saving
+
+		// setup dofs on old mesh
 		dealii::DoFHandler<dim> old_dof_handler(old_mesh);
-		cout << "Make solution transfer" << endl;
 		dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
 				> sol_trans(old_dof_handler);
-		cout << "Distribute dofs" << endl;
 		old_dof_handler.distribute_dofs(*advection.getFe());
-		cout << "Make distribution functions" << endl;
 		DistributionFunctions old_f;
-		cout << "Reinit" << endl;
-		old_f.reinit(new_stencil->getQ(), old_dof_handler.locally_owned_dofs(),
+			old_f.reinit(new_stencil->getQ(), old_dof_handler.locally_owned_dofs(),
 		MPI_COMM_WORLD);
+
 		// read old solution
 		std::vector<distributed_vector*> to_load;
 		for (size_t i = 0; i < new_stencil->getQ(); i++) {
 			distributed_vector* p = &old_f.at(i);
 			to_load.push_back(p);
 		}
-		cout << "deserialize" << endl;
 		sol_trans.deserialize(to_load);
 
-		// Refine and transform new mesh
-		cout << "Refine" << endl;
-		problem.refineAndTransform();
+
 		LOG(DETAILED) << "Interpolate to new grid" << endl;
-		// dof handler with old fe on new mesh
-		/*cout << mesh.n_levels() << " " << old_mesh.n_levels() << endl;
-		cout << mesh.n_cells(0) << " " << old_mesh.n_cells(0) << endl;
-		typename Mesh<dim>::cell_iterator cell_1 = mesh.begin(0), cell_2 =
-				old_mesh.begin(0), endc = mesh.end(0);
-		for (; cell_1 != endc; ++cell_1, ++cell_2)
-			for (unsigned int v = 0;
-					v < dealii::GeometryInfo<dim>::vertices_per_cell; ++v)
-				if (cell_1->vertex(v) != cell_2->vertex(v))
-					cout << "vertex " << v << "does not agree on cells" << cell_1->id() << ", " << cell_2->id();
-		*/
-		//dealii::DoFHandler<dim> dof_handler_old_fe(mesh);
+		// Refine and transform new mesh
+		problem.refineAndTransform();
+
+		// setup dofs on new mesh
 		advection.setupDoFs();
 		f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
 		MPI_COMM_WORLD);
+
 		// interpolate from old to new mesh
 		for (size_t i = 0; i < new_stencil->getQ(); i++) {
-			cout << "interpolate to new mesh " << i << endl;
 			dealii::VectorTools::interpolate_to_different_mesh(old_dof_handler,
 					old_f.at(i), dof_handler, f.at(i));
 		}
@@ -169,16 +163,24 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		natrium_errorexit(
 				"An error occurred while reading the mesh and distribution functions from checkpoint file: "
 						"Please switch off the restart option to start the simulation from the beginning.");
+	} catch (dealii::StandardExceptions::ExcMessage& excM) {
+		std::stringstream msg;
+		msg << "Deal error while restarting:" << excM.what() <<
+				"If the error has to do with parallel partitioning, try to restart with a refinement and number of processes"
+				"that does not differ much from the previous simulation.";
+		natrium_errorexit(msg.str().c_str());
+
 	}
 
 
 	// TODO Enable transfer to new scaling
-	LOG(DETAILED) << "Transfer to new scaling" << endl;
+	/*LOG(DETAILED) << "Transfer to new scaling" << endl;
 	// transfer to current stencil scaling, if required
 	boost::shared_ptr<Stencil> old_stencil = CFDSolverUtilities::make_stencil(
 			new_stencil->getD(), new_stencil->getQ(), status.stencilScaling);
 	f.transferFromOtherScaling(*old_stencil, *new_stencil,
-			dof_handler.locally_owned_dofs());
+			dof_handler.locally_owned_dofs());*/
+	f.compress(dealii::VectorOperation::insert);
 
 	LOG(DETAILED) << "Restart successful" << endl;
 
