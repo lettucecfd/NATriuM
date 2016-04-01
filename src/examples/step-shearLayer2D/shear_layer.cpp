@@ -102,9 +102,9 @@ int main(int argc, char** argv) {
 	const double t_c = 2.0 / u0; //twice the eddy turnover time
 
 	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
-			ShearLayer2D>(viscosity, 0, u0, kappa);
-	double delta_t = CFDSolverUtilities::calculateTimestep<2>(
-			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);
+			ShearLayer2D>(viscosity, refinement_level, u0, kappa);
+	/*double delta_t = CFDSolverUtilities::calculateTimestep<2>(
+			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
 
 	// **** Grid properties ****
 	pout << "**** Grid properties ****" << endl;
