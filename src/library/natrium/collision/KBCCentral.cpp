@@ -382,9 +382,9 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 						+ 0.5 * (-ux * ux + uy * uy - 1 * ux - 1 * uy) * N
 						+ 0.5 * (scalar_product + (1) * ux - 1 * uy) * T);
 
-			for (int p=0;p<9;p++){
+/*			for (int p=0;p<9;p++){
 		 cout << p << " : "<< f.at(p)(i) << " " << k.at(p) << " " << s.at(p) << " " << h.at(p) << " " << f.at(p)(i)-k.at(p) - s.at(p) -h.at(p)  << endl;
-		 }
+		 } */
 
 #endif
 
@@ -417,9 +417,9 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 				* ((1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
 #endif
 
-		for (int p=0;p<9;p++){
+	/*	for (int p=0;p<9;p++){
 		 cout << p << "eq : "<< feq.at(p) << " " << k.at(p) << " " << seq.at(p) << " " << heq.at(p) << " " << feq.at(p) -k.at(p) -seq.at(p) - heq.at(p) <<endl;
-		 }
+		 } */
 
 		//deviation of the shear parts
 		vector<double> delta_s(Q);

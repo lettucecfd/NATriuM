@@ -46,7 +46,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
-#define KBC_D
+#define KBC_C
 
 	size_t Q = getQ();
 
