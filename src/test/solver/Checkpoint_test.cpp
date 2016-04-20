@@ -222,23 +222,28 @@ BOOST_AUTO_TEST_CASE(Checkpoint_ResumeOtherMa) {
 	CFDSolver<2> solver(cfg, tgv);
 	solver.run();
 	const vector<distributed_vector>& u1 = solver.getVelocity();
+	const distributed_vector& rho1 = solver.getDensity();
 
 	// load checkpoint
 	boost::shared_ptr<ProblemDescription<2> > tgv2 = boost::make_shared<
-				TaylorGreenVortex2D>(viscosity, ref_level);
-	cfg->setStencilScaling(2.5);
+			TaylorGreenVortex2D>(viscosity, ref_level);
+	cfg->setStencilScaling(110.5);
 	cfg->setRestartAtIteration(1);
 	CFDSolver<2> solver2(cfg, tgv2);
 	solver2.collide();
 	const vector<distributed_vector>& u2 = solver2.getVelocity();
+	const distributed_vector& rho2 = solver2.getDensity();
 
 	// compare
-	distributed_vector cmp = u1.at(0);
+	distributed_vector cmp = rho1;
+	cmp.add(-1.0, rho2);
+	BOOST_CHECK_SMALL(cmp.norm_sqr(), 1e-4);
+	cmp = u1.at(0);
 	cmp.add(-1.0, u2.at(0));
-	BOOST_CHECK_SMALL(cmp.norm_sqr() , 1e-4);
+	BOOST_CHECK_SMALL(cmp.norm_sqr(), 1e-4);
 	cmp = u1.at(1);
 	cmp.add(-1.0, u2.at(1));
-	BOOST_CHECK_SMALL(cmp.norm_sqr() , 1e-4);
+	BOOST_CHECK_SMALL(cmp.norm_sqr(), 1e-4);
 
 	// clean up
 	if (is_MPI_rank_0()) {
