@@ -169,9 +169,9 @@ public:
 	inline void randf_2(int idum, int &iy, vector<int> &iv, double &ran1,
 			int &iseed);
 
-	virtual void refine() {
+	virtual void refine(Mesh<3>& mesh) {
 		// refine global
-		getMesh()->refine_global(m_refinementLevel);
+		mesh.refine_global(m_refinementLevel);
 	}
 	virtual void transform(Mesh<3>& mesh) {
 		// transform grid to unstructured grid

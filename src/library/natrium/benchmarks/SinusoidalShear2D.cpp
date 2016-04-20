@@ -90,9 +90,9 @@ double SinusoidalShear2D::InitialVelocity::value(const dealii::Point<2>&,
 #endif
 }
 
-void SinusoidalShear2D::refine(){
+void SinusoidalShear2D::refine(Mesh<2>& mesh){
 	// Refine grid
-	getMesh()->refine_global(m_refinementLevel);
+	mesh.refine_global(m_refinementLevel);
 }
 
 void SinusoidalShear2D::transform(Mesh<2>& mesh){

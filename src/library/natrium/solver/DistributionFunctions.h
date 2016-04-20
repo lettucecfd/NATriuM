@@ -153,6 +153,13 @@ public:
 	 */
 	void operator=(const DistributionFunctions& other);
 
+	/**
+	 * @short checks whether two DistributionFunction objects are equal wrt. a given threshold
+	 * @param other Other DistributionFunction
+	 * @param threshold threshold (default: 1e-10)
+	 */
+	bool equals(const DistributionFunctions& other, double threshold = 1e-8) const;
+
 	void transferFromOtherScaling(const Stencil& old_stencil, const Stencil& new_stencil, const dealii::IndexSet& locally_owned_dofs);
 
 };

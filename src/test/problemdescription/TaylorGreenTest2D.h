@@ -149,8 +149,8 @@ private:
 		return boundaries;
 	}
 
-	virtual void refine(){
-		getMesh()->refine_global(m_refinementLevel);
+	virtual void refine(Mesh<2>& mesh){
+		mesh.refine_global(m_refinementLevel);
 	}
 
 	virtual void transform(Mesh<2>& ) {

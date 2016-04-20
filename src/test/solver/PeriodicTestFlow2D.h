@@ -54,11 +54,11 @@ public:
 	/// destructor
 	virtual ~SteadyPeriodicTestFlow2D() {
 	}
-	virtual void refine(){
-		getMesh()->refine_global(m_refinementLevel);
+	virtual void refine(Mesh<2>& mesh){
+		mesh.refine_global(m_refinementLevel);
 
 	}
-	virtual void transform(Mesh<2>& mesh){
+	virtual void transform(Mesh<2>& ){
 
 	}
 
@@ -108,7 +108,9 @@ private:
 
 };
 
+
 class UnsteadyPeriodicTestFlow2D: public SteadyPeriodicTestFlow2D {
+
 public:
 	// class that represents the initial velocity
 	class UnsteadyInitialVelocity: public dealii::Function<2> {
@@ -138,6 +140,8 @@ public:
 	/// destructor
 	virtual ~UnsteadyPeriodicTestFlow2D() {
 	}
+
+
 
 };
 

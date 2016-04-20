@@ -86,10 +86,9 @@ double LubricationSine::InitialVelocity::value(const dealii::Point<2>& x,
 	}
 }
 
-void LubricationSine::refine() {
+void LubricationSine::refine(Mesh<2>& mesh) {
 	// refine grid
-	boost::shared_ptr<Mesh<2> > rect = getMesh();
-	rect->refine_global(m_refinementLevel);
+	mesh.refine_global(m_refinementLevel);
 }
 
 void LubricationSine::transform(Mesh<2>& mesh){

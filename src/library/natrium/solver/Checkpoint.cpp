@@ -97,89 +97,120 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			iteration_start,
 			MPI_COMM_WORLD).max;
 	status.stencilScaling = dealii::Utilities::MPI::min_max_avg(stencil_scaling,
-			MPI_COMM_WORLD).max;
+	MPI_COMM_WORLD).max;
 	status.feOrder = dealii::Utilities::MPI::min_max_avg(fe_order,
-			MPI_COMM_WORLD).max;
+	MPI_COMM_WORLD).max;
 
-	if (status.feOrder != advection.getOrderOfFiniteElement()){
+	if (status.feOrder != advection.getOrderOfFiniteElement()) {
 		std::stringstream msg;
-		msg << "You are not allowed to restart the simulation with other order of finite element."
-				"Previously: " << status.feOrder << "; Now: " << advection.getOrderOfFiniteElement() << endl;
+		msg
+				<< "You are not allowed to restart the simulation with other order of finite element."
+						"Previously: " << status.feOrder << "; Now: "
+				<< advection.getOrderOfFiniteElement() << endl;
 		natrium_errorexit(msg.str().c_str());
 	}
 
 	// load mesh and solution
 	try {
 		// copy triangulation
-		Mesh<dim> old_mesh(MPI_COMM_WORLD);
+		// create future mesh just to get difference in refinement level
+		Mesh<dim> future_mesh(MPI_COMM_WORLD);
 		// copy mesh
-		old_mesh.copy_triangulation(mesh);
+		future_mesh.copy_triangulation(mesh);
+		// Refine and transform tmp mesh to get the desired refinement level
+		problem.refineAndTransform(future_mesh);
+		size_t nlevels_new = future_mesh.n_global_levels();
 
 		LOG(DETAILED) << "Read old solution" << endl;
 		// Prepare read old solution
 		// load mesh (must not be done with refined grid)
-		old_mesh.load(m_dataFile.c_str());
+		mesh.load(m_dataFile.c_str());
 		// on calling load(), the old mesh has been refined, as before saving
-		// transform old mesh
-		problem.transform(old_mesh);
 
 		// setup dofs on old mesh
-		dealii::DoFHandler<dim> old_dof_handler(old_mesh);
 		dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
-				> sol_trans(old_dof_handler);
-		old_dof_handler.distribute_dofs(*advection.getFe());
-		DistributionFunctions old_f;
-			old_f.reinit(new_stencil->getQ(), old_dof_handler.locally_owned_dofs(),
+				> sol_trans(dof_handler);
+		dof_handler.distribute_dofs(*advection.getFe());
+		DistributionFunctions tmp_f;
+		tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
 		MPI_COMM_WORLD);
 
 		// read old solution
-		std::vector<distributed_vector*> to_load;
+		std::vector<distributed_vector*> all_read;
 		for (size_t i = 0; i < new_stencil->getQ(); i++) {
-			distributed_vector* p = &old_f.at(i);
-			to_load.push_back(p);
+			distributed_vector* ptr = &tmp_f.at(i);
+			all_read.push_back(ptr);
 		}
-		sol_trans.deserialize(to_load);
+		sol_trans.deserialize(all_read);
 
+		LOG(DETAILED) << "Interpolate to refined grid" << endl;
 
-		LOG(DETAILED) << "Interpolate to new grid" << endl;
-		// Refine and transform new mesh
-		problem.refineAndTransform();
-
-		// setup dofs on new mesh
-		advection.setupDoFs();
-		f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
-		MPI_COMM_WORLD);
-
-		// interpolate from old to new mesh
-		for (size_t i = 0; i < new_stencil->getQ(); i++) {
-			dealii::VectorTools::interpolate_to_different_mesh(old_dof_handler,
-					old_f.at(i), dof_handler, f.at(i));
+		// assumption: future_mesh is a globally refined version of mesh
+		if (mesh.n_global_levels() == nlevels_new) {
+			advection.setupDoFs();
+			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+			MPI_COMM_WORLD);
+			f = tmp_f;
 		}
+		while (mesh.n_global_levels() < nlevels_new) {
+			// do one refinemenent step
+			dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
+					> soltrans_refine(dof_handler);
+			mesh.set_all_refine_flags();
+			mesh.prepare_coarsening_and_refinement();
+			// prepare all in
+			std::vector<const distributed_vector*> all_in;
+			all_in.clear();
+			for (size_t i = 0; i < new_stencil->getQ(); i++) {
+				const distributed_vector* ptr = &tmp_f.at(i);
+				all_in.push_back(ptr);
+			}
+			soltrans_refine.prepare_for_coarsening_and_refinement(all_in);
+			mesh.execute_coarsening_and_refinement();
+			advection.setupDoFs();
+			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+			MPI_COMM_WORLD);
+			// write f pointers into std::vector
+			std::vector<distributed_vector*> all_out;
+			all_out.clear();
+			for (size_t i = 0; i < new_stencil->getQ(); i++) {
+				distributed_vector* p = &f.at(i);
+				all_out.push_back(p);
+			}
+			// interpolate
+			soltrans_refine.interpolate(all_out);
+
+			// prepare next cycle
+			tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+			MPI_COMM_WORLD);
+			tmp_f = f;
+		}
+
+		// transform mesh
+		problem.transform(mesh);
 
 		// clear old dof handler to enable deletion of automatic variable old_fe
-		old_dof_handler.clear();
-
+		//old_dof_handler.clear();
 	} catch (dealii::StandardExceptions::ExcIO& excIO) {
 		natrium_errorexit(
 				"An error occurred while reading the mesh and distribution functions from checkpoint file: "
 						"Please switch off the restart option to start the simulation from the beginning.");
 	} catch (dealii::StandardExceptions::ExcMessage& excM) {
 		std::stringstream msg;
-		msg << "Deal error while restarting:" << excM.what() <<
-				"If the error has to do with parallel partitioning, try to restart with a refinement and number of processes"
-				"that does not differ much from the previous simulation.";
+		msg << "Deal error while restarting:" << excM.what()
+				<< "If the error has to do with parallel partitioning, try to restart with a refinement and number of processes"
+						"that does not differ much from the previous simulation.";
 		natrium_errorexit(msg.str().c_str());
 
 	}
 
-
 	// TODO Enable transfer to new scaling
-	/*LOG(DETAILED) << "Transfer to new scaling" << endl;
+	LOG(DETAILED) << "Transfer to new scaling" << endl;
 	// transfer to current stencil scaling, if required
 	boost::shared_ptr<Stencil> old_stencil = CFDSolverUtilities::make_stencil(
 			new_stencil->getD(), new_stencil->getQ(), status.stencilScaling);
 	f.transferFromOtherScaling(*old_stencil, *new_stencil,
-			dof_handler.locally_owned_dofs());*/
+			dof_handler.locally_owned_dofs());
 	f.compress(dealii::VectorOperation::insert);
 
 	LOG(DETAILED) << "Restart successful" << endl;
@@ -307,9 +338,9 @@ void Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(
 	status.time = dealii::Utilities::MPI::min_max_avg(phys_time,
 	MPI_COMM_WORLD).max;
 	status.iterationNumber = dealii::Utilities::MPI::min_max_avg(
-			iteration_start,
-			MPI_COMM_WORLD).max;
+			iteration_start, MPI_COMM_WORLD).max;
 	status.stencilScaling = new_stencil->getScaling();
+	status.feOrder = advection.getOrderOfFiniteElement();
 
 // PRECONDITION: vectors already created with the right sizes
 // read the distribution functions from file

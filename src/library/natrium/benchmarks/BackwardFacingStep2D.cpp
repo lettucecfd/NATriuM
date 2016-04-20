@@ -123,9 +123,9 @@ boost::shared_ptr<BoundaryCollection<2> > BackwardFacingStep2D::makeBoundaries(
 	return boundaries;
 }
 
-void BackwardFacingStep2D::refine(){
+void BackwardFacingStep2D::refine(Mesh<2>& mesh){
 	// Refine grid
-	getMesh()->refine_global(m_refinementLevel);
+	mesh.refine_global(m_refinementLevel);
 }
 void BackwardFacingStep2D::transform(Mesh<2>& mesh){
 	// transform grid
