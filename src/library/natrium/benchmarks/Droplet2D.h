@@ -80,9 +80,9 @@ public:
 		return m_W;
 	}
 
-	virtual void refine(){
+	virtual void refine(Mesh<2>& mesh){
 		// Refine grid
-		getMesh()->refine_global(m_refinementLevel);
+		mesh.refine_global(m_refinementLevel);
 	}
 
 	virtual void transform(Mesh<2>& ){

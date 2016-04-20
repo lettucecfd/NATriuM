@@ -49,9 +49,9 @@ public:
 		return 1;
 	}
 
-	virtual void refine() {
+	virtual void refine(Mesh<2>& mesh) {
 		// refine global
-		getMesh()->refine_global(m_refinementLevel);
+		mesh.refine_global(m_refinementLevel);
 	}
 
 	virtual void transform(Mesh<2>& mesh){
