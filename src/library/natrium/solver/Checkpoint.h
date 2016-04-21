@@ -99,6 +99,8 @@ public:
 	 * @short Load checkpoint from file. A simulation can be resumed from a checkpoint if
 	 * 		  -# the mesh is exactly the same as in the previous simulation
 	 * 		  -# the mesh is a globally refined version of the previous simulation
+	 * 	      Restarts are also possible with arbitrary Mach number.
+	 * 	      Varying the order of finite elements is not supported, so far.
 	 */
 	void load(DistributionFunctions& f, ProblemDescription<dim>& problem,
 			AdvectionOperator<dim>& advection, CheckpointStatus& status);
