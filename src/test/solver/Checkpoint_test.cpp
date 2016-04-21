@@ -103,7 +103,14 @@ BOOST_AUTO_TEST_CASE(Checkpoint_SaveAndLoadUnchanged_test) {
 	BOOST_CHECK_CLOSE(status2.stencilScaling, 1.0, 1e-8);
 	BOOST_CHECK_CLOSE(status2.time, 10.0, 1e-8);
 	BOOST_CHECK_EQUAL(f2.size(), Q);
-	BOOST_CHECK(f2.equals(f));
+	//BOOST_CHECK(f2.equals(f));
+	DistributionFunctions diff = f2;
+	for (size_t i = 0; i < Q; i++){
+		diff.at(i) *= -1.0;
+		diff.at(i).add(f.at(i),true);
+		BOOST_CHECK_SMALL(diff.at(i).norm_sqr(), 1e-8);
+	}
+
 
 	// clean up
 	if (is_MPI_rank_0()) {
@@ -177,14 +184,10 @@ BOOST_AUTO_TEST_CASE(Checkpoint_ResumeRefined_test) {
 	dealii::VectorTools::interpolate(sedg2->getMapping(),
 			*sedg2->getDoFHandler(), mon, expected);
 	for (size_t i = 0; i < Q; i++) {
-		dealii::IndexSet::ElementIterator it(
-				sedg->getLocallyOwnedDofs().begin());
-		dealii::IndexSet::ElementIterator end(
-				sedg->getLocallyOwnedDofs().end());
-		for (it = sedg->getLocallyOwnedDofs().begin(); it != end; it++) {
-			size_t j = *it;
-			BOOST_CHECK_SMALL(f2.at(i)(j) - expected(j), 1e-6);
-		}
+		distributed_vector diff = expected;
+		diff *= -1.0;
+		diff.add(f2.at(i), true); // allow different maps
+		BOOST_CHECK_SMALL(diff.norm_sqr(), 1e-6);
 	}
 
 	// clean up

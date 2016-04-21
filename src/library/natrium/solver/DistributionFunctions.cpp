@@ -117,6 +117,7 @@ bool DistributionFunctions::equals(const DistributionFunctions& other,
 
 }
 
+
 void DistributionFunctions::transferFromOtherScaling(const Stencil& old_stencil,
 		const Stencil& new_stencil,
 		const dealii::IndexSet& locally_owned_dofs) {

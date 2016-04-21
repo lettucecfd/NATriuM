@@ -7,7 +7,7 @@ file(   GLOB_RECURSE
         collision/*.cpp
         problemdescription/*.cpp
         smoothing/*.cpp
-        #solver/*.cpp
+        solver/*.cpp
         stencils/*.cpp
         timeintegration/*.cpp
         utilities/*.cpp
