@@ -55,6 +55,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	SolverConfiguration config;
 
 	// Set parameter
+	pout << " ... sanity test ... " << endl;
 	config.setInitializationScheme(ITERATIVE);
 	BOOST_CHECK(config.getInitializationScheme() == ITERATIVE);
 	config.setIterativeInitializationNumberOfIterations(10);
@@ -110,10 +111,11 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_CLOSE(config.getCFL(), 0.4, 1e-10);
 	config.setCFL(10);
 	BOOST_CHECK_CLOSE(config.getCFL(), 10, 1e-10);
-	BOOST_CHECK_CLOSE(config.getRestartAtIteration(), 0, 1e-10);
+	BOOST_CHECK_EQUAL(config.getRestartAtIteration(), size_t(0));
 	config.setRestartAtIteration(1);
-	BOOST_CHECK_CLOSE(config.getRestartAtIteration(), 1, 1e-10);
+	BOOST_CHECK_EQUAL(config.getRestartAtIteration(), size_t(1));
 	/// Failure test
+	pout << " ... failure test ... " << endl;
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);
 	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-0.1), ConfigurationException);
 	BOOST_CHECK_THROW(config.setBGKSteadyStateGamma(-0.1),

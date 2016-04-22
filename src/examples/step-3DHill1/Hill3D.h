@@ -59,10 +59,10 @@ public:
 		return m_meanInflowVelocity;
 	}
 
-	virtual void refine(){
+	virtual void refine(Mesh<3>& mesh){
 
 		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-		getMesh()->refine_global(m_refinementLevel);
+		mesh.refine_global(m_refinementLevel);
 	}
 	virtual void transform(){
 

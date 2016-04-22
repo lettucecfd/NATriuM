@@ -85,14 +85,22 @@ public:
 	}
 
 	/**
-	 * @short Write checkpoint int
+	 * @short Write checkpoint to checkpoint directory. A checkpoint contains of three files:
+	 *        -# a .stat file that contains some information about the status of the simulations
+	 *        (iteration number, time, stencil scaling, ...).
+	 *        -# a .data file that contains the serialized data (mesh and distribution functions)
+	 *        -# a .data.info file that contains some deal.II information about the mesh, refinement etc.
 	 */
 	void write(const Mesh<dim>& mesh, const DistributionFunctions& f,
 			const dealii::DoFHandler<dim>& dof_handler,
 			const CheckpointStatus& status);
 
 	/**
-	 * @short load
+	 * @short Load checkpoint from file. A simulation can be resumed from a checkpoint if
+	 * 		  -# the mesh is exactly the same as in the previous simulation
+	 * 		  -# the mesh is a globally refined version of the previous simulation
+	 * 	      Restarts are also possible with arbitrary Mach number.
+	 * 	      Varying the order of finite elements is not supported, so far.
 	 */
 	void load(DistributionFunctions& f, ProblemDescription<dim>& problem,
 			AdvectionOperator<dim>& advection, CheckpointStatus& status);

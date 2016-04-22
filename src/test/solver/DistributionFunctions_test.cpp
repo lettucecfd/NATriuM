@@ -61,6 +61,15 @@ BOOST_AUTO_TEST_CASE(DistributionFunctions_Construction_test) {
 	pout << "done" << endl;
 } /* DistributionFunctions_Construction_test */
 
+
+/*
+BOOST_AUTO_TEST_CASE(DistributionFunctions_StencilTransfer_test) {
+	pout << "DistributionFunctions_StencilTransfer_test..." << endl;
+
+
+	pout << "done" << endl;
+} */ /* DistributionFunctions_StencilTransfer_test */
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } /* namespace natrium */

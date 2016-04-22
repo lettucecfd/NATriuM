@@ -33,7 +33,7 @@ public:
 		return m_inletVelocity;
 	}
 
-	virtual void refine() {
+	virtual void refine(Mesh<2>& mesh) {
 
 	}
 
