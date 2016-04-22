@@ -119,9 +119,9 @@ public:
 		}
 	}
 
-	virtual void refine() {
+	virtual void refine(Mesh<2>& mesh) {
 		// Refine grid to 2x2 = 4 cells
-		getMesh()->refine_global(m_refinementLevel);
+		mesh.refine_global(m_refinementLevel);
 	}
 	virtual void transform(Mesh<2>& ) {
 

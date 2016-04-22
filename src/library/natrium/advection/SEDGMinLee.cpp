@@ -84,6 +84,9 @@ template<size_t dim>
 void SEDGMinLee<dim>::reassemble() {
 // TODO: if Mesh changed: reinit dof-handler and sparsity pattern in some way
 
+	// make sure that sparsity structure is not empty
+	assert (m_systemMatrix.n() != 0);
+	assert (m_systemMatrix.m() != 0);
 /////////////////////////////////
 // Initialize Finite Element ////
 /////////////////////////////////

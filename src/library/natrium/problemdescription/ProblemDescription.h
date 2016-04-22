@@ -92,12 +92,17 @@ public:
 		return m_initialU;
 	}
 
-	virtual void refine () = 0;
-	virtual void transform (Mesh<dim>& mesh) = 0;
+	virtual void refine(Mesh<dim>& mesh) = 0;
+	virtual void transform(Mesh<dim>& mesh) = 0;
 
-	void refineAndTransform(){
-		refine();
+	void refineAndTransform() {
+		refine(*getMesh());
 		transform(*getMesh());
+	}
+
+	void refineAndTransform(Mesh<dim>& mesh) {
+		refine(mesh);
+		transform(mesh);
 	}
 
 	/**

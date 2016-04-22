@@ -39,10 +39,9 @@ CouetteFlow2D::CouetteFlow2D(double viscosity, double topPlateVelocity,
 CouetteFlow2D::~CouetteFlow2D() {
 }
 
-void CouetteFlow2D::refine(){
+void CouetteFlow2D::refine(Mesh<2>& mesh){
 	// refine grid
-	boost::shared_ptr<Mesh<2> > unitSquare = getMesh();
-	unitSquare->refine_global(m_refinementLevel);
+	mesh.refine_global(m_refinementLevel);
 
 }
 

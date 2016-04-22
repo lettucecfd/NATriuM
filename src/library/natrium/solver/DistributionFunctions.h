@@ -153,6 +153,16 @@ public:
 	 */
 	void operator=(const DistributionFunctions& other);
 
+	/**
+	 * @short checks whether two DistributionFunction objects are equal wrt. a given threshold. Use carefully: vectors are only
+	 *        considered equal if they have the same distributions among processors.
+	 * @param other Other DistributionFunction
+	 * @param threshold threshold (default: 1e-10)
+	 * @note  If you want to compare vectors that have different distributions among processors, you can work around this functions
+	 *        using Vector::add(v, allow_different_maps = true ) and check whether the entries are close to zero (requires additional memory)
+	 */
+	bool equals(const DistributionFunctions& other, double threshold = 1e-8) const;
+
 	void transferFromOtherScaling(const Stencil& old_stencil, const Stencil& new_stencil, const dealii::IndexSet& locally_owned_dofs);
 
 };

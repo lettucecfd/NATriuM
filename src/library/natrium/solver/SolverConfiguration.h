@@ -197,11 +197,11 @@ public:
 	 * @throws ... //TODO implement custom exception
 	 */
 	void checkProblem(boost::shared_ptr<ProblemDescription<2> > problem) {
-		// make sure that the mesh does not have refined cells, refinement has to be done via ProblemDescription::refineAndTransform()
+		// make sure that the mesh does not have refined cells, refinement has to be done via ProblemDescription::refine()
 		if (problem->getMesh()->n_levels() != 1){
 			throw ConfigurationException("The mesh in your ProblemDescription must not have refined cells "
 					"upon initialization of the solver. Please implement the initial mesh refinement only by "
-					"overriding the virtual function void ProblemDescription::refineAndTransform().");
+					"overriding the virtual function void ProblemDescription::refine().");
 		}
 
 	}
@@ -218,7 +218,7 @@ public:
 		if (problem->getMesh()->n_levels() != 1){
 			throw ConfigurationException("The mesh in your ProblemDescription must not have refined cells "
 					"upon initialization of the solver. Please implement the initial mesh refinement only by "
-					"overriding the virtual function void ProblemDescription::refineAndTransform().");
+					"overriding the virtual function void ProblemDescription::refine().");
 		}
 	}
 
@@ -1119,7 +1119,16 @@ public:
 
 	void setRestartAtIteration(long int restart_it) {
 		enter_subsection("Initialization");
-		set("Restart at iteration", restart_it);
+		try {
+			set("Restart at iteration", restart_it);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not set parameter 'Restart at iteration': "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
 		leave_subsection();
 	}
 

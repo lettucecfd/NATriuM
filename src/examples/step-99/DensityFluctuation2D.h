@@ -31,9 +31,9 @@ public:
 	virtual void applyInitialVelocities(
 			vector<distributed_vector>& initialVelocities,
 			const vector<dealii::Point<2> >& supportPoints) const;
-	virtual void refine() {
+	virtual void refine(Mesh<2>& mesh) {
 
-		getMesh()->refine_global(m_refinementLevel);
+		mesh.refine_global(m_refinementLevel);
 	}
 	virtual void transform(Mesh<2>& mesh){
 

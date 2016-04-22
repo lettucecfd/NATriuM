@@ -162,11 +162,8 @@ BOOST_AUTO_TEST_CASE(ExponentialFilter_TestFiltering_test) {
 	sedg_operator.reassemble();
 	distributed_vector vec;
 	vec.reinit(sedg_operator.getSystemVector().block(0));
-	dealii::ConstraintMatrix dummy;
-	dummy.close();
-	dealii::VectorTools::project(*sedg_operator.getDoFHandler(),
-			dummy, *sedg_operator.getQuadrature(), mode_f,
-			vec);
+	dealii::VectorTools::interpolate(*sedg_operator.getDoFHandler(),
+			mode_f,	vec);
 
 	dealii::DataOut<2> data_out;
 	data_out.attach_dof_handler(*sedg_operator.getDoFHandler());

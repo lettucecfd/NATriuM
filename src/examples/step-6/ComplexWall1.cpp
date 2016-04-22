@@ -49,9 +49,9 @@ boost::shared_ptr<Mesh<2> > ComplexWall1::makeGrid(double L,
 
 }
 
-void ComplexWall1::refine() {
+void ComplexWall1::refine(Mesh<2>& mesh) {
 	// refine grid
-	rect->refine_global(m_refinementLevel);
+	mesh.refine_global(m_refinementLevel);
 }
 
 void ComplexWall1::transform(Mesh<2>& mesh){

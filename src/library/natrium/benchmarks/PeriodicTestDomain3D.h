@@ -47,9 +47,9 @@ private:
 	 */
 	boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
-	virtual void refine(){
+	virtual void refine(Mesh<3>& mesh){
 		// Refine grid
-		getMesh()->refine_global(m_refinementLevel);
+		mesh.refine_global(m_refinementLevel);
 	}
 
 	virtual void transform(Mesh<3>& ){
