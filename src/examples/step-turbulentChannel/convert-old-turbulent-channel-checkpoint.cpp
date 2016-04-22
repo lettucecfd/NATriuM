@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtIteration(restart_iteration);
+	//configuration->setRestartAtIteration(restart_iteration);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(100);
 	configuration->setOutputCheckpointInterval(1);
