@@ -122,6 +122,7 @@ void DistributionFunctions::transferFromOtherScaling(const Stencil& old_stencil,
 		const Stencil& new_stencil,
 		const dealii::IndexSet& locally_owned_dofs) {
 
+
 	assert(new_stencil.getQ() == m_Q);
 	assert(old_stencil.getQ() == m_Q);
 	assert(old_stencil.getD() == new_stencil.getD());
