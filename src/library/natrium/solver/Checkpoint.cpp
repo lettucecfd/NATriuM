@@ -144,8 +144,12 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		sol_trans.deserialize(all_read);
 
 		LOG(DETAILED) << "Interpolate to refined grid" << endl;
+		LOG(DETAILED) << "... from refinement level " << mesh.n_global_levels() -1 << " to " << nlevels_new -1 << endl;
 
 		// assumption: future_mesh is a globally refined version of mesh
+		if (mesh.n_global_levels() > nlevels_new) {
+			throw CheckpointException("Restarting from coarser grid is not implemented, yet.");
+ 		}
 		if (mesh.n_global_levels() == nlevels_new) {
 			advection.setupDoFs();
 			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
