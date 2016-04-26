@@ -392,6 +392,7 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 	FaceIterator face_1 = cell_1->face(face_nr_1);
 	FaceIterator face_2 = cell_2->face(face_nr_2);
 
+
 	Assert(
 			(dim != 1) || (face_orientation == true && face_flip == false && face_rotation == false),
 			ExcMessage ("The supplied orientation " "(face_orientation, face_flip, face_rotation) " "is invalid for 1D"));
@@ -426,6 +427,7 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 					}, { { 3, 2, 1, 0 }, //  true        true  false
 							{ 2, 0, 3, 1 }, //  true        true  true
 					}, }, };
+
 
 	if (cell_1->has_children() && cell_2->has_children()) {
 		// In the case that both faces have children, we loop over all
@@ -561,6 +563,10 @@ void make_periodicity_map_dg(
 	typename FaceVector::const_iterator it, end_periodic;
 	it = periodic_faces.begin();
 	end_periodic = periodic_faces.end();
+
+	// Clear the output map
+	cell_map.clear();
+
 
 	// Loop over all periodic faces...
 	for (; it != end_periodic; ++it) {
