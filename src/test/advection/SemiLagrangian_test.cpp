@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_Neighborhood_test) {
 	SemiLagrangian<2>::Neighborhood neighbors;
 	sl.getNeighborhood(cell, neighbors);
 	dealii::Point<2> cell_center = cell->barycenter();
-	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1){
+	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1) {
 		BOOST_CHECK_EQUAL(neighbors.size(), 13);
 	} else {
 		BOOST_CHECK_GE(neighbors.size(), 9);
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_Neighborhood_test) {
 		}
 	}
 	// cell is corner!
-	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1){
+	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1) {
 		BOOST_CHECK_EQUAL(n_periodic_x, 4);
 		BOOST_CHECK_EQUAL(n_periodic_y, 4);
 	} else {
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_Neighborhood_test) {
 	SemiLagrangian<3>::Neighborhood neighbors;
 	sl.getNeighborhood(cell, neighbors);
 	dealii::Point<3> cell_center = cell->barycenter();
-	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1){
+	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1) {
 		BOOST_CHECK_EQUAL(neighbors.size(), 63);
 	} else {
 		BOOST_CHECK_GE(neighbors.size(), 27);
@@ -159,18 +159,67 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_Neighborhood_test) {
 		}
 	}
 	// cell is corner!
-	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1){
-	BOOST_CHECK_EQUAL(n_periodic_x, 19);
-	BOOST_CHECK_EQUAL(n_periodic_y, 19);
-	BOOST_CHECK_EQUAL(n_periodic_z, 19);
+	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1) {
+		BOOST_CHECK_EQUAL(n_periodic_x, 19);
+		BOOST_CHECK_EQUAL(n_periodic_y, 19);
+		BOOST_CHECK_EQUAL(n_periodic_z, 19);
 	} else {
 		BOOST_CHECK_GE(n_periodic_x, 13);
 		BOOST_CHECK_GE(n_periodic_y, 13);
 	}
 
-
 	pout << "done." << endl;
 } /* SemiLagrangian3D_Neighborhod_test */
+
+BOOST_AUTO_TEST_CASE(SemiLagrangian2D_FindPointInNeighborhod_test) {
+	pout << "SemiLagrangian2D_FindPointInNeighborhod_test..." << endl;
+
+	size_t fe_order = 1;
+	size_t refinementLevel = 3;
+	PeriodicTestDomain2D periodic(refinementLevel);
+	periodic.refineAndTransform();
+	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D2Q9>());
+	sl.setupDoFs();
+	typename dealii::DoFHandler<2>::active_cell_iterator cell =
+			sl.getDoFHandler()->begin_active();
+
+	dealii::Point<2> p(1, 2);
+	typename dealii::DoFHandler<2>::active_cell_iterator found_in =
+			sl.recursivelySearchInNeighborhood(p, cell);
+	BOOST_CHECK(found_in == sl.getDoFHandler()->end());
+
+	dealii::Point<2> p2(1, 0.5);
+	found_in = sl.recursivelySearchInNeighborhood(p2, cell);
+	BOOST_CHECK(found_in != sl.getDoFHandler()->end());
+
+	pout << "done." << endl;
+} /* SemiLagrangian2D_FindPointInNeighborhod_test */
+
+BOOST_AUTO_TEST_CASE(SemiLagrangian3D_FindPointInNeighborhod_test) {
+	pout << "SemiLagrangian3D_FindPointInNeighborhod_test..." << endl;
+
+	size_t fe_order = 1;
+	size_t refinementLevel = 3;
+	PeriodicTestDomain3D periodic(refinementLevel);
+	periodic.refineAndTransform();
+	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D3Q19>());
+	sl.setupDoFs();
+	typename dealii::DoFHandler<3>::active_cell_iterator cell =
+			sl.getDoFHandler()->begin_active();
+
+	dealii::Point<3> p(1, 2, 1);
+	typename dealii::DoFHandler<3>::active_cell_iterator found_in =
+			sl.recursivelySearchInNeighborhood(p, cell);
+	BOOST_CHECK(found_in == sl.getDoFHandler()->end());
+
+	dealii::Point<3> p2(1, 0.5, 0.7);
+	found_in = sl.recursivelySearchInNeighborhood(p2, cell);
+	BOOST_CHECK(found_in != sl.getDoFHandler()->end());
+
+	pout << "done." << endl;
+} /* SemiLagrangian3D_FindPointInNeighborhod_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 
