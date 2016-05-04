@@ -153,6 +153,20 @@ public:
 						false), boundaryPoint() {
 
 		}
+		DoFInfo(const DoFInfo& other) :
+			globalDof(other.globalDof), alpha(other.alpha), beta(other.beta), oldPoint(
+					other.oldPoint), isBoundary(other.isBoundary), boundaryPoint(
+					other.boundaryPoint){
+		}
+		DoFInfo& operator= (const DoFInfo& other){
+			globalDof = other.globalDof;
+			alpha = other.alpha;
+			beta = other.beta;
+			oldPoint = other.oldPoint;
+			isBoundary = other.isBoundary;
+			boundaryPoint = other.boundaryPoint;
+			return *this;
+		}
 		size_t globalDof; // global degree of freedom
 		size_t alpha; // direction id
 		size_t beta; // direction one (across boundary)
@@ -284,7 +298,8 @@ public:
 								neighborhood)) {
 							continue;
 						}
-						std::array < size_t, faces_per_cell > v(visited_faces.at(c));
+						std::array < size_t, faces_per_cell
+								> v(visited_faces.at(c));
 						v[i]++;
 						visited_faces.push_back(v);
 						neighborhood.push_back(
@@ -435,7 +450,7 @@ public:
 
 	dealii::Tensor<1, dim> vectorToTensor(const numeric_vector& v) const {
 		assert(v.size() == dim);
-		dealii::Tensor<1,dim> t;
+		dealii::Tensor<1, dim> t;
 		t[0] = v(0);
 		t[1] = v(1);
 		if (dim == 3)

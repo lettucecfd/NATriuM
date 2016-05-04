@@ -261,7 +261,6 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 }
 /* updateSparsityPattern */
 
-
 template<size_t dim>
 std::map<size_t, size_t> SemiLagrangian<dim>::map_celldofs_to_q_index() const {
 	const dealii::UpdateFlags cellUpdateFlags = update_values
@@ -381,10 +380,11 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	// Finite Element
 	dealii::FEValues<dim> fe_cell_values(m_mapping, *m_fe, *m_quadrature,
 			cell_update_flags);
-	dealii::FEFaceValues<dim> fe_face_values(m_mapping, *m_fe, *m_faceQuadrature,
-			face_update_flags);
+	dealii::FEFaceValues<dim> fe_face_values(m_mapping, *m_fe,
+			*m_faceQuadrature, face_update_flags);
 
 	// Initialize
+	std::map<typename DoFHandler<dim>::active_cell_iterator, XList> cell_map;
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const std::vector<Point<dim> > & unit_support_points =
 			m_fe->get_unit_support_points();
@@ -400,12 +400,14 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	size_t max_n_shells = (size_t) (m_stencil->getMaxParticleVelocityMagnitude()
 			* m_deltaT
 			/ CFDSolverUtilities::getMinimumVertexDistance<dim>(*m_mesh)) + 1;
-	if ((max_n_shells > 1) and (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)>1)){
-		LOG(WARNING) << "The global CFL number (wrt. cells) is > 1. That is not a problem, in principle. "
-				"However, depending on the mesh and its distribution, the simulation may crash, as the "
-				"semi-Lagrangian paths may lead into cells that are not even ghost cells. "
-				"When this happens, the algorithm is not longer defined and you will get an error message "
-				"before the simulation crashes.";
+	if ((max_n_shells > 1)
+			and (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) > 1)) {
+		LOG(WARNING)
+				<< "The global CFL number (wrt. cells) is > 1. That is not a problem, in principle. "
+						"However, depending on the mesh and its distribution, the simulation may crash, as the "
+						"semi-Lagrangian paths may lead into cells that are not even ghost cells. "
+						"When this happens, the algorithm is not longer defined and you will get an error message "
+						"before the simulation crashes.";
 	}
 
 	///////////////
@@ -418,6 +420,13 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// calculate the fe values for the cell
 			fe_cell_values.reinit(cell);
 
+			//
+			cell_map.clear();
+
+			// get a list of adjacent cells (including all cells that have common vertices with 'cell')
+			Neighborhood neighborhood;
+			getNeighborhood(cell, neighborhood, max_n_shells);
+
 			// get global degrees of freedom
 			cell->get_dof_indices(local_dof_indices);
 
@@ -429,9 +438,33 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 				// for all directions
 				for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
 					// calculate x^(t-delta_t)
-					dealii::Point<dim> x_previous = x_i + minus_dtealpha.at(alpha);
-					dealii::Point<dim> null;
+					dealii::Point<dim> x_previous = x_i
+							+ minus_dtealpha.at(alpha);
+					bool found = false;
+					DoFInfo info_i(local_dof_indices.at(i), alpha, alpha,
+							x_previous);
 
+					// look for x_previous in neighborhood
+					for (size_t j = 0; j < neighborhood.size(); j++) {
+						if (neighborhood.at(j)->point_inside(x_previous)) {
+							found = true;
+							typename std::map<
+									typename DoFHandler<dim>::active_cell_iterator, XList>::iterator it =
+									cell_map.find(neighborhood.at(j));
+							if (it == cell_map.end()) {
+								XList new_xlist;
+								new_xlist.push_back(info_i);
+								cell_map.insert(
+										std::pair<
+												typename DoFHandler<dim>::active_cell_iterator,
+												XList>(neighborhood.at(j),
+												new_xlist));
+							} else {
+								it->second.push_back(info_i);
+							}
+							break;
+						}
+					}
 				}
 			}
 		}
