@@ -217,6 +217,12 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_FindPointInNeighborhood_test) {
 	pout << "done." << endl;
 } /* SemiLagrangian3D_FindPointInNeighborhood_test */
 
+BOOST_AUTO_TEST_CASE(SemiLagrangian2D_CheckPeriodicAllFound_test){
+	pout << "SemiLagrangian2D_CheckPeriodicAllFound_test..." << endl;
+
+	pout << "done." << endl;
+} /* SemiLagrangian2D_CheckPeriodicAllFound_test */
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } /* namespace natrium */

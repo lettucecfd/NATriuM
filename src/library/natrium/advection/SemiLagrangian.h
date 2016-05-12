@@ -75,7 +75,7 @@ private:
 	boost::shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
 
 	/// Sparsity Pattern of the sparse matrix
-	dealii::BlockSparsityPattern m_sparsityPattern;
+	std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > m_sparsityPattern;
 
 	/// Mapping from real space to unit cell
 	const dealii::MappingQ<dim> m_mapping;
@@ -361,6 +361,7 @@ public:
 		return cell->get_dof_handler().end();
 	} /* recursivelySearchInNeighborhood */
 
+
 	/// function to (re-)assemble linear system
 	virtual void reassemble();
 
@@ -385,7 +386,7 @@ public:
 		return m_doFHandler;
 	}
 
-	const dealii::BlockSparsityPattern& getBlockSparsityPattern() const {
+	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> >& getBlockSparsityPattern() const {
 		return m_sparsityPattern;
 	}
 
