@@ -13,6 +13,7 @@
 #include "deal.II/base/geometry_info.h"
 #include "deal.II/dofs/dof_tools.h"
 #include "deal.II/lac/constraint_matrix.h"
+#include "deal.II/lac/identity_matrix.h"
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
@@ -85,12 +86,6 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 	LOG(DETAILED) << "...success" << endl;
 
 } /* Constructor 2 */
-template PeriodicBoundary<2>::PeriodicBoundary(size_t boundaryIndicator1,
-		size_t boundaryIndicator2, size_t direction,
-		boost::shared_ptr<Mesh<2> > triangulation);
-template PeriodicBoundary<3>::PeriodicBoundary(size_t boundaryIndicator1,
-		size_t boundaryIndicator2, size_t direction,
-		boost::shared_ptr<Mesh<3> > triangulation);
 
 template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator &,
@@ -111,19 +106,9 @@ template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 	}
 	return false;
 }
-// The template Parameter has to be made explicit in order for the code to compile
-template bool PeriodicBoundary<2>::isFaceInBoundary(
-		const typename dealii::DoFHandler<2>::active_cell_iterator &,
-		size_t faceBoundaryIndicator) const;
-template bool PeriodicBoundary<3>::isFaceInBoundary(
-		const typename dealii::DoFHandler<3>::active_cell_iterator &,
-		size_t faceBoundaryIndicator) const;
 
 template<size_t dim> PeriodicBoundary<dim>::~PeriodicBoundary() {
 }
-// The template Parameter has to be made explicit in order for the code to compile
-template PeriodicBoundary<2>::~PeriodicBoundary();
-template PeriodicBoundary<3>::~PeriodicBoundary();
 
 template<size_t dim> void PeriodicBoundary<dim>::createCellMap(
 		const dealii::DoFHandler<dim>& doFHandler) {
@@ -135,10 +120,6 @@ template<size_t dim> void PeriodicBoundary<dim>::createCellMap(
 	checkCellMap();
 
 } /* createMap */
-template void PeriodicBoundary<2>::createCellMap(
-		const dealii::DoFHandler<2>& doFHandler);
-template void PeriodicBoundary<3>::createCellMap(
-		const dealii::DoFHandler<3>& doFHandler);
 
 template<size_t dim> void PeriodicBoundary<dim>::checkCellMap() {
 	typename PeriodicCellMap<dim>::const_iterator it, end = m_cells.end();
@@ -164,8 +145,6 @@ template<size_t dim> void PeriodicBoundary<dim>::checkCellMap() {
 
 	}
 }
-template void PeriodicBoundary<2>::checkCellMap();
-template void PeriodicBoundary<3>::checkCellMap();
 
 template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoundary(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
@@ -196,12 +175,6 @@ template<size_t dim> size_t PeriodicBoundary<dim>::getOppositeCellAtPeriodicBoun
 	}
 }
 // The template parameter has to be made explicit in order for the code to compile
-template size_t PeriodicBoundary<2>::getOppositeCellAtPeriodicBoundary(
-		const dealii::DoFHandler<2>::active_cell_iterator & cell,
-		dealii::DoFHandler<2>::cell_iterator & neighborCell) const;
-template size_t PeriodicBoundary<3>::getOppositeCellAtPeriodicBoundary(
-		const dealii::DoFHandler<3>::active_cell_iterator & cell,
-		dealii::DoFHandler<3>::cell_iterator & neighborCell) const;
 
 template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const {
@@ -209,9 +182,141 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 	// THIS FUNCTION IS NOT USED!!! See DealIIExtensions module for details
 	assert(false);
 }
-template void PeriodicBoundary<2>::addToSparsityPattern(
-		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const;
-template void PeriodicBoundary<3>::addToSparsityPattern(
-		dealii::BlockDynamicSparsityPattern&, size_t, size_t, size_t) const;
+
+/**
+ * Transform a point into its equivalent across the periodic boundary
+ */
+template<size_t dim>
+dealii::Point<dim> PeriodicBoundary<dim>::coordinatesAcrossPeriodicBoundary(
+		const dealii::Point<dim>& p,
+		typename dealii::DoFHandler<dim>::active_cell_iterator& cell) {
+	//TODO should be inlined
+	assert(m_doFHandler != NULL);
+
+	// get face ids and cell iterators
+	FacePair<dim> face_pair = m_cells.at(cell);
+	std::bitset<3> orientation = face_pair.orientation;
+
+	// determine how cell[0]->face[0]->vertex(i) is transformed into cell[1]->face[1]->vertex(j)
+
+	// relative orientation of face0 with respect to face1; see documentation of dealii::GridTools::orthogonal_equality()
+	size_t face1_to_face0_vertex[dealii::GeometryInfo<dim>::vertices_per_face];
+	if (3 == dim) {
+		size_t h[dealii::GeometryInfo<dim>::vertices_per_face];
+		face1_to_face0_vertex[0] = 0;
+		face1_to_face0_vertex[1] = 1;
+		face1_to_face0_vertex[2] = 2;
+		face1_to_face0_vertex[3] = 3;
+		if (orientation[0]) {
+			//face_orientation
+			face1_to_face0_vertex[0] = 0;
+			face1_to_face0_vertex[1] = 2;
+			face1_to_face0_vertex[2] = 1;
+			face1_to_face0_vertex[3] = 3;
+		}
+		if (orientation[1]) {
+			// face flip
+			h[0] = face1_to_face0_vertex[0];
+			h[1] = face1_to_face0_vertex[1];
+			h[2] = face1_to_face0_vertex[2];
+			h[3] = face1_to_face0_vertex[3];
+			for (size_t i = 0; i < 4; i++) {
+				if (0 == h[i])
+					face1_to_face0_vertex[i] = 3;
+				if (1 == h[i])
+					face1_to_face0_vertex[i] = 2;
+				if (2 == h[i])
+					face1_to_face0_vertex[i] = 1;
+				if (3 == h[i])
+					face1_to_face0_vertex[i] = 0;
+			}
+		}
+		if (orientation[2]) {
+			// face flip
+			h[0] = face1_to_face0_vertex[0];
+			h[1] = face1_to_face0_vertex[1];
+			h[2] = face1_to_face0_vertex[2];
+			h[3] = face1_to_face0_vertex[3];
+			for (size_t i = 0; i < 4; i++) {
+				if (0 == h[i])
+					face1_to_face0_vertex[i] = 1;
+				if (1 == h[i])
+					face1_to_face0_vertex[i] = 3;
+				if (2 == h[i])
+					face1_to_face0_vertex[i] = 0;
+				if (3 == h[i])
+					face1_to_face0_vertex[i] = 2;
+			}
+		}
+	} else {
+		assert(2 == dim);
+		face1_to_face0_vertex[0] = 0;
+		face1_to_face0_vertex[1] = 1;
+		// in 2D: face orientation = true; face_rotation = false
+		if (orientation[1]) {
+			// face flip
+			face1_to_face0_vertex[0] = 1;
+			face1_to_face0_vertex[1] = 0;
+		}
+	}
+
+	// calculate offset (face1->face0)
+	const size_t mdim = dim;
+	numeric_matrix matrix( mdim );
+	matrix(0,0) = 1;
+	matrix(1,1) = 1;
+	if (dim == 3){
+		matrix(2,2) =1;
+	}
+	if (not face_pair.matrix.empty())
+		matrix = face_pair.matrix;
+	dealii::Tensor<1, dim> offset;
+	for (size_t i = 0; i < dim; i++) {
+		for (size_t j = 0; j < dim; j++)
+			offset[i] += matrix(i, j)
+					* face_pair.cell[0]->face(face_pair.face_idx[0])->vertex(
+							face1_to_face0_vertex[0])[j];
+		offset[i] -= face_pair.cell[1]->face(face_pair.face_idx[1])->vertex(0)[i];
+	}
+
+#ifdef DEBUG
+	// check whether the same offset applies to all other vertices
+	for (size_t i = 0; i < dealii::GeometryInfo<dim>::vertices_per_face;
+			i++) {
+		dealii::Tensor<1, dim> offset_test;
+		for (size_t i = 0; i < dim; i++) {
+			for (size_t j = 0; j < dim; j++)
+			offset_test[i] += matrix(i,j) * face_pair.cell[0]->face(face_pair.face_idx[0])->vertex(
+					face1_to_face0_vertex[0])[j];
+			offset_test[i] -= face_pair.cell[1]->face(face_pair.face_idx[1])->vertex(0)[i];
+		}
+		offset_test -= offset;
+		assert(offset_test.norm_square() < 1e-15);
+	}
+#endif
+
+	// transform point
+	dealii::Point < dim > result;
+	if (face_pair.cell[0] == cell) {
+		numeric_matrix inv(mdim);
+		inv.invert(matrix);
+		for (size_t i = 0; i < dim; i++) {
+			for (size_t j = 0; j < dim; j++)
+				result[i] += inv(i, j) * (p[j] - offset[j]);
+		}
+	} else {
+		assert(face_pair.cell[1] == cell);
+		for (size_t i = 0; i < dim; i++) {
+			for (size_t j = 0; j < dim; j++)
+				result[i] += matrix(i, j) * p[j];
+			result[i] += offset[i];
+		}
+	}
+
+	return result;
+}
+
+template class PeriodicBoundary<2>;
+template class PeriodicBoundary<3>;
 
 } /* namespace natrium */

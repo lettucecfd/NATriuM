@@ -85,51 +85,10 @@ void SemiLagrangian<dim>::reassemble() {
 	assert(m_systemMatrix.n() != 0);
 	assert(m_systemMatrix.m() != 0);
 
-/////////////////////////////////
-// Initialize Finite Element ////
-/////////////////////////////////
-// Define update flags (which values have to be known at each cell, face, neighbor face)
-	const dealii::UpdateFlags cellUpdateFlags = update_values
-			| update_quadrature_points | update_JxW_values;
-	const dealii::UpdateFlags faceUpdateFlags = update_quadrature_points
-			| update_JxW_values | update_normal_vectors;
-// Finite Element
-	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
-			cellUpdateFlags);
-	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
-			faceUpdateFlags);
-	dealii::FESubfaceValues<dim> feSubfaceValues(m_mapping, *m_fe,
-			*m_faceQuadrature, faceUpdateFlags);
+	fillSparseObject(false); // "false" says that you want to fill the system matrix, not the sparsity pattern
 
-	const size_t dofs_per_cell = m_fe->dofs_per_cell;
-
-// Initialize
-
-	vector<double> localMassMatrix(dofs_per_cell);
-	vector<double> inverseLocalMassMatrix(dofs_per_cell);
-	vector<dealii::FullMatrix<double> > localDerivativeMatrices;
-	for (size_t i = 0; i < dim; i++) {
-		dealii::FullMatrix<double> D_i(dofs_per_cell, dofs_per_cell);
-		localDerivativeMatrices.push_back(D_i);
-	}
-	dealii::FullMatrix<double> localFaceMatrix(dofs_per_cell, dofs_per_cell);
-	dealii::FullMatrix<double> localSystemMatrix(dofs_per_cell, dofs_per_cell);
-	std::vector<dealii::types::global_dof_index> localDoFIndices(dofs_per_cell);
-
-///////////////
-// MAIN LOOP //
-///////////////
-	typename DoFHandler<dim>::active_cell_iterator cell =
-			m_doFHandler->begin_active(), endc = m_doFHandler->end();
-	for (; cell != endc; ++cell) {
-		if (cell->is_locally_owned()) {
-
-		}
-	}
 	m_systemVector.compress(dealii::VectorOperation::add);
 	m_systemMatrix.compress(dealii::VectorOperation::add);
-
-//#endif
 
 } /* reassemble */
 
@@ -163,101 +122,37 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 	DoFTools::extract_locally_relevant_dofs(*m_doFHandler,
 			m_locallyRelevantDofs);
 
-	TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
-	TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
-	TrilinosWrappers::SparsityPattern cSparseNotOpposite(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
-	/*DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
-	 DynamicSparsityPattern cSparseOpposite(m_locallyRelevantDofs);
-	 DynamicSparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
-
-	//reorder degrees of freedom
-	//DoFRenumbering::Cuthill_McKee(*m_doFHandler);
-	//The Renumbering operation is commented out because of its quadratic complexity.
-	//When it is used, it takes the most time of all assembly functions for meshes with >250 cells
-	//The main point of renumbering algorithms is to make solving linear equation systems faster.
-	//As we have no LES to solve, renumbering does not bring anything here.
-	//However, when porting the code to distributed triangulations, it might become an issue again,
-	//as the numbering of the DoFs determines the partition (and thus the number of halo nodes
-	//for each MPI process). Furthermore, using implicit time integration schemes could bring
-	//the issue of renumbering up again, as they require linear equation systems to be solved.
-	// make diagonal block 0,0 which can be copied to the other ones
-	ConstraintMatrix constraints;
-	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-			cSparseDiag, constraints, *m_boundaries, feFaceValues, true,
-			dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
-	delete feFaceValues;
-	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
-	 cSparse.block(0, 0));*/
-
-	// add entries for non-periodic boundaries
-	for (typename BoundaryCollection<dim>::ConstLinearIterator dirichlet_iterator =
-			m_boundaries->getLinearBoundaries().begin();
-			dirichlet_iterator != m_boundaries->getLinearBoundaries().end();
-			dirichlet_iterator++) {
-		dirichlet_iterator->second->addToSparsityPattern(cSparseOpposite,
-				*m_doFHandler);
-		if (BoundaryTools::COUPLE_ALL_DISTRIBUTIONS
-				== dirichlet_iterator->second->m_distributionCoupling) {
-			dirichlet_iterator->second->addToSparsityPattern(cSparseNotOpposite,
-					*m_doFHandler);
+	// create empty sparsity pattern for each block
+	for (size_t i = 0; i < n_blocks; i++) {
+		std::vector<TrilinosWrappers::SparsityPattern> line;
+		line.clear();
+		for (size_t j = 0; j < n_blocks; j++) {
+			TrilinosWrappers::SparsityPattern empty;
+			line.push_back(empty);
 		}
+		m_sparsityPattern.push_back(line);
 	}
-	//reinitialize matrices
-	//In order to store the sparsity pattern for blocks with same pattern only once: initialize from other block
-	cSparseDiag.compress();
-	cSparseOpposite.compress();
-	cSparseNotOpposite.compress();
-	/*SparsityTools::distribute_sparsity_pattern(cSparseDiag,
-	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-	 m_locallyRelevantDofs);
-	 SparsityTools::distribute_sparsity_pattern(cSparseOpposite,
-	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-	 m_locallyRelevantDofs);
-	 SparsityTools::distribute_sparsity_pattern(cSparseEmpty,
-	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
-	 m_locallyRelevantDofs);
-	 */
+
+	// 	reinit sparsity pattern
+	for (size_t i = 0; i < n_blocks; i++)
+	for (size_t j = 0; j < n_blocks; j++)
+		m_sparsityPattern[i][j].reinit(m_locallyOwnedDofs,
+						m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+
+	// fill sparsity pattern
+	fillSparseObject(true); // "true" means that the object to fill is the sparsity pattern
+
+	// initialize matrix
 	m_systemMatrix.reinit(n_blocks, n_blocks);
-	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
-	size_t some_nonopposite = m_stencil->getIndexOfOppositeDirection(1);
-	assert(some_nonopposite <= n_blocks);
-	assert(some_nonopposite != first_opposite);
-	assert(some_nonopposite != 1);
-	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
-	m_systemMatrix.block(0, some_nonopposite).reinit(cSparseNotOpposite);
-	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
-
-	for (size_t I = 0; I < n_blocks; I++) {
-		for (size_t J = 0; J < n_blocks; J++) {
-			if ((I == 0) and (J == 0)) {
-				continue;
-			}
-			if ((I == 0) and (J == some_nonopposite)) {
-				continue;
-			}
-			if ((I == 0) and (J == first_opposite)) {
-				continue;
-			}
-			if (I == J) {
-				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, 0));
-				continue;
-			}
-			if (I == m_stencil->getIndexOfOppositeDirection(J + 1) - 1) {
-				m_systemMatrix.block(I, J).reinit(
-						m_systemMatrix.block(0, first_opposite));
-				continue;
-			} else {
-				m_systemMatrix.block(I, J).reinit(
-						m_systemMatrix.block(0, some_nonopposite));
-			}
-
+	for (size_t i = 0; i < n_blocks; i++) {
+		for (size_t j = 0; j < n_blocks; j++) {
+			m_sparsityPattern[i][j].compress();
+			m_systemMatrix.block(i, j).reinit(m_sparsityPattern[i][j]);
 		}
 	}
 	m_systemMatrix.collect_sizes();
 
+	delete feFaceValues;
 }
 /* updateSparsityPattern */
 
@@ -265,17 +160,17 @@ template<size_t dim>
 std::map<size_t, size_t> SemiLagrangian<dim>::map_celldofs_to_q_index() const {
 	const dealii::UpdateFlags cellUpdateFlags = update_values
 			| update_quadrature_points;
-// Finite Element
+	// Finite Element
 	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
 			cellUpdateFlags);
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const size_t n_quadrature_points = m_quadrature->size();
-// take first cell
+	// take first cell
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			m_doFHandler->begin_active();
 	std::map<size_t, size_t> result;
 
-/// find quadrature node for every DoF
+	/// find quadrature node for every DoF
 	feCellValues.reinit(cell);
 	for (size_t i = 0; i < dofs_per_cell; i++) {
 		int unique = 0;
@@ -300,7 +195,7 @@ vector<std::map<size_t, size_t> > SemiLagrangian<dim>::map_facedofs_to_q_index()
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			m_doFHandler->begin_active();
-// LOOP over all faces
+	// LOOP over all faces
 	vector<std::map<size_t, size_t> > result;
 	for (size_t f = 0; f < GeometryInfo<dim>::faces_per_cell; f++) {
 		feFaceValues.reinit(cell, f);
@@ -314,7 +209,7 @@ vector<std::map<size_t, size_t> > SemiLagrangian<dim>::map_facedofs_to_q_index()
 					resultForFaceF.insert(std::make_pair(i, q));
 				}
 			}
-// Test, if the relationship doF <-> quadrature points in unique
+			// Test, if the relationship doF <-> quadrature points in unique
 			assert(unique <= 1);
 		}
 		result.push_back(resultForFaceF);
@@ -332,7 +227,7 @@ vector<std::map<size_t, size_t> > SemiLagrangian<dim>::map_q_index_to_facedofs()
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			m_doFHandler->begin_active();
-// LOOP over all faces
+	// LOOP over all faces
 	vector<std::map<size_t, size_t> > result;
 	for (size_t f = 0; f < GeometryInfo<dim>::faces_per_cell; f++) {
 		feFaceValues.reinit(cell, f);
@@ -346,7 +241,7 @@ vector<std::map<size_t, size_t> > SemiLagrangian<dim>::map_q_index_to_facedofs()
 					resultForFaceF.insert(std::make_pair(q, i));
 				}
 			}
-// Test, if the relationship doF <-> quadrature points in unique
+			// Test, if the relationship doF <-> quadrature points in unique
 			assert(unique <= 1);
 		}
 		result.push_back(resultForFaceF);
@@ -361,117 +256,214 @@ void SemiLagrangian<dim>::stream() {
 
 template<size_t dim>
 void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
-
-	if (not sparsity_pattern) {
-		// make sure that sparsity structure is not empty
-		assert(m_systemMatrix.n() != 0);
-		assert(m_systemMatrix.m() != 0);
-
-	}
-
-	/////////////////////////////////
-	// Initialize Finite Element ////
-	/////////////////////////////////
-	// Define update flags (which values have to be known at each cell, face, neighbor face)
-	const dealii::UpdateFlags cell_update_flags = update_values
-			| update_quadrature_points | update_JxW_values;
-	const dealii::UpdateFlags face_update_flags = update_quadrature_points
-			| update_normal_vectors;
-	// Finite Element
-	dealii::FEValues<dim> fe_cell_values(m_mapping, *m_fe, *m_quadrature,
-			cell_update_flags);
-	dealii::FEFaceValues<dim> fe_face_values(m_mapping, *m_fe,
-			*m_faceQuadrature, face_update_flags);
-
-	// Initialize
-	std::map<typename DoFHandler<dim>::active_cell_iterator, XList> cell_map;
-	const size_t dofs_per_cell = m_fe->dofs_per_cell;
-	const std::vector<Point<dim> > & unit_support_points =
-			m_fe->get_unit_support_points();
-	std::vector<Tensor<1, dim> > minus_dtealpha;
-	for (size_t i = 0; i < m_stencil->getQ(); i++) {
-		minus_dtealpha.push_back(
-				vectorToTensor(m_stencil->getDirection(i)) * (-m_deltaT));
-	}
-	std::vector<dealii::types::global_dof_index> local_dof_indices(
-			dofs_per_cell);
-	std::vector<dealii::types::global_dof_index> neighbor_dof_indices(
-			dofs_per_cell);
-	size_t max_n_shells = (size_t) (m_stencil->getMaxParticleVelocityMagnitude()
-			* m_deltaT
-			/ CFDSolverUtilities::getMinimumVertexDistance<dim>(*m_mesh)) + 1;
-	if ((max_n_shells > 1)
-			and (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) > 1)) {
-		LOG(WARNING)
-				<< "The global CFL number (wrt. cells) is > 1. That is not a problem, in principle. "
-						"However, depending on the mesh and its distribution, the simulation may crash, as the "
-						"semi-Lagrangian paths may lead into cells that are not even ghost cells. "
-						"When this happens, the algorithm is not longer defined and you will get an error message "
-						"before the simulation crashes.";
-	}
-
-	///////////////
-	// MAIN LOOP //
-	///////////////
-	typename DoFHandler<dim>::active_cell_iterator cell =
-			m_doFHandler->begin_active(), endc = m_doFHandler->end();
-	for (; cell != endc; ++cell) {
-		if (cell->is_locally_owned()) {
-			// calculate the fe values for the cell
-			fe_cell_values.reinit(cell);
-
-			//
-			cell_map.clear();
-
-			// get a list of adjacent cells (including all cells that have common vertices with 'cell')
-			Neighborhood neighborhood;
-			getNeighborhood(cell, neighborhood, max_n_shells);
-
-			// get global degrees of freedom
-			cell->get_dof_indices(local_dof_indices);
-
-			// for all points in cell
-			for (size_t i = 0; i < dofs_per_cell; i++) {
-				// get a point x
-				dealii::Point<dim> x_i = m_mapping.transform_unit_to_real_cell(
-						cell, unit_support_points.at(i));
-				// for all directions
-				for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
-					// calculate x^(t-delta_t)
-					dealii::Point<dim> x_previous = x_i
-							+ minus_dtealpha.at(alpha);
-					bool found = false;
-					DoFInfo info_i(local_dof_indices.at(i), alpha, alpha,
-							x_previous);
-
-					// look for x_previous in neighborhood
-					for (size_t j = 0; j < neighborhood.size(); j++) {
-						if (neighborhood.at(j)->point_inside(x_previous)) {
-							found = true;
-							typename std::map<
-									typename DoFHandler<dim>::active_cell_iterator, XList>::iterator it =
-									cell_map.find(neighborhood.at(j));
-							if (it == cell_map.end()) {
-								XList new_xlist;
-								new_xlist.push_back(info_i);
-								cell_map.insert(
-										std::pair<
-												typename DoFHandler<dim>::active_cell_iterator,
-												XList>(neighborhood.at(j),
-												new_xlist));
-							} else {
-								it->second.push_back(info_i);
-							}
-							break;
-						}
-					}
-				}
-			}
-		}
-
-	}
-	m_systemVector.compress(dealii::VectorOperation::add);
-	m_systemMatrix.compress(dealii::VectorOperation::add);
+//
+//	if (not sparsity_pattern) {
+//		// make sure that sparsity structure is not empty
+//		assert(m_systemMatrix.n() != 0);
+//		assert(m_systemMatrix.m() != 0);
+//
+//	}
+//
+//	/////////////////////////////////
+//	// Initialize Finite Element ////
+//	/////////////////////////////////
+//	// Define update flags (which values have to be known at each cell, face, neighbor face)
+//	const dealii::UpdateFlags cell_update_flags = update_values
+//			| update_quadrature_points | update_JxW_values;
+//	const dealii::UpdateFlags face_update_flags = update_quadrature_points
+//			| update_normal_vectors;
+//	// Finite Element
+//	//dealii::FEValues<dim> fe_normals(m_mappting, *m_fe, *m_quadrature, update_normal_vectors);
+//	dealii::FEValues<dim> fe_cell_values(m_mapping, *m_fe, *m_quadrature,
+//			cell_update_flags);
+//	dealii::FEFaceValues<dim> fe_face_values(m_mapping, *m_fe,
+//			*m_faceQuadrature, face_update_flags);
+//
+//	// Initialize
+//	std::map<typename DoFHandler<dim>::active_cell_iterator, XList> cell_map;
+//	const size_t dofs_per_cell = m_fe->dofs_per_cell;
+//	const std::vector<Point<dim> > & unit_support_points =
+//			m_fe->get_unit_support_points();
+//	std::vector<Tensor<1, dim> > minus_dtealpha;
+//	for (size_t i = 0; i < m_stencil->getQ(); i++) {
+//		minus_dtealpha.push_back(
+//				vectorToTensor(m_stencil->getDirection(i)) * (-m_deltaT));
+//	}
+//	std::vector<dealii::types::global_dof_index> local_dof_indices(
+//			dofs_per_cell);
+//	std::vector<dealii::types::global_dof_index> neighbor_dof_indices(
+//			dofs_per_cell);
+//	size_t max_n_shells = (size_t) (m_stencil->getMaxParticleVelocityMagnitude()
+//			* m_deltaT
+//			/ CFDSolverUtilities::getMinimumVertexDistance<dim>(*m_mesh)) + 1;
+//	if ((max_n_shells > 1)
+//			and (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) > 1)) {
+//		LOG(WARNING)
+//				<< "The global CFL number (wrt. cells) is > 1. That is not a problem, in principle. "
+//						"However, depending on the mesh and its distribution, the simulation may crash, as the "
+//						"semi-Lagrangian paths may lead into cells that are neither locally owned cells nor ghost cells. "
+//						"When this happens, the algorithm is not longer well-defined and you will get an error message "
+//						"before the simulation crashes. The cure: Decrease your time step size (via the CFL number)";
+//	}
+//
+//	///////////////
+//	// MAIN LOOP //
+//	///////////////
+//	typename DoFHandler<dim>::active_cell_iterator cell =
+//			m_doFHandler->begin_active(), endc = m_doFHandler->end();
+//	for (; cell != endc; ++cell) {
+//		if (cell->is_locally_owned()) {
+//			// calculate the fe values for the cell
+//			fe_cell_values.reinit(cell);
+//
+//			//
+//			cell_map.clear();
+//
+//			// get a list of adjacent cells (including all cells that have common vertices with 'cell')
+//			Neighborhood neighborhood;
+//			getNeighborhood(cell, neighborhood, max_n_shells);
+//
+//			// get global degrees of freedom
+//			cell->get_dof_indices(local_dof_indices);
+//
+//			// for all points in cell
+//			for (size_t i = 0; i < dofs_per_cell; i++) {
+//				// get a point x
+//				dealii::Point<dim> x_i = m_mapping.transform_unit_to_real_cell(
+//						cell, unit_support_points.at(i));
+//				// for all directions
+//				for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
+//					// calculate x^(t-delta_t)
+//					dealii::Point<dim> x_previous = x_i
+//							+ minus_dtealpha.at(alpha);
+//					bool found = false;
+//					DoFInfo info_i(local_dof_indices.at(i), alpha, alpha,
+//							x_previous);
+//
+//					// look for x_previous in neighborhood
+//					for (size_t j = 0; j < neighborhood.size(); j++) {
+//						if (neighborhood.at(j)->point_inside(x_previous)) {
+//							found = true;
+//							typename std::map<
+//									typename DoFHandler<dim>::active_cell_iterator,
+//									XList>::iterator it = cell_map.find(
+//									neighborhood.at(j));
+//							if (it == cell_map.end()) {
+//								XList new_xlist;
+//								new_xlist.push_back(info_i);
+//								cell_map.insert(
+//										std::pair<
+//												typename DoFHandler<dim>::active_cell_iterator,
+//												XList>(neighborhood.at(j),
+//												new_xlist));
+//							} else {
+//								it->second.push_back(info_i);
+//							}
+//							break;
+//						}
+//					} // for j < neighborhood.size()
+//					if (found)
+//						continue;
+//
+//					// calculate x_previous due to boundary conditions
+//					bool found_across_bound = false;
+//					int face_hit_counter = -1;
+//					while (not found_across_bound) {
+//						face_hit_counter++;
+//						if (face_hit_counter >= 4) {
+//							break;
+//						}
+//						for (size_t j = 0;
+//								j < GeometryInfo<dim>::faces_per_cell; j++) {
+//							if (cell->at_boundary(j)) {
+//								// check if point is outside
+//								fe_face_values.reinit(cell, j);
+//								// assume that all faces are planar (i.e. all normal vectors are equal)
+//								const dealii::Tensor<1, dim>& n =
+//										fe_face_values.normal_vector(0);
+//								const dealii::Point<dim>& p =
+//										cell->face(j)->vertex(0);
+//								double n_pminx = n * (p - x_i);
+//								double n_xpreviousminx = n * (x_previous - x_i);
+//								if (fabs(n_xpreviousminx) < 1e-20) {
+//									// Lagrangian path parallel to face
+//									continue;
+//								}
+//								double lambda = n_pminx / n_xpreviousminx;
+//								if ((lambda > 1 + 1e-20) or (lambda < -1e-20)) {
+//									// Lagrangian path does not cut face
+//									continue;
+//								}
+//
+//								dealii::Tensor<1, dim> h = x_previous - x_i;
+//								h *= lambda;
+//								dealii::Point<dim> x_b = x_i + h;
+//								if (not cell->point_inside(x_b)) {
+//									// another face is cut before this one
+//									continue;
+//								}
+//								found_across_bound = true;
+//								// Periodic boundaries
+//
+//								// Other boundaries
+//
+//							}
+//						}
+//					} /* while not bound_found */
+////					if (not found_across_bound) {
+////						LOG(WARNING) << "The population f" << alpha + 1
+////								<< "on support point could not trace its Lagrangian path from the point "
+////								<< x_i
+////								<< "backwards. Support point not found. As a last resort, all locally "
+////										"owned cells are searched recursively. Note that in this way, boundary conditions "
+////										"could be omitted. If this is unsuccessful, NATriuM will terminate."
+////								<< endl;
+////						cout << "The population f" << alpha + 1
+////								<< "on support point could not trace its Lagrangian path from the point "
+////								<< x_i
+////								<< "backwards. Support point not found. As a last resort, all locally "
+////										"owned cells are searched recursively. Note that in this way, boundary conditions "
+////										"could be omitted. If this is unsuccessful, NATriuM will terminate."
+////								<< endl;
+////						typename dealii::DoFHandler<dim>::active_cell_iterator found_in_cell =
+////								recursivelySearchInNeighborhood(x_previous,
+////										cell);
+////						if (found_in_cell != m_doFHandler->end()) {
+////							// coarse check if boundaries conditions were violated
+////							// TODO
+////							// add to cell_map
+////							DoFInfo info_i_b(local_dof_indices.at(i), alpha,
+////									alpha, x_previous);
+////							typename std::map<
+////									typename DoFHandler<dim>::active_cell_iterator,
+////									XList>::iterator it = cell_map.find(
+////									found_in_cell);
+////							if (it == cell_map.end()) {
+////								XList new_xlist;
+////								new_xlist.push_back(info_i_b);
+////								cell_map.insert(
+////										std::pair<
+////												typename DoFHandler<dim>::active_cell_iterator,
+////												XList>(found_in_cell,
+////												new_xlist));
+////							} else {
+////								it->second.push_back(info_i_b);
+////							}
+////							break;
+////						} else { /* if not found in cell */
+////							cout << x_previous << "not found anywhere in the domain." << endl;
+////							natrium_errorexit("Semi-Lagrangian assembly failed. A point could not be "
+////									"found in the domain. Try to decrease the time step size.");
+////						} /* if found in cell // else  */
+////					}
+//
+//				}
+//			}
+//		}
+//
+//	}
+//	m_systemVector.compress(dealii::VectorOperation::add);
+//	m_systemMatrix.compress(dealii::VectorOperation::add);
 
 //#endif
 } /* fillSparseObject */
