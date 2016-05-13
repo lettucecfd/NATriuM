@@ -9,6 +9,7 @@
 #define DISTRIBUTIONFUNCTIONS_H_
 
 #include "../utilities/BasicNames.h"
+#include "../stencils/Stencil.h"
 
 namespace natrium {
 
@@ -53,9 +54,9 @@ public:
 	 */
 	DistributionFunctions(const vector<distributed_vector>& f) ;
 
+
 	/// Destructor
 	virtual ~DistributionFunctions() {
-
 	}
 
 	/**
@@ -117,7 +118,6 @@ public:
 		return m_Q;
 	}
 
-#ifdef WITH_TRILINOS_MPI
 	/**
 	 * @short reinitialize the sizes of the distribution functions - without ghost elements
 	 */
@@ -130,9 +130,6 @@ public:
 	void reinit(size_t Q, const dealii::IndexSet &local,
 			const MPI_Comm &communicator = MPI_COMM_WORLD);
 
-#else
-	void reinit(size_t Q, size_t size);
-#endif
 
 	/**
 	 * @short the number of discrete velocities, including zero
@@ -140,7 +137,6 @@ public:
 	size_t size() const {
 		return m_Q;
 	}
-
 
 	/**
 	 * @short call dealii's compress function to all distributed_vectors stored herein. Compress has to
@@ -156,6 +152,18 @@ public:
 	 * @note is only allowed for DistributionFunctions of equal size
 	 */
 	void operator=(const DistributionFunctions& other);
+
+	/**
+	 * @short checks whether two DistributionFunction objects are equal wrt. a given threshold. Use carefully: vectors are only
+	 *        considered equal if they have the same distributions among processors.
+	 * @param other Other DistributionFunction
+	 * @param threshold threshold (default: 1e-10)
+	 * @note  If you want to compare vectors that have different distributions among processors, you can work around this functions
+	 *        using Vector::add(v, allow_different_maps = true ) and check whether the entries are close to zero (requires additional memory)
+	 */
+	bool equals(const DistributionFunctions& other, double threshold = 1e-8) const;
+
+	void transferFromOtherScaling(const Stencil& old_stencil, const Stencil& new_stencil, const dealii::IndexSet& locally_owned_dofs);
 
 };
 /* class DistributionFunctions */

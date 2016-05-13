@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 	vector<distributed_vector> f;
 	distributed_vector rho;
 	rho.reinit((dof_handler.locally_owned_dofs()), MPI_COMM_WORLD);
-	rho.compress(dealii::VectorOperation::add);
+	//rho.compress(dealii::VectorOperation::add);
 	vector<distributed_vector> u;
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
 		distributed_vector f_i(rho);
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 						+ pow((0.5 * cos(j)), 2);
 			}
 		}
-		f_i.compress(dealii::VectorOperation::add);
+		//f_i.compress(dealii::VectorOperation::add);
 		f.push_back(f_i);
 	}
 	for (size_t i = 0; i < dqmodel->getD(); i++) {
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 		for (size_t j = 0; j < 10; j++) {
 			u_i(j) = 0;
 		}
-		u_i.compress(dealii::VectorOperation::add);
+		//u_i.compress(dealii::VectorOperation::add);
 		u.push_back(u_i);
 	}
 
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAllD3Q15_test) {
 	vector<distributed_vector> f;
 	distributed_vector rho;
 	rho.reinit((dof_handler.locally_owned_dofs()), MPI_COMM_WORLD);
-	rho.compress(dealii::VectorOperation::add);
+	//rho.compress(dealii::VectorOperation::insert);
 	vector<distributed_vector> u;
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
 		distributed_vector f_i(rho);
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAllD3Q15_test) {
 		}
 
 
-		f_i.compress(dealii::VectorOperation::add);
+		//f_i.compress(dealii::VectorOperation::insert);
 		f.push_back(f_i);
 
 	}
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAllD3Q15_test) {
 		for (size_t j = 0; j < 10; j++) {
 			u_i(j) = 0;
 		}
-		u_i.compress(dealii::VectorOperation::add);
+		//u_i.compress(dealii::VectorOperation::insert);
 		u.push_back(u_i);
 
 	}

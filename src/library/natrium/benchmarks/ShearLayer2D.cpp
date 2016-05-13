@@ -20,15 +20,13 @@ namespace natrium {
 ShearLayer2D::ShearLayer2D(double viscosity, size_t refinement_level, double u0,
 		double kappa) :
 		ProblemDescription<2>(makeGrid(), viscosity, 1.0), m_u0(u0), m_kappa(
-				kappa) {
+				kappa), m_refinementLevel(refinement_level) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply initial and analytical solution
 	this->setInitialU(boost::make_shared<InitialVelocity>(this));
 
-	// Refine grid
-	getMesh()->refine_global(refinement_level);
 }
 
 ShearLayer2D::~ShearLayer2D() {

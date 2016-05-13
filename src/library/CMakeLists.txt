@@ -15,15 +15,16 @@ file(   GLOB_RECURSE
         natrium/advection/*.cpp 
         natrium/benchmarks/*.cpp
         natrium/collision/*.cpp
+        natrium/dataprocessors/*.cpp
         natrium/problemdescription/*.cpp
         natrium/smoothing/*.cpp
         natrium/solver/*.cpp
         natrium/stencils/*.cpp
         natrium/timeintegration/*.cpp 
         natrium/utilities/*.cpp
-        )
-        
-        
+        )   
+       
+                
 enable_unity_build(natrium SRC_FILES)
     
     

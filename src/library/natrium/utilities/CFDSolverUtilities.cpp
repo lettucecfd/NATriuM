@@ -208,10 +208,38 @@ void CFDSolverUtilities::get_integrator_by_id(size_t id,
 		break;
 	}
 	default: {
-		LOG(ERROR) << "Time integrator not set properly in CFDSolverUtilities::get_integrator_by_id()." << endl;
+		LOG(ERROR)
+				<< "Time integrator not set properly in CFDSolverUtilities::get_integrator_by_id()."
+				<< endl;
 		break;
 	}
 	}
 } /* get_integrator_by_id */
 
+boost::shared_ptr<Stencil> CFDSolverUtilities::make_stencil(size_t d, size_t q,
+		size_t scaling) {
+	{
+		std::stringstream msg;
+		msg << "Could not create stencil with d=" << d << ", q=" << q << ".";
+		if (2 == d) {
+			if (9 == q) {
+				return boost::make_shared<D2Q9>(scaling);
+			}
+		} else if (3 == d) {
+			if (15 == q) {
+				return boost::make_shared<D3Q15>(scaling);
+			}
+			if (19 == q) {
+				return boost::make_shared<D3Q19>(scaling);
+			}
+			if (27 == q) {
+				return boost::make_shared<D3Q27>(scaling);
+			}
+		}
+		throw CFDSolverUtilitiesException(msg.str());
+		return NULL;
+	}
+}
+
 } /* namespace natrium */
+

@@ -197,8 +197,14 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(boost::shared_ptr<ProblemDescription<2> >) {
-		//TODO: implement the checkProblem function
+	void checkProblem(boost::shared_ptr<ProblemDescription<2> > problem) {
+		// make sure that the mesh does not have refined cells, refinement has to be done via ProblemDescription::refine()
+		if (problem->getMesh()->n_levels() != 1){
+			throw ConfigurationException("The mesh in your ProblemDescription must not have refined cells "
+					"upon initialization of the solver. Please implement the initial mesh refinement only by "
+					"overriding the virtual function void ProblemDescription::refine().");
+		}
+
 	}
 
 	/**
@@ -208,8 +214,13 @@ public:
 	 *
 	 * @throws ... //TODO implement custom exception
 	 */
-	void checkProblem(boost::shared_ptr<ProblemDescription<3> >) {
-		//TODO: implement the checkProblem function
+	void checkProblem(boost::shared_ptr<ProblemDescription<3> > problem) {
+		// make sure that the mesh does not have refined cells, refinement has to be done via ProblemDescription::refineAndTransform()
+		if (problem->getMesh()->n_levels() != 1){
+			throw ConfigurationException("The mesh in your ProblemDescription must not have refined cells "
+					"upon initialization of the solver. Please implement the initial mesh refinement only by "
+					"overriding the virtual function void ProblemDescription::refine().");
+		}
 	}
 
 	/*void setOutputFlags(int outputFlags) {
@@ -1096,26 +1107,35 @@ public:
 		leave_subsection();
 	}
 
-	bool isRestartAtLastCheckpoint() {
+	size_t getRestartAtIteration() {
 		enter_subsection("Initialization");
-		bool restartAtLastCheckpoint;
+		size_t restart_it;
 		try {
-			restartAtLastCheckpoint = get_bool("Restart at last checkpoint?");
+			restart_it = get_integer("Restart at iteration");
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg
-					<< "Could not read parameter 'Restart at last checkpoint?' from parameters: "
+					<< "Could not read parameter 'Restart at iteration' from parameters: "
 					<< e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}
 		leave_subsection();
-		return restartAtLastCheckpoint;
+		return restart_it;
 	}
 
-	void setRestartAtLastCheckpoint(bool restartAtLastCheckpoint) {
+	void setRestartAtIteration(long int restart_it) {
 		enter_subsection("Initialization");
-		set("Restart at last checkpoint?", restartAtLastCheckpoint);
+		try {
+			set("Restart at iteration", restart_it);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not set parameter 'Restart at iteration': "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
 		leave_subsection();
 	}
 
@@ -1571,8 +1591,8 @@ public:
 
 		set("Coarsen parameter", coarsen_param);
 		set("Refinement parameter", refine_param);
-		set("Minimum time step", min_delta);
-		set("Maximum time step", max_delta);
+		set("Minimum CFL", min_delta);
+		set("Maximum CFL", max_delta);
 		set("Refinement tolerance", refine_tol);
 		set("Coarsen tolerance", coarsen_tol);
 
@@ -1620,12 +1640,12 @@ public:
 		return refine_param;
 	}
 
-	double getEmbeddedDealIntegratorMinimumTimeStep() {
+	double getEmbeddedDealIntegratorMinimumCFL() {
 		enter_subsection("Advection");
 		enter_subsection("Embedded Parameters");
 		double min_delta;
 		try {
-			min_delta = get_double("Minimum time step");
+			min_delta = get_double("Minimum CFL");
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg
@@ -1640,12 +1660,12 @@ public:
 		return min_delta;
 	}
 
-	double getEmbeddedDealIntegratorMaximumTimeStep() {
+	double getEmbeddedDealIntegratorMaximumCFL() {
 		enter_subsection("Advection");
 		enter_subsection("Embedded Parameters");
 		double max_delta;
 		try {
-			max_delta = get_double("Maximum time step");
+			max_delta = get_double("Maximum CFL");
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg
@@ -1700,30 +1720,30 @@ public:
 		return coarsen_tol;
 	}
 
-	double getTimeStepSize() {
+	double getCFL() {
 		enter_subsection("General");
-		double stepSize;
+		double cfl;
 		try {
-			stepSize = get_double("Time step size");
+			cfl = get_double("CFL");
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not read parameter 'Time step size' from parameters: "
+			msg << "Could not read parameter 'CFL' from parameters: "
 					<< e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}
 		leave_subsection();
-		return stepSize;
+		return cfl;
 	}
 
-	void setTimeStepSize(double timeStepSize) {
+	void setCFL(double cfl) {
 		enter_subsection("General");
 		try {
-			set("Time step size", timeStepSize);
+			set("CFL", cfl);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value " << timeStepSize
-					<< " to Time step size: " << e.what();
+			msg << "Could not assign value " << cfl
+					<< " to CFL: " << e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}
@@ -1849,15 +1869,14 @@ public:
 		try {
 			full_string = get("Wall normal coordinates");
 			// comma-seperated string to vector<double>
-		    std::stringstream ss(full_string);
-		    double i;
-		    while (ss >> i)
-		    {
-		        wall_normal_coordinates.push_back(i);
+			std::stringstream ss(full_string);
+			double i;
+			while (ss >> i) {
+				wall_normal_coordinates.push_back(i);
 
-		        if (ss.peek() == ',' || ss.peek() == ' ')
-		            ss.ignore();
-		    }
+				if (ss.peek() == ',' || ss.peek() == ' ')
+					ss.ignore();
+			}
 		} catch (std::exception& e) {
 			std::stringstream msg;
 			msg

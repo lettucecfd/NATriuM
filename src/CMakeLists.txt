@@ -2,6 +2,8 @@
 # CMake File for NATriuM test
 #    
   
+  
+  
    
 #
 # It is good practise to specify a version requirement:
@@ -47,7 +49,7 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 add_subdirectory( library )
 add_subdirectory( test )
 add_subdirectory( examples )
-#add_subdirectory( analysis )
+add_subdirectory( analysis )
  
 #
 # set variable NATRIUM_TARGET (only used in this file)

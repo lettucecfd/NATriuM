@@ -158,13 +158,12 @@ BOOST_AUTO_TEST_CASE(ExponentialFilter_TestFiltering_test) {
 	size_t p = 10;
 	SEDGMinLee<2> sedg_operator(test_domain.getMesh(),
 			test_domain.getBoundaries(), p, boost::make_shared<D2Q9>(1.0));
+	sedg_operator.setupDoFs();
+	sedg_operator.reassemble();
 	distributed_vector vec;
 	vec.reinit(sedg_operator.getSystemVector().block(0));
-	dealii::ConstraintMatrix dummy;
-	dummy.close();
-	dealii::VectorTools::project(*sedg_operator.getDoFHandler(),
-			dummy, *sedg_operator.getQuadrature(), mode_f,
-			vec);
+	dealii::VectorTools::interpolate(*sedg_operator.getDoFHandler(),
+			mode_f,	vec);
 
 	dealii::DataOut<2> data_out;
 	data_out.attach_dof_handler(*sedg_operator.getDoFHandler());

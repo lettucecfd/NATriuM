@@ -99,28 +99,22 @@ int main(int argc, char** argv) {
 	if (dim_3) {
 		couetteProblem3D = boost::make_shared<CouetteFlow3D>(viscosity, U,
 				refinementLevel, replicates, startTime, isUnstructured);
-		delta_t = CFDSolverUtilities::calculateTimestep<3>(
-				*(couetteProblem3D->getMesh()), orderOfFiniteElement,
-				D3Q15(dqScaling), CFL);
 	} else {
 		couetteProblem2D = boost::make_shared<CouetteFlow2D>(viscosity, U,
 				refinementLevel, 1.0, startTime, isUnstructured);
-		delta_t = CFDSolverUtilities::calculateTimestep<2>(
-				*(couetteProblem2D->getMesh()), orderOfFiniteElement,
-				D2Q9(dqScaling), CFL);
 	}
 
 	// configure solver
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(true);
 	//configuration->setCommandLineVerbosity(ALL);
 	configuration->setUserInteraction(false);
 	configuration->setNumberOfTimeSteps(nof_iterations);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
-	configuration->setTimeStepSize(delta_t);
+	configuration->setCFL(CFL);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 

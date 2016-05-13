@@ -25,13 +25,11 @@ public:
 
 	/// constructor
 	TaylorGreenTest2D(double viscosity, size_t refinementLevel) :
-			ProblemDescription<2>(makeGrid(), viscosity, 1) {
+			ProblemDescription<2>(makeGrid(), viscosity, 1), m_refinementLevel(refinementLevel) {
 
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
 
-		// Refine grid to 8 x 8 = 64 cells; boundary indicators are inherited from parent cell
-		getMesh()->refine_global(refinementLevel);
 	}
 
 	/// destructor
@@ -104,6 +102,8 @@ public:
 
 private:
 
+	size_t m_refinementLevel;
+
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
@@ -147,6 +147,14 @@ private:
 		boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
 
 		return boundaries;
+	}
+
+	virtual void refine(Mesh<2>& mesh){
+		mesh.refine_global(m_refinementLevel);
+	}
+
+	virtual void transform(Mesh<2>& ) {
+
 	}
 }
 ;

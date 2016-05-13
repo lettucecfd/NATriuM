@@ -9,6 +9,7 @@
 #define ADVECTIONOPERATOR_H_
 
 #include "../utilities/BasicNames.h"
+#include "../stencils/Stencil.h"
 
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/fe/fe_dgq.h"
@@ -39,6 +40,8 @@ public:
 	/// function to (re-)assemble linear system
 	virtual void reassemble() = 0;
 
+	virtual  void setupDoFs() = 0;
+
 	/// make streaming step
 	virtual void stream() = 0;
 	// TODO is blas installed with dealii? installing blas will speed up the streaming step
@@ -58,8 +61,6 @@ public:
 	 *  @param[in] directory directory to save the matrix files to
 	 *  @throws AdvectionSolverException
 	 */
-	virtual void saveCheckpoint(const string& directory) const = 0;
-
 	virtual size_t getNumberOfDoFs() const = 0;
 
 	virtual const boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const = 0;
@@ -74,10 +75,13 @@ public:
 
 	virtual size_t getOrderOfFiniteElement() const = 0;
 
-#ifdef WITH_TRILINOS
 	virtual const dealii::IndexSet& getLocallyOwnedDofs() = 0;
+
 	virtual const dealii::IndexSet& getLocallyRelevantDofs() = 0;
-#endif
+
+	virtual const boost::shared_ptr<Mesh<dim> >& getMesh() const = 0;
+
+	virtual const boost::shared_ptr<Stencil>& getStencil() const  = 0;
 };
 
 } /* namespace natrium */

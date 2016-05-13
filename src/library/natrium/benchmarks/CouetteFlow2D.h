@@ -49,11 +49,18 @@ public:
 		return m_topPlateVelocity;
 	}
 
+	virtual void refine(Mesh<2>& mesh);
+	virtual void transform(Mesh<2>& mesh);
+
 private:
 
 	const double m_topPlateVelocity;
 
 	const double m_startTime;
+
+	const size_t m_refinementLevel;
+
+	const bool m_isUnstructured;
 
 	/**
 	 * @short create triangulation for couette flow
