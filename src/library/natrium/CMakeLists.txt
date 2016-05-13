@@ -8,6 +8,7 @@ file(   GLOB_RECURSE
         benchmarks/* 
         boltzmannmodels/*
         collision/*
+        dataprocessors/*
         problemdescription/* 
         smoothing/*
         solver/*
@@ -15,8 +16,8 @@ file(   GLOB_RECURSE
         timeintegration/*
         utilities/*  
         )
-     
-     
+      
+      
 #
 # Create natrium library
 #

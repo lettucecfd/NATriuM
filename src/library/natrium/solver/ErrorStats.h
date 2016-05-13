@@ -42,6 +42,23 @@ private:
 	double m_maxUAnalytic;
 	double m_l2UAnalytic;
 
+	/**
+	 * @short Analytic u function with fixed component, to be passed to integrate_difference
+	 */
+	template <size_t dim2>
+	class AnalyticU: public dealii::Function<dim2>{
+	private:
+		const dealii::Function<dim2>& m_analyticU;
+		size_t m_component;
+	public:
+		AnalyticU(const dealii::Function<dim2>& ana_u, size_t component):
+			m_analyticU(ana_u), m_component(component){
+		}
+		virtual double value(const dealii::Point<dim2>& x,  const unsigned int ) const {
+			return m_analyticU.value(x, m_component);
+		}
+	};
+
 public:
 	/**
 	 * @short Constructor
@@ -131,6 +148,7 @@ public:
 	double getL2UAnalytic() const {
 		return m_l2UAnalytic;
 	}
+
 };
 
 }/*namespace natrium */

@@ -51,9 +51,6 @@ int main(int argc, char** argv) {
 	const size_t orderOfFiniteElement = 2;
 	const double cfl=1.5;
 
-	const double timeStepSize = CFDSolverUtilities::calculateTimestep<2>(*cylinder->getMesh(),
-			orderOfFiniteElement, stencil, cfl);
-
 
 	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 
@@ -63,15 +60,14 @@ int main(int argc, char** argv) {
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/step-9";
 	configuration->setOutputDirectory(dirname.str());
-	configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
-	configuration->setNumberOfTimeSteps(5000./timeStepSize);
+	configuration->setSimulationEndTime(5000);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
-	configuration->setTimeStepSize(timeStepSize);
+	configuration->setCFL(cfl);
 	configuration->setCommandLineVerbosity(7);
 	//configuration->setDistributionInitType(Iterative);
 

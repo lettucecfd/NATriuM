@@ -73,6 +73,8 @@ protected:
 	/// scaling of the stencil
 	const double m_scaling;
 
+	numeric_matrix makeMomentBasis(vector<numeric_vector> e);
+
 public:
 
 	/// D

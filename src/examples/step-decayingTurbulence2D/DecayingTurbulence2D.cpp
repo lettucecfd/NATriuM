@@ -25,15 +25,13 @@ namespace natrium {
 
 DecayingTurbulence2D::DecayingTurbulence2D(double viscosity,
 		size_t refinementLevel) :
-		ProblemDescription<2>(makeGrid(), viscosity, 1.0) {
+		ProblemDescription<2>(makeGrid(), viscosity, 1.0), m_refinementLevel(refinementLevel){
 
 	/// apply boundary values
 	setBoundaries (makeBoundaries());
 	// apply initial values / analytic solution
 	setInitialU	(boost::make_shared<InitialVelocity>(this));
 
-	// refine global
-	getMesh()->refine_global(refinementLevel);
 }
 
 DecayingTurbulence2D::~DecayingTurbulence2D() {

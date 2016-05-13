@@ -22,6 +22,7 @@ namespace natrium {
 class DiamondObstacle2D: public ProblemDescription<2> {
 private:
 	double m_meanInflowVelocity;
+	size_t m_refinementLevel;
 public:
 
 	class InflowVelocity: public dealii::Function<2> {
@@ -57,6 +58,12 @@ public:
 		return m_meanInflowVelocity;
 	}
 
+	virtual void refine(Mesh<2>& mesh) {
+		mesh.refine_global(m_refinementLevel);
+	}
+	virtual void transform(Mesh<2>& mesh){
+
+	}
 private:
 
 	/**
@@ -75,6 +82,7 @@ private:
 	 *       has a tangential speed.
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
+
 
 };
 

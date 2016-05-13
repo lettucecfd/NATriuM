@@ -53,9 +53,10 @@ int main() {
 			viscosity, refinementLevel);
 
 	// chose dt so that courant (advection) = 1 for the diagonal directions
+	double CFL = 0.4;
 	double 	dt = CFDSolverUtilities::calculateTimestep<2>(
 			*tgVortex->getMesh(), orderOfFiniteElement,
-			D2Q9(scaling), 0.4);
+			D2Q9(scaling), CFL);
 
 
 
@@ -69,7 +70,7 @@ int main() {
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
-	configuration->setRestartAtLastCheckpoint(false);
+	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(10);
 	configuration->setOutputSolutionInterval(1000);
@@ -77,7 +78,7 @@ int main() {
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(0);
-	configuration->setTimeStepSize(dt);
+	configuration->setCFL(CFL);
 	configuration->setConvergenceThreshold(1e-15);
 	if (dt > 0.1) {
 		pout << "Timestep too big." << endl;

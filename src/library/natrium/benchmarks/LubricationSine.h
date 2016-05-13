@@ -46,12 +46,18 @@ public:
 		return m_bottomVelocity;
 	}
 
+	virtual void refine(Mesh<2>& mesh);
+	virtual void transform(Mesh<2>& mesh);
+
 private:
 
 	const double m_bottomVelocity;
 	double m_height;
 	double m_ampl;
 	const double m_length;
+	double m_roughnessHeight;
+	double m_roughnessLengthRatio;
+	size_t m_refinementLevel;
 
 	/**
 	 * @short create triangulation for couette flow

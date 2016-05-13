@@ -141,10 +141,6 @@ int main() {
 
 		for (double CFL = 0.2; CFL <= 102.4; CFL *= 2.) {
 
-			double dt = CFDSolverUtilities::calculateTimestep<2>(
-					*benchmark->getMesh(), orderOfFiniteElement, D2Q9(scaling),
-					CFL);
-
 			pout << "CFL = " << CFL << endl;
 			if (tmax / dt < 2) {
 				pout << "time step too big." << endl;
@@ -161,7 +157,6 @@ int main() {
 
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName.str());
-			configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(10000000);
 
@@ -169,7 +164,7 @@ int main() {
 			configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 			configuration->setStencilScaling(scaling);
 			configuration->setCommandLineVerbosity(BASIC);
-			configuration->setTimeStepSize(dt);
+			configuration->setCFL(CFL);
 			configuration->setSimulationEndTime(tmax);
 
 #ifdef MEASURE_ONLY_INIT_TIME
@@ -197,13 +192,13 @@ int main() {
 						<< solver.getErrorStats()->getMaxVelocityError()
 						<< endl;
 				// put out runtime
-				timeFile << orderOfFiniteElement << "         " << dt
+				timeFile << orderOfFiniteElement << "         " << solver->getTimeStepSize()
 						<< "      " << time1 << "     " << time2 << "        "
 						<< time2 / configuration->getNumberOfTimeSteps()
 						<< endl;
 				// put out final errors
 				solver.getErrorStats()->update();
-				orderFile << dt << " " << solver.getIteration() << " " << CFL
+				orderFile << solver->getTimeStepSize() << " " << solver.getIteration() << " " << CFL
 						<< " " << solver.getErrorStats()->getMaxUAnalytic()
 						<< " " << solver.getErrorStats()->getMaxVelocityError()
 						<< " " << solver.getErrorStats()->getMaxDensityError()

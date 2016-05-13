@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
 	// READ COMMAND LINE PARAMETERS
 	// ========================================================================
 	pout
+
 			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0>"
 			<< endl;
 
@@ -88,7 +89,7 @@ int main(int argc, char** argv) {
 	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
 			deal_integrator, integrator_name);
 	pout << "... that is the " << integrator_name << endl;
-	pout << "----------------" << endl;
+	pout << "-------------------------------------" << endl;
 
 	// ========================================================================
 	// MAKE FLOW PROBLEM
@@ -102,36 +103,47 @@ int main(int argc, char** argv) {
 
 	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
 			ShearLayer2D>(viscosity, refinement_level, u0, kappa);
-	double delta_t = CFDSolverUtilities::calculateTimestep<2>(
-			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);
+	/*double delta_t = CFDSolverUtilities::calculateTimestep<2>(
+			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
+
+	// **** Grid properties ****
+	pout << "**** Grid properties ****" << endl;
+	int noCellsInOneDir	= p * pow( 2, refinement_level + 1 );
+	pout << "Mesh resolution: " << noCellsInOneDir << "x" << noCellsInOneDir << endl;
+	pout << "Number of grid points: " << pow(noCellsInOneDir, 2) << endl;
+	pout << "-------------------------------------" << endl;
+
 	// ========================================================================
 	// CONFIGURE SOLVER
 	// ========================================================================
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setRestartAtLastCheckpoint(false);
+	configuration->setRestartAtIteration(500);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setOutputTableInterval(10);	//10
+	configuration->setOutputTableInterval(100);	//10
 	configuration->setOutputSolutionInterval(100); //10
 	configuration->setOutputCheckpointInterval(100);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
-			<< "-p" << p << "-coll" << collision_id << "-int" << integrator_id
+			<< "-p" << p << "-filt" << filter_id << "-coll" << collision_id << "-int" << integrator_id
 			<< "-CFL" << CFL << "-scaling" << stencil_scaling;
 	configuration->setOutputDirectory("./parameters");
 	configuration->setConvergenceThreshold(1e-10);
+	//configuration->setNumberOfTimeSteps(500000);
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(stencil_scaling);
-	configuration->setTimeStepSize(delta_t);
+	configuration->setCFL(CFL);
 	configuration->setSimulationEndTime(t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 	configuration->setOutputTurbulenceStatistics(true);
+
 	if (collision_id == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
 	}
+
 	if (filter_id == 1) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(EXPONENTIAL_FILTER);

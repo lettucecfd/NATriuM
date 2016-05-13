@@ -20,6 +20,7 @@
 #include "deal.II/base/index_set.h"
 
 #include "PhysicalProperties.h"
+#include "Checkpoint.h"
 
 #include "../stencils/D2Q9.h"
 #include "../stencils/D3Q19.h"
@@ -66,6 +67,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		}
 	}
 
+	boost::filesystem::path out_dir(configuration->getOutputDirectory());
+	boost::filesystem::path log_file = out_dir / "natrium.log";
+	boost::filesystem::path checkpoint_dir = out_dir / "checkpoint";
+
 	// CONFIGURE LOGGER
 	if (configuration->isSwitchOutputOff()) {
 		LOGGER().setConsoleLevel(SILENT);
@@ -74,10 +79,15 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		LOGGER().setConsoleLevel(
 				LogLevel(configuration->getCommandLineVerbosity()));
 		LOGGER().setFileLevel(ALL);
-		LOGGER().setLogFile(
-				(boost::filesystem::path(configuration->getOutputDirectory())
-						/ "natrium.log").string());
+		LOGGER().setLogFile(log_file.string());
 	}
+
+	// welcome message
+	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
+	LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
+	LOG(WELCOME) << "------ " << currentDateTime() << " ------" << endl;
+	LOG(WELCOME) << "------ " << Info::getUserName() << " on "
+			<< Info::getHostName() << " ------" << endl;
 
 	/// check if problem's boundary conditions are well defined
 	bool boundaries_ok = problemDescription->checkBoundaryConditions();
@@ -94,7 +104,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	m_problemDescription = problemDescription;
 	m_configuration = configuration;
 
-	/// Build boltzmann model
+	/// Build stencil
 	if (Stencil_D2Q9 == configuration->getStencil()) {
 		m_stencil = boost::make_shared<D2Q9>(
 				configuration->getStencilScaling());
@@ -114,47 +124,64 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		natrium_errorexit("Stencil has wrong dimension.");
 	}
 
+	// Restart from checkpoint?
+	boost::shared_ptr<Checkpoint<dim> > checkpoint;
+	CheckpointStatus checkpoint_status;
+	size_t restart_i = m_configuration->getRestartAtIteration();
+	if (0 != restart_i) {
+		checkpoint = boost::make_shared<Checkpoint<dim> >(restart_i,
+				checkpoint_dir);
+		if (not checkpoint->exists()) {
+			std::stringstream msg;
+			msg << "You want to restart from iteration " << restart_i
+					<< ", but I could not find the required checkpoint files "
+					<< checkpoint->getStatusFile().string() << " and "
+					<< checkpoint->getDataFile().string() << ".";
+			natrium_errorexit(msg.str().c_str());
+		} else {
+			LOG(BASIC) << "Restart at iteration " << restart_i << endl;
+		}
+	}
+
 	/// Build streaming data object
 	if (SEDG == configuration->getAdvectionScheme()) {
 		// start timer
-		TimerOutput::Scope timer_section(Timing::getTimer(), "System assembly");
 
-		string check_dir;
-		if (configuration->isRestartAtLastCheckpoint()) {
-			boost::filesystem::path out_dir(
-					m_configuration->getOutputDirectory());
-			boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
-			check_dir = checkpoint_dir.string();
-		}
-		// create SEDG MinLee by reading the system matrices from files or assembling
-		// TODO estimate time for assembly
+		// create SEDG MinLee and assemble
 		try {
 			m_advectionOperator = boost::make_shared<SEDGMinLee<dim> >(
 					m_problemDescription->getMesh(),
 					m_problemDescription->getBoundaries(),
 					configuration->getSedgOrderOfFiniteElement(), m_stencil,
-					check_dir, (CENTRAL == configuration->getSedgFluxType()));
+					(CENTRAL == configuration->getSedgFluxType()));
 		} catch (AdvectionSolverException & e) {
 			natrium_errorexit(e.what());
 		}
 	}
-
-	if (configuration->isRestartAtLastCheckpoint()) {
-		// read iteration number and time from file
-		boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
-		boost::filesystem::path filename(
-				out_dir / "checkpoint" / "checkpoint.dat");
-		std::ifstream ifile(filename.string());
-		ifile >> m_iterationStart;
-		ifile >> m_time;
-		// print out message
-		LOG(BASIC) << "Restart at iteration " << m_iterationStart
-				<< " (simulation time = " << m_time << " s)." << endl;
+	// Refine mesh, Build DoF system (by reading from restart file)
+	if (checkpoint) {
+		checkpoint->load(m_f, *m_problemDescription, *m_advectionOperator,
+				checkpoint_status);
+		m_iterationStart = checkpoint_status.iterationNumber;
+		m_time = checkpoint_status.time;
 	} else {
+		m_problemDescription->refineAndTransform();
+		m_advectionOperator->setupDoFs();
+		m_f.reinit(m_stencil->getQ(),
+				m_advectionOperator->getLocallyOwnedDofs(),
+				MPI_COMM_WORLD);
 		m_iterationStart = 0;
 		m_time = 0;
 	}
 	m_i = m_iterationStart;
+	// assemble advection operator
+	m_advectionOperator->reassemble();
+
+	// set time step size
+	double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
+			*(m_problemDescription->getMesh()),
+			m_configuration->getSedgOrderOfFiniteElement(), *m_stencil,
+			configuration->getCFL());
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
@@ -162,63 +189,57 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	double G = -5;
 	if (BGK_STANDARD == configuration->getCollisionScheme()) {
 		tau = BGKStandard::calculateRelaxationParameter(
-				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_stencil);
-		m_collisionModel = boost::make_shared<BGKStandard>(tau,
-				m_configuration->getTimeStepSize(), m_stencil);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		m_collisionModel = boost::make_shared<BGKStandard>(tau, delta_t,
+				m_stencil);
 	} else if (BGK_STEADY_STATE == configuration->getCollisionScheme()) {
 		gamma = configuration->getBGKSteadyStateGamma();
 		tau = BGKSteadyState::calculateRelaxationParameter(
-				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_stencil, gamma);
-		m_collisionModel = boost::make_shared<BGKSteadyState>(tau,
-				m_configuration->getTimeStepSize(), m_stencil, gamma);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil,
+				gamma);
+		m_collisionModel = boost::make_shared<BGKSteadyState>(tau, delta_t,
+				m_stencil, gamma);
 	} else if (BGK_STANDARD_TRANSFORMED
 			== configuration->getCollisionScheme()) {
 		tau = BGKStandardTransformed::calculateRelaxationParameter(
-				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_stencil);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 		m_collisionModel = boost::make_shared<BGKStandardTransformed>(tau,
-				m_configuration->getTimeStepSize(), m_stencil);
+				delta_t, m_stencil);
 	} else if (BGK_MULTIPHASE == configuration->getCollisionScheme()) {
 		tau = BGKStandardTransformed::calculateRelaxationParameter(
-				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_stencil);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 		PseudopotentialParameters pp_para(
 				m_configuration->getPseudopotentialType(),
 				m_configuration->getBGKPseudopotentialG(),
 				m_configuration->getBGKPseudopotentialT());
 		G = m_configuration->getBGKPseudopotentialG();
 		boost::shared_ptr<BGKPseudopotential<dim> > coll_tmp =
-				boost::make_shared<BGKPseudopotential<dim> >(tau,
-						m_configuration->getTimeStepSize(), m_stencil, pp_para);
+				boost::make_shared<BGKPseudopotential<dim> >(tau, delta_t,
+						m_stencil, pp_para);
 		coll_tmp->setAdvectionOperator(m_advectionOperator);
 		m_collisionModel = coll_tmp;
 	} else if (BGK_INCOMPRESSIBLE == configuration->getCollisionScheme()) {
 		tau = BGKIncompressible::calculateRelaxationParameter(
-				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_stencil);
-		m_collisionModel = boost::make_shared<BGKIncompressible>(tau,
-				m_configuration->getTimeStepSize(), m_stencil);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		m_collisionModel = boost::make_shared<BGKIncompressible>(tau, delta_t,
+				m_stencil);
 	} else if (MRT_STANDARD == configuration->getCollisionScheme()) {
 		tau = BGKStandard::calculateRelaxationParameter(
-				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_stencil);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 		m_collisionModel = boost::make_shared<MRTStandard>(
-				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), m_stencil);
+				m_problemDescription->getViscosity(), delta_t, m_stencil);
 	} else if (KBC_STANDARD == configuration->getCollisionScheme()) {
 		tau = KBCStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_stencil);
+				delta_t, *m_stencil);
 		m_collisionModel = boost::make_shared<KBCStandard>(tau,
-				m_configuration->getTimeStepSize(), m_stencil);
+				delta_t, m_stencil);
 	} else if (KBC_CENTRAL == configuration->getCollisionScheme()) {
 			tau = KBCCentral::calculateRelaxationParameter(
 					m_problemDescription->getViscosity(),
-					m_configuration->getTimeStepSize(), *m_stencil);
+					delta_t, *m_stencil);
 			m_collisionModel = boost::make_shared<KBCCentral>(tau,
-					m_configuration->getTimeStepSize(), m_stencil);
+					delta_t, m_stencil);
 	}
 	// apply external force
 	if (m_problemDescription->hasExternalForce()) {
@@ -239,56 +260,55 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_velocity.push_back(vi);
 		m_tmpVelocity.push_back(vi);
 	}
-	applyInitialDensities(m_density, m_supportPoints);
-	applyInitialVelocities(m_velocity, m_supportPoints);
+	if (not checkpoint) {
+		applyInitialDensities(m_density, m_supportPoints);
+		applyInitialVelocities(m_velocity, m_supportPoints);
+	} else {
+		calculateDensitiesAndVelocities();
+	}
 	m_residuumDensity = 1.0;
 	m_residuumVelocity = 1.0;
-
-	//distribution functions
-#ifdef WITH_TRILINOS_MPI
-	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
-	MPI_COMM_WORLD);
-#else
-	m_f.reinit(m_stencil->getQ(), m_advectionOperator->getNumberOfDoFs());
-#endif
 
 	/// Build time integrator
 	if (RUNGE_KUTTA_5STAGE == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = boost::make_shared<
 				RungeKutta5LowStorage<distributed_sparse_block_matrix,
-						distributed_block_vector> >(
-				configuration->getTimeStepSize(), m_f.getFStream());
+						distributed_block_vector> >(delta_t, m_f.getFStream());
 	} else if (THETA_METHOD == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = boost::make_shared<
 				ThetaMethod<distributed_sparse_block_matrix,
-						distributed_block_vector> >(
-				configuration->getTimeStepSize(), m_f.getFStream(),
+						distributed_block_vector> >(delta_t, m_f.getFStream(),
 				configuration->getThetaMethodTheta());
 	} else if (EXPONENTIAL == configuration->getTimeIntegrator()) {
 		m_timeIntegrator = boost::make_shared<
 				ExponentialTimeIntegrator<distributed_sparse_block_matrix,
-						distributed_block_vector> >(
-				configuration->getTimeStepSize(), m_stencil->getQ() - 1);
+						distributed_block_vector> >(delta_t,
+				m_stencil->getQ() - 1);
 	} else if (OTHER == configuration->getTimeIntegrator()) {
 		if (configuration->getDealIntegrator() < 7) {
 			m_timeIntegrator = boost::make_shared<
 					DealIIWrapper<distributed_sparse_block_matrix,
-							distributed_block_vector> >(
-					configuration->getTimeStepSize(),
+							distributed_block_vector> >(delta_t,
 					configuration->getDealIntegrator(),
 					configuration->getDealLinearSolver());
 		} else if (configuration->getDealIntegrator() < 12) {
+			double min_delta_t = CFDSolverUtilities::calculateTimestep<dim>(
+					*(m_problemDescription->getMesh()),
+					m_configuration->getSedgOrderOfFiniteElement(), *m_stencil,
+					configuration->getEmbeddedDealIntegratorMinimumCFL());
+			double max_delta_t = CFDSolverUtilities::calculateTimestep<dim>(
+					*(m_problemDescription->getMesh()),
+					m_configuration->getSedgOrderOfFiniteElement(), *m_stencil,
+					configuration->getEmbeddedDealIntegratorMaximumCFL());
 			m_timeIntegrator =
 					boost::make_shared<
 							DealIIWrapper<distributed_sparse_block_matrix,
-									distributed_block_vector> >(
-							configuration->getTimeStepSize(),
+									distributed_block_vector> >(delta_t,
 							configuration->getDealIntegrator(),
 							configuration->getDealLinearSolver(),
 							configuration->getEmbeddedDealIntegratorCoarsenParameter(),
 							configuration->getEmbeddedDealIntegratorRefinementParameter(),
-							configuration->getEmbeddedDealIntegratorMinimumTimeStep(),
-							configuration->getEmbeddedDealIntegratorMaximumTimeStep(),
+							min_delta_t, max_delta_t,
 							configuration->getEmbeddedDealIntegratorRefinementTolerance(),
 							configuration->getEmbeddedDealIntegratorCoarsenTolerance());
 		};
@@ -298,7 +318,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_problemDescription->getBoundaries());
 	}
 
-	// build filter
+// build filter
 	if (m_configuration->isFiltering() == true) {
 		if (m_configuration->getFilteringScheme() == EXPONENTIAL_FILTER) {
 			m_filter = boost::make_shared<ExponentialFilter<dim> >(
@@ -324,11 +344,6 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 	double dx = CFDSolverUtilities::getMinimumVertexDistance<dim>(
 			*problemDescription->getMesh());
-	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
-	LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
-	LOG(WELCOME) << "------ " << currentDateTime() << " ------" << endl;
-	LOG(WELCOME) << "------ " << Info::getUserName() << " on "
-			<< Info::getHostName() << " ------" << endl;
 	LOG(WELCOME) << "viscosity:                "
 			<< problemDescription->getViscosity() << " m^2/s" << endl;
 	LOG(WELCOME) << "char. length:             "
@@ -345,20 +360,16 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			<< configuration->getStencilScaling() << endl;
 	LOG(WELCOME) << "Sound speed:              " << m_stencil->getSpeedOfSound()
 			<< endl;
-	//TODO propose optimal cfl based on time integrator
+//TODO propose optimal cfl based on time integrator
 	const double optimal_cfl = 0.4;
 	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
 			<< CFDSolverUtilities::calculateTimestep<dim>(
 					*m_problemDescription->getMesh(),
 					configuration->getSedgOrderOfFiniteElement(), *m_stencil,
 					optimal_cfl) << " s" << endl;
-	LOG(WELCOME) << "Actual dt:                "
-			<< configuration->getTimeStepSize() << " s" << endl;
-	LOG(WELCOME) << "CFL number:               "
-			<< configuration->getTimeStepSize() / dx
-					* m_stencil->getMaxParticleVelocityMagnitude()
-					* configuration->getSedgOrderOfFiniteElement()
-					* configuration->getSedgOrderOfFiniteElement() << endl;
+	LOG(WELCOME) << "Actual dt:                " << delta_t << " s" << endl;
+	LOG(WELCOME) << "CFL number:               " << configuration->getCFL()
+			<< endl;
 	LOG(WELCOME) << "dx:                       " << dx << endl;
 	LOG(WELCOME) << "Order of finite element:  "
 			<< configuration->getSedgOrderOfFiniteElement() << endl;
@@ -405,7 +416,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 	LOG(WELCOME) << "----------------------------" << endl;
 
-	// initialize boundary dof indicator
+// initialize boundary dof indicator
 	std::set<dealii::types::boundary_id> boundaryIndicators;
 	typename BoundaryCollection<dim>::ConstIterator it =
 			m_problemDescription->getBoundaries()->getBoundaries().begin();
@@ -433,20 +444,16 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			m_advectionOperator->getDoFHandler()->n_locally_owned_dofs_per_processor();
 	for (size_t i = 0;
 			i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); i++) {
-		LOG(DETAILED) << "Process "
-				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-				<< " has " << dofs_per_proc.at(i) << " grid points." << endl;
+		LOG(DETAILED) << "Process " << i << " has " << dofs_per_proc.at(i)
+				<< " grid points." << endl;
 	}
 
 // Initialize distribution functions
-	if (configuration->isRestartAtLastCheckpoint()) {
-		boost::filesystem::path out_dir(m_configuration->getOutputDirectory());
-		boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
-		loadDistributionFunctionsFromFiles(checkpoint_dir.string());
-	} else {
+	if (not checkpoint) {
 		initializeDistributions();
 	}
-	// initialize nonlinear boundaries
+
+// initialize nonlinear boundaries
 	m_boundaryVector.reinit(m_advectionOperator->getSystemVector());
 	m_boundaryVector = m_advectionOperator->getSystemVector();
 	m_problemDescription->getBoundaries()->initializeNonlinearBoundaries(
@@ -478,12 +485,6 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 }
 /* Constructor */
-template CFDSolver<2>::CFDSolver(
-		boost::shared_ptr<SolverConfiguration> configuration,
-		boost::shared_ptr<ProblemDescription<2> > problemDescription);
-template CFDSolver<3>::CFDSolver(
-		boost::shared_ptr<SolverConfiguration> configuration,
-		boost::shared_ptr<ProblemDescription<3> > problemDescription);
 
 template<size_t dim>
 void CFDSolver<dim>::stream() {
@@ -496,21 +497,21 @@ void CFDSolver<dim>::stream() {
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
 
-	//const distributed_block_vector& systemVector =
-	//		m_advectionOperator->getSystemVector();
-	//TODO has to be replaced by boundaryVector
+//const distributed_block_vector& systemVector =
+//		m_advectionOperator->getSystemVector();
+//TODO has to be replaced by boundaryVector
 	m_boundaryVector = m_advectionOperator->getSystemVector();
 
-	//try {
-	m_time = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector, m_time,
-			m_timeIntegrator->getTimeStepSize());
-	//} catch (std::exception& e) {
-	//	natrium_errorexit(e.what());
-	//}
+//try {
+	double new_dt = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector,
+			0.0, m_timeIntegrator->getTimeStepSize());
+	m_timeIntegrator->setTimeStepSize(new_dt);
+	m_time += new_dt;
+//} catch (std::exception& e) {
+//	natrium_errorexit(e.what());
+//}
 	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
 }
-template void CFDSolver<2>::stream();
-template void CFDSolver<3>::stream();
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
@@ -525,8 +526,6 @@ void CFDSolver<dim>::collide() {
 		natrium_errorexit(e.what());
 	}
 }
-template void CFDSolver<2>::collide();
-template void CFDSolver<3>::collide();
 
 template<size_t dim>
 void CFDSolver<dim>::reassemble() {
@@ -540,8 +539,6 @@ void CFDSolver<dim>::reassemble() {
 		natrium_errorexit(e.what());
 	}
 }
-template void CFDSolver<2>::reassemble();
-template void CFDSolver<3>::reassemble();
 
 template<size_t dim>
 void CFDSolver<dim>::filter() {
@@ -556,8 +553,6 @@ void CFDSolver<dim>::filter() {
 		}
 	}
 }
-template void CFDSolver<2>::filter();
-template void CFDSolver<3>::filter();
 
 template<size_t dim>
 void CFDSolver<dim>::run() {
@@ -571,6 +566,9 @@ void CFDSolver<dim>::run() {
 		stream();
 		filter();
 		collide();
+		for (size_t i = 0; i < m_dataProcessors.size(); i++) {
+			m_dataProcessors.at(i)->apply();
+		}
 	}
 	output(m_i);
 
@@ -580,8 +578,6 @@ void CFDSolver<dim>::run() {
 	LOG(BASIC) << "Summary: " << endl;
 	LOG(BASIC) << Timing::getOutStream().str() << endl;
 }
-template void CFDSolver<2>::run();
-template void CFDSolver<3>::run();
 
 template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
@@ -606,10 +602,10 @@ bool CFDSolver<dim>::stopConditionMet() {
 		return true;
 	}
 // Converged
-	const size_t check_interval = 10;
+	const size_t check_interval = 100;
 	const double convergence_threshold =
 			m_configuration->getConvergenceThreshold();
-	if (m_i % 10 == 0) {
+	if (m_i % check_interval == 0) {
 		m_solverStats->calulateResiduals(m_i);
 		if ((m_residuumVelocity < convergence_threshold)
 		/*and (m_residuumDensity < convergence_threshold)*/) {
@@ -626,14 +622,15 @@ bool CFDSolver<dim>::stopConditionMet() {
 	}
 	return false;
 }
-template bool CFDSolver<2>::stopConditionMet();
-template bool CFDSolver<3>::stopConditionMet();
 
 template<size_t dim>
 void CFDSolver<dim>::output(size_t iteration) {
 
 // start timer
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
+
+// sync MPI processes
+	MPI_sync();
 
 // output: vector fields as .vtu files
 	if (iteration == m_iterationStart) {
@@ -659,7 +656,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 		 }
 		 }*/
 		if (m_configuration->isOutputTurbulenceStatistics())
-				m_turbulenceStats->addToReynoldsStatistics(m_velocity);
+			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
 		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
 			// save local part of the solution
 			std::stringstream str;
@@ -683,7 +680,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 			/// For Benchmarks: add analytic solution
 			addAnalyticSolutionToOutput(data_out);
 			/// For turbulent flows: add turbulent statistics
-			if (m_configuration->isOutputTurbulenceStatistics()){
+			if (m_configuration->isOutputTurbulenceStatistics()) {
 				m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
 			}
 
@@ -697,7 +694,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 
 			// Write vtu file
 			data_out.build_patches(
-					m_configuration->getSedgOrderOfFiniteElement()*2);
+					m_configuration->getSedgOrderOfFiniteElement() * 2);
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)
@@ -725,38 +722,32 @@ void CFDSolver<dim>::output(size_t iteration) {
 			}
 		}
 
-
 		// output: table
 		// calculate information + physical properties
 		if (iteration % m_configuration->getOutputTableInterval() == 0) {
 			m_solverStats->printNewLine();
 			if (m_configuration->isOutputTurbulenceStatistics()) {
-				assert (m_turbulenceStats);
+				assert(m_turbulenceStats);
 				m_turbulenceStats->printNewLine();
 			}
 		}
 
 		// output: checkpoint
 		if (iteration % m_configuration->getOutputCheckpointInterval() == 0) {
-			boost::filesystem::path out_dir(
+			boost::filesystem::path checkpoint_dir(
 					m_configuration->getOutputDirectory());
-			boost::filesystem::path checkpoint_dir(out_dir / "checkpoint");
-			// advection matrices
-			m_advectionOperator->saveCheckpoint(checkpoint_dir.string());
-			// distribution functions
-			saveDistributionFunctionsToFiles(checkpoint_dir.string());
-			// iteration
-			boost::filesystem::path filename = checkpoint_dir
-					/ "checkpoint.dat";
-			std::ofstream outfile(filename.string());
-			outfile << iteration << endl;
-			// time
-			outfile << m_time << endl;
-		}
-	}
+			checkpoint_dir /= "checkpoint";
+			Checkpoint<dim> checkpoint(m_i, checkpoint_dir);
+			CheckpointStatus checkpoint_status;
+			checkpoint_status.iterationNumber = m_i;
+			checkpoint_status.stencilScaling = m_stencil->getScaling();
+			checkpoint_status.time = m_time;
+			checkpoint_status.feOrder = m_configuration->getSedgOrderOfFiniteElement();
+			checkpoint.write(*m_problemDescription->getMesh(), m_f,
+					*m_advectionOperator->getDoFHandler(), checkpoint_status);
+		} /*if checkpoint interval*/
+	} /*if not output off*/
 }
-template void CFDSolver<2>::output(size_t iteration);
-template void CFDSolver<3>::output(size_t iteration);
 
 template<size_t dim>
 void CFDSolver<dim>::initializeDistributions() {
@@ -862,71 +853,6 @@ void CFDSolver<dim>::initializeDistributions() {
 	LOG(BASIC) << "Initialize distribution functions: done." << endl;
 }
 
-template void CFDSolver<2>::initializeDistributions();
-template void CFDSolver<3>::initializeDistributions();
-
-template<size_t dim>
-void CFDSolver<dim>::saveDistributionFunctionsToFiles(const string& directory) {
-	for (size_t i = 0; i < m_stencil->getQ(); i++) {
-		// filename
-		std::stringstream filename;
-
-		filename << directory << "/checkpoint_f_" << i
-#ifdef WITH_TRILINOS_MPI
-				<< "."
-				<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-#endif
-				<< ".dat";
-		std::ofstream file(filename.str().c_str());
-#ifndef WITH_TRILINOS
-		m_f.at(i).block_write(file);
-#else
-		// TODO Write and read functions for Trilinos vectors. This here is really bad.
-		numeric_vector tmp(m_f.at(i));
-		tmp.block_write(file);
-#endif
-	}
-}
-template void CFDSolver<2>::saveDistributionFunctionsToFiles(
-		const string& directory);
-template void CFDSolver<3>::saveDistributionFunctionsToFiles(
-		const string& directory);
-
-template<size_t dim>
-void CFDSolver<dim>::loadDistributionFunctionsFromFiles(
-		const string& directory) {
-// PRECONDITION: vectors already created with the right sizes
-// read the distribution functions from file
-	try {
-		for (size_t i = 0; i < m_stencil->getQ(); i++) {
-			// filename
-			std::stringstream filename;
-			filename << directory << "/checkpoint_f_" << i
-#ifdef WITH_TRILINOS_MPI
-					<< "."
-					<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-#endif
-					<< ".dat";
-			std::ifstream file(filename.str().c_str());
-#ifndef WITH_TRILINOS
-			m_f.at(i).block_read(file);
-#else
-			// TODO Write and read functions for Trilinos vectors. This here is really bad.
-			numeric_vector tmp(m_f.at(i));
-			tmp.block_read(file);
-			m_f.at(i) = tmp;
-
-#endif
-		}
-	} catch (dealii::StandardExceptions::ExcIO& excIO) {
-		natrium_errorexit(
-				"An error occurred while reading the distribution functions from file: Please switch off the restart option to start the simulation from the beginning.");
-	}
-}
-template void CFDSolver<2>::loadDistributionFunctionsFromFiles(
-		const string& directory);
-template void CFDSolver<3>::loadDistributionFunctionsFromFiles(
-		const string& directory);
 
 template<size_t dim>
 void natrium::CFDSolver<dim>::applyInitialDensities(
@@ -957,14 +883,6 @@ void natrium::CFDSolver<dim>::applyInitialDensities(
 		} /* if is locally owned */
 	} /* for all cells */
 }
-template
-void natrium::CFDSolver<2>::applyInitialDensities(
-		distributed_vector& initialDensities,
-		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const;
-template
-void natrium::CFDSolver<3>::applyInitialDensities(
-		distributed_vector& initialDensities,
-		const map<dealii::types::global_dof_index, dealii::Point<3> >& supportPoints) const;
 
 template<size_t dim>
 void natrium::CFDSolver<dim>::applyInitialVelocities(
@@ -1002,36 +920,26 @@ void natrium::CFDSolver<dim>::applyInitialVelocities(
 		} /* if is locally owned */
 	} /* for all cells */
 }
-template
-void natrium::CFDSolver<2>::applyInitialVelocities(
-		vector<distributed_vector>& initialVelocities,
-		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const;
-template
-void natrium::CFDSolver<3>::applyInitialVelocities(
-		vector<distributed_vector>& initialVelocities,
-		const map<dealii::types::global_dof_index, dealii::Point<3> >& supportPoints) const;
 
 template<size_t dim>
 double CFDSolver<dim>::getTau() const {
+	double delta_t = m_timeIntegrator->getTimeStepSize();
 	if ((BGK_STANDARD == m_configuration->getCollisionScheme())
 			or (BGK_STANDARD_TRANSFORMED
 					== m_configuration->getCollisionScheme())) {
 		return BGKStandard::calculateRelaxationParameter(
-				m_problemDescription->getViscosity(),
-				m_configuration->getTimeStepSize(), *m_stencil);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 	}
 	LOG(WARNING)
 			<< "getTau() is called, but you don't have a BGK Standard model."
 			<< endl;
 	return 0;
 }
-template double CFDSolver<2>::getTau() const;
-template double CFDSolver<3>::getTau() const;
 
 template<size_t dim>
 void CFDSolver<dim>::addToVelocity(
 		boost::shared_ptr<dealii::Function<dim> > function) {
-	// get Function instance
+// get Function instance
 	const unsigned int dofs_per_cell =
 			m_advectionOperator->getFe()->dofs_per_cell;
 	vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -1064,10 +972,6 @@ void CFDSolver<dim>::addToVelocity(
 	} /* for all cells */
 	initializeDistributions();
 }
-template void CFDSolver<2>::addToVelocity(
-		boost::shared_ptr<dealii::Function<2> > function);
-template void CFDSolver<3>::addToVelocity(
-		boost::shared_ptr<dealii::Function<3> > function);
 
 template<size_t dim>
 void CFDSolver<dim>::scaleVelocity(double scaling_factor) {
@@ -1078,8 +982,55 @@ void CFDSolver<dim>::scaleVelocity(double scaling_factor) {
 	}
 	initializeDistributions();
 }
-template void CFDSolver<2>::scaleVelocity(double scaling_factor);
-template void CFDSolver<3>::scaleVelocity(double scaling_factor);
+
+template<size_t dim>
+void CFDSolver<dim>::calculateDensitiesAndVelocities() {
+// inefficient version, only for initialization
+
+	size_t Q = m_stencil->getQ();
+	m_density = 0;
+	for (size_t i = 0; i < dim; i++) {
+		m_velocity.at(i) = 0;
+	}
+
+	for (size_t i = 0; i < Q; i++) {
+		m_density.add(m_f.at(i));
+		for (size_t j = 0; j < dim; j++) {
+			m_velocity.at(j).add(m_stencil->getDirection(i)(j), m_f.at(i));
+		}
+	}
+
+//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it(
+			m_advectionOperator->getLocallyOwnedDofs().begin());
+	dealii::IndexSet::ElementIterator end(
+			m_advectionOperator->getLocallyOwnedDofs().end());
+	for (; it != end; it++) {
+		size_t i = *it;
+		double one_by_rho_i = 1.0 / m_density(i);
+		for (size_t j = 0; j < dim; j++) {
+			m_velocity[j](i) = m_velocity[j](i) * one_by_rho_i;
+		}
+	}
+}
+
+template<size_t dim>
+void CFDSolver<dim>::convertDeprecatedCheckpoint() {
+	// load
+	boost::filesystem::path checkpoint_dir(	m_configuration->getOutputDirectory());
+	checkpoint_dir /= "checkpoint";
+	CheckpointStatus checkpoint_status;
+	Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(m_f,
+			*m_advectionOperator, checkpoint_dir.string(), checkpoint_status);
+
+	// save
+	Checkpoint<dim> checkpoint(checkpoint_status.iterationNumber, checkpoint_dir);
+	checkpoint.write(*m_problemDescription->getMesh(), m_f,
+			*m_advectionOperator->getDoFHandler(), checkpoint_status);
+}
+
+template class CFDSolver<2> ;
+template class CFDSolver<3> ;
 
 } /* namespace natrium */
 

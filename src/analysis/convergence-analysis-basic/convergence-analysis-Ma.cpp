@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
 					SolverConfiguration>();
 			//configuration->setSwitchOutputOff(true);
 			configuration->setOutputDirectory(dirName2.str());
-			configuration->setRestartAtLastCheckpoint(false);
+			//configuration->setRestartAtLastCheckpoint(false);
 			configuration->setUserInteraction(false);
 			configuration->setOutputTableInterval(100);
 			configuration->setOutputSolutionInterval(100000);
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
 				pout << "Not yet implemented" << endl;
 				continue;
 			}
-			configuration->setTimeStepSize(dt);
+			configuration->setCFL(CFL);
 			if (dt > 0.1) {
 				pout << "Timestep too big." << endl;
 				continue;

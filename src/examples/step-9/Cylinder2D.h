@@ -33,6 +33,14 @@ public:
 		return m_inletVelocity;
 	}
 
+	virtual void refine(Mesh<2>& mesh) {
+
+	}
+
+	virtual void transform(Mesh<2>& mesh){
+
+	}
+
 private:
 
 	const double m_inletVelocity;
@@ -67,7 +75,9 @@ private:
 			vector<distributed_vector>& initialVelocities,
 			const vector<dealii::Point<2> >& supportPoints) const;
 
+
 };
+
 
 } /* namespace natrium */
 #endif /* CYLINDER2D_H_ */
