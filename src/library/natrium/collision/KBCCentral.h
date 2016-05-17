@@ -2,11 +2,11 @@
  * KBCCentral.h
  *
  *  Created on: 29.03.2016
- *      Author: dominik
+ *      Author: Dominik Wilde
  */
 
-#ifndef LIBRARY_NATRIUM_COLLISION_KBCCENTRAL_H_
-#define LIBRARY_NATRIUM_COLLISION_KBCCENTRAL_H_
+#ifndef KBCCENTRAL_H_
+#define KBCCENTRAL_H_
 
 #include "MRTStandard.h"
 
@@ -38,7 +38,7 @@ public:
 			bool inInitializationProcedure) const;
 
 	/**
-	 * @short optimized version of collideAll for D2Q9 stencil
+	 * @short evaluates the stabilizer of the KBC function and writes it to a parameter file
 	 */
 
 
@@ -94,4 +94,4 @@ private:
 } /* namespace natrium */
 
 
-#endif /* LIBRARY_NATRIUM_COLLISION_KBCCENTRAL_H_ */
+#endif /* KBCCENTRAL_H_ */

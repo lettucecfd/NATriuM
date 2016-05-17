@@ -2,10 +2,12 @@
  * KBCStandard.cpp
  *
  *  Created on: 17.11.2015
- *      Author: dominik
+ *      Author: Dominik Wilde
  */
 
 #include "KBCStandard.h"
+#define KBC_C // if not defined, KBC_D will be used (according to Karlin et al. 2015)
+#define EVALUATE_GAMMA // if defined, an  evaluation over time of the stabilizer gamma will be carried out (D2Q9 only)
 
 namespace natrium {
 
@@ -34,7 +36,7 @@ void KBCStandard::collideAll(DistributionFunctions& f,
 		collideAllD3Q15(f, densities, velocities, locally_owned_dofs,
 				inInitializationProcedure);
 	} else {
-		throw CollisionException("KBC only implemented for D2Q9");
+		throw CollisionException("KBC_Standard only implemented for D2Q9 and D3Q15");
 		// Inefficient collision
 		//BGK::collideAll(f, densities, velocities, locally_owned_dofs,
 		//		inInitializationProcedure);
@@ -46,7 +48,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
-#define KBC_C
+#define KBC_C // if not defined, KBC_D will be used (according to Karlin et al. 2015)
 
 	size_t Q = getQ();
 
