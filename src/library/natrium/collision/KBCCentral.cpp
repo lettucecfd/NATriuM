@@ -2,10 +2,11 @@
  * KBCCentral.cpp
  *
  *  Created on: 29.03.2016
- *      Author: dominik
+ *      Author: Dominik Wilde
  */
 
 #include "KBCCentral.h"
+#define EVALUATE_GAMMA // if defined, an evaluation over time of the stabilizer gamma will be carried out
 
 namespace natrium {
 
@@ -13,12 +14,10 @@ KBCCentral::KBCCentral(double relaxationParameter, double dt,
 		const boost::shared_ptr<Stencil> stencil) :
 		counter(0), MRT(relaxationParameter, dt, stencil), parameterFile(
 				"deviation.txt") {
-	// TODO Auto-generated constructor stub
 
 }
 
 KBCCentral::~KBCCentral() {
-	// TODO Auto-generated destructor stub
 }
 
 void KBCCentral::collideAll(DistributionFunctions& f,
@@ -34,10 +33,7 @@ void KBCCentral::collideAll(DistributionFunctions& f,
 		 inInitializationProcedure);*/
 
 	} else {
-		throw CollisionException("KBC only implemented for D2Q9");
-		// Inefficient collision
-		//BGK::collideAll(f, densities, velocities, locally_owned_dofs,
-		//		inInitializationProcedure);
+		throw CollisionException("KBC_Central only implemented for D2Q9");
 	}
 }
 
@@ -46,14 +42,10 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
-#define KBC_D
-
 	size_t Q = getQ();
 
 	stabilizer gamma(locally_owned_dofs.size());
 	stabilizer entropy(locally_owned_dofs.size());
-
-	//vector<double> gamma(locally_owned_dofs.size());
 
 	double scaling = getStencil()->getScaling();
 	double cs2 = getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
@@ -91,6 +83,7 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 		double direction_x[9];
 		double direction_y[9];
 
+		//Calculation of the central moments
 		for (int d = 0; d < 9; d++) {
 			direction_x[d] = getStencil()->getDirection(d)(0) / scaling;
 			direction_y[d] = getStencil()->getDirection(d)(1) / scaling;
@@ -105,12 +98,6 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 				}
 			}
 		}
-
-/*		for (int p = 0; p < 3; p++) {
-			for (int q = 0; q < 3; q++) {
-				cout << p << " " << q << " " << moments[p][q] << endl;
-			}
-		}*/
 
 		// moment representation of the populations
 		double T = 0, N = 0, Pi_xy = 0, Q_xyy = 0, Q_yxx = 0, A = 0;
@@ -154,19 +141,6 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 		// shear part vector s
 		vector<double> s(Q);
 
-#ifdef KBC_C
-
-		s.at(0) = -rho * T;
-		s.at(1) = 0.5 * rho * 0.5 * (T + N);
-		s.at(2) = 0.5 * rho * 0.5 * (T - N);
-		s.at(3) = 0.5 * rho * 0.5 * (T + N);
-		s.at(4) = 0.5 * rho * 0.5 * (T - N);
-		s.at(5) = 0.25 * rho * Pi_xy;
-		s.at(6) = 0.25 * rho * -Pi_xy;
-		s.at(7) = 0.25 * rho * Pi_xy;
-		s.at(8) = 0.25 * rho * -Pi_xy;
-
-#else
 		s.at(0) = rho
 				* ((4 * ux) * uy * Pi_xy - 0.5 * (ux * ux - uy * uy) * N
 						+ 0.5 * (scalar_product - 2) * T);
@@ -210,21 +184,9 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 						+ 0.5 * (-ux * ux + uy * uy - 1 * ux - 1 * uy) * N
 						+ 0.5 * (scalar_product + (1) * ux - 1 * uy) * T);
 
-#endif
-
 		// higher order part vector h
 		vector<double> h(Q);
-#ifdef KBC_C
-		h.at(0) = rho * A;
-		h.at(1) = -0.5 * rho * (1 * Q_xyy + A);
-		h.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
-		h.at(2) = -0.5 * rho * (1 * Q_yxx + A);
-		h.at(4) = -0.5 * rho * (-1 * Q_yxx + A);
-		h.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
-		h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
-		h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
-		h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
-#else
+
 		h.at(0) = rho * (2 * ux * Q_xyy + 2 * uy * Q_yxx + A);
 		h.at(1) = 0.5 * rho * (-(1 + 2 * ux) * Q_xyy - 2 * uy * Q_yxx - A);
 		h.at(3) = 0.5 * rho * (-(-1 + 2 * ux) * Q_xyy - 2 * uy * Q_yxx - A);
@@ -238,7 +200,6 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 				* ((-1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
 		h.at(8) = 0.25 * rho
 				* ((1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
-#endif
 
 		// equilibrium vectors for shear vector
 		vector<double> seq(Q);
@@ -282,8 +243,7 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
 
 		//Calculation of the moments for the equilibrium distribution function
-
-		double moments_eq[3][3]={0};
+		double moments_eq[3][3] = { 0 };
 
 		for (int d = 0; d < 9; d++) {
 			direction_x[d] = getStencil()->getDirection(d)(0) / scaling;
@@ -299,8 +259,6 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 				}
 			}
 		}
-
-
 
 		// calculate the trace of the pressure tensor at unit density (T)
 		T = moments_eq[2][0] + moments_eq[0][2];
@@ -326,19 +284,6 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 		A = A / rho;
 
 		// calculate shear equilibrium
-#ifdef KBC_C
-
-		seq.at(0) = -rho * T;
-		seq.at(1) = 0.5 * rho * 0.5 * (T + N);
-		seq.at(3) = 0.5 * rho * 0.5 * (T + N);
-		seq.at(2) = 0.5 * rho * 0.5 * (T - N);
-		seq.at(4) = 0.5 * rho * 0.5 * (T - N);
-		seq.at(5) = 0.25 * rho * Pi_xy;
-		seq.at(6) = 0.25 * rho * -Pi_xy;
-		seq.at(7) = 0.25 * rho * Pi_xy;
-		seq.at(8) = 0.25 * rho * -Pi_xy;
-
-#else
 		seq.at(0) = rho
 				* ((4 * ux) * uy * Pi_xy - 0.5 * (ux * ux - uy * uy) * N
 						+ 0.5 * (scalar_product - 2) * T);
@@ -382,26 +327,7 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 						+ 0.5 * (-ux * ux + uy * uy - 1 * ux - 1 * uy) * N
 						+ 0.5 * (scalar_product + (1) * ux - 1 * uy) * T);
 
-/*			for (int p=0;p<9;p++){
-		 cout << p << " : "<< f.at(p)(i) << " " << k.at(p) << " " << s.at(p) << " " << h.at(p) << " " << f.at(p)(i)-k.at(p) - s.at(p) -h.at(p)  << endl;
-		 } */
-
-#endif
-
 		// calculate higher order equilibrium
-#ifdef KBC_C
-
-		heq.at(0) = rho * A;
-		heq.at(1) = -0.5 * rho * (1 * Q_xyy + A);
-		heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
-		heq.at(2) = -0.5 * rho * (1 * Q_yxx + A);
-		heq.at(4) = -0.5 * rho * (-1 * Q_yxx + A);
-		heq.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
-		heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
-		heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
-		heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
-
-#else
 		heq.at(0) = rho * (2 * ux * Q_xyy + 2 * uy * Q_yxx + A);
 		heq.at(1) = 0.5 * rho * (-(1 + 2 * ux) * Q_xyy - 2 * uy * Q_yxx - A);
 		heq.at(3) = 0.5 * rho * (-(-1 + 2 * ux) * Q_xyy - 2 * uy * Q_yxx - A);
@@ -415,11 +341,6 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 				* ((-1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
 		heq.at(8) = 0.25 * rho
 				* ((1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
-#endif
-
-	/*	for (int p=0;p<9;p++){
-		 cout << p << "eq : "<< feq.at(p) << " " << k.at(p) << " " << seq.at(p) << " " << heq.at(p) << " " << feq.at(p) -k.at(p) -seq.at(p) - heq.at(p) <<endl;
-		 } */
 
 		//deviation of the shear parts
 		vector<double> delta_s(Q);
@@ -496,6 +417,7 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 
 		}
 
+#ifdef EVALUATE_GAMMA
 		entropy.value.at(i) = -(f.at(0)(i) * log(f.at(0)(i) / (4. / 9.))
 				+ f.at(1)(i) * log(f.at(1)(i) / (1. / 9.))
 				+ f.at(2)(i) * log(f.at(2)(i) / (1. / 9.))
@@ -505,7 +427,7 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 				+ f.at(6)(i) * log(f.at(6)(i) / (1. / 36.))
 				+ f.at(7)(i) * log(f.at(7)(i) / (1. / 36.))
 				+ f.at(8)(i) * log(f.at(8)(i) / (1. / 36.)));
-
+#endif
 		// calculate new f
 		f.at(0)(i) =
 				f.at(0)(i)
@@ -555,8 +477,10 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 
 	}
 
+#ifdef EVALUATE_GAMMA
 	writeDeviation(gamma.getAverage(), gamma.getDeviation(),
 			entropy.getAverage(), entropy.getDeviation());
+#endif
 
 }
 }

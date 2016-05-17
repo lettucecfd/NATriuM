@@ -2,7 +2,7 @@
  * KBCStandard.h
  *
  *  Created on: 17.11.2015
- *      Author: dominik
+ *      Author: Dominik Wilde
  */
 
 #ifndef KBCSTANDARD_H_
@@ -26,10 +26,6 @@ public:
 
 	/**
 	 * @short function for collision
-	 * @short f the global vectors of discrete particle distribution functions
-	 * @short densities the global vector of densities
-	 * @short velocities the global vectors of velocity components [ [u_1x, u_2x, ...], [u_1y, u_2y, ...] ]
-	 * @short inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false
 	 */
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
@@ -46,13 +42,17 @@ public:
 			bool inInitializationProcedure) const;
 
 	/**
-	 * @short optimized version of collideAll for D2Q9 stencil
+	 * @short optimized version of collideAll for D3Q15 stencil
 	 */
 	void collideAllD3Q15(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
 			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure) const;
+
+	/**
+	 * @short Stores the values of the stabilizer of the KBC function and averages it for every time step
+	 */
 
 	struct stabilizer {
 		stabilizer(int size_dofs) {
@@ -89,6 +89,10 @@ public:
 		;
 
 	};
+
+	/**
+	 * @short writes the averaged data of the stabilizer into a parameter file
+	 */
 
 	void writeDeviation(double ave, double dev, double ave_entropy, double dev_entropy) const {
 		parameterFile << counter << " " << ave << " " << dev << " " << ave_entropy << " " << dev_entropy << endl;
