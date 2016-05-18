@@ -361,6 +361,16 @@ public:
 		return cell->get_dof_handler().end();
 	} /* recursivelySearchInNeighborhood */
 
+
+	/**
+	 * @short Determines which face is crossed first, when moving from one point inside the cell to a point outside.
+	 * @param[in] cell iterator to the active cell that contains the point p_inside
+	 * @param[in] p_inside the point inside the cell
+	 * @param[in] p_outside the point outside  the cell
+	 * @param[out] p_boundary the point where the boundary is hit
+	 * @param[out] lambda the parameter lambda that solves   p_boundary = lambda * p_outside + (1-lambda) * p_inside
+	 * @return face_id, if a face is crossed; -1, if no face is crossed (i.e. the second point is inside the cell)
+	 */
 	int faceCrossedFirst(
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			const dealii::Point<dim>& p_inside,

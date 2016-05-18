@@ -589,6 +589,15 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	dealii::Point<dim> po_unit = m_mapping.transform_real_to_unit_cell(ci,
 			p_outside);
 
+	/*       3
+	 *    2-->--3
+	 *    |     |
+	 *   0^     ^1
+	 *    |     |
+	 *    0-->--1
+	 *        2
+	 */
+
 	/*       *-------*        *-------*
 	 *      /|       |       /       /|
 	 *     / |   3   |      /   5   / |
@@ -637,7 +646,7 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 			face_id = 3;
 		}
 	}
-	if (dim == 2) {
+	if (dim == 3) {
 		if (po_unit[2] < 0) {
 			// if face 4 is crossed
 			double lambda_z = (0 - pi_unit[2]) / (po_unit[2] - pi_unit[2]);
