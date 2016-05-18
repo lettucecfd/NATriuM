@@ -154,11 +154,11 @@ public:
 
 		}
 		DoFInfo(const DoFInfo& other) :
-			globalDof(other.globalDof), alpha(other.alpha), beta(other.beta), oldPoint(
-					other.oldPoint), isBoundary(other.isBoundary), boundaryPoint(
-					other.boundaryPoint){
+				globalDof(other.globalDof), alpha(other.alpha), beta(
+						other.beta), oldPoint(other.oldPoint), isBoundary(
+						other.isBoundary), boundaryPoint(other.boundaryPoint) {
 		}
-		DoFInfo& operator= (const DoFInfo& other){
+		DoFInfo& operator=(const DoFInfo& other) {
 			globalDof = other.globalDof;
 			alpha = other.alpha;
 			beta = other.beta;
@@ -361,6 +361,11 @@ public:
 		return cell->get_dof_handler().end();
 	} /* recursivelySearchInNeighborhood */
 
+	int faceCrossedFirst(
+			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+			const dealii::Point<dim>& p_inside,
+			const dealii::Point<dim>& p_outside,
+			dealii::Point<dim>& p_boundary, double* lambda);
 
 	/// function to (re-)assemble linear system
 	virtual void reassemble();

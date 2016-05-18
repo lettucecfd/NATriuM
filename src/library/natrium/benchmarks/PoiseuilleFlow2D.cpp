@@ -113,12 +113,12 @@ double PoiseuilleFlow2D::AnalyticVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {
 	assert(component < 2);
 	double h = m_flow->getCharacteristicLength();
-	if (component == 0) {
+	/*if (component == 0) {
 		return (- 4 * m_flow->m_uMax *
 				(x(1) - h) * x(1) / (h*h) );
-	} else {
+	} else {*/
 		return 0.0;
-	}
+	//}
 }
 
 } /* namespace natrium */
