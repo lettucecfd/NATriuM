@@ -217,11 +217,206 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_FindPointInNeighborhood_test) {
 	pout << "done." << endl;
 } /* SemiLagrangian3D_FindPointInNeighborhood_test */
 
-BOOST_AUTO_TEST_CASE(SemiLagrangian2D_CheckPeriodicAllFound_test){
-	pout << "SemiLagrangian2D_CheckPeriodicAllFound_test..." << endl;
+BOOST_AUTO_TEST_CASE(SemiLagrangian2D_FaceCrossedFirst_test) {
+	pout << "SemiLagrangian2D_FaceCrossedFirst_test..." << endl;
+
+	size_t fe_order = 1;
+	size_t refinementLevel = 3;
+	PeriodicTestDomain2D periodic(refinementLevel);
+	periodic.refineAndTransform();
+	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D2Q9>(), 0.001);
+	sl.setupDoFs();
+	typename dealii::DoFHandler<2>::active_cell_iterator cell =
+			sl.getDoFHandler()->begin_active();
+	// make sure cell is not in the ghost layer (begin_active() might point to a ghost cell)
+	while (not cell->is_locally_owned()) {
+		cell++;
+	}
+
+	// the following tests are only valid if the cell is the left lower corner
+	if (is_MPI_rank_0()) {
+		BOOST_CHECK(cell->at_boundary(0));
+		BOOST_CHECK(cell->at_boundary(2));
+
+		// p = (0.0625, 0.0625)
+		dealii::Point<2> p = cell->barycenter();
+
+		double lambda;
+		dealii::Point<2> pb;
+		// no face crossed
+		dealii::Point<2> p2(0.0625, 0.0625);
+		BOOST_CHECK_EQUAL(sl.faceCrossedFirst(cell, p, p2, pb, &lambda), -1);
+		// face 0 crossed
+		p2[0] = -0.0625;
+		int result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 0);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_SMALL(pb[0], 1e-20);
+		BOOST_CHECK_CLOSE(pb[1], 0.0625, 1e-20);
+		// face 2 crossed
+		p2[0] = 0.0625;
+		p2[1] = -0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 2);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.0625, 1e-20);
+		BOOST_CHECK_SMALL(pb[1], 1e-20);
+		// face 0 and 2 crossed, but 0 first
+		p2[0] =  0.0625 - 0.25;
+		p2[1] = -0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 0);
+		BOOST_CHECK_CLOSE(lambda, 0.25, 1e-20);
+		BOOST_CHECK_SMALL(pb[0], 1e-20);
+		BOOST_CHECK_CLOSE(pb[1], 0.03125, 1e-20);
+		// face 0 and 2 crossed, but 2 first
+		p2[0] = -0.0625;
+		p2[1] = 0.0625 - 0.25;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 2);
+		BOOST_CHECK_CLOSE(lambda, 0.25, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.03125, 1e-20);
+		BOOST_CHECK_SMALL(pb[1], 1e-20);
+		// face 1 crossed
+		p2[0] = 0.1875;
+		p2[1] = 0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 1);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.125, 1e-20);
+		BOOST_CHECK_CLOSE(pb[1], 0.0625, 1e-20);
+		// face 3 crossed
+		p2[0] = 0.0625;
+		p2[1] = 0.1875;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 3);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.0625, 1e-20);
+		BOOST_CHECK_CLOSE(pb[1], 0.125, 1e-20);
+	}
 
 	pout << "done." << endl;
-} /* SemiLagrangian2D_CheckPeriodicAllFound_test */
+} /* SemiLagrangian2D_FaceCrossedFirst_test */
+
+
+
+BOOST_AUTO_TEST_CASE(SemiLagrangian3D_FaceCrossedFirst_test) {
+	pout << "SemiLagrangian3D_FaceCrossedFirst_test..." << endl;
+
+	size_t fe_order = 1;
+	size_t refinementLevel = 3;
+	PeriodicTestDomain3D periodic(refinementLevel);
+	periodic.refineAndTransform();
+	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D3Q19>(), 0.001);
+	sl.setupDoFs();
+	typename dealii::DoFHandler<3>::active_cell_iterator cell =
+			sl.getDoFHandler()->begin_active();
+	// make sure cell is not in the ghost layer (begin_active() might point to a ghost cell)
+	while (not cell->is_locally_owned()) {
+		cell++;
+	}
+
+	// the following tests are only valid if the cell is the left lower corner
+	if (is_MPI_rank_0()) {
+		BOOST_CHECK(cell->at_boundary(0));
+		BOOST_CHECK(cell->at_boundary(2));
+		BOOST_CHECK(cell->at_boundary(4));
+
+		// p = (0.0625, 0.0625, 0.0625)
+		dealii::Point<3> p = cell->barycenter();
+
+		double lambda;
+		dealii::Point<3> pb;
+		// no face crossed
+		dealii::Point<3> p2(0.0625, 0.0625, 0.0625);
+		BOOST_CHECK_EQUAL(sl.faceCrossedFirst(cell, p, p2, pb, &lambda), -1);
+		// face 0 crossed
+		p2[0] = -0.0625;
+		int result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 0);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_SMALL(pb[0], 1e-20);
+		BOOST_CHECK_CLOSE(pb[1], 0.0625, 1e-20);
+		BOOST_CHECK_CLOSE(pb[2], 0.0625, 1e-20);
+		// face 1 crossed
+		p2[0] = 0.125+0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 1);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.125, 1e-13);
+		BOOST_CHECK_CLOSE(pb[1], 0.0625, 1e-13);
+		BOOST_CHECK_CLOSE(pb[2], 0.0625, 1e-13);
+		// face 2 crossed
+		p2[0] = 0.0625;
+		p2[1] = -0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 2);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.0625, 1e-13);
+		BOOST_CHECK_SMALL(pb[1], 1e-13);
+		BOOST_CHECK_CLOSE(pb[2], 0.0625, 1e-13);
+		// face 3 crossed
+		p2[1] = 0.125+0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 3);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.0625, 1e-13);
+		BOOST_CHECK_CLOSE(pb[1], 0.125, 1e-13);
+		BOOST_CHECK_CLOSE(pb[2], 0.0625, 1e-13);
+		// face 4 crossed
+		p2[1] = 0.0625;
+		p2[2] = -0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 4);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-13);
+		BOOST_CHECK_CLOSE(pb[0], 0.0625, 1e-13);
+		BOOST_CHECK_CLOSE(pb[1], 0.0625, 1e-13);
+		BOOST_CHECK_SMALL(pb[2], 1e-13);
+		// face 5 crossed
+		p2[2] = 0.125+0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 5);
+		BOOST_CHECK_CLOSE(lambda, 0.5, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.0625, 1e-13);
+		BOOST_CHECK_CLOSE(pb[1], 0.0625, 1e-13);
+		BOOST_CHECK_CLOSE(pb[2], 0.125, 1e-13);
+
+		// face 0, 2 and 4 crossed, but 0 first
+		p2[0] =  0.0625 - 0.25;
+		p2[1] = -0.0625;
+		p2[2] = -0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 0);
+		BOOST_CHECK_CLOSE(lambda, 0.25, 1e-20);
+		BOOST_CHECK_SMALL(pb[0], 1e-13);
+		BOOST_CHECK_CLOSE(pb[1], 0.03125, 1e-13);
+		BOOST_CHECK_CLOSE(pb[2], 0.03125, 1e-13);
+		// face 0, 2 and 4 crossed, but 2 first
+		p2[0] = -0.0625;
+		p2[1] =  0.0625 - 0.25;
+		p2[2] = -0.0625;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 2);
+		BOOST_CHECK_CLOSE(lambda, 0.25, 1e-20);
+		BOOST_CHECK_CLOSE(pb[0], 0.03125, 1e-13);
+		BOOST_CHECK_SMALL(pb[1], 1e-13);
+		BOOST_CHECK_CLOSE(pb[2], 0.03125, 1e-13);
+		// face 0, 2 and 4 crossed, but 4 first
+		p2[0] = -0.0625;
+		p2[1] = -0.0625;
+		p2[2] =  0.0625 - 0.25;
+		result = sl.faceCrossedFirst(cell, p, p2, pb, &lambda);
+		BOOST_CHECK_EQUAL(result, 4);
+		BOOST_CHECK_CLOSE(lambda, 0.25, 1e-13);
+		BOOST_CHECK_CLOSE(pb[0], 0.03125, 1e-13);
+		BOOST_CHECK_CLOSE(pb[1], 0.03125, 1e-13);
+		BOOST_CHECK_SMALL(pb[2], 1e-13);
+	}
+
+	pout << "done." << endl;
+} /* SemiLagrangian3D_FaceCrossedFirst_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 

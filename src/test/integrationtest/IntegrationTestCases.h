@@ -51,6 +51,10 @@ TestResult ConvergenceTest3D();
 
 TestResult ConvergenceTestMovingWall ();
 
+TestResult ConvergenceTestForcingSchemes2D ();
+
+TestResult ConvergenceTestForcingSchemes3D ();
+
 } /* namespace IntegrationTests */
 } /* namespace natrium */
 
