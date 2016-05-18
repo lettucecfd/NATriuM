@@ -34,6 +34,8 @@ D3Q27::D3Q27(double scaling) :
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
 				scaling * pow(3, -0.5)), m_speedOfSoundSquare(
 				scaling * scaling / 3.), m_scaling(scaling) {
+	// TODO Bugfix
+	LOG(WARNING) << "There is a bug somewhere in the D3Q27. The use of this module is highly discouraged at the moment." << endl;
 } //constructor
 
 /// destructor
