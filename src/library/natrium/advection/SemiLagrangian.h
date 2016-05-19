@@ -16,6 +16,7 @@
 #include "deal.II/dofs/dof_handler.h"
 #include <deal.II/dofs/dof_tools.h>
 #include "deal.II/lac/sparse_matrix.h"
+#include "deal.II/fe/fe_update_flags.h"
 #include "deal.II/lac/block_sparsity_pattern.h"
 #include "deal.II/base/quadrature_lib.h"
 
@@ -146,7 +147,7 @@ public:
 				const dealii::Point<dim>& current_point,
 				typename dealii::DoFHandler<dim>::active_cell_iterator current_cell) :
 				globalDof(dof), alpha(a), beta(b), sourcePoint(x), currentPoint(
-						current_point), currentCell(current_cell){
+						current_point), currentCell(current_cell) {
 
 		}
 		DoFInfo(const DoFInfo& other) :
@@ -372,6 +373,59 @@ public:
 			const dealii::Point<dim>& p_inside,
 			const dealii::Point<dim>& p_outside, dealii::Point<dim>& p_boundary,
 			double* lambda, size_t* child_id);
+
+	/**
+	 * @short Calculates the shape values for arbitrary points.
+	 * @param[in] cell the cell which contains the points
+	 * @param[in] a vector of points
+	 * @param[in] a vector of vector<double> that will contain the shape function values at the points.
+	 * 				Has to have the size n_points x dofs_per_cell
+	 * @note This function is similar to FEFieldFunction<dim, DH, VECTOR>::vector_value
+	 */
+	void shapeFunctionValue(const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+			const std::vector<dealii::Point<dim> >& points,
+			std::vector<std::vector<double> >&values) {
+
+		const size_t n_dofs_per_cell = cell->get_fe().n_dofs_per_cell();
+		const size_t n_points = points.size();
+		assert(n_points > 0);
+		assert(values.size() == n_points);
+
+		// clear values
+		for (size_t i = 0; i < n_points; i++) {
+			assert(values.at(i).size() == n_dofs_per_cell);
+			for (size_t j = 0; j < n_dofs_per_cell; j++) {
+				values[i][j] = 0;
+			}
+		}
+		// transform to unit points
+		std::vector<dealii::Point<dim> > unit_points;
+		//std::vector<double> weights (n_points, 1.0);
+		for (size_t i = 0; i < n_points; i++) {
+			dealii::Point<dim> h = m_mapping.transform_real_to_unit_cell(cell, points[i]);
+			for (size_t i = 0; i < dim; i++) {
+				if (fabs(h[i]) < 1e-12) {
+					h[i] = 0;
+				}
+				if (fabs(h[i] - 1) < 1e-12) {
+					h[i] = 1;
+				}
+				assert (h[i] <= 1);
+				assert (h[i] >= 0);
+			}
+			unit_points.push_back(h);
+		}
+		// Now we can find out about the points
+		for (size_t i = 0; i < n_points; i++) {
+			dealii::Quadrature < dim > quad(unit_points.at(i));//, weights);
+			dealii::FEValues < dim
+					> fe_v(m_mapping, cell->get_fe(), quad, dealii::update_values);
+			fe_v.reinit(cell);
+			for (size_t j = 0; j < n_dofs_per_cell; j++) {
+				values[i][j] = fe_v.shape_value(j, 0);
+			}
+		}
+	}
 
 	/// function to (re-)assemble linear system
 	virtual void reassemble();

@@ -92,8 +92,7 @@ void SEDGMinLee<dim>::reassemble() {
 /////////////////////////////////
 // Define update flags (which values have to be known at each cell, face, neighbor face)
 	const dealii::UpdateFlags cellUpdateFlags = update_values | update_gradients
-
-	| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
+			| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points | update_JxW_values
 			| update_normal_vectors;
