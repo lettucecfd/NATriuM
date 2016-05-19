@@ -178,7 +178,7 @@ public:
 	 */
 	dealii::Point<dim> coordinatesAcrossPeriodicBoundary(
 			const dealii::Point<dim>& p,
-			typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
+			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
 	//TODO should be inlined
 
 /////////////////////////////////

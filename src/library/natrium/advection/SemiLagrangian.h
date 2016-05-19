@@ -143,36 +143,32 @@ public:
 
 	struct DoFInfo {
 		DoFInfo(size_t dof, size_t a, size_t b, const dealii::Point<dim>& x,
-				bool is_boundary, dealii::Point<dim> x_b) :
-				globalDof(dof), alpha(a), beta(b), oldPoint(x), isBoundary(
-						is_boundary), boundaryPoint(x_b) {
-
-		}
-		DoFInfo(size_t dof, size_t a, size_t b, const dealii::Point<dim>& x) :
-				globalDof(dof), alpha(a), beta(b), oldPoint(x), isBoundary(
-						false), boundaryPoint() {
+				const dealii::Point<dim>& current_point,
+				typename dealii::DoFHandler<dim>::active_cell_iterator current_cell) :
+				globalDof(dof), alpha(a), beta(b), sourcePoint(x), currentPoint(
+						current_point), currentCell(current_cell){
 
 		}
 		DoFInfo(const DoFInfo& other) :
 				globalDof(other.globalDof), alpha(other.alpha), beta(
-						other.beta), oldPoint(other.oldPoint), isBoundary(
-						other.isBoundary), boundaryPoint(other.boundaryPoint) {
+						other.beta), sourcePoint(other.sourcePoint), currentPoint(
+						other.currentPoint), currentCell(other.currentCell) {
 		}
 		DoFInfo& operator=(const DoFInfo& other) {
 			globalDof = other.globalDof;
 			alpha = other.alpha;
 			beta = other.beta;
-			oldPoint = other.oldPoint;
-			isBoundary = other.isBoundary;
-			boundaryPoint = other.boundaryPoint;
+			sourcePoint = other.sourcePoint;
+			currentPoint = other.currentPoint;
+			currentCell = other.currentCell;
 			return *this;
 		}
 		size_t globalDof; // global degree of freedom
-		size_t alpha; // direction id
-		size_t beta; // direction one (across boundary)
-		dealii::Point<dim> oldPoint; // lagrangian point x^(t-dt)
-		bool isBoundary; // flags whether the dof needs boundary handling
-		dealii::Point<dim> boundaryPoint; // point where the lagrangian path hits the boundary
+		size_t alpha; // direction of target degree of freedom
+		size_t beta; // direction of source degrees of freedom (across boundary)
+		dealii::Point<dim> sourcePoint; // Lagrangian point x^(t-dt)
+		dealii::Point<dim> currentPoint; // Lagrangian point x^(t-(dt-timeLeft))
+		typename dealii::DoFHandler<dim>::active_cell_iterator currentCell; // cell of currentPoint
 	};
 
 	/**
@@ -361,21 +357,21 @@ public:
 		return cell->get_dof_handler().end();
 	} /* recursivelySearchInNeighborhood */
 
-
 	/**
 	 * @short Determines which face is crossed first, when moving from one point inside the cell to a point outside.
 	 * @param[in] cell iterator to the active cell that contains the point p_inside
 	 * @param[in] p_inside the point inside the cell
 	 * @param[in] p_outside the point outside  the cell
 	 * @param[out] p_boundary the point where the boundary is hit
-	 * @param[out] lambda the parameter lambda that solves   p_boundary = lambda * p_outside + (1-lambda) * p_inside
+	 * @param[out] lambda the parameter lambda that solves   p_boundary_unit = lambda * p_outside_unit + (1-lambda) * p_inside_unit
 	 * @return face_id, if a face is crossed; -1, if no face is crossed (i.e. the second point is inside the cell)
+	 * @note lambda is calculated for the unit cell. In general, p_boundary = lambda * p_outside + (1-lambda) * p_inside does not hold
 	 */
 	int faceCrossedFirst(
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			const dealii::Point<dim>& p_inside,
-			const dealii::Point<dim>& p_outside,
-			dealii::Point<dim>& p_boundary, double* lambda);
+			const dealii::Point<dim>& p_outside, dealii::Point<dim>& p_boundary,
+			double* lambda, size_t* child_id);
 
 	/// function to (re-)assemble linear system
 	virtual void reassemble();

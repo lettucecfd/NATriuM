@@ -189,7 +189,7 @@ template<size_t dim> void PeriodicBoundary<dim>::addToSparsityPattern(
 template<size_t dim>
 dealii::Point<dim> PeriodicBoundary<dim>::coordinatesAcrossPeriodicBoundary(
 		const dealii::Point<dim>& p,
-		typename dealii::DoFHandler<dim>::active_cell_iterator& cell) {
+		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell) {
 	//TODO should be inlined
 	assert(m_doFHandler != NULL);
 

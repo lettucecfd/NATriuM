@@ -7,7 +7,9 @@
 
 #include "SemiLagrangian.h"
 
-#include <fstream>
+// #include <fstream>
+#include <queue>
+#include <sstream>
 
 #include "deal.II/lac/trilinos_sparsity_pattern.h"
 #include "deal.II/dofs/dof_renumbering.h"
@@ -36,9 +38,9 @@ SemiLagrangian<dim>::SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
 		boost::shared_ptr<BoundaryCollection<dim> > boundaries,
 		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
 		double delta_t) :
-		m_mesh(triangulation), m_boundaries(boundaries), m_mapping(
-				orderOfFiniteElement), m_stencil(Stencil), m_orderOfFiniteElement(
-				orderOfFiniteElement), m_deltaT(delta_t) {
+		m_mesh(triangulation), m_boundaries(boundaries), m_mapping(1), m_stencil(
+				Stencil), m_orderOfFiniteElement(orderOfFiniteElement), m_deltaT(
+				delta_t) {
 	// assertions
 	assert(orderOfFiniteElement >= 1);
 	assert(Stencil->getD() == dim);
@@ -268,8 +270,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	// Initialize Finite Element ////
 	/////////////////////////////////
 	// Define update flags (which values have to be known at each cell, face, neighbor face)
-	const dealii::UpdateFlags cell_update_flags = update_values
-			| update_quadrature_points | update_JxW_values;
+	const dealii::UpdateFlags cell_update_flags = update_values;
 	const dealii::UpdateFlags face_update_flags = update_quadrature_points
 			| update_normal_vectors;
 	// Finite Element
@@ -284,6 +285,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const std::vector<Point<dim> > & unit_support_points =
 			m_fe->get_unit_support_points();
+	std::vector<double> local_entries;
 	std::vector<Tensor<1, dim> > minus_dtealpha;
 	for (size_t i = 0; i < m_stencil->getQ(); i++) {
 		minus_dtealpha.push_back(
@@ -316,17 +318,15 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// calculate the fe values for the cell
 			fe_cell_values.reinit(cell);
 
-			//
+			// initialize
 			cell_map.clear();
-
-			// get a list of adjacent cells (including all cells that have common vertices with 'cell')
-			Neighborhood neighborhood;
-			getNeighborhood(cell, neighborhood, max_n_shells);
+			std::queue<DoFInfo> not_found;
 
 			// get global degrees of freedom
 			cell->get_dof_indices(local_dof_indices);
 
-			// for all points in cell
+			// -- Create Lagrangian support points --
+			// for all support points in cell
 			for (size_t i = 0; i < dofs_per_cell; i++) {
 				// get a point x
 				dealii::Point<dim> x_i = m_mapping.transform_unit_to_real_cell(
@@ -334,260 +334,178 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 				// for all directions
 				for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
 					// calculate x^(t-delta_t)
-					dealii::Point<dim> x_previous = x_i
+					dealii::Point<dim> x_target = x_i
 							+ minus_dtealpha.at(alpha);
-					bool found = false;
 					DoFInfo info_i(local_dof_indices.at(i), alpha, alpha,
-							x_previous);
-
-					// look for x_previous in neighborhood
-					for (size_t j = 0; j < neighborhood.size(); j++) {
-						if (neighborhood.at(j)->point_inside(x_previous)) {
-							found = true;
-							typename std::map<
-									typename DoFHandler<dim>::active_cell_iterator,
-									XList>::iterator it = cell_map.find(
-									neighborhood.at(j));
-							if (it == cell_map.end()) {
-								XList new_xlist;
-								new_xlist.push_back(info_i);
-								cell_map.insert(
-										std::pair<
-												typename DoFHandler<dim>::active_cell_iterator,
-												XList>(neighborhood.at(j),
-												new_xlist));
-							} else {
-								it->second.push_back(info_i);
-							}
-							break;
-						}
-					} // for j < neighborhood.size()
-					if (found)
-						continue;
-
-					// calculate x_previous due to boundary conditions
-					bool found_across_bound = false;
-					int face_hit_counter = -1;
-					while (not found_across_bound) {
-						face_hit_counter++;
-						if (face_hit_counter >= 4) {
-							break;
-						}
-						for (size_t j = 0;
-								j < GeometryInfo<dim>::faces_per_cell; j++) {
-							if (cell->at_boundary(j)) {
-								// check if point is outside
-								fe_face_values.reinit(cell, j);
-								// assume that all faces are planar (i.e. all normal vectors are equal)
-								const dealii::Tensor<1, dim>& n =
-										fe_face_values.normal_vector(0);
-								const dealii::Point<dim>& p =
-										cell->face(j)->vertex(0);
-								double n_pminx = n * (p - x_i);
-								double n_xpreviousminx = n * (x_previous - x_i);
-								if (fabs(n_xpreviousminx) < 1e-20) {
-									// Lagrangian path parallel to face
-									continue;
-								}
-								double lambda = n_pminx / n_xpreviousminx;
-								if ((lambda > 1 + 1e-20) or (lambda < -1e-20)) {
-									// Lagrangian path does not cut face
-									continue;
-								}
-
-								dealii::Tensor<1, dim> h = x_previous - x_i;
-								h *= lambda;
-								dealii::Point<dim> x_b = x_i + h;
-								if (not cell->point_inside(x_b)) {
-									// another face is cut before this one
-									continue;
-								}
-								found_across_bound = true;
-								// Periodic boundaries
-
-								// Other boundaries
-
-							}
-						}
-					} /* while not bound_found */
-//					if (not found_across_bound) {
-//						LOG(WARNING) << "The population f" << alpha + 1
-//								<< "on support point could not trace its Lagrangian path from the point "
-//								<< x_i
-//								<< "backwards. Support point not found. As a last resort, all locally "
-//										"owned cells are searched recursively. Note that in this way, boundary conditions "
-//										"could be omitted. If this is unsuccessful, NATriuM will terminate."
-//								<< endl;
-//						cout << "The population f" << alpha + 1
-//								<< "on support point could not trace its Lagrangian path from the point "
-//								<< x_i
-//								<< "backwards. Support point not found. As a last resort, all locally "
-//										"owned cells are searched recursively. Note that in this way, boundary conditions "
-//										"could be omitted. If this is unsuccessful, NATriuM will terminate."
-//								<< endl;
-//						typename dealii::DoFHandler<dim>::active_cell_iterator found_in_cell =
-//								recursivelySearchInNeighborhood(x_previous,
-//										cell);
-//						if (found_in_cell != m_doFHandler->end()) {
-//							// coarse check if boundaries conditions were violated
-//							// TODO
-//							// add to cell_map
-//							DoFInfo info_i_b(local_dof_indices.at(i), alpha,
-//									alpha, x_previous);
-//							typename std::map<
-//									typename DoFHandler<dim>::active_cell_iterator,
-//									XList>::iterator it = cell_map.find(
-//									found_in_cell);
-//							if (it == cell_map.end()) {
-//								XList new_xlist;
-//								new_xlist.push_back(info_i_b);
-//								cell_map.insert(
-//										std::pair<
-//												typename DoFHandler<dim>::active_cell_iterator,
-//												XList>(found_in_cell,
-//												new_xlist));
-//							} else {
-//								it->second.push_back(info_i_b);
-//							}
-//							break;
-//						} else { /* if not found in cell */
-//							cout << x_previous << "not found anywhere in the domain." << endl;
-//							natrium_errorexit("Semi-Lagrangian assembly failed. A point could not be "
-//									"found in the domain. Try to decrease the time step size.");
-//						} /* if found in cell // else  */
-//					}
-
+							x_target, x_i, cell);
+					not_found.push(info_i);
 				}
 			}
-		}
 
+			// -- Recursively follow Lagrangian paths ---
+			// while there are points that have not been found, yet
+			while (not not_found.empty()) {
+				DoFInfo& el = not_found.front();
+				double lambda = 100;
+				size_t child_id = 100;
+				dealii::Point<dim> p_boundary;
+				int face_id = faceCrossedFirst(el.currentCell, el.currentPoint,
+						el.sourcePoint, p_boundary, &lambda, &child_id);
+				if (face_id == -1) {
+					// point found in this cell: add to cell_map
+					typename std::map<
+							typename DoFHandler<dim>::active_cell_iterator,
+							XList>::iterator it = cell_map.find(el.currentCell);
+					if (it == cell_map.end()) {
+						XList new_xlist;
+						new_xlist.push_back(el);
+						cell_map.insert(
+								std::pair<
+										typename DoFHandler<dim>::active_cell_iterator,
+										XList>(el.currentCell, new_xlist));
+					} else {
+						it->second.push_back(el);
+					}
+					not_found.pop();
+
+				} else if (el.currentCell->at_boundary(face_id)) {
+					// Boundary faces
+					size_t bi = el.currentCell->face(face_id)->boundary_id();
+					if (m_boundaries->isPeriodic(bi)) {
+						// Apply periodic boundaries
+						const boost::shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
+								m_boundaries->getPeriodicBoundary(bi);
+						assert(
+								periodicBoundary->isFaceInBoundary(
+										el.currentCell, face_id));
+						el.currentPoint =
+								periodicBoundary->coordinatesAcrossPeriodicBoundary(
+										p_boundary, el.currentCell);
+						el.sourcePoint =
+								periodicBoundary->coordinatesAcrossPeriodicBoundary(
+										el.sourcePoint, el.currentCell);
+						const typename dealii::DoFHandler<dim>::active_cell_iterator h =
+								el.currentCell;
+						periodicBoundary->getOppositeCellAtPeriodicBoundary(h,
+								el.currentCell);
+
+					} else /* if is not periodic */{
+						// Apply other boundaries
+						// TODO
+					} /* endif isPeriodic */
+				} else {
+					// Interior faces
+					el.currentPoint = p_boundary;
+					if (el.currentCell->neighbor(face_id)->has_children()) {
+						el.currentCell =
+								el.currentCell->neighbor(face_id)->child(
+										child_id);
+					} else {
+						el.currentCell = el.currentCell->neighbor(face_id);
+					}
+					if (not (el.currentCell->is_locally_owned()
+							or el.currentCell->is_ghost())) {
+						// information at source point is on a different processor
+						std::stringstream s;
+						s
+								<< "Time step too large in semi-Lagrangian streaming. Lagrangian source point "
+								<< el.sourcePoint
+								<< " is owned by another MPI process, but required by MPI process "
+								<< dealii::Utilities::MPI::this_mpi_process(
+								MPI_COMM_WORLD)
+								<< ". Please decrease the CFL number so that the Lagrangian source"
+								<< " points are at least inside the layer of ghost cells."
+								<< endl;
+						natrium_errorexit(s.str().c_str());
+					} /* end if cell not locally owned or ghost */
+				} /* end if at boundary / else */
+
+			} /* end while not found */
+
+			// -- Assemble matrix / sparsity pattern --
+			typename std::map<typename DoFHandler<dim>::active_cell_iterator,
+					XList>::iterator list = cell_map.begin();
+			typename std::map<typename DoFHandler<dim>::active_cell_iterator,
+					XList>::iterator end_list = cell_map.end();
+			// (i.e. for all cells that contain support points )
+			for (; list != end_list; list++) {
+				const typename DoFHandler<dim>::active_cell_iterator & it =
+						list->first;
+
+				// get dofs
+				it->get_dof_indices(local_dof_indices);
+
+				if (not sparsity_pattern) {
+					// get shape functions
+					fe_cell_values.reinit(it);
+				}
+
+				const XList & l = list->second;
+				// (i.e. for all shape functions in cell)
+				for (size_t i = 0; i < l.size(); i++) {
+					assert(it == l.at(i).currentCell);
+					if (sparsity_pattern) {
+						// add entry to sparsity pattern
+						//m_sparsityPattern[l[i].alpha-1][l[i].beta-1].add_entries(
+						//		l[i].globalDof, local_dof_indices.begin(),
+						//		local_dof_indices.end(), false);
+					} else {
+						// calculate matrix entries
+						local_entries.clear();
+						local_entries.resize(dofs_per_cell, 0);
+						// TODO evaluate shape functions
+						//m_systemMatrix.block(l[i].alpha-1, l[i].beta-1).add(
+						//		l[i].globalDof, local_dof_indices,
+						//		local_entries);	//fe_cell_values.shape_value;
+					}
+				} /* end for all support points in cell*/
+			} /* end for all xlists (i.e. for all cells that contain support points )*/
+		} /* end if cell is locally owned */
+	} /* end for all cells */
+
+	if (sparsity_pattern) {
+		const size_t Q = m_stencil->getQ();
+		for (size_t i = 0; i < Q - 1; i++) {
+			for (size_t j = 0; j < Q - 1; j++) {
+				m_sparsityPattern.at(i).at(j).compress();
+			}
+		}
+	} else {
+		m_systemVector.compress(dealii::VectorOperation::add);
+		m_systemMatrix.compress(dealii::VectorOperation::add);
 	}
-	m_systemVector.compress(dealii::VectorOperation::add);
-	m_systemMatrix.compress(dealii::VectorOperation::add);
 
 //#endif
 } /* fillSparseObject */
-
-//template<>
-//int SemiLagrangian<2>::faceCrossedFirst(
-//		const typename dealii::DoFHandler<2>::active_cell_iterator& cell,
-//		const dealii::Point<2>& p_inside, const dealii::Point<2>& p_outside,
-//		dealii::Point<2>& p_boundary, double* lambda) {
-//	// transform to unit cell
-//	dealii::DoFHandler<2>::cell_iterator ci(*cell);
-//	dealii::Point<2> pi_unit = m_mapping.transform_real_to_unit_cell(ci,
-//			p_inside);
-//	dealii::Point<2> po_unit = m_mapping.transform_real_to_unit_cell(ci,
-//			p_outside);
-//
-//	/*       3
-//	 *    2-->--3
-//	 *    |     |
-//	 *   0^     ^1
-//	 *    |     |
-//	 *    0-->--1
-//	 *        2
-//	 */
-//	int face_id = -1;
-//	if (po_unit[0] < 0) {
-//		// if face 0 is crossed
-//		if (po_unit[1] < 0) {
-//			// if face 2 is crossed
-//			if (pi_unit[1] / pi_unit[0] > po_unit[1] / po_unit[0])
-//				face_id = 2;
-//			else
-//				face_id = 0;
-//		} else if (po_unit[1] > 1) {
-//			// if face 3 is crossed
-//			if ((1 - po_unit[1]) / po_unit[0] > (1 - pi_unit[1]) / pi_unit[0])
-//				face_id = 3;
-//			else
-//				face_id = 0;
-//		} else {
-//			face_id = 0;
-//		}
-//	} else if (po_unit[0] > 1) {
-//		// check if face 1 is crossed
-//		if (po_unit[1] < 0) {
-//			// if face 2 is crossed
-//			if (po_unit[1] / (1 - po_unit[0]) > pi_unit[1] / (1 - pi_unit[0]))
-//				face_id = 2;
-//			else
-//				face_id = 1;
-//		} else if (po_unit[1] > 1) {
-//			// if face 3 is crossed
-//			if ((1 - po_unit[1]) / (1 - po_unit[0])
-//					> (1 - pi_unit[1]) / (1 - pi_unit[0]))
-//				face_id = 3;
-//			else
-//				face_id = 1;
-//
-//		} else {
-//			// only face 1 is crossed
-//			face_id = 1;
-//		}
-//	} else {
-//		if (po_unit[1] < 0) {
-//			// only face 2 is crossed
-//			face_id = 2;
-//		} else if (po_unit[1] > 1) {
-//			// only face 3 is crossed
-//			face_id = 3;
-//		} else {
-//			// no face crossed;
-//			return -1;
-//		}
-//	}
-//
-//	// calculate boundary point
-//	dealii::Point<2> pb_unit;
-//	size_t coord_b; // boundary coordinate of unit cell (0 or 1)
-//	size_t index_b; // index of boundary coordinate ( 0 for x or 1 for 1 )
-//	switch (face_id) {
-//	case 0: {
-//		index_b = 0;
-//		coord_b = 0;
-//		break;
-//	}
-//	case 1: {
-//		index_b = 0;
-//		coord_b = 1;
-//		break;
-//	}
-//	case 2: {
-//		index_b = 1;
-//		coord_b = 0;
-//		break;
-//	}
-//	case 3: {
-//		index_b = 1;
-//		coord_b = 1;
-//		break;
-//	}
-//	} /* switch face_id */
-//	// calculate lambda and coordinates of boundary point
-//	pb_unit[index_b] = coord_b;
-//	*lambda = (coord_b - po_unit[coord_b])
-//			/ (pi_unit[1 - coord_b] - po_unit[1 - coord_b]);
-//	pb_unit[1 - coord_b] = po_unit[1 - coord_b]
-//			+ *lambda * (pi_unit[1 - coord_b] - po_unit[1 - coord_b]);
-//	p_boundary = m_mapping.transform_unit_to_real_cell(ci, pb_unit);
-//
-//	assert(cell->point_inside(p_boundary));
-//	return face_id;
-//} /* faceCrossedFirst */
 
 template<size_t dim>
 int SemiLagrangian<dim>::faceCrossedFirst(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		const dealii::Point<dim>& p_inside, const dealii::Point<dim>& p_outside,
-		dealii::Point<dim>& p_boundary, double* lambda) {
+		dealii::Point<dim>& p_boundary, double* lambda, size_t* child_id) {
+
 	// transform to unit cell
 	typename dealii::DoFHandler<dim>::cell_iterator ci(*cell);
 	dealii::Point<dim> pi_unit = m_mapping.transform_real_to_unit_cell(ci,
 			p_inside);
 	dealii::Point<dim> po_unit = m_mapping.transform_real_to_unit_cell(ci,
 			p_outside);
+
+	// eliminate round-off-errors
+	for (size_t i = 0; i < dim; i++) {
+		if (fabs(pi_unit[i]) < 1e-12) {
+			pi_unit[i] = 0;
+		}
+		if (fabs(pi_unit[i] - 1) < 1e-12) {
+			pi_unit[i] = 1;
+		}
+		if (fabs(po_unit[i]) < 1e-12) {
+			po_unit[i] = 0;
+		}
+		if (fabs(po_unit[i] - 1) < 1e-12) {
+			po_unit[i] = 1;
+		}
+	}
 
 	/*       3
 	 *    2-->--3
@@ -617,21 +535,21 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	if (po_unit[0] < 0) {
 		// if face 0 is crossed
 		*lambda = (0 - pi_unit[0]) / (po_unit[0] - pi_unit[0]);
-		assert(*lambda > 0);
-		assert(*lambda < 1);
+		assert(*lambda >= 0);
+		assert(*lambda <= 1);
 		face_id = 0;
 	} else if (po_unit[0] > 1) {
 		// if face 1 is crossed
 		*lambda = (1 - pi_unit[0]) / (po_unit[0] - pi_unit[0]);
-		assert(*lambda > 0);
-		assert(*lambda < 1);
+		assert(*lambda >= 0);
+		assert(*lambda <= 1);
 		face_id = 1;
 	}
 	if (po_unit[1] < 0) {
 		// if face 2 is crossed
 		double lambda_y = (0 - pi_unit[1]) / (po_unit[1] - pi_unit[1]);
-		assert(lambda_y > 0);
-		assert(lambda_y < 1);
+		assert(lambda_y >= 0);
+		assert(lambda_y <= 1);
 		if (lambda_y < *lambda) {
 			*lambda = lambda_y;
 			face_id = 2;
@@ -639,8 +557,8 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	} else if (po_unit[1] > 1) {
 		// if face 3 is crossed
 		double lambda_y = (1 - pi_unit[1]) / (po_unit[1] - pi_unit[1]);
-		assert(lambda_y > 0);
-		assert(lambda_y < 1);
+		assert(lambda_y >= 0);
+		assert(lambda_y <= 1);
 		if (lambda_y < *lambda) {
 			*lambda = lambda_y;
 			face_id = 3;
@@ -650,8 +568,8 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		if (po_unit[2] < 0) {
 			// if face 4 is crossed
 			double lambda_z = (0 - pi_unit[2]) / (po_unit[2] - pi_unit[2]);
-			assert(lambda_z > 0);
-			assert(lambda_z < 1);
+			assert(lambda_z >= 0);
+			assert(lambda_z <= 1);
 			if (lambda_z < *lambda) {
 				*lambda = lambda_z;
 				face_id = 4;
@@ -659,8 +577,8 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		} else if (po_unit[2] > 1) {
 			// if face 5 is crossed
 			double lambda_z = (1 - pi_unit[2]) / (po_unit[2] - pi_unit[2]);
-			assert(lambda_z > 0);
-			assert(lambda_z < 1);
+			assert(lambda_z >= 0);
+			assert(lambda_z <= 1);
 			if (lambda_z < *lambda) {
 				*lambda = lambda_z;
 				face_id = 5;
@@ -675,11 +593,31 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	// calculate boundary point
 	dealii::Tensor<1, dim> increment = po_unit - pi_unit;
 	increment *= (*lambda);
-	p_boundary = m_mapping.transform_unit_to_real_cell(ci, pi_unit + increment);
 
-	assert(cell->point_inside(p_boundary));
+	// compensate for round-off errors
+	dealii::Point<dim> h = pi_unit + increment;
+	for (size_t i = 0; i < dim; i++) {
+		if (fabs(h[i]) < 1e-12) {
+			h[i] = 0;
+		}
+		if (fabs(h[i] - 1) < 1e-12) {
+			h[i] = 1;
+		}
+	}
+	// assert that point is at boundary
+	if (2 == dim) {
+	 assert(h[0] * h[1] * (1 - h[0]) * (1 - h[1]) == 0);
+	 } else { // 3 == dim
+	 assert(h[0] * h[1] * h[2] * (1 - h[0]) * (1 - h[1]) * (1 - h[2]) == 0);
+	 }
 
-	// TODO assert that p_boundary is at cell boundary
+	// map to real cell
+	p_boundary = m_mapping.transform_unit_to_real_cell(ci, h);
+
+	// cout << "boundary point: " << p_boundary << endl;
+
+	//assert(cell->point_inside(p_boundary));
+	*child_id = dealii::GeometryInfo<dim>::child_cell_from_point(h);
 
 	return face_id;
 
