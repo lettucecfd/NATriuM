@@ -285,7 +285,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const std::vector<Point<dim> > & unit_support_points =
 			m_fe->get_unit_support_points();
-	std::vector<double> local_entries;
+	std::vector<std::vector<double> > local_entries;
+	std::vector<Point<dim> >  local_lagrange_points;
 	std::vector<Tensor<1, dim> > minus_dtealpha;
 	for (size_t i = 0; i < m_stencil->getQ(); i++) {
 		minus_dtealpha.push_back(
@@ -434,36 +435,41 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 				// get dofs
 				it->get_dof_indices(local_dof_indices);
+				const XList & l = list->second;
 
 				if (not sparsity_pattern) {
-					// get shape functions
-					fe_cell_values.reinit(it);
+					// calculate shape values
+					local_entries.clear();
+					local_lagrange_points.clear();
+					for (size_t i = 0; i < l.size(); i++) {
+						local_lagrange_points.push_back(l[i].sourcePoint);
+						std::vector<double> h(dofs_per_cell);
+						local_entries.push_back(h);
+					}
+					shapeFunctionValue(it, local_lagrange_points, local_entries);
 				}
-
-				const XList & l = list->second;
-				// (i.e. for all shape functions in cell)
+				// (i.e. for all Lagrangian points in cell)
 				for (size_t i = 0; i < l.size(); i++) {
 					assert(it == l.at(i).currentCell);
 					if (sparsity_pattern) {
 						// add entry to sparsity pattern
-						//m_sparsityPattern[l[i].alpha-1][l[i].beta-1].add_entries(
-						//		l[i].globalDof, local_dof_indices.begin(),
-						//		local_dof_indices.end(), false);
+						m_sparsityPattern[l[i].alpha - 1][l[i].beta - 1].add_entries(
+								l[i].globalDof, local_dof_indices.begin(),
+								local_dof_indices.end(), false);
 					} else {
 						// calculate matrix entries
-						local_entries.clear();
-						local_entries.resize(dofs_per_cell, 0);
-						// TODO evaluate shape functions
-						//m_systemMatrix.block(l[i].alpha-1, l[i].beta-1).add(
-						//		l[i].globalDof, local_dof_indices,
-						//		local_entries);	//fe_cell_values.shape_value;
+						m_systemMatrix.block(l[i].alpha - 1, l[i].beta - 1).add(
+								l[i].globalDof, local_dof_indices,
+								local_entries.at(i));	//fe_cell_values.shape_value;
 					}
 				} /* end for all support points in cell*/
 			} /* end for all xlists (i.e. for all cells that contain support points )*/
 		} /* end if cell is locally owned */
 	} /* end for all cells */
 
-	if (sparsity_pattern) {
+
+	/*is done later
+	 * if (sparsity_pattern) {
 		const size_t Q = m_stencil->getQ();
 		for (size_t i = 0; i < Q - 1; i++) {
 			for (size_t j = 0; j < Q - 1; j++) {
@@ -473,7 +479,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	} else {
 		m_systemVector.compress(dealii::VectorOperation::add);
 		m_systemMatrix.compress(dealii::VectorOperation::add);
-	}
+	}*/
 
 //#endif
 } /* fillSparseObject */
@@ -606,10 +612,10 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	}
 	// assert that point is at boundary
 	if (2 == dim) {
-	 assert(h[0] * h[1] * (1 - h[0]) * (1 - h[1]) == 0);
-	 } else { // 3 == dim
-	 assert(h[0] * h[1] * h[2] * (1 - h[0]) * (1 - h[1]) * (1 - h[2]) == 0);
-	 }
+		assert(h[0] * h[1] * (1 - h[0]) * (1 - h[1]) == 0);
+	} else { // 3 == dim
+		assert(h[0] * h[1] * h[2] * (1 - h[0]) * (1 - h[1]) * (1 - h[2]) == 0);
+	}
 
 	// map to real cell
 	p_boundary = m_mapping.transform_unit_to_real_cell(ci, h);
