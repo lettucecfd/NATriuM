@@ -476,55 +476,75 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_SparsityPattern_test) {
 	pout << "done." << endl;
 } /* SemiLagrangian3D_SparsityPattern_test */
 
-BOOST_AUTO_TEST_CASE(SemiLagrangian2D_ZeroStreaming_test) {
-	pout << "SemiLagrangian2D_ZeroStreaming_test..." << endl;
+BOOST_AUTO_TEST_CASE(SemiLagrangian2D_ConstantStreaming_test) {
+	pout << "SemiLagrangian2D_ConstantStreaming_test..." << endl;
 
 	// setup system
-	size_t fe_order = 1;
+	size_t fe_order = 3;
 	size_t refinementLevel = 3;
 
 	PeriodicTestDomain2D periodic(refinementLevel);
 	periodic.refineAndTransform();
 	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
-			boost::make_shared<D2Q9>(), 0.001);
+			boost::make_shared<D2Q9>(), 0.01);
 	sl.setupDoFs();
 	sl.reassemble();
 
-	distributed_block_vector zeros;
+	distributed_block_vector ones;
 	distributed_block_vector result;
-	zeros.reinit(8);
+	ones.reinit(8);
 	result.reinit(8);
 	for (size_t i = 0; i < 8; i++) {
-		zeros.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
+		ones.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		result.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		// reinit does only change the size but not the content
+		dealii::ConstraintMatrix c(sl.getLocallyOwnedDofs());
+		c.close();
+		dealii::VectorTools::project(sl.getMapping(),*sl.getDoFHandler(), c, *sl.getQuadrature(), dealii::ConstantFunction<2>(1), ones.block(i));
 	}
 
-	sl.getSystemMatrix().vmult(result, zeros);
 
-	BOOST_CHECK_LE(zeros.norm_sqr(), 1e-6);
+	sl.getSystemMatrix().vmult(result, ones);
+	result -= ones;
+	BOOST_CHECK_LE(result.norm_sqr(), 1e-6);
 
 	pout << "done." << endl;
-} /* SemiLagrangian2D_ZeroStreaming_test */
+} /* SemiLagrangian2D_ConstantStreaming_test */
 
-
-BOOST_AUTO_TEST_CASE(SemiLagrangian2D_PeriodicTestCase_test) {
-	pout << "SemiLagrangian2D_PeriodicTestCase_test..." << endl;
+BOOST_AUTO_TEST_CASE(SemiLagrangian3D_ConstantStreaming_test) {
+	pout << "SemiLagrangian3D_ConstantStreaming_test..." << endl;
 
 	// setup system
 	size_t fe_order = 1;
 	size_t refinementLevel = 3;
 
-	PeriodicTestDomain2D periodic(refinementLevel);
+	PeriodicTestDomain3D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
-			boost::make_shared<D2Q9>(), 0.001);
+	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D3Q19>(), 0.01);
 	sl.setupDoFs();
 	sl.reassemble();
 
+	distributed_block_vector ones;
+	distributed_block_vector result;
+	ones.reinit(18);
+	result.reinit(18);
+	for (size_t i = 0; i < 18; i++) {
+		ones.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
+		result.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
+		// reinit does only change the size but not the content
+		dealii::ConstraintMatrix c(sl.getLocallyOwnedDofs());
+		c.close();
+		dealii::VectorTools::project(sl.getMapping(),*sl.getDoFHandler(), c, *sl.getQuadrature(), dealii::ConstantFunction<3>(1), ones.block(i));
+	}
+
+
+	sl.getSystemMatrix().vmult(result, ones);
+	result -= ones;
+	BOOST_CHECK_LE(result.norm_sqr(), 1e-6);
 
 	pout << "done." << endl;
-} /* SemiLagrangian2D_PeriodicTestCase_test */
+} /* SemiLagrangian3D_ConstantStreaming_test */
 
 
 BOOST_AUTO_TEST_SUITE_END()

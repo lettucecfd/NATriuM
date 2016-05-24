@@ -22,7 +22,6 @@
 #include "../problemdescription/ProblemDescription.h"
 
 #include "../advection/AdvectionOperator.h"
-#include "../advection/SEDGMinLee.h"
 
 #include "../collision/CollisionModel.h"
 

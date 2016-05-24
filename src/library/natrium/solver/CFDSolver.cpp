@@ -28,6 +28,9 @@
 #include "../stencils/D3Q27.h"
 #include "../stencils/Stencil.h"
 
+#include "../advection/SEDGMinLee.h"
+#include "../advection/SemiLagrangian.h"
+
 #include "../collision/BGKStandard.h"
 #include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
@@ -156,6 +159,15 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		} catch (AdvectionSolverException & e) {
 			natrium_errorexit(e.what());
 		}
+	} else if (SEMI_LAGRANGIAN == configuration->getAdvectionScheme()) {
+		try {
+			m_advectionOperator = boost::make_shared<SemiLagrangian<dim> >(
+					m_problemDescription->getMesh(),
+					m_problemDescription->getBoundaries(),
+					configuration->getSedgOrderOfFiniteElement(), m_stencil);
+		} catch (AdvectionSolverException & e) {
+			natrium_errorexit(e.what());
+		}		
 	}
 	// Refine mesh, Build DoF system (by reading from restart file)
 	if (checkpoint) {

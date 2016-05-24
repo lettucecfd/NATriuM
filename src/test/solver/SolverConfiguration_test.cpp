@@ -114,6 +114,9 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.getRestartAtIteration(), size_t(0));
 	config.setRestartAtIteration(1);
 	BOOST_CHECK_EQUAL(config.getRestartAtIteration(), size_t(1));
+	BOOST_CHECK_EQUAL(config.getAdvectionScheme(), SEDG);
+	config.setAdvectionScheme(SEMI_LAGRANGIAN);
+	BOOST_CHECK_EQUAL(config.getAdvectionScheme(), SEMI_LAGRANGIAN);
 	/// Failure test
 	pout << " ... failure test ... " << endl;
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);

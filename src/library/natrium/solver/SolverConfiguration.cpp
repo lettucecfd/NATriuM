@@ -31,8 +31,8 @@ SolverConfiguration::SolverConfiguration() {
 	enter_subsection("Advection");
 	{
 		declare_entry("Advection scheme", "SEDG",
-				dealii::Patterns::Selection("SEDG"),
-				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme.");
+				dealii::Patterns::Selection("SEDG|Semi-Lagrangian"),
+				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme. SEDG stands for spectral element discontinuous Galerkin. Note that the Semi-Lagrangian streaming does not require a time integrator.");
 		declare_entry("Time integrator", "Runge-Kutta 5-stage",
 				dealii::Patterns::Selection(
 						"Runge-Kutta 5-stage|Theta method|Exponential|Other"),
