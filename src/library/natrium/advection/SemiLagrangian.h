@@ -188,6 +188,7 @@ public:
 	 * @param[in] triangulation The global mesh.
 	 * @param[in] orderOfFiniteElement The number of nodes element and dimension
 	 * @param[in] stencil the DQ model
+	 * @param[in] delta_t time step size; if delta_t = 0, the sparsity pattern is not updated during construction
 	 */
 	SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
 			boost::shared_ptr<BoundaryCollection<dim> > boundaries,
@@ -522,6 +523,15 @@ public:
 		if (dim == 3)
 			t[2] = v(2);
 		return t;
+	}
+
+	double getDeltaT() const {
+		return m_deltaT;
+	}
+
+	virtual void setDeltaT(double deltaT) {
+		m_deltaT = deltaT;
+		updateSparsityPattern();
 	}
 }
 ;

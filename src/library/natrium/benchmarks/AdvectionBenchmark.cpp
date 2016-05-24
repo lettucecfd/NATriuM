@@ -15,6 +15,7 @@
 #include "deal.II/numerics/data_out.h"
 
 #include "../advection/SEDGMinLee.h"
+#include "../advection/SemiLagrangian.h"
 
 #include "../problemdescription/ProblemDescription.h"
 
@@ -32,6 +33,7 @@
 namespace natrium {
 
 template<size_t dim> class SEDGMinLee;
+template<size_t dim> class SemiLagrangian;
 
 boost::shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > make_integrator(
 		TimeIntegratorName integrator_name,
@@ -69,8 +71,8 @@ boost::shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> 
 					delta_t, deal_integrator_name, config.getDealLinearSolver(),
 					config.getEmbeddedDealIntegratorCoarsenParameter(),
 					config.getEmbeddedDealIntegratorRefinementParameter(),
-					0.1*delta_t, // minimum time step
-					10*delta_t, // maximum time step
+					0.1 * delta_t, // minimum time step
+					10 * delta_t, // maximum time step
 					config.getEmbeddedDealIntegratorRefinementTolerance(),
 					config.getEmbeddedDealIntegratorCoarsenTolerance());
 		}
@@ -114,7 +116,7 @@ double analytic_solution(double time, const dealii::Point<2>& x,
 
 void getAnalyticSolution(double time, distributed_vector& analyticSolution,
 		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints,
-		const SEDGMinLee<2>& streaming, bool is_smooth) {
+		const AdvectionOperator<2>& streaming, bool is_smooth) {
 	// get Function instance
 	const unsigned int dofs_per_cell = streaming.getFe()->dofs_per_cell;
 	vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -142,7 +144,7 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution,
 AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 		double t_end, const TimeIntegratorName integrator,
 		const DealIntegratorName deal_integrator, bool is_smooth,
-		bool output_to_std_dir, bool useCentralFlux) {
+		bool semi_lagrangian, bool output_to_std_dir, bool useCentralFlux) {
 
 	AdvectionResult result;
 	result.refinementLevel = refinementLevel;
@@ -154,8 +156,18 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	// create problem and solver
 	PeriodicTestDomain2D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SEDGMinLee<2> streaming(periodic.getMesh(), periodic.getBoundaries(),
-			fe_order, boost::make_shared<D2Q9>(),useCentralFlux);
+
+	boost::shared_ptr<AdvectionOperator<2> > s;
+	if (semi_lagrangian) {
+		s = boost::make_shared<SemiLagrangian<2> >(periodic.getMesh(),
+				periodic.getBoundaries(), fe_order, boost::make_shared<D2Q9>(),
+				deltaT);
+	} else {
+		s = boost::make_shared<SEDGMinLee<2> >(periodic.getMesh(),
+				periodic.getBoundaries(), fe_order, boost::make_shared<D2Q9>(),
+				useCentralFlux);
+	}
+	AdvectionOperator<2> & streaming = *s;
 	streaming.setupDoFs();
 	streaming.reassemble();
 	const distributed_sparse_block_matrix& matrices =
@@ -181,15 +193,12 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	distributed_sparse_matrix advectionMatrix;
 	advectionMatrix.reinit(matrices.block(0, 0));
 	advectionMatrix.copy_from(matrices.block(0, 0));
-	boost::shared_ptr<TimeIntegrator<distributed_sparse_matrix, distributed_vector> > time_stepper;
+	boost::shared_ptr<
+			TimeIntegrator<distributed_sparse_matrix, distributed_vector> > time_stepper;
 	time_stepper = make_integrator(integrator, deal_integrator, deltaT, f);
 
-#ifdef WITH_TRILINOS_MPI
 	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(),
-	MPI_COMM_WORLD);
-#else
-	distributed_vector fAnalytic(f.size());
-#endif
+			MPI_COMM_WORLD);
 
 	double timestart;
 	timestart = clock();
@@ -208,13 +217,20 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 			}
 		}
 
-		while (t < t_end){
+		while (t < t_end) {
 			i++;
-		//for (size_t i = 0; i < numberOfTimeSteps; i++) {
+			//for (size_t i = 0; i < numberOfTimeSteps; i++) {
 			//stream
-			t = time_stepper->step(f, advectionMatrix, g, t,
-					time_stepper->getTimeStepSize());
-
+			if (semi_lagrangian) {
+				distributed_vector f_tmp;
+				f_tmp.reinit(f);
+				f_tmp = f;
+				t += deltaT;
+				advectionMatrix.vmult(f, f_tmp);
+			} else {
+				t += time_stepper->step(f, advectionMatrix, g, t,
+						time_stepper->getTimeStepSize());
+			}
 			// output
 			if (i % 10 == 0) {
 				std::stringstream str;
@@ -234,7 +250,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 		}
 	} else {
 
-		while (t < t_end){
+		while (t < t_end) {
 			i++;
 			//stream
 			t = time_stepper->step(f, advectionMatrix, g, t,
@@ -248,8 +264,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	result.timesec /= CLOCKS_PER_SEC;
 
 	// compare with analytic solution by sup-norm and 2-norm
-	getAnalyticSolution(t, fAnalytic, supportPoints,
-			streaming, is_smooth);
+	getAnalyticSolution(t, fAnalytic, supportPoints, streaming, is_smooth);
 	fAnalytic.add(-1, f);
 	result.normSup = fAnalytic.linfty_norm();
 	result.norm2 = fAnalytic.l2_norm();
@@ -258,7 +273,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	fileName << getenv("NATRIUM_HOME") << "/convergence-advection-solver/Level_"
 			<< refinementLevel << "_p_" << fe_order << ".sp";
 	std::ofstream sp_file(fileName.str().c_str());
-	streaming.getBlockSparsityPattern().print_gnuplot(sp_file);
+	//streaming.getBlockSparsityPattern().print_gnuplot(sp_file);
 	return result;
 
 } /* oneTest */

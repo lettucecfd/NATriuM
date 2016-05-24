@@ -224,6 +224,18 @@ int main(int argc, char **argv) {
 		errors = true;
 	}
 
+	// Test 11: Convergence of semi-Lagrangian advection scheme
+	result = IntegrationTestCases::ConvergenceTestSemiLagrangianAdvection();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		pout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		pout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
 	// FINALIZE
 	if (errors) {
 		pout << "Done. Errors occured in tests. See natrium.html for details."
