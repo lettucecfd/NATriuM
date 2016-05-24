@@ -44,6 +44,7 @@ SemiLagrangian<dim>::SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
 	// assertions
 	assert(orderOfFiniteElement >= 1);
 	assert(Stencil->getD() == dim);
+	assert(m_deltaT >= 0);
 
 	// TODO FEM rather than DG
 	// make dof handler
@@ -64,6 +65,7 @@ void SemiLagrangian<dim>::setupDoFs() {
 	m_doFHandler->distribute_dofs(*m_fe);
 
 	updateSparsityPattern();
+
 
 	// define relation between dofs and quadrature nodes
 	m_facedof_to_q_index = map_facedofs_to_q_index();
@@ -142,7 +144,9 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 					m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
 
 	// fill sparsity pattern
-	fillSparseObject(true); // "true" means that the object to fill is the sparsity pattern
+	if (m_deltaT != 0) {
+		fillSparseObject(true); // "true" means that the object to fill is the sparsity pattern
+	}
 
 	// initialize matrix
 	m_systemMatrix.reinit(n_blocks, n_blocks);

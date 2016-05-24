@@ -55,7 +55,7 @@ TestResult ConvergenceTestForcingSchemes2D ();
 
 TestResult ConvergenceTestForcingSchemes3D ();
 
-TestResult ConvergenceTestSemiLagrangianLBM ();
+TestResult ConvergenceTestSemiLagrangianAdvection ();
 
 } /* namespace IntegrationTests */
 } /* namespace natrium */

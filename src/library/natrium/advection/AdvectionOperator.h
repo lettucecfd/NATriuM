@@ -82,6 +82,10 @@ public:
 	virtual const boost::shared_ptr<Mesh<dim> >& getMesh() const = 0;
 
 	virtual const boost::shared_ptr<Stencil>& getStencil() const  = 0;
+
+	virtual void setDeltaT(double ){
+
+	}
 };
 
 } /* namespace natrium */

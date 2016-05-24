@@ -24,6 +24,7 @@
 
 using namespace natrium;
 
+
 // Main function
 int main(int argc, char** argv) {
 
@@ -76,6 +77,7 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
+	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setCFL(CFL);
 	if (collision == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);

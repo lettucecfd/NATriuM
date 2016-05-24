@@ -862,7 +862,67 @@ TestResult ConvergenceTestForcingSchemes3D() {
 	return result;
 }
 
-TestResult ConvergenceTestSemiLagrangianLBM (){
+TestResult ConvergenceTestSemiLagrangianAdvection (){
+
+	TestResult result;
+	result.id = 11;
+	result.name = "Convergence Test: Semi-Lagrangian linear advection (smooth problem)";
+	result.details =
+			"This test runs the advection solver for a smooth periodic sine profile.";
+	result.time = clock();
+	// smooth: 100*(0.3*dx)**(p+1)
+	// nonsmooth: (0.5*p)**(-1.5)*4*dx**2
+
+	bool is_smooth = true;
+	bool semi_lagrangian = true;
+	for (size_t N = 2; N <= 3; N++) {
+		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
+				orderOfFiniteElement += 4) {
+
+			double deltaX = 1. / (pow(2, N));
+			double deltaT = 0.4 * pow(0.5, N)
+					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));
+			double t_end = 0.1;
+			if (t_end / deltaT <= 5) {
+				continue;
+			}
+			AdvectionBenchmark::AdvectionResult advectionResult =
+					AdvectionBenchmark::oneTest(N, orderOfFiniteElement, deltaT,
+							t_end, RUNGE_KUTTA_5STAGE, NONE, is_smooth, semi_lagrangian, false,
+							false);
+
+			// Analysis
+			// Velocity error (compare Paper by Min and Lee)
+			std::stringstream stream1;
+			stream1 << "|f-f_ref|_sup; N=" << N << "; p="
+					<< orderOfFiniteElement;
+			result.quantity.push_back(stream1.str());
+			double expected = std::log10(
+					400 * std::pow(0.3 * deltaX, orderOfFiniteElement + 1));
+			result.expected.push_back(expected);
+			result.threshold.push_back(0.8);
+			result.outcome.push_back(std::log10(advectionResult.normSup));
+
+		} /* for p */
+	} /* for N */
+
+// Finalize test
+	result.time = (clock() - result.time) / CLOCKS_PER_SEC;
+	assert(result.quantity.size() == result.expected.size());
+	assert(result.quantity.size() == result.threshold.size());
+	assert(result.quantity.size() == result.outcome.size());
+	result.success = true;
+	for (size_t i = 0; i < result.quantity.size(); i++) {
+		if (fabs(result.expected.at(i) - result.outcome.at(i))
+				> result.threshold.at(i)) {
+			result.success = false;
+			*result.error_msg << result.quantity.at(i)
+					<< " not below threshold.";
+		}
+	}
+
+	return result;
+
 }
 
 } /* namespace IntegrationTests */
