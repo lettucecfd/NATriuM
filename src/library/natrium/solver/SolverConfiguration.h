@@ -33,7 +33,8 @@ namespace natrium {
  * @short Implemented streaming data types
  */
 enum AdvectionSchemeName {
-	SEDG
+	SEDG,
+	SEMI_LAGRANGIAN
 };
 
 /**
@@ -269,6 +270,8 @@ public:
 		leave_subsection();
 		if ("SEDG" == advectionScheme) {
 			return SEDG;
+		} else if ("Semi-Lagrangian" == advectionScheme){
+			return SEMI_LAGRANGIAN;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown advection scheme '" << advectionScheme
@@ -283,6 +286,10 @@ public:
 		switch (advectionScheme) {
 		case SEDG: {
 			set("Advection scheme", "SEDG");
+			break;
+		}
+		case SEMI_LAGRANGIAN: {
+			set("Advection scheme", "Semi-Lagrangian");
 			break;
 		}
 		default: {

@@ -35,11 +35,11 @@
 namespace natrium {
 namespace IntegrationTestCases {
 
-TestResult ConvergencePureLinearAdvectionSmooth() {
+TestResult ConvergenceSEDGLinearAdvectionSmooth() {
 
 	TestResult result;
 	result.id = 1;
-	result.name = "Convergence Test: Pure linear advection (smooth problem)";
+	result.name = "Convergence Test: SEDG linear advection (smooth problem)";
 	result.details =
 			"This test runs the advection solver for a smooth periodic sine profile."
 					"Theoretically, the solver has to converge exponentially, which is tested.";
@@ -96,14 +96,14 @@ TestResult ConvergencePureLinearAdvectionSmooth() {
 
 	return result;
 
-} /* ConvergencePureLinearAdvectionSmooth */
+} /* ConvergenceSEDGLinearAdvectionSmooth */
 
-TestResult ConvergencePureLinearAdvectionNonsmooth() {
+TestResult ConvergenceSEDGLinearAdvectionNonsmooth() {
 
 	TestResult result;
 	result.id = 2;
 	result.name =
-			"Convergence Test: Pure linear advection (non-smooth problem)";
+			"Convergence Test: SEDG linear advection (non-smooth problem)";
 	result.details =
 			"This test runs the advection solver for a non-smooth periodic profile, which is "
 					"only twice continuously differentiable."
@@ -162,7 +162,7 @@ TestResult ConvergencePureLinearAdvectionNonsmooth() {
 	return result;
 
 }
-/* ConvergencePureLinearAdvectionNonsmooth */
+/* ConvergenceSEDGLinearAdvectionNonsmooth */
 
 TestResult ConvergenceTestPeriodic() {
 
@@ -860,6 +860,9 @@ TestResult ConvergenceTestForcingSchemes3D() {
 		}
 	}
 	return result;
+}
+
+TestResult ConvergenceTestSemiLagrangianLBM (){
 }
 
 } /* namespace IntegrationTests */

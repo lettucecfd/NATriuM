@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
 	IntegrationTestCases::TestResult result;
 
 	// Test 1: Convergence Pure Linear Advection (smooth)
-	result = IntegrationTestCases::ConvergencePureLinearAdvectionSmooth();
+	result = IntegrationTestCases::ConvergenceSEDGLinearAdvectionSmooth();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
 		pout << "-  " << result.name << " ... " << "OK." << endl;
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
 	}
 
 	// Test 2: Convergence Pure Linear Advection (non-smooth)
-	result = IntegrationTestCases::ConvergencePureLinearAdvectionNonsmooth();
+	result = IntegrationTestCases::ConvergenceSEDGLinearAdvectionNonsmooth();
 	print_line_html(result, htmlTrace.getHtml());
 	if (result.success) {
 		pout << "-  " << result.name << " ... " << "OK." << endl;
