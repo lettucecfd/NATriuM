@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
 		double timestart = clock();
 		solver.run();
 		double runtime = clock() - timestart;
+		runtime /= CLOCKS_PER_SEC;
 		solver.getErrorStats()->update();
 		solver.getSolverStats()->update();
 		double kinE_num = solver.getSolverStats()->getKinE();
