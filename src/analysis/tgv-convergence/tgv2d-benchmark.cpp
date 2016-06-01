@@ -40,13 +40,14 @@ int main(int argc, char** argv) {
 	const double CFL = atof(argv[6]);
 	const double collision = atoi(argv[7]);
 	const double init_rho_analytically = atoi(argv[8]);
+	const int semi_lagrange = atoi(argv[9]);
 	double refine_tol = 1e-7;
 	double coarsen_tol = 1e-8;
-	if (argc > 9) {
-		refine_tol = atof(argv[9]);
-	}
 	if (argc > 10) {
 		refine_tol = atof(argv[10]);
+	}
+	if (argc > 11) {
+		refine_tol = atof(argv[11]);
 	}
 
 	/////////////////////////////////////////////////
@@ -77,7 +78,9 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	if (semi_lagrange == 1){
+		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	}
 	configuration->setCFL(CFL);
 	if (collision == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
