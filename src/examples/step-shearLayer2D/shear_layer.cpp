@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setRestartAtIteration(500);
+	//configuration->setRestartAtIteration(500);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
