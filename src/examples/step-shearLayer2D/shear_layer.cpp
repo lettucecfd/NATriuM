@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	pout
 
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0>"
 			<< endl;
 
 	size_t refinement_level = 3;
@@ -58,11 +58,11 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Coll:  " << collision_id << endl;
 
-	size_t filter_id = 0;
+	size_t semi_lagrange = 0;
 	if (argc >= 5) {
-		filter_id = std::atoi(argv[4]);
+		semi_lagrange = std::atoi(argv[4]);
 	}
-	pout << "... Filter:  " << filter_id << endl;
+	pout << "... Filter:  " << semi_lagrange << endl;
 
 	size_t integrator_id = 1;
 	if (argc >= 6) {
@@ -88,6 +88,7 @@ int main(int argc, char** argv) {
 	string integrator_name;
 	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
 			deal_integrator, integrator_name);
+
 	pout << "... that is the " << integrator_name << endl;
 	pout << "-------------------------------------" << endl;
 
@@ -127,7 +128,7 @@ int main(int argc, char** argv) {
 	configuration->setOutputCheckpointInterval(100);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
-			<< "-p" << p << "-filt" << filter_id << "-coll" << collision_id << "-int" << integrator_id
+			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id << "-int" << integrator_id
 			<< "-CFL" << CFL << "-scaling" << stencil_scaling;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
@@ -144,14 +145,13 @@ int main(int argc, char** argv) {
 		configuration->setCollisionScheme(KBC_STANDARD);
 	}
 
-	if (filter_id == 1) {
-		configuration->setFiltering(true);
-		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
+	if (semi_lagrange == 1)
+		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 
-	} else if (filter_id == 2) {
+	/*} else if (semi_lagrange == 2) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(NEW_FILTER);
-	}
+	}*/
 	//configuration->setFiltering(true);
 
 	pout << "Simulation end time will be t_c = " << t_c << endl;

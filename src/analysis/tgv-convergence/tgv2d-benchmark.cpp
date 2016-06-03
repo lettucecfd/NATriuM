@@ -66,8 +66,6 @@ int main(int argc, char** argv) {
 	pout << "-------------------------------------" << endl;
 	boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
 			TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
-	double delta_t = CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),
-			p, D2Q9(scaling), CFL);
 
 	// setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
@@ -93,6 +91,7 @@ int main(int argc, char** argv) {
 	// exp(-2vt) = 1/10
 	configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
 	BenchmarkCFDSolver<2> solver(configuration, tgv);
+	double delta_t = solver.getTimeStepSize();
 
 	try {
 
