@@ -129,8 +129,6 @@ int main(int argc, char** argv) {
 	} else if (stencil_id == 2){
 		st = boost::make_shared<D3Q27>(scaling);
 	}
-	double dt = CFDSolverUtilities::calculateTimestep<3>(
-			*taylorGreen->getMesh(), p, *st, CFL);
 
 	// setup configuration
 	std::stringstream dirName;
