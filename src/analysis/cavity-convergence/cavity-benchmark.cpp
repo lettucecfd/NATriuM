@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(outdir.str());
-	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputSolutionInterval(100000000);
 	configuration->setOutputCheckpointInterval(100000);
 	configuration->setOutputTableInterval(1000);
 	//configuration->setSwitchOutputOff(true);
