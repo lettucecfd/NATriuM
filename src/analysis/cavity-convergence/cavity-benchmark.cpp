@@ -21,7 +21,7 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 
-#include "CompareToGhia.h"
+#include "CompareToBotella.h"
 #include "../../examples/step-0/LidDrivenCavity2D.h"
 
 using namespace natrium;
@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
 	const double integrator = atoi(argv[5]);
 	const double CFL = atof(argv[6]);
 	const double collision = atoi(argv[7]);
+	const bool semi_lagrange = atoi(argv[8]);
 	double refine_tol = 1e-7;
 	double coarsen_tol = 1e-8;
 	if (argc > 9) {
@@ -73,7 +74,7 @@ int main(int argc, char** argv) {
 	std::stringstream outdir;
 	outdir << getenv("NATRIUM_HOME") << "/cavity-benchmark/Re" << Re << "_N"
 			<< N << "_p" << p << "_Ma" << Ma << "_int" << integrator << "_CFL"
-			<< CFL << "_coll" << collision ;
+			<< CFL << "_coll" << collision << "_sl" << semi_lagrange;
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(outdir.str());
@@ -100,14 +101,17 @@ int main(int argc, char** argv) {
 	//configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
 	configuration->setSimulationEndTime(50);
 	configuration->setConvergenceThreshold(1e-10);
+	if (semi_lagrange){
+		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	}
 	CFDSolver<2> solver(configuration, tgv);
 	std::stringstream outfile;
 	outfile << getenv("NATRIUM_HOME") << "/cavity-benchmark/Re" << Re << "_N"
 			<< N << "_p" << p << "_Ma" << Ma << "_int" << integrator << "_CFL"
-			<< CFL << "_coll" << collision << ".dat";
-	boost::shared_ptr<CompareToGhia> ghia = boost::make_shared<CompareToGhia>(
+			<< CFL << "_coll" << collision << "_sl" << semi_lagrange << ".dat";
+	boost::shared_ptr<CompareToBotella> res = boost::make_shared<CompareToBotella>(
 			solver, Re, outfile.str());
-	solver.appendDataProcessor(ghia);
+	solver.appendDataProcessor(res);
 	// put out grid
 	std::stringstream gridfile;
 	gridfile << getenv("NATRIUM_HOME") << "/cavity-benchmark/grid_N"
@@ -123,10 +127,10 @@ int main(int argc, char** argv) {
 		solver.run();
 		double runtime = clock() - timestart;
 		solver.getSolverStats()->update();
-		ghia->apply();
-		ghia->printFinalVelocities();
-		double u_error = ghia->getUError();
-		double v_error = ghia->getVError();
+		res->apply();
+		res->printFinalVelocities();
+		double u_error = res->getUError();
+		double v_error = res->getVError();
 		pout
 				<< "N p Ma Re integrator CFL collision  #steps Mean_CFL u_error v_error  runtime"
 				<< endl;
