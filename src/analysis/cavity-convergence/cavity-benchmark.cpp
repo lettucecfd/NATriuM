@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
 	// end after Dissipation by one order of magnitude
 	// exp(-2vt) = 1/10
 	//configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
-	configuration->setSimulationEndTime(50);
+	//configuration->setSimulationEndTime(50);
 	configuration->setConvergenceThreshold(1e-10);
 	if (semi_lagrange){
 		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
