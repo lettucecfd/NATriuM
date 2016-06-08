@@ -105,8 +105,8 @@ int main(int argc, char** argv) {
 	//////////////////////////////////////////////////
 
 	// Re = viscosity/(2*pi)
-	const double U = 2 * M_PI;
-	const double viscosity = 1. / Re;
+	const double U = 1; //2 * M_PI;
+	const double viscosity = 2 * M_PI / Re;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
 	const double Ma = 0.1;
@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
 	// zunaechst: fixed order of FE
 
 	// chose scaling so that the right Ma-number is achieved
-	const double scaling = sqrt(3) * U / Ma;
+	const double scaling = sqrt(3) * cs;
 	const bool init_rho_analytically = true;
 
 	boost::shared_ptr<ProblemDescription<3> > taylorGreen = boost::make_shared<
