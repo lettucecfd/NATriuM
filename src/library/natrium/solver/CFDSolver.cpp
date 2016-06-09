@@ -195,8 +195,11 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 	// assemble advection operator
 	// upon setDeltaT, the semi-Lagrangian updates the sparsity pattern
-	m_advectionOperator->setDeltaT(delta_t);
-	m_advectionOperator->reassemble();
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "Assembly");
+		m_advectionOperator->setDeltaT(delta_t);
+		m_advectionOperator->reassemble();
+	}
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
@@ -332,6 +335,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			m_filter = boost::make_shared<ExponentialFilter<dim> >(
 					m_configuration->getExponentialFilterAlpha(),
 					m_configuration->getExponentialFilterS(),
+					m_configuration->getExponentialFilterNc(),
 					*m_advectionOperator->getQuadrature(),
 					*m_advectionOperator->getFe());
 		} else if (m_configuration->getFilteringScheme() == NEW_FILTER) {
@@ -553,7 +557,7 @@ template<size_t dim>
 void CFDSolver<dim>::reassemble() {
 
 // start timer
-	TimerOutput::Scope timer_section(Timing::getTimer(), "Reassemble");
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Reassembly");
 
 	try {
 		m_advectionOperator->reassemble();

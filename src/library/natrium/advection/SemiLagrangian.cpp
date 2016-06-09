@@ -28,6 +28,7 @@
 
 #include "../utilities/DealiiExtensions.h"
 #include "../utilities/CFDSolverUtilities.h"
+#include "../utilities/Timing.h"
 
 using namespace dealii;
 

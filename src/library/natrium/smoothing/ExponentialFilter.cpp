@@ -13,10 +13,10 @@
 namespace natrium {
 
 template<size_t dim>
-ExponentialFilter<dim>::ExponentialFilter(double alpha, double s,
+ExponentialFilter<dim>::ExponentialFilter(double alpha, double s, size_t Nc,
 		const dealii::Quadrature<dim>& quadrature,
 		const dealii::FE_DGQ<dim>& fe) :
-		m_alpha(alpha), m_s(s), m_p(fe.get_degree()), m_quadrature(quadrature), m_sourceFE(
+		m_alpha(alpha), m_s(s), m_Nc(Nc), m_p(fe.get_degree()), m_quadrature(quadrature), m_sourceFE(
 				fe), m_legendre1D(0), m_projectToLegendre(
 				pow(m_sourceFE.get_degree() + 1, dim)), m_projectFromLegendre(
 				pow(m_sourceFE.get_degree() + 1, dim)) {
@@ -163,8 +163,10 @@ void ExponentialFilter<dim>::applyFilter(
 
 			// apply exponential filtering
 			for (size_t i = 0; i < dofs_per_cell; i++) {
-				sigma = std::exp( - m_alpha * pow( ((double) m_degreeSum.at(i)) / ((double) max_degree), m_s));
-				legendre_dofs(i) = sigma * legendre_dofs(i);
+				if ( m_degreeSum.at(i) >= m_Nc){
+					sigma = std::exp( - m_alpha * pow( ((double) m_degreeSum.at(i) + 1 - m_Nc) / ((double) max_degree + 1 - m_Nc), m_s));
+					legendre_dofs(i) = sigma * legendre_dofs(i);
+				}
 			}
 
 			// project back to original basis
