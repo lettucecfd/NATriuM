@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	pout
 
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0> <filter=0>"
 			<< endl;
 
 	size_t refinement_level = 3;
@@ -81,6 +81,12 @@ int main(int argc, char** argv) {
 		stencil_scaling = std::atof(argv[7]);
 	}
 	pout << "... stencil_scaling:  " << stencil_scaling << endl;
+
+	size_t filter = 0;
+	if (argc >= 9) {
+		filter = std::atof(argv[8]);
+	}
+	pout << "... Filter:  " << filter << endl;
 
 	// get integrator
 	TimeIntegratorName time_integrator;
@@ -129,7 +135,7 @@ int main(int argc, char** argv) {
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
 			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id << "-int" << integrator_id
-			<< "-CFL" << CFL << "-scaling" << stencil_scaling;
+			<< "-CFL" << CFL << "-scaling" << stencil_scaling << "-filter" << filter;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(500000);
@@ -148,11 +154,14 @@ int main(int argc, char** argv) {
 	if (semi_lagrange == 1)
 		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 
-	/*} else if (semi_lagrange == 2) {
+	if (filter == 1){
 		configuration->setFiltering(true);
-		configuration->setFilteringScheme(NEW_FILTER);
-	}*/
-	//configuration->setFiltering(true);
+		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
+		configuration->setExponentialFilterAlpha(36);
+		configuration->setExponentialFilterS(32);
+		configuration->setExponentialFilterNc(4);
+	}
+
 
 	pout << "Simulation end time will be t_c = " << t_c << endl;
 	// ========================================================================
