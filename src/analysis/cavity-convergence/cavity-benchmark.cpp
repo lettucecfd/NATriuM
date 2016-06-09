@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
-	const double L = 2 * M_PI;
+	const double L = 1;
 	const double U = 1;
 	const double scaling = sqrt(3) * U / Ma;
 	const double viscosity = (L * U) / Re;
@@ -66,8 +66,8 @@ int main(int argc, char** argv) {
 	pout << "-------------------------------------" << endl;
 	boost::shared_ptr<ProblemDescription<2> > tgv = boost::make_shared<
 			LidDrivenCavity2D>(U, viscosity, N);
-	double delta_t = CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),
-			p, D2Q9(scaling), CFL);
+	//double delta_t = CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),
+	//		p, D2Q9(scaling), CFL);
 
 
 	// setup configuration
@@ -120,6 +120,7 @@ int main(int argc, char** argv) {
 	dealii::GridOut grid_out;
 	grid_out.write_eps(*tgv->getMesh(), gout);
 	gout.close();
+	const double delta_t = solver.getTimeStepSize();
 	// run simulation
 	try {
 

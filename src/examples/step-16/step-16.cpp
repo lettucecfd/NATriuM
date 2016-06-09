@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 	if (argc >= 6) {
 		semi_lagrange = std::atoi(argv[5]);
 	}
-	pout << "... Filter:  " << semi_lagrange << endl;
+	pout << "... Semi_Lagrange:  " << semi_lagrange << endl;
 
 	size_t integrator_id = 1;
 	if (argc >= 7) {
