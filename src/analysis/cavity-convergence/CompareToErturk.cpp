@@ -104,8 +104,8 @@ void CompareToErturk::apply() {
 		// generate test points
 		dealii::Point<2> x_point(m_x(i), 0.5);
 		dealii::Point<2> y_point(0.5, m_y(i));
-		double ui;
-		double vi;
+		double ui = -1000000000;
+		double vi = -1000000000;
 		double ui_mpi;
 		double vi_mpi;
 		// evaluate solution and synchronize via MPI
@@ -163,8 +163,8 @@ void CompareToErturk::printFinalVelocities() {
 		// generate test points
 		dealii::Point<2> x_point(1.0 * i / 150., 0.5);
 		dealii::Point<2> y_point(0.5, 1.0 * i / 150.);
-		double ui;
-		double vi;
+		double ui = -1000000000;
+		double vi = -1000000000;
 		double ui_mpi;
 		double vi_mpi;
 		// evaluate solution and synchronize via MPI

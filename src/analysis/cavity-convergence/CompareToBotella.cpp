@@ -67,7 +67,7 @@ void CompareToBotella::apply() {
 		return;
 	std::ofstream out(m_fileName);
 	if (is_MPI_rank_0()) {
-		out << "y   uy   uy_ref      x   vx  vx_ref" << endl;
+		out << "# y   uy   uy_ref      x   vx  vx_ref" << endl;
 	}
 
 	m_uError = 0;
@@ -91,8 +91,8 @@ void CompareToBotella::apply() {
 		// generate test points
 		dealii::Point<2> x_point(m_x(i), 0.5);
 		dealii::Point<2> y_point(0.5, m_y(i));
-		double ui;
-		double vi;
+		double ui = -10000000;
+		double vi = -10000000;
 		double ui_mpi;
 		double vi_mpi;
 		// evaluate solution and synchronize via MPI
@@ -129,7 +129,7 @@ void CompareToBotella::printFinalVelocities() {
 	final_name << m_fileName << "final";
 	std::ofstream out(final_name.str());
 	if (is_MPI_rank_0()) {
-		out << "y   uy   x   vx " << endl;
+		out << "# y   uy   x   vx " << endl;
 	}
 
 	// make fe field function to evaluate the solution
@@ -150,8 +150,8 @@ void CompareToBotella::printFinalVelocities() {
 		// generate test points
 		dealii::Point<2> x_point(1.0 * i / 150., 0.5);
 		dealii::Point<2> y_point(0.5, 1.0 * i / 150.);
-		double ui;
-		double vi;
+		double ui = -1000000;
+		double vi = -1000000;
 		double ui_mpi;
 		double vi_mpi;
 		// evaluate solution and synchronize via MPI
