@@ -772,6 +772,41 @@ public:
 		return s;
 	}
 
+	void setExponentialFilterNc(long int Nc) {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		try {
+			set("Exponential Nc", Nc);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << Nc << " to Exponential Nc: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+	size_t getExponentialFilterNc() {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		size_t Nc;
+		try {
+			Nc = get_double("Exponential Nc");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not read parameter 'Exponential Nc' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return Nc;
+	}
+
 	InitializationSchemeName getInitializationScheme() {
 		enter_subsection("Initialization");
 		string initializationScheme = get("Initialization scheme");

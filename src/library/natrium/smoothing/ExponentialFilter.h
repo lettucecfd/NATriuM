@@ -18,11 +18,15 @@
 
 namespace natrium {
 
+/**
+ * @short Filter from Gassner and Beck (2011)
+ */
 template <size_t dim>
 class ExponentialFilter: public Filter<dim> {
 private:
 	double m_alpha;
 	double m_s;
+	size_t m_Nc;
 
 	size_t m_p;
 	const dealii::Quadrature<dim>& m_quadrature;
@@ -53,7 +57,7 @@ private:
 
 
 public:
-	ExponentialFilter(double alpha, double s, const dealii::Quadrature<dim>& quadrature, const dealii::FE_DGQ<dim>& fe);
+	ExponentialFilter(double alpha, double s, size_t Nc, const dealii::Quadrature<dim>& quadrature, const dealii::FE_DGQ<dim>& fe);
 	virtual ~ExponentialFilter(){};
 	virtual void applyFilter(const dealii::DoFHandler<dim>& dof_handler, distributed_vector& dof_vector);
 

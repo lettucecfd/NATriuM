@@ -547,6 +547,43 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_ConstantStreaming_test) {
 } /* SemiLagrangian3D_ConstantStreaming_test */
 
 
+BOOST_AUTO_TEST_CASE(SemiLagrangian3D_VectorReference_test) {
+	pout << "SemiLagrangian3D_VectorReference_test..." << endl;
+
+	// setup system
+	size_t fe_order = 1;
+	size_t refinementLevel = 3;
+
+	PeriodicTestDomain3D periodic(refinementLevel);
+	periodic.refineAndTransform();
+	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D3Q19>(), 0.01);
+	sl.setupDoFs();
+	sl.reassemble();
+
+	distributed_block_vector ones;
+	distributed_block_vector result;
+	ones.reinit(18);
+	result.reinit(18);
+	for (size_t i = 0; i < 18; i++) {
+		ones.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
+		result.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
+		// reinit does only change the size but not the content
+		dealii::ConstraintMatrix c(sl.getLocallyOwnedDofs());
+		c.close();
+		dealii::VectorTools::project(sl.getMapping(),*sl.getDoFHandler(), c, *sl.getQuadrature(), dealii::ConstantFunction<3>(1), ones.block(i));
+	}
+
+
+	size_t index = ones.locally_owned_elements().nth_index_in_set(0);
+	dealii::TrilinosWrappers::internal::VectorReference pointer = ones.block(0)(index);
+	pointer += 1.5;
+	BOOST_CHECK_SMALL(ones.block(0)(index) - 2.5, 1e-10);
+
+	pout << "done." << endl;
+} /* SemiLagrangian3D_VectorReference_test */
+
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } /* namespace natrium */
