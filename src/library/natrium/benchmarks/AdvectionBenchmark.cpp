@@ -176,7 +176,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 #ifdef WITH_TRILINOS_MPI
 	// create smooth initial conditions
 	distributed_vector f(streaming.getLocallyOwnedDofs(), MPI_COMM_WORLD);
-	// zero-vector for time integrator
+	// zero-vector for time integrator / tmp-vector for semi-lagrangian
 	distributed_vector g(streaming.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 #else
 	// create smooth initial conditions
@@ -198,7 +198,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	time_stepper = make_integrator(integrator, deal_integrator, deltaT, f);
 
 	distributed_vector fAnalytic(streaming.getLocallyOwnedDofs(),
-			MPI_COMM_WORLD);
+	MPI_COMM_WORLD);
 
 	double timestart;
 	timestart = clock();
@@ -222,11 +222,9 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 			//for (size_t i = 0; i < numberOfTimeSteps; i++) {
 			//stream
 			if (semi_lagrangian) {
-				distributed_vector f_tmp;
-				f_tmp.reinit(f);
-				f_tmp = f;
+				g = f;
 				t += deltaT;
-				advectionMatrix.vmult(f, f_tmp);
+				advectionMatrix.vmult(f, g);
 			} else {
 				t += time_stepper->step(f, advectionMatrix, g, t,
 						time_stepper->getTimeStepSize());
@@ -252,9 +250,16 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 		while (t < t_end) {
 			i++;
+
 			//stream
-			t = time_stepper->step(f, advectionMatrix, g, t,
-					time_stepper->getTimeStepSize());
+			if (semi_lagrangian) {
+				g = f;
+				t += deltaT;
+				advectionMatrix.vmult(f, g);
+			} else {
+				t = time_stepper->step(f, advectionMatrix, g, t,
+						time_stepper->getTimeStepSize());
+			}
 			//pout << t << endl;
 		}
 

@@ -862,13 +862,89 @@ TestResult ConvergenceTestForcingSchemes3D() {
 	return result;
 }
 
-TestResult ConvergenceTestSemiLagrangianAdvection (){
+TestResult ConvergenceTestSemiLagrangianPeriodic() {
 
 	TestResult result;
 	result.id = 11;
+	result.name = "Convergence Test: Semi-Lagrangian LBM with Periodic Boundaries";
+	result.details =
+			"This test runs the Taylor Green vortex benchmark on a 8x8 grid with FE order 4 and CFL=0.4."
+					"It compares the simulated decay of kinetic energy with the analytic solution."
+					"The kinematic viscosity is nu=1 and the Reynolds number 2*PI."
+					"The simulated and reference E_kin are compared at t=1/(2 nu)";
+	result.time = clock();
+
+	// Initialization
+	const double viscosity = 1;
+	const double Ma = 0.05;
+	const double orderOfFiniteElement = 4;
+	const double scaling = sqrt(3) * 1 / Ma;
+	const double refinementLevel = 3;
+	const double CFL = 0.4;
+
+	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<
+			TaylorGreenVortex2D>(viscosity, refinementLevel, 1. / Ma);
+
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
+			SolverConfiguration>();
+	configuration->setSwitchOutputOff(true);
+	//configuration->setRestartAtLastCheckpoint(false);
+	configuration->setUserInteraction(false);
+	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+	configuration->setStencilScaling(scaling);
+	configuration->setCFL(CFL);
+	configuration->setSimulationEndTime(1.0 / (2 * viscosity));
+	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	//configuration->setCollisionScheme(KBC_STANDARD);
+
+	// Simulation
+	BenchmarkCFDSolver<2> solver(configuration, benchmark);
+	solver.getSolverStats()->update();
+	double Ekin0 = solver.getSolverStats()->getKinE();
+	solver.run();
+	solver.getSolverStats()->update();
+	solver.getErrorStats()->update();
+
+	// Analysis
+	// Kinetic Energy
+	result.quantity.push_back("E_kin(t=1/(2 nu))/E_kin(t=0)");
+	result.expected.push_back(exp(-2));
+	result.threshold.push_back(1e-2);
+	result.outcome.push_back(solver.getSolverStats()->getKinE() / Ekin0);
+
+	// Velocity: 5 percent allowed
+	result.quantity.push_back("|u-u_ref|_2/|u_ref|_2");
+	result.expected.push_back(0);
+	result.threshold.push_back(5e-2);
+	result.outcome.push_back(
+			solver.getErrorStats()->getL2VelocityError()
+					/ solver.getErrorStats()->getL2UAnalytic());
+
+	// Finalize test
+	result.time = (clock() - result.time) / CLOCKS_PER_SEC;
+	assert(result.quantity.size() == result.expected.size());
+	assert(result.quantity.size() == result.threshold.size());
+	assert(result.quantity.size() == result.outcome.size());
+	result.success = true;
+	for (size_t i = 0; i < result.quantity.size(); i++) {
+		if (fabs(result.expected.at(i) - result.outcome.at(i))
+				> result.threshold.at(i)) {
+			result.success = false;
+			*result.error_msg << result.quantity.at(i)
+					<< " not below threshold.";
+		}
+	}
+	return result;
+} /* ConvergenceTestSemiLagrangianPeriodic */
+
+TestResult ConvergenceTestSemiLagrangianAdvectionSmooth (){
+
+	TestResult result;
+	result.id = 12;
 	result.name = "Convergence Test: Semi-Lagrangian linear advection (smooth problem)";
 	result.details =
-			"This test runs the advection solver for a smooth periodic sine profile.";
+			"This test runs the semi-Lagrangian advection solver for a smooth periodic sine profile.";
 	result.time = clock();
 	// smooth: 100*(0.3*dx)**(p+1)
 	// nonsmooth: (0.5*p)**(-1.5)*4*dx**2
@@ -923,7 +999,77 @@ TestResult ConvergenceTestSemiLagrangianAdvection (){
 
 	return result;
 
+} /* ConvergenceTestSemiLagrangianAdvection */
+
+
+TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
+
+	TestResult result;
+	result.id = 13;
+	result.name =
+			"Convergence Test: SEDG linear advection (non-smooth problem)";
+	result.details =
+			"This test runs the advection solver for a non-smooth periodic profile, which is "
+					"only twice continuously differentiable."
+					"The theoretical convergence rate is O(h^min( p+1 , 2 ) * p^(-1.5)) , which is tested.";
+	result.time = clock();
+	// smooth: 100*(0.3*dx)**(p+1)
+	// nonsmooth: (0.5*p)**(-1.5)*4*dx**2
+
+	bool is_smooth = false;
+	bool semi_lagrangian = true;
+	for (size_t N = 2; N <= 3; N++) {
+		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
+				orderOfFiniteElement += 4) {
+
+			double deltaX = 1. / (pow(2, N));
+			double deltaT = 0.4 * pow(0.5, N)
+					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));
+			double t_end = 0.1;
+			if (t_end / deltaT <= 5) {
+				continue;
+			}
+			AdvectionBenchmark::AdvectionResult advectionResult =
+					AdvectionBenchmark::oneTest(N, orderOfFiniteElement, deltaT,
+							t_end, RUNGE_KUTTA_5STAGE, NONE, is_smooth, semi_lagrangian,
+							false);
+
+			// Analysis
+			std::stringstream stream1;
+			stream1 << "log10(|f-f_ref|_sup); N=" << N << "; p="
+					<< orderOfFiniteElement;
+			result.quantity.push_back(stream1.str());
+			double expected = std::log10(
+					0.5 * std::pow(0.5 * orderOfFiniteElement, -1.5) * deltaX
+							* deltaX);
+			result.expected.push_back(expected);
+			result.threshold.push_back(0.8);
+			result.outcome.push_back(std::log10(advectionResult.normSup));
+
+		} /* for p */
+	} /* for N */
+
+// Finalize test
+	result.time = (clock() - result.time) / CLOCKS_PER_SEC;
+	assert(result.quantity.size() == result.expected.size());
+	assert(result.quantity.size() == result.threshold.size());
+	assert(result.quantity.size() == result.outcome.size());
+	result.success = true;
+	for (size_t i = 0; i < result.quantity.size(); i++) {
+		if (fabs(result.expected.at(i) - result.outcome.at(i))
+				> result.threshold.at(i)) {
+			result.success = false;
+			*result.error_msg << result.quantity.at(i)
+					<< " not below threshold.";
+		}
+	}
+
+	return result;
+
 }
+/* ConvergenceSemiLagrangianAdvectionNonsmooth */
+
+
 
 } /* namespace IntegrationTests */
 } /* namespace natrium */
