@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 
 	pout
 			<< "Usage: ./step-16 <Re=800> <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> "
-					"<semi_lagrange=0> <integrator-id=1> <CFL=1.0> <stencil-id=0 (D3Q15: 0; D3Q19: 1; D3Q27: 2)>"
+					"<semi_lagrange=0> <integrator-id=1> <CFL=1.0> <stencil-id=0 (D3Q15: 0; D3Q19: 1; D3Q27: 2)> <filter=0>"
 			<< endl;
 
 	double Re = 800;
@@ -100,6 +100,12 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Sten:  " << stencil_id << endl;
 
+	size_t filter = 0;
+	if (argc >= 10) {
+		filter = std::atoi(argv[9]);
+	}
+	pout << "... Filter:  " << filter << endl;
+
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
@@ -134,7 +140,7 @@ int main(int argc, char** argv) {
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/step-TGV3D/Re" << Re << "-ref"
 			<< refinement_level << "-p" << p << "-coll" << collision_id << "-sl"
-			<< semi_lagrange << "-int" << integrator_id << "-CFL" << CFL << "-sten" << stencil_id;
+			<< semi_lagrange << "-int" << integrator_id << "-CFL" << CFL << "-sten" << stencil_id << "-filt" << filter;
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
@@ -163,6 +169,14 @@ int main(int argc, char** argv) {
 	configuration->setDealIntegrator(deal_integrator);
 	if (semi_lagrange == 1) {
 		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	}
+	if (filter == 1){
+		configuration->setFiltering(true);
+		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
+		configuration->setExponentialFilterAlpha(36);
+		configuration->setExponentialFilterS(32);
+		configuration->setExponentialFilterNc(4);
+
 	}
 
 	//configuration->setNumberOfTimeSteps(1.0 / dt);
