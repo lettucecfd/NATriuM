@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
 			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
 			<< "-int" << integrator_id << "-CFL" << CFL << "-scaling"
-			<< stencil_scaling << "-filter" << filter;
+			<< stencil_scaling << "-filter" << filter << "-filt_s" << filter_s;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(500000);
