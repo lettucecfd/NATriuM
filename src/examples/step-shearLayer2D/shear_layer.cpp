@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	pout
 
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0> <filter=0>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0> <filter=0> <filter_s=32>"
 			<< endl;
 
 	size_t refinement_level = 3;
@@ -88,6 +88,12 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Filter:  " << filter << endl;
 
+	size_t filter_s = 0;
+	if (argc >= 10) {
+		filter_s = std::atof(argv[9]);
+	}
+	pout << "... Filter s:  " << filter_s << endl;
+
 	// get integrator
 	TimeIntegratorName time_integrator;
 	DealIntegratorName deal_integrator;
@@ -111,12 +117,13 @@ int main(int argc, char** argv) {
 	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
 			ShearLayer2D>(viscosity, refinement_level, u0, kappa);
 	/*double delta_t = CFDSolverUtilities::calculateTimestep<2>(
-			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
+	 *(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
 
 	// **** Grid properties ****
 	pout << "**** Grid properties ****" << endl;
-	int noCellsInOneDir	= p * pow( 2, refinement_level + 1 );
-	pout << "Mesh resolution: " << noCellsInOneDir << "x" << noCellsInOneDir << endl;
+	int noCellsInOneDir = p * pow(2, refinement_level + 1);
+	pout << "Mesh resolution: " << noCellsInOneDir << "x" << noCellsInOneDir
+			<< endl;
 	pout << "Number of grid points: " << pow(noCellsInOneDir, 2) << endl;
 	pout << "-------------------------------------" << endl;
 
@@ -134,8 +141,9 @@ int main(int argc, char** argv) {
 	configuration->setOutputCheckpointInterval(100);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
-			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id << "-int" << integrator_id
-			<< "-CFL" << CFL << "-scaling" << stencil_scaling << "-filter" << filter;
+			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
+			<< "-int" << integrator_id << "-CFL" << CFL << "-scaling"
+			<< stencil_scaling << "-filter" << filter;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(500000);
@@ -154,14 +162,13 @@ int main(int argc, char** argv) {
 	if (semi_lagrange == 1)
 		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 
-	if (filter == 1){
+	if (filter == 1) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
 		configuration->setExponentialFilterAlpha(36);
-		configuration->setExponentialFilterS(32);
+		configuration->setExponentialFilterS(filter_s);
 		configuration->setExponentialFilterNc(4);
 	}
-
 
 	pout << "Simulation end time will be t_c = " << t_c << endl;
 	// ========================================================================

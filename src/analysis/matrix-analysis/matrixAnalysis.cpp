@@ -31,14 +31,16 @@ template<> matrixAnalysis<3>::~matrixAnalysis() {
 }
 
 template<size_t dim>
-void matrixAnalysis<dim>::writeSpectrum() {
+void matrixAnalysis<dim>::writeSpectrum(bool scale_by_timestep) {
 	// compute eigenvalues of A
 	vector<std::complex<double> > eigenvalues;
 	computeSpectrum(m_solver->getAdvectionOperator()->getSystemMatrix(),
 			eigenvalues);
 	// scale by time step (=> eigenvalues of dt*A)
-	for (size_t i = 0; i < eigenvalues.size(); i++) {
-		eigenvalues.at(i) *= m_solver->getConfiguration()->getTimeStepSize();
+	if (scale_by_timestep){
+		for (size_t i = 0; i < eigenvalues.size(); i++) {
+			eigenvalues.at(i) *= m_solver->getTimeStepSize();
+		}
 	}
 	// open file
 	std::stringstream s;
@@ -57,8 +59,8 @@ void matrixAnalysis<dim>::writeSpectrum() {
 				<< eigenvalues.at(i).imag() << endl;
 	}
 }
-template void matrixAnalysis<2>::writeSpectrum();
-template void matrixAnalysis<3>::writeSpectrum();
+template void matrixAnalysis<2>::writeSpectrum(bool scale_by_timestep);
+template void matrixAnalysis<3>::writeSpectrum(bool scale_by_timestep);
 
 template<size_t dim>
 double matrixAnalysis<dim>::computeSpectrum(
@@ -106,7 +108,7 @@ template double matrixAnalysis<3>::computeSpectrum(
 		vector<std::complex<double> > & eigenvalues, double perturbation);
 
 template<size_t dim>
-void matrixAnalysis<dim>::writePseudospectrum(size_t numberOfCycles,
+void matrixAnalysis<dim>::writePseudospectrum(bool scale_by_timestep, size_t numberOfCycles,
 		double perturbation) {
 
 	// compute pseudoeigenvalues of A
@@ -120,10 +122,12 @@ void matrixAnalysis<dim>::writePseudospectrum(size_t numberOfCycles,
 				eigenvalues.end());
 
 	}
-	// scale by time step (=> pseudoeigenvalues of dt*A)
-	for (size_t i = 0; i < pseudoeigenvalues.size(); i++) {
-		pseudoeigenvalues.at(i) *=
-				m_solver->getConfiguration()->getTimeStepSize();
+	if (scale_by_timestep){
+		// scale by time step (=> pseudoeigenvalues of dt*A)
+		for (size_t i = 0; i < pseudoeigenvalues.size(); i++) {
+			pseudoeigenvalues.at(i) *=
+					m_solver->getTimeStepSize();
+		}
 	}
 	// open file
 	std::stringstream s;
@@ -143,9 +147,9 @@ void matrixAnalysis<dim>::writePseudospectrum(size_t numberOfCycles,
 				<< pseudoeigenvalues.at(i).imag() << endl;
 	}
 }
-template void matrixAnalysis<2>::writePseudospectrum(size_t numberOfCycles,
+template void matrixAnalysis<2>::writePseudospectrum(bool scale_by_timestep, size_t numberOfCycles,
 		double perturbation);
-template void matrixAnalysis<3>::writePseudospectrum(size_t numberOfCycles,
+template void matrixAnalysis<3>::writePseudospectrum(bool scale_by_timestep, size_t numberOfCycles,
 		double perturbation);
 
 } /* namespace natrium */
