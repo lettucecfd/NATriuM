@@ -37,7 +37,7 @@ public:
 	 * @note The result differs from the spectrum in Min and Lees Paper, because we consider here the full streaming matrix,
 	 * which includes all streaming directions.
 	 */
-	void writeSpectrum();
+	void writeSpectrum(bool scale_by_timestep);
 
 	/**
 	 * @short Write the pseudospectrum of the CFDSolver's streaming matrix to the file pseudospectrum.txt in the OutputDirectory.
@@ -47,7 +47,7 @@ public:
 	 * @param perturbation Maximal perturbation of the matrix entries. Default: 0.1.
 	 * @note If the output directory does not exist: Write to /tmp/NATrium_pseudospectrum.txt
 	 */
-	void writePseudospectrum(size_t numberOfCycles = 10, double perturbation = 0.1) ;
+	void writePseudospectrum(bool scale_by_timestep, size_t numberOfCycles = 10, double perturbation = 0.1) ;
 
 	/**
 	 * @short Compute the eigenvalues of a sparse block matrix
