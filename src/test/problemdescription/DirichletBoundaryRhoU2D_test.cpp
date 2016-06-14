@@ -17,8 +17,11 @@
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/advection/SEDGMinLee.h"
+#include "natrium/advection/SemiLagrangian.h"
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
+#include "natrium/advection/SemiLagrangianBoundaryDoFHandler.h"
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "WallTestDomain2D.h"
 
 namespace natrium {
@@ -57,8 +60,8 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_SparsityPattern_test) {
 	// The incoming particle distributions at the boundary must be affected by the opposite outgoing ones
 	// This means that diagonal entries must exist for the boundary dofs
 	// for all blocks (I,J) (I for incoming and J for their opposites)
-	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<WallTestDomain2D>(
-			1);
+	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<
+			WallTestDomain2D>(1);
 	SEDGMinLee<2> advector(problem->getMesh(), problem->getBoundaries(), 2,
 			boost::make_shared<D2Q9>());
 	advector.setupDoFs();
@@ -141,8 +144,8 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_MassConservation_test) {
 	pout << "LinearBoundaryRhoU2D_MassConservation_test..." << endl;
 
 	// make problem and solver
-	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<WallTestDomain2D>(
-			1);
+	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<
+			WallTestDomain2D>(1);
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("/tmp");
@@ -166,8 +169,8 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_MassConservation_test) {
 BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_BoundaryVelocity_test) {
 	pout << "LinearBoundaryRhoU2D_BoundaryVelocity_test..." << endl;
 
-	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<WallTestDomain2D>(
-			1);
+	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<
+			WallTestDomain2D>(1);
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory("/tmp");
@@ -201,6 +204,79 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_BoundaryVelocity_test) {
 
 	pout << "done" << endl;
 } /* LinearBoundaryRhoU2D_BoundaryVelocity_test */
+
+BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_makeIncomingDirections_test) {
+	pout << "LinearBoundaryRhoU2D_makeIncomingDirections_test..." << endl;
+
+	size_t fe_order = 1;
+	size_t refinementLevel = 3;
+	PeriodicTestDomain2D periodic(refinementLevel);
+	periodic.refineAndTransform();
+	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D2Q9>(), 0.001);
+	sl.setupDoFs();
+	typename dealii::DoFHandler<2>::active_cell_iterator cell =
+			sl.getDoFHandler()->begin_active();
+	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
+			LINEAR_RHO_U, cell, 1);
+	D2Q9 d2q9;
+	LinearBoundaryRhoU<2>::makeIncomingDirections(hit, d2q9);
+	BOOST_CHECK_EQUAL(hit.incomingDirections.size(), size_t(1));
+	BOOST_CHECK_EQUAL(hit.incomingDirections.at(0), size_t(3));
+
+	pout << "done" << endl;
+} /* LinearBoundaryRhoU2D_makeIncomingDirections_test */
+
+
+BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
+	pout << "LinearBoundaryRhoU2D_calculate_test..." << endl;
+
+	size_t fe_order = 1;
+	size_t refinementLevel = 3;
+	PeriodicTestDomain2D periodic(refinementLevel);
+	periodic.refineAndTransform();
+	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D2Q9>(), 0.001);
+	sl.setupDoFs();
+	typename dealii::DoFHandler<2>::active_cell_iterator cell =
+			sl.getDoFHandler()->begin_active();
+
+	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
+			LINEAR_RHO_U, cell, 1);
+	distributed_vector vec(sl.getLocallyOwnedDofs(),
+	MPI_COMM_WORLD);
+	size_t index = vec.locally_owned_elements().nth_index_in_set(0);
+	dealii::TrilinosWrappers::internal::VectorReference ref = vec(index);
+
+	// simple BB
+	ref = 1.0;
+	D2Q9 d2q9;
+	numeric_vector ub1(2);
+	LinearBoundaryRhoU<2> boundary1(0, ub1);
+	boundary1.makeIncomingDirections(hit, d2q9);
+	hit.fIn.push_back(ref);
+	boundary1.calculate(hit, d2q9);
+	BOOST_CHECK_SMALL(hit.fOut - 1.0, 1e-15);
+
+
+	// velocity BB
+	ref = 1.0;
+	BoundaryHit<2> hit2(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
+			LINEAR_RHO_U, cell, 1);
+	numeric_vector ub2(2);
+	ub2(0) = 2.5;
+	LinearBoundaryRhoU<2> boundary2(0, ub2);
+	boundary2.makeIncomingDirections(hit2, d2q9);
+	hit2.fIn.push_back(ref);
+	boundary2.calculate(hit2, d2q9);
+	double expected = 1.0 + 2.0 * 1.0 / 9.0 * 2.5 / (1.0/3.0);
+	// f_opposite + 2 * stencil.getWeight(boundary_hit.outgoingDirection) * 1
+	// * (ea * velocity) / stencil.getSpeedOfSoundSquare()
+
+	BOOST_CHECK_SMALL(hit2.fOut - expected, 1e-15);
+
+	pout << "done" << endl;
+} /* LinearBoundaryRhoU2D_calculate_test */
 
 BOOST_AUTO_TEST_SUITE_END() /*LinearBoundaryRhoU2D_test*/
 

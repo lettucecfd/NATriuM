@@ -16,7 +16,7 @@
 namespace natrium {
 
 enum BoundaryHitType {
-	LinearRhoU
+	LINEAR_RHO_U
 };
 
 template<size_t dim>
@@ -24,14 +24,14 @@ struct BoundaryHit {
 
 	BoundaryHit(const dealii::Point<dim>& coord, double t,
 			const dealii::Tensor<1, dim>& n, BoundaryHitType type,
-			const typename dealii::DoFHandler<dim>::cell_iterator& c, size_t out_direction) {
+			typename dealii::DoFHandler<dim>::cell_iterator& c, size_t out_direction) {
 		coordinates = coord;
 		time = t;
 		faceNormal = n;
 		boundaryType = type;
-		c = cell;
+		cell = c;
 		outgoingDirection = out_direction;
-		f_out = -1e20;
+		fOut = -1e20;
 	}
 
 	// global information
@@ -43,11 +43,11 @@ struct BoundaryHit {
 
 	// outgoing distribution (only one!)
 	size_t outgoingDirection;
-	double f_out;
+	double fOut;
 
 	// incoming distributions
 	vector<size_t> incomingDirections;
-	vector<dealii::TrilinosWrappers::internal::VectorReference> incomingDistributions;
+	vector<dealii::TrilinosWrappers::internal::VectorReference> fIn;
 
 };
 
@@ -57,11 +57,11 @@ private:
 
 	dealii::IndexSet m_dofsThatDependOnBoundaryValues;
 
-	dealii::TrilinosWrappers::Vector m_boundaryValues;
+	distributed_vector m_boundaryValues;
 
 	std::vector<BoundaryHit<dim> > m_boundaryPoints;
 
-	dealii::TrilinosWrappers::Vector m_secondaryBoundaryValues;
+	distributed_vector m_secondaryBoundaryValues;
 
 	std::vector<BoundaryHit<dim> > m_secondaryBoundaryPoints;
 
