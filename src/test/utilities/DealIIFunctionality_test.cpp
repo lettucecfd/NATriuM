@@ -134,9 +134,25 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_VectorReference_test) {
 	}
 
 	size_t index = a.locally_owned_elements().nth_index_in_set(0);
-	dealii::TrilinosWrappers::internal::VectorReference pointer = a(index);
-	pointer += 1.5;
+	dealii::TrilinosWrappers::internal::VectorReference ref = a(index);
+	ref += 1.5;
 	BOOST_CHECK_SMALL(a(index) - 2.5, 1e-10);
+
+	// can vector reference be used in a std::vector?
+	std::vector<typename dealii::TrilinosWrappers::internal::VectorReference> v;
+	v.push_back(ref);
+	v.at(0) += 1.5;
+	BOOST_CHECK_SMALL(a(index) - 4.0, 1e-10);
+
+	// can vector reference's = operator can be used in a vector?
+	// in principle yes, but there is no syntax to replace the reference by another, as "=" refers to the value rather than the adress
+	//index = a.locally_owned_elements().nth_index_in_set(1);
+	//v.at(0) = a(index);
+	//BOOST_CHECK_SMALL(v.at(0) - 1.0, 1e-10);
+	// v.at(0) += 1.5;
+	//BOOST_CHECK_SMALL(a(index) - 2.5, 1e-10);
+
+
 
 	pout << "done" << endl;
 }
