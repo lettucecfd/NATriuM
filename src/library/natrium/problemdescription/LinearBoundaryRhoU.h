@@ -83,18 +83,19 @@ public:
 	/**
 	 * @short Calculates outgoing distribution from incoming distributions.
 	 * @param[in/out] boundary_hit The boundary hit instance that contains all information about the boundary hit.
-	 * @param[in/out] stencil the stencil (e.g. a D2Q9 instance)
+	 * @param[in] stencil the stencil (e.g. a D2Q9 instance)
+	 * @param[in] time_of_next_step the physical time at the next time step (is required here to define time-dependent boundary conditions)
 	 * @note This function is used by the semi-Lagrangian advection solver. Before it is called on a
 	 *       BoundaryHit instance, the BoundaryHit instance must have the right incoming directions (usually filled
 	 *       by makeIncomingDirections()) and the right references in fIn (has to be filled by hand -- by the
 	 *       semi-Lagrangian advection solver).
 	 */
-	void calculate(BoundaryHit<dim>& boundary_hit, const Stencil& stencil) {
+	void calculate(BoundaryHit<dim>& boundary_hit, const Stencil& stencil, double time_of_next_step) {
 		assert ( boundary_hit.incomingDirections.size() == boundary_hit.fIn.size() );
 		const numeric_vector ea = stencil.getDirection(
 				boundary_hit.outgoingDirection);
 		numeric_vector velocity(dim);
-		LinearBoundary<dim>::getBoundaryVelocity()->set_time(boundary_hit.time);
+		LinearBoundary<dim>::getBoundaryVelocity()->set_time(time_of_next_step - boundary_hit.time_shift);
 		LinearBoundary<dim>::getBoundaryVelocity()->vector_value(
 				boundary_hit.coordinates, velocity);
 		boundary_hit.fOut = boundary_hit.fIn.at(0)
@@ -105,7 +106,7 @@ public:
 	/**
 	 * @short Resizes boundary_hit.incomingDirections and fills it in.
 	 * @param[in/out] boundary_hit The boundary hit instance that contains all information about the boundary hit.
-	 * @param[in/out] stencil the stencil (e.g. a D2Q9 instance)
+	 * @param[in] stencil the stencil (e.g. a D2Q9 instance)
 	 * @note This function is used by the semi-Lagrangian advection solver
 	 */
 	static void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,

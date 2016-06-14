@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	LinearBoundaryRhoU<2> boundary1(0, ub1);
 	boundary1.makeIncomingDirections(hit, d2q9);
 	hit.fIn.push_back(ref);
-	boundary1.calculate(hit, d2q9);
+	boundary1.calculate(hit, d2q9, 0);
 	BOOST_CHECK_SMALL(hit.fOut - 1.0, 1e-15);
 
 
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	LinearBoundaryRhoU<2> boundary2(0, ub2);
 	boundary2.makeIncomingDirections(hit2, d2q9);
 	hit2.fIn.push_back(ref);
-	boundary2.calculate(hit2, d2q9);
+	boundary2.calculate(hit2, d2q9, 0);
 	double expected = 1.0 + 2.0 * 1.0 / 9.0 * 2.5 / (1.0/3.0);
 	// f_opposite + 2 * stencil.getWeight(boundary_hit.outgoingDirection) * 1
 	// * (ea * velocity) / stencil.getSpeedOfSoundSquare()
