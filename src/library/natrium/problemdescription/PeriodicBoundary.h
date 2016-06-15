@@ -181,6 +181,24 @@ public:
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
 	//TODO should be inlined
 
+
+	/**
+	 * @short dummy function. Do not use.
+	 */
+	virtual void calculate(BoundaryHit<dim>& boundary_hit,
+			const Stencil& stencil, double time_of_next_step) {
+		LOG(WARNING) << "PeriodicBoundary.calculate is just a dummy function. But was called." << endl;
+	}
+
+	/**
+	 * @short dummy function. Do not use.
+	 */
+	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
+			const Stencil& stencil) {
+		LOG(WARNING) << "PeriodicBoundary.makeIncomingDirections is just a dummy function. But was called." << endl;
+	}
+
+
 /////////////////////////////////
 // GETTER     // SETTER        //
 /////////////////////////////////

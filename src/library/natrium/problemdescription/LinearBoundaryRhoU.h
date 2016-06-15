@@ -10,7 +10,7 @@
 
 #include "LinearBoundary.h"
 #include "BoundaryTools.h"
-#include "../advection/SemiLagrangianBoundaryDoFHandler.h"
+#include "../advection/BoundaryHit.h"
 
 namespace natrium {
 
@@ -90,7 +90,7 @@ public:
 	 *       by makeIncomingDirections()) and the right references in fIn (has to be filled by hand -- by the
 	 *       semi-Lagrangian advection solver).
 	 */
-	void calculate(BoundaryHit<dim>& boundary_hit, const Stencil& stencil, double time_of_next_step) {
+	virtual void calculate(BoundaryHit<dim>& boundary_hit, const Stencil& stencil, double time_of_next_step) {
 		assert ( boundary_hit.incomingDirections.size() == boundary_hit.fIn.size() );
 		const numeric_vector ea = stencil.getDirection(
 				boundary_hit.outgoingDirection);
@@ -109,7 +109,7 @@ public:
 	 * @param[in] stencil the stencil (e.g. a D2Q9 instance)
 	 * @note This function is used by the semi-Lagrangian advection solver
 	 */
-	static void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
+	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
 			const Stencil& stencil) {
 		assert(boundary_hit.fIn.size() == 0);
 		boundary_hit.incomingDirections.resize(1);

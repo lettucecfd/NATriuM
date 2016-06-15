@@ -7,6 +7,7 @@
 
 #include "natrium/advection/SemiLagrangianBoundaryDoFHandler.h"
 #include "natrium/advection/SemiLagrangian.h"
+#include "natrium/problemdescription/BoundaryCollection.h"
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 
 #include "boost/test/unit_test.hpp"
@@ -31,7 +32,7 @@ BOOST_AUTO_TEST_CASE(BoundaryHit_Construction_test){
 			sl.getDoFHandler()->begin_active();
 
 	BOOST_CHECK_NO_THROW(BoundaryHit<2>(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
-			LINEAR_RHO_U, cell, 1));
+			*(periodic.getBoundaries()->getBoundary(0)), cell, 1));
 
 	pout << "done." << endl;
 }

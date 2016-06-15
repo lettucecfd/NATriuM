@@ -218,9 +218,12 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_makeIncomingDirections_test) {
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
 			sl.getDoFHandler()->begin_active();
 	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
-			LINEAR_RHO_U, cell, 1);
+			*(periodic.getBoundaries()->getBoundary(0)), cell, 1);
 	D2Q9 d2q9;
-	LinearBoundaryRhoU<2>::makeIncomingDirections(hit, d2q9);
+	numeric_vector ub1(2);
+	LinearBoundaryRhoU<2> boundary1(0, ub1);
+	boundary1.makeIncomingDirections(hit, d2q9);
+
 	BOOST_CHECK_EQUAL(hit.incomingDirections.size(), size_t(1));
 	BOOST_CHECK_EQUAL(hit.incomingDirections.at(0), size_t(3));
 
@@ -242,7 +245,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 			sl.getDoFHandler()->begin_active();
 
 	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
-			LINEAR_RHO_U, cell, 1);
+			*(periodic.getBoundaries()->getBoundary(0)), cell, 1);
 	distributed_vector vec(sl.getLocallyOwnedDofs(),
 	MPI_COMM_WORLD);
 	size_t index = vec.locally_owned_elements().nth_index_in_set(0);
@@ -262,7 +265,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	// velocity BB
 	ref = 1.0;
 	BoundaryHit<2> hit2(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
-			LINEAR_RHO_U, cell, 1);
+			*(periodic.getBoundaries()->getBoundary(0)), cell, 1);
 	numeric_vector ub2(2);
 	ub2(0) = 2.5;
 	LinearBoundaryRhoU<2> boundary2(0, ub2);
