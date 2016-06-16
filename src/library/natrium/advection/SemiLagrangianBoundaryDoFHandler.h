@@ -13,9 +13,11 @@
 #include "deal.II/dofs/dof_handler.h"
 
 #include "BoundaryHit.h"
+#include "SemiLagrangianVectorReferenceTypes.h"
 #include "../problemdescription/BoundaryCollection.h"
+#include "../problemdescription/Boundary.h"
 #include "../utilities/BasicNames.h"
-
+#include "../stencils/Stencil.h"
 
 namespace natrium {
 
@@ -26,32 +28,48 @@ template<size_t dim>
 class SemiLagrangianBoundaryDoFHandler {
 private:
 
-	dealii::IndexSet m_dofsThatDependOnBoundaryValues;
+	GeneralizedDoFVector m_allValues;
 
-	distributed_vector m_boundaryValues;
+	std::vector<BoundaryHit<dim> > m_primaryBoundaryHits;
 
-	std::vector<BoundaryHit<dim> > m_boundaryPoints;
+	std::vector<BoundaryHit<dim> > m_secondaryBoundaryHits;
 
-	distributed_vector m_secondaryBoundaryValues;
-
-	std::vector<BoundaryHit<dim> > m_secondaryBoundaryPoints;
-
+	const Stencil<dim>& m_stencil;
 	// boost::shared_ptr<BoundaryCollection<dim> >& m_boundaries;
 
 public:
-	SemiLagrangianBoundaryDoFHandler();
+	SemiLagrangianBoundaryDoFHandler(const Stencil<dim>& stencil) :
+			m_stencil(stencil) {
+
+	}
 	virtual ~SemiLagrangianBoundaryDoFHandler();
 
 	/**
-	 * @short
+	 * @short add a Boundary hit to either the primary or secondary boundary values
+	 * @param[in/out] boundary_hit the BoundaryHit instance. The present function fills in the incoming directions of boundary_hit.
+	 * @return position of the boundary hit in the
 	 */
-	void addBoundaryHit(BoundaryHit<dim>& boundary_hit){
-
+	size_t addBoundaryHit(BoundaryHit<dim>& boundary_hit) {
+		// get directions
+		boundary_hit.boundary.makeIncomingDirections(boundary_hit, m_stencil);
+		// push back to boundary hit vector
+		if (boundary_hit.isPrimary) {
+			m_primaryBoundaryHits.push_back(boundary_hit);
+		} else {
+			m_secondaryBoundaryHits.push_back(boundary_hit);
+		}
 	}
-	void calculateBoundaryValues(double time_of_next_step){}
-	void applyBoundaryValues(distributed_block_vector& f){}
-
-
+	BoundaryHit<dim>& getBoundaryHit(size_t id, bool primary){
+		if (primary){
+			return m_primaryBoundaryHits.at(id);
+		} else {
+			return m_secondaryBoundaryHits.at(id);
+		}
+	}
+	void calculateBoundaryValues(double time_of_next_step) {
+	}
+	void applyBoundaryValues(distributed_block_vector& f) {
+	}
 
 };
 
