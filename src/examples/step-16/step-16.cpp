@@ -110,14 +110,12 @@ int main(int argc, char** argv) {
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 
-	// Re = viscosity/(2*pi)
-	const double U = 1; //2 * M_PI;
-	const double viscosity = 2 * M_PI / Re;
-	// C-E-approach: constant stencil scaling
-	// specify Mach number
+	// ist im Paper von Gassner und Beck so definiert !!!!!
+	const double U = 1/(2*M_PI);
+	const double L = 2 * M_PI;
+	const double viscosity = U * L / Re;
 	const double Ma = 0.1;
 	const double cs = U / Ma;
-	// zunaechst: fixed order of FE
 
 	// chose scaling so that the right Ma-number is achieved
 	const double scaling = sqrt(3) * cs;
