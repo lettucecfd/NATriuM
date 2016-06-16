@@ -17,7 +17,6 @@
 
 namespace natrium {
 
-
 ///**
 // * @short An enum that describes the type of the boundary.
 // */
@@ -25,9 +24,6 @@ namespace natrium {
 //	LINEAR_RHO_U,
 //	LINEAR_RHO_U_CORNER
 //};
-
-
-
 
 /**
  * @short A struct that defines all information of a boundary hit. (When and where did the distribution hit the boundary hit, ...)
@@ -43,26 +39,30 @@ struct BoundaryHit {
 	 * @param bound reference to boundary object
 	 * @param c present cell
 	 * @param out_direction the unknown distribution that is to be calculated at the boundary
+	 * @param is_primary if false, other boundary hits depend on the present boundary hit
 	 * @note Each distribution that is required to close the streaming step needs a separate BoundaryHit instance.
 	 * @note The remaining fields incomingDirections, fIn have to filled after construction.
 	 */
 	BoundaryHit(const dealii::Point<dim>& coord, double t_shift,
 			const dealii::Tensor<1, dim>& n, const Boundary<dim>& bound,
-			typename dealii::DoFHandler<dim>::cell_iterator& c, size_t out_direction):
-			boundary(bound){
+			typename dealii::DoFHandler<dim>::cell_iterator& c,
+			size_t out_direction, bool is_primary, size_t id) :
+			boundary(bound) {
 		coordinates = coord;
 		time_shift = t_shift;
 		faceNormal = n;
 		cell = c;
 		outgoingDirection = out_direction;
 		fOut = -1e20;
+		isPrimary = is_primary;
+		hitID = id;
 	}
 
 	/**
 	 * @short copy constructor
 	 */
-	BoundaryHit (const BoundaryHit& other):
-		boundary(other.boundary){
+	BoundaryHit(const BoundaryHit& other) :
+			boundary(other.boundary) {
 		coordinates = other.coordinates;
 		time_shift = other.time_shift;
 		faceNormal = other.faceNormal;
@@ -71,6 +71,8 @@ struct BoundaryHit {
 		fOut = other.fOut;
 		incomingDirections = other.incomingDirections;
 		fIn = other.fIn;
+		isPrimary = other.isPrimary;
+		hitID = other.hitID;
 	}
 
 	////////////////////////
@@ -94,13 +96,12 @@ struct BoundaryHit {
 	/**
 	 * @short the type of the boundary hit point
 	 */
-	 const Boundary<dim>& boundary;
+	const Boundary<dim>& boundary;
 
 	/**
 	 * @short cell that contains the boundary hit point
 	 */
 	typename dealii::DoFHandler<dim>::cell_iterator cell;
-
 
 	///////////////////////////////////////
 	// outgoing distribution (only one!) //
@@ -112,7 +113,17 @@ struct BoundaryHit {
 	/**
 	 * @short value of the outgoing distribution (has to be calculated in each time step)
 	 */
-	double fOut;
+	dealii::TrilinosWrappers::internal::VectorReference fOut;
+
+	/**
+	 * @short if false, other boundary hits depend on the present boundary hit
+	 */
+	bool isPrimary;
+
+	/**
+	 * @short the id of the presentHit (unique, contiguous range of ids per processors)
+	 */
+	bool hitID;
 
 	///////////////////////////
 	// incoming distribution //
@@ -131,5 +142,5 @@ struct BoundaryHit {
 
 } /* end namespace natrium */
 
-
 #endif /* LIBRARY_NATRIUM_ADVECTION_BOUNDARYHIT_H_ */
+
