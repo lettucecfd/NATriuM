@@ -12,6 +12,7 @@
 #include "deal.II/dofs/dof_handler.h"
 //#include "deal.II/lac/constraint_matrix.h"
 #include "deal.II/fe/fe_values.h"
+#include "../advection/SemiLagrangianVectorReferenceTypes.h"
 
 #include "../utilities/BasicNames.h"
 
@@ -54,13 +55,15 @@ public:
 	 * @param[in/out] boundary_hit The boundary hit instance that contains all information about the boundary hit.
 	 * @param[in] stencil the stencil (e.g. a D2Q9 instance)
 	 * @param[in] time_of_next_step the physical time at the next time step (is required here to define time-dependent boundary conditions)
+	 * @param[in] f a generalized version of a degree of freedom vector that can also contain boundary values
 	 * @note This function is used by the semi-Lagrangian advection solver. Before it is called on a
 	 *       BoundaryHit instance, the BoundaryHit instance must have the right incoming directions (usually filled
 	 *       by makeIncomingDirections()) and the right references in fIn (has to be filled by hand -- by the
 	 *       semi-Lagrangian advection solver).
 	 */
 	virtual void calculate(BoundaryHit<dim>& boundary_hit,
-			const Stencil& stencil, double time_of_next_step) = 0;
+			const Stencil& stencil, double time_of_next_step,
+			SemiLagrangianVectorAccess& f) const = 0;
 
 	/**
 	 * @short Resizes boundary_hit.incomingDirections and fills it in.
@@ -69,7 +72,7 @@ public:
 	 * @note This function is used by the semi-Lagrangian advection solver
 	 */
 	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
-			const Stencil& stencil) = 0;
+			const Stencil& stencil) const = 0;
 
 };
 

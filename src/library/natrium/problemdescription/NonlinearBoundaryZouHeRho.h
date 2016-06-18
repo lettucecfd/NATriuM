@@ -56,10 +56,10 @@ public:
 	 *       by makeIncomingDirections()) and the right references in fIn (has to be filled by hand -- by the
 	 *       semi-Lagrangian advection solver).
 	 */
-	virtual void calculate(BoundaryHit<dim>& boundary_hit, const Stencil& stencil, double time_of_next_step) {
-		assert ( boundary_hit.incomingDirections.size() == boundary_hit.fIn.size() );
+	virtual void calculate(BoundaryHit<dim>& boundary_hit, const Stencil& stencil, double time_of_next_step,
+			SemiLagrangianVectorAccess& f) const {
 		const numeric_vector ea = stencil.getDirection(
-				boundary_hit.outgoingDirection);
+				boundary_hit.out.getAlpha());
 		natrium_errorexit("ZouHeRho-SL not implemented.");
 
 	}
@@ -71,8 +71,8 @@ public:
 	 * @note This function is used by the semi-Lagrangian advection solver
 	 */
 	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
-			const Stencil& stencil) {
-		assert(boundary_hit.fIn.size() == 0);
+			const Stencil& stencil) const {
+		assert(boundary_hit.in.size() == 0);
 		natrium_errorexit("ZouHeRho-SL not implemented.");
 	}
 

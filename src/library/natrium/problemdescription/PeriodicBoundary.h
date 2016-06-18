@@ -185,16 +185,17 @@ public:
 	/**
 	 * @short dummy function. Do not use.
 	 */
-	virtual void calculate(BoundaryHit<dim>& boundary_hit,
-			const Stencil& stencil, double time_of_next_step) {
+	virtual void calculate(BoundaryHit<dim>& ,
+			const Stencil& , double ,
+			SemiLagrangianVectorAccess& ) const {
 		LOG(WARNING) << "PeriodicBoundary.calculate is just a dummy function. But was called." << endl;
 	}
 
 	/**
 	 * @short dummy function. Do not use.
 	 */
-	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
-			const Stencil& stencil) {
+	virtual void makeIncomingDirections(BoundaryHit<dim>& ,
+			const Stencil& ) const {
 		LOG(WARNING) << "PeriodicBoundary.makeIncomingDirections is just a dummy function. But was called." << endl;
 	}
 
