@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/step-TGV3D/Re" << Re << "-ref"
 			<< refinement_level << "-p" << p << "-coll" << collision_id << "-sl"
-			<< semi_lagrange << "-int" << integrator_id << "-CFL" << CFL << "-sten" << stencil_id << "-filt" << filter;
+			<< semi_lagrange << "-int" << integrator_id << "-CFL" << CFL << "-sten" << stencil_id << "-filt" << filter << "by_max_degree";
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
