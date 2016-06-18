@@ -24,12 +24,12 @@ BOOST_AUTO_TEST_SUITE(SemiLagrangianVectorReferenceTypes_test)
 BOOST_AUTO_TEST_CASE(GeneralizedDoF_Construction_test) {
 	pout << "GeneralizedDoF_Construction_test" << endl;
 
-	GeneralizedDoF d(true, 1, 1);
+	GeneralizedDestinationDoF d(true, 1, 1);
 	BOOST_CHECK_EQUAL(d.getAlpha(), size_t(1));
 	BOOST_CHECK_EQUAL(d.getIndex(), size_t(1));
 	BOOST_CHECK_EQUAL(d.isSecondaryBoundaryHit(), true);
 
-	GeneralizedDoF e(d);
+	GeneralizedDestinationDoF e(d);
 	BOOST_CHECK_EQUAL(d.getAlpha(), e.getAlpha());
 	BOOST_CHECK_EQUAL(d.getIndex(), e.getIndex());
 	BOOST_CHECK_EQUAL(d.isSecondaryBoundaryHit(), e.isSecondaryBoundaryHit());
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(SecondaryBoundaryDoFVector_appendBoundaryDoFAndCompress_tes
 
 	SecondaryBoundaryDoFVector sbdv(dof_handler.locally_owned_dofs());
 
-	GeneralizedDoF a = sbdv.appendSecondaryBoundaryDoF();
+	GeneralizedDestinationDoF a = sbdv.appendSecondaryBoundaryDoF();
 	BOOST_CHECK_EQUAL(a.getIndex(),
 			dof_handler.locally_owned_dofs().nth_index_in_set(0));
 	BOOST_CHECK_EQUAL(a.getAlpha(), size_t(0));
@@ -123,10 +123,10 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorSubscript_test) {
 
 	SemiLagrangianVectorAccess f(f_old, f_new, sbdv);
 
-	GeneralizedDoF a = sbdv.appendSecondaryBoundaryDoF();
-	GeneralizedDoF b = sbdv.appendSecondaryBoundaryDoF();
-	GeneralizedDoF c(false, 1, 1);
-	GeneralizedDoF d(true, 0, 0);
+	GeneralizedDestinationDoF a = sbdv.appendSecondaryBoundaryDoF();
+	GeneralizedDestinationDoF b = sbdv.appendSecondaryBoundaryDoF();
+	GeneralizedDestinationDoF c(false, 1, 1);
+	GeneralizedDestinationDoF d(true, 0, 0);
 
 	sbdv.compress();
 
@@ -138,15 +138,67 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorSubscript_test) {
 	BOOST_CHECK_EQUAL(f[b], 3.14);
 	BOOST_CHECK_EQUAL(f[c], 2.7);
 
-	BOOST_CHECK_EQUAL(f(a), 2.0);
+	/*BOOST_CHECK_EQUAL(f(a), 2.0);
 	BOOST_CHECK_EQUAL(f(b), 3.14);
-	BOOST_CHECK_EQUAL(f(c), 2.7);
+	BOOST_CHECK_EQUAL(f(c), 2.7);*/
 
 
 	dof_handler.clear();
 
 	pout << "done." << endl;
 } /* SemiLagrangianVectorAccess_operatorSubscript_test*/
+
+
+BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorCalculateFunctionValue_test) {
+	pout << "SemiLagrangianVectorAccess_operatorCalculateFunctionValue_test" << endl;
+
+	size_t fe_order = 1;
+	size_t refinementLevel = 3;
+	PeriodicTestDomain2D periodic(refinementLevel);
+	periodic.refineAndTransform();
+	dealii::DoFHandler<2> dof_handler(*periodic.getMesh());
+	dealii::FE_DGQArbitraryNodes<2> fe(
+			dealii::QGaussLobatto<1>(fe_order + 1));
+	dof_handler.distribute_dofs(fe);
+
+	vector<distributed_vector> vec;
+	for (size_t i = 0; i < 9; i++) {
+		distributed_vector tmp(dof_handler.locally_owned_dofs(),
+				MPI_COMM_WORLD);
+		vec.push_back(tmp);
+	}
+	DistributionFunctions f_old (vec);
+
+	vector<distributed_vector> vec2;
+	for (size_t i = 0; i < 9; i++) {
+		distributed_vector tmp(dof_handler.locally_owned_dofs(),
+				MPI_COMM_WORLD);
+		vec2.push_back(tmp);
+	}
+	DistributionFunctions f_new (vec2);
+
+	SecondaryBoundaryDoFVector sbdv(dof_handler.locally_owned_dofs());
+
+	SemiLagrangianVectorAccess f(f_old, f_new, sbdv);
+
+	GeneralizedDestinationDoF a = sbdv.appendSecondaryBoundaryDoF();
+	GeneralizedDestinationDoF b = sbdv.appendSecondaryBoundaryDoF();
+	GeneralizedDestinationDoF c(false, 1, 1);
+	GeneralizedDestinationDoF d(true, 0, 0);
+
+	sbdv.compress();
+
+	f[a] = 2.0;
+	f[b] = 3.14;
+	f[c] = 2.7;
+
+	//TODO
+	BOOST_CHECK(false);
+
+	dof_handler.clear();
+
+	pout << "done." << endl;
+} /* SemiLagrangianVectorAccess_operatorCalculateFunctionValue_test*/
 
 BOOST_AUTO_TEST_SUITE_END()
 
