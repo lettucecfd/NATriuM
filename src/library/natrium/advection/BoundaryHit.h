@@ -42,6 +42,7 @@ struct LagrangianPathDestination {
 	}
 };
 
+
 /**
  * @short A struct that defines all information of a boundary hit. (When and where did the distribution hit the boundary hit, ...)
  */
@@ -62,7 +63,7 @@ struct BoundaryHit {
 	BoundaryHit(const dealii::Point<dim>& coord, double t_shift,
 			const dealii::Tensor<1, dim>& n, const Boundary<dim>& bound,
 			typename dealii::DoFHandler<dim>::cell_iterator& c,
-			const GeneralizedDoF& out_dof) :
+			const GeneralizedDestinationDoF& out_dof) :
 			boundary(bound), out(out_dof) {
 		coordinates = coord;
 		time_shift = t_shift;
@@ -116,15 +117,17 @@ struct BoundaryHit {
 	/**
 	 * @short if false, other boundary hits depend on the present boundary hit
 	 */
-	GeneralizedDoF out;
+	GeneralizedDestinationDoF out;
 
 	///////////////////////////
 	// incoming distribution //
 	///////////////////////////
+	vector<size_t> incomingDirections;
+
 	/**
 	 * @short vector of references to the values of incoming directions
 	 */
-	vector<GeneralizedDoF> in;
+	vector<FunctionDepartureValue> in;
 
 };
 

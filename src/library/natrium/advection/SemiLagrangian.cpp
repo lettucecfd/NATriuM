@@ -432,7 +432,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 							// destination is not a boundary
 
 							// make primary boundary hit from Lagrangian path tracker
-							GeneralizedDoF out_dof(false, el.destination.index,
+							GeneralizedDestinationDoF out_dof(false, el.destination.index,
 									el.beta);
 							BoundaryHit<dim> hit(el.currentPoint, t_shift,
 									fev_normals.normal_vector(0), *boundary,
@@ -441,13 +441,16 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 									sl_boundary_handler.addBoundaryHit(hit);
 
 							// make new lagragian path trackers from boundary hit
+							// opposite ordering is important, so that later the
+							// shape values are delivered in the same order
+							// (not_found is a stack/FIFO queue)
 							for (size_t i = hit.in.size(); i >= 0; i++) {
 								Tensor<1, dim> e = minus_dtealpha.at(
-										hit.in.at(i).getAlpha());
+										hit.incomingDirections.at(i));
 								e *= (t_shift / m_deltaT);
 								dealii::Point<dim> x_departure = el.currentPoint + e;
 								LagrangianPathTracker tracker_i(here,
-										hit.in.at(i).getAlpha(), x_departure,
+										hit.incomingDirections.at(i), x_departure,
 										el.currentPoint, el.currentCell);
 								not_found.push(tracker_i);
 							}
@@ -517,7 +520,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 						if (l[i].destination.isBoundaryHit) {
 							// introduce present cell dofs to incoming dofs of boundary hit
 							// sl_boundary_handler.getBoundaryHit(l[i].destination).in.at(...).setIndex(...);
-							// TODO make incoming dofs vector, so and calculate by shape functions
+							// TODO make incoming dofs vector, make shape values vector
 
 						} else {
 							// add entry to sparsity pattern

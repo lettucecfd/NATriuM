@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(BoundaryHit_Construction_test){
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
 			sl.getDoFHandler()->begin_active();
 
-	GeneralizedDoF a(false,0,1);
+	GeneralizedDestinationDoF a(false,0,1);
 	//BOOST_CHECK_NO_THROW(
 	BoundaryHit<2>(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
 			*(periodic.getBoundaries()->getBoundary(0)), cell, a);

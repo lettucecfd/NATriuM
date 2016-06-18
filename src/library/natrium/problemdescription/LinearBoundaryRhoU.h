@@ -115,9 +115,9 @@ public:
 	 */
 	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
 			const Stencil& stencil) const {
-		boundary_hit.in.clear();
-		boundary_hit.in.push_back(GeneralizedDoF(false, 0, stencil.getIndexOfOppositeDirection(
-						boundary_hit.out.getAlpha())));
+		assert (boundary_hit.incomingDirections.empty());
+		boundary_hit.incomingDirections.push_back(stencil.getIndexOfOppositeDirection(
+						boundary_hit.out.getAlpha()));
 	}
 
 };

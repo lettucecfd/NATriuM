@@ -17,11 +17,22 @@ namespace natrium {
 
 typedef dealii::TrilinosWrappers::internal::VectorReference TrilinosVRef;
 
+struct FunctionDepartureValue {
+	bool isBoundary;
+	size_t secondaryBoundaryDoF;
+	vector<double> internalValues;
+	vector<size_t> internalDoFs;
+	size_t alpha;
+	FunctionDepartureValue(size_t boundary_dof) :
+			isBoundary(true), secondaryBoundaryDoF(boundary_dof), alpha(0) {
+	}
+};
+
 /**
  * @short A generalized degree of freedom that can be used for FE degrees of freedom or boundary hits.
  * The generalized dof is required to describe the propagation of information through Boundary Hits.
  */
-class GeneralizedDoF {
+class GeneralizedDestinationDoF {
 private:
 	bool m_secondaryBoundaryHit;
 	size_t m_index;
@@ -36,19 +47,19 @@ public:
 	 * @param[in] alpha the id of the streaming direction
 	 * @note if is_primary == false and is_secondary == false, the dof is not a boundary dof
 	 */
-	GeneralizedDoF(bool is_secondary, size_t index, size_t alpha) :
+	GeneralizedDestinationDoF(bool is_secondary, size_t index, size_t alpha) :
 			m_secondaryBoundaryHit(is_secondary), m_index(index), m_alpha(alpha) {
 
 	}
 	/**
 	 * @short copy constructor
 	 */
-	GeneralizedDoF(const GeneralizedDoF& other) {
+	GeneralizedDestinationDoF(const GeneralizedDestinationDoF& other) {
 		m_secondaryBoundaryHit = other.isSecondaryBoundaryHit();
 		m_index = other.getIndex();
 		m_alpha = other.getAlpha();
 	}
-	virtual ~GeneralizedDoF() {
+	virtual ~GeneralizedDestinationDoF() {
 	}
 
 	/**
@@ -169,7 +180,7 @@ public:
 	/**
 	 * @short add a boundary dof and return its generalized dof index
 	 */
-	GeneralizedDoF appendSecondaryBoundaryDoF() {
+	GeneralizedDestinationDoF appendSecondaryBoundaryDoF() {
 		size_t index;
 		assert(
 				m_secondaryBoundaryIndices.n_elements()
@@ -178,7 +189,7 @@ public:
 				m_secondaryBoundaryIndices.n_elements());
 		m_secondaryBoundaryIndices.add_index(index);
 
-		GeneralizedDoF result(true, index, 0);
+		GeneralizedDestinationDoF result(true, index, 0);
 		return result;
 	}
 
@@ -224,29 +235,35 @@ public:
 	}
 
 	/**
-	 * @short access an element of the generalized vector.
+	 * @short write access to an element of the generalized vector.
 	 * @param[in] dof may denote a boundary hit or a usual dof
 	 * @note Primary boundary hits are not explicitly stored and can thus not be accessed.
 	 */
-	TrilinosVRef operator[](const GeneralizedDoF& dof) {
+	TrilinosVRef operator[](const GeneralizedDestinationDoF& dof) {
 		if (dof.isSecondaryBoundaryHit()) {
 			return m_fSecondaryBoundary(dof.getIndex());
 		}
 		assert(dof.getAlpha() > 0);
 		return m_fNew.at(dof.getAlpha())(dof.getIndex());
 		/*TrilinosVRef ref = m_fNew.at(dof.getAlpha())(dof.getIndex());
-		return ref;*/
+		 return ref;*/
 	}
 
 	/**
 	 * @short read only access (to f_old)
 	 */
-	double operator()(const GeneralizedDoF& dof) {
-		if (dof.isSecondaryBoundaryHit()) {
-			return m_fSecondaryBoundary(dof.getIndex());
+	double operator()(const FunctionDepartureValue& fv) const {
+		if (fv.isBoundary) {
+			return m_fSecondaryBoundary(fv.secondaryBoundaryDoF);
 		}
-		assert(dof.getAlpha() > 0);
-		return m_fOld.at(dof.getAlpha())(dof.getIndex());
+		assert(fv.internalDoFs.size() == fv.internalValues.size());
+		assert(fv.alpha < m_fOld.getQ());
+		double result = 0.0;
+		for (size_t i = 0; i < fv.internalDoFs.size(); i++) {
+			result += m_fOld.at(fv.alpha)(fv.internalDoFs[i])
+					* fv.internalValues[i];
+		}
+		return result;
 	}
 
 };
