@@ -9,11 +9,11 @@
 
 namespace natrium {
 
-template<size_t dim>
-SemiLagrangianBoundaryDoFHandler<dim>::SemiLagrangianBoundaryDoFHandler() {
+/*template<size_t dim>
+SemiLagrangianBoundaryDoFHandler<dim>::SemiLagrangianBoundaryDoFHandler(const Stencil& stencil) {
 	// TODO Auto-generated constructor stub
 
-}
+}*/
 
 template<size_t dim>
 SemiLagrangianBoundaryDoFHandler<dim>::~SemiLagrangianBoundaryDoFHandler() {

@@ -9,6 +9,9 @@
 #define LIBRARY_NATRIUM_ADVECTION_SEMILAGRANGIANVECTORREFERENCETYPES_H_
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
+#include "mpi.h"
+#include "../solver/DistributionFunctions.h"
 
 namespace natrium {
 
@@ -20,146 +23,232 @@ typedef dealii::TrilinosWrappers::internal::VectorReference TrilinosVRef;
  */
 class GeneralizedDoF {
 private:
-	bool m_primaryBoundaryHit;
 	bool m_secondaryBoundaryHit;
 	size_t m_index;
-	size_t m_Q;
+	size_t m_alpha;
 public:
-	GeneralizedDoF(bool is_primary, bool is_secondary, size_t index,
-			size_t q) :
-			m_primaryBoundaryHit(is_primary), m_secondaryBoundaryHit(
-					is_secondary), m_index(index), m_Q(q) {
+
+	/**
+	 * @short Constructor
+	 * @param[in] is_primary indicates whether this dof is a primary boundary dof (i.e. it does not depend on other boundary dofs)
+	 * @param[in] is_secondary indicates whether this dof is a secondary boundary dof (i.e. it does depend on other boundary dofs)
+	 * @param[in] index the index (in locally_owned_dofs) of this dof
+	 * @param[in] alpha the id of the streaming direction
+	 * @note if is_primary == false and is_secondary == false, the dof is not a boundary dof
+	 */
+	GeneralizedDoF(bool is_secondary, size_t index, size_t alpha) :
+			m_secondaryBoundaryHit(is_secondary), m_index(index), m_alpha(alpha) {
 
 	}
+	/**
+	 * @short copy constructor
+	 */
 	GeneralizedDoF(const GeneralizedDoF& other) {
-		m_primaryBoundaryHit = other.isPrimaryBoundaryHit();
 		m_secondaryBoundaryHit = other.isSecondaryBoundaryHit();
 		m_index = other.getIndex();
-		m_Q = other.getQ();
+		m_alpha = other.getAlpha();
 	}
 	virtual ~GeneralizedDoF() {
 	}
 
+	/**
+	 * @short get the dof index (i.e. one of the locally owned dofs)
+	 */
 	size_t getIndex() const {
 		return m_index;
 	}
 
+	/**
+	 * @short set index to a the locally owned dof
+	 */
 	void setIndex(size_t index) {
 		m_index = index;
 	}
 
-	bool isPrimaryBoundaryHit() const {
-		return m_primaryBoundaryHit;
-	}
-
-	void setPrimaryBoundaryHit(bool primaryBoundaryHit) {
-		m_primaryBoundaryHit = primaryBoundaryHit;
-	}
-
+	/**
+	 * @short indicates whether this dof is a secondary boundary dof (i.e. other boundary dof depends on its value)
+	 */
 	bool isSecondaryBoundaryHit() const {
 		return m_secondaryBoundaryHit;
 	}
 
+	/**
+	 * @short set this dof to be a secondary boundary dof
+	 */
 	void setSecondaryBoundaryHit(bool secondaryBoundaryHit) {
 		m_secondaryBoundaryHit = secondaryBoundaryHit;
 	}
 
-	size_t getQ() const {
-		return m_Q;
+	/**
+	 * @short get the streaming direction of this dof
+	 */
+	size_t getAlpha() const {
+		return m_alpha;
 	}
 
-	void setQ(size_t q) {
-		m_Q = q;
+	/**
+	 * @short set the streaming direction of this dof
+	 */
+	void setAlpha(size_t alpha) {
+		m_alpha = alpha;
 	}
 };
 
-class GeneralizedDoFVector {
+class SemiLagrangianVectorAccessException: public NATriuMException {
+private:
+	std::string message;
+public:
+	SemiLagrangianVectorAccessException(const char *msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	SemiLagrangianVectorAccessException(const string& msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	~SemiLagrangianVectorAccessException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
+/**
+ * @short A generalized version of the distributed_block_vector for the semi-Lagrangian boundary description
+ * The semi-Lagrangian advection solver requires to track the distribution functions
+ * to their departure points across boundaries. To allow for arbitrary nonlinear boundaries, the information
+ * at the boundary has to be stored in addition to the usual degrees of freedom. The present class is container
+ * for the boundary values. It distinguishes between primary and secondary boundary values. Secondary boundary values
+ * denote those that are required by other boundaries -- which only happens when a Lagrangian path hits more
+ * than one boundary during a single time step. This situation may occur e.g. in the corners of the computational domain.
+ * Each GeneralizedDoFVector is built upon a distributed_block_vector, i.e. a dealii::TrilinosWrappers::MPI::BlockVector.
+ */
+class SecondaryBoundaryDoFVector {
 private:
 
-	const size_t m_numberOfBlocks;
+	/**
+	 * @short underlying distributed_block_vector
+	 */
+	const dealii::IndexSet& m_locallyOwnedDoFs;
 
-	const dealii::IndexSet& m_locallyOwned;
-
-	const distributed_block_vector& m_vector;
-
-	distributed_vector m_primaryBoundaryValues;
-
+	/**
+	 * @short the vector that stores the secondary boundary values, i.e. those that are required to calculate other boundary values
+	 */
 	distributed_vector m_secondaryBoundaryValues;
 
-	dealii::IndexSet m_primaryBoundaryIndices;
-
+	/**
+	 * @short indices of secondary boundary values (a subset of the locally owned dofs).
+	 * The boundary dof indices are arbitrary and have nothing to do with the usual dof indices.
+	 * They are only defined as a subset of the locally owned dofs to facilitate the
+	 * distribution among processors with a unique indexing. This procedure assumes that
+	 * there are more locally owned dofs than boundary hits, which will hopefully be the case.
+	 */
 	dealii::IndexSet m_secondaryBoundaryIndices;
 
 public:
 
-	GeneralizedDoFVector(const dealii::IndexSet& locally_owned_dofs,
-			const distributed_block_vector& vector) :
-			m_numberOfBlocks(vector.n_blocks()), m_locallyOwned(
-					locally_owned_dofs), m_vector(vector), m_primaryBoundaryIndices(
-					locally_owned_dofs.size()), m_secondaryBoundaryIndices(
+	/**
+	 * Constructor.
+	 * @param[in] the underlying distributed_block_vector which should at least contain one block
+	 * The underlying distributed_block_vector does not have to be fully filled or initialized.
+	 */
+	SecondaryBoundaryDoFVector(const dealii::IndexSet& locally_owned_dofs) :
+			m_locallyOwnedDoFs(locally_owned_dofs), m_secondaryBoundaryIndices(
 					locally_owned_dofs.size()) {
 
 	}
-	TrilinosVRef operator[](const GeneralizedDoF& dof) {
-		if (dof.isPrimaryBoundaryHit()) {
-			return m_primaryBoundaryValues(dof.getIndex());
-		}
-		if (dof.isSecondaryBoundaryHit()) {
-			return m_secondaryBoundaryValues(dof.getIndex());
-		}
-		return m_vector.block(dof.getBlock())(dof.getIndex());
-	}
 
-	GeneralizedDoF appendBoundaryDoF(bool primary) {
+	/**
+	 * @short reinitialize the boundary indices. Has to be called after the distributed_block_vector has the right size.
+	 */
+	/*void reinit() {
+	 assert(m_secondaryBoundaryIndices.n_elements() == 0);
+	 m_secondaryBoundaryIndices.set_size(
+	 m_vector.block(0).locally_owned_elements().size());
+
+	 }*/
+
+	/**
+	 * @short add a boundary dof and return its generalized dof index
+	 */
+	GeneralizedDoF appendSecondaryBoundaryDoF() {
 		size_t index;
-		if (primary) {
-			assert(m_primaryBoundaryIndices.size() < m_locallyOwned.size());
-			index = m_locallyOwned.nth_index_in_set(
-					m_primaryBoundaryIndices.size());
-			m_primaryBoundaryIndices.add_index(index);
-		} else {
-			assert(m_secondaryBoundaryIndices.size() < m_locallyOwned.size());
-			index = m_locallyOwned.nth_index_in_set(
-					m_secondaryBoundaryIndices.size());
-			m_secondaryBoundaryIndices.add_index(index);
-		}
-		GeneralizedDoF result(primary, !primary, index, 0);
+		assert(
+				m_secondaryBoundaryIndices.n_elements()
+						< m_locallyOwnedDoFs.n_elements());
+		index = m_locallyOwnedDoFs.nth_index_in_set(
+				m_secondaryBoundaryIndices.n_elements());
+		m_secondaryBoundaryIndices.add_index(index);
+
+		GeneralizedDoF result(true, index, 0);
 		return result;
 	}
 
+	/**
+	 * Allocate memory for the primary and secondary boundary values
+	 */
 	void compress() {
-		m_primaryBoundaryValues.reinit(m_primaryBoundaryValues, MPI_COMM_WORLD);
-		m_secondaryBoundaryValues.reinit(m_secondaryBoundaryValues,
-				MPI_COMM_WORLD);
+		m_secondaryBoundaryValues.reinit(m_secondaryBoundaryIndices);
 	}
 
-	const dealii::IndexSet&& getLocallyOwned() const {
-		return m_locallyOwned;
+	TrilinosVRef operator()(size_t index) {
+		TrilinosVRef ref = m_secondaryBoundaryValues(index);
+		return ref;
 	}
 
-	const size_t getNumberOfBlocks() const {
-		return m_numberOfBlocks;
-	}
-
-	const dealii::IndexSet& getPrimaryBoundaryIndices() const {
-		return m_primaryBoundaryIndices;
-	}
-
-	const distributed_vector& getPrimaryBoundaryValues() const {
-		return m_primaryBoundaryValues;
-	}
-
+	/**
+	 *  @return secondary boundary indices, see class description
+	 */
 	const dealii::IndexSet& getSecondaryBoundaryIndices() const {
 		return m_secondaryBoundaryIndices;
 	}
 
+	/**
+	 * @return secondary boundary values, see class description
+	 */
 	const distributed_vector& getSecondaryBoundaryValues() const {
 		return m_secondaryBoundaryValues;
 	}
 
-	const distributed_block_vector&& getVector() const {
-		return m_vector;
+};
+
+class SemiLagrangianVectorAccess {
+private:
+	const DistributionFunctions& m_fOld;
+	DistributionFunctions& m_fNew;
+	SecondaryBoundaryDoFVector& m_fSecondaryBoundary;
+public:
+	SemiLagrangianVectorAccess(const DistributionFunctions& f_old,
+			DistributionFunctions& f_new,
+			SecondaryBoundaryDoFVector& f_secondary_boundary) :
+			m_fOld(f_old), m_fNew(f_new), m_fSecondaryBoundary(
+					f_secondary_boundary) {
 	}
+
+	/**
+	 * @short access an element of the generalized vector.
+	 * @param[in] dof may denote a boundary hit or a usual dof
+	 * @note Primary boundary hits are not explicitly stored and can thus not be accessed.
+	 */
+	TrilinosVRef operator[](const GeneralizedDoF& dof) {
+		if (dof.isSecondaryBoundaryHit()) {
+			return m_fSecondaryBoundary(dof.getIndex());
+		}
+		assert(dof.getAlpha() > 0);
+		return m_fNew.at(dof.getAlpha())(dof.getIndex());
+		/*TrilinosVRef ref = m_fNew.at(dof.getAlpha())(dof.getIndex());
+		return ref;*/
+	}
+
+	/**
+	 * @short read only access (to f_old)
+	 */
+	double operator()(const GeneralizedDoF& dof) {
+		if (dof.isSecondaryBoundaryHit()) {
+			return m_fSecondaryBoundary(dof.getIndex());
+		}
+		assert(dof.getAlpha() > 0);
+		return m_fOld.at(dof.getAlpha())(dof.getIndex());
+	}
+
 };
 
 } /* namespace natrium */

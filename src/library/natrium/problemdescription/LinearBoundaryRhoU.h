@@ -11,6 +11,7 @@
 #include "LinearBoundary.h"
 #include "BoundaryTools.h"
 #include "../advection/BoundaryHit.h"
+#include "../advection/SemiLagrangianVectorReferenceTypes.h"
 
 namespace natrium {
 
@@ -90,16 +91,19 @@ public:
 	 *       by makeIncomingDirections()) and the right references in fIn (has to be filled by hand -- by the
 	 *       semi-Lagrangian advection solver).
 	 */
-	virtual void calculate(BoundaryHit<dim>& boundary_hit, const Stencil& stencil, double time_of_next_step) {
-		assert ( boundary_hit.incomingDirections.size() == boundary_hit.fIn.size() );
+	virtual void calculate(BoundaryHit<dim>& boundary_hit,
+			const Stencil& stencil, double time_of_next_step,
+			SemiLagrangianVectorAccess& f) const {
+
 		const numeric_vector ea = stencil.getDirection(
-				boundary_hit.outgoingDirection);
+				boundary_hit.out.getAlpha());
 		numeric_vector velocity(dim);
-		LinearBoundary<dim>::getBoundaryVelocity()->set_time(time_of_next_step - boundary_hit.time_shift);
+		LinearBoundary<dim>::getBoundaryVelocity()->set_time(
+				time_of_next_step - boundary_hit.time_shift);
 		LinearBoundary<dim>::getBoundaryVelocity()->vector_value(
 				boundary_hit.coordinates, velocity);
-		boundary_hit.fOut = boundary_hit.fIn.at(0)
-				+ 2.0 * stencil.getWeight(boundary_hit.outgoingDirection) * 1.0
+		f[boundary_hit.out] = f(boundary_hit.in.at(0))
+				+ 2.0 * stencil.getWeight(boundary_hit.out.getAlpha()) * 1.0
 						* (ea * velocity) / stencil.getSpeedOfSoundSquare();
 	}
 
@@ -110,10 +114,10 @@ public:
 	 * @note This function is used by the semi-Lagrangian advection solver
 	 */
 	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
-			const Stencil& stencil) {
-		assert(boundary_hit.fIn.size() == 0);
-		boundary_hit.incomingDirections.resize(1);
-		boundary_hit.incomingDirections.at(0) = stencil.getIndexOfOppositeDirection(boundary_hit.outgoingDirection);
+			const Stencil& stencil) const {
+		boundary_hit.in.clear();
+		boundary_hit.in.push_back(GeneralizedDoF(false, 0, stencil.getIndexOfOppositeDirection(
+						boundary_hit.out.getAlpha())));
 	}
 
 };

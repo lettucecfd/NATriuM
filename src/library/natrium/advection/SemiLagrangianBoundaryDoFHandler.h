@@ -18,8 +18,26 @@
 #include "../problemdescription/Boundary.h"
 #include "../utilities/BasicNames.h"
 #include "../stencils/Stencil.h"
+#include "../solver/DistributionFunctions.h"
 
 namespace natrium {
+
+class SemiLagrangianBoundaryHitException: public NATriuMException {
+private:
+	std::string message;
+public:
+	SemiLagrangianBoundaryHitException(const char *msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	SemiLagrangianBoundaryHitException(const string& msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	~SemiLagrangianBoundaryHitException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
 
 /**
  * @short
@@ -28,18 +46,19 @@ template<size_t dim>
 class SemiLagrangianBoundaryDoFHandler {
 private:
 
-	GeneralizedDoFVector m_allValues;
+	SecondaryBoundaryDoFVector m_secondaryBoundaryValues;
 
 	std::vector<BoundaryHit<dim> > m_primaryBoundaryHits;
 
 	std::vector<BoundaryHit<dim> > m_secondaryBoundaryHits;
 
-	const Stencil<dim>& m_stencil;
+	const Stencil& m_stencil;
 	// boost::shared_ptr<BoundaryCollection<dim> >& m_boundaries;
 
 public:
-	SemiLagrangianBoundaryDoFHandler(const Stencil<dim>& stencil) :
-			m_stencil(stencil) {
+	SemiLagrangianBoundaryDoFHandler(const dealii::IndexSet& locally_owned_dofs,
+			const Stencil& stencil) :
+			m_secondaryBoundaryValues(locally_owned_dofs), m_stencil(stencil) {
 
 	}
 	virtual ~SemiLagrangianBoundaryDoFHandler();
@@ -49,28 +68,46 @@ public:
 	 * @param[in/out] boundary_hit the BoundaryHit instance. The present function fills in the incoming directions of boundary_hit.
 	 * @return position of the boundary hit in the
 	 */
-	size_t addBoundaryHit(BoundaryHit<dim>& boundary_hit) {
+	LagrangianPathDestination addBoundaryHit(BoundaryHit<dim>& boundary_hit) {
 		// get directions
 		boundary_hit.boundary.makeIncomingDirections(boundary_hit, m_stencil);
 		// push back to boundary hit vector
-		if (boundary_hit.isPrimary) {
-			m_primaryBoundaryHits.push_back(boundary_hit);
-		} else {
+		if (boundary_hit.out.isSecondaryBoundaryHit()) {
 			m_secondaryBoundaryHits.push_back(boundary_hit);
-		}
-	}
-	BoundaryHit<dim>& getBoundaryHit(size_t id, bool primary){
-		if (primary){
-			return m_primaryBoundaryHits.at(id);
+			// TODO append to 2ndary vector
+			return LagrangianPathDestination(m_secondaryBoundaryHits.size() - 1,
+					true, true, boundary_hit.out.getAlpha());
 		} else {
-			return m_secondaryBoundaryHits.at(id);
+			m_primaryBoundaryHits.push_back(boundary_hit);
+			return LagrangianPathDestination(m_primaryBoundaryHits.size() - 1,
+					true, false, boundary_hit.out.getAlpha());
 		}
+}
+BoundaryHit<dim>& getBoundaryHit(LagrangianPathDestination a) {
+	if (not a.isBoundaryHit) {
+		throw SemiLagrangianBoundaryHitException(
+				"You tried to retrieve a boundary hit without "
+						"actually referencing to a boundary destination."
+						"getBoundaryHit() is only defined for Lagragian"
+						"path destinations at a boundary.");
 	}
-	void calculateBoundaryValues(double time_of_next_step) {
+	if (a.isSecondary) {
+		return m_secondaryBoundaryHits.at(a.index);
+	} else {
+		return m_primaryBoundaryHits.at(a.index);
 	}
-	void applyBoundaryValues(distributed_block_vector& f) {
-	}
+}
+void calculateAndApplyBoundaryValues(DistributionFunctions& f_out,
+		const DistributionFunctions& f_in, double time_of_next_step) {
+	// SemiLagrangianVectorAccess
+	// for all secondary boundary hits (in right order)
+	// 		calculate secondary boundary values
+	// 		write to generalized dof vector (secondary-boundary part)
+	// for all primary boundary hits
+	//		calculate primary boundary values
+	//		write to dof vector (f)
 
+}
 };
 
 } /* namespace natrium */

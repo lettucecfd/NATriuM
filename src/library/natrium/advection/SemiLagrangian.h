@@ -21,6 +21,8 @@
 #include "deal.II/base/quadrature_lib.h"
 
 #include "AdvectionOperator.h"
+#include "BoundaryHit.h"
+#include "SemiLagrangianBoundaryDoFHandler.h"
 #include "../problemdescription/BoundaryCollection.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
@@ -142,40 +144,45 @@ private:
 
 public:
 
-	struct DoFInfo {
-		DoFInfo(size_t dof, size_t a, size_t b, const dealii::Point<dim>& x,
+	struct LagrangianPathTracker {
+		LagrangianPathTracker(size_t dof, size_t a, size_t b, const dealii::Point<dim>& x,
 				const dealii::Point<dim>& current_point,
 				typename dealii::DoFHandler<dim>::active_cell_iterator current_cell) :
-				globalDof(dof), alpha(a), beta(b), sourcePoint(x), currentPoint(
+					destination(dof, a), beta(b), departurePoint(x), currentPoint(
 						current_point), currentCell(current_cell) {
 
 		}
-		DoFInfo(const DoFInfo& other) :
-				globalDof(other.globalDof), alpha(other.alpha), beta(
-						other.beta), sourcePoint(other.sourcePoint), currentPoint(
+		LagrangianPathTracker(LagrangianPathDestination& dest, size_t b, const dealii::Point<dim>& x,
+				const dealii::Point<dim>& current_point,
+				typename dealii::DoFHandler<dim>::active_cell_iterator current_cell) :
+				destination(dest), beta(b), departurePoint(x), currentPoint(
+						current_point), currentCell(current_cell) {
+
+		}
+		LagrangianPathTracker(const LagrangianPathTracker& other) :
+				destination(other.destination), beta(
+						other.beta), departurePoint(other.departurePoint), currentPoint(
 						other.currentPoint), currentCell(other.currentCell) {
 		}
-		DoFInfo& operator=(const DoFInfo& other) {
-			globalDof = other.globalDof;
-			alpha = other.alpha;
+		LagrangianPathTracker& operator=(const LagrangianPathTracker& other) {
+			destination = other.destination;
 			beta = other.beta;
-			sourcePoint = other.sourcePoint;
+			departurePoint = other.departurePoint;
 			currentPoint = other.currentPoint;
 			currentCell = other.currentCell;
 			return *this;
 		}
-		size_t globalDof; // global degree of freedom
-		size_t alpha; // direction of target degree of freedom
-		size_t beta; // direction of source degrees of freedom (across boundary)
-		dealii::Point<dim> sourcePoint; // Lagrangian point x^(t-dt)
-		dealii::Point<dim> currentPoint; // Lagrangian point x^(t-(dt-timeLeft))
+		LagrangianPathDestination destination; // global degree of freedom at destination (includes direction)
+		size_t beta; // current directions (later: direction of departure degree of freedom (across boundary))
+		dealii::Point<dim> departurePoint; // Lagrangian departure point x^(t-dt)
+		dealii::Point<dim> currentPoint; // Current point x^(t-(dt-timeLeft))
 		typename dealii::DoFHandler<dim>::active_cell_iterator currentCell; // cell of currentPoint
 	};
 
 	/**
 	 * @short A list that stores cell-specific information for assembly
 	 */
-	typedef std::vector<DoFInfo> XList;
+	typedef std::vector<LagrangianPathTracker> DeparturePointList;
 
 	/**
 	 * @short List of neighbors
