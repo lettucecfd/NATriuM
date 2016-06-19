@@ -13,7 +13,7 @@ namespace natrium {
 KBCCentral::KBCCentral(double relaxationParameter, double dt,
 		const boost::shared_ptr<Stencil> stencil) :
 		counter(0), MRT(relaxationParameter, dt, stencil), parameterFile(
-				"deviation.txt") {
+				"deviation_KBC_CENTRAL.txt") {
 
 }
 
@@ -64,6 +64,12 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 
 		// density
 		double rho = densities(i);
+
+		if (rho < 1e-10) {
+			throw CollisionException(
+					"Densities too small (< 1e-10) for collisions. Decrease time step size.");
+		}
+
 
 		if (not inInitializationProcedure) {
 
