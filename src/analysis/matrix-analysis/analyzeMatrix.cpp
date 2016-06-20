@@ -84,7 +84,7 @@ int main() {
 									solver->getAdvectionOperator()->getSystemMatrix(),
 									eigenvalues, 0.0) << endl;
 			analyzer.writeSpectrum(false);
-			analyzer.writePseudospectrum(false);
+			analyzer.writePseudospectrum(false, 10, 0.01);
 		} else {
 			pout << "abs max: "
 					<< solver->getTimeStepSize()
