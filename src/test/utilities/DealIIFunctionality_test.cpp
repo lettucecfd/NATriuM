@@ -29,7 +29,6 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_Periodicity_test) {
 	cell->face(2)->set_all_boundary_ids(2);  // top
 	cell->face(3)->set_all_boundary_ids(3);  // bottom
 
-
 	// check if periodicity updates neighbors
 	BOOST_CHECK_EQUAL(cell->neighbor_index(0), -1);
 	std::vector<
@@ -47,7 +46,7 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_Periodicity_test) {
 
 	// check if neighbor relations work generally
 	// therefore pick upper right corner cell
-	for (cell = square.begin_active(); cell != square.end(); cell ++)
+	for (cell = square.begin_active(); cell != square.end(); cell++)
 		if (cell->at_boundary(2))
 			if (cell->at_boundary(1))
 				break;
@@ -67,11 +66,11 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_Periodicity_test) {
 	//----------------------------------------------------------------
 	//----------------------------------------------------------------
 
-	for (cell = square.begin_active(); cell != square.end(); cell ++)
+	for (cell = square.begin_active(); cell != square.end(); cell++)
 		if (cell->at_boundary(2))
 			if (cell->at_boundary(1))
 				break;
-	for (neighbor = square.begin_active(); neighbor != square.end(); neighbor ++)
+	for (neighbor = square.begin_active(); neighbor != square.end(); neighbor++)
 		if (neighbor->at_boundary(2))
 			if (neighbor->at_boundary(0))
 				break;
@@ -86,13 +85,9 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_Periodicity_test) {
 	//BOOST_CHECK(cell->neighbor_of_neighbor(1) == 0);
 	//BOOST_CHECK(neighbor->neighbor_of_neighbor(0) == 1);
 
-
-
-
 	pout << "done." << endl;
 
 }
-
 
 BOOST_AUTO_TEST_CASE(DealIIFunctionality_UserFlags_test) {
 	// Check how the built-in periodic bc works in deal.II
@@ -113,6 +108,60 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_UserFlags_test) {
 	Mesh<2>::cell_iterator cell2 = square.begin();
 	BOOST_CHECK(cell2->face(0)->user_flag_set());
 
+	pout << "done" << endl;
+}
+
+
+BOOST_AUTO_TEST_CASE(DealIIFunctionality_VectorReference_test) {
+	pout << "DealIIFunctionality_VectorReference_test..." << endl;
+
+	const size_t ref_level = 3;
+	const size_t fe_order = 1;
+	PeriodicTestDomain2D periodic(ref_level);
+	periodic.refineAndTransform();
+	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D2Q9>(), 0.01);
+	sl.setupDoFs();
+
+	distributed_vector a(sl.getLocallyOwnedDofs());
+
+	//for all degrees of freedom on current processor
+	dealii::IndexSet::ElementIterator it(sl.getLocallyOwnedDofs().begin());
+	dealii::IndexSet::ElementIterator end(sl.getLocallyOwnedDofs().end());
+	for (; it != end; it++) {
+		size_t j = *it;
+		a(j) = 1;
+	}
+
+	size_t index = a.locally_owned_elements().nth_index_in_set(0);
+	dealii::TrilinosWrappers::internal::VectorReference pointer = a(index);
+	pointer += 1.5;
+	BOOST_CHECK_SMALL(a(index) - 2.5, 1e-10);
+
+	pout << "done" << endl;
+}
+
+
+
+BOOST_AUTO_TEST_CASE(DealIIFunctionality_IndexSet_test) {
+	// check whether indices of a distributed vector have to be consistent
+	pout << "DealIIFunctionality_IndexSet_test..." << endl;
+
+	const size_t ref_level = 3;
+	const size_t fe_order = 1;
+	PeriodicTestDomain2D periodic(ref_level);
+	periodic.refineAndTransform();
+	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+			boost::make_shared<D2Q9>(), 0.01);
+	sl.setupDoFs();
+
+	dealii::IndexSet indexset(sl.getLocallyOwnedDofs());
+	indexset.add_index(sl.getLocallyOwnedDofs().nth_index_in_set(0));
+	indexset.add_index(sl.getLocallyOwnedDofs().nth_index_in_set(1));
+	distributed_vector a(indexset);
+	BOOST_CHECK_NO_THROW(a.compress(dealii::VectorOperation::unknown));
+	a(sl.getLocallyOwnedDofs().nth_index_in_set(0)) = 1;
+	BOOST_CHECK_EQUAL(a(sl.getLocallyOwnedDofs().nth_index_in_set(0)), 1);
 	pout << "done" << endl;
 }
 
