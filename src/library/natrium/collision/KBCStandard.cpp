@@ -2,16 +2,18 @@
  * KBCStandard.cpp
  *
  *  Created on: 17.11.2015
- *      Author: dominik
+ *      Author: Dominik Wilde
  */
 
 #include "KBCStandard.h"
+#define KBC_C // if not defined, KBC_D will be used (according to Karlin et al. 2015)
+#define EVALUATE_GAMMA // if defined, an  evaluation over time of the stabilizer gamma will be carried out (D2Q9 only)
 
 namespace natrium {
 
 KBCStandard::KBCStandard(double relaxationParameter, double dt,
-		const boost::shared_ptr<Stencil> stencil) :
-		MRT(relaxationParameter, dt, stencil) {
+		const boost::shared_ptr<Stencil> stencil) : counter(0),
+		MRT(relaxationParameter, dt, stencil),parameterFile("deviation_KBC_STANDARD.txt") {
 
 }
 
@@ -34,7 +36,7 @@ void KBCStandard::collideAll(DistributionFunctions& f,
 		collideAllD3Q15(f, densities, velocities, locally_owned_dofs,
 				inInitializationProcedure);
 	} else {
-		throw CollisionException("KBC only implemented for D2Q9");
+		throw CollisionException("KBC_Standard only implemented for D2Q9 and D3Q15");
 		// Inefficient collision
 		//BGK::collideAll(f, densities, velocities, locally_owned_dofs,
 		//		inInitializationProcedure);
@@ -46,7 +48,15 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
+#define KBC_C // if not defined, KBC_D will be used (according to Karlin et al. 2015)
+
 	size_t Q = getQ();
+
+
+	stabilizer gamma(locally_owned_dofs.size());
+	stabilizer entropy(locally_owned_dofs.size());
+
+	//vector<double> gamma(locally_owned_dofs.size());
 
 	double scaling = getStencil()->getScaling();
 	double cs2 = getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
@@ -54,6 +64,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 	//for all degrees of freedom on current processor
 	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+
 	for (it = locally_owned_dofs.begin(); it != end; it++) {
 		size_t i = *it;
 
@@ -64,6 +75,11 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		// density
 		double rho = densities(i);
+
+		if (rho < 1e-10) {
+			throw CollisionException(
+					"Densities too small (< 1e-10) for collisions. Decrease time step size.");
+		}
 
 		if (not inInitializationProcedure) {
 
@@ -122,6 +138,8 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		// shear part vector s
 		vector<double> s(Q);
 
+#ifdef KBC_C
+
 		s.at(0) = -rho * T;
 		s.at(1) = 0.5 * rho * 0.5 * (T + N);
 		s.at(2) = 0.5 * rho * 0.5 * (T - N);
@@ -132,9 +150,24 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		s.at(7) = 0.25 * rho * Pi_xy;
 		s.at(8) = 0.25 * rho * -Pi_xy;
 
+#else
+		s.at(0) = 0;
+		s.at(1) = 0.5 * rho * 0.5 * (+ N);
+		s.at(2) = 0.5 * rho * 0.5 * (- N);
+		s.at(3) = 0.5 * rho * 0.5 * (+ N);
+		s.at(4) = 0.5 * rho * 0.5 * (- N);
+		s.at(5) = 0.25 * rho * Pi_xy;
+		s.at(6) = 0.25 * rho * -Pi_xy;
+		s.at(7) = 0.25 * rho * Pi_xy;
+		s.at(8) = 0.25 * rho * -Pi_xy;
+
+
+#endif
+
+
 		// higher order part vector h
 		vector<double> h(Q);
-
+#ifdef KBC_C
 		h.at(0) = rho * A;
 		h.at(1) = -0.5 * rho * (1 * Q_xyy + A);
 		h.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
@@ -144,6 +177,17 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
 		h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
 		h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+#else
+		h.at(0) = rho * (A - T);
+		h.at(1) = -0.5 * rho * (1 * Q_xyy + A - T);
+		h.at(3) = -0.5 * rho * (-1 * Q_xyy + A - T);
+		h.at(2) = -0.5 * rho * (1 * Q_yxx + A - T);
+		h.at(4) = -0.5 * rho * (-1 * Q_yxx + A - T);
+		h.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
+		h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
+		h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
+		h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+#endif
 
 		// equilibrium vectors for shear vector
 		vector<double> seq(Q);
@@ -155,33 +199,33 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		double uSquareTerm;
 		double mixedTerm;
 		double weighting;
-		double prefactor = scaling / getStencil()->getSpeedOfSoundSquare();
+		double prefactor = 1/cs2;
 
 		uSquareTerm = -scalar_product
-				/ (2 * getStencil()->getSpeedOfSoundSquare());
+				/ (2 * cs2);
 		// direction 0
 		weighting = 4. / 9. * rho;
 		feq.at(0) = weighting * (1 + uSquareTerm);
 		// directions 1-4
 		weighting = 1. / 9. * rho;
-		mixedTerm = prefactor * (velocities.at(0)(i));
+		mixedTerm = prefactor * (ux);
 		feq.at(1) = weighting
 				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 		feq.at(3) = weighting
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		mixedTerm = prefactor * (velocities.at(1)(i));
+		mixedTerm = prefactor * (uy);
 		feq.at(2) = weighting
 				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 		feq.at(4) = weighting
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
 		// directions 5-8
 		weighting = 1. / 36. * rho;
-		mixedTerm = prefactor * (velocities.at(0)(i) + velocities.at(1)(i));
+		mixedTerm = prefactor * (ux + uy);
 		feq.at(5) = weighting
 				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 		feq.at(7) = weighting
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		mixedTerm = prefactor * (-velocities.at(0)(i) + velocities.at(1)(i));
+		mixedTerm = prefactor * (-ux + uy);
 		feq.at(6) = weighting
 				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 		feq.at(8) = weighting
@@ -214,6 +258,8 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		A = A / rho;
 
 		// calculate shear equilibrium
+#ifdef KBC_C
+
 		seq.at(0) = -rho * T;
 		seq.at(1) = 0.5 * rho * 0.5 * (T + N);
 		seq.at(3) = 0.5 * rho * 0.5 * (T + N);
@@ -224,7 +270,21 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		seq.at(7) = 0.25 * rho * Pi_xy;
 		seq.at(8) = 0.25 * rho * -Pi_xy;
 
+#else
+		seq.at(0) = 0;
+		seq.at(1) = 0.5 * rho * 0.5 * (+ N);
+		seq.at(3) = 0.5 * rho * 0.5 * (+ N);
+		seq.at(2) = 0.5 * rho * 0.5 * (- N);
+		seq.at(4) = 0.5 * rho * 0.5 * (- N);
+		seq.at(5) = 0.25 * rho * Pi_xy;
+		seq.at(6) = 0.25 * rho * -Pi_xy;
+		seq.at(7) = 0.25 * rho * Pi_xy;
+		seq.at(8) = 0.25 * rho * -Pi_xy;
+#endif
+
 		// calculate higher order equilibrium
+#ifdef KBC_C
+
 		heq.at(0) = rho * A;
 		heq.at(1) = -0.5 * rho * (1 * Q_xyy + A);
 		heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
@@ -234,6 +294,18 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
 		heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
 		heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+
+#else
+		heq.at(0) = rho * (A - T);
+		heq.at(1) = -0.5 * rho * (1 * Q_xyy + A - T);
+		heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A - T);
+		heq.at(2) = -0.5 * rho * (1 * Q_yxx + A - T);
+		heq.at(4) = -0.5 * rho * (-1 * Q_yxx + A - T);
+		heq.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
+		heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
+		heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
+		heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+#endif
 
 		//deviation of the shear parts
 		vector<double> delta_s(Q);
@@ -302,38 +374,43 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		double beta = 1. / (getRelaxationParameter() + 0.5) / 2;
 
 		// stabilizer of KBC model
-		double gamma = 1. / beta - (2 - 1. / beta) * sum_s / sum_h;
+		gamma.value.at(i) = 1. / beta - (2 - 1. / beta) * (sum_s / sum_h);
 
 		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
-		if (sum_h < 1e-20) {
-			gamma = 2;
+		if (sum_h < 1e-16) {
+		gamma.value.at(i) = 2;
+
 		}
+
+		entropy.value.at(i) = -(f.at(0)(i)*log(f.at(0)(i)/(4./9.))+f.at(1)(i)*log(f.at(1)(i)/(1./9.))+f.at(2)(i)*log(f.at(2)(i)/(1./9.))+f.at(3)(i)*log(f.at(3)(i)/(1./9.))+f.at(4)(i)*log(f.at(4)(i)/(1./9.))+f.at(5)(i)*log(f.at(5)(i)/(1./36.))+f.at(6)(i)*log(f.at(6)(i)/(1./36.))+f.at(7)(i)*log(f.at(7)(i)/(1./36.))+f.at(8)(i)*log(f.at(8)(i)/(1./36.)));
+
+
+
 
 		// calculate new f
 		f.at(0)(i) = f.at(0)(i)
-				- beta * (2 * delta_s.at(0) + gamma * delta_h.at(0));
+				- beta * (2 * delta_s.at(0) + gamma.value.at(i) * delta_h.at(0));
 		f.at(1)(i) = f.at(1)(i)
-				- beta * (2 * delta_s.at(1) + gamma * delta_h.at(1));
+				- beta * (2 * delta_s.at(1) + gamma.value.at(i) * delta_h.at(1));
 		f.at(2)(i) = f.at(2)(i)
-				- beta * (2 * delta_s.at(2) + gamma * delta_h.at(2));
+				- beta * (2 * delta_s.at(2) + gamma.value.at(i) * delta_h.at(2));
 		f.at(3)(i) = f.at(3)(i)
-				- beta * (2 * delta_s.at(3) + gamma * delta_h.at(3));
+				- beta * (2 * delta_s.at(3) + gamma.value.at(i) * delta_h.at(3));
 		f.at(4)(i) = f.at(4)(i)
-				- beta * (2 * delta_s.at(4) + gamma * delta_h.at(4));
+				- beta * (2 * delta_s.at(4) + gamma.value.at(i) * delta_h.at(4));
 		f.at(5)(i) = f.at(5)(i)
-				- beta * (2 * delta_s.at(5) + gamma * delta_h.at(5));
+				- beta * (2 * delta_s.at(5) + gamma.value.at(i) * delta_h.at(5));
 		f.at(6)(i) = f.at(6)(i)
-				- beta * (2 * delta_s.at(6) + gamma * delta_h.at(6));
+				- beta * (2 * delta_s.at(6) + gamma.value.at(i) * delta_h.at(6));
 		f.at(7)(i) = f.at(7)(i)
-				- beta * (2 * delta_s.at(7) + gamma * delta_h.at(7));
+				- beta * (2 * delta_s.at(7) + gamma.value.at(i) * delta_h.at(7));
 		f.at(8)(i) = f.at(8)(i)
-				- beta * (2 * delta_s.at(8) + gamma * delta_h.at(8));
+				- beta * (2 * delta_s.at(8) + gamma.value.at(i) * delta_h.at(8));
 
-		if (gamma != 2) {
-
-		}
 
 	}
+
+writeDeviation(gamma.getAverage(),gamma.getDeviation(),entropy.getAverage(),entropy.getDeviation());
 
 }
 
@@ -795,7 +872,7 @@ void KBCStandard::collideAllD3Q15(DistributionFunctions& f,
 		double gamma = 1. / beta - (2 - 1. / beta) * sum_s / sum_h;
 
 		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
-		if (sum_h < 1e-20) {
+		if (sum_h < 1e-16) {
 			gamma = 2;
 		}
 
