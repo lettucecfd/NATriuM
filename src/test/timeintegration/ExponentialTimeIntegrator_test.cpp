@@ -13,6 +13,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/timeintegration/ExponentialTimeIntegrator.h"
+#include "natrium/benchmarks/AdvectionBenchmark.h"
 
 namespace natrium {
 

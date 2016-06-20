@@ -1,14 +1,14 @@
 /*
- * KBCStandard.h
+ * KBCCentral.h
  *
- *  Created on: 17.11.2015
+ *  Created on: 29.03.2016
  *      Author: Dominik Wilde
  */
 
-#ifndef KBCSTANDARD_H_
-#define KBCSTANDARD_H_
+#ifndef KBCCENTRAL_H_
+#define KBCCENTRAL_H_
 
-#include "MRT.h"
+#include "MRTStandard.h"
 
 #include "../utilities/BasicNames.h"
 
@@ -18,15 +18,11 @@
 
 namespace natrium {
 
-class KBCStandard: public MRT {
+class KBCCentral: public MRT {
 public:
-	KBCStandard(double relaxationParameter, double dt,
+	KBCCentral(double relaxationParameter, double dt,
 			const boost::shared_ptr<Stencil> stencil);
-	virtual ~KBCStandard();
-
-	/**
-	 * @short function for collision
-	 */
+	virtual ~KBCCentral();
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
@@ -42,17 +38,9 @@ public:
 			bool inInitializationProcedure) const;
 
 	/**
-	 * @short optimized version of collideAll for D3Q15 stencil
+	 * @short evaluates the stabilizer of the KBC function and writes it to a parameter file
 	 */
-	void collideAllD3Q15(DistributionFunctions& f,
-			distributed_vector& densities,
-			vector<distributed_vector>& velocities,
-			const dealii::IndexSet& locally_owned_dofs,
-			bool inInitializationProcedure) const;
 
-	/**
-	 * @short Stores the values of the stabilizer of the KBC function and averages it for every time step
-	 */
 
 	struct stabilizer {
 		stabilizer(int size_dofs) {
@@ -90,10 +78,6 @@ public:
 
 	};
 
-	/**
-	 * @short writes the averaged data of the stabilizer into a parameter file
-	 */
-
 	void writeDeviation(double ave, double dev, double ave_entropy, double dev_entropy) const {
 		parameterFile << counter << " " << ave << " " << dev << " " << ave_entropy << " " << dev_entropy << endl;
 		counter += 1;
@@ -109,4 +93,5 @@ private:
 ;
 } /* namespace natrium */
 
-#endif /* KBCSTANDARD_H_ */
+
+#endif /* KBCCENTRAL_H_ */
