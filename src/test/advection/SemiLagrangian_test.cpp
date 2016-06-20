@@ -440,9 +440,10 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_SparsityPattern_test) {
 	BOOST_CHECK_EQUAL(sp.size(), size_t(8));
 	for (size_t i = 0; i < sp.size(); i++) {
 		BOOST_CHECK_EQUAL(sp[i].size(), size_t(8));
-		BOOST_CHECK_EQUAL(sp[i][i].n_nonzero_elements(),
-				sl.getDoFHandler()->n_locally_owned_dofs()
-						* pow((fe_order + 1), 2));
+		BOOST_CHECK_SMALL(
+				sp[i][i].n_nonzero_elements()
+						- sl.getDoFHandler()->n_dofs() * pow((fe_order + 1), 2),
+				2.0);
 	}
 
 	pout << "done." << endl;
@@ -468,9 +469,10 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_SparsityPattern_test) {
 	BOOST_CHECK_EQUAL(sp.size(), size_t(18));
 	for (size_t i = 0; i < sp.size(); i++) {
 		BOOST_CHECK_EQUAL(sp[i].size(), size_t(18));
-		BOOST_CHECK_EQUAL(sp[i][i].n_nonzero_elements(),
-				sl.getDoFHandler()->n_locally_owned_dofs()
-						* pow((fe_order + 1), 3));
+		BOOST_CHECK_SMALL(
+				sp[i][i].n_nonzero_elements()
+						- sl.getDoFHandler()->n_dofs() * pow((fe_order + 1), 3),
+				2.0);
 	}
 
 	pout << "done." << endl;
@@ -498,11 +500,14 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_ConstantStreaming_test) {
 		ones.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		result.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		// reinit does only change the size but not the content
-		dealii::ConstraintMatrix c(sl.getLocallyOwnedDofs());
-		c.close();
-		dealii::VectorTools::project(sl.getMapping(),*sl.getDoFHandler(), c, *sl.getQuadrature(), dealii::ConstantFunction<2>(1), ones.block(i));
+		//for all degrees of freedom on current processor
+		dealii::IndexSet::ElementIterator it(sl.getLocallyOwnedDofs().begin());
+		dealii::IndexSet::ElementIterator end(sl.getLocallyOwnedDofs().end());
+		for (; it != end; it++) {
+			size_t j = *it;
+			ones.block(i)(j) = 1;
+		}
 	}
-
 
 	sl.getSystemMatrix().vmult(result, ones);
 	result -= ones;
@@ -533,11 +538,14 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_ConstantStreaming_test) {
 		ones.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		result.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		// reinit does only change the size but not the content
-		dealii::ConstraintMatrix c(sl.getLocallyOwnedDofs());
-		c.close();
-		dealii::VectorTools::project(sl.getMapping(),*sl.getDoFHandler(), c, *sl.getQuadrature(), dealii::ConstantFunction<3>(1), ones.block(i));
+		//for all degrees of freedom on current processor
+		dealii::IndexSet::ElementIterator it(sl.getLocallyOwnedDofs().begin());
+		dealii::IndexSet::ElementIterator end(sl.getLocallyOwnedDofs().end());
+		for (; it != end; it++) {
+			size_t j = *it;
+			ones.block(i)(j) = 1;
+		}
 	}
-
 
 	sl.getSystemMatrix().vmult(result, ones);
 	result -= ones;
@@ -545,7 +553,6 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_ConstantStreaming_test) {
 
 	pout << "done." << endl;
 } /* SemiLagrangian3D_ConstantStreaming_test */
-
 
 BOOST_AUTO_TEST_CASE(SemiLagrangian3D_VectorReference_test) {
 	pout << "SemiLagrangian3D_VectorReference_test..." << endl;
@@ -569,20 +576,17 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_VectorReference_test) {
 		ones.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		result.block(i).reinit(sl.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		// reinit does only change the size but not the content
-		dealii::ConstraintMatrix c(sl.getLocallyOwnedDofs());
-		c.close();
-		dealii::VectorTools::project(sl.getMapping(),*sl.getDoFHandler(), c, *sl.getQuadrature(), dealii::ConstantFunction<3>(1), ones.block(i));
+		//for all degrees of freedom on current processor
+		dealii::IndexSet::ElementIterator it(sl.getLocallyOwnedDofs().begin());
+		dealii::IndexSet::ElementIterator end(sl.getLocallyOwnedDofs().end());
+		for (; it != end; it++) {
+			size_t j = *it;
+			ones.block(i)(j) = 1;
+		}
 	}
-
-
-	size_t index = ones.locally_owned_elements().nth_index_in_set(0);
-	dealii::TrilinosWrappers::internal::VectorReference pointer = ones.block(0)(index);
-	pointer += 1.5;
-	BOOST_CHECK_SMALL(ones.block(0)(index) - 2.5, 1e-10);
 
 	pout << "done." << endl;
 } /* SemiLagrangian3D_VectorReference_test */
-
 
 BOOST_AUTO_TEST_SUITE_END()
 
