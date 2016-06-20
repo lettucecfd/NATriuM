@@ -336,6 +336,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					m_configuration->getExponentialFilterAlpha(),
 					m_configuration->getExponentialFilterS(),
 					m_configuration->getExponentialFilterNc(),
+					m_configuration->isFilterDegreeByComponentSums(),
 					*m_advectionOperator->getQuadrature(),
 					*m_advectionOperator->getFe());
 		} else if (m_configuration->getFilteringScheme() == NEW_FILTER) {
@@ -573,9 +574,11 @@ void CFDSolver<dim>::filter() {
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Filter");
 
 	if (m_configuration->isFiltering()) {
-		for (size_t i = 0; i < m_stencil->getQ(); i++) {
-			m_filter->applyFilter(*m_advectionOperator->getDoFHandler(),
-					m_f.at(i));
+		if (m_i % m_configuration->getFilterInterval() == 0) {
+			for (size_t i = 0; i < m_stencil->getQ(); i++) {
+				m_filter->applyFilter(*m_advectionOperator->getDoFHandler(),
+						m_f.at(i));
+			}
 		}
 	}
 }
