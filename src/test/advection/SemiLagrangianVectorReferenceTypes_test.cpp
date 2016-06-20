@@ -137,6 +137,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorSubscript_test) {
 	BOOST_CHECK_EQUAL(f[a], 2.0);
 	BOOST_CHECK_EQUAL(f[b], 3.14);
 	BOOST_CHECK_EQUAL(f[c], 2.7);
+	BOOST_CHECK_EQUAL(f[d], 2.0);
 
 	/*BOOST_CHECK_EQUAL(f(a), 2.0);
 	BOOST_CHECK_EQUAL(f(b), 3.14);
@@ -152,6 +153,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorSubscript_test) {
 BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorCalculateFunctionValue_test) {
 	pout << "SemiLagrangianVectorAccess_operatorCalculateFunctionValue_test" << endl;
 
+	//  create distribution function vectors
 	size_t fe_order = 1;
 	size_t refinementLevel = 3;
 	PeriodicTestDomain2D periodic(refinementLevel);
@@ -177,23 +179,41 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorCalculateFunctionValue_t
 	}
 	DistributionFunctions f_new (vec2);
 
+	// create boundary dof vector
 	SecondaryBoundaryDoFVector sbdv(dof_handler.locally_owned_dofs());
 
+	// create vector access instance
 	SemiLagrangianVectorAccess f(f_old, f_new, sbdv);
 
+	// append boundary dofs
 	GeneralizedDestinationDoF a = sbdv.appendSecondaryBoundaryDoF();
 	GeneralizedDestinationDoF b = sbdv.appendSecondaryBoundaryDoF();
-	GeneralizedDestinationDoF c(false, 1, 1);
-	GeneralizedDestinationDoF d(true, 0, 0);
+	// get references to non-boundary dofs
+	GeneralizedDestinationDoF c(false, dof_handler.locally_owned_dofs().nth_index_in_set(0) ,1 );
+	GeneralizedDestinationDoF d(false, dof_handler.locally_owned_dofs().nth_index_in_set(1) , 1 );
 
+	// compress: resize vector of secondary boundary dofs
 	sbdv.compress();
 
+	// assign values to dofs
 	f[a] = 2.0;
 	f[b] = 3.14;
-	f[c] = 2.7;
+	f_old.at(1)( dof_handler.locally_owned_dofs().nth_index_in_set(0)) = 2.7;
+	f_old.at(1)( dof_handler.locally_owned_dofs().nth_index_in_set(1)) = -1.0;
 
-	//TODO
-	BOOST_CHECK(false);
+	// get/calculate function values
+	FunctionDepartureValue fval(a.getIndex());
+	FunctionDepartureValue fval2;
+	fval2.alpha = 1;
+	fval2.internalDoFs.push_back(dof_handler.locally_owned_dofs().nth_index_in_set(0));
+	fval2.internalDoFs.push_back(dof_handler.locally_owned_dofs().nth_index_in_set(1));
+	fval2.internalValues.push_back(3.0);
+	fval2.internalValues.push_back(2.0);
+
+	// boundary function value
+	BOOST_CHECK_EQUAL(f(fval), 2.0);
+	// internal function value
+	BOOST_CHECK_EQUAL(f(fval2), 2.7 * 3.0 + (-1.0) * 2.0);
 
 	dof_handler.clear();
 

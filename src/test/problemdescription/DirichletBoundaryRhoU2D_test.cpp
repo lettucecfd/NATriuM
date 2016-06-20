@@ -239,11 +239,11 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_makeIncomingDirections_test) {
 BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	pout << "LinearBoundaryRhoU2D_calculate_test..." << endl;
 
+	// make distribution functions
 	size_t fe_order = 1;
 	size_t refinementLevel = 3;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	periodic.refineAndTransform();
-
 	dealii::DoFHandler<2> dof_handler(*periodic.getMesh());
 	dealii::FE_DGQArbitraryNodes<2> fe(
 			dealii::QGaussLobatto<1>(fe_order + 1));
@@ -264,10 +264,17 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	}
 	DistributionFunctions fnew (v2);
 
+	// make vector of secondary boundary dofs
 	SecondaryBoundaryDoFVector sbdv(dof_handler.locally_owned_dofs());
+	GeneralizedDestinationDoF dof_in = sbdv.appendSecondaryBoundaryDoF();
 
+	// make vector access instance
 	SemiLagrangianVectorAccess generalized_f(fold, fnew, sbdv);
 
+	// compress: resize vectors
+	sbdv.compress();
+
+	// make dof out
 	GeneralizedDestinationDoF dof_out(false, 0,1);
 	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
 			*(periodic.getBoundaries()->getBoundary(0)), cell, dof_out);
@@ -277,11 +284,12 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	numeric_vector ub1(2);
 	LinearBoundaryRhoU<2> boundary1(0, ub1);
 	boundary1.makeIncomingDirections(hit, d2q9);
-	GeneralizedDestinationDoF dof_in(false, 0, 3);
-	BOOST_CHECK(false);
-	//TODO Use function values hit.in.push_back(dof_in);
+	FunctionDepartureValue fval(0);
+	hit.in.push_back(fval);
+	generalized_f[dof_in] = 1.1;
+
 	boundary1.calculate(hit, d2q9, 0, generalized_f);
-	BOOST_CHECK_SMALL(generalized_f[dof_out] - 1.0, 1e-15);
+	BOOST_CHECK_SMALL(generalized_f[dof_out] - 1.1, 1e-15);
 
 
 	// velocity BB
@@ -292,14 +300,15 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	ub2(0) = 2.5;
 	LinearBoundaryRhoU<2> boundary2(0, ub2);
 	boundary2.makeIncomingDirections(hit2, d2q9);
-	BOOST_CHECK(false);
-	//TODO Use function values hit.in.push_back(dof_in);
+	hit2.in.push_back(fval);
+	generalized_f[dof_in] = 1.1;
+
 	boundary2.calculate(hit2, d2q9, 0, generalized_f);
-	double expected = 1.0 + 2.0 * 1.0 / 9.0 * 2.5 / (1.0/3.0);
+	double expected = 1.1 + 2.0 * 1.0 / 9.0 * 2.5 / (1.0/3.0);
 	// f_opposite + 2 * stencil.getWeight(boundary_hit.outgoingDirection) * 1
 	// * (ea * velocity) / stencil.getSpeedOfSoundSquare()
 
-	//BOOST_CHECK_SMALL(generalized_f[dof_out] - expected, 1e-15);
+	BOOST_CHECK_SMALL(generalized_f[dof_out] - expected, 1e-15);
 
 	dof_handler.clear();
 	pout << "done" << endl;
