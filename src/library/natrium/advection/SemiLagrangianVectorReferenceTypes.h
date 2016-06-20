@@ -17,8 +17,20 @@ namespace natrium {
 
 typedef dealii::TrilinosWrappers::internal::VectorReference TrilinosVRef;
 
+
+/**
+ * @short A struct representing the value of a distribution function at a Lagrangian departure point.
+ * 		  Depending on whether the departure point is a (secondary) boundary point or an internal point,
+ * 		  the information is represented by a single boundary index or a set of internal degrees of freedom
+ * 		  and shape function values, respectively.
+ *
+ */
 struct FunctionDepartureValue {
+	/**
+	 * @short Indicates whether this instance represents a boundary index or a set of internal DoFs.
+	 */
 	bool isBoundary;
+
 	size_t secondaryBoundaryDoF;
 	vector<double> internalValues;
 	vector<size_t> internalDoFs;
@@ -26,10 +38,13 @@ struct FunctionDepartureValue {
 	FunctionDepartureValue(size_t boundary_dof) :
 			isBoundary(true), secondaryBoundaryDoF(boundary_dof), alpha(0) {
 	}
+	FunctionDepartureValue() :
+			isBoundary(false), secondaryBoundaryDoF(0), alpha(0) {
+	}
 };
 
 /**
- * @short A generalized degree of freedom that can be used for FE degrees of freedom or boundary hits.
+ * @short A generalized degree of freedom that can be used for FE degrees of freedom or secondary boundary hits.
  * The generalized dof is required to describe the propagation of information through Boundary Hits.
  */
 class GeneralizedDestinationDoF {
