@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(ExponentialFilter_Construction2D_test) {
 	dealii::QGaussLobatto<2> quadrature(p + 1);
 	dealii::FE_DGQArbitraryNodes<2> fe(dealii::QGaussLobatto<1>(p + 1));
 
-	ExponentialFilter<2> exp_filter2d(alpha, s, Nc, quadrature, fe);
+	ExponentialFilter<2> exp_filter2d(alpha, s, Nc, false, quadrature, fe);
 
 	pout << "done" << endl;
 }
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(ExponentialFilter_Construction3D_test) {
 	dealii::QGaussLobatto<3> quadrature(p + 1);
 	dealii::FE_DGQArbitraryNodes<3> fe(dealii::QGaussLobatto<1>(p + 1));
 
-	ExponentialFilter<3> exp_filter3d(alpha, s, Nc, quadrature, fe);
+	ExponentialFilter<3> exp_filter3d(alpha, s, Nc, false, quadrature, fe);
 
 	pout << "done" << endl;
 }
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(ExponentialFilter_TestProjection_test) {
 	dealii::QGaussLobatto<1> quadrature(p + 1);
 	dealii::FE_DGQArbitraryNodes<1> fe(dealii::QGaussLobatto<1>(p + 1));
 
-	ExponentialFilter<1> exp_filter1d(alpha, s, Nc, quadrature, fe);
+	ExponentialFilter<1> exp_filter1d(alpha, s, Nc, false, quadrature, fe);
 	numeric_matrix project = exp_filter1d.getProjectToLegendre();
 	numeric_vector dgq_coefficients(p + 1);
 	dgq_coefficients(0) = 0.5;
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(ExponentialFilter_TestFiltering_test) {
 	double alpha = 36;
 	size_t s = 2;
 	size_t Nc = 1;
-	ExponentialFilter<2> exp_filter(alpha, s, Nc, *sedg_operator.getQuadrature(),
+	ExponentialFilter<2> exp_filter(alpha, s, Nc, false, *sedg_operator.getQuadrature(),
 			*sedg_operator.getFe());
 	exp_filter.applyFilter(*sedg_operator.getDoFHandler(), vec);
 	std::ofstream out_file2("/tmp/natrium_filtered.vtu");

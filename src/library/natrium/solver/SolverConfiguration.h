@@ -33,8 +33,7 @@ namespace natrium {
  * @short Implemented streaming data types
  */
 enum AdvectionSchemeName {
-	SEDG,
-	SEMI_LAGRANGIAN
+	SEDG, SEMI_LAGRANGIAN
 };
 
 /**
@@ -199,10 +198,11 @@ public:
 	 */
 	void checkProblem(boost::shared_ptr<ProblemDescription<2> > problem) {
 		// make sure that the mesh does not have refined cells, refinement has to be done via ProblemDescription::refine()
-		if (problem->getMesh()->n_levels() != 1){
-			throw ConfigurationException("The mesh in your ProblemDescription must not have refined cells "
-					"upon initialization of the solver. Please implement the initial mesh refinement only by "
-					"overriding the virtual function void ProblemDescription::refine().");
+		if (problem->getMesh()->n_levels() != 1) {
+			throw ConfigurationException(
+					"The mesh in your ProblemDescription must not have refined cells "
+							"upon initialization of the solver. Please implement the initial mesh refinement only by "
+							"overriding the virtual function void ProblemDescription::refine().");
 		}
 
 	}
@@ -216,10 +216,11 @@ public:
 	 */
 	void checkProblem(boost::shared_ptr<ProblemDescription<3> > problem) {
 		// make sure that the mesh does not have refined cells, refinement has to be done via ProblemDescription::refineAndTransform()
-		if (problem->getMesh()->n_levels() != 1){
-			throw ConfigurationException("The mesh in your ProblemDescription must not have refined cells "
-					"upon initialization of the solver. Please implement the initial mesh refinement only by "
-					"overriding the virtual function void ProblemDescription::refine().");
+		if (problem->getMesh()->n_levels() != 1) {
+			throw ConfigurationException(
+					"The mesh in your ProblemDescription must not have refined cells "
+							"upon initialization of the solver. Please implement the initial mesh refinement only by "
+							"overriding the virtual function void ProblemDescription::refine().");
 		}
 	}
 
@@ -270,7 +271,7 @@ public:
 		leave_subsection();
 		if ("SEDG" == advectionScheme) {
 			return SEDG;
-		} else if ("Semi-Lagrangian" == advectionScheme){
+		} else if ("Semi-Lagrangian" == advectionScheme) {
 			return SEMI_LAGRANGIAN;
 		} else {
 			std::stringstream msg;
@@ -702,6 +703,44 @@ public:
 		}
 
 	}
+
+	void setFilterInterval(long int interval) {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		try {
+			set("Filter interval", interval);
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg << "Could not assign value " << interval
+					<< " to Filter interval: " << e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+	}
+
+	size_t getFilterInterval() {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		size_t interval;
+		try {
+			interval = get_double("Filter interval");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Filter interval' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return interval;
+	}
+
 	void setExponentialFilterAlpha(double alpha) {
 		enter_subsection("Filtering");
 		enter_subsection("Filter parameters");
@@ -805,6 +844,33 @@ public:
 		leave_subsection();
 		leave_subsection();
 		return Nc;
+	}
+
+	void setFilterDegreeByComponentSums(bool by_sums) {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		set("Degree by component sums", by_sums);
+		leave_subsection();
+		leave_subsection();
+	}
+	bool isFilterDegreeByComponentSums() {
+		enter_subsection("Filtering");
+		enter_subsection("Filter parameters");
+		bool by_sums;
+		try {
+			by_sums = get_bool("Degree by component sums");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Degree by component sums' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return by_sums;
 	}
 
 	InitializationSchemeName getInitializationScheme() {
@@ -1165,8 +1231,7 @@ public:
 			set("Restart at iteration", restart_it);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg
-					<< "Could not set parameter 'Restart at iteration': "
+			msg << "Could not set parameter 'Restart at iteration': "
 					<< e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
@@ -1777,8 +1842,7 @@ public:
 			set("CFL", cfl);
 		} catch (std::exception& e) {
 			std::stringstream msg;
-			msg << "Could not assign value " << cfl
-					<< " to CFL: " << e.what();
+			msg << "Could not assign value " << cfl << " to CFL: " << e.what();
 			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}
