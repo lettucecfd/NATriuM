@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 
 	pout
 			<< "Usage: ./step-16 <Re=800> <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> "
-					"<filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=1.0> <stencil-id=0 (D3Q15: 0; D3Q19: 1; D3Q27: 2)>"
+					"<semi_lagrange=0> <integrator-id=1> <CFL=1.0> <stencil-id=0 (D3Q15: 0; D3Q19: 1; D3Q27: 2)> <filter=0>"
 			<< endl;
 
 	double Re = 800;
@@ -68,11 +68,11 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Coll:  " << collision_id << endl;
 
-	size_t filter_id = 0;
+	size_t semi_lagrange = 0;
 	if (argc >= 6) {
-		filter_id = std::atoi(argv[5]);
+		semi_lagrange = std::atoi(argv[5]);
 	}
-	pout << "... Filter:  " << filter_id << endl;
+	pout << "... Semi_Lagrange:  " << semi_lagrange << endl;
 
 	size_t integrator_id = 1;
 	if (argc >= 7) {
@@ -100,21 +100,25 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Sten:  " << stencil_id << endl;
 
+	size_t filter = 0;
+	if (argc >= 10) {
+		filter = std::atoi(argv[9]);
+	}
+	pout << "... Filter:  " << filter << endl;
+
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 
-	// Re = viscosity/(2*pi)
-	const double U = 2 * M_PI;
-	const double viscosity = 1. / Re;
-	// C-E-approach: constant stencil scaling
-	// specify Mach number
+	// ist im Paper von Gassner und Beck so definiert !!!!!
+	const double U = 1/(2*M_PI);
+	const double L = 2 * M_PI;
+	const double viscosity = U * L / Re;
 	const double Ma = 0.1;
 	const double cs = U / Ma;
-	// zunaechst: fixed order of FE
 
 	// chose scaling so that the right Ma-number is achieved
-	const double scaling = sqrt(3) * U / Ma;
+	const double scaling = sqrt(3) * cs;
 	const bool init_rho_analytically = true;
 
 	boost::shared_ptr<ProblemDescription<3> > taylorGreen = boost::make_shared<
@@ -129,23 +133,21 @@ int main(int argc, char** argv) {
 	} else if (stencil_id == 2){
 		st = boost::make_shared<D3Q27>(scaling);
 	}
-	double dt = CFDSolverUtilities::calculateTimestep<3>(
-			*taylorGreen->getMesh(), p, *st, CFL);
 
 	// setup configuration
 	std::stringstream dirName;
 	dirName << getenv("NATRIUM_HOME") << "/step-TGV3D/Re" << Re << "-ref"
-			<< refinement_level << "-p" << p << "-coll" << collision_id << "-f"
-			<< filter_id << "-int" << integrator_id << "-CFL" << CFL << "-sten" << stencil_id;
+			<< refinement_level << "-p" << p << "-coll" << collision_id << "-sl"
+			<< semi_lagrange << "-int" << integrator_id << "-CFL" << CFL << "-sten" << stencil_id << "-filt" << filter << "by_max_degree";
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setSwitchOutputOff(true);
 	configuration->setOutputDirectory(dirName.str());
 	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
-	configuration->setOutputTableInterval(10);
+	configuration->setOutputTableInterval(1);
 	configuration->setOutputCheckpointInterval(10000);
-	configuration->setOutputSolutionInterval(1000);
+	configuration->setOutputSolutionInterval(100);
 	configuration->setSimulationEndTime(10.0);
 	configuration->setInitializationScheme(EQUILIBRIUM);
 	configuration->setSedgOrderOfFiniteElement(p);
@@ -158,16 +160,21 @@ int main(int argc, char** argv) {
 	}
 	//configuration->setCommandLineVerbosity(BASIC);
 	configuration->setCFL(CFL);
-	if (dt > 0.1) {
-		pout << "Timestep too big." << endl;
-	}
 	if (collision_id == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
 	}
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
-	if (filter_id == 1) {
-		configuration->setFiltering(EXPONENTIAL_FILTER);
+	if (semi_lagrange == 1) {
+		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	}
+	if (filter == 1){
+		configuration->setFiltering(true);
+		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
+		configuration->setExponentialFilterAlpha(36);
+		configuration->setExponentialFilterS(32);
+		configuration->setExponentialFilterNc(4);
+
 	}
 
 	//configuration->setNumberOfTimeSteps(1.0 / dt);

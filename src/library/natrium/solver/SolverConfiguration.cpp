@@ -31,8 +31,8 @@ SolverConfiguration::SolverConfiguration() {
 	enter_subsection("Advection");
 	{
 		declare_entry("Advection scheme", "SEDG",
-				dealii::Patterns::Selection("SEDG"),
-				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme.");
+				dealii::Patterns::Selection("SEDG|Semi-Lagrangian"),
+				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme. SEDG stands for spectral element discontinuous Galerkin. Note that the Semi-Lagrangian streaming does not require a time integrator.");
 		declare_entry("Time integrator", "Runge-Kutta 5-stage",
 				dealii::Patterns::Selection(
 						"Runge-Kutta 5-stage|Theta method|Exponential|Other"),
@@ -81,11 +81,9 @@ SolverConfiguration::SolverConfiguration() {
 			declare_entry("Refinement parameter", "0.8",
 					dealii::Patterns::Double(0, 1),
 					"Parameter for the embedded deal.II methods. This parameter is the factor (<1) by which the time step is multiplied when the time stepping must be refined.");
-			declare_entry("Minimum CFL", "10",
-					dealii::Patterns::Double(),
+			declare_entry("Minimum CFL", "10", dealii::Patterns::Double(),
 					"Parameter for the embedded deal.II methods. Smallest CFL allowed.");
-			declare_entry("Maximum CFL", "0.05",
-					dealii::Patterns::Double(),
+			declare_entry("Maximum CFL", "0.05", dealii::Patterns::Double(),
 					"Parameter for the embedded deal.II methods. Largest CFL allowed.");
 			declare_entry("Refinement tolerance", "1e-8",
 					dealii::Patterns::Double(),
@@ -140,12 +138,23 @@ SolverConfiguration::SolverConfiguration() {
 				"A filter that dampens the high-frequent oscillations from the distribution functions.");
 		enter_subsection("Filter parameters");
 		{
+			declare_entry("Filter interval", "1",
+					dealii::Patterns::Integer(1, 10000000),
+					"The filter is applied each ... time step.");
 			declare_entry("Exponential alpha", "10.0",
 					dealii::Patterns::Double(0, 1e10),
-					"The exponential filter is defined exp(-alpha * poly_degree ^ s");
+					"The exponential filter is defined exp(-alpha * ((poly_degree + 1 -Nc) / (max_poly_degree + 1 -Nc)) ^ s");
 			declare_entry("Exponential s", "20.0",
 					dealii::Patterns::Double(0, 1e10),
-					"The exponential filter is defined exp(-alpha * poly_degree ^ s");
+					"The exponential filter is defined exp(-alpha * ((poly_degree + 1 -Nc) / (max_poly_degree + 1 -Nc)) ^ s");
+			declare_entry("Exponential Nc", "1",
+					dealii::Patterns::Integer(1, 50),
+					"First polynomial degree that is filtered in the exponential filter, Nc.");
+			declare_entry("Degree by component sums", "false",
+					dealii::Patterns::Bool(),
+					"If true, the degree of the polynomial is calculated as the sum of the one-dimensional degrees, "
+					"which creates a much more dissipative filter."
+					"Otherwise (default) the degree is calculated as the maximum degree of the one-dimensional shape functions.");
 		}
 		leave_subsection();
 	}

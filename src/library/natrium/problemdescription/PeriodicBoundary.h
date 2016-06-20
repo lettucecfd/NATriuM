@@ -38,13 +38,15 @@ public:
 	PeriodicBoundaryNotPossible(const char *msg,
 			const std::stringstream & additionalInfo = std::stringstream()) :
 			NATriuMException(msg), message(msg) {
-		LOG(DETAILED) << "Additional information on error: " << additionalInfo.str().c_str() << endl;
+		LOG(DETAILED) << "Additional information on error: "
+				<< additionalInfo.str().c_str() << endl;
 
 	}
 	PeriodicBoundaryNotPossible(const string& msg,
 			const std::stringstream & additionalInfo = std::stringstream()) :
 			NATriuMException(msg), message(msg) {
-		LOG(DETAILED) << "Additional information on error: " << additionalInfo.str().c_str() << endl;
+		LOG(DETAILED) << "Additional information on error: "
+				<< additionalInfo.str().c_str() << endl;
 	}
 	~PeriodicBoundaryNotPossible() throw () {
 	}
@@ -52,7 +54,6 @@ public:
 		return this->message.c_str();
 	}
 };
-
 
 /**
  * @short  A periodic boundary condition. Periodic boundaries have to be set before the grid is refined!
@@ -122,8 +123,8 @@ public:
 	 *  @param boundaryIndicator2 boundary indicator of interface line 2
 	 *  @param triangulation A (shared ptr to a) triangulation object (the mesh)
 	 */
-	PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction,
-			boost::shared_ptr<Mesh<dim> > triangulation);
+	PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2,
+			size_t direction, boost::shared_ptr<Mesh<dim> > triangulation);
 
 	/// destructor
 	virtual ~PeriodicBoundary();
@@ -160,7 +161,6 @@ public:
 	 */
 	void createCellMap(const dealii::DoFHandler<dim>& doFHandler);
 
-
 	/** @short
 	 * check if all cells in the cell map have appropriate boundary indicators
 	 */
@@ -170,13 +170,20 @@ public:
 	 * @short This function does nothing; just to satisfy the interface.
 	 * 		  The Periodic Boundary conditions are directly incorporated in make_sparser_flux_sparsity_pattern
 	 */
-	void addToSparsityPattern(dealii::BlockDynamicSparsityPattern& ,
-			size_t , size_t ,
-			size_t ) const;
+	void addToSparsityPattern(dealii::BlockDynamicSparsityPattern&, size_t,
+			size_t, size_t) const;
 
-	/////////////////////////////////
-	// GETTER     // SETTER        //
-	/////////////////////////////////
+	/**
+	 * Transform a point into its equivalent across the periodic boundary
+	 */
+	dealii::Point<dim> coordinatesAcrossPeriodicBoundary(
+			const dealii::Point<dim>& p,
+			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
+	//TODO should be inlined
+
+/////////////////////////////////
+// GETTER     // SETTER        //
+/////////////////////////////////
 
 	const boost::shared_ptr<Mesh<dim> >& getMesh() const {
 		return m_triangulation;
@@ -201,7 +208,8 @@ public:
 	const boost::shared_ptr<Mesh<dim> >& getTriangulation() const {
 		return m_triangulation;
 	}
-};
+}
+;
 /* PeriodicBoundary1D */
 
 } /* namespace natrium */

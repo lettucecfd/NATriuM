@@ -13,11 +13,11 @@
 namespace natrium {
 
 template<size_t dim>
-ExponentialFilter<dim>::ExponentialFilter(double alpha, double s,
-		const dealii::Quadrature<dim>& quadrature,
+ExponentialFilter<dim>::ExponentialFilter(double alpha, double s, size_t Nc,
+		bool by_sum, const dealii::Quadrature<dim>& quadrature,
 		const dealii::FE_DGQ<dim>& fe) :
-		m_alpha(alpha), m_s(s), m_p(fe.get_degree()), m_quadrature(quadrature), m_sourceFE(
-				fe), m_legendre1D(0), m_projectToLegendre(
+		m_alpha(alpha), m_s(s), m_Nc(Nc), m_bySum(by_sum), m_p(fe.get_degree()), m_quadrature(
+				quadrature), m_sourceFE(fe), m_legendre1D(0), m_projectToLegendre(
 				pow(m_sourceFE.get_degree() + 1, dim)), m_projectFromLegendre(
 				pow(m_sourceFE.get_degree() + 1, dim)) {
 	m_legendre1D = dealii::Polynomials::Legendre::generate_complete_basis(m_p);
@@ -94,9 +94,9 @@ inline double natrium::ExponentialFilter<3>::evaluateLegendreND(size_t i,
 
 template<>
 inline void ExponentialFilter<1>::makeDegreeVectors(size_t p) {
-	m_degreeMax.resize(p+1);
-	m_degreeSum.resize(p+1);
-	for (size_t i = 0; i < p+1; i++) {
+	m_degreeMax.resize(p + 1);
+	m_degreeSum.resize(p + 1);
+	for (size_t i = 0; i < p + 1; i++) {
 		m_degreeMax.at(i) = i;
 		m_degreeSum.at(i) = i;
 	}
@@ -104,11 +104,11 @@ inline void ExponentialFilter<1>::makeDegreeVectors(size_t p) {
 
 template<>
 inline void ExponentialFilter<2>::makeDegreeVectors(size_t p) {
-	m_degreeMax.resize((p+1) * (p+1));
-	m_degreeSum.resize((p+1) * (p+1));
-	for (size_t i = 0; i < (p+1) * (p+1); i++) {
-		size_t ix = i / (p+1);
-		size_t iy = i % (p+1);
+	m_degreeMax.resize((p + 1) * (p + 1));
+	m_degreeSum.resize((p + 1) * (p + 1));
+	for (size_t i = 0; i < (p + 1) * (p + 1); i++) {
+		size_t ix = i / (p + 1);
+		size_t iy = i % (p + 1);
 		size_t max = ix;
 		if (iy > max)
 			max = iy;
@@ -119,15 +119,15 @@ inline void ExponentialFilter<2>::makeDegreeVectors(size_t p) {
 
 template<>
 inline void ExponentialFilter<3>::makeDegreeVectors(size_t p) {
-	m_degreeMax.resize((p+1)*(p+1)*(p+1));
-	m_degreeSum.resize((p+1)*(p+1)*(p+1));
-	for (size_t i = 0; i < (p+1)*(p+1)*(p+1); i++) {
-		size_t ix = i / ((p+1) * (p+1));
+	m_degreeMax.resize((p + 1) * (p + 1) * (p + 1));
+	m_degreeSum.resize((p + 1) * (p + 1) * (p + 1));
+	for (size_t i = 0; i < (p + 1) * (p + 1) * (p + 1); i++) {
+		size_t ix = i / ((p + 1) * (p + 1));
 		size_t max = ix;
-		size_t iy = i / (p+1);
+		size_t iy = i / (p + 1);
 		if (iy > max)
 			max = iy;
-		size_t iz = i % (p+1);
+		size_t iz = i % (p + 1);
 		if (iz > max)
 			max = iz;
 		m_degreeMax.at(i) = max;
@@ -145,7 +145,9 @@ void ExponentialFilter<dim>::applyFilter(
 			dofs_per_cell);
 	numeric_vector source_fe_dofs(dofs_per_cell);
 	numeric_vector legendre_dofs(dofs_per_cell);
-	size_t max_degree = dim*m_p;
+	size_t max_degree = m_p;
+	if (m_bySum)
+		max_degree = dim * m_p;
 	double sigma = 0.0; // filter scaling
 
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
@@ -163,8 +165,19 @@ void ExponentialFilter<dim>::applyFilter(
 
 			// apply exponential filtering
 			for (size_t i = 0; i < dofs_per_cell; i++) {
-				sigma = std::exp( - m_alpha * pow( ((double) m_degreeSum.at(i)) / ((double) max_degree), m_s));
-				legendre_dofs(i) = sigma * legendre_dofs(i);
+				size_t degree = m_degreeMax.at(i);
+				if (m_bySum)
+					degree = m_degreeSum.at(i);
+
+				if (degree >= m_Nc) {
+					sigma = std::exp(
+							-m_alpha
+									* pow(
+											((double) degree + 1 - m_Nc)
+													/ ((double) max_degree + 1
+															- m_Nc), m_s));
+					legendre_dofs(i) = sigma * legendre_dofs(i);
+				}
 			}
 
 			// project back to original basis
