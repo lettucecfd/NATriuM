@@ -19,6 +19,7 @@
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
+#include "../solver/SolverConfiguration.h"
 
 namespace natrium {
 

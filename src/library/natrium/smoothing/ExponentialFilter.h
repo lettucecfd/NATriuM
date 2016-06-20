@@ -18,11 +18,16 @@
 
 namespace natrium {
 
-template <size_t dim>
+/**
+ * @short Filter from Gassner and Beck (2011)
+ */
+template<size_t dim>
 class ExponentialFilter: public Filter<dim> {
 private:
 	double m_alpha;
 	double m_s;
+	size_t m_Nc;
+	bool m_bySum;
 
 	size_t m_p;
 	const dealii::Quadrature<dim>& m_quadrature;
@@ -41,8 +46,8 @@ private:
 	vector<size_t> m_degreeSum;
 	vector<size_t> m_degreeMax;
 
-
-	void makeProjectionMatrices(numeric_matrix& to_legendre, numeric_matrix& from_legendre);
+	void makeProjectionMatrices(numeric_matrix& to_legendre,
+			numeric_matrix& from_legendre);
 	void makeDegreeVectors(size_t p);
 
 	/**
@@ -51,11 +56,15 @@ private:
 	 */
 	double evaluateLegendreND(size_t i, const dealii::Point<dim>& x);
 
-
 public:
-	ExponentialFilter(double alpha, double s, const dealii::Quadrature<dim>& quadrature, const dealii::FE_DGQ<dim>& fe);
-	virtual ~ExponentialFilter(){};
-	virtual void applyFilter(const dealii::DoFHandler<dim>& dof_handler, distributed_vector& dof_vector);
+	ExponentialFilter(double alpha, double s, size_t Nc, bool by_sum,
+			const dealii::Quadrature<dim>& quadrature,
+			const dealii::FE_DGQ<dim>& fe);
+	virtual ~ExponentialFilter() {
+	}
+	;
+	virtual void applyFilter(const dealii::DoFHandler<dim>& dof_handler,
+			distributed_vector& dof_vector);
 
 	double getAlpha() const {
 		return m_alpha;
@@ -87,6 +96,5 @@ public:
 };
 
 } /* namespace natrium */
-
 
 #endif /* LIBRARY_NATRIUM_SMOOTHING_EXPONENTIALFILTER_H_ */

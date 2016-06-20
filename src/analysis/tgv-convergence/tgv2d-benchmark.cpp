@@ -24,6 +24,7 @@
 
 using namespace natrium;
 
+
 // Main function
 int main(int argc, char** argv) {
 
@@ -39,13 +40,14 @@ int main(int argc, char** argv) {
 	const double CFL = atof(argv[6]);
 	const double collision = atoi(argv[7]);
 	const double init_rho_analytically = atoi(argv[8]);
+	const int semi_lagrange = atoi(argv[9]);
 	double refine_tol = 1e-7;
 	double coarsen_tol = 1e-8;
-	if (argc > 9) {
-		refine_tol = atof(argv[9]);
-	}
 	if (argc > 10) {
 		refine_tol = atof(argv[10]);
+	}
+	if (argc > 11) {
+		refine_tol = atof(argv[11]);
 	}
 
 	/////////////////////////////////////////////////
@@ -64,8 +66,6 @@ int main(int argc, char** argv) {
 	pout << "-------------------------------------" << endl;
 	boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
 			TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
-	double delta_t = CFDSolverUtilities::calculateTimestep<2>(*(tgv->getMesh()),
-			p, D2Q9(scaling), CFL);
 
 	// setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
@@ -76,6 +76,9 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
+	if (semi_lagrange == 1){
+		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	}
 	configuration->setCFL(CFL);
 	if (collision == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
@@ -88,12 +91,14 @@ int main(int argc, char** argv) {
 	// exp(-2vt) = 1/10
 	configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
 	BenchmarkCFDSolver<2> solver(configuration, tgv);
+	double delta_t = solver.getTimeStepSize();
 
 	try {
 
 		double timestart = clock();
 		solver.run();
 		double runtime = clock() - timestart;
+		runtime /= CLOCKS_PER_SEC;
 		solver.getErrorStats()->update();
 		solver.getSolverStats()->update();
 		double kinE_num = solver.getSolverStats()->getKinE();

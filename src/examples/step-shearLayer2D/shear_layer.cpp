@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	pout
 
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <filter=0 (no: 0, exp: 1, new: 2> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0> <filter=0> <filter_s=32>"
 			<< endl;
 
 	size_t refinement_level = 3;
@@ -58,11 +58,11 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Coll:  " << collision_id << endl;
 
-	size_t filter_id = 0;
+	size_t semi_lagrange = 0;
 	if (argc >= 5) {
-		filter_id = std::atoi(argv[4]);
+		semi_lagrange = std::atoi(argv[4]);
 	}
-	pout << "... Filter:  " << filter_id << endl;
+	pout << "... Semi-Lagrange:  " << semi_lagrange << endl;
 
 	size_t integrator_id = 1;
 	if (argc >= 6) {
@@ -82,12 +82,25 @@ int main(int argc, char** argv) {
 	}
 	pout << "... stencil_scaling:  " << stencil_scaling << endl;
 
+	size_t filter = 0;
+	if (argc >= 9) {
+		filter = std::atof(argv[8]);
+	}
+	pout << "... Filter:  " << filter << endl;
+
+	size_t filter_s = 0;
+	if (argc >= 10) {
+		filter_s = std::atof(argv[9]);
+	}
+	pout << "... Filter s:  " << filter_s << endl;
+
 	// get integrator
 	TimeIntegratorName time_integrator;
 	DealIntegratorName deal_integrator;
 	string integrator_name;
 	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
 			deal_integrator, integrator_name);
+
 	pout << "... that is the " << integrator_name << endl;
 	pout << "-------------------------------------" << endl;
 
@@ -104,12 +117,13 @@ int main(int argc, char** argv) {
 	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
 			ShearLayer2D>(viscosity, refinement_level, u0, kappa);
 	/*double delta_t = CFDSolverUtilities::calculateTimestep<2>(
-			*(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
+	 *(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
 
 	// **** Grid properties ****
 	pout << "**** Grid properties ****" << endl;
-	int noCellsInOneDir	= p * pow( 2, refinement_level + 1 );
-	pout << "Mesh resolution: " << noCellsInOneDir << "x" << noCellsInOneDir << endl;
+	int noCellsInOneDir = p * pow(2, refinement_level + 1);
+	pout << "Mesh resolution: " << noCellsInOneDir << "x" << noCellsInOneDir
+			<< endl;
 	pout << "Number of grid points: " << pow(noCellsInOneDir, 2) << endl;
 	pout << "-------------------------------------" << endl;
 
@@ -118,7 +132,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setRestartAtIteration(500);
+	//configuration->setRestartAtIteration(500);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
@@ -127,9 +141,10 @@ int main(int argc, char** argv) {
 	configuration->setOutputCheckpointInterval(100);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
-			<< "-p" << p << "-filt" << filter_id << "-coll" << collision_id << "-int" << integrator_id
-			<< "-CFL" << CFL << "-scaling" << stencil_scaling;
-	configuration->setOutputDirectory("./parameters");
+			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
+			<< "-int" << integrator_id << "-CFL" << CFL << "-scaling"
+			<< stencil_scaling << "-filter" << filter << "-filt_s" << filter_s;
+	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(500000);
 	configuration->setSedgOrderOfFiniteElement(p);
@@ -144,15 +159,16 @@ int main(int argc, char** argv) {
 		configuration->setCollisionScheme(KBC_STANDARD);
 	}
 
-	if (filter_id == 1) {
+	if (semi_lagrange == 1)
+		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+
+	if (filter == 1) {
 		configuration->setFiltering(true);
 		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
-
-	} else if (filter_id == 2) {
-		configuration->setFiltering(true);
-		configuration->setFilteringScheme(NEW_FILTER);
+		configuration->setExponentialFilterAlpha(36);
+		configuration->setExponentialFilterS(filter_s);
+		configuration->setExponentialFilterNc(4);
 	}
-	//configuration->setFiltering(true);
 
 	pout << "Simulation end time will be t_c = " << t_c << endl;
 	// ========================================================================
@@ -161,12 +177,6 @@ int main(int argc, char** argv) {
 	CFDSolver<2> solver(configuration, shear_layer);
 
 	solver.run();
-
-/*	configuration->setTimeStepSize(3*delta_t);
-	configuration->setRestartAtLastCheckpoint(false);
-	configuration->setSimulationEndTime(t_c*(1-1./10));
-	CFDSolver<2> solver2(configuration, shear_layer);
-	solver2.run();*/
 
 	// ========================================================================
 	// FINAL OUTPUT

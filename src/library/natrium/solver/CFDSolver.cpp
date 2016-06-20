@@ -28,6 +28,9 @@
 #include "../stencils/D3Q27.h"
 #include "../stencils/Stencil.h"
 
+#include "../advection/SEDGMinLee.h"
+#include "../advection/SemiLagrangian.h"
+
 #include "../collision/BGKStandard.h"
 #include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
@@ -157,6 +160,16 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		} catch (AdvectionSolverException & e) {
 			natrium_errorexit(e.what());
 		}
+	} else if (SEMI_LAGRANGIAN == configuration->getAdvectionScheme()) {
+		try {
+			m_advectionOperator = boost::make_shared<SemiLagrangian<dim> >(
+					m_problemDescription->getMesh(),
+					m_problemDescription->getBoundaries(),
+					configuration->getSedgOrderOfFiniteElement(), m_stencil,
+					0.0);
+		} catch (AdvectionSolverException & e) {
+			natrium_errorexit(e.what());
+		}
 	}
 	// Refine mesh, Build DoF system (by reading from restart file)
 	if (checkpoint) {
@@ -174,14 +187,20 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_time = 0;
 	}
 	m_i = m_iterationStart;
-	// assemble advection operator
-	m_advectionOperator->reassemble();
 
 	// set time step size
 	double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
 			*(m_problemDescription->getMesh()),
 			m_configuration->getSedgOrderOfFiniteElement(), *m_stencil,
 			configuration->getCFL());
+
+	// assemble advection operator
+	// upon setDeltaT, the semi-Lagrangian updates the sparsity pattern
+	{
+		TimerOutput::Scope timer_section(Timing::getTimer(), "Assembly");
+		m_advectionOperator->setDeltaT(delta_t);
+		m_advectionOperator->reassemble();
+	}
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
@@ -324,6 +343,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			m_filter = boost::make_shared<ExponentialFilter<dim> >(
 					m_configuration->getExponentialFilterAlpha(),
 					m_configuration->getExponentialFilterS(),
+					m_configuration->getExponentialFilterNc(),
+					m_configuration->isFilterDegreeByComponentSums(),
 					*m_advectionOperator->getQuadrature(),
 					*m_advectionOperator->getFe());
 		} else if (m_configuration->getFilteringScheme() == NEW_FILTER) {
@@ -361,12 +382,20 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "Sound speed:              " << m_stencil->getSpeedOfSound()
 			<< endl;
 //TODO propose optimal cfl based on time integrator
-	const double optimal_cfl = 0.4;
-	LOG(WELCOME) << "Recommended dt (CFL 0.4): "
-			<< CFDSolverUtilities::calculateTimestep<dim>(
-					*m_problemDescription->getMesh(),
-					configuration->getSedgOrderOfFiniteElement(), *m_stencil,
-					optimal_cfl) << " s" << endl;
+	LOG(WELCOME) << "----------------------------" << endl;
+	LOG(WELCOME) << "== ADVECTION ==          " << endl;
+	if (SEMI_LAGRANGIAN == configuration->getAdvectionScheme()) {
+		LOG(WELCOME) << "Semi-Lagrangian advection" << endl;
+		LOG(WELCOME) << "Semi-Lagrangian advection" << endl;
+	} else if (SEDG == configuration->getAdvectionScheme()) {
+		LOG(WELCOME) << "Spectral-element discontinuous Galerkin" << endl;
+		const double optimal_cfl = 0.4;
+		LOG(WELCOME) << "Recommended dt (CFL 0.4): "
+				<< CFDSolverUtilities::calculateTimestep<dim>(
+						*m_problemDescription->getMesh(),
+						configuration->getSedgOrderOfFiniteElement(),
+						*m_stencil, optimal_cfl) << " s" << endl;
+	}
 	LOG(WELCOME) << "Actual dt:                " << delta_t << " s" << endl;
 	LOG(WELCOME) << "CFL number:               " << configuration->getCFL()
 			<< endl;
@@ -503,14 +532,24 @@ void CFDSolver<dim>::stream() {
 	m_boundaryVector = m_advectionOperator->getSystemVector();
 
 //try {
-	double new_dt = m_timeIntegrator->step(f, systemMatrix, m_boundaryVector,
-			0.0, m_timeIntegrator->getTimeStepSize());
-	m_timeIntegrator->setTimeStepSize(new_dt);
-	m_time += new_dt;
+	if (SEMI_LAGRANGIAN == m_configuration->getAdvectionScheme()) {
+		distributed_block_vector f_tmp(f.n_blocks());
+		reinitVector(f_tmp, f);
+		f_tmp = f;
+		//f_tmp.reinit(f);
+		systemMatrix.vmult(f, f_tmp);
+		//f += m_boundaryVector;
+		m_time += getTimeStepSize();
+	} else {
+		double new_dt = m_timeIntegrator->step(f, systemMatrix,
+				m_boundaryVector, 0.0, m_timeIntegrator->getTimeStepSize());
+		m_timeIntegrator->setTimeStepSize(new_dt);
+		m_time += new_dt;
+		m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
+	}
 //} catch (std::exception& e) {
 //	natrium_errorexit(e.what());
 //}
-	m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
 }
 
 template<size_t dim>
@@ -531,7 +570,7 @@ template<size_t dim>
 void CFDSolver<dim>::reassemble() {
 
 // start timer
-	TimerOutput::Scope timer_section(Timing::getTimer(), "Reassemble");
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Reassembly");
 
 	try {
 		m_advectionOperator->reassemble();
@@ -547,9 +586,11 @@ void CFDSolver<dim>::filter() {
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Filter");
 
 	if (m_configuration->isFiltering()) {
-		for (size_t i = 0; i < m_stencil->getQ(); i++) {
-			m_filter->applyFilter(*m_advectionOperator->getDoFHandler(),
-					m_f.at(i));
+		if (m_i % m_configuration->getFilterInterval() == 0) {
+			for (size_t i = 0; i < m_stencil->getQ(); i++) {
+				m_filter->applyFilter(*m_advectionOperator->getDoFHandler(),
+						m_f.at(i));
+			}
 		}
 	}
 }
@@ -742,7 +783,8 @@ void CFDSolver<dim>::output(size_t iteration) {
 			checkpoint_status.iterationNumber = m_i;
 			checkpoint_status.stencilScaling = m_stencil->getScaling();
 			checkpoint_status.time = m_time;
-			checkpoint_status.feOrder = m_configuration->getSedgOrderOfFiniteElement();
+			checkpoint_status.feOrder =
+					m_configuration->getSedgOrderOfFiniteElement();
 			checkpoint.write(*m_problemDescription->getMesh(), m_f,
 					*m_advectionOperator->getDoFHandler(), checkpoint_status);
 		} /*if checkpoint interval*/
@@ -852,7 +894,6 @@ void CFDSolver<dim>::initializeDistributions() {
 
 	LOG(BASIC) << "Initialize distribution functions: done." << endl;
 }
-
 
 template<size_t dim>
 void natrium::CFDSolver<dim>::applyInitialDensities(
@@ -1017,14 +1058,16 @@ void CFDSolver<dim>::calculateDensitiesAndVelocities() {
 template<size_t dim>
 void CFDSolver<dim>::convertDeprecatedCheckpoint() {
 	// load
-	boost::filesystem::path checkpoint_dir(	m_configuration->getOutputDirectory());
+	boost::filesystem::path checkpoint_dir(
+			m_configuration->getOutputDirectory());
 	checkpoint_dir /= "checkpoint";
 	CheckpointStatus checkpoint_status;
 	Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(m_f,
 			*m_advectionOperator, checkpoint_dir.string(), checkpoint_status);
 
 	// save
-	Checkpoint<dim> checkpoint(checkpoint_status.iterationNumber, checkpoint_dir);
+	Checkpoint<dim> checkpoint(checkpoint_status.iterationNumber,
+			checkpoint_dir);
 	checkpoint.write(*m_problemDescription->getMesh(), m_f,
 			*m_advectionOperator->getDoFHandler(), checkpoint_status);
 }
