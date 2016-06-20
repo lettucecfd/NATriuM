@@ -12,6 +12,7 @@
 #include "deal.II/lac/sparsity_pattern.h"
 #include "deal.II/lac/compressed_sparsity_pattern.h"
 
+#include "natrium/benchmarks/AdvectionBenchmark.h"
 #include "natrium/utilities/BasicNames.h"
 
 namespace natrium {

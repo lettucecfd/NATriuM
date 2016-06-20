@@ -124,7 +124,7 @@ inline void ExponentialFilter<3>::makeDegreeVectors(size_t p) {
 	for (size_t i = 0; i < (p + 1) * (p + 1) * (p + 1); i++) {
 		size_t ix = i / ((p + 1) * (p + 1));
 		size_t max = ix;
-		size_t iy = i / (p + 1);
+		size_t iy = ( i % (p+1) * (p+1) ) / (p + 1);
 		if (iy > max)
 			max = iy;
 		size_t iz = i % (p + 1);

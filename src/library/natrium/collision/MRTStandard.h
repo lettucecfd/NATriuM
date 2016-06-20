@@ -63,13 +63,15 @@ public:
 		return D;
 	}
 
+	// for D2Q9 only s(1) and s(2) should be adjusted to the specific needs
 	vector<double> setRelaxationRates() const {
 		vector<double> s(9);
 		s.at(0) = s.at(3) = s.at(5) = 0.0;
 		s.at(7) = s.at(8) = - 1.0 / getPrefactor();
 		s.at(4) = s.at(6) = 8.0 * (2.0 - s.at(7)) / (8.0 - s.at(7));
-		s.at(1) = - 1.0 / getPrefactor();
-		s.at(2) = - 1.0 / getPrefactor();
+
+		s.at(1) = 1.6;
+		s.at(2) = 1.8;
 		return s;
 	}
 
