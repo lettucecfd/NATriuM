@@ -5,17 +5,17 @@
  *      Author: dominik
  */
 
-#include <natrium/collision/MultistepCollisionModel.h>
+#include "natrium/collision/MultistepCollisionModel.h"
 
 namespace natrium {
 
-MultistepCollisionModel::MultistepCollisionModel() {
-	// TODO Auto-generated constructor stub
+MultistepCollisionModel::MultistepCollisionModel(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil) {
+
 
 }
 
 MultistepCollisionModel::~MultistepCollisionModel() {
-	// TODO Auto-generated destructor stub
+
 }
 
 } /* namespace natrium */
