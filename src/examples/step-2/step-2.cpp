@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 	const double Ma = 0.05;
 
 	// set spatial discretization
-	size_t refinementLevel = 1;
+	size_t refinementLevel = 2;
 	size_t orderOfFiniteElement = 5;
 	bool isUnstructured = false;
 
@@ -63,6 +63,7 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(dqScaling);
 	configuration->setCFL(CFL);
 	configuration->setCommandLineVerbosity(7);
+	//configuration->setCollisionScheme(KBC_STANDARD);
 	//configuration->setDistributionInitType(Iterative);
 
 	boost::shared_ptr<CouetteFlow2D> couetteFlow = boost::make_shared<CouetteFlow2D>(
