@@ -17,7 +17,6 @@ namespace natrium {
 
 typedef dealii::TrilinosWrappers::internal::VectorReference TrilinosVRef;
 
-
 /**
  * @short A struct representing the value of a distribution function at a Lagrangian departure point.
  * 		  Depending on whether the departure point is a (secondary) boundary point or an internal point,
@@ -209,10 +208,11 @@ public:
 	}
 
 	/**
-	 * Allocate memory for the primary and secondary boundary values
+	 * Allocate memory for the secondary boundary values
 	 */
 	void compress() {
-		m_secondaryBoundaryValues.reinit(m_secondaryBoundaryIndices);
+		m_secondaryBoundaryValues.reinit(m_secondaryBoundaryIndices,
+				MPI_COMM_WORLD);
 	}
 
 	TrilinosVRef operator()(size_t index) {

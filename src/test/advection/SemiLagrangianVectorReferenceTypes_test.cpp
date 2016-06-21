@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(SecondaryBoundaryDoFVector_appendBoundaryDoFAndCompress_tes
 
 	sbdv.compress();
 
-	BOOST_CHECK_EQUAL(sbdv.getSecondaryBoundaryValues().size(), n+1);
+	BOOST_CHECK_EQUAL(sbdv.getSecondaryBoundaryValues().local_size(), n+1);
 
 	dof_handler.clear();
 	pout << "done." << endl;
@@ -125,8 +125,8 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorSubscript_test) {
 
 	GeneralizedDestinationDoF a = sbdv.appendSecondaryBoundaryDoF();
 	GeneralizedDestinationDoF b = sbdv.appendSecondaryBoundaryDoF();
-	GeneralizedDestinationDoF c(false, 1, 1);
-	GeneralizedDestinationDoF d(true, 0, 0);
+	GeneralizedDestinationDoF c(false, dof_handler.locally_owned_dofs().nth_index_in_set(1), 1);
+	GeneralizedDestinationDoF d(true, dof_handler.locally_owned_dofs().nth_index_in_set(0), 0);
 
 	sbdv.compress();
 
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianVectorAccess_operatorCalculateFunctionValue_t
 	GeneralizedDestinationDoF a = sbdv.appendSecondaryBoundaryDoF();
 	GeneralizedDestinationDoF b = sbdv.appendSecondaryBoundaryDoF();
 	// get references to non-boundary dofs
-	GeneralizedDestinationDoF c(false, dof_handler.locally_owned_dofs().nth_index_in_set(0) ,1 );
+	GeneralizedDestinationDoF c(false, dof_handler.locally_owned_dofs().nth_index_in_set(0) , 1 );
 	GeneralizedDestinationDoF d(false, dof_handler.locally_owned_dofs().nth_index_in_set(1) , 1 );
 
 	// compress: resize vector of secondary boundary dofs
