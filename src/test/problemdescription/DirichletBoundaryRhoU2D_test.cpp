@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	sbdv.compress();
 
 	// make dof out
-	GeneralizedDestinationDoF dof_out(false, 0,1);
+	GeneralizedDestinationDoF dof_out(false, dof_handler.locally_owned_dofs().nth_index_in_set(0),1);
 	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
 			*(periodic.getBoundaries()->getBoundary(0)), cell, dof_out);
 
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	numeric_vector ub1(2);
 	LinearBoundaryRhoU<2> boundary1(0, ub1);
 	boundary1.makeIncomingDirections(hit, d2q9);
-	FunctionDepartureValue fval(0);
+	FunctionDepartureValue fval(dof_out.getIndex());
 	hit.in.push_back(fval);
 	generalized_f[dof_in] = 1.1;
 
