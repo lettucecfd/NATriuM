@@ -80,6 +80,7 @@ public:
 	 * @short calculate relaxation parameter
 	 * @note preconditioning_parameter is only used for steady state
 	 */
+	// TODO remove
 	static double calculateRelaxationParameter(double viscosity,
 			double timeStepSize, const Stencil& stencil, double = 1.0) {
 		assert(viscosity > 0.0);
@@ -89,6 +90,7 @@ public:
 
 
 	// GETTER AND SETTER
+	// TODO remove
 	void setRelaxationParameter(double tau, double dt) {
 		assert(tau > 0);
 		m_relaxationParameter = tau;
@@ -96,6 +98,7 @@ public:
 		m_dt = dt;
 	}
 
+	// TODO remove
 	double getPrefactor() const {
 		return m_prefactor;
 	}
@@ -103,10 +106,12 @@ public:
 	/**
 	 * @short changes time step and relaxation time at constant velocity and speed of sound
 	 */
+	// TODO remove
 	void setTimeStep(double dt) {
 		assert(dt > 0);
 		double tau_times_dt = m_dt * m_relaxationParameter;
 		m_dt = dt;
+		CollisionModel::setTimeStep(dt);
 		m_relaxationParameter = tau_times_dt / dt;
 		m_prefactor = -1. / (m_relaxationParameter + 0.5);
 	}
@@ -115,12 +120,19 @@ public:
 		return getStencil()->getQ();
 	}
 
+	// TODO remove
 	double getRelaxationParameter() const {
 		return m_relaxationParameter;
 	}
 
+	// TODO remove
 	double getDt() const {
 		return m_dt;
+	}
+
+	// TODO remove
+	double getLambda() const {
+		return m_relaxationParameter*getStencil()->getSpeedOfSoundSquare()*m_dt;
 	}
 };
 

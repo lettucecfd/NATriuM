@@ -47,7 +47,8 @@ enum CollisionSchemeName {
 	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
 	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
 	KBC_STANDARD, // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014)
-	KBC_CENTRAL // // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014), central moments are used
+	KBC_CENTRAL, // // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014), central moments are used
+	BGK_MULTISTEP // Multistep BGK model according to Krämer (2016)
 };
 
 // StencilType defined in Stencil.h
@@ -325,6 +326,8 @@ public:
 			return KBC_STANDARD;
 		} else if ("KBC central" == collisionScheme) {
 			return KBC_CENTRAL;
+		} else if ("BGK multistep" == collisionScheme) {
+			return BGK_MULTISTEP;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown collision scheme '" << collisionScheme
@@ -367,6 +370,10 @@ public:
 		}
 		case KBC_CENTRAL: {
 			set("Collision scheme", "KBC central");
+			break;
+		}
+		case BGK_MULTISTEP: {
+			set("Collision scheme", "BGK multistep");
 			break;
 		}
 		default: {
