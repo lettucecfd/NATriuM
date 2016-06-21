@@ -24,6 +24,7 @@
 #include "../advection/AdvectionOperator.h"
 
 #include "../collision/CollisionModel.h"
+#include "../collision/MultistepCollisionData.h"
 
 #include "../smoothing/Filter.h"
 
@@ -97,6 +98,7 @@ private:
 
 	/// Description of the collision algorithm
 	boost::shared_ptr<CollisionModel> m_collisionModel;
+	boost::shared_ptr<MultistepCollisionData> m_multistepData;
 
 	/// Time Integrator for the solution of the ODE, which stems from the space discretization
 	boost::shared_ptr<

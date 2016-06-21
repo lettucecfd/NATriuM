@@ -55,13 +55,18 @@ private:
 	double m_forceX;
 	double m_forceY;
 	double m_forceZ;
+
+	double m_viscosity;
+	double m_timeStep;
 public:
 	CollisionModel(const boost::shared_ptr<Stencil> stencil, ForceType force_type = NO_FORCING) :
 			m_stencil(stencil),
 			m_forceType(force_type),
 			m_forceX(0),
 			m_forceY(0),
-			m_forceZ(0){
+			m_forceZ(0),
+			m_viscosity(0),
+			m_timeStep(0){
 	}
 	;
 	virtual ~CollisionModel() {
@@ -73,7 +78,9 @@ public:
 			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure = false) const = 0;
 
-	virtual void setTimeStep(double dt) = 0;
+	virtual void setTimeStep(double dt){
+		m_timeStep = dt;
+	}
 
 	const boost::shared_ptr<Stencil>& getStencil() const {
 		return m_stencil;
@@ -198,6 +205,18 @@ public:
 
 	void setForceType(ForceType forceType) {
 		m_forceType = forceType;
+	}
+
+	double getTimeStep() const {
+		return m_timeStep;
+	}
+
+	double getViscosity() const {
+		return m_viscosity;
+	}
+
+	void setViscosity(double viscosity) {
+		m_viscosity = viscosity;
 	}
 };
 
