@@ -63,7 +63,7 @@ struct BoundaryHit {
 	BoundaryHit(const dealii::Point<dim>& coord, double t_shift,
 			const dealii::Tensor<1, dim>& n, const Boundary<dim>& bound,
 			typename dealii::DoFHandler<dim>::cell_iterator& c,
-			const GeneralizedDestinationDoF& out_dof) :
+			const OutgoingDistributionValue& out_dof) :
 			boundary(bound), out(out_dof) {
 		coordinates = coord;
 		time_shift = t_shift;
@@ -117,7 +117,7 @@ struct BoundaryHit {
 	/**
 	 * @short if false, other boundary hits depend on the present boundary hit
 	 */
-	GeneralizedDestinationDoF out;
+	OutgoingDistributionValue out;
 
 	///////////////////////////
 	// incoming distribution //
@@ -127,7 +127,7 @@ struct BoundaryHit {
 	/**
 	 * @short vector of references to the values of incoming directions
 	 */
-	vector<FunctionDepartureValue> in;
+	vector<IncomingDistributionValue> in;
 
 };
 

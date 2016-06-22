@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_makeIncomingDirections_test) {
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
 			dof_handler.begin_active();
 	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
-			*(periodic.getBoundaries()->getBoundary(0)), cell, GeneralizedDestinationDoF(false,0,1));
+			*(periodic.getBoundaries()->getBoundary(0)), cell, OutgoingDistributionValue(false,0,1));
 	D2Q9 d2q9;
 	numeric_vector ub1(2);
 	LinearBoundaryRhoU<2> boundary1(0, ub1);
@@ -264,9 +264,10 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	}
 	DistributionFunctions fnew (v2);
 
+
 	// make vector of secondary boundary dofs
 	SecondaryBoundaryDoFVector sbdv(dof_handler.locally_owned_dofs());
-	GeneralizedDestinationDoF dof_in = sbdv.appendSecondaryBoundaryDoF();
+	OutgoingDistributionValue dof_in = sbdv.appendSecondaryBoundaryDoF();
 
 	// make vector access instance
 	SemiLagrangianVectorAccess generalized_f(fold, fnew, sbdv);
@@ -275,7 +276,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	sbdv.compress();
 
 	// make dof out
-	GeneralizedDestinationDoF dof_out(false, dof_handler.locally_owned_dofs().nth_index_in_set(0),1);
+	OutgoingDistributionValue dof_out(false, dof_handler.locally_owned_dofs().nth_index_in_set(0),1);
 	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
 			*(periodic.getBoundaries()->getBoundary(0)), cell, dof_out);
 
@@ -284,7 +285,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 	numeric_vector ub1(2);
 	LinearBoundaryRhoU<2> boundary1(0, ub1);
 	boundary1.makeIncomingDirections(hit, d2q9);
-	FunctionDepartureValue fval(dof_out.getIndex());
+	IncomingDistributionValue fval(dof_out.getIndex());
 	hit.in.push_back(fval);
 	generalized_f[dof_in] = 1.1;
 
