@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 	boost::shared_ptr<Stencil> dqmodel = boost::make_shared<D2Q9>();
 	double tau = 0.9;
 	double dt = 0.1;
-	double viscosity = tau/(dt*1./3.);
+	double viscosity = tau*dt*(1./3.);
 
 	BGKMultistep multistep(tau, dt, boost::make_shared<D2Q9>());
 	BGKStandard bgk(tau, dt, boost::make_shared<D2Q9>());
@@ -78,15 +78,23 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 		//u_i.compress(dealii::VectorOperation::add);
 		u.push_back(u_i);
 	}
-	for (int p=0;p<10;p++)
-	{
 	// collide and compare to previous collision function
 	DistributionFunctions fAfterCollisionmulti(f);
 	DistributionFunctions fAfterCollisionbgk(f);
+
+	for (int p=0;p<1500;p++)
+	{
+
 	multistep.collideAll(fAfterCollisionmulti, rho, u, dof_handler.locally_owned_dofs(),
 			false);
 	bgk.collideAll(fAfterCollisionbgk, rho, u, dof_handler.locally_owned_dofs(),
 			false);
+
+	cout << fAfterCollisionmulti.at(4)(1) << " multi to f :  " << f.at(4)(1) << endl;
+	cout << fAfterCollisionbgk.at(4)(1) << " bgk to f :  " << f.at(4)(1) << endl;
+
+
+
 
 	for (size_t i = 0; i < dof_handler.n_dofs(); i++) {
 		double rho_bgk = 0, rho_multistep = 0;
