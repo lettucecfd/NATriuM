@@ -432,7 +432,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 							// destination is not a boundary
 
 							// make primary boundary hit from Lagrangian path tracker
-							GeneralizedDestinationDoF out_dof(false, el.destination.index,
+							OutgoingDistributionValue out_dof(false, el.destination.index,
 									el.beta);
 							BoundaryHit<dim> hit(el.currentPoint, t_shift,
 									fev_normals.normal_vector(0), *boundary,

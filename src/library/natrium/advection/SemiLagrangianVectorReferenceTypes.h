@@ -1,8 +1,9 @@
-/*
+/**
  * SemiLagrangianVectorReferenceTypes.h
  *
  *  Created on: 16.06.2016
  *      Author: akraem3m
+ *
  */
 
 #ifndef LIBRARY_NATRIUM_ADVECTION_SEMILAGRANGIANVECTORREFERENCETYPES_H_
@@ -24,7 +25,7 @@ typedef dealii::TrilinosWrappers::internal::VectorReference TrilinosVRef;
  * 		  and shape function values, respectively.
  *
  */
-struct FunctionDepartureValue {
+struct IncomingDistributionValue {
 	/**
 	 * @short Indicates whether this instance represents a boundary index or a set of internal DoFs.
 	 */
@@ -34,10 +35,10 @@ struct FunctionDepartureValue {
 	vector<double> internalValues;
 	vector<size_t> internalDoFs;
 	size_t alpha;
-	FunctionDepartureValue(size_t boundary_dof) :
+	IncomingDistributionValue(size_t boundary_dof) :
 			isBoundary(true), secondaryBoundaryDoF(boundary_dof), alpha(0) {
 	}
-	FunctionDepartureValue() :
+	IncomingDistributionValue() :
 			isBoundary(false), secondaryBoundaryDoF(0), alpha(0) {
 	}
 };
@@ -46,12 +47,21 @@ struct FunctionDepartureValue {
  * @short A generalized degree of freedom that can be used for FE degrees of freedom or secondary boundary hits.
  * The generalized dof is required to describe the propagation of information through Boundary Hits.
  */
-class GeneralizedDestinationDoF {
+struct OutgoingDistributionValue {
 private:
+	bool m_unready;
 	bool m_secondaryBoundaryHit;
 	size_t m_index;
 	size_t m_alpha;
 public:
+
+	/**
+	 * @short Empty constructor
+	 */
+	OutgoingDistributionValue() :
+			m_unready(true), m_secondaryBoundaryHit(true), m_index(0), m_alpha(0) {
+
+	}
 
 	/**
 	 * @short Constructor
@@ -61,19 +71,29 @@ public:
 	 * @param[in] alpha the id of the streaming direction
 	 * @note if is_primary == false and is_secondary == false, the dof is not a boundary dof
 	 */
-	GeneralizedDestinationDoF(bool is_secondary, size_t index, size_t alpha) :
-			m_secondaryBoundaryHit(is_secondary), m_index(index), m_alpha(alpha) {
+	OutgoingDistributionValue(bool is_secondary, size_t index, size_t alpha) :
+			m_unready(false), m_secondaryBoundaryHit(is_secondary), m_index(index), m_alpha(alpha) {
 
 	}
 	/**
 	 * @short copy constructor
 	 */
-	GeneralizedDestinationDoF(const GeneralizedDestinationDoF& other) {
+	OutgoingDistributionValue(const OutgoingDistributionValue& other) {
+		m_unready = other.isUnready();
 		m_secondaryBoundaryHit = other.isSecondaryBoundaryHit();
 		m_index = other.getIndex();
 		m_alpha = other.getAlpha();
 	}
-	virtual ~GeneralizedDestinationDoF() {
+
+	OutgoingDistributionValue& operator=(const OutgoingDistributionValue& other){
+		m_unready = other.isUnready();
+		m_secondaryBoundaryHit = other.isSecondaryBoundaryHit();
+		m_index = other.getIndex();
+		m_alpha = other.getAlpha();
+		return *this;
+	}
+
+	virtual ~OutgoingDistributionValue() {
 	}
 
 	/**
@@ -116,6 +136,14 @@ public:
 	 */
 	void setAlpha(size_t alpha) {
 		m_alpha = alpha;
+	}
+
+	bool isUnready() const {
+		return m_unready;
+	}
+
+	void setUnready(bool unready) {
+		m_unready = unready;
 	}
 };
 
@@ -194,7 +222,7 @@ public:
 	/**
 	 * @short add a boundary dof and return its generalized dof index
 	 */
-	GeneralizedDestinationDoF appendSecondaryBoundaryDoF() {
+	OutgoingDistributionValue appendSecondaryBoundaryDoF() {
 		size_t index;
 		assert(
 				m_secondaryBoundaryIndices.n_elements()
@@ -203,7 +231,7 @@ public:
 				m_secondaryBoundaryIndices.n_elements());
 		m_secondaryBoundaryIndices.add_index(index);
 
-		GeneralizedDestinationDoF result(true, index, 0);
+		OutgoingDistributionValue result(true, index, 0);
 		return result;
 	}
 
@@ -254,7 +282,7 @@ public:
 	 * @param[in] dof may denote a boundary hit or a usual dof
 	 * @note Primary boundary hits are not explicitly stored and can thus not be accessed.
 	 */
-	TrilinosVRef operator[](const GeneralizedDestinationDoF& dof) {
+	TrilinosVRef operator[](const OutgoingDistributionValue& dof) {
 		if (dof.isSecondaryBoundaryHit()) {
 			return m_fSecondaryBoundary(dof.getIndex());
 		}
@@ -267,7 +295,7 @@ public:
 	/**
 	 * @short read only access (to f_old)
 	 */
-	double operator()(const FunctionDepartureValue& fv) const {
+	double operator()(const IncomingDistributionValue& fv) const {
 		if (fv.isBoundary) {
 			return m_fSecondaryBoundary(fv.secondaryBoundaryDoF);
 		}
