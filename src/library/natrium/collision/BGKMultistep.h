@@ -23,6 +23,14 @@ namespace natrium {
 
 class BGKMultistep: public BGK, public MultistepCollisionData  {
 public:
+	enum MultistepModelName
+	{
+		ADAMSMOULTON4,
+		BDF2
+	};
+
+	MultistepModelName m_model = BDF2;
+
 	BGKMultistep(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil);
 
 

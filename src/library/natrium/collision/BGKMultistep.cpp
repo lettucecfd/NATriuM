@@ -14,7 +14,7 @@ BGKMultistep::BGKMultistep(double relaxationParameter, double dt,
 		const boost::shared_ptr<Stencil> stencil) :
 		BGK(relaxationParameter, dt, stencil), MultistepCollisionData() {
 	// TODO Auto-generated constructor stub
-setTimeStep(dt);
+	setTimeStep(dt);
 }
 
 BGKMultistep::~BGKMultistep() {
@@ -41,26 +41,26 @@ double BGKMultistep::getEquilibriumDistribution(size_t i,
 
 } /// getEquilibriumDistribution
 
-
 void BGKMultistep::collideAll(DistributionFunctions& f,
 		distributed_vector& densities, vector<distributed_vector>& velocities,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
-	if (m_firstCollision)
-	{
-		cout << " First collision check" << endl ;
-		m_formerF.reinit(getStencil()->getQ(), locally_owned_dofs, MPI_COMM_WORLD);
-		m_formerFEq.reinit(getStencil()->getQ(), locally_owned_dofs, MPI_COMM_WORLD);
+	if (m_firstCollision) {
+		//cout << " First collision check" << endl ;
+		m_formerF.reinit(getStencil()->getQ(), locally_owned_dofs,
+		MPI_COMM_WORLD);
+		m_formerFEq.reinit(getStencil()->getQ(), locally_owned_dofs,
+		MPI_COMM_WORLD);
 	}
 
 	/*if (m_formerF.size() == 0){
-		m_formerF.reinit(m_stencil->getQ(), locally_owned_dofs , MPI_COMM_WORLD);
-	}
+	 m_formerF.reinit(m_stencil->getQ(), locally_owned_dofs , MPI_COMM_WORLD);
+	 }
 
-	if (m_formerFEq.size() == 0){
-		m_formerFEq.reinit(m_stencil->getQ(), locally_owned_dofs , MPI_COMM_WORLD);
-	} */
+	 if (m_formerFEq.size() == 0){
+	 m_formerFEq.reinit(m_stencil->getQ(), locally_owned_dofs , MPI_COMM_WORLD);
+	 } */
 
 	if (Stencil_D2Q9 == getStencil()->getStencilType()) {
 		collideAllD2Q9(f, densities, velocities, locally_owned_dofs,
@@ -77,26 +77,36 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 
 	double cs2 = getStencil()->getSpeedOfSoundSquare(); ///(scaling * scaling);
 	double lambda = getViscosity() / cs2;
-	double multistep_factor0 = -1./(12./13. * lambda/getTimeStep() + 5./13.);
-	double multistep_factor1 = +1./(12 * lambda/getTimeStep() + 5);
+	double multistep_factor0 =0;
+	double multistep_factor1 =0;
 
+	if (m_model == ADAMSMOULTON4) {
+		multistep_factor0 = -1.
+				/ (12. / 13. * lambda / getTimeStep() + 5. / 13.);
+		multistep_factor1 = +1. / (12 * lambda / getTimeStep() + 5);
+	}
+
+	if (m_model == BDF2) {
+		multistep_factor0 = -1. / (9. / 8. * lambda / getTimeStep() + 3. / 4.);
+		multistep_factor1 = +1. / (9. / 2. * lambda / getTimeStep() + 3);
+	}
 
 	// Efficient collision for D2Q9
 	size_t Q = 9;
 	size_t D = 2;
 	double scaling = getStencil()->getScaling();
 	double prefactor = scaling / cs2;
-	double relax_factor = getPrefactor();
+	double relax_factor = -1 / (lambda / getTimeStep() + 0.5);
 
-
-	if (m_firstCollision)
-	{
+	// For the first collision, a BGK single step must be executed
+	if (m_firstCollision) {
 		multistep_factor0 = relax_factor;
 		multistep_factor1 = 0;
 	}
 
+	//cout << "multi relax_factor: " << relax_factor << " prefactor: " << prefactor << endl;
 
-	double dt = getDt();
+	double dt = getTimeStep();
 
 	// External force information
 	ForceType force_type = getForceType();
@@ -177,25 +187,25 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 		f_i[7] = f7(i);
 		f_i[8] = f8(i);
 
-		formerF_i[0]=former0(i);
-		formerF_i[1]=former1(i);
-		formerF_i[2]=former2(i);
-		formerF_i[3]=former3(i);
-		formerF_i[4]=former4(i);
-		formerF_i[5]=former5(i);
-		formerF_i[6]=former6(i);
-		formerF_i[7]=former7(i);
-		formerF_i[8]=former8(i);
+		formerF_i[0] = former0(i);
+		formerF_i[1] = former1(i);
+		formerF_i[2] = former2(i);
+		formerF_i[3] = former3(i);
+		formerF_i[4] = former4(i);
+		formerF_i[5] = former5(i);
+		formerF_i[6] = former6(i);
+		formerF_i[7] = former7(i);
+		formerF_i[8] = former8(i);
 
-		formerFEq_i[0]=formerFEq0(i);
-		formerFEq_i[1]=formerFEq1(i);
-		formerFEq_i[2]=formerFEq2(i);
-		formerFEq_i[3]=formerFEq3(i);
-		formerFEq_i[4]=formerFEq4(i);
-		formerFEq_i[5]=formerFEq5(i);
-		formerFEq_i[6]=formerFEq6(i);
-		formerFEq_i[7]=formerFEq7(i);
-		formerFEq_i[8]=formerFEq8(i);
+		formerFEq_i[0] = formerFEq0(i);
+		formerFEq_i[1] = formerFEq1(i);
+		formerFEq_i[2] = formerFEq2(i);
+		formerFEq_i[3] = formerFEq3(i);
+		formerFEq_i[4] = formerFEq4(i);
+		formerFEq_i[5] = formerFEq5(i);
+		formerFEq_i[6] = formerFEq6(i);
+		formerFEq_i[7] = formerFEq7(i);
+		formerFEq_i[8] = formerFEq8(i);
 
 		// calculate density
 		rho_i = f_i[0] + f_i[1] + f_i[2] + f_i[3] + f_i[4] + f_i[5] + f_i[6]
@@ -265,15 +275,53 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
 
 		// BGK collision
-		f_i[0] += multistep_factor0 * (f_i[0] - feq[0]) + multistep_factor1 * (formerF_i[0]-formerFEq_i[0]);
-		f_i[0] += multistep_factor0 * (f_i[1] - feq[1]) + multistep_factor1 * (formerF_i[1]-formerFEq_i[1]);
-		f_i[0] += multistep_factor0 * (f_i[2] - feq[2]) + multistep_factor1 * (formerF_i[2]-formerFEq_i[2]);
-		f_i[0] += multistep_factor0 * (f_i[3] - feq[3]) + multistep_factor1 * (formerF_i[3]-formerFEq_i[3]);
-		f_i[0] += multistep_factor0 * (f_i[4] - feq[4]) + multistep_factor1 * (formerF_i[4]-formerFEq_i[4]);
-		f_i[0] += multistep_factor0 * (f_i[5] - feq[5]) + multistep_factor1 * (formerF_i[5]-formerFEq_i[5]);
-		f_i[0] += multistep_factor0 * (f_i[6] - feq[6]) + multistep_factor1 * (formerF_i[6]-formerFEq_i[6]);
-		f_i[0] += multistep_factor0 * (f_i[7] - feq[7]) + multistep_factor1 * (formerF_i[7]-formerFEq_i[7]);
-		f_i[0] += multistep_factor0 * (f_i[8] - feq[8]) + multistep_factor1 * (formerF_i[8]-formerFEq_i[8]);
+		if (m_model == ADAMSMOULTON4) {
+			f_i[0] += multistep_factor0 * (f_i[0] - feq[0])
+					+ multistep_factor1 * (formerF_i[0] - formerFEq_i[0]);
+			f_i[1] += multistep_factor0 * (f_i[1] - feq[1])
+					+ multistep_factor1 * (formerF_i[1] - formerFEq_i[1]);
+			f_i[2] += multistep_factor0 * (f_i[2] - feq[2])
+					+ multistep_factor1 * (formerF_i[2] - formerFEq_i[2]);
+			f_i[3] += multistep_factor0 * (f_i[3] - feq[3])
+					+ multistep_factor1 * (formerF_i[3] - formerFEq_i[3]);
+			f_i[4] += multistep_factor0 * (f_i[4] - feq[4])
+					+ multistep_factor1 * (formerF_i[4] - formerFEq_i[4]);
+			f_i[5] += multistep_factor0 * (f_i[5] - feq[5])
+					+ multistep_factor1 * (formerF_i[5] - formerFEq_i[5]);
+			f_i[6] += multistep_factor0 * (f_i[6] - feq[6])
+					+ multistep_factor1 * (formerF_i[6] - formerFEq_i[6]);
+			f_i[7] += multistep_factor0 * (f_i[7] - feq[7])
+					+ multistep_factor1 * (formerF_i[7] - formerFEq_i[7]);
+			f_i[8] += multistep_factor0 * (f_i[8] - feq[8])
+					+ multistep_factor1 * (formerF_i[8] - formerFEq_i[8]);
+		}
+
+		if (m_model == BDF2 && !m_firstCollision) {
+			f_i[0] =  4./3.*f_i[0] - 1./3. * formerF_i[0]+ multistep_factor0 * (f_i[0] - feq[0]) +  multistep_factor1 * (formerF_i[0] - formerFEq_i[0]);
+			f_i[1] =  4./3.*f_i[1] - 1./3. * formerF_i[1]+ multistep_factor0 * (f_i[1] - feq[1]) +  multistep_factor1 * (formerF_i[1] - formerFEq_i[1]);
+			f_i[2] =  4./3.*f_i[2] - 1./3. * formerF_i[2]+ multistep_factor0 * (f_i[2] - feq[2]) +  multistep_factor1 * (formerF_i[2] - formerFEq_i[2]);
+			f_i[3] =  4./3.*f_i[3] - 1./3. * formerF_i[3]+ multistep_factor0 * (f_i[3] - feq[3]) +  multistep_factor1 * (formerF_i[3] - formerFEq_i[3]);
+			f_i[4] =  4./3.*f_i[4] - 1./3. * formerF_i[4]+ multistep_factor0 * (f_i[4] - feq[4]) +  multistep_factor1 * (formerF_i[4] - formerFEq_i[4]);
+			f_i[5] =  4./3.*f_i[5] - 1./3. * formerF_i[5]+ multistep_factor0 * (f_i[5] - feq[5]) +  multistep_factor1 * (formerF_i[5] - formerFEq_i[5]);
+			f_i[6] =  4./3.*f_i[6] - 1./3. * formerF_i[6]+ multistep_factor0 * (f_i[6] - feq[6]) +  multistep_factor1 * (formerF_i[6] - formerFEq_i[6]);
+			f_i[7] =  4./3.*f_i[7] - 1./3. * formerF_i[7]+ multistep_factor0 * (f_i[7] - feq[7]) +  multistep_factor1 * (formerF_i[7] - formerFEq_i[7]);
+			f_i[8] =  4./3.*f_i[8] - 1./3. * formerF_i[8]+ multistep_factor0 * (f_i[8] - feq[8]) +  multistep_factor1 * (formerF_i[8] - formerFEq_i[8]);
+		}
+
+		if (m_model == BDF2 && m_firstCollision)
+		{
+			f_i[0] += relax_factor * (f_i[0] - feq[0]);
+			f_i[1] += relax_factor * (f_i[1] - feq[1]);
+			f_i[2] += relax_factor * (f_i[2] - feq[2]);
+			f_i[3] += relax_factor * (f_i[3] - feq[3]);
+			f_i[4] += relax_factor * (f_i[4] - feq[4]);
+			f_i[5] += relax_factor * (f_i[5] - feq[5]);
+			f_i[6] += relax_factor * (f_i[6] - feq[6]);
+			f_i[7] += relax_factor * (f_i[7] - feq[7]);
+			f_i[8] += relax_factor * (f_i[8] - feq[8]);
+		}
+
+		//	cout << "multistep_factor0" <<  multistep_factor0 << " ;  multistep_factor1: " << multistep_factor1 << endl;
 
 		// Add Source term
 		// Exact difference method (Kupershtokh)
@@ -286,15 +334,15 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 		}
 
 		//copy the former PDF
-		former0(i) = f_i[0];
-		former1(i) = f_i[1];
-		former2(i) = f_i[2];
-		former3(i) = f_i[3];
-		former4(i) = f_i[4];
-		former5(i) = f_i[5];
-		former6(i) = f_i[6];
-		former7(i) = f_i[7];
-		former8(i) = f_i[8];
+		former0(i) = f0(i);
+		former1(i) = f1(i);
+		former2(i) = f2(i);
+		former3(i) = f3(i);
+		former4(i) = f4(i);
+		former5(i) = f5(i);
+		former6(i) = f6(i);
+		former7(i) = f7(i);
+		former8(i) = f8(i);
 
 		// copy the Equilibrium PDF
 		formerFEq0(i) = feq[0];
@@ -319,8 +367,6 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 		f8(i) = f_i[8];
 
 	} /* for all dofs */
-
-
 
 } /* collideAllD2Q9 */
 

@@ -559,14 +559,12 @@ void CFDSolver<dim>::stream() {
 		if (BGK_MULTISTEP == m_configuration->getCollisionScheme() && (m_i-m_iterationStart)>1) {
 			distributed_block_vector& formerF =
 					m_multistepData->getFormerF().getFStream();
-			reinitVector(f_tmp, formerF);
 			f_tmp = formerF;
 			assert(m_multistepData != NULL);
 			systemMatrix.vmult(formerF, f_tmp);
 
 			distributed_block_vector& formerFEq =
 					m_multistepData->getFormerFEq().getFStream();
-			reinitVector(f_tmp, formerFEq);
 			f_tmp = formerFEq;
 			systemMatrix.vmult(formerFEq, f_tmp);
 		}
@@ -577,6 +575,7 @@ void CFDSolver<dim>::stream() {
 		double new_dt = m_timeIntegrator->step(f, systemMatrix,
 				m_boundaryVector, 0.0, m_timeIntegrator->getTimeStepSize());
 
+		// For multistep methods, the former PDF for f and feq have also to be streamed
 		if (BGK_MULTISTEP == m_configuration->getCollisionScheme() && (m_i-m_iterationStart)>1)
 				{
 			distributed_block_vector& formerF =
