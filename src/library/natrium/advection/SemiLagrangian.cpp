@@ -21,6 +21,8 @@
 #include "deal.II/base/utilities.h"
 #include "deal.II/lac/constraint_matrix.h"
 
+#include "SemiLagrangianVectorReferenceTypes.h"
+
 #include "../problemdescription/PeriodicBoundary.h"
 #include "../problemdescription/LinearBoundary.h"
 
@@ -66,7 +68,6 @@ void SemiLagrangian<dim>::setupDoFs() {
 	m_doFHandler->distribute_dofs(*m_fe);
 
 	updateSparsityPattern();
-
 
 	// define relation between dofs and quadrature nodes
 	m_facedof_to_q_index = map_facedofs_to_q_index();
@@ -275,23 +276,21 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	// Initialize Finite Element ////
 	/////////////////////////////////
 	// Define update flags (which values have to be known at each cell, face, neighbor face)
-	const dealii::UpdateFlags cell_update_flags = update_values;
-	const dealii::UpdateFlags face_update_flags = update_quadrature_points
-			| update_normal_vectors;
+	const dealii::UpdateFlags normals_update = update_normal_vectors;
+
 	// Finite Element
 	//dealii::FEValues<dim> fe_normals(m_mappting, *m_fe, *m_quadrature, update_normal_vectors);
-	dealii::FEValues<dim> fe_cell_values(m_mapping, *m_fe, *m_quadrature,
-			cell_update_flags);
-	dealii::FEFaceValues<dim> fe_face_values(m_mapping, *m_fe,
-			*m_faceQuadrature, face_update_flags);
+	dealii::FEFaceValues<dim> fev_normals(m_mapping, *m_fe, *m_faceQuadrature,
+			normals_update);
 
 	// Initialize
-	std::map<typename DoFHandler<dim>::active_cell_iterator, XList> cell_map;
+	SemiLagrangianBoundaryDoFHandler<dim> sl_boundary_handler(m_doFHandler->locally_owned_dofs(), *getStencil());
+	std::map<typename DoFHandler<dim>::active_cell_iterator, DeparturePointList> found_in_cell;
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const std::vector<Point<dim> > & unit_support_points =
 			m_fe->get_unit_support_points();
 	std::vector<std::vector<double> > local_entries;
-	std::vector<Point<dim> >  local_lagrange_points;
+	std::vector<Point<dim> > local_lagrange_points;
 	std::vector<Tensor<1, dim> > minus_dtealpha;
 	for (size_t i = 0; i < m_stencil->getQ(); i++) {
 		minus_dtealpha.push_back(
@@ -321,12 +320,10 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			m_doFHandler->begin_active(), endc = m_doFHandler->end();
 	for (; cell != endc; ++cell) {
 		if (cell->is_locally_owned()) {
-			// calculate the fe values for the cell
-			fe_cell_values.reinit(cell);
 
 			// initialize
-			cell_map.clear();
-			std::queue<DoFInfo> not_found;
+			found_in_cell.clear();
+			std::queue<LagrangianPathTracker> not_found;
 
 			// get global degrees of freedom
 			cell->get_dof_indices(local_dof_indices);
@@ -340,10 +337,10 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 				// for all directions
 				for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
 					// calculate x^(t-delta_t)
-					dealii::Point<dim> x_target = x_i
+					dealii::Point<dim> x_departure = x_i
 							+ minus_dtealpha.at(alpha);
-					DoFInfo info_i(local_dof_indices.at(i), alpha, alpha,
-							x_target, x_i, cell);
+					LagrangianPathTracker info_i(local_dof_indices.at(i), alpha,
+							alpha, x_departure, x_i, cell);
 					not_found.push(info_i);
 				}
 			}
@@ -351,24 +348,26 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// -- Recursively follow Lagrangian paths ---
 			// while there are points that have not been found, yet
 			while (not not_found.empty()) {
-				DoFInfo& el = not_found.front();
+				LagrangianPathTracker& el = not_found.front();
 				double lambda = 100;
 				size_t child_id = 100;
 				dealii::Point<dim> p_boundary;
 				int face_id = faceCrossedFirst(el.currentCell, el.currentPoint,
-						el.sourcePoint, p_boundary, &lambda, &child_id);
+						el.departurePoint, p_boundary, &lambda, &child_id);
 				if (face_id == -1) {
 					// point found in this cell: add to cell_map
 					typename std::map<
 							typename DoFHandler<dim>::active_cell_iterator,
-							XList>::iterator it = cell_map.find(el.currentCell);
-					if (it == cell_map.end()) {
-						XList new_xlist;
+							DeparturePointList>::iterator it =
+							found_in_cell.find(el.currentCell);
+					if (it == found_in_cell.end()) {
+						DeparturePointList new_xlist;
 						new_xlist.push_back(el);
-						cell_map.insert(
+						found_in_cell.insert(
 								std::pair<
 										typename DoFHandler<dim>::active_cell_iterator,
-										XList>(el.currentCell, new_xlist));
+										DeparturePointList>(el.currentCell,
+										new_xlist));
 					} else {
 						it->second.push_back(el);
 					}
@@ -387,17 +386,76 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 						el.currentPoint =
 								periodicBoundary->coordinatesAcrossPeriodicBoundary(
 										p_boundary, el.currentCell);
-						el.sourcePoint =
+						el.departurePoint =
 								periodicBoundary->coordinatesAcrossPeriodicBoundary(
-										el.sourcePoint, el.currentCell);
+										el.departurePoint, el.currentCell);
 						const typename dealii::DoFHandler<dim>::active_cell_iterator h =
 								el.currentCell;
 						periodicBoundary->getOppositeCellAtPeriodicBoundary(h,
 								el.currentCell);
 
 					} else /* if is not periodic */{
+
+						// TODO omit if !sparsity_pattern
 						// Apply other boundaries
-						// TODO
+						const boost::shared_ptr<Boundary<dim> >& boundary =
+								m_boundaries->getBoundary(bi);
+
+						// time remaining to departure point
+						double t_shift = el.currentPoint.distance(
+								el.departurePoint)
+								/ m_stencil->getDirection(el.beta).l2_norm();
+						fev_normals.reinit(el.currentCell, face_id);
+						if (el.destination.isBoundaryHit) {
+							// TODO
+							// cut Lagrangian path into two parts
+							// - The already tracked part of the path is handled by a boundary hit
+							// - The remaining part of the path is handled by a set of new path trackers
+							/*BoundaryHit<dim> hit(el.currentPoint, t_shift,
+							 fev_normals.normal_vector(0), *Boundary,
+							 el.currentCell, el.destinationDoF);
+							 GeneralizedDoF a = sl_boundary_handler.addBoundaryHit(
+							 hit);
+							 // make incoming directions was called when added
+							 LagrangianPathTracker new_track(a, alpha, x_target, x_i, cell);
+							 if (is_destination_boundary) {
+							 // merge two parts of the previous Lagrangian path,
+							 // which are represented by a boundary hit and the present path tracker
+							 // by setting the departure dofs of the present path tracker as incoming dof of the boundary point
+							 sl_boundary_handler.getBoundaryHit(el.destinationDoF).in.push_back(a);
+							 }
+							 */
+							cout
+									<< "WAAAAAAAAAAAAAAAAAAAAAArning. secondary not impl. yet"
+									<< endl;
+						} else {
+							// destination is not a boundary
+
+							// make primary boundary hit from Lagrangian path tracker
+							OutgoingDistributionValue out_dof(false, el.destination.index,
+									el.beta);
+							BoundaryHit<dim> hit(el.currentPoint, t_shift,
+									fev_normals.normal_vector(0), *boundary,
+									el.currentCell, out_dof);
+							LagrangianPathDestination here =
+									sl_boundary_handler.addBoundaryHit(hit);
+
+							// make new lagragian path trackers from boundary hit
+							// opposite ordering is important, so that later the
+							// shape values are delivered in the same order
+							// (not_found is a stack/FIFO queue)
+							for (size_t i = hit.in.size(); i >= 0; i++) {
+								Tensor<1, dim> e = minus_dtealpha.at(
+										hit.incomingDirections.at(i));
+								e *= (t_shift / m_deltaT);
+								dealii::Point<dim> x_departure = el.currentPoint + e;
+								LagrangianPathTracker tracker_i(here,
+										hit.incomingDirections.at(i), x_departure,
+										el.currentPoint, el.currentCell);
+								not_found.push(tracker_i);
+							}
+
+						}
 					} /* endif isPeriodic */
 				} else {
 					// Interior faces
@@ -415,7 +473,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 						std::stringstream s;
 						s
 								<< "Time step too large in semi-Lagrangian streaming. Lagrangian source point "
-								<< el.sourcePoint
+								<< el.departurePoint
 								<< " is owned by another MPI process, but required by MPI process "
 								<< dealii::Utilities::MPI::this_mpi_process(
 								MPI_COMM_WORLD)
@@ -430,9 +488,10 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 			// -- Assemble matrix / sparsity pattern --
 			typename std::map<typename DoFHandler<dim>::active_cell_iterator,
-					XList>::iterator list = cell_map.begin();
+					DeparturePointList>::iterator list = found_in_cell.begin();
 			typename std::map<typename DoFHandler<dim>::active_cell_iterator,
-					XList>::iterator end_list = cell_map.end();
+					DeparturePointList>::iterator end_list =
+					found_in_cell.end();
 			// (i.e. for all cells that contain support points )
 			for (; list != end_list; list++) {
 				const typename DoFHandler<dim>::active_cell_iterator & it =
@@ -440,51 +499,61 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 				// get dofs
 				it->get_dof_indices(local_dof_indices);
-				const XList & l = list->second;
+				const DeparturePointList & l = list->second;
 
 				if (not sparsity_pattern) {
 					// calculate shape values
 					local_entries.clear();
 					local_lagrange_points.clear();
 					for (size_t i = 0; i < l.size(); i++) {
-						local_lagrange_points.push_back(l[i].sourcePoint);
+						local_lagrange_points.push_back(l[i].departurePoint);
 						std::vector<double> h(dofs_per_cell);
 						local_entries.push_back(h);
 					}
-					shapeFunctionValue(it, local_lagrange_points, local_entries);
+					shapeFunctionValue(it, local_lagrange_points,
+							local_entries);
 				}
 				// (i.e. for all Lagrangian points in cell)
 				for (size_t i = 0; i < l.size(); i++) {
 					assert(it == l.at(i).currentCell);
 					if (sparsity_pattern) {
-						// add entry to sparsity pattern
-						m_sparsityPattern[l[i].alpha - 1][l[i].beta - 1].add_entries(
-								l[i].globalDof, local_dof_indices.begin(),
-								local_dof_indices.end(), false);
+						if (l[i].destination.isBoundaryHit) {
+							// introduce present cell dofs to incoming dofs of boundary hit
+							// sl_boundary_handler.getBoundaryHit(l[i].destination).in.at(...).setIndex(...);
+							// TODO make incoming dofs vector, make shape values vector
+
+						} else {
+							// add entry to sparsity pattern
+							m_sparsityPattern[l[i].destination.direction - 1][l[i].beta
+									- 1].add_entries(
+									l[i].destination.index,
+									local_dof_indices.begin(),
+									local_dof_indices.end(), false);
+						}
 					} else {
 						// calculate matrix entries
-						m_systemMatrix.block(l[i].alpha - 1, l[i].beta - 1).add(
-								l[i].globalDof, local_dof_indices,
-								local_entries.at(i));	//fe_cell_values.shape_value;
+						m_systemMatrix.block(l[i].destination.direction - 1,
+								l[i].beta - 1).add(
+								l[i].destination.index,
+								local_dof_indices, local_entries.at(i));//fe_cell_values.shape_value;
 					}
 				} /* end for all support points in cell*/
 			} /* end for all xlists (i.e. for all cells that contain support points )*/
 		} /* end if cell is locally owned */
 	} /* end for all cells */
 
-
 	/*is done later
 	 * if (sparsity_pattern) {
-		const size_t Q = m_stencil->getQ();
-		for (size_t i = 0; i < Q - 1; i++) {
-			for (size_t j = 0; j < Q - 1; j++) {
-				m_sparsityPattern.at(i).at(j).compress();
-			}
-		}
-	} else {
-		m_systemVector.compress(dealii::VectorOperation::add);
-		m_systemMatrix.compress(dealii::VectorOperation::add);
-	}*/
+	 const size_t Q = m_stencil->getQ();
+	 for (size_t i = 0; i < Q - 1; i++) {
+	 for (size_t j = 0; j < Q - 1; j++) {
+	 m_sparsityPattern.at(i).at(j).compress();
+	 }
+	 }
+	 } else {
+	 m_systemVector.compress(dealii::VectorOperation::add);
+	 m_systemMatrix.compress(dealii::VectorOperation::add);
+	 }*/
 
 //#endif
 } /* fillSparseObject */

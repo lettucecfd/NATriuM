@@ -10,6 +10,8 @@
 
 #include "LinearBoundary.h"
 #include "BoundaryTools.h"
+#include "../advection/BoundaryHit.h"
+#include "../advection/SemiLagrangianVectorReferenceTypes.h"
 
 namespace natrium {
 
@@ -37,7 +39,6 @@ public:
 	LinearBoundaryRhoU(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity);
-
 
 	/** @short This constructor assigns the Boundary condition with a constant fixed velocity and \f[ \rho = 1 \f]
 	 *  to the boundary with the given boundary indicator.
@@ -79,6 +80,45 @@ public:
 			distributed_sparse_block_matrix& systemMatrix,
 			distributed_block_vector& systemVector,
 			bool useCentralFlux = false) const;
+
+	/**
+	 * @short Calculates outgoing distribution from incoming distributions.
+	 * @param[in/out] boundary_hit The boundary hit instance that contains all information about the boundary hit.
+	 * @param[in] stencil the stencil (e.g. a D2Q9 instance)
+	 * @param[in] time_of_next_step the physical time at the next time step (is required here to define time-dependent boundary conditions)
+	 * @note This function is used by the semi-Lagrangian advection solver. Before it is called on a
+	 *       BoundaryHit instance, the BoundaryHit instance must have the right incoming directions (usually filled
+	 *       by makeIncomingDirections()) and the right references in fIn (has to be filled by hand -- by the
+	 *       semi-Lagrangian advection solver).
+	 */
+	virtual void calculate(BoundaryHit<dim>& boundary_hit,
+			const Stencil& stencil, double time_of_next_step,
+			SemiLagrangianVectorAccess& f) const {
+
+		const numeric_vector ea = stencil.getDirection(
+				boundary_hit.out.getAlpha());
+		numeric_vector velocity(dim);
+		LinearBoundary<dim>::getBoundaryVelocity()->set_time(
+				time_of_next_step - boundary_hit.time_shift);
+		LinearBoundary<dim>::getBoundaryVelocity()->vector_value(
+				boundary_hit.coordinates, velocity);
+		f[boundary_hit.out] = f(boundary_hit.in.at(0))
+				+ 2.0 * stencil.getWeight(boundary_hit.out.getAlpha()) * 1.0
+						* (ea * velocity) / stencil.getSpeedOfSoundSquare();
+	}
+
+	/**
+	 * @short Resizes boundary_hit.incomingDirections and fills it in.
+	 * @param[in/out] boundary_hit The boundary hit instance that contains all information about the boundary hit.
+	 * @param[in] stencil the stencil (e.g. a D2Q9 instance)
+	 * @note This function is used by the semi-Lagrangian advection solver
+	 */
+	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
+			const Stencil& stencil) const {
+		assert (boundary_hit.incomingDirections.empty());
+		boundary_hit.incomingDirections.push_back(stencil.getIndexOfOppositeDirection(
+						boundary_hit.out.getAlpha()));
+	}
 
 };
 
