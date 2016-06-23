@@ -259,17 +259,26 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 		m_collisionModel = boost::make_shared<KBCCentral>(tau, delta_t,
 				m_stencil);
-	} else if (BGK_MULTISTEP == configuration->getCollisionScheme()) {
+	} else if (BGK_MULTI_AM4 == configuration->getCollisionScheme()) {
 		tau = BGKStandard::calculateRelaxationParameter(
-						m_problemDescription->getViscosity(), delta_t, *m_stencil);
-		boost::shared_ptr<BGKMultistep> bgk_tmp = boost::make_shared<BGKMultistep>(tau, delta_t,
-				m_stencil);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		boost::shared_ptr<BGKMultistep> bgk_tmp = boost::make_shared<
+				BGKMultistep>(tau, delta_t, m_stencil, 0); //0 for Adams Moulton
+		m_multistepData = bgk_tmp;
+		m_collisionModel = bgk_tmp;
+		m_collisionModel->setViscosity(m_problemDescription->getViscosity());
+
+	} else if (BGK_MULTI_BDF2 == configuration->getCollisionScheme()) {
+		tau = BGKStandard::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		boost::shared_ptr<BGKMultistep> bgk_tmp = boost::make_shared<
+				BGKMultistep>(tau, delta_t, m_stencil, 1); // 1 for BDF2
+
 		m_multistepData = bgk_tmp;
 		m_collisionModel = bgk_tmp;
 		m_collisionModel->setViscosity(m_problemDescription->getViscosity());
 		// TODO call setViscosity only once (for general collision model)
 		// TODO remove relaxation-parameter from collision model and calculate in each time step from dt and nu
-
 	}
 
 	// apply external force
@@ -454,7 +463,11 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "tau:						" << tau << endl;
 		break;
 	}
-	case BGK_MULTISTEP: {
+	case BGK_MULTI_AM4: {
+		LOG(WELCOME) << "tau:						" << tau << endl;
+		break;
+	}
+	case BGK_MULTI_BDF2: {
 		LOG(WELCOME) << "tau:						" << tau << endl;
 		break;
 	}
@@ -556,7 +569,9 @@ void CFDSolver<dim>::stream() {
 		systemMatrix.vmult(f, f_tmp);
 		//f += m_boundaryVector;
 
-		if (BGK_MULTISTEP == m_configuration->getCollisionScheme() && (m_i-m_iterationStart)>1) {
+		if ((BGK_MULTI_AM4 == m_configuration->getCollisionScheme()
+				|| (BGK_MULTI_BDF2 == m_configuration->getCollisionScheme()))
+				&& (m_i - m_iterationStart) > 1) {
 			distributed_block_vector& formerF =
 					m_multistepData->getFormerF().getFStream();
 			f_tmp = formerF;
@@ -576,17 +591,20 @@ void CFDSolver<dim>::stream() {
 				m_boundaryVector, 0.0, m_timeIntegrator->getTimeStepSize());
 
 		// For multistep methods, the former PDF for f and feq have also to be streamed
-		if (BGK_MULTISTEP == m_configuration->getCollisionScheme() && (m_i-m_iterationStart)>1)
-				{
+		if ((BGK_MULTI_AM4 == m_configuration->getCollisionScheme()
+				|| (BGK_MULTI_BDF2 == m_configuration->getCollisionScheme()))
+				&& (m_i - m_iterationStart) > 1) {
+
 			distributed_block_vector& formerF =
 					m_multistepData->getFormerF().getFStream();
 			distributed_block_vector& formerFEq =
-								m_multistepData->getFormerFEq().getFStream();
+					m_multistepData->getFormerFEq().getFStream();
 
-			m_timeIntegrator->step(formerF, systemMatrix,
-					m_boundaryVector, 0.0, m_timeIntegrator->getTimeStepSize());
+			m_timeIntegrator->step(formerF, systemMatrix, m_boundaryVector, 0.0,
+					m_timeIntegrator->getTimeStepSize());
 
-			m_timeIntegrator->step(formerFEq, systemMatrix, m_boundaryVector, 0.0, m_timeIntegrator->getTimeStepSize());
+			m_timeIntegrator->step(formerFEq, systemMatrix, m_boundaryVector,
+					0.0, m_timeIntegrator->getTimeStepSize());
 
 		}
 

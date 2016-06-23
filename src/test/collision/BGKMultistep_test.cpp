@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 	double dt = 0.1;
 	double viscosity = tau*dt*(1./3.);
 
-	BGKMultistep multistep(tau, dt, boost::make_shared<D2Q9>());
+	BGKMultistep multistep(tau, dt, boost::make_shared<D2Q9>(),0);
 	BGKStandard bgk(tau, dt, boost::make_shared<D2Q9>());
 	multistep.setViscosity(viscosity);
 

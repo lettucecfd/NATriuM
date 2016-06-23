@@ -48,7 +48,8 @@ enum CollisionSchemeName {
 	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
 	KBC_STANDARD, // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014)
 	KBC_CENTRAL, // // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014), central moments are used
-	BGK_MULTISTEP // Multistep BGK model according to Krämer (2016)
+	BGK_MULTI_AM4, // Multistep BGK model according to Krämer (2016)
+	BGK_MULTI_BDF2
 };
 
 // StencilType defined in Stencil.h
@@ -326,8 +327,10 @@ public:
 			return KBC_STANDARD;
 		} else if ("KBC central" == collisionScheme) {
 			return KBC_CENTRAL;
-		} else if ("BGK multistep" == collisionScheme) {
-			return BGK_MULTISTEP;
+		} else if ("BGK multi am4" == collisionScheme) {
+			return BGK_MULTI_AM4;
+		} else if ("BGK multi bdf2" == collisionScheme) {
+			return BGK_MULTI_BDF2;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown collision scheme '" << collisionScheme
@@ -372,8 +375,12 @@ public:
 			set("Collision scheme", "KBC central");
 			break;
 		}
-		case BGK_MULTISTEP: {
-			set("Collision scheme", "BGK multistep");
+		case BGK_MULTI_AM4: {
+			set("Collision scheme", "BGK multi am4");
+			break;
+		}
+		case BGK_MULTI_BDF2: {
+			set("Collision scheme", "BGK multi bdf2");
 			break;
 		}
 		default: {
