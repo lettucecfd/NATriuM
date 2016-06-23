@@ -11,10 +11,17 @@
 namespace natrium {
 
 BGKMultistep::BGKMultistep(double relaxationParameter, double dt,
-		const boost::shared_ptr<Stencil> stencil) :
+		const boost::shared_ptr<Stencil> stencil, int model) :
 		BGK(relaxationParameter, dt, stencil), MultistepCollisionData() {
 	// TODO Auto-generated constructor stub
 	setTimeStep(dt);
+	if (model==0)
+	{m_model = ADAMSMOULTON4;
+	cout << "AM4 selected";}
+	if (model==1)
+	{m_model = BDF2;
+	cout << "BDF2 selected";}
+
 }
 
 BGKMultistep::~BGKMultistep() {

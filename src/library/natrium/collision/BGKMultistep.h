@@ -29,10 +29,11 @@ public:
 		BDF2
 	};
 
-	MultistepModelName m_model = BDF2;
 
-	BGKMultistep(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil);
 
+	BGKMultistep(double relaxationParameter, double dt, const boost::shared_ptr<Stencil> stencil, int model);
+
+	MultistepModelName m_model;
 
 	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
 			const double rho = 1) const;
