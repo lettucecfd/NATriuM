@@ -35,8 +35,8 @@ void LidDrivenCavity2D::refine(Mesh<2>& mesh){
 	mesh.refine_global(m_refinementLevel);
 }
 
-void LidDrivenCavity2D::transform(Mesh<2>& ){
-	//dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
+void LidDrivenCavity2D::transform(Mesh<2>& mesh){
+	dealii::GridTools::transform(UnstructuredGridFunc(0.2, 0.9, 0.15, 0.85), mesh);
 }
 
 
