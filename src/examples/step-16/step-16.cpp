@@ -110,8 +110,12 @@ int main(int argc, char** argv) {
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 
-	// ist im Paper von Gassner und Beck so definiert !!!!!
-	const double U = 1/(2*M_PI);
+	// im Paper von Gassner und Beck ist U = 1/2pi definiert !!!!!
+	// Aber ihre zeitangaben beziehen sich auf U = 1, wie bei Brachet (1991)
+	// hier simulieren wir jetzt  U = 1 (ist im TGV3D modul sowieso nur so definiert)
+	// und mit der Reynoldsähnlichkeit ist das kein Problem, da wir gegenüber Gassner
+	// und Beck ja auch die Viskosität verändern
+	const double U = 1;
 	const double L = 2 * M_PI;
 	const double viscosity = U * L / Re;
 	const double Ma = 0.1;
