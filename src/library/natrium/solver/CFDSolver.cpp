@@ -662,16 +662,16 @@ void CFDSolver<dim>::filter() {
 template<size_t dim>
 void CFDSolver<dim>::run() {
 	m_i = m_iterationStart;
+	collide();
 	while (true) {
 		if (stopConditionMet()) {
 			break;
 		}
 		output(m_i);
 		m_i++;
-		collide();
 		stream();
 		filter();
-
+		collide();
 		for (size_t i = 0; i < m_dataProcessors.size(); i++) {
 			m_dataProcessors.at(i)->apply();
 		}
