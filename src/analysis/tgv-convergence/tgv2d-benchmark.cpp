@@ -83,6 +83,17 @@ int main(int argc, char** argv) {
 	if (collision == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
 	}
+
+	if (collision == 2) {
+		configuration->setCollisionScheme(BGK_MULTI_AM4);
+	}
+	if (collision == 3) {
+		configuration->setCollisionScheme(BGK_MULTI_BDF2);
+	}
+	if (collision == 4)
+	{
+		configuration->setCollisionScheme(KBC_CENTRAL);
+	}
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 	configuration->setEmbeddedDealIntegratorParameters(1.2, 0.8, 0.05, CFL,
