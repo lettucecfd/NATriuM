@@ -17,10 +17,10 @@ BGKMultistep::BGKMultistep(double relaxationParameter, double dt,
 	setTimeStep(dt);
 	if (model==0)
 	{m_model = ADAMSMOULTON4;
-	cout << "AM4 selected";}
+	pout << "Collision model AM4 selected" << endl;}
 	if (model==1)
 	{m_model = BDF2;
-	cout << "BDF2 selected";}
+	pout << "Collision modelBDF2 selected" << endl;}
 
 }
 
@@ -107,8 +107,10 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 
 	// For the first collision, a BGK single step must be executed
 	if (m_firstCollision) {
-		multistep_factor0 = relax_factor;
-		multistep_factor1 = 0;
+		m_formerF = f;
+		m_formerFEq = f;
+	/*	multistep_factor0 = relax_factor;
+		multistep_factor1 = 0;*/
 	}
 
 	//cout << "multi relax_factor: " << relax_factor << " prefactor: " << prefactor << endl;
@@ -303,7 +305,8 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 					+ multistep_factor1 * (formerF_i[8] - formerFEq_i[8]);
 		}
 
-		if (m_model == BDF2 && !m_firstCollision) {
+		if (m_model == BDF2)// && !m_firstCollision) {
+		{
 			f_i[0] =  4./3.*f_i[0] - 1./3. * formerF_i[0]+ multistep_factor0 * (f_i[0] - feq[0]) +  multistep_factor1 * (formerF_i[0] - formerFEq_i[0]);
 			f_i[1] =  4./3.*f_i[1] - 1./3. * formerF_i[1]+ multistep_factor0 * (f_i[1] - feq[1]) +  multistep_factor1 * (formerF_i[1] - formerFEq_i[1]);
 			f_i[2] =  4./3.*f_i[2] - 1./3. * formerF_i[2]+ multistep_factor0 * (f_i[2] - feq[2]) +  multistep_factor1 * (formerF_i[2] - formerFEq_i[2]);
@@ -315,7 +318,7 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 			f_i[8] =  4./3.*f_i[8] - 1./3. * formerF_i[8]+ multistep_factor0 * (f_i[8] - feq[8]) +  multistep_factor1 * (formerF_i[8] - formerFEq_i[8]);
 		}
 
-		if (m_model == BDF2 && m_firstCollision)
+	/*	if (m_model == BDF2 && m_firstCollision)
 		{
 			f_i[0] += relax_factor * (f_i[0] - feq[0]);
 			f_i[1] += relax_factor * (f_i[1] - feq[1]);
@@ -326,7 +329,7 @@ void BGKMultistep::collideAllD2Q9(DistributionFunctions& f,
 			f_i[6] += relax_factor * (f_i[6] - feq[6]);
 			f_i[7] += relax_factor * (f_i[7] - feq[7]);
 			f_i[8] += relax_factor * (f_i[8] - feq[8]);
-		}
+		}*/
 
 		//	cout << "multistep_factor0" <<  multistep_factor0 << " ;  multistep_factor1: " << multistep_factor1 << endl;
 

@@ -267,7 +267,6 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_multistepData = bgk_tmp;
 		m_collisionModel = bgk_tmp;
 		m_collisionModel->setViscosity(m_problemDescription->getViscosity());
-
 	} else if (BGK_MULTI_BDF2 == configuration->getCollisionScheme()) {
 		tau = BGKStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
@@ -669,9 +668,10 @@ void CFDSolver<dim>::run() {
 		}
 		output(m_i);
 		m_i++;
+		collide();
 		stream();
 		filter();
-		collide();
+
 		for (size_t i = 0; i < m_dataProcessors.size(); i++) {
 			m_dataProcessors.at(i)->apply();
 		}
