@@ -360,6 +360,7 @@ public:
 	virtual const boost::shared_ptr<Stencil>& getStencil() const {
 		return m_stencil;
 	}
+
 };
 
 } /* namespace natrium */

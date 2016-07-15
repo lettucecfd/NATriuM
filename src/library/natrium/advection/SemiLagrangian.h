@@ -26,6 +26,7 @@
 #include "../problemdescription/BoundaryCollection.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
+#include "../utilities/Timing.h"
 
 namespace natrium {
 
@@ -394,6 +395,8 @@ public:
 			const std::vector<dealii::Point<dim> >& points,
 			std::vector<std::vector<double> >&values) {
 
+		TimerOutput::Scope timer_section(Timing::getTimer(), "Assembly: evaluate function");
+
 		const size_t n_dofs_per_cell = cell->get_fe().n_dofs_per_cell();
 		const size_t n_points = points.size();
 		assert(n_points > 0);
@@ -540,6 +543,17 @@ public:
 		m_deltaT = deltaT;
 		updateSparsityPattern();
 	}
+
+	virtual size_t memory_consumption_sparsity_pattern () const {
+		size_t mem = 0;
+		for (size_t i = 0; i < m_sparsityPattern.size(); i++){
+			for (size_t j = 0; j < m_sparsityPattern.at(i).size(); j++){
+				mem += m_sparsityPattern.at(i).at(j).memory_consumption();
+			}
+		}
+		return mem;
+	}
+
 }
 ;
 

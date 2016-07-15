@@ -147,6 +147,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 	/// Build streaming data object
+	LOG(WELCOME) << "Create streaming object ..." << endl;
 	if (SEDG == configuration->getAdvectionScheme()) {
 		// start timer
 
@@ -201,6 +202,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_advectionOperator->setDeltaT(delta_t);
 		m_advectionOperator->reassemble();
 	}
+	LOG(WELCOME) << "... done" << endl;
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
@@ -249,16 +251,14 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_problemDescription->getViscosity(), delta_t, m_stencil);
 	} else if (KBC_STANDARD == configuration->getCollisionScheme()) {
 		tau = KBCStandard::calculateRelaxationParameter(
-				m_problemDescription->getViscosity(),
-				delta_t, *m_stencil);
-		m_collisionModel = boost::make_shared<KBCStandard>(tau,
-				delta_t, m_stencil);
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		m_collisionModel = boost::make_shared<KBCStandard>(tau, delta_t,
+				m_stencil);
 	} else if (KBC_CENTRAL == configuration->getCollisionScheme()) {
-			tau = KBCCentral::calculateRelaxationParameter(
-					m_problemDescription->getViscosity(),
-					delta_t, *m_stencil);
-			m_collisionModel = boost::make_shared<KBCCentral>(tau,
-					delta_t, m_stencil);
+		tau = KBCCentral::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		m_collisionModel = boost::make_shared<KBCCentral>(tau, delta_t,
+				m_stencil);
 	}
 	// apply external force
 	if (m_problemDescription->hasExternalForce()) {
@@ -511,6 +511,25 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this);
 		//m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this);
 	}
+
+	// print out memory requirements of single components
+	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- " << endl;
+	LOG(BASIC) << " |  Sparse matrix        |  "
+			<< m_advectionOperator->getSystemMatrix().memory_consumption()
+			<< " (#nonzero elem: "
+			<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
+			<< ")" << endl;
+	LOG(BASIC) << " |  Mesh                 |  "
+			<< m_problemDescription->getMesh()->memory_consumption()  << endl;
+	LOG(BASIC) << " |  Distributions        |  " << m_f.memory_consumption()
+			<< endl;
+	LOG(BASIC) << " |  Tmp distributions    |  " << m_f.memory_consumption()
+			<< endl;
+	LOG(BASIC) << " |  Velocities           |  "
+			<< dim * m_velocity.at(0).memory_consumption() << endl;
+	LOG(BASIC) << " |  Densities            |  " << m_density.memory_consumption()
+			<< endl;
+	LOG(BASIC) << " ------------------------------------------------- " << endl << endl;
 
 }
 /* Constructor */
