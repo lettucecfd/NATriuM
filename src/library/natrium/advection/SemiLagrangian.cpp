@@ -265,6 +265,9 @@ void SemiLagrangian<dim>::stream() {
 template<size_t dim>
 void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
+	TimerOutput::Scope timer_section(Timing::getTimer(),
+				"Assembly: fill sparse object");
+
 	if (not sparsity_pattern) {
 		// make sure that sparsity structure is not empty
 		assert(m_systemMatrix.n() != 0);
@@ -332,6 +335,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// -- Create Lagrangian support points --
 			// for all support points in cell
 			for (size_t i = 0; i < dofs_per_cell; i++) {
+				TimerOutput::Scope timer_section(Timing::getTimer(),
+							"Assembly: create points");
 				// get a point x
 				dealii::Point<dim> x_i = m_mapping.transform_unit_to_real_cell(
 						cell, unit_support_points.at(i));
@@ -349,6 +354,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// -- Recursively follow Lagrangian paths ---
 			// while there are points that have not been found, yet
 			while (not not_found.empty()) {
+				TimerOutput::Scope timer_section(Timing::getTimer(),
+							"Assembly: follow paths");
 				LagrangianPathTracker& el = not_found.front();
 				double lambda = 100;
 				size_t child_id = 100;
@@ -497,6 +504,9 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					found_in_cell.end();
 			// (i.e. for all cells that contain support points )
 			for (; list != end_list; list++) {
+				TimerOutput::Scope timer_section(Timing::getTimer(),
+							"Assembly: add entries");
+
 				const typename DoFHandler<dim>::active_cell_iterator & it =
 						list->first;
 
