@@ -30,7 +30,6 @@
 
 #include "../utilities/DealiiExtensions.h"
 #include "../utilities/CFDSolverUtilities.h"
-#include "../utilities/Timing.h"
 
 using namespace dealii;
 
@@ -64,6 +63,8 @@ SemiLagrangian<dim>::SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
 template<size_t dim>
 void SemiLagrangian<dim>::setupDoFs() {
 
+
+	LOG(DETAILED) << "Setup DoFs..." << endl;
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
 
@@ -81,12 +82,15 @@ void SemiLagrangian<dim>::setupDoFs() {
 		m_systemVector.collect_sizes();
 	}
 
+	LOG(DETAILED) << "... done (setup DoFs)." << endl;
+
 }
 
 template<size_t dim>
 void SemiLagrangian<dim>::reassemble() {
 // TODO: if Mesh changed: reinit dof-handler and sparsity pattern in some way
 
+	LOG(DETAILED) << "Assemble..." << endl;
 	// make sure that sparsity structure is not empty
 	assert(m_systemMatrix.n() != 0);
 	assert(m_systemMatrix.m() != 0);
@@ -96,10 +100,14 @@ void SemiLagrangian<dim>::reassemble() {
 	m_systemVector.compress(dealii::VectorOperation::add);
 	m_systemMatrix.compress(dealii::VectorOperation::add);
 
+	LOG(DETAILED) << "... done (assemble)." << endl;
+
 } /* reassemble */
 
 template<size_t dim>
 void SemiLagrangian<dim>::updateSparsityPattern() {
+
+	LOG(DETAILED) << "Update sparsity pattern..." << endl;
 	// TODO only update sparsity pattern for changed cells
 	///////////////////////////////////////////////////////
 	// Setup sparsity pattern (completely manually):
@@ -161,6 +169,7 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 	m_systemMatrix.collect_sizes();
 
 	delete feFaceValues;
+	LOG(DETAILED) << "... done (update sparsity pattern)." << endl;
 }
 /* updateSparsityPattern */
 
@@ -265,8 +274,8 @@ void SemiLagrangian<dim>::stream() {
 template<size_t dim>
 void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
-	TimerOutput::Scope timer_section(Timing::getTimer(),
-				"Assembly: fill sparse object");
+	//TimerOutput::Scope timer_section(Timing::getTimer(),
+	//			"Assembly: fill sparse object");
 
 	if (not sparsity_pattern) {
 		// make sure that sparsity structure is not empty
@@ -324,7 +333,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			m_doFHandler->begin_active(), endc = m_doFHandler->end();
 	for (; cell != endc; ++cell) {
 		if (cell->is_locally_owned()) {
-
 			// initialize
 			found_in_cell.clear();
 			std::queue<LagrangianPathTracker> not_found;
@@ -335,8 +343,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// -- Create Lagrangian support points --
 			// for all support points in cell
 			for (size_t i = 0; i < dofs_per_cell; i++) {
-				TimerOutput::Scope timer_section(Timing::getTimer(),
-							"Assembly: create points");
+				//TimerOutput::Scope timer_section(Timing::getTimer(),
+				//			"Assembly: create points");
 				// get a point x
 				dealii::Point<dim> x_i = m_mapping.transform_unit_to_real_cell(
 						cell, unit_support_points.at(i));
@@ -354,8 +362,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// -- Recursively follow Lagrangian paths ---
 			// while there are points that have not been found, yet
 			while (not not_found.empty()) {
-				TimerOutput::Scope timer_section(Timing::getTimer(),
-							"Assembly: follow paths");
+				//TimerOutput::Scope timer_section(Timing::getTimer(),
+				//			"Assembly: follow paths");
 				LagrangianPathTracker& el = not_found.front();
 				double lambda = 100;
 				size_t child_id = 100;
@@ -504,9 +512,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					found_in_cell.end();
 			// (i.e. for all cells that contain support points )
 			for (; list != end_list; list++) {
-				TimerOutput::Scope timer_section(Timing::getTimer(),
-							"Assembly: add entries");
-
+				//TimerOutput::Scope timer_section(Timing::getTimer(),
+				//			"Assembly: add entries");
 				const typename DoFHandler<dim>::active_cell_iterator & it =
 						list->first;
 
@@ -546,8 +553,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 							}
 						} else {
 							// calculate matrix entries
-							TimerOutput::Scope timer_section(Timing::getTimer(),
-									"Assembly: block and add");
+							//TimerOutput::Scope timer_section(Timing::getTimer(),
+							//		"Assembly: block and add");
 							m_systemMatrix.block(l[i].destination.direction - 1,
 									l[i].beta - 1).add(l[i].destination.index,
 									local_dof_indices.at(j), local_entries.at(i).at(j));//fe_cell_values.shape_value;
@@ -580,8 +587,8 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		const dealii::Point<dim>& p_inside, const dealii::Point<dim>& p_outside,
 		dealii::Point<dim>& p_boundary, double* lambda, size_t* child_id) {
 
-	TimerOutput::Scope timer_section(Timing::getTimer(),
-			"Assembly: face crossing");
+	//TimerOutput::Scope timer_section(Timing::getTimer(),
+	//		"Assembly: face crossing");
 
 // transform to unit cell
 	typename dealii::DoFHandler<dim>::cell_iterator ci(*cell);

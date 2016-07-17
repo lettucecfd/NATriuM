@@ -69,8 +69,10 @@ int main(int argc, char** argv) {
 
 	// set small time step size
 	const double CFL = 0.4;
+	pout << "Make problem..." << endl;
 	tgvProblem3D = boost::make_shared<TaylorGreenVortex3D>(viscosity,
 			refinement_level, cs, init_rho_analytically);
+	pout << "...done" << endl;
 
 	// configure solver
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
@@ -84,12 +86,15 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	//configuration->setCommandLineVerbosity(DETAILED);
 
 	size_t n_dofs;
 	double lups;
 	configuration->setStencil(Stencil_D3Q19);
 	time1 = clock() - timestart;
+	pout << "Make solver..." << endl;
 	CFDSolver<3> solver(configuration, tgvProblem3D);
+	pout << "...done" << endl;
 
 	// info output
 	const vector<dealii::types::global_dof_index>& dofs_per_proc =
