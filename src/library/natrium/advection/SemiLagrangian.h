@@ -27,6 +27,7 @@
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
 #include "../utilities/Timing.h"
+#include "../utilities/Logging.h"
 
 namespace natrium {
 
@@ -395,7 +396,7 @@ public:
 			const std::vector<dealii::Point<dim> >& points,
 			std::vector<std::vector<double> >&values) {
 
-		TimerOutput::Scope timer_section(Timing::getTimer(), "Assembly: evaluate function");
+		//TimerOutput::Scope timer_section(Timing::getTimer(), "Assembly: evaluate function");
 
 		const size_t n_dofs_per_cell = cell->get_fe().n_dofs_per_cell();
 		const size_t n_points = points.size();
