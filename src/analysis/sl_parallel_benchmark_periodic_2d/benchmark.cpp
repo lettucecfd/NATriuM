@@ -21,7 +21,6 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-#include "natrium/benchmarks/TaylorGreenVortex3D.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 #include "natrium/utilities/Info.h"
@@ -65,12 +64,12 @@ int main(int argc, char** argv) {
 	// time measurement variables
 	double time1, time2, time3, timestart;
 	timestart = clock();
-	boost::shared_ptr<ProblemDescription<3> > tgvProblem3D;
+	boost::shared_ptr<ProblemDescription<2> > tgvProblem2D;
 
 	// set small time step size
 	const double CFL = 0.4;
 	pout << "Make problem..." << endl;
-	tgvProblem3D = boost::make_shared<TaylorGreenVortex3D>(viscosity,
+	tgvProblem2D = boost::make_shared<TaylorGreenVortex2D>(viscosity,
 			refinement_level, cs, init_rho_analytically);
 	pout << "...done" << endl;
 
@@ -78,7 +77,7 @@ int main(int argc, char** argv) {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	//configuration->setRestartAtLastCheckpoint(false);
-	//configuration->setSwitchOutputOff(true);
+	configuration->setSwitchOutputOff(true);
 	//configuration->setCommandLineVerbosity(ALL);
 	configuration->setUserInteraction(false);
 	configuration->setNumberOfTimeSteps(nof_iterations);
@@ -86,14 +85,14 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-	configuration->setCommandLineVerbosity(DETAILED);
+	//configuration->setCommandLineVerbosity(DETAILED);
 
 	size_t n_dofs;
 	double lups;
-	configuration->setStencil(Stencil_D3Q19);
+	configuration->setStencil(Stencil_D2Q9);
 	time1 = clock() - timestart;
 	pout << "Make solver..." << endl;
-	CFDSolver<3> solver(configuration, tgvProblem3D);
+	CFDSolver<2> solver(configuration, tgvProblem2D);
 	pout << "...done" << endl;
 
 	// info output
