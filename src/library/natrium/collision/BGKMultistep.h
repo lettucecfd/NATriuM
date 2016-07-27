@@ -52,6 +52,10 @@ public:
 			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure) const;
 
+	void collideAllD3Q19(DistributionFunctions& f,
+			distributed_vector& densities, vector<distributed_vector>& velocities,
+			const dealii::IndexSet& locally_owned_dofs,
+			bool inInitializationProcedure) const;
 
 
 
