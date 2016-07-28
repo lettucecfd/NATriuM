@@ -196,7 +196,7 @@ template<> double PhysicalProperties<3>::enstrophy(
 	const distributed_vector& uz = u.at(2);
 
 	// Integrate ux over whole domain
-	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
+	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values | dealii::update_gradients;
 	const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<3> feCellValues(advection->getMapping(),
 			*(advection->getFe()), *(advection->getQuadrature()),
