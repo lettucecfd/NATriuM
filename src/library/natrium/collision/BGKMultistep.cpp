@@ -53,6 +53,7 @@ void BGKMultistep::collideAll(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
+	assert (f.size() == getStencil()->getQ());
 	if (m_firstCollision) {
 		//cout << " First collision check" << endl ;
 		m_formerF.reinit(getStencil()->getQ(), locally_owned_dofs,

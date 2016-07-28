@@ -165,6 +165,10 @@ public:
 
 	void transferFromOtherScaling(const Stencil& old_stencil, const Stencil& new_stencil, const dealii::IndexSet& locally_owned_dofs);
 
+	size_t 	memory_consumption () const {
+		return m_f0.memory_consumption() + m_fStream.memory_consumption();
+	}
+
 };
 /* class DistributionFunctions */
 

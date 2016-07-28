@@ -21,6 +21,7 @@
 #include "natrium/solver/BenchmarkCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
+#include "natrium/collision/BGKStandard.h"
 
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/BasicNames.h"
@@ -79,6 +80,7 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 		u.push_back(u_i);
 	}
 	// collide and compare to previous collision function
+	assert (f.size() == dqmodel->getQ());
 	DistributionFunctions fAfterCollisionmulti(f);
 	DistributionFunctions fAfterCollisionbgk(f);
 

@@ -39,12 +39,12 @@ int main() {
 	// specify Mach number
 	const double Ma = 0.05;
 	// zunaechst: fixed order of FE
-	const double orderOfFiniteElement = 4;
+	const double orderOfFiniteElement = 9;
 
 	// chose scaling so that the right Ma-number is achieved
-	double scaling = sqrt(3) * 1 / Ma;
+	double scaling = sqrt(3) * 2 / Ma;
 
-	const double refinementLevel = 4;
+	const double refinementLevel = 2;
 		pout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
@@ -56,7 +56,7 @@ int main() {
 		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		//double dt = dx / (scaling * sqrt(2));
-		double CFL=0.4;
+		double CFL=8;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -75,6 +75,7 @@ int main() {
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(ALL);
+		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 		configuration->setCFL(CFL);
 
 		//configuration->setInitializationScheme(ITERATIVE);
@@ -86,6 +87,7 @@ int main() {
 		// make problem and solver objects
 		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 				TaylorGreenVortex2D>(viscosity, refinementLevel, 1./Ma);
+		tgVortex->setHorizontalVelocity(1);
 		boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
 		timestart = clock();
 		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);

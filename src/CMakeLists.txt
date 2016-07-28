@@ -1,23 +1,23 @@
 #
 # CMake File for NATriuM test
 #    
-  
-  
-  
-   
+       
 #
 # It is good practise to specify a version requirement:
 #
 cmake_minimum_required( VERSION 2.8.8 )
-
+      
+      
 #
 # Find deal library
 #
 find_package(   deal.II 8.0 REQUIRED
                 HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
-)
-
-#
+)      
+        
+        
+     
+# 
 # Initialize Deal variables (has to be called before "project")
 #
 DEAL_II_INITIALIZE_CACHED_VARIABLES() 
@@ -28,8 +28,8 @@ DEAL_II_INITIALIZE_CACHED_VARIABLES()
 # flags.
 #
 project( NATriuM )
-    
-#
+   
+# 
 # include boost
 #
 SET(BOOST_MIN_VERSION "1.54.0")
@@ -72,8 +72,10 @@ add_executable( ${NATRIUM_TARGET}
 # make executable
 #
 deal_ii_setup_target( ${NATRIUM_TARGET} )     
-         
-                
+      
+      
+           
+       
 #
 # link natrium library to executable
 #           
@@ -81,9 +83,7 @@ include_directories( "${PROJECT_SOURCE_DIR}/library" )
 target_link_libraries(  ${NATRIUM_TARGET}
                         natrium
                         )
-                       
- 
-
+                             
 #
 # (Optional)
 # If you wish to have a "run" target for make, specify one:

@@ -4,8 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        #shear-layer    
-        shear-layer-MinionBrown
+        benchmark2d
         )
  
 
@@ -13,8 +12,7 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                #shear_layer.cpp
-                shear_layer_MinionBrown.cpp
+                benchmark.cpp
                )
 #
 # link natrium library to executable

@@ -148,6 +148,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 	/// Build streaming data object
+	LOG(WELCOME) << "Create streaming object ..." << endl;
 	if (SEDG == configuration->getAdvectionScheme()) {
 		// start timer
 
@@ -202,6 +203,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_advectionOperator->setDeltaT(delta_t);
 		m_advectionOperator->reassemble();
 	}
+	LOG(WELCOME) << "... done" << endl;
 
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
@@ -278,7 +280,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_collisionModel->setViscosity(m_problemDescription->getViscosity());
 		// TODO call setViscosity only once (for general collision model)
 		// TODO remove relaxation-parameter from collision model and calculate in each time step from dt and nu
-	}
+}
 
 	// apply external force
 	if (m_problemDescription->hasExternalForce()) {
@@ -540,6 +542,25 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		//m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this);
 	}
 
+	// print out memory requirements of single components
+	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- " << endl;
+	LOG(BASIC) << " |  Sparse matrix        |  "
+			<< m_advectionOperator->getSystemMatrix().memory_consumption()
+			<< " (#nonzero elem: "
+			<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
+			<< ")" << endl;
+	LOG(BASIC) << " |  Mesh                 |  "
+			<< m_problemDescription->getMesh()->memory_consumption()  << endl;
+	LOG(BASIC) << " |  Distributions        |  " << m_f.memory_consumption()
+			<< endl;
+	LOG(BASIC) << " |  Tmp distributions    |  " << m_f.memory_consumption()
+			<< endl;
+	LOG(BASIC) << " |  Velocities           |  "
+			<< dim * m_velocity.at(0).memory_consumption() << endl;
+	LOG(BASIC) << " |  Densities            |  " << m_density.memory_consumption()
+			<< endl;
+	LOG(BASIC) << " ------------------------------------------------- " << endl << endl;
+
 }
 /* Constructor */
 
@@ -676,7 +697,7 @@ void CFDSolver<dim>::run() {
 			m_dataProcessors.at(i)->apply();
 		}
 	}
-	output(m_i);
+	output(m_i, true);
 
 // Finalize
 	Timing::getTimer().print_summary();
@@ -730,7 +751,7 @@ bool CFDSolver<dim>::stopConditionMet() {
 }
 
 template<size_t dim>
-void CFDSolver<dim>::output(size_t iteration) {
+void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 // start timer
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
@@ -763,7 +784,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 		 }*/
 		if (m_configuration->isOutputTurbulenceStatistics())
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
-		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
+		if ((iteration % m_configuration->getOutputSolutionInterval() == 0) or is_final) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
@@ -839,7 +860,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 		}
 
 		// output: checkpoint
-		if (iteration % m_configuration->getOutputCheckpointInterval() == 0) {
+		if ((iteration % m_configuration->getOutputCheckpointInterval() == 0) or is_final) {
 			boost::filesystem::path checkpoint_dir(
 					m_configuration->getOutputDirectory());
 			checkpoint_dir /= "checkpoint";

@@ -440,10 +440,12 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_SparsityPattern_test) {
 	BOOST_CHECK_EQUAL(sp.size(), size_t(8));
 	for (size_t i = 0; i < sp.size(); i++) {
 		BOOST_CHECK_EQUAL(sp[i].size(), size_t(8));
+		/* the following test worked for the suboptimal sparsity patterns
 		BOOST_CHECK_SMALL(
 				sp[i][i].n_nonzero_elements()
 						- sl.getDoFHandler()->n_dofs() * pow((fe_order + 1), 2),
 				2.0);
+		*/
 	}
 
 	pout << "done." << endl;
@@ -469,10 +471,12 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_SparsityPattern_test) {
 	BOOST_CHECK_EQUAL(sp.size(), size_t(18));
 	for (size_t i = 0; i < sp.size(); i++) {
 		BOOST_CHECK_EQUAL(sp[i].size(), size_t(18));
+		/* the following test worked for the suboptimal sparsity patterns
 		BOOST_CHECK_SMALL(
 				sp[i][i].n_nonzero_elements()
 						- sl.getDoFHandler()->n_dofs() * pow((fe_order + 1), 3),
 				2.0);
+		*/
 	}
 
 	pout << "done." << endl;

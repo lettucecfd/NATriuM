@@ -30,7 +30,6 @@
 
 #include "../utilities/DealiiExtensions.h"
 #include "../utilities/CFDSolverUtilities.h"
-#include "../utilities/Timing.h"
 
 using namespace dealii;
 
@@ -64,6 +63,8 @@ SemiLagrangian<dim>::SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
 template<size_t dim>
 void SemiLagrangian<dim>::setupDoFs() {
 
+
+	LOG(DETAILED) << "Setup DoFs..." << endl;
 	// distribute degrees of freedom over mesh
 	m_doFHandler->distribute_dofs(*m_fe);
 
@@ -81,12 +82,15 @@ void SemiLagrangian<dim>::setupDoFs() {
 		m_systemVector.collect_sizes();
 	}
 
+	LOG(DETAILED) << "... done (setup DoFs)." << endl;
+
 }
 
 template<size_t dim>
 void SemiLagrangian<dim>::reassemble() {
 // TODO: if Mesh changed: reinit dof-handler and sparsity pattern in some way
 
+	LOG(DETAILED) << "Assemble..." << endl;
 	// make sure that sparsity structure is not empty
 	assert(m_systemMatrix.n() != 0);
 	assert(m_systemMatrix.m() != 0);
@@ -96,10 +100,14 @@ void SemiLagrangian<dim>::reassemble() {
 	m_systemVector.compress(dealii::VectorOperation::add);
 	m_systemMatrix.compress(dealii::VectorOperation::add);
 
+	LOG(DETAILED) << "... done (assemble)." << endl;
+
 } /* reassemble */
 
 template<size_t dim>
 void SemiLagrangian<dim>::updateSparsityPattern() {
+
+	LOG(DETAILED) << "Update sparsity pattern..." << endl;
 	// TODO only update sparsity pattern for changed cells
 	///////////////////////////////////////////////////////
 	// Setup sparsity pattern (completely manually):
@@ -161,6 +169,7 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 	m_systemMatrix.collect_sizes();
 
 	delete feFaceValues;
+	LOG(DETAILED) << "... done (update sparsity pattern)." << endl;
 }
 /* updateSparsityPattern */
 
@@ -265,6 +274,9 @@ void SemiLagrangian<dim>::stream() {
 template<size_t dim>
 void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
+	//TimerOutput::Scope timer_section(Timing::getTimer(),
+	//			"Assembly: fill sparse object");
+
 	if (not sparsity_pattern) {
 		// make sure that sparsity structure is not empty
 		assert(m_systemMatrix.n() != 0);
@@ -284,7 +296,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			normals_update);
 
 	// Initialize
-	SemiLagrangianBoundaryDoFHandler<dim> sl_boundary_handler(m_doFHandler->locally_owned_dofs(), *getStencil());
+	SemiLagrangianBoundaryDoFHandler<dim> sl_boundary_handler(
+			m_doFHandler->locally_owned_dofs(), *getStencil());
 	std::map<typename DoFHandler<dim>::active_cell_iterator, DeparturePointList> found_in_cell;
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const std::vector<Point<dim> > & unit_support_points =
@@ -320,7 +333,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			m_doFHandler->begin_active(), endc = m_doFHandler->end();
 	for (; cell != endc; ++cell) {
 		if (cell->is_locally_owned()) {
-
 			// initialize
 			found_in_cell.clear();
 			std::queue<LagrangianPathTracker> not_found;
@@ -331,6 +343,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// -- Create Lagrangian support points --
 			// for all support points in cell
 			for (size_t i = 0; i < dofs_per_cell; i++) {
+				//TimerOutput::Scope timer_section(Timing::getTimer(),
+				//			"Assembly: create points");
 				// get a point x
 				dealii::Point<dim> x_i = m_mapping.transform_unit_to_real_cell(
 						cell, unit_support_points.at(i));
@@ -348,6 +362,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// -- Recursively follow Lagrangian paths ---
 			// while there are points that have not been found, yet
 			while (not not_found.empty()) {
+				//TimerOutput::Scope timer_section(Timing::getTimer(),
+				//			"Assembly: follow paths");
 				LagrangianPathTracker& el = not_found.front();
 				double lambda = 100;
 				size_t child_id = 100;
@@ -432,8 +448,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 							// destination is not a boundary
 
 							// make primary boundary hit from Lagrangian path tracker
-							OutgoingDistributionValue out_dof(false, el.destination.index,
-									el.beta);
+							OutgoingDistributionValue out_dof(false,
+									el.destination.index, el.beta);
 							BoundaryHit<dim> hit(el.currentPoint, t_shift,
 									fev_normals.normal_vector(0), *boundary,
 									el.currentCell, out_dof);
@@ -448,10 +464,12 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 								Tensor<1, dim> e = minus_dtealpha.at(
 										hit.incomingDirections.at(i));
 								e *= (t_shift / m_deltaT);
-								dealii::Point<dim> x_departure = el.currentPoint + e;
+								dealii::Point<dim> x_departure = el.currentPoint
+										+ e;
 								LagrangianPathTracker tracker_i(here,
-										hit.incomingDirections.at(i), x_departure,
-										el.currentPoint, el.currentCell);
+										hit.incomingDirections.at(i),
+										x_departure, el.currentPoint,
+										el.currentCell);
 								not_found.push(tracker_i);
 							}
 
@@ -494,6 +512,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					found_in_cell.end();
 			// (i.e. for all cells that contain support points )
 			for (; list != end_list; list++) {
+				//TimerOutput::Scope timer_section(Timing::getTimer(),
+				//			"Assembly: add entries");
 				const typename DoFHandler<dim>::active_cell_iterator & it =
 						list->first;
 
@@ -501,41 +521,44 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 				it->get_dof_indices(local_dof_indices);
 				const DeparturePointList & l = list->second;
 
-				if (not sparsity_pattern) {
-					// calculate shape values
-					local_entries.clear();
-					local_lagrange_points.clear();
-					for (size_t i = 0; i < l.size(); i++) {
-						local_lagrange_points.push_back(l[i].departurePoint);
-						std::vector<double> h(dofs_per_cell);
-						local_entries.push_back(h);
-					}
-					shapeFunctionValue(it, local_lagrange_points,
-							local_entries);
+				//if (not sparsity_pattern) {
+				// calculate shape values
+				local_entries.clear();
+				local_lagrange_points.clear();
+				for (size_t i = 0; i < l.size(); i++) {
+					local_lagrange_points.push_back(l[i].departurePoint);
+					std::vector<double> h(dofs_per_cell);
+					local_entries.push_back(h);
 				}
+				shapeFunctionValue(it, local_lagrange_points, local_entries);
+				//}
 				// (i.e. for all Lagrangian points in cell)
 				for (size_t i = 0; i < l.size(); i++) {
 					assert(it == l.at(i).currentCell);
-					if (sparsity_pattern) {
-						if (l[i].destination.isBoundaryHit) {
-							// introduce present cell dofs to incoming dofs of boundary hit
-							// sl_boundary_handler.getBoundaryHit(l[i].destination).in.at(...).setIndex(...);
-							// TODO make incoming dofs vector, make shape values vector
-
-						} else {
-							// add entry to sparsity pattern
-							m_sparsityPattern[l[i].destination.direction - 1][l[i].beta
-									- 1].add_entries(
-									l[i].destination.index,
-									local_dof_indices.begin(),
-									local_dof_indices.end(), false);
+					for (size_t j = 0; j < local_entries.at(i).size(); j++) {
+						if (fabs(local_entries.at(i).at(j)) < 1e-10) {
+							continue;
 						}
-					} else {
-						// calculate matrix entries
-						m_systemMatrix.block(l[i].destination.direction - 1,
-								l[i].beta - 1).add(
-								l[i].destination.index,
-								local_dof_indices, local_entries.at(i));//fe_cell_values.shape_value;
+						if (sparsity_pattern) {
+							if (l[i].destination.isBoundaryHit) {
+								// introduce present cell dofs to incoming dofs of boundary hit
+								// sl_boundary_handler.getBoundaryHit(l[i].destination).in.at(...).setIndex(...);
+								// TODO make incoming dofs vector, make shape values vector
+
+							} else {
+								// add entry to sparsity pattern
+								m_sparsityPattern[l[i].destination.direction - 1][l[i].beta
+										- 1].add(l[i].destination.index,
+										local_dof_indices.at(j));
+							}
+						} else {
+							// calculate matrix entries
+							//TimerOutput::Scope timer_section(Timing::getTimer(),
+							//		"Assembly: block and add");
+							m_systemMatrix.block(l[i].destination.direction - 1,
+									l[i].beta - 1).add(l[i].destination.index,
+									local_dof_indices.at(j), local_entries.at(i).at(j));//fe_cell_values.shape_value;
+						}
 					}
 				} /* end for all support points in cell*/
 			} /* end for all xlists (i.e. for all cells that contain support points )*/
@@ -564,14 +587,17 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		const dealii::Point<dim>& p_inside, const dealii::Point<dim>& p_outside,
 		dealii::Point<dim>& p_boundary, double* lambda, size_t* child_id) {
 
-	// transform to unit cell
+	//TimerOutput::Scope timer_section(Timing::getTimer(),
+	//		"Assembly: face crossing");
+
+// transform to unit cell
 	typename dealii::DoFHandler<dim>::cell_iterator ci(*cell);
 	dealii::Point<dim> pi_unit = m_mapping.transform_real_to_unit_cell(ci,
 			p_inside);
 	dealii::Point<dim> po_unit = m_mapping.transform_real_to_unit_cell(ci,
 			p_outside);
 
-	// eliminate round-off-errors
+// eliminate round-off-errors
 	for (size_t i = 0; i < dim; i++) {
 		if (fabs(pi_unit[i]) < 1e-12) {
 			pi_unit[i] = 0;
@@ -611,7 +637,7 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	int face_id = -1;
 	*lambda = 100;
 
-	// for efficiency reasons: omit the lambda-stuff, if possible (which is in most calls)
+// for efficiency reasons: omit the lambda-stuff, if possible (which is in most calls)
 	if (po_unit[0] < 0) {
 		// if face 0 is crossed
 		*lambda = (0 - pi_unit[0]) / (po_unit[0] - pi_unit[0]);
@@ -670,11 +696,11 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		return -1;
 	}
 
-	// calculate boundary point
+// calculate boundary point
 	dealii::Tensor<1, dim> increment = po_unit - pi_unit;
 	increment *= (*lambda);
 
-	// compensate for round-off errors
+// compensate for round-off errors
 	dealii::Point<dim> h = pi_unit + increment;
 	for (size_t i = 0; i < dim; i++) {
 		if (fabs(h[i]) < 1e-12) {
@@ -684,19 +710,19 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 			h[i] = 1;
 		}
 	}
-	// assert that point is at boundary
+// assert that point is at boundary
 	if (2 == dim) {
 		assert(h[0] * h[1] * (1 - h[0]) * (1 - h[1]) == 0);
 	} else { // 3 == dim
 		assert(h[0] * h[1] * h[2] * (1 - h[0]) * (1 - h[1]) * (1 - h[2]) == 0);
 	}
 
-	// map to real cell
+// map to real cell
 	p_boundary = m_mapping.transform_unit_to_real_cell(ci, h);
 
-	// cout << "boundary point: " << p_boundary << endl;
+// cout << "boundary point: " << p_boundary << endl;
 
-	//assert(cell->point_inside(p_boundary));
+//assert(cell->point_inside(p_boundary));
 	*child_id = dealii::GeometryInfo<dim>::child_cell_from_point(h);
 
 	return face_id;
