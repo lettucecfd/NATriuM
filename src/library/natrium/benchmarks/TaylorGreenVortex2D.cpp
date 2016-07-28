@@ -20,7 +20,7 @@ namespace natrium {
 TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
 		size_t refinementLevel, double cs, bool init_rho_analytically) :
 		Benchmark<2>(makeGrid(), viscosity, 8 * atan(1)), m_cs(
-				cs), m_analyticInit(init_rho_analytically), m_refinementLevel(refinementLevel) {
+				cs), m_analyticInit(init_rho_analytically), m_refinementLevel(refinementLevel), m_horizontalVelocity(0) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
@@ -37,12 +37,13 @@ double TaylorGreenVortex2D::AnalyticVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {
 	assert(component < 2);
 	if (component == 0) {
-		return sin(x(0)) * cos(x(1))
+		return m_flow->getHorizontalVelocity() + sin(x(0) - m_flow->getHorizontalVelocity() * this->get_time()) * cos(x(1))
 				* exp(-2 * m_flow->getViscosity() * this->get_time());
 	} else {
-		return -cos(x(0)) * sin(x(1))
+		return -cos(x(0) - m_flow->getHorizontalVelocity() * this->get_time()) * sin(x(1))
 				* exp(-2 * m_flow->getViscosity() * this->get_time());
 	}
+	return 0;
 }
 
 double TaylorGreenVortex2D::AnalyticDensity::value(const dealii::Point<2>& x,
@@ -50,7 +51,7 @@ double TaylorGreenVortex2D::AnalyticDensity::value(const dealii::Point<2>& x,
 	assert (component == 0);
 	if (m_flow->m_analyticInit) {
 		double rho0 = 1;
-		double p = rho0 / 4. * (cos(2 * x(0)) + cos(2 * x(1)))
+		double p = rho0 / 4. * (cos(2 * (x(0) - m_flow->getHorizontalVelocity() * this->get_time())) + cos(2 * x(1)))
 				* exp(-4 * m_flow->getViscosity() * this->get_time());
 		return rho0 + p / (m_flow->m_cs * m_flow->m_cs);
 	} else {

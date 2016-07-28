@@ -66,6 +66,14 @@ public:
 
 	}
 
+	void setHorizontalVelocity(double u){
+		m_horizontalVelocity = u;
+	}
+
+	double getHorizontalVelocity() const {
+		return m_horizontalVelocity;
+	}
+
 private:
 	/// speed of sound
 	double m_cs;
@@ -74,6 +82,8 @@ private:
 	bool m_analyticInit;
 
 	size_t m_refinementLevel;
+
+	double m_horizontalVelocity;
 
 	/**
 	 * @short create triangulation for couette flow
