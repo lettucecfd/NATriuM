@@ -14,10 +14,7 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-
-
 namespace natrium {
-
 
 /**
  * @short Description of a lid-driven cavity flow.
@@ -28,11 +25,11 @@ private:
 public:
 
 	/// constructor
-	LidDrivenCavity2D(double velocity, double viscosity, size_t refinementLevel);
+	LidDrivenCavity2D(double velocity, double viscosity,
+			size_t refinementLevel);
 
 	/// destructor
 	virtual ~LidDrivenCavity2D();
-
 
 	virtual double getCharacteristicVelocity() const {
 		return topPlateVelocity;
@@ -62,18 +59,36 @@ private:
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
 
-
 	/**
 	 * @short function to generate the unstructured mesh grid
 	 */
 	struct UnstructuredGridFunc {
-		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
-			return dealii::Point<2>(0.5*(pow(sin(M_PI*(in(0)-0.5)),1)+1), 0.5*(pow(sin(M_PI*(in(1)-0.5)),1)+1));
+	private:
+		double m_ax;
+		double m_bx;
+		double m_ay;
+		double m_by;
+
+		double shifted_sine(double x) const {
+			return 0.5 * (1 + sin(M_PI * x - 0.5 * M_PI));
 		}
-		UnstructuredGridFunc() {
+		double trafo(double x, double a, double b) const {
+			assert(a > 0);
+			assert(b < 1);
+			assert(x >= 0);
+			assert(x <= 1);
+			return (shifted_sine((b - a) * x + a) - shifted_sine(a))
+					/ (shifted_sine(b) - shifted_sine(a));
+
+		}
+	public:
+		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
+			return dealii::Point<2>( trafo(in(0), m_ax, m_bx) , trafo(in(1), m_ay,m_by) );
+		}
+		UnstructuredGridFunc(double ax, double bx, double ay, double by) :
+				m_ax(ax), m_bx(bx), m_ay(ay), m_by(by){
 		}
 	};
-
 
 };
 
