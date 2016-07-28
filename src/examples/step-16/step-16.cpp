@@ -115,9 +115,12 @@ int main(int argc, char** argv) {
 	// hier simulieren wir jetzt  U = 1 (ist im TGV3D modul sowieso nur so definiert)
 	// und mit der Reynoldsähnlichkeit ist das kein Problem, da wir gegenüber Gassner
 	// und Beck ja auch die Viskosität verändern
+	// Nach einem Blick in van Rees et.al. (2011) und einer erfolgreichen Simulation in Palabos: 
+	// (Hier war tau = 3*nu_LB + 0.5, nu_LB = U_lattice * (N/2pi) / Re, dt = 2pi/N* U_lattice
+	// Re = 1/nu,L=2pi, U = 1 und D = [0,2pi*L]^3
 	const double U = 1;
-	const double L = 2 * M_PI;
-	const double viscosity = U * L / Re;
+	//const double L = 2 * M_PI;
+	const double viscosity = 1.0 / Re;
 	const double Ma = 0.1;
 	const double cs = U / Ma;
 
@@ -151,7 +154,7 @@ int main(int argc, char** argv) {
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(1);
 	configuration->setOutputCheckpointInterval(10000);
-	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputSolutionInterval(10000);
 	configuration->setSimulationEndTime(10.0);
 	configuration->setInitializationScheme(EQUILIBRIUM);
 	configuration->setSedgOrderOfFiniteElement(p);
