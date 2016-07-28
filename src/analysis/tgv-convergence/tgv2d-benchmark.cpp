@@ -32,6 +32,12 @@ int main(int argc, char** argv) {
 
 	//pout << "Starting NATriuM step-1 ..." << endl;
 
+	if (strcmp(argv[1],"?") == 0)
+	{
+		pout << "USAGE: ./tgv-convergence N p Ma Re integrator CFL collision init_rho_analytically semi_lagrange" << endl;
+		return 0;
+	}
+
 	const double N = atoi(argv[1]);
 	const double p = atoi(argv[2]);
 	const double Ma = atof(argv[3]);

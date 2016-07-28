@@ -193,19 +193,15 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 		// higher order part vector h
 		vector<double> h(Q);
 
-		h.at(0) = rho * (2 * ux * Q_xyy + 2 * uy * Q_yxx + A);
-		h.at(1) = 0.5 * rho * (-(1 + 2 * ux) * Q_xyy - 2 * uy * Q_yxx - A);
-		h.at(3) = 0.5 * rho * (-(-1 + 2 * ux) * Q_xyy - 2 * uy * Q_yxx - A);
-		h.at(2) = 0.5 * rho * (-(1 + 2 * uy) * Q_yxx - 2 * ux * Q_xyy - A);
-		h.at(4) = 0.5 * rho * (-(-1 + 2 * uy) * Q_yxx - 2 * ux * Q_xyy - A);
-		h.at(5) = 0.25 * rho
-				* ((1 + 2 * ux) * Q_xyy + (1 + 2 * uy) * Q_yxx + A);
-		h.at(6) = 0.25 * rho
-				* ((-1 + 2 * ux) * Q_xyy + (1 + 2 * uy) * Q_yxx + A);
-		h.at(7) = 0.25 * rho
-				* ((-1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
-		h.at(8) = 0.25 * rho
-				* ((1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
+		h.at(0) = f.at(0)(i)-k.at(0)-s.at(0);
+		h.at(1) = f.at(1)(i)-k.at(1)-s.at(1);
+		h.at(3) = f.at(3)(i)-k.at(3)-s.at(3);
+		h.at(2) = f.at(2)(i)-k.at(2)-s.at(2);
+		h.at(4) = f.at(4)(i)-k.at(4)-s.at(4);
+		h.at(5) = f.at(5)(i)-k.at(5)-s.at(5);
+		h.at(6) = f.at(6)(i)-k.at(6)-s.at(6);
+		h.at(7) = f.at(7)(i)-k.at(7)-s.at(7);
+		h.at(8) = f.at(8)(i)-k.at(8)-s.at(8);
 
 		// equilibrium vectors for shear vector
 		vector<double> seq(Q);
@@ -334,19 +330,15 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 						+ 0.5 * (scalar_product + (1) * ux - 1 * uy) * T);
 
 		// calculate higher order equilibrium
-		heq.at(0) = rho * (2 * ux * Q_xyy + 2 * uy * Q_yxx + A);
-		heq.at(1) = 0.5 * rho * (-(1 + 2 * ux) * Q_xyy - 2 * uy * Q_yxx - A);
-		heq.at(3) = 0.5 * rho * (-(-1 + 2 * ux) * Q_xyy - 2 * uy * Q_yxx - A);
-		heq.at(2) = 0.5 * rho * (-(1 + 2 * uy) * Q_yxx - 2 * ux * Q_xyy - A);
-		heq.at(4) = 0.5 * rho * (-(-1 + 2 * uy) * Q_yxx - 2 * ux * Q_xyy - A);
-		heq.at(5) = 0.25 * rho
-				* ((1 + 2 * ux) * Q_xyy + (1 + 2 * uy) * Q_yxx + A);
-		heq.at(6) = 0.25 * rho
-				* ((-1 + 2 * ux) * Q_xyy + (1 + 2 * uy) * Q_yxx + A);
-		heq.at(7) = 0.25 * rho
-				* ((-1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
-		heq.at(8) = 0.25 * rho
-				* ((1 + 2 * ux) * Q_xyy + (-1 + 2 * uy) * Q_yxx + A);
+		heq.at(0) = feq.at(0)-k.at(0)-seq.at(0);
+		heq.at(1) = feq.at(1)-k.at(1)-seq.at(1);
+		heq.at(3) = feq.at(3)-k.at(3)-seq.at(3);
+		heq.at(2) = feq.at(2)-k.at(2)-seq.at(2);
+		heq.at(4) = feq.at(4)-k.at(4)-seq.at(4);
+		heq.at(5) = feq.at(5)-k.at(5)-seq.at(5);
+		heq.at(6) = feq.at(6)-k.at(6)-seq.at(6);
+		heq.at(7) = feq.at(7)-k.at(7)-seq.at(7);
+		heq.at(8) = feq.at(8)-k.at(8)-seq.at(8);
 
 		//deviation of the shear parts
 		vector<double> delta_s(Q);
