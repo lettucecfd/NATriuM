@@ -167,6 +167,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		// higher order part vector h
 		vector<double> h(Q);
+/*
 #ifdef KBC_C
 		h.at(0) = rho * A;
 		h.at(1) = -0.5 * rho * (1 * Q_xyy + A);
@@ -188,6 +189,17 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
 		h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
 #endif
+*/
+		h.at(0) = f.at(0)(i)-k.at(0)-s.at(0);
+		h.at(1) = f.at(1)(i)-k.at(1)-s.at(1);
+		h.at(3) = f.at(3)(i)-k.at(3)-s.at(3);
+		h.at(2) = f.at(2)(i)-k.at(2)-s.at(2);
+		h.at(4) = f.at(4)(i)-k.at(4)-s.at(4);
+		h.at(5) = f.at(5)(i)-k.at(5)-s.at(5);
+		h.at(6) = f.at(6)(i)-k.at(6)-s.at(6);
+		h.at(7) = f.at(7)(i)-k.at(7)-s.at(7);
+		h.at(8) = f.at(8)(i)-k.at(8)-s.at(8);
+
 
 		// equilibrium vectors for shear vector
 		vector<double> seq(Q);
@@ -282,6 +294,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		seq.at(8) = 0.25 * rho * -Pi_xy;
 #endif
 
+/*
 		// calculate higher order equilibrium
 #ifdef KBC_C
 
@@ -306,6 +319,17 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
 		heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
 #endif
+*/
+
+		heq.at(0) = feq.at(0)-k.at(0)-seq.at(0);
+		heq.at(1) = feq.at(1)-k.at(1)-seq.at(1);
+		heq.at(3) = feq.at(3)-k.at(3)-seq.at(3);
+		heq.at(2) = feq.at(2)-k.at(2)-seq.at(2);
+		heq.at(4) = feq.at(4)-k.at(4)-seq.at(4);
+		heq.at(5) = feq.at(5)-k.at(5)-seq.at(5);
+		heq.at(6) = feq.at(6)-k.at(6)-seq.at(6);
+		heq.at(7) = feq.at(7)-k.at(7)-seq.at(7);
+		heq.at(8) = feq.at(8)-k.at(8)-seq.at(8);
 
 		//deviation of the shear parts
 		vector<double> delta_s(Q);
@@ -595,7 +619,7 @@ void KBCStandard::collideAllD3Q15(DistributionFunctions& f,
 		s.at(13) = s.at(7);
 		s.at(14) = -s.at(7);
 
-		// higher order part vector h
+/*		// higher order part vector h
 		h.at(0) = 2. * A * rho;
 		h.at(1) = 1. / 6. * rho * 3 * (-Q_xyy - A);
 		h.at(2) = 1. / 6. * rho * 3 * (Q_xyy - A);
@@ -626,7 +650,24 @@ void KBCStandard::collideAllD3Q15(DistributionFunctions& f,
 
 		h.at(14) = 1. / 8. * rho
 				* (-1 * Q_xzz + 1 * Q_xxy + 1 * Q_xxz + -1 * 1 * Pi_xy
-						+ -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);
+						+ -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);*/
+
+		h.at(0) = f.at(0)(i)-k.at(0)-s.at(0);
+		h.at(1) = f.at(1)(i)-k.at(1)-s.at(1);
+		h.at(2) = f.at(2)(i)-k.at(2)-s.at(2);
+		h.at(3) = f.at(3)(i)-k.at(3)-s.at(3);
+		h.at(4) = f.at(4)(i)-k.at(4)-s.at(4);
+		h.at(5) = f.at(5)(i)-k.at(5)-s.at(5);
+		h.at(6) = f.at(6)(i)-k.at(6)-s.at(6);
+		h.at(7) = f.at(7)(i)-k.at(7)-s.at(7);
+		h.at(8) = f.at(8)(i)-k.at(8)-s.at(8);
+		h.at(9) = f.at(9)(i)-k.at(9)-s.at(9);
+		h.at(10) = f.at(10)(i)-k.at(10)-s.at(10);
+		h.at(11) = f.at(11)(i)-k.at(11)-s.at(11);
+		h.at(12) = f.at(12)(i)-k.at(12)-s.at(12);
+		h.at(13) = f.at(13)(i)-k.at(13)-s.at(13);
+		h.at(14) = f.at(14)(i)-k.at(14)-s.at(14);
+
 
 		// calculate equilibrium distribution
 		scalar_product = ux * ux + uy * uy + uz * uz;
@@ -753,7 +794,7 @@ void KBCStandard::collideAllD3Q15(DistributionFunctions& f,
 		seq.at(13) = seq.at(7);
 		seq.at(14) = -seq.at(7);
 
-		// calculate higher order equilibrium
+/*		// calculate higher order equilibrium
 		heq.at(0) = 2. * A * rho;
 		heq.at(1) = 1. / 6. * rho * 3 * (-Q_xyy - A);
 		heq.at(2) = 1. / 6. * rho * 3 * (Q_xyy - A);
@@ -784,7 +825,23 @@ void KBCStandard::collideAllD3Q15(DistributionFunctions& f,
 
 		heq.at(14) = 1. / 8. * rho
 				* (-1 * Q_xzz + 1 * Q_xxy + 1 * Q_xxz + -1 * 1 * Pi_xy
-						+ -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);
+						+ -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);*/
+
+		heq.at(0) = feq.at(0)-k.at(0)-seq.at(0);
+		heq.at(1) = feq.at(1)-k.at(1)-seq.at(1);
+		heq.at(2) = feq.at(2)-k.at(2)-seq.at(2);
+		heq.at(3) = feq.at(3)-k.at(3)-seq.at(3);
+		heq.at(4) = feq.at(4)-k.at(4)-seq.at(4);
+		heq.at(5) = feq.at(5)-k.at(5)-seq.at(5);
+		heq.at(6) = feq.at(6)-k.at(6)-seq.at(6);
+		heq.at(7) = feq.at(7)-k.at(7)-seq.at(7);
+		heq.at(8) = feq.at(8)-k.at(8)-seq.at(8);
+		heq.at(9) = feq.at(9)-k.at(9)-seq.at(9);
+		heq.at(10) = feq.at(10)-k.at(10)-seq.at(10);
+		heq.at(11) = feq.at(11)-k.at(11)-seq.at(11);
+		heq.at(12) = feq.at(12)-k.at(12)-seq.at(12);
+		heq.at(13) = feq.at(13)-k.at(13)-seq.at(13);
+		heq.at(14) = feq.at(14)-k.at(14)-seq.at(14);
 
 		// needed expressions for the calculation of gamma
 		delta_s.at(0) = s.at(0) - seq.at(0);
