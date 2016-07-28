@@ -4,17 +4,15 @@
 # set variable TARGET
 #
 set(    TARGET 
-        #shear-layer    
-        shear-layer-MinionBrown
+        movedtgv2d-benchmark
         )
- 
+
 
 #
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                #shear_layer.cpp
-                shear_layer_MinionBrown.cpp
+                movedtgv2d-benchmark.cpp 
                )
 #
 # link natrium library to executable

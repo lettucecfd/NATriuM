@@ -86,6 +86,11 @@ public:
 	virtual void setDeltaT(double ){
 
 	}
+
+	virtual size_t memory_consumption_sparsity_pattern () const {
+		return 0;
+	}
+
 };
 
 } /* namespace natrium */

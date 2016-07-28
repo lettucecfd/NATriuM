@@ -13,7 +13,7 @@ DistributionFunctions::DistributionFunctions(
 		const vector<distributed_vector>& f) :
 		m_Q(f.size()), m_f0(f.at(0)) {
 #ifdef WITH_TRILINOS
-	m_fStream.reinit(m_Q);
+	m_fStream.reinit(m_Q - 1);
 #else
 	m_fStream.reinit(m_Q, m_f0.size());
 #endif
@@ -76,6 +76,7 @@ void DistributionFunctions::compress(
 }
 
 void DistributionFunctions::operator=(const DistributionFunctions& other) {
+	assert (other.getQ() == m_Q);
 	m_f0 = other.getF0();
 	m_fStream = other.getFStream();
 }

@@ -18,9 +18,9 @@
 namespace natrium {
 
 ShearLayer2D::ShearLayer2D(double viscosity, size_t refinement_level, double u0,
-		double kappa) :
+		double kappa, double perturbation) :
 		ProblemDescription<2>(makeGrid(), viscosity, 1.0), m_u0(u0), m_kappa(
-				kappa), m_refinementLevel(refinement_level) {
+				kappa), m_refinementLevel(refinement_level), m_perturbation(perturbation) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
@@ -42,8 +42,7 @@ double ShearLayer2D::InitialVelocity::value(const dealii::Point<2>& x,
 			return  m_flow->m_u0 * tanh( m_flow->m_kappa * (0.75 - x(1)));
 		}
 	} else {
-		double delta = 0.01;
-		return delta *  m_flow->m_u0 * sin( 8 * atan(1) * (x(0) + 0.25));
+		return m_flow->m_perturbation *  m_flow->m_u0 * sin( 8 * atan(1) * (x(0) + 0.25));
 	}
 }
 

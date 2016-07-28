@@ -2,6 +2,10 @@
 #
 # Store all library files in environment variable SRC_FILES
 #
+         
+             
+             
+          
 
 file(   GLOB_RECURSE
         SRC_FILES
@@ -16,9 +20,8 @@ file(   GLOB_RECURSE
         timeintegration/*
         utilities/*  
         )
-      
-      
-#
+             
+#    
 # Create natrium library
 #
 add_library( natrium SHARED ${SRC_FILES} )
