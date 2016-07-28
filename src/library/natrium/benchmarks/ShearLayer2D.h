@@ -40,7 +40,7 @@ public:
 
 	/// constructor (with default cs=1/sqrt(3))
 	ShearLayer2D(double viscosity,
-			size_t refinement_level, double u0, double kappa);
+			size_t refinement_level, double u0, double kappa, double perturbation=0.01);
 
 	/// destructor
 	virtual ~ShearLayer2D();
@@ -59,6 +59,7 @@ private:
 	double m_u0;
 	double m_kappa;
 	size_t m_refinementLevel;
+	double m_perturbation;
 
 	/**
 	 * @short create triangulation for couette flow

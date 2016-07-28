@@ -41,15 +41,9 @@ template<size_t dim> BenchmarkCFDSolver<dim>::BenchmarkCFDSolver(
 	}
 
 } /*BenchmarkCFDSolver constructor */
-template BenchmarkCFDSolver<2>::BenchmarkCFDSolver(
-		boost::shared_ptr<SolverConfiguration> configuration,
-		boost::shared_ptr<Benchmark<2> > problemDescription);
-template BenchmarkCFDSolver<3>::BenchmarkCFDSolver(
-		boost::shared_ptr<SolverConfiguration> configuration,
-		boost::shared_ptr<Benchmark<3> > problemDescription);
 
 template<size_t dim>
-void BenchmarkCFDSolver<dim>::output(size_t iteration) {
+void BenchmarkCFDSolver<dim>::output(size_t iteration, bool is_final) {
 	CFDSolver<dim>::output(iteration);
 	// output error table
 	if (not this->getConfiguration()->isSwitchOutputOff()) {
@@ -59,11 +53,9 @@ void BenchmarkCFDSolver<dim>::output(size_t iteration) {
 		}
 	}
 } /*output*/
-template void BenchmarkCFDSolver<2>::output(size_t iteration);
-template void BenchmarkCFDSolver<3>::output(size_t iteration);
 
 template<size_t dim>
-void natrium::BenchmarkCFDSolver<dim>::getAllAnalyticDensities(double time,
+void BenchmarkCFDSolver<dim>::getAllAnalyticDensities(double time,
 		distributed_vector& analyticDensities,
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
 	boost::shared_ptr<AdvectionOperator<dim> > adv_op = this->getAdvectionOperator();
@@ -88,17 +80,9 @@ void natrium::BenchmarkCFDSolver<dim>::getAllAnalyticDensities(double time,
 		} /* if is locally owned */
 	} /* for all cells */
 }
-template
-void natrium::BenchmarkCFDSolver<2>::getAllAnalyticDensities(double time,
-		distributed_vector& analyticDensities,
-		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const;
-template
-void natrium::BenchmarkCFDSolver<3>::getAllAnalyticDensities(double time,
-		distributed_vector& analyticDensities,
-		const map<dealii::types::global_dof_index, dealii::Point<3> >& supportPoints) const;
 
 template<size_t dim>
-void natrium::BenchmarkCFDSolver<dim>::getAllAnalyticVelocities(double time,
+void BenchmarkCFDSolver<dim>::getAllAnalyticVelocities(double time,
 		vector<distributed_vector>& analyticVelocities,
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
 	boost::shared_ptr<AdvectionOperator<dim> > adv_op = this->getAdvectionOperator();
@@ -127,13 +111,10 @@ void natrium::BenchmarkCFDSolver<dim>::getAllAnalyticVelocities(double time,
 		} /* if is locally owned */
 	} /* for all cells */
 }
-template
-void natrium::BenchmarkCFDSolver<2>::getAllAnalyticVelocities(double time,
-		vector<distributed_vector>& analyticVelocities,
-		const map<dealii::types::global_dof_index, dealii::Point<2> >& supportPoints) const;
-template
-void natrium::BenchmarkCFDSolver<3>::getAllAnalyticVelocities(double time,
-		vector<distributed_vector>& analyticVelocities,
-		const map<dealii::types::global_dof_index, dealii::Point<3> >& supportPoints) const;
+
+
+// Explicit instatiation
+template class BenchmarkCFDSolver<2>;
+template class BenchmarkCFDSolver<3>;
 
 } /* namespace natrium */

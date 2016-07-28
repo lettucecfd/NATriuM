@@ -26,6 +26,9 @@ public:
 	static double kineticEnergy(const vector<distributed_vector>& u, const distributed_vector& rho,
 			boost::shared_ptr<AdvectionOperator<dim> > advection);
 
+	static double enstrophy(const vector<distributed_vector>& u,
+			boost::shared_ptr<AdvectionOperator<dim> > advection);
+
 	/// Pressure
 	static double maximalPressure(const distributed_vector& rho, const double speedOfSound, double & minimalPressure);
 

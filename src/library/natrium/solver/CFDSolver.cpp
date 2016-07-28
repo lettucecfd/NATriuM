@@ -630,7 +630,7 @@ void CFDSolver<dim>::run() {
 			m_dataProcessors.at(i)->apply();
 		}
 	}
-	output(m_i);
+	output(m_i, true);
 
 // Finalize
 	Timing::getTimer().print_summary();
@@ -684,7 +684,7 @@ bool CFDSolver<dim>::stopConditionMet() {
 }
 
 template<size_t dim>
-void CFDSolver<dim>::output(size_t iteration) {
+void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 // start timer
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
@@ -717,7 +717,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 		 }*/
 		if (m_configuration->isOutputTurbulenceStatistics())
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
-		if (iteration % m_configuration->getOutputSolutionInterval() == 0) {
+		if ((iteration % m_configuration->getOutputSolutionInterval() == 0) or is_final) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
@@ -793,7 +793,7 @@ void CFDSolver<dim>::output(size_t iteration) {
 		}
 
 		// output: checkpoint
-		if (iteration % m_configuration->getOutputCheckpointInterval() == 0) {
+		if ((iteration % m_configuration->getOutputCheckpointInterval() == 0) or is_final) {
 			boost::filesystem::path checkpoint_dir(
 					m_configuration->getOutputDirectory());
 			checkpoint_dir /= "checkpoint";

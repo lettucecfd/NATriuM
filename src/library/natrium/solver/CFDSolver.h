@@ -214,7 +214,7 @@ public:
 	/**
 	 * @short create output data and write to file
 	 */
-	virtual void output(size_t iteration);
+	virtual void output(size_t iteration, bool is_final=false);
 
 	/**
 	 *
