@@ -6,18 +6,45 @@
  */
 
 #include "KBCStandard.h"
+#include <math.h>
 #define KBC_C // if not defined, KBC_D will be used (according to Karlin et al. 2015)
 #define EVALUATE_GAMMA // if defined, an  evaluation over time of the stabilizer gamma will be carried out (D2Q9 only)
 
 namespace natrium {
 
 KBCStandard::KBCStandard(double relaxationParameter, double dt,
-		const boost::shared_ptr<Stencil> stencil) : counter(0),
-		MRT(relaxationParameter, dt, stencil),parameterFile("deviation_KBC_STANDARD.txt") {
+		const boost::shared_ptr<Stencil> stencil) :
+		counter(0), MRT(relaxationParameter, dt, stencil), parameterFile(
+				"deviation_KBC_STANDARD.txt") {
 
 }
 
 KBCStandard::~KBCStandard() {
+
+}
+
+double KBCStandard::getEquilibriumDistribution(size_t i,
+		const numeric_vector& u, const double rho) const {
+	double weighting;
+
+// TODO SCALING !!!!
+	// direction 0
+
+	double value = getStencil()->getWeight(i) * rho;
+
+	for (int p = 0; p < getStencil()->getD(); p++) {
+		value *=
+				(2
+						- sqrt(
+								1
+										+ u(p) * u(p)
+												/ getStencil()->getSpeedOfSoundSquare()));
+		value *= (2 / sqrt(3) * u(p) / getStencil()->getSpeedOfSound()
+				+ sqrt(1 + u(p) * u(p) / getStencil()->getSpeedOfSoundSquare()))
+				/ (1 - u(p) / (getStencil()->getSpeedOfSound() * sqrt(3)*5));
+	}
+
+	return value;
 
 }
 
@@ -36,7 +63,8 @@ void KBCStandard::collideAll(DistributionFunctions& f,
 		collideAllD3Q15(f, densities, velocities, locally_owned_dofs,
 				inInitializationProcedure);
 	} else {
-		throw CollisionException("KBC_Standard only implemented for D2Q9 and D3Q15");
+		throw CollisionException(
+				"KBC_Standard only implemented for D2Q9 and D3Q15");
 		// Inefficient collision
 		//BGK::collideAll(f, densities, velocities, locally_owned_dofs,
 		//		inInitializationProcedure);
@@ -51,7 +79,6 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 #define KBC_C // if not defined, KBC_D will be used (according to Karlin et al. 2015)
 
 	size_t Q = getQ();
-
 
 	stabilizer gamma(locally_owned_dofs.size());
 	stabilizer entropy(locally_owned_dofs.size());
@@ -161,45 +188,42 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		s.at(7) = 0.25 * rho * Pi_xy;
 		s.at(8) = 0.25 * rho * -Pi_xy;
 
-
 #endif
-
 
 		// higher order part vector h
 		vector<double> h(Q);
-/*
-#ifdef KBC_C
-		h.at(0) = rho * A;
-		h.at(1) = -0.5 * rho * (1 * Q_xyy + A);
-		h.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
-		h.at(2) = -0.5 * rho * (1 * Q_yxx + A);
-		h.at(4) = -0.5 * rho * (-1 * Q_yxx + A);
-		h.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
-		h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
-		h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
-		h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
-#else
-		h.at(0) = rho * (A - T);
-		h.at(1) = -0.5 * rho * (1 * Q_xyy + A - T);
-		h.at(3) = -0.5 * rho * (-1 * Q_xyy + A - T);
-		h.at(2) = -0.5 * rho * (1 * Q_yxx + A - T);
-		h.at(4) = -0.5 * rho * (-1 * Q_yxx + A - T);
-		h.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
-		h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
-		h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
-		h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
-#endif
-*/
-		h.at(0) = f.at(0)(i)-k.at(0)-s.at(0);
-		h.at(1) = f.at(1)(i)-k.at(1)-s.at(1);
-		h.at(3) = f.at(3)(i)-k.at(3)-s.at(3);
-		h.at(2) = f.at(2)(i)-k.at(2)-s.at(2);
-		h.at(4) = f.at(4)(i)-k.at(4)-s.at(4);
-		h.at(5) = f.at(5)(i)-k.at(5)-s.at(5);
-		h.at(6) = f.at(6)(i)-k.at(6)-s.at(6);
-		h.at(7) = f.at(7)(i)-k.at(7)-s.at(7);
-		h.at(8) = f.at(8)(i)-k.at(8)-s.at(8);
-
+		/*
+		 #ifdef KBC_C
+		 h.at(0) = rho * A;
+		 h.at(1) = -0.5 * rho * (1 * Q_xyy + A);
+		 h.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
+		 h.at(2) = -0.5 * rho * (1 * Q_yxx + A);
+		 h.at(4) = -0.5 * rho * (-1 * Q_yxx + A);
+		 h.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
+		 h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
+		 h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
+		 h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+		 #else
+		 h.at(0) = rho * (A - T);
+		 h.at(1) = -0.5 * rho * (1 * Q_xyy + A - T);
+		 h.at(3) = -0.5 * rho * (-1 * Q_xyy + A - T);
+		 h.at(2) = -0.5 * rho * (1 * Q_yxx + A - T);
+		 h.at(4) = -0.5 * rho * (-1 * Q_yxx + A - T);
+		 h.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
+		 h.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
+		 h.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
+		 h.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+		 #endif
+		 */
+		h.at(0) = f.at(0)(i) - k.at(0) - s.at(0);
+		h.at(1) = f.at(1)(i) - k.at(1) - s.at(1);
+		h.at(3) = f.at(3)(i) - k.at(3) - s.at(3);
+		h.at(2) = f.at(2)(i) - k.at(2) - s.at(2);
+		h.at(4) = f.at(4)(i) - k.at(4) - s.at(4);
+		h.at(5) = f.at(5)(i) - k.at(5) - s.at(5);
+		h.at(6) = f.at(6)(i) - k.at(6) - s.at(6);
+		h.at(7) = f.at(7)(i) - k.at(7) - s.at(7);
+		h.at(8) = f.at(8)(i) - k.at(8) - s.at(8);
 
 		// equilibrium vectors for shear vector
 		vector<double> seq(Q);
@@ -208,40 +232,38 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		// equilibrium distribution of the population f
 		vector<double> feq(Q, 0.0);
-		double uSquareTerm;
-		double mixedTerm;
-		double weighting;
-		double prefactor = 1/cs2;
 
-		uSquareTerm = -scalar_product
-				/ (2 * cs2);
+		double weighting;
+
+		double u_0_i = rho
+				* (f.at(1)(i) + f.at(5)(i) + f.at(8)(i) - f.at(3)(i)
+						- f.at(6)(i) - f.at(7)(i)) * sqrt(3);
+		double u_1_i = rho
+				* (f.at(2)(i) + f.at(5)(i) + f.at(6)(i) - f.at(4)(i)
+						- f.at(7)(i) - f.at(8)(i)) * sqrt(3);
+
+		double sqrt_ux = sqrt(1 + u_0_i * u_0_i);
+		double sqrt_uy = sqrt(1 + u_1_i * u_1_i);
+		double prefactor_x = (2 / sqrt(3) * u_0_i + sqrt_ux)
+				/ (1 - u_0_i / sqrt(3));
+		double prefactor_y = (2 / sqrt(3) * u_1_i + sqrt_uy)
+				/ (1 - u_1_i / sqrt(3));
+
+		weighting = rho * (2 - sqrt_ux) * (2 - sqrt_uy);
 		// direction 0
-		weighting = 4. / 9. * rho;
-		feq.at(0) = weighting * (1 + uSquareTerm);
-		// directions 1-4
-		weighting = 1. / 9. * rho;
-		mixedTerm = prefactor * (ux);
-		feq.at(1) = weighting
-				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-		feq.at(3) = weighting
-				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		mixedTerm = prefactor * (uy);
-		feq.at(2) = weighting
-				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-		feq.at(4) = weighting
-				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		// directions 5-8
-		weighting = 1. / 36. * rho;
-		mixedTerm = prefactor * (ux + uy);
-		feq.at(5) = weighting
-				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-		feq.at(7) = weighting
-				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		mixedTerm = prefactor * (-ux + uy);
-		feq.at(6) = weighting
-				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-		feq.at(8) = weighting
-				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+		feq[0] = 4. / 9. * weighting;
+		feq[1] = 1. / 9. * weighting * prefactor_x;
+		feq[2] = 1. / 9. * weighting * prefactor_y;
+		feq[3] = 1. / 9. * weighting / prefactor_x;
+		feq[4] = 1. / 9. * weighting / prefactor_y;
+		feq[5] = 1. / 36. * weighting * prefactor_x * prefactor_y;
+		feq[6] = 1. / 36. * weighting / prefactor_x * prefactor_y;
+		feq[7] = 1. / 36. * weighting / prefactor_x / prefactor_y;
+		feq[8] = 1. / 36. * weighting * prefactor_x / prefactor_y;
+
+		/*for (int p = 0; p < 9; p++) {
+			pout << p << ": feq: " << feq[p] << " f: " << f.at(p)(i) << endl;
+		}*/
 
 		//Calculation of the moments for the equilibrium distribution function
 
@@ -294,42 +316,42 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		seq.at(8) = 0.25 * rho * -Pi_xy;
 #endif
 
-/*
-		// calculate higher order equilibrium
-#ifdef KBC_C
+		/*
+		 // calculate higher order equilibrium
+		 #ifdef KBC_C
 
-		heq.at(0) = rho * A;
-		heq.at(1) = -0.5 * rho * (1 * Q_xyy + A);
-		heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
-		heq.at(2) = -0.5 * rho * (1 * Q_yxx + A);
-		heq.at(4) = -0.5 * rho * (-1 * Q_yxx + A);
-		heq.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
-		heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
-		heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
-		heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+		 heq.at(0) = rho * A;
+		 heq.at(1) = -0.5 * rho * (1 * Q_xyy + A);
+		 heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A);
+		 heq.at(2) = -0.5 * rho * (1 * Q_yxx + A);
+		 heq.at(4) = -0.5 * rho * (-1 * Q_yxx + A);
+		 heq.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
+		 heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
+		 heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
+		 heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
 
-#else
-		heq.at(0) = rho * (A - T);
-		heq.at(1) = -0.5 * rho * (1 * Q_xyy + A - T);
-		heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A - T);
-		heq.at(2) = -0.5 * rho * (1 * Q_yxx + A - T);
-		heq.at(4) = -0.5 * rho * (-1 * Q_yxx + A - T);
-		heq.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
-		heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
-		heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
-		heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
-#endif
-*/
+		 #else
+		 heq.at(0) = rho * (A - T);
+		 heq.at(1) = -0.5 * rho * (1 * Q_xyy + A - T);
+		 heq.at(3) = -0.5 * rho * (-1 * Q_xyy + A - T);
+		 heq.at(2) = -0.5 * rho * (1 * Q_yxx + A - T);
+		 heq.at(4) = -0.5 * rho * (-1 * Q_yxx + A - T);
+		 heq.at(5) = 0.25 * rho * (1 * Q_xyy + 1 * Q_yxx + A);
+		 heq.at(6) = 0.25 * rho * (-1 * Q_xyy + 1 * Q_yxx + A);
+		 heq.at(7) = 0.25 * rho * (-1 * Q_xyy - 1 * Q_yxx + A);
+		 heq.at(8) = 0.25 * rho * (1 * Q_xyy + -1 * Q_yxx + A);
+		 #endif
+		 */
 
-		heq.at(0) = feq.at(0)-k.at(0)-seq.at(0);
-		heq.at(1) = feq.at(1)-k.at(1)-seq.at(1);
-		heq.at(3) = feq.at(3)-k.at(3)-seq.at(3);
-		heq.at(2) = feq.at(2)-k.at(2)-seq.at(2);
-		heq.at(4) = feq.at(4)-k.at(4)-seq.at(4);
-		heq.at(5) = feq.at(5)-k.at(5)-seq.at(5);
-		heq.at(6) = feq.at(6)-k.at(6)-seq.at(6);
-		heq.at(7) = feq.at(7)-k.at(7)-seq.at(7);
-		heq.at(8) = feq.at(8)-k.at(8)-seq.at(8);
+		heq.at(0) = feq.at(0) - k.at(0) - seq.at(0);
+		heq.at(1) = feq.at(1) - k.at(1) - seq.at(1);
+		heq.at(3) = feq.at(3) - k.at(3) - seq.at(3);
+		heq.at(2) = feq.at(2) - k.at(2) - seq.at(2);
+		heq.at(4) = feq.at(4) - k.at(4) - seq.at(4);
+		heq.at(5) = feq.at(5) - k.at(5) - seq.at(5);
+		heq.at(6) = feq.at(6) - k.at(6) - seq.at(6);
+		heq.at(7) = feq.at(7) - k.at(7) - seq.at(7);
+		heq.at(8) = feq.at(8) - k.at(8) - seq.at(8);
 
 		//deviation of the shear parts
 		vector<double> delta_s(Q);
@@ -402,39 +424,71 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
 		if (sum_h < 1e-16) {
-		gamma.value.at(i) = 2;
+			gamma.value.at(i) = 2;
 
 		}
 
-		entropy.value.at(i) = -(f.at(0)(i)*log(f.at(0)(i)/(4./9.))+f.at(1)(i)*log(f.at(1)(i)/(1./9.))+f.at(2)(i)*log(f.at(2)(i)/(1./9.))+f.at(3)(i)*log(f.at(3)(i)/(1./9.))+f.at(4)(i)*log(f.at(4)(i)/(1./9.))+f.at(5)(i)*log(f.at(5)(i)/(1./36.))+f.at(6)(i)*log(f.at(6)(i)/(1./36.))+f.at(7)(i)*log(f.at(7)(i)/(1./36.))+f.at(8)(i)*log(f.at(8)(i)/(1./36.)));
-
-
-
+		entropy.value.at(i) = -(f.at(0)(i) * log(f.at(0)(i) / (4. / 9.))
+				+ f.at(1)(i) * log(f.at(1)(i) / (1. / 9.))
+				+ f.at(2)(i) * log(f.at(2)(i) / (1. / 9.))
+				+ f.at(3)(i) * log(f.at(3)(i) / (1. / 9.))
+				+ f.at(4)(i) * log(f.at(4)(i) / (1. / 9.))
+				+ f.at(5)(i) * log(f.at(5)(i) / (1. / 36.))
+				+ f.at(6)(i) * log(f.at(6)(i) / (1. / 36.))
+				+ f.at(7)(i) * log(f.at(7)(i) / (1. / 36.))
+				+ f.at(8)(i) * log(f.at(8)(i) / (1. / 36.)));
 
 		// calculate new f
-		f.at(0)(i) = f.at(0)(i)
-				- beta * (2 * delta_s.at(0) + gamma.value.at(i) * delta_h.at(0));
-		f.at(1)(i) = f.at(1)(i)
-				- beta * (2 * delta_s.at(1) + gamma.value.at(i) * delta_h.at(1));
-		f.at(2)(i) = f.at(2)(i)
-				- beta * (2 * delta_s.at(2) + gamma.value.at(i) * delta_h.at(2));
-		f.at(3)(i) = f.at(3)(i)
-				- beta * (2 * delta_s.at(3) + gamma.value.at(i) * delta_h.at(3));
-		f.at(4)(i) = f.at(4)(i)
-				- beta * (2 * delta_s.at(4) + gamma.value.at(i) * delta_h.at(4));
-		f.at(5)(i) = f.at(5)(i)
-				- beta * (2 * delta_s.at(5) + gamma.value.at(i) * delta_h.at(5));
-		f.at(6)(i) = f.at(6)(i)
-				- beta * (2 * delta_s.at(6) + gamma.value.at(i) * delta_h.at(6));
-		f.at(7)(i) = f.at(7)(i)
-				- beta * (2 * delta_s.at(7) + gamma.value.at(i) * delta_h.at(7));
-		f.at(8)(i) = f.at(8)(i)
-				- beta * (2 * delta_s.at(8) + gamma.value.at(i) * delta_h.at(8));
-
+		f.at(0)(i) =
+				f.at(0)(i)
+						- beta
+								* (2 * delta_s.at(0)
+										+ gamma.value.at(i) * delta_h.at(0));
+		f.at(1)(i) =
+				f.at(1)(i)
+						- beta
+								* (2 * delta_s.at(1)
+										+ gamma.value.at(i) * delta_h.at(1));
+		f.at(2)(i) =
+				f.at(2)(i)
+						- beta
+								* (2 * delta_s.at(2)
+										+ gamma.value.at(i) * delta_h.at(2));
+		f.at(3)(i) =
+				f.at(3)(i)
+						- beta
+								* (2 * delta_s.at(3)
+										+ gamma.value.at(i) * delta_h.at(3));
+		f.at(4)(i) =
+				f.at(4)(i)
+						- beta
+								* (2 * delta_s.at(4)
+										+ gamma.value.at(i) * delta_h.at(4));
+		f.at(5)(i) =
+				f.at(5)(i)
+						- beta
+								* (2 * delta_s.at(5)
+										+ gamma.value.at(i) * delta_h.at(5));
+		f.at(6)(i) =
+				f.at(6)(i)
+						- beta
+								* (2 * delta_s.at(6)
+										+ gamma.value.at(i) * delta_h.at(6));
+		f.at(7)(i) =
+				f.at(7)(i)
+						- beta
+								* (2 * delta_s.at(7)
+										+ gamma.value.at(i) * delta_h.at(7));
+		f.at(8)(i) =
+				f.at(8)(i)
+						- beta
+								* (2 * delta_s.at(8)
+										+ gamma.value.at(i) * delta_h.at(8));
 
 	}
 
-writeDeviation(gamma.getAverage(),gamma.getDeviation(),entropy.getAverage(),entropy.getDeviation());
+	writeDeviation(gamma.getAverage(), gamma.getDeviation(),
+			entropy.getAverage(), entropy.getDeviation());
 
 }
 
@@ -619,55 +673,54 @@ void KBCStandard::collideAllD3Q15(DistributionFunctions& f,
 		s.at(13) = s.at(7);
 		s.at(14) = -s.at(7);
 
-/*		// higher order part vector h
-		h.at(0) = 2. * A * rho;
-		h.at(1) = 1. / 6. * rho * 3 * (-Q_xyy - A);
-		h.at(2) = 1. / 6. * rho * 3 * (Q_xyy - A);
-		h.at(3) = 1. / 6. * rho * 3 * (-Q_xxy - A);
-		h.at(4) = 1. / 6. * rho * 3 * (Q_xxy - A);
-		h.at(5) = 1. / 6. * rho * 3 * (-Q_xxz - A);
-		h.at(6) = 1. / 6. * rho * 3 * (Q_xxz - A);
-		h.at(7) = 1. / 8. * rho
-				* (Q_xzz + Q_xxy + Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
-		h.at(8) = 1. / 8. * rho
-				* (-Q_xzz - Q_xxy - Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
+		/*		// higher order part vector h
+		 h.at(0) = 2. * A * rho;
+		 h.at(1) = 1. / 6. * rho * 3 * (-Q_xyy - A);
+		 h.at(2) = 1. / 6. * rho * 3 * (Q_xyy - A);
+		 h.at(3) = 1. / 6. * rho * 3 * (-Q_xxy - A);
+		 h.at(4) = 1. / 6. * rho * 3 * (Q_xxy - A);
+		 h.at(5) = 1. / 6. * rho * 3 * (-Q_xxz - A);
+		 h.at(6) = 1. / 6. * rho * 3 * (Q_xxz - A);
+		 h.at(7) = 1. / 8. * rho
+		 * (Q_xzz + Q_xxy + Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
+		 h.at(8) = 1. / 8. * rho
+		 * (-Q_xzz - Q_xxy - Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
 
-		h.at(9) = 1. / 8. * rho
-				* (1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + 1 * 1 * Pi_xy
-						+ 1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
-		h.at(10) = 1. / 8. * rho
-				* (-1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + -1 * -1 * Pi_xy
-						+ -1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
-		h.at(11) = 1. / 8. * rho
-				* (1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + 1 * -1 * Pi_xy
-						+ 1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
-		h.at(12) = 1. / 8. * rho
-				* (-1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + -1 * 1 * Pi_xy
-						+ -1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
-		h.at(13) = 1. / 8. * rho
-				* (1 * Q_xzz + -1 * Q_xxy + -1 * Q_xxz + 1 * -1 * Pi_xy
-						+ 1 * -1 * Pi_xz + -1 * -1 * Pi_yz + A);
+		 h.at(9) = 1. / 8. * rho
+		 * (1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + 1 * 1 * Pi_xy
+		 + 1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
+		 h.at(10) = 1. / 8. * rho
+		 * (-1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + -1 * -1 * Pi_xy
+		 + -1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
+		 h.at(11) = 1. / 8. * rho
+		 * (1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + 1 * -1 * Pi_xy
+		 + 1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
+		 h.at(12) = 1. / 8. * rho
+		 * (-1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + -1 * 1 * Pi_xy
+		 + -1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
+		 h.at(13) = 1. / 8. * rho
+		 * (1 * Q_xzz + -1 * Q_xxy + -1 * Q_xxz + 1 * -1 * Pi_xy
+		 + 1 * -1 * Pi_xz + -1 * -1 * Pi_yz + A);
 
-		h.at(14) = 1. / 8. * rho
-				* (-1 * Q_xzz + 1 * Q_xxy + 1 * Q_xxz + -1 * 1 * Pi_xy
-						+ -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);*/
+		 h.at(14) = 1. / 8. * rho
+		 * (-1 * Q_xzz + 1 * Q_xxy + 1 * Q_xxz + -1 * 1 * Pi_xy
+		 + -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);*/
 
-		h.at(0) = f.at(0)(i)-k.at(0)-s.at(0);
-		h.at(1) = f.at(1)(i)-k.at(1)-s.at(1);
-		h.at(2) = f.at(2)(i)-k.at(2)-s.at(2);
-		h.at(3) = f.at(3)(i)-k.at(3)-s.at(3);
-		h.at(4) = f.at(4)(i)-k.at(4)-s.at(4);
-		h.at(5) = f.at(5)(i)-k.at(5)-s.at(5);
-		h.at(6) = f.at(6)(i)-k.at(6)-s.at(6);
-		h.at(7) = f.at(7)(i)-k.at(7)-s.at(7);
-		h.at(8) = f.at(8)(i)-k.at(8)-s.at(8);
-		h.at(9) = f.at(9)(i)-k.at(9)-s.at(9);
-		h.at(10) = f.at(10)(i)-k.at(10)-s.at(10);
-		h.at(11) = f.at(11)(i)-k.at(11)-s.at(11);
-		h.at(12) = f.at(12)(i)-k.at(12)-s.at(12);
-		h.at(13) = f.at(13)(i)-k.at(13)-s.at(13);
-		h.at(14) = f.at(14)(i)-k.at(14)-s.at(14);
-
+		h.at(0) = f.at(0)(i) - k.at(0) - s.at(0);
+		h.at(1) = f.at(1)(i) - k.at(1) - s.at(1);
+		h.at(2) = f.at(2)(i) - k.at(2) - s.at(2);
+		h.at(3) = f.at(3)(i) - k.at(3) - s.at(3);
+		h.at(4) = f.at(4)(i) - k.at(4) - s.at(4);
+		h.at(5) = f.at(5)(i) - k.at(5) - s.at(5);
+		h.at(6) = f.at(6)(i) - k.at(6) - s.at(6);
+		h.at(7) = f.at(7)(i) - k.at(7) - s.at(7);
+		h.at(8) = f.at(8)(i) - k.at(8) - s.at(8);
+		h.at(9) = f.at(9)(i) - k.at(9) - s.at(9);
+		h.at(10) = f.at(10)(i) - k.at(10) - s.at(10);
+		h.at(11) = f.at(11)(i) - k.at(11) - s.at(11);
+		h.at(12) = f.at(12)(i) - k.at(12) - s.at(12);
+		h.at(13) = f.at(13)(i) - k.at(13) - s.at(13);
+		h.at(14) = f.at(14)(i) - k.at(14) - s.at(14);
 
 		// calculate equilibrium distribution
 		scalar_product = ux * ux + uy * uy + uz * uz;
@@ -794,54 +847,54 @@ void KBCStandard::collideAllD3Q15(DistributionFunctions& f,
 		seq.at(13) = seq.at(7);
 		seq.at(14) = -seq.at(7);
 
-/*		// calculate higher order equilibrium
-		heq.at(0) = 2. * A * rho;
-		heq.at(1) = 1. / 6. * rho * 3 * (-Q_xyy - A);
-		heq.at(2) = 1. / 6. * rho * 3 * (Q_xyy - A);
-		heq.at(3) = 1. / 6. * rho * 3 * (-Q_xxy - A);
-		heq.at(4) = 1. / 6. * rho * 3 * (Q_xxy - A);
-		heq.at(5) = 1. / 6. * rho * 3 * (-Q_xxz - A);
-		heq.at(6) = 1. / 6. * rho * 3 * (Q_xxz - A);
-		heq.at(7) = 1. / 8. * rho
-				* (Q_xzz + Q_xxy + Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
-		heq.at(8) = 1. / 8. * rho
-				* (-Q_xzz - Q_xxy - Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
+		/*		// calculate higher order equilibrium
+		 heq.at(0) = 2. * A * rho;
+		 heq.at(1) = 1. / 6. * rho * 3 * (-Q_xyy - A);
+		 heq.at(2) = 1. / 6. * rho * 3 * (Q_xyy - A);
+		 heq.at(3) = 1. / 6. * rho * 3 * (-Q_xxy - A);
+		 heq.at(4) = 1. / 6. * rho * 3 * (Q_xxy - A);
+		 heq.at(5) = 1. / 6. * rho * 3 * (-Q_xxz - A);
+		 heq.at(6) = 1. / 6. * rho * 3 * (Q_xxz - A);
+		 heq.at(7) = 1. / 8. * rho
+		 * (Q_xzz + Q_xxy + Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
+		 heq.at(8) = 1. / 8. * rho
+		 * (-Q_xzz - Q_xxy - Q_xxz + Pi_xy + Pi_xz + Pi_yz + A);
 
-		heq.at(9) = 1. / 8. * rho
-				* (1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + 1 * 1 * Pi_xy
-						+ 1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
-		heq.at(10) = 1. / 8. * rho
-				* (-1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + -1 * -1 * Pi_xy
-						+ -1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
-		heq.at(11) = 1. / 8. * rho
-				* (1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + 1 * -1 * Pi_xy
-						+ 1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
-		heq.at(12) = 1. / 8. * rho
-				* (-1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + -1 * 1 * Pi_xy
-						+ -1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
-		heq.at(13) = 1. / 8. * rho
-				* (1 * Q_xzz + -1 * Q_xxy + -1 * Q_xxz + 1 * -1 * Pi_xy
-						+ 1 * -1 * Pi_xz + -1 * -1 * Pi_yz + A);
+		 heq.at(9) = 1. / 8. * rho
+		 * (1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + 1 * 1 * Pi_xy
+		 + 1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
+		 heq.at(10) = 1. / 8. * rho
+		 * (-1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + -1 * -1 * Pi_xy
+		 + -1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
+		 heq.at(11) = 1. / 8. * rho
+		 * (1 * Q_xzz + -1 * Q_xxy + 1 * Q_xxz + 1 * -1 * Pi_xy
+		 + 1 * 1 * Pi_xz + -1 * 1 * Pi_yz + A);
+		 heq.at(12) = 1. / 8. * rho
+		 * (-1 * Q_xzz + 1 * Q_xxy + -1 * Q_xxz + -1 * 1 * Pi_xy
+		 + -1 * -1 * Pi_xz + 1 * -1 * Pi_yz + A);
+		 heq.at(13) = 1. / 8. * rho
+		 * (1 * Q_xzz + -1 * Q_xxy + -1 * Q_xxz + 1 * -1 * Pi_xy
+		 + 1 * -1 * Pi_xz + -1 * -1 * Pi_yz + A);
 
-		heq.at(14) = 1. / 8. * rho
-				* (-1 * Q_xzz + 1 * Q_xxy + 1 * Q_xxz + -1 * 1 * Pi_xy
-						+ -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);*/
+		 heq.at(14) = 1. / 8. * rho
+		 * (-1 * Q_xzz + 1 * Q_xxy + 1 * Q_xxz + -1 * 1 * Pi_xy
+		 + -1 * 1 * Pi_xz + 1 * 1 * Pi_yz + A);*/
 
-		heq.at(0) = feq.at(0)-k.at(0)-seq.at(0);
-		heq.at(1) = feq.at(1)-k.at(1)-seq.at(1);
-		heq.at(2) = feq.at(2)-k.at(2)-seq.at(2);
-		heq.at(3) = feq.at(3)-k.at(3)-seq.at(3);
-		heq.at(4) = feq.at(4)-k.at(4)-seq.at(4);
-		heq.at(5) = feq.at(5)-k.at(5)-seq.at(5);
-		heq.at(6) = feq.at(6)-k.at(6)-seq.at(6);
-		heq.at(7) = feq.at(7)-k.at(7)-seq.at(7);
-		heq.at(8) = feq.at(8)-k.at(8)-seq.at(8);
-		heq.at(9) = feq.at(9)-k.at(9)-seq.at(9);
-		heq.at(10) = feq.at(10)-k.at(10)-seq.at(10);
-		heq.at(11) = feq.at(11)-k.at(11)-seq.at(11);
-		heq.at(12) = feq.at(12)-k.at(12)-seq.at(12);
-		heq.at(13) = feq.at(13)-k.at(13)-seq.at(13);
-		heq.at(14) = feq.at(14)-k.at(14)-seq.at(14);
+		heq.at(0) = feq.at(0) - k.at(0) - seq.at(0);
+		heq.at(1) = feq.at(1) - k.at(1) - seq.at(1);
+		heq.at(2) = feq.at(2) - k.at(2) - seq.at(2);
+		heq.at(3) = feq.at(3) - k.at(3) - seq.at(3);
+		heq.at(4) = feq.at(4) - k.at(4) - seq.at(4);
+		heq.at(5) = feq.at(5) - k.at(5) - seq.at(5);
+		heq.at(6) = feq.at(6) - k.at(6) - seq.at(6);
+		heq.at(7) = feq.at(7) - k.at(7) - seq.at(7);
+		heq.at(8) = feq.at(8) - k.at(8) - seq.at(8);
+		heq.at(9) = feq.at(9) - k.at(9) - seq.at(9);
+		heq.at(10) = feq.at(10) - k.at(10) - seq.at(10);
+		heq.at(11) = feq.at(11) - k.at(11) - seq.at(11);
+		heq.at(12) = feq.at(12) - k.at(12) - seq.at(12);
+		heq.at(13) = feq.at(13) - k.at(13) - seq.at(13);
+		heq.at(14) = feq.at(14) - k.at(14) - seq.at(14);
 
 		// needed expressions for the calculation of gamma
 		delta_s.at(0) = s.at(0) - seq.at(0);
