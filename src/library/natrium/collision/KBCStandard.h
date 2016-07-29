@@ -24,6 +24,9 @@ public:
 			const boost::shared_ptr<Stencil> stencil);
 	virtual ~KBCStandard();
 
+	double getEquilibriumDistribution(size_t i, const numeric_vector& u,
+			const double rho) const;
+
 	/**
 	 * @short function for collision
 	 */
@@ -101,6 +104,8 @@ public:
 		parameterFile << counter << " " << ave << " " << dev << " " << ave_entropy << " " << dev_entropy << endl;
 		counter += 1;
 	}
+
+
 
 
 private:
