@@ -97,7 +97,7 @@ public:
 	 * @short writes the averaged data of the stabilizer into a parameter file
 	 */
 
-	mutable int counter = 0;
+	mutable int counter;
 
 
 	void writeDeviation(double ave, double dev, double ave_entropy, double dev_entropy) const {

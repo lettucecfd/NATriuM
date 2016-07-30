@@ -25,23 +25,17 @@ KBCStandard::~KBCStandard() {
 
 double KBCStandard::getEquilibriumDistribution(size_t i,
 		const numeric_vector& u, const double rho) const {
-	double weighting;
-
-// TODO SCALING !!!!
-	// direction 0
 
 	double value = getStencil()->getWeight(i) * rho;
+	int D = getStencil()->getD();
+	for (int p = 0; p < D; p++) {
+		double v =
+				u(p)
+						/ (getStencil()->getScaling()
+								* getStencil()->getSpeedOfSound());
 
-	for (int p = 0; p < getStencil()->getD(); p++) {
-		value *=
-				(2
-						- sqrt(
-								1
-										+ u(p) * u(p)
-												/ getStencil()->getSpeedOfSoundSquare()));
-		value *= (2 / sqrt(3) * u(p) / getStencil()->getSpeedOfSound()
-				+ sqrt(1 + u(p) * u(p) / getStencil()->getSpeedOfSoundSquare()))
-				/ (1 - u(p) / (getStencil()->getSpeedOfSound() * sqrt(3)*5));
+		value *= 2 - sqrt(1 + v * v);
+		value *= (2 * v / sqrt(3) + sqrt(1 + v * v)) / (1 - v / sqrt(3));
 	}
 
 	return value;
@@ -235,38 +229,34 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		double weighting;
 
-		double u_0_i = rho
-				* (f.at(1)(i) + f.at(5)(i) + f.at(8)(i) - f.at(3)(i)
-						- f.at(6)(i) - f.at(7)(i)) * sqrt(3);
-		double u_1_i = rho
-				* (f.at(2)(i) + f.at(5)(i) + f.at(6)(i) - f.at(4)(i)
-						- f.at(7)(i) - f.at(8)(i)) * sqrt(3);
+		double u_0_i = (f.at(1)(i) + f.at(5)(i) + f.at(8)(i) - f.at(3)(i)
+						- f.at(6)(i) - f.at(7)(i))
+				/ (getStencil()->getSpeedOfSound()*rho);
+		double u_1_i = (f.at(2)(i) + f.at(5)(i) + f.at(6)(i) - f.at(4)(i)
+						- f.at(7)(i) - f.at(8)(i))
+				/ (getStencil()->getSpeedOfSound()*rho);
 
 		double sqrt_ux = sqrt(1 + u_0_i * u_0_i);
 		double sqrt_uy = sqrt(1 + u_1_i * u_1_i);
-		double prefactor_x = (2 / sqrt(3) * u_0_i + sqrt_ux)
+		double prefactor_x = (2 * u_0_i / sqrt(3) + sqrt_ux)
 				/ (1 - u_0_i / sqrt(3));
-		double prefactor_y = (2 / sqrt(3) * u_1_i + sqrt_uy)
+		double prefactor_y = (2 * u_1_i / sqrt(3) + sqrt_uy)
 				/ (1 - u_1_i / sqrt(3));
+
 
 		weighting = rho * (2 - sqrt_ux) * (2 - sqrt_uy);
 		// direction 0
-		feq[0] = 4. / 9. * weighting;
-		feq[1] = 1. / 9. * weighting * prefactor_x;
-		feq[2] = 1. / 9. * weighting * prefactor_y;
-		feq[3] = 1. / 9. * weighting / prefactor_x;
-		feq[4] = 1. / 9. * weighting / prefactor_y;
-		feq[5] = 1. / 36. * weighting * prefactor_x * prefactor_y;
-		feq[6] = 1. / 36. * weighting / prefactor_x * prefactor_y;
-		feq[7] = 1. / 36. * weighting / prefactor_x / prefactor_y;
-		feq[8] = 1. / 36. * weighting * prefactor_x / prefactor_y;
-
-		/*for (int p = 0; p < 9; p++) {
-			pout << p << ": feq: " << feq[p] << " f: " << f.at(p)(i) << endl;
-		}*/
+		feq.at(0) = 4. / 9. * weighting;
+		feq.at(1) = 1. / 9. * weighting * prefactor_x;
+		feq.at(2) = 1. / 9. * weighting * prefactor_y;
+		feq.at(3) = 1. / 9. * weighting / prefactor_x;
+		feq.at(4) = 1. / 9. * weighting / prefactor_y;
+		feq.at(5) = 1. / 36. * weighting * prefactor_x * prefactor_y;
+		feq.at(6) = 1. / 36. * weighting / prefactor_x * prefactor_y;
+		feq.at(7) = 1. / 36. * weighting / prefactor_x / prefactor_y;
+		feq.at(8) = 1. / 36. * weighting * prefactor_x / prefactor_y;
 
 		//Calculation of the moments for the equilibrium distribution function
-
 		//calculate the trace of the pressure tensor at unit density (T)
 		T = feq.at(1) + feq.at(2) + feq.at(3) + feq.at(4)
 				+ 2 * (feq.at(5) + feq.at(6) + feq.at(7) + feq.at(8));
