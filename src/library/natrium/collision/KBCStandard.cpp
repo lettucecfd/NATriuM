@@ -26,8 +26,15 @@ KBCStandard::~KBCStandard() {
 double KBCStandard::getEquilibriumDistribution(size_t i,
 		const numeric_vector& u, const double rho) const {
 
+	assert(i < getStencil()->getQ());
+		assert(rho > 0);
+		assert(u.size() == getStencil()->getD());
+		assert(u(0) < 1000000000000000.);
+		assert(u(1) < 1000000000000000.);
+
 	double value = getStencil()->getWeight(i) * rho;
 	int D = getStencil()->getD();
+	numeric_vector c_i = getStencil()->getDirection(i);
 	for (int p = 0; p < D; p++) {
 		double v =
 				u(p)
@@ -35,8 +42,22 @@ double KBCStandard::getEquilibriumDistribution(size_t i,
 								* getStencil()->getSpeedOfSound());
 
 		value *= 2 - sqrt(1 + v * v);
-		value *= (2 * v / sqrt(3) + sqrt(1 + v * v)) / (1 - v / sqrt(3));
+		value *= pow(((2 * v / sqrt(3) + sqrt(1 + v * v)) / (1 - v / sqrt(3))),c_i(p));
+
+
+
 	}
+
+
+		double prefactor = getStencil()->getWeight(i) * rho;
+		double uSquareTerm = -(u * u) / (2 * getStencil()->getSpeedOfSoundSquare());
+		if (0 == i) {
+			cout << value - prefactor * (1 + uSquareTerm);
+					return value;
+		}
+		double mixedTerm = (u * getStencil()->getDirection(i))
+				/ getStencil()->getSpeedOfSoundSquare();
+		cout << value - prefactor * (1 + mixedTerm * (1 + 0.5 * (mixedTerm)) + uSquareTerm) << endl;
 
 	return value;
 
