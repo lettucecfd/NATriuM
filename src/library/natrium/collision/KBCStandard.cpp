@@ -80,7 +80,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 	//vector<double> gamma(locally_owned_dofs.size());
 
 	double scaling = getStencil()->getScaling();
-	double cs2 = getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
+//	double cs2 = getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
 
 	//for all degrees of freedom on current processor
 	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
@@ -114,7 +114,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		double ux = velocities.at(0)(i) / scaling;
 		double uy = velocities.at(1)(i) / scaling;
-		double scalar_product = ux * ux + uy * uy;
+//		double scalar_product = ux * ux + uy * uy;
 
 		// moment representation of the populations
 		double T = 0, N = 0, Pi_xy = 0, Q_xyy = 0, Q_yxx = 0, A = 0;
@@ -227,34 +227,28 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		// equilibrium distribution of the population f
 		vector<double> feq(Q, 0.0);
 
-		double weighting;
+		double u_x_i = ux / getStencil()->getSpeedOfSound();
+		double u_y_i = uy / getStencil()->getSpeedOfSound();
 
-		double u_0_i = (f.at(1)(i) + f.at(5)(i) + f.at(8)(i) - f.at(3)(i)
-						- f.at(6)(i) - f.at(7)(i))
-				/ (getStencil()->getSpeedOfSound()*rho);
-		double u_1_i = (f.at(2)(i) + f.at(5)(i) + f.at(6)(i) - f.at(4)(i)
-						- f.at(7)(i) - f.at(8)(i))
-				/ (getStencil()->getSpeedOfSound()*rho);
+		double sqrt_ux = sqrt(1 + u_x_i * u_x_i);
+		double sqrt_uy = sqrt(1 + u_y_i * u_y_i);
 
-		double sqrt_ux = sqrt(1 + u_0_i * u_0_i);
-		double sqrt_uy = sqrt(1 + u_1_i * u_1_i);
-		double prefactor_x = (2 * u_0_i / sqrt(3) + sqrt_ux)
-				/ (1 - u_0_i / sqrt(3));
-		double prefactor_y = (2 * u_1_i / sqrt(3) + sqrt_uy)
-				/ (1 - u_1_i / sqrt(3));
+		double prefactor = rho * (2 - sqrt_ux) * (2 - sqrt_uy);
 
+		double postfactor_x = (2 * u_x_i / sqrt(3) + sqrt_ux)
+				/ (1 - u_x_i / sqrt(3));
+		double postfactor_y = (2 * u_y_i / sqrt(3) + sqrt_uy)
+				/ (1 - u_y_i / sqrt(3));
 
-		weighting = rho * (2 - sqrt_ux) * (2 - sqrt_uy);
-		// direction 0
-		feq.at(0) = 4. / 9. * weighting;
-		feq.at(1) = 1. / 9. * weighting * prefactor_x;
-		feq.at(2) = 1. / 9. * weighting * prefactor_y;
-		feq.at(3) = 1. / 9. * weighting / prefactor_x;
-		feq.at(4) = 1. / 9. * weighting / prefactor_y;
-		feq.at(5) = 1. / 36. * weighting * prefactor_x * prefactor_y;
-		feq.at(6) = 1. / 36. * weighting / prefactor_x * prefactor_y;
-		feq.at(7) = 1. / 36. * weighting / prefactor_x / prefactor_y;
-		feq.at(8) = 1. / 36. * weighting * prefactor_x / prefactor_y;
+		feq.at(0) = 4. / 9. * prefactor;
+		feq.at(1) = 1. / 9. * prefactor * postfactor_x;
+		feq.at(2) = 1. / 9. * prefactor * postfactor_y;
+		feq.at(3) = 1. / 9. * prefactor / postfactor_x;
+		feq.at(4) = 1. / 9. * prefactor / postfactor_y;
+		feq.at(5) = 1. / 36. * prefactor * postfactor_x * postfactor_y;
+		feq.at(6) = 1. / 36. * prefactor / postfactor_x * postfactor_y;
+		feq.at(7) = 1. / 36. * prefactor / postfactor_x / postfactor_y;
+		feq.at(8) = 1. / 36. * prefactor * postfactor_x / postfactor_y;
 
 		//Calculation of the moments for the equilibrium distribution function
 		//calculate the trace of the pressure tensor at unit density (T)
