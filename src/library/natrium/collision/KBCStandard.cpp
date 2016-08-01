@@ -57,9 +57,9 @@ double KBCStandard::getEquilibriumDistribution(size_t i,
 					- prefactor
 							* (1 + mixedTerm * (1 + 0.5 * (mixedTerm))
 									+ uSquareTerm) << endl;
-
-	return value;
 */
+	return value;
+
 }
 
 void KBCStandard::collideAll(DistributionFunctions& f,
