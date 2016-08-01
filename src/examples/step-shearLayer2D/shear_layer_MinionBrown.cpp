@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(10);	//10
 	configuration->setOutputSolutionInterval(100); //10
-	configuration->setOutputCheckpointInterval(100);
+	configuration->setOutputCheckpointInterval(100000);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer-MinionBrown/N" << refinement_level
 			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
