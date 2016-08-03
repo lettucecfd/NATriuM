@@ -537,6 +537,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					m_configuration->getWallNormalDirection(),
 					m_configuration->getWallNormalCoordinates(), s2.str());
 		}
+		if (configuration->isOutputGlobalTurbulenceStatistics()){
+			appendDataProcessor(boost::make_shared<GlobalTurbulenceStats<dim> > (*this));
+		}
 	} else {
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this);
 		//m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this);
