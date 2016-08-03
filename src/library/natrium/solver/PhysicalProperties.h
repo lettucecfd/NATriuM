@@ -38,6 +38,8 @@ public:
 	/// Flow factor
 	static double meanVelocityX(const distributed_vector& ux, boost::shared_ptr<AdvectionOperator<dim> > advection);
 
+	static double entropy(const DistributionFunctions& f, boost::shared_ptr<AdvectionOperator<dim> > advection);
+
 };
 
 } /* namespace natrium */
