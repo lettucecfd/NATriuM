@@ -25,6 +25,8 @@
 
 #include "natrium/utilities/Info.h"
 
+#include "EnstrophySubdomain.h"
+
 using namespace natrium;
 
 // Main function
@@ -183,6 +185,8 @@ int main(int argc, char** argv) {
 	// RUN SOLVER
 	// ========================================================================
 	CFDSolver<2> solver(configuration, shear_layer);
+	boost::shared_ptr<EnstrophySubdomain> enst = boost::make_shared<EnstrophySubdomain>(solver);
+	solver.appendDataProcessor(enst);
 
 	solver.run();
 
@@ -190,5 +194,6 @@ int main(int argc, char** argv) {
 	// FINAL OUTPUT
 	// ========================================================================
 	pout << "Flow converged" << endl;
+	pout << "Enstrophy in subdomain: " << enst->getResult() << endl;
 	return 0;
 }

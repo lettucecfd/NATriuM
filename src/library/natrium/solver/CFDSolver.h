@@ -70,6 +70,7 @@ template<size_t dim> class CFDSolver {
 	template<size_t dim2> friend class SolverStats;
 	template<size_t dim3> friend class TurbulenceStats;
 	template<size_t dim3> friend class GridInterpolation;
+	template<size_t dim4> friend class DataProcessor;
 
 private:
 	/// particle distribution functions

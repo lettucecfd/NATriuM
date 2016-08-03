@@ -15,6 +15,7 @@ set(    TARGET
 ADD_EXECUTABLE( ${TARGET} 
                 #shear_layer.cpp
                 shear_layer_MinionBrown.cpp
+                EnstrophySubdomain.h
                )
 #
 # link natrium library to executable
