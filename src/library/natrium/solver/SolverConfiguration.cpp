@@ -222,9 +222,12 @@ SolverConfiguration::SolverConfiguration() {
 				"Specifies if log is written to a file.");
 		enter_subsection("Turbulence Statistics");
 		{
+			declare_entry("Output global turbulence statistics?", "false",
+								dealii::Patterns::Bool(),
+								"Specifies if global turbulence statistics should be monitored.");
 			declare_entry("Output turbulence statistics?", "false",
 					dealii::Patterns::Bool(),
-					"Specifies if turbulence statistics should be monitored.");
+					"Specifies if turbulence statistics in slices should be monitored.");
 			declare_entry("Wall normal direction", "1",
 					dealii::Patterns::Integer(0, 3),
 					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");
