@@ -40,24 +40,24 @@ double KBCStandard::getEquilibriumDistribution(size_t i,
 
 		value *= 2 - sqrt(1 + v * v);
 		value *= pow(((2 * v / sqrt(3) + sqrt(1 + v * v)) / (1 - v / sqrt(3))),
-				c_i(p)/(getStencil()->getScaling()));
+				c_i(p) / (getStencil()->getScaling()));
 
 	}
-/*
-	double prefactor = getStencil()->getWeight(i) * rho;
-	double uSquareTerm = -(u * u) / (2 * getStencil()->getSpeedOfSoundSquare());
-	if (0 == i) {
-		cout << value - prefactor * (1 + uSquareTerm);
-		return value;
-	}
-	double mixedTerm = (u * getStencil()->getDirection(i))
-			/ getStencil()->getSpeedOfSoundSquare();
-	cout
-			<< value
-					- prefactor
-							* (1 + mixedTerm * (1 + 0.5 * (mixedTerm))
-									+ uSquareTerm) << endl;
-*/
+	/*
+	 double prefactor = getStencil()->getWeight(i) * rho;
+	 double uSquareTerm = -(u * u) / (2 * getStencil()->getSpeedOfSoundSquare());
+	 if (0 == i) {
+	 cout << value - prefactor * (1 + uSquareTerm);
+	 return value;
+	 }
+	 double mixedTerm = (u * getStencil()->getDirection(i))
+	 / getStencil()->getSpeedOfSoundSquare();
+	 cout
+	 << value
+	 - prefactor
+	 * (1 + mixedTerm * (1 + 0.5 * (mixedTerm))
+	 + uSquareTerm) << endl;
+	 */
 	return value;
 
 }
@@ -423,14 +423,46 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		// relaxation parameter (2*beta = omega of BGK)
 		double beta = 1. / (getRelaxationParameter() + 0.5) / 2;
 
+		vector<double> s_pc(Q);
+		for (int p = 0; p < Q; p++) {
+			s_p	c[p] = s[p]
+					- 1. / (getRelaxationParameter() + 0.5) * (s[p] - seq[p]);
+
+			//cout << s_pc[p] << " h: " << h[p] << " " << heq[p] << endl;
+		}
+
+		vector<double> psi(Q);
+		double sum_0 = 0.0;
+		double sum_a = 0.0;
+		double sum_b = 0.0;
+		double sum_c = 0.0;
+		for (int p = 0; p < Q; p++) {
+			psi[p] = k[p] + s_pc[p] + (1 - beta) * h[p]
+					+ beta * (2 * heq[p] - h[p]);
+
+			sum_0 += (h[p] - heq[p]) * (f.at(p)(i) - psi[p]) / psi[p];
+
+			sum_a += (h[p] - heq[p])
+					* (log(psi[p]) - log(getStencil()->getWeight(p))) / psi[p];
+			sum_b += (h[p] - heq[p]) * (h[p] - heq[p]) / psi[p];
+			sum_c += (h[p] - heq[p]) * (s[p] - seq[p]) / psi[p];
+		}
+		pout << " sum 0 = " << sum_0 << endl;
+		//cout << " sumabc" << sum_a << " " << sum_b << " " << sum_c << endl;
+
 		// stabilizer of KBC model
-		gamma.value.at(i) = 1. / beta - (2 - 1. / beta) * (sum_s / sum_h);
+		//gamma.value.at(i) = 1. / beta - (2 - 1. / beta) * (sum_s / sum_h);
+		gamma.value.at(i) = 1. / beta * ((sum_0 + sum_a) / sum_b)
+				- 2 * (sum_c / sum_b);
+		pout << gamma.value.at(i) << " " << 1. / beta - (2 - 1. / beta) * (sum_s / sum_h) << " ";
 
 		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
-		if (sum_h < 1e-16) {
+		if (sum_0 < 1e-16 || sum_b < 1e-16 || sum_a < 1e-16 || sum_c < 1e-16) {
 			gamma.value.at(i) = 2;
 
 		}
+
+		pout << gamma.value.at(i) << endl;
 
 		entropy.value.at(i) = -(f.at(0)(i) * log(f.at(0)(i) / (4. / 9.))
 				+ f.at(1)(i) * log(f.at(1)(i) / (1. / 9.))
