@@ -425,7 +425,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		vector<double> s_pc(Q);
 		for (int p = 0; p < Q; p++) {
-			s_p	c[p] = s[p]
+			s_pc[p] = s[p]
 					- 1. / (getRelaxationParameter() + 0.5) * (s[p] - seq[p]);
 
 			//cout << s_pc[p] << " h: " << h[p] << " " << heq[p] << endl;
@@ -447,17 +447,28 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 			sum_b += (h[p] - heq[p]) * (h[p] - heq[p]) / psi[p];
 			sum_c += (h[p] - heq[p]) * (s[p] - seq[p]) / psi[p];
 		}
-		pout << " sum 0 = " << sum_0 << endl;
+		pout << " sum 0 = " << sum_0 << " sum 1 =" << sum_a << " sum 2 = " << sum_b << " sum_3 = " << sum_c << endl;
 		//cout << " sumabc" << sum_a << " " << sum_b << " " << sum_c << endl;
+
+		double dummy_sum =0;
+		for (int x = 0; x<Q; x++)
+		{
+		pout << x <<  ": psi = " << psi[x] << " delta_h " << delta_h[x] << " " << " delta_s " << delta_s[x] << " " << endl;
+		dummy_sum += psi[x];
+		}
+		pout  << "rhopsi: " << dummy_sum <<  endl;
 
 		// stabilizer of KBC model
 		//gamma.value.at(i) = 1. / beta - (2 - 1. / beta) * (sum_s / sum_h);
 		gamma.value.at(i) = 1. / beta * ((sum_0 + sum_a) / sum_b)
 				- 2 * (sum_c / sum_b);
-		pout << gamma.value.at(i) << " " << 1. / beta - (2 - 1. / beta) * (sum_s / sum_h) << " ";
+		pout << gamma.value.at(i) << " " << 1. / beta - (2. - 1. / beta) * (sum_s / sum_h) << " " << endl;
+		pout << "Zum Vergleich: " << 2./beta + 1. / beta * ((sum_a) / sum_b)
+						- 2 * (sum_c / sum_b) << endl;
+		pout << "Noch ein Vergleich:" << 1./beta - ( 2. - 1./beta) * sum_c / sum_b << endl;
 
 		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
-		if (sum_0 < 1e-16 || sum_b < 1e-16 || sum_a < 1e-16 || sum_c < 1e-16) {
+		if (abs(sum_0) < 1e-16 || abs(sum_b) < 1e-16 || abs(sum_a) < 1e-16 || abs(sum_c) < 1e-16) {
 			gamma.value.at(i) = 2;
 
 		}
