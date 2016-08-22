@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	pout
 
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <BDF=0> <filter=0> <filter_s=32>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <BDF=0> <filter=0> <filter_s=32> <scaling=1>"
 			<< endl;
 
 	size_t refinement_level = 3;
@@ -96,6 +96,13 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Filter s:  " << filter_s << endl;
 
+	// scales the speed of sound (scaling=1 <=> Boesch et al.)
+	double scaling = 1;
+	if (argc >= 11) {
+		scaling = std::atof(argv[10]);
+	}
+	pout << "... stencil scaling:  " << scaling << endl;
+
 	// get integrator
 	TimeIntegratorName time_integrator;
 	DealIntegratorName deal_integrator;
@@ -116,7 +123,7 @@ int main(int argc, char** argv) {
 	const double Ma_Boesch = u0_Boesch/cs_Boesch;
 	const double u0 = 1;
 	const double cs = u0/Ma_Boesch;
-	const double stencil_scaling = sqrt(3) * cs;
+	const double stencil_scaling = sqrt(3) * cs * scaling;
 	const double kappa = 80;
 	const double viscosity = 0.0001;
 	const double t_c = 1;
@@ -151,7 +158,7 @@ int main(int argc, char** argv) {
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer-MinionBrown/N" << refinement_level
 			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
 			<< "-int" << integrator_id << "-CFL" << CFL << "-BDF"
-			<< BDF << "-filter" << filter << "-filt_s" << filter_s;
+			<< BDF << "-filter" << filter << "-filt_s" << filter_s << "-scaling" << scaling;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(500000);
