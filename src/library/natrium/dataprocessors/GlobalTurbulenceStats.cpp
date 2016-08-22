@@ -89,7 +89,9 @@ void GlobalTurbulenceStats<dim>::printHeaderLine() {
 		std::ofstream legend_file(m_legendFilename, std::fstream::out);
 
 		// write legend file
-		size_t k = 1;
+		legend_file << "1  iteration" << endl;
+		legend_file << "3  time" << endl;
+		size_t k = 3;
 		for (size_t i = 0; i < m_nofObservables; i++) {
 			legend_file << k << "  < " << m_names.at(i) << " >" << endl;
 			k++;
@@ -117,6 +119,9 @@ void GlobalTurbulenceStats<dim>::printHeaderLine() {
 template<size_t dim>
 void GlobalTurbulenceStats<dim>::writeToFile() {
 	if ((is_MPI_rank_0()) and (not m_outputOff)) {
+
+		*m_tableFile << this->m_solver.getIteration() << " ";
+		*m_tableFile << this->m_solver.getTime() << " ";
 
 		// averages
 		for (size_t i = 0; i < m_nofObservables; i++) {
@@ -256,9 +261,9 @@ void GlobalTurbulenceStats<dim>::calculate() {
 
 				// add to correlations
 				for (size_t j = 0; j < m_nofObservables; j++) {
-					for (size_t k = 0; k < j + 1; k++) {
-						l_correlations.at(j).at(k) += (l_values.at(q)
-								* l_values.at(k)) * weights.at(q);
+					for (size_t r = 0; r < j + 1; r++) {
+						l_correlations.at(j).at(r) += (l_values.at(j)
+								* l_values.at(r)) * weights.at(q);
 					}
 				}
 				// add to third moment
