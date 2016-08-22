@@ -152,8 +152,8 @@ int main(int argc, char** argv) {
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(10);	//10
-	configuration->setOutputSolutionInterval(100); //10
-	configuration->setOutputCheckpointInterval(100000);
+	configuration->setOutputSolutionInterval(1000); //10
+	configuration->setOutputCheckpointInterval(1e9);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer-MinionBrown/N" << refinement_level
 			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
-	configuration->setOutputTurbulenceStatistics(true);
+	configuration->setOutputGlobalTurbulenceStatistics(true);
 
 	if (collision_id == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);

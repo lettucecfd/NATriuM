@@ -280,7 +280,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_collisionModel->setViscosity(m_problemDescription->getViscosity());
 		// TODO call setViscosity only once (for general collision model)
 		// TODO remove relaxation-parameter from collision model and calculate in each time step from dt and nu
-}
+	}
 
 	// apply external force
 	if (m_problemDescription->hasExternalForce()) {
@@ -537,8 +537,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					m_configuration->getWallNormalDirection(),
 					m_configuration->getWallNormalCoordinates(), s2.str());
 		}
-		if (configuration->isOutputGlobalTurbulenceStatistics()){
-			appendDataProcessor(boost::make_shared<GlobalTurbulenceStats<dim> > (*this));
+		if (configuration->isOutputGlobalTurbulenceStatistics()) {
+			appendDataProcessor(
+					boost::make_shared<GlobalTurbulenceStats<dim> >(*this));
 		}
 	} else {
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this);
@@ -546,23 +547,25 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 	// print out memory requirements of single components
-	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- " << endl;
+	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- "
+			<< endl;
 	LOG(BASIC) << " |  Sparse matrix        |  "
 			<< m_advectionOperator->getSystemMatrix().memory_consumption()
 			<< " (#nonzero elem: "
 			<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
 			<< ")" << endl;
 	LOG(BASIC) << " |  Mesh                 |  "
-			<< m_problemDescription->getMesh()->memory_consumption()  << endl;
+			<< m_problemDescription->getMesh()->memory_consumption() << endl;
 	LOG(BASIC) << " |  Distributions        |  " << m_f.memory_consumption()
 			<< endl;
 	LOG(BASIC) << " |  Tmp distributions    |  " << m_f.memory_consumption()
 			<< endl;
 	LOG(BASIC) << " |  Velocities           |  "
 			<< dim * m_velocity.at(0).memory_consumption() << endl;
-	LOG(BASIC) << " |  Densities            |  " << m_density.memory_consumption()
+	LOG(BASIC) << " |  Densities            |  "
+			<< m_density.memory_consumption() << endl;
+	LOG(BASIC) << " ------------------------------------------------- " << endl
 			<< endl;
-	LOG(BASIC) << " ------------------------------------------------- " << endl << endl;
 
 }
 /* Constructor */
@@ -787,7 +790,10 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		 }*/
 		if (m_configuration->isOutputTurbulenceStatistics())
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
-		if ((iteration % m_configuration->getOutputSolutionInterval() == 0) or is_final) {
+		// no output if solution interval > 10^8
+		if (((iteration % m_configuration->getOutputSolutionInterval() == 0)
+				or is_final)
+				and m_configuration->getOutputSolutionInterval() <= 1e8) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
@@ -863,7 +869,10 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		}
 
 		// output: checkpoint
-		if ((iteration % m_configuration->getOutputCheckpointInterval() == 0) or is_final) {
+		// no output if checkpoint interval > 10^8
+		if (((iteration % m_configuration->getOutputCheckpointInterval() == 0)
+				or is_final) and (m_configuration->getOutputCheckpointInterval() <= 1e8)){
+
 			boost::filesystem::path checkpoint_dir(
 					m_configuration->getOutputDirectory());
 			checkpoint_dir /= "checkpoint";
