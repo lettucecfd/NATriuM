@@ -10,16 +10,16 @@
 #include <fstream>
 #include <sstream>
 
-#include "deal.II/lac/lapack_full_matrix.h"
-
 namespace natrium {
 
 // constructor/destructor
-template<> matrixAnalysis<2>::matrixAnalysis(boost::shared_ptr<CFDSolver<2> > solver) :
+template<> matrixAnalysis<2>::matrixAnalysis(
+		boost::shared_ptr<CFDSolver<2> > solver) :
 		m_solver(solver) {
 
 }
-template<> matrixAnalysis<3>::matrixAnalysis(boost::shared_ptr<CFDSolver<3> > solver) :
+template<> matrixAnalysis<3>::matrixAnalysis(
+		boost::shared_ptr<CFDSolver<3> > solver) :
 		m_solver(solver) {
 
 }
@@ -37,7 +37,7 @@ void matrixAnalysis<dim>::writeSpectrum(bool scale_by_timestep) {
 	computeSpectrum(m_solver->getAdvectionOperator()->getSystemMatrix(),
 			eigenvalues);
 	// scale by time step (=> eigenvalues of dt*A)
-	if (scale_by_timestep){
+	if (scale_by_timestep) {
 		for (size_t i = 0; i < eigenvalues.size(); i++) {
 			eigenvalues.at(i) *= m_solver->getTimeStepSize();
 		}
@@ -70,32 +70,12 @@ double matrixAnalysis<dim>::computeSpectrum(
 	assert(matrix.n() == matrix.m());
 	eigenvalues.clear();
 	// copy the Matrix into LAPACK full matrix
-	dealii::LAPACKFullMatrix<double> fullSystemMatrix(matrix.n(), matrix.n());
-	fullSystemMatrix = 0;
-	fullSystemMatrix.copy_from(matrix);
-	// perturb the matrix (in order to compute pseudospectra)
-	// set seed of random number generator
-	std::srand(std::time(0));
-	if (perturbation != 0.0) {
-		for (size_t i = 0; i < fullSystemMatrix.n_rows(); i++) {
-			for (size_t j = 0; j < fullSystemMatrix.n_cols(); j++) {
-				// random number in [-perturbation,perturbation]
-				double rnd = 2 * perturbation
-						* (((double) std::rand() / (RAND_MAX)) - 0.5);
-				fullSystemMatrix(i, j) += rnd;
-			}
-		}
-	}
-	fullSystemMatrix.compute_eigenvalues();
-	// write eigenvalues to vector
-	eigenvalues.resize(matrix.n());
-	double abs_max_eigenvalue = 0.0;
-	for (size_t i = 0; i < fullSystemMatrix.n_cols(); i++) {
-		eigenvalues.at(i) = fullSystemMatrix.eigenvalue(i);
-		if (abs(eigenvalues.at(i)) > abs_max_eigenvalue){
-			abs_max_eigenvalue = abs(eigenvalues.at(i));
-		}
-	}
+	dealii::LAPACKFullMatrix<double> full_system_matrix(matrix.n(), matrix.n());
+	full_system_matrix = 0;
+	full_system_matrix.copy_from(matrix);
+
+	double abs_max_eigenvalue = computeSpectrum(full_system_matrix, eigenvalues,
+			perturbation);
 
 	//return max absolute of eigenvalues
 	return abs_max_eigenvalue;
@@ -108,8 +88,49 @@ template double matrixAnalysis<3>::computeSpectrum(
 		vector<std::complex<double> > & eigenvalues, double perturbation);
 
 template<size_t dim>
-void matrixAnalysis<dim>::writePseudospectrum(bool scale_by_timestep, size_t numberOfCycles,
-		double perturbation) {
+double matrixAnalysis<dim>::computeSpectrum(
+		dealii::LAPACKFullMatrix<double>& matrix,
+		vector<std::complex<double> > & eigenvalues, double perturbation) {
+	// make sure the matrix is quadratic
+	assert(matrix.n() == matrix.m());
+	eigenvalues.clear();
+	// perturb the matrix (in order to compute pseudospectra)
+	// set seed of random number generator
+	std::srand(std::time(0));
+	if (perturbation != 0.0) {
+		for (size_t i = 0; i < matrix.n_rows(); i++) {
+			for (size_t j = 0; j < matrix.n_cols(); j++) {
+				// random number in [-perturbation,perturbation]
+				double rnd = 2 * perturbation
+						* (((double) std::rand() / (RAND_MAX)) - 0.5);
+				matrix(i, j) += rnd;
+			}
+		}
+	}
+	matrix.compute_eigenvalues();
+	// write eigenvalues to vector
+	eigenvalues.resize(matrix.n());
+	double abs_max_eigenvalue = 0.0;
+	for (size_t i = 0; i < matrix.n_cols(); i++) {
+		eigenvalues.at(i) = matrix.eigenvalue(i);
+		if (abs(eigenvalues.at(i)) > abs_max_eigenvalue) {
+			abs_max_eigenvalue = abs(eigenvalues.at(i));
+		}
+	}
+
+	//return max absolute of eigenvalues
+	return abs_max_eigenvalue;
+}
+template double matrixAnalysis<2>::computeSpectrum(
+		dealii::LAPACKFullMatrix<double>& matrix,
+		vector<std::complex<double> > & eigenvalues, double perturbation);
+template double matrixAnalysis<3>::computeSpectrum(
+		dealii::LAPACKFullMatrix<double>& matrix,
+		vector<std::complex<double> > & eigenvalues, double perturbation);
+
+template<size_t dim>
+void matrixAnalysis<dim>::writePseudospectrum(bool scale_by_timestep,
+		size_t numberOfCycles, double perturbation) {
 
 	// compute pseudoeigenvalues of A
 	vector<std::complex<double> > pseudoeigenvalues;
@@ -122,11 +143,10 @@ void matrixAnalysis<dim>::writePseudospectrum(bool scale_by_timestep, size_t num
 				eigenvalues.end());
 
 	}
-	if (scale_by_timestep){
+	if (scale_by_timestep) {
 		// scale by time step (=> pseudoeigenvalues of dt*A)
 		for (size_t i = 0; i < pseudoeigenvalues.size(); i++) {
-			pseudoeigenvalues.at(i) *=
-					m_solver->getTimeStepSize();
+			pseudoeigenvalues.at(i) *= m_solver->getTimeStepSize();
 		}
 	}
 	// open file
@@ -147,9 +167,9 @@ void matrixAnalysis<dim>::writePseudospectrum(bool scale_by_timestep, size_t num
 				<< pseudoeigenvalues.at(i).imag() << endl;
 	}
 }
-template void matrixAnalysis<2>::writePseudospectrum(bool scale_by_timestep, size_t numberOfCycles,
-		double perturbation);
-template void matrixAnalysis<3>::writePseudospectrum(bool scale_by_timestep, size_t numberOfCycles,
-		double perturbation);
+template void matrixAnalysis<2>::writePseudospectrum(bool scale_by_timestep,
+		size_t numberOfCycles, double perturbation);
+template void matrixAnalysis<3>::writePseudospectrum(bool scale_by_timestep,
+		size_t numberOfCycles, double perturbation);
 
 } /* namespace natrium */
