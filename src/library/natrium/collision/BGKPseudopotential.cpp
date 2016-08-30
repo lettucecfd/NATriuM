@@ -24,17 +24,20 @@ namespace natrium {
 /// constructor
 template<size_t dim>
 BGKPseudopotential<dim>::BGKPseudopotential(double relaxationParameter,
-		double dt, const boost::shared_ptr<Stencil> stencil, PseudopotentialParameters parameters) :
-		BGK(relaxationParameter, dt, stencil), m_pseudopotentialParameters(parameters) {
-	assert (parameters.G != 0);
-	if (m_pseudopotentialParameters.pseudopotentialType == SHAN_CHEN){
+		double dt, const boost::shared_ptr<Stencil> stencil,
+		PseudopotentialParameters parameters) :
+		BGK(relaxationParameter, dt, stencil), m_pseudopotentialParameters(
+				parameters) {
+	assert(parameters.G != 0);
+	if (m_pseudopotentialParameters.pseudopotentialType == SHAN_CHEN) {
 
-	} else if (m_pseudopotentialParameters.pseudopotentialType == SUKOP){
+	} else if (m_pseudopotentialParameters.pseudopotentialType == SUKOP) {
 
-	} else if (m_pseudopotentialParameters.pseudopotentialType == CARNAHAN_STARLING) {
-		assert (parameters.T != 0);
+	} else if (m_pseudopotentialParameters.pseudopotentialType
+			== CARNAHAN_STARLING) {
+		assert(parameters.T != 0);
 	}
-	
+
 }
 
 // destructor
@@ -123,6 +126,7 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 	assert(dim == 2);
 
 	// External force information
+
 	ForceType force_type = getForceType();
 	double ext_force_x = getForceX();
 	double ext_force_y = getForceY();
@@ -165,15 +169,26 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 	std::vector<dealii::types::global_dof_index> localDoFIndices(dofs_per_cell);
 	const std::map<size_t, size_t>& celldofToQIndex =
 			m_advectionOperator->getCelldofToQIndex();
-	const dealii::UpdateFlags updateFlags = dealii::update_gradients;
+	const dealii::UpdateFlags updateFlags = dealii::update_gradients
+			| dealii::update_quadrature_points;
 
 	dealii::FEValues<dim> feValues(m_advectionOperator->getMapping(),
 			*m_advectionOperator->getFe(),
 			*m_advectionOperator->getQuadrature(), updateFlags);
 
+	std::vector<dealii::types::global_dof_index> neighbor_indices(
+			dofs_per_cell);
+	dealii::FEValues<dim> neighbor_fe_values(m_advectionOperator->getMapping(),
+			*m_advectionOperator->getFe(),
+			*m_advectionOperator->getQuadrature(), updateFlags);
+
+	densities = 0;
+	for (size_t i = 0; i < 9; i++) {
+		densities.add(f.at(i));
+	}
 // loop over all cells
 	dealii::Tensor<1, dim> density_gradient;
-	typename dealii::DoFHandler<2>::active_cell_iterator cell =
+	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
 	for (; cell != endc; ++cell) {
 
@@ -203,9 +218,9 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			f_i[8] = f8(i);
 
 			// calculate density
-			rho_i = f_i[0] + f_i[1] + f_i[2] + f_i[3] + f_i[4] + f_i[5] + f_i[6]
-					+ f_i[7] + f_i[8];
-			densities(i) = rho_i;
+			rho_i = densities(i);//f_i[0] + f_i[1] + f_i[2] + f_i[3] + f_i[4] + f_i[5] + f_i[6]
+			//+ f_i[7] + f_i[8];
+			//densities(i) = rho_i;
 			if (rho_i < 1e-10) {
 				throw CollisionException(
 						"Densities too small (< 1e-10) for collisions. Decrease time step size.");
@@ -215,13 +230,94 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			// This function assumes that the DoFs are uniquely identified with quadrature points
 			// it uses the relation grad(rho)(x_i) = grad( sum_alpha f_alpha(x_i))  = grad ( sum_alpha(sum_k(dof_{alpha,k} phi_k(x_i))))
 			//                                     = sum_k ((sum_alpha dof_{alpha,k}) grad(phi_k(x_i))) = sum_k (rho_k grad(phi_k(x_i)))
-			double rho_k;
+
+			// PRELIMINATRY IMPLEMENTATION.
+			// THE DENSITY GRADIENT CALCULATE MUST BE VERY INEFFICIENT. IT DOES NOT SUPPORT BOUNDARY CONDITIONS AT ALL.
+			// IN 3D, ANOTHER LAYER OF CELLS AROUND MUST BE TAKEN CARE OF TO EVALUATE THE GRADIENTS AT VERTICES
+			// ONLY GLOBAL REFINEMENT IS SUPPORTED SO FAR
+			// WHEN USING A NORMAL FINITE ELEMENT RATHER THAN A DG FINITE ELEMENT, THE SEARCH FOR p ON NEIGHBOR ELEMENT COULD
+			// BE SPEEDED UP
+
+			// average face gradients over cell and all neighbors that also contain the support point
 			density_gradient = 0;
-			for (size_t k = 0; k < dofs_per_cell; k++) {
-				rho_k = densities(localDoFIndices.at(k));
-				density_gradient += (feValues.shape_grad(k,
-						celldofToQIndex.at(j)) * rho_k);
+			dealii::Point<dim> p = feValues.quadrature_point(
+					celldofToQIndex.at(j));
+			// a list of all cells that contain p
+			vector< typename dealii::DoFHandler<dim>::cell_iterator> cells_with_point;
+			// this cell
+			cells_with_point.push_back(cell);
+			// iterate over neighbors
+			for (size_t k = 0; k < dealii::GeometryInfo<dim>::faces_per_cell;
+					k++) {
+				if (cell->face(k)->at_boundary()) {
+					// TODO incorporate periodic boundaries
+					continue;
+				}
+				if (cell->neighbor(k)->point_inside(p)) {
+					cells_with_point.push_back(cell->neighbor(k));
+				}
 			}
+			// iterate over neighbors of the neighbors that are in the list
+			size_t len = cells_with_point.size();
+			for (size_t c = 1; c < len; c++) {
+				for (size_t k = 0;
+						k < dealii::GeometryInfo<dim>::faces_per_cell; k++) {
+					if (cells_with_point.at(c)->face(k)->at_boundary()) {
+						// TODO incorporate periodic boundaries
+						continue;
+					}
+					bool already_visited = (std::find(cells_with_point.begin(),
+							cells_with_point.end(), cells_with_point.at(c)->neighbor(k))
+							!= cells_with_point.end());
+					if ((cells_with_point.at(c)->neighbor(k)->point_inside(p)) and (not already_visited)) {
+						cells_with_point.push_back(cells_with_point.at(c)->neighbor(k));
+					}
+				}
+
+			}
+			// calculate the density gradient as the average over all cells that contain p
+			//size_t n_finds = 0;
+			len = cells_with_point.size();
+			for (size_t c = 0; c < len; c++) {
+				neighbor_fe_values.reinit(cells_with_point.at(c));
+				cells_with_point.at(c)->get_dof_indices(neighbor_indices);
+				/*
+				// find point in neighbor quadrature
+				size_t m;
+				bool found = false;
+				for (m = 0; m < feValues.dofs_per_cell; m++) {
+					if (p.distance(
+							neighbor_fe_values.quadrature_point(
+									celldofToQIndex.at(m))) < 1e-12) {
+						n_finds++;
+						found = true;
+						break;
+					}
+				}
+				assert(found);// otherwise: the point is not a quadrature point at neighbor cell.
+							  // requires more complicated evaluation.
+							   *
+							   */
+				// calculate average gradient
+				for (size_t n = 0; n < dofs_per_cell; n++) {
+					double rho_n = densities(neighbor_indices.at(n));
+					for (size_t m = 0; m < dofs_per_cell; m++){
+						density_gradient += (neighbor_fe_values.shape_grad(n,
+							celldofToQIndex.at(m)) * rho_n);
+					}
+				}
+			}
+			cout << endl;
+			// average
+			density_gradient *= (1. / (len*dofs_per_cell));
+			/*double limit = 5;
+			if (density_gradient.norm() > limit){
+				density_gradient*=(limit/density_gradient.norm());
+			}
+			*/
+			cout << p(0) << " " << p(1) << " | " << len << " " << rho_i
+					<< " | " << density_gradient[0] << " "
+					<< density_gradient[1] << endl;
 
 			// =============================
 			// Calculate Interaction Force
@@ -241,28 +337,44 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 						+ ext_force_x;
 				force_y = -G * psi * exp(-rho_i) * density_gradient[1]
 						+ ext_force_y;
-			} else if (SUKOP == m_pseudopotentialParameters.pseudopotentialType) {
+			} else if (SUKOP
+					== m_pseudopotentialParameters.pseudopotentialType) {
 				// Psi = psi0 * exp(-rho/rho0)
-				 double G = m_pseudopotentialParameters.G;
-				 double psi0 = (double) 4 ;
-				 double rho0 = (double) 200 ;
-				 double psi = (double)psi0 * exp(-rho_i/rho0) ;
-				 force_x = -G * psi * (-psi0/rho0) * exp(-rho_i/rho0) * density_gradient[0] + ext_force_x;
-				 force_y = -G * psi * (-psi0/rho0) * exp(-rho_i/rho0) * density_gradient[1] + ext_force_y;
-			} else if (CARNAHAN_STARLING == m_pseudopotentialParameters.pseudopotentialType) {
+				double G = m_pseudopotentialParameters.G;
+				double psi0 = (double) 4;
+				double rho0 = (double) 200;
+				double psi = (double) psi0 * exp(-rho_i / rho0);
+				force_x = -G * psi * (-psi0 / rho0) * exp(-rho_i / rho0)
+						* density_gradient[0] + ext_force_x;
+				force_y = -G * psi * (-psi0 / rho0) * exp(-rho_i / rho0)
+						* density_gradient[1] + ext_force_y;
+			} else if (CARNAHAN_STARLING
+					== m_pseudopotentialParameters.pseudopotentialType) {
 				// Psi Carnahan Starling
-				 double G = m_pseudopotentialParameters.G;
-				 double T = m_pseudopotentialParameters.T*cs2 ;
-				 double pCS = rho_i * T * (1.+rho_i+pow(rho_i,2.)-pow(rho_i,3.)) / pow(1.-rho_i,3.) - pow(rho_i,2.) ;
-				 double psi = sqrt(2.*(pCS-cs2*rho_i)/G) ;
-				 double grad_pCS_X = density_gradient[0] * ( (T*(1+4*rho_i+4*pow(rho_i,2.)-4*pow(rho_i,3.)+pow(rho_i,4.))/pow(1.-rho_i,4.))
-				 - (2.*rho_i) ) ;
-				 double grad_pCS_Y = density_gradient[1] * ( (T*(1+4*rho_i+4*pow(rho_i,2.)-4*pow(rho_i,3.)+pow(rho_i,4.))/pow(1.-rho_i,4.))
-				 - (2.*rho_i) ) ;
-				 double gradPsiX = grad_pCS_X - cs2*density_gradient[0] / (2.*G*(pCS-cs2*rho_i)) ;
-				 double gradPsiY = grad_pCS_Y - cs2*density_gradient[1] / (2.*G*(pCS-cs2*rho_i)) ;
-				 force_x = -G*psi*gradPsiX + ext_force_x;
-				 force_y = -G*psi*gradPsiY + ext_force_y;
+				double G = m_pseudopotentialParameters.G;
+				double T = m_pseudopotentialParameters.T * cs2;
+				double pCS = rho_i * T
+						* (1. + rho_i + pow(rho_i, 2.) - pow(rho_i, 3.))
+						/ pow(1. - rho_i, 3.) - pow(rho_i, 2.);
+				double psi = sqrt(2. * (pCS - cs2 * rho_i) / G);
+				double grad_pCS_X = density_gradient[0]
+						* ((T
+								* (1 + 4 * rho_i + 4 * pow(rho_i, 2.)
+										- 4 * pow(rho_i, 3.) + pow(rho_i, 4.))
+								/ pow(1. - rho_i, 4.)) - (2. * rho_i));
+				double grad_pCS_Y = density_gradient[1]
+						* ((T
+								* (1 + 4 * rho_i + 4 * pow(rho_i, 2.)
+										- 4 * pow(rho_i, 3.) + pow(rho_i, 4.))
+								/ pow(1. - rho_i, 4.)) - (2. * rho_i));
+				double gradPsiX = grad_pCS_X
+						- cs2 * density_gradient[0]
+								/ (2. * G * (pCS - cs2 * rho_i));
+				double gradPsiY = grad_pCS_Y
+						- cs2 * density_gradient[1]
+								/ (2. * G * (pCS - cs2 * rho_i));
+				force_x = -G * psi * gradPsiX + ext_force_x;
+				force_y = -G * psi * gradPsiY + ext_force_y;
 			}
 			// With Tuneable surface tension (Kupershtokh)
 //			double A = 0.0 ;
@@ -344,7 +456,8 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			// Exact difference method (Kupershtokh)
 			if (force_type == EXACT_DIFFERENCE) {
 				ExternalForceFunctions::applyExactDifferenceForcingD2Q9(f_i,
-						force_x, force_y, u_0_i, u_1_i, rho_i, getDt(), prefactor);
+						force_x, force_y, u_0_i, u_1_i, rho_i, getDt(),
+						prefactor);
 			}
 			// TODO add source term guo
 

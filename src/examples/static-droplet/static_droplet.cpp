@@ -5,6 +5,8 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
+
+
 #include <stdlib.h>
 #include <sstream>
 
@@ -78,7 +80,7 @@ int main(int argc, char** argv) {
 	// MAKE FLOW PROBLEM
 	// ========================================================================
 	const double stencil_scaling = 1.0;
-	const double CFL = .4 ;
+	const double CFL = .8 ;
 	const double R0 = 0.125;
 	const double W = 0.05;
 	const double rho_l = 1.932442e+00 ;//2.470937e-01 ;//1.9;//3; //1.93;
@@ -110,6 +112,8 @@ int main(int argc, char** argv) {
 	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(true);
+	configuration->setVmultLimiter(true);
+	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(1);//10
 	configuration->setOutputSolutionInterval(1); //10
