@@ -240,10 +240,11 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 
 			// average face gradients over cell and all neighbors that also contain the support point
 			density_gradient = 0;
+			double weight_sum = 0;
 			dealii::Point<dim> p = feValues.quadrature_point(
 					celldofToQIndex.at(j));
 			// a list of all cells that contain p
-			vector< typename dealii::DoFHandler<dim>::cell_iterator> cells_with_point;
+			vector<typename dealii::DoFHandler<dim>::cell_iterator> cells_with_point;
 			// this cell
 			cells_with_point.push_back(cell);
 			// iterate over neighbors
@@ -267,10 +268,13 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 						continue;
 					}
 					bool already_visited = (std::find(cells_with_point.begin(),
-							cells_with_point.end(), cells_with_point.at(c)->neighbor(k))
+							cells_with_point.end(),
+							cells_with_point.at(c)->neighbor(k))
 							!= cells_with_point.end());
-					if ((cells_with_point.at(c)->neighbor(k)->point_inside(p)) and (not already_visited)) {
-						cells_with_point.push_back(cells_with_point.at(c)->neighbor(k));
+					if ((cells_with_point.at(c)->neighbor(k)->point_inside(p))
+							and (not already_visited)) {
+						cells_with_point.push_back(
+								cells_with_point.at(c)->neighbor(k));
 					}
 				}
 
@@ -282,42 +286,47 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 				neighbor_fe_values.reinit(cells_with_point.at(c));
 				cells_with_point.at(c)->get_dof_indices(neighbor_indices);
 				/*
-				// find point in neighbor quadrature
-				size_t m;
-				bool found = false;
-				for (m = 0; m < feValues.dofs_per_cell; m++) {
-					if (p.distance(
-							neighbor_fe_values.quadrature_point(
-									celldofToQIndex.at(m))) < 1e-12) {
-						n_finds++;
-						found = true;
-						break;
-					}
-				}
-				assert(found);// otherwise: the point is not a quadrature point at neighbor cell.
-							  // requires more complicated evaluation.
-							   *
-							   */
+				 // find point in neighbor quadrature
+				 size_t m;
+				 bool found = false;
+				 for (m = 0; m < feValues.dofs_per_cell; m++) {
+				 if (p.distance(
+				 neighbor_fe_values.quadrature_point(
+				 celldofToQIndex.at(m))) < 1e-12) {
+				 n_finds++;
+				 found = true;
+				 break;
+				 }
+				 }
+				 assert(found);// otherwise: the point is not a quadrature point at neighbor cell.
+				 // requires more complicated evaluation.
+				 *
+				 */
 				// calculate average gradient
 				for (size_t n = 0; n < dofs_per_cell; n++) {
 					double rho_n = densities(neighbor_indices.at(n));
-					for (size_t m = 0; m < dofs_per_cell; m++){
+					for (size_t m = 0; m < dofs_per_cell; m++) {
+						double weight = exp(-p.distance(
+								neighbor_fe_values.quadrature_point(
+										celldofToQIndex.at(m)))
+								/ cell->diameter());
 						density_gradient += (neighbor_fe_values.shape_grad(n,
-							celldofToQIndex.at(m)) * rho_n);
+								celldofToQIndex.at(m)) * rho_n * weight);
+						weight_sum += weight;
 					}
 				}
 			}
 			cout << endl;
 			// average
-			density_gradient *= (1. / (len*dofs_per_cell));
+			density_gradient *= (1. / (weight_sum));
 			/*double limit = 5;
-			if (density_gradient.norm() > limit){
-				density_gradient*=(limit/density_gradient.norm());
-			}
-			*/
-			cout << p(0) << " " << p(1) << " | " << len << " " << rho_i
-					<< " | " << density_gradient[0] << " "
-					<< density_gradient[1] << endl;
+			 if (density_gradient.norm() > limit){
+			 density_gradient*=(limit/density_gradient.norm());
+			 }
+			 */
+			cout << p(0) << " " << p(1) << " | " << len << " " << rho_i << " | "
+					<< density_gradient[0] << " " << density_gradient[1]
+					<< endl;
 
 			// =============================
 			// Calculate Interaction Force
