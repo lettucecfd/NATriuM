@@ -126,6 +126,9 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.isOutputGlobalTurbulenceStatistics(), false);
 	config.setOutputGlobalTurbulenceStatistics(true);
 	BOOST_CHECK_EQUAL(config.isOutputGlobalTurbulenceStatistics(), true);
+	BOOST_CHECK_EQUAL(config.isVmultLimiter(), false);
+	config.setVmultLimiter(true);
+	BOOST_CHECK_EQUAL(config.isVmultLimiter(), true);
 
 	/// Failure test
 	pout << " ... failure test ... " << endl;
