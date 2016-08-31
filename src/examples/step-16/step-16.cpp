@@ -158,6 +158,7 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(10.0);
 	configuration->setInitializationScheme(EQUILIBRIUM);
 	configuration->setSedgOrderOfFiniteElement(p);
+	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setStencilScaling(scaling);
 	configuration->setStencil(Stencil_D3Q15);
 	if (stencil_id == 1){
