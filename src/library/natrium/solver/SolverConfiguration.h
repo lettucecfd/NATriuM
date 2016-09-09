@@ -685,6 +685,29 @@ public:
 		leave_subsection();
 		return is_filter;
 	}
+
+	void setVmultLimiter(bool limiting) {
+		enter_subsection("Filtering");
+		set("Apply vmult limiter?", limiting);
+		leave_subsection();
+	}
+	bool isVmultLimiter() {
+		enter_subsection("Filtering");
+		bool is_limiter;
+		try {
+			is_limiter = get_bool("Apply vmult limiter?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Apply vmult limiter?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		return is_limiter;
+	}
+
 	void setFilteringScheme(FilteringSchemeName filtering_scheme) {
 		enter_subsection("Filtering");
 		switch (filtering_scheme) {
@@ -1940,6 +1963,35 @@ public:
 		enter_subsection("Output");
 		enter_subsection("Turbulence Statistics");
 		set("Output turbulence statistics?", output_turbulence);
+		leave_subsection();
+		leave_subsection();
+	}
+
+	bool isOutputGlobalTurbulenceStatistics() {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		bool turbulence_output;
+		try {
+			turbulence_output = get_bool(
+					"Output global turbulence statistics?");
+		} catch (std::exception& e) {
+			std::stringstream msg;
+			msg
+					<< "Could not read parameter 'Output global turbulence statistics?' from parameters: "
+					<< e.what();
+			leave_subsection();
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		leave_subsection();
+		leave_subsection();
+		return turbulence_output;
+	}
+
+	void setOutputGlobalTurbulenceStatistics(bool output_turbulence) {
+		enter_subsection("Output");
+		enter_subsection("Turbulence Statistics");
+		set("Output global turbulence statistics?", output_turbulence);
 		leave_subsection();
 		leave_subsection();
 	}

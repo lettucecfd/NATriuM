@@ -37,6 +37,7 @@ private:
 	double m_mass;
 	double m_kinE;
 	double m_enstrophy;
+	double m_entropy;
 	double m_maxP;
 	double m_minP;
 	double m_meanVelocityX;
@@ -58,6 +59,7 @@ public:
 		m_mass = 0;
 		m_kinE = 0;
 		m_enstrophy = 0;
+		m_entropy = 0;
 		m_maxP = 0;
 		m_minP = 0;
 
@@ -85,7 +87,7 @@ public:
 		assert(not m_outputOff);
 		if (is_MPI_rank_0()) {
 			(*m_tableFile)
-					<< "#  i      t      max |u_numeric|   mass  kinE  enstrophy   maxP     minP    residuum(rho)   residuum(u)    mean(ux)"
+					<< "#  i      t      max |u_numeric|   mass  kinE  enstrophy   entropy   maxP     minP    residuum(rho)   residuum(u)    mean(ux)"
 					<< endl;
 		}
 	}
@@ -100,6 +102,7 @@ public:
 		m_kinE = PhysicalProperties<dim>::kineticEnergy(m_solver->getVelocity(),
 				m_solver->getDensity(), m_solver->getAdvectionOperator());
 		m_enstrophy = PhysicalProperties<dim>::enstrophy(m_solver->getVelocity(), m_solver->getAdvectionOperator());
+		m_entropy = PhysicalProperties<dim>::entropy(m_solver->getF(), m_solver->getAdvectionOperator());
 		m_maxP = PhysicalProperties<dim>::maximalPressure(
 				m_solver->getDensity(),
 				m_solver->getStencil()->getSpeedOfSound(), m_minP);
@@ -143,7 +146,7 @@ public:
 		}
 		if (is_MPI_rank_0()) {
 			(*m_tableFile) << m_iterationNumber << " " << m_time << " "
-					<< m_maxU << " " << m_mass << " " << m_kinE << " " << m_enstrophy << " " << m_maxP << " " << m_minP
+					<< m_maxU << " " << m_mass << " " << m_kinE << " " << m_enstrophy << " " << m_entropy << " " << m_maxP << " " << m_minP
 					<< " " << m_solver->m_residuumDensity << " "
 					<< m_solver->m_residuumVelocity << " " << m_meanVelocityX
 					<< endl;
@@ -196,6 +199,14 @@ public:
 
 	double getMeanVelocityX() const {
 		return m_meanVelocityX;
+	}
+
+	double getEntropy() const {
+		return m_entropy;
+	}
+
+	const bool isOutputOff() const {
+		return m_outputOff;
 	}
 };
 

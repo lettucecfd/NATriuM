@@ -25,6 +25,8 @@
 
 #include "natrium/utilities/Info.h"
 
+#include "EnstrophySubdomain.h"
+
 using namespace natrium;
 
 // Main function
@@ -37,7 +39,7 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	pout
 
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <BDF=0> <filter=0> <filter_s=32>"
+			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <BDF=0> <filter=0> <filter_s=32> <scaling=1>"
 			<< endl;
 
 	size_t refinement_level = 3;
@@ -94,6 +96,13 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Filter s:  " << filter_s << endl;
 
+	// scales the speed of sound (scaling=1 <=> Boesch et al.)
+	double scaling = 1;
+	if (argc >= 11) {
+		scaling = std::atof(argv[10]);
+	}
+	pout << "... stencil scaling:  " << scaling << endl;
+
 	// get integrator
 	TimeIntegratorName time_integrator;
 	DealIntegratorName deal_integrator;
@@ -114,7 +123,7 @@ int main(int argc, char** argv) {
 	const double Ma_Boesch = u0_Boesch/cs_Boesch;
 	const double u0 = 1;
 	const double cs = u0/Ma_Boesch;
-	const double stencil_scaling = sqrt(3) * cs;
+	const double stencil_scaling = sqrt(3) * cs * scaling;
 	const double kappa = 80;
 	const double viscosity = 0.0001;
 	const double t_c = 1;
@@ -143,13 +152,13 @@ int main(int argc, char** argv) {
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(10);	//10
-	configuration->setOutputSolutionInterval(100); //10
-	configuration->setOutputCheckpointInterval(100000);
+	configuration->setOutputSolutionInterval(1000); //10
+	configuration->setOutputCheckpointInterval(1e9);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer-MinionBrown/N" << refinement_level
 			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
 			<< "-int" << integrator_id << "-CFL" << CFL << "-BDF"
-			<< BDF << "-filter" << filter << "-filt_s" << filter_s;
+			<< BDF << "-filter" << filter << "-filt_s" << filter_s << "-scaling" << scaling;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(500000);
@@ -159,7 +168,7 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
-	configuration->setOutputTurbulenceStatistics(true);
+	configuration->setOutputGlobalTurbulenceStatistics(true);
 
 	if (collision_id == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
@@ -183,6 +192,8 @@ int main(int argc, char** argv) {
 	// RUN SOLVER
 	// ========================================================================
 	CFDSolver<2> solver(configuration, shear_layer);
+	boost::shared_ptr<EnstrophySubdomain> enst = boost::make_shared<EnstrophySubdomain>(solver);
+	solver.appendDataProcessor(enst);
 
 	solver.run();
 
@@ -190,5 +201,6 @@ int main(int argc, char** argv) {
 	// FINAL OUTPUT
 	// ========================================================================
 	pout << "Flow converged" << endl;
+	pout << "Enstrophy in subdomain: " << enst->getResult() << endl;
 	return 0;
 }

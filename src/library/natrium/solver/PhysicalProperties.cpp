@@ -196,7 +196,8 @@ template<> double PhysicalProperties<3>::enstrophy(
 	const distributed_vector& uz = u.at(2);
 
 	// Integrate ux over whole domain
-	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values | dealii::update_gradients;
+	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values
+			| dealii::update_gradients;
 	const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<3> feCellValues(advection->getMapping(),
 			*(advection->getFe()), *(advection->getQuadrature()),
@@ -348,8 +349,57 @@ double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
 
 }
 
+template<size_t dim>
+double PhysicalProperties<dim>::entropy(const DistributionFunctions& f,
+		boost::shared_ptr<AdvectionOperator<dim> > advection) {
+	const size_t n_dofs = advection->getNumberOfDoFs();
+	const size_t Q = advection->getStencil()->getQ();
+	const vector<double>& weights = advection->getStencil()->getWeights();
+	for (size_t i = 0; i < Q; i++) {
+		assert(n_dofs == f.at(i).size());
+	}
+
+	// Integrate rho over whole domain
+	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
+	const dealii::DoFHandler<dim> & dof_handler = *(advection->getDoFHandler());
+	dealii::FEValues<dim> feCellValues(advection->getMapping(),
+			*(advection->getFe()), *(advection->getQuadrature()),
+			cellUpdateFlags);
+	double result = 0.0;
+	size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
+
+	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+			dof_handler.begin_active(), endc = dof_handler.end();
+	for (; cell != endc; ++cell) {
+		if (cell->is_locally_owned()) {
+			// get global degrees of freedom
+			std::vector<dealii::types::global_dof_index> localDoFIndices(
+					dofs_per_cell);
+			cell->get_dof_indices(localDoFIndices);
+			// calculate the fe values for the cell
+			feCellValues.reinit(cell);
+
+			size_t local_i;
+			for (size_t i = 0; i < dofs_per_cell; i++) {
+				local_i = localDoFIndices.at(i);
+				for (size_t j = 0; j < Q; j++) {
+					result -= f.at(j)(local_i)
+							* log(f.at(j)(local_i) / weights.at(j))
+							* feCellValues.JxW(
+									advection->getCelldofToQIndex().at(i));
+				}
+			}
+		} /* if is locally owned */
+	} /* for cells */
+
+	// communicate among MPI processes
+	dealii::Utilities::MPI::MinMaxAvg global_res =
+			dealii::Utilities::MPI::min_max_avg(result, MPI_COMM_WORLD);
+	return global_res.sum;
+}
+
 // Explicit instantiation
-template class PhysicalProperties<2>;
-template class PhysicalProperties<3>;
+template class PhysicalProperties<2> ;
+template class PhysicalProperties<3> ;
 
 } /* namespace natrium */

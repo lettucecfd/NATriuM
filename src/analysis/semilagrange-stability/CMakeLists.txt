@@ -4,23 +4,23 @@
 # set variable TARGET
 #
 set(    TARGET 
-        #shear-layer    
-        shear-layer-MinionBrown
-        )
- 
+		sl-stability        
+    )
+
 
 #
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                #shear_layer.cpp
-                shear_layer_MinionBrown.cpp
-                EnstrophySubdomain.h
+                sl-stability.cpp
                )
+               
 #
 # link natrium library to executable
 #           
-include_directories( /usr/include/boost  ${PROJECT_SOURCE_DIR}/library) 
+include_directories(  ${PROJECT_SOURCE_DIR}/library
+                     /usr/include/boost 
+                   )
 
 target_link_libraries(  ${TARGET}
                         natrium

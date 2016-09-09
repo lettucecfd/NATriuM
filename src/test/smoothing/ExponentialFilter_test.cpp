@@ -16,7 +16,7 @@
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/numerics/vector_tools.h"
 #include "deal.II/lac/constraint_matrix.h"
-#include "deal.II/base/data_out_base.h"
+#include "deal.II/numerics/data_out.h"
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/stencils/D2Q9.h"
@@ -25,7 +25,7 @@
 
 namespace natrium {
 
-BOOST_AUTO_TEST_SUITE(CFDSolver_test)
+BOOST_AUTO_TEST_SUITE(ExponentialFilter_test)
 
 BOOST_AUTO_TEST_CASE(ExponentialFilter_PolynomialDegree_test) {
 	pout << "ExponentialFilter_GetPolynomialDegree_test..." << endl;

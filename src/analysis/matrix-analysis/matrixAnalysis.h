@@ -8,9 +8,9 @@
 #ifndef MATRIXANALYSIS_H_
 #define MATRIXANALYSIS_H_
 
+#include "deal.II/lac/lapack_full_matrix.h"
 
 #include "natrium/solver/CFDSolver.h"
-
 #include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
@@ -61,6 +61,8 @@ public:
 	static double computeSpectrum(const distributed_sparse_block_matrix& matrix,
 			vector<std::complex<double> > & eigenvalues, double perturbation = 0.0) ;
 
+	static double computeSpectrum(dealii::LAPACKFullMatrix<double>& matrix,
+			vector<std::complex<double> > & eigenvalues, double perturbation = 0.0) ;
 }
 ;
 

@@ -123,6 +123,13 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.isFilterDegreeByComponentSums(), false);
 	config.setFilterDegreeByComponentSums(true);
 	BOOST_CHECK_EQUAL(config.isFilterDegreeByComponentSums(), true);
+	BOOST_CHECK_EQUAL(config.isOutputGlobalTurbulenceStatistics(), false);
+	config.setOutputGlobalTurbulenceStatistics(true);
+	BOOST_CHECK_EQUAL(config.isOutputGlobalTurbulenceStatistics(), true);
+	BOOST_CHECK_EQUAL(config.isVmultLimiter(), false);
+	config.setVmultLimiter(true);
+	BOOST_CHECK_EQUAL(config.isVmultLimiter(), true);
+
 	/// Failure test
 	pout << " ... failure test ... " << endl;
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);
@@ -131,6 +138,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 			ConfigurationException);
 	BOOST_CHECK_THROW(config.setCFL(-1.0), ConfigurationException);
 	BOOST_CHECK_THROW(config.setRestartAtIteration(-10), ConfigurationException);
+
 
 	pout << "done" << endl;
 } /*CFDSolverConfiguration_CheckSet_test*/
