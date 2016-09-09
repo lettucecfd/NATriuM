@@ -280,11 +280,14 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_collisionModel->setViscosity(m_problemDescription->getViscosity());
 		// TODO call setViscosity only once (for general collision model)
 		// TODO remove relaxation-parameter from collision model and calculate in each time step from dt and nu
-}
+	}
 
-	// apply external force
-	if (m_problemDescription->hasExternalForce()) {
+	// apply forces
+	if ((m_problemDescription->hasExternalForce())
+			or (configuration->getCollisionScheme() == BGK_MULTIPHASE)) {
 		m_collisionModel->setForceType(m_configuration->getForcingScheme());
+	}
+	if (m_problemDescription->hasExternalForce()) {
 		m_collisionModel->setExternalForce(
 				*(m_problemDescription->getExternalForce()));
 	}
@@ -537,29 +540,35 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					m_configuration->getWallNormalDirection(),
 					m_configuration->getWallNormalCoordinates(), s2.str());
 		}
+		if (configuration->isOutputGlobalTurbulenceStatistics()) {
+			appendDataProcessor(
+					boost::make_shared<GlobalTurbulenceStats<dim> >(*this));
+		}
 	} else {
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this);
 		//m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this);
 	}
 
 	// print out memory requirements of single components
-	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- " << endl;
+	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- "
+			<< endl;
 	LOG(BASIC) << " |  Sparse matrix        |  "
 			<< m_advectionOperator->getSystemMatrix().memory_consumption()
 			<< " (#nonzero elem: "
 			<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
 			<< ")" << endl;
 	LOG(BASIC) << " |  Mesh                 |  "
-			<< m_problemDescription->getMesh()->memory_consumption()  << endl;
+			<< m_problemDescription->getMesh()->memory_consumption() << endl;
 	LOG(BASIC) << " |  Distributions        |  " << m_f.memory_consumption()
 			<< endl;
 	LOG(BASIC) << " |  Tmp distributions    |  " << m_f.memory_consumption()
 			<< endl;
 	LOG(BASIC) << " |  Velocities           |  "
 			<< dim * m_velocity.at(0).memory_consumption() << endl;
-	LOG(BASIC) << " |  Densities            |  " << m_density.memory_consumption()
+	LOG(BASIC) << " |  Densities            |  "
+			<< m_density.memory_consumption() << endl;
+	LOG(BASIC) << " ------------------------------------------------- " << endl
 			<< endl;
-	LOG(BASIC) << " ------------------------------------------------- " << endl << endl;
 
 }
 /* Constructor */
@@ -587,6 +596,10 @@ void CFDSolver<dim>::stream() {
 		f_tmp = f;
 		//f_tmp.reinit(f);
 		systemMatrix.vmult(f, f_tmp);
+		if (m_configuration->isVmultLimiter()) {
+			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+			VmultLimiter::apply(systemMatrix, f, f_tmp);
+		}
 		//f += m_boundaryVector;
 
 		if ((BGK_MULTI_AM4 == m_configuration->getCollisionScheme()
@@ -597,11 +610,19 @@ void CFDSolver<dim>::stream() {
 			f_tmp = formerF;
 			assert(m_multistepData != NULL);
 			systemMatrix.vmult(formerF, f_tmp);
+			if (m_configuration->isVmultLimiter()) {
+				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+				VmultLimiter::apply(systemMatrix, f, f_tmp);
+			}
 
 			distributed_block_vector& formerFEq =
 					m_multistepData->getFormerFEq().getFStream();
 			f_tmp = formerFEq;
 			systemMatrix.vmult(formerFEq, f_tmp);
+			if (m_configuration->isVmultLimiter()) {
+				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+				VmultLimiter::apply(systemMatrix, formerFEq, f_tmp);
+			}
 		}
 
 		m_time += getTimeStepSize();
@@ -784,7 +805,10 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		 }*/
 		if (m_configuration->isOutputTurbulenceStatistics())
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
-		if ((iteration % m_configuration->getOutputSolutionInterval() == 0) or is_final) {
+		// no output if solution interval > 10^8
+		if (((iteration % m_configuration->getOutputSolutionInterval() == 0)
+				or is_final)
+				and m_configuration->getOutputSolutionInterval() <= 1e8) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
@@ -820,8 +844,11 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 			data_out.add_data_vector(subdomain, "subdomain");
 
 			// Write vtu file
+
 			data_out.build_patches(
-					m_configuration->getSedgOrderOfFiniteElement() * 2);
+					(m_configuration->getSedgOrderOfFiniteElement() == 1) ?
+							m_configuration->getSedgOrderOfFiniteElement() :
+							m_configuration->getSedgOrderOfFiniteElement() + 1);
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)
@@ -860,7 +887,11 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		}
 
 		// output: checkpoint
-		if ((iteration % m_configuration->getOutputCheckpointInterval() == 0) or is_final) {
+		// no output if checkpoint interval > 10^8
+		if (((iteration % m_configuration->getOutputCheckpointInterval() == 0)
+				or is_final)
+				and (m_configuration->getOutputCheckpointInterval() <= 1e8)) {
+
 			boost::filesystem::path checkpoint_dir(
 					m_configuration->getOutputDirectory());
 			checkpoint_dir /= "checkpoint";

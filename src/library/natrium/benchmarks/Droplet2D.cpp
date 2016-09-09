@@ -79,12 +79,12 @@ boost::shared_ptr<BoundaryCollection<2> > Droplet2D::makeBoundaries() {
 */
 	boundaries->addBoundary(
 			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
-//	boundaries->addBoundary(
-//			boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
+	boundaries->addBoundary(
+			boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
 
-	dealii::Vector<double> zeroVelocity(2);
-	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(2, zeroVelocity)) ;
-	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(3, zeroVelocity)) ;
+//	dealii::Vector<double> zeroVelocity(2);
+//	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(2, zeroVelocity)) ;
+//	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(3, zeroVelocity)) ;
 
 //	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh() ;
 

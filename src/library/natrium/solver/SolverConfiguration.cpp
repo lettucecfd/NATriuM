@@ -132,6 +132,9 @@ SolverConfiguration::SolverConfiguration() {
 
 	enter_subsection("Filtering");
 	{
+		declare_entry("Apply vmult limiter?", "false", dealii::Patterns::Bool(),
+				"Limiting suppresses oscillations in the semi-Lagrangian streaming "
+						"(makes sense when the order of finite elements is > 2).");
 		declare_entry("Apply filtering?", "false", dealii::Patterns::Bool());
 		declare_entry("Filtering scheme", "Exponential",
 				dealii::Patterns::Selection("Exponential|New"),
@@ -153,8 +156,8 @@ SolverConfiguration::SolverConfiguration() {
 			declare_entry("Degree by component sums", "false",
 					dealii::Patterns::Bool(),
 					"If true, the degree of the polynomial is calculated as the sum of the one-dimensional degrees, "
-					"which creates a much more dissipative filter."
-					"Otherwise (default) the degree is calculated as the maximum degree of the one-dimensional shape functions.");
+							"which creates a much more dissipative filter."
+							"Otherwise (default) the degree is calculated as the maximum degree of the one-dimensional shape functions.");
 		}
 		leave_subsection();
 	}
@@ -222,9 +225,12 @@ SolverConfiguration::SolverConfiguration() {
 				"Specifies if log is written to a file.");
 		enter_subsection("Turbulence Statistics");
 		{
+			declare_entry("Output global turbulence statistics?", "false",
+					dealii::Patterns::Bool(),
+					"Specifies if global turbulence statistics should be monitored.");
 			declare_entry("Output turbulence statistics?", "false",
 					dealii::Patterns::Bool(),
-					"Specifies if turbulence statistics should be monitored.");
+					"Specifies if turbulence statistics in slices should be monitored.");
 			declare_entry("Wall normal direction", "1",
 					dealii::Patterns::Integer(0, 3),
 					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");

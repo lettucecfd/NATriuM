@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 
 	if (strcmp(argv[1],"?") == 0)
 	{
-		pout << "USAGE: ./tgv-convergence N p Ma Re integrator CFL collision init_rho_analytically semi_lagrange" << endl;
+		pout << "USAGE: ./tgv-convergence N p Ma Re integrator CFL collision init_rho_analytically semi_lagrange limiter=0" << endl;
 		return 0;
 	}
 
@@ -47,6 +47,9 @@ int main(int argc, char** argv) {
 	const double collision = atoi(argv[7]);
 	const double init_rho_analytically = atoi(argv[8]);
 	const int semi_lagrange = atoi(argv[9]);
+	int limiter = 0;
+	if (argc > 10)
+		limiter = atoi(argv[10]);
 	double refine_tol = 1e-7;
 	double coarsen_tol = 1e-8;
 	if (argc > 10) {
@@ -99,6 +102,9 @@ int main(int argc, char** argv) {
 	if (collision == 4)
 	{
 		configuration->setCollisionScheme(KBC_CENTRAL);
+	}
+	if (limiter){
+		configuration->setVmultLimiter(true);
 	}
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);

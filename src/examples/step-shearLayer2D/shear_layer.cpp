@@ -153,7 +153,7 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(t_c);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
-	configuration->setOutputTurbulenceStatistics(true);
+	configuration->setOutputGlobalTurbulenceStatistics(true);
 
 	if (collision_id == 1) {
 		configuration->setCollisionScheme(KBC_STANDARD);
