@@ -13,7 +13,7 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 
-#include "natrium/problemdescription/PeriodicBoundary.h"
+#include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 

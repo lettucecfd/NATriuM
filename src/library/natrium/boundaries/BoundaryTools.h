@@ -11,6 +11,7 @@
 #include <string>
 
 #include "deal.II/base/point.h"
+#include "deal.II/base/function.h"
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"

@@ -26,7 +26,7 @@ namespace natrium {
  * 			The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the
  * 			boundary have to be defined (see Documentation of the constructors).
  */
-template<size_t dim> class LinearBoundary: public Boundary<dim> {
+template<size_t dim> class LinearFluxBoundary: public Boundary<dim> {
 private:
 
 	size_t m_boundaryIndicator;
@@ -58,7 +58,7 @@ public:
 	 * 			  -#  \[ f_{\alpha} \f] depends on the distribution functions at other points at the face (e.g. when gradients
 	 * 			  are computed.) Then, this parameter has to be COUPLE_WHOLE_FACE.
 	 */
-	LinearBoundary(size_t boundaryIndicator,
+	LinearFluxBoundary(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity,
 			BoundaryTools::DistributionCouplingAtBoundary distribution_coupling,
@@ -66,7 +66,7 @@ public:
 
 
 	/// destructor
-	virtual ~LinearBoundary() {
+	virtual ~LinearFluxBoundary() {
 	}
 	;
 

@@ -10,13 +10,15 @@
 
 namespace natrium {
 
+namespace BoundaryTools {
+
 
 template class BoundaryDensity<2> ;
 template class BoundaryDensity<3> ;
 template class BoundaryVelocity<2> ;
 template class BoundaryVelocity<3> ;
 
-bool BoundaryTools::checkParallelLines(const dealii::Point<2>& beginLine1,
+bool checkParallelLines(const dealii::Point<2>& beginLine1,
 		const dealii::Point<2>& endLine1, dealii::Point<2>& beginLine2,
 		dealii::Point<2>& endLine2, std::string& errorMessage) {
 
@@ -66,7 +68,7 @@ bool BoundaryTools::checkParallelLines(const dealii::Point<2>& beginLine1,
 	return true;
 }
 
-bool BoundaryTools::getInterfacialLinesByBoundaryIndicator(
+bool getInterfacialLinesByBoundaryIndicator(
 		size_t boundaryIndicator1, size_t boundaryIndicator2,
 		boost::shared_ptr<Mesh<2> > triangulation, dealii::Point<2>& beginLine1,
 		dealii::Point<2>& endLine1, dealii::Point<2>& beginLine2,
@@ -159,7 +161,7 @@ bool BoundaryTools::getInterfacialLinesByBoundaryIndicator(
 }/* getInterfacialLinesByBoundaryIndicator */
 
 template<size_t dim>
-void BoundaryTools::CoupleDoFsAtBoundary(
+void CoupleDoFsAtBoundary(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler, size_t boundary_id,
 		PointCouplingAtBoundary coupling) {
@@ -228,13 +230,14 @@ void BoundaryTools::CoupleDoFsAtBoundary(
 	} /* end forall cells */
 
 } /* CoupleDoFsAtBoundary */
-template void BoundaryTools::CoupleDoFsAtBoundary<2>(
+template void CoupleDoFsAtBoundary<2>(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 		const dealii::DoFHandler<2>& doFHandler, size_t boundary_id,
 		PointCouplingAtBoundary coupling);
-template void BoundaryTools::CoupleDoFsAtBoundary<3>(
+template void CoupleDoFsAtBoundary<3>(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 		const dealii::DoFHandler<3>& doFHandler, size_t boundary_id,
 		PointCouplingAtBoundary coupling);
 
+} /* namespace BoundaryTools */
 } /* namespace natrium */

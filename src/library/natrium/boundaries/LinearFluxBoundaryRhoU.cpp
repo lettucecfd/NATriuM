@@ -5,15 +5,15 @@
  *      Author: akraem3m
  */
 
-#include "LinearBoundaryRhoU.h"
+#include "LinearFluxBoundaryRhoU.h"
 
 namespace natrium {
 
 template<size_t dim>
-LinearBoundaryRhoU<dim>::LinearBoundaryRhoU(size_t boundaryIndicator,
+LinearFluxBoundaryRhoU<dim>::LinearFluxBoundaryRhoU(size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity) :
-		LinearBoundary<dim>(boundaryIndicator, boundaryDensity,
+		LinearFluxBoundary<dim>(boundaryIndicator, boundaryDensity,
 				boundaryVelocity,
 				BoundaryTools::COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
 				BoundaryTools::COUPLE_ONLY_SINGLE_POINTS) {
@@ -22,19 +22,19 @@ LinearBoundaryRhoU<dim>::LinearBoundaryRhoU(size_t boundaryIndicator,
 
 /// constructor
 template<size_t dim>
-LinearBoundaryRhoU<dim>::LinearBoundaryRhoU(size_t boundaryIndicator,
+LinearFluxBoundaryRhoU<dim>::LinearFluxBoundaryRhoU(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity) :
-		LinearBoundaryRhoU(boundaryIndicator,
-				boost::make_shared<BoundaryDensity<dim> >(),
-				boost::make_shared<BoundaryVelocity<dim> >(velocity)) {
+		LinearFluxBoundaryRhoU(boundaryIndicator,
+				boost::make_shared<BoundaryTools::BoundaryDensity<dim> >(),
+				boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(velocity)) {
 
 }
 
 template<size_t dim>
-LinearBoundaryRhoU<dim>::~LinearBoundaryRhoU() {
+LinearFluxBoundaryRhoU<dim>::~LinearFluxBoundaryRhoU() {
 }
 
-template<size_t dim> void LinearBoundaryRhoU<dim>::assembleBoundary(
+template<size_t dim> void LinearFluxBoundaryRhoU<dim>::assembleBoundary(
 		size_t alpha,
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
@@ -63,10 +63,10 @@ template<size_t dim> void LinearBoundaryRhoU<dim>::assembleBoundary(
 		size_t thisDoF = q_index_to_facedof.at(q);
 
 		// get density and velocity at boundary point
-		double density = LinearBoundary<dim>::getBoundaryDensity()->value(
+		double density = LinearFluxBoundary<dim>::getBoundaryDensity()->value(
 				feFaceValues.quadrature_point(q));
 		dealii::Vector<double> velocity(dim);
-		LinearBoundary<dim>::getBoundaryVelocity()->vector_value(
+		LinearFluxBoundary<dim>::getBoundaryVelocity()->vector_value(
 				feFaceValues.quadrature_point(q), velocity);
 
 		// calculate matrix entries
@@ -122,7 +122,7 @@ template<size_t dim> void LinearBoundaryRhoU<dim>::assembleBoundary(
 }
 
 // Explicit instantiation
-template class LinearBoundaryRhoU<2> ;
-template class LinearBoundaryRhoU<3> ;
+template class LinearFluxBoundaryRhoU<2> ;
+template class LinearFluxBoundaryRhoU<3> ;
 
 } /* namespace natrium */

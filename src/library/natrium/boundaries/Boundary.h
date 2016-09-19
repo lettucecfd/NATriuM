@@ -28,10 +28,10 @@ template<size_t dim> class Boundary {
 public:
 
 	/// constructor
-	Boundary();
+	Boundary(){};
 
 	/// destructor
-	virtual ~Boundary();
+	virtual ~Boundary(){};
 
 	/** @short is the boundary a periodic boundary ?
 	 */
@@ -47,13 +47,7 @@ public:
 
 };
 
-template<size_t dim>
-inline natrium::Boundary<dim>::Boundary() {
-}
 
-template<size_t dim>
-inline natrium::Boundary<dim>::~Boundary() {
-}
 
 } /* namespace natrium */
 

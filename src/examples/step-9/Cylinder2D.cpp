@@ -7,14 +7,14 @@
 
 #include "Cylinder2D.h"
 
-#include <natrium/problemdescription/LinearBoundaryRhoU.h>
 #include "deal.II/grid/grid_in.h"
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/geometry_info.h"
 
-#include "natrium/problemdescription/PeriodicBoundary.h"
+#include "natrium/boundaries/PeriodicBoundary.h"
+#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/Logging.h"
 
@@ -57,12 +57,12 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = inletVelocity;
 
-	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(0, constantVelocity));
-	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(1, constantVelocity));
-	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(2, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<2> >(0, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<2> >(1, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<2> >(2, constantVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearBoundaryRhoU<2> >(3, constantVelocity));
-	boundaries->addBoundary(boost::make_shared<LinearBoundaryRhoU<2> >(4, zeroVelocity));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(3, constantVelocity));
+	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<2> >(4, zeroVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

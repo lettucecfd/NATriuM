@@ -4,6 +4,7 @@ include(../CMake_UnityBuild.txt)
 file(   GLOB_RECURSE
         TEST_FILES
         advection/*.cpp
+        boundaries/*.cpp
         collision/*.cpp
         problemdescription/*.cpp
         smoothing/*.cpp

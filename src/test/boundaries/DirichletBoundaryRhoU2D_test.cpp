@@ -5,8 +5,9 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include <natrium/problemdescription/LinearBoundaryRhoU.h>
 #include "boost/test/unit_test.hpp"
+
+#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
 
 #include "deal.II/base/function.h"
 #include "deal.II/dofs/dof_tools.h"
@@ -21,7 +22,7 @@
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
-#include "WallTestDomain2D.h"
+#include "../problemdescription/WallTestDomain2D.h"
 
 namespace natrium {
 
@@ -46,9 +47,9 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_Construction_test) {
 	pout << "LinearBoundaryRhoU2D_Construction_test..." << endl;
 
 	BOOST_CHECK_NO_THROW(
-			LinearBoundaryRhoU<2> mlBound1(0, boost::make_shared<BoundaryTestDensity>(), boost::make_shared<BoundaryTestVelocity>()));
+			LinearFluxBoundaryRhoU<2> mlBound1(0, boost::make_shared<BoundaryTestDensity>(), boost::make_shared<BoundaryTestVelocity>()));
 	numeric_vector U(2);
-	BOOST_CHECK_NO_THROW(LinearBoundaryRhoU<2> mlBound2(0, U); );
+	BOOST_CHECK_NO_THROW(LinearFluxBoundaryRhoU<2> mlBound2(0, U); );
 
 	pout << "done" << endl;
 } /*LinearBoundaryRhoU2D_Construction_test */

@@ -5,7 +5,7 @@
  *      Author: kraemer
  */
 
-#include "LinearBoundary.h"
+#include "LinearFluxBoundary.h"
 
 #include "deal.II/lac/compressed_sparsity_pattern.h"
 #include <deal.II/dofs/dof_handler.h>
@@ -15,7 +15,7 @@
 namespace natrium {
 
 
-template<size_t dim> LinearBoundary<dim>::LinearBoundary(
+template<size_t dim> LinearFluxBoundary<dim>::LinearFluxBoundary(
 		size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity,
@@ -28,15 +28,15 @@ template<size_t dim> LinearBoundary<dim>::LinearBoundary(
 }
 
 
-template<size_t dim> void LinearBoundary<dim>::addToSparsityPattern(
+template<size_t dim> void LinearFluxBoundary<dim>::addToSparsityPattern(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler) const {
 	BoundaryTools::CoupleDoFsAtBoundary<dim>(cSparse,
 			doFHandler, m_boundaryIndicator, m_pointCoupling);
 }
 
-template class LinearBoundary<2>;
-template class LinearBoundary<3>;
+template class LinearFluxBoundary<2>;
+template class LinearFluxBoundary<3>;
 
 
 } /* namespace natrium */

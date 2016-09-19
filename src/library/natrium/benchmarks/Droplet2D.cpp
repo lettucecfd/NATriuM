@@ -13,7 +13,8 @@
 #include "deal.II/grid/grid_out.h"
 #include "deal.II/grid/grid_tools.h"
 
-#include "../problemdescription/LinearBoundaryRhoU.h"
+
+#include "../boundaries/LinearFluxBoundaryRhoU.h"
 
 namespace natrium {
 

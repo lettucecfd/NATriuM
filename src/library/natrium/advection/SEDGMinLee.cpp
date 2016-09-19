@@ -24,8 +24,8 @@
 #include "deal.II/base/utilities.h"
 #include "deal.II/lac/constraint_matrix.h"
 
-#include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/LinearBoundary.h"
+#include "../boundaries/PeriodicBoundary.h"
+#include "../boundaries/LinearFluxBoundary.h"
 
 #include "../stencils/Stencil.h"
 
@@ -227,8 +227,8 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 
 	// add entries for non-periodic boundaries
 	for (typename BoundaryCollection<dim>::ConstLinearIterator dirichlet_iterator =
-			m_boundaries->getLinearBoundaries().begin();
-			dirichlet_iterator != m_boundaries->getLinearBoundaries().end();
+			m_boundaries->getLinearFluxBoundaries().begin();
+			dirichlet_iterator != m_boundaries->getLinearFluxBoundaries().end();
 			dirichlet_iterator++) {
 		dirichlet_iterator->second->addToSparsityPattern(cSparseOpposite,
 				*m_doFHandler);
@@ -362,8 +362,8 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 			} else /* if is not periodic */{
 				// Apply other boundaries
 				if ((m_boundaries->getBoundary(boundaryIndicator)->isLinear())) {
-					const boost::shared_ptr<LinearBoundary<dim> >& LinearBoundary =
-							m_boundaries->getLinearBoundary(boundaryIndicator);
+					const boost::shared_ptr<LinearFluxBoundary<dim> >& LinearBoundary =
+							m_boundaries->getLinearFluxBoundary(boundaryIndicator);
 					LinearBoundary->assembleBoundary(alpha, cell, j,
 							feFaceValues, *m_stencil,
 							m_q_index_to_facedof.at(j), inverseLocalMassMatrix,
