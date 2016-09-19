@@ -19,11 +19,11 @@
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/lac/compressed_sparsity_pattern.h"
 
+#include "Boundary.h"
 #include "../utilities/NATriuMException.h"
 #include "../utilities/Logging.h"
 #include "../utilities/DealiiExtensions.h"
 
-#include "Boundary.h"
 
 namespace natrium {
 

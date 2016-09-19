@@ -5,11 +5,11 @@
  *      Author: akraem3m
  */
 
-#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARBOUNDARYRHOU_H_
-#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARBOUNDARYRHOU_H_
+#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARFLUXBOUNDARYRHOU_H_
+#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARFLUXBOUNDARYRHOU_H_
 
-#include "LinearBoundary.h"
 #include "BoundaryTools.h"
+#include "LinearFluxBoundary.h"
 
 namespace natrium {
 
@@ -26,7 +26,7 @@ namespace natrium {
  * 		  	when proposing the SEDG-LBM. It has been shown practically that it  supports the exponential convergence of the scheme.
  */
 template<size_t dim>
-class LinearBoundaryRhoU: public LinearBoundary<dim> {
+class LinearFluxBoundaryRhoU: public LinearFluxBoundary<dim> {
 public:
 	/** @short This constructor assigns the Boundary condition with arbitrary density and velocity
 	 *         to the boundary with the given boundary indicator.
@@ -34,7 +34,7 @@ public:
 	 *  @param[in] boundaryDensity A dealii::Function<dim> that defines the prescribed density at the boundary.
 	 *  @param[in] boundaryVelocity A dealii::Function<dim> that defines the prescribed velocity at the boundary.
 	 */
-	LinearBoundaryRhoU(size_t boundaryIndicator,
+	LinearFluxBoundaryRhoU(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity);
 
@@ -43,11 +43,11 @@ public:
 	 *  @param[in] boundaryIndicator the boundary indicator that is assigned to the target boundary.
 	 *  @param[in] velocity Constant velocity vector at the boundary.
 	 */
-	LinearBoundaryRhoU(size_t boundaryIndicator,
+	LinearFluxBoundaryRhoU(size_t boundaryIndicator,
 			const dealii::Vector<double>& velocity);
 
 	/// destructor
-	virtual ~LinearBoundaryRhoU();
+	virtual ~LinearFluxBoundaryRhoU();
 
 	/**
 	 * @short This function defines the actual boundary condition. It calculates and assembles the fluxes at the
@@ -123,4 +123,4 @@ public:
 
 } /* namespace natrium */
 
-#endif /* LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARBOUNDARYRHOU_H_ */
+#endif /* LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARFLUXBOUNDARYRHOU_H_ */

@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "natrium/problemdescription/BoundaryTools.h"
+#include "natrium/boundaries/BoundaryTools.h"
 
 #include <string>
 

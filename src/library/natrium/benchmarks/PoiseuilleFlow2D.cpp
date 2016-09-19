@@ -12,9 +12,8 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/tensor.h"
 
-#include "../problemdescription/LinearBoundaryRhoU.h"
-#include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/NonlinearBoundaryZouHeRho.h"
+#include "../boundaries/LinearFluxBoundaryRhoU.h"
+#include "../boundaries/PeriodicBoundary.h"
 #include "../problemdescription/ConstantExternalForce.h"
 #include "../utilities/Math.h"
 
@@ -23,7 +22,8 @@ namespace natrium {
 PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 		double u_bulk, double height, double length, bool is_periodic) :
 		Benchmark<2>(makeGrid(height, length), viscosity, height), m_uBulk(
-				u_bulk), m_uMax(3. / 2. * u_bulk), m_refinementLevel(refinementLevel) {
+				u_bulk), m_uMax(3. / 2. * u_bulk), m_refinementLevel(
+				refinementLevel) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
@@ -36,8 +36,7 @@ PoiseuilleFlow2D::PoiseuilleFlow2D(double viscosity, size_t refinementLevel,
 		//pout << "F: " << Fx << endl;
 		dealii::Tensor<1, 2> F;
 		F[0] = Fx;
-		setExternalForce(
-				boost::make_shared<ConstantExternalForce<2> >(F));
+		setExternalForce(boost::make_shared<ConstantExternalForce<2> >(F));
 	}
 
 }
@@ -85,11 +84,12 @@ boost::shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 		boundaries->addBoundary(
 				boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<2> >(2, zeroVector));
+				boost::make_shared<LinearFluxBoundaryRhoU<2> >(2, zeroVector));
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<2> >(3, zeroVector));
+				boost::make_shared<LinearFluxBoundaryRhoU<2> >(3, zeroVector));
 	} else {
-		dealii::Vector<double> xVelocity(2);
+		natrium_errorexit("Periodic-free Poiseuille flow not implemented, yet.");
+		/*dealii::Vector<double> xVelocity(2);
 		xVelocity(0) = m_uMax;
 		boundaries->addBoundary(
 				boost::make_shared<LinearBoundaryRhoU<2> >(0,
@@ -104,6 +104,7 @@ boost::shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 				boost::make_shared<LinearBoundaryRhoU<2> >(2, zeroVector));
 		boundaries->addBoundary(
 				boost::make_shared<LinearBoundaryRhoU<2> >(3, zeroVector));
+				*/
 	}
 
 	return boundaries;
@@ -114,10 +115,10 @@ double PoiseuilleFlow2D::AnalyticVelocity::value(const dealii::Point<2>& x,
 	assert(component < 2);
 	double h = m_flow->getCharacteristicLength();
 	/*if (component == 0) {
-		return (- 4 * m_flow->m_uMax *
-				(x(1) - h) * x(1) / (h*h) );
-	} else {*/
-		return 0.0;
+	 return (- 4 * m_flow->m_uMax *
+	 (x(1) - h) * x(1) / (h*h) );
+	 } else {*/
+	return 0.0;
 	//}
 }
 

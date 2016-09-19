@@ -15,11 +15,11 @@
 #include "deal.II/lac/constraint_matrix.h"
 #include "deal.II/lac/identity_matrix.h"
 
+#include "BoundaryTools.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
 #include "../utilities/Logging.h"
 
-#include "BoundaryTools.h"
 
 namespace natrium {
 

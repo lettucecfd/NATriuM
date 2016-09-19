@@ -5,7 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "natrium/problemdescription/PeriodicBoundary.h"
+#include "natrium/boundaries/PeriodicBoundary.h"
 
 #include <iterator>
 
@@ -26,7 +26,7 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
-#include "TaylorGreenTest2D.h"
+#include "../problemdescription/TaylorGreenTest2D.h"
 
 namespace natrium {
 

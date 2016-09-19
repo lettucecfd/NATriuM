@@ -21,8 +21,8 @@
 #include "deal.II/base/utilities.h"
 #include "deal.II/lac/constraint_matrix.h"
 
-#include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/LinearBoundary.h"
+#include "../boundaries/PeriodicBoundary.h"
+#include "../boundaries/DoFBoundary.h"
 
 #include "../stencils/Stencil.h"
 

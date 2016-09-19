@@ -8,10 +8,10 @@
 #ifndef WallTestDomain2D_H_
 #define WallTestDomain2D_H_
 
-#include <natrium/problemdescription/LinearBoundaryRhoU.h>
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_generator.h"
 
+#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
@@ -59,18 +59,18 @@ private:
 		boost::shared_ptr<BoundaryCollection<2> > boundaries =
 				boost::make_shared<BoundaryCollection<2> >();
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<2> >(0,
+				boost::make_shared<LinearFluxBoundaryRhoU<2> >(0,
 						numeric_vector(2)));
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<2> >(1,
+				boost::make_shared<LinearFluxBoundaryRhoU<2> >(1,
 						numeric_vector(2)));
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<2> >(2,
+				boost::make_shared<LinearFluxBoundaryRhoU<2> >(2,
 						numeric_vector(2)));
 		numeric_vector topPlateVelocity(2);
 		topPlateVelocity(0) = 0.01;
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<2> >(3,
+				boost::make_shared<LinearFluxBoundaryRhoU<2> >(3,
 						topPlateVelocity));
 
 		// Get the triangulation object (which belongs to the parent class).

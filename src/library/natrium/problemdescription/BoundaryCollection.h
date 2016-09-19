@@ -8,12 +8,12 @@
 #ifndef BOUNDARYCOLLECTION_H_
 #define BOUNDARYCOLLECTION_H_
 
-#include "Boundary.h"
-#include "LinearBoundary.h"
-#include "NonlinearBoundary.h"
-#include "PeriodicBoundary.h"
 #include "deal.II/lac/constraint_matrix.h"
 
+#include "../boundaries/Boundary.h"
+#include "../boundaries/PeriodicBoundary.h"
+#include "../boundaries/LinearFluxBoundary.h"
+#include "../boundaries/DoFBoundary.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
 #include "../solver/DistributionFunctions.h"
@@ -52,10 +52,10 @@ private:
 	std::map<size_t, boost::shared_ptr<Boundary<dim> > > m_boundaries;
 
 	/// vector to store linear boundaries in
-	std::map<size_t, boost::shared_ptr<LinearBoundary<dim> > > m_linearBoundaries;
+	std::map<size_t, boost::shared_ptr<LinearFluxBoundary<dim> > > m_linearBoundaries;
 
-	/// vector to store nonlinear boundaries in
-	std::map<size_t, boost::shared_ptr<NonlinearBoundary<dim> > > m_nonlinearBoundaries;
+	/// vector to store dof boundaries in
+	std::map<size_t, boost::shared_ptr<DoFBoundary<dim> > > m_dofBoundaries;
 
 	/// vector to store periodic boundaries in
 	std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > > m_periodicBoundaries;
@@ -64,10 +64,10 @@ public:
 
 	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::iterator Iterator;
 	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::const_iterator ConstIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<LinearBoundary<dim> > >::iterator LinearIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<LinearBoundary<dim> > >::const_iterator ConstLinearIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<NonlinearBoundary<dim> > >::iterator NonlinearIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<NonlinearBoundary<dim> > >::const_iterator ConstNonlinearIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<LinearFluxBoundary<dim> > >::iterator LinearIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<LinearFluxBoundary<dim> > >::const_iterator ConstLinearIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<DoFBoundary<dim> > >::iterator DoFBoundaryIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<DoFBoundary<dim> > >::const_iterator ConstDoFBoundaryIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::iterator PeriodicIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::const_iterator ConstPeriodicIterator;
 
@@ -108,7 +108,7 @@ public:
 	 * @param boundary a periodic boundary
 	 * @throws BoundaryCollectionError, e.g. if boundary indicators are not unique
 	 */
-	void addBoundary(boost::shared_ptr<LinearBoundary<dim> > boundary) {
+	void addBoundary(boost::shared_ptr<LinearFluxBoundary<dim> > boundary) {
 		bool success =
 				m_boundaries.insert(
 						std::make_pair(boundary->getBoundaryIndicator(),
@@ -126,7 +126,7 @@ public:
 	 * @param boundary a periodic boundary
 	 * @throws BoundaryCollectionError, e.g. if boundary indicators are not unique
 	 */
-	void addBoundary(boost::shared_ptr<NonlinearBoundary<dim> > boundary) {
+	void addBoundary(boost::shared_ptr<DoFBoundary<dim> > boundary) {
 		bool success =
 				m_boundaries.insert(
 						std::make_pair(boundary->getBoundaryIndicator(),
@@ -135,7 +135,7 @@ public:
 			throw BoundaryCollectionException(
 					"Boundary could not be inserted. Boundary indicators must be unique.");
 		}
-		m_nonlinearBoundaries.insert(
+		m_dofBoundaries.insert(
 				std::make_pair(boundary->getBoundaryIndicator(), boundary));
 	}
 
@@ -170,7 +170,7 @@ public:
 	 * @short get a specific MinLee boundary
 	 * @throws BoundaryCollectionError, if the specified boundary indicator does not exist
 	 */
-	const boost::shared_ptr<LinearBoundary<dim> >& getLinearBoundary(
+	const boost::shared_ptr<LinearFluxBoundary<dim> >& getLinearFluxBoundary(
 			size_t boundaryIndicator) const {
 		assert(not isPeriodic(boundaryIndicator));
 		if (m_linearBoundaries.count(boundaryIndicator) == 0) {
@@ -181,17 +181,17 @@ public:
 	}
 
 	/**
-	 * @short get a specific nonlinear boundary
+	 * @short get a specific dof boundary
 	 * @throws BoundaryCollectionError, if the specified boundary indicator does not exist
 	 */
-	const boost::shared_ptr<NonlinearBoundary<dim> >& getNonlinearBoundary(
+	const boost::shared_ptr<DoFBoundary<dim> >& getDoFBoundary(
 			size_t boundaryIndicator) const {
 		assert(not isPeriodic(boundaryIndicator));
-		if (m_nonlinearBoundaries.count(boundaryIndicator) == 0) {
+		if (m_dofBoundaries.count(boundaryIndicator) == 0) {
 			throw BoundaryCollectionException(
-					"in NonlinearBoundary: This boundary collection does not contain a nonlinear boundary with the specified boundary indicator.");
+					"in getDoFBoundary: This boundary collection does not contain a dof boundary with the specified boundary indicator.");
 		}
-		return m_nonlinearBoundaries.at(boundaryIndicator);
+		return m_dofBoundaries.at(boundaryIndicator);
 	}
 
 	/**
@@ -217,23 +217,18 @@ public:
 		return m_periodicBoundaries;
 	}
 
-	const std::map<size_t, boost::shared_ptr<LinearBoundary<dim> > >& getLinearBoundaries() const {
+	const std::map<size_t, boost::shared_ptr<LinearFluxBoundary<dim> > >& getLinearFluxBoundaries() const {
 		return m_linearBoundaries;
 	}
 
-	const std::map<size_t, boost::shared_ptr<NonlinearBoundary<dim> > >& getNonlinearBoundaries() const {
-		return m_nonlinearBoundaries;
+	const std::map<size_t, boost::shared_ptr<DoFBoundary<dim> > >& getDoFBoundaries() const {
+		return m_dofBoundaries;
 	}
 
-	void updateNonlinearBoundaryValues();
-
-	bool hasNonlinearBoundaries(){
-		return m_nonlinearBoundaries.size() != 0;
+	bool hasDoFBoundaries(){
+		return m_dofBoundaries.size() != 0;
 	}
 
-	void initializeNonlinearBoundaries(boost::shared_ptr<AdvectionOperator<dim> > advection_operator, boost::shared_ptr<Stencil> stencil, distributed_vector const * rho,
-			vector<distributed_vector> const* u, DistributionFunctions const * f,
-			distributed_block_vector* boundary_vector);
 };
 
 } /* namespace natrium */

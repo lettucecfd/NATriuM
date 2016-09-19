@@ -8,12 +8,21 @@
 #ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_GRADSBOUNDARYCONDITION_H_
 #define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_GRADSBOUNDARYCONDITION_H_
 
+#include <array>
+#include "../stencils/Stencil.h"
+
 namespace natrium {
 
-class GradsBoundaryCondition {
+template<size_t dim>
+class GradsBoundary: public DoFBoundary<dim> {
 public:
-	GradsBoundaryCondition();
-	virtual ~GradsBoundaryCondition();
+	GradsBoundary() {
+
+	}
+	virtual ~GradsBoundary() {
+
+	}
+
 };
 
 } /* namespace natrium */
