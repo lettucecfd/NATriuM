@@ -21,8 +21,6 @@
 #include "deal.II/base/quadrature_lib.h"
 
 #include "AdvectionOperator.h"
-#include "BoundaryHit.h"
-#include "SemiLagrangianBoundaryDoFHandler.h"
 #include "../problemdescription/BoundaryCollection.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
@@ -145,6 +143,17 @@ private:
 	vector<std::map<size_t, size_t> > map_q_index_to_facedofs() const;
 
 public:
+
+	struct LagrangianPathDestination {
+		size_t index;
+		size_t direction; // in case of a boundary: the outgoing direction
+		LagrangianPathDestination(size_t i, size_t alpha) :
+				index(i),  direction(alpha) {
+		}
+		LagrangianPathDestination(const LagrangianPathDestination& other):
+			index(other.index), direction(other.direction){
+		}
+	};
 
 	struct LagrangianPathTracker {
 		LagrangianPathTracker(size_t dof, size_t a, size_t b, const dealii::Point<dim>& x,

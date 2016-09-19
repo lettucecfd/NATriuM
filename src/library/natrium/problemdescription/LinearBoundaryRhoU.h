@@ -10,8 +10,6 @@
 
 #include "LinearBoundary.h"
 #include "BoundaryTools.h"
-#include "../advection/BoundaryHit.h"
-#include "../advection/SemiLagrangianVectorReferenceTypes.h"
 
 namespace natrium {
 
@@ -91,7 +89,7 @@ public:
 	 *       by makeIncomingDirections()) and the right references in fIn (has to be filled by hand -- by the
 	 *       semi-Lagrangian advection solver).
 	 */
-	virtual void calculate(BoundaryHit<dim>& boundary_hit,
+/*	virtual void calculate(BoundaryHit<dim>& boundary_hit,
 			const Stencil& stencil, double time_of_next_step,
 			SemiLagrangianVectorAccess& f) const {
 
@@ -106,19 +104,20 @@ public:
 				+ 2.0 * stencil.getWeight(boundary_hit.out.getAlpha()) * 1.0
 						* (ea * velocity) / stencil.getSpeedOfSoundSquare();
 	}
-
+*/
 	/**
 	 * @short Resizes boundary_hit.incomingDirections and fills it in.
 	 * @param[in/out] boundary_hit The boundary hit instance that contains all information about the boundary hit.
 	 * @param[in] stencil the stencil (e.g. a D2Q9 instance)
 	 * @note This function is used by the semi-Lagrangian advection solver
 	 */
-	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
+/*	virtual void makeIncomingDirections(BoundaryHit<dim>& boundary_hit,
 			const Stencil& stencil) const {
 		assert (boundary_hit.incomingDirections.empty());
 		boundary_hit.incomingDirections.push_back(stencil.getIndexOfOppositeDirection(
 						boundary_hit.out.getAlpha()));
 	}
+	*/
 
 };
 

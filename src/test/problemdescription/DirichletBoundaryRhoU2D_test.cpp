@@ -20,8 +20,6 @@
 #include "natrium/advection/SemiLagrangian.h"
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
-#include "natrium/advection/SemiLagrangianBoundaryDoFHandler.h"
-#include "natrium/advection/SemiLagrangianVectorReferenceTypes.h"
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "WallTestDomain2D.h"
 
@@ -206,114 +204,6 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_BoundaryVelocity_test) {
 	pout << "done" << endl;
 } /* LinearBoundaryRhoU2D_BoundaryVelocity_test */
 
-BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_makeIncomingDirections_test) {
-	pout << "LinearBoundaryRhoU2D_makeIncomingDirections_test..." << endl;
-
-	size_t fe_order = 1;
-	size_t refinementLevel = 3;
-	PeriodicTestDomain2D periodic(refinementLevel);
-	periodic.refineAndTransform();
-
-	dealii::DoFHandler<2> dof_handler(*periodic.getMesh());
-	dealii::FE_DGQArbitraryNodes<2> fe(
-			dealii::QGaussLobatto<1>(fe_order + 1));
-	dof_handler.distribute_dofs(fe);
-
-	typename dealii::DoFHandler<2>::active_cell_iterator cell =
-			dof_handler.begin_active();
-	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
-			*(periodic.getBoundaries()->getBoundary(0)), cell, OutgoingDistributionValue(false,0,1));
-	D2Q9 d2q9;
-	numeric_vector ub1(2);
-	LinearBoundaryRhoU<2> boundary1(0, ub1);
-	boundary1.makeIncomingDirections(hit, d2q9);
-
-	BOOST_CHECK_EQUAL(hit.incomingDirections.size(), size_t(1));
-	BOOST_CHECK_EQUAL(hit.incomingDirections.at(0), size_t(3));
-
-	dof_handler.clear();
-	pout << "done" << endl;
-} /* LinearBoundaryRhoU2D_makeIncomingDirections_test */
-
-
-BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
-	pout << "LinearBoundaryRhoU2D_calculate_test..." << endl;
-
-	// make distribution functions
-	size_t fe_order = 1;
-	size_t refinementLevel = 3;
-	PeriodicTestDomain2D periodic(refinementLevel);
-	periodic.refineAndTransform();
-	dealii::DoFHandler<2> dof_handler(*periodic.getMesh());
-	dealii::FE_DGQArbitraryNodes<2> fe(
-			dealii::QGaussLobatto<1>(fe_order + 1));
-	dof_handler.distribute_dofs(fe);
-	typename dealii::DoFHandler<2>::active_cell_iterator cell =
-			dof_handler.begin_active();
-	vector<distributed_vector> v1;
-	for (size_t i = 0; i < 9; i++){
-		distributed_vector tmp(dof_handler.locally_owned_dofs(), MPI_COMM_WORLD);
-		v1.push_back(tmp);
-	}
-	DistributionFunctions fold (v1);
-
-	vector<distributed_vector> v2;
-	for (size_t i = 0; i < 9; i++){
-		distributed_vector tmp(dof_handler.locally_owned_dofs(), MPI_COMM_WORLD);
-		v2.push_back(tmp);
-	}
-	DistributionFunctions fnew (v2);
-
-
-	// make vector of secondary boundary dofs
-	SecondaryBoundaryDoFVector sbdv(dof_handler.locally_owned_dofs());
-	OutgoingDistributionValue dof_in = sbdv.appendSecondaryBoundaryDoF();
-
-	// make vector access instance
-	SemiLagrangianVectorAccess generalized_f(fold, fnew, sbdv);
-
-	// compress: resize vectors
-	sbdv.compress();
-
-	// make dof out
-	OutgoingDistributionValue dof_out(false, dof_handler.locally_owned_dofs().nth_index_in_set(0),1);
-	BoundaryHit<2> hit(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
-			*(periodic.getBoundaries()->getBoundary(0)), cell, dof_out);
-
-	// simple BB
-	D2Q9 d2q9;
-	numeric_vector ub1(2);
-	LinearBoundaryRhoU<2> boundary1(0, ub1);
-	boundary1.makeIncomingDirections(hit, d2q9);
-	IncomingDistributionValue fval(dof_out.getIndex());
-	hit.in.push_back(fval);
-	generalized_f[dof_in] = 1.1;
-
-	boundary1.calculate(hit, d2q9, 0, generalized_f);
-	BOOST_CHECK_SMALL(generalized_f[dof_out] - 1.1, 1e-15);
-
-
-	// velocity BB
-	generalized_f[dof_out] = 1.0;
-	BoundaryHit<2> hit2(dealii::Point<2>(0.0, 0.0), 0.0, dealii::Tensor<1, 2>(),
-			*(periodic.getBoundaries()->getBoundary(0)), cell, dof_out);
-	numeric_vector ub2(2);
-	ub2(0) = 2.5;
-	LinearBoundaryRhoU<2> boundary2(0, ub2);
-	boundary2.makeIncomingDirections(hit2, d2q9);
-	hit2.in.push_back(fval);
-	generalized_f[dof_in] = 1.1;
-
-	boundary2.calculate(hit2, d2q9, 0, generalized_f);
-	double expected = 1.1 + 2.0 * 1.0 / 9.0 * 2.5 / (1.0/3.0);
-	// f_opposite + 2 * stencil.getWeight(boundary_hit.outgoingDirection) * 1
-	// * (ea * velocity) / stencil.getSpeedOfSoundSquare()
-
-	BOOST_CHECK_SMALL(generalized_f[dof_out] - expected, 1e-15);
-
-	dof_handler.clear();
-	pout << "done" << endl;
-} /* LinearBoundaryRhoU2D_calculate_test */
 
 BOOST_AUTO_TEST_SUITE_END() /*LinearBoundaryRhoU2D_test*/
 
