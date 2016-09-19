@@ -21,8 +21,6 @@
 #include "deal.II/base/utilities.h"
 #include "deal.II/lac/constraint_matrix.h"
 
-#include "SemiLagrangianVectorReferenceTypes.h"
-
 #include "../problemdescription/PeriodicBoundary.h"
 #include "../problemdescription/LinearBoundary.h"
 
@@ -296,8 +294,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			normals_update);
 
 	// Initialize
-	SemiLagrangianBoundaryDoFHandler<dim> sl_boundary_handler(
-			m_doFHandler->locally_owned_dofs(), *getStencil());
 	std::map<typename DoFHandler<dim>::active_cell_iterator, DeparturePointList> found_in_cell;
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const std::vector<Point<dim> > & unit_support_points =
@@ -412,68 +408,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 					} else /* if is not periodic */{
 
-						// TODO omit if !sparsity_pattern
-						// Apply other boundaries
-						const boost::shared_ptr<Boundary<dim> >& boundary =
-								m_boundaries->getBoundary(bi);
-
-						// time remaining to departure point
-						double t_shift = el.currentPoint.distance(
-								el.departurePoint)
-								/ m_stencil->getDirection(el.beta).l2_norm();
-						fev_normals.reinit(el.currentCell, face_id);
-						if (el.destination.isBoundaryHit) {
-							// TODO
-							// cut Lagrangian path into two parts
-							// - The already tracked part of the path is handled by a boundary hit
-							// - The remaining part of the path is handled by a set of new path trackers
-							/*BoundaryHit<dim> hit(el.currentPoint, t_shift,
-							 fev_normals.normal_vector(0), *Boundary,
-							 el.currentCell, el.destinationDoF);
-							 GeneralizedDoF a = sl_boundary_handler.addBoundaryHit(
-							 hit);
-							 // make incoming directions was called when added
-							 LagrangianPathTracker new_track(a, alpha, x_target, x_i, cell);
-							 if (is_destination_boundary) {
-							 // merge two parts of the previous Lagrangian path,
-							 // which are represented by a boundary hit and the present path tracker
-							 // by setting the departure dofs of the present path tracker as incoming dof of the boundary point
-							 sl_boundary_handler.getBoundaryHit(el.destinationDoF).in.push_back(a);
-							 }
-							 */
-							cout
-									<< "WAAAAAAAAAAAAAAAAAAAAAArning. secondary not impl. yet"
-									<< endl;
-						} else {
-							// destination is not a boundary
-
-							// make primary boundary hit from Lagrangian path tracker
-							OutgoingDistributionValue out_dof(false,
-									el.destination.index, el.beta);
-							BoundaryHit<dim> hit(el.currentPoint, t_shift,
-									fev_normals.normal_vector(0), *boundary,
-									el.currentCell, out_dof);
-							LagrangianPathDestination here =
-									sl_boundary_handler.addBoundaryHit(hit);
-
-							// make new lagragian path trackers from boundary hit
-							// opposite ordering is important, so that later the
-							// shape values are delivered in the same order
-							// (not_found is a stack/FIFO queue)
-							for (size_t i = hit.in.size(); i >= 0; i++) {
-								Tensor<1, dim> e = minus_dtealpha.at(
-										hit.incomingDirections.at(i));
-								e *= (t_shift / m_deltaT);
-								dealii::Point<dim> x_departure = el.currentPoint
-										+ e;
-								LagrangianPathTracker tracker_i(here,
-										hit.incomingDirections.at(i),
-										x_departure, el.currentPoint,
-										el.currentCell);
-								not_found.push(tracker_i);
-							}
-
-						}
 					} /* endif isPeriodic */
 				} else {
 					// Interior faces
@@ -540,17 +474,10 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 							continue;
 						}
 						if (sparsity_pattern) {
-							if (l[i].destination.isBoundaryHit) {
-								// introduce present cell dofs to incoming dofs of boundary hit
-								// sl_boundary_handler.getBoundaryHit(l[i].destination).in.at(...).setIndex(...);
-								// TODO make incoming dofs vector, make shape values vector
-
-							} else {
 								// add entry to sparsity pattern
 								m_sparsityPattern[l[i].destination.direction - 1][l[i].beta
 										- 1].add(l[i].destination.index,
 										local_dof_indices.at(j));
-							}
 						} else {
 							// calculate matrix entries
 							//TimerOutput::Scope timer_section(Timing::getTimer(),
