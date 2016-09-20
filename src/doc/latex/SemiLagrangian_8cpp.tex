@@ -1,0 +1,40 @@
+\hypertarget{SemiLagrangian_8cpp}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/SemiLagrangian.cpp File Reference}
+\label{SemiLagrangian_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/SemiLagrangian.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/SemiLagrangian.cpp}}
+}
+
+
+Semi-\/Lagrangian advection scheme.  
+{\ttfamily \#include \char`\"{}SemiLagrangian.h\char`\"{}}\par
+{\ttfamily \#include $<$queue$>$}\par
+{\ttfamily \#include $<$sstream$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/trilinos\_\-sparsity\_\-pattern.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/dofs/dof\_\-renumbering.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/grid/tria\_\-accessor.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/grid/tria\_\-iterator.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/fe/fe\_\-update\_\-flags.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/matrix\_\-iterator.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/sparsity\_\-tools.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/utilities.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/constraint\_\-matrix.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../boundaries/PeriodicBoundary.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../boundaries/DoFBoundary.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/DealiiExtensions.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/CFDSolverUtilities.h\char`\"{}}\par
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Semi-\/Lagrangian advection scheme. \begin{DoxyDate}{Date}
+29.04.2016 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}

@@ -3,15 +3,22 @@
 \label{Cylinder2D_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/examples/step-\/9/Cylinder2D.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/examples/step-\/9/Cylinder2D.cpp}}
 }
 {\ttfamily \#include \char`\"{}Cylinder2D.h\char`\"{}}\par
-{\ttfamily \#include $<$natrium/problemdescription/LinearBoundaryRhoU.h$>$}\par
 {\ttfamily \#include \char`\"{}deal.II/grid/grid\_\-in.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/grid/grid\_\-tools.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/grid/tria\_\-accessor.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/grid/tria\_\-iterator.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/base/geometry\_\-info.h\char`\"{}}\par
-{\ttfamily \#include \char`\"{}natrium/problemdescription/PeriodicBoundary.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/boundaries/PeriodicBoundary.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/boundaries/LinearFluxBoundaryRhoU.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}natrium/utilities/CFDSolverUtilities.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}natrium/utilities/Logging.h\char`\"{}}\par
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

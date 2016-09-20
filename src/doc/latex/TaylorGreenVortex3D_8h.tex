@@ -6,15 +6,24 @@
 
 Description of a simple Periodic Flow (in cubic domain).  
 {\ttfamily \#include \char`\"{}deal.II/grid/tria.h\char`\"{}}\par
-{\ttfamily \#include \char`\"{}../problemdescription/Benchmark.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../problemdescription/ProblemDescription.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \hyperlink{classnatrium_1_1TaylorGreenVortex3D}{natrium::TaylorGreenVortex3D}
 \begin{DoxyCompactList}\small\item\em Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \item\end{DoxyCompactList}\item 
-class \hyperlink{classnatrium_1_1TaylorGreenVortex3D_1_1AnalyticVelocity}{natrium::TaylorGreenVortex3D::AnalyticVelocity}
-\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+class \hyperlink{classnatrium_1_1TaylorGreenVortex3D_1_1InitialVelocity}{natrium::TaylorGreenVortex3D::InitialVelocity}
+\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the initial velocity \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1TaylorGreenVortex3D_1_1InitialDensity}{natrium::TaylorGreenVortex3D::InitialDensity}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

@@ -51,14 +51,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;deal.II/grid/tria.h&quot;</code><br/>
 <code>#include &quot;deal.II/base/quadrature_lib.h&quot;</code><br/>
 <code>#include &quot;../stencils/Stencil.h&quot;</code><br/>
+<code>#include &quot;../stencils/D2Q9.h&quot;</code><br/>
+<code>#include &quot;../stencils/D3Q15.h&quot;</code><br/>
+<code>#include &quot;../stencils/D3Q19.h&quot;</code><br/>
+<code>#include &quot;../stencils/D3Q27.h&quot;</code><br/>
 <code>#include &quot;../utilities/BasicNames.h&quot;</code><br/>
 <code>#include &quot;../utilities/NATriuMException.h&quot;</code><br/>
+<code>#include &quot;../solver/SolverConfiguration.h&quot;</code><br/>
 
 <p><a href="CFDSolverUtilities_8h_source.html">Go to the source code of this file.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CFDSolverUtilities_1_1CFDSolverUtilitiesException.html">natrium::CFDSolverUtilities::CFDSolverUtilitiesException</a></td></tr>
 <tr><td colspan="2"><h2>Namespaces</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html">natrium</a></td></tr>
+
+<p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. </p>
+<br/></td></tr>
+</p>
 <tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html">natrium::CFDSolverUtilities</a></td></tr>
 
 <p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Some tools for the <a class="el" href="classnatrium_1_1CFDSolver.html" title="The central class for the CFD simulation based on the DBE.">CFDSolver</a> and its simple usage. </p>
@@ -98,6 +108,8 @@ template&lt;int dim&gt; </td></tr>
 <li>15) CASH_KARP. </li>
 </ul>
  <a href="#a3719826384e1c13644bac00524f72a46"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bbf2001ab29fe02fc3a11bcf1515614"></a><!-- doxytag: member="CFDSolverUtilities.h::make_stencil" ref="a6bbf2001ab29fe02fc3a11bcf1515614" args="(size_t d, size_t q, size_t scaling)" -->
+boost::shared_ptr&lt; Stencil &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::CFDSolverUtilities::make_stencil</b> (size_t d, size_t q, size_t scaling)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>General utility functions for the CFD solver. </p>
@@ -109,7 +121,7 @@ template&lt;int dim&gt; </td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -118,7 +130,7 @@ template&lt;int dim&gt; </td></tr>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

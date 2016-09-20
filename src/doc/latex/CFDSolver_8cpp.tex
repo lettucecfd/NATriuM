@@ -13,14 +13,24 @@
 {\ttfamily \#include \char`\"{}deal.II/lac/constraint\_\-matrix.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/base/index\_\-set.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}PhysicalProperties.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}Checkpoint.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../stencils/D2Q9.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../stencils/D3Q19.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../stencils/D3Q15.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../stencils/D3Q27.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../advection/SEDGMinLee.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../advection/SemiLagrangian.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../collision/BGKStandard.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../collision/BGKStandardTransformed.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../collision/BGKSteadyState.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../collision/BGKIncompressible.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../collision/MRTStandard.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../collision/KBCStandard.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../collision/KBCCentral.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../collision/BGKMultistep.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../smoothing/ExponentialFilter.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../smoothing/NewFilter.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../problemdescription/BoundaryCollection.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../timeintegration/ThetaMethod.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../timeintegration/RungeKutta5LowStorage.h\char`\"{}}\par
@@ -30,6 +40,13 @@
 {\ttfamily \#include \char`\"{}../utilities/CFDSolverUtilities.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/MPIGuard.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/Info.h\char`\"{}}\par
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
