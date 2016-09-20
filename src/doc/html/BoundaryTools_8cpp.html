@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>NATriuM: /mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/BoundaryTools.cpp File Reference</title>
+<title>NATriuM: /mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/BoundaryTools.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javaScript" src="search/search.js"></script>
@@ -45,9 +45,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="contents">
-<h1>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/BoundaryTools.cpp File Reference</h1><code>#include &quot;<a class="el" href="BoundaryTools_8h_source.html">BoundaryTools.h</a>&quot;</code><br/>
+<h1>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/BoundaryTools.cpp File Reference</h1><code>#include &quot;<a class="el" href="BoundaryTools_8h_source.html">BoundaryTools.h</a>&quot;</code><br/>
 <code>#include &quot;../utilities/Math.h&quot;</code><br/>
 <table border="0" cellpadding="0" cellspacing="0">
+<tr><td colspan="2"><h2>Namespaces</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html">natrium</a></td></tr>
+
+<p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. </p>
+<br/></td></tr>
+</p>
+<tr><td colspan="2"><h2>Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1BoundaryTools.html#a64669bd0ddcea4f0eb21121beebcf76f">natrium::BoundaryTools::checkParallelLines</a> (const dealii::Point&lt; 2 &gt; &amp;beginLine1, const dealii::Point&lt; 2 &gt; &amp;endLine1, dealii::Point&lt; 2 &gt; &amp;beginLine2, dealii::Point&lt; 2 &gt; &amp;endLine2, std::string &amp;errorMessage)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check if two lines in a 2D plane are parallel and not equal to each other. If they are antiparallel, swap begin and end of the second line.  <a href="#a64669bd0ddcea4f0eb21121beebcf76f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1BoundaryTools.html#a4a6b2ff032061b8ebac2955d09630240">natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator</a> (size_t boundaryIndicator1, size_t boundaryIndicator2, boost::shared_ptr&lt; Mesh&lt; 2 &gt; &gt; triangulation, dealii::Point&lt; 2 &gt; &amp;beginLine1, dealii::Point&lt; 2 &gt; &amp;endLine1, dealii::Point&lt; 2 &gt; &amp;beginLine2, dealii::Point&lt; 2 &gt; &amp;endLine2, std::string &amp;errorMessage)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the positions of the lines that define interfaces from the defining <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> indicators.  <a href="#a4a6b2ff032061b8ebac2955d09630240"></a><br/></td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1BoundaryTools.html#a89cbacd10c5ed2e0d49eb2c72b57fc4b">natrium::BoundaryTools::CoupleDoFsAtBoundary</a> (dealii::TrilinosWrappers::SparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; dim &gt; &amp;doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This functions adds elements to the sparsity pattern to couple different distribution functions at the boundary.  <a href="#a89cbacd10c5ed2e0d49eb2c72b57fc4b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad9bf65cd6eed52ccff2f6e671f1e6bb9"></a><!-- doxytag: member="BoundaryTools.cpp::CoupleDoFsAtBoundary&lt; 2 &gt;" ref="ad9bf65cd6eed52ccff2f6e671f1e6bb9" args="(dealii::TrilinosWrappers::SparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; 2 &gt; &amp;doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BoundaryTools::CoupleDoFsAtBoundary&lt; 2 &gt;</b> (dealii::TrilinosWrappers::SparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; 2 &gt; &amp;doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b4645703f7d9d8574b68b5e22e9ed77"></a><!-- doxytag: member="BoundaryTools.cpp::CoupleDoFsAtBoundary&lt; 3 &gt;" ref="a1b4645703f7d9d8574b68b5e22e9ed77" args="(dealii::TrilinosWrappers::SparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; 3 &gt; &amp;doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BoundaryTools::CoupleDoFsAtBoundary&lt; 3 &gt;</b> (dealii::TrilinosWrappers::SparsityPattern &amp;cSparse, const dealii::DoFHandler&lt; 3 &gt; &amp;doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <dl class="date"><dt><b>Date:</b></dt><dd>14.11.2013 </dd></dl>
@@ -58,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -67,7 +85,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -303,7 +303,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	std::vector<Tensor<1, dim> > minus_dtealpha;
 	for (size_t i = 0; i < m_stencil->getQ(); i++) {
 		minus_dtealpha.push_back(
-				vectorToTensor(m_stencil->getDirection(i)) * (-m_deltaT));
+				vectorToTensor<dim>(m_stencil->getDirection(i)) * (-m_deltaT));
 	}
 	std::vector<dealii::types::global_dof_index> local_dof_indices(
 			dofs_per_cell);

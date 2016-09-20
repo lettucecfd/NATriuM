@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1SolverStats.html">SolverStats</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1SolverStats.html">SolverStats</a>
   </div>
 </div>
 <div class="contents">
@@ -72,6 +72,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>printNewLine</b> ()</
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getIterationNumber</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a24d2637fa64a779c0f01820ae7e0dfa6"></a><!-- doxytag: member="natrium::SolverStats::getKinE" ref="a24d2637fa64a779c0f01820ae7e0dfa6" args="() const " -->
 double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getKinE</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63d4c1478964175cb70b6bab4ad6da58"></a><!-- doxytag: member="natrium::SolverStats::getMass" ref="a63d4c1478964175cb70b6bab4ad6da58" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMass</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1da43f2bb7fbb734e3ec6c7eaa8d647a"></a><!-- doxytag: member="natrium::SolverStats::getEnstrophy" ref="a1da43f2bb7fbb734e3ec6c7eaa8d647a" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getEnstrophy</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac880e86e2e93cafad88fa447ebb641b5"></a><!-- doxytag: member="natrium::SolverStats::getMaxU" ref="ac880e86e2e93cafad88fa447ebb641b5" args="() const " -->
 double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMaxU</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1663800fe3d597f2727f0d938641381"></a><!-- doxytag: member="natrium::SolverStats::getTableFile" ref="ac1663800fe3d597f2727f0d938641381" args="() const " -->
@@ -88,6 +92,10 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMaxP</b> () cons
 double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMinP</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a331dab963d64362612b3378fc9588894"></a><!-- doxytag: member="natrium::SolverStats::getMeanVelocityX" ref="a331dab963d64362612b3378fc9588894" args="() const " -->
 double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMeanVelocityX</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a784dddde05eaaa83786abf861cc141ae"></a><!-- doxytag: member="natrium::SolverStats::getEntropy" ref="a784dddde05eaaa83786abf861cc141ae" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getEntropy</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3675819c1d09da806da1fadc1391b814"></a><!-- doxytag: member="natrium::SolverStats::isOutputOff" ref="a3675819c1d09da806da1fadc1391b814" args="() const " -->
+const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>isOutputOff</b> () const </td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;size_t dim&gt;<br/>
@@ -104,7 +112,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMeanVelocityX</b
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -113,7 +121,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMeanVelocityX</b
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

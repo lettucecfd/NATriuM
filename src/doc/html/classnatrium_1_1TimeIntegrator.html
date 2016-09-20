@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>
   </div>
 </div>
 <div class="contents">
@@ -80,12 +80,12 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getTimeStepSize</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18592866e946c63ab1595d3ab688ea6b"></a><!-- doxytag: member="natrium::TimeIntegrator::setTimeStepSize" ref="a18592866e946c63ab1595d3ab688ea6b" args="(double timeStepSize)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setTimeStepSize</b> (double timeStepSize)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TimeIntegrator.html#a1c438e41d183d172d524aa5dc97785fb">step</a> (VECTOR &amp;f, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector, double t=0, double dt=0)=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TimeIntegrator.html#a0237ebbaf737c7d3278777fb08007e99">step</a> (VECTOR &amp;f, const MATRIX &amp;systemMatrix, VECTOR &amp;systemVector, double t=0, double dt=0)=0</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">make one time integration step on f: </p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\[ \frac{df}{dt} = Af+b \]" src="form_33.png"/>
 </p>
-<p>.  <a href="#a1c438e41d183d172d524aa5dc97785fb"></a><br/></td></tr>
+<p>.  <a href="#a0237ebbaf737c7d3278777fb08007e99"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;class MATRIX, class VECTOR&gt;<br/>
@@ -94,7 +94,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setTimeStepSize</b> (
 <p>Abstract class for time integration (solution of ordinary differential equations (ODE)). </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>The ODEs arise from the space discretization of the DBE, which is basically a partial differential equation (PDE). By application of a space discretization scheme (like discontinuous Galerkin or standard FEM methods) the space derivatives in the PDE are replaced with arithmetic expressions. The only remaining derivative is then the time derivative, which makes the equation an ODE. The latter can be solved using classical time integration methods like Runge-Kutta or Adams-Moulton. </dd></dl>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a1c438e41d183d172d524aa5dc97785fb"></a><!-- doxytag: member="natrium::TimeIntegrator::step" ref="a1c438e41d183d172d524aa5dc97785fb" args="(VECTOR &amp;f, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector, double t=0, double dt=0)=0" -->
+<a class="anchor" id="a0237ebbaf737c7d3278777fb08007e99"></a><!-- doxytag: member="natrium::TimeIntegrator::step" ref="a0237ebbaf737c7d3278777fb08007e99" args="(VECTOR &amp;f, const MATRIX &amp;systemMatrix, VECTOR &amp;systemVector, double t=0, double dt=0)=0" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -115,7 +115,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VECTOR &amp;&nbsp;</td>
+          <td class="paramtype">VECTOR &amp;&nbsp;</td>
           <td class="paramname"> <em>systemVector</em>, </td>
         </tr>
         <tr>
@@ -157,7 +157,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 <dl class="return"><dt><b>Returns:</b></dt><dd>new global time </dd></dl>
 <dl class="note"><dt><b>Note:</b></dt><dd>fully virtual method. Overloaded by subclasses. </dd></dl>
 
-<p>Implemented in <a class="el" href="classnatrium_1_1DealIIWrapper.html#a62621205ff77a46c4f3ef01c3aefb06d">natrium::DealIIWrapper&lt; MATRIX, VECTOR &gt;</a>, <a class="el" href="classnatrium_1_1ExponentialTimeIntegrator.html#ae0a9cff9bdafab123016db72d1439ef8">natrium::ExponentialTimeIntegrator&lt; MATRIX, VECTOR &gt;</a>, <a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a11ed7e7ef3b4a5e575452261bc783a21">natrium::RungeKutta5LowStorage&lt; MATRIX, VECTOR &gt;</a>, and <a class="el" href="classnatrium_1_1ThetaMethod.html#a247c639f49a05904dae01b05115bc7e4">natrium::ThetaMethod&lt; MATRIX, VECTOR &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classnatrium_1_1DealIIWrapper.html#a50227545e1fcff4c2d0f10a9c6eb3bca">natrium::DealIIWrapper&lt; MATRIX, VECTOR &gt;</a>, <a class="el" href="classnatrium_1_1ExponentialTimeIntegrator.html#a656810a85c20b5f7eae422ee596fc340">natrium::ExponentialTimeIntegrator&lt; MATRIX, VECTOR &gt;</a>, <a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a90a1bec53a8fd458a190d3e9f8c78478">natrium::RungeKutta5LowStorage&lt; MATRIX, VECTOR &gt;</a>, and <a class="el" href="classnatrium_1_1ThetaMethod.html#a25fb9b235e61a96de76139919d7fbbfe">natrium::ThetaMethod&lt; MATRIX, VECTOR &gt;</a>.</p>
 
 </div>
 </div>
@@ -171,7 +171,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -180,7 +180,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

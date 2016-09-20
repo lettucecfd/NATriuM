@@ -16,10 +16,7 @@ Abstract class for the description of a CFD problem. The description includes th
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}{
-\hyperlink{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}{ProblemDescription} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation, double viscosity, double characteristicLength)}
-\label{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}
-
+\hyperlink{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}{ProblemDescription} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation, double viscosity, double characteristicLength)
 \begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}{
 virtual \hyperlink{classnatrium_1_1ProblemDescription_a5270994970ddbd9f6fc98f292c1ccc0e}{$\sim$ProblemDescription} ()}
@@ -46,6 +43,26 @@ virtual const boost::shared\_\-ptr$<$ dealii::Function$<$ dim $>$ $>$ \& {\bfser
 \label{classnatrium_1_1ProblemDescription_a008bd19c317f7907229c5cab7a646ea0}
 
 \item 
+\hypertarget{classnatrium_1_1ProblemDescription_ac60c308fbab126339ec08e2377fc77bb}{
+virtual void {\bfseries refine} (Mesh$<$ dim $>$ \&mesh)=0}
+\label{classnatrium_1_1ProblemDescription_ac60c308fbab126339ec08e2377fc77bb}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_aedee850a39034390229f3e1131b00fad}{
+virtual void {\bfseries transform} (Mesh$<$ dim $>$ \&mesh)=0}
+\label{classnatrium_1_1ProblemDescription_aedee850a39034390229f3e1131b00fad}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_a9487f2c9b6f6845d1eac886470b91457}{
+void {\bfseries refineAndTransform} ()}
+\label{classnatrium_1_1ProblemDescription_a9487f2c9b6f6845d1eac886470b91457}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_aa8ca60598929e469f18e5ebf37d2ad6e}{
+void {\bfseries refineAndTransform} (Mesh$<$ dim $>$ \&mesh)}
+\label{classnatrium_1_1ProblemDescription_aa8ca60598929e469f18e5ebf37d2ad6e}
+
+\item 
 bool \hyperlink{classnatrium_1_1ProblemDescription_aed8ec93fcba6c0b78c04ef91b8703f7a}{checkBoundaryConditions} ()
 \begin{DoxyCompactList}\small\item\em check if boundary conditions are uniquely assigned to boundary indicator \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ProblemDescription_afeb7e2a712c3fb816d8491cb01d02156}{
@@ -56,6 +73,21 @@ void {\bfseries setMesh} (const boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \&tr
 \hypertarget{classnatrium_1_1ProblemDescription_a9078dc3c0da45f600e8b2375f321494e}{
 void {\bfseries setBoundaries} (const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ \&boundaries)}
 \label{classnatrium_1_1ProblemDescription_a9078dc3c0da45f600e8b2375f321494e}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_a02ed1361dced4a544fea2c50af06fe65}{
+void {\bfseries setExternalForce} (const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1ConstantExternalForce}{ConstantExternalForce}$<$ dim $>$ $>$ \&force)}
+\label{classnatrium_1_1ProblemDescription_a02ed1361dced4a544fea2c50af06fe65}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_a9989950e9e18966c6600ab4fd80b5009}{
+boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1ConstantExternalForce}{ConstantExternalForce}$<$ dim $>$ $>$ {\bfseries getExternalForce} () const }
+\label{classnatrium_1_1ProblemDescription_a9989950e9e18966c6600ab4fd80b5009}
+
+\item 
+\hypertarget{classnatrium_1_1ProblemDescription_a5527b8c5da6a4decb34bf34cd02a6734}{
+bool {\bfseries hasExternalForce} () const }
+\label{classnatrium_1_1ProblemDescription_a5527b8c5da6a4decb34bf34cd02a6734}
 
 \item 
 \hypertarget{classnatrium_1_1ProblemDescription_a582ecf296837d78a8a00fd598de38de2}{
@@ -105,6 +137,18 @@ Abstract class for the description of a CFD problem. The description includes th
 \begin{DoxyTemplParams}{Template Parameters}
 \item[{\em dim}]The dimension of the flow (2 or 3). \end{DoxyTemplParams}
 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}{
+\index{natrium::ProblemDescription@{natrium::ProblemDescription}!ProblemDescription@{ProblemDescription}}
+\index{ProblemDescription@{ProblemDescription}!natrium::ProblemDescription@{natrium::ProblemDescription}}
+\subsubsection[{ProblemDescription}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::ProblemDescription}$<$ dim $>$::{\bf ProblemDescription} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ {\em triangulation}, \/  double {\em viscosity}, \/  double {\em characteristicLength})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1ProblemDescription_afc92659d0022799b4e846cf050e8efad}
+
+
+constructor 
+
+Create MPI (if not done yet); 
 
 \subsection{Member Function Documentation}
 \hypertarget{classnatrium_1_1ProblemDescription_aed8ec93fcba6c0b78c04ef91b8703f7a}{

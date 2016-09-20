@@ -12,6 +12,7 @@
 #include <math.h>
 
 #include "deal.II/base/index_set.h"
+#include "deal.II/base/tensor.h"
 
 #include "BasicNames.h"
 
@@ -135,6 +136,17 @@ public:
 	}
 	double epsilon;
 };
+
+template<size_t dim>
+dealii::Tensor<1, dim> vectorToTensor(const numeric_vector& v) {
+	assert(v.size() == dim);
+	dealii::Tensor<1, dim> t;
+	t[0] = v(0);
+	t[1] = v(1);
+	if (dim == 3)
+		t[2] = v(2);
+	return t;
+}
 
 }
 //namespace natrium

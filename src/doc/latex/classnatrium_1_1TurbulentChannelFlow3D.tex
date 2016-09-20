@@ -1,0 +1,139 @@
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D}{
+\section{natrium::TurbulentChannelFlow3D Class Reference}
+\label{classnatrium_1_1TurbulentChannelFlow3D}\index{natrium::TurbulentChannelFlow3D@{natrium::TurbulentChannelFlow3D}}
+}
+
+
+Description of a turbulent Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}.  
+
+
+{\ttfamily \#include $<$TurbulentChannelFlow3D.h$>$}Inheritance diagram for natrium::TurbulentChannelFlow3D::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classnatrium_1_1TurbulentChannelFlow3D}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1TurbulentChannelFlow3D_1_1IncompressibleU}{IncompressibleU}
+\item 
+class \hyperlink{classnatrium_1_1TurbulentChannelFlow3D_1_1InitialVelocity}{InitialVelocity}
+\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1TurbulentChannelFlow3D_1_1MeanVelocityProfile}{MeanVelocityProfile}
+\item 
+struct \hyperlink{structnatrium_1_1TurbulentChannelFlow3D_1_1UnstructuredGridFunc}{UnstructuredGridFunc}
+\begin{DoxyCompactList}\small\item\em function to generate the unstructured mesh grid \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1TurbulentChannelFlow3D_a5ffe8d8abb3209fffa0e96dc094e88fc}{TurbulentChannelFlow3D} (double viscosity, size\_\-t refinementLevel, std::vector$<$ unsigned int $>$ repetitions, double ReTau=180.0, double u\_\-cl=10, double height=1.0, double length=6.0, double width=3.0, double orderOfFiniteElement=2, bool is\_\-periodic=true)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_ab64ee135c7156427f370b7d5225b5d99}{
+virtual \hyperlink{classnatrium_1_1TurbulentChannelFlow3D_ab64ee135c7156427f370b7d5225b5d99}{$\sim$TurbulentChannelFlow3D} ()}
+\label{classnatrium_1_1TurbulentChannelFlow3D_ab64ee135c7156427f370b7d5225b5d99}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a2ede3122bfa58fe49666d33115e55fd3}{
+double {\bfseries getRefinementLevel} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_a2ede3122bfa58fe49666d33115e55fd3}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_aec3b2a3852fd1f8987673f2ade97a921}{
+std::vector$<$ unsigned int $>$ {\bfseries getRepetitions} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_aec3b2a3852fd1f8987673f2ade97a921}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_aadc61bde5b2b11a0574983df00faabe2}{
+double {\bfseries getFrictionReNumber} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_aadc61bde5b2b11a0574983df00faabe2}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a19919ff8e7f2b03bd74b7f3754a2d2b9}{
+double {\bfseries getCenterLineVelocity} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_a19919ff8e7f2b03bd74b7f3754a2d2b9}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_af4006f6ab6aa2a50b68f12ca2914c467}{
+double {\bfseries getOrderOfFiniteElement} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_af4006f6ab6aa2a50b68f12ca2914c467}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a4f9b365a4c4d0c38822be3b77c4a818d}{
+double {\bfseries getHeight} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_a4f9b365a4c4d0c38822be3b77c4a818d}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a9b54eda9afcf408f8623d47315722291}{
+double {\bfseries getLength} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_a9b54eda9afcf408f8623d47315722291}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a00bc5208b0b263f933b15169fffa5c69}{
+double {\bfseries getWidth} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_a00bc5208b0b263f933b15169fffa5c69}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a3a8f288733304a89a5dd6deb08a9db44}{
+double {\bfseries getMaxUtrp} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_a3a8f288733304a89a5dd6deb08a9db44}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_aeb8c57df7519e022505d46164f53f9d0}{
+double {\bfseries getMaxIncUtrp} () const }
+\label{classnatrium_1_1TurbulentChannelFlow3D_aeb8c57df7519e022505d46164f53f9d0}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a1e3e23496273ae5495ad29af22e1facc}{
+void {\bfseries mean} (vector$<$ vector$<$ double $>$ $>$ \&matrix, double \&avg)}
+\label{classnatrium_1_1TurbulentChannelFlow3D_a1e3e23496273ae5495ad29af22e1facc}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_ae0449fc4860ea522f9de86d92db8c5b1}{
+void {\bfseries angles} (int nmodes, int \&iseed, int \&iy, vector$<$ int $>$ \&iv, vector$<$ double $>$ \&fi, vector$<$ double $>$ \&psi, vector$<$ double $>$ \&alfa, vector$<$ double $>$ \&teta)}
+\label{classnatrium_1_1TurbulentChannelFlow3D_ae0449fc4860ea522f9de86d92db8c5b1}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_ab59092223adefa914cf248c6ca65c85b}{
+void {\bfseries randf\_\-1} (int nmd, int alow, double ahigh, int idum, int \&iy, vector$<$ int $>$ \&iv, vector$<$ double $>$ \&out, int \&iseed)}
+\label{classnatrium_1_1TurbulentChannelFlow3D_ab59092223adefa914cf248c6ca65c85b}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_aaa37441a5ea6a0f3e2ef534c24eabbfe}{
+void {\bfseries randf\_\-2} (int idum, int \&iy, vector$<$ int $>$ \&iv, double \&ran1, int \&iseed)}
+\label{classnatrium_1_1TurbulentChannelFlow3D_aaa37441a5ea6a0f3e2ef534c24eabbfe}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a28a4340ffbf2044de9d99ba6b8c6c346}{
+virtual void {\bfseries refine} (Mesh$<$ 3 $>$ \&mesh)}
+\label{classnatrium_1_1TurbulentChannelFlow3D_a28a4340ffbf2044de9d99ba6b8c6c346}
+
+\item 
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a97bd4bdeeed7e5cb932b5bc9ed834d6b}{
+virtual void {\bfseries transform} (Mesh$<$ 3 $>$ \&mesh)}
+\label{classnatrium_1_1TurbulentChannelFlow3D_a97bd4bdeeed7e5cb932b5bc9ed834d6b}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a turbulent Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1TurbulentChannelFlow3D_a5ffe8d8abb3209fffa0e96dc094e88fc}{
+\index{natrium::TurbulentChannelFlow3D@{natrium::TurbulentChannelFlow3D}!TurbulentChannelFlow3D@{TurbulentChannelFlow3D}}
+\index{TurbulentChannelFlow3D@{TurbulentChannelFlow3D}!natrium::TurbulentChannelFlow3D@{natrium::TurbulentChannelFlow3D}}
+\subsubsection[{TurbulentChannelFlow3D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::TurbulentChannelFlow3D::TurbulentChannelFlow3D (double {\em viscosity}, \/  size\_\-t {\em refinementLevel}, \/  std::vector$<$ unsigned int $>$ {\em repetitions}, \/  double {\em ReTau} = {\ttfamily 180.0}, \/  double {\em u\_\-cl} = {\ttfamily 10}, \/  double {\em height} = {\ttfamily 1.0}, \/  double {\em length} = {\ttfamily 6.0}, \/  double {\em width} = {\ttfamily 3.0}, \/  double {\em orderOfFiniteElement} = {\ttfamily 2}, \/  bool {\em is\_\-periodic} = {\ttfamily true})}}
+\label{classnatrium_1_1TurbulentChannelFlow3D_a5ffe8d8abb3209fffa0e96dc094e88fc}
+
+
+constructor 
+
+y$^\wedge$+ calculation
+
+max spacing 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/examples/step-\/turbulentChannel/\hyperlink{TurbulentChannelFlow3D_8h}{TurbulentChannelFlow3D.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/examples/step-\/turbulentChannel/\hyperlink{TurbulentChannelFlow3D_8cpp}{TurbulentChannelFlow3D.cpp}\end{DoxyCompactItemize}

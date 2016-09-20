@@ -1,0 +1,305 @@
+\hypertarget{classnatrium_1_1SemiLagrangian}{
+\section{natrium::SemiLagrangian$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1SemiLagrangian}\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+}
+
+
+This class solves the linear advection equations by a semi-\/Lagrangian scheme.  
+
+
+{\ttfamily \#include $<$SemiLagrangian.h$>$}Inheritance diagram for natrium::SemiLagrangian$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classnatrium_1_1SemiLagrangian}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structnatrium_1_1SemiLagrangian_1_1LagrangianPathDestination}{LagrangianPathDestination}
+\item 
+struct \hyperlink{structnatrium_1_1SemiLagrangian_1_1LagrangianPathTracker}{LagrangianPathTracker}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a0f63be1763c4063ccdf2ff4bee7a3456}{
+typedef std::vector$<$ \hyperlink{structnatrium_1_1SemiLagrangian_1_1LagrangianPathTracker}{LagrangianPathTracker} $>$ \hyperlink{classnatrium_1_1SemiLagrangian_a0f63be1763c4063ccdf2ff4bee7a3456}{DeparturePointList}}
+\label{classnatrium_1_1SemiLagrangian_a0f63be1763c4063ccdf2ff4bee7a3456}
+
+\begin{DoxyCompactList}\small\item\em A list that stores cell-\/specific information for assembly. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a8a801296be3b37837a347342f32b2d57}{
+typedef std::vector$<$ typename dealii::DoFHandler$<$ dim $>$::cell\_\-iterator $>$ \hyperlink{classnatrium_1_1SemiLagrangian_a8a801296be3b37837a347342f32b2d57}{Neighborhood}}
+\label{classnatrium_1_1SemiLagrangian_a8a801296be3b37837a347342f32b2d57}
+
+\begin{DoxyCompactList}\small\item\em List of neighbors. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1SemiLagrangian_ae6ef291c9cd0579ebb5889b271d64123}{SemiLagrangian} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ boundaries, size\_\-t orderOfFiniteElement, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil, double delta\_\-t)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a6c0ebcd2055e6608cc6f280a89ea43a3}{
+virtual \hyperlink{classnatrium_1_1SemiLagrangian_a6c0ebcd2055e6608cc6f280a89ea43a3}{$\sim$SemiLagrangian} ()}
+\label{classnatrium_1_1SemiLagrangian_a6c0ebcd2055e6608cc6f280a89ea43a3}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+bool \hyperlink{classnatrium_1_1SemiLagrangian_a1e41b66518f92c75135b2873a39160ff}{isCellInNeighborhood} (const typename dealii::DoFHandler$<$ dim $>$::cell\_\-accessor \&cell, const \hyperlink{classnatrium_1_1SemiLagrangian_a8a801296be3b37837a347342f32b2d57}{Neighborhood} \&neighborhood)
+\begin{DoxyCompactList}\small\item\em Checks if a cell is already in the neighborhood list. \item\end{DoxyCompactList}\item 
+dealii::DoFHandler$<$ dim $>$::cell\_\-iterator \hyperlink{classnatrium_1_1SemiLagrangian_aac0394a8292810788e983909b2de4355}{getNeighbor} (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, size\_\-t i)
+\begin{DoxyCompactList}\small\item\em get i-\/th neighbor of a cell, incorporating periodic boundaries \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SemiLagrangian_ab6d5f8d666330d8f229ee727985592b8}{getNeighborhood} (typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, \hyperlink{classnatrium_1_1SemiLagrangian_a8a801296be3b37837a347342f32b2d57}{Neighborhood} \&neighborhood, size\_\-t n\_\-shells=1)
+\begin{DoxyCompactList}\small\item\em fill the neighborhood list \item\end{DoxyCompactList}\item 
+dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \hyperlink{classnatrium_1_1SemiLagrangian_a9db13229770025b4c0461d8e4ff4ee50}{recursivelySearchInNeighborhood} (const dealii::Point$<$ dim $>$ \&p, typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell)
+\begin{DoxyCompactList}\small\item\em recursively search a point in neighborhood, until is found \item\end{DoxyCompactList}\item 
+int \hyperlink{classnatrium_1_1SemiLagrangian_a3b096afb85f7ea3782e03ba36b973088}{faceCrossedFirst} (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, const dealii::Point$<$ dim $>$ \&p\_\-inside, const dealii::Point$<$ dim $>$ \&p\_\-outside, dealii::Point$<$ dim $>$ \&p\_\-boundary, double $\ast$lambda, size\_\-t $\ast$child\_\-id)
+\begin{DoxyCompactList}\small\item\em Determines which face is crossed first, when moving from one point inside the cell to a point outside. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1SemiLagrangian_a108742ef40b532cb9e1e26384dafec94}{shapeFunctionValue} (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, const std::vector$<$ dealii::Point$<$ dim $>$ $>$ \&points, std::vector$<$ std::vector$<$ double $>$ $>$ \&values)
+\begin{DoxyCompactList}\small\item\em Calculates the shape values for arbitrary points. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a7f08b1181db3c1d1f26ba0cac9210fbc}{
+virtual void \hyperlink{classnatrium_1_1SemiLagrangian_a7f08b1181db3c1d1f26ba0cac9210fbc}{reassemble} ()}
+\label{classnatrium_1_1SemiLagrangian_a7f08b1181db3c1d1f26ba0cac9210fbc}
+
+\begin{DoxyCompactList}\small\item\em function to (re-\/)assemble linear system \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a29408988807e9fbe24c8900c0e6bcf00}{
+virtual void {\bfseries setupDoFs} ()}
+\label{classnatrium_1_1SemiLagrangian_a29408988807e9fbe24c8900c0e6bcf00}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_abbaedf8c657aa964006a3bb193185559}{
+virtual void \hyperlink{classnatrium_1_1SemiLagrangian_abbaedf8c657aa964006a3bb193185559}{stream} ()}
+\label{classnatrium_1_1SemiLagrangian_abbaedf8c657aa964006a3bb193185559}
+
+\begin{DoxyCompactList}\small\item\em make streaming step \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_ae8a21527f3ab056eab8b3b0af25a572c}{
+virtual const distributed\_\-sparse\_\-block\_\-matrix \& \hyperlink{classnatrium_1_1SemiLagrangian_ae8a21527f3ab056eab8b3b0af25a572c}{getSystemMatrix} () const }
+\label{classnatrium_1_1SemiLagrangian_ae8a21527f3ab056eab8b3b0af25a572c}
+
+\begin{DoxyCompactList}\small\item\em get global system matrix \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a91283ee7b7dfd1ecaa92992b9b48ee5d}{
+virtual void {\bfseries mapDoFsToSupportPoints} (std::map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const }
+\label{classnatrium_1_1SemiLagrangian_a91283ee7b7dfd1ecaa92992b9b48ee5d}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a5e3e4c9820cf2701f789f8ba8ea9d9ac}{
+virtual const boost::shared\_\-ptr$<$ dealii::DoFHandler$<$ dim $>$ $>$ \& {\bfseries getDoFHandler} () const }
+\label{classnatrium_1_1SemiLagrangian_a5e3e4c9820cf2701f789f8ba8ea9d9ac}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a6cdea22c2d1999275488710ab08c94fa}{
+const std::vector$<$ std::vector$<$ dealii::TrilinosWrappers::SparsityPattern $>$ $>$ \& {\bfseries getBlockSparsityPattern} () const }
+\label{classnatrium_1_1SemiLagrangian_a6cdea22c2d1999275488710ab08c94fa}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_ac7bcf29bf27ec29138625b753fd5ea57}{
+const dealii::MappingQ$<$ dim $>$ \& {\bfseries getMapping} () const }
+\label{classnatrium_1_1SemiLagrangian_ac7bcf29bf27ec29138625b753fd5ea57}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a7fada93fe551913cbd3953b649bac5ab}{
+virtual const std::map$<$ size\_\-t, size\_\-t $>$ \& {\bfseries getCelldofToQIndex} () const }
+\label{classnatrium_1_1SemiLagrangian_a7fada93fe551913cbd3953b649bac5ab}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a76b652f977cd083a430c664ae28b9d1d}{
+const vector$<$ std::map$<$ size\_\-t, size\_\-t $>$ $>$ \& {\bfseries getFacedofToQIndex} () const }
+\label{classnatrium_1_1SemiLagrangian_a76b652f977cd083a430c664ae28b9d1d}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a85f0c5658089dad43594df005398b478}{
+const boost::shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim-\/1 $>$ $>$ \& {\bfseries getFaceQuadrature} () const }
+\label{classnatrium_1_1SemiLagrangian_a85f0c5658089dad43594df005398b478}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_ab62cef51c3f415243da5b30061a32bdb}{
+virtual const boost::shared\_\-ptr$<$ dealii::FE\_\-DGQArbitraryNodes$<$ dim $>$ $>$ \& {\bfseries getFe} () const }
+\label{classnatrium_1_1SemiLagrangian_ab62cef51c3f415243da5b30061a32bdb}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a51957acb7ab69735c985be65538878f6}{
+virtual size\_\-t {\bfseries getNumberOfDoFsPerCell} () const }
+\label{classnatrium_1_1SemiLagrangian_a51957acb7ab69735c985be65538878f6}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a17d0d8e42f22eae8c55d754530636dce}{
+virtual const boost::shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim $>$ $>$ \& {\bfseries getQuadrature} () const }
+\label{classnatrium_1_1SemiLagrangian_a17d0d8e42f22eae8c55d754530636dce}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_aabf77e88390f4c6656d2c45cdc65cce8}{
+virtual size\_\-t {\bfseries getOrderOfFiniteElement} () const }
+\label{classnatrium_1_1SemiLagrangian_aabf77e88390f4c6656d2c45cdc65cce8}
+
+\item 
+virtual size\_\-t \hyperlink{classnatrium_1_1SemiLagrangian_aeb3b1dfda8a0d8fe7473716f98b12647}{getNumberOfDoFs} () const 
+\begin{DoxyCompactList}\small\item\em save matrices and status to files \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a730b721bc86a64418b2ae60fa888b3d4}{
+virtual const distributed\_\-block\_\-vector \& {\bfseries getSystemVector} () const }
+\label{classnatrium_1_1SemiLagrangian_a730b721bc86a64418b2ae60fa888b3d4}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a5eea1ecde1da0e7aa81f4972037f5f01}{
+const dealii::IndexSet \& {\bfseries getLocallyOwnedDofs} ()}
+\label{classnatrium_1_1SemiLagrangian_a5eea1ecde1da0e7aa81f4972037f5f01}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_a17810c1590eb72c5449819f51fa6b4d7}{
+const dealii::IndexSet \& {\bfseries getLocallyRelevantDofs} ()}
+\label{classnatrium_1_1SemiLagrangian_a17810c1590eb72c5449819f51fa6b4d7}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_aa4489b0521eac87a93119f1f02459722}{
+virtual const vector$<$ std::map$<$ size\_\-t, size\_\-t $>$ $>$ \& {\bfseries getQIndexToFacedof} () const }
+\label{classnatrium_1_1SemiLagrangian_aa4489b0521eac87a93119f1f02459722}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_ac7bd1619acea6f079a7b3151a3c5a3af}{
+virtual const boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \& {\bfseries getMesh} () const }
+\label{classnatrium_1_1SemiLagrangian_ac7bd1619acea6f079a7b3151a3c5a3af}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_aaf58cb3aa2282de0cee86cc7dd3d7707}{
+virtual const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ \& {\bfseries getStencil} () const }
+\label{classnatrium_1_1SemiLagrangian_aaf58cb3aa2282de0cee86cc7dd3d7707}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_ab7a610fbe5599e729230438af1dff2a0}{
+double {\bfseries getDeltaT} () const }
+\label{classnatrium_1_1SemiLagrangian_ab7a610fbe5599e729230438af1dff2a0}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_abd17b628b89c43303d067c0a4e4d0bf1}{
+virtual void {\bfseries setDeltaT} (double deltaT)}
+\label{classnatrium_1_1SemiLagrangian_abd17b628b89c43303d067c0a4e4d0bf1}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangian_ac447ccd4c5b945da503cd57f8072db81}{
+virtual size\_\-t {\bfseries memory\_\-consumption\_\-sparsity\_\-pattern} () const }
+\label{classnatrium_1_1SemiLagrangian_ac447ccd4c5b945da503cd57f8072db81}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::SemiLagrangian$<$ dim $>$}
+
+This class solves the linear advection equations by a semi-\/Lagrangian scheme. 
+\begin{DoxyTemplParams}{Template Parameters}
+\item[{\em dim}]The dimension of the flow (2 or 3). \end{DoxyTemplParams}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1SemiLagrangian_ae6ef291c9cd0579ebb5889b271d64123}{
+\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}!SemiLagrangian@{SemiLagrangian}}
+\index{SemiLagrangian@{SemiLagrangian}!natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+\subsubsection[{SemiLagrangian}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::SemiLagrangian}$<$ dim $>$::{\bf SemiLagrangian} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ {\em triangulation}, \/  boost::shared\_\-ptr$<$ {\bf BoundaryCollection}$<$ dim $>$ $>$ {\em boundaries}, \/  size\_\-t {\em orderOfFiniteElement}, \/  boost::shared\_\-ptr$<$ {\bf Stencil} $>$ {\em stencil}, \/  double {\em delta\_\-t})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiLagrangian_ae6ef291c9cd0579ebb5889b271d64123}
+
+
+constructor Constructor 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em triangulation}]The global mesh. \item[\mbox{$\leftarrow$} {\em orderOfFiniteElement}]The number of nodes element and dimension \item[\mbox{$\leftarrow$} {\em stencil}]the DQ model \item[\mbox{$\leftarrow$} {\em delta\_\-t}]time step size; if delta\_\-t = 0, the sparsity pattern is not updated during construction \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1SemiLagrangian_a3b096afb85f7ea3782e03ba36b973088}{
+\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}!faceCrossedFirst@{faceCrossedFirst}}
+\index{faceCrossedFirst@{faceCrossedFirst}!natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+\subsubsection[{faceCrossedFirst}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ int {\bf natrium::SemiLagrangian}$<$ dim $>$::faceCrossedFirst (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  const dealii::Point$<$ dim $>$ \& {\em p\_\-inside}, \/  const dealii::Point$<$ dim $>$ \& {\em p\_\-outside}, \/  dealii::Point$<$ dim $>$ \& {\em p\_\-boundary}, \/  double $\ast$ {\em lambda}, \/  size\_\-t $\ast$ {\em child\_\-id})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiLagrangian_a3b096afb85f7ea3782e03ba36b973088}
+
+
+Determines which face is crossed first, when moving from one point inside the cell to a point outside. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em cell}]iterator to the active cell that contains the point p\_\-inside \item[\mbox{$\leftarrow$} {\em p\_\-inside}]the point inside the cell \item[\mbox{$\leftarrow$} {\em p\_\-outside}]the point outside the cell \item[\mbox{$\rightarrow$} {\em p\_\-boundary}]the point where the boundary is hit \item[\mbox{$\rightarrow$} {\em lambda}]the parameter lambda that solves p\_\-boundary\_\-unit = lambda $\ast$ p\_\-outside\_\-unit + (1-\/lambda) $\ast$ p\_\-inside\_\-unit \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+face\_\-id, if a face is crossed; -\/1, if no face is crossed (i.e. the second point is inside the cell) 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+lambda is calculated for the unit cell. In general, p\_\-boundary = lambda $\ast$ p\_\-outside + (1-\/lambda) $\ast$ p\_\-inside does not hold 
+\end{DoxyNote}
+\hypertarget{classnatrium_1_1SemiLagrangian_aac0394a8292810788e983909b2de4355}{
+\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}!getNeighbor@{getNeighbor}}
+\index{getNeighbor@{getNeighbor}!natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+\subsubsection[{getNeighbor}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ dealii::DoFHandler$<$dim$>$::cell\_\-iterator {\bf natrium::SemiLagrangian}$<$ dim $>$::getNeighbor (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  size\_\-t {\em i})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiLagrangian_aac0394a8292810788e983909b2de4355}
+
+
+get i-\/th neighbor of a cell, incorporating periodic boundaries 
+\begin{DoxyParams}{Parameters}
+\item[{\em cell}]An iterator pointing to cell \item[{\em i}]face index (=neighbor index) \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+m\_\-doFHandler-\/$>$end(), if cell has no i-\/th neighbor (e.g. at solid boundary) 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1SemiLagrangian_ab6d5f8d666330d8f229ee727985592b8}{
+\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}!getNeighborhood@{getNeighborhood}}
+\index{getNeighborhood@{getNeighborhood}!natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+\subsubsection[{getNeighborhood}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::SemiLagrangian}$<$ dim $>$::getNeighborhood (typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  {\bf Neighborhood} \& {\em neighborhood}, \/  size\_\-t {\em n\_\-shells} = {\ttfamily 1})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiLagrangian_ab6d5f8d666330d8f229ee727985592b8}
+
+
+fill the neighborhood list 
+\begin{DoxyParams}{Parameters}
+\item[{\em cell}]cell \item[{\em neighborhood}]the neighborhood object \end{DoxyParams}
+\begin{DoxyNote}{Note}
+the neighborhood incorporates the current cell, all its neighbors, and their respective neighbors; each cell has only pointer to it in the neighborhood. 
+\end{DoxyNote}
+\hypertarget{classnatrium_1_1SemiLagrangian_aeb3b1dfda8a0d8fe7473716f98b12647}{
+\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}!getNumberOfDoFs@{getNumberOfDoFs}}
+\index{getNumberOfDoFs@{getNumberOfDoFs}!natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+\subsubsection[{getNumberOfDoFs}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual size\_\-t {\bf natrium::SemiLagrangian}$<$ dim $>$::getNumberOfDoFs () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1SemiLagrangian_aeb3b1dfda8a0d8fe7473716f98b12647}
+
+
+save matrices and status to files 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em directory}]directory to save the matrix files to \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em \hyperlink{classnatrium_1_1AdvectionSolverException}{AdvectionSolverException}}]\end{DoxyExceptions}
+
+
+Implements \hyperlink{classnatrium_1_1AdvectionOperator_a251e21d1dd023926d4c5f7fd973b90bf}{natrium::AdvectionOperator$<$ dim $>$}.\hypertarget{classnatrium_1_1SemiLagrangian_a1e41b66518f92c75135b2873a39160ff}{
+\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}!isCellInNeighborhood@{isCellInNeighborhood}}
+\index{isCellInNeighborhood@{isCellInNeighborhood}!natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+\subsubsection[{isCellInNeighborhood}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ bool {\bf natrium::SemiLagrangian}$<$ dim $>$::isCellInNeighborhood (const typename dealii::DoFHandler$<$ dim $>$::cell\_\-accessor \& {\em cell}, \/  const {\bf Neighborhood} \& {\em neighborhood})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiLagrangian_a1e41b66518f92c75135b2873a39160ff}
+
+
+Checks if a cell is already in the neighborhood list. 
+\begin{DoxyParams}{Parameters}
+\item[{\em cell}]the cell \item[{\em neighborhood}]the neighborhood list \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true, if cell is already in the list 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1SemiLagrangian_a9db13229770025b4c0461d8e4ff4ee50}{
+\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}!recursivelySearchInNeighborhood@{recursivelySearchInNeighborhood}}
+\index{recursivelySearchInNeighborhood@{recursivelySearchInNeighborhood}!natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+\subsubsection[{recursivelySearchInNeighborhood}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ dealii::DoFHandler$<$dim$>$::active\_\-cell\_\-iterator {\bf natrium::SemiLagrangian}$<$ dim $>$::recursivelySearchInNeighborhood (const dealii::Point$<$ dim $>$ \& {\em p}, \/  typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiLagrangian_a9db13229770025b4c0461d8e4ff4ee50}
+
+
+recursively search a point in neighborhood, until is found 
+\begin{DoxyParams}{Parameters}
+\item[{\em p}]the point you search for \item[{\em cell}]The start cell of the recursive search \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A cell that contains the point p. If the point was not found, the cell pointer will point to DoFHandler.end() 
+\end{DoxyReturn}
+\hypertarget{classnatrium_1_1SemiLagrangian_a108742ef40b532cb9e1e26384dafec94}{
+\index{natrium::SemiLagrangian@{natrium::SemiLagrangian}!shapeFunctionValue@{shapeFunctionValue}}
+\index{shapeFunctionValue@{shapeFunctionValue}!natrium::SemiLagrangian@{natrium::SemiLagrangian}}
+\subsubsection[{shapeFunctionValue}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::SemiLagrangian}$<$ dim $>$::shapeFunctionValue (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  const std::vector$<$ dealii::Point$<$ dim $>$ $>$ \& {\em points}, \/  std::vector$<$ std::vector$<$ double $>$ $>$ \& {\em values})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SemiLagrangian_a108742ef40b532cb9e1e26384dafec94}
+
+
+Calculates the shape values for arbitrary points. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em cell}]the cell which contains the points \item[\mbox{$\leftarrow$} {\em a}]vector of points \item[\mbox{$\leftarrow$} {\em a}]vector of vector$<$double$>$ that will contain the shape function values at the points. Has to have the size n\_\-points x dofs\_\-per\_\-cell \end{DoxyParams}
+\begin{DoxyNote}{Note}
+This function is similar to FEFieldFunction$<$dim, DH, VECTOR$>$::vector\_\-value 
+\end{DoxyNote}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/\hyperlink{SemiLagrangian_8h}{SemiLagrangian.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/\hyperlink{SemiLagrangian_8cpp}{SemiLagrangian.cpp}\end{DoxyCompactItemize}

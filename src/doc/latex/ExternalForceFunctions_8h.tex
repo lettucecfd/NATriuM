@@ -1,0 +1,40 @@
+\hypertarget{ExternalForceFunctions_8h}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/ExternalForceFunctions.h File Reference}
+\label{ExternalForceFunctions_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/ExternalForceFunctions.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/ExternalForceFunctions.h}}
+}
+
+
+Inline functions to incorporate external forces.  
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{namespacenatrium_1_1ExternalForceFunctions_afb11a9f37e665fde60f8271fcf44627f}{natrium::ExternalForceFunctions::applyExactDifferenceForcingD2Q9} (double f\_\-i\mbox{[}9\mbox{]}, double force\_\-x, double force\_\-y, double u\_\-0\_\-i, double u\_\-1\_\-i, double rho\_\-i, double dt, double prefactor)
+\begin{DoxyCompactList}\small\item\em Calculate source term for exact difference forcing (Kupershtokh et. al.). \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1ExternalForceFunctions_a0679b8f54f21f795b822f843a1f1e2a4}{
+void {\bfseries natrium::ExternalForceFunctions::applyGuoForcingD2Q9} (double f\_\-i\mbox{[}9\mbox{]}, double force\_\-x, double force\_\-y, double u\_\-0\_\-i, double u\_\-1\_\-i, double omega, double prefactor, double dt)}
+\label{namespacenatrium_1_1ExternalForceFunctions_a0679b8f54f21f795b822f843a1f1e2a4}
+
+\item 
+void \hyperlink{namespacenatrium_1_1ExternalForceFunctions_ae3a272c916b3ea794cd0fd7f30ca2fa7}{natrium::ExternalForceFunctions::applyExactDifferenceForcingD3Q19} (double f\_\-i\mbox{[}19\mbox{]}, double force\_\-x, double force\_\-y, double force\_\-z, double u\_\-0\_\-i, double u\_\-1\_\-i, double u\_\-2\_\-i, double rho\_\-i, double dt, double prefactor)
+\begin{DoxyCompactList}\small\item\em Calculate source term for exact difference forcing (Kupershtokh et. al.). \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1ExternalForceFunctions_a7bae1e5945fcae2095c828c435833c74}{
+void {\bfseries natrium::ExternalForceFunctions::applyGuoForcingD3Q19} (double f\_\-i\mbox{[}19\mbox{]}, double force\_\-x, double force\_\-y, double force\_\-z, double u\_\-0\_\-i, double u\_\-1\_\-i, double u\_\-2\_\-i, double omega, double prefactor, double dt)}
+\label{namespacenatrium_1_1ExternalForceFunctions_a7bae1e5945fcae2095c828c435833c74}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Inline functions to incorporate external forces. \begin{DoxyDate}{Date}
+04.01.2016 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}

@@ -1,9 +1,35 @@
 \hypertarget{BoundaryTools_8cpp}{
-\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/BoundaryTools.cpp File Reference}
-\label{BoundaryTools_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/BoundaryTools.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/BoundaryTools.cpp}}
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/BoundaryTools.cpp File Reference}
+\label{BoundaryTools_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/BoundaryTools.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/BoundaryTools.cpp}}
 }
 {\ttfamily \#include \char`\"{}BoundaryTools.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/Math.h\char`\"{}}\par
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{namespacenatrium_1_1BoundaryTools_a64669bd0ddcea4f0eb21121beebcf76f}{natrium::BoundaryTools::checkParallelLines} (const dealii::Point$<$ 2 $>$ \&beginLine1, const dealii::Point$<$ 2 $>$ \&endLine1, dealii::Point$<$ 2 $>$ \&beginLine2, dealii::Point$<$ 2 $>$ \&endLine2, std::string \&errorMessage)
+\begin{DoxyCompactList}\small\item\em Check if two lines in a 2D plane are parallel and not equal to each other. If they are antiparallel, swap begin and end of the second line. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacenatrium_1_1BoundaryTools_a4a6b2ff032061b8ebac2955d09630240}{natrium::BoundaryTools::getInterfacialLinesByBoundaryIndicator} (size\_\-t boundaryIndicator1, size\_\-t boundaryIndicator2, boost::shared\_\-ptr$<$ Mesh$<$ 2 $>$ $>$ triangulation, dealii::Point$<$ 2 $>$ \&beginLine1, dealii::Point$<$ 2 $>$ \&endLine1, dealii::Point$<$ 2 $>$ \&beginLine2, dealii::Point$<$ 2 $>$ \&endLine2, std::string \&errorMessage)
+\begin{DoxyCompactList}\small\item\em Get the positions of the lines that define interfaces from the defining \hyperlink{classnatrium_1_1Boundary}{Boundary} indicators. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$size\_\-t dim$>$ }\\void \hyperlink{namespacenatrium_1_1BoundaryTools_a89cbacd10c5ed2e0d49eb2c72b57fc4b}{natrium::BoundaryTools::CoupleDoFsAtBoundary} (dealii::TrilinosWrappers::SparsityPattern \&cSparse, const dealii::DoFHandler$<$ dim $>$ \&doFHandler, size\_\-t boundary\_\-id, PointCouplingAtBoundary coupling)
+\begin{DoxyCompactList}\small\item\em This functions adds elements to the sparsity pattern to couple different distribution functions at the boundary. \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1BoundaryTools_ad9bf65cd6eed52ccff2f6e671f1e6bb9}{
+template void {\bfseries natrium::BoundaryTools::CoupleDoFsAtBoundary$<$ 2 $>$} (dealii::TrilinosWrappers::SparsityPattern \&cSparse, const dealii::DoFHandler$<$ 2 $>$ \&doFHandler, size\_\-t boundary\_\-id, PointCouplingAtBoundary coupling)}
+\label{namespacenatrium_1_1BoundaryTools_ad9bf65cd6eed52ccff2f6e671f1e6bb9}
+
+\item 
+\hypertarget{namespacenatrium_1_1BoundaryTools_a1b4645703f7d9d8574b68b5e22e9ed77}{
+template void {\bfseries natrium::BoundaryTools::CoupleDoFsAtBoundary$<$ 3 $>$} (dealii::TrilinosWrappers::SparsityPattern \&cSparse, const dealii::DoFHandler$<$ 3 $>$ \&doFHandler, size\_\-t boundary\_\-id, PointCouplingAtBoundary coupling)}
+\label{namespacenatrium_1_1BoundaryTools_a1b4645703f7d9d8574b68b5e22e9ed77}
+
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

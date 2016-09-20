@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1BGK.html">BGK</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1BGK.html">BGK</a>
   </div>
 </div>
 <div class="contents">
@@ -59,11 +59,13 @@ Inheritance diagram for natrium::BGK:</div>
  <div class="center">
   <img src="classnatrium_1_1BGK.gif" usemap="#natrium::BGK_map" alt=""/>
   <map id="natrium::BGK_map" name="natrium::BGK_map">
-<area href="classnatrium_1_1CollisionModel.html" alt="natrium::CollisionModel" shape="rect" coords="324,0,530,24"/>
-<area href="classnatrium_1_1BGKPseudopotential.html" alt="natrium::BGKPseudopotential" shape="rect" coords="0,112,206,136"/>
-<area href="classnatrium_1_1BGKStandard.html" alt="natrium::BGKStandard" shape="rect" coords="216,112,422,136"/>
-<area href="classnatrium_1_1BGKStandardTransformed.html" alt="natrium::BGKStandardTransformed" shape="rect" coords="432,112,638,136"/>
-<area href="classnatrium_1_1BGKSteadyState.html" alt="natrium::BGKSteadyState" shape="rect" coords="648,112,854,136"/>
+<area href="classnatrium_1_1CollisionModel.html" alt="natrium::CollisionModel" shape="rect" coords="565,0,781,24"/>
+<area href="classnatrium_1_1BGKIncompressible.html" alt="natrium::BGKIncompressible" shape="rect" coords="0,112,216,136"/>
+<area href="classnatrium_1_1BGKMultistep.html" alt="natrium::BGKMultistep" shape="rect" coords="226,112,442,136"/>
+<area href="classnatrium_1_1BGKPseudopotential.html" alt="natrium::BGKPseudopotential&lt; dim &gt;" shape="rect" coords="452,112,668,136"/>
+<area href="classnatrium_1_1BGKStandard.html" alt="natrium::BGKStandard" shape="rect" coords="678,112,894,136"/>
+<area href="classnatrium_1_1BGKStandardTransformed.html" alt="natrium::BGKStandardTransformed" shape="rect" coords="904,112,1120,136"/>
+<area href="classnatrium_1_1BGKSteadyState.html" alt="natrium::BGKSteadyState" shape="rect" coords="1130,112,1346,136"/>
 </map>
  </div>
 </div>
@@ -76,7 +78,7 @@ Inheritance diagram for natrium::BGK:</div>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1029401a72788a6538e4e1941c305ab4"></a><!-- doxytag: member="natrium::BGK::~BGK" ref="a1029401a72788a6538e4e1941c305ab4" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGK.html#a1029401a72788a6538e4e1941c305ab4">~BGK</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGK.html#a9fa1c980217a183fc4762954e86ba36d">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGK.html#a9fa1c980217a183fc4762954e86ba36d">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;densities, vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#a9fa1c980217a183fc4762954e86ba36d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab82471c249d19fdc62005fb8b7e03190"></a><!-- doxytag: member="natrium::BGK::collideSingleDoF" ref="ab82471c249d19fdc62005fb8b7e03190" args="(size_t doF, const vector&lt; double &gt; &amp;feq, DistributionFunctions &amp;f) const " -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>collideSingleDoF</b> (size_t doF, const vector&lt; double &gt; &amp;feq, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f) const </td></tr>
@@ -94,6 +96,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQ</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adac002cf79a455f6b053b51210f39acb"></a><!-- doxytag: member="natrium::BGK::getRelaxationParameter" ref="adac002cf79a455f6b053b51210f39acb" args="() const " -->
 double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParameter</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0e0ead95ae973c7d1c561edf35b3cba3"></a><!-- doxytag: member="natrium::BGK::getDt" ref="a0e0ead95ae973c7d1c561edf35b3cba3" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDt</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6b4c1726c7454c516a044d00f0917f4"></a><!-- doxytag: member="natrium::BGK::getLambda" ref="af6b4c1726c7454c516a044d00f0917f4" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getLambda</b> () const </td></tr>
 <tr><td colspan="2"><h2>Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGK.html#a430f5020b6101a64d89a0cc2a246260e">calculateRelaxationParameter</a> (double viscosity, double timeStepSize, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;stencil, double=1.0)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">calculate relaxation parameter  <a href="#a430f5020b6101a64d89a0cc2a246260e"></a><br/></td></tr>
@@ -200,13 +206,13 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParame
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">distributed_vector &amp;&nbsp;</td>
+          <td class="paramtype"><a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>densities</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">vector&lt; distributed_vector &gt; &amp;&nbsp;</td>
+          <td class="paramtype">vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>velocities</em>, </td>
         </tr>
         <tr>
@@ -235,7 +241,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParame
 
 <p>Implements <a class="el" href="classnatrium_1_1CollisionModel.html">natrium::CollisionModel</a>.</p>
 
-<p>Reimplemented in <a class="el" href="classnatrium_1_1BGKPseudopotential.html#a5f40f5076273f9ec38f3078c891b453c">natrium::BGKPseudopotential</a>, <a class="el" href="classnatrium_1_1BGKStandard.html#a8e0493b063d56275d7ee607e25c4145e">natrium::BGKStandard</a>, <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#aaa2e752c6aa2294f1ebeb9d326ba9eb8">natrium::BGKStandardTransformed</a>, and <a class="el" href="classnatrium_1_1BGKSteadyState.html#a8554fb624c5a3abe01651747b3d9aeb7">natrium::BGKSteadyState</a>.</p>
+<p>Reimplemented in <a class="el" href="classnatrium_1_1BGKIncompressible.html#a53dc53b5ddb31a6ef67acd25abb405f1">natrium::BGKIncompressible</a>, <a class="el" href="classnatrium_1_1BGKMultistep.html#a503d69a669d91979a885d1b02c2edb0a">natrium::BGKMultistep</a>, <a class="el" href="classnatrium_1_1BGKPseudopotential.html#afa18cdab45c73c33b2660f37d0ca82ba">natrium::BGKPseudopotential&lt; dim &gt;</a>, <a class="el" href="classnatrium_1_1BGKStandard.html#a8e0493b063d56275d7ee607e25c4145e">natrium::BGKStandard</a>, <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#aaa2e752c6aa2294f1ebeb9d326ba9eb8">natrium::BGKStandardTransformed</a>, and <a class="el" href="classnatrium_1_1BGKSteadyState.html#a8554fb624c5a3abe01651747b3d9aeb7">natrium::BGKSteadyState</a>.</p>
 
 </div>
 </div>
@@ -249,7 +255,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParame
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -258,7 +264,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRelaxationParame
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

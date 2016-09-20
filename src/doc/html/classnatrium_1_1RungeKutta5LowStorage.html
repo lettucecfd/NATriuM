@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html">RungeKutta5LowStorage</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html">RungeKutta5LowStorage</a>
   </div>
 </div>
 <div class="contents">
@@ -72,8 +72,8 @@ Inheritance diagram for natrium::RungeKutta5LowStorage&lt; MATRIX, VECTOR &gt;:<
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a915493da30cf9308bd47e87d0c20cad8"></a><!-- doxytag: member="natrium::RungeKutta5LowStorage::~RungeKutta5LowStorage" ref="a915493da30cf9308bd47e87d0c20cad8" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">~RungeKutta5LowStorage</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a11ed7e7ef3b4a5e575452261bc783a21"></a><!-- doxytag: member="natrium::RungeKutta5LowStorage::step" ref="a11ed7e7ef3b4a5e575452261bc783a21" args="(VECTOR &amp;vector, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector, double t=0, double dt=0)" -->
-virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a11ed7e7ef3b4a5e575452261bc783a21">step</a> (VECTOR &amp;vector, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector, double t=0, double dt=0)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a90a1bec53a8fd458a190d3e9f8c78478"></a><!-- doxytag: member="natrium::RungeKutta5LowStorage::step" ref="a90a1bec53a8fd458a190d3e9f8c78478" args="(VECTOR &amp;vector, const MATRIX &amp;systemMatrix, VECTOR &amp;systemVector, double t=0, double dt=0)" -->
+virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a90a1bec53a8fd458a190d3e9f8c78478">step</a> (VECTOR &amp;vector, const MATRIX &amp;systemMatrix, VECTOR &amp;systemVector, double t=0, double dt=0)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">make one time integration using the RK5 scheme dU_j = A_j * dU_{j-1} + timeStep * F(U_j) U_j = U_{j-1} + B_j* dU_j <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a452fad5bef3b7734c94ca5796ce0c589"></a><!-- doxytag: member="natrium::RungeKutta5LowStorage::getA" ref="a452fad5bef3b7734c94ca5796ce0c589" args="() const " -->
 const vector&lt; double &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getA</b> () const </td></tr>
@@ -83,13 +83,13 @@ const vector&lt; double &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bo
 const vector&lt; double &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getC</b> () const </td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a226065b21bd5f8e3ae7566ba53e33d1e"></a><!-- doxytag: member="natrium::RungeKutta5LowStorage::RungeKutta5LowStorage" ref="a226065b21bd5f8e3ae7566ba53e33d1e" args="(double timeStepSize, const distributed_vector &amp;prototype_vector)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>RungeKutta5LowStorage</b> (double timeStepSize, const distributed_vector &amp;prototype_vector)</td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>RungeKutta5LowStorage</b> (double timeStepSize, const <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;prototype_vector)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="ae5c62f8f59075a950ff25719e79d6fab"></a><!-- doxytag: member="natrium::RungeKutta5LowStorage::RungeKutta5LowStorage" ref="ae5c62f8f59075a950ff25719e79d6fab" args="(double timeStepSize, const distributed_block_vector &amp;prototype_vector)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>RungeKutta5LowStorage</b> (double timeStepSize, const distributed_block_vector &amp;prototype_vector)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a54a371cac7acd4b1ab73ddf7636fb60a"></a><!-- doxytag: member="natrium::RungeKutta5LowStorage::RungeKutta5LowStorage" ref="a54a371cac7acd4b1ab73ddf7636fb60a" args="(double timeStepSize, const numeric_vector &amp;prototype_vector)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>RungeKutta5LowStorage</b> (double timeStepSize, const numeric_vector &amp;prototype_vector)</td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>RungeKutta5LowStorage</b> (double timeStepSize, const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;prototype_vector)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a5ab769a4a099dd65cb5c2ff9d13c7eab"></a><!-- doxytag: member="natrium::RungeKutta5LowStorage::RungeKutta5LowStorage" ref="a5ab769a4a099dd65cb5c2ff9d13c7eab" args="(double timeStepSize, const block_vector &amp;prototype_vector)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>RungeKutta5LowStorage</b> (double timeStepSize, const block_vector &amp;prototype_vector)</td></tr>
@@ -149,7 +149,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -158,7 +158,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -21,9 +21,9 @@ a class that overrides the output function of the CFD solver class with comparis
 \label{classnatrium_1_1BenchmarkCFDSolver_aa9cdc67e4218230f54d74b0182170705}
 
 \begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1BenchmarkCFDSolver_a9708132fc0cef4ae55e3453672891c81}{
-virtual void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_a9708132fc0cef4ae55e3453672891c81}{output} (size\_\-t iteration)}
-\label{classnatrium_1_1BenchmarkCFDSolver_a9708132fc0cef4ae55e3453672891c81}
+\hypertarget{classnatrium_1_1BenchmarkCFDSolver_a9d63cc1e2fe66301533713d4f1ce43a6}{
+virtual void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_a9d63cc1e2fe66301533713d4f1ce43a6}{output} (size\_\-t iteration, bool is\_\-final=false)}
+\label{classnatrium_1_1BenchmarkCFDSolver_a9d63cc1e2fe66301533713d4f1ce43a6}
 
 \begin{DoxyCompactList}\small\item\em create output data and write to file \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BenchmarkCFDSolver_a96be8add7c888ef4e6a1cb41cd2b40f6}{
@@ -37,16 +37,16 @@ virtual \hyperlink{classnatrium_1_1BenchmarkCFDSolver_aafd3c01db648420ce6d98a834
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BenchmarkCFDSolver_a486d464112256436c1c3300b28519cbb}{
-void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_a486d464112256436c1c3300b28519cbb}{getAllAnalyticDensities} (double time, distributed\_\-vector \&analyticDensities, const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const }
+void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_a486d464112256436c1c3300b28519cbb}{getAllAnalyticDensities} (double time, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&analyticDensities, const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const }
 \label{classnatrium_1_1BenchmarkCFDSolver_a486d464112256436c1c3300b28519cbb}
 
 \begin{DoxyCompactList}\small\item\em get full analytic solution for the density field at time t \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BenchmarkCFDSolver_aebef5814f8c44ab8d0029114b5998cff}{
-void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_aebef5814f8c44ab8d0029114b5998cff}{getAllAnalyticVelocities} (double time, vector$<$ distributed\_\-vector $>$ \&analyticVelocities, const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const }
+void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_aebef5814f8c44ab8d0029114b5998cff}{getAllAnalyticVelocities} (double time, vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&analyticVelocities, const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const }
 \label{classnatrium_1_1BenchmarkCFDSolver_aebef5814f8c44ab8d0029114b5998cff}
 
 \begin{DoxyCompactList}\small\item\em get full analytic solution for the density field at time t \item\end{DoxyCompactList}\item 
-void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_a7883dcfd4469ae65ae62cad09ae5d160}{applyInitialVelocities} (vector$<$ distributed\_\-vector $>$ \&initialVelocities, const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const 
+void \hyperlink{classnatrium_1_1BenchmarkCFDSolver_a7883dcfd4469ae65ae62cad09ae5d160}{applyInitialVelocities} (vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&initialVelocities, const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const 
 \begin{DoxyCompactList}\small\item\em set initial velocities \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BenchmarkCFDSolver_a767bb620c883abad0091a9e68aee4491}{
 const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Benchmark}{Benchmark}$<$ dim $>$ $>$ \& {\bfseries getBenchmark} () const }
@@ -82,7 +82,7 @@ a class that overrides the output function of the CFD solver class with comparis
 \hypertarget{classnatrium_1_1BenchmarkCFDSolver_a7883dcfd4469ae65ae62cad09ae5d160}{
 \index{natrium::BenchmarkCFDSolver@{natrium::BenchmarkCFDSolver}!applyInitialVelocities@{applyInitialVelocities}}
 \index{applyInitialVelocities@{applyInitialVelocities}!natrium::BenchmarkCFDSolver@{natrium::BenchmarkCFDSolver}}
-\subsubsection[{applyInitialVelocities}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::BenchmarkCFDSolver}$<$ dim $>$::applyInitialVelocities (vector$<$ distributed\_\-vector $>$ \& {\em initialVelocities}, \/  const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \& {\em supportPoints}) const}}
+\subsubsection[{applyInitialVelocities}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::BenchmarkCFDSolver}$<$ dim $>$::applyInitialVelocities (vector$<$ {\bf distributed\_\-vector} $>$ \& {\em initialVelocities}, \/  const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \& {\em supportPoints}) const}}
 \label{classnatrium_1_1BenchmarkCFDSolver_a7883dcfd4469ae65ae62cad09ae5d160}
 
 

@@ -535,16 +535,6 @@ public:
 		return m_stencil;
 	}
 
-	dealii::Tensor<1, dim> vectorToTensor(const numeric_vector& v) const {
-		assert(v.size() == dim);
-		dealii::Tensor<1, dim> t;
-		t[0] = v(0);
-		t[1] = v(1);
-		if (dim == 3)
-			t[2] = v(2);
-		return t;
-	}
-
 	double getDeltaT() const {
 		return m_deltaT;
 	}

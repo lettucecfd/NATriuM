@@ -44,11 +44,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1TaylorGreenVortex3D.html">TaylorGreenVortex3D</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1TaylorGreenVortex3D.html">TaylorGreenVortex3D</a>
   </div>
 </div>
 <div class="contents">
-<h1>natrium::TaylorGreenVortex3D Class Reference</h1><!-- doxytag: class="natrium::TaylorGreenVortex3D" --><!-- doxytag: inherits="Benchmark&lt; 3 &gt;" -->
+<h1>natrium::TaylorGreenVortex3D Class Reference</h1><!-- doxytag: class="natrium::TaylorGreenVortex3D" --><!-- doxytag: inherits="ProblemDescription&lt; 3 &gt;" -->
 <p>Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  
 <a href="#_details">More...</a></p>
 
@@ -59,8 +59,7 @@ Inheritance diagram for natrium::TaylorGreenVortex3D:</div>
  <div class="center">
   <img src="classnatrium_1_1TaylorGreenVortex3D.gif" usemap="#natrium::TaylorGreenVortex3D_map" alt=""/>
   <map id="natrium::TaylorGreenVortex3D_map" name="natrium::TaylorGreenVortex3D_map">
-<area href="classnatrium_1_1Benchmark.html" alt="natrium::Benchmark&lt; 3 &gt;" shape="rect" coords="0,56,212,80"/>
-<area href="classnatrium_1_1ProblemDescription.html" alt="natrium::ProblemDescription&lt; dim &gt;" shape="rect" coords="0,0,212,24"/>
+<area href="classnatrium_1_1ProblemDescription.html" alt="natrium::ProblemDescription&lt; 3 &gt;" shape="rect" coords="0,0,200,24"/>
 </map>
  </div>
 </div>
@@ -68,11 +67,12 @@ Inheritance diagram for natrium::TaylorGreenVortex3D:</div>
 <p><a href="classnatrium_1_1TaylorGreenVortex3D-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex3D_1_1AnalyticVelocity.html">AnalyticVelocity</a></td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">class to describe the x-component of the analytic solution  <a href="classnatrium_1_1TaylorGreenVortex3D_1_1AnalyticVelocity.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex3D_1_1InitialDensity.html">InitialDensity</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex3D_1_1InitialVelocity.html">InitialVelocity</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">class to describe the x-component of the initial velocity  <a href="classnatrium_1_1TaylorGreenVortex3D_1_1InitialVelocity.html#_details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex3D.html#ac0f6f0036c2c42c65cbbb7f4eaa359ed">TaylorGreenVortex3D</a> (double viscosity, size_t refinementLevel)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#ac0f6f0036c2c42c65cbbb7f4eaa359ed"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex3D.html#a8d6071197520b6fb7766132318a15029">TaylorGreenVortex3D</a> (double viscosity, size_t refinementLevel, double cs=0.57735026919, bool init_rho_analytically=false)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a8d6071197520b6fb7766132318a15029"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1cc6d70f1b2610383f81b8d1109b6ae9"></a><!-- doxytag: member="natrium::TaylorGreenVortex3D::~TaylorGreenVortex3D" ref="a1cc6d70f1b2610383f81b8d1109b6ae9" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex3D.html#a1cc6d70f1b2610383f81b8d1109b6ae9">~TaylorGreenVortex3D</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -80,7 +80,7 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). </p>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ac0f6f0036c2c42c65cbbb7f4eaa359ed"></a><!-- doxytag: member="natrium::TaylorGreenVortex3D::TaylorGreenVortex3D" ref="ac0f6f0036c2c42c65cbbb7f4eaa359ed" args="(double viscosity, size_t refinementLevel)" -->
+<a class="anchor" id="a8d6071197520b6fb7766132318a15029"></a><!-- doxytag: member="natrium::TaylorGreenVortex3D::TaylorGreenVortex3D" ref="a8d6071197520b6fb7766132318a15029" args="(double viscosity, size_t refinementLevel, double cs=0.57735026919, bool init_rho_analytically=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -94,7 +94,19 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&nbsp;</td>
-          <td class="paramname"> <em>refinementLevel</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>refinementLevel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>cs</em> = <code>0.57735026919</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>init_rho_analytically</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -122,7 +134,7 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -131,7 +143,7 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
