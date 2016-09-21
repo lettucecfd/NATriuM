@@ -35,15 +35,13 @@ public:
 
 	/** @short is the boundary a periodic boundary ?
 	 */
-	virtual bool isPeriodic() const {
-		return false;
-	}
+	virtual bool isPeriodic() const = 0;
 
-	/** @short is the boundary a dirichlet boundary ?
+	/** @short is the boundary a linear flux boundary as in SEDG-LBM
 	 */
-	virtual bool isLinear() const {
-		return false;
-	}
+	virtual bool isLinearFluxBoundary() const = 0;
+
+	virtual bool isDoFBoundary() const = 0;
 
 };
 

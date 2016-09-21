@@ -160,6 +160,7 @@ void CoupleDoFsAtBoundary(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling);
 
+
 } /* namespace BoundaryTools */
 
 } /* namespace natrium */

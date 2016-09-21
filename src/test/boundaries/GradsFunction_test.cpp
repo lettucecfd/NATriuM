@@ -29,13 +29,13 @@ BOOST_AUTO_TEST_CASE(GradsFunction_Call_test) {
 	vector<double> f;
 
 	f.resize(9);
-	GradsFunction<D2Q9, 2>(f, D2Q9(), rho, j2, P2);
+	GradsFunction<2>(f, D2Q9(), rho, j2, P2);
 	f.resize(15);
-	GradsFunction<D3Q15, 3>(f, D3Q15(), rho, j3, P3);
+	GradsFunction<3>(f, D3Q15(), rho, j3, P3);
 	f.resize(19);
-	GradsFunction<D3Q19, 3>(f, D3Q19(), rho, j3, P3);
+	GradsFunction<3>(f, D3Q19(), rho, j3, P3);
 	f.resize(27);
-	GradsFunction<D3Q27, 3>(f, D3Q27(), rho, j3, P3);
+	GradsFunction<3>(f, D3Q27(), rho, j3, P3);
 
 	pout << "done." << endl;
 
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(GradsFunction_Moments_test) {
 	// D2Q9
 	f.resize(9);
 	D2Q9 dq(12);
-	GradsFunction<D2Q9, 2>(f, dq, rho, j2, P2);
+	GradsFunction<2>(f, dq, rho, j2, P2);
 	rho_out = 0;
 	for (size_t alpha = 0; alpha < f.size(); alpha++) {
 		rho_out += f.at(alpha);
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(GradsFunction_Moments_test) {
 	// D3Q15
 	f.resize(15);
 	D3Q15 d3q15(1.9);
-	GradsFunction<D3Q15, 3>(f, d3q15, rho, j3, P3);
+	GradsFunction<3>(f, d3q15, rho, j3, P3);
 	rho_out = 0;
 	for (size_t alpha = 0; alpha < f.size(); alpha++) {
 		rho_out += f.at(alpha);
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(GradsFunction_Moments_test) {
 	// D3Q19
 	f.resize(19);
 	D3Q19 d3q19(0.012);
-	GradsFunction<D3Q19, 3>(f, d3q19, rho, j3, P3);
+	GradsFunction<3>(f, d3q19, rho, j3, P3);
 	rho_out = 0;
 	for (size_t alpha = 0; alpha < f.size(); alpha++) {
 		rho_out += f.at(alpha);
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(GradsFunction_Moments_test) {
 	// D3Q27
 	f.resize(27);
 	D3Q27 d3q27(5.2);
-	GradsFunction<D3Q27, 3>(f, d3q27, rho, j3, P3);
+	GradsFunction<3>(f, d3q27, rho, j3, P3);
 	rho_out = 0;
 	for (size_t alpha = 0; alpha < f.size(); alpha++) {
 		rho_out += f.at(alpha);

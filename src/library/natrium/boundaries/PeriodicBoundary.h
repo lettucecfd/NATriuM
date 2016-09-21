@@ -151,8 +151,15 @@ public:
 			const typename dealii::DoFHandler<dim>::active_cell_iterator &,
 			size_t faceBoundaryIndicator) const;
 
+
 	virtual bool isPeriodic() const {
 		return true;
+	}
+	virtual bool isLinearFluxBoundary() const {
+		return false;
+	}
+	virtual bool isDoFBoundary() const {
+		return false;
 	}
 
 	/**
@@ -211,6 +218,8 @@ public:
 	const boost::shared_ptr<Mesh<dim> >& getTriangulation() const {
 		return m_triangulation;
 	}
+
+
 }
 ;
 /* PeriodicBoundary1D */

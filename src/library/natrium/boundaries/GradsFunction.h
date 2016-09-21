@@ -13,6 +13,7 @@
 
 namespace natrium {
 
+
 /**
  * @short Grad's function constructs a set of discrete distributions with respect to a certain set of moments
  * Its functional form is \f[ f_i(\rho, j, P) = w_i \left[ \rho + \frac{j_{\alpha} c_{i \alpha} }{c_s^2}
@@ -20,7 +21,7 @@ namespace natrium {
  * \left( c_{i \alpha} c_{i \beta} - c_s^2 \delta_{\alpha \beta} \right) \right]. \f]
  * Checkout e.g. Dorschner et al. JCP 295 (2015) for more information.
  */
-template <class Stencil, size_t dim>
+template <size_t dim>
 void GradsFunction(vector<double>& f, const Stencil& stencil, double rho, const dealii::Tensor<1,dim>& j, const dealii::Tensor<2,dim>& P){
 	const size_t Q = stencil.getQ();
 	double p_part;

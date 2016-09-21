@@ -231,6 +231,11 @@ public:
 
 };
 
+
+void make_boundary_collection_from_file(std::string filename){
+	// TODO
+}
+
 } /* namespace natrium */
 
 #endif /* BOUNDARYCOLLECTION_H_ */
