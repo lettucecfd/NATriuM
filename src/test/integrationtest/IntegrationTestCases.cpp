@@ -792,8 +792,7 @@ TestResult ConvergenceTestForcingSchemes3D() {
 	//configuration->setDealIntegrator(SDIRK_TWO_STAGES);
 
 	// forall stencil types and forcing schemes
-	// TODO there is a bug in D3Q27; set "i < 4" when resolved
-	for (size_t i = 1; i < 3; i++) {
+	for (size_t i = 1; i < 4; i++) {
 		configuration->setStencil(static_cast<StencilType>(i));
 		for (size_t j = 1; j < 4; j++) {
 			configuration->setForcingScheme(static_cast<ForceType>(j));

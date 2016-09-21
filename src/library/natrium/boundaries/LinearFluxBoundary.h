@@ -124,10 +124,15 @@ public:
 		return m_boundaryVelocity;
 	}
 
-	/** @short is the boundary a dirichlet boundary ?
-	 */
-	virtual bool isLinear() const {
+
+	virtual bool isPeriodic() const {
+		return false;
+	}
+	virtual bool isLinearFluxBoundary() const {
 		return true;
+	}
+	virtual bool isDoFBoundary() const {
+		return false;
 	}
 };
 

@@ -361,7 +361,7 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 						feNeighborFaceValues, inverseLocalMassMatrix);
 			} else /* if is not periodic */{
 				// Apply other boundaries
-				if ((m_boundaries->getBoundary(boundaryIndicator)->isLinear())) {
+				if ((m_boundaries->getBoundary(boundaryIndicator)->isLinearFluxBoundary())) {
 					const boost::shared_ptr<LinearFluxBoundary<dim> >& LinearBoundary =
 							m_boundaries->getLinearFluxBoundary(boundaryIndicator);
 					LinearBoundary->assembleBoundary(alpha, cell, j,
