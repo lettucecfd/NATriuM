@@ -9,7 +9,7 @@
 
 #include <iterator>
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "deal.II/base/point.h"
 #include "deal.II/grid/grid_generator.h"

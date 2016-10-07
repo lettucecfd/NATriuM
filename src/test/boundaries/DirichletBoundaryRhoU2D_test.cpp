@@ -7,7 +7,7 @@
 
 
 #include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "deal.II/base/function.h"
 #include "deal.II/dofs/dof_tools.h"

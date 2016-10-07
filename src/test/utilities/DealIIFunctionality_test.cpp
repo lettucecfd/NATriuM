@@ -15,7 +15,7 @@
 #include "natrium/advection/SemiLagrangian.h"
 #include "natrium/stencils/D2Q9.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 using namespace natrium;
 

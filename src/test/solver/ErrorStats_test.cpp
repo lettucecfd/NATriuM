@@ -8,7 +8,7 @@
 #include "natrium/solver/ErrorStats.h"
 #include <fstream>
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 #include "boost/filesystem.hpp"
 
 #include "natrium/solver/SolverConfiguration.h"

@@ -10,7 +10,7 @@
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_generator.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 using namespace natrium;
 
