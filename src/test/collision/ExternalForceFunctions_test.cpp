@@ -8,7 +8,7 @@
 #include <math.h>
 #include <exception>
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D3Q15.h"

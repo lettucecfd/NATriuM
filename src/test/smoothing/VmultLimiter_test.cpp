@@ -7,7 +7,7 @@
 
 #include "natrium/smoothing/VmultLimiter.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "deal.II/base/index_set.h"
 

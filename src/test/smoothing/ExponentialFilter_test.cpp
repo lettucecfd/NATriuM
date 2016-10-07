@@ -7,7 +7,7 @@
 
 #include "natrium/smoothing/ExponentialFilter.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "deal.II/base/polynomial_space.h"
 #include "deal.II/base/polynomial.h"

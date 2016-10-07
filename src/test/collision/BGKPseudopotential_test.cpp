@@ -7,7 +7,7 @@
 
 #include "natrium/collision/BGK.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/collision/BGKPseudopotential.h"

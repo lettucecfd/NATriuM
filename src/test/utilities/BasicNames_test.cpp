@@ -7,7 +7,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 using std::cout;
 using std::endl;

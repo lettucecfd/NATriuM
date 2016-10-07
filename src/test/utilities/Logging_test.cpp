@@ -9,7 +9,7 @@
 
 #include <time.h>
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 
 //#define TEST_LOGGING

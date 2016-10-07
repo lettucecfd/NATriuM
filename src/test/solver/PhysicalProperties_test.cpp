@@ -8,7 +8,7 @@
 #include "natrium/solver/PhysicalProperties.h"
 
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/benchmarks/CouetteFlow2D.h"

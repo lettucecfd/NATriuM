@@ -7,7 +7,7 @@
 
 #include "natrium/advection/SemiLagrangian.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 /*#include "deal.II/numerics/data_out.h"
  #include "deal.II/fe/fe_dgq.h"

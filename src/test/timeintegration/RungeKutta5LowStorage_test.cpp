@@ -6,7 +6,7 @@
  */
 
 #include "natrium/timeintegration/RungeKutta5LowStorage.h"
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "deal.II/lac/sparsity_pattern.h"
 #include "deal.II/lac/compressed_sparsity_pattern.h"

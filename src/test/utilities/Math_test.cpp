@@ -7,7 +7,7 @@
 
 #include "natrium/utilities/Math.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "natrium/utilities/BasicNames.h"
 

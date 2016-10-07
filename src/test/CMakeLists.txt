@@ -3,15 +3,15 @@
 
 file(   GLOB_RECURSE
         TEST_FILES
-        #advection/*.cpp
-        #boundaries/*.cpp
-        #collision/*.cpp
-        #problemdescription/*.cpp
-        #smoothing/*.cpp
-        #solver/*.cpp
+        advection/*.cpp
+        boundaries/*.cpp
+        collision/*.cpp
+        problemdescription/*.cpp
+        smoothing/*.cpp
+        solver/*.cpp
         stencils/*.cpp
-        #timeintegration/*.cpp
-        #utilities/*.cpp
+        timeintegration/*.cpp
+        utilities/*.cpp
         )
       
       

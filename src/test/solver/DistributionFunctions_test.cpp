@@ -7,7 +7,7 @@
 
 #include "natrium/solver/DistributionFunctions.h"
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "deal.II/fe/fe_dgq.h"
 
