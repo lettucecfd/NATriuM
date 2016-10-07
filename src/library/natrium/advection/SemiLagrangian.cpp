@@ -19,7 +19,6 @@
 #include "deal.II/lac/matrix_iterator.h"
 #include "deal.II/lac/sparsity_tools.h"
 #include "deal.II/base/utilities.h"
-#include "deal.II/lac/constraint_matrix.h"
 
 #include "../boundaries/PeriodicBoundary.h"
 #include "../boundaries/DoFBoundary.h"

@@ -139,6 +139,12 @@ public:
 				std::make_pair(boundary->getBoundaryIndicator(), boundary));
 	}
 
+	void removeBoundary(size_t boundary_id){
+		if (m_boundaries.at(boundary_id)){
+
+		}
+	}
+
 	/**
 	 * @short get a specific boundary
 	 * @throws BoundaryCollectionError, if the specified boundary indicator does not exist
@@ -232,9 +238,9 @@ public:
 };
 
 
-void make_boundary_collection_from_file(std::string filename){
+/*void make_boundary_collection_from_file(std::string filename){
 	// TODO
-}
+}*/
 
 } /* namespace natrium */
 

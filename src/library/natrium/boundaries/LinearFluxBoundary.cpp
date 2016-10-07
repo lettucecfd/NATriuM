@@ -8,8 +8,7 @@
 #include "LinearFluxBoundary.h"
 
 #include "deal.II/lac/compressed_sparsity_pattern.h"
-#include <deal.II/dofs/dof_handler.h>
-#include <deal.II/lac/constraint_matrix.h>
+#include "deal.II/dofs/dof_handler.h"
 
 
 namespace natrium {

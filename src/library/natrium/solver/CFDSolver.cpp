@@ -16,7 +16,6 @@
 #include "deal.II/fe/component_mask.h"
 #include "deal.II/base/logstream.h"
 #include "deal.II/grid/grid_tools.h"
-#include "deal.II/lac/constraint_matrix.h"
 #include "deal.II/base/index_set.h"
 
 #include "PhysicalProperties.h"
