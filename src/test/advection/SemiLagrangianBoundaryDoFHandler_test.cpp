@@ -12,9 +12,9 @@
 #include "natrium/problemdescription/LinearBoundaryRhoU.h"
 #include "natrium/advection/SemiLagrangianVectorReferenceTypes.h"
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(SemiLagrangianBoundaryDoFHandler_test)
 
@@ -150,4 +150,3 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryDoFHandler_Apply_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

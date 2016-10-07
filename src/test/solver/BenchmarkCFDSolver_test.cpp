@@ -7,6 +7,5 @@
 
 #include "natrium/solver/BenchmarkCFDSolver.h"
 
-namespace natrium {
+using namespace natrium;
 
-} /* namespace natrium */

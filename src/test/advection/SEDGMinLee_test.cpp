@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "deal.II/numerics/data_out.h"
 #include "deal.II/fe/fe_dgq.h"
@@ -42,7 +42,7 @@
 ///////////////////////////////
 ///////////////////////////////
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(SEDGMinLee_test)
 
@@ -566,4 +566,3 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

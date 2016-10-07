@@ -7,6 +7,5 @@
 
 #include "natrium/utilities/DealiiExtensions.h"
 
-namespace natrium {
+using namespace natrium;
 
-} /* namespace natrium */

@@ -7,7 +7,7 @@
 
 #include "natrium/smoothing/VmultLimiter.h"
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "deal.II/base/index_set.h"
 
@@ -16,7 +16,7 @@
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "natrium/advection/SemiLagrangian.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(VmultLimiter_test)
 
@@ -65,4 +65,3 @@ BOOST_AUTO_TEST_CASE(VmultLimiter_apply_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

@@ -17,7 +17,7 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
+using namespace natrium;
 
 /** @short Description of a simple Periodic Flow (flow in square domain).
  *  The domain is [0,1]^2. The domain consists of
@@ -145,5 +145,4 @@ public:
 
 };
 
-} /* namespace natrium */
 #endif /* PeriodicTestFlow2D_H_ */

@@ -8,7 +8,7 @@
 #include "natrium/solver/ErrorStats.h"
 #include <fstream>
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 #include "boost/filesystem.hpp"
 
 #include "natrium/solver/SolverConfiguration.h"
@@ -18,7 +18,7 @@
 
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(ErrorStats_test)
 
@@ -112,4 +112,3 @@ BOOST_AUTO_TEST_CASE(ErrorStats_FunctionsInSolverContext_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

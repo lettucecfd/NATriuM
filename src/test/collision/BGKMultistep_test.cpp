@@ -12,7 +12,7 @@
 #include <math.h>
 #include <exception>
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "natrium/utilities/Math.h"
 #include "natrium/utilities/BasicNames.h"
@@ -28,7 +28,7 @@
 
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(BGKMultistep_test)
 BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
@@ -84,8 +84,8 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 	DistributionFunctions fAfterCollisionmulti(f);
 	DistributionFunctions fAfterCollisionbgk(f);
 
-	for (int p=0;p<1500;p++)
-	{
+	//for (int p=0;p<1500;p++)
+	//{
 
 	multistep.collideAll(fAfterCollisionmulti, rho, u, dof_handler.locally_owned_dofs(),
 			false);
@@ -107,9 +107,9 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 			}
 
 			BOOST_CHECK_SMALL(rho_bgk - rho_multistep, 1e-5);
-		}}
+		}
 	}
 
 	pout << "done" << endl;
 }
-}}
+BOOST_AUTO_TEST_SUITE_END()

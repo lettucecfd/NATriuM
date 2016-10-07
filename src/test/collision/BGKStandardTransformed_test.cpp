@@ -11,7 +11,7 @@
 #include <math.h>
 #include <exception>
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/fe/fe_dgq.h"
@@ -24,7 +24,7 @@
 
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(BGKStandardTransformed_test)
 
@@ -411,5 +411,4 @@ BOOST_AUTO_TEST_CASE(BGKStandardTransformed_collideAll_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */
 

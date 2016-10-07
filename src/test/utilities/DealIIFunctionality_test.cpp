@@ -10,9 +10,9 @@
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/grid/grid_generator.h"
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(DealIIFunctionality_test)
 
@@ -182,5 +182,3 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_IndexSet_test) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-
-} /* namespace natrium */

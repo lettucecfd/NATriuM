@@ -9,7 +9,7 @@
 
 #include <iterator>
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "deal.II/base/point.h"
 #include "deal.II/grid/grid_generator.h"
@@ -28,7 +28,7 @@
 
 #include "TaylorGreenTest2D.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(PeriodicBoundary2D_test)
 
@@ -407,4 +407,3 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary_getCoordinates3D_test) {
 
 BOOST_AUTO_TEST_SUITE_END() /* PeriodicBoundary<2>_test */
 
-} /* namespace natrium */

@@ -8,7 +8,7 @@
 #include <math.h>
 #include <exception>
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D3Q15.h"
@@ -24,7 +24,7 @@
 
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 // is now an integration test
 
@@ -199,4 +199,3 @@ namespace natrium {
 //
 //BOOST_AUTO_TEST_SUITE_END()
 
-}

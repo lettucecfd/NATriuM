@@ -3,14 +3,14 @@ include(../CMake_UnityBuild.txt)
 
 file(   GLOB_RECURSE
         TEST_FILES
-        advection/*.cpp
-        collision/*.cpp
-        problemdescription/*.cpp
-        smoothing/*.cpp
-        solver/*.cpp
-        stencils/*.cpp
-        timeintegration/*.cpp
-        utilities/*.cpp
+	#advection/*.cpp
+	collision/*.cpp
+	problemdescription/*.cpp
+	smoothing/*.cpp
+	#solver/*.cpp
+	#stencils/*.cpp
+	#timeintegration/*.cpp
+	#utilities/*.cpp
         )
    
       
