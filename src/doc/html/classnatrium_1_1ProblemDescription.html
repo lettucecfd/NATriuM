@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>
   </div>
 </div>
 <div class="contents">
@@ -66,7 +66,7 @@ Inheritance diagram for natrium::ProblemDescription&lt; dim &gt;:</div>
 <area href="classnatrium_1_1PoiseuilleFlow2D.html" alt="natrium::PoiseuilleFlow2D" shape="rect" coords="222,112,434,136"/>
 <area href="classnatrium_1_1TaylorGreenVortex2D.html" alt="natrium::TaylorGreenVortex2D" shape="rect" coords="444,112,656,136"/>
 <area href="classnatrium_1_1CouetteFlow3D.html" alt="natrium::CouetteFlow3D" shape="rect" coords="666,112,878,136"/>
-<area href="classnatrium_1_1TaylorGreenVortex3D.html" alt="natrium::TaylorGreenVortex3D" shape="rect" coords="888,112,1100,136"/>
+<area href="classnatrium_1_1PoiseuilleFlow3D.html" alt="natrium::PoiseuilleFlow3D" shape="rect" coords="888,112,1100,136"/>
 </map>
  </div>
 </div>
@@ -74,9 +74,8 @@ Inheritance diagram for natrium::ProblemDescription&lt; dim &gt;:</div>
 <p><a href="classnatrium_1_1ProblemDescription-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc92659d0022799b4e846cf050e8efad"></a><!-- doxytag: member="natrium::ProblemDescription::ProblemDescription" ref="afc92659d0022799b4e846cf050e8efad" args="(boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#afc92659d0022799b4e846cf050e8efad">ProblemDescription</a> (boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#afc92659d0022799b4e846cf050e8efad">ProblemDescription</a> (boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#afc92659d0022799b4e846cf050e8efad"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5270994970ddbd9f6fc98f292c1ccc0e"></a><!-- doxytag: member="natrium::ProblemDescription::~ProblemDescription" ref="a5270994970ddbd9f6fc98f292c1ccc0e" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#a5270994970ddbd9f6fc98f292c1ccc0e">~ProblemDescription</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -94,12 +93,27 @@ boost::shared_ptr<br class="typebreak"/>
 virtual const <br class="typebreak"/>
 boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::Function&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getInitialUFunction</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac60c308fbab126339ec08e2377fc77bb"></a><!-- doxytag: member="natrium::ProblemDescription::refine" ref="ac60c308fbab126339ec08e2377fc77bb" args="(Mesh&lt; dim &gt; &amp;mesh)=0" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>refine</b> (Mesh&lt; dim &gt; &amp;mesh)=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aedee850a39034390229f3e1131b00fad"></a><!-- doxytag: member="natrium::ProblemDescription::transform" ref="aedee850a39034390229f3e1131b00fad" args="(Mesh&lt; dim &gt; &amp;mesh)=0" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b> (Mesh&lt; dim &gt; &amp;mesh)=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9487f2c9b6f6845d1eac886470b91457"></a><!-- doxytag: member="natrium::ProblemDescription::refineAndTransform" ref="a9487f2c9b6f6845d1eac886470b91457" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>refineAndTransform</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8ca60598929e469f18e5ebf37d2ad6e"></a><!-- doxytag: member="natrium::ProblemDescription::refineAndTransform" ref="aa8ca60598929e469f18e5ebf37d2ad6e" args="(Mesh&lt; dim &gt; &amp;mesh)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>refineAndTransform</b> (Mesh&lt; dim &gt; &amp;mesh)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ProblemDescription.html#aed8ec93fcba6c0b78c04ef91b8703f7a">checkBoundaryConditions</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">check if boundary conditions are uniquely assigned to boundary indicator  <a href="#aed8ec93fcba6c0b78c04ef91b8703f7a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afeb7e2a712c3fb816d8491cb01d02156"></a><!-- doxytag: member="natrium::ProblemDescription::setMesh" ref="afeb7e2a712c3fb816d8491cb01d02156" args="(const boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; &amp;triangulation)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setMesh</b> (const boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; &amp;triangulation)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9078dc3c0da45f600e8b2375f321494e"></a><!-- doxytag: member="natrium::ProblemDescription::setBoundaries" ref="a9078dc3c0da45f600e8b2375f321494e" args="(const boost::shared_ptr&lt; BoundaryCollection&lt; dim &gt; &gt; &amp;boundaries)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setBoundaries</b> (const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt; &amp;boundaries)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02ed1361dced4a544fea2c50af06fe65"></a><!-- doxytag: member="natrium::ProblemDescription::setExternalForce" ref="a02ed1361dced4a544fea2c50af06fe65" args="(const boost::shared_ptr&lt; ConstantExternalForce&lt; dim &gt; &gt; &amp;force)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setExternalForce</b> (const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1ConstantExternalForce.html">ConstantExternalForce</a>&lt; dim &gt; &gt; &amp;force)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9989950e9e18966c6600ab4fd80b5009"></a><!-- doxytag: member="natrium::ProblemDescription::getExternalForce" ref="a9989950e9e18966c6600ab4fd80b5009" args="() const " -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1ConstantExternalForce.html">ConstantExternalForce</a>&lt; dim &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getExternalForce</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5527b8c5da6a4decb34bf34cd02a6734"></a><!-- doxytag: member="natrium::ProblemDescription::hasExternalForce" ref="a5527b8c5da6a4decb34bf34cd02a6734" args="() const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>hasExternalForce</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a582ecf296837d78a8a00fd598de38de2"></a><!-- doxytag: member="natrium::ProblemDescription::getViscosity" ref="a582ecf296837d78a8a00fd598de38de2" args="() const " -->
 double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getViscosity</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad624cab941ab79af0422e5f7c735e8d8"></a><!-- doxytag: member="natrium::ProblemDescription::setViscosity" ref="ad624cab941ab79af0422e5f7c735e8d8" args="(double viscosity)" -->
@@ -127,6 +141,47 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setInitialU</b> (boos
   </table>
   </dd>
 </dl>
+<hr/><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="afc92659d0022799b4e846cf050e8efad"></a><!-- doxytag: member="natrium::ProblemDescription::ProblemDescription" ref="afc92659d0022799b4e846cf050e8efad" args="(boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, double viscosity, double characteristicLength)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classnatrium_1_1ProblemDescription.html">natrium::ProblemDescription</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a> </td>
+          <td>(</td>
+          <td class="paramtype">boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt;&nbsp;</td>
+          <td class="paramname"> <em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>viscosity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>characteristicLength</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>constructor </p>
+
+<p><p>Create MPI (if not done yet); </p>
+</p>
+
+</div>
+</div>
 <hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="aed8ec93fcba6c0b78c04ef91b8703f7a"></a><!-- doxytag: member="natrium::ProblemDescription::checkBoundaryConditions" ref="aed8ec93fcba6c0b78c04ef91b8703f7a" args="()" -->
 <div class="memitem">
@@ -159,7 +214,7 @@ template&lt;size_t dim&gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -168,7 +223,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

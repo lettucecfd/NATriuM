@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>NATriuM: /mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/Boundary.h Source File</title>
+<title>NATriuM: /mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/Boundary.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javaScript" src="search/search.js"></script>
@@ -43,7 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-<h1>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/Boundary.h</h1><a href="Boundary_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
+<h1>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/Boundary.h</h1><a href="Boundary_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
 <a name="l00008"></a>00008 <span class="preprocessor">#ifndef BOUNDARYDESCRIPTION_H_</span>
 <a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define BOUNDARYDESCRIPTION_H_</span>
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
@@ -60,9 +60,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00027"></a>00027 
 <a name="l00028"></a>00028 <span class="keyword">public</span>:
 <a name="l00029"></a>00029 
-<a name="l00031"></a>00031         <a class="code" href="classnatrium_1_1Boundary.html#a987978143b16ef0bbadd2b465dc1882d" title="constructor">Boundary</a>();
+<a name="l00031"></a><a class="code" href="classnatrium_1_1Boundary.html#a987978143b16ef0bbadd2b465dc1882d">00031</a>         <a class="code" href="classnatrium_1_1Boundary.html#a987978143b16ef0bbadd2b465dc1882d" title="constructor">Boundary</a>(){};
 <a name="l00032"></a>00032 
-<a name="l00034"></a>00034         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1Boundary.html#a63e8fb8ec44288b9145f819b515ae6d9" title="destructor">~Boundary</a>();
+<a name="l00034"></a><a class="code" href="classnatrium_1_1Boundary.html#a534f7d32a140c0764c61dce6129bf88f">00034</a>         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1Boundary.html#a534f7d32a140c0764c61dce6129bf88f" title="destructor">~Boundary</a>(){};
 <a name="l00035"></a>00035 
 <a name="l00038"></a><a class="code" href="classnatrium_1_1Boundary.html#acb651f4148b4e00f08258e1321c43235">00038</a>         <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classnatrium_1_1Boundary.html#acb651f4148b4e00f08258e1321c43235" title="is the boundary a periodic boundary ?">isPeriodic</a>()<span class="keyword"> const </span>{
 <a name="l00039"></a>00039                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
@@ -71,26 +71,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00044"></a><a class="code" href="classnatrium_1_1Boundary.html#aa76ef0eef351680cadb6299dca94ee89">00044</a>         <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classnatrium_1_1Boundary.html#aa76ef0eef351680cadb6299dca94ee89" title="is the boundary a dirichlet boundary ?">isLinear</a>()<span class="keyword"> const </span>{
 <a name="l00045"></a>00045                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
 <a name="l00046"></a>00046         }
-<a name="l00047"></a>00047 };
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
-<a name="l00050"></a><a class="code" href="classnatrium_1_1Boundary.html#a987978143b16ef0bbadd2b465dc1882d">00050</a> <span class="keyword">inline</span> <a class="code" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">natrium::Boundary&lt;dim&gt;::Boundary</a>() {
-<a name="l00051"></a>00051 }
-<a name="l00052"></a>00052 
-<a name="l00053"></a>00053 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
-<a name="l00054"></a><a class="code" href="classnatrium_1_1Boundary.html#a63e8fb8ec44288b9145f819b515ae6d9">00054</a> <span class="keyword">inline</span> <a class="code" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">natrium::Boundary&lt;dim&gt;::~Boundary</a>() {
-<a name="l00055"></a>00055 }
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057 } <span class="comment">/* namespace natrium */</span>
-<a name="l00058"></a>00058 
-<a name="l00059"></a>00059 <span class="preprocessor">#endif </span><span class="comment">/* BOUNDARYDESCRIPTION_H_ */</span>
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048 };
+<a name="l00049"></a>00049 
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052 } <span class="comment">/* namespace natrium */</span>
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054 <span class="preprocessor">#endif </span><span class="comment">/* BOUNDARYDESCRIPTION_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -99,7 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

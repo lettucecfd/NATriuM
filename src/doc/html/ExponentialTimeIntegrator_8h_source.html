@@ -63,20 +63,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00022"></a>00022 
 <a name="l00023"></a>00023 <span class="keyword">private</span>:
 <a name="l00024"></a>00024         <span class="keywordtype">double</span> factorial(<span class="keywordtype">int</span> base);
-<a name="l00025"></a>00025         numeric_matrix makeIdentityMatrix();
-<a name="l00026"></a>00026         numeric_matrix makeMatrix(<span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n);
-<a name="l00027"></a>00027         numeric_matrix taylorSeries (numeric_matrix base);
-<a name="l00028"></a>00028         numeric_matrix padeApproximation (numeric_matrix base);
-<a name="l00029"></a>00029         <span class="keywordtype">void</span> phiFunction(<span class="keyword">const</span> numeric_matrix &amp;Hm, numeric_matrix &amp;phiOne, numeric_matrix &amp;phiTwo);
+<a name="l00025"></a>00025         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> makeIdentityMatrix();
+<a name="l00026"></a>00026         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> makeMatrix(<span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n);
+<a name="l00027"></a>00027         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> taylorSeries (<a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> base);
+<a name="l00028"></a>00028         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> padeApproximation (<a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> base);
+<a name="l00029"></a>00029         <span class="keywordtype">void</span> phiFunction(<span class="keyword">const</span> <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> &amp;Hm, <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> &amp;phiOne, <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a> &amp;phiTwo);
 <a name="l00030"></a>00030 
-<a name="l00031"></a>00031         numeric_matrix  m_identityMatrix;
-<a name="l00032"></a>00032         numeric_matrix  m_Hm;                   <span class="comment">// Hessenberg matrix (symmetric)</span>
-<a name="l00033"></a>00033         numeric_matrix  m_H;                            <span class="comment">// Hessenberg matrix</span>
-<a name="l00034"></a>00034         numeric_matrix  m_phiOne;
-<a name="l00035"></a>00035         numeric_matrix  m_phiTwo;
-<a name="l00036"></a>00036         numeric_matrix  m_phiExtended;
+<a name="l00031"></a>00031         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a>  m_identityMatrix;
+<a name="l00032"></a>00032         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a>  m_Hm;                   <span class="comment">// Hessenberg matrix (symmetric)</span>
+<a name="l00033"></a>00033         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a>  m_H;                            <span class="comment">// Hessenberg matrix</span>
+<a name="l00034"></a>00034         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a>  m_phiOne;
+<a name="l00035"></a>00035         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a>  m_phiTwo;
+<a name="l00036"></a>00036         <a class="code" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47" title="matrix for numeric operations">numeric_matrix</a>  m_phiExtended;
 <a name="l00037"></a>00037         VECTOR          m_f;                    <span class="comment">//auxiliary vector for calculating f</span>
-<a name="l00038"></a>00038         numeric_vector  m_firstColumn;  <span class="comment">//vector for the first column of H_m (Symmetric Hessenberg matrix)</span>
+<a name="l00038"></a>00038         <a class="code" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4" title="vector for numeric operations">numeric_vector</a>  m_firstColumn;  <span class="comment">//vector for the first column of H_m (Symmetric Hessenberg matrix)</span>
 <a name="l00039"></a>00039 
 <a name="l00040"></a>00040         VECTOR m_w;     <span class="comment">// Auxiliary vector for the Arnoldi algorithm</span>
 <a name="l00041"></a>00041         VECTOR m_vj; <span class="comment">// Auxiliary vector for the Arnoldi algorithm</span>
@@ -95,7 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00055"></a>00055 
 <a name="l00057"></a><a class="code" href="classnatrium_1_1ExponentialTimeIntegrator.html#ad85e62117ec3dbfebfbccd6ad1135d8c">00057</a>         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1ExponentialTimeIntegrator.html#ad85e62117ec3dbfebfbccd6ad1135d8c" title="destructor">~ExponentialTimeIntegrator</a>(){};
 <a name="l00058"></a>00058 
-<a name="l00059"></a>00059         <span class="keyword">virtual</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ExponentialTimeIntegrator.html#ae0a9cff9bdafab123016db72d1439ef8" title="make one time integration step on f: .">step</a>(VECTOR&amp; f, <span class="keyword">const</span> MATRIX&amp; systemMatrix, <span class="keyword">const</span> VECTOR&amp; systemVector, <span class="keywordtype">double</span> t = 0, <span class="keywordtype">double</span> dt = 0);
+<a name="l00059"></a>00059         <span class="keyword">virtual</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1ExponentialTimeIntegrator.html#a656810a85c20b5f7eae422ee596fc340" title="make one time integration step on f: .">step</a>(VECTOR&amp; f, <span class="keyword">const</span> MATRIX&amp; systemMatrix, VECTOR&amp; systemVector, <span class="keywordtype">double</span> t = 0, <span class="keywordtype">double</span> dt = 0);
 <a name="l00060"></a>00060 
 <a name="l00061"></a>00061 
 <a name="l00062"></a>00062 };
@@ -110,7 +110,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -119,7 +119,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

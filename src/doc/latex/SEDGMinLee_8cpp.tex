@@ -16,10 +16,17 @@ Advection scheme proposed by Min and Lee (2011).
 {\ttfamily \#include \char`\"{}deal.II/lac/sparsity\_\-tools.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/base/utilities.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/lac/constraint\_\-matrix.h\char`\"{}}\par
-{\ttfamily \#include \char`\"{}../problemdescription/PeriodicBoundary.h\char`\"{}}\par
-{\ttfamily \#include \char`\"{}../problemdescription/LinearBoundary.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../boundaries/PeriodicBoundary.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../boundaries/LinearFluxBoundary.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/DealiiExtensions.h\char`\"{}}\par
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

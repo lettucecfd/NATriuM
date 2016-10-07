@@ -10,12 +10,13 @@
 file(   GLOB_RECURSE
         SRC_FILES
         benchmarks/* 
-        boltzmannmodels/*
+        boundaries/*
         collision/*
         dataprocessors/*
         problemdescription/* 
         smoothing/*
         solver/*
+        stencils/*
         advection/*
         timeintegration/*
         utilities/*  

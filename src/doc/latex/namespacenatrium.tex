@@ -1,0 +1,1165 @@
+\hypertarget{namespacenatrium}{
+\section{natrium Namespace Reference}
+\label{namespacenatrium}\index{natrium@{natrium}}
+}
+
+
+Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries.  
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium_1_1CFDSolverUtilities}{CFDSolverUtilities}
+
+
+\begin{DoxyCompactList}\small\item\em Some tools for the \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver} and its simple usage. \item\end{DoxyCompactList}\item 
+namespace \hyperlink{namespacenatrium_1_1DealIIExtensions}{DealIIExtensions}
+
+
+\begin{DoxyCompactList}\small\item\em some extensions to deal.ii \item\end{DoxyCompactList}\item 
+namespace \hyperlink{namespacenatrium_1_1Math}{Math}
+
+
+\begin{DoxyCompactList}\small\item\em namespace which contains basic math functions \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1CompareToBotella}{CompareToBotella}
+\item 
+class \hyperlink{classnatrium_1_1CompareToErturk}{CompareToErturk}
+\item 
+class \hyperlink{classnatrium_1_1CompareToGhia}{CompareToGhia}
+\item 
+class \hyperlink{classnatrium_1_1matrixAnalysis}{matrixAnalysis}
+\begin{DoxyCompactList}\small\item\em Calculation of spectra and pseudospectra of streaming matrices. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1LidDrivenCavity2D}{LidDrivenCavity2D}
+\begin{DoxyCompactList}\small\item\em Description of a lid-\/driven cavity flow. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Hill3D}{Hill3D}
+\begin{DoxyCompactList}\small\item\em Description of a flow around a diamond-\/shaped obstacle. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1ComplexWall1}{ComplexWall1}
+\begin{DoxyCompactList}\small\item\em Description of a simple Couette Flow (regular channel flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Cylinder2D}{Cylinder2D}
+\begin{DoxyCompactList}\small\item\em Description of the flow around a circular cylinder (regular channel flow in square domain). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1DensityFluctuation2D}{DensityFluctuation2D}
+\item 
+class \hyperlink{classnatrium_1_1DecayingTurbulence2D}{DecayingTurbulence2D}
+\begin{DoxyCompactList}\small\item\em Description of a turbulent Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1DiamondObstacle2D}{DiamondObstacle2D}
+\begin{DoxyCompactList}\small\item\em Description of a flow around a diamond-\/shaped obstacle. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1FinalChannelStatistics}{FinalChannelStatistics}
+\item 
+class \hyperlink{classnatrium_1_1TurbulentChannelFlow3D}{TurbulentChannelFlow3D}
+\begin{DoxyCompactList}\small\item\em Description of a turbulent Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}
+\begin{DoxyCompactList}\small\item\em Abstract class for spatial part of the Advection Operator e\_\-i $\ast$ dx\_\-i f. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1AdvectionSolverException}{AdvectionSolverException}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1SEDGMinLee}{SEDGMinLee}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SEDGMinLee}{SEDGMinLee}
+\begin{DoxyCompactList}\small\item\em This class solves the linear advection equations by a scheme which is used, e.g., by Min and Lee (2011): A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-\/259. The advection equations used in the Lattice Boltzmann on unstructured grids are \[ \partial_t f_{\alpha} + e_{\alpha} \partial_x f_{\alpha} = 0,\quad \forall {\alpha} = 1,\dots,Q-1 \] where $ f_{\alpha}(x,t) $ are the particle distribution functions, and $ e_{\alpha} $ are the particle velocities. The discontinuous Galerkin (DG) method turns these PDEs into a large system of ODEs which can then be solved by a time integration scheme. Whereas this class implements the SEDG spatial discretization, the time integration is done by a subclass of \hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}, e.g. \hyperlink{classnatrium_1_1RungeKutta5LowStorage}{RungeKutta5LowStorage}. In other Finite Element schemes, degrees of freedom can belong to different elements (e.g. at corners of elements). In contrast, DG methods have the degrees of freedom belonging to a single element, which can lead to discontinuities at the element faces. To connect neighbor cells, the integral over the boundary of each cell incorporates the solution on neighbor cells. These contributions are called numerical fluxes. The DG scheme uses the weak formulation of the above equations on quadrilateral elements \$\$: \[ \left( \partial_t f_{\alpha} + \partial_x (e_{\alpha} f_{\alpha}), \Phi \right)_{\Omega_e} = \left(n \left[ e_i f_{\alpha} - F^{\ast}_{\alpha}(f) \right], \Phi \right)_{\partial \Omega_e}. \] In this formulation $ F^{\ast}_{i}(f) $ denotes the numerical fluxes. They can be be calculated as central fluxes or Lax-\/Friedrichs fluxes. Lax-\/Friedrichs is in general more accurate for the advection equation. For detailed information on the fluxes, see the cited paper. For spatial integration a Gauss-\/Lobatto quadrature is used, which has the advantage that the resulting mass matrix M\_\-\{\} = (, )\_\-\{\} is diagonal. This circumvents the solution of a linear equation system. Each advection equation leads to a ODE \[ \partial_t f_{\alpha} = M_{\alpha}^{-1}(- e_{\alpha x} D_{{\alpha}x} - e_{{\alpha}y} D_{{\alpha}y} + R_{\alpha}) f_{\alpha} + B_i f_{{\alpha}^{\ast}} + b_{\alpha}.\] Altogether, for the example of the \hyperlink{classnatrium_1_1D2Q9}{D2Q9}, the system becomes \[ \partial_t f_{1,\dots,Q} = \left( \matrix{ L_1 & 0 & B_1 & 0 & 0 & 0 & 0 & 0 \cr 0 & L_2 & 0 & B_2 & 0 & 0 & 0 & 0 \cr B_3 & 0 & L_3 & 0 & 0 & 0 & 0 & 0 \cr 0 & B_4 & 0 & L_4 & 0 & 0 & 0 & 0 \cr 0 & 0 & 0 & 0 & L_5 & 0 & B_5 & 0 \cr 0 & 0 & 0 & 0 & 0 & L_6 & 0 & B_6\cr 0 & 0 & 0 & 0 & B_7 & 0 & L_7 & 0 \cr 0 & 0 & 0 & 0 & 0 & B_8 & 0 & L_8 } \right) f_{1,\dots,Q} + \left( \matrix{ b_1 \cr b_2 \cr b_3 \cr b_4 \cr b_5 \cr b_6 \cr b_7 \cr b_8 }\right), \] where $ L_{\alpha} = M_{\alpha}^{-1}(- e_{{\alpha}x} D_{{\alpha}x} - e_{{\alpha}y} D_{{\alpha}y} + R_{\alpha}) $. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SemiLagrangianException}{SemiLagrangianException}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1SemiLagrangian}{SemiLagrangian} advection operator. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SemiLagrangian}{SemiLagrangian}
+\begin{DoxyCompactList}\small\item\em This class solves the linear advection equations by a semi-\/Lagrangian scheme. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1BackwardFacingStep2D}{BackwardFacingStep2D}
+\item 
+class \hyperlink{classnatrium_1_1CouetteFlow2D}{CouetteFlow2D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Couette Flow (regular channel flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1CouetteFlow3D}{CouetteFlow3D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Couette Flow (regular channel flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$3. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Droplet2D}{Droplet2D}
+\item 
+class \hyperlink{classnatrium_1_1LubricationSine}{LubricationSine}
+\item 
+class \hyperlink{classnatrium_1_1PeriodicTestDomain2D}{PeriodicTestDomain2D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 4 elements. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1PeriodicTestDomain3D}{PeriodicTestDomain3D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 4 elements. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1PoiseuilleFlow2D}{PoiseuilleFlow2D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1PoiseuilleFlow3D}{PoiseuilleFlow3D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1ShearLayer2D}{ShearLayer2D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SinusoidalShear2D}{SinusoidalShear2D}
+\item 
+class \hyperlink{classnatrium_1_1TaylorGreenVortex2D}{TaylorGreenVortex2D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1TaylorGreenVortex3D}{TaylorGreenVortex3D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Boundary}{Boundary}
+\begin{DoxyCompactList}\small\item\em Abstract class for the description of boundaries. Base class of \hyperlink{classnatrium_1_1PeriodicBoundary}{PeriodicBoundary}, InflowBoundary, etc. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1DoFBoundary}{DoFBoundary}
+\item 
+class \hyperlink{classnatrium_1_1GradsBoundary}{GradsBoundary}
+\item 
+class \hyperlink{classnatrium_1_1LinearFluxBoundary}{LinearFluxBoundary}
+\begin{DoxyCompactList}\small\item\em Abstract class to describe Linear boundary conditions. The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the boundary have to be defined (see Documentation of the constructors). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1LinearFluxBoundaryRhoU}{LinearFluxBoundaryRhoU}
+\item 
+class \hyperlink{classnatrium_1_1PeriodicBoundaryNotPossible}{PeriodicBoundaryNotPossible}
+\begin{DoxyCompactList}\small\item\em Exception for impossible periodic boundary, e.g. when the interfaces don't have the same length. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1PeriodicBoundary}{PeriodicBoundary}
+\begin{DoxyCompactList}\small\item\em A periodic boundary condition. Periodic boundaries have to be set before the grid is refined! \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1BGK}{BGK}
+\begin{DoxyCompactList}\small\item\em Description of the \hyperlink{classnatrium_1_1BGK}{BGK} model for the transformed particle distributions, as described in Global data which is used by Min and Lee (2011): A spectral-\/element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-\/259. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1BGKIncompressible}{BGKIncompressible}
+\item 
+class \hyperlink{classnatrium_1_1BGKMultistep}{BGKMultistep}
+\item 
+struct \hyperlink{structnatrium_1_1PseudopotentialParameters}{PseudopotentialParameters}
+\item 
+class \hyperlink{classnatrium_1_1BGKPseudopotential}{BGKPseudopotential}
+\item 
+class \hyperlink{classnatrium_1_1BGKStandard}{BGKStandard}
+\begin{DoxyCompactList}\small\item\em Simple \hyperlink{classnatrium_1_1BGK}{BGK} model. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1BGKStandardTransformed}{BGKStandardTransformed}
+\begin{DoxyCompactList}\small\item\em Simple \hyperlink{classnatrium_1_1BGK}{BGK} model with transformed distributions in order to lower round-\/off errors The scheme is described in \char`\"{}How to improve the accuracy of Lattice Boltzmann calculations\char`\"{} by Bastien Chopard (May 2008), available on LBMethod.org. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1BGKSteadyState}{BGKSteadyState}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classnatrium_1_1BGK}{BGK} model for preconditioned Navier-\/Stokes equation Paper by Guo et al. (2004): Preconditioned lattice-\/Boltzmann method for steady flows, Physical Review E 70. The equilibrium distribution functions agrees with the one of the standard \hyperlink{classnatrium_1_1BGK}{BGK} model, except it has the factor \[\frac{1}{\gamma}\] with each \[ O(u^2) \] term. The hydrodynamic equations of the Steady State \hyperlink{classnatrium_1_1BGK}{BGK} can be derived by the Chapman-\/Enskog analysis. Except for the temporal derivative, the compressible Navier-\/Stokes equation is found, but with a much better eigenvalue system. This makes the preconditioned \hyperlink{classnatrium_1_1BGK}{BGK} perfect for steady flows, although not physical for unsteady flows. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1CollisionException}{CollisionException}
+\begin{DoxyCompactList}\small\item\em Exception class for Collision. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1CollisionModel}{CollisionModel}
+\begin{DoxyCompactList}\small\item\em Abstract collision model. Required to have a common parent of all template specializations of Collision. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1KBCCentral}{KBCCentral}
+\item 
+class \hyperlink{classnatrium_1_1KBCStandard}{KBCStandard}
+\item 
+class \hyperlink{classnatrium_1_1MRT}{MRT}
+\item 
+class \hyperlink{classnatrium_1_1MRTStandard}{MRTStandard}
+\item 
+class \hyperlink{classnatrium_1_1MultistepCollisionData}{MultistepCollisionData}
+\item 
+class \hyperlink{classnatrium_1_1DataProcessor}{DataProcessor}
+\item 
+class \hyperlink{classnatrium_1_1GlobalTurbulenceStats}{GlobalTurbulenceStats}
+\item 
+class \hyperlink{classnatrium_1_1Benchmark}{Benchmark}
+\item 
+class \hyperlink{classnatrium_1_1BoundaryCollectionException}{BoundaryCollectionException}
+\begin{DoxyCompactList}\small\item\em Exception class for Boundaries. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection} class is a container for all boundaries of a flow domain. Internally, the boundaries are stored in two different std::map, one for the periodic boundaries and one for the non-\/periodic ones. Its keys are the boundary indicators (for periodic boundaries: the first boundary indicator). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1ConstantExternalForce}{ConstantExternalForce}
+\item 
+class \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}
+\begin{DoxyCompactList}\small\item\em Abstract class for the description of a CFD problem. The description includes the computational mesh, boundary description, viscosity and initial values. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1ExponentialFilter}{ExponentialFilter}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classnatrium_1_1Filter}{Filter} from Gassner and Beck (2011). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Filter}{Filter}
+\item 
+class \hyperlink{classnatrium_1_1NewFilter}{NewFilter}
+\item 
+class \hyperlink{classnatrium_1_1VmultLimiter}{VmultLimiter}
+\item 
+class \hyperlink{classnatrium_1_1BenchmarkCFDSolver}{BenchmarkCFDSolver}
+\begin{DoxyCompactList}\small\item\em a class that overrides the output function of the CFD solver class with comparisons to a reference solution \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1CFDSolverException}{CFDSolverException}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}
+\begin{DoxyCompactList}\small\item\em The central class for the CFD simulation based on the DBE. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structnatrium_1_1CheckpointStatus}{CheckpointStatus}
+\begin{DoxyCompactList}\small\item\em A struct describing the status of a checkpoint (iteration number, time, stencil scaling). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1CheckpointException}{CheckpointException}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Checkpoint}{Checkpoint}
+\begin{DoxyCompactList}\small\item\em A class describing the checkpoint. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions}
+\begin{DoxyCompactList}\small\item\em This class contains the distribution functions. As the zero-\/velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (fStream) in the implementation. fStream is a block vector, which has the advantage that it can be multiplied with the SystemMatrix. The \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} class is designed to mime the behaviour of a vector$<$distributed\_\-vector$>$ . \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1ErrorStats}{ErrorStats}
+\begin{DoxyCompactList}\small\item\em Container for error statistics and table file; only for use with \hyperlink{classnatrium_1_1BenchmarkCFDSolver}{BenchmarkCFDSolver}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1PhysicalProperties}{PhysicalProperties}
+\item 
+class \hyperlink{classnatrium_1_1ConfigurationException}{ConfigurationException}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SolverConfiguration}{SolverConfiguration}
+\begin{DoxyCompactList}\small\item\em Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SolverStats}{SolverStats}
+\begin{DoxyCompactList}\small\item\em Container for solver statistics and table file. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1StatsInPlane}{StatsInPlane}
+\begin{DoxyCompactList}\small\item\em This class calculates the turbulence statistics in planes parallel to the wall. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1TurbulenceStats}{TurbulenceStats}
+\begin{DoxyCompactList}\small\item\em A class that calculates and puts out turbulent statistics. It provides the functionality to evaluate the statistics over wall-\/parallel planes: For many relevant flows (e.g. channels, boundary layers, ...), the turbulence is homogenous in one direction, which allows to calculate time-\/independent statistics. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1D2Q9}{D2Q9}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classnatrium_1_1D2Q9}{D2Q9} Model. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1D3Q15}{D3Q15}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classnatrium_1_1D3Q15}{D3Q15} Model. The lattice velocities are: 0. 0.0 0.0 0.0. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1D3Q19}{D3Q19}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classnatrium_1_1D3Q19}{D3Q19} Model. The lattice velocities are: 0. 0.0 0.0 0.0. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1D3Q27}{D3Q27}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classnatrium_1_1D3Q27}{D3Q27} Model. The lattice velocities are: 0. 0.0 0.0 0.0. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Stencil}{Stencil}
+\begin{DoxyCompactList}\small\item\em Abstract class for the description of a boltzmann model, e.g. \hyperlink{classnatrium_1_1D2Q9}{D2Q9}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1DealIIWrapper}{DealIIWrapper}
+\begin{DoxyCompactList}\small\item\em Wrapper class to deal.II's built-\/in time stepping routines. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1ExponentialTimeIntegrator}{ExponentialTimeIntegrator}
+\begin{DoxyCompactList}\small\item\em Exponential time integration scheme for the solution of f' = L$\ast$f, as used in Uga etal. (2012) Spectral-\/element discontinuous Galerkin lattice Boltzmann simulation of flow past two cylinders in tandem with an exponential time integrator, CMWA 65 pp. 239-\/251. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1RungeKutta5LowStorage}{RungeKutta5LowStorage}
+\begin{DoxyCompactList}\small\item\em Implementation of the fifth-\/order Runge-\/Kutta time integration scheme with low storage consumption. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1ThetaMethod}{ThetaMethod}
+\begin{DoxyCompactList}\small\item\em Implementation of the Theta method for time integration. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}
+\begin{DoxyCompactList}\small\item\em Abstract class for time integration (solution of ordinary differential equations (ODE)). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Logging}{Logging}
+\begin{DoxyCompactList}\small\item\em this class is responsible for output streams to the command line and log file \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1own__double__less}{own\_\-double\_\-less}
+\begin{DoxyCompactList}\small\item\em function to compare doubles as map keys; regards two doubles equal if they are in a epsilon(=1e-\/7)-\/range. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard}
+\begin{DoxyCompactList}\small\item\em Singleton that encapsulates the MPI init and finalize calls so that they are called at most once per run. This class wraps the function dealii::Utilities::MPI::MPI\_\-InitFinalize(argc, argv). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1NATriuMException}{NATriuMException}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SemiParallelMatrix}{SemiParallelMatrix}
+\begin{DoxyCompactList}\small\item\em Class that describes a matrix with parallelized columns and non-\/parallelized rows. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1Timing}{Timing}
+\begin{DoxyCompactList}\small\item\em Kind of a singleton for Runtime measurements. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1FFTW2D}{FFTW2D}
+\item 
+class \hyperlink{classnatrium_1_1BoundaryTestDensity}{BoundaryTestDensity}
+\item 
+class \hyperlink{classnatrium_1_1BoundaryTestVelocity}{BoundaryTestVelocity}
+\item 
+struct \hyperlink{structnatrium_1_1InitMPI}{InitMPI}
+\item 
+class \hyperlink{classnatrium_1_1SteadyPeriodicTestFlow2D}{SteadyPeriodicTestFlow2D}
+\begin{DoxyCompactList}\small\item\em Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1UnsteadyPeriodicTestFlow2D}{UnsteadyPeriodicTestFlow2D}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{
+typedef dealii::Vector$<$ double $>$ \hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector}}
+\label{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}
+
+\begin{DoxyCompactList}\small\item\em vector for numeric operations \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_af033b61eba66ee890834d17f01c2ecb3}{
+typedef dealii::BlockVector$<$ double $>$ {\bfseries block\_\-vector}}
+\label{namespacenatrium_af033b61eba66ee890834d17f01c2ecb3}
+
+\item 
+\hypertarget{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}{
+typedef dealii::FullMatrix$<$ double $>$ \hyperlink{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}{numeric\_\-matrix}}
+\label{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}
+
+\begin{DoxyCompactList}\small\item\em matrix for numeric operations \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}{
+typedef dealii::BlockSparseMatrix$<$ double $>$ \hyperlink{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}{sparse\_\-block\_\-matrix}}
+\label{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}
+
+\begin{DoxyCompactList}\small\item\em sparse matrix \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}{
+typedef dealii::SparseMatrix$<$ double $>$ {\bfseries sparse\_\-matrix}}
+\label{namespacenatrium_ab028bf9ec4c04790f1851c2351d4ae5b}
+
+\item 
+\hypertarget{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}{
+typedef sparse\_\-matrix \hyperlink{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}{distributed\_\-sparse\_\-matrix}}
+\label{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}
+
+\begin{DoxyCompactList}\small\item\em matrix which can be distributed over different cores \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_a70f1738fc69761e34e1df08e0708d2f3}{
+typedef \hyperlink{namespacenatrium_acd63e25d68fdb74dd9b789bb2e836cb8}{sparse\_\-block\_\-matrix} {\bfseries distributed\_\-sparse\_\-block\_\-matrix}}
+\label{namespacenatrium_a70f1738fc69761e34e1df08e0708d2f3}
+
+\item 
+\hypertarget{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{
+typedef dealii::TrilinosWrappers::MPI::Vector \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector}}
+\label{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}
+
+\begin{DoxyCompactList}\small\item\em vectors which can be distributed over multiple cores \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_ac1e32e729ff6f86147e9b109bbe41b48}{
+typedef dealii::TrilinosWrappers::MPI::BlockVector {\bfseries distributed\_\-block\_\-vector}}
+\label{namespacenatrium_ac1e32e729ff6f86147e9b109bbe41b48}
+
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{namespacenatrium_ab73faf50bccace063cee6f66b5af2b02}{AdvectionSchemeName} \{ {\bfseries SEDG}, 
+{\bfseries SEMI\_\-LAGRANGIAN}
+ \}
+\begin{DoxyCompactList}\small\item\em Implemented streaming data types. \item\end{DoxyCompactList}\item 
+enum \hyperlink{namespacenatrium_a77a27ea835db291372b246db6b4b1578}{CollisionSchemeName} \{ \par
+{\bfseries BGK\_\-STANDARD}, 
+{\bfseries BGK\_\-STANDARD\_\-TRANSFORMED}, 
+{\bfseries BGK\_\-STEADY\_\-STATE}, 
+{\bfseries BGK\_\-MULTIPHASE}, 
+\par
+{\bfseries BGK\_\-INCOMPRESSIBLE}, 
+{\bfseries MRT\_\-STANDARD}, 
+{\bfseries KBC\_\-STANDARD}, 
+{\bfseries KBC\_\-CENTRAL}, 
+\par
+{\bfseries BGK\_\-MULTI\_\-AM4}, 
+{\bfseries BGK\_\-MULTI\_\-BDF2}
+ \}
+\begin{DoxyCompactList}\small\item\em Implemented collision models. \item\end{DoxyCompactList}\item 
+enum \hyperlink{namespacenatrium_a00a0ec1e80f138680e0fcca78349f6d8}{TimeIntegratorName} \{ {\bfseries RUNGE\_\-KUTTA\_\-5STAGE}, 
+{\bfseries THETA\_\-METHOD}, 
+{\bfseries EXPONENTIAL}, 
+{\bfseries OTHER}
+ \}
+\begin{DoxyCompactList}\small\item\em Implemented time integrators. \item\end{DoxyCompactList}\item 
+enum {\bfseries DealIntegratorName} \{ \par
+{\bfseries FORWARD\_\-EULER}, 
+{\bfseries RK\_\-THIRD\_\-ORDER}, 
+{\bfseries RK\_\-CLASSIC\_\-FOURTH\_\-ORDER}, 
+{\bfseries BACKWARD\_\-EULER}, 
+\par
+{\bfseries IMPLICIT\_\-MIDPOINT}, 
+{\bfseries CRANK\_\-NICOLSON}, 
+{\bfseries SDIRK\_\-TWO\_\-STAGES}, 
+{\bfseries HEUN\_\-EULER}, 
+\par
+{\bfseries BOGACKI\_\-SHAMPINE}, 
+{\bfseries DOPRI}, 
+{\bfseries FEHLBERG}, 
+{\bfseries CASH\_\-KARP}, 
+\par
+{\bfseries NONE}
+ \}
+\item 
+enum {\bfseries DealSolverName} \{ \par
+{\bfseries BICGSTAB}, 
+{\bfseries CG}, 
+{\bfseries FGMRES}, 
+{\bfseries GMRES}, 
+\par
+{\bfseries MINRES}, 
+{\bfseries QMRS}, 
+{\bfseries RELAXATION}, 
+{\bfseries RICHARDSON}
+ \}
+\item 
+enum \hyperlink{namespacenatrium_a9366e68e932696b3dc277fc010ac1057}{FluxTypeName} \{ {\bfseries LAX\_\-FRIEDRICHS}, 
+{\bfseries CENTRAL}
+ \}
+\begin{DoxyCompactList}\small\item\em the numerical flux used to calculate the advection operator \item\end{DoxyCompactList}\item 
+enum \hyperlink{namespacenatrium_a5aad7d448441836f9c631c505cf8cd54}{InitializationSchemeName} \{ {\bfseries EQUILIBRIUM}, 
+{\bfseries ITERATIVE}
+ \}
+\begin{DoxyCompactList}\small\item\em the initialization procedure for the distribution functions \item\end{DoxyCompactList}\item 
+enum {\bfseries PseudopotentialType} \{ {\bfseries SHAN\_\-CHEN}, 
+{\bfseries SUKOP}, 
+{\bfseries CARNAHAN\_\-STARLING}
+ \}
+\item 
+enum {\bfseries ForceType} \{ {\bfseries NO\_\-FORCING}, 
+{\bfseries SHIFTING\_\-VELOCITY}, 
+{\bfseries EXACT\_\-DIFFERENCE}, 
+{\bfseries GUO}
+ \}
+\item 
+enum {\bfseries FilteringSchemeName} \{ {\bfseries EXPONENTIAL\_\-FILTER}, 
+{\bfseries NEW\_\-FILTER}
+ \}
+\item 
+enum \hyperlink{namespacenatrium_a45d5dacaf5eb5efde670179d949173ba}{StencilType} \{ \hyperlink{namespacenatrium_a45d5dacaf5eb5efde670179d949173baabe9c0ce3734a5131262789758ca5fbd1}{Stencil\_\-D2Q9}, 
+{\bfseries Stencil\_\-D3Q19}, 
+{\bfseries Stencil\_\-D3Q15}, 
+{\bfseries Stencil\_\-D3Q27}
+ \}
+\begin{DoxyCompactList}\small\item\em Enum type for the difference stencil. \item\end{DoxyCompactList}\item 
+enum {\bfseries LogLevel} \{ \par
+{\bfseries SILENT}, 
+{\bfseries ERROR}, 
+{\bfseries WARNING}, 
+{\bfseries WELCOME}, 
+\par
+{\bfseries BASIC}, 
+{\bfseries DETAILED}, 
+{\bfseries DEAL\_\-II\_\-BASIC}, 
+{\bfseries DEAL\_\-II\_\-DETAILED}, 
+\par
+{\bfseries ALL}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ \hyperlink{namespacenatrium_a860e92befb23651241c8b3d61a0d4034}{distributed\_\-sparse\_\-matrix}, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ $>$ \hyperlink{namespacenatrium_aaa8bf70405092ec81a8b15331a8f24b5}{make\_\-integrator} (\hyperlink{namespacenatrium_a00a0ec1e80f138680e0fcca78349f6d8}{TimeIntegratorName} integrator\_\-name, DealIntegratorName deal\_\-integrator\_\-name, double delta\_\-t, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&f)
+\item 
+\hypertarget{namespacenatrium_a0cef4fe0f0b48bfd41191cdccc8fd098}{
+template void {\bfseries GradsFunction$<$ D2Q9, 2 $>$} (vector$<$ double $>$ \&f, const \hyperlink{classnatrium_1_1D2Q9}{D2Q9} \&stencil, double rho, const dealii::Tensor$<$ 1, 2 $>$ \&j, const dealii::Tensor$<$ 2, 2 $>$ \&P)}
+\label{namespacenatrium_a0cef4fe0f0b48bfd41191cdccc8fd098}
+
+\item 
+\hypertarget{namespacenatrium_ad404daaac7f20207f08ff5f211a2721c}{
+template void {\bfseries GradsFunction$<$ D3Q15, 3 $>$} (vector$<$ double $>$ \&f, const \hyperlink{classnatrium_1_1D3Q15}{D3Q15} \&stencil, double rho, const dealii::Tensor$<$ 1, 3 $>$ \&j, const dealii::Tensor$<$ 2, 3 $>$ \&P)}
+\label{namespacenatrium_ad404daaac7f20207f08ff5f211a2721c}
+
+\item 
+\hypertarget{namespacenatrium_a67c2e91582d49b0a53b79ea9e5200d75}{
+template void {\bfseries GradsFunction$<$ D3Q19, 3 $>$} (vector$<$ double $>$ \&f, const \hyperlink{classnatrium_1_1D3Q19}{D3Q19} \&stencil, double rho, const dealii::Tensor$<$ 1, 3 $>$ \&j, const dealii::Tensor$<$ 2, 3 $>$ \&P)}
+\label{namespacenatrium_a67c2e91582d49b0a53b79ea9e5200d75}
+
+\item 
+\hypertarget{namespacenatrium_ab812c6cdcf3b271b97c19d49332286bc}{
+template void {\bfseries GradsFunction$<$ D3Q27, 3 $>$} (vector$<$ double $>$ \&f, const \hyperlink{classnatrium_1_1D3Q27}{D3Q27} \&stencil, double rho, const dealii::Tensor$<$ 1, 3 $>$ \&j, const dealii::Tensor$<$ 2, 3 $>$ \&P)}
+\label{namespacenatrium_ab812c6cdcf3b271b97c19d49332286bc}
+
+\item 
+\hypertarget{namespacenatrium_ad76c25c4de7488b1d117274f62d4f929}{
+{\footnotesize template$<$class Stencil , size\_\-t dim$>$ }\\void \hyperlink{namespacenatrium_ad76c25c4de7488b1d117274f62d4f929}{GradsFunction} (vector$<$ double $>$ \&f, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, double rho, const dealii::Tensor$<$ 1, dim $>$ \&j, const dealii::Tensor$<$ 2, dim $>$ \&P)}
+\label{namespacenatrium_ad76c25c4de7488b1d117274f62d4f929}
+
+\begin{DoxyCompactList}\small\item\em Grad's function constructs a set of discrete distributions with respect to a certain set of moments Its functional form is \[ f_i(\rho, j, P) = w_i \left[ \rho + \frac{j_{\alpha} c_{i \alpha} }{c_s^2} + \frac{1}{2 c_s^4} \left( P_{\alpha \beta} - \rho c_s^2 \delta_{\alpha \beta} \right) \left( c_{i \alpha} c_{i \beta} - c_s^2 \delta_{\alpha \beta} \right) \right]. \] Checkout e.g. Dorschner et al. JCP 295 (2015) for more information. \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_a31c41694ea4808b3e801fd586bc10fef}{
+void {\bfseries REINIT\_\-UNDISTRIBUTED\_\-BLOCK\_\-VECTOR} (distributed\_\-block\_\-vector \&bv, size\_\-t n\_\-blocks, size\_\-t block\_\-size)}
+\label{namespacenatrium_a31c41694ea4808b3e801fd586bc10fef}
+
+\item 
+\hypertarget{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}{
+void \hyperlink{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}{MPI\_\-sync} ()}
+\label{namespacenatrium_ad9280c1cdcb421c6bf3f719ae2747120}
+
+\begin{DoxyCompactList}\small\item\em Synchronize all MPI processes. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacenatrium_a791202a0d8b6bdac2c62f3ae63905a36}{is\_\-MPI\_\-rank\_\-0} ()
+\item 
+\hyperlink{classnatrium_1_1Logging}{Logging} \& \hyperlink{namespacenatrium_a0590621d19e4629e6afb5e7365f9f331}{LOG} (LogLevel level)
+\begin{DoxyCompactList}\small\item\em can be used like \char`\"{}LOG(ERROR) $<$$<$ ...;\char`\"{}, to write output to the log file and command line \item\end{DoxyCompactList}\item 
+\hyperlink{classnatrium_1_1Logging}{Logging} \& \hyperlink{namespacenatrium_a0d879cf404d8a12fc978ab97d33758b4}{LOGGER} ()
+\begin{DoxyCompactList}\small\item\em is used to access the default logging instance m\_\-LOGGER; e.g. \hyperlink{namespacenatrium_a0d879cf404d8a12fc978ab97d33758b4}{LOGGER()}.setLogFile(...) \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_acdc05b9a9596bba608cb1af116a15538}{
+const std::string {\bfseries currentDateTime} ()}
+\label{namespacenatrium_acdc05b9a9596bba608cb1af116a15538}
+
+\item 
+\hypertarget{namespacenatrium_ae701d55b10027c6e5affa8bf49f9d87f}{
+{\footnotesize template$<$size\_\-t dim$>$ }\\dealii::Tensor$<$ 1, dim $>$ {\bfseries vectorToTensor} (const \hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} \&v)}
+\label{namespacenatrium_ae701d55b10027c6e5affa8bf49f9d87f}
+
+\item 
+dealii::ConditionalOStream \hyperlink{namespacenatrium_a5493e61c5fe1935bc9975d78a24dceda}{perr} (std::cerr, true)
+\item 
+\hypertarget{namespacenatrium_af2d0f99c55fb56378ad9d31eedd3e45d}{
+dealii::ConditionalOStream {\bfseries pout} (std::cout, true)}
+\label{namespacenatrium_af2d0f99c55fb56378ad9d31eedd3e45d}
+
+\item 
+\hypertarget{namespacenatrium_a4ee36100433ccf7e16ee3aa1b03a401e}{
+void {\bfseries natrium\_\-errorexit} (const char $\ast$msg)}
+\label{namespacenatrium_a4ee36100433ccf7e16ee3aa1b03a401e}
+
+\item 
+\hypertarget{namespacenatrium_a2a8dd72d47e91c7e67cd26ee06ea9318}{
+{\footnotesize template$<$$>$ }\\void {\bfseries reinitVector$<$ distributed\_\-block\_\-vector $>$} (distributed\_\-block\_\-vector \&dst, const distributed\_\-block\_\-vector \&src)}
+\label{namespacenatrium_a2a8dd72d47e91c7e67cd26ee06ea9318}
+
+\item 
+\hypertarget{namespacenatrium_a2a6a1717ec66f3598c956ee077e9aa7c}{
+{\footnotesize template$<$$>$ }\\void {\bfseries reinitVector$<$ distributed\_\-vector $>$} (\hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&dst, const \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&src)}
+\label{namespacenatrium_a2a6a1717ec66f3598c956ee077e9aa7c}
+
+\item 
+\hypertarget{namespacenatrium_ae4f0884b841c84392ef76f5cef13b798}{
+{\footnotesize template$<$$>$ }\\void {\bfseries reinitVector$<$ numeric\_\-vector $>$} (\hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} \&dst, const \hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} \&src)}
+\label{namespacenatrium_ae4f0884b841c84392ef76f5cef13b798}
+
+\item 
+\hypertarget{namespacenatrium_a60c08462f26b0566d3676ef72a77a289}{
+{\footnotesize template$<$$>$ }\\void {\bfseries reinitVector$<$ block\_\-vector $>$} (block\_\-vector \&dst, const block\_\-vector \&src)}
+\label{namespacenatrium_a60c08462f26b0566d3676ef72a77a289}
+
+\item 
+{\footnotesize template$<$class VECTOR $>$ }\\void \hyperlink{namespacenatrium_a95eedd6a35d489da1b939928d8cf40e0}{reinitVector} (VECTOR \&dst, const VECTOR \&src)
+\item 
+\hypertarget{namespacenatrium_ad78ce248f34db62b3d9bd2e6cf959cbc}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SEDGMinLee\_\-Construction\_\-test)}
+\label{namespacenatrium_ad78ce248f34db62b3d9bd2e6cf959cbc}
+
+\item 
+\hypertarget{namespacenatrium_a7510cddf2a5057595ad4e7f3c7bddff8}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SEDGMinLee\_\-systemMatrix\_\-test)}
+\label{namespacenatrium_a7510cddf2a5057595ad4e7f3c7bddff8}
+
+\item 
+\hypertarget{namespacenatrium_ae9b4ffa9f8ace78360f43adc88f28bee}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SEDGMinLee\_\-steadyStreaming\_\-test)}
+\label{namespacenatrium_ae9b4ffa9f8ace78360f43adc88f28bee}
+
+\item 
+\hypertarget{namespacenatrium_a635e77494362fb2b4f16eefebcd688b3}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SEDGMinLee\_\-streaming\_\-test)}
+\label{namespacenatrium_a635e77494362fb2b4f16eefebcd688b3}
+
+\item 
+\hyperlink{namespacenatrium_a5d50c8f7b1a7391f2433de8b308a11e7}{BOOST\_\-AUTO\_\-TEST\_\-CASE} (SEDGMinLee\_\-RKstreaming\_\-test)
+\item 
+\hypertarget{namespacenatrium_ae770b0311667837cbe15679c4f642d8d}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SEDGMinLee\_\-SaveAndLoadCheckpoints\_\-test)}
+\label{namespacenatrium_ae770b0311667837cbe15679c4f642d8d}
+
+\item 
+\hypertarget{namespacenatrium_a883618d1bfe54362b6fe566b33a125c4}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian\_\-Construction\_\-test)}
+\label{namespacenatrium_a883618d1bfe54362b6fe566b33a125c4}
+
+\item 
+\hypertarget{namespacenatrium_ae598f215914e7095e4689e52a46ae220}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-Neighborhood\_\-test)}
+\label{namespacenatrium_ae598f215914e7095e4689e52a46ae220}
+
+\item 
+\hypertarget{namespacenatrium_a6ef21ff5bbdcea455ad5ec1c82c09009}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-Neighborhood\_\-test)}
+\label{namespacenatrium_a6ef21ff5bbdcea455ad5ec1c82c09009}
+
+\item 
+\hypertarget{namespacenatrium_ac86883f17cf49cbc2da6538b669f4da3}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-FindPointInNeighborhood\_\-test)}
+\label{namespacenatrium_ac86883f17cf49cbc2da6538b669f4da3}
+
+\item 
+\hypertarget{namespacenatrium_a193f933a32473e494d79e6497fde0e2c}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-FindPointInNeighborhood\_\-test)}
+\label{namespacenatrium_a193f933a32473e494d79e6497fde0e2c}
+
+\item 
+\hypertarget{namespacenatrium_aae67c7512f6343d603c5b33e0cdab798}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-FaceCrossedFirst\_\-test)}
+\label{namespacenatrium_aae67c7512f6343d603c5b33e0cdab798}
+
+\item 
+\hypertarget{namespacenatrium_a3e7fdc3d43feb7b3b2907ad1318f0023}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-FaceCrossedFirst\_\-test)}
+\label{namespacenatrium_a3e7fdc3d43feb7b3b2907ad1318f0023}
+
+\item 
+\hypertarget{namespacenatrium_a0ea7d35705b5510cf096509e0c04b666}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-SparsityPattern\_\-test)}
+\label{namespacenatrium_a0ea7d35705b5510cf096509e0c04b666}
+
+\item 
+\hypertarget{namespacenatrium_aee9f084e377533e7051bc7ed8271526b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-SparsityPattern\_\-test)}
+\label{namespacenatrium_aee9f084e377533e7051bc7ed8271526b}
+
+\item 
+\hypertarget{namespacenatrium_a3beee955eed9ac8e01af3cc7ce514fcb}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-ConstantStreaming\_\-test)}
+\label{namespacenatrium_a3beee955eed9ac8e01af3cc7ce514fcb}
+
+\item 
+\hypertarget{namespacenatrium_a068ae2506e3d7bd4b03a98d6ba57034f}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-ConstantStreaming\_\-test)}
+\label{namespacenatrium_a068ae2506e3d7bd4b03a98d6ba57034f}
+
+\item 
+\hypertarget{namespacenatrium_a96d7feccacfc22412c6a16721c205a8a}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-VectorReference\_\-test)}
+\label{namespacenatrium_a96d7feccacfc22412c6a16721c205a8a}
+
+\item 
+\hypertarget{namespacenatrium_a6836c174e44ff7be71d260768b06a169}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (LinearBoundaryRhoU2D\_\-Construction\_\-test)}
+\label{namespacenatrium_a6836c174e44ff7be71d260768b06a169}
+
+\item 
+\hypertarget{namespacenatrium_acd713562ddb2d103f3d59f703be1f085}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (LinearBoundaryRhoU2D\_\-SparsityPattern\_\-test)}
+\label{namespacenatrium_acd713562ddb2d103f3d59f703be1f085}
+
+\item 
+\hypertarget{namespacenatrium_ab56d4c7d39e126ebd76a4433d7efb8e8}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (LinearBoundaryRhoU2D\_\-MassConservation\_\-test)}
+\label{namespacenatrium_ab56d4c7d39e126ebd76a4433d7efb8e8}
+
+\item 
+\hypertarget{namespacenatrium_adc3a4cdd4cb4f509f325373919a22b58}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (LinearBoundaryRhoU2D\_\-BoundaryVelocity\_\-test)}
+\label{namespacenatrium_adc3a4cdd4cb4f509f325373919a22b58}
+
+\item 
+\hyperlink{namespacenatrium_a4090d871d84ad4fb470c0b909c8aa3a2}{BOOST\_\-AUTO\_\-TEST\_\-CASE} (PeriodicBoundary2D\_\-ConstructionByBoundaryIndicator\_\-test)
+\item 
+\hyperlink{namespacenatrium_ac3aa16cb6afbde804febb51c503b72e3}{BOOST\_\-AUTO\_\-TEST\_\-CASE} (PeriodicBoundary2D\_\-forDiscontinuousGalerkin\_\-test)
+\item 
+\hyperlink{namespacenatrium_a6742e53417be0f418326a958ef719cd0}{BOOST\_\-AUTO\_\-TEST\_\-CASE} (PeriodicBoundary\_\-getCoordinates2D\_\-test)
+\item 
+\hyperlink{namespacenatrium_a6c15033ca6f4995b47ec6f3b8f2c8472}{BOOST\_\-AUTO\_\-TEST\_\-CASE} (PeriodicBoundary\_\-getCoordinates3D\_\-test)
+\item 
+\hypertarget{namespacenatrium_a1640922536fff531f06f653caebad0e3}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKIncompressible\_\-collideAll\_\-test)}
+\label{namespacenatrium_a1640922536fff531f06f653caebad0e3}
+
+\item 
+\hypertarget{namespacenatrium_a7e1836389d3bae75b3a38f7c84a4ed51}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKMultistep\_\-collideAll\_\-test)}
+\label{namespacenatrium_a7e1836389d3bae75b3a38f7c84a4ed51}
+
+\item 
+\hypertarget{namespacenatrium_a2bfe2e1f1a590e450e0ae6bf5f88b39d}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKPseudopotential\_\-collideAll\_\-test)}
+\label{namespacenatrium_a2bfe2e1f1a590e450e0ae6bf5f88b39d}
+
+\item 
+\hypertarget{namespacenatrium_a6dabfa8f4922e330d651ce3e658ae03c}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandardConstruction\_\-test)}
+\label{namespacenatrium_a6dabfa8f4922e330d651ce3e658ae03c}
+
+\item 
+\hypertarget{namespacenatrium_aecdb3d15ce07cddfd3aa4a264553174b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandardSetTimeStep\_\-test)}
+\label{namespacenatrium_aecdb3d15ce07cddfd3aa4a264553174b}
+
+\item 
+\hypertarget{namespacenatrium_aaddbd8507218a02c3db1181247d759d1}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKMoments\_\-test)}
+\label{namespacenatrium_aaddbd8507218a02c3db1181247d759d1}
+
+\item 
+\hypertarget{namespacenatrium_a5d06bb4919a0a0a3c56c0a1de0c2243f}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9IncompressibleModelAllEqDistributions\_\-test)}
+\label{namespacenatrium_a5d06bb4919a0a0a3c56c0a1de0c2243f}
+
+\item 
+\hypertarget{namespacenatrium_a37799239d4b3fa49a4d8613b0021b2fb}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9IncompressibleModelMoments\_\-Scaled\_\-test)}
+\label{namespacenatrium_a37799239d4b3fa49a4d8613b0021b2fb}
+
+\item 
+\hypertarget{namespacenatrium_a2d6acb8f854c0728d233d067b69292f8}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9IncompressibleModelAllEqDistributions\_\-Scaled\_\-test)}
+\label{namespacenatrium_a2d6acb8f854c0728d233d067b69292f8}
+
+\item 
+\hypertarget{namespacenatrium_adbf98857fcf6990496eaab840c849244}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandardCollisionInvariants\_\-test)}
+\label{namespacenatrium_adbf98857fcf6990496eaab840c849244}
+
+\item 
+\hypertarget{namespacenatrium_ad4e8b85ceefce152b84e7c53e5ad44d0}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandard\_\-collideAllD2Q9\_\-test)}
+\label{namespacenatrium_ad4e8b85ceefce152b84e7c53e5ad44d0}
+
+\item 
+\hypertarget{namespacenatrium_ad714500b301a39d46458adc5144e5a90}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandard\_\-collideAllD3Q19\_\-test)}
+\label{namespacenatrium_ad714500b301a39d46458adc5144e5a90}
+
+\item 
+\hypertarget{namespacenatrium_a4b0a05bdc1399a013844bbf877a7f97d}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandard\_\-collideAllD3Q15\_\-test)}
+\label{namespacenatrium_a4b0a05bdc1399a013844bbf877a7f97d}
+
+\item 
+\hypertarget{namespacenatrium_ad76995868b4ffe00088a84dc3919b49e}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandardTransformedConstruction\_\-test)}
+\label{namespacenatrium_ad76995868b4ffe00088a84dc3919b49e}
+
+\item 
+\hypertarget{namespacenatrium_ad1fb291bc5533411170ccd76077536c3}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandardTransformedSetTimeStep\_\-test)}
+\label{namespacenatrium_ad1fb291bc5533411170ccd76077536c3}
+
+\item 
+\hypertarget{namespacenatrium_a77bbfe0e7ee61933f94814e328fb4f33}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKTransformedMoments\_\-test)}
+\label{namespacenatrium_a77bbfe0e7ee61933f94814e328fb4f33}
+
+\item 
+\hypertarget{namespacenatrium_a0dc2bf09abe47dd26f2f57f2c57bcdf2}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandardTransformedCollisionInvariants\_\-test)}
+\label{namespacenatrium_a0dc2bf09abe47dd26f2f57f2c57bcdf2}
+
+\item 
+\hypertarget{namespacenatrium_a290363fe04219a9ab8157ff7182021f0}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKStandardTransformed\_\-collideAll\_\-test)}
+\label{namespacenatrium_a290363fe04219a9ab8157ff7182021f0}
+
+\item 
+\hypertarget{namespacenatrium_a1102ad6934f491e6a49480081982440a}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateConstruction\_\-test)}
+\label{namespacenatrium_a1102ad6934f491e6a49480081982440a}
+
+\item 
+\hypertarget{namespacenatrium_a0040d9381f0717dfa1faccf4995a4f85}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateSetTimeStep\_\-test)}
+\label{namespacenatrium_a0040d9381f0717dfa1faccf4995a4f85}
+
+\item 
+\hypertarget{namespacenatrium_a61d21f636a84d5adb7912b847b25fa06}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateMoments\_\-test)}
+\label{namespacenatrium_a61d21f636a84d5adb7912b847b25fa06}
+
+\item 
+\hypertarget{namespacenatrium_a10f79d9f3fff4b4bd1a74f9cecbec22a}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateMoments\_\-Scaled\_\-test)}
+\label{namespacenatrium_a10f79d9f3fff4b4bd1a74f9cecbec22a}
+
+\item 
+\hypertarget{namespacenatrium_abc1880f32a200d413949cb5ac59d94b1}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateAllEqDistributions\_\-Scaled\_\-test)}
+\label{namespacenatrium_abc1880f32a200d413949cb5ac59d94b1}
+
+\item 
+\hypertarget{namespacenatrium_a5c7300f3faa06fe8d0255ec9bd267371}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateInvariants\_\-test)}
+\label{namespacenatrium_a5c7300f3faa06fe8d0255ec9bd267371}
+
+\item 
+\hypertarget{namespacenatrium_a157851ed45bc9df182651c6e5474a23b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyState\_\-collideAll\_\-test)}
+\label{namespacenatrium_a157851ed45bc9df182651c6e5474a23b}
+
+\item 
+\hypertarget{namespacenatrium_a67caa76ee272bd6eff0ecf145383c8ec}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (KBCStandard\_\-collideAll\_\-test)}
+\label{namespacenatrium_a67caa76ee272bd6eff0ecf145383c8ec}
+
+\item 
+\hypertarget{namespacenatrium_a6dbb4ae558c5145ecb8dad5917cb1739}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (KBCStandard\_\-collideAllD3Q15\_\-test)}
+\label{namespacenatrium_a6dbb4ae558c5145ecb8dad5917cb1739}
+
+\item 
+\hypertarget{namespacenatrium_aec0de411445e92474210cf06a70e11f7}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (MRTStandard\_\-collideAll\_\-test)}
+\label{namespacenatrium_aec0de411445e92474210cf06a70e11f7}
+
+\item 
+\hypertarget{namespacenatrium_ab123d146472bc24ce4cd36c5cb71e9a8}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (Boost\_\-test)}
+\label{namespacenatrium_ab123d146472bc24ce4cd36c5cb71e9a8}
+
+\item 
+\hypertarget{namespacenatrium_a079786c75e31c8ceb37511575a567ba1}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ExponentialFilter\_\-PolynomialDegree\_\-test)}
+\label{namespacenatrium_a079786c75e31c8ceb37511575a567ba1}
+
+\item 
+\hypertarget{namespacenatrium_aa16b180ba946481bdb52b08a1c0c3d2b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ExponentialFilter\_\-Construction2D\_\-test)}
+\label{namespacenatrium_aa16b180ba946481bdb52b08a1c0c3d2b}
+
+\item 
+\hypertarget{namespacenatrium_ac03a2217678ec69581c3ed15cda461df}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ExponentialFilter\_\-Construction3D\_\-test)}
+\label{namespacenatrium_ac03a2217678ec69581c3ed15cda461df}
+
+\item 
+\hypertarget{namespacenatrium_a1b95e965eb850eab92329ea18986a38d}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ExponentialFilter\_\-TestProjection\_\-test)}
+\label{namespacenatrium_a1b95e965eb850eab92329ea18986a38d}
+
+\item 
+\hypertarget{namespacenatrium_a1f58b59987be6e427484f1169f5398e6}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ExponentialFilter\_\-TestFiltering\_\-test)}
+\label{namespacenatrium_a1f58b59987be6e427484f1169f5398e6}
+
+\item 
+\hypertarget{namespacenatrium_a7d4dab2eb93c75d6f906ff7f3f56368f}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (VmultLimiter\_\-apply\_\-test)}
+\label{namespacenatrium_a7d4dab2eb93c75d6f906ff7f3f56368f}
+
+\item 
+\hypertarget{namespacenatrium_a271d07a7da6606cbde36ee419b272cae}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolver\_\-CreateTestFlow\_\-test)}
+\label{namespacenatrium_a271d07a7da6606cbde36ee419b272cae}
+
+\item 
+\hypertarget{namespacenatrium_ac80f837d01c91dcae6c12c68137218dc}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolver\_\-Construction\_\-test)}
+\label{namespacenatrium_ac80f837d01c91dcae6c12c68137218dc}
+
+\item 
+\hypertarget{namespacenatrium_a12ba8ff19abf98381f5fa015c524a2f0}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolver\_\-SteadyStreaming\_\-test)}
+\label{namespacenatrium_a12ba8ff19abf98381f5fa015c524a2f0}
+
+\item 
+\hypertarget{namespacenatrium_acb3795cef35aaf5ceb1beddbe38498bb}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolver\_\-UnsteadyStreaming\_\-test)}
+\label{namespacenatrium_acb3795cef35aaf5ceb1beddbe38498bb}
+
+\item 
+\hypertarget{namespacenatrium_a919d8c6f9f1a0df849d52fc6b8bf3299}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolver\_\-Restart\_\-test)}
+\label{namespacenatrium_a919d8c6f9f1a0df849d52fc6b8bf3299}
+
+\item 
+\hypertarget{namespacenatrium_a91e709e65a2b694c19879df1aaea18bd}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolver\_\-IterativeInit\_\-test)}
+\label{namespacenatrium_a91e709e65a2b694c19879df1aaea18bd}
+
+\item 
+\hypertarget{namespacenatrium_a48b188e2db3a9d04be4801adbd6badcb}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolver\_\-StopCondition\_\-test)}
+\label{namespacenatrium_a48b188e2db3a9d04be4801adbd6badcb}
+
+\item 
+\hypertarget{namespacenatrium_a0906093004ceddfcc527abaa0a6f7931}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (Checkpoint\_\-Create\_\-test)}
+\label{namespacenatrium_a0906093004ceddfcc527abaa0a6f7931}
+
+\item 
+\hypertarget{namespacenatrium_ab20dbe3d70cebe3c4d076fdb8963150a}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (Checkpoint\_\-SaveAndLoadUnchanged\_\-test)}
+\label{namespacenatrium_ab20dbe3d70cebe3c4d076fdb8963150a}
+
+\item 
+\hypertarget{namespacenatrium_a9bb1426901f85aa278e9aaa0bc3c292e}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (Checkpoint\_\-ResumeRefined\_\-test)}
+\label{namespacenatrium_a9bb1426901f85aa278e9aaa0bc3c292e}
+
+\item 
+\hypertarget{namespacenatrium_aef2253e44a4a45889806bbb338a603e5}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (Checkpoint\_\-ResumeOtherP\_\-test)}
+\label{namespacenatrium_aef2253e44a4a45889806bbb338a603e5}
+
+\item 
+\hypertarget{namespacenatrium_a039c9382ee32f6158c43183385ca6b6b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (Checkpoint\_\-ResumeOtherMa)}
+\label{namespacenatrium_a039c9382ee32f6158c43183385ca6b6b}
+
+\item 
+\hyperlink{namespacenatrium_a3fc48dbb8fbf2d4a981c1d02ef5e555e}{BOOST\_\-AUTO\_\-TEST\_\-CASE} (DistributionFunctions\_\-Construction\_\-test)
+\item 
+\hypertarget{namespacenatrium_a5b8ba00780d9b64478d38f0e0942f9fe}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ErrorStats\_\-ConstructionAndFunctionality\_\-test)}
+\label{namespacenatrium_a5b8ba00780d9b64478d38f0e0942f9fe}
+
+\item 
+\hypertarget{namespacenatrium_a2ce53d6763ffb6dcdceef6ca14b2c8a1}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ErrorStats\_\-FunctionsInSolverContext\_\-test)}
+\label{namespacenatrium_a2ce53d6763ffb6dcdceef6ca14b2c8a1}
+
+\item 
+\hypertarget{namespacenatrium_a0609cd32e1900e7276c5ef3b8787cb51}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (PhysicalProperties\_\-MassFluxX\_\-test)}
+\label{namespacenatrium_a0609cd32e1900e7276c5ef3b8787cb51}
+
+\item 
+\hypertarget{namespacenatrium_a2f6d36631d1209cc3bcf60be653b9d1c}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (PhysicalProperties\_\-Mass\_\-test)}
+\label{namespacenatrium_a2f6d36631d1209cc3bcf60be653b9d1c}
+
+\item 
+\hypertarget{namespacenatrium_aa10f55a443c7883764bb737a0dc2703c}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (PhysicalProperties\_\-KineticEnergy\_\-test)}
+\label{namespacenatrium_aa10f55a443c7883764bb737a0dc2703c}
+
+\item 
+\hypertarget{namespacenatrium_a09203b04dcf3f8d697ea3a274f122ee7}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (PhysicalProperties\_\-Enstrophy\_\-test)}
+\label{namespacenatrium_a09203b04dcf3f8d697ea3a274f122ee7}
+
+\item 
+\hypertarget{namespacenatrium_ab5cc1869722e5d7a01921c8c4d7508c4}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolverConfiguration\_\-Construction\_\-test)}
+\label{namespacenatrium_ab5cc1869722e5d7a01921c8c4d7508c4}
+
+\item 
+\hypertarget{namespacenatrium_ab6670763e204b340b8d08a8ea40ab784}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolverConfiguration\_\-CreateParameterFiles\_\-test)}
+\label{namespacenatrium_ab6670763e204b340b8d08a8ea40ab784}
+
+\item 
+\hyperlink{namespacenatrium_ac5584f4e62acc077516547aba5d60fe0}{BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolverConfiguration\_\-CheckSet\_\-test)
+\item 
+\hypertarget{namespacenatrium_ac4ceabb9b7aa1a42d5b60a4f65fc9808}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolverConfiguration\_\-ReadFromFile\_\-test)}
+\label{namespacenatrium_ac4ceabb9b7aa1a42d5b60a4f65fc9808}
+
+\item 
+\hypertarget{namespacenatrium_ac47b8864fc751be468f8fed651695b79}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolverConfiguration\_\-PrepareOutputDirectory\_\-test)}
+\label{namespacenatrium_ac47b8864fc751be468f8fed651695b79}
+
+\item 
+\hypertarget{namespacenatrium_a7674a6713c567058866476c0e2f923ac}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolverConfiguration\_\-OutputFlags\_\-test)}
+\label{namespacenatrium_a7674a6713c567058866476c0e2f923ac}
+
+\item 
+\hypertarget{namespacenatrium_a0d3613c7722c49a3f20b5cb8d9c6190c}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SolverStats\_\-ConstructionAndFunctionality\_\-test)}
+\label{namespacenatrium_a0d3613c7722c49a3f20b5cb8d9c6190c}
+
+\item 
+\hypertarget{namespacenatrium_ab8797e90a62a5280f7877bb3e2a5535f}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (SolverStats\_\-FunctionsInSolverContext\_\-test)}
+\label{namespacenatrium_ab8797e90a62a5280f7877bb3e2a5535f}
+
+\item 
+\hypertarget{namespacenatrium_aaa6f7bc5b2e61e0c673c46d7d58b486b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9Construction\_\-test)}
+\label{namespacenatrium_aaa6f7bc5b2e61e0c673c46d7d58b486b}
+
+\item 
+\hypertarget{namespacenatrium_a9e6ccf665a38e49780d3eb74ecb7ae2e}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9Static\_\-test)}
+\label{namespacenatrium_a9e6ccf665a38e49780d3eb74ecb7ae2e}
+
+\item 
+\hypertarget{namespacenatrium_a39bd87b48b869970d1ff9c39e8906611}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9Getter\_\-test)}
+\label{namespacenatrium_a39bd87b48b869970d1ff9c39e8906611}
+
+\item 
+\hypertarget{namespacenatrium_ad989d789b8bf82e68e1322b744f6c278}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9Construction\_\-Scaled\_\-test)}
+\label{namespacenatrium_ad989d789b8bf82e68e1322b744f6c278}
+
+\item 
+\hypertarget{namespacenatrium_a7988f30467753a9ffd505f19442f2356}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9Getter\_\-Scaled\_\-test)}
+\label{namespacenatrium_a7988f30467753a9ffd505f19442f2356}
+
+\item 
+\hypertarget{namespacenatrium_a99065e1e640a5c6ed259446a521e21c7}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9MomentTrafo\_\-test)}
+\label{namespacenatrium_a99065e1e640a5c6ed259446a521e21c7}
+
+\item 
+\hypertarget{namespacenatrium_aff7666ed1e4b6996f51dd95d5b6628f4}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D3QXMomentTrafo\_\-test)}
+\label{namespacenatrium_aff7666ed1e4b6996f51dd95d5b6628f4}
+
+\item 
+\hypertarget{namespacenatrium_a27e93123eac460080124636220f3b81b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (DealIIWrapper\_\-Convergence\_\-test)}
+\label{namespacenatrium_a27e93123eac460080124636220f3b81b}
+
+\item 
+\hypertarget{namespacenatrium_abc807165bb6f713d05eeec21612df097}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (DealIIWrapper\_\-MultiBlock\_\-test)}
+\label{namespacenatrium_abc807165bb6f713d05eeec21612df097}
+
+\item 
+\hypertarget{namespacenatrium_a71c27b988e4175b7a40b3a35472dcf17}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (DealIIWrapper\_\-MPI\_\-test)}
+\label{namespacenatrium_a71c27b988e4175b7a40b3a35472dcf17}
+
+\item 
+\hypertarget{namespacenatrium_a061f5535433c3c834eca7c3438d8d438}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ExponentialTimeIntegrator\_\-test)}
+\label{namespacenatrium_a061f5535433c3c834eca7c3438d8d438}
+
+\item 
+\hypertarget{namespacenatrium_a3ae22811692fba80a6a0de5b843877fe}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ExponentialTimeIntegrator\_\-MPI\_\-test)}
+\label{namespacenatrium_a3ae22811692fba80a6a0de5b843877fe}
+
+\item 
+\hypertarget{namespacenatrium_a11f2ca3b923a75460c139b6a8a5829ae}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (RungeKutta5LowStorage\_\-Convergence\_\-test)}
+\label{namespacenatrium_a11f2ca3b923a75460c139b6a8a5829ae}
+
+\item 
+\hypertarget{namespacenatrium_a46aa1d17c95e14848fe9e4bf06920eb9}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (RungeKutta5LowStorage\_\-MPI\_\-test)}
+\label{namespacenatrium_a46aa1d17c95e14848fe9e4bf06920eb9}
+
+\item 
+\hypertarget{namespacenatrium_ab2f8301ae61e983bdf79275749c43db5}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ThetaMethod\_\-Convergence\_\-test)}
+\label{namespacenatrium_ab2f8301ae61e983bdf79275749c43db5}
+
+\item 
+\hypertarget{namespacenatrium_ab08bd8b94d961571a14c779cb6f43ea5}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ThetaMethod\_\-MultiBlock\_\-test)}
+\label{namespacenatrium_ab08bd8b94d961571a14c779cb6f43ea5}
+
+\item 
+\hypertarget{namespacenatrium_ad6e4cd3c4519457f2fcab08ccf941cab}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (ThetaMethod\_\-MPI\_\-test)}
+\label{namespacenatrium_ad6e4cd3c4519457f2fcab08ccf941cab}
+
+\item 
+\hypertarget{namespacenatrium_a063d598f02838b791545695ce7c2bb8d}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BasicNames\_\-pout\_\-Test)}
+\label{namespacenatrium_a063d598f02838b791545695ce7c2bb8d}
+
+\item 
+\hypertarget{namespacenatrium_a373dbad4fef7c7a61a60bdb02ad96334}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolverUtilities\_\-DoFDistance\_\-test)}
+\label{namespacenatrium_a373dbad4fef7c7a61a60bdb02ad96334}
+
+\item 
+\hypertarget{namespacenatrium_aefd330df08a36589588646c79b6484db}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (CFDSolverUtilities\_\-getIntegratorByID\_\-test)}
+\label{namespacenatrium_aefd330df08a36589588646c79b6484db}
+
+\item 
+\hypertarget{namespacenatrium_a334239f5dfc2861c3d722ceab11d956b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (DealIIFunctionality\_\-Periodicity\_\-test)}
+\label{namespacenatrium_a334239f5dfc2861c3d722ceab11d956b}
+
+\item 
+\hypertarget{namespacenatrium_ae2b885e6d3e03dc649f0bd44295ad701}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (DealIIFunctionality\_\-UserFlags\_\-test)}
+\label{namespacenatrium_ae2b885e6d3e03dc649f0bd44295ad701}
+
+\item 
+\hypertarget{namespacenatrium_afe0d974e8e27371c1cfbede14560dc72}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (DealIIFunctionality\_\-VectorReference\_\-test)}
+\label{namespacenatrium_afe0d974e8e27371c1cfbede14560dc72}
+
+\item 
+\hypertarget{namespacenatrium_a5bdafd6bf42964ea54804589a5991a67}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (DealIIFunctionality\_\-IndexSet\_\-test)}
+\label{namespacenatrium_a5bdafd6bf42964ea54804589a5991a67}
+
+\item 
+\hypertarget{namespacenatrium_a1ccd12b5301561e908ab18bec38078c3}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (Math\_\-VelocityNorm\_\-test)}
+\label{namespacenatrium_a1ccd12b5301561e908ab18bec38078c3}
+
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+dealii::ConditionalOStream \hyperlink{namespacenatrium_a3cedd4d2c74ed3a6e0f61166ddff40d1}{perr}
+\item 
+\hypertarget{namespacenatrium_ae1c1457daa96180a3ee2057cf5f7f9e3}{
+dealii::ConditionalOStream {\bfseries pout}}
+\label{namespacenatrium_ae1c1457daa96180a3ee2057cf5f7f9e3}
+
+\item 
+\hypertarget{namespacenatrium_a43f9d1a94de3cd6d8515e213d9c389cc}{
+const double {\bfseries SCALING} = 0.5}
+\label{namespacenatrium_a43f9d1a94de3cd6d8515e213d9c389cc}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. 
+
+\subsection{Enumeration Type Documentation}
+\hypertarget{namespacenatrium_a45d5dacaf5eb5efde670179d949173ba}{
+\index{natrium@{natrium}!StencilType@{StencilType}}
+\index{StencilType@{StencilType}!natrium@{natrium}}
+\subsubsection[{StencilType}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf natrium::StencilType}}}
+\label{namespacenatrium_a45d5dacaf5eb5efde670179d949173ba}
+
+
+Enum type for the difference stencil. \begin{Desc}
+\item[Enumerator: ]\par
+\begin{description}
+\index{Stencil\_\-D2Q9@{Stencil\_\-D2Q9}!natrium@{natrium}}\index{natrium@{natrium}!Stencil\_\-D2Q9@{Stencil\_\-D2Q9}}\item[{\em 
+\hypertarget{namespacenatrium_a45d5dacaf5eb5efde670179d949173baabe9c0ce3734a5131262789758ca5fbd1}{
+Stencil\_\-D2Q9}
+\label{namespacenatrium_a45d5dacaf5eb5efde670179d949173baabe9c0ce3734a5131262789758ca5fbd1}
+}]\hyperlink{classnatrium_1_1D2Q9}{D2Q9} stencil. \end{description}
+\end{Desc}
+
+\hypertarget{namespacenatrium_a00a0ec1e80f138680e0fcca78349f6d8}{
+\index{natrium@{natrium}!TimeIntegratorName@{TimeIntegratorName}}
+\index{TimeIntegratorName@{TimeIntegratorName}!natrium@{natrium}}
+\subsubsection[{TimeIntegratorName}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf natrium::TimeIntegratorName}}}
+\label{namespacenatrium_a00a0ec1e80f138680e0fcca78349f6d8}
+
+
+Implemented time integrators. \begin{DoxyNote}{Note}
+other refers to dealii integrators which are accessed through a wrapper class 
+\end{DoxyNote}
+
+
+\subsection{Function Documentation}
+\hypertarget{namespacenatrium_ac5584f4e62acc077516547aba5d60fe0}{
+\index{natrium@{natrium}!BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}}
+\index{BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}!natrium@{natrium}}
+\subsubsection[{BOOST\_\-AUTO\_\-TEST\_\-CASE}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE (CFDSolverConfiguration\_\-CheckSet\_\-test)}}
+\label{namespacenatrium_ac5584f4e62acc077516547aba5d60fe0}
+
+
+Failure test \hypertarget{namespacenatrium_a3fc48dbb8fbf2d4a981c1d02ef5e555e}{
+\index{natrium@{natrium}!BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}}
+\index{BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}!natrium@{natrium}}
+\subsubsection[{BOOST\_\-AUTO\_\-TEST\_\-CASE}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE (DistributionFunctions\_\-Construction\_\-test)}}
+\label{namespacenatrium_a3fc48dbb8fbf2d4a981c1d02ef5e555e}
+
+
+Empty constructor
+
+Conversion-\/from-\/vector constructor \hypertarget{namespacenatrium_a6c15033ca6f4995b47ec6f3b8f2c8472}{
+\index{natrium@{natrium}!BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}}
+\index{BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}!natrium@{natrium}}
+\subsubsection[{BOOST\_\-AUTO\_\-TEST\_\-CASE}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE (PeriodicBoundary\_\-getCoordinates3D\_\-test)}}
+\label{namespacenatrium_a6c15033ca6f4995b47ec6f3b8f2c8472}
+
+
+create triangulation \hypertarget{namespacenatrium_a6742e53417be0f418326a958ef719cd0}{
+\index{natrium@{natrium}!BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}}
+\index{BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}!natrium@{natrium}}
+\subsubsection[{BOOST\_\-AUTO\_\-TEST\_\-CASE}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE (PeriodicBoundary\_\-getCoordinates2D\_\-test)}}
+\label{namespacenatrium_a6742e53417be0f418326a958ef719cd0}
+
+
+create triangulation \hypertarget{namespacenatrium_ac3aa16cb6afbde804febb51c503b72e3}{
+\index{natrium@{natrium}!BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}}
+\index{BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}!natrium@{natrium}}
+\subsubsection[{BOOST\_\-AUTO\_\-TEST\_\-CASE}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE (PeriodicBoundary2D\_\-forDiscontinuousGalerkin\_\-test)}}
+\label{namespacenatrium_ac3aa16cb6afbde804febb51c503b72e3}
+
+
+create triangulation \hypertarget{namespacenatrium_a4090d871d84ad4fb470c0b909c8aa3a2}{
+\index{natrium@{natrium}!BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}}
+\index{BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}!natrium@{natrium}}
+\subsubsection[{BOOST\_\-AUTO\_\-TEST\_\-CASE}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE (PeriodicBoundary2D\_\-ConstructionByBoundaryIndicator\_\-test)}}
+\label{namespacenatrium_a4090d871d84ad4fb470c0b909c8aa3a2}
+
+
+Valid set of points and triangulation
+
+Test if construction works and vertices could be found automatically \hypertarget{namespacenatrium_a5d50c8f7b1a7391f2433de8b308a11e7}{
+\index{natrium@{natrium}!BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}}
+\index{BOOST\_\-AUTO\_\-TEST\_\-CASE@{BOOST\_\-AUTO\_\-TEST\_\-CASE}!natrium@{natrium}}
+\subsubsection[{BOOST\_\-AUTO\_\-TEST\_\-CASE}]{\setlength{\rightskip}{0pt plus 5cm}natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE (SEDGMinLee\_\-RKstreaming\_\-test)}}
+\label{namespacenatrium_a5d50c8f7b1a7391f2433de8b308a11e7}
+
+
+THIS WILL SHOW, if streaming is really correct
+
+relaxationParamter and velocity have no impact; just needed for construction \hypertarget{namespacenatrium_a791202a0d8b6bdac2c62f3ae63905a36}{
+\index{natrium@{natrium}!is\_\-MPI\_\-rank\_\-0@{is\_\-MPI\_\-rank\_\-0}}
+\index{is\_\-MPI\_\-rank\_\-0@{is\_\-MPI\_\-rank\_\-0}!natrium@{natrium}}
+\subsubsection[{is\_\-MPI\_\-rank\_\-0}]{\setlength{\rightskip}{0pt plus 5cm}bool natrium::is\_\-MPI\_\-rank\_\-0 ()\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_a791202a0d8b6bdac2c62f3ae63905a36}
+check if the MPI process has rank zero returns true, if MPI is not used \hypertarget{namespacenatrium_a0590621d19e4629e6afb5e7365f9f331}{
+\index{natrium@{natrium}!LOG@{LOG}}
+\index{LOG@{LOG}!natrium@{natrium}}
+\subsubsection[{LOG}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Logging}\& natrium::LOG (LogLevel {\em level})}}
+\label{namespacenatrium_a0590621d19e4629e6afb5e7365f9f331}
+
+
+can be used like \char`\"{}LOG(ERROR) $<$$<$ ...;\char`\"{}, to write output to the log file and command line friend function; can be used like \char`\"{}LOG(ERROR) $<$$<$ ...;\char`\"{}, to write output to the log file and command line
+
+\begin{DoxyNote}{Note}
+accesses the default logstream Logging::m\_\-LOGGER 
+\end{DoxyNote}
+\hypertarget{namespacenatrium_a0d879cf404d8a12fc978ab97d33758b4}{
+\index{natrium@{natrium}!LOGGER@{LOGGER}}
+\index{LOGGER@{LOGGER}!natrium@{natrium}}
+\subsubsection[{LOGGER}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Logging}\& natrium::LOGGER ()}}
+\label{namespacenatrium_a0d879cf404d8a12fc978ab97d33758b4}
+
+
+is used to access the default logging instance m\_\-LOGGER; e.g. \hyperlink{namespacenatrium_a0d879cf404d8a12fc978ab97d33758b4}{LOGGER()}.setLogFile(...) friend function; is used to access the default logging instance; e.g. \hyperlink{namespacenatrium_a0d879cf404d8a12fc978ab97d33758b4}{LOGGER()}.setLogFile(...) \hypertarget{namespacenatrium_aaa8bf70405092ec81a8b15331a8f24b5}{
+\index{natrium@{natrium}!make\_\-integrator@{make\_\-integrator}}
+\index{make\_\-integrator@{make\_\-integrator}!natrium@{natrium}}
+\subsubsection[{make\_\-integrator}]{\setlength{\rightskip}{0pt plus 5cm}boost::shared\_\-ptr$<${\bf TimeIntegrator}$<${\bf distributed\_\-sparse\_\-matrix}, {\bf distributed\_\-vector}$>$ $>$ natrium::make\_\-integrator (TimeIntegratorName {\em integrator\_\-name}, \/  DealIntegratorName {\em deal\_\-integrator\_\-name}, \/  double {\em delta\_\-t}, \/  distributed\_\-vector \& {\em f})}}
+\label{namespacenatrium_aaa8bf70405092ec81a8b15331a8f24b5}
+
+
+Build time integrator \hypertarget{namespacenatrium_a5493e61c5fe1935bc9975d78a24dceda}{
+\index{natrium@{natrium}!perr@{perr}}
+\index{perr@{perr}!natrium@{natrium}}
+\subsubsection[{perr}]{\setlength{\rightskip}{0pt plus 5cm}dealii::ConditionalOStream {\bf natrium::perr} (std::cerr, \/  true)}}
+\label{namespacenatrium_a5493e61c5fe1935bc9975d78a24dceda}
+Parallel cout and cerr Their activity is changed, when \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard} is initialized \hypertarget{namespacenatrium_a95eedd6a35d489da1b939928d8cf40e0}{
+\index{natrium@{natrium}!reinitVector@{reinitVector}}
+\index{reinitVector@{reinitVector}!natrium@{natrium}}
+\subsubsection[{reinitVector}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class VECTOR $>$ void natrium::reinitVector (VECTOR \& {\em dst}, \/  const VECTOR \& {\em src})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_a95eedd6a35d489da1b939928d8cf40e0}
+reinit vector (initialization is different for trilinos data structures, so this functions has two different instantiation) 
+
+\subsection{Variable Documentation}
+\hypertarget{namespacenatrium_a3cedd4d2c74ed3a6e0f61166ddff40d1}{
+\index{natrium@{natrium}!perr@{perr}}
+\index{perr@{perr}!natrium@{natrium}}
+\subsubsection[{perr}]{\setlength{\rightskip}{0pt plus 5cm}dealii::ConditionalOStream {\bf natrium::perr}}}
+\label{namespacenatrium_a3cedd4d2c74ed3a6e0f61166ddff40d1}
+Parallel cout and cerr Their activity is changed, when \hyperlink{classnatrium_1_1MPIGuard}{MPIGuard} is initialized Defined in MPIGuard.cpp 

@@ -18,9 +18,9 @@ A periodic boundary condition. Periodic boundaries have to be set before the gri
 \item 
 \hyperlink{classnatrium_1_1PeriodicBoundary_ad105994a331755f654822813875771d8}{PeriodicBoundary} (size\_\-t boundaryIndicator1, size\_\-t boundaryIndicator2, size\_\-t direction, boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation)
 \begin{DoxyCompactList}\small\item\em Constructor; the periodic boundary is defined by two lines. The degrees of freedom on the first line are forced to be equal to the opposite one on the second line, respectively. \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1PeriodicBoundary_ae71c1a8ea1f1f9e29be8ab6496125a5c}{
-virtual \hyperlink{classnatrium_1_1PeriodicBoundary_ae71c1a8ea1f1f9e29be8ab6496125a5c}{$\sim$PeriodicBoundary} ()}
-\label{classnatrium_1_1PeriodicBoundary_ae71c1a8ea1f1f9e29be8ab6496125a5c}
+\hypertarget{classnatrium_1_1PeriodicBoundary_ad5f86b54a5a3ff86593ddb0e69b352e4}{
+virtual \hyperlink{classnatrium_1_1PeriodicBoundary_ad5f86b54a5a3ff86593ddb0e69b352e4}{$\sim$PeriodicBoundary} ()}
+\label{classnatrium_1_1PeriodicBoundary_ad5f86b54a5a3ff86593ddb0e69b352e4}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
 size\_\-t \hyperlink{classnatrium_1_1PeriodicBoundary_aaa861135e070feb4b3dd4408c487cd14}{getOppositeCellAtPeriodicBoundary} (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, typename dealii::DoFHandler$<$ dim $>$::cell\_\-iterator \&neighborCell) const 
@@ -34,16 +34,18 @@ virtual bool \hyperlink{classnatrium_1_1PeriodicBoundary_a38c5e966e4b2a1ee185a56
 \begin{DoxyCompactList}\small\item\em is the boundary a periodic boundary ? \item\end{DoxyCompactList}\item 
 void \hyperlink{classnatrium_1_1PeriodicBoundary_a233d460baa307b13bc32efb57c07f7c5}{createCellMap} (const dealii::DoFHandler$<$ dim $>$ \&doFHandler)
 \begin{DoxyCompactList}\small\item\em create the map m\_\-cells which stores the cells adjacent to the periodic boundary \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1PeriodicBoundary_a036bc3340a3217dfe4f916d5c2b29299}{
-void \hyperlink{classnatrium_1_1PeriodicBoundary_a036bc3340a3217dfe4f916d5c2b29299}{checkCellMap} ()}
-\label{classnatrium_1_1PeriodicBoundary_a036bc3340a3217dfe4f916d5c2b29299}
+\hypertarget{classnatrium_1_1PeriodicBoundary_a4885d5d5d4c8965db5534390ad877511}{
+void \hyperlink{classnatrium_1_1PeriodicBoundary_a4885d5d5d4c8965db5534390ad877511}{checkCellMap} ()}
+\label{classnatrium_1_1PeriodicBoundary_a4885d5d5d4c8965db5534390ad877511}
 
 \begin{DoxyCompactList}\small\item\em check if all cells in the cell map have appropriate boundary indicators \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1PeriodicBoundary_a8523a2b22bfacc8aa299c5a9c238ffdd}{
-void \hyperlink{classnatrium_1_1PeriodicBoundary_a8523a2b22bfacc8aa299c5a9c238ffdd}{addToSparsityPattern} (dealii::BlockDynamicSparsityPattern \&, size\_\-t, size\_\-t, size\_\-t) const }
-\label{classnatrium_1_1PeriodicBoundary_a8523a2b22bfacc8aa299c5a9c238ffdd}
+\hypertarget{classnatrium_1_1PeriodicBoundary_af46e4e91a6b612fb3b2ef658b962d5d8}{
+void \hyperlink{classnatrium_1_1PeriodicBoundary_af46e4e91a6b612fb3b2ef658b962d5d8}{addToSparsityPattern} (dealii::BlockDynamicSparsityPattern \&, size\_\-t, size\_\-t, size\_\-t) const }
+\label{classnatrium_1_1PeriodicBoundary_af46e4e91a6b612fb3b2ef658b962d5d8}
 
 \begin{DoxyCompactList}\small\item\em This function does nothing; just to satisfy the interface. The Periodic \hyperlink{classnatrium_1_1Boundary}{Boundary} conditions are directly incorporated in make\_\-sparser\_\-flux\_\-sparsity\_\-pattern. \item\end{DoxyCompactList}\item 
+dealii::Point$<$ dim $>$ \hyperlink{classnatrium_1_1PeriodicBoundary_a9a5677bbc1d59499ceec15a7893b8688}{coordinatesAcrossPeriodicBoundary} (const dealii::Point$<$ dim $>$ \&p, const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell)
+\item 
 \hypertarget{classnatrium_1_1PeriodicBoundary_a1351b925b9ae2008539a351a4baac3e0}{
 const boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \& {\bfseries getMesh} () const }
 \label{classnatrium_1_1PeriodicBoundary_a1351b925b9ae2008539a351a4baac3e0}
@@ -115,7 +117,12 @@ Since both lines have to match each other perfectly, the constructor tests wheth
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1PeriodicBoundary_a233d460baa307b13bc32efb57c07f7c5}{
+\hypertarget{classnatrium_1_1PeriodicBoundary_a9a5677bbc1d59499ceec15a7893b8688}{
+\index{natrium::PeriodicBoundary@{natrium::PeriodicBoundary}!coordinatesAcrossPeriodicBoundary@{coordinatesAcrossPeriodicBoundary}}
+\index{coordinatesAcrossPeriodicBoundary@{coordinatesAcrossPeriodicBoundary}!natrium::PeriodicBoundary@{natrium::PeriodicBoundary}}
+\subsubsection[{coordinatesAcrossPeriodicBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ dealii::Point$<$ dim $>$ {\bf natrium::PeriodicBoundary}$<$ dim $>$::coordinatesAcrossPeriodicBoundary (const dealii::Point$<$ dim $>$ \& {\em p}, \/  const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1PeriodicBoundary_a9a5677bbc1d59499ceec15a7893b8688}
+Transform a point into its equivalent across the periodic boundary \hypertarget{classnatrium_1_1PeriodicBoundary_a233d460baa307b13bc32efb57c07f7c5}{
 \index{natrium::PeriodicBoundary@{natrium::PeriodicBoundary}!createCellMap@{createCellMap}}
 \index{createCellMap@{createCellMap}!natrium::PeriodicBoundary@{natrium::PeriodicBoundary}}
 \subsubsection[{createCellMap}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::PeriodicBoundary}$<$ dim $>$::createCellMap (const dealii::DoFHandler$<$ dim $>$ \& {\em doFHandler})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
@@ -152,5 +159,5 @@ test if a given face belongs to this boundary
 
 The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/\hyperlink{PeriodicBoundary_8h}{PeriodicBoundary.h}\item 
-/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/\hyperlink{PeriodicBoundary_8cpp}{PeriodicBoundary.cpp}\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/\hyperlink{PeriodicBoundary_8h}{PeriodicBoundary.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/\hyperlink{PeriodicBoundary_8cpp}{PeriodicBoundary.cpp}\end{DoxyCompactItemize}

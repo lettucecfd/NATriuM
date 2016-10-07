@@ -9,6 +9,11 @@
 
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/grid/grid_generator.h"
+#include "deal.II/base/index_set.h"
+
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
+#include "natrium/advection/SemiLagrangian.h"
+#include "natrium/stencils/D2Q9.h"
 
 #include "boost/test/included/unit_test.hpp"
 

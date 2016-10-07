@@ -205,7 +205,7 @@ public:
 		return m_entropy;
 	}
 
-	const bool isOutputOff() const {
+	bool isOutputOff() const {
 		return m_outputOff;
 	}
 };

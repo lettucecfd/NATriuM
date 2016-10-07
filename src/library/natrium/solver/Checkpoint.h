@@ -16,6 +16,10 @@
 #include "../utilities/BasicNames.h"
 #include "../stencils/Stencil.h"
 
+#include "../utilities/NATriuMException.h"
+#include "../problemdescription/ProblemDescription.h"
+#include "../advection/AdvectionOperator.h"
+
 namespace natrium {
 
 /**

@@ -10,6 +10,7 @@
 
 #include "../advection/AdvectionOperator.h"
 #include "../utilities/BasicNames.h"
+#include "../solver/DistributionFunctions.h"
 
 namespace natrium {
 

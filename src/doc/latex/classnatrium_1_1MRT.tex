@@ -1,0 +1,82 @@
+\hypertarget{classnatrium_1_1MRT}{
+\section{natrium::MRT Class Reference}
+\label{classnatrium_1_1MRT}\index{natrium::MRT@{natrium::MRT}}
+}
+Inheritance diagram for natrium::MRT::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1MRT}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1MRT_a48bf35d2c4142b066d739c875476c014}{
+{\bfseries MRT} (double relaxationParameter, double dt, const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil)}
+\label{classnatrium_1_1MRT_a48bf35d2c4142b066d739c875476c014}
+
+\item 
+virtual double \hyperlink{classnatrium_1_1MRT_a3f96915f9f67680f4a1d7b952e70be55}{getEquilibriumDistribution} (size\_\-t i, const \hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} \&u, const double rho) const 
+\begin{DoxyCompactList}\small\item\em virtual function for the calculation of the equilibrium distribution \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1MRT_aaaa7b9eac3ef3ef3f77b9de2df38ac8c}{
+void {\bfseries setTimeStep} (double dt)}
+\label{classnatrium_1_1MRT_aaaa7b9eac3ef3ef3f77b9de2df38ac8c}
+
+\item 
+\hypertarget{classnatrium_1_1MRT_af5071fe45b44df6a7276601448184634}{
+double {\bfseries getTimeStep} () const }
+\label{classnatrium_1_1MRT_af5071fe45b44df6a7276601448184634}
+
+\item 
+\hypertarget{classnatrium_1_1MRT_a9d855516e1b76f90b4cd4b470260dadf}{
+size\_\-t {\bfseries getQ} () const }
+\label{classnatrium_1_1MRT_a9d855516e1b76f90b4cd4b470260dadf}
+
+\item 
+\hypertarget{classnatrium_1_1MRT_a7d8213b0eb352329f0d21cb86ebccc30}{
+double {\bfseries getPrefactor} () const }
+\label{classnatrium_1_1MRT_a7d8213b0eb352329f0d21cb86ebccc30}
+
+\item 
+\hypertarget{classnatrium_1_1MRT_ad5ed25948b4e6f391ea206fa3a11688b}{
+double {\bfseries getRelaxationParameter} () const }
+\label{classnatrium_1_1MRT_ad5ed25948b4e6f391ea206fa3a11688b}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1MRT_aa7bf1bb5e4ff004480e2dd42fc95bf0c}{
+static double {\bfseries calculateRelaxationParameter} (double viscosity, double timeStepSize, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil)}
+\label{classnatrium_1_1MRT_aa7bf1bb5e4ff004480e2dd42fc95bf0c}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1MRT_a3f96915f9f67680f4a1d7b952e70be55}{
+\index{natrium::MRT@{natrium::MRT}!getEquilibriumDistribution@{getEquilibriumDistribution}}
+\index{getEquilibriumDistribution@{getEquilibriumDistribution}!natrium::MRT@{natrium::MRT}}
+\subsubsection[{getEquilibriumDistribution}]{\setlength{\rightskip}{0pt plus 5cm}double natrium::MRT::getEquilibriumDistribution (size\_\-t {\em i}, \/  const {\bf numeric\_\-vector} \& {\em u}, \/  const double {\em rho}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1MRT_a3f96915f9f67680f4a1d7b952e70be55}
+
+
+virtual function for the calculation of the equilibrium distribution 
+\begin{DoxyParams}{Parameters}
+\item[{\em i}]index of the direction \item[{\em u}]macroscopic velocity \item[{\em rho}]macroscopic density \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value of the equilibrium distribution 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+The calculation can surely be done more efficiently by passing different arguments, e.g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classnatrium_1_1CollisionModel_a88b382d63da80e950bc58e8afad769a6}{natrium::CollisionModel}.
+
+Reimplemented in \hyperlink{classnatrium_1_1KBCStandard_a1dac2deaafb93027bf168887dd2e002d}{natrium::KBCStandard}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/MRT.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/MRT.cpp\end{DoxyCompactItemize}

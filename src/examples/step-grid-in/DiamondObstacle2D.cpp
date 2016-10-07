@@ -12,7 +12,7 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/grid/grid_in.h"
 
-#include "natrium/problemdescription/LinearBoundaryRhoU.h"
+#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
 
 #include "natrium/utilities/Math.h"
 
@@ -74,13 +74,13 @@ boost::shared_ptr<BoundaryCollection<2> > DiamondObstacle2D::makeBoundaries() {
 	boost::shared_ptr<dealii::Function<2> > boundary_velocity = boost::make_shared<
 			InflowVelocity> (m_meanInflowVelocity);
 	boundaries->addBoundary(
-			boost::make_shared<LinearBoundaryRhoU<2> >(1, zeroVector));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(1, zeroVector));
 	boundaries->addBoundary(
-			boost::make_shared<LinearBoundaryRhoU<2> >(2, boundary_density, boundary_velocity));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(2, boundary_density, boundary_velocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearBoundaryRhoU<2> >(3, boundary_density, boundary_velocity));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(3, boundary_density, boundary_velocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearBoundaryRhoU<2> >(4, zeroVector));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(4, zeroVector));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

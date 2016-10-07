@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html">BenchmarkCFDSolver</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html">BenchmarkCFDSolver</a>
   </div>
 </div>
 <div class="contents">
@@ -70,8 +70,8 @@ Inheritance diagram for natrium::BenchmarkCFDSolver&lt; dim &gt;:</div>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa9cdc67e4218230f54d74b0182170705"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::BenchmarkCFDSolver" ref="aa9cdc67e4218230f54d74b0182170705" args="(boost::shared_ptr&lt; SolverConfiguration &gt; configuration, boost::shared_ptr&lt; Benchmark&lt; dim &gt; &gt; problemDescription)" -->
 &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#aa9cdc67e4218230f54d74b0182170705">BenchmarkCFDSolver</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SolverConfiguration.html">SolverConfiguration</a> &gt; configuration, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Benchmark.html">Benchmark</a>&lt; dim &gt; &gt; problemDescription)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9708132fc0cef4ae55e3453672891c81"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::output" ref="a9708132fc0cef4ae55e3453672891c81" args="(size_t iteration)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a9708132fc0cef4ae55e3453672891c81">output</a> (size_t iteration)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9d63cc1e2fe66301533713d4f1ce43a6"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::output" ref="a9d63cc1e2fe66301533713d4f1ce43a6" args="(size_t iteration, bool is_final=false)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a9d63cc1e2fe66301533713d4f1ce43a6">output</a> (size_t iteration, bool is_final=false)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">create output data and write to file <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96be8add7c888ef4e6a1cb41cd2b40f6"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::addAnalyticSolutionToOutput" ref="a96be8add7c888ef4e6a1cb41cd2b40f6" args="(dealii::DataOut&lt; dim &gt; &amp;data_out)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a96be8add7c888ef4e6a1cb41cd2b40f6">addAnalyticSolutionToOutput</a> (dealii::DataOut&lt; dim &gt; &amp;data_out)</td></tr>
@@ -80,12 +80,12 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#aafd3c01db648420ce6d98a8349bdfa09">~BenchmarkCFDSolver</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a486d464112256436c1c3300b28519cbb"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::getAllAnalyticDensities" ref="a486d464112256436c1c3300b28519cbb" args="(double time, distributed_vector &amp;analyticDensities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const " -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a486d464112256436c1c3300b28519cbb">getAllAnalyticDensities</a> (double time, distributed_vector &amp;analyticDensities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a486d464112256436c1c3300b28519cbb">getAllAnalyticDensities</a> (double time, <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;analyticDensities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get full analytic solution for the density field at time t <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aebef5814f8c44ab8d0029114b5998cff"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::getAllAnalyticVelocities" ref="aebef5814f8c44ab8d0029114b5998cff" args="(double time, vector&lt; distributed_vector &gt; &amp;analyticVelocities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const " -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#aebef5814f8c44ab8d0029114b5998cff">getAllAnalyticVelocities</a> (double time, vector&lt; distributed_vector &gt; &amp;analyticVelocities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#aebef5814f8c44ab8d0029114b5998cff">getAllAnalyticVelocities</a> (double time, vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;analyticVelocities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get full analytic solution for the density field at time t <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a7883dcfd4469ae65ae62cad09ae5d160">applyInitialVelocities</a> (vector&lt; distributed_vector &gt; &amp;initialVelocities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a7883dcfd4469ae65ae62cad09ae5d160">applyInitialVelocities</a> (vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;initialVelocities, const map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">set initial velocities  <a href="#a7883dcfd4469ae65ae62cad09ae5d160"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a767bb620c883abad0091a9e68aee4491"></a><!-- doxytag: member="natrium::BenchmarkCFDSolver::getBenchmark" ref="a767bb620c883abad0091a9e68aee4491" args="() const " -->
 const boost::shared_ptr<br class="typebreak"/>
@@ -116,7 +116,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html">natrium::BenchmarkCFDSolver</a>&lt; dim &gt;::applyInitialVelocities </td>
           <td>(</td>
-          <td class="paramtype">vector&lt; distributed_vector &gt; &amp;&nbsp;</td>
+          <td class="paramtype">vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>initialVelocities</em>, </td>
         </tr>
         <tr>
@@ -157,7 +157,7 @@ template&lt;size_t dim&gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -166,7 +166,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

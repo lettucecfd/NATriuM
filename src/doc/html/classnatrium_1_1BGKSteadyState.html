@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1BGKSteadyState.html">BGKSteadyState</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1BGKSteadyState.html">BGKSteadyState</a>
   </div>
 </div>
 <div class="contents">
@@ -80,9 +80,9 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor.  <a href="#a36e281915902e8ac1e347a22e382ac3f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#ab2c58f1d6b964179a2abeb5f54aa5edc">~BGKSteadyState</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor  <a href="#ab2c58f1d6b964179a2abeb5f54aa5edc"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">getEquilibriumDistribution</a> (size_t i, const numeric_vector &amp;u, const double rho=1) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">getEquilibriumDistribution</a> (size_t i, const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;u, const double rho=1) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for the calculation of the equilibrium distribution in the incompressible <a class="el" href="classnatrium_1_1D2Q9.html" title="D2Q9 Model.">D2Q9</a> model  <a href="#ad99d9159cc14b5897bea7f145c3b39ca"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#a8554fb624c5a3abe01651747b3d9aeb7">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#a8554fb624c5a3abe01651747b3d9aeb7">collideAll</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;densities, vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for collision  <a href="#a8554fb624c5a3abe01651747b3d9aeb7"></a><br/></td></tr>
 <tr><td colspan="2"><h2>Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKSteadyState.html#a2cd6628c71475663e204656147de99b8">calculateRelaxationParameter</a> (double viscosity, double timeStepSize, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;stencil, double preconditioning_parameter)</td></tr>
@@ -237,13 +237,13 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">distributed_vector &amp;&nbsp;</td>
+          <td class="paramtype"><a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>densities</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">vector&lt; distributed_vector &gt; &amp;&nbsp;</td>
+          <td class="paramtype">vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>velocities</em>, </td>
         </tr>
         <tr>
@@ -288,7 +288,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const numeric_vector &amp;&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>u</em>, </td>
         </tr>
         <tr>
@@ -333,7 +333,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -342,7 +342,7 @@ Inheritance diagram for natrium::BGKSteadyState:</div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

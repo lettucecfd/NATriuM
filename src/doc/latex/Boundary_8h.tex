@@ -1,6 +1,6 @@
 \hypertarget{Boundary_8h}{
-\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/Boundary.h File Reference}
-\label{Boundary_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/Boundary.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/Boundary.h}}
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/Boundary.h File Reference}
+\label{Boundary_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/Boundary.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/Boundary.h}}
 }
 
 
@@ -9,11 +9,19 @@ Abstract class for Description of a Boundary object.
 {\ttfamily \#include \char`\"{}deal.II/dofs/dof\_\-handler.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/fe/fe\_\-values.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \hyperlink{classnatrium_1_1Boundary}{natrium::Boundary$<$ dim $>$}
 \begin{DoxyCompactList}\small\item\em Abstract class for the description of boundaries. Base class of \hyperlink{classnatrium_1_1PeriodicBoundary}{PeriodicBoundary}, InflowBoundary, etc. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

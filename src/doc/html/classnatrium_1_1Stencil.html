@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1Stencil.html">Stencil</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1Stencil.html">Stencil</a>
   </div>
 </div>
 <div class="contents">
@@ -70,14 +70,14 @@ Inheritance diagram for natrium::Stencil:</div>
 <p><a href="classnatrium_1_1Stencil-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#a5a65aa1dbfeceb278bd70c3c760c14fd">Stencil</a> (size_t d, size_t q, const vector&lt; numeric_vector &gt; &amp;directions, const vector&lt; double &gt; &amp;weights, StencilType stencilType)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a5a65aa1dbfeceb278bd70c3c760c14fd"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#ac521a427aca04be5a4962f3f23e17cd5">Stencil</a> (size_t d, size_t q, const vector&lt; <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &gt; &amp;directions, const vector&lt; double &gt; &amp;weights, <a class="el" href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173ba">StencilType</a> stencilType, const <a class="el" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47">numeric_matrix</a> &amp;moment_basis)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#ac521a427aca04be5a4962f3f23e17cd5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aff8956ea1dca43ed70f513baa755331f"></a><!-- doxytag: member="natrium::Stencil::~Stencil" ref="aff8956ea1dca43ed70f513baa755331f" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#aff8956ea1dca43ed70f513baa755331f">~Stencil</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const vector&lt; numeric_vector &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#a02dbfdb70b94a32f477a6ac57ed14f5e">getDirections</a> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const vector&lt; <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#a02dbfdb70b94a32f477a6ac57ed14f5e">getDirections</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get a reference to the vector of directions  <a href="#a02dbfdb70b94a32f477a6ac57ed14f5e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const numeric_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#a76b179032543b3436dea199beceab000">getDirection</a> (size_t i) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#a76b179032543b3436dea199beceab000">getDirection</a> (size_t i) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get the i-th direction  <a href="#a76b179032543b3436dea199beceab000"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#a9c42c1e1fbc5308a8ba1281eb5e4be18">getQ</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get q, the number of directions in the DdQq-stencil  <a href="#a9c42c1e1fbc5308a8ba1281eb5e4be18"></a><br/></td></tr>
@@ -87,7 +87,7 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get the weights of the equilibrium distributions  <a href="#a35c26427afdd33c3477b60be157e5bc8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#ae5cb8bd1a305ed29c779725f489bb855">getWeight</a> (size_t i) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get the weight belonging to a certain direction  <a href="#ae5cb8bd1a305ed29c779725f489bb855"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const StencilType &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#af4dbee6d83d5d749f02f771633d54db2">getStencilType</a> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173ba">StencilType</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Stencil.html#af4dbee6d83d5d749f02f771633d54db2">getStencilType</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get stencil type  <a href="#af4dbee6d83d5d749f02f771633d54db2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac63de1be258c896319cb2c6dba515270"></a><!-- doxytag: member="natrium::Stencil::getIndexOfOppositeDirection" ref="ac63de1be258c896319cb2c6dba515270" args="(size_t index) const =0" -->
 virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getIndexOfOppositeDirection</b> (size_t index) const =0</td></tr>
@@ -97,13 +97,17 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSpeedOfS
 virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSpeedOfSoundSquare</b> () const =0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4ad65f3c998ac0a7242fa80bb440d38c"></a><!-- doxytag: member="natrium::Stencil::getMaxParticleVelocityMagnitude" ref="a4ad65f3c998ac0a7242fa80bb440d38c" args="() const =0" -->
 virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMaxParticleVelocityMagnitude</b> () const =0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a44d2b95f02b22b275332c5f3899b44ff"></a><!-- doxytag: member="natrium::Stencil::getMomentBasis" ref="a44d2b95f02b22b275332c5f3899b44ff" args="(numeric_matrix &amp;m) const " -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMomentBasis</b> (<a class="el" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47">numeric_matrix</a> &amp;m) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a90a42c687b2dfdd485e31e815e0668"></a><!-- doxytag: member="natrium::Stencil::getInverseMomentBasis" ref="a0a90a42c687b2dfdd485e31e815e0668" args="(numeric_matrix &amp;m_inv) const " -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>getInverseMomentBasis</b> (<a class="el" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47">numeric_matrix</a> &amp;m_inv) const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4b312a36671c30499d129bb91052f8c"></a><!-- doxytag: member="natrium::Stencil::getScaling" ref="aa4b312a36671c30499d129bb91052f8c" args="() const " -->
 virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getScaling</b> () const </td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Abstract class for the description of a boltzmann model, e.g. <a class="el" href="classnatrium_1_1D2Q9.html" title="D2Q9 Model.">D2Q9</a>. </p>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a5a65aa1dbfeceb278bd70c3c760c14fd"></a><!-- doxytag: member="natrium::Stencil::Stencil" ref="a5a65aa1dbfeceb278bd70c3c760c14fd" args="(size_t d, size_t q, const vector&lt; numeric_vector &gt; &amp;directions, const vector&lt; double &gt; &amp;weights, StencilType stencilType)" -->
+<a class="anchor" id="ac521a427aca04be5a4962f3f23e17cd5"></a><!-- doxytag: member="natrium::Stencil::Stencil" ref="ac521a427aca04be5a4962f3f23e17cd5" args="(size_t d, size_t q, const vector&lt; numeric_vector &gt; &amp;directions, const vector&lt; double &gt; &amp;weights, StencilType stencilType, const numeric_matrix &amp;moment_basis)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -122,7 +126,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getScaling<
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const vector&lt; numeric_vector &gt; &amp;&nbsp;</td>
+          <td class="paramtype">const vector&lt; <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>directions</em>, </td>
         </tr>
         <tr>
@@ -134,8 +138,14 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getScaling<
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">StencilType&nbsp;</td>
-          <td class="paramname"> <em>stencilType</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173ba">StencilType</a>&nbsp;</td>
+          <td class="paramname"> <em>stencilType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespacenatrium.html#ad8cbec7aab93a74837b06ded39615d47">numeric_matrix</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>moment_basis</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -186,7 +196,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getScaling<
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const numeric_vector&amp; natrium::Stencil::getDirection </td>
+          <td class="memname">const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a>&amp; natrium::Stencil::getDirection </td>
           <td>(</td>
           <td class="paramtype">size_t&nbsp;</td>
           <td class="paramname"> <em>i</em></td>
@@ -213,7 +223,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getScaling<
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const vector&lt;numeric_vector&gt;&amp; natrium::Stencil::getDirections </td>
+          <td class="memname">const vector&lt;<a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a>&gt;&amp; natrium::Stencil::getDirections </td>
           <td>(</td>
           <td class="paramname"></td>
           <td>&nbsp;)&nbsp;</td>
@@ -253,7 +263,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getScaling<
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const StencilType&amp; natrium::Stencil::getStencilType </td>
+          <td class="memname">const <a class="el" href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173ba">StencilType</a>&amp; natrium::Stencil::getStencilType </td>
           <td>(</td>
           <td class="paramname"></td>
           <td>&nbsp;)&nbsp;</td>
@@ -325,7 +335,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getScaling<
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -334,7 +344,7 @@ virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getScaling<
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

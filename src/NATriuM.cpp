@@ -63,12 +63,25 @@
  *
  * \section start_sec Getting started
  * For simple applications, the triangulation can be generated within deal.II. The examples in the Examples section will help
- * you to get grip on the code.
+ * you to get grip on the code. If you have questions, do not hesitate to contact us on kraemer.research@gmail.com.
  *
  * \section install_sec Installation
- *
  * The installation of NATRiuM requires several third party libraries. For a detailed documentation see the file INSTALL.txt.
  *
+ * \section contrib_sec Contributing to NATriuM
+ * NATriuM was developed by Andreas Kraemer at Bonn-Rhein-Sieg University of Applied Sciences. The following co-developers have
+ * contributed on improving NATriuM:
+ *   - Dominik Wilde
+ *   - Natan Zawadzki
+ *   - Knut Kuellmer
+ * If you would like to work with or contribute to NATriuM, we are happy to include you into our Google Group natrium-lbm.
+ * The following links will help you to get started:
+ *   - Setting up your own flow
+ *   - Implementing collision models
+ *   - Implementing boundary conditions
+ *   - Implementing advection schemes
+ *   - Adding new configurations
+ *   - Adding analysis tools
  */
 
 #include "deal.II/grid/tria.h"

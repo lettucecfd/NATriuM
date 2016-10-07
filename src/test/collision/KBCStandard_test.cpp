@@ -20,6 +20,9 @@
 #include "natrium/solver/BenchmarkCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
+#include "natrium/collision/BGKStandard.h"
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
+#include "natrium/benchmarks/PeriodicTestDomain3D.h"
 
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/BasicNames.h"

@@ -16,7 +16,6 @@
 #include "deal.II/fe/component_mask.h"
 #include "deal.II/base/logstream.h"
 #include "deal.II/grid/grid_tools.h"
-#include "deal.II/lac/constraint_matrix.h"
 #include "deal.II/base/index_set.h"
 
 #include "PhysicalProperties.h"
@@ -44,7 +43,6 @@
 #include "../smoothing/NewFilter.h"
 
 #include "../problemdescription/BoundaryCollection.h"
-#include "../problemdescription/NonlinearBoundary.h"
 
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
@@ -357,10 +355,6 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 							configuration->getEmbeddedDealIntegratorCoarsenTolerance());
 		};
 	}
-	if (m_problemDescription->getBoundaries()->hasNonlinearBoundaries()) {
-		m_timeIntegrator->setBoundaryCollection(
-				m_problemDescription->getBoundaries());
-	}
 
 // build filter
 	if (m_configuration->isFiltering() == true) {
@@ -515,12 +509,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 
-// initialize nonlinear boundaries
+// initialize dof boundaries
 	m_boundaryVector.reinit(m_advectionOperator->getSystemVector());
 	m_boundaryVector = m_advectionOperator->getSystemVector();
-	m_problemDescription->getBoundaries()->initializeNonlinearBoundaries(
-			m_advectionOperator, m_stencil, &m_density, &m_velocity, &m_f,
-			&m_boundaryVector);
 
 // Create file for output table
 	if ((not configuration->isSwitchOutputOff())

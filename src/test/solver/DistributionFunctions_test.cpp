@@ -9,7 +9,10 @@
 
 #include "boost/test/included/unit_test.hpp"
 
+#include "deal.II/fe/fe_dgq.h"
+
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
 
 using namespace natrium;
 
