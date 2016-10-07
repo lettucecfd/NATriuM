@@ -1,0 +1,90 @@
+\hypertarget{SemiLagrangian__test_8cpp}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/test/advection/SemiLagrangian\_\-test.cpp File Reference}
+\label{SemiLagrangian__test_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/test/advection/SemiLagrangian\_\-test.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/test/advection/SemiLagrangian\_\-test.cpp}}
+}
+{\ttfamily \#include \char`\"{}natrium/advection/SemiLagrangian.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}boost/test/unit\_\-test.hpp\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/stencils/D2Q9.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/stencils/D3Q19.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/utilities/BasicNames.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/benchmarks/PeriodicTestDomain3D.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/benchmarks/PeriodicTestDomain2D.h\char`\"{}}\par
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_a883618d1bfe54362b6fe566b33a125c4}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian\_\-Construction\_\-test)}
+\label{namespacenatrium_a883618d1bfe54362b6fe566b33a125c4}
+
+\item 
+\hypertarget{namespacenatrium_ae598f215914e7095e4689e52a46ae220}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-Neighborhood\_\-test)}
+\label{namespacenatrium_ae598f215914e7095e4689e52a46ae220}
+
+\item 
+\hypertarget{namespacenatrium_a6ef21ff5bbdcea455ad5ec1c82c09009}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-Neighborhood\_\-test)}
+\label{namespacenatrium_a6ef21ff5bbdcea455ad5ec1c82c09009}
+
+\item 
+\hypertarget{namespacenatrium_ac86883f17cf49cbc2da6538b669f4da3}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-FindPointInNeighborhood\_\-test)}
+\label{namespacenatrium_ac86883f17cf49cbc2da6538b669f4da3}
+
+\item 
+\hypertarget{namespacenatrium_a193f933a32473e494d79e6497fde0e2c}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-FindPointInNeighborhood\_\-test)}
+\label{namespacenatrium_a193f933a32473e494d79e6497fde0e2c}
+
+\item 
+\hypertarget{namespacenatrium_aae67c7512f6343d603c5b33e0cdab798}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-FaceCrossedFirst\_\-test)}
+\label{namespacenatrium_aae67c7512f6343d603c5b33e0cdab798}
+
+\item 
+\hypertarget{namespacenatrium_a3e7fdc3d43feb7b3b2907ad1318f0023}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-FaceCrossedFirst\_\-test)}
+\label{namespacenatrium_a3e7fdc3d43feb7b3b2907ad1318f0023}
+
+\item 
+\hypertarget{namespacenatrium_a0ea7d35705b5510cf096509e0c04b666}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-SparsityPattern\_\-test)}
+\label{namespacenatrium_a0ea7d35705b5510cf096509e0c04b666}
+
+\item 
+\hypertarget{namespacenatrium_aee9f084e377533e7051bc7ed8271526b}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-SparsityPattern\_\-test)}
+\label{namespacenatrium_aee9f084e377533e7051bc7ed8271526b}
+
+\item 
+\hypertarget{namespacenatrium_a3beee955eed9ac8e01af3cc7ce514fcb}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian2D\_\-ConstantStreaming\_\-test)}
+\label{namespacenatrium_a3beee955eed9ac8e01af3cc7ce514fcb}
+
+\item 
+\hypertarget{namespacenatrium_a068ae2506e3d7bd4b03a98d6ba57034f}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-ConstantStreaming\_\-test)}
+\label{namespacenatrium_a068ae2506e3d7bd4b03a98d6ba57034f}
+
+\item 
+\hypertarget{namespacenatrium_a96d7feccacfc22412c6a16721c205a8a}{
+{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (SemiLagrangian3D\_\-VectorReference\_\-test)}
+\label{namespacenatrium_a96d7feccacfc22412c6a16721c205a8a}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyDate}{Date}
+02.05.2016 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}

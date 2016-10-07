@@ -13,9 +13,12 @@
 
 #include "boost/test/included/unit_test.hpp"
 
+#include "deal.II/fe/fe_dgq.h"
 #include "natrium/utilities/Math.h"
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/stencils/D2Q9.h"
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
+#include "natrium/collision/BGKStandard.h"
 
 using std::exception;
 

@@ -10,18 +10,20 @@ Description of a simple Periodic Flow (flow in square domain). The domain is \mb
 {\ttfamily \#include $<$TaylorGreenVortex3D.h$>$}Inheritance diagram for natrium::TaylorGreenVortex3D::\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3cm]{classnatrium_1_1TaylorGreenVortex3D}
+\includegraphics[height=2cm]{classnatrium_1_1TaylorGreenVortex3D}
 \end{center}
 \end{figure}
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{classnatrium_1_1TaylorGreenVortex3D_1_1AnalyticVelocity}{AnalyticVelocity}
-\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+class \hyperlink{classnatrium_1_1TaylorGreenVortex3D_1_1InitialDensity}{InitialDensity}
+\item 
+class \hyperlink{classnatrium_1_1TaylorGreenVortex3D_1_1InitialVelocity}{InitialVelocity}
+\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the initial velocity \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1TaylorGreenVortex3D_ac0f6f0036c2c42c65cbbb7f4eaa359ed}{TaylorGreenVortex3D} (double viscosity, size\_\-t refinementLevel)
+\hyperlink{classnatrium_1_1TaylorGreenVortex3D_a8d6071197520b6fb7766132318a15029}{TaylorGreenVortex3D} (double viscosity, size\_\-t refinementLevel, double cs=0.57735026919, bool init\_\-rho\_\-analytically=false)
 \begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1TaylorGreenVortex3D_a1cc6d70f1b2610383f81b8d1109b6ae9}{
 virtual \hyperlink{classnatrium_1_1TaylorGreenVortex3D_a1cc6d70f1b2610383f81b8d1109b6ae9}{$\sim$TaylorGreenVortex3D} ()}
@@ -34,11 +36,11 @@ virtual \hyperlink{classnatrium_1_1TaylorGreenVortex3D_a1cc6d70f1b2610383f81b8d1
 Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1TaylorGreenVortex3D_ac0f6f0036c2c42c65cbbb7f4eaa359ed}{
+\hypertarget{classnatrium_1_1TaylorGreenVortex3D_a8d6071197520b6fb7766132318a15029}{
 \index{natrium::TaylorGreenVortex3D@{natrium::TaylorGreenVortex3D}!TaylorGreenVortex3D@{TaylorGreenVortex3D}}
 \index{TaylorGreenVortex3D@{TaylorGreenVortex3D}!natrium::TaylorGreenVortex3D@{natrium::TaylorGreenVortex3D}}
-\subsubsection[{TaylorGreenVortex3D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::TaylorGreenVortex3D::TaylorGreenVortex3D (double {\em viscosity}, \/  size\_\-t {\em refinementLevel})}}
-\label{classnatrium_1_1TaylorGreenVortex3D_ac0f6f0036c2c42c65cbbb7f4eaa359ed}
+\subsubsection[{TaylorGreenVortex3D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::TaylorGreenVortex3D::TaylorGreenVortex3D (double {\em viscosity}, \/  size\_\-t {\em refinementLevel}, \/  double {\em cs} = {\ttfamily 0.57735026919}, \/  bool {\em init\_\-rho\_\-analytically} = {\ttfamily false})}}
+\label{classnatrium_1_1TaylorGreenVortex3D_a8d6071197520b6fb7766132318a15029}
 
 
 constructor 

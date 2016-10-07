@@ -11,7 +11,7 @@ This example is thoroughly commented to introduce you to the key concepts in flu
 
 We have the following includes that are part of every simulation script in NATriuM: First, we need stdlib.h to access the environment variable NATRIUM\_\-HOME and ssteam to concatenate strings to build the path of the output directory. Second, the three classes mentioned above are implemented in \hyperlink{CFDSolver_8h}{CFDSolver.h}, \hyperlink{SolverConfiguration_8h}{SolverConfiguration.h}, and \hyperlink{ProblemDescription_8h}{ProblemDescription.h}. Third, \hyperlink{BasicNames_8h}{BasicNames.h} contains some general typedefs used throughout NATriuM and automatically enables using certain std and boost types and functions (e.g. boost::shared\_\-ptr). It has to be included in basically every file that is part of or uses NATriuM. Finally, we include \hyperlink{LidDrivenCavity2D_8h}{LidDrivenCavity2D.h}. It contains the class LidDrivenCavity2D, which defines the concrete flow we want to simulate.  \hyperlink{step-0_8cpp}{step-\/0.cpp} Includes
 
-We include the namespace natrium to access all classes and functions directly.  \hyperlink{step-0_8cpp}{step-\/0.cpp} Namespace
+We include the namespace \hyperlink{namespacenatrium}{natrium} to access all classes and functions directly.  \hyperlink{step-0_8cpp}{step-\/0.cpp} Namespace
 
 The Main function of the program begins with defining the Reynolds and Mach number. Note that in the LBM context the Mach number must not exceed a limit of approximately 0.3. On the other hand the time step is proportional to the Mach number, meaning that for Ma $<$$<$ 0.1 the runtime of the code will grow. Usually, Ma is set roughly to 0.1. (On the contrary, the Reynolds number does not influence the time step size directly.)  \hyperlink{step-0_8cpp}{step-\/0.cpp} Main function
 
@@ -67,7 +67,7 @@ int main() {
         size_t orderOfFiniteElement = 5;
 
         // set temporal discretization
-        double dt = 0.0001;
+        double CFL = 0.4;
 
         // set Problem so that the right Re and Ma are achieved
         const double U = 1 / sqrt(3) * Ma;
@@ -80,11 +80,10 @@ int main() {
       <
                         SolverConfiguration>();
         configuration->setOutputDirectory(dirname.str());
-        configuration->setRestartAtLastCheckpoint(false);
         configuration->setOutputCheckpointInterval(1000);
         configuration->setOutputSolutionInterval(100);
         configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
-        configuration->setTimeStepSize(dt);
+        configuration->setCFL(CFL);
         configuration->setNumberOfTimeSteps(200000);
 
         // make problem and solver objects

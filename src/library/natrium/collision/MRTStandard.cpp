@@ -46,7 +46,7 @@ void MRTStandard::collideAllD2Q9(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
-		size_t n_dofs = f.at(0).size();
+		//size_t n_dofs = f.at(0).size();
 		size_t Q = getQ();
 		double scaling = getStencil()->getScaling();
 		vector<double> meq(Q); 	// moment equilibrium distribution functions

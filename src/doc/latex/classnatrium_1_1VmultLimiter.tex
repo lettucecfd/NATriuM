@@ -1,0 +1,28 @@
+\hypertarget{classnatrium_1_1VmultLimiter}{
+\section{natrium::VmultLimiter Class Reference}
+\label{classnatrium_1_1VmultLimiter}\index{natrium::VmultLimiter@{natrium::VmultLimiter}}
+}
+
+
+{\ttfamily \#include $<$VmultLimiter.h$>$}\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1VmultLimiter_aef0bb4209b3c1e5a563027af56207485}{
+static void {\bfseries apply} (const dealii::TrilinosWrappers::BlockSparseMatrix \&matrix, dealii::TrilinosWrappers::MPI::BlockVector \&target, const dealii::TrilinosWrappers::MPI::BlockVector \&source)}
+\label{classnatrium_1_1VmultLimiter_aef0bb4209b3c1e5a563027af56207485}
+
+\item 
+\hypertarget{classnatrium_1_1VmultLimiter_a65036c5ebf9b0fd452b0723a3cbcb098}{
+static void {\bfseries apply} (const dealii::TrilinosWrappers::SparseMatrix \&matrix, dealii::TrilinosWrappers::MPI::Vector \&target, const dealii::TrilinosWrappers::MPI::Vector \&source)}
+\label{classnatrium_1_1VmultLimiter_a65036c5ebf9b0fd452b0723a3cbcb098}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Enforces that the result of a sparse matrix-\/vector multiplication is between the minimum and maximum of the source values. set fi = aij$\ast$fj, if (fi $>$ min\_\-\{aij$>$0\} fj) and (fi $<$ max\{aij$>$0\} fj); = min\_\-\{aij$>$0\} fj, if (fi $<$ min\_\-\{aij$>$0\} fj); = max\_\-\{aij$>$0\} fj, if (fi $>$ max\_\-\{aij$>$0\} fj) 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/smoothing/VmultLimiter.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/smoothing/VmultLimiter.cpp\end{DoxyCompactItemize}

@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1ThetaMethod.html">ThetaMethod</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1ThetaMethod.html">ThetaMethod</a>
   </div>
 </div>
 <div class="contents">
@@ -72,36 +72,36 @@ Inheritance diagram for natrium::ThetaMethod&lt; MATRIX, VECTOR &gt;:</div>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac742c678ab9674722295585f10d27279"></a><!-- doxytag: member="natrium::ThetaMethod::~ThetaMethod" ref="ac742c678ab9674722295585f10d27279" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ThetaMethod.html#ac742c678ab9674722295585f10d27279">~ThetaMethod</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ThetaMethod.html#a247c639f49a05904dae01b05115bc7e4">step</a> (VECTOR &amp;vector, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector, double t=0, double dt=0)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ThetaMethod.html#a25fb9b235e61a96de76139919d7fbbfe">step</a> (VECTOR &amp;vector, const MATRIX &amp;systemMatrix, VECTOR &amp;systemVector, double t=0, double dt=0)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Make one time integration step on f: </p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\[ \frac{df}{dt} = Af+b \]" src="form_33.png"/>
 </p>
-<p> with the theta method.  <a href="#a247c639f49a05904dae01b05115bc7e4"></a><br/></td></tr>
+<p> with the theta method.  <a href="#a25fb9b235e61a96de76139919d7fbbfe"></a><br/></td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="abbab4d93f6d54e1b82ea8cc008eba126"></a><!-- doxytag: member="natrium::ThetaMethod::ThetaMethod" ref="abbab4d93f6d54e1b82ea8cc008eba126" args="(double timeStepSize, const numeric_vector &amp;, double theta)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const numeric_vector &amp;, double theta)</td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;, double theta)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a8ab913e8242378d6877ef6dcee80aebb"></a><!-- doxytag: member="natrium::ThetaMethod::ThetaMethod" ref="a8ab913e8242378d6877ef6dcee80aebb" args="(double timeStepSize, const distributed_vector &amp;, double theta)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const distributed_vector &amp;, double theta)</td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;, double theta)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="ac5b08a9ab08f4f61779dc818a6dac3b2"></a><!-- doxytag: member="natrium::ThetaMethod::ThetaMethod" ref="ac5b08a9ab08f4f61779dc818a6dac3b2" args="(double timeStepSize, const distributed_block_vector &amp;prototype_vector, double theta)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const distributed_block_vector &amp;prototype_vector, double theta)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a6329a87c9fd50d6db3546b892b716b3c"></a><!-- doxytag: member="natrium::ThetaMethod::ThetaMethod" ref="a6329a87c9fd50d6db3546b892b716b3c" args="(double timeStepSize, const block_vector &amp;prototype_vector, double theta)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ThetaMethod</b> (double timeStepSize, const block_vector &amp;prototype_vector, double theta)</td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a68e1ddc84cd0ae5ee13a26333a9b5b97"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a68e1ddc84cd0ae5ee13a26333a9b5b97" args="(distributed_vector &amp;f, const distributed_sparse_matrix &amp;systemMatrix, const distributed_vector &amp;systemVector, double t, double dt)" -->
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a85ff32df10d08008b15048325e83c3b8"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a85ff32df10d08008b15048325e83c3b8" args="(distributed_vector &amp;f, const distributed_sparse_matrix &amp;systemMatrix, distributed_vector &amp;systemVector, double t, double dt)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (distributed_vector &amp;f, const distributed_sparse_matrix &amp;systemMatrix, const distributed_vector &amp;systemVector, double t, double dt)</td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a1fe9306f09ecdc50f27c7ae36c528e13"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a1fe9306f09ecdc50f27c7ae36c528e13" args="(numeric_vector &amp;f, const sparse_matrix &amp;systemMatrix, const numeric_vector &amp;systemVector, double t, double dt)" -->
+<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (<a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;f, const <a class="el" href="namespacenatrium.html#a860e92befb23651241c8b3d61a0d4034">distributed_sparse_matrix</a> &amp;systemMatrix, <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;systemVector, double t, double dt)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a49620e2e027e6e512258fcd9a60c0d71"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a49620e2e027e6e512258fcd9a60c0d71" args="(numeric_vector &amp;f, const sparse_matrix &amp;systemMatrix, numeric_vector &amp;systemVector, double t, double dt)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (numeric_vector &amp;f, const sparse_matrix &amp;systemMatrix, const numeric_vector &amp;systemVector, double t, double dt)</td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a09182df9e98932d93b7e32ffdd2ae46f"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a09182df9e98932d93b7e32ffdd2ae46f" args="(distributed_block_vector &amp;f, const distributed_sparse_block_matrix &amp;systemMatrix, const distributed_block_vector &amp;systemVector, double t, double dt)" -->
+<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (<a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;f, const sparse_matrix &amp;systemMatrix, <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;systemVector, double t, double dt)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a0c2550f6a2033c91b73a7116a7b8a29c"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a0c2550f6a2033c91b73a7116a7b8a29c" args="(distributed_block_vector &amp;f, const distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, double t, double dt)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (distributed_block_vector &amp;f, const distributed_sparse_block_matrix &amp;systemMatrix, const distributed_block_vector &amp;systemVector, double t, double dt)</td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a30d578fab2d0189fe2a4c51ddc29cc3a"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a30d578fab2d0189fe2a4c51ddc29cc3a" args="(block_vector &amp;f, const sparse_block_matrix &amp;systemMatrix, const block_vector &amp;systemVector, double t, double dt)" -->
+<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (distributed_block_vector &amp;f, const distributed_sparse_block_matrix &amp;systemMatrix, distributed_block_vector &amp;systemVector, double t, double dt)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="af8a464bd93042c5e5f006e5ff9b4d8a4"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="af8a464bd93042c5e5f006e5ff9b4d8a4" args="(block_vector &amp;f, const sparse_block_matrix &amp;systemMatrix, block_vector &amp;systemVector, double t, double dt)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (block_vector &amp;f, const sparse_block_matrix &amp;systemMatrix, const block_vector &amp;systemVector, double t, double dt)</td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>step</b> (block_vector &amp;f, const <a class="el" href="namespacenatrium.html#acd63e25d68fdb74dd9b789bb2e836cb8">sparse_block_matrix</a> &amp;systemMatrix, block_vector &amp;systemVector, double t, double dt)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;class MATRIX, class VECTOR&gt;<br/>
@@ -155,7 +155,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a247c639f49a05904dae01b05115bc7e4"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a247c639f49a05904dae01b05115bc7e4" args="(VECTOR &amp;vector, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector, double t=0, double dt=0)" -->
+<a class="anchor" id="a25fb9b235e61a96de76139919d7fbbfe"></a><!-- doxytag: member="natrium::ThetaMethod::step" ref="a25fb9b235e61a96de76139919d7fbbfe" args="(VECTOR &amp;vector, const MATRIX &amp;systemMatrix, VECTOR &amp;systemVector, double t=0, double dt=0)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -176,7 +176,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VECTOR &amp;&nbsp;</td>
+          <td class="paramtype">VECTOR &amp;&nbsp;</td>
           <td class="paramname"> <em>systemVector</em>, </td>
         </tr>
         <tr>
@@ -217,7 +217,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>new global time t+dt </dd></dl>
 
-<p>Implements <a class="el" href="classnatrium_1_1TimeIntegrator.html#a1c438e41d183d172d524aa5dc97785fb">natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;</a>.</p>
+<p>Implements <a class="el" href="classnatrium_1_1TimeIntegrator.html#a0237ebbaf737c7d3278777fb08007e99">natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;</a>.</p>
 
 </div>
 </div>
@@ -230,7 +230,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -239,7 +239,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -37,3 +37,4 @@
 \form#36:\[ f_{\beta} \]
 \form#37:\[ \partial_{x}f_{\beta} \]
 \form#38:\[ M^{-1} \]
+\form#39:\[ f_i(\rho, j, P) = w_i \left[ \rho + \frac{j_{\alpha} c_{i \alpha} }{c_s^2} + \frac{1}{2 c_s^4} \left( P_{\alpha \beta} - \rho c_s^2 \delta_{\alpha \beta} \right) \left( c_{i \alpha} c_{i \beta} - c_s^2 \delta_{\alpha \beta} \right) \right]. \]

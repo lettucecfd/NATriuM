@@ -6,7 +6,6 @@
  */
 
 
-#include "natrium/stencils/D2Q9.h"
 #include "natrium/collision/BGKMultistep.h"
 
 #include <math.h>
@@ -25,6 +24,8 @@
 
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/BasicNames.h"
+
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
 
 using std::exception;
 

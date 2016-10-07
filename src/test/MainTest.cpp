@@ -9,7 +9,7 @@
 #define BOOST_TEST_MODULE Main
 
 
-#include "boost/test/included/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/MPIGuard.h"
@@ -32,7 +32,7 @@ struct InitMPI {
 BOOST_AUTO_TEST_SUITE(Boost_test)
 
 
-BOOST_GLOBAL_FIXTURE( InitMPI );
+BOOST_GLOBAL_FIXTURE( InitMPI )
 
 
 // Test if Boost unit test framework is running properly

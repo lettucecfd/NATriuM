@@ -8,7 +8,7 @@
     0.0a) (on cluster: module load gcc openmpi/gnu, boost)
     0.0a') (on cluster: if boost is not installed - get tar)
     0.0a') (on cluster: set BOOST_ROOT in ~/.bashrc to the directory you want boost installed in; source ~/.bashrc)
-    0.0b') (on cluster: tar xzvf boost_1_59_0.tar.gz ;  cd boost_1_59_0 ; ./bootstrap --prefix=$BOOST_ROOT; ./b2; ./b2 install)
+    0.0b') (on cluster: tar xzvf boost_1_55_0.tar.gz ;  cd boost_1_55_0 ; ./bootstrap.sh --prefix=$BOOST_ROOT; ./b2; ./b2 install)
     0.0b') (on cluster: to shorten the installation time you can also call the bootstrap command with the option
            --with-libraries=iostreams,serialization,thread,system,filesystem,test 
            While deal.ii requires the first four of them, natrium requires the last three)
@@ -43,7 +43,7 @@
 	-D BUILD_SHARED_LIBS=ON \
 	-D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
 	.. 
-    0.4.6) make -jN; make install, with N=number of processors (N=1 works, not so sure about that at the moment; perhaps just "make && make install" will do)
+    0.4.6) make -jN; make install, with N=number of processors
     0.5) p4est
     	0.5.1) download tarball from p4est homepage (here: version 1.1; no need to untar)
 		0.5.2) get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)

@@ -1,18 +1,19 @@
-include(../CMake_UnityBuild.txt)
+#### include(../CMake_UnityBuild.txt)
 
 
 file(   GLOB_RECURSE
         TEST_FILES
-	#advection/*.cpp
-	collision/*.cpp
-	problemdescription/*.cpp
-	smoothing/*.cpp
-	#solver/*.cpp
-	#stencils/*.cpp
-	#timeintegration/*.cpp
-	#utilities/*.cpp
+        #advection/*.cpp
+        #boundaries/*.cpp
+        #collision/*.cpp
+        #problemdescription/*.cpp
+        #smoothing/*.cpp
+        #solver/*.cpp
+        stencils/*.cpp
+        #timeintegration/*.cpp
+        #utilities/*.cpp
         )
-   
+      
       
 #
 # set variable TEST_TARGET (only used in this file)
@@ -27,7 +28,7 @@ set(    INTEGRATION_TEST_TARGET
  
 
 
-enable_unity_build(${TEST_TARGET} TEST_FILES)
+#enable_unity_build(${TEST_TARGET} TEST_FILES)
 
 #
 # Specify a target:

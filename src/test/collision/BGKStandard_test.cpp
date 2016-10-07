@@ -19,6 +19,8 @@
 #include "natrium/stencils/D3Q19.h"
 #include "natrium/stencils/D3Q15.h"
 
+#include "deal.II/fe/fe_dgq.h"
+
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "natrium/benchmarks/PeriodicTestDomain3D.h"
 

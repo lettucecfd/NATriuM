@@ -31,7 +31,7 @@ virtual \hyperlink{classnatrium_1_1DealIIWrapper_a193b75fd9e4734d14988927c21312c
 \label{classnatrium_1_1DealIIWrapper_a193b75fd9e4734d14988927c21312c8a}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
-virtual double \hyperlink{classnatrium_1_1DealIIWrapper_a62621205ff77a46c4f3ef01c3aefb06d}{step} (VECTOR \&vector, const MATRIX \&systemMatrix, const VECTOR \&systemVector, double t=0, double dt=\hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ MATRIX, VECTOR $>$::getTimeStepSize())
+virtual double \hyperlink{classnatrium_1_1DealIIWrapper_a50227545e1fcff4c2d0f10a9c6eb3bca}{step} (VECTOR \&vector, const MATRIX \&systemMatrix, VECTOR \&systemVector, double t=0, double dt=\hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ MATRIX, VECTOR $>$::getTimeStepSize())
 \begin{DoxyCompactList}\small\item\em make one time integration step on f: \[ \frac{df}{dt} = Af+b \]. \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1DealIIWrapper_aead07b81d0d8d218e8d4a435f1420b73}{
 const boost::shared\_\-ptr$<$ dealii::TimeStepping::EmbeddedExplicitRungeKutta$<$ VECTOR $>$ $>$ \& {\bfseries getDealIIEmbedded} () const }
@@ -44,12 +44,12 @@ const boost::shared\_\-ptr$<$ dealii::TimeStepping::RungeKutta$<$ VECTOR $>$ $>$
 
 \item 
 \hypertarget{classnatrium_1_1DealIIWrapper_ad9f669169c770a15fc9edf5e93030b1f}{
-{\footnotesize template$<$$>$ }\\distributed\_\-vector {\bfseries evaluateJInverse} (const double, const double, const distributed\_\-vector \&f) const}
+{\footnotesize template$<$$>$ }\\\hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} {\bfseries evaluateJInverse} (const double, const double, const \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&f) const}
 \label{classnatrium_1_1DealIIWrapper_ad9f669169c770a15fc9edf5e93030b1f}
 
 \item 
 \hypertarget{classnatrium_1_1DealIIWrapper_a83a7d57a68f35158263bf74c0a4d5aed}{
-{\footnotesize template$<$$>$ }\\numeric\_\-vector {\bfseries evaluateJInverse} (const double, const double, const numeric\_\-vector \&f) const}
+{\footnotesize template$<$$>$ }\\\hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} {\bfseries evaluateJInverse} (const double, const double, const \hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} \&f) const}
 \label{classnatrium_1_1DealIIWrapper_a83a7d57a68f35158263bf74c0a4d5aed}
 
 \item 
@@ -64,12 +64,12 @@ const boost::shared\_\-ptr$<$ dealii::TimeStepping::RungeKutta$<$ VECTOR $>$ $>$
 
 \item 
 \hypertarget{classnatrium_1_1DealIIWrapper_ab0e57073c150e04e063dc621bf9b94f5}{
-{\footnotesize template$<$$>$ }\\distributed\_\-vector {\bfseries evaluateIdMinusTauJInverse} (const double, const double tau, const distributed\_\-vector \&f)}
+{\footnotesize template$<$$>$ }\\\hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} {\bfseries evaluateIdMinusTauJInverse} (const double, const double tau, const \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&f)}
 \label{classnatrium_1_1DealIIWrapper_ab0e57073c150e04e063dc621bf9b94f5}
 
 \item 
 \hypertarget{classnatrium_1_1DealIIWrapper_a9a50370a5fbdce709aab87a4c38d5247}{
-{\footnotesize template$<$$>$ }\\numeric\_\-vector {\bfseries evaluateIdMinusTauJInverse} (const double, const double tau, const numeric\_\-vector \&f)}
+{\footnotesize template$<$$>$ }\\\hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} {\bfseries evaluateIdMinusTauJInverse} (const double, const double tau, const \hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} \&f)}
 \label{classnatrium_1_1DealIIWrapper_a9a50370a5fbdce709aab87a4c38d5247}
 
 \item 
@@ -91,11 +91,11 @@ const boost::shared\_\-ptr$<$ dealii::TimeStepping::RungeKutta$<$ VECTOR $>$ $>$
 Wrapper class to deal.II's built-\/in time stepping routines. This implementation supports all time stepping schemes in deal Release 8.2.1, which includes Explicit, Implicit and Embedded explicit Runge Kutta methods. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1DealIIWrapper_a62621205ff77a46c4f3ef01c3aefb06d}{
+\hypertarget{classnatrium_1_1DealIIWrapper_a50227545e1fcff4c2d0f10a9c6eb3bca}{
 \index{natrium::DealIIWrapper@{natrium::DealIIWrapper}!step@{step}}
 \index{step@{step}!natrium::DealIIWrapper@{natrium::DealIIWrapper}}
-\subsubsection[{step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class MATRIX , class VECTOR $>$ double {\bf natrium::DealIIWrapper}$<$ MATRIX, VECTOR $>$::step (VECTOR \& {\em vector}, \/  const MATRIX \& {\em systemMatrix}, \/  const VECTOR \& {\em systemVector}, \/  double {\em t} = {\ttfamily 0}, \/  double {\em dt} = {\ttfamily {\bf TimeIntegrator}$<$MATRIX,VECTOR$>$::getTimeStepSize()})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
-\label{classnatrium_1_1DealIIWrapper_a62621205ff77a46c4f3ef01c3aefb06d}
+\subsubsection[{step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class MATRIX , class VECTOR $>$ double {\bf natrium::DealIIWrapper}$<$ MATRIX, VECTOR $>$::step (VECTOR \& {\em vector}, \/  const MATRIX \& {\em systemMatrix}, \/  VECTOR \& {\em systemVector}, \/  double {\em t} = {\ttfamily 0}, \/  double {\em dt} = {\ttfamily {\bf TimeIntegrator}$<$MATRIX,VECTOR$>$::getTimeStepSize()})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1DealIIWrapper_a50227545e1fcff4c2d0f10a9c6eb3bca}
 
 
 make one time integration step on f: \[ \frac{df}{dt} = Af+b \]. 
@@ -106,7 +106,7 @@ new global time t + dt
 \end{DoxyReturn}
 
 
-Implements \hyperlink{classnatrium_1_1TimeIntegrator_a1c438e41d183d172d524aa5dc97785fb}{natrium::TimeIntegrator$<$ MATRIX, VECTOR $>$}.
+Implements \hyperlink{classnatrium_1_1TimeIntegrator_a0237ebbaf737c7d3278777fb08007e99}{natrium::TimeIntegrator$<$ MATRIX, VECTOR $>$}.
 
 The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 

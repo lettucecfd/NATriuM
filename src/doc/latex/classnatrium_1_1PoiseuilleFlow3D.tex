@@ -1,0 +1,66 @@
+\hypertarget{classnatrium_1_1PoiseuilleFlow3D}{
+\section{natrium::PoiseuilleFlow3D Class Reference}
+\label{classnatrium_1_1PoiseuilleFlow3D}\index{natrium::PoiseuilleFlow3D@{natrium::PoiseuilleFlow3D}}
+}
+
+
+Description of a simple Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}.  
+
+
+{\ttfamily \#include $<$PoiseuilleFlow3D.h$>$}Inheritance diagram for natrium::PoiseuilleFlow3D::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1PoiseuilleFlow3D}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1PoiseuilleFlow3D_1_1AnalyticVelocity}{AnalyticVelocity}
+\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1PoiseuilleFlow3D_a65444fdaec3bb59ab98870acfcb297f1}{PoiseuilleFlow3D} (double viscosity, size\_\-t refinementLevel, double u\_\-bulk=1.0, double height=1.0, double width=2.0, double length=2.0, bool is\_\-periodic=true)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1PoiseuilleFlow3D_a79c1655f3e863583bf8752550f3448bf}{
+virtual \hyperlink{classnatrium_1_1PoiseuilleFlow3D_a79c1655f3e863583bf8752550f3448bf}{$\sim$PoiseuilleFlow3D} ()}
+\label{classnatrium_1_1PoiseuilleFlow3D_a79c1655f3e863583bf8752550f3448bf}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1PoiseuilleFlow3D_a78bb2ddc867df9204ec2fa5cda48c7d9}{
+virtual double {\bfseries getCharacteristicVelocity} () const }
+\label{classnatrium_1_1PoiseuilleFlow3D_a78bb2ddc867df9204ec2fa5cda48c7d9}
+
+\item 
+\hypertarget{classnatrium_1_1PoiseuilleFlow3D_a80c9ef01d1629030d52be9a6a005cc66}{
+virtual void {\bfseries refine} (Mesh$<$ 3 $>$ \&mesh)}
+\label{classnatrium_1_1PoiseuilleFlow3D_a80c9ef01d1629030d52be9a6a005cc66}
+
+\item 
+\hypertarget{classnatrium_1_1PoiseuilleFlow3D_ae9cc344fb2f2c1badd80e43341dbb3fe}{
+virtual void {\bfseries transform} (Mesh$<$ 3 $>$ \&)}
+\label{classnatrium_1_1PoiseuilleFlow3D_ae9cc344fb2f2c1badd80e43341dbb3fe}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a simple Channel Flow The domain is \mbox{[}0,5\mbox{]}x\mbox{[}0,1\mbox{]}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1PoiseuilleFlow3D_a65444fdaec3bb59ab98870acfcb297f1}{
+\index{natrium::PoiseuilleFlow3D@{natrium::PoiseuilleFlow3D}!PoiseuilleFlow3D@{PoiseuilleFlow3D}}
+\index{PoiseuilleFlow3D@{PoiseuilleFlow3D}!natrium::PoiseuilleFlow3D@{natrium::PoiseuilleFlow3D}}
+\subsubsection[{PoiseuilleFlow3D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::PoiseuilleFlow3D::PoiseuilleFlow3D (double {\em viscosity}, \/  size\_\-t {\em refinementLevel}, \/  double {\em u\_\-bulk} = {\ttfamily 1.0}, \/  double {\em height} = {\ttfamily 1.0}, \/  double {\em width} = {\ttfamily 2.0}, \/  double {\em length} = {\ttfamily 2.0}, \/  bool {\em is\_\-periodic} = {\ttfamily true})}}
+\label{classnatrium_1_1PoiseuilleFlow3D_a65444fdaec3bb59ab98870acfcb297f1}
+
+
+constructor 
+
+apply boundary values 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{PoiseuilleFlow3D_8h}{PoiseuilleFlow3D.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{PoiseuilleFlow3D_8cpp}{PoiseuilleFlow3D.cpp}\end{DoxyCompactItemize}

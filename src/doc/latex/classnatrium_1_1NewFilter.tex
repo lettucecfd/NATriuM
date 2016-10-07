@@ -1,0 +1,96 @@
+\hypertarget{classnatrium_1_1NewFilter}{
+\section{natrium::NewFilter$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1NewFilter}\index{natrium::NewFilter@{natrium::NewFilter}}
+}
+Inheritance diagram for natrium::NewFilter$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classnatrium_1_1NewFilter}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1NewFilter_a4762826b58acf9b1770733aa0cc18cdc}{
+{\bfseries NewFilter} (double alpha, double s, const dealii::Quadrature$<$ dim $>$ \&quadrature, const dealii::FE\_\-DGQ$<$ dim $>$ \&fe)}
+\label{classnatrium_1_1NewFilter_a4762826b58acf9b1770733aa0cc18cdc}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_ae5c15cce51ac8c2e5669c97c03f40a8f}{
+void {\bfseries applyFilter} (const dealii::DoFHandler$<$ dim $>$ \&dof\_\-handler, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&dof\_\-vector)}
+\label{classnatrium_1_1NewFilter_ae5c15cce51ac8c2e5669c97c03f40a8f}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_ad7c478d6f6eb91c68dbd65a15f75a9be}{
+double {\bfseries getAlpha} () const }
+\label{classnatrium_1_1NewFilter_ad7c478d6f6eb91c68dbd65a15f75a9be}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_a99e40481e0a1846982dfbbf755855af8}{
+void {\bfseries setAlpha} (double alpha)}
+\label{classnatrium_1_1NewFilter_a99e40481e0a1846982dfbbf755855af8}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_ac41f9e04b6e8510bba2a500ecb32324e}{
+const \hyperlink{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}{numeric\_\-matrix} \& {\bfseries getProjectFromLegendre} () const }
+\label{classnatrium_1_1NewFilter_ac41f9e04b6e8510bba2a500ecb32324e}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_a412d1f58c4317384d847a7d2915853ab}{
+const \hyperlink{namespacenatrium_ad8cbec7aab93a74837b06ded39615d47}{numeric\_\-matrix} \& {\bfseries getProjectToLegendre} () const }
+\label{classnatrium_1_1NewFilter_a412d1f58c4317384d847a7d2915853ab}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_aba20fadc302c80b8f019dc21528b9b5b}{
+double {\bfseries getS} () const }
+\label{classnatrium_1_1NewFilter_aba20fadc302c80b8f019dc21528b9b5b}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_a7806f03494544d011d60788de497db2f}{
+void {\bfseries setS} (double s)}
+\label{classnatrium_1_1NewFilter_a7806f03494544d011d60788de497db2f}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_a08cf711ca2c7671c5c35aa8045a0274e}{
+const std::vector$<$ dealii::Polynomials::Polynomial$<$ double $>$ $>$ \& {\bfseries getLegendre1D} () const }
+\label{classnatrium_1_1NewFilter_a08cf711ca2c7671c5c35aa8045a0274e}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_acad32702d7d53cfe52961363043e3e34}{
+{\footnotesize template$<$$>$ }\\double {\bfseries evaluateLegendreND} (size\_\-t i, const dealii::Point$<$ 1 $>$ \&x)}
+\label{classnatrium_1_1NewFilter_acad32702d7d53cfe52961363043e3e34}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_a1870dd3c571a62174c334421b83f7aa1}{
+{\footnotesize template$<$$>$ }\\double {\bfseries evaluateLegendreND} (size\_\-t i, const dealii::Point$<$ 2 $>$ \&x)}
+\label{classnatrium_1_1NewFilter_a1870dd3c571a62174c334421b83f7aa1}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_a68443209e58c4fbe6b4a74d4391a16d7}{
+{\footnotesize template$<$$>$ }\\double {\bfseries evaluateLegendreND} (size\_\-t i, const dealii::Point$<$ 3 $>$ \&x)}
+\label{classnatrium_1_1NewFilter_a68443209e58c4fbe6b4a74d4391a16d7}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_af0c7da64b0a485b526175021644ba520}{
+{\footnotesize template$<$$>$ }\\void {\bfseries makeDegreeVectors} (size\_\-t p)}
+\label{classnatrium_1_1NewFilter_af0c7da64b0a485b526175021644ba520}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_ae325ca249a1732b87301ae9ff8ca1ccd}{
+{\footnotesize template$<$$>$ }\\void {\bfseries makeDegreeVectors} (size\_\-t p)}
+\label{classnatrium_1_1NewFilter_ae325ca249a1732b87301ae9ff8ca1ccd}
+
+\item 
+\hypertarget{classnatrium_1_1NewFilter_a0f91122ee3ebc5c3b089a4f0c3484990}{
+{\footnotesize template$<$$>$ }\\void {\bfseries makeDegreeVectors} (size\_\-t p)}
+\label{classnatrium_1_1NewFilter_a0f91122ee3ebc5c3b089a4f0c3484990}
+
+\end{DoxyCompactItemize}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::NewFilter$<$ dim $>$}
+
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/smoothing/NewFilter.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/smoothing/NewFilter.cpp\end{DoxyCompactItemize}

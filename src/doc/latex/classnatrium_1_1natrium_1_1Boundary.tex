@@ -1,0 +1,51 @@
+\hypertarget{classnatrium_1_1natrium_1_1Boundary}{
+\section{natrium::natrium::Boundary$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1natrium_1_1Boundary}\index{natrium::natrium::Boundary@{natrium::natrium::Boundary}}
+}
+
+
+Abstract class for the description of boundaries. Base class of \hyperlink{classnatrium_1_1PeriodicBoundary}{PeriodicBoundary}, InflowBoundary, etc.  
+
+
+{\ttfamily \#include $<$DoFBoundary.h$>$}Inheritance diagram for natrium::natrium::Boundary$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.19608cm]{classnatrium_1_1natrium_1_1Boundary}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1natrium_1_1Boundary_a2fd9701faa34f52480eef8a2afb9d387}{
+\hyperlink{classnatrium_1_1natrium_1_1Boundary_a2fd9701faa34f52480eef8a2afb9d387}{Boundary} ()}
+\label{classnatrium_1_1natrium_1_1Boundary_a2fd9701faa34f52480eef8a2afb9d387}
+
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1natrium_1_1Boundary_a8a09a17f803acb05fbe9410841913232}{
+virtual \hyperlink{classnatrium_1_1natrium_1_1Boundary_a8a09a17f803acb05fbe9410841913232}{$\sim$Boundary} ()}
+\label{classnatrium_1_1natrium_1_1Boundary_a8a09a17f803acb05fbe9410841913232}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1natrium_1_1Boundary_a56b517cd6273411041b7a108853ec2c3}{
+virtual bool \hyperlink{classnatrium_1_1natrium_1_1Boundary_a56b517cd6273411041b7a108853ec2c3}{isPeriodic} () const }
+\label{classnatrium_1_1natrium_1_1Boundary_a56b517cd6273411041b7a108853ec2c3}
+
+\begin{DoxyCompactList}\small\item\em is the boundary a periodic boundary ? \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1natrium_1_1Boundary_ae2ab7049e7ef6146936bb039bf2e4e5b}{
+virtual bool \hyperlink{classnatrium_1_1natrium_1_1Boundary_ae2ab7049e7ef6146936bb039bf2e4e5b}{isLinear} () const }
+\label{classnatrium_1_1natrium_1_1Boundary_ae2ab7049e7ef6146936bb039bf2e4e5b}
+
+\begin{DoxyCompactList}\small\item\em is the boundary a dirichlet boundary ? \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::natrium::Boundary$<$ dim $>$}
+
+Abstract class for the description of boundaries. Base class of \hyperlink{classnatrium_1_1PeriodicBoundary}{PeriodicBoundary}, InflowBoundary, etc. 
+\begin{DoxyTemplParams}{Template Parameters}
+\item[{\em dim}]The dimension of the boundary is the dimension of the domain -\/1 ( e.g. 2-\/dim meshes have 1-\/dim boundary) \end{DoxyTemplParams}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/DoFBoundary.h\end{DoxyCompactItemize}

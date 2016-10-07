@@ -89,7 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00103"></a>00103 
 <a name="l00104"></a>00104 <span class="keyword">private</span>:
 <a name="l00105"></a>00105 
-<a name="l00107"></a>00107         boost::shared_ptr&lt;Mesh&lt;dim&gt; &gt; m_tria;
+<a name="l00107"></a>00107         boost::shared_ptr&lt;Mesh&lt;dim&gt; &gt; m_mesh;
 <a name="l00108"></a>00108 
 <a name="l00110"></a>00110         boost::shared_ptr&lt;BoundaryCollection&lt;dim&gt; &gt; m_boundaries;
 <a name="l00111"></a>00111 
@@ -164,126 +164,127 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00236"></a>00236 
 <a name="l00241"></a>00241         vector&lt;std::map&lt;size_t, size_t&gt; &gt; map_q_index_to_facedofs() <span class="keyword">const</span>;
 <a name="l00242"></a>00242 
-<a name="l00246"></a>00246         <span class="keywordtype">double</span> calcMagicNumber() <span class="keyword">const</span>;
-<a name="l00247"></a>00247 
-<a name="l00251"></a>00251         <span class="keywordtype">void</span> saveMatricesToFiles(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; directory) <span class="keyword">const</span>;
-<a name="l00252"></a>00252 
-<a name="l00256"></a>00256         <span class="keywordtype">void</span> loadMatricesFromFiles(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; directory);
-<a name="l00257"></a>00257 
-<a name="l00262"></a>00262         <span class="keywordtype">void</span> writeStatus(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; directory) <span class="keyword">const</span>;
-<a name="l00263"></a>00263 
-<a name="l00269"></a>00269         <span class="keywordtype">bool</span> isStatusOK(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; directory, <span class="keywordtype">string</span>&amp; message) <span class="keyword">const</span>;
+<a name="l00243"></a>00243 
+<a name="l00244"></a>00244 
+<a name="l00245"></a>00245 <span class="keyword">public</span>:
+<a name="l00246"></a>00246 
+<a name="l00248"></a>00248 
+<a name="l00254"></a>00254         <a class="code" href="classnatrium_1_1SEDGMinLee.html#a1d570e9833c6b0df01a0cd7cf3b8c905" title="constructor">SEDGMinLee</a>(boost::shared_ptr&lt;Mesh&lt;dim&gt; &gt; triangulation,
+<a name="l00255"></a>00255                         boost::shared_ptr&lt;<a class="code" href="classnatrium_1_1BoundaryCollection.html" title="The BoundaryCollection class is a container for all boundaries of a flow domain....">BoundaryCollection&lt;dim&gt;</a> &gt; boundaries,
+<a name="l00256"></a>00256                         <span class="keywordtype">size_t</span> orderOfFiniteElement,
+<a name="l00257"></a>00257                         boost::shared_ptr&lt;Stencil&gt; stencil,  <span class="keywordtype">bool</span> useCentralFlux =
+<a name="l00258"></a>00258                                         <span class="keyword">false</span>);
+<a name="l00259"></a>00259 
+<a name="l00261"></a><a class="code" href="classnatrium_1_1SEDGMinLee.html#a6c55a31bc4cb0e314876af7251ad8ce3">00261</a>         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#a6c55a31bc4cb0e314876af7251ad8ce3" title="destructor">~SEDGMinLee</a>() {
+<a name="l00262"></a>00262                 m_doFHandler-&gt;clear();
+<a name="l00263"></a>00263         }
+<a name="l00264"></a>00264         ;
+<a name="l00265"></a>00265 
+<a name="l00267"></a>00267         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#afc9430efe8aefc7bbe580db2302b2392" title="function to (re-)assemble linear system">reassemble</a>();
+<a name="l00268"></a>00268 
+<a name="l00269"></a>00269         <span class="keyword">virtual</span>  <span class="keywordtype">void</span> setupDoFs();
 <a name="l00270"></a>00270 
-<a name="l00275"></a>00275         <span class="keywordtype">void</span> loadCheckpoint(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; directory);
-<a name="l00276"></a>00276 
-<a name="l00277"></a>00277 <span class="keyword">public</span>:
+<a name="l00272"></a>00272         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#aba8ec4263463d79479a3bbbad2f65844" title="make streaming step">stream</a>();
+<a name="l00273"></a>00273 
+<a name="l00275"></a><a class="code" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0">00275</a>         <span class="keyword">virtual</span> <span class="keyword">const</span> distributed_sparse_block_matrix&amp; <a class="code" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0" title="get global system matrix">getSystemMatrix</a>()<span class="keyword"> const </span>{
+<a name="l00276"></a>00276                 <span class="keywordflow">return</span> m_systemMatrix;
+<a name="l00277"></a>00277         }
 <a name="l00278"></a>00278 
-<a name="l00280"></a>00280 
-<a name="l00286"></a>00286         <a class="code" href="classnatrium_1_1SEDGMinLee.html#a429930c197a9ab2a881ffc71aa0dd86b" title="constructor">SEDGMinLee</a>(boost::shared_ptr&lt;Mesh&lt;dim&gt; &gt; triangulation,
-<a name="l00287"></a>00287                         boost::shared_ptr&lt;<a class="code" href="classnatrium_1_1BoundaryCollection.html" title="The BoundaryCollection class defines all boundaries of a flow domain. Internally...">BoundaryCollection&lt;dim&gt;</a> &gt; boundaries,
-<a name="l00288"></a>00288                         <span class="keywordtype">size_t</span> orderOfFiniteElement,
-<a name="l00289"></a>00289                         boost::shared_ptr&lt;Stencil&gt; stencil, <span class="keywordtype">string</span> inputDirectory = <span class="stringliteral">&quot;&quot;</span>, <span class="keywordtype">bool</span> useCentralFlux =
-<a name="l00290"></a>00290                                         <span class="keyword">false</span>);
-<a name="l00291"></a>00291 
-<a name="l00293"></a><a class="code" href="classnatrium_1_1SEDGMinLee.html#a6c55a31bc4cb0e314876af7251ad8ce3">00293</a>         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#a6c55a31bc4cb0e314876af7251ad8ce3" title="destructor">~SEDGMinLee</a>() {
-<a name="l00294"></a>00294                 m_doFHandler-&gt;clear();
-<a name="l00295"></a>00295         }
-<a name="l00296"></a>00296         ;
-<a name="l00297"></a>00297 
-<a name="l00299"></a>00299         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#a5fa8b34df3c3bdd9f492a1e555effbe4" title="function to (re-)assemble linear system">reassemble</a>();
-<a name="l00300"></a>00300 
-<a name="l00302"></a>00302         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#a04707d696f7f466f17e3de055187ecd9" title="make streaming step">stream</a>();
-<a name="l00303"></a>00303 
-<a name="l00308"></a>00308         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#ab3cf80e18230ee7f08f4ed9883b9dadd" title="save matrices and status to files">saveCheckpoint</a>(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; directory) <span class="keyword">const</span>;
-<a name="l00309"></a>00309 
-<a name="l00311"></a><a class="code" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0">00311</a>         <span class="keyword">virtual</span> <span class="keyword">const</span> distributed_sparse_block_matrix&amp; <a class="code" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0" title="get global system matrix">getSystemMatrix</a>()<span class="keyword"> const </span>{
-<a name="l00312"></a>00312                 <span class="keywordflow">return</span> m_systemMatrix;
-<a name="l00313"></a>00313         }
-<a name="l00314"></a>00314 
-<a name="l00315"></a>00315         <span class="keyword">virtual</span> <span class="keywordtype">void</span> mapDoFsToSupportPoints(
-<a name="l00316"></a>00316                         std::map&lt;dealii::types::global_dof_index, dealii::Point&lt;dim&gt; &gt;&amp; supportPoints)<span class="keyword"> const </span>{
-<a name="l00317"></a>00317                 <span class="comment">//assert(supportPoints.size() == this-&gt;getNumberOfDoFs());</span>
-<a name="l00318"></a>00318                 dealii::DoFTools::map_dofs_to_support_points(m_mapping, *m_doFHandler,
-<a name="l00319"></a>00319                                 supportPoints);
-<a name="l00320"></a>00320         }
-<a name="l00321"></a>00321 
-<a name="l00322"></a>00322         <span class="keyword">virtual</span> <span class="keyword">const</span> boost::shared_ptr&lt;dealii::DoFHandler&lt;dim&gt; &gt;&amp; getDoFHandler()<span class="keyword"> const </span>{
-<a name="l00323"></a>00323                 <span class="keywordflow">return</span> m_doFHandler;
-<a name="l00324"></a>00324         }
-<a name="l00325"></a>00325 
-<a name="l00326"></a>00326         <span class="keyword">const</span> dealii::BlockSparsityPattern&amp; getBlockSparsityPattern()<span class="keyword"> const </span>{
-<a name="l00327"></a>00327                 <span class="keywordflow">return</span> m_sparsityPattern;
-<a name="l00328"></a>00328         }
-<a name="l00329"></a>00329 
-<a name="l00330"></a>00330 <span class="preprocessor">#ifndef WITH_TRILINOS</span>
-<a name="l00331"></a>00331 <span class="preprocessor"></span>
-<a name="l00335"></a><a class="code" href="classnatrium_1_1SEDGMinLee.html#ac9392932aaab8186b427b9d12bc64771">00335</a>         <span class="keyword">const</span> dealii::SparsityPattern&amp; <a class="code" href="classnatrium_1_1SEDGMinLee.html#ac9392932aaab8186b427b9d12bc64771" title="get sparsity pattern">getSparsityPattern</a>(<span class="keywordtype">size_t</span> i)<span class="keyword"> const </span>{
-<a name="l00336"></a>00336                 <span class="keywordflow">return</span> m_systemMatrix.block(i,i).get_sparsity_pattern();
-<a name="l00337"></a>00337         }
-<a name="l00338"></a>00338 <span class="preprocessor">#endif</span>
-<a name="l00339"></a>00339 <span class="preprocessor"></span>
-<a name="l00340"></a>00340         <span class="keyword">const</span> dealii::MappingQ&lt;dim&gt;&amp; getMapping()<span class="keyword"> const </span>{
-<a name="l00341"></a>00341                 <span class="keywordflow">return</span> m_mapping;
-<a name="l00342"></a>00342         }
-<a name="l00343"></a>00343 
-<a name="l00344"></a>00344         <span class="keyword">virtual</span> <span class="keyword">const</span> std::map&lt;size_t, size_t&gt;&amp; getCelldofToQIndex()<span class="keyword"> const </span>{
-<a name="l00345"></a>00345                 <span class="keywordflow">return</span> m_celldof_to_q_index;
-<a name="l00346"></a>00346         }
-<a name="l00347"></a>00347 
-<a name="l00348"></a>00348         <span class="keyword">const</span> vector&lt;std::map&lt;size_t, size_t&gt; &gt;&amp; getFacedofToQIndex()<span class="keyword"> const </span>{
-<a name="l00349"></a>00349                 <span class="keywordflow">return</span> m_facedof_to_q_index;
+<a name="l00279"></a>00279         <span class="keyword">virtual</span> <span class="keywordtype">void</span> mapDoFsToSupportPoints(
+<a name="l00280"></a>00280                         std::map&lt;dealii::types::global_dof_index, dealii::Point&lt;dim&gt; &gt;&amp; supportPoints)<span class="keyword"> const </span>{
+<a name="l00281"></a>00281                 <span class="comment">//assert(supportPoints.size() == this-&gt;getNumberOfDoFs());</span>
+<a name="l00282"></a>00282                 dealii::DoFTools::map_dofs_to_support_points(m_mapping, *m_doFHandler,
+<a name="l00283"></a>00283                                 supportPoints);
+<a name="l00284"></a>00284         }
+<a name="l00285"></a>00285 
+<a name="l00286"></a>00286         <span class="keyword">virtual</span> <span class="keyword">const</span> boost::shared_ptr&lt;dealii::DoFHandler&lt;dim&gt; &gt;&amp; getDoFHandler()<span class="keyword"> const </span>{
+<a name="l00287"></a>00287                 <span class="keywordflow">return</span> m_doFHandler;
+<a name="l00288"></a>00288         }
+<a name="l00289"></a>00289 
+<a name="l00290"></a>00290         <span class="keyword">const</span> dealii::BlockSparsityPattern&amp; getBlockSparsityPattern()<span class="keyword"> const </span>{
+<a name="l00291"></a>00291                 <span class="keywordflow">return</span> m_sparsityPattern;
+<a name="l00292"></a>00292         }
+<a name="l00293"></a>00293 
+<a name="l00294"></a>00294 <span class="preprocessor">#ifndef WITH_TRILINOS</span>
+<a name="l00295"></a>00295 <span class="preprocessor"></span>
+<a name="l00299"></a><a class="code" href="classnatrium_1_1SEDGMinLee.html#ac9392932aaab8186b427b9d12bc64771">00299</a>         <span class="keyword">const</span> dealii::SparsityPattern&amp; <a class="code" href="classnatrium_1_1SEDGMinLee.html#ac9392932aaab8186b427b9d12bc64771" title="get sparsity pattern">getSparsityPattern</a>(<span class="keywordtype">size_t</span> i)<span class="keyword"> const </span>{
+<a name="l00300"></a>00300                 <span class="keywordflow">return</span> m_systemMatrix.block(i,i).get_sparsity_pattern();
+<a name="l00301"></a>00301         }
+<a name="l00302"></a>00302 <span class="preprocessor">#endif</span>
+<a name="l00303"></a>00303 <span class="preprocessor"></span>
+<a name="l00304"></a>00304         <span class="keyword">const</span> dealii::MappingQ&lt;dim&gt;&amp; getMapping()<span class="keyword"> const </span>{
+<a name="l00305"></a>00305                 <span class="keywordflow">return</span> m_mapping;
+<a name="l00306"></a>00306         }
+<a name="l00307"></a>00307 
+<a name="l00308"></a>00308         <span class="keyword">virtual</span> <span class="keyword">const</span> std::map&lt;size_t, size_t&gt;&amp; getCelldofToQIndex()<span class="keyword"> const </span>{
+<a name="l00309"></a>00309                 <span class="keywordflow">return</span> m_celldof_to_q_index;
+<a name="l00310"></a>00310         }
+<a name="l00311"></a>00311 
+<a name="l00312"></a>00312         <span class="keyword">const</span> vector&lt;std::map&lt;size_t, size_t&gt; &gt;&amp; getFacedofToQIndex()<span class="keyword"> const </span>{
+<a name="l00313"></a>00313                 <span class="keywordflow">return</span> m_facedof_to_q_index;
+<a name="l00314"></a>00314         }
+<a name="l00315"></a>00315 
+<a name="l00316"></a>00316 
+<a name="l00317"></a>00317         <span class="keyword">const</span> boost::shared_ptr&lt;dealii::QGaussLobatto&lt;dim - 1&gt; &gt;&amp; getFaceQuadrature()<span class="keyword"> const </span>{
+<a name="l00318"></a>00318                 <span class="keywordflow">return</span> m_faceQuadrature;
+<a name="l00319"></a>00319         }
+<a name="l00320"></a>00320 
+<a name="l00321"></a>00321         <span class="keyword">virtual</span> <span class="keyword">const</span> boost::shared_ptr&lt;dealii::FE_DGQArbitraryNodes&lt;dim&gt; &gt;&amp; getFe()<span class="keyword"> const </span>{
+<a name="l00322"></a>00322                 <span class="keywordflow">return</span> m_fe;
+<a name="l00323"></a>00323         }
+<a name="l00324"></a>00324 
+<a name="l00325"></a>00325         <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> getNumberOfDoFsPerCell()<span class="keyword"> const</span>{
+<a name="l00326"></a>00326                 <span class="keywordflow">return</span> m_fe-&gt;dofs_per_cell;
+<a name="l00327"></a>00327         }
+<a name="l00328"></a>00328 
+<a name="l00329"></a>00329         <span class="keyword">virtual</span> <span class="keyword">const</span> boost::shared_ptr&lt;dealii::QGaussLobatto&lt;dim&gt; &gt;&amp; getQuadrature()<span class="keyword"> const </span>{
+<a name="l00330"></a>00330                 <span class="keywordflow">return</span> m_quadrature;
+<a name="l00331"></a>00331         }
+<a name="l00332"></a>00332 
+<a name="l00333"></a>00333         <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> getOrderOfFiniteElement()<span class="keyword"> const </span>{
+<a name="l00334"></a>00334                 <span class="keywordflow">return</span> m_orderOfFiniteElement;
+<a name="l00335"></a>00335         }
+<a name="l00336"></a>00336 
+<a name="l00337"></a><a class="code" href="classnatrium_1_1SEDGMinLee.html#af667cda1a894340f614da67c0a0ae5da">00337</a>         <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#af667cda1a894340f614da67c0a0ae5da" title="save matrices and status to files">getNumberOfDoFs</a>()<span class="keyword"> const </span>{
+<a name="l00338"></a>00338                 <span class="keywordflow">return</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0" title="get global system matrix">getSystemMatrix</a>().block(0,0).n();
+<a name="l00339"></a>00339         }
+<a name="l00340"></a>00340 
+<a name="l00341"></a>00341         <span class="keyword">virtual</span> <span class="keyword">const</span> distributed_block_vector&amp; getSystemVector()<span class="keyword"> const </span>{
+<a name="l00342"></a>00342                 <span class="keywordflow">return</span> m_systemVector;
+<a name="l00343"></a>00343         }
+<a name="l00344"></a>00344 
+<a name="l00345"></a>00345         <span class="keyword">const</span> dealii::IndexSet&amp; getLocallyOwnedDofs() {
+<a name="l00346"></a>00346                 <span class="keywordflow">return</span> m_locallyOwnedDofs;
+<a name="l00347"></a>00347         }
+<a name="l00348"></a>00348         <span class="keyword">const</span> dealii::IndexSet&amp; getLocallyRelevantDofs() {
+<a name="l00349"></a>00349                 <span class="keywordflow">return</span> m_locallyRelevantDofs;
 <a name="l00350"></a>00350         }
 <a name="l00351"></a>00351 
-<a name="l00352"></a>00352         <span class="keyword">const</span> boost::shared_ptr&lt;dealii::QGaussLobatto&lt;dim - 1&gt; &gt;&amp; getFaceQuadrature()<span class="keyword"> const </span>{
-<a name="l00353"></a>00353                 <span class="keywordflow">return</span> m_faceQuadrature;
+<a name="l00352"></a>00352         <span class="keyword">virtual</span> <span class="keyword">const</span> vector&lt;std::map&lt;size_t, size_t&gt; &gt;&amp; getQIndexToFacedof()<span class="keyword"> const </span>{
+<a name="l00353"></a>00353                 <span class="keywordflow">return</span> m_q_index_to_facedof;
 <a name="l00354"></a>00354         }
 <a name="l00355"></a>00355 
-<a name="l00356"></a>00356         <span class="keyword">virtual</span> <span class="keyword">const</span> boost::shared_ptr&lt;dealii::FE_DGQArbitraryNodes&lt;dim&gt; &gt;&amp; getFe()<span class="keyword"> const </span>{
-<a name="l00357"></a>00357                 <span class="keywordflow">return</span> m_fe;
+<a name="l00356"></a>00356         <span class="keyword">virtual</span> <span class="keyword">const</span> boost::shared_ptr&lt;Mesh&lt;dim&gt; &gt;&amp; getMesh()<span class="keyword"> const </span>{
+<a name="l00357"></a>00357                 <span class="keywordflow">return</span> m_mesh;
 <a name="l00358"></a>00358         }
 <a name="l00359"></a>00359 
-<a name="l00360"></a>00360         <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> getNumberOfDoFsPerCell()<span class="keyword"> const</span>{
-<a name="l00361"></a>00361                 <span class="keywordflow">return</span> m_fe-&gt;dofs_per_cell;
+<a name="l00360"></a>00360         <span class="keyword">virtual</span> <span class="keyword">const</span> boost::shared_ptr&lt;Stencil&gt;&amp; getStencil()<span class="keyword"> const </span>{
+<a name="l00361"></a>00361                 <span class="keywordflow">return</span> m_stencil;
 <a name="l00362"></a>00362         }
 <a name="l00363"></a>00363 
-<a name="l00364"></a>00364         <span class="keyword">virtual</span> <span class="keyword">const</span> boost::shared_ptr&lt;dealii::QGaussLobatto&lt;dim&gt; &gt;&amp; getQuadrature()<span class="keyword"> const </span>{
-<a name="l00365"></a>00365                 <span class="keywordflow">return</span> m_quadrature;
-<a name="l00366"></a>00366         }
+<a name="l00364"></a>00364 };
+<a name="l00365"></a>00365 
+<a name="l00366"></a>00366 } <span class="comment">/* namespace natrium */</span>
 <a name="l00367"></a>00367 
-<a name="l00368"></a>00368         <span class="keywordtype">size_t</span> getOrderOfFiniteElement()<span class="keyword"> const </span>{
-<a name="l00369"></a>00369                 <span class="keywordflow">return</span> m_orderOfFiniteElement;
-<a name="l00370"></a>00370         }
-<a name="l00371"></a>00371 
-<a name="l00372"></a>00372         <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> getNumberOfDoFs()<span class="keyword"> const </span>{
-<a name="l00373"></a>00373                 <span class="keywordflow">return</span> <a class="code" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0" title="get global system matrix">getSystemMatrix</a>().block(0,0).n();
-<a name="l00374"></a>00374         }
-<a name="l00375"></a>00375 
-<a name="l00376"></a>00376         <span class="keyword">virtual</span> <span class="keyword">const</span> distributed_block_vector&amp; getSystemVector()<span class="keyword"> const </span>{
-<a name="l00377"></a>00377                 <span class="keywordflow">return</span> m_systemVector;
-<a name="l00378"></a>00378         }
-<a name="l00379"></a>00379 
-<a name="l00380"></a>00380 <span class="preprocessor">#ifdef WITH_TRILINOS</span>
-<a name="l00381"></a>00381 <span class="preprocessor"></span>        <span class="keyword">const</span> dealii::IndexSet&amp; getLocallyOwnedDofs() {
-<a name="l00382"></a>00382                 <span class="keywordflow">return</span> m_locallyOwnedDofs;
-<a name="l00383"></a>00383         }
-<a name="l00384"></a>00384         <span class="keyword">const</span> dealii::IndexSet&amp; getLocallyRelevantDofs() {
-<a name="l00385"></a>00385                 <span class="keywordflow">return</span> m_locallyRelevantDofs;
-<a name="l00386"></a>00386         }
-<a name="l00387"></a>00387 <span class="preprocessor">#endif</span>
-<a name="l00388"></a>00388 <span class="preprocessor"></span>
-<a name="l00389"></a>00389 };
-<a name="l00390"></a>00390 
-<a name="l00391"></a>00391 } <span class="comment">/* namespace natrium */</span>
-<a name="l00392"></a>00392 
-<a name="l00393"></a>00393 
-<a name="l00394"></a>00394 <span class="preprocessor">#endif </span><span class="comment">/* SEDGMINLEE_H_ */</span>
+<a name="l00368"></a>00368 
+<a name="l00369"></a>00369 <span class="preprocessor">#endif </span><span class="comment">/* SEDGMINLEE_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -292,7 +293,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

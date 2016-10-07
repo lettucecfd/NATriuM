@@ -12,7 +12,7 @@ namespace natrium {
 
 KBCCentral::KBCCentral(double relaxationParameter, double dt,
 		const boost::shared_ptr<Stencil> stencil) :
-		counter(0), MRT(relaxationParameter, dt, stencil), parameterFile(
+		MRT(relaxationParameter, dt, stencil), counter(0), parameterFile(
 				"deviation_KBC_CENTRAL.txt") {
 
 }

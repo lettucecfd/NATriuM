@@ -8,6 +8,7 @@ Definition of basic math functionality.
 {\ttfamily \#include $<$functional$>$}\par
 {\ttfamily \#include $<$math.h$>$}\par
 {\ttfamily \#include \char`\"{}deal.II/base/index\_\-set.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/tensor.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}BasicNames.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
@@ -17,6 +18,10 @@ class \hyperlink{classnatrium_1_1own__double__less}{natrium::own\_\-double\_\-le
 \subsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\item 
 namespace \hyperlink{namespacenatrium_1_1Math}{natrium::Math}
 
 
@@ -62,7 +67,12 @@ bool {\bfseries natrium::Math::is\_\-angle\_\-small} (dealii::Tensor$<$ 1, 2 $>$
 {\footnotesize template$<$class VECTOR $>$ }\\double \hyperlink{namespacenatrium_1_1Math_afdfb0b93daae2db1221dc22e268c631d}{natrium::Math::maxVelocityNorm} (const vector$<$ VECTOR $>$ \&velocity, const dealii::IndexSet \&locally\_\-owned\_\-dofs)
 \begin{DoxyCompactList}\small\item\em Calculate the maximum of the euclidean velocity norm. \item\end{DoxyCompactList}\item 
 {\footnotesize template$<$class VECTOR $>$ }\\double \hyperlink{namespacenatrium_1_1Math_ac6abc916cc66dda84a4e5c28e61be560}{natrium::Math::velocity2Norm} (const vector$<$ VECTOR $>$ \&velocity, const dealii::IndexSet \&locally\_\-owned\_\-dofs)
-\begin{DoxyCompactList}\small\item\em Calculate the euclidean norm of the velocity over all points (not in the finite element space, but element-\/wise). \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Calculate the euclidean norm of the velocity over all points (not in the finite element space, but element-\/wise). \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_ae701d55b10027c6e5affa8bf49f9d87f}{
+{\footnotesize template$<$size\_\-t dim$>$ }\\dealii::Tensor$<$ 1, dim $>$ {\bfseries natrium::vectorToTensor} (const numeric\_\-vector \&v)}
+\label{namespacenatrium_ae701d55b10027c6e5affa8bf49f9d87f}
+
+\end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 

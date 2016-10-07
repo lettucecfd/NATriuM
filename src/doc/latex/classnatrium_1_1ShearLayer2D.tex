@@ -1,0 +1,61 @@
+\hypertarget{classnatrium_1_1ShearLayer2D}{
+\section{natrium::ShearLayer2D Class Reference}
+\label{classnatrium_1_1ShearLayer2D}\index{natrium::ShearLayer2D@{natrium::ShearLayer2D}}
+}
+
+
+Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  
+
+
+{\ttfamily \#include $<$ShearLayer2D.h$>$}Inheritance diagram for natrium::ShearLayer2D::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classnatrium_1_1ShearLayer2D}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1ShearLayer2D_1_1InitialVelocity}{InitialVelocity}
+\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1ShearLayer2D_a5428379aab66e023c11f11ff86d53546}{ShearLayer2D} (double viscosity, size\_\-t refinement\_\-level, double u0, double kappa, double perturbation=0.01)
+\begin{DoxyCompactList}\small\item\em constructor (with default cs=1/sqrt(3)) \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ShearLayer2D_ac15c8dc03cc5a7fbb594b863ddac4bce}{
+virtual \hyperlink{classnatrium_1_1ShearLayer2D_ac15c8dc03cc5a7fbb594b863ddac4bce}{$\sim$ShearLayer2D} ()}
+\label{classnatrium_1_1ShearLayer2D_ac15c8dc03cc5a7fbb594b863ddac4bce}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ShearLayer2D_a58306e2c321765071614fbd1839ae1ee}{
+virtual void {\bfseries refine} (Mesh$<$ 2 $>$ \&mesh)}
+\label{classnatrium_1_1ShearLayer2D_a58306e2c321765071614fbd1839ae1ee}
+
+\item 
+\hypertarget{classnatrium_1_1ShearLayer2D_a6e4e7f310f4180650700ce3167a8f6a1}{
+virtual void {\bfseries transform} (Mesh$<$ 2 $>$ \&)}
+\label{classnatrium_1_1ShearLayer2D_a6e4e7f310f4180650700ce3167a8f6a1}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1ShearLayer2D_a5428379aab66e023c11f11ff86d53546}{
+\index{natrium::ShearLayer2D@{natrium::ShearLayer2D}!ShearLayer2D@{ShearLayer2D}}
+\index{ShearLayer2D@{ShearLayer2D}!natrium::ShearLayer2D@{natrium::ShearLayer2D}}
+\subsubsection[{ShearLayer2D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::ShearLayer2D::ShearLayer2D (double {\em viscosity}, \/  size\_\-t {\em refinement\_\-level}, \/  double {\em u0}, \/  double {\em kappa}, \/  double {\em perturbation} = {\ttfamily 0.01})}}
+\label{classnatrium_1_1ShearLayer2D_a5428379aab66e023c11f11ff86d53546}
+
+
+constructor (with default cs=1/sqrt(3)) 
+
+apply boundary values 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{ShearLayer2D_8h}{ShearLayer2D.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{ShearLayer2D_8cpp}{ShearLayer2D.cpp}\end{DoxyCompactItemize}

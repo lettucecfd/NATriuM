@@ -14,6 +14,7 @@
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/ShearLayer2D.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
+#include "natrium/solver/CFDSolver.h"
 
 using namespace natrium;
 

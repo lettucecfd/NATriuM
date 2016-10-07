@@ -20,9 +20,12 @@ namespace natrium {
 
 class KBCCentral: public MRT {
 public:
+
 	KBCCentral(double relaxationParameter, double dt,
 			const boost::shared_ptr<Stencil> stencil);
 	virtual ~KBCCentral();
+
+	mutable int counter = 0;
 	virtual void collideAll(DistributionFunctions& f,
 			distributed_vector& densities,
 			vector<distributed_vector>& velocities,
@@ -77,8 +80,6 @@ public:
 		;
 
 	};
-
-	mutable int counter = 0;
 
 	void writeDeviation(double ave, double dev, double ave_entropy, double dev_entropy) const {
 		parameterFile << counter << " " << ave << " " << dev << " " << ave_entropy << " " << dev_entropy << endl;
