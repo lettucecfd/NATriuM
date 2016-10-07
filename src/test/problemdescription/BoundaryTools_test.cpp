@@ -9,14 +9,14 @@
 
 #include <string>
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "deal.II/base/point.h"
 
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
-namespace BoundaryTools{
+using namespace natrium;
+using namespace BoundaryTools;
 
 BOOST_AUTO_TEST_SUITE(BoundaryTools_test)
 
@@ -48,5 +48,3 @@ BOOST_AUTO_TEST_CASE(BoundaryTools_CheckParallelLines_test) {
 } /* BoundaryTools_CheckParallelLines_test */
 
 BOOST_AUTO_TEST_SUITE_END()
-} /* namepace BoundaryTools */
-} /* namespace natrium */

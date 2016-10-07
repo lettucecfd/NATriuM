@@ -7,7 +7,7 @@
 
 #include "natrium/solver/Checkpoint.h"
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 #include "boost/filesystem.hpp"
 
 #include "deal.II/base/index_set.h"
@@ -18,7 +18,7 @@
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 #include "natrium/advection/SEDGMinLee.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(Checkpoint_test)
 
@@ -257,5 +257,3 @@ BOOST_AUTO_TEST_CASE(Checkpoint_ResumeOtherMa) {
 } /* Checkpoint_ResumeOtherMa */
 
 BOOST_AUTO_TEST_SUITE_END()
-
-} /* namespace natrium */

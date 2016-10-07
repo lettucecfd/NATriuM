@@ -7,11 +7,11 @@
 
 #include "natrium/solver/DistributionFunctions.h"
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(DistributionFunctions_test)
 
@@ -72,4 +72,3 @@ BOOST_AUTO_TEST_CASE(DistributionFunctions_StencilTransfer_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

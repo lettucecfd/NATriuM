@@ -7,12 +7,12 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 using std::cout;
 using std::endl;
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(BasicNames_test)
 
@@ -32,4 +32,3 @@ BOOST_AUTO_TEST_CASE(BasicNames_pout_Test){
 BOOST_AUTO_TEST_SUITE_END()
 
 
-} /* namespace natrium */

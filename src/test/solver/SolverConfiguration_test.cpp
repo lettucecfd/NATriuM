@@ -9,13 +9,13 @@
 
 #include <fstream>
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 #include "boost/filesystem.hpp"
 #include "boost/foreach.hpp"
 
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
+using namespace natrium;
 
 //#define TEST_USER_INTERACTION_CIN
 
@@ -274,4 +274,3 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_OutputFlags_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

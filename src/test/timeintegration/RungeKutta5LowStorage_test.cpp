@@ -6,7 +6,7 @@
  */
 
 #include "natrium/timeintegration/RungeKutta5LowStorage.h"
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "deal.II/lac/sparsity_pattern.h"
 #include "deal.II/lac/compressed_sparsity_pattern.h"
@@ -14,7 +14,7 @@
 #include "natrium/benchmarks/AdvectionBenchmark.h"
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(RungeKutta5LowStorage_test)
 
@@ -89,4 +89,3 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_MPI_test) {
 
 	BOOST_AUTO_TEST_SUITE_END()
 
-}	/* namespace natrium */

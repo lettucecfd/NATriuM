@@ -32,7 +32,7 @@
 #include "natrium/benchmarks/AdvectionBenchmark.h"
 
 
-namespace natrium {
+using namespace natrium;
 namespace IntegrationTestCases {
 
 TestResult ConvergenceSEDGLinearAdvectionSmooth() {
@@ -1072,5 +1072,4 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
 
 
 } /* namespace IntegrationTests */
-} /* namespace natrium */
 

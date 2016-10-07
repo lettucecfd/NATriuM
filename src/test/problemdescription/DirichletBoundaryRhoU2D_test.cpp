@@ -6,7 +6,7 @@
  */
 
 #include <natrium/problemdescription/LinearBoundaryRhoU.h>
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "deal.II/base/function.h"
 #include "deal.II/dofs/dof_tools.h"
@@ -25,7 +25,7 @@
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "WallTestDomain2D.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(LinearBoundaryRhoU2D_test)
 
@@ -317,4 +317,3 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_calculate_test) {
 
 BOOST_AUTO_TEST_SUITE_END() /*LinearBoundaryRhoU2D_test*/
 
-} /* namespace natrium */

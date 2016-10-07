@@ -7,7 +7,7 @@
 
 #include "natrium/advection/SemiLagrangian.h"
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 /*#include "deal.II/numerics/data_out.h"
  #include "deal.II/fe/fe_dgq.h"
@@ -24,7 +24,7 @@
 #include "natrium/benchmarks/PeriodicTestDomain3D.h"
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(SemiLagrangian_test)
 
@@ -593,5 +593,3 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_VectorReference_test) {
 } /* SemiLagrangian3D_VectorReference_test */
 
 BOOST_AUTO_TEST_SUITE_END()
-
-} /* namespace natrium */

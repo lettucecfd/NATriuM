@@ -7,8 +7,7 @@
 
 #include "natrium/problemdescription/Boundary.h"
 
-namespace natrium {
+using namespace natrium;
 
 
 
-} /* namespace natrium */

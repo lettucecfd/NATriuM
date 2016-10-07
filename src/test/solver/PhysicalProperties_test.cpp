@@ -8,14 +8,14 @@
 #include "natrium/solver/PhysicalProperties.h"
 
 
-#include "boost/test/unit_test.hpp"
+#include "boost/test/included/unit_test.hpp"
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/ShearLayer2D.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(PhysicalProperties_test)
 
@@ -120,4 +120,3 @@ BOOST_AUTO_TEST_CASE(PhysicalProperties_Enstrophy_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */
