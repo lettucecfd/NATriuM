@@ -12,7 +12,6 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/geometry_info.h"
 #include "deal.II/dofs/dof_tools.h"
-#include "deal.II/lac/constraint_matrix.h"
 #include "deal.II/lac/identity_matrix.h"
 
 #include "BoundaryTools.h"
