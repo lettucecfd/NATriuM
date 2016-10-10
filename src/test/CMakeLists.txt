@@ -1,4 +1,4 @@
-#### include(../CMake_UnityBuild.txt)
+include(../CMake_UnityBuild.txt)
 
 
 file(   GLOB_RECURSE
@@ -28,7 +28,7 @@ set(    INTEGRATION_TEST_TARGET
  
 
 
-#enable_unity_build(${TEST_TARGET} TEST_FILES)
+enable_unity_build(${TEST_TARGET} TEST_FILES)
 
 #
 # Specify a target:
