@@ -69,7 +69,7 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 	// subdomain. Not setting a subdomain is also okay, because we skip
 	// ghost cells in the loop below.
 	Assert(
-			(dof.get_tria().locally_owned_subdomain() == numbers::invalid_subdomain_id) || (subdomain_id == numbers::invalid_subdomain_id) || (subdomain_id == dof.get_tria().locally_owned_subdomain()),
+			(dof.get_triangulation().locally_owned_subdomain() == numbers::invalid_subdomain_id) || (subdomain_id == numbers::invalid_subdomain_id) || (subdomain_id == dof.get_triangulation().locally_owned_subdomain()),
 			ExcMessage ("For parallel::distributed::Mesh objects and " "associated DoF handler objects, asking for any subdomain other " "than the locally owned one does not make sense."));
 
 	std::vector<types::global_dof_index> dofs_on_this_cell;

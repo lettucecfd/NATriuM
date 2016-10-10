@@ -53,7 +53,7 @@ void ContinuousBoundaryGradient<dim>::reinit() {
 
 	// set dofs for discontinuous boundaries
 	m_discontinuousBoundaryDoF = boost::make_shared<DoFHandler<dim> >(
-			m_dof.get_tria());
+			m_dof.get_triangulation());
 
 #ifndef NO_SUPPORT_HP_PARALLEL
 
@@ -85,7 +85,7 @@ void ContinuousBoundaryGradient<dim>::reinit() {
 #endif
 
 	m_continuousBoundaryDoF = boost::make_shared<DoFHandler<dim> >(
-			m_dof.get_tria());
+			m_dof.get_triangulation());
 #ifndef NO_SUPPORT_HP_PARALLEL
 	// set dofs for continuous boundaries
 	for (typename DoFHandler<dim>::active_cell_iterator cell =

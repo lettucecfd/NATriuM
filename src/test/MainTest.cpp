@@ -32,7 +32,7 @@ struct InitMPI {
 BOOST_AUTO_TEST_SUITE(Boost_test)
 
 
-BOOST_GLOBAL_FIXTURE( InitMPI )
+BOOST_GLOBAL_FIXTURE( InitMPI );
 
 
 // Test if Boost unit test framework is running properly
