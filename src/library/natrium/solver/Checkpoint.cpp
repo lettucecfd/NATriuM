@@ -226,7 +226,7 @@ void Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(
 		DistributionFunctions& f, AdvectionOperator<dim>& advection,
 		string directory, CheckpointStatus& status) {
 
-	dealii::DoFHandler<dim>& dof_handler = *advection.getDoFHandler();
+	//dealii::DoFHandler<dim>& dof_handler = *advection.getDoFHandler();
 	boost::shared_ptr<Stencil> new_stencil = advection.getStencil();
 	Mesh<dim>& mesh = *advection.getMesh();
 	std::string message;
