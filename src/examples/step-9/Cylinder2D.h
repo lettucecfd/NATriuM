@@ -10,15 +10,15 @@
 
 #include "deal.II/grid/tria.h"
 
+#include <deal.II/grid/manifold_lib.h>
+
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
-
-
 namespace natrium {
 
-/** @short Description of the flow around a circular cylinder (regular channel flow in square domain).
- *
+/**
+ * @short Description of the flow around a circular cylinder (regular channel flow in square domain).
  */
 class Cylinder2D: public ProblemDescription<2> {
 public:
@@ -34,16 +34,29 @@ public:
 	}
 
 	virtual void refine(Mesh<2>& mesh) {
-
+		// remember to make_inner_manifold when implementing global refinement
 	}
 
-	virtual void transform(Mesh<2>& mesh){
+	virtual void transform(Mesh<2>& mesh) {
 
 	}
 
 private:
 
 	const double m_inletVelocity;
+
+	/**
+	 * @ short Sets the manifold id and boundary id of the inner manifold, respectively
+	 * @ short The manifold will contain all faces that have a distance <= radius + tol to the center
+	 * @param[in] mesh the mesh
+	 * @param[in] manifold the spherical manifold (that also contains the center)
+	 * @param[in] radius distance from center to sphere (default: 0.5)
+	 * @param[in] boundary_id: if >= 0, then all faces in the manifold get this boundary id
+	 * @param[in] tol tolerance for checking the distance (default: 1e-10)
+	 */
+	static void make_inner_manifold(dealii::Triangulation<2>& mesh,
+			const dealii::SphericalManifold<2>& manifold, double radius = 0.5, int boundary_id = -1,
+			double tol = 1e-10);
 
 	/**
 	 * @short create triangulation for cylinder flow
@@ -56,7 +69,8 @@ private:
 	 * @return shared pointer to a vector of boundaries
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
-	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(double inletVelocity);
+	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(
+			double inletVelocity);
 
 	/**
 	 * @short set initial densities
@@ -75,9 +89,7 @@ private:
 			vector<distributed_vector>& initialVelocities,
 			const vector<dealii::Point<2> >& supportPoints) const;
 
-
 };
-
 
 } /* namespace natrium */
 #endif /* CYLINDER2D_H_ */
