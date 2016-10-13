@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Initialization_test) {
 
 BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Functionality2D_test) {
 	pout << "ContinuousBoundaryGradient_Functionality2D_test..." << endl;
-/*
+
 	// prepare mesh
 	Mesh<2> square(MPI_COMM_WORLD);
 	dealii::GridGenerator::hyper_cube(square, 0, 1);
@@ -149,6 +149,7 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Functionality2D_test) {
 	ContinuousBoundaryGradient<2> grad(dof, m,  q1, q1, q2 , boundary_ids);
 	grad.reinit();
 
+	cout << "Hallo " << endl;
 	grad.calculateGradients(u);
 
 	dealii::UpdateFlags flags = dealii::update_gradients;
@@ -184,7 +185,7 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Functionality2D_test) {
 
 
 	dof.clear();
-	*/
+
 
 	pout << "done." << endl;
 } /* ContinuousBoundaryGradient_Functionality2D_test */

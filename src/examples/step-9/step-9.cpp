@@ -29,10 +29,9 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
+
 	pout << "Starting NATriuM step-9..." << endl;
-#ifdef WITH_TRILINOS
-	static	dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv);
-#endif
+
 
 	// set Reynolds and Mach number
 	const double Re = 10;
