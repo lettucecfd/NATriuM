@@ -406,7 +406,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 								el.currentCell);
 
 					} else /* if is not periodic */{
-
+						not_found.pop();
 					} /* endif isPeriodic */
 				} else {
 					// Interior faces

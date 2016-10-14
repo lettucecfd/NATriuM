@@ -30,6 +30,7 @@ Cylinder2D::Cylinder2D(double viscosity, double inletVelocity) :
 				inletVelocity) {
 	setCharacteristicLength(1.0);
 
+	this->setInitialU(boost::make_shared<InitialU>(this));
 	/// apply boundary values
 	setBoundaries(makeBoundaries(inletVelocity));
 }
@@ -204,31 +205,18 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	return boundaries;
 }
 
-/**
- * @short set initial densities
- * @param[out] initialDensities vector of densities; to be filled
- * @param[in] supportPoints the coordinates associated with each degree of freedom
- */
-void Cylinder2D::applyInitialDensities(distributed_vector& initialDensities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	for (size_t i = 0; i < initialDensities.size(); i++) {
-		initialDensities(i) = 1.0;
-	}
-}
 
 /**
  * @short set initial velocities
- * @param[out] initialVelocities vector of velocities; to be filled
- * @param[in] supportPoints the coordinates associated with each degree of freedom
+ *
  */
-void Cylinder2D::applyInitialVelocities(
-		vector<distributed_vector>& initialVelocities,
-		const vector<dealii::Point<2> >& supportPoints) const {
-	assert(initialVelocities.size() == 2);
-	for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-		initialVelocities.at(0)(i) = getCharacteristicVelocity();
-		initialVelocities.at(1)(i) = 0.0;
+double Cylinder2D::InitialU::value(const dealii::Point<2>& ,
+			const unsigned int component) const {
+		assert(component < 2);
+	if (0 == component){
+		return m_flow->getCharacteristicVelocity();// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
 	}
+	return 0;
 }
 
 } /* namespace natrium */

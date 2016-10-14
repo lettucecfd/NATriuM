@@ -35,13 +35,33 @@ public:
 
 	virtual void refine(Mesh<2>& mesh) {
 		// remember to make_inner_manifold when implementing global refinement
+		const dealii::SphericalManifold<2> manifold(dealii::Point<2>(0, 0));
+		make_inner_manifold(mesh, manifold);
+		mesh.refine_global(1);
+		// free the manifold
+		mesh.set_manifold(1);
+
 	}
 
-	virtual void transform(Mesh<2>& mesh) {
+	virtual void transform(Mesh<2>& ) {
 
 	}
+
+	/**
+	 * @short class to describe the the initial solution
+	 */
+	class InitialU: public dealii::Function<2> {
+	private:
+		Cylinder2D* m_flow;
+	public:
+		InitialU(Cylinder2D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
+	};
 
 private:
+
 
 	const double m_inletVelocity;
 
@@ -72,22 +92,7 @@ private:
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries(
 			double inletVelocity);
 
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const vector<dealii::Point<2> >& supportPoints) const;
 
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const vector<dealii::Point<2> >& supportPoints) const;
 
 };
 

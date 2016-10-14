@@ -47,8 +47,11 @@ public:
 
 	}
 
-	void apply(DistributionFunctions& f, const distributed_block_vector rho,
-			const vector<distributed_block_vector>& u,
+	/**
+	 * @short Apply the boundary condition (calculate unkown distributions)
+	 */
+	virtual void apply(DistributionFunctions& f, const distributed_vector& rho,
+			const vector<distributed_vector>& u,
 			const AdvectionOperator<dim>& advection, double beta,
 			const Stencil& stencil);
 };
