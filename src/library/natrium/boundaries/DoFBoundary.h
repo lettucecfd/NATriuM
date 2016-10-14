@@ -12,6 +12,9 @@
 
 #include "deal.II/base/function.h"
 
+#include "../solver/DistributionFunctions.h"
+#include "../stencils/Stencil.h"
+#include "../advection/AdvectionOperator.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
@@ -65,7 +68,11 @@ public:
 		return m_boundaryVelocity;
 	}
 
-	;
+	virtual void apply(DistributionFunctions& f, const distributed_vector& rho,
+				const vector<distributed_vector>& u,
+				const AdvectionOperator<dim>& advection, double beta,
+				const Stencil& stencil) = 0;
+
 };
 
 } /* namespace natrium */

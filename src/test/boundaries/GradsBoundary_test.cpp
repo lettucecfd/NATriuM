@@ -1,15 +1,30 @@
 #include "natrium/boundaries/GradsBoundary.h"
 
+#include <mpi.h>
 #include <string>
 
 #include "boost/test/unit_test.hpp"
 
 #include "deal.II/base/tensor.h"
+#include "deal.II/grid/grid_generator.h"
+#include "deal.II/base/function.h"
+#include "deal.II/base/function_lib.h"
+#include "deal.II/dofs/dof_handler.h"
+#include "deal.II/fe/fe_dgq.h"
+#include "deal.II/base/quadrature_lib.h"
+
 
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D3Q15.h"
 #include "natrium/stencils/D3Q19.h"
 #include "natrium/stencils/D3Q27.h"
+#include "natrium/solver/DistributionFunctions.h"
+#include "natrium/solver/CFDSolver.h"
+#include "natrium/benchmarks/CouetteFlowGrad2D.h"
+
+#include "natrium/problemdescription/BoundaryCollection.h"
+#include "natrium/advection/SemiLagrangian.h"
+
 #include "natrium/utilities/BasicNames.h"
 
 namespace natrium {
@@ -18,31 +33,91 @@ BOOST_AUTO_TEST_SUITE(GradsBoundary_test)
 
 BOOST_AUTO_TEST_CASE(GradsBoundary_Constructor_test) {
 
-	pout << "GradsFunction_Call_test..." << endl;
+	pout << "GradsBoundary_Constructor_test..." << endl;
 
-	dealii::Tensor<2, 2> P2;
-	dealii::Tensor<2, 3> P3;
-	dealii::Tensor<1, 2> j2;
-	dealii::Tensor<1, 3> j3;
-	double rho = 1;
-	vector<double> f;
+	boost::shared_ptr<dealii::Function<2> > f = boost::make_shared<dealii::ConstantFunction<2> >(0.1, 2);
+	boost::shared_ptr<dealii::Function<3> > f3d = boost::make_shared<dealii::ConstantFunction<3> >(0.1, 3);
 
-	f.resize(9);
-	GradsFunction<2>(f, D2Q9(), rho, j2, P2);
-	f.resize(15);
-	GradsFunction<3>(f, D3Q15(), rho, j3, P3);
-	f.resize(19);
-	GradsFunction<3>(f, D3Q19(), rho, j3, P3);
-	f.resize(27);
-	GradsFunction<3>(f, D3Q27(), rho, j3, P3);
+	GradsBoundary<2,PRESCRIBED_VELOCITY> boundary(0,f);
+	GradsBoundary<3,PRESCRIBED_VELOCITY> boundary2(0,f3d);
+
+	//GradsBoundary<2,PRESCRIBED_PRESSURE> boundary3(0,f);
+	//GradsBoundary<3,PRESCRIBED_PRESSURE> boundary4(0,f3d);
 
 	pout << "done." << endl;
 
 } /* GradsFunction_Construction_test */
 
-BOOST_AUTO_TEST_CASE(GradsBoundary_Velocity_test) {
+BOOST_AUTO_TEST_CASE(GradsBoundary_Velocity2D_test) {
 
-} /* GradsFunction_Moments_test */
+	pout << "GradsBoundary_Velocity2D_test..." << endl;
+
+	boost::shared_ptr<dealii::Function<2> > f1 = boost::make_shared<dealii::ConstantFunction<2> >(0.1, 2);
+
+	boost::shared_ptr<Mesh<2> >mesh = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
+	dealii::GridGenerator::hyper_cube<2>(*mesh,0,1,true);
+	mesh->refine_global(3);
+	boost::shared_ptr<DoFBoundary<2> > boundary= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(0,f1);
+	boost::shared_ptr<DoFBoundary<2> > boundary1= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(1,f1);
+	boost::shared_ptr<DoFBoundary<2> > boundary2= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(2,f1);
+	boost::shared_ptr<DoFBoundary<2> > boundary3= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(3,f1);
+
+	boost::shared_ptr<BoundaryCollection<2> > bc = boost::make_shared<BoundaryCollection<2> >();
+	bc->addBoundary(boundary);
+	bc->addBoundary(boundary1);
+	bc->addBoundary(boundary2);
+	bc->addBoundary(boundary3);
+	//GradsBoundary<2,PRESCRIBED_PRESSURE> boundary2(1,f);
+
+	// distribute dofs
+	SemiLagrangian<2> sl(mesh,bc,2,boost::make_shared<D2Q9>(),0.001);
+	sl.setupDoFs();
+
+	DistributionFunctions f;
+	distributed_vector rho;
+	vector<distributed_vector> u;
+	f.reinit(9, sl.getDoFHandler()->locally_owned_dofs(), MPI_COMM_WORLD);
+	f.compress(dealii::VectorOperation::add);
+	rho.reinit(sl.getDoFHandler()->locally_owned_dofs(), MPI_COMM_WORLD);
+	rho.compress(dealii::VectorOperation::add);
+	for (size_t i = 0; i < 2; i++){
+		distributed_vector tmp;
+		tmp.reinit(sl.getDoFHandler()->locally_owned_dofs(), MPI_COMM_WORLD);
+		tmp.compress(dealii::VectorOperation::add);
+		u.push_back(tmp);
+	}
+	assert (u.size() == 2);
+	assert (f.size() > 0);
+	assert (f.at(0).size() > 0);
+	assert (rho.size() > 0);
+	assert (u.at(0).size() > 0);
+
+
+	double beta = 1;
+	D2Q9 d2q9;
+	boundary->apply(f, rho, u, sl, beta, d2q9);
+
+	// TODO: Calculate u beforehand
+
+	// TODO: Test afterwards
+
+	pout << "done." << endl;
+
+} /* GradsBoundary_Velocity2D_test */
+
+
+BOOST_AUTO_TEST_CASE(GradsBoundary_Couette2D_test) {
+	pout << "GradsBoundary_Couette2D_test..." << endl;
+
+	double viscosity = 1e-1;
+	double u0 = 0.1;
+	size_t ref_level = 3;
+	boost::shared_ptr<ProblemDescription<2> > couette = boost::make_shared<CouetteFlowGrad2D>(viscosity, u0, ref_level);
+
+	// TODO: finalize
+	pout << "done." << endl;
+} /* GradsBoundary_Velocity2D_test */
+
 
 BOOST_AUTO_TEST_SUITE_END()
 } /* namespace natrium */

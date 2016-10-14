@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Functionality2D_test) {
 
 	ContinuousBoundaryGradient<2> grad(dof, m,  q1, q1, q2 , boundary_ids);
 	grad.reinit();
-
+/*
 	cout << "Hallo " << endl;
 	grad.calculateGradients(u);
 
@@ -182,10 +182,9 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Functionality2D_test) {
 		}
 	}
 
-
+*/
 
 	dof.clear();
-
 
 	pout << "done." << endl;
 } /* ContinuousBoundaryGradient_Functionality2D_test */

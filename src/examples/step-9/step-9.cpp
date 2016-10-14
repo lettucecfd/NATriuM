@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 
 
 	// set Reynolds and Mach number
-	const double Re = 10;
+	const double Re = 100;
 	const double Ma = 0.1;
 
 	// set Problem so that the right Re and Ma are achieved
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	D2Q9 stencil(dqScaling);
 	// set FE order and time step size
 	const size_t orderOfFiniteElement = 2;
-	const double cfl=1.5;
+	const double cfl=5;
 
 
 	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
@@ -64,6 +64,7 @@ int main(int argc, char** argv) {
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
 	configuration->setSimulationEndTime(5000);
+	configuration->setTimeIntegrator(EXPONENTIAL);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(dqScaling);
 	configuration->setCFL(cfl);
