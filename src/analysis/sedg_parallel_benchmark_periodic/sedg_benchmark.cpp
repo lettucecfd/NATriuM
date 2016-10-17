@@ -1,6 +1,6 @@
 /**
  * @file benchmark.cpp
- * @short Couette Flow in 2D with time measurement
+ * @short TGV Flow in 3D with time measurement
  * @date 16.11.2015
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
@@ -26,6 +26,7 @@
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 #include "natrium/utilities/Info.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
 
 using namespace natrium;
 
@@ -35,7 +36,8 @@ int main(int argc, char** argv) {
 	MPIGuard::getInstance(argc, argv);
 
 	pout << "Usage: ./benchmark <ref_level> <order_fe>"
-			"<nof_iter=1000>  <is_unstructured=false>" << endl;
+			"<nof_iter=1000>  <is_unstructured=false> <time_integrator_id=1>"
+			<< endl;
 	assert(argc >= 3);
 
 	// set spatial discretization
@@ -43,11 +45,15 @@ int main(int argc, char** argv) {
 	size_t order_fe = std::atoi(argv[2]);
 	size_t nof_iterations = 1000;
 	bool is_unstructured = false;
+	size_t integrator_id = 1;
 	if (argc >= 4) {
 		nof_iterations = std::atoi(argv[3]);
 	}
 	if (argc >= 5) {
-		is_unstructured = bool( std::atoi(argv[4]) );
+		is_unstructured = bool(std::atoi(argv[4]));
+	}
+	if (argc >= 6) {
+		integrator_id = std::atoi(argv[5]);
 	}
 
 	pout << "Performance analysis with N=" << refinement_level << " and p="
@@ -77,9 +83,8 @@ int main(int argc, char** argv) {
 	pout << "Make problem..." << endl;
 	tgvProblem3D = boost::make_shared<TaylorGreenVortex3D>(viscosity,
 			refinement_level, cs, init_rho_analytically);
-	if (is_unstructured){
-		pout << "... with unstructured grid." << endl;
-		dealii::GridTools::distort_random(0.25,*tgvProblem3D->getMesh());
+	if (is_unstructured) {
+		dealii::GridTools::distort_random(0.1, *tgvProblem3D->getMesh());
 	}
 	pout << "...done" << endl;
 
@@ -94,8 +99,20 @@ int main(int argc, char** argv) {
 	configuration->setSedgOrderOfFiniteElement(order_fe);
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
-	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	//configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setCommandLineVerbosity(DETAILED);
+
+	// get integrator
+	TimeIntegratorName time_integrator;
+	DealIntegratorName deal_integrator;
+	string integrator_name;
+	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
+			deal_integrator, integrator_name);
+	pout << "Integrator: " << integrator_name << endl;
+
+	configuration->setTimeIntegrator(time_integrator);
+	configuration->setDealIntegrator(deal_integrator);
+
 
 	size_t n_dofs;
 	double lups;
@@ -136,11 +153,10 @@ int main(int argc, char** argv) {
 			<< endl;
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
 			<< refinement_level << " " << order_fe << " " << n_dofs << " "
-			<< (time1-timestart) / CLOCKS_PER_SEC * 1000 << " "
-			<< (time2-time1) / CLOCKS_PER_SEC * 1000 << " "
-			<< (time3-time2) / CLOCKS_PER_SEC * 1000 / nof_iterations << " "
-			<< (time3-timestart) / CLOCKS_PER_SEC * 1000 << " " << lups
-			<< " "
+			<< (time1 - timestart) / CLOCKS_PER_SEC * 1000 << " "
+			<< (time2 - time1) / CLOCKS_PER_SEC * 1000 << " "
+			<< (time3 - time2) / CLOCKS_PER_SEC * 1000 / nof_iterations << " "
+			<< (time3 - timestart) / CLOCKS_PER_SEC * 1000 << " " << lups << " "
 			<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
 			<< endl;
 	pout << "done." << endl;
