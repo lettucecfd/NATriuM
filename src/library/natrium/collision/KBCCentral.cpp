@@ -12,8 +12,8 @@ namespace natrium {
 
 KBCCentral::KBCCentral(double relaxationParameter, double dt,
 		const boost::shared_ptr<Stencil> stencil) :
-		counter(0), MRT(relaxationParameter, dt, stencil), parameterFile(
-				"deviation_KBC_CENTRAL.txt") {
+		MRT(relaxationParameter, dt, stencil), m_D(setMRTWeights()), m_S(
+				setRelaxationRates()) {
 
 }
 
@@ -42,443 +42,162 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
-	size_t Q = getQ();
 
-	stabilizer gamma(locally_owned_dofs.size());
-	stabilizer entropy(locally_owned_dofs.size());
+		size_t Q = getQ();
 
-	double scaling = getStencil()->getScaling();
-	double cs2 = getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
+		double scaling = getStencil()->getScaling();
+		double cs2 = getStencil()->getSpeedOfSoundSquare()/scaling/scaling;
+		vector<double> meq(Q); 	// moment equilibrium distribution functions
+		vector<double> m(Q);   	// moment distribution
 
-	//for all degrees of freedom on current processor
-	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
-	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+		//for all degrees of freedom on current processor
+		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+		for (it = locally_owned_dofs.begin(); it != end; it++) {
+			size_t i = *it;
 
-	for (it = locally_owned_dofs.begin(); it != end; it++) {
-		size_t i = *it;
+			// calculate density
+			densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
+					+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
+					+ f.at(8)(i);
 
-		// calculate density
-		densities(i) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
-				+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
-				+ f.at(8)(i);
-
-		// density
-		double rho = densities(i);
-
-		if (rho < 1e-10) {
+/*		if (densities(i) < 1e-10) {
 			throw CollisionException(
 					"Densities too small (< 1e-10) for collisions. Decrease time step size.");
-		}
+		}*/
 
+			if (not inInitializationProcedure) {
 
-		if (not inInitializationProcedure) {
-
-			velocities.at(0)(i) = scaling / rho
-					* (f.at(1)(i) + f.at(5)(i) + f.at(8)(i) - f.at(3)(i)
-							- f.at(6)(i) - f.at(7)(i));
-			velocities.at(1)(i) = scaling / rho
-					* (f.at(2)(i) + f.at(5)(i) + f.at(6)(i) - f.at(4)(i)
-							- f.at(7)(i) - f.at(8)(i));
-		}
-
-		double ux = velocities.at(0)(i) / scaling;
-		double uy = velocities.at(1)(i) / scaling;
-		double scalar_product = ux * ux + uy * uy;
-
-		double moments[3][3] = { 0 };
-		double direction_x[9];
-		double direction_y[9];
-
-		//Calculation of the central moments
-		for (int d = 0; d < 9; d++) {
-			direction_x[d] = getStencil()->getDirection(d)(0) / scaling;
-			direction_y[d] = getStencil()->getDirection(d)(1) / scaling;
-		}
-		for (int j = 0; j < 9; j++) {
-			for (int p = 0; p < 3; p++) {
-				for (int q = 0; q < 3; q++) {
-
-					moments[p][q] += pow((direction_x[j] - ux), p)
-							* pow((direction_y[j] - uy), q) * f.at(j)(i);
-
-				}
+				velocities.at(0)(i) = scaling / densities(i)
+						* (f.at(1)(i) + f.at(5)(i) + f.at(8)(i) - f.at(3)(i)
+								- f.at(6)(i) - f.at(7)(i));
+				velocities.at(1)(i) = scaling / densities(i)
+						* (f.at(2)(i) + f.at(5)(i) + f.at(6)(i) - f.at(4)(i)
+								- f.at(7)(i) - f.at(8)(i));
 			}
-		}
 
-		// moment representation of the populations
-		double T = 0, N = 0, Pi_xy = 0, Q_xyy = 0, Q_yxx = 0, A = 0;
 
-		// calculate the trace of the pressure tensor at unit density (T)
-		T = moments[2][0] + moments[0][2];
-		T = T / rho;
-
-		// calculate the normal stress difference at unit density (N)
-		N = moments[2][0] - moments[0][2];
-		N = N / rho;
-
-		// calculate the off-diagonal component of the pressure tensor at unit density
-		Pi_xy = moments[1][1];
-		Pi_xy = Pi_xy / rho;
-
-		// calculate moments of third order
-		Q_xyy = moments[1][2];
-		Q_xyy = Q_xyy / rho;
-
-		Q_yxx = moments[2][1];
-		Q_yxx = Q_yxx / rho;
-
-		// calculate moments of forth order
-		A = moments[2][2];
-		A = A / rho;
-
-		// kinematic part vector k
-		vector<double> k(Q);
-
-		k.at(0) = densities(i) * (1 - scalar_product);
-		k.at(1) = 0.5 * densities(i) * (ux * ux + 1 * ux);
-		k.at(3) = 0.5 * densities(i) * (ux * ux - 1 * ux);
-		k.at(2) = 0.5 * densities(i) * (uy * uy + 1 * uy);
-		k.at(4) = 0.5 * densities(i) * (uy * uy - 1 * uy);
-		k.at(5) = 0.25 * densities(i) * (1 * 1) * ux * uy;
-		k.at(6) = 0.25 * densities(i) * (1 * -1) * ux * uy;
-		k.at(7) = 0.25 * densities(i) * (-1 * -1) * ux * uy;
-		k.at(8) = 0.25 * densities(i) * (-1 * 1) * ux * uy;
-
-		// shear part vector s
-		vector<double> s(Q);
-
-		s.at(0) = rho
-				* ((4 * ux) * uy * Pi_xy - 0.5 * (ux * ux - uy * uy) * N
-						+ 0.5 * (scalar_product - 2) * T);
-		s.at(1) = 0.5 * rho
-				* (0.5 * (1 + 1 * ux + ux * ux - uy * uy) * N
-						- (2 * 1 * uy + 4 * ux * uy) * Pi_xy
-						+ 0.5 * (1 - 1 * ux - scalar_product) * T);
-
-		s.at(3) = 0.5 * rho
-				* (0.5 * (1 - 1 * ux + ux * ux - uy * uy) * N
-						- (2 * -1 * uy + 4 * ux * uy) * Pi_xy
-						+ 0.5 * (1 + 1 * ux - scalar_product) * T);
-
-		s.at(2) = 0.5 * rho
-				* (0.5 * (-1 - 1 * uy + ux * ux - uy * uy) * N
-						- (2 * 1 * ux + 4 * ux * uy) * Pi_xy
-						+ 0.5 * (1 - 1 * uy - scalar_product) * T);
-
-		s.at(4) = 0.5 * rho
-				* (0.5 * (-1 + 1 * uy + ux * ux - uy * uy) * N
-						- (2 * -1 * ux + 4 * ux * uy) * Pi_xy
-						+ 0.5 * (1 + 1 * uy - scalar_product) * T);
-
-		s.at(5) = 0.25 * rho
-				* ((4 * ux * uy + (1) * (1) + 2 * 1 * uy + 2 * 1 * ux) * Pi_xy
-						+ 0.5 * (-ux * ux + uy * uy - 1 * ux + 1 * uy) * N
-						+ 0.5 * (scalar_product + 1 * ux + 1 * uy) * T);
-		s.at(6) = 0.25 * rho
-				* ((4 * ux * uy + (-1) * (1) + 2 * -1 * uy + 2 * 1 * ux) * Pi_xy
-						+ 0.5 * (-ux * ux + uy * uy + 1 * ux + 1 * uy) * N
-						+ 0.5 * (scalar_product + (-1) * ux + 1 * uy) * T);
-		s.at(7) = 0.25 * rho
-				* ((4 * ux * uy + (-1) * (-1) + 2 * -1 * uy + 2 * (-1) * ux)
-						* Pi_xy
-						+ 0.5 * (-ux * ux + uy * uy + 1 * ux - 1 * uy) * N
-						+ 0.5 * (scalar_product + (-1) * ux - 1 * uy) * T);
-
-		s.at(8) = 0.25 * rho
-				* ((4 * ux * uy + (1) * (-1) + 2 * 1 * uy + 2 * (-1) * ux)
-						* Pi_xy
-						+ 0.5 * (-ux * ux + uy * uy - 1 * ux - 1 * uy) * N
-						+ 0.5 * (scalar_product + (1) * ux - 1 * uy) * T);
-
-		// higher order part vector h
-		vector<double> h(Q);
-
-		h.at(0) = f.at(0)(i)-k.at(0)-s.at(0);
-		h.at(1) = f.at(1)(i)-k.at(1)-s.at(1);
-		h.at(3) = f.at(3)(i)-k.at(3)-s.at(3);
-		h.at(2) = f.at(2)(i)-k.at(2)-s.at(2);
-		h.at(4) = f.at(4)(i)-k.at(4)-s.at(4);
-		h.at(5) = f.at(5)(i)-k.at(5)-s.at(5);
-		h.at(6) = f.at(6)(i)-k.at(6)-s.at(6);
-		h.at(7) = f.at(7)(i)-k.at(7)-s.at(7);
-		h.at(8) = f.at(8)(i)-k.at(8)-s.at(8);
-
-		// equilibrium vectors for shear vector
-		vector<double> seq(Q);
-		// equilibrium vectors for higher order part
-		vector<double> heq(Q);
-
-		// equilibrium distribution of the population f
-		vector<double> feq(Q, 0.0);
-		double uSquareTerm;
-		double mixedTerm;
-		double weighting;
-		double prefactor = 1 / cs2;
-
-		uSquareTerm = -scalar_product / (2 * cs2);
-		// direction 0
-		weighting = 4. / 9. * rho;
-		feq.at(0) = weighting * (1 + uSquareTerm);
-		// directions 1-4
-		weighting = 1. / 9. * rho;
-		mixedTerm = prefactor * (ux);
-		feq.at(1) = weighting
-				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-		feq.at(3) = weighting
-				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		mixedTerm = prefactor * (uy);
-		feq.at(2) = weighting
-				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-		feq.at(4) = weighting
-				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		// directions 5-8
-		weighting = 1. / 36. * rho;
-		mixedTerm = prefactor * (ux + uy);
-		feq.at(5) = weighting
-				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-		feq.at(7) = weighting
-				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-		mixedTerm = prefactor * (-ux + uy);
-		feq.at(6) = weighting
-				* (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
-		feq.at(8) = weighting
-				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
-
-		//Calculation of the moments for the equilibrium distribution function
-		double moments_eq[3][3] = { 0 };
-
-		for (int d = 0; d < 9; d++) {
-			direction_x[d] = getStencil()->getDirection(d)(0) / scaling;
-			direction_y[d] = getStencil()->getDirection(d)(1) / scaling;
-		}
-		for (int j = 0; j < 9; j++) {
-			for (int p = 0; p < 3; p++) {
-				for (int q = 0; q < 3; q++) {
-
-					moments_eq[p][q] += pow((direction_x[j] - ux), p)
-							* pow((direction_y[j] - uy), q) * feq.at(j);
-
-				}
+			if (i == 1) {
 			}
-		}
 
-		// calculate the trace of the pressure tensor at unit density (T)
-		T = moments_eq[2][0] + moments_eq[0][2];
-		T = T / rho;
+			// transform the velocity space into moment space
+			m.at(0) = f.at(0)(i) + f.at(1)(i) + f.at(2)(i) + f.at(3)(i)
+					+ f.at(4)(i) + f.at(5)(i) + f.at(6)(i) + f.at(7)(i)
+					+ f.at(8)(i);
+			m.at(1) = -4 * f.at(0)(i) - f.at(1)(i) - f.at(2)(i) - f.at(3)(i)
+					- f.at(4)(i)
+					+ 2 * (f.at(5)(i) + f.at(6)(i) + f.at(7)(i) + f.at(8)(i));
+			m.at(2) = 4 * f.at(0)(i)
+					- 2 * (f.at(1)(i) + f.at(2)(i) + f.at(3)(i) + f.at(4)(i))
+					+ f.at(5)(i) + f.at(6)(i) + f.at(7)(i) + f.at(8)(i);
+			m.at(3) = f.at(1)(i) - f.at(3)(i) + f.at(5)(i) - f.at(6)(i)
+					- f.at(7)(i) + f.at(8)(i);
+			m.at(4) = -2 * (f.at(1)(i) - f.at(3)(i)) + f.at(5)(i) - f.at(6)(i)
+					- f.at(7)(i) + f.at(8)(i);
+			m.at(5) = f.at(2)(i) - f.at(4)(i) + f.at(5)(i) + f.at(6)(i)
+					- f.at(7)(i) - f.at(8)(i);
+			m.at(6) = -2 * (f.at(2)(i) - f.at(4)(i)) + f.at(5)(i) + f.at(6)(i)
+					- f.at(7)(i) - f.at(8)(i);
+			m.at(7) = f.at(1)(i) - f.at(2)(i) + f.at(3)(i) - f.at(4)(i);
+			m.at(8) = f.at(5)(i) - f.at(6)(i) + f.at(7)(i) - f.at(8)(i);
 
-		// calculate the normal stress difference at unit density (N)
-		N = moments_eq[2][0] - moments_eq[0][2];
-		N = N / rho;
 
-		// calculate the off-diagonal component of the pressure tensor at unit density
-		Pi_xy = moments_eq[1][1];
-		Pi_xy = Pi_xy / rho;
 
-		// calculate moments of third order
-		Q_xyy = moments_eq[1][2];
-		Q_xyy = Q_xyy / rho;
+			for (int a = 0; a<9; a++)
+			{
+				//cout << "f" << a << " " << f.at(a)(i) << endl;
+			}
 
-		Q_yxx = moments_eq[2][1];
-		Q_yxx = Q_yxx / rho;
+			for (int a = 0; a<9; a++)
+			{
+				//cout << "m" << a << " " << m.at(a) << endl;
+			}
 
-		// calculate moments of forth order
-		A = moments_eq[2][2];
-		A = A / rho;
+			// calculate the moment equilibrium distribution function
+			double rho = m.at(0);
+			double e = m.at(1);
+			double jx = m.at(3);
+			double jy = m.at(5);
+			//assert(jx-ux<1e-10);
+			double eps = m.at(2);
+			double qx = m.at(4);
+			double qy = m.at(6);
+			double pxx = m.at(7);
+			double pxy = m.at(8);
 
-		// calculate shear equilibrium
-		seq.at(0) = rho
-				* ((4 * ux) * uy * Pi_xy - 0.5 * (ux * ux - uy * uy) * N
-						+ 0.5 * (scalar_product - 2) * T);
-		seq.at(1) = 0.5 * rho
-				* (0.5 * (1 + 1 * ux + ux * ux - uy * uy) * N
-						- (2 * 1 * uy + 4 * ux * uy) * Pi_xy
-						+ 0.5 * (1 - 1 * ux - scalar_product) * T);
 
-		seq.at(3) = 0.5 * rho
-				* (0.5 * (1 - 1 * ux + ux * ux - uy * uy) * N
-						- (2 * -1 * uy + 4 * ux * uy) * Pi_xy
-						+ 0.5 * (1 + 1 * ux - scalar_product) * T);
 
-		seq.at(2) = 0.5 * rho
-				* (0.5 * (-1 - 1 * uy + ux * ux - uy * uy) * N
-						- (2 * 1 * ux + 4 * ux * uy) * Pi_xy
-						+ 0.5 * (1 - 1 * uy - scalar_product) * T);
+			meq.at(0) = rho;
+			meq.at(1) = jx*jy/rho;
+			meq.at(2) = 0;
+			meq.at(3) = jx;
+			meq.at(4) = 0;
+			meq.at(5) = jy;
+			meq.at(6) = 0;
+			meq.at(7) = cs2*rho+jx*jx/rho;
+			meq.at(8) = cs2*rho+jx*jy/rho;
 
-		seq.at(4) = 0.5 * rho
-				* (0.5 * (-1 + 1 * uy + ux * ux - uy * uy) * N
-						- (2 * -1 * ux + 4 * ux * uy) * Pi_xy
-						+ 0.5 * (1 + 1 * uy - scalar_product) * T);
+			for (int a = 0; a<9; a++)
+			{
+				//cout << "meq" << a << " " << meq.at(a) << endl;
+			}
 
-		seq.at(5) = 0.25 * rho
-				* ((4 * ux * uy + (1) * (1) + 2 * 1 * uy + 2 * 1 * ux) * Pi_xy
-						+ 0.5 * (-ux * ux + uy * uy - 1 * ux + 1 * uy) * N
-						+ 0.5 * (scalar_product + 1 * ux + 1 * uy) * T);
-		seq.at(6) = 0.25 * rho
-				* ((4 * ux * uy + (-1) * (1) + 2 * -1 * uy + 2 * 1 * ux) * Pi_xy
-						+ 0.5 * (-ux * ux + uy * uy + 1 * ux + 1 * uy) * N
-						+ 0.5 * (scalar_product + (-1) * ux + 1 * uy) * T);
-		seq.at(7) = 0.25 * rho
-				* ((4 * ux * uy + (-1) * (-1) + 2 * -1 * uy + 2 * (-1) * ux)
-						* Pi_xy
-						+ 0.5 * (-ux * ux + uy * uy + 1 * ux - 1 * uy) * N
-						+ 0.5 * (scalar_product + (-1) * ux - 1 * uy) * T);
 
-		seq.at(8) = 0.25 * rho
-				* ((4 * ux * uy + (1) * (-1) + 2 * 1 * uy + 2 * (-1) * ux)
-						* Pi_xy
-						+ 0.5 * (-ux * ux + uy * uy - 1 * ux - 1 * uy) * N
-						+ 0.5 * (scalar_product + (1) * ux - 1 * uy) * T);
 
-		// calculate higher order equilibrium
-		heq.at(0) = feq.at(0)-k.at(0)-seq.at(0);
-		heq.at(1) = feq.at(1)-k.at(1)-seq.at(1);
-		heq.at(3) = feq.at(3)-k.at(3)-seq.at(3);
-		heq.at(2) = feq.at(2)-k.at(2)-seq.at(2);
-		heq.at(4) = feq.at(4)-k.at(4)-seq.at(4);
-		heq.at(5) = feq.at(5)-k.at(5)-seq.at(5);
-		heq.at(6) = feq.at(6)-k.at(6)-seq.at(6);
-		heq.at(7) = feq.at(7)-k.at(7)-seq.at(7);
-		heq.at(8) = feq.at(8)-k.at(8)-seq.at(8);
+			//relax and rescale the moments
+			for (size_t j = 0; j < Q; j++) {
+				m.at(j) = m.at(j) + -1./(getRelaxationParameter()+0.5) * (m.at(j) - meq.at(j));
+				//////cout << m.at(j);
 
-		//deviation of the shear parts
-		vector<double> delta_s(Q);
-		//deviation of the higher order parts
-		vector<double> delta_h(Q);
+			}
+//cout << getPrefactor() << endl;
 
-		//entropic scalar product of s
-		vector<double> delta_seq(Q);
-		//entropic scalar product of h
-		vector<double> delta_heq(Q);
+			m.at(2)=-rho-m.at(1);
+			m.at(4)=-jx;
+			m.at(6)=-jy;
 
-		// needed expressions for the calculation of gamma
-		delta_s.at(0) = s.at(0) - seq.at(0);
-		delta_s.at(1) = s.at(1) - seq.at(1);
-		delta_s.at(2) = s.at(2) - seq.at(2);
-		delta_s.at(3) = s.at(3) - seq.at(3);
-		delta_s.at(4) = s.at(4) - seq.at(4);
-		delta_s.at(5) = s.at(5) - seq.at(5);
-		delta_s.at(6) = s.at(6) - seq.at(6);
-		delta_s.at(7) = s.at(7) - seq.at(7);
-		delta_s.at(8) = s.at(8) - seq.at(8);
+			for (size_t j = 0; j < Q; j++) {
+			m.at(j) /= m_D.at(j);
+			}
 
-		delta_h.at(0) = h.at(0) - heq.at(0);
-		delta_h.at(1) = h.at(1) - heq.at(1);
-		delta_h.at(2) = h.at(2) - heq.at(2);
-		delta_h.at(3) = h.at(3) - heq.at(3);
-		delta_h.at(4) = h.at(4) - heq.at(4);
-		delta_h.at(5) = h.at(5) - heq.at(5);
-		delta_h.at(6) = h.at(6) - heq.at(6);
-		delta_h.at(7) = h.at(7) - heq.at(7);
-		delta_h.at(8) = h.at(8) - heq.at(8);
+			for (int a = 0; a<9; a++)
+			{
+				//cout << "mpc" << a << " " << m.at(a) << endl;
+			}
 
-		delta_seq.at(0) = delta_s.at(0) * delta_h.at(0) / feq.at(0);
-		delta_seq.at(1) = delta_s.at(1) * delta_h.at(1) / feq.at(1);
-		delta_seq.at(2) = delta_s.at(2) * delta_h.at(2) / feq.at(2);
-		delta_seq.at(3) = delta_s.at(3) * delta_h.at(3) / feq.at(3);
-		delta_seq.at(4) = delta_s.at(4) * delta_h.at(4) / feq.at(4);
-		delta_seq.at(5) = delta_s.at(5) * delta_h.at(5) / feq.at(5);
-		delta_seq.at(6) = delta_s.at(6) * delta_h.at(6) / feq.at(6);
-		delta_seq.at(7) = delta_s.at(7) * delta_h.at(7) / feq.at(7);
-		delta_seq.at(8) = delta_s.at(8) * delta_h.at(8) / feq.at(8);
 
-		delta_heq.at(0) = delta_h.at(0) * delta_h.at(0) / feq.at(0);
-		delta_heq.at(1) = delta_h.at(1) * delta_h.at(1) / feq.at(1);
-		delta_heq.at(2) = delta_h.at(2) * delta_h.at(2) / feq.at(2);
-		delta_heq.at(3) = delta_h.at(3) * delta_h.at(3) / feq.at(3);
-		delta_heq.at(4) = delta_h.at(4) * delta_h.at(4) / feq.at(4);
-		delta_heq.at(5) = delta_h.at(5) * delta_h.at(5) / feq.at(5);
-		delta_heq.at(6) = delta_h.at(6) * delta_h.at(6) / feq.at(6);
-		delta_heq.at(7) = delta_h.at(7) * delta_h.at(7) / feq.at(7);
-		delta_heq.at(8) = delta_h.at(8) * delta_h.at(8) / feq.at(8);
 
-		// sum of all entropic scalar products of s
-		double sum_s = 0;
-		sum_s = delta_seq.at(0) + delta_seq.at(1) + delta_seq.at(2)
-				+ delta_seq.at(3) + delta_seq.at(4) + delta_seq.at(5)
-				+ delta_seq.at(6) + delta_seq.at(7) + delta_seq.at(8);
 
-		// sum of all entropic scalar products of h
-		double sum_h = 0;
-		sum_h = delta_heq.at(0) + delta_heq.at(1) + delta_heq.at(2)
-				+ delta_heq.at(3) + delta_heq.at(4) + delta_heq.at(5)
-				+ delta_heq.at(6) + delta_heq.at(7) + delta_heq.at(8);
+			//transform the momentum space back into velocity space
+			f.at(0)(i) = m.at(0) - 4 * (m.at(1) - m.at(2));
+			f.at(1)(i) = m.at(0) - m.at(1) - 2 * (m.at(2) + m.at(4)) + m.at(3)
+					+ m.at(7);
+			f.at(2)(i) = m.at(0) - m.at(1) - 2 * (m.at(2) + m.at(6)) + m.at(5)
+					- m.at(7);
+			f.at(3)(i) = m.at(0) - m.at(1) - 2 * (m.at(2) - m.at(4)) - m.at(3)
+					+ m.at(7);
+			f.at(4)(i) = m.at(0) - m.at(1) - 2 * (m.at(2) - m.at(6)) - m.at(5)
+					- m.at(7);
+			f.at(5)(i) = m.at(0) + m.at(1) + m.at(1) + m.at(2) + m.at(3)
+					+ m.at(4) + m.at(5) + m.at(6) + m.at(8);
+			f.at(6)(i) = m.at(0) + m.at(1) + m.at(1) + m.at(2) - m.at(3)
+					- m.at(4) + m.at(5) + m.at(6) - m.at(8);
+			f.at(7)(i) = m.at(0) + m.at(1) + m.at(1) + m.at(2) - m.at(3)
+					- m.at(4) - m.at(5) - m.at(6) + m.at(8);
+			f.at(8)(i) = m.at(0) + m.at(1) + m.at(1) + m.at(2) + m.at(3)
+					+ m.at(4) - m.at(5) - m.at(6) - m.at(8);
 
-		// relaxation parameter (2*beta = omega of BGK)
-		double beta = 1. / (getRelaxationParameter() + 0.5) / 2;
-
-		// stabilizer of KBC model
-		gamma.value.at(i) = 1. / beta - (2 - 1. / beta) * (sum_s / sum_h);
-
-		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
-		if (sum_h < 1e-16) {
-			gamma.value.at(i) = 2;
-
-		}
-
-#ifdef EVALUATE_GAMMA
-		entropy.value.at(i) = -(f.at(0)(i) * log(f.at(0)(i) / (4. / 9.))
-				+ f.at(1)(i) * log(f.at(1)(i) / (1. / 9.))
-				+ f.at(2)(i) * log(f.at(2)(i) / (1. / 9.))
-				+ f.at(3)(i) * log(f.at(3)(i) / (1. / 9.))
-				+ f.at(4)(i) * log(f.at(4)(i) / (1. / 9.))
-				+ f.at(5)(i) * log(f.at(5)(i) / (1. / 36.))
-				+ f.at(6)(i) * log(f.at(6)(i) / (1. / 36.))
-				+ f.at(7)(i) * log(f.at(7)(i) / (1. / 36.))
-				+ f.at(8)(i) * log(f.at(8)(i) / (1. / 36.)));
-#endif
-		// calculate new f
-		f.at(0)(i) =
-				f.at(0)(i)
-						- beta
-								* (2 * delta_s.at(0)
-										+ gamma.value.at(i) * delta_h.at(0));
-		f.at(1)(i) =
-				f.at(1)(i)
-						- beta
-								* (2 * delta_s.at(1)
-										+ gamma.value.at(i) * delta_h.at(1));
-		f.at(2)(i) =
-				f.at(2)(i)
-						- beta
-								* (2 * delta_s.at(2)
-										+ gamma.value.at(i) * delta_h.at(2));
-		f.at(3)(i) =
-				f.at(3)(i)
-						- beta
-								* (2 * delta_s.at(3)
-										+ gamma.value.at(i) * delta_h.at(3));
-		f.at(4)(i) =
-				f.at(4)(i)
-						- beta
-								* (2 * delta_s.at(4)
-										+ gamma.value.at(i) * delta_h.at(4));
-		f.at(5)(i) =
-				f.at(5)(i)
-						- beta
-								* (2 * delta_s.at(5)
-										+ gamma.value.at(i) * delta_h.at(5));
-		f.at(6)(i) =
-				f.at(6)(i)
-						- beta
-								* (2 * delta_s.at(6)
-										+ gamma.value.at(i) * delta_h.at(6));
-		f.at(7)(i) =
-				f.at(7)(i)
-						- beta
-								* (2 * delta_s.at(7)
-										+ gamma.value.at(i) * delta_h.at(7));
-		f.at(8)(i) =
-				f.at(8)(i)
-						- beta
-								* (2 * delta_s.at(8)
-										+ gamma.value.at(i) * delta_h.at(8));
+			for (int a = 0; a<9; a++)
+			{
+				//cout << "fpc" << a << " " << f.at(a)(i) << endl;
+			}
 
 	}
 
-#ifdef EVALUATE_GAMMA
-	writeDeviation(gamma.getAverage(), gamma.getDeviation(),
-			entropy.getAverage(), entropy.getDeviation());
-#endif
+//#ifdef EVALUATE_GAMMA
+//	writeDeviation(gamma.getAverage(), gamma.getDeviation(),
+//			entropy.getAverage(), entropy.getDeviation());
+//#endif
 
 }
 }
