@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 	std::ofstream out_file("/tmp/grid_out.vtk");
 	dealii::GridOut().write_vtk(*channel3D->getMesh(), out_file);
 	out_file.close();
-	return 0;
+	//return 0;
 
 
 	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
