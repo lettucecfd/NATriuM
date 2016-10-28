@@ -11,6 +11,7 @@
 #include "FinalChannelStatistics.h"
 
 #include "deal.II/numerics/data_out.h"
+#include "deal.II/grid/grid_out.h"
 
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
@@ -133,6 +134,13 @@ int main(int argc, char** argv) {
 			TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
 			ReTau, u_cl, height, length, width, orderOfFiniteElement,
 			is_periodic);
+	channel3D->refineAndTransform();
+
+	std::ofstream out_file("/tmp/grid_out.vtk");
+	dealii::GridOut().write_vtk(*channel3D->getMesh(), out_file);
+	out_file.close();
+	return 0;
+
 
 	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
 	//poiseuille2D->setViscosity(viscosity);
