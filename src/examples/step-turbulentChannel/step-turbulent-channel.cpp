@@ -134,11 +134,11 @@ int main(int argc, char** argv) {
 			TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
 			ReTau, u_cl, height, length, width, orderOfFiniteElement,
 			is_periodic);
-	channel3D->refineAndTransform();
+	//channel3D->refineAndTransform();
 
-	std::ofstream out_file("/tmp/grid_out.vtk");
-	dealii::GridOut().write_vtk(*channel3D->getMesh(), out_file);
-	out_file.close();
+	//std::ofstream out_file("/tmp/grid_out.vtk");
+	//dealii::GridOut().write_vtk(*channel3D->getMesh(), out_file);
+	//out_file.close();
 	//return 0;
 
 
