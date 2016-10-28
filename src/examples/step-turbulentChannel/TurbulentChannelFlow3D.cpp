@@ -87,7 +87,11 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		// add external force
 		// turbulent flow
 		double rho = 1;
-		double Fx = pow( ReTau * viscosity / h_half, 2.) * rho / height;
+		// force so as to balance the wall stresses:
+		// h F = -2 tau_w = - 2 rho u_tau^2 = - 2 rho (Re_tau nu / delta)^2
+		// (delta = h_half)
+		// => F = - 1 / delta rho (Re_tau nu / delta)^2
+		double Fx = pow( ReTau * viscosity / h_half, 2.) * rho / h_half;
 		// laminar flow
 		//double Fx = 8 * m_uCl * viscosity / (height * height); // m_uCl = 1.5*u_bulk
 		pout << " >>>> Body force F = " << Fx << endl;
