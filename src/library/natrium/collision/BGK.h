@@ -81,12 +81,7 @@ public:
 	 * @note preconditioning_parameter is only used for steady state
 	 */
 	// TODO remove
-	static double calculateRelaxationParameter(double viscosity,
-			double timeStepSize, const Stencil& stencil, double = 1.0) {
-		assert(viscosity > 0.0);
-		assert(timeStepSize > 0.0);
-		return (viscosity) / (timeStepSize * stencil.getSpeedOfSoundSquare());
-	}
+
 
 
 	// GETTER AND SETTER

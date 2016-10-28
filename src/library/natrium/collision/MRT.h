@@ -36,24 +36,30 @@ public:
 	virtual double getEquilibriumDistribution(size_t i, const numeric_vector& u,
 			const double rho) const;
 
-	static double calculateRelaxationParameter(double viscosity,
-			double timeStepSize, const Stencil& stencil
-			//,double preconditioning_parameter = 1.0
-			) {
-		assert(viscosity > 0.0);
-		assert(timeStepSize > 0.0);
-		return (viscosity) / (timeStepSize * stencil.getSpeedOfSoundSquare());
-	}
 
 	void setTimeStep(double dt) {
 		assert(dt > 0);
 		double tau_times_dt = m_dt * m_relaxationParameter;
 		m_dt = dt;
+		CollisionModel::setTimeStep(dt);
 		m_relaxationParameter = tau_times_dt / dt;
 		m_prefactor = -1. / (m_relaxationParameter + 0.5);
 	}
 
-	double getTimeStep() const
+//	double getTimeStep() const
+//	{
+//		return m_dt;
+//	}
+
+	void setRelaxationParameter(double tau, double dt) {
+		assert(tau > 0);
+		m_relaxationParameter = tau;
+		cout << m_relaxationParameter << endl;
+		m_prefactor = -1. / (tau + 0.5);
+		m_dt = dt;
+	}
+
+	double getTime() const
 	{
 		return m_dt;
 	}
