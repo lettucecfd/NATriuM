@@ -15,6 +15,8 @@ BGK::BGK(double relaxationParameter, double dt,
 		CollisionModel(stencil), m_relaxationParameter(relaxationParameter), m_prefactor(
 				-1. / (relaxationParameter + 0.5)), m_dt(dt) {
 
+	cout << relaxationParameter << endl;
+
 } // constructor
 
 // destructor

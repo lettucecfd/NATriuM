@@ -152,6 +152,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		Pi_xy = f.at(5)(i) - f.at(6)(i) + f.at(7)(i) - f.at(8)(i);
 		Pi_xy = Pi_xy / rho;
 
+
 /*		// calculate moments of third order
 		Q_xyy = f.at(5)(i) - f.at(6)(i) - f.at(7)(i) + f.at(8)(i);
 		Q_xyy = Q_xyy / rho;
@@ -433,7 +434,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		vector<double> b(Q);
 		for (int p = 0; p < Q; p++) {
-			b[p] = feq[p] - k[p] - s_pc[p];// - log(feq[p])
+			b[p] = 0.5 - k[p] - s_pc[p];// - log(feq[p])
 					//+ log(getStencil()->getWeight(p)) - 1;
 		}
 

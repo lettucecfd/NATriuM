@@ -13,6 +13,8 @@ MRT::MRT(double relaxationParameter, double dt, const boost::shared_ptr<Stencil>
 		CollisionModel(stencil), m_relaxationParameter(relaxationParameter), m_prefactor(
 				-1. / (relaxationParameter + 0.5)), m_dt(dt) {
 
+	cout << m_relaxationParameter << endl;
+
 }
 
 MRT::~MRT() {

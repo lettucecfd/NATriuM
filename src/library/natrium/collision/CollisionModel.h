@@ -16,7 +16,6 @@
 
 #include "../solver/DistributionFunctions.h"
 #include "../solver/SolverConfiguration.h"
-
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
 
@@ -148,6 +147,13 @@ public:
 							m_stencil->getDirection(i)));
 		}
 		Math::scale_vector(1. / rho, u);
+	}
+
+	static double calculateRelaxationParameter(double viscosity,
+			double timeStepSize, const Stencil& stencil, double = 1.0) {
+		assert(viscosity > 0.0);
+		assert(timeStepSize > 0.0);
+		return (viscosity) / (timeStepSize * stencil.getSpeedOfSoundSquare());
 	}
 
 	//////////////////////////////

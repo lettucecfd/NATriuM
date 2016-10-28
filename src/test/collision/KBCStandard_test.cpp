@@ -6,6 +6,7 @@
  */
 
 #include "natrium/stencils/D2Q9.h"
+#include "natrium/collision/KBCCentral.h"
 #include "natrium/collision/KBCStandard.h"
 
 #include <math.h>
@@ -38,7 +39,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 	double tau = 0.9;
 	double dt = 0.1;
 
-	KBCStandard kbc(tau, dt, boost::make_shared<D2Q9>());
+	KBCCentral kbc(tau, dt, boost::make_shared<D2Q9>());
 	BGKStandard bgk(tau, dt, boost::make_shared<D2Q9>());
 
 	// vectors have to be distributed, because otherwise
@@ -60,8 +61,8 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 		distributed_vector f_i(rho);
 		for (size_t j = 0; j < dof_handler.n_dofs(); j++) {
 			if (rho.in_local_range(j)) {
-				f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
-						+ pow((0.5 * cos(j)), 2);
+				f_i(j) = i*0.1+0.1;
+				cout << f_i(j);
 			}
 		}
 		//f_i.compress(dealii::VectorOperation::add);
@@ -95,7 +96,11 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 			BOOST_CHECK_SMALL(rho_bgk - rho_kbc, 1e-5);
 		}
 	}
-
+for (int p=0;p<9;p++)
+{
+	cout <<  p << "kbc : "<< fAfterCollisionkbc.at(p)(1) << endl;
+	cout <<  p << "bgk : "<< fAfterCollisionbgk.at(p)(1) << endl;
+}
 	pout << "done" << endl;
 }
 

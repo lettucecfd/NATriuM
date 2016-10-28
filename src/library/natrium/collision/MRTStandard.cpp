@@ -148,6 +148,8 @@ void MRTStandard::collideAllD2Q9(DistributionFunctions& f,
 				//cout << "meq" << a << " " << meq.at(a) << endl;
 			}
 
+
+
 			//relax and rescale the moments
 			for (size_t j = 0; j < Q; j++) {
 				m.at(j) = m.at(j) + -0.0989903 * (m.at(j) - meq.at(j));
