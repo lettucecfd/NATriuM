@@ -40,24 +40,24 @@ double KBCStandard::getEquilibriumDistribution(size_t i,
 
 		value *= 2 - sqrt(1 + v * v);
 		value *= pow(((2 * v / sqrt(3) + sqrt(1 + v * v)) / (1 - v / sqrt(3))),
-				c_i(p) / (getStencil()->getScaling()));
+				c_i(p)/(getStencil()->getScaling()));
 
 	}
-	/*
-	 double prefactor = getStencil()->getWeight(i) * rho;
-	 double uSquareTerm = -(u * u) / (2 * getStencil()->getSpeedOfSoundSquare());
-	 if (0 == i) {
-	 cout << value - prefactor * (1 + uSquareTerm);
-	 return value;
-	 }
-	 double mixedTerm = (u * getStencil()->getDirection(i))
-	 / getStencil()->getSpeedOfSoundSquare();
-	 cout
-	 << value
-	 - prefactor
-	 * (1 + mixedTerm * (1 + 0.5 * (mixedTerm))
-	 + uSquareTerm) << endl;
-	 */
+/*
+	double prefactor = getStencil()->getWeight(i) * rho;
+	double uSquareTerm = -(u * u) / (2 * getStencil()->getSpeedOfSoundSquare());
+	if (0 == i) {
+		cout << value - prefactor * (1 + uSquareTerm);
+		return value;
+	}
+	double mixedTerm = (u * getStencil()->getDirection(i))
+			/ getStencil()->getSpeedOfSoundSquare();
+	cout
+			<< value
+					- prefactor
+							* (1 + mixedTerm * (1 + 0.5 * (mixedTerm))
+									+ uSquareTerm) << endl;
+*/
 	return value;
 
 }
@@ -152,8 +152,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		Pi_xy = f.at(5)(i) - f.at(6)(i) + f.at(7)(i) - f.at(8)(i);
 		Pi_xy = Pi_xy / rho;
 
-
-/*		// calculate moments of third order
+		// calculate moments of third order
 		Q_xyy = f.at(5)(i) - f.at(6)(i) - f.at(7)(i) + f.at(8)(i);
 		Q_xyy = Q_xyy / rho;
 
@@ -162,7 +161,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		// calculate moments of forth order
 		A = f.at(5)(i) + f.at(6)(i) + f.at(7)(i) + f.at(8)(i);
-		A = A / rho;*/
+		A = A / rho;
 
 		// kinematic part vector k
 		vector<double> k(Q);
@@ -285,7 +284,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		Pi_xy = feq.at(5) - feq.at(6) + feq.at(7) - feq.at(8);
 		Pi_xy = Pi_xy / rho;
 
-/*		//calculate moments of third order
+		//calculate moments of third order
 		Q_xyy = feq.at(5) - feq.at(6) - feq.at(7) + feq.at(8);
 		Q_xyy = Q_xyy / rho;
 
@@ -294,7 +293,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 
 		// calculate moments of forth order
 		A = feq.at(5) + feq.at(6) + feq.at(7) + feq.at(8);
-		A = A / rho;*/
+		A = A / rho;
 
 		// calculate shear equilibrium
 #ifdef KBC_C
@@ -348,7 +347,7 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 		 #endif
 		 */
 
-/*		heq.at(0) = feq.at(0) - k.at(0) - seq.at(0);
+		heq.at(0) = feq.at(0) - k.at(0) - seq.at(0);
 		heq.at(1) = feq.at(1) - k.at(1) - seq.at(1);
 		heq.at(3) = feq.at(3) - k.at(3) - seq.at(3);
 		heq.at(2) = feq.at(2) - k.at(2) - seq.at(2);
@@ -422,94 +421,16 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 				+ delta_heq.at(6) + delta_heq.at(7) + delta_heq.at(8);
 
 		// relaxation parameter (2*beta = omega of BGK)
-		double beta = 1. / (getRelaxationParameter() + 0.5) / 2;*/
-
-		vector<double> s_pc(Q);
-		for (int p = 0; p < Q; p++) {
-			s_pc[p] = s[p]
-					- 1. / (getRelaxationParameter() + 0.5) * (s[p] - seq[p]);
-
-			//cout << s_pc[p] << " h: " << h[p] << " " << heq[p] << endl;
-		}
-
-		vector<double> b(Q);
-		for (int p = 0; p < Q; p++) {
-			b[p] = 0.5 - k[p] - s_pc[p];// - log(feq[p])
-					//+ log(getStencil()->getWeight(p)) - 1;
-		}
-
-		vector<double> h_pc(Q);
-
-		h_pc[0] = 1./9. * b[0] + -2./9. * b[1] + -2./9. * b[2]
-				+ -2./9. * b[3] + -2./9. * b[4] + 4./9. * b[5]
-				+ 4./9. * b[6] + 4./9. * b[7] + 4./9. * b[8];
-		h_pc[1] = -1./18. * b[0] + 5./18. * b[1] + 1./9. * b[2]
-				+ -1./18. * b[3] + 1./9. * b[4] + -5./9. * b[5]
-				+ 1./9. * b[6] + 1./9. * b[7] + -5./9. * b[8];
-		h_pc[2] = -1./18. * b[0] + 1./9. * b[1] + 5./18. * b[2]
-				+ 1./9. * b[3] + -1./18. * b[4] + -5./9. * b[5]
-				+ -5./9. * b[6] + 1./9. * b[7] + 1./9. * b[8];
-		h_pc[3] = -1./18. * b[0] + -1./18. * b[1] + 1./9. * b[2]
-				+ 5./18. * b[3] + 1./9. * b[4] + 1./9. * b[5]
-				+ -5./9. * b[6] + -5./9. * b[7] + 1./9. * b[8];
-		h_pc[4] = -1./18. * b[0] + 1./9. * b[1] + -1./18. * b[2]
-				+ 1./9. * b[3] + 5./18. * b[4] + 1./9. * b[5]
-				+ 1./9. * b[6] + -5./9. * b[7] + -5./9. * b[8];
-		h_pc[5] = 1./36. * b[0] + -5./36. * b[1] + -5./36. * b[2]
-				+ 1./36. * b[3] + 1./36. * b[4] + 4./9. * b[5]
-				+ 1./9. * b[6] + -2./9. * b[7] + 1./9. * b[8];
-		h_pc[6] = 1./36. * b[0] + 1./36. * b[1] + -5./36. * b[2]
-				+ -5./36. * b[3] + 1./36. * b[4] + 1./9. * b[5]
-				+ 4./9. * b[6] + 1./9. * b[7] + -2./9. * b[8];
-		h_pc[7] = 1./36. * b[0] + 1./36. * b[1] + 1./36. * b[2]
-				+ -5./36. * b[3] + -5./36. * b[4] + -2./9. * b[5]
-				+ 1./9. * b[6] + 4./9. * b[7] + 1./9. * b[8];
-		h_pc[8] = 1./36. * b[0] + -5./36. * b[1] + 1./36. * b[2]
-				+ 1./36. * b[3] + -5./36. * b[4] + 1./9. * b[5]
-				+ -2./9. * b[6] + 1./9. * b[7] + 4./9. * b[8];
-
-
-
-/*		vector<double> psi(Q);
-		double sum_0 = 0.0;
-		double sum_a = 0.0;
-		double sum_b = 0.0;
-		double sum_c = 0.0;
-		for (int p = 0; p < Q; p++) {
-			psi[p] = k[p] + s_pc[p] + (1 - beta) * h[p]
-					+ beta * (2 * heq[p] - h[p]);
-
-			sum_0 += (h[p] - heq[p]) * (f.at(p)(i) - psi[p]) / psi[p];
-
-			sum_a += (h[p] - heq[p])
-					* (log(psi[p]) - log(getStencil()->getWeight(p))) / psi[p];
-			sum_b += (h[p] - heq[p]) * (h[p] - heq[p]) / psi[p];
-			sum_c += (h[p] - heq[p]) * (s[p] - seq[p]) / psi[p];
-		}
-
-
-		double dummy_sum = 0;
-		for (int x = 0; x < Q; x++) {
-	//		pout << x << ": psi = " << psi[x] << " delta_h " << delta_h[x]
-	//				<< " " << " delta_s " << delta_s[x] << " " << endl;
-			dummy_sum += psi[x];
-		}
-		//pout << "rhopsi: " << dummy_sum << endl;
+		double beta = 1. / (getRelaxationParameter() + 0.5) / 2;
 
 		// stabilizer of KBC model
-		//gamma.value.at(i) = 1. / beta - (2 - 1. / beta) * (sum_s / sum_h);
-		gamma.value.at(i) = 1. / beta * ((sum_0 + sum_a) / sum_b)
-				- 2 * (sum_c / sum_b);
-;
+		gamma.value.at(i) = 1. / beta - (2 - 1. / beta) * (sum_s / sum_h);
 
 		// if the sum_h expression is too small, BGK shall be performed (gamma = 2)
-		if (abs(sum_0) < 1e-16 || abs(sum_b) < 1e-16 || abs(sum_a) < 1e-16
-				|| abs(sum_c) < 1e-16) {
+		if (sum_h < 1e-16) {
 			gamma.value.at(i) = 2;
 
 		}
-
-		//pout << gamma.value.at(i) << endl;
 
 		entropy.value.at(i) = -(f.at(0)(i) * log(f.at(0)(i) / (4. / 9.))
 				+ f.at(1)(i) * log(f.at(1)(i) / (1. / 9.))
@@ -566,22 +487,12 @@ void KBCStandard::collideAllD2Q9(DistributionFunctions& f,
 				f.at(8)(i)
 						- beta
 								* (2 * delta_s.at(8)
-										+ gamma.value.at(i) * delta_h.at(8));*/
-
-		for (int p=0;p<Q;p++)
-		{
-
-			f.at(p)(i)=k[p]+s_pc[p]+h_pc[p];
-
-		}
-
-
-
+										+ gamma.value.at(i) * delta_h.at(8));
 
 	}
+
 	writeDeviation(gamma.getAverage(), gamma.getDeviation(),
 			entropy.getAverage(), entropy.getDeviation());
-
 
 }
 

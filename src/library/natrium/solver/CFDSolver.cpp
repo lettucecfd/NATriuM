@@ -247,10 +247,15 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_collisionModel = boost::make_shared<BGKIncompressible>(tau, delta_t,
 				m_stencil);
 	} else if (MRT_STANDARD == configuration->getCollisionScheme()) {
-		tau = BGKStandard::calculateRelaxationParameter(
+		tau = MRTStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 		m_collisionModel = boost::make_shared<MRTStandard>(
-				m_problemDescription->getViscosity(), delta_t, m_stencil);
+				tau, delta_t, m_stencil);
+	} else if (MRT_ENTROPIC == configuration->getCollisionScheme()) {
+			tau = MRTEntropic::calculateRelaxationParameter(
+					m_problemDescription->getViscosity(), delta_t, *m_stencil);
+			m_collisionModel = boost::make_shared<MRTEntropic>(
+					tau, delta_t, m_stencil);
 	} else if (KBC_STANDARD == configuration->getCollisionScheme()) {
 		tau = KBCStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
