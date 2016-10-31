@@ -9,6 +9,7 @@
 #define ShearLayer2D_H_
 
 #include "deal.II/grid/tria.h"
+#include "deal.II/grid/grid_out.h"
 
 #include "../problemdescription/ProblemDescription.h"
 #include "../utilities/BasicNames.h"
@@ -50,11 +51,28 @@ public:
 		mesh.refine_global(m_refinementLevel);
 	}
 
-	virtual void transform(Mesh<2>& ){
-
+	virtual void transform(Mesh<2>& mesh){
+		dealii::GridTools::transform(
+						UnstructuredGridFunc(), mesh);
+		std::ofstream out_file("/tmp/grid_out.eps");
+		dealii::GridOut().write_eps(*getMesh(), out_file);
+		out_file.close();
 	}
 
 private:
+
+	struct UnstructuredGridFunc {
+		UnstructuredGridFunc() {
+		}
+		double trans(const double y) const {
+			double m = 0.5;
+			return 1.0/(4.0*M_PI)*(m * sin( 4*M_PI*y) + 4*M_PI*y);
+		}
+		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
+			return dealii::Point<2>(trans(in(0)), trans(in(1)));
+		}
+	};
+
 
 	double m_u0;
 	double m_kappa;

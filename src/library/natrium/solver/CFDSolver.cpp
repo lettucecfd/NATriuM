@@ -408,12 +408,14 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "Semi-Lagrangian advection" << endl;
 	} else if (SEDG == configuration->getAdvectionScheme()) {
 		LOG(WELCOME) << "Spectral-element discontinuous Galerkin" << endl;
-		const double optimal_cfl = 0.4;
-		LOG(WELCOME) << "Recommended dt (CFL 0.4): "
+		LOG(WELCOME) << "Time integrator:          " << CFDSolverUtilities::get_integrator_name(configuration->getTimeIntegrator(),
+				configuration->getDealIntegrator()) << endl;
+		const double std_cfl = 1.0;
+		LOG(WELCOME) << "Standard dt (CFL 1.0):     "
 				<< CFDSolverUtilities::calculateTimestep<dim>(
 						*m_problemDescription->getMesh(),
 						configuration->getSedgOrderOfFiniteElement(),
-						*m_stencil, optimal_cfl) << " s" << endl;
+						*m_stencil, std_cfl) << " s" << endl;
 	}
 	LOG(WELCOME) << "Actual dt:                " << delta_t << " s" << endl;
 	LOG(WELCOME) << "CFL number:               " << configuration->getCFL()
@@ -560,6 +562,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			<< m_density.memory_consumption() << endl;
 	LOG(BASIC) << " ------------------------------------------------- " << endl
 			<< endl;
+
+	m_tstart = clock();
 
 }
 /* Constructor */
@@ -772,13 +776,17 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 	MPI_sync();
 
 // output: vector fields as .vtu files
-	if (iteration == m_iterationStart) {
-		m_tstart = time(0);
-	}
 	if (not m_configuration->isSwitchOutputOff()) {
 		if (iteration % 100 == 0) {
 			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time
 					<< endl;
+		}
+		if ((iteration % 1000 == 0) or (is_final)) {
+			double secs = 1e-10+(clock() - m_tstart) / CLOCKS_PER_SEC;
+			LOG(DETAILED) << "Time elapsed: " << secs << "s;    Average Performance: "
+					<< 1.0 * m_advectionOperator->getDoFHandler()->n_dofs()
+							* (iteration - m_iterationStart) / secs / 1000000.0
+					<< " million DoF updates per second" << endl;
 		}
 		// output estimated runtime after iterations 1, 10, 100, 1000, ...
 		/*if (iteration > m_iterationStart) {
@@ -1165,7 +1173,7 @@ void CFDSolver<dim>::calculateDensitiesAndVelocities() {
 
 template<size_t dim>
 void CFDSolver<dim>::convertDeprecatedCheckpoint() {
-	// load
+// load
 	boost::filesystem::path checkpoint_dir(
 			m_configuration->getOutputDirectory());
 	checkpoint_dir /= "checkpoint";
@@ -1173,7 +1181,7 @@ void CFDSolver<dim>::convertDeprecatedCheckpoint() {
 	Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(m_f,
 			*m_advectionOperator, checkpoint_dir.string(), checkpoint_status);
 
-	// save
+// save
 	Checkpoint<dim> checkpoint(checkpoint_status.iterationNumber,
 			checkpoint_dir);
 	checkpoint.write(*m_problemDescription->getMesh(), m_f,
