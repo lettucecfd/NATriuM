@@ -37,11 +37,6 @@ public:
 			const dealii::IndexSet& locally_owned_dofs,
 			bool inInitializationProcedure) const;
 
-	void collideAllD3Q19(DistributionFunctions& f, distributed_vector& densities,
-				vector<distributed_vector>& velocities,
-				const dealii::IndexSet& locally_owned_dofs,
-				bool inInitializationProcedure) const;
-
 	/**
 	 * @short evaluates the stabilizer of the KBC function and writes it to a parameter file
 	 */
@@ -83,48 +78,22 @@ public:
 
 	};
 
-	//mutable int counter = 0;
+	mutable int counter = 0;
 
-//	void writeDeviation(double ave, double dev, double ave_entropy, double dev_entropy) const {
-//		parameterFile << counter << " " << ave << " " << dev << " " << ave_entropy << " " << dev_entropy << endl;
-//		counter += 1;
-//	}
-
-	vector<double> m_D;
-		vector<double> m_S;
-
-		vector<double> setMRTWeights() const {
-			vector<double> D(9);
-			D.at(0) = 9.0;
-			D.at(1) = 36.0;
-			D.at(2) = 36.0;
-			D.at(3) = 6.0;
-			D.at(4) = 12.0;
-			D.at(5) = 6.0;
-			D.at(6) = 12.0;
-			D.at(7) = 4.0;
-			D.at(8) = 4.0;
-			return D;
-		}
-
-		// for D2Q9 only s(1) and s(2) should be adjusted to the specific needs
-		vector<double> setRelaxationRates() const {
-			vector<double> s(9);
-			s.at(0) = s.at(3) = s.at(5) = 0.0;
-			s.at(7) = s.at(8) = - getPrefactor();
-			s.at(4) = s.at(6) = 0;
-
-			s.at(1) = 0;
-			s.at(2) = -getPrefactor();
-			return s;
+	void writeDeviation(double ave, double dev, double ave_entropy, double dev_entropy) const {
+		parameterFile << counter << " " << ave << " " << dev << " " << ave_entropy << " " << dev_entropy << endl;
+		counter += 1;
+	}
 
 
 
+private:
+
+	mutable std::ofstream parameterFile;
 
 }
+;
+} /* namespace natrium */
 
-}
-;/* namespace natrium */
-}
 
 #endif /* KBCCENTRAL_H_ */

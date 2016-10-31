@@ -46,34 +46,7 @@ public:
 			bool inInitializationProcedure) const;
 
 
-	vector<double> m_D;
-	vector<double> m_S;
 
-	vector<double> setMRTWeights() const {
-		vector<double> D(9);
-		D.at(0) = 9.0;
-		D.at(1) = 36.0;
-		D.at(2) = 36.0;
-		D.at(3) = 6.0;
-		D.at(4) = 12.0;
-		D.at(5) = 6.0;
-		D.at(6) = 12.0;
-		D.at(7) = 4.0;
-		D.at(8) = 4.0;
-		return D;
-	}
-
-	// for D2Q9 only s(1) and s(2) should be adjusted to the specific needs
-	vector<double> setRelaxationRates() const {
-		vector<double> s(9);
-		s.at(0) = s.at(3) = s.at(5) = 0.0;
-		s.at(7) = s.at(8) = - getPrefactor();
-		s.at(4) = s.at(6) = 8.0 * (2.0 - s.at(7)) / (8.0 - s.at(7));
-
-		s.at(1) = 1.6;
-		s.at(2) = 1.8;
-		return s;
-	}
 
 };
 

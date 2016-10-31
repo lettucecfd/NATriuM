@@ -99,7 +99,7 @@ SolverConfiguration::SolverConfiguration() {
 	{
 		declare_entry("Collision scheme", "BGK standard",
 				dealii::Patterns::Selection(
-						"BGK standard|BGK steady state|BGK standard transformed|BGK multiphase|BGK incompressible|MRT standard|KBC standard|KBC central|BGK multi am4|BGK multi bdf2"),
+						"BGK standard|BGK steady state|BGK standard transformed|BGK multiphase|BGK incompressible|MRT standard|MRT entropic|KBC standard|KBC central|BGK multi am4|BGK multi bdf2"),
 				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards "
 						"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
 						"The standard");
