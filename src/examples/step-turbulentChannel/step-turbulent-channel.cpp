@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 	 */
 
 	// Flow variables
-	const double CFL = 2.0; 
+	const double CFL = 1.5; 
 	const double ReTau = atof(argv[1]);
 	const double u_cl = atof(argv[2]);
 	const double uCl2uTauRatio = atof(argv[3]);
@@ -183,7 +183,7 @@ int main(int argc, char** argv) {
 	configuration->setWallNormalDirection(1);
 	configuration->setWallNormalCoordinates(samplePointCoordinates);
 
-	configuration->setTimeIntegrator(EXPONENTIAL);
+	//configuration->setTimeIntegrator(EXPONENTIAL);
 	//configuration->setDealIntegrator(SDIRK_TWO_STAGES);
 	//configuration->setInitializationScheme(ITERATIVE);
 	//configuration->setIterativeInitializationNumberOfIterations(100);

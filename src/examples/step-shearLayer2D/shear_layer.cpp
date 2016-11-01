@@ -136,9 +136,9 @@ int main(int argc, char** argv) {
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setOutputTableInterval(100);	//10
-	configuration->setOutputSolutionInterval(100); //10
-	configuration->setOutputCheckpointInterval(100);
+	configuration->setOutputTableInterval(10);	//10
+	configuration->setOutputSolutionInterval(1e9); //10
+	configuration->setOutputCheckpointInterval(1e9);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
 			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id

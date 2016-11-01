@@ -4,8 +4,8 @@
 # set variable TARGET
 #
 set(    TARGET 
-        #shear-layer    
-        shear-layer-MinionBrown
+	shear-layer    
+	#shear-layer-MinionBrown
         )
  
 
@@ -13,8 +13,8 @@ set(    TARGET
 # Specify a target:
 #
 ADD_EXECUTABLE( ${TARGET} 
-                #shear_layer.cpp
-                shear_layer_MinionBrown.cpp
+                shear_layer.cpp
+		#                shear_layer_MinionBrown.cpp
                 EnstrophySubdomain.h
                )
 #

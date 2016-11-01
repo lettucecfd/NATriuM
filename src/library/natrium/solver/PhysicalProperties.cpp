@@ -128,12 +128,13 @@ template<> double PhysicalProperties<3>::kineticEnergy(
 
 template<> double PhysicalProperties<2>::enstrophy(
 		const vector<distributed_vector>& u,
-		boost::shared_ptr<AdvectionOperator<2> > advection) {
+		boost::shared_ptr<AdvectionOperator<2> > advection, double * squared) {
 	const size_t n_dofs = u.at(0).size();
 	assert(n_dofs == u.at(1).size());
 
 	const distributed_vector& ux = u.at(0);
 	const distributed_vector& uy = u.at(1);
+	double	sq = 0;
 
 	// Integrate ux over whole domain
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values
@@ -172,6 +173,7 @@ template<> double PhysicalProperties<2>::enstrophy(
 									* feCellValues.shape_grad(i, q_point)[1]);
 				}
 				result += vorticity * vorticity * feCellValues.JxW(q_point);
+				sq += vorticity * vorticity * vorticity * vorticity * feCellValues.JxW(q_point);
 			}
 		} /* if is locally owned */
 	} /* for cells */
@@ -179,14 +181,19 @@ template<> double PhysicalProperties<2>::enstrophy(
 // communicate among MPI processes
 	dealii::Utilities::MPI::MinMaxAvg global_res =
 			dealii::Utilities::MPI::min_max_avg(result, MPI_COMM_WORLD);
+	dealii::Utilities::MPI::MinMaxAvg global_sq =
+		                        dealii::Utilities::MPI::min_max_avg(sq, MPI_COMM_WORLD);
+
+
 	// the enstrophy can be defined with and without factor 1/2; here: without
+	*squared = global_sq.sum;
 	return global_res.sum;
 
 }
 
 template<> double PhysicalProperties<3>::enstrophy(
 		const vector<distributed_vector>& u,
-		boost::shared_ptr<AdvectionOperator<3> > advection) {
+		boost::shared_ptr<AdvectionOperator<3> > advection, double * squared) {
 	const size_t n_dofs = u.at(0).size();
 	assert(n_dofs == u.at(1).size());
 	assert(n_dofs == u.at(2).size());
@@ -194,6 +201,7 @@ template<> double PhysicalProperties<3>::enstrophy(
 	const distributed_vector& ux = u.at(0);
 	const distributed_vector& uy = u.at(1);
 	const distributed_vector& uz = u.at(2);
+	double sq = 0;
 
 	// Integrate ux over whole domain
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values
@@ -244,6 +252,7 @@ template<> double PhysicalProperties<3>::enstrophy(
 							+ dw_dxk * dw_dxk;
 				}
 				result += frobenius_sq * feCellValues.JxW(q_point);
+				sq += frobenius_sq * frobenius_sq * feCellValues.JxW(q_point);
 			}
 		} /* if is locally owned */
 	} /* for cells */
@@ -251,6 +260,9 @@ template<> double PhysicalProperties<3>::enstrophy(
 	// communicate among MPI processes
 	dealii::Utilities::MPI::MinMaxAvg global_res =
 			dealii::Utilities::MPI::min_max_avg(result, MPI_COMM_WORLD);
+	dealii::Utilities::MPI::MinMaxAvg global_sq =
+		                        dealii::Utilities::MPI::min_max_avg(sq, MPI_COMM_WORLD);
+	*squared = global_sq.sum;
 	return global_res.sum;
 }
 
