@@ -18,10 +18,14 @@
 namespace natrium {
 
 ShearLayer2D::ShearLayer2D(double viscosity, size_t refinement_level, double u0,
-		double kappa, double perturbation) :
+		double kappa, double perturbation, double trafo_x, double trafo_y) :
 		ProblemDescription<2>(makeGrid(), viscosity, 1.0), m_u0(u0), m_kappa(
-				kappa), m_refinementLevel(refinement_level), m_perturbation(perturbation) {
-
+				kappa), m_refinementLevel(refinement_level), m_perturbation(perturbation),
+       	              		m_trafoX(trafo_x), m_trafoY(trafo_y)	{
+	assert(trafo_x >=0);
+	assert(trafo_x < 1);
+	assert(trafo_y >=0);
+	assert(trafo_y < 1);
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply initial and analytical solution

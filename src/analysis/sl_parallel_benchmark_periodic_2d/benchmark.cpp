@@ -20,6 +20,7 @@
 #include "natrium/stencils/D3Q19.h"
 
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
 
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
@@ -43,6 +44,11 @@ int main(int argc, char** argv) {
 	if (argc >= 4) {
 		nof_iterations = std::atoi(argv[3]);
 	}
+        bool is_unstructured = false;
+	if (argc >= 5) {
+	        is_unstructured = bool( std::atoi(argv[4]) );
+	}
+
 
 	pout << "Performance analysis with N=" << refinement_level << " and p="
 			<< order_fe << endl;
@@ -90,10 +96,24 @@ int main(int argc, char** argv) {
 	size_t n_dofs;
 	double lups;
 	configuration->setStencil(Stencil_D2Q9);
-	time1 = clock() - timestart;
+	time1 = clock();
 	pout << "Make solver..." << endl;
 	CFDSolver<2> solver(configuration, tgvProblem2D);
 	pout << "...done" << endl;
+
+        // distort grid
+        if (is_unstructured){
+                pout << "... with unstructured grid." << endl;
+                dealii::GridTools::distort_random(0.05,*tgvProblem2D->getMesh());
+        
+	        double delta_t = CFDSolverUtilities::calculateTimestep<2>(
+                        *(solver.getProblemDescription()->getMesh()),
+                        configuration->getSedgOrderOfFiniteElement(), *solver.getStencil(),
+                        CFL);
+	        solver.getAdvectionOperator()->setDeltaT(delta_t);
+        	solver.getAdvectionOperator()->reassemble();
+	}	
+        // end distort grid
 
 	// info output
 	const vector<dealii::types::global_dof_index>& dofs_per_proc =
@@ -108,10 +128,10 @@ int main(int argc, char** argv) {
 			<< dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
 			<< " is running on host " << Info::getHostName() << "." << endl;
 
-	time2 = clock() - time1;
+	time2 = clock();
 
 	solver.run();
-	time3 = clock() - time2;
+	time3 = clock();
 
 	lups = solver.getNumberOfDoFs() * nof_iterations / (time3 /CLOCKS_PER_SEC);
 	pout
@@ -128,8 +148,9 @@ int main(int argc, char** argv) {
 			<< endl;
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
 			<< refinement_level << " " << order_fe << " " << n_dofs << " "
-			<< time1/CLOCKS_PER_SEC*1000 << " " << time2/CLOCKS_PER_SEC*1000 << " " << time3/CLOCKS_PER_SEC*1000 / nof_iterations << " "
-			<< (clock() - timestart)/CLOCKS_PER_SEC*1000 << " " << lups << " "
+			<< (time1-timestart)/CLOCKS_PER_SEC*1000 << " " << (time2-time1) / (1.0 + is_unstructured) /CLOCKS_PER_SEC*1000 
+			<< " " << (time3-time2)/CLOCKS_PER_SEC*1000 / nof_iterations << " "
+			<< (time3 - timestart)/CLOCKS_PER_SEC*1000 << " " << lups << " "
 			<< lups / dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
 			<< endl;
 	pout << "done." << endl;
