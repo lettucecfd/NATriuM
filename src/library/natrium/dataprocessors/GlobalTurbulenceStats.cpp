@@ -111,6 +111,13 @@ void GlobalTurbulenceStats<dim>::printHeaderLine() {
 			legend_file << k << "  < " << m_names.at(i) << "^4 >" << endl;
 			k++;
 		}
+		legend_file << k << "  <energy>" << endl;
+		k++;
+		legend_file << k << "  <enstrophy>" << endl;
+		k++;
+		legend_file << k << "  <energy^2>" << endl;
+		k++;
+		legend_file << k << "  <enstrophy^2>" << endl;
 		legend_file.close();
 
 	} /* is_MPI_rank 0 */
@@ -139,6 +146,10 @@ void GlobalTurbulenceStats<dim>::writeToFile() {
 		for (size_t i = 0; i < m_nofObservables; i++) {
 			*m_tableFile << m_EX4.at(i) << " ";
 		}
+		*m_tableFile << m_energy << " " ;
+		*m_tableFile << m_enstrophy << " " ;
+		*m_tableFile << m_energySquared << " " ;
+		*m_tableFile << m_enstrophySquared << " " ;
 		*m_tableFile << endl;
 
 	} /* is mpi rank 0 */
@@ -182,6 +193,10 @@ void GlobalTurbulenceStats<dim>::calculate() {
 	std::vector<dealii::Tensor<1, dim, double> > uy_gradients;
 	std::vector<dealii::Tensor<1, dim, double> > uz_gradients;
 	std::vector<dealii::Tensor<1, dim, double> > rho_gradients;
+	double ener = 0.0;
+	double enst = 0.0;
+	double ener_sq = 0.0;
+	double enst_sq = 0.0;
 	ux_gradients.resize(dofs_per_cell);
 	uy_gradients.resize(dofs_per_cell);
 	uz_gradients.resize(dofs_per_cell);
@@ -271,6 +286,19 @@ void GlobalTurbulenceStats<dim>::calculate() {
 					l_EX3.at(j) += pow(l_values.at(j), 3) * weights.at(q);
 					l_EX4.at(j) += pow(l_values.at(j), 4) * weights.at(q);
 				}
+				// add to energies and enstrophies
+				double e1 = u.at(0)(dof_ind) * u.at(0)(dof_ind) + u.at(1)(dof_ind) * u.at(1)(dof_ind);
+				double e2 = pow(uy_gradients.at(i)[0] - ux_gradients.at(i)[1],2);
+				if (3==dim){
+					e1 += u.at(2)(dof_ind) * u.at(2)(dof_ind);
+					e2 += pow(uz_gradients.at(i)[1] - uy_gradients.at(i)[2],2);
+					e2 += pow(ux_gradients.at(i)[2] - uz_gradients.at(i)[0],2);
+				}
+				ener += e1 * weights.at(q);
+				ener_sq += e1 * e1 * weights.at(q);
+				enst += e2 * weights.at(q);
+				enst_sq += e2*e2*weights.at(q);
+
 			} /* for all quadrature points */
 		} /* if locally owned */
 	} /* for all cells */
@@ -284,6 +312,10 @@ void GlobalTurbulenceStats<dim>::calculate() {
 		dealii::Utilities::MPI::sum(l_correlations.at(i),
 		MPI_COMM_WORLD, m_correlations.at(i));
 	}
+	dealii::Utilities::MPI::sum(ener, MPI_COMM_WORLD, m_energy);
+	dealii::Utilities::MPI::sum(enst, MPI_COMM_WORLD, m_enstrophy);
+	dealii::Utilities::MPI::sum(ener_sq, MPI_COMM_WORLD, m_energySquared);
+	dealii::Utilities::MPI::sum(enst_sq, MPI_COMM_WORLD, m_enstrophySquared);
 	//}
 }
 
