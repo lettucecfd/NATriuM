@@ -40,8 +40,13 @@ public:
 
 
 	/// constructor (with default cs=1/sqrt(3))
+	/**
+	 * @short Constructor 
+	 * @param trafo_x < 1: 0=regular grid spacing
+	 * @param trafo_y < 1: 0=regular grid spacing
+	 **/
 	ShearLayer2D(double viscosity,
-			size_t refinement_level, double u0, double kappa, double perturbation=0.01);
+			size_t refinement_level, double u0, double kappa, double perturbation=0.05, double trafo_x=0, double trafo_y=0);
 
 	/// destructor
 	virtual ~ShearLayer2D();
@@ -53,7 +58,7 @@ public:
 
 	virtual void transform(Mesh<2>& mesh){
 		dealii::GridTools::transform(
-						UnstructuredGridFunc(), mesh);
+						UnstructuredGridFunc(m_trafoX, m_trafoY), mesh);
 		std::ofstream out_file("/tmp/grid_out.eps");
 		dealii::GridOut().write_eps(*getMesh(), out_file);
 		out_file.close();
@@ -62,14 +67,17 @@ public:
 private:
 
 	struct UnstructuredGridFunc {
-		UnstructuredGridFunc() {
+		double m_tX;
+		double m_tY;
+		UnstructuredGridFunc(double trafo_x, double trafo_y):
+	       	m_tX (trafo_x), m_tY (trafo_y)	{
 		}
-		double trans(const double y) const {
-			double m = 0.5;
-			return 1.0/(4.0*M_PI)*(m * sin( 4*M_PI*y) + 4*M_PI*y);
+		double trans(const double y, double trafo) const {
+
+			return 1.0/(4.0*M_PI)*(trafo * sin( 4*M_PI*y) + 4*M_PI*y);
 		}
 		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
-			return dealii::Point<2>(trans(in(0)), trans(in(1)));
+			return dealii::Point<2>(trans(in(0),m_tX), trans(in(1),m_tY));
 		}
 	};
 
@@ -78,6 +86,9 @@ private:
 	double m_kappa;
 	size_t m_refinementLevel;
 	double m_perturbation;
+	double m_trafoX;
+	double m_trafoY;
+
 
 	/**
 	 * @short create triangulation for couette flow

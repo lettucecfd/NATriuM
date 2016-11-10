@@ -16,6 +16,7 @@
 #include "deal.II/fe/component_mask.h"
 #include "deal.II/base/logstream.h"
 #include "deal.II/grid/grid_tools.h"
+#include "deal.II/grid/grid_out.h"
 #include "deal.II/base/index_set.h"
 
 #include "PhysicalProperties.h"
@@ -777,6 +778,16 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 // output: vector fields as .vtu files
 	if (not m_configuration->isSwitchOutputOff()) {
+		if (iteration - m_iterationStart == 0){
+			// first iteration: put out mesh
+			std::stringstream str0;
+			str0 << m_configuration->getOutputDirectory().c_str() << "/grid.vtk";                            								
+                        std::string grid_file = str0.str();
+			std::ofstream grid_out_file(grid_file);
+			dealii::GridOut().write_vtk(*m_problemDescription->getMesh(), grid_out_file);
+			grid_out_file.close();
+
+		}
 		if (iteration % 100 == 0) {
 			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time
 					<< endl;
@@ -806,8 +817,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
 		// no output if solution interval > 10^8
 		if (((iteration % m_configuration->getOutputSolutionInterval() == 0)
-				or is_final)
-				and m_configuration->getOutputSolutionInterval() <= 1e8) {
+				and m_configuration->getOutputSolutionInterval() <= 1e8) or (is_final)) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"

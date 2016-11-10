@@ -21,6 +21,7 @@
 #include "natrium/stencils/D3Q19.h"
 
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/CFDSolverUtilities.h"
 
 #include "natrium/benchmarks/TaylorGreenVortex3D.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
@@ -77,10 +78,6 @@ int main(int argc, char** argv) {
 	pout << "Make problem..." << endl;
 	tgvProblem3D = boost::make_shared<TaylorGreenVortex3D>(viscosity,
 			refinement_level, cs, init_rho_analytically);
-	if (is_unstructured){
-		pout << "... with unstructured grid." << endl;
-		dealii::GridTools::distort_random(0.25,*tgvProblem3D->getMesh());
-	}
 	pout << "...done" << endl;
 
 	// configure solver
@@ -104,6 +101,19 @@ int main(int argc, char** argv) {
 	pout << "Make solver..." << endl;
 	CFDSolver<3> solver(configuration, tgvProblem3D);
 	pout << "...done" << endl;
+        
+	// distort grid
+	if (is_unstructured){
+		pout << "... with unstructured grid." << endl;
+		dealii::GridTools::distort_random(0.25,*tgvProblem3D->getMesh());
+		double delta_t = CFDSolverUtilities::calculateTimestep<3>(
+			*(solver.getProblemDescription()->getMesh()),
+			configuration->getSedgOrderOfFiniteElement(), *solver.getStencil(),
+			CFL);
+		solver.getAdvectionOperator()->setDeltaT(delta_t);
+		solver.getAdvectionOperator()->reassemble();
+	}
+	// end distort grid
 
 	// info output
 	cout << "Process "
@@ -137,7 +147,7 @@ int main(int argc, char** argv) {
 	pout << dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) << " "
 			<< refinement_level << " " << order_fe << " " << n_dofs << " "
 			<< (time1-timestart) / CLOCKS_PER_SEC * 1000 << " "
-			<< (time2-time1) / CLOCKS_PER_SEC * 1000 << " "
+			<< (time2-time1) / (1.0 + is_unstructured) / CLOCKS_PER_SEC * 1000 << " "
 			<< (time3-time2) / CLOCKS_PER_SEC * 1000 / nof_iterations << " "
 			<< (time3-timestart) / CLOCKS_PER_SEC * 1000 << " " << lups
 			<< " "
