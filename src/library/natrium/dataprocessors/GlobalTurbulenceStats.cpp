@@ -287,10 +287,10 @@ void GlobalTurbulenceStats<dim>::calculate() {
 					l_EX4.at(j) += pow(l_values.at(j), 4) * weights.at(q);
 				}
 				// add to energies and enstrophies
-				double e1 = u.at(0)(dof_ind) * u.at(0)(dof_ind) + u.at(1)(dof_ind) * u.at(1)(dof_ind);
+				double e1 = 0.5 * u.at(0)(dof_ind) * u.at(0)(dof_ind) + 0.5 * u.at(1)(dof_ind) * u.at(1)(dof_ind);
 				double e2 = pow(uy_gradients.at(i)[0] - ux_gradients.at(i)[1],2);
 				if (3==dim){
-					e1 += u.at(2)(dof_ind) * u.at(2)(dof_ind);
+					e1 += 0.5 * u.at(2)(dof_ind) * u.at(2)(dof_ind);
 					e2 += pow(uz_gradients.at(i)[1] - uy_gradients.at(i)[2],2);
 					e2 += pow(ux_gradients.at(i)[2] - uz_gradients.at(i)[0],2);
 				}
@@ -312,10 +312,10 @@ void GlobalTurbulenceStats<dim>::calculate() {
 		dealii::Utilities::MPI::sum(l_correlations.at(i),
 		MPI_COMM_WORLD, m_correlations.at(i));
 	}
-	dealii::Utilities::MPI::sum(ener, MPI_COMM_WORLD, m_energy);
-	dealii::Utilities::MPI::sum(enst, MPI_COMM_WORLD, m_enstrophy);
-	dealii::Utilities::MPI::sum(ener_sq, MPI_COMM_WORLD, m_energySquared);
-	dealii::Utilities::MPI::sum(enst_sq, MPI_COMM_WORLD, m_enstrophySquared);
+	m_energy  = dealii::Utilities::MPI::sum(ener, MPI_COMM_WORLD);
+	m_enstrophy = dealii::Utilities::MPI::sum(enst, MPI_COMM_WORLD);
+	m_energySquared = dealii::Utilities::MPI::sum(ener_sq, MPI_COMM_WORLD);
+	m_enstrophySquared = dealii::Utilities::MPI::sum(enst_sq, MPI_COMM_WORLD);
 	//}
 }
 
