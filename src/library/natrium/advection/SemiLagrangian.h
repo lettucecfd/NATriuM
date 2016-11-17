@@ -117,6 +117,8 @@ private:
 	// locally relevant degrees of freedom (i.e. ghost layer cells)
 	dealii::IndexSet m_locallyRelevantDofs;
 
+	SemiLagrangianBoundaryHandler<dim> m_boundaryHandler;
+
 	/**
 	 * @short update the sparsity pattern of the system matrix // the sparse matrix
 	 */
@@ -147,17 +149,6 @@ private:
 
 public:
 
-
-	/**
-	 * @short A list that stores cell-specific information for assembly
-	 */
-	typedef std::vector<LagrangianPathTracker<dim> > DeparturePointList;
-
-	/**
-	 * @short List of neighbors
-	 */
-	typedef std::vector<typename dealii::DoFHandler<dim>::cell_iterator> Neighborhood;
-
 	/// constructor
 	/**
 	 * @short Constructor
@@ -177,163 +168,6 @@ public:
 	}
 	;
 
-	/**
-	 * @short Checks if a cell is already in the neighborhood list
-	 * @param cell the cell
-	 * @param neighborhood the neighborhood list
-	 * @return true, if cell is already in the list
-	 */
-	bool isCellInNeighborhood(
-			const typename dealii::DoFHandler<dim>::cell_accessor& cell,
-			const Neighborhood& neighborhood) {
-		for (size_t i = 0; i < neighborhood.size(); i++) {
-			if (cell.id() == neighborhood.at(i)->id()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @short get i-th neighbor of a cell, incorporating periodic boundaries
-	 * @param cell An iterator pointing to cell
-	 * @param i face index (=neighbor index)
-	 * @return m_doFHandler->end(), if cell has no i-th neighbor (e.g. at solid boundary)
-	 *
-	 */
-	typename dealii::DoFHandler<dim>::cell_iterator getNeighbor(
-			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
-			size_t i) {
-		// cell at periodic boundary
-		if (cell->face(i)->at_boundary()) {
-			size_t boundaryIndicator = cell->face(i)->boundary_id();
-			if (m_boundaries->isPeriodic(boundaryIndicator)) {
-				const boost::shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
-						m_boundaries->getPeriodicBoundary(boundaryIndicator);
-				assert(periodicBoundary->isFaceInBoundary(cell, i));
-				typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
-				periodicBoundary->getOppositeCellAtPeriodicBoundary(cell,
-						neighborCell);
-				return neighborCell;
-			} else {
-				return cell->get_dof_handler().end();
-			}
-		}
-		// cell not at periodic boundary
-		return cell->neighbor(i);
-	}
-
-	/**
-	 * @short fill the neighborhood list
-	 * @param cell cell
-	 * @param neighborhood the neighborhood object
-	 * @note the neighborhood incorporates the current cell, all its neighbors,
-	 * 		 and their respective neighbors; each cell has only pointer to it in the neighborhood.
-	 */
-	void getNeighborhood(
-			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
-			Neighborhood& neighborhood, size_t n_shells = 1) {
-		const size_t faces_per_cell = 2 * dim;
-		neighborhood.clear();
-		vector < std::array<size_t, faces_per_cell> > visited_faces;
-
-		// add self
-		neighborhood.push_back(cell);
-		visited_faces.push_back(std::array<size_t, faces_per_cell>());
-		// as the neighborhood gets extended every time a new neighbor is added
-		// this loop runs over all cells (therefor we have to have a break)
-		for (size_t c = 0; c < neighborhood.size(); c++) {
-			for (size_t i = 0; i < faces_per_cell; i++) {
-				// TODO check the shells over cell orientation rather than face id
-				// The face-id test is risky for arbitrary meshes
-				if (visited_faces.at(c).at(i) >= n_shells) {
-					continue;
-				}
-				typename dealii::DoFHandler<dim>::cell_iterator n = getNeighbor(
-						neighborhood.at(c), i);
-				if (n == cell->get_dof_handler().end()) {
-					continue;
-				} else if (n->is_artificial()) {
-					continue;
-				} else if (isCellInNeighborhood(*n, neighborhood)) {
-					continue;
-				} else if (n->active() or n->is_ghost()) {
-					std::array < size_t, faces_per_cell > v(visited_faces.at(c));
-					v[i]++;
-					visited_faces.push_back(v);
-					neighborhood.push_back(
-							typename dealii::DoFHandler<dim>::active_cell_iterator(
-									n));
-					continue;
-				} else if (n->has_children()) {
-					for (size_t j = 0; j < n->n_children(); j++) {
-						assert(n->child(j)->active());
-						if (isCellInNeighborhood(*(n->child(j)),
-								neighborhood)) {
-							continue;
-						}
-						std::array < size_t, faces_per_cell
-								> v(visited_faces.at(c));
-						v[i]++;
-						visited_faces.push_back(v);
-						neighborhood.push_back(
-								typename dealii::DoFHandler<dim>::active_cell_iterator(
-										n->child(j)));
-						continue;
-					}
-				}
-			}
-		}
-	} /* getNeighborhood */
-
-	/**
-	 * @short recursively search a point in neighborhood, until is found
-	 * @param p the point you search for
-	 * @param cell The start cell of the recursive search
-	 * @return A cell that contains the point p. If the point was not found, the cell pointer will point to DoFHandler.end()
-	 */
-	typename dealii::DoFHandler<dim>::active_cell_iterator recursivelySearchInNeighborhood(
-			const dealii::Point<dim>& p,
-			typename dealii::DoFHandler<dim>::active_cell_iterator& cell) {
-		Neighborhood neighborhood;
-		// add self
-		neighborhood.push_back(cell);
-		for (size_t c = 0; c < neighborhood.size(); c++) {
-			if (neighborhood.at(c)->point_inside(p)) {
-				return neighborhood.at(c);
-			}
-			for (size_t i = 0; i < dealii::GeometryInfo<dim>::faces_per_cell;
-					i++) {
-				typename dealii::DoFHandler<dim>::cell_iterator n = getNeighbor(
-						neighborhood.at(c), i);
-				if (n == cell->get_dof_handler().end()) {
-					continue;
-				} else if (n->is_artificial()) {
-					continue;
-				} else if (isCellInNeighborhood(*n, neighborhood)) {
-					continue;
-				} else if (n->active() or n->is_ghost()) {
-					neighborhood.push_back(
-							typename dealii::DoFHandler<dim>::active_cell_iterator(
-									n));
-					continue;
-				} else if (n->has_children()) {
-					for (size_t j = 0; j < n->n_children(); j++) {
-						assert(n->child(j)->active());
-						if (isCellInNeighborhood(*(n->child(j)),
-								neighborhood)) {
-							continue;
-						}
-						neighborhood.push_back(
-								typename dealii::DoFHandler<dim>::active_cell_iterator(
-										n->child(j)));
-						continue;
-					}
-				}
-			}
-		}
-		return cell->get_dof_handler().end();
-	} /* recursivelySearchInNeighborhood */
 
 	/**
 	 * @short Determines which face is crossed first, when moving from one point inside the cell to a point outside.
@@ -457,6 +291,7 @@ public:
 	virtual void setDeltaT(double deltaT) {
 		m_deltaT = deltaT;
 		updateSparsityPattern();
+		m_boundaryHandler.setTimeStep(deltaT);
 	}
 
 	virtual size_t memory_consumption_sparsity_pattern () const {
@@ -468,6 +303,67 @@ public:
 		}
 		return mem;
 	}
+
+	/**
+	 * @short get i-th neighbor of a cell, incorporating periodic boundaries
+	 * @param cell An iterator pointing to cell
+	 * @param i face index (=neighbor index)
+	 * @return m_doFHandler->end(), if cell has no i-th neighbor (e.g. at solid boundary)
+	 *
+	 */
+	 typename dealii::DoFHandler<dim>::cell_iterator getNeighbor(
+	 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+	 		size_t i);
+
+
+	 /**
+	  * @short fill the neighborhood list
+	  * @param cell cell
+	  * @param neighborhood the neighborhood object
+	  * @note the neighborhood incorporates the current cell, all its neighbors,
+	  * 		 and their respective neighbors; each cell has only pointer to it in the neighborhood.
+	  */
+	 void getNeighborhood(
+	 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+	 		Neighborhood<dim>& neighborhood, size_t n_shells = 1);
+
+	 /**
+	  * @short recursively search a point in neighborhood, until is found
+	  * @param p the point you search for
+	  * @param cell The start cell of the recursive search
+	  * @return A cell that contains the point p. If the point was not found, the cell pointer will point to DoFHandler.end()
+	  */
+	 typename dealii::DoFHandler<dim>::active_cell_iterator recursivelySearchInNeighborhood(
+	 		const dealii::Point<dim>& p,
+	 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
+
+
+	virtual void setTimeIntegrator(boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
+			distributed_block_vector> > ) {
+
+	}
+
+	const SemiLagrangianBoundaryHandler<dim>& getBoundaryHandler() const {
+		return m_boundaryHandler;
+	}
+
+	/**
+	 * @short Checks if a cell is already in the neighborhood list
+	 * @param cell the cell
+	 * @param neighborhood the neighborhood list
+	 * @return true, if cell is already in the list
+	 */
+	bool isCellInNeighborhood(
+			const typename dealii::DoFHandler<dim>::cell_accessor& cell,
+			const Neighborhood<dim>& neighborhood) {
+		for (size_t i = 0; i < neighborhood.size(); i++) {
+			if (cell.id() == neighborhood.at(i)->id()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 }
 ;

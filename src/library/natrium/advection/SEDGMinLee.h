@@ -22,6 +22,7 @@
 #include "AdvectionOperator.h"
 #include "../problemdescription/BoundaryCollection.h"
 #include "../utilities/BasicNames.h"
+#include "../timeintegration/TimeIntegrator.h"
 #include "../utilities/NATriuMException.h"
 
 namespace natrium {
@@ -151,6 +152,10 @@ private:
 
 	/// central flux or Lax-Friedrichs flux (default)
 	const bool m_useCentralFlux;
+
+	///
+	boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
+	distributed_block_vector> > m_timeIntegrator;
 
 #ifdef WITH_TRILINOS
 	// locally owned degrees of freedom (for MPI parallelization)
@@ -372,6 +377,19 @@ public:
 		return m_stencil;
 	}
 
+	const boost::shared_ptr<BoundaryCollection<dim> >& getBoundaries() const {
+		return m_boundaries;
+	}
+
+	boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
+	distributed_block_vector> > getTimeIntegrator() const {
+		return m_timeIntegrator;
+	}
+
+	virtual void setTimeIntegrator(boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
+			distributed_block_vector> > timeIntegrator) {
+		m_timeIntegrator = timeIntegrator;
+	}
 };
 
 } /* namespace natrium */

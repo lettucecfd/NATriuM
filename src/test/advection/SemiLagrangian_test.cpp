@@ -19,6 +19,8 @@
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D3Q19.h"
 
+#include "natrium/advection/SemiLagrangianTools.h"
+
 #include "natrium/utilities/BasicNames.h"
 
 #include "natrium/benchmarks/PeriodicTestDomain3D.h"
@@ -57,7 +59,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_Neighborhood_test) {
 	while (not cell->is_locally_owned()) {
 		cell++;
 	}
-	SemiLagrangian<2>::Neighborhood neighbors;
+	Neighborhood<2> neighbors;
 	sl.getNeighborhood(cell, neighbors);
 	dealii::Point<2> cell_center = cell->barycenter();
 	BOOST_CHECK_EQUAL(neighbors.size(), size_t(9));
@@ -114,7 +116,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_Neighborhood_test) {
 	while (not cell->is_locally_owned()) {
 		cell++;
 	}
-	SemiLagrangian<3>::Neighborhood neighbors;
+	Neighborhood<3> neighbors;
 	sl.getNeighborhood(cell, neighbors);
 	dealii::Point<3> cell_center = cell->barycenter();
 	BOOST_CHECK_EQUAL(neighbors.size(), size_t(27));

@@ -356,6 +356,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 							configuration->getEmbeddedDealIntegratorCoarsenTolerance());
 		};
 	}
+	m_advectionOperator->setTimeIntegrator(m_timeIntegrator);
 
 // build filter
 	if (m_configuration->isFiltering() == true) {

@@ -10,6 +10,7 @@
 
 #include "../utilities/BasicNames.h"
 #include "../stencils/Stencil.h"
+#include "../timeintegration/TimeIntegrator.h"
 
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/fe/fe_dgq.h"
@@ -96,6 +97,9 @@ public:
 	virtual size_t memory_consumption_sparsity_pattern () const {
 		return 0;
 	}
+
+	virtual void setTimeIntegrator(boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
+			distributed_block_vector> > timeIntegrator) = 0;
 
 };
 

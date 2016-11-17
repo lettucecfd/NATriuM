@@ -1006,7 +1006,7 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
 	TestResult result;
 	result.id = 13;
 	result.name =
-			"Convergence Test: SEDG linear advection (non-smooth problem)";
+			"Convergence Test: Semi-Lagrangian linear advection (non-smooth problem)";
 	result.details =
 			"This test runs the advection solver for a non-smooth periodic profile, which is "
 					"only twice continuously differentiable."
