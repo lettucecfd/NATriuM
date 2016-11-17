@@ -876,10 +876,10 @@ TestResult ConvergenceTestSemiLagrangianPeriodic() {
 	// Initialization
 	const double viscosity = 1;
 	const double Ma = 0.05;
-	const double orderOfFiniteElement = 4;
+	const double orderOfFiniteElement = 2;
 	const double scaling = sqrt(3) * 1 / Ma;
-	const double refinementLevel = 3;
-	const double CFL = 0.4;
+	const double refinementLevel = 4;
+	const double CFL = 4;
 
 	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<
 			TaylorGreenVortex2D>(viscosity, refinementLevel, 1. / Ma);
