@@ -11,74 +11,67 @@ namespace natrium {
 
 template<size_t dim, PrescribedQuantity prescribed_quantity>
 GradsBoundary<dim, prescribed_quantity>::GradsBoundary(size_t boundaryIndicator,
-		boost::shared_ptr<dealii::Function<dim> > boundary_values):
-DoFBoundary<dim>(boundaryIndicator),
-m_boundaryValues(boundary_values) {
+		boost::shared_ptr<dealii::Function<dim> > boundary_values) :
+		SLBoundary<dim>(boundaryIndicator), m_boundaryValues(boundary_values) {
 	// TODO: assert n_components = dim
 
 }
 
 template<size_t dim, PrescribedQuantity prescribed_quantity>
-void GradsBoundary<dim, prescribed_quantity>::apply(DistributionFunctions& f,
-		const distributed_vector& rho,
-		const vector<distributed_vector>& u,
-		const AdvectionOperator<dim>& advection, double beta,
-		const Stencil& stencil) {
+void GradsBoundary<dim, prescribed_quantity>::calculateBoundaryValues(
+		const DistributionFunctions& f_old, DistributionFunctions& f_new,
+		const dealii::FEValues<dim>&, size_t q_point,
+		const LagrangianPathDestination& destination, double dt) const {
 
-	assert (u.size() == dim);
+	/*
+	assert(u.size() == dim);
 	const dealii::DoFHandler<dim>& dof_handler = *advection.getDoFHandler();
 	const size_t dofs_per_cell = advection.getNumberOfDoFsPerCell();
 	const size_t faces_per_cell = dealii::GeometryInfo<dim>::faces_per_cell;
-	std::vector < dealii::types::global_dof_index
-	> local_dof_indices(dofs_per_cell);
-	const vector<std::map<size_t, size_t> >& q_index_to_facedof = advection.getQIndexToFacedof();
-	assert (q_index_to_facedof.size() > 0);
+	std::vector<dealii::types::global_dof_index> local_dof_indices(
+			dofs_per_cell);
+	const vector<std::map<size_t, size_t> >& q_index_to_facedof =
+			advection.getQIndexToFacedof();
+	assert(q_index_to_facedof.size() > 0);
 	const dealii::UpdateFlags updateFlags = dealii::update_gradients
-	| dealii::update_quadrature_points | dealii::update_normal_vectors;
+			| dealii::update_quadrature_points | dealii::update_normal_vectors;
 
-	dealii::FEFaceValues < dim
-	> fe_face_values(advection.getMapping(), *advection.getFe(),
-			*advection.getFaceQuadrature(), updateFlags);
-
-	/*std::vector<dealii::types::global_dof_index> neighbor_indices(
-	 dofs_per_cell);
-	 dealii::FEValues<dim> neighbor_fe_values(advection.getMapping(),
-	 *advection.getFe(), *advection.getQuadrature(), updateFlags);
-	 */
+	dealii::FEFaceValues<dim> fe_face_values(advection.getMapping(),
+			*advection.getFe(), *advection.getFaceQuadrature(), updateFlags);
 
 	double rho_tgt;
 	//double rho_bb;
 	//double rho_s;
-	dealii::Tensor < 1, dim > j_tgt;
-	dealii::Tensor < 2, dim > P;
-	dealii::Tensor < 2, dim > P_eq;
-	dealii::Tensor < 2, dim > P_neq;
+	dealii::Tensor<1, dim> j_tgt;
+	dealii::Tensor<2, dim> P;
+	dealii::Tensor<2, dim> P_eq;
+	dealii::Tensor<2, dim> P_neq;
 	vector<double> f_grad;
 	f_grad.resize(stencil.getQ());
-	std::vector < std::vector<Tensor<1, dim> > > u_gradients(dim); // .at(i).at(j)[k] denotes du_i / dx_k (x_j)
+	std::vector<std::vector<Tensor<1, dim> > > u_gradients(dim); // .at(i).at(j)[k] denotes du_i / dx_k (x_j)
 	for (size_t j = 0; j < dim; j++) {
 		u_gradients.at(j).resize(fe_face_values.n_quadrature_points);
 	}
 	// loop over all cells
-	dealii::Tensor < 1, dim > density_gradient;
+	dealii::Tensor<1, dim> density_gradient;
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
-	dof_handler.begin_active(), endc = dof_handler.end();
+			dof_handler.begin_active(), endc = dof_handler.end();
 	for (; cell != endc; ++cell) {
 
 		if (!cell->is_locally_owned())
-		continue;
+			continue;
 
 		if (!cell->at_boundary())
-		continue;
+			continue;
 
 		// get global degrees of freedom
 
 		for (size_t fc = 0; fc < faces_per_cell; fc++) {
 
 			if (!cell->at_boundary(fc))
-			continue;
+				continue;
 			if (this->getBoundaryIndicator() != cell->face(fc)->boundary_id())
-			continue;
+				continue;
 			cell->get_dof_indices(local_dof_indices);
 
 			// calculate gradients of shape functions
@@ -99,12 +92,13 @@ void GradsBoundary<dim, prescribed_quantity>::apply(DistributionFunctions& f,
 					P_eq[j][j] = stencil.getSpeedOfSoundSquare();
 					j_tgt[j] = m_boundaryValues->value(
 							fe_face_values.quadrature_point(q), j);
-					for (size_t k = 0; k < dim; k++) {;
-						assert( local_dof_indices.size() > 0);
+					for (size_t k = 0; k < dim; k++) {
+						;
+						assert(local_dof_indices.size() > 0);
 						P_eq[j][k] += u.at(j)(local_dof_indices.at(i))
-						* u.at(j)(local_dof_indices.at(i));
+								* u.at(j)(local_dof_indices.at(i));
 						P_neq[j][k] = u_gradients.at(j).at(q)[k]
-						+ u_gradients.at(k).at(q)[j];
+								+ u_gradients.at(k).at(q)[j];
 					}
 				}
 				P_eq *= rho(local_dof_indices.at(i));
@@ -118,8 +112,7 @@ void GradsBoundary<dim, prescribed_quantity>::apply(DistributionFunctions& f,
 				// TODO incorporate pressure boundaries by using rho_tgt != 1 and u_tgt != uw
 				GradsFunction<dim>(f_grad, stencil, rho_tgt, j_tgt, P);
 				for (size_t alpha = 0; alpha < stencil.getQ(); alpha++) {
-					if (vectorToTensor < dim
-							> (stencil.getDirection(alpha))
+					if (vectorToTensor<dim>(stencil.getDirection(alpha))
 							* fe_face_values.normal_vector(q) < 0) {
 						f.at(alpha)(local_dof_indices.at(i)) = f_grad.at(alpha);
 					}
@@ -129,6 +122,7 @@ void GradsBoundary<dim, prescribed_quantity>::apply(DistributionFunctions& f,
 		}
 
 	}
+	*/
 }
 
 template class GradsBoundary<2, PRESCRIBED_VELOCITY> ;

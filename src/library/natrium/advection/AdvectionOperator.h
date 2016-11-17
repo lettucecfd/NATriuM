@@ -63,6 +63,10 @@ public:
 	 */
 	virtual size_t getNumberOfDoFs() const = 0;
 
+	virtual boost::shared_ptr<dealii::FEFaceValues<dim,dim> > getFEFaceValues(const dealii::UpdateFlags &) const = 0;
+
+	virtual boost::shared_ptr<dealii::FEValues<dim,dim> > getFEValues(const dealii::UpdateFlags &) const = 0;
+
 	virtual const boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const = 0;
 
 	virtual size_t getNumberOfDoFsPerCell() const = 0;

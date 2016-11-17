@@ -5,6 +5,7 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
+//#include "SLBoundary.h"
 #include "SemiLagrangian.h"
 
 // #include <fstream>
@@ -15,14 +16,11 @@
 #include "deal.II/dofs/dof_renumbering.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
-#include "deal.II/fe/fe_update_flags.h"
 #include "deal.II/lac/matrix_iterator.h"
 #include "deal.II/lac/sparsity_tools.h"
 #include "deal.II/base/utilities.h"
 
 #include "../boundaries/PeriodicBoundary.h"
-#include "../boundaries/DoFBoundary.h"
-
 #include "../stencils/Stencil.h"
 
 #include "../utilities/DealiiExtensions.h"
@@ -330,7 +328,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 		if (cell->is_locally_owned()) {
 			// initialize
 			found_in_cell.clear();
-			std::queue<LagrangianPathTracker> not_found;
+			std::queue<LagrangianPathTracker<dim> > not_found;
 
 			// get global degrees of freedom
 			cell->get_dof_indices(local_dof_indices);
@@ -348,7 +346,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					// calculate x^(t-delta_t)
 					dealii::Point<dim> x_departure = x_i
 							+ minus_dtealpha.at(alpha);
-					LagrangianPathTracker info_i(local_dof_indices.at(i), alpha,
+					LagrangianPathTracker<dim> info_i(local_dof_indices.at(i), alpha,
 							alpha, x_departure, x_i, cell);
 					not_found.push(info_i);
 				}
@@ -359,7 +357,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			while (not not_found.empty()) {
 				//TimerOutput::Scope timer_section(Timing::getTimer(),
 				//			"Assembly: follow paths");
-				LagrangianPathTracker& el = not_found.front();
+				LagrangianPathTracker<dim>& el = not_found.front();
 				double lambda = 100;
 				size_t child_id = 100;
 				dealii::Point<dim> p_boundary;
@@ -463,7 +461,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					std::vector<double> h(dofs_per_cell);
 					local_entries.push_back(h);
 				}
-				shapeFunctionValue(it, local_lagrange_points, local_entries);
+				shapeFunctionValue<dim>(it, local_lagrange_points, local_entries, m_mapping);
 				//}
 				// (i.e. for all Lagrangian points in cell)
 				for (size_t i = 0; i < l.size(); i++) {

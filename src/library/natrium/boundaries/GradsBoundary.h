@@ -8,6 +8,7 @@
 #ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_GRADSBOUNDARYCONDITION_H_
 #define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_GRADSBOUNDARYCONDITION_H_
 
+#include "SLBoundary.h"
 #include <array>
 
 #include "deal.II/base/tensor.h"
@@ -16,8 +17,6 @@
 #include "deal.II/base/function.h"
 
 #include "GradsFunction.h"
-#include "DoFBoundary.h"
-
 #include "../advection/AdvectionOperator.h"
 #include "../stencils/Stencil.h"
 #include "../solver/DistributionFunctions.h"
@@ -30,7 +29,7 @@ enum PrescribedQuantity {
 };
 
 template<size_t dim, PrescribedQuantity prescribed_quantity>
-class GradsBoundary: public DoFBoundary<dim> {
+class GradsBoundary: public SLBoundary<dim> {
 private:
 	boost::shared_ptr<dealii::Function<dim> > m_boundaryValues;
 public:
@@ -50,10 +49,15 @@ public:
 	/**
 	 * @short Apply the boundary condition (calculate unkown distributions)
 	 */
-	virtual void apply(DistributionFunctions& f, const distributed_vector& rho,
-			const vector<distributed_vector>& u,
-			const AdvectionOperator<dim>& advection, double beta,
-			const Stencil& stencil);
+	virtual void calculateBoundaryValues(const DistributionFunctions& f_old,
+			DistributionFunctions& f_new, const dealii::FEValues<dim>&,
+			size_t q_point, const LagrangianPathDestination& destination,
+			double dt) const;
+
+	virtual dealii::UpdateFlags getUpdateFlags() const {
+		return dealii::update_values;
+
+	}
 };
 
 } /* namespace natrium */
