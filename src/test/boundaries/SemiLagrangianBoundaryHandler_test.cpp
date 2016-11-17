@@ -52,9 +52,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	streaming.setupDoFs();
 
 	BoundaryCollection<2> bc2;
-	dealii::Point<2> p(0, 0);
-	dealii::Point<2> p2(-1, -1);
-	LagrangianPathTracker<2> tracker(1, 1, 1, p, p2,
+	dealii::Point<2> departure(-1, -1);
+	dealii::Point<2> p(0,0);
+	LagrangianPathTracker<2> tracker(1, 1, 1, departure, p,
 			streaming.getDoFHandler()->begin_active());
 	SemiLagrangianBoundaryHandler<2> bh(dt, *streaming.getStencil(), *couette.getBoundaries());
 	bh.addHit(tracker, 1, streaming);
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	bh.addHit(tracker, 1, streaming);
 	BOOST_CHECK(1 == bh.n_cells());
 
-	LagrangianPathTracker<2> tracker2(1, 1, 1, p, p2,
+	LagrangianPathTracker<2> tracker2(1, 1, 1, departure, p,
 			++(streaming.getDoFHandler()->begin_active()));
 	bh.addHit(tracker2, 1, streaming);
 	BOOST_CHECK(2 == bh.n_cells());
