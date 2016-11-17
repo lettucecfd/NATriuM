@@ -146,14 +146,14 @@ public:
 		hitListArbitrary = other.hitListArbitrary;
 		hitListSupportPoints = other.hitListSupportPoints;
 	}
-	virtual ~HitListAtCell(){
+	virtual ~HitListAtCell() {
 
 	}
-/*	HitListAtCell<dim> & operator= (const HitListAtCell<dim> & other) {
-		hitListArbitrary = other.hitListArbitrary;
-		hitListSupportPoints = other.hitListSupportPoints;
-		return *this;
-	}*/
+	/*	HitListAtCell<dim> & operator= (const HitListAtCell<dim> & other) {
+	 hitListArbitrary = other.hitListArbitrary;
+	 hitListSupportPoints = other.hitListSupportPoints;
+	 return *this;
+	 }*/
 
 	std::vector<BoundaryHit<dim> > hitListArbitrary;
 	std::vector<BoundaryHitAtSupportPoint<dim> > hitListSupportPoints;
@@ -163,6 +163,14 @@ public:
 	void addHit(const BoundaryHit<dim>& hit) {
 		hitListArbitrary.push_back(hit);
 	}
+
+	size_t n_arbitraryHits() const {
+		return hitListArbitrary.size();
+	}
+
+	size_t n_supportHits() const {
+		return hitListSupportPoints.size();
+	}
 };
 
 /**
@@ -170,7 +178,6 @@ public:
  */
 template<size_t dim>
 using HitList = std::map<typename dealii::DoFHandler<dim>::active_cell_iterator, HitListAtCell<dim> >;
-
 
 /**
  * @short Handler for semi-Lagrangian boundary conditions.
@@ -183,26 +190,71 @@ private:
 	const Stencil& m_stencil;
 	const BoundaryCollection<dim>& m_boundaries;
 public:
-	SemiLagrangianBoundaryHandler(double dt, const Stencil& stencil, const BoundaryCollection<dim>& boundaries) :
+	SemiLagrangianBoundaryHandler(double dt, const Stencil& stencil,
+			const BoundaryCollection<dim>& boundaries) :
 			m_timeStep(dt), m_stencil(stencil), m_boundaries(boundaries) {
+		assert(stencil.getD() == dim);
+		assert(dt >= 0);
 
 	}
 	virtual ~SemiLagrangianBoundaryHandler() {
 
 	}
-	void addHit(const LagrangianPathTracker<dim>& tracker, size_t boundary_id, const AdvectionOperator<dim>& sl) ;
+	void addHit(const LagrangianPathTracker<dim>& tracker, size_t boundary_id,
+			const AdvectionOperator<dim>& sl);
 
 	void apply(DistributionFunctions& f_new, const DistributionFunctions& f_old,
 			const dealii::DoFHandler<dim>& dof,
 			boost::shared_ptr<dealii::FEValues<dim> > fe_values);
 
 	/*void print_out(){
-		pout << "Semi Lagrangian Boundary Handler Object:" << endl;
-		m_hitList.print_out();
-		pout << "----------------------------------------" << endl;
-		pout << "#Hits at support points: " << endl;
-	}*/
-};
+	 pout << "Semi Lagrangian Boundary Handler Object:" << endl;
+	 m_hitList.print_out();
+	 pout << "----------------------------------------" << endl;
+	 pout << "#Hits at support points: " << endl;
+	 }*/
+
+	double getTimeStep() const {
+		return m_timeStep;
+	}
+
+	void setTimeStep(double timeStep) {
+		m_timeStep = timeStep;
+	}
+
+	void clear() {
+		m_hitList.clear();
+	}
+
+	size_t n_cells() const {
+		return m_hitList.size();
+	}
+
+	size_t n_supportHits() const {
+		typename HitList<dim>::const_iterator it = m_hitList.begin();
+		typename HitList<dim>::const_iterator end = m_hitList.end();
+		size_t n_hits = 0;
+		for (; it != end; ++it) {
+			n_hits += it->second.n_supportHits();
+		}
+		return n_hits;
+	}
+
+	size_t n_nonSupportHits() const {
+		typename HitList<dim>::const_iterator it = m_hitList.begin();
+		typename HitList<dim>::const_iterator end = m_hitList.end();
+		size_t n_hits = 0;
+		for (; it != end; ++it) {
+			n_hits += it->second.n_arbitraryHits();
+		}
+		return n_hits;
+	}
+
+	size_t n_hits() const {
+		return n_supportHits() + n_nonSupportHits();
+	}
+}
+;
 
 } /* namespace natrium */
 

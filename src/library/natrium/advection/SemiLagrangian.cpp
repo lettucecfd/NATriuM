@@ -33,14 +33,14 @@ namespace natrium {
 template<size_t dim>
 SemiLagrangian<dim>::SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
 		boost::shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
+		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
 		double delta_t) :
 		m_mesh(triangulation), m_boundaries(boundaries), m_mapping(1), m_stencil(
-				Stencil), m_orderOfFiniteElement(orderOfFiniteElement), m_deltaT(
-				delta_t) {
+				stencil), m_orderOfFiniteElement(orderOfFiniteElement), m_deltaT(
+				delta_t), m_boundaryHandler(delta_t, *stencil, *boundaries) {
 	// assertions
 	assert(orderOfFiniteElement >= 1);
-	assert(Stencil->getD() == dim);
+	assert(stencil->getD() == dim);
 	assert(m_deltaT >= 0);
 
 	// TODO FEM rather than DG
@@ -264,6 +264,7 @@ vector<std::map<size_t, size_t> > SemiLagrangian<dim>::map_q_index_to_facedofs()
 
 template<size_t dim>
 void SemiLagrangian<dim>::stream() {
+	throw AdvectionSolverException("SemiLagrangian<dim>::stream() not implemented, yet.");
 }
 
 template<size_t dim>
@@ -278,6 +279,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 		assert(m_systemMatrix.m() != 0);
 
 	}
+	assert (m_boundaryHandler.n_cells() == 0);
 
 	/////////////////////////////////
 	// Initialize Finite Element ////
@@ -291,7 +293,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			normals_update);
 
 	// Initialize
-	std::map<typename DoFHandler<dim>::active_cell_iterator, DeparturePointList> found_in_cell;
+	std::map<typename DoFHandler<dim>::active_cell_iterator, DeparturePointList<dim> > found_in_cell;
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const std::vector<Point<dim> > & unit_support_points =
 			m_fe->get_unit_support_points();
@@ -367,15 +369,15 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					// point found in this cell: add to cell_map
 					typename std::map<
 							typename DoFHandler<dim>::active_cell_iterator,
-							DeparturePointList>::iterator it =
+							DeparturePointList<dim> >::iterator it =
 							found_in_cell.find(el.currentCell);
 					if (it == found_in_cell.end()) {
-						DeparturePointList new_xlist;
+						DeparturePointList<dim> new_xlist;
 						new_xlist.push_back(el);
 						found_in_cell.insert(
 								std::pair<
 										typename DoFHandler<dim>::active_cell_iterator,
-										DeparturePointList>(el.currentCell,
+										DeparturePointList<dim> >(el.currentCell,
 										new_xlist));
 					} else {
 						it->second.push_back(el);
@@ -404,6 +406,10 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 								el.currentCell);
 
 					} else /* if is not periodic */{
+						/*if (not sparsity_pattern){
+							m_boundaryHandler.addHit(not_found.front(), bi, *this);
+						}*/
+						cout << "pop" << endl;
 						not_found.pop();
 					} /* endif isPeriodic */
 				} else {
@@ -437,9 +443,9 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 			// -- Assemble matrix / sparsity pattern --
 			typename std::map<typename DoFHandler<dim>::active_cell_iterator,
-					DeparturePointList>::iterator list = found_in_cell.begin();
+					DeparturePointList<dim> >::iterator list = found_in_cell.begin();
 			typename std::map<typename DoFHandler<dim>::active_cell_iterator,
-					DeparturePointList>::iterator end_list =
+					DeparturePointList<dim> >::iterator end_list =
 					found_in_cell.end();
 			// (i.e. for all cells that contain support points )
 			for (; list != end_list; list++) {
@@ -450,7 +456,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 				// get dofs
 				it->get_dof_indices(local_dof_indices);
-				const DeparturePointList & l = list->second;
+				const DeparturePointList<dim> & l = list->second;
 
 				//if (not sparsity_pattern) {
 				// calculate shape values
@@ -652,6 +658,146 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	return face_id;
 
 } /* faceCrossedFirst */
+
+template <size_t dim>
+typename dealii::DoFHandler<dim>::cell_iterator SemiLagrangian<dim>::getNeighbor(
+		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+		size_t i) {
+	// cell at periodic boundary
+	if (cell->face(i)->at_boundary()) {
+		size_t boundaryIndicator = cell->face(i)->boundary_id();
+		if (m_boundaries->isPeriodic(boundaryIndicator)) {
+			const boost::shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
+					m_boundaries->getPeriodicBoundary(boundaryIndicator);
+			assert(periodicBoundary->isFaceInBoundary(cell, i));
+			typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
+			periodicBoundary->getOppositeCellAtPeriodicBoundary(cell,
+					neighborCell);
+			return neighborCell;
+		} else {
+			return cell->get_dof_handler().end();
+		}
+	}
+	// cell not at periodic boundary
+	return cell->neighbor(i);
+} /* getNeighbor */
+
+
+
+/**
+ * @short fill the neighborhood list
+ * @param cell cell
+ * @param neighborhood the neighborhood object
+ * @note the neighborhood incorporates the current cell, all its neighbors,
+ * 		 and their respective neighbors; each cell has only pointer to it in the neighborhood.
+ */
+template <size_t dim>
+void SemiLagrangian<dim>::getNeighborhood(
+		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+		Neighborhood<dim>& neighborhood, size_t n_shells) {
+	const size_t faces_per_cell = 2 * dim;
+	neighborhood.clear();
+	std::vector < std::array<size_t, faces_per_cell> > visited_faces;
+
+	// add self
+	neighborhood.push_back(cell);
+	visited_faces.push_back(std::array<size_t, faces_per_cell>());
+	// as the neighborhood gets extended every time a new neighbor is added
+	// this loop runs over all cells (therefor we have to have a break)
+	for (size_t c = 0; c < neighborhood.size(); c++) {
+		for (size_t i = 0; i < faces_per_cell; i++) {
+			// TODO check the shells over cell orientation rather than face id
+			// The face-id test is risky for arbitrary meshes
+			if (visited_faces.at(c).at(i) >= n_shells) {
+				continue;
+			}
+			typename dealii::DoFHandler<dim>::cell_iterator n = getNeighbor(
+					neighborhood.at(c), i);
+			if (n == cell->get_dof_handler().end()) {
+				continue;
+			} else if (n->is_artificial()) {
+				continue;
+			} else if (isCellInNeighborhood(*n, neighborhood)) {
+				continue;
+			} else if (n->active() or n->is_ghost()) {
+				std::array < size_t, faces_per_cell > v(visited_faces.at(c));
+				v[i]++;
+				visited_faces.push_back(v);
+				neighborhood.push_back(
+						typename dealii::DoFHandler<dim>::active_cell_iterator(
+								n));
+				continue;
+			} else if (n->has_children()) {
+				for (size_t j = 0; j < n->n_children(); j++) {
+					assert(n->child(j)->active());
+					if (isCellInNeighborhood(*(n->child(j)),
+							neighborhood)) {
+						continue;
+					}
+					std::array < size_t, faces_per_cell
+							> v(visited_faces.at(c));
+					v[i]++;
+					visited_faces.push_back(v);
+					neighborhood.push_back(
+							typename dealii::DoFHandler<dim>::active_cell_iterator(
+									n->child(j)));
+					continue;
+				}
+			}
+		}
+	}
+} /* getNeighborhood */
+
+/**
+ * @short recursively search a point in neighborhood, until is found
+ * @param p the point you search for
+ * @param cell The start cell of the recursive search
+ * @return A cell that contains the point p. If the point was not found, the cell pointer will point to DoFHandler.end()
+ */
+template<size_t dim>
+typename dealii::DoFHandler<dim>::active_cell_iterator SemiLagrangian<dim>::recursivelySearchInNeighborhood(
+		const dealii::Point<dim>& p,
+		typename dealii::DoFHandler<dim>::active_cell_iterator& cell) {
+	Neighborhood<dim> neighborhood;
+	// add self
+	neighborhood.push_back(cell);
+	for (size_t c = 0; c < neighborhood.size(); c++) {
+		if (neighborhood.at(c)->point_inside(p)) {
+			return neighborhood.at(c);
+		}
+		for (size_t i = 0; i < dealii::GeometryInfo<dim>::faces_per_cell;
+				i++) {
+			typename dealii::DoFHandler<dim>::cell_iterator n = getNeighbor(
+					neighborhood.at(c), i);
+			if (n == cell->get_dof_handler().end()) {
+				continue;
+			} else if (n->is_artificial()) {
+				continue;
+			} else if (isCellInNeighborhood(*n, neighborhood)) {
+				continue;
+			} else if (n->active() or n->is_ghost()) {
+				neighborhood.push_back(
+						typename dealii::DoFHandler<dim>::active_cell_iterator(
+								n));
+				continue;
+			} else if (n->has_children()) {
+				for (size_t j = 0; j < n->n_children(); j++) {
+					assert(n->child(j)->active());
+					if (isCellInNeighborhood(*(n->child(j)),
+							neighborhood)) {
+						continue;
+					}
+					neighborhood.push_back(
+							typename dealii::DoFHandler<dim>::active_cell_iterator(
+									n->child(j)));
+					continue;
+				}
+			}
+		}
+	}
+	return cell->get_dof_handler().end();
+} /* recursivelySearchInNeighborhood */
+
 
 template class SemiLagrangian<2> ;
 template class SemiLagrangian<3> ;

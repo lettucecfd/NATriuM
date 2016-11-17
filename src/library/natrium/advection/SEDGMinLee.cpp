@@ -602,7 +602,11 @@ vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_q_index_to_facedofs() con
 } /* map_q_index_to_facedofs */
 
 template<size_t dim>
-void SEDGMinLee<dim>::stream() {
+void SEDGMinLee<dim>::stream(){
+	if (!m_timeIntegrator){
+		throw AdvectionSolverException("Before calling SEDGMinLee.stream(), you have to assign a time integrator.");
+	}
+	throw AdvectionSolverException("SEDGMinLee<dim>::stream() not implemented, yet.");
 }
 
 template class SEDGMinLee<2> ;

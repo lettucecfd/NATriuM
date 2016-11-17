@@ -5,6 +5,8 @@
  *      Author: akraem3m
  */
 
+#include <array>
+
 #include "SemiLagrangianTools.h"
 
 namespace natrium {
@@ -144,5 +146,8 @@ template boost::shared_ptr<dealii::FEValues<3> > reinitArbitraryPoints<3>(
 		const typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<3> >& points,
 		const dealii::Mapping<3>& mapping, const dealii::UpdateFlags& flags);
+
+
+
 
 } /* namespace natrium */

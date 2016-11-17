@@ -62,6 +62,19 @@ struct LagrangianPathTracker {
 	}
 };
 
+
+/**
+ * @short A list that stores cell-specific information for assembly
+ */
+template<size_t dim>
+using DeparturePointList = std::vector<LagrangianPathTracker<dim> > ;
+
+/**
+ * @short List of neighbors
+ */
+template <size_t dim>
+using Neighborhood =  std::vector<typename dealii::DoFHandler<dim>::cell_iterator>;
+
 /**
  * @short Calculates the shape values for arbitrary points.
  * @param[in] cell the cell which contains the points
@@ -93,6 +106,18 @@ boost::shared_ptr<dealii::FEValues<dim> > reinitArbitraryPoints(
 		const std::vector<dealii::Point<dim> >& points,
 		const dealii::Mapping<dim>& mapping, const dealii::UpdateFlags& flags);
 
-}
+template<size_t dim>
+void getNeighborhood(
+		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+		Neighborhood<dim>& neighborhood, size_t n_shells = 1);
 
-#endif
+
+template<size_t dim>
+typename dealii::DoFHandler<dim>::active_cell_iterator recursivelySearchInNeighborhood(
+		const dealii::Point<dim>& p,
+		typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
+
+} /* namespace natrium */
+
+
+#endif /* includeguard*/
