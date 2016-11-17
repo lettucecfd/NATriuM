@@ -21,6 +21,7 @@
 #include "natrium/solver/DistributionFunctions.h"
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/benchmarks/CouetteFlowGrad2D.h"
+#include "natrium/boundaries/SLBoundary.h"
 
 #include "natrium/problemdescription/BoundaryCollection.h"
 #include "natrium/advection/SemiLagrangian.h"
@@ -57,10 +58,10 @@ BOOST_AUTO_TEST_CASE(GradsBoundary_Velocity2D_test) {
 	boost::shared_ptr<Mesh<2> >mesh = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
 	dealii::GridGenerator::hyper_cube<2>(*mesh,0,1,true);
 	mesh->refine_global(3);
-	boost::shared_ptr<DoFBoundary<2> > boundary= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(0,f1);
-	boost::shared_ptr<DoFBoundary<2> > boundary1= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(1,f1);
-	boost::shared_ptr<DoFBoundary<2> > boundary2= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(2,f1);
-	boost::shared_ptr<DoFBoundary<2> > boundary3= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(3,f1);
+	boost::shared_ptr<SLBoundary<2> > boundary= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(0,f1);
+	boost::shared_ptr<SLBoundary<2> > boundary1= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(1,f1);
+	boost::shared_ptr<SLBoundary<2> > boundary2= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(2,f1);
+	boost::shared_ptr<SLBoundary<2> > boundary3= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(3,f1);
 
 	boost::shared_ptr<BoundaryCollection<2> > bc = boost::make_shared<BoundaryCollection<2> >();
 	bc->addBoundary(boundary);

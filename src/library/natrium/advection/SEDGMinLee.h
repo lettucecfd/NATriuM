@@ -287,6 +287,17 @@ public:
 		return m_doFHandler;
 	}
 
+
+	virtual boost::shared_ptr<dealii::FEFaceValues<dim> > getFEFaceValues(const dealii::UpdateFlags & flags) const {
+		return boost::make_shared<dealii::FEFaceValues<dim> >(m_mapping, *m_fe, *m_faceQuadrature,
+				flags);
+	}
+
+	virtual boost::shared_ptr<dealii::FEValues<dim> > getFEValues(const dealii::UpdateFlags & flags) const {
+		return boost::make_shared<dealii::FEValues<dim> >(m_mapping, *m_fe, *m_quadrature,
+				flags);
+	}
+
 	const dealii::BlockSparsityPattern& getBlockSparsityPattern() const {
 		return m_sparsityPattern;
 	}

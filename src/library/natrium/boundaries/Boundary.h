@@ -40,7 +40,7 @@ public:
 	 */
 	virtual bool isLinearFluxBoundary() const = 0;
 
-	virtual bool isDoFBoundary() const = 0;
+	virtual bool isSLBoundary() const = 0;
 
 };
 

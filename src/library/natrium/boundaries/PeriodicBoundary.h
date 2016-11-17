@@ -158,7 +158,7 @@ public:
 	virtual bool isLinearFluxBoundary() const {
 		return false;
 	}
-	virtual bool isDoFBoundary() const {
+	virtual bool isSLBoundary() const {
 		return false;
 	}
 

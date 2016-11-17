@@ -1,12 +1,12 @@
 /*
- * DoFBoundary.h
+ * SLBoundary.h
  *
  *  Created on: 19.09.2016
  *      Author: akraem3m
  */
 
-#ifndef LIBRARY_NATRIUM_BOUNDARIES_DOFBOUNDARY_H_
-#define LIBRARY_NATRIUM_BOUNDARIES_DOFBOUNDARY_H_
+#ifndef LIBRARY_NATRIUM_BOUNDARIES_SLBOUNDARY_H_
+#define LIBRARY_NATRIUM_BOUNDARIES_SLBOUNDARY_H_
 
 #include "Boundary.h"
 
@@ -14,13 +14,14 @@
 
 #include "../solver/DistributionFunctions.h"
 #include "../stencils/Stencil.h"
-#include "../advection/AdvectionOperator.h"
+#include "../advection/SemiLagrangianTools.h"
 #include "../utilities/BasicNames.h"
+#include "../advection/AdvectionOperator.h"
 
 namespace natrium {
 
 template<size_t dim>
-class DoFBoundary: public Boundary<dim> {
+class SLBoundary: public Boundary<dim> {
 private:
 	size_t m_boundaryIndicator;
 
@@ -30,12 +31,12 @@ private:
 
 public:
 
-	DoFBoundary(size_t boundaryIndicator) :
+	SLBoundary(size_t boundaryIndicator) :
 			m_boundaryIndicator(boundaryIndicator) {
 
 	}
 	// TODO boundary indicator
-	DoFBoundary(size_t boundaryIndicator,
+	SLBoundary(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
 			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity) :
 			m_boundaryIndicator(boundaryIndicator), m_boundaryDensity(
@@ -43,7 +44,7 @@ public:
 	}
 	;
 
-	virtual ~DoFBoundary() {
+	virtual ~SLBoundary() {
 	}
 	;
 
@@ -53,7 +54,7 @@ public:
 	virtual bool isLinearFluxBoundary() const {
 		return false;
 	}
-	virtual bool isDoFBoundary() const {
+	virtual bool isSLBoundary() const {
 		return true;
 	}
 
@@ -68,13 +69,15 @@ public:
 		return m_boundaryVelocity;
 	}
 
-	virtual void apply(DistributionFunctions& f, const distributed_vector& rho,
-				const vector<distributed_vector>& u,
-				const AdvectionOperator<dim>& advection, double beta,
-				const Stencil& stencil) = 0;
+	virtual void calculateBoundaryValues(const DistributionFunctions& f_old,
+			DistributionFunctions& f_new, const dealii::FEValues<dim>&,
+			size_t q_point, const LagrangianPathDestination& destination,
+			double dt) const = 0;
 
+	virtual dealii::UpdateFlags getUpdateFlags() const = 0;
 };
 
 } /* namespace natrium */
 
-#endif /* LIBRARY_NATRIUM_BOUNDARIES_DOFBOUNDARY_H_ */
+#endif /* LIBRARY_NATRIUM_BOUNDARIES_SLBOUNDARY_H_ */
+

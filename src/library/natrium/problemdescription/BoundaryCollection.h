@@ -13,7 +13,7 @@
 #include "../boundaries/Boundary.h"
 #include "../boundaries/PeriodicBoundary.h"
 #include "../boundaries/LinearFluxBoundary.h"
-#include "../boundaries/DoFBoundary.h"
+#include "../boundaries/SLBoundary.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
 #include "../solver/DistributionFunctions.h"
@@ -54,8 +54,8 @@ private:
 	/// vector to store linear boundaries in
 	std::map<size_t, boost::shared_ptr<LinearFluxBoundary<dim> > > m_linearBoundaries;
 
-	/// vector to store dof boundaries in
-	std::map<size_t, boost::shared_ptr<DoFBoundary<dim> > > m_dofBoundaries;
+	/// vector to store semi lagrangian boundaries in
+	std::map<size_t, boost::shared_ptr<SLBoundary<dim> > > m_SLBoundaries;
 
 	/// vector to store periodic boundaries in
 	std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > > m_periodicBoundaries;
@@ -66,8 +66,8 @@ public:
 	typedef typename std::map<size_t, boost::shared_ptr<Boundary<dim> > >::const_iterator ConstIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<LinearFluxBoundary<dim> > >::iterator LinearIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<LinearFluxBoundary<dim> > >::const_iterator ConstLinearIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<DoFBoundary<dim> > >::iterator DoFBoundaryIterator;
-	typedef typename std::map<size_t, boost::shared_ptr<DoFBoundary<dim> > >::const_iterator ConstDoFBoundaryIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<SLBoundary<dim> > >::iterator SLBoundaryIterator;
+	typedef typename std::map<size_t, boost::shared_ptr<SLBoundary<dim> > >::const_iterator ConstSLBoundaryIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::iterator PeriodicIterator;
 	typedef typename std::map<size_t, boost::shared_ptr<PeriodicBoundary<dim> > >::const_iterator ConstPeriodicIterator;
 
@@ -126,7 +126,7 @@ public:
 	 * @param boundary a periodic boundary
 	 * @throws BoundaryCollectionError, e.g. if boundary indicators are not unique
 	 */
-	void addBoundary(boost::shared_ptr<DoFBoundary<dim> > boundary) {
+	void addBoundary(boost::shared_ptr<SLBoundary<dim> > boundary) {
 		bool success =
 				m_boundaries.insert(
 						std::make_pair(boundary->getBoundaryIndicator(),
@@ -135,7 +135,7 @@ public:
 			throw BoundaryCollectionException(
 					"Boundary could not be inserted. Boundary indicators must be unique.");
 		}
-		m_dofBoundaries.insert(
+		m_SLBoundaries.insert(
 				std::make_pair(boundary->getBoundaryIndicator(), boundary));
 	}
 
@@ -187,17 +187,17 @@ public:
 	}
 
 	/**
-	 * @short get a specific dof boundary
+	 * @short get a specific semi lagrangian boundary
 	 * @throws BoundaryCollectionError, if the specified boundary indicator does not exist
 	 */
-	const boost::shared_ptr<DoFBoundary<dim> >& getDoFBoundary(
+	const boost::shared_ptr<SLBoundary<dim> >& getSLBoundary(
 			size_t boundaryIndicator) const {
 		assert(not isPeriodic(boundaryIndicator));
-		if (m_dofBoundaries.count(boundaryIndicator) == 0) {
+		if (m_SLBoundaries.count(boundaryIndicator) == 0) {
 			throw BoundaryCollectionException(
-					"in getDoFBoundary: This boundary collection does not contain a dof boundary with the specified boundary indicator.");
+					"in getSLBoundary: This boundary collection does not contain a sl boundary with the specified boundary indicator.");
 		}
-		return m_dofBoundaries.at(boundaryIndicator);
+		return m_SLBoundaries.at(boundaryIndicator);
 	}
 
 	/**
@@ -227,12 +227,20 @@ public:
 		return m_linearBoundaries;
 	}
 
-	const std::map<size_t, boost::shared_ptr<DoFBoundary<dim> > >& getDoFBoundaries() const {
-		return m_dofBoundaries;
+	const std::map<size_t, boost::shared_ptr<SLBoundary<dim> > >& getSLBoundaries() const {
+		return m_SLBoundaries;
 	}
 
-	bool hasDoFBoundaries(){
-		return m_dofBoundaries.size() != 0;
+	bool hasSLBoundaries(){
+		return m_SLBoundaries.size() != 0;
+	}
+
+	bool hasID(size_t boundary_id) const {
+		return (m_boundaries.find(boundary_id) != m_boundaries.end());
+	}
+
+	bool isSL(size_t boundary_id) const {
+		return (m_SLBoundaries.find(boundary_id) != m_SLBoundaries.end());
 	}
 
 };
