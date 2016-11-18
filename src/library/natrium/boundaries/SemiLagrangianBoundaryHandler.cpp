@@ -13,7 +13,6 @@ template<size_t dim>
 void SemiLagrangianBoundaryHandler<dim>::addHit(
 		const LagrangianPathTracker<dim>& tracker, size_t boundary_id,
 		const AdvectionOperator<dim>& sl) {
-	cout << "Add hit" << endl;
 	assert (m_timeStep > 0);
 	assert(m_boundaries.hasID(boundary_id));
 	assert(m_boundaries.isSL(boundary_id));
@@ -47,7 +46,8 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 		boost::shared_ptr<dealii::FEValues<dim> > fe_values) {
 
 	std::vector<dealii::Point<dim> > off_sup_points;
-
+	std::vector< dealii::types::global_dof_index > local_dofs;
+	local_dofs.resize(fe_values->get_fe().n_dofs_per_cell());
 	typename HitList<dim>::iterator it = m_hitList.begin();
 	typename HitList<dim>::iterator end = m_hitList.end();
 	for (; it != end; ++it) {
@@ -58,6 +58,7 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 
 		// update both fevalues instances, the one for the support points and the one for the arbitrary points
 		fe_values->reinit(cell);
+		cell->get_dof_indices(local_dofs);
 
 		off_sup_points.clear();
 		for (size_t i = 0; i < cell_hits.hitListArbitrary.size(); i++) {
@@ -69,11 +70,12 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 						fe_values->get_mapping(),
 						fe_values->get_update_flags());
 
+
 		// apply boundaries for support points
 		for (size_t i = 0; i < cell_hits.hitListSupportPoints.size(); i++) {
 			m_boundaries.getSLBoundary(
 					cell_hits.hitListSupportPoints.at(i).getBoundaryId())->calculateBoundaryValues(
-					f_old, f_new, *fe_values,
+					f_old, f_new, local_dofs, *fe_values,
 					cell_hits.hitListSupportPoints.at(i).getSupportQPoint(),
 					cell_hits.hitListSupportPoints.at(i).getDestination(),
 					cell_hits.hitListSupportPoints.at(i).getDtHit());
@@ -84,7 +86,7 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 		for (size_t q = 0; q < cell_hits.hitListArbitrary.size(); q++) {
 			m_boundaries.getSLBoundary(
 					cell_hits.hitListSupportPoints.at(q).getBoundaryId())->calculateBoundaryValues(
-					f_old, f_new, *fe_values2, q,
+					f_old, f_new, local_dofs, *fe_values2, q,
 					cell_hits.hitListSupportPoints.at(q).getDestination(),
 					cell_hits.hitListSupportPoints.at(q).getDtHit());
 
