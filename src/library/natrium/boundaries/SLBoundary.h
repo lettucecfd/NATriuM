@@ -70,7 +70,9 @@ public:
 	}
 
 	virtual void calculateBoundaryValues(const DistributionFunctions& f_old,
-			DistributionFunctions& f_new, const dealii::FEValues<dim>&,
+			DistributionFunctions& f_new,
+			const std::vector< dealii::types::global_dof_index > & local_dofs,
+			const dealii::FEValues<dim>&,
 			size_t q_point, const LagrangianPathDestination& destination,
 			double dt) const = 0;
 

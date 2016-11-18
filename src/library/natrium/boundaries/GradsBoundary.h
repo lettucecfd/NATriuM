@@ -31,6 +31,9 @@ enum PrescribedQuantity {
 template<size_t dim, PrescribedQuantity prescribed_quantity>
 class GradsBoundary: public SLBoundary<dim> {
 private:
+	boost::shared_ptr<Stencil> m_stencil;
+	double m_viscosity;
+	double m_dt;
 	boost::shared_ptr<dealii::Function<dim> > m_boundaryValues;
 public:
 	/** @short This constructor assigns the Boundary condition with arbitrary density and velocity
@@ -42,8 +45,7 @@ public:
 	GradsBoundary(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundary_values);
 
-	GradsBoundary(size_t boundaryIndicator,
-			double pressure);
+	GradsBoundary(size_t boundaryIndicator, double pressure);
 
 	//GradsBoundary(size_t boundaryIndicator,
 	//		dealii::Tensor<1,dim> velocity);
@@ -59,12 +61,14 @@ public:
 	 * @short Apply the boundary condition (calculate unkown distributions)
 	 */
 	virtual void calculateBoundaryValues(const DistributionFunctions& f_old,
-			DistributionFunctions& f_new, const dealii::FEValues<dim>&,
-			size_t q_point, const LagrangianPathDestination& destination,
-			double dt) const;
+			DistributionFunctions& f_new,
+			const std::vector<dealii::types::global_dof_index> & local_dofs,
+			const dealii::FEValues<dim>&, size_t q_point,
+			const LagrangianPathDestination& destination, double dt) const;
 
 	virtual dealii::UpdateFlags getUpdateFlags() const {
-		return dealii::update_values;
+		return dealii::update_values | dealii::update_gradients
+				| dealii::update_3rd_derivatives | dealii::update_hessians;
 
 	}
 };
