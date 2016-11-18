@@ -10,6 +10,7 @@
 
 // #include <fstream>
 #include <queue>
+#include <array>
 #include <sstream>
 
 #include "deal.II/lac/trilinos_sparsity_pattern.h"
@@ -406,10 +407,10 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 								el.currentCell);
 
 					} else /* if is not periodic */{
-						/*if (not sparsity_pattern){
-							m_boundaryHandler.addHit(not_found.front(), bi, *this);
-						}*/
-						cout << "pop" << endl;
+						if (not sparsity_pattern){
+							el.currentPoint = p_boundary;
+							m_boundaryHandler.addHit(el, bi, *this);
+						}
 						not_found.pop();
 					} /* endif isPeriodic */
 				} else {
@@ -542,6 +543,21 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 			po_unit[i] = 1;
 		}
 	}
+	// make sure the inner point is inside the cell
+	for (size_t i = 0; i < dim; i++) {
+		if (pi_unit[i] > 1){
+			cout << "The current point does not seem to lie inside the current cell." << endl;
+			cout << "This is a rather curious error that I encountered once or twice " << endl;
+			cout << "when working on grids that were not refined at all. I did not spend " << endl;
+			cout << "too much time to try to make it work. I might include some " << endl;
+			cout << "assertions in SemiLagrangian.cpp to check where this comes from --" << endl;
+			cout << "but not now :-/" << endl;
+			cout << "piunit: " << pi_unit[i] << endl;
+		}
+		assert (pi_unit[i] >= 0);
+		assert (pi_unit[i] <= 1);
+
+	}
 
 	/*       3
 	 *    2-->--3
@@ -568,15 +584,22 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	*lambda = 100;
 
 // for efficiency reasons: omit the lambda-stuff, if possible (which is in most calls)
+
 	if (po_unit[0] < 0) {
 		// if face 0 is crossed
 		*lambda = (0 - pi_unit[0]) / (po_unit[0] - pi_unit[0]);
+		if (fabs(*lambda) < 1e-9){
+			*lambda = 0;
+		}
 		assert(*lambda >= 0);
 		assert(*lambda <= 1);
 		face_id = 0;
 	} else if (po_unit[0] > 1) {
 		// if face 1 is crossed
 		*lambda = (1 - pi_unit[0]) / (po_unit[0] - pi_unit[0]);
+		if (fabs(*lambda) < 1e-9){
+			*lambda = 0;
+		}
 		assert(*lambda >= 0);
 		assert(*lambda <= 1);
 		face_id = 1;
@@ -584,6 +607,9 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	if (po_unit[1] < 0) {
 		// if face 2 is crossed
 		double lambda_y = (0 - pi_unit[1]) / (po_unit[1] - pi_unit[1]);
+		if (fabs(lambda_y) < 1e-9){
+			lambda_y = 0;
+		}
 		assert(lambda_y >= 0);
 		assert(lambda_y <= 1);
 		if (lambda_y < *lambda) {
@@ -593,6 +619,9 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	} else if (po_unit[1] > 1) {
 		// if face 3 is crossed
 		double lambda_y = (1 - pi_unit[1]) / (po_unit[1] - pi_unit[1]);
+		if (fabs(lambda_y) < 1e-9){
+			lambda_y = 0;
+		}
 		assert(lambda_y >= 0);
 		assert(lambda_y <= 1);
 		if (lambda_y < *lambda) {
@@ -604,6 +633,9 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		if (po_unit[2] < 0) {
 			// if face 4 is crossed
 			double lambda_z = (0 - pi_unit[2]) / (po_unit[2] - pi_unit[2]);
+			if (fabs(lambda_z) < 1e-9){
+				lambda_z = 0;
+			}
 			assert(lambda_z >= 0);
 			assert(lambda_z <= 1);
 			if (lambda_z < *lambda) {
@@ -613,6 +645,9 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		} else if (po_unit[2] > 1) {
 			// if face 5 is crossed
 			double lambda_z = (1 - pi_unit[2]) / (po_unit[2] - pi_unit[2]);
+			if (fabs(lambda_z) < 1e-9){
+				lambda_z = 0;
+			}
 			assert(lambda_z >= 0);
 			assert(lambda_z <= 1);
 			if (lambda_z < *lambda) {

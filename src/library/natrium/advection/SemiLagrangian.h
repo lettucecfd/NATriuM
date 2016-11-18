@@ -178,6 +178,7 @@ public:
 	 * @param[out] lambda the parameter lambda that solves   p_boundary_unit = lambda * p_outside_unit + (1-lambda) * p_inside_unit
 	 * @return face_id, if a face is crossed; -1, if no face is crossed (i.e. the second point is inside the cell)
 	 * @note lambda is calculated for the unit cell. In general, p_boundary = lambda * p_outside + (1-lambda) * p_inside does not hold
+	 * @note The current implementation does not do anything special at corner nodes. It prefers x over y over z faces. This may lead to problems later on.
 	 */
 	int faceCrossedFirst(
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
