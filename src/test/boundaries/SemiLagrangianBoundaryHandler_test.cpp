@@ -85,6 +85,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_DataStructures_test) {
 	SemiLagrangian<2> streaming(couette->getMesh(), couette->getBoundaries(),
 			fe_order, boost::make_shared<D2Q9>(), 0.001);
 	streaming.setupDoFs();
+	streaming.reassemble();
 
 	// small time step => only support hits
 	// precondition: all processes have an equal number of cells and boundary cells
@@ -92,7 +93,8 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_DataStructures_test) {
 			/ dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
 	BOOST_CHECK_EQUAL(expected_n_cells,
 			streaming.getBoundaryHandler().n_cells());
-	const size_t expected_n_hits = (pow(2, ref_level) * 2 * (fe_order + 1))
+	const size_t n_undefined_directions = 3;
+	const size_t expected_n_hits = (pow(2, ref_level) * 2 * (fe_order + 1) * n_undefined_directions)
 			/ dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); // minus corners
 	BOOST_CHECK_EQUAL(expected_n_hits, streaming.getBoundaryHandler().n_hits());
 	BOOST_CHECK_EQUAL(expected_n_hits,

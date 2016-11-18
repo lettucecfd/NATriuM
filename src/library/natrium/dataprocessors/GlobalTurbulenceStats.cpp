@@ -18,7 +18,7 @@
 namespace natrium {
 
 template<size_t dim>
-GlobalTurbulenceStats<dim>::GlobalTurbulenceStats(const CFDSolver<dim> & solver) :
+GlobalTurbulenceStats<dim>::GlobalTurbulenceStats(CFDSolver<dim> & solver) :
 		DataProcessor<dim>(solver), m_filename(
 				outfile(solver.getConfiguration()->getOutputDirectory())), m_legendFilename(
 				legendfile(solver.getConfiguration()->getOutputDirectory())), m_outputOff(
