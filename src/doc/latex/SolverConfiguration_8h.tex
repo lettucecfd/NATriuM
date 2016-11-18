@@ -8,6 +8,7 @@ Calculation of physical properties.
 {\ttfamily \#include $<$ctime$>$}\par
 {\ttfamily \#include $<$fstream$>$}\par
 {\ttfamily \#include $<$sstream$>$}\par
+{\ttfamily \#include $<$stdlib.h$>$}\par
 {\ttfamily \#include \char`\"{}deal.II/base/parameter\_\-handler.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../problemdescription/ProblemDescription.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
@@ -21,18 +22,36 @@ class \hyperlink{classnatrium_1_1ConfigurationException}{natrium::ConfigurationE
 \begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver}. \item\end{DoxyCompactList}\item 
 class \hyperlink{classnatrium_1_1SolverConfiguration}{natrium::SolverConfiguration}
 \begin{DoxyCompactList}\small\item\em Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann Equation (DBE). \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum {\bfseries AdvectionSchemeName} \{ {\bfseries SEDG}
+enum \hyperlink{namespacenatrium_ab73faf50bccace063cee6f66b5af2b02}{natrium::AdvectionSchemeName} \{ {\bfseries SEDG}, 
+{\bfseries SEMI\_\-LAGRANGIAN}
  \}
 \begin{DoxyCompactList}\small\item\em Implemented streaming data types. \item\end{DoxyCompactList}\item 
-enum {\bfseries CollisionSchemeName} \{ {\bfseries BGK\_\-STANDARD}, 
+enum \hyperlink{namespacenatrium_a77a27ea835db291372b246db6b4b1578}{natrium::CollisionSchemeName} \{ \par
+{\bfseries BGK\_\-STANDARD}, 
 {\bfseries BGK\_\-STANDARD\_\-TRANSFORMED}, 
-{\bfseries BGK\_\-STEADY\_\-STATE}
+{\bfseries BGK\_\-STEADY\_\-STATE}, 
+{\bfseries BGK\_\-MULTIPHASE}, 
+\par
+{\bfseries BGK\_\-INCOMPRESSIBLE}, 
+{\bfseries MRT\_\-STANDARD}, 
+{\bfseries KBC\_\-STANDARD}, 
+{\bfseries KBC\_\-CENTRAL}, 
+\par
+{\bfseries BGK\_\-MULTI\_\-AM4}, 
+{\bfseries BGK\_\-MULTI\_\-BDF2}
  \}
 \begin{DoxyCompactList}\small\item\em Implemented collision models. \item\end{DoxyCompactList}\item 
-enum {\bfseries TimeIntegratorName} \{ {\bfseries RUNGE\_\-KUTTA\_\-5STAGE}, 
+enum \hyperlink{namespacenatrium_a00a0ec1e80f138680e0fcca78349f6d8}{natrium::TimeIntegratorName} \{ {\bfseries RUNGE\_\-KUTTA\_\-5STAGE}, 
 {\bfseries THETA\_\-METHOD}, 
 {\bfseries EXPONENTIAL}, 
 {\bfseries OTHER}
@@ -69,14 +88,29 @@ enum {\bfseries DealSolverName} \{ \par
 {\bfseries RICHARDSON}
  \}
 \item 
-enum {\bfseries FluxTypeName} \{ {\bfseries LAX\_\-FRIEDRICHS}, 
+enum \hyperlink{namespacenatrium_a9366e68e932696b3dc277fc010ac1057}{natrium::FluxTypeName} \{ {\bfseries LAX\_\-FRIEDRICHS}, 
 {\bfseries CENTRAL}
  \}
 \begin{DoxyCompactList}\small\item\em the numerical flux used to calculate the advection operator \item\end{DoxyCompactList}\item 
-enum {\bfseries InitializationSchemeName} \{ {\bfseries EQUILIBRIUM}, 
+enum \hyperlink{namespacenatrium_a5aad7d448441836f9c631c505cf8cd54}{natrium::InitializationSchemeName} \{ {\bfseries EQUILIBRIUM}, 
 {\bfseries ITERATIVE}
  \}
-\begin{DoxyCompactList}\small\item\em the initialization procedure for the distribution functions \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em the initialization procedure for the distribution functions \item\end{DoxyCompactList}\item 
+enum {\bfseries PseudopotentialType} \{ {\bfseries SHAN\_\-CHEN}, 
+{\bfseries SUKOP}, 
+{\bfseries CARNAHAN\_\-STARLING}
+ \}
+\item 
+enum {\bfseries ForceType} \{ {\bfseries NO\_\-FORCING}, 
+{\bfseries SHIFTING\_\-VELOCITY}, 
+{\bfseries EXACT\_\-DIFFERENCE}, 
+{\bfseries GUO}
+ \}
+\item 
+enum {\bfseries FilteringSchemeName} \{ {\bfseries EXPONENTIAL\_\-FILTER}, 
+{\bfseries NEW\_\-FILTER}
+ \}
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

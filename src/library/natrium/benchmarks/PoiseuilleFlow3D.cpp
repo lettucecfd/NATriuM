@@ -12,9 +12,8 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/tensor.h"
 
-#include "../problemdescription/LinearBoundaryRhoU.h"
-#include "../problemdescription/PeriodicBoundary.h"
-#include "../problemdescription/NonlinearBoundaryZouHeRho.h"
+#include "../boundaries/LinearFluxBoundaryRhoU.h"
+#include "../boundaries/PeriodicBoundary.h"
 #include "../problemdescription/ConstantExternalForce.h"
 #include "../utilities/Math.h"
 
@@ -97,10 +96,10 @@ boost::shared_ptr<BoundaryCollection<3> > PoiseuilleFlow3D::makeBoundaries(
 				boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
 		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<3> >(4, zeroVector));
+				boost::make_shared<LinearFluxBoundaryRhoU<3> >(4, zeroVector));
 		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<3> >(5, zeroVector));
+				boost::make_shared<LinearFluxBoundaryRhoU<3> >(5, zeroVector));
 		//cout << " > no-slip: bottom" << endl;
 
 	} else {
@@ -125,11 +124,11 @@ boost::shared_ptr<BoundaryCollection<3> > PoiseuilleFlow3D::makeBoundaries(
 	return boundaries;
 }
 
-double PoiseuilleFlow3D::AnalyticVelocity::value(const dealii::Point<3>& x,
+double PoiseuilleFlow3D::AnalyticVelocity::value(const dealii::Point<3>& ,
 		const unsigned int component) const {
 	assert(component < 3);
-	double h = m_flow->getCharacteristicLength();
-	/*if (component == 0) {
+	/*double h = m_flow->getCharacteristicLength();
+	if (component == 0) {
 		return (- 4 * m_flow->m_uMax *
 				(x(2) - h) * x(2) / (h*h) );
 	} else {*/

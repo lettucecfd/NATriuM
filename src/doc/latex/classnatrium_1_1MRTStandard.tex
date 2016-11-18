@@ -1,0 +1,66 @@
+\hypertarget{classnatrium_1_1MRTStandard}{
+\section{natrium::MRTStandard Class Reference}
+\label{classnatrium_1_1MRTStandard}\index{natrium::MRTStandard@{natrium::MRTStandard}}
+}
+Inheritance diagram for natrium::MRTStandard::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1MRTStandard}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1MRTStandard_ab29f5d91681757338440a677f494e51e}{
+{\bfseries MRTStandard} (double relaxationParameter, double dt, const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil)}
+\label{classnatrium_1_1MRTStandard_ab29f5d91681757338440a677f494e51e}
+
+\item 
+virtual void \hyperlink{classnatrium_1_1MRTStandard_ae33b30f3080f8b933cf3b351092e8f09}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&densities, vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
+\begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1MRTStandard_aa1e422e0d86ff1754e9fb9e4df33a2ab}{
+void \hyperlink{classnatrium_1_1MRTStandard_aa1e422e0d86ff1754e9fb9e4df33a2ab}{collideAllD2Q9} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&densities, vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure) const }
+\label{classnatrium_1_1MRTStandard_aa1e422e0d86ff1754e9fb9e4df33a2ab}
+
+\begin{DoxyCompactList}\small\item\em optimized version of collideAll for \hyperlink{classnatrium_1_1D2Q9}{D2Q9} stencil \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1MRTStandard_aea329178a23726a72116465ccc692108}{
+vector$<$ double $>$ {\bfseries setMRTWeights} () const }
+\label{classnatrium_1_1MRTStandard_aea329178a23726a72116465ccc692108}
+
+\item 
+\hypertarget{classnatrium_1_1MRTStandard_a41ba2b4d689d15f1f0e018bd90a8f966}{
+vector$<$ double $>$ {\bfseries setRelaxationRates} () const }
+\label{classnatrium_1_1MRTStandard_a41ba2b4d689d15f1f0e018bd90a8f966}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1MRTStandard_af4f768f5872b78fc4c6927b00629eb93}{
+vector$<$ double $>$ {\bfseries m\_\-D}}
+\label{classnatrium_1_1MRTStandard_af4f768f5872b78fc4c6927b00629eb93}
+
+\item 
+\hypertarget{classnatrium_1_1MRTStandard_ab50078f150ae9edae275773ecd850d18}{
+vector$<$ double $>$ {\bfseries m\_\-S}}
+\label{classnatrium_1_1MRTStandard_ab50078f150ae9edae275773ecd850d18}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1MRTStandard_ae33b30f3080f8b933cf3b351092e8f09}{
+\index{natrium::MRTStandard@{natrium::MRTStandard}!collideAll@{collideAll}}
+\index{collideAll@{collideAll}!natrium::MRTStandard@{natrium::MRTStandard}}
+\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::MRTStandard::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  {\bf distributed\_\-vector} \& {\em densities}, \/  vector$<$ {\bf distributed\_\-vector} $>$ \& {\em velocities}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1MRTStandard_ae33b30f3080f8b933cf3b351092e8f09}
+
+
+function for collision f the global vectors of discrete particle distribution functions densities the global vector of densities velocities the global vectors of velocity components \mbox{[} \mbox{[}u\_\-1x, u\_\-2x, ...\mbox{]}, \mbox{[}u\_\-1y, u\_\-2y, ...\mbox{]} \mbox{]} inInitializationProcedure indicates if the collision is performed in the context of an iterative initilizatation procedure. In this case, only the macroscopic densities are recalculated, while the velocities remain unchanged. default: false 
+
+Implements \hyperlink{classnatrium_1_1CollisionModel}{natrium::CollisionModel}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/MRTStandard.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/MRTStandard.cpp\end{DoxyCompactItemize}

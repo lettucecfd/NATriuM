@@ -10,7 +10,7 @@ Description of the \hyperlink{classnatrium_1_1BGK}{BGK} model for the transforme
 {\ttfamily \#include $<$BGK.h$>$}Inheritance diagram for natrium::BGK::\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=1.96262cm]{classnatrium_1_1BGK}
+\includegraphics[height=1.25cm]{classnatrium_1_1BGK}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -23,7 +23,7 @@ virtual \hyperlink{classnatrium_1_1BGK_a1029401a72788a6538e4e1941c305ab4}{$\sim$
 \label{classnatrium_1_1BGK_a1029401a72788a6538e4e1941c305ab4}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, distributed\_\-vector \&densities, vector$<$ distributed\_\-vector $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
+virtual void \hyperlink{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&densities, vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const 
 \begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BGK_ab82471c249d19fdc62005fb8b7e03190}{
 void {\bfseries collideSingleDoF} (size\_\-t doF, const vector$<$ double $>$ \&feq, \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f) const }
@@ -58,6 +58,16 @@ size\_\-t {\bfseries getQ} () const }
 \hypertarget{classnatrium_1_1BGK_adac002cf79a455f6b053b51210f39acb}{
 double {\bfseries getRelaxationParameter} () const }
 \label{classnatrium_1_1BGK_adac002cf79a455f6b053b51210f39acb}
+
+\item 
+\hypertarget{classnatrium_1_1BGK_a0e0ead95ae973c7d1c561edf35b3cba3}{
+double {\bfseries getDt} () const }
+\label{classnatrium_1_1BGK_a0e0ead95ae973c7d1c561edf35b3cba3}
+
+\item 
+\hypertarget{classnatrium_1_1BGK_af6b4c1726c7454c516a044d00f0917f4}{
+double {\bfseries getLambda} () const }
+\label{classnatrium_1_1BGK_af6b4c1726c7454c516a044d00f0917f4}
 
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
@@ -99,7 +109,7 @@ preconditioning\_\-parameter is only used for steady state
 Reimplemented in \hyperlink{classnatrium_1_1BGKSteadyState_a2cd6628c71475663e204656147de99b8}{natrium::BGKSteadyState}.\hypertarget{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}{
 \index{natrium::BGK@{natrium::BGK}!collideAll@{collideAll}}
 \index{collideAll@{collideAll}!natrium::BGK@{natrium::BGK}}
-\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGK::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  distributed\_\-vector \& {\em densities}, \/  vector$<$ distributed\_\-vector $>$ \& {\em velocities}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\subsubsection[{collideAll}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::BGK::collideAll ({\bf DistributionFunctions} \& {\em f}, \/  {\bf distributed\_\-vector} \& {\em densities}, \/  vector$<$ {\bf distributed\_\-vector} $>$ \& {\em velocities}, \/  const dealii::IndexSet \& {\em locally\_\-owned\_\-dofs}, \/  bool {\em inInitializationProcedure} = {\ttfamily false}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
 \label{classnatrium_1_1BGK_a9fa1c980217a183fc4762954e86ba36d}
 
 
@@ -107,7 +117,7 @@ function for collision f the global vectors of discrete particle distribution fu
 
 Implements \hyperlink{classnatrium_1_1CollisionModel}{natrium::CollisionModel}.
 
-Reimplemented in \hyperlink{classnatrium_1_1BGKPseudopotential_a5f40f5076273f9ec38f3078c891b453c}{natrium::BGKPseudopotential}, \hyperlink{classnatrium_1_1BGKStandard_a8e0493b063d56275d7ee607e25c4145e}{natrium::BGKStandard}, \hyperlink{classnatrium_1_1BGKStandardTransformed_aaa2e752c6aa2294f1ebeb9d326ba9eb8}{natrium::BGKStandardTransformed}, and \hyperlink{classnatrium_1_1BGKSteadyState_a8554fb624c5a3abe01651747b3d9aeb7}{natrium::BGKSteadyState}.
+Reimplemented in \hyperlink{classnatrium_1_1BGKIncompressible_a53dc53b5ddb31a6ef67acd25abb405f1}{natrium::BGKIncompressible}, \hyperlink{classnatrium_1_1BGKMultistep_a503d69a669d91979a885d1b02c2edb0a}{natrium::BGKMultistep}, \hyperlink{classnatrium_1_1BGKPseudopotential_afa18cdab45c73c33b2660f37d0ca82ba}{natrium::BGKPseudopotential$<$ dim $>$}, \hyperlink{classnatrium_1_1BGKStandard_a8e0493b063d56275d7ee607e25c4145e}{natrium::BGKStandard}, \hyperlink{classnatrium_1_1BGKStandardTransformed_aaa2e752c6aa2294f1ebeb9d326ba9eb8}{natrium::BGKStandardTransformed}, and \hyperlink{classnatrium_1_1BGKSteadyState_a8554fb624c5a3abe01651747b3d9aeb7}{natrium::BGKSteadyState}.
 
 The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 

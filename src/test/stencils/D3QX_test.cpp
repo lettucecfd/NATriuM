@@ -19,7 +19,7 @@
 
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(D3QX_test)
 
@@ -66,6 +66,4 @@ BOOST_AUTO_TEST_CASE(D3QXMomentTrafo_test) {
 } //D2Q9MomentTrafo_test
 
 BOOST_AUTO_TEST_SUITE_END()
-
-} /* namespace natrium */
 

@@ -120,91 +120,80 @@ void CFDSolverUtilities::get_integrator_by_id(size_t id,
 
 	deal_integrator = NONE;
 	switch (id) {
-	case 1:
+	case 1: {
 		time_integrator = RUNGE_KUTTA_5STAGE;
-		integrator_name.assign("RUNGE_KUTTA_5STAGE");
 		break;
+	}
 
-	case 2:
+	case 2: {
 		time_integrator = THETA_METHOD;
-		integrator_name.assign("THETA_METHOD");
 		break;
+	}
 
 	case 3:
 		time_integrator = EXPONENTIAL;
-		integrator_name.assign("EXPONENTIAL");
 		break;
 
-	case 4:
+	case 4: {
 		time_integrator = OTHER;
 		deal_integrator = FORWARD_EULER;
-		integrator_name.assign("FORWARD_EULER");
 		break;
+	}
 
-	case 5:
+	case 5: {
 		time_integrator = OTHER;
 		deal_integrator = RK_THIRD_ORDER;
-		integrator_name.assign("RK_THIRD_ORDER");
 		break;
+	}
 
 	case 6: {
 		time_integrator = OTHER;
 		deal_integrator = RK_CLASSIC_FOURTH_ORDER;
-		integrator_name.assign("RK_CLASSIC_FOURTH_ORDER");
 		break;
 	}
 	case 7: {
 		time_integrator = OTHER;
 		deal_integrator = BACKWARD_EULER;
-		integrator_name.assign("BACKWARD_EULER");
 		break;
 	}
 	case 8: {
 		time_integrator = OTHER;
 		deal_integrator = IMPLICIT_MIDPOINT;
-		integrator_name.assign("IMPLICIT_MIDPOINT");
 		break;
 	}
 	case 9: {
 		time_integrator = OTHER;
 		deal_integrator = CRANK_NICOLSON;
-		integrator_name.assign("CRANK_NICOLSON");
 		break;
 	}
 	case 10: {
 		time_integrator = OTHER;
 		deal_integrator = SDIRK_TWO_STAGES;
-		integrator_name.assign("SDIRK_TWO_STAGES");
 		break;
 	}
 	case 11: {
 		time_integrator = OTHER;
 		deal_integrator = HEUN_EULER;
-		integrator_name.assign("HEUN_EULER");
 		break;
 	}
 	case 12: {
 		time_integrator = OTHER;
 		deal_integrator = BOGACKI_SHAMPINE;
-		integrator_name.assign("BOGACKI_SHAMPINE");
 		break;
 	}
 	case 13: {
 		time_integrator = OTHER;
 		deal_integrator = DOPRI;
-		integrator_name.assign("DOPRI");
 		break;
 	}
 	case 14: {
 		time_integrator = OTHER;
 		deal_integrator = FEHLBERG;
-		integrator_name.assign("FEHLBERG");
 		break;
 	}
 	case 15: {
 		time_integrator = OTHER;
 		deal_integrator = CASH_KARP;
-		integrator_name.assign("CASH_KARP");
 		break;
 	}
 	default: {
@@ -214,6 +203,75 @@ void CFDSolverUtilities::get_integrator_by_id(size_t id,
 		break;
 	}
 	}
+	integrator_name.assign(get_integrator_name(time_integrator, deal_integrator));
+} /* get_integrator_by_id */
+
+std::string CFDSolverUtilities::get_integrator_name(
+		const TimeIntegratorName& time_integrator,
+		const DealIntegratorName& deal_integrator) {
+
+	switch (time_integrator) {
+	case RUNGE_KUTTA_5STAGE: {
+		return "RUNGE_KUTTA_5STAGE";
+	}
+	case THETA_METHOD: {
+		return "THETA_METHOD";
+	}
+	case EXPONENTIAL: {
+		return "EXPONENTIAL";
+	}
+	case OTHER: {
+		switch (deal_integrator) {
+		case FORWARD_EULER: {
+			return "FORWARD_EULER";
+		}
+		case RK_THIRD_ORDER: {
+			return "RK_THIRD_ORDER";
+		}
+		case RK_CLASSIC_FOURTH_ORDER: {
+			return "RK_CLASSIC_FOURTH_ORDER";
+		}
+		case BACKWARD_EULER: {
+			return "BACKWARD_EULER";
+		}
+		case IMPLICIT_MIDPOINT: {
+			return "IMPLICIT_MIDPOINT";
+		}
+		case CRANK_NICOLSON: {
+			return "CRANK_NICOLSON";
+		}
+		case SDIRK_TWO_STAGES: {
+			return "SDIRK_TWO_STAGES";
+		}
+		case HEUN_EULER: {
+			return "HEUN_EULER";
+		}
+		case BOGACKI_SHAMPINE: {
+			return "BOGACKI_SHAMPINE";
+		}
+		case DOPRI: {
+			return "DOPRI";
+		}
+		case FEHLBERG: {
+			return "FEHLBERG";
+		}
+		case CASH_KARP: {
+			return "CASH_KARP";
+		}
+		case NONE: {
+			return "";
+		}
+		}
+		break;
+	}
+	default: {
+		LOG(ERROR)
+				<< "Time integrator not set properly in CFDSolverUtilities::get_integrator_by_id()."
+				<< endl;
+		break;
+	}
+	}
+	return "";
 } /* get_integrator_by_id */
 
 boost::shared_ptr<Stencil> CFDSolverUtilities::make_stencil(size_t d, size_t q,

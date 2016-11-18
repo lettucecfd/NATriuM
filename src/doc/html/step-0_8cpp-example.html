@@ -48,7 +48,7 @@ Basis tutorial: Lid-driven cavity in 2D</a></h2>
 <li>CFDSolver: The CFDSolver is the central class in the NATriuM framework. It creates all necessary classes and runs the simulation.</li>
 </ul>
 <p>We have the following includes that are part of every simulation script in NATriuM: First, we need stdlib.h to access the environment variable NATRIUM_HOME and ssteam to concatenate strings to build the path of the output directory. Second, the three classes mentioned above are implemented in <a class="el" href="CFDSolver_8h.html" title="CFD Solver, specified for Benchmark applications.">CFDSolver.h</a>, <a class="el" href="SolverConfiguration_8h.html" title="Calculation of physical properties.">SolverConfiguration.h</a>, and <a class="el" href="ProblemDescription_8h.html" title="Abstract class for the description of a CFD problem. The description includes the...">ProblemDescription.h</a>. Third, <a class="el" href="BasicNames_8h.html" title="Definition of the basic typedefs and names used in the Code;.">BasicNames.h</a> contains some general typedefs used throughout NATriuM and automatically enables using certain std and boost types and functions (e.g. boost::shared_ptr). It has to be included in basically every file that is part of or uses NATriuM. Finally, we include <a class="el" href="LidDrivenCavity2D_8h.html" title="Lid-driven cavity with three static walls and one moving wall.">LidDrivenCavity2D.h</a>. It contains the class LidDrivenCavity2D, which defines the concrete flow we want to simulate.  <a class="el" href="step-0_8cpp.html">step-0.cpp</a> Includes</p>
-<p>We include the namespace natrium to access all classes and functions directly.  <a class="el" href="step-0_8cpp.html">step-0.cpp</a> Namespace</p>
+<p>We include the namespace <a class="el" href="namespacenatrium.html" title="Definition of Grad&#39;s function to reconstruct missing distribution functions,...">natrium</a> to access all classes and functions directly.  <a class="el" href="step-0_8cpp.html">step-0.cpp</a> Namespace</p>
 <p>The Main function of the program begins with defining the Reynolds and Mach number. Note that in the LBM context the Mach number must not exceed a limit of approximately 0.3. On the other hand the time step is proportional to the Mach number, meaning that for Ma &lt;&lt; 0.1 the runtime of the code will grow. Usually, Ma is set roughly to 0.1. (On the contrary, the Reynolds number does not influence the time step size directly.)  <a class="el" href="step-0_8cpp.html">step-0.cpp</a> Main function</p>
 <p>Next, the discretization is defined. As the grid generation in the easier geometries is done inside deal.II, we need to specify the refinement level. Refinement level 4 will mean that our quadratic domain will have 2^4 * 2^4 = 256 cells. See LidDrivenCavity2D::makeGrid() for details on the grid generation. The next thing to specify is the order of the finite element, often referred to as p. p=1 stands for linear shape functions (the finite elments), while greater values of p stand for higher order polynomials. The choice of p has a tremendous impact on the accuracy and runtime of the program. Great values of p can lead to very accurate solutions (sometimes even exponential convergence in space!) but they require tiny timesteps (</p>
 <p class="formulaDsp">
@@ -99,7 +99,7 @@ Basis tutorial: Lid-driven cavity in 2D</a></h2>
         <span class="keywordtype">size_t</span> orderOfFiniteElement = 5;
 
         <span class="comment">// set temporal discretization</span>
-        <span class="keywordtype">double</span> dt = 0.0001;
+        <span class="keywordtype">double</span> CFL = 0.4;
 
         <span class="comment">// set Problem so that the right Re and Ma are achieved</span>
         <span class="keyword">const</span> <span class="keywordtype">double</span> U = 1 / sqrt(3) * Ma;
@@ -111,11 +111,10 @@ Basis tutorial: Lid-driven cavity in 2D</a></h2>
         boost::shared_ptr&lt;SolverConfiguration&gt; configuration = boost::make_shared&lt;
                         <a name="_a1"></a><a class="code" href="classnatrium_1_1SolverConfiguration.html" title="Class that stores the configuration for a CFD simulation based on the Discrete Boltzmann...">SolverConfiguration</a>&gt;();
         configuration-&gt;setOutputDirectory(dirname.str());
-        configuration-&gt;setRestartAtLastCheckpoint(<span class="keyword">false</span>);
         configuration-&gt;setOutputCheckpointInterval(1000);
         configuration-&gt;setOutputSolutionInterval(100);
         configuration-&gt;setSedgOrderOfFiniteElement(orderOfFiniteElement);
-        configuration-&gt;setTimeStepSize(dt);
+        configuration-&gt;setCFL(CFL);
         configuration-&gt;setNumberOfTimeSteps(200000);
 
         <span class="comment">// make problem and solver objects</span>
@@ -124,7 +123,7 @@ Basis tutorial: Lid-driven cavity in 2D</a></h2>
         boost::shared_ptr&lt;ProblemDescription&lt;2&gt; &gt; ldCavityProblem = lidDrivenCavity;
 
         <a name="_a3"></a><a class="code" href="classnatrium_1_1CFDSolver.html" title="The central class for the CFD simulation based on the DBE.">CFDSolver&lt;2&gt;</a> solver(configuration, ldCavityProblem);
-        solver.<a name="a4"></a><a class="code" href="classnatrium_1_1CFDSolver.html#a11f503bc3f3c306b240874c74a38025b" title="run CFD solver">run</a>();
+        solver.<a name="a4"></a><a class="code" href="classnatrium_1_1CFDSolver.html#a99a86f8369ea0866e35d88fd4ed70816" title="run CFD solver">run</a>();
 
         pout &lt;&lt; <span class="stringliteral">&quot;NATriuM step-0 terminated.&quot;</span> &lt;&lt; endl;
 
@@ -137,7 +136,7 @@ Basis tutorial: Lid-driven cavity in 2D</a></h2>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -146,7 +145,7 @@ Basis tutorial: Lid-driven cavity in 2D</a></h2>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

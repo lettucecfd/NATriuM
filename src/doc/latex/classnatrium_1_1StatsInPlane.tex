@@ -1,0 +1,65 @@
+\hypertarget{classnatrium_1_1StatsInPlane}{
+\section{natrium::StatsInPlane$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1StatsInPlane}\index{natrium::StatsInPlane@{natrium::StatsInPlane}}
+}
+
+
+This class calculates the turbulence statistics in planes parallel to the wall.  
+
+
+{\ttfamily \#include $<$TurbulenceStats.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1StatsInPlane_aea872f2aa9980983764aed1866f53903}{StatsInPlane} (size\_\-t wall\_\-normal\_\-direction, double wall\_\-normal\_\-coordinate, const vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&u)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1StatsInPlane_aa6e53875ea989769eacbbb80bfd41fac}{updatePlaneIndices} (const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&support\_\-points, const dealii::IndexSet \&locally\_\-owned, double tolerance)
+\begin{DoxyCompactList}\small\item\em Update the index set that stores all indices belonging to the plane. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1StatsInPlane_a648a470e8c462c10c9915a7a920c50ef}{calculate} (vector$<$ double $>$ \&u\_\-average, vector$<$ double $>$ \&u\_\-rms)
+\begin{DoxyCompactList}\small\item\em Calculate turbulence statistics over the plane. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::StatsInPlane$<$ dim $>$}
+
+This class calculates the turbulence statistics in planes parallel to the wall. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1StatsInPlane_aea872f2aa9980983764aed1866f53903}{
+\index{natrium::StatsInPlane@{natrium::StatsInPlane}!StatsInPlane@{StatsInPlane}}
+\index{StatsInPlane@{StatsInPlane}!natrium::StatsInPlane@{natrium::StatsInPlane}}
+\subsubsection[{StatsInPlane}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::StatsInPlane}$<$ dim $>$::{\bf StatsInPlane} (size\_\-t {\em wall\_\-normal\_\-direction}, \/  double {\em wall\_\-normal\_\-coordinate}, \/  const vector$<$ {\bf distributed\_\-vector} $>$ \& {\em u})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1StatsInPlane_aea872f2aa9980983764aed1866f53903}
+
+
+constructor 
+\begin{DoxyParams}{Parameters}
+\item[{\em wall\_\-normal\_\-direction}]0,1,2 for x,y,z; respectively \item[{\em wall\_\-normal\_\-coordinate}]the value of the wall-\/normal coordinate which defines the plane (e.g. y=0.01). \item[{\em u}]reference to the velocity vector \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1StatsInPlane_a648a470e8c462c10c9915a7a920c50ef}{
+\index{natrium::StatsInPlane@{natrium::StatsInPlane}!calculate@{calculate}}
+\index{calculate@{calculate}!natrium::StatsInPlane@{natrium::StatsInPlane}}
+\subsubsection[{calculate}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::StatsInPlane}$<$ dim $>$::calculate (vector$<$ double $>$ \& {\em u\_\-average}, \/  vector$<$ double $>$ \& {\em u\_\-rms})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1StatsInPlane_a648a470e8c462c10c9915a7a920c50ef}
+
+
+Calculate turbulence statistics over the plane. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\rightarrow$} {\em u\_\-average}]Vector that stores U,V (and W). Is automatically resized to dim. \item[\mbox{$\rightarrow$} {\em u\_\-average}]Vector that stores u',v' (and w'). Is automatically resized to dim. \end{DoxyParams}
+\hypertarget{classnatrium_1_1StatsInPlane_aa6e53875ea989769eacbbb80bfd41fac}{
+\index{natrium::StatsInPlane@{natrium::StatsInPlane}!updatePlaneIndices@{updatePlaneIndices}}
+\index{updatePlaneIndices@{updatePlaneIndices}!natrium::StatsInPlane@{natrium::StatsInPlane}}
+\subsubsection[{updatePlaneIndices}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::StatsInPlane}$<$ dim $>$::updatePlaneIndices (const map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \& {\em support\_\-points}, \/  const dealii::IndexSet \& {\em locally\_\-owned}, \/  double {\em tolerance})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1StatsInPlane_aa6e53875ea989769eacbbb80bfd41fac}
+
+
+Update the index set that stores all indices belonging to the plane. 
+\begin{DoxyParams}{Parameters}
+\item[{\em support\_\-points}]Reference to the map of support points that connects dof indices and grid points. \item[{\em locally\_\-owned}]index set that contains the indices belonging to locally owned degrees of freedom \item[{\em tolerance}]Tolerance to compare prescribed wall normal coordinate with grid point coordinate \end{DoxyParams}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/TurbulenceStats.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/TurbulenceStats.cpp\end{DoxyCompactItemize}

@@ -314,7 +314,7 @@ public:
 	}
 
 
-	const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
+	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
 

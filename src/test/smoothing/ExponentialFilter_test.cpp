@@ -23,7 +23,7 @@
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "natrium/advection/SEDGMinLee.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(ExponentialFilter_test)
 
@@ -200,4 +200,3 @@ BOOST_AUTO_TEST_CASE(ExponentialFilter_TestFiltering_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

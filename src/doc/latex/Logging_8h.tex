@@ -16,6 +16,13 @@ Definition of logging output streams.
 \item 
 class \hyperlink{classnatrium_1_1Logging}{natrium::Logging}
 \begin{DoxyCompactList}\small\item\em this class is responsible for output streams to the command line and log file \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
@@ -36,10 +43,10 @@ enum {\bfseries LogLevel} \{ \par
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-Logging \& \hyperlink{namespacenatrium_ad2838e1bab766ae66a68aa1ac6f2f7cb}{natrium::LOG} (LogLevel level)
+Logging \& \hyperlink{namespacenatrium_a0590621d19e4629e6afb5e7365f9f331}{natrium::LOG} (LogLevel level)
 \begin{DoxyCompactList}\small\item\em can be used like \char`\"{}LOG(ERROR) $<$$<$ ...;\char`\"{}, to write output to the log file and command line \item\end{DoxyCompactList}\item 
-Logging \& \hyperlink{namespacenatrium_addbc7112675b740db86c1c775fce7b1d}{natrium::LOGGER} ()
-\begin{DoxyCompactList}\small\item\em is used to access the default logging instance m\_\-LOGGER; e.g. LOGGER().setLogFile(...) \item\end{DoxyCompactList}\item 
+Logging \& \hyperlink{namespacenatrium_a0d879cf404d8a12fc978ab97d33758b4}{natrium::LOGGER} ()
+\begin{DoxyCompactList}\small\item\em is used to access the default logging instance m\_\-LOGGER; e.g. \hyperlink{namespacenatrium_a0d879cf404d8a12fc978ab97d33758b4}{LOGGER()}.setLogFile(...) \item\end{DoxyCompactList}\item 
 \hypertarget{namespacenatrium_acdc05b9a9596bba608cb1af116a15538}{
 const std::string {\bfseries natrium::currentDateTime} ()}
 \label{namespacenatrium_acdc05b9a9596bba608cb1af116a15538}

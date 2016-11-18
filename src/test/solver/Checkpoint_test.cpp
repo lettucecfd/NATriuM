@@ -17,8 +17,12 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 #include "natrium/advection/SEDGMinLee.h"
+#include "natrium/stencils/D2Q9.h"
+#include "natrium/solver/SolverConfiguration.h"
+#include "natrium/solver/CFDSolver.h"
 
-namespace natrium {
+
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(Checkpoint_test)
 
@@ -257,5 +261,3 @@ BOOST_AUTO_TEST_CASE(Checkpoint_ResumeOtherMa) {
 } /* Checkpoint_ResumeOtherMa */
 
 BOOST_AUTO_TEST_SUITE_END()
-
-} /* namespace natrium */

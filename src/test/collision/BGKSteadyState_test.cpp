@@ -5,7 +5,6 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "natrium/stencils/D2Q9.h"
 #include "natrium/collision/BGKSteadyState.h"
 
 #include <math.h>
@@ -13,13 +12,17 @@
 
 #include "boost/test/unit_test.hpp"
 
+#include "deal.II/fe/fe_dgq.h"
+
 #include "natrium/utilities/Math.h"
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/stencils/D2Q9.h"
 
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
+
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(BGKSteadyState_test)
 
@@ -422,6 +425,4 @@ BOOST_AUTO_TEST_CASE(BGKSteadyState_collideAll_test) {
 }/* BGKSteadyState_collideAll_test*/
 
 BOOST_AUTO_TEST_SUITE_END()
-
-} /* namespace natrium */
 

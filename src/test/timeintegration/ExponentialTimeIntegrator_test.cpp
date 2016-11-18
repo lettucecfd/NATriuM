@@ -15,7 +15,7 @@
 #include "natrium/timeintegration/ExponentialTimeIntegrator.h"
 #include "natrium/benchmarks/AdvectionBenchmark.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(ExponentialTimeIntegrator_test)
 
@@ -230,4 +230,3 @@ BOOST_AUTO_TEST_CASE(ExponentialTimeIntegrator_MPI_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

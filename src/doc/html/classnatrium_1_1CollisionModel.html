@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1CollisionModel.html">CollisionModel</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1CollisionModel.html">CollisionModel</a>
   </div>
 </div>
 <div class="contents">
@@ -59,11 +59,17 @@ Inheritance diagram for natrium::CollisionModel:</div>
  <div class="center">
   <img src="classnatrium_1_1CollisionModel.gif" usemap="#natrium::CollisionModel_map" alt=""/>
   <map id="natrium::CollisionModel_map" name="natrium::CollisionModel_map">
-<area href="classnatrium_1_1BGK.html" alt="natrium::BGK" shape="rect" coords="324,56,530,80"/>
-<area href="classnatrium_1_1BGKPseudopotential.html" alt="natrium::BGKPseudopotential" shape="rect" coords="0,112,206,136"/>
-<area href="classnatrium_1_1BGKStandard.html" alt="natrium::BGKStandard" shape="rect" coords="216,112,422,136"/>
-<area href="classnatrium_1_1BGKStandardTransformed.html" alt="natrium::BGKStandardTransformed" shape="rect" coords="432,112,638,136"/>
-<area href="classnatrium_1_1BGKSteadyState.html" alt="natrium::BGKSteadyState" shape="rect" coords="648,112,854,136"/>
+<area href="classnatrium_1_1BGK.html" alt="natrium::BGK" shape="rect" coords="0,56,216,80"/>
+<area href="classnatrium_1_1MRT.html" alt="natrium::MRT" shape="rect" coords="452,56,668,80"/>
+<area href="classnatrium_1_1BGKIncompressible.html" alt="natrium::BGKIncompressible" shape="rect" coords="226,112,442,136"/>
+<area href="classnatrium_1_1BGKMultistep.html" alt="natrium::BGKMultistep" shape="rect" coords="226,168,442,192"/>
+<area href="classnatrium_1_1BGKPseudopotential.html" alt="natrium::BGKPseudopotential&lt; dim &gt;" shape="rect" coords="226,224,442,248"/>
+<area href="classnatrium_1_1BGKStandard.html" alt="natrium::BGKStandard" shape="rect" coords="226,280,442,304"/>
+<area href="classnatrium_1_1BGKStandardTransformed.html" alt="natrium::BGKStandardTransformed" shape="rect" coords="226,336,442,360"/>
+<area href="classnatrium_1_1BGKSteadyState.html" alt="natrium::BGKSteadyState" shape="rect" coords="226,392,442,416"/>
+<area href="classnatrium_1_1KBCCentral.html" alt="natrium::KBCCentral" shape="rect" coords="678,112,894,136"/>
+<area href="classnatrium_1_1KBCStandard.html" alt="natrium::KBCStandard" shape="rect" coords="678,168,894,192"/>
+<area href="classnatrium_1_1MRTStandard.html" alt="natrium::MRTStandard" shape="rect" coords="678,224,894,248"/>
 </map>
  </div>
 </div>
@@ -71,25 +77,45 @@ Inheritance diagram for natrium::CollisionModel:</div>
 <p><a href="classnatrium_1_1CollisionModel-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4443d1f7ca0cc11ef6d5cc340c1076c9"></a><!-- doxytag: member="natrium::CollisionModel::CollisionModel" ref="a4443d1f7ca0cc11ef6d5cc340c1076c9" args="(const boost::shared_ptr&lt; Stencil &gt; stencil)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>CollisionModel</b> (const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a443734919886ea5880be3bba1257758d"></a><!-- doxytag: member="natrium::CollisionModel::CollisionModel" ref="a443734919886ea5880be3bba1257758d" args="(const boost::shared_ptr&lt; Stencil &gt; stencil, ForceType force_type=NO_FORCING)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>CollisionModel</b> (const boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, ForceType force_type=NO_FORCING)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac6c6d95633d62209a04528af86807025"></a><!-- doxytag: member="natrium::CollisionModel::collideAll" ref="ac6c6d95633d62209a04528af86807025" args="(DistributionFunctions &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const =0" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>collideAll</b> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, distributed_vector &amp;densities, vector&lt; distributed_vector &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0df0674bc26821d037323ac184fb52b"></a><!-- doxytag: member="natrium::CollisionModel::setTimeStep" ref="aa0df0674bc26821d037323ac184fb52b" args="(double dt)=0" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setTimeStep</b> (double dt)=0</td></tr>
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>collideAll</b> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;densities, vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;velocities, const dealii::IndexSet &amp;locally_owned_dofs, bool inInitializationProcedure=false) const =0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1ec1368662524bb87006f9038b4972d"></a><!-- doxytag: member="natrium::CollisionModel::setTimeStep" ref="ab1ec1368662524bb87006f9038b4972d" args="(double dt)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setTimeStep</b> (double dt)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac10edd12e081a6eb48a36568f1bc1c0f"></a><!-- doxytag: member="natrium::CollisionModel::getStencil" ref="ac10edd12e081a6eb48a36568f1bc1c0f" args="() const " -->
 const boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStencil</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#ae1c879c87ac210a227a8e3da2d0ac385">calculateDensity</a> (const vector&lt; double &gt; &amp;distributions) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">calculate macroscopic density  <a href="#ae1c879c87ac210a227a8e3da2d0ac385"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual numeric_vector&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a90428f4c29916641de3de872803dde0f">calculateVelocity</a> (const vector&lt; double &gt; &amp;distributions) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a90428f4c29916641de3de872803dde0f">calculateVelocity</a> (const vector&lt; double &gt; &amp;distributions) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">calculate macroscopic velocity  <a href="#a90428f4c29916641de3de872803dde0f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a667f0e36da1bfb1c5102adb8f3afdcde">calculateVelocity</a> (const vector&lt; double &gt; &amp;distributions, const double rho, numeric_vector &amp;u) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a667f0e36da1bfb1c5102adb8f3afdcde">calculateVelocity</a> (const vector&lt; double &gt; &amp;distributions, const double rho, <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;u) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">calculate macroscopic velocity; saves the double calculation of the density  <a href="#a667f0e36da1bfb1c5102adb8f3afdcde"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a88b382d63da80e950bc58e8afad769a6">getEquilibriumDistribution</a> (size_t i, const numeric_vector &amp;u, const double rho=1) const =0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a88b382d63da80e950bc58e8afad769a6">getEquilibriumDistribution</a> (size_t i, const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;u, const double rho=1) const =0</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">virtual function for the calculation of the equilibrium distribution  <a href="#a88b382d63da80e950bc58e8afad769a6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a296474961c4501bc23228be1d30ebf82">getEquilibriumDistributions</a> (vector&lt; double &gt; &amp;feq, const numeric_vector &amp;u, const double rho=1) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CollisionModel.html#a296474961c4501bc23228be1d30ebf82">getEquilibriumDistributions</a> (vector&lt; double &gt; &amp;feq, const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;u, const double rho=1) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function for the calculation of all equilibrium distributions  <a href="#a296474961c4501bc23228be1d30ebf82"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a44bababd58cae1fea650fe2bd86555b5"></a><!-- doxytag: member="natrium::CollisionModel::setExternalForce" ref="a44bababd58cae1fea650fe2bd86555b5" args="(const ConstantExternalForce&lt; 2 &gt; &amp;external_force)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setExternalForce</b> (const <a class="el" href="classnatrium_1_1ConstantExternalForce.html">ConstantExternalForce</a>&lt; 2 &gt; &amp;external_force)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae899a80c7dcfbbdb68dd6b4e4fff5a49"></a><!-- doxytag: member="natrium::CollisionModel::setExternalForce" ref="ae899a80c7dcfbbdb68dd6b4e4fff5a49" args="(const ConstantExternalForce&lt; 3 &gt; &amp;external_force)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setExternalForce</b> (const <a class="el" href="classnatrium_1_1ConstantExternalForce.html">ConstantExternalForce</a>&lt; 3 &gt; &amp;external_force)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6806e1494a2bbb03c27b146261af408b"></a><!-- doxytag: member="natrium::CollisionModel::getForceType" ref="a6806e1494a2bbb03c27b146261af408b" args="() const " -->
+ForceType&nbsp;</td><td class="memItemRight" valign="bottom"><b>getForceType</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a366ae27de1bf045fd9bf0159e251054a"></a><!-- doxytag: member="natrium::CollisionModel::getForceX" ref="a366ae27de1bf045fd9bf0159e251054a" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getForceX</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1282b42d5c270b9f031def96dbe15866"></a><!-- doxytag: member="natrium::CollisionModel::getForceY" ref="a1282b42d5c270b9f031def96dbe15866" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getForceY</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60fa9f8c1614789027c553264524fb5e"></a><!-- doxytag: member="natrium::CollisionModel::getForceZ" ref="a60fa9f8c1614789027c553264524fb5e" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getForceZ</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acff518f0353a95dfbf3ddeba2a7ed7f6"></a><!-- doxytag: member="natrium::CollisionModel::setForceType" ref="acff518f0353a95dfbf3ddeba2a7ed7f6" args="(ForceType forceType)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setForceType</b> (ForceType forceType)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa2a154a99039deb620501ef2e525089f"></a><!-- doxytag: member="natrium::CollisionModel::getTimeStep" ref="aa2a154a99039deb620501ef2e525089f" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getTimeStep</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4ee445caf75fff704811e29fc46f431e"></a><!-- doxytag: member="natrium::CollisionModel::getViscosity" ref="a4ee445caf75fff704811e29fc46f431e" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getViscosity</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43cfd1efe035afb6f170b7b05c18113a"></a><!-- doxytag: member="natrium::CollisionModel::setViscosity" ref="a43cfd1efe035afb6f170b7b05c18113a" args="(double viscosity)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setViscosity</b> (double viscosity)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Abstract collision model. Required to have a common parent of all template specializations of Collision. </p>
@@ -142,7 +168,7 @@ const boost::shared_ptr<br class="typebreak"/>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">numeric_vector &amp;&nbsp;</td>
+          <td class="paramtype"><a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>u</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -172,7 +198,7 @@ const boost::shared_ptr<br class="typebreak"/>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual numeric_vector natrium::CollisionModel::calculateVelocity </td>
+          <td class="memname">virtual <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> natrium::CollisionModel::calculateVelocity </td>
           <td>(</td>
           <td class="paramtype">const vector&lt; double &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>distributions</em></td>
@@ -207,7 +233,7 @@ const boost::shared_ptr<br class="typebreak"/>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const numeric_vector &amp;&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>u</em>, </td>
         </tr>
         <tr>
@@ -237,7 +263,7 @@ const boost::shared_ptr<br class="typebreak"/>
 <dl class="return"><dt><b>Returns:</b></dt><dd>value of the equilibrium distribution </dd></dl>
 <dl class="note"><dt><b>Note:</b></dt><dd>The calculation can surely be done more efficiently by passing different arguments, e.g. u*u or u/(c^2) </dd></dl>
 
-<p>Implemented in <a class="el" href="classnatrium_1_1BGKPseudopotential.html#a63ce98e44a07466963fb123cac9dd905">natrium::BGKPseudopotential</a>, <a class="el" href="classnatrium_1_1BGKStandard.html#a3d45ef2fe5536bf14914f99297477754">natrium::BGKStandard</a>, <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#a870465cc026f92c8ffba899af6f95634">natrium::BGKStandardTransformed</a>, and <a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">natrium::BGKSteadyState</a>.</p>
+<p>Implemented in <a class="el" href="classnatrium_1_1BGKIncompressible.html#a26dd8954261b04f8383ca9d37f5ac8c0">natrium::BGKIncompressible</a>, <a class="el" href="classnatrium_1_1BGKMultistep.html#a034cd475974bcce0db64e52245efd91d">natrium::BGKMultistep</a>, <a class="el" href="classnatrium_1_1BGKPseudopotential.html#a366ccd417ca4ad5fa37ce0572e0d6fe4">natrium::BGKPseudopotential&lt; dim &gt;</a>, <a class="el" href="classnatrium_1_1BGKStandard.html#a3d45ef2fe5536bf14914f99297477754">natrium::BGKStandard</a>, <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#a870465cc026f92c8ffba899af6f95634">natrium::BGKStandardTransformed</a>, <a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">natrium::BGKSteadyState</a>, <a class="el" href="classnatrium_1_1KBCStandard.html#a1dac2deaafb93027bf168887dd2e002d">natrium::KBCStandard</a>, and <a class="el" href="classnatrium_1_1MRT.html#a3f96915f9f67680f4a1d7b952e70be55">natrium::MRT</a>.</p>
 
 </div>
 </div>
@@ -254,7 +280,7 @@ const boost::shared_ptr<br class="typebreak"/>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const numeric_vector &amp;&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>u</em>, </td>
         </tr>
         <tr>
@@ -295,7 +321,7 @@ const boost::shared_ptr<br class="typebreak"/>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -304,7 +330,7 @@ const boost::shared_ptr<br class="typebreak"/>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

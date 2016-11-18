@@ -12,6 +12,7 @@
 #include <set>
 #include <map>
 
+#include <deal.II/grid/tria.h>
 #include <deal.II/base/config.h>
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/table.h>
@@ -28,13 +29,12 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria_iterator.h>
 
-#include "../problemdescription/PeriodicBoundary.h"
+//#include "../boundaries/PeriodicBoundary.h"
 
 namespace natrium {
 
 template<size_t dim, size_t spacedim = dim>
 using FacePair = dealii::GridTools::PeriodicFacePair< dealii::TriaIterator<dealii::CellAccessor<dim, spacedim> > >;
-
 
 /**
  * @short	A std::map that maps cells to face pairs
@@ -42,15 +42,14 @@ using FacePair = dealii::GridTools::PeriodicFacePair< dealii::TriaIterator<deali
  */
 template<size_t dim, size_t spacedim = dim>
 using PeriodicCellMap = std::map<
-			dealii::TriaIterator< dealii::CellAccessor<dim, spacedim> >,
-			FacePair<dim, spacedim>
-	>;
+dealii::TriaIterator< dealii::CellAccessor<dim, spacedim> >,
+FacePair<dim, spacedim>
+>;
 
 // forward declarations
 class PeriodicBoundaryNotPossible;
-template <size_t dim>
+template<size_t dim>
 class BoundaryCollection;
-
 
 /** @short
  * some extensions to deal.ii
@@ -60,7 +59,6 @@ namespace DealIIExtensions {
 //DEAL_II_NAMESPACE_OPEN
 
 using namespace dealii;
-
 
 /**
  * @short Like dealii::DoFTools::make_flux_sparsity_pattern but does only create
@@ -83,7 +81,6 @@ make_sparser_flux_sparsity_pattern(const DH &dof, SparsityPattern &sparsity,
 				BoundaryCollection<DH::dimension>(),
 		FEFaceValues<DH::dimension>* fe_face = NULL);
 
-
 /**
  *  @short 	Gathers cell pairs at a periodic boundary. This function starts at the coarsest level and
  *  		recursively visits the subcells of boundary cells. At the active level, cell pairs are added
@@ -100,10 +97,10 @@ make_sparser_flux_sparsity_pattern(const DH &dof, SparsityPattern &sparsity,
  */
 template<typename DH>
 void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
-		const typename identity<typename DH::cell_iterator>::type &cell_2, size_t face_nr_1,
-		size_t face_nr_2, PeriodicCellMap<DH::dimension>& cell_map,
-		const bool face_orientation, const bool face_flip,
-		const bool face_rotation);
+		const typename identity<typename DH::cell_iterator>::type &cell_2,
+		size_t face_nr_1, size_t face_nr_2,
+		PeriodicCellMap<DH::dimension>& cell_map, const bool face_orientation,
+		const bool face_flip, const bool face_rotation);
 
 /**
  * @short	High-level version of the first function, starting from PeriodicFacePairs
@@ -132,8 +129,7 @@ void make_periodicity_map_dg(
  * 			   on the active levels
  */
 template<typename DH>
-void make_periodicity_map_dg(const DH &dof_handler,
-		size_t b_id1, size_t b_id2,
+void make_periodicity_map_dg(const DH &dof_handler, size_t b_id1, size_t b_id2,
 		const int direction, PeriodicCellMap<DH::dimension>& cell_map);
 
 /**
@@ -156,11 +152,27 @@ void extract_dofs_with_support_on_boundary(const DH &dof_handler,
 		const ComponentMask &component_mask, std::vector<bool> &selected_dofs,
 		const std::set<types::boundary_id> &boundary_ids);
 
+/**
+ * @short Set boundary ids for all faces that have their vertices on the hyperplane x[component]=value
+ * @param mesh the mesh
+ * @param component 0 for x, 1 for y, 2 for z
+ * @param value the component value
+ * @param boundary_id the boundary id that is assigned to the faces that are in the hyperpalen
+ * @param tol tolerance for comparison with value
+ *
+ */
+template<size_t dim>
+void set_boundary_ids_at_hyperplane(dealii::Triangulation<dim>& mesh,
+		 unsigned int component, double value, size_t boundary_id, double tol = 1e-10);
+
+
 //DEAL_II_NAMESPACE_CLOSE
 
 } /* namespace DealIIExtensions */
 
 } /* namespace natrium */
+
+
 
 #endif /* DEALIIEXTENSIONS_H_ */
 

@@ -1,0 +1,90 @@
+\hypertarget{classnatrium_1_1Checkpoint}{
+\section{natrium::Checkpoint$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1Checkpoint}\index{natrium::Checkpoint@{natrium::Checkpoint}}
+}
+
+
+A class describing the checkpoint.  
+
+
+{\ttfamily \#include $<$Checkpoint.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1Checkpoint_a8d5798dea2e38acce751dd1194d76c27}{Checkpoint} (size\_\-t iteration, boost::filesystem::path checkpoint\_\-dir)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classnatrium_1_1Checkpoint_a43f7d305056ef5eab7a2efea2cdaebe5}{exists} ()
+\begin{DoxyCompactList}\small\item\em Function that determines whether the checkpoint files exist. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Checkpoint_a6c3eae90337f91948b4b17ad2456258c}{
+void \hyperlink{classnatrium_1_1Checkpoint_a6c3eae90337f91948b4b17ad2456258c}{write} (const Mesh$<$ dim $>$ \&mesh, const \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, const dealii::DoFHandler$<$ dim $>$ \&dof\_\-handler, const \hyperlink{structnatrium_1_1CheckpointStatus}{CheckpointStatus} \&status)}
+\label{classnatrium_1_1Checkpoint_a6c3eae90337f91948b4b17ad2456258c}
+
+\begin{DoxyCompactList}\small\item\em Write checkpoint to checkpoint directory. A checkpoint contains of three files:
+\begin{DoxyEnumerate}
+\item a .stat file that contains some information about the status of the simulations (iteration number, time, stencil scaling, ...).
+\item a .data file that contains the serialized data (mesh and distribution functions)
+\item a .data.info file that contains some deal.II information about the mesh, refinement etc. 
+\end{DoxyEnumerate}\item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Checkpoint_a71c6fb7d10a93b2dedc981fb9cdbb488}{
+void \hyperlink{classnatrium_1_1Checkpoint_a71c6fb7d10a93b2dedc981fb9cdbb488}{load} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ \&problem, \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}$<$ dim $>$ \&advection, \hyperlink{structnatrium_1_1CheckpointStatus}{CheckpointStatus} \&status)}
+\label{classnatrium_1_1Checkpoint_a71c6fb7d10a93b2dedc981fb9cdbb488}
+
+\begin{DoxyCompactList}\small\item\em Load checkpoint from file. A simulation can be resumed from a checkpoint if
+\begin{DoxyEnumerate}
+\item the mesh is exactly the same as in the previous simulation
+\item the mesh is a globally refined version of the previous simulation Restarts are also possible with arbitrary Mach number. Varying the order of finite elements is not supported, so far. 
+\end{DoxyEnumerate}\item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Checkpoint_a8391abf13cccdac1c3f2ad1ec4596541}{
+const boost::filesystem::path \& {\bfseries getDataFile} () const }
+\label{classnatrium_1_1Checkpoint_a8391abf13cccdac1c3f2ad1ec4596541}
+
+\item 
+\hypertarget{classnatrium_1_1Checkpoint_af2b2fe54ca03a86df627f10848df98c8}{
+const boost::filesystem::path \& {\bfseries getStatusFile} () const }
+\label{classnatrium_1_1Checkpoint_af2b2fe54ca03a86df627f10848df98c8}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1Checkpoint_a8ab0b57861be8c348efbe20bc5dec303}{
+static void {\bfseries loadFromDeprecatedCheckpointVersion} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}$<$ dim $>$ \&advection, string directory, \hyperlink{structnatrium_1_1CheckpointStatus}{CheckpointStatus} \&status)}
+\label{classnatrium_1_1Checkpoint_a8ab0b57861be8c348efbe20bc5dec303}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::Checkpoint$<$ dim $>$}
+
+A class describing the checkpoint. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1Checkpoint_a8d5798dea2e38acce751dd1194d76c27}{
+\index{natrium::Checkpoint@{natrium::Checkpoint}!Checkpoint@{Checkpoint}}
+\index{Checkpoint@{Checkpoint}!natrium::Checkpoint@{natrium::Checkpoint}}
+\subsubsection[{Checkpoint}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::Checkpoint}$<$ dim $>$::{\bf Checkpoint} (size\_\-t {\em iteration}, \/  boost::filesystem::path {\em checkpoint\_\-dir})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Checkpoint_a8d5798dea2e38acce751dd1194d76c27}
+
+
+Constructor. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em iteration}]The iteration number of the checkpoint (save or load). \item[\mbox{$\leftarrow$} {\em checkpoint\_\-dir}]The directory in which the checkpoint was saved. \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1Checkpoint_a43f7d305056ef5eab7a2efea2cdaebe5}{
+\index{natrium::Checkpoint@{natrium::Checkpoint}!exists@{exists}}
+\index{exists@{exists}!natrium::Checkpoint@{natrium::Checkpoint}}
+\subsubsection[{exists}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ bool {\bf natrium::Checkpoint}$<$ dim $>$::exists ()\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1Checkpoint_a43f7d305056ef5eab7a2efea2cdaebe5}
+
+
+Function that determines whether the checkpoint files exist. \begin{DoxyReturn}{Returns}
+boolean 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/Checkpoint.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/solver/Checkpoint.cpp\end{DoxyCompactItemize}

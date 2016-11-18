@@ -21,8 +21,6 @@
 #include "deal.II/base/quadrature_lib.h"
 
 #include "AdvectionOperator.h"
-#include "BoundaryHit.h"
-#include "SemiLagrangianBoundaryDoFHandler.h"
 #include "../problemdescription/BoundaryCollection.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
@@ -145,6 +143,17 @@ private:
 	vector<std::map<size_t, size_t> > map_q_index_to_facedofs() const;
 
 public:
+
+	struct LagrangianPathDestination {
+		size_t index;
+		size_t direction; // in case of a boundary: the outgoing direction
+		LagrangianPathDestination(size_t i, size_t alpha) :
+				index(i),  direction(alpha) {
+		}
+		LagrangianPathDestination(const LagrangianPathDestination& other):
+			index(other.index), direction(other.direction){
+		}
+	};
 
 	struct LagrangianPathTracker {
 		LagrangianPathTracker(size_t dof, size_t a, size_t b, const dealii::Point<dim>& x,
@@ -479,7 +488,7 @@ public:
 		return m_facedof_to_q_index;
 	}
 
-	const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
+	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
 
@@ -524,16 +533,6 @@ public:
 
 	virtual const boost::shared_ptr<Stencil>& getStencil() const {
 		return m_stencil;
-	}
-
-	dealii::Tensor<1, dim> vectorToTensor(const numeric_vector& v) const {
-		assert(v.size() == dim);
-		dealii::Tensor<1, dim> t;
-		t[0] = v(0);
-		t[1] = v(1);
-		if (dim == 3)
-			t[2] = v(2);
-		return t;
 	}
 
 	double getDeltaT() const {

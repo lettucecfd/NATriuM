@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1ExponentialTimeIntegrator.html">ExponentialTimeIntegrator</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1ExponentialTimeIntegrator.html">ExponentialTimeIntegrator</a>
   </div>
 </div>
 <div class="contents">
@@ -75,12 +75,12 @@ Inheritance diagram for natrium::ExponentialTimeIntegrator&lt; MATRIX, VECTOR &g
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad85e62117ec3dbfebfbccd6ad1135d8c"></a><!-- doxytag: member="natrium::ExponentialTimeIntegrator::~ExponentialTimeIntegrator" ref="ad85e62117ec3dbfebfbccd6ad1135d8c" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ExponentialTimeIntegrator.html#ad85e62117ec3dbfebfbccd6ad1135d8c">~ExponentialTimeIntegrator</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ExponentialTimeIntegrator.html#ae0a9cff9bdafab123016db72d1439ef8">step</a> (VECTOR &amp;f, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector, double t=0, double dt=0)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ExponentialTimeIntegrator.html#a656810a85c20b5f7eae422ee596fc340">step</a> (VECTOR &amp;f, const MATRIX &amp;systemMatrix, VECTOR &amp;systemVector, double t=0, double dt=0)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">make one time integration step on f: </p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\[ \frac{df}{dt} = Af+b \]" src="form_33.png"/>
 </p>
-<p>.  <a href="#ae0a9cff9bdafab123016db72d1439ef8"></a><br/></td></tr>
+<p>.  <a href="#a656810a85c20b5f7eae422ee596fc340"></a><br/></td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a7b68727897acae02ff025c39a56a4bf6"></a><!-- doxytag: member="natrium::ExponentialTimeIntegrator::ExponentialTimeIntegrator" ref="a7b68727897acae02ff025c39a56a4bf6" args="(double timeStepSize)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ExponentialTimeIntegrator</b> (double timeStepSize)</td></tr>
@@ -95,7 +95,7 @@ template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>ExponentialTimeIntegrator</b> (double timeStepSize, size_t)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a04d6a47d38318ab92ba4bd22b834d6c3"></a><!-- doxytag: member="natrium::ExponentialTimeIntegrator::getIndexSet" ref="a04d6a47d38318ab92ba4bd22b834d6c3" args="(const distributed_sparse_matrix &amp;m)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">dealii::IndexSet&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>getIndexSet</b> (const distributed_sparse_matrix &amp;m)</td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">dealii::IndexSet&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>getIndexSet</b> (const <a class="el" href="namespacenatrium.html#a860e92befb23651241c8b3d61a0d4034">distributed_sparse_matrix</a> &amp;m)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="aa58b4f252c2f19808f10102d60eed3a9"></a><!-- doxytag: member="natrium::ExponentialTimeIntegrator::getIndexSet" ref="aa58b4f252c2f19808f10102d60eed3a9" args="(const distributed_sparse_block_matrix &amp;m)" -->
 template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">dealii::IndexSet&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>getIndexSet</b> (const distributed_sparse_block_matrix &amp;m)</td></tr>
@@ -104,7 +104,7 @@ template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">dealii::IndexSet&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>getIndexSet</b> (const sparse_matrix &amp;m)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a0d43b0a3b92ced2b9b7755549742baa0"></a><!-- doxytag: member="natrium::ExponentialTimeIntegrator::getIndexSet" ref="a0d43b0a3b92ced2b9b7755549742baa0" args="(const sparse_block_matrix &amp;m)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">dealii::IndexSet&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>getIndexSet</b> (const sparse_block_matrix &amp;m)</td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">dealii::IndexSet&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>getIndexSet</b> (const <a class="el" href="namespacenatrium.html#acd63e25d68fdb74dd9b789bb2e836cb8">sparse_block_matrix</a> &amp;m)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;class MATRIX, class VECTOR&gt;<br/>
@@ -112,7 +112,7 @@ template&lt;&gt; </td></tr>
 
 <p>Exponential time integration scheme for the solution of f' = L*f, as used in Uga etal. (2012) Spectral-element discontinuous Galerkin lattice Boltzmann simulation of flow past two cylinders in tandem with an exponential time integrator, CMWA 65 pp. 239-251. </p>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="ae0a9cff9bdafab123016db72d1439ef8"></a><!-- doxytag: member="natrium::ExponentialTimeIntegrator::step" ref="ae0a9cff9bdafab123016db72d1439ef8" args="(VECTOR &amp;f, const MATRIX &amp;systemMatrix, const VECTOR &amp;systemVector, double t=0, double dt=0)" -->
+<a class="anchor" id="a656810a85c20b5f7eae422ee596fc340"></a><!-- doxytag: member="natrium::ExponentialTimeIntegrator::step" ref="a656810a85c20b5f7eae422ee596fc340" args="(VECTOR &amp;f, const MATRIX &amp;systemMatrix, VECTOR &amp;systemVector, double t=0, double dt=0)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -133,7 +133,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VECTOR &amp;&nbsp;</td>
+          <td class="paramtype">VECTOR &amp;&nbsp;</td>
           <td class="paramname"> <em>systemVector</em>, </td>
         </tr>
         <tr>
@@ -175,7 +175,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 <dl class="return"><dt><b>Returns:</b></dt><dd>new global time </dd></dl>
 <dl class="note"><dt><b>Note:</b></dt><dd>fully virtual method. Overloaded by subclasses. </dd></dl>
 
-<p>Implements <a class="el" href="classnatrium_1_1TimeIntegrator.html#a1c438e41d183d172d524aa5dc97785fb">natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;</a>.</p>
+<p>Implements <a class="el" href="classnatrium_1_1TimeIntegrator.html#a0237ebbaf737c7d3278777fb08007e99">natrium::TimeIntegrator&lt; MATRIX, VECTOR &gt;</a>.</p>
 
 </div>
 </div>
@@ -189,7 +189,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -198,7 +198,7 @@ template&lt;class MATRIX , class VECTOR &gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

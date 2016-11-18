@@ -24,7 +24,7 @@
 
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 // is now an integration test
 
@@ -199,4 +199,3 @@ namespace natrium {
 //
 //BOOST_AUTO_TEST_SUITE_END()
 
-}

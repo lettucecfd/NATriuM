@@ -1,4 +1,14 @@
 
+If you have trouble during the installation (which is not unlikely), contact the developers via the Google group natrium-lbm
+or via email (kraemer.research@gmail.com).
+
+The following configuration works fine:
+- Boost 1.62
+- Trilinos 11.10.2
+- P4est 1.1
+- Deal 8.4.2
+
+
 ================================================================================================
    INSTALL REQUIRED RESSOURCES
 ================================================================================================
@@ -8,10 +18,10 @@
     0.0a) (on cluster: module load gcc openmpi/gnu, boost)
     0.0a') (on cluster: if boost is not installed - get tar)
     0.0a') (on cluster: set BOOST_ROOT in ~/.bashrc to the directory you want boost installed in; source ~/.bashrc)
-    0.0b') (on cluster: tar xzvf boost_1_59_0.tar.gz ;  cd boost_1_59_0 ; ./bootstrap --prefix=$BOOST_ROOT; ./b2; ./b2 install)
+    0.0b') (on cluster: tar xzvf boost_1_55_0.tar.gz ;  cd boost_1_55_0 ; ./bootstrap.sh --prefix=$BOOST_ROOT; ./b2; ./b2 install)
     0.0b') (on cluster: to shorten the installation time you can also call the bootstrap command with the option
-           --with-libraries=iostreams,serialization,thread,system,filesystem,test 
-           While deal.ii requires the first four of them, natrium requires the last three)
+           --with-libraries=iostreams,serialization,graph,graph_parallel,thread,system,filesystem,test,timer
+           While deal.ii requires the first six of them, natrium requires the last four)
     0.0c') (on cluster: set BOOST_ROOT to the boost root directory)
     0.1) Install cmake download and untar tarball from cmake homepage; follow instructions
          (Version 2.8.8 required!)
@@ -43,7 +53,7 @@
 	-D BUILD_SHARED_LIBS=ON \
 	-D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
 	.. 
-    0.4.6) make -jN; make install, with N=number of processors (N=1 works, not so sure about that at the moment; perhaps just "make && make install" will do)
+    0.4.6) make -jN; make install, with N=number of processors
     0.5) p4est
     	0.5.1) download tarball from p4est homepage (here: version 1.1; no need to untar)
 		0.5.2) get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)

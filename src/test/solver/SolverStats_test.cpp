@@ -17,7 +17,7 @@
 
 #include "PeriodicTestFlow2D.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(SolverStats_test)
 
@@ -109,4 +109,3 @@ BOOST_AUTO_TEST_CASE(SolverStats_FunctionsInSolverContext_test) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-} /* namespace natrium */

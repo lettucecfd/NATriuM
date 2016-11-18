@@ -85,64 +85,70 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00046"></a>00046                 <span class="keywordflow">return</span> m_bottomVelocity;
 <a name="l00047"></a>00047         }
 <a name="l00048"></a>00048 
-<a name="l00049"></a>00049 <span class="keyword">private</span>:
-<a name="l00050"></a>00050 
-<a name="l00051"></a>00051         <span class="keyword">const</span> <span class="keywordtype">double</span> m_bottomVelocity;
-<a name="l00052"></a>00052         <span class="keywordtype">double</span> m_height;
-<a name="l00053"></a>00053         <span class="keywordtype">double</span> m_ampl;
-<a name="l00054"></a>00054         <span class="keyword">const</span> <span class="keywordtype">double</span> m_length;
-<a name="l00055"></a>00055 
-<a name="l00060"></a>00060         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid(<span class="keywordtype">double</span> L, <span class="keywordtype">double</span> averageHeight, <span class="keywordtype">double</span> cellAspectRatio);
+<a name="l00049"></a>00049         <span class="keyword">virtual</span> <span class="keywordtype">void</span> refine(Mesh&lt;2&gt;&amp; mesh);
+<a name="l00050"></a>00050         <span class="keyword">virtual</span> <span class="keywordtype">void</span> transform(Mesh&lt;2&gt;&amp; mesh);
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052 <span class="keyword">private</span>:
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054         <span class="keyword">const</span> <span class="keywordtype">double</span> m_bottomVelocity;
+<a name="l00055"></a>00055         <span class="keywordtype">double</span> m_height;
+<a name="l00056"></a>00056         <span class="keywordtype">double</span> m_ampl;
+<a name="l00057"></a>00057         <span class="keyword">const</span> <span class="keywordtype">double</span> m_length;
+<a name="l00058"></a>00058         <span class="keywordtype">double</span> m_roughnessHeight;
+<a name="l00059"></a>00059         <span class="keywordtype">double</span> m_roughnessLengthRatio;
+<a name="l00060"></a>00060         <span class="keywordtype">size_t</span> m_refinementLevel;
 <a name="l00061"></a>00061 
-<a name="l00067"></a>00067         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries(<span class="keywordtype">double</span> bottomVelocity);
-<a name="l00068"></a>00068 
-<a name="l00072"></a>00072         <span class="keyword">struct </span>UnstructuredGridFunc {
-<a name="l00073"></a>00073                 <span class="keywordtype">double</span> m_height;
-<a name="l00074"></a>00074                 <span class="keywordtype">double</span> m_ampl;
-<a name="l00075"></a>00075                 <span class="keywordtype">double</span> m_wavelength;
-<a name="l00076"></a>00076                 <span class="keywordtype">double</span> m_roughnessHeight;
-<a name="l00077"></a>00077                 <span class="keywordtype">size_t</span> m_roughnessLengthRatio;
-<a name="l00078"></a>00078                 <span class="keywordtype">double</span> refineBoundaryY(<span class="keyword">const</span> <span class="keywordtype">double</span> y)<span class="keyword"> const </span>{
-<a name="l00079"></a>00079                         <span class="comment">// a smooth curve with gradients that are not 0 or infinity</span>
-<a name="l00080"></a>00080                         <span class="comment">// less steepness on the boundaries leads to fine resolution</span>
-<a name="l00081"></a>00081                         <span class="comment">// of the boundary</span>
-<a name="l00082"></a>00082                         <span class="keywordflow">return</span> m_height * (0.5 + 0.5*tanh((y / m_height -0.5)*4*atan(1))/tanh((0.5)*4*atan(1)));
-<a name="l00083"></a>00083                 }
-<a name="l00084"></a>00084                 <span class="keywordtype">double</span> refineBoundaryX(<span class="keyword">const</span> <span class="keywordtype">double</span> x)<span class="keyword"> const </span>{
-<a name="l00085"></a>00085                         <span class="comment">// found this formula by analysis with gnuplot;</span>
-<a name="l00086"></a>00086                         <span class="comment">// aim: reduce aspect ratio of cells</span>
-<a name="l00087"></a>00087                         <span class="comment">//return  x - 0.019 * m_ampl / 0.49 * sin( 16 * atan(1) * x );</span>
-<a name="l00088"></a>00088                         <span class="comment">// dx ~ local height</span>
-<a name="l00089"></a>00089                         <span class="keywordflow">return</span> x + m_wavelength * m_ampl / m_height / (8.0 * atan(1.0)) * sin (8.0 * atan(1.0) * x / m_wavelength);
-<a name="l00090"></a>00090                 }
-<a name="l00091"></a>00091                 <span class="keywordtype">double</span> trans(<span class="keyword">const</span> <span class="keywordtype">double</span> x, <span class="keyword">const</span> <span class="keywordtype">double</span> y)<span class="keyword"> const </span>{
-<a name="l00092"></a>00092                         <span class="keywordtype">double</span> upper = m_height +  m_ampl * cos(8 * atan(1) * x / m_wavelength) + m_roughnessHeight * cos(8.0 * atan(1) * x / (m_wavelength/m_roughnessLengthRatio));
-<a name="l00093"></a>00093                         <span class="keywordflow">return</span> y / m_height * upper;
-<a name="l00094"></a>00094                 }
-<a name="l00095"></a>00095                 dealii::Point&lt;2&gt; operator()(<span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;in)<span class="keyword"> const </span>{
-<a name="l00096"></a>00096                         <span class="keywordflow">return</span> dealii::Point&lt;2&gt;(refineBoundaryX(in(0)), trans(refineBoundaryX(in(0)), refineBoundaryY(in(1))));
-<a name="l00097"></a>00097                 }
-<a name="l00098"></a>00098                 UnstructuredGridFunc(<span class="keywordtype">double</span> averageHeight, <span class="keywordtype">double</span> amplitude, <span class="keywordtype">double</span> wavelength, <span class="keywordtype">double</span> roughnessHeight, <span class="keywordtype">size_t</span> roughnessLengthRatio) {
-<a name="l00099"></a>00099                         assert (averageHeight &gt; amplitude);
-<a name="l00100"></a>00100                         m_height = averageHeight;
-<a name="l00101"></a>00101                         m_ampl = amplitude;
-<a name="l00102"></a>00102                         m_wavelength = wavelength;
-<a name="l00103"></a>00103                         m_roughnessHeight = roughnessHeight;
-<a name="l00104"></a>00104                         m_roughnessLengthRatio = roughnessLengthRatio;
-<a name="l00105"></a>00105                 }
-<a name="l00106"></a>00106         };
-<a name="l00107"></a>00107 
-<a name="l00108"></a>00108 };
-<a name="l00109"></a>00109 } <span class="comment">/* namespace natrium */</span>
-<a name="l00110"></a>00110 
-<a name="l00111"></a>00111 <span class="preprocessor">#endif </span><span class="comment">/* SINUSOIDALGAP2D_H_ */</span>
+<a name="l00066"></a>00066         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid(<span class="keywordtype">double</span> L, <span class="keywordtype">double</span> averageHeight, <span class="keywordtype">double</span> cellAspectRatio);
+<a name="l00067"></a>00067 
+<a name="l00073"></a>00073         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries(<span class="keywordtype">double</span> bottomVelocity);
+<a name="l00074"></a>00074 
+<a name="l00078"></a>00078         <span class="keyword">struct </span>UnstructuredGridFunc {
+<a name="l00079"></a>00079                 <span class="keywordtype">double</span> m_height;
+<a name="l00080"></a>00080                 <span class="keywordtype">double</span> m_ampl;
+<a name="l00081"></a>00081                 <span class="keywordtype">double</span> m_wavelength;
+<a name="l00082"></a>00082                 <span class="keywordtype">double</span> m_roughnessHeight;
+<a name="l00083"></a>00083                 <span class="keywordtype">size_t</span> m_roughnessLengthRatio;
+<a name="l00084"></a>00084                 <span class="keywordtype">double</span> refineBoundaryY(<span class="keyword">const</span> <span class="keywordtype">double</span> y)<span class="keyword"> const </span>{
+<a name="l00085"></a>00085                         <span class="comment">// a smooth curve with gradients that are not 0 or infinity</span>
+<a name="l00086"></a>00086                         <span class="comment">// less steepness on the boundaries leads to fine resolution</span>
+<a name="l00087"></a>00087                         <span class="comment">// of the boundary</span>
+<a name="l00088"></a>00088                         <span class="keywordflow">return</span> m_height * (0.5 + 0.5*tanh((y / m_height -0.5)*4*atan(1))/tanh((0.5)*4*atan(1)));
+<a name="l00089"></a>00089                 }
+<a name="l00090"></a>00090                 <span class="keywordtype">double</span> refineBoundaryX(<span class="keyword">const</span> <span class="keywordtype">double</span> x)<span class="keyword"> const </span>{
+<a name="l00091"></a>00091                         <span class="comment">// found this formula by analysis with gnuplot;</span>
+<a name="l00092"></a>00092                         <span class="comment">// aim: reduce aspect ratio of cells</span>
+<a name="l00093"></a>00093                         <span class="comment">//return  x - 0.019 * m_ampl / 0.49 * sin( 16 * atan(1) * x );</span>
+<a name="l00094"></a>00094                         <span class="comment">// dx ~ local height</span>
+<a name="l00095"></a>00095                         <span class="keywordflow">return</span> x + m_wavelength * m_ampl / m_height / (8.0 * atan(1.0)) * sin (8.0 * atan(1.0) * x / m_wavelength);
+<a name="l00096"></a>00096                 }
+<a name="l00097"></a>00097                 <span class="keywordtype">double</span> trans(<span class="keyword">const</span> <span class="keywordtype">double</span> x, <span class="keyword">const</span> <span class="keywordtype">double</span> y)<span class="keyword"> const </span>{
+<a name="l00098"></a>00098                         <span class="keywordtype">double</span> upper = m_height +  m_ampl * cos(8 * atan(1) * x / m_wavelength) + m_roughnessHeight * cos(8.0 * atan(1) * x / (m_wavelength/m_roughnessLengthRatio));
+<a name="l00099"></a>00099                         <span class="keywordflow">return</span> y / m_height * upper;
+<a name="l00100"></a>00100                 }
+<a name="l00101"></a>00101                 dealii::Point&lt;2&gt; operator()(<span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;in)<span class="keyword"> const </span>{
+<a name="l00102"></a>00102                         <span class="keywordflow">return</span> dealii::Point&lt;2&gt;(refineBoundaryX(in(0)), trans(refineBoundaryX(in(0)), refineBoundaryY(in(1))));
+<a name="l00103"></a>00103                 }
+<a name="l00104"></a>00104                 UnstructuredGridFunc(<span class="keywordtype">double</span> averageHeight, <span class="keywordtype">double</span> amplitude, <span class="keywordtype">double</span> wavelength, <span class="keywordtype">double</span> roughnessHeight, <span class="keywordtype">size_t</span> roughnessLengthRatio) {
+<a name="l00105"></a>00105                         assert (averageHeight &gt; amplitude);
+<a name="l00106"></a>00106                         m_height = averageHeight;
+<a name="l00107"></a>00107                         m_ampl = amplitude;
+<a name="l00108"></a>00108                         m_wavelength = wavelength;
+<a name="l00109"></a>00109                         m_roughnessHeight = roughnessHeight;
+<a name="l00110"></a>00110                         m_roughnessLengthRatio = roughnessLengthRatio;
+<a name="l00111"></a>00111                 }
+<a name="l00112"></a>00112         };
+<a name="l00113"></a>00113 
+<a name="l00114"></a>00114 };
+<a name="l00115"></a>00115 } <span class="comment">/* namespace natrium */</span>
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117 <span class="preprocessor">#endif </span><span class="comment">/* SINUSOIDALGAP2D_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -151,7 +157,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

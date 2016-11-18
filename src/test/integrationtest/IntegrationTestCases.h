@@ -12,7 +12,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
+using namespace natrium;
 namespace IntegrationTestCases {
 
 struct TestResult {
@@ -63,6 +63,5 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth ();
 
 
 } /* namespace IntegrationTests */
-} /* namespace natrium */
 
 #endif /* INTEGRATIONTESTCASE_H_ */

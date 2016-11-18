@@ -26,10 +26,6 @@ private:
 	/// size of the time step
 	double m_timeStepSize;
 
-	/// boundary collection - is required when nonlinear boundaries are present
-	boost::shared_ptr<BoundaryCollection<2> > m_boundaries2D;
-	boost::shared_ptr<BoundaryCollection<3> > m_boundaries3D;
-
 public:
 
 	/// constructor
@@ -62,24 +58,6 @@ public:
 	virtual double step(VECTOR& f, const MATRIX& systemMatrix,
 			VECTOR& systemVector, double t = 0, double dt = 0) = 0;
 
-	void setBoundaryCollection(
-			boost::shared_ptr<BoundaryCollection<2> > boundaries) {
-		m_boundaries2D = boundaries;
-	}
-	void setBoundaryCollection(
-			boost::shared_ptr<BoundaryCollection<3> > boundaries) {
-		m_boundaries3D = boundaries;
-	}
-	bool hasBoundary(){
-		return ( (m_boundaries3D != NULL) or (m_boundaries2D != NULL) );
-	}
-	void updateSystemVector(){
-		if (m_boundaries2D != NULL) {
-			m_boundaries2D->updateNonlinearBoundaryValues();
-		} else if (m_boundaries3D != NULL) {
-			m_boundaries3D->updateNonlinearBoundaryValues();
-		}
-	}
 };
 
 } /* namespace natrium */

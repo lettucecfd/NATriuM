@@ -9,7 +9,7 @@
 
 #include <fstream>
 #include <map>
-#include <complex.h>
+//#include <complex.h>
 #include <cstring>
 #include <string>
 #include <dirent.h>
@@ -42,7 +42,7 @@
 ///////////////////////////////
 ///////////////////////////////
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(SEDGMinLee_test)
 
@@ -566,4 +566,3 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_SaveAndLoadCheckpoints_test){
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

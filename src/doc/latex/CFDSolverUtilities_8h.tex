@@ -8,8 +8,13 @@ General utility functions for the CFD solver.
 {\ttfamily \#include \char`\"{}deal.II/grid/tria.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/base/quadrature\_\-lib.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/D2Q9.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/D3Q15.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/D3Q19.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/D3Q27.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/NATriuMException.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../solver/SolverConfiguration.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
@@ -18,6 +23,10 @@ class \hyperlink{classnatrium_1_1CFDSolverUtilities_1_1CFDSolverUtilitiesExcepti
 \subsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\item 
 namespace \hyperlink{namespacenatrium_1_1CFDSolverUtilities}{natrium::CFDSolverUtilities}
 
 
@@ -63,7 +72,12 @@ void \hyperlink{namespacenatrium_1_1CFDSolverUtilities_a3719826384e1c13644bac005
 \item 13) DOPRI
 \item 14) FEHLBERG
 \item 15) CASH\_\-KARP. 
-\end{DoxyItemize}\item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{DoxyItemize}\item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a6bbf2001ab29fe02fc3a11bcf1515614}{
+boost::shared\_\-ptr$<$ Stencil $>$ {\bfseries natrium::CFDSolverUtilities::make\_\-stencil} (size\_\-t d, size\_\-t q, size\_\-t scaling)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a6bbf2001ab29fe02fc3a11bcf1515614}
+
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

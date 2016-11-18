@@ -24,7 +24,7 @@
 
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(BGKStandardTransformed_test)
 
@@ -411,5 +411,4 @@ BOOST_AUTO_TEST_CASE(BGKStandardTransformed_collideAll_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */
 

@@ -7,16 +7,14 @@
 #
 cmake_minimum_required( VERSION 2.8.8 )
       
-      
 #
 # Find deal library
 #
 find_package(   deal.II 8.0 REQUIRED
                 HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
 )      
+
         
-        
-     
 # 
 # Initialize Deal variables (has to be called before "project")
 #
@@ -40,26 +38,31 @@ find_package( Boost ${BOOST_MIN_VERSION}
               unit_test_framework
               REQUIRED
               )
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS}) # systems suppresses warnings in boost
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
-              
+      
+      
+          
+
 #
 # descend into subdirectories (build natrium library in src and unit tests in test as well as examples)
 #
 add_subdirectory( library )
-add_subdirectory( test )
-add_subdirectory( examples )
+#add_subdirectory( test )
+#add_subdirectory( examples )
 add_subdirectory( analysis )
  
-#
+# 
 # set variable NATRIUM_TARGET (only used in this file)
 #
 set(    NATRIUM_TARGET 
         #${PROJECT_BINARY_DIR}/NATriuM_exe
         NATriuM_exe
         )
-
-
+        
+        
+ 
+  
   
 #
 # Specify a target:
@@ -75,7 +78,6 @@ deal_ii_setup_target( ${NATRIUM_TARGET} )
       
       
            
-       
 #
 # link natrium library to executable
 #           
@@ -84,6 +86,8 @@ target_link_libraries(  ${NATRIUM_TARGET}
                         natrium
                         )
                              
+                             
+           
 #
 # (Optional)
 # If you wish to have a "run" target for make, specify one:

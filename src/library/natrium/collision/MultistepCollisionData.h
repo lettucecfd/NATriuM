@@ -8,7 +8,7 @@
 #ifndef MULTISTEPCOLLISIONDATA_H_
 #define MULTISTEPCOLLISIONDATA_H_
 
-
+#include "../solver/DistributionFunctions.h"
 
 namespace natrium {
 

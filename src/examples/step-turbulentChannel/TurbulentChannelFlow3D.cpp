@@ -13,9 +13,8 @@
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/base/tensor.h"
 
-#include "natrium/problemdescription/LinearBoundaryRhoU.h"
-#include "natrium/problemdescription/PeriodicBoundary.h"
-#include "natrium/problemdescription/NonlinearBoundaryZouHeRho.h"
+#include "natrium/boundaries/PeriodicBoundary.h"
+#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
 #include "natrium/problemdescription/ConstantExternalForce.h"
 #include "natrium/utilities/Math.h"
 
@@ -88,7 +87,11 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		// add external force
 		// turbulent flow
 		double rho = 1;
-		double Fx = pow( ReTau * viscosity / h_half, 2.) * rho / height;
+		// force so as to balance the wall stresses:
+		// h F = -2 tau_w = - 2 rho u_tau^2 = - 2 rho (Re_tau nu / delta)^2
+		// (delta = h_half)
+		// => F = - 1 / delta rho (Re_tau nu / delta)^2
+		double Fx = pow( ReTau * viscosity / h_half, 2.) * rho / h_half;
 		// laminar flow
 		//double Fx = 8 * m_uCl * viscosity / (height * height); // m_uCl = 1.5*u_bulk
 		pout << " >>>> Body force F = " << Fx << endl;
@@ -142,14 +145,15 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 				boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<3> >(2, zeroVector));
+				boost::make_shared<LinearFluxBoundaryRhoU<3> >(2, zeroVector));
 		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<LinearBoundaryRhoU<3> >(3, zeroVector));
+				boost::make_shared<LinearFluxBoundaryRhoU<3> >(3, zeroVector));
 		//cout << " > no-slip: bottom" << endl;
 
 	} else {
-		boundaries->addBoundary(
+		cout << "Warning. Turbulent channel flow with in/outflow not implemented." << endl;
+		/*boundaries->addBoundary(
 				boost::make_shared<LinearBoundaryRhoU<3> >(0,
 						boost::make_shared<dealii::ConstantFunction<3> >(1.0),
 						boost::make_shared<TurbulentChannelFlow3D::InitialVelocity>(this)));
@@ -162,6 +166,7 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 				boost::make_shared<LinearBoundaryRhoU<3> >(2, zeroVector));
 		boundaries->addBoundary(
 				boost::make_shared<LinearBoundaryRhoU<3> >(3, zeroVector));
+				*/
 	}
 
 	return boundaries;

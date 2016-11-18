@@ -1,0 +1,50 @@
+\hypertarget{SemiLagrangian_8h}{
+\section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/SemiLagrangian.h File Reference}
+\label{SemiLagrangian_8h}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/SemiLagrangian.h@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/SemiLagrangian.h}}
+}
+
+
+Semi-\/Lagrangian advection operator.  
+{\ttfamily \#include $<$map$>$}\par
+{\ttfamily \#include $<$array$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/grid/tria.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/fe/fe\_\-dgq.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/dofs/dof\_\-handler.h\char`\"{}}\par
+{\ttfamily \#include $<$deal.II/dofs/dof\_\-tools.h$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/sparse\_\-matrix.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/fe/fe\_\-update\_\-flags.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/lac/block\_\-sparsity\_\-pattern.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/quadrature\_\-lib.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}AdvectionOperator.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../problemdescription/BoundaryCollection.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/NATriuMException.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/Timing.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../utilities/Logging.h\char`\"{}}\par
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1SemiLagrangianException}{natrium::SemiLagrangianException}
+\begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1SemiLagrangian}{SemiLagrangian} advection operator. \item\end{DoxyCompactList}\item 
+class \hyperlink{classnatrium_1_1SemiLagrangian}{natrium::SemiLagrangian$<$ dim $>$}
+\begin{DoxyCompactList}\small\item\em This class solves the linear advection equations by a semi-\/Lagrangian scheme. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structnatrium_1_1SemiLagrangian_1_1LagrangianPathDestination}{natrium::SemiLagrangian$<$ dim $>$::LagrangianPathDestination}
+\item 
+struct \hyperlink{structnatrium_1_1SemiLagrangian_1_1LagrangianPathTracker}{natrium::SemiLagrangian$<$ dim $>$::LagrangianPathTracker}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacenatrium}{natrium}
+
+
+\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Semi-\/Lagrangian advection operator. \begin{DoxyDate}{Date}
+29.04.16 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Andreas Kraemer, Bonn-\/Rhein-\/Sieg University of Applied Sciences, Sankt Augustin 
+\end{DoxyAuthor}

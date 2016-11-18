@@ -13,6 +13,8 @@
 #include "PhysicalProperties.h"
 //#include "BenchmarkCFDSolver.h"-> must not be in there because CFDBenchmarkSolver includes this module
 
+#include "deal.II/base/function.h"
+
 #include "../utilities/BasicNames.h"
 #include "../utilities/Math.h"
 

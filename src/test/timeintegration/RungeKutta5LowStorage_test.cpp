@@ -14,7 +14,7 @@
 #include "natrium/benchmarks/AdvectionBenchmark.h"
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(RungeKutta5LowStorage_test)
 
@@ -89,4 +89,3 @@ BOOST_AUTO_TEST_CASE(RungeKutta5LowStorage_MPI_test) {
 
 	BOOST_AUTO_TEST_SUITE_END()
 
-}	/* namespace natrium */
