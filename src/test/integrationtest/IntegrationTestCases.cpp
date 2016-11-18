@@ -23,6 +23,8 @@
 
 #include "natrium/utilities/CFDSolverUtilities.h"
 
+#include "natrium/dataprocessors/PseudoEntropicStabilizer.h"
+
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/CouetteFlow3D.h"
@@ -590,6 +592,7 @@ TestResult ConvergenceTestMovingWall() {
 
 		// Simulation (simulate 1 time unit from t=40.0)
 		BenchmarkCFDSolver<2> solver(configuration, benchmark);
+		//solver.appendDataProcessor(boost::make_shared<PseudoEntropicStabilizer<2> >(solver));
 		solver.getSolverStats()->update();
 		solver.run();
 		solver.getErrorStats()->update();
@@ -697,6 +700,7 @@ TestResult ConvergenceTestForcingSchemes2D() {
 						refinement_level, u_bulk, height, length, is_periodic);
 
 		CFDSolver<2> solver(configuration, poiseuille2D);
+		//solver.appendDataProcessor(boost::make_shared<PseudoEntropicStabilizer<2> >(solver));
 		solver.run();
 
 		result.quantity.push_back("Exact Difference");
@@ -870,7 +874,8 @@ TestResult ConvergenceTestSemiLagrangianPeriodic() {
 			"This test runs the Taylor Green vortex benchmark on a 8x8 grid with FE order 4 and CFL=0.4."
 					"It compares the simulated decay of kinetic energy with the analytic solution."
 					"The kinematic viscosity is nu=1 and the Reynolds number 2*PI."
-					"The simulated and reference E_kin are compared at t=1/(2 nu)";
+					"The simulated and reference E_kin are compared at t=1/(2 nu)."
+					"This test cases uses the pseudo-entropic stabilizer.";
 	result.time = clock();
 
 	// Initialization
@@ -899,6 +904,7 @@ TestResult ConvergenceTestSemiLagrangianPeriodic() {
 
 	// Simulation
 	BenchmarkCFDSolver<2> solver(configuration, benchmark);
+	solver.appendDataProcessor(boost::make_shared<PseudoEntropicStabilizer<2> >(solver));
 	solver.getSolverStats()->update();
 	double Ekin0 = solver.getSolverStats()->getKinE();
 	solver.run();
