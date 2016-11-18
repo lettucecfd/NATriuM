@@ -43,7 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="namespacemembers.html"><span>Namespace&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html">CFDSolverUtilities</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html">CFDSolverUtilities</a>
   </div>
 </div>
 <div class="contents">
@@ -67,7 +67,7 @@ template&lt;size_t dim&gt; </td></tr>
 template&lt;int dim&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html#adbcdda8cf5f7f3f0c835950a23e4c888">mesh_info</a> (const Mesh&lt; dim &gt; &amp;tria, const std::string &amp;filename)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">stolen from Deal.II's step 49 tutorial <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html#a3719826384e1c13644bac00524f72a46">get_integrator_by_id</a> (size_t id, TimeIntegratorName &amp;time_integrator, DealIntegratorName &amp;deal_integrator, std::string &amp;integrator_name)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1CFDSolverUtilities.html#a3719826384e1c13644bac00524f72a46">get_integrator_by_id</a> (size_t id, <a class="el" href="namespacenatrium.html#a00a0ec1e80f138680e0fcca78349f6d8">TimeIntegratorName</a> &amp;time_integrator, DealIntegratorName &amp;deal_integrator, std::string &amp;integrator_name)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Select an integrator by a specified id:</p>
 <ul>
 <li>1) RUNGE_KUTTA_5STAGE</li>
@@ -87,6 +87,8 @@ template&lt;int dim&gt; </td></tr>
 <li>15) CASH_KARP. </li>
 </ul>
  <a href="#a3719826384e1c13644bac00524f72a46"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bbf2001ab29fe02fc3a11bcf1515614"></a><!-- doxytag: member="natrium::CFDSolverUtilities::make_stencil" ref="a6bbf2001ab29fe02fc3a11bcf1515614" args="(size_t d, size_t q, size_t scaling)" -->
+boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>make_stencil</b> (size_t d, size_t q, size_t scaling)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Some tools for the <a class="el" href="classnatrium_1_1CFDSolver.html" title="The central class for the CFD simulation based on the DBE.">CFDSolver</a> and its simple usage. </p>
@@ -166,7 +168,7 @@ template&lt;int dim&gt; </td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -175,7 +177,7 @@ template&lt;int dim&gt; </td></tr>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

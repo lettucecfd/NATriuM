@@ -34,8 +34,6 @@ D3Q27::D3Q27(double scaling) :
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
 				scaling * pow(3, -0.5)), m_speedOfSoundSquare(
 				scaling * scaling / 3.), m_scaling(scaling) {
-	// TODO Bugfix
-	LOG(WARNING) << "There is a bug somewhere in the D3Q27. The use of this module is highly discouraged at the moment." << endl;
 } //constructor
 
 /// destructor
@@ -45,32 +43,68 @@ D3Q27::~D3Q27() {
 // make weights
 vector<double> D3Q27::makeWeights() {
 	vector<double> result;
-	result += 8. / 27., 2. / 27., 2. / 27., 2. / 27., 2. / 27., 2. / 27., 2.
-			/ 27., 1. / 54., 1. / 54., 1. / 54., 1. / 54., 1. / 54., 1. / 54., 1.
-			/ 54., 1. / 54., 1. / 54., 1. / 54., 1. / 54., 1. / 54., 1. / 216., 1.
-			/ 216., 1. / 216., 1. / 216., 1. / 216., 1. / 216., 1. / 216., 1.
-			/ 216.;
+	result += 8. / 27.,
+			2. / 27.,
+			2. / 27.,
+			2. / 27.,
+			2. / 27.,
+			2. / 27.,
+			2. / 27.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 54.,
+			1. / 216.,
+			1. / 216.,
+			1. / 216.,
+			1. / 216.,
+			1. / 216.,
+			1. / 216.,
+			1. / 216.,
+			1. / 216.;
 	return result;
 } /// make weights
 
 /// make directions
 /* Following the definition by Mohamad LBM book */
 vector<numeric_vector> D3Q27::makeDirections(double scaling) {
-	const double directionsArray[][3] = { { 0.0, 0.0, 0.0 },
-			{ scaling, 0.0, 0.0 }, { -scaling, 0.0, 0.0 },
-			{ 0.0, scaling, 0.0 }, { 0.0, -scaling, 0.0 },
-			{ 0.0, 0.0, scaling }, { 0.0, 0.0, -scaling }, { 0.0, scaling,
-					scaling }, { 0.0, -scaling - scaling, }, { 0.0, scaling,
-					-scaling }, { 0.0, -scaling, scaling }, { scaling, 0.0,
-					scaling }, { -scaling, 0.0, -scaling }, { scaling, 0.0,
-					-scaling }, { -scaling, 0.0, scaling }, { scaling, scaling,
-					0.0 }, { -scaling, -scaling, 0.0 },
-			{ scaling, -scaling, 0.0 }, { -scaling, scaling, 0.0 }, { scaling,
-					scaling, scaling }, { -scaling, -scaling, -scaling }, {
-					scaling, scaling, -scaling },
-			{ -scaling, -scaling, scaling }, { scaling, -scaling, scaling }, {
-					-scaling, scaling, -scaling },
-			{ scaling, -scaling, -scaling }, { -scaling, scaling, scaling } };
+	const double directionsArray[][3] =
+	{
+			{ 0.0, 0.0, 0.0 },
+			{ scaling, 0.0, 0.0 },
+			{ -scaling, 0.0, 0.0 },
+			{ 0.0, scaling, 0.0 },
+			{ 0.0, -scaling, 0.0 },
+			{ 0.0, 0.0, scaling },
+			{ 0.0, 0.0, -scaling },
+			{ 0.0, scaling,	scaling },
+			{ 0.0, -scaling, -scaling },
+			{ 0.0, scaling,	-scaling },
+			{ 0.0, -scaling, scaling },
+			{ scaling, 0.0,	scaling },
+			{ -scaling, 0.0, -scaling },
+			{ scaling, 0.0,	-scaling },
+			{ -scaling, 0.0, scaling },
+			{ scaling, scaling,	0.0 },
+			{ -scaling, -scaling, 0.0 },
+			{ scaling, -scaling, 0.0 },
+			{ -scaling, scaling, 0.0 },
+			{ scaling, scaling, scaling },
+			{ -scaling, -scaling, -scaling },
+			{scaling, scaling, -scaling },
+			{ -scaling, -scaling, scaling },
+			{ scaling, -scaling, scaling },
+			{-scaling, scaling, -scaling },
+			{ scaling, -scaling, -scaling },
+			{ -scaling, scaling, scaling } };
 	vector<numeric_vector> result;
 	for (size_t i = 0; i < Q; i++) {
 		numeric_vector direction(D);

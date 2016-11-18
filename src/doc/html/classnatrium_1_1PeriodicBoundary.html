@@ -44,11 +44,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><b>natrium</b>::<a class="el" href="classnatrium_1_1PeriodicBoundary.html">PeriodicBoundary</a>
+  <div class="navpath"><a class="el" href="namespacenatrium.html">natrium</a>::<a class="el" href="classnatrium_1_1PeriodicBoundary.html">PeriodicBoundary</a>
   </div>
 </div>
 <div class="contents">
-<h1>natrium::PeriodicBoundary&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::PeriodicBoundary" --><!-- doxytag: inherits="natrium::Boundary" -->
+<h1>natrium::PeriodicBoundary&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::PeriodicBoundary" --><!-- doxytag: inherits="natrium::natrium::Boundary" -->
 <p>A periodic boundary condition. Periodic boundaries have to be set before the grid is refined!  
 <a href="#_details">More...</a></p>
 
@@ -59,7 +59,7 @@ Inheritance diagram for natrium::PeriodicBoundary&lt; dim &gt;:</div>
  <div class="center">
   <img src="classnatrium_1_1PeriodicBoundary.gif" usemap="#natrium::PeriodicBoundary&lt; dim &gt;_map" alt=""/>
   <map id="natrium::PeriodicBoundary&lt; dim &gt;_map" name="natrium::PeriodicBoundary&lt; dim &gt;_map">
-<area href="classnatrium_1_1Boundary.html" alt="natrium::Boundary&lt; dim &gt;" shape="rect" coords="0,0,204,24"/>
+<area href="classnatrium_1_1natrium_1_1Boundary.html" alt="natrium::natrium::Boundary&lt; dim &gt;" shape="rect" coords="0,0,204,24"/>
 </map>
  </div>
 </div>
@@ -69,8 +69,8 @@ Inheritance diagram for natrium::PeriodicBoundary&lt; dim &gt;:</div>
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#ad105994a331755f654822813875771d8">PeriodicBoundary</a> (size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction, boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor; the periodic boundary is defined by two lines. The degrees of freedom on the first line are forced to be equal to the opposite one on the second line, respectively.  <a href="#ad105994a331755f654822813875771d8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae71c1a8ea1f1f9e29be8ab6496125a5c"></a><!-- doxytag: member="natrium::PeriodicBoundary::~PeriodicBoundary" ref="ae71c1a8ea1f1f9e29be8ab6496125a5c" args="()" -->
-virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#ae71c1a8ea1f1f9e29be8ab6496125a5c">~PeriodicBoundary</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad5f86b54a5a3ff86593ddb0e69b352e4"></a><!-- doxytag: member="natrium::PeriodicBoundary::~PeriodicBoundary" ref="ad5f86b54a5a3ff86593ddb0e69b352e4" args="()" -->
+virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#ad5f86b54a5a3ff86593ddb0e69b352e4">~PeriodicBoundary</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#aaa861135e070feb4b3dd4408c487cd14">getOppositeCellAtPeriodicBoundary</a> (const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, typename dealii::DoFHandler&lt; dim &gt;::cell_iterator &amp;neighborCell) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get the respective neighbor cell on the other side of a periodic boundary  <a href="#aaa861135e070feb4b3dd4408c487cd14"></a><br/></td></tr>
@@ -81,12 +81,13 @@ virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">is the boundary a periodic boundary ? <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a233d460baa307b13bc32efb57c07f7c5">createCellMap</a> (const dealii::DoFHandler&lt; dim &gt; &amp;doFHandler)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">create the map m_cells which stores the cells adjacent to the periodic boundary  <a href="#a233d460baa307b13bc32efb57c07f7c5"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a036bc3340a3217dfe4f916d5c2b29299"></a><!-- doxytag: member="natrium::PeriodicBoundary::checkCellMap" ref="a036bc3340a3217dfe4f916d5c2b29299" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a036bc3340a3217dfe4f916d5c2b29299">checkCellMap</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4885d5d5d4c8965db5534390ad877511"></a><!-- doxytag: member="natrium::PeriodicBoundary::checkCellMap" ref="a4885d5d5d4c8965db5534390ad877511" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a4885d5d5d4c8965db5534390ad877511">checkCellMap</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">check if all cells in the cell map have appropriate boundary indicators <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8523a2b22bfacc8aa299c5a9c238ffdd"></a><!-- doxytag: member="natrium::PeriodicBoundary::addToSparsityPattern" ref="a8523a2b22bfacc8aa299c5a9c238ffdd" args="(dealii::BlockDynamicSparsityPattern &amp;, size_t, size_t, size_t) const " -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a8523a2b22bfacc8aa299c5a9c238ffdd">addToSparsityPattern</a> (dealii::BlockDynamicSparsityPattern &amp;, size_t, size_t, size_t) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af46e4e91a6b612fb3b2ef658b962d5d8"></a><!-- doxytag: member="natrium::PeriodicBoundary::addToSparsityPattern" ref="af46e4e91a6b612fb3b2ef658b962d5d8" args="(dealii::BlockDynamicSparsityPattern &amp;, size_t, size_t, size_t) const " -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#af46e4e91a6b612fb3b2ef658b962d5d8">addToSparsityPattern</a> (dealii::BlockDynamicSparsityPattern &amp;, size_t, size_t, size_t) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function does nothing; just to satisfy the interface. The Periodic <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> conditions are directly incorporated in make_sparser_flux_sparsity_pattern. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dealii::Point&lt; dim &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a9a5677bbc1d59499ceec15a7893b8688">coordinatesAcrossPeriodicBoundary</a> (const dealii::Point&lt; dim &gt; &amp;p, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1351b925b9ae2008539a351a4baac3e0"></a><!-- doxytag: member="natrium::PeriodicBoundary::getMesh" ref="a1351b925b9ae2008539a351a4baac3e0" args="() const " -->
 const boost::shared_ptr&lt; Mesh<br class="typebreak"/>
 &lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMesh</b> () const </td></tr>
@@ -176,6 +177,36 @@ template&lt;size_t dim&gt; </div>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a9a5677bbc1d59499ceec15a7893b8688"></a><!-- doxytag: member="natrium::PeriodicBoundary::coordinatesAcrossPeriodicBoundary" ref="a9a5677bbc1d59499ceec15a7893b8688" args="(const dealii::Point&lt; dim &gt; &amp;p, const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">dealii::Point&lt; dim &gt; <a class="el" href="classnatrium_1_1PeriodicBoundary.html">natrium::PeriodicBoundary</a>&lt; dim &gt;::coordinatesAcrossPeriodicBoundary </td>
+          <td>(</td>
+          <td class="paramtype">const dealii::Point&lt; dim &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>p</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&nbsp;</td>
+          <td class="paramname"> <em>cell</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Transform a point into its equivalent across the periodic boundary </p>
+
+</div>
+</div>
 <a class="anchor" id="a233d460baa307b13bc32efb57c07f7c5"></a><!-- doxytag: member="natrium::PeriodicBoundary::createCellMap" ref="a233d460baa307b13bc32efb57c07f7c5" args="(const dealii::DoFHandler&lt; dim &gt; &amp;doFHandler)" -->
 <div class="memitem">
 <div class="memproto">
@@ -282,8 +313,8 @@ template&lt;size_t dim&gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/<a class="el" href="PeriodicBoundary_8h_source.html">PeriodicBoundary.h</a></li>
-<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/<a class="el" href="PeriodicBoundary_8cpp.html">PeriodicBoundary.cpp</a></li>
+<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/<a class="el" href="PeriodicBoundary_8h_source.html">PeriodicBoundary.h</a></li>
+<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/<a class="el" href="PeriodicBoundary_8cpp.html">PeriodicBoundary.cpp</a></li>
 </ul>
 </div>
 <!--- window showing the filter options -->
@@ -291,7 +322,7 @@ template&lt;size_t dim&gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -300,7 +331,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

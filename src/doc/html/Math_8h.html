@@ -51,6 +51,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &lt;functional&gt;</code><br/>
 <code>#include &lt;math.h&gt;</code><br/>
 <code>#include &quot;deal.II/base/index_set.h&quot;</code><br/>
+<code>#include &quot;deal.II/base/tensor.h&quot;</code><br/>
 <code>#include &quot;<a class="el" href="BasicNames_8h_source.html">BasicNames.h</a>&quot;</code><br/>
 
 <p><a href="Math_8h_source.html">Go to the source code of this file.</a></p>
@@ -59,6 +60,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1own__double__less.html">natrium::own_double_less</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function to compare doubles as map keys; regards two doubles equal if they are in a epsilon(=1e-7)-range.  <a href="classnatrium_1_1own__double__less.html#_details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2>Namespaces</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html">natrium</a></td></tr>
+
+<p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. </p>
+<br/></td></tr>
+</p>
 <tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1Math.html">natrium::Math</a></td></tr>
 
 <p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>namespace which contains basic math functions </p>
@@ -88,6 +94,9 @@ bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::Math::is_ang
 <tr><td class="memTemplParams" colspan="2">template&lt;class VECTOR &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">double&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1Math.html#ac6abc916cc66dda84a4e5c28e61be560">natrium::Math::velocity2Norm</a> (const vector&lt; VECTOR &gt; &amp;velocity, const dealii::IndexSet &amp;locally_owned_dofs)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Calculate the euclidean norm of the velocity over all points (not in the finite element space, but element-wise).  <a href="#ac6abc916cc66dda84a4e5c28e61be560"></a><br/></td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="ae701d55b10027c6e5affa8bf49f9d87f"></a><!-- doxytag: member="Math.h::vectorToTensor" ref="ae701d55b10027c6e5affa8bf49f9d87f" args="(const numeric_vector &amp;v)" -->
+template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">dealii::Tensor&lt; 1, dim &gt;&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>natrium::vectorToTensor</b> (const numeric_vector &amp;v)</td></tr>
 <tr><td colspan="2"><h2>Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ef5edf004cf147f3b3e9d36a7af4b00"></a><!-- doxytag: member="Math.h::PI" ref="a1ef5edf004cf147f3b3e9d36a7af4b00" args="" -->
 const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::Math::PI</b> = 3.141592653589793238462</td></tr>
@@ -102,7 +111,7 @@ const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::Math
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -111,7 +120,7 @@ const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::Math
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

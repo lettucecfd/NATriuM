@@ -22,7 +22,10 @@ class KBCStandard: public MRT {
 public:
 	KBCStandard(double relaxationParameter, double dt,
 			const boost::shared_ptr<Stencil> stencil);
+
 	virtual ~KBCStandard();
+
+	mutable int counter;
 
 	double getEquilibriumDistribution(size_t i, const numeric_vector& u,
 			const double rho) const;
@@ -96,9 +99,6 @@ public:
 	/**
 	 * @short writes the averaged data of the stabilizer into a parameter file
 	 */
-
-	mutable int counter;
-
 
 	void writeDeviation(double ave, double dev, double ave_entropy, double dev_entropy) const {
 		parameterFile << counter << " " << ave << " " << dev << " " << ave_entropy << " " << dev_entropy << endl;

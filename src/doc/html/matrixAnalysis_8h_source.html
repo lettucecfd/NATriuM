@@ -47,9 +47,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00008"></a>00008 <span class="preprocessor">#ifndef MATRIXANALYSIS_H_</span>
 <a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define MATRIXANALYSIS_H_</span>
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
-<a name="l00011"></a>00011 
-<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;<a class="code" href="CFDSolver_8h.html" title="CFD Solver, specified for Benchmark applications.">natrium/solver/CFDSolver.h</a>&quot;</span>
-<a name="l00013"></a>00013 
+<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;deal.II/lac/lapack_full_matrix.h&quot;</span>
+<a name="l00012"></a>00012 
+<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;<a class="code" href="CFDSolver_8h.html" title="CFD Solver, specified for Benchmark applications.">natrium/solver/CFDSolver.h</a>&quot;</span>
 <a name="l00014"></a>00014 <span class="preprocessor">#include &quot;<a class="code" href="BasicNames_8h.html" title="Definition of the basic typedefs and names used in the Code;.">natrium/utilities/BasicNames.h</a>&quot;</span>
 <a name="l00015"></a>00015 
 <a name="l00016"></a>00016 <span class="keyword">namespace </span>natrium {
@@ -67,26 +67,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00031"></a>00031         <span class="comment">// destructor</span>
 <a name="l00032"></a>00032         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1matrixAnalysis.html" title="Calculation of spectra and pseudospectra of streaming matrices.">matrixAnalysis</a>();
 <a name="l00033"></a>00033 
-<a name="l00040"></a>00040         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1matrixAnalysis.html#af83535a0c1c83db223649b958c245df1" title="Write the spectrum of the CFDSolver&amp;#39;s streaming matrix to the file spectrum.txt...">writeSpectrum</a>();
+<a name="l00040"></a>00040         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1matrixAnalysis.html#ae774e069b53034a25ed633f789af625e" title="Write the spectrum of the CFDSolver&amp;#39;s streaming matrix to the file spectrum.txt...">writeSpectrum</a>(<span class="keywordtype">bool</span> scale_by_timestep);
 <a name="l00041"></a>00041 
-<a name="l00050"></a>00050         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1matrixAnalysis.html#a2c18eb04461c90bfdf3f301e8c9dfc1b" title="Write the pseudospectrum of the CFDSolver&amp;#39;s streaming matrix to the file pseudospectrum...">writePseudospectrum</a>(<span class="keywordtype">size_t</span> numberOfCycles = 10, <span class="keywordtype">double</span> perturbation = 0.1) ;
+<a name="l00050"></a>00050         <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1matrixAnalysis.html#a9e9739f9d9181cc8b294bcbeca96df68" title="Write the pseudospectrum of the CFDSolver&amp;#39;s streaming matrix to the file pseudospectrum...">writePseudospectrum</a>(<span class="keywordtype">bool</span> scale_by_timestep, <span class="keywordtype">size_t</span> numberOfCycles = 10, <span class="keywordtype">double</span> perturbation = 0.1) ;
 <a name="l00051"></a>00051 
 <a name="l00061"></a>00061         <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1matrixAnalysis.html#a03a05223c2dc32a674f8b3ec2f6e6659" title="Compute the eigenvalues of a sparse block matrix.">computeSpectrum</a>(<span class="keyword">const</span> distributed_sparse_block_matrix&amp; matrix,
 <a name="l00062"></a>00062                         vector&lt;std::complex&lt;double&gt; &gt; &amp; eigenvalues, <span class="keywordtype">double</span> perturbation = 0.0) ;
 <a name="l00063"></a>00063 
-<a name="l00064"></a>00064 }
-<a name="l00065"></a>00065 ;
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067 } <span class="comment">/* namespace natrium */</span>
+<a name="l00064"></a>00064         <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1matrixAnalysis.html#a03a05223c2dc32a674f8b3ec2f6e6659" title="Compute the eigenvalues of a sparse block matrix.">computeSpectrum</a>(dealii::LAPACKFullMatrix&lt;double&gt;&amp; matrix,
+<a name="l00065"></a>00065                         vector&lt;std::complex&lt;double&gt; &gt; &amp; eigenvalues, <span class="keywordtype">double</span> perturbation = 0.0) ;
+<a name="l00066"></a>00066 }
+<a name="l00067"></a>00067 ;
 <a name="l00068"></a>00068 
-<a name="l00069"></a>00069 <span class="preprocessor">#endif </span><span class="comment">/* MATRIXANALYSIS_H_ */</span>
+<a name="l00069"></a>00069 } <span class="comment">/* namespace natrium */</span>
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 <span class="preprocessor">#endif </span><span class="comment">/* MATRIXANALYSIS_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -95,7 +97,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

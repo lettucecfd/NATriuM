@@ -92,6 +92,10 @@ void mesh_info(const Mesh<dim> &tria, const std::string &filename);
 void get_integrator_by_id(size_t id, TimeIntegratorName& time_integrator,
 		DealIntegratorName& deal_integrator, std::string& integrator_name);
 
+std::string get_integrator_name(
+		const TimeIntegratorName& time_integrator,
+		const DealIntegratorName& deal_integrator) ;
+
 boost::shared_ptr<Stencil> make_stencil(size_t d, size_t q, size_t scaling);
 
 

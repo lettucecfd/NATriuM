@@ -9,9 +9,12 @@
 
 #include "boost/test/unit_test.hpp"
 
-#include "natrium/utilities/BasicNames.h"
+#include "deal.II/fe/fe_dgq.h"
 
-namespace natrium {
+#include "natrium/utilities/BasicNames.h"
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
+
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(DistributionFunctions_test)
 
@@ -72,4 +75,3 @@ BOOST_AUTO_TEST_CASE(DistributionFunctions_StencilTransfer_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

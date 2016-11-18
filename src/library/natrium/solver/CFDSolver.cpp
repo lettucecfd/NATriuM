@@ -16,7 +16,7 @@
 #include "deal.II/fe/component_mask.h"
 #include "deal.II/base/logstream.h"
 #include "deal.II/grid/grid_tools.h"
-#include "deal.II/lac/constraint_matrix.h"
+#include "deal.II/grid/grid_out.h"
 #include "deal.II/base/index_set.h"
 
 #include "PhysicalProperties.h"
@@ -44,7 +44,6 @@
 #include "../smoothing/NewFilter.h"
 
 #include "../problemdescription/BoundaryCollection.h"
-#include "../problemdescription/NonlinearBoundary.h"
 
 #include "../timeintegration/ThetaMethod.h"
 #include "../timeintegration/RungeKutta5LowStorage.h"
@@ -362,10 +361,6 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 							configuration->getEmbeddedDealIntegratorCoarsenTolerance());
 		};
 	}
-	if (m_problemDescription->getBoundaries()->hasNonlinearBoundaries()) {
-		m_timeIntegrator->setBoundaryCollection(
-				m_problemDescription->getBoundaries());
-	}
 
 // build filter
 	if (m_configuration->isFiltering() == true) {
@@ -419,12 +414,14 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "Semi-Lagrangian advection" << endl;
 	} else if (SEDG == configuration->getAdvectionScheme()) {
 		LOG(WELCOME) << "Spectral-element discontinuous Galerkin" << endl;
-		const double optimal_cfl = 0.4;
-		LOG(WELCOME) << "Recommended dt (CFL 0.4): "
+		LOG(WELCOME) << "Time integrator:          " << CFDSolverUtilities::get_integrator_name(configuration->getTimeIntegrator(),
+				configuration->getDealIntegrator()) << endl;
+		const double std_cfl = 1.0;
+		LOG(WELCOME) << "Standard dt (CFL 1.0):     "
 				<< CFDSolverUtilities::calculateTimestep<dim>(
 						*m_problemDescription->getMesh(),
 						configuration->getSedgOrderOfFiniteElement(),
-						*m_stencil, optimal_cfl) << " s" << endl;
+						*m_stencil, std_cfl) << " s" << endl;
 	}
 	LOG(WELCOME) << "Actual dt:                " << delta_t << " s" << endl;
 	LOG(WELCOME) << "CFL number:               " << configuration->getCFL()
@@ -520,12 +517,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		initializeDistributions();
 	}
 
-// initialize nonlinear boundaries
+// initialize dof boundaries
 	m_boundaryVector.reinit(m_advectionOperator->getSystemVector());
 	m_boundaryVector = m_advectionOperator->getSystemVector();
-	m_problemDescription->getBoundaries()->initializeNonlinearBoundaries(
-			m_advectionOperator, m_stencil, &m_density, &m_velocity, &m_f,
-			&m_boundaryVector);
 
 // Create file for output table
 	if ((not configuration->isSwitchOutputOff())
@@ -574,6 +568,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			<< m_density.memory_consumption() << endl;
 	LOG(BASIC) << " ------------------------------------------------- " << endl
 			<< endl;
+
+	m_tstart = clock();
 
 }
 /* Constructor */
@@ -786,13 +782,27 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 	MPI_sync();
 
 // output: vector fields as .vtu files
-	if (iteration == m_iterationStart) {
-		m_tstart = time(0);
-	}
 	if (not m_configuration->isSwitchOutputOff()) {
+		if (iteration - m_iterationStart == 0){
+			// first iteration: put out mesh
+			std::stringstream str0;
+			str0 << m_configuration->getOutputDirectory().c_str() << "/grid.vtk";                            								
+                        std::string grid_file = str0.str();
+			std::ofstream grid_out_file(grid_file);
+			dealii::GridOut().write_vtk(*m_problemDescription->getMesh(), grid_out_file);
+			grid_out_file.close();
+
+		}
 		if (iteration % 100 == 0) {
 			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time
 					<< endl;
+		}
+		if ((iteration % 1000 == 0) or (is_final)) {
+			double secs = 1e-10+(clock() - m_tstart) / CLOCKS_PER_SEC;
+			LOG(DETAILED) << "Time elapsed: " << secs << "s;    Average Performance: "
+					<< 1.0 * m_advectionOperator->getDoFHandler()->n_dofs()
+							* (iteration - m_iterationStart) / secs / 1000000.0
+					<< " million DoF updates per second" << endl;
 		}
 		// output estimated runtime after iterations 1, 10, 100, 1000, ...
 		/*if (iteration > m_iterationStart) {
@@ -812,8 +822,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
 		// no output if solution interval > 10^8
 		if (((iteration % m_configuration->getOutputSolutionInterval() == 0)
-				or is_final)
-				and m_configuration->getOutputSolutionInterval() <= 1e8) {
+				and m_configuration->getOutputSolutionInterval() <= 1e8) or (is_final)) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"
@@ -1179,7 +1188,7 @@ void CFDSolver<dim>::calculateDensitiesAndVelocities() {
 
 template<size_t dim>
 void CFDSolver<dim>::convertDeprecatedCheckpoint() {
-	// load
+// load
 	boost::filesystem::path checkpoint_dir(
 			m_configuration->getOutputDirectory());
 	checkpoint_dir /= "checkpoint";
@@ -1187,7 +1196,7 @@ void CFDSolver<dim>::convertDeprecatedCheckpoint() {
 	Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(m_f,
 			*m_advectionOperator, checkpoint_dir.string(), checkpoint_status);
 
-	// save
+// save
 	Checkpoint<dim> checkpoint(checkpoint_status.iterationNumber,
 			checkpoint_dir);
 	checkpoint.write(*m_problemDescription->getMesh(), m_f,

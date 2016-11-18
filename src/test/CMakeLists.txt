@@ -4,6 +4,7 @@ include(../CMake_UnityBuild.txt)
 file(   GLOB_RECURSE
         TEST_FILES
         advection/*.cpp
+        boundaries/*.cpp
         collision/*.cpp
         problemdescription/*.cpp
         smoothing/*.cpp
@@ -12,7 +13,7 @@ file(   GLOB_RECURSE
         timeintegration/*.cpp
         utilities/*.cpp
         )
-   
+      
       
 #
 # set variable TEST_TARGET (only used in this file)

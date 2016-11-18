@@ -69,6 +69,8 @@ public:
 
 	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const = 0;
 
+	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const = 0;
+
 	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const = 0;
 
 	virtual const vector<std::map<size_t, size_t> >& getQIndexToFacedof() const = 0;

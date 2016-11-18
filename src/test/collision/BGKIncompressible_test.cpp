@@ -19,7 +19,7 @@
 
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(BGKIncompressible_test)
 
@@ -73,4 +73,3 @@ BOOST_AUTO_TEST_CASE(BGKIncompressible_collideAll_test) {
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-}

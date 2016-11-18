@@ -11,7 +11,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium{
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(Math_test)
 
@@ -54,4 +54,3 @@ BOOST_AUTO_TEST_CASE(Math_VelocityNorm_test){
 
 BOOST_AUTO_TEST_SUITE_END()
 
-}/*namespace natrium*/

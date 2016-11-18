@@ -4,7 +4,7 @@ A very promising approach for LBM on irregular grids was published by Lee and Li
 NATriuM inherits a huge part of its functionality from third party libraries, most importantly deal.II. Deal.II is a finite element library which was awarded the Wilkinson price for numerical software in 2007. Together with a huge FEM functionality, it offers wrappers to other TPLs like Trilinos to speed up simulations on multicore architectures. We use the Trilinos data structures (sparse matrices and vectors). The boost unit test module is used to structure the testing code. CMake is used for user-\/friendly compilation.\hypertarget{index_struct_sec}{}\section{Code structure}\label{index_struct_sec}
 At the moment, NATriuM can only be used as a library, but it is going to be usable from the command line in a later stage of the project. A class diagram is in the documentation folder, but it could be slightly outdated. The source directory contains the following folders:
 \begin{DoxyItemize}
-\item natrium: NATriuM library. Contains the code for the SEDG-\/Solver.
+\item \hyperlink{namespacenatrium}{natrium}: NATriuM library. Contains the code for the SEDG-\/Solver.
 \item test: Unit and integration tests.
 \item doc: Code documentation. Most importantly, this Doxygen documentation.
 \item examples: Example simulations that use the NATriuM code.

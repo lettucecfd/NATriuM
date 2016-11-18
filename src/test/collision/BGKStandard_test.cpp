@@ -19,12 +19,14 @@
 #include "natrium/stencils/D3Q19.h"
 #include "natrium/stencils/D3Q15.h"
 
+#include "deal.II/fe/fe_dgq.h"
+
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "natrium/benchmarks/PeriodicTestDomain3D.h"
 
 using std::exception;
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(BGKStandard_test)
 
@@ -587,5 +589,4 @@ BOOST_AUTO_TEST_CASE(BGKStandard_collideAllD3Q15_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */
 

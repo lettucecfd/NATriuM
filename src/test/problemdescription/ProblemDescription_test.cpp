@@ -7,6 +7,5 @@
 
 #include "natrium/problemdescription/ProblemDescription.h"
 
-namespace natrium {
+using namespace natrium;
 
-} /* namespace natrium */

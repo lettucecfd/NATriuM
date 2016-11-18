@@ -63,24 +63,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00028"></a>00028 
 <a name="l00030"></a>00030         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1PeriodicTestDomain2D.html#a81fe3504b294cd4d6219c360f465f84b" title="destructor">~PeriodicTestDomain2D</a>();
 <a name="l00031"></a>00031 
-<a name="l00032"></a>00032 
-<a name="l00033"></a>00033 <span class="keyword">private</span>:
-<a name="l00034"></a>00034 
-<a name="l00039"></a>00039         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid();
-<a name="l00040"></a>00040 
-<a name="l00046"></a>00046         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries();
-<a name="l00047"></a>00047 
-<a name="l00048"></a>00048 };
+<a name="l00032"></a>00032         <span class="keyword">virtual</span> <span class="keywordtype">void</span> refine(Mesh&lt;2&gt;&amp; mesh){
+<a name="l00033"></a>00033                 <span class="comment">// Refine grid</span>
+<a name="l00034"></a>00034                 mesh.refine_global(m_refinementLevel);
+<a name="l00035"></a>00035         }
+<a name="l00036"></a>00036         <span class="keyword">virtual</span> <span class="keywordtype">void</span> transform(Mesh&lt;2&gt;&amp; ){
+<a name="l00037"></a>00037 
+<a name="l00038"></a>00038         }
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040 <span class="keyword">private</span>:
+<a name="l00041"></a>00041 
+<a name="l00042"></a>00042         <span class="keywordtype">size_t</span> m_refinementLevel;
+<a name="l00043"></a>00043 
+<a name="l00048"></a>00048         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid();
 <a name="l00049"></a>00049 
-<a name="l00050"></a>00050 } <span class="comment">/* namespace natrium */</span>
-<a name="l00051"></a>00051 <span class="preprocessor">#endif </span><span class="comment">/* PeriodicTestDomain2D_H_ */</span>
+<a name="l00055"></a>00055         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries();
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058 };
+<a name="l00059"></a>00059 
+<a name="l00060"></a>00060 } <span class="comment">/* namespace natrium */</span>
+<a name="l00061"></a>00061 <span class="preprocessor">#endif </span><span class="comment">/* PeriodicTestDomain2D_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -89,7 +99,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

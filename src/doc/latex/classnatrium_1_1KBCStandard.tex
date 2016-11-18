@@ -1,0 +1,80 @@
+\hypertarget{classnatrium_1_1KBCStandard}{
+\section{natrium::KBCStandard Class Reference}
+\label{classnatrium_1_1KBCStandard}\index{natrium::KBCStandard@{natrium::KBCStandard}}
+}
+Inheritance diagram for natrium::KBCStandard::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1KBCStandard}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structnatrium_1_1KBCStandard_1_1stabilizer}{stabilizer}
+\begin{DoxyCompactList}\small\item\em Stores the values of the \hyperlink{structnatrium_1_1KBCStandard_1_1stabilizer}{stabilizer} of the KBC function and averages it for every time step. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1KBCStandard_ae775935dcbfcedc31364c5cb54031958}{
+{\bfseries KBCStandard} (double relaxationParameter, double dt, const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil)}
+\label{classnatrium_1_1KBCStandard_ae775935dcbfcedc31364c5cb54031958}
+
+\item 
+double \hyperlink{classnatrium_1_1KBCStandard_a1dac2deaafb93027bf168887dd2e002d}{getEquilibriumDistribution} (size\_\-t i, const \hyperlink{namespacenatrium_a67c39077adc6634f8fa3762b8eef24c4}{numeric\_\-vector} \&u, const double rho) const 
+\begin{DoxyCompactList}\small\item\em virtual function for the calculation of the equilibrium distribution \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1KBCStandard_ab27e055e44e1913a076235bc5a7f1f95}{
+virtual void \hyperlink{classnatrium_1_1KBCStandard_ab27e055e44e1913a076235bc5a7f1f95}{collideAll} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&densities, vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure=false) const }
+\label{classnatrium_1_1KBCStandard_ab27e055e44e1913a076235bc5a7f1f95}
+
+\begin{DoxyCompactList}\small\item\em function for collision \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1KBCStandard_a52be173f7289ef616099908c4ddb1316}{
+void \hyperlink{classnatrium_1_1KBCStandard_a52be173f7289ef616099908c4ddb1316}{collideAllD2Q9} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&densities, vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure) const }
+\label{classnatrium_1_1KBCStandard_a52be173f7289ef616099908c4ddb1316}
+
+\begin{DoxyCompactList}\small\item\em optimized version of collideAll for \hyperlink{classnatrium_1_1D2Q9}{D2Q9} stencil \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1KBCStandard_a9ce76f9d02120b79a12b883b67268caa}{
+void \hyperlink{classnatrium_1_1KBCStandard_a9ce76f9d02120b79a12b883b67268caa}{collideAllD3Q15} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} \&densities, vector$<$ \hyperlink{namespacenatrium_a903d2b92917f582f2ff05f52160ab811}{distributed\_\-vector} $>$ \&velocities, const dealii::IndexSet \&locally\_\-owned\_\-dofs, bool inInitializationProcedure) const }
+\label{classnatrium_1_1KBCStandard_a9ce76f9d02120b79a12b883b67268caa}
+
+\begin{DoxyCompactList}\small\item\em optimized version of collideAll for \hyperlink{classnatrium_1_1D3Q15}{D3Q15} stencil \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1KBCStandard_a2746649a1c6b4b0cf655b149a3e347dc}{
+void {\bfseries writeDeviation} (double ave, double dev, double ave\_\-entropy, double dev\_\-entropy) const }
+\label{classnatrium_1_1KBCStandard_a2746649a1c6b4b0cf655b149a3e347dc}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1KBCStandard_a68610043a08520a41b8c3473ae644ca3}{
+int \hyperlink{classnatrium_1_1KBCStandard_a68610043a08520a41b8c3473ae644ca3}{counter}}
+\label{classnatrium_1_1KBCStandard_a68610043a08520a41b8c3473ae644ca3}
+
+\begin{DoxyCompactList}\small\item\em writes the averaged data of the \hyperlink{structnatrium_1_1KBCStandard_1_1stabilizer}{stabilizer} into a parameter file \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1KBCStandard_a1dac2deaafb93027bf168887dd2e002d}{
+\index{natrium::KBCStandard@{natrium::KBCStandard}!getEquilibriumDistribution@{getEquilibriumDistribution}}
+\index{getEquilibriumDistribution@{getEquilibriumDistribution}!natrium::KBCStandard@{natrium::KBCStandard}}
+\subsubsection[{getEquilibriumDistribution}]{\setlength{\rightskip}{0pt plus 5cm}double natrium::KBCStandard::getEquilibriumDistribution (size\_\-t {\em i}, \/  const {\bf numeric\_\-vector} \& {\em u}, \/  const double {\em rho}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classnatrium_1_1KBCStandard_a1dac2deaafb93027bf168887dd2e002d}
+
+
+virtual function for the calculation of the equilibrium distribution 
+\begin{DoxyParams}{Parameters}
+\item[{\em i}]index of the direction \item[{\em u}]macroscopic velocity \item[{\em rho}]macroscopic density \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value of the equilibrium distribution 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+The calculation can surely be done more efficiently by passing different arguments, e.g. u$\ast$u or u/(c$^\wedge$2) 
+\end{DoxyNote}
+
+
+Reimplemented from \hyperlink{classnatrium_1_1MRT_a3f96915f9f67680f4a1d7b952e70be55}{natrium::MRT}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/KBCStandard.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/collision/KBCStandard.cpp\end{DoxyCompactItemize}

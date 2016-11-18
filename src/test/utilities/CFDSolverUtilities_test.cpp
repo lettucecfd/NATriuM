@@ -12,7 +12,7 @@
 
 #include "boost/test/unit_test.hpp"
 
-namespace natrium{
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(CFDSolverUtilities_test)
 
@@ -61,4 +61,3 @@ BOOST_AUTO_TEST_CASE(CFDSolverUtilities_getIntegratorByID_test){
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

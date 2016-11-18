@@ -15,7 +15,7 @@
 //#define TEST_LOGGING
 #ifdef TEST_LOGGING
 
-namespace natrium{
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(Logging_test)
 
@@ -82,9 +82,6 @@ BOOST_AUTO_TEST_CASE(Logging_WithGlobalObjectLOG_test){
 
 BOOST_AUTO_TEST_SUITE_END()
 
-
-
-} /*namespace natrium*/
 #endif
 
 

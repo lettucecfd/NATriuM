@@ -49,6 +49,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li class="current"><a href="functions.html"><span>All</span></a></li>
       <li><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
+      <li><a href="functions_type.html"><span>Typedefs</span></a></li>
       <li><a href="functions_rela.html"><span>Related&nbsp;Functions</span></a></li>
     </ul>
   </div>
@@ -59,11 +60,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions_0x63.html#index_c"><span>c</span></a></li>
       <li><a href="functions_0x64.html#index_d"><span>d</span></a></li>
       <li><a href="functions_0x65.html#index_e"><span>e</span></a></li>
+      <li><a href="functions_0x66.html#index_f"><span>f</span></a></li>
       <li class="current"><a href="functions_0x67.html#index_g"><span>g</span></a></li>
       <li><a href="functions_0x68.html#index_h"><span>h</span></a></li>
       <li><a href="functions_0x69.html#index_i"><span>i</span></a></li>
       <li><a href="functions_0x6c.html#index_l"><span>l</span></a></li>
       <li><a href="functions_0x6d.html#index_m"><span>m</span></a></li>
+      <li><a href="functions_0x6e.html#index_n"><span>n</span></a></li>
       <li><a href="functions_0x6f.html#index_o"><span>o</span></a></li>
       <li><a href="functions_0x70.html#index_p"><span>p</span></a></li>
       <li><a href="functions_0x71.html#index_q"><span>q</span></a></li>
@@ -108,12 +111,19 @@ Here is a list of all documented class members with links to the class documenta
 <li>getDirections()
 : <a class="el" href="classnatrium_1_1Stencil.html#a02dbfdb70b94a32f477a6ac57ed14f5e">natrium::Stencil</a>
 </li>
+<li>getDoFBoundary()
+: <a class="el" href="classnatrium_1_1BoundaryCollection.html#ad63f4c0e71eaa277f263d39415175549">natrium::BoundaryCollection&lt; dim &gt;</a>
+</li>
 <li>getEquilibriumDistribution()
-: <a class="el" href="classnatrium_1_1BGKPseudopotential.html#a63ce98e44a07466963fb123cac9dd905">natrium::BGKPseudopotential</a>
+: <a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">natrium::BGKSteadyState</a>
+, <a class="el" href="classnatrium_1_1CollisionModel.html#a88b382d63da80e950bc58e8afad769a6">natrium::CollisionModel</a>
+, <a class="el" href="classnatrium_1_1KBCStandard.html#a1dac2deaafb93027bf168887dd2e002d">natrium::KBCStandard</a>
+, <a class="el" href="classnatrium_1_1MRT.html#a3f96915f9f67680f4a1d7b952e70be55">natrium::MRT</a>
+, <a class="el" href="classnatrium_1_1BGKIncompressible.html#a26dd8954261b04f8383ca9d37f5ac8c0">natrium::BGKIncompressible</a>
+, <a class="el" href="classnatrium_1_1BGKMultistep.html#a034cd475974bcce0db64e52245efd91d">natrium::BGKMultistep</a>
+, <a class="el" href="classnatrium_1_1BGKPseudopotential.html#a366ccd417ca4ad5fa37ce0572e0d6fe4">natrium::BGKPseudopotential&lt; dim &gt;</a>
 , <a class="el" href="classnatrium_1_1BGKStandard.html#a3d45ef2fe5536bf14914f99297477754">natrium::BGKStandard</a>
 , <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#a870465cc026f92c8ffba899af6f95634">natrium::BGKStandardTransformed</a>
-, <a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">natrium::BGKSteadyState</a>
-, <a class="el" href="classnatrium_1_1CollisionModel.html#a88b382d63da80e950bc58e8afad769a6">natrium::CollisionModel</a>
 </li>
 <li>getEquilibriumDistributions()
 : <a class="el" href="classnatrium_1_1CollisionModel.html#a296474961c4501bc23228be1d30ebf82">natrium::CollisionModel</a>
@@ -142,8 +152,8 @@ Here is a list of all documented class members with links to the class documenta
 <li>getLatticeU()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#a934f8dea9c6235f3b3890057b935a61a">plb::ModIncomprFlowParam&lt; T &gt;</a>
 </li>
-<li>getLinearBoundary()
-: <a class="el" href="classnatrium_1_1BoundaryCollection.html#a1f2d415af1d71df84bbbcad218ccc79b">natrium::BoundaryCollection&lt; dim &gt;</a>
+<li>getLinearFluxBoundary()
+: <a class="el" href="classnatrium_1_1BoundaryCollection.html#a7961dc115c0a8cd29fa5cf6f553aa78f">natrium::BoundaryCollection&lt; dim &gt;</a>
 </li>
 <li>getLx()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#aab591cecf7b8eefbe16b9926d0f7de14">plb::ModIncomprFlowParam&lt; T &gt;</a>
@@ -162,6 +172,17 @@ Here is a list of all documented class members with links to the class documenta
 </li>
 <li>getMPI_InitFinalize()
 : <a class="el" href="classnatrium_1_1MPIGuard.html#a4df8a28efa88e97a77ee0dc9a74a1a17">natrium::MPIGuard</a>
+</li>
+<li>getNeighbor()
+: <a class="el" href="classnatrium_1_1SemiLagrangian.html#aac0394a8292810788e983909b2de4355">natrium::SemiLagrangian&lt; dim &gt;</a>
+</li>
+<li>getNeighborhood()
+: <a class="el" href="classnatrium_1_1SemiLagrangian.html#ab6d5f8d666330d8f229ee727985592b8">natrium::SemiLagrangian&lt; dim &gt;</a>
+</li>
+<li>getNumberOfDoFs()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a251e21d1dd023926d4c5f7fd973b90bf">natrium::AdvectionOperator&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SEDGMinLee.html#af667cda1a894340f614da67c0a0ae5da">natrium::SEDGMinLee&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SemiLagrangian.html#aeb3b1dfda8a0d8fe7473716f98b12647">natrium::SemiLagrangian&lt; dim &gt;</a>
 </li>
 <li>getOmega()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#a42ea717054c06234c523385d893c8ac7">plb::ModIncomprFlowParam&lt; T &gt;</a>
@@ -201,7 +222,8 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="classnatrium_1_1Stencil.html#af4dbee6d83d5d749f02f771633d54db2">natrium::Stencil</a>
 </li>
 <li>getSystemMatrix()
-: <a class="el" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0">natrium::SEDGMinLee&lt; dim &gt;</a>
+: <a class="el" href="classnatrium_1_1SemiLagrangian.html#ae8a21527f3ab056eab8b3b0af25a572c">natrium::SemiLagrangian&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0">natrium::SEDGMinLee&lt; dim &gt;</a>
 </li>
 <li>getTau()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#adbd07104d7d7e4dafe827f4a247e57f0">plb::ModIncomprFlowParam&lt; T &gt;</a>
@@ -215,6 +237,9 @@ Here is a list of all documented class members with links to the class documenta
 <li>getWeights()
 : <a class="el" href="classnatrium_1_1Stencil.html#a35c26427afdd33c3477b60be157e5bc8">natrium::Stencil</a>
 </li>
+<li>GlobalTurbulenceStats()
+: <a class="el" href="classnatrium_1_1GlobalTurbulenceStats.html#ac73a107d5d949a70e912051135514a72">natrium::GlobalTurbulenceStats&lt; dim &gt;</a>
+</li>
 </ul>
 </div>
 <!--- window showing the filter options -->
@@ -222,7 +247,7 @@ Here is a list of all documented class members with links to the class documenta
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -231,7 +256,7 @@ Here is a list of all documented class members with links to the class documenta
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

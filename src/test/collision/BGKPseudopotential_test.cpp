@@ -15,7 +15,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(BGKPseudopotential_test)
 
@@ -85,4 +85,3 @@ BOOST_AUTO_TEST_CASE(BGKPseudopotential_collideAll_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

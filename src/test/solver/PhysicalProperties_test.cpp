@@ -14,8 +14,9 @@
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/ShearLayer2D.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
+#include "natrium/solver/CFDSolver.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(PhysicalProperties_test)
 
@@ -108,7 +109,6 @@ BOOST_AUTO_TEST_CASE(PhysicalProperties_Enstrophy_test) {
 	CFDSolver<2> solver(config, problem);
 
 	const vector<distributed_vector> & u = solver.getVelocity();
-	const distributed_vector & rho = solver.getDensity();
 	double E = PhysicalProperties<2>::enstrophy(u, solver.getAdvectionOperator());
 	BOOST_CHECK_CLOSE(E, 213, 10);
 
@@ -120,4 +120,3 @@ BOOST_AUTO_TEST_CASE(PhysicalProperties_Enstrophy_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

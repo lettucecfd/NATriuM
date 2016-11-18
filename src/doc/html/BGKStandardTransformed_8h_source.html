@@ -71,10 +71,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00039"></a>00039         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1BGKStandardTransformed.html#a07dc7f5ccaf1abaa725a7b62a2b79ac4" title="destructor">~BGKStandardTransformed</a>();
 <a name="l00040"></a>00040 
 <a name="l00049"></a>00049         <span class="keyword">virtual</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1BGKStandardTransformed.html#a870465cc026f92c8ffba899af6f95634" title="function for the calculation of the equilibrium distribution in the incompressible...">getEquilibriumDistribution</a>(<span class="keywordtype">size_t</span> i,
-<a name="l00050"></a>00050                         <span class="keyword">const</span> numeric_vector&amp; u, <span class="keyword">const</span> <span class="keywordtype">double</span> rho = 1) <span class="keyword">const</span>;
+<a name="l00050"></a>00050                         <span class="keyword">const</span> <a class="code" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4" title="vector for numeric operations">numeric_vector</a>&amp; u, <span class="keyword">const</span> <span class="keywordtype">double</span> rho = 1) <span class="keyword">const</span>;
 <a name="l00051"></a>00051 
 <a name="l00059"></a>00059         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1BGKStandardTransformed.html#aaa2e752c6aa2294f1ebeb9d326ba9eb8" title="function for collision">collideAll</a>(<a class="code" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a>&amp; f,
-<a name="l00060"></a>00060                         distributed_vector&amp; densities,
+<a name="l00060"></a>00060                         <a class="code" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811" title="vectors which can be distributed over multiple cores">distributed_vector</a>&amp; densities,
 <a name="l00061"></a>00061                         vector&lt;distributed_vector&gt;&amp; velocities,
 <a name="l00062"></a>00062                         <span class="keyword">const</span> dealii::IndexSet&amp; locally_owned_dofs,
 <a name="l00063"></a>00063                         <span class="keywordtype">bool</span> inInitializationProcedure = <span class="keyword">false</span>) <span class="keyword">const</span>;
@@ -106,7 +106,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&nbsp;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -115,7 +115,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 9 Dec 2015 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

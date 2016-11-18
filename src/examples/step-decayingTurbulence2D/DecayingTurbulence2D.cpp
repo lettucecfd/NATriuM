@@ -15,9 +15,8 @@
 #include "deal.II/base/tensor.h"
 #include "deal.II/base/utilities.h"
 
-#include "natrium/problemdescription/LinearBoundaryRhoU.h"
-#include "natrium/problemdescription/PeriodicBoundary.h"
-#include "natrium/problemdescription/NonlinearBoundaryZouHeRho.h"
+#include "natrium/boundaries/PeriodicBoundary.h"
+#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
 #include "natrium/problemdescription/ConstantExternalForce.h"
 #include "natrium/utilities/Math.h"
 

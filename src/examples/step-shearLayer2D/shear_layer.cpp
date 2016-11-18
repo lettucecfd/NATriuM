@@ -94,6 +94,16 @@ int main(int argc, char** argv) {
 	}
 	pout << "... Filter s:  " << filter_s << endl;
 
+	double trafo_x = 0;
+	double trafo_y = 0;
+	if (argc >= 11) {
+		trafo_x = std::atof(argv[10]);
+	}
+	pout << "... Trafo X: " << trafo_x << endl;
+	if (argc >= 12) {
+		trafo_y = std::atof(argv[11]);
+	}
+	pout << "... Trafo Y: " << trafo_y << endl;
 	// get integrator
 	TimeIntegratorName time_integrator;
 	DealIntegratorName deal_integrator;
@@ -112,10 +122,11 @@ int main(int argc, char** argv) {
 	const double kappa = 80;
 	const double Re = 30000;
 	double viscosity = u0 * 1.0 / Re;
-	const double t_c = 2.0 / u0; //twice the eddy turnover time
+	const double t_c = 5.0 / u0; //twice the eddy turnover time
+	const double perturbation = 0.05;
 
 	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
-			ShearLayer2D>(viscosity, refinement_level, u0, kappa);
+			ShearLayer2D>(viscosity, refinement_level, u0, kappa, perturbation, trafo_x, trafo_y);
 	/*double delta_t = CFDSolverUtilities::calculateTimestep<2>(
 	 *(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
 
@@ -136,14 +147,14 @@ int main(int argc, char** argv) {
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setOutputTableInterval(100);	//10
-	configuration->setOutputSolutionInterval(100); //10
-	configuration->setOutputCheckpointInterval(100);
+	configuration->setOutputTableInterval(10);	//10
+	configuration->setOutputSolutionInterval(1e9); //10
+	configuration->setOutputCheckpointInterval(1e9);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
 			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
 			<< "-int" << integrator_id << "-CFL" << CFL << "-scaling"
-			<< stencil_scaling << "-filter" << filter << "-filt_s" << filter_s;
+			<< stencil_scaling << "-filter" << filter << "-filt_s" << filter_s << "-tx" << trafo_x << "-ty" << trafo_y;
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
 	//configuration->setNumberOfTimeSteps(500000);

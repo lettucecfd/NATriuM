@@ -7,6 +7,8 @@
 
 #include "DealiiExtensions.h"
 
+#include <assert.h>
+
 #include <deal.II/base/thread_management.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table.h>
@@ -69,7 +71,7 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 	// subdomain. Not setting a subdomain is also okay, because we skip
 	// ghost cells in the loop below.
 	Assert(
-			(dof.get_tria().locally_owned_subdomain() == numbers::invalid_subdomain_id) || (subdomain_id == numbers::invalid_subdomain_id) || (subdomain_id == dof.get_tria().locally_owned_subdomain()),
+			(dof.get_triangulation().locally_owned_subdomain() == numbers::invalid_subdomain_id) || (subdomain_id == numbers::invalid_subdomain_id) || (subdomain_id == dof.get_triangulation().locally_owned_subdomain()),
 			ExcMessage ("For parallel::distributed::Mesh objects and " "associated DoF handler objects, asking for any subdomain other " "than the locally owned one does not make sense."));
 
 	std::vector<types::global_dof_index> dofs_on_this_cell;
@@ -392,7 +394,6 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 	FaceIterator face_1 = cell_1->face(face_nr_1);
 	FaceIterator face_2 = cell_2->face(face_nr_2);
 
-
 	Assert(
 			(dim != 1) || (face_orientation == true && face_flip == false && face_rotation == false),
 			ExcMessage ("The supplied orientation " "(face_orientation, face_flip, face_rotation) " "is invalid for 1D"));
@@ -427,7 +428,6 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 					}, { { 3, 2, 1, 0 }, //  true        true  false
 							{ 2, 0, 3, 1 }, //  true        true  true
 					}, }, };
-
 
 	if (cell_1->has_children() && cell_2->has_children()) {
 		// In the case that both faces have children, we loop over all
@@ -487,7 +487,8 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 		// taken from make_periodicity_constraints: make sure faces are not artificial
 		const unsigned int face_1_index = face_1->nth_active_fe_index(0);
 		const unsigned int face_2_index = face_2->nth_active_fe_index(0);
-		const unsigned int dofs_per_face = face_1->get_fe(face_1_index).dofs_per_face;
+		const unsigned int dofs_per_face =
+				face_1->get_fe(face_1_index).dofs_per_face;
 		std::vector<types::global_dof_index> dofs_1(dofs_per_face);
 		std::vector<types::global_dof_index> dofs_2(dofs_per_face);
 		face_1->get_dof_indices(dofs_1, face_1_index);
@@ -521,9 +522,9 @@ void make_periodicity_map_dg(const typename DH::cell_iterator &cell_1,
 		if ((cell_1->is_artificial()) or (cell_2->is_artificial()))
 			return;
 		/*Assert(not cell_1->is_artificial(),
-				ExcMessage ("Cell at periodic boundary must not be artificial."));
-		Assert(not cell_2->is_artificial(),
-				ExcMessage ("Cell at periodic boundary must not be artificial."));
+		 ExcMessage ("Cell at periodic boundary must not be artificial."));
+		 Assert(not cell_2->is_artificial(),
+		 ExcMessage ("Cell at periodic boundary must not be artificial."));
 		 */
 
 		// insert periodic face pair for both cells
@@ -566,7 +567,6 @@ void make_periodicity_map_dg(
 
 	// Clear the output map
 	cell_map.clear();
-
 
 	// Loop over all periodic faces...
 	for (; it != end_periodic; ++it) {
@@ -771,6 +771,38 @@ void extract_dofs_with_support_on_boundary(
 		const dealii::DoFHandler<3> &dof_handler,
 		const ComponentMask &component_mask, std::vector<bool> &selected_dofs,
 		const std::set<types::boundary_id> &boundary_ids);
+
+template<size_t dim>
+void set_boundary_ids_at_hyperplane(dealii::Triangulation<dim>& mesh,
+		unsigned int component, double value, size_t boundary_id, double tol) {
+	assert(component < dim);
+
+	typename dealii::Triangulation<dim>::active_cell_iterator cell = mesh.begin_active(),
+			endc = mesh.end();
+	for (; cell != endc; ++cell) {
+		for (unsigned int f = 0; f < dealii::GeometryInfo<dim>::faces_per_cell;
+				++f) {
+			bool is_face_at_boundary = true;
+			for (unsigned int v = 0;
+					v < dealii::GeometryInfo<dim>::vertices_per_face; ++v) {
+				if ((cell->face(f)->vertex(v)(component) >= value + tol)
+						or (cell->face(f)->vertex(v)(component) <= value - tol)) {
+					is_face_at_boundary = false;
+					break;
+				}
+			}
+			if (is_face_at_boundary) {
+				cell->face(f)->set_boundary_id(boundary_id);
+			}
+		}
+	}
+
+} /* set_boundary_ids_at_hyperplane */
+template void set_boundary_ids_at_hyperplane<2>(dealii::Triangulation<2>& mesh,
+		unsigned int component, double value, size_t boundary_id, double tol);
+
+template void set_boundary_ids_at_hyperplane<3>(dealii::Triangulation<3>& mesh,
+		unsigned int component, double value, size_t boundary_id, double tol);
 
 } /* namepace DealIIExtensions */
 

@@ -16,6 +16,7 @@ file( GLOB_RECURSE
 file(   GLOB_RECURSE
         SRC_FILES
         natrium/advection/*.cpp 
+        natrium/boundaries/*.cpp
         natrium/benchmarks/*.cpp
         natrium/collision/*.cpp
         natrium/dataprocessors/*.cpp

@@ -33,6 +33,10 @@ private:
 	vector<vector<double> > m_correlations;
 	vector<double> m_EX3; // for skewness
 	vector<double> m_EX4; // for kurtosis
+	double m_energy;
+	double m_enstrophy;
+	double m_energySquared;
+	double m_enstrophySquared;
 
 	std::string outfile(std::string dir) {
 		boost::filesystem::path out_dir(dir);

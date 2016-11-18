@@ -13,6 +13,11 @@ Description of a lid-\/driven cavity flow.
 \includegraphics[height=2cm]{classnatrium_1_1LidDrivenCavity2D}
 \end{center}
 \end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bfseries UnstructuredGridFunc}
+\begin{DoxyCompactList}\small\item\em function to generate the unstructured mesh grid \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -23,13 +28,19 @@ virtual \hyperlink{classnatrium_1_1LidDrivenCavity2D_a8ae5029b008eb3d3c810bae814
 \label{classnatrium_1_1LidDrivenCavity2D_a8ae5029b008eb3d3c810bae81440b29c}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1LidDrivenCavity2D_ab4a8629cfd3472847d40cf42a4ca72a8}{applyInitialDensities} (distributed\_\-vector \&initialDensities, const vector$<$ dealii::Point$<$ 2 $>$ $>$ \&supportPoints) const 
-\begin{DoxyCompactList}\small\item\em set initial densities \item\end{DoxyCompactList}\item 
-virtual void \hyperlink{classnatrium_1_1LidDrivenCavity2D_a6e633e30cfeae500757bdd4c37a5c478}{applyInitialVelocities} (vector$<$ distributed\_\-vector $>$ \&initialVelocities, const vector$<$ dealii::Point$<$ 2 $>$ $>$ \&supportPoints) const 
-\begin{DoxyCompactList}\small\item\em set initial velocities \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1LidDrivenCavity2D_a82c2d453cd5dd83f09a438201a7adec6}{
 virtual double {\bfseries getCharacteristicVelocity} () const }
 \label{classnatrium_1_1LidDrivenCavity2D_a82c2d453cd5dd83f09a438201a7adec6}
+
+\item 
+\hypertarget{classnatrium_1_1LidDrivenCavity2D_a1899d1f52f6f0e25f6be7dff5746efb9}{
+virtual void {\bfseries refine} (Mesh$<$ 2 $>$ \&mesh)}
+\label{classnatrium_1_1LidDrivenCavity2D_a1899d1f52f6f0e25f6be7dff5746efb9}
+
+\item 
+\hypertarget{classnatrium_1_1LidDrivenCavity2D_af42aefb1a7b763f7b0cca834038b5290}{
+virtual void {\bfseries transform} (Mesh$<$ 2 $>$ \&mesh)}
+\label{classnatrium_1_1LidDrivenCavity2D_af42aefb1a7b763f7b0cca834038b5290}
 
 \end{DoxyCompactItemize}
 
@@ -53,32 +64,6 @@ Description of a lid-\/driven cavity flow. \begin{Desc}
 constructor 
 
 apply boundary values 
-
-\subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1LidDrivenCavity2D_ab4a8629cfd3472847d40cf42a4ca72a8}{
-\index{natrium::LidDrivenCavity2D@{natrium::LidDrivenCavity2D}!applyInitialDensities@{applyInitialDensities}}
-\index{applyInitialDensities@{applyInitialDensities}!natrium::LidDrivenCavity2D@{natrium::LidDrivenCavity2D}}
-\subsubsection[{applyInitialDensities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::LidDrivenCavity2D::applyInitialDensities (distributed\_\-vector \& {\em initialDensities}, \/  const vector$<$ dealii::Point$<$ 2 $>$ $>$ \& {\em supportPoints}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
-\label{classnatrium_1_1LidDrivenCavity2D_ab4a8629cfd3472847d40cf42a4ca72a8}
-
-
-set initial densities 
-\begin{DoxyParams}{Parameters}
-\item[\mbox{$\rightarrow$} {\em initialDensities}]vector of densities; to be filled; \item[\mbox{$\leftarrow$} {\em supportPoints}]the coordinates associated with each degree of freedom \end{DoxyParams}
-\begin{DoxyNote}{Note}
-Usually, the densities are set to unity. 
-\end{DoxyNote}
-\hypertarget{classnatrium_1_1LidDrivenCavity2D_a6e633e30cfeae500757bdd4c37a5c478}{
-\index{natrium::LidDrivenCavity2D@{natrium::LidDrivenCavity2D}!applyInitialVelocities@{applyInitialVelocities}}
-\index{applyInitialVelocities@{applyInitialVelocities}!natrium::LidDrivenCavity2D@{natrium::LidDrivenCavity2D}}
-\subsubsection[{applyInitialVelocities}]{\setlength{\rightskip}{0pt plus 5cm}void natrium::LidDrivenCavity2D::applyInitialVelocities (vector$<$ distributed\_\-vector $>$ \& {\em initialVelocities}, \/  const vector$<$ dealii::Point$<$ 2 $>$ $>$ \& {\em supportPoints}) const\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
-\label{classnatrium_1_1LidDrivenCavity2D_a6e633e30cfeae500757bdd4c37a5c478}
-
-
-set initial velocities 
-\begin{DoxyParams}{Parameters}
-\item[\mbox{$\rightarrow$} {\em initialVelocities}]vector of velocities; to be filled \item[\mbox{$\leftarrow$} {\em supportPoints}]the coordinates associated with each degree of freedom \end{DoxyParams}
-
 
 The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 

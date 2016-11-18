@@ -36,7 +36,7 @@ void {\bfseries setTimeStepSize} (double timeStepSize)}
 \label{classnatrium_1_1TimeIntegrator_a18592866e946c63ab1595d3ab688ea6b}
 
 \item 
-virtual double \hyperlink{classnatrium_1_1TimeIntegrator_a1c438e41d183d172d524aa5dc97785fb}{step} (VECTOR \&f, const MATRIX \&systemMatrix, const VECTOR \&systemVector, double t=0, double dt=0)=0
+virtual double \hyperlink{classnatrium_1_1TimeIntegrator_a0237ebbaf737c7d3278777fb08007e99}{step} (VECTOR \&f, const MATRIX \&systemMatrix, VECTOR \&systemVector, double t=0, double dt=0)=0
 \begin{DoxyCompactList}\small\item\em make one time integration step on f: \[ \frac{df}{dt} = Af+b \]. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
@@ -49,11 +49,11 @@ The ODEs arise from the space discretization of the DBE, which is basically a pa
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1TimeIntegrator_a1c438e41d183d172d524aa5dc97785fb}{
+\hypertarget{classnatrium_1_1TimeIntegrator_a0237ebbaf737c7d3278777fb08007e99}{
 \index{natrium::TimeIntegrator@{natrium::TimeIntegrator}!step@{step}}
 \index{step@{step}!natrium::TimeIntegrator@{natrium::TimeIntegrator}}
-\subsubsection[{step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class MATRIX , class VECTOR $>$ virtual double {\bf natrium::TimeIntegrator}$<$ MATRIX, VECTOR $>$::step (VECTOR \& {\em f}, \/  const MATRIX \& {\em systemMatrix}, \/  const VECTOR \& {\em systemVector}, \/  double {\em t} = {\ttfamily 0}, \/  double {\em dt} = {\ttfamily 0})\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
-\label{classnatrium_1_1TimeIntegrator_a1c438e41d183d172d524aa5dc97785fb}
+\subsubsection[{step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class MATRIX , class VECTOR $>$ virtual double {\bf natrium::TimeIntegrator}$<$ MATRIX, VECTOR $>$::step (VECTOR \& {\em f}, \/  const MATRIX \& {\em systemMatrix}, \/  VECTOR \& {\em systemVector}, \/  double {\em t} = {\ttfamily 0}, \/  double {\em dt} = {\ttfamily 0})\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classnatrium_1_1TimeIntegrator_a0237ebbaf737c7d3278777fb08007e99}
 
 
 make one time integration step on f: \[ \frac{df}{dt} = Af+b \]. 
@@ -67,7 +67,7 @@ fully virtual method. Overloaded by subclasses.
 \end{DoxyNote}
 
 
-Implemented in \hyperlink{classnatrium_1_1DealIIWrapper_a62621205ff77a46c4f3ef01c3aefb06d}{natrium::DealIIWrapper$<$ MATRIX, VECTOR $>$}, \hyperlink{classnatrium_1_1ExponentialTimeIntegrator_ae0a9cff9bdafab123016db72d1439ef8}{natrium::ExponentialTimeIntegrator$<$ MATRIX, VECTOR $>$}, \hyperlink{classnatrium_1_1RungeKutta5LowStorage_a11ed7e7ef3b4a5e575452261bc783a21}{natrium::RungeKutta5LowStorage$<$ MATRIX, VECTOR $>$}, and \hyperlink{classnatrium_1_1ThetaMethod_a247c639f49a05904dae01b05115bc7e4}{natrium::ThetaMethod$<$ MATRIX, VECTOR $>$}.
+Implemented in \hyperlink{classnatrium_1_1DealIIWrapper_a50227545e1fcff4c2d0f10a9c6eb3bca}{natrium::DealIIWrapper$<$ MATRIX, VECTOR $>$}, \hyperlink{classnatrium_1_1ExponentialTimeIntegrator_a656810a85c20b5f7eae422ee596fc340}{natrium::ExponentialTimeIntegrator$<$ MATRIX, VECTOR $>$}, \hyperlink{classnatrium_1_1RungeKutta5LowStorage_a90a1bec53a8fd458a190d3e9f8c78478}{natrium::RungeKutta5LowStorage$<$ MATRIX, VECTOR $>$}, and \hyperlink{classnatrium_1_1ThetaMethod_a25fb9b235e61a96de76139919d7fbbfe}{natrium::ThetaMethod$<$ MATRIX, VECTOR $>$}.
 
 The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 

@@ -16,7 +16,7 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/benchmarks/AdvectionBenchmark.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(DealIIWrapper_test)
 
@@ -197,4 +197,3 @@ BOOST_AUTO_TEST_CASE(DealIIWrapper_MPI_test) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} /* namespace natrium */

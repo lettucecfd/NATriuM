@@ -10,6 +10,7 @@
 
 #include "../advection/AdvectionOperator.h"
 #include "../utilities/BasicNames.h"
+#include "../solver/DistributionFunctions.h"
 
 namespace natrium {
 
@@ -27,7 +28,7 @@ public:
 			boost::shared_ptr<AdvectionOperator<dim> > advection);
 
 	static double enstrophy(const vector<distributed_vector>& u,
-			boost::shared_ptr<AdvectionOperator<dim> > advection);
+			boost::shared_ptr<AdvectionOperator<dim> > advection, double* squared);
 
 	static double mass(const distributed_vector& rho, boost::shared_ptr<AdvectionOperator<dim> > advection);
 
