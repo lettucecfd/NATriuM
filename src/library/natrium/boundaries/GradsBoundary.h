@@ -42,6 +42,15 @@ public:
 	GradsBoundary(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundary_values);
 
+	GradsBoundary(size_t boundaryIndicator,
+			double pressure);
+
+	//GradsBoundary(size_t boundaryIndicator,
+	//		dealii::Tensor<1,dim> velocity);
+	/// constructor
+	GradsBoundary(size_t boundaryIndicator,
+			const dealii::Vector<double>& velocity);
+
 	virtual ~GradsBoundary() {
 
 	}

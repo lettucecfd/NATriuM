@@ -14,7 +14,7 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/geometry_info.h"
 
-#include "../boundaries/LinearFluxBoundaryRhoU.h"
+#include "../boundaries/GradsBoundary.h"
 #include "../boundaries/PeriodicBoundary.h"
 #include "../utilities/Logging.h"
 #include "../utilities/MPIGuard.h"
@@ -103,9 +103,9 @@ boost::shared_ptr<BoundaryCollection<2> > CouetteFlowGrad2D::makeBoundaries(
 	boundaries->addBoundary(
 			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(2, zeroVelocity));
+			boost::make_shared<GradsBoundary<2, PRESCRIBED_VELOCITY> >(2, zeroVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(3, constantVelocity));
+			boost::make_shared<GradsBoundary<2, PRESCRIBED_VELOCITY> >(3, constantVelocity));
 
 
 	// Get the triangulation object (which belongs to the parent class).

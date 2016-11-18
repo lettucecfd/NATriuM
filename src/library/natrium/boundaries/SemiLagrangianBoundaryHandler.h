@@ -105,7 +105,7 @@ public:
 	BoundaryHitAtSupportPoint(const LagrangianPathTracker<dim>& tracker,
 			const Stencil&, size_t boundary_id, size_t q_point) :
 			destination(tracker.destination) {
-		assert(tracker.currentPoint.distance(tracker.departurePoint) < 1e-12);
+		//assert(tracker.currentPoint.distance(tracker.departurePoint) < 1e-12);
 		dtHit = 0;
 		supportQPoint = q_point;
 		boundaryID = boundary_id;

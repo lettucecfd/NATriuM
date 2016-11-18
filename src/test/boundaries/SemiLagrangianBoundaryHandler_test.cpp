@@ -47,6 +47,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	size_t ref_level = 3;
 	size_t fe_order = 2;
 	CouetteFlowGrad2D couette(viscosity, u0, ref_level);
+	couette.refineAndTransform();
 	SemiLagrangian<2> streaming(couette.getMesh(), couette.getBoundaries(),
 			fe_order, boost::make_shared<D2Q9>(), dt);
 	streaming.setupDoFs();
@@ -57,15 +58,15 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	LagrangianPathTracker<2> tracker(1, 1, 1, departure, p,
 			streaming.getDoFHandler()->begin_active());
 	SemiLagrangianBoundaryHandler<2> bh(dt, *streaming.getStencil(), *couette.getBoundaries());
-	bh.addHit(tracker, 1, streaming);
+	bh.addHit(tracker, 2, streaming);
 	BOOST_CHECK(1 == bh.n_cells());
 
-	bh.addHit(tracker, 1, streaming);
+	bh.addHit(tracker, 2, streaming);
 	BOOST_CHECK(1 == bh.n_cells());
 
 	LagrangianPathTracker<2> tracker2(1, 1, 1, departure, p,
 			++(streaming.getDoFHandler()->begin_active()));
-	bh.addHit(tracker2, 1, streaming);
+	bh.addHit(tracker2, 2, streaming);
 	BOOST_CHECK(2 == bh.n_cells());
 
 	pout << "done." << endl;
@@ -87,11 +88,11 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_DataStructures_test) {
 
 	// small time step => only support hits
 	// precondition: all processes have an equal number of cells and boundary cells
-	const size_t expected_n_cells = (pow(2, ref_level) * 4 - 4)
-			/ dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); // minus corners
+	const size_t expected_n_cells = (pow(2, ref_level) * 2)
+			/ dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
 	BOOST_CHECK_EQUAL(expected_n_cells,
 			streaming.getBoundaryHandler().n_cells());
-	const size_t expected_n_hits = (pow(2, ref_level) * 4 * (fe_order + 1) - 4)
+	const size_t expected_n_hits = (pow(2, ref_level) * 2 * (fe_order + 1))
 			/ dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); // minus corners
 	BOOST_CHECK_EQUAL(expected_n_hits, streaming.getBoundaryHandler().n_hits());
 	BOOST_CHECK_EQUAL(expected_n_hits,

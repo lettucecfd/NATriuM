@@ -58,6 +58,23 @@ public:
 	}
 };
 template<size_t dim>
+class BoundaryPressure: public dealii::Function<dim> {
+private:
+	double m_pressure;
+public:
+	BoundaryPressure(double p = 0) {
+		m_pressure = p;
+	}
+	;
+	virtual ~BoundaryPressure() {
+	}
+	;
+	virtual double value(const dealii::Point<dim> &,
+			const unsigned int  = 0) const {
+		return m_pressure;
+	}
+};
+template<size_t dim>
 class BoundaryVelocity: public dealii::Function<dim> {
 private:
 	dealii::Vector<double> m_Velocity;

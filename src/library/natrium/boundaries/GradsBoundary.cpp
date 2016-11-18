@@ -18,6 +18,23 @@ GradsBoundary<dim, prescribed_quantity>::GradsBoundary(size_t boundaryIndicator,
 }
 
 template<size_t dim, PrescribedQuantity prescribed_quantity>
+GradsBoundary<dim, prescribed_quantity>::GradsBoundary(size_t boundaryIndicator,
+		const dealii::Vector<double>& velocity) :
+		SLBoundary<dim>(boundaryIndicator),
+		m_boundaryValues(boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(velocity)) {
+	assert (prescribed_quantity == PRESCRIBED_VELOCITY);
+}
+
+template<size_t dim, PrescribedQuantity prescribed_quantity>
+GradsBoundary<dim, prescribed_quantity>::GradsBoundary(size_t boundaryIndicator,
+		double pressure):
+		SLBoundary<dim>(boundaryIndicator),
+		m_boundaryValues(boost::make_shared<BoundaryTools::BoundaryPressure<dim> >(pressure)) {
+
+	assert (prescribed_quantity == PRESCRIBED_PRESSURE);
+}
+
+template<size_t dim, PrescribedQuantity prescribed_quantity>
 void GradsBoundary<dim, prescribed_quantity>::calculateBoundaryValues(
 		const DistributionFunctions& f_old, DistributionFunctions& f_new,
 		const dealii::FEValues<dim>&, size_t q_point,
