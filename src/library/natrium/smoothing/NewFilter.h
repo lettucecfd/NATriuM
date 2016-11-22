@@ -27,7 +27,7 @@ private:
 
 	size_t m_p;
 	const dealii::Quadrature<dim>& m_quadrature;
-	const dealii::FE_DGQ<dim>& m_sourceFE;
+	const dealii::FiniteElement<dim>& m_sourceFE;
 
 	// space of legendre polynomials (not using deal.II's FE classes, because the legendre fe
 	// is inherited of fe_dgp, not fe_dqq. FE_DGP defines a COMPLETE polynomial space, meaning
@@ -54,7 +54,7 @@ private:
 
 
 public:
-	NewFilter(double alpha, double s, const dealii::Quadrature<dim>& quadrature, const dealii::FE_DGQ<dim>& fe);
+	NewFilter(double alpha, double s, const dealii::Quadrature<dim>& quadrature, const dealii::FiniteElement<dim>& fe);
 	virtual ~NewFilter(){};
 	void applyFilter(const dealii::DoFHandler<dim>& dof_handler, distributed_vector& dof_vector);
 

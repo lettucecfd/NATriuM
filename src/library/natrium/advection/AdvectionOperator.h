@@ -11,6 +11,7 @@
 #include "../utilities/BasicNames.h"
 #include "../stencils/Stencil.h"
 #include "../timeintegration/TimeIntegrator.h"
+#include "../solver/DistributionFunctions.h"
 
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/fe/fe_dgq.h"
@@ -24,8 +25,63 @@ namespace natrium {
  *  @tparam dim The dimension of the flow (2 or 3).
  */
 template<size_t dim> class AdvectionOperator {
+private:
+/*
+	// Problem Instance
+	boost::shared_ptr<ProblemDescription<dim> > m_problem;
+
+	// Computational grid
+	const Mesh<dim>& m_mesh;
+
+	// Boundary description
+	const BoundaryCollection<dim> & m_boundaries;
+
+	/// Mapping from real space to unit cell
+	const dealii::MappingQ<dim> m_mapping;
+
+	/// Sparsity Pattern of the sparse matrix
+	dealii::BlockSparsityPattern m_sparsityPattern;
+
+	/// System matrix L = M^(-1)*(-D+R)
+	distributed_sparse_block_matrix m_systemMatrix;
+
+	/// the DQ model (e.g. D2Q9)
+	boost::shared_ptr<Stencil> m_stencil;
+
+	/// order of the finite element functions
+	size_t m_orderOfFiniteElement;
+
+	/// dealii::DoFHandler to distribute the degrees of freedom over the Mesh
+	boost::shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
+
+	/// a map, which connects degrees of freedom with their respective quadrature nodes
+	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
+	std::map<size_t, size_t> m_celldof_to_q_index;
+
+	/// a set of maps, which connect degrees of freedom with their respective quadrature nodes
+	/// m_facedof_to_q_index.at(i)[j] is the support node index q of the j-th dof at face i
+	vector<std::map<size_t, size_t> > m_facedof_to_q_index;
+
+	/// the transposed map of m_facedof_to_q_index
+	vector<std::map<size_t, size_t> > m_q_index_to_facedof;
 
 
+	/// Mesh
+	boost::shared_ptr<Mesh<dim> > m_mesh;
+
+	/// Boundary Description
+	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
+
+	/// integration on gauss lobatto nodes
+	boost::shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
+
+	/// integration on boundary (with gauß lobatto nodes)
+	boost::shared_ptr<dealii::QGaussLobatto<dim - 1> > m_faceQuadrature;
+
+	/// Finite Element function on one cell
+	boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
+
+*/
 public:
 
 	/// constructor
@@ -44,8 +100,10 @@ public:
 	virtual  void setupDoFs() = 0;
 
 	/// make streaming step
-	virtual void stream() = 0;
-	// TODO is blas installed with dealii? installing blas will speed up the streaming step
+	virtual double stream(DistributionFunctions& f_old,
+				DistributionFunctions& f) = 0;
+
+	virtual void applyBoundaryConditions(double t)  = 0;
 
 	virtual const distributed_sparse_block_matrix& getSystemMatrix() const = 0;
 
@@ -68,13 +126,13 @@ public:
 
 	virtual boost::shared_ptr<dealii::FEValues<dim,dim> > getFEValues(const dealii::UpdateFlags &) const = 0;
 
-	virtual const boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const = 0;
+	virtual const boost::shared_ptr<dealii::FiniteElement<dim> >& getFe() const = 0;
 
 	virtual size_t getNumberOfDoFsPerCell() const = 0;
 
-	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const = 0;
+	virtual const boost::shared_ptr<dealii::Quadrature<dim> >& getQuadrature() const = 0;
 
-	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const = 0;
+	virtual const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const = 0;
 
 	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const = 0;
 

@@ -263,10 +263,6 @@ vector<std::map<size_t, size_t> > SemiLagrangian<dim>::map_q_index_to_facedofs()
 	return result;
 } /* map_q_index_to_facedofs */
 
-template<size_t dim>
-void SemiLagrangian<dim>::stream() {
-	throw AdvectionSolverException("SemiLagrangian<dim>::stream() not implemented, yet.");
-}
 
 template<size_t dim>
 void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
@@ -280,7 +276,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 		assert(m_systemMatrix.m() != 0);
 
 	}
-	assert (m_boundaryHandler.n_cells() == 0);
+	assert (m_boundaryHandler.n_hits() == 0);
 
 	/////////////////////////////////
 	// Initialize Finite Element ////
