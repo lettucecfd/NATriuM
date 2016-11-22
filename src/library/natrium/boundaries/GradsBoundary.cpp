@@ -9,175 +9,183 @@
 
 namespace natrium {
 
-template<size_t dim, PrescribedQuantity prescribed_quantity>
-GradsBoundary<dim, prescribed_quantity>::GradsBoundary(size_t boundaryIndicator,
-		boost::shared_ptr<dealii::Function<dim> > boundary_values) :
-		SLBoundary<dim>(boundaryIndicator), m_boundaryValues(boundary_values) {
-	// TODO: assert n_components = dim
+template<size_t dim>
+void GradsBoundary<dim>::updateMacroscopic(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
+		const dealii::FEValues<dim>& fe_values, size_t q_point) {
 
-}
+	// check that object has been initialized properly via reinit
+	assert(g.m_viscosity > 0);
+	assert(g.m_dt > 0); // time step
 
-template<size_t dim, PrescribedQuantity prescribed_quantity>
-GradsBoundary<dim, prescribed_quantity>::GradsBoundary(size_t boundaryIndicator,
-		const dealii::Vector<double>& velocity) :
-		SLBoundary<dim>(boundaryIndicator), m_boundaryValues(
-				boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(
-						velocity)) {
-	assert(prescribed_quantity == PRESCRIBED_VELOCITY);
-}
-
-template<size_t dim, PrescribedQuantity prescribed_quantity>
-GradsBoundary<dim, prescribed_quantity>::GradsBoundary(size_t boundaryIndicator,
-		double pressure) :
-		SLBoundary<dim>(boundaryIndicator), m_boundaryValues(
-				boost::make_shared<BoundaryTools::BoundaryPressure<dim> >(
-						pressure)) {
-
-	assert(prescribed_quantity == PRESCRIBED_PRESSURE);
-}
-
-template<size_t dim, PrescribedQuantity prescribed_quantity>
-void GradsBoundary<dim, prescribed_quantity>::calculateBoundaryValues(
-		const DistributionFunctions& f_old, DistributionFunctions& f_new,
-		const std::vector<dealii::types::global_dof_index> & local_dofs,
-		const dealii::FEValues<dim>& fe_values, size_t q_point,
-		const LagrangianPathDestination& destination, double eps) const {
-
-	// check that object has been initialized properly
-	assert(m_viscosity > 0);
-	assert(m_stencil);
-	assert(m_dt > 0); // time step
 	// check function parameters
-	assert(eps > 0); // local time to boundary
-	assert(fe_values.get_fe().n_dofs_per_cell() == local_dofs.size());
-
-	// obtain constants
-	const size_t dofs_per_cell = local_dofs.size();
-	const size_t Q = m_stencil->getQ();
-	const double cs2 = m_stencil->getSpeedOfSoundSquare();
+	assert(fe_values.get_fe().n_dofs_per_cell() == b.local_dofs.size());
+	assert (b.dofs_per_cell == b.local_dofs.size());
 
 	// initalize macroscopic variables and dof variables
-	double rho = 0.0;
-	Tensor < 1, dim > rho_u;
-	Tensor < 1, dim > u;
-	vector<double> rho_dof;
-	rho_dof.resize(dofs_per_cell);
-	vector<Tensor<1, dim> > rho_u_dof;
-	rho_u_dof.resize(dofs_per_cell);
-	vector<Tensor<1, dim> > u_dof;
-	u_dof.resize(dofs_per_cell);
+	b.rho = 0;
+	b.rho_u = 0;
+	b.u = 0;
+	for (size_t i = 0; i < b.dofs_per_cell; i++) {
+		b.rho_dof.at(i) = 0;
+		b.rho_u_dof.at(i) = 0;
+		b.u_dof.at(i) = 0;
+	}
 
 	// calculate macroscopic variables and dof variables
-	for (size_t dof = 0; dof < dofs_per_cell; dof++) {
-		for (size_t qi = 0; qi < Q; qi++) {
-			rho_dof.at(dof) += f_old.at(qi)(local_dofs.at(dof));
+	for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
+		for (size_t qi = 0; qi < g.m_Q; qi++) {
+			b.rho_dof.at(dof) += g.m_fold.at(qi)(b.local_dofs.at(dof));
 			for (size_t i = 0; i < dim; i++) {
-				rho_u_dof.at(dof)[i] += f_old.at(qi)(local_dofs.at(dof))
-						* m_stencil->getDirection(qi)[i];
+				b.rho_u_dof.at(dof)[i] += g.m_fold.at(qi)(b.local_dofs.at(dof))
+						* g.m_stencil.getDirection(qi)[i];
 			}
 		}
-		u_dof.at(dof) = rho_u_dof.at(dof);
-		u_dof.at(dof) /= rho_dof.at(dof);
-		rho += rho_dof.at(dof) * fe_values.shape_value(dof, q_point);
-		rho_u += rho_u_dof.at(dof) * fe_values.shape_value(dof, q_point);
-		u += u_dof.at(dof) * fe_values.shape_value(dof, q_point);
+		b.u_dof.at(dof) = b.rho_u_dof.at(dof);
+		b.u_dof.at(dof) /= b.rho_dof.at(dof);
+		b.rho += b.rho_dof.at(dof) * fe_values.shape_value(dof, q_point);
+		b.rho_u += b.rho_u_dof.at(dof) * fe_values.shape_value(dof, q_point);
+		b.u += b.u_dof.at(dof) * fe_values.shape_value(dof, q_point);
 	}
-	assert((u * rho - rho_u).norm() < 1e-10);
+	assert((b.u * b.rho - b.rho_u).norm() < 1e-10);
+}
 
-	// calculate boundary values
-	// TODO: incorporate prescribed values
-	double rho_w = 0;
-	Tensor < 1, dim > u_w;
-	Tensor < 2, dim > dudx_w;
+template<size_t dim>
+void GradsBoundary<dim>::calculateWallValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
+		const dealii::FEValues<dim>& fe_values, size_t q_point) {
+	b.rho_w = 0;
+	b.drhodt_w = 0;
+	b.u_w = 0;
+	b.dudt_w = 0;
+	b.dudx_w = 0;
+	b.d2udxdt_w = 0;
 
 	// calculate rho_w: first divergence, then rest
-	for (size_t dof = 0; dof < dofs_per_cell; dof++) {
+	for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
 		for (size_t i = 0; i < dim; i++) {
 			// derivative drhoui_dxi
-			rho_w += fe_values.shape_grad(dof, q_point)[i]
-					* rho_u_dof.at(dof)[i];
+			b.drhodt_w += fe_values.shape_grad(dof, q_point)[i]
+					* b.rho_u_dof.at(dof)[i];
 		}
 	}
-	rho_w *= -(m_dt - eps);
-	rho_w += rho;
+	b.drhodt_w *= -1;
 
 	// calculate u_w: first viscous term, then derivative part, then rest
 	for (size_t i = 0; i < dim; i++) {
 		// viscous term
-		for (size_t dof = 0; dof < dofs_per_cell; dof++) {
+		for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
 			for (size_t k = 0; k < dim; k++) {
-				u_w[i] += fe_values.shape_hessian(dof, q_point)[k][k]
-						* u_dof.at(dof)[i];
-				u_w[i] += fe_values.shape_hessian(dof, q_point)[i][k]
-						* u_dof.at(dof)[k];
+				b.dudt_w[i] += fe_values.shape_hessian(dof, q_point)[k][k]
+						* b.u_dof.at(dof)[i];
+				b.dudt_w[i] += fe_values.shape_hessian(dof, q_point)[i][k]
+						* b.u_dof.at(dof)[k];
 			}
 		}
-		u_w[i] *= (-m_viscosity);
-		for (size_t dof = 0; dof < dofs_per_cell; dof++) {
+		b.dudt_w[i] *= (-g.m_viscosity);
+		for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
 			// nonlinear term
 			for (size_t k = 0; k < dim; k++) {
-				u_w[i] += u[k] * fe_values.shape_grad(dof, q_point)[k]
-						* u_dof.at(dof)[i];
+				b.dudt_w[i] += b.u[k] * fe_values.shape_grad(dof, q_point)[k]
+						* b.u_dof.at(dof)[i];
 			}
 			// pressure term
-			u_w[i] += cs2 / rho * fe_values.shape_grad(dof, q_point)[i]
-					* rho_dof.at(dof);
+			b.dudt_w[i] += g.m_cs2 / b.rho * fe_values.shape_grad(dof, q_point)[i]
+					* b.rho_dof.at(dof);
 		}
-		u_w[i] *= -(m_dt - eps);
-		u_w[i] += u[i];
+		b.u_w[i] *= -1;
 	}
 
 	// calculate dudx_w
 	for (size_t i = 0; i < dim; i++) {
 		for (size_t j = 0; j < dim; j++) {
 			// viscous term
-			for (size_t dof = 0; dof < dofs_per_cell; dof++) {
+			for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
 				for (size_t k = 0; k < dim; k++) {
-					dudx_w[i][j] +=
-							fe_values.shape_3rd_derivative(dof, q_point)[k][k][j]
-									* u_dof.at(dof)[i];
-					dudx_w[i][j] +=
-							fe_values.shape_3rd_derivative(dof, q_point)[i][k][j]
-									* u_dof.at(dof)[k];
+					b.d2udxdt_w[i][j] += fe_values.shape_3rd_derivative(dof,
+							q_point)[k][k][j] * b.u_dof.at(dof)[i];
+					b.d2udxdt_w[i][j] += fe_values.shape_3rd_derivative(dof,
+							q_point)[i][k][j] * b.u_dof.at(dof)[k];
 				}
 			}
-			dudx_w[i][j] *= (-m_viscosity);
-			for (size_t dof = 0; dof < dofs_per_cell; dof++) {
+			b.d2udxdt_w[i][j] *= (-g.m_viscosity);
+			for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
 				for (size_t k = 0; k < dim; k++) {
 					// nonlinear term 1
-					dudx_w[i][j] += fe_values.shape_grad(dof, q_point)[j]
-							* u_dof.at(dof)[k]
+					b.d2udxdt_w[i][j] += fe_values.shape_grad(dof, q_point)[j]
+							* b.u_dof.at(dof)[k]
 							* fe_values.shape_grad(dof, q_point)[k]
-							* u_dof.at(dof)[i];
+							* b.u_dof.at(dof)[i];
 					// nonlinear term 2
-					dudx_w[i][j] += u[j]
+					b.d2udxdt_w[i][j] += b.u[j]
 							* fe_values.shape_hessian(dof, q_point)[j][k]
-							* u_dof.at(dof)[i];
+							* b.u_dof.at(dof)[i];
 
 				}
 				// pressure term 1
-				dudx_w[i][j] += cs2 / (rho * rho)
+				b.d2udxdt_w[i][j] += g.m_cs2 / (b.rho * b.rho)
 						* fe_values.shape_hessian(dof, q_point)[i][j]
-						* rho_dof.at(dof);
+						* b.rho_dof.at(dof);
 				// pressure term 2
-				dudx_w[i][j] += cs2 / (rho * rho)
+				b.d2udxdt_w[i][j] += g.m_cs2 / (b.rho * b.rho)
 						* fe_values.shape_grad(dof, q_point)[i]
-						* rho_dof.at(dof)
+						* b.rho_dof.at(dof)
 						* fe_values.shape_grad(dof, q_point)[j]
-						* rho_dof.at(dof);
+						* b.rho_dof.at(dof);
 			}
-			dudx_w[i] *= -(m_dt - eps);
+			b.d2udxdt_w[i] *= -1;
 			// + dudx_w, which is not stored, but calculated by:
-			for (size_t dof = 0; dof < dofs_per_cell; dof++) {
-				dudx_w[i][j] += fe_values.shape_grad(dof, q_point)[j]
-						* u_dof.at(dof)[i];
+			for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
+				b.dudx_w[i][j] += fe_values.shape_grad(dof, q_point)[j]
+						* b.u_dof.at(dof)[i];
 			}
 		}
 	}
+}
+template<size_t dim>
+void GradsBoundary<dim>::applyWallValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
+		const dealii::FEValues<dim>& fe_values, size_t q_point,
+		const LagrangianPathDestination& destination, double eps) {
+
+	assert(eps > 0); // local time to boundary
+	assert(g.m_Q > 0);
 
 
+	// calculate Grad's approximation of the distribution functions
+	Tensor < 2, dim > P;
+	Tensor < 2, dim > dudx_w_eps = b.dudx_w + (g.m_dt  - eps) * b.d2udxdt_w;
+	Tensor < 1, dim > u_w_eps = b.u_w +  (g.m_dt  - eps) * b.dudt_w;
+	double rho_w_eps =  b.rho_w + (g.m_dt  - eps) * b.drhodt_w;
+	for (size_t i = 0; i < dim; i++) {
+		for (size_t j = 0; j < dim; j++) {
+			P[i][j] = rho_w_eps * g.m_cs2 * (i == j) + rho_w_eps * u_w_eps[i] * u_w_eps[j]
+					- rho_w_eps * (g.m_viscosity + g.m_cs2 / 2.0)
+							* (dudx_w_eps[i][j] + dudx_w_eps[j][i]);
+		}
+	}
 
-	/*
+	vector<double> f;
+	f.resize(g.m_Q);
+	GradsFunction<dim>(f, g.m_stencil, b.rho_w + (g.m_dt - eps) * b.drhodt_w, (b.u_w + (g.m_dt -eps) * b.dudt_w) * b.rho_w, P);
+	// TODO: calculate here
+
+	g.m_fnew.at(destination.direction)(destination.index) = f.at(
+			destination.direction);
+
+
+}
+
+template<size_t dim>
+void GradsBoundary<dim>::calculateBoundaryValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
+		const dealii::FEValues<dim>& fe_values, size_t q_point,
+		const LagrangianPathDestination& destination, double eps) {
+
+	// TODO change so that this gets an instance of BoundaryHitsAtCell
+	updateMacroscopic(g,b, fe_values, q_point);
+
+	calculateWallValues(g,b, fe_values, q_point);
+
+	applyWallValues(g,b, fe_values, q_point, destination, eps);
+
+/*
 	 assert(u.size() == dim);
 	 const dealii::DoFHandler<dim>& dof_handler = *advection.getDoFHandler();
 	 const size_t dofs_per_cell = advection.getNumberOfDoFsPerCell();
@@ -279,8 +287,8 @@ void GradsBoundary<dim, prescribed_quantity>::calculateBoundaryValues(
 	 */
 }
 
-template class GradsBoundary<2, PRESCRIBED_VELOCITY> ;
-template class GradsBoundary<3, PRESCRIBED_VELOCITY> ;
+template class GradsBoundary<2> ;
+template class GradsBoundary<3> ;
 
 }
 /* namespace natrium */
