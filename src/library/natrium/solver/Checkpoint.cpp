@@ -257,7 +257,7 @@ void Checkpoint<dim>::loadFromDeprecatedCheckpointVersion(
 		}
 		// order of fe
 		infile >> tmp;
-		if (tmp != advection.getFe()->get_degree()) {
+		if (tmp != advection.getFe()->degree) {
 			message = "Order of finite element not equal.";
 			status_ok = false;
 			break;

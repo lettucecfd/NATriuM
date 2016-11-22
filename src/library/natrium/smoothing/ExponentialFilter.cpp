@@ -15,11 +15,11 @@ namespace natrium {
 template<size_t dim>
 ExponentialFilter<dim>::ExponentialFilter(double alpha, double s, size_t Nc,
 		bool by_sum, const dealii::Quadrature<dim>& quadrature,
-		const dealii::FE_DGQ<dim>& fe) :
-		m_alpha(alpha), m_s(s), m_Nc(Nc), m_bySum(by_sum), m_p(fe.get_degree()), m_quadrature(
+		const dealii::FiniteElement<dim>& fe) :
+		m_alpha(alpha), m_s(s), m_Nc(Nc), m_bySum(by_sum), m_p(fe.degree), m_quadrature(
 				quadrature), m_sourceFE(fe), m_legendre1D(0), m_projectToLegendre(
-				pow(m_sourceFE.get_degree() + 1, dim)), m_projectFromLegendre(
-				pow(m_sourceFE.get_degree() + 1, dim)) {
+				pow(m_sourceFE.degree + 1, dim)), m_projectFromLegendre(
+				pow(m_sourceFE.degree + 1, dim)) {
 	m_legendre1D = dealii::Polynomials::Legendre::generate_complete_basis(m_p);
 	makeProjectionMatrices(m_projectToLegendre, m_projectFromLegendre);
 	makeDegreeVectors(m_p);

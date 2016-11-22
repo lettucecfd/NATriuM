@@ -69,13 +69,13 @@ private:
 	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
 	/// integration on gauss lobatto nodes
-	boost::shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
+	boost::shared_ptr<dealii::Quadrature<dim> > m_quadrature;
 
 	/// integration on boundary (with gauß lobatto nodes)
-	boost::shared_ptr<dealii::QGaussLobatto<dim - 1> > m_faceQuadrature;
+	boost::shared_ptr<dealii::Quadrature<dim - 1> > m_faceQuadrature;
 
 	/// Finite Element function on one cell
-	boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
+	boost::shared_ptr<dealii::FiniteElement<dim> > m_fe;
 
 	/// dealii::DoFHandler to distribute the degrees of freedom over the Mesh
 	boost::shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
@@ -193,8 +193,19 @@ public:
 
 	virtual void setupDoFs();
 
-	/// make streaming step
-	virtual void stream();
+	virtual double stream(DistributionFunctions& f_old,
+				DistributionFunctions& f){
+		assert (&f_old != &f);
+		f_old = f;
+		m_systemMatrix.vmult(f.getFStream(), f_old.getFStream());
+		return m_deltaT;
+	}
+
+	virtual void applyBoundaryConditions(double t) {
+		//m_boundaryHandler.apply();
+
+	}
+
 
 	/// get global system matrix
 	virtual const distributed_sparse_block_matrix& getSystemMatrix() const {
@@ -238,11 +249,11 @@ public:
 		return m_facedof_to_q_index;
 	}
 
-	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
+	virtual const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
 
-	virtual const boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
+	virtual const boost::shared_ptr<dealii::FiniteElement<dim> >& getFe() const {
 		return m_fe;
 	}
 
@@ -250,7 +261,7 @@ public:
 		return m_fe->dofs_per_cell;
 	}
 
-	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
+	virtual const boost::shared_ptr<dealii::Quadrature<dim> >& getQuadrature() const {
 		return m_quadrature;
 	}
 

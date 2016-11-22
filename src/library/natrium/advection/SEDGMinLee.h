@@ -20,13 +20,13 @@
 #include "deal.II/base/quadrature_lib.h"
 
 #include "AdvectionOperator.h"
+#include "../smoothing/VmultLimiter.h"
 #include "../problemdescription/BoundaryCollection.h"
 #include "../utilities/BasicNames.h"
 #include "../timeintegration/TimeIntegrator.h"
 #include "../utilities/NATriuMException.h"
 
 namespace natrium {
-
 
 /* forward declaration */
 class Stencil;
@@ -111,13 +111,13 @@ private:
 	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
 
 	/// integration on gauss lobatto nodes
-	boost::shared_ptr<dealii::QGaussLobatto<dim> > m_quadrature;
+	boost::shared_ptr<dealii::Quadrature<dim> > m_quadrature;
 
 	/// integration on boundary (with gauß lobatto nodes)
-	boost::shared_ptr<dealii::QGaussLobatto<dim - 1> > m_faceQuadrature;
+	boost::shared_ptr<dealii::Quadrature<dim - 1> > m_faceQuadrature;
 
 	/// Finite Element function on one cell
-	boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
+	boost::shared_ptr<dealii::FiniteElement<dim> > m_fe;
 
 	/// dealii::DoFHandler to distribute the degrees of freedom over the Mesh
 	boost::shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
@@ -154,8 +154,9 @@ private:
 	const bool m_useCentralFlux;
 
 	///
-	boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
-	distributed_block_vector> > m_timeIntegrator;
+	boost::shared_ptr<
+			TimeIntegrator<distributed_sparse_block_matrix,
+					distributed_block_vector> > m_timeIntegrator;
 
 #ifdef WITH_TRILINOS
 	// locally owned degrees of freedom (for MPI parallelization)
@@ -197,14 +198,16 @@ private:
 			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
-			dealii::FEFaceValues<dim>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
+			dealii::FEFaceValues<dim>& feNeighborFaceValues,
+			const vector<double>& inverseLocalMassMatrix);
 
 	/**
 	 * @short calculate system diagonal block matrix  (Dx*eix + Dy*eiy)
 	 */
 	void calculateAndDistributeLocalStiffnessMatrix(size_t alpha,
 			const vector<dealii::FullMatrix<double> > &derivativeMatrices,
-			dealii::FullMatrix<double> &systemMatrix, const vector<double>& inverseLocalMassMatrix,
+			dealii::FullMatrix<double> &systemMatrix,
+			const vector<double>& inverseLocalMassMatrix,
 			const std::vector<dealii::types::global_dof_index>& globalDoFs,
 			size_t dofsPerCell);
 
@@ -225,7 +228,8 @@ private:
 			typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
 			size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
 			dealii::FESubfaceValues<dim>& feSubfaceValues,
-			dealii::FEFaceValues<dim>& feNeighborFaceValues, const vector<double>& inverseLocalMassMatrix);
+			dealii::FEFaceValues<dim>& feNeighborFaceValues,
+			const vector<double>& inverseLocalMassMatrix);
 
 	/**
 	 * @short map degrees of freedom to quadrature node indices on a cell
@@ -245,8 +249,6 @@ private:
 	 */
 	vector<std::map<size_t, size_t> > map_q_index_to_facedofs() const;
 
-
-
 public:
 
 	/// constructor
@@ -258,9 +260,8 @@ public:
 	 */
 	SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
 			boost::shared_ptr<BoundaryCollection<dim> > boundaries,
-			size_t orderOfFiniteElement,
-			boost::shared_ptr<Stencil> stencil,  bool useCentralFlux =
-					false);
+			size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
+			bool useCentralFlux = false);
 
 	/// destructor
 	virtual ~SEDGMinLee() {
@@ -271,10 +272,26 @@ public:
 	/// function to (re-)assemble linear system
 	virtual void reassemble();
 
-	virtual  void setupDoFs();
+	virtual void setupDoFs();
 
 	/// make streaming step
-	virtual void stream();
+	virtual double stream(DistributionFunctions& f_old,
+			DistributionFunctions& f) {
+		if (!m_timeIntegrator) {
+			throw AdvectionSolverException(
+					"Before calling SEDGMinLee.stream(), you have to assign a time integrator.");
+		}
+		LOG(WARNING)
+				<< "SEDGMinLee<dim>::stream() is not tested and might not work properly."
+				<< endl;
+		assert(&f_old == &f);
+		return m_timeIntegrator->step(f.getFStream(), m_systemMatrix,
+				m_systemVector, 0.0, m_timeIntegrator->getTimeStepSize());
+	}
+
+	virtual void applyBoundaryConditions(double t) {
+
+	}
 
 	/// get global system matrix
 	virtual const distributed_sparse_block_matrix& getSystemMatrix() const {
@@ -292,15 +309,16 @@ public:
 		return m_doFHandler;
 	}
 
-
-	virtual boost::shared_ptr<dealii::FEFaceValues<dim> > getFEFaceValues(const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEFaceValues<dim> >(m_mapping, *m_fe, *m_faceQuadrature,
-				flags);
+	virtual boost::shared_ptr<dealii::FEFaceValues<dim> > getFEFaceValues(
+			const dealii::UpdateFlags & flags) const {
+		return boost::make_shared<dealii::FEFaceValues<dim> >(m_mapping, *m_fe,
+				*m_faceQuadrature, flags);
 	}
 
-	virtual boost::shared_ptr<dealii::FEValues<dim> > getFEValues(const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEValues<dim> >(m_mapping, *m_fe, *m_quadrature,
-				flags);
+	virtual boost::shared_ptr<dealii::FEValues<dim> > getFEValues(
+			const dealii::UpdateFlags & flags) const {
+		return boost::make_shared<dealii::FEValues<dim> >(m_mapping, *m_fe,
+				*m_quadrature, flags);
 	}
 
 	const dealii::BlockSparsityPattern& getBlockSparsityPattern() const {
@@ -329,20 +347,19 @@ public:
 		return m_facedof_to_q_index;
 	}
 
-
-	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim - 1> >& getFaceQuadrature() const {
+	virtual const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
 
-	virtual const boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> >& getFe() const {
+	virtual const boost::shared_ptr<dealii::FiniteElement<dim> >& getFe() const {
 		return m_fe;
 	}
 
-	virtual size_t getNumberOfDoFsPerCell() const{
+	virtual size_t getNumberOfDoFsPerCell() const {
 		return m_fe->dofs_per_cell;
 	}
 
-	virtual const boost::shared_ptr<dealii::QGaussLobatto<dim> >& getQuadrature() const {
+	virtual const boost::shared_ptr<dealii::Quadrature<dim> >& getQuadrature() const {
 		return m_quadrature;
 	}
 
@@ -351,7 +368,7 @@ public:
 	}
 
 	virtual size_t getNumberOfDoFs() const {
-		return getSystemMatrix().block(0,0).n();
+		return getSystemMatrix().block(0, 0).n();
 	}
 
 	virtual const distributed_block_vector& getSystemVector() const {
@@ -381,18 +398,20 @@ public:
 		return m_boundaries;
 	}
 
-	boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
-	distributed_block_vector> > getTimeIntegrator() const {
+	boost::shared_ptr<
+			TimeIntegrator<distributed_sparse_block_matrix,
+					distributed_block_vector> > getTimeIntegrator() const {
 		return m_timeIntegrator;
 	}
 
-	virtual void setTimeIntegrator(boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
-			distributed_block_vector> > timeIntegrator) {
+	virtual void setTimeIntegrator(
+			boost::shared_ptr<
+					TimeIntegrator<distributed_sparse_block_matrix,
+							distributed_block_vector> > timeIntegrator) {
 		m_timeIntegrator = timeIntegrator;
 	}
 };
 
 } /* namespace natrium */
-
 
 #endif /* SEDGMINLEE_H_ */
