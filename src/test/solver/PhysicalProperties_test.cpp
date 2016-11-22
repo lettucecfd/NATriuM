@@ -109,7 +109,8 @@ BOOST_AUTO_TEST_CASE(PhysicalProperties_Enstrophy_test) {
 	CFDSolver<2> solver(config, problem);
 
 	const vector<distributed_vector> & u = solver.getVelocity();
-	double E = PhysicalProperties<2>::enstrophy(u, solver.getAdvectionOperator());
+	double sq;
+	double E = PhysicalProperties<2>::enstrophy(u, solver.getAdvectionOperator(), &sq);
 	BOOST_CHECK_CLOSE(E, 213, 10);
 
 	pout << "done" << endl;

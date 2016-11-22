@@ -24,47 +24,62 @@
 
 namespace natrium {
 
-enum PrescribedQuantity {
-	PRESCRIBED_VELOCITY, PRESCRIBED_PRESSURE
-};
-
-template<size_t dim, PrescribedQuantity prescribed_quantity>
+template<size_t dim>
 class GradsBoundary: public SLBoundary<dim> {
-private:
-	boost::shared_ptr<Stencil> m_stencil;
-	double m_viscosity;
-	double m_dt;
-	boost::shared_ptr<dealii::Function<dim> > m_boundaryValues;
 public:
-	/** @short This constructor assigns the Boundary condition with arbitrary density and velocity
-	 *         to the boundary with the given boundary indicator.
-	 *  @param[in] boundaryIndicator the boundary indicator that is assigned to the target boundary.
-	 *  @param[in] boundaryDensity A dealii::Function<dim> that defines the prescribed density at the boundary.
-	 *  @param[in] boundaryVelocity A dealii::Function<dim> that defines the prescribed velocity at the boundary.
-	 */
-	GradsBoundary(size_t boundaryIndicator,
-			boost::shared_ptr<dealii::Function<dim> > boundary_values);
 
-	GradsBoundary(size_t boundaryIndicator, double pressure);
-
-	//GradsBoundary(size_t boundaryIndicator,
-	//		dealii::Tensor<1,dim> velocity);
-	/// constructor
-	GradsBoundary(size_t boundaryIndicator,
-			const dealii::Vector<double>& velocity);
-
-	virtual ~GradsBoundary() {
+	GradsBoundary(size_t boundary_id,
+			const PrescribedQuantities<dim>& quantities) :
+			SLBoundary<dim>(boundary_id, quantities) {
 
 	}
+
+	GradsBoundary(size_t boundary_id, double pressure) :
+			SLBoundary<dim>(boundary_id, PrescribedQuantities<dim>(pressure)) {
+
+	}
+
+	GradsBoundary(size_t boundary_id,
+			boost::shared_ptr<dealii::TensorFunction<2, dim> > function) :
+			SLBoundary<dim>(boundary_id, PrescribedQuantities<dim>(function)) {
+
+	}
+
+	GradsBoundary(size_t boundary_id, dealii::Tensor<1, dim>& velocity) :
+			SLBoundary<dim>(boundary_id, PrescribedQuantities<dim>(velocity)) {
+
+	}
+
+	GradsBoundary(size_t boundary_id, dealii::Tensor<2, dim>& velocity_gradient) :
+			SLBoundary<dim>(boundary_id,
+					PrescribedQuantities<dim>(velocity_gradient)) {
+
+	}
+
+	GradsBoundary(size_t boundary_id, const dealii::Vector<double>& velocity) :
+			SLBoundary<dim>(boundary_id, PrescribedQuantities<dim>(velocity)) {
+	}
+
+	virtual ~GradsBoundary() {
+	}
+
+	void updateMacroscopic(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
+			const dealii::FEValues<dim>& fe_values, size_t q_point);
+
+	void calculateWallValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
+			const dealii::FEValues<dim>& fe_values, size_t q_point);
+
+	void applyWallValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
+			const dealii::FEValues<dim>& fe_values, size_t q_point,
+			const LagrangianPathDestination& destination, double dt);
 
 	/**
 	 * @short Apply the boundary condition (calculate unkown distributions)
 	 */
-	virtual void calculateBoundaryValues(const DistributionFunctions& f_old,
-			DistributionFunctions& f_new,
-			const std::vector<dealii::types::global_dof_index> & local_dofs,
-			const dealii::FEValues<dim>&, size_t q_point,
-			const LagrangianPathDestination& destination, double dt) const;
+	virtual void calculateBoundaryValues(const GlobalBoundaryData& g,
+			LocalBoundaryData<dim>& b, const dealii::FEValues<dim>& fe_values,
+			size_t q_point, const LagrangianPathDestination& destination,
+			double dt);
 
 	virtual dealii::UpdateFlags getUpdateFlags() const {
 		return dealii::update_values | dealii::update_gradients

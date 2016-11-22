@@ -12,6 +12,7 @@
 
 #include "deal.II/base/point.h"
 #include "deal.II/base/function.h"
+#include "deal.II/base/tensor_function.h"
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
@@ -81,6 +82,11 @@ private:
 public:
 	BoundaryVelocity(const dealii::Vector<double>& velocity) :
 			m_Velocity(velocity) {
+		assert (velocity.size() == dim);
+	}
+	BoundaryVelocity(const dealii::Tensor<1,dim>& velocity){
+		m_Velocity.reinit(dim);
+		velocity.unroll(m_Velocity);
 	}
 	virtual ~BoundaryVelocity() {
 	}
@@ -90,6 +96,23 @@ public:
 		values = m_Velocity;
 	}
 };
+
+template<size_t dim>
+class BoundaryVelocityGradient: public dealii::TensorFunction<2, dim> {
+private:
+	dealii::Tensor<2, dim> m_VelocityGradient;
+public:
+	BoundaryVelocityGradient(const dealii::Tensor<2, dim>& velocity_gradient) :
+		m_VelocityGradient(velocity_gradient) {
+	}
+	virtual ~BoundaryVelocityGradient() {
+	}
+	;
+	virtual dealii::Tensor<2, dim> value(const dealii::Point<dim> & ) const {
+		return m_VelocityGradient;
+	}
+};
+
 
 /**
  * @short function to compare points as map keys;

@@ -57,6 +57,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	dealii::Point<2> p(0,0);
 	LagrangianPathTracker<2> tracker(1, 1, 1, departure, p,
 			streaming.getDoFHandler()->begin_active());
+	assert (streaming.getStencil());
 	SemiLagrangianBoundaryHandler<2> bh(dt, *streaming.getStencil(), *couette.getBoundaries());
 	bh.addHit(tracker, 2, streaming);
 	BOOST_CHECK(1 == bh.n_cells());

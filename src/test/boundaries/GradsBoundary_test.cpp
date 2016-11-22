@@ -39,8 +39,8 @@ BOOST_AUTO_TEST_CASE(GradsBoundary_Constructor_test) {
 	boost::shared_ptr<dealii::Function<2> > f = boost::make_shared<dealii::ConstantFunction<2> >(0.1, 2);
 	boost::shared_ptr<dealii::Function<3> > f3d = boost::make_shared<dealii::ConstantFunction<3> >(0.1, 3);
 
-	GradsBoundary<2,PRESCRIBED_VELOCITY> boundary(0,f);
-	GradsBoundary<3,PRESCRIBED_VELOCITY> boundary2(0,f3d);
+	GradsBoundary<2> boundary(0,f);
+	GradsBoundary<3> boundary2(0,f3d);
 
 	//GradsBoundary<2,PRESCRIBED_PRESSURE> boundary3(0,f);
 	//GradsBoundary<3,PRESCRIBED_PRESSURE> boundary4(0,f3d);
@@ -58,10 +58,10 @@ BOOST_AUTO_TEST_CASE(GradsBoundary_Velocity2D_test) {
 	boost::shared_ptr<Mesh<2> >mesh = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
 	dealii::GridGenerator::hyper_cube<2>(*mesh,0,1,true);
 	mesh->refine_global(3);
-	boost::shared_ptr<SLBoundary<2> > boundary= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(0,f1);
-	boost::shared_ptr<SLBoundary<2> > boundary1= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(1,f1);
-	boost::shared_ptr<SLBoundary<2> > boundary2= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(2,f1);
-	boost::shared_ptr<SLBoundary<2> > boundary3= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(3,f1);
+	boost::shared_ptr<SLBoundary<2> > boundary= boost::make_shared<GradsBoundary<2> >(0,f1);
+	boost::shared_ptr<SLBoundary<2> > boundary1= boost::make_shared<GradsBoundary<2> >(1,f1);
+	boost::shared_ptr<SLBoundary<2> > boundary2= boost::make_shared<GradsBoundary<2> >(2,f1);
+	boost::shared_ptr<SLBoundary<2> > boundary3= boost::make_shared<GradsBoundary<2> >(3,f1);
 
 	boost::shared_ptr<BoundaryCollection<2> > bc = boost::make_shared<BoundaryCollection<2> >();
 	bc->addBoundary(boundary);
