@@ -39,12 +39,12 @@ int main() {
 	// specify Mach number
 	const double Ma = 0.05;
 	// zunaechst: fixed order of FE
-	const double orderOfFiniteElement = 9;
+	const double orderOfFiniteElement = 2;
 
 	// chose scaling so that the right Ma-number is achieved
 	double scaling = sqrt(3) * 2 / Ma;
 
-	const double refinementLevel = 2;
+	const double refinementLevel = 5;
 		pout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
@@ -56,7 +56,7 @@ int main() {
 		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		//double dt = dx / (scaling * sqrt(2));
-		double CFL=8;
+		double CFL=1;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -69,9 +69,9 @@ int main() {
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
 		configuration->setUserInteraction(false);
-		configuration->setOutputTableInterval(10);
-		configuration->setOutputCheckpointInterval(1000);
-		configuration->setOutputSolutionInterval(10);
+		configuration->setOutputTableInterval(5);
+		configuration->setOutputCheckpointInterval(1000000);
+		configuration->setOutputSolutionInterval(5);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(ALL);

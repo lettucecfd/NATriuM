@@ -154,12 +154,9 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_MassConservation_test) {
 	configuration->setSedgOrderOfFiniteElement(1);
 	configuration->setCFL(0.4);
 
-	cout << "make solver" << endl;
 	CFDSolver<2> solver(configuration, problem);
-	cout << "run" << endl;
 	solver.run();
 
-	cout << "getmass" << endl;
 	// check mass conservation
 	double mass = solver.getDensity().l1_norm();
 	mass /= solver.getNumberOfDoFs();
