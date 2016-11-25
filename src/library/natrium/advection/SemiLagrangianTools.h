@@ -88,7 +88,7 @@ void shapeFunctionValue(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<dim> >& points,
 		std::vector<std::vector<double> >&values,
-		const dealii::MappingQ<dim>& mapping);
+		const dealii::Mapping<dim>& mapping);
 
 template<size_t dim>
 int supportPointNr(

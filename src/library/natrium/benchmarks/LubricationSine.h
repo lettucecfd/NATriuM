@@ -48,7 +48,9 @@ public:
 
 	virtual void refine(Mesh<2>& mesh);
 	virtual void transform(Mesh<2>& mesh);
-
+	virtual bool isCartesian(){
+		return false;
+	}
 private:
 
 	const double m_bottomVelocity;

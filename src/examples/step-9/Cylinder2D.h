@@ -47,6 +47,10 @@ public:
 
 	}
 
+	virtual bool isCartesian(){
+		return false;
+	}
+
 	/**
 	 * @short class to describe the the initial solution
 	 */

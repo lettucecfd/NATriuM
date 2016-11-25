@@ -16,7 +16,7 @@ void shapeFunctionValue(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<dim> >& points,
 		std::vector<std::vector<double> >&values,
-		const dealii::MappingQ<dim>& mapping) {
+		const dealii::Mapping<dim>& mapping) {
 
 	//TimerOutput::Scope timer_section(Timing::getTimer(), "Assembly: evaluate function");
 
@@ -39,10 +39,10 @@ void shapeFunctionValue(
 		dealii::Point<dim> h = mapping.transform_real_to_unit_cell(cell,
 				points[i]);
 		for (size_t i = 0; i < dim; i++) {
-			if (fabs(h[i]) < 1e-12) {
+			if (fabs(h[i]) < 1e-10) {
 				h[i] = 0;
 			}
-			if (fabs(h[i] - 1) < 1e-12) {
+			if (fabs(h[i] - 1) < 1e-10) {
 				h[i] = 1;
 			}
 			assert(h[i] <= 1);
@@ -67,12 +67,12 @@ template void shapeFunctionValue<2>(
 		const typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<2> >& points,
 		std::vector<std::vector<double> >&values,
-		const dealii::MappingQ<2>& mapping);
+		const dealii::Mapping<2>& mapping);
 template void shapeFunctionValue<3>(
 		const typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<3> >& points,
 		std::vector<std::vector<double> >&values,
-		const dealii::MappingQ<3>& mapping);
+		const dealii::Mapping<3>& mapping);
 
 template<size_t dim>
 int supportPointNr(
@@ -85,7 +85,7 @@ int supportPointNr(
 			dealii::update_quadrature_points);
 	fe_v.reinit(cell);
 	for (size_t q = 0; q < quad.size(); q++) {
-		if (fe_v.quadrature_point(q).distance(point) < 1e-12){
+		if (fe_v.quadrature_point(q).distance(point) < 1e-10){
 			return q;
 		}
 	}
@@ -119,10 +119,10 @@ boost::shared_ptr<dealii::FEValues<dim> > reinitArbitraryPoints(
 		dealii::Point<dim> h = mapping.transform_real_to_unit_cell(cell,
 				points[i]);
 		for (size_t i = 0; i < dim; i++) {
-			if (fabs(h[i]) < 1e-12) {
+			if (fabs(h[i]) < 1e-10) {
 				h[i] = 0;
 			}
-			if (fabs(h[i] - 1) < 1e-12) {
+			if (fabs(h[i] - 1) < 1e-10) {
 				h[i] = 1;
 			}
 			assert(h[i] <= 1);

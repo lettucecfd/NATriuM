@@ -146,10 +146,10 @@ void GlobalTurbulenceStats<dim>::writeToFile() {
 		for (size_t i = 0; i < m_nofObservables; i++) {
 			*m_tableFile << m_EX4.at(i) << " ";
 		}
-		*m_tableFile << m_energy << " " ;
-		*m_tableFile << m_enstrophy << " " ;
-		*m_tableFile << m_energySquared << " " ;
-		*m_tableFile << m_enstrophySquared << " " ;
+		*m_tableFile << m_energy << " ";
+		*m_tableFile << m_enstrophy << " ";
+		*m_tableFile << m_energySquared << " ";
+		*m_tableFile << m_enstrophySquared << " ";
 		*m_tableFile << endl;
 
 	} /* is mpi rank 0 */
@@ -185,9 +185,11 @@ void GlobalTurbulenceStats<dim>::calculate() {
 	dealii::FEValues<dim> fe_values(
 			this->m_solver.getAdvectionOperator()->getMapping(),
 			*(this->m_solver.getAdvectionOperator()->getFe()),
-			*(this->m_solver.getAdvectionOperator()->getQuadrature()), update_flags);
+			*(this->m_solver.getAdvectionOperator()->getQuadrature()),
+			update_flags);
 	size_t dofs_per_cell =
 			this->m_solver.getAdvectionOperator()->getFe()->dofs_per_cell;
+	size_t n_q_points = this->m_solver.getAdvectionOperator()->getQuadrature()->size();
 	std::vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
 	std::vector<dealii::Tensor<1, dim, double> > ux_gradients;
 	std::vector<dealii::Tensor<1, dim, double> > uy_gradients;
@@ -221,85 +223,88 @@ void GlobalTurbulenceStats<dim>::calculate() {
 				fe_values.get_function_gradients(u.at(2), uz_gradients);
 			fe_values.get_function_gradients(rho, rho_gradients);
 
-			for (size_t i = 0; i < dofs_per_cell; i++) {
-				size_t q =
-						this->m_solver.getAdvectionOperator()->getCelldofToQIndex().at(
-								i);
-				dof_ind = local_indices.at(i);
+			for (size_t q = 0; q < n_q_points; q++) {
+				for (size_t i = 0; i < dofs_per_cell; i++) {
+					dof_ind = local_indices.at(i);
 
-				// fill value vector
-				size_t k = 0;
-				l_values.at(k) = rho(dof_ind);				// rho
-				k++;
-				l_values.at(k) = rho_gradients.at(i)[0];	// drho/dx
-				k++;
-				l_values.at(k) = rho_gradients.at(i)[1]; 	// drho/dy
-				k++;
-				if (3 == dim) {
-					l_values.at(k) = rho_gradients.at(i)[2]; 	// drho/dz
+					// fill value vector
+					size_t k = 0;
+					l_values.at(k) = rho(dof_ind);				// rho
 					k++;
-				}
-				l_values.at(k) = u.at(0)(dof_ind); 			// ux
-				k++;
-				l_values.at(k) = u.at(1)(dof_ind);			// uy
-				k++;
-				if (3 == dim) {
-					l_values.at(k) = u.at(2)(dof_ind);		// uz
+					l_values.at(k) = rho_gradients.at(i)[0];	// drho/dx
 					k++;
-				}
-				l_values.at(k) = ux_gradients.at(i)[0];		// dux/dx
-				k++;
-				l_values.at(k) = ux_gradients.at(i)[1];		// dux/dy
-				k++;
-				if (3 == dim) {
-					l_values.at(k) = ux_gradients.at(i)[2];	// dux/dz
+					l_values.at(k) = rho_gradients.at(i)[1]; 	// drho/dy
 					k++;
-				}
-				l_values.at(k) = uy_gradients.at(i)[0];		// duy/dx
-				k++;
-				l_values.at(k) = uy_gradients.at(i)[1];		// duy/dy
-				k++;
-				if (3 == dim) {
-					l_values.at(k) = uy_gradients.at(i)[2];	// duy/dz
-					k++;
-					l_values.at(k) = uz_gradients.at(i)[0];	// duz/dx
-					k++;
-					l_values.at(k) = uz_gradients.at(i)[1];	// duz/dy
-					k++;
-					l_values.at(k) = uz_gradients.at(i)[2];	// duz/dz
-				}
-
-				// add to averages:
-				for (size_t j = 0; j < m_nofObservables; j++) {
-					l_averages.at(j) += l_values.at(j) * weights.at(q);
-				}
-
-				// add to correlations
-				for (size_t j = 0; j < m_nofObservables; j++) {
-					for (size_t r = 0; r < j + 1; r++) {
-						l_correlations.at(j).at(r) += (l_values.at(j)
-								* l_values.at(r)) * weights.at(q);
+					if (3 == dim) {
+						l_values.at(k) = rho_gradients.at(i)[2]; 	// drho/dz
+						k++;
 					}
-				}
-				// add to third moment
-				for (size_t j = 0; j < m_nofObservables; j++) {
-					l_EX3.at(j) += pow(l_values.at(j), 3) * weights.at(q);
-					l_EX4.at(j) += pow(l_values.at(j), 4) * weights.at(q);
-				}
-				// add to energies and enstrophies
-				double e1 = 0.5 * u.at(0)(dof_ind) * u.at(0)(dof_ind) + 0.5 * u.at(1)(dof_ind) * u.at(1)(dof_ind);
-				double e2 = pow(uy_gradients.at(i)[0] - ux_gradients.at(i)[1],2);
-				if (3==dim){
-					e1 += 0.5 * u.at(2)(dof_ind) * u.at(2)(dof_ind);
-					e2 += pow(uz_gradients.at(i)[1] - uy_gradients.at(i)[2],2);
-					e2 += pow(ux_gradients.at(i)[2] - uz_gradients.at(i)[0],2);
-				}
-				ener += e1 * weights.at(q);
-				ener_sq += e1 * e1 * weights.at(q);
-				enst += e2 * weights.at(q);
-				enst_sq += e2*e2*weights.at(q);
+					l_values.at(k) = u.at(0)(dof_ind); 			// ux
+					k++;
+					l_values.at(k) = u.at(1)(dof_ind);			// uy
+					k++;
+					if (3 == dim) {
+						l_values.at(k) = u.at(2)(dof_ind);		// uz
+						k++;
+					}
+					l_values.at(k) = ux_gradients.at(i)[0];		// dux/dx
+					k++;
+					l_values.at(k) = ux_gradients.at(i)[1];		// dux/dy
+					k++;
+					if (3 == dim) {
+						l_values.at(k) = ux_gradients.at(i)[2];	// dux/dz
+						k++;
+					}
+					l_values.at(k) = uy_gradients.at(i)[0];		// duy/dx
+					k++;
+					l_values.at(k) = uy_gradients.at(i)[1];		// duy/dy
+					k++;
+					if (3 == dim) {
+						l_values.at(k) = uy_gradients.at(i)[2];	// duy/dz
+						k++;
+						l_values.at(k) = uz_gradients.at(i)[0];	// duz/dx
+						k++;
+						l_values.at(k) = uz_gradients.at(i)[1];	// duz/dy
+						k++;
+						l_values.at(k) = uz_gradients.at(i)[2];	// duz/dz
+					}
 
-			} /* for all quadrature points */
+					// add to averages:
+					for (size_t j = 0; j < m_nofObservables; j++) {
+						l_averages.at(j) += l_values.at(j) * weights.at(q);
+					}
+
+					// add to correlations
+					for (size_t j = 0; j < m_nofObservables; j++) {
+						for (size_t r = 0; r < j + 1; r++) {
+							l_correlations.at(j).at(r) += (l_values.at(j)
+									* l_values.at(r)) * weights.at(q);
+						}
+					}
+					// add to third moment
+					for (size_t j = 0; j < m_nofObservables; j++) {
+						l_EX3.at(j) += pow(l_values.at(j), 3) * weights.at(q);
+						l_EX4.at(j) += pow(l_values.at(j), 4) * weights.at(q);
+					}
+					// add to energies and enstrophies
+					double e1 = 0.5 * u.at(0)(dof_ind) * u.at(0)(dof_ind)
+							+ 0.5 * u.at(1)(dof_ind) * u.at(1)(dof_ind);
+					double e2 = pow(
+							uy_gradients.at(i)[0] - ux_gradients.at(i)[1], 2);
+					if (3 == dim) {
+						e1 += 0.5 * u.at(2)(dof_ind) * u.at(2)(dof_ind);
+						e2 += pow(uz_gradients.at(i)[1] - uy_gradients.at(i)[2],
+								2);
+						e2 += pow(ux_gradients.at(i)[2] - uz_gradients.at(i)[0],
+								2);
+					}
+					ener += e1 * weights.at(q);
+					ener_sq += e1 * e1 * weights.at(q);
+					enst += e2 * weights.at(q);
+					enst_sq += e2 * e2 * weights.at(q);
+
+				} /* for all dof indices */
+			} /* for all quadrature nodes */
 		} /* if locally owned */
 	} /* for all cells */
 
@@ -312,7 +317,7 @@ void GlobalTurbulenceStats<dim>::calculate() {
 		dealii::Utilities::MPI::sum(l_correlations.at(i),
 		MPI_COMM_WORLD, m_correlations.at(i));
 	}
-	m_energy  = dealii::Utilities::MPI::sum(ener, MPI_COMM_WORLD);
+	m_energy = dealii::Utilities::MPI::sum(ener, MPI_COMM_WORLD);
 	m_enstrophy = dealii::Utilities::MPI::sum(enst, MPI_COMM_WORLD);
 	m_energySquared = dealii::Utilities::MPI::sum(ener_sq, MPI_COMM_WORLD);
 	m_enstrophySquared = dealii::Utilities::MPI::sum(enst_sq, MPI_COMM_WORLD);
@@ -323,8 +328,8 @@ template<size_t dim>
 void GlobalTurbulenceStats<dim>::apply() {
 	{
 		if ((this->m_solver.getIteration()
-				% this->m_solver.getConfiguration()->getOutputTableInterval() == 0)
-				and (not m_outputOff)) {
+				% this->m_solver.getConfiguration()->getOutputTableInterval()
+				== 0) and (not m_outputOff)) {
 			calculate();
 			writeToFile();
 		}

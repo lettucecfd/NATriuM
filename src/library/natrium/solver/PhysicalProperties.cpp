@@ -37,7 +37,8 @@ template<> double PhysicalProperties<2>::kineticEnergy(
 	const distributed_vector& uy = u.at(1);
 
 	// Integrate ux over whole domain
-	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
+	size_t n_q_points = advection->getQuadrature()->size();
+	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values | dealii::update_values;
 	const dealii::DoFHandler<2> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<2> feCellValues(advection->getMapping(),
 			*(advection->getFe()), *(advection->getQuadrature()),
@@ -58,14 +59,14 @@ template<> double PhysicalProperties<2>::kineticEnergy(
 			feCellValues.reinit(cell);
 
 			size_t local_i;
-			for (size_t i = 0; i < dofs_per_cell; i++) {
-				local_i = localDoFIndices.at(i);
-				result +=
-						rho(local_i)
-								* (ux(local_i) * ux(local_i)
-										+ uy(local_i) * uy(local_i))
-								* feCellValues.JxW(
-										advection->getCelldofToQIndex().at(i));
+			for (size_t q = 0; q < n_q_points; q++) {
+				for (size_t i = 0; i < dofs_per_cell; i++) {
+					local_i = localDoFIndices.at(i);
+					result += rho(local_i)
+							* (ux(local_i) * ux(local_i)
+									+ uy(local_i) * uy(local_i))
+									 * feCellValues.shape_value(i,q)* feCellValues.JxW(q);
+				}
 			}
 		} /* if is locally owned */
 	} /* for cells */
@@ -89,7 +90,8 @@ template<> double PhysicalProperties<3>::kineticEnergy(
 	const distributed_vector& uz = u.at(2);
 
 	// Integrate ux over whole domain
-	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
+	size_t n_q_points = advection->getQuadrature()->size();
+	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values | dealii::update_values;
 	const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<3> feCellValues(advection->getMapping(),
 			*(advection->getFe()), *(advection->getQuadrature()),
@@ -109,13 +111,15 @@ template<> double PhysicalProperties<3>::kineticEnergy(
 			feCellValues.reinit(cell);
 
 			size_t local_i;
-			for (size_t i = 0; i < dofs_per_cell; i++) {
-				local_i = localDoFIndices.at(i);
-				result += rho(local_i)
-						* (ux(local_i) * ux(local_i) + uy(local_i) * uy(local_i)
-								+ uz(local_i) * uz(local_i))
-						* feCellValues.JxW(
-								advection->getCelldofToQIndex().at(i));
+			for (size_t q = 0; q < n_q_points; q++) {
+				for (size_t i = 0; i < dofs_per_cell; i++) {
+					local_i = localDoFIndices.at(i);
+					result += rho(local_i)
+							* (ux(local_i) * ux(local_i)
+									+ uy(local_i) * uy(local_i)
+									+ uz(local_i) * uz(local_i))
+							* feCellValues.shape_value(i,q) * feCellValues.JxW(q);
+				}
 			}
 		} /* if is locally owned */
 	} /* for cells */
@@ -134,9 +138,10 @@ template<> double PhysicalProperties<2>::enstrophy(
 
 	const distributed_vector& ux = u.at(0);
 	const distributed_vector& uy = u.at(1);
-	double	sq = 0;
+	double sq = 0;
 
 	// Integrate ux over whole domain
+	size_t n_q_points = advection->getQuadrature()->size();
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values
 			| dealii::update_gradients;
 	const dealii::DoFHandler<2> & dof_handler = *(advection->getDoFHandler());
@@ -146,7 +151,6 @@ template<> double PhysicalProperties<2>::enstrophy(
 	double result = 0.0;
 	double vorticity = 0.0;
 	size_t local_i;
-	size_t q_point;
 	size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
 
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
@@ -162,18 +166,16 @@ template<> double PhysicalProperties<2>::enstrophy(
 			feCellValues.reinit(cell);
 
 			// Enstrophy = int w^2 = int ( dv/dx - du/dy)^2  = w_q ( v_i dphi/dx (x_q) - u_j dphi/dy (x_q) )
-			for (size_t q = 0; q < dofs_per_cell; q++) {
+			for (size_t q = 0; q < n_q_points; q++) {
 				vorticity = 0.0;
-				q_point = advection->getCelldofToQIndex().at(q);
 				for (size_t i = 0; i < dofs_per_cell; i++) {
 					local_i = localDoFIndices.at(i);
-					vorticity += (uy(local_i)
-							* feCellValues.shape_grad(i, q_point)[0]
-							- ux(local_i)
-									* feCellValues.shape_grad(i, q_point)[1]);
+					vorticity += (uy(local_i) * feCellValues.shape_grad(i, q)[0]
+							- ux(local_i) * feCellValues.shape_grad(i, q)[1]);
 				}
-				result += vorticity * vorticity * feCellValues.JxW(q_point);
-				sq += vorticity * vorticity * vorticity * vorticity * feCellValues.JxW(q_point);
+				result += vorticity * vorticity * feCellValues.JxW(q);
+				sq += vorticity * vorticity * vorticity * vorticity
+						* feCellValues.JxW(q);
 			}
 		} /* if is locally owned */
 	} /* for cells */
@@ -182,8 +184,7 @@ template<> double PhysicalProperties<2>::enstrophy(
 	dealii::Utilities::MPI::MinMaxAvg global_res =
 			dealii::Utilities::MPI::min_max_avg(result, MPI_COMM_WORLD);
 	dealii::Utilities::MPI::MinMaxAvg global_sq =
-		                        dealii::Utilities::MPI::min_max_avg(sq, MPI_COMM_WORLD);
-
+			dealii::Utilities::MPI::min_max_avg(sq, MPI_COMM_WORLD);
 
 	// the enstrophy can be defined with and without factor 1/2; here: without
 	*squared = global_sq.sum;
@@ -204,6 +205,7 @@ template<> double PhysicalProperties<3>::enstrophy(
 	double sq = 0;
 
 	// Integrate ux over whole domain
+	size_t n_q_points = advection->getQuadrature()->size();
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values
 			| dealii::update_gradients;
 	const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
@@ -213,7 +215,6 @@ template<> double PhysicalProperties<3>::enstrophy(
 	double result = 0.0;
 	double frobenius_sq = 0.0;
 	size_t local_i;
-	size_t q_point;
 	double du_dxk;
 	double dv_dxk;
 	double dw_dxk;
@@ -232,9 +233,8 @@ template<> double PhysicalProperties<3>::enstrophy(
 
 			// Enstrophy = int |frob(u)|^2 = int sum_k (ui dphi_i/dxk)^2 +  (vi dphi_i/dxk)^2 + (wi dphi_i/dxk)^2
 			// = w_q  sum_k (ui dphi_i/dxk(x_q))^2 +  (vi dphi_i/dxk(x_q))^2 + (wi dphi_i/dxk(x_q))^2
-			for (size_t q = 0; q < dofs_per_cell; q++) {
+			for (size_t q = 0; q < n_q_points; q++) {
 				frobenius_sq = 0.0;
-				q_point = advection->getCelldofToQIndex().at(q);
 				for (size_t k = 0; k < 3; k++) {
 					du_dxk = 0;
 					dv_dxk = 0;
@@ -242,17 +242,17 @@ template<> double PhysicalProperties<3>::enstrophy(
 					for (size_t i = 0; i < dofs_per_cell; i++) {
 						local_i = localDoFIndices.at(i);
 						du_dxk += ux(local_i)
-								* feCellValues.shape_grad(i, q_point)[k];
+								* feCellValues.shape_grad(i, q)[k];
 						dv_dxk += uy(local_i)
-								* feCellValues.shape_grad(i, q_point)[k];
+								* feCellValues.shape_grad(i, q)[k];
 						dw_dxk += uz(local_i)
-								* feCellValues.shape_grad(i, q_point)[k];
+								* feCellValues.shape_grad(i, q)[k];
 					}
 					frobenius_sq += du_dxk * du_dxk + dv_dxk * dv_dxk
 							+ dw_dxk * dw_dxk;
 				}
-				result += frobenius_sq * feCellValues.JxW(q_point);
-				sq += frobenius_sq * frobenius_sq * feCellValues.JxW(q_point);
+				result += frobenius_sq * feCellValues.JxW(q);
+				sq += frobenius_sq * frobenius_sq * feCellValues.JxW(q);
 			}
 		} /* if is locally owned */
 	} /* for cells */
@@ -261,7 +261,7 @@ template<> double PhysicalProperties<3>::enstrophy(
 	dealii::Utilities::MPI::MinMaxAvg global_res =
 			dealii::Utilities::MPI::min_max_avg(result, MPI_COMM_WORLD);
 	dealii::Utilities::MPI::MinMaxAvg global_sq =
-		                        dealii::Utilities::MPI::min_max_avg(sq, MPI_COMM_WORLD);
+			dealii::Utilities::MPI::min_max_avg(sq, MPI_COMM_WORLD);
 	*squared = global_sq.sum;
 	return global_res.sum;
 }
@@ -273,7 +273,8 @@ double PhysicalProperties<dim>::mass(const distributed_vector& rho,
 	assert(n_dofs == rho.size());
 
 	// Integrate rho over whole domain
-	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
+	size_t n_q_points = advection->getQuadrature()->size();
+	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values | dealii::update_values;
 	const dealii::DoFHandler<dim> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<dim> feCellValues(advection->getMapping(),
 			*(advection->getFe()), *(advection->getQuadrature()),
@@ -293,11 +294,11 @@ double PhysicalProperties<dim>::mass(const distributed_vector& rho,
 			feCellValues.reinit(cell);
 
 			size_t local_i;
-			for (size_t i = 0; i < dofs_per_cell; i++) {
-				local_i = localDoFIndices.at(i);
-				result += rho(local_i)
-						* feCellValues.JxW(
-								advection->getCelldofToQIndex().at(i));
+			for (size_t q = 0; q < n_q_points; q++) {
+				for (size_t i = 0; i < dofs_per_cell; i++) {
+					local_i = localDoFIndices.at(i);
+					result += rho(local_i) * feCellValues.shape_value(i,q) * feCellValues.JxW(q);
+				}
 			}
 		} /* if is locally owned */
 	} /* for cells */
@@ -323,6 +324,7 @@ double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
 		boost::shared_ptr<AdvectionOperator<dim> > advection) {
 
 // Integrate ux over whole domain
+	size_t n_q_points = advection->getQuadrature()->size();
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
 	const dealii::DoFHandler<dim> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<dim> feCellValues(advection->getMapping(),
@@ -343,12 +345,11 @@ double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
 			cell->get_dof_indices(localDoFIndices);
 			// calculate the fe values for the cell
 			feCellValues.reinit(cell);
-
-			for (size_t i = 0; i < dofs_per_cell; i++) {
-				result += ux(localDoFIndices.at(i))
-						* feCellValues.JxW(
-								advection->getCelldofToQIndex().at(i));
-				area += feCellValues.JxW(advection->getCelldofToQIndex().at(i));
+			for (size_t q = 0; q < n_q_points; q++) {
+				for (size_t i = 0; i < dofs_per_cell; i++) {
+					result += ux(localDoFIndices.at(i)) * feCellValues.JxW(q);
+					area += feCellValues.JxW(q);
+				}
 			}
 		} /* if is locally owned */
 	} /* for all cells */
@@ -372,6 +373,7 @@ double PhysicalProperties<dim>::entropy(const DistributionFunctions& f,
 	}
 
 	// Integrate rho over whole domain
+	size_t n_q_points = advection->getQuadrature()->size();
 	const dealii::UpdateFlags cellUpdateFlags = dealii::update_JxW_values;
 	const dealii::DoFHandler<dim> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<dim> feCellValues(advection->getMapping(),
@@ -392,13 +394,14 @@ double PhysicalProperties<dim>::entropy(const DistributionFunctions& f,
 			feCellValues.reinit(cell);
 
 			size_t local_i;
-			for (size_t i = 0; i < dofs_per_cell; i++) {
-				local_i = localDoFIndices.at(i);
-				for (size_t j = 0; j < Q; j++) {
-					result -= f.at(j)(local_i)
-							* log(f.at(j)(local_i) / weights.at(j))
-							* feCellValues.JxW(
-									advection->getCelldofToQIndex().at(i));
+			for (size_t q = 0; q < n_q_points; q++) {
+				for (size_t i = 0; i < dofs_per_cell; i++) {
+					local_i = localDoFIndices.at(i);
+					for (size_t j = 0; j < Q; j++) {
+						result -= f.at(j)(local_i)
+								* log(f.at(j)(local_i) / weights.at(j))
+								* feCellValues.JxW(q);
+					}
 				}
 			}
 		} /* if is locally owned */

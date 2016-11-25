@@ -167,8 +167,6 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			*m_advectionOperator->getDoFHandler();
 	const size_t dofs_per_cell = m_advectionOperator->getNumberOfDoFsPerCell();
 	std::vector<dealii::types::global_dof_index> localDoFIndices(dofs_per_cell);
-	const std::map<size_t, size_t>& celldofToQIndex =
-			m_advectionOperator->getCelldofToQIndex();
 	const dealii::UpdateFlags updateFlags = dealii::update_gradients
 			| dealii::update_quadrature_points;
 
@@ -240,7 +238,7 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 
 			// average face gradients over cell and all neighbors that also contain the support point
 			density_gradient = 0;
-			double weight_sum = 0;
+/*			double weight_sum = 0;
 			dealii::Point<dim> p = feValues.quadrature_point(
 					celldofToQIndex.at(j));
 			// a list of all cells that contain p
@@ -285,7 +283,7 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			for (size_t c = 0; c < len; c++) {
 				neighbor_fe_values.reinit(cells_with_point.at(c));
 				cells_with_point.at(c)->get_dof_indices(neighbor_indices);
-				/*
+
 				 // find point in neighbor quadrature
 				 size_t m;
 				 bool found = false;
@@ -301,7 +299,7 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 				 assert(found);// otherwise: the point is not a quadrature point at neighbor cell.
 				 // requires more complicated evaluation.
 				 *
-				 */
+
 				// calculate average gradient
 				for (size_t n = 0; n < dofs_per_cell; n++) {
 					double rho_n = densities(neighbor_indices.at(n));
@@ -319,12 +317,12 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			cout << endl;
 			// average
 			density_gradient *= (1. / (weight_sum));
-			/*double limit = 5;
+			double limit = 5;
 			 if (density_gradient.norm() > limit){
 			 density_gradient*=(limit/density_gradient.norm());
 			 }
 			 */
-			cout << p(0) << " " << p(1) << " | " << len << " " << rho_i << " | "
+			cout  << rho_i << " | "
 					<< density_gradient[0] << " " << density_gradient[1]
 					<< endl;
 

@@ -12,6 +12,7 @@
 #include "../stencils/Stencil.h"
 #include "../timeintegration/TimeIntegrator.h"
 #include "../solver/DistributionFunctions.h"
+#include "../problemdescription/ProblemDescription.h"
 
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/fe/fe_dgq.h"
@@ -37,7 +38,7 @@ private:
 	const BoundaryCollection<dim> & m_boundaries;
 
 	/// Mapping from real space to unit cell
-	const dealii::MappingQ<dim> m_mapping;
+	boost::shared_ptr<dealii::Mapping<dim> > m_mapping;
 
 	/// Sparsity Pattern of the sparse matrix
 	dealii::BlockSparsityPattern m_sparsityPattern;
@@ -82,13 +83,19 @@ private:
 	boost::shared_ptr<dealii::FE_DGQArbitraryNodes<dim> > m_fe;
 
 */
+
+
 public:
 
 	/// constructor
 	AdvectionOperator() {
 	}
 	;
-
+	/*
+	AdvectionOperator(boost::shared_ptr<ProblemDescription<dim> > problem, dealii::Quadrature<1> quad_name,
+				size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
+				double delta_t);
+	*/
 	/// destructor
 	virtual ~AdvectionOperator() {
 	}
@@ -114,7 +121,7 @@ public:
 	virtual void mapDoFsToSupportPoints(
 			std::map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const = 0;
 
-	virtual const dealii::MappingQ<dim>& getMapping() const = 0;
+	virtual const dealii::Mapping<dim>& getMapping() const = 0;
 
 	/** @short save matrices and status to files
 	 *  @param[in] directory directory to save the matrix files to
@@ -133,10 +140,6 @@ public:
 	virtual const boost::shared_ptr<dealii::Quadrature<dim> >& getQuadrature() const = 0;
 
 	virtual const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const = 0;
-
-	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const = 0;
-
-	virtual const vector<std::map<size_t, size_t> >& getQIndexToFacedof() const = 0;
 
 	virtual size_t getOrderOfFiniteElement() const = 0;
 

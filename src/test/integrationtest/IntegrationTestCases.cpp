@@ -881,10 +881,10 @@ TestResult ConvergenceTestSemiLagrangianPeriodic() {
 	// Initialization
 	const double viscosity = 1;
 	const double Ma = 0.05;
-	const double orderOfFiniteElement = 2;
+	const double orderOfFiniteElement = 4;
 	const double scaling = sqrt(3) * 1 / Ma;
-	const double refinementLevel = 4;
-	const double CFL = 4;
+	const double refinementLevel = 3;
+	const double CFL = 0.4;
 
 	boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<
 			TaylorGreenVortex2D>(viscosity, refinementLevel, 1. / Ma);
@@ -898,7 +898,7 @@ TestResult ConvergenceTestSemiLagrangianPeriodic() {
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
 	configuration->setSimulationEndTime(1.0 / (2 * viscosity));
-	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(BGK_STANDARD);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	//configuration->setCollisionScheme(KBC_STANDARD);
 
@@ -1026,7 +1026,7 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
 	for (size_t N = 2; N <= 3; N++) {
 		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
 				orderOfFiniteElement += 4) {
-
+			cout << orderOfFiniteElement << endl;
 			double deltaX = 1. / (pow(2, N));
 			double deltaT = 0.4 * pow(0.5, N)
 					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));

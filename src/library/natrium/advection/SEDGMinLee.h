@@ -335,17 +335,10 @@ public:
 	}
 #endif
 
-	const dealii::MappingQ<dim>& getMapping() const {
+	virtual const dealii::Mapping<dim>& getMapping() const {
 		return m_mapping;
 	}
 
-	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const {
-		return m_celldof_to_q_index;
-	}
-
-	const vector<std::map<size_t, size_t> >& getFacedofToQIndex() const {
-		return m_facedof_to_q_index;
-	}
 
 	virtual const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const {
 		return m_faceQuadrature;
@@ -380,10 +373,6 @@ public:
 	}
 	const dealii::IndexSet& getLocallyRelevantDofs() {
 		return m_locallyRelevantDofs;
-	}
-
-	virtual const vector<std::map<size_t, size_t> >& getQIndexToFacedof() const {
-		return m_q_index_to_facedof;
 	}
 
 	virtual const boost::shared_ptr<Mesh<dim> >& getMesh() const {
