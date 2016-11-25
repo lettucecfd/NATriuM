@@ -23,9 +23,9 @@
 using namespace natrium;
 
 // Main function
-int main() {
+int main(int argc, char** argv) {
 
-	MPIGuard::getInstance();
+	MPIGuard::getInstance(argc, argv);
 
 	pout << "Starting NATriuM step-1 ..." << endl;
 
@@ -34,12 +34,18 @@ int main() {
 	//////////////////////////////////////////////////
 
 	// Re = viscosity/(2*pi)
-	const double viscosity = 1;
+	//const double viscosity = 1;
+	double L = 2*M_PI;
+	if (argc > 1) {
+		L = atof(argv[1]);
+	}
+	const double Re = 10;
+	const double viscosity = 1 * L / Re;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
 	const double Ma = 0.05;
 	// zunaechst: fixed order of FE
-	const double orderOfFiniteElement = 2;
+	const double orderOfFiniteElement = 1;
 
 	// chose scaling so that the right Ma-number is achieved
 	double scaling = sqrt(3) * 2 / Ma;
@@ -56,7 +62,7 @@ int main() {
 		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		//double dt = dx / (scaling * sqrt(2));
-		double CFL=1;
+		double CFL=sqrt(2)*4;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -70,8 +76,8 @@ int main() {
 		configuration->setOutputDirectory(dirName.str());
 		configuration->setUserInteraction(false);
 		configuration->setOutputTableInterval(5);
-		configuration->setOutputCheckpointInterval(1000000);
-		configuration->setOutputSolutionInterval(5);
+		configuration->setOutputCheckpointInterval(1000000000);
+		configuration->setOutputSolutionInterval(1);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(ALL);
@@ -84,14 +90,39 @@ int main() {
 
 		configuration->setSimulationEndTime(10.0);
 
+
 		// make problem and solver objects
 		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
-				TaylorGreenVortex2D>(viscosity, refinementLevel, 1./Ma);
-		tgVortex->setHorizontalVelocity(1);
-		boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+				TaylorGreenVortex2D>(viscosity, refinementLevel, 1./Ma, true, L);
+		//tgVortex->setHorizontalVelocity(1);
+		boost::shared_ptr<ProblemDescription<2> > taylorGreen = tgVortex;
 		timestart = clock();
-		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
+		CFDSolver<2> solver(configuration, taylorGreen);
 		time1 = clock() - timestart;
+
+		distributed_block_vector ones;
+		distributed_block_vector result;
+		ones.reinit(8);
+		result.reinit(8);
+		for (size_t i = 0; i < 8; i++) {
+			ones.block(i).reinit(solver.getAdvectionOperator()->getLocallyOwnedDofs(), MPI_COMM_WORLD);
+			result.block(i).reinit(solver.getAdvectionOperator()->getLocallyOwnedDofs(), MPI_COMM_WORLD);
+			// reinit does only change the size but not the content
+			//for all degrees of freedom on current processor
+			dealii::IndexSet::ElementIterator it(solver.getAdvectionOperator()->getLocallyOwnedDofs().begin());
+			dealii::IndexSet::ElementIterator end(solver.getAdvectionOperator()->getLocallyOwnedDofs().end());
+			for (; it != end; it++) {
+				size_t j = *it;
+				ones.block(i)(j) = 1;
+			}
+		}
+		solver.getAdvectionOperator()->getSystemMatrix().print(cout);
+		solver.getAdvectionOperator()->getSystemMatrix().vmult(result, ones);
+
+		result -= ones;
+		cout << "error: " << result.norm_sqr();
+		//solver.getF().getFStream().print(cout,10,true);
+
 
 		try {
 			solver.run();

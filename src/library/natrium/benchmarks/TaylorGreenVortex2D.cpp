@@ -18,16 +18,16 @@
 namespace natrium {
 
 TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
-		size_t refinementLevel, double cs, bool init_rho_analytically) :
-		Benchmark<2>(makeGrid(), viscosity, 8 * atan(1)), m_cs(
-				cs), m_analyticInit(init_rho_analytically), m_refinementLevel(refinementLevel), m_horizontalVelocity(0) {
+		size_t refinementLevel, double cs, bool init_rho_analytically, double L) :
+		Benchmark<2>(makeGrid(L), viscosity, 8 * atan(1)), m_cs(
+				cs), m_analyticInit(init_rho_analytically), m_refinementLevel(refinementLevel), m_horizontalVelocity(0), m_L(L) {
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply initial and analytical solution
 	this->setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
 	this->setAnalyticRho(boost::make_shared<AnalyticDensity>(this));
-
+	assert (L > 0);
 }
 
 TaylorGreenVortex2D::~TaylorGreenVortex2D() {
@@ -37,11 +37,11 @@ double TaylorGreenVortex2D::AnalyticVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {
 	assert(component < 2);
 	if (component == 0) {
-		return m_flow->getHorizontalVelocity() + sin(x(0) - m_flow->getHorizontalVelocity() * this->get_time()) * cos(x(1))
-				* exp(-2 * m_flow->getViscosity() * this->get_time());
+		return m_flow->getHorizontalVelocity() + sin(x(0)*(2*M_PI)/m_flow->m_L - m_flow->getHorizontalVelocity() * this->get_time()) * cos(x(1)*(2*M_PI)/m_flow->m_L)
+				* exp(-2 * m_flow->getViscosity() * this->get_time()*(2*M_PI)/m_flow->m_L);
 	} else {
-		return -cos(x(0) - m_flow->getHorizontalVelocity() * this->get_time()) * sin(x(1))
-				* exp(-2 * m_flow->getViscosity() * this->get_time());
+		return -cos(x(0)*(2*M_PI)/m_flow->m_L - m_flow->getHorizontalVelocity() * this->get_time()) * sin(x(1)*(2*M_PI)/m_flow->m_L)
+				* exp(-2 * m_flow->getViscosity() * this->get_time()*(2*M_PI)/m_flow->m_L);
 	}
 	return 0;
 }
@@ -51,8 +51,8 @@ double TaylorGreenVortex2D::AnalyticDensity::value(const dealii::Point<2>& x,
 	assert (component == 0);
 	if (m_flow->m_analyticInit) {
 		double rho0 = 1;
-		double p = rho0 / 4. * (cos(2 * (x(0) - m_flow->getHorizontalVelocity() * this->get_time())) + cos(2 * x(1)))
-				* exp(-4 * m_flow->getViscosity() * this->get_time());
+		double p = rho0 / 4. * (cos(2 * (x(0)*(2*M_PI)/m_flow->m_L - m_flow->getHorizontalVelocity() * this->get_time())) + cos(2 * x(1)*(2*M_PI)/m_flow->m_L))
+				* exp(-4 * m_flow->getViscosity() * this->get_time()*(2*M_PI)/m_flow->m_L);
 		return rho0 + p / (m_flow->m_cs * m_flow->m_cs);
 	} else {
 		return 1.0;
@@ -63,14 +63,14 @@ double TaylorGreenVortex2D::AnalyticDensity::value(const dealii::Point<2>& x,
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-boost::shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid() {
+boost::shared_ptr<Mesh<2> > TaylorGreenVortex2D::makeGrid(double L) {
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
 	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
 #else
 	boost::shared_ptr<Mesh<2> > square = boost::make_shared<Mesh<2> >();
 #endif
-	dealii::GridGenerator::hyper_cube(*square, 0, 8 * atan(1));
+	dealii::GridGenerator::hyper_cube(*square, 0, L);// * atan(1));
 
 	// Assign boundary indicators to the faces of the "parent cell"
 	Mesh<2>::active_cell_iterator cell = square->begin_active();

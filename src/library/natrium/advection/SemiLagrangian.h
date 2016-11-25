@@ -17,6 +17,7 @@
 #include "deal.II/dofs/dof_tools.h"
 #include "deal.II/lac/sparse_matrix.h"
 #include "deal.II/fe/fe_update_flags.h"
+#include "deal.II/fe/mapping_cartesian.h"
 #include "deal.II/lac/block_sparsity_pattern.h"
 #include "deal.II/base/quadrature_lib.h"
 
@@ -84,7 +85,7 @@ private:
 	std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > m_sparsityPattern;
 
 	/// Mapping from real space to unit cell
-	const dealii::MappingQ<dim> m_mapping;
+	boost::shared_ptr< dealii::Mapping<dim> > m_mapping;
 
 	/// System matrix L = M^(-1)*(-D+R)
 	distributed_sparse_block_matrix m_systemMatrix;
@@ -134,7 +135,6 @@ private:
 	 * @note called by the constructor to initialize m_dof_to_q_index
 	 */
 	std::map<size_t, size_t> map_celldofs_to_q_index() const;
-
 	/**
 	 * @short map degrees of freedom to quadrature node indices on the faces
 	 * @note called by the constructor to initialize m_dof_to_q_index
@@ -161,6 +161,11 @@ public:
 			boost::shared_ptr<BoundaryCollection<dim> > boundaries,
 			size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
 			double delta_t);
+
+	///
+	/*SemiLagrangian(boost::shared_ptr<ProblemDescription<dim> > problem, SupportPointsName quad_name,
+			size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
+			double delta_t);*/
 
 	/// destructor
 	virtual ~SemiLagrangian() {
@@ -215,7 +220,7 @@ public:
 	virtual void mapDoFsToSupportPoints(
 			std::map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
 		//assert(supportPoints.size() == this->getNumberOfDoFs());
-		dealii::DoFTools::map_dofs_to_support_points(m_mapping, *m_doFHandler,
+		dealii::DoFTools::map_dofs_to_support_points(*m_mapping, *m_doFHandler,
 				supportPoints);
 	}
 
@@ -228,25 +233,17 @@ public:
 	}
 
 	virtual boost::shared_ptr<dealii::FEFaceValues<dim> > getFEFaceValues(const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEFaceValues<dim> >(m_mapping, *m_fe, *m_faceQuadrature,
+		return boost::make_shared<dealii::FEFaceValues<dim> >(*m_mapping, *m_fe, *m_faceQuadrature,
 				flags);
 	}
 
 	virtual boost::shared_ptr<dealii::FEValues<dim> > getFEValues(const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEValues<dim> >(m_mapping, *m_fe, *m_quadrature,
+		return boost::make_shared<dealii::FEValues<dim> >(*m_mapping, *m_fe, *m_quadrature,
 				flags);
 	}
 
-	const dealii::MappingQ<dim>& getMapping() const {
-		return m_mapping;
-	}
-
-	virtual const std::map<size_t, size_t>& getCelldofToQIndex() const {
-		return m_celldof_to_q_index;
-	}
-
-	const vector<std::map<size_t, size_t> >& getFacedofToQIndex() const {
-		return m_facedof_to_q_index;
+	virtual const dealii::Mapping<dim>& getMapping() const {
+		return *m_mapping;
 	}
 
 	virtual const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const {
@@ -282,10 +279,6 @@ public:
 	}
 	const dealii::IndexSet& getLocallyRelevantDofs() {
 		return m_locallyRelevantDofs;
-	}
-
-	virtual const vector<std::map<size_t, size_t> >& getQIndexToFacedof() const {
-		return m_q_index_to_facedof;
 	}
 
 	virtual const boost::shared_ptr<Mesh<dim> >& getMesh() const {

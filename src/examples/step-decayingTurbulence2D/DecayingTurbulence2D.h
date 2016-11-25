@@ -57,6 +57,10 @@ public:
 	virtual void transform(Mesh<2>& mesh){
 
 	}
+
+	virtual bool isCartesian(){
+		return true;
+	}
 private:
 
 	const size_t m_refinementLevel;

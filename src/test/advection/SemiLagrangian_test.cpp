@@ -515,6 +515,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_ConstantStreaming_test) {
 		}
 	}
 
+	//sl.getSystemMatrix().print(cout);
 	sl.getSystemMatrix().vmult(result, ones);
 	result -= ones;
 	BOOST_CHECK_LE(result.norm_sqr(), 1e-6);

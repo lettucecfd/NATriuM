@@ -20,6 +20,7 @@
 #include "deal.II/lac/matrix_iterator.h"
 #include "deal.II/lac/sparsity_tools.h"
 #include "deal.II/base/utilities.h"
+#include "deal.II/fe/fe_q.h"
 
 #include "../boundaries/PeriodicBoundary.h"
 #include "../stencils/Stencil.h"
@@ -36,7 +37,7 @@ SemiLagrangian<dim>::SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
 		boost::shared_ptr<BoundaryCollection<dim> > boundaries,
 		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
 		double delta_t) :
-		m_mesh(triangulation), m_boundaries(boundaries), m_mapping(1), m_stencil(
+		m_mesh(triangulation), m_boundaries(boundaries),  m_stencil(
 				stencil), m_orderOfFiniteElement(orderOfFiniteElement), m_deltaT(
 				delta_t), m_boundaryHandler(delta_t, *stencil, *boundaries) {
 	// assertions
@@ -46,11 +47,12 @@ SemiLagrangian<dim>::SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
 
 	// TODO FEM rather than DG
 	// make dof handler
+	m_mapping = boost::make_shared<MappingCartesian<dim> >();
 	m_quadrature = boost::make_shared<QGaussLobatto<dim> >(
 			orderOfFiniteElement + 1);
 	m_faceQuadrature = boost::make_shared<QGaussLobatto<dim - 1> >(
 			orderOfFiniteElement + 1);
-	m_fe = boost::make_shared<FE_DGQArbitraryNodes<dim> >(
+	m_fe = boost::make_shared<FE_Q<dim> >(
 			QGaussLobatto<1>(orderOfFiniteElement + 1));
 	m_doFHandler = boost::make_shared<DoFHandler<dim> >(*triangulation);
 
@@ -112,7 +114,7 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 	size_t n_blocks = m_stencil->getQ() - 1;
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
-	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping,
+	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(*m_mapping,
 			*m_fe, *m_faceQuadrature, faceUpdateFlags);
 
 	// create cell maps for periodic boundary
@@ -174,7 +176,7 @@ std::map<size_t, size_t> SemiLagrangian<dim>::map_celldofs_to_q_index() const {
 	const dealii::UpdateFlags cellUpdateFlags = update_values
 			| update_quadrature_points;
 	// Finite Element
-	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
+	dealii::FEValues<dim> feCellValues(*m_mapping, *m_fe, *m_quadrature,
 			cellUpdateFlags);
 	const size_t dofs_per_cell = m_fe->dofs_per_cell;
 	const size_t n_quadrature_points = m_quadrature->size();
@@ -203,7 +205,7 @@ template<size_t dim>
 vector<std::map<size_t, size_t> > SemiLagrangian<dim>::map_facedofs_to_q_index() const {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
-	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
+	dealii::FEFaceValues<dim> feFaceValues(*m_mapping, *m_fe, *m_faceQuadrature,
 			faceUpdateFlags);
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
@@ -235,7 +237,7 @@ template<size_t dim>
 vector<std::map<size_t, size_t> > SemiLagrangian<dim>::map_q_index_to_facedofs() const {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
-	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
+	dealii::FEFaceValues<dim> feFaceValues(*m_mapping, *m_fe, *m_faceQuadrature,
 			faceUpdateFlags);
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
@@ -270,6 +272,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 	//TimerOutput::Scope timer_section(Timing::getTimer(),
 	//			"Assembly: fill sparse object");
 
+	dealii::IndexSet tracked_indices(m_doFHandler->n_dofs());
 	if (not sparsity_pattern) {
 		// make sure that sparsity structure is not empty
 		assert(m_systemMatrix.n() != 0);
@@ -280,14 +283,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 	/////////////////////////////////
 	// Initialize Finite Element ////
-	/////////////////////////////////
-	// Define update flags (which values have to be known at each cell, face, neighbor face)
-	const dealii::UpdateFlags normals_update = update_normal_vectors;
-
-	// Finite Element
-	//dealii::FEValues<dim> fe_normals(m_mappting, *m_fe, *m_quadrature, update_normal_vectors);
-	dealii::FEFaceValues<dim> fev_normals(m_mapping, *m_fe, *m_faceQuadrature,
-			normals_update);
 
 	// Initialize
 	std::map<typename DoFHandler<dim>::active_cell_iterator, DeparturePointList<dim> > found_in_cell;
@@ -335,10 +330,18 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// -- Create Lagrangian support points --
 			// for all support points in cell
 			for (size_t i = 0; i < dofs_per_cell; i++) {
+				// force each support point to be handled only once
+				if (tracked_indices.is_element(local_dof_indices.at(i))){
+					continue;
+				}
+				if (not m_doFHandler->locally_owned_dofs().is_element(local_dof_indices.at(i))){
+					continue;
+				}
+				tracked_indices.add_index(local_dof_indices.at(i));
 				//TimerOutput::Scope timer_section(Timing::getTimer(),
 				//			"Assembly: create points");
 				// get a point x
-				dealii::Point<dim> x_i = m_mapping.transform_unit_to_real_cell(
+				dealii::Point<dim> x_i = m_mapping->transform_unit_to_real_cell(
 						cell, unit_support_points.at(i));
 				// for all directions
 				for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
@@ -403,6 +406,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 								el.currentCell);
 
 					} else /* if is not periodic */{
+						cout << "Do you really have non-periodic boundaries?" << endl;
 						if (not sparsity_pattern){
 							el.currentPoint = p_boundary;
 							m_boundaryHandler.addHit(el, bi, *this);
@@ -464,7 +468,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					std::vector<double> h(dofs_per_cell);
 					local_entries.push_back(h);
 				}
-				shapeFunctionValue<dim>(it, local_lagrange_points, local_entries, m_mapping);
+				shapeFunctionValue<dim>(it, local_lagrange_points, local_entries, *m_mapping);
 				//}
 				// (i.e. for all Lagrangian points in cell)
 				for (size_t i = 0; i < l.size(); i++) {
@@ -519,23 +523,23 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 
 // transform to unit cell
 	typename dealii::DoFHandler<dim>::cell_iterator ci(*cell);
-	dealii::Point<dim> pi_unit = m_mapping.transform_real_to_unit_cell(ci,
+	dealii::Point<dim> pi_unit = m_mapping->transform_real_to_unit_cell(ci,
 			p_inside);
-	dealii::Point<dim> po_unit = m_mapping.transform_real_to_unit_cell(ci,
+	dealii::Point<dim> po_unit = m_mapping->transform_real_to_unit_cell(ci,
 			p_outside);
 
 // eliminate round-off-errors
 	for (size_t i = 0; i < dim; i++) {
-		if (fabs(pi_unit[i]) < 1e-12) {
+		if (fabs(pi_unit[i]) < 1e-10) {
 			pi_unit[i] = 0;
 		}
-		if (fabs(pi_unit[i] - 1) < 1e-12) {
+		if (fabs(pi_unit[i] - 1) < 1e-10) {
 			pi_unit[i] = 1;
 		}
-		if (fabs(po_unit[i]) < 1e-12) {
+		if (fabs(po_unit[i]) < 1e-10) {
 			po_unit[i] = 0;
 		}
-		if (fabs(po_unit[i] - 1) < 1e-12) {
+		if (fabs(po_unit[i] - 1) < 1e-10) {
 			po_unit[i] = 1;
 		}
 	}
@@ -578,24 +582,16 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	 */
 	int face_id = -1;
 	*lambda = 100;
-
 // for efficiency reasons: omit the lambda-stuff, if possible (which is in most calls)
-
 	if (po_unit[0] < 0) {
 		// if face 0 is crossed
 		*lambda = (0 - pi_unit[0]) / (po_unit[0] - pi_unit[0]);
-		if (fabs(*lambda) < 1e-9){
-			*lambda = 0;
-		}
 		assert(*lambda >= 0);
 		assert(*lambda <= 1);
 		face_id = 0;
 	} else if (po_unit[0] > 1) {
 		// if face 1 is crossed
 		*lambda = (1 - pi_unit[0]) / (po_unit[0] - pi_unit[0]);
-		if (fabs(*lambda) < 1e-9){
-			*lambda = 0;
-		}
 		assert(*lambda >= 0);
 		assert(*lambda <= 1);
 		face_id = 1;
@@ -603,9 +599,6 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	if (po_unit[1] < 0) {
 		// if face 2 is crossed
 		double lambda_y = (0 - pi_unit[1]) / (po_unit[1] - pi_unit[1]);
-		if (fabs(lambda_y) < 1e-9){
-			lambda_y = 0;
-		}
 		assert(lambda_y >= 0);
 		assert(lambda_y <= 1);
 		if (lambda_y < *lambda) {
@@ -615,9 +608,6 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	} else if (po_unit[1] > 1) {
 		// if face 3 is crossed
 		double lambda_y = (1 - pi_unit[1]) / (po_unit[1] - pi_unit[1]);
-		if (fabs(lambda_y) < 1e-9){
-			lambda_y = 0;
-		}
 		assert(lambda_y >= 0);
 		assert(lambda_y <= 1);
 		if (lambda_y < *lambda) {
@@ -629,9 +619,6 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		if (po_unit[2] < 0) {
 			// if face 4 is crossed
 			double lambda_z = (0 - pi_unit[2]) / (po_unit[2] - pi_unit[2]);
-			if (fabs(lambda_z) < 1e-9){
-				lambda_z = 0;
-			}
 			assert(lambda_z >= 0);
 			assert(lambda_z <= 1);
 			if (lambda_z < *lambda) {
@@ -641,9 +628,6 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 		} else if (po_unit[2] > 1) {
 			// if face 5 is crossed
 			double lambda_z = (1 - pi_unit[2]) / (po_unit[2] - pi_unit[2]);
-			if (fabs(lambda_z) < 1e-9){
-				lambda_z = 0;
-			}
 			assert(lambda_z >= 0);
 			assert(lambda_z <= 1);
 			if (lambda_z < *lambda) {
@@ -664,10 +648,10 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 // compensate for round-off errors
 	dealii::Point<dim> h = pi_unit + increment;
 	for (size_t i = 0; i < dim; i++) {
-		if (fabs(h[i]) < 1e-12) {
+		if (fabs(h[i]) < 1e-10) {
 			h[i] = 0;
 		}
-		if (fabs(h[i] - 1) < 1e-12) {
+		if (fabs(h[i] - 1) < 1e-10) {
 			h[i] = 1;
 		}
 	}
@@ -679,7 +663,7 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	}
 
 // map to real cell
-	p_boundary = m_mapping.transform_unit_to_real_cell(ci, h);
+	p_boundary = m_mapping->transform_unit_to_real_cell(ci, h);
 
 // cout << "boundary point: " << p_boundary << endl;
 
