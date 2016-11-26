@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_VectorReference_test) {
 	const size_t fe_order = 1;
 	PeriodicTestDomain2D periodic(ref_level);
 	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<2> sl(periodic, fe_order,
 			boost::make_shared<D2Q9>(), 0.01);
 	sl.setupDoFs();
 
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(DealIIFunctionality_IndexSet_test) {
 	const size_t fe_order = 1;
 	PeriodicTestDomain2D periodic(ref_level);
 	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<2> sl(periodic, fe_order,
 			boost::make_shared<D2Q9>(), 0.01);
 	sl.setupDoFs();
 

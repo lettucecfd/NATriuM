@@ -1026,7 +1026,6 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
 	for (size_t N = 2; N <= 3; N++) {
 		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
 				orderOfFiniteElement += 4) {
-			cout << orderOfFiniteElement << endl;
 			double deltaX = 1. / (pow(2, N));
 			double deltaT = 0.4 * pow(0.5, N)
 					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));

@@ -154,9 +154,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		// create SEDG MinLee and assemble
 		try {
 			m_advectionOperator = boost::make_shared<SEDGMinLee<dim> >(
-					m_problemDescription->getMesh(),
-					m_problemDescription->getBoundaries(),
-					configuration->getSedgOrderOfFiniteElement(), m_stencil,
+					*m_problemDescription,
+					configuration->getSedgOrderOfFiniteElement(),
+					configuration->getQuadrature(),
+					configuration->getSupportPoints(), m_stencil,
 					(CENTRAL == configuration->getSedgFluxType()));
 		} catch (AdvectionSolverException & e) {
 			natrium_errorexit(e.what());
@@ -164,10 +165,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	} else if (SEMI_LAGRANGIAN == configuration->getAdvectionScheme()) {
 		try {
 			m_advectionOperator = boost::make_shared<SemiLagrangian<dim> >(
-					m_problemDescription->getMesh(),
-					m_problemDescription->getBoundaries(),
-					configuration->getSedgOrderOfFiniteElement(), m_stencil,
-					0.0);
+					*m_problemDescription,
+					configuration->getSedgOrderOfFiniteElement(),
+					configuration->getQuadrature(),
+					configuration->getSupportPoints(), m_stencil, 0.0);
 		} catch (AdvectionSolverException & e) {
 			natrium_errorexit(e.what());
 		}
@@ -410,8 +411,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "Semi-Lagrangian advection" << endl;
 	} else if (SEDG == configuration->getAdvectionScheme()) {
 		LOG(WELCOME) << "Spectral-element discontinuous Galerkin" << endl;
-		LOG(WELCOME) << "Time integrator:          " << CFDSolverUtilities::get_integrator_name(configuration->getTimeIntegrator(),
-				configuration->getDealIntegrator()) << endl;
+		LOG(WELCOME) << "Time integrator:          "
+				<< CFDSolverUtilities::get_integrator_name(
+						configuration->getTimeIntegrator(),
+						configuration->getDealIntegrator()) << endl;
 		const double std_cfl = 1.0;
 		LOG(WELCOME) << "Standard dt (CFL 1.0):     "
 				<< CFDSolverUtilities::calculateTimestep<dim>(
@@ -514,8 +517,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 // initialize dof boundaries
-	m_boundaryVector.reinit(m_advectionOperator->getSystemVector());
-	m_boundaryVector = m_advectionOperator->getSystemVector();
+	if (configuration->getAdvectionScheme() == SEDG) {
+		m_boundaryVector.reinit(m_advectionOperator->getSystemVector());
+		m_boundaryVector = m_advectionOperator->getSystemVector();
+	}
 
 // Create file for output table
 	if ((not configuration->isSwitchOutputOff())
@@ -584,7 +589,6 @@ void CFDSolver<dim>::stream() {
 //const distributed_block_vector& systemVector =
 //		m_advectionOperator->getSystemVector();
 //TODO has to be replaced by boundaryVector
-	m_boundaryVector = m_advectionOperator->getSystemVector();
 
 //try {
 	if (SEMI_LAGRANGIAN == m_configuration->getAdvectionScheme()) {
@@ -625,6 +629,7 @@ void CFDSolver<dim>::stream() {
 		m_time += getTimeStepSize();
 
 	} else {
+		m_boundaryVector = m_advectionOperator->getSystemVector();
 		double new_dt = m_timeIntegrator->step(f, systemMatrix,
 				m_boundaryVector, 0.0, m_timeIntegrator->getTimeStepSize());
 
@@ -779,13 +784,15 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 // output: vector fields as .vtu files
 	if (not m_configuration->isSwitchOutputOff()) {
-		if (iteration - m_iterationStart == 0){
+		if (iteration - m_iterationStart == 0) {
 			// first iteration: put out mesh
 			std::stringstream str0;
-			str0 << m_configuration->getOutputDirectory().c_str() << "/grid.vtk";                            								
-                        std::string grid_file = str0.str();
+			str0 << m_configuration->getOutputDirectory().c_str()
+					<< "/grid.vtk";
+			std::string grid_file = str0.str();
 			std::ofstream grid_out_file(grid_file);
-			dealii::GridOut().write_vtk(*m_problemDescription->getMesh(), grid_out_file);
+			dealii::GridOut().write_vtk(*m_problemDescription->getMesh(),
+					grid_out_file);
 			grid_out_file.close();
 
 		}
@@ -794,8 +801,9 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 					<< endl;
 		}
 		if ((iteration % 1000 == 0) or (is_final)) {
-			double secs = 1e-10+(clock() - m_tstart) / CLOCKS_PER_SEC;
-			LOG(DETAILED) << "Time elapsed: " << secs << "s;    Average Performance: "
+			double secs = 1e-10 + (clock() - m_tstart) / CLOCKS_PER_SEC;
+			LOG(DETAILED) << "Time elapsed: " << secs
+					<< "s;    Average Performance: "
 					<< 1.0 * m_advectionOperator->getDoFHandler()->n_dofs()
 							* (iteration - m_iterationStart) / secs / 1000000.0
 					<< " million DoF updates per second" << endl;
@@ -818,7 +826,8 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
 		// no output if solution interval > 10^8
 		if (((iteration % m_configuration->getOutputSolutionInterval() == 0)
-				and m_configuration->getOutputSolutionInterval() <= 1e8) or (is_final)) {
+				and m_configuration->getOutputSolutionInterval() <= 1e8)
+				or (is_final)) {
 			// save local part of the solution
 			std::stringstream str;
 			str << m_configuration->getOutputDirectory().c_str() << "/t_"

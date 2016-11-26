@@ -146,6 +146,7 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 		const DealIntegratorName deal_integrator, bool is_smooth,
 		bool semi_lagrangian, bool output_to_std_dir, bool useCentralFlux) {
 
+	assert (useCentralFlux == false);
 	AdvectionResult result;
 	result.refinementLevel = refinementLevel;
 	result.fe_order = fe_order;
@@ -159,13 +160,10 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 
 	boost::shared_ptr<AdvectionOperator<2> > s;
 	if (semi_lagrangian) {
-		s = boost::make_shared<SemiLagrangian<2> >(periodic.getMesh(),
-				periodic.getBoundaries(), fe_order, boost::make_shared<D2Q9>(),
+		s = boost::make_shared<SemiLagrangian<2> >(periodic, fe_order, boost::make_shared<D2Q9>(),
 				deltaT);
 	} else {
-		s = boost::make_shared<SEDGMinLee<2> >(periodic.getMesh(),
-				periodic.getBoundaries(), fe_order, boost::make_shared<D2Q9>(),
-				useCentralFlux);
+		s = boost::make_shared<SEDGMinLee<2> >(periodic, fe_order, boost::make_shared<D2Q9>());
 	}
 	AdvectionOperator<2> & streaming = *s;
 	streaming.setupDoFs();
