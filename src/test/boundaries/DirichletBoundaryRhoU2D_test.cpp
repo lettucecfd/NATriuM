@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_SparsityPattern_test) {
 	// for all blocks (I,J) (I for incoming and J for their opposites)
 	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<
 			WallTestDomain2D>(1);
-	SEDGMinLee<2> advector(problem->getMesh(), problem->getBoundaries(), 2,
+	SEDGMinLee<2> advector(*problem, 2,
 			boost::make_shared<D2Q9>());
 	advector.setupDoFs();
 	advector.reassemble();

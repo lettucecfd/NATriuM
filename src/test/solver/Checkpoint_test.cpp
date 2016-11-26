@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(Checkpoint_SaveAndLoadUnchanged_test) {
 			TaylorGreenVortex2D>(viscosity, ref_level);
 	tgv->refineAndTransform();
 	boost::shared_ptr<AdvectionOperator<2> > sedg = boost::make_shared<
-			SEDGMinLee<2> >(tgv->getMesh(), tgv->getBoundaries(), p,
+			SEDGMinLee<2> >(*tgv, p,
 			boost::make_shared<D2Q9>(1));
 	sedg->setupDoFs();
 	DistributionFunctions f;
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(Checkpoint_SaveAndLoadUnchanged_test) {
 	boost::shared_ptr<ProblemDescription<2> > tgv2 = boost::make_shared<
 			TaylorGreenVortex2D>(viscosity, ref_level);
 	boost::shared_ptr<AdvectionOperator<2> > sedg2 = boost::make_shared<
-			SEDGMinLee<2> >(tgv2->getMesh(), tgv2->getBoundaries(), p,
+			SEDGMinLee<2> >(*tgv2, p,
 			boost::make_shared<D2Q9>(1));
 	Checkpoint<2> c2(1, check_dir);
 	c2.load(f2, *tgv2, *sedg2, status2);
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(Checkpoint_ResumeRefined_test) {
 			TaylorGreenVortex2D>(viscosity, ref_level);
 	tgv->refineAndTransform();
 	boost::shared_ptr<AdvectionOperator<2> > sedg = boost::make_shared<
-			SEDGMinLee<2> >(tgv->getMesh(), tgv->getBoundaries(), p,
+			SEDGMinLee<2> >(*tgv, p,
 			boost::make_shared<D2Q9>(1));
 	sedg->setupDoFs();
 	DistributionFunctions f;
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(Checkpoint_ResumeRefined_test) {
 	boost::shared_ptr<ProblemDescription<2> > tgv2 = boost::make_shared<
 			TaylorGreenVortex2D>(viscosity, ref_level);
 	boost::shared_ptr<AdvectionOperator<2> > sedg2 = boost::make_shared<
-			SEDGMinLee<2> >(tgv2->getMesh(), tgv2->getBoundaries(), p,
+			SEDGMinLee<2> >(*tgv2, p,
 			boost::make_shared<D2Q9>(1));
 	Checkpoint<2> c2(1, check_dir);
 	c2.load(f2, *tgv2, *sedg2, status2);

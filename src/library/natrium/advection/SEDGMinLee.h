@@ -20,6 +20,7 @@
 #include "deal.II/base/quadrature_lib.h"
 
 #include "AdvectionOperator.h"
+#include "AdvectionTools.h"
 #include "../smoothing/VmultLimiter.h"
 #include "../problemdescription/BoundaryCollection.h"
 #include "../utilities/BasicNames.h"
@@ -31,25 +32,6 @@ namespace natrium {
 /* forward declaration */
 class Stencil;
 
-/**
- * @short Exception class for SEDGMinLee
- */
-class AdvectionSolverException: public NATriuMException {
-private:
-	std::string message;
-public:
-	AdvectionSolverException(const char *msg) :
-			NATriuMException(msg), message(msg) {
-	}
-	AdvectionSolverException(const string& msg) :
-			NATriuMException(msg), message(msg) {
-	}
-	~AdvectionSolverException() throw () {
-	}
-	const char *what() const throw () {
-		return this->message.c_str();
-	}
-};
 
 /** @short This class solves the linear advection equations by a scheme which is used, e.g.,
  * 		   by Min and Lee (2011): A spectral-element discontinuous Galerkin lattice Boltzmann
@@ -104,37 +86,10 @@ template<size_t dim> class SEDGMinLee: public AdvectionOperator<dim> {
 
 private:
 
-	/// Mesh
-	boost::shared_ptr<Mesh<dim> > m_mesh;
-
-	/// Boundary Description
-	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
-
-	/// integration on gauss lobatto nodes
-	boost::shared_ptr<dealii::Quadrature<dim> > m_quadrature;
-
-	/// integration on boundary (with gauß lobatto nodes)
-	boost::shared_ptr<dealii::Quadrature<dim - 1> > m_faceQuadrature;
-
-	/// Finite Element function on one cell
-	boost::shared_ptr<dealii::FiniteElement<dim> > m_fe;
-
-	/// dealii::DoFHandler to distribute the degrees of freedom over the Mesh
-	boost::shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
-
-	/// Sparsity Pattern of the sparse matrix
-	dealii::BlockSparsityPattern m_sparsityPattern;
-
-	/// Mapping from real space to unit cell
-	const dealii::MappingQ<dim> m_mapping;
-
-	/// System matrix L = M^(-1)*(-D+R)
-	distributed_sparse_block_matrix m_systemMatrix;
+	// quick access to data of base class (without this-> pointer)
+	typedef AdvectionOperator<dim> Base;
 
 	distributed_block_vector m_systemVector;
-
-	/// the DQ model (e.g. D2Q9)
-	boost::shared_ptr<Stencil> m_stencil;
 
 	/// a map, which connects degrees of freedom with their respective quadrature nodes
 	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
@@ -147,9 +102,6 @@ private:
 	/// the transposed map of m_facedof_to_q_index
 	vector<std::map<size_t, size_t> > m_q_index_to_facedof;
 
-	/// order of the finite element functions
-	size_t m_orderOfFiniteElement;
-
 	/// central flux or Lax-Friedrichs flux (default)
 	const bool m_useCentralFlux;
 
@@ -158,13 +110,10 @@ private:
 			TimeIntegrator<distributed_sparse_block_matrix,
 					distributed_block_vector> > m_timeIntegrator;
 
-#ifdef WITH_TRILINOS
-	// locally owned degrees of freedom (for MPI parallelization)
-	dealii::IndexSet m_locallyOwnedDofs;
-	// locally relevant degrees of freedom (i.e. ghost layer cells)
-	dealii::IndexSet m_locallyRelevantDofs;
-#endif
 
+	////////////////////////////////
+	// QUICK ACCESS TO BASE CLASS //
+	////////////////////////////////
 	/**
 	 * @short update the sparsity pattern of the system matrix
 	 */
@@ -258,14 +207,18 @@ public:
 	 * @param[in] orderOfFiniteElement The number of nodes element and dimension
 	 * @param[in] stencil the DQ model
 	 */
-	SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
-			boost::shared_ptr<BoundaryCollection<dim> > boundaries,
+	SEDGMinLee(ProblemDescription<dim>& problem,
+			size_t orderOfFiniteElement, QuadratureName quad_name,
+			SupportPointsName points_name, boost::shared_ptr<Stencil> stencil,
+			bool use_central_flux, double delta_t = 0.0);
+
+
+	SEDGMinLee(ProblemDescription<dim>& problem,
 			size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
-			bool useCentralFlux = false);
+			double delta_t = 0.0);
 
 	/// destructor
 	virtual ~SEDGMinLee() {
-		m_doFHandler->clear();
 	}
 	;
 
@@ -285,7 +238,7 @@ public:
 				<< "SEDGMinLee<dim>::stream() is not tested and might not work properly."
 				<< endl;
 		assert(&f_old == &f);
-		return m_timeIntegrator->step(f.getFStream(), m_systemMatrix,
+		return m_timeIntegrator->step(f.getFStream(), Base::m_systemMatrix,
 				m_systemVector, 0.0, m_timeIntegrator->getTimeStepSize());
 	}
 
@@ -293,98 +246,8 @@ public:
 
 	}
 
-	/// get global system matrix
-	virtual const distributed_sparse_block_matrix& getSystemMatrix() const {
-		return m_systemMatrix;
-	}
-
-	virtual void mapDoFsToSupportPoints(
-			std::map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
-		//assert(supportPoints.size() == this->getNumberOfDoFs());
-		dealii::DoFTools::map_dofs_to_support_points(m_mapping, *m_doFHandler,
-				supportPoints);
-	}
-
-	virtual const boost::shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
-		return m_doFHandler;
-	}
-
-	virtual boost::shared_ptr<dealii::FEFaceValues<dim> > getFEFaceValues(
-			const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEFaceValues<dim> >(m_mapping, *m_fe,
-				*m_faceQuadrature, flags);
-	}
-
-	virtual boost::shared_ptr<dealii::FEValues<dim> > getFEValues(
-			const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEValues<dim> >(m_mapping, *m_fe,
-				*m_quadrature, flags);
-	}
-
-	const dealii::BlockSparsityPattern& getBlockSparsityPattern() const {
-		return m_sparsityPattern;
-	}
-
-#ifndef WITH_TRILINOS
-	/**
-	 * @short get sparsity pattern
-	 * @note not available for trilinos, as trilinos has an internal format for sparsity patterns (Epetra_CrsGraph)
-	 */
-	const dealii::SparsityPattern& getSparsityPattern(size_t i) const {
-		return m_systemMatrix.block(i,i).get_sparsity_pattern();
-	}
-#endif
-
-	virtual const dealii::Mapping<dim>& getMapping() const {
-		return m_mapping;
-	}
-
-
-	virtual const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const {
-		return m_faceQuadrature;
-	}
-
-	virtual const boost::shared_ptr<dealii::FiniteElement<dim> >& getFe() const {
-		return m_fe;
-	}
-
-	virtual size_t getNumberOfDoFsPerCell() const {
-		return m_fe->dofs_per_cell;
-	}
-
-	virtual const boost::shared_ptr<dealii::Quadrature<dim> >& getQuadrature() const {
-		return m_quadrature;
-	}
-
-	virtual size_t getOrderOfFiniteElement() const {
-		return m_orderOfFiniteElement;
-	}
-
-	virtual size_t getNumberOfDoFs() const {
-		return getSystemMatrix().block(0, 0).n();
-	}
-
 	virtual const distributed_block_vector& getSystemVector() const {
 		return m_systemVector;
-	}
-
-	const dealii::IndexSet& getLocallyOwnedDofs() {
-		return m_locallyOwnedDofs;
-	}
-	const dealii::IndexSet& getLocallyRelevantDofs() {
-		return m_locallyRelevantDofs;
-	}
-
-	virtual const boost::shared_ptr<Mesh<dim> >& getMesh() const {
-		return m_mesh;
-	}
-
-	virtual const boost::shared_ptr<Stencil>& getStencil() const {
-		return m_stencil;
-	}
-
-	const boost::shared_ptr<BoundaryCollection<dim> >& getBoundaries() const {
-		return m_boundaries;
 	}
 
 	boost::shared_ptr<

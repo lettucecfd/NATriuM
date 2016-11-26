@@ -129,23 +129,37 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.isVmultLimiter(), false);
 	config.setVmultLimiter(true);
 	BOOST_CHECK_EQUAL(config.isVmultLimiter(), true);
+	BOOST_CHECK_EQUAL(config.getQuadrature(), QGAUSS_LOBATTO);
+	config.setQuadrature(QGAUSS);
+	BOOST_CHECK_EQUAL(config.getQuadrature(), QGAUSS);
+	BOOST_CHECK_EQUAL(config.getSupportPoints(), GAUSS_LOBATTO_POINTS);
+	config.setSupportPoints(EQUIDISTANT_POINTS);
+	BOOST_CHECK_EQUAL(config.getSupportPoints(), EQUIDISTANT_POINTS);
+	config.setSupportPoints(GAUSS_CHEBYSHEV_POINTS);
+	BOOST_CHECK_EQUAL(config.getSupportPoints(), GAUSS_CHEBYSHEV_POINTS);
+	config.setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
+	BOOST_CHECK_EQUAL(config.getSupportPoints(), GAUSS_LOBATTO_CHEBYSHEV_POINTS);
 
 	/// Failure test
 	pout << " ... failure test ... " << endl;
-	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1), ConfigurationException);
-	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-0.1), ConfigurationException);
+	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1),
+			ConfigurationException);
+	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-0.1),
+			ConfigurationException);
 	BOOST_CHECK_THROW(config.setBGKSteadyStateGamma(-0.1),
 			ConfigurationException);
 	BOOST_CHECK_THROW(config.setCFL(-1.0), ConfigurationException);
-	BOOST_CHECK_THROW(config.setRestartAtIteration(-10), ConfigurationException);
-
+	BOOST_CHECK_THROW(config.setRestartAtIteration(-10),
+			ConfigurationException);
 
 	pout << "done" << endl;
 } /*CFDSolverConfiguration_CheckSet_test*/
 
 BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_ReadFromFile_test) {
 
-	pout << "CFDSolverConfiguration_CheckIfEnvironmentVariable_NATRIUM_DIR_IsSet_text" << endl;
+	pout
+			<< "CFDSolverConfiguration_CheckIfEnvironmentVariable_NATRIUM_DIR_IsSet_text"
+			<< endl;
 	std::stringstream name1;
 	name1 << getenv("NATRIUM_DIR");
 	BOOST_CHECK(name1.str().size() != 0);
@@ -158,7 +172,6 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_ReadFromFile_test) {
 	name2 << getenv("NATRIUM_DIR");
 	name2 << "/src/test/solver/invalid_parameters.xml";
 
-
 	try {
 		config.readFromXMLFile(name1.str());
 	} catch (std::exception& e) {
@@ -167,8 +180,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_ReadFromFile_test) {
 						"Try to replace it by results/NATriuM_parameters.xml"
 				<< endl;
 	}
-	BOOST_CHECK_THROW(
-			config.readFromXMLFile(name2.str()),
+	BOOST_CHECK_THROW(config.readFromXMLFile(name2.str()),
 			ConfigurationException);
 
 	pout << "done" << endl;

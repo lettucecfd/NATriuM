@@ -78,7 +78,7 @@ void FinalChannelStatistics::updateYValues() {
 	const dealii::UpdateFlags update_flags = dealii::update_quadrature_points;
 	const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<3> fe_values(advection->getMapping(),
-			*(advection->getFe()), *(advection->getQuadrature()), update_flags);
+			*(advection->getFe()), *(advection->getSupportPointEvaluation()), update_flags);
 	// loop
 	typename dealii::DoFHandler<3>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
@@ -198,7 +198,7 @@ void FinalChannelStatistics::updateAverages() {
 			| dealii::update_gradients;
 	const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
 	dealii::FEValues<3> fe_values(advection->getMapping(),
-			*(advection->getFe()), *(advection->getQuadrature()), update_flags);
+			*(advection->getFe()), *(advection->getSupportPointEvaluation()), update_flags);
 	size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
 	std::vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
 	std::vector<dealii::Tensor<1, 3, double> > ux_gradients;

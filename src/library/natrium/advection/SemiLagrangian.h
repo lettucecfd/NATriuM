@@ -22,6 +22,7 @@
 #include "deal.II/base/quadrature_lib.h"
 
 #include "AdvectionOperator.h"
+#include "AdvectionTools.h"
 #include "SemiLagrangianTools.h"
 #include "../boundaries/SemiLagrangianBoundaryHandler.h"
 #include "../problemdescription/BoundaryCollection.h"
@@ -29,7 +30,6 @@
 #include "../utilities/NATriuMException.h"
 #include "../utilities/Timing.h"
 #include "../utilities/Logging.h"
-
 
 namespace natrium {
 
@@ -63,60 +63,12 @@ template<size_t dim> class SemiLagrangian: public AdvectionOperator<dim> {
 
 private:
 
-	/// Mesh
-	boost::shared_ptr<Mesh<dim> > m_mesh;
-
-	/// Boundary Description
-	boost::shared_ptr<BoundaryCollection<dim> > m_boundaries;
-
-	/// integration on gauss lobatto nodes
-	boost::shared_ptr<dealii::Quadrature<dim> > m_quadrature;
-
-	/// integration on boundary (with gauß lobatto nodes)
-	boost::shared_ptr<dealii::Quadrature<dim - 1> > m_faceQuadrature;
-
-	/// Finite Element function on one cell
-	boost::shared_ptr<dealii::FiniteElement<dim> > m_fe;
-
-	/// dealii::DoFHandler to distribute the degrees of freedom over the Mesh
-	boost::shared_ptr<dealii::DoFHandler<dim> > m_doFHandler;
+	// quick access to data of base class (without this-> pointer)
+	typedef AdvectionOperator<dim> Base;
 
 	/// Sparsity Pattern of the sparse matrix
 	std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > m_sparsityPattern;
 
-	/// Mapping from real space to unit cell
-	boost::shared_ptr< dealii::Mapping<dim> > m_mapping;
-
-	/// System matrix L = M^(-1)*(-D+R)
-	distributed_sparse_block_matrix m_systemMatrix;
-
-	distributed_block_vector m_systemVector;
-
-	/// the DQ model (e.g. D2Q9)
-	boost::shared_ptr<Stencil> m_stencil;
-
-	/// a map, which connects degrees of freedom with their respective quadrature nodes
-	/// m_celldof_to_q_index.at(i)[j] is the support node index q of the j-th dof at a cell
-	std::map<size_t, size_t> m_celldof_to_q_index;
-
-	/// a set of maps, which connect degrees of freedom with their respective quadrature nodes
-	/// m_facedof_to_q_index.at(i)[j] is the support node index q of the j-th dof at face i
-	vector<std::map<size_t, size_t> > m_facedof_to_q_index;
-
-	/// the transposed map of m_facedof_to_q_index
-	vector<std::map<size_t, size_t> > m_q_index_to_facedof;
-
-	/// order of the finite element functions
-	size_t m_orderOfFiniteElement;
-
-	// time step size
-	double m_deltaT;
-
-	// locally owned degrees of freedom (for MPI parallelization)
-	dealii::IndexSet m_locallyOwnedDofs;
-
-	// locally relevant degrees of freedom (i.e. ghost layer cells)
-	dealii::IndexSet m_locallyRelevantDofs;
 
 	SemiLagrangianBoundaryHandler<dim> m_boundaryHandler;
 
@@ -130,23 +82,6 @@ private:
 	 */
 	void updateSparsityPattern();
 
-	/**
-	 * @short map degrees of freedom to quadrature node indices on a cell
-	 * @note called by the constructor to initialize m_dof_to_q_index
-	 */
-	std::map<size_t, size_t> map_celldofs_to_q_index() const;
-	/**
-	 * @short map degrees of freedom to quadrature node indices on the faces
-	 * @note called by the constructor to initialize m_dof_to_q_index
-	 */
-	vector<std::map<size_t, size_t> > map_facedofs_to_q_index() const;
-
-	/**
-	 * @short map quadrature node indices on the faces to degrees of freedom
-	 * @note called by the constructor to initialize m_q_index_to_facedof
-	 */
-	vector<std::map<size_t, size_t> > map_q_index_to_facedofs() const;
-
 public:
 
 	/// constructor
@@ -157,22 +92,23 @@ public:
 	 * @param[in] stencil the DQ model
 	 * @param[in] delta_t time step size; if delta_t = 0, the sparsity pattern is not updated during construction
 	 */
-	SemiLagrangian(boost::shared_ptr<Mesh<dim> > triangulation,
-			boost::shared_ptr<BoundaryCollection<dim> > boundaries,
+	SemiLagrangian(ProblemDescription<dim>& problem,
+			size_t orderOfFiniteElement, QuadratureName quad_name,
+			SupportPointsName points_name, boost::shared_ptr<Stencil> stencil,
+			double delta_t);
+
+	SemiLagrangian(ProblemDescription<dim>& problem,
 			size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
 			double delta_t);
 
-	///
 	/*SemiLagrangian(boost::shared_ptr<ProblemDescription<dim> > problem, SupportPointsName quad_name,
-			size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
-			double delta_t);*/
+	 size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
+	 double delta_t);*/
 
 	/// destructor
 	virtual ~SemiLagrangian() {
-		m_doFHandler->clear();
 	}
 	;
-
 
 	/**
 	 * @short Determines which face is crossed first, when moving from one point inside the cell to a point outside.
@@ -191,19 +127,17 @@ public:
 			const dealii::Point<dim>& p_outside, dealii::Point<dim>& p_boundary,
 			double* lambda, size_t* child_id);
 
-
-
 	/// function to (re-)assemble linear system
 	virtual void reassemble();
 
 	virtual void setupDoFs();
 
 	virtual double stream(DistributionFunctions& f_old,
-				DistributionFunctions& f){
-		assert (&f_old != &f);
+			DistributionFunctions& f) {
+		assert(&f_old != &f);
 		f_old = f;
-		m_systemMatrix.vmult(f.getFStream(), f_old.getFStream());
-		return m_deltaT;
+		Base::m_systemMatrix.vmult(f.getFStream(), f_old.getFStream());
+		return Base::m_deltaT;
 	}
 
 	virtual void applyBoundaryConditions(double t) {
@@ -211,102 +145,10 @@ public:
 
 	}
 
-
-	/// get global system matrix
-	virtual const distributed_sparse_block_matrix& getSystemMatrix() const {
-		return m_systemMatrix;
-	}
-
-	virtual void mapDoFsToSupportPoints(
-			std::map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
-		//assert(supportPoints.size() == this->getNumberOfDoFs());
-		dealii::DoFTools::map_dofs_to_support_points(*m_mapping, *m_doFHandler,
-				supportPoints);
-	}
-
-	virtual const boost::shared_ptr<dealii::DoFHandler<dim> >& getDoFHandler() const {
-		return m_doFHandler;
-	}
-
-	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> >& getBlockSparsityPattern() const {
-		return m_sparsityPattern;
-	}
-
-	virtual boost::shared_ptr<dealii::FEFaceValues<dim> > getFEFaceValues(const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEFaceValues<dim> >(*m_mapping, *m_fe, *m_faceQuadrature,
-				flags);
-	}
-
-	virtual boost::shared_ptr<dealii::FEValues<dim> > getFEValues(const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEValues<dim> >(*m_mapping, *m_fe, *m_quadrature,
-				flags);
-	}
-
-	virtual const dealii::Mapping<dim>& getMapping() const {
-		return *m_mapping;
-	}
-
-	virtual const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const {
-		return m_faceQuadrature;
-	}
-
-	virtual const boost::shared_ptr<dealii::FiniteElement<dim> >& getFe() const {
-		return m_fe;
-	}
-
-	virtual size_t getNumberOfDoFsPerCell() const {
-		return m_fe->dofs_per_cell;
-	}
-
-	virtual const boost::shared_ptr<dealii::Quadrature<dim> >& getQuadrature() const {
-		return m_quadrature;
-	}
-
-	virtual size_t getOrderOfFiniteElement() const {
-		return m_orderOfFiniteElement;
-	}
-
-	virtual size_t getNumberOfDoFs() const {
-		return getSystemMatrix().block(0, 0).n();
-	}
-
-	virtual const distributed_block_vector& getSystemVector() const {
-		return m_systemVector;
-	}
-
-	const dealii::IndexSet& getLocallyOwnedDofs() {
-		return m_locallyOwnedDofs;
-	}
-	const dealii::IndexSet& getLocallyRelevantDofs() {
-		return m_locallyRelevantDofs;
-	}
-
-	virtual const boost::shared_ptr<Mesh<dim> >& getMesh() const {
-		return m_mesh;
-	}
-
-	virtual const boost::shared_ptr<Stencil>& getStencil() const {
-		return m_stencil;
-	}
-
-	double getDeltaT() const {
-		return m_deltaT;
-	}
-
 	virtual void setDeltaT(double deltaT) {
-		m_deltaT = deltaT;
+		Base::setDeltaT(deltaT);
 		updateSparsityPattern();
 		m_boundaryHandler.setTimeStep(deltaT);
-	}
-
-	virtual size_t memory_consumption_sparsity_pattern () const {
-		size_t mem = 0;
-		for (size_t i = 0; i < m_sparsityPattern.size(); i++){
-			for (size_t j = 0; j < m_sparsityPattern.at(i).size(); j++){
-				mem += m_sparsityPattern.at(i).at(j).memory_consumption();
-			}
-		}
-		return mem;
 	}
 
 	/**
@@ -316,35 +158,35 @@ public:
 	 * @return m_doFHandler->end(), if cell has no i-th neighbor (e.g. at solid boundary)
 	 *
 	 */
-	 typename dealii::DoFHandler<dim>::cell_iterator getNeighbor(
-	 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
-	 		size_t i);
+	typename dealii::DoFHandler<dim>::cell_iterator getNeighbor(
+			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+			size_t i);
 
+	/**
+	 * @short fill the neighborhood list
+	 * @param cell cell
+	 * @param neighborhood the neighborhood object
+	 * @note the neighborhood incorporates the current cell, all its neighbors,
+	 * 		 and their respective neighbors; each cell has only pointer to it in the neighborhood.
+	 */
+	void getNeighborhood(
+			typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+			Neighborhood<dim>& neighborhood, size_t n_shells = 1);
 
-	 /**
-	  * @short fill the neighborhood list
-	  * @param cell cell
-	  * @param neighborhood the neighborhood object
-	  * @note the neighborhood incorporates the current cell, all its neighbors,
-	  * 		 and their respective neighbors; each cell has only pointer to it in the neighborhood.
-	  */
-	 void getNeighborhood(
-	 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
-	 		Neighborhood<dim>& neighborhood, size_t n_shells = 1);
+	/**
+	 * @short recursively search a point in neighborhood, until is found
+	 * @param p the point you search for
+	 * @param cell The start cell of the recursive search
+	 * @return A cell that contains the point p. If the point was not found, the cell pointer will point to DoFHandler.end()
+	 */
+	typename dealii::DoFHandler<dim>::active_cell_iterator recursivelySearchInNeighborhood(
+			const dealii::Point<dim>& p,
+			typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
 
-	 /**
-	  * @short recursively search a point in neighborhood, until is found
-	  * @param p the point you search for
-	  * @param cell The start cell of the recursive search
-	  * @return A cell that contains the point p. If the point was not found, the cell pointer will point to DoFHandler.end()
-	  */
-	 typename dealii::DoFHandler<dim>::active_cell_iterator recursivelySearchInNeighborhood(
-	 		const dealii::Point<dim>& p,
-	 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
-
-
-	virtual void setTimeIntegrator(boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
-			distributed_block_vector> > ) {
+	virtual void setTimeIntegrator(
+			boost::shared_ptr<
+					TimeIntegrator<distributed_sparse_block_matrix,
+							distributed_block_vector> >) {
 
 	}
 
@@ -369,6 +211,24 @@ public:
 		return false;
 	}
 
+	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> >&  getBlockSparsityPattern() const {
+		return m_sparsityPattern;
+	}
+
+	virtual size_t memory_consumption_sparsity_pattern () const {
+		size_t mem = 0;
+		for (size_t i = 0; i < m_sparsityPattern.size(); i++) {
+			for (size_t j = 0; j < m_sparsityPattern.at(i).size(); j++) {
+				mem += m_sparsityPattern.at(i).at(j).memory_consumption();
+			}
+		}
+		return mem;
+	}
+
+	virtual const distributed_block_vector& getSystemVector() const {
+		throw AdvectionSolverException("getSytemVector is not defined for SemiLagrangian streaming. Function to be removed."
+				"as soon as AdvectionOperator::stream() works.");
+	}
 
 }
 ;

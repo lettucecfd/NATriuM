@@ -54,24 +54,11 @@ BOOST_AUTO_TEST_CASE(GradsBoundary_Velocity2D_test) {
 	pout << "GradsBoundary_Velocity2D_test..." << endl;
 
 	boost::shared_ptr<dealii::Function<2> > f1 = boost::make_shared<dealii::ConstantFunction<2> >(0.1, 2);
-
-	boost::shared_ptr<Mesh<2> >mesh = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
-	dealii::GridGenerator::hyper_cube<2>(*mesh,0,1,true);
-	mesh->refine_global(3);
-	boost::shared_ptr<SLBoundary<2> > boundary= boost::make_shared<GradsBoundary<2> >(0,f1);
-	boost::shared_ptr<SLBoundary<2> > boundary1= boost::make_shared<GradsBoundary<2> >(1,f1);
-	boost::shared_ptr<SLBoundary<2> > boundary2= boost::make_shared<GradsBoundary<2> >(2,f1);
-	boost::shared_ptr<SLBoundary<2> > boundary3= boost::make_shared<GradsBoundary<2> >(3,f1);
-
-	boost::shared_ptr<BoundaryCollection<2> > bc = boost::make_shared<BoundaryCollection<2> >();
-	bc->addBoundary(boundary);
-	bc->addBoundary(boundary1);
-	bc->addBoundary(boundary2);
-	bc->addBoundary(boundary3);
-	//GradsBoundary<2,PRESCRIBED_PRESSURE> boundary2(1,f);
+	CouetteFlowGrad2D couette(0.1, 0.01, 3);
+	couette.refineAndTransform();
 
 	// distribute dofs
-	SemiLagrangian<2> sl(mesh,bc,2,boost::make_shared<D2Q9>(),0.001);
+	SemiLagrangian<2> sl(couette,2,boost::make_shared<D2Q9>(),0.001);
 	sl.setupDoFs();
 
 	DistributionFunctions f;

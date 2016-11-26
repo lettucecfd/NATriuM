@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	size_t fe_order = 2;
 	CouetteFlowGrad2D couette(viscosity, u0, ref_level);
 	couette.refineAndTransform();
-	SemiLagrangian<2> streaming(couette.getMesh(), couette.getBoundaries(),
+	SemiLagrangian<2> streaming(couette,
 			fe_order, boost::make_shared<D2Q9>(), dt);
 	streaming.setupDoFs();
 
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_DataStructures_test) {
 	boost::shared_ptr<ProblemDescription<2> > couette = boost::make_shared<
 			CouetteFlowGrad2D>(viscosity, u0, ref_level);
 	couette->refineAndTransform();
-	SemiLagrangian<2> streaming(couette->getMesh(), couette->getBoundaries(),
+	SemiLagrangian<2> streaming(*couette,
 			fe_order, boost::make_shared<D2Q9>(), 0.001);
 	streaming.setupDoFs();
 	streaming.reassemble();
