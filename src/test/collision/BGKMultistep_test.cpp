@@ -50,6 +50,7 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 	// they are recognized as ghost vectors; and ghost
 	// do not support writing on individual elements
 	PeriodicTestDomain2D test_domain(3);
+	test_domain.refineAndTransform();
 	dealii::QGaussLobatto<1> quadrature(2);
 	dealii::FE_DGQArbitraryNodes<2> fe(quadrature);
 	dealii::DoFHandler<2> dof_handler(*(test_domain.getMesh()));
@@ -63,11 +64,13 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 	vector<distributed_vector> u;
 	for (size_t i = 0; i < dqmodel->getQ(); i++) {
 		distributed_vector f_i(rho);
-		for (size_t j = 0; j < dof_handler.n_dofs(); j++) {
-			if (rho.in_local_range(j)) {
+		typename dealii::IndexSet::ElementIterator it = dof_handler.locally_owned_dofs().begin();
+		typename dealii::IndexSet::ElementIterator end = dof_handler.locally_owned_dofs().end();
+
+		for (; it != end; ++it) {
+			size_t j = *it;
 				f_i(j) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
 						+ pow((0.5 * cos(j)), 2);
-			}
 		}
 		//f_i.compress(dealii::VectorOperation::add);
 		f.push_back(f_i);
@@ -93,22 +96,21 @@ BOOST_AUTO_TEST_CASE(BGKMultistep_collideAll_test) {
 	bgk.collideAll(fAfterCollisionbgk, rho, u, dof_handler.locally_owned_dofs(),
 			false);
 
-	cout << fAfterCollisionmulti.at(4)(1) << " multi to f :  " << f.at(4)(1) << endl;
+/*	cout << fAfterCollisionmulti.at(4)(1) << " multi to f :  " << f.at(4)(1) << endl;
 	cout << fAfterCollisionbgk.at(4)(1) << " bgk to f :  " << f.at(4)(1) << endl;
+*/
 
+	typename dealii::IndexSet::ElementIterator it = dof_handler.locally_owned_dofs().begin();
+	typename dealii::IndexSet::ElementIterator end = dof_handler.locally_owned_dofs().end();
 
-
-
-	for (size_t i = 0; i < dof_handler.n_dofs(); i++) {
+	for (; it != end; ++it) {
+		size_t i = *it;
 		double rho_bgk = 0, rho_multistep = 0;
-		if (rho.in_local_range(i)) {
 			for (int g = 0; g < 9; g++) {
 				rho_bgk = rho_bgk + fAfterCollisionbgk.at(g)(i);
 				rho_multistep = rho_multistep + fAfterCollisionmulti.at(g)(i);
 			}
-
 			BOOST_CHECK_SMALL(rho_bgk - rho_multistep, 1e-5);
-		}
 	}
 
 	pout << "done" << endl;

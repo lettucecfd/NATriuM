@@ -48,17 +48,18 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	size_t fe_order = 2;
 	CouetteFlowGrad2D couette(viscosity, u0, ref_level);
 	couette.refineAndTransform();
-	SemiLagrangian<2> streaming(couette,
-			fe_order, boost::make_shared<D2Q9>(), dt);
+	SemiLagrangian<2> streaming(couette, fe_order, boost::make_shared<D2Q9>(),
+			dt);
 	streaming.setupDoFs();
 
 	BoundaryCollection<2> bc2;
 	dealii::Point<2> departure(-1, -1);
-	dealii::Point<2> p(0,0);
+	dealii::Point<2> p(0, 0);
 	LagrangianPathTracker<2> tracker(1, 1, 1, departure, p,
 			streaming.getDoFHandler()->begin_active());
-	assert (streaming.getStencil());
-	SemiLagrangianBoundaryHandler<2> bh(dt, *streaming.getStencil(), *couette.getBoundaries());
+	assert(streaming.getStencil());
+	SemiLagrangianBoundaryHandler<2> bh(dt, *streaming.getStencil(),
+			*couette.getBoundaries());
 	bh.addHit(tracker, 2, streaming);
 	BOOST_CHECK(1 == bh.n_cells());
 
@@ -83,11 +84,11 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_DataStructures_test) {
 	boost::shared_ptr<ProblemDescription<2> > couette = boost::make_shared<
 			CouetteFlowGrad2D>(viscosity, u0, ref_level);
 	couette->refineAndTransform();
-	SemiLagrangian<2> streaming(*couette,
-			fe_order, boost::make_shared<D2Q9>(), 0.001);
+	SemiLagrangian<2> streaming(*couette, fe_order, boost::make_shared<D2Q9>(),
+			0.001);
 	streaming.setupDoFs();
 	streaming.reassemble();
-/*
+
 	// small time step => only support hits
 	// precondition: all processes have an equal number of cells and boundary cells
 	const size_t expected_n_cells = (pow(2, ref_level) * 2)
@@ -95,13 +96,11 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_DataStructures_test) {
 	BOOST_CHECK_EQUAL(expected_n_cells,
 			streaming.getBoundaryHandler().n_cells());
 	const size_t n_undefined_directions = 3;
-	const size_t expected_n_hits = (pow(2, ref_level) * 2 * (fe_order + 1) * n_undefined_directions)
-			/ dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); // minus corners
+	const size_t n_points = pow(2, ref_level) * 2 * (fe_order) + 2;
+	const size_t expected_n_hits = n_points * n_undefined_directions
+			/ dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
 	BOOST_CHECK_EQUAL(expected_n_hits, streaming.getBoundaryHandler().n_hits());
-	BOOST_CHECK_EQUAL(expected_n_hits,
-			streaming.getBoundaryHandler().n_supportHits());
-	BOOST_CHECK_EQUAL(0, streaming.getBoundaryHandler().n_nonSupportHits());
-*/
+
 	// TODO: finalize
 	pout << "done." << endl;
 } /* SemiLagrangianBoundaryHandler_DataStructures_test */

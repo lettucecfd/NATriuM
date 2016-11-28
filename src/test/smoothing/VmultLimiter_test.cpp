@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(VmultLimiter_apply_test) {
 	// make a matrix
 	PeriodicTestDomain2D domain(3);
 	domain.refineAndTransform();
-	double dt = 0.03/(1.0*0.125); // so that dt xi dx = 0.03; (should be unstable)
+	double dt = 0.003/(1.0*0.125); // so that dt xi dx = 0.003; (should be unstable)
 
 	SemiLagrangian<2> semi(domain, 3, boost::make_shared<D2Q9>(), dt);
 	semi.setupDoFs();

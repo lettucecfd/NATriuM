@@ -19,7 +19,7 @@ namespace natrium {
 
 TaylorGreenVortex2D::TaylorGreenVortex2D(double viscosity,
 		size_t refinementLevel, double cs, bool init_rho_analytically, double L) :
-		Benchmark<2>(makeGrid(L), viscosity, 8 * atan(1)), m_cs(
+		Benchmark<2>(makeGrid(L), viscosity, L), m_cs(
 				cs), m_analyticInit(init_rho_analytically), m_refinementLevel(refinementLevel), m_horizontalVelocity(0), m_L(L) {
 
 	/// apply boundary values
