@@ -133,16 +133,20 @@ public:
 	virtual void setupDoFs();
 
 	virtual double stream(DistributionFunctions& f_old,
-			DistributionFunctions& f) {
+			DistributionFunctions& f, double t) {
 		assert(&f_old != &f);
 		f_old = f;
 		Base::m_systemMatrix.vmult(f.getFStream(), f_old.getFStream());
+		{
+			TimerOutput::Scope timer_section(Timing::getTimer(), "Semi-Lagrangian Boundaries");
+			m_boundaryHandler.apply(f, f_old, t);
+		}
 		return Base::m_deltaT;
 	}
 
-	virtual void applyBoundaryConditions(double t) {
-		//m_boundaryHandler.apply();
-
+	virtual void applyBoundaryConditions(DistributionFunctions& f_old,
+			DistributionFunctions& f, double t){
+		m_boundaryHandler.apply(f, f_old, t);
 	}
 
 	virtual void setDeltaT(double deltaT) {

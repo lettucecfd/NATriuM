@@ -27,34 +27,58 @@ namespace natrium {
 template<size_t dim>
 class AdvectionOperator;
 
+template<size_t dim>
+class SemiLagrangian;
 
 /**
- * @short Handler for semi-Lagrangian boundary conditions.
+ * @short Handler for semi-Lagrangian boundary conditions. This class manages the update of distribution functions
+ *		 at the boundaries in the semi-Lagrangian streaming step.
  */
 template<size_t dim>
 class SemiLagrangianBoundaryHandler {
 private:
+
+	/// list of boundary hit points
 	HitList<dim> m_hitList;
+
+	/// dt
 	double m_timeStep;
+
+	/// the LBM stencil (e.g. D2Q9)
 	const Stencil& m_stencil;
+
+	/// the advection operator (usually a semi-Lagrangian one)
+	const AdvectionOperator<dim>& m_advection;
+
+	/// definition of the flow
+	const ProblemDescription<dim>& m_problem;
+
+	/// definition of the boundary conditions
 	const BoundaryCollection<dim>& m_boundaries;
+
+	/// deal.II's degree of freedom handler
+	const dealii::DoFHandler<dim>& m_dof;
+
 public:
-	SemiLagrangianBoundaryHandler(double dt, const Stencil& stencil,
-			const BoundaryCollection<dim>& boundaries) :
-			m_timeStep(dt), m_stencil(stencil), m_boundaries(boundaries) {
-		assert(stencil.getD() == dim);
-		assert(dt >= 0);
+	/**
+	 * @short
+	 */
+	SemiLagrangianBoundaryHandler(SemiLagrangian<dim>& advection) :
+			m_timeStep(advection.getDeltaT()), m_stencil(
+					*advection.getStencil()), m_advection(advection), m_problem(
+					advection.getProblem()), m_boundaries(
+					*advection.getBoundaries()), m_dof(
+					*advection.getDoFHandler()) {
+		assert(m_stencil.getD() == dim);
+		assert(m_timeStep >= 0);
 
 	}
 	virtual ~SemiLagrangianBoundaryHandler() {
 
 	}
-	void addHit(const LagrangianPathTracker<dim>& tracker, size_t boundary_id,
-			const AdvectionOperator<dim>& sl);
+	void addHit(const LagrangianPathTracker<dim>& tracker, size_t boundary_id);
 
-	void apply(DistributionFunctions& f_new, const DistributionFunctions& f_old,
-			const dealii::DoFHandler<dim>& dof,
-			boost::shared_ptr<dealii::FEValues<dim> > fe_values, double t);
+	void apply(DistributionFunctions& f_new, const DistributionFunctions& f_old, double t);
 
 	/*void print_out(){
 	 pout << "Semi Lagrangian Boundary Handler Object:" << endl;

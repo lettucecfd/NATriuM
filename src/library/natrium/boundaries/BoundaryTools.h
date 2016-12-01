@@ -16,6 +16,8 @@
 
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
+#include "../solver/DistributionFunctions.h"
+#include "../stencils/Stencil.h"
 
 namespace natrium {
 
@@ -91,6 +93,10 @@ public:
 	virtual ~BoundaryVelocity() {
 	}
 	;
+	virtual double value(const dealii::Point<dim> &,  const unsigned int component=0) const {
+		assert (component < dim);
+		return m_Velocity(component);
+	}
 	virtual void vector_value(const dealii::Point<dim> &,
 			dealii::Vector<double> &values) const {
 		values = m_Velocity;
@@ -202,6 +208,54 @@ void CoupleDoFsAtBoundary(
 
 
 } /* namespace BoundaryTools */
+
+/**
+ * @short Container for global Data that is required by the FEBoundaryValues class
+ */
+struct GlobalBoundaryData {
+
+	/// old distribution functions (at t-dt)
+	const DistributionFunctions& m_fold;
+
+	/// new distribution functions (at t)
+	DistributionFunctions& m_fnew;
+
+	/// LBM stencil
+	const Stencil& m_stencil;
+
+	/// viscosity
+	double m_viscosity;
+
+	/// time step
+	double m_dt;
+
+	/// number of discrete particle velocities in stencil
+	size_t m_Q;
+
+	/// speed of sound
+	double m_cs2;
+
+	/***
+	 * @short Constructor
+	 * @param f_old old distribution functions (at t-dt, read only)
+	 * @param f_new new distribution functions (at t, write only)
+	 * @param stencil LBM stencil (e.g. D2Q9)
+	 * @param viscosity kinematic viscosity of the fluid
+	 * @param dt time step
+	 */
+	GlobalBoundaryData(const DistributionFunctions& f_old,
+			DistributionFunctions& f_new, const Stencil& stencil,
+			double viscosity, double dt) :
+			m_fold(f_old), m_fnew(f_new), m_stencil(stencil) {
+		m_viscosity = viscosity;
+		m_dt = dt;
+		m_cs2 = stencil.getSpeedOfSoundSquare();
+		m_Q = stencil.getQ();
+	}
+	virtual ~GlobalBoundaryData() {
+
+	}
+};
 
 } /* namespace natrium */
 

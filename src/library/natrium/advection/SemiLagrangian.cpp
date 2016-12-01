@@ -38,8 +38,7 @@ SemiLagrangian<dim>::SemiLagrangian(ProblemDescription<dim>& problem,
 		SupportPointsName points_name, boost::shared_ptr<Stencil> stencil,
 		double delta_t) :
 		AdvectionOperator<dim>(problem, orderOfFiniteElement, quad_name,
-				points_name, stencil, delta_t, false), m_boundaryHandler(
-				delta_t, *stencil, *problem.getBoundaries()) {
+				points_name, stencil, delta_t, false), m_boundaryHandler(*this) {
 
 } /* SEDGMinLee<dim>::SEDGMinLee */
 
@@ -292,7 +291,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					} else /* if is not periodic */{
 						if (not sparsity_pattern) {
 							el.currentPoint = p_boundary;
-							m_boundaryHandler.addHit(el, bi, *this);
+							m_boundaryHandler.addHit(el, bi);
 						}
 						not_found.pop();
 					} /* endif isPeriodic */

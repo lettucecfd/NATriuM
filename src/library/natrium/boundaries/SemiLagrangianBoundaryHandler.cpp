@@ -6,77 +6,86 @@
  */
 
 #include "SemiLagrangianBoundaryHandler.h"
+#include "BoundaryFlags.h"
+#include "SLBoundary.h"
 
 namespace natrium {
 
 template<size_t dim>
 void SemiLagrangianBoundaryHandler<dim>::addHit(
-		const LagrangianPathTracker<dim>& tracker, size_t boundary_id,
-		const AdvectionOperator<dim>& sl) {
-	assert (m_timeStep > 0);
+		const LagrangianPathTracker<dim>& tracker, size_t boundary_id) {
+	assert(m_timeStep > 0);
 	assert(m_boundaries.hasID(boundary_id));
 	assert(m_boundaries.isSL(boundary_id));
 	// check if cell is already there
 	m_hitList.addHit(BoundaryHit<dim>(tracker, m_stencil, boundary_id));
+	// TODO deal with corner nodes. Each boundary hit could be given prescribed values of multiple boundaries.
 }
 
 template<size_t dim>
 void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
-		const DistributionFunctions& f_old, const dealii::DoFHandler<dim>& dof,
-		boost::shared_ptr<dealii::FEValues<dim> > fe_values, double t) {
+		const DistributionFunctions& f_old, double t) {
 
-	cout << "!!!!!!!!!!!!!!!!SemiLagrangianBoundaryHandler<dim>::apply: Constant Viscosity 0.1" << endl;
-	//TODO problemdescription instead of boundaryhandler
-	GlobalBoundaryData g_data (f_old,f_new, m_stencil, 0.1, m_timeStep);
-	LocalBoundaryData<dim> l_data;
-	l_data.resize(fe_values->get_fe().n_dofs_per_cell());;
-	std::vector<dealii::Point<dim> > off_sup_points;
-	/*typename HitList<dim>::iterator it = m_hitList.begin();
-	typename HitList<dim>::iterator end = m_hitList.end();
-	for (; it != end; ++it) {
+	GlobalBoundaryData g_data(f_old, f_new, m_stencil, 0.1, m_timeStep);
+	std::vector<dealii::Point<dim> > local_hit_points;
+	typename HitList<dim>::iterator cell_it = m_hitList.begin();
+	typename HitList<dim>::iterator cell_end = m_hitList.end();
+	for (; cell_it != cell_end; ++cell_it) {
+		// i.e., FOR ALL CELLS
 
 		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell =
-				it->first;
-		const HitListAtCell<dim> & cell_hits = it->second;
+				cell_it->first;
+		const HitListAtCell<dim> & cell_hits = cell_it->second;
 
-		// update both fevalues instances, the one for the support points and the one for the arbitrary points
-		fe_values->reinit(cell);
-		cell->get_dof_indices(l_data.local_dofs);
-
-		off_sup_points.clear();
-		for (size_t i = 0; i < cell_hits.getHitList().size(); i++) {
-			off_sup_points.push_back(
-					cell_hits.hitListArbitrary.at(i).getCurrentPoint());
-		}
-		boost::shared_ptr<dealii::FEValues<dim> > fe_values2 =
-				reinitArbitraryPoints<dim>(cell, off_sup_points,
-						fe_values->get_mapping(),
-						fe_values->get_update_flags());
-
-
-		// apply boundaries for support points
-		for (size_t i = 0; i < cell_hits.hitListSupportPoints.size(); i++) {
-			m_boundaries.getSLBoundary(
-					cell_hits.hitListSupportPoints.at(i).getBoundaryId())->calculateBoundaryValues(
-					g_data, l_data, *fe_values,
-					cell_hits.hitListSupportPoints.at(i).getSupportQPoint(),
-					cell_hits.hitListSupportPoints.at(i).getDestination(),
-					cell_hits.hitListSupportPoints.at(i).getDtHit());
+		// get update flags for all boundaries that are present at this cell
+		BoundaryFlags flags = only_distributions;
+		for (size_t f = 0; f < dealii::GeometryInfo<dim>::faces_per_cell; f++) {
+			if (not cell->at_boundary(f)) {
+				continue;
+			}
+			size_t bi = cell->face(f)->boundary_id();
+			if (m_boundaries.getBoundary(bi)->isSLBoundary()) {
+				BoundaryFlags flags_f = m_boundaries.getSLBoundary(bi)->getUpdateFlags();
+				flags |= flags_f;
+			}
 		}
 
-		// apply boundaries for arbitrary points
-		// quadrature is already in the right order by construction, i.e. q==i
-		for (size_t q = 0; q < cell_hits.hitListArbitrary.size(); q++) {
-			m_boundaries.getSLBoundary(
-					cell_hits.hitListSupportPoints.at(q).getBoundaryId())->calculateBoundaryValues(
-							g_data, l_data, *fe_values2, q,
-					cell_hits.hitListSupportPoints.at(q).getDestination(),
-					cell_hits.hitListSupportPoints.at(q).getDtHit());
-
+		// get hit points
+		local_hit_points.clear();
+		typename HitListAtCell<dim>::const_iterator point_it =
+				cell_hits.begin();
+		typename HitListAtCell<dim>::const_iterator point_end =
+				cell_hits.end();
+		for (; point_it != point_end; ++point_it) {
+			local_hit_points.push_back(point_it->first);
 		}
 
-	}
-	*/
+		// make boundary values instance for the calculations at the boundary
+		FEBoundaryValues<dim> fe_b_values(cell,
+				local_hit_points,
+				*m_advection.getFe(), m_advection.getMapping(),  flags,
+				g_data);
+
+		// apply boundaries at boundaries
+		size_t q_point = 0;
+		for (point_it = cell_hits.begin(); point_it != point_end;
+				++point_it) {
+			const HitListAtPoint<dim> & point_hits = point_it->second;
+			// calculate values at points
+			fe_b_values.reinit(q_point);
+
+			// apply boundaries at hits
+			for (size_t i = 0; i < point_hits.n_hits(); i++){
+				const BoundaryHit<dim>& hit = point_hits.at(i);
+				// calculate new distribution functions at hits
+				 m_boundaries.getSLBoundary(hit.getBoundaryId())->calculateBoundaryValues( fe_b_values,
+								q_point, hit.getDestination(),
+								hit.getDtHit(), t);
+			} /* for all hits */
+			q_point ++;
+		} /* for all points */
+	} /* for all cells */
+
 }
 
 template class SemiLagrangianBoundaryHandler<2> ;
