@@ -63,29 +63,17 @@ public:
 	virtual ~GradsBoundary() {
 	}
 
-	void updateMacroscopic(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
-			const dealii::FEValues<dim>& fe_values, size_t q_point);
+	virtual BoundaryFlags getUpdateFlags() const {
+		return only_distributions;
+	}
 
-	void calculateWallValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
-			const dealii::FEValues<dim>& fe_values, size_t q_point);
-
-	void applyWallValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
-			const dealii::FEValues<dim>& fe_values, size_t q_point,
-			const LagrangianPathDestination& destination, double dt);
-
-	/**
-	 * @short Apply the boundary condition (calculate unkown distributions)
-	 */
-	virtual void calculateBoundaryValues(const GlobalBoundaryData& g,
-			LocalBoundaryData<dim>& b, const dealii::FEValues<dim>& fe_values,
-			size_t q_point, const LagrangianPathDestination& destination,
-			double dt);
-
-	virtual dealii::UpdateFlags getUpdateFlags() const {
-		return dealii::update_values | dealii::update_gradients
-				| dealii::update_3rd_derivatives | dealii::update_hessians;
+	virtual void calculateBoundaryValues(FEBoundaryValues<dim>& fe_boundary_values,
+				size_t q_point, const LagrangianPathDestination& destination,
+				double eps, double t){
 
 	}
+
+
 };
 
 } /* namespace natrium */

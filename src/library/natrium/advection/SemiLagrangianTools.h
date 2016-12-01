@@ -101,10 +101,10 @@ int supportPointNr(
  * @note the returned object is already reinitialized for the cell, i.e. you don't need need to call reinit(cell) for the returned object.
  */
 template<size_t dim>
-boost::shared_ptr<dealii::FEValues<dim> > reinitArbitraryPoints(
+dealii::Quadrature<dim> makeQuadratureAtPoints(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<dim> >& points,
-		const dealii::Mapping<dim>& mapping, const dealii::UpdateFlags& flags);
+		const dealii::Mapping<dim>& mapping);
 
 template<size_t dim>
 void getNeighborhood(

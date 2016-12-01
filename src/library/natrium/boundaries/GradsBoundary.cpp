@@ -8,138 +8,7 @@
 #include "GradsBoundary.h"
 
 namespace natrium {
-
-template<size_t dim>
-void GradsBoundary<dim>::updateMacroscopic(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
-		const dealii::FEValues<dim>& fe_values, size_t q_point) {
-
-	// check that object has been initialized properly via reinit
-	assert(g.m_viscosity > 0);
-	assert(g.m_dt > 0); // time step
-
-	// check function parameters
-	assert(fe_values.get_fe().n_dofs_per_cell() == b.local_dofs.size());
-	assert (b.dofs_per_cell == b.local_dofs.size());
-
-	// initalize macroscopic variables and dof variables
-	b.rho = 0;
-	b.rho_u = 0;
-	b.u = 0;
-	for (size_t i = 0; i < b.dofs_per_cell; i++) {
-		b.rho_dof.at(i) = 0;
-		b.rho_u_dof.at(i) = 0;
-		b.u_dof.at(i) = 0;
-	}
-
-	// calculate macroscopic variables and dof variables
-	for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
-		for (size_t qi = 0; qi < g.m_Q; qi++) {
-			b.rho_dof.at(dof) += g.m_fold.at(qi)(b.local_dofs.at(dof));
-			for (size_t i = 0; i < dim; i++) {
-				b.rho_u_dof.at(dof)[i] += g.m_fold.at(qi)(b.local_dofs.at(dof))
-						* g.m_stencil.getDirection(qi)[i];
-			}
-		}
-		b.u_dof.at(dof) = b.rho_u_dof.at(dof);
-		b.u_dof.at(dof) /= b.rho_dof.at(dof);
-		b.rho += b.rho_dof.at(dof) * fe_values.shape_value(dof, q_point);
-		b.rho_u += b.rho_u_dof.at(dof) * fe_values.shape_value(dof, q_point);
-		b.u += b.u_dof.at(dof) * fe_values.shape_value(dof, q_point);
-	}
-	assert((b.u * b.rho - b.rho_u).norm() < 1e-10);
-}
-
-template<size_t dim>
-void GradsBoundary<dim>::calculateWallValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
-		const dealii::FEValues<dim>& fe_values, size_t q_point) {
-	b.rho_w = 0;
-	b.drhodt_w = 0;
-	b.u_w = 0;
-	b.dudt_w = 0;
-	b.dudx_w = 0;
-	b.d2udxdt_w = 0;
-
-	// calculate rho_w: first divergence, then rest
-	for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
-		for (size_t i = 0; i < dim; i++) {
-			// derivative drhoui_dxi
-			b.drhodt_w += fe_values.shape_grad(dof, q_point)[i]
-					* b.rho_u_dof.at(dof)[i];
-		}
-	}
-	b.drhodt_w *= -1;
-
-	// calculate u_w: first viscous term, then derivative part, then rest
-	for (size_t i = 0; i < dim; i++) {
-		// viscous term
-		for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
-			for (size_t k = 0; k < dim; k++) {
-				b.dudt_w[i] += fe_values.shape_hessian(dof, q_point)[k][k]
-						* b.u_dof.at(dof)[i];
-				b.dudt_w[i] += fe_values.shape_hessian(dof, q_point)[i][k]
-						* b.u_dof.at(dof)[k];
-			}
-		}
-		b.dudt_w[i] *= (-g.m_viscosity);
-		for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
-			// nonlinear term
-			for (size_t k = 0; k < dim; k++) {
-				b.dudt_w[i] += b.u[k] * fe_values.shape_grad(dof, q_point)[k]
-						* b.u_dof.at(dof)[i];
-			}
-			// pressure term
-			b.dudt_w[i] += g.m_cs2 / b.rho * fe_values.shape_grad(dof, q_point)[i]
-					* b.rho_dof.at(dof);
-		}
-		b.u_w[i] *= -1;
-	}
-
-	// calculate dudx_w
-	for (size_t i = 0; i < dim; i++) {
-		for (size_t j = 0; j < dim; j++) {
-			// viscous term
-			for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
-				for (size_t k = 0; k < dim; k++) {
-					b.d2udxdt_w[i][j] += fe_values.shape_3rd_derivative(dof,
-							q_point)[k][k][j] * b.u_dof.at(dof)[i];
-					b.d2udxdt_w[i][j] += fe_values.shape_3rd_derivative(dof,
-							q_point)[i][k][j] * b.u_dof.at(dof)[k];
-				}
-			}
-			b.d2udxdt_w[i][j] *= (-g.m_viscosity);
-			for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
-				for (size_t k = 0; k < dim; k++) {
-					// nonlinear term 1
-					b.d2udxdt_w[i][j] += fe_values.shape_grad(dof, q_point)[j]
-							* b.u_dof.at(dof)[k]
-							* fe_values.shape_grad(dof, q_point)[k]
-							* b.u_dof.at(dof)[i];
-					// nonlinear term 2
-					b.d2udxdt_w[i][j] += b.u[j]
-							* fe_values.shape_hessian(dof, q_point)[j][k]
-							* b.u_dof.at(dof)[i];
-
-				}
-				// pressure term 1
-				b.d2udxdt_w[i][j] += g.m_cs2 / (b.rho * b.rho)
-						* fe_values.shape_hessian(dof, q_point)[i][j]
-						* b.rho_dof.at(dof);
-				// pressure term 2
-				b.d2udxdt_w[i][j] += g.m_cs2 / (b.rho * b.rho)
-						* fe_values.shape_grad(dof, q_point)[i]
-						* b.rho_dof.at(dof)
-						* fe_values.shape_grad(dof, q_point)[j]
-						* b.rho_dof.at(dof);
-			}
-			b.d2udxdt_w[i] *= -1;
-			// + dudx_w, which is not stored, but calculated by:
-			for (size_t dof = 0; dof < b.dofs_per_cell; dof++) {
-				b.dudx_w[i][j] += fe_values.shape_grad(dof, q_point)[j]
-						* b.u_dof.at(dof)[i];
-			}
-		}
-	}
-}
+/*
 template<size_t dim>
 void GradsBoundary<dim>::applyWallValues(const GlobalBoundaryData& g, LocalBoundaryData<dim>& b,
 		const dealii::FEValues<dim>& fe_values, size_t q_point,
@@ -185,7 +54,7 @@ void GradsBoundary<dim>::calculateBoundaryValues(const GlobalBoundaryData& g, Lo
 
 	applyWallValues(g,b, fe_values, q_point, destination, eps);
 
-/*
+
 	 assert(u.size() == dim);
 	 const dealii::DoFHandler<dim>& dof_handler = *advection.getDoFHandler();
 	 const size_t dofs_per_cell = advection.getNumberOfDoFsPerCell();
@@ -284,11 +153,10 @@ void GradsBoundary<dim>::calculateBoundaryValues(const GlobalBoundaryData& g, Lo
 	 }
 
 	 }
-	 */
 }
 
+	 */
 template class GradsBoundary<2> ;
 template class GradsBoundary<3> ;
 
-}
-/* namespace natrium */
+}/* namespace natrium */

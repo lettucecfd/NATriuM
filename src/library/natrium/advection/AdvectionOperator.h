@@ -132,20 +132,24 @@ public:
 	 */
 	virtual void setupDoFs() = 0;
 
+	virtual void applyBoundaryConditions(DistributionFunctions& f_old,
+			DistributionFunctions& f, double t) = 0;
+
+
 	/**
 	 * @short Stream the distribution functions. Purely virtual for this class.
 	 * @param f_old distribution functions at t
 	 * @param f distribution functsion at t+delta_t
 	 */
 	virtual double stream(DistributionFunctions& f_old,
-			DistributionFunctions& f) = 0;
+			DistributionFunctions& f, double t) = 0;
 
 	/**
 	 * @short Apply boundary conditions. Purely virtual for this class.
 	 * @note While the SEDG boundary conditions are directly implemented in the system matrix and vector,
 	 * 			the semi-Lagrangian advection operator needs to do something in this functions.
 	 */
-	virtual void applyBoundaryConditions(double t) = 0;
+	//virtual void applyBoundaryConditions(double t) = 0;
 
 	/**
      * @short set the time integrator for the SEDG streaming step.  Purely virtual for this class.
@@ -346,6 +350,21 @@ public:
 		return *m_supportPointEvaluation;
 	}
 
+	double getDeltaT() const {
+		return m_deltaT;
+	}
+
+	const dealii::IndexSet& getLocallyOwnedDoFs() const {
+		return m_locallyOwnedDoFs;
+	}
+
+	const dealii::IndexSet& getLocallyRelevantDoFs() const {
+		return m_locallyRelevantDoFs;
+	}
+
+	const ProblemDescription<dim> & getProblem() const {
+		return m_problem;
+	}
 };
 
 } /* namespace natrium */

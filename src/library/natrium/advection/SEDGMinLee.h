@@ -227,9 +227,13 @@ public:
 
 	virtual void setupDoFs();
 
+	virtual void applyBoundaryConditions(DistributionFunctions& f_old,
+			DistributionFunctions& f, double t){
+	}
+
 	/// make streaming step
-	virtual double stream(DistributionFunctions& f_old,
-			DistributionFunctions& f) {
+	virtual double stream(DistributionFunctions& ,
+			DistributionFunctions& f, double ) {
 		if (!m_timeIntegrator) {
 			throw AdvectionSolverException(
 					"Before calling SEDGMinLee.stream(), you have to assign a time integrator.");
@@ -237,14 +241,13 @@ public:
 		LOG(WARNING)
 				<< "SEDGMinLee<dim>::stream() is not tested and might not work properly."
 				<< endl;
-		assert(&f_old == &f);
 		return m_timeIntegrator->step(f.getFStream(), Base::m_systemMatrix,
 				m_systemVector, 0.0, m_timeIntegrator->getTimeStepSize());
 	}
 
-	virtual void applyBoundaryConditions(double t) {
+	/*virtual void applyBoundaryConditions(double t) {
 
-	}
+	}*/
 
 	virtual const distributed_block_vector& getSystemVector() const {
 		return m_systemVector;

@@ -103,10 +103,10 @@ int supportPointNr<3>(
 		const dealii::MappingQ<3>& mapping);
 
 template<size_t dim>
-boost::shared_ptr<dealii::FEValues<dim> > reinitArbitraryPoints(
+dealii::Quadrature<dim> makeQuadratureAtPoints(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<dim> >& points,
-		const dealii::Mapping<dim>& mapping, const dealii::UpdateFlags& flags) {
+		const dealii::Mapping<dim>& mapping) {
 
 	//TimerOutput::Scope timer_section(Timing::getTimer(), "Assembly: evaluate function");
 	const size_t n_points = points.size();
@@ -132,20 +132,17 @@ boost::shared_ptr<dealii::FEValues<dim> > reinitArbitraryPoints(
 	}
 	// Now we can find out about the points
 	dealii::Quadrature<dim> quad(unit_points); //, weights);
-	boost::shared_ptr<dealii::FEValues<dim> > fe_v = boost::make_shared<
-			dealii::FEValues<dim> >(mapping, cell->get_fe(), quad, flags);
-	fe_v->reinit(cell);
-	return fe_v;
+	return quad;
 }
 
-template boost::shared_ptr<dealii::FEValues<2> > reinitArbitraryPoints<2>(
+template dealii::Quadrature<2> makeQuadratureAtPoints<2>(
 		const typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<2> >& points,
-		const dealii::Mapping<2>& mapping, const dealii::UpdateFlags& flags);
-template boost::shared_ptr<dealii::FEValues<3> > reinitArbitraryPoints<3>(
+		const dealii::Mapping<2>& mapping);
+template dealii::Quadrature<3> makeQuadratureAtPoints<3>(
 		const typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		const std::vector<dealii::Point<3> >& points,
-		const dealii::Mapping<3>& mapping, const dealii::UpdateFlags& flags);
+		const dealii::Mapping<3>& mapping);
 
 
 

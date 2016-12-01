@@ -575,6 +575,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 }
 /* Constructor */
 
+
 template<size_t dim>
 void CFDSolver<dim>::stream() {
 
@@ -597,6 +598,8 @@ void CFDSolver<dim>::stream() {
 		f_tmp = f;
 		//f_tmp.reinit(f);
 		systemMatrix.vmult(f, f_tmp);
+
+		//m_advectionOperator->applyBoundaryConditions( f_tmp, f,  m_time);
 		if (m_configuration->isVmultLimiter()) {
 			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
 			VmultLimiter::apply(systemMatrix, f, f_tmp);
@@ -611,6 +614,7 @@ void CFDSolver<dim>::stream() {
 			f_tmp = formerF;
 			assert(m_multistepData != NULL);
 			systemMatrix.vmult(formerF, f_tmp);
+			//m_advectionOperator->applyBoundaryConditions( f_tmp, formerF,  m_time);
 			if (m_configuration->isVmultLimiter()) {
 				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
 				VmultLimiter::apply(systemMatrix, f, f_tmp);
@@ -620,6 +624,7 @@ void CFDSolver<dim>::stream() {
 					m_multistepData->getFormerFEq().getFStream();
 			f_tmp = formerFEq;
 			systemMatrix.vmult(formerFEq, f_tmp);
+			//m_advectionOperator->applyBoundaryConditions( f_tmp, formerFEq,  m_time);
 			if (m_configuration->isVmultLimiter()) {
 				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
 				VmultLimiter::apply(systemMatrix, formerFEq, f_tmp);
@@ -659,6 +664,57 @@ void CFDSolver<dim>::stream() {
 //	natrium_errorexit(e.what());
 //}
 }
+
+
+/*
+template<size_t dim>
+void CFDSolver<dim>::stream() {
+
+// start timer
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Streaming");
+
+		DistributionFunctions f_tmp(m_f);
+
+		double new_dt = m_advectionOperator->stream(f_tmp, m_f, m_time);
+		if (m_configuration->isVmultLimiter()) {
+			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+			VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), m_f.getFStream(), f_tmp.getFStream());
+		}
+		if ((BGK_MULTI_AM4 == m_configuration->getCollisionScheme()
+				|| (BGK_MULTI_BDF2 == m_configuration->getCollisionScheme()))
+				&& (m_i - m_iterationStart) > 1) {
+			DistributionFunctions& formerF =
+					m_multistepData->getFormerF();
+			f_tmp = formerF;
+			assert(m_multistepData != NULL);
+			m_advectionOperator->stream(f_tmp, formerF, m_time);
+			if ((m_configuration->isVmultLimiter())
+					and (SEMI_LAGRANGIAN
+							== m_configuration->getAdvectionScheme())) {
+				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+				VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), m_f.getFStream(), f_tmp.getFStream());
+			}
+
+			DistributionFunctions& formerFEq =
+					m_multistepData->getFormerFEq();
+			f_tmp = formerFEq;
+			m_advectionOperator->stream(f_tmp, formerFEq, m_time);
+			if ((m_configuration->isVmultLimiter())
+								and (SEMI_LAGRANGIAN
+										== m_configuration->getAdvectionScheme())){
+				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+				VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), formerFEq.getFStream(), f_tmp.getFStream());
+			}
+		}
+
+		m_time += getTimeStepSize();
+
+		m_timeIntegrator->setTimeStepSize(new_dt);
+		m_time += new_dt;
+		m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
+	
+}
+*/
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
