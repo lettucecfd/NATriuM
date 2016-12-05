@@ -196,11 +196,13 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_PrepareOutputDirectory_test) {
 	// Sanity test
 	config.setRestartAtIteration(1);
 	config.setUserInteraction(false);
-	if (boost::filesystem::is_directory(natriumTmpDir)) {
-		boost::filesystem::remove_all(natriumTmpDir);
-	}
-	if (is_MPI_rank_0())
+	if (is_MPI_rank_0()){
+		if (boost::filesystem::is_directory(natriumTmpDir)) {
+			boost::filesystem::remove_all(natriumTmpDir);
+		}
 		boost::filesystem::create_directory(natriumTmpDir);
+	}
+
 	// wait for directory to be created
 	sleep(1);
 	MPI_sync();

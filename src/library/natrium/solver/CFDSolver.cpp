@@ -184,6 +184,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_advectionOperator->setupDoFs();
 		m_f.reinit(m_stencil->getQ(),
 				m_advectionOperator->getLocallyOwnedDofs(),
+				m_advectionOperator->getLocallyRelevantDofs(),
 				MPI_COMM_WORLD);
 		m_iterationStart = 0;
 		m_time = 0;
@@ -295,18 +296,37 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 // initialize macroscopic variables
 	m_advectionOperator->mapDoFsToSupportPoints(m_supportPoints);
 	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-	MPI_COMM_WORLD);
+			m_advectionOperator->getLocallyRelevantDofs(),
+			MPI_COMM_WORLD);
 	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-	MPI_COMM_WORLD);
+			MPI_COMM_WORLD);
 	for (size_t i = 0; i < dim; i++) {
+		distributed_vector vi_ghosted(
+				m_advectionOperator->getLocallyOwnedDofs(),
+				m_advectionOperator->getLocallyRelevantDofs(),
+				MPI_COMM_WORLD);
 		distributed_vector vi(m_advectionOperator->getLocallyOwnedDofs(),
 		MPI_COMM_WORLD);
-		m_velocity.push_back(vi);
+		m_velocity.push_back(vi_ghosted);
 		m_tmpVelocity.push_back(vi);
 	}
 	if (not checkpoint) {
-		applyInitialDensities(m_density, m_supportPoints);
-		applyInitialVelocities(m_velocity, m_supportPoints);
+		// get writeable copies of density and velocity
+		std::vector<distributed_vector> writeable_u;
+		distributed_vector writeable_rho;
+		CFDSolverUtilities::getWriteableDensity(writeable_rho, m_density,
+				m_advectionOperator->getLocallyOwnedDofs());
+		CFDSolverUtilities::getWriteableVelocity(writeable_u, m_velocity,
+				m_advectionOperator->getLocallyOwnedDofs());
+
+		// set writeable copies
+		applyInitialDensities(writeable_rho, m_supportPoints);
+		applyInitialVelocities(writeable_u, m_supportPoints);
+
+		// copy back to ghosted vectors and communicate across MPI processors
+		CFDSolverUtilities::applyWriteableDensity(writeable_rho, m_density);
+		CFDSolverUtilities::applyWriteableVelocity(writeable_u, m_velocity);
+
 	} else {
 		calculateDensitiesAndVelocities();
 	}
@@ -575,59 +595,66 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 }
 /* Constructor */
 
-
 template<size_t dim>
 void CFDSolver<dim>::stream() {
 
-// start timer
-	TimerOutput::Scope timer_section(Timing::getTimer(), "Streaming");
+	// start timer
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Stream");
 
-// no streaming in direction 0; begin with 1
+	// no streaming in direction 0; begin with 1
 	distributed_block_vector& f = m_f.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 			m_advectionOperator->getSystemMatrix();
 
-//const distributed_block_vector& systemVector =
-//		m_advectionOperator->getSystemVector();
-//TODO has to be replaced by boundaryVector
-
-//try {
 	if (SEMI_LAGRANGIAN == m_configuration->getAdvectionScheme()) {
-		distributed_block_vector f_tmp(f.n_blocks());
-		reinitVector(f_tmp, f);
-		f_tmp = f;
-		//f_tmp.reinit(f);
-		systemMatrix.vmult(f, f_tmp);
+
+		DistributionFunctions f_tmp(m_f);
+		systemMatrix.vmult(m_f.getFStream(), f_tmp.getFStream());
+		m_advectionOperator->applyBoundaryConditions(f_tmp, m_f, m_time);
+		/*distributed_block_vector f_tmp(f.n_blocks());
+		 reinitVector(f_tmp, f);
+		 f_tmp = f;
+		 systemMatrix.vmult(f, f_tmp);*/
 
 		//m_advectionOperator->applyBoundaryConditions( f_tmp, f,  m_time);
 		if (m_configuration->isVmultLimiter()) {
 			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-			VmultLimiter::apply(systemMatrix, f, f_tmp);
+			VmultLimiter::apply(systemMatrix, m_f.getFStream(),
+					f_tmp.getFStream());
 		}
-		//f += m_boundaryVector;
 
 		if ((BGK_MULTI_AM4 == m_configuration->getCollisionScheme()
 				|| (BGK_MULTI_BDF2 == m_configuration->getCollisionScheme()))
 				&& (m_i - m_iterationStart) > 1) {
-			distributed_block_vector& formerF =
-					m_multistepData->getFormerF().getFStream();
-			f_tmp = formerF;
+			//distributed_block_vector& formerF =
+			//		m_multistepData->getFormerF().getFStream();
+			f_tmp = m_multistepData->getFormerF();
 			assert(m_multistepData != NULL);
-			systemMatrix.vmult(formerF, f_tmp);
+			systemMatrix.vmult(m_multistepData->getFormerF().getFStream(),
+					f_tmp.getFStream());
+			m_advectionOperator->applyBoundaryConditions(f_tmp,
+					m_multistepData->getFormerF(), m_time);
 			//m_advectionOperator->applyBoundaryConditions( f_tmp, formerF,  m_time);
 			if (m_configuration->isVmultLimiter()) {
 				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-				VmultLimiter::apply(systemMatrix, f, f_tmp);
+				VmultLimiter::apply(systemMatrix,
+						m_multistepData->getFormerF().getFStream(),
+						f_tmp.getFStream());
 			}
 
-			distributed_block_vector& formerFEq =
-					m_multistepData->getFormerFEq().getFStream();
-			f_tmp = formerFEq;
-			systemMatrix.vmult(formerFEq, f_tmp);
+			//distributed_block_vector& formerFEq =
+			//		m_multistepData->getFormerFEq().getFStream();
+			f_tmp = m_multistepData->getFormerFEq();
+			systemMatrix.vmult(m_multistepData->getFormerFEq().getFStream(),
+					f_tmp.getFStream());
+			m_advectionOperator->applyBoundaryConditions(f_tmp,
+					m_multistepData->getFormerFEq(), m_time);
 			//m_advectionOperator->applyBoundaryConditions( f_tmp, formerFEq,  m_time);
 			if (m_configuration->isVmultLimiter()) {
 				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-				VmultLimiter::apply(systemMatrix, formerFEq, f_tmp);
+				VmultLimiter::apply(systemMatrix,
+						m_multistepData->getFormerFEq().getFStream(),
+						f_tmp.getFStream());
 			}
 		}
 
@@ -660,61 +687,61 @@ void CFDSolver<dim>::stream() {
 		m_time += new_dt;
 		m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
 	}
-//} catch (std::exception& e) {
-//	natrium_errorexit(e.what());
-//}
-}
 
+	// communicate
+	m_f.updateGhosted();
+
+}
 
 /*
-template<size_t dim>
-void CFDSolver<dim>::stream() {
+ template<size_t dim>
+ void CFDSolver<dim>::stream() {
 
-// start timer
-	TimerOutput::Scope timer_section(Timing::getTimer(), "Streaming");
+ // start timer
+ TimerOutput::Scope timer_section(Timing::getTimer(), "Streaming");
 
-		DistributionFunctions f_tmp(m_f);
+ DistributionFunctions f_tmp(m_f);
 
-		double new_dt = m_advectionOperator->stream(f_tmp, m_f, m_time);
-		if (m_configuration->isVmultLimiter()) {
-			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-			VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), m_f.getFStream(), f_tmp.getFStream());
-		}
-		if ((BGK_MULTI_AM4 == m_configuration->getCollisionScheme()
-				|| (BGK_MULTI_BDF2 == m_configuration->getCollisionScheme()))
-				&& (m_i - m_iterationStart) > 1) {
-			DistributionFunctions& formerF =
-					m_multistepData->getFormerF();
-			f_tmp = formerF;
-			assert(m_multistepData != NULL);
-			m_advectionOperator->stream(f_tmp, formerF, m_time);
-			if ((m_configuration->isVmultLimiter())
-					and (SEMI_LAGRANGIAN
-							== m_configuration->getAdvectionScheme())) {
-				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-				VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), m_f.getFStream(), f_tmp.getFStream());
-			}
+ double new_dt = m_advectionOperator->stream(f_tmp, m_f, m_time);
+ if (m_configuration->isVmultLimiter()) {
+ TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+ VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), m_f.getFStream(), f_tmp.getFStream());
+ }
+ if ((BGK_MULTI_AM4 == m_configuration->getCollisionScheme()
+ || (BGK_MULTI_BDF2 == m_configuration->getCollisionScheme()))
+ && (m_i - m_iterationStart) > 1) {
+ DistributionFunctions& formerF =
+ m_multistepData->getFormerF();
+ f_tmp = formerF;
+ assert(m_multistepData != NULL);
+ m_advectionOperator->stream(f_tmp, formerF, m_time);
+ if ((m_configuration->isVmultLimiter())
+ and (SEMI_LAGRANGIAN
+ == m_configuration->getAdvectionScheme())) {
+ TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+ VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), m_f.getFStream(), f_tmp.getFStream());
+ }
 
-			DistributionFunctions& formerFEq =
-					m_multistepData->getFormerFEq();
-			f_tmp = formerFEq;
-			m_advectionOperator->stream(f_tmp, formerFEq, m_time);
-			if ((m_configuration->isVmultLimiter())
-								and (SEMI_LAGRANGIAN
-										== m_configuration->getAdvectionScheme())){
-				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-				VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), formerFEq.getFStream(), f_tmp.getFStream());
-			}
-		}
+ DistributionFunctions& formerFEq =
+ m_multistepData->getFormerFEq();
+ f_tmp = formerFEq;
+ m_advectionOperator->stream(f_tmp, formerFEq, m_time);
+ if ((m_configuration->isVmultLimiter())
+ and (SEMI_LAGRANGIAN
+ == m_configuration->getAdvectionScheme())){
+ TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+ VmultLimiter::apply(m_advectionOperator->getSystemMatrix(), formerFEq.getFStream(), f_tmp.getFStream());
+ }
+ }
 
-		m_time += getTimeStepSize();
+ m_time += getTimeStepSize();
 
-		m_timeIntegrator->setTimeStepSize(new_dt);
-		m_time += new_dt;
-		m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
-	
-}
-*/
+ m_timeIntegrator->setTimeStepSize(new_dt);
+ m_time += new_dt;
+ m_collisionModel->setTimeStep(m_timeIntegrator->getTimeStepSize());
+
+ }
+ */
 
 template<size_t dim>
 void CFDSolver<dim>::collide() {
@@ -723,8 +750,23 @@ void CFDSolver<dim>::collide() {
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Collision");
 
 	try {
-		m_collisionModel->collideAll(m_f, m_density, m_velocity,
+		// get writeable copies of density and velocity
+		std::vector<distributed_vector> writeable_u;
+		distributed_vector writeable_rho;
+		CFDSolverUtilities::getWriteableVelocity(writeable_u, m_velocity,
+				m_advectionOperator->getLocallyOwnedDofs());
+		CFDSolverUtilities::getWriteableDensity(writeable_rho, m_density,
+				m_advectionOperator->getLocallyOwnedDofs());
+
+		// perform collision
+		m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
 				m_advectionOperator->getLocallyOwnedDofs(), false);
+
+		// copy back to ghosted vectors and communicate across MPI processors
+		CFDSolverUtilities::applyWriteableDensity(writeable_rho, m_density);
+		CFDSolverUtilities::applyWriteableVelocity(writeable_u, m_velocity);
+		m_f.updateGhosted();
+
 	} catch (CollisionException& e) {
 		natrium_errorexit(e.what());
 	}
@@ -757,6 +799,8 @@ void CFDSolver<dim>::filter() {
 			}
 		}
 	}
+
+	m_f.updateGhosted();
 }
 
 template<size_t dim>
@@ -812,7 +856,7 @@ bool CFDSolver<dim>::stopConditionMet() {
 	const double convergence_threshold =
 			m_configuration->getConvergenceThreshold();
 	if (m_i % check_interval == 0) {
-		m_solverStats->calulateResiduals(m_i);
+		m_solverStats->calculateResiduals(m_i);
 		if ((m_residuumVelocity < convergence_threshold)
 		/*and (m_residuumDensity < convergence_threshold)*/) {
 			LOG(BASIC)
@@ -994,6 +1038,8 @@ void CFDSolver<dim>::initializeDistributions() {
 // save starting time
 	double t0 = m_time;
 
+
+
 // Initialize f with the equilibrium distribution functions
 //for all degrees of freedom on current processor
 	const dealii::IndexSet& locally_owned_dofs =
@@ -1041,7 +1087,15 @@ void CFDSolver<dim>::initializeDistributions() {
 						<< "To avoid this Warning, soften the scheme (i.e. aim at a greater residual.)";
 				break;
 			}
-			oldDensities = m_density;
+			distributed_vector rho;
+			vector<distributed_vector> u;
+			// get writeable copies of rho and u
+			CFDSolverUtilities::getWriteableDensity(oldDensities, m_density,
+					locally_owned_dofs);
+			CFDSolverUtilities::getWriteableDensity(rho, m_density,
+					locally_owned_dofs);
+			CFDSolverUtilities::getWriteableVelocity(u, m_velocity,
+					locally_owned_dofs);
 			try {
 				stream();
 			} catch (std::exception& e) {
@@ -1049,14 +1103,17 @@ void CFDSolver<dim>::initializeDistributions() {
 			}
 			// collide without recalculating velocities
 			try {
-				m_collisionModel->collideAll(m_f, m_density, m_velocity,
-						m_advectionOperator->getLocallyOwnedDofs(),
+				// collide
+				m_collisionModel->collideAll(m_f, rho, u, locally_owned_dofs,
 						inInitializationProcedure);
+				// copy back
 			} catch (CollisionException& e) {
 				natrium_errorexit(e.what());
 			}
-			oldDensities -= m_density;
+			oldDensities -= rho;
 			residual = oldDensities.norm_sqr();
+			CFDSolverUtilities::applyWriteableDensity(rho, m_density);
+			CFDSolverUtilities::applyWriteableVelocity(u, m_velocity);
 			loopCount++;
 		}
 		LOG(DETAILED) << "Residual " << residual << " reached after "
@@ -1104,9 +1161,10 @@ void natrium::CFDSolver<dim>::applyInitialDensities(
 		if (cell->is_locally_owned()) {
 			cell->get_dof_indices(local_dof_indices);
 			for (size_t i = 0; i < dofs_per_cell; i++) {
-				assert(
-						initialDensities.in_local_range(
-								local_dof_indices.at(i)));
+				if (not m_advectionOperator->getLocallyOwnedDofs().is_element(
+						local_dof_indices.at(i))) {
+					continue;
+				}
 				assert(
 						supportPoints.find(local_dof_indices.at(i))
 								!= supportPoints.end());
@@ -1134,12 +1192,10 @@ void natrium::CFDSolver<dim>::applyInitialVelocities(
 		if (cell->is_locally_owned()) {
 			cell->get_dof_indices(local_dof_indices);
 			for (size_t i = 0; i < dofs_per_cell; i++) {
-				assert(
-						initialVelocities.at(0).in_local_range(
-								local_dof_indices.at(i)));
-				assert(
-						initialVelocities.at(1).in_local_range(
-								local_dof_indices.at(i)));
+				if (not m_advectionOperator->getLocallyOwnedDofs().is_element(
+						local_dof_indices.at(i))) {
+					continue;
+				}
 				assert(
 						supportPoints.find(local_dof_indices.at(i))
 								!= supportPoints.end());
@@ -1220,16 +1276,24 @@ template<size_t dim>
 void CFDSolver<dim>::calculateDensitiesAndVelocities() {
 // inefficient version, only for initialization
 
+	// get writeable copies of density and velocity
+	std::vector<distributed_vector> writeable_u;
+	distributed_vector writeable_rho;
+	CFDSolverUtilities::getWriteableVelocity(writeable_u, m_velocity,
+			m_advectionOperator->getLocallyOwnedDofs());
+	CFDSolverUtilities::getWriteableDensity(writeable_rho, m_density,
+			m_advectionOperator->getLocallyOwnedDofs());
+
 	size_t Q = m_stencil->getQ();
-	m_density = 0;
+	writeable_rho = 0;
 	for (size_t i = 0; i < dim; i++) {
-		m_velocity.at(i) = 0;
+		writeable_u.at(i) = 0;
 	}
 
 	for (size_t i = 0; i < Q; i++) {
-		m_density.add(m_f.at(i));
+		writeable_rho.add(m_f.at(i));
 		for (size_t j = 0; j < dim; j++) {
-			m_velocity.at(j).add(m_stencil->getDirection(i)(j), m_f.at(i));
+			writeable_u.at(j).add(m_stencil->getDirection(i)(j), m_f.at(i));
 		}
 	}
 
@@ -1240,11 +1304,15 @@ void CFDSolver<dim>::calculateDensitiesAndVelocities() {
 			m_advectionOperator->getLocallyOwnedDofs().end());
 	for (; it != end; it++) {
 		size_t i = *it;
-		double one_by_rho_i = 1.0 / m_density(i);
+		double one_by_rho_i = 1.0 / writeable_rho(i);
 		for (size_t j = 0; j < dim; j++) {
-			m_velocity[j](i) = m_velocity[j](i) * one_by_rho_i;
+			writeable_u[j](i) = m_velocity[j](i) * one_by_rho_i;
 		}
 	}
+
+	// copy back to ghosted vectors and communicate across MPI processes
+	CFDSolverUtilities::applyWriteableDensity(writeable_rho, m_density);
+	CFDSolverUtilities::applyWriteableVelocity(writeable_u, m_velocity);
 }
 
 template<size_t dim>

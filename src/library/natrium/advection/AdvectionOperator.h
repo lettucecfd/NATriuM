@@ -354,13 +354,13 @@ public:
 		return m_deltaT;
 	}
 
-	const dealii::IndexSet& getLocallyOwnedDoFs() const {
+	/*const dealii::IndexSet& getLocallyOwnedDoFs() const {
 		return m_locallyOwnedDoFs;
 	}
 
 	const dealii::IndexSet& getLocallyRelevantDoFs() const {
 		return m_locallyRelevantDoFs;
-	}
+	}*/
 
 	const ProblemDescription<dim> & getProblem() const {
 		return m_problem;

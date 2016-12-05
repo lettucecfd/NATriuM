@@ -18,7 +18,7 @@ void SemiLagrangianBoundaryHandler<dim>::addHit(
 	assert(m_boundaries.hasID(boundary_id));
 	assert(m_boundaries.isSL(boundary_id));
 	// check if cell is already there
-	m_hitList.addHit(BoundaryHit<dim>(tracker, m_stencil, boundary_id));
+	m_hitList.addHit(BoundaryHit<dim>(tracker, m_stencil, boundary_id, m_timeStep));
 	// TODO deal with corner nodes. Each boundary hit could be given prescribed values of multiple boundaries.
 }
 

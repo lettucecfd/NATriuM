@@ -109,6 +109,8 @@ void PseudoEntropicStabilizer<dim>::apply() {
 		f.at(8)(i) = f_i_new[8];
 
 	} /* for all dofs */
+
+	this->m_solver.m_f.updateGhosted();
 } /* apply */
 
 template class PseudoEntropicStabilizer<2> ;

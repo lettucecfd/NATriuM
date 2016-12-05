@@ -44,16 +44,24 @@ public:
 	BenchmarkCFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			boost::shared_ptr<Benchmark<dim> > problemDescription);
 
-
 	/**
 	 * @short create output data and write to file
 	 */
-	virtual void output(size_t iteration, bool is_final=false);
+	virtual void output(size_t iteration, bool is_final = false);
 
 /// gives the possibility for Benchmark instances to add the analytic solution to output
 	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>& data_out) {
-		getAllAnalyticVelocities(this->getTime(), m_analyticVelocity, m_supportPoints);
-		getAllAnalyticDensities(this->getTime(), m_analyticDensity, m_supportPoints);
+		distributed_vector rho;
+		vector<distributed_vector> u;
+		CFDSolverUtilities::getWriteableDensity(rho, m_analyticDensity,
+				this->getAdvectionOperator()->getLocallyOwnedDofs());
+		CFDSolverUtilities::getWriteableVelocity(u, m_analyticVelocity,
+				this->getAdvectionOperator()->getLocallyOwnedDofs());
+		getAllAnalyticVelocities(this->getTime(), u, m_supportPoints);
+		getAllAnalyticDensities(this->getTime(), rho, m_supportPoints);
+		CFDSolverUtilities::applyWriteableDensity(rho, m_analyticDensity);
+		CFDSolverUtilities::applyWriteableVelocity(u, m_analyticVelocity);
+
 		data_out.add_data_vector(m_analyticDensity, "rho_analytic");
 		if (dim == 2) {
 			data_out.add_data_vector(m_analyticVelocity.at(0), "ux_analytic");
@@ -73,15 +81,16 @@ public:
 	/**
 	 * @short get full analytic solution for the density field at time t
 	 */
-	void getAllAnalyticDensities(double time, distributed_vector& analyticDensities,
+	void getAllAnalyticDensities(double time,
+			distributed_vector& analyticDensities,
 			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
 
 	/**
 	 * @short get full analytic solution for the density field at time t
 	 */
-	void getAllAnalyticVelocities(double time, vector<distributed_vector>& analyticVelocities,
+	void getAllAnalyticVelocities(double time,
+			vector<distributed_vector>& analyticVelocities,
 			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
-
 
 	/**
 	 * @short set initial velocities
@@ -104,7 +113,6 @@ public:
 	}
 }
 ;
-
 
 } /* namespace natrium */
 

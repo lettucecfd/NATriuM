@@ -134,6 +134,7 @@ public:
 
 	virtual double stream(DistributionFunctions& f_old,
 			DistributionFunctions& f, double t) {
+
 		assert(&f_old != &f);
 		f_old = f;
 		Base::m_systemMatrix.vmult(f.getFStream(), f_old.getFStream());

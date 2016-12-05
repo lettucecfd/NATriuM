@@ -52,7 +52,7 @@ void Checkpoint<dim>::write(const Mesh<dim>& mesh,
 	std::vector<const distributed_vector*> to_save;
 	size_t Q = f.getQ();
 	for (size_t i = 0; i < Q; i++) {
-		const distributed_vector* p = &f.at(i);
+		const distributed_vector* p = &f.atGhosted(i);
 		to_save.push_back(p);
 	}
 	sol_trans.prepare_serialization(to_save);

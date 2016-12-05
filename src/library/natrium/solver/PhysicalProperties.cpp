@@ -365,12 +365,8 @@ double PhysicalProperties<dim>::meanVelocityX(const distributed_vector& ux,
 template<size_t dim>
 double PhysicalProperties<dim>::entropy(const DistributionFunctions& f,
 		boost::shared_ptr<AdvectionOperator<dim> > advection) {
-	const size_t n_dofs = advection->getNumberOfDoFs();
 	const size_t Q = advection->getStencil()->getQ();
 	const vector<double>& weights = advection->getStencil()->getWeights();
-	for (size_t i = 0; i < Q; i++) {
-		assert(n_dofs == f.at(i).size());
-	}
 
 	// Integrate rho over whole domain
 	size_t n_q_points = advection->getQuadrature()->size();
@@ -398,8 +394,9 @@ double PhysicalProperties<dim>::entropy(const DistributionFunctions& f,
 				for (size_t i = 0; i < dofs_per_cell; i++) {
 					local_i = localDoFIndices.at(i);
 					for (size_t j = 0; j < Q; j++) {
-						result -= f.at(j)(local_i)
-								* log(f.at(j)(local_i) / weights.at(j))
+						// atGhosted gives a vector that also contains the ghost elements
+						result -= f.atGhosted(j)(local_i)
+								* log(f.atGhosted(j)(local_i) / weights.at(j))
 								* feCellValues.JxW(q);
 					}
 				}

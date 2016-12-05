@@ -10,6 +10,7 @@
 
 #include "../utilities/BasicNames.h"
 #include "SLBoundary.h"
+#include "BoundaryTools.h"
 
 namespace natrium {
 
@@ -62,7 +63,17 @@ public:
 		// assign opposite distribution to destination dof
 
 		// does only work for points with support on boundary, thus:
-		assert(eps < 1e-10);
+		if (eps > 1e-7) {
+			LOG(WARNING) << "Epsilon was " << eps
+					<< " in SLFirstOrderBounceBack::calculateBoundaryValues(),"
+							"which indicates that the destination point of the Lagrangian path ("
+					<< fe_boundary_values.getPoint(q_point)
+					<< ") was not at the boundary. That might lead to unwanted behavior."
+					<< "If you really want to use the 1st order bounce-back scheme, you should consider "
+							"having smaller time steps (CFL < 1 recommended)."
+					<< endl;
+			//throw BoundaryException()
+		}
 		//fe_boundary_values.getData().m_fnew.at(destination.direction)(destination.index) = opposite_fi;
 		fe_boundary_values.getData().m_fnew.at(destination.direction)(
 				destination.index) = fe_boundary_values.getData().m_fnew.at(
