@@ -64,7 +64,7 @@ public:
 
 		// get velocity
 		dealii::Tensor<1, dim> u;
-		if (boundary_u & m_prescribedQuantities) {
+		if (boundary_u & SLBoundary<dim>::getPrescribedQuantities()) {
 			// set time of this function object for time-dependent boundary conditions
 			SLBoundary<dim>::getPrescribedQuantities().getVelocity().set_time(
 					t - eps);

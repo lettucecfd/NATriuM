@@ -33,11 +33,20 @@ public:
 					hit.getCurrentCell()) {
 	}
 	BoundaryHit(const LagrangianPathTracker<dim>& tracker,
-			const Stencil& stencil, size_t boundary_id) :
+			const Stencil& stencil, size_t boundary_id, double dt_global) :
 			destination(tracker.destination) {
 
-		dtHit = (tracker.currentPoint.distance(tracker.departurePoint)
-				/ stencil.getDirection(tracker.beta).l2_norm());
+		dtHit = dt_global - (tracker.currentPoint.distance(tracker.departurePoint)
+				/ stencil.getDirection(tracker.beta).l2_norm() );
+		if (dtHit > 10){
+			cout << "-----------------" << endl
+					<< "current: 	" << tracker.currentPoint << endl
+					<< "departure:  " << tracker.departurePoint << endl
+					<< "distance:   " <<  tracker.currentPoint.distance(tracker.departurePoint) << endl
+					<< "velocity:   " <<  stencil.getDirection(tracker.beta).l2_norm() << endl
+					<< "dtHit: 		" << dtHit << endl
+					 << "-----------------" << endl;
+		}
 		currentPoint = tracker.currentPoint;
 		boundaryID = boundary_id;
 		currentCell = tracker.currentCell;

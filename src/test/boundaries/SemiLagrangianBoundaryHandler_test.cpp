@@ -169,14 +169,14 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_PoiseuilleBB_test) {
 	pout << "SemiLagrangianBoundaryHandler_PoiseuilleBB_test..." << endl;
 
 	// setup test case
-	const double CFL = 0.8;
+	const double CFL = 1.5;
 	const double Re = 10;
 	const double u_bulk = 0.0001 / 1.5; //1.0;
-	const double height = 3.0;
+	const double height = 1.0;
 	const double length = 2.0;
 	const double orderOfFiniteElement = 2;
 	const double Ma = 0.1;
-	const double refinement_level = 1;
+	const double refinement_level = 2;
 	bool is_periodic = true;
 
 	/// create CFD problem
@@ -186,17 +186,13 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_PoiseuilleBB_test) {
 	/// setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	//configuration->setSwitchOutputOff(true);
-	configuration->setOutputSolutionInterval(10);
+	configuration->setSwitchOutputOff(true);
 	configuration->setUserInteraction(false);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
-	configuration->setConvergenceThreshold(1e-8);
-	//configuration->setTimeIntegrator(OTHER);
-	//configuration->setDealIntegrator(SDIRK_TWO_STAGES);
-
+	configuration->setConvergenceThreshold(1e-6);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 
 	// make solver object and run simulation
@@ -214,7 +210,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_PoiseuilleBB_test) {
 
 	CFDSolver<2> solver(configuration, problem);
 
-	BOOST_CHECK(solver.getVelocity().at(0).norm_sqr() < 1e-10);
+	//BOOST_CHECK(solver.getVelocity().at(0).norm_sqr() < 1e-10);
 	solver.run();
 	solver.getSolverStats()->update();
 	BOOST_CHECK_GT(solver.getSolverStats()->getMeanVelocityX(), 0.9*u_bulk);

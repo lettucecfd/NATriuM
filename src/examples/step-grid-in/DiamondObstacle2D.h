@@ -61,7 +61,7 @@ public:
 	virtual void refine(Mesh<2>& mesh) {
 		mesh.refine_global(m_refinementLevel);
 	}
-	virtual void transform(Mesh<2>& mesh){
+	virtual void transform(Mesh<2>& ){
 
 	}
 	virtual bool isCartesian(){

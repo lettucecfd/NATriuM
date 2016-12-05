@@ -288,6 +288,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 						periodicBoundary->getOppositeCellAtPeriodicBoundary(h,
 								el.currentCell);
 
+
 					} else /* if is not periodic */{
 						if (not sparsity_pattern) {
 							el.currentPoint = p_boundary;

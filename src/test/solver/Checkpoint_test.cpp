@@ -242,15 +242,21 @@ BOOST_AUTO_TEST_CASE(Checkpoint_ResumeOtherMa) {
 	const distributed_vector& rho2 = solver2.getDensity();
 
 	// compare
-	distributed_vector cmp = rho1;
-	cmp.add(-1.0, rho2);
+	distributed_vector cmp;
+	CFDSolverUtilities::getWriteableDensity(cmp, rho1, solver2.getAdvectionOperator()->getLocallyOwnedDofs());
+	distributed_vector rho2_writeable;
+	vector<distributed_vector> u2_writeable;
+	CFDSolverUtilities::getWriteableDensity(rho2_writeable, rho2, solver2.getAdvectionOperator()->getLocallyOwnedDofs());
+	CFDSolverUtilities::getWriteableVelocity(u2_writeable, u2, solver2.getAdvectionOperator()->getLocallyOwnedDofs());
+	cmp.add(-1.0, rho2_writeable);
 	BOOST_CHECK_SMALL(cmp.norm_sqr(), 1e-4);
 	cmp = u1.at(0);
-	cmp.add(-1.0, u2.at(0));
+	cmp.add(-1.0, u2_writeable.at(0));
 	BOOST_CHECK_SMALL(cmp.norm_sqr(), 1e-4);
 	cmp = u1.at(1);
-	cmp.add(-1.0, u2.at(1));
+	cmp.add(-1.0, u2_writeable.at(1));
 	BOOST_CHECK_SMALL(cmp.norm_sqr(), 1e-4);
+
 
 	// clean up
 	if (is_MPI_rank_0()) {
