@@ -1,0 +1,60 @@
+\hypertarget{classnatrium_1_1SLFirstOrderBounceBack}{
+\section{natrium::SLFirstOrderBounceBack$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1SLFirstOrderBounceBack}\index{natrium::SLFirstOrderBounceBack@{natrium::SLFirstOrderBounceBack}}
+}
+
+
+simple first-\/order bounce-\/back for no-\/slip boundaries  
+
+
+{\ttfamily \#include $<$SLFirstOrderBounceBack.h$>$}Inheritance diagram for natrium::SLFirstOrderBounceBack$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1SLFirstOrderBounceBack}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1SLFirstOrderBounceBack_ad387719d716c6c4ef323d082e9abe90f}{
+\hyperlink{classnatrium_1_1SLFirstOrderBounceBack_ad387719d716c6c4ef323d082e9abe90f}{SLFirstOrderBounceBack} (size\_\-t boundary\_\-id)}
+\label{classnatrium_1_1SLFirstOrderBounceBack_ad387719d716c6c4ef323d082e9abe90f}
+
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SLFirstOrderBounceBack_a9f7143924cb11361e0dc68d9d2accaca}{
+virtual \hyperlink{classnatrium_1_1SLFirstOrderBounceBack_a9f7143924cb11361e0dc68d9d2accaca}{$\sim$SLFirstOrderBounceBack} ()}
+\label{classnatrium_1_1SLFirstOrderBounceBack_a9f7143924cb11361e0dc68d9d2accaca}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SLFirstOrderBounceBack_ab64572ca24635330d2831d11bb4796db}{
+virtual \hyperlink{namespacenatrium_a93b2a3d564675413b9f6cc88c60f46af}{BoundaryFlags} \hyperlink{classnatrium_1_1SLFirstOrderBounceBack_ab64572ca24635330d2831d11bb4796db}{getUpdateFlags} () const }
+\label{classnatrium_1_1SLFirstOrderBounceBack_ab64572ca24635330d2831d11bb4796db}
+
+\begin{DoxyCompactList}\small\item\em a function returning the values that are to be calculated at the boundaries \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1SLFirstOrderBounceBack_a0ff05e7fd8cd657f77fd9636c7a55e60}{calculateBoundaryValues} (\hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues}$<$ dim $>$ \&fe\_\-boundary\_\-values, size\_\-t q\_\-point, const \hyperlink{structnatrium_1_1LagrangianPathDestination}{LagrangianPathDestination} \&destination, double eps, double t)
+\begin{DoxyCompactList}\small\item\em calculate boundary values. This function overrides the virtual function of \hyperlink{classnatrium_1_1SLBoundary}{SLBoundary}. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::SLFirstOrderBounceBack$<$ dim $>$}
+
+simple first-\/order bounce-\/back for no-\/slip boundaries 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1SLFirstOrderBounceBack_a0ff05e7fd8cd657f77fd9636c7a55e60}{
+\index{natrium::SLFirstOrderBounceBack@{natrium::SLFirstOrderBounceBack}!calculateBoundaryValues@{calculateBoundaryValues}}
+\index{calculateBoundaryValues@{calculateBoundaryValues}!natrium::SLFirstOrderBounceBack@{natrium::SLFirstOrderBounceBack}}
+\subsubsection[{calculateBoundaryValues}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual void {\bf natrium::SLFirstOrderBounceBack}$<$ dim $>$::calculateBoundaryValues ({\bf FEBoundaryValues}$<$ dim $>$ \& {\em fe\_\-boundary\_\-values}, \/  size\_\-t {\em q\_\-point}, \/  const {\bf LagrangianPathDestination} \& {\em destination}, \/  double {\em eps}, \/  double {\em t})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1SLFirstOrderBounceBack_a0ff05e7fd8cd657f77fd9636c7a55e60}
+
+
+calculate boundary values. This function overrides the virtual function of \hyperlink{classnatrium_1_1SLBoundary}{SLBoundary}. 
+\begin{DoxyParams}{Parameters}
+\item[{\em fe\_\-boundary\_\-values}]An instance of \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues}, that stores the flow variables at t-\/dt (here only the distribution functions) \item[{\em q\_\-point}]the local index of the boundary hit point, i.e. its position in the fe\_\-boundary\_\-values \item[{\em destination}]defines the degree of freedom and discrete direction that the calculated value is assigned to (usually defines a point close to the boundary) \item[{\em eps}]Not used here. Defines the point in time at which the boundary is hit. \item[{\em t}]global time. Only relevant for time-\/dependent boundary conditions. \end{DoxyParams}
+
+
+Implements \hyperlink{classnatrium_1_1SLBoundary_a7c166745b087afdd137013f994733b89}{natrium::SLBoundary$<$ dim $>$}.
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/SLFirstOrderBounceBack.h\end{DoxyCompactItemize}

@@ -1,0 +1,81 @@
+\hypertarget{classnatrium_1_1SLBoundary}{
+\section{natrium::SLBoundary$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1SLBoundary}\index{natrium::SLBoundary@{natrium::SLBoundary}}
+}
+Inheritance diagram for natrium::SLBoundary$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.19608cm]{classnatrium_1_1SLBoundary}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1SLBoundary_a47ab6f4a95d19e5590a89e5ad6f83390}{
+{\bfseries SLBoundary} (size\_\-t boundaryIndicator, const \hyperlink{classnatrium_1_1PrescribedQuantities}{PrescribedQuantities}$<$ dim $>$ \&quantities)}
+\label{classnatrium_1_1SLBoundary_a47ab6f4a95d19e5590a89e5ad6f83390}
+
+\item 
+\hypertarget{classnatrium_1_1SLBoundary_a71fbdf8cec050dabc8a9515209e1cf9c}{
+virtual bool \hyperlink{classnatrium_1_1SLBoundary_a71fbdf8cec050dabc8a9515209e1cf9c}{isPeriodic} () const }
+\label{classnatrium_1_1SLBoundary_a71fbdf8cec050dabc8a9515209e1cf9c}
+
+\begin{DoxyCompactList}\small\item\em is the boundary a periodic boundary ? \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SLBoundary_ad09ab98f91e8dc00fc4b624937b1b905}{
+virtual bool \hyperlink{classnatrium_1_1SLBoundary_ad09ab98f91e8dc00fc4b624937b1b905}{isLinearFluxBoundary} () const }
+\label{classnatrium_1_1SLBoundary_ad09ab98f91e8dc00fc4b624937b1b905}
+
+\begin{DoxyCompactList}\small\item\em is the boundary a linear flux boundary as in SEDG-\/LBM \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SLBoundary_a70cb2434ebca8eea14d583ddb2dd7aa7}{
+virtual bool {\bfseries isSLBoundary} () const }
+\label{classnatrium_1_1SLBoundary_a70cb2434ebca8eea14d583ddb2dd7aa7}
+
+\item 
+\hypertarget{classnatrium_1_1SLBoundary_a9b8906be20bc88f40b37e2aa82e617f1}{
+size\_\-t {\bfseries getBoundaryIndicator} () const }
+\label{classnatrium_1_1SLBoundary_a9b8906be20bc88f40b37e2aa82e617f1}
+
+\item 
+virtual void \hyperlink{classnatrium_1_1SLBoundary_a7c166745b087afdd137013f994733b89}{calculateBoundaryValues} (\hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues}$<$ dim $>$ \&fe\_\-boundary\_\-values, size\_\-t q\_\-point, const \hyperlink{structnatrium_1_1LagrangianPathDestination}{LagrangianPathDestination} \&destination, double eps, double t)=0
+\begin{DoxyCompactList}\small\item\em calculate boundary values. This pure virtual function has to be overriden by derived classes. \item\end{DoxyCompactList}\item 
+virtual \hyperlink{namespacenatrium_a93b2a3d564675413b9f6cc88c60f46af}{BoundaryFlags} \hyperlink{classnatrium_1_1SLBoundary_ad2b9a7f797b3af9b6493f9e9c5da5434}{getUpdateFlags} () const =0
+\begin{DoxyCompactList}\small\item\em Get update flags. This pure virtual function has to be overriden by derived classes. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SLBoundary_a1505c5690482cb586d03905923c42942}{
+const \hyperlink{classnatrium_1_1PrescribedQuantities}{PrescribedQuantities}$<$ dim $>$ \& {\bfseries getPrescribedQuantities} () const }
+\label{classnatrium_1_1SLBoundary_a1505c5690482cb586d03905923c42942}
+
+\end{DoxyCompactItemize}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::SLBoundary$<$ dim $>$}
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1SLBoundary_a7c166745b087afdd137013f994733b89}{
+\index{natrium::SLBoundary@{natrium::SLBoundary}!calculateBoundaryValues@{calculateBoundaryValues}}
+\index{calculateBoundaryValues@{calculateBoundaryValues}!natrium::SLBoundary@{natrium::SLBoundary}}
+\subsubsection[{calculateBoundaryValues}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual void {\bf natrium::SLBoundary}$<$ dim $>$::calculateBoundaryValues ({\bf FEBoundaryValues}$<$ dim $>$ \& {\em fe\_\-boundary\_\-values}, \/  size\_\-t {\em q\_\-point}, \/  const {\bf LagrangianPathDestination} \& {\em destination}, \/  double {\em eps}, \/  double {\em t})\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classnatrium_1_1SLBoundary_a7c166745b087afdd137013f994733b89}
+
+
+calculate boundary values. This pure virtual function has to be overriden by derived classes. 
+\begin{DoxyParams}{Parameters}
+\item[{\em fe\_\-boundary\_\-values}]An instance of \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues}, that stores the flow variables at t-\/dt (here only the distribution functions) \item[{\em q\_\-point}]the local index of the boundary hit point, i.e. its position in the fe\_\-boundary\_\-values \item[{\em destination}]defines the degree of freedom and discrete direction that the calculated value is assigned to (usually defines a point close to the boundary) \item[{\em eps}]Defines the point in time at which the boundary is hit. \item[{\em t}]global time. Only relevant for time-\/dependent boundary conditions. \end{DoxyParams}
+
+
+Implemented in \hyperlink{classnatrium_1_1GradsBoundary_a66b6623d5701b3a8e40d3527412e37df}{natrium::GradsBoundary$<$ dim $>$}, \hyperlink{classnatrium_1_1SLEquilibriumBoundary_a25ba9ab8c3263043b158e913d130bd2d}{natrium::SLEquilibriumBoundary$<$ dim $>$}, and \hyperlink{classnatrium_1_1SLFirstOrderBounceBack_a0ff05e7fd8cd657f77fd9636c7a55e60}{natrium::SLFirstOrderBounceBack$<$ dim $>$}.\hypertarget{classnatrium_1_1SLBoundary_ad2b9a7f797b3af9b6493f9e9c5da5434}{
+\index{natrium::SLBoundary@{natrium::SLBoundary}!getUpdateFlags@{getUpdateFlags}}
+\index{getUpdateFlags@{getUpdateFlags}!natrium::SLBoundary@{natrium::SLBoundary}}
+\subsubsection[{getUpdateFlags}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual {\bf BoundaryFlags} {\bf natrium::SLBoundary}$<$ dim $>$::getUpdateFlags () const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classnatrium_1_1SLBoundary_ad2b9a7f797b3af9b6493f9e9c5da5434}
+
+
+Get update flags. This pure virtual function has to be overriden by derived classes. \begin{DoxyReturn}{Returns}
+the flags specifying the required values that have to be calculated from the flow field at t-\/dt, e.g. only\_\-distributions, boundary\_\-rho, boundary\_\-drho\_\-dt, ... 
+\end{DoxyReturn}
+
+
+Implemented in \hyperlink{classnatrium_1_1GradsBoundary_a1f8deb8033e218d7890b0db5d72f5508}{natrium::GradsBoundary$<$ dim $>$}, \hyperlink{classnatrium_1_1SLEquilibriumBoundary_a09e349b179448c54a68245485be642f0}{natrium::SLEquilibriumBoundary$<$ dim $>$}, and \hyperlink{classnatrium_1_1SLFirstOrderBounceBack_ab64572ca24635330d2831d11bb4796db}{natrium::SLFirstOrderBounceBack$<$ dim $>$}.
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/SLBoundary.h\end{DoxyCompactItemize}

@@ -8,9 +8,73 @@ Inheritance diagram for natrium::GradsBoundary$<$ dim $>$::\begin{figure}[H]
 \includegraphics[height=3cm]{classnatrium_1_1GradsBoundary}
 \end{center}
 \end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1GradsBoundary_af8cc824dbea1df5a2906fbf2cf310970}{
+{\bfseries GradsBoundary} (size\_\-t boundary\_\-id, const \hyperlink{classnatrium_1_1PrescribedQuantities}{PrescribedQuantities}$<$ dim $>$ \&quantities)}
+\label{classnatrium_1_1GradsBoundary_af8cc824dbea1df5a2906fbf2cf310970}
+
+\item 
+\hypertarget{classnatrium_1_1GradsBoundary_ac6299634c876127d49de84200b506d9a}{
+{\bfseries GradsBoundary} (size\_\-t boundary\_\-id, double pressure)}
+\label{classnatrium_1_1GradsBoundary_ac6299634c876127d49de84200b506d9a}
+
+\item 
+\hypertarget{classnatrium_1_1GradsBoundary_a6bf86434cca76d98b245173f580c63d1}{
+{\bfseries GradsBoundary} (size\_\-t boundary\_\-id, boost::shared\_\-ptr$<$ dealii::TensorFunction$<$ 2, dim $>$ $>$ function)}
+\label{classnatrium_1_1GradsBoundary_a6bf86434cca76d98b245173f580c63d1}
+
+\item 
+\hypertarget{classnatrium_1_1GradsBoundary_ad33d8e3fdc2e4af27f8530c252a73e05}{
+{\bfseries GradsBoundary} (size\_\-t boundary\_\-id, dealii::Tensor$<$ 1, dim $>$ \&velocity)}
+\label{classnatrium_1_1GradsBoundary_ad33d8e3fdc2e4af27f8530c252a73e05}
+
+\item 
+\hypertarget{classnatrium_1_1GradsBoundary_ae1cf955f1d2264e59d203c78951df273}{
+{\bfseries GradsBoundary} (size\_\-t boundary\_\-id, dealii::Tensor$<$ 2, dim $>$ \&velocity\_\-gradient)}
+\label{classnatrium_1_1GradsBoundary_ae1cf955f1d2264e59d203c78951df273}
+
+\item 
+\hypertarget{classnatrium_1_1GradsBoundary_a907418b07a4ab871d50439798efc0d35}{
+{\bfseries GradsBoundary} (size\_\-t boundary\_\-id, const dealii::Vector$<$ double $>$ \&velocity)}
+\label{classnatrium_1_1GradsBoundary_a907418b07a4ab871d50439798efc0d35}
+
+\item 
+virtual \hyperlink{namespacenatrium_a93b2a3d564675413b9f6cc88c60f46af}{BoundaryFlags} \hyperlink{classnatrium_1_1GradsBoundary_a1f8deb8033e218d7890b0db5d72f5508}{getUpdateFlags} () const 
+\begin{DoxyCompactList}\small\item\em Get update flags. This pure virtual function has to be overriden by derived classes. \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1GradsBoundary_a66b6623d5701b3a8e40d3527412e37df}{calculateBoundaryValues} (\hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues}$<$ dim $>$ \&fe\_\-boundary\_\-values, size\_\-t q\_\-point, const \hyperlink{structnatrium_1_1LagrangianPathDestination}{LagrangianPathDestination} \&destination, double eps, double t)
+\begin{DoxyCompactList}\small\item\em calculate boundary values. This pure virtual function has to be overriden by derived classes. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsubsection*{template$<$size\_\-t dim$>$ class natrium::GradsBoundary$<$ dim $>$}
 
 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1GradsBoundary_a66b6623d5701b3a8e40d3527412e37df}{
+\index{natrium::GradsBoundary@{natrium::GradsBoundary}!calculateBoundaryValues@{calculateBoundaryValues}}
+\index{calculateBoundaryValues@{calculateBoundaryValues}!natrium::GradsBoundary@{natrium::GradsBoundary}}
+\subsubsection[{calculateBoundaryValues}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual void {\bf natrium::GradsBoundary}$<$ dim $>$::calculateBoundaryValues ({\bf FEBoundaryValues}$<$ dim $>$ \& {\em fe\_\-boundary\_\-values}, \/  size\_\-t {\em q\_\-point}, \/  const {\bf LagrangianPathDestination} \& {\em destination}, \/  double {\em eps}, \/  double {\em t})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1GradsBoundary_a66b6623d5701b3a8e40d3527412e37df}
+
+
+calculate boundary values. This pure virtual function has to be overriden by derived classes. 
+\begin{DoxyParams}{Parameters}
+\item[{\em fe\_\-boundary\_\-values}]An instance of \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues}, that stores the flow variables at t-\/dt (here only the distribution functions) \item[{\em q\_\-point}]the local index of the boundary hit point, i.e. its position in the fe\_\-boundary\_\-values \item[{\em destination}]defines the degree of freedom and discrete direction that the calculated value is assigned to (usually defines a point close to the boundary) \item[{\em eps}]Defines the point in time at which the boundary is hit. \item[{\em t}]global time. Only relevant for time-\/dependent boundary conditions. \end{DoxyParams}
+
+
+Implements \hyperlink{classnatrium_1_1SLBoundary_a7c166745b087afdd137013f994733b89}{natrium::SLBoundary$<$ dim $>$}.\hypertarget{classnatrium_1_1GradsBoundary_a1f8deb8033e218d7890b0db5d72f5508}{
+\index{natrium::GradsBoundary@{natrium::GradsBoundary}!getUpdateFlags@{getUpdateFlags}}
+\index{getUpdateFlags@{getUpdateFlags}!natrium::GradsBoundary@{natrium::GradsBoundary}}
+\subsubsection[{getUpdateFlags}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual {\bf BoundaryFlags} {\bf natrium::GradsBoundary}$<$ dim $>$::getUpdateFlags () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1GradsBoundary_a1f8deb8033e218d7890b0db5d72f5508}
+
+
+Get update flags. This pure virtual function has to be overriden by derived classes. \begin{DoxyReturn}{Returns}
+the flags specifying the required values that have to be calculated from the flow field at t-\/dt, e.g. only\_\-distributions, boundary\_\-rho, boundary\_\-drho\_\-dt, ... 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classnatrium_1_1SLBoundary_ad2b9a7f797b3af9b6493f9e9c5da5434}{natrium::SLBoundary$<$ dim $>$}.
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 

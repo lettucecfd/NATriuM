@@ -73,8 +73,8 @@ Inheritance diagram for natrium::TaylorGreenVortex2D:</div>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex2D_1_1AnalyticVelocity.html">AnalyticVelocity</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">class to describe the x-component of the analytic solution  <a href="classnatrium_1_1TaylorGreenVortex2D_1_1AnalyticVelocity.html#_details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex2D.html#a48410d029b8a0f9801b66efda45aa77f">TaylorGreenVortex2D</a> (double viscosity, size_t refinementLevel, double cs=0.57735026919, bool init_rho_analytically=false)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor (with default cs=1/sqrt(3))  <a href="#a48410d029b8a0f9801b66efda45aa77f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex2D.html#a7f03f55df315b2b2ac1671fa3d07e9df">TaylorGreenVortex2D</a> (double viscosity, size_t refinementLevel, double cs=0.57735026919, bool init_rho_analytically=false, double L=2 *M_PI)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor (with default cs=1/sqrt(3))  <a href="#a7f03f55df315b2b2ac1671fa3d07e9df"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb6099f4f9791f7decabb35ccd3dbe49"></a><!-- doxytag: member="natrium::TaylorGreenVortex2D::~TaylorGreenVortex2D" ref="abb6099f4f9791f7decabb35ccd3dbe49" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TaylorGreenVortex2D.html#abb6099f4f9791f7decabb35ccd3dbe49">~TaylorGreenVortex2D</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -82,6 +82,8 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>refine</b> (Mesh&lt; 2 &gt; &amp;mesh)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0319526156d349175c2cc7c499a81abe"></a><!-- doxytag: member="natrium::TaylorGreenVortex2D::transform" ref="a0319526156d349175c2cc7c499a81abe" args="(Mesh&lt; 2 &gt; &amp;)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b> (Mesh&lt; 2 &gt; &amp;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e58992bc24488b0bc4ea2df4971cd5a"></a><!-- doxytag: member="natrium::TaylorGreenVortex2D::isCartesian" ref="a8e58992bc24488b0bc4ea2df4971cd5a" args="()" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>isCartesian</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad58ed418e97c541c3d9f8a1b7153bc08"></a><!-- doxytag: member="natrium::TaylorGreenVortex2D::setHorizontalVelocity" ref="ad58ed418e97c541c3d9f8a1b7153bc08" args="(double u)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setHorizontalVelocity</b> (double u)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f47e0968be3cd7ef9ec1cafef8124ab"></a><!-- doxytag: member="natrium::TaylorGreenVortex2D::getHorizontalVelocity" ref="a3f47e0968be3cd7ef9ec1cafef8124ab" args="() const " -->
@@ -90,7 +92,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getHorizontalVeloci
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). </p>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a48410d029b8a0f9801b66efda45aa77f"></a><!-- doxytag: member="natrium::TaylorGreenVortex2D::TaylorGreenVortex2D" ref="a48410d029b8a0f9801b66efda45aa77f" args="(double viscosity, size_t refinementLevel, double cs=0.57735026919, bool init_rho_analytically=false)" -->
+<a class="anchor" id="a7f03f55df315b2b2ac1671fa3d07e9df"></a><!-- doxytag: member="natrium::TaylorGreenVortex2D::TaylorGreenVortex2D" ref="a7f03f55df315b2b2ac1671fa3d07e9df" args="(double viscosity, size_t refinementLevel, double cs=0.57735026919, bool init_rho_analytically=false, double L=2 *M_PI)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -116,7 +118,13 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getHorizontalVeloci
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>init_rho_analytically</em> = <code>false</code></td><td>&nbsp;</td>
+          <td class="paramname"> <em>init_rho_analytically</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>L</em> = <code>2*M_PI</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -153,7 +161,7 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getHorizontalVeloci
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

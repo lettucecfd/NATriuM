@@ -49,7 +49,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>All</span></a></li>
       <li class="current"><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
-      <li><a href="functions_type.html"><span>Typedefs</span></a></li>
       <li><a href="functions_rela.html"><span>Related&nbsp;Functions</span></a></li>
     </ul>
   </div>
@@ -85,9 +84,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>calculate()
 : <a class="el" href="classnatrium_1_1StatsInPlane.html#a648a470e8c462c10c9915a7a920c50ef">natrium::StatsInPlane&lt; dim &gt;</a>
 </li>
+<li>calculateBoundaryValues()
+: <a class="el" href="classnatrium_1_1GradsBoundary.html#a66b6623d5701b3a8e40d3527412e37df">natrium::GradsBoundary&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SLEquilibriumBoundary.html#a25ba9ab8c3263043b158e913d130bd2d">natrium::SLEquilibriumBoundary&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SLFirstOrderBounceBack.html#a0ff05e7fd8cd657f77fd9636c7a55e60">natrium::SLFirstOrderBounceBack&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SLBoundary.html#a7c166745b087afdd137013f994733b89">natrium::SLBoundary&lt; dim &gt;</a>
+</li>
 <li>calculateDensity()
 : <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#a58c4dc0c67ff4898c6555b614afc1ace">natrium::BGKStandardTransformed</a>
 , <a class="el" href="classnatrium_1_1CollisionModel.html#ae1c879c87ac210a227a8e3da2d0ac385">natrium::CollisionModel</a>
+</li>
+<li>calculateGradients()
+: <a class="el" href="classnatrium_1_1ContinuousBoundaryGradient.html#a0ac7cad2865e491d0c77863ce9b2061a">natrium::ContinuousBoundaryGradient&lt; dim &gt;</a>
 </li>
 <li>calculateRelaxationParameter()
 : <a class="el" href="classnatrium_1_1BGK.html#a430f5020b6101a64d89a0cc2a246260e">natrium::BGK</a>
@@ -115,7 +123,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classnatrium_1_1CFDSolver.html#a0eccad07388eccf53d7cfeb3dd818657">natrium::CFDSolver&lt; dim &gt;</a>
 </li>
 <li>collideAll()
-: <a class="el" href="classnatrium_1_1BGKIncompressible.html#a53dc53b5ddb31a6ef67acd25abb405f1">natrium::BGKIncompressible</a>
+: <a class="el" href="classnatrium_1_1BGK.html#a9fa1c980217a183fc4762954e86ba36d">natrium::BGK</a>
+, <a class="el" href="classnatrium_1_1BGKIncompressible.html#a53dc53b5ddb31a6ef67acd25abb405f1">natrium::BGKIncompressible</a>
 , <a class="el" href="classnatrium_1_1BGKMultistep.html#a503d69a669d91979a885d1b02c2edb0a">natrium::BGKMultistep</a>
 , <a class="el" href="classnatrium_1_1BGKPseudopotential.html#afa18cdab45c73c33b2660f37d0ca82ba">natrium::BGKPseudopotential&lt; dim &gt;</a>
 , <a class="el" href="classnatrium_1_1BGKStandard.html#a8e0493b063d56275d7ee607e25c4145e">natrium::BGKStandard</a>
@@ -123,20 +132,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="classnatrium_1_1BGKSteadyState.html#a8554fb624c5a3abe01651747b3d9aeb7">natrium::BGKSteadyState</a>
 , <a class="el" href="classnatrium_1_1KBCStandard.html#ab27e055e44e1913a076235bc5a7f1f95">natrium::KBCStandard</a>
 , <a class="el" href="classnatrium_1_1MRTStandard.html#ae33b30f3080f8b933cf3b351092e8f09">natrium::MRTStandard</a>
-, <a class="el" href="classnatrium_1_1BGK.html#a9fa1c980217a183fc4762954e86ba36d">natrium::BGK</a>
 </li>
 <li>collideAllD2Q9()
 : <a class="el" href="classnatrium_1_1BGKStandard.html#aaaad49afea2e7079645b49380d990254">natrium::BGKStandard</a>
-, <a class="el" href="classnatrium_1_1BGKIncompressible.html#aa7f79409678bd0992ca7da81c4632707">natrium::BGKIncompressible</a>
-, <a class="el" href="classnatrium_1_1BGKMultistep.html#abc9c762511c5dd75a4fc238584a0bc0a">natrium::BGKMultistep</a>
-, <a class="el" href="classnatrium_1_1BGKPseudopotential.html#acf03df141262b39a778e327bf0c25c2a">natrium::BGKPseudopotential&lt; dim &gt;</a>
 , <a class="el" href="classnatrium_1_1KBCCentral.html#a93dcaf32ed6176504c647906a279bd79">natrium::KBCCentral</a>
 , <a class="el" href="classnatrium_1_1KBCStandard.html#a52be173f7289ef616099908c4ddb1316">natrium::KBCStandard</a>
 , <a class="el" href="classnatrium_1_1MRTStandard.html#aa1e422e0d86ff1754e9fb9e4df33a2ab">natrium::MRTStandard</a>
+, <a class="el" href="classnatrium_1_1BGKPseudopotential.html#acf03df141262b39a778e327bf0c25c2a">natrium::BGKPseudopotential&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1BGKIncompressible.html#aa7f79409678bd0992ca7da81c4632707">natrium::BGKIncompressible</a>
+, <a class="el" href="classnatrium_1_1BGKMultistep.html#abc9c762511c5dd75a4fc238584a0bc0a">natrium::BGKMultistep</a>
 </li>
 <li>collideAllD3Q15()
-: <a class="el" href="classnatrium_1_1KBCStandard.html#a9ce76f9d02120b79a12b883b67268caa">natrium::KBCStandard</a>
-, <a class="el" href="classnatrium_1_1BGKStandard.html#a6ffd7d81aef7a233dd44c46eb539e833">natrium::BGKStandard</a>
+: <a class="el" href="classnatrium_1_1BGKStandard.html#a6ffd7d81aef7a233dd44c46eb539e833">natrium::BGKStandard</a>
+, <a class="el" href="classnatrium_1_1KBCStandard.html#a9ce76f9d02120b79a12b883b67268caa">natrium::KBCStandard</a>
 </li>
 <li>collideAllD3Q19()
 : <a class="el" href="classnatrium_1_1BGKStandard.html#a7362ff8603390301e8c4062ad348edd1">natrium::BGKStandard</a>
@@ -156,6 +164,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>computeSpectrum()
 : <a class="el" href="classnatrium_1_1matrixAnalysis.html#a03a05223c2dc32a674f8b3ec2f6e6659">natrium::matrixAnalysis&lt; dim &gt;</a>
 </li>
+<li>ContinuousBoundaryGradient()
+: <a class="el" href="classnatrium_1_1ContinuousBoundaryGradient.html#a50ea3e2b4baedabcca7514d3f7dddda7">natrium::ContinuousBoundaryGradient&lt; dim &gt;</a>
+</li>
 <li>coordinatesAcrossPeriodicBoundary()
 : <a class="el" href="classnatrium_1_1PeriodicBoundary.html#a9a5677bbc1d59499ceec15a7893b8688">natrium::PeriodicBoundary&lt; dim &gt;</a>
 </li>
@@ -164,6 +175,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>CouetteFlow3D()
 : <a class="el" href="classnatrium_1_1CouetteFlow3D.html#acf083268f4190ffe62b01f3dfc77d407">natrium::CouetteFlow3D</a>
+</li>
+<li>CouetteFlowGrad2D()
+: <a class="el" href="classnatrium_1_1CouetteFlowGrad2D.html#a06404aab631016fcf3850339402550e3">natrium::CouetteFlowGrad2D</a>
 </li>
 <li>createCellMap()
 : <a class="el" href="classnatrium_1_1PeriodicBoundary.html#a233d460baa307b13bc32efb57c07f7c5">natrium::PeriodicBoundary&lt; dim &gt;</a>
@@ -187,7 +201,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

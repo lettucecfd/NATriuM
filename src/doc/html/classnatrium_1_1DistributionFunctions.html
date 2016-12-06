@@ -57,14 +57,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p><a href="classnatrium_1_1DistributionFunctions-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4fc9c42637465355a9df7681d45340c9"></a><!-- doxytag: member="natrium::DistributionFunctions::DistributionFunctions" ref="a4fc9c42637465355a9df7681d45340c9" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a4fc9c42637465355a9df7681d45340c9">DistributionFunctions</a> ()</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">empty constructor. Construction is done through reinit. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a3c886085011c99c505cdfc4903e20dfd">DistributionFunctions</a> (bool dg=true)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">empty constructor. Construction is done through reinit.  <a href="#a3c886085011c99c505cdfc4903e20dfd"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0a970355419acf79be898e573f3149a"></a><!-- doxytag: member="natrium::DistributionFunctions::DistributionFunctions" ref="af0a970355419acf79be898e573f3149a" args="(const DistributionFunctions &amp;f)" -->
 &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#af0a970355419acf79be898e573f3149a">DistributionFunctions</a> (const <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ea3ad0426df18a986578f7b57361dd3"></a><!-- doxytag: member="natrium::DistributionFunctions::DistributionFunctions" ref="a0ea3ad0426df18a986578f7b57361dd3" args="(const vector&lt; distributed_vector &gt; &amp;f)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a0ea3ad0426df18a986578f7b57361dd3">DistributionFunctions</a> (const vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;f)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43739b1d781e72fa21740dc4dcfe7a54"></a><!-- doxytag: member="natrium::DistributionFunctions::DistributionFunctions" ref="a43739b1d781e72fa21740dc4dcfe7a54" args="(const vector&lt; distributed_vector &gt; &amp;f, bool dg=true)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a43739b1d781e72fa21740dc4dcfe7a54">DistributionFunctions</a> (const vector&lt; <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &amp;f, bool dg=true)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. Conversion from vector&lt;distributed_vector&gt;. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af965a46fbf124e8f90250c843e615bcd"></a><!-- doxytag: member="natrium::DistributionFunctions::~DistributionFunctions" ref="af965a46fbf124e8f90250c843e615bcd" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#af965a46fbf124e8f90250c843e615bcd">~DistributionFunctions</a> ()</td></tr>
@@ -74,6 +73,12 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">mimes std::vector.at(i) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55af3d8382ed4c46d88e86a8f41844f7"></a><!-- doxytag: member="natrium::DistributionFunctions::at" ref="a55af3d8382ed4c46d88e86a8f41844f7" args="(size_t i) const " -->
 const <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a55af3d8382ed4c46d88e86a8f41844f7">at</a> (size_t i) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">mimes std::vector.at(i) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a3dd164bf6f2519b142c7eaa950daa6"></a><!-- doxytag: member="natrium::DistributionFunctions::atGhosted" ref="a1a3dd164bf6f2519b142c7eaa950daa6" args="(size_t i)" -->
+<a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a1a3dd164bf6f2519b142c7eaa950daa6">atGhosted</a> (size_t i)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">mimes std::vector.at(i) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10d928c2587e6a747ca330f57e72e819"></a><!-- doxytag: member="natrium::DistributionFunctions::atGhosted" ref="a10d928c2587e6a747ca330f57e72e819" args="(size_t i) const " -->
+const <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a10d928c2587e6a747ca330f57e72e819">atGhosted</a> (size_t i) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">mimes std::vector.at(i) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d76ae4f928f324ec82099dbdce678d7"></a><!-- doxytag: member="natrium::DistributionFunctions::getF0" ref="a3d76ae4f928f324ec82099dbdce678d7" args="() const " -->
 const <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">getF0</a> () const </td></tr>
@@ -90,6 +95,11 @@ distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88224d528262c522ea2ad8bec11178c1"></a><!-- doxytag: member="natrium::DistributionFunctions::getFStream" ref="a88224d528262c522ea2ad8bec11178c1" args="() const " -->
 const distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a88224d528262c522ea2ad8bec11178c1">getFStream</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">FStream denotes the block vector containing the vectors <img class="formulaInl" alt="$ f_1, ..., f_Q $" src="form_19.png"/>. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79d29cb24887e83728fb2f94b611ecb8"></a><!-- doxytag: member="natrium::DistributionFunctions::getF0Ghosted" ref="a79d29cb24887e83728fb2f94b611ecb8" args="()" -->
+const <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a79d29cb24887e83728fb2f94b611ecb8">getF0Ghosted</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">F0 denotes the vector <img class="formulaInl" alt="$ f_0 $" src="form_18.png"/> (zero-velocity particles). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#acc97fc1ac5185c94d8d15024c168b6c2">getFStreamGhosted</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">F0 denotes the vector <img class="formulaInl" alt="$ f_0 $" src="form_18.png"/> (zero-velocity particles).  <a href="#acc97fc1ac5185c94d8d15024c168b6c2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0ada0c54968a61f78eb1b82eb6c5a68"></a><!-- doxytag: member="natrium::DistributionFunctions::setFStream" ref="ad0ada0c54968a61f78eb1b82eb6c5a68" args="(const distributed_block_vector &amp;fStream)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#ad0ada0c54968a61f78eb1b82eb6c5a68">setFStream</a> (const distributed_block_vector &amp;fStream)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">FStream denotes the block vector containing the vectors <img class="formulaInl" alt="$ f_1, ..., f_Q $" src="form_19.png"/>. <br/></td></tr>
@@ -98,10 +108,10 @@ size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">the number of discrete velocities <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aefd3e3b6c39358653ac9531fa9f6f357"></a><!-- doxytag: member="natrium::DistributionFunctions::reinit" ref="aefd3e3b6c39358653ac9531fa9f6f357" args="(size_t Q, const dealii::IndexSet &amp;local, const dealii::IndexSet &amp;relevant, const MPI_Comm &amp;communicator=MPI_COMM_WORLD)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#aefd3e3b6c39358653ac9531fa9f6f357">reinit</a> (size_t Q, const dealii::IndexSet &amp;local, const dealii::IndexSet &amp;relevant, const MPI_Comm &amp;communicator=MPI_COMM_WORLD)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">reinitialize the sizes of the distribution functions - without ghost elements <br/></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">reinitialize the sizes of the distribution functions - with ghost elements <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a188cee7a5362588da36e30f616f446"></a><!-- doxytag: member="natrium::DistributionFunctions::reinit" ref="a4a188cee7a5362588da36e30f616f446" args="(size_t Q, const dealii::IndexSet &amp;local, const MPI_Comm &amp;communicator=MPI_COMM_WORLD)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a4a188cee7a5362588da36e30f616f446">reinit</a> (size_t Q, const dealii::IndexSet &amp;local, const MPI_Comm &amp;communicator=MPI_COMM_WORLD)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">reinitialize the sizes of the distribution functions - with ghost elements <br/></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">reinitialize the sizes of the distribution functions - without ghost elements <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a636814c639143c76989b09b2a92b6757"></a><!-- doxytag: member="natrium::DistributionFunctions::size" ref="a636814c639143c76989b09b2a92b6757" args="() const " -->
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#a636814c639143c76989b09b2a92b6757">size</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">the number of discrete velocities, including zero <br/></td></tr>
@@ -115,9 +125,41 @@ size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transferFromOtherScaling</b> (const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;old_stencil, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;new_stencil, const dealii::IndexSet &amp;locally_owned_dofs)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3942c2287df5372698ca987288a902e8"></a><!-- doxytag: member="natrium::DistributionFunctions::memory_consumption" ref="a3942c2287df5372698ca987288a902e8" args="() const " -->
 size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_consumption</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acbfa4e0f94855fb32ad486cddec2d597"></a><!-- doxytag: member="natrium::DistributionFunctions::updateGhosted" ref="acbfa4e0f94855fb32ad486cddec2d597" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html#acbfa4e0f94855fb32ad486cddec2d597">updateGhosted</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">update ghosted distributions, i.e. communicate over MPI processes It is very! important! that after each manipulation of the distribution functions, you call <a class="el" href="classnatrium_1_1DistributionFunctions.html#acbfa4e0f94855fb32ad486cddec2d597" title="update ghosted distributions, i.e. communicate over MPI processes It is very! important!...">updateGhosted()</a>. Otherwise you might get terrible errors at boundaries, (or in other parts, e.g. calculating the entropy), due to the fact that your distributions at ghost nodes are not up to date. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95ebd185a8c5df260a538206b4db9759"></a><!-- doxytag: member="natrium::DistributionFunctions::isDg" ref="a95ebd185a8c5df260a538206b4db9759" args="() const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>isDg</b> () const </td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>This class contains the distribution functions. As the zero-velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (fStream) in the implementation. fStream is a block vector, which has the advantage that it can be multiplied with the SystemMatrix. The <a class="el" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a> class is designed to mime the behaviour of a vector&lt;distributed_vector&gt; . </p>
+<hr/><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a3c886085011c99c505cdfc4903e20dfd"></a><!-- doxytag: member="natrium::DistributionFunctions::DistributionFunctions" ref="a3c886085011c99c505cdfc4903e20dfd" args="(bool dg=true)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">natrium::DistributionFunctions::DistributionFunctions </td>
+          <td>(</td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>dg</em> = <code>true</code></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>empty constructor. Construction is done through reinit. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>dg</em>&nbsp;</td><td>flag that indicates whether we have a parallel DG discretization; in this case, we do not need ghosted elements as all local dof indices are in fact locally owned on the current MPI process </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="a5b0afbafe841922dd3f949cc315b5533"></a><!-- doxytag: member="natrium::DistributionFunctions::compress" ref="a5b0afbafe841922dd3f949cc315b5533" args="(dealii::VectorOperation::values operation)" -->
 <div class="memitem">
@@ -182,6 +224,26 @@ size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_consumption<
 
 </div>
 </div>
+<a class="anchor" id="acc97fc1ac5185c94d8d15024c168b6c2"></a><!-- doxytag: member="natrium::DistributionFunctions::getFStreamGhosted" ref="acc97fc1ac5185c94d8d15024c168b6c2" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const distributed_block_vector&amp; natrium::DistributionFunctions::getFStreamGhosted </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>F0 denotes the vector <img class="formulaInl" alt="$ f_0 $" src="form_18.png"/> (zero-velocity particles). </p>
+<p>FStream denotes the block vector containing the vectors <img class="formulaInl" alt="$ f_1, ..., f_Q $" src="form_19.png"/> FStream denotes the block vector containing the vectors <img class="formulaInl" alt="$ f_1, ..., f_Q $" src="form_19.png"/> </p>
+
+</div>
+</div>
 <a class="anchor" id="a5e61cb3ba258cf0958e1557061ed31b9"></a><!-- doxytag: member="natrium::DistributionFunctions::operator=" ref="a5e61cb3ba258cf0958e1557061ed31b9" args="(const DistributionFunctions &amp;other)" -->
 <div class="memitem">
 <div class="memproto">
@@ -222,7 +284,7 @@ size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_consumption<
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

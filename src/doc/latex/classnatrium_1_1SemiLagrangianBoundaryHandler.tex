@@ -1,0 +1,58 @@
+\hypertarget{classnatrium_1_1SemiLagrangianBoundaryHandler}{
+\section{natrium::SemiLagrangianBoundaryHandler$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1SemiLagrangianBoundaryHandler}\index{natrium::SemiLagrangianBoundaryHandler@{natrium::SemiLagrangianBoundaryHandler}}
+}
+
+
+Handler for semi-\/Lagrangian boundary conditions. This class manages the update of distribution functions at the boundaries in the semi-\/Lagrangian streaming step.  
+
+
+{\ttfamily \#include $<$SemiLagrangianBoundaryHandler.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangianBoundaryHandler_a54cb870dad6fb60cb7c71d606cc213b7}{
+{\bfseries SemiLagrangianBoundaryHandler} (\hyperlink{classnatrium_1_1SemiLagrangian}{SemiLagrangian}$<$ dim $>$ \&advection)}
+\label{classnatrium_1_1SemiLagrangianBoundaryHandler_a54cb870dad6fb60cb7c71d606cc213b7}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangianBoundaryHandler_a670c3a30fbde7200c0df9e68a31394f4}{
+void {\bfseries addHit} (const \hyperlink{structnatrium_1_1LagrangianPathTracker}{LagrangianPathTracker}$<$ dim $>$ \&tracker, size\_\-t boundary\_\-id)}
+\label{classnatrium_1_1SemiLagrangianBoundaryHandler_a670c3a30fbde7200c0df9e68a31394f4}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangianBoundaryHandler_adf15590774c689568e0d9e1b6147dc3d}{
+void {\bfseries apply} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f\_\-new, const \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f\_\-old, double t)}
+\label{classnatrium_1_1SemiLagrangianBoundaryHandler_adf15590774c689568e0d9e1b6147dc3d}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangianBoundaryHandler_a569e569580975ff6ba53a4252ee1779c}{
+double {\bfseries getTimeStep} () const }
+\label{classnatrium_1_1SemiLagrangianBoundaryHandler_a569e569580975ff6ba53a4252ee1779c}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangianBoundaryHandler_ab2cb0b7f808e41db489fec02b697f15a}{
+void {\bfseries setTimeStep} (double timeStep)}
+\label{classnatrium_1_1SemiLagrangianBoundaryHandler_ab2cb0b7f808e41db489fec02b697f15a}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangianBoundaryHandler_ae63b26af365aa53b29239007db243501}{
+size\_\-t {\bfseries n\_\-hits} () const }
+\label{classnatrium_1_1SemiLagrangianBoundaryHandler_ae63b26af365aa53b29239007db243501}
+
+\item 
+\hypertarget{classnatrium_1_1SemiLagrangianBoundaryHandler_a7707295a100a75a9bb3aaf03019060e1}{
+size\_\-t {\bfseries n\_\-cells} () const }
+\label{classnatrium_1_1SemiLagrangianBoundaryHandler_a7707295a100a75a9bb3aaf03019060e1}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::SemiLagrangianBoundaryHandler$<$ dim $>$}
+
+Handler for semi-\/Lagrangian boundary conditions. This class manages the update of distribution functions at the boundaries in the semi-\/Lagrangian streaming step. 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/SemiLagrangianBoundaryHandler.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/SemiLagrangianBoundaryHandler.cpp\end{DoxyCompactItemize}

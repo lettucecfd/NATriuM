@@ -48,7 +48,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="contents">
-<h1>natrium::PeriodicBoundary&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::PeriodicBoundary" --><!-- doxytag: inherits="natrium::natrium::Boundary" -->
+<h1>natrium::PeriodicBoundary&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::PeriodicBoundary" --><!-- doxytag: inherits="natrium::Boundary" -->
 <p>A periodic boundary condition. Periodic boundaries have to be set before the grid is refined!  
 <a href="#_details">More...</a></p>
 
@@ -59,7 +59,7 @@ Inheritance diagram for natrium::PeriodicBoundary&lt; dim &gt;:</div>
  <div class="center">
   <img src="classnatrium_1_1PeriodicBoundary.gif" usemap="#natrium::PeriodicBoundary&lt; dim &gt;_map" alt=""/>
   <map id="natrium::PeriodicBoundary&lt; dim &gt;_map" name="natrium::PeriodicBoundary&lt; dim &gt;_map">
-<area href="classnatrium_1_1natrium_1_1Boundary.html" alt="natrium::natrium::Boundary&lt; dim &gt;" shape="rect" coords="0,0,204,24"/>
+<area href="classnatrium_1_1Boundary.html" alt="natrium::Boundary&lt; dim &gt;" shape="rect" coords="0,0,204,24"/>
 </map>
  </div>
 </div>
@@ -79,6 +79,11 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38c5e966e4b2a1ee185a5634fc379393"></a><!-- doxytag: member="natrium::PeriodicBoundary::isPeriodic" ref="a38c5e966e4b2a1ee185a5634fc379393" args="() const " -->
 virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a38c5e966e4b2a1ee185a5634fc379393">isPeriodic</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">is the boundary a periodic boundary ? <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e2e849b0086d1d19518894d92cc9ec0"></a><!-- doxytag: member="natrium::PeriodicBoundary::isLinearFluxBoundary" ref="a8e2e849b0086d1d19518894d92cc9ec0" args="() const " -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a8e2e849b0086d1d19518894d92cc9ec0">isLinearFluxBoundary</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">is the boundary a linear flux boundary as in SEDG-LBM <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a324efe2ded446a20123f229748e7d016"></a><!-- doxytag: member="natrium::PeriodicBoundary::isSLBoundary" ref="a324efe2ded446a20123f229748e7d016" args="() const " -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>isSLBoundary</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html#a233d460baa307b13bc32efb57c07f7c5">createCellMap</a> (const dealii::DoFHandler&lt; dim &gt; &amp;doFHandler)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">create the map m_cells which stores the cells adjacent to the periodic boundary  <a href="#a233d460baa307b13bc32efb57c07f7c5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4885d5d5d4c8965db5534390ad877511"></a><!-- doxytag: member="natrium::PeriodicBoundary::checkCellMap" ref="a4885d5d5d4c8965db5534390ad877511" args="()" -->
@@ -331,7 +336,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

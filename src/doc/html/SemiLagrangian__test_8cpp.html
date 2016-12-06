@@ -49,41 +49,36 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;boost/test/unit_test.hpp&quot;</code><br/>
 <code>#include &quot;<a class="el" href="D2Q9_8h_source.html">natrium/stencils/D2Q9.h</a>&quot;</code><br/>
 <code>#include &quot;natrium/stencils/D3Q19.h&quot;</code><br/>
+<code>#include &quot;natrium/advection/SemiLagrangianTools.h&quot;</code><br/>
 <code>#include &quot;<a class="el" href="BasicNames_8h_source.html">natrium/utilities/BasicNames.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="PeriodicTestDomain3D_8h_source.html">natrium/benchmarks/PeriodicTestDomain3D.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="PeriodicTestDomain2D_8h_source.html">natrium/benchmarks/PeriodicTestDomain2D.h</a>&quot;</code><br/>
 <table border="0" cellpadding="0" cellspacing="0">
-<tr><td colspan="2"><h2>Namespaces</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html">natrium</a></td></tr>
-
-<p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. </p>
-<br/></td></tr>
-</p>
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a883618d1bfe54362b6fe566b33a125c4"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a883618d1bfe54362b6fe566b33a125c4" args="(SemiLagrangian_Construction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian_Construction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae598f215914e7095e4689e52a46ae220"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="ae598f215914e7095e4689e52a46ae220" args="(SemiLagrangian2D_Neighborhood_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_Neighborhood_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ef21ff5bbdcea455ad5ec1c82c09009"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a6ef21ff5bbdcea455ad5ec1c82c09009" args="(SemiLagrangian3D_Neighborhood_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_Neighborhood_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac86883f17cf49cbc2da6538b669f4da3"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="ac86883f17cf49cbc2da6538b669f4da3" args="(SemiLagrangian2D_FindPointInNeighborhood_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_FindPointInNeighborhood_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a193f933a32473e494d79e6497fde0e2c"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a193f933a32473e494d79e6497fde0e2c" args="(SemiLagrangian3D_FindPointInNeighborhood_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_FindPointInNeighborhood_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae67c7512f6343d603c5b33e0cdab798"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="aae67c7512f6343d603c5b33e0cdab798" args="(SemiLagrangian2D_FaceCrossedFirst_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_FaceCrossedFirst_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e7fdc3d43feb7b3b2907ad1318f0023"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a3e7fdc3d43feb7b3b2907ad1318f0023" args="(SemiLagrangian3D_FaceCrossedFirst_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_FaceCrossedFirst_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ea7d35705b5510cf096509e0c04b666"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a0ea7d35705b5510cf096509e0c04b666" args="(SemiLagrangian2D_SparsityPattern_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_SparsityPattern_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee9f084e377533e7051bc7ed8271526b"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="aee9f084e377533e7051bc7ed8271526b" args="(SemiLagrangian3D_SparsityPattern_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_SparsityPattern_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3beee955eed9ac8e01af3cc7ce514fcb"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a3beee955eed9ac8e01af3cc7ce514fcb" args="(SemiLagrangian2D_ConstantStreaming_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_ConstantStreaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a068ae2506e3d7bd4b03a98d6ba57034f"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a068ae2506e3d7bd4b03a98d6ba57034f" args="(SemiLagrangian3D_ConstantStreaming_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_ConstantStreaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96d7feccacfc22412c6a16721c205a8a"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a96d7feccacfc22412c6a16721c205a8a" args="(SemiLagrangian3D_VectorReference_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_VectorReference_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83e8cfd7d82c94ce13aa9d158557e87f"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a83e8cfd7d82c94ce13aa9d158557e87f" args="(SemiLagrangian_Construction_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian_Construction_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d96c9ac610481cda969838d28c385cb"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a1d96c9ac610481cda969838d28c385cb" args="(SemiLagrangian2D_Neighborhood_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_Neighborhood_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e97374951a86c079b88fd2716cd8f4f"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a7e97374951a86c079b88fd2716cd8f4f" args="(SemiLagrangian3D_Neighborhood_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_Neighborhood_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ecfc6778e08f7f92c52c75fcc4f2fed"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a3ecfc6778e08f7f92c52c75fcc4f2fed" args="(SemiLagrangian2D_FindPointInNeighborhood_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_FindPointInNeighborhood_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5798f91d13abbb7fd31910823f68826"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="aa5798f91d13abbb7fd31910823f68826" args="(SemiLagrangian3D_FindPointInNeighborhood_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_FindPointInNeighborhood_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64e2f7078264be322f0ca6c7d4b03fd5"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a64e2f7078264be322f0ca6c7d4b03fd5" args="(SemiLagrangian2D_FaceCrossedFirst_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_FaceCrossedFirst_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a327de7be080ffad791de60dd540b70f1"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a327de7be080ffad791de60dd540b70f1" args="(SemiLagrangian3D_FaceCrossedFirst_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_FaceCrossedFirst_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaff2aae1cc3c7603db4d7d2ddfe1b5c3"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="aaff2aae1cc3c7603db4d7d2ddfe1b5c3" args="(SemiLagrangian2D_SparsityPattern_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_SparsityPattern_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a73bdd57a76b12aab3ebabccd995e3e39"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a73bdd57a76b12aab3ebabccd995e3e39" args="(SemiLagrangian3D_SparsityPattern_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_SparsityPattern_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a883bc1a8188b5ea1b1180310756e7254"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a883bc1a8188b5ea1b1180310756e7254" args="(SemiLagrangian2D_ConstantStreaming_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_ConstantStreaming_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a76c4e961a9de85c8b0f55c0f42d48128"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="a76c4e961a9de85c8b0f55c0f42d48128" args="(SemiLagrangian3D_ConstantStreaming_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_ConstantStreaming_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab008a08a8a129f9288e7b28baf0a6fa9"></a><!-- doxytag: member="SemiLagrangian_test.cpp::BOOST_AUTO_TEST_CASE" ref="ab008a08a8a129f9288e7b28baf0a6fa9" args="(SemiLagrangian3D_VectorReference_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_VectorReference_test)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <dl class="date"><dt><b>Date:</b></dt><dd>02.05.2016 </dd></dl>
@@ -103,7 +98,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

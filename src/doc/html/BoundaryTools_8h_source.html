@@ -51,109 +51,194 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00012"></a>00012 
 <a name="l00013"></a>00013 <span class="preprocessor">#include &quot;deal.II/base/point.h&quot;</span>
 <a name="l00014"></a>00014 <span class="preprocessor">#include &quot;deal.II/base/function.h&quot;</span>
-<a name="l00015"></a>00015 
-<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span>
-<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;../utilities/NATriuMException.h&quot;</span>
-<a name="l00018"></a>00018 
-<a name="l00019"></a>00019 <span class="keyword">namespace </span>natrium {
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021 <span class="keyword">namespace </span>BoundaryTools {
-<a name="l00022"></a>00022 
-<a name="l00026"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html">00026</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html" title="Exception class for Boundaries.">BoundaryException</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1NATriuMException.html" title="Exception class for CFDSolver.">NATriuMException</a> {
-<a name="l00027"></a>00027 <span class="keyword">private</span>:
-<a name="l00028"></a>00028         std::string message;
-<a name="l00029"></a>00029 <span class="keyword">public</span>:
-<a name="l00030"></a>00030         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html" title="Exception class for Boundaries.">BoundaryException</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *msg) :
-<a name="l00031"></a>00031                         <a class="code" href="classnatrium_1_1NATriuMException.html" title="Exception class for CFDSolver.">NATriuMException</a>(msg), message(msg) {
-<a name="l00032"></a>00032         }
-<a name="l00033"></a>00033         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html" title="Exception class for Boundaries.">BoundaryException</a>(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; msg) :
+<a name="l00015"></a>00015 <span class="preprocessor">#include &quot;deal.II/base/tensor_function.h&quot;</span>
+<a name="l00016"></a>00016 
+<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span>
+<a name="l00018"></a>00018 <span class="preprocessor">#include &quot;../utilities/NATriuMException.h&quot;</span>
+<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;../solver/DistributionFunctions.h&quot;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;../stencils/Stencil.h&quot;</span>
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022 <span class="keyword">namespace </span>natrium {
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 <span class="keyword">namespace </span>BoundaryTools {
+<a name="l00025"></a>00025 
+<a name="l00029"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html">00029</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html" title="Exception class for Boundaries.">BoundaryException</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1NATriuMException.html" title="Exception class for CFDSolver.">NATriuMException</a> {
+<a name="l00030"></a>00030 <span class="keyword">private</span>:
+<a name="l00031"></a>00031         std::string message;
+<a name="l00032"></a>00032 <span class="keyword">public</span>:
+<a name="l00033"></a>00033         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html" title="Exception class for Boundaries.">BoundaryException</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *msg) :
 <a name="l00034"></a>00034                         <a class="code" href="classnatrium_1_1NATriuMException.html" title="Exception class for CFDSolver.">NATriuMException</a>(msg), message(msg) {
 <a name="l00035"></a>00035         }
-<a name="l00036"></a>00036         ~<a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html" title="Exception class for Boundaries.">BoundaryException</a>() <span class="keywordflow">throw</span> () {
-<a name="l00037"></a>00037         }
-<a name="l00038"></a>00038         <span class="keyword">const</span> <span class="keywordtype">char</span> *what() <span class="keyword">const</span> <span class="keywordflow">throw</span> () {
-<a name="l00039"></a>00039                 <span class="keywordflow">return</span> this-&gt;message.c_str();
+<a name="l00036"></a>00036         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html" title="Exception class for Boundaries.">BoundaryException</a>(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; msg) :
+<a name="l00037"></a>00037                         <a class="code" href="classnatrium_1_1NATriuMException.html" title="Exception class for CFDSolver.">NATriuMException</a>(msg), message(msg) {
+<a name="l00038"></a>00038         }
+<a name="l00039"></a>00039         ~<a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html" title="Exception class for Boundaries.">BoundaryException</a>() <span class="keywordflow">throw</span> () {
 <a name="l00040"></a>00040         }
-<a name="l00041"></a>00041 };
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
-<a name="l00044"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">00044</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">BoundaryDensity</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
-<a name="l00045"></a>00045 <span class="keyword">private</span>:
-<a name="l00046"></a>00046         <span class="keywordtype">double</span> m_density;
-<a name="l00047"></a>00047 <span class="keyword">public</span>:
-<a name="l00048"></a>00048         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">BoundaryDensity</a>(<span class="keywordtype">double</span> rho = 1) {
-<a name="l00049"></a>00049                 m_density = rho;
-<a name="l00050"></a>00050         }
-<a name="l00051"></a>00051         ;
-<a name="l00052"></a>00052         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">BoundaryDensity</a>() {
+<a name="l00041"></a>00041         <span class="keyword">const</span> <span class="keywordtype">char</span> *what() <span class="keyword">const</span> <span class="keywordflow">throw</span> () {
+<a name="l00042"></a>00042                 <span class="keywordflow">return</span> this-&gt;message.c_str();
+<a name="l00043"></a>00043         }
+<a name="l00044"></a>00044 };
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00047"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">00047</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">BoundaryDensity</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
+<a name="l00048"></a>00048 <span class="keyword">private</span>:
+<a name="l00049"></a>00049         <span class="keywordtype">double</span> m_density;
+<a name="l00050"></a>00050 <span class="keyword">public</span>:
+<a name="l00051"></a>00051         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">BoundaryDensity</a>(<span class="keywordtype">double</span> rho = 1) {
+<a name="l00052"></a>00052                 m_density = rho;
 <a name="l00053"></a>00053         }
 <a name="l00054"></a>00054         ;
-<a name="l00055"></a>00055         <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
-<a name="l00056"></a>00056                         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  = 0)<span class="keyword"> const </span>{
-<a name="l00057"></a>00057                 <span class="keywordflow">return</span> m_density;
-<a name="l00058"></a>00058         }
-<a name="l00059"></a>00059 };
-<a name="l00060"></a>00060 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
-<a name="l00061"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">00061</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">BoundaryVelocity</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
-<a name="l00062"></a>00062 <span class="keyword">private</span>:
-<a name="l00063"></a>00063         dealii::Vector&lt;double&gt; m_Velocity;
-<a name="l00064"></a>00064 <span class="keyword">public</span>:
-<a name="l00065"></a>00065         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">BoundaryVelocity</a>(<span class="keyword">const</span> dealii::Vector&lt;double&gt;&amp; velocity) :
-<a name="l00066"></a>00066                         m_Velocity(velocity) {
-<a name="l00067"></a>00067         }
-<a name="l00068"></a>00068         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">BoundaryVelocity</a>() {
-<a name="l00069"></a>00069         }
-<a name="l00070"></a>00070         ;
-<a name="l00071"></a>00071         <span class="keyword">virtual</span> <span class="keywordtype">void</span> vector_value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
-<a name="l00072"></a>00072                         dealii::Vector&lt;double&gt; &amp;values)<span class="keyword"> const </span>{
-<a name="l00073"></a>00073                 values = m_Velocity;
-<a name="l00074"></a>00074         }
-<a name="l00075"></a>00075 };
-<a name="l00076"></a>00076 
-<a name="l00082"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1point__sorter.html">00082</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1point__sorter.html" title="function to compare points as map keys; the points with smaller x components fall...">point_sorter</a> : <span class="keyword">public</span> std::binary_function&lt;dealii::Point&lt;2&gt; , dealii::Point&lt;2&gt; , bool &gt; {
-<a name="l00083"></a>00083 <span class="keyword">public</span>:
-<a name="l00084"></a>00084 
-<a name="l00085"></a>00085   <span class="keywordtype">bool</span> operator()(<span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;left, <span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;right)<span class="keyword"> const </span>{
-<a name="l00086"></a>00086     <span class="keywordflow">if</span> (left[0] &lt; right[0]){<span class="keywordflow">return</span> <span class="keyword">true</span>;}
-<a name="l00087"></a>00087         <span class="keywordflow">else</span> <span class="keywordflow">if</span> ((left[0] == right[0])&amp;&amp;(left[1] &lt; right[1])) {<span class="keywordflow">return</span> <span class="keyword">true</span>;}
-<a name="l00088"></a>00088     <span class="keywordflow">else</span>  <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00089"></a>00089         }
-<a name="l00090"></a>00090 };
-<a name="l00091"></a>00091 
-<a name="l00095"></a>00095 <span class="keyword">enum</span> DistributionCouplingAtBoundary{
-<a name="l00096"></a>00096         COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
-<a name="l00097"></a>00097         COUPLE_ALL_DISTRIBUTIONS
-<a name="l00098"></a>00098 };
-<a name="l00099"></a>00099 
-<a name="l00103"></a>00103 <span class="keyword">enum</span> PointCouplingAtBoundary{
-<a name="l00104"></a>00104         COUPLE_ONLY_SINGLE_POINTS,
-<a name="l00105"></a>00105         COUPLE_WHOLE_FACE
-<a name="l00106"></a>00106 };
-<a name="l00107"></a>00107 
-<a name="l00108"></a>00108 
-<a name="l00119"></a>00119 <span class="keywordtype">bool</span> checkParallelLines(<span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; beginLine1,
-<a name="l00120"></a>00120                 <span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; endLine1, dealii::Point&lt;2&gt;&amp; beginLine2,
-<a name="l00121"></a>00121                 dealii::Point&lt;2&gt;&amp; endLine2, std::string&amp; errorMessage);
+<a name="l00055"></a>00055         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">BoundaryDensity</a>() {
+<a name="l00056"></a>00056         }
+<a name="l00057"></a>00057         ;
+<a name="l00058"></a>00058         <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
+<a name="l00059"></a>00059                         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  = 0)<span class="keyword"> const </span>{
+<a name="l00060"></a>00060                 <span class="keywordflow">return</span> m_density;
+<a name="l00061"></a>00061         }
+<a name="l00062"></a>00062 };
+<a name="l00063"></a>00063 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00064"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryPressure.html">00064</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryPressure.html">BoundaryPressure</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
+<a name="l00065"></a>00065 <span class="keyword">private</span>:
+<a name="l00066"></a>00066         <span class="keywordtype">double</span> m_pressure;
+<a name="l00067"></a>00067 <span class="keyword">public</span>:
+<a name="l00068"></a>00068         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryPressure.html">BoundaryPressure</a>(<span class="keywordtype">double</span> p = 0) {
+<a name="l00069"></a>00069                 m_pressure = p;
+<a name="l00070"></a>00070         }
+<a name="l00071"></a>00071         ;
+<a name="l00072"></a>00072         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryPressure.html">BoundaryPressure</a>() {
+<a name="l00073"></a>00073         }
+<a name="l00074"></a>00074         ;
+<a name="l00075"></a>00075         <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
+<a name="l00076"></a>00076                         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  = 0)<span class="keyword"> const </span>{
+<a name="l00077"></a>00077                 <span class="keywordflow">return</span> m_pressure;
+<a name="l00078"></a>00078         }
+<a name="l00079"></a>00079 };
+<a name="l00080"></a>00080 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00081"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">00081</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">BoundaryVelocity</a>: <span class="keyword">public</span> dealii::Function&lt;dim&gt; {
+<a name="l00082"></a>00082 <span class="keyword">private</span>:
+<a name="l00083"></a>00083         dealii::Vector&lt;double&gt; m_Velocity;
+<a name="l00084"></a>00084 <span class="keyword">public</span>:
+<a name="l00085"></a>00085         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">BoundaryVelocity</a>(<span class="keyword">const</span> dealii::Vector&lt;double&gt;&amp; velocity) :
+<a name="l00086"></a>00086                         m_Velocity(velocity) {
+<a name="l00087"></a>00087                 assert (velocity.size() == dim);
+<a name="l00088"></a>00088         }
+<a name="l00089"></a>00089         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">BoundaryVelocity</a>(<span class="keyword">const</span> dealii::Tensor&lt;1,dim&gt;&amp; velocity){
+<a name="l00090"></a>00090                 m_Velocity.reinit(dim);
+<a name="l00091"></a>00091                 velocity.unroll(m_Velocity);
+<a name="l00092"></a>00092         }
+<a name="l00093"></a>00093         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">BoundaryVelocity</a>() {
+<a name="l00094"></a>00094         }
+<a name="l00095"></a>00095         ;
+<a name="l00096"></a>00096         <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component=0)<span class="keyword"> const </span>{
+<a name="l00097"></a>00097                 assert (component &lt; dim);
+<a name="l00098"></a>00098                 <span class="keywordflow">return</span> m_Velocity(component);
+<a name="l00099"></a>00099         }
+<a name="l00100"></a>00100         <span class="keyword">virtual</span> <span class="keywordtype">void</span> vector_value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp;,
+<a name="l00101"></a>00101                         dealii::Vector&lt;double&gt; &amp;values)<span class="keyword"> const </span>{
+<a name="l00102"></a>00102                 values = m_Velocity;
+<a name="l00103"></a>00103         }
+<a name="l00104"></a>00104 };
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00107"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocityGradient.html">00107</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocityGradient.html">BoundaryVelocityGradient</a>: <span class="keyword">public</span> dealii::TensorFunction&lt;2, dim&gt; {
+<a name="l00108"></a>00108 <span class="keyword">private</span>:
+<a name="l00109"></a>00109         dealii::Tensor&lt;2, dim&gt; m_VelocityGradient;
+<a name="l00110"></a>00110 <span class="keyword">public</span>:
+<a name="l00111"></a>00111         <a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocityGradient.html">BoundaryVelocityGradient</a>(<span class="keyword">const</span> dealii::Tensor&lt;2, dim&gt;&amp; velocity_gradient) :
+<a name="l00112"></a>00112                 m_VelocityGradient(velocity_gradient) {
+<a name="l00113"></a>00113         }
+<a name="l00114"></a>00114         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocityGradient.html">BoundaryVelocityGradient</a>() {
+<a name="l00115"></a>00115         }
+<a name="l00116"></a>00116         ;
+<a name="l00117"></a>00117         <span class="keyword">virtual</span> dealii::Tensor&lt;2, dim&gt; value(<span class="keyword">const</span> dealii::Point&lt;dim&gt; &amp; )<span class="keyword"> const </span>{
+<a name="l00118"></a>00118                 <span class="keywordflow">return</span> m_VelocityGradient;
+<a name="l00119"></a>00119         }
+<a name="l00120"></a>00120 };
+<a name="l00121"></a>00121 
 <a name="l00122"></a>00122 
-<a name="l00138"></a>00138 <span class="keywordtype">bool</span> getInterfacialLinesByBoundaryIndicator(<span class="keywordtype">size_t</span> boundaryIndicator1,
-<a name="l00139"></a>00139                 <span class="keywordtype">size_t</span> boundaryIndicator2,
-<a name="l00140"></a>00140                 boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; triangulation,
-<a name="l00141"></a>00141                 dealii::Point&lt;2&gt;&amp; beginLine1, dealii::Point&lt;2&gt;&amp; endLine1,
-<a name="l00142"></a>00142                 dealii::Point&lt;2&gt;&amp; beginLine2, dealii::Point&lt;2&gt;&amp; endLine2,
-<a name="l00143"></a>00143                 std::string&amp; errorMessage);
-<a name="l00144"></a>00144 
+<a name="l00128"></a><a class="code" href="classnatrium_1_1BoundaryTools_1_1point__sorter.html">00128</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1BoundaryTools_1_1point__sorter.html" title="function to compare points as map keys; the points with smaller x components fall...">point_sorter</a> : <span class="keyword">public</span> std::binary_function&lt;dealii::Point&lt;2&gt; , dealii::Point&lt;2&gt; , bool &gt; {
+<a name="l00129"></a>00129 <span class="keyword">public</span>:
+<a name="l00130"></a>00130 
+<a name="l00131"></a>00131   <span class="keywordtype">bool</span> operator()(<span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;left, <span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;right)<span class="keyword"> const </span>{
+<a name="l00132"></a>00132     <span class="keywordflow">if</span> (left[0] &lt; right[0]){<span class="keywordflow">return</span> <span class="keyword">true</span>;}
+<a name="l00133"></a>00133         <span class="keywordflow">else</span> <span class="keywordflow">if</span> ((left[0] == right[0])&amp;&amp;(left[1] &lt; right[1])) {<span class="keywordflow">return</span> <span class="keyword">true</span>;}
+<a name="l00134"></a>00134     <span class="keywordflow">else</span>  <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00135"></a>00135         }
+<a name="l00136"></a>00136 };
+<a name="l00137"></a>00137 
+<a name="l00141"></a>00141 <span class="keyword">enum</span> DistributionCouplingAtBoundary{
+<a name="l00142"></a>00142         COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
+<a name="l00143"></a>00143         COUPLE_ALL_DISTRIBUTIONS
+<a name="l00144"></a>00144 };
 <a name="l00145"></a>00145 
-<a name="l00146"></a>00146 
-<a name="l00158"></a>00158 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
-<a name="l00159"></a>00159 <span class="keywordtype">void</span> CoupleDoFsAtBoundary(
-<a name="l00160"></a>00160                 dealii::TrilinosWrappers::SparsityPattern&amp; cSparse,
-<a name="l00161"></a>00161                 <span class="keyword">const</span> dealii::DoFHandler&lt;dim&gt;&amp; doFHandler, <span class="keywordtype">size_t</span> boundary_id, PointCouplingAtBoundary coupling);
-<a name="l00162"></a>00162 
-<a name="l00163"></a>00163 } <span class="comment">/* namespace BoundaryTools */</span>
-<a name="l00164"></a>00164 
-<a name="l00165"></a>00165 } <span class="comment">/* namespace natrium */</span>
-<a name="l00166"></a>00166 
-<a name="l00167"></a>00167 <span class="preprocessor">#endif </span><span class="comment">/* BOUNDARYTOOLS_H_ */</span>
+<a name="l00149"></a>00149 <span class="keyword">enum</span> PointCouplingAtBoundary{
+<a name="l00150"></a>00150         COUPLE_ONLY_SINGLE_POINTS,
+<a name="l00151"></a>00151         COUPLE_WHOLE_FACE
+<a name="l00152"></a>00152 };
+<a name="l00153"></a>00153 
+<a name="l00154"></a>00154 
+<a name="l00165"></a>00165 <span class="keywordtype">bool</span> checkParallelLines(<span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; beginLine1,
+<a name="l00166"></a>00166                 <span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; endLine1, dealii::Point&lt;2&gt;&amp; beginLine2,
+<a name="l00167"></a>00167                 dealii::Point&lt;2&gt;&amp; endLine2, std::string&amp; errorMessage);
+<a name="l00168"></a>00168 
+<a name="l00184"></a>00184 <span class="keywordtype">bool</span> getInterfacialLinesByBoundaryIndicator(<span class="keywordtype">size_t</span> boundaryIndicator1,
+<a name="l00185"></a>00185                 <span class="keywordtype">size_t</span> boundaryIndicator2,
+<a name="l00186"></a>00186                 boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; triangulation,
+<a name="l00187"></a>00187                 dealii::Point&lt;2&gt;&amp; beginLine1, dealii::Point&lt;2&gt;&amp; endLine1,
+<a name="l00188"></a>00188                 dealii::Point&lt;2&gt;&amp; beginLine2, dealii::Point&lt;2&gt;&amp; endLine2,
+<a name="l00189"></a>00189                 std::string&amp; errorMessage);
+<a name="l00190"></a>00190 
+<a name="l00191"></a>00191 
+<a name="l00192"></a>00192 
+<a name="l00204"></a>00204 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00205"></a>00205 <span class="keywordtype">void</span> CoupleDoFsAtBoundary(
+<a name="l00206"></a>00206                 dealii::TrilinosWrappers::SparsityPattern&amp; cSparse,
+<a name="l00207"></a>00207                 <span class="keyword">const</span> dealii::DoFHandler&lt;dim&gt;&amp; doFHandler, <span class="keywordtype">size_t</span> boundary_id, PointCouplingAtBoundary coupling);
+<a name="l00208"></a>00208 
+<a name="l00209"></a>00209 
+<a name="l00210"></a>00210 } <span class="comment">/* namespace BoundaryTools */</span>
+<a name="l00211"></a>00211 
+<a name="l00215"></a><a class="code" href="structnatrium_1_1GlobalBoundaryData.html">00215</a> <span class="keyword">struct </span><a class="code" href="structnatrium_1_1GlobalBoundaryData.html" title="Container for global Data that is required by the FEBoundaryValues class.">GlobalBoundaryData</a> {
+<a name="l00216"></a>00216 
+<a name="l00218"></a><a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1f91270a22f386384bdf3d8dbdc4e475">00218</a>         <span class="keyword">const</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a>&amp; <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1f91270a22f386384bdf3d8dbdc4e475" title="old distribution functions (at t-dt)">m_fold</a>;
+<a name="l00219"></a>00219 
+<a name="l00221"></a><a class="code" href="structnatrium_1_1GlobalBoundaryData.html#aacf4ae7ac003a2f6d2af911ff3c75e2f">00221</a>         <a class="code" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a>&amp; <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#aacf4ae7ac003a2f6d2af911ff3c75e2f" title="new distribution functions (at t)">m_fnew</a>;
+<a name="l00222"></a>00222 
+<a name="l00224"></a><a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a34dc1babbbd63a0ff74cc7475910ff34">00224</a>         <span class="keyword">const</span> <a class="code" href="classnatrium_1_1Stencil.html" title="Abstract class for the description of a boltzmann model, e.g. D2Q9.">Stencil</a>&amp; <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a34dc1babbbd63a0ff74cc7475910ff34" title="LBM stencil.">m_stencil</a>;
+<a name="l00225"></a>00225 
+<a name="l00227"></a><a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a5d3c36be4d6fff45f8ce88fed18d51d5">00227</a>         <span class="keywordtype">double</span> <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a5d3c36be4d6fff45f8ce88fed18d51d5" title="viscosity">m_viscosity</a>;
+<a name="l00228"></a>00228 
+<a name="l00230"></a><a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1439fef0250e57ec53dd02c833339167">00230</a>         <span class="keywordtype">double</span> <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1439fef0250e57ec53dd02c833339167" title="time step">m_dt</a>;
+<a name="l00231"></a>00231 
+<a name="l00233"></a><a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a2b85d0c2f50a9d9f7ab10216ab222a63">00233</a>         <span class="keywordtype">size_t</span> <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a2b85d0c2f50a9d9f7ab10216ab222a63" title="number of discrete particle velocities in stencil">m_Q</a>;
+<a name="l00234"></a>00234 
+<a name="l00236"></a><a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1a3b7c46e08d7afd4b48456310c8aa9d">00236</a>         <span class="keywordtype">double</span> <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1a3b7c46e08d7afd4b48456310c8aa9d" title="speed of sound">m_cs2</a>;
+<a name="l00237"></a>00237 
+<a name="l00238"></a>00238         <span class="comment">/***</span>
+<a name="l00239"></a>00239 <span class="comment">         * @short Constructor</span>
+<a name="l00240"></a>00240 <span class="comment">         * @param f_old old distribution functions (at t-dt, read only)</span>
+<a name="l00241"></a>00241 <span class="comment">         * @param f_new new distribution functions (at t, write only)</span>
+<a name="l00242"></a>00242 <span class="comment">         * @param stencil LBM stencil (e.g. D2Q9)</span>
+<a name="l00243"></a>00243 <span class="comment">         * @param viscosity kinematic viscosity of the fluid</span>
+<a name="l00244"></a>00244 <span class="comment">         * @param dt time step</span>
+<a name="l00245"></a>00245 <span class="comment">         */</span>
+<a name="l00246"></a>00246         <a class="code" href="structnatrium_1_1GlobalBoundaryData.html" title="Container for global Data that is required by the FEBoundaryValues class.">GlobalBoundaryData</a>(<span class="keyword">const</span> <a class="code" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a>&amp; f_old,
+<a name="l00247"></a>00247                         <a class="code" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a>&amp; f_new, <span class="keyword">const</span> <a class="code" href="classnatrium_1_1Stencil.html" title="Abstract class for the description of a boltzmann model, e.g. D2Q9.">Stencil</a>&amp; stencil,
+<a name="l00248"></a>00248                         <span class="keywordtype">double</span> viscosity, <span class="keywordtype">double</span> dt) :
+<a name="l00249"></a>00249                         <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1f91270a22f386384bdf3d8dbdc4e475" title="old distribution functions (at t-dt)">m_fold</a>(f_old), <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#aacf4ae7ac003a2f6d2af911ff3c75e2f" title="new distribution functions (at t)">m_fnew</a>(f_new), <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a34dc1babbbd63a0ff74cc7475910ff34" title="LBM stencil.">m_stencil</a>(stencil) {
+<a name="l00250"></a>00250                 <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a5d3c36be4d6fff45f8ce88fed18d51d5" title="viscosity">m_viscosity</a> = viscosity;
+<a name="l00251"></a>00251                 <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1439fef0250e57ec53dd02c833339167" title="time step">m_dt</a> = dt;
+<a name="l00252"></a>00252                 <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a1a3b7c46e08d7afd4b48456310c8aa9d" title="speed of sound">m_cs2</a> = stencil.getSpeedOfSoundSquare();
+<a name="l00253"></a>00253                 <a class="code" href="structnatrium_1_1GlobalBoundaryData.html#a2b85d0c2f50a9d9f7ab10216ab222a63" title="number of discrete particle velocities in stencil">m_Q</a> = stencil.<a class="code" href="classnatrium_1_1Stencil.html#a9c42c1e1fbc5308a8ba1281eb5e4be18" title="get q, the number of directions in the DdQq-stencil">getQ</a>();
+<a name="l00254"></a>00254         }
+<a name="l00255"></a>00255         <span class="keyword">virtual</span> ~<a class="code" href="structnatrium_1_1GlobalBoundaryData.html" title="Container for global Data that is required by the FEBoundaryValues class.">GlobalBoundaryData</a>() {
+<a name="l00256"></a>00256 
+<a name="l00257"></a>00257         }
+<a name="l00258"></a>00258 };
+<a name="l00259"></a>00259 
+<a name="l00260"></a>00260 } <span class="comment">/* namespace natrium */</span>
+<a name="l00261"></a>00261 
+<a name="l00262"></a>00262 <span class="preprocessor">#endif </span><span class="comment">/* BOUNDARYTOOLS_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -169,7 +254,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

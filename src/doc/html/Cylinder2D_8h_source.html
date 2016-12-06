@@ -49,10 +49,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
 <a name="l00011"></a>00011 <span class="preprocessor">#include &quot;deal.II/grid/tria.h&quot;</span>
 <a name="l00012"></a>00012 
-<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;<a class="code" href="ProblemDescription_8h.html" title="Abstract class for the description of a CFD problem. The description includes the...">natrium/problemdescription/ProblemDescription.h</a>&quot;</span>
-<a name="l00014"></a>00014 <span class="preprocessor">#include &quot;<a class="code" href="BasicNames_8h.html" title="Definition of the basic typedefs and names used in the Code;.">natrium/utilities/BasicNames.h</a>&quot;</span>
-<a name="l00015"></a>00015 
-<a name="l00016"></a>00016 
+<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;deal.II/grid/manifold_lib.h&gt;</span>
+<a name="l00014"></a>00014 
+<a name="l00015"></a>00015 <span class="preprocessor">#include &quot;<a class="code" href="ProblemDescription_8h.html" title="Abstract class for the description of a CFD problem. The description includes the...">natrium/problemdescription/ProblemDescription.h</a>&quot;</span>
+<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;<a class="code" href="BasicNames_8h.html" title="Definition of the basic typedefs and names used in the Code;.">natrium/utilities/BasicNames.h</a>&quot;</span>
 <a name="l00017"></a>00017 
 <a name="l00018"></a>00018 <span class="keyword">namespace </span>natrium {
 <a name="l00019"></a>00019 
@@ -68,34 +68,53 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00034"></a>00034         }
 <a name="l00035"></a>00035 
 <a name="l00036"></a>00036         <span class="keyword">virtual</span> <span class="keywordtype">void</span> refine(Mesh&lt;2&gt;&amp; mesh) {
-<a name="l00037"></a>00037 
-<a name="l00038"></a>00038         }
-<a name="l00039"></a>00039 
-<a name="l00040"></a>00040         <span class="keyword">virtual</span> <span class="keywordtype">void</span> transform(Mesh&lt;2&gt;&amp; mesh){
-<a name="l00041"></a>00041 
-<a name="l00042"></a>00042         }
+<a name="l00037"></a>00037                 <span class="comment">// remember to make_inner_manifold when implementing global refinement</span>
+<a name="l00038"></a>00038                 <span class="keyword">const</span> dealii::SphericalManifold&lt;2&gt; manifold(dealii::Point&lt;2&gt;(0, 0));
+<a name="l00039"></a>00039                 make_inner_manifold(mesh, manifold);
+<a name="l00040"></a>00040                 mesh.refine_global(1);
+<a name="l00041"></a>00041                 <span class="comment">// free the manifold</span>
+<a name="l00042"></a>00042                 mesh.set_manifold(1);
 <a name="l00043"></a>00043 
-<a name="l00044"></a>00044 <span class="keyword">private</span>:
+<a name="l00044"></a>00044         }
 <a name="l00045"></a>00045 
-<a name="l00046"></a>00046         <span class="keyword">const</span> <span class="keywordtype">double</span> m_inletVelocity;
+<a name="l00046"></a>00046         <span class="keyword">virtual</span> <span class="keywordtype">void</span> transform(Mesh&lt;2&gt;&amp; ) {
 <a name="l00047"></a>00047 
-<a name="l00052"></a>00052         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid();
+<a name="l00048"></a>00048         }
+<a name="l00049"></a>00049 
+<a name="l00050"></a>00050         <span class="keyword">virtual</span> <span class="keywordtype">bool</span> isCartesian(){
+<a name="l00051"></a>00051                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00052"></a>00052         }
 <a name="l00053"></a>00053 
-<a name="l00059"></a>00059         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries(<span class="keywordtype">double</span> inletVelocity);
-<a name="l00060"></a>00060 
-<a name="l00066"></a>00066         <span class="keyword">virtual</span> <span class="keywordtype">void</span> applyInitialDensities(<a class="code" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811" title="vectors which can be distributed over multiple cores">distributed_vector</a>&amp; initialDensities,
-<a name="l00067"></a>00067                         <span class="keyword">const</span> vector&lt;dealii::Point&lt;2&gt; &gt;&amp; supportPoints) <span class="keyword">const</span>;
+<a name="l00057"></a><a class="code" href="classnatrium_1_1Cylinder2D_1_1InitialU.html">00057</a>         <span class="keyword">class </span><a class="code" href="classnatrium_1_1Cylinder2D_1_1InitialU.html" title="class to describe the the initial solution">InitialU</a>: <span class="keyword">public</span> dealii::Function&lt;2&gt; {
+<a name="l00058"></a>00058         <span class="keyword">private</span>:
+<a name="l00059"></a>00059                 <a class="code" href="classnatrium_1_1Cylinder2D.html" title="Description of the flow around a circular cylinder (regular channel flow in square...">Cylinder2D</a>* m_flow;
+<a name="l00060"></a>00060         <span class="keyword">public</span>:
+<a name="l00061"></a>00061                 <a class="code" href="classnatrium_1_1Cylinder2D_1_1InitialU.html" title="class to describe the the initial solution">InitialU</a>(<a class="code" href="classnatrium_1_1Cylinder2D.html" title="Description of the flow around a circular cylinder (regular channel flow in square...">Cylinder2D</a>* flow) :
+<a name="l00062"></a>00062                                 m_flow(flow) {
+<a name="l00063"></a>00063                 }
+<a name="l00064"></a>00064                 <span class="keyword">virtual</span> <span class="keywordtype">double</span> <a class="code" href="classnatrium_1_1Cylinder2D_1_1InitialU.html#a57d333724d661f25b71d90bbf502c97d" title="set initial velocities">value</a>(<span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; x, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component=0) <span class="keyword">const</span>;
+<a name="l00065"></a>00065         };
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067 <span class="keyword">private</span>:
 <a name="l00068"></a>00068 
-<a name="l00074"></a>00074         <span class="keyword">virtual</span> <span class="keywordtype">void</span> applyInitialVelocities(
-<a name="l00075"></a>00075                         vector&lt;distributed_vector&gt;&amp; initialVelocities,
-<a name="l00076"></a>00076                         <span class="keyword">const</span> vector&lt;dealii::Point&lt;2&gt; &gt;&amp; supportPoints) <span class="keyword">const</span>;
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078 
-<a name="l00079"></a>00079 };
-<a name="l00080"></a>00080 
-<a name="l00081"></a>00081 
-<a name="l00082"></a>00082 } <span class="comment">/* namespace natrium */</span>
-<a name="l00083"></a>00083 <span class="preprocessor">#endif </span><span class="comment">/* CYLINDER2D_H_ */</span>
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070         <span class="keyword">const</span> <span class="keywordtype">double</span> m_inletVelocity;
+<a name="l00071"></a>00071 
+<a name="l00081"></a>00081         <span class="keyword">static</span> <span class="keywordtype">void</span> make_inner_manifold(dealii::Triangulation&lt;2&gt;&amp; mesh,
+<a name="l00082"></a>00082                         <span class="keyword">const</span> dealii::SphericalManifold&lt;2&gt;&amp; manifold, <span class="keywordtype">double</span> radius = 0.5, <span class="keywordtype">int</span> boundary_id = -1,
+<a name="l00083"></a>00083                         <span class="keywordtype">double</span> tol = 1e-10);
+<a name="l00084"></a>00084 
+<a name="l00089"></a>00089         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid();
+<a name="l00090"></a>00090 
+<a name="l00096"></a>00096         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries(
+<a name="l00097"></a>00097                         <span class="keywordtype">double</span> inletVelocity);
+<a name="l00098"></a>00098 
+<a name="l00099"></a>00099 
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101 };
+<a name="l00102"></a>00102 
+<a name="l00103"></a>00103 } <span class="comment">/* namespace natrium */</span>
+<a name="l00104"></a>00104 <span class="preprocessor">#endif </span><span class="comment">/* CYLINDER2D_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -111,7 +130,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -1,0 +1,76 @@
+\hypertarget{classnatrium_1_1CouetteFlowGrad2D}{
+\section{natrium::CouetteFlowGrad2D Class Reference}
+\label{classnatrium_1_1CouetteFlowGrad2D}\index{natrium::CouetteFlowGrad2D@{natrium::CouetteFlowGrad2D}}
+}
+
+
+Description of a simple Couette Flow (regular channel flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  
+
+
+{\ttfamily \#include $<$CouetteFlowGrad2D.h$>$}Inheritance diagram for natrium::CouetteFlowGrad2D::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1CouetteFlowGrad2D}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classnatrium_1_1CouetteFlowGrad2D_1_1AnalyticVelocity}{AnalyticVelocity}
+\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\item 
+struct {\bfseries UnstructuredGridFunc}
+\begin{DoxyCompactList}\small\item\em function to generate the unstructured mesh grid \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1CouetteFlowGrad2D_a06404aab631016fcf3850339402550e3}{CouetteFlowGrad2D} (double viscosity, double topPlateVelocity, size\_\-t refinementLevel, double L=1.0, double startTime=0.0, bool isUnstructured=false)
+\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CouetteFlowGrad2D_ab216121a846c30d31a18c5969112a182}{
+virtual \hyperlink{classnatrium_1_1CouetteFlowGrad2D_ab216121a846c30d31a18c5969112a182}{$\sim$CouetteFlowGrad2D} ()}
+\label{classnatrium_1_1CouetteFlowGrad2D_ab216121a846c30d31a18c5969112a182}
+
+\begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1CouetteFlowGrad2D_a05395f1ddd439fcbbf99e5d6b41a1c6a}{
+virtual double {\bfseries getCharacteristicVelocity} () const }
+\label{classnatrium_1_1CouetteFlowGrad2D_a05395f1ddd439fcbbf99e5d6b41a1c6a}
+
+\item 
+\hypertarget{classnatrium_1_1CouetteFlowGrad2D_ac58feae313a7c9edfbfd16adcb6d1585}{
+virtual void {\bfseries refine} (Mesh$<$ 2 $>$ \&mesh)}
+\label{classnatrium_1_1CouetteFlowGrad2D_ac58feae313a7c9edfbfd16adcb6d1585}
+
+\item 
+\hypertarget{classnatrium_1_1CouetteFlowGrad2D_a08a61536fbdcff1fdc91b9ed62f96a3d}{
+virtual void {\bfseries transform} (Mesh$<$ 2 $>$ \&mesh)}
+\label{classnatrium_1_1CouetteFlowGrad2D_a08a61536fbdcff1fdc91b9ed62f96a3d}
+
+\item 
+\hypertarget{classnatrium_1_1CouetteFlowGrad2D_af3a585d50ee8ce107e9ec8f57edbcc8b}{
+virtual bool {\bfseries isCartesian} ()}
+\label{classnatrium_1_1CouetteFlowGrad2D_af3a585d50ee8ce107e9ec8f57edbcc8b}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Description of a simple Couette Flow (regular channel flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). \begin{DoxyNote}{Note}
+The analytic solution is obtained by a formula stated in Min and Lee (2011). 
+\end{DoxyNote}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1CouetteFlowGrad2D_a06404aab631016fcf3850339402550e3}{
+\index{natrium::CouetteFlowGrad2D@{natrium::CouetteFlowGrad2D}!CouetteFlowGrad2D@{CouetteFlowGrad2D}}
+\index{CouetteFlowGrad2D@{CouetteFlowGrad2D}!natrium::CouetteFlowGrad2D@{natrium::CouetteFlowGrad2D}}
+\subsubsection[{CouetteFlowGrad2D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::CouetteFlowGrad2D::CouetteFlowGrad2D (double {\em viscosity}, \/  double {\em topPlateVelocity}, \/  size\_\-t {\em refinementLevel}, \/  double {\em L} = {\ttfamily 1.0}, \/  double {\em startTime} = {\ttfamily 0.0}, \/  bool {\em isUnstructured} = {\ttfamily false})}}
+\label{classnatrium_1_1CouetteFlowGrad2D_a06404aab631016fcf3850339402550e3}
+
+
+constructor 
+
+apply boundary values 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{CouetteFlowGrad2D_8h}{CouetteFlowGrad2D.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/benchmarks/\hyperlink{CouetteFlowGrad2D_8cpp}{CouetteFlowGrad2D.cpp}\end{DoxyCompactItemize}

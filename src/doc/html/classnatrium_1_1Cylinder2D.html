@@ -66,6 +66,9 @@ Inheritance diagram for natrium::Cylinder2D:</div>
 
 <p><a href="classnatrium_1_1Cylinder2D-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
+<tr><td colspan="2"><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Cylinder2D_1_1InitialU.html">InitialU</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">class to describe the the initial solution  <a href="classnatrium_1_1Cylinder2D_1_1InitialU.html#_details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Cylinder2D.html#a38e5826b6fd4fc859b74783de3999658">Cylinder2D</a> (double viscosity, double inletVelocity)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a38e5826b6fd4fc859b74783de3999658"></a><br/></td></tr>
@@ -76,8 +79,10 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCharacteristicVelocity</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa67c905852893276844a6f9d6013cc05"></a><!-- doxytag: member="natrium::Cylinder2D::refine" ref="aa67c905852893276844a6f9d6013cc05" args="(Mesh&lt; 2 &gt; &amp;mesh)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>refine</b> (Mesh&lt; 2 &gt; &amp;mesh)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a34077d9eecf1277adc4e7255ed695fc0"></a><!-- doxytag: member="natrium::Cylinder2D::transform" ref="a34077d9eecf1277adc4e7255ed695fc0" args="(Mesh&lt; 2 &gt; &amp;mesh)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b> (Mesh&lt; 2 &gt; &amp;mesh)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85d8d7e04217ad182ef5b0b744d1f9b5"></a><!-- doxytag: member="natrium::Cylinder2D::transform" ref="a85d8d7e04217ad182ef5b0b744d1f9b5" args="(Mesh&lt; 2 &gt; &amp;)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b> (Mesh&lt; 2 &gt; &amp;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c1429f27ae6133ec4d54cdcd7e0c359"></a><!-- doxytag: member="natrium::Cylinder2D::isCartesian" ref="a1c1429f27ae6133ec4d54cdcd7e0c359" args="()" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>isCartesian</b> ()</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Description of the flow around a circular cylinder (regular channel flow in square domain). </p>
@@ -133,7 +138,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
