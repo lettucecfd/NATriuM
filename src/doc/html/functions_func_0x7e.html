@@ -49,7 +49,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions.html"><span>All</span></a></li>
       <li class="current"><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
-      <li><a href="functions_type.html"><span>Typedefs</span></a></li>
       <li><a href="functions_rela.html"><span>Related&nbsp;Functions</span></a></li>
     </ul>
   </div>
@@ -111,7 +110,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>~Boundary()
 : <a class="el" href="classnatrium_1_1Boundary.html#a534f7d32a140c0764c61dce6129bf88f">natrium::Boundary&lt; dim &gt;</a>
-, <a class="el" href="classnatrium_1_1natrium_1_1Boundary.html#a8a09a17f803acb05fbe9410841913232">natrium::natrium::Boundary&lt; dim &gt;</a>
 </li>
 <li>~CFDSolver()
 : <a class="el" href="classnatrium_1_1CFDSolver.html#a7ca9bd709255ac87b34f869c984b913b">natrium::CFDSolver&lt; dim &gt;</a>
@@ -124,6 +122,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>~CouetteFlow3D()
 : <a class="el" href="classnatrium_1_1CouetteFlow3D.html#a2d1b9db247ba3e51ed092dab3637a657">natrium::CouetteFlow3D</a>
+</li>
+<li>~CouetteFlowGrad2D()
+: <a class="el" href="classnatrium_1_1CouetteFlowGrad2D.html#ab216121a846c30d31a18c5969112a182">natrium::CouetteFlowGrad2D</a>
 </li>
 <li>~Cylinder2D()
 : <a class="el" href="classnatrium_1_1Cylinder2D.html#a40a33168f7deb7f35e4eb7b3f749b4a3">natrium::Cylinder2D</a>
@@ -200,6 +201,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>~ProblemDescription()
 : <a class="el" href="classnatrium_1_1ProblemDescription.html#a5270994970ddbd9f6fc98f292c1ccc0e">natrium::ProblemDescription&lt; dim &gt;</a>
 </li>
+<li>~PseudoEntropicStabilizer()
+: <a class="el" href="classnatrium_1_1PseudoEntropicStabilizer.html#af4ff07c0cf4ff17d4b4440aee4e537c1">natrium::PseudoEntropicStabilizer&lt; dim &gt;</a>
+</li>
 <li>~RungeKutta5LowStorage()
 : <a class="el" href="classnatrium_1_1RungeKutta5LowStorage.html#a915493da30cf9308bd47e87d0c20cad8">natrium::RungeKutta5LowStorage&lt; MATRIX, VECTOR &gt;</a>
 </li>
@@ -215,11 +219,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>~SinusoidalShear2D()
 : <a class="el" href="classnatrium_1_1SinusoidalShear2D.html#a7aaf185e32e29f1f50b3f9db9c213a2c">natrium::SinusoidalShear2D</a>
 </li>
+<li>~SLFirstOrderBounceBack()
+: <a class="el" href="classnatrium_1_1SLFirstOrderBounceBack.html#a9f7143924cb11361e0dc68d9d2accaca">natrium::SLFirstOrderBounceBack&lt; dim &gt;</a>
+</li>
 <li>~SolverConfiguration()
 : <a class="el" href="classnatrium_1_1SolverConfiguration.html#ac1b521d8c205b8774dbb7c038304336d">natrium::SolverConfiguration</a>
 </li>
 <li>~SteadyPeriodicTestFlow2D()
-: <a class="el" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7344b71a404f2c4bbc73c1c738fdfa22">natrium::SteadyPeriodicTestFlow2D</a>
+: <a class="el" href="classSteadyPeriodicTestFlow2D.html#a07b6c5b3cba87a6c2355e4a98e2d7d49">SteadyPeriodicTestFlow2D</a>
 </li>
 <li>~Stencil()
 : <a class="el" href="classnatrium_1_1Stencil.html#aff8956ea1dca43ed70f513baa755331f">natrium::Stencil</a>
@@ -243,7 +250,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classnatrium_1_1TurbulentChannelFlow3D.html#ab64ee135c7156427f370b7d5225b5d99">natrium::TurbulentChannelFlow3D</a>
 </li>
 <li>~UnsteadyPeriodicTestFlow2D()
-: <a class="el" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html#aa91ea175e2993bf00f8a48fded987c54">natrium::UnsteadyPeriodicTestFlow2D</a>
+: <a class="el" href="classUnsteadyPeriodicTestFlow2D.html#a45558f2ef5811d544b3b7b8d2893a35d">UnsteadyPeriodicTestFlow2D</a>
 </li>
 <li>~WallTestDomain2D()
 : <a class="el" href="classWallTestDomain2D.html#af086a6015fed51c4e1bd14e39fa52971">WallTestDomain2D</a>
@@ -264,7 +271,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

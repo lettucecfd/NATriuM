@@ -56,16 +56,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00017"></a>00017 <span class="preprocessor">#include &quot;<a class="code" href="ProblemDescription_8h.html" title="Abstract class for the description of a CFD problem. The description includes the...">natrium/problemdescription/ProblemDescription.h</a>&quot;</span>
 <a name="l00018"></a>00018 <span class="preprocessor">#include &quot;<a class="code" href="BasicNames_8h.html" title="Definition of the basic typedefs and names used in the Code;.">natrium/utilities/BasicNames.h</a>&quot;</span>
 <a name="l00019"></a>00019 
-<a name="l00020"></a>00020 <span class="keyword">namespace </span>natrium {
+<a name="l00020"></a>00020 <span class="keyword">using namespace </span>natrium;
 <a name="l00021"></a>00021 
-<a name="l00026"></a><a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html">00026</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html" title="Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2...">SteadyPeriodicTestFlow2D</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1ProblemDescription.html" title="Abstract class for the description of a CFD problem. The description includes the...">ProblemDescription</a>&lt;2&gt; {
+<a name="l00026"></a><a class="code" href="classSteadyPeriodicTestFlow2D.html">00026</a> <span class="keyword">class </span><a class="code" href="classSteadyPeriodicTestFlow2D.html" title="Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2...">SteadyPeriodicTestFlow2D</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1ProblemDescription.html" title="Abstract class for the description of a CFD problem. The description includes the...">ProblemDescription</a>&lt;2&gt; {
 <a name="l00027"></a>00027 <span class="keyword">private</span>:
 <a name="l00028"></a>00028         <span class="keywordtype">size_t</span> m_refinementLevel;
 <a name="l00029"></a>00029 <span class="keyword">public</span>:
 <a name="l00030"></a>00030         <span class="comment">// class that represents the initial velocity</span>
-<a name="l00031"></a><a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D_1_1InitialVelocity.html">00031</a>         <span class="keyword">class </span><a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D_1_1InitialVelocity.html">InitialVelocity</a>: <span class="keyword">public</span> dealii::Function&lt;2&gt; {
+<a name="l00031"></a><a class="code" href="classSteadyPeriodicTestFlow2D_1_1InitialVelocity.html">00031</a>         <span class="keyword">class </span><a class="code" href="classSteadyPeriodicTestFlow2D_1_1InitialVelocity.html">InitialVelocity</a>: <span class="keyword">public</span> dealii::Function&lt;2&gt; {
 <a name="l00032"></a>00032         <span class="keyword">public</span>:
-<a name="l00033"></a>00033                 <a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D_1_1InitialVelocity.html">InitialVelocity</a>(){
+<a name="l00033"></a>00033                 <a class="code" href="classSteadyPeriodicTestFlow2D_1_1InitialVelocity.html">InitialVelocity</a>(){
 <a name="l00034"></a>00034                 }
 <a name="l00035"></a>00035                 <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; ,
 <a name="l00036"></a>00036                                 <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component = 0)<span class="keyword"> const </span>{
@@ -75,7 +75,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00040"></a>00040                 }
 <a name="l00041"></a>00041         };
 <a name="l00042"></a>00042 
-<a name="l00044"></a><a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7db4598e86b34158612497ea2ff0ca74">00044</a>         <a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7db4598e86b34158612497ea2ff0ca74" title="constructor">SteadyPeriodicTestFlow2D</a>(<span class="keywordtype">double</span> viscosity, <span class="keywordtype">size_t</span> refinementLevel) :
+<a name="l00044"></a><a class="code" href="classSteadyPeriodicTestFlow2D.html#ab5920c3efd71be68da68c87745f98c28">00044</a>         <a class="code" href="classSteadyPeriodicTestFlow2D.html#ab5920c3efd71be68da68c87745f98c28" title="constructor">SteadyPeriodicTestFlow2D</a>(<span class="keywordtype">double</span> viscosity, <span class="keywordtype">size_t</span> refinementLevel) :
 <a name="l00045"></a>00045                         <a class="code" href="classnatrium_1_1ProblemDescription.html" title="Abstract class for the description of a CFD problem. The description includes the...">ProblemDescription</a>&lt;2&gt;(makeGrid(), viscosity, 1), m_refinementLevel(refinementLevel) {
 <a name="l00046"></a>00046                 setInitialU(boost::make_shared&lt;InitialVelocity&gt;());
 <a name="l00048"></a>00048                 setBoundaries(makeBoundaries());
@@ -84,7 +84,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00051"></a>00051 
 <a name="l00052"></a>00052         }
 <a name="l00053"></a>00053 
-<a name="l00055"></a><a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7344b71a404f2c4bbc73c1c738fdfa22">00055</a>         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html#a7344b71a404f2c4bbc73c1c738fdfa22" title="destructor">~SteadyPeriodicTestFlow2D</a>() {
+<a name="l00055"></a><a class="code" href="classSteadyPeriodicTestFlow2D.html#a07b6c5b3cba87a6c2355e4a98e2d7d49">00055</a>         <span class="keyword">virtual</span> <a class="code" href="classSteadyPeriodicTestFlow2D.html#a07b6c5b3cba87a6c2355e4a98e2d7d49" title="destructor">~SteadyPeriodicTestFlow2D</a>() {
 <a name="l00056"></a>00056         }
 <a name="l00057"></a>00057         <span class="keyword">virtual</span> <span class="keywordtype">void</span> refine(Mesh&lt;2&gt;&amp; mesh){
 <a name="l00058"></a>00058                 mesh.refine_global(m_refinementLevel);
@@ -93,81 +93,83 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00061"></a>00061         <span class="keyword">virtual</span> <span class="keywordtype">void</span> transform(Mesh&lt;2&gt;&amp; ){
 <a name="l00062"></a>00062 
 <a name="l00063"></a>00063         }
-<a name="l00064"></a>00064 
-<a name="l00065"></a>00065 
-<a name="l00066"></a>00066 <span class="keyword">private</span>:
+<a name="l00064"></a>00064         <span class="keyword">virtual</span> <span class="keywordtype">bool</span> isCartesian(){
+<a name="l00065"></a>00065                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00066"></a>00066         }
 <a name="l00067"></a>00067 
-<a name="l00072"></a>00072         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid() {
-<a name="l00073"></a>00073                 <span class="comment">//Creation of the principal domain</span>
-<a name="l00074"></a>00074                 boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; unitSquare = boost::make_shared&lt;Mesh&lt;2&gt; &gt;(
-<a name="l00075"></a>00075 <span class="preprocessor">#ifdef WITH_TRILINOS_MPI</span>
-<a name="l00076"></a>00076 <span class="preprocessor"></span>                                MPI_COMM_WORLD
-<a name="l00077"></a>00077 <span class="preprocessor">#endif</span>
-<a name="l00078"></a>00078 <span class="preprocessor"></span>                                );
-<a name="l00079"></a>00079                 dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
-<a name="l00080"></a>00080 
-<a name="l00081"></a>00081                 <span class="comment">// Assign boundary indicators to the faces of the &quot;parent cell&quot;</span>
-<a name="l00082"></a>00082                 Mesh&lt;2&gt;::active_cell_iterator cell = unitSquare-&gt;begin_active();
-<a name="l00083"></a>00083                 cell-&gt;face(0)-&gt;set_all_boundary_ids(0);  <span class="comment">// left</span>
-<a name="l00084"></a>00084                 cell-&gt;face(1)-&gt;set_all_boundary_ids(1);  <span class="comment">// right</span>
-<a name="l00085"></a>00085                 cell-&gt;face(2)-&gt;set_all_boundary_ids(2);  <span class="comment">// top</span>
-<a name="l00086"></a>00086                 cell-&gt;face(3)-&gt;set_all_boundary_ids(3);  <span class="comment">// bottom</span>
-<a name="l00087"></a>00087 
-<a name="l00088"></a>00088                 <span class="keywordflow">return</span> unitSquare;
-<a name="l00089"></a>00089         }
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069 <span class="keyword">private</span>:
+<a name="l00070"></a>00070 
+<a name="l00075"></a>00075         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid() {
+<a name="l00076"></a>00076                 <span class="comment">//Creation of the principal domain</span>
+<a name="l00077"></a>00077                 boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; unitSquare = boost::make_shared&lt;Mesh&lt;2&gt; &gt;(
+<a name="l00078"></a>00078 <span class="preprocessor">#ifdef WITH_TRILINOS_MPI</span>
+<a name="l00079"></a>00079 <span class="preprocessor"></span>                                MPI_COMM_WORLD
+<a name="l00080"></a>00080 <span class="preprocessor">#endif</span>
+<a name="l00081"></a>00081 <span class="preprocessor"></span>                                );
+<a name="l00082"></a>00082                 dealii::GridGenerator::hyper_cube(*unitSquare, 0, 1);
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084                 <span class="comment">// Assign boundary indicators to the faces of the &quot;parent cell&quot;</span>
+<a name="l00085"></a>00085                 Mesh&lt;2&gt;::active_cell_iterator cell = unitSquare-&gt;begin_active();
+<a name="l00086"></a>00086                 cell-&gt;face(0)-&gt;set_all_boundary_ids(0);  <span class="comment">// left</span>
+<a name="l00087"></a>00087                 cell-&gt;face(1)-&gt;set_all_boundary_ids(1);  <span class="comment">// right</span>
+<a name="l00088"></a>00088                 cell-&gt;face(2)-&gt;set_all_boundary_ids(2);  <span class="comment">// top</span>
+<a name="l00089"></a>00089                 cell-&gt;face(3)-&gt;set_all_boundary_ids(3);  <span class="comment">// bottom</span>
 <a name="l00090"></a>00090 
-<a name="l00096"></a>00096         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries() {
-<a name="l00097"></a>00097 
-<a name="l00098"></a>00098                 <span class="comment">// make boundary description</span>
-<a name="l00099"></a>00099                 boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; boundaries = boost::make_shared&lt;
-<a name="l00100"></a>00100                                 BoundaryCollection&lt;2&gt; &gt;();
-<a name="l00101"></a>00101                 boundaries-&gt;addBoundary(
-<a name="l00102"></a>00102                                 boost::make_shared&lt;PeriodicBoundary&lt;2&gt; &gt;(0, 1, 0, getMesh()));
-<a name="l00103"></a>00103                 boundaries-&gt;addBoundary(
-<a name="l00104"></a>00104                                 boost::make_shared&lt;PeriodicBoundary&lt;2&gt; &gt;(2, 3, 1, getMesh()));
-<a name="l00105"></a>00105 
-<a name="l00106"></a>00106                 <span class="keywordflow">return</span> boundaries;
-<a name="l00107"></a>00107         }
+<a name="l00091"></a>00091                 <span class="keywordflow">return</span> unitSquare;
+<a name="l00092"></a>00092         }
+<a name="l00093"></a>00093 
+<a name="l00099"></a>00099         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries() {
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101                 <span class="comment">// make boundary description</span>
+<a name="l00102"></a>00102                 boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; boundaries = boost::make_shared&lt;
+<a name="l00103"></a>00103                                 <a class="code" href="classnatrium_1_1BoundaryCollection.html" title="The BoundaryCollection class is a container for all boundaries of a flow domain....">BoundaryCollection&lt;2&gt;</a> &gt;();
+<a name="l00104"></a>00104                 boundaries-&gt;addBoundary(
+<a name="l00105"></a>00105                                 boost::make_shared&lt;<a class="code" href="classnatrium_1_1PeriodicBoundary.html" title="A periodic boundary condition. Periodic boundaries have to be set before the grid...">PeriodicBoundary&lt;2&gt;</a> &gt;(0, 1, 0, getMesh()));
+<a name="l00106"></a>00106                 boundaries-&gt;addBoundary(
+<a name="l00107"></a>00107                                 boost::make_shared&lt;<a class="code" href="classnatrium_1_1PeriodicBoundary.html" title="A periodic boundary condition. Periodic boundaries have to be set before the grid...">PeriodicBoundary&lt;2&gt;</a> &gt;(2, 3, 1, getMesh()));
 <a name="l00108"></a>00108 
-<a name="l00109"></a>00109 };
-<a name="l00110"></a>00110 
+<a name="l00109"></a>00109                 <span class="keywordflow">return</span> boundaries;
+<a name="l00110"></a>00110         }
 <a name="l00111"></a>00111 
-<a name="l00112"></a><a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html">00112</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html">UnsteadyPeriodicTestFlow2D</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html" title="Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2...">SteadyPeriodicTestFlow2D</a> {
+<a name="l00112"></a>00112 };
 <a name="l00113"></a>00113 
-<a name="l00114"></a>00114 <span class="keyword">public</span>:
-<a name="l00115"></a>00115         <span class="comment">// class that represents the initial velocity</span>
-<a name="l00116"></a><a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D_1_1UnsteadyInitialVelocity.html">00116</a>         <span class="keyword">class </span><a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D_1_1UnsteadyInitialVelocity.html">UnsteadyInitialVelocity</a>: <span class="keyword">public</span> dealii::Function&lt;2&gt; {
-<a name="l00117"></a>00117         <span class="keyword">public</span>:
-<a name="l00118"></a>00118                 <a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D_1_1UnsteadyInitialVelocity.html">UnsteadyInitialVelocity</a>(){
-<a name="l00119"></a>00119                 }
-<a name="l00120"></a>00120                 <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; x,
-<a name="l00121"></a>00121                                 <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component = 0)<span class="keyword"> const </span>{
-<a name="l00122"></a>00122                         assert(component &lt; 2);
-<a name="l00123"></a>00123                         <span class="keywordflow">if</span> (component == 0) {
-<a name="l00124"></a>00124                                 <span class="keywordflow">if</span> ((x(1) &gt;= 0.25) and (x(1) &lt; 0.75)) {
-<a name="l00125"></a>00125                                         <span class="keywordflow">return</span> 0.1;
-<a name="l00126"></a>00126                                 } <span class="keywordflow">else</span> {
-<a name="l00127"></a>00127                                         <span class="keywordflow">return</span> -0.1;
-<a name="l00128"></a>00128                                 }
-<a name="l00129"></a>00129                         } <span class="keywordflow">else</span> {
-<a name="l00130"></a>00130                                 <span class="keywordflow">return</span> 0.0;
-<a name="l00131"></a>00131                         }
-<a name="l00132"></a>00132                 }
-<a name="l00133"></a>00133         };
-<a name="l00134"></a>00134 
-<a name="l00136"></a><a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html#a3a513d06c9018e78041cf8179ef2d80f">00136</a>         <a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html#a3a513d06c9018e78041cf8179ef2d80f" title="constructor">UnsteadyPeriodicTestFlow2D</a>(<span class="keywordtype">double</span> viscosity, <span class="keywordtype">size_t</span> refinementLevel) :
-<a name="l00137"></a>00137                         <a class="code" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html" title="Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2...">SteadyPeriodicTestFlow2D</a>(viscosity, refinementLevel) {
-<a name="l00138"></a>00138                 setInitialU(boost::make_shared&lt;UnsteadyInitialVelocity&gt;());
-<a name="l00139"></a>00139         }
-<a name="l00141"></a><a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html#aa91ea175e2993bf00f8a48fded987c54">00141</a>         <span class="keyword">virtual</span> <a class="code" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html#aa91ea175e2993bf00f8a48fded987c54" title="destructor">~UnsteadyPeriodicTestFlow2D</a>() {
+<a name="l00114"></a>00114 
+<a name="l00115"></a><a class="code" href="classUnsteadyPeriodicTestFlow2D.html">00115</a> <span class="keyword">class </span><a class="code" href="classUnsteadyPeriodicTestFlow2D.html">UnsteadyPeriodicTestFlow2D</a>: <span class="keyword">public</span> <a class="code" href="classSteadyPeriodicTestFlow2D.html" title="Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2...">SteadyPeriodicTestFlow2D</a> {
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117 <span class="keyword">public</span>:
+<a name="l00118"></a>00118         <span class="comment">// class that represents the initial velocity</span>
+<a name="l00119"></a><a class="code" href="classUnsteadyPeriodicTestFlow2D_1_1UnsteadyInitialVelocity.html">00119</a>         <span class="keyword">class </span><a class="code" href="classUnsteadyPeriodicTestFlow2D_1_1UnsteadyInitialVelocity.html">UnsteadyInitialVelocity</a>: <span class="keyword">public</span> dealii::Function&lt;2&gt; {
+<a name="l00120"></a>00120         <span class="keyword">public</span>:
+<a name="l00121"></a>00121                 <a class="code" href="classUnsteadyPeriodicTestFlow2D_1_1UnsteadyInitialVelocity.html">UnsteadyInitialVelocity</a>(){
+<a name="l00122"></a>00122                 }
+<a name="l00123"></a>00123                 <span class="keyword">virtual</span> <span class="keywordtype">double</span> value(<span class="keyword">const</span> dealii::Point&lt;2&gt;&amp; x,
+<a name="l00124"></a>00124                                 <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component = 0)<span class="keyword"> const </span>{
+<a name="l00125"></a>00125                         assert(component &lt; 2);
+<a name="l00126"></a>00126                         <span class="keywordflow">if</span> (component == 0) {
+<a name="l00127"></a>00127                                 <span class="keywordflow">if</span> ((x(1) &gt;= 0.25) and (x(1) &lt; 0.75)) {
+<a name="l00128"></a>00128                                         <span class="keywordflow">return</span> 0.1;
+<a name="l00129"></a>00129                                 } <span class="keywordflow">else</span> {
+<a name="l00130"></a>00130                                         <span class="keywordflow">return</span> -0.1;
+<a name="l00131"></a>00131                                 }
+<a name="l00132"></a>00132                         } <span class="keywordflow">else</span> {
+<a name="l00133"></a>00133                                 <span class="keywordflow">return</span> 0.0;
+<a name="l00134"></a>00134                         }
+<a name="l00135"></a>00135                 }
+<a name="l00136"></a>00136         };
+<a name="l00137"></a>00137 
+<a name="l00139"></a><a class="code" href="classUnsteadyPeriodicTestFlow2D.html#afaf08fa5f1a69e9ed9be9a774ae32773">00139</a>         <a class="code" href="classUnsteadyPeriodicTestFlow2D.html#afaf08fa5f1a69e9ed9be9a774ae32773" title="constructor">UnsteadyPeriodicTestFlow2D</a>(<span class="keywordtype">double</span> viscosity, <span class="keywordtype">size_t</span> refinementLevel) :
+<a name="l00140"></a>00140                         <a class="code" href="classSteadyPeriodicTestFlow2D.html" title="Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2...">SteadyPeriodicTestFlow2D</a>(viscosity, refinementLevel) {
+<a name="l00141"></a>00141                 setInitialU(boost::make_shared&lt;UnsteadyInitialVelocity&gt;());
 <a name="l00142"></a>00142         }
-<a name="l00143"></a>00143 
-<a name="l00144"></a>00144 
-<a name="l00145"></a>00145 
-<a name="l00146"></a>00146 };
+<a name="l00144"></a><a class="code" href="classUnsteadyPeriodicTestFlow2D.html#a45558f2ef5811d544b3b7b8d2893a35d">00144</a>         <span class="keyword">virtual</span> <a class="code" href="classUnsteadyPeriodicTestFlow2D.html#a45558f2ef5811d544b3b7b8d2893a35d" title="destructor">~UnsteadyPeriodicTestFlow2D</a>() {
+<a name="l00145"></a>00145         }
+<a name="l00146"></a>00146 
 <a name="l00147"></a>00147 
-<a name="l00148"></a>00148 } <span class="comment">/* namespace natrium */</span>
-<a name="l00149"></a>00149 <span class="preprocessor">#endif </span><span class="comment">/* PeriodicTestFlow2D_H_ */</span>
+<a name="l00148"></a>00148 
+<a name="l00149"></a>00149 };
+<a name="l00150"></a>00150 
+<a name="l00151"></a>00151 <span class="preprocessor">#endif </span><span class="comment">/* PeriodicTestFlow2D_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -183,7 +185,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

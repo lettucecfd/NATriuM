@@ -53,12 +53,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;deal.II/grid/tria.h&quot;</code><br/>
 <code>#include &quot;deal.II/fe/fe_dgq.h&quot;</code><br/>
 <code>#include &quot;deal.II/dofs/dof_handler.h&quot;</code><br/>
-<code>#include &lt;deal.II/dofs/dof_tools.h&gt;</code><br/>
+<code>#include &quot;deal.II/dofs/dof_tools.h&quot;</code><br/>
 <code>#include &quot;deal.II/lac/sparse_matrix.h&quot;</code><br/>
 <code>#include &quot;deal.II/fe/fe_update_flags.h&quot;</code><br/>
+<code>#include &quot;deal.II/fe/mapping_cartesian.h&quot;</code><br/>
 <code>#include &quot;deal.II/lac/block_sparsity_pattern.h&quot;</code><br/>
 <code>#include &quot;deal.II/base/quadrature_lib.h&quot;</code><br/>
 <code>#include &quot;<a class="el" href="AdvectionOperator_8h_source.html">AdvectionOperator.h</a>&quot;</code><br/>
+<code>#include &quot;AdvectionTools.h&quot;</code><br/>
+<code>#include &quot;SemiLagrangianTools.h&quot;</code><br/>
+<code>#include &quot;../boundaries/SemiLagrangianBoundaryHandler.h&quot;</code><br/>
 <code>#include &quot;../problemdescription/BoundaryCollection.h&quot;</code><br/>
 <code>#include &quot;../utilities/BasicNames.h&quot;</code><br/>
 <code>#include &quot;../utilities/NATriuMException.h&quot;</code><br/>
@@ -72,8 +76,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception class for <a class="el" href="classnatrium_1_1SemiLagrangian.html" title="This class solves the linear advection equations by a semi-Lagrangian scheme.">SemiLagrangian</a> advection operator.  <a href="classnatrium_1_1SemiLagrangianException.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian&lt; dim &gt;</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This class solves the linear advection equations by a semi-Lagrangian scheme.  <a href="classnatrium_1_1SemiLagrangian.html#_details">More...</a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1SemiLagrangian_1_1LagrangianPathDestination.html">natrium::SemiLagrangian&lt; dim &gt;::LagrangianPathDestination</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1SemiLagrangian_1_1LagrangianPathTracker.html">natrium::SemiLagrangian&lt; dim &gt;::LagrangianPathTracker</a></td></tr>
 <tr><td colspan="2"><h2>Namespaces</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html">natrium</a></td></tr>
 
@@ -100,7 +102,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

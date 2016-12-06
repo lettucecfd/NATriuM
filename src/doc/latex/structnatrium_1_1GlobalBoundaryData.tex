@@ -1,0 +1,63 @@
+\hypertarget{structnatrium_1_1GlobalBoundaryData}{
+\section{natrium::GlobalBoundaryData Struct Reference}
+\label{structnatrium_1_1GlobalBoundaryData}\index{natrium::GlobalBoundaryData@{natrium::GlobalBoundaryData}}
+}
+
+
+Container for global Data that is required by the \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues} class.  
+
+
+{\ttfamily \#include $<$BoundaryTools.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structnatrium_1_1GlobalBoundaryData_a5ee5214222b99f43fe7dda2fae1541b2}{
+{\bfseries GlobalBoundaryData} (const \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f\_\-old, \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f\_\-new, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, double viscosity, double dt)}
+\label{structnatrium_1_1GlobalBoundaryData_a5ee5214222b99f43fe7dda2fae1541b2}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structnatrium_1_1GlobalBoundaryData_a1f91270a22f386384bdf3d8dbdc4e475}{
+const \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \& \hyperlink{structnatrium_1_1GlobalBoundaryData_a1f91270a22f386384bdf3d8dbdc4e475}{m\_\-fold}}
+\label{structnatrium_1_1GlobalBoundaryData_a1f91270a22f386384bdf3d8dbdc4e475}
+
+\begin{DoxyCompactList}\small\item\em old distribution functions (at t-\/dt) \item\end{DoxyCompactList}\item 
+\hypertarget{structnatrium_1_1GlobalBoundaryData_aacf4ae7ac003a2f6d2af911ff3c75e2f}{
+\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \& \hyperlink{structnatrium_1_1GlobalBoundaryData_aacf4ae7ac003a2f6d2af911ff3c75e2f}{m\_\-fnew}}
+\label{structnatrium_1_1GlobalBoundaryData_aacf4ae7ac003a2f6d2af911ff3c75e2f}
+
+\begin{DoxyCompactList}\small\item\em new distribution functions (at t) \item\end{DoxyCompactList}\item 
+\hypertarget{structnatrium_1_1GlobalBoundaryData_a34dc1babbbd63a0ff74cc7475910ff34}{
+const \hyperlink{classnatrium_1_1Stencil}{Stencil} \& \hyperlink{structnatrium_1_1GlobalBoundaryData_a34dc1babbbd63a0ff74cc7475910ff34}{m\_\-stencil}}
+\label{structnatrium_1_1GlobalBoundaryData_a34dc1babbbd63a0ff74cc7475910ff34}
+
+\begin{DoxyCompactList}\small\item\em LBM stencil. \item\end{DoxyCompactList}\item 
+\hypertarget{structnatrium_1_1GlobalBoundaryData_a5d3c36be4d6fff45f8ce88fed18d51d5}{
+double \hyperlink{structnatrium_1_1GlobalBoundaryData_a5d3c36be4d6fff45f8ce88fed18d51d5}{m\_\-viscosity}}
+\label{structnatrium_1_1GlobalBoundaryData_a5d3c36be4d6fff45f8ce88fed18d51d5}
+
+\begin{DoxyCompactList}\small\item\em viscosity \item\end{DoxyCompactList}\item 
+\hypertarget{structnatrium_1_1GlobalBoundaryData_a1439fef0250e57ec53dd02c833339167}{
+double \hyperlink{structnatrium_1_1GlobalBoundaryData_a1439fef0250e57ec53dd02c833339167}{m\_\-dt}}
+\label{structnatrium_1_1GlobalBoundaryData_a1439fef0250e57ec53dd02c833339167}
+
+\begin{DoxyCompactList}\small\item\em time step \item\end{DoxyCompactList}\item 
+\hypertarget{structnatrium_1_1GlobalBoundaryData_a2b85d0c2f50a9d9f7ab10216ab222a63}{
+size\_\-t \hyperlink{structnatrium_1_1GlobalBoundaryData_a2b85d0c2f50a9d9f7ab10216ab222a63}{m\_\-Q}}
+\label{structnatrium_1_1GlobalBoundaryData_a2b85d0c2f50a9d9f7ab10216ab222a63}
+
+\begin{DoxyCompactList}\small\item\em number of discrete particle velocities in stencil \item\end{DoxyCompactList}\item 
+\hypertarget{structnatrium_1_1GlobalBoundaryData_a1a3b7c46e08d7afd4b48456310c8aa9d}{
+double \hyperlink{structnatrium_1_1GlobalBoundaryData_a1a3b7c46e08d7afd4b48456310c8aa9d}{m\_\-cs2}}
+\label{structnatrium_1_1GlobalBoundaryData_a1a3b7c46e08d7afd4b48456310c8aa9d}
+
+\begin{DoxyCompactList}\small\item\em speed of sound \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Container for global Data that is required by the \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues} class. 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/\hyperlink{BoundaryTools_8h}{BoundaryTools.h}\end{DoxyCompactItemize}

@@ -49,17 +49,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Abstract class for spatial part of the Advection Operator e_i * dx_i f.  
 <a href="#_details">More...</a></p>
 <code>#include &quot;../utilities/BasicNames.h&quot;</code><br/>
-<code>#include &quot;../stencils/Stencil.h&quot;</code><br/>
+<code>#include &quot;../timeintegration/TimeIntegrator.h&quot;</code><br/>
+<code>#include &quot;../solver/DistributionFunctions.h&quot;</code><br/>
+<code>#include &quot;../utilities/ConfigNames.h&quot;</code><br/>
 <code>#include &quot;deal.II/dofs/dof_handler.h&quot;</code><br/>
+<code>#include &quot;deal.II/dofs/dof_tools.h&quot;</code><br/>
 <code>#include &quot;deal.II/fe/fe_dgq.h&quot;</code><br/>
 <code>#include &quot;deal.II/base/quadrature_lib.h&quot;</code><br/>
 <code>#include &quot;deal.II/base/index_set.h&quot;</code><br/>
+<code>#include &quot;deal.II/lac/trilinos_sparsity_pattern.h&quot;</code><br/>
 
 <p><a href="AdvectionOperator_8h_source.html">Go to the source code of this file.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator&lt; dim &gt;</a></td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abstract class for spatial part of the Advection Operator e_i * dx_i f.  <a href="classnatrium_1_1AdvectionOperator.html#_details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abstract class for discretizing the linear advection equation. So far, NATriuM supports a spectral element discontinuous Galerkin solver (<a class="el" href="classnatrium_1_1SEDGMinLee.html" title="This class solves the linear advection equations by a scheme which is used, e.g....">SEDGMinLee</a>), and an interpolation-based solver (<a class="el" href="classnatrium_1_1SemiLagrangian.html" title="This class solves the linear advection equations by a semi-Lagrangian scheme.">SemiLagrangian</a>).  <a href="classnatrium_1_1AdvectionOperator.html#_details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2>Namespaces</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html">natrium</a></td></tr>
 
@@ -86,7 +90,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

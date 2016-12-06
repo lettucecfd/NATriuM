@@ -93,6 +93,18 @@ template void {\bfseries extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary} (
 template void {\bfseries extract\_\-dofs\_\-with\_\-support\_\-on\_\-boundary} (const dealii::DoFHandler$<$ 3 $>$ \&dof\_\-handler, const ComponentMask \&component\_\-mask, std::vector$<$ bool $>$ \&selected\_\-dofs, const std::set$<$ types::boundary\_\-id $>$ \&boundary\_\-ids)}
 \label{namespacenatrium_1_1DealIIExtensions_a157762b4a7d95c0f6b614f451d1dbd2d}
 
+\item 
+{\footnotesize template$<$size\_\-t dim$>$ }\\void \hyperlink{namespacenatrium_1_1DealIIExtensions_ae126f478c9cfcae855a24b140b5e64f1}{set\_\-boundary\_\-ids\_\-at\_\-hyperplane} (dealii::Triangulation$<$ dim $>$ \&mesh, unsigned int component, double value, size\_\-t boundary\_\-id, double tol=1e-\/10)
+\begin{DoxyCompactList}\small\item\em Set boundary ids for all faces that have their vertices on the hyperplane x\mbox{[}component\mbox{]}=value. \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_a54ad7a3525402e88e1ab01a9c9f6eb6b}{
+template void {\bfseries set\_\-boundary\_\-ids\_\-at\_\-hyperplane$<$ 2 $>$} (dealii::Triangulation$<$ 2 $>$ \&mesh, unsigned int component, double value, size\_\-t boundary\_\-id, double tol)}
+\label{namespacenatrium_1_1DealIIExtensions_a54ad7a3525402e88e1ab01a9c9f6eb6b}
+
+\item 
+\hypertarget{namespacenatrium_1_1DealIIExtensions_ad860cc7a713cef79e2ebb0e9bef6f23a}{
+template void {\bfseries set\_\-boundary\_\-ids\_\-at\_\-hyperplane$<$ 3 $>$} (dealii::Triangulation$<$ 3 $>$ \&mesh, unsigned int component, double value, size\_\-t boundary\_\-id, double tol)}
+\label{namespacenatrium_1_1DealIIExtensions_ad860cc7a713cef79e2ebb0e9bef6f23a}
+
 \end{DoxyCompactItemize}
 
 
@@ -152,3 +164,13 @@ Gathers cell pairs at a periodic boundary. This function starts at the coarsest 
 \begin{DoxyNote}{Note}
 The implementation of this function is similar to dealii::make\_\-periodicity\_\-constraints 
 \end{DoxyNote}
+\hypertarget{namespacenatrium_1_1DealIIExtensions_ae126f478c9cfcae855a24b140b5e64f1}{
+\index{natrium::DealIIExtensions@{natrium::DealIIExtensions}!set\_\-boundary\_\-ids\_\-at\_\-hyperplane@{set\_\-boundary\_\-ids\_\-at\_\-hyperplane}}
+\index{set\_\-boundary\_\-ids\_\-at\_\-hyperplane@{set\_\-boundary\_\-ids\_\-at\_\-hyperplane}!natrium::DealIIExtensions@{natrium::DealIIExtensions}}
+\subsubsection[{set\_\-boundary\_\-ids\_\-at\_\-hyperplane}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void natrium::DealIIExtensions::set\_\-boundary\_\-ids\_\-at\_\-hyperplane (dealii::Triangulation$<$ dim $>$ \& {\em mesh}, \/  unsigned int {\em component}, \/  double {\em value}, \/  size\_\-t {\em boundary\_\-id}, \/  double {\em tol} = {\ttfamily 1e-\/10})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{namespacenatrium_1_1DealIIExtensions_ae126f478c9cfcae855a24b140b5e64f1}
+
+
+Set boundary ids for all faces that have their vertices on the hyperplane x\mbox{[}component\mbox{]}=value. 
+\begin{DoxyParams}{Parameters}
+\item[{\em mesh}]the mesh \item[{\em component}]0 for x, 1 for y, 2 for z \item[{\em value}]the component value \item[{\em boundary\_\-id}]the boundary id that is assigned to the faces that are in the hyperpalen \item[{\em tol}]tolerance for comparison with value \end{DoxyParams}

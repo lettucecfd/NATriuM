@@ -66,108 +66,54 @@ Inheritance diagram for natrium::SemiLagrangian&lt; dim &gt;:</div>
 
 <p><a href="classnatrium_1_1SemiLagrangian-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
-<tr><td colspan="2"><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1SemiLagrangian_1_1LagrangianPathDestination.html">LagrangianPathDestination</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1SemiLagrangian_1_1LagrangianPathTracker.html">LagrangianPathTracker</a></td></tr>
-<tr><td colspan="2"><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f63be1763c4063ccdf2ff4bee7a3456"></a><!-- doxytag: member="natrium::SemiLagrangian::DeparturePointList" ref="a0f63be1763c4063ccdf2ff4bee7a3456" args="" -->
-typedef std::vector<br class="typebreak"/>
-&lt; <a class="el" href="structnatrium_1_1SemiLagrangian_1_1LagrangianPathTracker.html">LagrangianPathTracker</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a0f63be1763c4063ccdf2ff4bee7a3456">DeparturePointList</a></td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A list that stores cell-specific information for assembly. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a801296be3b37837a347342f32b2d57"></a><!-- doxytag: member="natrium::SemiLagrangian::Neighborhood" ref="a8a801296be3b37837a347342f32b2d57" args="" -->
-typedef std::vector&lt; typename <br class="typebreak"/>
-dealii::DoFHandler&lt; dim &gt;<br class="typebreak"/>
-::cell_iterator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a8a801296be3b37837a347342f32b2d57">Neighborhood</a></td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">List of neighbors. <br/></td></tr>
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#ae6ef291c9cd0579ebb5889b271d64123">SemiLagrangian</a> (boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt; boundaries, size_t orderOfFiniteElement, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, double delta_t)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#ae6ef291c9cd0579ebb5889b271d64123"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a6875a404457277b3e1f7853768837b3f">SemiLagrangian</a> (<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;problem, size_t orderOfFiniteElement, QuadratureName quad_name, SupportPointsName points_name, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, double delta_t)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a6875a404457277b3e1f7853768837b3f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b94451652c87b98a140ddcec7f21033"></a><!-- doxytag: member="natrium::SemiLagrangian::SemiLagrangian" ref="a4b94451652c87b98a140ddcec7f21033" args="(ProblemDescription&lt; dim &gt; &amp;problem, size_t orderOfFiniteElement, boost::shared_ptr&lt; Stencil &gt; stencil, double delta_t)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>SemiLagrangian</b> (<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;problem, size_t orderOfFiniteElement, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, double delta_t)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c0ebcd2055e6608cc6f280a89ea43a3"></a><!-- doxytag: member="natrium::SemiLagrangian::~SemiLagrangian" ref="a6c0ebcd2055e6608cc6f280a89ea43a3" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a6c0ebcd2055e6608cc6f280a89ea43a3">~SemiLagrangian</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a1e41b66518f92c75135b2873a39160ff">isCellInNeighborhood</a> (const typename dealii::DoFHandler&lt; dim &gt;::cell_accessor &amp;cell, const <a class="el" href="classnatrium_1_1SemiLagrangian.html#a8a801296be3b37837a347342f32b2d57">Neighborhood</a> &amp;neighborhood)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Checks if a cell is already in the neighborhood list.  <a href="#a1e41b66518f92c75135b2873a39160ff"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">dealii::DoFHandler&lt; dim &gt;<br class="typebreak"/>
-::cell_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#aac0394a8292810788e983909b2de4355">getNeighbor</a> (const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t i)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get i-th neighbor of a cell, incorporating periodic boundaries  <a href="#aac0394a8292810788e983909b2de4355"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#ab6d5f8d666330d8f229ee727985592b8">getNeighborhood</a> (typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, <a class="el" href="classnatrium_1_1SemiLagrangian.html#a8a801296be3b37837a347342f32b2d57">Neighborhood</a> &amp;neighborhood, size_t n_shells=1)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fill the neighborhood list  <a href="#ab6d5f8d666330d8f229ee727985592b8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">dealii::DoFHandler&lt; dim &gt;<br class="typebreak"/>
-::active_cell_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a9db13229770025b4c0461d8e4ff4ee50">recursivelySearchInNeighborhood</a> (const dealii::Point&lt; dim &gt; &amp;p, typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">recursively search a point in neighborhood, until is found  <a href="#a9db13229770025b4c0461d8e4ff4ee50"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a3b096afb85f7ea3782e03ba36b973088">faceCrossedFirst</a> (const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const dealii::Point&lt; dim &gt; &amp;p_inside, const dealii::Point&lt; dim &gt; &amp;p_outside, dealii::Point&lt; dim &gt; &amp;p_boundary, double *lambda, size_t *child_id)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determines which face is crossed first, when moving from one point inside the cell to a point outside.  <a href="#a3b096afb85f7ea3782e03ba36b973088"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a108742ef40b532cb9e1e26384dafec94">shapeFunctionValue</a> (const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;values)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Calculates the shape values for arbitrary points.  <a href="#a108742ef40b532cb9e1e26384dafec94"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f08b1181db3c1d1f26ba0cac9210fbc"></a><!-- doxytag: member="natrium::SemiLagrangian::reassemble" ref="a7f08b1181db3c1d1f26ba0cac9210fbc" args="()" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a7f08b1181db3c1d1f26ba0cac9210fbc">reassemble</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function to (re-)assemble linear system <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a29408988807e9fbe24c8900c0e6bcf00"></a><!-- doxytag: member="natrium::SemiLagrangian::setupDoFs" ref="a29408988807e9fbe24c8900c0e6bcf00" args="()" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setupDoFs</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abbaedf8c657aa964006a3bb193185559"></a><!-- doxytag: member="natrium::SemiLagrangian::stream" ref="abbaedf8c657aa964006a3bb193185559" args="()" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#abbaedf8c657aa964006a3bb193185559">stream</a> ()</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">make streaming step <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8a21527f3ab056eab8b3b0af25a572c"></a><!-- doxytag: member="natrium::SemiLagrangian::getSystemMatrix" ref="ae8a21527f3ab056eab8b3b0af25a572c" args="() const " -->
-virtual const <br class="typebreak"/>
-distributed_sparse_block_matrix &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#ae8a21527f3ab056eab8b3b0af25a572c">getSystemMatrix</a> () const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get global system matrix <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91283ee7b7dfd1ecaa92992b9b48ee5d"></a><!-- doxytag: member="natrium::SemiLagrangian::mapDoFsToSupportPoints" ref="a91283ee7b7dfd1ecaa92992b9b48ee5d" args="(std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const " -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>mapDoFsToSupportPoints</b> (std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e3e4c9820cf2701f789f8ba8ea9d9ac"></a><!-- doxytag: member="natrium::SemiLagrangian::getDoFHandler" ref="a5e3e4c9820cf2701f789f8ba8ea9d9ac" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::DoFHandler&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDoFHandler</b> () const </td></tr>
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a29408988807e9fbe24c8900c0e6bcf00">setupDoFs</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Setup degrees of freedom and fill sparsity pattern of the system matrix. Purely virtual for this class. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a03956c49c0bd288340b734f2fa9aad3c">stream</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f_old, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, double t)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stream the distribution functions. Purely virtual for this class.  <a href="#a03956c49c0bd288340b734f2fa9aad3c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a731b3834c039ba6bc07a5ee0e51f8e4c"></a><!-- doxytag: member="natrium::SemiLagrangian::applyBoundaryConditions" ref="a731b3834c039ba6bc07a5ee0e51f8e4c" args="(DistributionFunctions &amp;f_old, DistributionFunctions &amp;f, double t)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>applyBoundaryConditions</b> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f_old, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, double t)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#abd17b628b89c43303d067c0a4e4d0bf1">setDeltaT</a> (double deltaT)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">set time step  <a href="#abd17b628b89c43303d067c0a4e4d0bf1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dealii::DoFHandler&lt; dim &gt;<br class="typebreak"/>
+::cell_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a5e70ea981e2070d5e9657f3df8d61979">getNeighbor</a> (const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t i)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get i-th neighbor of a cell, incorporating periodic boundaries  <a href="#a5e70ea981e2070d5e9657f3df8d61979"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a511a39fcd3f598bd42c18deeb50cd7f5">getNeighborhood</a> (typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, Neighborhood&lt; dim &gt; &amp;neighborhood, size_t n_shells=1)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fill the neighborhood list  <a href="#a511a39fcd3f598bd42c18deeb50cd7f5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dealii::DoFHandler&lt; dim &gt;<br class="typebreak"/>
+::active_cell_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a8d075c2ae01b26d66999782cc14c5515">recursivelySearchInNeighborhood</a> (const dealii::Point&lt; dim &gt; &amp;p, typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">recursively search a point in neighborhood, until is found  <a href="#a8d075c2ae01b26d66999782cc14c5515"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#ac11ac59a28176a74e94fde81362ce7b5">setTimeIntegrator</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt;)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Apply boundary conditions. Purely virtual for this class.  <a href="#ac11ac59a28176a74e94fde81362ce7b5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac644f8378ee6bd26ff24eb025a60dda0"></a><!-- doxytag: member="natrium::SemiLagrangian::getBoundaryHandler" ref="ac644f8378ee6bd26ff24eb025a60dda0" args="() const " -->
+const <br class="typebreak"/>
+<a class="el" href="classnatrium_1_1SemiLagrangianBoundaryHandler.html">SemiLagrangianBoundaryHandler</a><br class="typebreak"/>
+&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getBoundaryHandler</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a7facbe9874541441921973030ec6f831">isCellInNeighborhood</a> (const typename dealii::DoFHandler&lt; dim &gt;::cell_accessor &amp;cell, const Neighborhood&lt; dim &gt; &amp;neighborhood)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Checks if a cell is already in the neighborhood list.  <a href="#a7facbe9874541441921973030ec6f831"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6cdea22c2d1999275488710ab08c94fa"></a><!-- doxytag: member="natrium::SemiLagrangian::getBlockSparsityPattern" ref="a6cdea22c2d1999275488710ab08c94fa" args="() const " -->
 const std::vector&lt; std::vector<br class="typebreak"/>
 &lt; dealii::TrilinosWrappers::SparsityPattern &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getBlockSparsityPattern</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7bcf29bf27ec29138625b753fd5ea57"></a><!-- doxytag: member="natrium::SemiLagrangian::getMapping" ref="ac7bcf29bf27ec29138625b753fd5ea57" args="() const " -->
-const dealii::MappingQ&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMapping</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7fada93fe551913cbd3953b649bac5ab"></a><!-- doxytag: member="natrium::SemiLagrangian::getCelldofToQIndex" ref="a7fada93fe551913cbd3953b649bac5ab" args="() const " -->
-virtual const std::map&lt; size_t, <br class="typebreak"/>
-size_t &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCelldofToQIndex</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a76b652f977cd083a430c664ae28b9d1d"></a><!-- doxytag: member="natrium::SemiLagrangian::getFacedofToQIndex" ref="a76b652f977cd083a430c664ae28b9d1d" args="() const " -->
-const vector&lt; std::map&lt; size_t, <br class="typebreak"/>
-size_t &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFacedofToQIndex</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85f0c5658089dad43594df005398b478"></a><!-- doxytag: member="natrium::SemiLagrangian::getFaceQuadrature" ref="a85f0c5658089dad43594df005398b478" args="() const " -->
-const boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::QGaussLobatto&lt; dim-1 &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFaceQuadrature</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab62cef51c3f415243da5b30061a32bdb"></a><!-- doxytag: member="natrium::SemiLagrangian::getFe" ref="ab62cef51c3f415243da5b30061a32bdb" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::FE_DGQArbitraryNodes<br class="typebreak"/>
-&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFe</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51957acb7ab69735c985be65538878f6"></a><!-- doxytag: member="natrium::SemiLagrangian::getNumberOfDoFsPerCell" ref="a51957acb7ab69735c985be65538878f6" args="() const " -->
-virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getNumberOfDoFsPerCell</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a17d0d8e42f22eae8c55d754530636dce"></a><!-- doxytag: member="natrium::SemiLagrangian::getQuadrature" ref="a17d0d8e42f22eae8c55d754530636dce" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::QGaussLobatto&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQuadrature</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aabf77e88390f4c6656d2c45cdc65cce8"></a><!-- doxytag: member="natrium::SemiLagrangian::getOrderOfFiniteElement" ref="aabf77e88390f4c6656d2c45cdc65cce8" args="() const " -->
-virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getOrderOfFiniteElement</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#aeb3b1dfda8a0d8fe7473716f98b12647">getNumberOfDoFs</a> () const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">save matrices and status to files  <a href="#aeb3b1dfda8a0d8fe7473716f98b12647"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac447ccd4c5b945da503cd57f8072db81"></a><!-- doxytag: member="natrium::SemiLagrangian::memory_consumption_sparsity_pattern" ref="ac447ccd4c5b945da503cd57f8072db81" args="() const " -->
+virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#ac447ccd4c5b945da503cd57f8072db81">memory_consumption_sparsity_pattern</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">estimate the memory consumption of the sparsity pattern For SEDG, this is 0, because the sparsity pattern is a part of the trilinos matrix. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a730b721bc86a64418b2ae60fa888b3d4"></a><!-- doxytag: member="natrium::SemiLagrangian::getSystemVector" ref="a730b721bc86a64418b2ae60fa888b3d4" args="() const " -->
 virtual const <br class="typebreak"/>
-distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSystemVector</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5eea1ecde1da0e7aa81f4972037f5f01"></a><!-- doxytag: member="natrium::SemiLagrangian::getLocallyOwnedDofs" ref="a5eea1ecde1da0e7aa81f4972037f5f01" args="()" -->
-const dealii::IndexSet &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getLocallyOwnedDofs</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a17810c1590eb72c5449819f51fa6b4d7"></a><!-- doxytag: member="natrium::SemiLagrangian::getLocallyRelevantDofs" ref="a17810c1590eb72c5449819f51fa6b4d7" args="()" -->
-const dealii::IndexSet &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getLocallyRelevantDofs</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4489b0521eac87a93119f1f02459722"></a><!-- doxytag: member="natrium::SemiLagrangian::getQIndexToFacedof" ref="aa4489b0521eac87a93119f1f02459722" args="() const " -->
-virtual const vector&lt; std::map<br class="typebreak"/>
-&lt; size_t, size_t &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQIndexToFacedof</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7bd1619acea6f079a7b3151a3c5a3af"></a><!-- doxytag: member="natrium::SemiLagrangian::getMesh" ref="ac7bd1619acea6f079a7b3151a3c5a3af" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMesh</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf58cb3aa2282de0cee86cc7dd3d7707"></a><!-- doxytag: member="natrium::SemiLagrangian::getStencil" ref="aaf58cb3aa2282de0cee86cc7dd3d7707" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStencil</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7a610fbe5599e729230438af1dff2a0"></a><!-- doxytag: member="natrium::SemiLagrangian::getDeltaT" ref="ab7a610fbe5599e729230438af1dff2a0" args="() const " -->
-double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDeltaT</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd17b628b89c43303d067c0a4e4d0bf1"></a><!-- doxytag: member="natrium::SemiLagrangian::setDeltaT" ref="abd17b628b89c43303d067c0a4e4d0bf1" args="(double deltaT)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setDeltaT</b> (double deltaT)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac447ccd4c5b945da503cd57f8072db81"></a><!-- doxytag: member="natrium::SemiLagrangian::memory_consumption_sparsity_pattern" ref="ac447ccd4c5b945da503cd57f8072db81" args="() const " -->
-virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_consumption_sparsity_pattern</b> () const </td></tr>
+distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a730b721bc86a64418b2ae60fa888b3d4">getSystemVector</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get system vector. To be removed. <br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;size_t dim&gt;<br/>
@@ -181,7 +127,7 @@ virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_cons
   </dd>
 </dl>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ae6ef291c9cd0579ebb5889b271d64123"></a><!-- doxytag: member="natrium::SemiLagrangian::SemiLagrangian" ref="ae6ef291c9cd0579ebb5889b271d64123" args="(boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, boost::shared_ptr&lt; BoundaryCollection&lt; dim &gt; &gt; boundaries, size_t orderOfFiniteElement, boost::shared_ptr&lt; Stencil &gt; stencil, double delta_t)" -->
+<a class="anchor" id="a6875a404457277b3e1f7853768837b3f"></a><!-- doxytag: member="natrium::SemiLagrangian::SemiLagrangian" ref="a6875a404457277b3e1f7853768837b3f" args="(ProblemDescription&lt; dim &gt; &amp;problem, size_t orderOfFiniteElement, QuadratureName quad_name, SupportPointsName points_name, boost::shared_ptr&lt; Stencil &gt; stencil, double delta_t)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -190,20 +136,26 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1SemiLagrangian.html">SemiLagrangian</a> </td>
           <td>(</td>
-          <td class="paramtype">boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt;&nbsp;</td>
-          <td class="paramname"> <em>triangulation</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt;&nbsp;</td>
-          <td class="paramname"> <em>boundaries</em>, </td>
+          <td class="paramtype"><a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>problem</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&nbsp;</td>
           <td class="paramname"> <em>orderOfFiniteElement</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QuadratureName&nbsp;</td>
+          <td class="paramname"> <em>quad_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SupportPointsName&nbsp;</td>
+          <td class="paramname"> <em>points_name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -304,18 +256,20 @@ template&lt;size_t dim&gt; </div>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>face_id, if a face is crossed; -1, if no face is crossed (i.e. the second point is inside the cell) </dd></dl>
-<dl class="note"><dt><b>Note:</b></dt><dd>lambda is calculated for the unit cell. In general, p_boundary = lambda * p_outside + (1-lambda) * p_inside does not hold </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>lambda is calculated for the unit cell. In general, p_boundary = lambda * p_outside + (1-lambda) * p_inside does not hold </dd>
+<dd>
+The current implementation does not do anything special at corner nodes. It prefers x over y over z faces. This may lead to problems later on. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="aac0394a8292810788e983909b2de4355"></a><!-- doxytag: member="natrium::SemiLagrangian::getNeighbor" ref="aac0394a8292810788e983909b2de4355" args="(const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t i)" -->
+<a class="anchor" id="a5e70ea981e2070d5e9657f3df8d61979"></a><!-- doxytag: member="natrium::SemiLagrangian::getNeighbor" ref="a5e70ea981e2070d5e9657f3df8d61979" args="(const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, size_t i)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">dealii::DoFHandler&lt;dim&gt;::cell_iterator <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::getNeighbor </td>
+          <td class="memname">dealii::DoFHandler&lt; dim &gt;::cell_iterator <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::getNeighbor </td>
           <td>(</td>
           <td class="paramtype">const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&nbsp;</td>
           <td class="paramname"> <em>cell</em>, </td>
@@ -347,7 +301,7 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ab6d5f8d666330d8f229ee727985592b8"></a><!-- doxytag: member="natrium::SemiLagrangian::getNeighborhood" ref="ab6d5f8d666330d8f229ee727985592b8" args="(typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, Neighborhood &amp;neighborhood, size_t n_shells=1)" -->
+<a class="anchor" id="a511a39fcd3f598bd42c18deeb50cd7f5"></a><!-- doxytag: member="natrium::SemiLagrangian::getNeighborhood" ref="a511a39fcd3f598bd42c18deeb50cd7f5" args="(typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, Neighborhood&lt; dim &gt; &amp;neighborhood, size_t n_shells=1)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -362,7 +316,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classnatrium_1_1SemiLagrangian.html#a8a801296be3b37837a347342f32b2d57">Neighborhood</a> &amp;&nbsp;</td>
+          <td class="paramtype">Neighborhood&lt; dim &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>neighborhood</em>, </td>
         </tr>
         <tr>
@@ -392,42 +346,7 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="aeb3b1dfda8a0d8fe7473716f98b12647"></a><!-- doxytag: member="natrium::SemiLagrangian::getNumberOfDoFs" ref="aeb3b1dfda8a0d8fe7473716f98b12647" args="() const " -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;size_t dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual size_t <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::getNumberOfDoFs </td>
-          <td>(</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const<code> [inline, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>save matrices and status to files </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>directory</em>&nbsp;</td><td>directory to save the matrix files to </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl><dt><b>Exceptions:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em><a class="el" href="classnatrium_1_1AdvectionSolverException.html" title="Exception class for SEDGMinLee.">AdvectionSolverException</a></em>&nbsp;</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classnatrium_1_1AdvectionOperator.html#a251e21d1dd023926d4c5f7fd973b90bf">natrium::AdvectionOperator&lt; dim &gt;</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a1e41b66518f92c75135b2873a39160ff"></a><!-- doxytag: member="natrium::SemiLagrangian::isCellInNeighborhood" ref="a1e41b66518f92c75135b2873a39160ff" args="(const typename dealii::DoFHandler&lt; dim &gt;::cell_accessor &amp;cell, const Neighborhood &amp;neighborhood)" -->
+<a class="anchor" id="a7facbe9874541441921973030ec6f831"></a><!-- doxytag: member="natrium::SemiLagrangian::isCellInNeighborhood" ref="a7facbe9874541441921973030ec6f831" args="(const typename dealii::DoFHandler&lt; dim &gt;::cell_accessor &amp;cell, const Neighborhood&lt; dim &gt; &amp;neighborhood)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -442,7 +361,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classnatrium_1_1SemiLagrangian.html#a8a801296be3b37837a347342f32b2d57">Neighborhood</a> &amp;&nbsp;</td>
+          <td class="paramtype">const Neighborhood&lt; dim &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>neighborhood</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -466,14 +385,14 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a9db13229770025b4c0461d8e4ff4ee50"></a><!-- doxytag: member="natrium::SemiLagrangian::recursivelySearchInNeighborhood" ref="a9db13229770025b4c0461d8e4ff4ee50" args="(const dealii::Point&lt; dim &gt; &amp;p, typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)" -->
+<a class="anchor" id="a8d075c2ae01b26d66999782cc14c5515"></a><!-- doxytag: member="natrium::SemiLagrangian::recursivelySearchInNeighborhood" ref="a8d075c2ae01b26d66999782cc14c5515" args="(const dealii::Point&lt; dim &gt; &amp;p, typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">dealii::DoFHandler&lt;dim&gt;::active_cell_iterator <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::recursivelySearchInNeighborhood </td>
+          <td class="memname">dealii::DoFHandler&lt; dim &gt;::active_cell_iterator <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::recursivelySearchInNeighborhood </td>
           <td>(</td>
           <td class="paramtype">const dealii::Point&lt; dim &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>p</em>, </td>
@@ -505,49 +424,106 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a108742ef40b532cb9e1e26384dafec94"></a><!-- doxytag: member="natrium::SemiLagrangian::shapeFunctionValue" ref="a108742ef40b532cb9e1e26384dafec94" args="(const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;values)" -->
+<a class="anchor" id="abd17b628b89c43303d067c0a4e4d0bf1"></a><!-- doxytag: member="natrium::SemiLagrangian::setDeltaT" ref="abd17b628b89c43303d067c0a4e4d0bf1" args="(double deltaT)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::shapeFunctionValue </td>
+          <td class="memname">virtual void <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::setDeltaT </td>
           <td>(</td>
-          <td class="paramtype">const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&nbsp;</td>
-          <td class="paramname"> <em>cell</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>points</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; std::vector&lt; double &gt; &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>values</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [inline]</code></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>delta_t</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Calculates the shape values for arbitrary points. </p>
+<p>set time step </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>cell</em>&nbsp;</td><td>the cell which contains the points </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>a</em>&nbsp;</td><td>vector of points </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>a</em>&nbsp;</td><td>vector of vector&lt;double&gt; that will contain the shape function values at the points. Has to have the size n_points x dofs_per_cell </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>delta_t</em>&nbsp;</td><td>time step </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="note"><dt><b>Note:</b></dt><dd>This function is similar to FEFieldFunction&lt;dim, DH, VECTOR&gt;::vector_value </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classnatrium_1_1AdvectionOperator.html#a640db5be4d4930198124fa57752167e5">natrium::AdvectionOperator&lt; dim &gt;</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac11ac59a28176a74e94fde81362ce7b5"></a><!-- doxytag: member="natrium::SemiLagrangian::setTimeIntegrator" ref="ac11ac59a28176a74e94fde81362ce7b5" args="(boost::shared_ptr&lt; TimeIntegrator&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt;)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::setTimeIntegrator </td>
+          <td>(</td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt;&nbsp;</td>
+          <td class="paramname"> <em>timeIntegrator</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Apply boundary conditions. Purely virtual for this class. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>While the SEDG boundary conditions are directly implemented in the system matrix and vector, the semi-Lagrangian advection operator needs to do something in this functions. set the time integrator for the SEDG streaming step. Purely virtual for this class. </dd>
+<dd>
+This function is empty for the semi-Lagrangian streaming, which does not require time integrators. </dd></dl>
+
+<p>Implements <a class="el" href="classnatrium_1_1AdvectionOperator.html#aa93f60c7e7270a35df21387a962d7a38">natrium::AdvectionOperator&lt; dim &gt;</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a03956c49c0bd288340b734f2fa9aad3c"></a><!-- doxytag: member="natrium::SemiLagrangian::stream" ref="a03956c49c0bd288340b734f2fa9aad3c" args="(DistributionFunctions &amp;f_old, DistributionFunctions &amp;f, double t)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double <a class="el" href="classnatrium_1_1SemiLagrangian.html">natrium::SemiLagrangian</a>&lt; dim &gt;::stream </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>f_old</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>t</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Stream the distribution functions. Purely virtual for this class. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>f_old</em>&nbsp;</td><td>distribution functions at t </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>f</em>&nbsp;</td><td>distribution functsion at t+delta_t </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classnatrium_1_1AdvectionOperator.html#abccc060e37071fa776cd6e9fc6cc7987">natrium::AdvectionOperator&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -570,7 +546,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

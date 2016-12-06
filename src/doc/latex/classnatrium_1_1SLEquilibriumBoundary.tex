@@ -1,0 +1,64 @@
+\hypertarget{classnatrium_1_1SLEquilibriumBoundary}{
+\section{natrium::SLEquilibriumBoundary$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1SLEquilibriumBoundary}\index{natrium::SLEquilibriumBoundary@{natrium::SLEquilibriumBoundary}}
+}
+
+
+\hyperlink{classnatrium_1_1Boundary}{Boundary} condition that sets an equilibrium with respect to a prescribed velocity or pressure.  
+
+
+{\ttfamily \#include $<$SLEquilibriumBoundary.h$>$}Inheritance diagram for natrium::SLEquilibriumBoundary$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3cm]{classnatrium_1_1SLEquilibriumBoundary}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1SLEquilibriumBoundary_abd99d0bc8bb8c15aedb8dbef803b38df}{
+{\bfseries SLEquilibriumBoundary} (size\_\-t boundary\_\-id, dealii::Tensor$<$ 1, dim $>$ \&velocity)}
+\label{classnatrium_1_1SLEquilibriumBoundary_abd99d0bc8bb8c15aedb8dbef803b38df}
+
+\item 
+virtual \hyperlink{namespacenatrium_a93b2a3d564675413b9f6cc88c60f46af}{BoundaryFlags} \hyperlink{classnatrium_1_1SLEquilibriumBoundary_a09e349b179448c54a68245485be642f0}{getUpdateFlags} () const 
+\begin{DoxyCompactList}\small\item\em Get update flags. This pure virtual function has to be overriden by derived classes. \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1SLEquilibriumBoundary_a25ba9ab8c3263043b158e913d130bd2d}{calculateBoundaryValues} (\hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues}$<$ dim $>$ \&fe\_\-boundary\_\-values, size\_\-t q\_\-point, const \hyperlink{structnatrium_1_1LagrangianPathDestination}{LagrangianPathDestination} \&destination, double eps, double t)
+\begin{DoxyCompactList}\small\item\em calculate boundary values. This pure virtual function has to be overriden by derived classes. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::SLEquilibriumBoundary$<$ dim $>$}
+
+\hyperlink{classnatrium_1_1Boundary}{Boundary} condition that sets an equilibrium with respect to a prescribed velocity or pressure. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1SLEquilibriumBoundary_a25ba9ab8c3263043b158e913d130bd2d}{
+\index{natrium::SLEquilibriumBoundary@{natrium::SLEquilibriumBoundary}!calculateBoundaryValues@{calculateBoundaryValues}}
+\index{calculateBoundaryValues@{calculateBoundaryValues}!natrium::SLEquilibriumBoundary@{natrium::SLEquilibriumBoundary}}
+\subsubsection[{calculateBoundaryValues}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual void {\bf natrium::SLEquilibriumBoundary}$<$ dim $>$::calculateBoundaryValues ({\bf FEBoundaryValues}$<$ dim $>$ \& {\em fe\_\-boundary\_\-values}, \/  size\_\-t {\em q\_\-point}, \/  const {\bf LagrangianPathDestination} \& {\em destination}, \/  double {\em eps}, \/  double {\em t})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1SLEquilibriumBoundary_a25ba9ab8c3263043b158e913d130bd2d}
+
+
+calculate boundary values. This pure virtual function has to be overriden by derived classes. 
+\begin{DoxyParams}{Parameters}
+\item[{\em fe\_\-boundary\_\-values}]An instance of \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues}, that stores the flow variables at t-\/dt (here only the distribution functions) \item[{\em q\_\-point}]the local index of the boundary hit point, i.e. its position in the fe\_\-boundary\_\-values \item[{\em destination}]defines the degree of freedom and discrete direction that the calculated value is assigned to (usually defines a point close to the boundary) \item[{\em eps}]Defines the point in time at which the boundary is hit. \item[{\em t}]global time. Only relevant for time-\/dependent boundary conditions. \end{DoxyParams}
+
+
+Implements \hyperlink{classnatrium_1_1SLBoundary_a7c166745b087afdd137013f994733b89}{natrium::SLBoundary$<$ dim $>$}.\hypertarget{classnatrium_1_1SLEquilibriumBoundary_a09e349b179448c54a68245485be642f0}{
+\index{natrium::SLEquilibriumBoundary@{natrium::SLEquilibriumBoundary}!getUpdateFlags@{getUpdateFlags}}
+\index{getUpdateFlags@{getUpdateFlags}!natrium::SLEquilibriumBoundary@{natrium::SLEquilibriumBoundary}}
+\subsubsection[{getUpdateFlags}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual {\bf BoundaryFlags} {\bf natrium::SLEquilibriumBoundary}$<$ dim $>$::getUpdateFlags () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1SLEquilibriumBoundary_a09e349b179448c54a68245485be642f0}
+
+
+Get update flags. This pure virtual function has to be overriden by derived classes. \begin{DoxyReturn}{Returns}
+the flags specifying the required values that have to be calculated from the flow field at t-\/dt, e.g. only\_\-distributions, boundary\_\-rho, boundary\_\-drho\_\-dt, ... 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classnatrium_1_1SLBoundary_ad2b9a7f797b3af9b6493f9e9c5da5434}{natrium::SLBoundary$<$ dim $>$}.
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/SLEquilibriumBoundary.h\end{DoxyCompactItemize}

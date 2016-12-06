@@ -49,7 +49,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <h1>natrium::AdvectionOperator&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::AdvectionOperator" -->
-<p>Abstract class for spatial part of the Advection Operator e_i * dx_i f.  
+<p>Abstract class for discretizing the linear advection equation. So far, NATriuM supports a spectral element discontinuous Galerkin solver (<a class="el" href="classnatrium_1_1SEDGMinLee.html" title="This class solves the linear advection equations by a scheme which is used, e.g....">SEDGMinLee</a>), and an interpolation-based solver (<a class="el" href="classnatrium_1_1SemiLagrangian.html" title="This class solves the linear advection equations by a semi-Lagrangian scheme.">SemiLagrangian</a>).  
 <a href="#_details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="AdvectionOperator_8h_source.html">AdvectionOperator.h</a>&gt;</code></p>
@@ -68,120 +68,498 @@ Inheritance diagram for natrium::AdvectionOperator&lt; dim &gt;:</div>
 <p><a href="classnatrium_1_1AdvectionOperator-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a48d3a57e3433d9f6c3768ad2f392df56"></a><!-- doxytag: member="natrium::AdvectionOperator::AdvectionOperator" ref="a48d3a57e3433d9f6c3768ad2f392df56" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a48d3a57e3433d9f6c3768ad2f392df56">AdvectionOperator</a> ()</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a89843b1b14386e984a5dab59b0a602b4">AdvectionOperator</a> (<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;problem, size_t fe_order, QuadratureName quad_name, SupportPointsName points_name, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, double delta_t, bool dg)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor.  <a href="#a89843b1b14386e984a5dab59b0a602b4"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a691156dace41e3075fd89953f30ae83f"></a><!-- doxytag: member="natrium::AdvectionOperator::~AdvectionOperator" ref="a691156dace41e3075fd89953f30ae83f" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a691156dace41e3075fd89953f30ae83f">~AdvectionOperator</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63ea65f840743d1b75d529ea4c91d4b0"></a><!-- doxytag: member="natrium::AdvectionOperator::distributeDoFs" ref="a63ea65f840743d1b75d529ea4c91d4b0" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>distributeDoFs</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a640db5be4d4930198124fa57752167e5">setDeltaT</a> (double delta_t)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">set time step  <a href="#a640db5be4d4930198124fa57752167e5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89c25c3dae9a1e5973cd89fab8c2c052"></a><!-- doxytag: member="natrium::AdvectionOperator::reassemble" ref="a89c25c3dae9a1e5973cd89fab8c2c052" args="()=0" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a89c25c3dae9a1e5973cd89fab8c2c052">reassemble</a> ()=0</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function to (re-)assemble linear system <br/></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">(re-)assemble system matrix (and system vector, for SEDG). Purely virtual for this class. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcd3e1a5bfd9fc4bc2bbc09c02c0f248"></a><!-- doxytag: member="natrium::AdvectionOperator::setupDoFs" ref="adcd3e1a5bfd9fc4bc2bbc09c02c0f248" args="()=0" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setupDoFs</b> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aacdf6096f40166c5ec64686655c906a0"></a><!-- doxytag: member="natrium::AdvectionOperator::stream" ref="aacdf6096f40166c5ec64686655c906a0" args="()=0" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#aacdf6096f40166c5ec64686655c906a0">stream</a> ()=0</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">make streaming step <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2cbaee43740d976492e6c9d6d2b84ad0"></a><!-- doxytag: member="natrium::AdvectionOperator::getSystemMatrix" ref="a2cbaee43740d976492e6c9d6d2b84ad0" args="() const =0" -->
-virtual const <br class="typebreak"/>
-distributed_sparse_block_matrix &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSystemMatrix</b> () const =0</td></tr>
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#adcd3e1a5bfd9fc4bc2bbc09c02c0f248">setupDoFs</a> ()=0</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Setup degrees of freedom and fill sparsity pattern of the system matrix. Purely virtual for this class. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5444b3cde21a9b638d963e36d2f3ad88"></a><!-- doxytag: member="natrium::AdvectionOperator::applyBoundaryConditions" ref="a5444b3cde21a9b638d963e36d2f3ad88" args="(DistributionFunctions &amp;f_old, DistributionFunctions &amp;f, double t)=0" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>applyBoundaryConditions</b> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f_old, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, double t)=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#abccc060e37071fa776cd6e9fc6cc7987">stream</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f_old, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, double t)=0</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stream the distribution functions. Purely virtual for this class.  <a href="#abccc060e37071fa776cd6e9fc6cc7987"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#aa93f60c7e7270a35df21387a962d7a38">setTimeIntegrator</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt; timeIntegrator)=0</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Apply boundary conditions. Purely virtual for this class.  <a href="#aa93f60c7e7270a35df21387a962d7a38"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1eb5cd5a2c1b6b3b8f6395bac67ef55"></a><!-- doxytag: member="natrium::AdvectionOperator::getSystemVector" ref="aa1eb5cd5a2c1b6b3b8f6395bac67ef55" args="() const =0" -->
 virtual const <br class="typebreak"/>
-distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSystemVector</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf18a849f6d7b81083d1fee462f87500"></a><!-- doxytag: member="natrium::AdvectionOperator::getDoFHandler" ref="acf18a849f6d7b81083d1fee462f87500" args="() const =0" -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::DoFHandler&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDoFHandler</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6171b5c645167a5e81f56964f1b9ae6f"></a><!-- doxytag: member="natrium::AdvectionOperator::mapDoFsToSupportPoints" ref="a6171b5c645167a5e81f56964f1b9ae6f" args="(std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>mapDoFsToSupportPoints</b> (std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1c9d47c0cb17019bb122a4e45051ffa"></a><!-- doxytag: member="natrium::AdvectionOperator::getMapping" ref="aa1c9d47c0cb17019bb122a4e45051ffa" args="() const =0" -->
-virtual const dealii::MappingQ<br class="typebreak"/>
-&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMapping</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a251e21d1dd023926d4c5f7fd973b90bf">getNumberOfDoFs</a> () const =0</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">save matrices and status to files  <a href="#a251e21d1dd023926d4c5f7fd973b90bf"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad282440d7dbee0e78f6489e9878d1b41"></a><!-- doxytag: member="natrium::AdvectionOperator::getFe" ref="ad282440d7dbee0e78f6489e9878d1b41" args="() const =0" -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::FE_DGQArbitraryNodes<br class="typebreak"/>
-&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFe</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac452ae3240fa37df817c7e294f71315e"></a><!-- doxytag: member="natrium::AdvectionOperator::getNumberOfDoFsPerCell" ref="ac452ae3240fa37df817c7e294f71315e" args="() const =0" -->
-virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getNumberOfDoFsPerCell</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf5b566df5abc5ad2afa8977e83bb518"></a><!-- doxytag: member="natrium::AdvectionOperator::getQuadrature" ref="adf5b566df5abc5ad2afa8977e83bb518" args="() const =0" -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::QGaussLobatto&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQuadrature</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88232d5ef52ce0db77133682e26a5760"></a><!-- doxytag: member="natrium::AdvectionOperator::getCelldofToQIndex" ref="a88232d5ef52ce0db77133682e26a5760" args="() const =0" -->
-virtual const std::map&lt; size_t, <br class="typebreak"/>
-size_t &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCelldofToQIndex</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a09b59c91618b2a8d55a98ccc0fd33d36"></a><!-- doxytag: member="natrium::AdvectionOperator::getQIndexToFacedof" ref="a09b59c91618b2a8d55a98ccc0fd33d36" args="() const =0" -->
-virtual const vector&lt; std::map<br class="typebreak"/>
-&lt; size_t, size_t &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQIndexToFacedof</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afedb20e8eac67980523f64e446f8bbe9"></a><!-- doxytag: member="natrium::AdvectionOperator::getOrderOfFiniteElement" ref="afedb20e8eac67980523f64e446f8bbe9" args="() const =0" -->
-virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getOrderOfFiniteElement</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aac798ab3b6259b3b3b1e21c5cddac05b"></a><!-- doxytag: member="natrium::AdvectionOperator::getLocallyOwnedDofs" ref="aac798ab3b6259b3b3b1e21c5cddac05b" args="()=0" -->
-virtual const dealii::IndexSet &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getLocallyOwnedDofs</b> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3011d32ffb48a1e5b5aef470a4440f0b"></a><!-- doxytag: member="natrium::AdvectionOperator::getLocallyRelevantDofs" ref="a3011d32ffb48a1e5b5aef470a4440f0b" args="()=0" -->
-virtual const dealii::IndexSet &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getLocallyRelevantDofs</b> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67fddd527b5f2b9f19f663284e6954bc"></a><!-- doxytag: member="natrium::AdvectionOperator::getMesh" ref="a67fddd527b5f2b9f19f663284e6954bc" args="() const =0" -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMesh</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a76b4ba0077ef23188ca39d8d7081dfee"></a><!-- doxytag: member="natrium::AdvectionOperator::getStencil" ref="a76b4ba0077ef23188ca39d8d7081dfee" args="() const =0" -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStencil</b> () const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c08044f375da0bb5350d6dc7cce7de6"></a><!-- doxytag: member="natrium::AdvectionOperator::setDeltaT" ref="a6c08044f375da0bb5350d6dc7cce7de6" args="(double)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setDeltaT</b> (double)</td></tr>
+distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#aa1eb5cd5a2c1b6b3b8f6395bac67ef55">getSystemVector</a> () const =0</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get system vector. To be removed. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf891e95e63f22a5f9c8f09d56bdafba"></a><!-- doxytag: member="natrium::AdvectionOperator::getDoFHandler" ref="acf891e95e63f22a5f9c8f09d56bdafba" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::DoFHandler&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#acf891e95e63f22a5f9c8f09d56bdafba">getDoFHandler</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the degree of freedom handler. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f64cd24839b7695fb4a88574c769b16"></a><!-- doxytag: member="natrium::AdvectionOperator::getSystemMatrix" ref="a5f64cd24839b7695fb4a88574c769b16" args="() const " -->
+const <br class="typebreak"/>
+distributed_sparse_block_matrix &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a5f64cd24839b7695fb4a88574c769b16">getSystemMatrix</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the system matrix <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::FEFaceValues&lt; dim &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#acf26df77fa01498ff8de55e6d4c51311">getFEFaceValues</a> (const dealii::UpdateFlags &amp;flags) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return an object to integrate/interpolate on faces, or extract other information  <a href="#acf26df77fa01498ff8de55e6d4c51311"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::FEValues&lt; dim &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#ae786297e9fe77377841ff7e41fcd0d01">getFEValues</a> (const dealii::UpdateFlags &amp;flags) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return an object to integrate/interpolate on cells, or extract other information  <a href="#ae786297e9fe77377841ff7e41fcd0d01"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const dealii::Mapping&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#aab63eee00fc2b000c3fbae9552807607">getMapping</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the mapping function that maps from an arbitrary quadrilateral cell to a unit cell [0,1]^dim  <a href="#aab63eee00fc2b000c3fbae9552807607"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac9b50e9da1a6e900c36a2c4e0556d4cd"></a><!-- doxytag: member="natrium::AdvectionOperator::getFaceQuadrature" ref="ac9b50e9da1a6e900c36a2c4e0556d4cd" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::Quadrature&lt; dim-1 &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#ac9b50e9da1a6e900c36a2c4e0556d4cd">getFaceQuadrature</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the quadrature object to integrate over faces. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d6b06b8adf7deaae029e076b197560a"></a><!-- doxytag: member="natrium::AdvectionOperator::getFe" ref="a4d6b06b8adf7deaae029e076b197560a" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::FiniteElement&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFe</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#abd4d7735336cda33f9c117ffcee0db0b">getNumberOfDoFsPerCell</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">number of degrees of freedom per cell  <a href="#abd4d7735336cda33f9c117ffcee0db0b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38a1bb6cc12ee88da3f0580b95f399c5"></a><!-- doxytag: member="natrium::AdvectionOperator::getQuadrature" ref="a38a1bb6cc12ee88da3f0580b95f399c5" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::Quadrature&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a38a1bb6cc12ee88da3f0580b95f399c5">getQuadrature</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the quadrature object to integrate over cells. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a186174a39dc395973b8f3fd368632333"></a><!-- doxytag: member="natrium::AdvectionOperator::getOrderOfFiniteElement" ref="a186174a39dc395973b8f3fd368632333" args="() const " -->
+size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a186174a39dc395973b8f3fd368632333">getOrderOfFiniteElement</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the polynomial order of the finite element shape functions <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a49514ed3873072b50f381ed39c2be2d1"></a><!-- doxytag: member="natrium::AdvectionOperator::getNumberOfDoFs" ref="a49514ed3873072b50f381ed39c2be2d1" args="() const " -->
+size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a49514ed3873072b50f381ed39c2be2d1">getNumberOfDoFs</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the global number of degrees of freedom <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a118d2e75644d4bab0e0349afda26688f"></a><!-- doxytag: member="natrium::AdvectionOperator::getLocallyOwnedDofs" ref="a118d2e75644d4bab0e0349afda26688f" args="()" -->
+const dealii::IndexSet &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a118d2e75644d4bab0e0349afda26688f">getLocallyOwnedDofs</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the set of locally owned degrees of freedom. Each degree of freedom, i.e. each grid point, is owned by one and only one MPI process. There are of course other degrees of freedom that are relevant to the calculations (mainly at boundaries of the locally owned subdomain), those are denoted as locally relevant degrees of freedom. See the Deal.II glossary for more information. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a122a5378bcd93dc121cde12a95be75d8"></a><!-- doxytag: member="natrium::AdvectionOperator::getLocallyRelevantDofs" ref="a122a5378bcd93dc121cde12a95be75d8" args="()" -->
+const dealii::IndexSet &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a122a5378bcd93dc121cde12a95be75d8">getLocallyRelevantDofs</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the set of locally relevant degrees of freedom. Each degree of freedom, i.e. each grid point, is owned by one and only one MPI process. There are of course other degrees of freedom that are relevant to the calculations (mainly at boundaries of the locally owned subdomain), those are denoted as locally relevant degrees of freedom. See the Deal.II glossary for more information. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae5d7feac48c54abb876432e9166ea248"></a><!-- doxytag: member="natrium::AdvectionOperator::getMesh" ref="ae5d7feac48c54abb876432e9166ea248" args="() const " -->
+const boost::shared_ptr&lt; Mesh<br class="typebreak"/>
+&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#ae5d7feac48c54abb876432e9166ea248">getMesh</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the computational grid <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15e11e1df8d26eefcfc701eece00f1c6"></a><!-- doxytag: member="natrium::AdvectionOperator::getStencil" ref="a15e11e1df8d26eefcfc701eece00f1c6" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a15e11e1df8d26eefcfc701eece00f1c6">getStencil</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the LBM stencil (e.g. <a class="el" href="classnatrium_1_1D2Q9.html" title="D2Q9 Model.">D2Q9</a>) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a072f5f90fc914c6e9ac5a7295d6bc84e"></a><!-- doxytag: member="natrium::AdvectionOperator::getBoundaries" ref="a072f5f90fc914c6e9ac5a7295d6bc84e" args="() const " -->
+const boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a072f5f90fc914c6e9ac5a7295d6bc84e">getBoundaries</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the boundary collection <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a37ad28637da38eb776ba3eca89a0820c"></a><!-- doxytag: member="natrium::AdvectionOperator::memory_consumption_sparsity_pattern" ref="a37ad28637da38eb776ba3eca89a0820c" args="() const " -->
-virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_consumption_sparsity_pattern</b> () const </td></tr>
+virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a37ad28637da38eb776ba3eca89a0820c">memory_consumption_sparsity_pattern</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">estimate the memory consumption of the sparsity pattern For SEDG, this is 0, because the sparsity pattern is a part of the trilinos matrix. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a3de39c26aa52db4ced3d2d78e192ebce">mapDoFsToSupportPoints</a> (std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">map degrees of freedom to support points  <a href="#a3de39c26aa52db4ced3d2d78e192ebce"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a6891816bbe0a3f6be217f47a78cdcd79">getCellSupportPoints</a> (typename dealii::DoFHandler&lt; dim &gt;::cell_iterator &amp;cell, vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;points)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return the support points in real space on a given cell  <a href="#a6891816bbe0a3f6be217f47a78cdcd79"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af7e5dfef6d4e93a455b4eeb58cb543c2"></a><!-- doxytag: member="natrium::AdvectionOperator::getSupportPointEvaluation" ref="af7e5dfef6d4e93a455b4eeb58cb543c2" args="()" -->
+const dealii::Quadrature&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#af7e5dfef6d4e93a455b4eeb58cb543c2">getSupportPointEvaluation</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A quadrature instance that is meant for evaluation of the finite element functions at the support points This quadrature should never be used for integration, only for function evaluations, as the weights are complete nonsense. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c3f3aaea40cc82f345606291f9ac38d"></a><!-- doxytag: member="natrium::AdvectionOperator::getDeltaT" ref="a9c3f3aaea40cc82f345606291f9ac38d" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDeltaT</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4610eea1853b4e9c2fe550527b4abcf"></a><!-- doxytag: member="natrium::AdvectionOperator::getProblem" ref="aa4610eea1853b4e9c2fe550527b4abcf" args="() const " -->
+const <a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getProblem</b> () const </td></tr>
+<tr><td colspan="2"><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afa85027b7416373a3b5ea63719716da2"></a><!-- doxytag: member="natrium::AdvectionOperator::m_problem" ref="afa85027b7416373a3b5ea63719716da2" args="" -->
+<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>m_problem</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1166202d92f4bd8ead4b5486540eb34d"></a><!-- doxytag: member="natrium::AdvectionOperator::m_mapping" ref="a1166202d92f4bd8ead4b5486540eb34d" args="" -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::Mapping&lt; dim &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a1166202d92f4bd8ead4b5486540eb34d">m_mapping</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Mapping from real space to unit cell. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01fe6ea5b78b0482d08d30a525f66f1c"></a><!-- doxytag: member="natrium::AdvectionOperator::m_systemMatrix" ref="a01fe6ea5b78b0482d08d30a525f66f1c" args="" -->
+distributed_sparse_block_matrix&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a01fe6ea5b78b0482d08d30a525f66f1c">m_systemMatrix</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">System matrix L = M^(-1)*(-D+R). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf58a2b8f218438a3557d8217d6b76c7"></a><!-- doxytag: member="natrium::AdvectionOperator::m_stencil" ref="abf58a2b8f218438a3557d8217d6b76c7" args="" -->
+boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#abf58a2b8f218438a3557d8217d6b76c7">m_stencil</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">the DQ model (e.g. <a class="el" href="classnatrium_1_1D2Q9.html" title="D2Q9 Model.">D2Q9</a>) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcff42a6fd461409e87b5aca7f0bb217"></a><!-- doxytag: member="natrium::AdvectionOperator::m_orderOfFiniteElement" ref="afcff42a6fd461409e87b5aca7f0bb217" args="" -->
+size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#afcff42a6fd461409e87b5aca7f0bb217">m_orderOfFiniteElement</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">order of the finite element functions <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60997fa95371a281fcbfc9418d12d258"></a><!-- doxytag: member="natrium::AdvectionOperator::m_quadrature" ref="a60997fa95371a281fcbfc9418d12d258" args="" -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::Quadrature&lt; dim &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#a60997fa95371a281fcbfc9418d12d258">m_quadrature</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">integration on gauss lobatto nodes <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf5c9e9e749cc771635a7dcefc9f569f"></a><!-- doxytag: member="natrium::AdvectionOperator::m_faceQuadrature" ref="acf5c9e9e749cc771635a7dcefc9f569f" args="" -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::Quadrature&lt; dim-1 &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#acf5c9e9e749cc771635a7dcefc9f569f">m_faceQuadrature</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">integration on boundary (with gauß lobatto nodes) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed3833678ead684ce2d86383707962ab"></a><!-- doxytag: member="natrium::AdvectionOperator::m_supportPointEvaluation" ref="aed3833678ead684ce2d86383707962ab" args="" -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::Quadrature&lt; dim &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>m_supportPointEvaluation</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2df69e4fdda8a3243a722564279ef83"></a><!-- doxytag: member="natrium::AdvectionOperator::m_fe" ref="ab2df69e4fdda8a3243a722564279ef83" args="" -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::FiniteElement&lt; dim &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#ab2df69e4fdda8a3243a722564279ef83">m_fe</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Finite Element function on one cell. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa3139b789e3cf4db3a367b756df88440"></a><!-- doxytag: member="natrium::AdvectionOperator::m_doFHandler" ref="aa3139b789e3cf4db3a367b756df88440" args="" -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; dealii::DoFHandler&lt; dim &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html#aa3139b789e3cf4db3a367b756df88440">m_doFHandler</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">dealii::DoFHandler to distribute the degrees of freedom over the Mesh <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a06f200c873b739bbd1a2f6b4fcf34d40"></a><!-- doxytag: member="natrium::AdvectionOperator::m_locallyOwnedDoFs" ref="a06f200c873b739bbd1a2f6b4fcf34d40" args="" -->
+dealii::IndexSet&nbsp;</td><td class="memItemRight" valign="bottom"><b>m_locallyOwnedDoFs</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c23c164bd3db14ce88a54801354615e"></a><!-- doxytag: member="natrium::AdvectionOperator::m_locallyRelevantDoFs" ref="a8c23c164bd3db14ce88a54801354615e" args="" -->
+dealii::IndexSet&nbsp;</td><td class="memItemRight" valign="bottom"><b>m_locallyRelevantDoFs</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8a58e4761fb827914d48d39d98265d8"></a><!-- doxytag: member="natrium::AdvectionOperator::m_deltaT" ref="ae8a58e4761fb827914d48d39d98265d8" args="" -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><b>m_deltaT</b></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;size_t dim&gt;<br/>
  class natrium::AdvectionOperator&lt; dim &gt;</h3>
 
-<p>Abstract class for spatial part of the Advection Operator e_i * dx_i f. </p>
+<p>Abstract class for discretizing the linear advection equation. So far, NATriuM supports a spectral element discontinuous Galerkin solver (<a class="el" href="classnatrium_1_1SEDGMinLee.html" title="This class solves the linear advection equations by a scheme which is used, e.g....">SEDGMinLee</a>), and an interpolation-based solver (<a class="el" href="classnatrium_1_1SemiLagrangian.html" title="This class solves the linear advection equations by a semi-Lagrangian scheme.">SemiLagrangian</a>). </p>
 <dl><dt><b>Template Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>dim</em>&nbsp;</td><td>The dimension of the flow (2 or 3). </td></tr>
   </table>
   </dd>
 </dl>
-<hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a251e21d1dd023926d4c5f7fd973b90bf"></a><!-- doxytag: member="natrium::AdvectionOperator::getNumberOfDoFs" ref="a251e21d1dd023926d4c5f7fd973b90bf" args="() const =0" -->
+<hr/><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a89843b1b14386e984a5dab59b0a602b4"></a><!-- doxytag: member="natrium::AdvectionOperator::AdvectionOperator" ref="a89843b1b14386e984a5dab59b0a602b4" args="(ProblemDescription&lt; dim &gt; &amp;problem, size_t fe_order, QuadratureName quad_name, SupportPointsName points_name, boost::shared_ptr&lt; Stencil &gt; stencil, double delta_t, bool dg)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">virtual size_t <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::getNumberOfDoFs </td>
+          <td class="memname"><a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1AdvectionOperator.html">AdvectionOperator</a> </td>
           <td>(</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const<code> [pure virtual]</code></td>
+          <td class="paramtype"><a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>problem</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&nbsp;</td>
+          <td class="paramname"> <em>fe_order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QuadratureName&nbsp;</td>
+          <td class="paramname"> <em>quad_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SupportPointsName&nbsp;</td>
+          <td class="paramname"> <em>points_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt;&nbsp;</td>
+          <td class="paramname"> <em>stencil</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>delta_t</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>dg</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>save matrices and status to files </p>
+<p>Constructor. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>directory</em>&nbsp;</td><td>directory to save the matrix files to </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>problem</em>&nbsp;</td><td>The <a class="el" href="classnatrium_1_1ProblemDescription.html" title="Abstract class for the description of a CFD problem. The description includes the...">ProblemDescription</a> instance that defines the flow </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>fe_order</em>&nbsp;</td><td>polynomial order of the finite element discretization </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>quad_name</em>&nbsp;</td><td>name of the quadrature that is used for spatial integration </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>points_name</em>&nbsp;</td><td>name of the set of support points, as defined in <a class="el" href="ConfigNames_8h_source.html">ConfigNames.h</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>stencil</em>&nbsp;</td><td>the LBM stencil (e.g. <a class="el" href="classnatrium_1_1D2Q9.html" title="D2Q9 Model.">D2Q9</a>) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>delta_t</em>&nbsp;</td><td>The computational time step. Note that the <a class="el" href="classnatrium_1_1CFDSolver.html" title="The central class for the CFD simulation based on the DBE.">CFDSolver</a> calls <a class="el" href="classnatrium_1_1AdvectionOperator.html#a640db5be4d4930198124fa57752167e5" title="set time step">AdvectionOperator::setDeltaT()</a> to set the time step, so as to appy the CFL number to an already refined grid (upon construction of the <a class="el" href="classnatrium_1_1AdvectionOperator.html" title="Abstract class for discretizing the linear advection equation. So far, NATriuM supports...">AdvectionOperator</a>, the grid is not yet refined) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dg</em>&nbsp;</td><td>Flag that indicates whether the finite element is of discontinuous Galerkin type (FE_DGQArbitraryNodes), otherwise it is a standard Lagrangian finite element (FE_Q) </td></tr>
   </table>
   </dd>
 </dl>
-<dl><dt><b>Exceptions:</b></dt><dd>
+
+</div>
+</div>
+<hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a6891816bbe0a3f6be217f47a78cdcd79"></a><!-- doxytag: member="natrium::AdvectionOperator::getCellSupportPoints" ref="a6891816bbe0a3f6be217f47a78cdcd79" args="(typename dealii::DoFHandler&lt; dim &gt;::cell_iterator &amp;cell, vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;points)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::getCellSupportPoints </td>
+          <td>(</td>
+          <td class="paramtype">typename dealii::DoFHandler&lt; dim &gt;::cell_iterator &amp;&nbsp;</td>
+          <td class="paramname"> <em>cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>points</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>return the support points in real space on a given cell </p>
+<dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em><a class="el" href="classnatrium_1_1AdvectionSolverException.html" title="Exception class for SEDGMinLee.">AdvectionSolverException</a></em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>cell</em>&nbsp;</td><td>the cell  points to be filled by this function. Has to have the right size before calling the function, i.e. the dofs per cell. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classnatrium_1_1SEDGMinLee.html#af667cda1a894340f614da67c0a0ae5da">natrium::SEDGMinLee&lt; dim &gt;</a>, and <a class="el" href="classnatrium_1_1SemiLagrangian.html#aeb3b1dfda8a0d8fe7473716f98b12647">natrium::SemiLagrangian&lt; dim &gt;</a>.</p>
+</div>
+</div>
+<a class="anchor" id="acf26df77fa01498ff8de55e6d4c51311"></a><!-- doxytag: member="natrium::AdvectionOperator::getFEFaceValues" ref="acf26df77fa01498ff8de55e6d4c51311" args="(const dealii::UpdateFlags &amp;flags) const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">boost::shared_ptr&lt;dealii::FEFaceValues&lt;dim&gt; &gt; <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::getFEFaceValues </td>
+          <td>(</td>
+          <td class="paramtype">const dealii::UpdateFlags &amp;&nbsp;</td>
+          <td class="paramname"> <em>flags</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>return an object to integrate/interpolate on faces, or extract other information </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>flags</em>&nbsp;</td><td>dealii::UpdateFlags. Depending on which quantity you want to work on, you can specify which quantities are updated at the cell (gradients, shape function values, normal vectors, ...) </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a class="anchor" id="ae786297e9fe77377841ff7e41fcd0d01"></a><!-- doxytag: member="natrium::AdvectionOperator::getFEValues" ref="ae786297e9fe77377841ff7e41fcd0d01" args="(const dealii::UpdateFlags &amp;flags) const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">boost::shared_ptr&lt;dealii::FEValues&lt;dim&gt; &gt; <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::getFEValues </td>
+          <td>(</td>
+          <td class="paramtype">const dealii::UpdateFlags &amp;&nbsp;</td>
+          <td class="paramname"> <em>flags</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>return an object to integrate/interpolate on cells, or extract other information </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>flags</em>&nbsp;</td><td>dealii::UpdateFlags. Depending on which quantity you want to work on, you can specify which quantities are updated at the cell (gradients, shape function values, normal vectors, ...) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aab63eee00fc2b000c3fbae9552807607"></a><!-- doxytag: member="natrium::AdvectionOperator::getMapping" ref="aab63eee00fc2b000c3fbae9552807607" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">const dealii::Mapping&lt;dim&gt;&amp; <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::getMapping </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>return the mapping function that maps from an arbitrary quadrilateral cell to a unit cell [0,1]^dim </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>Depending on whether the isCartesian flag is set in your problem description, this mapping can either be a Cartesian or a bilinear ("Q1") mapping. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="abd4d7735336cda33f9c117ffcee0db0b"></a><!-- doxytag: member="natrium::AdvectionOperator::getNumberOfDoFsPerCell" ref="abd4d7735336cda33f9c117ffcee0db0b" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::getNumberOfDoFsPerCell </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>number of degrees of freedom per cell </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>so far, <a class="el" href="namespacenatrium.html" title="Definition of Grad&#39;s function to reconstruct missing distribution functions,...">natrium</a> does not support different finite elements on different cells. Thus, the number of dofs per cell is globally well-defined. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3de39c26aa52db4ced3d2d78e192ebce"></a><!-- doxytag: member="natrium::AdvectionOperator::mapDoFsToSupportPoints" ref="a3de39c26aa52db4ced3d2d78e192ebce" args="(std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::mapDoFsToSupportPoints </td>
+          <td>(</td>
+          <td class="paramtype">std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>supportPoints</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>map degrees of freedom to support points </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>supportPoints.</em>&nbsp;</td><td>This map is filled with the dof indices and their respective support points. Note that <a class="el" href="namespacenatrium.html" title="Definition of Grad&#39;s function to reconstruct missing distribution functions,...">natrium</a> operates on Lagrangian finite elements; thus, support points do always exist. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>this function just calls dealii::DoFTools::map_dofs_to_support_points() </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a640db5be4d4930198124fa57752167e5"></a><!-- doxytag: member="natrium::AdvectionOperator::setDeltaT" ref="a640db5be4d4930198124fa57752167e5" args="(double delta_t)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::setDeltaT </td>
+          <td>(</td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>delta_t</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>set time step </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>delta_t</em>&nbsp;</td><td>time step </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented in <a class="el" href="classnatrium_1_1SemiLagrangian.html#abd17b628b89c43303d067c0a4e4d0bf1">natrium::SemiLagrangian&lt; dim &gt;</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa93f60c7e7270a35df21387a962d7a38"></a><!-- doxytag: member="natrium::AdvectionOperator::setTimeIntegrator" ref="aa93f60c7e7270a35df21387a962d7a38" args="(boost::shared_ptr&lt; TimeIntegrator&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt; timeIntegrator)=0" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::setTimeIntegrator </td>
+          <td>(</td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt;&nbsp;</td>
+          <td class="paramname"> <em>timeIntegrator</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Apply boundary conditions. Purely virtual for this class. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>While the SEDG boundary conditions are directly implemented in the system matrix and vector, the semi-Lagrangian advection operator needs to do something in this functions. set the time integrator for the SEDG streaming step. Purely virtual for this class. </dd>
+<dd>
+This function is empty for the semi-Lagrangian streaming, which does not require time integrators. </dd></dl>
+
+<p>Implemented in <a class="el" href="classnatrium_1_1SEDGMinLee.html#add96facb8df190a139505ea912bb1a75">natrium::SEDGMinLee&lt; dim &gt;</a>, and <a class="el" href="classnatrium_1_1SemiLagrangian.html#ac11ac59a28176a74e94fde81362ce7b5">natrium::SemiLagrangian&lt; dim &gt;</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abccc060e37071fa776cd6e9fc6cc7987"></a><!-- doxytag: member="natrium::AdvectionOperator::stream" ref="abccc060e37071fa776cd6e9fc6cc7987" args="(DistributionFunctions &amp;f_old, DistributionFunctions &amp;f, double t)=0" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double <a class="el" href="classnatrium_1_1AdvectionOperator.html">natrium::AdvectionOperator</a>&lt; dim &gt;::stream </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>f_old</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>t</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Stream the distribution functions. Purely virtual for this class. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>f_old</em>&nbsp;</td><td>distribution functions at t </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>f</em>&nbsp;</td><td>distribution functsion at t+delta_t </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classnatrium_1_1SEDGMinLee.html#a6a343b581a1e2ffdf0806b140ca82c9e">natrium::SEDGMinLee&lt; dim &gt;</a>, and <a class="el" href="classnatrium_1_1SemiLagrangian.html#a03956c49c0bd288340b734f2fa9aad3c">natrium::SemiLagrangian&lt; dim &gt;</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/<a class="el" href="AdvectionOperator_8h_source.html">AdvectionOperator.h</a></li>
+<li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/AdvectionOperator.cpp</li>
 </ul>
 </div>
 <!--- window showing the filter options -->
@@ -198,7 +576,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -88,9 +88,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TurbulentChannelFlow3D.html">TurbulentChannelFlow3D</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Description of a turbulent Channel Flow The domain is [0,5]x[0,1].  <a href="classnatrium_1_1TurbulentChannelFlow3D.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionOperator.html">AdvectionOperator</a></td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abstract class for spatial part of the Advection Operator e_i * dx_i f.  <a href="classnatrium_1_1AdvectionOperator.html#_details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abstract class for discretizing the linear advection equation. So far, NATriuM supports a spectral element discontinuous Galerkin solver (<a class="el" href="classnatrium_1_1SEDGMinLee.html" title="This class solves the linear advection equations by a scheme which is used, e.g....">SEDGMinLee</a>), and an interpolation-based solver (<a class="el" href="classnatrium_1_1SemiLagrangian.html" title="This class solves the linear advection equations by a semi-Lagrangian scheme.">SemiLagrangian</a>).  <a href="classnatrium_1_1AdvectionOperator.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1AdvectionSolverException.html">AdvectionSolverException</a></td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception class for <a class="el" href="classnatrium_1_1SEDGMinLee.html" title="This class solves the linear advection equations by a scheme which is used, e.g....">SEDGMinLee</a>.  <a href="classnatrium_1_1AdvectionSolverException.html#_details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception class for <a class="el" href="classnatrium_1_1AdvectionOperator.html" title="Abstract class for discretizing the linear advection equation. So far, NATriuM supports...">AdvectionOperator</a>.  <a href="classnatrium_1_1AdvectionSolverException.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html">SEDGMinLee</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This class solves the linear advection equations by a scheme which is used, e.g., by Min and Lee (2011): A spectral-element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-259. The advection equations used in the Lattice Boltzmann on unstructured grids are </p>
 <p class="formulaDsp">
@@ -113,11 +113,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception class for <a class="el" href="classnatrium_1_1SemiLagrangian.html" title="This class solves the linear advection equations by a semi-Lagrangian scheme.">SemiLagrangian</a> advection operator.  <a href="classnatrium_1_1SemiLagrangianException.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangian.html">SemiLagrangian</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This class solves the linear advection equations by a semi-Lagrangian scheme.  <a href="classnatrium_1_1SemiLagrangian.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1LagrangianPathDestination.html">LagrangianPathDestination</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1LagrangianPathTracker.html">LagrangianPathTracker</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BackwardFacingStep2D.html">BackwardFacingStep2D</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlow2D.html">CouetteFlow2D</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Description of a simple Couette Flow (regular channel flow in square domain). The domain is [0,1]^2. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  <a href="classnatrium_1_1CouetteFlow2D.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlow3D.html">CouetteFlow3D</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Description of a simple Couette Flow (regular channel flow in square domain). The domain is [0,1]^3. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  <a href="classnatrium_1_1CouetteFlow3D.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1CouetteFlowGrad2D.html">CouetteFlowGrad2D</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Description of a simple Couette Flow (regular channel flow in square domain). The domain is [0,1]^2. The top plate is moved with constant velocity. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  <a href="classnatrium_1_1CouetteFlowGrad2D.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Droplet2D.html">Droplet2D</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LubricationSine.html">LubricationSine</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicTestDomain2D.html">PeriodicTestDomain2D</a></td></tr>
@@ -137,7 +141,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  <a href="classnatrium_1_1TaylorGreenVortex3D.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Boundary.html">Boundary</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abstract class for the description of boundaries. Base class of <a class="el" href="classnatrium_1_1PeriodicBoundary.html" title="A periodic boundary condition. Periodic boundaries have to be set before the grid...">PeriodicBoundary</a>, InflowBoundary, etc.  <a href="classnatrium_1_1Boundary.html#_details">More...</a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PrescribedQuantities.html">PrescribedQuantities</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A class that contains the values that are prescribed by a semi-Lagrangian boundary condition.  <a href="classnatrium_1_1PrescribedQuantities.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1BoundaryHit.html">BoundaryHit</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Defines the point in space and time where a Lagrangian path hit the boundary. <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> conditions in the Semi-Lagrangian LBM reconstruct the solution at the boundary hits.  <a href="structnatrium_1_1BoundaryHit.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1HitListAtPoint.html">HitListAtPoint</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">container for boundary hits at a certain point and a certain point in time  <a href="structnatrium_1_1HitListAtPoint.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1PointComp.html">PointComp</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1HitListAtCell.html">HitListAtCell</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Container for all boundary hits in a cell.  <a href="structnatrium_1_1HitListAtCell.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1HitList.html">HitList</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">stores all boundary hits that are required for the locally owned dofs Structure of <a class="el" href="structnatrium_1_1HitList.html" title="stores all boundary hits that are required for the locally owned dofs Structure of...">HitList</a>:</p>
+<ul>
+<li><a class="el" href="structnatrium_1_1HitList.html" title="stores all boundary hits that are required for the locally owned dofs Structure of...">HitList</a> &gt;&gt; <a class="el" href="structnatrium_1_1HitListAtCell.html" title="Container for all boundary hits in a cell.">HitListAtCell</a> A &gt;&gt; <a class="el" href="structnatrium_1_1HitListAtPoint.html" title="container for boundary hits at a certain point and a certain point in time">HitListAtPoint</a> 1 &gt;&gt; ... &gt;&gt; <a class="el" href="structnatrium_1_1HitListAtPoint.html" title="container for boundary hits at a certain point and a certain point in time">HitListAtPoint</a> 2 &gt;&gt; ... &gt;&gt; ... &gt;&gt; <a class="el" href="structnatrium_1_1HitListAtCell.html" title="Container for all boundary hits in a cell.">HitListAtCell</a> B &gt;&gt; ... &gt;&gt; ... </li>
+</ul>
+ <a href="structnatrium_1_1HitList.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1GlobalBoundaryData.html">GlobalBoundaryData</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Container for global Data that is required by the <a class="el" href="classnatrium_1_1FEBoundaryValues.html" title="A class that calculates macroscopic values at the boundaries, implemented similarly...">FEBoundaryValues</a> class.  <a href="structnatrium_1_1GlobalBoundaryData.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1FEBoundaryValues.html">FEBoundaryValues</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A class that calculates macroscopic values at the boundaries, implemented similarly as deal.II's FEValues class. In constrast to the latter, a new instance of <a class="el" href="classnatrium_1_1FEBoundaryValues.html" title="A class that calculates macroscopic values at the boundaries, implemented similarly...">FEBoundaryValues</a> is to be created for each cell by the semi-Lagrangian boundary handler. This is due to the fact that each cell may have a new set of boundary hit points. The instance is initialized for the entire cell. <a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> values at single quadrature points are obtained by calling reinit(q_point) for the point and then use the getter-Functions to retrieve the desired values.  <a href="classnatrium_1_1FEBoundaryValues.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LinearFluxBoundary.html">LinearFluxBoundary</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abstract class to describe Linear boundary conditions. The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the boundary have to be defined (see Documentation of the constructors).  <a href="classnatrium_1_1LinearFluxBoundary.html#_details">More...</a><br/></td></tr>
@@ -146,6 +168,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception for impossible periodic boundary, e.g. when the interfaces don't have the same length.  <a href="classnatrium_1_1PeriodicBoundaryNotPossible.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PeriodicBoundary.html">PeriodicBoundary</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A periodic boundary condition. Periodic boundaries have to be set before the grid is refined!  <a href="classnatrium_1_1PeriodicBoundary.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SemiLagrangianBoundaryHandler.html">SemiLagrangianBoundaryHandler</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Handler for semi-Lagrangian boundary conditions. This class manages the update of distribution functions at the boundaries in the semi-Lagrangian streaming step.  <a href="classnatrium_1_1SemiLagrangianBoundaryHandler.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SLBoundary.html">SLBoundary</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SLEquilibriumBoundary.html">SLEquilibriumBoundary</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classnatrium_1_1Boundary.html" title="Abstract class for the description of boundaries. Base class of PeriodicBoundary...">Boundary</a> condition that sets an equilibrium with respect to a prescribed velocity or pressure.  <a href="classnatrium_1_1SLEquilibriumBoundary.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SLFirstOrderBounceBack.html">SLFirstOrderBounceBack</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">simple first-order bounce-back for no-slip boundaries  <a href="classnatrium_1_1SLFirstOrderBounceBack.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGK.html">BGK</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Description of the <a class="el" href="classnatrium_1_1BGK.html" title="Description of the BGK model for the transformed particle distributions, as described...">BGK</a> model for the transformed particle distributions, as described in Global data which is used by Min and Lee (2011): A spectral-element discontinuous Galerkin lattice Boltzmann method for nearly incompressible flows, JCP 230 pp. 245-259.  <a href="classnatrium_1_1BGK.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BGKIncompressible.html">BGKIncompressible</a></td></tr>
@@ -177,6 +206,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1MultistepCollisionData.html">MultistepCollisionData</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DataProcessor.html">DataProcessor</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1GlobalTurbulenceStats.html">GlobalTurbulenceStats</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1PseudoEntropicStabilizer.html">PseudoEntropicStabilizer</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Simple <a class="el" href="classnatrium_1_1BGK.html" title="Description of the BGK model for the transformed particle distributions, as described...">BGK</a> model.  <a href="classnatrium_1_1PseudoEntropicStabilizer.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Benchmark.html">Benchmark</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollectionException.html">BoundaryCollectionException</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception class for Boundaries.  <a href="classnatrium_1_1BoundaryCollectionException.html#_details">More...</a><br/></td></tr>
@@ -202,6 +233,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception class for <a class="el" href="classnatrium_1_1CFDSolver.html" title="The central class for the CFD simulation based on the DBE.">CFDSolver</a>.  <a href="classnatrium_1_1CheckpointException.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Checkpoint.html">Checkpoint</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A class describing the checkpoint.  <a href="classnatrium_1_1Checkpoint.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctionsException.html">DistributionFunctionsException</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception class for <a class="el" href="classnatrium_1_1AdvectionOperator.html" title="Abstract class for discretizing the linear advection equation. So far, NATriuM supports...">AdvectionOperator</a>.  <a href="classnatrium_1_1DistributionFunctionsException.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This class contains the distribution functions. As the zero-velocity particles (f0) can be ignored for streaming, f0 is split from the other distribution functions (fStream) in the implementation. fStream is a block vector, which has the advantage that it can be multiplied with the SystemMatrix. The <a class="el" href="classnatrium_1_1DistributionFunctions.html" title="This class contains the distribution functions. As the zero-velocity particles (f0)...">DistributionFunctions</a> class is designed to mime the behaviour of a vector&lt;distributed_vector&gt; .  <a href="classnatrium_1_1DistributionFunctions.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ErrorStats.html">ErrorStats</a></td></tr>
@@ -237,6 +270,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Implementation of the Theta method for time integration.  <a href="classnatrium_1_1ThetaMethod.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abstract class for time integration (solution of ordinary differential equations (ODE)).  <a href="classnatrium_1_1TimeIntegrator.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ContinuousBoundaryGradient.html">ContinuousBoundaryGradient</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A class to obtain gradients at a boundary that are continuous over the cell interfaces.  <a href="classnatrium_1_1ContinuousBoundaryGradient.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Logging.html">Logging</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">this class is responsible for output streams to the command line and log file  <a href="classnatrium_1_1Logging.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1own__double__less.html">own_double_less</a></td></tr>
@@ -250,12 +285,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1Timing.html">Timing</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Kind of a singleton for Runtime measurements.  <a href="classnatrium_1_1Timing.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1FFTW2D.html">FFTW2D</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTestDensity.html">BoundaryTestDensity</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTestVelocity.html">BoundaryTestVelocity</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1InitMPI.html">InitMPI</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SteadyPeriodicTestFlow2D.html">SteadyPeriodicTestFlow2D</a></td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6).  <a href="classnatrium_1_1SteadyPeriodicTestFlow2D.html#_details">More...</a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1UnsteadyPeriodicTestFlow2D.html">UnsteadyPeriodicTestFlow2D</a></td></tr>
 <tr><td colspan="2"><h2>Typedefs</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67c39077adc6634f8fa3762b8eef24c4"></a><!-- doxytag: member="natrium::numeric_vector" ref="a67c39077adc6634f8fa3762b8eef24c4" args="" -->
 typedef dealii::Vector&lt; double &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a67c39077adc6634f8fa3762b8eef24c4">numeric_vector</a></td></tr>
@@ -288,6 +317,29 @@ dealii::TrilinosWrappers::MPI::Vector&nbsp;</td><td class="memItemRight" valign=
 typedef <br class="typebreak"/>
 dealii::TrilinosWrappers::MPI::BlockVector&nbsp;</td><td class="memItemRight" valign="bottom"><b>distributed_block_vector</b></td></tr>
 <tr><td colspan="2"><h2>Enumerations</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> { <br/>
+&nbsp;&nbsp;<b>only_distributions</b> =  0x0000, 
+<b>boundary_rho</b> =  0x0001, 
+<b>boundary_u</b> =  0x0002, 
+<b>boundary_du_dx</b> =  0x0004, 
+<br/>
+&nbsp;&nbsp;<b>boundary_drho_dt</b> =  0x0008, 
+<b>boundary_du_dt</b> =  0x0010, 
+<b>boundary_d2u_dxdt</b> =  0x0020, 
+<b>boundary_p</b> =  0x0040, 
+<br/>
+&nbsp;&nbsp;<b>boundary_dp_dt</b> =  0x0080
+<br/>
+ }</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>An enum that is used to flag values at the boundary. BoundaryFlags is used by semi-Lagrangian boundary conditions to flag prescribed values or values that are to be calculated from the flow field. </p>
+<br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173ba">StencilType</a> { <a class="el" href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173baabe9c0ce3734a5131262789758ca5fbd1">Stencil_D2Q9</a>, 
+<b>Stencil_D3Q19</b>, 
+<b>Stencil_D3Q15</b>, 
+<b>Stencil_D3Q27</b>
+ }</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Enum type for the difference stencil. </p>
+ <a href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173ba">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#ab73faf50bccace063cee6f66b5af2b02">AdvectionSchemeName</a> { <b>SEDG</b>, 
 <b>SEMI_LAGRANGIAN</b>
  }</td></tr>
@@ -370,13 +422,14 @@ dealii::TrilinosWrappers::MPI::BlockVector&nbsp;</td><td class="memItemRight" va
 <tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>FilteringSchemeName</b> { <b>EXPONENTIAL_FILTER</b>, 
 <b>NEW_FILTER</b>
  }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173ba">StencilType</a> { <a class="el" href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173baabe9c0ce3734a5131262789758ca5fbd1">Stencil_D2Q9</a>, 
-<b>Stencil_D3Q19</b>, 
-<b>Stencil_D3Q15</b>, 
-<b>Stencil_D3Q27</b>
+<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>SupportPointsName</b> { <b>GAUSS_LOBATTO_POINTS</b>, 
+<b>GAUSS_CHEBYSHEV_POINTS</b>, 
+<b>GAUSS_LOBATTO_CHEBYSHEV_POINTS</b>, 
+<b>EQUIDISTANT_POINTS</b>
  }</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Enum type for the difference stencil. </p>
- <a href="namespacenatrium.html#a45d5dacaf5eb5efde670179d949173ba">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>QuadratureName</b> { <b>QGAUSS_LOBATTO</b>, 
+<b>QGAUSS</b>
+ }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>LogLevel</b> { <br/>
 &nbsp;&nbsp;<b>SILENT</b>, 
 <b>ERROR</b>, 
@@ -392,20 +445,52 @@ dealii::TrilinosWrappers::MPI::BlockVector&nbsp;</td><td class="memItemRight" va
 <br/>
  }</td></tr>
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#aa39b5925f0186ff601e4acae922d50e3">shapeFunctionValue</a> (const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;values, const dealii::Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Calculates the shape values for arbitrary points.  <a href="#aa39b5925f0186ff601e4acae922d50e3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af37c616efb721af13467414a85d0c1de"></a><!-- doxytag: member="natrium::shapeFunctionValue&lt; 2 &gt;" ref="af37c616efb721af13467414a85d0c1de" args="(const typename dealii::DoFHandler&lt; 2 &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;values, const dealii::Mapping&lt; 2 &gt; &amp;mapping)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>shapeFunctionValue&lt; 2 &gt;</b> (const typename dealii::DoFHandler&lt; 2 &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;values, const dealii::Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b46344046b892f3cdcef58f9df80033"></a><!-- doxytag: member="natrium::shapeFunctionValue&lt; 3 &gt;" ref="a3b46344046b892f3cdcef58f9df80033" args="(const typename dealii::DoFHandler&lt; 3 &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; 3 &gt; &gt; &amp;points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;values, const dealii::Mapping&lt; 3 &gt; &amp;mapping)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>shapeFunctionValue&lt; 3 &gt;</b> (const typename dealii::DoFHandler&lt; 3 &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; 3 &gt; &gt; &amp;points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;values, const dealii::Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a199e78099c6ea1439a062701f4962906"></a><!-- doxytag: member="natrium::supportPointNr" ref="a199e78099c6ea1439a062701f4962906" args="(const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const dealii::Point&lt; dim &gt; &amp;point, const dealii::Quadrature&lt; dim &gt; &amp;quad, const dealii::MappingQ&lt; dim &gt; &amp;mapping)" -->
+template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">int&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>supportPointNr</b> (const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const dealii::Point&lt; dim &gt; &amp;point, const dealii::Quadrature&lt; dim &gt; &amp;quad, const dealii::MappingQ&lt; dim &gt; &amp;mapping)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03542d5e44cd904eb0774e50ed937d8c"></a><!-- doxytag: member="natrium::supportPointNr&lt; 2 &gt;" ref="a03542d5e44cd904eb0774e50ed937d8c" args="(const typename dealii::DoFHandler&lt; 2 &gt;::active_cell_iterator &amp;cell, const dealii::Point&lt; 2 &gt; &amp;point, const dealii::Quadrature&lt; 2 &gt; &amp;quad, const dealii::MappingQ&lt; 2 &gt; &amp;mapping)" -->
+template int&nbsp;</td><td class="memItemRight" valign="bottom"><b>supportPointNr&lt; 2 &gt;</b> (const typename dealii::DoFHandler&lt; 2 &gt;::active_cell_iterator &amp;cell, const dealii::Point&lt; 2 &gt; &amp;point, const dealii::Quadrature&lt; 2 &gt; &amp;quad, const dealii::MappingQ&lt; 2 &gt; &amp;mapping)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a597d1f2c5391e67efe48e1a8ea822bdb"></a><!-- doxytag: member="natrium::supportPointNr&lt; 3 &gt;" ref="a597d1f2c5391e67efe48e1a8ea822bdb" args="(const typename dealii::DoFHandler&lt; 3 &gt;::active_cell_iterator &amp;cell, const dealii::Point&lt; 3 &gt; &amp;point, const dealii::Quadrature&lt; 3 &gt; &amp;quad, const dealii::MappingQ&lt; 3 &gt; &amp;mapping)" -->
+template int&nbsp;</td><td class="memItemRight" valign="bottom"><b>supportPointNr&lt; 3 &gt;</b> (const typename dealii::DoFHandler&lt; 3 &gt;::active_cell_iterator &amp;cell, const dealii::Point&lt; 3 &gt; &amp;point, const dealii::Quadrature&lt; 3 &gt; &amp;quad, const dealii::MappingQ&lt; 3 &gt; &amp;mapping)</td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">dealii::Quadrature&lt; dim &gt;&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a27247bfe7bab81b738081b41113ed419">makeQuadratureAtPoints</a> (const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;points, const dealii::Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create an FEValues object to calculate shape functions, etc. on other points than the support points.  <a href="#a27247bfe7bab81b738081b41113ed419"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac8fb2d7fb073970c20ac95c08e79283f"></a><!-- doxytag: member="natrium::makeQuadratureAtPoints&lt; 2 &gt;" ref="ac8fb2d7fb073970c20ac95c08e79283f" args="(const typename dealii::DoFHandler&lt; 2 &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;points, const dealii::Mapping&lt; 2 &gt; &amp;mapping)" -->
+template dealii::Quadrature&lt; 2 &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>makeQuadratureAtPoints&lt; 2 &gt;</b> (const typename dealii::DoFHandler&lt; 2 &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; 2 &gt; &gt; &amp;points, const dealii::Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1cc55ab3e7c6c6eca599770406beac5a"></a><!-- doxytag: member="natrium::makeQuadratureAtPoints&lt; 3 &gt;" ref="a1cc55ab3e7c6c6eca599770406beac5a" args="(const typename dealii::DoFHandler&lt; 3 &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; 3 &gt; &gt; &amp;points, const dealii::Mapping&lt; 3 &gt; &amp;mapping)" -->
+template dealii::Quadrature&lt; 3 &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>makeQuadratureAtPoints&lt; 3 &gt;</b> (const typename dealii::DoFHandler&lt; 3 &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; 3 &gt; &gt; &amp;points, const dealii::Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a739b95319a61aa10dd39b2c1e2cd79e7"></a><!-- doxytag: member="natrium::getNeighborhood" ref="a739b95319a61aa10dd39b2c1e2cd79e7" args="(typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, Neighborhood&lt; dim &gt; &amp;neighborhood, size_t n_shells=1)" -->
+template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>getNeighborhood</b> (typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, Neighborhood&lt; dim &gt; &amp;neighborhood, size_t n_shells=1)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a8469a9edf49968998833895b8468cd5c"></a><!-- doxytag: member="natrium::recursivelySearchInNeighborhood" ref="a8469a9edf49968998833895b8468cd5c" args="(const dealii::Point&lt; dim &gt; &amp;p, typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)" -->
+template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">dealii::DoFHandler&lt; dim &gt;<br class="typebreak"/>
+::active_cell_iterator&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>recursivelySearchInNeighborhood</b> (const dealii::Point&lt; dim &gt; &amp;p, typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a><br class="typebreak"/>
 &lt; <a class="el" href="namespacenatrium.html#a860e92befb23651241c8b3d61a0d4034">distributed_sparse_matrix</a>, <br class="typebreak"/>
 <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#aaa8bf70405092ec81a8b15331a8f24b5">make_integrator</a> (<a class="el" href="namespacenatrium.html#a00a0ec1e80f138680e0fcca78349f6d8">TimeIntegratorName</a> integrator_name, DealIntegratorName deal_integrator_name, double delta_t, <a class="el" href="namespacenatrium.html#a903d2b92917f582f2ff05f52160ab811">distributed_vector</a> &amp;f)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cef4fe0f0b48bfd41191cdccc8fd098"></a><!-- doxytag: member="natrium::GradsFunction&lt; D2Q9, 2 &gt;" ref="a0cef4fe0f0b48bfd41191cdccc8fd098" args="(vector&lt; double &gt; &amp;f, const D2Q9 &amp;stencil, double rho, const dealii::Tensor&lt; 1, 2 &gt; &amp;j, const dealii::Tensor&lt; 2, 2 &gt; &amp;P)" -->
-template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>GradsFunction&lt; D2Q9, 2 &gt;</b> (vector&lt; double &gt; &amp;f, const <a class="el" href="classnatrium_1_1D2Q9.html">D2Q9</a> &amp;stencil, double rho, const dealii::Tensor&lt; 1, 2 &gt; &amp;j, const dealii::Tensor&lt; 2, 2 &gt; &amp;P)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad404daaac7f20207f08ff5f211a2721c"></a><!-- doxytag: member="natrium::GradsFunction&lt; D3Q15, 3 &gt;" ref="ad404daaac7f20207f08ff5f211a2721c" args="(vector&lt; double &gt; &amp;f, const D3Q15 &amp;stencil, double rho, const dealii::Tensor&lt; 1, 3 &gt; &amp;j, const dealii::Tensor&lt; 2, 3 &gt; &amp;P)" -->
-template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>GradsFunction&lt; D3Q15, 3 &gt;</b> (vector&lt; double &gt; &amp;f, const <a class="el" href="classnatrium_1_1D3Q15.html">D3Q15</a> &amp;stencil, double rho, const dealii::Tensor&lt; 1, 3 &gt; &amp;j, const dealii::Tensor&lt; 2, 3 &gt; &amp;P)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67c2e91582d49b0a53b79ea9e5200d75"></a><!-- doxytag: member="natrium::GradsFunction&lt; D3Q19, 3 &gt;" ref="a67c2e91582d49b0a53b79ea9e5200d75" args="(vector&lt; double &gt; &amp;f, const D3Q19 &amp;stencil, double rho, const dealii::Tensor&lt; 1, 3 &gt; &amp;j, const dealii::Tensor&lt; 2, 3 &gt; &amp;P)" -->
-template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>GradsFunction&lt; D3Q19, 3 &gt;</b> (vector&lt; double &gt; &amp;f, const <a class="el" href="classnatrium_1_1D3Q19.html">D3Q19</a> &amp;stencil, double rho, const dealii::Tensor&lt; 1, 3 &gt; &amp;j, const dealii::Tensor&lt; 2, 3 &gt; &amp;P)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab812c6cdcf3b271b97c19d49332286bc"></a><!-- doxytag: member="natrium::GradsFunction&lt; D3Q27, 3 &gt;" ref="ab812c6cdcf3b271b97c19d49332286bc" args="(vector&lt; double &gt; &amp;f, const D3Q27 &amp;stencil, double rho, const dealii::Tensor&lt; 1, 3 &gt; &amp;j, const dealii::Tensor&lt; 2, 3 &gt; &amp;P)" -->
-template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>GradsFunction&lt; D3Q27, 3 &gt;</b> (vector&lt; double &gt; &amp;f, const <a class="el" href="classnatrium_1_1D3Q27.html">D3Q27</a> &amp;stencil, double rho, const dealii::Tensor&lt; 1, 3 &gt; &amp;j, const dealii::Tensor&lt; 2, 3 &gt; &amp;P)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af17fca7c5a3c61dd18e6ccf84deb2622"></a><!-- doxytag: member="natrium::operator|" ref="af17fca7c5a3c61dd18e6ccf84deb2622" args="(BoundaryFlags f1, BoundaryFlags f2)" -->
+<a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator|</b> (<a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> f1, <a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> f2)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0be22caa54ac298120530e48e1c342fe"></a><!-- doxytag: member="natrium::operator|=" ref="a0be22caa54ac298120530e48e1c342fe" args="(BoundaryFlags &amp;f1, BoundaryFlags f2)" -->
+<a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator|=</b> (<a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> &amp;f1, <a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> f2)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03675a37450a8851ae857f52ed79debe"></a><!-- doxytag: member="natrium::operator&amp;" ref="a03675a37450a8851ae857f52ed79debe" args="(BoundaryFlags f1, BoundaryFlags f2)" -->
+<a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator&amp;</b> (<a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> f1, <a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> f2)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1710742f771c6817888a736a098d10b"></a><!-- doxytag: member="natrium::operator&amp;=" ref="ad1710742f771c6817888a736a098d10b" args="(BoundaryFlags &amp;f1, BoundaryFlags f2)" -->
+<a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator&amp;=</b> (<a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> &amp;f1, <a class="el" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af">BoundaryFlags</a> f2)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab114b1ec26e472df5c5071f4377e2339"></a><!-- doxytag: member="natrium::GradsFunction&lt; 2 &gt;" ref="ab114b1ec26e472df5c5071f4377e2339" args="(vector&lt; double &gt; &amp;f, const Stencil &amp;stencil, double rho, const dealii::Tensor&lt; 1, 2 &gt; &amp;j, const dealii::Tensor&lt; 2, 2 &gt; &amp;P)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>GradsFunction&lt; 2 &gt;</b> (vector&lt; double &gt; &amp;f, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;stencil, double rho, const dealii::Tensor&lt; 1, 2 &gt; &amp;j, const dealii::Tensor&lt; 2, 2 &gt; &amp;P)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0b5270dcb4b0e4099644d9fae1a7d44"></a><!-- doxytag: member="natrium::GradsFunction&lt; 3 &gt;" ref="ac0b5270dcb4b0e4099644d9fae1a7d44" args="(vector&lt; double &gt; &amp;f, const Stencil &amp;stencil, double rho, const dealii::Tensor&lt; 1, 3 &gt; &amp;j, const dealii::Tensor&lt; 2, 3 &gt; &amp;P)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>GradsFunction&lt; 3 &gt;</b> (vector&lt; double &gt; &amp;f, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;stencil, double rho, const dealii::Tensor&lt; 1, 3 &gt; &amp;j, const dealii::Tensor&lt; 2, 3 &gt; &amp;P)</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="ad76c25c4de7488b1d117274f62d4f929"></a><!-- doxytag: member="natrium::GradsFunction" ref="ad76c25c4de7488b1d117274f62d4f929" args="(vector&lt; double &gt; &amp;f, const Stencil &amp;stencil, double rho, const dealii::Tensor&lt; 1, dim &gt; &amp;j, const dealii::Tensor&lt; 2, dim &gt; &amp;P)" -->
-template&lt;class Stencil , size_t dim&gt; </td></tr>
+template&lt;size_t dim&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#ad76c25c4de7488b1d117274f62d4f929">GradsFunction</a> (vector&lt; double &gt; &amp;f, const <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &amp;stencil, double rho, const dealii::Tensor&lt; 1, dim &gt; &amp;j, const dealii::Tensor&lt; 2, dim &gt; &amp;P)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Grad's function constructs a set of discrete distributions with respect to a certain set of moments Its functional form is </p>
 <p class="formulaDsp">
@@ -418,10 +503,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>REINIT_UNDISTRIBUTED_
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#ad9280c1cdcb421c6bf3f719ae2747120">MPI_sync</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Synchronize all MPI processes. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a791202a0d8b6bdac2c62f3ae63905a36">is_MPI_rank_0</a> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a0590621d19e4629e6afb5e7365f9f331">LOG</a> (LogLevel level)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">can be used like "LOG(ERROR) &lt;&lt; ...;", to write output to the log file and command line  <a href="#a0590621d19e4629e6afb5e7365f9f331"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a0d879cf404d8a12fc978ab97d33758b4">LOGGER</a> ()</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">is used to access the default logging instance m_LOGGER; e.g. <a class="el" href="namespacenatrium.html#a0d879cf404d8a12fc978ab97d33758b4" title="is used to access the default logging instance m_LOGGER; e.g. LOGGER().setLogFile(...">LOGGER()</a>.setLogFile(...)  <a href="#a0d879cf404d8a12fc978ab97d33758b4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#ad2838e1bab766ae66a68aa1ac6f2f7cb">LOG</a> (LogLevel level)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">can be used like "LOG(ERROR) &lt;&lt; ...;", to write output to the log file and command line  <a href="#ad2838e1bab766ae66a68aa1ac6f2f7cb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#addbc7112675b740db86c1c775fce7b1d">LOGGER</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">is used to access the default logging instance m_LOGGER; e.g. <a class="el" href="namespacenatrium.html#addbc7112675b740db86c1c775fce7b1d" title="is used to access the default logging instance m_LOGGER; e.g. LOGGER().setLogFile(...">LOGGER()</a>.setLogFile(...)  <a href="#addbc7112675b740db86c1c775fce7b1d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acdc05b9a9596bba608cb1af116a15538"></a><!-- doxytag: member="natrium::currentDateTime" ref="acdc05b9a9596bba608cb1af116a15538" args="()" -->
 const std::string&nbsp;</td><td class="memItemRight" valign="bottom"><b>currentDateTime</b> ()</td></tr>
 <tr><td class="memTemplParams" colspan="2"><a class="anchor" id="ae701d55b10027c6e5affa8bf49f9d87f"></a><!-- doxytag: member="natrium::vectorToTensor" ref="ae701d55b10027c6e5affa8bf49f9d87f" args="(const numeric_vector &amp;v)" -->
@@ -446,234 +531,14 @@ template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>reinitVector&lt; block_vector &gt;</b> (block_vector &amp;dst, const block_vector &amp;src)</td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class VECTOR &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a95eedd6a35d489da1b939928d8cf40e0">reinitVector</a> (VECTOR &amp;dst, const VECTOR &amp;src)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad78ce248f34db62b3d9bd2e6cf959cbc"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ad78ce248f34db62b3d9bd2e6cf959cbc" args="(SEDGMinLee_Construction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SEDGMinLee_Construction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7510cddf2a5057595ad4e7f3c7bddff8"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a7510cddf2a5057595ad4e7f3c7bddff8" args="(SEDGMinLee_systemMatrix_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SEDGMinLee_systemMatrix_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9b4ffa9f8ace78360f43adc88f28bee"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ae9b4ffa9f8ace78360f43adc88f28bee" args="(SEDGMinLee_steadyStreaming_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SEDGMinLee_steadyStreaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a635e77494362fb2b4f16eefebcd688b3"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a635e77494362fb2b4f16eefebcd688b3" args="(SEDGMinLee_streaming_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SEDGMinLee_streaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a5d50c8f7b1a7391f2433de8b308a11e7">BOOST_AUTO_TEST_CASE</a> (SEDGMinLee_RKstreaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae770b0311667837cbe15679c4f642d8d"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ae770b0311667837cbe15679c4f642d8d" args="(SEDGMinLee_SaveAndLoadCheckpoints_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SEDGMinLee_SaveAndLoadCheckpoints_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a883618d1bfe54362b6fe566b33a125c4"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a883618d1bfe54362b6fe566b33a125c4" args="(SemiLagrangian_Construction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian_Construction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae598f215914e7095e4689e52a46ae220"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ae598f215914e7095e4689e52a46ae220" args="(SemiLagrangian2D_Neighborhood_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_Neighborhood_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ef21ff5bbdcea455ad5ec1c82c09009"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a6ef21ff5bbdcea455ad5ec1c82c09009" args="(SemiLagrangian3D_Neighborhood_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_Neighborhood_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac86883f17cf49cbc2da6538b669f4da3"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ac86883f17cf49cbc2da6538b669f4da3" args="(SemiLagrangian2D_FindPointInNeighborhood_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_FindPointInNeighborhood_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a193f933a32473e494d79e6497fde0e2c"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a193f933a32473e494d79e6497fde0e2c" args="(SemiLagrangian3D_FindPointInNeighborhood_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_FindPointInNeighborhood_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae67c7512f6343d603c5b33e0cdab798"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aae67c7512f6343d603c5b33e0cdab798" args="(SemiLagrangian2D_FaceCrossedFirst_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_FaceCrossedFirst_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e7fdc3d43feb7b3b2907ad1318f0023"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a3e7fdc3d43feb7b3b2907ad1318f0023" args="(SemiLagrangian3D_FaceCrossedFirst_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_FaceCrossedFirst_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ea7d35705b5510cf096509e0c04b666"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a0ea7d35705b5510cf096509e0c04b666" args="(SemiLagrangian2D_SparsityPattern_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_SparsityPattern_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee9f084e377533e7051bc7ed8271526b"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aee9f084e377533e7051bc7ed8271526b" args="(SemiLagrangian3D_SparsityPattern_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_SparsityPattern_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3beee955eed9ac8e01af3cc7ce514fcb"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a3beee955eed9ac8e01af3cc7ce514fcb" args="(SemiLagrangian2D_ConstantStreaming_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian2D_ConstantStreaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a068ae2506e3d7bd4b03a98d6ba57034f"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a068ae2506e3d7bd4b03a98d6ba57034f" args="(SemiLagrangian3D_ConstantStreaming_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_ConstantStreaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96d7feccacfc22412c6a16721c205a8a"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a96d7feccacfc22412c6a16721c205a8a" args="(SemiLagrangian3D_VectorReference_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SemiLagrangian3D_VectorReference_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6836c174e44ff7be71d260768b06a169"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a6836c174e44ff7be71d260768b06a169" args="(LinearBoundaryRhoU2D_Construction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (LinearBoundaryRhoU2D_Construction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd713562ddb2d103f3d59f703be1f085"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="acd713562ddb2d103f3d59f703be1f085" args="(LinearBoundaryRhoU2D_SparsityPattern_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (LinearBoundaryRhoU2D_SparsityPattern_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab56d4c7d39e126ebd76a4433d7efb8e8"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ab56d4c7d39e126ebd76a4433d7efb8e8" args="(LinearBoundaryRhoU2D_MassConservation_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (LinearBoundaryRhoU2D_MassConservation_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc3a4cdd4cb4f509f325373919a22b58"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="adc3a4cdd4cb4f509f325373919a22b58" args="(LinearBoundaryRhoU2D_BoundaryVelocity_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (LinearBoundaryRhoU2D_BoundaryVelocity_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a4090d871d84ad4fb470c0b909c8aa3a2">BOOST_AUTO_TEST_CASE</a> (PeriodicBoundary2D_ConstructionByBoundaryIndicator_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#ac3aa16cb6afbde804febb51c503b72e3">BOOST_AUTO_TEST_CASE</a> (PeriodicBoundary2D_forDiscontinuousGalerkin_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a6742e53417be0f418326a958ef719cd0">BOOST_AUTO_TEST_CASE</a> (PeriodicBoundary_getCoordinates2D_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a6c15033ca6f4995b47ec6f3b8f2c8472">BOOST_AUTO_TEST_CASE</a> (PeriodicBoundary_getCoordinates3D_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1640922536fff531f06f653caebad0e3"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a1640922536fff531f06f653caebad0e3" args="(BGKIncompressible_collideAll_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKIncompressible_collideAll_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e1836389d3bae75b3a38f7c84a4ed51"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a7e1836389d3bae75b3a38f7c84a4ed51" args="(BGKMultistep_collideAll_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKMultistep_collideAll_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2bfe2e1f1a590e450e0ae6bf5f88b39d"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a2bfe2e1f1a590e450e0ae6bf5f88b39d" args="(BGKPseudopotential_collideAll_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKPseudopotential_collideAll_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6dabfa8f4922e330d651ce3e658ae03c"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a6dabfa8f4922e330d651ce3e658ae03c" args="(BGKStandardConstruction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardConstruction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aecdb3d15ce07cddfd3aa4a264553174b"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aecdb3d15ce07cddfd3aa4a264553174b" args="(BGKStandardSetTimeStep_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardSetTimeStep_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaddbd8507218a02c3db1181247d759d1"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aaddbd8507218a02c3db1181247d759d1" args="(BGKMoments_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKMoments_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d06bb4919a0a0a3c56c0a1de0c2243f"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a5d06bb4919a0a0a3c56c0a1de0c2243f" args="(D2Q9IncompressibleModelAllEqDistributions_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelAllEqDistributions_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a37799239d4b3fa49a4d8613b0021b2fb"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a37799239d4b3fa49a4d8613b0021b2fb" args="(D2Q9IncompressibleModelMoments_Scaled_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelMoments_Scaled_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2d6acb8f854c0728d233d067b69292f8"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a2d6acb8f854c0728d233d067b69292f8" args="(D2Q9IncompressibleModelAllEqDistributions_Scaled_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelAllEqDistributions_Scaled_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adbf98857fcf6990496eaab840c849244"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="adbf98857fcf6990496eaab840c849244" args="(BGKStandardCollisionInvariants_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardCollisionInvariants_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4e8b85ceefce152b84e7c53e5ad44d0"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ad4e8b85ceefce152b84e7c53e5ad44d0" args="(BGKStandard_collideAllD2Q9_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD2Q9_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad714500b301a39d46458adc5144e5a90"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ad714500b301a39d46458adc5144e5a90" args="(BGKStandard_collideAllD3Q19_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD3Q19_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b0a05bdc1399a013844bbf877a7f97d"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a4b0a05bdc1399a013844bbf877a7f97d" args="(BGKStandard_collideAllD3Q15_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD3Q15_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad76995868b4ffe00088a84dc3919b49e"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ad76995868b4ffe00088a84dc3919b49e" args="(BGKStandardTransformedConstruction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardTransformedConstruction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1fb291bc5533411170ccd76077536c3"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ad1fb291bc5533411170ccd76077536c3" args="(BGKStandardTransformedSetTimeStep_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardTransformedSetTimeStep_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77bbfe0e7ee61933f94814e328fb4f33"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a77bbfe0e7ee61933f94814e328fb4f33" args="(BGKTransformedMoments_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKTransformedMoments_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0dc2bf09abe47dd26f2f57f2c57bcdf2"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a0dc2bf09abe47dd26f2f57f2c57bcdf2" args="(BGKStandardTransformedCollisionInvariants_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardTransformedCollisionInvariants_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a290363fe04219a9ab8157ff7182021f0"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a290363fe04219a9ab8157ff7182021f0" args="(BGKStandardTransformed_collideAll_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardTransformed_collideAll_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1102ad6934f491e6a49480081982440a"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a1102ad6934f491e6a49480081982440a" args="(BGKSteadyStateConstruction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKSteadyStateConstruction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0040d9381f0717dfa1faccf4995a4f85"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a0040d9381f0717dfa1faccf4995a4f85" args="(BGKSteadyStateSetTimeStep_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKSteadyStateSetTimeStep_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61d21f636a84d5adb7912b847b25fa06"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a61d21f636a84d5adb7912b847b25fa06" args="(BGKSteadyStateMoments_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKSteadyStateMoments_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10f79d9f3fff4b4bd1a74f9cecbec22a"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a10f79d9f3fff4b4bd1a74f9cecbec22a" args="(BGKSteadyStateMoments_Scaled_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKSteadyStateMoments_Scaled_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abc1880f32a200d413949cb5ac59d94b1"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="abc1880f32a200d413949cb5ac59d94b1" args="(BGKSteadyStateAllEqDistributions_Scaled_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKSteadyStateAllEqDistributions_Scaled_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c7300f3faa06fe8d0255ec9bd267371"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a5c7300f3faa06fe8d0255ec9bd267371" args="(BGKSteadyStateInvariants_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKSteadyStateInvariants_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a157851ed45bc9df182651c6e5474a23b"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a157851ed45bc9df182651c6e5474a23b" args="(BGKSteadyState_collideAll_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKSteadyState_collideAll_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67caa76ee272bd6eff0ecf145383c8ec"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a67caa76ee272bd6eff0ecf145383c8ec" args="(KBCStandard_collideAll_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (KBCStandard_collideAll_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6dbb4ae558c5145ecb8dad5917cb1739"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a6dbb4ae558c5145ecb8dad5917cb1739" args="(KBCStandard_collideAllD3Q15_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (KBCStandard_collideAllD3Q15_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec0de411445e92474210cf06a70e11f7"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aec0de411445e92474210cf06a70e11f7" args="(MRTStandard_collideAll_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (MRTStandard_collideAll_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab123d146472bc24ce4cd36c5cb71e9a8"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ab123d146472bc24ce4cd36c5cb71e9a8" args="(Boost_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (Boost_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a079786c75e31c8ceb37511575a567ba1"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a079786c75e31c8ceb37511575a567ba1" args="(ExponentialFilter_PolynomialDegree_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ExponentialFilter_PolynomialDegree_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa16b180ba946481bdb52b08a1c0c3d2b"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aa16b180ba946481bdb52b08a1c0c3d2b" args="(ExponentialFilter_Construction2D_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ExponentialFilter_Construction2D_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac03a2217678ec69581c3ed15cda461df"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ac03a2217678ec69581c3ed15cda461df" args="(ExponentialFilter_Construction3D_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ExponentialFilter_Construction3D_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b95e965eb850eab92329ea18986a38d"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a1b95e965eb850eab92329ea18986a38d" args="(ExponentialFilter_TestProjection_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ExponentialFilter_TestProjection_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f58b59987be6e427484f1169f5398e6"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a1f58b59987be6e427484f1169f5398e6" args="(ExponentialFilter_TestFiltering_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ExponentialFilter_TestFiltering_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d4dab2eb93c75d6f906ff7f3f56368f"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a7d4dab2eb93c75d6f906ff7f3f56368f" args="(VmultLimiter_apply_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (VmultLimiter_apply_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a271d07a7da6606cbde36ee419b272cae"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a271d07a7da6606cbde36ee419b272cae" args="(CFDSolver_CreateTestFlow_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolver_CreateTestFlow_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac80f837d01c91dcae6c12c68137218dc"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ac80f837d01c91dcae6c12c68137218dc" args="(CFDSolver_Construction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolver_Construction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a12ba8ff19abf98381f5fa015c524a2f0"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a12ba8ff19abf98381f5fa015c524a2f0" args="(CFDSolver_SteadyStreaming_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolver_SteadyStreaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb3795cef35aaf5ceb1beddbe38498bb"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="acb3795cef35aaf5ceb1beddbe38498bb" args="(CFDSolver_UnsteadyStreaming_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolver_UnsteadyStreaming_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a919d8c6f9f1a0df849d52fc6b8bf3299"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a919d8c6f9f1a0df849d52fc6b8bf3299" args="(CFDSolver_Restart_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolver_Restart_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91e709e65a2b694c19879df1aaea18bd"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a91e709e65a2b694c19879df1aaea18bd" args="(CFDSolver_IterativeInit_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolver_IterativeInit_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a48b188e2db3a9d04be4801adbd6badcb"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a48b188e2db3a9d04be4801adbd6badcb" args="(CFDSolver_StopCondition_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolver_StopCondition_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0906093004ceddfcc527abaa0a6f7931"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a0906093004ceddfcc527abaa0a6f7931" args="(Checkpoint_Create_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (Checkpoint_Create_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab20dbe3d70cebe3c4d076fdb8963150a"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ab20dbe3d70cebe3c4d076fdb8963150a" args="(Checkpoint_SaveAndLoadUnchanged_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (Checkpoint_SaveAndLoadUnchanged_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9bb1426901f85aa278e9aaa0bc3c292e"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a9bb1426901f85aa278e9aaa0bc3c292e" args="(Checkpoint_ResumeRefined_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (Checkpoint_ResumeRefined_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aef2253e44a4a45889806bbb338a603e5"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aef2253e44a4a45889806bbb338a603e5" args="(Checkpoint_ResumeOtherP_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (Checkpoint_ResumeOtherP_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a039c9382ee32f6158c43183385ca6b6b"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a039c9382ee32f6158c43183385ca6b6b" args="(Checkpoint_ResumeOtherMa)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (Checkpoint_ResumeOtherMa)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a3fc48dbb8fbf2d4a981c1d02ef5e555e">BOOST_AUTO_TEST_CASE</a> (DistributionFunctions_Construction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b8ba00780d9b64478d38f0e0942f9fe"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a5b8ba00780d9b64478d38f0e0942f9fe" args="(ErrorStats_ConstructionAndFunctionality_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ErrorStats_ConstructionAndFunctionality_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ce53d6763ffb6dcdceef6ca14b2c8a1"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a2ce53d6763ffb6dcdceef6ca14b2c8a1" args="(ErrorStats_FunctionsInSolverContext_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ErrorStats_FunctionsInSolverContext_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0609cd32e1900e7276c5ef3b8787cb51"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a0609cd32e1900e7276c5ef3b8787cb51" args="(PhysicalProperties_MassFluxX_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (PhysicalProperties_MassFluxX_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f6d36631d1209cc3bcf60be653b9d1c"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a2f6d36631d1209cc3bcf60be653b9d1c" args="(PhysicalProperties_Mass_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (PhysicalProperties_Mass_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa10f55a443c7883764bb737a0dc2703c"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aa10f55a443c7883764bb737a0dc2703c" args="(PhysicalProperties_KineticEnergy_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (PhysicalProperties_KineticEnergy_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a09203b04dcf3f8d697ea3a274f122ee7"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a09203b04dcf3f8d697ea3a274f122ee7" args="(PhysicalProperties_Enstrophy_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (PhysicalProperties_Enstrophy_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5cc1869722e5d7a01921c8c4d7508c4"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ab5cc1869722e5d7a01921c8c4d7508c4" args="(CFDSolverConfiguration_Construction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolverConfiguration_Construction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6670763e204b340b8d08a8ea40ab784"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ab6670763e204b340b8d08a8ea40ab784" args="(CFDSolverConfiguration_CreateParameterFiles_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolverConfiguration_CreateParameterFiles_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#ac5584f4e62acc077516547aba5d60fe0">BOOST_AUTO_TEST_CASE</a> (CFDSolverConfiguration_CheckSet_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac4ceabb9b7aa1a42d5b60a4f65fc9808"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ac4ceabb9b7aa1a42d5b60a4f65fc9808" args="(CFDSolverConfiguration_ReadFromFile_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolverConfiguration_ReadFromFile_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac47b8864fc751be468f8fed651695b79"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ac47b8864fc751be468f8fed651695b79" args="(CFDSolverConfiguration_PrepareOutputDirectory_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolverConfiguration_PrepareOutputDirectory_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7674a6713c567058866476c0e2f923ac"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a7674a6713c567058866476c0e2f923ac" args="(CFDSolverConfiguration_OutputFlags_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolverConfiguration_OutputFlags_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0d3613c7722c49a3f20b5cb8d9c6190c"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a0d3613c7722c49a3f20b5cb8d9c6190c" args="(SolverStats_ConstructionAndFunctionality_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SolverStats_ConstructionAndFunctionality_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8797e90a62a5280f7877bb3e2a5535f"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ab8797e90a62a5280f7877bb3e2a5535f" args="(SolverStats_FunctionsInSolverContext_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (SolverStats_FunctionsInSolverContext_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa6f7bc5b2e61e0c673c46d7d58b486b"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aaa6f7bc5b2e61e0c673c46d7d58b486b" args="(D2Q9Construction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9Construction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e6ccf665a38e49780d3eb74ecb7ae2e"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a9e6ccf665a38e49780d3eb74ecb7ae2e" args="(D2Q9Static_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9Static_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a39bd87b48b869970d1ff9c39e8906611"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a39bd87b48b869970d1ff9c39e8906611" args="(D2Q9Getter_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9Getter_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad989d789b8bf82e68e1322b744f6c278"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ad989d789b8bf82e68e1322b744f6c278" args="(D2Q9Construction_Scaled_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9Construction_Scaled_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7988f30467753a9ffd505f19442f2356"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a7988f30467753a9ffd505f19442f2356" args="(D2Q9Getter_Scaled_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9Getter_Scaled_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99065e1e640a5c6ed259446a521e21c7"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a99065e1e640a5c6ed259446a521e21c7" args="(D2Q9MomentTrafo_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9MomentTrafo_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aff7666ed1e4b6996f51dd95d5b6628f4"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aff7666ed1e4b6996f51dd95d5b6628f4" args="(D3QXMomentTrafo_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D3QXMomentTrafo_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27e93123eac460080124636220f3b81b"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a27e93123eac460080124636220f3b81b" args="(DealIIWrapper_Convergence_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (DealIIWrapper_Convergence_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abc807165bb6f713d05eeec21612df097"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="abc807165bb6f713d05eeec21612df097" args="(DealIIWrapper_MultiBlock_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (DealIIWrapper_MultiBlock_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a71c27b988e4175b7a40b3a35472dcf17"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a71c27b988e4175b7a40b3a35472dcf17" args="(DealIIWrapper_MPI_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (DealIIWrapper_MPI_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a061f5535433c3c834eca7c3438d8d438"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a061f5535433c3c834eca7c3438d8d438" args="(ExponentialTimeIntegrator_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ExponentialTimeIntegrator_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ae22811692fba80a6a0de5b843877fe"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a3ae22811692fba80a6a0de5b843877fe" args="(ExponentialTimeIntegrator_MPI_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ExponentialTimeIntegrator_MPI_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a11f2ca3b923a75460c139b6a8a5829ae"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a11f2ca3b923a75460c139b6a8a5829ae" args="(RungeKutta5LowStorage_Convergence_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (RungeKutta5LowStorage_Convergence_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46aa1d17c95e14848fe9e4bf06920eb9"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a46aa1d17c95e14848fe9e4bf06920eb9" args="(RungeKutta5LowStorage_MPI_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (RungeKutta5LowStorage_MPI_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2f8301ae61e983bdf79275749c43db5"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ab2f8301ae61e983bdf79275749c43db5" args="(ThetaMethod_Convergence_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ThetaMethod_Convergence_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab08bd8b94d961571a14c779cb6f43ea5"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ab08bd8b94d961571a14c779cb6f43ea5" args="(ThetaMethod_MultiBlock_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ThetaMethod_MultiBlock_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad6e4cd3c4519457f2fcab08ccf941cab"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ad6e4cd3c4519457f2fcab08ccf941cab" args="(ThetaMethod_MPI_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (ThetaMethod_MPI_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a063d598f02838b791545695ce7c2bb8d"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a063d598f02838b791545695ce7c2bb8d" args="(BasicNames_pout_Test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BasicNames_pout_Test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a373dbad4fef7c7a61a60bdb02ad96334"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a373dbad4fef7c7a61a60bdb02ad96334" args="(CFDSolverUtilities_DoFDistance_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolverUtilities_DoFDistance_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aefd330df08a36589588646c79b6484db"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="aefd330df08a36589588646c79b6484db" args="(CFDSolverUtilities_getIntegratorByID_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (CFDSolverUtilities_getIntegratorByID_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a334239f5dfc2861c3d722ceab11d956b"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a334239f5dfc2861c3d722ceab11d956b" args="(DealIIFunctionality_Periodicity_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (DealIIFunctionality_Periodicity_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2b885e6d3e03dc649f0bd44295ad701"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ae2b885e6d3e03dc649f0bd44295ad701" args="(DealIIFunctionality_UserFlags_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (DealIIFunctionality_UserFlags_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe0d974e8e27371c1cfbede14560dc72"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="afe0d974e8e27371c1cfbede14560dc72" args="(DealIIFunctionality_VectorReference_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (DealIIFunctionality_VectorReference_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5bdafd6bf42964ea54804589a5991a67"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a5bdafd6bf42964ea54804589a5991a67" args="(DealIIFunctionality_IndexSet_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (DealIIFunctionality_IndexSet_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ccd12b5301561e908ab18bec38078c3"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a1ccd12b5301561e908ab18bec38078c3" args="(Math_VelocityNorm_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (Math_VelocityNorm_test)</td></tr>
 <tr><td colspan="2"><h2>Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">dealii::ConditionalOStream&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a3cedd4d2c74ed3a6e0f61166ddff40d1">perr</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1c1457daa96180a3ee2057cf5f7f9e3"></a><!-- doxytag: member="natrium::pout" ref="ae1c1457daa96180a3ee2057cf5f7f9e3" args="" -->
 dealii::ConditionalOStream&nbsp;</td><td class="memItemRight" valign="bottom"><b>pout</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43f9d1a94de3cd6d8515e213d9c389cc"></a><!-- doxytag: member="natrium::SCALING" ref="a43f9d1a94de3cd6d8515e213d9c389cc" args="" -->
-const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>SCALING</b> = 0.5</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. </p>
+<p>a module to read arguments from the command line </p>
 <hr/><h2>Enumeration Type Documentation</h2>
 <a class="anchor" id="a45d5dacaf5eb5efde670179d949173ba"></a><!-- doxytag: member="natrium::StencilType" ref="a45d5dacaf5eb5efde670179d949173ba" args="" -->
 <div class="memitem">
@@ -714,156 +579,6 @@ const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>SCALING</b> =
 </div>
 </div>
 <hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ac5584f4e62acc077516547aba5d60fe0"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ac5584f4e62acc077516547aba5d60fe0" args="(CFDSolverConfiguration_CheckSet_test)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">natrium::BOOST_AUTO_TEST_CASE </td>
-          <td>(</td>
-          <td class="paramtype">CFDSolverConfiguration_CheckSet_test&nbsp;</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Failure test </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a3fc48dbb8fbf2d4a981c1d02ef5e555e"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a3fc48dbb8fbf2d4a981c1d02ef5e555e" args="(DistributionFunctions_Construction_test)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">natrium::BOOST_AUTO_TEST_CASE </td>
-          <td>(</td>
-          <td class="paramtype">DistributionFunctions_Construction_test&nbsp;</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Empty constructor</p>
-<p>Conversion-from-vector constructor </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a6c15033ca6f4995b47ec6f3b8f2c8472"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a6c15033ca6f4995b47ec6f3b8f2c8472" args="(PeriodicBoundary_getCoordinates3D_test)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">natrium::BOOST_AUTO_TEST_CASE </td>
-          <td>(</td>
-          <td class="paramtype">PeriodicBoundary_getCoordinates3D_test&nbsp;</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>create triangulation </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a6742e53417be0f418326a958ef719cd0"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a6742e53417be0f418326a958ef719cd0" args="(PeriodicBoundary_getCoordinates2D_test)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">natrium::BOOST_AUTO_TEST_CASE </td>
-          <td>(</td>
-          <td class="paramtype">PeriodicBoundary_getCoordinates2D_test&nbsp;</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>create triangulation </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="ac3aa16cb6afbde804febb51c503b72e3"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="ac3aa16cb6afbde804febb51c503b72e3" args="(PeriodicBoundary2D_forDiscontinuousGalerkin_test)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">natrium::BOOST_AUTO_TEST_CASE </td>
-          <td>(</td>
-          <td class="paramtype">PeriodicBoundary2D_forDiscontinuousGalerkin_test&nbsp;</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>create triangulation </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a4090d871d84ad4fb470c0b909c8aa3a2"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a4090d871d84ad4fb470c0b909c8aa3a2" args="(PeriodicBoundary2D_ConstructionByBoundaryIndicator_test)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">natrium::BOOST_AUTO_TEST_CASE </td>
-          <td>(</td>
-          <td class="paramtype">PeriodicBoundary2D_ConstructionByBoundaryIndicator_test&nbsp;</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Valid set of points and triangulation</p>
-<p>Test if construction works and vertices could be found automatically </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a5d50c8f7b1a7391f2433de8b308a11e7"></a><!-- doxytag: member="natrium::BOOST_AUTO_TEST_CASE" ref="a5d50c8f7b1a7391f2433de8b308a11e7" args="(SEDGMinLee_RKstreaming_test)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">natrium::BOOST_AUTO_TEST_CASE </td>
-          <td>(</td>
-          <td class="paramtype">SEDGMinLee_RKstreaming_test&nbsp;</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>THIS WILL SHOW, if streaming is really correct</p>
-<p>relaxationParamter and velocity have no impact; just needed for construction </p>
-</p>
-
-</div>
-</div>
 <a class="anchor" id="a791202a0d8b6bdac2c62f3ae63905a36"></a><!-- doxytag: member="natrium::is_MPI_rank_0" ref="a791202a0d8b6bdac2c62f3ae63905a36" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -882,12 +597,12 @@ const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>SCALING</b> =
 
 </div>
 </div>
-<a class="anchor" id="a0590621d19e4629e6afb5e7365f9f331"></a><!-- doxytag: member="natrium::LOG" ref="a0590621d19e4629e6afb5e7365f9f331" args="(LogLevel level)" -->
+<a class="anchor" id="ad2838e1bab766ae66a68aa1ac6f2f7cb"></a><!-- doxytag: member="natrium::LOG" ref="ad2838e1bab766ae66a68aa1ac6f2f7cb" args="(LogLevel level)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classnatrium_1_1Logging.html">Logging</a>&amp; natrium::LOG </td>
+          <td class="memname"><a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp; natrium::LOG </td>
           <td>(</td>
           <td class="paramtype">LogLevel&nbsp;</td>
           <td class="paramname"> <em>level</em></td>
@@ -904,12 +619,12 @@ const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>SCALING</b> =
 
 </div>
 </div>
-<a class="anchor" id="a0d879cf404d8a12fc978ab97d33758b4"></a><!-- doxytag: member="natrium::LOGGER" ref="a0d879cf404d8a12fc978ab97d33758b4" args="()" -->
+<a class="anchor" id="addbc7112675b740db86c1c775fce7b1d"></a><!-- doxytag: member="natrium::LOGGER" ref="addbc7112675b740db86c1c775fce7b1d" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classnatrium_1_1Logging.html">Logging</a>&amp; natrium::LOGGER </td>
+          <td class="memname"><a class="el" href="classnatrium_1_1Logging.html">Logging</a> &amp; natrium::LOGGER </td>
           <td>(</td>
           <td class="paramname"></td>
           <td>&nbsp;)&nbsp;</td>
@@ -919,8 +634,8 @@ const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>SCALING</b> =
 </div>
 <div class="memdoc">
 
-<p>is used to access the default logging instance m_LOGGER; e.g. <a class="el" href="namespacenatrium.html#a0d879cf404d8a12fc978ab97d33758b4" title="is used to access the default logging instance m_LOGGER; e.g. LOGGER().setLogFile(...">LOGGER()</a>.setLogFile(...) </p>
-<p>friend function; is used to access the default logging instance; e.g. <a class="el" href="namespacenatrium.html#a0d879cf404d8a12fc978ab97d33758b4" title="is used to access the default logging instance m_LOGGER; e.g. LOGGER().setLogFile(...">LOGGER()</a>.setLogFile(...) </p>
+<p>is used to access the default logging instance m_LOGGER; e.g. <a class="el" href="namespacenatrium.html#addbc7112675b740db86c1c775fce7b1d" title="is used to access the default logging instance m_LOGGER; e.g. LOGGER().setLogFile(...">LOGGER()</a>.setLogFile(...) </p>
+<p>friend function; is used to access the default logging instance; e.g. <a class="el" href="namespacenatrium.html#addbc7112675b740db86c1c775fce7b1d" title="is used to access the default logging instance m_LOGGER; e.g. LOGGER().setLogFile(...">LOGGER()</a>.setLogFile(...) </p>
 
 </div>
 </div>
@@ -963,6 +678,44 @@ const double&nbsp;</td><td class="memItemRight" valign="bottom"><b>SCALING</b> =
 
 <p><p>Build time integrator </p>
 </p>
+
+</div>
+</div>
+<a class="anchor" id="a27247bfe7bab81b738081b41113ed419"></a><!-- doxytag: member="natrium::makeQuadratureAtPoints" ref="a27247bfe7bab81b738081b41113ed419" args="(const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;points, const dealii::Mapping&lt; dim &gt; &amp;mapping)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">dealii::Quadrature&lt; dim &gt; natrium::makeQuadratureAtPoints </td>
+          <td>(</td>
+          <td class="paramtype">const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&nbsp;</td>
+          <td class="paramname"> <em>cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const dealii::Mapping&lt; dim &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>mapping</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Create an FEValues object to calculate shape functions, etc. on other points than the support points. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>the returned object is already reinitialized for the cell, i.e. you don't need need to call reinit(cell) for the returned object. </dd></dl>
 
 </div>
 </div>
@@ -1024,6 +777,58 @@ template&lt;class VECTOR &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="aa39b5925f0186ff601e4acae922d50e3"></a><!-- doxytag: member="natrium::shapeFunctionValue" ref="aa39b5925f0186ff601e4acae922d50e3" args="(const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;values, const dealii::Mapping&lt; dim &gt; &amp;mapping)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void natrium::shapeFunctionValue </td>
+          <td>(</td>
+          <td class="paramtype">const typename dealii::DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&nbsp;</td>
+          <td class="paramname"> <em>cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; dealii::Point&lt; dim &gt; &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::vector&lt; double &gt; &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const dealii::Mapping&lt; dim &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>mapping</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Calculates the shape values for arbitrary points. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>cell</em>&nbsp;</td><td>the cell which contains the points </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>a</em>&nbsp;</td><td>vector of points </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>a</em>&nbsp;</td><td>vector of vector&lt;double&gt; that will contain the shape function values at the points. Has to have the size n_points x dofs_per_cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>This function is similar to FEFieldFunction&lt;dim, DH, VECTOR&gt;::vector_value </dd></dl>
+
+</div>
+</div>
 <hr/><h2>Variable Documentation</h2>
 <a class="anchor" id="a3cedd4d2c74ed3a6e0f61166ddff40d1"></a><!-- doxytag: member="natrium::perr" ref="a3cedd4d2c74ed3a6e0f61166ddff40d1" args="" -->
 <div class="memitem">
@@ -1054,7 +859,7 @@ template&lt;class VECTOR &gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

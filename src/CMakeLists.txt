@@ -1,5 +1,5 @@
 #
-# CMake File for NATriuM test
+# CMake File for NATriuM
 #    
        
 #
@@ -13,6 +13,9 @@ cmake_minimum_required( VERSION 2.8.8 )
 find_package(   deal.II 8.0 REQUIRED
                 HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
 )      
+
+
+
 
         
 # 
@@ -42,15 +45,16 @@ INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS}) # systems suppresses warnings 
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
       
       
+         
           
 
 #
 # descend into subdirectories (build natrium library in src and unit tests in test as well as examples)
 #
 add_subdirectory( library )
-#add_subdirectory( test )
-#add_subdirectory( examples )
-add_subdirectory( analysis )
+add_subdirectory( test )
+add_subdirectory( examples )
+#add_subdirectory( analysis )
  
 # 
 # set variable NATRIUM_TARGET (only used in this file)

@@ -50,18 +50,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#_details">More...</a></p>
 <code>#include &quot;<a class="el" href="SemiLagrangian_8h_source.html">SemiLagrangian.h</a>&quot;</code><br/>
 <code>#include &lt;queue&gt;</code><br/>
+<code>#include &lt;array&gt;</code><br/>
 <code>#include &lt;sstream&gt;</code><br/>
 <code>#include &quot;deal.II/lac/trilinos_sparsity_pattern.h&quot;</code><br/>
 <code>#include &quot;deal.II/dofs/dof_renumbering.h&quot;</code><br/>
 <code>#include &quot;deal.II/grid/tria_accessor.h&quot;</code><br/>
 <code>#include &quot;deal.II/grid/tria_iterator.h&quot;</code><br/>
-<code>#include &quot;deal.II/fe/fe_update_flags.h&quot;</code><br/>
 <code>#include &quot;deal.II/lac/matrix_iterator.h&quot;</code><br/>
 <code>#include &quot;deal.II/lac/sparsity_tools.h&quot;</code><br/>
 <code>#include &quot;deal.II/base/utilities.h&quot;</code><br/>
-<code>#include &quot;deal.II/lac/constraint_matrix.h&quot;</code><br/>
+<code>#include &quot;deal.II/fe/fe_q.h&quot;</code><br/>
 <code>#include &quot;../boundaries/PeriodicBoundary.h&quot;</code><br/>
-<code>#include &quot;../boundaries/DoFBoundary.h&quot;</code><br/>
 <code>#include &quot;../stencils/Stencil.h&quot;</code><br/>
 <code>#include &quot;../utilities/DealiiExtensions.h&quot;</code><br/>
 <code>#include &quot;../utilities/CFDSolverUtilities.h&quot;</code><br/>
@@ -92,7 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

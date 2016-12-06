@@ -1,0 +1,56 @@
+\hypertarget{structnatrium_1_1HitList}{
+\section{natrium::HitList$<$ dim $>$ Struct Template Reference}
+\label{structnatrium_1_1HitList}\index{natrium::HitList@{natrium::HitList}}
+}
+
+
+stores all boundary hits that are required for the locally owned dofs Structure of \hyperlink{structnatrium_1_1HitList}{HitList}:
+\begin{DoxyItemize}
+\item \hyperlink{structnatrium_1_1HitList}{HitList} $>$$>$ \hyperlink{structnatrium_1_1HitListAtCell}{HitListAtCell} A $>$$>$ \hyperlink{structnatrium_1_1HitListAtPoint}{HitListAtPoint} 1 $>$$>$ ... $>$$>$ \hyperlink{structnatrium_1_1HitListAtPoint}{HitListAtPoint} 2 $>$$>$ ... $>$$>$ ... $>$$>$ \hyperlink{structnatrium_1_1HitListAtCell}{HitListAtCell} B $>$$>$ ... $>$$>$ ... 
+\end{DoxyItemize} 
+
+
+{\ttfamily \#include $<$BoundaryHit.h$>$}\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structnatrium_1_1HitList_a89f232c16ffe68afb8e654cd1827d206}{
+typedef Base::iterator {\bfseries iterator}}
+\label{structnatrium_1_1HitList_a89f232c16ffe68afb8e654cd1827d206}
+
+\item 
+\hypertarget{structnatrium_1_1HitList_a071a4ba91f009ded8a789ee228fc9741}{
+typedef Base::const\_\-iterator {\bfseries const\_\-iterator}}
+\label{structnatrium_1_1HitList_a071a4ba91f009ded8a789ee228fc9741}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structnatrium_1_1HitList_ad409882e8650f2a2975554ca6739f35e}{
+void {\bfseries addHit} (const \hyperlink{structnatrium_1_1BoundaryHit}{BoundaryHit}$<$ dim $>$ \&hit)}
+\label{structnatrium_1_1HitList_ad409882e8650f2a2975554ca6739f35e}
+
+\item 
+\hypertarget{structnatrium_1_1HitList_aaeabd78604239f7e58ca91fdd68c3cfc}{
+size\_\-t {\bfseries n\_\-hits} () const }
+\label{structnatrium_1_1HitList_aaeabd78604239f7e58ca91fdd68c3cfc}
+
+\item 
+\hypertarget{structnatrium_1_1HitList_ac088ae0bbfa85efdeff0c81380489874}{
+size\_\-t {\bfseries n\_\-cells} () const }
+\label{structnatrium_1_1HitList_ac088ae0bbfa85efdeff0c81380489874}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ struct natrium::HitList$<$ dim $>$}
+
+stores all boundary hits that are required for the locally owned dofs Structure of \hyperlink{structnatrium_1_1HitList}{HitList}:
+\begin{DoxyItemize}
+\item \hyperlink{structnatrium_1_1HitList}{HitList} $>$$>$ \hyperlink{structnatrium_1_1HitListAtCell}{HitListAtCell} A $>$$>$ \hyperlink{structnatrium_1_1HitListAtPoint}{HitListAtPoint} 1 $>$$>$ ... $>$$>$ \hyperlink{structnatrium_1_1HitListAtPoint}{HitListAtPoint} 2 $>$$>$ ... $>$$>$ ... $>$$>$ \hyperlink{structnatrium_1_1HitListAtCell}{HitListAtCell} B $>$$>$ ... $>$$>$ ... 
+\end{DoxyItemize}
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/BoundaryHit.h\end{DoxyCompactItemize}
