@@ -127,9 +127,11 @@ void getAnalyticSolution(double time, distributed_vector& analyticSolution,
 		if (cell->is_locally_owned()) {
 			cell->get_dof_indices(local_dof_indices);
 			for (size_t i = 0; i < dofs_per_cell; i++) {
-				assert(
+				if ( not
 						analyticSolution.in_local_range(
-								local_dof_indices.at(i)));
+								local_dof_indices.at(i))){
+					continue;
+				}
 				assert(
 						supportPoints.find(local_dof_indices.at(i))
 								!= supportPoints.end());
@@ -171,17 +173,15 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 	const distributed_sparse_block_matrix& matrices =
 			streaming.getSystemMatrix();
 
-#ifdef WITH_TRILINOS_MPI
 	// create smooth initial conditions
 	distributed_vector f(streaming.getLocallyOwnedDofs(), MPI_COMM_WORLD);
 	// zero-vector for time integrator / tmp-vector for semi-lagrangian
 	distributed_vector g(streaming.getLocallyOwnedDofs(), MPI_COMM_WORLD);
-#else
-	// create smooth initial conditions
-	distributed_vector f(streaming.getNumberOfDoFs());
-	// zero-vector for time integrator
-	distributed_vector g(streaming.getNumberOfDoFs());
-#endif
+
+
+	distributed_vector f_ana_ghosted(streaming.getLocallyOwnedDofs(),streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	distributed_vector f_ghosted(streaming.getLocallyOwnedDofs(),streaming.getLocallyRelevantDofs(), MPI_COMM_WORLD);
+
 	map<dealii::types::global_dof_index, dealii::Point<2> > supportPoints;
 	streaming.mapDoFsToSupportPoints(supportPoints);
 	getAnalyticSolution(0.0, f, supportPoints, streaming, is_smooth);
@@ -229,16 +229,18 @@ AdvectionResult oneTest(size_t refinementLevel, size_t fe_order, double deltaT,
 			}
 			// output
 			if (i % 10 == 0) {
+				f_ghosted = f;
 				std::stringstream str;
 				str << dirName.str().c_str() << "/t_" << i << ".vtu";
 				std::string filename = str.str();
 				std::ofstream vtu_output(filename.c_str());
 				dealii::DataOut<2> data_out;
 				data_out.attach_dof_handler(*streaming.getDoFHandler());
-				data_out.add_data_vector(f, "f");
+				data_out.add_data_vector(f_ghosted, "f");
 				getAnalyticSolution(deltaT * i, fAnalytic, supportPoints,
 						streaming, is_smooth);
-				data_out.add_data_vector(fAnalytic, "f_ref");
+				f_ana_ghosted = fAnalytic;
+				data_out.add_data_vector(f_ana_ghosted, "f_ref");
 				data_out.build_patches(20);
 				data_out.write_vtu(vtu_output);
 			}

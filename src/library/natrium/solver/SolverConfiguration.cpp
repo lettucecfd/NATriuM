@@ -45,7 +45,7 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Quadrature", "Gauss-Lobatto",
 				dealii::Patterns::Selection("Gauss-Lobatto|Gauss"),
 				"The quadrature rule that is used for integration of the finite elements. "
-				"For the SEDG streaming, this has to be set to 'Gauss-Lobatto'.");
+						"For the SEDG streaming, this has to be set to 'Gauss-Lobatto'.");
 
 		declare_entry("Time integrator", "Runge-Kutta 5-stage",
 				dealii::Patterns::Selection(
@@ -472,6 +472,29 @@ void SolverConfiguration::isConsistent() {
 					<< "If you use the BGK Multiphase model you will need to specify a forcing scheme. Found 'No Forcing'.";
 			LOG(ERROR) << msg1.str().c_str() << endl;
 			throw ConfigurationException(msg1.str());
+		}
+		LOG(WARNING)
+				<< "BGK_MULTIPHASE does not work properly. The finite element discretization "
+						"does not provide gradients with sufficient isotropy"
+				<< endl;
+	}
+	// not all forcing schemes work properly
+	if (NO_FORCING != getForcingScheme()) {
+		if (Stencil_D3Q15 == getStencil()) {
+			LOG(ERROR)
+					<< "NATriuM's Stencil_D3Q15 does not support forcing schemes, so far."
+					<< endl;
+		}
+		if (Stencil_D3Q27 == getStencil()) {
+			LOG(ERROR)
+					<< "NATriuM's Stencil_D3Q27 does not support forcing schemes, so far."
+					<< endl;
+		}
+		if (Stencil_D3Q19 == getStencil()) {
+			if (SHIFTING_VELOCITY != getForcingScheme())
+				LOG(ERROR)
+						<< "NATriuM's Stencil_D3Q19 works only with the shifting velocity forcing scheme."
+						<< endl;
 		}
 	}
 
