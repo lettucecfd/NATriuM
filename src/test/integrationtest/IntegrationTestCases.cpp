@@ -786,7 +786,7 @@ TestResult ConvergenceTestForcingSchemes3D() {
 	/// setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setSwitchOutputOff(true);
+	//configuration->setSwitchOutputOff(true);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
@@ -829,6 +829,7 @@ TestResult ConvergenceTestForcingSchemes3D() {
 				break;
 			}
 			}
+			cout << s.str() << endl;
 
 			// make solver object and run simulation
 			boost::shared_ptr<ProblemDescription<3> > poiseuille3D =

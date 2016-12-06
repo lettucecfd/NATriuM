@@ -138,26 +138,30 @@ public:
 		if (not (m_solver->m_i - m_solver->m_iterationStart < 100)) {
 			// i.e. not first visit of this if-statement
 			///// CALCULATE MAX VELOCITY VARIATION
-			// substract new from old velocity
-			m_solver->m_tmpVelocity.at(0).add(-1.0, u.at(0));
-			m_solver->m_tmpVelocity.at(1).add(-1.0, u.at(1));
-			// calculate squares
-			m_solver->m_tmpVelocity.at(0).scale(m_solver->m_tmpVelocity.at(0));
-			m_solver->m_tmpVelocity.at(1).scale(m_solver->m_tmpVelocity.at(1));
+			for (size_t i = 0; i < dim; i++){
+				// substract new from old velocity
+				m_solver->m_tmpVelocity.at(i).add(-1.0, u.at(i));
+				// calculate squares
+				m_solver->m_tmpVelocity.at(i).scale(m_solver->m_tmpVelocity.at(i));
+			}
 			// calculate ||error (pointwise)||^2
 			m_solver->m_tmpVelocity.at(0).add(m_solver->m_tmpVelocity.at(1));
+			if (dim == 3){
+				m_solver->m_tmpVelocity.at(0).add(m_solver->m_tmpVelocity.at(2));
+			}
 			m_solver->m_residuumVelocity = sqrt(
 					m_solver->m_tmpVelocity.at(0).linfty_norm());
+
 			///// CALCULATE MAX DENSITY VARIATION
 			m_solver->m_tmpDensity.add(-1.0, rho);
-			m_solver->m_residuumDensity = sqrt(
-					m_solver->m_tmpDensity.linfty_norm());
+			m_solver->m_residuumDensity = m_solver->m_tmpDensity.linfty_norm();
 
 		}
 		// (if first visit of this if-statement, only this part is executed)
 		assert(m_solver->m_tmpVelocity.size() == m_solver->m_velocity.size());
-		m_solver->m_tmpVelocity.at(0) = u.at(0);
-		m_solver->m_tmpVelocity.at(1) = u.at(1);
+		for (size_t i = 0; i < dim; i++){
+			m_solver->m_tmpVelocity.at(i) = u.at(i);
+		}
 		m_solver->m_tmpDensity = rho;
 	}
 
