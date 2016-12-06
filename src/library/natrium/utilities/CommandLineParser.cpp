@@ -9,17 +9,17 @@
 
 namespace natrium {
 
-//
-//CommandLineParser::CommandLineParser(int argc, char** argv) :
-//		m_argc(argc), m_argv(argv), m_description(
-//				"This executable is compiled with NATriuM, a package for off-lattice Boltzmann simulations. Allowed options:"), m_isImported(false) {
-//	m_description.add_options()("help", "produce help message");
-//}
-//
-//
-//void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg){
-//
-//}
+
+CommandLineParser::CommandLineParser(int argc, char** argv) :
+		//	"This executable is compiled with NATriuM, a package for off-lattice Boltzmann simulations.
+		m_argc(argc), m_argv(argv), m_description("Allowed options"), m_isImported(false) {
+	m_description.add_options()("help", "produce help message");
+}
+
+
+void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg){
+
+}
 
 } /* namespace natrium */
 

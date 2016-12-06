@@ -39,6 +39,7 @@ find_package( Boost ${BOOST_MIN_VERSION}
               system
               filesystem
               unit_test_framework
+              program_options
               REQUIRED
               )
 INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS}) # systems suppresses warnings in boost

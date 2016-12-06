@@ -63,6 +63,7 @@ target_link_libraries(  ${TEST_TARGET}
                        ${Boost_FILESYSTEM_LIBRARY}
                        ${Boost_SYSTEM_LIBRARY}
                        ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+                       ${Boost_PROGRAM_OPTIONS_LIBRARY}
                         ) 
                         
 target_link_libraries(  ${INTEGRATION_TEST_TARGET}
@@ -70,5 +71,7 @@ target_link_libraries(  ${INTEGRATION_TEST_TARGET}
                        ${Boost_FILESYSTEM_LIBRARY}
                        ${Boost_SYSTEM_LIBRARY}
                        ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+                       ${Boost_PROGRAM_OPTIONS_LIBRARY}
+                       
                         )                        
                        
