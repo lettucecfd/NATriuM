@@ -127,14 +127,22 @@ int main(int argc, char** argv) {
 			<< static_cast<int>(configuration->getTimeIntegrator()) << "_"
 			<< static_cast<int>(configuration->getDealIntegrator()) << "-CFL"
 			<< configuration->getCFL() << "-scaling"
-			<< configuration->getStencilScaling() << "-filter"
-			<< parser.getArgument<int>("filter") << "-filt_s"
-			<< parser.getArgument<int>("filter-s") << "-tx"
-			<< parser.getArgument<double>("tx") << "-ty"
-			<< parser.getArgument<double>("ty");
+			<< configuration->getStencilScaling();
+	if (parser.getArgument<int>("filter") != 0) {
+		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"
+				<< parser.getArgument<int>("filter-s");
+	}
+	if ((parser.getArgument<double>("tx") != 0)
+			or (parser.getArgument<double>("ty") != 0)) {
+		dirname << "-tx" << parser.getArgument<double>("tx") << "-ty"
+				<< parser.getArgument<double>("ty");
+	}
+	if (configuration->getRegularizationScheme() != NO_REGULARIZATION){
+		dirname << "-reg" << static_cast<int>(configuration->getRegularizationScheme());
+	}
 	configuration->setOutputDirectory(dirname.str());
 
-	pout << "Simulation end time will be t_c = " << t_max << endl;
+	pout << "Simulation end time will be t_max = " << t_max << endl;
 	// ========================================================================
 	// RUN SOLVER
 	// ========================================================================

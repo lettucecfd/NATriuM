@@ -20,6 +20,7 @@
 #include "../utilities/BasicNames.h"
 #include "../utilities/NATriuMException.h"
 #include "../solver/SolverConfiguration.h"
+#include "../utilities/Timing.h"
 
 namespace natrium {
 
@@ -112,6 +113,8 @@ boost::shared_ptr<Stencil> make_stencil(size_t d, size_t q, size_t scaling);
  *
  */
 inline std::vector<distributed_vector>& getWriteableVelocity(std::vector<distributed_vector>& writeable, const std::vector<distributed_vector>& member, const dealii::IndexSet& locally_owned){
+
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 	writeable.resize(member.size());
 	for (size_t i = 0; i < member.size(); i++){
 		writeable.at(i).reinit(locally_owned, member.at(i).get_mpi_communicator(), true);
@@ -126,6 +129,7 @@ inline std::vector<distributed_vector>& getWriteableVelocity(std::vector<distrib
  * @short copy the changes in the writeable copy to the global velocity, see getWritableVelocity for a detailed explanation
  */
 inline void applyWriteableVelocity(const std::vector<distributed_vector>& writeable, std::vector<distributed_vector>& member){
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 	assert (member.size() == writeable.size());
 	for (size_t i = 0; i < member.size(); i++){
 		member = writeable;
@@ -136,6 +140,7 @@ inline void applyWriteableVelocity(const std::vector<distributed_vector>& writea
  * @short get a writeable copy of the velocity
  */
 inline distributed_vector& getWriteableDensity(distributed_vector& writeable, const distributed_vector& member, const dealii::IndexSet& locally_owned){
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 	writeable.reinit(locally_owned, member.get_mpi_communicator(), true);
 	assert (not writeable.has_ghost_elements());
 	writeable = member;
@@ -147,6 +152,7 @@ inline distributed_vector& getWriteableDensity(distributed_vector& writeable, co
  * @short copy the changes in the writeable copy to the global density, see getWritableVelocity for a detailed explanation
  */
 inline void applyWriteableDensity(const distributed_vector& writeable, distributed_vector& member){
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 	member = writeable;
 }
 

@@ -11,6 +11,7 @@
 #include "../solver/DistributionFunctions.h"
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/base/index_set.h"
+#include "../utilities/Timing.h"
 
 // enable + operator for filling vectors
 #include "boost/assign/std/vector.hpp"
@@ -20,26 +21,30 @@ using namespace boost::assign;
 
 namespace natrium {
 
+//dealii::FullMatrix stabilizer_matrix(9);
+// nominator
+double n[][9] = { { 8, 2, 2, 2, 2, -4, -4, -4, -4 }, { 1, 13, -1, 1,
+		-1, 5, -1, -1, 5 }, { 1, -1, 13, -1, 1, 5, 5, -1, -1 }, { 1, 1, -1,
+		13, -1, -1, 5, 5, -1 }, { 1, -1, 1, -1, 13, -1, -1, 5, 5 }, { -1, 5,
+		5, -1, -1, 5, -1, 2, -1 }, { -1, -1, 5, 5, -1, -1, 5, -1, 2 }, { -1,
+		-1, -1, 5, 5, 2, -1, 5, -1 }, { -1, 5, -1, -1, 5, -1, 2, -1, 5 } };
+// denominator
+double d[][9] = { { 9, 9, 9, 9, 9, 9, 9, 9, 9 }, { 18, 18, 9, 18, 9,
+		9, 9, 9, 9 }, { 18, 9, 18, 9, 18, 9, 9, 9, 9 }, { 18, 18, 9, 18, 9,
+		9, 9, 9, 9 }, { 18, 9, 18, 9, 18, 9, 9, 9, 9 }, { 36, 36, 36, 36,
+		36, 9, 9, 9, 9 }, { 36, 36, 36, 36, 36, 9, 9, 9, 9 }, { 36, 36, 36,
+		36, 36, 9, 9, 9, 9 }, { 36, 36, 36, 36, 36, 9, 9, 9, 9 } };
+
+
 template<size_t dim>
 void PseudoEntropicStabilizer<dim>::apply() {
+
+
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Pseudo-entropic stabilizer");
 
 	//pout << "Stabilizer is active." << endl;
 	const Stencil& stencil = *(this->m_solver.getStencil());
 	assert(Stencil_D2Q9 == stencil.getStencilType());
-
-	//dealii::FullMatrix stabilizer_matrix(9);
-	// nominator
-	const double n[][9] = { { 8, 2, 2, 2, 2, -4, -4, -4, -4 }, { 1, 13, -1, 1,
-			-1, 5, -1, -1, 5 }, { 1, -1, 13, -1, 1, 5, 5, -1, -1 }, { 1, 1, -1,
-			13, -1, -1, 5, 5, -1 }, { 1, -1, 1, -1, 13, -1, -1, 5, 5 }, { -1, 5,
-			5, -1, -1, 5, -1, 2, -1 }, { -1, -1, 5, 5, -1, -1, 5, -1, 2 }, { -1,
-			-1, -1, 5, 5, 2, -1, 5, -1 }, { -1, 5, -1, -1, 5, -1, 2, -1, 5 } };
-	// denominator
-	const double d[][9] = { { 9, 9, 9, 9, 9, 9, 9, 9, 9 }, { 18, 18, 9, 18, 9,
-			9, 9, 9, 9 }, { 18, 9, 18, 9, 18, 9, 9, 9, 9 }, { 18, 18, 9, 18, 9,
-			9, 9, 9, 9 }, { 18, 9, 18, 9, 18, 9, 9, 9, 9 }, { 36, 36, 36, 36,
-			36, 9, 9, 9, 9 }, { 36, 36, 36, 36, 36, 9, 9, 9, 9 }, { 36, 36, 36,
-			36, 36, 9, 9, 9, 9 }, { 36, 36, 36, 36, 36, 9, 9, 9, 9 } };
 
 	// allocation
 	double f_i[9] = { };
