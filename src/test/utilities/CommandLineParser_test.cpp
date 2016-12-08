@@ -226,6 +226,35 @@ BOOST_AUTO_TEST_CASE(CommandLineParser_MakePositional_test) {
 	pout << "done." << endl;
 } /* CommandLineParser_MakePositional_test */
 
+BOOST_AUTO_TEST_CASE(CommandLineParser_SetWithoutDefault_test) {
+	pout << "CommandLineParser_SetWithoutDefault_test..." << endl;
+
+	char arg1[] = "program_name";
+	char arg2[] = "--arg1";
+	char arg3[] = "5";
+	char* argv[] = { arg1, arg2, arg3, NULL };
+	int argc = sizeof(argv) / sizeof(char*) - 1;
+
+	CommandLineParser c(argc, argv);
+
+	// define arguments
+	c.setArgument<int>("arg1", "description");
+	c.setArgument<int>("arg2", "description");
+	c.setArgument<int>("arg3", "description", 1);
+	c.importOptions();
+
+
+	BOOST_CHECK_EQUAL(c.getArgument<int>("arg1"), 5);
+	BOOST_CHECK(not c.hasArgument("arg2"));
+	BOOST_CHECK(c.hasArgument("arg3"));
+
+	BOOST_CHECK_THROW(c.getArgument<int>("arg2"), CommandLineParserException);
+	BOOST_CHECK_NO_THROW(c.getArgument<int>("arg3"));
+
+
+	pout << "done." << endl;
+} /* CommandLineParser_SetWithoutDefault_test */
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

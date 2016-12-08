@@ -221,7 +221,6 @@ public:
 		leave_subsection();
 	}
 
-
 	SupportPointsName getSupportPoints() {
 		enter_subsection("Advection");
 		string sup = get("Support points");
@@ -230,7 +229,7 @@ public:
 			return GAUSS_LOBATTO_POINTS;
 		} else if ("Gauss-Lobatto-Chebyshev" == sup) {
 			return GAUSS_LOBATTO_CHEBYSHEV_POINTS;
-		}  else if ("Gauss-Chebyshev" == sup) {
+		} else if ("Gauss-Chebyshev" == sup) {
 			return GAUSS_CHEBYSHEV_POINTS;
 		} else if ("Equidistant" == sup) {
 			return EQUIDISTANT_POINTS;
@@ -273,9 +272,7 @@ public:
 		leave_subsection();
 	}
 
-
-
-	 	QuadratureName getQuadrature() {
+	QuadratureName getQuadrature() {
 		enter_subsection("Advection");
 		string quad = get("Quadrature");
 		leave_subsection();
@@ -291,8 +288,6 @@ public:
 			throw ConfigurationException(msg.str());
 		}
 	}
-
-
 
 	void setQuadrature(QuadratureName quad) {
 		enter_subsection("Advection");
@@ -315,8 +310,6 @@ public:
 		}
 		leave_subsection();
 	}
-
-
 
 	CollisionSchemeName getCollisionScheme() {
 		enter_subsection("Collision");
@@ -2119,6 +2112,59 @@ public:
 	void setUserInteraction(bool userInteract) {
 		enter_subsection("Output");
 		set("User interaction?", userInteract);
+		leave_subsection();
+	}
+
+	RegularizationSchemeName getRegularizationScheme() {
+		enter_subsection("Filtering");
+		string regularization = get("Regularization");
+		leave_subsection();
+		if ("No Regularization" == regularization) {
+			return NO_REGULARIZATION;
+		} else if ("Pseudo-entropy maximization" == regularization) {
+			return PSEUDO_ENTROPY_MAXIMIZATION;
+
+		} else if ("Zero high-order moments" == regularization) {
+			return ZERO_HIGH_ORDER_MOMENTS;
+
+		} else if ("Entropy maximization" == regularization) {
+			return ENTROPY_MAXIMIZATION;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown regularization scheme '" << regularization
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of RegularizationSchemeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setRegularizationScheme(RegularizationSchemeName regularization) {
+		enter_subsection("Filtering");
+		switch (regularization) {
+		case NO_FORCING:{
+			set("Regularization", "No Regularization");
+			break;
+		}
+		case PSEUDO_ENTROPY_MAXIMIZATION: {
+			set("Regularization", "Pseudo-entropy maximization");
+			break;
+		}
+		case ZERO_HIGH_ORDER_MOMENTS: {
+			set("Regularization", "Zero high-order moments");
+			break;
+		}
+		case ENTROPY_MAXIMIZATION: {
+			set("Regularization", "Entropy maximization");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown regularization scheme; index. " << regularization
+					<< " in enum RegularizationSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
 		leave_subsection();
 	}
 
