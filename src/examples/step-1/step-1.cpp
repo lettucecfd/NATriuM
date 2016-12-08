@@ -17,6 +17,7 @@
 #include "natrium/problemdescription/Benchmark.h"
 
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/CommandLineParser.h"
 
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
@@ -27,18 +28,26 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
-	pout << "Starting NATriuM step-1 ..." << endl;
+	// parse arguments from command line
+	CommandLineParser parse(argc, argv);
+	parse.addDocumentationString("step-1-taylorGreenVortex", "This program runs the two-dimensional Taylor-Green vortex on a regular grid.");
+	parse.setArgument<double>("L", "size of the computational domain", 2*M_PI);
+	parse.setArgument<int>("ref-level", "refinement level of the computational grid", 5);
+	try {
+		parse.importOptions();
+	} catch (HelpMessageStop&){
+		return 0;
+	}
 
+
+	pout << "Starting NATriuM step-1 ..." << endl;
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 
 	// Re = viscosity/(2*pi)
 	//const double viscosity = 1;
-	double L = 2*M_PI;
-	if (argc > 1) {
-		L = atof(argv[1]);
-	}
+	double L = parse.getArgument<double>("L");
 	const double Re = 10;
 	const double viscosity = 1 * L / Re;
 	// C-E-approach: constant stencil scaling
@@ -50,7 +59,7 @@ int main(int argc, char** argv) {
 	// chose scaling so that the right Ma-number is achieved
 	double scaling = sqrt(3) * 2 / Ma;
 
-	const double refinementLevel = 5;
+	const double refinementLevel = parse.getArgument<int>("ref-level");
 		pout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
@@ -91,15 +100,19 @@ int main(int argc, char** argv) {
 		configuration->setSimulationEndTime(10.0);
 
 
+		parse.applyToSolverConfiguration(*configuration);
 		// make problem and solver objects
 		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
 				TaylorGreenVortex2D>(viscosity, refinementLevel, 1./Ma, true, L);
 		//tgVortex->setHorizontalVelocity(1);
 		boost::shared_ptr<ProblemDescription<2> > taylorGreen = tgVortex;
 		timestart = clock();
+
+		pout << "Make solver" << endl;
 		CFDSolver<2> solver(configuration, taylorGreen);
 		time1 = clock() - timestart;
 
+		pout << "Check for standard LBM" << endl;
 		distributed_block_vector ones;
 		distributed_block_vector result;
 		ones.reinit(8);
@@ -124,6 +137,7 @@ int main(int argc, char** argv) {
 		//solver.getF().getFStream().print(cout,10,true);
 
 
+		cout << "Run simulation" << endl;
 		try {
 			solver.run();
 			time2 = clock() - time1 - timestart;
