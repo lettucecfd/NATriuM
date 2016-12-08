@@ -165,6 +165,13 @@ public:
 			type default_value);
 
 	/**
+	 * @short Define a double parameter (i.e. a command line parameter like --cfl 2.0)
+	 */
+	template<class type>
+	void setArgument(std::string name, std::string description);
+
+
+	/**
 	 * @short check if the argument is set
 	 */
 	bool hasArgument(std::string name) {

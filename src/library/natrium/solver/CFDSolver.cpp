@@ -61,15 +61,18 @@ template<size_t dim>
 CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		boost::shared_ptr<ProblemDescription<dim> > problemDescription) {
 
+	LOG(DETAILED) << "CFDSolver Construction" << endl;
 	/// Create output directory
 	if (not configuration->isSwitchOutputOff()) {
 		try {
+			LOG(DETAILED) << "CFDSolver: Prepare output directory." << endl;
 			configuration->prepareOutputDirectory();
 		} catch (ConfigurationException & e) {
 			natrium_errorexit(e.what());
 		}
 	}
 
+	LOG(DETAILED) << "CFDSolver: set paths and configure logger" << endl;
 	boost::filesystem::path out_dir(configuration->getOutputDirectory());
 	boost::filesystem::path log_file = out_dir / "natrium.log";
 	boost::filesystem::path checkpoint_dir = out_dir / "checkpoint";
@@ -292,6 +295,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_collisionModel->setExternalForce(
 				*(m_problemDescription->getExternalForce()));
 	}
+
 
 // initialize macroscopic variables
 	m_advectionOperator->mapDoFsToSupportPoints(m_supportPoints);
@@ -568,6 +572,13 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this);
 		//m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this);
 	}
+
+	// Data processors for regularization
+	if (configuration->getRegularizationScheme() == PSEUDO_ENTROPY_MAXIMIZATION){
+		appendDataProcessor(boost::make_shared<PseudoEntropicStabilizer<dim> >(*this));
+		LOG(BASIC) << "Using Pseudo-Entropic Stabilizer." << endl;
+	}
+
 
 	// print out memory requirements of single components
 	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- "
