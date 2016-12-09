@@ -89,6 +89,7 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(10.0);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setStencilScaling(scaling);
+	configuration->setStencil(Stencil_D3Q19);
 
 	parser.applyToSolverConfiguration(*configuration);
 
