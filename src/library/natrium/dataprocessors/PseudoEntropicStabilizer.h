@@ -26,12 +26,17 @@ namespace natrium {
  */
 template<size_t dim>
 class PseudoEntropicStabilizer: public DataProcessor<dim> {
+private:
+	const bool m_withE;
+	void apply_d2q9();
+	void apply_d2q9_with_e();
+	void apply_d3q19();
 public:
 
-
 	/// constructor
-	PseudoEntropicStabilizer(CFDSolver<dim> & solver):
-		DataProcessor<dim>(solver){
+	PseudoEntropicStabilizer(CFDSolver<dim> & solver, bool with_e=false):
+		DataProcessor<dim>(solver),
+		m_withE(with_e) {
 		LOG(BASIC) << "Starting pseudo-entropic stabilizer." << endl;
 
 	}

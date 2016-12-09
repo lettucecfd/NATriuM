@@ -2129,7 +2129,9 @@ public:
 
 		} else if ("Entropy maximization" == regularization) {
 			return ENTROPY_MAXIMIZATION;
-		} else {
+		} else if ("Pseudo-entropy maximization with e" == regularization) {
+			return PSEUDO_ENTROPY_MAXIMIZATION_WITH_E;
+		}  else {
 			std::stringstream msg;
 			msg << "Unknown regularization scheme '" << regularization
 					<< " '. Check your configuration file. If everything is alright, "
@@ -2155,6 +2157,10 @@ public:
 		}
 		case ENTROPY_MAXIMIZATION: {
 			set("Regularization", "Entropy maximization");
+			break;
+		}
+		case PSEUDO_ENTROPY_MAXIMIZATION_WITH_E: {
+			set("Regularization", "Pseudo-entropy maximization with e");
 			break;
 		}
 		default: {

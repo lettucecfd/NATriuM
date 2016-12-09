@@ -39,9 +39,12 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<double>("scaling", "scaling of discrete particle velocities");
 	setArgument<string>("regularization",
 			"regularization of high-order moments [no (no regularization), pem (pseudo-entropy maximization), "
-					"zero (zero high-order moments), em (entropy maximization)]");
-	setArgument<string>("support-points", "support points for semi-Lagrangian streaming [gll (Gauss-Lobatto-Legendre)"
-			", glc (Gauss-Lobatto-Chebyshev), gc (Gauss-Chebyshev), equi (equidistant)]");
+					"zero (zero high-order moments), em (entropy maximization), pemwe(pseudo-entropy maximization with flexible moment e)]");
+	setArgument<string>("support-points",
+			"support points for semi-Lagrangian streaming [gll (Gauss-Lobatto-Legendre)"
+					", glc (Gauss-Lobatto-Chebyshev), gc (Gauss-Chebyshev), equi (equidistant)]");
+	setArgument<int>("output-sol", "output solution interval (#iterations)");
+	setArgument<string>("stencil", "stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27]");
 
 }
 
@@ -236,7 +239,9 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			cfg.setRegularizationScheme(ZERO_HIGH_ORDER_MOMENTS);
 		} else if (reg == "em") {
 			cfg.setRegularizationScheme(ENTROPY_MAXIMIZATION);
-		} else {
+		} else if (reg == "pemwe") {
+			cfg.setRegularizationScheme(PSEUDO_ENTROPY_MAXIMIZATION_WITH_E);
+		}  else {
 			std::stringstream msg;
 			msg << "Regularization scheme " << reg << " is illegal." << endl;
 			msg << "See --help for allowed options." << endl;
@@ -248,25 +253,53 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 
 	// support points
 	if (hasArgument("support-points")) {
-			string sup_p = getArgument<string>("support-points");
-			if (sup_p == "gll") {
-				cfg.setSupportPoints(GAUSS_LOBATTO_POINTS);
-			} else if (sup_p == "glc") {
-				cfg.setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
-			} else if (sup_p == "gc") {
-				cfg.setSupportPoints(GAUSS_CHEBYSHEV_POINTS);
-			} else if (sup_p == "equi") {
-				cfg.setSupportPoints(EQUIDISTANT_POINTS);
-			} else {
-				std::stringstream msg;
-				msg << "--support-points=" << sup_p << " is illegal." << endl;
-				msg << "See --help for allowed options." << endl;
-				throw CommandLineParserException(msg.str());
-			}
-			LOG(BASIC) << "Support points set to " << sup_p << " via command line"
-					<< endl;
+		string sup_p = getArgument<string>("support-points");
+		if (sup_p == "gll") {
+			cfg.setSupportPoints(GAUSS_LOBATTO_POINTS);
+		} else if (sup_p == "glc") {
+			cfg.setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
+		} else if (sup_p == "gc") {
+			cfg.setSupportPoints(GAUSS_CHEBYSHEV_POINTS);
+		} else if (sup_p == "equi") {
+			cfg.setSupportPoints(EQUIDISTANT_POINTS);
+		} else {
+			std::stringstream msg;
+			msg << "--support-points=" << sup_p << " is illegal." << endl;
+			msg << "See --help for allowed options." << endl;
+			throw CommandLineParserException(msg.str());
 		}
+		LOG(BASIC) << "Support points set to " << sup_p << " via command line"
+				<< endl;
+	}
 
+	// output solution interval
+	if (hasArgument("output-sol")) {
+		int sol = getArgument<int>("output-sol");
+		cfg.setOutputSolutionInterval(sol);
+		LOG(BASIC) << "Output solution interval set to " << sol
+				<< " via command line" << endl;
+	}
+
+	// stencil
+	if (hasArgument("stencil")){
+		const string sten = getArgument<string>("stencil");
+		if (sten == "d2q9"){
+			cfg.setStencil(Stencil_D2Q9);
+		} else if (sten == "d3q19"){
+			cfg.setStencil(Stencil_D3Q19);
+		} else if (sten == "d3q15"){
+			cfg.setStencil(Stencil_D3Q15);
+		} else if (sten == "d3q27"){
+			cfg.setStencil(Stencil_D3Q27);
+		} else {
+			std::stringstream msg;
+						msg << "--stencil=" << sten << " is illegal." << endl;
+						msg << "See --help for allowed options." << endl;
+						throw CommandLineParserException(msg.str());
+		}
+		LOG(BASIC) << "Stencil set to " << sten
+				<< " via command line" << endl;
+	}
 
 }
 
