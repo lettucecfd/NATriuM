@@ -255,7 +255,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 				cfg.setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
 			} else if (sup_p == "gc") {
 				cfg.setSupportPoints(GAUSS_CHEBYSHEV_POINTS);
-			} else if (reg == "equi") {
+			} else if (sup_p == "equi") {
 				cfg.setSupportPoints(EQUIDISTANT_POINTS);
 			} else {
 				std::stringstream msg;
