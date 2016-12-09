@@ -270,7 +270,6 @@ void PseudoEntropicStabilizer<dim>::apply() {
 
 	//pout << "Stabilizer is active." << endl;
 	const Stencil& stencil = *(this->m_solver.getStencil());
-	assert(Stencil_D2Q9 == stencil.getStencilType());
 
 	if (Stencil_D2Q9 == stencil.getStencilType()) {
 		if (m_withE)

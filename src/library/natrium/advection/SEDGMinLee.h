@@ -227,8 +227,8 @@ public:
 
 	virtual void setupDoFs();
 
-	virtual void applyBoundaryConditions(DistributionFunctions& f_old,
-			DistributionFunctions& f, double t){
+	virtual void applyBoundaryConditions(DistributionFunctions& ,
+			DistributionFunctions& , double){
 	}
 
 	/// make streaming step
