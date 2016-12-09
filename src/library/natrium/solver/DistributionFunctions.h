@@ -12,6 +12,8 @@
 #include "../stencils/Stencil.h"
 #include "../utilities/NATriuMException.h"
 
+#include "../utilities/Timing.h"
+
 namespace natrium {
 
 /**
@@ -285,6 +287,7 @@ public:
 		// "=" is a collective operation and will communicate the ghost elements
 		m_f0Ghosted = m_f0;
 		m_fStreamGhosted = m_fStream;
+		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 	}
 
 	bool isDg() const {
