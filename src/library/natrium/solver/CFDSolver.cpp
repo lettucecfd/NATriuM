@@ -296,14 +296,13 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				*(m_problemDescription->getExternalForce()));
 	}
 
-
 // initialize macroscopic variables
 	m_advectionOperator->mapDoFsToSupportPoints(m_supportPoints);
 	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
 			m_advectionOperator->getLocallyRelevantDofs(),
 			MPI_COMM_WORLD);
 	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-			MPI_COMM_WORLD);
+	MPI_COMM_WORLD);
 	for (size_t i = 0; i < dim; i++) {
 		distributed_vector vi_ghosted(
 				m_advectionOperator->getLocallyOwnedDofs(),
@@ -386,6 +385,12 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 // build filter
 	if (m_configuration->isFiltering() == true) {
 		if (m_configuration->getFilteringScheme() == EXPONENTIAL_FILTER) {
+			LOG(BASIC) << "Using an exponential filter with alpha = "
+					<< m_configuration->getExponentialFilterAlpha() << ", s= "
+					<< m_configuration->getExponentialFilterS() << ", Nc= "
+					<< m_configuration->getExponentialFilterNc()
+					<< ", by_sums= "
+					<< m_configuration->isFilterDegreeByComponentSums() << endl;
 			m_filter = boost::make_shared<ExponentialFilter<dim> >(
 					m_configuration->getExponentialFilterAlpha(),
 					m_configuration->getExponentialFilterS(),
@@ -394,6 +399,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					*m_advectionOperator->getQuadrature(),
 					*m_advectionOperator->getFe());
 		} else if (m_configuration->getFilteringScheme() == NEW_FILTER) {
+			LOG(WELCOME) << "Using the 'new' filter with alpha = "
+					<< m_configuration->getExponentialFilterAlpha() << ", s= "
+					<< m_configuration->getExponentialFilterS() << endl;
 			m_filter = boost::make_shared<NewFilter<dim> >(
 					m_configuration->getExponentialFilterAlpha(),
 					m_configuration->getExponentialFilterS(),
@@ -574,11 +582,12 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 	// Data processors for regularization
-	if (configuration->getRegularizationScheme() == PSEUDO_ENTROPY_MAXIMIZATION){
-		appendDataProcessor(boost::make_shared<PseudoEntropicStabilizer<dim> >(*this));
+	if (configuration->getRegularizationScheme()
+			== PSEUDO_ENTROPY_MAXIMIZATION) {
+		appendDataProcessor(
+				boost::make_shared<PseudoEntropicStabilizer<dim> >(*this));
 		LOG(BASIC) << "Using Pseudo-Entropic Stabilizer." << endl;
 	}
-
 
 	// print out memory requirements of single components
 	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- "
@@ -809,9 +818,9 @@ void CFDSolver<dim>::filter() {
 						m_f.at(i));
 			}
 		}
+		m_f.updateGhosted();
 	}
 
-	m_f.updateGhosted();
 }
 
 template<size_t dim>
@@ -1048,8 +1057,6 @@ void CFDSolver<dim>::initializeDistributions() {
 
 // save starting time
 	double t0 = m_time;
-
-
 
 // Initialize f with the equilibrium distribution functions
 //for all degrees of freedom on current processor

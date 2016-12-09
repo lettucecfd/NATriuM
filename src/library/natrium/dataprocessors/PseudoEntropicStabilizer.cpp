@@ -40,6 +40,7 @@ template<size_t dim>
 void PseudoEntropicStabilizer<dim>::apply() {
 
 
+
 	TimerOutput::Scope timer_section(Timing::getTimer(), "Pseudo-entropic stabilizer");
 
 	//pout << "Stabilizer is active." << endl;
