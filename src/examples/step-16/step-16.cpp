@@ -44,6 +44,11 @@ int main(int argc, char** argv) {
 	parser.setArgument<int>("Re", "Reynolds number 1/nu", 1600);
 	parser.setPositionalArgument<int>("ref-level",
 			"Refinement level of the computation grid.");
+	try {
+		parser.importOptions();
+	} catch (HelpMessageStop&){
+		return 0;
+	}
 	double Re = parser.getArgument<int>("Re");
 	double refinement_level = parser.getArgument<int>("ref-level");
 
