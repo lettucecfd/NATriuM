@@ -214,7 +214,6 @@ void GlobalTurbulenceStats<dim>::calculate() {
 	// loop
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
-	size_t dof_ind;
 	for (; cell != endc; ++cell) {
 		if (cell->is_locally_owned()) {
 

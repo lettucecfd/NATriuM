@@ -148,7 +148,7 @@ SolverConfiguration::SolverConfiguration() {
 	{
 		declare_entry("Regularization", "No Regularization",
 				dealii::Patterns::Selection(
-						"No Regularization|Pseudo-entropy maximization|Zero high-order moments|Entropy maximization"),
+						"No Regularization|Pseudo-entropy maximization|Zero high-order moments|Entropy maximization|Pseudo-entropy maximization with e"),
 				"Regularization of high-order moments.");
 		declare_entry("Apply vmult limiter?", "false", dealii::Patterns::Bool(),
 				"Limiting suppresses oscillations in the semi-Lagrangian streaming "

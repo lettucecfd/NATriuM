@@ -585,7 +585,12 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	if (configuration->getRegularizationScheme()
 			== PSEUDO_ENTROPY_MAXIMIZATION) {
 		appendDataProcessor(
-				boost::make_shared<PseudoEntropicStabilizer<dim> >(*this));
+				boost::make_shared<PseudoEntropicStabilizer<dim> >(*this,false));
+		LOG(BASIC) << "Using Pseudo-Entropic Stabilizer." << endl;
+	} else if (configuration->getRegularizationScheme()
+			== PSEUDO_ENTROPY_MAXIMIZATION_WITH_E) {
+		appendDataProcessor(
+				boost::make_shared<PseudoEntropicStabilizer<dim> >(*this,true));
 		LOG(BASIC) << "Using Pseudo-Entropic Stabilizer." << endl;
 	}
 
