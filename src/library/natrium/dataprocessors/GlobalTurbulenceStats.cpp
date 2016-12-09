@@ -178,7 +178,7 @@ void GlobalTurbulenceStats<dim>::calculate() {
 	//////////////////////////
 	// Calculate averages ////
 	//////////////////////////
-	const dealii::UpdateFlags update_flags = dealii::update_gradients
+	const dealii::UpdateFlags update_flags = dealii::update_values | dealii::update_gradients
 			| dealii::update_JxW_values;
 	const dealii::DoFHandler<dim> & dof_handler =
 			*(this->m_solver.getAdvectionOperator()->getDoFHandler());
@@ -191,6 +191,10 @@ void GlobalTurbulenceStats<dim>::calculate() {
 			this->m_solver.getAdvectionOperator()->getFe()->dofs_per_cell;
 	size_t n_q_points = this->m_solver.getAdvectionOperator()->getQuadrature()->size();
 	std::vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
+	std::vector<double> uxs;
+	std::vector<double> uys;
+	std::vector<double> uzs;
+	std::vector<double> rhos;
 	std::vector<dealii::Tensor<1, dim, double> > ux_gradients;
 	std::vector<dealii::Tensor<1, dim, double> > uy_gradients;
 	std::vector<dealii::Tensor<1, dim, double> > uz_gradients;
@@ -199,10 +203,14 @@ void GlobalTurbulenceStats<dim>::calculate() {
 	double enst = 0.0;
 	double ener_sq = 0.0;
 	double enst_sq = 0.0;
-	ux_gradients.resize(dofs_per_cell);
-	uy_gradients.resize(dofs_per_cell);
-	uz_gradients.resize(dofs_per_cell);
-	rho_gradients.resize(dofs_per_cell);
+	uxs.resize(n_q_points);
+	uys.resize(n_q_points);
+	uzs.resize(n_q_points);
+	rhos.resize(n_q_points);
+	ux_gradients.resize(n_q_points);
+	uy_gradients.resize(n_q_points);
+	uz_gradients.resize(n_q_points);
+	rho_gradients.resize(n_q_points);
 	// loop
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
@@ -219,54 +227,59 @@ void GlobalTurbulenceStats<dim>::calculate() {
 			// calculate gradients (for w and strain rate)
 			fe_values.get_function_gradients(u.at(0), ux_gradients);
 			fe_values.get_function_gradients(u.at(1), uy_gradients);
-			if (3 == dim)
+			fe_values.get_function_values(u.at(0), uxs);
+			fe_values.get_function_values(u.at(1), uys);
+			if (3 == dim){
 				fe_values.get_function_gradients(u.at(2), uz_gradients);
+				fe_values.get_function_values(u.at(2), uzs);
+			}
 			fe_values.get_function_gradients(rho, rho_gradients);
+			fe_values.get_function_values(rho, rhos);
 
 			for (size_t q = 0; q < n_q_points; q++) {
-				for (size_t i = 0; i < dofs_per_cell; i++) {
-					dof_ind = local_indices.at(i);
+			/*	for (size_t i = 0; i < dofs_per_cell; i++) {*/
+					//dof_ind = local_indices.at(i);
 
 					// fill value vector
 					size_t k = 0;
-					l_values.at(k) = rho(dof_ind);				// rho
+					l_values.at(k) = rhos.at(q);				// rho
 					k++;
-					l_values.at(k) = rho_gradients.at(i)[0];	// drho/dx
+					l_values.at(k) = rho_gradients.at(q)[0];	// drho/dx
 					k++;
-					l_values.at(k) = rho_gradients.at(i)[1]; 	// drho/dy
+					l_values.at(k) = rho_gradients.at(q)[1]; 	// drho/dy
 					k++;
 					if (3 == dim) {
-						l_values.at(k) = rho_gradients.at(i)[2]; 	// drho/dz
+						l_values.at(k) = rho_gradients.at(q)[2]; 	// drho/dz
 						k++;
 					}
-					l_values.at(k) = u.at(0)(dof_ind); 			// ux
+					l_values.at(k) = uxs.at(q); 			// ux
 					k++;
-					l_values.at(k) = u.at(1)(dof_ind);			// uy
+					l_values.at(k) = uys.at(q);			// uy
 					k++;
 					if (3 == dim) {
-						l_values.at(k) = u.at(2)(dof_ind);		// uz
+						l_values.at(k) = uzs.at(q);		// uz
 						k++;
 					}
-					l_values.at(k) = ux_gradients.at(i)[0];		// dux/dx
+					l_values.at(k) = ux_gradients.at(q)[0];		// dux/dx
 					k++;
-					l_values.at(k) = ux_gradients.at(i)[1];		// dux/dy
+					l_values.at(k) = ux_gradients.at(q)[1];		// dux/dy
 					k++;
 					if (3 == dim) {
-						l_values.at(k) = ux_gradients.at(i)[2];	// dux/dz
+						l_values.at(k) = ux_gradients.at(q)[2];	// dux/dz
 						k++;
 					}
-					l_values.at(k) = uy_gradients.at(i)[0];		// duy/dx
+					l_values.at(k) = uy_gradients.at(q)[0];		// duy/dx
 					k++;
-					l_values.at(k) = uy_gradients.at(i)[1];		// duy/dy
+					l_values.at(k) = uy_gradients.at(q)[1];		// duy/dy
 					k++;
 					if (3 == dim) {
-						l_values.at(k) = uy_gradients.at(i)[2];	// duy/dz
+						l_values.at(k) = uy_gradients.at(q)[2];	// duy/dz
 						k++;
-						l_values.at(k) = uz_gradients.at(i)[0];	// duz/dx
+						l_values.at(k) = uz_gradients.at(q)[0];	// duz/dx
 						k++;
-						l_values.at(k) = uz_gradients.at(i)[1];	// duz/dy
+						l_values.at(k) = uz_gradients.at(q)[1];	// duz/dy
 						k++;
-						l_values.at(k) = uz_gradients.at(i)[2];	// duz/dz
+						l_values.at(k) = uz_gradients.at(q)[2];	// duz/dz
 					}
 
 					// add to averages:
@@ -287,15 +300,15 @@ void GlobalTurbulenceStats<dim>::calculate() {
 						l_EX4.at(j) += pow(l_values.at(j), 4) * weights.at(q);
 					}
 					// add to energies and enstrophies
-					double e1 = 0.5 * u.at(0)(dof_ind) * u.at(0)(dof_ind)
-							+ 0.5 * u.at(1)(dof_ind) * u.at(1)(dof_ind);
+					double e1 = 0.5 * uxs.at(q) * uxs.at(q)
+							+ 0.5 * uys.at(q) * uys.at(q);
 					double e2 = pow(
-							uy_gradients.at(i)[0] - ux_gradients.at(i)[1], 2);
+							uy_gradients.at(q)[0] - ux_gradients.at(q)[1], 2);
 					if (3 == dim) {
-						e1 += 0.5 * u.at(2)(dof_ind) * u.at(2)(dof_ind);
-						e2 += pow(uz_gradients.at(i)[1] - uy_gradients.at(i)[2],
+						e1 += 0.5 * uzs.at(q) * uzs.at(q);
+						e2 += pow(uz_gradients.at(q)[1] - uy_gradients.at(q)[2],
 								2);
-						e2 += pow(ux_gradients.at(i)[2] - uz_gradients.at(i)[0],
+						e2 += pow(ux_gradients.at(q)[2] - uz_gradients.at(q)[0],
 								2);
 					}
 					ener += e1 * weights.at(q);
@@ -303,7 +316,7 @@ void GlobalTurbulenceStats<dim>::calculate() {
 					enst += e2 * weights.at(q);
 					enst_sq += e2 * e2 * weights.at(q);
 
-				} /* for all dof indices */
+				//} /* for all dof indices */
 			} /* for all quadrature nodes */
 		} /* if locally owned */
 	} /* for all cells */

@@ -40,6 +40,8 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<string>("regularization",
 			"regularization of high-order moments [no (no regularization), pem (pseudo-entropy maximization), "
 					"zero (zero high-order moments), em (entropy maximization)]");
+	setArgument<string>("support-points", "support points for semi-Lagrangian streaming [gll (Gauss-Lobatto-Legendre)"
+			", glc (Gauss-Lobatto-Chebyshev), gc (Gauss-Chebyshev), equi (equidistant)]");
 
 }
 
@@ -243,6 +245,28 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		LOG(BASIC) << "Regularization set to " << reg << " via command line"
 				<< endl;
 	}
+
+	// support points
+	if (hasArgument("support-points")) {
+			string sup_p = getArgument<string>("support-points");
+			if (sup_p == "gll") {
+				cfg.setSupportPoints(GAUSS_LOBATTO_POINTS);
+			} else if (sup_p == "glc") {
+				cfg.setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
+			} else if (sup_p == "gc") {
+				cfg.setSupportPoints(GAUSS_CHEBYSHEV_POINTS);
+			} else if (reg == "equi") {
+				cfg.setSupportPoints(EQUIDISTANT_POINTS);
+			} else {
+				std::stringstream msg;
+				msg << "--support-points=" << sup_p << " is illegal." << endl;
+				msg << "See --help for allowed options." << endl;
+				throw CommandLineParserException(msg.str());
+			}
+			LOG(BASIC) << "Support points set to " << sup_p << " via command line"
+					<< endl;
+		}
+
 
 }
 
