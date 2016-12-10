@@ -67,6 +67,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		}
 		cfg.setCFL(sqrt(2) * 2);
 		cfg.setSedgOrderOfFiniteElement(2);
+		cfg.setAdvectionScheme(SEMI_LAGRANGIAN);
 		LOG(BASIC) << "Scheme set to standard LBM via command line." << endl;
 	}
 
