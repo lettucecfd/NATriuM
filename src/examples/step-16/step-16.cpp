@@ -90,6 +90,7 @@ int main(int argc, char** argv) {
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setStencilScaling(scaling);
 	configuration->setStencil(Stencil_D3Q19);
+	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 
 	parser.applyToSolverConfiguration(*configuration);
 
