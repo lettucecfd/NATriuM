@@ -109,6 +109,8 @@ int main(int argc, char** argv) {
 		dirName << "-filt"
 				<< static_cast<int>(configuration->getFilteringScheme())
 				<< "by_max_degree";
+	if (configuration->getRegularizationScheme() != NO_REGULARIZATION)
+		dirName << "-reg" << static_cast<int>(configuration->getRegularizationScheme());
 	configuration->setOutputDirectory(dirName.str());
 
 
