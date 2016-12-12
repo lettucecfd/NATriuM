@@ -227,7 +227,7 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Output directory", "/tmp/NATriuM",
 				dealii::Patterns::DirectoryName(),
 				"The name of the directory to which the output is written.");
-		declare_entry("Output checkpoint interval", "1000",
+		declare_entry("Output checkpoint interval", "1000000000",
 				dealii::Patterns::Integer(1),
 				"Write out checkpoint files every ... step.");
 		declare_entry("Output table interval", "1000",
