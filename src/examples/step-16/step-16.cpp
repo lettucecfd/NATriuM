@@ -83,8 +83,7 @@ int main(int argc, char** argv) {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setUserInteraction(false);
-	configuration->setOutputTableInterval(100);
-	configuration->setOutputCheckpointInterval(10000);
+	configuration->setOutputCheckpointInterval(1e9);
 	configuration->setOutputSolutionInterval(10000);
 	configuration->setSimulationEndTime(10.0);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
@@ -120,6 +119,9 @@ int main(int argc, char** argv) {
 	//////////////////////////////////////////////////
 
 	CFDSolver<3> solver(configuration, taylorGreen);
+
+	const size_t table_output_lines_per_10s = 300;
+	configuration->setOutputTableInterval(1 + 10.0/solver.getTimeStepSize()/table_output_lines_per_10s);
 
 	solver.run();
 

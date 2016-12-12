@@ -44,7 +44,10 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 			"support points for semi-Lagrangian streaming [gll (Gauss-Lobatto-Legendre)"
 					", glc (Gauss-Lobatto-Chebyshev), gc (Gauss-Chebyshev), equi (equidistant)]");
 	setArgument<int>("output-sol", "output solution interval (#iterations)");
+	setArgument<int>("output-chk", "output checkpoint interval (#iterations)");
+	setArgument<int>("output-tab", "output table interval (#iterations)");
 	setArgument<string>("stencil", "stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27]");
+	setArgument<double>("tmax", "simulation end time");
 
 }
 
@@ -281,6 +284,22 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 				<< " via command line" << endl;
 	}
 
+	// output checkpoint interval
+	if (hasArgument("output-chk")) {
+		int erval = getArgument<int>("output-chk");
+		cfg.setOutputCheckpointInterval(erval);
+		LOG(BASIC) << "Output checkpoint interval set to " << erval
+				<< " via command line" << endl;
+	}
+
+	// output solution interval
+	if (hasArgument("output-tab")) {
+		int erval = getArgument<int>("output-tab");
+		cfg.setOutputTableInterval(erval);
+		LOG(BASIC) << "Output table interval set to " << erval
+				<< " via command line" << endl;
+	}
+
 	// stencil
 	if (hasArgument("stencil")){
 		const string sten = getArgument<string>("stencil");
@@ -299,6 +318,14 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 						throw CommandLineParserException(msg.str());
 		}
 		LOG(BASIC) << "Stencil set to " << sten
+				<< " via command line" << endl;
+	}
+
+	// output solution interval
+	if (hasArgument("tmax")) {
+		int tmax = getArgument<double>("tmax");
+		cfg.setSimulationEndTime(tmax);
+		LOG(BASIC) << "Output simulation end time set to " << tmax
 				<< " via command line" << endl;
 	}
 
