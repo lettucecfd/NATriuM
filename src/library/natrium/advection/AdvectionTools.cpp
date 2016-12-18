@@ -64,7 +64,12 @@ boost::shared_ptr<dealii::FiniteElement<dim> > make_fe_by_name(
 		break;
 	}
 	case EQUIDISTANT_POINTS: {
-		quad = boost::make_shared<dealii::QGauss<1> >(order + 1);
+		vector<dealii::Point<1> > points;
+		for (size_t i = 0; i < order + 1; i++){
+			points.push_back(dealii::Point<1>((double) i / (double) (order)));
+		}
+		vector<double> weights(order+1, 1.0/(double) (order + 1));
+		quad = boost::make_shared<dealii::Quadrature<1> >(points, weights);
 		break;
 	}
 	default: {

@@ -18,6 +18,7 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	// define standard arguments that can be used in all scripts to change the solver configuration
 	setFlag("standard-lbm",
 			"sets the order to 2 and cfl to 4*sqrt(2), giving standard lbm on regular grids");
+	setArgument<int>("standard-lbm-with", "as standard-lbm, but with n-th order calculation of derivatives.");
 	setArgument<int>("order-fe", "order of finite elements");
 	setArgument<double>("cfl", "CFL number");
 	setFlag("output-on", "switches output on");
@@ -72,6 +73,36 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		cfg.setSedgOrderOfFiniteElement(2);
 		cfg.setAdvectionScheme(SEMI_LAGRANGIAN);
 		LOG(BASIC) << "Scheme set to standard LBM via command line." << endl;
+	}
+
+	// standard lbm on regular grids with higher-order differentiation
+	if (hasArgument("standard-lbm-with")) {
+		if (hasArgument("cfl")) {
+			throw CommandLineParserException(
+					"Conflicting arguments: standard-lbm and cfl");
+		}
+		if (hasArgument("order-fe") and (getArgument<int>("order-fe") != 2)) {
+			throw CommandLineParserException(
+					"Conflicting arguments: standard-lbm and order-fe != 2");
+		}
+		if (hasArgument("streaming")
+				and (getArgument<string>("streaming") != "sl")) {
+			throw CommandLineParserException(
+					"Conflicting arguments: standard-lbm and streaming != sl");
+		}
+		if (hasArgument("standard-lbm")) {
+			throw CommandLineParserException(
+					"Conflicting arguments: standard-lbm and standard-lbm-with");
+		}
+		int order = getArgument<int>("standard-lbm-with");
+		assert (order > 0);
+		cfg.setCFL(sqrt(2) * order * order / order);
+		cfg.setSedgOrderOfFiniteElement(order);
+		cfg.setSupportPoints(EQUIDISTANT_POINTS);
+		cfg.setAdvectionScheme(SEMI_LAGRANGIAN);
+		LOG(BASIC) << "Scheme set to standard LBM with N="
+				<< cfg.getSedgOrderOfFiniteElement() << " via command line."
+				<< endl;
 	}
 
 	// finite element order
