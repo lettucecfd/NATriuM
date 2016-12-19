@@ -71,47 +71,50 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00037"></a>00037 
 <a name="l00038"></a>00038         <span class="keyword">virtual</span> <span class="keywordtype">void</span> refine(Mesh&lt;2&gt;&amp; mesh);
 <a name="l00039"></a>00039         <span class="keyword">virtual</span> <span class="keywordtype">void</span> transform(Mesh&lt;2&gt;&amp; mesh);
-<a name="l00040"></a>00040 
-<a name="l00041"></a>00041 <span class="keyword">private</span>:
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043         <span class="keyword">const</span> <span class="keywordtype">size_t</span> m_refinementLevel;
-<a name="l00044"></a>00044 
-<a name="l00050"></a>00050         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid();
-<a name="l00051"></a>00051 
-<a name="l00060"></a>00060         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries();
-<a name="l00061"></a>00061 
-<a name="l00065"></a>00065         <span class="keyword">struct </span>UnstructuredGridFunc {
-<a name="l00066"></a>00066         <span class="keyword">private</span>:
-<a name="l00067"></a>00067                 <span class="keywordtype">double</span> m_ax;
-<a name="l00068"></a>00068                 <span class="keywordtype">double</span> m_bx;
-<a name="l00069"></a>00069                 <span class="keywordtype">double</span> m_ay;
-<a name="l00070"></a>00070                 <span class="keywordtype">double</span> m_by;
-<a name="l00071"></a>00071 
-<a name="l00072"></a>00072                 <span class="keywordtype">double</span> shifted_sine(<span class="keywordtype">double</span> x)<span class="keyword"> const </span>{
-<a name="l00073"></a>00073                         <span class="keywordflow">return</span> 0.5 * (1 + sin(M_PI * x - 0.5 * M_PI));
-<a name="l00074"></a>00074                 }
-<a name="l00075"></a>00075                 <span class="keywordtype">double</span> trafo(<span class="keywordtype">double</span> x, <span class="keywordtype">double</span> a, <span class="keywordtype">double</span> b)<span class="keyword"> const </span>{
-<a name="l00076"></a>00076                         assert(a &gt; 0);
-<a name="l00077"></a>00077                         assert(b &lt; 1);
-<a name="l00078"></a>00078                         assert(x &gt;= 0);
-<a name="l00079"></a>00079                         assert(x &lt;= 1);
-<a name="l00080"></a>00080                         <span class="keywordflow">return</span> (shifted_sine((b - a) * x + a) - shifted_sine(a))
-<a name="l00081"></a>00081                                         / (shifted_sine(b) - shifted_sine(a));
-<a name="l00082"></a>00082 
-<a name="l00083"></a>00083                 }
-<a name="l00084"></a>00084         <span class="keyword">public</span>:
-<a name="l00085"></a>00085                 dealii::Point&lt;2&gt; operator()(<span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;in)<span class="keyword"> const </span>{
-<a name="l00086"></a>00086                         <span class="keywordflow">return</span> dealii::Point&lt;2&gt;( trafo(in(0), m_ax, m_bx) , trafo(in(1), m_ay,m_by) );
-<a name="l00087"></a>00087                 }
-<a name="l00088"></a>00088                 UnstructuredGridFunc(<span class="keywordtype">double</span> ax, <span class="keywordtype">double</span> bx, <span class="keywordtype">double</span> ay, <span class="keywordtype">double</span> by) :
-<a name="l00089"></a>00089                                 m_ax(ax), m_bx(bx), m_ay(ay), m_by(by){
+<a name="l00040"></a>00040         <span class="keyword">virtual</span> <span class="keywordtype">bool</span> isCartesian(){
+<a name="l00041"></a>00041                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00042"></a>00042         }
+<a name="l00043"></a>00043 
+<a name="l00044"></a>00044 <span class="keyword">private</span>:
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046         <span class="keyword">const</span> <span class="keywordtype">size_t</span> m_refinementLevel;
+<a name="l00047"></a>00047 
+<a name="l00053"></a>00053         boost::shared_ptr&lt;Mesh&lt;2&gt; &gt; makeGrid();
+<a name="l00054"></a>00054 
+<a name="l00063"></a>00063         boost::shared_ptr&lt;BoundaryCollection&lt;2&gt; &gt; makeBoundaries();
+<a name="l00064"></a>00064 
+<a name="l00068"></a>00068         <span class="keyword">struct </span>UnstructuredGridFunc {
+<a name="l00069"></a>00069         <span class="keyword">private</span>:
+<a name="l00070"></a>00070                 <span class="keywordtype">double</span> m_ax;
+<a name="l00071"></a>00071                 <span class="keywordtype">double</span> m_bx;
+<a name="l00072"></a>00072                 <span class="keywordtype">double</span> m_ay;
+<a name="l00073"></a>00073                 <span class="keywordtype">double</span> m_by;
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075                 <span class="keywordtype">double</span> shifted_sine(<span class="keywordtype">double</span> x)<span class="keyword"> const </span>{
+<a name="l00076"></a>00076                         <span class="keywordflow">return</span> 0.5 * (1 + sin(M_PI * x - 0.5 * M_PI));
+<a name="l00077"></a>00077                 }
+<a name="l00078"></a>00078                 <span class="keywordtype">double</span> trafo(<span class="keywordtype">double</span> x, <span class="keywordtype">double</span> a, <span class="keywordtype">double</span> b)<span class="keyword"> const </span>{
+<a name="l00079"></a>00079                         assert(a &gt; 0);
+<a name="l00080"></a>00080                         assert(b &lt; 1);
+<a name="l00081"></a>00081                         assert(x &gt;= 0);
+<a name="l00082"></a>00082                         assert(x &lt;= 1);
+<a name="l00083"></a>00083                         <span class="keywordflow">return</span> (shifted_sine((b - a) * x + a) - shifted_sine(a))
+<a name="l00084"></a>00084                                         / (shifted_sine(b) - shifted_sine(a));
+<a name="l00085"></a>00085 
+<a name="l00086"></a>00086                 }
+<a name="l00087"></a>00087         <span class="keyword">public</span>:
+<a name="l00088"></a>00088                 dealii::Point&lt;2&gt; operator()(<span class="keyword">const</span> dealii::Point&lt;2&gt; &amp;in)<span class="keyword"> const </span>{
+<a name="l00089"></a>00089                         <span class="keywordflow">return</span> dealii::Point&lt;2&gt;( trafo(in(0), m_ax, m_bx) , trafo(in(1), m_ay,m_by) );
 <a name="l00090"></a>00090                 }
-<a name="l00091"></a>00091         };
-<a name="l00092"></a>00092 
-<a name="l00093"></a>00093 };
-<a name="l00094"></a>00094 
-<a name="l00095"></a>00095 } <span class="comment">/* namespace natrium */</span>
-<a name="l00096"></a>00096 <span class="preprocessor">#endif </span><span class="comment">/* LIDDRIVENCAVIT2D_H_ */</span>
+<a name="l00091"></a>00091                 UnstructuredGridFunc(<span class="keywordtype">double</span> ax, <span class="keywordtype">double</span> bx, <span class="keywordtype">double</span> ay, <span class="keywordtype">double</span> by) :
+<a name="l00092"></a>00092                                 m_ax(ax), m_bx(bx), m_ay(ay), m_by(by){
+<a name="l00093"></a>00093                 }
+<a name="l00094"></a>00094         };
+<a name="l00095"></a>00095 
+<a name="l00096"></a>00096 };
+<a name="l00097"></a>00097 
+<a name="l00098"></a>00098 } <span class="comment">/* namespace natrium */</span>
+<a name="l00099"></a>00099 <span class="preprocessor">#endif </span><span class="comment">/* LIDDRIVENCAVIT2D_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -127,7 +130,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

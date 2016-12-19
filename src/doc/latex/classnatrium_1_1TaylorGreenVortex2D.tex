@@ -23,7 +23,7 @@ class \hyperlink{classnatrium_1_1TaylorGreenVortex2D_1_1AnalyticVelocity}{Analyt
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1TaylorGreenVortex2D_a48410d029b8a0f9801b66efda45aa77f}{TaylorGreenVortex2D} (double viscosity, size\_\-t refinementLevel, double cs=0.57735026919, bool init\_\-rho\_\-analytically=false)
+\hyperlink{classnatrium_1_1TaylorGreenVortex2D_a7f03f55df315b2b2ac1671fa3d07e9df}{TaylorGreenVortex2D} (double viscosity, size\_\-t refinementLevel, double cs=0.57735026919, bool init\_\-rho\_\-analytically=false, double L=2 $\ast$M\_\-PI)
 \begin{DoxyCompactList}\small\item\em constructor (with default cs=1/sqrt(3)) \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}{
 virtual \hyperlink{classnatrium_1_1TaylorGreenVortex2D_abb6099f4f9791f7decabb35ccd3dbe49}{$\sim$TaylorGreenVortex2D} ()}
@@ -38,6 +38,11 @@ virtual void {\bfseries refine} (Mesh$<$ 2 $>$ \&mesh)}
 \hypertarget{classnatrium_1_1TaylorGreenVortex2D_a0319526156d349175c2cc7c499a81abe}{
 virtual void {\bfseries transform} (Mesh$<$ 2 $>$ \&)}
 \label{classnatrium_1_1TaylorGreenVortex2D_a0319526156d349175c2cc7c499a81abe}
+
+\item 
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a8e58992bc24488b0bc4ea2df4971cd5a}{
+virtual bool {\bfseries isCartesian} ()}
+\label{classnatrium_1_1TaylorGreenVortex2D_a8e58992bc24488b0bc4ea2df4971cd5a}
 
 \item 
 \hypertarget{classnatrium_1_1TaylorGreenVortex2D_ad58ed418e97c541c3d9f8a1b7153bc08}{
@@ -56,11 +61,11 @@ double {\bfseries getHorizontalVelocity} () const }
 Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a48410d029b8a0f9801b66efda45aa77f}{
+\hypertarget{classnatrium_1_1TaylorGreenVortex2D_a7f03f55df315b2b2ac1671fa3d07e9df}{
 \index{natrium::TaylorGreenVortex2D@{natrium::TaylorGreenVortex2D}!TaylorGreenVortex2D@{TaylorGreenVortex2D}}
 \index{TaylorGreenVortex2D@{TaylorGreenVortex2D}!natrium::TaylorGreenVortex2D@{natrium::TaylorGreenVortex2D}}
-\subsubsection[{TaylorGreenVortex2D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::TaylorGreenVortex2D::TaylorGreenVortex2D (double {\em viscosity}, \/  size\_\-t {\em refinementLevel}, \/  double {\em cs} = {\ttfamily 0.57735026919}, \/  bool {\em init\_\-rho\_\-analytically} = {\ttfamily false})}}
-\label{classnatrium_1_1TaylorGreenVortex2D_a48410d029b8a0f9801b66efda45aa77f}
+\subsubsection[{TaylorGreenVortex2D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::TaylorGreenVortex2D::TaylorGreenVortex2D (double {\em viscosity}, \/  size\_\-t {\em refinementLevel}, \/  double {\em cs} = {\ttfamily 0.57735026919}, \/  bool {\em init\_\-rho\_\-analytically} = {\ttfamily false}, \/  double {\em L} = {\ttfamily 2$\ast$M\_\-PI})}}
+\label{classnatrium_1_1TaylorGreenVortex2D_a7f03f55df315b2b2ac1671fa3d07e9df}
 
 
 constructor (with default cs=1/sqrt(3)) 

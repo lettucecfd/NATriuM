@@ -17,11 +17,13 @@ Description of a simple Periodic Flow (flow in square domain). The domain is \mb
 \begin{DoxyCompactItemize}
 \item 
 class \hyperlink{classnatrium_1_1ShearLayer2D_1_1InitialVelocity}{InitialVelocity}
-\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em class to describe the x-\/component of the analytic solution \item\end{DoxyCompactList}\item 
+struct {\bfseries UnstructuredGridFunc}
+\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1ShearLayer2D_a5428379aab66e023c11f11ff86d53546}{ShearLayer2D} (double viscosity, size\_\-t refinement\_\-level, double u0, double kappa, double perturbation=0.01)
+\hyperlink{classnatrium_1_1ShearLayer2D_a471304728fbf5bcae19f815d386e2f6c}{ShearLayer2D} (double viscosity, size\_\-t refinement\_\-level, double u0, double kappa, double perturbation=0.05, double trafo\_\-x=0, double trafo\_\-y=0)
 \begin{DoxyCompactList}\small\item\em constructor (with default cs=1/sqrt(3)) \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1ShearLayer2D_ac15c8dc03cc5a7fbb594b863ddac4bce}{
 virtual \hyperlink{classnatrium_1_1ShearLayer2D_ac15c8dc03cc5a7fbb594b863ddac4bce}{$\sim$ShearLayer2D} ()}
@@ -33,9 +35,14 @@ virtual void {\bfseries refine} (Mesh$<$ 2 $>$ \&mesh)}
 \label{classnatrium_1_1ShearLayer2D_a58306e2c321765071614fbd1839ae1ee}
 
 \item 
-\hypertarget{classnatrium_1_1ShearLayer2D_a6e4e7f310f4180650700ce3167a8f6a1}{
-virtual void {\bfseries transform} (Mesh$<$ 2 $>$ \&)}
-\label{classnatrium_1_1ShearLayer2D_a6e4e7f310f4180650700ce3167a8f6a1}
+\hypertarget{classnatrium_1_1ShearLayer2D_ac040c6c2592809529b1700b71acbd049}{
+virtual void {\bfseries transform} (Mesh$<$ 2 $>$ \&mesh)}
+\label{classnatrium_1_1ShearLayer2D_ac040c6c2592809529b1700b71acbd049}
+
+\item 
+\hypertarget{classnatrium_1_1ShearLayer2D_a702544a11e40afae6c9268e7c2fa4854}{
+virtual bool {\bfseries isCartesian} ()}
+\label{classnatrium_1_1ShearLayer2D_a702544a11e40afae6c9268e7c2fa4854}
 
 \end{DoxyCompactItemize}
 
@@ -44,14 +51,17 @@ virtual void {\bfseries transform} (Mesh$<$ 2 $>$ \&)}
 Description of a simple Periodic Flow (flow in square domain). The domain is \mbox{[}0,1\mbox{]}$^\wedge$2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1ShearLayer2D_a5428379aab66e023c11f11ff86d53546}{
+\hypertarget{classnatrium_1_1ShearLayer2D_a471304728fbf5bcae19f815d386e2f6c}{
 \index{natrium::ShearLayer2D@{natrium::ShearLayer2D}!ShearLayer2D@{ShearLayer2D}}
 \index{ShearLayer2D@{ShearLayer2D}!natrium::ShearLayer2D@{natrium::ShearLayer2D}}
-\subsubsection[{ShearLayer2D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::ShearLayer2D::ShearLayer2D (double {\em viscosity}, \/  size\_\-t {\em refinement\_\-level}, \/  double {\em u0}, \/  double {\em kappa}, \/  double {\em perturbation} = {\ttfamily 0.01})}}
-\label{classnatrium_1_1ShearLayer2D_a5428379aab66e023c11f11ff86d53546}
+\subsubsection[{ShearLayer2D}]{\setlength{\rightskip}{0pt plus 5cm}natrium::ShearLayer2D::ShearLayer2D (double {\em viscosity}, \/  size\_\-t {\em refinement\_\-level}, \/  double {\em u0}, \/  double {\em kappa}, \/  double {\em perturbation} = {\ttfamily 0.05}, \/  double {\em trafo\_\-x} = {\ttfamily 0}, \/  double {\em trafo\_\-y} = {\ttfamily 0})}}
+\label{classnatrium_1_1ShearLayer2D_a471304728fbf5bcae19f815d386e2f6c}
 
 
-constructor (with default cs=1/sqrt(3)) 
+constructor (with default cs=1/sqrt(3)) Constructor 
+\begin{DoxyParams}{Parameters}
+\item[{\em trafo\_\-x}]$<$ 1: 0=regular grid spacing \item[{\em trafo\_\-y}]$<$ 1: 0=regular grid spacing \end{DoxyParams}
+
 
 apply boundary values 
 

@@ -17,34 +17,49 @@
 #include "natrium/problemdescription/Benchmark.h"
 
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/CommandLineParser.h"
 
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 using namespace natrium;
 
 // Main function
-int main() {
+int main(int argc, char** argv) {
 
-	MPIGuard::getInstance();
+	MPIGuard::getInstance(argc, argv);
+
+	// parse arguments from command line
+	CommandLineParser parse(argc, argv);
+	parse.addDocumentationString("step-1-taylorGreenVortex", "This program runs the two-dimensional Taylor-Green vortex on a regular grid.");
+	parse.setArgument<double>("L", "size of the computational domain", 2*M_PI);
+	parse.setArgument<int>("ref-level", "refinement level of the computational grid", 5);
+	try {
+		parse.importOptions();
+	} catch (HelpMessageStop&){
+		return 0;
+	}
+
 
 	pout << "Starting NATriuM step-1 ..." << endl;
-
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 
 	// Re = viscosity/(2*pi)
-	const double viscosity = 1;
+	//const double viscosity = 1;
+	double L = parse.getArgument<double>("L");
+	const double Re = 10;
+	const double viscosity = 1 * L / Re;
 	// C-E-approach: constant stencil scaling
 	// specify Mach number
 	const double Ma = 0.05;
 	// zunaechst: fixed order of FE
-	const double orderOfFiniteElement = 9;
+	const double orderOfFiniteElement = 1;
 
 	// chose scaling so that the right Ma-number is achieved
 	double scaling = sqrt(3) * 2 / Ma;
 
-	const double refinementLevel = 2;
+	const double refinementLevel = parse.getArgument<int>("ref-level");
 		pout << "refinement Level = " << refinementLevel << endl;
 //		for (size_t orderOfFiniteElement = 2; orderOfFiniteElement < 7;
 //				orderOfFiniteElement++) {
@@ -56,7 +71,7 @@ int main() {
 		//		/ (pow(2, refinementLevel) * (orderOfFiniteElement - 1));
 		// chose dt so that courant (advection) = 1 for the diagonal directions
 		//double dt = dx / (scaling * sqrt(2));
-		double CFL=8;
+		double CFL=sqrt(2)*4;
 
 		// time measurement variables
 		double time1, time2, timestart;
@@ -69,9 +84,9 @@ int main() {
 		//configuration->setSwitchOutputOff(true);
 		configuration->setOutputDirectory(dirName.str());
 		configuration->setUserInteraction(false);
-		configuration->setOutputTableInterval(10);
-		configuration->setOutputCheckpointInterval(1000);
-		configuration->setOutputSolutionInterval(10);
+		configuration->setOutputTableInterval(5);
+		configuration->setOutputCheckpointInterval(1000000000);
+		configuration->setOutputSolutionInterval(1);
 		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 		configuration->setStencilScaling(scaling);
 		configuration->setCommandLineVerbosity(ALL);
@@ -84,15 +99,45 @@ int main() {
 
 		configuration->setSimulationEndTime(10.0);
 
+
+		parse.applyToSolverConfiguration(*configuration);
 		// make problem and solver objects
 		boost::shared_ptr<TaylorGreenVortex2D> tgVortex = boost::make_shared<
-				TaylorGreenVortex2D>(viscosity, refinementLevel, 1./Ma);
-		tgVortex->setHorizontalVelocity(1);
-		boost::shared_ptr<Benchmark<2> > taylorGreen = tgVortex;
+				TaylorGreenVortex2D>(viscosity, refinementLevel, 1./Ma, true, L);
+		//tgVortex->setHorizontalVelocity(1);
+		boost::shared_ptr<ProblemDescription<2> > taylorGreen = tgVortex;
 		timestart = clock();
-		BenchmarkCFDSolver<2> solver(configuration, taylorGreen);
+
+		pout << "Make solver" << endl;
+		CFDSolver<2> solver(configuration, taylorGreen);
 		time1 = clock() - timestart;
 
+		pout << "Check for standard LBM" << endl;
+		distributed_block_vector ones;
+		distributed_block_vector result;
+		ones.reinit(8);
+		result.reinit(8);
+		for (size_t i = 0; i < 8; i++) {
+			ones.block(i).reinit(solver.getAdvectionOperator()->getLocallyOwnedDofs(), MPI_COMM_WORLD);
+			result.block(i).reinit(solver.getAdvectionOperator()->getLocallyOwnedDofs(), MPI_COMM_WORLD);
+			// reinit does only change the size but not the content
+			//for all degrees of freedom on current processor
+			dealii::IndexSet::ElementIterator it(solver.getAdvectionOperator()->getLocallyOwnedDofs().begin());
+			dealii::IndexSet::ElementIterator end(solver.getAdvectionOperator()->getLocallyOwnedDofs().end());
+			for (; it != end; it++) {
+				size_t j = *it;
+				ones.block(i)(j) = 1;
+			}
+		}
+		solver.getAdvectionOperator()->getSystemMatrix().print(cout);
+		solver.getAdvectionOperator()->getSystemMatrix().vmult(result, ones);
+
+		result -= ones;
+		cout << "error: " << result.norm_sqr();
+		//solver.getF().getFStream().print(cout,10,true);
+
+
+		cout << "Run simulation" << endl;
 		try {
 			solver.run();
 			time2 = clock() - time1 - timestart;

@@ -58,6 +58,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;../utilities/BasicNames.h&quot;</code><br/>
 <code>#include &quot;../utilities/Logging.h&quot;</code><br/>
 <code>#include &quot;../utilities/NATriuMException.h&quot;</code><br/>
+<code>#include &quot;../utilities/ConfigNames.h&quot;</code><br/>
 
 <p><a href="SolverConfiguration_8h_source.html">Go to the source code of this file.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
@@ -72,89 +73,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. </p>
 <br/></td></tr>
 </p>
-<tr><td colspan="2"><h2>Enumerations</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#ab73faf50bccace063cee6f66b5af2b02">natrium::AdvectionSchemeName</a> { <b>SEDG</b>, 
-<b>SEMI_LAGRANGIAN</b>
- }</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Implemented streaming data types. </p>
-<br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a77a27ea835db291372b246db6b4b1578">natrium::CollisionSchemeName</a> { <br/>
-&nbsp;&nbsp;<b>BGK_STANDARD</b>, 
-<b>BGK_STANDARD_TRANSFORMED</b>, 
-<b>BGK_STEADY_STATE</b>, 
-<b>BGK_MULTIPHASE</b>, 
-<br/>
-&nbsp;&nbsp;<b>BGK_INCOMPRESSIBLE</b>, 
-<b>MRT_STANDARD</b>, 
-<b>KBC_STANDARD</b>, 
-<b>KBC_CENTRAL</b>, 
-<br/>
-&nbsp;&nbsp;<b>BGK_MULTI_AM4</b>, 
-<b>BGK_MULTI_BDF2</b>
-<br/>
- }</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Implemented collision models. </p>
-<br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a00a0ec1e80f138680e0fcca78349f6d8">natrium::TimeIntegratorName</a> { <b>RUNGE_KUTTA_5STAGE</b>, 
-<b>THETA_METHOD</b>, 
-<b>EXPONENTIAL</b>, 
-<b>OTHER</b>
- }</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Implemented time integrators. </p>
- <a href="namespacenatrium.html#a00a0ec1e80f138680e0fcca78349f6d8">More...</a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>DealIntegratorName</b> { <br/>
-&nbsp;&nbsp;<b>FORWARD_EULER</b>, 
-<b>RK_THIRD_ORDER</b>, 
-<b>RK_CLASSIC_FOURTH_ORDER</b>, 
-<b>BACKWARD_EULER</b>, 
-<br/>
-&nbsp;&nbsp;<b>IMPLICIT_MIDPOINT</b>, 
-<b>CRANK_NICOLSON</b>, 
-<b>SDIRK_TWO_STAGES</b>, 
-<b>HEUN_EULER</b>, 
-<br/>
-&nbsp;&nbsp;<b>BOGACKI_SHAMPINE</b>, 
-<b>DOPRI</b>, 
-<b>FEHLBERG</b>, 
-<b>CASH_KARP</b>, 
-<br/>
-&nbsp;&nbsp;<b>NONE</b>
-<br/>
- }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>DealSolverName</b> { <br/>
-&nbsp;&nbsp;<b>BICGSTAB</b>, 
-<b>CG</b>, 
-<b>FGMRES</b>, 
-<b>GMRES</b>, 
-<br/>
-&nbsp;&nbsp;<b>MINRES</b>, 
-<b>QMRS</b>, 
-<b>RELAXATION</b>, 
-<b>RICHARDSON</b>
-<br/>
- }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a9366e68e932696b3dc277fc010ac1057">natrium::FluxTypeName</a> { <b>LAX_FRIEDRICHS</b>, 
-<b>CENTRAL</b>
- }</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>the numerical flux used to calculate the advection operator </p>
-<br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html#a5aad7d448441836f9c631c505cf8cd54">natrium::InitializationSchemeName</a> { <b>EQUILIBRIUM</b>, 
-<b>ITERATIVE</b>
- }</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>the initialization procedure for the distribution functions </p>
-<br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>PseudopotentialType</b> { <b>SHAN_CHEN</b>, 
-<b>SUKOP</b>, 
-<b>CARNAHAN_STARLING</b>
- }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>ForceType</b> { <b>NO_FORCING</b>, 
-<b>SHIFTING_VELOCITY</b>, 
-<b>EXACT_DIFFERENCE</b>, 
-<b>GUO</b>
- }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>FilteringSchemeName</b> { <b>EXPONENTIAL_FILTER</b>, 
-<b>NEW_FILTER</b>
- }</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Calculation of physical properties. </p>
@@ -176,7 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

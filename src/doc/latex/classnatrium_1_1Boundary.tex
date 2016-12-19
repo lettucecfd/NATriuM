@@ -7,7 +7,13 @@
 Abstract class for the description of boundaries. Base class of \hyperlink{classnatrium_1_1PeriodicBoundary}{PeriodicBoundary}, InflowBoundary, etc.  
 
 
-{\ttfamily \#include $<$Boundary.h$>$}\subsection*{Public Member Functions}
+{\ttfamily \#include $<$Boundary.h$>$}Inheritance diagram for natrium::Boundary$<$ dim $>$::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.64706cm]{classnatrium_1_1Boundary}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \hypertarget{classnatrium_1_1Boundary_a987978143b16ef0bbadd2b465dc1882d}{
@@ -20,16 +26,21 @@ virtual \hyperlink{classnatrium_1_1Boundary_a534f7d32a140c0764c61dce6129bf88f}{$
 \label{classnatrium_1_1Boundary_a534f7d32a140c0764c61dce6129bf88f}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1Boundary_acb651f4148b4e00f08258e1321c43235}{
-virtual bool \hyperlink{classnatrium_1_1Boundary_acb651f4148b4e00f08258e1321c43235}{isPeriodic} () const }
-\label{classnatrium_1_1Boundary_acb651f4148b4e00f08258e1321c43235}
+\hypertarget{classnatrium_1_1Boundary_a34309a0e46dad328a7e8b09c5ba2321c}{
+virtual bool \hyperlink{classnatrium_1_1Boundary_a34309a0e46dad328a7e8b09c5ba2321c}{isPeriodic} () const =0}
+\label{classnatrium_1_1Boundary_a34309a0e46dad328a7e8b09c5ba2321c}
 
 \begin{DoxyCompactList}\small\item\em is the boundary a periodic boundary ? \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1Boundary_aa76ef0eef351680cadb6299dca94ee89}{
-virtual bool \hyperlink{classnatrium_1_1Boundary_aa76ef0eef351680cadb6299dca94ee89}{isLinear} () const }
-\label{classnatrium_1_1Boundary_aa76ef0eef351680cadb6299dca94ee89}
+\hypertarget{classnatrium_1_1Boundary_ab8e9685a85a8f0243a49c574061b59a5}{
+virtual bool \hyperlink{classnatrium_1_1Boundary_ab8e9685a85a8f0243a49c574061b59a5}{isLinearFluxBoundary} () const =0}
+\label{classnatrium_1_1Boundary_ab8e9685a85a8f0243a49c574061b59a5}
 
-\begin{DoxyCompactList}\small\item\em is the boundary a dirichlet boundary ? \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em is the boundary a linear flux boundary as in SEDG-\/LBM \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1Boundary_ad10921f5de82b00e5479c484f09de9e8}{
+virtual bool {\bfseries isSLBoundary} () const =0}
+\label{classnatrium_1_1Boundary_ad10921f5de82b00e5479c484f09de9e8}
+
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

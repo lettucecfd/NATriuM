@@ -16,8 +16,13 @@ This class solves the linear advection equations by a scheme which is used, e.g.
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classnatrium_1_1SEDGMinLee_a1d570e9833c6b0df01a0cd7cf3b8c905}{SEDGMinLee} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ triangulation, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ boundaries, size\_\-t orderOfFiniteElement, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil, bool useCentralFlux=false)
+\hyperlink{classnatrium_1_1SEDGMinLee_a774e2c04bcb9ef8f8c900b4ffaf140ec}{SEDGMinLee} (\hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ \&problem, size\_\-t orderOfFiniteElement, QuadratureName quad\_\-name, SupportPointsName points\_\-name, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil, bool use\_\-central\_\-flux, double delta\_\-t=0.0)
 \begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a1393ad1c5649dab747cd78b1e88ccd0f}{
+{\bfseries SEDGMinLee} (\hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ \&problem, size\_\-t orderOfFiniteElement, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil, double delta\_\-t=0.0)}
+\label{classnatrium_1_1SEDGMinLee_a1393ad1c5649dab747cd78b1e88ccd0f}
+
+\item 
 \hypertarget{classnatrium_1_1SEDGMinLee_a6c55a31bc4cb0e314876af7251ad8ce3}{
 virtual \hyperlink{classnatrium_1_1SEDGMinLee_a6c55a31bc4cb0e314876af7251ad8ce3}{$\sim$SEDGMinLee} ()}
 \label{classnatrium_1_1SEDGMinLee_a6c55a31bc4cb0e314876af7251ad8ce3}
@@ -29,117 +34,40 @@ virtual void \hyperlink{classnatrium_1_1SEDGMinLee_afc9430efe8aefc7bbe580db2302b
 
 \begin{DoxyCompactList}\small\item\em function to (re-\/)assemble linear system \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1SEDGMinLee_a61d0a648a6a46a4fb7445c67e010f14e}{
-virtual void {\bfseries setupDoFs} ()}
+virtual void \hyperlink{classnatrium_1_1SEDGMinLee_a61d0a648a6a46a4fb7445c67e010f14e}{setupDoFs} ()}
 \label{classnatrium_1_1SEDGMinLee_a61d0a648a6a46a4fb7445c67e010f14e}
 
+\begin{DoxyCompactList}\small\item\em Setup degrees of freedom and fill sparsity pattern of the system matrix. Purely virtual for this class. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a999ba2ec978258854ccbf1f11f68e642}{
+virtual void {\bfseries applyBoundaryConditions} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f\_\-old, \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, double t)}
+\label{classnatrium_1_1SEDGMinLee_a999ba2ec978258854ccbf1f11f68e642}
+
 \item 
-\hypertarget{classnatrium_1_1SEDGMinLee_aba8ec4263463d79479a3bbbad2f65844}{
-virtual void \hyperlink{classnatrium_1_1SEDGMinLee_aba8ec4263463d79479a3bbbad2f65844}{stream} ()}
-\label{classnatrium_1_1SEDGMinLee_aba8ec4263463d79479a3bbbad2f65844}
+\hypertarget{classnatrium_1_1SEDGMinLee_a6a343b581a1e2ffdf0806b140ca82c9e}{
+virtual double \hyperlink{classnatrium_1_1SEDGMinLee_a6a343b581a1e2ffdf0806b140ca82c9e}{stream} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&, \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, double)}
+\label{classnatrium_1_1SEDGMinLee_a6a343b581a1e2ffdf0806b140ca82c9e}
 
 \begin{DoxyCompactList}\small\item\em make streaming step \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_adcf3f6321cbf27f6c540a6c5f21c7cb0}{
-virtual const distributed\_\-sparse\_\-block\_\-matrix \& \hyperlink{classnatrium_1_1SEDGMinLee_adcf3f6321cbf27f6c540a6c5f21c7cb0}{getSystemMatrix} () const }
-\label{classnatrium_1_1SEDGMinLee_adcf3f6321cbf27f6c540a6c5f21c7cb0}
-
-\begin{DoxyCompactList}\small\item\em get global system matrix \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_ac1f5ecd80111566dd53804b6db2a1cb3}{
-virtual void {\bfseries mapDoFsToSupportPoints} (std::map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const }
-\label{classnatrium_1_1SEDGMinLee_ac1f5ecd80111566dd53804b6db2a1cb3}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_abd088667b6ff315c440d00cd0eb26840}{
-virtual const boost::shared\_\-ptr$<$ dealii::DoFHandler$<$ dim $>$ $>$ \& {\bfseries getDoFHandler} () const }
-\label{classnatrium_1_1SEDGMinLee_abd088667b6ff315c440d00cd0eb26840}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a10acabaac20a992130e88fb9bd395d31}{
-const dealii::BlockSparsityPattern \& {\bfseries getBlockSparsityPattern} () const }
-\label{classnatrium_1_1SEDGMinLee_a10acabaac20a992130e88fb9bd395d31}
-
-\item 
-const dealii::SparsityPattern \& \hyperlink{classnatrium_1_1SEDGMinLee_ac9392932aaab8186b427b9d12bc64771}{getSparsityPattern} (size\_\-t i) const 
-\begin{DoxyCompactList}\small\item\em get sparsity pattern \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_ab888ac14b8ef33ed706b5d63deea86ae}{
-const dealii::MappingQ$<$ dim $>$ \& {\bfseries getMapping} () const }
-\label{classnatrium_1_1SEDGMinLee_ab888ac14b8ef33ed706b5d63deea86ae}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_aec38323cbd34487a73b4f62f0a310ceb}{
-virtual const std::map$<$ size\_\-t, size\_\-t $>$ \& {\bfseries getCelldofToQIndex} () const }
-\label{classnatrium_1_1SEDGMinLee_aec38323cbd34487a73b4f62f0a310ceb}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a8b7d94c90ccfa5e341d854059d883f57}{
-const vector$<$ std::map$<$ size\_\-t, size\_\-t $>$ $>$ \& {\bfseries getFacedofToQIndex} () const }
-\label{classnatrium_1_1SEDGMinLee_a8b7d94c90ccfa5e341d854059d883f57}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a42897893820c9d12e9fea6f5518e3447}{
-const boost::shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim-\/1 $>$ $>$ \& {\bfseries getFaceQuadrature} () const }
-\label{classnatrium_1_1SEDGMinLee_a42897893820c9d12e9fea6f5518e3447}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_ab7cd0a95e74da6d4d16ab2d174b17458}{
-virtual const boost::shared\_\-ptr$<$ dealii::FE\_\-DGQArbitraryNodes$<$ dim $>$ $>$ \& {\bfseries getFe} () const }
-\label{classnatrium_1_1SEDGMinLee_ab7cd0a95e74da6d4d16ab2d174b17458}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a5dac839ef4963af315dba5f201bd763c}{
-virtual size\_\-t {\bfseries getNumberOfDoFsPerCell} () const }
-\label{classnatrium_1_1SEDGMinLee_a5dac839ef4963af315dba5f201bd763c}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_ad36da36624c983cf84716d97442b1989}{
-virtual const boost::shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim $>$ $>$ \& {\bfseries getQuadrature} () const }
-\label{classnatrium_1_1SEDGMinLee_ad36da36624c983cf84716d97442b1989}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a954e80fd9475bd4c617b573a96b5290e}{
-virtual size\_\-t {\bfseries getOrderOfFiniteElement} () const }
-\label{classnatrium_1_1SEDGMinLee_a954e80fd9475bd4c617b573a96b5290e}
-
-\item 
-virtual size\_\-t \hyperlink{classnatrium_1_1SEDGMinLee_af667cda1a894340f614da67c0a0ae5da}{getNumberOfDoFs} () const 
-\begin{DoxyCompactList}\small\item\em save matrices and status to files \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1SEDGMinLee_ac4d17489cf8bf5e98bd7bd4e3e32f0d4}{
-virtual const distributed\_\-block\_\-vector \& {\bfseries getSystemVector} () const }
+virtual const distributed\_\-block\_\-vector \& \hyperlink{classnatrium_1_1SEDGMinLee_ac4d17489cf8bf5e98bd7bd4e3e32f0d4}{getSystemVector} () const }
 \label{classnatrium_1_1SEDGMinLee_ac4d17489cf8bf5e98bd7bd4e3e32f0d4}
 
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a790e9783ea5c3ce34b1a4e82332eda4c}{
-const dealii::IndexSet \& {\bfseries getLocallyOwnedDofs} ()}
-\label{classnatrium_1_1SEDGMinLee_a790e9783ea5c3ce34b1a4e82332eda4c}
+\begin{DoxyCompactList}\small\item\em get system vector. To be removed. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a13a865449ffb61a8ab3685183297bf25}{
+boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ distributed\_\-sparse\_\-block\_\-matrix, distributed\_\-block\_\-vector $>$ $>$ {\bfseries getTimeIntegrator} () const }
+\label{classnatrium_1_1SEDGMinLee_a13a865449ffb61a8ab3685183297bf25}
 
 \item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a9c47f73e0a2dcd738573b57f61da75fc}{
-const dealii::IndexSet \& {\bfseries getLocallyRelevantDofs} ()}
-\label{classnatrium_1_1SEDGMinLee_a9c47f73e0a2dcd738573b57f61da75fc}
+virtual void \hyperlink{classnatrium_1_1SEDGMinLee_add96facb8df190a139505ea912bb1a75}{setTimeIntegrator} (boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ distributed\_\-sparse\_\-block\_\-matrix, distributed\_\-block\_\-vector $>$ $>$ timeIntegrator)
+\begin{DoxyCompactList}\small\item\em Apply boundary conditions. Purely virtual for this class. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1SEDGMinLee_a6b207f31315f80f2a91a4063c1ab8f84}{
+{\footnotesize template$<$$>$ }\\void {\bfseries calculateAndDistributeLocalStiffnessMatrix} (size\_\-t alpha, const vector$<$ dealii::FullMatrix$<$ double $>$ $>$ \&derivative\_\-matrices, dealii::FullMatrix$<$ double $>$ \&system\_\-matrix, const vector$<$ double $>$ \&inverse\_\-local\_\-mass\_\-matrix, const std::vector$<$ dealii::types::global\_\-dof\_\-index $>$ \&global\_\-dofs, size\_\-t dofs\_\-per\_\-cell)}
+\label{classnatrium_1_1SEDGMinLee_a6b207f31315f80f2a91a4063c1ab8f84}
 
 \item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a6bb31f5b359305f3f36ec5000767c8a3}{
-virtual const vector$<$ std::map$<$ size\_\-t, size\_\-t $>$ $>$ \& {\bfseries getQIndexToFacedof} () const }
-\label{classnatrium_1_1SEDGMinLee_a6bb31f5b359305f3f36ec5000767c8a3}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a23bb9307417d9626121422252dad46d9}{
-virtual const boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \& {\bfseries getMesh} () const }
-\label{classnatrium_1_1SEDGMinLee_a23bb9307417d9626121422252dad46d9}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a102114aac5fa9d33a4bf7a1f70eb3ed8}{
-virtual const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ \& {\bfseries getStencil} () const }
-\label{classnatrium_1_1SEDGMinLee_a102114aac5fa9d33a4bf7a1f70eb3ed8}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_ab9bdc47144e9e45960ca1bee2593d713}{
-{\footnotesize template$<$$>$ }\\void {\bfseries calculateAndDistributeLocalStiffnessMatrix} (size\_\-t alpha, const vector$<$ dealii::FullMatrix$<$ double $>$ $>$ \&derivativeMatrices, dealii::FullMatrix$<$ double $>$ \&systemMatrix, const vector$<$ double $>$ \&inverseLocalMassMatrix, const std::vector$<$ dealii::types::global\_\-dof\_\-index $>$ \&globalDoFs, size\_\-t dofsPerCell)}
-\label{classnatrium_1_1SEDGMinLee_ab9bdc47144e9e45960ca1bee2593d713}
-
-\item 
-\hypertarget{classnatrium_1_1SEDGMinLee_a7d20a56bbe96969ef037be2a6f47d12d}{
-{\footnotesize template$<$$>$ }\\void {\bfseries calculateAndDistributeLocalStiffnessMatrix} (size\_\-t alpha, const vector$<$ dealii::FullMatrix$<$ double $>$ $>$ \&derivativeMatrices, dealii::FullMatrix$<$ double $>$ \&systemMatrix, const vector$<$ double $>$ \&inverseLocalMassMatrix, const std::vector$<$ dealii::types::global\_\-dof\_\-index $>$ \&globalDoFs, size\_\-t dofsPerCell)}
-\label{classnatrium_1_1SEDGMinLee_a7d20a56bbe96969ef037be2a6f47d12d}
+\hypertarget{classnatrium_1_1SEDGMinLee_a0f83e4fb7ded82cc27fb60f6d6ff5a17}{
+{\footnotesize template$<$$>$ }\\void {\bfseries calculateAndDistributeLocalStiffnessMatrix} (size\_\-t alpha, const vector$<$ dealii::FullMatrix$<$ double $>$ $>$ \&derivative\_\-matrices, dealii::FullMatrix$<$ double $>$ \&system\_\-matrix, const vector$<$ double $>$ \&inverse\_\-local\_\-mass\_\-matrix, const std::vector$<$ dealii::types::global\_\-dof\_\-index $>$ \&global\_\-dofs, size\_\-t dofs\_\-per\_\-cell)}
+\label{classnatrium_1_1SEDGMinLee_a0f83e4fb7ded82cc27fb60f6d6ff5a17}
 
 \end{DoxyCompactItemize}
 
@@ -153,11 +81,11 @@ This class solves the linear advection equations by a scheme which is used, e.g.
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classnatrium_1_1SEDGMinLee_a1d570e9833c6b0df01a0cd7cf3b8c905}{
+\hypertarget{classnatrium_1_1SEDGMinLee_a774e2c04bcb9ef8f8c900b4ffaf140ec}{
 \index{natrium::SEDGMinLee@{natrium::SEDGMinLee}!SEDGMinLee@{SEDGMinLee}}
 \index{SEDGMinLee@{SEDGMinLee}!natrium::SEDGMinLee@{natrium::SEDGMinLee}}
-\subsubsection[{SEDGMinLee}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::SEDGMinLee}$<$ dim $>$::{\bf SEDGMinLee} (boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ {\em triangulation}, \/  boost::shared\_\-ptr$<$ {\bf BoundaryCollection}$<$ dim $>$ $>$ {\em boundaries}, \/  size\_\-t {\em orderOfFiniteElement}, \/  boost::shared\_\-ptr$<$ {\bf Stencil} $>$ {\em stencil}, \/  bool {\em useCentralFlux} = {\ttfamily false})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classnatrium_1_1SEDGMinLee_a1d570e9833c6b0df01a0cd7cf3b8c905}
+\subsubsection[{SEDGMinLee}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::SEDGMinLee}$<$ dim $>$::{\bf SEDGMinLee} ({\bf ProblemDescription}$<$ dim $>$ \& {\em problem}, \/  size\_\-t {\em orderOfFiniteElement}, \/  QuadratureName {\em quad\_\-name}, \/  SupportPointsName {\em points\_\-name}, \/  boost::shared\_\-ptr$<$ {\bf Stencil} $>$ {\em stencil}, \/  bool {\em use\_\-central\_\-flux}, \/  double {\em delta\_\-t} = {\ttfamily 0.0})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1SEDGMinLee_a774e2c04bcb9ef8f8c900b4ffaf140ec}
 
 
 constructor Constructor 
@@ -166,32 +94,21 @@ constructor Constructor
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1SEDGMinLee_af667cda1a894340f614da67c0a0ae5da}{
-\index{natrium::SEDGMinLee@{natrium::SEDGMinLee}!getNumberOfDoFs@{getNumberOfDoFs}}
-\index{getNumberOfDoFs@{getNumberOfDoFs}!natrium::SEDGMinLee@{natrium::SEDGMinLee}}
-\subsubsection[{getNumberOfDoFs}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual size\_\-t {\bf natrium::SEDGMinLee}$<$ dim $>$::getNumberOfDoFs () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
-\label{classnatrium_1_1SEDGMinLee_af667cda1a894340f614da67c0a0ae5da}
+\hypertarget{classnatrium_1_1SEDGMinLee_add96facb8df190a139505ea912bb1a75}{
+\index{natrium::SEDGMinLee@{natrium::SEDGMinLee}!setTimeIntegrator@{setTimeIntegrator}}
+\index{setTimeIntegrator@{setTimeIntegrator}!natrium::SEDGMinLee@{natrium::SEDGMinLee}}
+\subsubsection[{setTimeIntegrator}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual void {\bf natrium::SEDGMinLee}$<$ dim $>$::setTimeIntegrator (boost::shared\_\-ptr$<$ {\bf TimeIntegrator}$<$ distributed\_\-sparse\_\-block\_\-matrix, distributed\_\-block\_\-vector $>$ $>$ {\em timeIntegrator})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1SEDGMinLee_add96facb8df190a139505ea912bb1a75}
 
 
-save matrices and status to files 
-\begin{DoxyParams}{Parameters}
-\item[\mbox{$\leftarrow$} {\em directory}]directory to save the matrix files to \end{DoxyParams}
+Apply boundary conditions. Purely virtual for this class. \begin{DoxyNote}{Note}
+While the SEDG boundary conditions are directly implemented in the system matrix and vector, the semi-\/Lagrangian advection operator needs to do something in this functions. set the time integrator for the SEDG streaming step. Purely virtual for this class. 
 
-\begin{DoxyExceptions}{Exceptions}
-\item[{\em \hyperlink{classnatrium_1_1AdvectionSolverException}{AdvectionSolverException}}]\end{DoxyExceptions}
-
-
-Implements \hyperlink{classnatrium_1_1AdvectionOperator_a251e21d1dd023926d4c5f7fd973b90bf}{natrium::AdvectionOperator$<$ dim $>$}.\hypertarget{classnatrium_1_1SEDGMinLee_ac9392932aaab8186b427b9d12bc64771}{
-\index{natrium::SEDGMinLee@{natrium::SEDGMinLee}!getSparsityPattern@{getSparsityPattern}}
-\index{getSparsityPattern@{getSparsityPattern}!natrium::SEDGMinLee@{natrium::SEDGMinLee}}
-\subsubsection[{getSparsityPattern}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ const dealii::SparsityPattern\& {\bf natrium::SEDGMinLee}$<$ dim $>$::getSparsityPattern (size\_\-t {\em i}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classnatrium_1_1SEDGMinLee_ac9392932aaab8186b427b9d12bc64771}
-
-
-get sparsity pattern \begin{DoxyNote}{Note}
-not available for trilinos, as trilinos has an internal format for sparsity patterns (Epetra\_\-CrsGraph) 
+This function is empty for the semi-\/Lagrangian streaming, which does not require time integrators. 
 \end{DoxyNote}
 
+
+Implements \hyperlink{classnatrium_1_1AdvectionOperator_aa93f60c7e7270a35df21387a962d7a38}{natrium::AdvectionOperator$<$ dim $>$}.
 
 The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 

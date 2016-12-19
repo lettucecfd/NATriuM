@@ -75,14 +75,14 @@ typedef std::map&lt; size_t, <br class="typebreak"/>
 boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1LinearFluxBoundary.html">LinearFluxBoundary</a>&lt; dim &gt;<br class="typebreak"/>
  &gt; &gt;::const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>ConstLinearIterator</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5dc656df5e72156bde252c308dadc36f"></a><!-- doxytag: member="natrium::BoundaryCollection::DoFBoundaryIterator" ref="a5dc656df5e72156bde252c308dadc36f" args="" -->
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af5968712678ecdd739a1bd103aca9adf"></a><!-- doxytag: member="natrium::BoundaryCollection::SLBoundaryIterator" ref="af5968712678ecdd739a1bd103aca9adf" args="" -->
 typedef std::map&lt; size_t, <br class="typebreak"/>
-boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a><br class="typebreak"/>
-&lt; dim &gt; &gt; &gt;::iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>DoFBoundaryIterator</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4e01a670a4f0736dfd74274b59cb036"></a><!-- doxytag: member="natrium::BoundaryCollection::ConstDoFBoundaryIterator" ref="ae4e01a670a4f0736dfd74274b59cb036" args="" -->
+boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SLBoundary.html">SLBoundary</a><br class="typebreak"/>
+&lt; dim &gt; &gt; &gt;::iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>SLBoundaryIterator</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59b89c5c7dfaf37311f23012720cd536"></a><!-- doxytag: member="natrium::BoundaryCollection::ConstSLBoundaryIterator" ref="a59b89c5c7dfaf37311f23012720cd536" args="" -->
 typedef std::map&lt; size_t, <br class="typebreak"/>
-boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a><br class="typebreak"/>
-&lt; dim &gt; &gt; &gt;::const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>ConstDoFBoundaryIterator</b></td></tr>
+boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SLBoundary.html">SLBoundary</a><br class="typebreak"/>
+&lt; dim &gt; &gt; &gt;::const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>ConstSLBoundaryIterator</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c641c34778fdb95ff98827c818773e6"></a><!-- doxytag: member="natrium::BoundaryCollection::PeriodicIterator" ref="a9c641c34778fdb95ff98827c818773e6" args="" -->
 typedef std::map&lt; size_t, <br class="typebreak"/>
 boost::shared_ptr<br class="typebreak"/>
@@ -98,8 +98,10 @@ boost::shared_ptr<br class="typebreak"/>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a boundary to the flow definition. This definition of addBoundary applies to periodic boundaries. As periodic boundaries have two boundary indicators, they are added twice to the boundary map. Internally, they are additionally added to the vector periodicBoundaries, which can be accessed separate from non-periodic boundaries.  <a href="#a9f957b5338bca01c7bd8c21576ec922c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollection.html#aa248c47170036538ef052940123b2322">addBoundary</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1LinearFluxBoundary.html">LinearFluxBoundary</a>&lt; dim &gt; &gt; boundary)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a boundary to the flow definition.  <a href="#aa248c47170036538ef052940123b2322"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollection.html#aeb04961249e675666c092afd721ad32a">addBoundary</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a>&lt; dim &gt; &gt; boundary)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a boundary to the flow definition.  <a href="#aeb04961249e675666c092afd721ad32a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollection.html#a7eb369274f50a3e671cd8cd98e1cff68">addBoundary</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SLBoundary.html">SLBoundary</a>&lt; dim &gt; &gt; boundary)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a boundary to the flow definition.  <a href="#a7eb369274f50a3e671cd8cd98e1cff68"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3992eb9a0e11aa894937ba062560861"></a><!-- doxytag: member="natrium::BoundaryCollection::removeBoundary" ref="ad3992eb9a0e11aa894937ba062560861" args="(size_t boundary_id)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>removeBoundary</b> (size_t boundary_id)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1Boundary.html">Boundary</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollection.html#a44816fa48b8100fb37b8ad7491c2cc6c">getBoundary</a> (size_t boundaryIndicator) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get a specific boundary  <a href="#a44816fa48b8100fb37b8ad7491c2cc6c"></a><br/></td></tr>
@@ -110,8 +112,8 @@ boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1LinearFluxBoundary.html">LinearFluxBoundary</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollection.html#a7961dc115c0a8cd29fa5cf6f553aa78f">getLinearFluxBoundary</a> (size_t boundaryIndicator) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get a specific MinLee boundary  <a href="#a7961dc115c0a8cd29fa5cf6f553aa78f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const boost::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollection.html#ad63f4c0e71eaa277f263d39415175549">getDoFBoundary</a> (size_t boundaryIndicator) const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get a specific dof boundary  <a href="#ad63f4c0e71eaa277f263d39415175549"></a><br/></td></tr>
+&lt; <a class="el" href="classnatrium_1_1SLBoundary.html">SLBoundary</a>&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollection.html#ab914df04ecc518f42f8a61287f2f8b3c">getSLBoundary</a> (size_t boundaryIndicator) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get a specific semi lagrangian boundary  <a href="#ab914df04ecc518f42f8a61287f2f8b3c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec4a9de4aaccaa7a49e5308bf9812c66"></a><!-- doxytag: member="natrium::BoundaryCollection::isPeriodic" ref="aec4a9de4aaccaa7a49e5308bf9812c66" args="(size_t boundaryIndicator) const " -->
 bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryCollection.html#aec4a9de4aaccaa7a49e5308bf9812c66">isPeriodic</a> (size_t boundaryIndicator) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">test if the boundary with the given boundary indicator is periodic <br/></td></tr>
@@ -131,12 +133,16 @@ boost::shared_ptr<br class="typebreak"/>
 const std::map&lt; size_t, <br class="typebreak"/>
 boost::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classnatrium_1_1LinearFluxBoundary.html">LinearFluxBoundary</a>&lt; dim &gt; &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getLinearFluxBoundaries</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78baba7c1d84139fe939a805e5a6f941"></a><!-- doxytag: member="natrium::BoundaryCollection::getDoFBoundaries" ref="a78baba7c1d84139fe939a805e5a6f941" args="() const " -->
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a980dcbe94f1c80e0a73de722724a00e7"></a><!-- doxytag: member="natrium::BoundaryCollection::getSLBoundaries" ref="a980dcbe94f1c80e0a73de722724a00e7" args="() const " -->
 const std::map&lt; size_t, <br class="typebreak"/>
-boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a><br class="typebreak"/>
-&lt; dim &gt; &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDoFBoundaries</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5cf479c4e1ce37cea40b81ebbe5500b8"></a><!-- doxytag: member="natrium::BoundaryCollection::hasDoFBoundaries" ref="a5cf479c4e1ce37cea40b81ebbe5500b8" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>hasDoFBoundaries</b> ()</td></tr>
+boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SLBoundary.html">SLBoundary</a><br class="typebreak"/>
+&lt; dim &gt; &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSLBoundaries</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3773550ad0da7ee09a1870a5e2f45c9e"></a><!-- doxytag: member="natrium::BoundaryCollection::hasSLBoundaries" ref="a3773550ad0da7ee09a1870a5e2f45c9e" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>hasSLBoundaries</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0c126620e40bc08b5aa959d774f98e2"></a><!-- doxytag: member="natrium::BoundaryCollection::hasID" ref="ad0c126620e40bc08b5aa959d774f98e2" args="(size_t boundary_id) const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>hasID</b> (size_t boundary_id) const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a343dd25dde692d73e1d3826f6d297856"></a><!-- doxytag: member="natrium::BoundaryCollection::isSL" ref="a343dd25dde692d73e1d3826f6d297856" args="(size_t boundary_id) const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>isSL</b> (size_t boundary_id) const </td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;size_t dim&gt;<br/>
@@ -144,7 +150,7 @@ bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>hasDoFBoundaries</b> 
 
 <p>The <a class="el" href="classnatrium_1_1BoundaryCollection.html" title="The BoundaryCollection class is a container for all boundaries of a flow domain....">BoundaryCollection</a> class is a container for all boundaries of a flow domain. Internally, the boundaries are stored in two different std::map, one for the periodic boundaries and one for the non-periodic ones. Its keys are the boundary indicators (for periodic boundaries: the first boundary indicator). </p>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="aeb04961249e675666c092afd721ad32a"></a><!-- doxytag: member="natrium::BoundaryCollection::addBoundary" ref="aeb04961249e675666c092afd721ad32a" args="(boost::shared_ptr&lt; DoFBoundary&lt; dim &gt; &gt; boundary)" -->
+<a class="anchor" id="a7eb369274f50a3e671cd8cd98e1cff68"></a><!-- doxytag: member="natrium::BoundaryCollection::addBoundary" ref="a7eb369274f50a3e671cd8cd98e1cff68" args="(boost::shared_ptr&lt; SLBoundary&lt; dim &gt; &gt; boundary)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -153,7 +159,7 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classnatrium_1_1BoundaryCollection.html">natrium::BoundaryCollection</a>&lt; dim &gt;::addBoundary </td>
           <td>(</td>
-          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a>&lt; dim &gt; &gt;&nbsp;</td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1SLBoundary.html">SLBoundary</a>&lt; dim &gt; &gt;&nbsp;</td>
           <td class="paramname"> <em>boundary</em></td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [inline]</code></td>
@@ -274,34 +280,6 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ad63f4c0e71eaa277f263d39415175549"></a><!-- doxytag: member="natrium::BoundaryCollection::getDoFBoundary" ref="ad63f4c0e71eaa277f263d39415175549" args="(size_t boundaryIndicator) const " -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;size_t dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">const boost::shared_ptr&lt;<a class="el" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a>&lt;dim&gt; &gt;&amp; <a class="el" href="classnatrium_1_1BoundaryCollection.html">natrium::BoundaryCollection</a>&lt; dim &gt;::getDoFBoundary </td>
-          <td>(</td>
-          <td class="paramtype">size_t&nbsp;</td>
-          <td class="paramname"> <em>boundaryIndicator</em></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const<code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>get a specific dof boundary </p>
-<dl><dt><b>Exceptions:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>BoundaryCollectionError,if</em>&nbsp;</td><td>the specified boundary indicator does not exist </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a7961dc115c0a8cd29fa5cf6f553aa78f"></a><!-- doxytag: member="natrium::BoundaryCollection::getLinearFluxBoundary" ref="a7961dc115c0a8cd29fa5cf6f553aa78f" args="(size_t boundaryIndicator) const " -->
 <div class="memitem">
 <div class="memproto">
@@ -358,6 +336,34 @@ template&lt;size_t dim&gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="ab914df04ecc518f42f8a61287f2f8b3c"></a><!-- doxytag: member="natrium::BoundaryCollection::getSLBoundary" ref="ab914df04ecc518f42f8a61287f2f8b3c" args="(size_t boundaryIndicator) const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">const boost::shared_ptr&lt;<a class="el" href="classnatrium_1_1SLBoundary.html">SLBoundary</a>&lt;dim&gt; &gt;&amp; <a class="el" href="classnatrium_1_1BoundaryCollection.html">natrium::BoundaryCollection</a>&lt; dim &gt;::getSLBoundary </td>
+          <td>(</td>
+          <td class="paramtype">size_t&nbsp;</td>
+          <td class="paramname"> <em>boundaryIndicator</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>get a specific semi lagrangian boundary </p>
+<dl><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>BoundaryCollectionError,if</em>&nbsp;</td><td>the specified boundary indicator does not exist </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/problemdescription/<a class="el" href="BoundaryCollection_8h_source.html">BoundaryCollection.h</a></li>
 </ul>
@@ -376,7 +382,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

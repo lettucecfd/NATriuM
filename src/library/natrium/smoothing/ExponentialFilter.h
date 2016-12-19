@@ -31,7 +31,7 @@ private:
 
 	size_t m_p;
 	const dealii::Quadrature<dim>& m_quadrature;
-	const dealii::FE_DGQ<dim>& m_sourceFE;
+	const dealii::FiniteElement<dim>& m_sourceFE;
 
 	// space of legendre polynomials (not using deal.II's FE classes, because the legendre fe
 	// is inherited of fe_dgp, not fe_dqq. FE_DGP defines a COMPLETE polynomial space, meaning
@@ -59,7 +59,7 @@ private:
 public:
 	ExponentialFilter(double alpha, double s, size_t Nc, bool by_sum,
 			const dealii::Quadrature<dim>& quadrature,
-			const dealii::FE_DGQ<dim>& fe);
+			const dealii::FiniteElement<dim>& fe);
 	virtual ~ExponentialFilter() {
 	}
 	;

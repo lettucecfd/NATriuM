@@ -49,7 +49,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li class="current"><a href="functions.html"><span>All</span></a></li>
       <li><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
-      <li><a href="functions_type.html"><span>Typedefs</span></a></li>
       <li><a href="functions_rela.html"><span>Related&nbsp;Functions</span></a></li>
     </ul>
   </div>
@@ -66,7 +65,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions_0x69.html#index_i"><span>i</span></a></li>
       <li><a href="functions_0x6c.html#index_l"><span>l</span></a></li>
       <li><a href="functions_0x6d.html#index_m"><span>m</span></a></li>
-      <li><a href="functions_0x6e.html#index_n"><span>n</span></a></li>
       <li><a href="functions_0x6f.html#index_o"><span>o</span></a></li>
       <li><a href="functions_0x70.html#index_p"><span>p</span></a></li>
       <li><a href="functions_0x71.html#index_q"><span>q</span></a></li>
@@ -84,14 +82,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Here is a list of all documented class members with links to the class documentation for each member:
 
 <h3><a class="anchor" id="index_g">- g -</a></h3><ul>
+<li>get_gradient_component()
+: <a class="el" href="classnatrium_1_1ContinuousBoundaryGradient.html#ae1ef18bcd802bcbfc84419f42bb699da">natrium::ContinuousBoundaryGradient&lt; dim &gt;</a>
+</li>
 <li>getAllAnalyticDensities()
 : <a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#a486d464112256436c1c3300b28519cbb">natrium::BenchmarkCFDSolver&lt; dim &gt;</a>
 </li>
 <li>getAllAnalyticVelocities()
 : <a class="el" href="classnatrium_1_1BenchmarkCFDSolver.html#aebef5814f8c44ab8d0029114b5998cff">natrium::BenchmarkCFDSolver&lt; dim &gt;</a>
 </li>
+<li>getBoundaries()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a072f5f90fc914c6e9ac5a7295d6bc84e">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
 <li>getBoundary()
 : <a class="el" href="classnatrium_1_1BoundaryCollection.html#a44816fa48b8100fb37b8ad7491c2cc6c">natrium::BoundaryCollection&lt; dim &gt;</a>
+</li>
+<li>getCellSupportPoints()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a6891816bbe0a3f6be217f47a78cdcd79">natrium::AdvectionOperator&lt; dim &gt;</a>
 </li>
 <li>getColumn()
 : <a class="el" href="classnatrium_1_1SemiParallelMatrix.html#a573e34e163358f87aee0f22742deda66">natrium::SemiParallelMatrix&lt; VECTOR &gt;</a>
@@ -111,19 +118,19 @@ Here is a list of all documented class members with links to the class documenta
 <li>getDirections()
 : <a class="el" href="classnatrium_1_1Stencil.html#a02dbfdb70b94a32f477a6ac57ed14f5e">natrium::Stencil</a>
 </li>
-<li>getDoFBoundary()
-: <a class="el" href="classnatrium_1_1BoundaryCollection.html#ad63f4c0e71eaa277f263d39415175549">natrium::BoundaryCollection&lt; dim &gt;</a>
+<li>getDoFHandler()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#acf891e95e63f22a5f9c8f09d56bdafba">natrium::AdvectionOperator&lt; dim &gt;</a>
 </li>
 <li>getEquilibriumDistribution()
-: <a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">natrium::BGKSteadyState</a>
+: <a class="el" href="classnatrium_1_1BGKPseudopotential.html#a366ccd417ca4ad5fa37ce0572e0d6fe4">natrium::BGKPseudopotential&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1BGKStandard.html#a3d45ef2fe5536bf14914f99297477754">natrium::BGKStandard</a>
+, <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#a870465cc026f92c8ffba899af6f95634">natrium::BGKStandardTransformed</a>
+, <a class="el" href="classnatrium_1_1BGKSteadyState.html#ad99d9159cc14b5897bea7f145c3b39ca">natrium::BGKSteadyState</a>
 , <a class="el" href="classnatrium_1_1CollisionModel.html#a88b382d63da80e950bc58e8afad769a6">natrium::CollisionModel</a>
 , <a class="el" href="classnatrium_1_1KBCStandard.html#a1dac2deaafb93027bf168887dd2e002d">natrium::KBCStandard</a>
 , <a class="el" href="classnatrium_1_1MRT.html#a3f96915f9f67680f4a1d7b952e70be55">natrium::MRT</a>
 , <a class="el" href="classnatrium_1_1BGKIncompressible.html#a26dd8954261b04f8383ca9d37f5ac8c0">natrium::BGKIncompressible</a>
 , <a class="el" href="classnatrium_1_1BGKMultistep.html#a034cd475974bcce0db64e52245efd91d">natrium::BGKMultistep</a>
-, <a class="el" href="classnatrium_1_1BGKPseudopotential.html#a366ccd417ca4ad5fa37ce0572e0d6fe4">natrium::BGKPseudopotential&lt; dim &gt;</a>
-, <a class="el" href="classnatrium_1_1BGKStandard.html#a3d45ef2fe5536bf14914f99297477754">natrium::BGKStandard</a>
-, <a class="el" href="classnatrium_1_1BGKStandardTransformed.html#a870465cc026f92c8ffba899af6f95634">natrium::BGKStandardTransformed</a>
 </li>
 <li>getEquilibriumDistributions()
 : <a class="el" href="classnatrium_1_1CollisionModel.html#a296474961c4501bc23228be1d30ebf82">natrium::CollisionModel</a>
@@ -131,8 +138,23 @@ Here is a list of all documented class members with links to the class documenta
 <li>getF0()
 : <a class="el" href="classnatrium_1_1DistributionFunctions.html#a3d76ae4f928f324ec82099dbdce678d7">natrium::DistributionFunctions</a>
 </li>
+<li>getF0Ghosted()
+: <a class="el" href="classnatrium_1_1DistributionFunctions.html#a79d29cb24887e83728fb2f94b611ecb8">natrium::DistributionFunctions</a>
+</li>
+<li>getFaceQuadrature()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#ac9b50e9da1a6e900c36a2c4e0556d4cd">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
+<li>getFEFaceValues()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#acf26df77fa01498ff8de55e6d4c51311">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
+<li>getFEValues()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#ae786297e9fe77377841ff7e41fcd0d01">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
 <li>getFStream()
 : <a class="el" href="classnatrium_1_1DistributionFunctions.html#a74dfe8e6ac6d5f463dcb8220f37800a3">natrium::DistributionFunctions</a>
+</li>
+<li>getFStreamGhosted()
+: <a class="el" href="classnatrium_1_1DistributionFunctions.html#acc97fc1ac5185c94d8d15024c168b6c2">natrium::DistributionFunctions</a>
 </li>
 <li>getHtml()
 : <a class="el" href="classHtmlTrace.html#a334a99ca80288f4b25ee6e5d02edf679">HtmlTrace</a>
@@ -155,6 +177,12 @@ Here is a list of all documented class members with links to the class documenta
 <li>getLinearFluxBoundary()
 : <a class="el" href="classnatrium_1_1BoundaryCollection.html#a7961dc115c0a8cd29fa5cf6f553aa78f">natrium::BoundaryCollection&lt; dim &gt;</a>
 </li>
+<li>getLocallyOwnedDofs()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a118d2e75644d4bab0e0349afda26688f">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
+<li>getLocallyRelevantDofs()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a122a5378bcd93dc121cde12a95be75d8">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
 <li>getLx()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#aab591cecf7b8eefbe16b9926d0f7de14">plb::ModIncomprFlowParam&lt; T &gt;</a>
 </li>
@@ -164,31 +192,41 @@ Here is a list of all documented class members with links to the class documenta
 <li>getLz()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#a2769747747e81cdfde14ec2c6225f469">plb::ModIncomprFlowParam&lt; T &gt;</a>
 </li>
+<li>getMapping()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#aab63eee00fc2b000c3fbae9552807607">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
 <li>getMaxDensityError()
 : <a class="el" href="classnatrium_1_1ErrorStats.html#a8e32b3e8c8d141b6cdcf5428613a875e">natrium::ErrorStats&lt; dim &gt;</a>
 </li>
 <li>getMaxVelocityError()
 : <a class="el" href="classnatrium_1_1ErrorStats.html#a48ea1bfc5db4dad6369b4b2991aa1f5c">natrium::ErrorStats&lt; dim &gt;</a>
 </li>
+<li>getMesh()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#ae5d7feac48c54abb876432e9166ea248">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
 <li>getMPI_InitFinalize()
 : <a class="el" href="classnatrium_1_1MPIGuard.html#a4df8a28efa88e97a77ee0dc9a74a1a17">natrium::MPIGuard</a>
 </li>
 <li>getNeighbor()
-: <a class="el" href="classnatrium_1_1SemiLagrangian.html#aac0394a8292810788e983909b2de4355">natrium::SemiLagrangian&lt; dim &gt;</a>
+: <a class="el" href="classnatrium_1_1SemiLagrangian.html#a5e70ea981e2070d5e9657f3df8d61979">natrium::SemiLagrangian&lt; dim &gt;</a>
 </li>
 <li>getNeighborhood()
-: <a class="el" href="classnatrium_1_1SemiLagrangian.html#ab6d5f8d666330d8f229ee727985592b8">natrium::SemiLagrangian&lt; dim &gt;</a>
+: <a class="el" href="classnatrium_1_1SemiLagrangian.html#a511a39fcd3f598bd42c18deeb50cd7f5">natrium::SemiLagrangian&lt; dim &gt;</a>
 </li>
 <li>getNumberOfDoFs()
-: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a251e21d1dd023926d4c5f7fd973b90bf">natrium::AdvectionOperator&lt; dim &gt;</a>
-, <a class="el" href="classnatrium_1_1SEDGMinLee.html#af667cda1a894340f614da67c0a0ae5da">natrium::SEDGMinLee&lt; dim &gt;</a>
-, <a class="el" href="classnatrium_1_1SemiLagrangian.html#aeb3b1dfda8a0d8fe7473716f98b12647">natrium::SemiLagrangian&lt; dim &gt;</a>
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a49514ed3873072b50f381ed39c2be2d1">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
+<li>getNumberOfDoFsPerCell()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#abd4d7735336cda33f9c117ffcee0db0b">natrium::AdvectionOperator&lt; dim &gt;</a>
 </li>
 <li>getOmega()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#a42ea717054c06234c523385d893c8ac7">plb::ModIncomprFlowParam&lt; T &gt;</a>
 </li>
 <li>getOppositeCellAtPeriodicBoundary()
 : <a class="el" href="classnatrium_1_1PeriodicBoundary.html#aaa861135e070feb4b3dd4408c487cd14">natrium::PeriodicBoundary&lt; dim &gt;</a>
+</li>
+<li>getOrderOfFiniteElement()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a186174a39dc395973b8f3fd368632333">natrium::AdvectionOperator&lt; dim &gt;</a>
 </li>
 <li>getOutStream()
 : <a class="el" href="classnatrium_1_1Timing.html#a200f8c6a0776b98c8937ab3cb56e2b01">natrium::Timing</a>
@@ -205,9 +243,18 @@ Here is a list of all documented class members with links to the class documenta
 <li>getPhysicalU()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#ad63c693f7d4b665d8089c86d1cb12d9c">plb::ModIncomprFlowParam&lt; T &gt;</a>
 </li>
+<li>getPrescribedValues()
+: <a class="el" href="classnatrium_1_1PrescribedQuantities.html#abd0a9118245c390be9a3f25c69264646">natrium::PrescribedQuantities&lt; dim &gt;</a>
+</li>
+<li>getPressure()
+: <a class="el" href="classnatrium_1_1PrescribedQuantities.html#a00fa3456952323fb1b0d4844ce626aee">natrium::PrescribedQuantities&lt; dim &gt;</a>
+</li>
 <li>getQ()
-: <a class="el" href="classnatrium_1_1Stencil.html#a9c42c1e1fbc5308a8ba1281eb5e4be18">natrium::Stencil</a>
-, <a class="el" href="classnatrium_1_1DistributionFunctions.html#a2ab8e5abf8cdef76f62e443a8dde5fd4">natrium::DistributionFunctions</a>
+: <a class="el" href="classnatrium_1_1DistributionFunctions.html#a2ab8e5abf8cdef76f62e443a8dde5fd4">natrium::DistributionFunctions</a>
+, <a class="el" href="classnatrium_1_1Stencil.html#a9c42c1e1fbc5308a8ba1281eb5e4be18">natrium::Stencil</a>
+</li>
+<li>getQuadrature()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a38a1bb6cc12ee88da3f0580b95f399c5">natrium::AdvectionOperator&lt; dim &gt;</a>
 </li>
 <li>getRe()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#a08ca6b7c2fe3505ee71889458359dfbd">plb::ModIncomprFlowParam&lt; T &gt;</a>
@@ -215,21 +262,43 @@ Here is a list of all documented class members with links to the class documenta
 <li>getResolution()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#a5473afa576ad57bc1a928099142580ac">plb::ModIncomprFlowParam&lt; T &gt;</a>
 </li>
-<li>getSparsityPattern()
-: <a class="el" href="classnatrium_1_1SEDGMinLee.html#ac9392932aaab8186b427b9d12bc64771">natrium::SEDGMinLee&lt; dim &gt;</a>
+<li>getSLBoundary()
+: <a class="el" href="classnatrium_1_1BoundaryCollection.html#ab914df04ecc518f42f8a61287f2f8b3c">natrium::BoundaryCollection&lt; dim &gt;</a>
+</li>
+<li>getStencil()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a15e11e1df8d26eefcfc701eece00f1c6">natrium::AdvectionOperator&lt; dim &gt;</a>
 </li>
 <li>getStencilType()
 : <a class="el" href="classnatrium_1_1Stencil.html#af4dbee6d83d5d749f02f771633d54db2">natrium::Stencil</a>
 </li>
+<li>getSupportPointEvaluation()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#af7e5dfef6d4e93a455b4eeb58cb543c2">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
 <li>getSystemMatrix()
-: <a class="el" href="classnatrium_1_1SemiLagrangian.html#ae8a21527f3ab056eab8b3b0af25a572c">natrium::SemiLagrangian&lt; dim &gt;</a>
-, <a class="el" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0">natrium::SEDGMinLee&lt; dim &gt;</a>
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#a5f64cd24839b7695fb4a88574c769b16">natrium::AdvectionOperator&lt; dim &gt;</a>
+</li>
+<li>getSystemVector()
+: <a class="el" href="classnatrium_1_1AdvectionOperator.html#aa1eb5cd5a2c1b6b3b8f6395bac67ef55">natrium::AdvectionOperator&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SEDGMinLee.html#ac4d17489cf8bf5e98bd7bd4e3e32f0d4">natrium::SEDGMinLee&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SemiLagrangian.html#a730b721bc86a64418b2ae60fa888b3d4">natrium::SemiLagrangian&lt; dim &gt;</a>
 </li>
 <li>getTau()
 : <a class="el" href="classplb_1_1ModIncomprFlowParam.html#adbd07104d7d7e4dafe827f4a247e57f0">plb::ModIncomprFlowParam&lt; T &gt;</a>
 </li>
 <li>getTimer()
 : <a class="el" href="classnatrium_1_1Timing.html#a60dd1b626a67c97f016e0c76616ccf65">natrium::Timing</a>
+</li>
+<li>getUpdateFlags()
+: <a class="el" href="classnatrium_1_1GradsBoundary.html#a1f8deb8033e218d7890b0db5d72f5508">natrium::GradsBoundary&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SLBoundary.html#ad2b9a7f797b3af9b6493f9e9c5da5434">natrium::SLBoundary&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SLFirstOrderBounceBack.html#ab64572ca24635330d2831d11bb4796db">natrium::SLFirstOrderBounceBack&lt; dim &gt;</a>
+, <a class="el" href="classnatrium_1_1SLEquilibriumBoundary.html#a09e349b179448c54a68245485be642f0">natrium::SLEquilibriumBoundary&lt; dim &gt;</a>
+</li>
+<li>getVelocity()
+: <a class="el" href="classnatrium_1_1PrescribedQuantities.html#a0fd5bdca3f77f3d946b5453d7c989ba3">natrium::PrescribedQuantities&lt; dim &gt;</a>
+</li>
+<li>getVelocityGradient()
+: <a class="el" href="classnatrium_1_1PrescribedQuantities.html#a24c5a8a0ec450a88c3fdbb4ba3f71f6c">natrium::PrescribedQuantities&lt; dim &gt;</a>
 </li>
 <li>getWeight()
 : <a class="el" href="classnatrium_1_1Stencil.html#ae5cb8bd1a305ed29c779725f489bb855">natrium::Stencil</a>
@@ -238,7 +307,7 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="classnatrium_1_1Stencil.html#a35c26427afdd33c3477b60be157e5bc8">natrium::Stencil</a>
 </li>
 <li>GlobalTurbulenceStats()
-: <a class="el" href="classnatrium_1_1GlobalTurbulenceStats.html#ac73a107d5d949a70e912051135514a72">natrium::GlobalTurbulenceStats&lt; dim &gt;</a>
+: <a class="el" href="classnatrium_1_1GlobalTurbulenceStats.html#aecbe59a8e8ec7687e4619a53bd9bfd5f">natrium::GlobalTurbulenceStats&lt; dim &gt;</a>
 </li>
 </ul>
 </div>
@@ -256,7 +325,7 @@ Here is a list of all documented class members with links to the class documenta
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

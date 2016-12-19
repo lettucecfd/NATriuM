@@ -21,13 +21,14 @@
 #include "natrium/solver/DistributionFunctions.h"
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/benchmarks/CouetteFlowGrad2D.h"
+#include "natrium/boundaries/SLBoundary.h"
 
 #include "natrium/problemdescription/BoundaryCollection.h"
 #include "natrium/advection/SemiLagrangian.h"
 
 #include "natrium/utilities/BasicNames.h"
 
-namespace natrium {
+using namespace natrium;
 
 BOOST_AUTO_TEST_SUITE(GradsBoundary_test)
 
@@ -38,8 +39,8 @@ BOOST_AUTO_TEST_CASE(GradsBoundary_Constructor_test) {
 	boost::shared_ptr<dealii::Function<2> > f = boost::make_shared<dealii::ConstantFunction<2> >(0.1, 2);
 	boost::shared_ptr<dealii::Function<3> > f3d = boost::make_shared<dealii::ConstantFunction<3> >(0.1, 3);
 
-	GradsBoundary<2,PRESCRIBED_VELOCITY> boundary(0,f);
-	GradsBoundary<3,PRESCRIBED_VELOCITY> boundary2(0,f3d);
+	GradsBoundary<2> boundary(0,f);
+	GradsBoundary<3> boundary2(0,f3d);
 
 	//GradsBoundary<2,PRESCRIBED_PRESSURE> boundary3(0,f);
 	//GradsBoundary<3,PRESCRIBED_PRESSURE> boundary4(0,f3d);
@@ -53,24 +54,11 @@ BOOST_AUTO_TEST_CASE(GradsBoundary_Velocity2D_test) {
 	pout << "GradsBoundary_Velocity2D_test..." << endl;
 
 	boost::shared_ptr<dealii::Function<2> > f1 = boost::make_shared<dealii::ConstantFunction<2> >(0.1, 2);
-
-	boost::shared_ptr<Mesh<2> >mesh = boost::make_shared<Mesh<2> >(MPI_COMM_WORLD);
-	dealii::GridGenerator::hyper_cube<2>(*mesh,0,1,true);
-	mesh->refine_global(3);
-	boost::shared_ptr<DoFBoundary<2> > boundary= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(0,f1);
-	boost::shared_ptr<DoFBoundary<2> > boundary1= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(1,f1);
-	boost::shared_ptr<DoFBoundary<2> > boundary2= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(2,f1);
-	boost::shared_ptr<DoFBoundary<2> > boundary3= boost::make_shared<GradsBoundary<2,PRESCRIBED_VELOCITY> >(3,f1);
-
-	boost::shared_ptr<BoundaryCollection<2> > bc = boost::make_shared<BoundaryCollection<2> >();
-	bc->addBoundary(boundary);
-	bc->addBoundary(boundary1);
-	bc->addBoundary(boundary2);
-	bc->addBoundary(boundary3);
-	//GradsBoundary<2,PRESCRIBED_PRESSURE> boundary2(1,f);
+	CouetteFlowGrad2D couette(0.1, 0.01, 3);
+	couette.refineAndTransform();
 
 	// distribute dofs
-	SemiLagrangian<2> sl(mesh,bc,2,boost::make_shared<D2Q9>(),0.001);
+	SemiLagrangian<2> sl(couette,2,boost::make_shared<D2Q9>(),0.001);
 	sl.setupDoFs();
 
 	DistributionFunctions f;
@@ -95,7 +83,7 @@ BOOST_AUTO_TEST_CASE(GradsBoundary_Velocity2D_test) {
 
 	double beta = 1;
 	D2Q9 d2q9;
-	boundary->apply(f, rho, u, sl, beta, d2q9);
+	//boundary->apply(f, rho, u, sl, beta, d2q9);
 
 	// TODO: Calculate u beforehand
 
@@ -120,5 +108,4 @@ BOOST_AUTO_TEST_CASE(GradsBoundary_Couette2D_test) {
 
 
 BOOST_AUTO_TEST_SUITE_END()
-} /* namespace natrium */
 

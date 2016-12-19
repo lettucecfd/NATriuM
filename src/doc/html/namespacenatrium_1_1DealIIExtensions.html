@@ -99,6 +99,13 @@ template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>make_periodi
 template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>extract_dofs_with_support_on_boundary</b> (const dealii::DoFHandler&lt; 2 &gt; &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a157762b4a7d95c0f6b614f451d1dbd2d"></a><!-- doxytag: member="natrium::DealIIExtensions::extract_dofs_with_support_on_boundary" ref="a157762b4a7d95c0f6b614f451d1dbd2d" args="(const dealii::DoFHandler&lt; 3 &gt; &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)" -->
 template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>extract_dofs_with_support_on_boundary</b> (const dealii::DoFHandler&lt; 3 &gt; &amp;dof_handler, const ComponentMask &amp;component_mask, std::vector&lt; bool &gt; &amp;selected_dofs, const std::set&lt; types::boundary_id &gt; &amp;boundary_ids)</td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;size_t dim&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacenatrium_1_1DealIIExtensions.html#ae126f478c9cfcae855a24b140b5e64f1">set_boundary_ids_at_hyperplane</a> (dealii::Triangulation&lt; dim &gt; &amp;mesh, unsigned int component, double value, size_t boundary_id, double tol=1e-10)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set boundary ids for all faces that have their vertices on the hyperplane x[component]=value.  <a href="#ae126f478c9cfcae855a24b140b5e64f1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a54ad7a3525402e88e1ab01a9c9f6eb6b"></a><!-- doxytag: member="natrium::DealIIExtensions::set_boundary_ids_at_hyperplane&lt; 2 &gt;" ref="a54ad7a3525402e88e1ab01a9c9f6eb6b" args="(dealii::Triangulation&lt; 2 &gt; &amp;mesh, unsigned int component, double value, size_t boundary_id, double tol)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_boundary_ids_at_hyperplane&lt; 2 &gt;</b> (dealii::Triangulation&lt; 2 &gt; &amp;mesh, unsigned int component, double value, size_t boundary_id, double tol)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad860cc7a713cef79e2ebb0e9bef6f23a"></a><!-- doxytag: member="natrium::DealIIExtensions::set_boundary_ids_at_hyperplane&lt; 3 &gt;" ref="ad860cc7a713cef79e2ebb0e9bef6f23a" args="(dealii::Triangulation&lt; 3 &gt; &amp;mesh, unsigned int component, double value, size_t boundary_id, double tol)" -->
+template void&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_boundary_ids_at_hyperplane&lt; 3 &gt;</b> (dealii::Triangulation&lt; 3 &gt; &amp;mesh, unsigned int component, double value, size_t boundary_id, double tol)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>some extensions to deal.ii </p>
@@ -331,6 +338,65 @@ template&lt;typename DH &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="ae126f478c9cfcae855a24b140b5e64f1"></a><!-- doxytag: member="natrium::DealIIExtensions::set_boundary_ids_at_hyperplane" ref="ae126f478c9cfcae855a24b140b5e64f1" args="(dealii::Triangulation&lt; dim &gt; &amp;mesh, unsigned int component, double value, size_t boundary_id, double tol=1e&#45;10)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void natrium::DealIIExtensions::set_boundary_ids_at_hyperplane </td>
+          <td>(</td>
+          <td class="paramtype">dealii::Triangulation&lt; dim &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>mesh</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>component</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&nbsp;</td>
+          <td class="paramname"> <em>boundary_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>tol</em> = <code>1e-10</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set boundary ids for all faces that have their vertices on the hyperplane x[component]=value. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>mesh</em>&nbsp;</td><td>the mesh </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>component</em>&nbsp;</td><td>0 for x, 1 for y, 2 for z </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>value</em>&nbsp;</td><td>the component value </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>boundary_id</em>&nbsp;</td><td>the boundary id that is assigned to the faces that are in the hyperpalen </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>tol</em>&nbsp;</td><td>tolerance for comparison with value </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 </div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -346,7 +412,7 @@ template&lt;typename DH &gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

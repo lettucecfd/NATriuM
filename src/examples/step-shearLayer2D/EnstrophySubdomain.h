@@ -42,6 +42,7 @@ public:
 		size_t local_i;
 		size_t q_point;
 		size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
+		size_t n_q_points = advection->getQuadrature()->size();
 
 		typename dealii::DoFHandler<2>::active_cell_iterator cell =
 				dof_handler.begin_active(), endc = dof_handler.end();
@@ -62,9 +63,8 @@ public:
 				feCellValues.reinit(cell);
 
 				// Enstrophy = int w^2 = int ( dv/dx - du/dy)^2  = w_q ( v_i dphi/dx (x_q) - u_j dphi/dy (x_q) )
-				for (size_t q = 0; q < dofs_per_cell; q++) {
+				for (size_t q = 0; q < n_q_points; q++) {
 					vorticity = 0.0;
-					q_point = advection->getCelldofToQIndex().at(q);
 					for (size_t i = 0; i < dofs_per_cell; i++) {
 						local_i = localDoFIndices.at(i);
 						vorticity +=

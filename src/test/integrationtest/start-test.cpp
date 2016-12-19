@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
 				<< " See natrium.html for details." << endl;
 		errors = true;
 	}
-
+/*
 	// Test 10: Convergence Forcing Schemes 3D
 	result = IntegrationTestCases::ConvergenceTestForcingSchemes3D();
 	print_line_html(result, htmlTrace.getHtml());
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
 				<< " See natrium.html for details." << endl;
 		errors = true;
 	}
-
+*/
 	// Test 9: Convergence Forcing Schemes 2D
 	result = IntegrationTestCases::ConvergenceTestForcingSchemes2D();
 	print_line_html(result, htmlTrace.getHtml());
@@ -163,6 +163,7 @@ int main(int argc, char **argv) {
 				<< " See natrium.html for details." << endl;
 		errors = true;
 	}
+
 
 	// Test 8: Convergence Moving Walls
 	result = IntegrationTestCases::ConvergenceTestMovingWall();

@@ -10,12 +10,16 @@ Semi-\/Lagrangian advection operator.
 {\ttfamily \#include \char`\"{}deal.II/grid/tria.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/fe/fe\_\-dgq.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/dofs/dof\_\-handler.h\char`\"{}}\par
-{\ttfamily \#include $<$deal.II/dofs/dof\_\-tools.h$>$}\par
+{\ttfamily \#include \char`\"{}deal.II/dofs/dof\_\-tools.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/lac/sparse\_\-matrix.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/fe/fe\_\-update\_\-flags.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/fe/mapping\_\-cartesian.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/lac/block\_\-sparsity\_\-pattern.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/base/quadrature\_\-lib.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}AdvectionOperator.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}AdvectionTools.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}SemiLagrangianTools.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../boundaries/SemiLagrangianBoundaryHandler.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../problemdescription/BoundaryCollection.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/NATriuMException.h\char`\"{}}\par
@@ -27,11 +31,7 @@ Semi-\/Lagrangian advection operator.
 class \hyperlink{classnatrium_1_1SemiLagrangianException}{natrium::SemiLagrangianException}
 \begin{DoxyCompactList}\small\item\em Exception class for \hyperlink{classnatrium_1_1SemiLagrangian}{SemiLagrangian} advection operator. \item\end{DoxyCompactList}\item 
 class \hyperlink{classnatrium_1_1SemiLagrangian}{natrium::SemiLagrangian$<$ dim $>$}
-\begin{DoxyCompactList}\small\item\em This class solves the linear advection equations by a semi-\/Lagrangian scheme. \item\end{DoxyCompactList}\item 
-struct \hyperlink{structnatrium_1_1SemiLagrangian_1_1LagrangianPathDestination}{natrium::SemiLagrangian$<$ dim $>$::LagrangianPathDestination}
-\item 
-struct \hyperlink{structnatrium_1_1SemiLagrangian_1_1LagrangianPathTracker}{natrium::SemiLagrangian$<$ dim $>$::LagrangianPathTracker}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em This class solves the linear advection equations by a semi-\/Lagrangian scheme. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 

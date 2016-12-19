@@ -4,7 +4,7 @@
 }
 
 
-Abstract class for spatial part of the Advection Operator e\_\-i $\ast$ dx\_\-i f.  
+Abstract class for discretizing the linear advection equation. So far, NATriuM supports a spectral element discontinuous Galerkin solver (\hyperlink{classnatrium_1_1SEDGMinLee}{SEDGMinLee}), and an interpolation-\/based solver (\hyperlink{classnatrium_1_1SemiLagrangian}{SemiLagrangian}).  
 
 
 {\ttfamily \#include $<$AdvectionOperator.h$>$}Inheritance diagram for natrium::AdvectionOperator$<$ dim $>$::\begin{figure}[H]
@@ -16,116 +16,202 @@ Abstract class for spatial part of the Advection Operator e\_\-i $\ast$ dx\_\-i 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a48d3a57e3433d9f6c3768ad2f392df56}{
-\hyperlink{classnatrium_1_1AdvectionOperator_a48d3a57e3433d9f6c3768ad2f392df56}{AdvectionOperator} ()}
-\label{classnatrium_1_1AdvectionOperator_a48d3a57e3433d9f6c3768ad2f392df56}
-
-\begin{DoxyCompactList}\small\item\em constructor \item\end{DoxyCompactList}\item 
+\hyperlink{classnatrium_1_1AdvectionOperator_a89843b1b14386e984a5dab59b0a602b4}{AdvectionOperator} (\hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ \&problem, size\_\-t fe\_\-order, QuadratureName quad\_\-name, SupportPointsName points\_\-name, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ stencil, double delta\_\-t, bool dg)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1AdvectionOperator_a691156dace41e3075fd89953f30ae83f}{
 virtual \hyperlink{classnatrium_1_1AdvectionOperator_a691156dace41e3075fd89953f30ae83f}{$\sim$AdvectionOperator} ()}
 \label{classnatrium_1_1AdvectionOperator_a691156dace41e3075fd89953f30ae83f}
 
 \begin{DoxyCompactList}\small\item\em destructor \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a63ea65f840743d1b75d529ea4c91d4b0}{
+void {\bfseries distributeDoFs} ()}
+\label{classnatrium_1_1AdvectionOperator_a63ea65f840743d1b75d529ea4c91d4b0}
+
+\item 
+virtual void \hyperlink{classnatrium_1_1AdvectionOperator_a640db5be4d4930198124fa57752167e5}{setDeltaT} (double delta\_\-t)
+\begin{DoxyCompactList}\small\item\em set time step \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1AdvectionOperator_a89c25c3dae9a1e5973cd89fab8c2c052}{
 virtual void \hyperlink{classnatrium_1_1AdvectionOperator_a89c25c3dae9a1e5973cd89fab8c2c052}{reassemble} ()=0}
 \label{classnatrium_1_1AdvectionOperator_a89c25c3dae9a1e5973cd89fab8c2c052}
 
-\begin{DoxyCompactList}\small\item\em function to (re-\/)assemble linear system \item\end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em (re-\/)assemble system matrix (and system vector, for SEDG). Purely virtual for this class. \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1AdvectionOperator_adcd3e1a5bfd9fc4bc2bbc09c02c0f248}{
-virtual void {\bfseries setupDoFs} ()=0}
+virtual void \hyperlink{classnatrium_1_1AdvectionOperator_adcd3e1a5bfd9fc4bc2bbc09c02c0f248}{setupDoFs} ()=0}
 \label{classnatrium_1_1AdvectionOperator_adcd3e1a5bfd9fc4bc2bbc09c02c0f248}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_aacdf6096f40166c5ec64686655c906a0}{
-virtual void \hyperlink{classnatrium_1_1AdvectionOperator_aacdf6096f40166c5ec64686655c906a0}{stream} ()=0}
-\label{classnatrium_1_1AdvectionOperator_aacdf6096f40166c5ec64686655c906a0}
-
-\begin{DoxyCompactList}\small\item\em make streaming step \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a2cbaee43740d976492e6c9d6d2b84ad0}{
-virtual const distributed\_\-sparse\_\-block\_\-matrix \& {\bfseries getSystemMatrix} () const =0}
-\label{classnatrium_1_1AdvectionOperator_a2cbaee43740d976492e6c9d6d2b84ad0}
+\begin{DoxyCompactList}\small\item\em Setup degrees of freedom and fill sparsity pattern of the system matrix. Purely virtual for this class. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a5444b3cde21a9b638d963e36d2f3ad88}{
+virtual void {\bfseries applyBoundaryConditions} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f\_\-old, \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, double t)=0}
+\label{classnatrium_1_1AdvectionOperator_a5444b3cde21a9b638d963e36d2f3ad88}
 
 \item 
+virtual double \hyperlink{classnatrium_1_1AdvectionOperator_abccc060e37071fa776cd6e9fc6cc7987}{stream} (\hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f\_\-old, \hyperlink{classnatrium_1_1DistributionFunctions}{DistributionFunctions} \&f, double t)=0
+\begin{DoxyCompactList}\small\item\em Stream the distribution functions. Purely virtual for this class. \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classnatrium_1_1AdvectionOperator_aa93f60c7e7270a35df21387a962d7a38}{setTimeIntegrator} (boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1TimeIntegrator}{TimeIntegrator}$<$ distributed\_\-sparse\_\-block\_\-matrix, distributed\_\-block\_\-vector $>$ $>$ timeIntegrator)=0
+\begin{DoxyCompactList}\small\item\em Apply boundary conditions. Purely virtual for this class. \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1AdvectionOperator_aa1eb5cd5a2c1b6b3b8f6395bac67ef55}{
-virtual const distributed\_\-block\_\-vector \& {\bfseries getSystemVector} () const =0}
+virtual const distributed\_\-block\_\-vector \& \hyperlink{classnatrium_1_1AdvectionOperator_aa1eb5cd5a2c1b6b3b8f6395bac67ef55}{getSystemVector} () const =0}
 \label{classnatrium_1_1AdvectionOperator_aa1eb5cd5a2c1b6b3b8f6395bac67ef55}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_acf18a849f6d7b81083d1fee462f87500}{
-virtual const boost::shared\_\-ptr$<$ dealii::DoFHandler$<$ dim $>$ $>$ \& {\bfseries getDoFHandler} () const =0}
-\label{classnatrium_1_1AdvectionOperator_acf18a849f6d7b81083d1fee462f87500}
+\begin{DoxyCompactList}\small\item\em get system vector. To be removed. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_acf891e95e63f22a5f9c8f09d56bdafba}{
+const boost::shared\_\-ptr$<$ dealii::DoFHandler$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1AdvectionOperator_acf891e95e63f22a5f9c8f09d56bdafba}{getDoFHandler} () const }
+\label{classnatrium_1_1AdvectionOperator_acf891e95e63f22a5f9c8f09d56bdafba}
+
+\begin{DoxyCompactList}\small\item\em Returns the degree of freedom handler. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a5f64cd24839b7695fb4a88574c769b16}{
+const distributed\_\-sparse\_\-block\_\-matrix \& \hyperlink{classnatrium_1_1AdvectionOperator_a5f64cd24839b7695fb4a88574c769b16}{getSystemMatrix} () const }
+\label{classnatrium_1_1AdvectionOperator_a5f64cd24839b7695fb4a88574c769b16}
+
+\begin{DoxyCompactList}\small\item\em return the system matrix \item\end{DoxyCompactList}\item 
+boost::shared\_\-ptr$<$ dealii::FEFaceValues$<$ dim $>$ $>$ \hyperlink{classnatrium_1_1AdvectionOperator_acf26df77fa01498ff8de55e6d4c51311}{getFEFaceValues} (const dealii::UpdateFlags \&flags) const 
+\begin{DoxyCompactList}\small\item\em return an object to integrate/interpolate on faces, or extract other information \item\end{DoxyCompactList}\item 
+boost::shared\_\-ptr$<$ dealii::FEValues$<$ dim $>$ $>$ \hyperlink{classnatrium_1_1AdvectionOperator_ae786297e9fe77377841ff7e41fcd0d01}{getFEValues} (const dealii::UpdateFlags \&flags) const 
+\begin{DoxyCompactList}\small\item\em return an object to integrate/interpolate on cells, or extract other information \item\end{DoxyCompactList}\item 
+const dealii::Mapping$<$ dim $>$ \& \hyperlink{classnatrium_1_1AdvectionOperator_aab63eee00fc2b000c3fbae9552807607}{getMapping} () const 
+\begin{DoxyCompactList}\small\item\em return the mapping function that maps from an arbitrary quadrilateral cell to a unit cell \mbox{[}0,1\mbox{]}$^\wedge$dim \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_ac9b50e9da1a6e900c36a2c4e0556d4cd}{
+const boost::shared\_\-ptr$<$ dealii::Quadrature$<$ dim-\/1 $>$ $>$ \& \hyperlink{classnatrium_1_1AdvectionOperator_ac9b50e9da1a6e900c36a2c4e0556d4cd}{getFaceQuadrature} () const }
+\label{classnatrium_1_1AdvectionOperator_ac9b50e9da1a6e900c36a2c4e0556d4cd}
+
+\begin{DoxyCompactList}\small\item\em return the quadrature object to integrate over faces. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a4d6b06b8adf7deaae029e076b197560a}{
+const boost::shared\_\-ptr$<$ dealii::FiniteElement$<$ dim $>$ $>$ \& {\bfseries getFe} () const }
+\label{classnatrium_1_1AdvectionOperator_a4d6b06b8adf7deaae029e076b197560a}
 
 \item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a6171b5c645167a5e81f56964f1b9ae6f}{
-virtual void {\bfseries mapDoFsToSupportPoints} (std::map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const =0}
-\label{classnatrium_1_1AdvectionOperator_a6171b5c645167a5e81f56964f1b9ae6f}
+size\_\-t \hyperlink{classnatrium_1_1AdvectionOperator_abd4d7735336cda33f9c117ffcee0db0b}{getNumberOfDoFsPerCell} () const 
+\begin{DoxyCompactList}\small\item\em number of degrees of freedom per cell \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a38a1bb6cc12ee88da3f0580b95f399c5}{
+const boost::shared\_\-ptr$<$ dealii::Quadrature$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1AdvectionOperator_a38a1bb6cc12ee88da3f0580b95f399c5}{getQuadrature} () const }
+\label{classnatrium_1_1AdvectionOperator_a38a1bb6cc12ee88da3f0580b95f399c5}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_aa1c9d47c0cb17019bb122a4e45051ffa}{
-virtual const dealii::MappingQ$<$ dim $>$ \& {\bfseries getMapping} () const =0}
-\label{classnatrium_1_1AdvectionOperator_aa1c9d47c0cb17019bb122a4e45051ffa}
+\begin{DoxyCompactList}\small\item\em return the quadrature object to integrate over cells. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a186174a39dc395973b8f3fd368632333}{
+size\_\-t \hyperlink{classnatrium_1_1AdvectionOperator_a186174a39dc395973b8f3fd368632333}{getOrderOfFiniteElement} () const }
+\label{classnatrium_1_1AdvectionOperator_a186174a39dc395973b8f3fd368632333}
 
-\item 
-virtual size\_\-t \hyperlink{classnatrium_1_1AdvectionOperator_a251e21d1dd023926d4c5f7fd973b90bf}{getNumberOfDoFs} () const =0
-\begin{DoxyCompactList}\small\item\em save matrices and status to files \item\end{DoxyCompactList}\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_ad282440d7dbee0e78f6489e9878d1b41}{
-virtual const boost::shared\_\-ptr$<$ dealii::FE\_\-DGQArbitraryNodes$<$ dim $>$ $>$ \& {\bfseries getFe} () const =0}
-\label{classnatrium_1_1AdvectionOperator_ad282440d7dbee0e78f6489e9878d1b41}
+\begin{DoxyCompactList}\small\item\em return the polynomial order of the finite element shape functions \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a49514ed3873072b50f381ed39c2be2d1}{
+size\_\-t \hyperlink{classnatrium_1_1AdvectionOperator_a49514ed3873072b50f381ed39c2be2d1}{getNumberOfDoFs} () const }
+\label{classnatrium_1_1AdvectionOperator_a49514ed3873072b50f381ed39c2be2d1}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_ac452ae3240fa37df817c7e294f71315e}{
-virtual size\_\-t {\bfseries getNumberOfDoFsPerCell} () const =0}
-\label{classnatrium_1_1AdvectionOperator_ac452ae3240fa37df817c7e294f71315e}
+\begin{DoxyCompactList}\small\item\em return the global number of degrees of freedom \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a118d2e75644d4bab0e0349afda26688f}{
+const dealii::IndexSet \& \hyperlink{classnatrium_1_1AdvectionOperator_a118d2e75644d4bab0e0349afda26688f}{getLocallyOwnedDofs} ()}
+\label{classnatrium_1_1AdvectionOperator_a118d2e75644d4bab0e0349afda26688f}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_adf5b566df5abc5ad2afa8977e83bb518}{
-virtual const boost::shared\_\-ptr$<$ dealii::QGaussLobatto$<$ dim $>$ $>$ \& {\bfseries getQuadrature} () const =0}
-\label{classnatrium_1_1AdvectionOperator_adf5b566df5abc5ad2afa8977e83bb518}
+\begin{DoxyCompactList}\small\item\em return the set of locally owned degrees of freedom. Each degree of freedom, i.e. each grid point, is owned by one and only one MPI process. There are of course other degrees of freedom that are relevant to the calculations (mainly at boundaries of the locally owned subdomain), those are denoted as locally relevant degrees of freedom. See the Deal.II glossary for more information. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a122a5378bcd93dc121cde12a95be75d8}{
+const dealii::IndexSet \& \hyperlink{classnatrium_1_1AdvectionOperator_a122a5378bcd93dc121cde12a95be75d8}{getLocallyRelevantDofs} ()}
+\label{classnatrium_1_1AdvectionOperator_a122a5378bcd93dc121cde12a95be75d8}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a88232d5ef52ce0db77133682e26a5760}{
-virtual const std::map$<$ size\_\-t, size\_\-t $>$ \& {\bfseries getCelldofToQIndex} () const =0}
-\label{classnatrium_1_1AdvectionOperator_a88232d5ef52ce0db77133682e26a5760}
+\begin{DoxyCompactList}\small\item\em return the set of locally relevant degrees of freedom. Each degree of freedom, i.e. each grid point, is owned by one and only one MPI process. There are of course other degrees of freedom that are relevant to the calculations (mainly at boundaries of the locally owned subdomain), those are denoted as locally relevant degrees of freedom. See the Deal.II glossary for more information. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_ae5d7feac48c54abb876432e9166ea248}{
+const boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1AdvectionOperator_ae5d7feac48c54abb876432e9166ea248}{getMesh} () const }
+\label{classnatrium_1_1AdvectionOperator_ae5d7feac48c54abb876432e9166ea248}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a09b59c91618b2a8d55a98ccc0fd33d36}{
-virtual const vector$<$ std::map$<$ size\_\-t, size\_\-t $>$ $>$ \& {\bfseries getQIndexToFacedof} () const =0}
-\label{classnatrium_1_1AdvectionOperator_a09b59c91618b2a8d55a98ccc0fd33d36}
+\begin{DoxyCompactList}\small\item\em return the computational grid \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a15e11e1df8d26eefcfc701eece00f1c6}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ \& \hyperlink{classnatrium_1_1AdvectionOperator_a15e11e1df8d26eefcfc701eece00f1c6}{getStencil} () const }
+\label{classnatrium_1_1AdvectionOperator_a15e11e1df8d26eefcfc701eece00f1c6}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_afedb20e8eac67980523f64e446f8bbe9}{
-virtual size\_\-t {\bfseries getOrderOfFiniteElement} () const =0}
-\label{classnatrium_1_1AdvectionOperator_afedb20e8eac67980523f64e446f8bbe9}
+\begin{DoxyCompactList}\small\item\em return the LBM stencil (e.g. \hyperlink{classnatrium_1_1D2Q9}{D2Q9}) \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a072f5f90fc914c6e9ac5a7295d6bc84e}{
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection}$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1AdvectionOperator_a072f5f90fc914c6e9ac5a7295d6bc84e}{getBoundaries} () const }
+\label{classnatrium_1_1AdvectionOperator_a072f5f90fc914c6e9ac5a7295d6bc84e}
 
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_aac798ab3b6259b3b3b1e21c5cddac05b}{
-virtual const dealii::IndexSet \& {\bfseries getLocallyOwnedDofs} ()=0}
-\label{classnatrium_1_1AdvectionOperator_aac798ab3b6259b3b3b1e21c5cddac05b}
-
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a3011d32ffb48a1e5b5aef470a4440f0b}{
-virtual const dealii::IndexSet \& {\bfseries getLocallyRelevantDofs} ()=0}
-\label{classnatrium_1_1AdvectionOperator_a3011d32ffb48a1e5b5aef470a4440f0b}
-
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a67fddd527b5f2b9f19f663284e6954bc}{
-virtual const boost::shared\_\-ptr$<$ Mesh$<$ dim $>$ $>$ \& {\bfseries getMesh} () const =0}
-\label{classnatrium_1_1AdvectionOperator_a67fddd527b5f2b9f19f663284e6954bc}
-
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a76b4ba0077ef23188ca39d8d7081dfee}{
-virtual const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ \& {\bfseries getStencil} () const =0}
-\label{classnatrium_1_1AdvectionOperator_a76b4ba0077ef23188ca39d8d7081dfee}
-
-\item 
-\hypertarget{classnatrium_1_1AdvectionOperator_a6c08044f375da0bb5350d6dc7cce7de6}{
-virtual void {\bfseries setDeltaT} (double)}
-\label{classnatrium_1_1AdvectionOperator_a6c08044f375da0bb5350d6dc7cce7de6}
-
-\item 
+\begin{DoxyCompactList}\small\item\em return the boundary collection \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1AdvectionOperator_a37ad28637da38eb776ba3eca89a0820c}{
-virtual size\_\-t {\bfseries memory\_\-consumption\_\-sparsity\_\-pattern} () const }
+virtual size\_\-t \hyperlink{classnatrium_1_1AdvectionOperator_a37ad28637da38eb776ba3eca89a0820c}{memory\_\-consumption\_\-sparsity\_\-pattern} () const }
 \label{classnatrium_1_1AdvectionOperator_a37ad28637da38eb776ba3eca89a0820c}
+
+\begin{DoxyCompactList}\small\item\em estimate the memory consumption of the sparsity pattern For SEDG, this is 0, because the sparsity pattern is a part of the trilinos matrix. \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1AdvectionOperator_a3de39c26aa52db4ced3d2d78e192ebce}{mapDoFsToSupportPoints} (std::map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \&supportPoints) const 
+\begin{DoxyCompactList}\small\item\em map degrees of freedom to support points \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1AdvectionOperator_a6891816bbe0a3f6be217f47a78cdcd79}{getCellSupportPoints} (typename dealii::DoFHandler$<$ dim $>$::cell\_\-iterator \&cell, vector$<$ dealii::Point$<$ dim $>$ $>$ \&points)
+\begin{DoxyCompactList}\small\item\em return the support points in real space on a given cell \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_af7e5dfef6d4e93a455b4eeb58cb543c2}{
+const dealii::Quadrature$<$ dim $>$ \& \hyperlink{classnatrium_1_1AdvectionOperator_af7e5dfef6d4e93a455b4eeb58cb543c2}{getSupportPointEvaluation} ()}
+\label{classnatrium_1_1AdvectionOperator_af7e5dfef6d4e93a455b4eeb58cb543c2}
+
+\begin{DoxyCompactList}\small\item\em A quadrature instance that is meant for evaluation of the finite element functions at the support points This quadrature should never be used for integration, only for function evaluations, as the weights are complete nonsense. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a9c3f3aaea40cc82f345606291f9ac38d}{
+double {\bfseries getDeltaT} () const }
+\label{classnatrium_1_1AdvectionOperator_a9c3f3aaea40cc82f345606291f9ac38d}
+
+\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_aa4610eea1853b4e9c2fe550527b4abcf}{
+const \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ \& {\bfseries getProblem} () const }
+\label{classnatrium_1_1AdvectionOperator_aa4610eea1853b4e9c2fe550527b4abcf}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_afa85027b7416373a3b5ea63719716da2}{
+\hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription}$<$ dim $>$ \& {\bfseries m\_\-problem}}
+\label{classnatrium_1_1AdvectionOperator_afa85027b7416373a3b5ea63719716da2}
+
+\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a1166202d92f4bd8ead4b5486540eb34d}{
+boost::shared\_\-ptr$<$ dealii::Mapping$<$ dim $>$ $>$ \hyperlink{classnatrium_1_1AdvectionOperator_a1166202d92f4bd8ead4b5486540eb34d}{m\_\-mapping}}
+\label{classnatrium_1_1AdvectionOperator_a1166202d92f4bd8ead4b5486540eb34d}
+
+\begin{DoxyCompactList}\small\item\em Mapping from real space to unit cell. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a01fe6ea5b78b0482d08d30a525f66f1c}{
+distributed\_\-sparse\_\-block\_\-matrix \hyperlink{classnatrium_1_1AdvectionOperator_a01fe6ea5b78b0482d08d30a525f66f1c}{m\_\-systemMatrix}}
+\label{classnatrium_1_1AdvectionOperator_a01fe6ea5b78b0482d08d30a525f66f1c}
+
+\begin{DoxyCompactList}\small\item\em System matrix L = M$^\wedge$(-\/1)$\ast$(-\/D+R). \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_abf58a2b8f218438a3557d8217d6b76c7}{
+boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Stencil}{Stencil} $>$ \hyperlink{classnatrium_1_1AdvectionOperator_abf58a2b8f218438a3557d8217d6b76c7}{m\_\-stencil}}
+\label{classnatrium_1_1AdvectionOperator_abf58a2b8f218438a3557d8217d6b76c7}
+
+\begin{DoxyCompactList}\small\item\em the DQ model (e.g. \hyperlink{classnatrium_1_1D2Q9}{D2Q9}) \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_afcff42a6fd461409e87b5aca7f0bb217}{
+size\_\-t \hyperlink{classnatrium_1_1AdvectionOperator_afcff42a6fd461409e87b5aca7f0bb217}{m\_\-orderOfFiniteElement}}
+\label{classnatrium_1_1AdvectionOperator_afcff42a6fd461409e87b5aca7f0bb217}
+
+\begin{DoxyCompactList}\small\item\em order of the finite element functions \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a60997fa95371a281fcbfc9418d12d258}{
+boost::shared\_\-ptr$<$ dealii::Quadrature$<$ dim $>$ $>$ \hyperlink{classnatrium_1_1AdvectionOperator_a60997fa95371a281fcbfc9418d12d258}{m\_\-quadrature}}
+\label{classnatrium_1_1AdvectionOperator_a60997fa95371a281fcbfc9418d12d258}
+
+\begin{DoxyCompactList}\small\item\em integration on gauss lobatto nodes \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_acf5c9e9e749cc771635a7dcefc9f569f}{
+boost::shared\_\-ptr$<$ dealii::Quadrature$<$ dim-\/1 $>$ $>$ \hyperlink{classnatrium_1_1AdvectionOperator_acf5c9e9e749cc771635a7dcefc9f569f}{m\_\-faceQuadrature}}
+\label{classnatrium_1_1AdvectionOperator_acf5c9e9e749cc771635a7dcefc9f569f}
+
+\begin{DoxyCompactList}\small\item\em integration on boundary (with gauß lobatto nodes) \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_aed3833678ead684ce2d86383707962ab}{
+boost::shared\_\-ptr$<$ dealii::Quadrature$<$ dim $>$ $>$ {\bfseries m\_\-supportPointEvaluation}}
+\label{classnatrium_1_1AdvectionOperator_aed3833678ead684ce2d86383707962ab}
+
+\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_ab2df69e4fdda8a3243a722564279ef83}{
+boost::shared\_\-ptr$<$ dealii::FiniteElement$<$ dim $>$ $>$ \hyperlink{classnatrium_1_1AdvectionOperator_ab2df69e4fdda8a3243a722564279ef83}{m\_\-fe}}
+\label{classnatrium_1_1AdvectionOperator_ab2df69e4fdda8a3243a722564279ef83}
+
+\begin{DoxyCompactList}\small\item\em Finite Element function on one cell. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_aa3139b789e3cf4db3a367b756df88440}{
+boost::shared\_\-ptr$<$ dealii::DoFHandler$<$ dim $>$ $>$ \hyperlink{classnatrium_1_1AdvectionOperator_aa3139b789e3cf4db3a367b756df88440}{m\_\-doFHandler}}
+\label{classnatrium_1_1AdvectionOperator_aa3139b789e3cf4db3a367b756df88440}
+
+\begin{DoxyCompactList}\small\item\em dealii::DoFHandler to distribute the degrees of freedom over the Mesh \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a06f200c873b739bbd1a2f6b4fcf34d40}{
+dealii::IndexSet {\bfseries m\_\-locallyOwnedDoFs}}
+\label{classnatrium_1_1AdvectionOperator_a06f200c873b739bbd1a2f6b4fcf34d40}
+
+\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_a8c23c164bd3db14ce88a54801354615e}{
+dealii::IndexSet {\bfseries m\_\-locallyRelevantDoFs}}
+\label{classnatrium_1_1AdvectionOperator_a8c23c164bd3db14ce88a54801354615e}
+
+\item 
+\hypertarget{classnatrium_1_1AdvectionOperator_ae8a58e4761fb827914d48d39d98265d8}{
+double {\bfseries m\_\-deltaT}}
+\label{classnatrium_1_1AdvectionOperator_ae8a58e4761fb827914d48d39d98265d8}
 
 \end{DoxyCompactItemize}
 
@@ -133,29 +219,129 @@ virtual size\_\-t {\bfseries memory\_\-consumption\_\-sparsity\_\-pattern} () co
 \subsection{Detailed Description}
 \subsubsection*{template$<$size\_\-t dim$>$ class natrium::AdvectionOperator$<$ dim $>$}
 
-Abstract class for spatial part of the Advection Operator e\_\-i $\ast$ dx\_\-i f. 
+Abstract class for discretizing the linear advection equation. So far, NATriuM supports a spectral element discontinuous Galerkin solver (\hyperlink{classnatrium_1_1SEDGMinLee}{SEDGMinLee}), and an interpolation-\/based solver (\hyperlink{classnatrium_1_1SemiLagrangian}{SemiLagrangian}). 
 \begin{DoxyTemplParams}{Template Parameters}
 \item[{\em dim}]The dimension of the flow (2 or 3). \end{DoxyTemplParams}
 
 
-\subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1AdvectionOperator_a251e21d1dd023926d4c5f7fd973b90bf}{
-\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!getNumberOfDoFs@{getNumberOfDoFs}}
-\index{getNumberOfDoFs@{getNumberOfDoFs}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
-\subsubsection[{getNumberOfDoFs}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual size\_\-t {\bf natrium::AdvectionOperator}$<$ dim $>$::getNumberOfDoFs () const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
-\label{classnatrium_1_1AdvectionOperator_a251e21d1dd023926d4c5f7fd973b90bf}
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1AdvectionOperator_a89843b1b14386e984a5dab59b0a602b4}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!AdvectionOperator@{AdvectionOperator}}
+\index{AdvectionOperator@{AdvectionOperator}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{AdvectionOperator}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::AdvectionOperator}$<$ dim $>$::{\bf AdvectionOperator} ({\bf ProblemDescription}$<$ dim $>$ \& {\em problem}, \/  size\_\-t {\em fe\_\-order}, \/  QuadratureName {\em quad\_\-name}, \/  SupportPointsName {\em points\_\-name}, \/  boost::shared\_\-ptr$<$ {\bf Stencil} $>$ {\em stencil}, \/  double {\em delta\_\-t}, \/  bool {\em dg})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_a89843b1b14386e984a5dab59b0a602b4}
 
 
-save matrices and status to files 
+Constructor. 
 \begin{DoxyParams}{Parameters}
-\item[\mbox{$\leftarrow$} {\em directory}]directory to save the matrix files to \end{DoxyParams}
-
-\begin{DoxyExceptions}{Exceptions}
-\item[{\em \hyperlink{classnatrium_1_1AdvectionSolverException}{AdvectionSolverException}}]\end{DoxyExceptions}
+\item[{\em problem}]The \hyperlink{classnatrium_1_1ProblemDescription}{ProblemDescription} instance that defines the flow \item[{\em fe\_\-order}]polynomial order of the finite element discretization \item[{\em quad\_\-name}]name of the quadrature that is used for spatial integration \item[{\em points\_\-name}]name of the set of support points, as defined in \hyperlink{ConfigNames_8h_source}{ConfigNames.h} \item[{\em stencil}]the LBM stencil (e.g. \hyperlink{classnatrium_1_1D2Q9}{D2Q9}) \item[{\em delta\_\-t}]The computational time step. Note that the \hyperlink{classnatrium_1_1CFDSolver}{CFDSolver} calls \hyperlink{classnatrium_1_1AdvectionOperator_a640db5be4d4930198124fa57752167e5}{AdvectionOperator::setDeltaT()} to set the time step, so as to appy the CFL number to an already refined grid (upon construction of the \hyperlink{classnatrium_1_1AdvectionOperator}{AdvectionOperator}, the grid is not yet refined) \item[{\em dg}]Flag that indicates whether the finite element is of discontinuous Galerkin type (FE\_\-DGQArbitraryNodes), otherwise it is a standard Lagrangian finite element (FE\_\-Q) \end{DoxyParams}
 
 
-Implemented in \hyperlink{classnatrium_1_1SEDGMinLee_af667cda1a894340f614da67c0a0ae5da}{natrium::SEDGMinLee$<$ dim $>$}, and \hyperlink{classnatrium_1_1SemiLagrangian_aeb3b1dfda8a0d8fe7473716f98b12647}{natrium::SemiLagrangian$<$ dim $>$}.
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1AdvectionOperator_a6891816bbe0a3f6be217f47a78cdcd79}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!getCellSupportPoints@{getCellSupportPoints}}
+\index{getCellSupportPoints@{getCellSupportPoints}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{getCellSupportPoints}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::AdvectionOperator}$<$ dim $>$::getCellSupportPoints (typename dealii::DoFHandler$<$ dim $>$::cell\_\-iterator \& {\em cell}, \/  vector$<$ dealii::Point$<$ dim $>$ $>$ \& {\em points})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_a6891816bbe0a3f6be217f47a78cdcd79}
 
-The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+
+return the support points in real space on a given cell 
+\begin{DoxyParams}{Parameters}
+\item[{\em cell}]the cell  points to be filled by this function. Has to have the right size before calling the function, i.e. the dofs per cell. \end{DoxyParams}
+\hypertarget{classnatrium_1_1AdvectionOperator_acf26df77fa01498ff8de55e6d4c51311}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!getFEFaceValues@{getFEFaceValues}}
+\index{getFEFaceValues@{getFEFaceValues}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{getFEFaceValues}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ boost::shared\_\-ptr$<$dealii::FEFaceValues$<$dim$>$ $>$ {\bf natrium::AdvectionOperator}$<$ dim $>$::getFEFaceValues (const dealii::UpdateFlags \& {\em flags}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_acf26df77fa01498ff8de55e6d4c51311}
+
+
+return an object to integrate/interpolate on faces, or extract other information 
+\begin{DoxyParams}{Parameters}
+\item[{\em flags}]dealii::UpdateFlags. Depending on which quantity you want to work on, you can specify which quantities are updated at the cell (gradients, shape function values, normal vectors, ...) \end{DoxyParams}
+\hypertarget{classnatrium_1_1AdvectionOperator_ae786297e9fe77377841ff7e41fcd0d01}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!getFEValues@{getFEValues}}
+\index{getFEValues@{getFEValues}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{getFEValues}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ boost::shared\_\-ptr$<$dealii::FEValues$<$dim$>$ $>$ {\bf natrium::AdvectionOperator}$<$ dim $>$::getFEValues (const dealii::UpdateFlags \& {\em flags}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_ae786297e9fe77377841ff7e41fcd0d01}
+
+
+return an object to integrate/interpolate on cells, or extract other information 
+\begin{DoxyParams}{Parameters}
+\item[{\em flags}]dealii::UpdateFlags. Depending on which quantity you want to work on, you can specify which quantities are updated at the cell (gradients, shape function values, normal vectors, ...) \end{DoxyParams}
+\hypertarget{classnatrium_1_1AdvectionOperator_aab63eee00fc2b000c3fbae9552807607}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!getMapping@{getMapping}}
+\index{getMapping@{getMapping}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{getMapping}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ const dealii::Mapping$<$dim$>$\& {\bf natrium::AdvectionOperator}$<$ dim $>$::getMapping () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_aab63eee00fc2b000c3fbae9552807607}
+
+
+return the mapping function that maps from an arbitrary quadrilateral cell to a unit cell \mbox{[}0,1\mbox{]}$^\wedge$dim \begin{DoxyNote}{Note}
+Depending on whether the isCartesian flag is set in your problem description, this mapping can either be a Cartesian or a bilinear (\char`\"{}Q1\char`\"{}) mapping. 
+\end{DoxyNote}
+\hypertarget{classnatrium_1_1AdvectionOperator_abd4d7735336cda33f9c117ffcee0db0b}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!getNumberOfDoFsPerCell@{getNumberOfDoFsPerCell}}
+\index{getNumberOfDoFsPerCell@{getNumberOfDoFsPerCell}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{getNumberOfDoFsPerCell}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ size\_\-t {\bf natrium::AdvectionOperator}$<$ dim $>$::getNumberOfDoFsPerCell () const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_abd4d7735336cda33f9c117ffcee0db0b}
+
+
+number of degrees of freedom per cell \begin{DoxyNote}{Note}
+so far, \hyperlink{namespacenatrium}{natrium} does not support different finite elements on different cells. Thus, the number of dofs per cell is globally well-\/defined. 
+\end{DoxyNote}
+\hypertarget{classnatrium_1_1AdvectionOperator_a3de39c26aa52db4ced3d2d78e192ebce}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!mapDoFsToSupportPoints@{mapDoFsToSupportPoints}}
+\index{mapDoFsToSupportPoints@{mapDoFsToSupportPoints}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{mapDoFsToSupportPoints}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::AdvectionOperator}$<$ dim $>$::mapDoFsToSupportPoints (std::map$<$ dealii::types::global\_\-dof\_\-index, dealii::Point$<$ dim $>$ $>$ \& {\em supportPoints}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_a3de39c26aa52db4ced3d2d78e192ebce}
+
+
+map degrees of freedom to support points 
+\begin{DoxyParams}{Parameters}
+\item[{\em supportPoints.}]This map is filled with the dof indices and their respective support points. Note that \hyperlink{namespacenatrium}{natrium} operates on Lagrangian finite elements; thus, support points do always exist. \end{DoxyParams}
+\begin{DoxyNote}{Note}
+this function just calls dealii::DoFTools::map\_\-dofs\_\-to\_\-support\_\-points() 
+\end{DoxyNote}
+\hypertarget{classnatrium_1_1AdvectionOperator_a640db5be4d4930198124fa57752167e5}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!setDeltaT@{setDeltaT}}
+\index{setDeltaT@{setDeltaT}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{setDeltaT}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual void {\bf natrium::AdvectionOperator}$<$ dim $>$::setDeltaT (double {\em delta\_\-t})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_a640db5be4d4930198124fa57752167e5}
+
+
+set time step 
+\begin{DoxyParams}{Parameters}
+\item[{\em delta\_\-t}]time step \end{DoxyParams}
+
+
+Reimplemented in \hyperlink{classnatrium_1_1SemiLagrangian_abd17b628b89c43303d067c0a4e4d0bf1}{natrium::SemiLagrangian$<$ dim $>$}.\hypertarget{classnatrium_1_1AdvectionOperator_aa93f60c7e7270a35df21387a962d7a38}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!setTimeIntegrator@{setTimeIntegrator}}
+\index{setTimeIntegrator@{setTimeIntegrator}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{setTimeIntegrator}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual void {\bf natrium::AdvectionOperator}$<$ dim $>$::setTimeIntegrator (boost::shared\_\-ptr$<$ {\bf TimeIntegrator}$<$ distributed\_\-sparse\_\-block\_\-matrix, distributed\_\-block\_\-vector $>$ $>$ {\em timeIntegrator})\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_aa93f60c7e7270a35df21387a962d7a38}
+
+
+Apply boundary conditions. Purely virtual for this class. \begin{DoxyNote}{Note}
+While the SEDG boundary conditions are directly implemented in the system matrix and vector, the semi-\/Lagrangian advection operator needs to do something in this functions. set the time integrator for the SEDG streaming step. Purely virtual for this class. 
+
+This function is empty for the semi-\/Lagrangian streaming, which does not require time integrators. 
+\end{DoxyNote}
+
+
+Implemented in \hyperlink{classnatrium_1_1SEDGMinLee_add96facb8df190a139505ea912bb1a75}{natrium::SEDGMinLee$<$ dim $>$}, and \hyperlink{classnatrium_1_1SemiLagrangian_ac11ac59a28176a74e94fde81362ce7b5}{natrium::SemiLagrangian$<$ dim $>$}.\hypertarget{classnatrium_1_1AdvectionOperator_abccc060e37071fa776cd6e9fc6cc7987}{
+\index{natrium::AdvectionOperator@{natrium::AdvectionOperator}!stream@{stream}}
+\index{stream@{stream}!natrium::AdvectionOperator@{natrium::AdvectionOperator}}
+\subsubsection[{stream}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ virtual double {\bf natrium::AdvectionOperator}$<$ dim $>$::stream ({\bf DistributionFunctions} \& {\em f\_\-old}, \/  {\bf DistributionFunctions} \& {\em f}, \/  double {\em t})\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classnatrium_1_1AdvectionOperator_abccc060e37071fa776cd6e9fc6cc7987}
+
+
+Stream the distribution functions. Purely virtual for this class. 
+\begin{DoxyParams}{Parameters}
+\item[{\em f\_\-old}]distribution functions at t \item[{\em f}]distribution functsion at t+delta\_\-t \end{DoxyParams}
+
+
+Implemented in \hyperlink{classnatrium_1_1SEDGMinLee_a6a343b581a1e2ffdf0806b140ca82c9e}{natrium::SEDGMinLee$<$ dim $>$}, and \hyperlink{classnatrium_1_1SemiLagrangian_a03956c49c0bd288340b734f2fa9aad3c}{natrium::SemiLagrangian$<$ dim $>$}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
 \item 
-/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/\hyperlink{AdvectionOperator_8h}{AdvectionOperator.h}\end{DoxyCompactItemize}
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/\hyperlink{AdvectionOperator_8h}{AdvectionOperator.h}\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/advection/AdvectionOperator.cpp\end{DoxyCompactItemize}

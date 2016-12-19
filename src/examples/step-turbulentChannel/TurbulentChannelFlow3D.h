@@ -179,6 +179,9 @@ public:
 				UnstructuredGridFunc(m_length, m_height, m_width), mesh);
 	}
 
+	virtual bool isCartesian(){
+		return true;
+	}
 private:
 
 	double m_refinementLevel;

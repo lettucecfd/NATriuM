@@ -1,0 +1,132 @@
+\hypertarget{classnatrium_1_1FEBoundaryValues}{
+\section{natrium::FEBoundaryValues$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1FEBoundaryValues}\index{natrium::FEBoundaryValues@{natrium::FEBoundaryValues}}
+}
+
+
+A class that calculates macroscopic values at the boundaries, implemented similarly as deal.II's FEValues class. In constrast to the latter, a new instance of \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues} is to be created for each cell by the semi-\/Lagrangian boundary handler. This is due to the fact that each cell may have a new set of boundary hit points. The instance is initialized for the entire cell. \hyperlink{classnatrium_1_1Boundary}{Boundary} values at single quadrature points are obtained by calling reinit(q\_\-point) for the point and then use the getter-\/Functions to retrieve the desired values.  
+
+
+{\ttfamily \#include $<$FEBoundaryValues.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1FEBoundaryValues_a9122d6b193907bf21c8a091b18c7cad1}{FEBoundaryValues} (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, const vector$<$ dealii::Point$<$ dim $>$ $>$ \&hit\_\-points, const dealii::FiniteElement$<$ dim $>$ \&fe, const dealii::Mapping$<$ dim $>$ \&mapping, \hyperlink{namespacenatrium_a93b2a3d564675413b9f6cc88c60f46af}{BoundaryFlags} \&flags, const \hyperlink{structnatrium_1_1GlobalBoundaryData}{GlobalBoundaryData} \&global\_\-data)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a21eb9c3950af08dcdf61ae680cdf239e}{
+void \hyperlink{classnatrium_1_1FEBoundaryValues_a21eb9c3950af08dcdf61ae680cdf239e}{resize} (size\_\-t n)}
+\label{classnatrium_1_1FEBoundaryValues_a21eb9c3950af08dcdf61ae680cdf239e}
+
+\begin{DoxyCompactList}\small\item\em resize all vectors \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a0d7d6462f3b4738a89a2cfae56dade81}{
+void {\bfseries setToZero} ()}
+\label{classnatrium_1_1FEBoundaryValues_a0d7d6462f3b4738a89a2cfae56dade81}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_aedd1e1d7f687db75aea18bcafaa58c37}{
+void {\bfseries clear} ()}
+\label{classnatrium_1_1FEBoundaryValues_aedd1e1d7f687db75aea18bcafaa58c37}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a84fc36ec9a17f3c513cf70785be10aee}{
+void {\bfseries reinit} (size\_\-t q\_\-point)}
+\label{classnatrium_1_1FEBoundaryValues_a84fc36ec9a17f3c513cf70785be10aee}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_aa461bc7861bdd972a1d6c51588c7d1d3}{
+size\_\-t {\bfseries getDofsPerCell} () const }
+\label{classnatrium_1_1FEBoundaryValues_aa461bc7861bdd972a1d6c51588c7d1d3}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a287eadeacca5569299b24e6147c2db89}{
+double {\bfseries getDrhodt} () const }
+\label{classnatrium_1_1FEBoundaryValues_a287eadeacca5569299b24e6147c2db89}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a1d16686582959a92b7aeefd4866f9d45}{
+const dealii::Tensor$<$ 1, dim $>$ \& {\bfseries getDudt} () const }
+\label{classnatrium_1_1FEBoundaryValues_a1d16686582959a92b7aeefd4866f9d45}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a4a1c401b1a7b58d6a963280be1a3350b}{
+\hyperlink{namespacenatrium_a93b2a3d564675413b9f6cc88c60f46af}{BoundaryFlags} {\bfseries getFlags} () const }
+\label{classnatrium_1_1FEBoundaryValues_a4a1c401b1a7b58d6a963280be1a3350b}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_aef160cd4d9b242b058a6863315330c21}{
+const std::vector$<$ dealii::types::global\_\-dof\_\-index $>$ \& {\bfseries getLocalDofs} () const }
+\label{classnatrium_1_1FEBoundaryValues_aef160cd4d9b242b058a6863315330c21}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a441b52521a62e81ae13a2512c932cf15}{
+double {\bfseries getRho} () const }
+\label{classnatrium_1_1FEBoundaryValues_a441b52521a62e81ae13a2512c932cf15}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a2237a35026a3329788a057a946c2b8d5}{
+const vector$<$ double $>$ \& {\bfseries getRhoDof} () const }
+\label{classnatrium_1_1FEBoundaryValues_a2237a35026a3329788a057a946c2b8d5}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_ad27ae015904872d4c4b22d6f04a72eb7}{
+const dealii::Tensor$<$ 1, dim $>$ \& {\bfseries getRhoU} () const }
+\label{classnatrium_1_1FEBoundaryValues_ad27ae015904872d4c4b22d6f04a72eb7}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a4a8c164cb301300ed00d46d504680435}{
+const vector$<$ dealii::Tensor$<$ 1, dim $>$ $>$ \& {\bfseries getRhoUDof} () const }
+\label{classnatrium_1_1FEBoundaryValues_a4a8c164cb301300ed00d46d504680435}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a31843e6afc7495a2c5c1eaef0e43e9c5}{
+const dealii::Tensor$<$ 1, dim $>$ \& {\bfseries getU} () const }
+\label{classnatrium_1_1FEBoundaryValues_a31843e6afc7495a2c5c1eaef0e43e9c5}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a4f3396a993006cbcc8150e6ce4551e95}{
+const vector$<$ dealii::Tensor$<$ 1, dim $>$ $>$ \& {\bfseries getUDof} () const }
+\label{classnatrium_1_1FEBoundaryValues_a4f3396a993006cbcc8150e6ce4551e95}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a28350e357b7f07bf30ac57372b5aeb86}{
+\hyperlink{namespacenatrium_a93b2a3d564675413b9f6cc88c60f46af}{BoundaryFlags} {\bfseries getUpToDate} () const }
+\label{classnatrium_1_1FEBoundaryValues_a28350e357b7f07bf30ac57372b5aeb86}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a6f1482dafa9ce2f99678625a438f364a}{
+double {\bfseries getDistribution} (size\_\-t i, size\_\-t q\_\-point)}
+\label{classnatrium_1_1FEBoundaryValues_a6f1482dafa9ce2f99678625a438f364a}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_a12812ab663d3b50cbcba1e0c6077cf46}{
+const dealii::Point$<$ dim $>$ \& {\bfseries getPoint} (size\_\-t q\_\-point)}
+\label{classnatrium_1_1FEBoundaryValues_a12812ab663d3b50cbcba1e0c6077cf46}
+
+\item 
+\hypertarget{classnatrium_1_1FEBoundaryValues_aca8692735010e37b0795e0a979ae59e9}{
+const \hyperlink{structnatrium_1_1GlobalBoundaryData}{GlobalBoundaryData} \& {\bfseries getData} () const }
+\label{classnatrium_1_1FEBoundaryValues_aca8692735010e37b0795e0a979ae59e9}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::FEBoundaryValues$<$ dim $>$}
+
+A class that calculates macroscopic values at the boundaries, implemented similarly as deal.II's FEValues class. In constrast to the latter, a new instance of \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues} is to be created for each cell by the semi-\/Lagrangian boundary handler. This is due to the fact that each cell may have a new set of boundary hit points. The instance is initialized for the entire cell. \hyperlink{classnatrium_1_1Boundary}{Boundary} values at single quadrature points are obtained by calling reinit(q\_\-point) for the point and then use the getter-\/Functions to retrieve the desired values. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1FEBoundaryValues_a9122d6b193907bf21c8a091b18c7cad1}{
+\index{natrium::FEBoundaryValues@{natrium::FEBoundaryValues}!FEBoundaryValues@{FEBoundaryValues}}
+\index{FEBoundaryValues@{FEBoundaryValues}!natrium::FEBoundaryValues@{natrium::FEBoundaryValues}}
+\subsubsection[{FEBoundaryValues}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::FEBoundaryValues}$<$ dim $>$::{\bf FEBoundaryValues} (const typename dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  const vector$<$ dealii::Point$<$ dim $>$ $>$ \& {\em hit\_\-points}, \/  const dealii::FiniteElement$<$ dim $>$ \& {\em fe}, \/  const dealii::Mapping$<$ dim $>$ \& {\em mapping}, \/  {\bf BoundaryFlags} \& {\em flags}, \/  const {\bf GlobalBoundaryData} \& {\em global\_\-data})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1FEBoundaryValues_a9122d6b193907bf21c8a091b18c7cad1}
+
+
+Constructor. 
+\begin{DoxyParams}{Parameters}
+\item[{\em cell}]the current cell. Note that every cell requires a new instance of \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues} for the update. \item[{\em hit\_\-points}]the local boundary hit points \item[{\em fe}]the (Lagrangian) finite elements that are used for discretization \item[{\em mapping}]mapping from real to unit cell \item[{\em flags}]the boundary update flags \item[{\em global\_\-data}]GlobalData instance that gives quick access to relevant data, such as the time step, the stencil and the distributions \end{DoxyParams}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/FEBoundaryValues.h\end{DoxyCompactItemize}

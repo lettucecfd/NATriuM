@@ -1,0 +1,96 @@
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient}{
+\section{natrium::ContinuousBoundaryGradient$<$ dim $>$ Class Template Reference}
+\label{classnatrium_1_1ContinuousBoundaryGradient}\index{natrium::ContinuousBoundaryGradient@{natrium::ContinuousBoundaryGradient}}
+}
+
+
+A class to obtain gradients at a boundary that are continuous over the cell interfaces.  
+
+
+{\ttfamily \#include $<$ContinuousBoundaryGradient.h$>$}\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_a569e86febfc24a8e43e667ac979f72a5}{
+typedef dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator {\bfseries active\_\-cell\_\-iterator}}
+\label{classnatrium_1_1ContinuousBoundaryGradient_a569e86febfc24a8e43e667ac979f72a5}
+
+\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_a00191cdc7ecd0dc6a6d315d9822fe1d8}{
+typedef dealii::DoFHandler$<$ dim $>$::cell\_\-iterator {\bfseries cell\_\-iterator}}
+\label{classnatrium_1_1ContinuousBoundaryGradient_a00191cdc7ecd0dc6a6d315d9822fe1d8}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classnatrium_1_1ContinuousBoundaryGradient_a50ea3e2b4baedabcca7514d3f7dddda7}{ContinuousBoundaryGradient} (const dealii::DoFHandler$<$ dim $>$ \&dof, const dealii::Mapping$<$ dim $>$ \&mapping, const dealii::Quadrature$<$ 1 $>$ \&quadrature, const dealii::Quadrature$<$ dim-\/1 $>$ \&face\_\-quadrature, const dealii::Quadrature$<$ dim $>$ \&cell\_\-quadrature, std::set$<$ size\_\-t $>$ boundary\_\-ids)
+\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_a0f121ef55710aaee77d070d5d31839f1}{
+void \hyperlink{classnatrium_1_1ContinuousBoundaryGradient_a0f121ef55710aaee77d070d5d31839f1}{reinit} ()}
+\label{classnatrium_1_1ContinuousBoundaryGradient_a0f121ef55710aaee77d070d5d31839f1}
+
+\begin{DoxyCompactList}\small\item\em reinitialize the data structures of this boundary gradient \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_a0ac7cad2865e491d0c77863ce9b2061a}{
+void \hyperlink{classnatrium_1_1ContinuousBoundaryGradient_a0ac7cad2865e491d0c77863ce9b2061a}{calculateGradients} (const dealii::TrilinosWrappers::MPI::Vector \&solution)}
+\label{classnatrium_1_1ContinuousBoundaryGradient_a0ac7cad2865e491d0c77863ce9b2061a}
+
+\begin{DoxyCompactList}\small\item\em Calculate the gradients of the solution. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_aeb8d2aa8290ea70e51f4904573541a8f}{
+active\_\-cell\_\-iterator \hyperlink{classnatrium_1_1ContinuousBoundaryGradient_aeb8d2aa8290ea70e51f4904573541a8f}{begin\_\-active} () const }
+\label{classnatrium_1_1ContinuousBoundaryGradient_aeb8d2aa8290ea70e51f4904573541a8f}
+
+\begin{DoxyCompactList}\small\item\em first active cell of this gradient \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_a80dc48096381a481f688c75dace6a3b7}{
+cell\_\-iterator \hyperlink{classnatrium_1_1ContinuousBoundaryGradient_a80dc48096381a481f688c75dace6a3b7}{end} () const }
+\label{classnatrium_1_1ContinuousBoundaryGradient_a80dc48096381a481f688c75dace6a3b7}
+
+\begin{DoxyCompactList}\small\item\em last active cell of this gradient \item\end{DoxyCompactList}\item 
+void \hyperlink{classnatrium_1_1ContinuousBoundaryGradient_a2345918a9418d4f53d2f52de71c17237}{face\_\-reinit} (const typename dealii::hp::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \&cell, size\_\-t face\_\-id)
+\begin{DoxyCompactList}\small\item\em Reinit the face values. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_ae1ef18bcd802bcbfc84419f42bb699da}{
+double \hyperlink{classnatrium_1_1ContinuousBoundaryGradient_ae1ef18bcd802bcbfc84419f42bb699da}{get\_\-gradient\_\-component} (size\_\-t q\_\-point, size\_\-t component)}
+\label{classnatrium_1_1ContinuousBoundaryGradient_ae1ef18bcd802bcbfc84419f42bb699da}
+
+\begin{DoxyCompactList}\small\item\em get component i of the (continuous) gradient at a quadrature point \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_a73672ffc86ec74c4e48e2e46f84d99b2}{
+const dealii::TrilinosWrappers::MPI::Vector \& {\bfseries getContinuousGradient} () const }
+\label{classnatrium_1_1ContinuousBoundaryGradient_a73672ffc86ec74c4e48e2e46f84d99b2}
+
+\item 
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_af075434e3eea2d7e6281e867aefc28b0}{
+const dealii::TrilinosWrappers::MPI::Vector \& {\bfseries getDiscontinuousGradient} () const }
+\label{classnatrium_1_1ContinuousBoundaryGradient_af075434e3eea2d7e6281e867aefc28b0}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ class natrium::ContinuousBoundaryGradient$<$ dim $>$}
+
+A class to obtain gradients at a boundary that are continuous over the cell interfaces. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_a50ea3e2b4baedabcca7514d3f7dddda7}{
+\index{natrium::ContinuousBoundaryGradient@{natrium::ContinuousBoundaryGradient}!ContinuousBoundaryGradient@{ContinuousBoundaryGradient}}
+\index{ContinuousBoundaryGradient@{ContinuousBoundaryGradient}!natrium::ContinuousBoundaryGradient@{natrium::ContinuousBoundaryGradient}}
+\subsubsection[{ContinuousBoundaryGradient}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ {\bf natrium::ContinuousBoundaryGradient}$<$ dim $>$::{\bf ContinuousBoundaryGradient} (const dealii::DoFHandler$<$ dim $>$ \& {\em dof}, \/  const dealii::Mapping$<$ dim $>$ \& {\em mapping}, \/  const dealii::Quadrature$<$ 1 $>$ \& {\em quadrature}, \/  const dealii::Quadrature$<$ dim-\/1 $>$ \& {\em face\_\-quadrature}, \/  const dealii::Quadrature$<$ dim $>$ \& {\em cell\_\-quadrature}, \/  std::set$<$ size\_\-t $>$ {\em boundary\_\-ids})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1ContinuousBoundaryGradient_a50ea3e2b4baedabcca7514d3f7dddda7}
+constructor 
+
+\subsection{Member Function Documentation}
+\hypertarget{classnatrium_1_1ContinuousBoundaryGradient_a2345918a9418d4f53d2f52de71c17237}{
+\index{natrium::ContinuousBoundaryGradient@{natrium::ContinuousBoundaryGradient}!face\_\-reinit@{face\_\-reinit}}
+\index{face\_\-reinit@{face\_\-reinit}!natrium::ContinuousBoundaryGradient@{natrium::ContinuousBoundaryGradient}}
+\subsubsection[{face\_\-reinit}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::ContinuousBoundaryGradient}$<$ dim $>$::face\_\-reinit (const typename dealii::hp::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\em cell}, \/  size\_\-t {\em face\_\-id})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1ContinuousBoundaryGradient_a2345918a9418d4f53d2f52de71c17237}
+
+
+Reinit the face values. \begin{DoxyNote}{Note}
+The cell iterator given to this functions has to be a different one than that of your regular dof handler. In order to hand this function a valid cell iterator, you have to initialize one with \hyperlink{classnatrium_1_1ContinuousBoundaryGradient_aeb8d2aa8290ea70e51f4904573541a8f}{begin\_\-active()} and increment it in line with your other cell iterator. The cells will come in the same order. 
+\end{DoxyNote}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/ContinuousBoundaryGradient.h\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/utilities/ContinuousBoundaryGradient.cpp\end{DoxyCompactItemize}

@@ -61,6 +61,9 @@ public:
 	virtual void transform(Mesh<2>& ){
 
 	}
+	virtual bool isCartesian(){
+		return true;
+	}
 
 
 private:

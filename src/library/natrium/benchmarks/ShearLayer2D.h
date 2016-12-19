@@ -63,7 +63,9 @@ public:
 		dealii::GridOut().write_eps(*getMesh(), out_file);
 		out_file.close();
 	}
-
+	virtual bool isCartesian(){
+		return true;
+	}
 private:
 
 	struct UnstructuredGridFunc {

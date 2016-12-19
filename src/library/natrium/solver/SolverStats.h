@@ -11,6 +11,7 @@
 #include <fstream>
 
 #include "PhysicalProperties.h"
+#include "../utilities/CFDSolverUtilities.h"
 //#include "CFDSolver.h" -> must not be in there because CFDSolver includes this module
 
 #include "../utilities/BasicNames.h"
@@ -94,7 +95,7 @@ public:
 		if (is_MPI_rank_0()) {
 			(*m_tableFile)
 					<< "#  i      t      max |u_numeric|   mass  kinE  enstrophy   entropy   maxP     minP    "
-					   "#residuum(rho)   residuum(u)    mean(ux)   enstr^2  "
+							"#residuum(rho)   residuum(u)    mean(ux)   enstr^2  "
 					<< endl;
 		}
 	}
@@ -105,11 +106,15 @@ public:
 		m_iterationNumber = m_solver->getIteration();
 		m_time = m_solver->getTime();
 		m_maxU = m_solver->getMaxVelocityNorm();
-		m_mass = PhysicalProperties<dim>::mass(m_solver->getDensity(), m_solver->getAdvectionOperator());
+		m_mass = PhysicalProperties<dim>::mass(m_solver->getDensity(),
+				m_solver->getAdvectionOperator());
 		m_kinE = PhysicalProperties<dim>::kineticEnergy(m_solver->getVelocity(),
 				m_solver->getDensity(), m_solver->getAdvectionOperator());
-		m_enstrophy = PhysicalProperties<dim>::enstrophy(m_solver->getVelocity(), m_solver->getAdvectionOperator(), &m_enstrophy_sq);
-		m_entropy = PhysicalProperties<dim>::entropy(m_solver->getF(), m_solver->getAdvectionOperator());
+		m_enstrophy = PhysicalProperties<dim>::enstrophy(
+				m_solver->getVelocity(), m_solver->getAdvectionOperator(),
+				&m_enstrophy_sq);
+		m_entropy = PhysicalProperties<dim>::entropy(m_solver->getF(),
+				m_solver->getAdvectionOperator());
 		m_maxP = PhysicalProperties<dim>::maximalPressure(
 				m_solver->getDensity(),
 				m_solver->getStencil()->getSpeedOfSound(), m_minP);
@@ -118,32 +123,46 @@ public:
 		// Residuals must not be calculated because they have to be determined every 10th time steps
 	}
 
-	void calulateResiduals(size_t iteration) {
+	void calculateResiduals(size_t iteration) {
 		assert(iteration % 10 == 0);
+
+		// subtracting the vectors requires completely local vectors with disjoint index sets on each processor
+		distributed_vector rho;
+		vector<distributed_vector> u;
+		CFDSolverUtilities::getWriteableDensity(rho, m_solver->m_density,
+						m_solver->getAdvectionOperator()->getLocallyOwnedDofs());
+		CFDSolverUtilities::getWriteableVelocity(u, m_solver->m_velocity,
+				m_solver->getAdvectionOperator()->getLocallyOwnedDofs());
+
+		// operate on writeable vectors
 		if (not (m_solver->m_i - m_solver->m_iterationStart < 100)) {
 			// i.e. not first visit of this if-statement
 			///// CALCULATE MAX VELOCITY VARIATION
-			// substract new from old velocity
-			m_solver->m_tmpVelocity.at(0).add(-1.0, m_solver->m_velocity.at(0));
-			m_solver->m_tmpVelocity.at(1).add(-1.0, m_solver->m_velocity.at(1));
-			// calculate squares
-			m_solver->m_tmpVelocity.at(0).scale(m_solver->m_tmpVelocity.at(0));
-			m_solver->m_tmpVelocity.at(1).scale(m_solver->m_tmpVelocity.at(1));
+			for (size_t i = 0; i < dim; i++){
+				// substract new from old velocity
+				m_solver->m_tmpVelocity.at(i).add(-1.0, u.at(i));
+				// calculate squares
+				m_solver->m_tmpVelocity.at(i).scale(m_solver->m_tmpVelocity.at(i));
+			}
 			// calculate ||error (pointwise)||^2
 			m_solver->m_tmpVelocity.at(0).add(m_solver->m_tmpVelocity.at(1));
+			if (dim == 3){
+				m_solver->m_tmpVelocity.at(0).add(m_solver->m_tmpVelocity.at(2));
+			}
 			m_solver->m_residuumVelocity = sqrt(
 					m_solver->m_tmpVelocity.at(0).linfty_norm());
+
 			///// CALCULATE MAX DENSITY VARIATION
-			m_solver->m_tmpDensity.add(-1.0, m_solver->m_density);
-			m_solver->m_residuumDensity = sqrt(
-					m_solver->m_tmpDensity.linfty_norm());
+			m_solver->m_tmpDensity.add(-1.0, rho);
+			m_solver->m_residuumDensity = m_solver->m_tmpDensity.linfty_norm();
 
 		}
 		// (if first visit of this if-statement, only this part is executed)
 		assert(m_solver->m_tmpVelocity.size() == m_solver->m_velocity.size());
-		m_solver->m_tmpVelocity.at(0) = m_solver->m_velocity.at(0);
-		m_solver->m_tmpVelocity.at(1) = m_solver->m_velocity.at(1);
-		m_solver->m_tmpDensity = m_solver->m_density;
+		for (size_t i = 0; i < dim; i++){
+			m_solver->m_tmpVelocity.at(i) = u.at(i);
+		}
+		m_solver->m_tmpDensity = rho;
 	}
 
 	void printNewLine() {
@@ -153,10 +172,11 @@ public:
 		}
 		if (is_MPI_rank_0()) {
 			(*m_tableFile) << m_iterationNumber << " " << m_time << " "
-					<< m_maxU << " " << m_mass << " " << m_kinE << " " << m_enstrophy << " " << m_entropy << " " << m_maxP << " " << m_minP
-					<< " " << m_solver->m_residuumDensity << " "
-					<< m_solver->m_residuumVelocity << " " << m_meanVelocityX << " " << m_enstrophy_sq
-					<< endl;
+					<< m_maxU << " " << m_mass << " " << m_kinE << " "
+					<< m_enstrophy << " " << m_entropy << " " << m_maxP << " "
+					<< m_minP << " " << m_solver->m_residuumDensity << " "
+					<< m_solver->m_residuumVelocity << " " << m_meanVelocityX
+					<< " " << m_enstrophy_sq << endl;
 		}
 	}
 

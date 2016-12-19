@@ -52,7 +52,7 @@ public:
 
 	/// constructor (with default cs=1/sqrt(3))
 	TaylorGreenVortex2D(double viscosity,
-			size_t refinementLevel, double cs = 0.57735026919, bool init_rho_analytically = false);
+			size_t refinementLevel, double cs = 0.57735026919, bool init_rho_analytically = false, double L = 2*M_PI);
 
 	/// destructor
 	virtual ~TaylorGreenVortex2D();
@@ -64,6 +64,10 @@ public:
 
 	virtual void transform(Mesh<2>& ){
 
+	}
+
+	virtual bool isCartesian(){
+		return true;
 	}
 
 	void setHorizontalVelocity(double u){
@@ -85,11 +89,13 @@ private:
 
 	double m_horizontalVelocity;
 
+	double m_L;
+
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	boost::shared_ptr<Mesh<2> > makeGrid();
+	boost::shared_ptr<Mesh<2> > makeGrid(double L);
 
 	/**
 	 * @short create boundaries for couette flow

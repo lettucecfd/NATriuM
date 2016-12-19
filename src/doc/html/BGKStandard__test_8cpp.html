@@ -54,36 +54,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;<a class="el" href="BasicNames_8h_source.html">natrium/utilities/BasicNames.h</a>&quot;</code><br/>
 <code>#include &quot;natrium/stencils/D3Q19.h&quot;</code><br/>
 <code>#include &quot;natrium/stencils/D3Q15.h&quot;</code><br/>
+<code>#include &quot;deal.II/fe/fe_dgq.h&quot;</code><br/>
 <code>#include &quot;<a class="el" href="PeriodicTestDomain2D_8h_source.html">natrium/benchmarks/PeriodicTestDomain2D.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="PeriodicTestDomain3D_8h_source.html">natrium/benchmarks/PeriodicTestDomain3D.h</a>&quot;</code><br/>
 <table border="0" cellpadding="0" cellspacing="0">
-<tr><td colspan="2"><h2>Namespaces</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html">natrium</a></td></tr>
-
-<p><tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><p>Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. </p>
-<br/></td></tr>
-</p>
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6dabfa8f4922e330d651ce3e658ae03c"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="a6dabfa8f4922e330d651ce3e658ae03c" args="(BGKStandardConstruction_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (BGKStandardConstruction_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aecdb3d15ce07cddfd3aa4a264553174b"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="aecdb3d15ce07cddfd3aa4a264553174b" args="(BGKStandardSetTimeStep_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (BGKStandardSetTimeStep_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaddbd8507218a02c3db1181247d759d1"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="aaddbd8507218a02c3db1181247d759d1" args="(BGKMoments_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (BGKMoments_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d06bb4919a0a0a3c56c0a1de0c2243f"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="a5d06bb4919a0a0a3c56c0a1de0c2243f" args="(D2Q9IncompressibleModelAllEqDistributions_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelAllEqDistributions_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a37799239d4b3fa49a4d8613b0021b2fb"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="a37799239d4b3fa49a4d8613b0021b2fb" args="(D2Q9IncompressibleModelMoments_Scaled_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelMoments_Scaled_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2d6acb8f854c0728d233d067b69292f8"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="a2d6acb8f854c0728d233d067b69292f8" args="(D2Q9IncompressibleModelAllEqDistributions_Scaled_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelAllEqDistributions_Scaled_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adbf98857fcf6990496eaab840c849244"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="adbf98857fcf6990496eaab840c849244" args="(BGKStandardCollisionInvariants_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (BGKStandardCollisionInvariants_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4e8b85ceefce152b84e7c53e5ad44d0"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="ad4e8b85ceefce152b84e7c53e5ad44d0" args="(BGKStandard_collideAllD2Q9_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD2Q9_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad714500b301a39d46458adc5144e5a90"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="ad714500b301a39d46458adc5144e5a90" args="(BGKStandard_collideAllD3Q19_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD3Q19_test)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b0a05bdc1399a013844bbf877a7f97d"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="a4b0a05bdc1399a013844bbf877a7f97d" args="(BGKStandard_collideAllD3Q15_test)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>natrium::BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD3Q15_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac88d13ec34998145db28b77862613aec"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="ac88d13ec34998145db28b77862613aec" args="(BGKStandardConstruction_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardConstruction_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af93f579653afdb1a17fd3735080a2f7b"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="af93f579653afdb1a17fd3735080a2f7b" args="(BGKStandardSetTimeStep_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardSetTimeStep_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4dfd355c695baf61a0fb424a0b0f4e07"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="a4dfd355c695baf61a0fb424a0b0f4e07" args="(BGKMoments_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKMoments_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af5dfe912ff60e486135ad17d5081c602"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="af5dfe912ff60e486135ad17d5081c602" args="(D2Q9IncompressibleModelAllEqDistributions_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelAllEqDistributions_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9b1ac00ad7637e1817e18988630c8748"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="a9b1ac00ad7637e1817e18988630c8748" args="(D2Q9IncompressibleModelMoments_Scaled_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelMoments_Scaled_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad4b8e867632c05ced4a7e309aeecf0e"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="aad4b8e867632c05ced4a7e309aeecf0e" args="(D2Q9IncompressibleModelAllEqDistributions_Scaled_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (D2Q9IncompressibleModelAllEqDistributions_Scaled_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab0860d6712f8b70f61038f2ca3715396"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="ab0860d6712f8b70f61038f2ca3715396" args="(BGKStandardCollisionInvariants_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandardCollisionInvariants_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae64744205e786c1f8cc007037cd28640"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="ae64744205e786c1f8cc007037cd28640" args="(BGKStandard_collideAllD2Q9_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD2Q9_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9d5e1c8a95af35f12de12e824c96375b"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="a9d5e1c8a95af35f12de12e824c96375b" args="(BGKStandard_collideAllD3Q19_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD3Q19_test)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac96d90f743cffd1008fda3d6571de573"></a><!-- doxytag: member="BGKStandard_test.cpp::BOOST_AUTO_TEST_CASE" ref="ac96d90f743cffd1008fda3d6571de573" args="(BGKStandard_collideAllD3Q15_test)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>BOOST_AUTO_TEST_CASE</b> (BGKStandard_collideAllD3Q15_test)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <dl class="date"><dt><b>Date:</b></dt><dd>29.05.2013 </dd></dl>
@@ -103,7 +98,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

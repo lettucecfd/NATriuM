@@ -53,7 +53,9 @@ public:
 	virtual void refine(Mesh<3>& mesh);
 
 	virtual void transform(Mesh<3>& mesh);
-
+	virtual bool isCartesian(){
+		return true;
+	}
 private:
 
 	const double m_topPlateVelocity;
