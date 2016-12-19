@@ -69,21 +69,24 @@ Inheritance diagram for natrium::ShearLayer2D:</div>
 <tr><td colspan="2"><h2>Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ShearLayer2D_1_1InitialVelocity.html">InitialVelocity</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">class to describe the x-component of the analytic solution  <a href="classnatrium_1_1ShearLayer2D_1_1InitialVelocity.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>UnstructuredGridFunc</b></td></tr>
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ShearLayer2D.html#a5428379aab66e023c11f11ff86d53546">ShearLayer2D</a> (double viscosity, size_t refinement_level, double u0, double kappa, double perturbation=0.01)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor (with default cs=1/sqrt(3))  <a href="#a5428379aab66e023c11f11ff86d53546"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ShearLayer2D.html#a471304728fbf5bcae19f815d386e2f6c">ShearLayer2D</a> (double viscosity, size_t refinement_level, double u0, double kappa, double perturbation=0.05, double trafo_x=0, double trafo_y=0)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor (with default cs=1/sqrt(3))  <a href="#a471304728fbf5bcae19f815d386e2f6c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac15c8dc03cc5a7fbb594b863ddac4bce"></a><!-- doxytag: member="natrium::ShearLayer2D::~ShearLayer2D" ref="ac15c8dc03cc5a7fbb594b863ddac4bce" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1ShearLayer2D.html#ac15c8dc03cc5a7fbb594b863ddac4bce">~ShearLayer2D</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a58306e2c321765071614fbd1839ae1ee"></a><!-- doxytag: member="natrium::ShearLayer2D::refine" ref="a58306e2c321765071614fbd1839ae1ee" args="(Mesh&lt; 2 &gt; &amp;mesh)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>refine</b> (Mesh&lt; 2 &gt; &amp;mesh)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e4e7f310f4180650700ce3167a8f6a1"></a><!-- doxytag: member="natrium::ShearLayer2D::transform" ref="a6e4e7f310f4180650700ce3167a8f6a1" args="(Mesh&lt; 2 &gt; &amp;)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b> (Mesh&lt; 2 &gt; &amp;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac040c6c2592809529b1700b71acbd049"></a><!-- doxytag: member="natrium::ShearLayer2D::transform" ref="ac040c6c2592809529b1700b71acbd049" args="(Mesh&lt; 2 &gt; &amp;mesh)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b> (Mesh&lt; 2 &gt; &amp;mesh)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a702544a11e40afae6c9268e7c2fa4854"></a><!-- doxytag: member="natrium::ShearLayer2D::isCartesian" ref="a702544a11e40afae6c9268e7c2fa4854" args="()" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>isCartesian</b> ()</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Description of a simple Periodic Flow (flow in square domain). The domain is [0,1]^2. The domain consists of 8 x 8 = 64 Elements (contrast to Min and Lee, who have 6 x 6). </p>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a5428379aab66e023c11f11ff86d53546"></a><!-- doxytag: member="natrium::ShearLayer2D::ShearLayer2D" ref="a5428379aab66e023c11f11ff86d53546" args="(double viscosity, size_t refinement_level, double u0, double kappa, double perturbation=0.01)" -->
+<a class="anchor" id="a471304728fbf5bcae19f815d386e2f6c"></a><!-- doxytag: member="natrium::ShearLayer2D::ShearLayer2D" ref="a471304728fbf5bcae19f815d386e2f6c" args="(double viscosity, size_t refinement_level, double u0, double kappa, double perturbation=0.05, double trafo_x=0, double trafo_y=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -115,7 +118,19 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&nbsp;</td>
-          <td class="paramname"> <em>perturbation</em> = <code>0.01</code></td><td>&nbsp;</td>
+          <td class="paramname"> <em>perturbation</em> = <code>0.05</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>trafo_x</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>trafo_y</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -127,6 +142,14 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b>
 <div class="memdoc">
 
 <p>constructor (with default cs=1/sqrt(3)) </p>
+<p>Constructor </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>trafo_x</em>&nbsp;</td><td>&lt; 1: 0=regular grid spacing </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>trafo_y</em>&nbsp;</td><td>&lt; 1: 0=regular grid spacing </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p><p>apply boundary values </p>
 </p>
@@ -152,7 +175,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>transform</b>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

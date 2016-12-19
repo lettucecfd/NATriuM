@@ -2,61 +2,56 @@
 \section{/mnt/fdrive/akraem3m/workspace/NATriuM/src/test/collision/BGKSteadyState\_\-test.cpp File Reference}
 \label{BGKSteadyState__test_8cpp}\index{/mnt/fdrive/akraem3m/workspace/NATriuM/src/test/collision/BGKSteadyState\_\-test.cpp@{/mnt/fdrive/akraem3m/workspace/NATriuM/src/test/collision/BGKSteadyState\_\-test.cpp}}
 }
-{\ttfamily \#include \char`\"{}natrium/stencils/D2Q9.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}natrium/collision/BGKSteadyState.h\char`\"{}}\par
 {\ttfamily \#include $<$math.h$>$}\par
 {\ttfamily \#include $<$exception$>$}\par
 {\ttfamily \#include \char`\"{}boost/test/unit\_\-test.hpp\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/fe/fe\_\-dgq.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}natrium/utilities/Math.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}natrium/utilities/BasicNames.h\char`\"{}}\par
-\subsection*{Namespaces}
-\begin{DoxyCompactItemize}
-\item 
-namespace \hyperlink{namespacenatrium}{natrium}
-
-
-\begin{DoxyCompactList}\small\item\em Definition of Grad's function to reconstruct missing distribution functions, e.g. at boundaries. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+{\ttfamily \#include \char`\"{}natrium/stencils/D2Q9.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}natrium/benchmarks/PeriodicTestDomain2D.h\char`\"{}}\par
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespacenatrium_a1102ad6934f491e6a49480081982440a}{
-{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateConstruction\_\-test)}
-\label{namespacenatrium_a1102ad6934f491e6a49480081982440a}
+\hypertarget{BGKSteadyState__test_8cpp_a154d00cb20130d4ca051b60718224b77}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateConstruction\_\-test)}
+\label{BGKSteadyState__test_8cpp_a154d00cb20130d4ca051b60718224b77}
 
 \item 
-\hypertarget{namespacenatrium_a0040d9381f0717dfa1faccf4995a4f85}{
-{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateSetTimeStep\_\-test)}
-\label{namespacenatrium_a0040d9381f0717dfa1faccf4995a4f85}
+\hypertarget{BGKSteadyState__test_8cpp_aa6f5a3883fc2f8195ba32ed843212a6f}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateSetTimeStep\_\-test)}
+\label{BGKSteadyState__test_8cpp_aa6f5a3883fc2f8195ba32ed843212a6f}
 
 \item 
-\hypertarget{namespacenatrium_a61d21f636a84d5adb7912b847b25fa06}{
-{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateMoments\_\-test)}
-\label{namespacenatrium_a61d21f636a84d5adb7912b847b25fa06}
+\hypertarget{BGKSteadyState__test_8cpp_a592bf0eff01ecfed23f55db48838060c}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateMoments\_\-test)}
+\label{BGKSteadyState__test_8cpp_a592bf0eff01ecfed23f55db48838060c}
 
 \item 
-\hypertarget{namespacenatrium_a5d06bb4919a0a0a3c56c0a1de0c2243f}{
-{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9IncompressibleModelAllEqDistributions\_\-test)}
-\label{namespacenatrium_a5d06bb4919a0a0a3c56c0a1de0c2243f}
+\hypertarget{BGKSteadyState__test_8cpp_af5dfe912ff60e486135ad17d5081c602}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (D2Q9IncompressibleModelAllEqDistributions\_\-test)}
+\label{BGKSteadyState__test_8cpp_af5dfe912ff60e486135ad17d5081c602}
 
 \item 
-\hypertarget{namespacenatrium_a10f79d9f3fff4b4bd1a74f9cecbec22a}{
-{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateMoments\_\-Scaled\_\-test)}
-\label{namespacenatrium_a10f79d9f3fff4b4bd1a74f9cecbec22a}
+\hypertarget{BGKSteadyState__test_8cpp_a566ed34178d0b09c9ad8a05d85a36043}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateMoments\_\-Scaled\_\-test)}
+\label{BGKSteadyState__test_8cpp_a566ed34178d0b09c9ad8a05d85a36043}
 
 \item 
-\hypertarget{namespacenatrium_abc1880f32a200d413949cb5ac59d94b1}{
-{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateAllEqDistributions\_\-Scaled\_\-test)}
-\label{namespacenatrium_abc1880f32a200d413949cb5ac59d94b1}
+\hypertarget{BGKSteadyState__test_8cpp_a5026a814fc8b31c58d4181229ff95a96}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateAllEqDistributions\_\-Scaled\_\-test)}
+\label{BGKSteadyState__test_8cpp_a5026a814fc8b31c58d4181229ff95a96}
 
 \item 
-\hypertarget{namespacenatrium_a5c7300f3faa06fe8d0255ec9bd267371}{
-{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateInvariants\_\-test)}
-\label{namespacenatrium_a5c7300f3faa06fe8d0255ec9bd267371}
+\hypertarget{BGKSteadyState__test_8cpp_a9ef54bee441e1f22f61e621ba2ed0e70}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyStateInvariants\_\-test)}
+\label{BGKSteadyState__test_8cpp_a9ef54bee441e1f22f61e621ba2ed0e70}
 
 \item 
-\hypertarget{namespacenatrium_a157851ed45bc9df182651c6e5474a23b}{
-{\bfseries natrium::BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyState\_\-collideAll\_\-test)}
-\label{namespacenatrium_a157851ed45bc9df182651c6e5474a23b}
+\hypertarget{BGKSteadyState__test_8cpp_a81a4b50cafa8cfd8a556e48a9fe0349b}{
+{\bfseries BOOST\_\-AUTO\_\-TEST\_\-CASE} (BGKSteadyState\_\-collideAll\_\-test)}
+\label{BGKSteadyState__test_8cpp_a81a4b50cafa8cfd8a556e48a9fe0349b}
 
 \end{DoxyCompactItemize}
 

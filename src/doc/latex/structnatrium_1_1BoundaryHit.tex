@@ -1,0 +1,57 @@
+\hypertarget{structnatrium_1_1BoundaryHit}{
+\section{natrium::BoundaryHit$<$ dim $>$ Struct Template Reference}
+\label{structnatrium_1_1BoundaryHit}\index{natrium::BoundaryHit@{natrium::BoundaryHit}}
+}
+
+
+Defines the point in space and time where a Lagrangian path hit the boundary. \hyperlink{classnatrium_1_1Boundary}{Boundary} conditions in the Semi-\/Lagrangian LBM reconstruct the solution at the boundary hits.  
+
+
+{\ttfamily \#include $<$BoundaryHit.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structnatrium_1_1BoundaryHit_af4c88d91789f99fced8d8d3b4cd7ebbc}{
+{\bfseries BoundaryHit} (const \hyperlink{structnatrium_1_1BoundaryHit}{BoundaryHit}$<$ dim $>$ \&hit)}
+\label{structnatrium_1_1BoundaryHit_af4c88d91789f99fced8d8d3b4cd7ebbc}
+
+\item 
+\hypertarget{structnatrium_1_1BoundaryHit_a2804aa93a7f03d12ec28415b42aa12ee}{
+{\bfseries BoundaryHit} (const \hyperlink{structnatrium_1_1LagrangianPathTracker}{LagrangianPathTracker}$<$ dim $>$ \&tracker, const \hyperlink{classnatrium_1_1Stencil}{Stencil} \&stencil, size\_\-t boundary\_\-id, double dt\_\-global)}
+\label{structnatrium_1_1BoundaryHit_a2804aa93a7f03d12ec28415b42aa12ee}
+
+\item 
+\hypertarget{structnatrium_1_1BoundaryHit_a4f20976b5fb57874538448907dbdad3d}{
+size\_\-t {\bfseries getBoundaryId} () const }
+\label{structnatrium_1_1BoundaryHit_a4f20976b5fb57874538448907dbdad3d}
+
+\item 
+\hypertarget{structnatrium_1_1BoundaryHit_a4ff918c172f0cb36cfc64480f68762e1}{
+const dealii::Point$<$ dim $>$ \& {\bfseries getCurrentPoint} () const }
+\label{structnatrium_1_1BoundaryHit_a4ff918c172f0cb36cfc64480f68762e1}
+
+\item 
+\hypertarget{structnatrium_1_1BoundaryHit_ab7467ce964ae4abd864aecabf1f9d414}{
+const \hyperlink{structnatrium_1_1LagrangianPathDestination}{LagrangianPathDestination} \& {\bfseries getDestination} () const }
+\label{structnatrium_1_1BoundaryHit_ab7467ce964ae4abd864aecabf1f9d414}
+
+\item 
+\hypertarget{structnatrium_1_1BoundaryHit_aa12ef41734a2e7e64e4f9cce6f517f36}{
+double {\bfseries getDtHit} () const }
+\label{structnatrium_1_1BoundaryHit_aa12ef41734a2e7e64e4f9cce6f517f36}
+
+\item 
+\hypertarget{structnatrium_1_1BoundaryHit_aed98a3af2ad2340721c6d4c48b3e89d8}{
+const dealii::DoFHandler$<$ dim $>$::active\_\-cell\_\-iterator \& {\bfseries getCurrentCell} () const }
+\label{structnatrium_1_1BoundaryHit_aed98a3af2ad2340721c6d4c48b3e89d8}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\_\-t dim$>$ struct natrium::BoundaryHit$<$ dim $>$}
+
+Defines the point in space and time where a Lagrangian path hit the boundary. \hyperlink{classnatrium_1_1Boundary}{Boundary} conditions in the Semi-\/Lagrangian LBM reconstruct the solution at the boundary hits. 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/BoundaryHit.h\end{DoxyCompactItemize}

@@ -83,8 +83,10 @@ Inheritance diagram for natrium::SEDGMinLee&lt; dim &gt;:</div>
 <p><a href="classnatrium_1_1SEDGMinLee-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#a1d570e9833c6b0df01a0cd7cf3b8c905">SEDGMinLee</a> (boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt; boundaries, size_t orderOfFiniteElement, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, bool useCentralFlux=false)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a1d570e9833c6b0df01a0cd7cf3b8c905"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#a774e2c04bcb9ef8f8c900b4ffaf140ec">SEDGMinLee</a> (<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;problem, size_t orderOfFiniteElement, QuadratureName quad_name, SupportPointsName points_name, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, bool use_central_flux, double delta_t=0.0)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">constructor  <a href="#a774e2c04bcb9ef8f8c900b4ffaf140ec"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1393ad1c5649dab747cd78b1e88ccd0f"></a><!-- doxytag: member="natrium::SEDGMinLee::SEDGMinLee" ref="a1393ad1c5649dab747cd78b1e88ccd0f" args="(ProblemDescription&lt; dim &gt; &amp;problem, size_t orderOfFiniteElement, boost::shared_ptr&lt; Stencil &gt; stencil, double delta_t=0.0)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>SEDGMinLee</b> (<a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;problem, size_t orderOfFiniteElement, boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; stencil, double delta_t=0.0)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c55a31bc4cb0e314876af7251ad8ce3"></a><!-- doxytag: member="natrium::SEDGMinLee::~SEDGMinLee" ref="a6c55a31bc4cb0e314876af7251ad8ce3" args="()" -->
 virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#a6c55a31bc4cb0e314876af7251ad8ce3">~SEDGMinLee</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br/></td></tr>
@@ -92,73 +94,30 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#afc9430efe8aefc7bbe580db2302b2392">reassemble</a> ()</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function to (re-)assemble linear system <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61d0a648a6a46a4fb7445c67e010f14e"></a><!-- doxytag: member="natrium::SEDGMinLee::setupDoFs" ref="a61d0a648a6a46a4fb7445c67e010f14e" args="()" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setupDoFs</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aba8ec4263463d79479a3bbbad2f65844"></a><!-- doxytag: member="natrium::SEDGMinLee::stream" ref="aba8ec4263463d79479a3bbbad2f65844" args="()" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#aba8ec4263463d79479a3bbbad2f65844">stream</a> ()</td></tr>
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#a61d0a648a6a46a4fb7445c67e010f14e">setupDoFs</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Setup degrees of freedom and fill sparsity pattern of the system matrix. Purely virtual for this class. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a999ba2ec978258854ccbf1f11f68e642"></a><!-- doxytag: member="natrium::SEDGMinLee::applyBoundaryConditions" ref="a999ba2ec978258854ccbf1f11f68e642" args="(DistributionFunctions &amp;f_old, DistributionFunctions &amp;f, double t)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>applyBoundaryConditions</b> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f_old, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, double t)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a343b581a1e2ffdf0806b140ca82c9e"></a><!-- doxytag: member="natrium::SEDGMinLee::stream" ref="a6a343b581a1e2ffdf0806b140ca82c9e" args="(DistributionFunctions &amp;, DistributionFunctions &amp;f, double)" -->
+virtual double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#a6a343b581a1e2ffdf0806b140ca82c9e">stream</a> (<a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;, <a class="el" href="classnatrium_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;f, double)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">make streaming step <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcf3f6321cbf27f6c540a6c5f21c7cb0"></a><!-- doxytag: member="natrium::SEDGMinLee::getSystemMatrix" ref="adcf3f6321cbf27f6c540a6c5f21c7cb0" args="() const " -->
-virtual const <br class="typebreak"/>
-distributed_sparse_block_matrix &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#adcf3f6321cbf27f6c540a6c5f21c7cb0">getSystemMatrix</a> () const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get global system matrix <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1f5ecd80111566dd53804b6db2a1cb3"></a><!-- doxytag: member="natrium::SEDGMinLee::mapDoFsToSupportPoints" ref="ac1f5ecd80111566dd53804b6db2a1cb3" args="(std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const " -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>mapDoFsToSupportPoints</b> (std::map&lt; dealii::types::global_dof_index, dealii::Point&lt; dim &gt; &gt; &amp;supportPoints) const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd088667b6ff315c440d00cd0eb26840"></a><!-- doxytag: member="natrium::SEDGMinLee::getDoFHandler" ref="abd088667b6ff315c440d00cd0eb26840" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::DoFHandler&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getDoFHandler</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10acabaac20a992130e88fb9bd395d31"></a><!-- doxytag: member="natrium::SEDGMinLee::getBlockSparsityPattern" ref="a10acabaac20a992130e88fb9bd395d31" args="() const " -->
-const <br class="typebreak"/>
-dealii::BlockSparsityPattern &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getBlockSparsityPattern</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const dealii::SparsityPattern &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#ac9392932aaab8186b427b9d12bc64771">getSparsityPattern</a> (size_t i) const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get sparsity pattern  <a href="#ac9392932aaab8186b427b9d12bc64771"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab888ac14b8ef33ed706b5d63deea86ae"></a><!-- doxytag: member="natrium::SEDGMinLee::getMapping" ref="ab888ac14b8ef33ed706b5d63deea86ae" args="() const " -->
-const dealii::MappingQ&lt; dim &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMapping</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec38323cbd34487a73b4f62f0a310ceb"></a><!-- doxytag: member="natrium::SEDGMinLee::getCelldofToQIndex" ref="aec38323cbd34487a73b4f62f0a310ceb" args="() const " -->
-virtual const std::map&lt; size_t, <br class="typebreak"/>
-size_t &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCelldofToQIndex</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b7d94c90ccfa5e341d854059d883f57"></a><!-- doxytag: member="natrium::SEDGMinLee::getFacedofToQIndex" ref="a8b7d94c90ccfa5e341d854059d883f57" args="() const " -->
-const vector&lt; std::map&lt; size_t, <br class="typebreak"/>
-size_t &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFacedofToQIndex</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42897893820c9d12e9fea6f5518e3447"></a><!-- doxytag: member="natrium::SEDGMinLee::getFaceQuadrature" ref="a42897893820c9d12e9fea6f5518e3447" args="() const " -->
-const boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::QGaussLobatto&lt; dim-1 &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFaceQuadrature</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7cd0a95e74da6d4d16ab2d174b17458"></a><!-- doxytag: member="natrium::SEDGMinLee::getFe" ref="ab7cd0a95e74da6d4d16ab2d174b17458" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::FE_DGQArbitraryNodes<br class="typebreak"/>
-&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getFe</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5dac839ef4963af315dba5f201bd763c"></a><!-- doxytag: member="natrium::SEDGMinLee::getNumberOfDoFsPerCell" ref="a5dac839ef4963af315dba5f201bd763c" args="() const " -->
-virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getNumberOfDoFsPerCell</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad36da36624c983cf84716d97442b1989"></a><!-- doxytag: member="natrium::SEDGMinLee::getQuadrature" ref="ad36da36624c983cf84716d97442b1989" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr<br class="typebreak"/>
-&lt; dealii::QGaussLobatto&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQuadrature</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a954e80fd9475bd4c617b573a96b5290e"></a><!-- doxytag: member="natrium::SEDGMinLee::getOrderOfFiniteElement" ref="a954e80fd9475bd4c617b573a96b5290e" args="() const " -->
-virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>getOrderOfFiniteElement</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#af667cda1a894340f614da67c0a0ae5da">getNumberOfDoFs</a> () const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">save matrices and status to files  <a href="#af667cda1a894340f614da67c0a0ae5da"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac4d17489cf8bf5e98bd7bd4e3e32f0d4"></a><!-- doxytag: member="natrium::SEDGMinLee::getSystemVector" ref="ac4d17489cf8bf5e98bd7bd4e3e32f0d4" args="() const " -->
 virtual const <br class="typebreak"/>
-distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getSystemVector</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a790e9783ea5c3ce34b1a4e82332eda4c"></a><!-- doxytag: member="natrium::SEDGMinLee::getLocallyOwnedDofs" ref="a790e9783ea5c3ce34b1a4e82332eda4c" args="()" -->
-const dealii::IndexSet &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getLocallyOwnedDofs</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c47f73e0a2dcd738573b57f61da75fc"></a><!-- doxytag: member="natrium::SEDGMinLee::getLocallyRelevantDofs" ref="a9c47f73e0a2dcd738573b57f61da75fc" args="()" -->
-const dealii::IndexSet &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getLocallyRelevantDofs</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bb31f5b359305f3f36ec5000767c8a3"></a><!-- doxytag: member="natrium::SEDGMinLee::getQIndexToFacedof" ref="a6bb31f5b359305f3f36ec5000767c8a3" args="() const " -->
-virtual const vector&lt; std::map<br class="typebreak"/>
-&lt; size_t, size_t &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getQIndexToFacedof</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a23bb9307417d9626121422252dad46d9"></a><!-- doxytag: member="natrium::SEDGMinLee::getMesh" ref="a23bb9307417d9626121422252dad46d9" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getMesh</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a102114aac5fa9d33a4bf7a1f70eb3ed8"></a><!-- doxytag: member="natrium::SEDGMinLee::getStencil" ref="a102114aac5fa9d33a4bf7a1f70eb3ed8" args="() const " -->
-virtual const <br class="typebreak"/>
-boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1Stencil.html">Stencil</a> &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStencil</b> () const </td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="ab9bdc47144e9e45960ca1bee2593d713"></a><!-- doxytag: member="natrium::SEDGMinLee::calculateAndDistributeLocalStiffnessMatrix" ref="ab9bdc47144e9e45960ca1bee2593d713" args="(size_t alpha, const vector&lt; dealii::FullMatrix&lt; double &gt; &gt; &amp;derivativeMatrices, dealii::FullMatrix&lt; double &gt; &amp;systemMatrix, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, const std::vector&lt; dealii::types::global_dof_index &gt; &amp;globalDoFs, size_t dofsPerCell)" -->
+distributed_block_vector &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#ac4d17489cf8bf5e98bd7bd4e3e32f0d4">getSystemVector</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get system vector. To be removed. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13a865449ffb61a8ab3685183297bf25"></a><!-- doxytag: member="natrium::SEDGMinLee::getTimeIntegrator" ref="a13a865449ffb61a8ab3685183297bf25" args="() const " -->
+boost::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a><br class="typebreak"/>
+&lt; distributed_sparse_block_matrix, <br class="typebreak"/>
+distributed_block_vector &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getTimeIntegrator</b> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1SEDGMinLee.html#add96facb8df190a139505ea912bb1a75">setTimeIntegrator</a> (boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt; timeIntegrator)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Apply boundary conditions. Purely virtual for this class.  <a href="#add96facb8df190a139505ea912bb1a75"></a><br/></td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a6b207f31315f80f2a91a4063c1ab8f84"></a><!-- doxytag: member="natrium::SEDGMinLee::calculateAndDistributeLocalStiffnessMatrix" ref="a6b207f31315f80f2a91a4063c1ab8f84" args="(size_t alpha, const vector&lt; dealii::FullMatrix&lt; double &gt; &gt; &amp;derivative_matrices, dealii::FullMatrix&lt; double &gt; &amp;system_matrix, const vector&lt; double &gt; &amp;inverse_local_mass_matrix, const std::vector&lt; dealii::types::global_dof_index &gt; &amp;global_dofs, size_t dofs_per_cell)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>calculateAndDistributeLocalStiffnessMatrix</b> (size_t alpha, const vector&lt; dealii::FullMatrix&lt; double &gt; &gt; &amp;derivativeMatrices, dealii::FullMatrix&lt; double &gt; &amp;systemMatrix, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, const std::vector&lt; dealii::types::global_dof_index &gt; &amp;globalDoFs, size_t dofsPerCell)</td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a7d20a56bbe96969ef037be2a6f47d12d"></a><!-- doxytag: member="natrium::SEDGMinLee::calculateAndDistributeLocalStiffnessMatrix" ref="a7d20a56bbe96969ef037be2a6f47d12d" args="(size_t alpha, const vector&lt; dealii::FullMatrix&lt; double &gt; &gt; &amp;derivativeMatrices, dealii::FullMatrix&lt; double &gt; &amp;systemMatrix, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, const std::vector&lt; dealii::types::global_dof_index &gt; &amp;globalDoFs, size_t dofsPerCell)" -->
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>calculateAndDistributeLocalStiffnessMatrix</b> (size_t alpha, const vector&lt; dealii::FullMatrix&lt; double &gt; &gt; &amp;derivative_matrices, dealii::FullMatrix&lt; double &gt; &amp;system_matrix, const vector&lt; double &gt; &amp;inverse_local_mass_matrix, const std::vector&lt; dealii::types::global_dof_index &gt; &amp;global_dofs, size_t dofs_per_cell)</td></tr>
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a0f83e4fb7ded82cc27fb60f6d6ff5a17"></a><!-- doxytag: member="natrium::SEDGMinLee::calculateAndDistributeLocalStiffnessMatrix" ref="a0f83e4fb7ded82cc27fb60f6d6ff5a17" args="(size_t alpha, const vector&lt; dealii::FullMatrix&lt; double &gt; &gt; &amp;derivative_matrices, dealii::FullMatrix&lt; double &gt; &amp;system_matrix, const vector&lt; double &gt; &amp;inverse_local_mass_matrix, const std::vector&lt; dealii::types::global_dof_index &gt; &amp;global_dofs, size_t dofs_per_cell)" -->
 template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>calculateAndDistributeLocalStiffnessMatrix</b> (size_t alpha, const vector&lt; dealii::FullMatrix&lt; double &gt; &gt; &amp;derivativeMatrices, dealii::FullMatrix&lt; double &gt; &amp;systemMatrix, const vector&lt; double &gt; &amp;inverseLocalMassMatrix, const std::vector&lt; dealii::types::global_dof_index &gt; &amp;globalDoFs, size_t dofsPerCell)</td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>calculateAndDistributeLocalStiffnessMatrix</b> (size_t alpha, const vector&lt; dealii::FullMatrix&lt; double &gt; &gt; &amp;derivative_matrices, dealii::FullMatrix&lt; double &gt; &amp;system_matrix, const vector&lt; double &gt; &amp;inverse_local_mass_matrix, const std::vector&lt; dealii::types::global_dof_index &gt; &amp;global_dofs, size_t dofs_per_cell)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;size_t dim&gt;<br/>
@@ -188,7 +147,7 @@ template&lt;&gt; </td></tr>
   </dd>
 </dl>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a1d570e9833c6b0df01a0cd7cf3b8c905"></a><!-- doxytag: member="natrium::SEDGMinLee::SEDGMinLee" ref="a1d570e9833c6b0df01a0cd7cf3b8c905" args="(boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt; triangulation, boost::shared_ptr&lt; BoundaryCollection&lt; dim &gt; &gt; boundaries, size_t orderOfFiniteElement, boost::shared_ptr&lt; Stencil &gt; stencil, bool useCentralFlux=false)" -->
+<a class="anchor" id="a774e2c04bcb9ef8f8c900b4ffaf140ec"></a><!-- doxytag: member="natrium::SEDGMinLee::SEDGMinLee" ref="a774e2c04bcb9ef8f8c900b4ffaf140ec" args="(ProblemDescription&lt; dim &gt; &amp;problem, size_t orderOfFiniteElement, QuadratureName quad_name, SupportPointsName points_name, boost::shared_ptr&lt; Stencil &gt; stencil, bool use_central_flux, double delta_t=0.0)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -197,20 +156,26 @@ template&lt;size_t dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classnatrium_1_1SEDGMinLee.html">natrium::SEDGMinLee</a>&lt; dim &gt;::<a class="el" href="classnatrium_1_1SEDGMinLee.html">SEDGMinLee</a> </td>
           <td>(</td>
-          <td class="paramtype">boost::shared_ptr&lt; Mesh&lt; dim &gt; &gt;&nbsp;</td>
-          <td class="paramname"> <em>triangulation</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1BoundaryCollection.html">BoundaryCollection</a>&lt; dim &gt; &gt;&nbsp;</td>
-          <td class="paramname"> <em>boundaries</em>, </td>
+          <td class="paramtype"><a class="el" href="classnatrium_1_1ProblemDescription.html">ProblemDescription</a>&lt; dim &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>problem</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&nbsp;</td>
           <td class="paramname"> <em>orderOfFiniteElement</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QuadratureName&nbsp;</td>
+          <td class="paramname"> <em>quad_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SupportPointsName&nbsp;</td>
+          <td class="paramname"> <em>points_name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -222,7 +187,13 @@ template&lt;size_t dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>useCentralFlux</em> = <code>false</code></td><td>&nbsp;</td>
+          <td class="paramname"> <em>use_central_flux</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>delta_t</em> = <code>0.0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -247,61 +218,30 @@ template&lt;size_t dim&gt; </div>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="af667cda1a894340f614da67c0a0ae5da"></a><!-- doxytag: member="natrium::SEDGMinLee::getNumberOfDoFs" ref="af667cda1a894340f614da67c0a0ae5da" args="() const " -->
+<a class="anchor" id="add96facb8df190a139505ea912bb1a75"></a><!-- doxytag: member="natrium::SEDGMinLee::setTimeIntegrator" ref="add96facb8df190a139505ea912bb1a75" args="(boost::shared_ptr&lt; TimeIntegrator&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt; timeIntegrator)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">virtual size_t <a class="el" href="classnatrium_1_1SEDGMinLee.html">natrium::SEDGMinLee</a>&lt; dim &gt;::getNumberOfDoFs </td>
+          <td class="memname">virtual void <a class="el" href="classnatrium_1_1SEDGMinLee.html">natrium::SEDGMinLee</a>&lt; dim &gt;::setTimeIntegrator </td>
           <td>(</td>
-          <td class="paramname"></td>
+          <td class="paramtype">boost::shared_ptr&lt; <a class="el" href="classnatrium_1_1TimeIntegrator.html">TimeIntegrator</a>&lt; distributed_sparse_block_matrix, distributed_block_vector &gt; &gt;&nbsp;</td>
+          <td class="paramname"> <em>timeIntegrator</em></td>
           <td>&nbsp;)&nbsp;</td>
-          <td> const<code> [inline, virtual]</code></td>
+          <td><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>save matrices and status to files </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>directory</em>&nbsp;</td><td>directory to save the matrix files to </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl><dt><b>Exceptions:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em><a class="el" href="classnatrium_1_1AdvectionSolverException.html" title="Exception class for SEDGMinLee.">AdvectionSolverException</a></em>&nbsp;</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Apply boundary conditions. Purely virtual for this class. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>While the SEDG boundary conditions are directly implemented in the system matrix and vector, the semi-Lagrangian advection operator needs to do something in this functions. set the time integrator for the SEDG streaming step. Purely virtual for this class. </dd>
+<dd>
+This function is empty for the semi-Lagrangian streaming, which does not require time integrators. </dd></dl>
 
-<p>Implements <a class="el" href="classnatrium_1_1AdvectionOperator.html#a251e21d1dd023926d4c5f7fd973b90bf">natrium::AdvectionOperator&lt; dim &gt;</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ac9392932aaab8186b427b9d12bc64771"></a><!-- doxytag: member="natrium::SEDGMinLee::getSparsityPattern" ref="ac9392932aaab8186b427b9d12bc64771" args="(size_t i) const " -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;size_t dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">const dealii::SparsityPattern&amp; <a class="el" href="classnatrium_1_1SEDGMinLee.html">natrium::SEDGMinLee</a>&lt; dim &gt;::getSparsityPattern </td>
-          <td>(</td>
-          <td class="paramtype">size_t&nbsp;</td>
-          <td class="paramname"> <em>i</em></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const<code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>get sparsity pattern </p>
-<dl class="note"><dt><b>Note:</b></dt><dd>not available for trilinos, as trilinos has an internal format for sparsity patterns (Epetra_CrsGraph) </dd></dl>
+<p>Implements <a class="el" href="classnatrium_1_1AdvectionOperator.html#aa93f60c7e7270a35df21387a962d7a38">natrium::AdvectionOperator&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -324,7 +264,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

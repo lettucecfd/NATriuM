@@ -16,7 +16,7 @@ namespace ExternalForceFunctions {
  * @short Calculate source term for exact difference forcing (Kupershtokh et. al.)
  * @note See Phys.Rev. E 84, 046710 (2011), Scheme V
  */
-inline void applyExactDifferenceForcingD2Q9(double f_i[9], double force_x,
+inline void applyExactDifferenceForcingD2Q9(double f_i[], double force_x,
 		double force_y, double u_0_i, double u_1_i, double rho_i, double dt,
 		double prefactor) {
 	double mixed_term_shifted;
@@ -116,7 +116,7 @@ inline void applyExactDifferenceForcingD2Q9(double f_i[9], double force_x,
 	f_i[8] += s_i[8];
 }
 
-inline void applyGuoForcingD2Q9(double f_i[9], double force_x, double force_y,
+inline void applyGuoForcingD2Q9(double f_i[], double force_x, double force_y,
 		double u_0_i, double u_1_i, double omega, double prefactor, double dt) {
 
 	double s_i[9];
@@ -200,7 +200,7 @@ inline void applyGuoForcingD2Q9(double f_i[9], double force_x, double force_y,
  * @short Calculate source term for exact difference forcing (Kupershtokh et. al.)
  * @note See Phys.Rev. E 84, 046710 (2011), Scheme V
  */
-inline void applyExactDifferenceForcingD3Q19(double f_i[19], double force_x,
+inline void applyExactDifferenceForcingD3Q19(double f_i[], double force_x,
 		double force_y, double force_z, double u_0_i, double u_1_i,
 		double u_2_i, double rho_i, double dt, double prefactor) {
 	double mixed_term_shifted;
@@ -382,7 +382,7 @@ inline void applyExactDifferenceForcingD3Q19(double f_i[19], double force_x,
 	f_i[18] += s_i[18];
 }
 
-inline void applyGuoForcingD3Q19(double f_i[19], double force_x, double force_y,
+inline void applyGuoForcingD3Q19(double f_i[], double force_x, double force_y,
 		double force_z, double u_0_i, double u_1_i, double u_2_i, double omega,
 		double prefactor, double dt) {
 

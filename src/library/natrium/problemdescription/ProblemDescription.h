@@ -94,6 +94,7 @@ public:
 
 	virtual void refine(Mesh<dim>& mesh) = 0;
 	virtual void transform(Mesh<dim>& mesh) = 0;
+	virtual bool isCartesian() = 0;
 
 	void refineAndTransform() {
 		refine(*getMesh());

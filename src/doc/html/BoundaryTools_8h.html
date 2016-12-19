@@ -48,8 +48,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h1>/mnt/fdrive/akraem3m/workspace/NATriuM/src/library/natrium/boundaries/BoundaryTools.h File Reference</h1><code>#include &lt;string&gt;</code><br/>
 <code>#include &quot;deal.II/base/point.h&quot;</code><br/>
 <code>#include &quot;deal.II/base/function.h&quot;</code><br/>
+<code>#include &quot;deal.II/base/tensor_function.h&quot;</code><br/>
 <code>#include &quot;../utilities/BasicNames.h&quot;</code><br/>
 <code>#include &quot;../utilities/NATriuMException.h&quot;</code><br/>
+<code>#include &quot;../solver/DistributionFunctions.h&quot;</code><br/>
+<code>#include &quot;../stencils/Stencil.h&quot;</code><br/>
 
 <p><a href="BoundaryTools_8h_source.html">Go to the source code of this file.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
@@ -57,9 +60,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html">natrium::BoundaryTools::BoundaryException</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception class for Boundaries.  <a href="classnatrium_1_1BoundaryTools_1_1BoundaryException.html#_details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTools_1_1BoundaryDensity.html">natrium::BoundaryTools::BoundaryDensity&lt; dim &gt;</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTools_1_1BoundaryPressure.html">natrium::BoundaryTools::BoundaryPressure&lt; dim &gt;</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocity.html">natrium::BoundaryTools::BoundaryVelocity&lt; dim &gt;</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTools_1_1BoundaryVelocityGradient.html">natrium::BoundaryTools::BoundaryVelocityGradient&lt; dim &gt;</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1BoundaryTools_1_1point__sorter.html">natrium::BoundaryTools::point_sorter</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">function to compare points as map keys; the points with smaller x components fall before others. in case of equal x, the points with smaller y components will be placed first.  <a href="classnatrium_1_1BoundaryTools_1_1point__sorter.html#_details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnatrium_1_1GlobalBoundaryData.html">natrium::GlobalBoundaryData</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Container for global Data that is required by the <a class="el" href="classnatrium_1_1FEBoundaryValues.html" title="A class that calculates macroscopic values at the boundaries, implemented similarly...">FEBoundaryValues</a> class.  <a href="structnatrium_1_1GlobalBoundaryData.html#_details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2>Namespaces</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacenatrium.html">natrium</a></td></tr>
 
@@ -104,7 +111,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

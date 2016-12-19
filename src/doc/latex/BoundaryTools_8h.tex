@@ -5,8 +5,11 @@
 {\ttfamily \#include $<$string$>$}\par
 {\ttfamily \#include \char`\"{}deal.II/base/point.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}deal.II/base/function.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}deal.II/base/tensor\_\-function.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/BasicNames.h\char`\"{}}\par
 {\ttfamily \#include \char`\"{}../utilities/NATriuMException.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../solver/DistributionFunctions.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}../stencils/Stencil.h\char`\"{}}\par
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
@@ -14,10 +17,16 @@ class \hyperlink{classnatrium_1_1BoundaryTools_1_1BoundaryException}{natrium::Bo
 \begin{DoxyCompactList}\small\item\em Exception class for Boundaries. \item\end{DoxyCompactList}\item 
 class \hyperlink{classnatrium_1_1BoundaryTools_1_1BoundaryDensity}{natrium::BoundaryTools::BoundaryDensity$<$ dim $>$}
 \item 
+class \hyperlink{classnatrium_1_1BoundaryTools_1_1BoundaryPressure}{natrium::BoundaryTools::BoundaryPressure$<$ dim $>$}
+\item 
 class \hyperlink{classnatrium_1_1BoundaryTools_1_1BoundaryVelocity}{natrium::BoundaryTools::BoundaryVelocity$<$ dim $>$}
 \item 
+class \hyperlink{classnatrium_1_1BoundaryTools_1_1BoundaryVelocityGradient}{natrium::BoundaryTools::BoundaryVelocityGradient$<$ dim $>$}
+\item 
 class \hyperlink{classnatrium_1_1BoundaryTools_1_1point__sorter}{natrium::BoundaryTools::point\_\-sorter}
-\begin{DoxyCompactList}\small\item\em function to compare points as map keys; the points with smaller x components fall before others. in case of equal x, the points with smaller y components will be placed first. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em function to compare points as map keys; the points with smaller x components fall before others. in case of equal x, the points with smaller y components will be placed first. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structnatrium_1_1GlobalBoundaryData}{natrium::GlobalBoundaryData}
+\begin{DoxyCompactList}\small\item\em Container for global Data that is required by the \hyperlink{classnatrium_1_1FEBoundaryValues}{FEBoundaryValues} class. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 

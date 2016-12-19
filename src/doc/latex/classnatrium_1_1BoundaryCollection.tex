@@ -30,14 +30,14 @@ typedef std::map$<$ size\_\-t, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1
 \label{classnatrium_1_1BoundaryCollection_a886a6e984b43ab1ad7b79610b6960a6a}
 
 \item 
-\hypertarget{classnatrium_1_1BoundaryCollection_a5dc656df5e72156bde252c308dadc36f}{
-typedef std::map$<$ size\_\-t, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1DoFBoundary}{DoFBoundary}$<$ dim $>$ $>$ $>$::iterator {\bfseries DoFBoundaryIterator}}
-\label{classnatrium_1_1BoundaryCollection_a5dc656df5e72156bde252c308dadc36f}
+\hypertarget{classnatrium_1_1BoundaryCollection_af5968712678ecdd739a1bd103aca9adf}{
+typedef std::map$<$ size\_\-t, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SLBoundary}{SLBoundary}$<$ dim $>$ $>$ $>$::iterator {\bfseries SLBoundaryIterator}}
+\label{classnatrium_1_1BoundaryCollection_af5968712678ecdd739a1bd103aca9adf}
 
 \item 
-\hypertarget{classnatrium_1_1BoundaryCollection_ae4e01a670a4f0736dfd74274b59cb036}{
-typedef std::map$<$ size\_\-t, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1DoFBoundary}{DoFBoundary}$<$ dim $>$ $>$ $>$::const\_\-iterator {\bfseries ConstDoFBoundaryIterator}}
-\label{classnatrium_1_1BoundaryCollection_ae4e01a670a4f0736dfd74274b59cb036}
+\hypertarget{classnatrium_1_1BoundaryCollection_a59b89c5c7dfaf37311f23012720cd536}{
+typedef std::map$<$ size\_\-t, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SLBoundary}{SLBoundary}$<$ dim $>$ $>$ $>$::const\_\-iterator {\bfseries ConstSLBoundaryIterator}}
+\label{classnatrium_1_1BoundaryCollection_a59b89c5c7dfaf37311f23012720cd536}
 
 \item 
 \hypertarget{classnatrium_1_1BoundaryCollection_a9c641c34778fdb95ff98827c818773e6}{
@@ -57,16 +57,21 @@ void \hyperlink{classnatrium_1_1BoundaryCollection_a9f957b5338bca01c7bd8c21576ec
 \begin{DoxyCompactList}\small\item\em Add a boundary to the flow definition. This definition of addBoundary applies to periodic boundaries. As periodic boundaries have two boundary indicators, they are added twice to the boundary map. Internally, they are additionally added to the vector periodicBoundaries, which can be accessed separate from non-\/periodic boundaries. \item\end{DoxyCompactList}\item 
 void \hyperlink{classnatrium_1_1BoundaryCollection_aa248c47170036538ef052940123b2322}{addBoundary} (boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1LinearFluxBoundary}{LinearFluxBoundary}$<$ dim $>$ $>$ boundary)
 \begin{DoxyCompactList}\small\item\em Add a boundary to the flow definition. \item\end{DoxyCompactList}\item 
-void \hyperlink{classnatrium_1_1BoundaryCollection_aeb04961249e675666c092afd721ad32a}{addBoundary} (boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1DoFBoundary}{DoFBoundary}$<$ dim $>$ $>$ boundary)
+void \hyperlink{classnatrium_1_1BoundaryCollection_a7eb369274f50a3e671cd8cd98e1cff68}{addBoundary} (boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SLBoundary}{SLBoundary}$<$ dim $>$ $>$ boundary)
 \begin{DoxyCompactList}\small\item\em Add a boundary to the flow definition. \item\end{DoxyCompactList}\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_ad3992eb9a0e11aa894937ba062560861}{
+void {\bfseries removeBoundary} (size\_\-t boundary\_\-id)}
+\label{classnatrium_1_1BoundaryCollection_ad3992eb9a0e11aa894937ba062560861}
+
+\item 
 const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1Boundary}{Boundary}$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1BoundaryCollection_a44816fa48b8100fb37b8ad7491c2cc6c}{getBoundary} (size\_\-t boundaryIndicator) const 
 \begin{DoxyCompactList}\small\item\em get a specific boundary \item\end{DoxyCompactList}\item 
 const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1PeriodicBoundary}{PeriodicBoundary}$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1BoundaryCollection_aea0ba68a319b3ec0f3774ba814e18217}{getPeriodicBoundary} (size\_\-t boundaryIndicator) const 
 \begin{DoxyCompactList}\small\item\em get a specific periodic boundary \item\end{DoxyCompactList}\item 
 const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1LinearFluxBoundary}{LinearFluxBoundary}$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1BoundaryCollection_a7961dc115c0a8cd29fa5cf6f553aa78f}{getLinearFluxBoundary} (size\_\-t boundaryIndicator) const 
 \begin{DoxyCompactList}\small\item\em get a specific MinLee boundary \item\end{DoxyCompactList}\item 
-const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1DoFBoundary}{DoFBoundary}$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1BoundaryCollection_ad63f4c0e71eaa277f263d39415175549}{getDoFBoundary} (size\_\-t boundaryIndicator) const 
-\begin{DoxyCompactList}\small\item\em get a specific dof boundary \item\end{DoxyCompactList}\item 
+const boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SLBoundary}{SLBoundary}$<$ dim $>$ $>$ \& \hyperlink{classnatrium_1_1BoundaryCollection_ab914df04ecc518f42f8a61287f2f8b3c}{getSLBoundary} (size\_\-t boundaryIndicator) const 
+\begin{DoxyCompactList}\small\item\em get a specific semi lagrangian boundary \item\end{DoxyCompactList}\item 
 \hypertarget{classnatrium_1_1BoundaryCollection_aec4a9de4aaccaa7a49e5308bf9812c66}{
 bool \hyperlink{classnatrium_1_1BoundaryCollection_aec4a9de4aaccaa7a49e5308bf9812c66}{isPeriodic} (size\_\-t boundaryIndicator) const }
 \label{classnatrium_1_1BoundaryCollection_aec4a9de4aaccaa7a49e5308bf9812c66}
@@ -97,14 +102,24 @@ const std::map$<$ size\_\-t, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1
 \label{classnatrium_1_1BoundaryCollection_a3b04ece6b8b942c2189493eea93fe9b4}
 
 \item 
-\hypertarget{classnatrium_1_1BoundaryCollection_a78baba7c1d84139fe939a805e5a6f941}{
-const std::map$<$ size\_\-t, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1DoFBoundary}{DoFBoundary}$<$ dim $>$ $>$ $>$ \& {\bfseries getDoFBoundaries} () const }
-\label{classnatrium_1_1BoundaryCollection_a78baba7c1d84139fe939a805e5a6f941}
+\hypertarget{classnatrium_1_1BoundaryCollection_a980dcbe94f1c80e0a73de722724a00e7}{
+const std::map$<$ size\_\-t, boost::shared\_\-ptr$<$ \hyperlink{classnatrium_1_1SLBoundary}{SLBoundary}$<$ dim $>$ $>$ $>$ \& {\bfseries getSLBoundaries} () const }
+\label{classnatrium_1_1BoundaryCollection_a980dcbe94f1c80e0a73de722724a00e7}
 
 \item 
-\hypertarget{classnatrium_1_1BoundaryCollection_a5cf479c4e1ce37cea40b81ebbe5500b8}{
-bool {\bfseries hasDoFBoundaries} ()}
-\label{classnatrium_1_1BoundaryCollection_a5cf479c4e1ce37cea40b81ebbe5500b8}
+\hypertarget{classnatrium_1_1BoundaryCollection_a3773550ad0da7ee09a1870a5e2f45c9e}{
+bool {\bfseries hasSLBoundaries} ()}
+\label{classnatrium_1_1BoundaryCollection_a3773550ad0da7ee09a1870a5e2f45c9e}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_ad0c126620e40bc08b5aa959d774f98e2}{
+bool {\bfseries hasID} (size\_\-t boundary\_\-id) const }
+\label{classnatrium_1_1BoundaryCollection_ad0c126620e40bc08b5aa959d774f98e2}
+
+\item 
+\hypertarget{classnatrium_1_1BoundaryCollection_a343dd25dde692d73e1d3826f6d297856}{
+bool {\bfseries isSL} (size\_\-t boundary\_\-id) const }
+\label{classnatrium_1_1BoundaryCollection_a343dd25dde692d73e1d3826f6d297856}
 
 \end{DoxyCompactItemize}
 
@@ -115,11 +130,11 @@ bool {\bfseries hasDoFBoundaries} ()}
 The \hyperlink{classnatrium_1_1BoundaryCollection}{BoundaryCollection} class is a container for all boundaries of a flow domain. Internally, the boundaries are stored in two different std::map, one for the periodic boundaries and one for the non-\/periodic ones. Its keys are the boundary indicators (for periodic boundaries: the first boundary indicator). 
 
 \subsection{Member Function Documentation}
-\hypertarget{classnatrium_1_1BoundaryCollection_aeb04961249e675666c092afd721ad32a}{
+\hypertarget{classnatrium_1_1BoundaryCollection_a7eb369274f50a3e671cd8cd98e1cff68}{
 \index{natrium::BoundaryCollection@{natrium::BoundaryCollection}!addBoundary@{addBoundary}}
 \index{addBoundary@{addBoundary}!natrium::BoundaryCollection@{natrium::BoundaryCollection}}
-\subsubsection[{addBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::BoundaryCollection}$<$ dim $>$::addBoundary (boost::shared\_\-ptr$<$ {\bf DoFBoundary}$<$ dim $>$ $>$ {\em boundary})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classnatrium_1_1BoundaryCollection_aeb04961249e675666c092afd721ad32a}
+\subsubsection[{addBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ void {\bf natrium::BoundaryCollection}$<$ dim $>$::addBoundary (boost::shared\_\-ptr$<$ {\bf SLBoundary}$<$ dim $>$ $>$ {\em boundary})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1BoundaryCollection_a7eb369274f50a3e671cd8cd98e1cff68}
 
 
 Add a boundary to the flow definition. 
@@ -164,16 +179,6 @@ Add a boundary to the flow definition. This definition of addBoundary applies to
 get a specific boundary 
 \begin{DoxyExceptions}{Exceptions}
 \item[{\em BoundaryCollectionError,if}]the specified boundary indicator does not exist \end{DoxyExceptions}
-\hypertarget{classnatrium_1_1BoundaryCollection_ad63f4c0e71eaa277f263d39415175549}{
-\index{natrium::BoundaryCollection@{natrium::BoundaryCollection}!getDoFBoundary@{getDoFBoundary}}
-\index{getDoFBoundary@{getDoFBoundary}!natrium::BoundaryCollection@{natrium::BoundaryCollection}}
-\subsubsection[{getDoFBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ const boost::shared\_\-ptr$<${\bf DoFBoundary}$<$dim$>$ $>$\& {\bf natrium::BoundaryCollection}$<$ dim $>$::getDoFBoundary (size\_\-t {\em boundaryIndicator}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classnatrium_1_1BoundaryCollection_ad63f4c0e71eaa277f263d39415175549}
-
-
-get a specific dof boundary 
-\begin{DoxyExceptions}{Exceptions}
-\item[{\em BoundaryCollectionError,if}]the specified boundary indicator does not exist \end{DoxyExceptions}
 \hypertarget{classnatrium_1_1BoundaryCollection_a7961dc115c0a8cd29fa5cf6f553aa78f}{
 \index{natrium::BoundaryCollection@{natrium::BoundaryCollection}!getLinearFluxBoundary@{getLinearFluxBoundary}}
 \index{getLinearFluxBoundary@{getLinearFluxBoundary}!natrium::BoundaryCollection@{natrium::BoundaryCollection}}
@@ -192,6 +197,16 @@ get a specific MinLee boundary
 
 
 get a specific periodic boundary 
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em BoundaryCollectionError,if}]the specified boundary indicator does not exist \end{DoxyExceptions}
+\hypertarget{classnatrium_1_1BoundaryCollection_ab914df04ecc518f42f8a61287f2f8b3c}{
+\index{natrium::BoundaryCollection@{natrium::BoundaryCollection}!getSLBoundary@{getSLBoundary}}
+\index{getSLBoundary@{getSLBoundary}!natrium::BoundaryCollection@{natrium::BoundaryCollection}}
+\subsubsection[{getSLBoundary}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\_\-t dim$>$ const boost::shared\_\-ptr$<${\bf SLBoundary}$<$dim$>$ $>$\& {\bf natrium::BoundaryCollection}$<$ dim $>$::getSLBoundary (size\_\-t {\em boundaryIndicator}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classnatrium_1_1BoundaryCollection_ab914df04ecc518f42f8a61287f2f8b3c}
+
+
+get a specific semi lagrangian boundary 
 \begin{DoxyExceptions}{Exceptions}
 \item[{\em BoundaryCollectionError,if}]the specified boundary indicator does not exist \end{DoxyExceptions}
 

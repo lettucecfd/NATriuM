@@ -55,6 +55,9 @@ private:
 	virtual void transform(Mesh<3>& ){
 
 	}
+	virtual bool isCartesian(){
+		return true;
+	}
 };
 
 } /* namespace natrium */

@@ -52,49 +52,62 @@ void ErrorStats<dim>::update() {
 	if (m_iterationNumber == m_solver->getIteration()) {
 		return;
 	}
+
+
+	vector<distributed_vector> num_u;
+	distributed_vector num_rho;
+	vector<distributed_vector> ana_u;
+	distributed_vector ana_rho;
+	CFDSolverUtilities::getWriteableDensity(num_rho, m_solver->getDensity(),
+			m_solver->getAdvectionOperator()->getLocallyOwnedDofs());
+	CFDSolverUtilities::getWriteableVelocity(num_u, m_solver->getVelocity(),
+			m_solver->getAdvectionOperator()->getLocallyOwnedDofs());
+	CFDSolverUtilities::getWriteableDensity(ana_rho, m_solver->getDensity(),
+			m_solver->getAdvectionOperator()->getLocallyOwnedDofs());
+	CFDSolverUtilities::getWriteableVelocity(ana_u, m_solver->getVelocity(),
+			m_solver->getAdvectionOperator()->getLocallyOwnedDofs());
+
 	m_iterationNumber = m_solver->getIteration();
 	m_time = m_solver->getTime();
 	// get analytic and numeric values
 	// TODO: only assign once (see. addAnalyticSolutionToOutput)
-	m_solver->getAllAnalyticVelocities(m_solver->getTime(),
-			m_solver->m_analyticVelocity, m_solver->m_supportPoints);
-	m_solver->getAllAnalyticDensities(m_solver->getTime(),
-			m_solver->m_analyticDensity, m_solver->m_supportPoints);
-	const vector<distributed_vector>& numericVelocity = m_solver->getVelocity();
-	const distributed_vector& numericDensity = m_solver->getDensity();
+	m_solver->getAllAnalyticVelocities(m_solver->getTime(), ana_u,
+			m_solver->m_supportPoints);
+	m_solver->getAllAnalyticDensities(m_solver->getTime(), ana_rho,
+			m_solver->m_supportPoints);
 
 	//#  i      t         max |u_analytic|  max |error_u|  max |error_rho|   ||error_u||_2   ||error_rho||_2
-	m_solver->m_analyticDensity.add(-1.0, numericDensity);
-	m_maxDensityError = m_solver->m_analyticDensity.linfty_norm();
+	ana_rho.add(-1.0, num_rho);
+	m_maxDensityError = ana_rho.linfty_norm();
 
 	// calculate maximum analytic velocity norm
 	const dealii::IndexSet& locally_owned_dofs =
 			m_solver->getAdvectionOperator()->getLocallyOwnedDofs();
-	m_maxUAnalytic = Math::maxVelocityNorm(m_solver->m_analyticVelocity,
+	m_maxUAnalytic = Math::maxVelocityNorm(ana_u,
 			locally_owned_dofs);
-	m_l2UAnalytic = Math::velocity2Norm(m_solver->m_analyticVelocity,
+	m_l2UAnalytic = Math::velocity2Norm(ana_u,
 			locally_owned_dofs);
 
 	// substract numeric from analytic velocity
-	m_solver->m_analyticVelocity.at(0).add(-1.0, numericVelocity.at(0));
-	m_solver->m_analyticVelocity.at(1).add(-1.0, numericVelocity.at(1));
+	ana_u.at(0).add(-1.0, num_u.at(0));
+	ana_u.at(1).add(-1.0, num_u.at(1));
 	if (dim == 3) {
-		m_solver->m_analyticVelocity.at(2).add(-1.0, numericVelocity.at(2));
+		ana_u.at(2).add(-1.0, num_u.at(2));
 	}
 	// calculate squares
-	m_solver->m_analyticVelocity.at(0).scale(
-			m_solver->m_analyticVelocity.at(0));
-	m_solver->m_analyticVelocity.at(1).scale(
-			m_solver->m_analyticVelocity.at(1));
+	ana_u.at(0).scale(
+			ana_u.at(0));
+	ana_u.at(1).scale(
+			ana_u.at(1));
 	if (dim == 3) {
-		m_solver->m_analyticVelocity.at(2).scale(
-				m_solver->m_analyticVelocity.at(2));
+		ana_u.at(2).scale(
+				ana_u.at(2));
 	}
 	// calculate ||error (pointwise)||^2
-	m_solver->m_analyticVelocity.at(0).add(m_solver->m_analyticVelocity.at(1));
+	ana_u.at(0).add(ana_u.at(1));
 	if (dim == 3) {
-		m_solver->m_analyticVelocity.at(0).add(
-				m_solver->m_analyticVelocity.at(2));
+		ana_u.at(0).add(
+				ana_u.at(2));
 	}
 
 	// calculate || error (pointwise) ||
@@ -103,8 +116,8 @@ void ErrorStats<dim>::update() {
 	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
 	for (; it != end; it++) {
 		size_t i = *it;
-		m_solver->m_analyticVelocity.at(0)(i) = sqrt(
-				m_solver->m_analyticVelocity.at(0)(i));
+		ana_u.at(0)(i) = sqrt(
+				ana_u.at(0)(i));
 	}
 
 	//rho
@@ -114,7 +127,7 @@ void ErrorStats<dim>::update() {
 			m_solver->getProblemDescription()->getMesh()->n_active_cells());
 	dealii::VectorTools::integrate_difference(
 			m_solver->getAdvectionOperator()->getMapping(),
-			*m_solver->getAdvectionOperator()->getDoFHandler(), numericDensity,
+			*m_solver->getAdvectionOperator()->getDoFHandler(), m_solver->getDensity(),
 			f_rho, local_errors,
 			*m_solver->getAdvectionOperator()->getQuadrature(),
 			dealii::VectorTools::L2_norm);
@@ -133,7 +146,7 @@ void ErrorStats<dim>::update() {
 	dealii::VectorTools::integrate_difference(
 			m_solver->getAdvectionOperator()->getMapping(),
 			*m_solver->getAdvectionOperator()->getDoFHandler(),
-			numericVelocity.at(0), ana_ux, local_errors,
+			m_solver->getVelocity().at(0), ana_ux, local_errors,
 			*m_solver->getAdvectionOperator()->getQuadrature(),
 			dealii::VectorTools::L2_norm);
 	double one_component_local_error = local_errors.l2_norm();
@@ -144,7 +157,7 @@ void ErrorStats<dim>::update() {
 	dealii::VectorTools::integrate_difference(
 			m_solver->getAdvectionOperator()->getMapping(),
 			*m_solver->getAdvectionOperator()->getDoFHandler(),
-			numericVelocity.at(1), ana_uy, local_errors,
+			m_solver->getVelocity().at(1), ana_uy, local_errors,
 			*m_solver->getAdvectionOperator()->getQuadrature(),
 			dealii::VectorTools::L2_norm);
 	one_component_local_error = local_errors.l2_norm();
@@ -156,7 +169,7 @@ void ErrorStats<dim>::update() {
 		dealii::VectorTools::integrate_difference(
 				m_solver->getAdvectionOperator()->getMapping(),
 				*m_solver->getAdvectionOperator()->getDoFHandler(),
-				numericVelocity.at(2), ana_uz, local_errors,
+				m_solver->getVelocity().at(2), ana_uz, local_errors,
 				*m_solver->getAdvectionOperator()->getQuadrature(),
 				dealii::VectorTools::L2_norm);
 		one_component_local_error = local_errors.l2_norm();
@@ -167,12 +180,13 @@ void ErrorStats<dim>::update() {
 			dealii::Utilities::MPI::sum(total_local_error,
 			MPI_COMM_WORLD));
 
-	m_maxVelocityError = m_solver->m_analyticVelocity.at(0).linfty_norm();
+	m_maxVelocityError = ana_u.at(0).linfty_norm();
 	m_l2VelocityError = total_global_error;
 
-	// set marker value that indicates that this function has already been called
-	// for the present data
-	m_solver->m_analyticVelocity.at(1)(0) = 31415926;
+	CFDSolverUtilities::applyWriteableDensity(ana_rho,  m_solver->m_analyticDensity);
+	CFDSolverUtilities::applyWriteableVelocity(ana_u,  m_solver->m_analyticVelocity);
+
+
 } /*update*/
 template void ErrorStats<2>::update();
 template void ErrorStats<3>::update();

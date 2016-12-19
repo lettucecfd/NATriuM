@@ -108,10 +108,12 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Initialization_test) {
 	dealii::MappingQ1<2> m;
 	dealii::ConstraintMatrix c;
 	c.close();
-	dealii::VectorTools::project(m, dof, c, q2, DiffFunction2D(), u);
-
-	ContinuousBoundaryGradient<2> grad(dof, m,  q1, q1, q2 , boundary_ids);
-	grad.reinit();
+	// project does not work in parallel
+	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1) {
+		dealii::VectorTools::project(m, dof, c, q2, DiffFunction2D(), u);
+		ContinuousBoundaryGradient<2> grad(dof, m,  q1, q1, q2 , boundary_ids);
+		grad.reinit();
+	}
 
 	dof.clear();
 	pout << "done." << endl;
@@ -143,11 +145,14 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Functionality2D_test) {
 	dealii::MappingQ1<2> m;
 	dealii::ConstraintMatrix c;
 	c.close();
-	dealii::VectorTools::project(m, dof, c, q2, DiffFunction2D(), u);
+	// project does not work in parallel
+	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1) {
+		dealii::VectorTools::project(m, dof, c, q2, DiffFunction2D(), u);
+		ContinuousBoundaryGradient<2> grad(dof, m,  q1, q1, q2 , boundary_ids);
+		grad.reinit();
+	}
 
 
-	ContinuousBoundaryGradient<2> grad(dof, m,  q1, q1, q2 , boundary_ids);
-	grad.reinit();
 /*
 	cout << "Hallo " << endl;
 	grad.calculateGradients(u);

@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(SEDGMinLee_Construction_test) {
 	size_t refinementLevel = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	BOOST_CHECK_NO_THROW(
-			SEDGMinLee<2> streaming(periodic.getMesh(), periodic.getBoundaries(), fe_order, boost::make_shared<D2Q9>()));
+			SEDGMinLee<2> streaming(periodic, fe_order, boost::make_shared<D2Q9>()));
 
 	pout << "done." << endl;
 } /* SEDGMinLee_Construction_test */

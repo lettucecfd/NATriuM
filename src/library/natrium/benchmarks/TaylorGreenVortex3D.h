@@ -8,7 +8,6 @@
 #ifndef TAYLORGREENVORTEX3D_H_
 #define TAYLORGREENVORTEX3D_H_
 
-
 /**
  * @file TaylorGreenVortex3D.h
  * @short Description of a simple Periodic Flow (in cubic domain).
@@ -18,8 +17,6 @@
 
 #include "../problemdescription/ProblemDescription.h"
 #include "../utilities/BasicNames.h"
-
-
 
 namespace natrium {
 
@@ -41,7 +38,8 @@ public:
 		InitialVelocity(TaylorGreenVortex3D* flow) :
 				m_flow(flow) {
 		}
-		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+		virtual double value(const dealii::Point<3>& x,
+				const unsigned int component = 0) const;
 	};
 	class InitialDensity: public dealii::Function<3> {
 	private:
@@ -50,18 +48,27 @@ public:
 		InitialDensity(TaylorGreenVortex3D* flow) :
 				m_flow(flow) {
 		}
-		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+		virtual double value(const dealii::Point<3>& x,
+				const unsigned int component = 0) const;
 	};
 
+	/// constructor
+	TaylorGreenVortex3D(double viscosity, size_t refinementLevel, double cs =
+			0.57735026919, bool init_rho_analytically = false);
 
-  /// constructor
-  TaylorGreenVortex3D(double viscosity,
-      size_t refinementLevel,  double cs = 0.57735026919, bool init_rho_analytically = false);
+	/// destructor
+	virtual ~TaylorGreenVortex3D();
 
+	virtual void refine(Mesh<3>& mesh) {
+		// Refine grid
+		mesh.refine_global(m_refinementLevel);
+	}
+	virtual void transform(Mesh<3>&) {
 
-  /// destructor
-  virtual ~TaylorGreenVortex3D();
-
+	}
+	virtual bool isCartesian() {
+		return true;
+	}
 private:
 	/// speed of sound
 	double m_cs;
@@ -71,26 +78,19 @@ private:
 
 	size_t m_refinementLevel;
 
-  /**
-   * @short create triangulation for couette flow
-   * @return shared pointer to a triangulation instance
-   */
-  boost::shared_ptr<Mesh<3> > makeGrid();
+	/**
+	 * @short create triangulation for couette flow
+	 * @return shared pointer to a triangulation instance
+	 */
+	boost::shared_ptr<Mesh<3> > makeGrid();
 
-  /**
-   * @short create boundaries for couette flow
-   * @return shared pointer to a vector of boundaries
-   * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
-   */
-  boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
+	/**
+	 * @short create boundaries for couette flow
+	 * @return shared pointer to a vector of boundaries
+	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
+	 */
+	boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
-	virtual void refine(Mesh<3>& mesh){
-		// Refine grid
-		mesh.refine_global(m_refinementLevel);
-	}
-	virtual void transform(Mesh<3>& ){
-
-	}
 };
 
 } /* namespace natrium */

@@ -48,7 +48,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="contents">
-<h1>natrium::LinearFluxBoundary&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::LinearFluxBoundary" --><!-- doxytag: inherits="natrium::natrium::Boundary" -->
+<h1>natrium::LinearFluxBoundary&lt; dim &gt; Class Template Reference</h1><!-- doxytag: class="natrium::LinearFluxBoundary" --><!-- doxytag: inherits="natrium::Boundary" -->
 <p>Abstract class to describe Linear boundary conditions. The virtual function to be overriden is assembleBoundary. Moreover, the DoF couplings at the boundary have to be defined (see Documentation of the constructors).  
 <a href="#_details">More...</a></p>
 
@@ -59,7 +59,7 @@ Inheritance diagram for natrium::LinearFluxBoundary&lt; dim &gt;:</div>
  <div class="center">
   <img src="classnatrium_1_1LinearFluxBoundary.gif" usemap="#natrium::LinearFluxBoundary&lt; dim &gt;_map" alt=""/>
   <map id="natrium::LinearFluxBoundary&lt; dim &gt;_map" name="natrium::LinearFluxBoundary&lt; dim &gt;_map">
-<area href="classnatrium_1_1natrium_1_1Boundary.html" alt="natrium::natrium::Boundary&lt; dim &gt;" shape="rect" coords="0,0,247,24"/>
+<area href="classnatrium_1_1Boundary.html" alt="natrium::Boundary&lt; dim &gt;" shape="rect" coords="0,0,247,24"/>
 <area href="classnatrium_1_1LinearFluxBoundaryRhoU.html" alt="natrium::LinearFluxBoundaryRhoU&lt; dim &gt;" shape="rect" coords="0,112,247,136"/>
 </map>
  </div>
@@ -103,9 +103,14 @@ const boost::shared_ptr<br class="typebreak"/>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab631d4d94882bb2a29002498d2ddb34c"></a><!-- doxytag: member="natrium::LinearFluxBoundary::getBoundaryVelocity" ref="ab631d4d94882bb2a29002498d2ddb34c" args="() const " -->
 const boost::shared_ptr<br class="typebreak"/>
 &lt; dealii::Function&lt; dim &gt; &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>getBoundaryVelocity</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad13f51e17a0fb420ef8d6d090af73b34"></a><!-- doxytag: member="natrium::LinearFluxBoundary::isLinear" ref="ad13f51e17a0fb420ef8d6d090af73b34" args="() const " -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LinearFluxBoundary.html#ad13f51e17a0fb420ef8d6d090af73b34">isLinear</a> () const </td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">is the boundary a dirichlet boundary ? <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a7b89b4c2aadc88c8f6374b8877ad4f"></a><!-- doxytag: member="natrium::LinearFluxBoundary::isPeriodic" ref="a5a7b89b4c2aadc88c8f6374b8877ad4f" args="() const " -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LinearFluxBoundary.html#a5a7b89b4c2aadc88c8f6374b8877ad4f">isPeriodic</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">is the boundary a periodic boundary ? <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb35b886c5d0777d185eb1eb38f44e09"></a><!-- doxytag: member="natrium::LinearFluxBoundary::isLinearFluxBoundary" ref="acb35b886c5d0777d185eb1eb38f44e09" args="() const " -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classnatrium_1_1LinearFluxBoundary.html#acb35b886c5d0777d185eb1eb38f44e09">isLinearFluxBoundary</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">is the boundary a linear flux boundary as in SEDG-LBM <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a24be4f9709268e4753b895cf930aecec"></a><!-- doxytag: member="natrium::LinearFluxBoundary::isSLBoundary" ref="a24be4f9709268e4753b895cf930aecec" args="() const " -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>isSLBoundary</b> () const </td></tr>
 <tr><td colspan="2"><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43cb1a741dedeef2b4bb190b01276806"></a><!-- doxytag: member="natrium::LinearFluxBoundary::m_distributionCoupling" ref="a43cb1a741dedeef2b4bb190b01276806" args="" -->
 const <br class="typebreak"/>
@@ -363,7 +368,7 @@ template&lt;size_t dim&gt; </div>
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

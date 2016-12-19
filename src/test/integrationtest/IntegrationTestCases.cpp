@@ -23,6 +23,8 @@
 
 #include "natrium/utilities/CFDSolverUtilities.h"
 
+#include "natrium/dataprocessors/PseudoEntropicStabilizer.h"
+
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 #include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/CouetteFlow3D.h"
@@ -590,6 +592,7 @@ TestResult ConvergenceTestMovingWall() {
 
 		// Simulation (simulate 1 time unit from t=40.0)
 		BenchmarkCFDSolver<2> solver(configuration, benchmark);
+		//solver.appendDataProcessor(boost::make_shared<PseudoEntropicStabilizer<2> >(solver));
 		solver.getSolverStats()->update();
 		solver.run();
 		solver.getErrorStats()->update();
@@ -697,6 +700,7 @@ TestResult ConvergenceTestForcingSchemes2D() {
 						refinement_level, u_bulk, height, length, is_periodic);
 
 		CFDSolver<2> solver(configuration, poiseuille2D);
+		//solver.appendDataProcessor(boost::make_shared<PseudoEntropicStabilizer<2> >(solver));
 		solver.run();
 
 		result.quantity.push_back("Exact Difference");
@@ -782,7 +786,7 @@ TestResult ConvergenceTestForcingSchemes3D() {
 	/// setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setSwitchOutputOff(true);
+	//configuration->setSwitchOutputOff(true);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
@@ -825,6 +829,7 @@ TestResult ConvergenceTestForcingSchemes3D() {
 				break;
 			}
 			}
+			cout << s.str() << endl;
 
 			// make solver object and run simulation
 			boost::shared_ptr<ProblemDescription<3> > poiseuille3D =
@@ -870,7 +875,8 @@ TestResult ConvergenceTestSemiLagrangianPeriodic() {
 			"This test runs the Taylor Green vortex benchmark on a 8x8 grid with FE order 4 and CFL=0.4."
 					"It compares the simulated decay of kinetic energy with the analytic solution."
 					"The kinematic viscosity is nu=1 and the Reynolds number 2*PI."
-					"The simulated and reference E_kin are compared at t=1/(2 nu)";
+					"The simulated and reference E_kin are compared at t=1/(2 nu)."
+					"This test cases uses the pseudo-entropic stabilizer.";
 	result.time = clock();
 
 	// Initialization
@@ -893,12 +899,13 @@ TestResult ConvergenceTestSemiLagrangianPeriodic() {
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
 	configuration->setSimulationEndTime(1.0 / (2 * viscosity));
-	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(BGK_STANDARD);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	//configuration->setCollisionScheme(KBC_STANDARD);
 
 	// Simulation
 	BenchmarkCFDSolver<2> solver(configuration, benchmark);
+	solver.appendDataProcessor(boost::make_shared<PseudoEntropicStabilizer<2> >(solver));
 	solver.getSolverStats()->update();
 	double Ekin0 = solver.getSolverStats()->getKinE();
 	solver.run();
@@ -1006,7 +1013,7 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
 	TestResult result;
 	result.id = 13;
 	result.name =
-			"Convergence Test: SEDG linear advection (non-smooth problem)";
+			"Convergence Test: Semi-Lagrangian linear advection (non-smooth problem)";
 	result.details =
 			"This test runs the advection solver for a non-smooth periodic profile, which is "
 					"only twice continuously differentiable."
@@ -1020,7 +1027,6 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
 	for (size_t N = 2; N <= 3; N++) {
 		for (size_t orderOfFiniteElement = 4; orderOfFiniteElement <= 8;
 				orderOfFiniteElement += 4) {
-
 			double deltaX = 1. / (pow(2, N));
 			double deltaT = 0.4 * pow(0.5, N)
 					/ ((orderOfFiniteElement + 1) * (orderOfFiniteElement + 1));

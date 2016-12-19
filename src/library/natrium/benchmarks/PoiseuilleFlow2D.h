@@ -58,7 +58,9 @@ public:
 	virtual void transform(Mesh<2>& ){
 
 	}
-
+	virtual bool isCartesian(){
+		return true;
+	}
 private:
 
 	double m_uBulk;

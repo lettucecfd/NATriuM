@@ -73,11 +73,36 @@ void \hyperlink{namespacenatrium_1_1CFDSolverUtilities_a3719826384e1c13644bac005
 \item 14) FEHLBERG
 \item 15) CASH\_\-KARP. 
 \end{DoxyItemize}\item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_adef7eb36e19b4d7a1e785aac88932099}{
+std::string {\bfseries natrium::CFDSolverUtilities::get\_\-integrator\_\-name} (const TimeIntegratorName \&time\_\-integrator, const DealIntegratorName \&deal\_\-integrator)}
+\label{namespacenatrium_1_1CFDSolverUtilities_adef7eb36e19b4d7a1e785aac88932099}
+
+\item 
 \hypertarget{namespacenatrium_1_1CFDSolverUtilities_a6bbf2001ab29fe02fc3a11bcf1515614}{
 boost::shared\_\-ptr$<$ Stencil $>$ {\bfseries natrium::CFDSolverUtilities::make\_\-stencil} (size\_\-t d, size\_\-t q, size\_\-t scaling)}
 \label{namespacenatrium_1_1CFDSolverUtilities_a6bbf2001ab29fe02fc3a11bcf1515614}
 
-\end{DoxyCompactItemize}
+\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a23bc6f350850b22ee4f2a972693f8078}{
+std::vector$<$ distributed\_\-vector $>$ \& \hyperlink{namespacenatrium_1_1CFDSolverUtilities_a23bc6f350850b22ee4f2a972693f8078}{natrium::CFDSolverUtilities::getWriteableVelocity} (std::vector$<$ distributed\_\-vector $>$ \&writeable, const std::vector$<$ distributed\_\-vector $>$ \&member, const dealii::IndexSet \&locally\_\-owned)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a23bc6f350850b22ee4f2a972693f8078}
+
+\begin{DoxyCompactList}\small\item\em get a writeable copy of the velocity The background of this function is that the velocity is stored in a ghosted vector (see deal.II glossary entry on ghosted vector, when we use non-\/DG type discretizations). This is required, e.g. when integrating the velocity on a cell, as all locally relevant dofs have to be stored on the local processor. Ghosted vectors in deal.II can only be written to by assigning a non-\/ghosted vector. In order to write something into the velocity vectors, we have to copy the values into non-\/ghosted vectors with the present function, change then and assign the writeable vector to the member variable via applyWriteableVeloctiy()). \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_a00773fb48b0a6ddfbb86e52a30544ee2}{
+void \hyperlink{namespacenatrium_1_1CFDSolverUtilities_a00773fb48b0a6ddfbb86e52a30544ee2}{natrium::CFDSolverUtilities::applyWriteableVelocity} (const std::vector$<$ distributed\_\-vector $>$ \&writeable, std::vector$<$ distributed\_\-vector $>$ \&member)}
+\label{namespacenatrium_1_1CFDSolverUtilities_a00773fb48b0a6ddfbb86e52a30544ee2}
+
+\begin{DoxyCompactList}\small\item\em copy the changes in the writeable copy to the global velocity, see getWritableVelocity for a detailed explanation \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_ada769f000dcb288b9e7ea99f7464bc56}{
+distributed\_\-vector \& \hyperlink{namespacenatrium_1_1CFDSolverUtilities_ada769f000dcb288b9e7ea99f7464bc56}{natrium::CFDSolverUtilities::getWriteableDensity} (distributed\_\-vector \&writeable, const distributed\_\-vector \&member, const dealii::IndexSet \&locally\_\-owned)}
+\label{namespacenatrium_1_1CFDSolverUtilities_ada769f000dcb288b9e7ea99f7464bc56}
+
+\begin{DoxyCompactList}\small\item\em get a writeable copy of the velocity \item\end{DoxyCompactList}\item 
+\hypertarget{namespacenatrium_1_1CFDSolverUtilities_ad28ce02271a0e87e460d6fb5c6a80f13}{
+void \hyperlink{namespacenatrium_1_1CFDSolverUtilities_ad28ce02271a0e87e460d6fb5c6a80f13}{natrium::CFDSolverUtilities::applyWriteableDensity} (const distributed\_\-vector \&writeable, distributed\_\-vector \&member)}
+\label{namespacenatrium_1_1CFDSolverUtilities_ad28ce02271a0e87e460d6fb5c6a80f13}
+
+\begin{DoxyCompactList}\small\item\em copy the changes in the writeable copy to the global density, see getWritableVelocity for a detailed explanation \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

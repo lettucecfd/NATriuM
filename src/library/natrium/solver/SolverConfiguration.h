@@ -22,96 +22,9 @@
 #include "../utilities/BasicNames.h"
 #include "../utilities/Logging.h"
 #include "../utilities/NATriuMException.h"
+#include "../utilities/ConfigNames.h"
 
 namespace natrium {
-
-//////////////////////////////
-// DECLARE ALL SELECTIONS ////
-//////////////////////////////
-
-/**
- * @short Implemented streaming data types
- */
-enum AdvectionSchemeName {
-	SEDG, SEMI_LAGRANGIAN
-};
-
-/**
- * @short Implemented collision models
- */
-enum CollisionSchemeName {
-	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
-	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
-	BGK_STEADY_STATE, // Steady state preconditioning by Guo et al. (2004)
-	BGK_MULTIPHASE,
-	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
-	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
-	MRT_ENTROPIC, // Optimized Multiple Relaxation Time scheme by A.Kraemer (2016)
-	KBC_STANDARD, // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014)
-	KBC_CENTRAL, // // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014), central moments are used
-	BGK_MULTI_AM4, // Multistep BGK model according to Krämer (2016)
-	BGK_MULTI_BDF2
-};
-
-// StencilType defined in Stencil.h
-
-/**
- * @short Implemented time integrators
- * @note other refers to dealii integrators which are accessed through a wrapper class
- */
-enum TimeIntegratorName {
-	RUNGE_KUTTA_5STAGE, THETA_METHOD, EXPONENTIAL, OTHER
-};
-
-enum DealIntegratorName {
-	FORWARD_EULER,
-	RK_THIRD_ORDER,
-	RK_CLASSIC_FOURTH_ORDER,
-	BACKWARD_EULER,
-	IMPLICIT_MIDPOINT,
-	CRANK_NICOLSON,
-	SDIRK_TWO_STAGES,
-	HEUN_EULER,
-	BOGACKI_SHAMPINE,
-	DOPRI,
-	FEHLBERG,
-	CASH_KARP,
-	NONE
-};
-
-enum DealSolverName {
-	BICGSTAB, CG, FGMRES, GMRES, MINRES, QMRS, RELAXATION, RICHARDSON
-};
-
-/**
- * @short the numerical flux used to calculate the advection operator
- */
-enum FluxTypeName {
-	LAX_FRIEDRICHS, CENTRAL
-};
-
-/**
- * @short the initialization procedure for the distribution functions
- */
-enum InitializationSchemeName {
-	EQUILIBRIUM, // Distribute with equilibrium functions
-	ITERATIVE // Distribute with iterative procedure; enforces consistent initial conditions
-};
-
-enum PseudopotentialType {
-	SHAN_CHEN, SUKOP, CARNAHAN_STARLING
-};
-
-enum ForceType {
-	NO_FORCING, 	// No external force
-	SHIFTING_VELOCITY,  // Shifting velocity method
-	EXACT_DIFFERENCE,   // Exact difference method by Kuppershtokh
-	GUO
-};
-
-enum FilteringSchemeName {
-	EXPONENTIAL_FILTER, NEW_FILTER
-};
 
 //////////////////////////////
 // EXCEPTION CLASS        ////
@@ -301,6 +214,96 @@ public:
 			std::stringstream msg;
 			msg << "Unknown advection scheme; index. " << advectionScheme
 					<< " in enum AdvectionSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+	}
+
+	SupportPointsName getSupportPoints() {
+		enter_subsection("Advection");
+		string sup = get("Support points");
+		leave_subsection();
+		if ("Gauss-Lobatto" == sup) {
+			return GAUSS_LOBATTO_POINTS;
+		} else if ("Gauss-Lobatto-Chebyshev" == sup) {
+			return GAUSS_LOBATTO_CHEBYSHEV_POINTS;
+		} else if ("Gauss-Chebyshev" == sup) {
+			return GAUSS_CHEBYSHEV_POINTS;
+		} else if ("Equidistant" == sup) {
+			return EQUIDISTANT_POINTS;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown support points '" << sup
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of SupportPointsName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setSupportPoints(SupportPointsName sup) {
+		enter_subsection("Advection");
+		switch (sup) {
+		case GAUSS_LOBATTO_POINTS: {
+			set("Support points", "Gauss-Lobatto");
+			break;
+		}
+		case GAUSS_LOBATTO_CHEBYSHEV_POINTS: {
+			set("Support points", "Gauss-Lobatto-Chebyshev");
+			break;
+		}
+		case GAUSS_CHEBYSHEV_POINTS: {
+			set("Support points", "Gauss-Chebyshev");
+			break;
+		}
+		case EQUIDISTANT_POINTS: {
+			set("Support points", "Equidistant");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown support points ; index. " << sup
+					<< " in enum SupportPointsName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+	}
+
+	QuadratureName getQuadrature() {
+		enter_subsection("Advection");
+		string quad = get("Quadrature");
+		leave_subsection();
+		if ("Gauss-Lobatto" == quad) {
+			return QGAUSS_LOBATTO;
+		} else if ("Gauss" == quad) {
+			return QGAUSS;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown quadrature'" << quad
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of QuadratureName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setQuadrature(QuadratureName quad) {
+		enter_subsection("Advection");
+		switch (quad) {
+		case QGAUSS_LOBATTO: {
+			set("Quadrature", "Gauss-Lobatto");
+			break;
+		}
+		case QGAUSS: {
+			set("Quadrature", "Gauss");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown quadrature; index. " << quad
+					<< " in enum QuadratureName. The constructor of SolverConfiguration might not be up-to-date.";
 			leave_subsection();
 			throw ConfigurationException(msg.str());
 		}
@@ -2115,6 +2118,65 @@ public:
 	void setUserInteraction(bool userInteract) {
 		enter_subsection("Output");
 		set("User interaction?", userInteract);
+		leave_subsection();
+	}
+
+	RegularizationSchemeName getRegularizationScheme() {
+		enter_subsection("Filtering");
+		string regularization = get("Regularization");
+		leave_subsection();
+		if ("No Regularization" == regularization) {
+			return NO_REGULARIZATION;
+		} else if ("Pseudo-entropy maximization" == regularization) {
+			return PSEUDO_ENTROPY_MAXIMIZATION;
+
+		} else if ("Zero high-order moments" == regularization) {
+			return ZERO_HIGH_ORDER_MOMENTS;
+
+		} else if ("Entropy maximization" == regularization) {
+			return ENTROPY_MAXIMIZATION;
+		} else if ("Pseudo-entropy maximization with e" == regularization) {
+			return PSEUDO_ENTROPY_MAXIMIZATION_WITH_E;
+		}  else {
+			std::stringstream msg;
+			msg << "Unknown regularization scheme '" << regularization
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of RegularizationSchemeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setRegularizationScheme(RegularizationSchemeName regularization) {
+		enter_subsection("Filtering");
+		switch (regularization) {
+		case NO_FORCING:{
+			set("Regularization", "No Regularization");
+			break;
+		}
+		case PSEUDO_ENTROPY_MAXIMIZATION: {
+			set("Regularization", "Pseudo-entropy maximization");
+			break;
+		}
+		case ZERO_HIGH_ORDER_MOMENTS: {
+			set("Regularization", "Zero high-order moments");
+			break;
+		}
+		case ENTROPY_MAXIMIZATION: {
+			set("Regularization", "Entropy maximization");
+			break;
+		}
+		case PSEUDO_ENTROPY_MAXIMIZATION_WITH_E: {
+			set("Regularization", "Pseudo-entropy maximization with e");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown regularization scheme; index. " << regularization
+					<< " in enum RegularizationSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
 		leave_subsection();
 	}
 

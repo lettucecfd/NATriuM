@@ -19,6 +19,8 @@
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D3Q19.h"
 
+#include "natrium/advection/SemiLagrangianTools.h"
+
 #include "natrium/utilities/BasicNames.h"
 
 #include "natrium/benchmarks/PeriodicTestDomain3D.h"
@@ -36,7 +38,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian_Construction_test) {
 	size_t refinementLevel = 2;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	BOOST_CHECK_NO_THROW(
-			SemiLagrangian<2> streaming(periodic.getMesh(), periodic.getBoundaries(), fe_order, boost::make_shared<D2Q9>(), 0.001));
+			SemiLagrangian<2> streaming(periodic, fe_order, boost::make_shared<D2Q9>(), 0.001));
 
 	pout << "done." << endl;
 } /* SemiLagrangian_Construction_test */
@@ -48,7 +50,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_Neighborhood_test) {
 	size_t refinementLevel = 3;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<2> sl(periodic, fe_order,
 			boost::make_shared<D2Q9>(), 0.001);
 	sl.setupDoFs();
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
@@ -57,7 +59,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_Neighborhood_test) {
 	while (not cell->is_locally_owned()) {
 		cell++;
 	}
-	SemiLagrangian<2>::Neighborhood neighbors;
+	Neighborhood<2> neighbors;
 	sl.getNeighborhood(cell, neighbors);
 	dealii::Point<2> cell_center = cell->barycenter();
 	BOOST_CHECK_EQUAL(neighbors.size(), size_t(9));
@@ -105,7 +107,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_Neighborhood_test) {
 	size_t refinementLevel = 3;
 	PeriodicTestDomain3D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<3> sl(periodic, fe_order,
 			boost::make_shared<D3Q19>(), 0.001);
 	sl.setupDoFs();
 	typename dealii::DoFHandler<3>::active_cell_iterator cell =
@@ -114,7 +116,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_Neighborhood_test) {
 	while (not cell->is_locally_owned()) {
 		cell++;
 	}
-	SemiLagrangian<3>::Neighborhood neighbors;
+	Neighborhood<3> neighbors;
 	sl.getNeighborhood(cell, neighbors);
 	dealii::Point<3> cell_center = cell->barycenter();
 	BOOST_CHECK_EQUAL(neighbors.size(), size_t(27));
@@ -170,7 +172,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_FindPointInNeighborhood_test) {
 	size_t refinementLevel = 3;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<2> sl(periodic, fe_order,
 			boost::make_shared<D2Q9>(), 0.001);
 	sl.setupDoFs();
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
@@ -195,7 +197,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_FindPointInNeighborhood_test) {
 	size_t refinementLevel = 3;
 	PeriodicTestDomain3D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<3> sl(periodic, fe_order,
 			boost::make_shared<D3Q19>(), 0.001);
 	sl.setupDoFs();
 	typename dealii::DoFHandler<3>::active_cell_iterator cell =
@@ -224,7 +226,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_FaceCrossedFirst_test) {
 	size_t refinementLevel = 3;
 	PeriodicTestDomain2D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<2> sl(periodic, fe_order,
 			boost::make_shared<D2Q9>(), 0.001);
 	sl.setupDoFs();
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
@@ -308,7 +310,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_FaceCrossedFirst_test) {
 	size_t refinementLevel = 3;
 	PeriodicTestDomain3D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<3> sl(periodic, fe_order,
 			boost::make_shared<D3Q19>(), 0.001);
 	sl.setupDoFs();
 	typename dealii::DoFHandler<3>::active_cell_iterator cell =
@@ -429,7 +431,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_SparsityPattern_test) {
 
 	PeriodicTestDomain2D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<2> sl(periodic, fe_order,
 			boost::make_shared<D2Q9>(), 0.001);
 	sl.setupDoFs();
 
@@ -460,7 +462,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_SparsityPattern_test) {
 
 	PeriodicTestDomain3D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<3> sl(periodic, fe_order,
 			boost::make_shared<D3Q19>(), 0.001);
 	sl.setupDoFs();
 
@@ -491,7 +493,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_ConstantStreaming_test) {
 
 	PeriodicTestDomain2D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<2> sl(periodic, fe_order,
 			boost::make_shared<D2Q9>(), 0.01);
 	sl.setupDoFs();
 	sl.reassemble();
@@ -513,6 +515,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_ConstantStreaming_test) {
 		}
 	}
 
+	//sl.getSystemMatrix().print(cout);
 	sl.getSystemMatrix().vmult(result, ones);
 	result -= ones;
 	BOOST_CHECK_LE(result.norm_sqr(), 1e-6);
@@ -529,7 +532,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_ConstantStreaming_test) {
 
 	PeriodicTestDomain3D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<3> sl(periodic, fe_order,
 			boost::make_shared<D3Q19>(), 0.01);
 	sl.setupDoFs();
 	sl.reassemble();
@@ -567,7 +570,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_VectorReference_test) {
 
 	PeriodicTestDomain3D periodic(refinementLevel);
 	periodic.refineAndTransform();
-	SemiLagrangian<3> sl(periodic.getMesh(), periodic.getBoundaries(), fe_order,
+	SemiLagrangian<3> sl(periodic, fe_order,
 			boost::make_shared<D3Q19>(), 0.01);
 	sl.setupDoFs();
 	sl.reassemble();

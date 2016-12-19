@@ -36,33 +36,39 @@ using namespace dealii;
 namespace natrium {
 
 template<size_t dim>
-SEDGMinLee<dim>::SEDGMinLee(boost::shared_ptr<Mesh<dim> > triangulation,
-		boost::shared_ptr<BoundaryCollection<dim> > boundaries,
-		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> Stencil,
-		bool useCentralFlux) :
-		m_mesh(triangulation), m_boundaries(boundaries), m_mapping(
-				orderOfFiniteElement), m_stencil(Stencil), m_orderOfFiniteElement(
-				orderOfFiniteElement), m_useCentralFlux(useCentralFlux) {
-	// assertions
-	assert(orderOfFiniteElement >= 1);
-	assert(Stencil->getD() == dim);
-
-	// make dof handler
-	m_quadrature = boost::make_shared<QGaussLobatto<dim> >(
-			orderOfFiniteElement + 1);
-	m_faceQuadrature = boost::make_shared<QGaussLobatto<dim - 1> >(
-			orderOfFiniteElement + 1);
-	m_fe = boost::make_shared<FE_DGQArbitraryNodes<dim> >(
-			QGaussLobatto<1>(orderOfFiniteElement + 1));
-	m_doFHandler = boost::make_shared<DoFHandler<dim> >(*triangulation);
+SEDGMinLee<dim>::SEDGMinLee(ProblemDescription<dim>& problem,
+		size_t orderOfFiniteElement, QuadratureName quad_name,
+		SupportPointsName points_name, boost::shared_ptr<Stencil> stencil, bool use_central_flux,
+		double delta_t) :
+		AdvectionOperator<dim>(problem, orderOfFiniteElement, quad_name,
+				points_name, stencil, delta_t, true), m_useCentralFlux(
+				use_central_flux) {
+	if (use_central_flux){
+		LOG(WARNING) << "The use of central fluxes is highly discouraged. They "
+				"have not proven too good and have not been used or tested for a long time." << endl;
+	}
+	if ((quad_name != QGAUSS_LOBATTO) or (points_name != GAUSS_LOBATTO_POINTS) ){
+		throw AdvectionSolverException("SEDGMinLee can only be used with Gauss-Lobatto points"
+				"and Gauss-Lobatto quadrature. Everything else would probably be way too costly and is thus not"
+				"implemented in NATriuM.");
+	}
 
 } /* SEDGMinLee<dim>::SEDGMinLee */
+
+template<size_t dim>
+SEDGMinLee<dim>::SEDGMinLee(ProblemDescription<dim>& problem,
+		size_t orderOfFiniteElement, boost::shared_ptr<Stencil> stencil,
+		double delta_t) :
+		SEDGMinLee(problem, orderOfFiniteElement, QGAUSS_LOBATTO,
+				GAUSS_LOBATTO_POINTS, stencil, delta_t, false) {
+
+}
 
 template<size_t dim>
 void SEDGMinLee<dim>::setupDoFs() {
 
 	// distribute degrees of freedom over mesh
-	m_doFHandler->distribute_dofs(*m_fe);
+	Base::distributeDoFs();
 
 	updateSparsityPattern();
 
@@ -72,9 +78,10 @@ void SEDGMinLee<dim>::setupDoFs() {
 	m_q_index_to_facedof = map_q_index_to_facedofs();
 
 	// set size for the system vector	
-	m_systemVector.reinit(m_stencil->getQ() - 1);
-	for (size_t i = 0; i < m_stencil->getQ() - 1; i++) {
-		m_systemVector.block(i).reinit(m_locallyOwnedDofs, MPI_COMM_WORLD);
+	m_systemVector.reinit(Base::m_stencil->getQ() - 1);
+	for (size_t i = 0; i < Base::m_stencil->getQ() - 1; i++) {
+		m_systemVector.block(i).reinit(Base::getLocallyOwnedDofs(),
+		MPI_COMM_WORLD);
 		m_systemVector.collect_sizes();
 	}
 
@@ -84,83 +91,92 @@ template<size_t dim>
 void SEDGMinLee<dim>::reassemble() {
 // TODO: if Mesh changed: reinit dof-handler and sparsity pattern in some way
 
-	// make sure that sparsity structure is not empty
-	assert (m_systemMatrix.n() != 0);
-	assert (m_systemMatrix.m() != 0);
+// make sure that sparsity structure is not empty
+	distributed_sparse_block_matrix& system_matrix = Base::m_systemMatrix;
+	assert(system_matrix.n() != 0);
+	assert(system_matrix.m() != 0);
 /////////////////////////////////
 // Initialize Finite Element ////
 /////////////////////////////////
 // Define update flags (which values have to be known at each cell, face, neighbor face)
-	const dealii::UpdateFlags cellUpdateFlags = update_values | update_gradients
-			| update_quadrature_points | update_JxW_values | update_inverse_jacobians;
-	const dealii::UpdateFlags faceUpdateFlags = update_values
+	const dealii::UpdateFlags cell_flags = update_values | update_gradients
+			| update_quadrature_points | update_JxW_values
+			| update_inverse_jacobians;
+	const dealii::UpdateFlags face_flags = update_values
 			| update_quadrature_points | update_JxW_values
 			| update_normal_vectors;
-	const dealii::UpdateFlags neighborFaceUpdateFlags = update_values
+	const dealii::UpdateFlags neighbor_face_flags = update_values
 			| update_JxW_values | update_normal_vectors;
 // Finite Element
-	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
-			cellUpdateFlags);
-	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
-			faceUpdateFlags);
-	dealii::FESubfaceValues<dim> feSubfaceValues(m_mapping, *m_fe,
-			*m_faceQuadrature, faceUpdateFlags);
-	dealii::FEFaceValues<dim> feNeighborFaceValues(m_mapping, *m_fe,
-			*m_faceQuadrature, neighborFaceUpdateFlags);
-
-	const size_t dofs_per_cell = m_fe->dofs_per_cell;
+	boost::shared_ptr<dealii::FEValues<dim> > fe_cell_ptr = Base::getFEValues(
+			cell_flags);
+	dealii::FEValues<dim>& fe_cell_values = *fe_cell_ptr;
+	boost::shared_ptr<dealii::FEFaceValues<dim> > fe_face_ptr =
+			Base::getFEFaceValues(face_flags);
+	dealii::FEFaceValues<dim> & fe_face_values = *fe_face_ptr;
+	boost::shared_ptr<dealii::FEFaceValues<dim> > fe_neighbor_face_ptr =
+			Base::getFEFaceValues(neighbor_face_flags);
+	dealii::FEFaceValues<dim> & fe_neighbor_face_values = *fe_neighbor_face_ptr;
+	dealii::FESubfaceValues<dim> fe_subface_values(*Base::m_mapping,
+			*Base::m_fe, *Base::m_faceQuadrature, face_flags);
+	const size_t dofs_per_cell = Base::m_fe->dofs_per_cell;
+	const size_t Q = Base::getStencil()->getQ();
 
 // Initialize matrices
-	vector<double> localMassMatrix(dofs_per_cell);
-	vector<double> inverseLocalMassMatrix(dofs_per_cell);
-	vector<dealii::FullMatrix<double> > localDerivativeMatrices;
+	vector<double> local_mass_matrix(dofs_per_cell);
+	vector<double> inverse_local_mass_matrix(dofs_per_cell);
+	vector<dealii::FullMatrix<double> > local_stiffness_matrix;
 	for (size_t i = 0; i < dim; i++) {
 		dealii::FullMatrix<double> D_i(dofs_per_cell, dofs_per_cell);
-		localDerivativeMatrices.push_back(D_i);
+		local_stiffness_matrix.push_back(D_i);
 	}
-	dealii::FullMatrix<double> localFaceMatrix(dofs_per_cell, dofs_per_cell);
-	dealii::FullMatrix<double> localSystemMatrix(dofs_per_cell, dofs_per_cell);
-	std::vector<dealii::types::global_dof_index> localDoFIndices(dofs_per_cell);
+	dealii::FullMatrix<double> local_face_matrix(dofs_per_cell, dofs_per_cell);
+	dealii::FullMatrix<double> local_system_matrix(dofs_per_cell,
+			dofs_per_cell);
+	std::vector<dealii::types::global_dof_index> local_doF_indices(
+			dofs_per_cell);
 
 ///////////////
 // MAIN LOOP //
 ///////////////
 	typename DoFHandler<dim>::active_cell_iterator cell =
-			m_doFHandler->begin_active(), endc = m_doFHandler->end();
+			Base::m_doFHandler->begin_active(), endc =
+			Base::m_doFHandler->end();
 	for (; cell != endc; ++cell) {
 		if (cell->is_locally_owned()) {
 			// calculate the fe values for the cell
-			feCellValues.reinit(cell);
+			fe_cell_values.reinit(cell);
 
 			// get global degrees of freedom
-			cell->get_dof_indices(localDoFIndices);
+			cell->get_dof_indices(local_doF_indices);
 
 			// assemble local cell matrices
-			assembleLocalMassMatrix(feCellValues, dofs_per_cell,
-					localMassMatrix);
-			assembleLocalDerivativeMatrices(feCellValues, dofs_per_cell,
-					localDerivativeMatrices);
+			assembleLocalMassMatrix(fe_cell_values, dofs_per_cell,
+					local_mass_matrix);
+			assembleLocalDerivativeMatrices(fe_cell_values, dofs_per_cell,
+					local_stiffness_matrix);
 
 			// invert local mass matrix
 			for (size_t i = 0; i < dofs_per_cell; i++) {
-				inverseLocalMassMatrix.at(i) = 1. / localMassMatrix.at(i);
+				inverse_local_mass_matrix.at(i) = 1. / local_mass_matrix.at(i);
 			}
 
 			// assemble faces and put together
-			for (size_t alpha = 1; alpha < m_stencil->getQ(); alpha++) {
+			for (size_t alpha = 1; alpha < Q; alpha++) {
 // calculate local diagonal block (cell) matrix -D
 				calculateAndDistributeLocalStiffnessMatrix(alpha,
-						localDerivativeMatrices, localSystemMatrix,
-						inverseLocalMassMatrix, localDoFIndices, dofs_per_cell);
+						local_stiffness_matrix, local_system_matrix,
+						inverse_local_mass_matrix, local_doF_indices,
+						dofs_per_cell);
 // calculate face contributions  R
 				assembleAndDistributeLocalFaceMatrices(alpha, cell,
-						feFaceValues, feSubfaceValues, feNeighborFaceValues,
-						inverseLocalMassMatrix);
+						fe_face_values, fe_subface_values,
+						fe_neighbor_face_values, inverse_local_mass_matrix);
 			}
 		}
 	}
 	m_systemVector.compress(dealii::VectorOperation::add);
-	m_systemMatrix.compress(dealii::VectorOperation::add);
+	Base::m_systemMatrix.compress(dealii::VectorOperation::add);
 
 //#endif
 
@@ -173,35 +189,33 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	// Setup sparsity pattern (completely manually):
 	///////////////////////////////////////////////////////
 	// allocate sizes
-	size_t n_blocks = m_stencil->getQ() - 1;
-	const dealii::UpdateFlags faceUpdateFlags = update_values
+	size_t n_blocks = Base::m_stencil->getQ() - 1;
+	const dealii::UpdateFlags face_flags = update_values
 			| update_quadrature_points;
-	dealii::FEFaceValues<dim>* feFaceValues = new FEFaceValues<dim>(m_mapping,
-			*m_fe, *m_faceQuadrature, faceUpdateFlags);
+	dealii::FEFaceValues<dim>* fe_face_values = new FEFaceValues<dim>(
+			*Base::m_mapping, *Base::m_fe, *Base::m_faceQuadrature, face_flags);
 
 	// create cell maps for periodic boundary
 	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
-			m_boundaries->getPeriodicBoundaries().begin();
-			periodic != m_boundaries->getPeriodicBoundaries().end();
+			Base::getBoundaries()->getPeriodicBoundaries().begin();
+			periodic != Base::getBoundaries()->getPeriodicBoundaries().end();
 			periodic++) {
 		// Periodic boundaries have two boundary indicators; (and are stored twice in the map)
 		// skip double execution of addToSparsityPattern
 		if (periodic->first == periodic->second->getBoundaryIndicator1()) {
-			periodic->second->createCellMap(*m_doFHandler);
+			periodic->second->createCellMap(*Base::m_doFHandler);
 		}
 	}
 
-	//get locally owned and locally relevant dofs
-	m_locallyOwnedDofs = m_doFHandler->locally_owned_dofs();
-	DoFTools::extract_locally_relevant_dofs(*m_doFHandler,
-			m_locallyRelevantDofs);
-
-	TrilinosWrappers::SparsityPattern cSparseDiag(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
-	TrilinosWrappers::SparsityPattern cSparseOpposite(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
-	TrilinosWrappers::SparsityPattern cSparseNotOpposite(m_locallyOwnedDofs,
-			m_locallyOwnedDofs, m_locallyRelevantDofs, MPI_COMM_WORLD);
+	TrilinosWrappers::SparsityPattern cSparseDiag(Base::getLocallyOwnedDofs(),
+			Base::getLocallyOwnedDofs(), Base::getLocallyRelevantDofs(),
+			MPI_COMM_WORLD);
+	TrilinosWrappers::SparsityPattern cSparseOpposite(
+			Base::getLocallyOwnedDofs(), Base::getLocallyOwnedDofs(),
+			Base::getLocallyRelevantDofs(), MPI_COMM_WORLD);
+	TrilinosWrappers::SparsityPattern cSparseNotOpposite(
+			Base::getLocallyOwnedDofs(), Base::getLocallyOwnedDofs(),
+			Base::getLocallyRelevantDofs(), MPI_COMM_WORLD);
 	/*DynamicSparsityPattern cSparseDiag(m_locallyRelevantDofs);
 	 DynamicSparsityPattern cSparseOpposite(m_locallyRelevantDofs);
 	 DynamicSparsityPattern cSparseEmpty(m_locallyRelevantDofs);*/
@@ -218,24 +232,25 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 	// make diagonal block 0,0 which can be copied to the other ones
 	ConstraintMatrix constraints;
-	DealIIExtensions::make_sparser_flux_sparsity_pattern(*m_doFHandler,
-			cSparseDiag, constraints, *m_boundaries, feFaceValues, true,
-			dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
-	delete feFaceValues;
+	DealIIExtensions::make_sparser_flux_sparsity_pattern(*Base::m_doFHandler,
+			cSparseDiag, constraints, *Base::getBoundaries(), fe_face_values,
+			true, dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
+	delete fe_face_values;
 	/*DoFTools::make_flux_sparsity_pattern(*m_doFHandler,
 	 cSparse.block(0, 0));*/
 
 	// add entries for non-periodic boundaries
 	for (typename BoundaryCollection<dim>::ConstLinearIterator dirichlet_iterator =
-			m_boundaries->getLinearFluxBoundaries().begin();
-			dirichlet_iterator != m_boundaries->getLinearFluxBoundaries().end();
+			Base::getBoundaries()->getLinearFluxBoundaries().begin();
+			dirichlet_iterator
+					!= Base::getBoundaries()->getLinearFluxBoundaries().end();
 			dirichlet_iterator++) {
 		dirichlet_iterator->second->addToSparsityPattern(cSparseOpposite,
-				*m_doFHandler);
+				*Base::m_doFHandler);
 		if (BoundaryTools::COUPLE_ALL_DISTRIBUTIONS
 				== dirichlet_iterator->second->m_distributionCoupling) {
 			dirichlet_iterator->second->addToSparsityPattern(cSparseNotOpposite,
-					*m_doFHandler);
+					*Base::m_doFHandler);
 		}
 	}
 	//reinitialize matrices
@@ -253,15 +268,15 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	 m_doFHandler->n_locally_owned_dofs_per_processor(), MPI_COMM_WORLD,
 	 m_locallyRelevantDofs);
 	 */
-	m_systemMatrix.reinit(n_blocks, n_blocks);
-	size_t first_opposite = m_stencil->getIndexOfOppositeDirection(1) - 1;
-	size_t some_nonopposite = m_stencil->getIndexOfOppositeDirection(1);
+	Base::m_systemMatrix.reinit(n_blocks, n_blocks);
+	size_t first_opposite = Base::m_stencil->getIndexOfOppositeDirection(1) - 1;
+	size_t some_nonopposite = Base::m_stencil->getIndexOfOppositeDirection(1);
 	assert(some_nonopposite <= n_blocks);
 	assert(some_nonopposite != first_opposite);
 	assert(some_nonopposite != 1);
-	m_systemMatrix.block(0, 0).reinit(cSparseDiag);
-	m_systemMatrix.block(0, some_nonopposite).reinit(cSparseNotOpposite);
-	m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
+	Base::m_systemMatrix.block(0, 0).reinit(cSparseDiag);
+	Base::m_systemMatrix.block(0, some_nonopposite).reinit(cSparseNotOpposite);
+	Base::m_systemMatrix.block(0, first_opposite).reinit(cSparseOpposite);
 
 	for (size_t I = 0; I < n_blocks; I++) {
 		for (size_t J = 0; J < n_blocks; J++) {
@@ -275,58 +290,59 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 				continue;
 			}
 			if (I == J) {
-				m_systemMatrix.block(I, J).reinit(m_systemMatrix.block(0, 0));
+				Base::m_systemMatrix.block(I, J).reinit(
+						Base::m_systemMatrix.block(0, 0));
 				continue;
 			}
-			if (I == m_stencil->getIndexOfOppositeDirection(J + 1) - 1) {
-				m_systemMatrix.block(I, J).reinit(
-						m_systemMatrix.block(0, first_opposite));
+			if (I == Base::m_stencil->getIndexOfOppositeDirection(J + 1) - 1) {
+				Base::m_systemMatrix.block(I, J).reinit(
+						Base::m_systemMatrix.block(0, first_opposite));
 				continue;
 			} else {
-				m_systemMatrix.block(I, J).reinit(
-						m_systemMatrix.block(0, some_nonopposite));
+				Base::m_systemMatrix.block(I, J).reinit(
+						Base::m_systemMatrix.block(0, some_nonopposite));
 			}
 
 		}
 	}
-	m_systemMatrix.collect_sizes();
+	Base::m_systemMatrix.collect_sizes();
 
 }
 /* updateSparsityPattern */
 
 template<size_t dim>
 void SEDGMinLee<dim>::assembleLocalMassMatrix(
-		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
-		vector<double> &massMatrix) {
+		const dealii::FEValues<dim>& fe_values, size_t dofs_per_cell,
+		vector<double> &mass_matrix) {
 // initialize with zeros
-	std::fill(massMatrix.begin(), massMatrix.end(), 0.0);
+	std::fill(mass_matrix.begin(), mass_matrix.end(), 0.0);
 
 // fill diagonal "matrix"
 	for (size_t i = 0; i < dofs_per_cell; i++) {
 		size_t q_point = m_celldof_to_q_index.at(i);
-		massMatrix.at(i) += feValues.shape_value(i, q_point)
-				* feValues.shape_value(i, q_point) * feValues.JxW(q_point);
+		mass_matrix.at(i) += fe_values.shape_value(i, q_point)
+				* fe_values.shape_value(i, q_point) * fe_values.JxW(q_point);
 	}
 
 } /*assembleLocalMassMatrix*/
 
 template<size_t dim>
 void SEDGMinLee<dim>::assembleLocalDerivativeMatrices(
-		const dealii::FEValues<dim>& feValues, size_t dofs_per_cell,
-		vector<dealii::FullMatrix<double> >&derivativeMatrix) const {
+		const dealii::FEValues<dim>& fe_values, size_t dofs_per_cell,
+		vector<dealii::FullMatrix<double> >&derivative_matrix) const {
 	for (size_t i = 0; i < dim; i++) {
-		derivativeMatrix.at(i) = 0;
+		derivative_matrix.at(i) = 0;
 	}
 	for (size_t i = 0; i < dofs_per_cell; i++) {
 		for (size_t j = 0; j < dofs_per_cell; j++) {
 			// the shape value is zero for all q, except i<->q
 			size_t q_point = m_celldof_to_q_index.at(i);
 			Tensor<1, dim> integrandAtQ;
-			integrandAtQ = feValues.shape_grad(j, q_point);
-			integrandAtQ *= (feValues.shape_value(i, q_point)
-					* feValues.JxW(q_point));
+			integrandAtQ = fe_values.shape_grad(j, q_point);
+			integrandAtQ *= (fe_values.shape_value(i, q_point)
+					* fe_values.JxW(q_point));
 			for (size_t k = 0; k < dim; k++) {
-				derivativeMatrix.at(k)(i, j) += integrandAtQ[k];
+				derivative_matrix.at(k)(i, j) += integrandAtQ[k];
 			}
 
 		}
@@ -337,37 +353,39 @@ void SEDGMinLee<dim>::assembleLocalDerivativeMatrices(
 template<size_t dim>
 void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
-		dealii::FEFaceValues<dim>& feFaceValues,
-		dealii::FESubfaceValues<dim>& feSubfaceValues,
-		dealii::FEFaceValues<dim>& feNeighborFaceValues,
-		const vector<double>& inverseLocalMassMatrix) {
+		dealii::FEFaceValues<dim>& fe_face_values,
+		dealii::FESubfaceValues<dim>& fe_subface_values,
+		dealii::FEFaceValues<dim>& fe_neighbor_face_values,
+		const vector<double>& inverse_local_mass_matrix) {
 
 // loop over all faces
 	for (size_t j = 0; j < dealii::GeometryInfo<dim>::faces_per_cell; j++) {
 		//Faces at boundary
 		if (cell->face(j)->at_boundary()) {
-			size_t boundaryIndicator = cell->face(j)->boundary_id();
-			if (m_boundaries->isPeriodic(boundaryIndicator)) {
+			size_t boundary_id = cell->face(j)->boundary_id();
+			if (Base::getBoundaries()->isPeriodic(boundary_id)) {
 				// Apply periodic boundaries
 				const boost::shared_ptr<PeriodicBoundary<dim> >& periodicBoundary =
-						m_boundaries->getPeriodicBoundary(boundaryIndicator);
+						Base::getBoundaries()->getPeriodicBoundary(boundary_id);
 				assert(periodicBoundary->isFaceInBoundary(cell, j));
 				typename dealii::DoFHandler<dim>::cell_iterator neighborCell;
 				size_t opposite_face =
 						periodicBoundary->getOppositeCellAtPeriodicBoundary(
 								cell, neighborCell);
 				assembleAndDistributeInternalFace(alpha, cell, j, neighborCell,
-						opposite_face, feFaceValues, feSubfaceValues,
-						feNeighborFaceValues, inverseLocalMassMatrix);
+						opposite_face, fe_face_values, fe_subface_values,
+						fe_neighbor_face_values, inverse_local_mass_matrix);
 			} else /* if is not periodic */{
 				// Apply other boundaries
-				if ((m_boundaries->getBoundary(boundaryIndicator)->isLinearFluxBoundary())) {
+				if ((Base::getBoundaries()->getBoundary(boundary_id)->isLinearFluxBoundary())) {
 					const boost::shared_ptr<LinearFluxBoundary<dim> >& LinearBoundary =
-							m_boundaries->getLinearFluxBoundary(boundaryIndicator);
+							Base::getBoundaries()->getLinearFluxBoundary(
+									boundary_id);
 					LinearBoundary->assembleBoundary(alpha, cell, j,
-							feFaceValues, *m_stencil,
-							m_q_index_to_facedof.at(j), inverseLocalMassMatrix,
-							m_systemMatrix, m_systemVector, m_useCentralFlux);
+							fe_face_values, *Base::m_stencil,
+							m_q_index_to_facedof.at(j),
+							inverse_local_mass_matrix, Base::m_systemMatrix,
+							m_systemVector, m_useCentralFlux);
 				}
 			} /* endif isPeriodic */
 
@@ -376,8 +394,9 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 			typename DoFHandler<dim>::cell_iterator neighbor = cell->neighbor(
 					j);
 			assembleAndDistributeInternalFace(alpha, cell, j, neighbor,
-					cell->neighbor_face_no(j), feFaceValues, feSubfaceValues,
-					feNeighborFaceValues, inverseLocalMassMatrix);
+					cell->neighbor_face_no(j), fe_face_values,
+					fe_subface_values, fe_neighbor_face_values,
+					inverse_local_mass_matrix);
 		} /* endif is face at boundary*/
 
 	}
@@ -386,64 +405,64 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 
 template<> void SEDGMinLee<2>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
-		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
-		dealii::FullMatrix<double> &systemMatrix,
-		const vector<double>& inverseLocalMassMatrix,
-		const std::vector<dealii::types::global_dof_index>& globalDoFs,
-		size_t dofsPerCell) {
+		const vector<dealii::FullMatrix<double> >& derivative_matrices,
+		dealii::FullMatrix<double> &system_matrix,
+		const vector<double>& inverse_local_mass_matrix,
+		const std::vector<dealii::types::global_dof_index>& global_dofs,
+		size_t dofs_per_cell) {
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
 // calculate -D = -(e_x * D_x  +  e_y * D_y)
-	systemMatrix = derivativeMatrices.at(0);
-	systemMatrix *= (-(m_stencil->getDirection(alpha)[0]));
-	systemMatrix.add(-(m_stencil->getDirection(alpha)[1]),
-			derivativeMatrices.at(1));
+	system_matrix = derivative_matrices.at(0);
+	system_matrix *= (-(Base::m_stencil->getDirection(alpha)[0]));
+	system_matrix.add(-(Base::m_stencil->getDirection(alpha)[1]),
+			derivative_matrices.at(1));
 // distribute to global system matrix
 	// avoid to call block() too often
-	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1,
+	distributed_sparse_matrix& block = Base::m_systemMatrix.block(alpha - 1,
 			alpha - 1);
-	for (unsigned int j = 0; j < dofsPerCell; j++)
-		for (unsigned int k = 0; k < dofsPerCell; k++) {
-			block.add(globalDoFs[j], globalDoFs[k],
-					systemMatrix(j, k) * inverseLocalMassMatrix.at(j));
+	for (unsigned int j = 0; j < dofs_per_cell; j++)
+		for (unsigned int k = 0; k < dofs_per_cell; k++) {
+			block.add(global_dofs[j], global_dofs[k],
+					system_matrix(j, k) * inverse_local_mass_matrix.at(j));
 		}
 }
 template<> void SEDGMinLee<3>::calculateAndDistributeLocalStiffnessMatrix(
 		size_t alpha,
-		const vector<dealii::FullMatrix<double> >& derivativeMatrices,
-		dealii::FullMatrix<double> &systemMatrix,
-		const vector<double>& inverseLocalMassMatrix,
-		const std::vector<dealii::types::global_dof_index>& globalDoFs,
-		size_t dofsPerCell) {
+		const vector<dealii::FullMatrix<double> >& derivative_matrices,
+		dealii::FullMatrix<double> &system_matrix,
+		const vector<double>& inverse_local_mass_matrix,
+		const std::vector<dealii::types::global_dof_index>& global_dofs,
+		size_t dofs_per_cell) {
 // TODO efficient implementation (testing if e_ix, e_iy = 0, -1 or 1)
 // calculate -D = -(e_x * D_x  +  e_y * D_y)
-	systemMatrix = derivativeMatrices.at(0);
-	systemMatrix *= (-m_stencil->getDirection(alpha)[0]);
-	systemMatrix.add(-m_stencil->getDirection(alpha)[1],
-			derivativeMatrices.at(1), -m_stencil->getDirection(alpha)[2],
-			derivativeMatrices.at(2));
+	system_matrix = derivative_matrices.at(0);
+	system_matrix *= (-Base::m_stencil->getDirection(alpha)[0]);
+	system_matrix.add(-Base::m_stencil->getDirection(alpha)[1],
+			derivative_matrices.at(1), -Base::m_stencil->getDirection(alpha)[2],
+			derivative_matrices.at(2));
 // distribute to global system matrix
-	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1,
+	distributed_sparse_matrix& block = Base::m_systemMatrix.block(alpha - 1,
 			alpha - 1);
-	for (unsigned int j = 0; j < dofsPerCell; j++)
-		for (unsigned int k = 0; k < dofsPerCell; k++)
-			block.add(globalDoFs[j], globalDoFs[k],
-					systemMatrix(j, k) * inverseLocalMassMatrix.at(j));
+	for (unsigned int j = 0; j < dofs_per_cell; j++)
+		for (unsigned int k = 0; k < dofs_per_cell; k++)
+			block.add(global_dofs[j], global_dofs[k],
+					system_matrix(j, k) * inverse_local_mass_matrix.at(j));
 }
 
 template<size_t dim>
 void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
-		size_t faceNumber,
-		typename dealii::DoFHandler<dim>::cell_iterator& neighborCell,
-		size_t neighborFaceNumber, dealii::FEFaceValues<dim>& feFaceValues,
-		dealii::FESubfaceValues<dim>& ,
-		dealii::FEFaceValues<dim>& feNeighborFaceValues,
-		const vector<double>& inverseLocalMassMatrix) {
+		size_t face_number,
+		typename dealii::DoFHandler<dim>::cell_iterator& neighbor_cell,
+		size_t neighbor_face_number, dealii::FEFaceValues<dim>& fe_face_values,
+		dealii::FESubfaceValues<dim>&,
+		dealii::FEFaceValues<dim>& fe_neighbor_face_values,
+		const vector<double>& inverse_local_mass_matrix) {
 // get the required FE Values for the local cell
-	feFaceValues.reinit(cell, faceNumber);
-	const vector<double> &JxW = feFaceValues.get_JxW_values();
+	fe_face_values.reinit(cell, face_number);
+	const vector<double> &JxW = fe_face_values.get_JxW_values();
 	const vector<Tensor<1, dim> > &normals =
-			feFaceValues.get_all_normal_vectors();
+			fe_face_values.get_all_normal_vectors();
 
 	if (4 == alpha) {
 
@@ -451,25 +470,26 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 // get the required dofs of the neighbor cell
 //	typename DoFHandler<dim>::face_iterator neighborFace = neighborCell->face(
 //			neighborFaceNumber);
-	feNeighborFaceValues.reinit(neighborCell, neighborFaceNumber);
+	fe_neighbor_face_values.reinit(neighbor_cell, neighbor_face_number);
 
 	vector<dealii::types::global_dof_index> localDoFIndices(
-			feFaceValues.get_fe().dofs_per_cell);
+			fe_face_values.get_fe().dofs_per_cell);
 	vector<dealii::types::global_dof_index> neighborDoFIndices(
-			feFaceValues.get_fe().dofs_per_cell);
+			fe_face_values.get_fe().dofs_per_cell);
 	cell->get_dof_indices(localDoFIndices);
-	neighborCell->get_dof_indices(neighborDoFIndices);
+	neighbor_cell->get_dof_indices(neighborDoFIndices);
 
 	// avoid many calls to block()
-	distributed_sparse_matrix& block = m_systemMatrix.block(alpha - 1,
+	distributed_sparse_matrix& block = Base::m_systemMatrix.block(alpha - 1,
 			alpha - 1);
 
 // loop over all quadrature points at the face
-	for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
-		size_t thisDoF = m_q_index_to_facedof.at(faceNumber).at(q);
-		assert(feFaceValues.shape_value(thisDoF, q) > 0);
-		size_t neighborDoF = m_q_index_to_facedof.at(neighborFaceNumber).at(q);
-		assert(feNeighborFaceValues.shape_value(neighborDoF, q) > 0);
+	for (size_t q = 0; q < fe_face_values.n_quadrature_points; q++) {
+		size_t thisDoF = m_q_index_to_facedof.at(face_number).at(q);
+		assert(fe_face_values.shape_value(thisDoF, q) > 0);
+		size_t neighborDoF = m_q_index_to_facedof.at(neighbor_face_number).at(
+				q);
+		assert(fe_neighbor_face_values.shape_value(neighborDoF, q) > 0);
 
 		double cell_entry = 0.0;
 		double neighbor_entry = 0.0;
@@ -480,7 +500,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 
 		// calculate scalar product
 		for (size_t i = 0; i < dim; i++) {		// TODO efficient multiplication
-			exn += normals.at(q)[i] * m_stencil->getDirection(alpha)(i);
+			exn += normals.at(q)[i] * Base::m_stencil->getDirection(alpha)(i);
 		}
 		prefactor *= exn;
 
@@ -494,9 +514,9 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 		}
 
 		block.add(localDoFIndices[thisDoF], localDoFIndices[thisDoF],
-				cell_entry * inverseLocalMassMatrix.at(thisDoF));
+				cell_entry * inverse_local_mass_matrix.at(thisDoF));
 		block.add(localDoFIndices[thisDoF], neighborDoFIndices[neighborDoF],
-				neighbor_entry * inverseLocalMassMatrix.at(thisDoF));
+				neighbor_entry * inverse_local_mass_matrix.at(thisDoF));
 	}
 
 // get DoF indices
@@ -509,16 +529,16 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 
 template<size_t dim>
 std::map<size_t, size_t> SEDGMinLee<dim>::map_celldofs_to_q_index() const {
-	const dealii::UpdateFlags cellUpdateFlags = update_values
+	const dealii::UpdateFlags cell_flags = update_values
 			| update_quadrature_points;
 // Finite Element
-	dealii::FEValues<dim> feCellValues(m_mapping, *m_fe, *m_quadrature,
-			cellUpdateFlags);
-	const size_t dofs_per_cell = m_fe->dofs_per_cell;
-	const size_t n_quadrature_points = m_quadrature->size();
+	dealii::FEValues<dim> feCellValues(*Base::m_mapping, *Base::m_fe,
+			*Base::m_quadrature, cell_flags);
+	const size_t dofs_per_cell = Base::m_fe->dofs_per_cell;
+	const size_t n_quadrature_points = Base::m_quadrature->size();
 // take first cell
 	typename DoFHandler<dim>::active_cell_iterator cell =
-			m_doFHandler->begin_active();
+			Base::m_doFHandler->begin_active();
 	std::map<size_t, size_t> result;
 
 /// find quadrature node for every DoF
@@ -539,19 +559,19 @@ std::map<size_t, size_t> SEDGMinLee<dim>::map_celldofs_to_q_index() const {
 
 template<size_t dim>
 vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_facedofs_to_q_index() const {
-	const dealii::UpdateFlags faceUpdateFlags = update_values
+	const dealii::UpdateFlags face_flags = update_values
 			| update_quadrature_points;
-	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
-			faceUpdateFlags);
+	dealii::FEFaceValues<dim> feFaceValues(*Base::m_mapping, *Base::m_fe,
+			*Base::m_faceQuadrature, face_flags);
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
-			m_doFHandler->begin_active();
+			Base::m_doFHandler->begin_active();
 // LOOP over all faces
 	vector<std::map<size_t, size_t> > result;
 	for (size_t f = 0; f < GeometryInfo<dim>::faces_per_cell; f++) {
 		feFaceValues.reinit(cell, f);
 		std::map<size_t, size_t> resultForFaceF;
-		for (size_t i = 0; i < m_fe->dofs_per_cell; i++) {
+		for (size_t i = 0; i < Base::m_fe->dofs_per_cell; i++) {
 			int unique = 0;
 			for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
 				if (feFaceValues.shape_value(i, q) > 1e-10) {
@@ -573,17 +593,17 @@ template<size_t dim>
 vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_q_index_to_facedofs() const {
 	const dealii::UpdateFlags faceUpdateFlags = update_values
 			| update_quadrature_points;
-	dealii::FEFaceValues<dim> feFaceValues(m_mapping, *m_fe, *m_faceQuadrature,
-			faceUpdateFlags);
+	dealii::FEFaceValues<dim> feFaceValues(*Base::m_mapping, *Base::m_fe,
+			*Base::m_faceQuadrature, faceUpdateFlags);
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
-			m_doFHandler->begin_active();
+			Base::m_doFHandler->begin_active();
 // LOOP over all faces
 	vector<std::map<size_t, size_t> > result;
 	for (size_t f = 0; f < GeometryInfo<dim>::faces_per_cell; f++) {
 		feFaceValues.reinit(cell, f);
 		std::map<size_t, size_t> resultForFaceF;
-		for (size_t i = 0; i < m_fe->dofs_per_cell; i++) {
+		for (size_t i = 0; i < Base::m_fe->dofs_per_cell; i++) {
 			int unique = 0;
 			for (size_t q = 0; q < feFaceValues.n_quadrature_points; q++) {
 				if (feFaceValues.shape_value(i, q) > 1e-10) {
@@ -600,10 +620,6 @@ vector<std::map<size_t, size_t> > SEDGMinLee<dim>::map_q_index_to_facedofs() con
 	}
 	return result;
 } /* map_q_index_to_facedofs */
-
-template<size_t dim>
-void SEDGMinLee<dim>::stream() {
-}
 
 template class SEDGMinLee<2> ;
 template class SEDGMinLee<3> ;

@@ -58,7 +58,7 @@ private:
 
 public:
 	/// constructor
-	GlobalTurbulenceStats(const CFDSolver<dim> & solver);
+	GlobalTurbulenceStats(CFDSolver<dim> & solver);
 
 	/// destructor
 	virtual ~GlobalTurbulenceStats() {

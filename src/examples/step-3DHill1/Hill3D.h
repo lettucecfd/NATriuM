@@ -68,6 +68,9 @@ public:
 
 	}
 
+	virtual bool isCartesian(){
+		return false;
+	}
 private:
 
 	const size_t m_refinementLevel;

@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <mpi.h>
 
+#include "Info.h"
+
 #include "deal.II/base/utilities.h"
 
 //============================================================================
@@ -43,6 +45,9 @@ HtmlTrace::HtmlTrace(bool active) :
 		char host[129];
 		gethostname(host, 128);
 		m_html << " / Host: " << host << "</h3>\n\n";
+
+		// Commit
+		m_html << " / Commit: " << natrium::Info::getGitSha() << "</h3>\n\n";
 
 		// Table with header lines
 		m_html << "<table border=\"1\">\n";

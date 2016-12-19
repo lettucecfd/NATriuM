@@ -53,26 +53,77 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00008"></a>00008 <span class="preprocessor">#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_GRADSBOUNDARYCONDITION_H_</span>
 <a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_GRADSBOUNDARYCONDITION_H_</span>
 <a name="l00010"></a>00010 <span class="preprocessor"></span>
-<a name="l00011"></a>00011 <span class="preprocessor">#include &lt;array&gt;</span>
-<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;../stencils/Stencil.h&quot;</span>
+<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;SLBoundary.h&quot;</span>
+<a name="l00012"></a>00012 <span class="preprocessor">#include &lt;array&gt;</span>
 <a name="l00013"></a>00013 
-<a name="l00014"></a>00014 <span class="keyword">namespace </span>natrium {
-<a name="l00015"></a>00015 
-<a name="l00016"></a>00016 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
-<a name="l00017"></a><a class="code" href="classnatrium_1_1GradsBoundary.html">00017</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1DoFBoundary.html">DoFBoundary</a>&lt;dim&gt; {
-<a name="l00018"></a>00018 <span class="keyword">public</span>:
-<a name="l00019"></a>00019         <a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>() {
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021         }
-<a name="l00022"></a>00022         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>() {
-<a name="l00023"></a>00023 
-<a name="l00024"></a>00024         }
-<a name="l00025"></a>00025 
-<a name="l00026"></a>00026 };
-<a name="l00027"></a>00027 
-<a name="l00028"></a>00028 } <span class="comment">/* namespace natrium */</span>
-<a name="l00029"></a>00029 
-<a name="l00030"></a>00030 <span class="preprocessor">#endif </span><span class="comment">/* LIBRARY_NATRIUM_PROBLEMDESCRIPTION_GRADSBOUNDARYCONDITION_H_ */</span>
+<a name="l00014"></a>00014 <span class="preprocessor">#include &quot;deal.II/base/tensor.h&quot;</span>
+<a name="l00015"></a>00015 <span class="preprocessor">#include &quot;deal.II/fe/fe_values.h&quot;</span>
+<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;deal.II/base/geometry_info.h&quot;</span>
+<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;deal.II/base/function.h&quot;</span>
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;GradsFunction.h&quot;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;../advection/AdvectionOperator.h&quot;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &quot;../stencils/Stencil.h&quot;</span>
+<a name="l00022"></a>00022 <span class="preprocessor">#include &quot;../solver/DistributionFunctions.h&quot;</span>
+<a name="l00023"></a>00023 <span class="preprocessor">#include &quot;../utilities/BasicNames.h&quot;</span>
+<a name="l00024"></a>00024 
+<a name="l00025"></a>00025 <span class="keyword">namespace </span>natrium {
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027 <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> dim&gt;
+<a name="l00028"></a><a class="code" href="classnatrium_1_1GradsBoundary.html">00028</a> <span class="keyword">class </span><a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>: <span class="keyword">public</span> <a class="code" href="classnatrium_1_1SLBoundary.html">SLBoundary</a>&lt;dim&gt; {
+<a name="l00029"></a>00029 <span class="keyword">public</span>:
+<a name="l00030"></a>00030 
+<a name="l00031"></a>00031         <a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>(<span class="keywordtype">size_t</span> boundary_id,
+<a name="l00032"></a>00032                         <span class="keyword">const</span> <a class="code" href="classnatrium_1_1PrescribedQuantities.html" title="A class that contains the values that are prescribed by a semi-Lagrangian boundary...">PrescribedQuantities&lt;dim&gt;</a>&amp; quantities) :
+<a name="l00033"></a>00033                         <a class="code" href="classnatrium_1_1SLBoundary.html">SLBoundary&lt;dim&gt;</a>(boundary_id, quantities) {
+<a name="l00034"></a>00034 
+<a name="l00035"></a>00035         }
+<a name="l00036"></a>00036 
+<a name="l00037"></a>00037         <a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>(<span class="keywordtype">size_t</span> boundary_id, <span class="keywordtype">double</span> pressure) :
+<a name="l00038"></a>00038                         <a class="code" href="classnatrium_1_1SLBoundary.html">SLBoundary&lt;dim&gt;</a>(boundary_id, <a class="code" href="classnatrium_1_1PrescribedQuantities.html" title="A class that contains the values that are prescribed by a semi-Lagrangian boundary...">PrescribedQuantities&lt;dim&gt;</a>(pressure)) {
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040         }
+<a name="l00041"></a>00041 
+<a name="l00042"></a>00042         <a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>(<span class="keywordtype">size_t</span> boundary_id,
+<a name="l00043"></a>00043                         boost::shared_ptr&lt;dealii::TensorFunction&lt;2, dim&gt; &gt; function) :
+<a name="l00044"></a>00044                         <a class="code" href="classnatrium_1_1SLBoundary.html">SLBoundary&lt;dim&gt;</a>(boundary_id, <a class="code" href="classnatrium_1_1PrescribedQuantities.html" title="A class that contains the values that are prescribed by a semi-Lagrangian boundary...">PrescribedQuantities&lt;dim&gt;</a>(function)) {
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046         }
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048         <a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>(<span class="keywordtype">size_t</span> boundary_id, dealii::Tensor&lt;1, dim&gt;&amp; velocity) :
+<a name="l00049"></a>00049                         <a class="code" href="classnatrium_1_1SLBoundary.html">SLBoundary&lt;dim&gt;</a>(boundary_id, <a class="code" href="classnatrium_1_1PrescribedQuantities.html" title="A class that contains the values that are prescribed by a semi-Lagrangian boundary...">PrescribedQuantities&lt;dim&gt;</a>(velocity)) {
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051         }
+<a name="l00052"></a>00052 
+<a name="l00053"></a>00053         <a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>(<span class="keywordtype">size_t</span> boundary_id, dealii::Tensor&lt;2, dim&gt;&amp; velocity_gradient) :
+<a name="l00054"></a>00054                         <a class="code" href="classnatrium_1_1SLBoundary.html">SLBoundary&lt;dim&gt;</a>(boundary_id,
+<a name="l00055"></a>00055                                         <a class="code" href="classnatrium_1_1PrescribedQuantities.html" title="A class that contains the values that are prescribed by a semi-Lagrangian boundary...">PrescribedQuantities&lt;dim&gt;</a>(velocity_gradient)) {
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057         }
+<a name="l00058"></a>00058 
+<a name="l00059"></a>00059         <a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>(<span class="keywordtype">size_t</span> boundary_id, <span class="keyword">const</span> dealii::Vector&lt;double&gt;&amp; velocity) :
+<a name="l00060"></a>00060                         <a class="code" href="classnatrium_1_1SLBoundary.html">SLBoundary&lt;dim&gt;</a>(boundary_id, <a class="code" href="classnatrium_1_1PrescribedQuantities.html" title="A class that contains the values that are prescribed by a semi-Lagrangian boundary...">PrescribedQuantities&lt;dim&gt;</a>(velocity)) {
+<a name="l00061"></a>00061         }
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063         <span class="keyword">virtual</span> ~<a class="code" href="classnatrium_1_1GradsBoundary.html">GradsBoundary</a>() {
+<a name="l00064"></a>00064         }
+<a name="l00065"></a>00065 
+<a name="l00066"></a><a class="code" href="classnatrium_1_1GradsBoundary.html#a1f8deb8033e218d7890b0db5d72f5508">00066</a>         <span class="keyword">virtual</span> <a class="code" href="namespacenatrium.html#a93b2a3d564675413b9f6cc88c60f46af" title="An enum that is used to flag values at the boundary. BoundaryFlags is used by semi-Lagrangian...">BoundaryFlags</a> <a class="code" href="classnatrium_1_1GradsBoundary.html#a1f8deb8033e218d7890b0db5d72f5508" title="Get update flags. This pure virtual function has to be overriden by derived classes...">getUpdateFlags</a>()<span class="keyword"> const </span>{
+<a name="l00067"></a>00067                 <span class="keywordflow">return</span> only_distributions;
+<a name="l00068"></a>00068         }
+<a name="l00069"></a>00069 
+<a name="l00070"></a><a class="code" href="classnatrium_1_1GradsBoundary.html#a66b6623d5701b3a8e40d3527412e37df">00070</a>         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classnatrium_1_1GradsBoundary.html#a66b6623d5701b3a8e40d3527412e37df" title="calculate boundary values. This pure virtual function has to be overriden by derived...">calculateBoundaryValues</a>(<a class="code" href="classnatrium_1_1FEBoundaryValues.html" title="A class that calculates macroscopic values at the boundaries, implemented similarly...">FEBoundaryValues&lt;dim&gt;</a>&amp; fe_boundary_values,
+<a name="l00071"></a>00071                                 <span class="keywordtype">size_t</span> q_point, <span class="keyword">const</span> <a class="code" href="structnatrium_1_1LagrangianPathDestination.html">LagrangianPathDestination</a>&amp; destination,
+<a name="l00072"></a>00072                                 <span class="keywordtype">double</span> eps, <span class="keywordtype">double</span> t){
+<a name="l00073"></a>00073 
+<a name="l00074"></a>00074         }
+<a name="l00075"></a>00075 
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077 };
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079 } <span class="comment">/* namespace natrium */</span>
+<a name="l00080"></a>00080 
+<a name="l00081"></a>00081 <span class="preprocessor">#endif </span><span class="comment">/* LIBRARY_NATRIUM_PROBLEMDESCRIPTION_GRADSBOUNDARYCONDITION_H_ */</span>
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -88,7 +139,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr size="1"/><address style="text-align: right;"><small>Generated on 20 Sep 2016 for NATriuM by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Dec 2016 for NATriuM by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
