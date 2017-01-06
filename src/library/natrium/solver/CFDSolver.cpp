@@ -31,6 +31,7 @@
 #include "../advection/SEDGMinLee.h"
 #include "../advection/SemiLagrangian.h"
 
+#include "../collision/CollisionOperator.h"
 #include "../collision/BGKStandard.h"
 #include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
@@ -788,9 +789,14 @@ void CFDSolver<dim>::collide() {
 		CFDSolverUtilities::getWriteableDensity(writeable_rho, m_density,
 				m_advectionOperator->getLocallyOwnedDofs());
 
+		CollisionOperator collisionOperator;
+// TODO member function collisionModel
+		collisionOperator.collide(m_configuration, m_f, writeable_rho, writeable_u,
+				m_advectionOperator->getLocallyOwnedDofs(), false)
+
 		// perform collision
-		m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
-				m_advectionOperator->getLocallyOwnedDofs(), false);
+		/*m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
+				m_advectionOperator->getLocallyOwnedDofs(), false);*/
 
 		// copy back to ghosted vectors and communicate across MPI processors
 		CFDSolverUtilities::applyWriteableDensity(writeable_rho, m_density);
