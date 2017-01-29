@@ -1,0 +1,86 @@
+/*
+ * Equilibrium_test.cpp
+ *
+ *  Created on: 20.01.2017
+ *      Author: natrium
+ */
+#include "natrium/stencils/D2Q9.h"
+#include "natrium/collision/BGKStandard.h"
+
+#include <math.h>
+#include <exception>
+
+#include "boost/test/unit_test.hpp"
+
+#include "natrium/utilities/Math.h"
+#include "natrium/utilities/BasicNames.h"
+#include "natrium/stencils/D2Q9.h"
+#include "natrium/stencils/D3Q19.h"
+#include "natrium/stencils/D3Q15.h"
+#include "natrium/collision_advanced/Equilibria.h"
+#include "natrium/collision_advanced/AuxiliaryCollisionFunctions.h"
+
+#include "deal.II/fe/fe_dgq.h"
+
+#include "natrium/benchmarks/PeriodicTestDomain2D.h"
+#include "natrium/benchmarks/PeriodicTestDomain3D.h"
+
+namespace natrium {
+
+
+BOOST_AUTO_TEST_SUITE(Equilibrium_test_suite)
+
+BOOST_AUTO_TEST_CASE(Equilibrium_test) {
+
+
+
+	// initialize distributions with arbitrary components
+//vector<distributed_vector> f;
+double rho = 1.0;
+		//rho.compress(dealii::VectorOperation::add);
+	vector<distributed_vector> u;
+/*	for (size_t i = 0; i < 9; i++) {
+		distributed_vector f_i;
+				f_i(0) = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
+						+ pow((0.5 * cos(0.5)), 2);
+
+		//f_i.compress(dealii::VectorOperation::add);
+		f.push_back(f_i);
+	}*/
+
+	//DistributionFunctions f_new(f);
+
+	double velocities[2]={0.1,0.2};
+
+	BGKEquilibrium<2,9> eq;
+	double feq[9];
+	CollisionParameters<2,9> prams;
+	prams.cs2=1./3.;
+	prams.scaling = 1.0;
+	prams.velocity[0]=velocities[0];
+	prams.velocity[1]=velocities[1];
+	prams.density = rho;
+
+
+	eq.calc(feq,prams);
+
+	for (int i =0;i<9;i++)
+	{
+		cout << feq[i] << endl;
+	}
+
+	BOOST_CHECK(feq[1]-feq[3]+feq[5]-feq[6]-feq[7]+feq[8]-velocities[0]<10e-6);
+	BOOST_CHECK(feq[1]-feq[3]+feq[5]-feq[6]-feq[7]+feq[8]-velocities[0]<10e-6);
+
+
+
+
+
+} // test_case
+} // namespace natrium
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+
+
