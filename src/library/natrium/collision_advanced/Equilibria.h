@@ -7,7 +7,10 @@
 
 #ifndef LIBRARY_NATRIUM_COLLISION_EQUILIBRIA_H_
 #define LIBRARY_NATRIUM_COLLISION_EQUILIBRIA_H_
+//#include "CollisionOperator.h"
 #include "AuxiliaryCollisionFunctions.h"
+#include "Equilibria.h"
+#include "CollisionSchemes.h"
 namespace natrium{
 template <int T_D,int T_Q>
 class BGKEquilibrium

@@ -11,15 +11,7 @@
 
 namespace natrium {
 
-template<int T_D, int T_Q>
-struct CollisionParameters{
-	double density;
-	double velocity[T_D];
-	double scaling;
-	double tau;
-	double cs2;
-	double dt;
-};
+
 
 template<int T_Q>
 inline double calculateDensity(const double fLocal[]) {
@@ -30,8 +22,8 @@ inline double calculateDensity(const double fLocal[]) {
 	return density;
 }
 
-inline double calculateTauFromNu(double viscosity,double cs2, double timeStepSize)
-{
+inline double calculateTauFromNu(double viscosity, double cs2,
+		double timeStepSize) {
 	double tau;
 	tau = (viscosity) / (timeStepSize * cs2) + 0.5;
 	return tau;
@@ -49,9 +41,23 @@ template<int T_Q>
 inline void copyLocalToGlobalF(double fLocal[], const DistributionFunctions& f,
 		const size_t i) {
 	for (int p = 0; p < T_Q; ++p) {
-		f.at(p)(i) = fLocal[p] ;
+	//	f[p][i] = fLocal[p];
 	}
 }
+template<int T_D, int T_Q>
+struct CollisionParameters {
+	double density = 0.0;
+	double velocity[T_D] = { 0.0 };
+	double scaling = 0.0;
+	double tau = 0.0;
+	double cs2 = 0.0;
+	double dt = 0.0;
+	CollisionParameters(double scaling, double viscosity, double cs2, double dt) :
+			scaling(scaling), cs2(cs2), dt(dt) {
+		tau = calculateTauFromNu(viscosity, cs2, dt);
+	}
+	CollisionParameters(){}
+};
 
 template<int T_D, int T_Q>
 inline void calculateVelocity(const double fLocal[], double velocity[],

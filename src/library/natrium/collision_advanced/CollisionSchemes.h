@@ -9,7 +9,7 @@
 #define LIBRARY_NATRIUM_COLLISION_COLLISIONSCHEMES_H_
 
 #include "Equilibria.h"
-#include "AuxiliaryCollisionFunctions.h"
+
 
 namespace natrium{
 template<int T_D, int T_Q, template <int T_D, int T_Q> class T_equilibrium>
