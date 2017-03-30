@@ -38,10 +38,11 @@ inline void copyGlobalToLocalF(double fLocal[], const DistributionFunctions& f,
 }
 
 template<int T_Q>
-inline void copyLocalToGlobalF(double fLocal[], const DistributionFunctions& f,
+inline void copyLocalToGlobalF(double fLocal[], DistributionFunctions& f,
 		const size_t i) {
 	for (int p = 0; p < T_Q; ++p) {
-	//	f[p][i] = fLocal[p];
+		distributed_vector& f0 = f.at(p);
+		f0(i) = fLocal[p];
 	}
 }
 template<int T_D, int T_Q>

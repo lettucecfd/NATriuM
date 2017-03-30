@@ -117,6 +117,11 @@ SolverConfiguration::SolverConfiguration() {
 				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards "
 						"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
 						"The standard");
+
+		declare_entry("Equilibrium scheme", "BGK equilibrium",dealii::Patterns::Selection(
+				"BGK equilibrium"),
+		"Defines the equilibrium that is used for most of the collision models");
+
 		enter_subsection("BGK parameters");
 		{
 			declare_entry("Steady state gamma", "0.25",
@@ -141,6 +146,7 @@ SolverConfiguration::SolverConfiguration() {
 
 		}
 		leave_subsection();
+
 	}
 	leave_subsection();
 

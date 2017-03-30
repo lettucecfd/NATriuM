@@ -404,6 +404,41 @@ public:
 		leave_subsection();
 	}
 
+	EquilibriumSchemeName getEquilibriumScheme() {
+		enter_subsection("Collision");
+		string equilibriumScheme = get("Equilibrium scheme");
+		leave_subsection();
+		if ("BGK equilibrium" == equilibriumScheme) {
+			return BGK_EQUILIBRIUM;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown equilibrium scheme '" << equilibriumScheme
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of EquilibriumSchemeName might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setEquilibriumScheme(EquilibriumSchemeName equilibriumScheme) {
+		enter_subsection("Collision");
+		switch (equilibriumScheme) {
+		case BGK_EQUILIBRIUM: {
+			set("Equilibrium scheme", "BGK equilibrium");
+			break;
+		}
+
+		default: {
+			std::stringstream msg;
+			msg << "Unknown equilibrium scheme; index. " << equilibriumScheme
+					<< " in enum EquilibriumSchemeName. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+
+	}
+
 	double getBGKSteadyStateGamma() {
 		enter_subsection("Collision");
 		enter_subsection("BGK parameters");
@@ -2137,7 +2172,7 @@ public:
 			return ENTROPY_MAXIMIZATION;
 		} else if ("Pseudo-entropy maximization with e" == regularization) {
 			return PSEUDO_ENTROPY_MAXIMIZATION_WITH_E;
-		}  else {
+		} else {
 			std::stringstream msg;
 			msg << "Unknown regularization scheme '" << regularization
 					<< " '. Check your configuration file. If everything is alright, "
@@ -2149,7 +2184,7 @@ public:
 	void setRegularizationScheme(RegularizationSchemeName regularization) {
 		enter_subsection("Filtering");
 		switch (regularization) {
-		case NO_FORCING:{
+		case NO_FORCING: {
 			set("Regularization", "No Regularization");
 			break;
 		}

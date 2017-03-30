@@ -31,7 +31,7 @@
 #include "../advection/SEDGMinLee.h"
 #include "../advection/SemiLagrangian.h"
 
-#include "../collision_advanced/CollisionOperator.h"
+#include "../collision_advanced/CollisionSelection.h"
 #include "../collision/BGKStandard.h"
 #include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
@@ -789,10 +789,15 @@ void CFDSolver<dim>::collide() {
 		CFDSolverUtilities::getWriteableDensity(writeable_rho, m_density,
 				m_advectionOperator->getLocallyOwnedDofs());
 
+		double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
+					*(m_problemDescription->getMesh()),
+					m_configuration->getSedgOrderOfFiniteElement(), *m_stencil,
+					m_configuration->getCFL());
+
 
 // TODO member function collisionModel
-		selectCollide(m_configuration, m_f, writeable_rho, writeable_u,
-				m_advectionOperator->getLocallyOwnedDofs(), false);
+		selectCollision(m_configuration, m_f, writeable_rho, writeable_u,
+				m_advectionOperator->getLocallyOwnedDofs(), m_problemDescription->getViscosity(), delta_t, *m_stencil, false);
 
 		// perform collision
 		/*m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,

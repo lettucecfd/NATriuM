@@ -37,8 +37,8 @@ public:
 			size_t i = *it;
 
 
-			params.scaling = 1.0; // TODO adjust to global scaling
-			params.tau = 1.0; // TODO
+			//params.scaling = 1.0; // TODO adjust to global scaling
+			//params.tau = 3*params.viscosity+0.5; // TODO
 			double fLocal[T_Q];
 
 			copyGlobalToLocalF<T_Q>(fLocal, f, i); // done
@@ -57,12 +57,12 @@ public:
 
 			//applyForces<T_Q>(fLocal); // TODO
 
-			T_collision<T_D, T_Q, T_equilibrium> collisionScheme;
+			T_collision<T_D, T_Q, T_equilibrium> collisionScheme(params);
 			collisionScheme.relax(fLocal, params);  //TODO
 
 			//reApplyForces<T_Q>(fLocal); // TODO
 
-			//copyLocalToGlobalF<T_Q>(fLocal, f, i); //TODO
+			copyLocalToGlobalF<T_Q>(fLocal, f, i); //TODO
 
 
 
