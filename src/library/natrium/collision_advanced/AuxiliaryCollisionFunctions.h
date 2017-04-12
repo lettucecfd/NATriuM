@@ -45,6 +45,7 @@ inline void copyLocalToGlobalF(double fLocal[], DistributionFunctions& f,
 		f0(i) = fLocal[p];
 	}
 }
+//Stores the needed parameters for the collision phase
 template<int T_D, int T_Q>
 struct CollisionParameters {
 	double density = 0.0;
