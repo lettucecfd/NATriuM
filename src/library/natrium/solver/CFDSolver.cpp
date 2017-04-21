@@ -39,6 +39,7 @@
 #include "../collision/KBCStandard.h"
 #include "../collision/KBCCentral.h"
 #include "../collision/BGKMultistep.h"
+#include "../collision/BGKRegularized.h"
 
 #include "../smoothing/ExponentialFilter.h"
 #include "../smoothing/NewFilter.h"
@@ -232,6 +233,13 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 		m_collisionModel = boost::make_shared<BGKStandardTransformed>(tau,
 				delta_t, m_stencil);
+	} else if (BGK_REGULARIZED
+				== configuration->getCollisionScheme()) {
+			tau = BGKRegularized::calculateRelaxationParameter(
+					m_problemDescription->getViscosity(), delta_t, *m_stencil);
+			m_collisionModel = boost::make_shared<BGKRegularized>(tau,
+					delta_t, m_stencil);
+
 	} else if (BGK_MULTIPHASE == configuration->getCollisionScheme()) {
 		tau = BGKStandardTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
@@ -473,6 +481,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		break;
 	}
 	case BGK_STANDARD_TRANSFORMED: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
+	case BGK_REGULARIZED: {
 		LOG(WELCOME) << "tau:                      " << tau << endl;
 		break;
 	}

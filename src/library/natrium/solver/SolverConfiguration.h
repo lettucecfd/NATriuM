@@ -325,6 +325,8 @@ public:
 			return BGK_MULTIPHASE;
 		} else if ("BGK incompressible" == collisionScheme) {
 			return BGK_INCOMPRESSIBLE;
+		} else if ("BGK regularized" == collisionScheme) {
+			return BGK_REGULARIZED;
 		} else if ("MRT standard" == collisionScheme) {
 			return MRT_STANDARD;
 		} else if ("MRT entropic" == collisionScheme) {
@@ -369,6 +371,10 @@ public:
 			set("Collision scheme", "BGK incompressible");
 			break;
 		}
+		case BGK_REGULARIZED: {
+					set("Collision scheme", "BGK regularized");
+					break;
+				}
 		case MRT_STANDARD: {
 			set("Collision scheme", "MRT standard");
 			break;
