@@ -134,6 +134,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	// command line verbosity
 	if (hasArgument("verbose")) {
 		cfg.setCommandLineVerbosity(static_cast<int>(ALL));
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Max verbosity specified via command line." << endl;
 	}
 
@@ -318,6 +319,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	if (hasArgument("output-dir")) {
 		string dir = getArgument<string>("output-dir");
 		cfg.setOutputDirectory(dir);
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Output directory set to " << dir << " via command line"
 				<< endl;
 	}
@@ -326,6 +328,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	if (hasArgument("output-sol")) {
 		int sol = getArgument<int>("output-sol");
 		cfg.setOutputSolutionInterval(sol);
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Output solution interval set to " << sol
 				<< " via command line" << endl;
 	}
@@ -334,6 +337,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	if (hasArgument("output-chk")) {
 		int erval = getArgument<int>("output-chk");
 		cfg.setOutputCheckpointInterval(erval);
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Output checkpoint interval set to " << erval
 				<< " via command line" << endl;
 	}
@@ -342,6 +346,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	if (hasArgument("output-tab")) {
 		int erval = getArgument<int>("output-tab");
 		cfg.setOutputTableInterval(erval);
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Output table interval set to " << erval
 				<< " via command line" << endl;
 	}
@@ -366,7 +371,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		LOG(BASIC) << "Stencil set to " << sten << " via command line" << endl;
 	}
 
-	// output solution interval
+	// simulation end time
 	if (hasArgument("tmax")) {
 		int tmax = getArgument<double>("tmax");
 		cfg.setSimulationEndTime(tmax);
