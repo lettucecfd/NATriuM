@@ -28,7 +28,7 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 			"advection scheme (sedg (discontinuous Galerkin) or sl (semi-Lagrange))");
 	setArgument<string>("collision",
 			"collision scheme (bgk, bgkt (transformed), inc (incompressible), pp (pseudo-potential)"
-					", ss (steady state), mrt, kbcs (KBC standard), kbcc (KBC central)"
+					", ss (steady state), mrt, kbcs (KBC standard), kbcc (KBC central), reg (regularized by Latt)"
 					", am4 (multistep Adams-Moulton 4), bdf2 (multistep BDF2)");
 	setArgument<string>("integrator",
 			"time integrator in sedg streaming ["
@@ -174,6 +174,8 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			cfg.setCollisionScheme(BGK_MULTI_AM4);
 		else if (collision == "bdf2")
 			cfg.setCollisionScheme(BGK_MULTI_BDF2);
+		else if (collision == "reg")
+			cfg.setCollisionScheme(BGK_REGULARIZED);
 		else {
 			throw CommandLineParserException(
 					"--collision had illegal value (see --help)");

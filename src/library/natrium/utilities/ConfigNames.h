@@ -36,8 +36,9 @@ enum CollisionSchemeName {
 	MRT_ENTROPIC, // Optimized Multiple Relaxation Time scheme by A.Kraemer (2016)
 	KBC_STANDARD, // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014)
 	KBC_CENTRAL, // // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014), central moments are used
-	BGK_MULTI_AM4, // Multistep BGK model according to Krämer (2016)
-	BGK_MULTI_BDF2
+	BGK_MULTI_AM4, // Multistep BGK model according to Krämer (2017, Uni Siegen, Anhang A)
+	BGK_MULTI_BDF2,
+	BGK_REGULARIZED // Regularized model by Latt and Chopard (2005)
 };
 
 // StencilType defined in Stencil.h
