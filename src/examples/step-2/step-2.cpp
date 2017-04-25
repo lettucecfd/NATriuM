@@ -16,6 +16,7 @@
 #include "natrium/problemdescription/Benchmark.h"
 
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/CommandLineParser.h"
 
 #include "natrium/benchmarks/CouetteFlow2D.h"
 
@@ -25,15 +26,24 @@ using namespace natrium;
 int main(int argc, char** argv) {
 
 	MPIGuard::getInstance();
+	CommandLineParser parser(argc, argv);
+	parser.setArgument<double>("Re", "Reynolds number 1/nu", 2000);
+	parser.setArgument<int>("ref-level",
+			"Refinement level of the computation grid.",1);
+	try {
+		parser.importOptions();
+	} catch (HelpMessageStop&){
+		return 0;
+	}
 
 	pout << "Starting NATriuM step-2..." << endl;
 
 	// set Reynolds and Mach number
-	const double Re = 2000;
+	const double Re = parser.getArgument<double>("Re");
 	const double Ma = 0.05;
 
 	// set spatial discretization
-	size_t refinementLevel = 1;
+	size_t refinementLevel = parser.getArgument<int>("ref-level");
 	size_t orderOfFiniteElement = 5;
 	bool isUnstructured = false;
 
@@ -56,7 +66,7 @@ int main(int argc, char** argv) {
 	dirname << getenv("NATRIUM_HOME") << "/step-2";
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setOutputCheckpointInterval(10000);
-	configuration->setOutputSolutionInterval(1);
+	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
 	configuration->setNumberOfTimeSteps(2000);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -64,6 +74,7 @@ int main(int argc, char** argv) {
 	configuration->setCFL(CFL);
 	configuration->setCommandLineVerbosity(7);
 	//configuration->setDistributionInitType(Iterative);
+	parser.applyToSolverConfiguration(*configuration);
 
 	boost::shared_ptr<CouetteFlow2D> couetteFlow = boost::make_shared<CouetteFlow2D>(
 			viscosity, U, refinementLevel, 1.0, startTime, isUnstructured);
