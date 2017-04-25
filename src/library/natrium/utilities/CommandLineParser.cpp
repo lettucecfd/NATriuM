@@ -47,6 +47,7 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 					", glc (Gauss-Lobatto-Chebyshev), gc (Gauss-Chebyshev), equi (equidistant)]");
 	setArgument<string>("output-dir", "output directory");
 	setArgument<int>("output-sol", "output solution interval (#iterations)");
+	setArgument<int>("output-sol", "output solution interval (#iterations)");
 	setArgument<int>("output-chk", "output checkpoint interval (#iterations)");
 	setArgument<int>("output-tab", "output table interval (#iterations)");
 	setArgument<string>("stencil",
@@ -54,6 +55,10 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<double>("tmax", "simulation end time");
 	setArgument<string>("init",
 			"initialization scheme [equi (equilibrium), iter (iterative)]");
+	setArgument<int>("init-niter",
+			"iterative initialization scheme: max. number of iterations");
+	setArgument<double>("init-res",
+			"iterative initialization scheme: residual");
 
 }
 
