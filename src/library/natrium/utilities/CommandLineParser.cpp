@@ -18,7 +18,8 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	// define standard arguments that can be used in all scripts to change the solver configuration
 	setFlag("standard-lbm",
 			"sets the order to 2 and cfl to 4*sqrt(2), giving standard lbm on regular grids");
-	setArgument<int>("standard-lbm-with", "as standard-lbm, but with n-th order calculation of derivatives.");
+	setArgument<int>("standard-lbm-with",
+			"as standard-lbm, but with n-th order calculation of derivatives.");
 	setArgument<int>("order-fe", "order of finite elements");
 	setArgument<double>("cfl", "CFL number");
 	setFlag("output-on", "switches output on");
@@ -47,8 +48,11 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<int>("output-sol", "output solution interval (#iterations)");
 	setArgument<int>("output-chk", "output checkpoint interval (#iterations)");
 	setArgument<int>("output-tab", "output table interval (#iterations)");
-	setArgument<string>("stencil", "stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27]");
+	setArgument<string>("stencil",
+			"stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27]");
 	setArgument<double>("tmax", "simulation end time");
+	setArgument<string>("init",
+			"initialization scheme [equi (equilibrium), iter (iterative)]");
 
 }
 
@@ -95,7 +99,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 					"Conflicting arguments: standard-lbm and standard-lbm-with");
 		}
 		int order = getArgument<int>("standard-lbm-with");
-		assert (order > 0);
+		assert(order > 0);
 		cfg.setCFL(sqrt(2) * order * order / order);
 		cfg.setSedgOrderOfFiniteElement(order);
 		cfg.setSupportPoints(EQUIDISTANT_POINTS);
@@ -276,7 +280,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			cfg.setRegularizationScheme(ENTROPY_MAXIMIZATION);
 		} else if (reg == "pemwe") {
 			cfg.setRegularizationScheme(PSEUDO_ENTROPY_MAXIMIZATION_WITH_E);
-		}  else {
+		} else {
 			std::stringstream msg;
 			msg << "Regularization scheme " << reg << " is illegal." << endl;
 			msg << "See --help for allowed options." << endl;
@@ -332,24 +336,23 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	}
 
 	// stencil
-	if (hasArgument("stencil")){
+	if (hasArgument("stencil")) {
 		const string sten = getArgument<string>("stencil");
-		if (sten == "d2q9"){
+		if (sten == "d2q9") {
 			cfg.setStencil(Stencil_D2Q9);
-		} else if (sten == "d3q19"){
+		} else if (sten == "d3q19") {
 			cfg.setStencil(Stencil_D3Q19);
-		} else if (sten == "d3q15"){
+		} else if (sten == "d3q15") {
 			cfg.setStencil(Stencil_D3Q15);
-		} else if (sten == "d3q27"){
+		} else if (sten == "d3q27") {
 			cfg.setStencil(Stencil_D3Q27);
 		} else {
 			std::stringstream msg;
-						msg << "--stencil=" << sten << " is illegal." << endl;
-						msg << "See --help for allowed options." << endl;
-						throw CommandLineParserException(msg.str());
+			msg << "--stencil=" << sten << " is illegal." << endl;
+			msg << "See --help for allowed options." << endl;
+			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "Stencil set to " << sten
-				<< " via command line" << endl;
+		LOG(BASIC) << "Stencil set to " << sten << " via command line" << endl;
 	}
 
 	// output solution interval
@@ -358,6 +361,22 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		cfg.setSimulationEndTime(tmax);
 		LOG(BASIC) << "Output simulation end time set to " << tmax
 				<< " via command line" << endl;
+	}
+
+	// iterative initialization
+	if (hasArgument("init")) {
+		const string init = getArgument<string>("init");
+		if (init == "equi") {
+			cfg.setInitializationScheme(EQUILIBRIUM);
+		} else if (init == "iter") {
+			cfg.setInitializationScheme(ITERATIVE);
+		} else {
+			std::stringstream msg;
+			msg << "--init=" << init << " is illegal." << endl;
+			msg << "See --help for allowed options." << endl;
+			throw CommandLineParserException(msg.str());
+		}
+		LOG(BASIC) << "Initialization set to " << init << " via command line" << endl;
 	}
 
 }
