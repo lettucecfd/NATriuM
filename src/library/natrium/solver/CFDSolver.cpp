@@ -1154,7 +1154,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			oldDensities -= rho;
 			residual = oldDensities.norm_sqr();
 			CFDSolverUtilities::applyWriteableDensity(rho, m_density);
-			CFDSolverUtilities::applyWriteableVelocity(u, m_velocity);
+			//CFDSolverUtilities::applyWriteableVelocity(u, m_velocity);
 			loopCount++;
 		}
 		LOG(DETAILED) << "Residual " << residual << " reached after "
