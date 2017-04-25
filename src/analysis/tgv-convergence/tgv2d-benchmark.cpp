@@ -19,11 +19,11 @@
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
+#include "natrium/utilities/CommandLineParser.h"
 
 #include "natrium/benchmarks/TaylorGreenVortex2D.h"
 
 using namespace natrium;
-
 
 // Main function
 int main(int argc, char** argv) {
@@ -32,32 +32,34 @@ int main(int argc, char** argv) {
 
 	//pout << "Starting NATriuM step-1 ..." << endl;
 
-	if (strcmp(argv[1],"?") == 0)
-	{
-		pout << "USAGE: ./tgv-convergence N p Ma Re integrator CFL collision init_rho_analytically semi_lagrange limiter=0" << endl;
+	CommandLineParser parser(argc, argv);
+	parser.setArgument<double>("Re", "Reynolds number", 10);
+	parser.setPositionalArgument<int>("ref-level",
+			"Refinement level of the computation grid.");
+	parser.setFlag("no_init_rho_analytically",
+			"Initialize with constant density (1)");
+	parser.setFlag("limiter", "Use a limiter in the advection step");
+	parser.setArgument<double>("refine-tol",
+			"Refinement tolerance for step size control (only for adaptive time integrators)",
+			1e-7);
+	parser.setArgument<double>("coarsen-tol",
+			"Coarsening tolerance for step size control (only for adaptive time integrators)",
+			1e-8);
+	parser.setArgument<double>("Ma", "Mach number", 0.05);
+	try {
+		parser.importOptions();
+	} catch (HelpMessageStop&) {
 		return 0;
 	}
 
-	const double N = atoi(argv[1]);
-	const double p = atoi(argv[2]);
-	const double Ma = atof(argv[3]);
-	const double Re = atof(argv[4]);
-	const double integrator = atoi(argv[5]);
-	const double CFL = atof(argv[6]);
-	const double collision = atoi(argv[7]);
-	const double init_rho_analytically = atoi(argv[8]);
-	const int semi_lagrange = atoi(argv[9]);
-	int limiter = 0;
-	if (argc > 10)
-		limiter = atoi(argv[10]);
-	double refine_tol = 1e-7;
-	double coarsen_tol = 1e-8;
-	if (argc > 10) {
-		refine_tol = atof(argv[10]);
-	}
-	if (argc > 11) {
-		refine_tol = atof(argv[11]);
-	}
+	const double N = parser.getArgument<int>("ref-level");
+	const double Ma = parser.getArgument<double>("Ma");
+	const double Re = parser.getArgument<double>("Re");
+	const double init_rho_analytically = not parser.hasArgument(
+			"no_init_rho_analytically");
+	int limiter = parser.hasArgument("limiter");
+	double refine_tol = parser.getArgument<double>("refine-tol");
+	double coarsen_tol = parser.getArgument<double>("coarsen-tol");
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -66,13 +68,7 @@ int main(int argc, char** argv) {
 	const double U = 1;
 	const double scaling = sqrt(3) * U / Ma;
 	const double viscosity = (L * U) / Re;
-	TimeIntegratorName time_integrator;
-	DealIntegratorName deal_integrator;
-	string integrator_name;
-	CFDSolverUtilities::get_integrator_by_id(integrator, time_integrator,
-			deal_integrator, integrator_name);
-	pout << "... that is the " << integrator_name << endl;
-	pout << "-------------------------------------" << endl;
+
 	boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
 			TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
 
@@ -82,37 +78,19 @@ int main(int argc, char** argv) {
 	configuration->setSwitchOutputOff(true);
 	configuration->setRestartAtIteration(0);
 	configuration->setUserInteraction(false);
-	configuration->setSedgOrderOfFiniteElement(p);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	if (semi_lagrange == 1){
-		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-	}
-	configuration->setCFL(CFL);
-	if (collision == 1) {
-		configuration->setCollisionScheme(KBC_STANDARD);
-	}
 
-	if (collision == 2) {
-		configuration->setCollisionScheme(BGK_MULTI_AM4);
-	}
-	if (collision == 3) {
-		configuration->setCollisionScheme(BGK_MULTI_BDF2);
-	}
-	if (collision == 4)
-	{
-		configuration->setCollisionScheme(KBC_CENTRAL);
-	}
-	if (limiter){
+	if (limiter) {
 		configuration->setVmultLimiter(true);
 	}
-	configuration->setTimeIntegrator(time_integrator);
-	configuration->setDealIntegrator(deal_integrator);
-	configuration->setEmbeddedDealIntegratorParameters(1.2, 0.8, 0.05, CFL,
-			refine_tol, coarsen_tol);
-	// end after Dissipation by one order of magnitude
-	// exp(-2vt) = 1/10
+
 	configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
+
+	parser.applyToSolverConfiguration(*configuration);
+	configuration->setEmbeddedDealIntegratorParameters(1.2, 0.8, 0.05,
+			configuration->getCFL(), refine_tol, coarsen_tol);
+
 	BenchmarkCFDSolver<2> solver(configuration, tgv);
 	double delta_t = solver.getTimeStepSize();
 
@@ -134,14 +112,17 @@ int main(int argc, char** argv) {
 		pout
 				<< "N p Ma Re integrator CFL collision init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu  runtime"
 				<< endl;
-		pout << N << " " << p << " " << Ma << " " << Re << " " << integrator
-				<< " " << CFL << " " << collision << " "
+		pout << N << " " << configuration->getSedgOrderOfFiniteElement() << " " << Ma << " " << Re << " "
+				<< 'td' << configuration->getTimeIntegrator()
+				<< configuration->getDealIntegrator() << " "
+				<< solver.getConfiguration()->getCFL() << " "
+				<< configuration->getCollisionScheme() << " "
 				<< init_rho_analytically << " " << " " << solver.getIteration()
 				<< " "
-				<< solver.getTime() / solver.getIteration() / delta_t * CFL
-				<< " " << rho_error * (U / Ma) * (U / Ma) << " " << u_error
-				<< " " << numerical_viscosity / viscosity << " " << runtime
-				<< endl;
+				<< solver.getTime() / solver.getIteration() / delta_t
+						* solver.getConfiguration()->getCFL() << " "
+				<< rho_error * (U / Ma) * (U / Ma) << " " << u_error << " "
+				<< numerical_viscosity / viscosity << " " << runtime << endl;
 
 	} catch (std::exception& e) {
 		pout << " Error" << endl;
@@ -149,7 +130,7 @@ int main(int argc, char** argv) {
 
 	LOG(BASIC) << "NATriuM run complete." << endl;
 
-	pout << "step-1 terminated." << endl;
+	//pout << "step-1 terminated." << endl;
 
 	return 0;
 }

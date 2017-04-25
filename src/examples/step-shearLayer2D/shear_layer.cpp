@@ -24,6 +24,7 @@
 #include "natrium/benchmarks/ShearLayer2D.h"
 
 #include "natrium/utilities/Info.h"
+#include "natrium/utilities/CommandLineParser.h"
 
 using namespace natrium;
 
@@ -35,156 +36,117 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	// READ COMMAND LINE PARAMETERS
 	// ========================================================================
-	pout
 
-			<< "Usage: ./shear-layer <refinement_level=3> <p=4> <collision-id=0 (BGK: 0, KBC: 1)> <semi-lagrange=0> <integrator-id=1> <CFL=0.4> <stencil_scaling=1.0> <filter=0> <filter_s=32>"
-			<< endl;
-
-	size_t refinement_level = 3;
-	if (argc >= 2) {
-		refinement_level = std::atoi(argv[1]);
+	CommandLineParser parser(argc, argv);
+	parser.addDocumentationString("shear-layer",
+			"2D Kelvin-Helmholtz instability at Re=30'000, as in Boesch (2014)");
+	parser.setPositionalArgument<int>("ref-level",
+			"refinement of the computational grid");
+	parser.setArgument<double>("tx",
+			"transformation of the grid in x-direction (<1)", 0);
+	parser.setArgument<double>("ty",
+			"transformation or the grid in y-direction (<1)", 0);
+	parser.setArgument<int>("filter", "apply filtering", 0);
+	parser.setArgument<int>("filter-s", "parameter as filter", 32);
+	parser.setFlag("minion-brown",
+			"sets the problem up as the 'thin' shear-layer in the original work by Minion and Brown");
+	try {
+		parser.importOptions();
+	} catch (HelpMessageStop&) {
+		return 0;
 	}
-	pout << "... N:    " << refinement_level << endl;
-
-	size_t p = 4;
-	if (argc >= 3) {
-		p = std::atoi(argv[2]);
-	}
-	pout << "... p:    " << p << endl;
-
-	size_t collision_id = 0;
-	if (argc >= 4) {
-		collision_id = std::atoi(argv[3]);
-	}
-	pout << "... Coll:  " << collision_id << endl;
-
-	size_t semi_lagrange = 0;
-	if (argc >= 5) {
-		semi_lagrange = std::atoi(argv[4]);
-	}
-	pout << "... Semi-Lagrange:  " << semi_lagrange << endl;
-
-	size_t integrator_id = 1;
-	if (argc >= 6) {
-		integrator_id = std::atoi(argv[5]);
-	}
-	pout << "... Int:  " << integrator_id << endl;
-
-	double CFL = .4;
-	if (argc >= 7) {
-		CFL = std::atof(argv[6]);
-	}
-	pout << "... CFL:  " << CFL << endl;
-
-	double stencil_scaling = 1.0;
-	if (argc >= 8) {
-		stencil_scaling = std::atof(argv[7]);
-	}
-	pout << "... stencil_scaling:  " << stencil_scaling << endl;
-
-	size_t filter = 0;
-	if (argc >= 9) {
-		filter = std::atof(argv[8]);
-	}
-	pout << "... Filter:  " << filter << endl;
-
-	size_t filter_s = 0;
-	if (argc >= 10) {
-		filter_s = std::atof(argv[9]);
-	}
-	pout << "... Filter s:  " << filter_s << endl;
-
-	double trafo_x = 0;
-	double trafo_y = 0;
-	if (argc >= 11) {
-		trafo_x = std::atof(argv[10]);
-	}
-	pout << "... Trafo X: " << trafo_x << endl;
-	if (argc >= 12) {
-		trafo_y = std::atof(argv[11]);
-	}
-	pout << "... Trafo Y: " << trafo_y << endl;
-	// get integrator
-	TimeIntegratorName time_integrator;
-	DealIntegratorName deal_integrator;
-	string integrator_name;
-	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
-			deal_integrator, integrator_name);
-
-	pout << "... that is the " << integrator_name << endl;
-	pout << "-------------------------------------" << endl;
 
 	// ========================================================================
 	// MAKE FLOW PROBLEM
 	// ========================================================================
 
-	const double u0 = 0.04;
-	const double kappa = 80;
-	const double Re = 30000;
+	double perturbation = 0.05;
+	double kappa = 80;
+	double Ma = 0.04 / (1.0 / sqrt(3));
+	double Re;
+	double u0;
+	double t_max;
+	if (parser.hasArgument("minion-brown")) {
+		Re = 10000;
+		u0 = 1.0;
+		t_max = 1 / u0;
+	} else {
+		Re = 30000;
+		u0 = 0.04;
+		t_max = 5.0 / u0;
+	}
+	double scaling = sqrt(3) * u0 / Ma;
 	double viscosity = u0 * 1.0 / Re;
-	const double t_c = 5.0 / u0; //twice the eddy turnover time
-	const double perturbation = 0.05;
 
 	boost::shared_ptr<ProblemDescription<2> > shear_layer = boost::make_shared<
-			ShearLayer2D>(viscosity, refinement_level, u0, kappa, perturbation, trafo_x, trafo_y);
-	/*double delta_t = CFDSolverUtilities::calculateTimestep<2>(
-	 *(shear_layer->getMesh()), p, D2Q9(stencil_scaling), CFL);*/
+			ShearLayer2D>(viscosity, parser.getArgument<int>("ref-level"), u0,
+			kappa, perturbation, parser.getArgument<double>("tx"),
+			parser.getArgument<double>("ty"));
 
 	// **** Grid properties ****
-	pout << "**** Grid properties ****" << endl;
-	int noCellsInOneDir = p * pow(2, refinement_level + 1);
-	pout << "Mesh resolution: " << noCellsInOneDir << "x" << noCellsInOneDir
-			<< endl;
-	pout << "Number of grid points: " << pow(noCellsInOneDir, 2) << endl;
-	pout << "-------------------------------------" << endl;
+	/*pout << "**** Grid properties ****" << endl;
+	 int noCellsInOneDir = p * pow(2, refinement_level + 1);
+	 pout << "Mesh resolution: " << noCellsInOneDir << "x" << noCellsInOneDir
+	 << endl;
+	 pout << "Number of grid points: " << pow(noCellsInOneDir, 2) << endl;
+	 pout << "-------------------------------------" << endl;
+	 */
 
 	// ========================================================================
 	// CONFIGURE SOLVER
 	// ========================================================================
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	//configuration->setRestartAtIteration(500);
 	configuration->setSwitchOutputOff(false);
 	configuration->setUserInteraction(false);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setOutputTableInterval(10);	//10
 	configuration->setOutputSolutionInterval(1e9); //10
 	configuration->setOutputCheckpointInterval(1e9);
-	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/shear-layer/N" << refinement_level
-			<< "-p" << p << "-sl" << semi_lagrange << "-coll" << collision_id
-			<< "-int" << integrator_id << "-CFL" << CFL << "-scaling"
-			<< stencil_scaling << "-filter" << filter << "-filt_s" << filter_s << "-tx" << trafo_x << "-ty" << trafo_y;
-	configuration->setOutputDirectory(dirname.str());
 	configuration->setConvergenceThreshold(1e-10);
-	//configuration->setNumberOfTimeSteps(500000);
-	configuration->setSedgOrderOfFiniteElement(p);
-	configuration->setStencilScaling(stencil_scaling);
-	configuration->setCFL(CFL);
-	configuration->setSimulationEndTime(t_c);
-	configuration->setTimeIntegrator(time_integrator);
-	configuration->setDealIntegrator(deal_integrator);
+	configuration->setStencilScaling(scaling);
+	configuration->setCFL(1);
+	configuration->setSedgOrderOfFiniteElement(2);
+	configuration->setSimulationEndTime(t_max);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
+	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	configuration->setExponentialFilterAlpha(36);
+	configuration->setExponentialFilterNc(4);
 
-	if (collision_id == 1) {
-		configuration->setCollisionScheme(KBC_STANDARD);
+	parser.applyToSolverConfiguration(*configuration);
+
+	std::stringstream dirname;
+	dirname << getenv("NATRIUM_HOME") << "/shear-layer";
+	if (parser.hasArgument("minion-brown")) {
+		dirname << "-MinionBrown";
 	}
-
-	if (semi_lagrange == 1)
-		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-
-	if (filter == 1) {
-		configuration->setFiltering(true);
-		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
-		configuration->setExponentialFilterAlpha(36);
-		configuration->setExponentialFilterS(filter_s);
-		configuration->setExponentialFilterNc(4);
+	dirname << "/N" << parser.getArgument<int>("ref-level") << "-p"
+			<< configuration->getSedgOrderOfFiniteElement() << "-sl"
+			<< static_cast<int>(configuration->getAdvectionScheme()) << "-coll"
+			<< static_cast<int>(configuration->getCollisionScheme()) << "-int"
+			<< static_cast<int>(configuration->getTimeIntegrator()) << "_"
+			<< static_cast<int>(configuration->getDealIntegrator()) << "-CFL"
+			<< configuration->getCFL() << "-reg" << static_cast<int>(configuration->getRegularizationScheme())<< "-scaling"
+			<< configuration->getStencilScaling();
+	if (parser.getArgument<int>("filter") != 0) {
+		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"
+				<< parser.getArgument<int>("filter-s");
 	}
+	if ((parser.getArgument<double>("tx") != 0)
+			or (parser.getArgument<double>("ty") != 0)) {
+		dirname << "-tx" << parser.getArgument<double>("tx") << "-ty"
+				<< parser.getArgument<double>("ty");
+	}
+	if (configuration->getRegularizationScheme() != NO_REGULARIZATION){
+		dirname << "-reg" << static_cast<int>(configuration->getRegularizationScheme());
+	}
+	configuration->setOutputDirectory(dirname.str());
 
-	pout << "Simulation end time will be t_c = " << t_c << endl;
+	pout << "Simulation end time will be t_max = " << t_max << endl;
 	// ========================================================================
 	// RUN SOLVER
 	// ========================================================================
+
 	CFDSolver<2> solver(configuration, shear_layer);
 
 	solver.run();
@@ -192,6 +154,6 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	// FINAL OUTPUT
 	// ========================================================================
-	pout << "Flow converged" << endl;
+	pout << "Simulation successful." << endl;
 	return 0;
 }
