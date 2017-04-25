@@ -45,6 +45,7 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<string>("support-points",
 			"support points for semi-Lagrangian streaming [gll (Gauss-Lobatto-Legendre)"
 					", glc (Gauss-Lobatto-Chebyshev), gc (Gauss-Chebyshev), equi (equidistant)]");
+	setArgument<string>("output-dir", "output directory");
 	setArgument<int>("output-sol", "output solution interval (#iterations)");
 	setArgument<int>("output-chk", "output checkpoint interval (#iterations)");
 	setArgument<int>("output-tab", "output table interval (#iterations)");
@@ -313,6 +314,14 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 				<< endl;
 	}
 
+	// output directory
+	if (hasArgument("output-dir")) {
+		string dir = getArgument<string>("output-dir");
+		cfg.setOutputDirectory(dir);
+		LOG(BASIC) << "Output directory set to " << dir << " via command line"
+				<< endl;
+	}
+
 	// output solution interval
 	if (hasArgument("output-sol")) {
 		int sol = getArgument<int>("output-sol");
@@ -388,9 +397,9 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		LOG(BASIC) << "Residual for iterative initialization set to " << res << " via command line" << endl;
 	}
 
-	// iterative initialization: residual
+	// iterative initialization: max n. iterations
 	if (hasArgument("init-niter")) {
-		const int niter = getArgument<int>("init-res");
+		const int niter = getArgument<int>("init-niter");
 		cfg.setIterativeInitializationNumberOfIterations(niter);
 		LOG(BASIC) << "Max. number of iterative initialization steps set to " << niter << " via command line" << endl;
 	}
