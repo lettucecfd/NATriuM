@@ -36,6 +36,7 @@
 #include "../collision/BGKSteadyState.h"
 #include "../collision/BGKIncompressible.h"
 #include "../collision/MRTStandard.h"
+#include "../collision/MRTEntropic.h"
 #include "../collision/KBCStandard.h"
 #include "../collision/KBCCentral.h"
 #include "../collision/BGKMultistep.h"
