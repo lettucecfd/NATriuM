@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
 				<< "N p Ma Re integrator CFL collision init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu  runtime"
 				<< endl;
 		pout << N << " " << configuration->getSedgOrderOfFiniteElement() << " " << Ma << " " << Re << " "
-				<< 'td' << configuration->getTimeIntegrator()
+				<< "td" << configuration->getTimeIntegrator()
 				<< configuration->getDealIntegrator() << " "
 				<< solver.getConfiguration()->getCFL() << " "
 				<< configuration->getCollisionScheme() << " "
