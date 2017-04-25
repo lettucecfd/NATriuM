@@ -381,6 +381,20 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		LOG(BASIC) << "Initialization set to " << init << " via command line" << endl;
 	}
 
+	// iterative initialization: residual
+	if (hasArgument("init-res")) {
+		const double res = getArgument<double>("init-res");
+		cfg.setIterativeInitializationResidual(res);
+		LOG(BASIC) << "Residual for iterative initialization set to " << res << " via command line" << endl;
+	}
+
+	// iterative initialization: residual
+	if (hasArgument("init-niter")) {
+		const int niter = getArgument<int>("init-res");
+		cfg.setIterativeInitializationNumberOfIterations(niter);
+		LOG(BASIC) << "Max. number of iterative initialization steps set to " << niter << " via command line" << endl;
+	}
+
 }
 
 template<class type>
