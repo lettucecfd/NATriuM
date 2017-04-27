@@ -47,7 +47,6 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 					", glc (Gauss-Lobatto-Chebyshev), gc (Gauss-Chebyshev), equi (equidistant)]");
 	setArgument<string>("output-dir", "output directory");
 	setArgument<int>("output-sol", "output solution interval (#iterations)");
-	setArgument<int>("output-sol", "output solution interval (#iterations)");
 	setArgument<int>("output-chk", "output checkpoint interval (#iterations)");
 	setArgument<int>("output-tab", "output table interval (#iterations)");
 	setArgument<string>("stencil",

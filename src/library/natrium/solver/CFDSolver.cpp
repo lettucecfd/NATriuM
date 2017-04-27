@@ -1161,7 +1161,7 @@ void CFDSolver<dim>::initializeDistributions() {
 				<< loopCount << " iterations." << endl;
 
 		//for all degrees of freedom on current processor
-		for (it = locally_owned_dofs.begin(); it != end; it++) {
+		/*for (it = locally_owned_dofs.begin(); it != end; it++) {
 			size_t i = *it;
 			for (size_t j = 0; j < dim; j++) {
 				u(j) = m_velocity.at(j)(i);
@@ -1170,7 +1170,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			for (size_t j = 0; j < m_stencil->getQ(); j++) {
 				m_f.at(j)(i) = feq.at(j);
 			}
-		}
+		}*/
 		break;
 	}
 	default: {
