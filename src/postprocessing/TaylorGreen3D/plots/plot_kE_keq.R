@@ -24,7 +24,7 @@ sim$V4 = (sim$V138 - 2* sim$V136 + sim$V109 + sim$V73 - 2*sim$V119 + sim$V123 + 
 N = 5
 # overwrite sim$V5 by finite differences
 A = -sim2$V3
-B = array(NA,N+1)
+B = array(NA,N)
 sim$V5=append(A,B)
 
 
