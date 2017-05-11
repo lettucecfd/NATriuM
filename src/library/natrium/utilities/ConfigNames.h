@@ -34,6 +34,7 @@ enum CollisionSchemeName {
 	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
 	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
 	MRT_ENTROPIC, // Optimized Multiple Relaxation Time scheme by A.Kraemer (2016)
+	ENTROPIC_STABILIZED, // Optimized Multiple Relaxation Time scheme by A.Kraemer (2016)
 	KBC_STANDARD, // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014)
 	KBC_CENTRAL, // // Multiple Relaxation Time scheme with autonomously adaptive parameters by Karlin et al. (2014), central moments are used
 	BGK_MULTI_AM4, // Multistep BGK model according to Krämer (2017, Uni Siegen, Anhang A)
