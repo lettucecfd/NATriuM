@@ -65,6 +65,10 @@ void EntropicStabilized::collide(DistributionFunctions& f,
 		const dealii::IndexSet& locally_owned_dofs,
 		bool inInitializationProcedure) const {
 
+	// assertion
+	assert (Q == f.size());
+	assert (D == velocities.size());
+
 	// Data for collision
 	EStCollisionData<D, Q> _(*getStencil(), getRelaxationParameter() + 0.5);
 
@@ -148,13 +152,23 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	//cout << "reg" << _.f_post_i[0] << _.f_post_reg_i[0] << endl;
 
 	// calculate Kullback-Leibler Divergences (if f_i > 0), to determine omega2
-	bool negative = false;
+	bool is_negative = false;
 	for (size_t j = 0; j < Q; j++) {
-		if ((_.f_post_reg_i[j] <= 1e-10) || (_.f_eq_i[j] <= 1e-10) || (_.f_i[j] <= 1e-10)) {
-			negative = true;
+		if (_.f_post_reg_i[j] < 1e-11)  {
+			is_negative = true;
+			break;
 		}
+		if (_.f_eq_i[j] < 1e-11)  {
+			is_negative = true;
+			break;
+		}
+		if (_.f_i[j] < 1e-11) {
+			is_negative = true;
+			break;
+		}
+
 	}
-	if (negative) {
+	if (is_negative) {
 		//cout << "negative" << endl;
 		_.omega2 = 1; // relaxation to stabilized post-collision state, without further manipulation of the mirror state
 	} else {
@@ -167,18 +181,20 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 		// i.e., the information from the high-order moments is incorporated
 		// into the shear moments
 		_.omega2 = _.kld_pre * abs(1.0 - 1. / _.tau) / _.kld_post;
+		if (abs(_.kld_pre) < 1e-10){
+			_.omega2 = 1;
+		}
 		//cout << _.kld_pre << " " <<  _.kld_post << " " << abs(1.0 - 1. / _.tau) << " " << _.omega2 << endl;
 	}
 
 	// constrain omega2. minimum: equilibrium distribution (0), maximum: full (over-)relaxation (2tau)
 	// f^pc = f^eq + omega2 * (f^reg - f^eq)
-	if (abs(_.omega2) < 1e-10){
-		_.omega2 = 1;
-	}
-	if (_.omega2 < 0.0)
+	if (_.omega2 < 0.0){
 		_.omega2 = 0.0;
-	else if (_.omega2 > 2 * _.tau)
+	}
+	else if (_.omega2 > 2 * _.tau){
 		_.omega2 = 2 * _.tau;
+	}
 
 	// perform collision
 	for (size_t j = 0; j < Q; j++) {
