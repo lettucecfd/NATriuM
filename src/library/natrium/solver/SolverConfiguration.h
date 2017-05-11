@@ -331,6 +331,8 @@ public:
 			return MRT_STANDARD;
 		} else if ("MRT entropic" == collisionScheme) {
 			return MRT_ENTROPIC;
+		} else if ("Entropic stabilized" == collisionScheme) {
+			return ENTROPIC_STABILIZED;
 		} else if ("KBC standard" == collisionScheme) {
 			return KBC_STANDARD;
 		} else if ("KBC central" == collisionScheme) {
@@ -381,6 +383,10 @@ public:
 		}
 		case MRT_ENTROPIC: {
 			set("Collision scheme", "MRT entropic");
+			break;
+		}
+		case ENTROPIC_STABILIZED: {
+			set("Collision scheme", "Entropic stabilized");
 			break;
 		}
 		case KBC_STANDARD: {

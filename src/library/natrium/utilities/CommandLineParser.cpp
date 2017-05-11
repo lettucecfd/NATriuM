@@ -29,7 +29,7 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<string>("collision",
 			"collision scheme (bgk, bgkt (transformed), inc (incompressible), pp (pseudo-potential)"
 					", ss (steady state), mrt, kbcs (KBC standard), kbcc (KBC central), reg (regularized by Latt)"
-					", am4 (multistep Adams-Moulton 4), bdf2 (multistep BDF2)");
+					", am4 (multistep Adams-Moulton 4), bdf2 (multistep BDF2), est (entropic stablized)");
 	setArgument<string>("integrator",
 			"time integrator in sedg streaming ["
 					"(1) rk4 (classical Runge-Kutta, built-in), (2) theta (theta method), (3) exp (exponential),  (4) ee (explicit Euler), "
@@ -182,6 +182,8 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			cfg.setCollisionScheme(BGK_MULTI_BDF2);
 		else if (collision == "reg")
 			cfg.setCollisionScheme(BGK_REGULARIZED);
+		else if (collision == "est")
+			cfg.setCollisionScheme(ENTROPIC_STABILIZED);
 		else {
 			throw CommandLineParserException(
 					"--collision had illegal value (see --help)");
