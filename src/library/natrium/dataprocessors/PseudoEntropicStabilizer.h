@@ -11,6 +11,7 @@
 #include "DataProcessor.h"
 
 #include <cassert>
+#include <array>
 
 #include "deal.II/base/index_set.h"
 
@@ -18,6 +19,8 @@
 #include "../solver/CFDSolver.h"
 
 #include "../utilities/Math.h"
+
+using std::array;
 
 namespace natrium {
 
@@ -50,7 +53,13 @@ public:
 
 
 	virtual void apply();
+
+
 };
+
+
+	template <size_t Q>
+	void applyStabilizer(const array<double,Q>& in, array<double,Q>& out);
 
 
 } /* namespace natrium */
