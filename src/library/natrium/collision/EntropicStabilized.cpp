@@ -150,7 +150,7 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	// calculate Kullback-Leibler Divergences (if f_i > 0), to determine omega2
 	bool negative = false;
 	for (size_t j = 0; j < Q; j++) {
-		if ((_.f_post_reg_i[j] <= 0) or (_.f_eq_i[j] <= 0) or (_.f_i[j] <= 0)) {
+		if ((_.f_post_reg_i[j] <= 1e-12) or (_.f_eq_i[j] <= 1e-12) or (_.f_i[j] <= 1e-12)) {
 			negative = true;
 			break;
 		}
