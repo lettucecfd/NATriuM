@@ -111,7 +111,7 @@ void EntropicStabilized::collide(DistributionFunctions& f,
 		_.omega_mean += _.omega2;
 
 	}
-	cout << _.omega_mean / locally_owned_dofs.size() << endl;
+	//cout << _.omega_mean / locally_owned_dofs.size() << endl;
 
 }
 template void EntropicStabilized::collide<2, 9>(DistributionFunctions& f,
