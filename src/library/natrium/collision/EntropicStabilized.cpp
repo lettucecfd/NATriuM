@@ -102,7 +102,7 @@ void EntropicStabilized::collide(DistributionFunctions& f,
 		collideOne<D, Q>(_);
 
 		// copy back
-		for (int j = 0; j < Q; j++) {
+		for (size_t j = 0; j < Q; j++) {
 			F[j](i) = _.f_i[j];
 		}
 
@@ -182,7 +182,7 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 		_.omega2 = 2 * _.tau;
 
 	// perform collision
-	for (int j = 0; j < Q; j++) {
+	for (size_t j = 0; j < Q; j++) {
 		_.f_i[j] = _.f_eq_i[j] + _.omega2 * (_.f_post_reg_i[j] - _.f_eq_i[j]);
 	}
 	//cout << "res" << _.f_i[0] << " " << _.f_eq_i[0] << " " << _.f_post_reg_i[0] << endl;
