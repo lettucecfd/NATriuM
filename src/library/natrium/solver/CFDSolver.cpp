@@ -1145,7 +1145,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			// collide without recalculating velocities
 			try {
 				// collide
-				m_collisionModel->collideAll(m_f, rho, u, locally_owned_dofs,
+				m_collisionModel->collideAll(m_f, rho, m_velocity, locally_owned_dofs,
 						inInitializationProcedure);
 				// copy back
 			} catch (CollisionException& e) {
@@ -1154,6 +1154,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			oldDensities -= rho;
 			residual = oldDensities.norm_sqr();
 			CFDSolverUtilities::applyWriteableDensity(rho, m_density);
+			m_f.updateGhosted();
 			//CFDSolverUtilities::applyWriteableVelocity(u, m_velocity);
 			loopCount++;
 		}
