@@ -32,6 +32,7 @@ struct EStCollisionData {
 
 	double kld_pre;
 	double kld_post;
+    double kld_post_reg;
 
 	double rho_i;
 	array<double,D> u_i;
