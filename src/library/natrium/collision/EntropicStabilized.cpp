@@ -115,7 +115,7 @@ void EntropicStabilized::collide(DistributionFunctions& f,
 		_.omega_mean += _.omega2;
 
 	}
-	//cout << _.omega_mean / locally_owned_dofs.size() << endl;
+   cout << _.omega_mean / locally_owned_dofs.size() << endl;
 
 }
 template void EntropicStabilized::collide<2, 9>(DistributionFunctions& f,
@@ -147,7 +147,7 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 		_.f_post_i[j] = _.f_i[j];
 	}
 	//cout << _.f_post_i[0] << " " << _.f_i[0] << " " << _.rho_i << " " << _.u_i[0] << " " << _.u_i[1] << " " << _.tau << endl;
-	collideBGK<D, Q>(_.f_post_i, _.rho_i, _.u_i, _.tau, _.stencil, _.f_eq_i);
+	collideBGK<D, Q>(_.f_post_i, _.rho_i, _.u_i, 0.5, _.stencil, _.f_eq_i);
 	applyStabilizer<Q>(_.f_post_i, _.f_post_reg_i);
 	//cout << "reg" << _.f_post_i[0] << _.f_post_reg_i[0] << endl;
 
@@ -174,13 +174,14 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	} else {
 		_.kld_pre = kullbackLeiblerDivergence<Q>(_.f_i, _.f_eq_i, _.rho_i);
 
-		_.kld_post = kullbackLeiblerDivergence<Q>(_.f_post_reg_i, _.f_eq_i,
+		_.kld_post_reg = kullbackLeiblerDivergence<Q>(_.f_post_reg_i, _.f_eq_i,
 				_.rho_i);
-		// alter relaxation so that the (stabilized) mirror distribution
-		// has similar KLD as the pre-collision distribution,
-		// i.e., the information from the high-order moments is incorporated
-		// into the shear moments
-		_.omega2 = _.kld_pre * abs(1.0 - 1. / _.tau) / _.kld_post;
+
+        _.kld_post = kullbackLeiblerDivergence<Q>(_.f_post_i, _.f_eq_i,
+				_.rho_i);
+
+        _.omega2 = (_.kld_pre - _.kld_post) / (_.kld_post_reg - _.kld_post);
+
 		if (abs(_.kld_pre) < 1e-10){
 			_.omega2 = 1;
 		}
@@ -192,13 +193,13 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	if (_.omega2 < 0.0){
 		_.omega2 = 0.0;
 	}
-	else if (_.omega2 > 2 * _.tau){
-		_.omega2 = 2 * _.tau;
+	else if (_.omega2 > 1){
+		_.omega2 = 1;
 	}
 
 	// perform collision
 	for (size_t j = 0; j < Q; j++) {
-		_.f_i[j] = _.f_eq_i[j] + _.omega2 * (_.f_post_reg_i[j] - _.f_eq_i[j]);
+		_.f_i[j] = _.f_eq_i[j] + (1./_.tau - 1.0) * (_.omega2 * _.f_post_reg_i[j]  + (1-_.omega2) * _.f_post_i[j] - _.f_eq_i[j]);
 	}
 	//cout << "res" << _.f_i[0] << " " << _.f_eq_i[0] << " " << _.f_post_reg_i[0] << endl;
 }
