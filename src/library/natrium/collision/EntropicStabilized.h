@@ -82,6 +82,9 @@ template<size_t Q>
 double kullbackLeiblerDivergence(const array<double,Q>& f, const array<double,Q>& f_reg,
 		double rho);
 
+template<size_t Q>
+double entropy(const array<double,Q>& f, const std::vector<double>& w);
+
 template<size_t D, size_t Q>
 void collideBGK(array<double,Q>& f, double rho, const array<double,D>& u, double tau,
 		const Stencil& st, array<double,Q>& feq);
