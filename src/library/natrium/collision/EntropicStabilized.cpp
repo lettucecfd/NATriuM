@@ -101,6 +101,9 @@ void EntropicStabilized::collide(DistributionFunctions& f,
 			}
 		}
 		densities(i) = _.rho_i;
+        if (_.rho_i < 1e-12){
+            natrium_errorexit("Density < 1e-12 in collision. Abort.");
+        }
 
 		// apply collision operator
 		collideOne<D, Q>(_);
@@ -154,15 +157,15 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	// calculate Kullback-Leibler Divergences (if f_i > 0), to determine omega2
 	bool is_negative = false;
 	for (size_t j = 0; j < Q; j++) {
-		if (_.f_post_reg_i[j] < 1e-11)  {
+		if (not (_.f_post_reg_i[j] > 1e-11) )  {
 			is_negative = true;
 			break;
 		}
-		if (_.f_eq_i[j] < 1e-11)  {
+		if  (not (_.f_eq_i[j] > 1e-11) ) {
 			is_negative = true;
 			break;
 		}
-		if (_.f_i[j] < 1e-11) {
+		if (not (_.f_i[j] > 1e-11) ) {
 			is_negative = true;
 			break;
 		}
@@ -170,23 +173,28 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	}
 	if (is_negative) {
 		//cout << "negative" << endl;
-		_.omega2 = 1; // relaxation to stabilized post-collision state, without further manipulation of the mirror state
-	} else {
-		_.kld_pre = kullbackLeiblerDivergence<Q>(_.f_i, _.f_eq_i, _.rho_i);
+		//_.omega2 = 1; // relaxation to stabilized post-collision state, without further manipulation of the mirror state
+	    for (size_t j = 0; j < Q; j++) {
+		    _.f_i[j] = _.f_eq_i[j] + (1./_.tau - 1.0) * ( _.f_post_reg_i[j] - _.f_eq_i[j]);
+	    }
+        return;
+	} 
 
-		_.kld_post_reg = kullbackLeiblerDivergence<Q>(_.f_post_reg_i, _.f_eq_i,
-				_.rho_i);
+		_.kld_pre = entropy<Q>(_.f_i, _.stencil.getWeights()); //kullbackLeiblerDivergence<Q>(_.f_i, _.f_eq_i, _.rho_i);
 
-        _.kld_post = kullbackLeiblerDivergence<Q>(_.f_post_i, _.f_eq_i,
-				_.rho_i);
+		_.kld_post_reg = entropy<Q>(_.f_post_reg_i, _.stencil.getWeights()); 
+            //kullbackLeiblerDivergence<Q>(_.f_post_reg_i, _.f_eq_i, _.rho_i);
+
+        _.kld_post = entropy<Q>(_.f_post_i, _.stencil.getWeights());
+            //kullbackLeiblerDivergence<Q>(_.f_post_i, _.f_eq_i, _.rho_i);
 
         _.omega2 = (_.kld_pre - _.kld_post) / (_.kld_post_reg - _.kld_post);
 
 		if (abs(_.kld_pre) < 1e-10){
-			_.omega2 = 1;
+			_.omega2 = 0;
 		}
 		//cout << _.kld_pre << " " <<  _.kld_post << " " << abs(1.0 - 1. / _.tau) << " " << _.omega2 << endl;
-	}
+	
 
 	// constrain omega2. minimum: equilibrium distribution (0), maximum: full (over-)relaxation (2tau)
 	// f^pc = f^eq + omega2 * (f^reg - f^eq)
@@ -229,6 +237,23 @@ template double kullbackLeiblerDivergence<19>(const array<double,19>& f,
 template double kullbackLeiblerDivergence<27>(const array<double,27>& f,
 		const array<double,27>& f_reg, double rho);
 
+
+// ======================================================================================================
+template<size_t Q>
+double entropy(const array<double,Q>& f, const std::vector<double>& w){
+    assert (w.size() == Q);
+    for (size_t i = 0; i < Q; i++) {
+		assert(f[i] > 0.0);
+	}
+	double result = 0.0;
+	for (size_t i = 0; i < Q; i++) {
+		result += f[i] * log(f[i] / w[i]);
+	}
+	return result;
+}
+template double entropy<9>(const array<double,9>& f, const std::vector<double>& w);
+template double entropy<19>(const array<double,19>& f, const std::vector<double>& w);
+template double entropy<27>(const array<double,27>& f, const std::vector<double>& w);
 // ======================================================================================================
 
 template<size_t D, size_t Q>
