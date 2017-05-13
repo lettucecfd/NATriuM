@@ -174,6 +174,7 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	if (is_negative) {
 		//cout << "negative" << endl;
 		//_.omega2 = 1; // relaxation to stabilized post-collision state, without further manipulation of the mirror state
+        _.omega2 = 1;
 	    for (size_t j = 0; j < Q; j++) {
 		    _.f_i[j] = _.f_eq_i[j] + (1./_.tau - 1.0) * ( _.f_post_reg_i[j] - _.f_eq_i[j]);
 	    }
@@ -188,9 +189,12 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
         _.kld_post = entropy<Q>(_.f_post_i, _.stencil.getWeights());
             //kullbackLeiblerDivergence<Q>(_.f_post_i, _.f_eq_i, _.rho_i);
 
+        if (abs (_.kld_post_reg - _.kld_post) > 1e-8){
         _.omega2 = (_.kld_pre - _.kld_post) / (_.kld_post_reg - _.kld_post);
-
-		if (abs(_.kld_pre) < 1e-10){
+        } else {
+        _.omega2 = 0;
+        }
+		if (not (abs(_.kld_pre) > 1e-10) ){
 			_.omega2 = 0;
 		}
 		//cout << _.kld_pre << " " <<  _.kld_post << " " << abs(1.0 - 1. / _.tau) << " " << _.omega2 << endl;
