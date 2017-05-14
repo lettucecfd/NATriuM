@@ -30,17 +30,13 @@ struct EStCollisionData {
 	array<double,Q> f_post_reg_i;
 	array<double,Q> f_eq_i;
 
-	double kld_pre;
-	double kld_post;
-    double kld_post_reg;
-
 	double rho_i;
 	array<double,D> u_i;
 	array<double,D> j_i;
 
 	EStCollisionData(const Stencil& st, double tau) :
 			stencil(st), e(st.getDirections()), scaling(st.getScaling()), tau(
-					tau), omega2(0.0), omega_mean(0.0), kld_pre(0.0), kld_post(0.0), rho_i(0.0){
+					tau), omega2(0.0), omega_mean(0.0){
 		assert(st.getQ() == Q);
 		assert(st.getD() == D);
 
@@ -56,6 +52,10 @@ struct EStCollisionData {
 
 class EntropicStabilized: public MRT {
 public:
+        mutable double m_old_old_entropy;
+        mutable double m_old_entropy;
+        mutable double m_entropy;
+
 	EntropicStabilized(double relaxationParameter, double dt,
 			const boost::shared_ptr<Stencil> stencil);
 	virtual ~EntropicStabilized();

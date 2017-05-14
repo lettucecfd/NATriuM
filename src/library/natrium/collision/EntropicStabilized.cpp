@@ -15,7 +15,9 @@ namespace natrium {
 EntropicStabilized::EntropicStabilized(double relaxationParameter, double dt,
 		const boost::shared_ptr<Stencil> stencil) :
 		MRT(relaxationParameter, dt, stencil) {
-
+        m_old_old_entropy = 0.0;
+        m_old_entropy = 0.0;
+        m_entropy = 0.0;
 }
 
 EntropicStabilized::~EntropicStabilized() {
@@ -78,12 +80,16 @@ void EntropicStabilized::collide(DistributionFunctions& f,
 		F.push_back(f.at(i));
 	}
 
+
+        m_old_old_entropy = m_old_entropy;
+        m_old_entropy = m_entropy;
+        m_entropy = 0.0;
+
 	//for all degrees of freedom on current processor
 	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
 	for (it = locally_owned_dofs.begin(); it != end; it++) {
 		size_t i = *it;
-
 		// copy f_i
 		for (size_t j = 0; j < Q; j++) {
 			_.f_i[j] = F[j](i);
@@ -150,7 +156,7 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 		_.f_post_i[j] = _.f_i[j];
 	}
 	//cout << _.f_post_i[0] << " " << _.f_i[0] << " " << _.rho_i << " " << _.u_i[0] << " " << _.u_i[1] << " " << _.tau << endl;
-	collideBGK<D, Q>(_.f_post_i, _.rho_i, _.u_i, 0.5, _.stencil, _.f_eq_i);
+	collideBGK<D, Q>(_.f_post_i, _.rho_i, _.u_i, _.tau, _.stencil, _.f_eq_i);
 	applyStabilizer<Q>(_.f_post_i, _.f_post_reg_i);
 	//cout << "reg" << _.f_post_i[0] << _.f_post_reg_i[0] << endl;
 
@@ -176,44 +182,33 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 		//_.omega2 = 1; // relaxation to stabilized post-collision state, without further manipulation of the mirror state
         _.omega2 = 1;
 	    for (size_t j = 0; j < Q; j++) {
-		    _.f_i[j] = _.f_eq_i[j] + (1./_.tau - 1.0) * ( _.f_post_reg_i[j] - _.f_eq_i[j]);
+		    _.f_i[j] = _.f_post_reg_i[j] ;
 	    }
         return;
 	} 
 
-		_.kld_pre = entropy<Q>(_.f_i, _.stencil.getWeights()); //kullbackLeiblerDivergence<Q>(_.f_i, _.f_eq_i, _.rho_i);
+		m_entropy += entropy<Q>(_.f_i, _.stencil.getWeights()); //kullbackLeiblerDivergence<Q>(_.f_i, _.f_eq_i, _.rho_i);
 
-		_.kld_post_reg = entropy<Q>(_.f_post_reg_i, _.stencil.getWeights()); 
+		//_.kld_post_reg = entropy<Q>(_.f_post_reg_i, _.stencil.getWeights()); 
             //kullbackLeiblerDivergence<Q>(_.f_post_reg_i, _.f_eq_i, _.rho_i);
 
-        _.kld_post = entropy<Q>(_.f_post_i, _.stencil.getWeights());
+        //_.kld_post = entropy<Q>(_.f_post_i, _.stencil.getWeights());
             //kullbackLeiblerDivergence<Q>(_.f_post_i, _.f_eq_i, _.rho_i);
 
-        if (abs (_.kld_post_reg - _.kld_post) > 1e-8){
-        _.omega2 = (_.kld_pre - _.kld_post) / (_.kld_post_reg - _.kld_post);
+        if (m_old_entropy < m_old_old_entropy){
+            // entropy has fallen
+	        for (size_t j = 0; j < Q; j++) {
+		        _.f_i[j] = _.f_post_reg_i[j] ;
+	        }           
+            _.omega2 = 1; 
         } else {
-        _.omega2 = 0;
+            // entropy has risen (normal behavior)
+            for (size_t j = 0; j < Q; j++) {
+		        _.f_i[j] = _.f_post_i[j] ;
+	        } 
+             _.omega2 = 0;
         }
-		if (not (abs(_.kld_pre) > 1e-10) ){
-			_.omega2 = 0;
-		}
-		//cout << _.kld_pre << " " <<  _.kld_post << " " << abs(1.0 - 1. / _.tau) << " " << _.omega2 << endl;
-	
 
-	// constrain omega2. minimum: equilibrium distribution (0), maximum: full (over-)relaxation (2tau)
-	// f^pc = f^eq + omega2 * (f^reg - f^eq)
-	if (_.omega2 < 0.0){
-		_.omega2 = 0.0;
-	}
-	else if (_.omega2 > 1){
-		_.omega2 = 1;
-	}
-
-	// perform collision
-	for (size_t j = 0; j < Q; j++) {
-		_.f_i[j] = _.f_eq_i[j] + (1./_.tau - 1.0) * (_.omega2 * _.f_post_reg_i[j]  + (1-_.omega2) * _.f_post_i[j] - _.f_eq_i[j]);
-	}
-	//cout << "res" << _.f_i[0] << " " << _.f_eq_i[0] << " " << _.f_post_reg_i[0] << endl;
 }
 template void EntropicStabilized::collideOne<2,9>(EStCollisionData<2, 9>& _) const;
 template void EntropicStabilized::collideOne<3,19>(EStCollisionData<3, 19>& _) const;
@@ -253,7 +248,7 @@ double entropy(const array<double,Q>& f, const std::vector<double>& w){
 	for (size_t i = 0; i < Q; i++) {
 		result += f[i] * log(f[i] / w[i]);
 	}
-	return result;
+	return -result;
 }
 template double entropy<9>(const array<double,9>& f, const std::vector<double>& w);
 template double entropy<19>(const array<double,19>& f, const std::vector<double>& w);
