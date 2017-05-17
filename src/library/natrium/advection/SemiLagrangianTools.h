@@ -26,7 +26,7 @@ template<size_t dim>
 struct LagrangianPathTracker {
 
 	LagrangianPathDestination destination; // global degree of freedom at destination (includes direction)
-	size_t beta; // current directions (later: direction of departure degree of freedom (across boundary))
+	size_t currentDirection; // current directions (later: direction of departure degree of freedom (across boundary))
 	dealii::Point<dim> departurePoint; // Lagrangian departure point x^(t-dt)
 	dealii::Point<dim> currentPoint; // Current point x^(t-(dt-timeLeft))
 	typename dealii::DoFHandler<dim>::active_cell_iterator currentCell; // cell of currentPoint
@@ -35,7 +35,7 @@ struct LagrangianPathTracker {
 			const dealii::Point<dim>& x,
 			const dealii::Point<dim>& current_point,
 			typename dealii::DoFHandler<dim>::active_cell_iterator current_cell) :
-			destination(dof, a), beta(b), departurePoint(x), currentPoint(
+			destination(dof, a), currentDirection(b), departurePoint(x), currentPoint(
 					current_point), currentCell(current_cell) {
 
 	}
@@ -43,18 +43,18 @@ struct LagrangianPathTracker {
 			const dealii::Point<dim>& x,
 			const dealii::Point<dim>& current_point,
 			typename dealii::DoFHandler<dim>::active_cell_iterator current_cell) :
-			destination(dest), beta(b), departurePoint(x), currentPoint(
+			destination(dest), currentDirection(b), departurePoint(x), currentPoint(
 					current_point), currentCell(current_cell) {
 
 	}
 	LagrangianPathTracker(const LagrangianPathTracker& other) :
-			destination(other.destination), beta(other.beta), departurePoint(
+			destination(other.destination), currentDirection(other.currentDirection), departurePoint(
 					other.departurePoint), currentPoint(other.currentPoint), currentCell(
 					other.currentCell) {
 	}
 	LagrangianPathTracker& operator=(const LagrangianPathTracker& other) {
 		destination = other.destination;
-		beta = other.beta;
+		currentDirection = other.currentDirection;
 		departurePoint = other.departurePoint;
 		currentPoint = other.currentPoint;
 		currentCell = other.currentCell;
