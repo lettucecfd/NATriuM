@@ -346,13 +346,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					} else /* if is not periodic */{
 						if ((Base::getBoundaries()->getBoundary(bi)->isLinearFluxBoundary())) {
 
-							for (size_t i = 0; i < dim; i++) {
-															pout << "curr" << i << " " << el.currentPoint[i]<< endl;
-															pout << "p_b" << i << " " << p_boundary[i]<< endl;
-															pout << "Dep "<< i << " = " << el.departurePoint[i] << endl;
-														}
 
-							pout << "Direction "<< el.currentDirection << endl;
 
 							el.currentDirection =
 									Base::m_stencil->getIndexOfOppositeDirection(
@@ -377,10 +371,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 												* distance / vel_direction;
 							}
 
-							for (size_t i = 0; i < dim; i++) {
-																						pout << "Depa"<< i << " = " << el.departurePoint[i] << endl;
-																					}
-							pout << endl;
 
 						//	m_boundaryHandler.addHit(el, bi);
 							// else
