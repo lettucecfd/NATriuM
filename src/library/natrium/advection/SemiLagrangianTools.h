@@ -11,6 +11,26 @@
 
 namespace natrium {
 
+/**
+ * @short Exception class for SemiLagrangian advection operator
+ */
+class FaceCrossedFirstFailed: public NATriuMException {
+private:
+	std::string message;
+public:
+	FaceCrossedFirstFailed(const char *msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	FaceCrossedFirstFailed(const string& msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	~FaceCrossedFirstFailed() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
 struct LagrangianPathDestination {
 	size_t index;
 	size_t direction; // in case of a boundary: the outgoing direction
@@ -27,6 +47,7 @@ struct LagrangianPathTracker {
 
 	LagrangianPathDestination destination; // global degree of freedom at destination (includes direction)
 	size_t currentDirection; // current directions (later: direction of departure degree of freedom (across boundary))
+	size_t lifeTimeCounter = 0; // counts the number of cell face crossings, needed for corner detection
 	dealii::Point<dim> departurePoint; // Lagrangian departure point x^(t-dt)
 	dealii::Point<dim> currentPoint; // Current point x^(t-(dt-timeLeft))
 	typename dealii::DoFHandler<dim>::active_cell_iterator currentCell; // cell of currentPoint
