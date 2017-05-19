@@ -143,29 +143,29 @@ BOOST_AUTO_TEST_CASE(PeriodicBoundary2D_forDiscontinuousGalerkin_test) {
 	// for left upper cell
 	BOOST_CHECK(
 			periodicLeftRight.isFaceInBoundary(leftUpperCorner,
-					leftUpperCorner->face(0)->boundary_id()));
+					0));
 	BOOST_CHECK(
 			not periodicLeftRight.isFaceInBoundary(leftUpperCorner,
-					leftUpperCorner->face(1)->boundary_id()));
+					1));
 	BOOST_CHECK(
 			not periodicLeftRight.isFaceInBoundary(leftUpperCorner,
-					leftUpperCorner->face(2)->boundary_id()));
+					2));
 	BOOST_CHECK(
 			not periodicLeftRight.isFaceInBoundary(leftUpperCorner,
-					leftUpperCorner->face(3)->boundary_id()));
+					3));
 
 	BOOST_CHECK(
 			not periodicTopBottom.isFaceInBoundary(leftUpperCorner,
-					leftUpperCorner->face(0)->boundary_id()));
+					0));
 	BOOST_CHECK(
 			not periodicTopBottom.isFaceInBoundary(leftUpperCorner,
-					leftUpperCorner->face(1)->boundary_id()));
+					1));
 	BOOST_CHECK(
 			not periodicTopBottom.isFaceInBoundary(leftUpperCorner,
-					leftUpperCorner->face(2)->boundary_id()));
+					2));
 	BOOST_CHECK(
 			periodicTopBottom.isFaceInBoundary(leftUpperCorner,
-					leftUpperCorner->face(3)->boundary_id()));
+					3));
 
 	// check if the opposite cells are really the opposite ones
 	dealii::DoFHandler<2>::active_cell_iterator it, it2;
