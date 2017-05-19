@@ -59,9 +59,9 @@ int main(int argc, char** argv) {
 	parser.setArgument<double>("Ma", "Mach number U_cl/cs", 0.1);
 	parser.setArgument<int>("rep-x",
 			"Number of repetitions in x-direction (to refine the grid in steps that are not 2^N).",
-			6);
-	parser.setArgument<int>("rep-y", "cf. rep-x", 4);
-	parser.setArgument<int>("rep-z", "cf. rep-x", 5);
+			1);
+	parser.setArgument<int>("rep-y", "cf. rep-x", 1);
+	parser.setArgument<int>("rep-z", "cf. rep-x", 1);
 	parser.setFlag("test", "no simulation, just show message");
 	try {
 		parser.importOptions();
