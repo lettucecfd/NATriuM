@@ -210,10 +210,13 @@ int main(int argc, char** argv) {
 			<< "y+:         " << yplus << "   dx+ = " << dxplus << ", "
 			<< "dz+ = " << dzplus << endl << "          -----         " << endl
 			<< "          -----         " << endl;
+	const double dt = configuration->getCFL() / (p * p)
+			/ (sqrt(2) * scaling) * ymin;
 	LOG(WELCOME) << "==================================================="
-			<< endl << "               dt+ = "
-			<< configuration->getCFL() / p * p / (sqrt(2) * scaling / utau)
-					* yplus << endl
+			<< endl << "               dt  = " << dt << endl << "               dt+ = "
+			<< dt/(viscosity/utau/utau) << endl << "    u_tau cross time = "
+			<< length / utau << " = "
+			<< int(length / utau / dt) << " steps" << endl
 			<< "===================================================" << endl
 			<< endl;
 
