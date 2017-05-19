@@ -15,9 +15,7 @@ namespace natrium {
 EntropicStabilized::EntropicStabilized(double relaxationParameter, double dt,
 		const boost::shared_ptr<Stencil> stencil) :
 		MRT(relaxationParameter, dt, stencil) {
-        m_old_old_entropy = 0.0;
-        m_old_entropy = 0.0;
-        m_entropy = 0.0;
+
 }
 
 EntropicStabilized::~EntropicStabilized() {
@@ -80,16 +78,12 @@ void EntropicStabilized::collide(DistributionFunctions& f,
 		F.push_back(f.at(i));
 	}
 
-
-        m_old_old_entropy = m_old_entropy;
-        m_old_entropy = m_entropy;
-        m_entropy = 0.0;
-
 	//for all degrees of freedom on current processor
 	dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 	dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
 	for (it = locally_owned_dofs.begin(); it != end; it++) {
 		size_t i = *it;
+
 		// copy f_i
 		for (size_t j = 0; j < Q; j++) {
 			_.f_i[j] = F[j](i);
@@ -156,7 +150,7 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 		_.f_post_i[j] = _.f_i[j];
 	}
 	//cout << _.f_post_i[0] << " " << _.f_i[0] << " " << _.rho_i << " " << _.u_i[0] << " " << _.u_i[1] << " " << _.tau << endl;
-	collideBGK<D, Q>(_.f_post_i, _.rho_i, _.u_i, _.tau, _.stencil, _.f_eq_i);
+	collideBGK<D, Q>(_.f_post_i, _.rho_i, _.u_i, 0.5, _.stencil, _.f_eq_i);
 	applyStabilizer<Q>(_.f_post_i, _.f_post_reg_i);
 	//cout << "reg" << _.f_post_i[0] << _.f_post_reg_i[0] << endl;
 
@@ -164,6 +158,10 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	bool is_negative = false;
 	for (size_t j = 0; j < Q; j++) {
 		if (not (_.f_post_reg_i[j] > 1e-11) )  {
+			is_negative = true;
+			break;
+		}
+		if (not (_.f_post_i[j] > 1e-11) )  {
 			is_negative = true;
 			break;
 		}
@@ -180,35 +178,58 @@ void EntropicStabilized::collideOne(EStCollisionData<D, Q>& _) const {
 	if (is_negative) {
 		//cout << "negative" << endl;
 		//_.omega2 = 1; // relaxation to stabilized post-collision state, without further manipulation of the mirror state
-        _.omega2 = 1;
+        _.omega2 = 0;
 	    for (size_t j = 0; j < Q; j++) {
-		    _.f_i[j] = _.f_post_reg_i[j] ;
+		    _.f_i[j] = _.f_eq_i[j] + (1./_.tau - 1) * ( _.f_post_reg_i[j] - _.f_eq_i[j] ) ;
 	    }
         return;
 	} 
 
-		m_entropy += entropy<Q>(_.f_i, _.stencil.getWeights()); //kullbackLeiblerDivergence<Q>(_.f_i, _.f_eq_i, _.rho_i);
+		_.kld_pre = entropy<Q>(_.f_i, _.stencil.getWeights()); //kullbackLeiblerDivergence<Q>(_.f_i, _.f_eq_i, _.rho_i);
 
-		//_.kld_post_reg = entropy<Q>(_.f_post_reg_i, _.stencil.getWeights()); 
+		_.kld_post_reg = entropy<Q>(_.f_post_reg_i, _.stencil.getWeights()); 
             //kullbackLeiblerDivergence<Q>(_.f_post_reg_i, _.f_eq_i, _.rho_i);
 
-        //_.kld_post = entropy<Q>(_.f_post_i, _.stencil.getWeights());
+        _.kld_post = entropy<Q>(_.f_post_i, _.stencil.getWeights());
             //kullbackLeiblerDivergence<Q>(_.f_post_i, _.f_eq_i, _.rho_i);
 
-        if (m_old_entropy < m_old_old_entropy){
-            // entropy has fallen
-	        for (size_t j = 0; j < Q; j++) {
-		        _.f_i[j] = _.f_post_reg_i[j] ;
-	        }           
-            _.omega2 = 1; 
-        } else {
-            // entropy has risen (normal behavior)
-            for (size_t j = 0; j < Q; j++) {
-		        _.f_i[j] = _.f_post_i[j] ;
-	        } 
-             _.omega2 = 0;
-        }
+        // make direction
+	    for (size_t j = 0; j < Q; j++) {
+		    _.f_post_i[j] = _.f_post_reg_i[j] - _.f_eq_i[j];
+	    }
 
+        // one Newton step [ H_post = H (f_reg + omega2 *(f_reg-f_eq)) ]
+        // H_post = H_reg + omega2 * H'(reg) * (f_reg - f_eq)
+        
+        
+
+
+        if (abs (_.kld_post_reg - _.kld_post) > 1e-10){
+        
+            _.omega2 = (_.kld_pre - _.kld_post_reg) / entropyDerivative<Q>(_.f_post_reg_i, _.f_post_i, _.stencil.getWeights());
+        } else {
+            _.omega2 = 0;
+        }
+		if (not (abs(_.kld_pre) > 1e-10) ){
+			_.omega2 = 0;
+		}
+		//cout << _.kld_pre << " " <<  _.kld_post << " " << abs(1.0 - 1. / _.tau) << " " << _.omega2 << endl;
+	
+
+	// constrain omega2. minimum: equilibrium distribution (0), maximum: full (over-)relaxation (2tau)
+	// f^pc = f^eq + omega2 * (f^reg - f^eq)
+	/*if (_.omega2 < 0.0){
+		_.omega2 = 0.0;
+	}
+	else if (_.omega2 > )){
+		_.omega2 = 1;
+	}*/
+
+	// perform collision
+	for (size_t j = 0; j < Q; j++) {
+		_.f_i[j] = _.f_eq_i[j] +  (1./_.tau - 1) *( _.f_post_reg_i[j] + _.omega2 * _.f_post_i[j] - _.f_eq_i[j]);
+	}
+	//cout << "res" << _.f_i[0] << " " << _.f_eq_i[0] << " " << _.f_post_reg_i[0] << endl;
 }
 template void EntropicStabilized::collideOne<2,9>(EStCollisionData<2, 9>& _) const;
 template void EntropicStabilized::collideOne<3,19>(EStCollisionData<3, 19>& _) const;
@@ -254,6 +275,25 @@ template double entropy<9>(const array<double,9>& f, const std::vector<double>& 
 template double entropy<19>(const array<double,19>& f, const std::vector<double>& w);
 template double entropy<27>(const array<double,27>& f, const std::vector<double>& w);
 // ======================================================================================================
+
+template<size_t Q>
+double entropyDerivative(const array<double,Q>& f, const array<double,Q>& direction, const std::vector<double>& w){
+    assert (w.size() == Q);
+    for (size_t i = 0; i < Q; i++) {
+		assert(f[i] > 0.0);
+	}
+	double result = 0.0;
+	for (size_t i = 0; i < Q; i++) {
+		result += direction[i] * (log(f[i] / w[i]) + w[i]);
+	}
+	return -result;
+}
+template double entropyDerivative<9>(const array<double,9>& f, const array<double,9>& direction, const std::vector<double>& w);
+template double entropyDerivative<19>(const array<double,19>& f, const array<double,19>& direction, const std::vector<double>& w);
+template double entropyDerivative<27>(const array<double,27>& f, const array<double,27>& direction, const std::vector<double>& w);
+
+// ======================================================================================================
+
 
 template<size_t D, size_t Q>
 void collideBGK(array<double,Q>& f, double rho, const array<double,D>& u, double tau,
