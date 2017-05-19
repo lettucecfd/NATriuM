@@ -295,9 +295,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 								" because NATriuM's function face_crossed_first did not work due to a non-invertible "
 								" mapping function. The deal.II function found out that the point does not "
 								" lie inside the grid. This situation is not supported by the current version of the Semi-Lagrangian code. "
-								" TODO: implement a supplement for face_crossed_first that does not rely on inverting the mapping function."
-								<< endl;
-						LOG(ERROR) << msg;
+								" TODO: implement a supplement for face_crossed_first that does not rely on inverting the mapping function.";
+						LOG(ERROR) << msg.str();
 						throw SemiLagrangianException(msg.str());
 					}
 				}
@@ -344,6 +343,9 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 								el.currentCell);
 
 					} else /* if is not periodic */{
+				// ================================================================================================
+				// ================================= LinearFluxBoundary ===========================================
+				// ================================================================================================
 						if ((Base::getBoundaries()->getBoundary(bi)->isLinearFluxBoundary())) {
 
 
@@ -373,15 +375,20 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 
 						//	m_boundaryHandler.addHit(el, bi);
-							// else
+
+						} else /* is not LinearFluxBoundary */ {
+
+				// ================================================================================================
+				// ================================= Other Boundaries =============================================
+				// ================================================================================================
 							if (not sparsity_pattern) {
 								el.currentPoint = p_boundary;
-							//	m_boundaryHandler.addHit(el, bi);
-							}   // not_found.pop();
+								m_boundaryHandler.addHit(el, bi);
+							}
+							not_found.pop();
 
-						} //endif isLinearFluxBoundary
-
-					} /* endif isPeriodic */
+						}
+					} /* endif isPeriodic ... else ... */
 				// ================================================================================================
 				// ================================= Interior faces ===============================================
 				// ================================================================================================
