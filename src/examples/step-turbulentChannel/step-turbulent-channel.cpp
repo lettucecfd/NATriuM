@@ -23,6 +23,7 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 
+#include "natrium/utilities/CommandLineParser.h"
 
 using namespace natrium;
 
@@ -31,8 +32,42 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
-	//pout << "Usage: ./turbulent-channel3D <is_restarted (false: 0, true: 1) <refinementLevel> <p> <filterID (no: 0, exp: 1, new: 2)>" << endl;
-	pout << "Starting NATriuM step-turbulent-channel..." << endl;
+	// ========================================================================
+	// READ COMMAND LINE PARAMETERS
+	// ========================================================================
+
+	CommandLineParser parser(argc, argv);
+	parser.addDocumentationString("turbulent-channel",
+			"Turbulent channel flow");
+	parser.setPositionalArgument<int>("ref-level",
+			"Global refinement level. Number of total grid points in direction i: 'ref-i' * (2 ^ 'ref-level')");
+	parser.setArgument<int>("restart", "Restart at iteration ...", 0);
+	parser.setArgument<double>("Re_tau",
+			"Wall Reynolds number u_tau * delta / nu", 180.0);
+	parser.setArgument<double>("U_cl", "Centerline velocity for initialization",
+			10.0);
+	parser.setArgument<double>("delta", "Channel half width", 1);
+	parser.setArgument<double>("lx",
+			"Streamwise length of computational domain normalized with delta",
+			4 * M_PI);
+	parser.setArgument<double>("lz",
+			"Spanwise length of computational domain normalized with delta",
+			2 * M_PI);
+	parser.setArgument<double>("Re_cl",
+			"Centerline Reynolds number used for initialization Re_c = U_cl * delta / nu",
+			3300);
+	parser.setArgument<double>("Ma", "Mach number U_cl/cs", 0.1);
+	parser.setArgument<int>("rep-x",
+			"Number of repetitions in x-direction (to refine the grid in steps that are not 2^N).",
+			6);
+	parser.setArgument<int>("rep-y", "cf. rep-x", 4);
+	parser.setArgument<int>("rep-z", "cf. rep-x", 5);
+	parser.setFlag("test", "no simulation, just show message");
+	try {
+		parser.importOptions();
+	} catch (HelpMessageStop&) {
+		return 0;
+	}
 
 	//**** User Input ****
 	/**
@@ -54,199 +89,195 @@ int main(int argc, char** argv) {
 	 *  Ma					| 0.05;				| 0.05				| 0.05
 	 */
 
-	// Flow variables
-	const double CFL = 1.5; 
-	const double ReTau = atof(argv[1]);
-	const double u_cl = atof(argv[2]);
-	const double uCl2uTauRatio = atof(argv[3]);
+	const int restart = parser.getArgument<int>("restart");
+	LOG(WELCOME) << "==================================================="
+			<< endl << "=== Starting NATriuM step-turbulent-channel... ===="
+			<< endl << "=== Restart iteration: " << restart << endl
+			<< "===================================================" << endl;
+
+	// ========================================================================
+	// CHANNEL SETUP
+	// ========================================================================
+
+	// Reynolds number
+	const double Re_tau = parser.getArgument<double>("Re_tau");
+	assert(Re_tau > 0);
 
 	// Computational domain
-	const double height = atof(argv[4]);
-	const double length = atof(argv[5]) * M_PI * height / 2;
-	const double width = atof(argv[6]) * M_PI * height / 2;
+	const double delta = parser.getArgument<double>("delta");
+	const double height = 2.0 * delta;
+	const double length = parser.getArgument<double>("lx") * delta;
+	const double width = parser.getArgument<double>("lz") * delta;
 
 	// Grid resolution
+	const int ref_level = parser.getArgument<int>("ref-level");
 	std::vector<unsigned int> repetitions(3);
-	repetitions.at(0) = atoi(argv[7]);
-	repetitions.at(1) = atoi(argv[8]);
-	repetitions.at(2) = atoi(argv[9]);
+	repetitions.at(0) = parser.getArgument<int>("rep-x");
+	repetitions.at(1) = parser.getArgument<int>("rep-y");
+	repetitions.at(2) = parser.getArgument<int>("rep-z");
 
-	const double Ma = atof(argv[10]);// lower Ma => reduction in numerical compressibility
+	// calculate viscosity and scaling
+	const double u_cl = parser.getArgument<double>("U_cl");
+	const double Ma = parser.getArgument<double>("Ma");
+	const double scaling = sqrt(3) * u_cl / Ma;
+	const double viscosity = u_cl * delta / parser.getArgument<double>("Re_cl");
+	const double utau = Re_tau * viscosity / delta;
 
-	const int refinementLevel = atoi(argv[11]);
-	const int orderOfFiniteElement = atoi(argv[12]);
-	const int filterID = atoi(argv[13]);
-
-	int restart_iteration = atoi(argv[14]);
-	bool is_periodic = true;
+	// make channel flow object
+	boost::shared_ptr<TurbulentChannelFlow3D> channel3D = boost::make_shared<
+			TurbulentChannelFlow3D>(viscosity,
+			(size_t) parser.getArgument<int>("ref-level"), repetitions, Re_tau,
+			u_cl, height, length, width);
 
 	// Turbulence statistics
-	int noSamplePoints = 3;
-	std::vector<double> samplePointCoordinates(noSamplePoints);
-
-	if (ReTau == 180) {
-		samplePointCoordinates[0] = 8. / 16;
-		samplePointCoordinates[1] = 4. / 16;
-		samplePointCoordinates[2] = 1. / 16;
-	} else if (ReTau == 395) {
-		samplePointCoordinates[0] = 12. / 24;
-		samplePointCoordinates[1] = 6. / 24;
-		samplePointCoordinates[2] = 1. / 24;
+	// y-coordinates for output of RMS values in table (turbulence monitor)
+	int n_rms_coords = 3;
+	std::vector<double> rms_coords(n_rms_coords);
+	rms_coords[0] = height / 2.0;
+	rms_coords[1] = height / 8.0;
+	rms_coords[2] = height / 32.0;
+	TurbulentChannelFlow3D::UnstructuredGridFunc trafo(length, height, width);
+	for (int i = 0; i < n_rms_coords; i++) {
+		rms_coords.at(i) = trafo.trans(rms_coords.at(i));
 	}
+	double ymin = trafo.trans(height / repetitions.at(1) / pow(2, ref_level));
+	double yplus = ymin / (viscosity / utau);
 
-
-	for (int i = 0; i < noSamplePoints; i++) {
-		samplePointCoordinates[i] = 0.5 * height
-				* (1 - cos( M_PI / height * samplePointCoordinates[i]));
-	}
-
-	//**** Calculated ****
-	// approximate air viscosity at room temperature (275K): 1.3e-5 [m^2/s]
-	double viscosity = u_cl * height / 2 / (ReTau * uCl2uTauRatio);
-	//TODO: smooth increase of the inlet velocity until the initTime is reached
-	//  	e.g. u_cl_init = u_cl*(F1B2 - F1B2 * cos(PI / (initTime * globalTimeStep)) ;
-
-	const double scaling = sqrt(3) * u_cl / Ma;
-
-	// Display user input
-	pout << "============================================================="
-			<< "\n" << " READ COMMAND LINE PARAMETERS " << "\n"
-			<< "============================================================="
-			<< "\n" << " |  Parameter \t\t\t\t| Value" << "\n"
-			<< " +--------------------------------------+------------------- "
-			<< "\n" << " |  Friction Reynolds number ReTau \t| " << ReTau
-			<< "\n" << " |  Mean centerline velocity u_cl \t| " << u_cl << "\n"
-			<< " |  Center line velocity to \t\t| " << "\n"
-			<< " |  ... friction velocity ratio \t| " << uCl2uTauRatio << "\n"
-			<< " |  \t\t\t\t\t| " << "\n" << " |  Channel height \t\t\t| "
-			<< height << "\n" << " |  Channel length \t\t\t| " << length << "\n"
-			<< " |  Channel width \t\t\t| " << width << "\n"
-			<< " |  \t\t\t\t\t| " << "\n" << " |  Mach number Ma \t\t\t| " << Ma
-			<< "\n" << " |  Repetitions at x \t\t\t| " << repetitions.at(0)
-			<< "\n" << " |  Repetitions at y \t\t\t| " << repetitions.at(1)
-			<< "\n" << " |  Repetitions at z \t\t\t| " << repetitions.at(2)
-			<< "\n" << " |  Refinement level N \t\t\t| " << refinementLevel
-			<< "\n" << " |  Order of finite element p \t\t| "
-			<< orderOfFiniteElement << endl;
-
-	///**** Create CFD problem ****
-	boost::shared_ptr<TurbulentChannelFlow3D> channel3D = boost::make_shared<
-			TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
-			ReTau, u_cl, height, length, width, orderOfFiniteElement,
-			is_periodic);
-	//channel3D->refineAndTransform();
-
-	//std::ofstream out_file("/tmp/grid_out.vtk");
-	//dealii::GridOut().write_vtk(*channel3D->getMesh(), out_file);
-	//out_file.close();
-	//return 0;
-
-
-	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
-	//poiseuille2D->setViscosity(viscosity);
-	//poiseuille2D->getExternalForce()->scale(viscosity);
-
-	/// setup configuration
-	std::stringstream dirName;
-	dirName << getenv("NATRIUM_HOME") << "/turbulent-channel3D/Re" << ReTau
-			<< "-N" << refinementLevel << "-p" << orderOfFiniteElement
-			<< "-filt" << filterID;
+	// ========================================================================
+	// SOLVER CONFIGURATION
+	// ========================================================================
 
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	//configuration->setSwitchOutputOff(true);
-	configuration->setOutputDirectory(dirName.str());
-        cout << "Restart iteration " << restart_iteration << endl;
-	configuration->setRestartAtIteration(restart_iteration);
+	configuration->setRestartAtIteration(restart);
 	configuration->setUserInteraction(false);
 	configuration->setOutputTableInterval(100);
-	configuration->setOutputCheckpointInterval(40000);
-	configuration->setOutputSolutionInterval(1000);
+	configuration->setOutputCheckpointInterval(5000);
+	configuration->setOutputSolutionInterval(5000);
 	configuration->setCommandLineVerbosity(WELCOME);
-	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setCFL(CFL);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	configuration->setStencil(Stencil_D3Q19);
-
-
-	if (filterID == 1) {
-		configuration->setFiltering(true);
-		configuration->setFilteringScheme(EXPONENTIAL_FILTER);
-	} else if (filterID == 2) {
-		configuration->setFiltering(true);
-		configuration->setFilteringScheme(NEW_FILTER);
-	}
-
 	configuration->setOutputTurbulenceStatistics(true);
 	configuration->setWallNormalDirection(1);
-	configuration->setWallNormalCoordinates(samplePointCoordinates);
+	configuration->setWallNormalCoordinates(rms_coords);
+	parser.applyToSolverConfiguration(*configuration);
+	std::stringstream dir;
+	dir << getenv("NATRIUM_HOME") << "/KMM/Re" << Re_tau << "-ref" << ref_level
+			<< "-p" << configuration->getSedgOrderOfFiniteElement() << "-Ma"
+			<< Ma << "-cfl" << configuration->getCFL() << "-rep"
+			<< repetitions.at(0) << repetitions.at(1) << repetitions.at(2);
+	configuration->setOutputDirectory(dir.str());
 
-	//configuration->setTimeIntegrator(EXPONENTIAL);
-	//configuration->setDealIntegrator(SDIRK_TWO_STAGES);
-	//configuration->setInitializationScheme(ITERATIVE);
-	//configuration->setIterativeInitializationNumberOfIterations(100);
-	//configuration->setIterativeInitializationResidual(1e-15);
-	configuration->setConvergenceThreshold(1e-10);
-	//configuration->setNumberOfTimeSteps(1);
+	// ========================================================================
+	// COMMAND LINE OUTPUT
+	// ========================================================================
+	LOG(WELCOME) << "          -----         " << endl
+			<< "          -----         " << endl << "FLOW SETUP: " << endl
+			<< "===================================================" << endl
+			<< "Re_cl = u_cl * delta / nu   = " << u_cl << " * " << delta
+			<< " / " << viscosity << " = " << u_cl * delta / viscosity << endl
+			<< "u_tau = Re_tau * nu / delta = " << Re_tau << " * " << viscosity
+			<< " / " << delta << " = " << Re_tau * viscosity / delta << endl
+			<< "F     = rho * utau^2 / delta = 1.0 * " << utau << "^2" << " / "
+			<< delta << " = " << utau * utau / delta << endl
+			<< "          -----         " << endl << "          -----        "
+			<< endl;
+	const double dxplus = length / repetitions.at(0) / pow(2, ref_level)
+			/ (viscosity / utau);
+	const double dzplus = width / repetitions.at(2) / pow(2, ref_level)
+			/ (viscosity / utau);
+	const double p = configuration->getSedgOrderOfFiniteElement();
+	LOG(WELCOME) << "CHANNEL SETUP: " << endl
+			<< "===================================================" << endl
+			<< "Dimensions: " << length << " x " << height << " x " << width
+			<< endl << "Grid:       " << repetitions.at(0) << " x "
+			<< repetitions.at(1) << " x " << repetitions.at(2)
+			<< " blocks with 8^" << ref_level << " cells each " << endl
+			<< "#Cells:     " << int(repetitions.at(0) * pow(2, ref_level))
+			<< " x " << int(repetitions.at(1) * pow(2, ref_level)) << " x "
+			<< int(repetitions.at(2) * pow(2, ref_level)) << " = "
+			<< int(
+					repetitions.at(0) * repetitions.at(1) * repetitions.at(2)
+							* pow(2, 3 * ref_level)) << endl << "#Points:    "
+			<< int(repetitions.at(0) * pow(2, ref_level) * p) << " x "
+			<< int(repetitions.at(1) * pow(2, ref_level) * p) << " x "
+			<< int(repetitions.at(2) * pow(2, ref_level) * p) << " = "
+			<< int(
+					repetitions.at(0) * repetitions.at(1) * repetitions.at(2)
+							* pow(2, 3 * ref_level) * p * p * p) << endl
+			<< "y+:         " << yplus << "   dx+ = " << dxplus << ", "
+			<< "dz+ = " << dzplus << endl << "          -----         " << endl
+			<< "          -----         " << endl;
+	LOG(WELCOME) << "==================================================="
+			<< endl << "               dt+ = "
+			<< configuration->getCFL() / p * p / (sqrt(2) * scaling / utau)
+					* yplus << endl
+			<< "===================================================" << endl
+			<< endl;
 
-	//configuration->setSimulationEndTime(); // unit [s]
+	if (parser.hasArgument("test")) {
+		return 0;
+	}
 
 	// ----------------------------------------------------------
 	// create a separate object for the initial velocity function
-	TurbulentChannelFlow3D::IncompressibleU test_velocity(channel3D.get());
+	// TurbulentChannelFlow3D::IncompressibleU test_velocity(channel3D.get());
 
-	if (restart_iteration == 0) {
-		// Divergence check
-		pout << "**** Divergence check ****" << endl;
-		//srand(1);
-		for (size_t i = 0; i < 30; i++) {
+	/*if (restart == 0) {
+	 // Divergence check
+	 pout << "**** Divergence check ****" << endl;
+	 //srand(1);
+	 for (size_t i = 0; i < 30; i++) {
 
-			double div = 0.0;
+	 double div = 0.0;
 
-			// create random point in the flow domain and calculate f
-			dealii::Point<3> x;
-			x(0) = (double) random() / RAND_MAX * length;
-			x(1) = (double) random() / RAND_MAX * width;
-			x(2) = (double) random() / RAND_MAX * height;
+	 // create random point in the flow domain and calculate f
+	 dealii::Point<3> x;
+	 x(0) = (double) random() / RAND_MAX * length;
+	 x(1) = (double) random() / RAND_MAX * width;
+	 x(2) = (double) random() / RAND_MAX * height;
 
-			// Calculate div(U):
+	 // Calculate div(U):
 
-			// increment
-			double h = 1e-6;
-			dealii::Point<3> x_plus_h(x);
+	 // increment
+	 double h = 1e-6;
+	 dealii::Point<3> x_plus_h(x);
 
-			// du / dx
-			x_plus_h(0) = x(0) + h;
-			double f = test_velocity.value(x, 0); // component 0 -> u
-			double f_h = test_velocity.value(x_plus_h, 0);
-			div += ((f_h - f) / h);
-			x_plus_h(0) = x(0);
+	 // du / dx
+	 x_plus_h(0) = x(0) + h;
+	 double f = test_velocity.value(x, 0); // component 0 -> u
+	 double f_h = test_velocity.value(x_plus_h, 0);
+	 div += ((f_h - f) / h);
+	 x_plus_h(0) = x(0);
 
-			// dv / dy
-			x_plus_h(1) = x(1) + h;
-			f = test_velocity.value(x, 1);	// component 1 -> v
-			f_h = test_velocity.value(x_plus_h, 1);
-			div += ((f_h - f) / h);
-			x_plus_h(1) = x(1);
+	 // dv / dy
+	 x_plus_h(1) = x(1) + h;
+	 f = test_velocity.value(x, 1);	// component 1 -> v
+	 f_h = test_velocity.value(x_plus_h, 1);
+	 div += ((f_h - f) / h);
+	 x_plus_h(1) = x(1);
 
-			// dw / dz
-			x_plus_h(2) = x(2) + h;
-			f = test_velocity.value(x, 2);	// component 2 -> w
-			f_h = test_velocity.value(x_plus_h, 2);
-			div += ((f_h - f) / h);
+	 // dw / dz
+	 x_plus_h(2) = x(2) + h;
+	 f = test_velocity.value(x, 2);	// component 2 -> w
+	 f_h = test_velocity.value(x_plus_h, 2);
+	 div += ((f_h - f) / h);
 
-			// check div small (could also be done with asserts)
-			pout << "... div u at point " << i << ", y-coord " << x(2) << ": "
-					<< div << endl;
-		}
-	}
+	 // check div small (could also be done with asserts)
+	 pout << "... div u at point " << i << ", y-coord " << x(2) << ": "
+	 << div << endl;
+	 }
+	 } */
 
+	// ========================================================================
+	// CREATE SOLVER AND RUN SIMULATION
+	// ========================================================================
 	// make solver object and run simulation
 	CFDSolver<3> solver(configuration, channel3D);
 
-	if (restart_iteration == 0) {
+	if (restart == 0) {
 		double utrp_max = channel3D.get()->getMaxUtrp();
 		double utrp_inc_max = channel3D.get()->getMaxIncUtrp();
 		double scalingFactor = utrp_max / utrp_inc_max;
@@ -261,13 +292,14 @@ int main(int argc, char** argv) {
 				boost::make_shared<TurbulentChannelFlow3D::MeanVelocityProfile>(
 						channel3D.get()));
 	} else {
+		// append data processor only in case of restart
 		solver.appendDataProcessor(
 				boost::make_shared<FinalChannelStatistics>(solver,
 						configuration->getOutputDirectory()));
 	}
 	solver.run();
 
-	pout << "Max Velocity  " << solver.getMaxVelocityNorm() << endl; //"   (laminar: "<< 1.5*u_bulk << ")" <<  endl;
+	pout << "Max Velocity  " << solver.getMaxVelocityNorm() << endl;
 
 	pout << "NATriuM step-turbulent-channel terminated." << endl;
 
