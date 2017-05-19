@@ -22,16 +22,14 @@ namespace natrium {
 
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
 		std::vector<unsigned int> repetitions, double ReTau, double u_cl,
-		double height, double length, double width,
-		double orderOfFiniteElement, bool is_periodic) :
+		double height, double length, double width, bool is_periodic) :
 		ProblemDescription<3>(makeGrid(repetitions), viscosity, height),
 		m_refinementLevel(refinementLevel), m_repetitions(repetitions),
-		m_ReTau(ReTau), m_uCl(u_cl), m_ofe(orderOfFiniteElement),
-		m_height(height), m_length(length), m_width(width),
+		m_ReTau(ReTau), m_uCl(u_cl), m_height(height), m_length(length), m_width(width),
 		m_maxUtrp(0.0), m_maxIncUtrp(0.0) {
 
 	// **** Recommendations for CPU use ****
-	pout << "-------------------------------------------------------------" << endl;
+	/*pout << "-------------------------------------------------------------" << endl;
 	pout << "**** Recommendations for CPU use ****" << endl;
 	double noRepetitions3D = repetitions.at(0) * repetitions.at(1) * repetitions.at(2);
 	double noGridPoints = pow( orderOfFiniteElement, 3 ) * pow( 8, refinementLevel +1 ) * noRepetitions3D;
@@ -42,6 +40,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 	pout << "... Recommended number of nodes: " << ceil(noGridPoints/10e+6) << endl;
 	pout << "------------------------------------------------------------" << endl;
 
+
 	// **** Grid properties ****
 	pout << "**** Grid properties ****" << endl;
 	int 	noCellsInXDir	= orderOfFiniteElement * pow( 2, refinementLevel + 1 ) * repetitions.at(0);
@@ -49,6 +48,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 	int 	noCellsInZDir	= orderOfFiniteElement * pow( 2, refinementLevel + 1 ) * repetitions.at(2);
 	pout << "... Mesh resolution: " << noCellsInXDir << "x" << noCellsInYDir << "x" << noCellsInZDir << endl;
 	pout << "... Number of total grid points: " << noGridPoints << endl;
+
 	double  h_half = height/2;
 
 	UnstructuredGridFunc Eq2NonEq(length, height, width);
@@ -77,7 +77,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 	double 	maxDeltaYPlus 	= maxDeltaY * ReTau / h_half;
 	pout << "... Max spacing in y-direction: " << maxDeltaYPlus << endl;
 	pout << "------------------------------------------------------------" << endl;
-
+	 */
 	// apply boundary values
 	setBoundaries(makeBoundaries(is_periodic));
 	// apply initial values / analytic solution
@@ -91,7 +91,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		// h F = -2 tau_w = - 2 rho u_tau^2 = - 2 rho (Re_tau nu / delta)^2
 		// (delta = h_half)
 		// => F = - 1 / delta rho (Re_tau nu / delta)^2
-		double Fx = pow( ReTau * viscosity / h_half, 2.) * rho / h_half;
+		double Fx = pow( ReTau * viscosity / (height/2.0), 2.) * rho / (height/2.0);
 		// laminar flow
 		//double Fx = 8 * m_uCl * viscosity / (height * height); // m_uCl = 1.5*u_bulk
 		pout << " >>>> Body force F = " << Fx << endl;
@@ -426,8 +426,8 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	double sli = delta;
 	double	epsm 				= pow(tke, 1.5)/sli;				// dissipation rate
 
-	double 	ofe					= m_flow->getOrderOfFiniteElement();
-	double	inletCellLength		= height/( (ofe + 1) * pow(2, m_flow->getRefinementLevel()) * m_flow->getRepetitions().at(1));
+	// '3' was 'order of finite element + 1'; changed by AK, May 2017
+	double	inletCellLength		= height/( 3 * pow(2, m_flow->getRefinementLevel()) * m_flow->getRepetitions().at(1));
 	double	wnrn				= 2*M_PI/inletCellLength;		// highest wave number // min cell length
 	double	wnre				= 9*M_PI*amp/(55*sli);			// k_e (related to peak energy wave number)
 	double	wnreta 				= pow((epsm/pow(visc, 3.)), .25);

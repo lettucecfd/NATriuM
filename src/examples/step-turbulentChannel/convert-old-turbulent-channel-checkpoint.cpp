@@ -133,8 +133,7 @@ int main(int argc, char** argv) {
 	///**** Create CFD problem ****
 	boost::shared_ptr<TurbulentChannelFlow3D> channel3D = boost::make_shared<
 			TurbulentChannelFlow3D>(viscosity, refinementLevel, repetitions,
-			ReTau, u_cl, height, length, width, orderOfFiniteElement,
-			is_periodic);
+			ReTau, u_cl, height, length, width, is_periodic);
 
 	//viscosity = 0.5*dt*scaling*scaling/3.; //u_bulk * height / Re;
 	//poiseuille2D->setViscosity(viscosity);
