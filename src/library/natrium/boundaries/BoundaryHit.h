@@ -37,13 +37,13 @@ public:
 			destination(tracker.destination) {
 
 		dtHit = dt_global - (tracker.currentPoint.distance(tracker.departurePoint)
-				/ stencil.getDirection(tracker.beta).l2_norm() );
+				/ stencil.getDirection(tracker.currentDirection).l2_norm() );
 		if (dtHit > 10){
 			cout << "-----------------" << endl
 					<< "current: 	" << tracker.currentPoint << endl
 					<< "departure:  " << tracker.departurePoint << endl
 					<< "distance:   " <<  tracker.currentPoint.distance(tracker.departurePoint) << endl
-					<< "velocity:   " <<  stencil.getDirection(tracker.beta).l2_norm() << endl
+					<< "velocity:   " <<  stencil.getDirection(tracker.currentDirection).l2_norm() << endl
 					<< "dtHit: 		" << dtHit << endl
 					 << "-----------------" << endl;
 		}

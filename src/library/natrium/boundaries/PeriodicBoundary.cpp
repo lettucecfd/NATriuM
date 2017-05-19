@@ -87,8 +87,8 @@ template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
 } /* Constructor 2 */
 
 template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
-		const typename dealii::DoFHandler<dim>::active_cell_iterator &,
-		size_t faceBoundaryIndicator) const {
+		const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+		size_t face_id) const {
 	/*
 	 // first condition: cell map has a key <cell>
 	 if (m_cells.count(cell) == 0) {
@@ -97,10 +97,11 @@ template<size_t dim> bool PeriodicBoundary<dim>::isFaceInBoundary(
 	 // second condition: the face has the right boundary indicator
 	 */
 	// assert(m_cells.count(cell) != 0);
-	if (faceBoundaryIndicator == m_boundaryIndicator1) {
+
+	if (cell->face(face_id)->boundary_id() == m_boundaryIndicator1) {
 		return true;
 	}
-	if (faceBoundaryIndicator == m_boundaryIndicator2) {
+	if (cell->face(face_id)->boundary_id() == m_boundaryIndicator2) {
 		return true;
 	}
 	return false;
