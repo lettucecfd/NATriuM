@@ -37,9 +37,12 @@
 #include "../collision/BGKSteadyState.h"
 #include "../collision/BGKIncompressible.h"
 #include "../collision/MRTStandard.h"
+#include "../collision/MRTEntropic.h"
 #include "../collision/KBCStandard.h"
 #include "../collision/KBCCentral.h"
 #include "../collision/BGKMultistep.h"
+#include "../collision/BGKRegularized.h"
+#include "../collision/EntropicStabilized.h"
 
 #include "../smoothing/ExponentialFilter.h"
 #include "../smoothing/NewFilter.h"
@@ -233,6 +236,12 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 		m_collisionModel = boost::make_shared<BGKStandardTransformed>(tau,
 				delta_t, m_stencil);
+	} else if (BGK_REGULARIZED == configuration->getCollisionScheme()) {
+		tau = BGKRegularized::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		m_collisionModel = boost::make_shared<BGKRegularized>(tau, delta_t,
+				m_stencil);
+
 	} else if (BGK_MULTIPHASE == configuration->getCollisionScheme()) {
 		tau = BGKStandardTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
@@ -254,13 +263,18 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	} else if (MRT_STANDARD == configuration->getCollisionScheme()) {
 		tau = MRTStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
-		m_collisionModel = boost::make_shared<MRTStandard>(
-				tau, delta_t, m_stencil);
+		m_collisionModel = boost::make_shared<MRTStandard>(tau, delta_t,
+				m_stencil);
 	} else if (MRT_ENTROPIC == configuration->getCollisionScheme()) {
-			tau = MRTEntropic::calculateRelaxationParameter(
-					m_problemDescription->getViscosity(), delta_t, *m_stencil);
-			m_collisionModel = boost::make_shared<MRTEntropic>(
-					tau, delta_t, m_stencil);
+		tau = MRTEntropic::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		m_collisionModel = boost::make_shared<MRTEntropic>(tau, delta_t,
+				m_stencil);
+	} else if (ENTROPIC_STABILIZED == configuration->getCollisionScheme()) {
+		tau = MRTEntropic::calculateRelaxationParameter(
+				m_problemDescription->getViscosity(), delta_t, *m_stencil);
+		m_collisionModel = boost::make_shared<EntropicStabilized>(tau, delta_t,
+				m_stencil);
 	} else if (KBC_STANDARD == configuration->getCollisionScheme()) {
 		tau = KBCStandard::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
@@ -477,6 +491,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		LOG(WELCOME) << "tau:                      " << tau << endl;
 		break;
 	}
+	case BGK_REGULARIZED: {
+		LOG(WELCOME) << "tau:                      " << tau << endl;
+		break;
+	}
 	case BGK_STEADY_STATE: {
 		LOG(WELCOME) << "tau:                      " << tau << endl;
 		LOG(WELCOME) << "steady state gamma:       " << gamma << endl;
@@ -591,12 +609,14 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	if (configuration->getRegularizationScheme()
 			== PSEUDO_ENTROPY_MAXIMIZATION) {
 		appendDataProcessor(
-				boost::make_shared<PseudoEntropicStabilizer<dim> >(*this,false));
+				boost::make_shared<PseudoEntropicStabilizer<dim> >(*this,
+						false));
 		LOG(BASIC) << "Using Pseudo-Entropic Stabilizer." << endl;
 	} else if (configuration->getRegularizationScheme()
 			== PSEUDO_ENTROPY_MAXIMIZATION_WITH_E) {
 		appendDataProcessor(
-				boost::make_shared<PseudoEntropicStabilizer<dim> >(*this,true));
+				boost::make_shared<PseudoEntropicStabilizer<dim> >(*this,
+						true));
 		LOG(BASIC) << "Using Pseudo-Entropic Stabilizer." << endl;
 	}
 
@@ -1143,7 +1163,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			// collide without recalculating velocities
 			try {
 				// collide
-				m_collisionModel->collideAll(m_f, rho, u, locally_owned_dofs,
+				m_collisionModel->collideAll(m_f, rho, m_velocity, locally_owned_dofs,
 						inInitializationProcedure);
 				// copy back
 			} catch (CollisionException& e) {
@@ -1152,23 +1172,24 @@ void CFDSolver<dim>::initializeDistributions() {
 			oldDensities -= rho;
 			residual = oldDensities.norm_sqr();
 			CFDSolverUtilities::applyWriteableDensity(rho, m_density);
-			CFDSolverUtilities::applyWriteableVelocity(u, m_velocity);
+			m_f.updateGhosted();
+			//CFDSolverUtilities::applyWriteableVelocity(u, m_velocity);
 			loopCount++;
 		}
 		LOG(DETAILED) << "Residual " << residual << " reached after "
 				<< loopCount << " iterations." << endl;
 
 		//for all degrees of freedom on current processor
-		for (it = locally_owned_dofs.begin(); it != end; it++) {
-			size_t i = *it;
-			for (size_t j = 0; j < dim; j++) {
-				u(j) = m_velocity.at(j)(i);
-			}
-			m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
-			for (size_t j = 0; j < m_stencil->getQ(); j++) {
-				m_f.at(j)(i) = feq.at(j);
-			}
-		}
+		/*for (it = locally_owned_dofs.begin(); it != end; it++) {
+		 size_t i = *it;
+		 for (size_t j = 0; j < dim; j++) {
+		 u(j) = m_velocity.at(j)(i);
+		 }
+		 m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
+		 for (size_t j = 0; j < m_stencil->getQ(); j++) {
+		 m_f.at(j)(i) = feq.at(j);
+		 }
+		 }*/
 		break;
 	}
 	default: {

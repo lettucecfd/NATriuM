@@ -166,6 +166,9 @@ void BGKStandard::collideAllD2Q9(DistributionFunctions& f,
 				velocities.at(0)(i) = u_0_i;
 				velocities.at(1)(i) = u_1_i;
 			}
+		} else {
+			u_0_i = velocities.at(0)(i);
+			u_1_i = velocities.at(1)(i);
 		}
 
 		// calculate equilibrium distribution
@@ -375,6 +378,10 @@ void BGKStandard::collideAllD3Q19(DistributionFunctions& f,
 				velocities.at(1)(i) = u_1_i;
 				velocities.at(2)(i) = u_2_i;
 			}
+		} else {
+			u_0_i = velocities.at(0)(i);
+			u_1_i = velocities.at(1)(i);
+			u_2_i = velocities.at(2)(i);
 		}
 
 		// calculate equilibrium distribution
@@ -572,6 +579,10 @@ void BGKStandard::collideAllD3Q15(DistributionFunctions& f,
 			velocities.at(0)(i) = u_0_i;
 			velocities.at(1)(i) = u_1_i;
 			velocities.at(2)(i) = u_2_i;
+		} else {
+			u_0_i = velocities.at(0)(i);
+			u_1_i = velocities.at(1)(i);
+			u_2_i = velocities.at(2)(i);
 		}
 
 		// calculate equilibrium distribution

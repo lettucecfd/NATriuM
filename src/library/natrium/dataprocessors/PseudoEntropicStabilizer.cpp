@@ -288,6 +288,36 @@ void PseudoEntropicStabilizer<dim>::apply() {
 	this->m_solver.m_f.updateGhosted();
 } /* apply */
 
+
+template<> void applyStabilizer<9>(const array<double,9>& in, array<double,9>& out){
+//    assert( dim == 2);
+	// multiply stabilizer matrix
+	for (size_t j = 0; j < 9; j++) {
+		out[j] = 0;
+		for (size_t k = 0; k < 9; k++) {
+			out[j] += n[j][k] / d[j][k] * in[k];
+		}
+	}
+}
+
+template<> void applyStabilizer<19>(const array<double,19>& in, array<double,19>& out){
+    //assert( dim == 3);
+	// multiply stabilizer matrix
+	for (size_t j = 0; j < 19; j++) {
+		out[j] = 0;
+		for (size_t k = 0; k < 19; k++) {
+			 out[j] += nd_d3q19[j][k] * in[k];
+		}
+	}
+}
+
+template<> void applyStabilizer<27>(const array<double,27>& in, array<double,27>& out){
+//    assert( dim == 3);
+
+    cout << "template<> void applyStabilizer<27> NOT IMPLEMENTED, YET." << endl;
+    assert (false);
+}
+
 template class PseudoEntropicStabilizer<2> ;
 template class PseudoEntropicStabilizer<3> ;
 
