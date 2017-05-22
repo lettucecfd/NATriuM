@@ -113,7 +113,7 @@ SolverConfiguration::SolverConfiguration() {
 	{
 		declare_entry("Collision scheme", "BGK standard",
 				dealii::Patterns::Selection(
-						"BGK standard|BGK steady state|BGK standard transformed|BGK multiphase|BGK incompressible|MRT standard|MRT entropic|KBC standard|KBC central|BGK multi am4|BGK multi bdf2"),
+						"BGK standard|BGK steady state|BGK standard transformed|BGK multiphase|BGK incompressible|BGK regularized|MRT standard|MRT entropic|Entropic stabilized|KBC standard|KBC central|BGK multi am4|BGK multi bdf2"),
 				"The collision step models velocity changes due to particle collisions (local at each node) by a relaxation towards "
 						"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
 						"The standard");
@@ -198,7 +198,7 @@ SolverConfiguration::SolverConfiguration() {
 				"The initial particle distribution functions are normally assumed to be in local equilibrium. A more stable (and costly) scheme is to do some streaming steps on the density field but not on the velocity field, before starting the actual simulations (see e.g. the Book of Guo and Shu).");
 		enter_subsection("Iterative initialization stop condition");
 		{
-			declare_entry("Residual", "1e-6", dealii::Patterns::Double(1e-25),
+			declare_entry("Residual", "1e-7", dealii::Patterns::Double(1e-25),
 					"The iterative initialization stops, when the density increment is smaller than the residual, i.e. the iteration has converged.");
 			declare_entry("Number of iterations", "2000",
 					dealii::Patterns::Integer(1),

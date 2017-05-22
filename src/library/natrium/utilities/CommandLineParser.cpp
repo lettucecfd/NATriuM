@@ -18,7 +18,8 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	// define standard arguments that can be used in all scripts to change the solver configuration
 	setFlag("standard-lbm",
 			"sets the order to 2 and cfl to 4*sqrt(2), giving standard lbm on regular grids");
-	setArgument<int>("standard-lbm-with", "as standard-lbm, but with n-th order calculation of derivatives.");
+	setArgument<int>("standard-lbm-with",
+			"as standard-lbm, but with n-th order calculation of derivatives.");
 	setArgument<int>("order-fe", "order of finite elements");
 	setArgument<double>("cfl", "CFL number");
 	setFlag("output-on", "switches output on");
@@ -27,8 +28,8 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 			"advection scheme (sedg (discontinuous Galerkin) or sl (semi-Lagrange))");
 	setArgument<string>("collision",
 			"collision scheme (bgk, bgkt (transformed), inc (incompressible), pp (pseudo-potential)"
-					", ss (steady state), mrt, kbcs (KBC standard), kbcc (KBC central)"
-					", am4 (multistep Adams-Moulton 4), bdf2 (multistep BDF2)");
+					", ss (steady state), mrt, kbcs (KBC standard), kbcc (KBC central), reg (regularized by Latt)"
+					", am4 (multistep Adams-Moulton 4), bdf2 (multistep BDF2), est (entropic stablized)");
 	setArgument<string>("integrator",
 			"time integrator in sedg streaming ["
 					"(1) rk4 (classical Runge-Kutta, built-in), (2) theta (theta method), (3) exp (exponential),  (4) ee (explicit Euler), "
@@ -44,11 +45,19 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<string>("support-points",
 			"support points for semi-Lagrangian streaming [gll (Gauss-Lobatto-Legendre)"
 					", glc (Gauss-Lobatto-Chebyshev), gc (Gauss-Chebyshev), equi (equidistant)]");
+	setArgument<string>("output-dir", "output directory");
 	setArgument<int>("output-sol", "output solution interval (#iterations)");
 	setArgument<int>("output-chk", "output checkpoint interval (#iterations)");
 	setArgument<int>("output-tab", "output table interval (#iterations)");
-	setArgument<string>("stencil", "stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27]");
+	setArgument<string>("stencil",
+			"stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27]");
 	setArgument<double>("tmax", "simulation end time");
+	setArgument<string>("init",
+			"initialization scheme [equi (equilibrium), iter (iterative)]");
+	setArgument<int>("init-niter",
+			"iterative initialization scheme: max. number of iterations");
+	setArgument<double>("init-res",
+			"iterative initialization scheme: residual");
 
 }
 
@@ -95,7 +104,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 					"Conflicting arguments: standard-lbm and standard-lbm-with");
 		}
 		int order = getArgument<int>("standard-lbm-with");
-		assert (order > 0);
+		assert(order > 0);
 		cfg.setCFL(sqrt(2) * order * order / order);
 		cfg.setSedgOrderOfFiniteElement(order);
 		cfg.setSupportPoints(EQUIDISTANT_POINTS);
@@ -129,6 +138,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	// command line verbosity
 	if (hasArgument("verbose")) {
 		cfg.setCommandLineVerbosity(static_cast<int>(ALL));
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Max verbosity specified via command line." << endl;
 	}
 
@@ -170,6 +180,10 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			cfg.setCollisionScheme(BGK_MULTI_AM4);
 		else if (collision == "bdf2")
 			cfg.setCollisionScheme(BGK_MULTI_BDF2);
+		else if (collision == "reg")
+			cfg.setCollisionScheme(BGK_REGULARIZED);
+		else if (collision == "est")
+			cfg.setCollisionScheme(ENTROPIC_STABILIZED);
 		else {
 			throw CommandLineParserException(
 					"--collision had illegal value (see --help)");
@@ -276,7 +290,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			cfg.setRegularizationScheme(ENTROPY_MAXIMIZATION);
 		} else if (reg == "pemwe") {
 			cfg.setRegularizationScheme(PSEUDO_ENTROPY_MAXIMIZATION_WITH_E);
-		}  else {
+		} else {
 			std::stringstream msg;
 			msg << "Regularization scheme " << reg << " is illegal." << endl;
 			msg << "See --help for allowed options." << endl;
@@ -307,10 +321,20 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 				<< endl;
 	}
 
+	// output directory
+	if (hasArgument("output-dir")) {
+		string dir = getArgument<string>("output-dir");
+		cfg.setOutputDirectory(dir);
+		cfg.setSwitchOutputOff(false);
+		LOG(BASIC) << "Output directory set to " << dir << " via command line"
+				<< endl;
+	}
+
 	// output solution interval
 	if (hasArgument("output-sol")) {
 		int sol = getArgument<int>("output-sol");
 		cfg.setOutputSolutionInterval(sol);
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Output solution interval set to " << sol
 				<< " via command line" << endl;
 	}
@@ -319,6 +343,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	if (hasArgument("output-chk")) {
 		int erval = getArgument<int>("output-chk");
 		cfg.setOutputCheckpointInterval(erval);
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Output checkpoint interval set to " << erval
 				<< " via command line" << endl;
 	}
@@ -327,37 +352,67 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 	if (hasArgument("output-tab")) {
 		int erval = getArgument<int>("output-tab");
 		cfg.setOutputTableInterval(erval);
+		cfg.setSwitchOutputOff(false);
 		LOG(BASIC) << "Output table interval set to " << erval
 				<< " via command line" << endl;
 	}
 
 	// stencil
-	if (hasArgument("stencil")){
+	if (hasArgument("stencil")) {
 		const string sten = getArgument<string>("stencil");
-		if (sten == "d2q9"){
+		if (sten == "d2q9") {
 			cfg.setStencil(Stencil_D2Q9);
-		} else if (sten == "d3q19"){
+		} else if (sten == "d3q19") {
 			cfg.setStencil(Stencil_D3Q19);
-		} else if (sten == "d3q15"){
+		} else if (sten == "d3q15") {
 			cfg.setStencil(Stencil_D3Q15);
-		} else if (sten == "d3q27"){
+		} else if (sten == "d3q27") {
 			cfg.setStencil(Stencil_D3Q27);
 		} else {
 			std::stringstream msg;
-						msg << "--stencil=" << sten << " is illegal." << endl;
-						msg << "See --help for allowed options." << endl;
-						throw CommandLineParserException(msg.str());
+			msg << "--stencil=" << sten << " is illegal." << endl;
+			msg << "See --help for allowed options." << endl;
+			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "Stencil set to " << sten
-				<< " via command line" << endl;
+		LOG(BASIC) << "Stencil set to " << sten << " via command line" << endl;
 	}
 
-	// output solution interval
+	// simulation end time
 	if (hasArgument("tmax")) {
 		int tmax = getArgument<double>("tmax");
 		cfg.setSimulationEndTime(tmax);
 		LOG(BASIC) << "Output simulation end time set to " << tmax
 				<< " via command line" << endl;
+	}
+
+	// iterative initialization
+	if (hasArgument("init")) {
+		const string init = getArgument<string>("init");
+		if (init == "equi") {
+			cfg.setInitializationScheme(EQUILIBRIUM);
+		} else if (init == "iter") {
+			cfg.setInitializationScheme(ITERATIVE);
+		} else {
+			std::stringstream msg;
+			msg << "--init=" << init << " is illegal." << endl;
+			msg << "See --help for allowed options." << endl;
+			throw CommandLineParserException(msg.str());
+		}
+		LOG(BASIC) << "Initialization set to " << init << " via command line" << endl;
+	}
+
+	// iterative initialization: residual
+	if (hasArgument("init-res")) {
+		const double res = getArgument<double>("init-res");
+		cfg.setIterativeInitializationResidual(res);
+		LOG(BASIC) << "Residual for iterative initialization set to " << res << " via command line" << endl;
+	}
+
+	// iterative initialization: max n. iterations
+	if (hasArgument("init-niter")) {
+		const int niter = getArgument<int>("init-niter");
+		cfg.setIterativeInitializationNumberOfIterations(niter);
+		LOG(BASIC) << "Max. number of iterative initialization steps set to " << niter << " via command line" << endl;
 	}
 
 }

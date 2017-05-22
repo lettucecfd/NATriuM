@@ -50,7 +50,7 @@ private:
 
 
 public:
-	FinalChannelStatistics(const CFDSolver<3> & solver, std::string outdir);
+	FinalChannelStatistics(CFDSolver<3> & solver, std::string outdir);
 	virtual void apply();
 	void update();
 	void updateYValues();

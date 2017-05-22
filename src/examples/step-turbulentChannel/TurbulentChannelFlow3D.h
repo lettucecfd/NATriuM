@@ -94,7 +94,7 @@ public:
 			new_y += 1;					// shift cos in [0, 2]
 			new_y *= (m_height / 2.0);	// set final y
 			return new_y;
-			//return std::tanh(4 * (y - 0.5)) / tanh(2) / 2 + 0.5;
+			//return 0.5*(new_y+y);qq
 		}
 		dealii::Point<3> operator()(const dealii::Point<3> &in) const {
 			return dealii::Point<3>(m_length * in(0), trans(in(1)),
@@ -110,7 +110,7 @@ public:
 	TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
 			std::vector<unsigned int> repetitions, double ReTau = 180.0,
 			double u_cl = 10, double height = 1.0, double length = 6.0,
-			double width = 3.0, double orderOfFiniteElement = 2,
+			double width = 3.0,
 			bool is_periodic = true);
 
 	/// destructor
@@ -134,10 +134,6 @@ public:
 
 	double getCenterLineVelocity() const {
 		return m_uCl;
-	}
-
-	double getOrderOfFiniteElement() const {
-		return m_ofe;
 	}
 
 	double getHeight() const {
@@ -188,7 +184,6 @@ private:
 	std::vector<unsigned int> m_repetitions;
 	double m_ReTau;
 	double m_uCl;
-	double m_ofe;
 	double m_height;
 	double m_length;
 	double m_width;

@@ -126,7 +126,7 @@ int main(int argc, char** argv) {
 			<< static_cast<int>(configuration->getCollisionScheme()) << "-int"
 			<< static_cast<int>(configuration->getTimeIntegrator()) << "_"
 			<< static_cast<int>(configuration->getDealIntegrator()) << "-CFL"
-			<< configuration->getCFL() << "-scaling"
+			<< configuration->getCFL() << "-reg" << static_cast<int>(configuration->getRegularizationScheme())<< "-scaling"
 			<< configuration->getStencilScaling();
 	if (parser.getArgument<int>("filter") != 0) {
 		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"

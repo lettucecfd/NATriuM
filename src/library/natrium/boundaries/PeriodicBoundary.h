@@ -144,12 +144,12 @@ public:
 	/**
 	 * @short test if a given face belongs to this boundary
 	 * @param[in] cell pointer to the cell
-	 * @param[in] faceBoundaryIndicator the boundary indicator of the face
+	 * @param[in] face_id local face id (< 6)
 	 *
 	 */
 	bool isFaceInBoundary(
-			const typename dealii::DoFHandler<dim>::active_cell_iterator &,
-			size_t faceBoundaryIndicator) const;
+			const typename dealii::DoFHandler<dim>::active_cell_iterator & cell,
+			size_t face_id) const;
 
 
 	virtual bool isPeriodic() const {
