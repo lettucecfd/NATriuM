@@ -42,6 +42,11 @@ enum CollisionSchemeName {
 	BGK_REGULARIZED // Regularized model by Latt and Chopard (2005)
 };
 
+enum EquilibriumSchemeName {
+	BGK_EQUILIBRIUM
+};
+
+
 // StencilType defined in Stencil.h
 
 /**

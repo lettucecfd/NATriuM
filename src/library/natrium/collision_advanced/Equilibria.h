@@ -28,7 +28,7 @@ template<>
 	double weighting;
 	double uSquareTerm;
 	double mixedTerm;
-	double prefactor = params.scaling / params.cs2;
+	double prefactor = 1. / params.cs2;
 	// calculate equilibrium distribution
 	scalar_product = params.velocity[0] * params.velocity[0]
 			+ params.velocity[1] * params.velocity[1];
@@ -52,6 +52,25 @@ template<>
 	mixedTerm = prefactor * (-params.velocity[0] + params.velocity[1]);
 	feq[6] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 	feq[8] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
+}
+
+template<int T_D,int T_Q>
+ inline void BGKEquilibrium<T_D,T_Q>::calc(double feq[], const CollisionParameters<T_D,T_Q> & params) {
+
+double uu_term = 0.0;
+	for (size_t j = 0; j < T_D; j++) {
+		uu_term += -(params.velocity[j] * params.velocity[j]) / (2.0 * params.cs2);
+	}
+
+	for (size_t i = 0; i < T_Q; i++) {
+		double prefactor = params.weight[i] * params.density;
+
+		double ue_term = 0.0;
+		for (size_t j = 0; j < T_D; j++) {
+			ue_term += (params.velocity[j] * params.e[i][j]) / params.cs2;
+		}
+		feq[i] = prefactor * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
+	}
 }
 }
 
