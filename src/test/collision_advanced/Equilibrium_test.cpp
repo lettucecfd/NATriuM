@@ -54,9 +54,17 @@ double rho = 1.0;
 
 	BGKEquilibrium<2,9> eq;
 	double feq[9];
-	CollisionParameters<2,9> prams;
-	prams.cs2=1./3.;
-	prams.scaling = 1.0;
+	D2Q9 d2q9(1.0);
+	double cs2=1./3.;
+	double scaling = 1.0;
+	double dt = 0.1;
+
+	double viscosity = 1.0;
+
+
+	CollisionParameters<2,9> prams(scaling, viscosity, d2q9,
+			cs2 , dt);
+
 	prams.velocity[0]=velocities[0];
 	prams.velocity[1]=velocities[1];
 	prams.density = rho;
@@ -69,8 +77,14 @@ double rho = 1.0;
 		cout << feq[i] << endl;
 	}
 
-	BOOST_CHECK(feq[1]-feq[3]+feq[5]-feq[6]-feq[7]+feq[8]-velocities[0]<10e-6);
-	BOOST_CHECK(feq[1]-feq[3]+feq[5]-feq[6]-feq[7]+feq[8]-velocities[0]<10e-6);
+	cout << "Dichte v:" << prams.density << endl;
+	cout << "Geschwindigkeit vorher:" << prams.velocity[0] << endl;
+	cout << "Geschwindigkeit vorher:" << prams.velocity[1] << endl;
+
+
+
+	BOOST_CHECK(feq[1]-feq[3]+feq[5]-feq[6]-feq[7]+feq[8]-prams.velocity[0]<10e-6);
+	BOOST_CHECK(feq[1]-feq[3]+feq[5]-feq[6]-feq[7]+feq[8]-prams.velocity[0]<10e-6);
 
 
 

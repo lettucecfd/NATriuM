@@ -28,7 +28,7 @@ namespace natrium{
 
 //BOOST_AUTO_TEST_SUITE(Relaxation_test_suite)
 
-BOOST_AUTO_TEST_CASE(Relaxation_test_suite) {
+BOOST_AUTO_TEST_CASE(Relaxation_test) {
 
 
 
@@ -43,28 +43,48 @@ double rho = 1.0;
 						+ pow((0.5 * cos(0.5)), 2);
 	}
 
-	double velocities[2];
-	double density;
-	density = calculateDensity<9>(test_f);
-	calculateVelocity<2,9>(test_f,velocities,1.0,density);
+	double cs2=1./3.;
+	double scaling = 1.0;
+	double dt = 0.1;
 
-	CollisionParameters<2,9> prams;
-	prams.cs2=1./3.;
-	prams.scaling = 1.0;
-	prams.velocity[0]=velocities[0];
-	prams.velocity[1]=velocities[1];
-	prams.density = density;
-	prams.tau = 1.0;
-
-	BGKCollision<2,9,BGKEquilibrium> test;
+	double viscosity = 1.0;
+	
+	D2Q9 d2q9(1.0);
+	CollisionParameters<2,9> prams(scaling, viscosity, d2q9,
+			cs2 , dt);
 
 
+	cout << "Tau: " << calculateTauFromNu(viscosity,cs2,dt);
 
-	test.relax(test_f,prams);
 
-	cout << (test_f[1]-test_f[3]+test_f[5]-test_f[6]-test_f[7]+test_f[8]) / density << endl << density << endl;
+	Regularized<2, 9, BGKEquilibrium>::uniqueData data(prams);
+	prams.density = calculateDensity<9>(test_f);
+	calculateVelocity<2,9>(test_f,prams.velocity,1.0,prams.density, prams);
 
-	BOOST_CHECK((test_f[1]-test_f[3]+test_f[5]-test_f[6]-test_f[7]+test_f[8])/density-velocities[0]<10e-6);
+
+
+	Regularized<2,9,BGKEquilibrium> test;
+
+
+
+	test.relax(test_f,prams,data);
+	cout << "Dichte v:" << prams.density << endl;
+	cout << "Geschwindigkeit vorher:" << prams.velocity[0] << endl;
+	cout << "Geschwindigkeit vorher:" << prams.velocity[1] << endl;
+
+	calculateVelocity<2,9>(test_f,prams.velocity,1.0,prams.density, prams);
+	cout << "Dichte n:" << prams.density << endl;
+	cout << "Geschwindigkeit nachher:" << prams.velocity[0] << endl;
+	cout << "Geschwindigkeit nachher:" << prams.velocity[1] << endl;
+
+	for (int i=0;i<9;i++)
+	{
+		cout << prams.weight[i] << endl;
+	}
+
+	cout << (test_f[1]-test_f[3]+test_f[5]-test_f[6]-test_f[7]+test_f[8]) / prams.density << endl << prams.density << endl;
+
+	BOOST_CHECK((test_f[1]-test_f[3]+test_f[5]-test_f[6]-test_f[7]+test_f[8])/prams.density-prams.velocity[0]<10e-6);
 
 
 
