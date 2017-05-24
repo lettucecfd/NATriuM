@@ -232,7 +232,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 				//			"Assembly: create points");
 				// get a point x
 				dealii::Point<dim> x_i =
-						StaticMappingQ1<dim,dim>::mapping.transform_unit_to_real_cell(cell,
+						Base::m_mapping->transform_unit_to_real_cell(cell,
 								unit_support_points.at(i));
 				// for all directions
 				for (size_t alpha = 1; alpha < Base::m_stencil->getQ();
@@ -507,13 +507,13 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 
 // transform to unit cell
 	typename dealii::DoFHandler<dim>::cell_iterator ci(*cell);
-	dealii::Point<dim> pi_unit = StaticMappingQ1<dim,dim>::mapping.transform_real_to_unit_cell(
+	dealii::Point<dim> pi_unit = Base::m_mapping->transform_real_to_unit_cell(
 			ci, p_inside);
 	dealii::Point<dim> po_unit;
 	try {
 		// the bilinear mapping function might not be invertible outside the cell
 		po_unit =
-				StaticMappingQ1<dim, dim>::mapping.transform_real_to_unit_cell(
+				Base::m_mapping->transform_real_to_unit_cell(
 						ci, p_outside);
 	} catch (dealii::Mapping<2, 2>::ExcTransformationFailed& e){
 		LOG(WARNING)
@@ -662,7 +662,7 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	}
 
 // map to real cell
-	p_boundary = StaticMappingQ1<dim,dim>::mapping.transform_unit_to_real_cell(ci, h);
+	p_boundary = Base::m_mapping->transform_unit_to_real_cell(ci, h);
 
 // cout << "boundary point: " << p_boundary << endl;
 

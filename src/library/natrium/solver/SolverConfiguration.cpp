@@ -125,7 +125,7 @@ SolverConfiguration::SolverConfiguration() {
 
 		declare_entry("MRT relaxation times", "Full",
 				dealii::Patterns::Selection(
-						"Full|Dellar D2Q9 Only N"),
+						"Full|Dellar D2Q9 Only N|DHumieres Paper"),
 				"Relaxation scheme (choice of the higher-order relaxation parameters). Default: full relaxation to equilibrium");
 
 		declare_entry("Equilibrium scheme", "BGK equilibrium",dealii::Patterns::Selection(

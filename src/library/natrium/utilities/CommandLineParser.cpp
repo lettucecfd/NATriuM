@@ -61,7 +61,7 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<string>("mrt-basis",
 			"Moment basis for MRT collision [dellar-d2q9, lallemand-d2q9, dhumieres-d3q19]");
 	setArgument<string>("mrt-relax",
-			"MRT relaxation times [full, dellar-only-N]");
+			"MRT relaxation times [full, dellar-only-N, dhumieres-paper]");
 
 }
 
@@ -446,6 +446,8 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			cfg.setMRTRelaxationTimes(RELAX_FULL);
 		} else if ("dellar-only-N" == relax) {
 			cfg.setMRTRelaxationTimes(DELLAR_RELAX_ONLY_N);
+		} else if ("dhumieres-paper") {
+			cfg.setMRTRelaxationTimes(RELAX_DHUMIERES_PAPER);
 		} else {
 			std::stringstream msg;
 			msg << "--mrt-relax " << relax << " is illegal." << endl;
