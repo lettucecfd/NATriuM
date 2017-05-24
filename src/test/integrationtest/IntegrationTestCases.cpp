@@ -198,7 +198,7 @@ TestResult ConvergenceTestPeriodic() {
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
 	configuration->setSimulationEndTime(1.0 / (2 * viscosity));
-	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(BGK_STANDARD);
 	//configuration->setCollisionScheme(KBC_STANDARD);
 
 	// Simulation
@@ -505,7 +505,7 @@ TestResult ConvergenceTest3D() {
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
 	//configuration->setCommandLineVerbosity(ALL);
-	configuration->setStencil(Stencil_D3Q15);
+	configuration->setStencil(Stencil_D3Q19);
 	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -688,7 +688,7 @@ TestResult ConvergenceTestForcingSchemes2D() {
 		//pout << "... done." << endl;
 
 	}
-
+/*
 	// EXACT_DIFFERENCE
 	{
 		//pout << "... exact difference scheme." << endl;
@@ -730,7 +730,7 @@ TestResult ConvergenceTestForcingSchemes2D() {
 		//BOOST_CHECK_CLOSE(solver.getMaxVelocityNorm(), 1.5 * u_bulk, 5);
 		//pout << "... done." << endl;
 	}
-
+*/
 	// Analysis
 	// Velocity error (compare Paper by Min and Lee)
 
@@ -798,7 +798,8 @@ TestResult ConvergenceTestForcingSchemes3D() {
 	// forall stencil types and forcing schemes
 	for (size_t i = 1; i < 4; i++) {
 		configuration->setStencil(static_cast<StencilType>(i));
-		for (size_t j = 1; j < 4; j++) {
+		//for (size_t j = 1; j < 4; j++) {
+		for (size_t j = 1; j < 2; j++) { // only shifting velocity for the moment
 			configuration->setForcingScheme(static_cast<ForceType>(j));
 			std::stringstream s;
 			switch (i) {

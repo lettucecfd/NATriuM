@@ -106,8 +106,8 @@ struct GeneralCollisionData {
 	// Individual parameters that are needed for specific collision models only
 
 	GeneralCollisionData(SolverConfiguration& cfg,
-			const ProblemDescription<T_D>& pd, double scl,
-			double viscosity, const Stencil& st, double scaled_cs2, double dt) :
+			const ProblemDescription<T_D>& pd, double scl, double viscosity,
+			const Stencil& st, double scaled_cs2, double dt) :
 			configuration(cfg), problemDescription(pd), scaling(scl), stencil(
 					st), dt(dt), forcetype(cfg.getForcingScheme()) {
 
@@ -130,9 +130,9 @@ struct GeneralCollisionData {
 		// The relaxation time has to be calculated with the scaled speed of sound
 		tau = calculateTauFromNu(viscosity, scaled_cs2, dt);
 
-		if (forcetype != NO_FORCING) {
+		if ((pd.hasExternalForce()) and (forcetype != NO_FORCING)) {
 			for (int i = 0; i < T_D; ++i) {
-				forces[i] = pd.getExternalForce()->getForce()[i]/scaling/scaling;
+				forces[i] = pd.getExternalForce()->getForce()[i] / scaling;
 			}
 		}
 		assert((cs2 - 1. / 3.) < 1e-10);
@@ -165,7 +165,6 @@ inline void calculateVelocity<2, 9>(const std::array<double, 9>& fLocal,
 					- fLocal[8]);
 }
 
-
 template<>
 inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 		std::array<double, 3>& velocity, double density,
@@ -188,24 +187,43 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 template<size_t T_D, size_t T_Q>
 inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
 		size_t i, GeneralCollisionData<T_D, T_Q> genData) {
+	assert(velocities.size() == T_D);
+	if (genData.forcetype == NO_FORCING) {
+		throw NATriuMException(
+				"Problem requires forcing scheme, but forcing was switched off."
+						"Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
+	}
 	if (genData.forcetype == SHIFTING_VELOCITY) {
 		for (int j = 0; j < T_D; j++) {
-			velocities[j][i] = genData.scaling*genData.velocity[j]
-					+ 0.5 * genData.dt * genData.forces[j] *genData.scaling*genData.scaling / genData.density;
+			velocities[j](i) = genData.scaling
+					* (genData.velocity[j]
+							+ 0.5 * genData.dt * genData.forces[j]
+									/ genData.density);
 		}
+	} else {
+		throw NotImplementedException(
+				"Force Type not implemented. Use Shifting Velocity instead.");
 	}
 }
 
 template<size_t T_D, size_t T_Q>
 inline void applyForces(GeneralCollisionData<T_D, T_Q> genData) {
+	if (genData.forcetype == NO_FORCING) {
+		throw NATriuMException(
+				"Problem requires forcing scheme, but forcing was switched off."
+						"Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
+	}
 	if (genData.forcetype == SHIFTING_VELOCITY) {
 		for (int i = 0; i < T_D; i++) {
-		//	genData.velocity[i] *=genData.scaling;
-			genData.velocity[i] += genData.tau * genData.dt
-					* genData.forces[i] / genData.density;
-		//	genData.velocity[i] /=genData.scaling;
+			//	genData.velocity[i] *=genData.scaling;
+			genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
+					/ genData.density;
+			//	genData.velocity[i] /=genData.scaling;
 
 		}
+	} else {
+		throw NotImplementedException(
+				"Force Type not implemented. Use Shifting Velocity instead.");
 	}
 }
 

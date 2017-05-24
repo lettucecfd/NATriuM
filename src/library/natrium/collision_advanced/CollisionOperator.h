@@ -44,8 +44,9 @@ public:
 
 			//Calculate the local density and store it into the Parameter Handling System
 			genData.density = calculateDensity<T_Q>(genData.fLocal); // done
-			if ( 1e-10 >= genData.density){
-				throw DensityZeroException("Density too small in collision. Decrease time step size.");
+			if (1e-10 >= genData.density) {
+				throw DensityZeroException(
+						"Density too small in collision. Decrease time step size.");
 			}
 
 			//Write the local density to the global density vector
@@ -60,8 +61,10 @@ public:
 				for (size_t j = 0; j < T_D; ++j) {
 					velocities.at(j)(i) = genData.velocity[j] * genData.scaling;
 				}
-				applyMacroscopicForces<T_D, T_Q>(velocities, i, genData);
-				applyForces<T_D, T_Q>(genData);
+				if (genData.problemDescription.hasExternalForce()) {
+					applyMacroscopicForces<T_D, T_Q>(velocities, i, genData);
+					applyForces<T_D, T_Q>(genData);
+				}
 			} else {
 				for (size_t j = 0; j < T_D; ++j) {
 					genData.velocity[i] = velocities.at(0)(i);
