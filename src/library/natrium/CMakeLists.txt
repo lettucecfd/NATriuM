@@ -12,6 +12,7 @@ file(   GLOB_RECURSE
         benchmarks/* 
         boundaries/*
         collision/*
+        collision_advanced/*
         dataprocessors/*
         problemdescription/* 
         smoothing/*
