@@ -39,7 +39,6 @@ public:
 
 			// Variable that stores the local distribution function values of every node
 
-
 			// Copy the needed global distribution function values into the local variable
 			copyGlobalToLocalF<T_Q>(genData.fLocal, f, i); // done
 
@@ -53,18 +52,21 @@ public:
 			densities[i] = genData.density; // write local density to global density vector
 
 			//Calculate the local velocity and store it into the Parameter Handling System
-			calculateVelocity<T_D, T_Q>(genData.fLocal, genData.velocity, genData.scaling,
+			calculateVelocity<T_D, T_Q>(genData.fLocal, genData.velocity,
 					genData.density, genData); // TODO velocities for other stencils
 
 			//Write the local density to the global velocity matrix
 			if (not inInitializationProcedure) {
-
 				for (size_t j = 0; j < T_D; ++j) {
 					velocities.at(j)(i) = genData.velocity[j] * genData.scaling;
 				}
+				applyMacroscopicForces<T_D, T_Q>(velocities, i, genData);
+				applyForces<T_D, T_Q>(genData);
+			} else {
+				for (size_t j = 0; j < T_D; ++j) {
+					genData.velocity[i] = velocities.at(0)(i);
+				}
 			}
-
-			//applyForces<T_Q>(fLocal); // TODO
 
 			//Initialize an object of the desired collision scheme and run the relaxation process
 

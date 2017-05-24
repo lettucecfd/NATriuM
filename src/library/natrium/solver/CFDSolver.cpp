@@ -816,7 +816,7 @@ void CFDSolver<dim>::collide() {
 
 
 // TODO member function collisionModel
-		selectCollision(*m_configuration, m_f, writeable_rho, writeable_u,
+		selectCollision(*m_configuration, *m_problemDescription, m_f, writeable_rho, writeable_u,
 				m_advectionOperator->getLocallyOwnedDofs(), m_problemDescription->getViscosity(), delta_t, *m_stencil, false);
 
 		// perform collision
