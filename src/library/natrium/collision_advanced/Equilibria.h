@@ -18,12 +18,12 @@ class BGKEquilibrium
 
 public:
 	//BGKEquilibrium();
-	void calc(double feq[], const CollisionParameters<T_D,T_Q> & params);
+	void calc(double feq[], const GeneralCollisionData<T_D,T_Q> & params);
 };
 
 
 template<>
- inline void BGKEquilibrium<2,9>::calc(double feq[], const CollisionParameters<2,9> & params) {
+ inline void BGKEquilibrium<2,9>::calc(double feq[], const GeneralCollisionData<2,9> & params) {
 	double scalar_product;
 	double weighting;
 	double uSquareTerm;
@@ -55,7 +55,7 @@ template<>
 }
 
 template<int T_D,int T_Q>
- inline void BGKEquilibrium<T_D,T_Q>::calc(double feq[], const CollisionParameters<T_D,T_Q> & params) {
+ inline void BGKEquilibrium<T_D,T_Q>::calc(double feq[], const GeneralCollisionData<T_D,T_Q> & params) {
 
 double uu_term = 0.0;
 	for (size_t j = 0; j < T_D; j++) {

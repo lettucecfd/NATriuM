@@ -62,7 +62,7 @@ double rho = 1.0;
 	double viscosity = 1.0;
 
 
-	CollisionParameters<2,9> prams(scaling, viscosity, d2q9,
+	GeneralCollisionData<2,9> prams(scaling, viscosity, d2q9,
 			cs2 , dt);
 
 	prams.velocity[0]=velocities[0];

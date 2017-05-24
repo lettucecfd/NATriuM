@@ -50,14 +50,14 @@ double rho = 1.0;
 	double viscosity = 1.0;
 	
 	D2Q9 d2q9(1.0);
-	CollisionParameters<2,9> prams(scaling, viscosity, d2q9,
+	GeneralCollisionData<2,9> prams(scaling, viscosity, d2q9,
 			cs2 , dt);
 
 
 	cout << "Tau: " << calculateTauFromNu(viscosity,cs2,dt);
 
 
-	Regularized<2, 9, BGKEquilibrium>::uniqueData data(prams);
+	Regularized<2, 9, BGKEquilibrium>::SpecificCollisionData data(prams);
 	prams.density = calculateDensity<9>(test_f);
 	calculateVelocity<2,9>(test_f,prams.velocity,1.0,prams.density, prams);
 
