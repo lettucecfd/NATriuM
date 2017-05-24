@@ -469,6 +469,8 @@ public:
 			return DELLAR_RELAX_ONLY_N;
 		} else if ("Full" == relax) {
 			return RELAX_FULL;
+		} else if ("DHumieres Paper") {
+			return RELAX_DHUMIERES_PAPER;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown MRT relaxation times '" << relax
@@ -489,6 +491,11 @@ public:
 			set("MRT relaxation times", "Dellar D2Q9 Only N");
 			break;
 		}
+		case RELAX_DHUMIERES_PAPER: {
+			set("MRT relaxation times", "DHumieres Paper");
+			break;
+		}
+
 		default: {
 			std::stringstream msg;
 			msg << "Unknown MRTRelaxationTimes; index. " << mode

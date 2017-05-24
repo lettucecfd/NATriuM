@@ -19,7 +19,8 @@ namespace natrium {
  */
 enum RelaxMode {
 	RELAX_FULL, // relax all higher-order moments to equilibrium
-	DELLAR_RELAX_ONLY_N // relax only J to equilibrium
+	DELLAR_RELAX_ONLY_N, // relax only J to equilibrium
+	RELAX_DHUMIERES_PAPER // D3Q19 relaxation rates from D'Humieres et al. (2002)
 };
 
 /**

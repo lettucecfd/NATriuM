@@ -147,6 +147,8 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.getMRTRelaxationTimes(), RELAX_FULL);
 	config.setMRTRelaxationTimes(DELLAR_RELAX_ONLY_N);
 	BOOST_CHECK_EQUAL(config.getMRTRelaxationTimes(), DELLAR_RELAX_ONLY_N);
+	config.setMRTRelaxationTimes(RELAX_DHUMIERES_PAPER);
+	BOOST_CHECK_EQUAL(config.getMRTRelaxationTimes(), RELAX_DHUMIERES_PAPER);
 
 	/// Failure test
 	pout << " ... failure test ... " << endl;

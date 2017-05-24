@@ -294,8 +294,8 @@ template<> const array<double, 9> make_diag(double tau, MomentBasis basis,
 
 	// firstly, relax all with tau
 	array<double, 9> diag = { };
-	for (size_t i=0 ; i < 9; i++){
-		diag[i] = 1./tau;
+	for (size_t i = 0; i < 9; i++) {
+		diag[i] = 1. / tau;
 	}
 
 	switch (relax_mode) {
@@ -323,7 +323,7 @@ template<> const array<double, 9> make_diag(double tau, MomentBasis basis,
 		break;
 	} /* case RELAX_FULL */
 
-	// Dellar relax only moment 'N'
+		// Dellar relax only moment 'N'
 	case DELLAR_RELAX_ONLY_N: {
 		assert(basis == DELLAR_D2Q9);
 		diag.at(8) = 1.0;
@@ -341,12 +341,12 @@ template<> const array<double, 9> make_diag(double tau, MomentBasis basis,
 template<> const array<double, 19> make_diag(double tau, MomentBasis basis,
 		RelaxMode relax_mode) {
 
-	assert (tau > 0.5);
+	assert(tau > 0.5);
 
 	// firstly, relax all with tau
-	array<double, 19> diag = {};
-	for (size_t i=0 ; i < 19; i++){
-		diag[i] = 1./tau;
+	array<double, 19> diag = { };
+	for (size_t i = 0; i < 19; i++) {
+		diag[i] = 1. / tau;
 	}
 	switch (relax_mode) {
 
@@ -367,7 +367,30 @@ template<> const array<double, 19> make_diag(double tau, MomentBasis basis,
 		} /* case DHUMIERES_D3Q19 */
 		default: {
 			throw MRTException(
-					"MRT relaxation not defined. Only RELAX_FULL is currently supported for the DHUMIERES_D3Q19 basis.");
+					"MRT relaxation not defined. NATriuM currently only supports the Basis from D'Humieres et al. (2002) in D3Q19.");
+
+		} /* default */
+		} /* switch basis */
+		break;
+	} /* case RELAX_FULL */
+
+		// full relaxation of higher-order moments
+	case RELAX_DHUMIERES_PAPER: {
+		switch (basis) {
+		case DHUMIERES_D3Q19: {
+			double s9 = 1. / tau;
+			double s13 = 1. / tau;
+			double s1 = 1.19;
+			double s2 = 1.4;
+			double s10 = 1.4;
+			double s4 = 1.2;
+			double s16 = 1.98;
+			diag = {0, s1, s2, 0, s4, 0, s4, 0, s4, s9, s10, s9, s10, s13, s13, s13, s16, s16, s16};
+			break;
+		} /* case DHUMIERES_D3Q19 */
+		default: {
+			throw MRTException(
+					"MRT relaxation not defined. NATriuM currently only supports the Basis from D'Humieres et al. (2002) in D3Q19.");
 		} /* default */
 		} /* switch basis */
 		break;
