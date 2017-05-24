@@ -374,9 +374,9 @@ public:
 			break;
 		}
 		case BGK_REGULARIZED: {
-					set("Collision scheme", "BGK regularized");
-					break;
-				}
+			set("Collision scheme", "BGK regularized");
+			break;
+		}
 		case MRT_STANDARD: {
 			set("Collision scheme", "MRT standard");
 			break;
@@ -414,6 +414,91 @@ public:
 		}
 		}
 		leave_subsection();
+	}
+
+	MomentBasis getMRTBasis() {
+		enter_subsection("Collision");
+		string basis = get("MRT basis");
+		leave_subsection();
+		if ("Dellar D2Q9" == basis) {
+			return DELLAR_D2Q9;
+		} else if ("Lallemand D2Q9" == basis) {
+			return LALLEMAND_D2Q9;
+		} else if ("DHumieres D3Q19" == basis) {
+			return DHUMIERES_D3Q19;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown MRT basis '" << basis
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of MomentBasis might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setMRTBasis(MomentBasis basis) {
+		enter_subsection("Collision");
+		switch (basis) {
+		case DELLAR_D2Q9: {
+			set("MRT basis", "Dellar D2Q9");
+			break;
+		}
+		case LALLEMAND_D2Q9: {
+			set("MRT basis", "Lallemand D2Q9");
+			break;
+		}
+		case DHUMIERES_D3Q19: {
+			set("MRT basis", "DHumieres D3Q19");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown MRT basis; index. " << basis
+					<< " in enum MomentBasis. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+	}
+
+	RelaxMode getMRTRelaxationTimes() {
+		enter_subsection("Collision");
+		string relax = get("MRT relaxation times");
+		leave_subsection();
+		if ("Dellar D2Q9 Only N" == relax) {
+			return DELLAR_RELAX_ONLY_N;
+		} else if ("Full" == relax) {
+			return RELAX_FULL;
+		} else {
+			std::stringstream msg;
+			msg << "Unknown MRT relaxation times '" << relax
+					<< " '. Check your configuration file. If everything is alright, "
+					<< "the implementation of RelaxMode might not be up-to-date.";
+			throw ConfigurationException(msg.str());
+		}
+	}
+
+	void setMRTRelaxationTimes(RelaxMode mode) {
+		enter_subsection("Collision");
+		switch (mode) {
+		case RELAX_FULL: {
+			set("MRT relaxation times", "Full");
+			break;
+		}
+		case DELLAR_RELAX_ONLY_N: {
+			set("MRT relaxation times", "Dellar D2Q9 Only N");
+			break;
+		}
+		default: {
+			std::stringstream msg;
+			msg << "Unknown MRTRelaxationTimes; index. " << mode
+					<< " in enum RelaxMode. The constructor of SolverConfiguration might not be up-to-date.";
+			leave_subsection();
+			throw ConfigurationException(msg.str());
+		}
+		}
+		leave_subsection();
+
 	}
 
 	EquilibriumSchemeName getEquilibriumScheme() {

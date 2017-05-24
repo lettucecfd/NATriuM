@@ -14,6 +14,22 @@ namespace natrium {
 // DECLARE ALL SELECTIONS ////
 //////////////////////////////
 
+/**
+ * @short relaxation matrix for MRT
+ */
+enum RelaxMode {
+	RELAX_FULL, // relax all higher-order moments to equilibrium
+	DELLAR_RELAX_ONLY_N // relax only J to equilibrium
+};
+
+/**
+ * @short moment basis for MRT
+ */
+enum MomentBasis {
+	DELLAR_D2Q9,
+	LALLEMAND_D2Q9,
+	DHUMIERES_D3Q19
+};
 
 
 /**
