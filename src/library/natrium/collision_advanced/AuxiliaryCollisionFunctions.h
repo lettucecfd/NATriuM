@@ -132,7 +132,7 @@ struct GeneralCollisionData {
 
 		if ((pd.hasExternalForce()) and (forcetype != NO_FORCING)) {
 			for (int i = 0; i < T_D; ++i) {
-				forces[i] = pd.getExternalForce()->getForce()[i] / scaling;
+				forces[i] = pd.getExternalForce()->getForce()[i] / scaling / scaling;
 			}
 		}
 		assert((cs2 - 1. / 3.) < 1e-10);
@@ -194,10 +194,10 @@ inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
 						"Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
 	}
 	if (genData.forcetype == SHIFTING_VELOCITY) {
+		// TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
+		// 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
 		for (int j = 0; j < T_D; j++) {
-			velocities[j](i) = genData.scaling
-					* (genData.velocity[j]
-							+ 0.5 * genData.dt * genData.forces[j]
+			velocities[j](i) = velocities[j](i) + (genData.scaling * 0.5 * genData.dt * genData.forces[j]
 									/ genData.density);
 		}
 	} else {
@@ -216,7 +216,8 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q> genData) {
 	if (genData.forcetype == SHIFTING_VELOCITY) {
 		for (int i = 0; i < T_D; i++) {
 			//	genData.velocity[i] *=genData.scaling;
-			genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
+			// TODO: Something to look at: the '-=' was a '+=' before, but BGKStandard has '-='
+			genData.velocity[i] -= genData.tau * genData.dt * genData.forces[i]
 					/ genData.density;
 			//	genData.velocity[i] /=genData.scaling;
 
