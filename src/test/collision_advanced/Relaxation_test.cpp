@@ -23,10 +23,10 @@
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "natrium/benchmarks/PeriodicTestDomain3D.h"
 
-namespace natrium{
+using namespace natrium;
 
 
-//BOOST_AUTO_TEST_SUITE(Relaxation_test_suite)
+BOOST_AUTO_TEST_SUITE(Relaxation_test_suite)
 
 BOOST_AUTO_TEST_CASE(Relaxation_test) {
 

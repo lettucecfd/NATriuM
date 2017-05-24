@@ -9,6 +9,7 @@
 #define LIBRARY_NATRIUM_COLLISION_COLLISIONSCHEMES_H_
 
 #include "Equilibria.h"
+#include "SolverConfiguration.h"
 
 namespace natrium {
 template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
@@ -127,6 +128,49 @@ public:
 
 	} //relax
 } //class regularized
+;
+
+
+template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
+class MRT {
+public:
+
+	struct uniqueData {
+		const std::array<std::array<double, T_Q>, T_Q> M = { { } };
+		const std::array<std::array<double, T_Q>, T_Q> T = { { } };
+		const std::array<double, T_Q> omega = { { } };
+		std::array<double, T_Q> m = { { } };
+		std::array<double, T_Q> meq = { { } };
+		CollisionParameters<T_D, T_Q>& params;
+
+		uniqueData(CollisionParameters<T_D, T_Q>& parameters) :
+				params(parameters) {
+		}
+	}; /* UniqueData */
+
+
+	void relax(double fLocal[], CollisionParameters<T_D, T_Q>& params,
+			uniqueData& data) {
+		double feq[T_Q];
+		//Initialize the corresponding Equilibrium Distribution Function
+		T_equilibrium<T_D, T_Q> eq;
+
+		//Calculate the equilibrium and write the result to feq
+		eq.calc(feq, params);
+
+		// calculate moments
+		AuxiliaryMRTFunctions::matrix_vector_product(data.M, fLocal, data.m);
+		AuxiliaryMRTFunctions::matrix_vector_product(data.M, feq, data.meq);
+
+		// relax moments
+		for (size_t i = 0; i < T_Q; i++) {
+			data.m[i] = data.m[i] - data.omega[i] * (data.m[i] - data.meq[i]);
+		}
+		// transform back
+		AuxiliaryMRTFunctions::matrix_vector_product(data.T, data.m, fLocal);
+
+	} //relax
+} //class MRT
 ;
 } // namespace natrium
 

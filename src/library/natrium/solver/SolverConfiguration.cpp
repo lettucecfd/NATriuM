@@ -118,6 +118,16 @@ SolverConfiguration::SolverConfiguration() {
 						"thermodynamic equilibrium. There are several approaches, e.g. the single-relaxation time Bhatnagar-Groß-Krook (BGK) model. "
 						"The standard");
 
+		declare_entry("MRT basis", "Dellar D2Q9",
+				dealii::Patterns::Selection(
+						"Dellar D2Q9|Lallemand D2Q9|DHumieres D3Q19"),
+				"Moment basis for MRT collisions");
+
+		declare_entry("MRT relaxation times", "Full",
+				dealii::Patterns::Selection(
+						"Full|Dellar D2Q9 Only N"),
+				"Relaxation scheme (choice of the higher-order relaxation parameters). Default: full relaxation to equilibrium");
+
 		declare_entry("Equilibrium scheme", "BGK equilibrium",dealii::Patterns::Selection(
 				"BGK equilibrium"),
 		"Defines the equilibrium that is used for most of the collision models");
