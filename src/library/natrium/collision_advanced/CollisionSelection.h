@@ -31,16 +31,16 @@ inline void selectCollision(
 		case BGK_STANDARD:
 			switch (configuration->getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
-				CollisionParameters<2, 9> prams(stencil.getScaling(), viscosity,
+				GeneralCollisionData<2, 9> genData(configuration, stencil.getScaling(), viscosity,
 						stencil, stencil.getSpeedOfSoundSquare(), delta_t);
 
-				BGKCollision<2, 9, BGKEquilibrium>::uniqueData data(prams);
+				BGKCollision<2, 9, BGKEquilibrium>::SpecificCollisionData specData(genData);
 
 				CollisionOperator<2, 9, BGKEquilibrium, BGKCollision> BGK_BGKEQ_D2Q9;
 
 				BGK_BGKEQ_D2Q9.collideAll(f, densities, velocities,
-						locally_owned_dofs, inInitializationProcedure, prams,
-						data);
+						locally_owned_dofs, inInitializationProcedure, genData,
+						specData);
 				hasCollided = 1;
 				break;
 			}
@@ -48,16 +48,16 @@ inline void selectCollision(
 		case BGK_REGULARIZED:
 			switch (configuration->getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
-				CollisionParameters<2, 9> prams(stencil.getScaling(), viscosity,
+				GeneralCollisionData<2, 9> genData(configuration, stencil.getScaling(), viscosity,
 						stencil, stencil.getSpeedOfSoundSquare(), delta_t);
 
-				Regularized<2, 9, BGKEquilibrium>::uniqueData data(prams);
+				Regularized<2, 9, BGKEquilibrium>::SpecificCollisionData specData(genData);
 
 				CollisionOperator<2, 9, BGKEquilibrium, Regularized> REG_BGKEQ_D2Q9;
 
 				REG_BGKEQ_D2Q9.collideAll(f, densities, velocities,
-						locally_owned_dofs, inInitializationProcedure, prams,
-						data);
+						locally_owned_dofs, inInitializationProcedure, genData,
+						specData);
 				hasCollided = 1;
 				break;
 			}
@@ -70,17 +70,17 @@ inline void selectCollision(
 		case BGK_STANDARD:
 			switch (configuration->getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
-				CollisionParameters<3, 19> prams(stencil.getScaling(),
+				GeneralCollisionData<3, 19> genData(configuration, stencil.getScaling(),
 						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
 						delta_t);
 
-				BGKCollision<3, 19, BGKEquilibrium>::uniqueData data(prams);
+				BGKCollision<3, 19, BGKEquilibrium>::SpecificCollisionData specData(genData);
 
 				CollisionOperator<3, 19, BGKEquilibrium, BGKCollision> BGK_BGKEQ_D3Q19;
 
 				BGK_BGKEQ_D3Q19.collideAll(f, densities, velocities,
-						locally_owned_dofs, inInitializationProcedure, prams,
-						data);
+						locally_owned_dofs, inInitializationProcedure, genData,
+						specData);
 				hasCollided = 1;
 				break;
 			}
@@ -88,14 +88,14 @@ inline void selectCollision(
 		case BGK_REGULARIZED:
 			switch (configuration->getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
-				CollisionParameters<3, 19> prams(stencil.getScaling(),
+				GeneralCollisionData<3, 19> genData(configuration, stencil.getScaling(),
 						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
 						delta_t);
-				Regularized<3, 19, BGKEquilibrium>::uniqueData data(prams);
+				Regularized<3, 19, BGKEquilibrium>::SpecificCollisionData specData(genData);
 				CollisionOperator<3, 19, BGKEquilibrium, Regularized> REG_BGKEQ_D3Q19;
 				REG_BGKEQ_D3Q19.collideAll(f, densities, velocities,
-						locally_owned_dofs, inInitializationProcedure, prams,
-						data);
+						locally_owned_dofs, inInitializationProcedure, genData,
+						specData);
 				hasCollided = 1;
 				break;
 			}
@@ -107,15 +107,15 @@ inline void selectCollision(
 		case BGK_STANDARD:
 			switch (configuration->getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
-				CollisionParameters<3, 27> prams(stencil.getScaling(),
+				GeneralCollisionData<3, 27> genData(configuration, stencil.getScaling(),
 						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
 						delta_t);
 
 				CollisionOperator<3, 27, BGKEquilibrium, BGKCollision> BGK_BGKEQ_D3Q27;
-				BGKCollision<3, 27, BGKEquilibrium>::uniqueData data(prams);
+				BGKCollision<3, 27, BGKEquilibrium>::SpecificCollisionData specData(genData);
 				BGK_BGKEQ_D3Q27.collideAll(f, densities, velocities,
-						locally_owned_dofs, inInitializationProcedure, prams,
-						data);
+						locally_owned_dofs, inInitializationProcedure, genData,
+						specData);
 				hasCollided = 1;
 				break;
 			}
@@ -124,14 +124,14 @@ inline void selectCollision(
 		case BGK_REGULARIZED:
 			switch (configuration->getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
-				CollisionParameters<3, 27> prams(stencil.getScaling(),
+				GeneralCollisionData<3, 27> genData(configuration, stencil.getScaling(),
 						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
 						delta_t);
-				Regularized<3, 27, BGKEquilibrium>::uniqueData data(prams);
+				Regularized<3, 27, BGKEquilibrium>::SpecificCollisionData specData(genData);
 				CollisionOperator<3, 27, BGKEquilibrium, Regularized> REG_BGKEQ_D3Q27;
 				REG_BGKEQ_D3Q27.collideAll(f, densities, velocities,
-						locally_owned_dofs, inInitializationProcedure, prams,
-						data);
+						locally_owned_dofs, inInitializationProcedure, genData,
+						specData);
 				hasCollided = 1;
 				break;
 			}
