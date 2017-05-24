@@ -9,7 +9,8 @@
 #define LIBRARY_NATRIUM_COLLISION_COLLISIONSCHEMES_H_
 
 #include "Equilibria.h"
-#include "SolverConfiguration.h"
+#include "../solver/SolverConfiguration.h"
+#include "AuxiliaryMRTFunctions.h"
 
 namespace natrium {
 template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
@@ -24,18 +25,18 @@ public:
 		}
 	};
 
-	void relax(std::array<double,T_Q>& fLocal, GeneralCollisionData<T_D, T_Q>& genData,
+	void relax(std::array<double, T_Q>& fLocal,
+			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
-		double feq[T_Q];
 		//Initialize the corresponding Equilibrium Distribution Function
 		T_equilibrium<T_D, T_Q> eq;
 
 		//Calculate the equilibrium and write the result to feq
-		eq.calc(feq, genData);
+		eq.calc(genData.feq, genData);
 
 		//Relax every direction towards the equilibrium
 		for (int p = 0; p < T_Q; ++p) {
-			fLocal[p] -= 1. / genData.tau * (fLocal[p] - feq[p]);
+			fLocal[p] -= 1. / genData.tau * (fLocal[p] - genData.feq[p]);
 		}
 	}
 };
@@ -45,7 +46,8 @@ class Regularized {
 public:
 
 	struct SpecificCollisionData {
-		std::array<std::array<std::array<double, T_D>, T_D>, T_Q> Q = { { { } } };
+		std::array<std::array<std::array<double, T_D>, T_D>, T_Q> Q =
+				{ { { } } };
 		std::array<std::array<double, T_Q>, T_Q> pi = { { } };
 		std::array<std::array<double, T_Q>, T_Q> pieq = { { } };
 
@@ -72,14 +74,14 @@ public:
 
 	};
 
-	void relax(std::array<double,T_Q>& fLocal, GeneralCollisionData<T_D, T_Q>& genData,
+	void relax(std::array<double, T_Q>& fLocal,
+			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
-		double feq[T_Q];
 		//Initialize the corresponding Equilibrium Distribution Function
 		T_equilibrium<T_D, T_Q> eq;
 
 		//Calculate the equilibrium and write the result to feq
-		eq.calc(feq, genData);
+		eq.calc(genData.feq, genData);
 
 		for (int m = 0; m < T_D; m++) {
 			for (int n = 0; n < T_D; n++) {
@@ -93,12 +95,11 @@ public:
 				for (int n = 0; n < T_D; n++) {
 					specData.pi[m][n] += fLocal[j] * genData.e[j][m]
 							* genData.e[j][n];
-					specData.pieq[m][n] += feq[j] * genData.e[j][m] * genData.e[j][n];
+					specData.pieq[m][n] += genData.feq[j] * genData.e[j][m]
+							* genData.e[j][n];
 				}
 			}
 		}
-
-
 
 		for (int m = 0; m < T_D; m++) {
 			for (int n = 0; n < T_D; n++) {
@@ -112,7 +113,8 @@ public:
 			for (int b = 0; b < T_D; b++) {
 				for (int c = 0; c < T_D; c++) {
 
-					fi1[a] += genData.weight[a] / (2 * genData.cs2 * genData.cs2)
+					fi1[a] += genData.weight[a]
+							/ (2 * genData.cs2 * genData.cs2)
 							* specData.Q[a][b][c] * specData.pi[b][c];
 
 				}
@@ -122,7 +124,7 @@ public:
 
 		//Relax every direction towards the equilibrium
 		for (int i = 0; i < T_Q; ++i) {
-			fLocal[i] = feq[i] + (1. - 1. / genData.tau) * fi1[i];
+			fLocal[i] = genData.feq[i] + (1. - 1. / genData.tau) * fi1[i];
 
 		}
 
@@ -130,48 +132,60 @@ public:
 } //class regularized
 ;
 
-
 template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
-class MRT {
+class MultipleRelaxationTime {
 public:
 
-	struct uniqueData {
-		const std::array<std::array<double, T_Q>, T_Q> M = { { } };
-		const std::array<std::array<double, T_Q>, T_Q> T = { { } };
-		const std::array<double, T_Q> omega = { { } };
+	struct SpecificCollisionData {
+		GeneralCollisionData<T_D, T_Q>& genData;
+		const std::array<std::array<double, T_Q>, T_Q> M;
+		const std::array<std::array<double, T_Q>, T_Q> T;
+		const std::array<double, T_Q> omega;
 		std::array<double, T_Q> m = { { } };
 		std::array<double, T_Q> meq = { { } };
-		CollisionParameters<T_D, T_Q>& params;
 
-		uniqueData(CollisionParameters<T_D, T_Q>& parameters) :
-				params(parameters) {
+		SpecificCollisionData(GeneralCollisionData<T_D, T_Q>& genData) :
+				genData(genData), M(
+						AuxiliaryMRTFunctions::make_M<T_Q>(
+								genData.configuration.getMRTBasis())), T(
+						AuxiliaryMRTFunctions::make_T<T_Q>(
+								genData.configuration.getMRTBasis())), omega(
+						AuxiliaryMRTFunctions::make_diag<T_Q>(genData.tau,
+								genData.configuration.getMRTBasis(),
+								genData.configuration.getMRTRelaxationTimes())) {
 		}
-	}; /* UniqueData */
+	}; /* SpecificCollisionData */
 
+	void relax(std::array<double, T_Q>& fLocal,
+			GeneralCollisionData<T_D, T_Q>& genData,
+			SpecificCollisionData& specData) {
 
-	void relax(double fLocal[], CollisionParameters<T_D, T_Q>& params,
-			uniqueData& data) {
-		double feq[T_Q];
 		//Initialize the corresponding Equilibrium Distribution Function
 		T_equilibrium<T_D, T_Q> eq;
 
 		//Calculate the equilibrium and write the result to feq
-		eq.calc(feq, params);
+		eq.calc(genData.feq, genData);
 
 		// calculate moments
-		AuxiliaryMRTFunctions::matrix_vector_product(data.M, fLocal, data.m);
-		AuxiliaryMRTFunctions::matrix_vector_product(data.M, feq, data.meq);
+		AuxiliaryMRTFunctions::matrix_vector_product(specData.M, fLocal,
+				specData.m);
+		AuxiliaryMRTFunctions::matrix_vector_product(specData.M, genData.feq,
+				specData.meq);
 
 		// relax moments
 		for (size_t i = 0; i < T_Q; i++) {
-			data.m[i] = data.m[i] - data.omega[i] * (data.m[i] - data.meq[i]);
+			specData.m[i] = specData.m[i]
+					- specData.omega[i] * (specData.m[i] - specData.meq[i]);
 		}
+
 		// transform back
-		AuxiliaryMRTFunctions::matrix_vector_product(data.T, data.m, fLocal);
+		AuxiliaryMRTFunctions::matrix_vector_product(specData.T, specData.m,
+				fLocal);
 
 	} //relax
 } //class MRT
 ;
+
 } // namespace natrium
 
 #endif /* LIBRARY_NATRIUM_COLLISION_COLLISIONSCHEMES_H_ */

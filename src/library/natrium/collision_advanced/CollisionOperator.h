@@ -45,6 +45,9 @@ public:
 
 			//Calculate the local density and store it into the Parameter Handling System
 			genData.density = calculateDensity<T_Q>(genData.fLocal); // done
+			if ( 1e-10 >= genData.density){
+				throw DensityZeroException("Density too small in collision. Decrease time step size.");
+			}
 
 			//Write the local density to the global density vector
 			densities[i] = genData.density; // write local density to global density vector
