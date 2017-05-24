@@ -1,16 +1,19 @@
 #include "natrium/collision_advanced/AuxiliaryMRTFunctions.h"
 #include "boost/test/unit_test.hpp"
+#include "natrium/utilities/BasicNames.h"
+#include "natrium/solver/SolverConfiguration.h"
 
 #include <array>
 
 using std::array;
 using namespace natrium;
-using namespace AuxiliaryMRTFunctions;
+using namespace natrium::AuxiliaryMRTFunctions;
 
 BOOST_AUTO_TEST_SUITE(AuxiliaryMRTFunctions_test)
 
-BOOST_AUTO_TEST_CASE(MRT_Invert_test) {
+BOOST_AUTO_TEST_CASE(AuxiliaryMRTFunctions_Invert_test) {
 
+	pout << "AuxiliaryMRTFunctions_Invert_test..." << endl;
 	array<array<double, 9>, 9> result9 = { };
 	array<array<double, 19>, 19> result19 = { };
 
@@ -41,20 +44,10 @@ BOOST_AUTO_TEST_CASE(MRT_Invert_test) {
 		}
 	}
 
-} /* MRT_Invert_test */
+	pout << "done." << endl;
+} /* AuxiliaryMRTFunctions_Invert_test */
 
-BOOST_AUTO_TEST_CASE(MRT_Conservation_test) {
 
-	// initialize distributions with arbitrary components
-	array<double, 9> test_f = { };
-	for (size_t i = 0; i < 9; i++) {
-		test_f[i] = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
-				+ pow((0.5 * cos(0.5)), 2);
-	}
-
-	// collide
-
-} /* MRT_Conservation_test */
 
 BOOST_AUTO_TEST_SUITE_END()
 

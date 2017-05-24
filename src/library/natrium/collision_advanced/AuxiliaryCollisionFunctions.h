@@ -13,6 +13,26 @@
 
 namespace natrium {
 
+/**
+ * @short Exception class for Unstable Collision
+ */
+class DensityZeroException: public NATriuMException {
+private:
+	std::string message;
+public:
+	DensityZeroException(const char *msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	DensityZeroException(const string& msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	~DensityZeroException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
 template<int T_Q>
 inline double calculateDensity(const std::array<double,T_Q>& fLocal) {
 	double density = 0;
@@ -48,7 +68,7 @@ inline void copyLocalToGlobalF(std::array<double,T_Q>& fLocal, DistributionFunct
 //Stores the needed parameters for the collision phase
 template<int T_D, int T_Q>
 struct GeneralCollisionData {
-	boost::shared_ptr<SolverConfiguration>& configuration;
+	SolverConfiguration& configuration;
 
 	// the local f is stored in this array
 	std::array<double,T_Q> fLocal = {};
@@ -75,7 +95,7 @@ struct GeneralCollisionData {
 
 	// Individual parameters that are needed for specific collision models only
 
-	GeneralCollisionData(boost::shared_ptr<SolverConfiguration>& cfg, double scl, double viscosity, const Stencil& st,
+	GeneralCollisionData(SolverConfiguration& cfg, double scl, double viscosity, const Stencil& st,
 			double scaled_cs2, double dt) : configuration(cfg),
 			scaling(scl), stencil(st), dt(dt) {
 
@@ -126,7 +146,7 @@ inline void calculateVelocity<2, 9>(const std::array<double,9>& fLocal, std::arr
 			* (fLocal[2] + fLocal[5] + fLocal[6] - fLocal[4] - fLocal[7]
 					- fLocal[8]);
 }
-template<>
+/*template<>
 inline void calculateVelocity<3, 19>(const std::array<double,19>& fLocal, std::array<double,3>& velocity,
 		double scaling, double density, GeneralCollisionData<3, 19>& params) {
 
@@ -142,7 +162,7 @@ inline void calculateVelocity<3, 19>(const std::array<double,19>& fLocal, std::a
 			* (fLocal[2] - fLocal[4] + fLocal[7] + fLocal[8] - fLocal[9]
 					- fLocal[10] + fLocal[15] + fLocal[16] - fLocal[17]
 					- fLocal[18]);
-}
+}*/
 
 } /* namespace natrium */
 

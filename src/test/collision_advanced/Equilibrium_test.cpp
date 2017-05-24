@@ -8,6 +8,7 @@
 #include "natrium/collision/BGKStandard.h"
 
 #include <math.h>
+#include <array>
 #include <exception>
 
 #include "boost/test/unit_test.hpp"
@@ -19,6 +20,7 @@
 #include "natrium/stencils/D3Q15.h"
 #include "natrium/collision_advanced/Equilibria.h"
 #include "natrium/collision_advanced/AuxiliaryCollisionFunctions.h"
+#include "natrium/solver/SolverConfiguration.h"
 
 #include "deal.II/fe/fe_dgq.h"
 
@@ -53,7 +55,7 @@ double rho = 1.0;
 	double velocities[2]={0.1,0.2};
 
 	BGKEquilibrium<2,9> eq;
-	double feq[9];
+	std::array<double,9> feq;
 	D2Q9 d2q9(1.0);
 	double cs2=1./3.;
 	double scaling = 1.0;
@@ -62,7 +64,8 @@ double rho = 1.0;
 	double viscosity = 1.0;
 
 
-	GeneralCollisionData<2,9> prams(scaling, viscosity, d2q9,
+	SolverConfiguration cfg;
+	GeneralCollisionData<2,9> prams(cfg, scaling, viscosity, d2q9,
 			cs2 , dt);
 
 	prams.velocity[0]=velocities[0];

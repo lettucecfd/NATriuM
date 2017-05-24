@@ -16,7 +16,7 @@
 
 namespace natrium {
 inline void selectCollision(
-		boost::shared_ptr<SolverConfiguration>& configuration,
+		SolverConfiguration& configuration,
 		DistributionFunctions& f, distributed_vector& densities,
 		vector<distributed_vector>& velocities,
 		const dealii::IndexSet& locally_owned_dofs, const double viscosity,
@@ -25,11 +25,11 @@ inline void selectCollision(
 
 	bool hasCollided = 0;
 
-	switch (configuration->getStencil()) {
+	switch (configuration.getStencil()) {
 	case Stencil_D2Q9:
-		switch (configuration->getCollisionScheme()) {
+		switch (configuration.getCollisionScheme()) {
 		case BGK_STANDARD:
-			switch (configuration->getEquilibriumScheme()) {
+			switch (configuration.getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
 				GeneralCollisionData<2, 9> genData(configuration, stencil.getScaling(), viscosity,
 						stencil, stencil.getSpeedOfSoundSquare(), delta_t);
@@ -43,10 +43,10 @@ inline void selectCollision(
 						specData);
 				hasCollided = 1;
 				break;
-			}
+			} /* end switch equilibrium */
 			break;
 		case BGK_REGULARIZED:
-			switch (configuration->getEquilibriumScheme()) {
+			switch (configuration.getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
 				GeneralCollisionData<2, 9> genData(configuration, stencil.getScaling(), viscosity,
 						stencil, stencil.getSpeedOfSoundSquare(), delta_t);
@@ -62,13 +62,30 @@ inline void selectCollision(
 				break;
 			}
 			break;
-		}
+		case MRT_STANDARD:
+			switch (configuration.getEquilibriumScheme()) {
+			case BGK_EQUILIBRIUM:
+				GeneralCollisionData<2, 9> genData(configuration, stencil.getScaling(), viscosity,
+						stencil, stencil.getSpeedOfSoundSquare(), delta_t);
+
+				MultipleRelaxationTime<2, 9, BGKEquilibrium>::SpecificCollisionData specData(genData);
+
+				CollisionOperator<2, 9, BGKEquilibrium, MultipleRelaxationTime> MRT_BGKEQ_D2Q9;
+
+				MRT_BGKEQ_D2Q9.collideAll(f, densities, velocities,
+						locally_owned_dofs, inInitializationProcedure, genData,
+						specData);
+				hasCollided = 1;
+				break;
+			} /* end switch equilibrium */
+			break;
+		} /* end switch collision scheme */
 		break;
 
 	case Stencil_D3Q19:
-		switch (configuration->getCollisionScheme()) {
+		switch (configuration.getCollisionScheme()) {
 		case BGK_STANDARD:
-			switch (configuration->getEquilibriumScheme()) {
+			switch (configuration.getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
 				GeneralCollisionData<3, 19> genData(configuration, stencil.getScaling(),
 						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
@@ -83,10 +100,10 @@ inline void selectCollision(
 						specData);
 				hasCollided = 1;
 				break;
-			}
+			} /* end switch equilibrium */
 			break;
 		case BGK_REGULARIZED:
-			switch (configuration->getEquilibriumScheme()) {
+			switch (configuration.getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
 				GeneralCollisionData<3, 19> genData(configuration, stencil.getScaling(),
 						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
@@ -98,14 +115,29 @@ inline void selectCollision(
 						specData);
 				hasCollided = 1;
 				break;
-			}
+			} /* end switch equilibrium */
 			break;
-		}
+		case MRT_STANDARD:
+			switch (configuration.getEquilibriumScheme()) {
+			case BGK_EQUILIBRIUM:
+				GeneralCollisionData<3, 19> genData(configuration, stencil.getScaling(),
+						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
+						delta_t);
+				MultipleRelaxationTime<3, 19, BGKEquilibrium>::SpecificCollisionData specData(genData);
+				CollisionOperator<3, 19, BGKEquilibrium, MultipleRelaxationTime> MRT_BGKEQ_D3Q19;
+				MRT_BGKEQ_D3Q19.collideAll(f, densities, velocities,
+						locally_owned_dofs, inInitializationProcedure, genData,
+						specData);
+				hasCollided = 1;
+				break;
+			} /* end switch equilibrium */
+			break;
+		} /* end switch collision scheme */
 		break;
 	case Stencil_D3Q27:
-		switch (configuration->getCollisionScheme()) {
+		switch (configuration.getCollisionScheme()) {
 		case BGK_STANDARD:
-			switch (configuration->getEquilibriumScheme()) {
+			switch (configuration.getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
 				GeneralCollisionData<3, 27> genData(configuration, stencil.getScaling(),
 						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
@@ -122,7 +154,7 @@ inline void selectCollision(
 			break;
 
 		case BGK_REGULARIZED:
-			switch (configuration->getEquilibriumScheme()) {
+			switch (configuration.getEquilibriumScheme()) {
 			case BGK_EQUILIBRIUM:
 				GeneralCollisionData<3, 27> genData(configuration, stencil.getScaling(),
 						viscosity, stencil, stencil.getSpeedOfSoundSquare(),
