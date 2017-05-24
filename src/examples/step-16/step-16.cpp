@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 			"Refinement level of the computation grid.");
 	try {
 		parser.importOptions();
-	} catch (HelpMessageStop&){
+	} catch (HelpMessageStop&) {
 		return 0;
 	}
 	double Re = parser.getArgument<int>("Re");
@@ -110,9 +110,16 @@ int main(int argc, char** argv) {
 				<< static_cast<int>(configuration->getFilteringScheme())
 				<< "by_max_degree";
 	if (configuration->getRegularizationScheme() != NO_REGULARIZATION)
-		dirName << "-reg" << static_cast<int>(configuration->getRegularizationScheme());
+		dirName << "-reg"
+				<< static_cast<int>(configuration->getRegularizationScheme());
+	if (configuration->getCollisionScheme() == MRT_STANDARD) {
+		dirName << "-mrt" << static_cast<int>(configuration->getMRTBasis());
+	}
+	if (configuration->getCollisionScheme() == MRT_STANDARD) {
+		dirName << "-relax"
+				<< static_cast<int>(configuration->getMRTRelaxationTimes());
+	}
 	configuration->setOutputDirectory(dirName.str());
-
 
 	/////////////////////////////////////////////////
 	// run solver
@@ -121,7 +128,8 @@ int main(int argc, char** argv) {
 	CFDSolver<3> solver(configuration, taylorGreen);
 
 	const size_t table_output_lines_per_10s = 300;
-	configuration->setOutputTableInterval(1 + 10.0/solver.getTimeStepSize()/table_output_lines_per_10s);
+	configuration->setOutputTableInterval(
+			1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
 
 	solver.run();
 
