@@ -26,6 +26,7 @@
 
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "natrium/benchmarks/PeriodicTestDomain3D.h"
+#include "../problemdescription/TaylorGreenTest2D.h"
 
 using namespace natrium;
 
@@ -65,7 +66,8 @@ double rho = 1.0;
 
 
 	SolverConfiguration cfg;
-	GeneralCollisionData<2,9> prams(cfg, scaling, viscosity, d2q9,
+	TaylorGreenTest2D tgv(0.1,1);
+	GeneralCollisionData<2,9> prams(cfg, tgv, scaling, viscosity, d2q9,
 			cs2 , dt);
 
 	prams.velocity[0]=velocities[0];

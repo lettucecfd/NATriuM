@@ -20,6 +20,8 @@
 
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "natrium/benchmarks/PeriodicTestDomain3D.h"
+#include "../problemdescription/TaylorGreenTest2D.h"
+#include "natrium/benchmarks/PoiseuilleFlow3D.h"
 
 using namespace natrium;
 
@@ -46,18 +48,19 @@ BOOST_AUTO_TEST_CASE(Relaxation_Regularized_test) {
 
 	D2Q9 d2q9(1.0);
 	SolverConfiguration cfg;
-	GeneralCollisionData<2, 9> prams(cfg, scaling, viscosity, d2q9, cs2, dt);
+	TaylorGreenTest2D tgv(0.1,1);
+	GeneralCollisionData<2, 9> prams(cfg, tgv, scaling, viscosity, d2q9, cs2, dt);
 
 	Regularized<2, 9, BGKEquilibrium>::SpecificCollisionData data(prams);
 
 	prams.density = calculateDensity<9>(test_f);
-	calculateVelocity<2, 9>(test_f, prams.velocity, 1.0, prams.density, prams);
+	calculateVelocity<2, 9>(test_f, prams.velocity, prams.density, prams);
 
 	Regularized<2, 9, BGKEquilibrium> test;
 
 	test.relax(test_f, prams, data);
 
-	calculateVelocity<2, 9>(test_f, prams.velocity, 1.0, prams.density, prams);
+	calculateVelocity<2, 9>(test_f, prams.velocity,  prams.density, prams);
 
 	BOOST_CHECK(
 			(test_f[1] - test_f[3] + test_f[5] - test_f[6] - test_f[7]
@@ -93,12 +96,13 @@ BOOST_AUTO_TEST_CASE(Relaxation_MRT_D2Q9_test) {
 
 	// ======================== Dellar D2Q9 =====================
 	cfg.setMRTBasis(DELLAR_D2Q9);
-	GeneralCollisionData<2, 9> prams(cfg, scaling, viscosity, d2q9, cs2, dt);
+	TaylorGreenTest2D tgv(0.1,1);
+	GeneralCollisionData<2, 9> prams(cfg, tgv, scaling, viscosity, d2q9, cs2, dt);
 
 	MultipleRelaxationTime<2, 9, BGKEquilibrium>::SpecificCollisionData data(
 			prams);
 	prams.density = calculateDensity<9>(test_f);
-	calculateVelocity<2, 9>(test_f, prams.velocity, scaling, prams.density,
+	calculateVelocity<2, 9>(test_f, prams.velocity,  prams.density,
 			prams);
 	rho = prams.density;
 	u[0] = prams.velocity[0];
@@ -107,7 +111,7 @@ BOOST_AUTO_TEST_CASE(Relaxation_MRT_D2Q9_test) {
 	MultipleRelaxationTime<2, 9, BGKEquilibrium> test;
 	test.relax(test_f, prams, data);
 	prams.density = calculateDensity<9>(test_f);
-	calculateVelocity<2, 9>(test_f, prams.velocity, scaling, prams.density,
+	calculateVelocity<2, 9>(test_f, prams.velocity,  prams.density,
 			prams);
 
 	BOOST_CHECK_CLOSE(rho, prams.density, 1e-10);
@@ -116,12 +120,12 @@ BOOST_AUTO_TEST_CASE(Relaxation_MRT_D2Q9_test) {
 
 	// ======================== Lallemand D2Q9 =====================
 	cfg.setMRTBasis(DELLAR_D2Q9);
-	GeneralCollisionData<2, 9> gendata(cfg, scaling, viscosity, d2q9, cs2, dt);
+	GeneralCollisionData<2, 9> gendata(cfg, tgv, scaling, viscosity, d2q9, cs2, dt);
 
 	MultipleRelaxationTime<2, 9, BGKEquilibrium>::SpecificCollisionData data2(
 			gendata);
 	gendata.density = calculateDensity<9>(test_f);
-	calculateVelocity<2, 9>(test_f, gendata.velocity, scaling, gendata.density,
+	calculateVelocity<2, 9>(test_f, gendata.velocity,  gendata.density,
 			gendata);
 	rho = gendata.density;
 	u[0] = gendata.velocity[0];
@@ -130,7 +134,7 @@ BOOST_AUTO_TEST_CASE(Relaxation_MRT_D2Q9_test) {
 	MultipleRelaxationTime<2, 9, BGKEquilibrium> test2;
 	test2.relax(test_f, gendata, data2);
 	gendata.density = calculateDensity<9>(test_f);
-	calculateVelocity<2, 9>(test_f, gendata.velocity, scaling, gendata.density,
+	calculateVelocity<2, 9>(test_f, gendata.velocity,  gendata.density,
 			gendata);
 
 	BOOST_CHECK_CLOSE(rho, gendata.density, 1e-10);
@@ -163,12 +167,13 @@ BOOST_AUTO_TEST_CASE(Relaxation_MRT_D3Q19_test) {
 
 	// ======================== DHumieres D3Q19 =====================
 	cfg.setMRTBasis(DHUMIERES_D3Q19);
-	GeneralCollisionData<3, 19> prams(cfg, scaling, viscosity, d3q19, cs2, dt);
+	PoiseuilleFlow3D pois(0.1,1); // just a dummy
+	GeneralCollisionData<3, 19> prams(cfg, pois, scaling, viscosity, d3q19, cs2, dt);
 
 	MultipleRelaxationTime<3, 19, BGKEquilibrium>::SpecificCollisionData data(
 			prams);
 	prams.density = calculateDensity<19>(test_f);
-	calculateVelocity<3, 19>(test_f, prams.velocity, scaling, prams.density,
+	calculateVelocity<3, 19>(test_f, prams.velocity,  prams.density,
 			prams);
 	rho = prams.density;
 	u[0] = prams.velocity[0];
@@ -178,7 +183,7 @@ BOOST_AUTO_TEST_CASE(Relaxation_MRT_D3Q19_test) {
 	MultipleRelaxationTime<3, 19, BGKEquilibrium> test;
 	test.relax(test_f, prams, data);
 	prams.density = calculateDensity<19>(test_f);
-	calculateVelocity<3, 19>(test_f, prams.velocity, scaling, prams.density,
+	calculateVelocity<3, 19>(test_f, prams.velocity,  prams.density,
 			prams);
 
 	BOOST_CHECK_CLOSE(rho, prams.density, 1e-10);
@@ -215,15 +220,16 @@ BOOST_AUTO_TEST_CASE(Relaxation_Equiv_MRT_Reg_test) {
 
 	D2Q9 d2q9(scaling);
 	SolverConfiguration cfg;
+	TaylorGreenTest2D tgv(0.1,1); // just a dummy
 
 	// ======================== Dellar D2Q9 =====================
 	cfg.setMRTBasis(DELLAR_D2Q9);
-	GeneralCollisionData<2, 9> prams(cfg, scaling, viscosity, d2q9, cs2, dt);
+	GeneralCollisionData<2, 9> prams(cfg, tgv, scaling, viscosity, d2q9, cs2, dt);
 
 	MultipleRelaxationTime<2, 9, BGKEquilibrium>::SpecificCollisionData data(
 			prams);
 	prams.density = calculateDensity<9>(test_f);
-	calculateVelocity<2, 9>(test_f, prams.velocity, scaling, prams.density,
+	calculateVelocity<2, 9>(test_f, prams.velocity,  prams.density,
 			prams);
 
 	MultipleRelaxationTime<2, 9, BGKEquilibrium> test;
@@ -231,11 +237,11 @@ BOOST_AUTO_TEST_CASE(Relaxation_Equiv_MRT_Reg_test) {
 
 	// ======================== Regularized =====================
 
-	GeneralCollisionData<2, 9> prams2(cfg, scaling, viscosity, d2q9, cs2, dt);
+	GeneralCollisionData<2, 9> prams2(cfg, tgv, scaling, viscosity, d2q9, cs2, dt);
 	Regularized<2, 9, BGKEquilibrium>::SpecificCollisionData data2(
 			prams2);
 	prams2.density = calculateDensity<9>(test_f2);
-	calculateVelocity<2, 9>(test_f2, prams2.velocity, scaling, prams2.density,
+	calculateVelocity<2, 9>(test_f2, prams2.velocity,  prams2.density,
 			prams2);
 
 	Regularized<2, 9, BGKEquilibrium> test2;
