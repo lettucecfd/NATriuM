@@ -27,6 +27,13 @@ DiamondObstacle2D::DiamondObstacle2D(double velocity, double viscosity,
 
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
+	double Fx = 8 * velocity * viscosity;
+	//pout << "F: " << Fx << endl;
+	dealii::Tensor<1, 2> F;
+	F[0] = Fx;
+			F[0] = Fx*0.04;
+	setExternalForce(boost::make_shared<ConstantExternalForce<2> >(F));
+
 
 }
 
@@ -47,12 +54,12 @@ boost::shared_ptr<Mesh<2> > DiamondObstacle2D::makeGrid(
 	grid_in.attach_triangulation(*mesh);
 	{
 		std::stringstream filename;
-		filename << getenv("NATRIUM_DIR") << "/src/examples/step-grid-in/nsbench2.inp";
+		filename << getenv("NATRIUM_DIR") << "/src/examples/step-grid-in/naca0012.msh";
 		std::ifstream file(filename.str().c_str());
 		assert(file);
-		grid_in.read_ucd(file);
+		grid_in.read_msh(file);
 	}
-	 mesh->refine_global (refinementLevel);
+	// mesh->refine_global (refinementLevel);
 	 mesh->get_boundary_ids();
 
 	return mesh;
@@ -69,18 +76,27 @@ boost::shared_ptr<BoundaryCollection<2> > DiamondObstacle2D::makeBoundaries() {
 	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
 	dealii::Vector<double> zeroVector(2);
+	zeroVector[0]=m_meanInflowVelocity;
+	zeroVector[1]=0.0;
+
+	dealii::Vector<double> oneVector(2);
+		oneVector[0]=m_meanInflowVelocity;
+		oneVector[1]=0.0;
 	boost::shared_ptr<dealii::Function<2> > boundary_density = boost::make_shared<
 			dealii::ConstantFunction<2> > (1.0);
 	boost::shared_ptr<dealii::Function<2> > boundary_velocity = boost::make_shared<
 			InflowVelocity> (m_meanInflowVelocity);
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(1, zeroVector));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(15, oneVector));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(2, boundary_density, boundary_velocity));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(16, oneVector));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(3, boundary_density, boundary_velocity));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(17, oneVector));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(4, zeroVector));
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(18, oneVector));
+
+	boundaries->addBoundary(
+			boost::make_shared<LinearFluxBoundaryRhoU<2> >(19, zeroVector));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
