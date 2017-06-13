@@ -67,7 +67,7 @@ public:
 				}
 			} else {
 				for (size_t j = 0; j < T_D; ++j) {
-					genData.velocity[i] = velocities.at(0)(i);
+					genData.velocity[j] = velocities.at(j)(i) / genData.scaling;
 				}
 			}
 
