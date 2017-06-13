@@ -817,11 +817,11 @@ void CFDSolver<dim>::collide() {
 
 // TODO member function collisionModel
 		selectCollision(*m_configuration, *m_problemDescription, m_f, writeable_rho, writeable_u,
-				m_advectionOperator->getLocallyOwnedDofs(), m_problemDescription->getViscosity(), delta_t, *m_stencil, false);
+			m_advectionOperator->getLocallyOwnedDofs(), m_problemDescription->getViscosity(), delta_t, *m_stencil, false);
 
 		// perform collision
-		/*m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
-				m_advectionOperator->getLocallyOwnedDofs(), false);*/
+		//m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
+		//		m_advectionOperator->getLocallyOwnedDofs(), false);
 
 		// copy back to ghosted vectors and communicate across MPI processors
 		CFDSolverUtilities::applyWriteableDensity(writeable_rho, m_density);

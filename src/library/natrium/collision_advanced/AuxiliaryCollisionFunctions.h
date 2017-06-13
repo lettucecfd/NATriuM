@@ -113,6 +113,7 @@ struct GeneralCollisionData {
 
 		assert(st.getD() == T_D);
 		assert(st.getQ() == T_Q);
+		assert(scaling == st.getScaling());
 
 		for (int i = 0; i < T_D; ++i) {
 			for (int j = 0; j < T_Q; ++j) {
@@ -128,11 +129,13 @@ struct GeneralCollisionData {
 		cs2 = scaled_cs2 / (scaling * scaling);
 
 		// The relaxation time has to be calculated with the scaled speed of sound
-		tau = calculateTauFromNu(viscosity, scaled_cs2, dt);
+		// As a dimensionless parameter, it is independent of scaling
+		// (Note that the scaling affects the time step size)
+		tau = calculateTauFromNu(viscosity , scaled_cs2, dt);
 
 		if ((pd.hasExternalForce()) and (forcetype != NO_FORCING)) {
 			for (int i = 0; i < T_D; ++i) {
-				forces[i] = pd.getExternalForce()->getForce()[i] / scaling / scaling;
+				forces[i] = pd.getExternalForce()->getForce()[i];
 			}
 		}
 		assert((cs2 - 1. / 3.) < 1e-10);
@@ -186,19 +189,21 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 
 template<size_t T_D, size_t T_Q>
 inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
-		size_t i, GeneralCollisionData<T_D, T_Q> genData) {
+		size_t i, GeneralCollisionData<T_D, T_Q>& genData) {
 	assert(velocities.size() == T_D);
 	if (genData.forcetype == NO_FORCING) {
 		throw NATriuMException(
 				"Problem requires forcing scheme, but forcing was switched off."
 						"Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
 	}
+
 	if (genData.forcetype == SHIFTING_VELOCITY) {
 		// TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
 		// 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
 		for (int j = 0; j < T_D; j++) {
-			velocities[j](i) = velocities[j](i) + (genData.scaling * 0.5 * genData.dt * genData.forces[j]
-									/ genData.density);
+			velocities[j](i) = velocities[j](i) +  0.5 * genData.dt * genData.forces[j]
+							/ genData.density;
+			// I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
 		}
 	} else {
 		throw NotImplementedException(
@@ -207,7 +212,7 @@ inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
 }
 
 template<size_t T_D, size_t T_Q>
-inline void applyForces(GeneralCollisionData<T_D, T_Q> genData) {
+inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 	if (genData.forcetype == NO_FORCING) {
 		throw NATriuMException(
 				"Problem requires forcing scheme, but forcing was switched off."
@@ -216,9 +221,8 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q> genData) {
 	if (genData.forcetype == SHIFTING_VELOCITY) {
 		for (int i = 0; i < T_D; i++) {
 			//	genData.velocity[i] *=genData.scaling;
-			// TODO: Something to look at: the '-=' was a '+=' before, but BGKStandard has '-='
-			genData.velocity[i] -= genData.tau * genData.dt * genData.forces[i]
-					/ genData.density;
+			genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
+					/ genData.density / genData.scaling;
 			//	genData.velocity[i] /=genData.scaling;
 
 		}
