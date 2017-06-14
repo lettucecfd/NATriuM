@@ -790,13 +790,14 @@ TestResult ConvergenceTestForcingSchemes3D() {
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
+	configuration->setSwitchOutputOff(true);
 	configuration->setCFL(CFL);
 	configuration->setConvergenceThreshold(1e-8);
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(SDIRK_TWO_STAGES);
 
 	// forall stencil types and forcing schemes
-	for (size_t i = 1; i < 4; i++) {
+	for (size_t i = 1; i < 2; i++) { // only D3Q19 for the moment
 		configuration->setStencil(static_cast<StencilType>(i));
 		//for (size_t j = 1; j < 4; j++) {
 		for (size_t j = 1; j < 2; j++) { // only shifting velocity for the moment
