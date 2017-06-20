@@ -65,6 +65,42 @@ BOOST_AUTO_TEST_CASE(CollisionSelection2D_test) {
 	BOOST_CHECK_NO_THROW(
 			selectCollision<2>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
 					*solver.getStencil(), false));
+	// -----------------
+	cfg->setEquilibriumScheme(INCOMPRESSIBLE_EQUILIBRIUM);
+	pout << " - Incompressible Equilibrium" << endl;
+	cfg->setCollisionScheme(BGK_STANDARD);
+	pout << " ---- BGK Standard" << endl;
+	BOOST_CHECK_NO_THROW(
+			selectCollision<2>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+					*solver.getStencil(), false));
+	cfg->setCollisionScheme(BGK_REGULARIZED);
+	pout << " ---- BGK Regularized" << endl;
+	BOOST_CHECK_NO_THROW(
+			selectCollision<2>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+					*solver.getStencil(), false));
+	cfg->setCollisionScheme(MRT_STANDARD);
+	pout << " ---- MRT Standard" << endl;
+	BOOST_CHECK_NO_THROW(
+			selectCollision<2>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+					*solver.getStencil(), false));
+	// -----------------
+	cfg->setEquilibriumScheme(STEADYSTATE_EQUILIBRIUM);
+	pout << " - Steady-state Equilibrium" << endl;
+	cfg->setCollisionScheme(BGK_STANDARD);
+	pout << " ---- BGK Standard" << endl;
+	BOOST_CHECK_NO_THROW(
+			selectCollision<2>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+					*solver.getStencil(), false));
+	cfg->setCollisionScheme(BGK_REGULARIZED);
+	pout << " ---- BGK Regularized" << endl;
+	BOOST_CHECK_NO_THROW(
+			selectCollision<2>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+					*solver.getStencil(), false));
+	cfg->setCollisionScheme(MRT_STANDARD);
+	pout << " ---- MRT Standard" << endl;
+	BOOST_CHECK_NO_THROW(
+			selectCollision<2>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+					*solver.getStencil(), false));
 
 	pout << "done." << endl;
 
@@ -123,6 +159,53 @@ BOOST_AUTO_TEST_CASE(CollisionSelection3D_test) {
 					selectCollision<3>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
 							*solver.getStencil(), false));
 		}
+
+		// ----------
+		cfg->setEquilibriumScheme(INCOMPRESSIBLE_EQUILIBRIUM);
+		pout << " ---- Incompressible Equilibrium" << endl;
+		cfg->setCollisionScheme(BGK_STANDARD);
+		pout << " ------- BGK Standard" << endl;
+		BOOST_CHECK_NO_THROW(
+				selectCollision<3>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+						*solver.getStencil(), false));
+		cfg->setCollisionScheme(BGK_REGULARIZED);
+		pout << " ------- BGK Regularized" << endl;
+		BOOST_CHECK_NO_THROW(
+				selectCollision<3>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+						*solver.getStencil(), false));
+		if (cfg->getStencil() == Stencil_D3Q19) {
+			cfg->setCollisionScheme(MRT_STANDARD);
+			cfg->setMRTBasis(DHUMIERES_D3Q19);
+			cfg->setMRTRelaxationTimes(RELAX_DHUMIERES_PAPER);
+			pout << " ------- MRT Standard" << endl;
+			BOOST_CHECK_NO_THROW(
+					selectCollision<3>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+							*solver.getStencil(), false));
+		}
+
+		// ----------
+		cfg->setEquilibriumScheme(STEADYSTATE_EQUILIBRIUM);
+		pout << " ---- Steady-state Equilibrium" << endl;
+		cfg->setCollisionScheme(BGK_STANDARD);
+		pout << " ------- BGK Standard" << endl;
+		BOOST_CHECK_NO_THROW(
+				selectCollision<3>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+						*solver.getStencil(), false));
+		cfg->setCollisionScheme(BGK_REGULARIZED);
+		pout << " ------- BGK Regularized" << endl;
+		BOOST_CHECK_NO_THROW(
+				selectCollision<3>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+						*solver.getStencil(), false));
+		if (cfg->getStencil() == Stencil_D3Q19) {
+			cfg->setCollisionScheme(MRT_STANDARD);
+			cfg->setMRTBasis(DHUMIERES_D3Q19);
+			cfg->setMRTRelaxationTimes(RELAX_DHUMIERES_PAPER);
+			pout << " ------- MRT Standard" << endl;
+			BOOST_CHECK_NO_THROW(
+					selectCollision<3>(*cfg, *tgv, f, rho, u, dofs, 1.0, 0.1,
+							*solver.getStencil(), false));
+		}
+
 
 	}
 	pout << "done." << endl;

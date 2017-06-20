@@ -47,6 +47,7 @@ enum CollisionSchemeName {
 	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
 	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
 	BGK_STEADY_STATE, // Steady state preconditioning by Guo et al. (2004)
+	// BGK_STEADY_STATE is   D E P R E C A T E D .    Use STEADYSTATE_EQUILIBRIUM to get the same behavior.
 	BGK_MULTIPHASE,
 	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
 	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
@@ -60,7 +61,10 @@ enum CollisionSchemeName {
 };
 
 enum EquilibriumSchemeName {
-	BGK_EQUILIBRIUM
+	BGK_EQUILIBRIUM,
+	INCOMPRESSIBLE_EQUILIBRIUM,
+	STEADYSTATE_EQUILIBRIUM,
+	ENTROPIC_EQUILIBRIUM
 };
 
 

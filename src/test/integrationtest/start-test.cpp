@@ -104,6 +104,18 @@ int main(int argc, char **argv) {
 	HtmlTrace htmlTrace(is_MPI_rank_0());
 	IntegrationTestCases::TestResult result;
 
+	// Test 14: Convergence of all collision schemes
+	result = IntegrationTestCases::ConvergenceTestCollisionSchemes();
+	print_line_html(result, htmlTrace.getHtml());
+	if (result.success) {
+		pout << "-  " << result.name << " ... " << "OK." << endl;
+	} else {
+		pout << "-  " << result.name << " ... " << "Error: "
+				<< result.error_msg->str().c_str()
+				<< " See natrium.html for details." << endl;
+		errors = true;
+	}
+
 	// Test 13: Convergence of semi-Lagrangian advection scheme (nonsmooth problem)
 	result = IntegrationTestCases::ConvergenceTestSemiLagrangianAdvectionNonsmooth();
 	print_line_html(result, htmlTrace.getHtml());

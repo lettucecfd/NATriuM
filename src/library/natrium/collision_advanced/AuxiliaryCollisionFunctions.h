@@ -55,6 +55,16 @@ inline double calculateTauFromNu(double viscosity, double cs2,
 	return tau;
 }
 
+/**
+ * @short for BGK steady state simulations
+ */
+inline double calculateTauFromNuAndGamma(double viscosity, double cs2,
+		double timeStepSize, double gamma) {
+	double tau;
+	tau = (viscosity) / (gamma * timeStepSize * cs2) + 0.5;
+	return tau;
+}
+
 template<int T_Q>
 inline void copyGlobalToLocalF(std::array<double, T_Q>& fLocal,
 		const DistributionFunctions& f, const size_t i) {
@@ -94,6 +104,8 @@ struct GeneralCollisionData {
 	const Stencil& stencil;
 	// time step size
 	double dt = 0.0;
+	// preconditioning parameter for steady-state simulations (Guo 2004)
+	double gamma_steadystate = 1.0;
 
 	ForceType forcetype;
 	std::array<double, T_D> forces;
@@ -139,6 +151,16 @@ struct GeneralCollisionData {
 			}
 		}
 		assert((cs2 - 1. / 3.) < 1e-10);
+
+		// for simulations with steady state equilibrium (Guo 2004)
+		gamma_steadystate = 1;
+		if (cfg.getEquilibriumScheme() == STEADYSTATE_EQUILIBRIUM){
+			gamma_steadystate = cfg.getBGKSteadyStateGamma();
+			tau = calculateTauFromNuAndGamma(viscosity, scaled_cs2, dt, gamma_steadystate);
+			for (int i = 0; i < T_D; ++i) {
+				forces[i] = pd.getExternalForce()->getForce()[i] / gamma_steadystate;
+			}
+		}
 
 	}
 };
@@ -220,10 +242,8 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 	}
 	if (genData.forcetype == SHIFTING_VELOCITY) {
 		for (int i = 0; i < T_D; i++) {
-			//	genData.velocity[i] *=genData.scaling;
 			genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
 					/ genData.density / genData.scaling;
-			//	genData.velocity[i] /=genData.scaling;
 
 		}
 	} else {

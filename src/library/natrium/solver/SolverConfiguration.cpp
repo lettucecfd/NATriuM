@@ -128,13 +128,13 @@ SolverConfiguration::SolverConfiguration() {
 						"Full|Dellar D2Q9 Only N|DHumieres Paper"),
 				"Relaxation scheme (choice of the higher-order relaxation parameters). Default: full relaxation to equilibrium");
 
-		declare_entry("Equilibrium scheme", "BGK equilibrium",dealii::Patterns::Selection(
-				"BGK equilibrium"),
-		"Defines the equilibrium that is used for most of the collision models");
+		declare_entry("Equilibrium scheme", "BGK equilibrium",
+				dealii::Patterns::Selection("BGK equilibrium|Incompressible equilibrium|Steady-state equilibrium|Entropic equilibrium"),
+				"Defines the equilibrium for the collision.");
 
 		enter_subsection("BGK parameters");
 		{
-			declare_entry("Steady state gamma", "0.25",
+			declare_entry("Steady state gamma", "1",
 					dealii::Patterns::Double(0, 1 + 1e-50),
 					"The parameter of the steady state preconditioner. For gamma = 1, the scheme is equivalent to the standard BGK"
 							"For gamma -> 0, the convergence to steady states is speed up and the effective Mach number is lowered, which"
