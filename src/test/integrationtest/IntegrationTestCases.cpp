@@ -1078,7 +1078,7 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
 
 TestResult ConvergenceTestCollisionSchemes() {
 	TestResult result;
-	result.id = 9;
+	result.id = 14;
 	result.name = "Convergence Test for collision schemes in 2D";
 	result.details =
 			"This test runs the Poiseuille flow benchmark on a 2x2 grid with FE order 2."
@@ -1200,7 +1200,6 @@ TestResult ConvergenceTestCollisionSchemes() {
 		// =============================================
 		configuration->setEquilibriumScheme(BGK_EQUILIBRIUM);
 		configuration->setCollisionScheme(BGK_REGULARIZED);
-		configuration->setCFL(10);
 
 		// make solver object and run simulation
 		boost::shared_ptr<ProblemDescription<2> > poiseuille2D =
