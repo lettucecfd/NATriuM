@@ -143,7 +143,7 @@ struct GeneralCollisionData {
 		// The relaxation time has to be calculated with the scaled speed of sound
 		// As a dimensionless parameter, it is independent of scaling
 		// (Note that the scaling affects the time step size)
-		tau = calculateTauFromNu(viscosity , scaled_cs2, dt);
+		tau = calculateTauFromNu(viscosity, scaled_cs2, dt);
 
 		if ((pd.hasExternalForce()) and (forcetype != NO_FORCING)) {
 			for (int i = 0; i < T_D; ++i) {
@@ -154,11 +154,15 @@ struct GeneralCollisionData {
 
 		// for simulations with steady state equilibrium (Guo 2004)
 		gamma_steadystate = 1;
-		if (cfg.getEquilibriumScheme() == STEADYSTATE_EQUILIBRIUM){
+		if (cfg.getEquilibriumScheme() == STEADYSTATE_EQUILIBRIUM) {
 			gamma_steadystate = cfg.getBGKSteadyStateGamma();
-			tau = calculateTauFromNuAndGamma(viscosity, scaled_cs2, dt, gamma_steadystate);
-			for (int i = 0; i < T_D; ++i) {
-				forces[i] = pd.getExternalForce()->getForce()[i] / gamma_steadystate;
+			tau = calculateTauFromNuAndGamma(viscosity, scaled_cs2, dt,
+					gamma_steadystate);
+			if ((pd.hasExternalForce()) and (forcetype != NO_FORCING)) {
+				for (int i = 0; i < T_D; ++i) {
+					forces[i] = pd.getExternalForce()->getForce()[i]
+							/ gamma_steadystate;
+				}
 			}
 		}
 
@@ -223,8 +227,8 @@ inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
 		// TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
 		// 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
 		for (int j = 0; j < T_D; j++) {
-			velocities[j](i) = velocities[j](i) +  0.5 * genData.dt * genData.forces[j]
-							/ genData.density;
+			velocities[j](i) = velocities[j](i)
+					+ 0.5 * genData.dt * genData.forces[j] / genData.density;
 			// I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
 		}
 	} else {
