@@ -82,9 +82,9 @@ double rho = 1.0;
 		cout << feq[i] << endl;
 	}
 
-	cout << "Dichte v:" << prams.density << endl;
-	cout << "Geschwindigkeit vorher:" << prams.velocity[0] << endl;
-	cout << "Geschwindigkeit vorher:" << prams.velocity[1] << endl;
+	//cout << "Dichte v:" << prams.density << endl;
+	//cout << "Geschwindigkeit vorher:" << prams.velocity[0] << endl;
+	//cout << "Geschwindigkeit vorher:" << prams.velocity[1] << endl;
 
 
 
