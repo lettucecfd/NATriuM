@@ -514,6 +514,12 @@ public:
 		leave_subsection();
 		if ("BGK equilibrium" == equilibriumScheme) {
 			return BGK_EQUILIBRIUM;
+		} else if ("Incompressible equilibrium" == equilibriumScheme) {
+			return INCOMPRESSIBLE_EQUILIBRIUM;
+		} else if ("Steady-state equilibrium" == equilibriumScheme) {
+			return STEADYSTATE_EQUILIBRIUM;
+		} else if ("Entropic equilibrium" == equilibriumScheme) {
+			return ENTROPIC_EQUILIBRIUM;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown equilibrium scheme '" << equilibriumScheme
@@ -528,6 +534,18 @@ public:
 		switch (equilibriumScheme) {
 		case BGK_EQUILIBRIUM: {
 			set("Equilibrium scheme", "BGK equilibrium");
+			break;
+		}
+		case INCOMPRESSIBLE_EQUILIBRIUM: {
+			set("Equilibrium scheme", "Incompressible equilibrium");
+			break;
+		}
+		case STEADYSTATE_EQUILIBRIUM: {
+			set("Equilibrium scheme", "Steady-state equilibrium");
+			break;
+		}
+		case ENTROPIC_EQUILIBRIUM: {
+			set("Equilibrium scheme", "Entropic equilibrium");
 			break;
 		}
 
