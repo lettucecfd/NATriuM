@@ -223,7 +223,7 @@ public:
 	 */
 	void reinit(size_t Q, const dealii::IndexSet &local,
 			const dealii::IndexSet &relevant, const MPI_Comm &communicator =
-			MPI_COMM_WORLD);
+			MPI_COMM_WORLD, bool dg=false);
 
 	/**
 	 * @short reinitialize the sizes of the distribution functions - without ghost elements
@@ -280,6 +280,7 @@ public:
 	 * at ghost nodes are not up to date.
 	 */
 	void updateGhosted() {
+		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 		if (m_dg) {
 			return;
 		}
@@ -287,7 +288,8 @@ public:
 		// "=" is a collective operation and will communicate the ghost elements
 		m_f0Ghosted = m_f0;
 		m_fStreamGhosted = m_fStream;
-		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
+
+
 	}
 
 	bool isDg() const {

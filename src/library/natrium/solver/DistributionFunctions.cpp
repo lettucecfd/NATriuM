@@ -91,7 +91,7 @@ const distributed_vector& DistributionFunctions::atGhosted(size_t i) const {
 }
 
 void DistributionFunctions::reinit(size_t Q, const dealii::IndexSet &local,
-		const dealii::IndexSet &relevant, const MPI_Comm &communicator) {
+		const dealii::IndexSet &relevant, const MPI_Comm &communicator, bool dg) {
 	m_Q = Q;
 	m_f0.reinit(local, communicator);
 	m_fStream.reinit(Q - 1);
@@ -99,7 +99,8 @@ void DistributionFunctions::reinit(size_t Q, const dealii::IndexSet &local,
 		m_fStream.block(i).reinit(m_f0);
 	}
 	m_fStream.collect_sizes();
-	m_dg = false;
+
+	m_dg = dg;
 
 	m_f0Ghosted.reinit(local, relevant, communicator);
 	m_fStreamGhosted.reinit(Q - 1);
@@ -108,7 +109,9 @@ void DistributionFunctions::reinit(size_t Q, const dealii::IndexSet &local,
 	}
 	m_fStreamGhosted.collect_sizes();
 
+	compress(dealii::VectorOperation::insert);
 	updateGhosted();
+
 }
 void DistributionFunctions::reinit(size_t Q, const dealii::IndexSet &local,
 		const MPI_Comm &communicator) {
@@ -135,6 +138,10 @@ void DistributionFunctions::compress(
 	m_f0.compress(operation);
 	m_fStream.compress(operation);
 	updateGhosted();
+	if (m_dg) {
+		m_f0Ghosted.compress(operation);
+		m_fStreamGhosted.compress(operation);
+	}
 
 }
 

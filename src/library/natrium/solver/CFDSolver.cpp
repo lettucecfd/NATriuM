@@ -192,7 +192,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_f.reinit(m_stencil->getQ(),
 				m_advectionOperator->getLocallyOwnedDofs(),
 				m_advectionOperator->getLocallyRelevantDofs(),
-				MPI_COMM_WORLD);
+				MPI_COMM_WORLD, (SEDG == configuration->getAdvectionScheme()));
 		m_iterationStart = 0;
 		m_time = 0;
 	}
