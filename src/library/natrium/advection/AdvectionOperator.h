@@ -72,6 +72,7 @@ protected:
 	dealii::IndexSet m_locallyRelevantDoFs;
 
 	double m_deltaT;
+	bool m_dg;
 
 public:
 
@@ -364,6 +365,10 @@ public:
 
 	const ProblemDescription<dim> & getProblem() const {
 		return m_problem;
+	}
+
+	bool isDG() const {
+		return m_dg;
 	}
 };
 

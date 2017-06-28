@@ -30,10 +30,11 @@ Checkpoint<dim>::Checkpoint(size_t iteration,
 
 template<size_t dim>
 void Checkpoint<dim>::write(const Mesh<dim>& mesh,
-		const DistributionFunctions& f,
+		DistributionFunctions& f,
 		const dealii::DoFHandler<dim>& dof_handler,
 		const CheckpointStatus& status) {
 
+	f.updateGhosted();
 	// write status
 	if (is_MPI_rank_0()) {
 		std::ofstream outfile(m_statusFile.string());
@@ -52,7 +53,7 @@ void Checkpoint<dim>::write(const Mesh<dim>& mesh,
 	std::vector<const distributed_vector*> to_save;
 	size_t Q = f.getQ();
 	for (size_t i = 0; i < Q; i++) {
-		const distributed_vector* p = &f.atGhosted(i);
+		const distributed_vector* p = &(f.atGhosted(i));
 		to_save.push_back(p);
 	}
 	sol_trans.prepare_serialization(to_save);
@@ -64,7 +65,6 @@ void Checkpoint<dim>::write(const Mesh<dim>& mesh,
 				"An error occurred while saving the mesh and distribution functions to checkpoint file."
 						"That's bad news. Make sure that you have writing permissions and that the disk quota is not exceeded.");
 	}
-
 } /* save */
 
 template<size_t dim>
@@ -90,6 +90,12 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		ifile >> fe_order;
 		ifile.close();
 	}
+	MPI_sync();
+
+
+	// container for locally relevant dofs
+	dealii::IndexSet locally_relevant_dofs;
+
 	// transfer iteration start and time to all mpi processes
 	status.time =
 			dealii::Utilities::MPI::min_max_avg(phys_time, MPI_COMM_WORLD).max;
@@ -131,9 +137,11 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
 				> sol_trans(dof_handler);
 		dof_handler.distribute_dofs(*advection.getFe());
-		DistributionFunctions tmp_f;
-		tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
-		MPI_COMM_WORLD);
+		DistributionFunctions tmp_f(f);
+		dealii::DoFTools::extract_locally_relevant_dofs(dof_handler,
+				locally_relevant_dofs);
+		tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),locally_relevant_dofs,
+		MPI_COMM_WORLD, advection.isDG());
 
 		// read old solution
 		std::vector<distributed_vector*> all_read;
@@ -142,6 +150,7 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			all_read.push_back(ptr);
 		}
 		sol_trans.deserialize(all_read);
+		tmp_f.updateGhosted();
 
 		LOG(DETAILED) << "Interpolate to refined grid" << endl;
 		LOG(DETAILED) << "... from refinement level " << mesh.n_global_levels() -1 << " to " << nlevels_new -1 << endl;
@@ -152,8 +161,8 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
  		}
 		if (mesh.n_global_levels() == nlevels_new) {
 			advection.setupDoFs();
-			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
-			MPI_COMM_WORLD);
+			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),	locally_relevant_dofs,
+			MPI_COMM_WORLD, advection.isDG());
 			f = tmp_f;
 		}
 		while (mesh.n_global_levels() < nlevels_new) {
@@ -166,14 +175,17 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			std::vector<const distributed_vector*> all_in;
 			all_in.clear();
 			for (size_t i = 0; i < new_stencil->getQ(); i++) {
-				const distributed_vector* ptr = &tmp_f.at(i);
+				const distributed_vector* ptr = &tmp_f.atGhosted(i);
 				all_in.push_back(ptr);
 			}
 			soltrans_refine.prepare_for_coarsening_and_refinement(all_in);
 			mesh.execute_coarsening_and_refinement();
 			advection.setupDoFs();
-			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
-			MPI_COMM_WORLD);
+			// after refinement, locally relevant dofs have changed
+			dealii::DoFTools::extract_locally_relevant_dofs(dof_handler,
+					locally_relevant_dofs);
+			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),locally_relevant_dofs,
+			MPI_COMM_WORLD, advection.isDG());
 			// write f pointers into std::vector
 			std::vector<distributed_vector*> all_out;
 			all_out.clear();
@@ -183,10 +195,10 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			}
 			// interpolate
 			soltrans_refine.interpolate(all_out);
-
+			f.updateGhosted();
 			// prepare next cycle
-			tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
-			MPI_COMM_WORLD);
+			tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),locally_relevant_dofs,
+			MPI_COMM_WORLD, advection.isDG());
 			tmp_f = f;
 		}
 

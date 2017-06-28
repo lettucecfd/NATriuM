@@ -46,7 +46,7 @@ AdvectionOperator<dim>::AdvectionOperator(ProblemDescription<dim>& problem,
 		SupportPointsName points_name, boost::shared_ptr<Stencil> stencil,
 		double delta_t, bool dg) :
 		m_problem(problem), m_stencil(stencil), m_orderOfFiniteElement(
-				fe_order), m_deltaT(delta_t) {
+				fe_order), m_deltaT(delta_t), m_dg (dg){
 
 	// assertions
 	assert(fe_order >= 1);
