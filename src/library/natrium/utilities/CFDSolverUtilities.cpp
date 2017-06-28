@@ -44,6 +44,28 @@ template double CFDSolverUtilities::getMinimumDoFDistanceGLL<3>(
 		const Mesh<3>& tria, const size_t orderOfFiniteElement);
 
 template<size_t dim>
+double CFDSolverUtilities::getMinimumDoFDistance(const Mesh<dim>& tria,
+		const dealii::FiniteElement<dim,dim>& fe){
+	assert (fe.has_support_points());
+
+	// calculate minimal distance between vertices of the triangulation
+	double min_vertex_distance = CFDSolverUtilities::getMinimumVertexDistance<
+			dim>(tria);
+	double unit_min = 100.0;
+	const std::vector< dealii::Point< dim > > & support_points = fe.get_unit_support_points ();
+	for (size_t i = 0; i < support_points.size(); i++){
+		for (size_t j = i+1; j < support_points.size(); j++){
+			double distance_ij = support_points.at(i).distance(support_points.at(j));
+			if ((distance_ij < unit_min) and (distance_ij > 1e-10)){
+				unit_min = distance_ij;
+			}
+		}
+	}
+
+	return min_vertex_distance * unit_min;
+}
+
+template<size_t dim>
 double CFDSolverUtilities::getMinimumVertexDistance(const Mesh<dim>& tria) {
 	// calculate minimal distance between vertices of the triangulation
 	double min_vertex_distance = 100000000000.0;
