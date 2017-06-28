@@ -119,7 +119,7 @@ public:
 
 	/// Destructor
 	virtual ~CommandLineParser() {
-
+		m_argv = NULL;
 	}
 
 	/**
