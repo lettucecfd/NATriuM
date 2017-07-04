@@ -85,7 +85,7 @@ int supportPointNr(
 			dealii::update_quadrature_points);
 	fe_v.reinit(cell);
 	for (size_t q = 0; q < quad.size(); q++) {
-		if (fe_v.quadrature_point(q).distance(point) < 1e-10){
+		if (fe_v.quadrature_point(q).distance(point) < 1e-10) {
 			return q;
 		}
 	}
@@ -145,6 +145,26 @@ template dealii::Quadrature<3> makeQuadratureAtPoints<3>(
 		const dealii::Mapping<3>& mapping);
 
 
+
+template<>
+dealii::Tensor<1, 2, double> normal_vector<2>(
+		const typename dealii::TriaIterator<dealii::TriaAccessor<1, 2, 2> >& face) {
+	// (tangential) direction vector
+	dealii::Tensor<1,2> d = face->vertex(1) - face->vertex(0);
+	// some normal vector
+	return dealii::cross_product_2d(d);
+}
+
+template<>
+dealii::Tensor<1, 3, double> normal_vector<3>(
+		const typename dealii::TriaIterator<dealii::TriaAccessor<2, 3, 3> >& face) {
+	// (tangetial) direction vector 1
+	dealii::Tensor<1,3> d1 = face->vertex(1) - face->vertex(0);
+	// (tangetial) direction vector 2
+	dealii::Tensor<1,3> d2 = face->vertex(2) - face->vertex(0);
+	// some normal vector
+	return dealii::cross_product_3d(d1,d2);
+}
 
 
 } /* namespace natrium */
