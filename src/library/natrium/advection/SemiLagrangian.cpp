@@ -283,14 +283,16 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					face_id = faceCrossedFirst(el.currentCell, el.currentPoint,
 							el.departurePoint, p_boundary, &lambda, &child_id);
 				} catch (FaceCrossedFirstFailed& e) {
-					try {
-						el.currentCell =
+					//try {
+						face_id = faceCrossedFirst(el.currentCell, el.currentPoint,
+													el.departurePoint, p_boundary, &lambda, &child_id, true);
+						/*el.currentCell =
 								dealii::GridTools::find_active_cell_around_point(
 										*(Base::m_problem.getMesh()),
 										el.departurePoint);
 						el.currentPoint = el.departurePoint;
-						continue;
-					} catch (dealii::GridTools::ExcPointNotFound<dim>& f) {
+						continue;*/
+					/*} catch (dealii::GridTools::ExcPointNotFound<dim>& f) {
 						std::stringstream msg;
 						msg
 								<< "NATriuM had to rely on deal.II's function find_active_cell_around point "
@@ -300,7 +302,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 										" TODO: implement a supplement for face_crossed_first that does not rely on inverting the mapping function.";
 						LOG(ERROR) << msg.str();
 						throw SemiLagrangianException(msg.str());
-					}
+					}*/
 				}
 				if (face_id == -1) {
 					// point found in this cell: add to cell_map
