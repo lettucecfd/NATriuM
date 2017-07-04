@@ -4,9 +4,10 @@
 #include <map>
 
 #include "deal.II/base/point.h"
+#include "deal.II/base/tensor.h"
 #include "deal.II/grid/tria.h"
 #include "deal.II/dofs/dof_handler.h"
-
+#include "deal.II/grid/tria_accessor.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
@@ -69,7 +70,8 @@ struct LagrangianPathTracker {
 
 	}
 	LagrangianPathTracker(const LagrangianPathTracker& other) :
-			destination(other.destination), currentDirection(other.currentDirection), departurePoint(
+			destination(other.destination), currentDirection(
+					other.currentDirection), departurePoint(
 					other.departurePoint), currentPoint(other.currentPoint), currentCell(
 					other.currentCell) {
 	}
@@ -83,18 +85,17 @@ struct LagrangianPathTracker {
 	}
 };
 
-
 /**
  * @short A list that stores cell-specific information for assembly
  */
 template<size_t dim>
-using DeparturePointList = std::vector<LagrangianPathTracker<dim> > ;
+using DeparturePointList = std::vector<LagrangianPathTracker<dim> >;
 
 /**
  * @short List of neighbors
  */
-template <size_t dim>
-using Neighborhood =  std::vector<typename dealii::DoFHandler<dim>::cell_iterator>;
+template<size_t dim>
+using Neighborhood = std::vector<typename dealii::DoFHandler<dim>::cell_iterator>;
 
 /**
  * @short Calculates the shape values for arbitrary points.
@@ -132,13 +133,18 @@ void getNeighborhood(
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		Neighborhood<dim>& neighborhood, size_t n_shells = 1);
 
-
 template<size_t dim>
 typename dealii::DoFHandler<dim>::active_cell_iterator recursivelySearchInNeighborhood(
 		const dealii::Point<dim>& p,
 		typename dealii::DoFHandler<dim>::active_cell_iterator& cell);
 
+template<size_t dim>
+dealii::Tensor<1, dim, double> normal_vector(
+		const typename dealii::TriaIterator<
+				dealii::TriaAccessor<dim - 1, dim, dim> >& face);
+
 } /* namespace natrium */
+
 
 
 #endif /* includeguard*/
