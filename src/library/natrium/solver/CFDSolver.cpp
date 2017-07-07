@@ -1070,7 +1070,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		// no output if checkpoint interval > 10^8
 		if (((iteration % m_configuration->getOutputCheckpointInterval() == 0)
 				or is_final)
-				and (m_configuration->getOutputCheckpointInterval() <= 1e8)) {
+				and (m_configuration->getOutputCheckpointInterval() <= 1e8) and (m_iterationStart != m_i)) {
 
 			boost::filesystem::path checkpoint_dir(
 					m_configuration->getOutputDirectory());

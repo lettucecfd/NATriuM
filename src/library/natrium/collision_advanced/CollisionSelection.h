@@ -35,7 +35,7 @@ namespace natrium {
 				CollisionOperator<T_D, T_Q, equilibrium_type, collision_type> collision_operator;\
 				collision_operator.collideAll(f, densities, velocities, locally_owned_dofs,\
 						inInitializationProcedure, genData, specData); \
-				has_collided = true; \
+				has_collided += 1; \
 		}
 
 
@@ -62,9 +62,11 @@ inline void selectCollision<2>(SolverConfiguration& configuration,
 	// CAUTION: The names of the arguments are used in the macro
 
 	// CAUTION: The name has_collided is used in the macro
-	bool has_collided = true;
+	int has_collided = false;
 
 	// Select and perform collision (the macro is defined above)
+	// Caution: You need to make sure that no configuration appears twice here.
+	// This would cause multiple collision steps per time step
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, MRT_STANDARD, BGK_EQUILIBRIUM, MultipleRelaxationTime, BGKEquilibrium);
@@ -79,7 +81,13 @@ inline void selectCollision<2>(SolverConfiguration& configuration,
 
 	if (not has_collided) {
 		throw CollisionException(
-				"Collision model not implemented yet -- cf. CollisionSelection.h");
+				"Severe error: Collision model not implemented yet -- cf. CollisionSelection.h");
+	}
+	if (has_collided > 1) {
+		throw CollisionException(
+				"Severe error: More than one collision model was executed per time step. "
+				"This means that there is a bug in CollisionSelection.h");
+
 	}
 
 } // selectCollision 2D
