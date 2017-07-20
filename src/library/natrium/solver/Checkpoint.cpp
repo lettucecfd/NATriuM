@@ -28,23 +28,25 @@ Checkpoint<dim>::Checkpoint(size_t iteration,
 
 	size_t it = iteration;
 
-	if (iteration == 0) {
+	if (iteration == 1) {
 		// find most recent checkpoint automatically
 		for (auto& entry : boost::make_iterator_range(
 				boost::filesystem::directory_iterator(checkpoint_dir), { })) {
-			std::string this_filename = entry.path().string();
+			std::string this_filename = entry.path().filename().string();
 			if (boost::filesystem::extension(this_filename)
 					!= ".stat") {
 				continue;
 			}
 			boost::replace_all(this_filename, "checkpoint_", "");
 			boost::replace_all(this_filename, ".stat", "");
+
 			size_t i = std::stoi(this_filename);
 			if (i > it){
 				it = i;
 			}
 		}
 	}
+	LOG(BASIC) << "Reading checkpoint " << it << " auomatically." <<  endl;
 	std::stringstream status_name;
 	std::stringstream data_name;
 	status_name << "checkpoint_" << it << ".stat";
