@@ -67,7 +67,7 @@ void MRTEntropic::collideAllD2Q9(DistributionFunctions& f,
 				+ 2 * (f.at(5)(i) + f.at(6)(i) + f.at(7)(i) + f.at(8)(i));
 //			m.at(2) = 4 * f.at(0)(i)
 //					- 2 * (f.at(1)(i) + f.at(2)(i) + f.at(3)(i) + f.at(4)(i))
-		+f.at(5)(i) + f.at(6)(i) + f.at(7)(i) + f.at(8)(i);
+//		+f.at(5)(i) + f.at(6)(i) + f.at(7)(i) + f.at(8)(i);
 		m.at(3) = f.at(1)(i) - f.at(3)(i) + f.at(5)(i) - f.at(6)(i) - f.at(7)(i)
 				+ f.at(8)(i);
 //			m.at(4) = -2 * (f.at(1)(i) - f.at(3)(i)) + f.at(5)(i) - f.at(6)(i)

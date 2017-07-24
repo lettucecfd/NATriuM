@@ -427,8 +427,8 @@ void BGKRegularized::collideAllD3Q19(DistributionFunctions& f,
 
 
 
-		double pi[3][3]={0};
-		double pieq[3][3]={0};
+		double pi[3][3]={{0}};
+		double pieq[3][3]={{0}};
 
 		for (int a=0; a<19 ;a++)
 				{

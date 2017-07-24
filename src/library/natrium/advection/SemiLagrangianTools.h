@@ -115,7 +115,7 @@ template<size_t dim>
 int supportPointNr(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		const dealii::Point<dim>& point, const dealii::Quadrature<dim>& quad,
-		const dealii::MappingQ<dim>& mapping);
+		const dealii::MappingQ<dim,dim>& mapping);
 
 /**
  * @short Create an FEValues object to calculate shape functions, etc. on other points than the support points

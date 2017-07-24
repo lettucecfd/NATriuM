@@ -17,7 +17,7 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/dofs/dof_handler.h"
-#include "deal.II/lac/compressed_sparsity_pattern.h"
+#include "deal.II/lac/dynamic_sparsity_pattern.h"//compressed_sparsity_pattern.h"
 
 #include "Boundary.h"
 #include "../utilities/NATriuMException.h"

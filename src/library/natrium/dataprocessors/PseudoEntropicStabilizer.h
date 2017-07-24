@@ -61,6 +61,11 @@ public:
 	template <size_t Q>
 	void applyStabilizer(const array<double,Q>& in, array<double,Q>& out);
 
+	// forward declare explicit specializations
+	template<> void applyStabilizer<9>(const array<double,9>& in, array<double,9>& out);
+	template<> void applyStabilizer<19>(const array<double,19>& in, array<double,19>& out);
+	template<> void applyStabilizer<27>(const array<double,27>& in, array<double,27>& out);
+
 
 } /* namespace natrium */
 #endif /* BGKSTANDARD_H_ */
