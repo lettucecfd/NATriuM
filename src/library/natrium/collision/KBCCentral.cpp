@@ -85,7 +85,7 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 		double uy = velocities.at(1)(i) / scaling;
 		double scalar_product = ux * ux + uy * uy;
 
-		double moments[3][3] = { 0 };
+		double moments[3][3] = { { 0 } };
 		double direction_x[9];
 		double direction_y[9];
 
@@ -245,7 +245,7 @@ void KBCCentral::collideAllD2Q9(DistributionFunctions& f,
 				* (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
 
 		//Calculation of the moments for the equilibrium distribution function
-		double moments_eq[3][3] = { 0 };
+		double moments_eq[3][3] = { { 0 } };
 
 		for (int d = 0; d < 9; d++) {
 			direction_x[d] = getStencil()->getDirection(d)(0) / scaling;

@@ -17,6 +17,19 @@ namespace natrium {
 /// so this functions has two different instantiation)
 template<class VECTOR>
 void reinitVector(VECTOR& dst, const VECTOR& src);
+// forward declare explicit instantiations
+template<>
+void reinitVector<distributed_block_vector>(distributed_block_vector& dst,
+		const distributed_block_vector& src) ;
+template<>
+void reinitVector<distributed_vector>(distributed_vector& dst,
+		const distributed_vector& src);
+template<>
+void reinitVector<numeric_vector>(numeric_vector& dst,
+		const numeric_vector& src) ;
+template<>
+void reinitVector<block_vector>(block_vector& dst,
+		const block_vector& src) ;
 
 
 /**
