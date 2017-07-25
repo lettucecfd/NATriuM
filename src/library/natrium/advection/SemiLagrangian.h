@@ -125,6 +125,16 @@ public:
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			const dealii::Point<dim>& p_inside,
 			const dealii::Point<dim>& p_outside, dealii::Point<dim>& p_boundary,
+			double* lambda, size_t* child_id, bool without_mapping = false);
+
+	/**
+	 * @short This function does the same as faceCrossedFirst, but without using mapping functions
+	 * @note The reason for this implementation is that the mapping function may not be invertible outside the cell
+	 */
+	int faceCrossedFirstWithoutMapping(
+			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+			const dealii::Point<dim>& p_inside,
+			const dealii::Point<dim>& p_outside, dealii::Point<dim>& p_boundary,
 			double* lambda, size_t* child_id);
 
 	/// function to (re-)assemble linear system

@@ -14,6 +14,23 @@ namespace natrium {
 // DECLARE ALL SELECTIONS ////
 //////////////////////////////
 
+/**
+ * @short relaxation matrix for MRT
+ */
+enum RelaxMode {
+	RELAX_FULL, // relax all higher-order moments to equilibrium
+	DELLAR_RELAX_ONLY_N, // relax only J to equilibrium
+	RELAX_DHUMIERES_PAPER // D3Q19 relaxation rates from D'Humieres et al. (2002)
+};
+
+/**
+ * @short moment basis for MRT
+ */
+enum MomentBasis {
+	DELLAR_D2Q9,
+	LALLEMAND_D2Q9,
+	DHUMIERES_D3Q19
+};
 
 
 /**
@@ -30,6 +47,7 @@ enum CollisionSchemeName {
 	BGK_STANDARD, // Standard BGK collision Collision for the distribution function as defined in MinLee2011
 	BGK_STANDARD_TRANSFORMED, // BGK collisions with transformed distributions, as used in Palabos
 	BGK_STEADY_STATE, // Steady state preconditioning by Guo et al. (2004)
+	// BGK_STEADY_STATE is   D E P R E C A T E D .    Use STEADYSTATE_EQUILIBRIUM to get the same behavior.
 	BGK_MULTIPHASE,
 	BGK_INCOMPRESSIBLE, // BGK collision for incompressible Navier Stokes equations by He & Luo (1997)
 	MRT_STANDARD, // Multiple Relaxation Time scheme by d'Humières (1992)
@@ -41,6 +59,14 @@ enum CollisionSchemeName {
 	BGK_MULTI_BDF2,
 	BGK_REGULARIZED // Regularized model by Latt and Chopard (2005)
 };
+
+enum EquilibriumSchemeName {
+	BGK_EQUILIBRIUM,
+	INCOMPRESSIBLE_EQUILIBRIUM,
+	STEADYSTATE_EQUILIBRIUM,
+	ENTROPIC_EQUILIBRIUM
+};
+
 
 // StencilType defined in Stencil.h
 

@@ -19,6 +19,7 @@ file(   GLOB_RECURSE
         natrium/boundaries/*.cpp
         natrium/benchmarks/*.cpp
         natrium/collision/*.cpp
+        natrium/collision_advanced/*.cpp
         natrium/dataprocessors/*.cpp
         natrium/problemdescription/*.cpp
         natrium/smoothing/*.cpp

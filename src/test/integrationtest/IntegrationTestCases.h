@@ -61,6 +61,7 @@ TestResult ConvergenceTestSemiLagrangianAdvectionSmooth ();
 
 TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth ();
 
+TestResult ConvergenceTestCollisionSchemes ();
 
 } /* namespace IntegrationTests */
 

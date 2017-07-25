@@ -31,6 +31,7 @@
 #include "../advection/SEDGMinLee.h"
 #include "../advection/SemiLagrangian.h"
 
+#include "../collision_advanced/CollisionSelection.h"
 #include "../collision/BGKStandard.h"
 #include "../collision/BGKStandardTransformed.h"
 #include "../collision/BGKSteadyState.h"
@@ -191,7 +192,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_f.reinit(m_stencil->getQ(),
 				m_advectionOperator->getLocallyOwnedDofs(),
 				m_advectionOperator->getLocallyRelevantDofs(),
-				MPI_COMM_WORLD);
+				MPI_COMM_WORLD, (SEDG == configuration->getAdvectionScheme()));
 		m_iterationStart = 0;
 		m_time = 0;
 	}
@@ -808,9 +809,19 @@ void CFDSolver<dim>::collide() {
 		CFDSolverUtilities::getWriteableDensity(writeable_rho, m_density,
 				m_advectionOperator->getLocallyOwnedDofs());
 
+		double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
+					*(m_problemDescription->getMesh()),
+					m_configuration->getSedgOrderOfFiniteElement(), *m_stencil,
+					m_configuration->getCFL());
+
+
+// TODO member function collisionModel
+		selectCollision(*m_configuration, *m_problemDescription, m_f, writeable_rho, writeable_u,
+			m_advectionOperator->getLocallyOwnedDofs(), m_problemDescription->getViscosity(), delta_t, *m_stencil, false);
+
 		// perform collision
-		m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
-				m_advectionOperator->getLocallyOwnedDofs(), false);
+		//m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
+		//		m_advectionOperator->getLocallyOwnedDofs(), false);
 
 		// copy back to ghosted vectors and communicate across MPI processors
 		CFDSolverUtilities::applyWriteableDensity(writeable_rho, m_density);
@@ -1059,7 +1070,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		// no output if checkpoint interval > 10^8
 		if (((iteration % m_configuration->getOutputCheckpointInterval() == 0)
 				or is_final)
-				and (m_configuration->getOutputCheckpointInterval() <= 1e8)) {
+				and (m_configuration->getOutputCheckpointInterval() <= 1e8) and (m_iterationStart != m_i)) {
 
 			boost::filesystem::path checkpoint_dir(
 					m_configuration->getOutputDirectory());

@@ -14,6 +14,6 @@
 #add_subdirectory(parallel_benchmark)
 add_subdirectory(sl_parallel_benchmark_periodic)
 add_subdirectory(sedg_parallel_benchmark_periodic)
-#add_subdirectory(tgv-convergence)
+add_subdirectory(tgv-convergence)
 #add_subdirectory(cavity-convergence)
 #add_subdirectory(semilagrange-stability)

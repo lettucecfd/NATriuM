@@ -58,6 +58,10 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 			"iterative initialization scheme: max. number of iterations");
 	setArgument<double>("init-res",
 			"iterative initialization scheme: residual");
+	setArgument<string>("mrt-basis",
+			"Moment basis for MRT collision [dellar-d2q9, lallemand-d2q9, dhumieres-d3q19]");
+	setArgument<string>("mrt-relax",
+			"MRT relaxation times [full, dellar-only-N, dhumieres-paper]");
 
 }
 
@@ -398,21 +402,60 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			msg << "See --help for allowed options." << endl;
 			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "Initialization set to " << init << " via command line" << endl;
+		LOG(BASIC) << "Initialization set to " << init << " via command line"
+				<< endl;
 	}
 
 	// iterative initialization: residual
 	if (hasArgument("init-res")) {
 		const double res = getArgument<double>("init-res");
 		cfg.setIterativeInitializationResidual(res);
-		LOG(BASIC) << "Residual for iterative initialization set to " << res << " via command line" << endl;
+		LOG(BASIC) << "Residual for iterative initialization set to " << res
+				<< " via command line" << endl;
 	}
 
 	// iterative initialization: max n. iterations
 	if (hasArgument("init-niter")) {
 		const int niter = getArgument<int>("init-niter");
 		cfg.setIterativeInitializationNumberOfIterations(niter);
-		LOG(BASIC) << "Max. number of iterative initialization steps set to " << niter << " via command line" << endl;
+		LOG(BASIC) << "Max. number of iterative initialization steps set to "
+				<< niter << " via command line" << endl;
+	}
+
+	if (hasArgument("mrt-basis")) {
+		const string basis = getArgument<string>("mrt-basis");
+		if ("dellar-d2q9" == basis) {
+			cfg.setMRTBasis(DELLAR_D2Q9);
+		} else if ("lallemand-d2q9" == basis) {
+			cfg.setMRTBasis(LALLEMAND_D2Q9);
+		} else if ("dhumieres-d3q19" == basis) {
+			cfg.setMRTBasis(DHUMIERES_D3Q19);
+		} else {
+			std::stringstream msg;
+			msg << "--mrt-basis " << basis << " is illegal." << endl;
+			msg << "See --help for allowed options." << endl;
+			throw CommandLineParserException(msg.str());
+		}
+		LOG(BASIC) << "MRT basis set to " << basis << " via command line"
+				<< endl;
+	}
+
+	if (hasArgument("mrt-relax")) {
+		const string relax = getArgument<string>("mrt-relax");
+		if ("full" == relax) {
+			cfg.setMRTRelaxationTimes(RELAX_FULL);
+		} else if ("dellar-only-N" == relax) {
+			cfg.setMRTRelaxationTimes(DELLAR_RELAX_ONLY_N);
+		} else if ("dhumieres-paper") {
+			cfg.setMRTRelaxationTimes(RELAX_DHUMIERES_PAPER);
+		} else {
+			std::stringstream msg;
+			msg << "--mrt-relax " << relax << " is illegal." << endl;
+			msg << "See --help for allowed options." << endl;
+			throw CommandLineParserException(msg.str());
+		}
+		LOG(BASIC) << "MRT relax set to " << relax << " via command line"
+				<< endl;
 	}
 
 }
