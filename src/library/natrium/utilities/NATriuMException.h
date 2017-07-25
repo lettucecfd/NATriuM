@@ -37,6 +37,27 @@ public:
 	}
 };
 
+
+/**
+ * @short Exception class for Unstable Collision
+ */
+class NotImplementedException: public NATriuMException {
+private:
+	std::string message;
+public:
+	NotImplementedException(const char *msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	NotImplementedException(const string& msg) :
+			NATriuMException(msg), message(msg) {
+	}
+	~NotImplementedException() throw () {
+	}
+	const char *what() const throw () {
+		return this->message.c_str();
+	}
+};
+
 inline void natrium_errorexit(const char* msg) {
 
 	LOG(ERROR) << "---------------------------------------------" << endl;

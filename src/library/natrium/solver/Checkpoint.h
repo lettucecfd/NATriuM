@@ -95,7 +95,7 @@ public:
 	 *        -# a .data file that contains the serialized data (mesh and distribution functions)
 	 *        -# a .data.info file that contains some deal.II information about the mesh, refinement etc.
 	 */
-	void write(const Mesh<dim>& mesh, const DistributionFunctions& f,
+	void write(const Mesh<dim>& mesh, DistributionFunctions& f,
 			const dealii::DoFHandler<dim>& dof_handler,
 			const CheckpointStatus& status);
 

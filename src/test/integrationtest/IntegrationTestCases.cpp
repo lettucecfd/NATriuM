@@ -198,7 +198,7 @@ TestResult ConvergenceTestPeriodic() {
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
 	configuration->setSimulationEndTime(1.0 / (2 * viscosity));
-	configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
+	configuration->setCollisionScheme(BGK_STANDARD);
 	//configuration->setCollisionScheme(KBC_STANDARD);
 
 	// Simulation
@@ -505,7 +505,7 @@ TestResult ConvergenceTest3D() {
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
 	//configuration->setCommandLineVerbosity(ALL);
-	configuration->setStencil(Stencil_D3Q15);
+	configuration->setStencil(Stencil_D3Q19);
 	//configuration->setRestartAtLastCheckpoint(false);
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -688,7 +688,7 @@ TestResult ConvergenceTestForcingSchemes2D() {
 		//pout << "... done." << endl;
 
 	}
-
+/*
 	// EXACT_DIFFERENCE
 	{
 		//pout << "... exact difference scheme." << endl;
@@ -730,7 +730,7 @@ TestResult ConvergenceTestForcingSchemes2D() {
 		//BOOST_CHECK_CLOSE(solver.getMaxVelocityNorm(), 1.5 * u_bulk, 5);
 		//pout << "... done." << endl;
 	}
-
+*/
 	// Analysis
 	// Velocity error (compare Paper by Min and Lee)
 
@@ -790,15 +790,17 @@ TestResult ConvergenceTestForcingSchemes3D() {
 	configuration->setUserInteraction(false);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
 	configuration->setStencilScaling(scaling);
+	configuration->setSwitchOutputOff(true);
 	configuration->setCFL(CFL);
 	configuration->setConvergenceThreshold(1e-8);
 	//configuration->setTimeIntegrator(OTHER);
 	//configuration->setDealIntegrator(SDIRK_TWO_STAGES);
 
 	// forall stencil types and forcing schemes
-	for (size_t i = 1; i < 4; i++) {
+	for (size_t i = 1; i < 2; i++) { // only D3Q19 for the moment
 		configuration->setStencil(static_cast<StencilType>(i));
-		for (size_t j = 1; j < 4; j++) {
+		//for (size_t j = 1; j < 4; j++) {
+		for (size_t j = 1; j < 2; j++) { // only shifting velocity for the moment
 			configuration->setForcingScheme(static_cast<ForceType>(j));
 			std::stringstream s;
 			switch (i) {
@@ -1074,7 +1076,161 @@ TestResult ConvergenceTestSemiLagrangianAdvectionNonsmooth() {
 }
 /* ConvergenceSemiLagrangianAdvectionNonsmooth */
 
+TestResult ConvergenceTestCollisionSchemes() {
+	TestResult result;
+	result.id = 14;
+	result.name = "Convergence Test for collision schemes in 2D";
+	result.details =
+			"This test runs the Poiseuille flow benchmark on a 2x2 grid with FE order 2."
+					"The flow is initialized with a zero profile and driven by an external force."
+					"The maximal velocity is then compared with the theoretical value."
+					"The stencil is a D2Q9 stencil.";
+	result.time = clock();
 
+	// Initialization (with standard LB units <=> scaling=1)
+
+	// setup test case
+	const double CFL = 3.0;
+	const double Re = 10;
+	const double u_bulk = 0.0001 / 1.5; //1.0;
+	const double height = 3.0;
+	const double length = 2.0;
+	const double orderOfFiniteElement = 2;
+	const double Ma = 0.1;
+	const double refinement_level = 1;
+	bool is_periodic = true;
+
+	/// create CFD problem
+	double viscosity = u_bulk * height / Re;
+	const double scaling = sqrt(3) * 1.5 * u_bulk / Ma;
+
+
+
+	/// setup configuration
+	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
+			SolverConfiguration>();
+	configuration->setSwitchOutputOff(true);
+	configuration->setUserInteraction(false);
+	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	configuration->setStencilScaling(scaling);
+	configuration->setCFL(CFL);
+	configuration->setConvergenceThreshold(1e-7);
+	configuration->setForcingScheme(SHIFTING_VELOCITY);
+
+	{
+		// BGK Standard
+		// =============================================
+
+		// make solver object and run simulation
+		boost::shared_ptr<ProblemDescription<2> > poiseuille2D =
+				boost::make_shared<PoiseuilleFlow2D>(viscosity,
+						refinement_level, u_bulk, height, length, is_periodic);
+
+		CFDSolver<2> solver(configuration, poiseuille2D);
+		solver.run();
+
+		result.quantity.push_back("BGK Standard");
+		result.expected.push_back(1.5 * u_bulk);
+		result.threshold.push_back(0.05 * 1.5 * u_bulk);
+		result.outcome.push_back(solver.getMaxVelocityNorm());
+	}
+	{
+		// BGK Incompressible
+		// =============================================
+		configuration->setEquilibriumScheme(INCOMPRESSIBLE_EQUILIBRIUM);
+
+		// make solver object and run simulation
+		boost::shared_ptr<ProblemDescription<2> > poiseuille2D =
+				boost::make_shared<PoiseuilleFlow2D>(viscosity,
+						refinement_level, u_bulk, height, length, is_periodic);
+
+		CFDSolver<2> solver(configuration, poiseuille2D);
+		solver.run();
+
+		result.quantity.push_back("BGK Incompressible");
+		result.expected.push_back(1.5 * u_bulk);
+		result.threshold.push_back(0.05 * 1.5 * u_bulk);
+		result.outcome.push_back(solver.getMaxVelocityNorm());
+	}
+	{
+		// BGK Steady-state
+		// =============================================
+		configuration->setEquilibriumScheme(STEADYSTATE_EQUILIBRIUM);
+		configuration->setBGKSteadyStateGamma(0.1);
+		configuration->setCFL(0.2);
+
+		// make solver object and run simulation
+		boost::shared_ptr<ProblemDescription<2> > poiseuille2D =
+				boost::make_shared<PoiseuilleFlow2D>(viscosity,
+						refinement_level, u_bulk, height, length, is_periodic);
+
+		CFDSolver<2> solver(configuration, poiseuille2D);
+		solver.run();
+
+		result.quantity.push_back("BGK Steady-State");
+		result.expected.push_back(1.5 * u_bulk);
+		result.threshold.push_back(0.05 * 1.5 * u_bulk);
+		result.outcome.push_back(solver.getMaxVelocityNorm());
+
+		configuration->setCFL(CFL);
+		configuration->setBGKSteadyStateGamma(1.0);
+	}
+	{
+		// MRT
+		// =============================================
+		configuration->setEquilibriumScheme(BGK_EQUILIBRIUM);
+		configuration->setCollisionScheme(MRT_STANDARD);
+
+		// make solver object and run simulation
+		boost::shared_ptr<ProblemDescription<2> > poiseuille2D =
+				boost::make_shared<PoiseuilleFlow2D>(viscosity,
+						refinement_level, u_bulk, height, length, is_periodic);
+
+		CFDSolver<2> solver(configuration, poiseuille2D);
+		solver.run();
+
+		result.quantity.push_back("MRT");
+		result.expected.push_back(1.5 * u_bulk);
+		result.threshold.push_back(0.05 * 1.5 * u_bulk);
+		result.outcome.push_back(solver.getMaxVelocityNorm());
+	}
+	{
+		// REGULARIZED
+		// =============================================
+		configuration->setEquilibriumScheme(BGK_EQUILIBRIUM);
+		configuration->setCollisionScheme(BGK_REGULARIZED);
+
+		// make solver object and run simulation
+		boost::shared_ptr<ProblemDescription<2> > poiseuille2D =
+				boost::make_shared<PoiseuilleFlow2D>(viscosity,
+						refinement_level, u_bulk, height, length, is_periodic);
+
+		CFDSolver<2> solver(configuration, poiseuille2D);
+		solver.run();
+
+		result.quantity.push_back("BGK Regularized");
+		result.expected.push_back(1.5 * u_bulk);
+		result.threshold.push_back(0.05 * 1.5 * u_bulk);
+		result.outcome.push_back(solver.getMaxVelocityNorm());
+	}
+
+	// Finalize test
+	result.time = (clock() - result.time) / CLOCKS_PER_SEC;
+	assert(result.quantity.size() == result.expected.size());
+	assert(result.quantity.size() == result.threshold.size());
+	assert(result.quantity.size() == result.outcome.size());
+	result.success = true;
+	for (size_t i = 0; i < result.quantity.size(); i++) {
+		if (fabs(result.expected.at(i) - result.outcome.at(i))
+				> result.threshold.at(i)) {
+			result.success = false;
+			*result.error_msg << result.quantity.at(i)
+					<< " not below threshold.";
+		}
+	}
+	return result;
+} /* ConvergenceTestCollisionSchemes*/
 
 } /* namespace IntegrationTests */
 

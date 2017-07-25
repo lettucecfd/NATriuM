@@ -6,6 +6,7 @@ file(   GLOB_RECURSE
         advection/*.cpp
         boundaries/*.cpp
         collision/*.cpp
+        collision_advanced/*.cpp
         problemdescription/*.cpp
         smoothing/*.cpp
         solver/*.cpp

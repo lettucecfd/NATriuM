@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
 			deal_integrator, integrator_name);
 	pout << "Integrator: " << integrator_name << endl;
 
-	const double Ma = 0.05;
+	const double Ma = 0.1;
 	//! [Main function]
 
 
@@ -166,8 +166,9 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
 	configuration->setNumberOfTimeSteps(200000);
-	//! [Configuration]
-
+	//configuration->setTimeIntegrator(EXPONENTIAL);
+	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	configuration->setForcingScheme(SHIFTING_VELOCITY);
 	//! [Solver]
 	CFDSolver<2> solver(configuration, obstacle_flow);
 	solver.run();

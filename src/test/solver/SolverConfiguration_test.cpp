@@ -139,6 +139,23 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	BOOST_CHECK_EQUAL(config.getSupportPoints(), GAUSS_CHEBYSHEV_POINTS);
 	config.setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
 	BOOST_CHECK_EQUAL(config.getSupportPoints(), GAUSS_LOBATTO_CHEBYSHEV_POINTS);
+	BOOST_CHECK_EQUAL(config.getMRTBasis(), DELLAR_D2Q9);
+	config.setMRTBasis(LALLEMAND_D2Q9);
+	BOOST_CHECK_EQUAL(config.getMRTBasis(), LALLEMAND_D2Q9);
+	config.setMRTBasis(DHUMIERES_D3Q19);
+	BOOST_CHECK_EQUAL(config.getMRTBasis(), DHUMIERES_D3Q19);
+	BOOST_CHECK_EQUAL(config.getMRTRelaxationTimes(), RELAX_FULL);
+	config.setMRTRelaxationTimes(DELLAR_RELAX_ONLY_N);
+	BOOST_CHECK_EQUAL(config.getMRTRelaxationTimes(), DELLAR_RELAX_ONLY_N);
+	config.setMRTRelaxationTimes(RELAX_DHUMIERES_PAPER);
+	BOOST_CHECK_EQUAL(config.getMRTRelaxationTimes(), RELAX_DHUMIERES_PAPER);
+	BOOST_CHECK_EQUAL(config.getEquilibriumScheme(), BGK_EQUILIBRIUM);
+	config.setEquilibriumScheme(ENTROPIC_EQUILIBRIUM);
+	BOOST_CHECK_EQUAL(config.getEquilibriumScheme(), ENTROPIC_EQUILIBRIUM);
+	config.setEquilibriumScheme(INCOMPRESSIBLE_EQUILIBRIUM);
+	BOOST_CHECK_EQUAL(config.getEquilibriumScheme(), INCOMPRESSIBLE_EQUILIBRIUM);
+	config.setEquilibriumScheme(STEADYSTATE_EQUILIBRIUM);
+	BOOST_CHECK_EQUAL(config.getEquilibriumScheme(), STEADYSTATE_EQUILIBRIUM);
 
 	/// Failure test
 	pout << " ... failure test ... " << endl;
