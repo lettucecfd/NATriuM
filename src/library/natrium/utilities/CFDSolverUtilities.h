@@ -19,6 +19,7 @@
 #include "../stencils/D3Q27.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/ConfigNames.h"
 #include "../utilities/NATriuMException.h"
 #include "../solver/SolverConfiguration.h"
 #include "../utilities/Timing.h"

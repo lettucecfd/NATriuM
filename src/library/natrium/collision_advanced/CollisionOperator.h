@@ -16,9 +16,9 @@
 
 namespace natrium {
 
-template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium,
-		template<int T_D, int T_Q,
-				template<int T_D, int T_Q> class T_equilibrium> class T_collision>
+template<int T_D, int T_Q, template<int, int> class T_equilibrium,
+		template<int, int,
+				template<int, int> class > class T_collision>
 class CollisionOperator {
 public:
 

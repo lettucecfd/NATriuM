@@ -7,6 +7,8 @@
 
 #include "TurbulentChannelFlow3D.h"
 
+#include <numeric>
+
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
@@ -608,9 +610,9 @@ inline void TurbulentChannelFlow3D::mean(vector<vector<double> > &matrix, double
 	vector<double> 		sum(i);
 
 	for (int k = 0; k <= i-1; ++k){
-		sum[k] = accumulate(matrix[k].begin(), matrix[k].end(), 0.0);
+		sum[k] = std::accumulate(matrix[k].begin(), matrix[k].end(), 0.0);
 	}
-	avg = accumulate(sum.begin(), sum.end(), 0.0) / (i*j);
+	avg = std::accumulate(sum.begin(), sum.end(), 0.0) / (i*j);
 }
 
 

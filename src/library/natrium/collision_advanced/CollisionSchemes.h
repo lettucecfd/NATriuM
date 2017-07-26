@@ -13,7 +13,7 @@
 #include "AuxiliaryMRTFunctions.h"
 
 namespace natrium {
-template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
+template<int T_D, int T_Q, template<int, int> class T_equilibrium>
 class BGKCollision {
 public:
 
@@ -41,7 +41,7 @@ public:
 	}
 };
 
-template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
+template<int T_D, int T_Q, template<int, int > class T_equilibrium>
 class Regularized {
 public:
 
@@ -107,7 +107,7 @@ public:
 			}
 		}
 
-		std::array<double, T_Q> fi1 = { 0.0 };
+		std::array<double, T_Q> fi1 = {{ 0.0 }};
 
 		for (int a = 0; a < T_Q; a++) {
 			for (int b = 0; b < T_D; b++) {
@@ -132,7 +132,7 @@ public:
 } //class regularized
 ;
 
-template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
+template<int T_D, int T_Q, template<int, int> class T_equilibrium>
 class MultipleRelaxationTime {
 public:
 

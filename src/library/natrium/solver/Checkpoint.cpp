@@ -19,6 +19,8 @@
 #include "deal.II/distributed/solution_transfer.h"
 #include "deal.II/numerics/vector_tools.h"
 
+#include "../utilities/CFDSolverUtilities.h"
+
 
 namespace natrium {
 

@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 		for (size_t j = 0; j < dof_handler.n_dofs(); j++) {
 			if (rho.in_local_range(j)) {
 				f_i(j) = i*0.1+0.1;
-				cout << f_i(j);
+				//cout << f_i(j);
 			}
 		}
 		//f_i.compress(dealii::VectorOperation::add);
@@ -101,10 +101,10 @@ BOOST_AUTO_TEST_CASE(KBCStandard_collideAll_test) {
 	}
 for (int p=0;p<9;p++)
 {
-	cout <<  p << "kbc : "<< fAfterCollisionkbc.at(p)(1) << endl;
-	cout <<  p << "bgk : "<< fAfterCollisionbgk.at(p)(1) << endl;
+	//cout <<  p << "kbc : "<< fAfterCollisionkbc.at(p)(1) << endl;
+	//cout <<  p << "bgk : "<< fAfterCollisionbgk.at(p)(1) << endl;
 }
-	pout << "done" << endl;
+	//pout << "done" << endl;
 }
 
 

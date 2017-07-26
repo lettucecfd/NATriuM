@@ -9,6 +9,7 @@
 #include "deal.II/dofs/dof_handler.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "../utilities/BasicNames.h"
+#include "../utilities/NATriuMException.h"
 
 namespace natrium {
 
@@ -142,6 +143,13 @@ template<size_t dim>
 dealii::Tensor<1, dim, double> normal_vector(
 		const typename dealii::TriaIterator<
 				dealii::TriaAccessor<dim - 1, dim, dim> >& face);
+// forward declare explicit specializations
+template<>
+dealii::Tensor<1, 2, double> normal_vector<2>(
+		const typename dealii::TriaIterator<dealii::TriaAccessor<1, 2, 2> >& face) ;
+template<>
+dealii::Tensor<1, 3, double> normal_vector<3>(
+		const typename dealii::TriaIterator<dealii::TriaAccessor<2, 3, 3> >& face) ;
 
 } /* namespace natrium */
 

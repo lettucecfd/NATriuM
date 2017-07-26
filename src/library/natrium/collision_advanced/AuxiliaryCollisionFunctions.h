@@ -7,11 +7,20 @@
 #ifndef AUXILIARYCOLLISIONFUNCTIONS_H_
 #define AUXILIARYCOLLISIONFUNCTIONS_H_
 
-#include "../collision/ExternalForceFunctions.h"
 #include <array>
 #include <vector>
 
+#include "../collision/ExternalForceFunctions.h"
+#include "../utilities/NATriuMException.h"
+#include "../utilities/ConfigNames.h"
+#include "../solver/DistributionFunctions.h"
+#include "../solver/SolverConfiguration.h"
+
+
 namespace natrium {
+
+// forward declaration
+class CollisionException;
 
 /**
  * @short Exception class for Unstable Collision
@@ -226,7 +235,7 @@ inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
 	if (genData.forcetype == SHIFTING_VELOCITY) {
 		// TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
 		// 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
-		for (int j = 0; j < T_D; j++) {
+		for (size_t j = 0; j < T_D; j++) {
 			velocities[j](i) = velocities[j](i)
 					+ 0.5 * genData.dt * genData.forces[j] / genData.density;
 			// I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
@@ -245,7 +254,7 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 						"Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
 	}
 	if (genData.forcetype == SHIFTING_VELOCITY) {
-		for (int i = 0; i < T_D; i++) {
+		for (size_t i = 0; i < T_D; i++) {
 			genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
 					/ genData.density / genData.scaling;
 

@@ -21,6 +21,7 @@
 
 #include "PhysicalProperties.h"
 #include "Checkpoint.h"
+#include "SolverConfiguration.h"
 
 #include "../stencils/D2Q9.h"
 #include "../stencils/D3Q19.h"
@@ -58,6 +59,7 @@
 #include "../utilities/CFDSolverUtilities.h"
 #include "../utilities/MPIGuard.h"
 #include "../utilities/Info.h"
+#include "../utilities/ConfigNames.h"
 
 namespace natrium {
 
@@ -482,57 +484,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			<< configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLISION ==          " << endl;
-	switch (configuration->getCollisionScheme()) {
-	case BGK_STANDARD: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		break;
-	}
-	case BGK_STANDARD_TRANSFORMED: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		break;
-	}
-	case BGK_REGULARIZED: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		break;
-	}
-	case BGK_STEADY_STATE: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		LOG(WELCOME) << "steady state gamma:       " << gamma << endl;
-		LOG(WELCOME) << "Effective Ma:             " << Ma / sqrt(gamma)
-				<< endl;
-
-		break;
-	}
-	case BGK_MULTIPHASE: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		LOG(WELCOME) << "G:                        " << G << endl;
-		break;
-	}
-	case BGK_INCOMPRESSIBLE: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		break;
-	}
-	case MRT_STANDARD: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	case KBC_STANDARD: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	case KBC_CENTRAL: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	case BGK_MULTI_AM4: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	case BGK_MULTI_BDF2: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	}
+	LOG(WELCOME) << "tau:                      " << tau << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 
 // initialize boundary dof indicator
