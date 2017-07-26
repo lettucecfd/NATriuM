@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(EntropicStabilizedDensityMomentum_test) {
 	pout << "EntropicStabilizedDensityMomentum_test..." << endl;
 
 	D2Q9 st;
-	array<double, 9> f = { 1.0, 0.5, 0.1, 0.2, 0.5, 0.2, 0.1, 1.0, 0.5 };
+	array<double, 9> f = {{ 1.0, 0.5, 0.1, 0.2, 0.5, 0.2, 0.1, 1.0, 0.5 }};
 	array<double, 2> j = { };
 	double rho = density<9>(f);
 	momentum<2, 9>(f, j, st.getDirections());
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(EntropicStabilized_collideBGK_test) {
 	pout << "EntropicStabilized_collideBGK_test..." << endl;
 
 	D2Q9 st;
-	array<double, 9> f = { 1.0, 0.5, 0.1, 0.2, 0.5, 0.2, 0.1, 1.0, 0.5 };
+	array<double, 9> f = {{ 1.0, 0.5, 0.1, 0.2, 0.5, 0.2, 0.1, 1.0, 0.5 }};
 	array<double, 9> feq = { };
 	array<double, 2> j = { };
 	array<double, 2> u = { };
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(EntropicStabilizedCollideOneD2Q9_test) {
 	double tau = 1.0;
 	double dt = 1.0;
 	EStCollisionData<2, 9> _(*st, tau);
-	_.f_i = {1.0, 0.5, 0.1, 0.2, 0.5, 0.2, 0.1, 1.0, 0.5};
+	_.f_i = {{1.0, 0.5, 0.1, 0.2, 0.5, 0.2, 0.1, 1.0, 0.5}};
 
 	// calc density and momentum (as input to the collision function)
 	_.rho_i = density<9>(_.f_i);

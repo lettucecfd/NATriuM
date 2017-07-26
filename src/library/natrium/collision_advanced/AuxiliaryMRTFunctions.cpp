@@ -385,7 +385,7 @@ template<> const array<double, 19> make_diag(double tau, MomentBasis basis,
 			double s10 = 1.4;
 			double s4 = 1.2;
 			double s16 = 1.98;
-			diag = {0, s1, s2, 0, s4, 0, s4, 0, s4, s9, s10, s9, s10, s13, s13, s13, s16, s16, s16};
+			diag = {{0, s1, s2, 0, s4, 0, s4, 0, s4, s9, s10, s9, s10, s13, s13, s13, s16, s16, s16}};
 			break;
 		} /* case DHUMIERES_D3Q19 */
 		default: {

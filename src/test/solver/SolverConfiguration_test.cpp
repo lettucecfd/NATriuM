@@ -13,6 +13,7 @@
 #include "boost/filesystem.hpp"
 #include "boost/foreach.hpp"
 
+#include "natrium/utilities/ConfigNames.h"
 #include "natrium/utilities/BasicNames.h"
 
 using namespace natrium;
@@ -161,7 +162,7 @@ BOOST_AUTO_TEST_CASE(CFDSolverConfiguration_CheckSet_test) {
 	pout << " ... failure test ... " << endl;
 	BOOST_CHECK_THROW(config.setSimulationEndTime(-0.1),
 			ConfigurationException);
-	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-0.1),
+	BOOST_CHECK_THROW(config.setNumberOfTimeSteps(-1),
 			ConfigurationException);
 	BOOST_CHECK_THROW(config.setBGKSteadyStateGamma(-0.1),
 			ConfigurationException);

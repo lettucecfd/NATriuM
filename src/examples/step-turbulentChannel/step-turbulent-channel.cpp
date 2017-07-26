@@ -22,7 +22,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
-
+#include "natrium/utilities/ConfigNames.h"
 #include "natrium/utilities/CommandLineParser.h"
 
 using namespace natrium;
