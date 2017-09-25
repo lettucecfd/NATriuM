@@ -383,7 +383,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 
 	// simulation end time
 	if (hasArgument("tmax")) {
-		int tmax = getArgument<double>("tmax");
+		double tmax = getArgument<double>("tmax");
 		cfg.setSimulationEndTime(tmax);
 		LOG(BASIC) << "Output simulation end time set to " << tmax
 				<< " via command line" << endl;
