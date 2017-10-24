@@ -1570,8 +1570,12 @@ public:
 			return Stencil_D2Q9;
 		} else if ("D3Q19" == stencil) {
 			return Stencil_D3Q19;
+		} else if ("D3Q13" == stencil) {
+			return Stencil_D3Q13;
 		} else if ("D3Q15" == stencil) {
 			return Stencil_D3Q15;
+		} else if ("D3Q21" == stencil) {
+			return Stencil_D3Q21;
 		} else if ("D3Q27" == stencil) {
 			return Stencil_D3Q27;
 		} else {
@@ -1594,8 +1598,16 @@ public:
 			set("Stencil", "D3Q19");
 			break;
 		}
+		case Stencil_D3Q13: {
+			set("Stencil", "D3Q13");
+			break;
+		}
 		case Stencil_D3Q15: {
 			set("Stencil", "D3Q15");
+			break;
+		}
+		case Stencil_D3Q21: {
+			set("Stencil", "D3Q21");
 			break;
 		}
 		case Stencil_D3Q27: {

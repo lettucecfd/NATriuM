@@ -19,7 +19,7 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("CFL", "0.4", dealii::Patterns::Double(1e-10),
 				"CFL number. Determines the size of the (initial) time step. The CFL number is defined as stencil_scaling/(dx*(p+1)^2).");
 		declare_entry("Stencil", "D2Q9",
-				dealii::Patterns::Selection("D2Q9|D3Q19|D3Q15|D3Q27"),
+				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
 		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
@@ -505,6 +505,13 @@ void SolverConfiguration::isConsistent() {
 					<< "NATriuM's Stencil_D3Q15 does not support forcing schemes, so far."
 					<< endl;
 		}
+
+		if (Stencil_D3Q13 == getStencil()) {
+			LOG(ERROR)
+					<< "NATriuM's Stencil_D3Q13 does not support forcing schemes, so far."
+					<< endl;
+		}
+
 		if (Stencil_D3Q27 == getStencil()) {
 			LOG(ERROR)
 					<< "NATriuM's Stencil_D3Q27 does not support forcing schemes, so far."

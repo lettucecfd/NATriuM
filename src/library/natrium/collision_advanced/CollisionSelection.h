@@ -98,6 +98,7 @@ inline void selectCollision<3>(SolverConfiguration& configuration,
 
 	// CAUTION: The name has_collided is used in the macro
 	bool has_collided = false;
+	DEFINE_POSSIBLE_COLLISION(3,13, Stencil_D3Q13, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 
 	DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
@@ -105,6 +106,8 @@ inline void selectCollision<3>(SolverConfiguration& configuration,
 	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, MRT_STANDARD, BGK_EQUILIBRIUM, MultipleRelaxationTime, BGKEquilibrium);
+
+	DEFINE_POSSIBLE_COLLISION(3,21, Stencil_D3Q21, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 
 	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
