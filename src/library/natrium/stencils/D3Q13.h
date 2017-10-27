@@ -137,7 +137,7 @@ namespace natrium {
       }
 
       virtual double getMaxParticleVelocityMagnitude() const {
-    	  return m_scaling*sqrt((5+sqrt(5.))/2.);
+    	  return m_scaling*sqrt(3);
       }
 
       virtual double getScaling() const {

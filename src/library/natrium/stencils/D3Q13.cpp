@@ -32,9 +32,9 @@ const size_t D3Q13::Q = 13;
 D3Q13::D3Q13(double scaling) :
 		Stencil(3, 13, makeDirections(scaling), makeWeights(), Stencil_D3Q13,
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
-						scaling*0.8506508084
+						scaling*0.774596669
 ), m_speedOfSoundSquare(
-						scaling * scaling * 0.7236067977), m_scaling(scaling) {
+						scaling * scaling * 0.6), m_scaling(scaling) {
 	if (scaling > 100) {
 		LOG(WARNING)
 				<< "The D3Q13 stencil is used with scaling > 100. "
@@ -58,7 +58,10 @@ vector<double> D3Q13::makeWeights() {
 /// make directions
 /* Following the definition by Mohamad LBM book */
 vector<numeric_vector> D3Q13::makeDirections(double scaling) {
-	const double phi = scaling* ((1.+ sqrt(5))/2.);
+	scaling /= 1.9021130326;
+			scaling *= sqrt(2);
+
+	const double phi = scaling* ((1.+ sqrt(5))/2.) ;
 //scaling *= sqrt((5.- sqrt(5))/2.);
 	const double directionsArray[][3] = { { 0.0, 0.0, 0.0 },
 			{ 0.0, scaling, phi }, { 0.0, -scaling, -phi },
