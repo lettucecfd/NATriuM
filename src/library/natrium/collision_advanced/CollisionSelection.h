@@ -111,6 +111,7 @@ inline void selectCollision<3>(SolverConfiguration& configuration,
 
 	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
+	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_RD3Q27, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
 	// ---------
 	DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);

@@ -28,6 +28,7 @@
 #include "../stencils/D3Q15.h"
 #include "../stencils/D3Q21.h"
 #include "../stencils/D3Q27.h"
+#include "../stencils/RD3Q27.h"
 #include "../stencils/Stencil.h"
 
 #include "../advection/SEDGMinLee.h"
@@ -135,6 +136,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	} else if (Stencil_D3Q27 == configuration->getStencil()) {
 		m_stencil = boost::make_shared<D3Q27>(
 				configuration->getStencilScaling());
+	} else if (Stencil_RD3Q27 == configuration->getStencil()) {
+			m_stencil = boost::make_shared<RD3Q27>(
+					configuration->getStencilScaling());
 	} else {
 		natrium_errorexit("Stencil not known to CFDSolver.");
 	}
