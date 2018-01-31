@@ -21,6 +21,7 @@
 #include "natrium/collision_advanced/AuxiliaryCollisionFunctions.h"
 #include "natrium/collision_advanced/CollisionSelection.h"
 #include "natrium/solver/SolverConfiguration.h"
+#include "natrium/solver/CFDSolver.h"
 
 #include "natrium/benchmarks/TaylorGreenVortex3D.h"
 #include "../problemdescription/TaylorGreenTest2D.h"

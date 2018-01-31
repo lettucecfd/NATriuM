@@ -920,6 +920,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 					<< 1.0 * m_advectionOperator->getDoFHandler()->n_dofs()
 							* (iteration - m_iterationStart) / secs / 1000000.0
 					<< " million DoF updates per second" << endl;
+			Timing::getTimer().print_summary();
 		}
 		// output estimated runtime after iterations 1, 10, 100, 1000, ...
 		/*if (iteration > m_iterationStart) {

@@ -70,9 +70,10 @@ BOOST_AUTO_TEST_CASE(SolverStats_ConstructionAndFunctionality_test) {
 	MPI_sync();
 	BOOST_CHECK_EQUAL(stats.getIterationNumber(),
 			testConfiguration->getNumberOfTimeSteps());
-	linecount = std::count(std::istreambuf_iterator<char>(file),
+	file.seekg(0); //set read position to 0
+    linecount = std::count(std::istreambuf_iterator<char>(file),
 			std::istreambuf_iterator<char>(), '\n');
-	BOOST_CHECK(linecount > 1);
+	BOOST_CHECK_GT(linecount, 1);
 
 	pout << "done" << endl;
 }
