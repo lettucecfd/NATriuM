@@ -14,7 +14,7 @@ namespace natrium {
 template<size_t dim>
 void SemiLagrangianBoundaryHandler<dim>::addHit(
 		const LagrangianPathTracker<dim>& tracker, size_t boundary_id) {
-	pout << m_timeStep << endl;
+	//pout << m_timeStep << endl;
 	assert(m_timeStep > 0);
 	assert(m_boundaries.hasID(boundary_id));
 	assert(m_boundaries.isSL(boundary_id));
