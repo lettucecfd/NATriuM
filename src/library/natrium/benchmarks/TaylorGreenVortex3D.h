@@ -54,7 +54,7 @@ public:
 
 	/// constructor
 	TaylorGreenVortex3D(double viscosity, size_t refinementLevel, double cs =
-			0.57735026919, bool init_rho_analytically = false);
+			0.57735026919, bool init_rho_analytically = false, size_t repetitions = 1);
 
 	/// destructor
 	virtual ~TaylorGreenVortex3D();
@@ -82,7 +82,7 @@ private:
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	boost::shared_ptr<Mesh<3> > makeGrid();
+	boost::shared_ptr<Mesh<3> > makeGrid(size_t repetitions=1);
 
 	/**
 	 * @short create boundaries for couette flow

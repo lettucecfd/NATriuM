@@ -836,7 +836,9 @@ void CFDSolver<dim>::run() {
 	output(m_i, true);
 
 // Finalize
-	Timing::getTimer().print_summary();
+	if (is_MPI_rank_0()) {
+		Timing::getTimer().print_summary();
+	}
 	LOG(BASIC) << "NATriuM run complete." << endl;
 	LOG(BASIC) << "Summary: " << endl;
 	LOG(BASIC) << Timing::getOutStream().str() << endl;
