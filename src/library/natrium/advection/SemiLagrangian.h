@@ -20,6 +20,7 @@
 #include "deal.II/fe/mapping_cartesian.h"
 #include "deal.II/lac/block_sparsity_pattern.h"
 #include "deal.II/base/quadrature_lib.h"
+#include "deal.II/base/utilities.h"
 
 #include "AdvectionOperator.h"
 #include "AdvectionTools.h"
@@ -67,15 +68,19 @@ private:
 	typedef AdvectionOperator<dim> Base;
 
 	/// Sparsity Pattern of the sparse matrix
-	std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > m_sparsityPattern;
+	/// The sparsity pattern is only used in the assembly
+	/// storing only one line of blocks at a time significantly reduces the storage
+	std::vector<dealii::TrilinosWrappers::SparsityPattern> m_sparsityPatternRow;
 
 
 	SemiLagrangianBoundaryHandler<dim> m_boundaryHandler;
 
 	/**
 	 * @short update the sparsity pattern of the system matrix // the sparse matrix
+	 * @param the row index is used in assembly of the sparsity pattern (we want
+	 *        to store only one line at a time to save memory)
 	 */
-	void fillSparseObject(bool sparsity_pattern = false);
+	void fillSparseObject(bool sparsity_pattern = false, size_t row_index  = -1);
 
 	/**
 	 * @short update the sparsity pattern of the system matrix
@@ -226,19 +231,7 @@ public:
 		return false;
 	}
 
-	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> >&  getBlockSparsityPattern() const {
-		return m_sparsityPattern;
-	}
 
-	virtual size_t memory_consumption_sparsity_pattern () const {
-		size_t mem = 0;
-		for (size_t i = 0; i < m_sparsityPattern.size(); i++) {
-			for (size_t j = 0; j < m_sparsityPattern.at(i).size(); j++) {
-				mem += m_sparsityPattern.at(i).at(j).memory_consumption();
-			}
-		}
-		return mem;
-	}
 
 	virtual const distributed_block_vector& getSystemVector() const {
 		throw AdvectionSolverException("getSytemVector is not defined for SemiLagrangian streaming. Function to be removed."

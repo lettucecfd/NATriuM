@@ -581,6 +581,16 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			<< " (#nonzero elem: "
 			<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
 			<< ")" << endl;
+	LOG(BASIC) << " |  DoF Handler          |  "
+			<< dealii::Utilities::MPI::sum(m_advectionOperator->getDoFHandler()->memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"
+			<< endl;
+/*
+	LOG(BASIC) << " |  Sparsity Pattern     |  "
+				<< dealii::Utilities::MPI::sum(m_advectionOperator->memory_consumption_sparsity_pattern(),MPI_COMM_WORLD)/float(1e6) << " MB"
+				<< " (#nonzero elem: "
+				<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
+				<< ")" << endl;
+*/
 	LOG(BASIC) << " |  Mesh                 |  "
 			<< dealii::Utilities::MPI::sum(m_problemDescription->getMesh()->memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB" << endl;
 	LOG(BASIC) << " |  Distributions        |  " << dealii::Utilities::MPI::sum(m_f.memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"

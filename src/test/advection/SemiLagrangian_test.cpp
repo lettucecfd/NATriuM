@@ -448,66 +448,66 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_FaceCrossedFirst_test) {
 	pout << "done." << endl;
 } /* SemiLagrangian3D_FaceCrossedFirst_test */
 
-BOOST_AUTO_TEST_CASE(SemiLagrangian2D_SparsityPattern_test) {
-	pout << "SemiLagrangian2D_SparsityPattern_test..." << endl;
-
-	// setup system
-	size_t fe_order = 2;
-	size_t refinementLevel = 3;
-
-	PeriodicTestDomain2D periodic(refinementLevel);
-	periodic.refineAndTransform();
-	SemiLagrangian<2> sl(periodic, fe_order, boost::make_shared<D2Q9>(), 0.001);
-	sl.setupDoFs();
-
-	// check number of corresponding dofs for each dof
-	// it has to be = (fe_order + 1)^dim
-	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > & sp =
-			sl.getBlockSparsityPattern();
-	BOOST_CHECK_EQUAL(sp.size(), size_t(8));
-	for (size_t i = 0; i < sp.size(); i++) {
-		BOOST_CHECK_EQUAL(sp[i].size(), size_t(8));
-		/* the following test worked for the suboptimal sparsity patterns
-		 BOOST_CHECK_SMALL(
-		 sp[i][i].n_nonzero_elements()
-		 - sl.getDoFHandler()->n_dofs() * pow((fe_order + 1), 2),
-		 2.0);
-		 */
-	}
-
-	pout << "done." << endl;
-} /* SemiLagrangian2D_SparsityPattern_test */
-
-BOOST_AUTO_TEST_CASE(SemiLagrangian3D_SparsityPattern_test) {
-	pout << "SemiLagrangian3D_SparsityPattern_test..." << endl;
-
-	// setup system
-	size_t fe_order = 1;
-	size_t refinementLevel = 3;
-
-	PeriodicTestDomain3D periodic(refinementLevel);
-	periodic.refineAndTransform();
-	SemiLagrangian<3> sl(periodic, fe_order, boost::make_shared<D3Q19>(),
-			0.001);
-	sl.setupDoFs();
-
-	// check number of corresponding dofs for each dof
-	// it has to be = (fe_order + 1)^dim
-	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > & sp =
-			sl.getBlockSparsityPattern();
-	BOOST_CHECK_EQUAL(sp.size(), size_t(18));
-	for (size_t i = 0; i < sp.size(); i++) {
-		BOOST_CHECK_EQUAL(sp[i].size(), size_t(18));
-		/* the following test worked for the suboptimal sparsity patterns
-		 BOOST_CHECK_SMALL(
-		 sp[i][i].n_nonzero_elements()
-		 - sl.getDoFHandler()->n_dofs() * pow((fe_order + 1), 3),
-		 2.0);
-		 */
-	}
-
-	pout << "done." << endl;
-} /* SemiLagrangian3D_SparsityPattern_test */
+//BOOST_AUTO_TEST_CASE(SemiLagrangian2D_SparsityPattern_test) {
+//	pout << "SemiLagrangian2D_SparsityPattern_test..." << endl;
+//
+//	// setup system
+//	size_t fe_order = 2;
+//	size_t refinementLevel = 3;
+//
+//	PeriodicTestDomain2D periodic(refinementLevel);
+//	periodic.refineAndTransform();
+//	SemiLagrangian<2> sl(periodic, fe_order, boost::make_shared<D2Q9>(), 0.001);
+//	sl.setupDoFs();
+//
+//	// check number of corresponding dofs for each dof
+//	// it has to be = (fe_order + 1)^dim
+//	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > & sp =
+//			sl.getBlockSparsityPattern();
+//	BOOST_CHECK_EQUAL(sp.size(), size_t(8));
+//	for (size_t i = 0; i < sp.size(); i++) {
+//		BOOST_CHECK_EQUAL(sp[i].size(), size_t(8));
+//		/* the following test worked for the suboptimal sparsity patterns
+//		 BOOST_CHECK_SMALL(
+//		 sp[i][i].n_nonzero_elements()
+//		 - sl.getDoFHandler()->n_dofs() * pow((fe_order + 1), 2),
+//		 2.0);
+//		 */
+//	}
+//
+//	pout << "done." << endl;
+//} /* SemiLagrangian2D_SparsityPattern_test */
+//
+//BOOST_AUTO_TEST_CASE(SemiLagrangian3D_SparsityPattern_test) {
+//	pout << "SemiLagrangian3D_SparsityPattern_test..." << endl;
+//
+//	// setup system
+//	size_t fe_order = 1;
+//	size_t refinementLevel = 3;
+//
+//	PeriodicTestDomain3D periodic(refinementLevel);
+//	periodic.refineAndTransform();
+//	SemiLagrangian<3> sl(periodic, fe_order, boost::make_shared<D3Q19>(),
+//			0.001);
+//	sl.setupDoFs();
+//
+//	// check number of corresponding dofs for each dof
+//	// it has to be = (fe_order + 1)^dim
+//	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > & sp =
+//			sl.getBlockSparsityPattern();
+//	BOOST_CHECK_EQUAL(sp.size(), size_t(18));
+//	for (size_t i = 0; i < sp.size(); i++) {
+//		BOOST_CHECK_EQUAL(sp[i].size(), size_t(18));
+//		/* the following test worked for the suboptimal sparsity patterns
+//		 BOOST_CHECK_SMALL(
+//		 sp[i][i].n_nonzero_elements()
+//		 - sl.getDoFHandler()->n_dofs() * pow((fe_order + 1), 3),
+//		 2.0);
+//		 */
+//	}
+//
+//	pout << "done." << endl;
+//} /* SemiLagrangian3D_SparsityPattern_test */
 
 BOOST_AUTO_TEST_CASE(SemiLagrangian2D_ConstantStreaming_test) {
 	pout << "SemiLagrangian2D_ConstantStreaming_test..." << endl;
