@@ -573,23 +573,24 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 	// print out memory requirements of single components
-	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- "
+
+	LOG(BASIC) << endl << " ------- Memory Requirements (estimate) -------- "
 			<< endl;
 	LOG(BASIC) << " |  Sparse matrix        |  "
-			<< m_advectionOperator->getSystemMatrix().memory_consumption()
+			<< dealii::Utilities::MPI::sum(m_advectionOperator->getSystemMatrix().memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"
 			<< " (#nonzero elem: "
 			<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
 			<< ")" << endl;
 	LOG(BASIC) << " |  Mesh                 |  "
-			<< m_problemDescription->getMesh()->memory_consumption() << endl;
-	LOG(BASIC) << " |  Distributions        |  " << m_f.memory_consumption()
+			<< dealii::Utilities::MPI::sum(m_problemDescription->getMesh()->memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB" << endl;
+	LOG(BASIC) << " |  Distributions        |  " << dealii::Utilities::MPI::sum(m_f.memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"
 			<< endl;
-	LOG(BASIC) << " |  Tmp distributions    |  " << m_f.memory_consumption()
+	LOG(BASIC) << " |  Tmp distributions    |  " << dealii::Utilities::MPI::sum(m_f.memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"
 			<< endl;
 	LOG(BASIC) << " |  Velocities           |  "
-			<< dim * m_velocity.at(0).memory_consumption() << endl;
+			<< dim * dealii::Utilities::MPI::sum(m_velocity.at(0).memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB" << endl;
 	LOG(BASIC) << " |  Densities            |  "
-			<< m_density.memory_consumption() << endl;
+			<< dealii::Utilities::MPI::sum(m_density.memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB" << endl;
 	LOG(BASIC) << " ------------------------------------------------- " << endl
 			<< endl;
 
