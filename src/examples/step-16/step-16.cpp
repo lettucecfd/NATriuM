@@ -48,10 +48,8 @@ int main(int argc, char** argv) {
 			"Number of grid cells along each axis before global refinement; "
 			"to produce grids with refinements that are not powers of two.", 1);
 	try {
-		cout << "import options" << endl;
 		parser.importOptions();
 	} catch (HelpMessageStop&) {
-		cout << "stopping" << endl;
 		return 0;
 	}
 	double Re = parser.getArgument<int>("Re");
