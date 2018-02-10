@@ -1157,7 +1157,7 @@ TestResult ConvergenceTestCollisionSchemes() {
 		// BGK Steady-state
 		// =============================================
 		configuration->setEquilibriumScheme(STEADYSTATE_EQUILIBRIUM);
-		configuration->setBGKSteadyStateGamma(0.1);
+		configuration->setBGKSteadyStateGamma(0.2);
 		configuration->setCFL(0.2);
 
 		// make solver object and run simulation
