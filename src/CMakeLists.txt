@@ -1,9 +1,7 @@
 #
 # CMake File for NATriuM
 #    
-       
-       
-       
+
 #
 # It is good practise to specify a version requirement:
 #
