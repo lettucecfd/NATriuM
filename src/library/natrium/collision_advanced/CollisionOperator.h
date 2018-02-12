@@ -48,7 +48,7 @@ public:
 		}
 
 
-#pragma simd
+#pragma omp simd
 		for (int ii = 0; ii < length; ii++) {
 
 			// Variable that stores the local distribution function values of every node
