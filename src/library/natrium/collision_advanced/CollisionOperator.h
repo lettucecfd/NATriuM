@@ -16,6 +16,7 @@
 
 namespace natrium {
 
+
 template<int T_D, int T_Q, template<int, int> class T_equilibrium,
 		template<int, int,
 				template<int, int> class > class T_collision>
@@ -29,18 +30,33 @@ public:
 			GeneralCollisionData<T_D, T_Q>& genData,
 			typename T_collision<T_D, T_Q, T_equilibrium>::SpecificCollisionData& specData) const {
 		//for all degrees of freedom on current processor
-		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
-		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+		//dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+		//dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
 
 		T_collision<T_D, T_Q, T_equilibrium> collisionScheme;
 
-		for (it = locally_owned_dofs.begin(); it != end; it++) {
-			size_t i = *it;
+		std::array< double*, T_Q> f_raw;
+		int length;
+		for (size_t i = 0; i < T_Q; i++){
+			f.at(i).trilinos_vector().ExtractView(&f_raw[i], &length);
+		}
+		double* rho_raw;
+		densities.trilinos_vector().ExtractView(&rho_raw, &length);
+		std::array< double*, T_D> u_raw;
+		for (size_t i = 0; i < T_D; i++){
+			velocities.at(i).trilinos_vector().ExtractView(&u_raw[i], &length);
+		}
+
+
+		for (int ii = 0; ii < length; ii++) {
 
 			// Variable that stores the local distribution function values of every node
 
 			// Copy the needed global distribution function values into the local variable
-			copyGlobalToLocalF<T_Q>(genData.fLocal, f, i); // done
+			for (int p = 0; p < T_Q; ++p) {
+				genData.fLocal[p] = f_raw[p][ii];
+			}
+			//copyGlobalToLocalF<T_Q>(genData.fLocal, f, i); // done
 
 			//Calculate the local density and store it into the Parameter Handling System
 			genData.density = calculateDensity<T_Q>(genData.fLocal); // done
@@ -50,7 +66,7 @@ public:
 			}
 
 			//Write the local density to the global density vector
-			densities[i] = genData.density; // write local density to global density vector
+			rho_raw[ii] = genData.density; // write local density to global density vector
 
 			//Calculate the local velocity and store it into the Parameter Handling System
 			calculateVelocity<T_D, T_Q>(genData.fLocal, genData.velocity,
@@ -59,15 +75,15 @@ public:
 			//Write the local density to the global velocity matrix
 			if (not inInitializationProcedure) {
 				for (size_t j = 0; j < T_D; ++j) {
-					velocities.at(j)(i) = genData.velocity[j] * genData.scaling;
+					u_raw[j][ii] = genData.velocity[j] * genData.scaling;
 				}
 				if (genData.problemDescription.hasExternalForce()) {
-					applyMacroscopicForces<T_D, T_Q>(velocities, i, genData);
+					applyMacroscopicForces<T_D, T_Q>(u_raw, ii, genData);
 					applyForces<T_D, T_Q>(genData);
 				}
 			} else {
 				for (size_t j = 0; j < T_D; ++j) {
-					genData.velocity[j] = velocities.at(j)(i) / genData.scaling;
+					genData.velocity[j] = u_raw[j][ii] / genData.scaling;
 				}
 			}
 
@@ -78,7 +94,9 @@ public:
 			//reApplyForces<T_Q>(fLocal); // TODO
 
 			//Finally copy the updated distribution function back to the global distribution function
-			copyLocalToGlobalF<T_Q>(genData.fLocal, f, i);
+			for (int p = 0; p < T_Q; ++p) {
+				 f_raw[p][ii] = genData.fLocal[p];
+			}
 
 		}
 
