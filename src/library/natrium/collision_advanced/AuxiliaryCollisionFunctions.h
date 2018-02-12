@@ -223,8 +223,8 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 }
 
 template<size_t T_D, size_t T_Q>
-inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
-		size_t i, GeneralCollisionData<T_D, T_Q>& genData) {
+inline void applyMacroscopicForces(std::array<double*, T_D>& velocities,
+		int ii, GeneralCollisionData<T_D, T_Q>& genData) {
 	assert(velocities.size() == T_D);
 	if (genData.forcetype == NO_FORCING) {
 		throw NATriuMException(
@@ -236,7 +236,7 @@ inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
 		// TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
 		// 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
 		for (size_t j = 0; j < T_D; j++) {
-			velocities[j](i) = velocities[j](i)
+			velocities[j][ii] = velocities[j][ii]
 					+ 0.5 * genData.dt * genData.forces[j] / genData.density;
 			// I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
 		}
