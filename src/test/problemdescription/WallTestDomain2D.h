@@ -11,7 +11,7 @@
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_generator.h"
 
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
@@ -58,23 +58,20 @@ private:
 		// make boundary description
 		boost::shared_ptr<BoundaryCollection<2> > boundaries =
 				boost::make_shared<BoundaryCollection<2> >();
-		boundaries->addBoundary(
-				boost::make_shared<LinearFluxBoundaryRhoU<2> >(0,
-						numeric_vector(2)));
-		boundaries->addBoundary(
-				boost::make_shared<LinearFluxBoundaryRhoU<2> >(1,
-						numeric_vector(2)));
-		boundaries->addBoundary(
-				boost::make_shared<LinearFluxBoundaryRhoU<2> >(2,
-						numeric_vector(2)));
-		numeric_vector topPlateVelocity(2);
-		topPlateVelocity(0) = 0.01;
-		boundaries->addBoundary(
-				boost::make_shared<LinearFluxBoundaryRhoU<2> >(3,
-						topPlateVelocity));
+		numeric_vector wall_velocity(2);
+		wall_velocity(0) = 0.01;
 
-		// Get the triangulation object (which belongs to the parent class).
-		boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
+		boundaries->addBoundary(
+				boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
+		/*boundaries->addBoundary(
+				boost::make_shared<VelocityNeqBounceBack<2> >(0, wall_velocity));
+		boundaries->addBoundary(
+				boost::make_shared<VelocityNeqBounceBack<2> >(1, wall_velocity));
+		*/
+		boundaries->addBoundary(
+				boost::make_shared<VelocityNeqBounceBack<2> >(2, wall_velocity));
+		boundaries->addBoundary(
+				boost::make_shared<VelocityNeqBounceBack<2> >(3, wall_velocity));
 
 		return boundaries;
 	}
@@ -83,7 +80,7 @@ public:
 
 	/// constructor
 	WallTestDomain2D(size_t refineLevel) :
-			ProblemDescription<2>(makeGrid(), 1.0, 1), m_refinementLevel(
+			ProblemDescription<2>(makeGrid(), 0.2, 1), m_refinementLevel(
 					refineLevel) {
 		/// apply boundary values
 		setBoundaries(makeBoundaries());
@@ -94,30 +91,6 @@ public:
 	}
 	;
 
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialDensities(distributed_vector& initialDensities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >&) const {
-		for (size_t i = 0; i < initialDensities.size(); i++) {
-			initialDensities(i) = 1.0;
-		}
-	}
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	virtual void applyInitialVelocities(
-			vector<distributed_vector>& initialVelocities,
-			const map<dealii::types::global_dof_index, dealii::Point<2> >&) const {
-		for (size_t i = 0; i < initialVelocities.at(0).size(); i++) {
-			initialVelocities.at(0)(i) = 0.0;
-			initialVelocities.at(1)(i) = 0.0;
-		}
-	}
 
 	virtual void refine(Mesh<2>& mesh) {
 		// Refine grid to 2x2 = 4 cells

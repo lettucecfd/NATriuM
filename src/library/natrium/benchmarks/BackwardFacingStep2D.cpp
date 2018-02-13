@@ -8,12 +8,12 @@
 #include "BackwardFacingStep2D.h"
 
 #include <math.h>
+#include "../boundaries/VelocityNeqBounceBack.h"
 
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/grid_out.h"
 #include "deal.II/grid/grid_tools.h"
 
-#include "../boundaries/LinearFluxBoundaryRhoU.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
@@ -109,10 +109,9 @@ boost::shared_ptr<BoundaryCollection<2> > BackwardFacingStep2D::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = bottomVelocity;
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(0, zeroVelocity));
+			boost::make_shared<VelocityNeqBounceBack<2> >(0, zeroVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(1,
-					boost::make_shared<dealii::ConstantFunction<2> >(0.0),
+			boost::make_shared<VelocityNeqBounceBack<2> >(1,
 					boost::make_shared<BackwardFacingStep2D::InflowVelocity>(
 							m_HStep, m_HDomain, m_inflowVelocity)));
 	//TODO add pressure boundary

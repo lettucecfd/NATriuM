@@ -9,7 +9,7 @@
 #define LIBRARY_NATRIUM_BOUNDARIES_SLFIRSTORDERBOUNCEBACK_H_
 
 #include "../utilities/BasicNames.h"
-#include "SLBoundary.h"
+#include "Boundary.h"
 #include "BoundaryTools.h"
 
 namespace natrium {
@@ -18,13 +18,13 @@ namespace natrium {
  * @short simple first-order bounce-back for no-slip boundaries
  */
 template<size_t dim>
-class SLFirstOrderBounceBack: public SLBoundary<dim> {
+class SLFirstOrderBounceBack: public Boundary<dim> {
 public:
 	/**
 	 * @short Constructor
 	 */
 	SLFirstOrderBounceBack(size_t boundary_id) :
-			SLBoundary<dim>(boundary_id, PrescribedQuantities<dim>()) {
+			Boundary<dim>(boundary_id, FIRST_ORDER_BB, PrescribedBoundaryValues<dim>(dealii::Tensor<1,dim>())) {
 
 	}
 
@@ -32,6 +32,30 @@ public:
 	virtual ~SLFirstOrderBounceBack() {
 
 	}
+
+	/////////////////////////////////////////////////
+	// FLAGS ////////////////////////////////////////
+	/////////////////////////////////////////////////
+
+	/** @short is the boundary a periodic boundary ?
+	 */
+	virtual bool isPeriodic() const{
+		return false;
+	}
+
+	/** @short is the boundary a linear flux boundary as in SEDG-LBM (affine linear in the distributions f)?
+	 */
+	virtual bool isDGSupported() const{
+		return false;
+	}
+
+	/** @short is the boundary set up to work with semi-Lagrangian streaming
+	 */
+	virtual bool isSLSupported() const{
+		return true;
+	}
+
+
 
 	/**
 	 * @short a function returning the values that are to be calculated at the boundaries
@@ -41,7 +65,7 @@ public:
 	}
 
 	/**
-	 * @short calculate boundary values. This function overrides the virtual function of SLBoundary.
+	 * @short calculate boundary values. This function overrides the virtual function of Boundary<dim>.
 	 * @param fe_boundary_values An instance of FEBoundaryValues, that stores the flow variables at t-dt (here only the distribution functions)
 	 * @param q_point the local index of the boundary hit point, i.e. its position in the fe_boundary_values
 	 * @param destination defines the degree of freedom and discrete direction that the calculated value is assigned to

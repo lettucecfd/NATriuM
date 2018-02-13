@@ -547,10 +547,18 @@ TestResult ConvergenceTest3D() {
 	return result;
 } /* ConvergenceTest3D */
 
-TestResult ConvergenceTestMovingWall() {
+TestResult ConvergenceTestMovingWall(AdvectionSchemeName advection_scheme) {
 	TestResult result;
-	result.id = 8;
-	result.name = "Convergence Test: Wall Boundaries";
+	std::stringstream name;
+	name << "Convergence Test: Wall Boundaries";
+	if (advection_scheme == SEDG){
+		name << " (SEDG)";
+		result.id = 8;
+	} else {
+		name << " (SL)";
+		result.id = 15;
+	}
+	result.name = name.str();
 	result.details =
 			"This test runs the Unsteady Couette flow benchmark on a 4x4 grid with FE orders 2,4,6,8,10,12 "
 					"and CFL=0.4. It reproduces exponential convergence observed by Min and Lee for Re=2000."
@@ -570,10 +578,8 @@ TestResult ConvergenceTestMovingWall() {
 	const double CFL = 0.4;
 	const double t0 = 40.0;
 
-	/*for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 12;
-	 orderOfFiniteElement += 2) {*/
-	for (size_t orderOfFiniteElement = 2; orderOfFiniteElement <= 10;
-			orderOfFiniteElement += 2) {
+	for (size_t order_fe = 2; order_fe <= 10;
+			order_fe += 2) {
 		// Initialization
 		boost::shared_ptr<Benchmark<2> > benchmark = boost::make_shared<
 				CouetteFlow2D>(viscosity, U, refinementLevel, L, t0);
@@ -582,11 +588,12 @@ TestResult ConvergenceTestMovingWall() {
 		configuration->setSwitchOutputOff(true);
 		//configuration->setRestartAtLastCheckpoint(false);
 		configuration->setUserInteraction(false);
-		configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+		configuration->setSedgOrderOfFiniteElement(order_fe);
 		configuration->setStencilScaling(scaling);
 		configuration->setCFL(CFL);
 		configuration->setTimeIntegrator(RUNGE_KUTTA_5STAGE);
 		configuration->setSimulationEndTime(1.0);
+		configuration->setAdvectionScheme(advection_scheme);
 		//configuration->setCollisionScheme(BGK_STANDARD_TRANSFORMED);
 		//configuration->setCollisionScheme(KBC_STANDARD);
 
@@ -600,12 +607,19 @@ TestResult ConvergenceTestMovingWall() {
 		// Analysis
 		// Velocity error (compare Paper by Min and Lee)
 		std::stringstream stream1;
-		stream1 << "|u-u_ref|_sup; p=" << orderOfFiniteElement;
+		stream1 << "|u-u_ref|_sup; p=" << order_fe;
 		result.quantity.push_back(stream1.str());
-		result.expected.push_back(
-				0.002 * pow(2.0, -(orderOfFiniteElement + 1.0)));
-		result.threshold.push_back(
-				0.002 * pow(2.0, -(orderOfFiniteElement + 1.0)));
+		if (advection_scheme == SEDG){
+			result.expected.push_back(
+					0.002 * pow(0.5, order_fe+1));
+			result.threshold.push_back(
+					0.002 * pow(0.5, order_fe+1));
+		} else {
+			result.expected.push_back(
+					0.02 * pow(0.5, order_fe+1));
+			result.threshold.push_back(
+					0.02 * pow(0.5, order_fe+1));
+		}
 		result.outcome.push_back(solver.getErrorStats()->getMaxVelocityError());
 	}
 
@@ -831,7 +845,7 @@ TestResult ConvergenceTestForcingSchemes3D() {
 				break;
 			}
 			}
-			cout << s.str() << endl;
+			pout << s.str() << endl;
 
 			// make solver object and run simulation
 			boost::shared_ptr<ProblemDescription<3> > poiseuille3D =
@@ -1115,7 +1129,7 @@ TestResult ConvergenceTestCollisionSchemes() {
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setStencilScaling(scaling);
 	configuration->setCFL(CFL);
-	configuration->setConvergenceThreshold(1e-7);
+	configuration->setConvergenceThreshold(1e-8);
 	configuration->setForcingScheme(SHIFTING_VELOCITY);
 
 	{

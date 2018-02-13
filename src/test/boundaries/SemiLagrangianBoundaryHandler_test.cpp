@@ -12,8 +12,9 @@
 #include "natrium/problemdescription/BoundaryCollection.h"
 #include "natrium/advection/SemiLagrangian.h"
 #include "natrium/advection/SemiLagrangianTools.h"
+#include "natrium/benchmarks/CouetteFlow2D.h"
 #include "natrium/benchmarks/CouetteFlow3D.h"
-#include "natrium/benchmarks/CouetteFlowGrad2D.h"
+//#include "natrium/benchmarks/CouetteFlowGrad2D.h"
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/problemdescription/ProblemDescription.h"
@@ -37,7 +38,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_Construction_test) {
 
 	// D2Q9
 	boost::shared_ptr<ProblemDescription<2> > couette = boost::make_shared<
-			CouetteFlowGrad2D>(viscosity, u0, ref_level);
+			CouetteFlow2D>(viscosity, u0, ref_level);
 	couette->refineAndTransform();
 	SemiLagrangian<2> streaming(*couette, fe_order, boost::make_shared<D2Q9>(),
 			0.001);
@@ -74,7 +75,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	const double dt = 1e-4;
 	size_t ref_level = 3;
 	size_t fe_order = 2;
-	CouetteFlowGrad2D couette(viscosity, u0, ref_level);
+	CouetteFlow2D couette(viscosity, u0, ref_level);
 	couette.refineAndTransform();
 	SemiLagrangian<2> streaming(couette, fe_order, boost::make_shared<D2Q9>(),
 			dt);
@@ -109,7 +110,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_DataStructures_test) {
 	size_t ref_level = 3;
 	size_t fe_order = 2;
 	boost::shared_ptr<ProblemDescription<2> > couette = boost::make_shared<
-			CouetteFlowGrad2D>(viscosity, u0, ref_level);
+			CouetteFlow2D>(viscosity, u0, ref_level);
 	couette->refineAndTransform();
 	SemiLagrangian<2> streaming(*couette, fe_order, boost::make_shared<D2Q9>(),
 			0.001);
@@ -140,7 +141,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_offSupportHits_test) {
 	size_t ref_level = 3;
 	size_t fe_order = 2;
 	boost::shared_ptr<ProblemDescription<2> > couette = boost::make_shared<
-			CouetteFlowGrad2D>(viscosity, u0, ref_level);
+			CouetteFlow2D>(viscosity, u0, ref_level);
 	couette->refineAndTransform();
 	SemiLagrangian<2> streaming(*couette, fe_order, boost::make_shared<D2Q9>(),
 			0.063);
@@ -226,7 +227,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_Couette_test) {
 	double u0 = 0.1;
 	size_t ref_level = 3;
 	boost::shared_ptr<ProblemDescription<2> > couette = boost::make_shared<
-			CouetteFlowGrad2D>(viscosity, u0, ref_level);
+			CouetteFlow2D>(viscosity, u0, ref_level);
 
 	// TODO: finalize
 	pout << "done." << endl;

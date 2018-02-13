@@ -25,6 +25,7 @@
 #include "deal.II/grid/grid_tools.h"
 
 #include "../boundaries/PeriodicBoundary.h"
+#include "../boundaries/Boundary.h"
 #include "../stencils/Stencil.h"
 
 #include "../utilities/DealiiExtensions.h"
@@ -352,10 +353,9 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 
 					} else /* if is not periodic */{
 						// ================================================================================================
-						// ================================= LinearFluxBoundary ===========================================
+						// ================================= VelocityNeqBounceBack ========================================
 						// ================================================================================================
-						if ((Base::getBoundaries()->getBoundary(bi)->isLinearFluxBoundary())) {
-
+						if (is_velocity_neq_bb(Base::getBoundaries()->getBoundary(bi)->getBoundaryName())) {
 							el.currentDirection =
 									Base::m_stencil->getIndexOfOppositeDirection(
 											el.currentDirection);
@@ -378,8 +378,9 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 												el.currentDirection)[i]
 												* distance / vel_direction;
 							}
-
-							//	m_boundaryHandler.addHit(el, bi);
+							if (not sparsity_pattern) {
+								m_boundaryHandler.addHit(el, bi);
+							}
 
 						} else /* is not LinearFluxBoundary */{
 

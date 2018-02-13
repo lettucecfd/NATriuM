@@ -12,7 +12,7 @@
 
 #include "natrium/utilities/Math.h"
 #include "Hill3D.h"
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 
 namespace natrium {
 
@@ -77,13 +77,13 @@ boost::shared_ptr<BoundaryCollection<3> > Hill3D::makeBoundaries() {
 	boost::shared_ptr<dealii::Function<3> > boundary_velocity = boost::make_shared<
 			InflowVelocity> (m_meanInflowVelocity);
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<3> >(1, zeroVector));
+			boost::make_shared<VelocityNeqBounceBack<3> >(1, zeroVector));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<3> >(2, boundary_density, boundary_velocity));
+			boost::make_shared<VelocityNeqBounceBack<3> >(2, boundary_density, boundary_velocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<3> >(3, boundary_density, boundary_velocity));
+			boost::make_shared<VelocityNeqBounceBack<3> >(3, boundary_density, boundary_velocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<3> >(4, zeroVector));
+			boost::make_shared<VelocityNeqBounceBack<3> >(4, zeroVector));
 
 	return boundaries;
 }

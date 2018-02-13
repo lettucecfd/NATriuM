@@ -25,7 +25,8 @@
 #include "deal.II/lac/constraint_matrix.h"
 
 #include "../boundaries/PeriodicBoundary.h"
-#include "../boundaries/LinearFluxBoundary.h"
+#include "../boundaries/Boundary.h"
+#include "../utilities/NATriuMException.h"
 
 #include "../stencils/Stencil.h"
 
@@ -240,16 +241,22 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	 cSparse.block(0, 0));*/
 
 	// add entries for non-periodic boundaries
-	for (typename BoundaryCollection<dim>::ConstLinearIterator dirichlet_iterator =
-			Base::getBoundaries()->getLinearFluxBoundaries().begin();
-			dirichlet_iterator
-					!= Base::getBoundaries()->getLinearFluxBoundaries().end();
-			dirichlet_iterator++) {
-		dirichlet_iterator->second->addToSparsityPattern(cSparseOpposite,
+	for (typename BoundaryCollection<dim>::ConstIterator boundary_it =
+			Base::getBoundaries()->getBoundaries().begin();
+			boundary_it != Base::getBoundaries()->getBoundaries().end();
+			boundary_it++) {
+		if (boundary_it->second->isPeriodic())
+			continue;
+		if (not boundary_it->second->isDGSupported()){
+			throw NotImplementedException("SEDG so far only supports boundaries that"
+					" are linear in f. A boundary from your ProblemDescriptions"
+					" had isDGSupported() == false.");
+		}
+		boundary_it->second->addToSparsityPattern(cSparseOpposite,
 				*Base::m_doFHandler);
 		if (BoundaryTools::COUPLE_ALL_DISTRIBUTIONS
-				== dirichlet_iterator->second->m_distributionCoupling) {
-			dirichlet_iterator->second->addToSparsityPattern(cSparseNotOpposite,
+				== boundary_it->second->getDistributionCoupling()) {
+			boundary_it->second->addToSparsityPattern(cSparseNotOpposite,
 					*Base::m_doFHandler);
 		}
 	}
@@ -375,17 +382,18 @@ void SEDGMinLee<dim>::assembleAndDistributeLocalFaceMatrices(size_t alpha,
 				assembleAndDistributeInternalFace(alpha, cell, j, neighborCell,
 						opposite_face, fe_face_values, fe_subface_values,
 						fe_neighbor_face_values, inverse_local_mass_matrix);
-			} else /* if is not periodic */{
+			} else /* if is not periodic */ {
 				// Apply other boundaries
-				if ((Base::getBoundaries()->getBoundary(boundary_id)->isLinearFluxBoundary())) {
-					const boost::shared_ptr<LinearFluxBoundary<dim> >& LinearBoundary =
-							Base::getBoundaries()->getLinearFluxBoundary(
-									boundary_id);
-					LinearBoundary->assembleBoundary(alpha, cell, j,
+				if ((Base::getBoundaries()->getBoundary(boundary_id)->isDGSupported())) {
+					Base::getBoundaries()->getBoundary(boundary_id)->assembleBoundary(alpha, cell, j,
 							fe_face_values, *Base::m_stencil,
 							m_q_index_to_facedof.at(j),
 							inverse_local_mass_matrix, Base::m_systemMatrix,
 							m_systemVector, m_useCentralFlux);
+				} else {
+					throw NotImplementedException("The SEDG solver so far only supports boundaries"
+							" that are linear in the distribution functions, but your ProblemDescription "
+							"includes a boundary that is neither periodic, nor isDGSupported() = true.");
 				}
 			} /* endif isPeriodic */
 

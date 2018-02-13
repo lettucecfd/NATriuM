@@ -9,7 +9,7 @@
 #define LIBRARY_NATRIUM_BOUNDARIES_SLEQUILIBRIUMBOUNDARY_H_
 
 #include "../utilities/BasicNames.h"
-#include "SLBoundary.h"
+#include "BoundaryFlags.h"
 
 namespace natrium {
 
@@ -17,22 +17,47 @@ namespace natrium {
  * @short Boundary condition that sets an equilibrium with respect to a prescribed velocity or pressure.
  */
 template<size_t dim>
-class SLEquilibriumBoundary: public SLBoundary<dim> {
+class SLEquilibriumBoundary: public Boundary<dim> {
 public:
 	SLEquilibriumBoundary(size_t boundary_id, dealii::Tensor<1, dim>& velocity) :
-			SLBoundary<dim>(boundary_id, PrescribedQuantities<dim>(velocity)) {
+			Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY,
+					PrescribedBoundaryValues<dim>(velocity)) {
 	}
 
 	virtual ~SLEquilibriumBoundary();
 
+	/////////////////////////////////////////////////
+	// FLAGS ////////////////////////////////////////
+	/////////////////////////////////////////////////
+
+	/** @short is the boundary a periodic boundary ?
+	 */
+	virtual bool isPeriodic() const {
+		return false;
+	}
+
+	/** @short is the boundary a linear flux boundary as in SEDG-LBM (affine linear in the distributions f)?
+	 */
+	virtual bool isDGSupported() const {
+		return false;
+	}
+
+	/** @short is the boundary set up to work with semi-Lagrangian streaming
+	 */
+	virtual bool isSLSupported() const {
+		return true;
+	}
+
+
+
 	virtual BoundaryFlags getUpdateFlags() const {
 		BoundaryFlags flags = only_distributions;
-		if (boundary_u & SLBoundary<dim>::getPrescribedQuantities()) {
+		if (boundary_u & Boundary<dim>::getPrescribedQuantities()) {
 			flags |= (boundary_rho | boundary_drho_dt);
 
 		}
-		if ((boundary_rho & SLBoundary<dim>::getPrescribedQuantities())
-				or (boundary_p & SLBoundary<dim>::getPrescribedQuantities())) {
+		if ((boundary_rho & Boundary<dim>::getPrescribedQuantities())
+				or (boundary_p & Boundary<dim>::getPrescribedQuantities())) {
 			flags |= (boundary_u | boundary_du_dt);
 		}
 		return flags;
@@ -45,13 +70,13 @@ public:
 
 		// get density
 		double rho;
-		if (boundary_p & SLBoundary<dim>::getPrescribedQuantities()) {
+		if (boundary_p & Boundary<dim>::getBoundaryValues()) {
 			// set time of this function object for time-dependent boundary conditions
-			SLBoundary<dim>::getPrescribedQuantities().getPressure().set_time(
+			Boundary<dim>::getBoundaryValues().getPressure().set_time(
 					t - eps);
 			// evaluate boundary conditions
 			double p =
-					SLBoundary<dim>::getPrescribedQuantities().getPressure().value(
+					Boundary<dim>::getBoundaryValues().getPressure().value(
 							fe_boundary_values.getPoint(q_point));
 			// obtain density by ideal gas law
 			rho = p / fe_boundary_values.getData().m_cs2;
@@ -64,13 +89,13 @@ public:
 
 		// get velocity
 		dealii::Tensor<1, dim> u;
-		if (boundary_u & SLBoundary<dim>::getPrescribedQuantities()) {
+		if (boundary_u & Boundary<dim>::getPrescribedQuantities()) {
 			// set time of this function object for time-dependent boundary conditions
-			SLBoundary<dim>::getPrescribedQuantities().getVelocity().set_time(
+			Boundary<dim>::getBoundaryValues().getVelocity().set_time(
 					t - eps);
 			// evaluate boundary conditions
 			dealii::Vector<double> tmp(dim);
-			SLBoundary<dim>::getPrescribedQuantities().getVelocity().vector_value(
+			Boundary<dim>::getPrescribedValues().getVelocity().vector_value(
 					tmp, fe_boundary_values.getPoint(q_point));
 			// vector to tensor
 			for (size_t i = 0; i < dim; i++) {

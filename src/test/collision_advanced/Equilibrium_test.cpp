@@ -77,10 +77,10 @@ double rho = 1.0;
 
 	eq.calc(feq,prams);
 
-	for (int i =0;i<9;i++)
+	/*for (int i =0;i<9;i++)
 	{
 		cout << feq[i] << endl;
-	}
+	}*/
 
 	//cout << "Dichte v:" << prams.density << endl;
 	//cout << "Geschwindigkeit vorher:" << prams.velocity[0] << endl;
