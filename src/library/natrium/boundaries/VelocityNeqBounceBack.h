@@ -5,11 +5,11 @@
  *      Author: akraem3m
  */
 
-#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARFLUXBOUNDARYRHOU_H_
-#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARFLUXBOUNDARYRHOU_H_
+#ifndef LIBRARY_NATRIUM_PROBLEMDESCRIPTION_VELOCITYNEQBOUNCEBACK_H_
+#define LIBRARY_NATRIUM_PROBLEMDESCRIPTION_VELOCITYNEQBOUNCEBACK_H_
 
 #include "BoundaryTools.h"
-#include "LinearFluxBoundary.h"
+#include "Boundary.h"
 
 namespace natrium {
 
@@ -26,16 +26,14 @@ namespace natrium {
  * 		  	when proposing the SEDG-LBM. It has been shown practically that it  supports the exponential convergence of the scheme.
  */
 template<size_t dim>
-class LinearFluxBoundaryRhoU: public LinearFluxBoundary<dim> {
+class VelocityNeqBounceBack: public Boundary<dim> {
 public:
 	/** @short This constructor assigns the Boundary condition with arbitrary density and velocity
 	 *         to the boundary with the given boundary indicator.
 	 *  @param[in] boundaryIndicator the boundary indicator that is assigned to the target boundary.
-	 *  @param[in] boundaryDensity A dealii::Function<dim> that defines the prescribed density at the boundary.
 	 *  @param[in] boundaryVelocity A dealii::Function<dim> that defines the prescribed velocity at the boundary.
 	 */
-	LinearFluxBoundaryRhoU(size_t boundaryIndicator,
-			boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
+	VelocityNeqBounceBack(size_t boundaryIndicator,
 			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity);
 
 	/** @short This constructor assigns the Boundary condition with a constant fixed velocity and \f[ \rho = 1 \f]
@@ -43,12 +41,42 @@ public:
 	 *  @param[in] boundaryIndicator the boundary indicator that is assigned to the target boundary.
 	 *  @param[in] velocity Constant velocity vector at the boundary.
 	 */
-	LinearFluxBoundaryRhoU(size_t boundaryIndicator,
+	VelocityNeqBounceBack(size_t boundaryIndicator,
 			const dealii::Vector<double>& velocity);
 
-	/// destructor
-	virtual ~LinearFluxBoundaryRhoU();
+	VelocityNeqBounceBack(size_t boundaryIndicator,
+			const dealii::Tensor<1,dim>& velocity);
 
+	/// destructor
+	virtual ~VelocityNeqBounceBack();
+
+
+	/////////////////////////////////////////////////
+	// FLAGS ////////////////////////////////////////
+	/////////////////////////////////////////////////
+
+	/** @short is the boundary a periodic boundary ?
+	 */
+	virtual bool isPeriodic() const{
+		return false;
+	}
+
+	/** @short is the boundary a linear flux boundary as in SEDG-LBM (affine linear in the distributions f)?
+	 */
+	virtual bool isDGSupported() const{
+		return true;
+	}
+
+	/** @short is the boundary set up to work with semi-Lagrangian streaming
+	 */
+	virtual bool isSLSupported() const{
+		return true;
+	}
+
+
+	/////////////////////////////////////////////////
+	// SEDG /////////////////////////////////////////
+	/////////////////////////////////////////////////
 	/**
 	 * @short This function defines the actual boundary condition. It calculates and assembles the fluxes at the
 	 * boundary. Note that this function has to be called only once at the beginning of a simulation
@@ -77,7 +105,40 @@ public:
 			const vector<double> & inverseLocalMassMatrix,
 			distributed_sparse_block_matrix& systemMatrix,
 			distributed_block_vector& systemVector,
-			bool useCentralFlux = false) const;
+			bool useCentralFlux = false) ;
+
+	virtual BoundaryTools::DistributionCouplingAtBoundary getDistributionCoupling() const {
+		return  BoundaryTools::COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS;
+		}
+
+	virtual BoundaryTools::PointCouplingAtBoundary getPointCoupling() const {
+		return BoundaryTools::COUPLE_ONLY_SINGLE_POINTS;
+
+	}
+
+	void addToSparsityPattern(
+			dealii::TrilinosWrappers::SparsityPattern& cSparse,
+			const dealii::DoFHandler<dim>& doFHandler) const {
+		BoundaryTools::CoupleDoFsAtBoundary<dim>(cSparse,
+				doFHandler, Boundary<dim>::getBoundaryIndicator(), getPointCoupling());
+	}
+
+
+	/////////////////////////////////////////////////
+	// SL ///////////////////////////////////////////
+	/////////////////////////////////////////////////
+
+	virtual void calculateBoundaryValues(
+			FEBoundaryValues<dim>& fe_boundary_values, size_t q_point,
+			const LagrangianPathDestination& destination, double eps,
+			double t);
+
+
+	virtual BoundaryFlags getUpdateFlags() const {
+		BoundaryFlags flags = only_distributions;
+		return flags;
+	}
+
 
 	/**
 	 * @short Calculates outgoing distribution from incoming distributions.
@@ -123,4 +184,4 @@ public:
 
 } /* namespace natrium */
 
-#endif /* LIBRARY_NATRIUM_PROBLEMDESCRIPTION_LINEARFLUXBOUNDARYRHOU_H_ */
+#endif /* LIBRARY_NATRIUM_PROBLEMDESCRIPTION_VELOCITYNEQBOUNCEBACK_H_ */

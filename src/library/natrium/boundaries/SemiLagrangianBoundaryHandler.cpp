@@ -7,7 +7,6 @@
 
 #include "SemiLagrangianBoundaryHandler.h"
 #include "BoundaryFlags.h"
-#include "SLBoundary.h"
 
 namespace natrium {
 
@@ -17,7 +16,7 @@ void SemiLagrangianBoundaryHandler<dim>::addHit(
 	//pout << m_timeStep << endl;
 	assert(m_timeStep > 0);
 	assert(m_boundaries.hasID(boundary_id));
-	assert(m_boundaries.isSL(boundary_id));
+	assert(m_boundaries.getBoundary(boundary_id)->isSLSupported());
 	// check if cell is already there
 	m_hitList.addHit(BoundaryHit<dim>(tracker, m_stencil, boundary_id, m_timeStep));
 	// TODO deal with corner nodes. Each boundary hit could be given prescribed values of multiple boundaries.
@@ -45,9 +44,14 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 				continue;
 			}
 			size_t bi = cell->face(f)->boundary_id();
-			if (m_boundaries.getBoundary(bi)->isSLBoundary()) {
-				BoundaryFlags flags_f = m_boundaries.getSLBoundary(bi)->getUpdateFlags();
+			if (m_boundaries.getBoundary(bi)->isPeriodic())
+				continue;
+			if (m_boundaries.getBoundary(bi)->isSLSupported()) {
+				BoundaryFlags flags_f = m_boundaries.getBoundary(bi)->getUpdateFlags();
 				flags |= flags_f;
+			} else {
+				throw NATriuMException("SemiLagrangian streaming can only be used with periodic boundaries "
+						"and SL boundaries. Your boundary had isSLSupported() == false.");
 			}
 		}
 
@@ -79,7 +83,8 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 			for (size_t i = 0; i < point_hits.n_hits(); i++){
 				const BoundaryHit<dim>& hit = point_hits.at(i);
 				// calculate new distribution functions at hits
-				 m_boundaries.getSLBoundary(hit.getBoundaryId())->calculateBoundaryValues( fe_b_values,
+				assert (m_boundaries.getBoundary(hit.getBoundaryId())->isSLSupported());
+				 m_boundaries.getBoundary(hit.getBoundaryId())->calculateBoundaryValues( fe_b_values,
 								q_point, hit.getDestination(),
 								hit.getDtHit(), t);
 			} /* for all hits */

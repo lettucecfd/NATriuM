@@ -322,10 +322,10 @@ void BGKPseudopotential<dim>::collideAllD2Q9(DistributionFunctions& f,
 			 density_gradient*=(limit/density_gradient.norm());
 			 }
 			 */
-			cout  << rho_i << " | "
+			/*cout  << rho_i << " | "
 					<< density_gradient[0] << " " << density_gradient[1]
 					<< endl;
-
+*/
 			// =============================
 			// Calculate Interaction Force
 			// =============================

@@ -2,6 +2,8 @@
 # CMake File for NATriuM
 #    
        
+       
+       
 #
 # It is good practise to specify a version requirement:
 #
@@ -101,7 +103,7 @@ ADD_CUSTOM_TARGET(  run
                     COMMAND ${NATRIUM_TARGET} 
                     COMMENT "Run ${NATRIUM_TARGET}  with ${CMAKE_BUILD_TYPE} configuration"
 )
-ADD_CUSTOM_TARGET(  test
+ADD_CUSTOM_TARGET(  tests
                     COMMAND ./bin/test/NATriuM_UnitTest_exe 
                     COMMENT "Run UnitTests  with ${CMAKE_BUILD_TYPE} configuration"
 )

@@ -18,7 +18,7 @@
 #include "deal.II/base/geometry_info.h"
 
 #include "natrium/boundaries/PeriodicBoundary.h"
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/DealiiExtensions.h"
 #include "natrium/utilities/Logging.h"
@@ -185,19 +185,19 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	constantVelocity(0) = inletVelocity;
 
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(4,
+			boost::make_shared<VelocityNeqBounceBack<2> >(4,
 					constantVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(1,
+			boost::make_shared<VelocityNeqBounceBack<2> >(1,
 					constantVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(2,
+			boost::make_shared<VelocityNeqBounceBack<2> >(2,
 					constantVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(3,
+			boost::make_shared<VelocityNeqBounceBack<2> >(3,
 					constantVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(0, zeroVelocity));
+			boost::make_shared<VelocityNeqBounceBack<2> >(0, zeroVelocity));
 
 // Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

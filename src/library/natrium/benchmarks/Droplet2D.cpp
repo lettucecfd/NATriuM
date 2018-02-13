@@ -14,7 +14,7 @@
 #include "deal.II/grid/grid_tools.h"
 
 
-#include "../boundaries/LinearFluxBoundaryRhoU.h"
+#include "../boundaries/VelocityNeqBounceBack.h"
 
 namespace natrium {
 

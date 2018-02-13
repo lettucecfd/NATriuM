@@ -83,10 +83,12 @@ private:
 	dealii::Vector<double> m_Velocity;
 public:
 	BoundaryVelocity(const dealii::Vector<double>& velocity) :
+		dealii::Function<dim>(dim),
 			m_Velocity(velocity) {
 		assert (velocity.size() == dim);
 	}
-	BoundaryVelocity(const dealii::Tensor<1,dim>& velocity){
+	BoundaryVelocity(const dealii::Tensor<1,dim>& velocity):
+			dealii::Function<dim>(dim){
 		m_Velocity.reinit(dim);
 		velocity.unroll(m_Velocity);
 	}

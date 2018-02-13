@@ -167,8 +167,8 @@ public:
 
 	virtual void setDeltaT(double deltaT) {
 		Base::setDeltaT(deltaT);
-		updateSparsityPattern();
 		m_boundaryHandler.setTimeStep(deltaT);
+		updateSparsityPattern();
 	}
 
 	/**

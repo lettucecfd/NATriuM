@@ -12,7 +12,7 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/grid/grid_in.h"
 
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 
 #include "natrium/utilities/Math.h"
 
@@ -87,16 +87,16 @@ boost::shared_ptr<BoundaryCollection<2> > DiamondObstacle2D::makeBoundaries() {
 	boost::shared_ptr<dealii::Function<2> > boundary_velocity = boost::make_shared<
 			InflowVelocity> (m_meanInflowVelocity);
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(15, oneVector));
+			boost::make_shared<VelocityNeqBounceBack<2> >(15, oneVector));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(16, oneVector));
+			boost::make_shared<VelocityNeqBounceBack<2> >(16, oneVector));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(17, oneVector));
+			boost::make_shared<VelocityNeqBounceBack<2> >(17, oneVector));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(18, oneVector));
+			boost::make_shared<VelocityNeqBounceBack<2> >(18, oneVector));
 
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(19, zeroVector));
+			boost::make_shared<VelocityNeqBounceBack<2> >(19, zeroVector));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
