@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
 		double u_error = solver.getErrorStats()->getL2VelocityError();
 		double rho_error = solver.getErrorStats()->getL2DensityError();
 		pout
-				<< "N p Ma Re integrator CFL collision  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  runtime"
+				<< "N p Ma Re integrator CFL collision  #steps Mean_CFL ||p-p_ana||_2 ||u-u_ana||_2  runtime"
 				<< endl;
 		pout << N << " " << configuration->getSedgOrderOfFiniteElement() << " " << Ma << " " << Re << " "
 				<< "td" << configuration->getTimeIntegrator()
