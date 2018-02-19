@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(PhysicalProperties_EntropyGhosted_test) {
 	const double u0 = 1;
 	const double kappa = 80;
 	const double viscosity = 0.0001;
-	const size_t refinement_level = 7;
+	const size_t refinement_level = 5;
 
 	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<ShearLayer2D> (viscosity, refinement_level, u0, kappa);
 	boost::shared_ptr<SolverConfiguration> config  = boost::make_shared<SolverConfiguration>();
