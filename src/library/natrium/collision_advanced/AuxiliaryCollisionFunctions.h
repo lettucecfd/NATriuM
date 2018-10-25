@@ -159,7 +159,7 @@ struct GeneralCollisionData {
 				forces[i] = pd.getExternalForce()->getForce()[i];
 			}
 		}
-		assert((cs2 - 1. / 3.) < 1e-10);
+		//assert((cs2 - 1. / 3.) < 1e-10);
 
 		// for simulations with steady state equilibrium (Guo 2004)
 		gamma_steadystate = 1;

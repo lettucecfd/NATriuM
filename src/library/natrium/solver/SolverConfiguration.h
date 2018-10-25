@@ -1574,6 +1574,10 @@ public:
 			return Stencil_D3Q15;
 		} else if ("D3Q27" == stencil) {
 			return Stencil_D3Q27;
+		} else if ("D2Q25" == stencil) {
+			return Stencil_D2Q25;
+		} else if ("D2Q25H" == stencil) {
+					return Stencil_D2Q25H;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown Stencil with index " << stencil
@@ -1600,6 +1604,14 @@ public:
 		}
 		case Stencil_D3Q27: {
 			set("Stencil", "D3Q27");
+			break;
+		}
+		case Stencil_D2Q25: {
+			set("Stencil", "D2Q25");
+			break;
+		}
+		case Stencil_D2Q25H: {
+			set("Stencil", "D2Q25H");
 			break;
 		}
 		default: {
