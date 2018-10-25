@@ -1,375 +1,172 @@
-/**
- * @file CFDSolver.h
- * @short Central class of the CFD Simulation based on the Discrete Boltzmann Equation (DBE)
- * @date 29.05.2013
- * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
+/*
+ * CompressibleCFDSolver.h
+ *
+ *  Created on: 25.10.2018
+ *      Author: natrium
  */
 
-#ifndef CFDSOLVER_H_
-#define CFDSOLVER_H_
+#ifndef COMPRESSIBLECFDSOLVER_H_
+#define COMPRESSIBLECFDSOLVER_H_
 
-#include <exception>
-
-#include "deal.II/numerics/data_out.h"
-
-#include "SolverConfiguration.h"
-#include "DistributionFunctions.h"
-#include "SolverStats.h"
-#include "TurbulenceStats.h"
-
-#include "../dataprocessors/DataProcessor.h"
-
-#include "../problemdescription/ProblemDescription.h"
-
-#include "../advection/AdvectionOperator.h"
-
-#include "../collision/CollisionModel.h"
-#include "../collision/MultistepCollisionData.h"
-
-#include "../smoothing/Filter.h"
-
-#include "../timeintegration/TimeIntegrator.h"
-
+#include "CFDSolver.h"
 #include "../utilities/BasicNames.h"
-#include "../utilities/Math.h"
-#include "../utilities/NATriuMException.h"
-#include "../utilities/Timing.h"
 
 namespace natrium {
 
-/* forward declarations */
-class Stencil;
-template <size_t dim> class GridInterpolation;
-/**
- * @short Exception class for CFDSolver
- */
-class CFDSolverException: public NATriuMException {
+template<size_t dim>
+class CompressibleCFDSolver: public CFDSolver<dim> {
 private:
-	std::string message;
-public:
-	CFDSolverException(const char *msg) :
-			NATriuMException(msg), message(msg) {
-	}
-	CFDSolverException(const string& msg) :
-			NATriuMException(msg), message(msg) {
-	}
-	~CFDSolverException() throw () {
-	}
-	const char *what() const throw () {
-		return this->message.c_str();
-	}
-};
-
-/** @short The central class for the CFD simulation based on the DBE.
- *  @note  The CFDSolver itself is quite static but it contains interchangeable modules, e.g. for the
- *         Stencil or the time integrator. By these means, a variety of different simulation
- *         methods can be covered.
- * @tparam dim The dimension of the flow (2 or 3).
- */
-template<size_t dim> class CFDSolver {
-	template<size_t dim2> friend class SolverStats;
-	template<size_t dim3> friend class TurbulenceStats;
-	template<size_t dim3> friend class GridInterpolation;
-	template<size_t dim4> friend class DataProcessor;
-	template<size_t dim3> friend class PseudoEntropicStabilizer;
-
-private:
-	/// particle distribution functions
-	DistributionFunctions m_f;
-
-	/// macroscopic density
-	distributed_vector m_density;
-
 	/// macroscopic density
 	distributed_vector m_temperature;
-
-	/// macroscopic velocity
-	vector<distributed_vector> m_velocity;
-
-	/// macroscopic density
-	distributed_vector m_tmpDensity;
-
-	/// macroscopic density
 	distributed_vector m_tmpTemperature;
 
-	/// temporary velocity to test for convergence
-	vector<distributed_vector> m_tmpVelocity;
-
-	/// description of the CFD problem (boundraries, initial values, etc.)
-	boost::shared_ptr<ProblemDescription<dim> > m_problemDescription;
-
-	/// global streaming data
-	boost::shared_ptr<AdvectionOperator<dim> > m_advectionOperator;
-
-	/// DdQq Boltzmann model (e.g. D2Q9)
-	boost::shared_ptr<Stencil> m_stencil;
-
-	/// Description of the collision algorithm
-	boost::shared_ptr<CollisionModel> m_collisionModel;
-	boost::shared_ptr<MultistepCollisionData> m_multistepData;
-
-	/// Time Integrator for the solution of the ODE, which stems from the space discretization
-	boost::shared_ptr<
-			TimeIntegrator<distributed_sparse_block_matrix,
-					distributed_block_vector> > m_timeIntegrator;
-
-	/// Configuration of the solver
-	boost::shared_ptr<SolverConfiguration> m_configuration;
-
-	/// Filtering scheme
-	boost::shared_ptr<Filter<dim> > m_filter;
-
-	/// the number of the first iteration (normally 0, except for restart at a checkpoint)
-	size_t m_iterationStart;
-
-	/// the physical time passed (normally initialized with 0.0, except for restart at a checkpoint)
-	double m_time;
-
-	/// a vector that indicates if a dofs is at the boundary (for each dof)
-	vector<bool> m_isDoFAtBoundary;
-
-	/// current iteration
-	size_t m_i;
-
-	/// table out
-	boost::shared_ptr<SolverStats<dim> > m_solverStats;
-	boost::shared_ptr<TurbulenceStats<dim> > m_turbulenceStats;
-
-	// vector of data processors
-	vector<boost::shared_ptr<DataProcessor<dim> > > m_dataProcessors;
-
-	// starting time
-	time_t m_tstart;
-
-	// residuum
-	double m_residuumDensity;
-	double m_residuumVelocity;
-
-	// vector for nonlinear boundary conditions
-	distributed_block_vector m_boundaryVector;
-
-	// vector of grid points
-	map<dealii::types::global_dof_index, dealii::Point<dim> > m_supportPoints;
-
-protected:
-
-	/// gives the possibility for Benchmark instances to add the analytic solution to output
-	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>&) {
-	}
-
 public:
+	CompressibleCFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
+			boost::shared_ptr<ProblemDescription<dim> > problemDescription) :
+			CFDSolver<dim>(configuration, problemDescription) {
 
+		m_temperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+				this->getAdvectionOperator()->getLocallyRelevantDofs(),
+				MPI_COMM_WORLD);
+		m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+			MPI_COMM_WORLD);
+		distributed_vector writeable_temperature;
+		// In this case, the density function fulfills the same purpose for the temperature
+		CFDSolverUtilities::getWriteableDensity(writeable_temperature, m_temperature,
+						this->getAdvectionOperator()->getLocallyOwnedDofs());
+		this->applyInitialDensities(writeable_temperature, this->getSupportPoints());
+		CFDSolverUtilities::applyWriteableDensity(writeable_temperature, m_temperature);
 
-	/// constructor
-	/// @note: has to be inlined, if the template parameter is not made explicit
-	CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
-			boost::shared_ptr<ProblemDescription<dim> > problemDescription);
-
-/// destructor
-	virtual ~CFDSolver() {
-	}
-	;
-
-	/**
-	 * @short initialize distribution functions
-	 */
-	void initializeDistributions();
-
-	/**
-	 * @short Advection in all directions
-	 */
-	void stream();
-
-	/**
-	 *  @short Low-level collide function
-	 */
-	void collide();
-
-	/**
-	 * @short reassembly of all matrices
-	 */
-	void reassemble();
-
-	/**
-	 * @short run CFD solver
-	 */
-	void run();
-
-	/**
-	 * @short filter solution
-	 */
-	void filter();
-
-	/**
-	 * @short test for stop conditions
-	 */
-	bool stopConditionMet();
-
-	/**
-	 * @short set initial densities
-	 * @param[out] initialDensities vector of densities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	void applyInitialDensities(distributed_vector& initialDensities,
-			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
-
-	void applyInitialTemperatures(distributed_vector& initialTemperatures,
-	const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
-
-	/**
-	 * @short set initial velocities
-	 * @param[out] initialVelocities vector of velocities; to be filled
-	 * @param[in] supportPoints the coordinates associated with each degree of freedom
-	 */
-	void applyInitialVelocities(vector<distributed_vector>& initialVelocities,
-			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
-
-	/**
-	 * @short create output data and write to file
-	 */
-	virtual void output(size_t iteration, bool is_final=false);
-
-	/**
-	 *
-	 */
-	bool hasGeometryChanged() {
-		return false;
 	}
 
-	const distributed_vector& getDensity() const {
-		return m_density;
-	}
+	void applyInitialTemperatures(
+			distributed_vector& initialTemperatures,
+			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
+		// get Function instance
+			const boost::shared_ptr<dealii::Function<dim> >& f_T =
+					this->getProblemDescription()->getInitialTFunction();
+			const unsigned int dofs_per_cell =
+					this->getAdvectionOperator()->getFe()->dofs_per_cell;
+			vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+			typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+					this->getAdvectionOperator()->getDoFHandler()->begin_active(), endc =
+							this->getAdvectionOperator()->getDoFHandler()->end();
+			for (; cell != endc; ++cell) {
+				if (cell->is_locally_owned()) {
+					cell->get_dof_indices(local_dof_indices);
+					for (size_t i = 0; i < dofs_per_cell; i++) {
+						if (not this->getAdvectionOperator()->getLocallyOwnedDofs().is_element(
+								local_dof_indices.at(i))) {
+							continue;
+						}
+						assert(
+								supportPoints.find(local_dof_indices.at(i))
+										!= supportPoints.end());
+						initialTemperatures(local_dof_indices.at(i)) = f_T->value(
+								supportPoints.at(local_dof_indices.at(i)));
+					}
+				} /* if is locally owned */
+			} /* for all cells */
+
+
+		}
 
 	const distributed_vector& getTemperature() const {
-		return m_density;
+		return m_temperature;
 	}
+		void calculateTemperature()
+		{
+			std::vector<distributed_vector> writeable_u;
+			distributed_vector writeable_rho;
+			distributed_vector writeable_T;
+			distributed_vector temporary;
+			CFDSolverUtilities::getWriteableVelocity(writeable_u, this->getVelocity(),
+					this->getAdvectionOperator()->getLocallyOwnedDofs());
+			CFDSolverUtilities::getWriteableDensity(writeable_rho, this->getDensity(),
+					this->getAdvectionOperator()->getLocallyOwnedDofs());
 
-	const DistributionFunctions& getF() const {
-		return m_f;
-	}
+			CFDSolverUtilities::getWriteableDensity(writeable_T, m_temperature,
+					this->getAdvectionOperator()->getLocallyOwnedDofs());
+			size_t Q = this->getStencil()->getQ();
+			writeable_T = 0;
 
-	const vector<distributed_vector>& getVelocity() const {
-		return m_velocity;
-	}
 
-	const boost::shared_ptr<AdvectionOperator<dim> >& getAdvectionOperator() const {
-		return m_advectionOperator;
-	}
+			for (size_t i = 0; i < Q; i++) {
+					//writeable_T.add(m_f.at(i));
+					for (size_t j = 0; j < dim; j++) {
+						writeable_T.add(this->getStencil()->getDirection(i)(j), this->getStencil()->getDirection(i)(j));
+					}
+				}
 
-	const boost::shared_ptr<Stencil>& getStencil() const {
-		return m_stencil;
-	}
-
-	const boost::shared_ptr<CollisionModel>& getCollisionModel() const {
-		return m_collisionModel;
-	}
-
-	const boost::shared_ptr<SolverConfiguration>& getConfiguration() const {
-		return m_configuration;
-	}
-
-	const boost::shared_ptr<ProblemDescription<dim> >& getProblemDescription() const {
-		return m_problemDescription;
-	}
-
-	const boost::shared_ptr<
-			TimeIntegrator<distributed_sparse_block_matrix,
-					distributed_block_vector> >& getTimeIntegrator() const {
-		return m_timeIntegrator;
-	}
-
-	size_t getNumberOfDoFs() const {
-		return m_advectionOperator->getNumberOfDoFs();
-	}
-	double getMaxVelocityNorm() const {
-		double max = m_velocity.at(0).linfty_norm();
-		double comp2 = m_velocity.at(1).linfty_norm();
-		if (comp2 > max) {
-			max = comp2;
 		}
-		double comp3 = 0;
-		if (dim == 3)
-			comp3 = m_velocity.at(2).linfty_norm();
-		if (comp3 > max) {
-			max = comp3;
+
+
+	inline distributed_vector& getWriteableTemperature(distributed_vector& writeable, const distributed_vector& member, const dealii::IndexSet& locally_owned){
+		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
+		writeable.reinit(locally_owned, member.get_mpi_communicator(), true);
+		assert (not writeable.has_ghost_elements());
+		writeable = member;
+		assert (not writeable.has_ghost_elements());
+		return writeable;
+	}
+
+	/**
+	 * @short copy the changes in the writeable copy to the global density, see getWritableVelocity for a detailed explanation
+	 */
+	inline void applyWriteableTemperature(const distributed_vector& writeable, distributed_vector& member){
+		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
+		member = writeable;
+	}
+
+	void run()
+	{
+		this->setIteration(this->getIterationStart());
+		collide();
+		cout << "RUnning tEST" << endl;
+
+	}
+
+	void collide()  {
+cout << "COLLISIONTEST" << endl;
+	// start timer
+		TimerOutput::Scope timer_section(Timing::getTimer(), "Collision");
+
+		try {
+			// get writeable copies of density and velocity
+			std::vector<distributed_vector> writeable_u;
+			distributed_vector writeable_rho;
+			CFDSolverUtilities::getWriteableVelocity(writeable_u, this->getVelocity(),
+					this->getAdvectionOperator()->getLocallyOwnedDofs());
+			CFDSolverUtilities::getWriteableDensity(writeable_rho, this->getDensity(),
+					this->getAdvectionOperator()->getLocallyOwnedDofs());
+
+			double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
+						*(this->getProblemDescription()->getMesh()),
+						this->getConfiguration()->getSedgOrderOfFiniteElement(), this->getStencil(),
+						this->getConfiguration()->getCFL());
+
+
+	// TODO member function collisionModel
+			//selectCollision(*m_configuration, *m_problemDescription, m_f, writeable_rho, writeable_u,
+			//	m_advectionOperator->getLocallyOwnedDofs(), m_problemDescription->getViscosity(), delta_t, this->getStencil(), false);
+
+			 //perform collision
+	//		m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
+	//				m_advectionOperator->getLocallyOwnedDofs(), false);
+
+			// copy back to ghosted vectors and communicate across MPI processors
+			CFDSolverUtilities::applyWriteableDensity(writeable_rho, this->getDensity());
+			CFDSolverUtilities::applyWriteableVelocity(writeable_u, this->getVelocity());
+			this->getF().updateGhosted();
+
+		} catch (CollisionException& e) {
+			natrium_errorexit(e.what());
 		}
-		return max;
 	}
 
-	double getMaxDensityDeviationFrom(double referenceDensity) const {
-		double maxdev = 0.0;
-		for (size_t i = 0; i < getNumberOfDoFs(); i++) {
-			double dev = fabs(m_density(i) - referenceDensity);
-			if (dev > maxdev) {
-				maxdev = dev;
-			}
-		}
-		return maxdev;
-	}
-
-	size_t getIterationStart() const {
-		return m_iterationStart;
-	}
-
-	double getTime() const {
-		return m_time;
-	}
-
-	double getTimeStepSize() const{
-		return m_timeIntegrator->getTimeStepSize();
-	}
-
-	size_t getIteration() const {
-		return m_i;
-	}
-
-	void setIteration(size_t iteration) {
-		m_i = iteration;
-	}
-
-	const boost::shared_ptr<SolverStats<dim> >& getSolverStats() const {
-		return m_solverStats;
-	}
-
-	double getTau() const;
-
-	double getResiduumDensity() const {
-		return m_residuumDensity;
-	}
-
-	double getResiduumVelocity() const {
-		return m_residuumVelocity;
-	}
-
-	void printRuntimeSummary() const {
-		pout << Timing::getOutStream().str() << endl;
-	}
-
-	void addToVelocity(boost::shared_ptr<dealii::Function<dim> > function);
-
-	void scaleVelocity(double scaling_factor);
-
-	const map<dealii::types::global_dof_index, dealii::Point<dim> >& getSupportPoints() const {
-		return m_supportPoints;
-	}
-
-	void setVelocity(const vector<distributed_vector>& velocity) {
-		m_velocity = velocity;
-	}
-
-	void appendDataProcessor(boost::shared_ptr<DataProcessor<dim> > proc) {
-		m_dataProcessors.push_back(proc);
-	}
-
-	void calculateDensitiesAndVelocities();
-
-	void calculateDensitiesVelocitiesAndTemperatures();
-
-	void convertDeprecatedCheckpoint();
-}
-;
-
-} /* namespace natrium */
+};
 
 
-#endif /* CFDSOLVER_H_ */
+
+} //namespace natrium
+#endif /* COMPRESSIBLECFDSOLVER_H_ */

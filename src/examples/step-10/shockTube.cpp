@@ -12,6 +12,7 @@
 #include "deal.II/base/utilities.h"
 
 #include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/CompressibleCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 
 #include "natrium/problemdescription/ProblemDescription.h"
@@ -148,7 +149,7 @@ int main(int argc, char** argv) {
 	// RUN SOLVER
 	// ========================================================================
 
-	CFDSolver<2> solver(configuration, shockTube);
+	natrium::CompressibleCFDSolver<2> solver(configuration, shockTube);
 
 	solver.run();
 
