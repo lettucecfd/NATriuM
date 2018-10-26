@@ -351,6 +351,10 @@ public:
 	void calculateDensitiesAndVelocities();
 
 	void convertDeprecatedCheckpoint();
+
+	void updateGhosted()
+	{m_f.updateGhosted();
+	}
 }
 ;
 

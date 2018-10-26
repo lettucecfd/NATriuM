@@ -10,6 +10,7 @@
 
 #include "CFDSolver.h"
 #include "../utilities/BasicNames.h"
+#include "../utilities/CFDSolverUtilities.h"
 
 namespace natrium {
 
@@ -121,7 +122,7 @@ public:
 	void run()
 	{
 		this->setIteration(this->getIterationStart());
-		collide();
+		//collide();
 		cout << "RUnning tEST" << endl;
 
 	}
@@ -135,14 +136,14 @@ cout << "COLLISIONTEST" << endl;
 			// get writeable copies of density and velocity
 			std::vector<distributed_vector> writeable_u;
 			distributed_vector writeable_rho;
-			CFDSolverUtilities::getWriteableVelocity(writeable_u, this->getVelocity(),
+			CFDSolverUtilities::getWriteableVelocity(writeable_u, *(this->getVelocity()),
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
-			CFDSolverUtilities::getWriteableDensity(writeable_rho, this->getDensity(),
+			CFDSolverUtilities::getWriteableDensity(writeable_rho, *(this->getDensity()),
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
 
 			double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
 						*(this->getProblemDescription()->getMesh()),
-						this->getConfiguration()->getSedgOrderOfFiniteElement(), this->getStencil(),
+						this->getConfiguration()->getSedgOrderOfFiniteElement(), *(this->getStencil()),
 						this->getConfiguration()->getCFL());
 
 
@@ -155,8 +156,8 @@ cout << "COLLISIONTEST" << endl;
 	//				m_advectionOperator->getLocallyOwnedDofs(), false);
 
 			// copy back to ghosted vectors and communicate across MPI processors
-			CFDSolverUtilities::applyWriteableDensity(writeable_rho, this->getDensity());
-			CFDSolverUtilities::applyWriteableVelocity(writeable_u, this->getVelocity());
+			CFDSolverUtilities::applyWriteableDensity(writeable_rho, *(this->getDensity()));
+			CFDSolverUtilities::applyWriteableVelocity(writeable_u, *(this->getVelocity()));
 			this->getF().updateGhosted();
 
 		} catch (CollisionException& e) {
