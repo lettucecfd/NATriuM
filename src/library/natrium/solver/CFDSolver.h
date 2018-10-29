@@ -73,7 +73,7 @@ template<size_t dim> class CFDSolver {
 	template<size_t dim4> friend class DataProcessor;
 	template<size_t dim3> friend class PseudoEntropicStabilizer;
 
-private:
+protected:
 	/// particle distribution functions
 	DistributionFunctions m_f;
 
