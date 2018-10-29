@@ -57,6 +57,22 @@ inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
 	return density;
 }
 
+template<int T_Q>
+inline double calculateTemperature(const std::array<double, T_Q>& fLocal) {
+	double density = 0;
+	for (int p = 0; p < T_Q; ++p) {
+		density += fLocal[p];
+	}
+
+	if (density < 1e-10) {
+		throw CollisionException(
+				"Densities too small (< 1e-10) for collisions. Decrease time step size.");
+	}
+
+	return density;
+}
+
+
 inline double calculateTauFromNu(double viscosity, double cs2,
 		double timeStepSize) {
 	double tau;
@@ -102,6 +118,7 @@ struct GeneralCollisionData {
 	std::array<double, T_Q> feq = { };
 
 	double density = 0.0;
+	double temperature = 1.0;
 	std::array<double, T_D> velocity = { };
 	//scaling of the calculation. All parameters are unscaled during the calculation. The macroscopic velocity has to be scaled at the end of the collision step
 	double scaling = 0.0;
@@ -221,6 +238,22 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 					- fLocal[10] + fLocal[15] + fLocal[16] - fLocal[17]
 					- fLocal[18]);
 }
+
+template<int T_D, int T_Q>
+inline void calculateTemperature(const std::array<double, T_Q>& fLocal,
+		 std::array<double, T_D>& velocity, double density, double temperature,
+		GeneralCollisionData<T_D, T_Q>& params) {
+	//T0[i,j]+=((c[k,0]-u[0,i,j])**2+(c[k,1]-u[1,i,j])**2)*fin[k,i,j]*0.5/rho[i,j]
+		temperature = 0.0;
+		for (int i = 0; i < T_Q; i++) {
+			temperature += ((params.e[i][0]-velocity[0]) * (params.e[i][0]-velocity[0])+ (params.e[i][1]-velocity[1]) * (params.e[i][1]-velocity[1]))*fLocal[i];
+
+		}
+		temperature = temperature * 0.5 / (density*params.cs2);
+
+}
+
+
 
 template<size_t T_D, size_t T_Q>
 inline void applyMacroscopicForces(std::array<double*, T_D>& velocities,

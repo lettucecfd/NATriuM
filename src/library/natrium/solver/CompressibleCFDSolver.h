@@ -11,6 +11,7 @@
 #include "CFDSolver.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/CFDSolverUtilities.h"
+#include "../collision_advanced/CollisionSelection.h"
 
 namespace natrium {
 
@@ -121,11 +122,32 @@ public:
 
 	void run()
 	{
-		this->setIteration(this->getIterationStart());
-		//collide();
-		cout << "RUnning tEST" << endl;
+		this->m_i = this->m_iterationStart;
+		collide();
+		while (true) {
+			if (this->stopConditionMet()) {
+				break;
+			}
+			this->output(this->m_i);
+			this->m_i++;
+			this->stream();
+			this->filter();
+			this->collide();
+			for (size_t i = 0; i < this->m_dataProcessors.size(); i++) {
+				this->m_dataProcessors.at(i)->apply();
+			}
+		}
+		this->output(this->m_i, true);
 
+	// Finalize
+		if (is_MPI_rank_0()) {
+			Timing::getTimer().print_summary();
+		}
+		LOG(BASIC) << "NATriuM run complete." << endl;
+		LOG(BASIC) << "Summary: " << endl;
+		LOG(BASIC) << Timing::getOutStream().str() << endl;
 	}
+
 
 	void collide()  {
 cout << "COLLISIONTEST" << endl;
@@ -133,32 +155,39 @@ cout << "COLLISIONTEST" << endl;
 		TimerOutput::Scope timer_section(Timing::getTimer(), "Collision");
 
 		try {
-			// get writeable copies of density and velocity
+			// get writeable copies of density and velocity and temperature
 			std::vector<distributed_vector> writeable_u;
 			distributed_vector writeable_rho;
-			CFDSolverUtilities::getWriteableVelocity(writeable_u, *(this->getVelocity()),
+			distributed_vector writeable_T;
+			CFDSolverUtilities::getWriteableVelocity(writeable_u, this->m_velocity,
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
-			CFDSolverUtilities::getWriteableDensity(writeable_rho, *(this->getDensity()),
+			CFDSolverUtilities::getWriteableDensity(writeable_rho, this->m_density,
+					this->getAdvectionOperator()->getLocallyOwnedDofs());
+			CFDSolverUtilities::getWriteableDensity(writeable_T, this->m_temperature,
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
 
 			double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
 						*(this->getProblemDescription()->getMesh()),
-						this->getConfiguration()->getSedgOrderOfFiniteElement(), *(this->getStencil()),
+						this->getConfiguration()->getSedgOrderOfFiniteElement(), *(this->m_stencil),
 						this->getConfiguration()->getCFL());
 
 
+
+
+
 	// TODO member function collisionModel
-			//selectCollision(*m_configuration, *m_problemDescription, m_f, writeable_rho, writeable_u,
-			//	m_advectionOperator->getLocallyOwnedDofs(), m_problemDescription->getViscosity(), delta_t, this->getStencil(), false);
+			selectCollision(*(this->m_configuration), *(this->m_problemDescription), this->m_f, writeable_rho, writeable_u, writeable_T,
+				this->m_advectionOperator->getLocallyOwnedDofs(), this->m_problemDescription->getViscosity(), delta_t, *(this->getStencil()), false);
 
 			 //perform collision
 	//		m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
 	//				m_advectionOperator->getLocallyOwnedDofs(), false);
 
 			// copy back to ghosted vectors and communicate across MPI processors
-			CFDSolverUtilities::applyWriteableDensity(writeable_rho, *(this->getDensity()));
-			CFDSolverUtilities::applyWriteableVelocity(writeable_u, *(this->getVelocity()));
-			this->getF().updateGhosted();
+			CFDSolverUtilities::applyWriteableDensity(writeable_rho, this->m_density);
+			CFDSolverUtilities::applyWriteableVelocity(writeable_u, this->m_velocity);
+			applyWriteableTemperature(writeable_T, m_temperature);
+			this->m_f.updateGhosted();
 
 		} catch (CollisionException& e) {
 			natrium_errorexit(e.what());

@@ -59,25 +59,26 @@ template<>
 }
 
 template<>
- inline void BGKEquilibrium<2,25>::calc(std::array<double, 25>& feq, const GeneralCollisionData<2,25> & params)
+ inline void BGKEquilibrium<2,25>::calc(std::array<double, 25>& feq, const GeneralCollisionData<2,25>& p)
 	{
 double eye[2][2]={{1,0},{0,1}};
 		double uu_term = 0.0;
 		for (size_t j = 0; j < 2; j++) {
-			uu_term += -(params.velocity[j] * params.velocity[j])
-					/ (2.0 * params.cs2);
+			uu_term += -(p.velocity[j] * p.velocity[j])
+					/ (2.0 * p.cs2);
 		}
 
 		for (size_t i = 0; i < 25; i++) {
 			double ue_term = 0.0;
 			for (size_t j = 0; j < 2; j++) {
-				ue_term += (params.velocity[j] * params.e[i][j]) / params.cs2;
+				ue_term += (p.velocity[j] * p.e[i][j]) / p.cs2;
 			}
-			feq[i] = params.weight[i] * params.density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
+			feq[i] = p.weight[i] * p.density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
 			for (int alp = 0; alp < 2; alp++){
 				for (int bet = 0; bet < 2; bet++){
+					p.density*p.weight[i]/(2.0*p.cs2);
 					for (int gam = 0; gam < 2; gam++){
-						feq[i] += params.weight[i] * params.density * params.velocity[alp]*params.velocity[bet]*params.velocity[gam]*params.e[i][gam]/(6.*params.cs2*params.cs2*params.cs2)*(params.e[i][alp]*params.e[i][bet]-3.*params.cs2*eye[alp][bet]);
+						feq[i] += p.weight[i] * p.density * p.velocity[alp]*p.velocity[bet]*p.velocity[gam]*p.e[i][gam]/(6.*p.cs2*p.cs2*p.cs2)*(p.e[i][alp]*p.e[i][bet]-3.*p.cs2*eye[alp][bet]);
 					}
 				}
 
