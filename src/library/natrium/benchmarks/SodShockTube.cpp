@@ -32,7 +32,7 @@ SodShockTube::SodShockTube(double viscosity, size_t refinement_level, double u0,
 	// apply initial and analytical solution
 	//this->setInitialU(boost::make_shared<InitialVelocity>(this));
 	this->setInitialRho(boost::make_shared<InitialDensity>(this));
-
+    this->setInitialT(boost::make_shared<InitialTemperature>(this));
 }
 
 SodShockTube::~SodShockTube() {
@@ -47,7 +47,7 @@ double SodShockTube::InitialDensity::value(const dealii::Point<2>& x, const unsi
 
 
 			if (x(0) <= 2.0) {
-				return 8.0;
+				return 4.0;
 			}
 		 else {
 			return 1.0; }
@@ -55,6 +55,20 @@ double SodShockTube::InitialDensity::value(const dealii::Point<2>& x, const unsi
 
 
 }
+
+double SodShockTube::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
+
+
+			if (x(0) <= 2.0) {
+				return 1.0;
+			}
+		 else {
+			return 0.8; }
+
+
+
+}
+
 
 
 /**

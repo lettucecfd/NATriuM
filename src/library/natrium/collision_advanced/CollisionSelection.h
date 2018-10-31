@@ -48,7 +48,7 @@ namespace natrium {
 				typename collision_type<T_D, T_Q, equilibrium_type>::SpecificCollisionData\
 					specData(genData);\
 				CollisionOperator<T_D, T_Q, equilibrium_type, collision_type> collision_operator;\
-				collision_operator.collideAll(f, densities, velocities, locally_owned_dofs,\
+				collision_operator.collideAll(f, densities, velocities, temperature, locally_owned_dofs,\
 						inInitializationProcedure, genData, specData); \
 				has_collided += 1; \
 		}

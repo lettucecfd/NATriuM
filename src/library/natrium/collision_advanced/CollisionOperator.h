@@ -128,7 +128,7 @@ public:
 		}
 
 		double* T_raw;
-				densities.trilinos_vector().ExtractView(&T_raw, &length);
+				temperature.trilinos_vector().ExtractView(&T_raw, &length);
 
 
 #pragma omp simd
@@ -144,8 +144,7 @@ public:
 
 			//Calculate the local density and store it into the Parameter Handling System
 			genData.density = calculateDensity<T_Q>(genData.fLocal); // done
-			genData.temperature = calculateTemperature<T_Q>(genData.fLocal, genData.velocity,
-					genData.density, genData.temperature, genData);
+
 			if (1e-10 >= genData.density) {
 				throw DensityZeroException(
 						"Density too small in collision. Decrease time step size.");
@@ -157,6 +156,10 @@ public:
 			//Calculate the local velocity and store it into the Parameter Handling System
 			calculateVelocity<T_D, T_Q>(genData.fLocal, genData.velocity,
 					genData.density, genData); // TODO velocities for other stencils
+
+			genData.temperature = calculateTemperature<T_D,T_Q>(genData.fLocal, genData.velocity,
+					genData.density, genData.temperature, genData);
+			T_raw[ii] = genData.temperature;
 
 			//Write the local density to the global velocity matrix
 			if (not inInitializationProcedure) {
