@@ -10,6 +10,8 @@
 
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_out.h"
+#include "deal.II/base/function.h"
+
 
 #include "../problemdescription/ProblemDescription.h"
 #include "../utilities/BasicNames.h"
@@ -43,6 +45,18 @@ public:
 		SodShockTube* m_flow;
 	public:
 		InitialDensity(SodShockTube* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
+
+
+	};
+
+	class InitialTemperature: public dealii::Function<2> {
+	private:
+		SodShockTube* m_flow;
+	public:
+		InitialTemperature(SodShockTube* flow) :
 				m_flow(flow) {
 		}
 		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
@@ -100,6 +114,7 @@ private:
 	double m_perturbation;
 	double m_trafoX;
 	double m_trafoY;
+
 
 
 	/**

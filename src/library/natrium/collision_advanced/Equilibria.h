@@ -76,9 +76,10 @@ double eye[2][2]={{1,0},{0,1}};
 			feq[i] = p.weight[i] * p.density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
 			for (int alp = 0; alp < 2; alp++){
 				for (int bet = 0; bet < 2; bet++){
-					p.density*p.weight[i]/(2.0*p.cs2);
+					feq[i]+=p.density*p.weight[i]/(2.0*p.cs2)*((p.temperature-1)*eye[alp][bet]*p.e[i][alp]*p.e[i][bet]-p.cs2*eye[alp][bet]*(p.temperature-1));
 					for (int gam = 0; gam < 2; gam++){
-						feq[i] += p.weight[i] * p.density * p.velocity[alp]*p.velocity[bet]*p.velocity[gam]*p.e[i][gam]/(6.*p.cs2*p.cs2*p.cs2)*(p.e[i][alp]*p.e[i][bet]-3.*p.cs2*eye[alp][bet]);
+						feq[i] += p.weight[i] * p.density * p.velocity[alp]*p.velocity[bet]*p.velocity[gam]*p.e[i][gam]/(6.*p.cs2*p.cs2*p.cs2)*((p.e[i][alp]*p.e[i][bet]-3.*p.cs2*eye[alp][bet])
+								+(p.temperature)*p.cs2*(eye[alp][bet]*p.velocity[gam]+eye[bet][gam]*p.velocity[alp]+eye[alp][gam]*p.velocity[bet])*(p.e[i][alp]*p.e[i][bet]*p.e[i][gam]-3*p.cs2*p.cs2*eye[alp][bet]*p.e[i][gam]));
 					}
 				}
 

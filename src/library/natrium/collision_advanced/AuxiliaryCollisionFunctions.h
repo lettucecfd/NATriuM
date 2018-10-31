@@ -56,7 +56,7 @@ inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
 
 	return density;
 }
-
+/*
 template<int T_Q>
 inline double calculateTemperature(const std::array<double, T_Q>& fLocal) {
 	double density = 0;
@@ -70,7 +70,7 @@ inline double calculateTemperature(const std::array<double, T_Q>& fLocal) {
 	}
 
 	return density;
-}
+} */
 
 
 inline double calculateTauFromNu(double viscosity, double cs2,
@@ -240,7 +240,7 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 }
 
 template<int T_D, int T_Q>
-inline void calculateTemperature(const std::array<double, T_Q>& fLocal,
+inline double calculateTemperature(const std::array<double, T_Q>& fLocal,
 		 std::array<double, T_D>& velocity, double density, double temperature,
 		GeneralCollisionData<T_D, T_Q>& params) {
 	//T0[i,j]+=((c[k,0]-u[0,i,j])**2+(c[k,1]-u[1,i,j])**2)*fin[k,i,j]*0.5/rho[i,j]
@@ -250,7 +250,8 @@ inline void calculateTemperature(const std::array<double, T_Q>& fLocal,
 
 		}
 		temperature = temperature * 0.5 / (density*params.cs2);
-
+cout << temperature << endl;
+return temperature;
 }
 
 
