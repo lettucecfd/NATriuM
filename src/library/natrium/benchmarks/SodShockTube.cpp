@@ -41,12 +41,13 @@ SodShockTube::~SodShockTube() {
 double SodShockTube::InitialVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {
 	return 0.0;
+
 }
 
 double SodShockTube::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
 
-
-			if (x(0) <= 2.0) {
+	cout << "Density initialized" << endl;
+			if (x(0) <= 8.0) {
 				return 4.0;
 			}
 		 else {
@@ -57,13 +58,13 @@ double SodShockTube::InitialDensity::value(const dealii::Point<2>& x, const unsi
 }
 
 double SodShockTube::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
+	cout << "Temperature initialized" << endl;
 
-
-			if (x(0) <= 2.0) {
+			if (x(0) <= 8.0) {
 				return 1.0;
 			}
 		 else {
-			return 0.8; }
+			return 1.0; }
 
 
 
@@ -84,8 +85,8 @@ boost::shared_ptr<Mesh<2> > SodShockTube::makeGrid() {
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	const dealii::Point<2> left = {0.0,0.0};
-	const dealii::Point<2> right = {4.0,1.0};
-	const std::vector <unsigned int>& reps = {4,1};
+	const dealii::Point<2> right = {100.0,1.0};
+	const std::vector <unsigned int>& reps = {100,1};
 
 
 	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, reps, left, right, true);
