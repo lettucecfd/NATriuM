@@ -250,7 +250,6 @@ inline double calculateTemperature(const std::array<double, T_Q>& fLocal,
 
 		}
 		temperature = temperature * 0.5 / (density*params.cs2);
-cout << temperature << endl;
 return temperature;
 }
 

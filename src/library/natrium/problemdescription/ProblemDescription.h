@@ -58,7 +58,7 @@ protected:
 	}
 
 	void setInitialT(boost::shared_ptr<dealii::Function<dim> > ini_T) {
-		m_initialRho = ini_T;
+		m_initialT = ini_T;
 	}
 
 	void setInitialU(boost::shared_ptr<dealii::Function<dim> > ini_u) {

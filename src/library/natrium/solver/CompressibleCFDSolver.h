@@ -45,7 +45,6 @@ public:
 	void applyInitialTemperatures(
 			distributed_vector& initialTemperatures,
 			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
-		cout << "applyInitialTemperature" << endl;
 
 		// get Function instance
 			const boost::shared_ptr<dealii::Function<dim> >& f_T =
@@ -81,7 +80,6 @@ public:
 	}
 		void calculateTemperature()
 		{
-			cout << "calculateTemperature" << endl;
 			std::vector<distributed_vector> writeable_u;
 			distributed_vector writeable_rho;
 			distributed_vector writeable_T;
@@ -108,7 +106,6 @@ public:
 
 
 	inline distributed_vector& getWriteableTemperature(distributed_vector& writeable, const distributed_vector& member, const dealii::IndexSet& locally_owned){
-		cout << "getwritabeT" << endl;
 		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 		writeable.reinit(locally_owned, member.get_mpi_communicator(), true);
 		assert (not writeable.has_ghost_elements());
@@ -123,7 +120,6 @@ public:
 	inline void applyWriteableTemperature(const distributed_vector& writeable, distributed_vector& member){
 		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 		member = writeable;
-		cout << "applyWirtebaleTemperature" << endl;
 	}
 
 	void secondOutput(size_t iteration, bool is_final)
@@ -234,8 +230,8 @@ public:
 				this->m_advectionOperator->getLocallyOwnedDofs(), this->m_problemDescription->getViscosity(), delta_t, *(this->getStencil()), false);
 
 			 //perform collision
-	//		m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
-	//				m_advectionOperator->getLocallyOwnedDofs(), false);
+			//m_collisionModel->collideAll(m_f, writeable_rho, writeable_u,
+			//		m_advectionOperator->getLocallyOwnedDofs(), false);
 
 			// copy back to ghosted vectors and communicate across MPI processors
 			CFDSolverUtilities::applyWriteableDensity(writeable_rho, this->m_density);
@@ -247,6 +243,46 @@ public:
 			natrium_errorexit(e.what());
 		}
 	}
+
+/*	void initializeDistributions() {
+	// PRECONDITION: vectors already created with the right sizes
+
+		LOG(BASIC) << "Initialize distribution functions: ";
+		vector<double> feq(m_stencil->getQ());
+		numeric_vector u(dim);
+
+	// save starting time
+		double t0 = m_time;
+
+	// Initialize f with the equilibrium distribution functions
+	//for all degrees of freedom on current processor
+		const dealii::IndexSet& locally_owned_dofs =
+				m_advectionOperator->getLocallyOwnedDofs();
+		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+		for (; it != end; it++) {
+			size_t i = *it;
+			for (size_t j = 0; j < dim; j++) {
+				u(j) = m_velocity.at(j)(i);
+			}
+
+			//m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
+			for (size_t j = 0; j < m_stencil->getQ(); j++) {
+				m_f.at(j)(i) = feq.at(j);
+			}
+		}
+
+		LOG(BASIC) << "Equilibrium distribution functions" << endl;
+			// do nothing else
+
+
+
+
+		m_time = t0;
+
+		LOG(BASIC) << "Initialize distribution functions: done." << endl;
+
+	}*/
 
 	void run()
 		{
@@ -276,6 +312,7 @@ public:
 			LOG(BASIC) << "Summary: " << endl;
 			LOG(BASIC) << Timing::getOutStream().str() << endl;
 		}
+
 
 
 };
