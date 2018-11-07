@@ -12,6 +12,8 @@
 #include "../utilities/BasicNames.h"
 #include "../utilities/CFDSolverUtilities.h"
 #include "../collision_advanced/CollisionSelection.h"
+#include "../collision_advanced/AuxiliaryCollisionFunctions.h"
+#include "../collision_advanced/Equilibria.h"
 
 namespace natrium {
 
@@ -244,31 +246,36 @@ public:
 		}
 	}
 
-/*	void initializeDistributions() {
+	void initializeDistributions()  {
 	// PRECONDITION: vectors already created with the right sizes
 
 		LOG(BASIC) << "Initialize distribution functions: ";
-		vector<double> feq(m_stencil->getQ());
-		numeric_vector u(dim);
+		array<double,25> feq;
+		array<double,2> u;
 
 	// save starting time
-		double t0 = m_time;
+		double t0 = this->m_time;
 
 	// Initialize f with the equilibrium distribution functions
 	//for all degrees of freedom on current processor
 		const dealii::IndexSet& locally_owned_dofs =
-				m_advectionOperator->getLocallyOwnedDofs();
+				this->m_advectionOperator->getLocallyOwnedDofs();
 		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
 		for (; it != end; it++) {
 			size_t i = *it;
 			for (size_t j = 0; j < dim; j++) {
-				u(j) = m_velocity.at(j)(i);
+				u[j] = this->m_velocity.at(j)(i);
 			}
-
+        GeneralCollisionData<2,25> data(*(this->m_configuration), *(this->m_problemDescription), this->m_stencil->getScaling(), this->m_problemDescription->getViscosity(), *(this->m_stencil), this->m_stencil->getSpeedOfSoundSquare(), 0.0);
+        data.density = this->m_density[i];
+        data.temperature = this->m_temperature[i];
+        data.velocity = u;
+        BGKEquilibrium<2,25> eq;
+              eq.calc(feq, data);
 			//m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
-			for (size_t j = 0; j < m_stencil->getQ(); j++) {
-				m_f.at(j)(i) = feq.at(j);
+			for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
+				this->m_f.at(j)(i) = feq[j];
 			}
 		}
 
@@ -278,15 +285,16 @@ public:
 
 
 
-		m_time = t0;
+		this->m_time = t0;
 
 		LOG(BASIC) << "Initialize distribution functions: done." << endl;
 
-	}*/
+	}
 
 	void run()
 		{
 			this->m_i = this->m_iterationStart;
+			initializeDistributions();
 			collide();
 			while (true) {
 				if (this->stopConditionMet()) {
