@@ -135,6 +135,7 @@ inline void selectCollision<2>(SolverConfiguration& configuration,
 	// This would cause multiple collision steps per time step
 
 	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
+	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 
 	if (not has_collided) {
 		throw CollisionException(
