@@ -48,10 +48,10 @@ double SodShockTube::InitialDensity::value(const dealii::Point<2>& x, const unsi
 
 	cout << "Density initialized" << endl;
 			if (x(0) <= 50.0) {
-				return 8.0;
+				return 1.0;
 			}
 		 else {
-			return 1.0; }
+			return 0.125; }
 
 
 
@@ -61,10 +61,10 @@ double SodShockTube::InitialTemperature::value(const dealii::Point<2>& x, const 
 	cout << "Temperature initialized" << endl;
 
 			if (x(0) <= 50.0) {
-				return 1.25;
+				return 1.0;
 			}
 		 else {
-			return 1;}
+			return 0.8;}
 
 
 
