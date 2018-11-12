@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
 		t_max = 5.0 / u0;
 	}
 	double scaling = sqrt(3) * u0 / Ma;
-	double viscosity = 0.1;//u0 * 1.0 / Re;
+	double viscosity = 0.001;//u0 * 1.0 / Re;
 
 	boost::shared_ptr<ProblemDescription<2> > shockTube = boost::make_shared<
 			SodShockTube>(viscosity, parser.getArgument<int>("ref-level"), u0,
