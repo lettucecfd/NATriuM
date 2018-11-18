@@ -28,7 +28,6 @@ public:
 	CompressibleCFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			boost::shared_ptr<ProblemDescription<dim> > problemDescription) :
 			CFDSolver<dim>(configuration, problemDescription) {
-		cout << "constructor" << endl;
 
 		m_temperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
 				this->getAdvectionOperator()->getLocallyRelevantDofs(),
@@ -41,6 +40,7 @@ public:
 						this->getAdvectionOperator()->getLocallyOwnedDofs());
 		this->applyInitialTemperatures(writeable_temperature, this->getSupportPoints());
 		CFDSolverUtilities::applyWriteableDensity(writeable_temperature, m_temperature);
+		LOG(BASIC) << "Speed of Sound Square: " << this->m_stencil->getSpeedOfSoundSquare() << endl;
 
 	}
 

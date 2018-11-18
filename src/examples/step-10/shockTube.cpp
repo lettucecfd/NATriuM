@@ -112,11 +112,13 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(t_max);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-	configuration->setExponentialFilterAlpha(36);
-	configuration->setExponentialFilterNc(4);
+	configuration->setExponentialFilterAlpha(36); //36
+	configuration->setExponentialFilterNc(3);
 
 	parser.applyToSolverConfiguration(*configuration);
-
+	//configuration->setFiltering(true);
+	//configuration->setFilteringScheme(EXPONENTIAL_FILTER);
+    configuration->setVmultLimiter(true);
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/shockTube";
 	if (parser.hasArgument("minion-brown")) {

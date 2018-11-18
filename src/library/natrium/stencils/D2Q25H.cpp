@@ -64,8 +64,8 @@ vector<double> D2Q25H::makeWeights() {
 
 /// make directions
 vector<numeric_vector> D2Q25H::makeDirections(double scaling) {
-	const double c_m = scaling*sqrt(5.-sqrt(10.))/sqrt(3);
-	const double c_n = sqrt(5.+sqrt(10.))*scaling/sqrt(3);
+	const double c_m = scaling*sqrt(5.-sqrt(10.))/sqrt(3.);
+	const double c_n = sqrt(5.+sqrt(10.))*scaling/sqrt(3.);
 	const double directionsArray[][2] = { { 0.0, 0.0 }, { c_m, 0.0 }, { 0.0,
 			c_m }, { -c_m, 0.0 }, { 0.0, -c_m },
 			{ c_m, c_m }, { -c_m, c_m }, { -c_m, -c_m },

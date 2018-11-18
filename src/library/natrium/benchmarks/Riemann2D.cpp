@@ -1,11 +1,11 @@
 /**
- * @file SodShockTube.cpp
+ * @file Riemann2D.cpp
  * @short 
  * @date 29.05.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
-#include "SodShockTube.h"
+#include "Riemann2D.h"
 
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
@@ -18,7 +18,7 @@
 
 namespace natrium {
 
-SodShockTube::SodShockTube(double viscosity, size_t refinement_level, double u0,
+Riemann2D::Riemann2D(double viscosity, size_t refinement_level, double u0,
 		double kappa, double perturbation, double trafo_x, double trafo_y) :
 		ProblemDescription<2>(makeGrid(), viscosity, 1.0), m_u0(u0), m_kappa(
 				kappa), m_refinementLevel(refinement_level), m_perturbation(perturbation),
@@ -30,41 +30,78 @@ SodShockTube::SodShockTube(double viscosity, size_t refinement_level, double u0,
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply initial and analytical solution
-	//this->setInitialU(boost::make_shared<InitialVelocity>(this));
+	this->setInitialU(boost::make_shared<InitialVelocity>(this));
 	this->setInitialRho(boost::make_shared<InitialDensity>(this));
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
 }
 
-SodShockTube::~SodShockTube() {
+Riemann2D::~Riemann2D() {
 }
 
-double SodShockTube::InitialVelocity::value(const dealii::Point<2>& x,
+double Riemann2D::InitialVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {
-	return 0.0;
+
+	assert(component < 2);
+	if (component == 0) {
+	if (x(0) <= 1.0 && x(1) > 1.0) {
+		return 0.7276;
+	}
+	else
+		return 0;
+		}
+
+    if (component == 1) {
+
+	if (x(0) > 1.0 && x(1)<=1.0) {
+		return 0.7276;
+	}
+	else
+		return 0.0;
+		}
+
+		return 0.0;
 
 }
 
-double SodShockTube::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
+double Riemann2D::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
 
-			if (x(0) <= 12.5) {
-				return 8.0;
+			if (x(0) <= 1.0 && x(1)<=1.0) {
+				return 0.8;
 			}
-		 else {
-			return 1; }
+			if (x(0) > 1.0 && x(1)<=1.0) {
+				return 1.0;
+			}
+			if (x(0) <= 1.0 && x(1) > 1.0) {
+				return 1.0;
+			}
+			if (x(0) > 1.0 && x(1) > 1.0) {
+				return 0.5313;
+			}
+
+			else
+				return 0;
 
 
 
 }
 
-double SodShockTube::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
+double Riemann2D::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
 
-			if (x(0) <= 12.5) {
-				return 1.25;
-			}
-		 else {
-			return 1.0;}
+	if (x(0) <= 1.0 && x(1)<=1.0) {
+		return 0.8;
+	}
+	if (x(0) > 1.0 && x(1)<=1.0) {
+		return 1.0;
+	}
+	if (x(0) <= 1.0 && x(1) > 1.0) {
+		return 1.0;
+	}
+	if (x(0) > 1.0 && x(1) > 1.0) {
+		return 1.32825;
+	}
 
-
+	else
+		return 0;
 
 }
 
@@ -74,7 +111,7 @@ double SodShockTube::InitialTemperature::value(const dealii::Point<2>& x, const 
  * @short create triangulation for couette flow
  * @return shared pointer to a triangulation instance
  */
-boost::shared_ptr<Mesh<2> > SodShockTube::makeGrid() {
+boost::shared_ptr<Mesh<2> > Riemann2D::makeGrid() {
 	//Creation of the principal domain
 #ifdef WITH_TRILINOS_MPI
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >(
@@ -83,8 +120,8 @@ boost::shared_ptr<Mesh<2> > SodShockTube::makeGrid() {
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	const dealii::Point<2> left = {0.0,0.0};
-	const dealii::Point<2> right = {25.0,1.0};
-	const std::vector <unsigned int>& reps = {25,1};
+	const dealii::Point<2> right = {2.0,2.0};
+	const std::vector <unsigned int>& reps = {2,2};
 
 
 	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, reps, left, right, true);
@@ -104,7 +141,7 @@ boost::shared_ptr<Mesh<2> > SodShockTube::makeGrid() {
  * @return shared pointer to a vector of boundaries
  * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
  */
-boost::shared_ptr<BoundaryCollection<2> > SodShockTube::makeBoundaries() {
+boost::shared_ptr<BoundaryCollection<2> > Riemann2D::makeBoundaries() {
 
 	// make boundary description
 	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
@@ -116,7 +153,9 @@ boost::shared_ptr<BoundaryCollection<2> > SodShockTube::makeBoundaries() {
 	boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(1, zeroVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<PeriodicBoundary<2> >(2, 3, 1, getMesh()));
+			boost::make_shared<VelocityNeqBounceBack<2> >(2, zeroVelocity));
+	boundaries->addBoundary(
+			boost::make_shared<VelocityNeqBounceBack<2> >(3, zeroVelocity));
 
 
 	// Get the triangulation object (which belongs to the parent class).
