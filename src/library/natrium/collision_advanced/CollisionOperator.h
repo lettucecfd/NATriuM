@@ -103,7 +103,7 @@ public:
 
 	}
 
-	void collideAll(DistributionFunctions& f, distributed_vector& densities,
+	void collideAll(DistributionFunctions& f, DistributionFunctions& g, distributed_vector& densities,
 			vector<distributed_vector>& velocities, distributed_vector& temperature,
 			const dealii::IndexSet& locally_owned_dofs,
 			const bool inInitializationProcedure,
@@ -116,9 +116,14 @@ public:
 		T_collision<T_D, T_Q, T_equilibrium> collisionScheme;
 
 		std::array< double*, T_Q> f_raw;
+		std::array< double*, T_Q> g_raw;
 		int length;
 		for (size_t i = 0; i < T_Q; i++){
 			f.at(i).trilinos_vector().ExtractView(&f_raw[i], &length);
+		}
+
+		for (size_t i = 0; i < T_Q; i++){
+			g.at(i).trilinos_vector().ExtractView(&g_raw[i], &length);
 		}
 		double* rho_raw;
 		densities.trilinos_vector().ExtractView(&rho_raw, &length);
@@ -140,6 +145,11 @@ public:
 			for (int p = 0; p < T_Q; ++p) {
 				genData.fLocal[p] = f_raw[p][ii];
 			}
+
+			for (int p = 0; p < T_Q; ++p) {
+				genData.gLocal[p] = g_raw[p][ii];
+			}
+
 			//copyGlobalToLocalF<T_Q>(genData.fLocal, f, i); // done
 
 			//Calculate the local density and store it into the Parameter Handling System
@@ -157,7 +167,7 @@ public:
 			calculateVelocity<T_D, T_Q>(genData.fLocal, genData.velocity,
 					genData.density, genData); // TODO velocities for other stencils
 
-			genData.temperature = calculateTemperature<T_D,T_Q>(genData.fLocal, genData.velocity,
+			genData.temperature = calculateTemperature<T_D,T_Q>(genData.fLocal, genData.gLocal, genData.velocity,
 					genData.density, genData.temperature, genData);
 			T_raw[ii] = genData.temperature;
 
@@ -185,6 +195,7 @@ public:
 			//Finally copy the updated distribution function back to the global distribution function
 			for (int p = 0; p < T_Q; ++p) {
 				 f_raw[p][ii] = genData.fLocal[p];
+				 g_raw[p][ii] = genData.gLocal[p];
 			}
 
 		}

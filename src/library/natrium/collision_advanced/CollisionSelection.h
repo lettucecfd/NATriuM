@@ -48,7 +48,7 @@ namespace natrium {
 				typename collision_type<T_D, T_Q, equilibrium_type>::SpecificCollisionData\
 					specData(genData);\
 				CollisionOperator<T_D, T_Q, equilibrium_type, collision_type> collision_operator;\
-				collision_operator.collideAll(f, densities, velocities, temperature, locally_owned_dofs,\
+				collision_operator.collideAll(f, g, densities, velocities, temperature, locally_owned_dofs,\
 						inInitializationProcedure, genData, specData); \
 				has_collided += 1; \
 		}
@@ -111,7 +111,7 @@ inline void selectCollision<2>(SolverConfiguration& configuration,
 template<size_t T_D>
 inline void selectCollision(SolverConfiguration& configuration,
 		const ProblemDescription<T_D>& problemDescription,
-		DistributionFunctions& f, distributed_vector& densities,
+		DistributionFunctions& f, DistributionFunctions& g, distributed_vector& densities,
 		vector<distributed_vector>& velocities, distributed_vector& temperature,
 		const dealii::IndexSet& locally_owned_dofs, const double viscosity,
 		const double delta_t, const Stencil& stencil,
@@ -120,7 +120,7 @@ inline void selectCollision(SolverConfiguration& configuration,
 template<>
 inline void selectCollision<2>(SolverConfiguration& configuration,
 		const ProblemDescription<2>& problemDescription,
-		DistributionFunctions& f, distributed_vector& densities,
+		DistributionFunctions& f, DistributionFunctions& g, distributed_vector& densities,
 		vector<distributed_vector>& velocities, distributed_vector& temperature,
 		const dealii::IndexSet& locally_owned_dofs, const double viscosity,
 		const double delta_t, const Stencil& stencil,

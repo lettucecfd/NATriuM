@@ -39,7 +39,25 @@ public:
 			fLocal[p] -= 1. / genData.tau * (fLocal[p] - genData.feq[p]);
 		}
 	}
+
+		void relaxWithG(std::array<double, T_Q>& fLocal, std::array<double, T_Q>& gLocal,
+			GeneralCollisionData<T_D, T_Q>& genData,
+			SpecificCollisionData& specData) {
+		//Initialize the corresponding Equilibrium Distribution Function
+		T_equilibrium<T_D, T_Q> eq;
+
+		//Calculate the equilibrium and write the result to feq
+		eq.calc(genData.feq, genData);
+		eq.calc(genData.geq, genData);
+
+		//Relax every direction towards the equilibrium
+		for (int p = 0; p < T_Q; ++p) {
+			fLocal[p] -= 1. / genData.tau * (fLocal[p] - genData.feq[p]);
+			gLocal[p] -= 1. / genData.tau * (gLocal[p] - genData.geq[p]);
+		}
+	}
 };
+
 
 template<int T_D, int T_Q, template<int, int > class T_equilibrium>
 class Regularized {

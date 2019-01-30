@@ -14,6 +14,7 @@
 #include "../collision_advanced/CollisionSelection.h"
 #include "../collision_advanced/AuxiliaryCollisionFunctions.h"
 #include "../collision_advanced/Equilibria.h"
+#include "../smoothing/VmultLimiter.h"
 
 namespace natrium {
 
@@ -23,6 +24,8 @@ private:
 	/// macroscopic density
 	distributed_vector m_temperature;
 	distributed_vector m_tmpTemperature;
+    /// particle distribution functions for internal energy
+	DistributionFunctions m_g;
 
 public:
 	CompressibleCFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
@@ -42,7 +45,41 @@ public:
 		CFDSolverUtilities::applyWriteableDensity(writeable_temperature, m_temperature);
 		LOG(BASIC) << "Speed of Sound Square: " << this->m_stencil->getSpeedOfSoundSquare() << endl;
 
+		m_g.reinit(this->m_stencil->getQ(),
+				this->getAdvectionOperator()->getLocallyOwnedDofs(),
+				this->getAdvectionOperator()->getLocallyRelevantDofs(),
+				MPI_COMM_WORLD, (SEDG == configuration->getAdvectionScheme()));
+
 	}
+
+	
+void gStream() {
+
+
+
+	// no streaming in direction 0; begin with 1
+	distributed_block_vector& g = m_g.getFStream();
+	const distributed_sparse_block_matrix& systemMatrix =
+		this->getAdvectionOperator()->getSystemMatrix();
+
+	if (SEMI_LAGRANGIAN == this->getConfiguration()->getAdvectionScheme()) {
+
+		DistributionFunctions g_tmp(m_g);
+		systemMatrix.vmult(m_g.getFStream(), g_tmp.getFStream());
+		this->getAdvectionOperator()->applyBoundaryConditions(g_tmp, m_g, this->m_time);
+		/*distributed_block_vector f_tmp(f.n_blocks());
+		 reinitVector(f_tmp, f);
+		 f_tmp = f;
+		 systemMatrix.vmult(f, f_tmp);*/
+
+		//m_advectionOperator->applyBoundaryConditions( f_tmp, f,  m_time);
+		if (this->getConfiguration()->isVmultLimiter()) {
+			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+			VmultLimiter::apply(systemMatrix, m_g.getFStream(),
+					g_tmp.getFStream());
+		}
+	}
+}
 
 	void applyInitialTemperatures(
 			distributed_vector& initialTemperatures,
@@ -228,7 +265,7 @@ public:
 
 
 	// TODO member function collisionModel
-			selectCollision(*(this->m_configuration), *(this->m_problemDescription), this->m_f, writeable_rho, writeable_u, writeable_T,
+			selectCollision(*(this->m_configuration), *(this->m_problemDescription), this->m_f, m_g, writeable_rho, writeable_u, writeable_T,
 				this->m_advectionOperator->getLocallyOwnedDofs(), this->m_problemDescription->getViscosity(), delta_t, *(this->getStencil()), false);
 
 			 //perform collision
@@ -304,6 +341,7 @@ public:
 				this->secondOutput(this->m_i,false);
 				this->m_i++;
 				this->stream();
+				gStream();
 				this->filter();
 				this->collide();
 				for (size_t i = 0; i < this->m_dataProcessors.size(); i++) {
