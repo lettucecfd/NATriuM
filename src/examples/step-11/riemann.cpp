@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 		t_max = 5.0 / u0;
 	}
 	double scaling = sqrt(3) * u0 / Ma;
-	double viscosity = 0.001;//u0 * 1.0 / Re;
+    double viscosity = 0.0000001;//u0 * 1.0 / Re;
 
 	boost::shared_ptr<ProblemDescription<2> > riemann = boost::make_shared<
 			Riemann2D>(viscosity, parser.getArgument<int>("ref-level"), u0,
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
 
 	parser.applyToSolverConfiguration(*configuration);
 
-	configuration->setVmultLimiter(true);
+    configuration->setVmultLimiter(true);
 
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/Riemann2D";

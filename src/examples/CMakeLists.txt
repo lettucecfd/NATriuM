@@ -5,7 +5,7 @@
 add_subdirectory(step-1)
 add_subdirectory(step-2)
 #add_subdirectory(step-6)
-#add_subdirectory(step-grid-in)
+add_subdirectory(step-grid-in)
 #add_subdirectory(step-3DHill1)
 #add_subdirectory(static-droplet)
 #add_subdirectory(step-9)

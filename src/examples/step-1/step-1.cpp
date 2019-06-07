@@ -93,9 +93,9 @@ int main(int argc, char** argv) {
 		configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 		configuration->setCFL(CFL);
 
-		//configuration->setInitializationScheme(ITERATIVE);
-		//configuration->setIterativeInitializationNumberOfIterations(1000);
-		//configuration->setIterativeInitializationResidual(1e-15);
+      //  configuration->setInitializationScheme(ITERATIVE);
+        configuration->setIterativeInitializationNumberOfIterations(1000);
+        configuration->setIterativeInitializationResidual(1e-7);
 
 		configuration->setSimulationEndTime(10.0);
 
@@ -129,8 +129,8 @@ int main(int argc, char** argv) {
 				ones.block(i)(j) = 1;
 			}
 		}
-		solver.getAdvectionOperator()->getSystemMatrix().print(cout);
-		solver.getAdvectionOperator()->getSystemMatrix().vmult(result, ones);
+        //solver.getAdvectionOperator()->getSystemMatrix().print(cout);
+        //solver.getAdvectionOperator()->getSystemMatrix().vmult(result, ones);
 
 		result -= ones;
 		cout << "error: " << result.norm_sqr();
