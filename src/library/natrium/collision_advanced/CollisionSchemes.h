@@ -48,7 +48,7 @@ public:
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
-		eq.calc(genData.geq, genData);
+        calculateGeqFromFeq<T_D,T_Q>(genData.feq,genData.geq,genData);
 
 		//Relax every direction towards the equilibrium
 		for (int p = 0; p < T_Q; ++p) {

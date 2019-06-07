@@ -44,7 +44,7 @@ double Riemann2D::InitialVelocity::value(const dealii::Point<2>& x,
 	assert(component < 2);
 	if (component == 0) {
 	if (x(0) <= 1.0 && x(1) > 1.0) {
-		return 0.7276;
+        return 0.42008;
 	}
 	else
 		return 0;
@@ -53,7 +53,7 @@ double Riemann2D::InitialVelocity::value(const dealii::Point<2>& x,
     if (component == 1) {
 
 	if (x(0) > 1.0 && x(1)<=1.0) {
-		return 0.7276;
+        return 0.42008;
 	}
 	else
 		return 0.0;
@@ -88,7 +88,7 @@ double Riemann2D::InitialDensity::value(const dealii::Point<2>& x, const unsigne
 double Riemann2D::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
 
 	if (x(0) <= 1.0 && x(1)<=1.0) {
-		return 0.8;
+        return 1.25;
 	}
 	if (x(0) > 1.0 && x(1)<=1.0) {
 		return 1.0;
@@ -97,7 +97,7 @@ double Riemann2D::InitialTemperature::value(const dealii::Point<2>& x, const uns
 		return 1.0;
 	}
 	if (x(0) > 1.0 && x(1) > 1.0) {
-		return 1.32825;
+        return 0.7532956685;
 	}
 
 	else

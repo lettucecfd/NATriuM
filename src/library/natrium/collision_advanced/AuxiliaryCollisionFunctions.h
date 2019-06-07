@@ -116,7 +116,7 @@ struct GeneralCollisionData {
 	std::array<double, T_Q> fLocal = { };
 	// the local f is stored in this array
 	std::array<double, T_Q> feq = { };
-		// the local g is stored in this array
+        // the local g is stored in this array
 	std::array<double, T_Q> gLocal = { };
 	// the local g is stored in this array
 	std::array<double, T_Q> geq = { };
@@ -253,7 +253,9 @@ inline double calculateTemperature(const std::array<double, T_Q>& fLocal, const 
 			temperature += ((params.e[i][0]-velocity[0]) * (params.e[i][0]-velocity[0])+ (params.e[i][1]-velocity[1]) * (params.e[i][1]-velocity[1]))*fLocal[i]/params.cs2+gLocal[i];
 
 		}
-		temperature = temperature * 0.5 / (density);
+        double gamma = 1.4;
+        double C_v = 1./(gamma-1.0);
+        temperature = temperature * 0.5 / (density*C_v);
 return temperature;
 }
 
@@ -300,6 +302,18 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 		throw NotImplementedException(
 				"Force Type not implemented. Use Shifting Velocity instead.");
 	}
+}
+
+template<size_t T_D, size_t T_Q>
+inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, T_Q>& geq, const GeneralCollisionData<T_D,T_Q>& genData)
+{
+    for (int i = 0; i < T_Q; i++) {
+        double gamma = 1.4;
+        double C_v = 1. / (gamma - 1.0);
+        geq[i]=feq[i]*(genData.temperature)*(2.0*C_v-T_D);
+
+    }
+
 }
 
 } /* namespace natrium */

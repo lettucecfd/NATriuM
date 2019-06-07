@@ -188,7 +188,9 @@ public:
 
 			//Initialize an object of the desired collision scheme and run the relaxation process
 
-			collisionScheme.relax(genData.fLocal, genData, specData);
+           // collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData);
+            collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData);
+
 
 			//reApplyForces<T_Q>(fLocal); // TODO
 

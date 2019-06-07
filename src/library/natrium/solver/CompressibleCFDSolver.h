@@ -277,6 +277,7 @@ void gStream() {
 			CFDSolverUtilities::applyWriteableVelocity(writeable_u, this->m_velocity);
 			applyWriteableTemperature(writeable_T, m_temperature);
 			this->m_f.updateGhosted();
+            this->m_g.updateGhosted();
 
 		} catch (CollisionException& e) {
 			natrium_errorexit(e.what());
@@ -310,9 +311,13 @@ void gStream() {
         data.velocity = u;
         BGKEquilibrium<2,25> eq;
               eq.calc(feq, data);
+              double gamma = 1.4;
+              double C_v = 1. / (gamma - 1.0);
 			//m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
 			for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
 				this->m_f.at(j)(i) = feq[j];
+                // ONLY FOR 2D! (due to -2.0)
+                this->m_g.at(j)(i) = feq[j]*(data.temperature)*(2.0*C_v-2.0);
 			}
 		}
 
@@ -349,6 +354,7 @@ void gStream() {
 				}
 			}
 			this->output(this->m_i, true);
+            this->secondOutput(this->m_i,true);
 
 		// Finalize
 			if (is_MPI_rank_0()) {
