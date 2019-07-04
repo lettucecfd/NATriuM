@@ -49,8 +49,9 @@ int main(int argc, char** argv) {
 			"transformation or the grid in y-direction (<1)", 0);
 	parser.setArgument<int>("filter", "apply filtering", 0);
 	parser.setArgument<int>("filter-s", "parameter as filter", 32);
-	parser.setFlag("minion-brown",
-			"sets the problem up as the 'thin' shear-layer in the original work by Minion and Brown");
+    parser.setArgument<int>("vmult", "apply vMultLimiter", 0);
+    parser.setFlag("minion-brown",
+            "sets the problem up as the 'thin' shear-layer in the original work by Minion and Brown");
 	try {
 		parser.importOptions();
 	} catch (HelpMessageStop&) {
@@ -63,35 +64,17 @@ int main(int argc, char** argv) {
 
 	double perturbation = 0.05;
 	double kappa = 80;
-	double Ma = 0.04 / (1.0 / sqrt(3));
-	double Re;
-	double u0;
-	double t_max;
-	if (parser.hasArgument("minion-brown")) {
-		Re = 100;
-		u0 = 1.0;
-		t_max = 1 / u0;
-	} else {
-		Re = 100;
-		u0 = 0.04;
-		t_max = 5.0 / u0;
-	}
-	double scaling = sqrt(3) * u0 / Ma;
-    double viscosity = 0.0000001;//u0 * 1.0 / Re;
+    double u0 = 0.0;
+
+    double t_max=1.0;
+
+    double scaling = 1.0;
+    double viscosity = 0.0000001;
 
 	boost::shared_ptr<ProblemDescription<2> > riemann = boost::make_shared<
-			Riemann2D>(viscosity, parser.getArgument<int>("ref-level"), u0,
+            Riemann2D>(viscosity, parser.getArgument<int>("ref-level"), u0,
 			kappa, perturbation, parser.getArgument<double>("tx"),
 			parser.getArgument<double>("ty"));
-
-	// **** Grid properties ****
-	/*pout << "**** Grid properties ****" << endl;
-	 int noCellsInOneDir = p * pow(2, refinement_level + 1);
-	 pout << "Mesh resolution: " << noCellsInOneDir << "x" << noCellsInOneDir
-	 << endl;
-	 pout << "Number of grid points: " << pow(noCellsInOneDir, 2) << endl;
-	 pout << "-------------------------------------" << endl;
-	 */
 
 	// ========================================================================
 	// CONFIGURE SOLVER
@@ -116,13 +99,10 @@ int main(int argc, char** argv) {
 
 	parser.applyToSolverConfiguration(*configuration);
 
-    configuration->setVmultLimiter(true);
 
 	std::stringstream dirname;
 	dirname << getenv("NATRIUM_HOME") << "/Riemann2D";
-	if (parser.hasArgument("minion-brown")) {
-		dirname << "-MinionBrown";
-	}
+
 	dirname << "/N" << parser.getArgument<int>("ref-level") << "-p"
 			<< configuration->getSedgOrderOfFiniteElement() << "-sl"
 			<< static_cast<int>(configuration->getAdvectionScheme()) << "-coll"
@@ -130,7 +110,9 @@ int main(int argc, char** argv) {
 			<< static_cast<int>(configuration->getTimeIntegrator()) << "_"
 			<< static_cast<int>(configuration->getDealIntegrator()) << "-CFL"
 			<< configuration->getCFL() << "-reg" << static_cast<int>(configuration->getRegularizationScheme())<< "-scaling"
-			<< configuration->getStencilScaling();
+            << configuration->getStencilScaling() << "-suppP"
+            << configuration->getSupportPoints() << "-vMult"
+            << configuration->isVmultLimiter();
 	if (parser.getArgument<int>("filter") != 0) {
 		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"
 				<< parser.getArgument<int>("filter-s");
