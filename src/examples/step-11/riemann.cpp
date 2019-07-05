@@ -97,6 +97,9 @@ int main(int argc, char** argv) {
 	configuration->setExponentialFilterAlpha(36);
 	configuration->setExponentialFilterNc(4);
 
+    configuration->setVmultLimiter(bool(parser.getArgument<int>("vmult")));
+    pout << "VMultLimiter is " << configuration->isVmultLimiter() << endl;
+
 	parser.applyToSolverConfiguration(*configuration);
 
 
