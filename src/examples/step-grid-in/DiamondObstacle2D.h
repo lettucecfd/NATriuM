@@ -25,6 +25,38 @@ private:
 	size_t m_refinementLevel;
 public:
 
+	class InitialVelocity: public dealii::Function<2> {
+	private:
+		DiamondObstacle2D* m_flow;
+	public:
+		InitialVelocity(DiamondObstacle2D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
+	};
+
+	class InitialDensity: public dealii::Function<2> {
+	private:
+		DiamondObstacle2D* m_flow;
+	public:
+		InitialDensity(DiamondObstacle2D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
+
+
+	};
+
+	class InitialTemperature: public dealii::Function<2> {
+	private:
+		DiamondObstacle2D* m_flow;
+	public:
+		InitialTemperature(DiamondObstacle2D* flow) :
+				m_flow(flow) {
+		}
+		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
+	};
+
 	class InflowVelocity: public dealii::Function<2> {
 	private:
 		double m_averageU;
@@ -37,7 +69,8 @@ public:
 				const unsigned int component) const {
 			double H = 4.1;
 			if (component == 0) {
-				return 4 * m_averageU * x(1) * (H - x(1)) / (H * H);
+				//return 4 * m_averageU * x(1) * (H - x(1)) / (H * H);
+				return m_averageU;
 			}
 			return 0.0;
 		}
