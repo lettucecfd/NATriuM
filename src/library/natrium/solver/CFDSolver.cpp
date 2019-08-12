@@ -999,10 +999,10 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 			// Write vtu file
 
-			data_out.build_patches(
-					(m_configuration->getSedgOrderOfFiniteElement() == 1) ?
-							m_configuration->getSedgOrderOfFiniteElement() :
-							m_configuration->getSedgOrderOfFiniteElement() + 1);
+            data_out.build_patches(0);
+                   // (m_configuration->getSedgOrderOfFiniteElement() == 1) ?
+                   //         m_configuration->getSedgOrderOfFiniteElement() :
+                   //     m_configuration->getSedgOrderOfFiniteElement() + 1);
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)

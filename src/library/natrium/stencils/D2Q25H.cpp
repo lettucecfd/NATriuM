@@ -32,8 +32,8 @@ const size_t D2Q25H::Q = 25;
 D2Q25H::D2Q25H(double scaling) :
 		Stencil(2, 25, makeDirections(scaling), makeWeights(), Stencil_D2Q25H,
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
-				scaling/sqrt(3)), m_speedOfSoundSquare(
-				scaling * scaling/(3)), m_scaling(scaling) {
+                scaling/sqrt(3)), m_speedOfSoundSquare(
+                scaling * scaling/(3)), m_scaling(scaling) {
 } //constructor
 
 /// destructor
@@ -44,7 +44,7 @@ D2Q25H::~D2Q25H() {
 
 // make weights
 vector<double> D2Q25H::makeWeights() {
-	double r = (sqrt(5.)-sqrt(2.))/sqrt(3.);
+    double r = (sqrt(5.)-sqrt(2.))/sqrt(3.);
 
 	double w_0 = (-3-3*r*r*r*r+54*r*r)/(75*r*r);
 
@@ -64,8 +64,8 @@ vector<double> D2Q25H::makeWeights() {
 
 /// make directions
 vector<numeric_vector> D2Q25H::makeDirections(double scaling) {
-	const double c_m = scaling*sqrt(5.-sqrt(10.))/sqrt(3.);
-	const double c_n = sqrt(5.+sqrt(10.))*scaling/sqrt(3.);
+    const double c_m = scaling*sqrt(5.-sqrt(10.))/sqrt(3.);
+    const double c_n = sqrt(5.+sqrt(10.))*scaling/sqrt(3.);
 	const double directionsArray[][2] = { { 0.0, 0.0 }, { c_m, 0.0 }, { 0.0,
 			c_m }, { -c_m, 0.0 }, { 0.0, -c_m },
 			{ c_m, c_m }, { -c_m, c_m }, { -c_m, -c_m },

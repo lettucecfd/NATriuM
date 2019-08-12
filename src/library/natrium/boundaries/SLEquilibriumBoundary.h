@@ -9,6 +9,7 @@
 #define LIBRARY_NATRIUM_BOUNDARIES_SLEQUILIBRIUMBOUNDARY_H_
 
 #include "../utilities/BasicNames.h"
+#include "Boundary.h"
 #include "BoundaryFlags.h"
 
 namespace natrium {
@@ -50,27 +51,19 @@ public:
 
 
 
-	virtual BoundaryFlags getUpdateFlags() const {
-		BoundaryFlags flags = only_distributions;
-		if (boundary_u & Boundary<dim>::getPrescribedQuantities()) {
-			flags |= (boundary_rho | boundary_drho_dt);
-
-		}
-		if ((boundary_rho & Boundary<dim>::getPrescribedQuantities())
-				or (boundary_p & Boundary<dim>::getPrescribedQuantities())) {
-			flags |= (boundary_u | boundary_du_dt);
-		}
-		return flags;
-	}
+    virtual BoundaryFlags getUpdateFlags() const {
+        BoundaryFlags flags = only_distributions;
+        return flags;
+    }
 
 	virtual void calculateBoundaryValues(
 			FEBoundaryValues<dim>& fe_boundary_values, size_t q_point,
 			const LagrangianPathDestination& destination, double eps,
-			double t) {
-
+            double t) {
+/*
 		// get density
 		double rho;
-		if (boundary_p & Boundary<dim>::getBoundaryValues()) {
+        if (Boundary<dim>::getBoundaryValues()) {
 			// set time of this function object for time-dependent boundary conditions
 			Boundary<dim>::getBoundaryValues().getPressure().set_time(
 					t - eps);
@@ -89,7 +82,7 @@ public:
 
 		// get velocity
 		dealii::Tensor<1, dim> u;
-		if (boundary_u & Boundary<dim>::getPrescribedQuantities()) {
+        if (Boundary<dim>::getPrescribedQuantities()) {
 			// set time of this function object for time-dependent boundary conditions
 			Boundary<dim>::getBoundaryValues().getVelocity().set_time(
 					t - eps);
@@ -109,16 +102,21 @@ public:
 		}
 
 		// calculate BGK equilibrium
-		dealii::Tensor<1, dim> e_i = vectorToTensor<dim>(
-				fe_boundary_values.getData().m_stencil.getWeight(
-						destination.direction));
+        vector<numeric_vector> e_i(fe_boundary_values.getData().m_stencil.getDirections());
+
+        //dealii::Tensor<1, dim> e_i = vectorToTensor<dim>(
+        //		fe_boundary_values.getData().m_stencil.getWeight(
+        //				destination.direction));
+
 		double w_i = fe_boundary_values.getData().m_stencil.getWeight(
 				destination.direction);
 		double cs2 = fe_boundary_values.getData().m_cs2;
-		fe_boundary_values.getData().m_fnew.at(destination.direction)(
-				destination.index) = rho * w_i
-				* (1 + (e_i * u) / cs2 + pow(e_i * u, 2) / (2 * cs2 * cs2)
-						- (u * u) / (2 * cs2));
+*/
+
+fe_boundary_values.getData().m_fnew.at(destination.direction)(
+                destination.index) = 1.0; // rho * w_i;
+                //* (1 + (e_i * u) / cs2 + pow(e_i * u, 2) / (2 * cs2 * cs2)
+                //		- (u * u) / (2 * cs2));
 
 	}
 

@@ -13,6 +13,7 @@
 #include "deal.II/grid/grid_in.h"
 
 #include "natrium/boundaries/VelocityNeqBounceBack.h"
+#include "natrium/boundaries/SLEquilibriumBoundary.h"
 
 #include "natrium/utilities/Math.h"
 
@@ -79,24 +80,28 @@ boost::shared_ptr<BoundaryCollection<2> > DiamondObstacle2D::makeBoundaries() {
 	zeroVector[0]=m_meanInflowVelocity;
 	zeroVector[1]=0.0;
 
+    dealii::Tensor<1, 2> u;
+    u[0] = zeroVector(0);
+    u[1] = zeroVector(1);
+
 	dealii::Vector<double> oneVector(2);
 		oneVector[0]=m_meanInflowVelocity;
-		oneVector[1]=0.0;
+        oneVector[1]=1.0;
 	boost::shared_ptr<dealii::Function<2> > boundary_density = boost::make_shared<
 			dealii::ConstantFunction<2> > (1.0);
 	boost::shared_ptr<dealii::Function<2> > boundary_velocity = boost::make_shared<
 			InflowVelocity> (m_meanInflowVelocity);
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(15, oneVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(15, u));
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(16, oneVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(16, u));
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(17, oneVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(17, u));
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(18, oneVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(18, u));
 
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(19, zeroVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(19, u));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

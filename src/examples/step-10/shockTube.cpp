@@ -136,7 +136,8 @@ int main(int argc, char** argv) {
 			<< configuration->getCFL() << "-reg" << static_cast<int>(configuration->getRegularizationScheme())<< "-scaling"
             << configuration->getStencilScaling() << "-suppP"
             << configuration->getSupportPoints() << "-vMult"
-            << configuration->isVmultLimiter();
+            << configuration->isVmultLimiter() << "-visc"
+            << parser.getArgument<double>("visc");
 	if (parser.getArgument<int>("filter") != 0) {
 		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"
 				<< parser.getArgument<int>("filter-s");
