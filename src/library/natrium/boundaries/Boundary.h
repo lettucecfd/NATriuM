@@ -103,7 +103,7 @@ public:
 		return m_boundaryValues;
 	}
 
-	BoundaryFlags& getPrescribedQuantities()  {
+    BoundaryFlags& getPrescribedQuantities() const {
 		return m_boundaryValues.getPrescribedValues();
 	}
 
