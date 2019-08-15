@@ -45,19 +45,19 @@ double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2>& x,
 
     double return_value = 0.0;
     if(component==0){
-    if (x(0) <= 14.0)
+    if (x(0) <= 30.0)
     {
-        return_value= -1.2/sqrt(3.0)/1.34161490;
+        return_value= -0.84217047/sqrt(3.0)*sqrt(1.4*1.12799382);
     }
  else
     {
-    return_value=  -1.2/sqrt(3.0); }
+    return_value=  -1.2/sqrt(3.0)*sqrt(1.4); }
 
 
 
     }
-        double x_rel = x(0) - 18.0;
-        double y_rel = x(1) - 3.0;
+        double x_rel = x(0) - 40.0;
+        double y_rel = x(1) - 12.0;
         double r = sqrt(x_rel*x_rel+y_rel*y_rel);
         double sinalpha = y_rel/r;
         double cosalpha = x_rel/r;
@@ -66,12 +66,12 @@ double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2>& x,
     {
         if(component==0)
         {
-            return_value+=sqrt(1.4)*u_v*cosalpha*r*exp((1.0-r*r)/2.0);
+            return_value-=r*u_v*sinalpha*exp((1.0-r*r)/2.0);
         }
 
         if(component==1)
         {
-            return_value+=sqrt(1.4)*u_v*sinalpha*r*exp((1.0-r*r)/2.0);
+            return_value+=r*u_v*cosalpha*exp((1.0-r*r)/2.0);
         }
 
     }
@@ -89,11 +89,11 @@ double ShockVortexInteraction::InitialDensity::value(const dealii::Point<2>& x, 
 double return_value = 0.0;
 double Ma_v = 0.5;
 
-double x_rel = x(0) - 18.0;
-double y_rel = x(1) - 3.0;
+double x_rel = x(0) - 40.0;
+double y_rel = x(1) - 12.0;
 double r = sqrt(x_rel*x_rel+y_rel*y_rel);
 
-    if (x(0) <= 14.0)
+    if (x(0) <=30.0)
     {
         return_value= 1.34161490;
     }
@@ -103,7 +103,7 @@ double r = sqrt(x_rel*x_rel+y_rel*y_rel);
 
 if(r<=4.0)
 {
-    return_value = pow(1.-(1.4-1.)/2.*Ma_v*Ma_v*exp(1-r*r),(1./(1.4-1.)));
+    return_value = pow(1.-((1.4-1.)/2.*Ma_v*Ma_v*exp(1.0-r*r)),(1./(1.4-1.)));
 }
 
 
@@ -115,7 +115,7 @@ return return_value;
 
 double ShockVortexInteraction::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
 double return_value = 0.0;
-    if (x(0) <= 14.0)
+    if (x(0) <= 30.0)
     {
         return_value= 1.12799382;
     }
@@ -126,12 +126,12 @@ double return_value = 0.0;
 
     double Ma_v = 0.5;
 
-    double x_rel = x(0) - 18.0;
-    double y_rel = x(1) - 3.0;
+    double x_rel = x(0) - 40.0;
+    double y_rel = x(1) - 12.0;
     double r = sqrt(x_rel*x_rel+y_rel*y_rel);
     if(r<=4.0)
     {
-        return_value = (1.-(1.4-1.)/2.*Ma_v*Ma_v*exp(1-r*r));
+        return_value = (1.-(1.4-1.)/2.*Ma_v*Ma_v*exp(1.0-r*r));
     }
 
 
@@ -152,7 +152,7 @@ boost::shared_ptr<Mesh<2> > ShockVortexInteraction::makeGrid() {
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	const dealii::Point<2> left = {0.0,0.0};
-        const dealii::Point<2> right = {28.0,6.0};
+        const dealii::Point<2> right = {72.0,24.0};
     const std::vector <unsigned int>& reps = {1,1};
 
 
