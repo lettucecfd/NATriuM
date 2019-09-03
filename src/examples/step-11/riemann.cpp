@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
     double t_max=1.0;
 
     double scaling = 1.0;
-    double viscosity = 0.0000001;
+    double viscosity = 0.00001;
 
 	boost::shared_ptr<ProblemDescription<2> > riemann = boost::make_shared<
             Riemann2D>(viscosity, parser.getArgument<int>("ref-level"), u0,
@@ -115,7 +115,8 @@ int main(int argc, char** argv) {
 			<< configuration->getCFL() << "-reg" << static_cast<int>(configuration->getRegularizationScheme())<< "-scaling"
             << configuration->getStencilScaling() << "-suppP"
             << configuration->getSupportPoints() << "-vMult"
-            << configuration->isVmultLimiter();
+            << configuration->isVmultLimiter() << "-visc"
+            << viscosity;
 	if (parser.getArgument<int>("filter") != 0) {
 		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"
 				<< parser.getArgument<int>("filter-s");
