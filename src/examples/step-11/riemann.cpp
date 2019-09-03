@@ -69,7 +69,9 @@ int main(int argc, char** argv) {
     double t_max=1.0;
 
     double scaling = 1.0;
+
     double viscosity = 0.00001;
+
 
 	boost::shared_ptr<ProblemDescription<2> > riemann = boost::make_shared<
             Riemann2D>(viscosity, parser.getArgument<int>("ref-level"), u0,
