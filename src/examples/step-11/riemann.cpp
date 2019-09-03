@@ -96,8 +96,11 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(t_max);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-	configuration->setExponentialFilterAlpha(36);
-	configuration->setExponentialFilterNc(4);
+	configuration->setExponentialFilterAlpha(3);
+	configuration->setExponentialFilterNc(0.0);
+	configuration->setFiltering(true);
+	configuration->setFilteringScheme(EXPONENTIAL_FILTER);
+	configuration->setExponentialFilterS(parser.getArgument<int>("filter-s"));
 
     configuration->setVmultLimiter(bool(parser.getArgument<int>("vmult")));
     pout << "VMultLimiter is " << configuration->isVmultLimiter() << endl;

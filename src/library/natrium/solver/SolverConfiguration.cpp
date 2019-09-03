@@ -185,7 +185,7 @@ SolverConfiguration::SolverConfiguration() {
 					dealii::Patterns::Double(0, 1e10),
 					"The exponential filter is defined exp(-alpha * ((poly_degree + 1 -Nc) / (max_poly_degree + 1 -Nc)) ^ s");
 			declare_entry("Exponential Nc", "1",
-					dealii::Patterns::Integer(1, 50),
+					dealii::Patterns::Double(0, 50),
 					"First polynomial degree that is filtered in the exponential filter, Nc.");
 			declare_entry("Degree by component sums", "false",
 					dealii::Patterns::Bool(),
