@@ -1022,7 +1022,7 @@ public:
 		return s;
 	}
 
-	void setExponentialFilterNc(long int Nc) {
+	void setExponentialFilterNc(double Nc) {
 		enter_subsection("Filtering");
 		enter_subsection("Filter parameters");
 		try {

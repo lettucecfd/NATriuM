@@ -81,6 +81,26 @@ void gStream() {
 	}
 }
 
+void compressibleFilter() {
+
+// start timer
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Filter");
+
+	if (this->m_configuration->isFiltering()) {
+		if (this->m_i % this->m_configuration->getFilterInterval() == 0) {
+			for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
+				this->m_filter->applyFilter(*(this->m_advectionOperator)->getDoFHandler(),
+						this->m_f.at(i));
+				this->m_filter->applyFilter(*(this->m_advectionOperator)->getDoFHandler(),
+						m_g.at(i));
+			}
+		}
+		this->m_f.updateGhosted();
+		m_g.updateGhosted();
+	}
+
+}
+
 	void applyInitialTemperatures(
 			distributed_vector& initialTemperatures,
 			const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const {
@@ -347,7 +367,7 @@ void gStream() {
 				this->m_i++;
 				this->stream();
 				gStream();
-				this->filter();
+				compressibleFilter();
 				this->collide();
 				for (size_t i = 0; i < this->m_dataProcessors.size(); i++) {
 					this->m_dataProcessors.at(i)->apply();
