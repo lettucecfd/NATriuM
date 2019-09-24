@@ -71,11 +71,11 @@ int main(int argc, char** argv) {
 
     double scaling = 1.0;
 
-    //double viscosity = 0.00000104;
+    double viscosity = parser.getArgument<double>("visc");
 
 
 	boost::shared_ptr<ProblemDescription<2> > riemann = boost::make_shared<
-            Riemann2D>(parser.getArgument<double>("visc"), parser.getArgument<int>("ref-level"), u0,
+            Riemann2D>(viscosity, parser.getArgument<int>("ref-level"), u0,
 			kappa, perturbation, parser.getArgument<double>("tx"),
 			parser.getArgument<double>("ty"));
 
