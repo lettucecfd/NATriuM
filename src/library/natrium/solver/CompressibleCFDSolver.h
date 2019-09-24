@@ -23,7 +23,9 @@ class CompressibleCFDSolver: public CFDSolver<dim> {
 private:
 	/// macroscopic density
 	distributed_vector m_temperature;
-	distributed_vector m_tmpTemperature;
+    distributed_vector m_tmpTemperature;
+    distributed_vector m_maskShockSensor;
+
     /// particle distribution functions for internal energy
 	DistributionFunctions m_g;
 
@@ -37,6 +39,11 @@ public:
 				MPI_COMM_WORLD);
 		m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
 			MPI_COMM_WORLD);
+
+        m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                this->getAdvectionOperator()->getLocallyRelevantDofs(),
+                MPI_COMM_WORLD);
+
 		distributed_vector writeable_temperature;
 		// In this case, the density function fulfills the same purpose for the temperature
 		CFDSolverUtilities::getWriteableDensity(writeable_temperature, m_temperature,
@@ -198,6 +205,7 @@ void compressibleFilter() {
 				data_out.attach_dof_handler(*(this->m_advectionOperator)->getDoFHandler());
 				data_out.add_data_vector(this->m_density, "rho");
 				data_out.add_data_vector(m_temperature, "T");
+                data_out.add_data_vector(m_maskShockSensor, "shockSensor");
 				if (dim == 2) {
 					data_out.add_data_vector(this->m_velocity.at(0), "ux");
 					data_out.add_data_vector(this->m_velocity.at(1), "uy");
@@ -224,10 +232,10 @@ void compressibleFilter() {
 
 				// Write vtu file
 
-				data_out.build_patches(
-						(this->m_configuration->getSedgOrderOfFiniteElement() == 1) ?
-								this->m_configuration->getSedgOrderOfFiniteElement() :
-								this->m_configuration->getSedgOrderOfFiniteElement() + 1);
+                data_out.build_patches(
+                        (this->m_configuration->getSedgOrderOfFiniteElement() == 1) ?
+                                this->m_configuration->getSedgOrderOfFiniteElement() :
+                                this->m_configuration->getSedgOrderOfFiniteElement() + 1);
 				data_out.write_vtu(vtu_output);
 
 				// Write pvtu file (which is a master file for all the single vtu files)
@@ -256,7 +264,46 @@ void compressibleFilter() {
 			}
 		}
 
+    void applyShockSensor()  {
+        const unsigned int dofs_per_cell =
+                this->getAdvectionOperator()->getFe()->dofs_per_cell;
+        vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+        typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+                this->getAdvectionOperator()->getDoFHandler()->begin_active(), endc =
+                this->getAdvectionOperator()->getDoFHandler()->end();
+        for (; cell != endc; ++cell) {
+            if (cell->is_locally_owned()) {
+                cell->get_dof_indices(local_dof_indices);
+                double cell_average = 0.0;
 
+                for (size_t i = 0; i < dofs_per_cell; i++) {
+
+                    m_maskShockSensor(local_dof_indices.at(i)) = 0.0;
+                    cell_average += this->m_density(local_dof_indices.at(i))*m_temperature(local_dof_indices.at(i));
+
+                }
+                cell_average /= dofs_per_cell;
+                double sum_mse = 0.0;
+
+                for (size_t i = 0; i < dofs_per_cell; i++) {
+                    if ((this->m_density(local_dof_indices.at(i))*m_temperature(local_dof_indices.at(i))-cell_average)>sum_mse)
+                    sum_mse = ((this->m_density(local_dof_indices.at(i))*m_temperature(local_dof_indices.at(i)) - cell_average));
+                }
+                //sum_mse /= dofs_per_cell;
+
+                for (size_t i = 0; i < dofs_per_cell; i++)
+                {
+                    m_maskShockSensor(local_dof_indices.at(i)) = sum_mse;
+                }
+
+
+
+
+            } /* if is locally owned */
+        } /* for all cells */
+
+
+    }
 
 
 	void collide()  {
@@ -268,12 +315,16 @@ void compressibleFilter() {
 			std::vector<distributed_vector> writeable_u;
 			distributed_vector writeable_rho;
 			distributed_vector writeable_T;
+            distributed_vector writeable_mSS;
 			CFDSolverUtilities::getWriteableVelocity(writeable_u, this->m_velocity,
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
 			CFDSolverUtilities::getWriteableDensity(writeable_rho, this->m_density,
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
 			CFDSolverUtilities::getWriteableDensity(writeable_T, this->m_temperature,
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
+            CFDSolverUtilities::getWriteableDensity(writeable_mSS, m_maskShockSensor,
+                    this->getAdvectionOperator()->getLocallyOwnedDofs());
+
 
 			double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
 						*(this->getProblemDescription()->getMesh()),
@@ -285,7 +336,7 @@ void compressibleFilter() {
 
 
 	// TODO member function collisionModel
-			selectCollision(*(this->m_configuration), *(this->m_problemDescription), this->m_f, m_g, writeable_rho, writeable_u, writeable_T,
+            selectCollision(*(this->m_configuration), *(this->m_problemDescription), this->m_f, m_g, writeable_rho, writeable_u, writeable_T, writeable_mSS,
 				this->m_advectionOperator->getLocallyOwnedDofs(), this->m_problemDescription->getViscosity(), delta_t, *(this->getStencil()), false);
 
 			 //perform collision
@@ -353,37 +404,38 @@ void compressibleFilter() {
 
 	}
 
-	void run()
-		{
-			this->m_i = this->m_iterationStart;
-			initializeDistributions();
-			collide();
-			while (true) {
-				if (this->stopConditionMet()) {
-					break;
-				}
-				this->output(this->m_i);
-				this->secondOutput(this->m_i,false);
-				this->m_i++;
-				this->stream();
-				gStream();
-				compressibleFilter();
-				this->collide();
-				for (size_t i = 0; i < this->m_dataProcessors.size(); i++) {
-					this->m_dataProcessors.at(i)->apply();
-				}
-			}
-			this->output(this->m_i, true);
-            this->secondOutput(this->m_i,true);
+    void run()
+    {
+        this->m_i = this->m_iterationStart;
+        initializeDistributions();
+        collide();
+        while (true) {
+            if (this->stopConditionMet()) {
+                break;
+            }
+            applyShockSensor();
+            this->output(this->m_i);
+            this->secondOutput(this->m_i,false);
+            this->m_i++;
+            this->stream();
+            gStream();
+            compressibleFilter();
+            this->collide();
+            for (size_t i = 0; i < this->m_dataProcessors.size(); i++) {
+                this->m_dataProcessors.at(i)->apply();
+            }
+        }
+        this->output(this->m_i, true);
+        this->secondOutput(this->m_i,true);
 
-		// Finalize
-			if (is_MPI_rank_0()) {
-				Timing::getTimer().print_summary();
-			}
-			LOG(BASIC) << "NATriuM run complete." << endl;
-			LOG(BASIC) << "Summary: " << endl;
-			LOG(BASIC) << Timing::getOutStream().str() << endl;
-		}
+        // Finalize
+        if (is_MPI_rank_0()) {
+            Timing::getTimer().print_summary();
+        }
+        LOG(BASIC) << "NATriuM run complete." << endl;
+        LOG(BASIC) << "Summary: " << endl;
+        LOG(BASIC) << Timing::getOutStream().str() << endl;
+    }
 
 
 

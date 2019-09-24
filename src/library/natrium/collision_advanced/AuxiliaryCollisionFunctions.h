@@ -90,6 +90,14 @@ inline double calculateTauFromNuAndGamma(double viscosity, double cs2,
 	return tau;
 }
 
+// Apply sutherland's law of temperature dependent viscosity
+inline double calculateTauFromNuAndT(double viscosity, double cs2,
+        double timeStepSize, double T) {
+    double tau;
+    tau = (viscosity)*sqrt(T) / (timeStepSize * cs2) + 0.5;
+    return tau;
+}
+
 template<int T_Q>
 inline void copyGlobalToLocalF(std::array<double, T_Q>& fLocal,
 		const DistributionFunctions& f, const size_t i) {
@@ -123,6 +131,8 @@ struct GeneralCollisionData {
 
 	double density = 0.0;
 	double temperature = 1.0;
+    double maskShockSensor = 0.0;
+
 	std::array<double, T_D> velocity = { };
 	//scaling of the calculation. All parameters are unscaled during the calculation. The macroscopic velocity has to be scaled at the end of the collision step
 	double scaling = 0.0;
