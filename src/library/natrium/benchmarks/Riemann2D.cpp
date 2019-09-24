@@ -43,7 +43,7 @@ double Riemann2D::InitialVelocity::value(const dealii::Point<2>& x,
 
 	assert(component < 2);
 	if (component == 0) {
-	if (x(0) <= 1.0 && x(1) > 1.0) {
+	if (x(0) <= 12.5 && x(1) > 12.5) {
         return 0.42008;
 	}
 	else
@@ -52,7 +52,7 @@ double Riemann2D::InitialVelocity::value(const dealii::Point<2>& x,
 
     if (component == 1) {
 
-	if (x(0) > 1.0 && x(1)<=1.0) {
+	if (x(0) > 12.5 && x(1)<=12.5) {
         return 0.42008;
 	}
 	else
@@ -65,16 +65,16 @@ double Riemann2D::InitialVelocity::value(const dealii::Point<2>& x,
 
 double Riemann2D::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
 
-			if (x(0) <= 1.0 && x(1)<=1.0) {
+			if (x(0) <= 12.5 && x(1)<=12.5) {
 				return 0.8;
 			}
-			if (x(0) > 1.0 && x(1)<=1.0) {
+			if (x(0) > 12.5 && x(1)<=12.5) {
 				return 1.0;
 			}
-			if (x(0) <= 1.0 && x(1) > 1.0) {
+			if (x(0) <= 12.5 && x(1) > 12.5) {
 				return 1.0;
 			}
-			if (x(0) > 1.0 && x(1) > 1.0) {
+			if (x(0) > 12.5 && x(1) > 12.5) {
 				return 0.5313;
 			}
 
@@ -87,16 +87,16 @@ double Riemann2D::InitialDensity::value(const dealii::Point<2>& x, const unsigne
 
 double Riemann2D::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
 
-	if (x(0) <= 1.0 && x(1)<=1.0) {
+	if (x(0) <= 12.5 && x(1)<=12.5) {
         return 1.25;
 	}
-	if (x(0) > 1.0 && x(1)<=1.0) {
+	if (x(0) > 12.5 && x(1)<=12.5) {
 		return 1.0;
 	}
-	if (x(0) <= 1.0 && x(1) > 1.0) {
+	if (x(0) <= 12.5 && x(1) > 12.5) {
 		return 1.0;
 	}
-	if (x(0) > 1.0 && x(1) > 1.0) {
+	if (x(0) > 12.5 && x(1) > 12.5) {
         return 0.7532956685;
 	}
 
@@ -120,8 +120,8 @@ boost::shared_ptr<Mesh<2> > Riemann2D::makeGrid() {
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	const dealii::Point<2> left = {0.0,0.0};
-	const dealii::Point<2> right = {2.0,2.0};
-	const std::vector <unsigned int>& reps = {2,2};
+	const dealii::Point<2> right = {25.0,25.0};
+	const std::vector <unsigned int>& reps = {25,25};
 
 
 	dealii::GridGenerator::subdivided_hyper_rectangle(*rect, reps, left, right, true);
