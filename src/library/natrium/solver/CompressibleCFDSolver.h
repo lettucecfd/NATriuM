@@ -276,9 +276,13 @@ void compressibleFilter() {
                 cell->get_dof_indices(local_dof_indices);
                 double cell_average = 0.0;
 
+                distributed_vector writeable_Mask;
+                CFDSolverUtilities::getWriteableDensity(writeable_Mask, m_maskShockSensor,
+                					this->getAdvectionOperator()->getLocallyOwnedDofs());
+
                 for (size_t i = 0; i < dofs_per_cell; i++) {
 
-                    m_maskShockSensor(local_dof_indices.at(i)) = 0.0;
+                	writeable_Mask(local_dof_indices.at(i)) = 0.0;
                     cell_average += this->m_density(local_dof_indices.at(i))*m_temperature(local_dof_indices.at(i));
 
                 }
@@ -291,10 +295,17 @@ void compressibleFilter() {
                 }
                 //sum_mse /= dofs_per_cell;
 
+
+
+                CFDSolverUtilities::getWriteableDensity(writeable_Mask, m_maskShockSensor,
+                					this->getAdvectionOperator()->getLocallyOwnedDofs());
+
                 for (size_t i = 0; i < dofs_per_cell; i++)
                 {
-                    m_maskShockSensor(local_dof_indices.at(i)) = sum_mse;
+                    writeable_Mask(local_dof_indices.at(i)) = sum_mse;
                 }
+
+                CFDSolverUtilities::applyWriteableDensity(writeable_Mask, m_maskShockSensor);
 
 
 
