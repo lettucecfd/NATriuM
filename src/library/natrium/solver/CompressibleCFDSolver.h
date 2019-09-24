@@ -424,7 +424,7 @@ void compressibleFilter() {
             if (this->stopConditionMet()) {
                 break;
             }
-            applyShockSensor();
+            //applyShockSensor();
             this->output(this->m_i);
             this->secondOutput(this->m_i,false);
             this->m_i++;

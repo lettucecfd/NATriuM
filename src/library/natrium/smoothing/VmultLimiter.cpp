@@ -50,6 +50,8 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 		for (dealii::TrilinosWrappers::types::int_type j = 0; j < num_entries; ++j){
 			//global column index
 			glob_j = M.GCID(indices[j]);
+			if (fabs(glob_j-glob_i)>100)
+				goto theveryend;
 			if (fabs(values[j]) > 1e-12){
 				if (source(glob_j) > max){
 					max = source(glob_j);
@@ -68,6 +70,9 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 		} else if (target_i < min){
 			target(glob_i) = min;
 		}
+
+		theveryend:;
+
 	}
 
 }
