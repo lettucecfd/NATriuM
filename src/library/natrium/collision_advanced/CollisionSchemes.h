@@ -50,10 +50,19 @@ public:
 		eq.calc(genData.feq, genData);
         calculateGeqFromFeq<T_D,T_Q>(genData.feq,genData.geq,genData);
 
+        double sutherland_tau = (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
+        double energy_tau=genData.tau;
+
+        //if(genData.maskShockSensor>0.5)
+        //{
+            sutherland_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*sutherland_tau;
+            energy_tau=sutherland_tau;
+        //}
+
 		//Relax every direction towards the equilibrium
 		for (int p = 0; p < T_Q; ++p) {
-			fLocal[p] -= 1. / genData.tau * (fLocal[p] - genData.feq[p]);
-			gLocal[p] -= 1. / genData.tau * (gLocal[p] - genData.geq[p]);
+            fLocal[p] -= 1. / sutherland_tau * (fLocal[p] - genData.feq[p]);
+            gLocal[p] -= 1. / energy_tau * (gLocal[p] - genData.geq[p]);
 		}
 	}
 };

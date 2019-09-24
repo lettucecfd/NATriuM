@@ -104,7 +104,7 @@ public:
 	}
 
 	void collideAll(DistributionFunctions& f, DistributionFunctions& g, distributed_vector& densities,
-			vector<distributed_vector>& velocities, distributed_vector& temperature,
+            vector<distributed_vector>& velocities, distributed_vector& temperature, distributed_vector& maskShockSensor,
 			const dealii::IndexSet& locally_owned_dofs,
 			const bool inInitializationProcedure,
 			GeneralCollisionData<T_D, T_Q>& genData,
@@ -134,6 +134,9 @@ public:
 
 		double* T_raw;
 				temperature.trilinos_vector().ExtractView(&T_raw, &length);
+
+        double* mSS_raw;
+                maskShockSensor.trilinos_vector().ExtractView(&mSS_raw, &length);
 
 
 #pragma omp simd
@@ -185,6 +188,9 @@ public:
 					genData.velocity[j] = u_raw[j][ii] / genData.scaling;
 				}
 			}
+
+            //Store the ShockSensorValue
+            genData.maskShockSensor = mSS_raw[ii];
 
 			//Initialize an object of the desired collision scheme and run the relaxation process
 

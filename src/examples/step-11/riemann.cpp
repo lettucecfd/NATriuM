@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
 
     double scaling = 1.0;
 
-    double viscosity = 0.00001;
+    double viscosity = 0.00000104;
 
 
 	boost::shared_ptr<ProblemDescription<2> > riemann = boost::make_shared<
@@ -96,9 +96,9 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(t_max);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-	configuration->setExponentialFilterAlpha(3);
-	configuration->setExponentialFilterNc(0.0);
-	configuration->setFiltering(true);
+    configuration->setExponentialFilterAlpha(36);
+    configuration->setExponentialFilterNc(1.0);
+    configuration->setFiltering(false);
 	configuration->setFilteringScheme(EXPONENTIAL_FILTER);
 	configuration->setExponentialFilterS(parser.getArgument<int>("filter-s"));
 
