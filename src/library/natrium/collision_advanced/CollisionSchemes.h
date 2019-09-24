@@ -55,8 +55,8 @@ public:
 
         //if(genData.maskShockSensor>0.5)
         //{
-            sutherland_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*sutherland_tau;
-            energy_tau=sutherland_tau;
+            //sutherland_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*sutherland_tau;
+            //energy_tau=sutherland_tau;
         //}
 
 		//Relax every direction towards the equilibrium
