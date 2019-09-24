@@ -50,6 +50,7 @@ int main(int argc, char** argv) {
 	parser.setArgument<int>("filter", "apply filtering", 0);
 	parser.setArgument<int>("filter-s", "parameter as filter", 32);
     parser.setArgument<int>("vmult", "apply vMultLimiter", 0);
+    parser.setArgument<double>("visc","viscosity of the fluid",0.000001);
     parser.setFlag("minion-brown",
             "sets the problem up as the 'thin' shear-layer in the original work by Minion and Brown");
 	try {
@@ -70,11 +71,11 @@ int main(int argc, char** argv) {
 
     double scaling = 1.0;
 
-    double viscosity = 0.00000104;
+    //double viscosity = 0.00000104;
 
 
 	boost::shared_ptr<ProblemDescription<2> > riemann = boost::make_shared<
-            Riemann2D>(viscosity, parser.getArgument<int>("ref-level"), u0,
+            Riemann2D>(parser.getArgument<double>("visc"), parser.getArgument<int>("ref-level"), u0,
 			kappa, perturbation, parser.getArgument<double>("tx"),
 			parser.getArgument<double>("ty"));
 
