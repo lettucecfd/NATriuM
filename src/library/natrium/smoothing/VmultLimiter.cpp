@@ -31,12 +31,13 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 	double *values;
 	int *indices;
 	int num_entries;
-	int glob_i;
+    int glob_i;
 	int glob_j;
 	double target_i;
 	double max;
 	double min;
-    dealii::TrilinosWrappers::MPI::Vector local_one;
+    dealii::TrilinosWrappers::MPI::Vector local_one(source);
+
     local_one.import_nonlocal_data_for_fe(matrix,source);
 	for (int i = 0; i < M.NumMyRows(); ++i){
 		M.ExtractMyRowView(i, num_entries, values, indices);
