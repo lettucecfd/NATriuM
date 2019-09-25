@@ -36,6 +36,8 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 	double target_i;
 	double max;
 	double min;
+    dealii::TrilinosWrappers::MPI::Vector local_one;
+    local_one.import_nonlocal_data_for_fe(matrix,source);
 	for (int i = 0; i < M.NumMyRows(); ++i){
 		M.ExtractMyRowView(i, num_entries, values, indices);
 		if (num_entries == 0){
@@ -50,14 +52,15 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 		for (dealii::TrilinosWrappers::types::int_type j = 0; j < num_entries; ++j){
 			//global column index
 			glob_j = M.GCID(indices[j]);
-			if (not source.in_local_range(glob_j))
-				goto theveryend;
+            //if (not local_one.in_local_range(glob_j))
+             //   cout << "Problem with" << glob_j << " num_entries: " << num_entries << endl;
+            //	goto theveryend;
 			if (fabs(values[j]) > 1e-12){
-				if (source(glob_j) > max){
-					max = source(glob_j);
+                if (local_one(glob_j) > max){
+                    max = local_one(glob_j);
 				}
-				if (source(glob_j) < min){
-					min = source(glob_j);
+                if (local_one(glob_j) < min){
+                    min = local_one(glob_j);
 				}
 				if ((target_i <= max) and (target_i >= min)){
 					break;
