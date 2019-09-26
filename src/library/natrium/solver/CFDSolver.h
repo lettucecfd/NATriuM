@@ -135,6 +135,8 @@ protected:
 	// starting time
 	time_t m_tstart;
 
+
+
 	// residuum
 	double m_residuumDensity;
 	double m_residuumVelocity;
@@ -150,6 +152,8 @@ protected:
 	/// gives the possibility for Benchmark instances to add the analytic solution to output
 	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>&) {
 	}
+
+    distributed_vector m_maskShockSensor;
 
 public:
 

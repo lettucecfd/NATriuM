@@ -28,10 +28,10 @@ public:
 
 	static void apply(const dealii::TrilinosWrappers::BlockSparseMatrix& matrix,
 			dealii::TrilinosWrappers::MPI::BlockVector& target,
-			const dealii::TrilinosWrappers::MPI::BlockVector& source);
+			const dealii::TrilinosWrappers::MPI::BlockVector& source, distributed_vector& shockSensor);
 	static void apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 			dealii::TrilinosWrappers::MPI::Vector& target,
-			const dealii::TrilinosWrappers::MPI::Vector& source);
+			const dealii::TrilinosWrappers::MPI::Vector& source, distributed_vector& shockSensor);
 
 };
 

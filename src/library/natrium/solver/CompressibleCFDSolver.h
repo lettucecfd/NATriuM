@@ -24,7 +24,7 @@ private:
 	/// macroscopic density
 	distributed_vector m_temperature;
     distributed_vector m_tmpTemperature;
-    distributed_vector m_maskShockSensor;
+
 
     /// particle distribution functions for internal energy
 	DistributionFunctions m_g;
@@ -40,7 +40,7 @@ public:
 		m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
 			MPI_COMM_WORLD);
 
-        m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+		this->m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
                 this->getAdvectionOperator()->getLocallyRelevantDofs(),
                 MPI_COMM_WORLD);
 
@@ -81,9 +81,14 @@ void gStream() {
 
 		//m_advectionOperator->applyBoundaryConditions( f_tmp, f,  m_time);
 		if (this->getConfiguration()->isVmultLimiter()) {
+            distributed_vector writeable_Mask;
+            CFDSolverUtilities::getWriteableDensity(writeable_Mask, this->m_maskShockSensor,
+            					this->getAdvectionOperator()->getLocallyOwnedDofs());
 			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+			writeable_Mask=0.0;
 			VmultLimiter::apply(systemMatrix, m_g.getFStream(),
-					g_tmp.getFStream());
+					g_tmp.getFStream(),writeable_Mask);
+            CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
 		}
 	}
 }
@@ -205,7 +210,7 @@ void compressibleFilter() {
 				data_out.attach_dof_handler(*(this->m_advectionOperator)->getDoFHandler());
 				data_out.add_data_vector(this->m_density, "rho");
 				data_out.add_data_vector(m_temperature, "T");
-                data_out.add_data_vector(m_maskShockSensor, "shockSensor");
+                data_out.add_data_vector(this->m_maskShockSensor, "shockSensor");
 				if (dim == 2) {
 					data_out.add_data_vector(this->m_velocity.at(0), "ux");
 					data_out.add_data_vector(this->m_velocity.at(1), "uy");
@@ -277,7 +282,7 @@ void compressibleFilter() {
                 double cell_average = 0.0;
 
                 distributed_vector writeable_Mask;
-                CFDSolverUtilities::getWriteableDensity(writeable_Mask, m_maskShockSensor,
+                CFDSolverUtilities::getWriteableDensity(writeable_Mask, this->m_maskShockSensor,
                 					this->getAdvectionOperator()->getLocallyOwnedDofs());
 
                 for (size_t i = 0; i < dofs_per_cell; i++) {
@@ -297,7 +302,7 @@ void compressibleFilter() {
 
 
 
-                CFDSolverUtilities::getWriteableDensity(writeable_Mask, m_maskShockSensor,
+                CFDSolverUtilities::getWriteableDensity(writeable_Mask, this->m_maskShockSensor,
                 					this->getAdvectionOperator()->getLocallyOwnedDofs());
 
                 for (size_t i = 0; i < dofs_per_cell; i++)
@@ -305,7 +310,7 @@ void compressibleFilter() {
                     writeable_Mask(local_dof_indices.at(i)) = sum_mse;
                 }
 
-                CFDSolverUtilities::applyWriteableDensity(writeable_Mask, m_maskShockSensor);
+                CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
 
 
 
@@ -333,7 +338,7 @@ void compressibleFilter() {
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
 			CFDSolverUtilities::getWriteableDensity(writeable_T, this->m_temperature,
 					this->getAdvectionOperator()->getLocallyOwnedDofs());
-            CFDSolverUtilities::getWriteableDensity(writeable_mSS, m_maskShockSensor,
+            CFDSolverUtilities::getWriteableDensity(writeable_mSS, this->m_maskShockSensor,
                     this->getAdvectionOperator()->getLocallyOwnedDofs());
 
 
