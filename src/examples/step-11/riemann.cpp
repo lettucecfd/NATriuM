@@ -99,8 +99,8 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(t_max);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-    configuration->setExponentialFilterAlpha(36);
-    configuration->setExponentialFilterNc(0);
+    configuration->setExponentialFilterAlpha(parser.getArgument<int>("filter-alpha"));
+    configuration->setExponentialFilterNc(parser.getArgument<int>("filter-nc"));
     configuration->setFiltering(true);
 	configuration->setFilteringScheme(EXPONENTIAL_FILTER);
 	configuration->setExponentialFilterS(parser.getArgument<int>("filter-s"));
