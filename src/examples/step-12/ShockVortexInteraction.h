@@ -100,7 +100,7 @@ private:
 		}
 		double trans(const double y, double trafo) const {
 
-			return 1.0/(4.0*M_PI)*(trafo * sin( 4*M_PI*y) + 4*M_PI*y);
+            return 36./(M_PI)*(trafo * sin(M_PI/36.*(y+6.0)) + M_PI/36.*y);
 		}
 		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
 			return dealii::Point<2>(trans(in(0),m_tX), trans(in(1),m_tY));
