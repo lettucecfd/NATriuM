@@ -41,7 +41,7 @@ SemiLagrangian<dim>::SemiLagrangian(ProblemDescription<dim>& problem,
 		SupportPointsName points_name, boost::shared_ptr<Stencil> stencil,
 		double delta_t) :
 		AdvectionOperator<dim>(problem, orderOfFiniteElement, quad_name,
-				points_name, stencil, delta_t, false), m_boundaryHandler(*this) {
+				points_name, stencil, delta_t, true), m_boundaryHandler(*this) {
 
 	m_boundaryHandler.setTimeStep(delta_t);
 
