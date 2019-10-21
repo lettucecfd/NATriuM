@@ -49,6 +49,8 @@ int main(int argc, char** argv) {
 			"transformation or the grid in y-direction (<1)", 0);
 	parser.setArgument<int>("filter", "apply filtering", 0);
 	parser.setArgument<int>("filter-s", "parameter as filter", 32);
+	parser.setArgument<int>("filter-nc", "parameter as filter", 4);
+	parser.setArgument<int>("filter-alpha", "parameter as filter", 36);
     parser.setArgument<int>("vmult", "apply vMultLimiter", 0);
     parser.setArgument<double>("visc","viscosity of the fluid",0.000001);
     parser.setFlag("minion-brown",
@@ -98,8 +100,8 @@ int main(int argc, char** argv) {
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     configuration->setExponentialFilterAlpha(36);
-    configuration->setExponentialFilterNc(1.0);
-    configuration->setFiltering(false);
+    configuration->setExponentialFilterNc(0);
+    configuration->setFiltering(true);
 	configuration->setFilteringScheme(EXPONENTIAL_FILTER);
 	configuration->setExponentialFilterS(parser.getArgument<int>("filter-s"));
 
@@ -125,7 +127,7 @@ int main(int argc, char** argv) {
             << viscosity;
 	if (parser.getArgument<int>("filter") != 0) {
 		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"
-				<< parser.getArgument<int>("filter-s");
+				<< parser.getArgument<int>("filter-s") << "-Nc" << configuration->getExponentialFilterNc() << "-Alpha" << configuration->getExponentialFilterAlpha();
 	}
 	if ((parser.getArgument<double>("tx") != 0)
 			or (parser.getArgument<double>("ty") != 0)) {
