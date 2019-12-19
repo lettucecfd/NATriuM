@@ -164,3 +164,4 @@ boost::shared_ptr<BoundaryCollection<2> > Riemann2D::makeBoundaries() {
 	return boundaries;
 }
 } /* namespace natrium */
+

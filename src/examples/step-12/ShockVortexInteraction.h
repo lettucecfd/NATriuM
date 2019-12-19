@@ -83,9 +83,9 @@ public:
 	virtual void transform(Mesh<2>& mesh){
 		dealii::GridTools::transform(
 						UnstructuredGridFunc(m_trafoX, m_trafoY), mesh);
-		std::ofstream out_file("/tmp/grid_out.eps");
-		dealii::GridOut().write_eps(*getMesh(), out_file);
-		out_file.close();
+		//std::ofstream out_file("/tmp/grid_out.eps");
+		//dealii::GridOut().write_eps(*getMesh(), out_file);
+		//out_file.close();
 	}
 	virtual bool isCartesian(){
 		return true;
@@ -100,7 +100,7 @@ private:
 		}
 		double trans(const double y, double trafo) const {
 
-            return 36./(M_PI)*(trafo * sin(M_PI/36.*(y+6.0)) + M_PI/36.*y);
+            return 30./(M_PI)*(trafo * sin(M_PI/30.*(y)) + M_PI/30.*y);
 		}
 		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
 			return dealii::Point<2>(trans(in(0),m_tX), trans(in(1),m_tY));

@@ -41,17 +41,17 @@ ShockVortexInteraction::~ShockVortexInteraction() {
 double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2>& x,
         const unsigned int component) const {
 
-    double u_v = 0.5/sqrt(3.0)*sqrt(2./1.4);
+    double u_v = 0.25/sqrt(3.0)*sqrt(1.4);
 
     double return_value = 0.0;
     if(component==0){
     if (x(0) <= 30.0)
     {
-        return_value= -0.84217047/sqrt(3.0)*sqrt(2./1.4*1.12799382);
+        return_value= -0.84217047/sqrt(3.0)*sqrt(1.4*1.12799382);
     }
  else
     {
-    return_value= -1.2/sqrt(3.0)*sqrt(2./1.4); }
+    return_value= -1.2/sqrt(3.0)*sqrt(1.4); }
 
 
 
@@ -87,7 +87,7 @@ return return_value;
 
 double ShockVortexInteraction::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
 double return_value = 0.0;
-double Ma_v = 0.5;
+double Ma_v = 0.25;
 
 double x_rel = x(0) - 34.0;
 double y_rel = x(1) - 12.0;
@@ -126,7 +126,7 @@ double return_value = 0.0;
     return_value= 1.0; }
 
 
-    double Ma_v = 0.5;
+    double Ma_v = 0.25;
 
     double x_rel = x(0) - 34.0;
     double y_rel = x(1) - 12.0;
@@ -154,7 +154,7 @@ boost::shared_ptr<Mesh<2> > ShockVortexInteraction::makeGrid() {
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	const dealii::Point<2> left = {0.0,0.0};
-        const dealii::Point<2> right = {72.0,24.0};
+        const dealii::Point<2> right = {60.0,24.0};
     const std::vector <unsigned int>& reps = {1,1};
 
 

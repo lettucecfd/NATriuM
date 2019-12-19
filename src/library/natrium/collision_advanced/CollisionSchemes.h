@@ -50,7 +50,7 @@ public:
 		eq.calc(genData.feq, genData);
         calculateGeqFromFeq<T_D,T_Q>(genData.feq,genData.geq,genData);
 
-        double sutherland_tau = (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
+        double sutherland_tau = (genData.tau-0.5)/1.0+0.5;
         double energy_tau=genData.tau;
 
         //if(genData.maskShockSensor>0.5)
