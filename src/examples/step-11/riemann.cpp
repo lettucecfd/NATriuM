@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     configuration->setExponentialFilterAlpha(parser.getArgument<int>("filter-alpha"));
     configuration->setExponentialFilterNc(parser.getArgument<int>("filter-nc"));
-    configuration->setFiltering(true);
+    configuration->setFiltering(false);
 	configuration->setFilteringScheme(EXPONENTIAL_FILTER);
 	configuration->setExponentialFilterS(parser.getArgument<int>("filter-s"));
 
