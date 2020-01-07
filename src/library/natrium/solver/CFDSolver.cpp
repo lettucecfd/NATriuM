@@ -641,13 +641,8 @@ void CFDSolver<dim>::stream() {
 		//m_advectionOperator->applyBoundaryConditions( f_tmp, f,  m_time);
 		if (m_configuration->isVmultLimiter()) {
 			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-			distributed_vector writeable_Mask;
-							            CFDSolverUtilities::getWriteableDensity(writeable_Mask, m_maskShockSensor,
-							            					this->getAdvectionOperator()->getLocallyOwnedDofs());
-							            writeable_Mask=0.0;
-							            VmultLimiter::apply(systemMatrix, m_f.getFStream(),
-					f_tmp.getFStream(),writeable_Mask);
-            CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
+			VmultLimiter::apply(systemMatrix, m_f.getFStream(),
+					f_tmp.getFStream());
 		}
 
 		if ((BGK_MULTI_AM4 == m_configuration->getCollisionScheme()
@@ -664,15 +659,9 @@ void CFDSolver<dim>::stream() {
 			//m_advectionOperator->applyBoundaryConditions( f_tmp, formerF,  m_time);
 			if (m_configuration->isVmultLimiter()) {
 				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-				distributed_vector writeable_Mask;
-				            CFDSolverUtilities::getWriteableDensity(writeable_Mask, m_maskShockSensor,
-				            					this->getAdvectionOperator()->getLocallyOwnedDofs());
-							writeable_Mask=0.0;
-
 				VmultLimiter::apply(systemMatrix,
 						m_multistepData->getFormerF().getFStream(),
-						f_tmp.getFStream(),writeable_Mask);
-	            CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
+						f_tmp.getFStream());
 			}
 
 			//distributed_block_vector& formerFEq =
@@ -685,14 +674,9 @@ void CFDSolver<dim>::stream() {
 			//m_advectionOperator->applyBoundaryConditions( f_tmp, formerFEq,  m_time);
 			if (m_configuration->isVmultLimiter()) {
 				TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-				distributed_vector writeable_Mask;
-											            CFDSolverUtilities::getWriteableDensity(writeable_Mask, m_maskShockSensor,
-											            					this->getAdvectionOperator()->getLocallyOwnedDofs());
-											            writeable_Mask=0.0;
-											            VmultLimiter::apply(systemMatrix,
+				VmultLimiter::apply(systemMatrix,
 						m_multistepData->getFormerFEq().getFStream(),
-						f_tmp.getFStream(),writeable_Mask);
-	            CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
+						f_tmp.getFStream());
 			}
 		}
 
@@ -1015,10 +999,10 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 			// Write vtu file
 
-            data_out.build_patches(0);
-                   // (m_configuration->getSedgOrderOfFiniteElement() == 1) ?
-                   //         m_configuration->getSedgOrderOfFiniteElement() :
-                   //     m_configuration->getSedgOrderOfFiniteElement() + 1);
+			data_out.build_patches(
+					(m_configuration->getSedgOrderOfFiniteElement() == 1) ?
+							m_configuration->getSedgOrderOfFiniteElement() :
+							m_configuration->getSedgOrderOfFiniteElement() + 1);
 			data_out.write_vtu(vtu_output);
 
 			// Write pvtu file (which is a master file for all the single vtu files)

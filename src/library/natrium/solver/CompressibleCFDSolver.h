@@ -81,14 +81,9 @@ void gStream() {
 
 		//m_advectionOperator->applyBoundaryConditions( f_tmp, f,  m_time);
 		if (this->getConfiguration()->isVmultLimiter()) {
-            distributed_vector writeable_Mask;
-            CFDSolverUtilities::getWriteableDensity(writeable_Mask, this->m_maskShockSensor,
-            					this->getAdvectionOperator()->getLocallyOwnedDofs());
 			TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
-			writeable_Mask=0.0;
 			VmultLimiter::apply(systemMatrix, m_g.getFStream(),
-					g_tmp.getFStream(),writeable_Mask);
-            CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
+					g_tmp.getFStream());
 		}
 	}
 }

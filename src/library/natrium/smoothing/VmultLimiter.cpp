@@ -5,20 +5,20 @@
  *      Author: akraem3m
  */
 
-#include "VmultLimiter.h"7
+#include "VmultLimiter.h"
 #include "../utilities/CFDSolverUtilities.h"
 #include <cfloat>
 namespace natrium {
 
 void VmultLimiter::apply(const dealii::TrilinosWrappers::BlockSparseMatrix& matrix,
 		dealii::TrilinosWrappers::MPI::BlockVector& target,
-		const dealii::TrilinosWrappers::MPI::BlockVector& source, distributed_vector& shockSensor){
+		const dealii::TrilinosWrappers::MPI::BlockVector& source){
 	// iterate over all blocks
 	for (size_t i = 0; i < matrix.n_block_rows(); i++){
 		dealii::TrilinosWrappers::MPI::Vector & t = target.block(i);
 		for (size_t j = 0; j < matrix.n_block_cols(); j++){
 			const dealii::TrilinosWrappers::MPI::Vector & s = source.block(j);
-			apply(matrix.block(i,j), t,s, shockSensor);
+			apply(matrix.block(i,j), t,s);
 		}
 	}
 
@@ -27,7 +27,7 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::BlockSparseMatrix& matr
 
 void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 		dealii::TrilinosWrappers::MPI::Vector& target,
-		const dealii::TrilinosWrappers::MPI::Vector& source, distributed_vector& shockSensor){
+		const dealii::TrilinosWrappers::MPI::Vector& source){
 	// Trilinos matrix format, iteration copied from dealii::TrilinosWrappers::SparseMatrix::print()
 	const Epetra_CrsMatrix& M = matrix.trilinos_matrix();
 	double *values;
@@ -77,12 +77,9 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 		// limiter
 		if (target_i > max){
 			target(glob_i) = max;
-			shockSensor(glob_i) = (target(glob_i)-max);
 		} else if (target_i < min){
 			target(glob_i) = min;
-			shockSensor(glob_i) =(min-target(glob_i));
 		}
-
 	}
 
 }
