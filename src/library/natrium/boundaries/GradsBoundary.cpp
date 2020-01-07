@@ -156,7 +156,7 @@ void GradsBoundary<dim>::calculateBoundaryValues(const GlobalBoundaryData& g, Lo
 }
 
 	 */
-template class GradsBoundary<2> ;
-template class GradsBoundary<3> ;
+//template class GradsBoundary<2> ;
+//template class GradsBoundary<3> ;
 
 }/* namespace natrium */

@@ -333,7 +333,7 @@ template<class MATRIX, class VECTOR> void ExponentialTimeIntegrator<MATRIX,
 
 }
 
-template double ExponentialTimeIntegrator<distributed_sparse_matrix,
+/*template double ExponentialTimeIntegrator<distributed_sparse_matrix,
 		distributed_vector>::step(distributed_vector& f,
 		const distributed_sparse_matrix& systemMatrix,
 		distributed_vector& systemVector, double t, double dt);
@@ -341,6 +341,7 @@ template double ExponentialTimeIntegrator<distributed_sparse_block_matrix,
 		distributed_block_vector>::step(distributed_block_vector& f,
 		const distributed_sparse_block_matrix& systemMatrix,
 		distributed_block_vector& systemVector, double t, double dt);
+*/
 
 template<>
 dealii::IndexSet ExponentialTimeIntegrator<distributed_sparse_matrix,

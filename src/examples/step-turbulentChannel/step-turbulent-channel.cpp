@@ -22,7 +22,7 @@
 
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
-
+#include "natrium/utilities/ConfigNames.h"
 #include "natrium/utilities/CommandLineParser.h"
 
 using namespace natrium;
@@ -191,23 +191,23 @@ int main(int argc, char** argv) {
 	const double p = configuration->getSedgOrderOfFiniteElement();
 	LOG(WELCOME) << "CHANNEL SETUP: " << endl
 			<< "===================================================" << endl
-			<< "Dimensions: " << length << " x " << height << " x " << width
-			<< endl << "Grid:       " << repetitions.at(0) << " x "
+			<< "Dimensions:    " << length << " x " << height << " x " << width
+			<< endl << "Grid:          " << repetitions.at(0) << " x "
 			<< repetitions.at(1) << " x " << repetitions.at(2)
 			<< " blocks with 8^" << ref_level << " cells each " << endl
-			<< "#Cells:     " << int(repetitions.at(0) * pow(2, ref_level))
+			<< "#Cells:        " << int(repetitions.at(0) * pow(2, ref_level))
 			<< " x " << int(repetitions.at(1) * pow(2, ref_level)) << " x "
 			<< int(repetitions.at(2) * pow(2, ref_level)) << " = "
 			<< int(
 					repetitions.at(0) * repetitions.at(1) * repetitions.at(2)
-							* pow(2, 3 * ref_level)) << endl << "#Points:    "
+							* pow(2, 3 * ref_level)) << endl << "#Points:       "
 			<< int(repetitions.at(0) * pow(2, ref_level) * p) << " x "
 			<< int(repetitions.at(1) * pow(2, ref_level) * p) << " x "
 			<< int(repetitions.at(2) * pow(2, ref_level) * p) << " = "
 			<< int(
 					repetitions.at(0) * repetitions.at(1) * repetitions.at(2)
 							* pow(2, 3 * ref_level) * p * p * p) << endl
-			<< "y+:         " << yplus << "   dx+ = " << dxplus << ", "
+			<< "y+ (wrt. cells): "  << yplus << "   dx+ = " << dxplus << ", "
 			<< "dz+ = " << dzplus << endl << "          -----         " << endl
 			<< "          -----         " << endl;
 	const double dt = configuration->getCFL() / (p * p)

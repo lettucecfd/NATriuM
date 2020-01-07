@@ -9,6 +9,9 @@
 #include <time.h>
 #include <stdlib.h>
 
+
+
+
 #include "deal.II/numerics/data_out.h"
 
 #include "natrium/solver/CFDSolver.h"
@@ -27,6 +30,7 @@
 
 #include "natrium/benchmarks/TaylorGreenVortex3D.h"
 
+
 using namespace natrium;
 
 // Main function
@@ -44,6 +48,9 @@ int main(int argc, char** argv) {
 	parser.setArgument<int>("Re", "Reynolds number 1/nu", 1600);
 	parser.setPositionalArgument<int>("ref-level",
 			"Refinement level of the computation grid.");
+	parser.setArgument<int>("grid-repetitions",
+			"Number of grid cells along each axis before global refinement; "
+			"to produce grids with refinements that are not powers of two.", 1);
 	try {
 		parser.importOptions();
 	} catch (HelpMessageStop&) {
@@ -51,6 +58,7 @@ int main(int argc, char** argv) {
 	}
 	double Re = parser.getArgument<int>("Re");
 	double refinement_level = parser.getArgument<int>("ref-level");
+	double repetitions = parser.getArgument<int>("grid-repetitions");
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -76,10 +84,9 @@ int main(int argc, char** argv) {
 
 	boost::shared_ptr<ProblemDescription<3> > taylorGreen = boost::make_shared<
 			TaylorGreenVortex3D>(viscosity, refinement_level, cs,
-			init_rho_analytically);
+			init_rho_analytically, repetitions);
 
 	// setup configuration
-	std::stringstream dirName;
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setUserInteraction(false);
@@ -93,34 +100,40 @@ int main(int argc, char** argv) {
 
 	parser.applyToSolverConfiguration(*configuration);
 
-	dirName << getenv("NATRIUM_HOME") << "/step-TGV3D/Re" << Re << "-ref"
-			<< refinement_level << "-p"
-			<< configuration->getSedgOrderOfFiniteElement() << "-coll"
-			<< static_cast<int>(configuration->getCollisionScheme()) << "-sl"
-			<< static_cast<int>(configuration->getAdvectionScheme());
-	if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
-		dirName << "-int"
-				<< static_cast<int>(configuration->getTimeIntegrator()) << "_"
-				<< static_cast<int>(configuration->getDealIntegrator());
-	dirName << "-CFL" << configuration->getCFL();
-	if (configuration->getStencil() != Stencil_D3Q19)
-		dirName << "-sten" << static_cast<int>(configuration->getStencil());
-	if (configuration->isFiltering())
-		dirName << "-filt"
-				<< static_cast<int>(configuration->getFilteringScheme())
-				<< "by_max_degree";
-	if (configuration->getRegularizationScheme() != NO_REGULARIZATION)
-		dirName << "-reg"
-				<< static_cast<int>(configuration->getRegularizationScheme());
-	if (configuration->getCollisionScheme() == MRT_STANDARD) {
-		dirName << "-mrt" << static_cast<int>(configuration->getMRTBasis());
+	// standard output dir
+	if (not parser.hasArgument("output-dir")){
+		std::stringstream dirName;
+		dirName << getenv("NATRIUM_HOME") << "/step-TGV3D/Re" << Re << "-ref"
+				<< refinement_level << "-p"
+				<< configuration->getSedgOrderOfFiniteElement() << "-coll"
+				<< static_cast<int>(configuration->getCollisionScheme()) << "-sl"
+				<< static_cast<int>(configuration->getAdvectionScheme());
+		if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
+			dirName << "-int"
+					<< static_cast<int>(configuration->getTimeIntegrator()) << "_"
+					<< static_cast<int>(configuration->getDealIntegrator());
+		dirName << "-CFL" << configuration->getCFL();
+		if (configuration->getStencil() != Stencil_D3Q19)
+			dirName << "-sten" << static_cast<int>(configuration->getStencil());
+		if (configuration->isFiltering())
+			dirName << "-filt"
+					<< static_cast<int>(configuration->getFilteringScheme())
+					<< "by_max_degree";
+		if (configuration->getRegularizationScheme() != NO_REGULARIZATION)
+			dirName << "-reg"
+					<< static_cast<int>(configuration->getRegularizationScheme());
+		if (configuration->getCollisionScheme() == MRT_STANDARD) {
+			dirName << "-mrt" << static_cast<int>(configuration->getMRTBasis());
+		}
+		if (configuration->getCollisionScheme() == MRT_STANDARD) {
+			dirName << "-relax"
+					<< static_cast<int>(configuration->getMRTRelaxationTimes());
+		}
+		if (repetitions != 1) {
+					dirName << "-rep" << repetitions;
+				}
+		configuration->setOutputDirectory(dirName.str());
 	}
-	if (configuration->getCollisionScheme() == MRT_STANDARD) {
-		dirName << "-relax"
-				<< static_cast<int>(configuration->getMRTRelaxationTimes());
-	}
-	configuration->setOutputDirectory(dirName.str());
-
 	/////////////////////////////////////////////////
 	// run solver
 	//////////////////////////////////////////////////

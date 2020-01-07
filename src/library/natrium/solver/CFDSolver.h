@@ -73,7 +73,7 @@ template<size_t dim> class CFDSolver {
 	template<size_t dim4> friend class DataProcessor;
 	template<size_t dim3> friend class PseudoEntropicStabilizer;
 
-private:
+protected:
 	/// particle distribution functions
 	DistributionFunctions m_f;
 
@@ -135,6 +135,8 @@ private:
 	// starting time
 	time_t m_tstart;
 
+
+
 	// residuum
 	double m_residuumDensity;
 	double m_residuumVelocity;
@@ -150,6 +152,8 @@ protected:
 	/// gives the possibility for Benchmark instances to add the analytic solution to output
 	virtual void addAnalyticSolutionToOutput(dealii::DataOut<dim>&) {
 	}
+
+    distributed_vector m_maskShockSensor;
 
 public:
 
@@ -351,6 +355,10 @@ public:
 	void calculateDensitiesAndVelocities();
 
 	void convertDeprecatedCheckpoint();
+
+	void updateGhosted()
+	{m_f.updateGhosted();
+	}
 }
 ;
 

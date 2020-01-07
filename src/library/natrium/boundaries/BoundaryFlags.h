@@ -53,10 +53,10 @@ operator &= (BoundaryFlags &f1, BoundaryFlags f2){
 }
 
 /**
- * @short A class that contains the values that are prescribed by a semi-Lagrangian boundary condition
+ * @short A class that contains the values that are prescribed by a boundary condition
  */
 template<size_t dim>
-class PrescribedQuantities {
+class PrescribedBoundaryValues {
 private:
 	BoundaryFlags m_prescribedValues;
 	boost::shared_ptr<dealii::Function<dim> > m_pressure;
@@ -67,14 +67,14 @@ public:
 	/**
 	 * @short Empty constructor. No values to be obtained (used e.g. for first-order bounce back)
 	 */
-	PrescribedQuantities() {
+	PrescribedBoundaryValues() {
 		m_prescribedValues = only_distributions;
 	}
 
 	/**
 	 * @short Copy constructor
 	 */
-	PrescribedQuantities(const PrescribedQuantities<dim>& other) {
+	PrescribedBoundaryValues(const PrescribedBoundaryValues<dim>& other) {
 		m_prescribedValues = other.m_prescribedValues;
 		m_pressure = other.m_pressure;
 		m_velocity = other.m_velocity;
@@ -86,7 +86,7 @@ public:
 	 * If the number of components in the function is 1, it is interpreted as a pressure boundary condition.
 	 * If the number is dim, it is interpreted as a velocity boundary condition.
 	 */
-	PrescribedQuantities(boost::shared_ptr<dealii::Function<dim> > function) {
+	PrescribedBoundaryValues(boost::shared_ptr<dealii::Function<dim> > function) {
 		m_prescribedValues = only_distributions;
 		if (function->n_components == 1) {
 			m_pressure = function;
@@ -104,7 +104,7 @@ public:
 	/**
 	 * @short Constructor using a tensor function defining the Jacobian du/dx at the boundary.
 	 */
-	PrescribedQuantities(
+	PrescribedBoundaryValues(
 			boost::shared_ptr<dealii::TensorFunction<2, dim> > function) {
 		m_prescribedValues = boundary_du_dx;
 		m_velocityGradient = function;
@@ -114,7 +114,7 @@ public:
 	 * @short Constructor using a double, i.e. the pressure
 	 * @note The function instance is created by using BoundaryTools::BoundaryPressure
 	 */
-	PrescribedQuantities(double p) {
+	PrescribedBoundaryValues(double p) {
 		m_prescribedValues = boundary_p;
 		m_pressure = boost::make_shared<BoundaryTools::BoundaryPressure<dim> >(
 				p);
@@ -124,7 +124,7 @@ public:
 	 * @short Constructor using a tensor, i.e. the velocity.
 	 * @note The function instance is created by using BoundaryTools::BoundaryVelocity
 	 */
-	PrescribedQuantities(const dealii::Tensor<1, dim>& u) {
+	PrescribedBoundaryValues(const dealii::Tensor<1, dim>& u) {
 		m_prescribedValues = boundary_u;
 		m_velocity = boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(
 				u);
@@ -134,7 +134,7 @@ public:
 	 * @short Constructor using a dealii::Vector, i.e. the velocity.
 	 * @note The function instance is created by using BoundaryTools::BoundaryVelocity
 	 */
-	PrescribedQuantities(const dealii::Vector<double>& u) {
+	PrescribedBoundaryValues(const dealii::Vector<double>& u) {
 		m_prescribedValues = boundary_u;
 		m_velocity = boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(
 				u);
@@ -144,7 +144,7 @@ public:
 	 * @short Constructor using a tensor, i.e. the Jacobian
 	 * @note The function instance is created by using BoundaryTools::BoundaryVelocityGradient
 	 */
-	PrescribedQuantities(const dealii::Tensor<2, dim>& dudx) {
+	PrescribedBoundaryValues(const dealii::Tensor<2, dim>& dudx) {
 		m_prescribedValues = boundary_du_dx;
 		m_velocityGradient = boost::make_shared<
 				BoundaryTools::BoundaryVelocityGradient<dim> >(dudx);
@@ -153,8 +153,8 @@ public:
 	/**
 	 * @short Adding prescribed values at corner nodes. Not implemented yet.
 	 */
-	PrescribedQuantities& operator+(const PrescribedQuantities& other) {
-		PrescribedQuantities result;
+	PrescribedBoundaryValues& operator+(const PrescribedBoundaryValues& other) {
+		PrescribedBoundaryValues result;
 		result.m_prescribedValues = this->m_prescribedValues
 				| other.m_prescribedValues;
 		LOG(ERROR) << "Prescribed Values operator+ is not yet complete." << endl;
@@ -172,21 +172,21 @@ public:
 	/**
 	 * @short get the function that defines the prescribed pressure
 	 */
-	const boost::shared_ptr<dealii::Function<dim> >& getPressure() const {
+	boost::shared_ptr<dealii::Function<dim> >& getPressure()  {
 		return m_pressure;
 	}
 
 	/**
 	 * @short get the function that defines the prescribed velocity
 	 */
-	const boost::shared_ptr<dealii::Function<dim> >& getVelocity() const {
+	boost::shared_ptr<dealii::Function<dim> >& getVelocity()  {
 		return m_velocity;
 	}
 
 	/**
 	 * @short get the function that defines the prescribed Jacobian du/dx
 	 */
-	const boost::shared_ptr<dealii::TensorFunction<2, dim> >& getVelocityGradient() const {
+	boost::shared_ptr<dealii::TensorFunction<2, dim> >& getVelocityGradient()  {
 		return m_velocityGradient;
 	}
 };

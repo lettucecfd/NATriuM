@@ -46,12 +46,19 @@ private:
 	/// function to define initial densities
 	boost::shared_ptr<dealii::Function<dim> > m_initialRho;
 
+	/// function to define initial densities
+	boost::shared_ptr<dealii::Function<dim> > m_initialT;
+
 	/// function to define initial velocities
 	boost::shared_ptr<dealii::Function<dim> > m_initialU;
 
 protected:
 	void setInitialRho(boost::shared_ptr<dealii::Function<dim> > ini_rho) {
 		m_initialRho = ini_rho;
+	}
+
+	void setInitialT(boost::shared_ptr<dealii::Function<dim> > ini_T) {
+		m_initialT = ini_T;
 	}
 
 	void setInitialU(boost::shared_ptr<dealii::Function<dim> > ini_u) {
@@ -90,6 +97,10 @@ public:
 
 	virtual const boost::shared_ptr<dealii::Function<dim> >& getInitialUFunction() const {
 		return m_initialU;
+	}
+
+	virtual const boost::shared_ptr<dealii::Function<dim> >& getInitialTFunction() const {
+		return m_initialT;
 	}
 
 	virtual void refine(Mesh<dim>& mesh) = 0;
@@ -217,6 +228,7 @@ inline ProblemDescription<dim>::ProblemDescription(
 				characteristicLength) {
 	// make default initial conditions (rho = 1, u = v = 0)
 	m_initialRho = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
+	m_initialT = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
 	m_initialU = boost::make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
 	/// Create MPI (if not done yet);
 	MPIGuard::getInstance();

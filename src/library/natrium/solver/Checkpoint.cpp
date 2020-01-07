@@ -8,6 +8,10 @@
 #include "Checkpoint.h"
 
 #include "math.h"
+#include <iostream>
+
+#include "boost/filesystem.hpp"
+#include "boost/algorithm/string/replace.hpp"
 
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/dofs/dof_handler.h"
@@ -15,22 +19,47 @@
 #include "deal.II/distributed/solution_transfer.h"
 #include "deal.II/numerics/vector_tools.h"
 
+#include "../utilities/CFDSolverUtilities.h"
+
+
 namespace natrium {
 
 template<size_t dim>
 Checkpoint<dim>::Checkpoint(size_t iteration,
 		boost::filesystem::path checkpoint_dir) {
+
+	size_t it = iteration;
+
+	if (iteration == 1) {
+		// find most recent checkpoint automatically
+		for (auto& entry : boost::make_iterator_range(
+				boost::filesystem::directory_iterator(checkpoint_dir), { })) {
+			std::string this_filename = entry.path().filename().string();
+			if (boost::filesystem::extension(this_filename)
+					!= ".stat") {
+				continue;
+			}
+			boost::replace_all(this_filename, "checkpoint_", "");
+			boost::replace_all(this_filename, ".stat", "");
+
+			size_t i = std::stoi(this_filename);
+			if (i > it){
+				it = i;
+			}
+		}
+	}
+	LOG(BASIC) << "Reading checkpoint " << it << " auomatically." <<  endl;
 	std::stringstream status_name;
 	std::stringstream data_name;
-	status_name << "checkpoint_" << iteration << ".stat";
-	data_name << "checkpoint_" << iteration << ".data";
+	status_name << "checkpoint_" << it << ".stat";
+	data_name << "checkpoint_" << it << ".data";
 	m_statusFile = checkpoint_dir / status_name.str();
 	m_dataFile = checkpoint_dir / data_name.str();
+
 }
 
 template<size_t dim>
-void Checkpoint<dim>::write(const Mesh<dim>& mesh,
-		DistributionFunctions& f,
+void Checkpoint<dim>::write(const Mesh<dim>& mesh, DistributionFunctions& f,
 		const dealii::DoFHandler<dim>& dof_handler,
 		const CheckpointStatus& status) {
 
@@ -48,8 +77,8 @@ void Checkpoint<dim>::write(const Mesh<dim>& mesh,
 	} /*if rank 0*/
 
 	// write mesh and solution
-	dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
-			> sol_trans(dof_handler);
+	dealii::parallel::distributed::SolutionTransfer<dim, distributed_vector> sol_trans(
+			dof_handler);
 	std::vector<const distributed_vector*> to_save;
 	size_t Q = f.getQ();
 	for (size_t i = 0; i < Q; i++) {
@@ -92,7 +121,6 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 	}
 	MPI_sync();
 
-
 	// container for locally relevant dofs
 	dealii::IndexSet locally_relevant_dofs;
 
@@ -134,14 +162,15 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		// on calling load(), the old mesh has been refined, as before saving
 
 		// setup dofs on old mesh
-		dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
-				> sol_trans(dof_handler);
+		dealii::parallel::distributed::SolutionTransfer<dim, distributed_vector> sol_trans(
+				dof_handler);
 		dof_handler.distribute_dofs(*advection.getFe());
 		DistributionFunctions tmp_f(f);
 		dealii::DoFTools::extract_locally_relevant_dofs(dof_handler,
 				locally_relevant_dofs);
-		tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),locally_relevant_dofs,
-		MPI_COMM_WORLD, advection.isDG());
+		tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+				locally_relevant_dofs,
+				MPI_COMM_WORLD, advection.isDG());
 
 		// read old solution
 		std::vector<distributed_vector*> all_read;
@@ -153,22 +182,26 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		tmp_f.updateGhosted();
 
 		LOG(DETAILED) << "Interpolate to refined grid" << endl;
-		LOG(DETAILED) << "... from refinement level " << mesh.n_global_levels() -1 << " to " << nlevels_new -1 << endl;
+		LOG(DETAILED) << "... from refinement level "
+				<< mesh.n_global_levels() - 1 << " to " << nlevels_new - 1
+				<< endl;
 
 		// assumption: future_mesh is a globally refined version of mesh
 		if (mesh.n_global_levels() > nlevels_new) {
-			throw CheckpointException("Restarting from coarser grid is not implemented, yet.");
- 		}
+			throw CheckpointException(
+					"Restarting from coarser grid is not implemented, yet.");
+		}
 		if (mesh.n_global_levels() == nlevels_new) {
 			advection.setupDoFs();
-			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),	locally_relevant_dofs,
-			MPI_COMM_WORLD, advection.isDG());
+			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+					locally_relevant_dofs,
+					MPI_COMM_WORLD, advection.isDG());
 			f = tmp_f;
 		}
 		while (mesh.n_global_levels() < nlevels_new) {
 			// do one refinemenent step
-			dealii::parallel::distributed::SolutionTransfer < dim, distributed_vector
-					> soltrans_refine(dof_handler);
+			dealii::parallel::distributed::SolutionTransfer<dim,
+					distributed_vector> soltrans_refine(dof_handler);
 			mesh.set_all_refine_flags();
 			mesh.prepare_coarsening_and_refinement();
 			// prepare all in
@@ -184,8 +217,9 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			// after refinement, locally relevant dofs have changed
 			dealii::DoFTools::extract_locally_relevant_dofs(dof_handler,
 					locally_relevant_dofs);
-			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),locally_relevant_dofs,
-			MPI_COMM_WORLD, advection.isDG());
+			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+					locally_relevant_dofs,
+					MPI_COMM_WORLD, advection.isDG());
 			// write f pointers into std::vector
 			std::vector<distributed_vector*> all_out;
 			all_out.clear();
@@ -197,8 +231,9 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			soltrans_refine.interpolate(all_out);
 			f.updateGhosted();
 			// prepare next cycle
-			tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),locally_relevant_dofs,
-			MPI_COMM_WORLD, advection.isDG());
+			tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+					locally_relevant_dofs,
+					MPI_COMM_WORLD, advection.isDG());
 			tmp_f = f;
 		}
 

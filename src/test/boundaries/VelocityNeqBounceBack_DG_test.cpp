@@ -1,12 +1,14 @@
 /**
- * @file LinearBoundaryRhoU2D_test.cpp
+ * @file VelocityNeqBounceBack_test.cpp
  * @short
  * @date 25.10.2013
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
 
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
+
+#include "./WallFixture.h"
 #include "boost/test/unit_test.hpp"
 
 #include "deal.II/base/function.h"
@@ -24,38 +26,26 @@
 #include "natrium/benchmarks/PeriodicTestDomain2D.h"
 #include "../problemdescription/WallTestDomain2D.h"
 
+
 using namespace natrium;
 
-BOOST_AUTO_TEST_SUITE(LinearBoundaryRhoU2D_test)
+BOOST_AUTO_TEST_SUITE(VelocityNeqBounceBack2D_DG_test)
 
-class BoundaryTestDensity: public dealii::Function<2> {
-public:
-	virtual double value(const dealii::Point<2> &, const unsigned int) const {
-		return 1;
-	}
-};
-class BoundaryTestVelocity: public dealii::Function<2> {
-public:
-	virtual void vector_value(const dealii::Point<2> &,
-			dealii::Vector<double> &values) const {
-		values(0) = 0;
-		values(1) = 0;
-	}
-};
 
-BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_Construction_test) {
-	pout << "LinearBoundaryRhoU2D_Construction_test..." << endl;
+
+BOOST_AUTO_TEST_CASE(VelocityNeqBounceBack2D_DG_Construction_test) {
+	pout << "VelocityNeqBounceBack_DG_Construction_test..." << endl;
 
 	BOOST_CHECK_NO_THROW(
-			LinearFluxBoundaryRhoU<2> mlBound1(0, boost::make_shared<BoundaryTestDensity>(), boost::make_shared<BoundaryTestVelocity>()));
+			VelocityNeqBounceBack<2> mlBound1(0, boost::make_shared<BoundaryTestVelocity>()));
 	numeric_vector U(2);
-	BOOST_CHECK_NO_THROW(LinearFluxBoundaryRhoU<2> mlBound2(0, U); );
+	BOOST_CHECK_NO_THROW(VelocityNeqBounceBack<2> mlBound2(0, U); );
 
 	pout << "done" << endl;
-} /*LinearBoundaryRhoU2D_Construction_test */
+} /*VelocityNeqBounceBack2D_DG_Construction_test */
 
-BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_SparsityPattern_test) {
-	pout << "LinearBoundaryRhoU2D_SparsityPattern_test..." << endl;
+BOOST_AUTO_TEST_CASE(VelocityNeqBounceBack2D_DG_SparsityPattern_test) {
+	pout << "VelocityNeqBounceBack_DG_SparsityPattern_test..." << endl;
 
 	// The incoming particle distributions at the boundary must be affected by the opposite outgoing ones
 	// This means that diagonal entries must exist for the boundary dofs
@@ -138,10 +128,10 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_SparsityPattern_test) {
 	}
 
 	pout << "done" << endl;
-} /* LinearBoundaryRhoU2D_SparsityPattern_test */
+} /* VelocityNeqBounceBack2D_DG_SparsityPattern_test */
 
-BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_MassConservation_test) {
-	pout << "LinearBoundaryRhoU2D_MassConservation_test..." << endl;
+BOOST_AUTO_TEST_CASE(VelocityNeqBounceBack_DG_MassConservation_test) {
+	pout << "VelocityNeqBounceBack_DG_MassConservation_test..." << endl;
 
 	// make problem and solver
 	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<
@@ -150,7 +140,7 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_MassConservation_test) {
 			SolverConfiguration>();
 	configuration->setOutputDirectory("/tmp");
 	configuration->setSwitchOutputOff(true);
-	configuration->setNumberOfTimeSteps(100);
+	configuration->setNumberOfTimeSteps(10);
 	configuration->setSedgOrderOfFiniteElement(1);
 	configuration->setCFL(0.4);
 
@@ -163,47 +153,24 @@ BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_MassConservation_test) {
 	BOOST_CHECK_SMALL(mass - 1.0, 1e-10);
 
 	pout << "done" << endl;
-} /*LinearBoundaryRhoU2D_MassConservation_test */
+} /*VelocityNeqBounceBack2D_DG_MassConservation_test */
 
-BOOST_AUTO_TEST_CASE(LinearBoundaryRhoU2D_BoundaryVelocity_test) {
-	pout << "LinearBoundaryRhoU2D_BoundaryVelocity_test..." << endl;
 
-	boost::shared_ptr<ProblemDescription<2> > problem = boost::make_shared<
-			WallTestDomain2D>(1);
-	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
-			SolverConfiguration>();
-	configuration->setOutputDirectory("/tmp");
-	configuration->setSwitchOutputOff(true);
-	configuration->setNumberOfTimeSteps(1);
-	configuration->setSedgOrderOfFiniteElement(9);
-	configuration->setCFL(0.4);
+BOOST_AUTO_TEST_CASE(VelocityNeqBounceBack2D_DG_BoundaryVelocity_test) {
+	pout << "VelocityNeqBounceBack2D_DG_BoundaryVelocity_test..." << endl;
 
-	CFDSolver<2> solver(configuration, problem);
-	solver.run();
+	WallTest w(SEDG);
 
-	// Check boundary velocity
-	std::set<dealii::types::boundary_id> boundaryIndicators;
-	boundaryIndicators.insert(3);
-	std::vector<bool> isBoundary(solver.getNumberOfDoFs());
-	DealIIExtensions::extract_dofs_with_support_on_boundary(
-			*(solver.getAdvectionOperator()->getDoFHandler()),
-			dealii::ComponentMask(), isBoundary, boundaryIndicators);
-	/*
-	 // TODO good test
-	 for (size_t i = 0; i < isBoundary.size(); i++) {
-	 if (isBoundary.at(i)) {
-	 pout << i << endl;
-	 BOOST_CHECK_CLOSE(
-	 solver.getVelocity().at(0)(i),
-	 0.01, 0.00001);
-	 BOOST_CHECK_SMALL(solver.getVelocity().at(1)(i), 1e-7);
-	 }
-	 }
-	 */
+	// Check velocity in domain
+	BOOST_CHECK_SMALL(w.error_u, 1e-3);
+	BOOST_CHECK_SMALL(w.error_v, 1e-5);
+
 
 	pout << "done" << endl;
-} /* LinearBoundaryRhoU2D_BoundaryVelocity_test */
+} /* VelocityNeqBounceBack2D_DG_BoundaryVelocity_test */
 
 
-BOOST_AUTO_TEST_SUITE_END() /*LinearBoundaryRhoU2D_test*/
+
+
+BOOST_AUTO_TEST_SUITE_END() /*VelocityNeqBounceBack2D_test*/
 

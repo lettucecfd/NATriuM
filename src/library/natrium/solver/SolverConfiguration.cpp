@@ -19,7 +19,7 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("CFL", "0.4", dealii::Patterns::Double(1e-10),
 				"CFL number. Determines the size of the (initial) time step. The CFL number is defined as stencil_scaling/(dx*(p+1)^2).");
 		declare_entry("Stencil", "D2Q9",
-				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27"),
+				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q25|D2Q25H"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
 		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
@@ -185,7 +185,7 @@ SolverConfiguration::SolverConfiguration() {
 					dealii::Patterns::Double(0, 1e10),
 					"The exponential filter is defined exp(-alpha * ((poly_degree + 1 -Nc) / (max_poly_degree + 1 -Nc)) ^ s");
 			declare_entry("Exponential Nc", "1",
-					dealii::Patterns::Integer(1, 50),
+					dealii::Patterns::Double(0, 50),
 					"First polynomial degree that is filtered in the exponential filter, Nc.");
 			declare_entry("Degree by component sums", "false",
 					dealii::Patterns::Bool(),
@@ -505,13 +505,6 @@ void SolverConfiguration::isConsistent() {
 					<< "NATriuM's Stencil_D3Q15 does not support forcing schemes, so far."
 					<< endl;
 		}
-
-		if (Stencil_D3Q13 == getStencil()) {
-			LOG(ERROR)
-					<< "NATriuM's Stencil_D3Q13 does not support forcing schemes, so far."
-					<< endl;
-		}
-
 		if (Stencil_D3Q27 == getStencil()) {
 			LOG(ERROR)
 					<< "NATriuM's Stencil_D3Q27 does not support forcing schemes, so far."
@@ -523,11 +516,6 @@ void SolverConfiguration::isConsistent() {
 						<< "NATriuM's Stencil_D3Q19 works only with the shifting velocity forcing scheme."
 						<< endl;
 		}
-		if (Stencil_RD3Q27 == getStencil()) {
-					LOG(ERROR)
-							<< "NATriuM's Stencil_RD3Q27 does not support forcing schemes, so far."
-							<< endl;
-				}
 	}
 
 	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) > 1) {

@@ -1022,7 +1022,7 @@ public:
 		return s;
 	}
 
-	void setExponentialFilterNc(long int Nc) {
+	void setExponentialFilterNc(double Nc) {
 		enter_subsection("Filtering");
 		enter_subsection("Filter parameters");
 		try {
@@ -1578,8 +1578,12 @@ public:
 			return Stencil_D3Q21;
 		} else if ("D3Q27" == stencil) {
 			return Stencil_D3Q27;
+		} else if ("D2Q25" == stencil) {
+			return Stencil_D2Q25;
+		} else if ("D2Q25H" == stencil) {
+			return Stencil_D2Q25H;
 		} else if ("RD3Q27" == stencil) {
-				return Stencil_RD3Q27;
+		    return Stencil_RD3Q27;
 		} else {
 			std::stringstream msg;
 			msg << "Unknown Stencil with index " << stencil
@@ -1614,6 +1618,14 @@ public:
 		}
 		case Stencil_D3Q27: {
 			set("Stencil", "D3Q27");
+			break;
+		}
+		case Stencil_D2Q25: {
+			set("Stencil", "D2Q25");
+			break;
+		}
+		case Stencil_D2Q25H: {
+			set("Stencil", "D2Q25H");
 			break;
 		}
 		case Stencil_RD3Q27: {

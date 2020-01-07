@@ -25,6 +25,7 @@
 #include "deal.II/grid/grid_tools.h"
 
 #include "../boundaries/PeriodicBoundary.h"
+#include "../boundaries/Boundary.h"
 #include "../stencils/Stencil.h"
 
 #include "../utilities/DealiiExtensions.h"
@@ -111,36 +112,38 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 	}
 
 // create empty sparsity pattern for each block
+	m_sparsityPatternRow.clear();
 	for (size_t i = 0; i < n_blocks; i++) {
-		std::vector<TrilinosWrappers::SparsityPattern> line;
-		line.clear();
-		for (size_t j = 0; j < n_blocks; j++) {
 			TrilinosWrappers::SparsityPattern empty;
-			line.push_back(empty);
-		}
-		m_sparsityPattern.push_back(line);
+			m_sparsityPatternRow.push_back(empty);
 	}
 
+
+	// initialize matrix
+		Base::m_systemMatrix.reinit(n_blocks, n_blocks);
+
 // 	reinit sparsity pattern
-	for (size_t i = 0; i < n_blocks; i++)
+	for (size_t i = 0; i < n_blocks; i++) {
+
 		for (size_t j = 0; j < n_blocks; j++)
-			m_sparsityPattern[i][j].reinit(Base::getLocallyOwnedDofs(),
+			m_sparsityPatternRow[j].reinit(Base::getLocallyOwnedDofs(),
 					Base::getLocallyOwnedDofs(), Base::getLocallyRelevantDofs(),
 					MPI_COMM_WORLD);
 
-// fill sparsity pattern
-	if (Base::m_deltaT != 0) {
-		fillSparseObject(true); // "true" means that the object to fill is the sparsity pattern
-	}
-
-// initialize matrix
-	Base::m_systemMatrix.reinit(n_blocks, n_blocks);
-	for (size_t i = 0; i < n_blocks; i++) {
-		for (size_t j = 0; j < n_blocks; j++) {
-			m_sparsityPattern[i][j].compress();
-			Base::m_systemMatrix.block(i, j).reinit(m_sparsityPattern[i][j]);
+	// fill sparsity pattern
+		if (Base::m_deltaT != 0) {
+			fillSparseObject(true, i); // "true" means that the object to fill is the sparsity pattern
 		}
+
+			for (size_t j = 0; j < n_blocks; j++) {
+				m_sparsityPatternRow[j].compress();
+				Base::m_systemMatrix.block(i, j).reinit(m_sparsityPatternRow[j]);
+				m_sparsityPatternRow[j].clear(); // not sure if its needed here
+
+			}
 	}
+	m_sparsityPatternRow.clear();
+
 	Base::m_systemMatrix.collect_sizes();
 
 	LOG(DETAILED) << "... done (update sparsity pattern)." << endl;
@@ -148,7 +151,7 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 /* updateSparsityPattern */
 
 template<size_t dim>
-void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
+void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_index ) {
 
 //TimerOutput::Scope timer_section(Timing::getTimer(),
 //			"Assembly: fill sparse object");
@@ -213,7 +216,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 			// get global degrees of freedom
 			cell->get_dof_indices(local_dof_indices);
 
-
 			// ================================================================================================
 			// =================================  Create Lagrangian support points ============================
 			// ================================================================================================
@@ -237,6 +239,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 				// for all directions
 				for (size_t alpha = 1; alpha < Base::m_stencil->getQ();
 						alpha++) {
+					if (sparsity_pattern and alpha-1 != row_index)
+						continue;
 					// calculate x^(t-delta_t)
 					dealii::Point<dim> x_departure = x_i
 							+ minus_dtealpha.at(alpha);
@@ -254,17 +258,16 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 				LagrangianPathTracker<dim>& el = not_found.front();
 				el.lifeTimeCounter++;
 				// check if el is running into Nirvana (which can happen, e.g., at domain corners)
-				if (el.lifeTimeCounter > 50)
-				{
+				if (el.lifeTimeCounter > 50) {
 					// write '1' on diagonal (i.e., do not change this distribution function during streaming step)
 					if (sparsity_pattern) {
 						// add diagonal entry to sparsity pattern
-						m_sparsityPattern[el.destination.direction - 1][el.destination.direction - 1].add(el.destination.index,
+						m_sparsityPatternRow[el.destination.direction
+								- 1].add(el.destination.index,
 								el.destination.index);
 					} else {
 						// insert '1'
-						Base::m_systemMatrix.block(
-								el.destination.direction - 1,
+						Base::m_systemMatrix.block(el.destination.direction - 1,
 								el.destination.direction - 1).add(
 								el.destination.index, el.destination.index,
 								1.0);
@@ -281,24 +284,30 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 				size_t child_id = 100;
 				dealii::Point<dim> p_boundary;
 				int face_id = -2;
-				try{
+				try {
 					face_id = faceCrossedFirst(el.currentCell, el.currentPoint,
 							el.departurePoint, p_boundary, &lambda, &child_id);
-				} catch (FaceCrossedFirstFailed& e){
-					try {
-						el.currentCell = dealii::GridTools::find_active_cell_around_point(*(Base::m_problem.getMesh()), 	el.departurePoint);
+				} catch (FaceCrossedFirstFailed& e) {
+					//try {
+						face_id = faceCrossedFirst(el.currentCell, el.currentPoint,
+													el.departurePoint, p_boundary, &lambda, &child_id, true);
+						/*el.currentCell =
+								dealii::GridTools::find_active_cell_around_point(
+										*(Base::m_problem.getMesh()),
+										el.departurePoint);
 						el.currentPoint = el.departurePoint;
-						continue;
-					} catch( dealii::GridTools::ExcPointNotFound<dim>& f) {
+						continue;*/
+					/*} catch (dealii::GridTools::ExcPointNotFound<dim>& f) {
 						std::stringstream msg;
-						msg << "NATriuM had to rely on deal.II's function find_active_cell_around point "
-								" because NATriuM's function face_crossed_first did not work due to a non-invertible "
-								" mapping function. The deal.II function found out that the point does not "
-								" lie inside the grid. This situation is not supported by the current version of the Semi-Lagrangian code. "
-								" TODO: implement a supplement for face_crossed_first that does not rely on inverting the mapping function.";
+						msg
+								<< "NATriuM had to rely on deal.II's function find_active_cell_around point "
+										" because NATriuM's function face_crossed_first did not work due to a non-invertible "
+										" mapping function. The deal.II function found out that the point does not "
+										" lie inside the grid. This situation is not supported by the current version of the Semi-Lagrangian code. "
+										" TODO: implement a supplement for face_crossed_first that does not rely on inverting the mapping function.";
 						LOG(ERROR) << msg.str();
 						throw SemiLagrangianException(msg.str());
-					}
+					}*/
 				}
 				if (face_id == -1) {
 					// point found in this cell: add to cell_map
@@ -319,9 +328,9 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 					}
 					not_found.pop();
 
-				// ================================================================================================
-				// ================================= Boundary faces ===============================================
-				// ================================================================================================
+					// ================================================================================================
+					// ================================= Boundary faces ===============================================
+					// ================================================================================================
 				} else if (el.currentCell->at_boundary(face_id)) {
 					size_t bi = el.currentCell->face(face_id)->boundary_id();
 					if (Base::getBoundaries()->isPeriodic(bi)) {
@@ -343,13 +352,10 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 								el.currentCell);
 
 					} else /* if is not periodic */{
-				// ================================================================================================
-				// ================================= LinearFluxBoundary ===========================================
-				// ================================================================================================
-						if ((Base::getBoundaries()->getBoundary(bi)->isLinearFluxBoundary())) {
-
-
-
+						// ================================================================================================
+						// ================================= VelocityNeqBounceBack ========================================
+						// ================================================================================================
+						if (is_velocity_neq_bb(Base::getBoundaries()->getBoundary(bi)->getBoundaryName())) {
 							el.currentDirection =
 									Base::m_stencil->getIndexOfOppositeDirection(
 											el.currentDirection);
@@ -363,7 +369,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 												el.currentDirection)[i];
 							}
 							vel_direction = sqrt(vel_direction);
-							
+
 							double distance = el.departurePoint.distance(
 									el.currentPoint);
 							for (size_t i = 0; i < dim; i++) {
@@ -372,15 +378,15 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 												el.currentDirection)[i]
 												* distance / vel_direction;
 							}
+							if (not sparsity_pattern) {
+								m_boundaryHandler.addHit(el, bi);
+							}
 
+						} else /* is not LinearFluxBoundary */{
 
-						//	m_boundaryHandler.addHit(el, bi);
-
-						} else /* is not LinearFluxBoundary */ {
-
-				// ================================================================================================
-				// ================================= Other Boundaries =============================================
-				// ================================================================================================
+							// ================================================================================================
+							// ================================= Other Boundaries =============================================
+							// ================================================================================================
 							if (not sparsity_pattern) {
 								el.currentPoint = p_boundary;
 								m_boundaryHandler.addHit(el, bi);
@@ -389,16 +395,16 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 
 						}
 					} /* endif isPeriodic ... else ... */
-				// ================================================================================================
-				// ================================= Interior faces ===============================================
-				// ================================================================================================
+					// ================================================================================================
+					// ================================= Interior faces ===============================================
+					// ================================================================================================
 				} else {
 					// Interior faces
 					el.currentPoint = p_boundary;
 					if (el.currentCell->neighbor(face_id)->has_children()) {
 						el.currentCell =
-								el.currentCell->neighbor(face_id)->child(
-										child_id);
+								el.currentCell->child(child_id)->neighbor(
+										face_id);
 					} else {
 						el.currentCell = el.currentCell->neighbor(face_id);
 					}
@@ -462,7 +468,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 						}
 						if (sparsity_pattern) {
 							// add entry to sparsity pattern
-							m_sparsityPattern[l[i].destination.direction - 1][l[i].currentDirection
+							m_sparsityPatternRow[l[i].currentDirection
 									- 1].add(l[i].destination.index,
 									local_dof_indices.at(j));
 						} else {
@@ -471,7 +477,8 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern) {
 							//		"Assembly: block and add");
 							Base::m_systemMatrix.block(
 									l[i].destination.direction - 1,
-									l[i].currentDirection - 1).add(l[i].destination.index,
+									l[i].currentDirection - 1).add(
+									l[i].destination.index,
 									local_dof_indices.at(j),
 									local_entries.at(i).at(j));	//fe_cell_values.shape_value;
 						}
@@ -501,7 +508,13 @@ template<size_t dim>
 int SemiLagrangian<dim>::faceCrossedFirst(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		const dealii::Point<dim>& p_inside, const dealii::Point<dim>& p_outside,
-		dealii::Point<dim>& p_boundary, double* lambda, size_t* child_id) {
+		dealii::Point<dim>& p_boundary, double* lambda, size_t* child_id,
+		bool without_mapping) {
+
+	if (without_mapping) {
+		return faceCrossedFirstWithoutMapping(cell, p_inside, p_outside,
+				p_boundary, lambda, child_id);
+	}
 
 //TimerOutput::Scope timer_section(Timing::getTimer(),
 
@@ -512,10 +525,8 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 	dealii::Point<dim> po_unit;
 	try {
 		// the bilinear mapping function might not be invertible outside the cell
-		po_unit =
-				Base::m_mapping->transform_real_to_unit_cell(
-						ci, p_outside);
-	} catch (dealii::Mapping<2, 2>::ExcTransformationFailed& e){
+		po_unit = Base::m_mapping->transform_real_to_unit_cell(ci, p_outside);
+	} catch (dealii::Mapping<2, 2>::ExcTransformationFailed& e) {
 		LOG(WARNING)
 				<< " using cell_around_active_point is a workaround! "
 						"Close to boundaries, the departure point (p_outside) could either reside outside the cell, "
@@ -664,14 +675,69 @@ int SemiLagrangian<dim>::faceCrossedFirst(
 // map to real cell
 	p_boundary = Base::m_mapping->transform_unit_to_real_cell(ci, h);
 
-// cout << "boundary point: " << p_boundary << endl;
-
-//assert(cell->point_inside(p_boundary));
 	*child_id = dealii::GeometryInfo<dim>::child_cell_from_point(h);
 
 	return face_id;
 
 } /* faceCrossedFirst */
+
+template<size_t dim>
+int SemiLagrangian<dim>::faceCrossedFirstWithoutMapping(
+		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+		const dealii::Point<dim>& p_inside, const dealii::Point<dim>& p_outside,
+		dealii::Point<dim>& p_boundary, double* lambda, size_t* child_id) {
+
+	size_t n_faces = dealii::GeometryInfo<dim>::faces_per_cell;
+	typename dealii::DoFHandler<dim>::cell_iterator ci(*cell);
+
+
+	double lam;
+	double lambda_min = 1;
+	size_t index_min = 0;
+	for (size_t i = 0; i < n_faces; i++) {
+		// some point on face i
+		const Point<dim>& p = ci->face(i)->vertex(0);
+
+		// some normal vector of face i
+		dealii::Tensor<1, dim> n = normal_vector<dim>(ci->face(i));
+
+		// calculate lambda for face i (some linear algebra)
+		// find out common point of trajectory (Lagrangian path)
+		//		x = p_inside + lambda * (p_outside - p_inside)		(1)
+		// and face i
+		//		(x-p) * n_i = 0										(2)
+		// where p is a point on face i and n is some normal vector
+		// inserting (1) into (2) gives
+		// => lambda = (p_inside - p) * n / (p_inside - p_outside) * n
+
+		lam = ((p_inside - p) * n) / ((p_inside - p_outside) * n);
+		//cout << i << lam << endl;
+		if (lam < 0) {
+			// wrong direction
+			continue;
+		}
+		if (lam < lambda_min) {
+			lambda_min = lam;
+			index_min = i;
+		}
+
+	} /* for all faces */
+
+	// if found in current cell
+	if (lambda_min == 1) {
+		return -1;
+	}
+
+	// calculate boundary point
+	*lambda = lambda_min;
+	p_boundary = p_inside + (p_outside - p_inside) * lambda_min;
+
+	// find out child index
+	*child_id = dealii::GeometryInfo<dim>::child_cell_from_point(
+			Base::m_mapping->transform_real_to_unit_cell(ci, p_boundary));
+
+	return index_min;
+} /* faceCrossedFirstWithoutMapping */
 
 template<size_t dim>
 typename dealii::DoFHandler<dim>::cell_iterator SemiLagrangian<dim>::getNeighbor(

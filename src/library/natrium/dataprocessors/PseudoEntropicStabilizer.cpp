@@ -289,6 +289,8 @@ void PseudoEntropicStabilizer<dim>::apply() {
 } /* apply */
 
 
+
+
 template<> void applyStabilizer<9>(const array<double,9>& in, array<double,9>& out){
 //    assert( dim == 2);
 	// multiply stabilizer matrix

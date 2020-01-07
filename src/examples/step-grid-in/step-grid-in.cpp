@@ -86,7 +86,9 @@
 #include <sstream>
 
 #include "natrium/stencils/D2Q9.h"
+#include "natrium/stencils/D2Q25H.h"
 #include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/CompressibleCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 
 #include "natrium/problemdescription/ProblemDescription.h"
@@ -137,14 +139,14 @@ int main(int argc, char** argv) {
 			deal_integrator, integrator_name);
 	pout << "Integrator: " << integrator_name << endl;
 
-	const double Ma = 0.1;
+	//const double Ma = 1.2;
 	//! [Main function]
 
 
 	//! [Problem]
 	// set Problem so that the right Re and Ma are achieved
-	const double U = 1.5;
-	const double scaling = U * sqrt(3) / Ma;
+	const double U = 0.7;
+	const double scaling = 1.0;//U * sqrt(3) / Ma;
 	const double viscosity = U / Re; // (because L = 1)
 
 	// make problem and solver objects
@@ -168,9 +170,10 @@ int main(int argc, char** argv) {
 	configuration->setNumberOfTimeSteps(200000);
 	//configuration->setTimeIntegrator(EXPONENTIAL);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-	configuration->setForcingScheme(SHIFTING_VELOCITY);
+	configuration->setForcingScheme(NO_FORCING);
+	configuration->setStencil(Stencil_D2Q25H);
 	//! [Solver]
-	CFDSolver<2> solver(configuration, obstacle_flow);
+	CompressibleCFDSolver<2> solver(configuration, obstacle_flow);
 	solver.run();
 
 	pout << "NATriuM step-0 terminated." << endl;

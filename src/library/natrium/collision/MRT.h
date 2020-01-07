@@ -54,7 +54,7 @@ public:
 	void setRelaxationParameter(double tau, double dt) {
 		assert(tau > 0);
 		m_relaxationParameter = tau;
-		cout << m_relaxationParameter << endl;
+		//cout << m_relaxationParameter << endl;
 		m_prefactor = -1. / (tau + 0.5);
 		m_dt = dt;
 	}

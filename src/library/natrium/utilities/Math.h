@@ -117,6 +117,11 @@ inline double maxVelocityNorm(const vector<VECTOR>& velocity,
 template< class VECTOR>
 double velocity2Norm(const vector<VECTOR>& velocity,
 		const dealii::IndexSet& locally_owned_dofs);
+// forward declare explicit spezialization
+template<>
+double velocity2Norm<distributed_vector>(const vector<distributed_vector>& velocity,
+		const dealii::IndexSet& locally_owned_dofs);
+
 
 } /* Math */
 

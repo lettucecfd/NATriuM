@@ -21,6 +21,7 @@
 #include "natrium/collision_advanced/AuxiliaryCollisionFunctions.h"
 #include "natrium/collision_advanced/CollisionSelection.h"
 #include "natrium/solver/SolverConfiguration.h"
+#include "natrium/solver/CFDSolver.h"
 
 #include "natrium/benchmarks/TaylorGreenVortex3D.h"
 #include "../problemdescription/TaylorGreenTest2D.h"
@@ -130,7 +131,7 @@ BOOST_AUTO_TEST_CASE(CollisionSelection3D_test) {
 		CFDSolver<3> solver(cfg, tgv);
 		const dealii::IndexSet& dofs =
 				solver.getAdvectionOperator()->getLocallyOwnedDofs();
-		cout << " - D3Q" << solver.getStencil()->getQ() << endl;
+		pout << " - D3Q" << solver.getStencil()->getQ() << endl;
 		DistributionFunctions f(solver.getF());
 		std::vector<distributed_vector> u;
 		distributed_vector rho;

@@ -17,7 +17,7 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/dofs/dof_handler.h"
-#include "deal.II/lac/compressed_sparsity_pattern.h"
+#include "deal.II/lac/dynamic_sparsity_pattern.h"//compressed_sparsity_pattern.h"
 
 #include "Boundary.h"
 #include "../utilities/NATriuMException.h"
@@ -155,10 +155,10 @@ public:
 	virtual bool isPeriodic() const {
 		return true;
 	}
-	virtual bool isLinearFluxBoundary() const {
+	virtual bool isDGSupported() const {
 		return false;
 	}
-	virtual bool isSLBoundary() const {
+	virtual bool isSLSupported() const {
 		return false;
 	}
 
@@ -172,13 +172,6 @@ public:
 	 * check if all cells in the cell map have appropriate boundary indicators
 	 */
 	void checkCellMap();
-
-	/**
-	 * @short This function does nothing; just to satisfy the interface.
-	 * 		  The Periodic Boundary conditions are directly incorporated in make_sparser_flux_sparsity_pattern
-	 */
-	void addToSparsityPattern(dealii::BlockDynamicSparsityPattern&, size_t,
-			size_t, size_t) const;
 
 	/**
 	 * Transform a point into its equivalent across the periodic boundary
@@ -199,11 +192,11 @@ public:
 		return m_triangulation;
 	}
 
-	size_t getBoundaryIndicator1() const {
+	virtual size_t getBoundaryIndicator1() const {
 		return m_boundaryIndicator1;
 	}
 
-	size_t getBoundaryIndicator2() const {
+	virtual size_t getBoundaryIndicator2() const {
 		return m_boundaryIndicator2;
 	}
 
@@ -217,6 +210,10 @@ public:
 
 	const boost::shared_ptr<Mesh<dim> >& getTriangulation() const {
 		return m_triangulation;
+	}
+
+	virtual size_t getBoundaryIndicator()  const {
+		throw NATriuMException("Periodic boundaries have two boundary indicators.");
 	}
 
 

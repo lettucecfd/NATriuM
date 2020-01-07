@@ -7,7 +7,7 @@
 
 #include "LidDrivenCavity2D.h"
 
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
@@ -74,10 +74,10 @@ boost::shared_ptr<BoundaryCollection<2> > LidDrivenCavity2D::makeBoundaries() {
 	dealii::Vector<double> zeroVector(2);
 	dealii::Vector<double> xVelocity(2);
 	xVelocity(0) = topPlateVelocity;
-	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<2> >(0, zeroVector));
-	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<2> >(1, zeroVector));
-	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<2> >(2, zeroVector));
-	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<2> >(3, xVelocity));
+	boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<2> >(0, zeroVector));
+	boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<2> >(1, zeroVector));
+	boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<2> >(2, zeroVector));
+	boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<2> >(3, xVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

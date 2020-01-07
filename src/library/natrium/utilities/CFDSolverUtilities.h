@@ -9,6 +9,7 @@
 #define CFDSOLVERUTILITIES_H_
 
 #include "deal.II/grid/tria.h"
+#include "deal.II/fe/fe.h"
 #include "deal.II/base/quadrature_lib.h"
 
 #include "../stencils/Stencil.h"
@@ -18,6 +19,7 @@
 #include "../stencils/D3Q27.h"
 
 #include "../utilities/BasicNames.h"
+#include "../utilities/ConfigNames.h"
 #include "../utilities/NATriuMException.h"
 #include "../solver/SolverConfiguration.h"
 #include "../utilities/Timing.h"
@@ -52,6 +54,10 @@ public:
 template<size_t dim>
 double getMinimumDoFDistanceGLL(const Mesh<dim>& tria,
 		const size_t orderOfFiniteElement);
+
+template<size_t dim>
+double getMinimumDoFDistance(const Mesh<dim>& tria,
+		const dealii::FiniteElement<dim,dim>& fe);
 
 template<size_t dim>
 double getMinimumVertexDistance(const Mesh<dim>& tria);

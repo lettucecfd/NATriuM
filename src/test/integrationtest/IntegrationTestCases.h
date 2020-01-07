@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "natrium/utilities/BasicNames.h"
+#include "natrium/utilities/ConfigNames.h"
 
 using namespace natrium;
 namespace IntegrationTestCases {
@@ -49,7 +50,7 @@ TestResult ConvergenceTestDealIIWrapper();
 
 TestResult ConvergenceTest3D();
 
-TestResult ConvergenceTestMovingWall ();
+TestResult ConvergenceTestMovingWall (AdvectionSchemeName advection_scheme);
 
 TestResult ConvergenceTestForcingSchemes2D ();
 

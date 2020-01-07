@@ -50,7 +50,7 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<int>("output-chk", "output checkpoint interval (#iterations)");
 	setArgument<int>("output-tab", "output table interval (#iterations)");
 	setArgument<string>("stencil",
-			"stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27, d3q13, d3q21, rd3q21]");
+			"stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27, d2q25, d2q25h]");
 	setArgument<double>("tmax", "simulation end time");
 	setArgument<string>("init",
 			"initialization scheme [equi (equilibrium), iter (iterative)]");
@@ -378,6 +378,10 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			cfg.setStencil(Stencil_D3Q13);
 		} else if (sten == "rd3q27") {
 			cfg.setStencil(Stencil_RD3Q27);
+		} else if (sten == "d2q25") {
+			cfg.setStencil(Stencil_D2Q25);
+		} else if (sten == "d2q25h") {
+		    cfg.setStencil(Stencil_D2Q25H);
 		} else {
 			std::stringstream msg;
 			msg << "--stencil=" << sten << " is illegal." << endl;
@@ -389,7 +393,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 
 	// simulation end time
 	if (hasArgument("tmax")) {
-		int tmax = getArgument<double>("tmax");
+		double tmax = getArgument<double>("tmax");
 		cfg.setSimulationEndTime(tmax);
 		LOG(BASIC) << "Output simulation end time set to " << tmax
 				<< " via command line" << endl;

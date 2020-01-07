@@ -16,7 +16,7 @@
 #include "deal.II/base/utilities.h"
 
 #include "natrium/boundaries/PeriodicBoundary.h"
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 #include "natrium/problemdescription/ConstantExternalForce.h"
 #include "natrium/utilities/Math.h"
 

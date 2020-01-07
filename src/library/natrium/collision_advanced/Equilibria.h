@@ -25,6 +25,7 @@ public:
 };
 
 
+
 template<>
  inline void BGKEquilibrium<2,9>::calc(std::array<double, 9>& feq, const GeneralCollisionData<2,9> & params) {
 	double scalar_product;
@@ -56,6 +57,61 @@ template<>
 	feq[6] = weighting * (1 + mixedTerm * (1 + 0.5 * mixedTerm) + uSquareTerm);
 	feq[8] = weighting * (1 - mixedTerm * (1 - 0.5 * mixedTerm) + uSquareTerm);
 }
+
+template<>
+ inline void BGKEquilibrium<2,25>::calc(std::array<double, 25>& feq, const GeneralCollisionData<2,25>& p)
+	{
+double eye[2][2]={{1,0},{0,1}};
+		double uu_term = 0.0;
+		for (size_t j = 0; j < 2; j++) {
+			uu_term += -(p.velocity[j] * p.velocity[j])
+					/ (2.0 * p.cs2);
+		}
+
+		for (size_t i = 0; i < 25; i++) {
+
+            double T1 = p.cs2*(p.temperature-1);
+
+			double ue_term = 0.0;
+			for (size_t j = 0; j < 2; j++) {
+				ue_term += (p.velocity[j] * p.e[i][j]) / p.cs2;
+			}
+			feq[i] = p.weight[i] * p.density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
+			for (int alp = 0; alp < 2; alp++){
+				for (int bet = 0; bet < 2; bet++){
+                    feq[i]+=p.density*p.weight[i]/(2.0*p.cs2)*((p.temperature-1)*eye[alp][bet]*p.e[i][alp]*p.e[i][bet]-p.cs2*eye[alp][bet]*(p.temperature-1));
+					for (int gam = 0; gam < 2; gam++){
+
+feq[i] += p.weight[i] * p.density /(6.*p.cs2*p.cs2*p.cs2) * (p.velocity[alp]*p.velocity[bet]*p.velocity[gam]
+								                            +(p.temperature-1)*p.cs2*(eye[alp][bet]*p.velocity[gam]+eye[bet][gam]*p.velocity[alp]+eye[alp][gam]*p.velocity[bet]))*(p.e[i][alp]*p.e[i][bet]*p.e[i][gam]-p.cs2*(p.e[i][gam]*eye[alp][bet]+p.e[i][bet]*eye[alp][gam]+p.e[i][alp]*eye[bet][gam]));
+
+					for (int det = 0; det < 2; det++)
+                    {
+                        double power4 = p.e[i][alp]*p.e[i][bet]*p.e[i][gam]*p.e[i][det];
+                        double power2 = p.e[i][alp]*p.e[i][bet]*eye[gam][det]
+                                       +p.e[i][alp]*p.e[i][gam]*eye[bet][det]
+                                       +p.e[i][alp]*p.e[i][det]*eye[bet][gam]
+                                       +p.e[i][bet]*p.e[i][gam]*eye[alp][det]
+                                       +p.e[i][bet]*p.e[i][det]*eye[alp][gam]
+                                       +p.e[i][gam]*p.e[i][det]*eye[alp][bet];
+                        double power0 = eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
+                        double u4    = p.velocity[alp]*p.velocity[bet]*p.velocity[gam]*p.velocity[det];
+                        double u2 = p.velocity[alp]*p.velocity[bet]*eye[gam][det]+p.velocity[alp]*p.velocity[gam]*eye[bet][det]+p.velocity[alp]*p.velocity[det]*eye[bet][gam]+p.velocity[bet]*p.velocity[gam]*eye[alp][det]+p.velocity[bet]*p.velocity[det]*eye[alp][gam]+p.velocity[gam]*p.velocity[det]*eye[alp][bet];
+                        double multieye= eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
+
+                        feq[i]+= p.weight[i] * p.density /(24.*p.cs2*p.cs2*p.cs2*p.cs2)*(power4-p.cs2*power2+p.cs2*p.cs2*power0)*(u4+T1*(u2+T1*multieye));
+
+
+					}
+
+					}
+				}
+
+			}
+		}
+	}
+
+
 
 template<int T_D, int T_Q>
 inline void BGKEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,

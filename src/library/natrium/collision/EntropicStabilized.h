@@ -40,7 +40,7 @@ struct EStCollisionData {
 
 	EStCollisionData(const Stencil& st, double tau) :
 			stencil(st), e(st.getDirections()), scaling(st.getScaling()), tau(
-					tau), omega2(0.0), omega_mean(0.0), kld_pre(0.0), kld_post(0.0), rho_i(0.0){
+					tau), omega2(0.0), omega_mean(0.0), kld_pre(0.0), kld_post(0.0), kld_post_reg(0.0), rho_i(0.0){
 		assert(st.getQ() == Q);
 		assert(st.getD() == D);
 

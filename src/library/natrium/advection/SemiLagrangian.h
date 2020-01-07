@@ -20,6 +20,7 @@
 #include "deal.II/fe/mapping_cartesian.h"
 #include "deal.II/lac/block_sparsity_pattern.h"
 #include "deal.II/base/quadrature_lib.h"
+#include "deal.II/base/utilities.h"
 
 #include "AdvectionOperator.h"
 #include "AdvectionTools.h"
@@ -67,15 +68,19 @@ private:
 	typedef AdvectionOperator<dim> Base;
 
 	/// Sparsity Pattern of the sparse matrix
-	std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> > m_sparsityPattern;
+	/// The sparsity pattern is only used in the assembly
+	/// storing only one line of blocks at a time significantly reduces the storage
+	std::vector<dealii::TrilinosWrappers::SparsityPattern> m_sparsityPatternRow;
 
 
 	SemiLagrangianBoundaryHandler<dim> m_boundaryHandler;
 
 	/**
 	 * @short update the sparsity pattern of the system matrix // the sparse matrix
+	 * @param the row index is used in assembly of the sparsity pattern (we want
+	 *        to store only one line at a time to save memory)
 	 */
-	void fillSparseObject(bool sparsity_pattern = false);
+	void fillSparseObject(bool sparsity_pattern = false, size_t row_index  = -1);
 
 	/**
 	 * @short update the sparsity pattern of the system matrix
@@ -125,6 +130,16 @@ public:
 			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 			const dealii::Point<dim>& p_inside,
 			const dealii::Point<dim>& p_outside, dealii::Point<dim>& p_boundary,
+			double* lambda, size_t* child_id, bool without_mapping = false);
+
+	/**
+	 * @short This function does the same as faceCrossedFirst, but without using mapping functions
+	 * @note The reason for this implementation is that the mapping function may not be invertible outside the cell
+	 */
+	int faceCrossedFirstWithoutMapping(
+			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+			const dealii::Point<dim>& p_inside,
+			const dealii::Point<dim>& p_outside, dealii::Point<dim>& p_boundary,
 			double* lambda, size_t* child_id);
 
 	/// function to (re-)assemble linear system
@@ -152,8 +167,8 @@ public:
 
 	virtual void setDeltaT(double deltaT) {
 		Base::setDeltaT(deltaT);
-		updateSparsityPattern();
 		m_boundaryHandler.setTimeStep(deltaT);
+		updateSparsityPattern();
 	}
 
 	/**
@@ -216,19 +231,7 @@ public:
 		return false;
 	}
 
-	const std::vector<std::vector<dealii::TrilinosWrappers::SparsityPattern> >&  getBlockSparsityPattern() const {
-		return m_sparsityPattern;
-	}
 
-	virtual size_t memory_consumption_sparsity_pattern () const {
-		size_t mem = 0;
-		for (size_t i = 0; i < m_sparsityPattern.size(); i++) {
-			for (size_t j = 0; j < m_sparsityPattern.at(i).size(); j++) {
-				mem += m_sparsityPattern.at(i).at(j).memory_consumption();
-			}
-		}
-		return mem;
-	}
 
 	virtual const distributed_block_vector& getSystemVector() const {
 		throw AdvectionSolverException("getSytemVector is not defined for SemiLagrangian streaming. Function to be removed."

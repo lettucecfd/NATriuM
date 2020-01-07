@@ -21,6 +21,7 @@
 
 #include "PhysicalProperties.h"
 #include "Checkpoint.h"
+#include "SolverConfiguration.h"
 
 #include "../stencils/D2Q9.h"
 #include "../stencils/D3Q13.h"
@@ -29,6 +30,8 @@
 #include "../stencils/D3Q21.h"
 #include "../stencils/D3Q27.h"
 #include "../stencils/RD3Q27.h"
+#include "../stencils/D2Q25.h"
+#include "../stencils/D2Q25H.h"
 #include "../stencils/Stencil.h"
 
 #include "../advection/SEDGMinLee.h"
@@ -61,6 +64,7 @@
 #include "../utilities/CFDSolverUtilities.h"
 #include "../utilities/MPIGuard.h"
 #include "../utilities/Info.h"
+#include "../utilities/ConfigNames.h"
 
 namespace natrium {
 
@@ -136,6 +140,12 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	} else if (Stencil_D3Q27 == configuration->getStencil()) {
 		m_stencil = boost::make_shared<D3Q27>(
 				configuration->getStencilScaling());
+	} else if (Stencil_D2Q25 == configuration->getStencil()) {
+			m_stencil = boost::make_shared<D2Q25>(
+					configuration->getStencilScaling());
+	} else if (Stencil_D2Q25H == configuration->getStencil()) {
+			m_stencil = boost::make_shared<D2Q25H>(
+					configuration->getStencilScaling());
 	} else if (Stencil_RD3Q27 == configuration->getStencil()) {
 			m_stencil = boost::make_shared<RD3Q27>(
 					configuration->getStencilScaling());
@@ -494,57 +504,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			<< configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLISION ==          " << endl;
-	switch (configuration->getCollisionScheme()) {
-	case BGK_STANDARD: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		break;
-	}
-	case BGK_STANDARD_TRANSFORMED: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		break;
-	}
-	case BGK_REGULARIZED: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		break;
-	}
-	case BGK_STEADY_STATE: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		LOG(WELCOME) << "steady state gamma:       " << gamma << endl;
-		LOG(WELCOME) << "Effective Ma:             " << Ma / sqrt(gamma)
-				<< endl;
-
-		break;
-	}
-	case BGK_MULTIPHASE: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		LOG(WELCOME) << "G:                        " << G << endl;
-		break;
-	}
-	case BGK_INCOMPRESSIBLE: {
-		LOG(WELCOME) << "tau:                      " << tau << endl;
-		break;
-	}
-	case MRT_STANDARD: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	case KBC_STANDARD: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	case KBC_CENTRAL: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	case BGK_MULTI_AM4: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	case BGK_MULTI_BDF2: {
-		LOG(WELCOME) << "tau:						" << tau << endl;
-		break;
-	}
-	}
+	LOG(WELCOME) << "tau:                      " << tau << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 
 // initialize boundary dof indicator
@@ -633,23 +593,34 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 	// print out memory requirements of single components
-	LOG(BASIC) << endl << " ------- Memory Requirements (MPI rank 0) -------- "
+
+	LOG(BASIC) << endl << " ------- Memory Requirements (estimate) -------- "
 			<< endl;
 	LOG(BASIC) << " |  Sparse matrix        |  "
-			<< m_advectionOperator->getSystemMatrix().memory_consumption()
+			<< dealii::Utilities::MPI::sum(m_advectionOperator->getSystemMatrix().memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"
 			<< " (#nonzero elem: "
 			<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
 			<< ")" << endl;
-	LOG(BASIC) << " |  Mesh                 |  "
-			<< m_problemDescription->getMesh()->memory_consumption() << endl;
-	LOG(BASIC) << " |  Distributions        |  " << m_f.memory_consumption()
+	LOG(BASIC) << " |  DoF Handler          |  "
+			<< dealii::Utilities::MPI::sum(m_advectionOperator->getDoFHandler()->memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"
 			<< endl;
-	LOG(BASIC) << " |  Tmp distributions    |  " << m_f.memory_consumption()
+/*
+	LOG(BASIC) << " |  Sparsity Pattern     |  "
+				<< dealii::Utilities::MPI::sum(m_advectionOperator->memory_consumption_sparsity_pattern(),MPI_COMM_WORLD)/float(1e6) << " MB"
+				<< " (#nonzero elem: "
+				<< m_advectionOperator->getSystemMatrix().n_nonzero_elements()
+				<< ")" << endl;
+*/
+	LOG(BASIC) << " |  Mesh                 |  "
+			<< dealii::Utilities::MPI::sum(m_problemDescription->getMesh()->memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB" << endl;
+	LOG(BASIC) << " |  Distributions        |  " << dealii::Utilities::MPI::sum(m_f.memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"
+			<< endl;
+	LOG(BASIC) << " |  Tmp distributions    |  " << dealii::Utilities::MPI::sum(m_f.memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB"
 			<< endl;
 	LOG(BASIC) << " |  Velocities           |  "
-			<< dim * m_velocity.at(0).memory_consumption() << endl;
+			<< dim * dealii::Utilities::MPI::sum(m_velocity.at(0).memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB" << endl;
 	LOG(BASIC) << " |  Densities            |  "
-			<< m_density.memory_consumption() << endl;
+			<< dealii::Utilities::MPI::sum(m_density.memory_consumption(),MPI_COMM_WORLD)/float(1e6) << " MB" << endl;
 	LOG(BASIC) << " ------------------------------------------------- " << endl
 			<< endl;
 
@@ -896,7 +867,9 @@ void CFDSolver<dim>::run() {
 	output(m_i, true);
 
 // Finalize
-	Timing::getTimer().print_summary();
+	if (is_MPI_rank_0()) {
+		Timing::getTimer().print_summary();
+	}
 	LOG(BASIC) << "NATriuM run complete." << endl;
 	LOG(BASIC) << "Summary: " << endl;
 	LOG(BASIC) << Timing::getOutStream().str() << endl;
@@ -980,6 +953,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 					<< 1.0 * m_advectionOperator->getDoFHandler()->n_dofs()
 							* (iteration - m_iterationStart) / secs / 1000000.0
 					<< " million DoF updates per second" << endl;
+			Timing::getTimer().print_summary();
 		}
 		// output estimated runtime after iterations 1, 10, 100, 1000, ...
 		/*if (iteration > m_iterationStart) {
@@ -1082,7 +1056,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		// no output if checkpoint interval > 10^8
 		if (((iteration % m_configuration->getOutputCheckpointInterval() == 0)
 				or is_final)
-				and (m_configuration->getOutputCheckpointInterval() <= 1e8)) {
+				and (m_configuration->getOutputCheckpointInterval() <= 1e8) and (m_iterationStart != m_i)) {
 
 			boost::filesystem::path checkpoint_dir(
 					m_configuration->getOutputDirectory());

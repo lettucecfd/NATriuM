@@ -7,11 +7,20 @@
 #ifndef AUXILIARYCOLLISIONFUNCTIONS_H_
 #define AUXILIARYCOLLISIONFUNCTIONS_H_
 
-#include "../collision/ExternalForceFunctions.h"
 #include <array>
 #include <vector>
 
+#include "../collision/ExternalForceFunctions.h"
+#include "../utilities/NATriuMException.h"
+#include "../utilities/ConfigNames.h"
+#include "../solver/DistributionFunctions.h"
+#include "../solver/SolverConfiguration.h"
+
+
 namespace natrium {
+
+// forward declaration
+class CollisionException;
 
 /**
  * @short Exception class for Unstable Collision
@@ -47,6 +56,22 @@ inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
 
 	return density;
 }
+/*
+template<int T_Q>
+inline double calculateTemperature(const std::array<double, T_Q>& fLocal) {
+	double density = 0;
+	for (int p = 0; p < T_Q; ++p) {
+		density += fLocal[p];
+	}
+
+	if (density < 1e-10) {
+		throw CollisionException(
+				"Densities too small (< 1e-10) for collisions. Decrease time step size.");
+	}
+
+	return density;
+} */
+
 
 inline double calculateTauFromNu(double viscosity, double cs2,
 		double timeStepSize) {
@@ -63,6 +88,14 @@ inline double calculateTauFromNuAndGamma(double viscosity, double cs2,
 	double tau;
 	tau = (viscosity) / (gamma * timeStepSize * cs2) + 0.5;
 	return tau;
+}
+
+// Apply sutherland's law of temperature dependent viscosity
+inline double calculateTauFromNuAndT(double viscosity, double cs2,
+        double timeStepSize, double T) {
+    double tau;
+    tau = (viscosity)*sqrt(T) / (timeStepSize * cs2) + 0.5;
+    return tau;
 }
 
 template<int T_Q>
@@ -91,8 +124,15 @@ struct GeneralCollisionData {
 	std::array<double, T_Q> fLocal = { };
 	// the local f is stored in this array
 	std::array<double, T_Q> feq = { };
+        // the local g is stored in this array
+	std::array<double, T_Q> gLocal = { };
+	// the local g is stored in this array
+	std::array<double, T_Q> geq = { };
 
 	double density = 0.0;
+	double temperature = 1.0;
+    double maskShockSensor = 0.0;
+
 	std::array<double, T_D> velocity = { };
 	//scaling of the calculation. All parameters are unscaled during the calculation. The macroscopic velocity has to be scaled at the end of the collision step
 	double scaling = 0.0;
@@ -213,9 +253,27 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 					- fLocal[18]);
 }
 
+template<int T_D, int T_Q>
+inline double calculateTemperature(const std::array<double, T_Q>& fLocal, const std::array<double, T_Q>& gLocal,
+		 std::array<double, T_D>& velocity, double density, double temperature,
+		GeneralCollisionData<T_D, T_Q>& params) {
+	//T0[i,j]+=((c[k,0]-u[0,i,j])**2+(c[k,1]-u[1,i,j])**2)*fin[k,i,j]*0.5/rho[i,j]
+		temperature = 0.0;
+		for (int i = 0; i < T_Q; i++) {
+			temperature += ((params.e[i][0]-velocity[0]) * (params.e[i][0]-velocity[0])+ (params.e[i][1]-velocity[1]) * (params.e[i][1]-velocity[1]))*fLocal[i]/params.cs2+gLocal[i];
+
+		}
+        double gamma = 1.4;
+        double C_v = 1./(gamma-1.0);
+        temperature = temperature * 0.5 / (density*C_v);
+return temperature;
+}
+
+
+
 template<size_t T_D, size_t T_Q>
-inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
-		size_t i, GeneralCollisionData<T_D, T_Q>& genData) {
+inline void applyMacroscopicForces(std::array<double*, T_D>& velocities,
+		int ii, GeneralCollisionData<T_D, T_Q>& genData) {
 	assert(velocities.size() == T_D);
 	if (genData.forcetype == NO_FORCING) {
 		throw NATriuMException(
@@ -226,8 +284,8 @@ inline void applyMacroscopicForces(vector<distributed_vector>& velocities,
 	if (genData.forcetype == SHIFTING_VELOCITY) {
 		// TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
 		// 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
-		for (int j = 0; j < T_D; j++) {
-			velocities[j](i) = velocities[j](i)
+		for (size_t j = 0; j < T_D; j++) {
+			velocities[j][ii] = velocities[j][ii]
 					+ 0.5 * genData.dt * genData.forces[j] / genData.density;
 			// I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
 		}
@@ -245,7 +303,7 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 						"Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
 	}
 	if (genData.forcetype == SHIFTING_VELOCITY) {
-		for (int i = 0; i < T_D; i++) {
+		for (size_t i = 0; i < T_D; i++) {
 			genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
 					/ genData.density / genData.scaling;
 
@@ -254,6 +312,18 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 		throw NotImplementedException(
 				"Force Type not implemented. Use Shifting Velocity instead.");
 	}
+}
+
+template<size_t T_D, size_t T_Q>
+inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, T_Q>& geq, const GeneralCollisionData<T_D,T_Q>& genData)
+{
+    for (int i = 0; i < T_Q; i++) {
+        double gamma = 1.4;
+        double C_v = 1. / (gamma - 1.0);
+        geq[i]=feq[i]*(genData.temperature)*(2.0*C_v-T_D);
+
+    }
+
 }
 
 } /* namespace natrium */

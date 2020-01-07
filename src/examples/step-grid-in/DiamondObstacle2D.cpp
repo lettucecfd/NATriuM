@@ -12,7 +12,8 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/grid/grid_in.h"
 
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
+#include "natrium/boundaries/SLEquilibriumBoundary.h"
 
 #include "natrium/utilities/Math.h"
 
@@ -32,7 +33,11 @@ DiamondObstacle2D::DiamondObstacle2D(double velocity, double viscosity,
 	dealii::Tensor<1, 2> F;
 	F[0] = Fx;
 			F[0] = Fx*0.04;
-	setExternalForce(boost::make_shared<ConstantExternalForce<2> >(F));
+	//setExternalForce(boost::make_shared<ConstantExternalForce<2> >(F));
+
+			this->setInitialU(boost::make_shared<InitialVelocity>(this));
+			this->setInitialRho(boost::make_shared<InitialDensity>(this));
+		    this->setInitialT(boost::make_shared<InitialTemperature>(this));
 
 
 }
@@ -45,6 +50,31 @@ DiamondObstacle2D::~DiamondObstacle2D() {
  * @short Read the mesh given in deal.ii's step-35
  * @return shared pointer to a triangulation instance
  */
+double DiamondObstacle2D::InitialVelocity::value(const dealii::Point<2>& x,
+		const unsigned int component) const {
+    if (component == 0) {
+    return 0.7;
+    }
+	if (component == 1) {
+	return 0.0;}
+
+}
+
+double DiamondObstacle2D::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
+
+
+                return 1.0;
+
+
+
+
+}
+
+double DiamondObstacle2D::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
+
+return 1.0;
+}
+
 boost::shared_ptr<Mesh<2> > DiamondObstacle2D::makeGrid(
 		size_t refinementLevel) {
 	//Read in grid
@@ -79,24 +109,35 @@ boost::shared_ptr<BoundaryCollection<2> > DiamondObstacle2D::makeBoundaries() {
 	zeroVector[0]=m_meanInflowVelocity;
 	zeroVector[1]=0.0;
 
+    dealii::Tensor<1, 2> u;
+    u[0] = zeroVector(0);
+    u[1] = zeroVector(1);
+
+    zeroVector[0]=0.0;
+
+    dealii::Tensor<1, 2> v;
+    v[0] = 0.0;
+    v[1] = 0.0;
+
+
 	dealii::Vector<double> oneVector(2);
 		oneVector[0]=m_meanInflowVelocity;
-		oneVector[1]=0.0;
+        oneVector[1]=1.0;
 	boost::shared_ptr<dealii::Function<2> > boundary_density = boost::make_shared<
 			dealii::ConstantFunction<2> > (1.0);
 	boost::shared_ptr<dealii::Function<2> > boundary_velocity = boost::make_shared<
 			InflowVelocity> (m_meanInflowVelocity);
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(15, oneVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(15, u));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(16, oneVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(16, u));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(17, oneVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(17, u));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(18, oneVector));
+            boost::make_shared<SLEquilibriumBoundary<2> >(18, u));
 
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(19, zeroVector));
+            boost::make_shared<VelocityNeqBounceBack<2> >(19, zeroVector));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

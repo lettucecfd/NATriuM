@@ -36,7 +36,7 @@ boost::filesystem::path get_natrium_dir(){
 std::string getGitSha() {
 		boost::filesystem::path working_dir( boost::filesystem::current_path() );
 		boost::filesystem::current_path( get_natrium_dir() );
-		std::string result = exec("git show --abbrev-commit 2> NULL | head -1 | awk '{print $2;}'");
+		std::string result = exec("git show --abbrev-commit 2> /dev/null | head -1 | awk '{print $2;}'");
 		boost::filesystem::current_path ( working_dir );
 		return result;
 }

@@ -15,7 +15,7 @@
 #include "deal.II/base/geometry_info.h"
 
 #include "../boundaries/PeriodicBoundary.h"
-#include "../boundaries/LinearFluxBoundaryRhoU.h"
+#include "../boundaries/VelocityNeqBounceBack.h"
 #include "../utilities/Logging.h"
 
 namespace natrium {
@@ -91,9 +91,9 @@ boost::shared_ptr<BoundaryCollection<3> > CouetteFlow3D::makeBoundaries(
 
 	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
-	boundaries->addBoundary(boost::make_shared<LinearFluxBoundaryRhoU<3> >(4, zeroVelocity));
+	boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3> >(4, zeroVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<3> >(5, constantVelocity));
+			boost::make_shared<VelocityNeqBounceBack<3> >(5, constantVelocity));
 
 	// Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();

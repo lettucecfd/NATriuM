@@ -13,7 +13,7 @@
 #include "AuxiliaryMRTFunctions.h"
 
 namespace natrium {
-template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
+template<int T_D, int T_Q, template<int, int> class T_equilibrium>
 class BGKCollision {
 public:
 
@@ -39,9 +39,36 @@ public:
 			fLocal[p] -= 1. / genData.tau * (fLocal[p] - genData.feq[p]);
 		}
 	}
+
+		void relaxWithG(std::array<double, T_Q>& fLocal, std::array<double, T_Q>& gLocal,
+			GeneralCollisionData<T_D, T_Q>& genData,
+			SpecificCollisionData& specData) {
+		//Initialize the corresponding Equilibrium Distribution Function
+		T_equilibrium<T_D, T_Q> eq;
+
+		//Calculate the equilibrium and write the result to feq
+		eq.calc(genData.feq, genData);
+        calculateGeqFromFeq<T_D,T_Q>(genData.feq,genData.geq,genData);
+
+        double sutherland_tau = (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
+        double energy_tau=genData.tau;
+
+        //if(genData.maskShockSensor>0.5)
+        //{
+            //sutherland_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*sutherland_tau;
+            //energy_tau=sutherland_tau;
+        //}
+
+		//Relax every direction towards the equilibrium
+		for (int p = 0; p < T_Q; ++p) {
+            fLocal[p] -= 1. / sutherland_tau * (fLocal[p] - genData.feq[p]);
+            gLocal[p] -= 1. / energy_tau * (gLocal[p] - genData.geq[p]);
+		}
+	}
 };
 
-template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
+
+template<int T_D, int T_Q, template<int, int > class T_equilibrium>
 class Regularized {
 public:
 
@@ -107,7 +134,7 @@ public:
 			}
 		}
 
-		std::array<double, T_Q> fi1 = { 0.0 };
+		std::array<double, T_Q> fi1 = {{ 0.0 }};
 
 		for (int a = 0; a < T_Q; a++) {
 			for (int b = 0; b < T_D; b++) {
@@ -132,7 +159,7 @@ public:
 } //class regularized
 ;
 
-template<int T_D, int T_Q, template<int T_D, int T_Q> class T_equilibrium>
+template<int T_D, int T_Q, template<int, int> class T_equilibrium>
 class MultipleRelaxationTime {
 public:
 

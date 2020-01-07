@@ -7,6 +7,8 @@
 
 #include "TurbulentChannelFlow3D.h"
 
+#include <numeric>
+
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
@@ -14,7 +16,7 @@
 #include "deal.II/base/tensor.h"
 
 #include "natrium/boundaries/PeriodicBoundary.h"
-#include "natrium/boundaries/LinearFluxBoundaryRhoU.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 #include "natrium/problemdescription/ConstantExternalForce.h"
 #include "natrium/utilities/Math.h"
 
@@ -145,10 +147,10 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 				boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<LinearFluxBoundaryRhoU<3> >(2, zeroVector));
+				boost::make_shared<VelocityNeqBounceBack<3> >(2, zeroVector));
 		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<LinearFluxBoundaryRhoU<3> >(3, zeroVector));
+				boost::make_shared<VelocityNeqBounceBack<3> >(3, zeroVector));
 		//cout << " > no-slip: bottom" << endl;
 
 	} else {
@@ -608,9 +610,9 @@ inline void TurbulentChannelFlow3D::mean(vector<vector<double> > &matrix, double
 	vector<double> 		sum(i);
 
 	for (int k = 0; k <= i-1; ++k){
-		sum[k] = accumulate(matrix[k].begin(), matrix[k].end(), 0.0);
+		sum[k] = std::accumulate(matrix[k].begin(), matrix[k].end(), 0.0);
 	}
-	avg = accumulate(sum.begin(), sum.end(), 0.0) / (i*j);
+	avg = std::accumulate(sum.begin(), sum.end(), 0.0) / (i*j);
 }
 
 

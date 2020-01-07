@@ -42,7 +42,7 @@
 
 #ifdef WITH_TRILINOS
 #include "deal.II/lac/trilinos_vector.h"
-#include "deal.II/lac/trilinos_block_vector.h"
+//#include "deal.II/lac/trilinos_block_vector.h"
 #include "deal.II/lac/trilinos_sparse_matrix.h"
 #include "deal.II/lac/trilinos_block_sparse_matrix.h"
 #include "deal.II/base/index_set.h"

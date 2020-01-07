@@ -40,12 +40,12 @@ BOOST_AUTO_TEST_CASE(BoundaryFlags_PrescribedQuantities_test) {
 
 	dealii::Tensor<1,2> u;
 	dealii::Point<2> p;
-	PrescribedQuantities<2> pu(u);
+	PrescribedBoundaryValues<2> pu(u);
 	BOOST_CHECK_EQUAL(pu.getPrescribedValues(), boundary_u);
 	BOOST_CHECK(not pu.getPressure());
 	BOOST_CHECK_EQUAL( pu.getVelocity()->value(p, 1), 0.0);
 
-	PrescribedQuantities<2> pp (1.0);
+	PrescribedBoundaryValues<2> pp (1.0);
 	BOOST_CHECK(pp.getPrescribedValues() == boundary_p);
 	BOOST_CHECK_EQUAL(pp.getPressure()->value(p), 1.0);
 	BOOST_CHECK(not pp.getVelocity());

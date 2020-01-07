@@ -5,16 +5,15 @@
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
  */
 
+#include "../boundaries/VelocityNeqBounceBack.h"
 #include "CouetteFlow2D.h"
 
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/grid/grid_out.h"
 #include "deal.II/grid/tria_accessor.h"
-#include "deal.II/grid/tria_iterator.h"
-#include "deal.II/base/geometry_info.h"
+#include "deal.II/grid/tria.h"
 
-#include "../boundaries/LinearFluxBoundaryRhoU.h"
 #include "../boundaries/PeriodicBoundary.h"
 #include "../utilities/Logging.h"
 #include "../utilities/MPIGuard.h"
@@ -76,22 +75,7 @@ boost::shared_ptr<Mesh<2> > CouetteFlow2D::makeGrid(double L) {
 
 boost::shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 		double topPlateVelocity) {
-	/*
-	 // make boundary description
-	 boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
-	 BoundaryCollection<2> >();
-	 numeric_vector zeroVelocity(2);
-	 numeric_vector constantVelocity(2);
-	 constantVelocity(0) = topPlateVelocity;
 
-	 boundaries->addBoundary(boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
-	 boundaries->addBoundary(boost::make_shared<MinLeeBoundary<2> >(2, zeroVelocity));
-	 boundaries->addBoundary(
-	 boost::make_shared<MinLeeBoundary<2> >(3, constantVelocity));
-
-	 // Get the triangulation object (which belongs to the parent class).
-	 boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
-	 */
 	// make boundary description
 	boost::shared_ptr<BoundaryCollection<2> > boundaries = boost::make_shared<
 			BoundaryCollection<2> >();
@@ -103,9 +87,9 @@ boost::shared_ptr<BoundaryCollection<2> > CouetteFlow2D::makeBoundaries(
 	boundaries->addBoundary(
 			boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(2, zeroVelocity));
+			boost::make_shared<VelocityNeqBounceBack<2> >(2, zeroVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<LinearFluxBoundaryRhoU<2> >(3, constantVelocity));
+			boost::make_shared<VelocityNeqBounceBack<2> >(3, constantVelocity));
 
 
 	// Get the triangulation object (which belongs to the parent class).

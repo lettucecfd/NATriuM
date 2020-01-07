@@ -5,36 +5,45 @@
  *      Author: akraem3m
  */
 
-#include "LinearFluxBoundaryRhoU.h"
+#include "VelocityNeqBounceBack.h"
+#include "BoundaryFlags.h"
+#include "BoundaryTools.h"
 
 namespace natrium {
 
 template<size_t dim>
-LinearFluxBoundaryRhoU<dim>::LinearFluxBoundaryRhoU(size_t boundaryIndicator,
-		boost::shared_ptr<dealii::Function<dim> > boundaryDensity,
+VelocityNeqBounceBack<dim>::VelocityNeqBounceBack(size_t boundaryIndicator,
 		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity) :
-		LinearFluxBoundary<dim>(boundaryIndicator, boundaryDensity,
-				boundaryVelocity,
-				BoundaryTools::COUPLE_ONLY_OPPOSITE_DISTRIBUTIONS,
-				BoundaryTools::COUPLE_ONLY_SINGLE_POINTS) {
+		Boundary<dim>(boundaryIndicator, NONCONSTANT_VELOCITY_NEQ_BB,
+				PrescribedBoundaryValues<dim>(boundaryVelocity) ) {
+
+	//assert(not Boundary<dim>::getBoundaryValues().getPressure());
+	assert(Boundary<dim>::getBoundaryValues().getVelocity());
 
 }
 
 /// constructor
 template<size_t dim>
-LinearFluxBoundaryRhoU<dim>::LinearFluxBoundaryRhoU(size_t boundaryIndicator,
+VelocityNeqBounceBack<dim>::VelocityNeqBounceBack(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity) :
-		LinearFluxBoundaryRhoU(boundaryIndicator,
-				boost::make_shared<BoundaryTools::BoundaryDensity<dim> >(),
+		VelocityNeqBounceBack<dim>(boundaryIndicator,
 				boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(velocity)) {
 
 }
 
 template<size_t dim>
-LinearFluxBoundaryRhoU<dim>::~LinearFluxBoundaryRhoU() {
+VelocityNeqBounceBack<dim>::VelocityNeqBounceBack(size_t boundaryIndicator,
+		const dealii::Tensor<1,dim>& velocity):
+	VelocityNeqBounceBack<dim>(boundaryIndicator,
+					boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(velocity))  {
 }
 
-template<size_t dim> void LinearFluxBoundaryRhoU<dim>::assembleBoundary(
+
+template<size_t dim>
+VelocityNeqBounceBack<dim>::~VelocityNeqBounceBack() {
+}
+
+template<size_t dim> void VelocityNeqBounceBack<dim>::assembleBoundary(
 		size_t alpha,
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
@@ -42,7 +51,7 @@ template<size_t dim> void LinearFluxBoundaryRhoU<dim>::assembleBoundary(
 		const std::map<size_t, size_t>& q_index_to_facedof,
 		const vector<double> & inverseLocalMassMatrix,
 		distributed_sparse_block_matrix& systemMatrix,
-		distributed_block_vector& systemVector, bool useCentralFlux) const {
+		distributed_block_vector& systemVector, bool useCentralFlux) {
 	// let the feFaceValues object calculate all the values needed at the boundary
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
@@ -63,10 +72,12 @@ template<size_t dim> void LinearFluxBoundaryRhoU<dim>::assembleBoundary(
 		size_t thisDoF = q_index_to_facedof.at(q);
 
 		// get density and velocity at boundary point
-		double density = LinearFluxBoundary<dim>::getBoundaryDensity()->value(
-				feFaceValues.quadrature_point(q));
+		double density = 1.0; // LinearFluxBoundary<dim>::getBoundaryDensity()->value(
+				// feFaceValues.quadrature_point(q));
 		dealii::Vector<double> velocity(dim);
-		LinearFluxBoundary<dim>::getBoundaryVelocity()->vector_value(
+
+		assert(Boundary<dim>::getBoundaryValues().getVelocity());
+		Boundary<dim>::getBoundaryValues().getVelocity()->vector_value(
 				feFaceValues.quadrature_point(q), velocity);
 
 		// calculate matrix entries
@@ -121,8 +132,70 @@ template<size_t dim> void LinearFluxBoundaryRhoU<dim>::assembleBoundary(
 	}
 }
 
+
+template <size_t dim>
+void VelocityNeqBounceBack<dim>::calculateBoundaryValues(
+		FEBoundaryValues<dim>& fe_boundary_values, size_t q_point,
+		const LagrangianPathDestination& destination, double eps,
+		double t) {
+
+	const GlobalBoundaryData& data = fe_boundary_values.getData();
+	const Stencil& stencil = data.m_stencil;
+
+	// density unity
+	double rho = 1;
+
+	// get velocity
+	dealii::Tensor<1, dim> u;
+	// set time of this function object for time-dependent boundary conditions
+
+
+	assert(Boundary<dim>::getBoundaryValues().getVelocity());
+	Boundary<dim>::getBoundaryValues().getVelocity()->set_time(
+			t - eps);
+	// evaluate boundary conditions
+	dealii::Vector<double> tmp(dim);
+	Boundary<dim>::getBoundaryValues().getVelocity()->vector_value(
+			fe_boundary_values.getPoint(q_point), tmp);
+
+
+	// vector to tensor
+	for (size_t i = 0; i < dim; i++) {
+		u[i] = tmp(i);
+	}
+
+
+	// calculate vector entry
+	double exu = 0.0;
+	double uxu = 0.0;
+	double cs2 = stencil.getSpeedOfSoundSquare();
+
+	// calculate scalar product
+	for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication
+		exu += u[i] * stencil.getDirection(destination.direction)(i);
+		uxu += u[i] * u[i];
+	}
+
+
+	//double to_add = 2 * stencil.getWeight(destination.direction)
+	//		* rho * exu / stencil.getSpeedOfSoundSquare();
+
+
+	 // equilibrium for testing:
+	 // fe_boundary_values.getData().m_fnew.at(destination.direction)(
+	//		destination.index) = stencil.getWeight(destination.direction) * rho *
+	//		(1 + exu / cs2 - uxu / (2 * cs2) +  (exu * exu) / (2*cs2*cs2));
+
+
+/*	fe_boundary_values.getData().m_fnew.at(destination.direction)(
+					destination.index) =
+				fe_boundary_values.getData().m_fnew.at(destination.direction)(
+						destination.index) + to_add;*/
+
+}
+
 // Explicit instantiation
-template class LinearFluxBoundaryRhoU<2> ;
-template class LinearFluxBoundaryRhoU<3> ;
+template class VelocityNeqBounceBack<2> ;
+template class VelocityNeqBounceBack<3> ;
 
 } /* namespace natrium */

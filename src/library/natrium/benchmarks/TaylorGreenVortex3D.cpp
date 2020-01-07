@@ -10,14 +10,15 @@
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
+#include "deal.II/grid/grid_out.h"
 
 #include "../boundaries/PeriodicBoundary.h"
 
 namespace natrium {
 
 TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
-		size_t refinementLevel, double cs, bool init_rho_analytically) :
-		ProblemDescription<3>(makeGrid(), viscosity, 1), m_cs(cs), m_analyticInit(
+		size_t refinementLevel, double cs, bool init_rho_analytically, size_t repetitions) :
+		ProblemDescription<3>(makeGrid(repetitions), viscosity, 1), m_cs(cs), m_analyticInit(
 				init_rho_analytically), m_refinementLevel(refinementLevel) {
 
 
@@ -60,24 +61,30 @@ double TaylorGreenVortex3D::InitialDensity::value(const dealii::Point<3>& x,
  * @short create triangulation for TaylorGreen Vortex flow
  * @return shared pointer to a triangulation instance
  */
-boost::shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid() {
+boost::shared_ptr<Mesh<3> > TaylorGreenVortex3D::makeGrid(size_t repetitions) {
 	//Creation of the principal domain
 
-	boost::shared_ptr<Mesh<3> > square =
-	boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+	boost::shared_ptr<Mesh<3> > cube =
+			boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
 
-	dealii::GridGenerator::hyper_cube(*square, 0, 8 * atan(1));
+	dealii::Point<3> corner1(0,0,0);
+	dealii::Point<3> corner2(8 * atan(1),8 * atan(1),8 * atan(1));
+	std::vector<unsigned int> rep;
+	rep.push_back(repetitions);
+	rep.push_back(repetitions);
+	rep.push_back(repetitions);
+	dealii::GridGenerator::subdivided_hyper_rectangle(*cube, rep, corner1, corner2, true);
 
 	// Assign boundary indicators to the faces of the "parent cell"
-	Mesh<3>::active_cell_iterator cell = square->begin_active();
+	/*Mesh<3>::active_cell_iterator cell = cube->begin_active();
 	cell->face(0)->set_all_boundary_ids(0);  //
 	cell->face(1)->set_all_boundary_ids(1);  //
 	cell->face(2)->set_all_boundary_ids(2);  //
 	cell->face(3)->set_all_boundary_ids(3);  //
 	cell->face(4)->set_all_boundary_ids(4);  //
 	cell->face(5)->set_all_boundary_ids(5);  //
-
-	return square;
+*/
+	return cube;
 }
 
 /**

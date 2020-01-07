@@ -12,7 +12,7 @@
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/base/tensor.h"
 
-#include "../boundaries/LinearFluxBoundaryRhoU.h"
+#include "../boundaries/VelocityNeqBounceBack.h"
 #include "../boundaries/PeriodicBoundary.h"
 #include "../problemdescription/ConstantExternalForce.h"
 #include "../utilities/Math.h"
@@ -84,9 +84,9 @@ boost::shared_ptr<BoundaryCollection<2> > PoiseuilleFlow2D::makeBoundaries(
 		boundaries->addBoundary(
 				boost::make_shared<PeriodicBoundary<2> >(0, 1, 0, getMesh()));
 		boundaries->addBoundary(
-				boost::make_shared<LinearFluxBoundaryRhoU<2> >(2, zeroVector));
+				boost::make_shared<VelocityNeqBounceBack<2> >(2, zeroVector));
 		boundaries->addBoundary(
-				boost::make_shared<LinearFluxBoundaryRhoU<2> >(3, zeroVector));
+				boost::make_shared<VelocityNeqBounceBack<2> >(3, zeroVector));
 	} else {
 		natrium_errorexit("Periodic-free Poiseuille flow not implemented, yet.");
 		/*dealii::Vector<double> xVelocity(2);
