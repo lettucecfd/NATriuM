@@ -31,7 +31,6 @@ enum StencilType {
 	/// D2Q25 stencil
 	Stencil_D2Q25,
 	Stencil_D2Q25H,
-	Stencil_D3Q27,
 	// D3Q13 stencil
 	Stencil_D3Q13,
 	// D3Q21 non-cubic stencil
