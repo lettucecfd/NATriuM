@@ -60,8 +60,8 @@ namespace natrium {
         scaling *= 1./sqrt(3);
 
 
-        const double phi_plus = scaling * sqrt((1. + sqrt(5)) / 2.);
-        const double phi_minu = scaling * sqrt((1. - sqrt(5)) / 2.);
+        const double phi_plus = scaling * sqrt((5. + sqrt(5)) / 2.);
+        const double phi_minu = scaling * sqrt((5. - sqrt(5)) / 2.);
         const double directionsArray[][3] = {{0.0,       0.0,       0.0},
                                              {0.0,       phi_minu,  phi_plus},
                                              {0.0,       -phi_minu, -phi_plus},
