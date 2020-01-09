@@ -46,10 +46,7 @@ public:
 		for (size_t i = 0; i < T_D; i++){
 			velocities.at(i).trilinos_vector().ExtractView(&u_raw[i], &length);
 		}
-        if (1e-10 >= genData.density) {
-            throw DensityZeroException(
-            		"Density too small in collision. Decrease time step size.");
-        }
+
 
 #pragma omp simd
 		for (int ii = 0; ii < length; ii++) {
@@ -101,6 +98,11 @@ public:
 
 		}
 
+        if (1e-10 >= genData.density) {
+            throw DensityZeroException(
+                    "Density too small in collision. Decrease time step size.");
+        }
+
 	}
 
 	void collideAll(DistributionFunctions& f, DistributionFunctions& g, distributed_vector& densities,
@@ -138,10 +140,6 @@ public:
         double* mSS_raw;
                 maskShockSensor.trilinos_vector().ExtractView(&mSS_raw, &length);
 
-        if (1e-10 >= genData.density) {
-            throw DensityZeroException(
-                    "Density too small in collision. Decrease time step size.");
-        }
 
 
 
@@ -209,7 +207,13 @@ public:
 
 		}
 
-	}
+        if (1e-10 >= genData.density) {
+            throw DensityZeroException(
+                    "Density too small in collision. Decrease time step size.");
+        }
+
+
+    }
 
 };
 
