@@ -56,26 +56,25 @@ namespace natrium {
 
 /// make directions
     vector <numeric_vector> D3Q13::makeDirections(double scaling) {
-        //Scale by the nominal speed of sound of D3Q13 (0.4472) to obtain unity speed of sound
-        scaling /= 0.85065080835204;
-        // Then scale to the standard speed of sound
+        // Scale to the standard speed of sound
         scaling *= 1./sqrt(3);
 
 
-        const double phi = scaling * ((1. + sqrt(5)) / 2.);
-        const double directionsArray[][3] = {{0.0,      0.0,      0.0},
-                                             {0.0,      scaling,  phi},
-                                             {0.0,      -scaling, -phi},
-                                             {0.0,      -scaling, phi},
-                                             {0.0,      scaling,  -phi},
-                                             {scaling,  phi,      0.0},
-                                             {-scaling, -phi,     0.0},
-                                             {-scaling, phi,      0.0},
-                                             {scaling,  -phi,     0.0},
-                                             {phi,      0.0,      scaling},
-                                             {-phi,     0.0,      -scaling},
-                                             {-phi,     0.0,      scaling},
-                                             {phi,      0.0,      -scaling}};
+        const double phi_plus = scaling * sqrt((1. + sqrt(5)) / 2.);
+        const double phi_minu = scaling * sqrt((1. - sqrt(5)) / 2.);
+        const double directionsArray[][3] = {{0.0,       0.0,       0.0},
+                                             {0.0,       phi_minu,  phi_plus},
+                                             {0.0,       -phi_minu, -phi_plus},
+                                             {0.0,       -phi_minu, phi_plus},
+                                             {0.0,       phi_minu,  -phi_plus},
+                                             {phi_minu,  phi_plus,  0.0},
+                                             {-phi_minu, -phi_plus, 0.0},
+                                             {-phi_minu, phi_plus,  0.0},
+                                             {phi_minu,  -phi_plus, 0.0},
+                                             {phi_plus,  0.0,       phi_minu},
+                                             {-phi_plus, 0.0,       -phi_minu},
+                                             {-phi_plus, 0.0,       phi_minu},
+                                             {phi_plus,  0.0,       -phi_minu}};
         vector<numeric_vector> result;
         for (size_t i = 0; i < Q; i++) {
             numeric_vector direction(D);
