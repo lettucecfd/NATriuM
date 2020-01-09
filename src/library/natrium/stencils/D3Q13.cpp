@@ -32,9 +32,8 @@ namespace natrium {
     D3Q13::D3Q13(double scaling) :
             Stencil(3, 13, makeDirections(scaling), makeWeights(), Stencil_D3Q13,
                     makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
-            scaling * 0.774596669
-    ), m_speedOfSoundSquare(
-            scaling * scaling * 0.6), m_scaling(scaling) {
+            scaling * pow(3, -0.5)), m_speedOfSoundSquare(
+            scaling * scaling / 3.), m_scaling(scaling) {
         if (scaling > 100) {
             LOG(WARNING)
                     << "The D3Q13 stencil is used with scaling > 100. "
@@ -57,8 +56,11 @@ namespace natrium {
 
 /// make directions
     vector <numeric_vector> D3Q13::makeDirections(double scaling) {
-        //division by 1.902 to obtain a unity stencil size
-        scaling /= 1.9021130326;
+        //Scale by the nominal speed of sound of D3Q13 (0.4472) to obtain unity speed of sound
+        scaling /= 0.85065080835204;
+        // Then scale to the standard speed of sound
+        scaling *= 1./sqrt(3);
+
 
         const double phi = scaling * ((1. + sqrt(5)) / 2.);
         const double directionsArray[][3] = {{0.0,      0.0,      0.0},

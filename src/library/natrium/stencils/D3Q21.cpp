@@ -32,8 +32,8 @@ const size_t D3Q21::Q = 21;
 D3Q21::D3Q21(double scaling) :
 		Stencil(3, 21, makeDirections(scaling), makeWeights(), Stencil_D3Q21,
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
-				scaling * (0.774596669)), m_speedOfSoundSquare(
-				scaling * scaling * 0.6), m_scaling(scaling) {
+        scaling * pow(3, -0.5)), m_speedOfSoundSquare(
+        scaling * scaling / 3.), m_scaling(scaling) {
 } //constructor
 
 /// destructor
@@ -41,73 +41,76 @@ D3Q21::~D3Q21() {
 } /// destructor
 
 // make weights
-vector<double> D3Q21::makeWeights() {
-	vector<double> result;
-	result += 2./5.,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ,
-			3./100. ;
-	return result;
-} /// make weights
+    vector<double> D3Q21::makeWeights() {
+        vector<double> result;
+        result += 2. / 5.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.,
+                3. / 100.;
+        return result;
+    } /// make weights
 
 /// make directions
 /* Following the definition by Mohamad LBM book */
-vector<numeric_vector> D3Q21::makeDirections(double scaling) {
-    scaling /= sqrt(3.0);
-	double phi = scaling * (1.+sqrt(5.))/2.;
-	double inphi = scaling* 1./((1.+sqrt(5.))/2.);
+    vector <numeric_vector> D3Q21::makeDirections(double scaling) {
+        //Scale by the nominal speed of sound of D3Q13 (0.4472) to obtain unity speed of sound
+        scaling /= 0.774596669241483;
+        // Then scale to the standard speed of sound
+        scaling *= 1./sqrt(3);
+        double phi = scaling * (1. + sqrt(5.)) / 2.;
+        double inphi = scaling * 1. / ((1. + sqrt(5.)) / 2.);
 
-	const double directionsArray[][3] =
-	{
-			{ 0.0, 0.0, 0.0 },
-			{ scaling, scaling, scaling },
-			{ -scaling, -scaling, -scaling },
-			{ -scaling, scaling, scaling },
-			{ scaling, -scaling, -scaling },
-			{ scaling, -scaling, scaling },
-			{ -scaling, scaling, -scaling },
-			{ scaling, scaling, -scaling },
-			{ -scaling, -scaling, scaling },
-			{ 0.0, phi,	inphi },
-			{ 0.0, -phi,-inphi },
-			{ 0.0, -phi, inphi },
-			{ 0.0,  phi,-inphi },
-			{ inphi, 0.0,	phi },
-			{ -inphi, 0.0, -phi },
-			{ -inphi, 0.0,	phi },
-			{  inphi, 0.0, -phi },
-			{ phi, inphi, 0.0 },
-			{ -phi, -inphi, 0.0 },
-			{ -phi, inphi, 0.0 },
-			{ phi, -inphi, 0.0 }};
+        const double directionsArray[][3] =
+                {
+                        {0.0,      0.0,      0.0},
+                        {scaling,  scaling,  scaling},
+                        {-scaling, -scaling, -scaling},
+                        {-scaling, scaling,  scaling},
+                        {scaling,  -scaling, -scaling},
+                        {scaling,  -scaling, scaling},
+                        {-scaling, scaling,  -scaling},
+                        {scaling,  scaling,  -scaling},
+                        {-scaling, -scaling, scaling},
+                        {0.0,      phi,      inphi},
+                        {0.0,      -phi,     -inphi},
+                        {0.0,      -phi,     inphi},
+                        {0.0,      phi,      -inphi},
+                        {inphi,    0.0,      phi},
+                        {-inphi,   0.0,      -phi},
+                        {-inphi,   0.0,      phi},
+                        {inphi,    0.0,      -phi},
+                        {phi,      inphi,    0.0},
+                        {-phi,     -inphi,   0.0},
+                        {-phi,     inphi,    0.0},
+                        {phi,      -inphi,   0.0}};
 
-	vector<numeric_vector> result;
-	for (size_t i = 0; i < Q; i++) {
-		numeric_vector direction(D);
-		direction(0) = directionsArray[i][0];
-		direction(1) = directionsArray[i][1];
-		direction(2) = directionsArray[i][2];
-		result += direction;
-	}
-	return result;
-}
+        vector<numeric_vector> result;
+        for (size_t i = 0; i < Q; i++) {
+            numeric_vector direction(D);
+            direction(0) = directionsArray[i][0];
+            direction(1) = directionsArray[i][1];
+            direction(2) = directionsArray[i][2];
+            result += direction;
+        }
+        return result;
+    }
 /// make directions
 
 numeric_matrix D3Q21::makeMomentBasis(vector<numeric_vector> e) {
