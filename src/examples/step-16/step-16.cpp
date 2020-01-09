@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
 	configuration->setUserInteraction(false);
 	configuration->setOutputCheckpointInterval(1e9);
 	configuration->setOutputSolutionInterval(10000);
-	configuration->setSimulationEndTime(10.0);
+	configuration->setSimulationEndTime(23.0);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setStencilScaling(scaling);
 	configuration->setStencil(Stencil_D3Q19);

@@ -70,6 +70,7 @@ vector<double> D3Q21::makeWeights() {
 /// make directions
 /* Following the definition by Mohamad LBM book */
 vector<numeric_vector> D3Q21::makeDirections(double scaling) {
+    scaling /= sqrt(3.0);
 	double phi = scaling * (1.+sqrt(5.))/2.;
 	double inphi = scaling* 1./((1.+sqrt(5.))/2.);
 
