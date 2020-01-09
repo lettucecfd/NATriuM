@@ -46,7 +46,10 @@ public:
 		for (size_t i = 0; i < T_D; i++){
 			velocities.at(i).trilinos_vector().ExtractView(&u_raw[i], &length);
 		}
-
+        if (1e-10 >= genData.density) {
+            throw DensityZeroException(
+            		"Density too small in collision. Decrease time step size.");
+        }
 
 #pragma omp simd
 		for (int ii = 0; ii < length; ii++) {
@@ -61,10 +64,7 @@ public:
 
 			//Calculate the local density and store it into the Parameter Handling System
 			genData.density = calculateDensity<T_Q>(genData.fLocal); // done
-			if (1e-10 >= genData.density) {
-				throw DensityZeroException(
-						"Density too small in collision. Decrease time step size.");
-			}
+
 
 			//Write the local density to the global density vector
 			rho_raw[ii] = genData.density; // write local density to global density vector
