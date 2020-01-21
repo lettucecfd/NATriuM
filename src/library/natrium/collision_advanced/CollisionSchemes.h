@@ -54,40 +54,49 @@ public:
 		std::array<double, T_Q> fStar = {0.0};//genData.feq;
         std::array<double, T_Q> gStar = {0.0};//genData.geq;
 
+        std::array<double, T_Q> fNeq = {0.0};
+        std::array<double, T_Q> gNeq = {0.0};
+#pragma simd
+        for (int p = 0; p < T_Q; ++p) {
+            fNeq[p] = fLocal[p] - genData.feq[p];
+            gNeq[p] = gLocal[p] - genData.geq[p];
+        }
+
         bool isPrandtlNumberSet = genData.configuration.isPrandtlNumberSet();
 
         if (isPrandtlNumberSet == true) {
 
-            double heatFluxTensorF[T_D][T_D][T_D] = {{{0.0}}};
-            double heatFluxTensorFEq[T_D][T_D][T_D] = {{{0.0}}};
-            double heatFluxTensorG[T_D][T_D][T_D] = {{{0.0}}};
-            double heatFluxTensorGEq[T_D][T_D][T_D] = {{{0.0}}};
+            // 3 staged heat flux tensors
+            std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFNEq = {{{0.0}}};
+            //std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFEq= {{{0.0}}};
+            std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
+            //std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGEq = {{{0.0}}};
 
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(fLocal, heatFluxTensorF, genData);
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(gLocal, heatFluxTensorG, genData);
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.geq,heatFluxTensorGEq,genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(fLocal, heatFluxTensorFNEq, genData);
+            //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(gLocal, heatFluxTensorGNeq, genData);
+            //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.geq,heatFluxTensorGEq,genData);
 
-            calculateFStar<T_D, T_Q>(fStar, heatFluxTensorF, heatFluxTensorFEq, genData);
-            calculateFStar<T_D, T_Q>(gStar, heatFluxTensorG, heatFluxTensorGEq, genData);
+            calculateFStar<T_D, T_Q>(fStar, heatFluxTensorFNEq, genData);
+            calculateFStar<T_D, T_Q>(gStar, heatFluxTensorGNeq, genData);
         }
 
-        double viscosity_tau = genData.tau; // (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
-        double energy_tau=genData.tau;
+        double visc_tau = genData.tau; // (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
+        double ener_tau = genData.tau;
 
         double prandtl = genData.configuration.getPrandtlNumber();
         double prandtl_tau = (genData.tau - 0.5)/prandtl + 0.5;
 
         //if(genData.maskShockSensor>0.5)
         //{
-            //viscosity_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*viscosity_tau;
-            //energy_tau=viscosity_tau;
+            //visc_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*visc_tau;
+            //ener_tau=visc_tau;
         //}
 
 		//Relax every direction towards the equilibrium
 		for (int p = 0; p < T_Q; ++p) {
-            fLocal[p] -= 1. / viscosity_tau * (fLocal[p] - genData.feq[p]) + (1. / viscosity_tau - 1. / prandtl_tau) * (fStar[p]); // -genData.feq[p]);
-            gLocal[p] -= 1. / energy_tau * (gLocal[p] - genData.geq[p]) + (1. / viscosity_tau - 1. / prandtl_tau) * gStar[p];
+            fLocal[p] -= 1. / visc_tau * (fNeq[p]) + (1. / visc_tau - 1. / prandtl_tau) * fStar[p]; // -genData.feq[p]);
+            gLocal[p] -= 1. / ener_tau * (gNeq[p]) + (1. / visc_tau - 1. / prandtl_tau) * gStar[p];
 		}
 	}
 };
