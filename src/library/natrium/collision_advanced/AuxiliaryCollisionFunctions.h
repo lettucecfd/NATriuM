@@ -327,14 +327,16 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
 }
 
     template<size_t T_D, size_t T_Q>
-    inline void calculateCenteredHeatFluxTensor(std::array<double, T_Q> &f, std::array<std::array<std::array<double, T_D>, T_D>, T_D> &heatFluxTensor,
+    inline void calculateCenteredHeatFluxTensor(std::array<double, T_Q> &f,
+                                                std::array<std::array<std::array<double, T_D>, T_D>, T_D> &heatFluxTensor,
                                                 const GeneralCollisionData<T_D, T_Q> &p) {
-        for (int a = 0; a < T_D; a++) {
-            for (int b = 0; b < T_D; b++) {
-                for (int c = 0; c < T_D; c++) {
-                    for (int i = 0; a < T_Q; i++) {
+        for (int i = 0; i < T_Q; i++) {
+            for (int a = 0; a < T_D; a++) {
+                for (int b = 0; b < T_D; b++) {
+                    for (int c = 0; c < T_D; c++) {
+
                         heatFluxTensor[a][b][c] += ((p.e[i][a] - p.velocity[a]) * (p.e[i][b] - p.velocity[b]) *
-                                                    (p.e[i][c] - p.velocity[c]));
+                                                    (p.e[i][c] - p.velocity[c])) * f[i];
                     }
                 }
             }
