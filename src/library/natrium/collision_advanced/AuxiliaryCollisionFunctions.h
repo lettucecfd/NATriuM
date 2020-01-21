@@ -349,8 +349,9 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
         for (int a = 0; a < T_D; a++) {
             for (int b = 0; b < T_D; b++) {
                 for (int c = 0; c < T_D; c++) {
+                    double Q_diff = Q[a][b][c]-QEq[a][b][c];
                     for (int i = 0; a < T_Q; i++) {
-                        fStar[i] += p.weight[i]*((Q[a][b][c]-QEq[a][b][c])*(p.e[i][a]*p.e[i][b]*p.e[i][c]-3*p.cs2*p.e[i][c]*eye[a][b]))/(6.0*p.cs2*p.cs2*p.cs2);
+                        fStar[i] += p.weight[i]*(Q_diff*(p.e[i][a]*p.e[i][b]*p.e[i][c]-3*p.cs2*p.e[i][c]*eye[a][b]))/(6.0*p.cs2*p.cs2*p.cs2);
                     }
                 }
             }

@@ -51,8 +51,8 @@ public:
 		calculateGeqFromFeq<T_D,T_Q>(genData.feq,genData.geq,genData);
 
 		//Distribution functions for variable Prandtl number (cf. Frapolli 2019)
-		std::array<double, T_Q> fStar = genData.feq;
-        std::array<double, T_Q> gStar = genData.geq;
+		std::array<double, T_Q> fStar = {0.0};//genData.feq;
+        std::array<double, T_Q> gStar = {0.0};//genData.geq;
 
         bool isPrandtlNumberSet = genData.configuration.isPrandtlNumberSet();
 
@@ -72,7 +72,7 @@ public:
             calculateFStar<T_D, T_Q>(gStar, heatFluxTensorG, heatFluxTensorGEq, genData);
         }
 
-        double sutherland_tau = genData.tau; // (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
+        double viscosity_tau = genData.tau; // (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
         double energy_tau=genData.tau;
 
         double prandtl = genData.configuration.getPrandtlNumber();
@@ -80,14 +80,14 @@ public:
 
         //if(genData.maskShockSensor>0.5)
         //{
-            //sutherland_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*sutherland_tau;
-            //energy_tau=sutherland_tau;
+            //viscosity_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*viscosity_tau;
+            //energy_tau=viscosity_tau;
         //}
 
 		//Relax every direction towards the equilibrium
 		for (int p = 0; p < T_Q; ++p) {
-            fLocal[p] -= 1. / sutherland_tau * (fLocal[p] - genData.feq[p]) + (1./ sutherland_tau-1./prandtl_tau)*(fStar[p]-genData.feq[p]);
-            gLocal[p] -= 1. / energy_tau * (gLocal[p] - genData.geq[p]) + (1./ sutherland_tau-1./prandtl_tau)*(gStar[p]-genData.feq[p]);;
+            fLocal[p] -= 1. / viscosity_tau * (fLocal[p] - genData.feq[p]) + (1. / viscosity_tau - 1. / prandtl_tau) * (fStar[p]); // -genData.feq[p]);
+            gLocal[p] -= 1. / energy_tau * (gLocal[p] - genData.geq[p]) + (1. / viscosity_tau - 1. / prandtl_tau) * gStar[p];
 		}
 	}
 };
