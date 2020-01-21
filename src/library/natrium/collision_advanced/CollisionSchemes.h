@@ -54,9 +54,9 @@ public:
 		std::array<double, T_Q> fStar = genData.feq;
         std::array<double, T_Q> gStar = genData.geq;
 
-        bool variablePrandtlNumber = true;
+        bool isPrandtlNumberSet = genData.configuration.isPrandtlNumberSet();
 
-        if (variablePrandtlNumber == true) {
+        if (isPrandtlNumberSet == true) {
 
             double heatFluxTensorF[T_D][T_D][T_D] = {{{0.0}}};
             double heatFluxTensorFEq[T_D][T_D][T_D] = {{{0.0}}};
