@@ -326,6 +326,37 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
 
 }
 
+    template<size_t T_D, size_t T_Q>
+    inline void calculateCenteredHeatFluxTensor(std::array<double, T_Q> &f, double heatFluxTensor[T_D][T_D][T_D],
+                                                const GeneralCollisionData<T_D, T_Q> &p) {
+        for (int a = 0; a < T_D; a++) {
+            for (int b = 0; b < T_D; b++) {
+                for (int c = 0; c < T_D; c++) {
+                    for (int i = 0; a < T_Q; i++) {
+                        heatFluxTensor[a][b][c] += ((p.e[i][a] - p.velocity[a]) * (p.e[i][b] - p.velocity[b]) *
+                                                    (p.e[i][c] - p.velocity[c]));
+                    }
+                }
+            }
+        }
+    }
+    template<size_t T_D, size_t T_Q>
+    inline void calculateFStar(std::array<double, T_Q> &fStar, double Q[T_D][T_D][T_D], double QEq[T_D][T_D][T_D],
+                                                const GeneralCollisionData<T_D, T_Q> &p) {
+        double eye[2][2] = {{1, 0},
+                            {0, 1}};
+
+        for (int a = 0; a < T_D; a++) {
+            for (int b = 0; b < T_D; b++) {
+                for (int c = 0; c < T_D; c++) {
+                    for (int i = 0; a < T_Q; i++) {
+                        fStar[i] += p.weight[i]*((Q[a][b][c]-QEq[a][b][c])*(p.e[i][a]*p.e[i][b]*p.e[i][c]-3*p.cs2*p.e[i][c]*eye[a][b]))/(6.0*p.cs2*p.cs2*p.cs2);
+                    }
+                }
+            }
+        }
+    }
+
 } /* namespace natrium */
 
 #endif /* AUXILIARYCOLLISIONFUNCTIONS_H_ */

@@ -48,10 +48,35 @@ public:
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
-        calculateGeqFromFeq<T_D,T_Q>(genData.feq,genData.geq,genData);
+		calculateGeqFromFeq<T_D,T_Q>(genData.feq,genData.geq,genData);
 
-        double sutherland_tau = (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
+		//Distribution functions for variable Prandtl number (cf. Frapolli 2019)
+		std::array<double, T_Q> fStar = genData.feq;
+        std::array<double, T_Q> gStar = genData.geq;
+
+        bool variablePrandtlNumber = true;
+
+        if (variablePrandtlNumber == true) {
+
+            double heatFluxTensorF[T_D][T_D][T_D] = {{{0.0}}};
+            double heatFluxTensorFEq[T_D][T_D][T_D] = {{{0.0}}};
+            double heatFluxTensorG[T_D][T_D][T_D] = {{{0.0}}};
+            double heatFluxTensorGEq[T_D][T_D][T_D] = {{{0.0}}};
+
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(fLocal, heatFluxTensorF, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(gLocal, heatFluxTensorG, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.geq,heatFluxTensorGEq,genData);
+
+            calculateFStar<T_D, T_Q>(fStar, heatFluxTensorF, heatFluxTensorFEq, genData);
+            calculateFStar<T_D, T_Q>(gStar, heatFluxTensorG, heatFluxTensorGEq, genData);
+        }
+
+        double sutherland_tau = genData.tau; // (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
         double energy_tau=genData.tau;
+
+        double prandtl = 0.7;
+        double prandtl_tau = (genData.tau - 0.5)/prandtl + 0.5;
 
         //if(genData.maskShockSensor>0.5)
         //{
@@ -61,8 +86,8 @@ public:
 
 		//Relax every direction towards the equilibrium
 		for (int p = 0; p < T_Q; ++p) {
-            fLocal[p] -= 1. / sutherland_tau * (fLocal[p] - genData.feq[p]);
-            gLocal[p] -= 1. / energy_tau * (gLocal[p] - genData.geq[p]);
+            fLocal[p] -= 1. / sutherland_tau * (fLocal[p] - genData.feq[p]) + (1./ sutherland_tau-1./prandtl_tau)*(fStar[p]-genData.feq[p]);
+            gLocal[p] -= 1. / energy_tau * (gLocal[p] - genData.geq[p]) + (1./ sutherland_tau-1./prandtl_tau)*(gStar[p]-genData.feq[p]);;
 		}
 	}
 };
