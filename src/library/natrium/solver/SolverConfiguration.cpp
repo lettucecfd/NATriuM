@@ -18,6 +18,11 @@ SolverConfiguration::SolverConfiguration() {
 	{
 		declare_entry("CFL", "0.4", dealii::Patterns::Double(1e-10),
 				"CFL number. Determines the size of the (initial) time step. The CFL number is defined as stencil_scaling/(dx*(p+1)^2).");
+        declare_entry("Prandtl", "1.0", dealii::Patterns::Double(1e-10),
+                      "Prandtl number. Determines ratio of viscosity and heat conduction. Set to Pr=0.7 for air. Default Pr=1.0 (BGK)");
+        declare_entry("Prandtl number set", "false",
+                      dealii::Patterns::Bool(),
+                      "Indicates if Prandtl number deviates from 1.0");
 		declare_entry("Stencil", "D2Q9",
 				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q25|D2Q25H"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");

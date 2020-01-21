@@ -505,7 +505,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLISION ==          " << endl;
 	LOG(WELCOME) << "tau:                      " << tau << endl;
-	LOG(WELCOME) << "----------------------------" << endl;
+    LOG(WELCOME) << "Prandtl number Pr:" << configuration->getPrandtlNumber() << endl;
+    LOG(WELCOME) << "----------------------------" << endl;
 
 // initialize boundary dof indicator
 	std::set<dealii::types::boundary_id> boundaryIndicators;

@@ -75,7 +75,7 @@ public:
         double sutherland_tau = genData.tau; // (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
         double energy_tau=genData.tau;
 
-        double prandtl = 0.7;
+        double prandtl = genData.configuration.getPrandtlNumber();
         double prandtl_tau = (genData.tau - 0.5)/prandtl + 0.5;
 
         //if(genData.maskShockSensor>0.5)
