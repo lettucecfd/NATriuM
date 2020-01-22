@@ -20,6 +20,8 @@ SolverConfiguration::SolverConfiguration() {
 				"CFL number. Determines the size of the (initial) time step. The CFL number is defined as stencil_scaling/(dx*(p+1)^2).");
         declare_entry("Prandtl", "1.0", dealii::Patterns::Double(1e-10),
                       "Prandtl number. Determines ratio of viscosity and heat conduction. Set to Pr=0.7 for air. Default Pr=1.0 (BGK)");
+        declare_entry("Gamma", "1.4", dealii::Patterns::Double(1e-10),
+                      "Heat capacity ratio . Set to gamma=1.4 for air (Default)");
         declare_entry("Prandtl number set", "false",
                       dealii::Patterns::Bool(),
                       "Indicates if Prandtl number deviates from 1.0");

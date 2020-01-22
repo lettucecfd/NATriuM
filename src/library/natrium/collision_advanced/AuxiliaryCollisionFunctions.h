@@ -253,16 +253,20 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 					- fLocal[18]);
 }
 
-template<int T_D, int T_Q>
-inline double calculateTemperature(const std::array<double, T_Q>& fLocal, const std::array<double, T_Q>& gLocal,
-		 std::array<double, T_D>& velocity, double density, double temperature,
-		GeneralCollisionData<T_D, T_Q>& params) {
-	//T0[i,j]+=((c[k,0]-u[0,i,j])**2+(c[k,1]-u[1,i,j])**2)*fin[k,i,j]*0.5/rho[i,j]
-		temperature = 0.0;
-		for (int i = 0; i < T_Q; i++) {
-			temperature += ((params.e[i][0]-velocity[0]) * (params.e[i][0]-velocity[0])+ (params.e[i][1]-velocity[1]) * (params.e[i][1]-velocity[1]))*fLocal[i]/params.cs2+gLocal[i];
-
-		}
+    template<int T_D, int T_Q>
+    inline double calculateTemperature(const std::array<double, T_Q> &fLocal, const std::array<double, T_Q> &gLocal,
+                                       std::array<double, T_D> &velocity, double density, double temperature,
+                                       GeneralCollisionData<T_D, T_Q> &params) {
+        //T0[i,j]+=((c[k,0]-u[0,i,j])**2+(c[k,1]-u[1,i,j])**2)*fin[k,i,j]*0.5/rho[i,j]
+        temperature = 0.0;
+        for (int i = 0; i < T_Q; i++) {
+            double sum = 0.0;
+            for (int a = 0; a < T_D; a++) {
+                sum += (params.e[i][a] - velocity[a]) * (params.e[i][a] - velocity[a]);
+            }
+            temperature += sum * fLocal[i] / params.cs2 +
+                           gLocal[i];
+        }
         double gamma = 1.4;
         double C_v = 1./(gamma-1.0);
         temperature = temperature * 0.5 / (density*C_v);
@@ -343,16 +347,19 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
         }
     }
     template<size_t T_D, size_t T_Q>
-    inline void calculateFStar(std::array<double, T_Q> &fStar, std::array<std::array<std::array<double, T_D>, T_D>, T_D> &QNeq,
-                                                const GeneralCollisionData<T_D, T_Q> &p) {
+    inline void
+    calculateFStar(std::array<double, T_Q> &fStar, std::array<std::array<std::array<double, T_D>, T_D>, T_D> &QNeq,
+                   const GeneralCollisionData<T_D, T_Q> &p) {
         double eye[2][2] = {{1, 0},
                             {0, 1}};
+        for (int i = 0; i < T_Q; i++) {
+            for (int a = 0; a < T_D; a++) {
+                for (int b = 0; b < T_D; b++) {
+                    for (int c = 0; c < T_D; c++) {
 
-        for (int a = 0; a < T_D; a++) {
-            for (int b = 0; b < T_D; b++) {
-                for (int c = 0; c < T_D; c++) {
-                    for (int i = 0; a < T_Q; i++) {
-                        fStar[i] += p.weight[i]*(QNeq[a][b][c]*(p.e[i][a]*p.e[i][b]*p.e[i][c]-3*p.cs2*p.e[i][c]*eye[a][b]))/(6.0*p.cs2*p.cs2*p.cs2);
+                        fStar[i] += p.weight[i] * (QNeq[a][b][c] * (p.e[i][a] * p.e[i][b] * p.e[i][c] -
+                                                                    3 * p.cs2 * p.e[i][c] * eye[a][b])) /
+                                    (6.0 * p.cs2 * p.cs2 * p.cs2);
                     }
                 }
             }

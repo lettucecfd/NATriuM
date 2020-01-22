@@ -2090,6 +2090,36 @@ public:
 		leave_subsection();
 	}
 
+    double getHeatCapacityRatioGamma() {
+        enter_subsection("General");
+        double gamma;
+        try {
+            gamma = get_double("Gamma");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Gamma' from parameters: "
+                << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return gamma;
+    }
+
+    void setHeatCapacityRatioGamma(double gamma) {
+        enter_subsection("General");
+        try {
+            set("Gamma", gamma);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << gamma << " to Gamma: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+
     double getPrandtlNumber() {
         enter_subsection("General");
         double prandtl;
