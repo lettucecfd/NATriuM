@@ -129,7 +129,7 @@ SolverConfiguration::SolverConfiguration() {
 				"Relaxation scheme (choice of the higher-order relaxation parameters). Default: full relaxation to equilibrium");
 
 		declare_entry("Equilibrium scheme", "BGK equilibrium",
-				dealii::Patterns::Selection("BGK equilibrium|Incompressible equilibrium|Steady-state equilibrium|Entropic equilibrium"),
+				dealii::Patterns::Selection("BGK equilibrium|Quartic equilibrium|Incompressible equilibrium|Steady-state equilibrium|Entropic equilibrium"),
 				"Defines the equilibrium for the collision.");
 
 		enter_subsection("BGK parameters");

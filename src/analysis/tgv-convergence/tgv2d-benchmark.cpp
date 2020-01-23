@@ -80,6 +80,8 @@ int main(int argc, char** argv) {
 	configuration->setUserInteraction(false);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
+	//configuration->setStencil(Stencil_D2Q25H);
+	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 
 	if (limiter) {
 		configuration->setVmultLimiter(true);

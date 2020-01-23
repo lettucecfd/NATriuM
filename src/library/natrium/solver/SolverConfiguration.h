@@ -516,6 +516,8 @@ public:
 			return BGK_EQUILIBRIUM;
 		} else if ("Incompressible equilibrium" == equilibriumScheme) {
 			return INCOMPRESSIBLE_EQUILIBRIUM;
+        } else if ("Quartic equilibrium" == equilibriumScheme) {
+            return QUARTIC_EQUILIBRIUM;
 		} else if ("Steady-state equilibrium" == equilibriumScheme) {
 			return STEADYSTATE_EQUILIBRIUM;
 		} else if ("Entropic equilibrium" == equilibriumScheme) {
@@ -536,6 +538,10 @@ public:
 			set("Equilibrium scheme", "BGK equilibrium");
 			break;
 		}
+        case QUARTIC_EQUILIBRIUM: {
+            set("Equilibrium scheme", "Quartic equilibrium");
+            break;
+        }
 		case INCOMPRESSIBLE_EQUILIBRIUM: {
 			set("Equilibrium scheme", "Incompressible equilibrium");
 			break;

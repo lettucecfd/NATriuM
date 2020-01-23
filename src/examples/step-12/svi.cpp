@@ -94,6 +94,7 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(t_max);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	configuration->setStencil(Stencil_D2Q25H)
 	configuration->setExponentialFilterAlpha(36);
 	configuration->setExponentialFilterNc(4);
 
