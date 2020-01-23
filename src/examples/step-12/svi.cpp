@@ -97,6 +97,7 @@ int main(int argc, char** argv) {
 	configuration->setStencil(Stencil_D2Q25H)
 	configuration->setExponentialFilterAlpha(36);
 	configuration->setExponentialFilterNc(4);
+	configuration->setPrandtlNumber(0.7);
 
     configuration->setVmultLimiter(bool(parser.getArgument<int>("vmult")));
     pout << "VMultLimiter is " << configuration->isVmultLimiter() << endl;

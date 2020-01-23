@@ -8,6 +8,7 @@
 #ifndef COMPRESSIBLECFDSOLVER_H_
 #define COMPRESSIBLECFDSOLVER_H_
 
+#include "deal.II/grid/grid_out.h"
 #include "CFDSolver.h"
 #include "../utilities/BasicNames.h"
 #include "../utilities/CFDSolverUtilities.h"
@@ -171,14 +172,14 @@ void compressibleFilter() {
 		}
 
 
-	inline distributed_vector& getWriteableTemperature(distributed_vector& writeable, const distributed_vector& member, const dealii::IndexSet& locally_owned){
+/*	inline distributed_vector& getWriteableTemperature(distributed_vector& writeable, const distributed_vector& member, const dealii::IndexSet& locally_owned){
 		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
 		writeable.reinit(locally_owned, member.get_mpi_communicator(), true);
 		assert (not writeable.has_ghost_elements());
 		writeable = member;
 		assert (not writeable.has_ghost_elements());
 		return writeable;
-	}
+	}*/
 
 	/**
 	 * @short copy the changes in the writeable copy to the global density, see getWritableVelocity for a detailed explanation
@@ -188,81 +189,133 @@ void compressibleFilter() {
 		member = writeable;
 	}
 
-	void secondOutput(size_t iteration, bool is_final)
-		{
-			// no output if solution interval > 10^8
-			if (((iteration % this->m_configuration->getOutputSolutionInterval() == 0)
-					and this->m_configuration->getOutputSolutionInterval() <= 1e8)
-					or (is_final)) {
-				// save local part of the solution
-				std::stringstream str;
-				str << this->m_configuration->getOutputDirectory().c_str() << "/t_"
-						<< this->m_problemDescription->getMesh()->locally_owned_subdomain()
-						<< "." << iteration << ".vtu";
-				std::string filename = str.str();
-				std::ofstream vtu_output(filename.c_str());
-				dealii::DataOut<dim> data_out;
-				data_out.attach_dof_handler(*(this->m_advectionOperator)->getDoFHandler());
-				data_out.add_data_vector(this->m_density, "rho");
-				data_out.add_data_vector(m_temperature, "T");
+	void compressibleOutput(size_t iteration, bool is_final) {
+
+
+// start timer
+        TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
+
+// sync MPI processes
+        MPI_sync();
+
+// output: vector fields as .vtu files
+        if (not this->m_configuration->isSwitchOutputOff()) {
+            if (iteration - this->m_iterationStart == 0) {
+                // first iteration: put out mesh
+                std::stringstream str0;
+                str0 << this->m_configuration->getOutputDirectory().c_str()
+                     << "/grid.vtk";
+                std::string grid_file = str0.str();
+                std::ofstream grid_out_file(grid_file);
+                dealii::GridOut().write_vtk(*(this->m_problemDescription)->getMesh(),
+                                            grid_out_file);
+                grid_out_file.close();
+
+            }
+            if (iteration % 100 == 0) {
+                LOG(DETAILED) << "Iteration " << iteration << ",  t = " << this->m_time
+                              << endl;
+            }
+            if ((iteration % 1000 == 0) or (is_final)) {
+                double secs = 1e-10 + (clock() - this->m_tstart) / CLOCKS_PER_SEC;
+                LOG(DETAILED) << "Time elapsed: " << secs
+                              << "s;    Average Performance: "
+                              << 1.0 * this->m_advectionOperator->getDoFHandler()->n_dofs()
+                                 * (iteration - this->m_iterationStart) / secs / 1000000.0
+                              << " million DoF updates per second" << endl;
+                Timing::getTimer().print_summary();
+            }
+            // output estimated runtime after iterations 1, 10, 100, 1000, ...
+            /*if (iteration > m_iterationStart) {
+             if (int(log10(iteration - m_iterationStart))
+             == log10(iteration - m_iterationStart)) {
+             time_t estimated_end = m_tstart
+             + (m_configuration->getNumberOfTimeSteps()
+             - m_iterationStart)
+             / (iteration - m_iterationStart)
+             * (time(0) - m_tstart);
+             struct tm * ltm = localtime(&estimated_end);
+             LOG(BASIC) << "i = " << iteration << "; Estimated end: "
+             << string(asctime(ltm)) << endl;
+             }
+             }*/
+            if (this->m_configuration->isOutputTurbulenceStatistics())
+                this->m_turbulenceStats->addToReynoldsStatistics(this->m_velocity);
+
+            // no output if solution interval > 10^8
+            if (((iteration % this->m_configuration->getOutputSolutionInterval() == 0)
+                 and this->m_configuration->getOutputSolutionInterval() <= 1e8)
+                or (is_final)) {
+                // save local part of the solution
+                std::stringstream str;
+                str << this->m_configuration->getOutputDirectory().c_str() << "/t_"
+                    << this->m_problemDescription->getMesh()->locally_owned_subdomain()
+                    << "." << iteration << ".vtu";
+                std::string filename = str.str();
+                std::ofstream vtu_output(filename.c_str());
+                dealii::DataOut<dim> data_out;
+                data_out.attach_dof_handler(*(this->m_advectionOperator)->getDoFHandler());
+                data_out.add_data_vector(this->m_density, "rho");
+                data_out.add_data_vector(m_temperature, "T");
                 data_out.add_data_vector(this->m_maskShockSensor, "shockSensor");
-				if (dim == 2) {
-					data_out.add_data_vector(this->m_velocity.at(0), "ux");
-					data_out.add_data_vector(this->m_velocity.at(1), "uy");
-				} else { //dim == 3
-					data_out.add_data_vector(this->m_velocity.at(0), "ux");
-					data_out.add_data_vector(this->m_velocity.at(1), "uy");
-					data_out.add_data_vector(this->m_velocity.at(2), "uz");
-				}
+                if (dim == 2) {
+                    data_out.add_data_vector(this->m_velocity.at(0), "ux");
+                    data_out.add_data_vector(this->m_velocity.at(1), "uy");
+                } else { //dim == 3
+                    data_out.add_data_vector(this->m_velocity.at(0), "ux");
+                    data_out.add_data_vector(this->m_velocity.at(1), "uy");
+                    data_out.add_data_vector(this->m_velocity.at(2), "uz");
+                }
 
-				/// For Benchmarks: add analytic solution
-				this->addAnalyticSolutionToOutput(data_out);
-				/// For turbulent flows: add turbulent statistics
-				if (this->m_configuration->isOutputTurbulenceStatistics()) {
-					this->m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
-				}
+                /// For Benchmarks: add analytic solution
+                this->addAnalyticSolutionToOutput(data_out);
+                /// For turbulent flows: add turbulent statistics
+                if (this->m_configuration->isOutputTurbulenceStatistics()) {
+                    this->m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
+                }
 
-				// tell the data processor the locally owned cells
-				dealii::Vector<float> subdomain(
-						this->m_problemDescription->getMesh()->n_active_cells());
-				for (unsigned int i = 0; i < subdomain.size(); ++i)
-					subdomain(i) =
-							this->m_problemDescription->getMesh()->locally_owned_subdomain();
-				data_out.add_data_vector(subdomain, "subdomain");
+                // tell the data processor the locally owned cells
+                dealii::Vector<float> subdomain(
+                        this->m_problemDescription->getMesh()->n_active_cells());
+                for (unsigned int i = 0; i < subdomain.size(); ++i)
+                    subdomain(i) =
+                            this->m_problemDescription->getMesh()->locally_owned_subdomain();
+                data_out.add_data_vector(subdomain, "subdomain");
 
-				// Write vtu file
+                // Write vtu file
 
                 data_out.build_patches(
                         (this->m_configuration->getSedgOrderOfFiniteElement() == 1) ?
-                                this->m_configuration->getSedgOrderOfFiniteElement() :
-                                this->m_configuration->getSedgOrderOfFiniteElement() + 1);
-				data_out.write_vtu(vtu_output);
+                        this->m_configuration->getSedgOrderOfFiniteElement() :
+                        this->m_configuration->getSedgOrderOfFiniteElement() + 1);
+                data_out.write_vtu(vtu_output);
 
-				// Write pvtu file (which is a master file for all the single vtu files)
-				if (is_MPI_rank_0()) {
-					// generate .pvtu filename
-					std::stringstream pvtu_filename;
-					pvtu_filename << this->m_configuration->getOutputDirectory().c_str()
-							<< "/t_"
-							<< this->m_problemDescription->getMesh()->locally_owned_subdomain()
-							<< "." << iteration << ".pvtu";
-					std::ofstream pvtu_output(pvtu_filename.str().c_str());
+                // Write pvtu file (which is a master file for all the single vtu files)
+                if (is_MPI_rank_0()) {
+                    // generate .pvtu filename
+                    std::stringstream pvtu_filename;
+                    pvtu_filename << this->m_configuration->getOutputDirectory().c_str()
+                                  << "/t_"
+                                  << this->m_problemDescription->getMesh()->locally_owned_subdomain()
+                                  << "." << iteration << ".pvtu";
+                    std::ofstream pvtu_output(pvtu_filename.str().c_str());
 
-					// generate all other filenames
-					std::vector<std::string> filenames;
-					for (unsigned int i = 0;
-							i < dealii::Utilities::MPI::n_mpi_processes(
-							MPI_COMM_WORLD); ++i) {
-						std::stringstream vtu_filename_i;
-						vtu_filename_i
-						//<< m_configuration->getOutputDirectory().c_str() << "/"
-						<< "t_" << i << "." << iteration << ".vtu";
-						filenames.push_back(vtu_filename_i.str());
-					}
-					data_out.write_pvtu_record(pvtu_output, filenames);
-				}
-			}
-		}
+                    // generate all other filenames
+                    std::vector<std::string> filenames;
+                    for (unsigned int i = 0;
+                         i < dealii::Utilities::MPI::n_mpi_processes(
+                                 MPI_COMM_WORLD); ++i) {
+                        std::stringstream vtu_filename_i;
+                        vtu_filename_i
+                                //<< m_configuration->getOutputDirectory().c_str() << "/"
+                                << "t_" << i << "." << iteration << ".vtu";
+                        filenames.push_back(vtu_filename_i.str());
+                    }
+                    data_out.write_pvtu_record(pvtu_output, filenames);
+                }
+            }
+        }
+    }
 
     void applyShockSensor()  {
         const unsigned int dofs_per_cell =
@@ -425,8 +478,8 @@ void compressibleFilter() {
                 break;
             }
             //applyShockSensor();
-            this->output(this->m_i);
-            this->secondOutput(this->m_i,false);
+            // Deactivated this->output(this->m_i);
+            this->compressibleOutput(this->m_i, false);
             this->m_i++;
             this->stream();
             gStream();
@@ -436,8 +489,8 @@ void compressibleFilter() {
                 this->m_dataProcessors.at(i)->apply();
             }
         }
-        this->output(this->m_i, true);
-        this->secondOutput(this->m_i,true);
+        //this->output(this->m_i, true);
+        this->compressibleOutput(this->m_i, true);
 
         // Finalize
         if (is_MPI_rank_0()) {

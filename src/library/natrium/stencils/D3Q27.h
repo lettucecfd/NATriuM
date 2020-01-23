@@ -185,7 +185,7 @@ public:
 	}
 
 	virtual double getMaxParticleVelocityMagnitude() const {
-		return m_scaling * sqrt(3);
+		return m_scaling * sqrt(2);
 	}
 
 	virtual double getScaling() const {

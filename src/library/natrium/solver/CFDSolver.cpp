@@ -503,9 +503,13 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "Order of finite element:  "
 			<< configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
-	LOG(WELCOME) << "== COLLISION ==          " << endl;
+	LOG(WELCOME) << "== COLLISION ==           " << endl;
 	LOG(WELCOME) << "tau:                      " << tau << endl;
-	LOG(WELCOME) << "----------------------------" << endl;
+    LOG(WELCOME) << "Is Prandtl number set?    " << configuration->isPrandtlNumberSet() << endl;
+    LOG(WELCOME) << "Prandtl number Pr:        " << configuration->getPrandtlNumber() << endl;
+    LOG(WELCOME) << "Heat capacity ratio:      " << configuration->getHeatCapacityRatioGamma() << endl;
+
+    LOG(WELCOME) << "----------------------------" << endl;
 
 // initialize boundary dof indicator
 	std::set<dealii::types::boundary_id> boundaryIndicators;

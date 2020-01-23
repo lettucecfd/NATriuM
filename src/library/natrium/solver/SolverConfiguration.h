@@ -2096,6 +2096,83 @@ public:
 		leave_subsection();
 	}
 
+    double getHeatCapacityRatioGamma() {
+        enter_subsection("General");
+        double gamma;
+        try {
+            gamma = get_double("Gamma");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Gamma' from parameters: "
+                << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return gamma;
+    }
+
+    void setHeatCapacityRatioGamma(double gamma) {
+        enter_subsection("General");
+        try {
+            set("Gamma", gamma);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << gamma << " to Gamma: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+
+    double getPrandtlNumber() {
+        enter_subsection("General");
+        double prandtl;
+        try {
+            prandtl = get_double("Prandtl");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Prandtl' from parameters: "
+                << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return prandtl;
+    }
+
+    void setPrandtlNumber(double prandtl) {
+        enter_subsection("General");
+        try {
+            set("Prandtl", prandtl);
+            set("Prandtl number set", true);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << prandtl << " to Prandtl: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    bool isPrandtlNumberSet() {
+        enter_subsection("General");
+        bool isPrandtlSet;
+        try {
+            isPrandtlSet = get_bool("Prandtl number set");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Prandtl number set' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return isPrandtlSet;
+    }
+
 	bool isWriteALogFile() {
 		enter_subsection("Output");
 		bool writeLogFile;
