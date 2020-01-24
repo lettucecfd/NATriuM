@@ -99,7 +99,6 @@ int main(int argc, char** argv) {
 	configuration->setExponentialFilterAlpha(36);
 	configuration->setExponentialFilterNc(4);
 	configuration->setPrandtlNumber(0.75);
-	configuration->setInitializationScheme(ITERATIVE);
 
     configuration->setVmultLimiter(bool(parser.getArgument<int>("vmult")));
     pout << "VMultLimiter is " << configuration->isVmultLimiter() << endl;
