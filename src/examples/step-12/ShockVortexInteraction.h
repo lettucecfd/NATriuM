@@ -70,7 +70,7 @@ public:
 	 * @param trafo_y < 1: 0=regular grid spacing
 	 **/
         ShockVortexInteraction(double viscosity,
-			size_t refinement_level, double u0, double kappa, double perturbation=0.05, double trafo_x=0, double trafo_y=0);
+			size_t refinement_level, double u0, double kappa, double Ma_v, double perturbation=0.05, double trafo_x=0, double trafo_y=0);
 
 	/// destructor
         virtual ~ShockVortexInteraction();
@@ -114,6 +114,8 @@ private:
 	double m_perturbation;
 	double m_trafoX;
 	double m_trafoY;
+
+	double m_Ma_v;
 
 
 

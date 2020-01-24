@@ -19,10 +19,10 @@
 namespace natrium {
 
 ShockVortexInteraction::ShockVortexInteraction(double viscosity, size_t refinement_level, double u0,
-		double kappa, double perturbation, double trafo_x, double trafo_y) :
+		double kappa, double Ma_v, double perturbation, double trafo_x, double trafo_y) :
 		ProblemDescription<2>(makeGrid(), viscosity, 1.0), m_u0(u0), m_kappa(
 				kappa), m_refinementLevel(refinement_level), m_perturbation(perturbation),
-       	              		m_trafoX(trafo_x), m_trafoY(trafo_y)	{
+       	              		m_trafoX(trafo_x), m_trafoY(trafo_y), m_Ma_v(Ma_v)	{
 	assert(trafo_x >=0);
 	assert(trafo_x < 1);
 	assert(trafo_y >=0);
@@ -40,14 +40,13 @@ ShockVortexInteraction::~ShockVortexInteraction() {
 
 double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2>& x,
         const unsigned int component) const {
-
-    double u_v = 0.25/sqrt(3.0)*sqrt(1.4);
+    double u_v = m_flow->m_Ma_v/sqrt(3.0)*sqrt(1.4);
 
     double return_value = 0.0;
     if(component==0){
     if (x(0) <= 30.0)
     {
-        return_value= -0.84217047/sqrt(3.0)*sqrt(1.4*1.12799382);
+        return_value= -0.84217047/sqrt(3.0)*sqrt(1.4*1.12811);//1.12799382);
     }
  else
     {
@@ -56,7 +55,7 @@ double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2>& x,
 
 
     }
-        double x_rel = x(0) - 38.0;
+        double x_rel = x(0) - 34.0;
         double y_rel = x(1) - 12.0;
         double r = sqrt(x_rel*x_rel+y_rel*y_rel);
         double sinalpha = y_rel/r;
@@ -87,9 +86,9 @@ return return_value;
 
 double ShockVortexInteraction::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
 double return_value = 0.0;
-double Ma_v = 0.25;
+double Ma_v = m_flow->m_Ma_v;
 
-double x_rel = x(0) - 38.0;
+double x_rel = x(0) - 34.0;
 double y_rel = x(1) - 12.0;
 double r = sqrt(x_rel*x_rel+y_rel*y_rel);
 
@@ -119,16 +118,16 @@ double ShockVortexInteraction::InitialTemperature::value(const dealii::Point<2>&
 double return_value = 0.0;
     if (x(0) <= 30.0)
     {
-        return_value= 1.12799382;
+        return_value= 1.12811;
     }
  else
     {
     return_value= 1.0; }
 
 
-    double Ma_v = 0.25;
+    double Ma_v = m_flow->m_Ma_v;
 
-    double x_rel = x(0) - 38.0;
+    double x_rel = x(0) - 34.0;
     double y_rel = x(1) - 12.0;
     double r = sqrt(x_rel*x_rel+y_rel*y_rel);
     if(r<=4.0)

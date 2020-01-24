@@ -61,7 +61,8 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	// MAKE FLOW PROBLEM
 	// ========================================================================
-
+    //Speed of the vortex
+	double Ma_v = 0.25;
 	double perturbation = 0.05;
 	double kappa = 80;
     double u0 = 0.0;
@@ -73,7 +74,7 @@ int main(int argc, char** argv) {
 
     boost::shared_ptr<ProblemDescription<2> > svi = boost::make_shared<
             ShockVortexInteraction>(viscosity, parser.getArgument<int>("ref-level"), u0,
-			kappa, perturbation, parser.getArgument<double>("tx"),
+			kappa, Ma_v, perturbation, parser.getArgument<double>("tx"),
 			parser.getArgument<double>("ty"));
 
 	// ========================================================================
