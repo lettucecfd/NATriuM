@@ -92,7 +92,7 @@ double x_rel = x(0) - 45.0;
 double y_rel = x(1) - 12.0;
 double r = sqrt(x_rel*x_rel+y_rel*y_rel);
 
-    if (x(0) <=45.0)
+    if (x(0) <=30.0)
     {
         return_value= 1.34131;//1.34161490;
     }
@@ -116,7 +116,7 @@ return return_value;
 
 double ShockVortexInteraction::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
 double return_value = 0.0;
-    if (x(0) <= 45.0)
+    if (x(0) <= 30.0)
     {
         return_value= 1.12811;
     }
