@@ -94,7 +94,7 @@ double r = sqrt(x_rel*x_rel+y_rel*y_rel);
 
     if (x(0) <=30.0)
     {
-        return_value= 1.34161490;
+        return_value= 1.34131;//1.34161490;
     }
 
 
