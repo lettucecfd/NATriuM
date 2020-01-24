@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
 	configuration->setStencil(Stencil_D2Q25H)
 	configuration->setExponentialFilterAlpha(36);
 	configuration->setExponentialFilterNc(4);
-	configuration->setPrandtlNumber(0.7);
+	configuration->setPrandtlNumber(0.75);
 
     configuration->setVmultLimiter(bool(parser.getArgument<int>("vmult")));
     pout << "VMultLimiter is " << configuration->isVmultLimiter() << endl;
@@ -116,8 +116,8 @@ int main(int argc, char** argv) {
 			<< static_cast<int>(configuration->getDealIntegrator()) << "-CFL"
 			<< configuration->getCFL() << "-reg" << static_cast<int>(configuration->getRegularizationScheme())<< "-scaling"
             << configuration->getStencilScaling() << "-suppP"
-            << configuration->getSupportPoints() << "-vMult"
-            << configuration->isVmultLimiter();
+            << configuration->getSupportPoints() << "-Pr"
+            << configuration->getPrandtlNumber();
 	if (parser.getArgument<int>("filter") != 0) {
 		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"
 				<< parser.getArgument<int>("filter-s");
