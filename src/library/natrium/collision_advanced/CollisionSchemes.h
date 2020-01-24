@@ -66,11 +66,9 @@ public:
 
         if (isPrandtlNumberSet == true) {
 
-            // 3 staged heat flux tensors
+            // 3 staged non-equilibrium heat flux tensors
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFNEq = {{{0.0}}};
-            //std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFEq= {{{0.0}}};
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
-            //std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGEq = {{{0.0}}};
 
             calculateCenteredHeatFluxTensor<T_D,T_Q>(fLocal, heatFluxTensorFNEq, genData);
             //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
