@@ -55,7 +55,7 @@ double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2>& x,
 
 
     }
-        double x_rel = x(0) - 45.0;
+        double x_rel = x(0) - 34.0;
         double y_rel = x(1) - 12.0;
         double r = sqrt(x_rel*x_rel+y_rel*y_rel);
         double sinalpha = y_rel/r;
@@ -88,7 +88,7 @@ double ShockVortexInteraction::InitialDensity::value(const dealii::Point<2>& x, 
 double return_value = 0.0;
 double Ma_v = m_flow->m_Ma_v;
 
-double x_rel = x(0) - 45.0;
+double x_rel = x(0) - 34.0;
 double y_rel = x(1) - 12.0;
 double r = sqrt(x_rel*x_rel+y_rel*y_rel);
 
@@ -127,7 +127,7 @@ double return_value = 0.0;
 
     double Ma_v = m_flow->m_Ma_v;
 
-    double x_rel = x(0) - 45.0;
+    double x_rel = x(0) - 34.0;
     double y_rel = x(1) - 12.0;
     double r = sqrt(x_rel*x_rel+y_rel*y_rel);
     if(r<=4.0)

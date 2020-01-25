@@ -459,10 +459,110 @@ void compressibleFilter() {
 		LOG(BASIC) << "Equilibrium distribution functions" << endl;
 			// do nothing else
 
+        switch (this->m_configuration->getInitializationScheme()) {
+            case EQUILIBRIUM: {
+                LOG(BASIC) << "Equilibrium distribution functions" << endl;
+                // do nothing else
+                break;
+            }
+            case ITERATIVE: {
+                LOG(BASIC) << "Iterative procedure" << endl;
+                LOG(DETAILED) << "residual = "
+                              << this->m_configuration->getIterativeInitializationResidual();
+                LOG(DETAILED) << ", max iterations = "
+                              << this->m_configuration->getIterativeInitializationNumberOfIterations()
+                              << endl;
+                // Iterative procedure; leading to consistent initial values
+                size_t loopCount = 0;
+                double residual = 1000000000;
+                const bool inInitializationProcedure = true;
+                distributed_vector oldDensities;
+                while (residual > this->m_configuration->getIterativeInitializationResidual()) {
+                    if (loopCount
+                        > this->m_configuration->getIterativeInitializationNumberOfIterations()) {
+                        LOG(WARNING)
+                                << "The iterative Initialization of equilibrium distribution functions could only reach residual "
+                                << residual << " after " << loopCount
+                                << " iterations (Aimed at residual "
+                                << this->m_configuration->getIterativeInitializationResidual()
+                                << "). If that is too bad, increase the number of iterations in the iterative initialization scheme. "
+                                << "To avoid this Warning, soften the scheme (i.e. aim at a greater residual.)";
+                        break;
+                    }
+                    distributed_vector rho;
+                    vector<distributed_vector> u;
+                    distributed_vector T;
+                    distributed_vector mask;
+                    // get writeable copies of rho and u
+                    CFDSolverUtilities::getWriteableDensity(oldDensities, this->m_density,
+                                                            locally_owned_dofs);
+                    CFDSolverUtilities::getWriteableDensity(rho, this->m_density,
+                                                            locally_owned_dofs);
+                    CFDSolverUtilities::getWriteableDensity(mask, this->m_maskShockSensor,
+                                                            locally_owned_dofs);
+                    CFDSolverUtilities::getWriteableVelocity(u, this->m_velocity,
+                                                             locally_owned_dofs);
+                    CFDSolverUtilities::getWriteableDensity(T, m_temperature,
+                                                            locally_owned_dofs);
+                    try {
+                        this->stream();
+                    } catch (std::exception& e) {
+                        natrium_errorexit(e.what());
+                    }
+                    // collide without recalculating velocities
+                    try {
+                        // collide
+                        double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
+                                *(this->getProblemDescription()->getMesh()),
+                                this->getConfiguration()->getSedgOrderOfFiniteElement(), *(this->m_stencil),
+                                this->getConfiguration()->getCFL());
 
 
 
-		this->m_time = t0;
+                        selectCollision(*(this->m_configuration), *(this->m_problemDescription), this->m_f, m_g, rho, u, T, mask,
+                                        this->m_advectionOperator->getLocallyOwnedDofs(), this->m_problemDescription->getViscosity(), delta_t, *(this->getStencil()), true);
+                        //m_collisionModel->collideAll(m_f, rho, m_velocity, locally_owned_dofs,
+                        //                             inInitializationProcedure);
+                        // copy back
+                    } catch (CollisionException& e) {
+                        natrium_errorexit(e.what());
+                    }
+                    //oldDensities -= rho;
+                    residual = oldDensities.norm_sqr();
+                    //CFDSolverUtilities::applyWriteableDensity(rho, this->m_density);
+                    this->m_f.updateGhosted();
+                    this->m_g.updateGhosted();
+                    //CFDSolverUtilities::applyWriteableVelocity(u, m_velocity);
+                    loopCount++;
+                }
+                LOG(DETAILED) << "Residual " << residual << " reached after "
+                              << loopCount << " iterations." << endl;
+
+                //for all degrees of freedom on current processor
+                /*for (it = locally_owned_dofs.begin(); it != end; it++) {
+                 size_t i = *it;
+                 for (size_t j = 0; j < dim; j++) {
+                 u(j) = m_velocity.at(j)(i);
+                 }
+                 m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
+                 for (size_t j = 0; j < m_stencil->getQ(); j++) {
+                 m_f.at(j)(i) = feq.at(j);
+                 }
+                 }*/
+                break;
+            }
+            default: {
+                throw CFDSolverException(
+                        "Error in CFDSolver::InitializeDistributions. A part of the code was reached, which should never be reached.");
+                break;
+            }
+        }
+
+
+
+
+
+        this->m_time = t0;
 
 		LOG(BASIC) << "Initialize distribution functions: done." << endl;
 

@@ -544,9 +544,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 
 // Initialize distribution functions
-	if (not checkpoint) {
-		initializeDistributions();
-	}
+//	if (not checkpoint) {
+//		initializeDistributions();
+//	}
 
 // initialize dof boundaries
 	if (configuration->getAdvectionScheme() == SEDG) {
