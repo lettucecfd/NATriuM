@@ -85,67 +85,22 @@ vector<numeric_vector> D2Q25H::makeDirections(double scaling) {
 	return result;
 } /// make directions
 
-numeric_matrix D2Q25H::makeMomentBasis(vector<numeric_vector> e) {
-	numeric_matrix m(Q);
-	// from Lallemand and Luo (2000)
-	for (size_t alpha = 0; alpha < Q; alpha++) {
-		double ealpha_normsq = e[alpha](0)*e[alpha](0) + e[alpha](1)*e[alpha](1) ;
-		// rho
-		m(0, alpha) = 1.0;
-		// e
-		m(1, alpha) = -4 + 3*ealpha_normsq;
-		// eps
-		m(2, alpha) = 4 - 21./2. * ealpha_normsq + 9./2. * ealpha_normsq * ealpha_normsq;
-		// jx
-		m(3, alpha) = e[alpha](0);
-		// qx
-		m(4, alpha) = (-5 + 3 * ealpha_normsq) * e[alpha](0);
-		// jy
-		m(5, alpha) = e[alpha](1);
-		// qy
-		m(6, alpha) = (-5 + 3 * ealpha_normsq) * e[alpha](1);
-		// pxx
-		m(7, alpha) = e[alpha](0)*e[alpha](0)-e[alpha](1)*e[alpha](1);
-		// pxy
-		m(8, alpha) = e[alpha](0)*e[alpha](1);
-		m(9, alpha) = e[alpha](0)*e[alpha](1);
-		m(10, alpha) = e[alpha](0)*e[alpha](1);
-		m(11, alpha) = e[alpha](0)*e[alpha](1);
-		m(12, alpha) = e[alpha](0)*e[alpha](1);
-		m(13, alpha) = e[alpha](0)*e[alpha](1);
-		m(14, alpha) = e[alpha](0)*e[alpha](1);
-		m(15, alpha) = e[alpha](0)*e[alpha](1);
-		m(16, alpha) = e[alpha](0)*e[alpha](1);
-		m(17, alpha) = e[alpha](0)*e[alpha](1);
-		m(18, alpha) = e[alpha](0)*e[alpha](1);
-		m(19, alpha) = e[alpha](0)*e[alpha](1);
-		m(20, alpha) = e[alpha](0)*e[alpha](1);
-		m(21, alpha) = e[alpha](0)*e[alpha](1);
-		m(22, alpha) = e[alpha](0)*e[alpha](1);
-		m(23, alpha) = e[alpha](0)*e[alpha](1);
-		m(24, alpha) = e[alpha](0)*e[alpha](1);
+    numeric_matrix D2Q25H::makeMomentBasis(vector<numeric_vector> e) {
+        numeric_matrix m(Q);
+        for (int i = 0;i<Q;i++){
+            for (int j = 0;j<Q;j++){
+                if(i==j)
+                {
+                    m(i,j) =1.0;
+                } else
+                {
+                    m(i,j) =0.0;
+                }
+            }
 
-		/*// density
-		m(0, alpha) = 1.0;
-		// velocity
-		m(1, alpha) = e[alpha](0);
-		m(2, alpha) = e[alpha](1);
-		// second order moments
-		m(3, alpha) = e[alpha](0) * e[alpha](0);
-		m(4, alpha) = e[alpha](1) * e[alpha](1);
-		m(5, alpha) = e[alpha](0) * e[alpha](1);
-		// third order moments
-		m(6, alpha) = e[alpha](0) * e[alpha](1) * e[alpha](1); // 1 2
-		m(7, alpha) = e[alpha](0) * e[alpha](0) * e[alpha](1); // 2 1
-		// 3 0
-		// 0 3
-		// fourth order moment
-		m(8, alpha) = e[alpha](0) * e[alpha](0) * e[alpha](1) * e[alpha](1); // 2 2*/
-	}
-	//cout << "D2Q25H:" << endl;
-	//m.print(cout);
-	return m;
-}
+        }
+        return m;
+    }
 
 } /* namespace natrium */
 

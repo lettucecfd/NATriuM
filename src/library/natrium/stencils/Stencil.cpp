@@ -26,7 +26,7 @@ Stencil::Stencil(size_t d, size_t q, const vector<numeric_vector>& directions,
 	//}
 
 	m_inverseMomentBasis = m_momentBasis;
-	//m_inverseMomentBasis.gauss_jordan();
+	m_inverseMomentBasis.gauss_jordan();
 
 }
 
