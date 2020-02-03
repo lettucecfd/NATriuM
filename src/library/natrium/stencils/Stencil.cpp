@@ -18,7 +18,6 @@ Stencil::Stencil(size_t d, size_t q, const vector<numeric_vector>& directions,
 	assert(d > (size_t ) 1);
 	assert(d < (size_t ) 4);
 	assert(q > (size_t ) 0);
-	cout << directions.size() << " " << q << endl;
 	assert(directions.size() - q == 0);
 	assert(weights.size() - q == 0);
 	//for (size_t i = 0; i < q; i++){
