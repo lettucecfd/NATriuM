@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 
     boost::shared_ptr<TaylorGreenVortex2D > tgv_tmp = boost::make_shared<
             TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
-    tgv_tmp->setHorizontalVelocity(5);
+    tgv_tmp->setHorizontalVelocity(u_horizontal);
     boost::shared_ptr<Benchmark<2> > tgv = tgv_tmp;
 
 	//boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
