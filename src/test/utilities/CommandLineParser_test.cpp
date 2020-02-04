@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(CommandLineParser_SetWithoutDefault_test) {
 	pout << "CommandLineParser_SetWithoutDefault_test..." << endl;
 
 	char arg1[] = "program_name";
-	char arg2[] = "--boost1";
+	char arg2[] = "--arg1";
 	char arg3[] = "5";
 	char* argv[4] = { arg1, arg2, arg3, NULL };
 	int argc = sizeof(argv) / sizeof(char*) - 1;
@@ -239,19 +239,18 @@ BOOST_AUTO_TEST_CASE(CommandLineParser_SetWithoutDefault_test) {
 	CommandLineParser c(argc, argv);
 
 	// define arguments
-	c.setArgument<double>("mogli", "description",3);
-    c.setArgument<double>("boost1", "description");
-	c.setArgument<double>("arg2", "description");
-
+	c.setArgument<int>("arg1", "description");
+	c.setArgument<int>("arg2", "description");
+	c.setArgument<int>("arg3", "description", 1);
 	c.importOptions();
 
 
-	BOOST_CHECK_EQUAL(c.getArgument<int>("boost1"), 5);
+	BOOST_CHECK_EQUAL(c.getArgument<int>("arg1"), 5);
 	BOOST_CHECK(not c.hasArgument("arg2"));
-	BOOST_CHECK(c.hasArgument("mogli"));
+	BOOST_CHECK(c.hasArgument("arg3"));
 
 	BOOST_CHECK_THROW(c.getArgument<int>("arg2"), CommandLineParserException);
-	BOOST_CHECK_NO_THROW(c.getArgument<int>("mogli"));
+	BOOST_CHECK_NO_THROW(c.getArgument<int>("arg3"));
 
 
 	pout << "done." << endl;

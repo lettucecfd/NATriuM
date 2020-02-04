@@ -46,6 +46,7 @@ int main(int argc, char** argv) {
 			"Coarsening tolerance for step size control (only for adaptive time integrators)",
 			1e-8);
 	parser.setArgument<double>("Ma", "Mach number", 0.05);
+    parser.setArgument<double>("horizontal", "U for the horizontal velocity", 0);
 	try {
 		parser.importOptions();
 	} catch (HelpMessageStop&) {
@@ -60,6 +61,7 @@ int main(int argc, char** argv) {
 	int limiter = parser.hasArgument("limiter");
 	double refine_tol = parser.getArgument<double>("refine-tol");
 	double coarsen_tol = parser.getArgument<double>("coarsen-tol");
+	double u_horizontal = parser.getArgument<double>("horizontal");
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -69,10 +71,16 @@ int main(int argc, char** argv) {
 	const double scaling = sqrt(3) * U / Ma;
 	const double viscosity = (L * U) / Re;
 
-	boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
-			TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
+    boost::shared_ptr<TaylorGreenVortex2D > tgv_tmp = boost::make_shared<
+            TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
+    tgv_tmp->setHorizontalVelocity(5);
+    boost::shared_ptr<Benchmark<2> > tgv = tgv_tmp;
 
-	// setup configuration
+	//boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
+	//		TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
+
+
+    // setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setSwitchOutputOff(true);
@@ -112,13 +120,13 @@ int main(int argc, char** argv) {
 		double u_error = solver.getErrorStats()->getL2VelocityError();
 		double rho_error = solver.getErrorStats()->getL2DensityError();
 		pout
-				<< "N p Ma Re integrator CFL collision init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu  runtime"
+				<< "N p Ma Re horizontal_u CFL stencil init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu  runtime"
 				<< endl;
 		pout << N << " " << configuration->getSedgOrderOfFiniteElement() << " " << Ma << " " << Re << " "
-				<< "td" << configuration->getTimeIntegrator()
-				<< configuration->getDealIntegrator() << " "
+		<< configuration->getTimeIntegrator()
+				<< u_horizontal << " "
 				<< solver.getConfiguration()->getCFL() << " "
-				<< configuration->getCollisionScheme() << " "
+				<< configuration->getStencil() << " "
 				<< init_rho_analytically << " " << " " << solver.getIteration()
 				<< " "
 				<< solver.getTime() / solver.getIteration() / delta_t

@@ -177,20 +177,20 @@ void VelocityNeqBounceBack<dim>::calculateBoundaryValues(
 	}
 
 
-	//double to_add = 2 * stencil.getWeight(destination.direction)
-	//		* rho * exu / stencil.getSpeedOfSoundSquare();
+	double to_add = 2 * stencil.getWeight(destination.direction)
+			* rho * exu / stencil.getSpeedOfSoundSquare();
 
+	/*
+	 * equilibrium for testing:
+	 * fe_boundary_values.getData().m_fnew.at(destination.direction)(
+			destination.index) = stencil.getWeight(destination.direction) * rho *
+			(1 + exu / cs2 + u*u / (2 * cs2) +  (exu * exu) / (2*cs2*cs2));
+			*/
 
-	 // equilibrium for testing:
-	 // fe_boundary_values.getData().m_fnew.at(destination.direction)(
-	//		destination.index) = stencil.getWeight(destination.direction) * rho *
-	//		(1 + exu / cs2 - uxu / (2 * cs2) +  (exu * exu) / (2*cs2*cs2));
-
-
-/*	fe_boundary_values.getData().m_fnew.at(destination.direction)(
+	fe_boundary_values.getData().m_fnew.at(destination.direction)(
 					destination.index) =
 				fe_boundary_values.getData().m_fnew.at(destination.direction)(
-						destination.index) + to_add;*/
+						destination.index) + to_add;
 
 }
 
