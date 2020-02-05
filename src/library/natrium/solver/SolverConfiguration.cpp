@@ -211,7 +211,7 @@ SolverConfiguration::SolverConfiguration() {
 						"The iteration at which the solver is to be restarted."
 						" You have to make sure that a checkpoint file corresponding to that iteration exists.");
 		declare_entry("Initialization scheme", "Equilibrium",
-				dealii::Patterns::Selection("Equilibrium|Iterative"),
+				dealii::Patterns::Selection("Equilibrium|Iterative|CompressibleIterative"),
 				"The initial particle distribution functions are normally assumed to be in local equilibrium. A more stable (and costly) scheme is to do some streaming steps on the density field but not on the velocity field, before starting the actual simulations (see e.g. the Book of Guo and Shu).");
 		enter_subsection("Iterative initialization stop condition");
 		{

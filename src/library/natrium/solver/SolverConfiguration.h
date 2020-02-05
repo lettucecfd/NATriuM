@@ -1096,6 +1096,8 @@ public:
 		leave_subsection();
 		if ("Iterative" == initializationScheme) {
 			return ITERATIVE;
+        } else if ("CompressibleIterative" == initializationScheme) {
+            return COMPRESSIBLE_ITERATIVE;
 		} else if ("Equilibrium" == initializationScheme) {
 			return EQUILIBRIUM;
 		} else {
@@ -1115,10 +1117,14 @@ public:
 			set("Initialization scheme", "Iterative");
 			break;
 		}
-		case EQUILIBRIUM: {
-			set("Initialization scheme", "Equilibrium");
+		case COMPRESSIBLE_ITERATIVE: {
+			set("Initialization scheme", "CompressibleIterative");
 			break;
 		}
+        case EQUILIBRIUM: {
+            set("Initialization scheme", "Equilibrium");
+            break;
+        }
 		default: {
 			std::stringstream msg;
 			msg << "Unknown initialization scheme scheme; index. "

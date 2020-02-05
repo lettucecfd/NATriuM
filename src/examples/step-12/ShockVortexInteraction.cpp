@@ -38,96 +38,79 @@ ShockVortexInteraction::ShockVortexInteraction(double viscosity, size_t refineme
 ShockVortexInteraction::~ShockVortexInteraction() {
 }
 
-double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2>& x,
-        const unsigned int component) const {
-    double u_v = m_flow->m_Ma_v/sqrt(3.0)*sqrt(1.4);
+    double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2> &x,
+                                                          const unsigned int component) const {
+        double u_v = m_flow->m_Ma_v / sqrt(3.0) * sqrt(1.4);
+        double offset = m_flow->m_shockPosition; // location of the shock
+        double left = -m_flow->m_machNumberLeft / sqrt(3.0) * sqrt(1.4 * m_flow->m_temperatureLeft);
+        double right = -m_flow->m_machNumberRight / sqrt(3.0) * sqrt(1.4);
+        double steepness = m_flow->m_shockSteepness;
 
-    double return_value = 0.0;
-    if(component==0){
-    if (x(0) <= 30.0)
-    {
-        return_value= -0.84217047/sqrt(3.0)*sqrt(1.4*1.12811);//1.12799382);
-    }
- else
-    {
-    return_value= -1.2/sqrt(3.0)*sqrt(1.4); }
+        auto[tanh_c, tanh_d] = m_flow->calcOffsets(left, right);
 
 
+        double return_value = 0.0;
+        if (component == 0) {
+            return_value = (tanh(steepness * (x[0] - offset)) + tanh_c) * tanh_d;
+        }
+        if (component == 1) {
+            return_value = 0.0;
+        }
 
-    }
-        double x_rel = x(0) - 34.0;
+
+        double x_rel = x(0) - (m_flow->m_shockPosition + 4.0);
         double y_rel = x(1) - 12.0;
-        double r = sqrt(x_rel*x_rel+y_rel*y_rel);
-        double sinalpha = y_rel/r;
-        double cosalpha = x_rel/r;
+        double r = sqrt(x_rel * x_rel + y_rel * y_rel);
+        double sinalpha = y_rel / r;
+        double cosalpha = x_rel / r;
 
-    if (r<=4.0)
-    {
-        if(component==0)
-        {
-            return_value-=r*u_v*sinalpha*exp((1.0-r*r)/2.0);
+        if (r <= 4.0) {
+            if (component == 0) {
+                return_value -= r * u_v * sinalpha * exp((1.0 - r * r) / 2.0);
+            }
+
+            if (component == 1) {
+                return_value += r * u_v * cosalpha * exp((1.0 - r * r) / 2.0);
+            }
+
         }
 
-        if(component==1)
-        {
-            return_value+=r*u_v*cosalpha*exp((1.0-r*r)/2.0);
-        }
+        return return_value;
 
     }
 
 
+    double
+    ShockVortexInteraction::InitialDensity::value(const dealii::Point<2> &x, const unsigned int component) const {
 
-return return_value;
+        double x_rel = x(0) - (m_flow->m_shockPosition + 4.0);
+        double y_rel = x(1) - 12.0;
+        double r = sqrt(x_rel * x_rel + y_rel * y_rel);
+        double offset = m_flow->m_shockPosition; // location of the shock
+        double steepness = m_flow->m_shockSteepness;
+        auto[tanh_c, tanh_d] = m_flow->calcOffsets(m_flow->m_densityLeft, m_flow->m_densityRight);
 
-}
+        double return_value = (tanh(steepness * (x[0] - offset)) + tanh_c) * tanh_d;
 
-
-
-
-double ShockVortexInteraction::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
-double return_value = 0.0;
-double Ma_v = m_flow->m_Ma_v;
-
-double x_rel = x(0) - 34.0;
-double y_rel = x(1) - 12.0;
-double r = sqrt(x_rel*x_rel+y_rel*y_rel);
-
-    if (x(0) <=30.0)
-    {
-        return_value= 1.34131;//1.34161490;
+        double Ma_v = m_flow->m_Ma_v;
+        if (r <= 4.0) {
+            return_value = pow(1. - ((1.4 - 1.) / 2. * Ma_v * Ma_v * exp(1.0 - r * r)), (1. / (1.4 - 1.)));
+        }
+        return return_value;
     }
-
-
- else
-    {
-    return_value= 1.0; }
-
-if(r<=4.0)
-{
-    return_value = pow(1.-((1.4-1.)/2.*Ma_v*Ma_v*exp(1.0-r*r)),(1./(1.4-1.)));
-}
-
-
-return return_value;
-}
 
 
 
 
 double ShockVortexInteraction::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
-double return_value = 0.0;
-    if (x(0) <= 30.0)
-    {
-        return_value= 1.12811;
-    }
- else
-    {
-    return_value= 1.0; }
 
+    double offset = m_flow->m_shockPosition; // location of the shock
+    double steepness = m_flow->m_shockSteepness;
+    auto[tanh_c, tanh_d] = m_flow->calcOffsets(m_flow->m_temperatureLeft, m_flow->m_temperatureRight);
+    double return_value = (tanh(steepness * (x[0] - offset)) + tanh_c) * tanh_d;
 
     double Ma_v = m_flow->m_Ma_v;
-
-    double x_rel = x(0) - 34.0;
+    double x_rel = x(0)  - (m_flow->m_shockPosition+4.0);
     double y_rel = x(1) - 12.0;
     double r = sqrt(x_rel*x_rel+y_rel*y_rel);
     if(r<=4.0)

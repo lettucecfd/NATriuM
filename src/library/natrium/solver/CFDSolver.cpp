@@ -1112,6 +1112,11 @@ void CFDSolver<dim>::initializeDistributions() {
 		// do nothing else
 		break;
 	}
+    case COMPRESSIBLE_ITERATIVE: {
+        LOG(BASIC) << "Compressible Iterative" << endl;
+        // do nothing else
+        break;
+    }
 	case ITERATIVE: {
 		LOG(BASIC) << "Iterative procedure" << endl;
 		LOG(DETAILED) << "residual = "

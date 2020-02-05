@@ -15,6 +15,7 @@
 
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
+#include <tuple>
 
 
 
@@ -90,6 +91,13 @@ public:
 	virtual bool isCartesian(){
 		return true;
 	}
+
+    std::tuple<double,double> calcOffsets(double left, double right){
+
+        double d = (right/2.0-left/2.0);
+        double c = 2.0*(left)/(right-left)+1.0;
+        return {c,d};
+    }
 private:
 
 	struct UnstructuredGridFunc {
@@ -116,6 +124,15 @@ private:
 	double m_trafoY;
 
 	double m_Ma_v;
+	double m_shockPosition = 30;
+	double m_shockSteepness = 15;
+    double m_densityLeft = 1.34161490;
+    double m_densityRight = 1.0;
+    double m_machNumberLeft = 0.84217047;
+	double m_machNumberRight = 1.2;
+    double m_temperatureLeft = 1.12799382716;
+    double m_temperatureRight = 1.0;
+
 
 
 

@@ -111,7 +111,8 @@ enum FluxTypeName {
  */
 enum InitializationSchemeName {
 	EQUILIBRIUM, // Distribute with equilibrium functions
-	ITERATIVE // Distribute with iterative procedure; enforces consistent initial conditions
+	ITERATIVE, // Distribute with iterative procedure; enforces consistent initial conditions
+	COMPRESSIBLE_ITERATIVE
 };
 
 enum PseudopotentialType {

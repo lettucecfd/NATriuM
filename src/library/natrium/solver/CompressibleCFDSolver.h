@@ -60,7 +60,7 @@ public:
 
 	}
 
-	
+
 void gStream() {
 
 
@@ -465,8 +465,8 @@ void compressibleFilter() {
                 // do nothing else
                 break;
             }
-            case ITERATIVE: {
-                LOG(BASIC) << "Iterative procedure" << endl;
+            case COMPRESSIBLE_ITERATIVE: {
+                LOG(BASIC) << "Compressible iterative procedure" << endl;
                 LOG(DETAILED) << "residual = "
                               << this->m_configuration->getIterativeInitializationResidual();
                 LOG(DETAILED) << ", max iterations = "
@@ -477,18 +477,9 @@ void compressibleFilter() {
                 double residual = 1000000000;
                 const bool inInitializationProcedure = true;
                 distributed_vector oldDensities;
-                while (residual > this->m_configuration->getIterativeInitializationResidual()) {
-                    if (loopCount
-                        > this->m_configuration->getIterativeInitializationNumberOfIterations()) {
-                        LOG(WARNING)
-                                << "The iterative Initialization of equilibrium distribution functions could only reach residual "
-                                << residual << " after " << loopCount
-                                << " iterations (Aimed at residual "
-                                << this->m_configuration->getIterativeInitializationResidual()
-                                << "). If that is too bad, increase the number of iterations in the iterative initialization scheme. "
-                                << "To avoid this Warning, soften the scheme (i.e. aim at a greater residual.)";
-                        break;
-                    }
+                while (loopCount
+                       < this->m_configuration->getIterativeInitializationNumberOfIterations()) {
+
                     distributed_vector rho;
                     vector<distributed_vector> u;
                     distributed_vector T;
@@ -553,7 +544,7 @@ void compressibleFilter() {
             }
             default: {
                 throw CFDSolverException(
-                        "Error in CFDSolver::InitializeDistributions. A part of the code was reached, which should never be reached.");
+                        "Error in CFDSolver::InitializeDistributions. A part of the code was reached, which should never be reached. With ITERATIVE you enforce it for compressible flows, however");
                 break;
             }
         }
