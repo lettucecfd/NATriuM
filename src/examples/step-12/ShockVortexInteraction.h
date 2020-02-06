@@ -126,6 +126,7 @@ private:
 	double m_Ma_v;
 	double m_shockPosition = 30;
 	double m_shockSteepness = 15;
+	double m_vortexOffset = 4.5;
     double m_densityLeft = 1.34161490;
     double m_densityRight = 1.0;
     double m_machNumberLeft = 0.84217047;

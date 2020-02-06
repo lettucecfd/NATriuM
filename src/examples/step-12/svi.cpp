@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
 	configuration->setExponentialFilterAlpha(36);
 	configuration->setExponentialFilterNc(4);
 	configuration->setPrandtlNumber(0.75);
-	configuration->setInitializationScheme(ITERATIVE);
+	configuration->setInitializationScheme(EQUILIBRIUM);
 	configuration->setIterativeInitializationNumberOfIterations(300);
 
     configuration->setVmultLimiter(bool(parser.getArgument<int>("vmult")));

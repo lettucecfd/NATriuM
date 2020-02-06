@@ -58,7 +58,7 @@ ShockVortexInteraction::~ShockVortexInteraction() {
         }
 
 
-        double x_rel = x(0) - (m_flow->m_shockPosition + 4.0);
+        double x_rel = x(0) - (m_flow->m_shockPosition + m_flow->m_vortexOffset);
         double y_rel = x(1) - 12.0;
         double r = sqrt(x_rel * x_rel + y_rel * y_rel);
         double sinalpha = y_rel / r;
@@ -83,7 +83,7 @@ ShockVortexInteraction::~ShockVortexInteraction() {
     double
     ShockVortexInteraction::InitialDensity::value(const dealii::Point<2> &x, const unsigned int component) const {
 
-        double x_rel = x(0) - (m_flow->m_shockPosition + 4.0);
+        double x_rel = x(0) - (m_flow->m_shockPosition + m_flow->m_vortexOffset);
         double y_rel = x(1) - 12.0;
         double r = sqrt(x_rel * x_rel + y_rel * y_rel);
         double offset = m_flow->m_shockPosition; // location of the shock
@@ -110,7 +110,7 @@ double ShockVortexInteraction::InitialTemperature::value(const dealii::Point<2>&
     double return_value = (tanh(steepness * (x[0] - offset)) + tanh_c) * tanh_d;
 
     double Ma_v = m_flow->m_Ma_v;
-    double x_rel = x(0)  - (m_flow->m_shockPosition+4.0);
+    double x_rel = x(0)  - (m_flow->m_shockPosition+m_flow->m_vortexOffset);
     double y_rel = x(1) - 12.0;
     double r = sqrt(x_rel*x_rel+y_rel*y_rel);
     if(r<=4.0)
