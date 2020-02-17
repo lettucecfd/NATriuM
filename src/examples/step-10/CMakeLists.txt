@@ -13,6 +13,8 @@ set(    TARGET
 #
 ADD_EXECUTABLE( ${TARGET} 
                 shockTube.cpp
+				SodShockTube.cpp
+				SodShockTube.h
                )
 #
 # link natrium library to executable

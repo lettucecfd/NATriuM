@@ -13,8 +13,8 @@
 #include "deal.II/base/function.h"
 
 
-#include "../problemdescription/ProblemDescription.h"
-#include "../utilities/BasicNames.h"
+#include "natrium/problemdescription/ProblemDescription.h"
+#include "natrium/utilities/BasicNames.h"
 
 
 
@@ -69,7 +69,7 @@ public:
 	 * @param trafo_x < 1: 0=regular grid spacing
 	 * @param trafo_y < 1: 0=regular grid spacing
 	 **/
-	SodShockTube(double viscosity,
+	SodShockTube(int length, double viscosity,
 			size_t refinement_level, double u0, double kappa, double perturbation=0.05, double trafo_x=0, double trafo_y=0);
 
 	/// destructor
@@ -90,6 +90,13 @@ public:
 	virtual bool isCartesian(){
 		return true;
 	}
+
+    std::tuple<double,double> calcOffsets(double left, double right){
+
+        double d = (right/2.0-left/2.0);
+        double c = 2.0*(left)/(right-left)+1.0;
+        return {c,d};
+    }
 private:
 
 	struct UnstructuredGridFunc {
@@ -108,6 +115,7 @@ private:
 	};
 
 
+    double m_length;
 	double m_u0;
 	double m_kappa;
 	size_t m_refinementLevel;
@@ -117,11 +125,13 @@ private:
 
 
 
+
+
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
 	 */
-	boost::shared_ptr<Mesh<2> > makeGrid();
+	boost::shared_ptr<Mesh<2> > makeGrid(int length);
 
 	/**
 	 * @short create boundaries for couette flow
