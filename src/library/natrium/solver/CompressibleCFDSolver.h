@@ -370,6 +370,65 @@ void compressibleFilter() {
     }
 
 
+    void smoothDensities(
+            const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints)  {
+        array<double,25> feq;
+        array<double,2> u;
+// get Function instance
+        const dealii::IndexSet& locally_owned_dofs =
+                this->m_advectionOperator->getLocallyOwnedDofs();
+        dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+        dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+        for (; it != end; it++) {
+            size_t i = *it;
+ //       const boost::shared_ptr<dealii::Function<dim> >& f_rho =
+ //               this->m_problemDescription->getInitialRhoFunction();
+/*        const unsigned int dofs_per_cell =
+                this->m_advectionOperator->getFe()->dofs_per_cell;
+        vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+        typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+                this->m_advectionOperator->getDoFHandler()->begin_active(), endc =
+                this->m_advectionOperator->getDoFHandler()->end();
+        for (; cell != endc; ++cell) {
+            if (cell->is_locally_owned()) {
+                cell->get_dof_indices(local_dof_indices);
+                for (size_t i = 0; i < dofs_per_cell; i++) {
+                    if (not this->m_advectionOperator->getLocallyOwnedDofs().is_element(
+                            local_dof_indices.at(i))) {
+                        continue;
+                    }
+                    assert(
+                            supportPoints.find(local_dof_indices.at(i))
+                            != supportPoints.end());*/
+                    if(supportPoints.at(i)(0)<29.90) {
+                            u[0] = -0.611022;
+                            u[1] = -0.0;
+
+
+
+                        GeneralCollisionData<2,25> data(*(this->m_configuration), *(this->m_problemDescription), this->m_stencil->getScaling(), this->m_problemDescription->getViscosity(), *(this->m_stencil), this->m_stencil->getSpeedOfSoundSquare(), 0.0);
+                        //this->m_density(i) = 1.34206;
+                        //m_temperature(i) = 1.129;
+                        data.density = 1.34161;
+                        data.temperature = 1.12799;
+                        data.velocity = u;
+                        BGKEquilibrium<2,25> eq;
+                        eq.calc(feq, data);
+                        double gamma = 1.4;
+                        double C_v = 1. / (gamma - 1.0);
+                        //m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
+                        for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
+                            this->m_f.at(j)(i) = feq[j];
+                            m_g.at(j)(i) = feq[j]*(data.temperature)*(2.0*C_v-2.0);
+                        }
+                    }
+                }
+            } /* if is locally owned */
+ //       } /* for all cells */
+ //   }
+
+
 	void collide()  {
 	// start timer
 		TimerOutput::Scope timer_section(Timing::getTimer(), "Collision");
@@ -575,7 +634,15 @@ void compressibleFilter() {
             this->stream();
             gStream();
             compressibleFilter();
+            if(this->m_i==400) {
+
+
+                smoothDensities(this->m_supportPoints);
+
+            }
+
             this->collide();
+
             for (size_t i = 0; i < this->m_dataProcessors.size(); i++) {
                 this->m_dataProcessors.at(i)->apply();
             }

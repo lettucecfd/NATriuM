@@ -132,6 +132,8 @@ private:
 	double m_machNumberRight = 1.2;
     double m_temperatureLeft = 1.12799382716;
     double m_temperatureRight = 1.0;
+	double m_vortexOffset = 4.0;
+
 
 
 
@@ -148,7 +150,6 @@ private:
 	 * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
 	 */
 	boost::shared_ptr<BoundaryCollection<2> > makeBoundaries();
-
 
 
 };
