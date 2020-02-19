@@ -92,11 +92,11 @@ public:
 		return true;
 	}
 
-    std::tuple<double,double> calcOffsets(double left, double right){
-
-        double d = (right/2.0-left/2.0);
-        double c = 2.0*(left)/(right-left)+1.0;
-        return {c,d};
+    std::pair<double,double> calcOffsets(double left, double right){
+		std::pair<double,double> pair;
+		pair.first = 2.0*(left)/(right-left)+1.0;
+		pair.second = (right/2.0-left/2.0);
+        return pair;
     }
 private:
 

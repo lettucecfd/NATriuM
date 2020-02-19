@@ -634,7 +634,7 @@ void compressibleFilter() {
             this->stream();
             gStream();
             compressibleFilter();
-            if(this->m_i==400) {
+            if(this->m_i==200) {
 
 
                 smoothDensities(this->m_supportPoints);
