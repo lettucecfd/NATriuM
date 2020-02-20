@@ -40,11 +40,12 @@ ShockVortexInteraction::~ShockVortexInteraction() {
 
     double ShockVortexInteraction::InitialVelocity::value(const dealii::Point<2> &x,
                                                           const unsigned int component) const {
-        double u_v = m_flow->m_Ma_v / sqrt(3.0) * sqrt(1.4);
+
         double offset = m_flow->m_shockPosition; // location of the shock
         double left = -m_flow->m_machNumberLeft / sqrt(3.0) * sqrt(1.4 * m_flow->m_temperatureLeft);
         double right = -m_flow->m_machNumberRight / sqrt(3.0) * sqrt(1.4);
         double steepness = m_flow->m_shockSteepness;
+
 
         std::pair<double,double> coeff = m_flow->calcOffsets(left, right);
 
@@ -65,6 +66,8 @@ ShockVortexInteraction::~ShockVortexInteraction() {
         double cosalpha = x_rel / r;
 
         if (r <= 4.0) {
+            double T_local = InitialTemperature(m_flow).value(x, component);
+            double u_v = m_flow->m_Ma_v / sqrt(3.0) * sqrt(1.4*T_local);
             if (component == 0) {
                 return_value -= r * u_v * sinalpha * exp((1.0 - r * r) / 2.0);
             }
