@@ -126,7 +126,7 @@ private:
 
 	double m_Ma_v;
 	double m_shockPosition = 27.0;
-	double m_shockSteepness = 1000;
+	double m_shockSteepness = 1000000;
     double m_densityLeft = 1.34161490;
     double m_densityRight = 1.0;
     double m_machNumberLeft = 0.84217047;
