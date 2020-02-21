@@ -401,7 +401,7 @@ void compressibleFilter() {
                     assert(
                             supportPoints.find(local_dof_indices.at(i))
                             != supportPoints.end());*/
-                    if(supportPoints.at(i)(0)<29.90) {
+                    if(supportPoints.at(i)(0)<27.90) {
                             u[0] = -0.611022;
                             u[1] = -0.0;
 
@@ -637,7 +637,7 @@ void compressibleFilter() {
             if(this->m_i==200) {
 
 
-                //smoothDensities(this->m_supportPoints);
+                smoothDensities(this->m_supportPoints);
 
             }
 
