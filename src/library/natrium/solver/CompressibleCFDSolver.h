@@ -637,7 +637,7 @@ void compressibleFilter() {
             if(this->m_i==200) {
 
 
-                smoothDensities(this->m_supportPoints);
+                //smoothDensities(this->m_supportPoints);
 
             }
 
