@@ -204,10 +204,10 @@ void compressibleFilter() {
                 // first iteration: put out mesh
                 std::stringstream str0;
                 str0 << this->m_configuration->getOutputDirectory().c_str()
-                     << "/grid.vtk";
+                     << "/grid.eps";
                 std::string grid_file = str0.str();
                 std::ofstream grid_out_file(grid_file);
-                dealii::GridOut().write_vtk(*(this->m_problemDescription)->getMesh(),
+                dealii::GridOut().write_eps(*(this->m_problemDescription)->getMesh(),
                                             grid_out_file);
                 grid_out_file.close();
 
