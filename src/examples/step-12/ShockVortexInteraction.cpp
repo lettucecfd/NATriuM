@@ -65,7 +65,7 @@ ShockVortexInteraction::~ShockVortexInteraction() {
         double sinalpha = y_rel / r;
         double cosalpha = x_rel / r;
 
-        if (r <= 4.0) {
+        if (r <= 5.0) {
             double T_local = InitialTemperature(m_flow).value(x, component);
             double u_v = m_flow->m_Ma_v / sqrt(3.0) * sqrt(1.4*T_local);
             if (component == 0) {
@@ -96,7 +96,7 @@ ShockVortexInteraction::~ShockVortexInteraction() {
         double return_value = (tanh(steepness * (x[0] - offset)) + coeff.first) * coeff.second;
 
         double Ma_v = m_flow->m_Ma_v;
-        if (r <= 4.0) {
+        if (r <= 5.0) {
             return_value = pow(1. - ((1.4 - 1.) / 2. * Ma_v * Ma_v * exp(1.0 - r * r)), (1. / (1.4 - 1.)));
         }
         return return_value;
@@ -116,7 +116,7 @@ double ShockVortexInteraction::InitialTemperature::value(const dealii::Point<2>&
     double x_rel = x(0)  - (m_flow->m_shockPosition+m_flow->m_vortexOffset);
     double y_rel = x(1) - 12.0;
     double r = sqrt(x_rel*x_rel+y_rel*y_rel);
-    if(r<=4.0)
+    if(r<=5.0)
     {
        return_value = (1.-(1.4-1.)/2.*Ma_v*Ma_v*exp(1.0-r*r));
     }
@@ -139,7 +139,7 @@ boost::shared_ptr<Mesh<2> > ShockVortexInteraction::makeGrid() {
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	const dealii::Point<2> left = {0.0,0.0};
-        const dealii::Point<2> right = {72.0,24.0};
+        const dealii::Point<2> right = {54.0,24.0};
     const std::vector <unsigned int>& reps = {1,1};
 
 

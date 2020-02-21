@@ -92,6 +92,7 @@ public:
 		return true;
 	}
 
+	// Computes the coefficients for the tanh initialization
     std::pair<double,double> calcOffsets(double left, double right){
 		std::pair<double,double> pair;
 		pair.first = 2.0*(left)/(right-left)+1.0;
@@ -132,7 +133,7 @@ private:
 	double m_machNumberRight = 1.2;
     double m_temperatureLeft = 1.12799382716;
     double m_temperatureRight = 1.0;
-	double m_vortexOffset = 4.0;
+	double m_vortexOffset = 5.0;
 
 
 
