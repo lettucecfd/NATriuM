@@ -97,7 +97,7 @@ ShockVortexInteraction::~ShockVortexInteraction() {
 
         double Ma_v = m_flow->m_Ma_v;
         if (r <= 5.0) {
-            return_value = pow(1. - ((1.4 - 1.) / 2. * Ma_v * Ma_v * exp(1.0 - r * r)), (1. / (1.4 - 1.)));
+            return_value *= pow(1. - ((1.4 - 1.) / 2. * Ma_v * Ma_v * exp(1.0 - r * r)), (1. / (1.4 - 1.)));
         }
         return return_value;
     }
@@ -118,7 +118,7 @@ double ShockVortexInteraction::InitialTemperature::value(const dealii::Point<2>&
     double r = sqrt(x_rel*x_rel+y_rel*y_rel);
     if(r<=5.0)
     {
-       return_value = (1.-(1.4-1.)/2.*Ma_v*Ma_v*exp(1.0-r*r));
+       return_value *= (1.-(1.4-1.)/2.*Ma_v*Ma_v*exp(1.0-r*r));
     }
 
 
