@@ -109,7 +109,7 @@ private:
 		}
 		double trans(const double y, double trafo) const {
 
-            return 36./(M_PI)*(trafo * sin(M_PI/36.*(y+6.0)) + M_PI/36.*y);
+            return 30./(M_PI)*(trafo * sin(M_PI/30.*(y)) + M_PI/30.*y);
 		}
 		dealii::Point<2> operator()(const dealii::Point<2> &in) const {
 			return dealii::Point<2>(trans(in(0),m_tX), trans(in(1),m_tY));
@@ -125,7 +125,7 @@ private:
 	double m_trafoY;
 
 	double m_Ma_v;
-	double m_shockPosition = 27.0;
+	double m_shockPosition = 30.0;
 	double m_shockSteepness = 1000000;
     double m_densityLeft = 1.34161490;
     double m_densityRight = 1.0;
@@ -133,7 +133,7 @@ private:
 	double m_machNumberRight = 1.2;
     double m_temperatureLeft = 1.12799382716;
     double m_temperatureRight = 1.0;
-	double m_vortexOffset = 4.0*5./8.;
+	double m_vortexOffset = 2.0;
 
 
 

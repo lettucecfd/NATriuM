@@ -139,7 +139,7 @@ boost::shared_ptr<Mesh<2> > ShockVortexInteraction::makeGrid() {
 	boost::shared_ptr<Mesh<2> > rect = boost::make_shared<Mesh<2> >();
 #endif
 	const dealii::Point<2> left = {0.0,0.0};
-        const dealii::Point<2> right = {54.0,24.0};
+        const dealii::Point<2> right = {60.0,24.0};
     const std::vector <unsigned int>& reps = {1,1};
 
 
