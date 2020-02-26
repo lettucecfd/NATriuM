@@ -37,7 +37,7 @@ enable_unity_build(natrium SRC_FILES)
 #
 # Create natrium library
 #
-add_library( natrium ${INCLUDES} ${SRC_FILES} )
+add_library( natrium ${INCLUDES} ${SRC_FILES} natrium/problemdescription/CompressibleBenchmark.h natrium/solver/BenchmarkCompressibleCFDSolver.cpp natrium/solver/BenchmarkCompressibleCFDSolver.h natrium/solver/CompressibleErrorStats.cpp natrium/solver/CompressibleErrorStats.h)
  
  
 
