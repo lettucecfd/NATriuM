@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
 			1e-8);
 	parser.setArgument<double>("Ma", "Mach number", 0.05);
     parser.setArgument<double>("horizontal", "U for the horizontal velocity", 0);
+    parser.setArgument<double>("visc","viscosity of the fluid",0.000001);
 	try {
 		parser.importOptions();
 	} catch (HelpMessageStop&) {
@@ -63,17 +64,18 @@ int main(int argc, char** argv) {
 	double coarsen_tol = parser.getArgument<double>("coarsen-tol");
 	double u_horizontal = parser.getArgument<double>("horizontal");
 
+
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
 	const double L = 1.0;//;2* M_PI;
-	const double U = u_horizontal*0.2*sqrt(1.4)/sqrt(3.0);
+	const double U = u_horizontal*sqrt(1.4)/sqrt(3.0);
 	const double scaling = 1.0;//sqrt(3) * (U)/ Ma;
-	const double viscosity = 0.0001;//(L * U) / Re;
+    double viscosity = parser.getArgument<double>("visc");
 
     boost::shared_ptr<SmoothDensityPropagation > sdp_tmp = boost::make_shared<
-            SmoothDensityPropagation>(viscosity, N, U / Ma, init_rho_analytically, L, u_horizontal);
-    sdp_tmp->setHorizontalVelocity(u_horizontal);
+            SmoothDensityPropagation>(viscosity, N, sqrt(1.4)/sqrt(3.0), init_rho_analytically, L, u_horizontal);
+    sdp_tmp->setHorizontalVelocity(U);
     boost::shared_ptr<CompressibleBenchmark<2> > sdp = sdp_tmp;
 
 	//boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
@@ -83,13 +85,13 @@ int main(int argc, char** argv) {
     // setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setSwitchOutputOff(false);
+	configuration->setSwitchOutputOff(true);
 	configuration->setRestartAtIteration(0);
 	configuration->setUserInteraction(false);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setStencil(Stencil_D2Q25H);
-	configuration->setOutputSolutionInterval(10);
+	//configuration->setOutputSolutionInterval(10);
 	configuration->setOutputDirectory("/home/dwilde3m/tmp/sdp");
 	//configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 
@@ -97,7 +99,7 @@ int main(int argc, char** argv) {
 		configuration->setVmultLimiter(true);
 	}
 
-	configuration->setSimulationEndTime(1.0);
+	configuration->setSimulationEndTime((1.0/u_horizontal)/(sqrt(1.4)/sqrt(3.0)));
 
 	parser.applyToSolverConfiguration(*configuration);
 	configuration->setEmbeddedDealIntegratorParameters(1.2, 0.8, 0.05,
