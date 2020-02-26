@@ -123,8 +123,9 @@ int main(int argc, char** argv) {
 		double numerical_viscosity = simulated_viscosity - viscosity;
 		double u_error = solver.getCompressibleErrorStats()->getL2VelocityError();
 		double rho_error = solver.getCompressibleErrorStats()->getL2DensityError();
+		double rho_max = solver.getCompressibleErrorStats()->getMaxDensityError();
 		pout
-				<< "N p Ma Re horizontal_u CFL stencil init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu  runtime"
+				<< "N p Ma Re horizontal_u CFL stencil init_rho_analytically  #steps Mean_CFL ||p-p_ana||_2 ||p-p_ana||_inf  nu_numerical/nu  runtime"
 				<< endl;
 		pout << N << " " << configuration->getSedgOrderOfFiniteElement() << " " << Ma << " " << Re << " "
 		<< configuration->getTimeIntegrator()
@@ -135,7 +136,7 @@ int main(int argc, char** argv) {
 				<< " "
 				<< solver.getTime() / solver.getIteration() / delta_t
 						* solver.getConfiguration()->getCFL() << " "
-				<< rho_error * (U / Ma) * (U / Ma) << " " << u_error << " "
+				<< rho_error<< " " << rho_max << " "
 				<< numerical_viscosity / viscosity << " " << runtime << endl;
 
 	} catch (std::exception& e) {
