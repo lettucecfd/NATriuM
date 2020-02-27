@@ -314,6 +314,16 @@ void compressibleFilter() {
                     data_out.write_pvtu_record(pvtu_output, filenames);
                 }
             }
+
+            // output: table
+            // calculate information + physical properties
+            if (iteration % this->m_configuration->getOutputTableInterval() == 0) {
+                this->m_solverStats->printNewLine();
+                if (this->m_configuration->isOutputTurbulenceStatistics()) {
+                    assert(this->m_turbulenceStats);
+                    this->m_turbulenceStats->printNewLine();
+                }
+            }
         }
     }
 
