@@ -86,8 +86,6 @@ inline void selectCollision<2>(SolverConfiguration& configuration,
     DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, MRT_STANDARD, BGK_EQUILIBRIUM, MultipleRelaxationTime, BGKEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(2,25, Stencil_D2Q25, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
     DEFINE_POSSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
@@ -140,8 +138,10 @@ inline void selectCollision<2>(SolverConfiguration& configuration,
 	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_REGULARIZED, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25, BGK_REGULARIZED, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
+    DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
 
-	if (not has_collided) {
+
+    if (not has_collided) {
 		throw CollisionException(
 				"Severe error: Collision model not implemented yet -- cf. CollisionSelection.h");
 	}

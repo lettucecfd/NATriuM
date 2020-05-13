@@ -110,6 +110,7 @@ int main(int argc, char** argv) {
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setExponentialFilterAlpha(36); //36
 	configuration->setExponentialFilterNc(3);
+	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 
 	parser.applyToSolverConfiguration(*configuration);
 	//configuration->setFiltering(true);

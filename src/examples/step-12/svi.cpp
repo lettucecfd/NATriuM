@@ -101,6 +101,8 @@ int main(int argc, char** argv) {
 	configuration->setPrandtlNumber(0.75);
 	configuration->setInitializationScheme(EQUILIBRIUM);
 	configuration->setIterativeInitializationNumberOfIterations(300);
+    configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+
 
     configuration->setVmultLimiter(bool(parser.getArgument<int>("vmult")));
     pout << "VMultLimiter is " << configuration->isVmultLimiter() << endl;

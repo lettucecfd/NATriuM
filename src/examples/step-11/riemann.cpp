@@ -104,6 +104,8 @@ int main(int argc, char** argv) {
     configuration->setFiltering(false);
 	configuration->setFilteringScheme(EXPONENTIAL_FILTER);
 	configuration->setExponentialFilterS(parser.getArgument<int>("filter-s"));
+    configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+
 
     configuration->setVmultLimiter(bool(parser.getArgument<int>("vmult")));
     pout << "VMultLimiter is " << configuration->isVmultLimiter() << endl;

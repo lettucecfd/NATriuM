@@ -62,6 +62,8 @@ public:
 			//Calculate the local density and store it into the Parameter Handling System
 			genData.density = calculateDensity<T_Q>(genData.fLocal); // done
 
+			//Set temperature so that Equilibrium terms cancel out
+			genData.temperature = 1.0;
 
 			//Write the local density to the global density vector
 			rho_raw[ii] = genData.density; // write local density to global density vector
