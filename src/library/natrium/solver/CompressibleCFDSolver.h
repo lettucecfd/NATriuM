@@ -488,14 +488,87 @@ void compressibleFilter() {
 		}
 	}
 
+    inline void calcQuarticEquilibrium(std::vector<double>& feq, size_t T_Q, double density, std::array<double,dim> velocity, double temperature, double cs2, std::vector<std::array<double,dim>> e, std::vector<double> weight) {
+        double eye[2][2]={{1,0},{0,1}};
+        double uu_term = 0.0;
+        for (size_t j = 0; j < dim; j++) {
+            uu_term += -(velocity[j] * velocity[j])
+                       / (2.0 * cs2);
+        }
+
+        for (size_t i = 0; i < T_Q; i++) {
+
+            double T1 = cs2*(temperature-1);
+
+            double ue_term = 0.0;
+            for (size_t j = 0; j < dim; j++) {
+                ue_term += (velocity[j] * e[i][j]) / cs2;
+            }
+            feq[i] = weight[i] * density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
+            for (int alp = 0; alp < dim; alp++){
+                for (int bet = 0; bet < dim; bet++){
+                    feq[i]+=density*weight[i]/(2.0*cs2)*((temperature-1)*eye[alp][bet]*e[i][alp]*e[i][bet]-cs2*eye[alp][bet]*(temperature-1));
+                    for (int gam = 0; gam < dim; gam++){
+
+                        feq[i] += weight[i] * density / (6. * cs2 * cs2 * cs2) *
+                                  (velocity[alp] * velocity[bet] * velocity[gam]
+                                   + T1 *
+                                     (eye[alp][bet] * velocity[gam] + eye[bet][gam] * velocity[alp] +
+                                      eye[alp][gam] * velocity[bet])) * (e[i][alp] * e[i][bet] * e[i][gam] - cs2 *
+                                                                                                                     (e[i][gam] *
+                                                                                                                      eye[alp][bet] +
+                                                                                                                      e[i][bet] *
+                                                                                                                      eye[alp][gam] +
+                                                                                                                      e[i][alp] *
+                                                                                                                      eye[bet][gam]));
+
+                        for (int det = 0; det < dim; det++)
+                        {
+                            double power4 = e[i][alp]*e[i][bet]*e[i][gam]*e[i][det];
+                            double power2 = e[i][alp]*e[i][bet]*eye[gam][det]
+                                            +e[i][alp]*e[i][gam]*eye[bet][det]
+                                            +e[i][alp]*e[i][det]*eye[bet][gam]
+                                            +e[i][bet]*e[i][gam]*eye[alp][det]
+                                            +e[i][bet]*e[i][det]*eye[alp][gam]
+                                            +e[i][gam]*e[i][det]*eye[alp][bet];
+                            double power0 = eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
+                            double u4    = velocity[alp]*velocity[bet]*velocity[gam]*velocity[det];
+                            double u2 = velocity[alp]*velocity[bet]*eye[gam][det]+velocity[alp]*velocity[gam]*eye[bet][det]+velocity[alp]*velocity[det]*eye[bet][gam]+velocity[bet]*velocity[gam]*eye[alp][det]+velocity[bet]*velocity[det]*eye[alp][gam]+velocity[gam]*velocity[det]*eye[alp][bet];
+                            double multieye= eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
+
+                            feq[i]+= weight[i] * density /(24.*cs2*cs2*cs2*cs2)*(power4-cs2*power2+cs2*cs2*power0)*(u4+T1*(u2+T1*multieye));
+
+
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
+
 	void initializeDistributions()  {
 	// PRECONDITION: vectors already created with the right sizes
 
 		LOG(BASIC) << "Initialize distribution functions: ";
-		array<double,25> feq;
-		array<double,2> u;
+        size_t T_Q = this->getStencil()->getQ();
+        std::vector<double> feq(T_Q);
+		std::array<double,dim> u;
+        std::vector<std::array<double,dim>> e(T_Q);
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < this->getStencil()->getQ(); ++j) {
+                e[j][i] = this->getStencil()->getDirections().at(j)(i) / this->getStencil()->getScaling();
+            }
+        }
+        std::vector<double> weight(T_Q);
+        for (int j = 0; j < this->getStencil()->getQ(); ++j) {
+            weight[j] = this->getStencil()->getWeight(j);
+        }
+        double descaled_cs2 = this->m_stencil->getSpeedOfSoundSquare() / (this->getStencil()->getScaling()*this->getStencil()->getScaling());
 
-	// save starting time
+
+        // save starting time
 		double t0 = this->m_time;
 
 	// Initialize f with the equilibrium distribution functions
@@ -504,26 +577,30 @@ void compressibleFilter() {
 				this->m_advectionOperator->getLocallyOwnedDofs();
 		dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+
 		for (; it != end; it++) {
-			size_t i = *it;
-			for (size_t j = 0; j < dim; j++) {
-				u[j] = this->m_velocity.at(j)(i);
-			}
-        GeneralCollisionData<2,25> data(*(this->m_configuration), *(this->m_problemDescription), this->m_stencil->getScaling(), this->m_problemDescription->getViscosity(), *(this->m_stencil), this->m_stencil->getSpeedOfSoundSquare(), 0.0);
-        data.density = this->m_density[i];
-        data.temperature = this->m_temperature[i];
-        data.velocity = u;
-        BGKEquilibrium<2,25> eq;
-              eq.calc(feq, data);
-              double gamma = 1.4;
-              double C_v = 1. / (gamma - 1.0);
-			//m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
-			for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
-				this->m_f.at(j)(i) = feq[j];
-                // ONLY FOR 2D! (due to -2.0)
-                this->m_g.at(j)(i) = feq[j]*(data.temperature)*(2.0*C_v-2.0);
-			}
-		}
+                size_t i = *it;
+                for (size_t j = 0; j < dim; j++) {
+                    u[j] = this->m_velocity.at(j)(i);
+                }
+            //GeneralCollisionData<2,25> data(*(this->m_configuration), *(this->m_problemDescription), this->m_stencil->getScaling(), this->m_problemDescription->getViscosity(), *(this->m_stencil), this->m_stencil->getSpeedOfSoundSquare(), 0.0);
+
+            double density = this->m_density[i];
+            double temperature = this->m_temperature[i];
+            //BGKEquilibrium<2,25> eq;
+            //      eq.calc(feq, data);
+            calcQuarticEquilibrium(feq,T_Q,density,u,temperature,descaled_cs2,e,weight);
+
+
+            double gamma = 1.4;
+                  double C_v = 1. / (gamma - 1.0);
+                //m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
+                for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
+                    this->m_f.at(j)(i) = feq[j];
+                    // ONLY FOR 2D! (due to -2.0)
+                    this->m_g.at(j)(i) = feq[j]*(temperature)*(2.0*C_v-2.0);
+                }
+            }
 
 		LOG(BASIC) << "Equilibrium distribution functions" << endl;
 			// do nothing else
