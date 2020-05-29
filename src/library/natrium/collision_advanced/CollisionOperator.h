@@ -142,7 +142,8 @@ public:
         double* mSS_raw;
                 maskShockSensor.trilinos_vector().ExtractView(&mSS_raw, &length);
 
-
+		genData.H3 = calculateH3<T_D,T_Q>(genData);
+		genData.H4 = calculateH4<T_D,T_Q>(genData);
 
 
 #pragma omp simd

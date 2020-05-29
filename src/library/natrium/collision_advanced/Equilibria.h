@@ -100,9 +100,31 @@ namespace natrium {
                        / (2.0 * p.cs2);
         }
 
+        double T1 = p.cs2 * (p.temperature - 1);
+
+        double a_xxx = p.velocity[0] * p.velocity[0] * p.velocity[0]
+                       + T1 * (p.velocity[0] + p.velocity[0] + p.velocity[0]);
+        double a_xxy = p.velocity[0] * p.velocity[0] * p.velocity[1]
+                       + T1 * (p.velocity[1]);
+        double a_xyy = p.velocity[0] * p.velocity[1] * p.velocity[1]
+                       + T1 * (p.velocity[0]);
+        double a_yyy = p.velocity[1] * p.velocity[1] * p.velocity[1]
+                       + T1 * (p.velocity[1] + p.velocity[1] + p.velocity[1]);
+
+        double a_xxxx = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[0] +
+                        T1 * p.velocity[0] * p.velocity[0] * 6.0 + T1 * T1 * 3.0;
+        double a_yyyy = p.velocity[1] * p.velocity[1] * p.velocity[1] * p.velocity[1] +
+                        T1 * p.velocity[1] * p.velocity[1] * 6.0 + T1 * T1 * 3.0;
+        double a_xxxy = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[1] +
+                        T1 * (p.velocity[0] * p.velocity[1] * 3.0 );
+        double a_xyyy = p.velocity[0] * p.velocity[1] * p.velocity[1] * p.velocity[1] +
+                        T1 * (p.velocity[0] * p.velocity[1] * 3.0 );
+        double a_xxyy = p.velocity[0] * p.velocity[0] * p.velocity[1] * p.velocity[1] +
+                        T1 * (p.velocity[0] * p.velocity[0] + p.velocity[1] * p.velocity[1]) + T1 * T1;
+
         for (size_t i = 0; i < T_Q; i++) {
 
-            double T1 = p.cs2 * (p.temperature - 1);
+
 
             double ue_term = 0.0;
             for (size_t j = 0; j < T_D; j++) {
@@ -114,50 +136,15 @@ namespace natrium {
                     feq[i] += p.density * p.weight[i] / (2.0 * p.cs2) *
                               ((p.temperature - 1) * eye[alp][bet] * p.e[i][alp] * p.e[i][bet] -
                                p.cs2 * eye[alp][bet] * (p.temperature - 1));
-                    /*            for (int gam = 0; gam < T_D; gam++) {
-                                    for (int det = 0; det < T_D; det++) {
-                                        double power4 = p.e[i][alp] * p.e[i][bet] * p.e[i][gam] * p.e[i][det];
-                                        double power2 = p.e[i][alp] * p.e[i][bet] * eye[gam][det]
-                                                        + p.e[i][alp] * p.e[i][gam] * eye[bet][det]
-                                                        + p.e[i][alp] * p.e[i][det] * eye[bet][gam]
-                                                        + p.e[i][bet] * p.e[i][gam] * eye[alp][det]
-                                                        + p.e[i][bet] * p.e[i][det] * eye[alp][gam]
-                                                        + p.e[i][gam] * p.e[i][det] * eye[alp][bet];
-                                        double power0 = eye[alp][bet] * eye[gam][det] + eye[alp][gam] * eye[bet][det] +
-                                                        eye[alp][det] * eye[bet][gam];
-                                        double u4 = p.velocity[alp] * p.velocity[bet] * p.velocity[gam] * p.velocity[det];
-                                        double u2 = p.velocity[alp] * p.velocity[bet] * eye[gam][det] +
-                                                    p.velocity[alp] * p.velocity[gam] * eye[bet][det] +
-                                                    p.velocity[alp] * p.velocity[det] * eye[bet][gam] +
-                                                    p.velocity[bet] * p.velocity[gam] * eye[alp][det] +
-                                                    p.velocity[bet] * p.velocity[det] * eye[alp][gam] +
-                                                    p.velocity[gam] * p.velocity[det] * eye[alp][bet];
-                                        double multieye = eye[alp][bet] * eye[gam][det] + eye[alp][gam] * eye[bet][det] +
-                                                          eye[alp][det] * eye[bet][gam];
 
-                                        feq[i] += p.weight[i] * p.density / (24. * p.cs2 * p.cs2 * p.cs2 * p.cs2) *
-                                                  (power4 - p.cs2 * power2 + p.cs2 * p.cs2 * power0) *
-                                                  (u4 + T1 * (u2 + T1 * multieye));
-
-
-                                    }
-
-                                }*/
                 }
             }
 
-            double H_xxx = p.e[i][0] * p.e[i][0] * p.e[i][0] - p.cs2 * (p.e[i][0] * 3.0);
-            double H_xxy = p.e[i][0] * p.e[i][0] * p.e[i][1] - p.cs2 * p.e[i][1];
-            double H_xyy = p.e[i][0] * p.e[i][1] * p.e[i][1] - p.cs2 * p.e[i][0];
-            double H_yyy = p.e[i][1] * p.e[i][1] * p.e[i][1] - p.cs2 * (p.e[i][1] * 3.0);
-            double a_xxx = p.velocity[0] * p.velocity[0] * p.velocity[0]
-                           + T1 * (p.velocity[0] + p.velocity[0] + p.velocity[0]);
-            double a_xxy = p.velocity[0] * p.velocity[0] * p.velocity[1]
-                           + T1 * (p.velocity[1]);
-            double a_xyy = p.velocity[0] * p.velocity[1] * p.velocity[1]
-                           + T1 * (p.velocity[0]);
-            double a_yyy = p.velocity[1] * p.velocity[1] * p.velocity[1]
-                           + T1 * (p.velocity[1] + p.velocity[1] + p.velocity[1]);
+            double H_xxx = p.H3[i][0][0][0];
+            double H_xxy = p.H3[i][0][0][1];
+            double H_xyy = p.H3[i][0][1][1];
+            double H_yyy = p.H3[i][1][1][1];
+
             feq[i] += p.weight[i] * p.density / (6. * p.cs2 * p.cs2 * p.cs2) *
                       (a_xxx * H_xxx + 3 * (a_xxy * H_xxy + a_xyy * H_xyy) + a_yyy * H_yyy);
 
@@ -187,58 +174,11 @@ namespace natrium {
                            a_xyz * H_xyz);
             }
 
-            double H_xxxx = p.e[i][0] * p.e[i][0] * p.e[i][0] * p.e[i][0] - p.cs2 * p.e[i][0] * p.e[i][0] * 6.0 +
-                            p.cs2 * p.cs2 * 3.0;
-            double H_yyyy = p.e[i][1] * p.e[i][1] * p.e[i][1] * p.e[i][1] - p.cs2 * p.e[i][1] * p.e[i][1] * 6.0 +
-                            p.cs2 * p.cs2 * 3.0;
-            double H_xxxy = p.e[i][0] * p.e[i][0] * p.e[i][0] * p.e[i][1] -
-                            p.cs2 * (p.e[i][0] * p.e[i][1] * 3.0);
-            double H_xyyy = p.e[i][0] * p.e[i][1] * p.e[i][1] * p.e[i][1] -
-                            p.cs2 * (p.e[i][0] * p.e[i][1] * 3.0);
-            double H_xxyy = p.e[i][0] * p.e[i][0] * p.e[i][1] * p.e[i][1] -
-                            p.cs2 * (p.e[i][0] * p.e[i][0] + p.e[i][1] * p.e[i][1]) + p.cs2 * p.cs2;
-
-            /*            for (int gam = 0; gam < T_D; gam++) {
-                                    for (int det = 0; det < T_D; det++) {
-                                        double power4 = p.e[i][alp] * p.e[i][bet] * p.e[i][gam] * p.e[i][det];
-                                        double power2 = p.e[i][alp] * p.e[i][bet] * eye[gam][det]
-                                                        + p.e[i][alp] * p.e[i][gam] * eye[bet][det]
-                                                        + p.e[i][alp] * p.e[i][det] * eye[bet][gam]
-                                                        + p.e[i][bet] * p.e[i][gam] * eye[alp][det]
-                                                        + p.e[i][bet] * p.e[i][det] * eye[alp][gam]
-                                                        + p.e[i][gam] * p.e[i][det] * eye[alp][bet];
-                                        double power0 = eye[alp][bet] * eye[gam][det] + eye[alp][gam] * eye[bet][det] +
-                                                        eye[alp][det] * eye[bet][gam];
-                                        double u4 = p.velocity[alp] * p.velocity[bet] * p.velocity[gam] * p.velocity[det];
-                                        double u2 = p.velocity[alp] * p.velocity[bet] * eye[gam][det] +
-                                                    p.velocity[alp] * p.velocity[gam] * eye[bet][det] +
-                                                    p.velocity[alp] * p.velocity[det] * eye[bet][gam] +
-                                                    p.velocity[bet] * p.velocity[gam] * eye[alp][det] +
-                                                    p.velocity[bet] * p.velocity[det] * eye[alp][gam] +
-                                                    p.velocity[gam] * p.velocity[det] * eye[alp][bet];
-                                        double multieye = eye[alp][bet] * eye[gam][det] + eye[alp][gam] * eye[bet][det] +
-                                                          eye[alp][det] * eye[bet][gam];
-
-                                        feq[i] += p.weight[i] * p.density / (24. * p.cs2 * p.cs2 * p.cs2 * p.cs2) *
-                                                  (power4 - p.cs2 * power2 + p.cs2 * p.cs2 * power0) *
-                                                  (u4 + T1 * (u2 + T1 * multieye));
-
-
-                                    }
-
-                                }*/
-
-            double a_xxxx = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[0] +
-                            T1 * p.velocity[0] * p.velocity[0] * 6.0 + T1 * T1 * 3.0;
-            double a_yyyy = p.velocity[1] * p.velocity[1] * p.velocity[1] * p.velocity[1] +
-                            T1 * p.velocity[1] * p.velocity[1] * 6.0 + T1 * T1 * 3.0;
-            double a_xxxy = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[1] +
-                            T1 * (p.velocity[0] * p.velocity[1] * 3.0 );
-            double a_xyyy = p.velocity[0] * p.velocity[1] * p.velocity[1] * p.velocity[1] +
-                            T1 * (p.velocity[0] * p.velocity[1] * 3.0 );
-            double a_xxyy = p.velocity[0] * p.velocity[0] * p.velocity[1] * p.velocity[1] +
-                            T1 * (p.velocity[0] * p.velocity[0] + p.velocity[1] * p.velocity[1]) + T1 * T1;
-
+            double H_xxxx = p.H4[i][0][0][0][0];
+            double H_yyyy = p.H4[i][1][1][1][1];
+            double H_xxxy = p.H4[i][0][0][0][1];
+            double H_xyyy = p.H4[i][0][1][1][1];
+            double H_xxyy = p.H4[i][0][0][1][1];
 
             feq[i] += p.weight[i] * p.density / (24. * p.cs2 * p.cs2 * p.cs2 * p.cs2) *
                      (H_xxxx * a_xxxx + H_yyyy * a_yyyy + 6.0 * H_xxyy * a_xxyy + 4.0 * H_xyyy * a_xyyy +
