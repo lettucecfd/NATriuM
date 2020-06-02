@@ -70,60 +70,60 @@ public:
 				return 0;
 				break;
 			case 1:
-				return 3;
-				break;
-			case 2:
 				return 4;
 				break;
-			case 3:
-				return 1;
+			case 2:
+				return 3;
 				break;
-			case 4:
+			case 3:
 				return 2;
 				break;
-			case 5:
-				return 7;
+			case 4:
+				return 1;
 				break;
-			case 6:
+			case 5:
 				return 8;
 				break;
-			case 7:
-				return 5;
+			case 6:
+				return 7;
 				break;
-			case 8:
+			case 7:
 				return 6;
 				break;
-			case 9:
-				return 11;
+			case 8:
+				return 5;
 				break;
-			case 10:
+			case 9:
 				return 12;
 				break;
-			case 11:
-				return 9;
+			case 10:
+				return 11;
 				break;
-			case 12:
+			case 11:
 				return 10;
 				break;
+			case 12:
+				return 9;
+				break;
 			case 13:
-				return 15;
-				break;
-			case 14:
-				return 16;
-				break;
-			case 15:
-				return 13;
-				break;
-			case 16:
 				return 14;
 				break;
+			case 14:
+				return 13;
+				break;
+			case 15:
+				return 16;
+				break;
+			case 16:
+				return 15;
+				break;
 			case 17:
-				return 19;
+				return 18;
 				break;
 			case 18:
-				return 20;
+				return 17;
 				break;
-			case 19:
+			/*case 19:
 				return 17;
 				break;
 			case 20:
@@ -140,7 +140,7 @@ public:
 				break;
 			case 24:
 				return 22;
-				break;
+				break; */
 			default:
 				return 0;
 		}

@@ -26,11 +26,11 @@ namespace natrium {
 /// D
 const size_t D2Q25H::D = 2;
 /// Q
-const size_t D2Q25H::Q = 25;
+const size_t D2Q25H::Q = 19;
 
 /// constructor
 D2Q25H::D2Q25H(double scaling) :
-		Stencil(2, 25, makeDirections(scaling), makeWeights(), Stencil_D2Q25H,
+		Stencil(2, 19, makeDirections(scaling), makeWeights(), Stencil_D2Q25H,
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
                 scaling/sqrt(3)), m_speedOfSoundSquare(
                 scaling * scaling/(3)), m_scaling(scaling) {
@@ -57,29 +57,58 @@ vector<double> D2Q25H::makeWeights() {
 	double w_mm = w_m*w_m;
 	double w_mn = w_m*w_n;
 	double w_nn = w_n*w_n;
-	vector<double> result;
-	result += w_0*w_0, w_0m,w_0m, w_0m,w_0m, w_mm, w_mm, w_mm, w_mm, w_0n, w_0n, w_0n, w_0n, w_nn, w_nn, w_nn, w_nn, w_mn,w_mn,w_mn,w_mn,w_mn,w_mn,w_mn,w_mn ;
-    return result;
+	vector<double> result { 0.3168437267921905 , 0.1024247123210936 ,
+                           0.1024247123210936 ,
+                           0.1024247123210936 ,
+                           0.1024247123210936 ,
+                           0.002405335328939458 ,
+                           0.002405335328939458 ,
+                           0.002405335328939458 ,
+                           0.002405335328939458 ,
+                           0.00953510698543825 ,
+                           0.00953510698543825 ,
+                           0.00953510698543825 ,
+                           0.00953510698543825 ,
+                           0.006865104210104631 ,
+                           0.006865104210104631 ,
+                           0.10558878375062891 ,
+                           0.10558878375062891 ,
+                           0.0003939393722285871 ,
+                           0.0003939393722285871
+                          };
+	//result += w_0*w_0, w_0m,w_0m, w_0m,w_0m, w_mm, w_mm, w_mm, w_mm, w_0n, w_0n, w_0n, w_0n, w_nn, w_nn, w_nn, w_nn, w_mn,w_mn,w_mn,w_mn,w_mn,w_mn,w_mn,w_mn ;
+	return result;
 } /// make weights
 
 /// make directions
 vector<numeric_vector> D2Q25H::makeDirections(double scaling) {
     const double c_m = scaling*sqrt(5.-sqrt(10.))/sqrt(3.);
     const double c_n = sqrt(5.+sqrt(10.))*scaling/sqrt(3.);
-	const double directionsArray[][2] = { { 0.0, 0.0 }, { c_m, 0.0 }, { 0.0,
-			c_m }, { -c_m, 0.0 }, { 0.0, -c_m },
-			{ c_m, c_m }, { -c_m, c_m }, { -c_m, -c_m },
-			{ c_m, -c_m } , { c_n, 0.0 }, { 0.0,
-					c_n }, { -c_n, 0.0 }, { 0.0, -c_n },
-					{ c_n, c_n }, { -c_n, c_n }, { -c_n, -c_n },
-					{ c_n, -c_n }, { c_m, c_n }, { c_m, -c_n }, { -c_m, -c_n }, { -c_m, c_n },
-							{ c_n, c_m }, { c_n, -c_m }, { -c_n, -c_m },
-							{ -c_n, c_m }};
-	vector<numeric_vector> result;
+	const double directionsArray[][2] = {{ 0.0 , 0.0 },{ 1.367469636752619 , 0.775196278121181 },
+        { 1.367469636752619 , -0.775196278121181 },
+        { -1.367469636752619 , 0.775196278121181 },
+        { -1.367469636752619 , -0.775196278121181 },
+        { 2.6987507639352253 , 1.8663975507141328 },
+        { 2.6987507639352253 , -1.8663975507141328 },
+        { -2.6987507639352253 , 1.8663975507141328 },
+        { -2.6987507639352253 , -1.8663975507141328 },
+        { 1.105629214668943 , 2.5175897644357486 },
+        { 1.105629214668943 , -2.5175897644357486 },
+        { -1.105629214668943 , 2.5175897644357486 },
+        { -1.105629214668943 , -2.5175897644357486 },
+        { 2.9213306655318734 , 0.0 },
+        { -2.9213306655318734 , 0.0 },
+        { 0.0 , 1.4869982213169028 },
+        { 0.0 , -1.4869982213169028 },
+        { 0.0 , 3.8358342053914734 },
+        { 0.0 , -3.8358342053914734 }};
+
+
+        vector<numeric_vector> result;
 	for (size_t i = 0; i < Q; i++) {
 		numeric_vector direction(2);
-		direction(0) = directionsArray[i][0];
-		direction(1) = directionsArray[i][1];
+		direction(0) = directionsArray[i][0] / sqrt(3);
+		direction(1) = directionsArray[i][1] / sqrt(3);
 		result += direction;
 	}
 	return result;
