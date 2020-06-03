@@ -122,8 +122,8 @@ vector<double> D3Q77::makeWeights() {
             0.01643923837821427 ,
             0.01643923837821427 ,
             0.01643923837821427 ,
-            0.01643923837821427 ,
-    }
+            0.01643923837821427
+    };
 	//result += w_0*w_0, w_0m,w_0m, w_0m,w_0m, w_mm, w_mm, w_mm, w_mm, w_0n, w_0n, w_0n, w_0n, w_nn, w_nn, w_nn, w_nn, w_mn,w_mn,w_mn,w_mn,w_mn,w_mn,w_mn,w_mn ;
 	return result;
 } /// make weights
