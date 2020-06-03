@@ -384,7 +384,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
             cfg.setStencil(Stencil_D2Q19V);
 		} else if (sten == "d2q25h") {
 		    cfg.setStencil(Stencil_D2Q25H);
-        } else if (sten == "d3q77h") {
+        } else if (sten == "d3q77") {
             cfg.setStencil(Stencil_D3Q77);
 		} else {
 			std::stringstream msg;
