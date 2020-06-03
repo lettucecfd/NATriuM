@@ -1,12 +1,12 @@
 /**
- * @file D2Q25H.h
- * @short D2Q25H Stencil
- * @date 09.10.2018
- * @author dwilde3m, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
+ * @file D2Q19H.h
+ * @short D2Q19H Stencil
+ * @date 02.06.2020
+ * @author dwilde3m, University of Siegen, Germany
  */
 
-#ifndef D2Q25HMODEL_H_
-#define D2Q25HMODEL_H_
+#ifndef D2Q19HMODEL_H_
+#define D2Q19HMODEL_H_
 
 #include "Stencil.h"
 
@@ -14,9 +14,9 @@
 
 namespace natrium {
 
-/** @short D2Q25H Model
+/** @short D2Q19H Model
  */
-class D2Q25H: public Stencil {
+class D2Q19H: public Stencil {
 
 private:
 
@@ -52,10 +52,10 @@ public:
 	static const size_t Q;
 
 	/// constructor
-	D2Q25H(double scaling = 1.0);
+	D2Q19H(double scaling = 1.0);
 
 	/// destructor
-	virtual ~D2Q25H();
+	virtual ~D2Q19H();
 
 	virtual double getSpeedOfSound() const {
 		return m_speedOfSound;
@@ -146,6 +146,25 @@ public:
 		}
 	}
 
+    const double m_directionsArray[19][2] {{ 0.0 , 0.0 },{ 1.367469636752619 , 0.775196278121181 },
+                                         { 1.367469636752619 , -0.775196278121181 },
+                                         { -1.367469636752619 , 0.775196278121181 },
+                                         { -1.367469636752619 , -0.775196278121181 },
+                                         { 2.6987507639352253 , 1.8663975507141328 },
+                                         { 2.6987507639352253 , -1.8663975507141328 },
+                                         { -2.6987507639352253 , 1.8663975507141328 },
+                                         { -2.6987507639352253 , -1.8663975507141328 },
+                                         { 1.105629214668943 , 2.5175897644357486 },
+                                         { 1.105629214668943 , -2.5175897644357486 },
+                                         { -1.105629214668943 , 2.5175897644357486 },
+                                         { -1.105629214668943 , -2.5175897644357486 },
+                                         { 2.9213306655318734 , 0.0 },
+                                         { -2.9213306655318734 , 0.0 },
+                                         { 0.0 , 1.4869982213169028 },
+                                         { 0.0 , -1.4869982213169028 },
+                                         { 0.0 , 3.8358342053914734 },
+                                         { 0.0 , -3.8358342053914734 }};
+
 	virtual double getMaxParticleVelocityMagnitude() const {
         return sqrt(2)*m_scaling;
 	}
@@ -157,4 +176,4 @@ public:
 };
 
 } /* namespace natrium */
-#endif /* D2Q25HMODEL_H_ */
+#endif /* D2Q19HMODEL_H_ */

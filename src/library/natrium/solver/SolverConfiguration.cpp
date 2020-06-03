@@ -26,7 +26,7 @@ SolverConfiguration::SolverConfiguration() {
                       dealii::Patterns::Bool(),
                       "Indicates if Prandtl number deviates from 1.0");
 		declare_entry("Stencil", "D2Q9",
-				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q25|D2Q25H"),
+				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q19V|D2Q19H|D2Q25H|D3Q77"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
 		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");

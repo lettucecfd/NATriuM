@@ -86,14 +86,18 @@ inline void selectCollision<2>(SolverConfiguration& configuration,
     DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, MRT_STANDARD, BGK_EQUILIBRIUM, MultipleRelaxationTime, BGKEquilibrium);
-    DEFINE_POSSIBLE_COLLISION(2,19, Stencil_D2Q25H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, MRT_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, MultipleRelaxationTime, IncompressibleEquilibrium);
+    DEFINE_POSSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
+    DEFINE_POSSIBLE_COLLISION(2,19, Stencil_D2Q19H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
+    DEFINE_POSSIBLE_COLLISION(2,19, Stencil_D2Q19V, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
 
-	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, MRT_STANDARD, STEADYSTATE_EQUILIBRIUM, MultipleRelaxationTime, SteadyStateEquilibrium);
+
+    //DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, MRT_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, MultipleRelaxationTime, IncompressibleEquilibrium);
+
+	//DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(2,9, Stencil_D2Q9, MRT_STANDARD, STEADYSTATE_EQUILIBRIUM, MultipleRelaxationTime, SteadyStateEquilibrium);
 
 	if (not has_collided) {
 		throw CollisionException(
@@ -134,11 +138,14 @@ inline void selectCollision<2>(SolverConfiguration& configuration,
 	// Caution: You need to make sure that no configuration appears twice here.
 	// This would cause multiple collision steps per time step
 
-	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,19, Stencil_D2Q25H, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
-	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,19, Stencil_D2Q25, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
-	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,19, Stencil_D2Q25H, BGK_REGULARIZED, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
-	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,19, Stencil_D2Q25, BGK_REGULARIZED, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
-    DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,19, Stencil_D2Q25H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
+	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
+	DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,19, Stencil_D2Q19H, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
+    DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
+
+    DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,19, Stencil_D2Q19H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
+    DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,19, Stencil_D2Q19V, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
+
+    DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(2,25, Stencil_D2Q25H, BGK_REGULARIZED, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 
 
     if (not has_collided) {
@@ -181,27 +188,31 @@ inline void selectCollision<3>(SolverConfiguration& configuration,
 
 	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_RD3Q27, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
+
+	DEFINE_POSSIBLE_COLLISION(3,77, Stencil_D3Q77, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
+
+
+    //DEFINE_POSSIBLE_COLLISION(3,27, Stencil_RD3Q27, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
 	// ---------
-	DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);
 
-	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, MRT_STANDARD, STEADYSTATE_EQUILIBRIUM, MultipleRelaxationTime, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, MRT_STANDARD, STEADYSTATE_EQUILIBRIUM, MultipleRelaxationTime, SteadyStateEquilibrium);
 
-	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_STANDARD, STEADYSTATE_EQUILIBRIUM, BGKCollision, SteadyStateEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_REGULARIZED, STEADYSTATE_EQUILIBRIUM, Regularized, SteadyStateEquilibrium);
 	// -------------
-	DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,15, Stencil_D3Q15, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
 
-	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, MRT_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, MultipleRelaxationTime, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,19, Stencil_D3Q19, MRT_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, MultipleRelaxationTime, IncompressibleEquilibrium);
 
-	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
-	DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_STANDARD, INCOMPRESSIBLE_EQUILIBRIUM, BGKCollision, IncompressibleEquilibrium);
+	//DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_REGULARIZED, INCOMPRESSIBLE_EQUILIBRIUM, Regularized, IncompressibleEquilibrium);
 
 	if (not has_collided) {
 		throw CollisionException(
@@ -209,6 +220,41 @@ inline void selectCollision<3>(SolverConfiguration& configuration,
 	}
 
 } // selectCollision 3D
+
+    template<>
+    inline void selectCollision<3>(SolverConfiguration& configuration,
+                                   const ProblemDescription<3>& problemDescription,
+                                   DistributionFunctions& f, DistributionFunctions& g, distributed_vector& densities,
+                                   vector<distributed_vector>& velocities, distributed_vector& temperature, distributed_vector& maskShockSensor,
+                                   const dealii::IndexSet& locally_owned_dofs, const double viscosity,
+                                   const double delta_t, const Stencil& stencil,
+                                   const bool inInitializationProcedure) {
+        // CAUTION: The names of the arguments are used in the macro
+
+        // CAUTION: The name has_collided is used in the macro
+        int has_collided = false;
+
+        // Select and perform collision (the macro is defined above)
+        // Caution: You need to make sure that no configuration appears twice here.
+        // This would cause multiple collision steps per time step
+
+        DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(3,77, Stencil_D2Q25H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
+
+
+
+        if (not has_collided) {
+            throw CollisionException(
+                    "Severe error: Collision model not implemented yet -- cf. CollisionSelection.h");
+        }
+        if (has_collided > 1) {
+            throw CollisionException(
+                    "Severe error: More than one collision model was executed per time step. "
+                    "This means that there is a bug in CollisionSelection.h");
+
+        }
+
+    } // selectCollision 3D
+
 } //namespace natrium
 
 #endif /* LIBRARY_NATRIUM_COLLISION_ADVANCED_COLLISIONSELECTION_H_ */

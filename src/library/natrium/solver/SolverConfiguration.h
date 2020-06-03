@@ -1590,13 +1590,17 @@ public:
 			return Stencil_D3Q21;
 		} else if ("D3Q27" == stencil) {
 			return Stencil_D3Q27;
-		} else if ("D2Q25" == stencil) {
-			return Stencil_D2Q25;
+		} else if ("D2Q19H" == stencil) {
+			return Stencil_D2Q19H;
+        } else if ("D2Q19V" == stencil) {
+            return Stencil_D2Q19V;
 		} else if ("D2Q25H" == stencil) {
 			return Stencil_D2Q25H;
 		} else if ("RD3Q27" == stencil) {
 		    return Stencil_RD3Q27;
-		} else {
+        } else if ("D3Q77" == stencil) {
+            return Stencil_D3Q77;
+        } else {
 			std::stringstream msg;
 			msg << "Unknown Stencil with index " << stencil
 					<< "in enum StencilType. Check your configuration file. If everything is alright, "
@@ -1632,10 +1636,14 @@ public:
 			set("Stencil", "D3Q27");
 			break;
 		}
-		case Stencil_D2Q25: {
-			set("Stencil", "D2Q25");
+		case Stencil_D2Q19H: {
+			set("Stencil", "D2Q19H");
 			break;
 		}
+        case Stencil_D2Q19V: {
+            set("Stencil", "D2Q19V");
+            break;
+        }
 		case Stencil_D2Q25H: {
 			set("Stencil", "D2Q25H");
 			break;
@@ -1644,6 +1652,10 @@ public:
 					set("Stencil", "RD3Q27");
 					break;
 				}
+        case Stencil_D3Q77: {
+            set("Stencil", "D3Q77");
+            break;
+        }
 		default: {
 			std::stringstream msg;
 			msg << "Unknown Stencil; index. " << stencil

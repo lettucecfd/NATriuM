@@ -17,8 +17,6 @@
 
 #include "natrium/problemdescription/ProblemDescription.h"
 
-#include "natrium/stencils/D2Q25.h"
-
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/BasicNames.h"
 

@@ -1,11 +1,11 @@
 /**
- * @file D2Q25H.cpp
+ * @file D2Q19H.cpp
  * @short 
- * @date 09.10.2018
- * @author dwilde3m, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
+ * @date 02.06.2020
+ * @author dwilde3m, University of Siegen, Germany
  */
 
-#include "D2Q25H.h"
+#include "D2Q19H.h"
 
 #include <math.h>
 
@@ -24,26 +24,26 @@ namespace natrium {
 // assign D and Q
 // has to be done outside the class, because function calls are not allowed in initialization of statics
 /// D
-const size_t D2Q25H::D = 2;
+const size_t D2Q19H::D = 2;
 /// Q
-const size_t D2Q25H::Q = 19;
+const size_t D2Q19H::Q = 19;
 
 /// constructor
-D2Q25H::D2Q25H(double scaling) :
-		Stencil(2, 19, makeDirections(scaling), makeWeights(), Stencil_D2Q25H,
+D2Q19H::D2Q19H(double scaling) :
+		Stencil(2, 19, makeDirections(scaling), makeWeights(), Stencil_D2Q19H,
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
                 scaling/sqrt(3)), m_speedOfSoundSquare(
                 scaling * scaling/(3)), m_scaling(scaling) {
 } //constructor
 
 /// destructor
-D2Q25H::~D2Q25H() {
+D2Q19H::~D2Q19H() {
 } /// destructor
 
 
 
 // make weights
-vector<double> D2Q25H::makeWeights() {
+vector<double> D2Q19H::makeWeights() {
     double r = (sqrt(5.)-sqrt(2.))/sqrt(3.);
 
 	double w_0 = (-3-3*r*r*r*r+54*r*r)/(75*r*r);
@@ -81,40 +81,19 @@ vector<double> D2Q25H::makeWeights() {
 } /// make weights
 
 /// make directions
-vector<numeric_vector> D2Q25H::makeDirections(double scaling) {
-    const double c_m = scaling*sqrt(5.-sqrt(10.))/sqrt(3.);
-    const double c_n = sqrt(5.+sqrt(10.))*scaling/sqrt(3.);
-	const double directionsArray[][2] = {{ 0.0 , 0.0 },{ 1.367469636752619 , 0.775196278121181 },
-        { 1.367469636752619 , -0.775196278121181 },
-        { -1.367469636752619 , 0.775196278121181 },
-        { -1.367469636752619 , -0.775196278121181 },
-        { 2.6987507639352253 , 1.8663975507141328 },
-        { 2.6987507639352253 , -1.8663975507141328 },
-        { -2.6987507639352253 , 1.8663975507141328 },
-        { -2.6987507639352253 , -1.8663975507141328 },
-        { 1.105629214668943 , 2.5175897644357486 },
-        { 1.105629214668943 , -2.5175897644357486 },
-        { -1.105629214668943 , 2.5175897644357486 },
-        { -1.105629214668943 , -2.5175897644357486 },
-        { 2.9213306655318734 , 0.0 },
-        { -2.9213306655318734 , 0.0 },
-        { 0.0 , 1.4869982213169028 },
-        { 0.0 , -1.4869982213169028 },
-        { 0.0 , 3.8358342053914734 },
-        { 0.0 , -3.8358342053914734 }};
-
+vector<numeric_vector> D2Q19H::makeDirections(double scaling) {
 
         vector<numeric_vector> result;
 	for (size_t i = 0; i < Q; i++) {
 		numeric_vector direction(2);
-		direction(0) = directionsArray[i][0] / sqrt(3);
-		direction(1) = directionsArray[i][1] / sqrt(3);
+		direction(0) = scaling * m_directionsArray[i][1] / sqrt(3);
+		direction(1) = scaling * m_directionsArray[i][0] / sqrt(3);
 		result += direction;
 	}
 	return result;
 } /// make directions
 
-    numeric_matrix D2Q25H::makeMomentBasis(vector<numeric_vector> e) {
+    numeric_matrix D2Q19H::makeMomentBasis(vector<numeric_vector> e) {
         numeric_matrix m(Q);
         for (int i = 0;i<Q;i++){
             for (int j = 0;j<Q;j++){
@@ -130,6 +109,7 @@ vector<numeric_vector> D2Q25H::makeDirections(double scaling) {
         }
         return m;
     }
+
 
 } /* namespace natrium */
 
