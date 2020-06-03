@@ -142,6 +142,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	} else if (Stencil_D3Q27 == configuration->getStencil()) {
 		m_stencil = boost::make_shared<D3Q27>(
 				configuration->getStencilScaling());
+    } else if (Stencil_D3Q77 == configuration->getStencil()) {
+        m_stencil = boost::make_shared<D3Q77>(
+                configuration->getStencilScaling());
 	} else if (Stencil_D2Q19H == configuration->getStencil()) {
 			m_stencil = boost::make_shared<D2Q19H>(
 					configuration->getStencilScaling());
