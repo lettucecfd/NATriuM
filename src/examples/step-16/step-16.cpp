@@ -46,7 +46,9 @@ int main(int argc, char** argv) {
 
 	CommandLineParser parser(argc, argv);
 	parser.setArgument<int>("Re", "Reynolds number 1/nu", 1600);
-	parser.setPositionalArgument<int>("ref-level",
+    parser.setArgument<double>("Ma", "Mach number", 0.1);
+
+    parser.setPositionalArgument<int>("ref-level",
 			"Refinement level of the computation grid.");
 	parser.setArgument<int>("grid-repetitions",
 			"Number of grid cells along each axis before global refinement; "
@@ -75,7 +77,7 @@ int main(int argc, char** argv) {
 	const double U = 1;
 	//const double L = 2 * M_PI;
 	const double viscosity = 1.0 / Re;
-	const double Ma = 0.1;
+    const double Ma = parser.getArgument<double>("Ma");
 	const double cs = U / Ma;
 
 	// chose scaling so that the right Ma-number is achieved
