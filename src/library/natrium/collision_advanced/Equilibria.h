@@ -100,31 +100,68 @@ namespace natrium {
                        / (2.0 * p.cs2);
         }
 
-        double T1 = p.cs2 * (p.temperature - 1);
+        const double T1 = p.cs2 * (p.temperature - 1);
 
-        double a_xxx = p.velocity[0] * p.velocity[0] * p.velocity[0]
-                       + T1 * (p.velocity[0] + p.velocity[0] + p.velocity[0]);
-        double a_xxy = p.velocity[0] * p.velocity[0] * p.velocity[1]
-                       + T1 * (p.velocity[1]);
-        double a_xyy = p.velocity[0] * p.velocity[1] * p.velocity[1]
-                       + T1 * (p.velocity[0]);
-        double a_yyy = p.velocity[1] * p.velocity[1] * p.velocity[1]
-                       + T1 * (p.velocity[1] + p.velocity[1] + p.velocity[1]);
+        const double a_xxx = p.velocity[0] * p.velocity[0] * p.velocity[0]
+                        + T1 * (p.velocity[0] + p.velocity[0] + p.velocity[0]);
+        const double a_xxy = p.velocity[0] * p.velocity[0] * p.velocity[1]
+                        + T1 * (p.velocity[1]);
+        const double a_xyy = p.velocity[0] * p.velocity[1] * p.velocity[1]
+                        + T1 * (p.velocity[0]);
+        const double a_yyy = p.velocity[1] * p.velocity[1] * p.velocity[1]
+                        + T1 * (p.velocity[1] + p.velocity[1] + p.velocity[1]);
 
-        double a_xxxx = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[0] +
-                        T1 * p.velocity[0] * p.velocity[0] * 6.0 + T1 * T1 * 3.0;
-        double a_yyyy = p.velocity[1] * p.velocity[1] * p.velocity[1] * p.velocity[1] +
-                        T1 * p.velocity[1] * p.velocity[1] * 6.0 + T1 * T1 * 3.0;
-        double a_xxxy = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[1] +
-                        T1 * (p.velocity[0] * p.velocity[1] * 3.0 );
-        double a_xyyy = p.velocity[0] * p.velocity[1] * p.velocity[1] * p.velocity[1] +
-                        T1 * (p.velocity[0] * p.velocity[1] * 3.0 );
-        double a_xxyy = p.velocity[0] * p.velocity[0] * p.velocity[1] * p.velocity[1] +
+        const double a_xxxx = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[0] +
+                         T1 * p.velocity[0] * p.velocity[0] * 6.0 + T1 * T1 * 3.0;
+        const double a_yyyy = p.velocity[1] * p.velocity[1] * p.velocity[1] * p.velocity[1] +
+                         T1 * p.velocity[1] * p.velocity[1] * 6.0 + T1 * T1 * 3.0;
+        const double a_xxxy = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[1] +
+                         T1 * (p.velocity[0] * p.velocity[1] * 3.0 );
+        const double a_xyyy = p.velocity[0] * p.velocity[1] * p.velocity[1] * p.velocity[1] +
+                         T1 * (p.velocity[0] * p.velocity[1] * 3.0 );
+        const double a_xxyy = p.velocity[0] * p.velocity[0] * p.velocity[1] * p.velocity[1] +
                         T1 * (p.velocity[0] * p.velocity[0] + p.velocity[1] * p.velocity[1]) + T1 * T1;
 
+        double a_zzz= 0.0, a_xxz= 0.0,a_xzz= 0.0,a_yzz= 0.0,a_yyz= 0.0,a_xyz  = 0.0;
+        double a_zzzz= 0.0, a_xzzz= 0.0, a_xxzz= 0.0, a_xxxz= 0.0, a_yzzz= 0.0, a_yyzz= 0.0, a_yyyz= 0.0, a_xxyz= 0.0, a_xyyz= 0.0, a_xyzz = 0.0;
+
+        if(T_D==3) {
+            a_zzz = p.velocity[2] * p.velocity[2] * p.velocity[2]
+                           + T1 * (p.velocity[2] + p.velocity[2] + p.velocity[2]);
+            a_xxz = p.velocity[0] * p.velocity[0] * p.velocity[2]
+                           + T1 * (p.velocity[2]);
+            a_xzz = p.velocity[0] * p.velocity[2] * p.velocity[2]
+                           + T1 * (p.velocity[0]);
+            a_yzz = p.velocity[1] * p.velocity[2] * p.velocity[2]
+                           + T1 * (p.velocity[1]);
+            a_yyz = p.velocity[1] * p.velocity[1] * p.velocity[2]
+                           + T1 * (p.velocity[2]);
+            a_xyz = p.velocity[0] * p.velocity[1] * p.velocity[2];
+
+            a_zzzz = p.velocity[2] * p.velocity[2] * p.velocity[2] * p.velocity[2] +
+                            T1 * p.velocity[2] * p.velocity[2] * 6.0 + T1 * T1 * 3.0;
+            a_xxxz = p.velocity[0] * p.velocity[0] * p.velocity[0] * p.velocity[2] +
+                            T1 * (p.velocity[0] * p.velocity[2] * 3.0 );
+            a_yyyz = p.velocity[1] * p.velocity[1] * p.velocity[1] * p.velocity[2] +
+                            T1 * (p.velocity[1] * p.velocity[2] * 3.0 );
+            a_xzzz = p.velocity[0] * p.velocity[2] * p.velocity[2] * p.velocity[2] +
+                            T1 * (p.velocity[0] * p.velocity[2] * 3.0 );
+            a_yzzz = p.velocity[1] * p.velocity[2] * p.velocity[2] * p.velocity[2] +
+                            T1 * (p.velocity[1] * p.velocity[2] * 3.0 );
+            a_xxzz = p.velocity[0] * p.velocity[0] * p.velocity[2] * p.velocity[2] +
+                            T1 * (p.velocity[0] * p.velocity[0] + p.velocity[2] * p.velocity[2]) + T1 * T1;
+            a_yyzz = p.velocity[1] * p.velocity[1] * p.velocity[2] * p.velocity[2] +
+                            T1 * (p.velocity[1] * p.velocity[1] + p.velocity[2] * p.velocity[2]) + T1 * T1;
+            a_xyzz = p.velocity[0] * p.velocity[1] * p.velocity[2] * p.velocity[2] +
+                            T1 * (p.velocity[0] * p.velocity[1]);
+            a_xyyz = p.velocity[0] * p.velocity[1] * p.velocity[1] * p.velocity[2] +
+                            T1 * (p.velocity[0] * p.velocity[2]);
+            a_xxyz = p.velocity[0] * p.velocity[0] * p.velocity[1] * p.velocity[2] +
+                            T1 * (p.velocity[1] * p.velocity[2]);
+
+        }
+
         for (size_t i = 0; i < T_Q; i++) {
-
-
 
             double ue_term = 0.0;
             for (size_t j = 0; j < T_D; j++) {
@@ -140,49 +177,58 @@ namespace natrium {
                 }
             }
 
-            double H_xxx = p.H3[i][0][0][0];
-            double H_xxy = p.H3[i][0][0][1];
-            double H_xyy = p.H3[i][0][1][1];
-            double H_yyy = p.H3[i][1][1][1];
+            const double H_xxx = p.H3[i][0][0][0];
+            const double H_xxy = p.H3[i][0][0][1];
+            const double H_xyy = p.H3[i][0][1][1];
+            const double H_yyy = p.H3[i][1][1][1];
 
             feq[i] += p.weight[i] * p.density / (6. * p.cs2 * p.cs2 * p.cs2) *
                       (a_xxx * H_xxx + 3 * (a_xxy * H_xxy + a_xyy * H_xyy) + a_yyy * H_yyy);
 
             if (T_D == 3) {
-                double H_zzz = p.e[i][2] * p.e[i][2] * p.e[i][2] - p.cs2 * (p.e[i][2] * 3.0);
-                double H_xxz = p.e[i][0] * p.e[i][0] * p.e[i][2] - p.cs2 * p.e[i][2];
-                double H_xzz = p.e[i][0] * p.e[i][2] * p.e[i][2] - p.cs2 * p.e[i][2];
-                double H_yzz = p.e[i][1] * p.e[i][2] * p.e[i][2] - p.cs2 * p.e[i][1];
-                double H_yyz = p.e[i][1] * p.e[i][1] * p.e[i][2] - p.cs2 * p.e[i][2];
-                double H_xyz = p.e[i][0] * p.e[i][1] * p.e[i][2];
+                const double H_zzz = p.H3[i][2][2][2];
+                const double H_xxz = p.H3[i][0][0][2];
+                const double H_xzz = p.H3[i][0][2][2];
+                const double H_yzz = p.H3[i][1][2][2];
+                const double H_yyz = p.H3[i][1][1][2];
+                const double H_xyz = p.H3[i][0][1][2];
 
-                double a_zzz = p.velocity[2] * p.velocity[2] * p.velocity[2]
-                               + T1 * (p.velocity[2] + p.velocity[2] + p.velocity[2]);
-                double a_xxz = p.velocity[0] * p.velocity[0] * p.velocity[2]
-                               + T1 * (p.velocity[2]);
-                double a_xzz = p.velocity[0] * p.velocity[2] * p.velocity[2]
-                               + T1 * (p.velocity[0]);
-                double a_yzz = p.velocity[1] * p.velocity[2] * p.velocity[2]
-                               + T1 * (p.velocity[1]);
-                double a_yyz = p.velocity[1] * p.velocity[1] * p.velocity[2]
-                               + T1 * (p.velocity[2]);
-                double a_xyz = p.velocity[0] * p.velocity[1] * p.velocity[2];
+
 
 
                 feq[i] += p.weight[i] * p.density / (6. * p.cs2 * p.cs2 * p.cs2) *
                           (a_zzz * H_zzz + 3 * (a_xxz * H_xxz + a_xzz * H_xzz + a_yzz * H_yzz + a_yyz * H_yyz) +
-                           a_xyz * H_xyz);
+                           6.0*a_xyz * H_xyz);
             }
 
-            double H_xxxx = p.H4[i][0][0][0][0];
-            double H_yyyy = p.H4[i][1][1][1][1];
-            double H_xxxy = p.H4[i][0][0][0][1];
-            double H_xyyy = p.H4[i][0][1][1][1];
-            double H_xxyy = p.H4[i][0][0][1][1];
+            const double H_xxxx = p.H4[i][0][0][0][0];
+            const double H_yyyy = p.H4[i][1][1][1][1];
+            const double H_xxxy = p.H4[i][0][0][0][1];
+            const double H_xyyy = p.H4[i][0][1][1][1];
+            const double H_xxyy = p.H4[i][0][0][1][1];
+
 
             feq[i] += p.weight[i] * p.density / (24. * p.cs2 * p.cs2 * p.cs2 * p.cs2) *
                      (H_xxxx * a_xxxx + H_yyyy * a_yyyy + 6.0 * H_xxyy * a_xxyy + 4.0 * H_xyyy * a_xyyy +
                        4.0 * H_xxxy * a_xxxy);
+
+            if(T_D==3){
+                const double H_zzzz = p.H4[i][2][2][2][2];
+                const double H_xzzz = p.H4[i][0][2][2][2];
+                const double H_xxzz = p.H4[i][0][0][2][2];
+                const double H_xxxz = p.H4[i][0][0][0][2];
+                const double H_yzzz = p.H4[i][1][2][2][2];
+                const double H_yyzz = p.H4[i][1][1][2][2];
+                const double H_yyyz = p.H4[i][1][1][1][2];
+                const double H_xxyz = p.H4[i][0][0][1][2];
+                const double H_xyyz = p.H4[i][0][1][1][2];
+                const double H_xyzz = p.H4[i][0][1][2][2];
+
+                feq[i] += p.weight[i] * p.density / (24. * p.cs2 * p.cs2 * p.cs2 * p.cs2) *
+                          (H_zzzz * a_zzzz + 4.0 * (H_xzzz * a_xzzz + H_yzzz * a_yzzz+ H_xxxz * a_xxxz + H_yyyz * a_yyyz) + 6.0 * (H_xxzz * a_xxzz + H_yyzz * a_yyzz)
+                          + 12.0 * (H_xxyz*a_xxyz + H_xyyz*a_xyyz+H_xyzz*a_xyzz));
+
+            }
         }
     }
 

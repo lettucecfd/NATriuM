@@ -26,11 +26,11 @@ namespace natrium {
 /// D
 const size_t D2Q25H::D = 2;
 /// Q
-const size_t D2Q25H::Q = 19;
+const size_t D2Q25H::Q = 25;
 
 /// constructor
 D2Q25H::D2Q25H(double scaling) :
-		Stencil(2, 19, makeDirections(scaling), makeWeights(), Stencil_D2Q25H,
+		Stencil(2, 25, makeDirections(scaling), makeWeights(), Stencil_D2Q25H,
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
                 scaling/sqrt(3)), m_speedOfSoundSquare(
                 scaling * scaling/(3)), m_scaling(scaling) {

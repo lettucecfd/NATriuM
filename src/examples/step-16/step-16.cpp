@@ -99,6 +99,7 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(scaling);
 	configuration->setStencil(Stencil_D3Q19);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 
 	parser.applyToSolverConfiguration(*configuration);
 
