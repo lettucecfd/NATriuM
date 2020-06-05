@@ -118,6 +118,8 @@ int main(int argc, char** argv) {
 		dirName << "-CFL" << configuration->getCFL();
 		if (configuration->getStencil() != Stencil_D3Q19)
 			dirName << "-sten" << static_cast<int>(configuration->getStencil());
+		if (Ma!=0.1)
+		    dirName << "-Ma" << Ma;
 		if (configuration->isFiltering())
 			dirName << "-filt"
 					<< static_cast<int>(configuration->getFilteringScheme())
