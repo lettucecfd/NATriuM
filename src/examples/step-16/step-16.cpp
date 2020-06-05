@@ -125,6 +125,9 @@ int main(int argc, char** argv) {
 		if (configuration->getRegularizationScheme() != NO_REGULARIZATION)
 			dirName << "-reg"
 					<< static_cast<int>(configuration->getRegularizationScheme());
+        if (configuration->getEquilibriumScheme()!= BGK_EQUILIBRIUM)
+            dirName << "-equili"
+                    << static_cast<int>(configuration->getRegularizationScheme());
 		if (configuration->getCollisionScheme() == MRT_STANDARD) {
 			dirName << "-mrt" << static_cast<int>(configuration->getMRTBasis());
 		}
