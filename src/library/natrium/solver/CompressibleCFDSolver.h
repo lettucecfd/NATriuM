@@ -581,7 +581,7 @@ void compressibleFilter() {
 		for (; it != end; it++) {
                 size_t i = *it;
                 for (size_t j = 0; j < dim; j++) {
-                    u[j] = this->m_velocity.at(j)(i);
+                    u[j] = this->m_velocity.at(j)(i)/this->m_stencil->getScaling();
                 }
             //GeneralCollisionData<2,25> data(*(this->m_configuration), *(this->m_problemDescription), this->m_stencil->getScaling(), this->m_problemDescription->getViscosity(), *(this->m_stencil), this->m_stencil->getSpeedOfSoundSquare(), 0.0);
 
@@ -598,7 +598,7 @@ void compressibleFilter() {
                 for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
                     this->m_f.at(j)(i) = feq[j];
                     // ONLY FOR 2D! (due to -2.0)
-                    this->m_g.at(j)(i) = feq[j]*(temperature)*(2.0*C_v-2.0);
+                    this->m_g.at(j)(i) = feq[j]*(temperature)*(2.0*C_v-dim);
                 }
             }
 
