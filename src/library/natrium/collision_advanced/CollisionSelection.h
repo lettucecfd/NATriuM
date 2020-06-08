@@ -241,7 +241,7 @@ inline void selectCollision<3>(SolverConfiguration& configuration,
         // Caution: You need to make sure that no configuration appears twice here.
         // This would cause multiple collision steps per time step
 
-        DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(3,77, Stencil_D2Q25H, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
+        DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(3,77, Stencil_D3Q77, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
 
 
 

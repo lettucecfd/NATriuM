@@ -14,7 +14,7 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/CompressibleCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 
 #include "natrium/stencils/Stencil.h"
@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
-	pout << "Starting NATriuM step-16 ..." << endl;
+	pout << "Starting NATriuM step-17 ..." << endl;
 
 	/////////////////////////////////////////////////
 	// read from command line
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
 	configuration->setSimulationEndTime(23.0);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setStencilScaling(scaling);
-	configuration->setStencil(Stencil_D3Q19);
+	configuration->setStencil(Stencil_D3Q77);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 
@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
 	// standard output dir
 	if (not parser.hasArgument("output-dir")){
 		std::stringstream dirName;
-		dirName << getenv("NATRIUM_HOME") << "/step-TGV3D/Re" << Re << "-ref"
+		dirName << getenv("NATRIUM_HOME") << "/step-17-compressible/Re" << Re << "-ref"
 				<< refinement_level << "-p"
 				<< configuration->getSedgOrderOfFiniteElement() << "-coll"
 				<< static_cast<int>(configuration->getCollisionScheme()) << "-sl"
@@ -145,7 +145,7 @@ int main(int argc, char** argv) {
 	// run solver
 	//////////////////////////////////////////////////
 
-	CFDSolver<3> solver(configuration, taylorGreen);
+	CompressibleCFDSolver<3> solver(configuration, taylorGreen);
 
 	const size_t table_output_lines_per_10s = 300;
 	configuration->setOutputTableInterval(
@@ -153,7 +153,7 @@ int main(int argc, char** argv) {
 
 	solver.run();
 
-	pout << "step-16 terminated." << endl;
+	pout << "step-17 terminated." << endl;
 
 	return 0;
 
