@@ -27,6 +27,8 @@ TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
 	// apply analytic solution
 	this->setInitialU(boost::make_shared<InitialVelocity>(this));
 	this->setInitialRho(boost::make_shared<InitialDensity>(this));
+    this->setInitialT(boost::make_shared<InitialTemperature>(this));
+
 
 }
 
@@ -56,6 +58,16 @@ double TaylorGreenVortex3D::InitialDensity::value(const dealii::Point<3>& x,
 		return 1.0;
 	}
 }
+
+    double TaylorGreenVortex3D::InitialTemperature::value(const dealii::Point<3>& x,
+                                                      const unsigned int component) const {
+        assert(component == 0);
+        if (m_flow->m_analyticInit) {
+            return 1.0;
+        } else {
+            return 1.0;
+        }
+    }
 
 /**
  * @short create triangulation for TaylorGreen Vortex flow

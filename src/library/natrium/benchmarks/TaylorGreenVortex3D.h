@@ -52,6 +52,17 @@ public:
 				const unsigned int component = 0) const;
 	};
 
+    class InitialTemperature: public dealii::Function<3> {
+    private:
+        TaylorGreenVortex3D* m_flow;
+    public:
+        InitialTemperature(TaylorGreenVortex3D* flow) :
+                m_flow(flow) {
+        }
+        virtual double value(const dealii::Point<3>& x,
+                             const unsigned int component = 0) const;
+    };
+
 	/// constructor
 	TaylorGreenVortex3D(double viscosity, size_t refinementLevel, double cs =
 			0.57735026919, bool init_rho_analytically = false, size_t repetitions = 1);

@@ -223,8 +223,6 @@ namespace natrium {
                 const double H_xyyz = p.H4[i][0][1][1][2];
                 const double H_xyzz = p.H4[i][0][1][2][2];
 
-                cout << H_xxyz << " " << a_xxyz << endl;
-
                 feq[i] += p.weight[i] * p.density / (24. * p.cs2 * p.cs2 * p.cs2 * p.cs2) *
                           (H_zzzz * a_zzzz + 4.0 * (H_xzzz * a_xzzz + H_yzzz * a_yzzz+ H_xxxz * a_xxxz + H_yyyz * a_yyyz) + 6.0 * (H_xxzz * a_xxzz + H_yyzz * a_yyzz)
                           + 12.0 * (H_xxyz*a_xxyz + H_xyyz*a_xyyz+H_xyzz*a_xyzz));
