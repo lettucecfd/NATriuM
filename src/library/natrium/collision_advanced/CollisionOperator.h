@@ -65,6 +65,9 @@ public:
 			//Set temperature so that Equilibrium terms cancel out
 			genData.temperature = 1.0;
 
+            genData.H3 = calculateH3<T_D,T_Q>(genData);
+            genData.H4 = calculateH4<T_D,T_Q>(genData);
+
 			//Write the local density to the global density vector
 			rho_raw[ii] = genData.density; // write local density to global density vector
 

@@ -82,7 +82,6 @@ namespace natrium {
 namespace natrium {
     template<int T_D, int T_Q>
     class QuarticEquilibrium {
-        std::array<std::array<std::array<std::array<double, T_Q>, T_D>, T_D>, T_D> m_H3 = {{{{0.0}}}};
 
     public:
         void calc(std::array<double, T_Q> &feq, const GeneralCollisionData<T_D, T_Q> &params);
@@ -223,6 +222,8 @@ namespace natrium {
                 const double H_xxyz = p.H4[i][0][0][1][2];
                 const double H_xyyz = p.H4[i][0][1][1][2];
                 const double H_xyzz = p.H4[i][0][1][2][2];
+
+                cout << H_xxyz << " " << a_xxyz << endl;
 
                 feq[i] += p.weight[i] * p.density / (24. * p.cs2 * p.cs2 * p.cs2 * p.cs2) *
                           (H_zzzz * a_zzzz + 4.0 * (H_xzzz * a_xzzz + H_yzzz * a_yzzz+ H_xxxz * a_xxxz + H_yyyz * a_yyyz) + 6.0 * (H_xxzz * a_xxzz + H_yyzz * a_yyzz)
