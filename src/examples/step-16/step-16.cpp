@@ -116,8 +116,7 @@ int main(int argc, char** argv) {
 					<< static_cast<int>(configuration->getTimeIntegrator()) << "_"
 					<< static_cast<int>(configuration->getDealIntegrator());
 		dirName << "-CFL" << configuration->getCFL();
-		if (configuration->getStencil() != Stencil_D3Q19)
-			dirName << "-sten" << static_cast<int>(configuration->getStencil());
+		dirName << "-sten" << static_cast<int>(configuration->getStencil());
 		if (Ma!=0.1)
 		    dirName << "-Ma" << Ma;
 		if (configuration->isFiltering())
@@ -129,7 +128,7 @@ int main(int argc, char** argv) {
 					<< static_cast<int>(configuration->getRegularizationScheme());
         if (configuration->getEquilibriumScheme()!= BGK_EQUILIBRIUM)
             dirName << "-equili"
-                    << static_cast<int>(configuration->getRegularizationScheme());
+                    << static_cast<int>(configuration->getEquilibriumScheme());
 		if (configuration->getCollisionScheme() == MRT_STANDARD) {
 			dirName << "-mrt" << static_cast<int>(configuration->getMRTBasis());
 		}
