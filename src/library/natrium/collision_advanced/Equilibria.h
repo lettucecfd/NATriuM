@@ -143,7 +143,7 @@ inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,
         feq[i] = p.weight[i] * p.density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
         for (int alp = 0; alp < T_D; alp++){
             for (int bet = 0; bet < T_D; bet++){
-                //feq[i]+=p.density*p.weight[i]/(2.0*p.cs2)*((p.temperature-1)*eye[alp][bet]*p.e[i][alp]*p.e[i][bet]-p.cs2*eye[alp][bet]*(p.temperature-1));
+                feq[i]+=p.density*p.weight[i]/(2.0*p.cs2)*((p.temperature-1)*eye[alp][bet]*p.e[i][alp]*p.e[i][bet]-p.cs2*eye[alp][bet]*(p.temperature-1));
                 for (int gam = 0; gam < T_D; gam++){
 
                     feq[i] += p.weight[i] * p.density / (6. * p.cs2 * p.cs2 * p.cs2) *

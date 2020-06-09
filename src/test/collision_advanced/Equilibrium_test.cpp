@@ -191,7 +191,7 @@ double rho = 1.0;
 
         //DistributionFunctions f_new(f);
 
-        double velocities[3]={0.1,0.2,0.3};
+        double velocities[3]={0.1,0.1,0.1};
 
         QuarticEquilibrium<3,27> eq;
         std::array<double,27> feq;
@@ -212,7 +212,7 @@ double rho = 1.0;
         prams.velocity[1]=velocities[1];
         prams.velocity[2]=velocities[2];
         prams.density = rho;
-        prams.temperature = 1.1;
+        prams.temperature = 1.3;
         prams.H3 = calculateH3<3,27>(prams);
         prams.H4 = calculateH4<3,27>(prams);
 
@@ -231,7 +231,10 @@ double rho = 1.0;
             cout << i << endl;
         }
         std::array<double,3> v_post;
+        double rho_post = calculateDensity<27>(feq);
         calculateVelocity<3,27>(feq,v_post,calculateDensity<27>(feq),prams);
+
+        BOOST_CHECK_CLOSE(rho_post,rho,10e-6);
 
         BOOST_CHECK_CLOSE(v_post[0],prams.velocity[0],10e-6);
         BOOST_CHECK_CLOSE(v_post[1],prams.velocity[1],10e-6);
