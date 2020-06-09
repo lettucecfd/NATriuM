@@ -101,6 +101,7 @@ int main(int argc, char** argv) {
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 	configuration->setHeatCapacityRatioGamma(1.4);
+	configuration->setPrandtlNumber(0.75);
 
 	parser.applyToSolverConfiguration(*configuration);
 
