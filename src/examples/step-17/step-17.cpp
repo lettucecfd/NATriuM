@@ -100,6 +100,7 @@ int main(int argc, char** argv) {
 	configuration->setStencil(Stencil_D3Q77);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+	configuration->setHeatCapacityRatioGamma(1.4);
 
 	parser.applyToSolverConfiguration(*configuration);
 
