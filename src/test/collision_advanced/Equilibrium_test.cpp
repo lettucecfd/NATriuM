@@ -197,7 +197,7 @@ double rho = 1.0;
 
         //DistributionFunctions f_new(f);
 
-        double velocities[3]={0.1,0.1,0.1};
+        double velocities[3]={0.1,0.0,0.0};
 
         QuarticEquilibrium<3,27> eq;
         std::array<double,27> feq;
@@ -210,7 +210,7 @@ double rho = 1.0;
 
 
         SolverConfiguration cfg;
-        TaylorGreenVortex3D tgv(0.1,1);
+        TaylorGreenVortex3D tgv(1.0,2);
         GeneralCollisionData<3,27> prams(cfg, tgv, scaling, viscosity, d3q27,
                                          cs2 , dt);
 
