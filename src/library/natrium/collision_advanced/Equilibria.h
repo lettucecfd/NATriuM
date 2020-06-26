@@ -93,7 +93,7 @@ public:
 template<int T_D, int T_Q>
 inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,
                                            const GeneralCollisionData<T_D, T_Q> & p) {
-    double eye[2][2]={{1,0},{0,1}};
+    const double eye[2][2]={{1,0},{0,1}};
     double uu_term = 0.0;
     double T1 = p.cs2*(p.temperature-1);
 
@@ -118,7 +118,7 @@ inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,
 
                     double u4    = p.velocity[alp]*p.velocity[bet]*p.velocity[gam]*p.velocity[det];
                     double u2 = p.velocity[alp]*p.velocity[bet]*eye[gam][det]+p.velocity[alp]*p.velocity[gam]*eye[bet][det]+p.velocity[alp]*p.velocity[det]*eye[bet][gam]+p.velocity[bet]*p.velocity[gam]*eye[alp][det]+p.velocity[bet]*p.velocity[det]*eye[alp][gam]+p.velocity[gam]*p.velocity[det]*eye[alp][bet];
-                    double multieye= eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
+                    const double multieye= eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
                     vel4[alp][bet][gam][det] = (u4+T1*(u2+T1*multieye));
 
                 }
