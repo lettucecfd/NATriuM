@@ -470,7 +470,7 @@ void SEDGMinLee<dim>::assembleAndDistributeInternalFace(size_t alpha,
 	fe_face_values.reinit(cell, face_number);
 	const vector<double> &JxW = fe_face_values.get_JxW_values();
 	const vector<Tensor<1, dim> > &normals =
-			fe_face_values.get_all_normal_vectors();
+			fe_face_values.get_normal_vectors();
 
 	if (4 == alpha) {
 

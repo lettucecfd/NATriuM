@@ -214,9 +214,10 @@ void ContinuousBoundaryGradient<dim>::calculateGradients(
 
 	// project from discontinuous to continuous fe
 #ifdef NO_SUPPORT_HP_PARALLEL
-	dealii::Functions::FEFieldFunction<dim> fe_function(
+//TODO BRUTE FORCE KILLED SEDG BOUNDARY
+/*dealii::Functions::FEFieldFunction<dim> fe_function(
 			*m_discontinuousBoundaryDoF, m_discontinuousGradient, m_mapping);
-
+*/
 #else
 	dealii::Functions::FEFieldFunction<dim, typename DoFHandler<dim> > fe_function(
 			*m_discontinuousBoundaryDoF, m_discontinuousGradient, m_mapping);
@@ -224,9 +225,9 @@ void ContinuousBoundaryGradient<dim>::calculateGradients(
 	dealii::ConstraintMatrix c;
 	c.close();
 #ifdef NO_SUPPORT_HP_PARALLEL
-	dealii::VectorTools::project(m_mapping, *m_continuousBoundaryDoF,
+/*	dealii::VectorTools::project(m_mapping, *m_continuousBoundaryDoF,
 			c, m_cellQuadrature, fe_function, m_continuousGradient,
-			false, m_faceQuadrature);
+			false, m_faceQuadrature); */
 	m_feFaceValues = boost::make_shared<FEFaceValues<dim> >(
 					m_mapping, m_continuousBoundaryDoF->get_fe(),
 					m_faceQuadrature, dg_flags);

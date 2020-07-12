@@ -12,7 +12,7 @@ namespace natrium {
 
 void VmultLimiter::apply(const dealii::TrilinosWrappers::BlockSparseMatrix& matrix,
 		dealii::TrilinosWrappers::MPI::BlockVector& target,
-		const dealii::TrilinosWrappers::MPI::BlockVector& source){
+		const dealii::TrilinosWrappers::MPI::BlockVector& source){ /*
 	// iterate over all blocks
 	for (size_t i = 0; i < matrix.n_block_rows(); i++){
 		dealii::TrilinosWrappers::MPI::Vector & t = target.block(i);
@@ -21,13 +21,13 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::BlockSparseMatrix& matr
 			apply(matrix.block(i,j), t,s);
 		}
 	}
-
+*/
 }
 
 
 void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 		dealii::TrilinosWrappers::MPI::Vector& target,
-		const dealii::TrilinosWrappers::MPI::Vector& source){
+		const dealii::TrilinosWrappers::MPI::Vector& source){ /*
 	// Trilinos matrix format, iteration copied from dealii::TrilinosWrappers::SparseMatrix::print()
 	const Epetra_CrsMatrix& M = matrix.trilinos_matrix();
 	double *values;
@@ -81,7 +81,7 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 			target(glob_i) = min;
 		}
 	}
-
+*/
 }
 
 

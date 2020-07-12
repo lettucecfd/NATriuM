@@ -296,38 +296,20 @@ SolverConfiguration::SolverConfiguration(const std::string& XMLfilename) {
  **/
 void SolverConfiguration::readFromTextFile(const std::string & filename,
 		const bool optional, const bool write_stripped_file) {
-	// redirect cerr to a string buffer
-	std::stringstream buffer;
-	std::streambuf * old = cerr.rdbuf(buffer.rdbuf());
-	bool isEverythingOK = ParameterHandler::read_input(filename, optional,
-			write_stripped_file);
-	std::string errorMessage = buffer.str();
-	// reset cerr to console output
-	cerr.rdbuf(old);
 
-	if (not isEverythingOK) {
-		throw ConfigurationException(errorMessage);
-	}
+	ParameterHandler::parse_input(filename);
+
 } /* readFromTextFile */
 
 /**
  * @short wrapper function for ParameterHandler::read_input_from_xml; directing cerr into a C++-Exception
  **/
 void SolverConfiguration::readFromXMLFile(const std::string & filename) {
-	// redirect cerr to a string buffer
-	std::stringstream buffer;
-	std::streambuf * old = cerr.rdbuf(buffer.rdbuf());
 
 	// create stream
 	std::ifstream xmlFile(filename);
-	bool isEverythingOK = ParameterHandler::read_input_from_xml(xmlFile);
-	std::string errorMessage = buffer.str();
-	// reset cerr to console output
-	cerr.rdbuf(old);
+	ParameterHandler::parse_input_from_xml(xmlFile);
 
-	if (not isEverythingOK) {
-		throw ConfigurationException(errorMessage);
-	}
 } /* readFromXMLFile */
 
 void SolverConfiguration::prepareOutputDirectory() {

@@ -78,7 +78,7 @@ template<size_t dim>
 int supportPointNr(
 		const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
 		const dealii::Point<dim>& point, const dealii::Quadrature<dim>& quad,
-		const dealii::MappingQ<dim,dim>& mapping) {
+		const dealii::Mapping<dim,dim>& mapping) {
 
 	// Now we can find out about the points
 	dealii::FEValues<dim> fe_v(mapping, cell->get_fe(), quad,
@@ -95,12 +95,12 @@ template
 int supportPointNr<2>(
 		const typename dealii::DoFHandler<2>::active_cell_iterator& cell,
 		const dealii::Point<2>& point, const dealii::Quadrature<2>& quad,
-		const dealii::MappingQ<2,2>& mapping);
+		const dealii::Mapping<2,2>& mapping);
 template
 int supportPointNr<3>(
 		const typename dealii::DoFHandler<3>::active_cell_iterator& cell,
 		const dealii::Point<3>& point, const dealii::Quadrature<3>& quad,
-		const dealii::MappingQ<3,3>& mapping);
+		const dealii::Mapping<3,3>& mapping);
 
 template<size_t dim>
 dealii::Quadrature<dim> makeQuadratureAtPoints(
