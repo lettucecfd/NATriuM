@@ -38,6 +38,8 @@ enum StencilType {
 	Stencil_D3Q21,
 	// Crystallographic RD3Q27 stencil
 	Stencil_RD3Q27,
+    Stencil_D3Q45,
+
     Stencil_D3Q77
 
 };

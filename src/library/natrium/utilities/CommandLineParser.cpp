@@ -50,7 +50,7 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<int>("output-chk", "output checkpoint interval (#iterations)");
 	setArgument<int>("output-tab", "output table interval (#iterations)");
 	setArgument<string>("stencil",
-			"stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27, d2q19v, d2q19h, d2q25h, d3q77]");
+			"stencil that defines the discrete particle velocities [d2q9, d3q19, d3q15, d3q27, d2q19v, d2q19h, d2q25h, d3q45, d3q77]");
 	setArgument<double>("tmax", "simulation end time");
 	setArgument<string>("init",
 			"initialization scheme [equi (equilibrium), iter (iterative)]");
@@ -384,7 +384,9 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
             cfg.setStencil(Stencil_D2Q19V);
 		} else if (sten == "d2q25h") {
 		    cfg.setStencil(Stencil_D2Q25H);
-        } else if (sten == "d3q77") {
+        } else if (sten == "d3q45") {
+            cfg.setStencil(Stencil_D3Q45);
+		} else if (sten == "d3q77") {
             cfg.setStencil(Stencil_D3Q77);
 		} else {
 			std::stringstream msg;
