@@ -7,6 +7,7 @@
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D2Q19V.h"
 #include "natrium/collision/BGKStandard.h"
+#include "natrium/stencils/D3Q45.h"
 
 #include <math.h>
 #include <array>
@@ -136,10 +137,6 @@ double rho = 1.0;
 
         double viscosity = 1.0;
 
-        for (int i =1; i<19; i++)
-        cout << d2q19h.getDirections()[i] << endl;
-
-
         SolverConfiguration cfg;
         TaylorGreenTest2D tgv(0.1,1);
         GeneralCollisionData<2,19> prams(cfg, tgv, scaling, viscosity, d2q19h,
@@ -176,7 +173,8 @@ double rho = 1.0;
 
 
     } // test_case
-
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(Equilibrium_test_suite2)
     BOOST_AUTO_TEST_CASE(Equilibrium_D3Q77_test) {
 
 
@@ -197,11 +195,11 @@ double rho = 1.0;
 
         //DistributionFunctions f_new(f);
 
-        double velocities[3]={0.1,0.0,0.0};
+        double velocities[3]={0.1,0.2,0.3};
 
-        QuarticEquilibrium<3,27> eq;
-        std::array<double,27> feq;
-        D3Q27 d3q27(1.0);
+        QuarticEquilibrium<3,45> eq;
+        std::array<double,45> feq;
+        D3Q45 d3q45(1.0);
         double cs2=1./3.;
         double scaling = 1.0;
         double dt = 0.1;
@@ -211,34 +209,31 @@ double rho = 1.0;
 
         SolverConfiguration cfg;
         TaylorGreenVortex3D tgv(1.0,2);
-        GeneralCollisionData<3,27> prams(cfg, tgv, scaling, viscosity, d3q27,
+        GeneralCollisionData<3,45> prams(cfg, tgv, scaling, viscosity, d3q45,
                                          cs2 , dt);
 
         prams.velocity[0]=velocities[0];
         prams.velocity[1]=velocities[1];
         prams.velocity[2]=velocities[2];
         prams.density = rho;
-        prams.temperature = 1.3;
-        prams.H3 = calculateH3<3,27>(prams);
-        prams.H4 = calculateH4<3,27>(prams);
+        prams.temperature = 1.0;
+        prams.H3 = calculateH3<3,45>(prams);
+        prams.H4 = calculateH4<3,45>(prams);
 
         eq.calc(feq,prams);
 
-        /*for (int i =0;i<9;i++)
+        for (int i =0;i<45;i++)
         {
             cout << feq[i] << endl;
-        }*/
+        }
 
         //cout << "Dichte v:" << prams.density << endl;
         //cout << "Geschwindigkeit vorher:" << prams.velocity[0] << endl;
         //cout << "Geschwindigkeit vorher:" << prams.velocity[1] << endl;
-        for (auto& i : feq)
-        {
-            cout << i << endl;
-        }
+
         std::array<double,3> v_post;
-        double rho_post = calculateDensity<27>(feq);
-        calculateVelocity<3,27>(feq,v_post,calculateDensity<27>(feq),prams);
+        double rho_post = calculateDensity<45>(feq);
+        calculateVelocity<3,45>(feq,v_post,calculateDensity<45>(feq),prams);
 
         BOOST_CHECK_CLOSE(rho_post,rho,10e-6);
 

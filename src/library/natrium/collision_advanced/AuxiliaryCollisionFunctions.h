@@ -171,13 +171,13 @@ struct GeneralCollisionData {
 		assert(st.getQ() == T_Q);
 		assert(scaling == st.getScaling());
 
-		for (int i = 0; i < T_D; ++i) {
-			for (int j = 0; j < T_Q; ++j) {
+		for (size_t i = 0; i < T_D; ++i) {
+			for (size_t j = 0; j < T_Q; ++j) {
 				e[j][i] = st.getDirections().at(j)(i) / scaling;
 			}
 		}
 
-		for (int j = 0; j < T_Q; ++j) {
+		for (size_t j = 0; j < T_Q; ++j) {
 			weight[j] = st.getWeight(j);
 		}
 
@@ -190,7 +190,7 @@ struct GeneralCollisionData {
 		tau = calculateTauFromNu(viscosity, scaled_cs2, dt);
 
 		if ((pd.hasExternalForce()) and (forcetype != NO_FORCING)) {
-			for (int i = 0; i < T_D; ++i) {
+			for (size_t i = 0; i < T_D; ++i) {
 				forces[i] = pd.getExternalForce()->getForce()[i];
 			}
 		}
@@ -203,7 +203,7 @@ struct GeneralCollisionData {
 			tau = calculateTauFromNuAndgamma(viscosity, scaled_cs2, dt,
 					gamma_steadystate);
 			if ((pd.hasExternalForce()) and (forcetype != NO_FORCING)) {
-				for (int i = 0; i < T_D; ++i) {
+				for (size_t i = 0; i < T_D; ++i) {
 					forces[i] = pd.getExternalForce()->getForce()[i]
 							/ gamma_steadystate;
 				}
@@ -217,9 +217,9 @@ template<int T_D, int T_Q>
 inline void calculateVelocity(const std::array<double, T_Q>& fLocal,
 		std::array<double, T_D>& velocity, double density,
 		GeneralCollisionData<T_D, T_Q>& params) {
-	for (int j = 0; j < T_D; j++) {
+	for (size_t j = 0; j < T_D; j++) {
 		velocity[j] = 0.0;
-		for (int i = 0; i < T_Q; i++) {
+		for (size_t i = 0; i < T_Q; i++) {
 			velocity[j] += params.e[i][j] * fLocal[i];
 		}
 		velocity[j] = velocity[j] * 1.0 / density;
@@ -263,9 +263,9 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
                                        GeneralCollisionData<T_D, T_Q> &params) {
         //T0[i,j]+=((c[k,0]-u[0,i,j])**2+(c[k,1]-u[1,i,j])**2)*fin[k,i,j]*0.5/rho[i,j]
         temperature = 0.0;
-        for (int i = 0; i < T_Q; i++) {
+        for (size_t i = 0; i < T_Q; i++) {
             double sum = 0.0;
-            for (int a = 0; a < T_D; a++) {
+            for (size_t a = 0; a < T_D; a++) {
                 sum += (params.e[i][a] - velocity[a]) * (params.e[i][a] - velocity[a]);
             }
             temperature += sum * fLocal[i] / params.cs2 +
@@ -325,7 +325,7 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 template<size_t T_D, size_t T_Q>
 inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, T_Q>& geq, const GeneralCollisionData<T_D,T_Q>& genData)
 {
-    for (int i = 0; i < T_Q; i++) {
+    for (size_t i = 0; i < T_Q; i++) {
         double gamma = 1.4;
         double C_v = 1. / (gamma - 1.0);
         geq[i]=feq[i]*(genData.temperature)*(2.0*C_v-T_D);
@@ -338,10 +338,10 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     inline void calculateCenteredHeatFluxTensor(std::array<double, T_Q> &f,
                                                 std::array<std::array<std::array<double, T_D>, T_D>, T_D> &heatFluxTensor,
                                                 const GeneralCollisionData<T_D, T_Q> &p) {
-        for (int i = 0; i < T_Q; i++) {
-            for (int a = 0; a < T_D; a++) {
-                for (int b = 0; b < T_D; b++) {
-                    for (int c = 0; c < T_D; c++) {
+        for (size_t i = 0; i < T_Q; i++) {
+            for (size_t a = 0; a < T_D; a++) {
+                for (size_t b = 0; b < T_D; b++) {
+                    for (size_t c = 0; c < T_D; c++) {
 
                         heatFluxTensor[a][b][c] += ((p.e[i][a] - p.velocity[a]) * (p.e[i][b] - p.velocity[b]) *
                                                     (p.e[i][c] - p.velocity[c])) * f[i];
@@ -356,10 +356,10 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
                    const GeneralCollisionData<T_D, T_Q> &p) {
         double eye[2][2] = {{1, 0},
                             {0, 1}};
-        for (int i = 0; i < T_Q; i++) {
-            for (int a = 0; a < T_D; a++) {
-                for (int b = 0; b < T_D; b++) {
-                    for (int c = 0; c < T_D; c++) {
+        for (size_t i = 0; i < T_Q; i++) {
+            for (size_t a = 0; a < T_D; a++) {
+                for (size_t b = 0; b < T_D; b++) {
+                    for (size_t c = 0; c < T_D; c++) {
 
                         fStar[i] += p.weight[i] * (QNeq[a][b][c] * (p.e[i][a] * p.e[i][b] * p.e[i][c] -
                                                                     3 * p.cs2 * p.e[i][c] * eye[a][b])) /
@@ -375,10 +375,10 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
         std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> H3;
         double eye[2][2] = {{1, 0},
                             {0, 1}};
-        for (int i = 0; i < T_Q; i++) {
-            for (int a = 0; a < T_D; a++) {
-                for (int b = 0; b < T_D; b++) {
-                    for (int c = 0; c < T_D; c++) {
+        for (size_t i = 0; i < T_Q; i++) {
+            for (size_t a = 0; a < T_D; a++) {
+                for (size_t b = 0; b < T_D; b++) {
+                    for (size_t c = 0; c < T_D; c++) {
                         H3[i][a][b][c] = p.e[i][a] * p.e[i][b] * p.e[i][c] - p.cs2 * (p.e[i][a]*eye[b][c] + p.e[i][b]*eye[a][c] + p.e[i][c]*eye[a][b]);
                     }
                 }
@@ -393,11 +393,11 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
         std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> H4;
         double eye[2][2] = {{1, 0},
                             {0, 1}};
-        for (int i = 0; i < T_Q; i++) {
-            for (int a = 0; a < T_D; a++) {
-                for (int b = 0; b < T_D; b++) {
-                    for (int c = 0; c < T_D; c++) {
-                        for (int d = 0; d < T_D; d++) {
+        for (size_t i = 0; i < T_Q; i++) {
+            for (size_t a = 0; a < T_D; a++) {
+                for (size_t b = 0; b < T_D; b++) {
+                    for (size_t c = 0; c < T_D; c++) {
+                        for (size_t d = 0; d < T_D; d++) {
 
                             double power4 = p.e[i][a] * p.e[i][b] * p.e[i][c] * p.e[i][d];
                             double power2 = p.e[i][a] * p.e[i][b] * eye[c][d]

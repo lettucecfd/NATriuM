@@ -99,9 +99,9 @@ inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,
 
 
     std::array<std::array<std::array<double, T_D>, T_D>, T_D> vel3;
-    for (int alp = 0; alp < T_D; alp++) {
-        for (int bet = 0; bet < T_D; bet++) {
-            for (int gam = 0; gam < T_D; gam++) {
+    for (size_t alp = 0; alp < T_D; alp++) {
+        for (size_t bet = 0; bet < T_D; bet++) {
+            for (size_t gam = 0; gam < T_D; gam++) {
                 vel3[alp][bet][gam]   = (p.velocity[alp] * p.velocity[bet] * p.velocity[gam]
                                          + T1 *
                                            (eye[alp][bet] * p.velocity[gam] + eye[bet][gam] * p.velocity[alp] +
@@ -111,10 +111,10 @@ inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,
     }
 
     std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D> vel4;
-    for (int alp = 0; alp < T_D; alp++) {
-        for (int bet = 0; bet < T_D; bet++) {
-            for (int gam = 0; gam < T_D; gam++) {
-                for (int det = 0; det < T_D; det++) {
+    for (size_t alp = 0; alp < T_D; alp++) {
+        for (size_t bet = 0; bet < T_D; bet++) {
+            for (size_t gam = 0; gam < T_D; gam++) {
+                for (size_t det = 0; det < T_D; det++) {
 
                     double u4 = p.velocity[alp]*p.velocity[bet]*p.velocity[gam]*p.velocity[det];
                     double u2 = p.velocity[alp]*p.velocity[bet]*eye[gam][det]+p.velocity[alp]*p.velocity[gam]*eye[bet][det]+p.velocity[alp]*p.velocity[det]*eye[bet][gam]+p.velocity[bet]*p.velocity[gam]*eye[alp][det]+p.velocity[bet]*p.velocity[det]*eye[alp][gam]+p.velocity[gam]*p.velocity[det]*eye[alp][bet];
@@ -143,10 +143,10 @@ inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,
             ue_term += (p.velocity[j] * p.e[i][j]) / p.cs2;
         }
         feq[i] = p.weight[i] * p.density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
-        for (int alp = 0; alp < T_D; alp++){
-            for (int bet = 0; bet < T_D; bet++){
+        for (size_t alp = 0; alp < T_D; alp++){
+            for (size_t bet = 0; bet < T_D; bet++){
                 feq[i]+=p.density*p.weight[i]/(2.0*p.cs2)*((p.temperature-1)*eye[alp][bet]*p.e[i][alp]*p.e[i][bet]-p.cs2*eye[alp][bet]*(p.temperature-1));
-                for (int gam = 0; gam < T_D; gam++){
+                for (size_t gam = 0; gam < T_D; gam++){
 
                     sum3 += vel3[alp][bet][gam] * (p.e[i][alp] * p.e[i][bet] * p.e[i][gam] - p.cs2 * (p.e[i][gam] *
                                                                                                                   eye[alp][bet] +
@@ -155,7 +155,7 @@ inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,
                                                                                                                   p.e[i][alp] *
                                                                                                                   eye[bet][gam]));
 
-                    for (int det = 0; det < T_D; det++)
+                    for (size_t det = 0; det < T_D; det++)
                     {
                         double power4 = p.e[i][alp]*p.e[i][bet]*p.e[i][gam]*p.e[i][det];
                         double power2 = p.e[i][alp]*p.e[i][bet]*eye[gam][det]
@@ -177,7 +177,7 @@ inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q>& feq,
 
         }
         feq[i]+=  p.weight[i] * p.density / (6. * p.cs2 * p.cs2 * p.cs2) * sum3;
-        feq[i]+=  p.weight[i] * p.density /(24.*p.cs2*p.cs2*p.cs2*p.cs2) * sum4;
+        //feq[i]+=  p.weight[i] * p.density /(24.*p.cs2*p.cs2*p.cs2*p.cs2) * sum4;
 
 
     }
