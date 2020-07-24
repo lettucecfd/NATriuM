@@ -138,7 +138,7 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 			for (size_t j = 0; j < n_blocks; j++) {
 				m_sparsityPatternRow[j].compress();
 				Base::m_systemMatrix.block(i, j).reinit(m_sparsityPatternRow[j]);
-				//m_sparsityPatternRow[j].clear(); // not sure if its needed here
+				m_sparsityPatternRow[j].clear(); // not sure if its needed here
 
 			}
 	}
