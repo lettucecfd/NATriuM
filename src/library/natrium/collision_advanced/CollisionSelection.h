@@ -191,6 +191,9 @@ inline void selectCollision<3>(SolverConfiguration& configuration,
 
     DEFINE_POSSIBLE_COLLISION(3,27, Stencil_D3Q27, BGK_REGULARIZED, BGK_EQUILIBRIUM, Regularized, BGKEquilibrium);
 
+    DEFINE_POSSIBLE_COLLISION(3,45, Stencil_D3Q45, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
+    DEFINE_POSSIBLE_COLLISION(3,45, Stencil_D3Q45, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
+
 	DEFINE_POSSIBLE_COLLISION(3,77, Stencil_D3Q77, BGK_STANDARD, BGK_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
     DEFINE_POSSIBLE_COLLISION(3,77, Stencil_D3Q77, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, BGKEquilibrium);
 
@@ -240,6 +243,8 @@ inline void selectCollision<3>(SolverConfiguration& configuration,
         // Select and perform collision (the macro is defined above)
         // Caution: You need to make sure that no configuration appears twice here.
         // This would cause multiple collision steps per time step
+
+        DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(3,45, Stencil_D3Q45, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
 
         DEFINE_POSSIBLE_COMPRESSIBLE_COLLISION(3,77, Stencil_D3Q77, BGK_STANDARD, QUARTIC_EQUILIBRIUM, BGKCollision, QuarticEquilibrium);
 
