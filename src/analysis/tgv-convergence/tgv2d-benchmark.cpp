@@ -39,6 +39,7 @@ int main(int argc, char** argv) {
 	parser.setFlag("no_init_rho_analytically",
 			"Initialize with constant density (1)");
 	parser.setFlag("limiter", "Use a limiter in the advection step");
+    parser.setFlag("fneq", "Initialize fneq by gradients");
 	parser.setArgument<double>("refine-tol",
 			"Refinement tolerance for step size control (only for adaptive time integrators)",
 			1e-7);
@@ -71,6 +72,8 @@ int main(int argc, char** argv) {
 	const double scaling = sqrt(3) * U / Ma;
 	const double viscosity = (L * U) / Re;
 
+
+
     boost::shared_ptr<TaylorGreenVortex2D > tgv_tmp = boost::make_shared<
             TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
     tgv_tmp->setHorizontalVelocity(u_horizontal);
@@ -94,8 +97,12 @@ int main(int argc, char** argv) {
 	if (limiter) {
 		configuration->setVmultLimiter(true);
 	}
+    if(parser.hasArgument("fneq")){
+        configuration->setInitializationScheme(GRADIENTS);
+    }
 
-	configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
+
+        configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
 
 	parser.applyToSolverConfiguration(*configuration);
 	configuration->setEmbeddedDealIntegratorParameters(1.2, 0.8, 0.05,

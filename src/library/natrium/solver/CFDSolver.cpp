@@ -1129,6 +1129,135 @@ void CFDSolver<dim>::initializeDistributions() {
         // do nothing else
         break;
     }
+
+    case GRADIENTS: {
+        LOG(BASIC) << "Initialize with velocity gradients" << endl;
+        const dealii::UpdateFlags update_flags = dealii::update_values | dealii::update_gradients
+                                                 | dealii::update_JxW_values;
+        const dealii::DoFHandler<dim> & dof_handler =
+                *(getAdvectionOperator()->getDoFHandler());
+        dealii::FEValues<dim> fe_values(this->getAdvectionOperator()->getMapping(),
+                *(this->getAdvectionOperator()->getFe()),
+                *(this->getAdvectionOperator()->getQuadrature()),
+                update_flags);
+        size_t dofs_per_cell =
+                getAdvectionOperator()->getFe()->dofs_per_cell;
+        size_t n_q_points = getAdvectionOperator()->getQuadrature()->size();
+
+        std::vector<double> uxs;
+        std::vector<double> uys;
+        std::vector<double> uzs;
+        std::vector<double> rhos;
+        std::vector<dealii::Tensor<1, dim, double> > ux_gradients;
+        std::vector<dealii::Tensor<1, dim, double> > uy_gradients;
+        std::vector<dealii::Tensor<1, dim, double> > uz_gradients;
+        std::vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
+        uxs.resize(n_q_points);
+        uys.resize(n_q_points);
+        uzs.resize(n_q_points);
+        rhos.resize(n_q_points);
+        ux_gradients.resize(n_q_points);
+        uy_gradients.resize(n_q_points);
+        uz_gradients.resize(n_q_points);
+
+        const vector<distributed_vector> & u_local(getVelocity());
+        const distributed_vector & rho_local(getDensity());
+
+        int eye [dim][dim] ={{0}};
+        for (int a = 0; a<dim; a++)  {
+            for (int b = 0; b < dim; b++) {
+                if (a==b){
+                    eye[a][b] = 1;
+                }
+            }
+        }
+
+        std::vector<std::array<std::array<double, dim>, dim>> Q(m_stencil->getQ());
+
+        for (int i = 0; i < m_stencil->getQ(); i++) {
+            for (int a = 0; a < dim; a++) {
+                for (int b = 0; b < dim; b++) {
+                    Q[i][a][b] = m_stencil->getDirection(i)[a] * m_stencil->getDirection(i)[b] -
+                                 eye[a][b] * m_stencil->getSpeedOfSoundSquare();
+                }
+            }
+        }
+
+        typename dealii::DoFHandler<dim>::active_cell_iterator cell =
+                dof_handler.begin_active(), endc = dof_handler.end();
+        for (; cell != endc; ++cell) {
+            if (cell->is_locally_owned()) {
+
+                cell->get_dof_indices(local_indices);
+
+                // get averages
+                fe_values.reinit(cell);
+                const std::vector<double> &weights = fe_values.get_JxW_values();
+
+                // calculate gradients (for w and strain rate)
+                fe_values.get_function_gradients(u_local.at(0), ux_gradients);
+                fe_values.get_function_gradients(u_local.at(1), uy_gradients);
+                fe_values.get_function_values(u_local.at(0), uxs);
+                fe_values.get_function_values(u_local.at(1), uys);
+                if (3 == dim) {
+                    fe_values.get_function_gradients(u_local.at(2), uz_gradients);
+                    fe_values.get_function_values(u_local.at(2), uzs);
+                }
+                fe_values.get_function_values(rho_local, rhos);
+
+                for (size_t q = 0; q < n_q_points; q++) {
+                    double dx = 1.0; //cell->minimum_vertex_distance()/ m_configuration->getSedgOrderOfFiniteElement();
+                    double tau = getTau() + 0.5;
+                    double Pi_1[dim][dim] = {{0.0}};
+                    for (int a = 0; a < dim; a++) {
+                        for (int b = 0; b < dim; b++) {
+                            Pi_1[a][b] = -1.0 * tau * rhos.at(q) / m_stencil->getSpeedOfSoundSquare() * dx;
+                        }
+                    }
+
+                    double uxx = ux_gradients.at(q)[0];
+                    double uyx = uy_gradients.at(q)[0];
+                    double uxy = ux_gradients.at(q)[1];
+                    double uyy = uy_gradients.at(q)[1];
+
+                    Pi_1[0][0]*=uxx;
+                    Pi_1[0][1]*=uxy;
+                    Pi_1[1][0]*=uyx;
+                    Pi_1[1][1]*=uyy;
+
+                    if (dim == 3) {
+                    double uxz = ux_gradients.at(q)[2];
+                    double uzz = uz_gradients.at(q)[2];
+                    double uyz = uy_gradients.at(q)[2];
+                    double uzy = uz_gradients.at(q)[1];
+                    double uzx = uz_gradients.at(q)[0];
+                    Pi_1[0][2]*=uxz;
+                    Pi_1[1][2]*=uyz;
+                    Pi_1[2][0]*=uzx;
+                    Pi_1[2][1]*=uzy;
+                    Pi_1[2][2]*=uzz;
+                    }
+
+                    std::vector<double> fneq(m_stencil->getQ(),0.0);
+                    for (int i = 0; i < m_stencil->getQ(); i++) {
+                        for (int a = 0; a < dim; a++) {
+                            for (int b = 0; b < dim; b++) {
+                                fneq.at(i) += Q[i][a][b]*Pi_1[a][b];
+                                cout << a << " " << b << "  " << Pi_1[a][b] << endl;
+                            }
+                        }
+                        fneq.at(i)*=m_stencil->getWeight(i);
+                        m_f.at(i)(local_indices[q])+=fneq.at(i);
+                        cout << i << " " << fneq.at(i) << endl;
+                    }
+
+                }
+            }
+        }
+
+        break;
+    }
+
 	case ITERATIVE: {
 		LOG(BASIC) << "Iterative procedure" << endl;
 		LOG(DETAILED) << "residual = "

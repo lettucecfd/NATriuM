@@ -171,6 +171,28 @@ BOOST_AUTO_TEST_CASE(CFDSolver_IterativeInit_test) {
 	pout << "done" << endl;
 } // CFDSolver_IterativeInit_test
 
+    BOOST_AUTO_TEST_CASE(CFDSolver_GradientInit_test) {
+        pout << "CFDSolver_GradientInit_test..." << endl;
+        boost::shared_ptr<SolverConfiguration> testConfiguration =
+                boost::make_shared<SolverConfiguration>();
+        testConfiguration->setStencil(Stencil_D3Q27);
+        testConfiguration->setSwitchOutputOff(true);
+        testConfiguration->setInitializationScheme(GRADIENTS);
+        size_t refinementLevel = 3;
+        testConfiguration->setCFL(0.4);
+        testConfiguration->setNumberOfTimeSteps(100);
+        // set viscosity so that tau = 1
+        double viscosity = 1. / 5;
+        testConfiguration->setStencilScaling(1);
+
+        boost::shared_ptr<ProblemDescription<3> > testFlow = boost::make_shared<
+                TaylorGreenVortex3D>(viscosity, refinementLevel);
+
+        CFDSolver<3> solver(testConfiguration, testFlow);
+
+        pout << "done" << endl;
+    } // CFDSolver_IterativeInit_test
+
 BOOST_AUTO_TEST_CASE(CFDSolver_StopCondition_test) {
 	pout << "CFDSolver_StopCondition_test..." << endl;
 

@@ -157,7 +157,7 @@ double rho = 1.0;
     } // test_case
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Equilibrium_test_suite2)
-    BOOST_AUTO_TEST_CASE(Equilibrium_D3Q27_test) {
+    BOOST_AUTO_TEST_CASE(Equilibrium_D3Q45_test) {
 
 
 
@@ -169,9 +169,9 @@ BOOST_AUTO_TEST_SUITE(Equilibrium_test_suite2)
 
         double velocities[3]={0.1,0.2,0.3};
 
-        QuarticEquilibrium<3,27> eq;
-        std::array<double,27> feq;
-        D3Q27 d3q27(1.0);
+        QuarticEquilibrium<3,45> eq;
+        std::array<double,45> feq;
+        D3Q45 d3q45(1.0);
         double cs2=1./3.;
         double scaling = 1.0;
         double dt = 0.1;
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_SUITE(Equilibrium_test_suite2)
 
         SolverConfiguration cfg;
         TaylorGreenVortex3D tgv(1.0,2);
-        GeneralCollisionData<3,27> prams(cfg, tgv, scaling, viscosity, d3q27,
+        GeneralCollisionData<3,45> prams(cfg, tgv, scaling, viscosity, d3q45,
                                          cs2 , dt);
 
         prams.velocity[0]=velocities[0];
@@ -189,14 +189,14 @@ BOOST_AUTO_TEST_SUITE(Equilibrium_test_suite2)
         prams.velocity[2]=velocities[2];
         prams.density = rho;
         prams.temperature = 1.2;
-        prams.H3 = calculateH3<3,27>(prams);
-        prams.H4 = calculateH4<3,27>(prams);
+        prams.H3 = calculateH3<3,45>(prams);
+        prams.H4 = calculateH4<3,45>(prams);
 
         eq.calc(feq,prams);
 
         std::array<double,3> v_post;
-        double rho_post = calculateDensity<27>(feq);
-        calculateVelocity<3,27>(feq,v_post,calculateDensity<27>(feq),prams);
+        double rho_post = calculateDensity<45>(feq);
+        calculateVelocity<3,45>(feq,v_post,calculateDensity<45>(feq),prams);
 
         BOOST_CHECK_CLOSE(rho_post,rho,10e-6);
 
