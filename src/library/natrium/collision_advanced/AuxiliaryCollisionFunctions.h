@@ -354,8 +354,14 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     inline void
     calculateFStar(std::array<double, T_Q> &fStar, std::array<std::array<std::array<double, T_D>, T_D>, T_D> &QNeq,
                    const GeneralCollisionData<T_D, T_Q> &p) {
-        double eye[2][2] = {{1, 0},
-                            {0, 1}};
+        int eye[T_D][T_D] ={{0}};
+        for (int a = 0; a<T_D; a++)  {
+            for (int b = 0; b < T_D; b++) {
+                if (a==b){
+                    eye[a][b] = 1;
+                }
+            }
+        }
         for (size_t i = 0; i < T_Q; i++) {
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
@@ -373,8 +379,14 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     template<size_t T_D, size_t T_Q>
     inline std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> calculateH3(const GeneralCollisionData<T_D, T_Q> &p) {
         std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> H3;
-        double eye[2][2] = {{1, 0},
-                            {0, 1}};
+        int eye[T_D][T_D] ={{0}};
+        for (int a = 0; a<T_D; a++)  {
+            for (int b = 0; b < T_D; b++) {
+                if (a==b){
+                    eye[a][b] = 1;
+                }
+            }
+        }
         for (size_t i = 0; i < T_Q; i++) {
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
@@ -391,8 +403,14 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     template<size_t T_D, size_t T_Q>
     inline std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> calculateH4(const GeneralCollisionData<T_D, T_Q> &p) {
         std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> H4;
-        double eye[2][2] = {{1, 0},
-                            {0, 1}};
+        int eye[T_D][T_D] ={{0}};
+        for (int a = 0; a<T_D; a++)  {
+            for (int b = 0; b < T_D; b++) {
+                if (a==b){
+                    eye[a][b] = 1;
+                }
+            }
+        }
         for (size_t i = 0; i < T_Q; i++) {
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
