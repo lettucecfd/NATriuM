@@ -200,7 +200,7 @@ void compressibleFilter() {
 
 // output: vector fields as .vtu files
         if (not this->m_configuration->isSwitchOutputOff()) {
-            if (iteration - this->m_iterationStart == 0) {
+            /*if (iteration - this->m_iterationStart == 0) {
                 // first iteration: put out mesh
                 std::stringstream str0;
                 str0 << this->m_configuration->getOutputDirectory().c_str()
@@ -211,7 +211,7 @@ void compressibleFilter() {
                                             grid_out_file);
                 grid_out_file.close();
 
-            }
+            }*/
             if (iteration % 100 == 0) {
                 LOG(DETAILED) << "Iteration " << iteration << ",  t = " << this->m_time
                               << endl;

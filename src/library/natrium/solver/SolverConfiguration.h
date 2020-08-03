@@ -1598,6 +1598,8 @@ public:
 			return Stencil_D2Q25H;
 		} else if ("RD3Q27" == stencil) {
 		    return Stencil_RD3Q27;
+        } else if ("D3Q45" == stencil) {
+            return Stencil_D3Q45;
         } else if ("D3Q77" == stencil) {
             return Stencil_D3Q77;
         } else {
@@ -1652,6 +1654,10 @@ public:
 					set("Stencil", "RD3Q27");
 					break;
 				}
+        case Stencil_D3Q45: {
+            set("Stencil", "D3Q45");
+            break;
+        }
         case Stencil_D3Q77: {
             set("Stencil", "D3Q77");
             break;
