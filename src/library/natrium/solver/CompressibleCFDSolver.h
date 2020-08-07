@@ -505,10 +505,10 @@ void compressibleFilter() {
                 ue_term += (velocity[j] * e[i][j]) / cs2;
             }
             feq[i] = weight[i] * density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
-            for (int alp = 0; alp < dim; alp++){
-                for (int bet = 0; bet < dim; bet++){
+            for (size_t alp = 0; alp < dim; alp++){
+                for (size_t bet = 0; bet < dim; bet++){
                     feq[i]+=density*weight[i]/(2.0*cs2)*((temperature-1)*eye[alp][bet]*e[i][alp]*e[i][bet]-cs2*eye[alp][bet]*(temperature-1));
-                    for (int gam = 0; gam < dim; gam++){
+                    for (size_t gam = 0; gam < dim; gam++){
 
                         feq[i] += weight[i] * density / (6. * cs2 * cs2 * cs2) *
                                   (velocity[alp] * velocity[bet] * velocity[gam]
@@ -522,7 +522,7 @@ void compressibleFilter() {
                                                                                                                       e[i][alp] *
                                                                                                                       eye[bet][gam]));
 
-                        for (int det = 0; det < dim; det++)
+                        for (size_t det = 0; det < dim; det++)
                         {
                             double power4 = e[i][alp]*e[i][bet]*e[i][gam]*e[i][det];
                             double power2 = e[i][alp]*e[i][bet]*eye[gam][det]

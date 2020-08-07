@@ -1098,6 +1098,8 @@ public:
 			return ITERATIVE;
         } else if ("CompressibleIterative" == initializationScheme) {
             return COMPRESSIBLE_ITERATIVE;
+        } else if ("Gradients" == initializationScheme) {
+            return GRADIENTS;
 		} else if ("Equilibrium" == initializationScheme) {
 			return EQUILIBRIUM;
 		} else {
@@ -1121,6 +1123,10 @@ public:
 			set("Initialization scheme", "CompressibleIterative");
 			break;
 		}
+        case GRADIENTS: {
+            set("Initialization scheme", "Gradients");
+            break;
+        }
         case EQUILIBRIUM: {
             set("Initialization scheme", "Equilibrium");
             break;

@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 
 	boost::shared_ptr<ProblemDescription<3> > taylorGreen = boost::make_shared<
 			TaylorGreenVortex3D>(viscosity, refinement_level, cs,
-			init_rho_analytically, repetitions);
+			init_rho_analytically, repetitions, true);
 
 	// setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<

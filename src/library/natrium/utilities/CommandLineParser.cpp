@@ -39,6 +39,9 @@ CommandLineParser::CommandLineParser(int argc, char** argv) :
 	setArgument<int>("integrator-id",
 			"select integrator by id, see help message for --integrator");
 	setArgument<double>("scaling", "scaling of discrete particle velocities");
+    setArgument<string>("equilibrium",
+                        "switch the equilibrium being used"
+                        "bgk (2nd order equilibrium), quartic");
 	setArgument<string>("regularization",
 			"regularization of high-order moments [no (no regularization), pem (pseudo-entropy maximization), "
 					"zero (zero high-order moments), em (entropy maximization), pemwe(pseudo-entropy maximization with flexible moment e)]");
@@ -303,6 +306,23 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		LOG(BASIC) << "Regularization set to " << reg << " via command line"
 				<< endl;
 	}
+
+    // regularization scheme
+    if (hasArgument("equilibrium")) {
+        string reg = getArgument<string>("equilibrium");
+        if (reg == "bgk") {
+            cfg.setEquilibriumScheme(BGK_EQUILIBRIUM);
+        } else if (reg == "quartic") {
+            cfg.setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+        } else {
+            std::stringstream msg;
+            msg << "Equilibrium scheme " << reg << " is illegal." << endl;
+            msg << "See --help for allowed options." << endl;
+            throw CommandLineParserException(msg.str());
+        }
+        LOG(BASIC) << "Equilibrium scheme set to " << reg << " via command line"
+                   << endl;
+    }
 
 	// support points
 	if (hasArgument("support-points")) {
