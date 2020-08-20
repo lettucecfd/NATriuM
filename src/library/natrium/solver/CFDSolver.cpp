@@ -1248,7 +1248,6 @@ void CFDSolver<dim>::initializeDistributions() {
                         }
                         fneq.at(i)*=m_stencil->getWeight(i);
                         m_f.at(i)(local_indices[q])+=fneq.at(i);
-                        cout << i << " " << fneq.at(i) << endl;
                     }
 
                 }

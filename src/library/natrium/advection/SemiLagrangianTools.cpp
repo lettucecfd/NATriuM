@@ -51,13 +51,14 @@ void shapeFunctionValue(
 		unit_points.push_back(h);
 	}
 	// Now we can find out about the points
-	for (size_t i = 0; i < n_points; i++) {
-		dealii::Quadrature<dim> quad(unit_points.at(i)); //, weights);
+    // All quadrature points are found at once now
+		dealii::Quadrature<dim> quad(unit_points); //, weights);
 		dealii::FEValues<dim> fe_v(mapping, cell->get_fe(), quad,
 				dealii::update_values);
 		fe_v.reinit(cell);
+    for (size_t i = 0; i < n_points; i++) {
 		for (size_t j = 0; j < n_dofs_per_cell; j++) {
-			values[i][j] = fe_v.shape_value(j, 0);
+			values[i][j] = fe_v.shape_value(j, i);
 		}
 	}
 }

@@ -96,8 +96,17 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 ///////////////////////////////////////////////////////
 // Setup sparsity pattern (completely manually):
 ///////////////////////////////////////////////////////
-// allocate sizes
+// allocate sizes - each block is for one direction
 	size_t n_blocks = Base::m_stencil->getQ() - 1;
+
+	// build a map, which consists of the n_blocks x n_blocks of the sparse matrix
+    m_block_map.resize(n_blocks, vector<bool>(n_blocks));
+
+    for (size_t i = 0; i < n_blocks; i++) {
+        for (size_t j = 0; j < n_blocks; j++) {
+	        m_block_map[i][j]=false;
+	    }
+	}
 
 // create cell maps for periodic boundary
 	for (typename BoundaryCollection<dim>::ConstPeriodicIterator periodic =
@@ -112,37 +121,50 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 	}
 
 // create empty sparsity pattern for each block
-	m_sparsityPatternRow.clear();
-	for (size_t i = 0; i < n_blocks; i++) {
-			TrilinosWrappers::SparsityPattern empty;
-			m_sparsityPatternRow.push_back(empty);
-	}
+	//m_sparsityPatternRow.clear();
+	//for (size_t i = 0; i < n_blocks; i++) {
+	//		TrilinosWrappers::SparsityPattern empty;
+	//		m_sparsityPatternRow.push_back(empty);
+	//}
 
 
 	// initialize matrix
 		Base::m_systemMatrix.reinit(n_blocks, n_blocks);
+        m_blockSparsityPattern.reinit(n_blocks, n_blocks);
+
+    for (size_t i = 0; i < n_blocks; i++) {
+        //initial round to fill m_block_map to know which blocks are really needed for the assembly process
+        fillSparseObject(true, true, i);
+    }
 
 // 	reinit sparsity pattern
 	for (size_t i = 0; i < n_blocks; i++) {
 
-		for (size_t j = 0; j < n_blocks; j++)
-			m_sparsityPatternRow[j].reinit(Base::getLocallyOwnedDofs(),
-					Base::getLocallyOwnedDofs(), Base::getLocallyRelevantDofs(),
-					MPI_COMM_WORLD);
+        for (size_t j = 0; j < n_blocks; j++) {
+            if (m_block_map[i][j] == true) {
+                m_blockSparsityPattern.block(i, j).reinit(Base::getLocallyOwnedDofs(),
+                                                          Base::getLocallyOwnedDofs(), Base::getLocallyRelevantDofs(),
+                                                          MPI_COMM_WORLD);
+            }
+            else{
+                // if the block is not needed, then reinit with zeros (this was the essential step to save a lot of memory during the assembly process)
+                m_blockSparsityPattern.block(i, j).reinit(Base::getLocallyOwnedDofs(),MPI_COMM_WORLD);
+            }
+        }
 
 	// fill sparsity pattern
 		if (Base::m_deltaT != 0) {
-			fillSparseObject(true, i); // "true" means that the object to fill is the sparsity pattern
+			fillSparseObject(true, false, i); // "true" means that the object to fill is the sparsity pattern
 		}
 
-			for (size_t j = 0; j < n_blocks; j++) {
-				m_sparsityPatternRow[j].compress();
-				Base::m_systemMatrix.block(i, j).reinit(m_sparsityPatternRow[j]);
-				m_sparsityPatternRow[j].clear(); // not sure if its needed here
 
-			}
+
+        for (size_t j = 0; j < n_blocks; j++){
+                m_blockSparsityPattern.block(i, j).compress();
+                Base::m_systemMatrix.block(i, j).reinit(m_blockSparsityPattern.block(i, j));
+        }
+
 	}
-	m_sparsityPatternRow.clear();
 
 	Base::m_systemMatrix.collect_sizes();
 
@@ -151,7 +173,7 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 /* updateSparsityPattern */
 
 template<size_t dim>
-void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_index ) {
+void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, bool initial_round, size_t row_index ) {
 
 //TimerOutput::Scope timer_section(Timing::getTimer(),
 //			"Assembly: fill sparse object");
@@ -260,10 +282,12 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 				// check if el is running into Nirvana (which can happen, e.g., at domain corners)
 				if (el.lifeTimeCounter > 50) {
 					// write '1' on diagonal (i.e., do not change this distribution function during streaming step)
-					if (sparsity_pattern) {
+					if (initial_round){
+					    m_block_map[row_index][el.destination.direction- 1]=true;
+					}
+					else if (sparsity_pattern) {
 						// add diagonal entry to sparsity pattern
-						m_sparsityPatternRow[el.destination.direction
-								- 1].add(el.destination.index,
+						m_blockSparsityPattern.block(row_index,el.destination.direction- 1).add(el.destination.index,
 								el.destination.index);
 					} else {
 						// insert '1'
@@ -466,12 +490,15 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 						if (fabs(local_entries.at(i).at(j)) < 1e-10) {
 							continue;
 						}
-						if (sparsity_pattern) {
+						if (initial_round){
+						    m_block_map[row_index][l[i].currentDirection -1] = true;
+						}
+						else if (sparsity_pattern) {
 							// add entry to sparsity pattern
-							m_sparsityPatternRow[l[i].currentDirection
-									- 1].add(l[i].destination.index,
+							m_blockSparsityPattern.block(row_index,l[i].currentDirection
+									- 1).add(l[i].destination.index,
 									local_dof_indices.at(j));
-						} else {
+						} if (initial_round == false and sparsity_pattern == false) {
 							// calculate matrix entries
 							//TimerOutput::Scope timer_section(Timing::getTimer(),
 							//		"Assembly: block and add");
