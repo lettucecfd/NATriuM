@@ -80,6 +80,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	SemiLagrangian<2> streaming(couette, fe_order, boost::make_shared<D2Q9>(),
 			dt);
 	streaming.setupDoFs();
+	streaming.setDeltaT(0.1);
 
 	BoundaryCollection<2> bc2;
 	dealii::Point<2> departure(-1, -1);
@@ -115,7 +116,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_DataStructures_test) {
 	SemiLagrangian<2> streaming(*couette, fe_order, boost::make_shared<D2Q9>(),
 			0.001);
 	streaming.setupDoFs();
-	streaming.reassemble();
+    streaming.setDeltaT(0.001);
+
+    streaming.reassemble();
 
 	// small time step => only support hits
 	// precondition: all processes have an equal number of cells and boundary cells
@@ -147,7 +150,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_offSupportHits_test) {
 			0.063);
 	// time step chosen > 0.0625, i.e., second layer of lattice nodes belong to boundary
 	streaming.setupDoFs();
-	streaming.reassemble();
+    streaming.setDeltaT(0.1);
+
+    streaming.reassemble();
 
 	// small time step => only support hits
 	// precondition: all processes have an equal number of cells and boundary cells
