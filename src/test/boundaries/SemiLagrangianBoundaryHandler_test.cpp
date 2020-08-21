@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_addHit_test) {
 	SemiLagrangian<2> streaming(couette, fe_order, boost::make_shared<D2Q9>(),
 			dt);
 	streaming.setupDoFs();
-	streaming.setDeltaT(0.1);
+	//streaming.setDeltaT(dt);
 
 	BoundaryCollection<2> bc2;
 	dealii::Point<2> departure(-1, -1);
