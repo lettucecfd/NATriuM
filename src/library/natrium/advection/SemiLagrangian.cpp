@@ -65,7 +65,8 @@ void SemiLagrangian<dim>::setupDoFs() {
 // distribute degrees of freedom over mesh
 	Base::distributeDoFs();
 
-	updateSparsityPattern();
+	// Sparsity pattern is updated when the time step size is set
+	//updateSparsityPattern();
 
 	LOG(DETAILED) << "... done (setup DoFs)." << endl;
 
@@ -119,14 +120,6 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 			periodic->second->createCellMap(*Base::m_doFHandler);
 		}
 	}
-
-// create empty sparsity pattern for each block
-	//m_sparsityPatternRow.clear();
-	//for (size_t i = 0; i < n_blocks; i++) {
-	//		TrilinosWrappers::SparsityPattern empty;
-	//		m_sparsityPatternRow.push_back(empty);
-	//}
-
 
 	// initialize matrix
 		Base::m_systemMatrix.reinit(n_blocks, n_blocks);
