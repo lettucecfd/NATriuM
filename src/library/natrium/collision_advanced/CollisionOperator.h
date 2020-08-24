@@ -149,16 +149,15 @@ public:
 		genData.H4 = calculateH4<T_D,T_Q>(genData);
 
 
-#pragma omp simd
 		for (int ii = 0; ii < length; ii++) {
 
 			// Variable that stores the local distribution function values of every node
 
+
 			// Copy the needed global distribution function values into the local variable
-			for (int p = 0; p < T_Q; ++p) {
+            for (int p = 0; p < T_Q; ++p) {
 				genData.fLocal[p] = f_raw[p][ii];
 			}
-
 			for (int p = 0; p < T_Q; ++p) {
 				genData.gLocal[p] = g_raw[p][ii];
 			}

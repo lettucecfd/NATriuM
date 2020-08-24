@@ -44,10 +44,11 @@ public:
 
 template<int T_Q>
 inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
-	double density = 0;
-	for (int p = 0; p < T_Q; ++p) {
+	double density = 0.0;
+
+	for (size_t p = 0; p < T_Q; ++p)
 		density += fLocal[p];
-	}
+
 
 	if (density < 1e-10) {
 		throw CollisionException(
@@ -56,21 +57,7 @@ inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
 
 	return density;
 }
-/*
-template<int T_Q>
-inline double calculateTemperature(const std::array<double, T_Q>& fLocal) {
-	double density = 0;
-	for (int p = 0; p < T_Q; ++p) {
-		density += fLocal[p];
-	}
 
-	if (density < 1e-10) {
-		throw CollisionException(
-				"Densities too small (< 1e-10) for collisions. Decrease time step size.");
-	}
-
-	return density;
-} */
 
 
 inline double calculateTauFromNu(double viscosity, double cs2,
@@ -101,7 +88,7 @@ inline double calculateTauFromNuAndT(double viscosity, double cs2,
 template<int T_Q>
 inline void copyGlobalToLocalF(std::array<double, T_Q>& fLocal,
 		const DistributionFunctions& f, const size_t i) {
-	for (int p = 0; p < T_Q; ++p) {
+	for (size_t p = 0; p < T_Q; ++p) {
 		fLocal[p] = f.at(p)(i);
 	}
 }
@@ -109,7 +96,7 @@ inline void copyGlobalToLocalF(std::array<double, T_Q>& fLocal,
 template<int T_Q>
 inline void copyLocalToGlobalF(std::array<double, T_Q>& fLocal,
 		DistributionFunctions& f, const size_t i) {
-	for (int p = 0; p < T_Q; ++p) {
+	for (size_t p = 0; p < T_Q; ++p) {
 		distributed_vector& f0 = f.at(p);
 		f0(i) = fLocal[p];
 	}
@@ -217,7 +204,7 @@ template<int T_D, int T_Q>
 inline void calculateVelocity(const std::array<double, T_Q>& fLocal,
 		std::array<double, T_D>& velocity, double density,
 		GeneralCollisionData<T_D, T_Q>& params) {
-	for (size_t j = 0; j < T_D; j++) {
+    for (size_t j = 0; j < T_D; j++) {
 		velocity[j] = 0.0;
 		for (size_t i = 0; i < T_Q; i++) {
 			velocity[j] += params.e[i][j] * fLocal[i];
@@ -271,8 +258,8 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
             temperature += sum * fLocal[i] / params.cs2 +
                            gLocal[i];
         }
-        double gamma = 1.4;
-        double C_v = 1./(gamma-1.0);
+        const double gamma = params.configuration.getHeatCapacityRatioGamma();
+        const double C_v = 1./(gamma-1.0);
         temperature = temperature * 0.5 / (density*C_v);
 return temperature;
 }
@@ -325,9 +312,11 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 template<size_t T_D, size_t T_Q>
 inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, T_Q>& geq, const GeneralCollisionData<T_D,T_Q>& genData)
 {
+    const double gamma = genData.configuration.getHeatCapacityRatioGamma();
+    const double C_v = 1. / (gamma - 1.0);
+#pragma omp parallel for
     for (size_t i = 0; i < T_Q; i++) {
-        double gamma = 1.4;
-        double C_v = 1. / (gamma - 1.0);
+
         geq[i]=feq[i]*(genData.temperature)*(2.0*C_v-T_D);
 
     }
@@ -355,8 +344,8 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     calculateFStar(std::array<double, T_Q> &fStar, std::array<std::array<std::array<double, T_D>, T_D>, T_D> &QNeq,
                    const GeneralCollisionData<T_D, T_Q> &p) {
         int eye[T_D][T_D] ={{0}};
-        for (int a = 0; a<T_D; a++)  {
-            for (int b = 0; b < T_D; b++) {
+        for (size_t a = 0; a<T_D; a++)  {
+            for (size_t b = 0; b < T_D; b++) {
                 if (a==b){
                     eye[a][b] = 1;
                 }
@@ -380,8 +369,8 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     inline std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> calculateH3(const GeneralCollisionData<T_D, T_Q> &p) {
         std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> H3;
         int eye[T_D][T_D] ={{0}};
-        for (int a = 0; a<T_D; a++)  {
-            for (int b = 0; b < T_D; b++) {
+        for (size_t a = 0; a<T_D; a++)  {
+            for (size_t b = 0; b < T_D; b++) {
                 if (a==b){
                     eye[a][b] = 1;
                 }
@@ -404,8 +393,8 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     inline std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> calculateH4(const GeneralCollisionData<T_D, T_Q> &p) {
         std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> H4;
         int eye[T_D][T_D] ={{0}};
-        for (int a = 0; a<T_D; a++)  {
-            for (int b = 0; b < T_D; b++) {
+        for (size_t a = 0; a<T_D; a++)  {
+            for (size_t b = 0; b < T_D; b++) {
                 if (a==b){
                     eye[a][b] = 1;
                 }

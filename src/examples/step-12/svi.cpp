@@ -98,6 +98,7 @@ int main(int argc, char** argv) {
 	configuration->setExponentialFilterAlpha(36);
 	configuration->setExponentialFilterNc(4);
 	configuration->setPrandtlNumber(0.75);
+	configuration->setHeatCapacityRatioGamma(1.4);
 	configuration->setInitializationScheme(EQUILIBRIUM);
 	configuration->setIterativeInitializationNumberOfIterations(300);
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);

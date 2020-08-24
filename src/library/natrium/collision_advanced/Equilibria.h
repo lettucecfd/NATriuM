@@ -92,8 +92,8 @@ class QuarticEquilibrium
     inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q> &feq,
                                                    const GeneralCollisionData<T_D, T_Q> &p) {
         int eye [T_D][T_D] ={{0}};
-        for (int a = 0; a<T_D; a++)  {
-            for (int b = 0; b < T_D; b++) {
+        for (size_t a = 0; a<T_D; a++)  {
+            for (size_t b = 0; b < T_D; b++) {
                 if (a==b){
                     eye[a][b] = 1;
                 }
@@ -165,7 +165,6 @@ class QuarticEquilibrium
                             T1 * (p.velocity[1] * p.velocity[2]);
 
         }
-
         for (size_t i = 0; i < T_Q; i++) {
 
             double ue_term = 0.0;

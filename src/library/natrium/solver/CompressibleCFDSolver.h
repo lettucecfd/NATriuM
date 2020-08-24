@@ -425,7 +425,7 @@ void compressibleFilter() {
                         data.velocity = u;
                         BGKEquilibrium<2,25> eq;
                         eq.calc(feq, data);
-                        double gamma = 1.4;
+                        double gamma = this->getConfiguration()->getHeatCapacityRatioGamma();
                         double C_v = 1. / (gamma - 1.0);
                         //m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
                         for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
@@ -592,7 +592,7 @@ void compressibleFilter() {
             calcQuarticEquilibrium(feq,T_Q,density,u,temperature,descaled_cs2,e,weight);
 
 
-            double gamma = 1.4;
+            double gamma = this->getConfiguration()->getHeatCapacityRatioGamma();
                   double C_v = 1. / (gamma - 1.0);
                 //m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
                 for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
