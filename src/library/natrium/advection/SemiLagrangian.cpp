@@ -135,9 +135,7 @@ void SemiLagrangian<dim>::updateSparsityPattern() {
 
         for (size_t j = 0; j < n_blocks; j++) {
             if (m_block_map[i][j] == true) {
-                m_blockSparsityPattern.block(i, j).reinit(Base::getLocallyOwnedDofs(),
-                                                          Base::getLocallyOwnedDofs(), Base::getLocallyRelevantDofs(),
-                                                          MPI_COMM_WORLD);
+                m_blockSparsityPattern.block(i, j).reinit(Base::getLocallyOwnedDofs(),MPI_COMM_WORLD);
             }
             else{
                 // if the block is not needed, then reinit with zeros (this was the essential step to save a lot of memory during the assembly process)
