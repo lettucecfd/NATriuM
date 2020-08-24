@@ -56,7 +56,7 @@ public:
 
         std::array<double, T_Q> fNeq = {0.0};
         std::array<double, T_Q> gNeq = {0.0};
-#pragma simd
+#pragma omp parallel for
         for (int p = 0; p < T_Q; ++p) {
             fNeq[p] = fLocal[p] - genData.feq[p];
             gNeq[p] = gLocal[p] - genData.geq[p];
@@ -92,7 +92,8 @@ public:
         //}
 
 		//Relax every direction towards the equilibrium
-		for (int p = 0; p < T_Q; ++p) {
+#pragma omp parallel for
+            for (int p = 0; p < T_Q; ++p) {
             fLocal[p] -= 1. / visc_tau * (fNeq[p]) + (1. / visc_tau - 1. / prandtl_tau) * fStar[p]; // -genData.feq[p]);
             gLocal[p] -= 1. / ener_tau * (gNeq[p]) + (1. / visc_tau - 1. / prandtl_tau) * gStar[p];
 		}
