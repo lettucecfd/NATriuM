@@ -70,22 +70,17 @@ private:
 	/// Sparsity Pattern of the sparse matrix
 	/// The sparsity pattern is only used in the assembly
 	/// storing only one line of blocks at a time significantly reduces the storage
-
 	dealii::TrilinosWrappers::BlockSparsityPattern m_blockSparsityPattern;
-
-	// Define a map of the blocks with nonzero entries (important for the initialization of the sparse matrices)
-	std::vector<std::vector<bool>> m_block_map;
 
 
 	SemiLagrangianBoundaryHandler<dim> m_boundaryHandler;
 
 	/**
 	 * @short update the sparsity pattern of the system matrix // the sparse matrix
-	 * @param initial_round for building a map which blocks are needed for the sparse matrix
 	 * @param the row index is used in assembly of the sparsity pattern (we want
 	 *        to store only one line at a time to save memory)
 	 */
-	void fillSparseObject(bool sparsity_pattern = false, bool initial_round = false, size_t row_index  = -1);
+	void fillSparseObject(bool sparsity_pattern = false, size_t row_index  = -1);
 
 	/**
 	 * @short update the sparsity pattern of the system matrix
