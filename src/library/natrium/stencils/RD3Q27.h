@@ -78,10 +78,10 @@ protected:
 public:
 
 	/// D
-	static const size_t D;
+	static const size_t D = 3;
 
 	/// Q
-	static const size_t Q;
+	static const size_t Q = 27;
 
 	/// constructor
 	RD3Q27(double scaling = 1.0);

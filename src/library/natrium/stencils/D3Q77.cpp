@@ -21,12 +21,6 @@ namespace natrium {
 // ASSIGN STATIC VARIABLES //
 /////////////////////////////
 
-// assign D and Q
-// has to be done outside the class, because function calls are not allowed in initialization of statics
-/// D
-const size_t D3Q77::D = 3;
-/// Q
-const size_t D3Q77::Q = 77;
 
 /// constructor
 D3Q77::D3Q77(double scaling) :

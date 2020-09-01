@@ -21,16 +21,9 @@ namespace natrium {
 // ASSIGN STATIC VARIABLES //
 /////////////////////////////
 
-// assign D and Q
-// has to be done outside the class, because function calls are not allowed in initialization of statics
-/// D
-const size_t D3Q21::D = 3;
-/// Q
-const size_t D3Q21::Q = 21;
-
 /// constructor
 D3Q21::D3Q21(double scaling) :
-		Stencil(3, 21, makeDirections(scaling), makeWeights(), Stencil_D3Q21,
+		Stencil(D, Q, makeDirections(scaling), makeWeights(), Stencil_D3Q21,
 				makeMomentBasis(makeDirections(scaling))), m_speedOfSound(
         scaling * pow(3, -0.5)), m_speedOfSoundSquare(
         scaling * scaling / 3.), m_scaling(scaling) {
