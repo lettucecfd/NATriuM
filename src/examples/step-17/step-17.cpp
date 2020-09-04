@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 	const double U = 1;
 	//const double L = 2 * M_PI;
 	const double viscosity = 1.0 / Re;
-    const double Ma = parser.getArgument<double>("Ma");
+    const double Ma = parser.getArgument<double>("Ma")*sqrt(1.4);
 	const double cs = U / Ma;
 
 	// chose scaling so that the right Ma-number is achieved
@@ -94,10 +94,10 @@ int main(int argc, char** argv) {
 	configuration->setUserInteraction(false);
 	configuration->setOutputCheckpointInterval(1e9);
 	configuration->setOutputSolutionInterval(10000);
-	configuration->setSimulationEndTime(23.0);
+	configuration->setSimulationEndTime(10.0);
 	configuration->setOutputGlobalTurbulenceStatistics(true);
 	configuration->setStencilScaling(scaling);
-	configuration->setStencil(Stencil_D3Q77);
+	configuration->setStencil(Stencil_D3Q45);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 	configuration->setHeatCapacityRatioGamma(1.4);
