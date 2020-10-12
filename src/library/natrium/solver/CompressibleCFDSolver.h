@@ -87,6 +87,14 @@ void gStream() {
 					g_tmp.getFStream());
 		}
 	}
+	else
+    {
+        this->m_boundaryVector = this->m_advectionOperator->getSystemVector();
+        double new_dt = this->m_timeIntegrator->step(g, systemMatrix,
+                                               this->m_boundaryVector, 0.0, this->m_timeIntegrator->getTimeStepSize());
+
+
+    }
 }
 
 void compressibleFilter() {
