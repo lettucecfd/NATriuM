@@ -79,11 +79,11 @@ public:
             calculateFStar<T_D, T_Q>(gStar, heatFluxTensorGNeq, genData);
         }
         //double sutherland_factor = 1.402*pow(genData.temperature,1.5) / ( genData.temperature + 0.40417);
-        double visc_tau = (genData.tau-0.5)/genData.temperature+0.5;
+        double visc_tau = (genData.tau-0.5)/(genData.temperature*genData.density)+0.5;
         double ener_tau = visc_tau;
 
         double prandtl = genData.configuration.getPrandtlNumber();
-        double prandtl_tau = (genData.tau - 0.5)/prandtl + 0.5;
+        double prandtl_tau = (visc_tau - 0.5)/prandtl + 0.5;
 
         //if(genData.maskShockSensor>0.5)
         //{
