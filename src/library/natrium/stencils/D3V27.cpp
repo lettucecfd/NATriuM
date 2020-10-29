@@ -73,7 +73,7 @@ vector<double> D3V27::makeWeights() {
 /// make directions
 /* Following the definition by Mohamad LBM book */
 vector<numeric_vector> D3V27::makeDirections(double scaling) {
-	const double r = sqrt((15+sqrt(15)/2));
+	const double r = sqrt((15+sqrt(15))/2.0);
     const double s = sqrt(6-sqrt(15));
     const double t = sqrt(9+sqrt(15));
 
