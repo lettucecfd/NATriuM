@@ -103,10 +103,10 @@ public:
 
 		}
 
-   /*     if (1e-10 >= genData.density) {
+        if (1e-10 >= genData.density) {
             throw DensityZeroException(
                     "Density too small in collision. Decrease time step size.");
-        } */
+        }
 
 	}
 
