@@ -69,8 +69,7 @@ int main(int argc, char** argv) {
     double t_max=1.0;
 
     double scaling = 1.0;
-    double viscosity = 0.001725164;//0.000023961*pow(2,parser.getArgument<int>("ref-level")+1)*72/parser.getArgument<int>("order-fe");
-
+    double viscosity = 0.001725164;
     boost::shared_ptr<ProblemDescription<2> > svi = boost::make_shared<
             ShockVortexInteraction>(viscosity, parser.getArgument<int>("ref-level"), u0,
 			kappa, Ma_v, perturbation, parser.getArgument<double>("tx"),
@@ -122,7 +121,8 @@ int main(int argc, char** argv) {
 			<< configuration->getCFL() << "-reg" << static_cast<int>(configuration->getRegularizationScheme())<< "-scaling"
             << configuration->getStencilScaling() << "-suppP"
             << configuration->getSupportPoints() << "-Pr"
-            << configuration->getPrandtlNumber() << "-Ma_v"
+            << configuration->getPrandtlNumber() << "-sten"
+            << configuration->getStencil() << "-Ma_v"
             << Ma_v ;
 	if (parser.getArgument<int>("filter") != 0) {
 		dirname << "-filter" << parser.getArgument<int>("filter") << "-filt_s"
