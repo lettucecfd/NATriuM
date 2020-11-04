@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
 	// MAKE FLOW PROBLEM
 	// ========================================================================
     //Speed of the vortex
-	double Ma_v = 0.5;
+	double Ma_v = 0.25;
 	double perturbation = 0.05;
 	double kappa = 80;
     double u0 = 0.0;
