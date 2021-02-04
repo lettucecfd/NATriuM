@@ -16,15 +16,18 @@
 #include "../collision_advanced/AuxiliaryCollisionFunctions.h"
 #include "../collision_advanced/Equilibria.h"
 #include "../smoothing/VmultLimiter.h"
+#include "../dataprocessors/CompressibleTurbulenceStats.h"
 
 namespace natrium {
 
 template<size_t dim>
 class CompressibleCFDSolver: public CFDSolver<dim> {
+    template<size_t dim6> friend class CompressibleTurbulenceStats;
 private:
 	/// macroscopic density
 	distributed_vector m_temperature;
     distributed_vector m_tmpTemperature;
+    boost::shared_ptr<CompressibleTurbulenceStats<dim> > m_compressibleTurbulenceStats;
 
 
     /// particle distribution functions for internal energy
@@ -40,7 +43,9 @@ public:
 				MPI_COMM_WORLD);
 		m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
 			MPI_COMM_WORLD);
-
+        if (configuration->isOutputGlobalTurbulenceStatistics()) {
+            m_compressibleTurbulenceStats = boost::make_shared<CompressibleTurbulenceStats<dim> >(*this);
+        }
 		this->m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
                 this->getAdvectionOperator()->getLocallyRelevantDofs(),
                 MPI_COMM_WORLD);
@@ -729,6 +734,9 @@ void compressibleFilter() {
             this->stream();
             gStream();
             compressibleFilter();
+            if (this->m_configuration->isOutputGlobalTurbulenceStatistics()) {
+                this->m_compressibleTurbulenceStats->apply();
+            }
             if(this->m_i==200) {
 
 
