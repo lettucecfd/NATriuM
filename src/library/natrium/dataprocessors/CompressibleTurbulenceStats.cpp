@@ -13,12 +13,14 @@
 
 namespace natrium {
 template<size_t dim>
-CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSolver<dim> & solver) :m_solver(solver),
+CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSolver<dim> &solver) :m_solver(solver),
+        m_gamma(solver.getConfiguration()->getHeatCapacityRatioGamma()),
         m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_legendFilename(
         legendfile(solver.getConfiguration()->getOutputDirectory())), m_outputOff(
         solver.getConfiguration()->isSwitchOutputOff()) {
     m_names.push_back("dilatation");
     m_names.push_back("solenoidal");
+    m_names.push_back("maxMach");
     // make table file
     if (not m_outputOff) {
         // create file (if necessary)
@@ -52,6 +54,8 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             legend_file << k << "  <dilatation>" << endl;
             k++;
             legend_file << k << "  <solenoidal>" << endl;
+            k++;
+            legend_file << k << "  maxMach" << endl;
             legend_file.close();
 
         } /* is_MPI_rank 0 */
@@ -66,6 +70,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
 
             *m_tableFile << m_dilatation << " ";
             *m_tableFile << m_solenoidal<< " ";
+            *m_tableFile << m_maxMach << " ";
             *m_tableFile << endl;
 
         } /* is mpi rank 0 */
@@ -107,6 +112,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
         std::vector<dealii::Tensor<1, dim, double> > T_gradients;
         double dilatation = 0.0;
         double solenoidal = 0.0;
+        double globalMach = 0.0;
 
         uxs.resize(n_q_points);
         uys.resize(n_q_points);
@@ -168,6 +174,13 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
                         dilatation += sunderland_factor * e1 * weights.at(q);
                         solenoidal += sunderland_factor* e2 * weights.at(q);
 
+                        double u_magnitude = uxs.at(q)*uxs.at(q)+uys.at(q)*uys.at(q);
+                            if (3 == dim)
+                                u_magnitude+=uzs.at(q)*uzs.at(q);
+                        u_magnitude=sqrt(u_magnitude);
+                        double localMach = u_magnitude/sqrt(m_gamma*Ts.at(q));
+                        if (localMach > globalMach)
+                            globalMach=localMach;
 
                         //} /* for all dof indices */
                     } /* for all quadrature nodes */
@@ -180,6 +193,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
 
             m_dilatation = dealii::Utilities::MPI::sum(dilatation, MPI_COMM_WORLD);
             m_solenoidal = dealii::Utilities::MPI::sum(solenoidal, MPI_COMM_WORLD);
+            m_maxMach = dealii::Utilities::MPI::max(globalMach,MPI_COMM_WORLD);
             //}
         }
 

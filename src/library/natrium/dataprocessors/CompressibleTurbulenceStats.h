@@ -24,6 +24,8 @@ private:
     CompressibleCFDSolver<dim> & m_solver;
     double m_dilatation;
     double m_solenoidal;
+    double m_maxMach;
+    double m_gamma;
     vector<string> m_names;
     std::string m_filename;
     std::string m_legendFilename;
