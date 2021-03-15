@@ -83,18 +83,17 @@ public:
 		double m_length;
 		double m_height;
 		double m_width;
-		UnstructuredGridFunc(double length, double height, double width) :
-				m_length(length), m_height(height), m_width(width) {
+		double m_smoothness;
+		UnstructuredGridFunc(double length, double height, double width, double smoothness = 0.8) :
+				m_length(length), m_height(height), m_width(width), m_smoothness(smoothness) {
 		}
 		double trans(const double y) const {
-			double new_y = y;
-			new_y /= m_height;			// normalise y/h
-			new_y *= M_PI; 				// 4*atan(1); // pi
-			new_y = -cos(new_y); 		// cos in [-1, 1]
-			new_y += 1;					// shift cos in [0, 2]
-			new_y *= (m_height / 2.0);	// set final y
-			return new_y;
-			//return 0.5*(new_y+y);qq
+
+            double new_y = (2*y);
+            new_y *= M_PI;
+            new_y = -m_smoothness*sin(new_y)/(2*M_PI);
+            new_y += y;
+            return new_y*m_height;
 		}
 		dealii::Point<3> operator()(const dealii::Point<3> &in) const {
 			return dealii::Point<3>(m_length * in(0), trans(in(1)),
