@@ -17,6 +17,7 @@
 
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/VelocityNeqBounceBack.h"
+#include "natrium/boundaries/SLFirstOrderBounceBack.h"
 #include "natrium/problemdescription/ConstantExternalForce.h"
 #include "natrium/utilities/Math.h"
 
@@ -147,10 +148,10 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 				boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<VelocityNeqBounceBack<3> >(2, zeroVector));
+				boost::make_shared<SLFirstOrderBounceBack<3> >(2));
 		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<VelocityNeqBounceBack<3> >(3, zeroVector));
+				boost::make_shared<SLFirstOrderBounceBack<3> >(3));
 		//cout << " > no-slip: bottom" << endl;
 
 	} else {
