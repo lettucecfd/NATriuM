@@ -57,6 +57,7 @@ int main(int argc, char** argv) {
 			"Centerline Reynolds number used for initialization Re_c = U_cl * delta / nu",
 			3300);
 	parser.setArgument<double>("Ma", "Mach number U_cl/cs", 0.1);
+    parser.setArgument<double>("grid-density", "The higher the value, the denser the grid at the walls", 0.8);
 	parser.setArgument<int>("rep-x",
 			"Number of repetitions in x-direction (to refine the grid in steps that are not 2^N).",
 			1);
@@ -119,6 +120,7 @@ int main(int argc, char** argv) {
 	// calculate viscosity and scaling
 	const double u_cl = parser.getArgument<double>("U_cl");
 	const double Ma = parser.getArgument<double>("Ma");
+	const double gridDensity = parser.getArgument<double>("Grid-density");
 	const double scaling = sqrt(3) * u_cl / Ma;
 	const double viscosity = u_cl * delta / parser.getArgument<double>("Re_cl");
 	const double utau = Re_tau * viscosity / delta;
@@ -126,8 +128,8 @@ int main(int argc, char** argv) {
 	// make channel flow object
 	boost::shared_ptr<TurbulentChannelFlow3D> channel3D = boost::make_shared<
 			TurbulentChannelFlow3D>(viscosity,
-			(size_t) parser.getArgument<int>("ref-level"), repetitions, Re_tau,
-			u_cl, height, length, width);
+                                    (size_t) parser.getArgument<int>("ref-level"), repetitions, Re_tau,
+                                    u_cl, height, length, width, gridDensity);
 
 	// Turbulence statistics
 	// y-coordinates for output of RMS values in table (turbulence monitor)
@@ -168,7 +170,7 @@ int main(int argc, char** argv) {
 			<< "-p" << configuration->getSedgOrderOfFiniteElement() << "-Ma"
 			<< Ma << "-cfl" << configuration->getCFL() << "-rep"
 			<< repetitions.at(0) << repetitions.at(1) << repetitions.at(2) << "-sten"
-            << configuration->getStencil();
+            << configuration->getStencil() << "-gridDensity" << gridDensity;
 	configuration->setOutputDirectory(dir.str());
 
 	// ========================================================================
