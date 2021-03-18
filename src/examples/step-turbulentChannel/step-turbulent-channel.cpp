@@ -167,7 +167,8 @@ int main(int argc, char** argv) {
 	dir << getenv("NATRIUM_HOME") << "/KMM/Re" << Re_tau << "-ref" << ref_level
 			<< "-p" << configuration->getSedgOrderOfFiniteElement() << "-Ma"
 			<< Ma << "-cfl" << configuration->getCFL() << "-rep"
-			<< repetitions.at(0) << repetitions.at(1) << repetitions.at(2);
+			<< repetitions.at(0) << repetitions.at(1) << repetitions.at(2) << "-sten"
+            << configuration->getStencil();
 	configuration->setOutputDirectory(dir.str());
 
 	// ========================================================================
