@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
 	// calculate viscosity and scaling
 	const double u_cl = parser.getArgument<double>("U_cl");
 	const double Ma = parser.getArgument<double>("Ma");
-	const double gridDensity = parser.getArgument<double>("Grid-density");
+	const double gridDensity = parser.getArgument<double>("grid-density");
 	const double scaling = sqrt(3) * u_cl / Ma;
 	const double viscosity = u_cl * delta / parser.getArgument<double>("Re_cl");
 	const double utau = Re_tau * viscosity / delta;
