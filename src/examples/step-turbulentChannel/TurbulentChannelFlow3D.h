@@ -83,15 +83,15 @@ public:
 		double m_length;
 		double m_height;
 		double m_width;
-		double m_smoothness;
-		UnstructuredGridFunc(double length, double height, double width, double smoothness = 0.8) :
-				m_length(length), m_height(height), m_width(width), m_smoothness(smoothness) {
+		double m_gridDensity;
+		UnstructuredGridFunc(double length, double height, double width, double gridDensity = 0.8) :
+				m_length(length), m_height(height), m_width(width), m_gridDensity(gridDensity) {
 		}
 		double trans(const double y) const {
 
             double new_y = (2*y);
             new_y *= M_PI;
-            new_y = -m_smoothness*sin(new_y)/(2*M_PI);
+            new_y = -m_gridDensity*sin(new_y)/(2*M_PI);
             new_y += y;
             return new_y*m_height;
 		}
@@ -110,7 +110,7 @@ public:
 			std::vector<unsigned int> repetitions, double ReTau = 180.0,
 			double u_cl = 10, double height = 1.0, double length = 6.0,
 			double width = 3.0,
-			bool is_periodic = true);
+			bool is_periodic = true, double gridDensity=0.8);
 
 	/// destructor
 	virtual ~TurbulentChannelFlow3D();
@@ -171,7 +171,7 @@ public:
 	virtual void transform(Mesh<3>& mesh) {
 		// transform grid to unstructured grid
 		dealii::GridTools::transform(
-				UnstructuredGridFunc(m_length, m_height, m_width), mesh);
+				UnstructuredGridFunc(m_length, m_height, m_width, m_gridDensity), mesh);
 	}
 
 	virtual bool isCartesian(){
@@ -188,6 +188,7 @@ private:
 	double m_width;
 	double m_maxUtrp;
 	double m_maxIncUtrp;
+	double m_gridDensity;
 
 	/**
 	 * @short create triangulation for couette flow
