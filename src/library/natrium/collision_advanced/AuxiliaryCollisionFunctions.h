@@ -292,13 +292,18 @@ inline void applyMacroscopicForces(std::array<double*, T_D>& velocities,
 	}
 
 	if (genData.forcetype == SHIFTING_VELOCITY) {
-		// TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
-		// 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
-		for (size_t j = 0; j < T_D; j++) {
-			velocities[j][ii] = velocities[j][ii]
-					+ 0.5 * genData.dt * genData.forces[j] / genData.density;
-			// I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
-		}
+        // TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
+        // 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
+        for (size_t j = 0; j < T_D; j++) {
+            velocities[j][ii] = velocities[j][ii]
+                                + 0.5 * genData.dt * genData.forces[j] / genData.density;
+            // I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
+        }
+    }
+    else if (genData.forcetype == EXACT_DIFFERENCE) {
+            // PASS
+
+
 	} else {
 		throw NotImplementedException(
 				"Force Type not implemented. Use Shifting Velocity instead.");
@@ -313,16 +318,57 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 						"Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
 	}
 	if (genData.forcetype == SHIFTING_VELOCITY) {
-		for (size_t i = 0; i < T_D; i++) {
-			genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
-					/ genData.density / genData.scaling;
+        for (size_t i = 0; i < T_D; i++) {
+            genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
+                                   / genData.density / genData.scaling;
 
-		}
-	} else {
+        }
+    }
+
+    else if (genData.forcetype == EXACT_DIFFERENCE) {
+        // PASS
+
+    }
+
+	 else {
 		throw NotImplementedException(
 				"Force Type not implemented. Use Shifting Velocity instead.");
 	}
 }
+
+    template<int T_D, int T_Q, template<int, int> class T_equilibrium>
+    inline void postCollisionApplyForces(std::array<double *, T_D> &velocities,
+                                         int ii, GeneralCollisionData<T_D, T_Q> &genData) {
+        if (genData.forcetype == NO_FORCING) {
+            throw NATriuMException(
+                    "Problem requires forcing scheme, but forcing was switched off."
+                    "Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
+        }
+        if (genData.forcetype == SHIFTING_VELOCITY) {
+            // PASS
+        } else if (genData.forcetype == EXACT_DIFFERENCE) {
+            for (size_t j = 0; j < T_D; j++) {
+                // no tau!
+                genData.velocity[j] += genData.dt * genData.forces[j]
+                                       / genData.density / genData.scaling;
+                velocities[j][ii] = velocities[j][ii]
+                                    + 0.5 * genData.dt * genData.forces[j] / genData.density;
+            }
+            std::array<double, T_Q> shiftedEq = {};
+            T_equilibrium<T_D, T_Q> eq_shifted;
+            eq_shifted.calc(shiftedEq, genData);
+            for (size_t i = 0; i < T_Q; i++) {
+                genData.fLocal[i] += (shiftedEq[i] - genData.feq[i]);
+            }
+
+
+        } else {
+            throw NotImplementedException(
+                    "Force Type not implemented. Use Shifting Velocity instead.");
+        }
+
+    }
+
 
 template<size_t T_D, size_t T_Q>
 inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, T_Q>& geq, const GeneralCollisionData<T_D,T_Q>& genData)

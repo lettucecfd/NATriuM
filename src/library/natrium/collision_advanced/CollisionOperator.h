@@ -94,7 +94,7 @@ public:
 
 			collisionScheme.relax(genData.fLocal, genData, specData);
 
-			//reApplyForces<T_Q>(fLocal); // TODO
+			postCollisionApplyForces<T_D,T_Q,T_equilibrium>(u_raw, ii, genData);
 
 			//Finally copy the updated distribution function back to the global distribution function
 			for (int p = 0; p < T_Q; ++p) {

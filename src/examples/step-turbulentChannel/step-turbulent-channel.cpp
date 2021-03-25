@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
 	configuration->setCommandLineVerbosity(WELCOME);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setForcingScheme(SHIFTING_VELOCITY);
+	configuration->setForcingScheme(EXACT_DIFFERENCE);
 	configuration->setStencil(Stencil_D3Q13);
 	configuration->setOutputTurbulenceStatistics(true);
 	configuration->setWallNormalDirection(1);
