@@ -93,9 +93,9 @@ public:
 			//Initialize an object of the desired collision scheme and run the relaxation process
 
 			collisionScheme.relax(genData.fLocal, genData, specData);
-
-			postCollisionApplyForces<T_D,T_Q,T_equilibrium>(u_raw, ii, genData);
-
+            if (genData.problemDescription.hasExternalForce()) {
+                postCollisionApplyForces<T_D, T_Q, T_equilibrium>(u_raw, ii, genData);
+            }
 			//Finally copy the updated distribution function back to the global distribution function
 			for (int p = 0; p < T_Q; ++p) {
 				 f_raw[p][ii] = genData.fLocal[p];
