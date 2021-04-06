@@ -90,7 +90,7 @@ class QuarticEquilibrium
     template<int T_D, int T_Q>
     inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q> &feq,
                                                    const GeneralCollisionData<T_D, T_Q> &p) {
-        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+        const std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
 
         double uu_term = 0.0;
         for (size_t j = 0; j < T_D; j++) {
