@@ -65,7 +65,7 @@ public:
 
 	/// constructor
 	TaylorGreenVortex3D(double viscosity, size_t refinementLevel, double cs =
-			0.57735026919, bool init_rho_analytically = false, size_t repetitions = 1, bool compressible_case = false);
+			0.57735026919, bool init_rho_analytically = false, size_t repetitions = 1, double densityNumerator = 1.0, bool compressible_case = false);
 
 	/// destructor
 	virtual ~TaylorGreenVortex3D();
@@ -83,7 +83,7 @@ public:
 private:
 	/// speed of sound
 	double m_cs;
-
+    double m_densityNumerator;
 	/// initialization with analytic pressure
 	bool m_analyticInit;
     bool m_compressibleCase;
