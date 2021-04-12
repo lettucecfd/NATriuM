@@ -305,6 +305,9 @@ boost::shared_ptr<Stencil> CFDSolverUtilities::make_stencil(size_t d, size_t q,
 			if (9 == q) {
 				return boost::make_shared<D2Q9>(scaling);
 			}
+            if (25 == q) {
+                return boost::make_shared<D2Q25H>(scaling);
+            }
 		} else if (3 == d) {
 			if (15 == q) {
 				return boost::make_shared<D3Q15>(scaling);
@@ -315,6 +318,15 @@ boost::shared_ptr<Stencil> CFDSolverUtilities::make_stencil(size_t d, size_t q,
 			if (27 == q) {
 				return boost::make_shared<D3Q27>(scaling);
 			}
+            if (45 == q) {
+                return boost::make_shared<D3Q45>(scaling);
+            }
+            if (13 == q) {
+                return boost::make_shared<D3Q13>(scaling);
+            }
+            if (21 == q) {
+                return boost::make_shared<D3Q21>(scaling);
+            }
 		}
 		throw CFDSolverUtilitiesException(msg.str());
 		return NULL;

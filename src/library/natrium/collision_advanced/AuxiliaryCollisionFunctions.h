@@ -448,14 +448,14 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
                     for (size_t c = 0; c < T_D; c++) {
                         for (size_t d = 0; d < T_D; d++) {
 
-                            double power4 = p.e[i][a] * p.e[i][b] * p.e[i][c] * p.e[i][d];
-                            double power2 = p.e[i][a] * p.e[i][b] * eye[c][d]
+                            const double power4 = p.e[i][a] * p.e[i][b] * p.e[i][c] * p.e[i][d];
+                            const double power2 = p.e[i][a] * p.e[i][b] * eye[c][d]
                                             + p.e[i][a] * p.e[i][c] * eye[b][d]
                                             + p.e[i][a] * p.e[i][d] * eye[b][c]
                                             + p.e[i][b] * p.e[i][c] * eye[a][d]
                                             + p.e[i][b] * p.e[i][d] * eye[a][c]
                                             + p.e[i][c] * p.e[i][d] * eye[a][b];
-                            double power0 = eye[a][b] * eye[c][d] + eye[a][c] * eye[b][d] +
+                            const double power0 = eye[a][b] * eye[c][d] + eye[a][c] * eye[b][d] +
                                             eye[a][d] * eye[b][c];
 
                             H4[i][a][b][c][d] = (power4 - p.cs2 * power2 + p.cs2 * p.cs2 * power0);
