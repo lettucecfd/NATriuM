@@ -269,6 +269,9 @@ SolverConfiguration::SolverConfiguration() {
 			declare_entry("Output global turbulence statistics?", "false",
 					dealii::Patterns::Bool(),
 					"Specifies if global turbulence statistics should be monitored.");
+            declare_entry("Output compressible turbulence statistics?", "false",
+                          dealii::Patterns::Bool(),
+                          "Specifies if compressible turbulence statistics should be monitored.");
 			declare_entry("Output turbulence statistics?", "false",
 					dealii::Patterns::Bool(),
 					"Specifies if turbulence statistics in slices should be monitored.");

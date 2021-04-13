@@ -43,7 +43,7 @@ public:
 				MPI_COMM_WORLD);
 		m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
 			MPI_COMM_WORLD);
-        if (configuration->isOutputGlobalTurbulenceStatistics()) {
+        if (configuration->isOutputCompressibleTurbulenceStatistics()) {
             m_compressibleTurbulenceStats = boost::make_shared<CompressibleTurbulenceStats<dim> >(*this);
         }
 		this->m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
@@ -734,7 +734,7 @@ void compressibleFilter() {
             this->stream();
             gStream();
             compressibleFilter();
-            if (this->m_configuration->isOutputGlobalTurbulenceStatistics()) {
+            if (this->m_configuration->isOutputCompressibleTurbulenceStatistics()) {
                 this->m_compressibleTurbulenceStats->apply();
             }
             if(this->m_i==200) {
