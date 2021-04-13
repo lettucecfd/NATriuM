@@ -17,9 +17,9 @@
 namespace natrium {
 
 TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
-		size_t refinementLevel, double cs, bool init_rho_analytically, size_t repetitions, bool compressible_case) :
-		ProblemDescription<3>(makeGrid(repetitions), viscosity, 1), m_cs(cs), m_analyticInit(
-				init_rho_analytically), m_refinementLevel(refinementLevel), m_compressibleCase(compressible_case) {
+                                         size_t refinementLevel, double cs, bool init_rho_analytically, size_t repetitions, double densityNumerator, bool compressible_case) :
+        ProblemDescription<3>(makeGrid(repetitions), viscosity, 1), m_cs(cs), m_analyticInit(
+				init_rho_analytically), m_refinementLevel(refinementLevel), m_densityNumerator(densityNumerator), m_compressibleCase(compressible_case) {
 
 
 	/// apply boundary values
@@ -51,12 +51,11 @@ double TaylorGreenVortex3D::InitialDensity::value(const dealii::Point<3>& x,
 		const unsigned int component) const {
 	assert(component == 0);
 	if (m_flow->m_analyticInit) {
-		double rho0 = 1;
-		double p = rho0 / 16. * (cos(2 * x(0)) + cos(2 * x(1))) * (cos (2* x(2)) + 2);
+		double p = 1.0 / 16. * (cos(2 * x(0)) + cos(2 * x(1))) * (cos (2* x(2)) + 2);
 		if(m_flow->m_compressibleCase){
-            return rho0 + p;
+            return 1.0 + p * m_flow->m_densityNumerator;
 		}
-        return rho0 + p / (m_flow->m_cs * m_flow->m_cs);
+        return 1.0 + p / (m_flow->m_cs * m_flow->m_cs);
     } else {
 		return 1.0;
 	}
