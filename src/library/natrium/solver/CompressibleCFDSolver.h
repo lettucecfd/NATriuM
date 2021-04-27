@@ -340,60 +340,109 @@ void compressibleFilter() {
         }
     }
 
-    void applyShockSensor()  {
+    void applyShockSensor() {
+
+        const vector<distributed_vector> &u(this->getVelocity());
+        const distributed_vector &rho(this->getDensity());
+        const distributed_vector &T(this->getTemperature());
+
         const unsigned int dofs_per_cell =
                 this->getAdvectionOperator()->getFe()->dofs_per_cell;
         vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
         typename dealii::DoFHandler<dim>::active_cell_iterator cell =
                 this->getAdvectionOperator()->getDoFHandler()->begin_active(), endc =
                 this->getAdvectionOperator()->getDoFHandler()->end();
+        const dealii::UpdateFlags update_flags = dealii::update_values | dealii::update_gradients
+                                                 | dealii::update_JxW_values;
+        const dealii::DoFHandler<dim> &dof_handler =
+                *(this->getAdvectionOperator()->getDoFHandler());
+        dealii::FEValues<dim> fe_values(
+                this->getAdvectionOperator()->getMapping(),
+                *(this->getAdvectionOperator()->getFe()),
+                *(this->getAdvectionOperator()->getQuadrature()),
+                update_flags);
+        size_t n_q_points = this->getAdvectionOperator()->getQuadrature()->size();
+        std::vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
+
+        std::vector<double> uxs;
+        std::vector<double> uys;
+        std::vector<double> uzs;
+        std::vector<double> rhos;
+        std::vector<double> Ts;
+
+        std::vector<dealii::Tensor<1, dim, double> > ux_gradients;
+        std::vector<dealii::Tensor<1, dim, double> > uy_gradients;
+        std::vector<dealii::Tensor<1, dim, double> > uz_gradients;
+        std::vector<dealii::Tensor<1, dim, double> > rho_gradients;
+        std::vector<dealii::Tensor<1, dim, double> > T_gradients;
+
+        uxs.resize(n_q_points);
+        uys.resize(n_q_points);
+        uzs.resize(n_q_points);
+        rhos.resize(n_q_points);
+        ux_gradients.resize(n_q_points);
+        uy_gradients.resize(n_q_points);
+        uz_gradients.resize(n_q_points);
+        rho_gradients.resize(n_q_points);
+        Ts.resize(n_q_points);
+        T_gradients.resize(n_q_points);
+
+        distributed_vector writeable_Mask;
+
+        CFDSolverUtilities::getWriteableDensity(writeable_Mask, this->m_maskShockSensor,
+                                                this->getAdvectionOperator()->getLocallyOwnedDofs());
+
+
         for (; cell != endc; ++cell) {
             if (cell->is_locally_owned()) {
                 cell->get_dof_indices(local_dof_indices);
-                double cell_average = 0.0;
 
-                distributed_vector writeable_Mask;
-                CFDSolverUtilities::getWriteableDensity(writeable_Mask, this->m_maskShockSensor,
-                					this->getAdvectionOperator()->getLocallyOwnedDofs());
 
-                for (size_t i = 0; i < dofs_per_cell; i++) {
+                cell->get_dof_indices(local_dof_indices);
 
-                	writeable_Mask(local_dof_indices.at(i)) = 0.0;
-                    cell_average += this->m_density(local_dof_indices.at(i))*m_temperature(local_dof_indices.at(i));
+                // get averages
+                fe_values.reinit(cell);
+                const std::vector<double> &weights = fe_values.get_JxW_values();
+
+                // calculate gradients (for w and strain rate)
+                fe_values.get_function_gradients(u.at(0), ux_gradients);
+                fe_values.get_function_gradients(u.at(1), uy_gradients);
+                fe_values.get_function_values(u.at(0), uxs);
+                fe_values.get_function_values(u.at(1), uys);
+                if (3 == dim) {
+                    fe_values.get_function_gradients(u.at(2), uz_gradients);
+                    fe_values.get_function_values(u.at(2), uzs);
+                }
+                fe_values.get_function_gradients(rho, rho_gradients);
+                fe_values.get_function_values(rho, rhos);
+                fe_values.get_function_gradients(T, T_gradients);
+                fe_values.get_function_values(T, Ts);
+
+                for (size_t q = 0; q < n_q_points; q++) {
+
+                    double dilatation = ux_gradients.at(q)[0] + uy_gradients.at(q)[1];
+
+                    if (3 == dim) {
+                        dilatation += uz_gradients.at(q)[2];
+                    }
+                    //double u_magnitude = uxs.at(q)*uxs.at(q)+uys.at(q)*uys.at(q);
+                    //if (3 == dim)
+                    //    u_magnitude+=uzs.at(q)*uzs.at(q);
+                    //    u_magnitude=sqrt(u_magnitude);
+
+
+                    writeable_Mask(local_dof_indices.at(q)) = dilatation;
+
+
 
                 }
-                cell_average /= dofs_per_cell;
-                double sum_mse = 0.0;
-
-                for (size_t i = 0; i < dofs_per_cell; i++) {
-                    if ((this->m_density(local_dof_indices.at(i))*m_temperature(local_dof_indices.at(i))-cell_average)>sum_mse)
-                    sum_mse = ((this->m_density(local_dof_indices.at(i))*m_temperature(local_dof_indices.at(i)) - cell_average));
-                }
-                //sum_mse /= dofs_per_cell;
-
-
-
-                CFDSolverUtilities::getWriteableDensity(writeable_Mask, this->m_maskShockSensor,
-                					this->getAdvectionOperator()->getLocallyOwnedDofs());
-
-                for (size_t i = 0; i < dofs_per_cell; i++)
-                {
-                    writeable_Mask(local_dof_indices.at(i)) = sum_mse;
-                }
-
-                CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
-
-
-
-
             } /* if is locally owned */
-        } /* for all cells */
-
-
+        }/* for all cells */
+        CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
     }
 
 
-    void smoothDensities(
+        void smoothDensities(
             const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints)  {
         array<double,25> feq;
         array<double,2> u;
@@ -727,7 +776,7 @@ void compressibleFilter() {
             if (this->stopConditionMet()) {
                 break;
             }
-            //applyShockSensor();
+            applyShockSensor();
             // Deactivated this->output(this->m_i);
             this->compressibleOutput(this->m_i, false);
             this->m_i++;
