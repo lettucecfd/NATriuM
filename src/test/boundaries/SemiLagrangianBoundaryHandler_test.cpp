@@ -19,6 +19,7 @@
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/boundaries/SLFirstOrderBounceBack.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/benchmarks/PoiseuilleFlow2D.h"
 
@@ -208,10 +209,12 @@ BOOST_AUTO_TEST_CASE(SemiLagrangianBoundaryHandler_PoiseuilleBB_test) {
 	// overwrite boundary conditions
 	boost::shared_ptr<BoundaryCollection<2> > bc = boost::make_shared<
 			BoundaryCollection<2> >();
+	numeric_vector zeroVelocity(2);
+
 	// we have to take care that we do not create a periodic boundary twice
 	bc->addBoundary(problem->getBoundaries()->getPeriodicBoundary(0));
-	bc->addBoundary(boost::make_shared<SLFirstOrderBounceBack<2> >(2));
-	bc->addBoundary(boost::make_shared<SLFirstOrderBounceBack<2> >(3));
+    bc->addBoundary(boost::make_shared<VelocityNeqBounceBack<2> >(2, zeroVelocity));
+    bc->addBoundary(boost::make_shared<VelocityNeqBounceBack<2> >(3, zeroVelocity));
 	problem->setBoundaries(bc);
 
 	CFDSolver<2> solver(configuration, problem);
