@@ -15,7 +15,7 @@
 #include "deal.II/base/geometry_info.h"
 #include "deal.II/numerics/fe_field_function.h"
 #include "deal.II/fe/fe_nothing.h"
-#include "deal.II/lac/constraint_matrix.h"
+#include <deal.II/lac/affine_constraints.h>
 
 namespace natrium {
 
@@ -222,7 +222,7 @@ void ContinuousBoundaryGradient<dim>::calculateGradients(
 	dealii::Functions::FEFieldFunction<dim, typename DoFHandler<dim> > fe_function(
 			*m_discontinuousBoundaryDoF, m_discontinuousGradient, m_mapping);
 #endif
-	dealii::ConstraintMatrix c;
+	dealii::AffineConstraints<double> c;
 	c.close();
 #ifdef NO_SUPPORT_HP_PARALLEL
 /*	dealii::VectorTools::project(m_mapping, *m_continuousBoundaryDoF,

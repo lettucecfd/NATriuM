@@ -22,7 +22,7 @@
 #include "deal.II/lac/matrix_iterator.h"
 #include "deal.II/lac/sparsity_tools.h"
 #include "deal.II/base/utilities.h"
-#include "deal.II/lac/constraint_matrix.h"
+#include <deal.II/lac/affine_constraints.h>
 
 #include "../boundaries/PeriodicBoundary.h"
 #include "../boundaries/Boundary.h"
@@ -232,7 +232,7 @@ void SEDGMinLee<dim>::updateSparsityPattern() {
 	//for each MPI process). Furthermore, using implicit time integration schemes could bring
 	//the issue of renumbering up again, as they require linear equation systems to be solved.
 	// make diagonal block 0,0 which can be copied to the other ones
-	ConstraintMatrix constraints;
+	AffineConstraints<double> constraints;
 	DealIIExtensions::make_sparser_flux_sparsity_pattern(*Base::m_doFHandler,
 			cSparseDiag, constraints, *Base::getBoundaries(), fe_face_values,
 			true, dealii::Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
