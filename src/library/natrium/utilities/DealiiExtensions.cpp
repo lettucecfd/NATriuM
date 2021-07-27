@@ -617,7 +617,7 @@ template<class DH>
 void extract_dofs_with_support_on_boundary(const DH &dof_handler,
 		const ComponentMask &component_mask, std::vector<bool> &selected_dofs,
 		const std::set<types::boundary_id> &boundary_ids) {
-	Assert(component_mask.represents_n_components (n_components(dof_handler)),
+	Assert(component_mask.represents_n_components (dof_handler.get_fe_collection().n_components()),
 			ExcMessage ("This component mask has the wrong size."));
 	Assert(
 			boundary_ids.find (numbers::internal_face_boundary_id) == boundary_ids.end(),
