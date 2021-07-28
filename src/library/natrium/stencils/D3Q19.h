@@ -69,10 +69,10 @@ protected:
 public:
 
 	/// D
-	static const size_t D;
+	static constexpr size_t D = 3;
 
 	/// Q
-	static const size_t Q;
+	static constexpr size_t Q = 19;
 
 	/// constructor
 	D3Q19(double scaling = 1.0);

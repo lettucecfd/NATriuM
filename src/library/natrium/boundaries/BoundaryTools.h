@@ -77,6 +77,24 @@ public:
 		return m_pressure;
 	}
 };
+
+    template<size_t dim>
+    class BoundaryTemperature: public dealii::Function<dim> {
+    private:
+        double m_temperature;
+    public:
+        BoundaryTemperature(double T = 1.0) {
+            m_temperature = T;
+        }
+        ;
+        virtual ~BoundaryTemperature() {
+        }
+        ;
+        virtual double value(const dealii::Point<dim> &,
+                             const unsigned int  = 0) const {
+            return m_temperature;
+        }
+    };
 template<size_t dim>
 class BoundaryVelocity: public dealii::Function<dim> {
 private:

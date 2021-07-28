@@ -11,6 +11,7 @@
 #include "../utilities/BasicNames.h"
 #include "Boundary.h"
 #include "BoundaryFlags.h"
+#include "../collision_advanced/AuxiliaryCollisionFunctions.h"
 
 namespace natrium {
 
@@ -75,33 +76,56 @@ public:
 		assert(Boundary<dim>::getBoundaryValues().getVelocity());
 		Boundary<dim>::getBoundaryValues().getVelocity()->set_time(t - eps);
 		// evaluate boundary conditions
-		dealii::Vector<double> tmp(dim);
+		dealii::Vector<double> tmp_u(dim);
 		Boundary<dim>::getBoundaryValues().getVelocity()->vector_value(
-				fe_boundary_values.getPoint(q_point), tmp);
+                fe_boundary_values.getPoint(q_point), tmp_u);
 
-		// vector to tensor
-		for (size_t i = 0; i < dim; i++) {
-			u[i] = tmp(i);
-		}
+        // vector to tensor
+        for (size_t i = 0; i < dim; i++) {
+            u[i] = tmp_u(i);
+        }
 
-		double eye[2][2] = { { 1, 0 }, { 0, 1 } };
-		double uu_term = 0.0;
-		for (size_t j = 0; j < 2; j++) {
-			uu_term += -(u[j] * u[j]) / (2.0 * cs2);
-		}
+        assert(Boundary<dim>::getBoundaryValues().getPressure());
+        Boundary<dim>::getBoundaryValues().getPressure()->set_time(t - eps);
+        double pressure;
+        Boundary<dim>::getBoundaryValues().getPressure()->vector_value(
+                fe_boundary_values.getPoint(q_point), pressure);
 
-			double T0 = 1.0;
-			double T1 = cs2 * (T0 - 1);
+        assert(Boundary<dim>::getBoundaryValues().getTemperature());
+        Boundary<dim>::getBoundaryValues().getTemperature()->set_time(t - eps);
+        double temperature;
+        Boundary<dim>::getBoundaryValues().getTemperature()->vector_value(
+                fe_boundary_values.getPoint(q_point), temperature);
 
-			double ue_term = 0.0;
-			for (size_t j = 0; j < dim; j++) {
-				ue_term += (u[j] * stencil.getDirection(destination.direction)[j]) / cs2;
-			}
-			feq = stencil.getWeight(destination.direction) * rho
-					* (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
 
-			fe_boundary_values.getData().m_fnew.at(destination.direction)(
-								destination.index) = feq;
+        std::array<std::array<size_t,dim>, dim> eye = unity_matrix<dim>();
+
+        double uu_term = 0.0;
+        for (size_t j = 0; j < dim; j++) {
+            uu_term += -(u[j] * u[j])
+                       / (2.0 * cs2);
+        }
+
+        double ue_term = 0.0;
+        for (size_t j = 0; j < dim; j++) {
+            ue_term += (u[j] * stencil.getDirection(destination.direction)[j]) / cs2;
+        }
+        feq = pressure * stencil.getWeight(destination.direction) * rho
+              * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
+
+        for (int alp = 0; alp < dim; alp++) {
+            for (int bet = 0; bet < dim; bet++) {
+                feq += pressure * stencil.getWeight(destination.direction) / (2.0 * cs2) *
+                       ((temperature - 1) * eye[alp][bet] * stencil.getDirection(destination.direction)[alp] *
+                        stencil.getDirection(destination.direction)[bet] -
+                        cs2 * eye[alp][bet] * (temperature - 1));
+
+            }
+        }
+
+
+        fe_boundary_values.getData().m_fnew.at(destination.direction)(
+                destination.index) = feq;
 
 		/*
 		 *

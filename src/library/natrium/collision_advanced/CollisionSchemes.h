@@ -56,7 +56,7 @@ public:
 
         std::array<double, T_Q> fNeq = {0.0};
         std::array<double, T_Q> gNeq = {0.0};
-#pragma simd
+#pragma omp parallel for
         for (int p = 0; p < T_Q; ++p) {
             fNeq[p] = fLocal[p] - genData.feq[p];
             gNeq[p] = gLocal[p] - genData.geq[p];
@@ -78,12 +78,12 @@ public:
             calculateFStar<T_D, T_Q>(fStar, heatFluxTensorFNEq, genData);
             calculateFStar<T_D, T_Q>(gStar, heatFluxTensorGNeq, genData);
         }
-
-        double visc_tau = genData.tau; // (genData.tau-0.5)*sqrt(genData.temperature)+0.5;
-        double ener_tau = genData.tau;
+        double sutherland_factor = 1.402*pow(genData.temperature,1.5) / ( genData.temperature + 0.40417);
+        double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
+        double ener_tau = visc_tau;
 
         double prandtl = genData.configuration.getPrandtlNumber();
-        double prandtl_tau = (genData.tau - 0.5)/prandtl + 0.5;
+        double prandtl_tau = (visc_tau - 0.5)/prandtl + 0.5;
 
         //if(genData.maskShockSensor>0.5)
         //{
@@ -92,7 +92,8 @@ public:
         //}
 
 		//Relax every direction towards the equilibrium
-		for (int p = 0; p < T_Q; ++p) {
+#pragma omp parallel for
+            for (int p = 0; p < T_Q; ++p) {
             fLocal[p] -= 1. / visc_tau * (fNeq[p]) + (1. / visc_tau - 1. / prandtl_tau) * fStar[p]; // -genData.feq[p]);
             gLocal[p] -= 1. / ener_tau * (gNeq[p]) + (1. / visc_tau - 1. / prandtl_tau) * gStar[p];
 		}

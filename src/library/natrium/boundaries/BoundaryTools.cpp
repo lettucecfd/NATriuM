@@ -7,7 +7,6 @@
 
 #include "BoundaryTools.h"
 #include "../utilities/Math.h"
-
 namespace natrium {
 
 namespace BoundaryTools {
@@ -167,7 +166,7 @@ void CoupleDoFsAtBoundary(
 		PointCouplingAtBoundary coupling) {
 
 	// ConstraintMatrix can be used for a more efficient distribution to global sparsity patterns
-	const dealii::ConstraintMatrix constraints;
+	const dealii::AffineConstraints<double> constraints;
 
 	size_t n_dofs_per_cell = doFHandler.get_fe().dofs_per_cell;
 	std::vector<dealii::types::global_dof_index> dofs_on_this_cell(

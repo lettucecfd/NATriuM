@@ -43,7 +43,7 @@ ShockVortexInteraction::~ShockVortexInteraction() {
 
         double offset = m_flow->m_shockPosition; // location of the shock
         double left = -m_flow->m_machNumberLeft / sqrt(3.0) * sqrt(1.4 * m_flow->m_temperatureLeft);
-        double right = -m_flow->m_machNumberRight / sqrt(3.0) * sqrt(1.4);
+        double right = -m_flow->m_machNumberRight / sqrt(3.0) * sqrt(1.4 * m_flow->m_temperatureRight);
         double steepness = m_flow->m_shockSteepness;
 
 
@@ -147,11 +147,11 @@ boost::shared_ptr<Mesh<2> > ShockVortexInteraction::makeGrid() {
 	//dealii::GridGenerator::hyper_cube(*rect, 0, 1);
 	// Assign boundary indicators to the faces of the "parent cell"
 	Mesh<2>::active_cell_iterator cell = rect->begin_active();
-	cell->face(0)->set_all_boundary_ids(0);  // left
+	/*cell->face(0)->set_all_boundary_ids(0);  // left
 	cell->face(1)->set_all_boundary_ids(1);  // right
 	cell->face(2)->set_all_boundary_ids(2);  // top
 	cell->face(3)->set_all_boundary_ids(3);  // bottom
-
+    */
 	return rect;
 }
 

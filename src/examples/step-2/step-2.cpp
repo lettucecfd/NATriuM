@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 	const double viscosity = U / Re; // (because L = 1)
 
 	// in order to start from a continuous solution, do not start at t=0
-	const double startTime = 40.0;
+	const double startTime = 0.0;//40.0;
 
 	// set small time step size
 	const double CFL = 0.4;

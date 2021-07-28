@@ -45,11 +45,12 @@ protected:
 
 public:
 
-	/// D
-	static const size_t D;
+    /// D
+    static constexpr size_t D=2;
 
-	/// Q
-	static const size_t Q;
+    /// Q
+    static constexpr size_t Q=19;
+
 
 	/// constructor
 	D2Q19V(double scaling = 1.0);

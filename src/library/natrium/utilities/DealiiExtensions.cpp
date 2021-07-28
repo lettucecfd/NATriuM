@@ -15,13 +15,13 @@
 #include <deal.II/base/template_constraints.h>
 #include <deal.II/base/utilities.h>
 #include <deal.II/lac/sparsity_pattern.h>
-#include <deal.II/lac/compressed_sparsity_pattern.h>
-#include <deal.II/lac/compressed_set_sparsity_pattern.h>
-#include <deal.II/lac/compressed_simple_sparsity_pattern.h>
+//#include <deal.II/lac/compressed_sparsity_pattern.h>
+//#include <deal.II/lac/compressed_set_sparsity_pattern.h>
+//#include <deal.II/lac/compressed_simple_sparsity_pattern.h>
 #include <deal.II/lac/trilinos_sparsity_pattern.h>
 #include <deal.II/lac/block_sparsity_pattern.h>
 #include <deal.II/lac/vector.h>
-#include <deal.II/lac/constraint_matrix.h>
+#include <deal.II/lac/affine_constraints.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/intergrid_map.h>
 #include <deal.II/grid/grid_tools.h>
@@ -48,7 +48,7 @@ namespace DealIIExtensions {
 
 template<class DH, class SparsityPattern>
 void make_sparser_flux_sparsity_pattern(const DH &dof,
-		SparsityPattern &sparsity, const ConstraintMatrix &constraints,
+		SparsityPattern &sparsity, const AffineConstraints<double> &constraints,
 		const natrium::BoundaryCollection<DH::dimension>& boundaries,
 		FEFaceValues<DH::dimension>* fe_face, const bool keep_constrained_dofs,
 		const types::subdomain_id subdomain_id)
@@ -78,10 +78,10 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 	std::vector<types::global_dof_index> dofs_on_other_cell;
 	std::vector<types::global_dof_index> dofs_on_this_face;
 	std::vector<types::global_dof_index> dofs_on_other_face;
-	dofs_on_this_cell.reserve(max_dofs_per_cell(dof));
-	dofs_on_other_cell.reserve(max_dofs_per_cell(dof));
-	dofs_on_this_face.reserve(max_dofs_per_cell(dof));
-	dofs_on_other_face.reserve(max_dofs_per_cell(dof));
+	dofs_on_this_cell.reserve(dof.get_fe_collection().max_dofs_per_cell());
+	dofs_on_other_cell.reserve(dof.get_fe_collection().max_dofs_per_cell());
+	dofs_on_this_face.reserve(dof.get_fe_collection().max_dofs_per_cell());
+	dofs_on_other_face.reserve(dof.get_fe_collection().max_dofs_per_cell());
 	typename DH::active_cell_iterator cell = dof.begin_active(), endc =
 			dof.end();
 
@@ -371,7 +371,7 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 		SparsityPattern &sparsity,
 		const natrium::BoundaryCollection<DH::dimension>& boundaries,
 		FEFaceValues<DH::dimension>* fe_face) {
-	ConstraintMatrix constraints;
+    AffineConstraints<double> constraints;
 	make_sparser_flux_sparsity_pattern(dof, sparsity, constraints, boundaries,
 			fe_face);
 }
@@ -617,7 +617,7 @@ template<class DH>
 void extract_dofs_with_support_on_boundary(const DH &dof_handler,
 		const ComponentMask &component_mask, std::vector<bool> &selected_dofs,
 		const std::set<types::boundary_id> &boundary_ids) {
-	Assert(component_mask.represents_n_components (n_components(dof_handler)),
+	Assert(component_mask.represents_n_components (dof_handler.get_fe_collection().n_components()),
 			ExcMessage ("This component mask has the wrong size."));
 	Assert(
 			boundary_ids.find (numbers::internal_face_boundary_id) == boundary_ids.end(),
@@ -635,7 +635,7 @@ void extract_dofs_with_support_on_boundary(const DH &dof_handler,
 	selected_dofs.clear();
 	selected_dofs.resize(dof_handler.n_dofs(), false);
 	std::vector<types::global_dof_index> cell_dof_indices;
-	cell_dof_indices.reserve(max_dofs_per_cell(dof_handler));
+	cell_dof_indices.reserve(dof_handler.get_fe_collection().max_dofs_per_cell());
 
 	// now loop over all cells and check whether their faces are at the
 	// boundary. note that we need not take special care of single lines
@@ -706,7 +706,7 @@ make_sparser_flux_sparsity_pattern<DoFHandler<2>, SP>(const DoFHandler<2> &dof,
 
 template void
 make_sparser_flux_sparsity_pattern<DoFHandler<2>, SP>(const DoFHandler<2> &dof,
-		SP &sparsity, const ConstraintMatrix &constraints,
+		SP &sparsity, const AffineConstraints<double> &constraints,
 		const BoundaryCollection<2>& boundaries, FEFaceValues<2>* fe_face,
 		const bool, const unsigned int);
 
@@ -717,7 +717,7 @@ make_sparser_flux_sparsity_pattern<DoFHandler<3>, SP>(const DoFHandler<3> &dof,
 
 template void
 make_sparser_flux_sparsity_pattern<DoFHandler<3>, SP>(const DoFHandler<3> &dof,
-		SP &sparsity, const ConstraintMatrix &constraints,
+		SP &sparsity, const AffineConstraints<double> &constraints,
 		const BoundaryCollection<3>& boundaries, FEFaceValues<3>* fe_face,
 		const bool, const unsigned int);
 

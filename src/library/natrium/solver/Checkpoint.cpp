@@ -85,7 +85,7 @@ void Checkpoint<dim>::write(const Mesh<dim>& mesh, DistributionFunctions& f,
 		const distributed_vector* p = &(f.atGhosted(i));
 		to_save.push_back(p);
 	}
-	sol_trans.prepare_serialization(to_save);
+	sol_trans.prepare_for_serialization(to_save);
 	try {
 		LOG(BASIC) << "Save: " << m_dataFile.string() << endl;
 		mesh.save(m_dataFile.c_str());

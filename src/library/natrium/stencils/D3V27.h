@@ -1,54 +1,21 @@
 /*
- * D3Q27Model.h
+ * D3V27.h
+
  *
- *  Created on: Nov 20, 2015
- *      Author: kraemer
+ *  Created on: Oct 29, 2020
+ *      Author: dwilde3m
  */
 
-#ifndef D3Q27MODEL_H_
-#define D3Q27MODEL_H_
+
+#ifndef D3V27MODEL_H_
+#define D3V27MODEL_H_
 
 #include "Stencil.h"
 #include "../utilities/BasicNames.h"
 
 namespace natrium {
 
-/** @short D3Q27 Model. The lattice velocities are: 0. 0.0 0.0 0.0
- *
- * -# scaling, 0.0, 0.0
- * -# -scaling, 0.0, 0.0
- * -# 0.0, scaling, 0.0
- * -# 0.0, -scaling, 0.0
- * -# 0.0, 0.0, scaling
- * -# 0.0, 0.0, -scaling
- * -# 0.0, scaling, scaling
- * -# 0.0, -scaling - scaling
- * -# 0.0, scaling, -scaling
- * -# 0.0, -scaling, scaling
- * -# scaling, 0.0, scaling
- * -# -scaling, 0.0, -scaling
- * -# scaling, 0.0, -scaling
- * -# -scaling, 0.0, scaling
- * -# scaling, scaling, 0.0
- * -# -scaling, -scaling, 0.0
- * -# scaling, -scaling, 0.0
- * -# -scaling, scaling, 0.0
- * -# scaling, scaling, scaling
- * -# -scaling, -scaling, -scaling
- * -# scaling, scaling, -scaling
- * -# -scaling, -scaling, scaling
- * -# scaling, -scaling, scaling
- * -#	-scaling, scaling, -scaling
- * -# scaling, -scaling, -scaling
- * -# -scaling, scaling, scaling
- *
- * The weights are:
- * - 0) 8./27.
- * - 1-6) 2./27.
- * - 7-18) 1./54.
- * - 19-26) 1./216.
- */
-class D3Q27: public Stencil {
+class D3V27: public Stencil {
 
 private:
 
@@ -84,10 +51,10 @@ public:
 	static constexpr size_t Q = 27;
 
 	/// constructor
-	D3Q27(double scaling = 1.0);
+	D3V27(double scaling = 1.0);
 
 	/// destructor
-	virtual ~D3Q27();
+	virtual ~D3V27();
 
 	virtual double getSpeedOfSound() const {
 		return m_speedOfSound;
@@ -195,4 +162,4 @@ public:
 };
 
 }/* namespace natrium */
-#endif /* D3Q27MODEL_H_ */
+#endif /* D3V27MODEL_H_ */

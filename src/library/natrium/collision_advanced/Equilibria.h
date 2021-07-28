@@ -9,7 +9,6 @@
 #define LIBRARY_NATRIUM_COLLISION_EQUILIBRIA_H_
 //#include "CollisionOperator.h"
 #include "AuxiliaryCollisionFunctions.h"
-#include "Equilibria.h"
 #include "CollisionSchemes.h"
 #include <array>
 
@@ -91,14 +90,8 @@ class QuarticEquilibrium
     template<int T_D, int T_Q>
     inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q> &feq,
                                                    const GeneralCollisionData<T_D, T_Q> &p) {
-        int eye [T_D][T_D] ={{0}};
-        for (int a = 0; a<T_D; a++)  {
-            for (int b = 0; b < T_D; b++) {
-                if (a==b){
-                    eye[a][b] = 1;
-                }
-            }
-        }
+        const std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+
         double uu_term = 0.0;
         for (size_t j = 0; j < T_D; j++) {
             uu_term += -(p.velocity[j] * p.velocity[j])
@@ -165,7 +158,6 @@ class QuarticEquilibrium
                             T1 * (p.velocity[1] * p.velocity[2]);
 
         }
-
         for (size_t i = 0; i < T_Q; i++) {
 
             double ue_term = 0.0;

@@ -9,7 +9,7 @@
 #define DEALIIWRAPPER_H_
 
 #include "deal.II/base/time_stepping.h"
-#include "deal.II/base/std_cxx11/function.h"
+#include "deal.II/base/function.h"
 
 #include "TimeIntegrator.h"
 #include "../utilities/BasicNames.h"

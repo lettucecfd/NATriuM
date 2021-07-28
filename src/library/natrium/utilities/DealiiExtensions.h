@@ -18,9 +18,8 @@
 #include <deal.II/base/table.h>
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/point.h>
-#include <deal.II/lac/constraint_matrix.h>
+#include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/sparsity_pattern.h>
-#include <deal.II/dofs/function_map.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_values.h>
@@ -67,7 +66,7 @@ using namespace dealii;
 template<class DH, class SparsityPattern>
 void
 make_sparser_flux_sparsity_pattern(const DH &dof, SparsityPattern &sparsity,
-		const ConstraintMatrix &constraints,
+		const AffineConstraints<double> &constraints,
 		const BoundaryCollection<DH::dimension>& boundaries =
 				natrium::BoundaryCollection<DH::dimension>(),
 		FEFaceValues<DH::dimension>* fe_face = NULL,

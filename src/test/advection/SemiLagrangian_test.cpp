@@ -52,6 +52,7 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_Neighborhood_test) {
 	periodic.refineAndTransform();
 	SemiLagrangian<2> sl(periodic, fe_order, boost::make_shared<D2Q9>(), 0.001);
 	sl.setupDoFs();
+	sl.setDeltaT(0.1);
 	typename dealii::DoFHandler<2>::active_cell_iterator cell =
 			sl.getDoFHandler()->begin_active();
 	// make sure cell is not in the ghost layer (begin_active() might point to a ghost cell)
@@ -109,7 +110,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_Neighborhood_test) {
 	SemiLagrangian<3> sl(periodic, fe_order, boost::make_shared<D3Q19>(),
 			0.001);
 	sl.setupDoFs();
-	typename dealii::DoFHandler<3>::active_cell_iterator cell =
+	sl.setDeltaT(0.1);
+
+        typename dealii::DoFHandler<3>::active_cell_iterator cell =
 			sl.getDoFHandler()->begin_active();
 	// make sure cell is not in the ghost layer
 	while (not cell->is_locally_owned()) {
@@ -173,7 +176,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_FindPointInNeighborhood_test) {
 	periodic.refineAndTransform();
 	SemiLagrangian<2> sl(periodic, fe_order, boost::make_shared<D2Q9>(), 0.001);
 	sl.setupDoFs();
-	typename dealii::DoFHandler<2>::active_cell_iterator cell =
+	sl.setDeltaT(0.1);
+
+        typename dealii::DoFHandler<2>::active_cell_iterator cell =
 			sl.getDoFHandler()->begin_active();
 
 	dealii::Point<2> p(1, 2);
@@ -198,7 +203,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_FindPointInNeighborhood_test) {
 	SemiLagrangian<3> sl(periodic, fe_order, boost::make_shared<D3Q19>(),
 			0.001);
 	sl.setupDoFs();
-	typename dealii::DoFHandler<3>::active_cell_iterator cell =
+	sl.setDeltaT(0.1);
+
+        typename dealii::DoFHandler<3>::active_cell_iterator cell =
 			sl.getDoFHandler()->begin_active();
 
 	dealii::Point<3> p(1, 2, 1);
@@ -520,7 +527,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian2D_ConstantStreaming_test) {
 	periodic.refineAndTransform();
 	SemiLagrangian<2> sl(periodic, fe_order, boost::make_shared<D2Q9>(), 0.01);
 	sl.setupDoFs();
-	sl.reassemble();
+    sl.setDeltaT(0.1);
+
+    sl.reassemble();
 
 	distributed_block_vector ones;
 	distributed_block_vector result;
@@ -558,7 +567,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_ConstantStreaming_test) {
 	periodic.refineAndTransform();
 	SemiLagrangian<3> sl(periodic, fe_order, boost::make_shared<D3Q19>(), 0.01);
 	sl.setupDoFs();
-	sl.reassemble();
+    sl.setDeltaT(0.1);
+
+    sl.reassemble();
 
 	distributed_block_vector ones;
 	distributed_block_vector result;
@@ -595,7 +606,9 @@ BOOST_AUTO_TEST_CASE(SemiLagrangian3D_VectorReference_test) {
 	periodic.refineAndTransform();
 	SemiLagrangian<3> sl(periodic, fe_order, boost::make_shared<D3Q19>(), 0.01);
 	sl.setupDoFs();
-	sl.reassemble();
+    sl.setDeltaT(0.1);
+
+    sl.reassemble();
 
 	distributed_block_vector ones;
 	distributed_block_vector result;

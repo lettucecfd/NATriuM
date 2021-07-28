@@ -26,7 +26,7 @@ SolverConfiguration::SolverConfiguration() {
                       dealii::Patterns::Bool(),
                       "Indicates if Prandtl number deviates from 1.0");
 		declare_entry("Stencil", "D2Q9",
-				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q19V|D2Q19H|D2Q25H|D3Q45|D3Q77"),
+				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q19V|D2Q19H|D2Q25H|D3Q45|D3Q77|D3V27"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
 		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
@@ -269,6 +269,9 @@ SolverConfiguration::SolverConfiguration() {
 			declare_entry("Output global turbulence statistics?", "false",
 					dealii::Patterns::Bool(),
 					"Specifies if global turbulence statistics should be monitored.");
+            declare_entry("Output compressible turbulence statistics?", "false",
+                          dealii::Patterns::Bool(),
+                          "Specifies if compressible turbulence statistics should be monitored.");
 			declare_entry("Output turbulence statistics?", "false",
 					dealii::Patterns::Bool(),
 					"Specifies if turbulence statistics in slices should be monitored.");
@@ -296,38 +299,20 @@ SolverConfiguration::SolverConfiguration(const std::string& XMLfilename) {
  **/
 void SolverConfiguration::readFromTextFile(const std::string & filename,
 		const bool optional, const bool write_stripped_file) {
-	// redirect cerr to a string buffer
-	std::stringstream buffer;
-	std::streambuf * old = cerr.rdbuf(buffer.rdbuf());
-	bool isEverythingOK = ParameterHandler::read_input(filename, optional,
-			write_stripped_file);
-	std::string errorMessage = buffer.str();
-	// reset cerr to console output
-	cerr.rdbuf(old);
 
-	if (not isEverythingOK) {
-		throw ConfigurationException(errorMessage);
-	}
+	ParameterHandler::parse_input(filename);
+
 } /* readFromTextFile */
 
 /**
  * @short wrapper function for ParameterHandler::read_input_from_xml; directing cerr into a C++-Exception
  **/
 void SolverConfiguration::readFromXMLFile(const std::string & filename) {
-	// redirect cerr to a string buffer
-	std::stringstream buffer;
-	std::streambuf * old = cerr.rdbuf(buffer.rdbuf());
 
 	// create stream
 	std::ifstream xmlFile(filename);
-	bool isEverythingOK = ParameterHandler::read_input_from_xml(xmlFile);
-	std::string errorMessage = buffer.str();
-	// reset cerr to console output
-	cerr.rdbuf(old);
+	ParameterHandler::parse_input_from_xml(xmlFile);
 
-	if (not isEverythingOK) {
-		throw ConfigurationException(errorMessage);
-	}
 } /* readFromXMLFile */
 
 void SolverConfiguration::prepareOutputDirectory() {

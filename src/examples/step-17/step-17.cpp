@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
 	CommandLineParser parser(argc, argv);
 	parser.setArgument<int>("Re", "Reynolds number 1/nu", 1600);
     parser.setArgument<double>("Ma", "Mach number", 0.1);
+    parser.setArgument<int>("densityNumerator", "Is the numerator in the density dependent on the Mach number?", 0);
 
     parser.setPositionalArgument<int>("ref-level",
 			"Refinement level of the computation grid.");
@@ -61,7 +62,10 @@ int main(int argc, char** argv) {
 	double Re = parser.getArgument<int>("Re");
 	double refinement_level = parser.getArgument<int>("ref-level");
 	double repetitions = parser.getArgument<int>("grid-repetitions");
-
+    const bool isDensityNumerator = static_cast<bool>(parser.getArgument<int>("densityNumerator"));
+    const double densityNumerator = isDensityNumerator ? parser.getArgument<double>("Ma") *
+                                                                                     parser.getArgument<double>("Ma") *
+                                                                                     1.4 : 1.0;
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
@@ -77,16 +81,17 @@ int main(int argc, char** argv) {
 	const double U = 1;
 	//const double L = 2 * M_PI;
 	const double viscosity = 1.0 / Re;
-    const double Ma = parser.getArgument<double>("Ma");
+    const double Ma = parser.getArgument<double>("Ma")*sqrt(1.4);
 	const double cs = U / Ma;
 
 	// chose scaling so that the right Ma-number is achieved
 	const double scaling = sqrt(3) * cs;
 	const bool init_rho_analytically = true;
 
+
 	boost::shared_ptr<ProblemDescription<3> > taylorGreen = boost::make_shared<
 			TaylorGreenVortex3D>(viscosity, refinement_level, cs,
-			init_rho_analytically, repetitions, true);
+			init_rho_analytically, repetitions, densityNumerator);
 
 	// setup configuration
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
@@ -94,14 +99,15 @@ int main(int argc, char** argv) {
 	configuration->setUserInteraction(false);
 	configuration->setOutputCheckpointInterval(1e9);
 	configuration->setOutputSolutionInterval(10000);
-	configuration->setSimulationEndTime(23.0);
-	configuration->setOutputGlobalTurbulenceStatistics(true);
+	configuration->setSimulationEndTime(10.0);
+	configuration->setOutputGlobalTurbulenceStatistics(false);
+    configuration->setOutputCompressibleTurbulenceStatistics(true);
 	configuration->setStencilScaling(scaling);
-	configuration->setStencil(Stencil_D3Q77);
+	configuration->setStencil(Stencil_D3Q45);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 	configuration->setHeatCapacityRatioGamma(1.4);
-	configuration->setPrandtlNumber(0.75);
+	configuration->setPrandtlNumber(0.71);
 
 	parser.applyToSolverConfiguration(*configuration);
 
@@ -119,6 +125,7 @@ int main(int argc, char** argv) {
 					<< static_cast<int>(configuration->getDealIntegrator());
 		dirName << "-CFL" << configuration->getCFL();
 		dirName << "-sten" << static_cast<int>(configuration->getStencil());
+        dirName << "-num" << static_cast<double>(densityNumerator);
 		if (Ma!=0.1)
 		    dirName << "-Ma" << Ma;
 		if (configuration->isFiltering())

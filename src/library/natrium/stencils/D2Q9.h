@@ -46,10 +46,10 @@ protected:
 public:
 
 	/// D
-	static const size_t D;
+	static constexpr size_t D=2;
 
 	/// Q
-	static const size_t Q;
+	static constexpr size_t Q=9;
 
 	/// constructor
 	D2Q9(double scaling = 1.0);

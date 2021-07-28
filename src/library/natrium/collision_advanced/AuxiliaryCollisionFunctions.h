@@ -44,10 +44,11 @@ public:
 
 template<int T_Q>
 inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
-	double density = 0;
-	for (int p = 0; p < T_Q; ++p) {
+	double density = 0.0;
+
+	for (size_t p = 0; p < T_Q; ++p)
 		density += fLocal[p];
-	}
+
 
 	if (density < 1e-10) {
 		throw CollisionException(
@@ -56,21 +57,7 @@ inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
 
 	return density;
 }
-/*
-template<int T_Q>
-inline double calculateTemperature(const std::array<double, T_Q>& fLocal) {
-	double density = 0;
-	for (int p = 0; p < T_Q; ++p) {
-		density += fLocal[p];
-	}
 
-	if (density < 1e-10) {
-		throw CollisionException(
-				"Densities too small (< 1e-10) for collisions. Decrease time step size.");
-	}
-
-	return density;
-} */
 
 
 inline double calculateTauFromNu(double viscosity, double cs2,
@@ -101,7 +88,7 @@ inline double calculateTauFromNuAndT(double viscosity, double cs2,
 template<int T_Q>
 inline void copyGlobalToLocalF(std::array<double, T_Q>& fLocal,
 		const DistributionFunctions& f, const size_t i) {
-	for (int p = 0; p < T_Q; ++p) {
+	for (size_t p = 0; p < T_Q; ++p) {
 		fLocal[p] = f.at(p)(i);
 	}
 }
@@ -109,7 +96,7 @@ inline void copyGlobalToLocalF(std::array<double, T_Q>& fLocal,
 template<int T_Q>
 inline void copyLocalToGlobalF(std::array<double, T_Q>& fLocal,
 		DistributionFunctions& f, const size_t i) {
-	for (int p = 0; p < T_Q; ++p) {
+	for (size_t p = 0; p < T_Q; ++p) {
 		distributed_vector& f0 = f.at(p);
 		f0(i) = fLocal[p];
 	}
@@ -211,13 +198,28 @@ struct GeneralCollisionData {
 		}
 
 	}
+
 };
+
+template <size_t T_D>
+constexpr std::array<std::array<size_t,T_D>, T_D> unity_matrix()
+{
+    std::array<std::array<size_t,T_D>, T_D> eye ={{0}};
+    for (size_t a = 0; a<T_D; a++)  {
+        for (size_t b = 0; b < T_D; b++) {
+            if (a==b){
+                eye[a][b] = 1;
+            }
+        }
+    }
+    return eye;
+}
 
 template<int T_D, int T_Q>
 inline void calculateVelocity(const std::array<double, T_Q>& fLocal,
 		std::array<double, T_D>& velocity, double density,
 		GeneralCollisionData<T_D, T_Q>& params) {
-	for (size_t j = 0; j < T_D; j++) {
+    for (size_t j = 0; j < T_D; j++) {
 		velocity[j] = 0.0;
 		for (size_t i = 0; i < T_Q; i++) {
 			velocity[j] += params.e[i][j] * fLocal[i];
@@ -271,8 +273,8 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
             temperature += sum * fLocal[i] / params.cs2 +
                            gLocal[i];
         }
-        double gamma = 1.4;
-        double C_v = 1./(gamma-1.0);
+        const double gamma = params.configuration.getHeatCapacityRatioGamma();
+        const double C_v = 1./(gamma-1.0);
         temperature = temperature * 0.5 / (density*C_v);
 return temperature;
 }
@@ -290,13 +292,18 @@ inline void applyMacroscopicForces(std::array<double*, T_D>& velocities,
 	}
 
 	if (genData.forcetype == SHIFTING_VELOCITY) {
-		// TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
-		// 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
-		for (size_t j = 0; j < T_D; j++) {
-			velocities[j][ii] = velocities[j][ii]
-					+ 0.5 * genData.dt * genData.forces[j] / genData.density;
-			// I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
-		}
+        // TODO: incorporate into calculate velocities  (accessing the global velocity vector twice is ugly)
+        // 		 upon refactoring this, remember to incorporate the test for problem.hasExternalForce() (cf. collideAll)
+        for (size_t j = 0; j < T_D; j++) {
+            velocities[j][ii] = velocities[j][ii]
+                                + 0.5 * genData.dt * genData.forces[j] / genData.density;
+            // I wanted this to be independent of the order of execution with applyForces  (therefor 2x acces to velocities; += is risky for TrilinosVector)
+        }
+    }
+    else if (genData.forcetype == EXACT_DIFFERENCE) {
+            // PASS
+
+
 	} else {
 		throw NotImplementedException(
 				"Force Type not implemented. Use Shifting Velocity instead.");
@@ -311,23 +318,65 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
 						"Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
 	}
 	if (genData.forcetype == SHIFTING_VELOCITY) {
-		for (size_t i = 0; i < T_D; i++) {
-			genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
-					/ genData.density / genData.scaling;
+        for (size_t i = 0; i < T_D; i++) {
+            genData.velocity[i] += genData.tau * genData.dt * genData.forces[i]
+                                   / genData.density / genData.scaling;
 
-		}
-	} else {
+        }
+    }
+
+    else if (genData.forcetype == EXACT_DIFFERENCE) {
+        // PASS
+
+    }
+
+	 else {
 		throw NotImplementedException(
 				"Force Type not implemented. Use Shifting Velocity instead.");
 	}
 }
 
+    template<int T_D, int T_Q, template<int, int> class T_equilibrium>
+    inline void postCollisionApplyForces(std::array<double *, T_D> &velocities,
+                                         int ii, GeneralCollisionData<T_D, T_Q> &genData) {
+        if (genData.forcetype == NO_FORCING) {
+            throw NATriuMException(
+                    "Problem requires forcing scheme, but forcing was switched off."
+                    "Please set forcing to SHIFTING_VELOCITY in the Solver Configuration.");
+        }
+        if (genData.forcetype == SHIFTING_VELOCITY) {
+            // PASS
+        } else if (genData.forcetype == EXACT_DIFFERENCE) {
+            for (size_t j = 0; j < T_D; j++) {
+                // no tau!
+                genData.velocity[j] += genData.dt * genData.forces[j]
+                                       / genData.density / genData.scaling;
+                velocities[j][ii] = velocities[j][ii]
+                                    + 0.5 * genData.dt * genData.forces[j] / genData.density;
+            }
+            std::array<double, T_Q> shiftedEq = {};
+            T_equilibrium<T_D, T_Q> eq_shifted;
+            eq_shifted.calc(shiftedEq, genData);
+            for (size_t i = 0; i < T_Q; i++) {
+                genData.fLocal[i] += (shiftedEq[i] - genData.feq[i]);
+            }
+
+
+        } else {
+            throw NotImplementedException(
+                    "Force Type not implemented. Use Shifting Velocity instead.");
+        }
+
+    }
+
+
 template<size_t T_D, size_t T_Q>
 inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, T_Q>& geq, const GeneralCollisionData<T_D,T_Q>& genData)
 {
+    const double gamma = genData.configuration.getHeatCapacityRatioGamma();
+    const double C_v = 1. / (gamma - 1.0);
     for (size_t i = 0; i < T_Q; i++) {
-        double gamma = 1.4;
-        double C_v = 1. / (gamma - 1.0);
+
         geq[i]=feq[i]*(genData.temperature)*(2.0*C_v-T_D);
 
     }
@@ -354,14 +403,8 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     inline void
     calculateFStar(std::array<double, T_Q> &fStar, std::array<std::array<std::array<double, T_D>, T_D>, T_D> &QNeq,
                    const GeneralCollisionData<T_D, T_Q> &p) {
-        int eye[T_D][T_D] ={{0}};
-        for (int a = 0; a<T_D; a++)  {
-            for (int b = 0; b < T_D; b++) {
-                if (a==b){
-                    eye[a][b] = 1;
-                }
-            }
-        }
+        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+
         for (size_t i = 0; i < T_Q; i++) {
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
@@ -379,14 +422,8 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     template<size_t T_D, size_t T_Q>
     inline std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> calculateH3(const GeneralCollisionData<T_D, T_Q> &p) {
         std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> H3;
-        int eye[T_D][T_D] ={{0}};
-        for (int a = 0; a<T_D; a++)  {
-            for (int b = 0; b < T_D; b++) {
-                if (a==b){
-                    eye[a][b] = 1;
-                }
-            }
-        }
+        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+
         for (size_t i = 0; i < T_Q; i++) {
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
@@ -403,28 +440,22 @@ inline void calculateGeqFromFeq(std::array<double, T_Q>& feq,std::array<double, 
     template<size_t T_D, size_t T_Q>
     inline std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> calculateH4(const GeneralCollisionData<T_D, T_Q> &p) {
         std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> H4;
-        int eye[T_D][T_D] ={{0}};
-        for (int a = 0; a<T_D; a++)  {
-            for (int b = 0; b < T_D; b++) {
-                if (a==b){
-                    eye[a][b] = 1;
-                }
-            }
-        }
+        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+
         for (size_t i = 0; i < T_Q; i++) {
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
                     for (size_t c = 0; c < T_D; c++) {
                         for (size_t d = 0; d < T_D; d++) {
 
-                            double power4 = p.e[i][a] * p.e[i][b] * p.e[i][c] * p.e[i][d];
-                            double power2 = p.e[i][a] * p.e[i][b] * eye[c][d]
+                            const double power4 = p.e[i][a] * p.e[i][b] * p.e[i][c] * p.e[i][d];
+                            const double power2 = p.e[i][a] * p.e[i][b] * eye[c][d]
                                             + p.e[i][a] * p.e[i][c] * eye[b][d]
                                             + p.e[i][a] * p.e[i][d] * eye[b][c]
                                             + p.e[i][b] * p.e[i][c] * eye[a][d]
                                             + p.e[i][b] * p.e[i][d] * eye[a][c]
                                             + p.e[i][c] * p.e[i][d] * eye[a][b];
-                            double power0 = eye[a][b] * eye[c][d] + eye[a][c] * eye[b][d] +
+                            const double power0 = eye[a][b] * eye[c][d] + eye[a][c] * eye[b][d] +
                                             eye[a][d] * eye[b][c];
 
                             H4[i][a][b][c][d] = (power4 - p.cs2 * power2 + p.cs2 * p.cs2 * power0);

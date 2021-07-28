@@ -70,7 +70,7 @@ private:
 	/// Sparsity Pattern of the sparse matrix
 	/// The sparsity pattern is only used in the assembly
 	/// storing only one line of blocks at a time significantly reduces the storage
-	std::vector<dealii::TrilinosWrappers::SparsityPattern> m_sparsityPatternRow;
+	dealii::TrilinosWrappers::BlockSparsityPattern m_blockSparsityPattern;
 
 
 	SemiLagrangianBoundaryHandler<dim> m_boundaryHandler;

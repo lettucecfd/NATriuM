@@ -1608,6 +1608,8 @@ public:
             return Stencil_D3Q45;
         } else if ("D3Q77" == stencil) {
             return Stencil_D3Q77;
+        } else if ("D3V27" == stencil) {
+            return Stencil_D3V27;
         } else {
 			std::stringstream msg;
 			msg << "Unknown Stencil with index " << stencil
@@ -1666,6 +1668,10 @@ public:
         }
         case Stencil_D3Q77: {
             set("Stencil", "D3Q77");
+            break;
+        }
+        case Stencil_D3V27: {
+            set("Stencil", "D3V27");
             break;
         }
 		default: {
@@ -2305,6 +2311,35 @@ public:
 		leave_subsection();
 		leave_subsection();
 	}
+
+    bool isOutputCompressibleTurbulenceStatistics() {
+        enter_subsection("Output");
+        enter_subsection("Turbulence Statistics");
+        bool turbulence_output;
+        try {
+            turbulence_output = get_bool(
+                    "Output compressible turbulence statistics?");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Output compressible turbulence statistics?' from parameters: "
+                    << e.what();
+            leave_subsection();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+        return turbulence_output;
+    }
+
+    void setOutputCompressibleTurbulenceStatistics(bool output_turbulence) {
+        enter_subsection("Output");
+        enter_subsection("Turbulence Statistics");
+        set("Output compressible turbulence statistics?", output_turbulence);
+        leave_subsection();
+        leave_subsection();
+    }
 
 	size_t getWallNormalDirection() {
 		enter_subsection("Output");

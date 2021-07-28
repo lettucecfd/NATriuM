@@ -40,7 +40,9 @@ enum StencilType {
 	Stencil_RD3Q27,
     Stencil_D3Q45,
 
-    Stencil_D3Q77
+    Stencil_D3Q77,
+    // D3V27 stencil
+    Stencil_D3V27
 
 };
 

@@ -610,7 +610,8 @@ block_vector natrium::DealIIWrapper<sparse_block_matrix, block_vector>::evaluate
 template<class MATRIX, class VECTOR>
 double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 		const MATRIX& systemMatrix, VECTOR& systemVector, double t,
-		double dt) {
+		double dt) { /*
+TODO BRUTE FORCE KILLED SEDG HERE DOMINIK WILDE 2020
 
 	if ((0.0 != dt) and dt != this->getTimeStepSize()) {
 		this->setTimeStepSize(dt);
@@ -632,7 +633,8 @@ double natrium::DealIIWrapper<MATRIX, VECTOR>::step(VECTOR& vector,
 					&DealIIWrapper<MATRIX, VECTOR>::evaluateIdMinusTauJInverse,
 					this, dealii::std_cxx11::_1, dealii::std_cxx11::_2,
 					dealii::std_cxx11::_3), t, dt, vector);
-}
+
+					*/}
 
 template<class MATRIX, class VECTOR>
 natrium::DealIIWrapper<MATRIX, VECTOR>::DealIIWrapper(const double timeStepSize,

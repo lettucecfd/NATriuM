@@ -56,7 +56,7 @@ template<size_t dim> void VelocityNeqBounceBack<dim>::assembleBoundary(
 	feFaceValues.reinit(cell, faceNumber);
 	const vector<double> &JxW = feFaceValues.get_JxW_values();
 	const vector<dealii::Tensor<1, dim> > &normals =
-			feFaceValues.get_all_normal_vectors();
+			feFaceValues.get_normal_vectors();
 
 // TODO clean up construction; or (better): assembly directly
 	dealii::FullMatrix<double> cellFaceMatrix(feFaceValues.dofs_per_cell);
