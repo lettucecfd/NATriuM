@@ -11,3 +11,17 @@ It features 2D and 3D unstructured grids and provides two streaming techniques:
 
 * Spectral-element discontinous Galerkin (SEDG), originally by Min and Lee
 * Semi-Lagrangian streaming, by Krämer et al.
+
+Regime: 
+
+* Fully compressible viscous flows
+* Weakly compressible viscous flows
+
+Test cases:
+
+* (Compressible) Taylor-Green vortex 2D and 3D
+* Shock tube 1D
+* Riemann problem 2D
+* Shock-vortex interaction 2D
+
+
