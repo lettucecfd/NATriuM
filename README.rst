@@ -1,7 +1,9 @@
 .. image:: https://github.com/lettucecfd/NATriuM/blob/compressible/.NATriuM_logo.png
 
-NATriuM is a high-order finite element lattice Boltzmann solver
+NATriuM is a high-order finite element lattice Boltzmann solver based on deal.ii
 ----------------------------------------------------------------------
+
+
 
 It features 2D and 3D unstructured grids and provides two streaming techniques:
 
