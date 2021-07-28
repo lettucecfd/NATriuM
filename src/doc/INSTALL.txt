@@ -1,47 +1,72 @@
 
 If you have trouble during the installation (which is not unlikely), contact the developers via the Google group natrium-lbm
-or via email (kraemer.research@gmail.com).
+or via email: kraemer.research@gmail.com or wilde.aerospace@gmail.com .
 
 The following configuration works fine:
-- Boost 1.62
-- Trilinos 11.10.2
-- P4est 1.1
-- Deal 8.4.2
+- Boost 1.76
+- Trilinos 13.0.1
+- P4est 2.2
+- Deal 9.3
 
 
 ================================================================================================
    INSTALL REQUIRED RESSOURCES
 ================================================================================================
+Prerequisites: CMake, GCC (Version 9 or higher recommended)
+
+If not installed, install blas/lapack (e.g. sudo apt-get install libblas-dev liblapack-dev)
+If not installed, install gfortran (e.g. sudo apt-get install gfortran)
+ 
+#### Set enviromental variables
+# Go to the desired install folder and set environment:
+NATRIUM_BASE_DIR=$(pwd)
+
+# Environment
+export BOOST_ROOT=$NATRIUM_BASE_DIR/libs/boost
+export TRILINOS_DIR=$NATRIUM_BASE_DIR/libs/trilinos
+export P4EST_DIR=$NATRIUM_BASE_DIR/libs/p4est
+export DEAL_II_DIR=$NATRIUM_BASE_DIR/libs/deal.II
+export NATRIUM_DIR=$NATRIUM_BASE_DIR/NATriuM
+export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
+
+Write your environmental variables into a file "natriumrc" to reload them later:
+
+cat > $NATRIUM_BASE_DIR/natriumrc <<EOF
+export BOOST_ROOT=$BOOST_ROOT
+export TRILINOS_DIR=$TRILINOS_DIR
+export P4EST_DIR=$P4EST_DIR
+export DEAL_II_DIR=$DEAL_II_DIR
+export NATRIUM_DIR=$NATRIUM_DIR
+export NATRIUM_HOME=$NATRIUM_HOME
+export LD_LIBRARY_PATH=$BOOST_ROOT/lib:$LD_LIBRARY_PATH
+export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
+EOF
 
 0) Install resources (via apt-get, synaptic, or manually)
-    0.0) All boost libraries (sudo apt-get install libboost-all-dev)
-    0.0a) (on cluster: module load gcc openmpi/gnu, boost)
-    0.0a') (on cluster: if boost is not installed - get tar)
-    0.0a') (on cluster: set BOOST_ROOT in ~/.bashrc to the directory you want boost installed in; source ~/.bashrc)
-    0.0b') (on cluster: tar xzvf boost_1_55_0.tar.gz ;  cd boost_1_55_0 ; ./bootstrap.sh --prefix=$BOOST_ROOT; ./b2; ./b2 install)
-    0.0b') (on cluster: to shorten the installation time you can also call the bootstrap command with the option
-           --with-libraries=iostreams,serialization,graph,graph_parallel,thread,system,filesystem,test,timer
-           While deal.ii requires the first six of them, natrium requires the last four)
-    0.0c') (on cluster: set BOOST_ROOT to the boost root directory)
-    0.1) Install cmake download and untar tarball from cmake homepage; follow instructions
-         (Version 2.8.8 required!)
-         (Version on ubuntu software center is too old)
-         tar -xzvf cmake....tgz; cd cmake...; ./bootstrap; make; make install;
-    0.1a) (on cluster: module load cmake/<version newer than 2.8.8> )         
-    0.1a') (on cluster: install with ./bootstrap --prefix=<your custom directory> )
-    0.2) If not installed, install valgrind (e.g. sudo apt-get install valgrind)
-         If not installed, install blas/lapack (e.g. sudo apt-get install libblas-dev liblapack-dev)
-         If not installed, install gfortran (e.g. sudo apt-get install gfortran)
-    0.3) (on cluster:  module load gcc/4.9.0; module load openmpi/gnu)     
-    0.4) Trilinos
-        0.4.1) Go to the Trilinos web page; download section
-        0.4.2) You will have to register to download the .gz files (Version 11.10.2 is recommended by deal.II)
-        0.4.3) Download and untar
-        0.4.7) set environment variable TRILINOS_DIR to a path of your choice (e.g. ~/NATriuM/trilinos-11.10.2)
-        0.4.4) cd trilinos-11.10.2; mkdir build; cd build
-        0.4.5) Cmake: (on cluster: add option	-D TPL_ENABLE_Pthread=OFF as including threads leads to a segmentation fault in the natrium executables)
-	cmake -D Trilinos_ENABLE_Sacado=ON \
+    0.0 Install Boost from https://www.boost.org/
+    	Download boost tar-file from www.boost.org:
+    	Extract file
+	Go to folder
+	Execute:
+    	
+	./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
+	./b2
+	./b2 install
+    
+    0.1) p4est
+    	0.5.1) download tarball from p4est homepage (here: version 2.2; no need to untar)
+	0.5.2) get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
+	0.5.3) export CC=mpicc && export CXX=mpicxx (somehow the configuration script does not detect the right compilers, otherwise)
+    	0.5.4) ./p4est-setup.sh <p4est tarball> $P4EST_DIR
+
+    0.2) Trilinos
+	git clone https://github.com/trilinos/Trilinos.git
+	
+	mkdir build_trilinos
+	cd build_trilinos
+	cmake 	-D Trilinos_ENABLE_Sacado=ON \
 	-D Trilinos_ENABLE_Stratimikos=ON \
+    	-D Trilinos_ENABLE_MueLu=ON \
 	-D CMAKE_BUILD_TYPE=RELEASE \
 	-D CMAKE_CXX_FLAGS="-g -O3" \
 	-D CMAKE_C_FLAGS="-g -O3" \
@@ -50,87 +75,40 @@ The following configuration works fine:
 	-D CMAKE_VERBOSE_MAKEFILE=FALSE \
 	-D Trilinos_VERBOSE_CONFIGURE=FALSE \
 	-D TPL_ENABLE_MPI=ON \
+	-D TPL_ENABLE_Pthread=OFF \
 	-D BUILD_SHARED_LIBS=ON \
 	-D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
-	.. 
-    0.4.6) make -jN; make install, with N=number of processors
-    0.5) p4est
-    	0.5.1) download tarball from p4est homepage (here: version 1.1; no need to untar)
-		0.5.2) get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
-		0.5.3) export CC=mpicc && export CXX=mpicxx (somehow the configuration script does not detect the right compilers, otherwise)
-    	0.5.4) set environment variable P4EST_DIR in .bashrc
-    	0.5.5) ./p4est-setup.sh <p4est tarball> $P4EST_DIR
-    0.6) Qt (full development kit) -> optional (for the parameter gui)
-    	0.6.1) sudo apt-get install qt-sdk
-    0.7) deal.ii
-        0.7.1) download and untar tarball from deal.ii homepage
+	../Trilinos*/
+
+    0.3) deal.ii
+        0.3.1) download and untar tarball from deal.ii homepage
         	   (rename directory if it has the name of your target directory)
         	   (to get newest dealii version: git clone git://git@github.org/dealii/dealii.git dealii-git)
-        0.7.2) set environment variable DEAL_II_DIR to the path you want to install the library to
-  		0.7.3a) (on cluster: execute the -> cmake command with -DDEAL_II_FORCE_BUNDLED_BOOST=OFF -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT)
-  		        (This is important to prevent errors that occur from different/old versions of dynamic libraries that are normally preinstalled.)
-        0.7.4) mkdir build; cd build; cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=ON -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON <directory/with/deal/source>
-        0.7.5) make -j 6 install (-j 6 enables parallel compilation on 6 processors; otherwise installation will take hours)
-        0.7.5a) (on cluster) check in the log if DEAL.II really used the external boost and not the bundled one 
-        		(NATriuM does not work with the bundled filesystem module and they have to be consistent)
         
+	0.3.2) mkdir build_deal; 
+		cd build_deal; 
+		cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON 						-DDEAL_II_COMPONENT_PARAMETER_GUI=OFF -DDEAL_II_WITH_BOOST=ON -DDEAL_II_ALLOW_BUNDLED=OFF -DBOOST_DIR=$BOOST_ROOT -DDEAL_II_WITH_THREADS=OFF 			-DBOOST_ROOT=$BOOST_ROOT -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON -DDEAL_II_FORCE_BUNDLED_UMFPACK=ON -DDEAL_II_FORCE_BUNDLED_MUPARSER=ON 			../dealii-9.3.0
+	
+        0.7.5) make -j 8 install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
+
+ 
+ 	0.8) Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and Trilinos libraries! 
         
-================================================================================================
-   OPTIONAL (IF YOU WANT TO CONTRIBUTE): INSTALL ECLIPSE
-================================================================================================
-        
- 1) Install Eclipse
-    1.1) get tar at eclipse web page -> Downloads -> Eclipse bundle for c++ developers (or similar)
-    1.2) move tar to /opt
-    1.3) untar (no installation needed)
-    1.4) (sudo) create a file "eclipse" in /usr/local/bin -> (sudo) open in text editor
-    1.5) write the following lines (if not the eclipse main menu is not going to work)
-            #!/bin/sh
-            UBUNTU_MENUPROXY= /opt/eclipse/eclipse
-    1.6) close
-    1.7) sudo chmod +x 
-    1.8) Launch eclipse by typing "eclipse" in a terminal
-            
+
 
 ================================================================================================
    GET AND COMPILE NATRIUM CODE
 ================================================================================================
-Currently the code is hosted at the wr0 Cluster (at the Bonn-Rhein-Sieg University of Applied Sciences).
+	0) cd $NATRIUM_BASE_DIR
+	1) clone https://github.com/lettucecfd/NATriuM.git
+	2) cd NATriuM; mkdir bin_debug; cd bin_debug
+	3) -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
+	3) make -j8
+	5) Load project via IDE (e.g., Eclipse or CLion (recommended))
+	6) Repeat steps 1-5) for "bin_release" instead of "bin_debug" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
+	7) Check that the CMakeCache.txt: CMAKE_BUILD_TYPE:STRING= must be set to RELEASE! Otherwise the program will be really slow
+CMAKE_BUILD_TYPE:STRING=Release
 
-
-OPTION A (IF YOU JUST WANT TO USE THE CODE, e.g. on a compute cluster): SET UP NATRIUM CODE AS A MAKEFILE PROJECT        
------------------------------------------------------------------------------------------------------------------
-   - go to the directory you want NATriuM to be installed in
-   - Clone the git repository: git clone username@wr0.wr.inf.h-brs.de:/home/akraem3m/git/NATriuM.git
-     (if you do not have an account, contact andreas.kraemer@h-brs.de)
-   1) go to the directory NATriuM/bin
-   2) cmake -DCMAKE_BUILD_TYPE=Release ../src/ -B. && make all
-   3) Set the environment variable NATRIUM_HOME to the principal output directory (in .bashrc)
-   4) Set the environment varialbe NATRIUM_DIR to the natrium directory that contains src and bin
-      Both NATRIUM_HOME and NATRIUM_DIR must not have a / as last character
-
-
-OPTION B (IF YOU WANT TO CONTRIUBTE): SET UP NATRIUM CODE AS AN ECLIPSE PROJECT
--------------------------------------------------------------------------------
-   - go to your eclipse workspace 
-   - Clone the git repository: git clone username@wr0.wr.inf.h-brs.de:/home/akraem3m/git/NATriuM.git
-     (if you do not have an account, contact andreas.kraemer@h-brs.de)
-   1) go to the directory NATriuM/bin
-   2) cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
-     (just so you know: -B. sets cmake's binary dir to .)
-   3) Launch eclipse
-   4) File->Import->General->Existing Projects Into Workspace->Select root directory
-   5) IMPORTANT: Select the cmake   b i n   directory (e.g. NATriuM/bin)
-      This will automatically set the build and run options in eclipse
-      Eclipse will automatically detect that it is a git repository
-   6) Build project 
-      (At least when having verbosity option on): CMake parses the include directories (das ist genial ;) )
-      This will keep the error parser from underlining everything ;)
-   7) Repeat steps 1-6) for "bin_relase" instead of "bin" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
-      All source files are accessible and changable via [Source directory] in the project tree
-   8) Set the environment variable NATRIUM_HOME to the principal output directory (in .bashrc)
-   9) Set the environment varialbe NATRIUM_DIR to the natrium directory that contains src and bin 
-      Both NATRIUM_HOME and NATRIUM_DIR must not have a / as last character  
 
 
         
