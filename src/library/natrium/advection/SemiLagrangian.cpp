@@ -312,7 +312,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
                         el.currentDirection =
                                 Base::m_stencil->getIndexOfOppositeDirection(
                                         el.currentDirection);
-                        cout << el.currentDirection << " " << el.destination.direction << el.departurePoint << "\n";
                     }
 					if (it == found_in_cell.end()) {
 
