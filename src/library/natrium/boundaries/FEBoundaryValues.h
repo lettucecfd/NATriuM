@@ -159,7 +159,7 @@ public:
 		if (boundary_du_dt & m_flags) {
 			calculateDuDt(q_point);
 		}
-		assert(m_flags == m_upToDate);
+		//assert(m_flags == m_upToDate);
 	}
 
 	size_t getDofsPerCell() const {

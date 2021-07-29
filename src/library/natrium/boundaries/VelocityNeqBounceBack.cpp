@@ -186,11 +186,12 @@ void VelocityNeqBounceBack<dim>::calculateBoundaryValues(
 			destination.index) = stencil.getWeight(destination.direction) * rho *
 			(1 + exu / cs2 + u*u / (2 * cs2) +  (exu * exu) / (2*cs2*cs2));
 			*/
-
-	//fe_boundary_values.getData().m_fnew.at(destination.direction)(
-	//				destination.index) =
-	//			fe_boundary_values.getData().m_fnew.at(destination.direction)(
-	//					destination.index) + to_add;
+    if (not destination.domain_corner) {
+        fe_boundary_values.getData().m_fnew.at(destination.direction)(
+                destination.index) =
+                fe_boundary_values.getData().m_fnew.at(destination.direction)(
+                        destination.index) + to_add;
+    }
 
 }
 

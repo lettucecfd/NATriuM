@@ -27,7 +27,6 @@ enum BoundaryFlags {
 	boundary_d2u_dxdt = 0x0020,
 	boundary_p = 0x0040,
 	boundary_dp_dt = 0x0080,
-	boundary_pUT = 0x0100
 };
 
 inline BoundaryFlags
@@ -62,7 +61,6 @@ private:
 	BoundaryFlags m_prescribedValues;
 	boost::shared_ptr<dealii::Function<dim> > m_pressure;
 	boost::shared_ptr<dealii::Function<dim> > m_velocity;
-	boost::shared_ptr<dealii::Function<dim> > m_temperature;
 	boost::shared_ptr<dealii::TensorFunction<2, dim> > m_velocityGradient;
 
 public:
@@ -132,20 +130,6 @@ public:
 				u);
 	}
 
-    /**
- * @short Constructor using a tensor, i.e. the velocity.
- * @note The function instance is created by using BoundaryTools::BoundaryVelocity
- */
-    PrescribedBoundaryValues(double p, const dealii::Tensor<1, dim>& u, double T) {
-        m_prescribedValues = boundary_pUT;
-        m_pressure = boost::make_shared<BoundaryTools::BoundaryPressure<dim> >(
-                p);
-        m_velocity = boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(
-                u);
-        m_temperature = boost::make_shared<BoundaryTools::BoundaryTemperature<dim> >(
-                p);
-    }
-
 	/**
 	 * @short Constructor using a dealii::Vector, i.e. the velocity.
 	 * @note The function instance is created by using BoundaryTools::BoundaryVelocity
@@ -198,12 +182,6 @@ public:
 	boost::shared_ptr<dealii::Function<dim> >& getVelocity()  {
 		return m_velocity;
 	}
-/**
-	 * @short get the function that defines the prescribed temperature
-	 */
-    boost::shared_ptr<dealii::Function<dim> >& getTemperature()  {
-        return m_temperature;
-    }
 
 	/**
 	 * @short get the function that defines the prescribed Jacobian du/dx

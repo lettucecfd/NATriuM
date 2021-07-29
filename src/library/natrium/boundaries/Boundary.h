@@ -99,11 +99,11 @@ public:
 		return m_boundaryName;
 	}
 
-	PrescribedBoundaryValues<dim>& getBoundaryValues()  {
+	PrescribedBoundaryValues<dim> getBoundaryValues()  {
 		return m_boundaryValues;
 	}
 
-    BoundaryFlags& getPrescribedQuantities() const {
+	BoundaryFlags getPrescribedQuantities() const {
 		return m_boundaryValues.getPrescribedValues();
 	}
 

@@ -161,7 +161,7 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	configuration->setOutputDirectory(dirname.str());
 	configuration->setOutputCheckpointInterval(10000);
-	configuration->setOutputSolutionInterval(100);
+	configuration->setOutputSolutionInterval(1);
 	configuration->setTimeIntegrator(time_integrator);
 	configuration->setDealIntegrator(deal_integrator);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
@@ -171,9 +171,9 @@ int main(int argc, char** argv) {
 	//configuration->setTimeIntegrator(EXPONENTIAL);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setForcingScheme(NO_FORCING);
-	configuration->setStencil(Stencil_D2Q25H);
+	configuration->setStencil(Stencil_D2Q9);
 	//! [Solver]
-	CompressibleCFDSolver<2> solver(configuration, obstacle_flow);
+	CFDSolver<2> solver(configuration, obstacle_flow);
 	solver.run();
 
 	pout << "NATriuM step-0 terminated." << endl;

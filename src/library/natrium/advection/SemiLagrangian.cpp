@@ -255,12 +255,15 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 						// add diagonal entry to sparsity pattern
 						m_blockSparsityPattern.block(row_index,el.destination.direction- 1).add(el.destination.index,
 								el.destination.index);
-					} else {
+                        el.destination.domain_corner=true;
+
+                    } else {
 						// insert '1'
 						Base::m_systemMatrix.block(el.destination.direction - 1,
 								el.destination.direction - 1).add(
 								el.destination.index, el.destination.index,
 								1.0);
+						el.destination.domain_corner=true;
 					}
 					not_found.pop();
 					continue;
@@ -368,7 +371,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 												el.currentDirection)[i]
 												* distance / vel_direction;
 							}
-							if (not sparsity_pattern) {
+							if (not sparsity_pattern and el.already_hit==false) {
 								m_boundaryHandler.addHit(el, bi);
 							}
 
