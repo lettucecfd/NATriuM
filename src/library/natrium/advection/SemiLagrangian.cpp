@@ -308,7 +308,14 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 							typename DoFHandler<dim>::active_cell_iterator,
 							DeparturePointList<dim> >::iterator it =
 							found_in_cell.find(el.currentCell);
+                    if(el.hit_do_nothing) {
+                        el.currentDirection =
+                                Base::m_stencil->getIndexOfOppositeDirection(
+                                        el.currentDirection);
+                        cout << el.currentDirection << " " << el.destination.direction << el.departurePoint << "\n";
+                    }
 					if (it == found_in_cell.end()) {
+
 						DeparturePointList<dim> new_xlist;
 						new_xlist.push_back(el);
 						found_in_cell.insert(
@@ -371,11 +378,28 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 												el.currentDirection)[i]
 												* distance / vel_direction;
 							}
-							if (not sparsity_pattern and el.already_hit==false) {
+							if (not sparsity_pattern) {
 								m_boundaryHandler.addHit(el, bi);
 							}
 
-						} else /* is not LinearFluxBoundary */{
+						}
+                        // ================================================================================================
+                        // ================================= DoNothingBoundaryCondition=== ================================
+                        // ================================================================================================
+                        if (Base::getBoundaries()->getBoundary(bi)->getBoundaryName() == DO_NOTHING_BC) {
+
+                            // Go back to start and follow the opposite direction to find the departure point
+                            el.currentPoint = el.departurePoint - minus_dtealpha.at(el.currentDirection);
+
+                            el.departurePoint = el.currentPoint - minus_dtealpha.at(el.currentDirection);
+                            el.currentDirection =
+                                    Base::m_stencil->getIndexOfOppositeDirection(
+                                            el.currentDirection);
+                            el.hit_do_nothing = true;
+                        }
+
+
+						else /* is not LinearFluxBoundary */{
 
 							// ================================================================================================
 							// ================================= Other Boundaries =============================================

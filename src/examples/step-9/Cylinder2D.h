@@ -39,7 +39,7 @@ public:
 		make_inner_manifold(mesh, manifold);
 		mesh.refine_global(1);
 		// free the manifold
-		mesh.set_manifold(1);
+		mesh.set_manifold(1,manifold);
 
 	}
 

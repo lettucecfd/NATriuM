@@ -37,7 +37,8 @@ enum BoundaryName {
 	//
 	FIRST_ORDER_BB,
 	PRESSURE_EQUILIBRIUM_BOUNDARY,
-	VELOCITY_EQUILIBRIUM_BOUNDARY
+	VELOCITY_EQUILIBRIUM_BOUNDARY,
+	DO_NOTHING_BC
 };
 
 inline bool is_velocity_neq_bb(BoundaryName bn){

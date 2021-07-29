@@ -18,6 +18,7 @@
 #include "deal.II/base/geometry_info.h"
 
 #include "natrium/boundaries/PeriodicBoundary.h"
+#include "natrium/boundaries/DoNothingBoundary.h"
 #include "natrium/boundaries/VelocityNeqBounceBack.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/DealiiExtensions.h"
@@ -93,16 +94,16 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 // make circular
 	make_inner_manifold(tmp, manifold1, 5);
 	tmp.refine_global(2);
-	tmp.set_manifold(1);
+	tmp.set_manifold(1,manifold1);
 // delete coarse cells (Mesh.merge() requires "coarse" triangulations as input)
 	dealii::GridGenerator::flatten_triangulation(tmp, trans);
 // inner part
 	tmp.clear();
-	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 0.5, 5, 8);
+	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 5, 8);
 	tmp.set_all_manifold_ids(1);
 	tmp.set_manifold(1, manifold2);
 	tmp.refine_global(2);
-	tmp.set_manifold(1);
+	tmp.set_manifold(1,manifold2);
 	dealii::GridGenerator::flatten_triangulation(tmp, inner);
 	dealii::GridGenerator::merge_triangulations(trans, inner, merge);
 	mesh.clear();
@@ -142,7 +143,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, -19, 3);
 	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, 25, 4);
 	make_inner_manifold(mesh, manifold3, 0.5, 0);
-	mesh.set_manifold(1);
+	mesh.set_manifold(1,manifold3);
 
 	std::stringstream s;
 	s << "/tmp/grid_cylinder.vtk";
@@ -169,7 +170,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	distributed_mesh->copy_triangulation(mesh);
 
 // release manifolds
-	tmp.set_manifold(0);
+	//tmp.set_manifold(0);
 
 	return distributed_mesh;
 }
@@ -184,18 +185,20 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = inletVelocity;
 
-	boundaries->addBoundary(
+	/*boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(4,
-					constantVelocity));
+					constantVelocity)); */
 	boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(1,
 					constantVelocity));
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(2,
-					constantVelocity));
-	boundaries->addBoundary(
+			boost::make_shared<DoNothingBoundary<2> >(2));
+    boundaries->addBoundary(
+            boost::make_shared<PeriodicBoundary<2> >(3, 4, 1, getMesh()));
+
+/*	boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(3,
-					constantVelocity));
+					constantVelocity)); */
 	boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(0, zeroVelocity));
 
@@ -210,12 +213,17 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
  * @short set initial velocities
  *
  */
-double Cylinder2D::InitialU::value(const dealii::Point<2>& ,
+double Cylinder2D::InitialU::value(const dealii::Point<2>& x,
 			const unsigned int component) const {
 		assert(component < 2);
 	if (0 == component){
+
 		return m_flow->getCharacteristicVelocity();// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
+
 	}
+    if (1 == component){
+        return m_flow->getCharacteristicVelocity()*0.1 * sin(x(1))*cos(5*x(1)+x(0));// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
+    }
 	return 0;
 }
 

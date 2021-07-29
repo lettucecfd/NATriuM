@@ -14,6 +14,7 @@
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
+#include "natrium/utilities/CommandLineParser.h"
 
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/stencils/D2Q9.h"
@@ -27,7 +28,15 @@ using namespace natrium;
 // Main function
 int main(int argc, char** argv) {
 
-	MPIGuard::getInstance(argc, argv);
+    MPIGuard::getInstance();
+    CommandLineParser parser(argc, argv);
+    parser.setArgument<double>("Ma", "Mach number", 0.1);
+
+    try {
+        parser.importOptions();
+    } catch (HelpMessageStop&){
+        return 0;
+    }
 
 
 	pout << "Starting NATriuM step-9..." << endl;
@@ -35,12 +44,13 @@ int main(int argc, char** argv) {
 
 	// set Reynolds and Mach number
 	const double Re = 100;
-	const double Ma = 0.1;
+	const double Ma = parser.getArgument<double>("Ma");
 
 	// set Problem so that the right Re and Ma are achieved
 	const double U = 1/sqrt(3)*Ma;
 	const double dqScaling = 1;
 	const double viscosity = U / Re; // (because L = 1)
+
 
 	// load grid
 	boost::shared_ptr<Cylinder2D> cylinder = boost::make_shared<Cylinder2D>(
@@ -70,6 +80,9 @@ int main(int argc, char** argv) {
 	configuration->setCFL(cfl);
 	configuration->setCommandLineVerbosity(7);
 	//configuration->setDistributionInitType(Iterative);
+
+
+	parser.applyToSolverConfiguration(*configuration);
 
 
 	boost::shared_ptr<ProblemDescription<2> > couetteProblem = cylinder;
