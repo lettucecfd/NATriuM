@@ -20,6 +20,7 @@
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/DoNothingBoundary.h"
 #include "natrium/boundaries/VelocityNeqBounceBack.h"
+#include "natrium/boundaries/SLEquilibriumBoundary.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/DealiiExtensions.h"
 #include "natrium/utilities/Logging.h"
@@ -185,12 +186,13 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = inletVelocity;
 
+	dealii::Tensor<1,2> inletTensor();
+
 	/*boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(4,
 					constantVelocity)); */
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(1,
-					constantVelocity));
+			boost::make_shared<VelocityNeqBounceBack<2> >(1, constantVelocity));
 	boundaries->addBoundary(
 			boost::make_shared<DoNothingBoundary<2> >(2));
     boundaries->addBoundary(

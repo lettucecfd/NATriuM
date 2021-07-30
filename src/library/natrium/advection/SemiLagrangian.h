@@ -160,10 +160,13 @@ public:
 		return Base::m_deltaT;
 	}
 
-	virtual void applyBoundaryConditions(DistributionFunctions& f_old,
-			DistributionFunctions& f, double t){
-		m_boundaryHandler.apply(f, f_old, t);
-	}
+	virtual void applyBoundaryConditions(DistributionFunctions& f_old, DistributionFunctions& f, double t){
+        m_boundaryHandler.apply(f, f_old, t);
+    }
+
+	virtual void applyBoundaryConditionsToG(DistributionFunctions& f, DistributionFunctions& g, double t, const double gamma){
+        m_boundaryHandler.applyToG(f, g, t, gamma);
+    }
 
 	virtual void setDeltaT(double deltaT) {
 		Base::setDeltaT(deltaT);

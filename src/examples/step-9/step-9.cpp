@@ -12,6 +12,8 @@
 #include "deal.II/numerics/data_out.h"
 
 #include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/CompressibleCFDSolver.h"
+
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/CommandLineParser.h"
@@ -31,6 +33,9 @@ int main(int argc, char** argv) {
     MPIGuard::getInstance();
     CommandLineParser parser(argc, argv);
     parser.setArgument<double>("Ma", "Mach number", 0.1);
+    parser.setArgument<int>("Re", "Reynolds number", 100);
+
+    parser.setArgument<int>("compressible", "Compressible CFD solver needed?", 0);
 
     try {
         parser.importOptions();
@@ -43,10 +48,11 @@ int main(int argc, char** argv) {
 
 
 	// set Reynolds and Mach number
-	const double Re = 100;
 	const double Ma = parser.getArgument<double>("Ma");
+    const double Re = parser.getArgument<int>("Re");;
 
-	// set Problem so that the right Re and Ma are achieved
+
+    // set Problem so that the right Re and Ma are achieved
 	const double U = 1/sqrt(3)*Ma;
 	const double dqScaling = 1;
 	const double viscosity = U / Re; // (because L = 1)
@@ -79,6 +85,7 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(dqScaling);
 	configuration->setCFL(cfl);
 	configuration->setCommandLineVerbosity(7);
+	configuration->setHeatCapacityRatioGamma(1.4);
 	//configuration->setDistributionInitType(Iterative);
 
 
@@ -86,11 +93,16 @@ int main(int argc, char** argv) {
 
 
 	boost::shared_ptr<ProblemDescription<2> > couetteProblem = cylinder;
-	CFDSolver<2> solver(configuration, couetteProblem);
 
-	solver.run();
-
-
+    if(static_cast<bool>(parser.getArgument<int>("compressible"))!=true) {
+        CFDSolver<2> solver(configuration, couetteProblem);
+        solver.run();
+    }
+    else
+    {
+        CompressibleCFDSolver<2> solver(configuration, couetteProblem);
+        solver.run();
+    }
 
 	pout << "NATriuM step-9 terminated." << endl;
 

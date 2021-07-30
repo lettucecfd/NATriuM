@@ -79,7 +79,8 @@ void gStream() {
 
 		DistributionFunctions g_tmp(m_g);
 		systemMatrix.vmult(m_g.getFStream(), g_tmp.getFStream());
-		this->getAdvectionOperator()->applyBoundaryConditions(g_tmp, m_g, this->m_time);
+		const double gamma = this->getConfiguration()->getHeatCapacityRatioGamma();
+        this->getAdvectionOperator()->applyBoundaryConditionsToG(this->m_f,this->m_g,this->m_time,gamma);
 		/*distributed_block_vector f_tmp(f.n_blocks());
 		 reinitVector(f_tmp, f);
 		 f_tmp = f;
@@ -551,7 +552,7 @@ void compressibleFilter() {
 	}
 
     inline void calcQuarticEquilibrium(std::vector<double>& feq, size_t T_Q, double density, std::array<double,dim> velocity, double temperature, double cs2, std::vector<std::array<double,dim>> e, std::vector<double> weight) {
-        double eye[2][2]={{1,0},{0,1}};
+        const std::array<std::array<size_t,dim>, dim> eye = unity_matrix<dim>();
         double uu_term = 0.0;
         for (size_t j = 0; j < dim; j++) {
             uu_term += -(velocity[j] * velocity[j])

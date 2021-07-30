@@ -24,6 +24,11 @@ public:
 					PrescribedBoundaryValues<dim>(velocity)) {
 	}
 
+    SLEquilibriumBoundary(size_t boundary_id, const dealii::Vector<double>& velocity) :
+            Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY,
+                          PrescribedBoundaryValues<dim>(velocity)) {
+    }
+
 	//virtual ~SLEquilibriumBoundary();
 
 	/////////////////////////////////////////////////

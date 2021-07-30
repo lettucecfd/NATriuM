@@ -80,6 +80,8 @@ public:
 
 	void apply(DistributionFunctions& f_new, const DistributionFunctions& f_old, double t);
 
+	void applyToG(DistributionFunctions& f, DistributionFunctions& g, double t, const double gamma);
+
 	/*void print_out(){
 	 pout << "Semi Lagrangian Boundary Handler Object:" << endl;
 	 m_hitList.print_out();
