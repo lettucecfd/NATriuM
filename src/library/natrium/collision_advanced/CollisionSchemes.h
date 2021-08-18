@@ -80,8 +80,18 @@ public:
         }
         double sutherland_factor = 1.402*pow(genData.temperature,1.5) / ( genData.temperature + 0.40417);
         double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
-        double ener_tau = visc_tau;
 
+
+        const double knudsen_estimate = calculateNonEquilibriumState<T_D,T_Q>(fLocal,genData.feq);
+        double tau_factor = 1.0;
+            if(knudsen_estimate >= 0.01)
+                tau_factor = 1.05;
+            if(knudsen_estimate >= 0.1)
+                tau_factor = 1.35;
+            if(knudsen_estimate >= 1)
+                tau_factor = 1/visc_tau;
+        visc_tau *=tau_factor;
+        double ener_tau = visc_tau;
         double prandtl = genData.configuration.getPrandtlNumber();
         double prandtl_tau = (visc_tau - 0.5)/prandtl + 0.5;
 

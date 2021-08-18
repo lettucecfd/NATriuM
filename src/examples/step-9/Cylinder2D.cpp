@@ -74,6 +74,10 @@ void Cylinder2D::make_inner_manifold(dealii::Triangulation<2>& mesh,
 
 boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 
+    const double upper_extent = 8;
+    const double total_length = 15;
+    const double total_height = 25;
+
 // this is not the domain by Min and Lee! they had D=1; [-19,50]x[-25,25]
 // differences:
 // - boundaries are closer (can be fixed with a few additional rectangles)
@@ -90,17 +94,17 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::Triangulation<2> trans;
 	dealii::Triangulation<2> tmp;
 	dealii::Triangulation<2> merge;
-	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 5, 19);
+	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 3, upper_extent);
 
 // make circular
-	make_inner_manifold(tmp, manifold1, 5);
+	make_inner_manifold(tmp, manifold1, 3);
 	tmp.refine_global(2);
 	tmp.set_manifold(1,manifold1);
 // delete coarse cells (Mesh.merge() requires "coarse" triangulations as input)
 	dealii::GridGenerator::flatten_triangulation(tmp, trans);
 // inner part
 	tmp.clear();
-	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 5, 8);
+	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 3, 8);
 	tmp.set_all_manifold_ids(1);
 	tmp.set_manifold(1, manifold2);
 	tmp.refine_global(2);
@@ -114,35 +118,59 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	repetitions.push_back(3);
 	repetitions.push_back(8);
 	dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
-			dealii::Point<2>(19, -19), dealii::Point<2>(50, 19));
+			dealii::Point<2>(upper_extent, -upper_extent), dealii::Point<2>(total_length, upper_extent));
 	dealii::GridGenerator::merge_triangulations(mesh, rect, merge);
 	mesh.clear();
 	mesh.copy_triangulation(merge);
 // add unsymmetric part
-// rect left
-	repetitions.at(0) = 8;
-	repetitions.at(1) = 1;
+//  UPPER rect left
+	 repetitions.at(0) = 8;
+	repetitions.at(1) = 2;
 	rect.clear();
 	dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
-			dealii::Point<2>(-19, 19), dealii::Point<2>(19, 25));
-	dealii::GridGenerator::merge_triangulations(mesh, rect, merge);
-	mesh.clear();
-	mesh.copy_triangulation(merge);
-// rect right 1
-	repetitions.at(0) = 3;
-	repetitions.at(1) = 1;
-	rect.clear();
-	dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
-			dealii::Point<2>(19, 19), dealii::Point<2>(50, 25));
+			dealii::Point<2>(-upper_extent, upper_extent), dealii::Point<2>(upper_extent, total_height));
 	dealii::GridGenerator::merge_triangulations(mesh, rect, merge);
 	mesh.clear();
 	mesh.copy_triangulation(merge);
 
+	// UPPER rect right 1
+	repetitions.at(0) = 3;
+	repetitions.at(1) = 2;
+	rect.clear();
+	dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
+			dealii::Point<2>(upper_extent, upper_extent), dealii::Point<2>(total_length, total_height));
+	dealii::GridGenerator::merge_triangulations(mesh, rect, merge);
+	mesh.clear();
+	mesh.copy_triangulation(merge);
+
+
+    // LOWER rect left
+    repetitions.at(0) = 8;
+    repetitions.at(1) = 2;
+    rect.clear();
+    dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
+                                                      dealii::Point<2>(-upper_extent, -upper_extent), dealii::Point<2>(upper_extent, -total_height));
+    dealii::GridGenerator::merge_triangulations(mesh, rect, merge);
+    mesh.clear();
+    mesh.copy_triangulation(merge);
+
+    // LOWER rect right 1
+    repetitions.at(0) = 3;
+    repetitions.at(1) = 2;
+    rect.clear();
+    dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
+                                                      dealii::Point<2>(upper_extent, -upper_extent), dealii::Point<2>(total_length, -total_height));
+    dealii::GridGenerator::merge_triangulations(mesh, rect, merge);
+    mesh.clear();
+    mesh.copy_triangulation(merge);
+
+
+
 // set boundary ids
-	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 0, -19, 1); // left
-	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 0, 50, 2);
-	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, -19, 3);
-	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, 25, 4);
+	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 0, -upper_extent, 1); // left
+	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 0, total_length, 2);
+	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, -total_height, 3);
+	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, total_height, 4);
 	make_inner_manifold(mesh, manifold3, 0.5, 0);
 	mesh.set_manifold(1,manifold3);
 

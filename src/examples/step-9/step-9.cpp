@@ -49,13 +49,22 @@ int main(int argc, char** argv) {
 
 	// set Reynolds and Mach number
 	const double Ma = parser.getArgument<double>("Ma");
+	const double gamma = 1.4;
+	// increase velocity to gain correct speed
+
+
+
     const double Re = parser.getArgument<int>("Re");;
 
 
     // set Problem so that the right Re and Ma are achieved
-	const double U = 1/sqrt(3)*Ma;
+	double U = 1/sqrt(3)*Ma;
+    if(static_cast<bool>(parser.getArgument<int>("compressible"))==true) {
+    U *= sqrt(gamma);
+    }
 	const double dqScaling = 1;
 	const double viscosity = U / Re; // (because L = 1)
+    pout << "Mach number: " << U / ( dqScaling / sqrt(3)) / sqrt(gamma) << endl;
 
 
 	// load grid
@@ -67,7 +76,6 @@ int main(int argc, char** argv) {
 	const double cfl=5;
 
 
-	pout << "Mach number: " << U / ( dqScaling / sqrt(3)) << endl;
 
 	// configure solver
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
@@ -85,7 +93,7 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(dqScaling);
 	configuration->setCFL(cfl);
 	configuration->setCommandLineVerbosity(7);
-	configuration->setHeatCapacityRatioGamma(1.4);
+	configuration->setHeatCapacityRatioGamma(gamma);
 	//configuration->setDistributionInitType(Iterative);
 
 
