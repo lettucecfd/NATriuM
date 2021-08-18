@@ -404,9 +404,9 @@ template<size_t T_D, size_t T_Q>
 inline double calculateNonEquilibriumState(const std::array<double, T_Q> &f, const std::array<double, T_Q> &feq) {
 double estimate = 0.0;
     for (size_t i = 0; i < T_Q; i++) {
-        estimate += (f[i] - feq [i]) / feq[i];
+        estimate += sqrt((f[i] - feq [i])*(f[i] - feq [i])) / feq[i];
 }
-return estimate;
+return estimate / T_Q;
 }
 
 
