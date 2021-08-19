@@ -34,8 +34,9 @@ int main(int argc, char** argv) {
     CommandLineParser parser(argc, argv);
     parser.setArgument<double>("Ma", "Mach number", 0.1);
     parser.setArgument<int>("Re", "Reynolds number", 100);
-
+    parser.setArgument<int>("ref-level", "Refinement level", 1);
     parser.setArgument<int>("compressible", "Compressible CFD solver needed?", 0);
+
 
     try {
         parser.importOptions();
@@ -46,6 +47,7 @@ int main(int argc, char** argv) {
 
 	pout << "Starting NATriuM step-9..." << endl;
 
+    const int refLevel = parser.getArgument<int>("ref-level");
 
 	// set Reynolds and Mach number
 	const double Ma = parser.getArgument<double>("Ma");
@@ -69,7 +71,7 @@ int main(int argc, char** argv) {
 
 	// load grid
 	boost::shared_ptr<Cylinder2D> cylinder = boost::make_shared<Cylinder2D>(
-				viscosity, U);
+				viscosity, U, refLevel);
 	D2Q9 stencil(dqScaling);
 	// set FE order and time step size
 	const size_t orderOfFiniteElement = 2;

@@ -27,9 +27,9 @@
 
 namespace natrium {
 
-Cylinder2D::Cylinder2D(double viscosity, double inletVelocity) :
+Cylinder2D::Cylinder2D(double viscosity, double inletVelocity, size_t refinementLevel) :
 		ProblemDescription<2>(makeGrid(), viscosity, 1.0), m_inletVelocity(
-				inletVelocity) {
+				inletVelocity), m_refinementLevel(refinementLevel) {
 	setCharacteristicLength(1.0);
 
 	this->setInitialU(boost::make_shared<InitialU>(this));
@@ -62,8 +62,9 @@ void Cylinder2D::make_inner_manifold(dealii::Triangulation<2>& mesh,
 			if (is_inner_face) {
 				//cout << cell->face(f)->barycenter() << endl;
 				cell->face(f)->set_manifold_id(1);
-				if (boundary_id > 0){
+				if (boundary_id >= 0){
 					cell->face(f)->set_boundary_id(boundary_id);
+					pout << "Face set to boundary id" << boundary_id << ". \n" ;
 				}
 			}
 		}
@@ -97,7 +98,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 3, upper_extent);
 
 // make circular
-	make_inner_manifold(tmp, manifold1, 3);
+	//make_inner_manifold(tmp, manifold1, 3);
 	tmp.refine_global(2);
 	tmp.set_manifold(1,manifold1);
 // delete coarse cells (Mesh.merge() requires "coarse" triangulations as input)
@@ -171,7 +172,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 0, total_length, 2);
 	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, -total_height, 3);
 	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, total_height, 4);
-	make_inner_manifold(mesh, manifold3, 0.5, 0);
+	make_inner_manifold(mesh, manifold3, 1.0, 5);
 	mesh.set_manifold(1,manifold3);
 
 	std::stringstream s;
@@ -229,8 +230,8 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 /*	boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(3,
 					constantVelocity)); */
-	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(0, zeroVelocity));
+boundaries->addBoundary(
+			boost::make_shared<VelocityNeqBounceBack<2> >(5, zeroVelocity));
 
 // Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

@@ -542,7 +542,9 @@ void compressibleFilter() {
 			// copy back to ghosted vectors and communicate across MPI processors
 			CFDSolverUtilities::applyWriteableDensity(writeable_rho, this->m_density);
 			CFDSolverUtilities::applyWriteableVelocity(writeable_u, this->m_velocity);
-			applyWriteableTemperature(writeable_T, m_temperature);
+            CFDSolverUtilities::applyWriteableDensity(writeable_mSS, this->m_maskShockSensor);
+
+            applyWriteableTemperature(writeable_T, m_temperature);
 			this->m_f.updateGhosted();
             this->m_g.updateGhosted();
 
@@ -777,7 +779,7 @@ void compressibleFilter() {
             if (this->stopConditionMet()) {
                 break;
             }
-            applyShockSensor();
+            //applyShockSensor();
             // Deactivated this->output(this->m_i);
             this->compressibleOutput(this->m_i, false);
             this->m_i++;

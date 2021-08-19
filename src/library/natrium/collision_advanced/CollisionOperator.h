@@ -194,15 +194,15 @@ public:
 			}
 
             //Store the ShockSensorValue
-            genData.maskShockSensor = mSS_raw[ii];
+            //genData.maskShockSensor = mSS_raw[ii];
 
 			//Initialize an object of the desired collision scheme and run the relaxation process
 
            // collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData);
             collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData);
 
-
-			//reApplyForces<T_Q>(fLocal); // TODO
+            mSS_raw[ii] = genData.maskShockSensor;
+ 			//reApplyForces<T_Q>(fLocal); // TODO
 
 			//Finally copy the updated distribution function back to the global distribution function
 			for (int p = 0; p < T_Q; ++p) {

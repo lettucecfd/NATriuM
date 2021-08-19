@@ -249,6 +249,7 @@ void VelocityNeqBounceBack<dim>::calculateBoundaryValues(
 
 
 	 //equilibrium for testing:
+	 if (uxu>0.000001)
 	  fe_boundary_values.getData().m_fnew.at(destination.direction)(
 			destination.index) = feq; //stencil.getWeight(destination.direction) * rho *
 			//(1 + exu / cs2 + u*u / (2 * cs2) +  (exu * exu) / (2*cs2*cs2));
