@@ -215,11 +215,6 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	numeric_vector constantVelocity(2);
 	constantVelocity(0) = inletVelocity;
 
-	dealii::Tensor<1,2> inletTensor();
-
-	/*boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(4,
-					constantVelocity)); */
 	// Inlet
 	boundaries->addBoundary(
 			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity));
@@ -227,8 +222,10 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	boundaries->addBoundary(
 			boost::make_shared<DoNothingBoundary<2> >(2));
 	// Top & Bottom
-	boundaries->addBoundary(
-            boost::make_shared<PeriodicBoundary<2> >(3, 4, 1, getMesh()));
+    boundaries->addBoundary(
+            boost::make_shared<DoNothingBoundary<2> >(3));
+    boundaries->addBoundary(
+            boost::make_shared<DoNothingBoundary<2> >(4));
     // Obstacle
 	boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(5, zeroVelocity));
