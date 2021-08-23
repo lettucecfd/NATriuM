@@ -401,7 +401,7 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
     }
 
     template<size_t T_D, size_t T_Q>
-    inline double calculateNonEquilibriumState(const std::array<double, T_Q> &f, const std::array<double, T_Q> &feq, const std::array<double, T_Q> &weight) {
+    inline double calculateKnudsenNumberEstimate(const std::array<double, T_Q> &f, const std::array<double, T_Q> &feq, const std::array<double, T_Q> &weight) {
     double estimate = 0.0;
         for (size_t i = 0; i < T_Q; i++) {
             estimate += abs(f[i] - feq[i]) / weight[i];

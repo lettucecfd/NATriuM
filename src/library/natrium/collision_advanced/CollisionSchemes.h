@@ -62,7 +62,7 @@ public:
             gNeq[p] = gLocal[p] - genData.geq[p];
         }
 
-        bool isPrandtlNumberSet = genData.configuration.isPrandtlNumberSet();
+        const bool isPrandtlNumberSet = genData.configuration.isPrandtlNumberSet();
 
         if (isPrandtlNumberSet == true) {
 
@@ -82,7 +82,7 @@ public:
         double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
 
 
-        const double knudsen_estimate = calculateNonEquilibriumState<T_D,T_Q>(fLocal,genData.feq, genData.weight);
+        const double knudsen_estimate = calculateKnudsenNumberEstimate<T_D, T_Q>(fLocal, genData.feq, genData.weight);
         double tau_factor = 1.0;
             if(knudsen_estimate >= 0.01)
                 tau_factor = 1.05;
@@ -93,7 +93,7 @@ public:
         visc_tau *=tau_factor;
         double ener_tau = visc_tau;
         double prandtl = genData.configuration.getPrandtlNumber();
-        double prandtl_tau = (visc_tau - 0.5)/prandtl + 0.5;
+        double prandtl_tau = (visc_tau - 0.5) / prandtl + 0.5;
 
         genData.maskShockSensor = knudsen_estimate;
 
