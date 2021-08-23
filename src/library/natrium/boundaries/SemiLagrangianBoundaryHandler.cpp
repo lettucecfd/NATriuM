@@ -129,18 +129,13 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 // apply boundaries at hits
                 for (size_t i = 0; i < point_hits.n_hits(); i++) {
                     const BoundaryHit<dim> &hit = point_hits.at(i);
-                    //if (m_boundaries.getBoundary(hit.getBoundaryId())->getBoundaryName() ==
-                      //  VELOCITY_EQUILIBRIUM_BOUNDARY or NONCONSTANT_VELOCITY_NEQ_BB)
+                    if (m_boundaries.getBoundary(hit.getBoundaryId())->getBoundaryName() ==
+                        VELOCITY_EQUILIBRIUM_BOUNDARY)
                         g.at(hit.getDestination().direction)(hit.getDestination().index) =
                                 f.at(hit.getDestination().direction)(hit.getDestination().index) * (temperature) *
                                 (2.0 * C_v - dim);
 // calculate new g distribution functions at hits
 
-
-/*                    m_boundaries.getBoundary(hit.getBoundaryId())->calculateBoundaryValues(fe_b_values,
-                                                                                           q_point,
-                                                                                           hit.getDestination(),
-                                                                                           hit.getDtHit(), t);*/
                 } /* for all hits */
                 q_point++;
             } /* for all points */

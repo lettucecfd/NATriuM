@@ -8,7 +8,6 @@
 #include "VelocityNeqBounceBack.h"
 #include "BoundaryFlags.h"
 #include "BoundaryTools.h"
-#include "../collision_advanced/AuxiliaryCollisionFunctions.h"
 
 namespace natrium {
 
@@ -165,14 +164,6 @@ void VelocityNeqBounceBack<dim>::calculateBoundaryValues(
 		u[i] = tmp(i);
 	}
 
-	const double temperature = 1.0;
-	const double density = rho;
-	double feq;
-    const double weight =  stencil.getWeight(destination.direction);
-    std::array<double,dim> e_vel ={0.0};
-    for (size_t i = 0; i < dim; i++) {
-       e_vel[i] = stencil.getDirection(destination.direction)(i);
-    }
 
 	// calculate vector entry
 	double exu = 0.0;
@@ -189,77 +180,17 @@ void VelocityNeqBounceBack<dim>::calculateBoundaryValues(
 	double to_add = 2 * stencil.getWeight(destination.direction)
 			* rho * exu / stencil.getSpeedOfSoundSquare();
 
+	/*
+	 * equilibrium for testing:
+	 * fe_boundary_values.getData().m_fnew.at(destination.direction)(
+			destination.index) = stencil.getWeight(destination.direction) * rho *
+			(1 + exu / cs2 + u*u / (2 * cs2) +  (exu * exu) / (2*cs2*cs2));
+			*/
 
-    const std::array<std::array<size_t,dim>, dim> eye = unity_matrix<dim>();
-    double uu_term = 0.0;
-    for (size_t j = 0; j < dim; j++) {
-        uu_term += -(u[j] * u[j])
-                   / (2.0 * cs2);
-    }
-
-
-
-        double T1 = cs2*(temperature-1);
-
-        double ue_term = 0.0;
-        for (size_t j = 0; j < dim; j++) {
-            ue_term += (u[j] * e_vel[j]) / cs2;
-        }
-        feq = weight * density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
-        for (size_t alp = 0; alp < dim; alp++){
-            for (size_t bet = 0; bet < dim; bet++){
-                feq+=density*weight/(2.0*cs2)*((temperature-1)*eye[alp][bet]*e_vel[alp]*e_vel[bet]-cs2*eye[alp][bet]*(temperature-1));
-                for (size_t gam = 0; gam < dim; gam++){
-
-                    feq += weight * density / (6. * cs2 * cs2 * cs2) *
-                              (u[alp] * u[bet] * u[gam]
-                               + T1 *
-                                 (eye[alp][bet] * u[gam] + eye[bet][gam] * u[alp] +
-                                  eye[alp][gam] * u[bet])) * (e_vel[alp] * e_vel[bet] * e_vel[gam] - cs2 *
-                                                                                                         (e_vel[gam] *
-                                                                                                          eye[alp][bet] +
-                                                                                                          e_vel[bet] *
-                                                                                                          eye[alp][gam] +
-                                                                                                          e_vel[alp] *
-                                                                                                          eye[bet][gam]));
-
-                    for (size_t det = 0; det < dim; det++)
-                    {
-                        double power4 = e_vel[alp]*e_vel[bet]*e_vel[gam]*e_vel[det];
-                        double power2 = e_vel[alp]*e_vel[bet]*eye[gam][det]
-                                        +e_vel[alp]*e_vel[gam]*eye[bet][det]
-                                        +e_vel[alp]*e_vel[det]*eye[bet][gam]
-                                        +e_vel[bet]*e_vel[gam]*eye[alp][det]
-                                        +e_vel[bet]*e_vel[det]*eye[alp][gam]
-                                        +e_vel[gam]*e_vel[det]*eye[alp][bet];
-                        double power0 = eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
-                        double u4    = u[alp]*u[bet]*u[gam]*u[det];
-                        double u2 = u[alp]*u[bet]*eye[gam][det]+u[alp]*u[gam]*eye[bet][det]+u[alp]*u[det]*eye[bet][gam]+u[bet]*u[gam]*eye[alp][det]+u[bet]*u[det]*eye[alp][gam]+u[gam]*u[det]*eye[alp][bet];
-                        double multieye= eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
-
-                        feq+= weight * density /(24.*cs2*cs2*cs2*cs2)*(power4-cs2*power2+cs2*cs2*power0)*(u4+T1*(u2+T1*multieye));
-
-
-                    }
-
-                }
-            }
-
-        }
-
-
-	 //equilibrium for testing:
-	 if (uxu>0.000001)
-	  fe_boundary_values.getData().m_fnew.at(destination.direction)(
-			destination.index) = feq; //stencil.getWeight(destination.direction) * rho *
-			//(1 + exu / cs2 + u*u / (2 * cs2) +  (exu * exu) / (2*cs2*cs2));
-		/*
-    if (not destination.domain_corner) {
-        fe_boundary_values.getData().m_fnew.at(destination.direction)(
-                destination.index) =
-                fe_boundary_values.getData().m_fnew.at(destination.direction)(
-                        destination.index) + to_add;
-    } */
+	fe_boundary_values.getData().m_fnew.at(destination.direction)(
+					destination.index) =
+				fe_boundary_values.getData().m_fnew.at(destination.direction)(
+						destination.index) + to_add;
 
 }
 

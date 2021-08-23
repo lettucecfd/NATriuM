@@ -221,9 +221,9 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 			boost::make_shared<VelocityNeqBounceBack<2> >(4,
 					constantVelocity)); */
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(1, constantVelocity));
-	boundaries->addBoundary(
-			boost::make_shared<DoNothingBoundary<2> >(2));
+			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity));
+	//boundaries->addBoundary(
+	//		boost::make_shared<DoNothingBoundary<2> >(2));
     boundaries->addBoundary(
             boost::make_shared<PeriodicBoundary<2> >(3, 4, 1, getMesh()));
 
@@ -232,6 +232,9 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 					constantVelocity)); */
 boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(5, zeroVelocity));
+
+    boundaries->addBoundary(
+            boost::make_shared<VelocityNeqBounceBack<2> >(2, zeroVelocity));
 
 // Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
