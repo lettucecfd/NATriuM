@@ -95,7 +95,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::Triangulation<2> trans;
 	dealii::Triangulation<2> tmp;
 	dealii::Triangulation<2> merge;
-	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 3, upper_extent);
+	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 5, upper_extent);
 
 // make circular
 	//make_inner_manifold(tmp, manifold1, 3);
@@ -105,7 +105,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::GridGenerator::flatten_triangulation(tmp, trans);
 // inner part
 	tmp.clear();
-	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 3, 8);
+	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 5, 8);
 	tmp.set_all_manifold_ids(1);
 	tmp.set_manifold(1, manifold2);
 	tmp.refine_global(2);
@@ -220,21 +220,18 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 	/*boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(4,
 					constantVelocity)); */
+	// Inlet
 	boundaries->addBoundary(
 			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity));
-	//boundaries->addBoundary(
-	//		boost::make_shared<DoNothingBoundary<2> >(2));
-    boundaries->addBoundary(
+	// Outlet
+	boundaries->addBoundary(
+			boost::make_shared<DoNothingBoundary<2> >(2));
+	// Top & Bottom
+	boundaries->addBoundary(
             boost::make_shared<PeriodicBoundary<2> >(3, 4, 1, getMesh()));
-
-/*	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(3,
-					constantVelocity)); */
-boundaries->addBoundary(
+    // Obstacle
+	boundaries->addBoundary(
 			boost::make_shared<VelocityNeqBounceBack<2> >(5, zeroVelocity));
-
-    boundaries->addBoundary(
-            boost::make_shared<VelocityNeqBounceBack<2> >(2, zeroVelocity));
 
 // Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();

@@ -255,7 +255,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 						// add diagonal entry to sparsity pattern
 						m_blockSparsityPattern.block(row_index,el.destination.direction- 1).add(el.destination.index,
 								el.destination.index);
-                        el.destination.domain_corner=true;
 
                     } else {
 						// insert '1'
@@ -263,7 +262,6 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 								el.destination.direction - 1).add(
 								el.destination.index, el.destination.index,
 								1.0);
-						el.destination.domain_corner=true;
 					}
 					not_found.pop();
 					continue;
@@ -308,7 +306,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 							typename DoFHandler<dim>::active_cell_iterator,
 							DeparturePointList<dim> >::iterator it =
 							found_in_cell.find(el.currentCell);
-                    if(el.hit_do_nothing) {
+                    if(el.hit_do_nothing == true) {
                         el.currentDirection =
                                 Base::m_stencil->getIndexOfOppositeDirection(
                                         el.currentDirection);
@@ -385,7 +383,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
                         // ================================================================================================
                         // ================================= DoNothingBoundaryCondition=== ================================
                         // ================================================================================================
-                        if (Base::getBoundaries()->getBoundary(bi)->getBoundaryName() == DO_NOTHING_BC) {
+                        else if (is_do_nothing_bb(Base::getBoundaries()->getBoundary(bi)->getBoundaryName())) {
 
                             // Go back to start and follow the opposite direction to find the departure point
                             el.currentPoint = el.departurePoint - minus_dtealpha.at(el.currentDirection);

@@ -34,7 +34,6 @@ public:
 };
 
 struct LagrangianPathDestination {
-    bool domain_corner=false;
 	size_t index;
 	size_t direction; // in case of a boundary: the outgoing direction
 	LagrangianPathDestination(size_t i, size_t alpha) :
@@ -54,7 +53,6 @@ struct LagrangianPathTracker {
 	dealii::Point<dim> departurePoint; // Lagrangian departure point x^(t-dt)
 	dealii::Point<dim> currentPoint; // Current point x^(t-(dt-timeLeft))
 	typename dealii::DoFHandler<dim>::active_cell_iterator currentCell; // cell of currentPoint
-	bool already_hit = false;
     bool hit_do_nothing = false;
 
 

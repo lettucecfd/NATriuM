@@ -47,6 +47,10 @@ inline bool is_velocity_neq_bb(BoundaryName bn){
 			or (bn == NONCONSTANT_VELOCITY_NEQ_BB) );
 }
 
+    inline bool is_do_nothing_bb(BoundaryName bn){
+        return bn == DO_NOTHING_BC;
+    }
+
 /**
  * @short  Abstract class for the description of boundaries.
  *         Base class for all boundaries.
@@ -100,11 +104,11 @@ public:
 		return m_boundaryName;
 	}
 
-	PrescribedBoundaryValues<dim> getBoundaryValues()  {
+	PrescribedBoundaryValues<dim>& getBoundaryValues()  {
 		return m_boundaryValues;
 	}
 
-	BoundaryFlags getPrescribedQuantities() const {
+    BoundaryFlags& getPrescribedQuantities() const {
 		return m_boundaryValues.getPrescribedValues();
 	}
 
