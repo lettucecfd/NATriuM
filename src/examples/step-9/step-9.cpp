@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
 	parser.applyToSolverConfiguration(*configuration);
 
 
-	boost::shared_ptr<ProblemDescription<2> > couetteProblem = cylinder;
+	boost::shared_ptr<ProblemDescription<2> > couetteProblem= cylinder;
 
     if(static_cast<bool>(parser.getArgument<int>("compressible"))!=true) {
         CFDSolver<2> solver(configuration, couetteProblem);

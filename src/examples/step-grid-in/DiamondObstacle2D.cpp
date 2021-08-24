@@ -13,6 +13,7 @@
 #include "deal.II/grid/grid_in.h"
 
 #include "natrium/boundaries/VelocityNeqBounceBack.h"
+#include "natrium/boundaries/DoNothingBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
 
 #include "natrium/utilities/Math.h"
@@ -53,7 +54,7 @@ DiamondObstacle2D::~DiamondObstacle2D() {
 double DiamondObstacle2D::InitialVelocity::value(const dealii::Point<2>& x,
 		const unsigned int component) const {
     if (component == 0) {
-    return 0.7;
+    return this->m_flow->m_meanInflowVelocity;
     }
 	if (component == 1) {
 	return 0.0;}
@@ -128,13 +129,13 @@ boost::shared_ptr<BoundaryCollection<2> > DiamondObstacle2D::makeBoundaries() {
 	boost::shared_ptr<dealii::Function<2> > boundary_velocity = boost::make_shared<
 			InflowVelocity> (m_meanInflowVelocity);
 	boundaries->addBoundary(
-            boost::make_shared<VelocityNeqBounceBack<2> >(15, u));
+            boost::make_shared<SLEquilibriumBoundary<2> >(15, zeroVector));
 	boundaries->addBoundary(
-            boost::make_shared<VelocityNeqBounceBack<2> >(16, u));
+            boost::make_shared<DoNothingBoundary<2> >(16));
 	boundaries->addBoundary(
-            boost::make_shared<VelocityNeqBounceBack<2> >(17, u));
+            boost::make_shared<DoNothingBoundary<2> >(17));
 	boundaries->addBoundary(
-            boost::make_shared<VelocityNeqBounceBack<2> >(18, u));
+            boost::make_shared<DoNothingBoundary<2> >(18));
 
 	boundaries->addBoundary(
             boost::make_shared<VelocityNeqBounceBack<2> >(19, zeroVector));

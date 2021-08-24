@@ -172,7 +172,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 0, total_length, 2);
 	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, -total_height, 3);
 	DealIIExtensions::set_boundary_ids_at_hyperplane<2>(mesh, 1, total_height, 4);
-	make_inner_manifold(mesh, manifold3, 1.0, 5);
+	make_inner_manifold(mesh, manifold3, 1.0, 0);
 	mesh.set_manifold(1,manifold3);
 
 	std::stringstream s;
@@ -228,7 +228,7 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
             boost::make_shared<DoNothingBoundary<2> >(4));
     // Obstacle
 	boundaries->addBoundary(
-			boost::make_shared<VelocityNeqBounceBack<2> >(5, zeroVelocity));
+			boost::make_shared<VelocityNeqBounceBack<2> >(0, zeroVelocity));
 
 // Get the triangulation object (which belongs to the parent class).
 	boost::shared_ptr<Mesh<2> > tria_pointer = getMesh();
