@@ -20,13 +20,14 @@ namespace natrium {
  */
 template<size_t dim>
 class SLEquilibriumBoundary: public Boundary<dim> {
+
 public:
-	SLEquilibriumBoundary(size_t boundary_id, dealii::Tensor<1, dim>& velocity) :
+	SLEquilibriumBoundary(size_t boundary_id, dealii::Tensor<1, dim>& velocity, double temperature = 1.0) : m_temperature(temperature),
 			Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY,
 					PrescribedBoundaryValues<dim>(velocity)) {
 	}
 
-    SLEquilibriumBoundary(size_t boundary_id, const dealii::Vector<double>& velocity) :
+    SLEquilibriumBoundary(size_t boundary_id, const dealii::Vector<double>& velocity, double temperature = 1.0) : m_temperature(temperature),
             Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY,
                           PrescribedBoundaryValues<dim>(velocity)) {
     }
@@ -94,7 +95,7 @@ public:
             u[i] = tmp(i);
         }
 
-        const double temperature = 1.0;
+        const double temperature = m_temperature;
         const double density = rho;
         double feq;
         const double weight =  stencil.getWeight(destination.direction);
@@ -180,7 +181,8 @@ public:
                     destination.index) = feq;
 
     }
-
+private:
+    double m_temperature;
 };
 
 } /* namespace natrium */

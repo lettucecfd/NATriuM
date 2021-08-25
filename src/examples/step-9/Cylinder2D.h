@@ -65,6 +65,28 @@ public:
 		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
 	};
 
+    class InitialT: public dealii::Function<2> {
+    private:
+        Cylinder2D* m_flow;
+    public:
+        InitialT(Cylinder2D* flow) :
+                m_flow(flow) {
+        }
+        virtual double value(const dealii::Point<2>& x,
+                             const unsigned int component = 0) const;
+    };
+
+    class InitialRho: public dealii::Function<2> {
+    private:
+        Cylinder2D* m_flow;
+    public:
+        InitialRho(Cylinder2D* flow) :
+                m_flow(flow) {
+        }
+        virtual double value(const dealii::Point<2>& x,
+                             const unsigned int component = 0) const;
+    };
+
 private:
     const size_t m_refinementLevel;
 

@@ -52,6 +52,7 @@ int main(int argc, char** argv) {
 	// set Reynolds and Mach number
 	const double Ma = parser.getArgument<double>("Ma");
 	const double gamma = 1.4;
+	const double T = 1.0;
 	// increase velocity to gain correct speed
 
 
@@ -62,11 +63,11 @@ int main(int argc, char** argv) {
     // set Problem so that the right Re and Ma are achieved
 	double U = 1/sqrt(3)*Ma;
     if(static_cast<bool>(parser.getArgument<int>("compressible"))==true) {
-    U *= sqrt(gamma);
+    U *= sqrt(gamma*T);
     }
 	const double dqScaling = 1;
 	const double viscosity = U / Re; // (because L = 1)
-    pout << "Mach number: " << U / ( dqScaling / sqrt(3)) / sqrt(gamma) << endl;
+    pout << "Mach number: " << U / ( dqScaling / sqrt(3)) / sqrt(gamma*T) << endl;
 
 
 	// load grid

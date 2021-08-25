@@ -33,7 +33,11 @@ Cylinder2D::Cylinder2D(double viscosity, double inletVelocity, size_t refinement
 	setCharacteristicLength(1.0);
 
 	this->setInitialU(boost::make_shared<InitialU>(this));
-	/// apply boundary values
+    this->setInitialT(boost::make_shared<InitialT>(this));
+    this->setInitialRho(boost::make_shared<InitialRho>(this));
+    pout << "Initial values set \n";
+
+    /// apply boundary values
 	setBoundaries(makeBoundaries(inletVelocity));
 }
 
@@ -75,7 +79,7 @@ void Cylinder2D::make_inner_manifold(dealii::Triangulation<2>& mesh,
 
 boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 
-    const double upper_extent = 8;
+    const double upper_extent = 4;
     const double total_length = 15;
     const double total_height = 25;
 
@@ -95,7 +99,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::Triangulation<2> trans;
 	dealii::Triangulation<2> tmp;
 	dealii::Triangulation<2> merge;
-	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 5, upper_extent);
+	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 2, upper_extent);
 
 // make circular
 	//make_inner_manifold(tmp, manifold1, 3);
@@ -105,7 +109,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::GridGenerator::flatten_triangulation(tmp, trans);
 // inner part
 	tmp.clear();
-	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 5, 8);
+	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 2, 8);
 	tmp.set_all_manifold_ids(1);
 	tmp.set_manifold(1, manifold2);
 	tmp.refine_global(2);
@@ -114,6 +118,9 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::GridGenerator::merge_triangulations(trans, inner, merge);
 	mesh.clear();
 	mesh.copy_triangulation(merge);
+
+
+
 // tail part
 	std::vector<unsigned int> repetitions;
 	repetitions.push_back(3);
@@ -217,7 +224,7 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 
 	// Inlet
 	boundaries->addBoundary(
-			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity));
+			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity, 0.7));
 	// Outlet
 	boundaries->addBoundary(
 			boost::make_shared<DoNothingBoundary<2> >(2));
@@ -246,13 +253,29 @@ double Cylinder2D::InitialU::value(const dealii::Point<2>& x,
 		assert(component < 2);
 	if (0 == component){
 
-		return m_flow->getCharacteristicVelocity();// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
+		return m_flow->getCharacteristicVelocity()*1.0;// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
 
 	}
     if (1 == component){
-        return m_flow->getCharacteristicVelocity()*0.1 * sin(x(1))*cos(5*x(1)+x(0));// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
+        return m_flow->getCharacteristicVelocity()*0.001 * sin(x(1))*cos(5*x(1)+x(0));// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
     }
 	return 0;
 }
 
+
+
+double Cylinder2D::InitialT::value(const dealii::Point<2>& x, const unsigned int component) const {
+
+        return 1.0;
+
+}
+
+    double Cylinder2D::InitialRho::value(const dealii::Point<2>& x, const unsigned int component) const {
+
+        return 1.0;
+
+    }
+
+
 } /* namespace natrium */
+
