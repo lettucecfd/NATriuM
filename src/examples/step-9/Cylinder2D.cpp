@@ -225,7 +225,7 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 
 	// Inlet
 	boundaries->addBoundary(
-			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity, 0.7));
+			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity, 1.0));
 	// Outlet
 	boundaries->addBoundary(
 			boost::make_shared<DoNothingBoundary<2> >(2));
