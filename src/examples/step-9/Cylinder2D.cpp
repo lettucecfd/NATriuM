@@ -251,14 +251,25 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 double Cylinder2D::InitialU::value(const dealii::Point<2>& x,
 			const unsigned int component) const {
 		assert(component < 2);
-	if (0 == component){
 
-		return m_flow->getCharacteristicVelocity()*1.0;// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
+	const double U = m_flow->getCharacteristicVelocity();
+	const double R = 0.5;
+	const double r = sqrt(x(0)*x(0)+x(1)*x(1));
+	assert(r>=0.97);
+	const double sin_phi = x(1)/r;
+	const double cos_phi = x(0)/r;
 
-	}
-    if (1 == component){
-        return m_flow->getCharacteristicVelocity()*0.001 * sin(x(1))*cos(5*x(1)+x(0));// * ( 1 + 0.5 * sin(x(1))*cos(5*x(1)+x(0)));
-    }
+	const double u_r =      U * (1 - R*R/(r*r)) * cos_phi;
+	const double u_phi = -  U * (1 + R*R/(r*r)) * sin_phi;
+
+
+    if (0 == component) {
+        return u_r * cos_phi -  u_phi * sin_phi;
+        }
+
+    if (1 == component) {
+        return u_r * sin_phi +  u_phi * cos_phi;
+        }
 	return 0;
 }
 
@@ -271,8 +282,20 @@ double Cylinder2D::InitialT::value(const dealii::Point<2>& x, const unsigned int
 }
 
     double Cylinder2D::InitialRho::value(const dealii::Point<2>& x, const unsigned int component) const {
+        const double U = m_flow->getCharacteristicVelocity()*0.5;
+        const double R = 0.5;
+        const double r = sqrt(x(0)*x(0)+x(1)*x(1));
+        assert(r>=0.97);
+        const double sin_phi = x(1)/r;
+        const double cos_phi = x(0)/r;
+        const double cos_2phi = cos_phi*cos_phi - sin_phi*sin_phi;
 
-        return 1.0;
+        const double u_r =      U * (1 - R*R/r*r) * cos_phi;
+        const double u_phi = -  U * (1 + R*R/r*r) * sin_phi;
+
+        const double u_x = u_r * cos_phi -  u_phi * sin_phi;
+        const double u_y = u_r * sin_phi +  u_phi * cos_phi;
+        return 1.0 + 0.5*U*U*(2*R*R/(r*r)*cos_2phi - R*R*R*R/(r*r*r*r));
 
     }
 

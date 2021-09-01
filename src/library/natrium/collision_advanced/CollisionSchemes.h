@@ -90,7 +90,7 @@ public:
                 tau_factor = 1.35;
             if(knudsen_estimate >= 0.1)
                 tau_factor = 1/visc_tau;
-        visc_tau *=tau_factor;
+        //visc_tau *=tau_factor;
         double ener_tau = visc_tau;
         double prandtl = genData.configuration.getPrandtlNumber();
         double prandtl_tau = (visc_tau - 0.5) / prandtl + 0.5;
