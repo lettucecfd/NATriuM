@@ -79,9 +79,9 @@ void Cylinder2D::make_inner_manifold(dealii::Triangulation<2>& mesh,
 
 boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 
-    const double upper_extent = 4;
-    const double total_length = 15;
-    const double total_height = 25;
+    const double upper_extent = 6;
+    const double total_length = 30;
+    const double total_height = 15;
 
 // this is not the domain by Min and Lee! they had D=1; [-19,50]x[-25,25]
 // differences:
@@ -99,7 +99,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::Triangulation<2> trans;
 	dealii::Triangulation<2> tmp;
 	dealii::Triangulation<2> merge;
-	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 2, upper_extent);
+	dealii::GridGenerator::hyper_cube_with_cylindrical_hole(tmp, 4, upper_extent);
 
 // make circular
 	//make_inner_manifold(tmp, manifold1, 3);
@@ -109,10 +109,10 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	dealii::GridGenerator::flatten_triangulation(tmp, trans);
 // inner part
 	tmp.clear();
-	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 2, 8);
+	dealii::GridGenerator::hyper_shell(tmp, dealii::Point<2>(0,0), 1, 4, 4);
 	tmp.set_all_manifold_ids(1);
 	tmp.set_manifold(1, manifold2);
-	tmp.refine_global(2);
+	tmp.refine_global(3);
 	tmp.set_manifold(1,manifold2);
 	dealii::GridGenerator::flatten_triangulation(tmp, inner);
 	dealii::GridGenerator::merge_triangulations(trans, inner, merge);
@@ -123,17 +123,18 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 
 // tail part
 	std::vector<unsigned int> repetitions;
-	repetitions.push_back(3);
+	repetitions.push_back(6);
 	repetitions.push_back(8);
 	dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
 			dealii::Point<2>(upper_extent, -upper_extent), dealii::Point<2>(total_length, upper_extent));
 	dealii::GridGenerator::merge_triangulations(mesh, rect, merge);
 	mesh.clear();
 	mesh.copy_triangulation(merge);
+
 // add unsymmetric part
 //  UPPER rect left
 	 repetitions.at(0) = 8;
-	repetitions.at(1) = 2;
+	repetitions.at(1) = 4;
 	rect.clear();
 	dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
 			dealii::Point<2>(-upper_extent, upper_extent), dealii::Point<2>(upper_extent, total_height));
@@ -142,8 +143,8 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 	mesh.copy_triangulation(merge);
 
 	// UPPER rect right 1
-	repetitions.at(0) = 3;
-	repetitions.at(1) = 2;
+	repetitions.at(0) = 6;
+	repetitions.at(1) = 4;
 	rect.clear();
 	dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
 			dealii::Point<2>(upper_extent, upper_extent), dealii::Point<2>(total_length, total_height));
@@ -154,7 +155,7 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
 
     // LOWER rect left
     repetitions.at(0) = 8;
-    repetitions.at(1) = 2;
+    repetitions.at(1) = 4;
     rect.clear();
     dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
                                                       dealii::Point<2>(-upper_extent, -upper_extent), dealii::Point<2>(upper_extent, -total_height));
@@ -163,8 +164,8 @@ boost::shared_ptr<Mesh<2> > Cylinder2D::makeGrid() {
     mesh.copy_triangulation(merge);
 
     // LOWER rect right 1
-    repetitions.at(0) = 3;
-    repetitions.at(1) = 2;
+    repetitions.at(0) = 6;
+    repetitions.at(1) = 4;
     rect.clear();
     dealii::GridGenerator::subdivided_hyper_rectangle(rect, repetitions,
                                                       dealii::Point<2>(upper_extent, -upper_extent), dealii::Point<2>(total_length, -total_height));
@@ -224,7 +225,7 @@ boost::shared_ptr<BoundaryCollection<2> > Cylinder2D::makeBoundaries(
 
 	// Inlet
 	boundaries->addBoundary(
-			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity, 0.7));
+			boost::make_shared<SLEquilibriumBoundary<2> >(1, constantVelocity, 1.0));
 	// Outlet
 	boundaries->addBoundary(
 			boost::make_shared<DoNothingBoundary<2> >(2));

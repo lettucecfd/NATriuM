@@ -153,7 +153,8 @@ int main(int argc, char** argv) {
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(dirname.str());
-	configuration->setOutputCheckpointInterval(10000);
+    configuration->setUserInteraction(false);
+    configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
     configuration->setStencilScaling(dqScaling);
 	configuration->setNumberOfTimeSteps(200000);
