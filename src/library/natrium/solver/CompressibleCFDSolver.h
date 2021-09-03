@@ -662,7 +662,6 @@ void compressibleFilter() {
                 //m_collisionModel->getEquilibriumDistributions(feq, u, m_density(i));
                 for (size_t j = 0; j < this->m_stencil->getQ(); j++) {
                     this->m_f.at(j)(i) = feq[j];
-                    // ONLY FOR 2D! (due to -2.0)
                     this->m_g.at(j)(i) = feq[j]*(temperature)*(2.0*C_v-dim);
                 }
             }

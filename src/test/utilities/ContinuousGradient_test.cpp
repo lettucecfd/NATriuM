@@ -10,6 +10,7 @@
 #include "deal.II/grid/grid_tools.h"
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/fe/mapping_q1.h"
+#include "deal.II/lac/affine_constraints.h"
 
 #include "boost/test/unit_test.hpp"
 
@@ -106,7 +107,7 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Initialization_test) {
 	dof.distribute_dofs(fe);
 	distributed_vector u(dof.locally_owned_dofs());
 	dealii::MappingQ1<2> m;
-	dealii::ConstraintMatrix c;
+	dealii::AffineConstraints<double> c;
 	c.close();
 	// project does not work in parallel
 	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1) {
@@ -143,7 +144,7 @@ BOOST_AUTO_TEST_CASE(ContinuousBoundaryGradient_Functionality2D_test) {
 	dof.distribute_dofs(fe);
 	distributed_vector u(dof.locally_owned_dofs());
 	dealii::MappingQ1<2> m;
-	dealii::ConstraintMatrix c;
+	dealii::AffineConstraints<double> c;
 	c.close();
 	// project does not work in parallel
 	if (dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) == 1) {

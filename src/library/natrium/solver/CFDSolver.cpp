@@ -1248,7 +1248,6 @@ void CFDSolver<dim>::initializeDistributions() {
                         for (int a = 0; a < dim; a++) {
                             for (int b = 0; b < dim; b++) {
                                 fneq.at(i) += Q[i][a][b]*Pi_1[a][b];
-                                cout << a << " " << b << "  " << Pi_1[a][b] << endl;
                             }
                         }
                         fneq.at(i)*=m_stencil->getWeight(i);
