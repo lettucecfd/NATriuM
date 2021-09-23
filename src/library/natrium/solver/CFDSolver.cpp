@@ -32,6 +32,7 @@
 #include "../stencils/RD3Q27.h"
 #include "../stencils/D2Q25H.h"
 #include "../stencils/D2Q19V.h"
+#include "../stencils/D2Q777.h"
 #include "../stencils/D2Q19H.h"
 #include "../stencils/D3Q45.h"
 #include "../stencils/D3Q77.h"
@@ -155,6 +156,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					configuration->getStencilScaling());
     } else if (Stencil_D2Q19V == configuration->getStencil()) {
         m_stencil = boost::make_shared<D2Q19V>(
+                configuration->getStencilScaling());
+    } else if (Stencil_D2Q777 == configuration->getStencil()) {
+        m_stencil = boost::make_shared<D2Q777>(
                 configuration->getStencilScaling());
 	} else if (Stencil_D2Q25H == configuration->getStencil()) {
 			m_stencil = boost::make_shared<D2Q25H>(
