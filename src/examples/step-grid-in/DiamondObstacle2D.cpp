@@ -85,7 +85,7 @@ boost::shared_ptr<Mesh<2> > DiamondObstacle2D::makeGrid(
 	grid_in.attach_triangulation(*mesh);
 	{
 		std::stringstream filename;
-		filename << getenv("NATRIUM_DIR") << "/src/examples/step-grid-in/naca0012_supersonic.msh";
+		filename << getenv("NATRIUM_DIR") << "/src/examples/step-grid-in/diamondAirfoil.msh";
 		std::ifstream file(filename.str().c_str());
 		assert(file);
 		grid_in.read_msh(file);
