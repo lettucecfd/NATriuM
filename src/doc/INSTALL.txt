@@ -79,6 +79,9 @@ EOF
 	-D BUILD_SHARED_LIBS=ON \
 	-D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
 	../Trilinos*/
+	
+	make -j8
+	make install
 
     0.3) deal.ii
         0.3.1) download and untar tarball from deal.ii homepage
