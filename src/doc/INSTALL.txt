@@ -6,7 +6,7 @@ The following configuration works fine:
 - Boost 1.76
 - Trilinos 13.0.1
 - P4est 2.2
-- Deal 9.3
+- Deal 9.3.2
 
 
 ================================================================================================
@@ -16,6 +16,18 @@ Prerequisites: CMake, GCC (Version 9 or higher recommended)
 
 If not installed, install blas/lapack (e.g. sudo apt-get install libblas-dev liblapack-dev)
 If not installed, install gfortran (e.g. sudo apt-get install gfortran)
+
+When using conda:
+
+    conda install -c conda-forge gcc
+    conda install -c conda-forge openmpi
+    conda install -c conda-forge g++
+    conda install -c conda-forge gxx
+    conda install -c conda-forge cmake
+    conda install -c conda-forge gfortran
+    conda install -c conda-forge blas
+    conda install -c conda-forge zlib
+
  
 #### Set enviromental variables
 # Go to the desired install folder and set environment:
@@ -90,7 +102,7 @@ EOF
         
 	0.3.2) mkdir build_deal; 
 		cd build_deal; 
-		cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON 						-DDEAL_II_COMPONENT_PARAMETER_GUI=OFF -DDEAL_II_WITH_BOOST=ON -DDEAL_II_ALLOW_BUNDLED=OFF -DBOOST_DIR=$BOOST_ROOT -DDEAL_II_WITH_THREADS=OFF 			-DBOOST_ROOT=$BOOST_ROOT -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON -DDEAL_II_FORCE_BUNDLED_UMFPACK=ON -DDEAL_II_FORCE_BUNDLED_MUPARSER=ON 			../dealii-9.3.0
+		cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON 						-DDEAL_II_COMPONENT_PARAMETER_GUI=OFF -DDEAL_II_WITH_BOOST=ON -DDEAL_II_ALLOW_BUNDLED=OFF -DBOOST_DIR=$BOOST_ROOT -DDEAL_II_WITH_THREADS=OFF 			-DBOOST_ROOT=$BOOST_ROOT -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON -DDEAL_II_FORCE_BUNDLED_UMFPACK=ON -DDEAL_II_FORCE_BUNDLED_MUPARSER=ON 			-DDEAL_II_WITH_ZLIB=OFF ../dealii-9.3.0
 	
         0.7.5) make -j 8 install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
 
