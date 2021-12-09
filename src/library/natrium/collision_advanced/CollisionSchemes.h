@@ -78,9 +78,15 @@ public:
             calculateFStar<T_D, T_Q>(fStar, heatFluxTensorFNEq, genData);
             calculateFStar<T_D, T_Q>(gStar, heatFluxTensorGNeq, genData);
         }
-        double sutherland_factor = 1.402*pow(genData.temperature,1.5) / ( genData.temperature + 0.40417);
-        double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
 
+        const bool isSutherlandLawSet = genData.configuration.isSutherlandLawSet();
+        double sutherland_factor = 1.0;
+
+        if (isSutherlandLawSet){
+                sutherland_factor = 1.402*pow(genData.temperature, 1.5) / ( genData.temperature + 0.40417);
+            }
+
+        const double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
 
         const double knudsen_estimate = calculateKnudsenNumberEstimate<T_D, T_Q>(fLocal, genData.feq, genData.weight);
         double tau_factor = 1.0;
@@ -91,9 +97,9 @@ public:
             if(knudsen_estimate >= 0.1)
                 tau_factor = 1/visc_tau;
         //visc_tau *=tau_factor;
-        double ener_tau = visc_tau;
-        double prandtl = genData.configuration.getPrandtlNumber();
-        double prandtl_tau = (visc_tau - 0.5) / prandtl + 0.5;
+        const double ener_tau = visc_tau;
+        const double prandtl = genData.configuration.getPrandtlNumber();
+        const double prandtl_tau = (visc_tau - 0.5) / prandtl + 0.5;
 
         genData.maskShockSensor = knudsen_estimate;
 

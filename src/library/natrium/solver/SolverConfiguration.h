@@ -2192,6 +2192,19 @@ public:
         leave_subsection();
     }
 
+    void setSutherlandLaw() {
+        enter_subsection("General");
+        try {
+           set("Sutherland law set", true);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign Sutherland Law " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
     bool isPrandtlNumberSet() {
         enter_subsection("General");
         bool isPrandtlSet;
@@ -2207,6 +2220,23 @@ public:
         }
         leave_subsection();
         return isPrandtlSet;
+    }
+
+    bool isSutherlandLawSet() {
+        enter_subsection("General");
+        bool isSutherland;
+        try {
+            isSutherland = get_bool("Sutherland law set");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Sutherland law set' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return isSutherland;
     }
 
 	bool isWriteALogFile() {

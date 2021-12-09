@@ -25,6 +25,9 @@ SolverConfiguration::SolverConfiguration() {
         declare_entry("Prandtl number set", "false",
                       dealii::Patterns::Bool(),
                       "Indicates if Prandtl number deviates from 1.0");
+        declare_entry("Sutherland law set", "false",
+                      dealii::Patterns::Bool(),
+                      "Enable viscosity depending on temperature");
 		declare_entry("Stencil", "D2Q9",
 				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q19V|D2Q19H|D2Q25H|D3Q45|D3Q77|D3V27"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
