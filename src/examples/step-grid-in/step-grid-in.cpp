@@ -84,6 +84,7 @@
 //! [Includes]
 #include <stdlib.h>
 #include <sstream>
+#include <ctime>
 
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D2Q25H.h"
@@ -149,7 +150,8 @@ int main(int argc, char** argv) {
 
 	//! [Configuration]
 	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/step-grid-in";
+    dirname << getenv("NATRIUM_HOME") << "/step-grid-in/Re" << Re << "-Ma" << Ma << "-reflevel" << refLevel << "-time"
+            << std::time(0);
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(dirname.str());
@@ -175,7 +177,7 @@ int main(int argc, char** argv) {
         solver.run();
     }
 
-	pout << "NATriuM step-0 terminated." << endl;
+	pout << "NATriuM step-grid-in terminated." << endl;
 
 	return 0;
 }
