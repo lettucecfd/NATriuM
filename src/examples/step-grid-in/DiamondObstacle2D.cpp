@@ -57,7 +57,7 @@ double DiamondObstacle2D::InitialVelocity::value(const dealii::Point<2>& x,
     return this->m_flow->m_meanInflowVelocity;
     }
 	if (component == 1) {
-	return 0.0;}
+	return this->m_flow->m_meanInflowVelocity*sin(x[1]*1.3+0.1)*0.1;}
 
 }
 
@@ -85,7 +85,7 @@ boost::shared_ptr<Mesh<2> > DiamondObstacle2D::makeGrid(
 	grid_in.attach_triangulation(*mesh);
 	{
 		std::stringstream filename;
-		filename << getenv("NATRIUM_DIR") << "/src/examples/step-grid-in/diamondAirfoil.msh";
+		filename << getenv("NATRIUM_DIR") << "/src/examples/step-grid-in/naca12_2d.msh";
 		std::ifstream file(filename.str().c_str());
 		assert(file);
 		grid_in.read_msh(file);
@@ -129,10 +129,10 @@ boost::shared_ptr<BoundaryCollection<2> > DiamondObstacle2D::makeBoundaries() {
 			InflowVelocity> (m_meanInflowVelocity);
 	boundaries->addBoundary(
             boost::make_shared<SLEquilibriumBoundary<2> >(101, zeroVector));
-	boundaries->addBoundary(
-            boost::make_shared<DoNothingBoundary<2> >(102));
-	boundaries->addBoundary(
-            boost::make_shared<DoNothingBoundary<2> >(103));
+	//boundaries->addBoundary(
+        //    boost::make_shared<DoNothingBoundary<2> >(102));
+	//boundaries->addBoundary(
+        //    boost::make_shared<DoNothingBoundary<2> >(103));
 	boundaries->addBoundary(
             boost::make_shared<DoNothingBoundary<2> >(104));
 
