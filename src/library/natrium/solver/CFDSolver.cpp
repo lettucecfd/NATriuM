@@ -526,6 +526,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLISION ==           " << endl;
 	LOG(WELCOME) << "tau:                      " << tau << endl;
+    LOG(WELCOME) << "Is Sutherland law set?    " << configuration->isSutherlandLawSet() << endl;
     LOG(WELCOME) << "Is Prandtl number set?    " << configuration->isPrandtlNumberSet() << endl;
     LOG(WELCOME) << "Prandtl number Pr:        " << configuration->getPrandtlNumber() << endl;
     LOG(WELCOME) << "Heat capacity ratio:      " << configuration->getHeatCapacityRatioGamma() << endl;
