@@ -36,7 +36,7 @@ namespace natrium {
         virtual void refine(Mesh<3>& mesh) {
             // remember to make_inner_manifold when implementing global refinement
             const dealii::SphericalManifold<3> manifold(dealii::Point<3>(0, 0, 0));
-            for(size_t i = 0; i < m_refinementLevel; i++) {
+            //for(size_t i = 0; i < m_refinementLevel; i++) {
                 mesh.reset_all_manifolds();
                 mesh.set_all_manifold_ids(0);
                 make_inner_manifold(mesh, manifold, 0.5, 1);
@@ -46,9 +46,9 @@ namespace natrium {
                 mesh.set_manifold(0, transfinite_manifold);
                 mesh.set_manifold(1, manifold);
 
-                mesh.refine_global(1);
+                mesh.refine_global(m_refinementLevel);
                 // free the manifold
-            }
+            //}
         }
 
         virtual void transform(Mesh<3>& ) {
