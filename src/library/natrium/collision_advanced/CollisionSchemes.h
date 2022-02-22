@@ -112,7 +112,7 @@ public:
 
 
 		//Relax every direction towards the equilibrium
-#pragma omp parallel for
+#pragma GCC unroll 190
             for (int p = 0; p < T_Q; ++p) {
             fLocal[p] -= visc_omega * fNeq[p] + prandtl_diff * fStar[p];
             gLocal[p] -= ener_omega * gNeq[p] + prandtl_diff * gStar[p];

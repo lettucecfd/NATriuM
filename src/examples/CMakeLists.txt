@@ -22,3 +22,5 @@ add_subdirectory(step-13)
 add_subdirectory(step-17)
 add_subdirectory(step-decayingTurbulence2D)
 add_subdirectory(step-mixingLayer3D)
+add_subdirectory(step-sphere)
+
