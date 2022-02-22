@@ -1600,6 +1600,8 @@ public:
 			return Stencil_D2Q19H;
         } else if ("D2Q19V" == stencil) {
             return Stencil_D2Q19V;
+        } else if ("D2Q777" == stencil) {
+            return Stencil_D2Q777;
 		} else if ("D2Q25H" == stencil) {
 			return Stencil_D2Q25H;
 		} else if ("RD3Q27" == stencil) {
@@ -1652,6 +1654,10 @@ public:
 		}
         case Stencil_D2Q19V: {
             set("Stencil", "D2Q19V");
+            break;
+        }
+        case Stencil_D2Q777: {
+            set("Stencil", "D2Q777");
             break;
         }
 		case Stencil_D2Q25H: {

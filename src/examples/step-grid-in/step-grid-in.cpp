@@ -84,6 +84,7 @@
 //! [Includes]
 #include <stdlib.h>
 #include <sstream>
+#include <ctime>
 
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D2Q25H.h"
@@ -133,14 +134,13 @@ int main(int argc, char** argv) {
     const double Re = parser.getArgument<int>("Re");;
 
     // set Problem so that the right Re and Ma are achieved
-    double U = 1/sqrt(3)*Ma;
+    double U = 1;
+    double scaling = 1;
     if(static_cast<bool>(parser.getArgument<int>("compressible"))==true) {
-        U *= sqrt(gamma);
+        scaling /= sqrt(gamma);
     }
-    const double dqScaling = 1;
+    scaling*=sqrt(3)/Ma;
     const double viscosity = U / Re; // (because L = 1)
-    pout << "Mach number: " << U / ( dqScaling / sqrt(3)) / sqrt(gamma) << endl;
-
 
     // make problem and solver objects
 	boost::shared_ptr<ProblemDescription<2> >  obstacle_flow = boost::make_shared<
@@ -149,14 +149,15 @@ int main(int argc, char** argv) {
 
 	//! [Configuration]
 	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/step-grid-in";
+    dirname << getenv("NATRIUM_HOME") << "/step-grid-in/Re" << Re << "-Ma" << Ma << "-reflevel" << refLevel << "-time"
+            << std::time(0);
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(dirname.str());
     configuration->setUserInteraction(false);
     configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
-    configuration->setStencilScaling(dqScaling);
+    configuration->setStencilScaling(scaling);
 	configuration->setNumberOfTimeSteps(200000);
 	//configuration->setTimeIntegrator(EXPONENTIAL);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
@@ -175,7 +176,7 @@ int main(int argc, char** argv) {
         solver.run();
     }
 
-	pout << "NATriuM step-0 terminated." << endl;
+	pout << "NATriuM step-grid-in terminated." << endl;
 
 	return 0;
 }
