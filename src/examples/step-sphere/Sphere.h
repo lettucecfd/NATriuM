@@ -47,6 +47,7 @@ namespace natrium {
 
                 mesh.refine_global(m_refinementLevel);
 
+
         }
 
         virtual void transform(Mesh<3>& ) {

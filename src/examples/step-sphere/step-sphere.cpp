@@ -74,34 +74,25 @@ int main(int argc, char** argv) {
 	boost::shared_ptr<Sphere> sphere = boost::make_shared<Sphere>(
 				viscosity, U, refLevel);
 	D2Q9 stencil(dqScaling);
-	// set FE order and time step size
-	const size_t orderOfFiniteElement = 2;
-	const double cfl=5;
-
-
 
 	// configure solver
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/step-sphere";
-	configuration->setOutputDirectory(dirname.str());
+
 	configuration->setUserInteraction(false);
 	configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
-	configuration->setSimulationEndTime(5000);
-	configuration->setTimeIntegrator(EXPONENTIAL);
-	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
+
 	configuration->setStencilScaling(dqScaling);
-	configuration->setCFL(cfl);
-	configuration->setCommandLineVerbosity(7);
 	configuration->setHeatCapacityRatioGamma(gamma);
 	configuration->setPrandtlNumber(0.71);
 
 
 	parser.applyToSolverConfiguration(*configuration);
-
+    std::stringstream dirname;
+    dirname << getenv("NATRIUM_HOME") << "/step-sphere/refLevel" << refLevel << "-p" << configuration->getSedgOrderOfFiniteElement() << "-Ma" << Ma  << "-Re" << Re << "-CFL" << configuration->getCFL();
+    configuration->setOutputDirectory(dirname.str());
 
 	boost::shared_ptr<ProblemDescription<3> > sphereProblem= sphere;
 

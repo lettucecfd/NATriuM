@@ -162,7 +162,7 @@ namespace natrium {
 
 
         std::stringstream s;
-        s << "/tmp/grid_sphere.vtk";
+        s << "./grid_sphere.vtk";
         cout << s.str() << endl;
         std::ofstream out(s.str());
         dealii::GridOut grid_out;
