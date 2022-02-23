@@ -229,17 +229,21 @@ namespace natrium {
 
         if (0 == component) {
             //return u_r * cos_phi -  u_phi * sin_phi;
-            return m_flow->getCharacteristicVelocity();
+            //return m_flow->getCharacteristicVelocity();
+            return U*(1-3*R*R*R*x(0)*x(0)/(2*r*r*r*r*r)+(R*R*R)/(2*r*r*r));
 
         }
 
 
         if (1 == component) {
-            return 0.0;// (u_r * sin_phi +  u_phi * cos_phi) * x(1)/yz_distance;
+           // return 0.0;// (u_r * sin_phi +  u_phi * cos_phi) * x(1)/yz_distance;
+           return -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(1);
         }
 
         if (2 == component) {
-            return 0.0; //(u_r * sin_phi +  u_phi * cos_phi) * x(2)/yz_distance;
+            //return 0.0; //(u_r * sin_phi +  u_phi * cos_phi) * x(2)/yz_distance;
+            return -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(2);
+
         }
         return 0;
     }
@@ -247,26 +251,27 @@ namespace natrium {
 
 
     double Sphere::InitialT::value(const dealii::Point<3>& x, const unsigned int component) const {
-
-        return 1.0;
+        const double U = m_flow->getCharacteristicVelocity();
+        const double R = 0.5;
+        const double r = sqrt(x(0)*x(0)+x(1)*x(1)+x(2)*x(2));
+        const double ux = U*(1-3*R*R*R*x(0)*x(0)/(2*r*r*r*r*r)+(R*R*R)/(2*r*r*r));
+        const double uy = -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(1);
+        const double uz = -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(2);
+        const double speed2 = ux*ux+uy*uy+uz*uz;
+        return 1.0;//1.5 - speed2/2;
 
     }
 
     double Sphere::InitialRho::value(const dealii::Point<3>& x, const unsigned int component) const {
         // use potential flow for initial values
-
-        const double U = m_flow->getCharacteristicVelocity()*0.5;
+        const double U = m_flow->getCharacteristicVelocity();
         const double R = 0.5;
         const double r = sqrt(x(0)*x(0)+x(1)*x(1)+x(2)*x(2));
-        const double yz_distance = sqrt(x(1)*x(1)+x(2)*x(2));
-        const double sin_phi = yz_distance/r;
-        const double cos_phi = x(0)/r;
-        const double cos_2phi = cos_phi*cos_phi - sin_phi*sin_phi;
-
-        const double u_r =      U * (1 - R*R/r*r) * cos_phi;
-        const double u_phi = -  U * (1 + R*R/r*r) * sin_phi;
-
-        return 1.0; //;+ 0.5*U*U*(2*R*R/(r*r)*cos_2phi - R*R*R*R/(r*r*r*r));
+        const double ux = U*(1-3*R*R*R*x(0)*x(0)/(2*r*r*r*r*r)+(R*R*R)/(2*r*r*r));
+        const double uy = -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(1);
+        const double uz = -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(2);
+        const double speed2 = ux*ux+uy*uy+uz*uz;
+        return 1.5 - speed2/2;
 
     }
 
