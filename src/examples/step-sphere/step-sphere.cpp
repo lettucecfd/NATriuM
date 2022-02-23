@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 
 	// load grid
 	boost::shared_ptr<Sphere> sphere = boost::make_shared<Sphere>(
-				viscosity, U, refLevel, Ma);
+				viscosity, U, refLevel);
 	D2Q9 stencil(dqScaling);
 
 	// configure solver
