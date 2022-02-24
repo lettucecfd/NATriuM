@@ -61,19 +61,19 @@ int main(int argc, char** argv) {
 
 
     // set Problem so that the right Re and Ma are achieved
-	double U = 1/sqrt(3)*Ma;
+    double U = 1;
+    double scaling = 1;
     if(static_cast<bool>(parser.getArgument<int>("compressible"))==true) {
-    U *= sqrt(gamma*T);
+        scaling /= sqrt(gamma);
     }
-	const double dqScaling = 1;
-	const double viscosity = U / Re; // (because L = 1)
-    pout << "Mach number: " << U / ( dqScaling / sqrt(3)) / sqrt(gamma*T) << endl;
+    scaling*=sqrt(3)/Ma;
+    const double viscosity = U / Re; // (because L = 1)
 
 
 	// load grid
 	boost::shared_ptr<Sphere> sphere = boost::make_shared<Sphere>(
 				viscosity, U, refLevel);
-	D2Q9 stencil(dqScaling);
+	D2Q9 stencil(scaling);
 
 	// configure solver
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
 	configuration->setOutputSolutionInterval(100);
 	configuration->setOutputTableInterval(100);
 
-	configuration->setStencilScaling(dqScaling);
+	configuration->setStencilScaling(scaling);
 	configuration->setHeatCapacityRatioGamma(gamma);
 	configuration->setPrandtlNumber(0.71);
 
