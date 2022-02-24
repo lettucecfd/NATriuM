@@ -187,14 +187,14 @@ namespace natrium {
                 boost::make_shared<SLEquilibriumBoundary<3> >(2, constantVelocity, 1.0));
         // Outlet
         boundaries->addBoundary(
-                boost::make_shared<DoNothingBoundary<3> >(3));
+                boost::make_shared<SLEquilibriumBoundary<3> >(3, constantVelocity, 1.0));
         // Top & Bottom
         boundaries->addBoundary(
-                boost::make_shared<DoNothingBoundary<3> >(4));
+                boost::make_shared<SLEquilibriumBoundary<3> >(4, constantVelocity, 1.0));
         boundaries->addBoundary(
-                boost::make_shared<DoNothingBoundary<3> >(5));
+                boost::make_shared<SLEquilibriumBoundary<3> >(5, constantVelocity, 1.0));
         boundaries->addBoundary(
-                boost::make_shared<DoNothingBoundary<3> >(6));
+                boost::make_shared<SLEquilibriumBoundary<3> >(6, constantVelocity, 1.0));
         boundaries->addBoundary(
                 boost::make_shared<DoNothingBoundary<3> >(7));
         // Obstacle
@@ -229,7 +229,7 @@ namespace natrium {
 
         if (0 == component) {
             //return u_r * cos_phi -  u_phi * sin_phi;
-            return m_flow->getCharacteristicVelocity()/1.7*1.3;;
+            return m_flow->getCharacteristicVelocity()/1.7*1.3*(1-sin(x(0)*x(1))*0.1);;
             //U*(1-3*R*R*R*x(0)*x(0)/(2*r*r*r*r*r)+(R*R*R)/(2*r*r*r));
 
         }
@@ -237,12 +237,12 @@ namespace natrium {
 
         if (1 == component) {
            // return 0.0;// (u_r * sin_phi +  u_phi * cos_phi) * x(1)/yz_distance;
-           return 0.0;//-U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(1);
+           return 0.3*sin(x(1)*x(2))*cos(x(0));//-U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(1);
         }
 
         if (2 == component) {
             //return 0.0; //(u_r * sin_phi +  u_phi * cos_phi) * x(2)/yz_distance;
-            return 0.0;//-U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(2);
+            return 0.3*sin(x(1)+0.33*x(2)+0.12)*cos(x(0)+0.33);//-U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(2);
 
         }
         return 0;
