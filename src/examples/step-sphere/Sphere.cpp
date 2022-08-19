@@ -229,7 +229,7 @@ namespace natrium {
 
         if (0 == component) {
             //return u_r * cos_phi -  u_phi * sin_phi;
-            return m_flow->getCharacteristicVelocity();///1.7*1.3*(1-sin(x(0)*x(1))*0.1);;
+            return m_flow->getCharacteristicVelocity();
             //U*(1-3*R*R*R*x(0)*x(0)/(2*r*r*r*r*r)+(R*R*R)/(2*r*r*r));
 
         }
@@ -251,27 +251,27 @@ namespace natrium {
 
 
     double Sphere::InitialT::value(const dealii::Point<3>& x, const unsigned int component) const {
-        const double U = m_flow->getCharacteristicVelocity();
+        /*const double U = m_flow->getCharacteristicVelocity();
         const double R = 0.5;
         const double r = sqrt(x(0)*x(0)+x(1)*x(1)+x(2)*x(2));
         const double ux = U*(1-3*R*R*R*x(0)*x(0)/(2*r*r*r*r*r)+(R*R*R)/(2*r*r*r));
         const double uy = -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(1);
         const double uz = -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(2);
-        const double speed2 = ux*ux+uy*uy+uz*uz;
-        return 1.0;//1.5 - speed2/2;
+        const double speed2 = ux*ux+uy*uy+uz*uz; */
+        return 1.0;
 
     }
 
     double Sphere::InitialRho::value(const dealii::Point<3>& x, const unsigned int component) const {
         // use potential flow for initial values
-        const double U = m_flow->getCharacteristicVelocity();
+        /*const double U = m_flow->getCharacteristicVelocity();
         const double R = 0.5;
         const double r = sqrt(x(0)*x(0)+x(1)*x(1)+x(2)*x(2));
         const double ux = U*(1-3*R*R*R*x(0)*x(0)/(2*r*r*r*r*r)+(R*R*R)/(2*r*r*r));
         const double uy = -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(1);
         const double uz = -U*3*(R*R*R)/(2*r*r*r*r*r)*x(0)*x(2);
-        const double speed2 = ux*ux+uy*uy+uz*uz;
-        return 1.0;//1.5 - speed2/2;
+        const double speed2 = ux*ux+uy*uy+uz*uz; */
+        return 1.0;
 
     }
 
