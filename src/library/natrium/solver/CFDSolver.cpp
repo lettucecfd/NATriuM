@@ -1439,10 +1439,13 @@ void CFDSolver<dim>::addToVelocity(
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
 			m_advectionOperator->getDoFHandler()->begin_active(), endc =
 			m_advectionOperator->getDoFHandler()->end();
+    std::set<int> already_set;
 	for (; cell != endc; ++cell) {
 		if (cell->is_locally_owned()) {
 			cell->get_dof_indices(local_dof_indices);
 			for (size_t i = 0; i < dofs_per_cell; i++) {
+                if (already_set.count(local_dof_indices.at(i))>0)
+                    continue;
 				assert(
 						m_velocity.at(0).in_local_range(
 								local_dof_indices.at(i)));
@@ -1460,6 +1463,7 @@ void CFDSolver<dim>::addToVelocity(
 													local_dof_indices.at(i)),
 											component);
 				}
+                already_set.insert(local_dof_indices.at(i));
 			}
 		} /* if is locally owned */
 	} /* for all cells */
