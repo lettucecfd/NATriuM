@@ -183,7 +183,7 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
 
 	// DEBUG:
 	//return m_initialIncompressibleU.value(x, component);
-	int meanVelocityMethodID = 3;
+	int meanVelocityMethodID = 1;
 
 	double height 	= m_flow->getCharacteristicLength();
     double ReTau 	= m_flow->getFrictionReNumber();
@@ -217,7 +217,7 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
 		}
 		else
 		{// log region
-			uPlus = 1./0.4 * log(yPlus) + 5.2;
+			uPlus = m_flow->m_uCl / ( ReTau * visc / h_half );
 		}
 		break;
 	case 2: {
@@ -316,9 +316,7 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
         uPlus = uPlus + uPlusDelta;
         break;
     }
-        case 3:
-        uPlus = m_flow->m_uCl* sin(x[1]/height*M_PI) /  ( ReTau * visc / h_half );
-        break;
+
 	}
 	double U = uPlus * ( ReTau * visc / h_half );
 
@@ -445,7 +443,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	//double	ReTau 				= m_flow->getFrictionReNumber();		// friction Reynolds number
 
 	double	u_cl				= m_flow->getCenterLineVelocity(); 		// mean centerline velocity
-	double  ti					= 0.05;							// turbulence intensity I = u'/U
+	double  ti					= 0.15;							// turbulence intensity I = u'/U
 	double	urms 				= ti * u_cl;					// turbulent velocity scale
 	double	tke 				= 3./2 * pow(urms, 2.);			// turbulent kinetic energy
 	double	delta 				= 5./32 * height;	        	// inlet boundary layer thickness. Only if the boundary layer
