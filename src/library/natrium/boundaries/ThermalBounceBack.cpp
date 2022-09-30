@@ -79,13 +79,16 @@ void ThermalBounceBack<dim>::calculateBoundaryValues(
     }
     eq.polynomial(feq,rho,u_local,1.0,e,w,cs2);
     for (int i=0; i<45; i++) {
-        f_destination[i] += feq[i];
+        //f_destination[i] += feq[i];
+        fe_boundary_values.getData().m_fnew.at(i)(
+                destination.index) =
+                f_destination[i]  + feq[i];
     }
 
 
-	fe_boundary_values.getData().m_fnew.at(destination.direction)(
+/*	fe_boundary_values.getData().m_fnew.at(destination.direction)(
 					destination.index) =
-            f_destination[destination.direction];
+            f_destination[destination.direction]; */
 
 }
 

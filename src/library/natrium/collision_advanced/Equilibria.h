@@ -98,6 +98,9 @@ class QuarticEquilibrium
     {
 
     }
+
+private:
+
     };
 
 

@@ -148,8 +148,9 @@ public:
 		genData.H3 = calculateH3<T_D,T_Q>(genData.cs2,genData.e);
 		genData.H4 = calculateH4<T_D,T_Q>(genData.cs2,genData.e);
 
+        T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
-		for (int ii = 0; ii < length; ii++) {
+        for (int ii = 0; ii < length; ii++) {
 
 			// Variable that stores the local distribution function values of every node
 
@@ -199,7 +200,7 @@ public:
 			//Initialize an object of the desired collision scheme and run the relaxation process
 
            // collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData);
-            collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData);
+            collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData, eq);
 
             mSS_raw[ii] = genData.maskShockSensor;
  			//reApplyForces<T_Q>(fLocal); // TODO

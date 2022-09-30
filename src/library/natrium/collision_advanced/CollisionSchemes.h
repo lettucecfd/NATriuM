@@ -42,9 +42,8 @@ public:
 
 		void relaxWithG(std::array<double, T_Q>& fLocal, std::array<double, T_Q>& gLocal,
 			GeneralCollisionData<T_D, T_Q>& genData,
-			SpecificCollisionData& specData) {
+			SpecificCollisionData& specData, T_equilibrium<T_D, T_Q> eq) {
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
