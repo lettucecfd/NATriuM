@@ -29,7 +29,7 @@ public:
 			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq;
+		T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
@@ -44,7 +44,7 @@ public:
 			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq;
+		T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
@@ -158,7 +158,7 @@ public:
 			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq;
+		T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
@@ -241,7 +241,7 @@ public:
 			SpecificCollisionData& specData) {
 
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq;
+		T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);

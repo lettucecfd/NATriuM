@@ -26,7 +26,21 @@ template<size_t dim>
 void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 		const DistributionFunctions& f_old, double t) {
 
-	GlobalBoundaryData g_data(f_old, f_new, m_stencil, 0.1, m_timeStep);
+    GlobalBoundaryData g_data(f_old, f_new, m_stencil, 0.1, m_timeStep);
+    operate(g_data,t);
+}
+
+template<size_t dim>
+void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
+                                               const DistributionFunctions& f_old, DistributionFunctions& g, double t) {
+
+    GlobalBoundaryData g_data(f_old, f_new, g, m_stencil, 0.1, m_timeStep);
+    operate(g_data,t);
+}
+
+
+    template<size_t dim>
+    void SemiLagrangianBoundaryHandler<dim>::operate(GlobalBoundaryData g_data, double t){
 	std::vector<dealii::Point<dim> > local_hit_points;
 	typename HitList<dim>::iterator cell_it = m_hitList.begin();
 	typename HitList<dim>::iterator cell_end = m_hitList.end();

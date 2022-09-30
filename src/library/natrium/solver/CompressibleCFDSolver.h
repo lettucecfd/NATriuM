@@ -66,6 +66,104 @@ public:
 	}
 
 
+    void stream() {
+
+        // start timer
+        TimerOutput::Scope timer_section(Timing::getTimer(), "Stream");
+
+        // no streaming in direction 0; begin with 1
+        distributed_block_vector& f = this->m_f.getFStream();
+        const distributed_sparse_block_matrix& systemMatrix =
+                this->m_advectionOperator->getSystemMatrix();
+
+        if (SEMI_LAGRANGIAN == this->m_configuration->getAdvectionScheme()) {
+
+            DistributionFunctions f_tmp(this->m_f);
+            systemMatrix.vmult(this->m_f.getFStream(), f_tmp.getFStream());
+            this->m_advectionOperator->applyBoundaryConditions(f_tmp, this->m_f, m_g, this->m_time);
+            /*distributed_block_vector f_tmp(f.n_blocks());
+             reinitVector(f_tmp, f);
+             f_tmp = f;
+             systemMatrix.vmult(f, f_tmp);*/
+
+            //m_advectionOperator->applyBoundaryConditions( f_tmp, f,  m_time);
+            if (this->m_configuration->isVmultLimiter()) {
+                TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+                VmultLimiter::apply(systemMatrix, this->m_f.getFStream(),
+                                    f_tmp.getFStream());
+            }
+
+            if ((BGK_MULTI_AM4 == this->m_configuration->getCollisionScheme()
+                 || (BGK_MULTI_BDF2 == this->m_configuration->getCollisionScheme()))
+                && (this->m_i - this->m_iterationStart) > 1) {
+                //distributed_block_vector& formerF =
+                //		m_multistepData->getFormerF().getFStream();
+                f_tmp = this->m_multistepData->getFormerF();
+                assert(this->m_multistepData != NULL);
+                systemMatrix.vmult(this->m_multistepData->getFormerF().getFStream(),
+                                   f_tmp.getFStream());
+                this->m_advectionOperator->applyBoundaryConditions(f_tmp,
+                                                                   this->m_multistepData->getFormerF(), this->m_time);
+                //m_advectionOperator->applyBoundaryConditions( f_tmp, formerF,  m_time);
+                if (this->m_configuration->isVmultLimiter()) {
+                    TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+                    VmultLimiter::apply(systemMatrix,
+                                        this->m_multistepData->getFormerF().getFStream(),
+                                        f_tmp.getFStream());
+                }
+
+                //distributed_block_vector& formerFEq =
+                //		m_multistepData->getFormerFEq().getFStream();
+                f_tmp = this->m_multistepData->getFormerFEq();
+                systemMatrix.vmult(this->m_multistepData->getFormerFEq().getFStream(),
+                                   f_tmp.getFStream());
+                this->m_advectionOperator->applyBoundaryConditions(f_tmp,
+                                                                   this->m_multistepData->getFormerFEq(), this->m_time);
+                //m_advectionOperator->applyBoundaryConditions( f_tmp, formerFEq,  m_time);
+                if (this->m_configuration->isVmultLimiter()) {
+                    TimerOutput::Scope timer_section(Timing::getTimer(), "Limiter");
+                    VmultLimiter::apply(systemMatrix,
+                                        this->m_multistepData->getFormerFEq().getFStream(),
+                                        f_tmp.getFStream());
+                }
+            }
+
+            this->m_time += this->getTimeStepSize();
+
+        } else {
+            this->m_boundaryVector = this->m_advectionOperator->getSystemVector();
+            double new_dt = this->m_timeIntegrator->step(f, systemMatrix,
+                                                         this->m_boundaryVector, 0.0, this->m_timeIntegrator->getTimeStepSize());
+
+            // For multistep methods, the former PDF for f and feq have also to be streamed
+            if ((BGK_MULTI_AM4 == this->m_configuration->getCollisionScheme()
+                 || (BGK_MULTI_BDF2 == this->m_configuration->getCollisionScheme()))
+                && (this->m_i - this->m_iterationStart) > 1) {
+
+                distributed_block_vector& formerF =
+                        this->m_multistepData->getFormerF().getFStream();
+                distributed_block_vector& formerFEq =
+                        this->m_multistepData->getFormerFEq().getFStream();
+
+                this->m_timeIntegrator->step(formerF, systemMatrix, this->m_boundaryVector, 0.0,
+                                             this->m_timeIntegrator->getTimeStepSize());
+
+                this->m_timeIntegrator->step(formerFEq, systemMatrix, this->m_boundaryVector,
+                                       0.0, this->m_timeIntegrator->getTimeStepSize());
+
+            }
+
+            this->m_timeIntegrator->setTimeStepSize(new_dt);
+            this->m_time += new_dt;
+            this->m_collisionModel->setTimeStep(this->m_timeIntegrator->getTimeStepSize());
+        }
+
+        // communicate
+        this->m_f.updateGhosted();
+
+    }
+
+
 void gStream() {
 
 

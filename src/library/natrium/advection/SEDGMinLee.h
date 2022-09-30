@@ -231,6 +231,10 @@ public:
 			DistributionFunctions& , double){
 	}
 
+        virtual void applyBoundaryConditions(DistributionFunctions& ,
+                                             DistributionFunctions& , DistributionFunctions& ,double){
+        }
+
     virtual void applyBoundaryConditionsToG(DistributionFunctions& ,
                                          DistributionFunctions& , double, double){
     }

@@ -65,8 +65,8 @@ public:
 			//Set temperature so that Equilibrium terms cancel out
 			genData.temperature = 1.0;
 
-            genData.H3 = calculateH3<T_D,T_Q>(genData);
-            genData.H4 = calculateH4<T_D,T_Q>(genData);
+            genData.H3 = calculateH3<T_D,T_Q>(genData.cs2,genData.e);
+            genData.H4 = calculateH4<T_D,T_Q>(genData.cs2,genData.e);
 
 			//Write the local density to the global density vector
 			rho_raw[ii] = genData.density; // write local density to global density vector
@@ -145,8 +145,8 @@ public:
         double* mSS_raw;
                 maskShockSensor.trilinos_vector().ExtractView(&mSS_raw, &length);
 
-		genData.H3 = calculateH3<T_D,T_Q>(genData);
-		genData.H4 = calculateH4<T_D,T_Q>(genData);
+		genData.H3 = calculateH3<T_D,T_Q>(genData.cs2,genData.e);
+		genData.H4 = calculateH4<T_D,T_Q>(genData.cs2,genData.e);
 
 
 		for (int ii = 0; ii < length; ii++) {
@@ -174,8 +174,8 @@ public:
 			calculateVelocity<T_D, T_Q>(genData.fLocal, genData.velocity,
 					genData.density, genData); // TODO velocities for other stencils
 
-			genData.temperature = calculateTemperature<T_D,T_Q>(genData.fLocal, genData.gLocal, genData.velocity,
-					genData.density, genData.temperature, genData);
+			genData.temperature = calculateTemperature<T_D, T_Q>(genData.fLocal, genData.gLocal, genData.velocity,
+                                                                 genData.density, genData.temperature, genData, 0);
 			T_raw[ii] = genData.temperature;
 
 			//Write the local density to the global velocity matrix

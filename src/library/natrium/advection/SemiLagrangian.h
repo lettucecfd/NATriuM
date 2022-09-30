@@ -164,6 +164,10 @@ public:
         m_boundaryHandler.apply(f, f_old, t);
     }
 
+    virtual void applyBoundaryConditions(DistributionFunctions& f_old, DistributionFunctions& f, DistributionFunctions& g, double t){
+        m_boundaryHandler.apply(f, f_old, g, t);
+    }
+
 	virtual void applyBoundaryConditionsToG(DistributionFunctions& f, DistributionFunctions& g, double t, const double gamma){
         m_boundaryHandler.applyToG(f, g, t, gamma);
     }

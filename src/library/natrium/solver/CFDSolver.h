@@ -359,6 +359,8 @@ public:
 	void updateGhosted()
 	{m_f.updateGhosted();
 	}
+
+    void additionalStreamingSteps();
 }
 ;
 
