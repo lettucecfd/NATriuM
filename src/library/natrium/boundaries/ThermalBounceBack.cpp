@@ -59,9 +59,8 @@ void ThermalBounceBack<dim>::calculateBoundaryValues(
     const double cs2 = stencil.getSpeedOfSoundSquare() / (scaling * scaling);
     const double gamma = 1.4;
     assert(stencil.getQ()==45);
-    std::array<double,45> f_destination, g_destination, feq, geq, w, f_old ;
+    std::array<double,45> f_destination, g_destination, feq, geq, w;
     for (int i=0; i<45; i++) {
-        f_old[i] = fe_boundary_values.getData().m_fold.at(i)(destination.index);
         f_destination[i] = fe_boundary_values.getData().m_fnew.at(i)(destination.index);
         g_destination[i] = fe_boundary_values.getData().m_g.at(i)(destination.index);
         w[i]=stencil.getWeight(i);
@@ -72,7 +71,7 @@ void ThermalBounceBack<dim>::calculateBoundaryValues(
     std::array<std::array<double,dim>,45> e = getParticleVelocitiesWithoutScaling<dim,45>(stencil);
     calculateVelocity<dim,45>(f_destination,u_local,rho,e);
 
-    const double T_local = calculateTemperature<dim,45>(f_old,g_destination,u_local,rho,e,cs2,gamma);
+    const double T_local = calculateTemperature<dim,45>(f_destination,g_destination,u_local,rho,e,cs2,gamma);
     if (std::abs(T_local- T_wall) > 0.01) {
         QuarticEquilibrium<dim, 45> eq(cs2, e);
         eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
