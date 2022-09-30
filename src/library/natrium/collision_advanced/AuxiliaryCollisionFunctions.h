@@ -430,6 +430,18 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
 
 }
 
+template<size_t T_D, size_t T_Q>
+inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<double, T_Q>& geq, const double temperature, const double gamma)
+{
+    const double C_v = 1. / (gamma - 1.0);
+    for (size_t i = 0; i < T_Q; i++) {
+
+        geq[i]=feq[i]*(temperature)*(2.0*C_v-T_D);
+
+    }
+
+}
+
     template<size_t T_D, size_t T_Q>
     inline void calculateCenteredHeatFluxTensor(const std::array<double, T_Q> &f,
                                                 std::array<std::array<std::array<double, T_D>, T_D>, T_D> &heatFluxTensor,
