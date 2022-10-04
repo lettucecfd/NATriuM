@@ -162,11 +162,11 @@ int main(int argc, char** argv) {
 	configuration->setCommandLineVerbosity(WELCOME);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	configuration->setForcingScheme(SHIFTING_VELOCITY);
+	configuration->setForcingScheme(EXACT_DIFFERENCE);
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
-    configuration->setPrandtlNumber(0.7);
+    //configuration->setPrandtlNumber(0.7);
     configuration->setSutherlandLaw();
 	configuration->setOutputTurbulenceStatistics(true);
 	configuration->setWallNormalDirection(1);

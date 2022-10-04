@@ -402,7 +402,7 @@ inline void applyForces(GeneralCollisionData<T_D, T_Q>& genData) {
                                     + 0.5 * genData.dt * genData.forces[j] / genData.density;
             }
             std::array<double, T_Q> shiftedEq = {};
-            T_equilibrium<T_D, T_Q> eq_shifted(genData.cs2,genData.e);
+            T_equilibrium<T_D, T_Q> eq_shifted(genData);
             eq_shifted.calc(shiftedEq, genData);
             for (size_t i = 0; i < T_Q; i++) {
                 genData.fLocal[i] += (shiftedEq[i] - genData.feq[i]);

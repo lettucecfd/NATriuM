@@ -23,6 +23,10 @@ namespace natrium {
         BGKEquilibrium(double cs2, std::array<std::array<double, T_D>, T_Q> e)
         {
         }
+
+        BGKEquilibrium(const GeneralCollisionData<T_D, T_Q> &params)
+        {
+        }
     };
 
 
@@ -96,9 +100,11 @@ class QuarticEquilibrium
 
     QuarticEquilibrium(double cs2, std::array<std::array<double, T_D>, T_Q> e) : H3(calculateH3(cs2,e)), H4(calculateH4(cs2,e))
     {
-
     }
 
+    QuarticEquilibrium(const GeneralCollisionData<T_D, T_Q> &params) :H3(params.H3), H4(params.H4)
+    {
+    }
 private:
 
     };
@@ -279,6 +285,9 @@ namespace natrium {
         SteadyStateEquilibrium(double cs2, std::array<std::array<double, T_D>, T_Q> e)
         {
         }
+        SteadyStateEquilibrium(const GeneralCollisionData<T_D, T_Q> &params)
+        {
+        }
     };
 
     template<int T_D, int T_Q>
@@ -312,6 +321,9 @@ namespace natrium {
     public:
         void calc(std::array<double, T_Q> &feq, const GeneralCollisionData<T_D, T_Q> &params);
         IncompressibleEquilibrium(double cs2, std::array<std::array<double, T_D>, T_Q> e)
+        {
+        }
+        IncompressibleEquilibrium(const GeneralCollisionData<T_D, T_Q> &params)
         {
         }
     };
@@ -348,6 +360,9 @@ namespace natrium {
     public:
         void calc(std::array<double, T_Q> &feq, const GeneralCollisionData<T_D, T_Q> &params);
         EntropicEquilibrium(double cs2, std::array<std::array<double, T_D>, T_Q> e)
+        {
+        }
+        EntropicEquilibrium(const GeneralCollisionData<T_D, T_Q> &params)
         {
         }
     };

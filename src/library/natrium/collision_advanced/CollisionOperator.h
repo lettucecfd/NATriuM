@@ -201,7 +201,9 @@ public:
 
            // collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData);
             collisionScheme.relaxWithG(genData.fLocal, genData.gLocal, genData, specData, eq);
-
+            if (genData.problemDescription.hasExternalForce()) {
+                postCollisionApplyForces<T_D, T_Q, T_equilibrium>(u_raw, ii, genData);
+            }
             mSS_raw[ii] = genData.maskShockSensor;
  			//reApplyForces<T_Q>(fLocal); // TODO
 
