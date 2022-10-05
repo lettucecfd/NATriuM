@@ -424,15 +424,18 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 
 	if (component == 0)
 	{
-		return ( utrp_inc );
+		return 0.0;
+        //return ( utrp_inc );
 	}
 	else if (component == 1)
 	{
-		return ( vtrp_inc );
+        return uv*(1+sum);
+        //return ( vtrp_inc );
 	}
 	else // component == 2
 	{
-		return ( wtrp_inc );
+        return uv*(1-sum);
+        //return ( wtrp_inc );
 	}
 }
 
@@ -684,12 +687,14 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
     // Vin & Win are assumed to be 0.
 	if (component == 0)
 	{
-		return ( fBlend*utrp );
+        return 0.0;
+		//return ( fBlend*utrp );
 		//return 0;
 	}
 	else if (component == 1)
-	{
-		return ( fBlend*vtrp );
+    {
+        return uv*(1+sum);
+		//return ( fBlend*vtrp );
 		//return 0;
 	}
 	else // component == 2
