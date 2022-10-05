@@ -474,15 +474,14 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
     calculateFStar(std::array<double, T_Q> &fStar, const std::array<std::array<std::array<double, T_D>, T_D>, T_D> &QNeq,
                    const GeneralCollisionData<T_D, T_Q> &p) {
         std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
-
-        for (size_t i = 0; i < T_Q; i++) {
+        const double cs6 = 6.0 * p.cs2 * p.cs2 * p.cs2;
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
                     for (size_t c = 0; c < T_D; c++) {
-
+                        for (size_t i = 0; i < T_Q; i++) {
                         fStar[i] += p.weight[i] * (QNeq[a][b][c] * (p.e[i][a] * p.e[i][b] * p.e[i][c] -
                                                                     3 * p.cs2 * p.e[i][c] * eye[a][b])) /
-                                    (6.0 * p.cs2 * p.cs2 * p.cs2);
+                                    cs6;
                     }
                 }
             }

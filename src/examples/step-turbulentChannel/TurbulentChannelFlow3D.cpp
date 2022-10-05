@@ -86,7 +86,7 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 	// apply initial values / analytic solution
 	setInitialU(boost::make_shared<IncompressibleU>(this));
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
-    //this->setInitialRho(boost::make_shared<InitialDensity>(this));
+    this->setInitialRho(boost::make_shared<InitialDensity>(this));
 
 
 	if (is_periodic) {
@@ -413,15 +413,31 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 	}
 }
 
-    double TurbulentChannelFlow3D::InitialTemperature::value(const dealii::Point<3>& x, const unsigned int component) const {
+    double
+    TurbulentChannelFlow3D::InitialTemperature::value(const dealii::Point<3> &x, const unsigned int component) const {
+        double T = 1.0;
+        const double height = this->m_flow->getHeight();
+        if (x(1) > (height / 2.0))
+            T = 1.0 + 0.25 * tanh((height - x(1)) * 20);
 
-        return 1.0;
+        else
+            T = 1.0 + 0.25 * tanh(x(1) * 20);
 
+        return T;
     }
 
-    double TurbulentChannelFlow3D::InitialDensity::value(const dealii::Point<3>& x, const unsigned int component) const {
+    double
+    TurbulentChannelFlow3D::InitialDensity::value(const dealii::Point<3> &x, const unsigned int component) const {
+        double rho = 1.0;
+        const double height = this->m_flow->getHeight();
+        if (x(1) > (height / 2.0))
+            rho = 1.0 - 0.25 * tanh((height - x(1)) * 20);
 
-        return 1.0;
+
+        else
+            rho = 1.0 - 0.25 * tanh(x(1) * 20);
+
+        return rho;
 
     }
 
