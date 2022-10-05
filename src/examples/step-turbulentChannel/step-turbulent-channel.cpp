@@ -300,7 +300,7 @@ int main(int argc, char** argv) {
 				<< utrp_inc_max << endl;
 		pout << " >>>> Scaling Factor:  " << scalingFactor << endl;
 
-        solver.scaleVelocity(0.0);
+        solver.scaleVelocity(scalingFactor);
 		solver.addToVelocity(
 				boost::make_shared<TurbulentChannelFlow3D::MeanVelocityProfile>(
 						channel3D.get()));
