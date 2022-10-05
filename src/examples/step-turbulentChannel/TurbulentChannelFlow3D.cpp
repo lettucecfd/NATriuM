@@ -409,9 +409,9 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 	}
     const double height = m_flow->getCharacteristicLength();
     const double streak_intensity = 0.04;
-    const double y = x(1)/height;
+    const double y = (x(1)-height)/height;
     const double z = x(2)/height;
-    const double off = x(1)<=height/2.0 ? 0.05 : -0.05;
+    const double off = y<=0 ? 0.05 : -0.05;
     double uv = streak_intensity * 4*0.9*sin(2*z)/(cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
     double uw = streak_intensity * 2*0.9*0.9*cos(2*z)*sinh(0.9*(y+off))/(cosh(0.9*(y+off))*cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
     double sum = 0.0;
@@ -434,7 +434,7 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 	}
 	else // component == 2
 	{
-        return uv*(1-sum);
+        return uw*(1-sum);
         //return ( wtrp_inc );
 	}
 }
