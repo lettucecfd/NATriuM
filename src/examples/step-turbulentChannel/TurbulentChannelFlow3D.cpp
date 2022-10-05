@@ -106,6 +106,15 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		setExternalForce(
 				boost::make_shared<ConstantExternalForce<3> >(F));
 	}
+    m_alpha = std::vector<int>();
+    m_beta = std::vector<int>();
+    for (int i=0; i < 24; i++)
+    {
+        m_alpha.push_back(rand() % 22 + 1);
+        m_beta.push_back(rand() % 22 + 1);
+    }
+
+
 }
 
 TurbulentChannelFlow3D::~TurbulentChannelFlow3D() {
@@ -398,6 +407,20 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 		m_flow->m_maxIncUtrp = utrp_inc;
 		//cout << "maxIncUtrp = "<< m_flow->m_maxIncUtrp << endl;
 	}
+    const double height = m_flow->getCharacteristicLength();
+    const double streak_intensity = 0.04;
+    const double y = x(1)/height;
+    const double z = x(2)/height;
+    const double off = x(1)<=height/2.0 ? 0.05 : -0.05;
+    double uv = streak_intensity * 4*0.9*sin(2*z)/(cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
+    double uw = streak_intensity * 2*0.9*0.9*cos(2*z)*sinh(0.9*(y+off))/(cosh(0.9*(y+off))*cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
+    double sum = 0.0;
+
+    for (int i = 1;i<13;i++)
+    {
+
+        sum+=1./120*uv*sin(x(0)*2*M_PI/23*this->m_flow->m_alpha.at(i))*sin(x(2)*2*M_PI/23*this->m_flow->m_beta.at(i));
+    }
 
 	if (component == 0)
 	{
@@ -644,6 +667,20 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
     // DEBUG: for mean velocity profile check
     //return 0;
 
+    const double streak_intensity = 0.04;
+    const double y = x(1)/height;
+    const double z = x(2)/height;
+    const double off = x(1)<=height/2.0 ? 0.05 : -0.05;
+     double uv = streak_intensity * 4*0.9*sin(2*z)/(cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
+     double uw = streak_intensity * 2*0.9*0.9*cos(2*z)*sinh(0.9*(y+off))/(cosh(0.9*(y+off))*cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
+    double sum = 0.0;
+
+    for (int i = 1;i<13;i++)
+    {
+
+        sum+=1./120*uv*sin(x(0)*2*M_PI/23*this->m_flow->m_alpha.at(i))*sin(x(2)*2*M_PI/23*this->m_flow->m_beta.at(i));
+    }
+
     // Vin & Win are assumed to be 0.
 	if (component == 0)
 	{
@@ -657,6 +694,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	}
 	else // component == 2
 	{
+        return uw*(1-sum);
 		return ( fBlend*wtrp );
 		//return 0;
 	}

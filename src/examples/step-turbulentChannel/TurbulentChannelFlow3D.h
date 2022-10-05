@@ -212,6 +212,9 @@ private:
 	double m_maxIncUtrp;
 	double m_gridDensity;
 
+    std::vector<int> m_alpha;
+    std::vector<int> m_beta;
+
 	/**
 	 * @short create triangulation for couette flow
 	 * @return shared pointer to a triangulation instance
