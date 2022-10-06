@@ -70,7 +70,6 @@ void AdaptiveForcing::apply() {
             if (cell->is_locally_owned()) {
 
                 cell->get_dof_indices(local_indices);
-                dof_ind = local_indices.at(i);
 
                 // get averages
                 fe_values.reinit(cell);
@@ -79,6 +78,7 @@ void AdaptiveForcing::apply() {
 
 
                 for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
+                    dof_ind = local_indices.at(i);
                     number_values += 1;
                     // fill value vector
                     value = m_rho(dof_ind) * m_u.at(0)(dof_ind);				// rho
