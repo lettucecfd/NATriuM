@@ -106,7 +106,7 @@ void AdaptiveForcing::apply() {
             *m_tableFile << this->m_solver.getIteration() << " ";
             *m_tableFile << this->m_solver.getTime() << " ";
 
-            *m_tableFile << m_currentValue << " " << m_force << "\n";
+            *m_tableFile << m_currentValue << " " << m_force << endl;
 
 
         }
