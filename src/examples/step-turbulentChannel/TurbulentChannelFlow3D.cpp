@@ -106,15 +106,6 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 		setExternalForce(
 				boost::make_shared<ConstantExternalForce<3> >(F));
 	}
-    m_alpha = std::vector<int>();
-    m_beta = std::vector<int>();
-    for (int i=0; i < 24; i++)
-    {
-        m_alpha.push_back(rand() % 22 + 1);
-        m_beta.push_back(rand() % 22 + 1);
-    }
-
-
 }
 
 TurbulentChannelFlow3D::~TurbulentChannelFlow3D() {
@@ -382,60 +373,24 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 	double utrp_inc = gradW[1] - gradV[2]; // dW/dy - dV/dz
 	double vtrp_inc = gradU[2] - gradW[0]; // dU/dz - dW/dx
 	double wtrp_inc = gradV[0] - gradU[1]; // dV/dx - dU/dy
-/*
-    const double max_factor = 0.1;
-    if (utrp_inc > m_flow-> m_uCl*max_factor )
-        utrp_inc = m_flow-> m_uCl*max_factor;
 
-    if (utrp_inc < -m_flow-> m_uCl*max_factor )
-        utrp_inc = -m_flow-> m_uCl*max_factor;
-
-    if (vtrp_inc > m_flow-> m_uCl*max_factor )
-        vtrp_inc = m_flow-> m_uCl*max_factor;
-
-    if (vtrp_inc < -m_flow-> m_uCl*max_factor )
-        vtrp_inc = -m_flow-> m_uCl*max_factor;
-
-    if (wtrp_inc > m_flow-> m_uCl*max_factor )
-        wtrp_inc = m_flow-> m_uCl*max_factor;
-        
-    if (wtrp_inc < -m_flow-> m_uCl*max_factor )
-        wtrp_inc = -m_flow-> m_uCl*max_factor;
-*/
-    if ( utrp_inc > m_flow->m_maxIncUtrp )
+	if ( utrp_inc > m_flow->m_maxIncUtrp )
 	{
 		m_flow->m_maxIncUtrp = utrp_inc;
 		//cout << "maxIncUtrp = "<< m_flow->m_maxIncUtrp << endl;
 	}
-    const double height = m_flow->getCharacteristicLength();
-    const double streak_intensity = 0.04;
-    const double y = (x(1)-height)/height;
-    const double z = x(2)/height;
-    const double off = y<=0 ? 0.05 : -0.05;
-    double uv = streak_intensity * 4*0.9*sin(2*z)/(cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
-    double uw = streak_intensity * 2*0.9*0.9*cos(2*z)*sinh(0.9*(y+off))/(cosh(0.9*(y+off))*cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
-    double sum = 0.0;
-
-    for (int i = 1;i<13;i++)
-    {
-
-        sum+=1./120*uv*sin(x(0)*2*M_PI/23*this->m_flow->m_alpha.at(i))*sin(x(2)*2*M_PI/23*this->m_flow->m_beta.at(i));
-    }
 
 	if (component == 0)
 	{
-		return 0.0;
-        //return ( utrp_inc );
+		return ( utrp_inc );
 	}
 	else if (component == 1)
 	{
-        return uv*(1+sum);
-        //return ( vtrp_inc );
+		return ( vtrp_inc );
 	}
 	else // component == 2
 	{
-        return uw*(1-sum);
-        //return ( wtrp_inc );
+		return ( wtrp_inc );
 	}
 }
 
@@ -670,36 +625,19 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
     // DEBUG: for mean velocity profile check
     //return 0;
 
-    const double streak_intensity = 0.04;
-    const double y = x(1)/height;
-    const double z = x(2)/height;
-    const double off = x(1)<=height/2.0 ? 0.05 : -0.05;
-     double uv = streak_intensity * 4*0.9*sin(2*z)/(cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
-     double uw = streak_intensity * 2*0.9*0.9*cos(2*z)*sinh(0.9*(y+off))/(cosh(0.9*(y+off))*cosh(0.9*(y+off))*(0.9*0.9*cos(2*z)*cos(2*z)/(cosh(0.9*(y+off))*cosh(0.9*(y+off)))-1) );
-    double sum = 0.0;
-
-    for (int i = 1;i<13;i++)
-    {
-
-        sum+=1./120*uv*sin(x(0)*2*M_PI/23*this->m_flow->m_alpha.at(i))*sin(x(2)*2*M_PI/23*this->m_flow->m_beta.at(i));
-    }
-
     // Vin & Win are assumed to be 0.
 	if (component == 0)
 	{
-        return 0.0;
-		//return ( fBlend*utrp );
+		return ( fBlend*utrp );
 		//return 0;
 	}
 	else if (component == 1)
-    {
-        return uv*(1+sum);
-		//return ( fBlend*vtrp );
+	{
+		return ( fBlend*vtrp );
 		//return 0;
 	}
 	else // component == 2
 	{
-        return uw*(1-sum);
 		return ( fBlend*wtrp );
 		//return 0;
 	}
