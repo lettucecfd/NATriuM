@@ -454,7 +454,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
 	//int 	nmodes 				= 600;							// number of Fourier modes
 	//changed by Andreas
-	int nmodes = 50;
+	int nmodes = 12;
 	//pout << " >>>> Number of Fourier modes = " << nmodes << endl;
 	
 	//double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
@@ -619,8 +619,8 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
     // Manipulated hyperbolic function, freeStreamTurb prescribes a free-stream turbulence
     //	by preventing the blending function from dropping below the set value
-    fBlend = std::max( 0.5 * ( 1 - tanh( (minDist - delta)/blendDist ) ), freeStreamTurb);
-    //fBlend = 1;
+    //fBlend = std::max( 0.5 * ( 1 - tanh( (minDist - delta)/blendDist ) ), freeStreamTurb);
+    fBlend = 1;
 
     // DEBUG: for mean velocity profile check
     //return 0;

@@ -20,6 +20,8 @@ ADD_EXECUTABLE( ${TARGET}
                 TurbulentChannelFlow3D.cpp
                 FinalChannelStatistics.h
                 FinalChannelStatistics.cpp
+				AdaptiveForcing.cpp
+				AdaptiveForcing.h
                )
                
 ADD_EXECUTABLE( ${RESTART_TARGET} 
@@ -28,6 +30,8 @@ ADD_EXECUTABLE( ${RESTART_TARGET}
                 TurbulentChannelFlow3D.cpp
                 FinalChannelStatistics.h
                 FinalChannelStatistics.cpp
+				AdaptiveForcing.cpp
+				AdaptiveForcing.h
                )
 #
 

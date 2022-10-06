@@ -9,6 +9,7 @@
 
 #include "TurbulentChannelFlow3D.h"
 #include "FinalChannelStatistics.h"
+#include "AdaptiveForcing.h"
 
 #include "deal.II/numerics/data_out.h"
 #include "deal.II/grid/grid_out.h"
@@ -300,7 +301,7 @@ int main(int argc, char** argv) {
 				<< utrp_inc_max << endl;
 		pout << " >>>> Scaling Factor:  " << scalingFactor << endl;
 
-        solver.scaleVelocity(1.0);
+        solver.scaleVelocity(scalingFactor);
 		solver.addToVelocity(
 				boost::make_shared<TurbulentChannelFlow3D::MeanVelocityProfile>(
 						channel3D.get()));
@@ -310,6 +311,10 @@ int main(int argc, char** argv) {
 				boost::make_shared<FinalChannelStatistics>(solver,
 						configuration->getOutputDirectory()));
 	}
+    solver.appendDataProcessor(
+            boost::make_shared<AdaptiveForcing>(solver,
+                                                       configuration->getOutputDirectory(), 1.0));
+
 	solver.run();
 
 	pout << "Max Velocity  " << solver.getMaxVelocityNorm() << endl;

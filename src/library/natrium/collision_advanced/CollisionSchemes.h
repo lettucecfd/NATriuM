@@ -55,7 +55,6 @@ public:
 
         std::array<double, T_Q> fNeq = {0.0};
         std::array<double, T_Q> gNeq = {0.0};
-#pragma omp parallel for
         for (int p = 0; p < T_Q; ++p) {
             fNeq[p] = fLocal[p] - genData.feq[p];
             gNeq[p] = gLocal[p] - genData.geq[p];
