@@ -70,6 +70,7 @@ void AdaptiveForcing::apply() {
             if (cell->is_locally_owned()) {
 
                 cell->get_dof_indices(local_indices);
+                dof_ind = local_indices.at(i);
 
                 // get averages
                 fe_values.reinit(cell);
