@@ -128,7 +128,9 @@ AdaptiveForcing::~AdaptiveForcing() {
             newForce = 0.9*currentForce;
         dealii::Tensor<1,3> forceTensor;
         forceTensor[0]=newForce;
-        this->m_solver.getProblemDescription()->getExternalForce()->setForce(forceTensor);
+        forceTensor[1]=0.0;
+        forceTensor[2]=0.0;
+        this->m_solver.getProblemDescription()->setExternalForceTensor(forceTensor);
         m_force = newForce;
     }
 
