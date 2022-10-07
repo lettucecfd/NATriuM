@@ -39,6 +39,7 @@ private:
 
     void write();
     void getRhoU();
+    void calculateForce();
 
     std::string outfile(std::string dir) {
         boost::filesystem::path out_dir(dir);

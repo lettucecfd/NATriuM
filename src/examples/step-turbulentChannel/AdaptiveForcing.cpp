@@ -16,7 +16,7 @@ namespace natrium {
 AdaptiveForcing::AdaptiveForcing(CFDSolver<3> & solver,
 		std::string outdir, double target) :
 		DataProcessor<3>(solver), m_outDir(outdir), m_u(solver.getVelocity()), m_rho(
-				solver.getDensity()), m_targetRhoU(target),
+				solver.getDensity()), m_targetRhoU(target), m_lastRhoU(target),
                 m_filename(outfile(solver.getConfiguration()->getOutputDirectory())) {
 
         if (solver.getIterationStart() > 0) {
@@ -36,9 +36,9 @@ AdaptiveForcing::AdaptiveForcing(CFDSolver<3> & solver,
 
 
 void AdaptiveForcing::apply() {
-	if (m_solver.getIteration() % 10 == 0) {
+	if (m_solver.getIteration() % 1 == 0) {
         getRhoU();
-
+        calculateForce();
         write();
 	}
 }
@@ -105,7 +105,6 @@ void AdaptiveForcing::apply() {
 
             *m_tableFile << this->m_solver.getIteration() << " ";
             *m_tableFile << this->m_solver.getTime() << " ";
-
             *m_tableFile << m_currentValue << " " << m_force << endl;
 
 
@@ -116,5 +115,21 @@ void AdaptiveForcing::apply() {
 AdaptiveForcing::~AdaptiveForcing() {
 	// TODO Auto-generated destructor stub
 }
+
+    void AdaptiveForcing::calculateForce() {
+        const double currentForce = this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0];
+        const double timeStepSize = this->m_solver.getTimeStepSize();
+        double newForce = currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
+
+
+        if (newForce/currentForce>1.1)
+            newForce = 1.1*currentForce;
+        if (newForce/currentForce<0.9 or newForce<0)
+            newForce = 0.9*currentForce;
+        dealii::Tensor<1,3> forceTensor;
+        forceTensor[0]=newForce;
+        this->m_solver.getProblemDescription()->getExternalForce()->setForce(forceTensor);
+        m_force = newForce;
+    }
 
 } /* namespace natrium */
