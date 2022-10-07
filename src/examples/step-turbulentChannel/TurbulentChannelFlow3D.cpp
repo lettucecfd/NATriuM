@@ -329,12 +329,12 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
 	}
     if (component == 1)
     {
-        return 0.1*sin(x(0))+0.01*cos(x(0))*cos(x(1));
+        return 0.1*m_flow->m_uCl*sin(x(0))+0.01*cos(x(0))*cos(x(1));
         //return ( Uin + m_initialIncompressibleU.value(x, component) );
     }
     if (component == 2)
     {
-        return 0.3*sin(M_PI*x(1))+0.01*cos(x(0))*cos(x(1));
+        return 0.3*m_flow->m_uCl*sin(M_PI*x(1))+0.01*cos(x(0))*cos(x(1));
         //return ( Uin + m_initialIncompressibleU.value(x, component) );
     }
 
