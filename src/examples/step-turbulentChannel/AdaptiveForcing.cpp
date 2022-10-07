@@ -91,8 +91,8 @@ void AdaptiveForcing::apply() {
         } /* for all cells */
 
         // communicate
-        double total_value = dealii::Utilities::MPI::sum(number_values, MPI_COMM_WORLD);;
-        int total_number = dealii::Utilities::MPI::sum(average, MPI_COMM_WORLD);
+        int total_number = dealii::Utilities::MPI::sum(number_values, MPI_COMM_WORLD);;
+        double total_value = dealii::Utilities::MPI::sum(average, MPI_COMM_WORLD);
 
 
         total_value /= total_number;
