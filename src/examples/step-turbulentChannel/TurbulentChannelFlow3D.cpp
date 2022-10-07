@@ -327,11 +327,23 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
 		return U;
 		//return ( Uin + m_initialIncompressibleU.value(x, component) );
 	}
-	else // component 1, 2
+    if (component == 1)
+    {
+        return 0.1*sin(x(0))+0.01*cos(x(0))*cos(x(1));
+        //return ( Uin + m_initialIncompressibleU.value(x, component) );
+    }
+    if (component == 2)
+    {
+        return 0.3*sin(M_PI*x(1))+0.01*cos(x(0))*cos(x(1));
+        //return ( Uin + m_initialIncompressibleU.value(x, component) );
+    }
+
+
+    /*else // component 1, 2
 	{
 		return 0;
 		//return ( m_initialIncompressibleU.value(x, component) );
-	}
+	}*/
 }
 
 
@@ -404,7 +416,7 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
         else
             T = 1.0 + 0.25 * tanh(x(1) * 20);
 
-        return T;
+        return 1.0;//T;
     }
 
     double
@@ -418,7 +430,7 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
         else
             rho = 1.0 - 0.25 * tanh(x(1) * 20);
 
-        return rho;
+        return 1.0;// rho;
 
     }
 

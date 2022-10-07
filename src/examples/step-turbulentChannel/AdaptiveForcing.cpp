@@ -97,6 +97,7 @@ void AdaptiveForcing::apply() {
 
         total_value /= total_number;
         m_currentValue = total_value;
+
     }
 
     void AdaptiveForcing::write() {
@@ -105,7 +106,7 @@ void AdaptiveForcing::apply() {
 
             *m_tableFile << this->m_solver.getIteration() << " ";
             *m_tableFile << this->m_solver.getTime() << " ";
-            *m_tableFile << m_currentValue << " " << m_force << endl;
+            *m_tableFile << m_targetRhoU << " " << m_currentValue << " " << m_force << endl;
 
 
         }
@@ -122,15 +123,15 @@ AdaptiveForcing::~AdaptiveForcing() {
         double newForce = currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
 
 
-        if (newForce/currentForce>1.1)
-            newForce = 1.1*currentForce;
-        if (newForce/currentForce<0.9 or newForce<0)
-            newForce = 0.9*currentForce;
+        if (newForce/currentForce>1.01)
+            newForce = 1.01*currentForce;
+        if (newForce/currentForce<0.99 or newForce<0)
+            newForce = 0.99*currentForce;
         dealii::Tensor<1,3> forceTensor;
         forceTensor[0]=newForce;
         forceTensor[1]=0.0;
         forceTensor[2]=0.0;
-        this->m_solver.getProblemDescription()->setExternalForceTensor(forceTensor);
+        //this->m_solver.getProblemDescription()->setExternalForceTensor(forceTensor);
         m_force = newForce;
     }
 
