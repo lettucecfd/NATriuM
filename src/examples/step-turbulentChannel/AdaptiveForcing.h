@@ -14,13 +14,14 @@
 #include "natrium/utilities/BasicNames.h"
 #include "natrium/utilities/Math.h"
 #include "boost/filesystem.hpp"
+#include "FinalChannelStatistics.h"
 
 
 
 namespace natrium {
 
 
-class AdaptiveForcing: public DataProcessor<3>{
+class AdaptiveForcing: public FinalChannelStatistics{
 private:
 
 	boost::filesystem::path m_outDir;
