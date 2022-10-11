@@ -65,6 +65,8 @@ private:
 	/// file that contains the data (mesh + distribution functions)
 	boost::filesystem::path m_dataFile;
 
+	bool m_isG;
+
 public:
 
 	/**
@@ -72,7 +74,7 @@ public:
 	 * @param[in] iteration The iteration number of the checkpoint (save or load).
 	 * @param[in] checkpoint_dir The directory in which the checkpoint was saved.
 	 */
-	Checkpoint(size_t iteration, boost::filesystem::path checkpoint_dir);
+	Checkpoint(size_t iteration, boost::filesystem::path checkpoint_dir, bool isG=false);
 
 	/**
 	 * @short Function that determines whether the checkpoint files exist.

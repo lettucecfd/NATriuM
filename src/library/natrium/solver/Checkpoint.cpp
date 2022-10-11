@@ -26,8 +26,8 @@ namespace natrium {
 
 template<size_t dim>
 Checkpoint<dim>::Checkpoint(size_t iteration,
-		boost::filesystem::path checkpoint_dir) {
-
+		boost::filesystem::path checkpoint_dir, bool isG) {
+    m_isG = isG;
 	size_t it = iteration;
 
 	if (iteration == 1) {
@@ -39,9 +39,15 @@ Checkpoint<dim>::Checkpoint(size_t iteration,
 					!= ".stat") {
 				continue;
 			}
+			if (!isG){
 			boost::replace_all(this_filename, "checkpoint_", "");
 			boost::replace_all(this_filename, ".stat", "");
-
+            }
+			if (isG)
+            {
+            boost::replace_all(this_filename, "checkpointG_", "");
+            boost::replace_all(this_filename, ".stat", "");
+            }
 			size_t i = std::stoi(this_filename);
 			if (i > it){
 				it = i;
@@ -51,8 +57,14 @@ Checkpoint<dim>::Checkpoint(size_t iteration,
 	LOG(BASIC) << "Reading checkpoint " << it << " auomatically." <<  endl;
 	std::stringstream status_name;
 	std::stringstream data_name;
-	status_name << "checkpoint_" << it << ".stat";
-	data_name << "checkpoint_" << it << ".data";
+    if (!isG) {
+        status_name << "checkpoint_" << it << ".stat";
+        data_name << "checkpoint_" << it << ".data";
+    }
+    if (isG) {
+        status_name << "checkpointG_" << it << ".stat";
+        data_name << "checkpointG_" << it << ".data";
+    }
 	m_statusFile = checkpoint_dir / status_name.str();
 	m_dataFile = checkpoint_dir / data_name.str();
 
@@ -152,8 +164,11 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		// copy mesh
 		future_mesh.copy_triangulation(mesh);
 		// Refine and transform tmp mesh to get the desired refinement level
-		problem.refineAndTransform(future_mesh);
+		if(!m_isG)
+		    problem.refineAndTransform(future_mesh);
 		size_t nlevels_new = future_mesh.n_global_levels();
+		if(m_isG)
+		   nlevels_new = mesh.n_global_levels();
 
 		LOG(DETAILED) << "Read old solution" << endl;
 		// Prepare read old solution
@@ -192,7 +207,9 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 					"Restarting from coarser grid is not implemented, yet.");
 		}
 		if (mesh.n_global_levels() == nlevels_new) {
-			advection.setupDoFs();
+            LOG(DETAILED) << "No interpolation needed..." << endl;
+			if(!m_isG)
+                advection.setupDoFs();
 			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
 					locally_relevant_dofs,
 					MPI_COMM_WORLD, advection.isDG());
@@ -202,9 +219,10 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			// do one refinemenent step
 			dealii::parallel::distributed::SolutionTransfer<dim,
 					distributed_vector> soltrans_refine(dof_handler);
-			mesh.set_all_refine_flags();
-			mesh.prepare_coarsening_and_refinement();
-			// prepare all in
+			if(!m_isG) {
+                mesh.set_all_refine_flags();
+                mesh.prepare_coarsening_and_refinement();
+            }// prepare all in
 			std::vector<const distributed_vector*> all_in;
 			all_in.clear();
 			for (size_t i = 0; i < new_stencil->getQ(); i++) {
@@ -212,8 +230,10 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 				all_in.push_back(ptr);
 			}
 			soltrans_refine.prepare_for_coarsening_and_refinement(all_in);
-			mesh.execute_coarsening_and_refinement();
-			advection.setupDoFs();
+            if(!m_isG) {
+                mesh.execute_coarsening_and_refinement();
+                advection.setupDoFs();
+            }
 			// after refinement, locally relevant dofs have changed
 			dealii::DoFTools::extract_locally_relevant_dofs(dof_handler,
 					locally_relevant_dofs);
@@ -238,7 +258,8 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		}
 
 		// transform mesh
-		problem.transform(mesh);
+        if(!m_isG)
+		    problem.transform(mesh);
 
 		// clear old dof handler to enable deletion of automatic variable old_fe
 		//old_dof_handler.clear();
@@ -263,7 +284,7 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 	f.transferFromOtherScaling(*old_stencil, *new_stencil,
 			dof_handler.locally_owned_dofs());
 	f.compress(dealii::VectorOperation::insert);
-
+    f.updateGhosted();
 	LOG(DETAILED) << "Restart successful" << endl;
 
 } /* load */

@@ -17,6 +17,7 @@
 #include "../collision_advanced/Equilibria.h"
 #include "../smoothing/VmultLimiter.h"
 #include "../dataprocessors/CompressibleTurbulenceStats.h"
+#include "Checkpoint.h"
 
 namespace natrium {
 
@@ -38,33 +39,117 @@ public:
 			boost::shared_ptr<ProblemDescription<dim> > problemDescription) :
 			CFDSolver<dim>(configuration, problemDescription) {
 
-		m_temperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
-				this->getAdvectionOperator()->getLocallyRelevantDofs(),
-				MPI_COMM_WORLD);
-		m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
-			MPI_COMM_WORLD);
-        if (configuration->isOutputCompressibleTurbulenceStatistics()) {
-            m_compressibleTurbulenceStats = boost::make_shared<CompressibleTurbulenceStats<dim> >(*this);
+        bool checkpointExists = applyCheckpointToG();
+
+            m_temperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                                 this->getAdvectionOperator()->getLocallyRelevantDofs(),
+                                 MPI_COMM_WORLD);
+            m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                                    MPI_COMM_WORLD);
+            if (configuration->isOutputCompressibleTurbulenceStatistics()) {
+                m_compressibleTurbulenceStats = boost::make_shared<CompressibleTurbulenceStats<dim> >(*this);
+            }
+            this->m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                                           this->getAdvectionOperator()->getLocallyRelevantDofs(),
+                                           MPI_COMM_WORLD);
+
+        if(!checkpointExists) {           distributed_vector writeable_temperature;
+            // In this case, the density function fulfills the same purpose for the temperature
+            CFDSolverUtilities::getWriteableDensity(writeable_temperature, m_temperature,
+                                                    this->getAdvectionOperator()->getLocallyOwnedDofs());
+            this->applyInitialTemperatures(writeable_temperature, this->getSupportPoints());
+            CFDSolverUtilities::applyWriteableDensity(writeable_temperature, m_temperature);
+            LOG(BASIC) << "Speed of Sound Square: " << this->m_stencil->getSpeedOfSoundSquare() << endl;
+
+            m_g.reinit(this->m_stencil->getQ(),
+                       this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                       this->getAdvectionOperator()->getLocallyRelevantDofs(),
+                       MPI_COMM_WORLD, (SEDG == configuration->getAdvectionScheme()));
         }
-		this->m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
-                this->getAdvectionOperator()->getLocallyRelevantDofs(),
-                MPI_COMM_WORLD);
+        if (checkpointExists)
+        {
+            this->calculateDensitiesAndVelocities();
+            distributed_vector writeable_T;
+            CFDSolverUtilities::getWriteableDensity(writeable_T, m_temperature,
+                                                    this->m_advectionOperator->getLocallyOwnedDofs());
+            //for all degrees of freedom on current processor
+            dealii::IndexSet::ElementIterator it(
+                    this->m_advectionOperator->getLocallyOwnedDofs().begin());
+            dealii::IndexSet::ElementIterator end(
+                    this->m_advectionOperator->getLocallyOwnedDofs().end());
+            for (; it != end; it++) {
+                double temperature = 0.0;
+                for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
+                    double sum = 0.0;
+                    for (size_t a = 0; a < dim; a++) {
+                        sum += (this->getStencil()->getDirection(i)[a] - this->m_velocity.at(a)(i)) * (this->getStencil()->getDirection(i)[a] - this->m_velocity.at(a)(i));
+                    }
+                    temperature += sum * this->m_f.at(i)(*it) / this->getStencil()->getSpeedOfSoundSquare() +
+                            m_g.at(i)(*it);
+                }
+                const double C_v = 1./(this->getConfiguration()->getHeatCapacityRatioGamma()-1.0);
+                temperature = temperature * 0.5 / (this->m_density(*it)*C_v);
+                writeable_T(*it)=temperature;
+            }
+            m_g.updateGhosted();
 
-		distributed_vector writeable_temperature;
-		// In this case, the density function fulfills the same purpose for the temperature
-		CFDSolverUtilities::getWriteableDensity(writeable_temperature, m_temperature,
-						this->getAdvectionOperator()->getLocallyOwnedDofs());
-		this->applyInitialTemperatures(writeable_temperature, this->getSupportPoints());
-		CFDSolverUtilities::applyWriteableDensity(writeable_temperature, m_temperature);
-		LOG(BASIC) << "Speed of Sound Square: " << this->m_stencil->getSpeedOfSoundSquare() << endl;
+            CFDSolverUtilities::applyWriteableDensity(writeable_T, m_temperature);
 
-		m_g.reinit(this->m_stencil->getQ(),
-				this->getAdvectionOperator()->getLocallyOwnedDofs(),
-				this->getAdvectionOperator()->getLocallyRelevantDofs(),
-				MPI_COMM_WORLD, (SEDG == configuration->getAdvectionScheme()));
+
+
+        }
 
 	}
 
+	    bool applyCheckpointToG() {
+        boost::filesystem::path out_dir(this->m_configuration->getOutputDirectory());
+        boost::filesystem::path log_file = out_dir / "natrium.log";
+        boost::filesystem::path checkpoint_dir = out_dir / "checkpoint";
+
+        // Restart from checkpoint?
+        boost::shared_ptr<Checkpoint<dim> > checkpoint;
+        CheckpointStatus checkpoint_status;
+        size_t restart_i = this->m_configuration->getRestartAtIteration();
+        if (0 != restart_i) {
+            checkpoint = boost::make_shared<Checkpoint<dim> >(restart_i,
+                    checkpoint_dir, true);
+            if (not checkpoint->exists()) {
+                std::stringstream msg;
+                msg << "You want to restart from iteration " << restart_i
+                    << ", but I could not find the required checkpoint files "
+                    << checkpoint->getStatusFile().string() << " and "
+                    << checkpoint->getDataFile().string() << ".";
+                natrium_errorexit(msg.str().c_str());
+            } else {
+                LOG(BASIC) << "Restart at iteration (also for g)" << restart_i << endl;
+            }
+        }
+
+        if (checkpoint) {
+            //checkpoint->load(m_g, *(this->m_problemDescription), *(this->m_advectionOperator),
+            //                 checkpoint_status);
+            m_g.reinit(this->m_stencil->getQ(),
+                       this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                       this->getAdvectionOperator()->getLocallyRelevantDofs(),
+                       MPI_COMM_WORLD, (SEDG == this->m_configuration->getAdvectionScheme()));
+            dealii::IndexSet::ElementIterator it(
+                    this->m_advectionOperator->getLocallyOwnedDofs().begin());
+            dealii::IndexSet::ElementIterator end(
+                    this->m_advectionOperator->getLocallyOwnedDofs().end());
+            for (; it != end; it++) {
+                const double gamma = this->m_configuration->getHeatCapacityRatioGamma();
+                const double C_v = 1. / (gamma - 1.0);
+                for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
+                    m_g.at(i)(*it) = this->m_f.at(i)(*it)*1.0*(2.0*C_v-dim);
+                }
+            }
+
+        }
+        return 0 != restart_i;
+
+
+
+	}
 
     void stream() {
 
@@ -437,6 +522,30 @@ void compressibleFilter() {
                 }
             }
         }
+        // output: checkpoint
+        // no output if checkpoint interval > 10^8
+        if (((iteration % this->m_configuration->getOutputCheckpointInterval() == 0)
+             or is_final)
+            and (this->m_configuration->getOutputCheckpointInterval() <= 1e8) and (this->m_iterationStart != this->m_i)) {
+
+            boost::filesystem::path checkpoint_dir(
+                    this->m_configuration->getOutputDirectory());
+            checkpoint_dir /= "checkpoint";
+            Checkpoint<dim> checkpoint(this->m_i, checkpoint_dir, false);
+            Checkpoint<dim> checkpointG(this->m_i, checkpoint_dir, true);
+            CheckpointStatus checkpoint_status;
+            checkpoint_status.iterationNumber = this->m_i;
+            checkpoint_status.stencilScaling = this->m_stencil->getScaling();
+            checkpoint_status.time = this->m_time;
+            checkpoint_status.feOrder =
+                    this->m_configuration->getSedgOrderOfFiniteElement();
+            checkpoint.write(*(this->m_problemDescription->getMesh()), this->m_f,
+                              *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
+            checkpointG.write(*(this->m_problemDescription->getMesh()), m_g,
+                             *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
+        } /*if checkpoint interval*/
+
+
     }
 
     void applyShockSensor() {
@@ -870,9 +979,12 @@ void compressibleFilter() {
     void run()
     {
         this->m_i = this->m_iterationStart;
-        initializeDistributions();
+        if(this->m_i<=1) {
+            initializeDistributions();
+
+        }
         collide();
-        while (true) {
+            while (true) {
             if (this->stopConditionMet()) {
                 break;
             }
