@@ -117,12 +117,10 @@ void AdaptiveForcing::apply() {
         double integral = 0;
         double total_window = 0;
         for (size_t i = 0; i < m_nofCoordinates-1; i++) {
-            cout << m_yCoordinates.at(i) << " " << average.at(i) << std::endl;
             double window_size = std::abs( m_yCoordinates.at(i+1) -m_yCoordinates.at(i));
             total_window +=window_size;
             integral += window_size*0.5*(average.at(i)+average.at(i+1));
         }
-        cout << total_window << "HIER" << endl;
         m_currentValue = integral/2.0;
 
     }
