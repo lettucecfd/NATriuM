@@ -305,15 +305,15 @@ int main(int argc, char** argv) {
 		solver.addToVelocity(
 				boost::make_shared<TurbulentChannelFlow3D::MeanVelocityProfile>(
 						channel3D.get()));
-	} else {
+	} /* else {
 		// append data processor only in case of restart
 		solver.appendDataProcessor(
 				boost::make_shared<FinalChannelStatistics>(solver,
 						configuration->getOutputDirectory()));
-	}
+	}*/
     solver.appendDataProcessor(
             boost::make_shared<AdaptiveForcing>(solver,
-                                                       configuration->getOutputDirectory(), 59.0));
+                                                       configuration->getOutputDirectory(), 59.0, static_cast<bool>(restart)));
 
 	solver.run();
 
