@@ -305,16 +305,14 @@ int main(int argc, char** argv) {
 		solver.addToVelocity(
 				boost::make_shared<TurbulentChannelFlow3D::MeanVelocityProfile>(
 						channel3D.get()));
-	} else {
+	} /* else {
 		// append data processor only in case of restart
 		solver.appendDataProcessor(
 				boost::make_shared<FinalChannelStatistics>(solver,
 						configuration->getOutputDirectory()));
-	}
+	}*/
     solver.appendDataProcessor(
-            boost::make_shared<AdaptiveForcing>(solver,
-                                                       configuration->getOutputDirectory(), 1.0));
-
+            boost::make_shared<AdaptiveForcing>(solver, configuration->getOutputDirectory(), 1.0)); 
 	solver.run();
 
 	pout << "Max Velocity  " << solver.getMaxVelocityNorm() << endl;

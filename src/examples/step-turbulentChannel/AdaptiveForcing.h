@@ -15,6 +15,8 @@
 #include "natrium/utilities/Math.h"
 #include "boost/filesystem.hpp"
 #include "FinalChannelStatistics.h"
+#include "natrium/solver/CompressibleCFDSolver.h"
+
 
 
 
@@ -25,13 +27,16 @@ class AdaptiveForcing: public FinalChannelStatistics{
 private:
 
 	boost::filesystem::path m_outDir;
-	const vector<distributed_vector>& m_u;
-	const distributed_vector& m_rho;
+
+    const distributed_vector& m_T;
 
     double m_targetRhoU;
     double m_lastRhoU;
     double m_currentValue;
     double m_force;
+    double m_starting_force;
+    bool m_restart;
+
 
     std::string m_filename;
 
@@ -50,13 +55,12 @@ private:
     }
 
 public:
-	AdaptiveForcing(CFDSolver<3> & solver, std::string outdir, double target);
+	AdaptiveForcing(CompressibleCFDSolver<3> & solver, std::string outdir, double target, bool restart=false);
 	virtual void apply();
 	virtual ~AdaptiveForcing();
 
 
-
-
+    void updateCompressibleAverages();
 };
 
 } /* namespace natrium */
