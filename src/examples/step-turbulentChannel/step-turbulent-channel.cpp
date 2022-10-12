@@ -313,7 +313,7 @@ int main(int argc, char** argv) {
 	}
     solver.appendDataProcessor(
             boost::make_shared<AdaptiveForcing>(solver,
-                                                       configuration->getOutputDirectory(), 59.0));
+                                                       configuration->getOutputDirectory(), 1.0));
 
 	solver.run();
 
