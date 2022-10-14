@@ -46,6 +46,8 @@ private:
     void write();
     void getRhoU();
     void calculateForce();
+    void changeTemperatureProfile();
+
 
     std::string outfile(std::string dir) {
         boost::filesystem::path out_dir(dir);

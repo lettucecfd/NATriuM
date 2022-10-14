@@ -109,6 +109,9 @@ void Checkpoint<dim>::write(const Mesh<dim>& mesh, DistributionFunctions& f,
 } /* save */
 
 template<size_t dim>
+int Checkpoint<dim>::m_numberOfRefinements = 0;
+
+template<size_t dim>
 void Checkpoint<dim>::load(DistributionFunctions& f,
 		ProblemDescription<dim>& problem, AdvectionOperator<dim>& advection,
 		CheckpointStatus& status) {
@@ -164,17 +167,22 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		// copy mesh
 		future_mesh.copy_triangulation(mesh);
 		// Refine and transform tmp mesh to get the desired refinement level
-		if(!m_isG)
-		    problem.refineAndTransform(future_mesh);
+
+        problem.refineAndTransform(future_mesh);
 		size_t nlevels_new = future_mesh.n_global_levels();
-		if(m_isG)
-		   nlevels_new = mesh.n_global_levels();
 
 		LOG(DETAILED) << "Read old solution" << endl;
 		// Prepare read old solution
 		// load mesh (must not be done with refined grid)
-		mesh.load(m_dataFile.c_str());
-		// on calling load(), the old mesh has been refined, as before saving
+		if(!m_isG) {
+            mesh.load(m_dataFile.c_str());
+            m_numberOfRefinements = nlevels_new - mesh.n_global_levels();
+
+        }
+
+
+
+        // on calling load(), the old mesh has been refined, as before saving
 
 		// setup dofs on old mesh
 		dealii::parallel::distributed::SolutionTransfer<dim, distributed_vector> sol_trans(
@@ -196,17 +204,24 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		sol_trans.deserialize(all_read);
 		tmp_f.updateGhosted();
 
-		LOG(DETAILED) << "Interpolate to refined grid" << endl;
-		LOG(DETAILED) << "... from refinement level "
-				<< mesh.n_global_levels() - 1 << " to " << nlevels_new - 1
-				<< endl;
+
+		if(!m_isG) {
+            LOG(DETAILED) << "Interpolate to refined grid" << endl;
+            LOG(DETAILED) << "... from refinement level "
+                          << mesh.n_global_levels() - 1 << " to " << nlevels_new - 1
+                          << endl;
+        } else {
+            LOG(DETAILED) << "Interpolate to refined grid for g, number of refinements: " << m_numberOfRefinements << endl;
+
+        }
+
 
 		// assumption: future_mesh is a globally refined version of mesh
 		if (mesh.n_global_levels() > nlevels_new) {
 			throw CheckpointException(
 					"Restarting from coarser grid is not implemented, yet.");
 		}
-		if (mesh.n_global_levels() == nlevels_new) {
+		if (m_numberOfRefinements == 0) {
             LOG(DETAILED) << "No interpolation needed..." << endl;
 			if(!m_isG)
                 advection.setupDoFs();
@@ -215,47 +230,57 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 					MPI_COMM_WORLD, advection.isDG());
 			f = tmp_f;
 		}
-		while (mesh.n_global_levels() < nlevels_new) {
-			// do one refinemenent step
-			dealii::parallel::distributed::SolutionTransfer<dim,
-					distributed_vector> soltrans_refine(dof_handler);
-			if(!m_isG) {
-                mesh.set_all_refine_flags();
-                mesh.prepare_coarsening_and_refinement();
-            }// prepare all in
-			std::vector<const distributed_vector*> all_in;
-			all_in.clear();
-			for (size_t i = 0; i < new_stencil->getQ(); i++) {
-				const distributed_vector* ptr = &tmp_f.atGhosted(i);
-				all_in.push_back(ptr);
-			}
-			soltrans_refine.prepare_for_coarsening_and_refinement(all_in);
-            if(!m_isG) {
-                mesh.execute_coarsening_and_refinement();
-                advection.setupDoFs();
+
+        if (m_numberOfRefinements > 0 && !m_isG) {
+            //while (mesh.n_global_levels() < nlevels_new) {
+            for (int i =0; i<m_numberOfRefinements;i++){
+                cout << "Refinement number " << i << endl;
+                // do one refinemenent step
+                dealii::parallel::distributed::SolutionTransfer<dim,
+                        distributed_vector> soltrans_refine(dof_handler);
+                if (!m_isG) {
+                    mesh.set_all_refine_flags();
+                    mesh.prepare_coarsening_and_refinement();
+                }// prepare all in
+                std::vector<const distributed_vector *> all_in;
+                all_in.clear();
+                for (size_t i = 0; i < new_stencil->getQ(); i++) {
+                    const distributed_vector *ptr = &tmp_f.atGhosted(i);
+                    all_in.push_back(ptr);
+                }
+                soltrans_refine.prepare_for_coarsening_and_refinement(all_in);
+                if (!m_isG) {
+                    mesh.execute_coarsening_and_refinement();
+                    advection.setupDoFs();
+                }
+                // after refinement, locally relevant dofs have changed
+                dealii::DoFTools::extract_locally_relevant_dofs(dof_handler,
+                                                                locally_relevant_dofs);
+                f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+                         locally_relevant_dofs,
+                         MPI_COMM_WORLD, advection.isDG());
+                // write f pointers into std::vector
+                std::vector<distributed_vector *> all_out;
+                all_out.clear();
+                for (size_t i = 0; i < new_stencil->getQ(); i++) {
+                    distributed_vector *p = &f.at(i);
+                    all_out.push_back(p);
+                }
+                // interpolate
+                soltrans_refine.interpolate(all_out);
+                f.updateGhosted();
+                // prepare next cycle
+                tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
+                             locally_relevant_dofs,
+                             MPI_COMM_WORLD, advection.isDG());
+                tmp_f = f;
             }
-			// after refinement, locally relevant dofs have changed
-			dealii::DoFTools::extract_locally_relevant_dofs(dof_handler,
-					locally_relevant_dofs);
-			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
-					locally_relevant_dofs,
-					MPI_COMM_WORLD, advection.isDG());
-			// write f pointers into std::vector
-			std::vector<distributed_vector*> all_out;
-			all_out.clear();
-			for (size_t i = 0; i < new_stencil->getQ(); i++) {
-				distributed_vector* p = &f.at(i);
-				all_out.push_back(p);
-			}
-			// interpolate
-			soltrans_refine.interpolate(all_out);
-			f.updateGhosted();
-			// prepare next cycle
-			tmp_f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
-					locally_relevant_dofs,
-					MPI_COMM_WORLD, advection.isDG());
-			tmp_f = f;
-		}
+        }
+
+
+
+
+
 
 		// transform mesh
         if(!m_isG)
@@ -277,12 +302,12 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 	}
 
 	// TODO Enable transfer to new scaling
-	LOG(DETAILED) << "Transfer to new scaling" << endl;
+	LOG(DETAILED) << "Transfer to new scaling (not implemented)" << endl;
 	// transfer to current stencil scaling, if required
 	boost::shared_ptr<Stencil> old_stencil = CFDSolverUtilities::make_stencil(
 			new_stencil->getD(), new_stencil->getQ(), status.stencilScaling);
-	f.transferFromOtherScaling(*old_stencil, *new_stencil,
-			dof_handler.locally_owned_dofs());
+	//f.transferFromOtherScaling(*old_stencil, *new_stencil,
+    //dof_handler.locally_owned_dofs());
 	f.compress(dealii::VectorOperation::insert);
     f.updateGhosted();
 	LOG(DETAILED) << "Restart successful" << endl;

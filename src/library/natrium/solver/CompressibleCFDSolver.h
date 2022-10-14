@@ -126,8 +126,7 @@ public:
         }
 
         if (checkpoint) {
-            //checkpoint->load(m_g, *(this->m_problemDescription), *(this->m_advectionOperator),
-            //                 checkpoint_status);
+
             m_g.reinit(this->m_stencil->getQ(),
                        this->getAdvectionOperator()->getLocallyOwnedDofs(),
                        this->getAdvectionOperator()->getLocallyRelevantDofs(),
@@ -143,6 +142,9 @@ public:
                     m_g.at(i)(*it) = this->m_f.at(i)(*it)*1.0*(2.0*C_v-dim);
                 }
             }
+
+            checkpoint->load(m_g, *(this->m_problemDescription), *(this->m_advectionOperator),
+                             checkpoint_status);
 
         }
         return 0 != restart_i;
