@@ -335,19 +335,22 @@ AdaptiveForcing::~AdaptiveForcing() {
     void AdaptiveForcing::calculateForce() {
         const double currentForce = this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0];
         const double timeStepSize = this->m_solver.getTimeStepSize();
-        double newForce = currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
-
+        double newForce = m_force; //currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
+        bool forceChanged = false;
 
         if (m_currentValue/m_targetRhoU>1.005)
-            newForce = 0.85*m_starting_force;
+            newForce = 0.6*m_starting_force;
+            forceChanged = true;
         if (m_currentValue/m_targetRhoU<0.995)
             newForce = 0.99*m_starting_force;
+            forceChanged = true;
         dealii::Tensor<1,3> forceTensor;
         forceTensor[0]=newForce;
         forceTensor[1]=0.0;
         forceTensor[2]=0.0;
+	if (forceChanged){
         this->m_solver.getProblemDescription()->setExternalForceTensor(forceTensor);
-        m_force = newForce;
+        m_force = newForce;}
     }
 
 } /* namespace natrium */
