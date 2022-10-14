@@ -353,4 +353,8 @@ AdaptiveForcing::~AdaptiveForcing() {
         m_force = newForce;}
     }
 
+    void AdaptiveForcing::changeTemperatureProfile() {
+
+    }
+
 } /* namespace natrium */

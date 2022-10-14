@@ -66,6 +66,7 @@ private:
 	boost::filesystem::path m_dataFile;
 
 	bool m_isG;
+    static int m_numberOfRefinements;
 
 public:
 
