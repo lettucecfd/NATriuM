@@ -135,16 +135,40 @@ public:
                     this->m_advectionOperator->getLocallyOwnedDofs().begin());
             dealii::IndexSet::ElementIterator end(
                     this->m_advectionOperator->getLocallyOwnedDofs().end());
-            for (; it != end; it++) {
-                const double gamma = this->m_configuration->getHeatCapacityRatioGamma();
-                const double C_v = 1. / (gamma - 1.0);
+
+            const double scaling = this->m_stencil->getScaling();
+                for (; it != end; it++) {
+                    double density = 0.0;
+                    std::array<double,dim> vel={0.0};
+                    for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
+                        density +=  this->m_f.at(i)(*it);
+                        for (size_t a = 0; a < dim; a++) {
+                            vel[a]+=this->m_stencil->getDirection(i)(a)/scaling *this->m_f.at(i)(*it);
+                        }
+                    }
+
+
+                        double temperature = 0.0;
+                    for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
+                        double sum = 0.0;
+                        for (size_t a = 0; a < dim; a++) {
+                            sum += (this->m_stencil->getDirection(i)(a)/scaling - vel[a]) * (this->m_stencil->getDirection(i)(a)/scaling - vel[a]);
+                        }
+                        temperature += sum * this->m_f.at(i)(*it) / (this->m_stencil->getSpeedOfSoundSquare()/scaling/scaling);
+                    }
+                    // Only one distribution --> gamma = d
+                    const double gamma_old =  (static_cast<double>(dim)+2) / static_cast<double>(dim);
+                    const double C_v_old = 1. / (gamma_old - 1.0);
+                    const double gamma_new = this->getConfiguration()->getHeatCapacityRatioGamma();
+                    const double C_v_new = 1. / (gamma_new - 1.0);
+                    temperature = temperature * 0.5 / (density*C_v_old);
                 for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
-                    m_g.at(i)(*it) = this->m_f.at(i)(*it)*1.0*(2.0*C_v-dim);
+                    m_g.at(i)(*it) = this->m_f.at(i)(*it)*temperature*(2.0*C_v_new-dim);
                 }
             }
 
-            checkpoint->load(m_g, *(this->m_problemDescription), *(this->m_advectionOperator),
-                             checkpoint_status);
+            //checkpoint->load(m_g, *(this->m_problemDescription), *(this->m_advectionOperator),
+            //                 checkpoint_status);
 
         }
         return 0 != restart_i;
