@@ -18,9 +18,13 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
         m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_legendFilename(
         legendfile(solver.getConfiguration()->getOutputDirectory())), m_outputOff(
         solver.getConfiguration()->isSwitchOutputOff()) {
+    m_names.push_back("timestep");
+    m_names.push_back("time");
     m_names.push_back("dilatation");
     m_names.push_back("solenoidal");
     m_names.push_back("maxMach");
+    m_names.push_back("totalEnergy");
+
     // make table file
     if (not m_outputOff) {
         // create file (if necessary)
@@ -71,6 +75,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             *m_tableFile << m_dilatation << " ";
             *m_tableFile << m_solenoidal<< " ";
             *m_tableFile << m_maxMach << " ";
+            *m_tableFile << m_totalEnergy << " ";
             *m_tableFile << endl;
 
         } /* is mpi rank 0 */
@@ -113,6 +118,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
         double dilatation = 0.0;
         double solenoidal = 0.0;
         double globalMach = 0.0;
+        double totalEnergy = 0.0;
 
         uxs.resize(n_q_points);
         uys.resize(n_q_points);
@@ -155,7 +161,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
                     for (size_t q = 0; q < n_q_points; q++) {
                         /*	for (size_t i = 0; i < dofs_per_cell; i++) {*/
                         //dof_ind = local_indices.at(i);
-
+                        totalEnergy += Ts.at(q);
                         double sunderland_factor = 1.402*pow(Ts.at(q),1.5) / (Ts.at(q) + 0.40417);
                         // add to energies and enstrophies
 
@@ -194,6 +200,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             m_dilatation = dealii::Utilities::MPI::sum(dilatation, MPI_COMM_WORLD);
             m_solenoidal = dealii::Utilities::MPI::sum(solenoidal, MPI_COMM_WORLD);
             m_maxMach = dealii::Utilities::MPI::max(globalMach,MPI_COMM_WORLD);
+            m_totalEnergy = dealii::Utilities::MPI::sum(totalEnergy, MPI_COMM_WORLD);
             //}
         }
 

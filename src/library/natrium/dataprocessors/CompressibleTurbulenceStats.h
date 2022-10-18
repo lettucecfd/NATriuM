@@ -26,6 +26,7 @@ private:
     double m_solenoidal;
     double m_maxMach;
     double m_gamma;
+    double m_totalEnergy;
     vector<string> m_names;
     std::string m_filename;
     std::string m_legendFilename;

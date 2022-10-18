@@ -167,6 +167,8 @@ int main(int argc, char** argv) {
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+    configuration->setOutputCompressibleTurbulenceStatistics(true);
+
     //configuration->setPrandtlNumber(0.7);
     configuration->setSutherlandLaw();
 	configuration->setOutputTurbulenceStatistics(true);
