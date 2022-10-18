@@ -168,6 +168,7 @@ int main(int argc, char** argv) {
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
     configuration->setPrandtlNumber(0.7);
+    configuration->setOutputCompressibleTurbulenceStatistics(true);
     configuration->setSutherlandLaw();
 	configuration->setOutputTurbulenceStatistics(true);
 	configuration->setWallNormalDirection(1);
