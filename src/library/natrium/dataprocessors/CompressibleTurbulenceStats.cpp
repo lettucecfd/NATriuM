@@ -161,7 +161,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
                     for (size_t q = 0; q < n_q_points; q++) {
                         /*	for (size_t i = 0; i < dofs_per_cell; i++) {*/
                         //dof_ind = local_indices.at(i);
-                        totalEnergy += Ts.at(q);
+                        totalEnergy += Ts.at(q) * weights.at(q);
                         double sunderland_factor = 1.402*pow(Ts.at(q),1.5) / (Ts.at(q) + 0.40417);
                         // add to energies and enstrophies
 
