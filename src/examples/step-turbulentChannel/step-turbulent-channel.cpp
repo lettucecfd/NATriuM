@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
-    //configuration->setPrandtlNumber(0.7);
+    configuration->setPrandtlNumber(0.7);
     configuration->setSutherlandLaw();
 	configuration->setOutputTurbulenceStatistics(true);
 	configuration->setWallNormalDirection(1);
@@ -312,7 +312,7 @@ int main(int argc, char** argv) {
 						configuration->getOutputDirectory()));
 	}*/
     solver.appendDataProcessor(
-            boost::make_shared<AdaptiveForcing>(solver, configuration->getOutputDirectory(), 1.0)); 
+            boost::make_shared<AdaptiveForcing>(solver, configuration->getOutputDirectory(), 1.0, static_cast<bool>(restart))); 
 	solver.run();
 
 	pout << "Max Velocity  " << solver.getMaxVelocityNorm() << endl;
