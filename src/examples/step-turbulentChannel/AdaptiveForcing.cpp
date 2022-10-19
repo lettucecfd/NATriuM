@@ -18,7 +18,7 @@ namespace natrium {
             FinalChannelStatistics(solver, outdir), m_outDir(outdir), m_T(solver.getTemperature()), m_targetRhoU(target),
             m_lastRhoU(target), m_starting_force(this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0]),
             m_restart(restart),
-            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())) {
+            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0) {
 
 
         m_names.push_back("T");
@@ -165,7 +165,7 @@ void AdaptiveForcing::apply() {
             integral_rho += window_size*0.5*(rho_average.at(i)+rho_average.at(i+1));
         }
         m_currentValueRhoU = integral / (2.0);
-        m_currentRho = integral / (2.0);
+        m_currentRho = integral_rho / (2.0);
 
     }
 
@@ -175,6 +175,7 @@ void AdaptiveForcing::apply() {
 
             *m_tableFile << this->m_solver.getIteration() << " ";
             *m_tableFile << this->m_solver.getTime() << " ";
+            *m_tableFile << m_currentRho << " ";
             *m_tableFile << m_targetRhoU << " " << m_currentValueRhoU << " " << m_force << endl;
 
 
