@@ -339,11 +339,15 @@ AdaptiveForcing::~AdaptiveForcing() {
         bool forceChanged = false;
 
         if (m_currentValue/m_targetRhoU>1.005)
-            newForce = 0.6*m_starting_force;
-            forceChanged = true;
+            {newForce = 0.4*m_starting_force;
+            forceChanged = true;}
         if (m_currentValue/m_targetRhoU<0.995)
-            newForce = 0.99*m_starting_force;
-            forceChanged = true;
+            {newForce = 0.85*m_starting_force;
+            forceChanged = true;}
+        if (m_currentValue/m_targetRhoU<0.98)
+	    {newForce = 2.0 * m_starting_force;
+	    forceChanged = true;}
+
         dealii::Tensor<1,3> forceTensor;
         forceTensor[0]=newForce;
         forceTensor[1]=0.0;
