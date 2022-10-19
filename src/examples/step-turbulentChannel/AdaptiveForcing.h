@@ -32,7 +32,8 @@ private:
 
     double m_targetRhoU;
     double m_lastRhoU;
-    double m_currentValue;
+    double m_currentValueRhoU;
+    double m_currentRho;
     double m_force;
     double m_starting_force;
     bool m_restart;
@@ -44,9 +45,10 @@ private:
 
 
     void write();
-    void getRhoU();
+    void calculateRhoU();
     void calculateForce();
     void changeTemperatureProfile();
+    void rescaleDensity();
 
 
     std::string outfile(std::string dir) {

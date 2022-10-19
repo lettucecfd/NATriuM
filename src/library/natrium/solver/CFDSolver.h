@@ -340,6 +340,11 @@ public:
 
 	void scaleVelocity(double scaling_factor);
 
+    void scaleF(double scale)
+    {
+        m_f.scaleF(scale,m_advectionOperator->getLocallyOwnedDofs());
+    }
+
 	const map<dealii::types::global_dof_index, dealii::Point<dim> >& getSupportPoints() const {
 		return m_supportPoints;
 	}
