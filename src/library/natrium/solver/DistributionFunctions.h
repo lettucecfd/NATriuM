@@ -292,6 +292,8 @@ public:
 
 	}
 
+    void scaleF(const double scale, const dealii::IndexSet& locally_owned_dofs);
+
 	bool isDg() const {
 		return m_dg;
 	}

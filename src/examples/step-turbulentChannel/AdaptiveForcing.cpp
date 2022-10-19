@@ -18,7 +18,7 @@ namespace natrium {
             FinalChannelStatistics(solver, outdir), m_outDir(outdir), m_T(solver.getTemperature()), m_targetRhoU(target),
             m_lastRhoU(target), m_starting_force(this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0]),
             m_restart(restart),
-            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())) {
+            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0) {
 
 
         m_names.push_back("T");
@@ -67,9 +67,10 @@ void AdaptiveForcing::apply() {
     if (!isMYCoordsUpToDate())
         updateYValues();
 
-	if (m_solver.getIteration() % 1 == 0) {
-        getRhoU();
+	if (m_solver.getIteration() % 10 == 0) {
+        calculateRhoU();
         calculateForce();
+        rescaleDensity();
         write();
 	}
 
@@ -87,13 +88,16 @@ void AdaptiveForcing::apply() {
     }
 }
 
-    void AdaptiveForcing::getRhoU() {
+    void AdaptiveForcing::calculateRhoU() {
         //////////////////////////
         // Calculate averages ////
         //////////////////////////
-        double value=0.0;
+
         vector<double> average;
+        vector<double> rho_average;
         average.resize(m_nofCoordinates);
+        rho_average.resize(m_nofCoordinates);
+
         vector<size_t> number;
         number.resize(m_nofCoordinates);
 
@@ -117,8 +121,6 @@ void AdaptiveForcing::apply() {
         for (; cell != endc; ++cell) {
             if (cell->is_locally_owned()) {
 
-
-
                 cell->get_dof_indices(local_indices);
 
                 // get averages
@@ -138,8 +140,8 @@ void AdaptiveForcing::apply() {
                     number.at(y_ind) += 1;
                     // fill value vector
                     // add to averages:
-                    average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind);				// rho
-
+                    average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind);				// rho u
+                    rho_average.at(y_ind) += m_rho(dof_ind);
 
                 } /* for all quadrature points */
             } /* if locally owned */
@@ -149,18 +151,21 @@ void AdaptiveForcing::apply() {
         for (size_t i = 0; i < m_nofCoordinates; i++) {
             number.at(i) = dealii::Utilities::MPI::sum(number.at(i), MPI_COMM_WORLD);
             average.at(i) = dealii::Utilities::MPI::sum(average.at(i), MPI_COMM_WORLD);
+            rho_average.at(i) = dealii::Utilities::MPI::sum(rho_average.at(i), MPI_COMM_WORLD);
             average.at(i)/=number.at(i);
+            rho_average.at(i)/=number.at(i);
         }
 
 
         double integral = 0;
-        double total_window = 0;
+        double integral_rho = 0;
         for (size_t i = 0; i < m_nofCoordinates-1; i++) {
             double window_size = std::abs( m_yCoordinates.at(i+1) -m_yCoordinates.at(i));
-            total_window +=window_size;
             integral += window_size*0.5*(average.at(i)+average.at(i+1));
+            integral_rho += window_size*0.5*(rho_average.at(i)+rho_average.at(i+1));
         }
-        m_currentValue = integral/2.0;
+        m_currentValueRhoU = integral / (2.0);
+        m_currentRho = integral_rho / (2.0);
 
     }
 
@@ -170,10 +175,16 @@ void AdaptiveForcing::apply() {
 
             *m_tableFile << this->m_solver.getIteration() << " ";
             *m_tableFile << this->m_solver.getTime() << " ";
-            *m_tableFile << m_targetRhoU << " " << m_currentValue << " " << m_force << endl;
+            *m_tableFile << m_currentRho << " ";
+            *m_tableFile << m_targetRhoU << " " << m_currentValueRhoU << " " << m_force << endl;
 
 
         }
+    }
+
+    void AdaptiveForcing::rescaleDensity() {
+
+        m_solver.scaleF(1.0/m_currentRho);
     }
 
     void AdaptiveForcing::updateCompressibleAverages() {
