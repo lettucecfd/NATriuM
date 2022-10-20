@@ -391,7 +391,10 @@ void AdaptiveForcing::apply() {
                         }
                     }
                 }
-            } /* if is locally owned */
+        m_solver.getF().updateGhosted();
+        m_compressibleSolver.getG().updateGhosted();
+
+    } /* if is locally owned */
 
 
 AdaptiveForcing::~AdaptiveForcing() {
