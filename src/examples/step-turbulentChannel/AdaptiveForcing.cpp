@@ -342,22 +342,26 @@ void AdaptiveForcing::apply() {
 
     void AdaptiveForcing::bulkHeating() {
 
-        dealii::IndexSet::ElementIterator it(
-                m_solver.getAdvectionOperator()->getLocallyOwnedDofs().begin());
-        dealii::IndexSet::ElementIterator end(
-                m_solver.getAdvectionOperator()->getLocallyOwnedDofs().end());
-        for (; it != end; it++) {
-            size_t dof = *it;
+        std::array< double*, 45> f_raw, g_raw;
+        std::array<double,45> w;
+        int length;
+        for (size_t i = 0; i < 45; i++){
+            m_solver.getF().at(i).trilinos_vector().ExtractView(&f_raw[i], &length);
+            m_compressibleSolver.getG().at(i).trilinos_vector().ExtractView(&g_raw[i], &length);
+            w[i]=m_solver.getStencil()->getWeight(i);
+        }
+
+        for (size_t dof = 0; dof < length; dof++) {
 
                     const double scaling = m_solver.getStencil()->getScaling();
                     const double cs2 = m_solver.getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
                     const double gamma = 1.4;
                     assert(m_solver.getStencil()->getQ()==45);
                     std::array<double,45> f_destination, g_destination, feq, geq, w;
+
                     for (int i=0; i<45; i++) {
-                        f_destination[i] = m_solver.getF().at(i)(dof);
-                        g_destination[i] = m_compressibleSolver.getG().at(i)(dof);
-                        w[i]=m_solver.getStencil()->getWeight(i);
+                        f_destination[i] = f_raw[i][dof];
+                        g_destination[i] = g_raw[i][dof];
                     }
 
                     const double rho = calculateDensity<45>(f_destination);
@@ -379,11 +383,10 @@ void AdaptiveForcing::apply() {
                         calculateGeqFromFeq<3, 45>(feq, geq, T_new, gamma);
 
                         for (int i = 0; i < 45; i++) {
-                            //f_destination[i] += feq[i];
-                            m_solver.getF().at(i)(dof) =
+                            f_raw[i][dof] =
                                     f_destination[i] + feq[i];
 
-                            m_compressibleSolver.getG().at(i)(dof) =
+                            g_raw[i][dof] =
                                     g_destination[i] + geq[i];
                         }
                     }
