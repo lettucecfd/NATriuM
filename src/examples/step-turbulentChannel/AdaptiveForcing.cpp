@@ -361,7 +361,7 @@ void AdaptiveForcing::apply() {
                     std::array<double,45> f_destination, g_destination, feq, geq, w;
                     for (int i=0; i<45; i++) {
                         f_destination[i] = m_solver.getF().at(i)(local_dof_indices.at(dof));
-                        f_destination[i] = m_compressibleSolver.getG().at(i)(local_dof_indices.at(dof));
+                        g_destination[i] = m_compressibleSolver.getG().at(i)(local_dof_indices.at(dof));
                         w[i]=m_solver.getStencil()->getWeight(i);
                     }
 
