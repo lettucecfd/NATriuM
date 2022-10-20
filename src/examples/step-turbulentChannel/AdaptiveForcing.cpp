@@ -408,7 +408,7 @@ AdaptiveForcing::~AdaptiveForcing() {
         bool forceChanged = false;
 
         const double kp = 50;
-        const double ki = 0.1;
+        const double ki = 0.01;
         const double kd = 0.01;
         const double error = m_targetRhoU - m_currentValueRhoU;
         double P = kp * error;
