@@ -407,7 +407,7 @@ AdaptiveForcing::~AdaptiveForcing() {
         double newForce = m_force; //currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
         bool forceChanged = false;
 
-        const double kp = 0.2;
+        const double kp = 50;
         const double ki = 0.01;
         const double kd = 0.01;
         const double error = m_targetRhoU - m_currentValueRhoU;
