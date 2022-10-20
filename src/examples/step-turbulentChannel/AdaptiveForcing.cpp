@@ -422,10 +422,10 @@ AdaptiveForcing::~AdaptiveForcing() {
 
         newForce += output;
 
-        if ( newForce > 1.5*m_starting_force)
-            newForce =  1.5*m_starting_force;
-        if (newForce < -m_starting_force)
-            newForce = -m_starting_force;
+        //if ( newForce > 1.5*m_starting_force)
+        //    newForce =  1.5*m_starting_force;
+        //if (newForce < -m_starting_force)
+        //    newForce = -m_starting_force;
 
         dealii::Tensor<1,3> forceTensor;
         forceTensor[0]=newForce;
