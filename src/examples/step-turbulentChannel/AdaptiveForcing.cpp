@@ -407,14 +407,14 @@ AdaptiveForcing::~AdaptiveForcing() {
         double newForce = m_force; //currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
         bool forceChanged = false;
 
-        const double kp = 0.1;
+        const double kp = 0.01;
         const double ki = 0.5;
         const double kd = 0.01;
         const double error = m_targetRhoU - m_currentValueRhoU;
         double P = kp * error;
         m_integral += error;
         double I = ki * m_integral;
-        double D = kd * (error - m_lastRhoU);
+        double D = 0.0;// kd * (error - m_lastRhoU);
 
         double output = P + I + D;
 
@@ -422,10 +422,10 @@ AdaptiveForcing::~AdaptiveForcing() {
 
         newForce += output;
 
-        //if ( newForce > 0.85*m_starting_force)
-         //   newForce = 0.85*m_starting_force;
-        //if (newForce < 0.0*m_starting_force)
-         //   newForce = 0.4*m_starting_force;
+        if ( newForce > 1.5*m_starting_force)
+            newForce =  1.5*m_starting_force;
+        if (newForce < -m_starting_force)
+            newForce = -m_starting_force;
 
         dealii::Tensor<1,3> forceTensor;
         forceTensor[0]=newForce;
