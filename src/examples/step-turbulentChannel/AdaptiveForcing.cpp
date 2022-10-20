@@ -72,7 +72,7 @@ void AdaptiveForcing::apply() {
         calculateRhoU();
         calculateForce();
         rescaleDensity();
-        bulkHeating();
+        //bulkHeating();
         write();
 	}
 
@@ -357,7 +357,7 @@ void AdaptiveForcing::apply() {
                     const double cs2 = m_solver.getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
                     const double gamma = 1.4;
                     assert(m_solver.getStencil()->getQ()==45);
-                    std::array<double,45> f_destination, g_destination, feq, geq, w;
+                    std::array<double,45> f_destination, g_destination, feq, geq;
 
                     for (int i=0; i<45; i++) {
                         f_destination[i] = f_raw[i][dof];
