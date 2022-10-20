@@ -239,6 +239,10 @@ public:
 		return m_f;
 	}
 
+    DistributionFunctions& getF() {
+        return m_f;
+    }
+
 	const vector<distributed_vector>& getVelocity() const {
 		return m_velocity;
 	}

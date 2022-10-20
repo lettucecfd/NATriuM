@@ -38,6 +38,8 @@ private:
     double m_starting_force;
     bool m_restart;
 
+    CompressibleCFDSolver<3> & m_compressibleSolver;
+
 
     std::string m_filename;
 
@@ -49,6 +51,7 @@ private:
     void calculateForce();
     void changeTemperatureProfile();
     void rescaleDensity();
+    void bulkHeating();
 
 
     std::string outfile(std::string dir) {
@@ -65,6 +68,8 @@ public:
 
 
     void updateCompressibleAverages();
+
+    double m_heatFactor;
 };
 
 } /* namespace natrium */

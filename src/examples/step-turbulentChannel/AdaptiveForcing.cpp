@@ -10,6 +10,7 @@
 #include "mpi.h"
 #include <utility>
 #include "deal.II/base/mpi.h"
+#include "natrium/collision_advanced/AuxiliaryCollisionFunctions.h"
 
 namespace natrium {
 
@@ -17,8 +18,8 @@ namespace natrium {
                                      std::string outdir, double target, bool restart) :
             FinalChannelStatistics(solver, outdir), m_outDir(outdir), m_T(solver.getTemperature()), m_targetRhoU(target),
             m_lastRhoU(target), m_starting_force(this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0]),
-            m_restart(restart),
-            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0) {
+            m_restart(restart), m_compressibleSolver(solver),
+            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0), m_heatFactor(1.005) {
 
 
         m_names.push_back("T");
@@ -71,6 +72,7 @@ void AdaptiveForcing::apply() {
         calculateRhoU();
         calculateForce();
         rescaleDensity();
+        bulkHeating();
         write();
 	}
 
@@ -338,6 +340,64 @@ void AdaptiveForcing::apply() {
         }
     }
 
+    void AdaptiveForcing::bulkHeating() {
+        const unsigned int dofs_per_cell =
+                m_solver.getAdvectionOperator()->getFe()->dofs_per_cell;
+        vector<dealii::types::global_dof_index> local_dof_indices(dofs_per_cell);
+        typename dealii::DoFHandler<3>::active_cell_iterator cell =
+                m_solver.getAdvectionOperator()->getDoFHandler()->begin_active();
+        typename dealii::DoFHandler<3>::active_cell_iterator endc = m_solver.getAdvectionOperator()->getDoFHandler()->end();
+        std::set<int> already_set;
+        for (; cell != endc; ++cell) {
+            if (cell->is_locally_owned()) {
+                cell->get_dof_indices(local_dof_indices);
+                for (size_t dof = 0; dof < dofs_per_cell; dof++) {
+                    if (already_set.count(local_dof_indices.at(dof))>0)
+                        continue;
+                    const double scaling = m_solver.getStencil()->getScaling();
+                    const double cs2 = m_solver.getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
+                    const double gamma = 1.4;
+                    assert(m_solver.getStencil()->getQ()==45);
+                    std::array<double,45> f_destination, g_destination, feq, geq, w;
+                    for (int i=0; i<45; i++) {
+                        f_destination[i] = m_solver.getF().at(i)(local_dof_indices.at(dof));
+                        f_destination[i] = m_compressibleSolver.getG().at(i)(local_dof_indices.at(dof));
+                        w[i]=m_solver.getStencil()->getWeight(i);
+                    }
+
+                    const double rho = calculateDensity<45>(f_destination);
+                    std::array<double,3> u_local;
+                    std::array<std::array<double,3>,45> e = getParticleVelocitiesWithoutScaling<3,45>(*m_solver.getStencil());
+                    calculateVelocity<3,45>(f_destination,u_local,rho,e);
+
+                    const double T_local = calculateTemperature<3,45>(f_destination,g_destination,u_local,rho,e,cs2,gamma);
+                    if (T_local < 1.40) {
+                        QuarticEquilibrium<3, 45> eq(cs2, e);
+                        eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
+                        calculateGeqFromFeq<3, 45>(feq, geq, T_local, gamma);
+                        for (int i = 0; i < 45; i++) {
+                            f_destination[i] -= feq[i];
+                            g_destination[i] -= geq[i];
+                        }
+                        const double T_new = (T_local - 1.0)*m_heatFactor + 1.0;
+                        eq.polynomial(feq, rho, u_local, T_new, e, w, cs2);
+                        calculateGeqFromFeq<3, 45>(feq, geq, T_new, gamma);
+
+                        for (int i = 0; i < 45; i++) {
+                            //f_destination[i] += feq[i];
+                            m_solver.getF().at(i)(local_dof_indices.at(dof)) =
+                                    f_destination[i] + feq[i];
+
+                            m_compressibleSolver.getG().at(i)(local_dof_indices.at(dof)) =
+                                    g_destination[i] + geq[i];
+                        }
+                    }
+                    already_set.insert(local_dof_indices.at(dof));
+                }
+            } /* if is locally owned */
+        }
+    }
+
 
 AdaptiveForcing::~AdaptiveForcing() {
 	// TODO Auto-generated destructor stub
@@ -349,13 +409,13 @@ AdaptiveForcing::~AdaptiveForcing() {
         double newForce = m_force; //currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
         bool forceChanged = false;
 
-        if (m_currentValue/m_targetRhoU>1.005)
+        if (m_currentValueRhoU/m_targetRhoU>1.005)
             {newForce = 0.4*m_starting_force;
             forceChanged = true;}
-        if (m_currentValue/m_targetRhoU<0.995)
+        if (m_currentValueRhoU/m_targetRhoU<0.995)
             {newForce = 0.85*m_starting_force;
             forceChanged = true;}
-        if (m_currentValue/m_targetRhoU<0.98)
+        if (m_currentValueRhoU/m_targetRhoU<0.98)
 	    {newForce = 2.0 * m_starting_force;
 	    forceChanged = true;}
 

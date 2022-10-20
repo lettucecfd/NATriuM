@@ -1049,7 +1049,13 @@ void compressibleFilter() {
         LOG(BASIC) << Timing::getOutStream().str() << endl;
     }
 
+    const DistributionFunctions& getG() const {
+        return m_g;
+    }
 
+    DistributionFunctions& getG() {
+        return m_g;
+    }
 
 };
 
