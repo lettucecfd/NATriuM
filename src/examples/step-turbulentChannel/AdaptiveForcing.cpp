@@ -408,12 +408,12 @@ AdaptiveForcing::~AdaptiveForcing() {
         bool forceChanged = false;
 
         const double kp = 0.01;
-        const double ki = 0.5;
+        const double ki = 0.01;
         const double kd = 0.01;
         const double error = m_targetRhoU - m_currentValueRhoU;
         double P = kp * error;
         m_integral += error;
-        double I = ki * m_integral;
+        double I = 0.0; //ki * m_integral;
         double D = 0.0;// kd * (error - m_lastRhoU);
 
         double output = P + I + D;
