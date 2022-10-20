@@ -420,7 +420,7 @@ AdaptiveForcing::~AdaptiveForcing() {
 
         m_lastRhoU = error;
 
-        newForce += output;
+        newForce = output;
 
         //if ( newForce > 1.5*m_starting_force)
         //    newForce =  1.5*m_starting_force;
