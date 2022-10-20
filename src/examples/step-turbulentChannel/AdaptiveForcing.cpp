@@ -389,7 +389,6 @@ void AdaptiveForcing::apply() {
                     }
                 }
             } /* if is locally owned */
-        }
 
 
 AdaptiveForcing::~AdaptiveForcing() {
