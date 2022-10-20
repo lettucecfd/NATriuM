@@ -70,6 +70,7 @@ public:
     void updateCompressibleAverages();
 
     double m_heatFactor;
+    double m_integral;
 };
 
 } /* namespace natrium */

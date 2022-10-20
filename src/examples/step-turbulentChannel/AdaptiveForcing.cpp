@@ -19,7 +19,7 @@ namespace natrium {
             FinalChannelStatistics(solver, outdir), m_outDir(outdir), m_T(solver.getTemperature()), m_targetRhoU(target),
             m_lastRhoU(target), m_starting_force(this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0]),
             m_restart(restart), m_compressibleSolver(solver),
-            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0), m_heatFactor(1.005) {
+            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0), m_heatFactor(1.005), m_integral(0.0) {
 
 
         m_names.push_back("T");
@@ -407,24 +407,34 @@ AdaptiveForcing::~AdaptiveForcing() {
         double newForce = m_force; //currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
         bool forceChanged = false;
 
-        if (m_currentValueRhoU/m_targetRhoU>1.005)
-            {newForce = 0.4*m_starting_force;
-            forceChanged = true;}
-        if (m_currentValueRhoU/m_targetRhoU<0.995)
-            {newForce = 0.85*m_starting_force;
-            forceChanged = true;}
-        if (m_currentValueRhoU/m_targetRhoU<0.98)
-	    {newForce = 2.0 * m_starting_force;
-	    forceChanged = true;}
+        const double kp = 0.1;
+        const double ki = 0.5;
+        const double kd = 0.01;
+        const double error = m_targetRhoU - m_currentValueRhoU;
+        double P = kp * error;
+        m_integral += error;
+        double I = ki * m_integral;
+        double D = kd * (error - m_lastRhoU);
+
+        double output = P + I + D;
+
+        m_lastRhoU = error;
+
+        newForce += output;
+
+        if ( output > 0.85*m_starting_force)
+            output = 0.85*m_starting_force;
+        if (output < 0.4*m_starting_force)
+            output = 0.4*m_starting_force;
 
         dealii::Tensor<1,3> forceTensor;
-        forceTensor[0]=newForce;
+        forceTensor[0]=output;
         forceTensor[1]=0.0;
         forceTensor[2]=0.0;
-	if (forceChanged){
+
         this->m_solver.getProblemDescription()->setExternalForceTensor(forceTensor);
         m_force = newForce;}
-    }
+
 
     void AdaptiveForcing::changeTemperatureProfile() {
 
