@@ -26,7 +26,7 @@ namespace natrium {
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
 		std::vector<unsigned int> repetitions, double ReTau, double u_cl,
 		double height, double length, double width, bool is_periodic, double gridDensity) :
-		ProblemDescription<3>(makeGrid(repetitions), viscosity, height / 2.0),
+		ProblemDescription<3>(makeGrid(repetitions), viscosity, height),
 		m_refinementLevel(refinementLevel), m_repetitions(repetitions),
 		m_ReTau(ReTau), m_uCl(u_cl), m_height(height), m_length(length), m_width(width),
 		m_maxUtrp(0.0), m_maxIncUtrp(0.0), m_gridDensity(gridDensity) {
