@@ -324,17 +324,17 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
     // mean velocities <Vin> & <Win> are assumed to be 0.
 	if (component == 0)
 	{
-		return U+0.1*m_flow->m_uCl*sin(2*x(0))+0.05*cos(x(0))*cos(x(1));
+		return U+0.06*m_flow->m_uCl*sin(4*x(0))+0.05*cos(x(0))*cos(x(1));
 		//return ( Uin + m_initialIncompressibleU.value(x, component) );
 	}
     if (component == 1)
     {
-        return 0.1*m_flow->m_uCl*sin(2*x(2))+0.05*cos(x(0))*cos(x(1));
+        return 0.02*m_flow->m_uCl*sin(2*x(2))+0.05*cos(x(0))*cos(x(1));
         //return ( Uin + m_initialIncompressibleU.value(x, component) );
     }
     if (component == 2)
     {
-        return 0.3*m_flow->m_uCl*sin(2*M_PI*x(1))+0.05*cos(x(0))*cos(x(1));
+        return 0.12*m_flow->m_uCl*sin(6*M_PI*x(1))+0.05*cos(x(0))*cos(x(1));
         //return ( Uin + m_initialIncompressibleU.value(x, component) );
     }
 
@@ -411,12 +411,12 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
         double T = 1.0;
         const double height = this->m_flow->getHeight();
         if (x(1) > (height / 2.0))
-            T = 1.0 + 0.25 * tanh((height - x(1)) * 20);
+            T = 1.0 + 0.39 * tanh((height - x(1)) * 20);
 
         else
-            T = 1.0 + 0.25 * tanh(x(1) * 20);
+            T = 1.0 + 0.39 * tanh(x(1) * 20);
 
-        return 1.0;//T;
+        return T;
     }
 
     double
