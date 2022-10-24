@@ -168,16 +168,15 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		// copy triangulation
 		// create future mesh just to get difference in refinement level
         LOG(DETAILED) << "Check4" << endl;
-
+        if(!m_isG) {
         Mesh<dim> future_mesh(MPI_COMM_WORLD);
 		// copy mesh
 		future_mesh.copy_triangulation(mesh);
 		// Refine and transform tmp mesh to get the desired refinement level
         LOG(DETAILED) << "Check5" << endl;
 
-        if(!m_isG) {
         problem.refineAndTransform(future_mesh);
-        }
+
         LOG(DETAILED) << "Check6" << endl;
 
         size_t nlevels_new = future_mesh.n_global_levels();
@@ -185,9 +184,9 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		LOG(DETAILED) << "Read old solution" << endl;
 		// Prepare read old solution
 		// load mesh (must not be done with refined grid)
-		if(!m_isG) {
-            mesh.load(m_dataFile.c_str());
-            m_numberOfRefinements = nlevels_new - mesh.n_global_levels();
+
+        mesh.load(m_dataFile.c_str());
+        m_numberOfRefinements = nlevels_new - mesh.n_global_levels();
 
         }
 
@@ -219,16 +218,16 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		if(!m_isG) {
             LOG(DETAILED) << "Interpolate to refined grid" << endl;
             LOG(DETAILED) << "... from refinement level "
-                          << mesh.n_global_levels() - 1 << " to " << nlevels_new - 1
+                          << mesh.n_global_levels() - 1 << " to " << mesh.n_global_levels() - 1 + m_numberOfRefinements
                           << endl;
         } else {
-            LOG(DETAILED) << "Interpolate to refined grid for g, number of refinements: " << m_numberOfRefinements << endl;
+            LOG(DETAILED) << "Interpolate to refined grid for g, number of refinements: " << mesh.n_global_levels() - 1 + m_numberOfRefinements << endl;
 
         }
 
 
 		// assumption: future_mesh is a globally refined version of mesh
-		if (mesh.n_global_levels() > nlevels_new) {
+		if (m_numberOfRefinements < 0) {
 			throw CheckpointException(
 					"Restarting from coarser grid is not implemented, yet.");
 		}
