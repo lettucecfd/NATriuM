@@ -163,12 +163,12 @@ public:
                     const double C_v_new = 1. / (gamma_new - 1.0);
                     temperature = temperature * 0.5 / (density*C_v_old);
                 for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
-                    m_g.at(i)(*it) = this->m_f.at(i)(*it)*temperature*(2.0*C_v_new-dim);
+                //    m_g.at(i)(*it) = this->m_f.at(i)(*it)*temperature*(2.0*C_v_new-dim);
                 }
             }
 
-            //checkpoint->load(m_g, *(this->m_problemDescription), *(this->m_advectionOperator),
-            //                 checkpoint_status);
+            checkpoint->load(m_g, *(this->m_problemDescription), *(this->m_advectionOperator),
+                             checkpoint_status);
 
         }
         return 0 != restart_i;
