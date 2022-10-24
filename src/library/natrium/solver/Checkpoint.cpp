@@ -115,12 +115,14 @@ template<size_t dim>
 void Checkpoint<dim>::load(DistributionFunctions& f,
 		ProblemDescription<dim>& problem, AdvectionOperator<dim>& advection,
 		CheckpointStatus& status) {
+    LOG(DETAILED) << "Check1" << endl;
 
 	dealii::DoFHandler<dim>& dof_handler = *advection.getDoFHandler();
 	boost::shared_ptr<Stencil> new_stencil = advection.getStencil();
 	Mesh<dim>& mesh = *advection.getMesh();
+    LOG(DETAILED) << "Check2" << endl;
 
-	// load status
+    // load status
 	// read iteration number and time from file
 	double phys_time = 0.0;
 	size_t iteration_start = 0;
@@ -135,8 +137,10 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		ifile.close();
 	}
 	MPI_sync();
+    LOG(DETAILED) << "Check3" << endl;
 
-	// container for locally relevant dofs
+
+    // container for locally relevant dofs
 	dealii::IndexSet locally_relevant_dofs;
 
 	// transfer iteration start and time to all mpi processes
@@ -163,13 +167,20 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 	try {
 		// copy triangulation
 		// create future mesh just to get difference in refinement level
-		Mesh<dim> future_mesh(MPI_COMM_WORLD);
+        LOG(DETAILED) << "Check4" << endl;
+
+        Mesh<dim> future_mesh(MPI_COMM_WORLD);
 		// copy mesh
 		future_mesh.copy_triangulation(mesh);
 		// Refine and transform tmp mesh to get the desired refinement level
+        LOG(DETAILED) << "Check5" << endl;
 
+        if(!m_isG) {
         problem.refineAndTransform(future_mesh);
-		size_t nlevels_new = future_mesh.n_global_levels();
+        }
+        LOG(DETAILED) << "Check6" << endl;
+
+        size_t nlevels_new = future_mesh.n_global_levels();
 
 		LOG(DETAILED) << "Read old solution" << endl;
 		// Prepare read old solution
