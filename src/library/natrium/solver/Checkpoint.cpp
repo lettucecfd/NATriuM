@@ -163,29 +163,33 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 		natrium_errorexit(msg.str().c_str());
 	}
 
+    size_t nlevels_new = 0;
+
 	// load mesh and solution
 	try {
 		// copy triangulation
 		// create future mesh just to get difference in refinement level
         LOG(DETAILED) << "Check4" << endl;
         if(!m_isG) {
-        Mesh<dim> future_mesh(MPI_COMM_WORLD);
-		// copy mesh
-		future_mesh.copy_triangulation(mesh);
-		// Refine and transform tmp mesh to get the desired refinement level
-        LOG(DETAILED) << "Check5" << endl;
+            Mesh<dim> future_mesh(MPI_COMM_WORLD);
+            // copy mesh
+            future_mesh.copy_triangulation(mesh);
+            // Refine and transform tmp mesh to get the desired refinement level
+            LOG(DETAILED) << "Check5" << endl;
 
-        problem.refineAndTransform(future_mesh);
+            problem.refineAndTransform(future_mesh);
 
-        LOG(DETAILED) << "Check6" << endl;
+            LOG(DETAILED) << "Check6" << endl;
 
-        size_t nlevels_new = future_mesh.n_global_levels();
+            nlevels_new = future_mesh.n_global_levels();
 
-		LOG(DETAILED) << "Read old solution" << endl;
-		// Prepare read old solution
-		// load mesh (must not be done with refined grid)
-
+            LOG(DETAILED) << "Read old solution" << endl;
+            // Prepare read old solution
+            // load mesh (must not be done with refined grid)
+        }
         mesh.load(m_dataFile.c_str());
+
+            if(!m_isG) {
         m_numberOfRefinements = nlevels_new - mesh.n_global_levels();
 
         }
