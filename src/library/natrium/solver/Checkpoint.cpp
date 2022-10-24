@@ -228,7 +228,7 @@ void Checkpoint<dim>::load(DistributionFunctions& f,
 			f.reinit(new_stencil->getQ(), dof_handler.locally_owned_dofs(),
 					locally_relevant_dofs,
 					MPI_COMM_WORLD, advection.isDG());
-			f = tmp_f;
+			f = std::move(tmp_f);
 		}
 
         if (m_numberOfRefinements > 0 && !m_isG) {
