@@ -171,6 +171,7 @@ public:
                              checkpoint_status);
 
         }
+        m_g.updateGhosted();
         return 0 != restart_i;
 
 
