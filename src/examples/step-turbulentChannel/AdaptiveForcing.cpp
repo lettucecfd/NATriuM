@@ -65,6 +65,8 @@ namespace natrium {
 
 
 void AdaptiveForcing::apply() {
+    setBoundaryTemperature();
+
     if (!isMYCoordsUpToDate())
         updateYValues();
 
@@ -72,7 +74,6 @@ void AdaptiveForcing::apply() {
         calculateRhoU();
         calculateForce();
         rescaleDensity();
-        //bulkHeating();
         write();
 	}
 
@@ -340,7 +341,7 @@ void AdaptiveForcing::apply() {
         }
     }
 
-    void AdaptiveForcing::bulkHeating() {
+    void AdaptiveForcing::setBoundaryTemperature() {
 
         std::array< double*, 45> f_raw, g_raw;
         std::array<double,45> w;
@@ -353,44 +354,51 @@ void AdaptiveForcing::apply() {
 
         for (size_t dof = 0; dof < length; dof++) {
 
-                    const double scaling = m_solver.getStencil()->getScaling();
-                    const double cs2 = m_solver.getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
-                    const double gamma = 1.4;
-                    assert(m_solver.getStencil()->getQ()==45);
-                    std::array<double,45> f_destination, g_destination, feq, geq;
 
-                    for (int i=0; i<45; i++) {
-                        f_destination[i] = f_raw[i][dof];
-                        g_destination[i] = g_raw[i][dof];
+            if (m_solver.getSupportPoints().at(dof)(1) < 0.000001 or
+                m_solver.getSupportPoints().at(dof)(1) - 2.0 < 0.000001) {
+
+                const double scaling = m_solver.getStencil()->getScaling();
+                const double cs2 = m_solver.getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
+                const double gamma = 1.4;
+                assert(m_solver.getStencil()->getQ() == 45);
+                std::array<double, 45> f_destination, g_destination, feq, geq;
+
+                for (int i = 0; i < 45; i++) {
+                    f_destination[i] = f_raw[i][dof];
+                    g_destination[i] = g_raw[i][dof];
+                }
+
+                const double rho = calculateDensity<45>(f_destination);
+                std::array<double, 3> u_local;
+                std::array<std::array<double, 3>, 45> e = getParticleVelocitiesWithoutScaling<3, 45>(
+                        *m_solver.getStencil());
+                calculateVelocity<3, 45>(f_destination, u_local, rho, e);
+
+                const double T_local = calculateTemperature<3, 45>(f_destination, g_destination, u_local, rho, e, cs2,
+                                                                   gamma);
+                if (T_local < 1.40) {
+                    QuarticEquilibrium<3, 45> eq(cs2, e);
+                    eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
+                    calculateGeqFromFeq<3, 45>(feq, geq, T_local, gamma);
+                    for (int i = 0; i < 45; i++) {
+                        f_destination[i] -= feq[i];
+                        g_destination[i] -= geq[i];
                     }
+                    const double T_new = 0.85;
+                    eq.polynomial(feq, rho, u_local, T_new, e, w, cs2);
+                    calculateGeqFromFeq<3, 45>(feq, geq, T_new, gamma);
 
-                    const double rho = calculateDensity<45>(f_destination);
-                    std::array<double,3> u_local;
-                    std::array<std::array<double,3>,45> e = getParticleVelocitiesWithoutScaling<3,45>(*m_solver.getStencil());
-                    calculateVelocity<3,45>(f_destination,u_local,rho,e);
+                    for (int i = 0; i < 45; i++) {
+                        f_raw[i][dof] =
+                                f_destination[i] + feq[i];
 
-                    const double T_local = calculateTemperature<3,45>(f_destination,g_destination,u_local,rho,e,cs2,gamma);
-                    if (T_local < 1.40) {
-                        QuarticEquilibrium<3, 45> eq(cs2, e);
-                        eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
-                        calculateGeqFromFeq<3, 45>(feq, geq, T_local, gamma);
-                        for (int i = 0; i < 45; i++) {
-                            f_destination[i] -= feq[i];
-                            g_destination[i] -= geq[i];
-                        }
-                        const double T_new = (T_local - 1.0)*m_heatFactor + 1.0;
-                        eq.polynomial(feq, rho, u_local, T_new, e, w, cs2);
-                        calculateGeqFromFeq<3, 45>(feq, geq, T_new, gamma);
-
-                        for (int i = 0; i < 45; i++) {
-                            f_raw[i][dof] =
-                                    f_destination[i] + feq[i];
-
-                            g_raw[i][dof] =
-                                    g_destination[i] + geq[i];
-                        }
+                        g_raw[i][dof] =
+                                g_destination[i] + geq[i];
                     }
                 }
+            }
+        }
         m_solver.getF().updateGhosted();
         m_compressibleSolver.getG().updateGhosted();
 
