@@ -19,7 +19,7 @@ namespace natrium {
             FinalChannelStatistics(solver, outdir), m_outDir(outdir), m_T(solver.getTemperature()), m_targetRhoU(target),
             m_lastRhoU(target), m_starting_force(this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0]),
             m_restart(restart), m_compressibleSolver(solver),
-            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0), m_heatFactor(1.005), m_integral(0.0) {
+            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0), m_coolingFactor(1.005), m_integral(0.0) {
 
 
         m_names.push_back("T");
@@ -343,61 +343,81 @@ void AdaptiveForcing::apply() {
 
     void AdaptiveForcing::setBoundaryTemperature() {
 
-        std::array< double*, 45> f_raw, g_raw;
         std::array<double,45> w;
         int length;
         for (size_t i = 0; i < 45; i++){
-            m_solver.getF().at(i).trilinos_vector().ExtractView(&f_raw[i], &length);
-            m_compressibleSolver.getG().at(i).trilinos_vector().ExtractView(&g_raw[i], &length);
             w[i]=m_solver.getStencil()->getWeight(i);
         }
 
-        for (size_t dof = 0; dof < length; dof++) {
+        const dealii::UpdateFlags update_flags = dealii::update_quadrature_points
+                                                 | dealii::update_gradients;
+        const dealii::DoFHandler<3> & dof_handler = *(m_solver.getAdvectionOperator()->getDoFHandler());
+        typename dealii::DoFHandler<3>::active_cell_iterator cell =
+                dof_handler.begin_active(), endc = dof_handler.end();
+        dealii::FEValues<3> fe_values(m_solver.getAdvectionOperator()->getMapping(),
+                                      *(m_solver.getAdvectionOperator()->getFe()), m_solver.getAdvectionOperator()->getSupportPointEvaluation(), update_flags);
+        size_t dofs_per_cell = m_solver.getAdvectionOperator()->getFe()->dofs_per_cell;
+        std::vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
 
 
-            if (m_solver.getSupportPoints().at(dof)(1) < 0.000001 or
-                m_solver.getSupportPoints().at(dof)(1) - 2.0 < 0.000001) {
+        for (; cell != endc; ++cell) {
+            if (cell->is_locally_owned()) {
+                cell->get_dof_indices(local_indices);
+                fe_values.reinit(cell);
 
-                const double scaling = m_solver.getStencil()->getScaling();
-                const double cs2 = m_solver.getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
-                const double gamma = 1.4;
-                assert(m_solver.getStencil()->getQ() == 45);
-                std::array<double, 45> f_destination, g_destination, feq, geq;
+                const std::vector<dealii::Point<3> >& quad_points =
+                        fe_values.get_quadrature_points();
 
-                for (int i = 0; i < 45; i++) {
-                    f_destination[i] = f_raw[i][dof];
-                    g_destination[i] = g_raw[i][dof];
-                }
+                for (size_t q = 0; q < fe_values.n_quadrature_points; q++) {
+                   size_t dof = local_indices.at(q);
 
-                const double rho = calculateDensity<45>(f_destination);
-                std::array<double, 3> u_local;
-                std::array<std::array<double, 3>, 45> e = getParticleVelocitiesWithoutScaling<3, 45>(
-                        *m_solver.getStencil());
-                calculateVelocity<3, 45>(f_destination, u_local, rho, e);
 
-                const double T_local = calculateTemperature<3, 45>(f_destination, g_destination, u_local, rho, e, cs2,
-                                                                   gamma);
-                if (T_local < 1.40) {
-                    QuarticEquilibrium<3, 45> eq(cs2, e);
-                    eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
-                    calculateGeqFromFeq<3, 45>(feq, geq, T_local, gamma);
+                if (quad_points.at(q)(1) < 0.000001 or
+                        quad_points.at(q)(1) - 2.0 < 0.000001) {
+
+                    const double scaling = m_solver.getStencil()->getScaling();
+                    const double cs2 = m_solver.getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
+                    const double gamma = 1.4;
+                    assert(m_solver.getStencil()->getQ() == 45);
+                    std::array<double, 45> f_destination, g_destination, feq, geq;
+
                     for (int i = 0; i < 45; i++) {
-                        f_destination[i] -= feq[i];
-                        g_destination[i] -= geq[i];
+                        f_destination[i] = m_solver.getF().at(i)(dof);
+                        g_destination[i] = m_compressibleSolver.getG().at(i)(dof);
                     }
-                    const double T_new = 0.85;
-                    eq.polynomial(feq, rho, u_local, T_new, e, w, cs2);
-                    calculateGeqFromFeq<3, 45>(feq, geq, T_new, gamma);
 
-                    for (int i = 0; i < 45; i++) {
-                        f_raw[i][dof] =
-                                f_destination[i] + feq[i];
+                    const double rho = calculateDensity<45>(f_destination);
+                    std::array<double, 3> u_local;
+                    std::array<std::array<double, 3>, 45> e = getParticleVelocitiesWithoutScaling<3, 45>(
+                            *m_solver.getStencil());
+                    calculateVelocity<3, 45>(f_destination, u_local, rho, e);
 
-                        g_raw[i][dof] =
-                                g_destination[i] + geq[i];
+                    const double T_local = calculateTemperature<3, 45>(f_destination, g_destination, u_local, rho, e,
+                                                                       cs2,
+                                                                       gamma);
+                    if (T_local < 1.40) {
+                        QuarticEquilibrium<3, 45> eq(cs2, e);
+                        eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
+                        calculateGeqFromFeq<3, 45>(feq, geq, T_local, gamma);
+                        for (int i = 0; i < 45; i++) {
+                            f_destination[i] -= feq[i];
+                            g_destination[i] -= geq[i];
+                        }
+                        const double T_new = 0.85;
+                        eq.polynomial(feq, rho, u_local, T_new, e, w, cs2);
+                        calculateGeqFromFeq<3, 45>(feq, geq, T_new, gamma);
+
+                        for (int i = 0; i < 45; i++) {
+                            m_solver.getF().at(i)(dof) =
+                                    f_destination[i] + feq[i];
+
+                            m_compressibleSolver.getG().at(i)(dof) =
+                                    g_destination[i] + geq[i];
+                        }
                     }
                 }
             }
+        }
         }
         m_solver.getF().updateGhosted();
         m_compressibleSolver.getG().updateGhosted();

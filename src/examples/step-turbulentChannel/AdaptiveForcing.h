@@ -69,7 +69,7 @@ public:
 
     void updateCompressibleAverages();
 
-    double m_heatFactor;
+    double m_coolingFactor;
     double m_integral;
 };
 
