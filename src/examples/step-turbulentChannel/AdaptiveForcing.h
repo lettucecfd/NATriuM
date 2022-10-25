@@ -51,7 +51,7 @@ private:
     void calculateForce();
     void changeTemperatureProfile();
     void rescaleDensity();
-    void bulkHeating();
+    void setBoundaryTemperature();
 
 
     std::string outfile(std::string dir) {

@@ -26,10 +26,12 @@ namespace natrium {
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
 		std::vector<unsigned int> repetitions, double ReTau, double u_cl,
 		double height, double length, double width, bool is_periodic, double gridDensity) :
-		ProblemDescription<3>(makeGrid(repetitions), viscosity, height),
+		ProblemDescription<3>(makeGrid(repetitions), viscosity, height/2.0),
 		m_refinementLevel(refinementLevel), m_repetitions(repetitions),
 		m_ReTau(ReTau), m_uCl(u_cl), m_height(height), m_length(length), m_width(width),
 		m_maxUtrp(0.0), m_maxIncUtrp(0.0), m_gridDensity(gridDensity) {
+
+
 
 	// **** Recommendations for CPU use ****
 	/*pout << "-------------------------------------------------------------" << endl;
@@ -151,10 +153,10 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 				boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<ThermalBounceBack<3> >(2, zeroVector));
+				boost::make_shared<VelocityNeqBounceBack<3> >(2, zeroVector));
 		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<ThermalBounceBack<3> >(3, zeroVector));
+				boost::make_shared<VelocityNeqBounceBack<3> >(3, zeroVector));
 		//cout << " > no-slip: bottom" << endl;
 
 	} else {

@@ -22,6 +22,10 @@ namespace natrium {
 class TurbulentChannelFlow3D: public ProblemDescription<3> {
 public:
 
+    double getCharacteristicVelocity() const {
+        return m_uCl;
+    }
+
 	/**
 	 * TODO: edit description
 	 * @short class to describe the x-component of the analytic solution

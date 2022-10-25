@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
 			TurbulentChannelFlow3D>(viscosity,
                                     (size_t) parser.getArgument<int>("ref-level"), repetitions, Re_tau,
                                     u_cl, height, length, width, gridDensity);
-
+    channel3D->setCharacteristicLength(1.0);
 	// Turbulence statistics
 	// y-coordinates for output of RMS values in table (turbulence monitor)
 	int n_rms_coords = 3;
