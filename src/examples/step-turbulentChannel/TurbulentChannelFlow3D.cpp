@@ -411,10 +411,10 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
         double T = 1.0;
         const double height = this->m_flow->getHeight();
         if (x(1) > (height / 2.0))
-            T = 1.0 + 0.39 * tanh((height - x(1)) * 20);
+            T = 0.85 + 0.39 * tanh((height - x(1)) * 20);
 
         else
-            T = 1.0 + 0.39 * tanh(x(1) * 20);
+            T = 0.85 + 0.39 * tanh(x(1) * 20);
 
         return T;
     }
