@@ -81,7 +81,7 @@ public:
         double sutherland_factor = 1.0;
 
         if (isSutherlandLawSet){
-                sutherland_factor = 1.402*pow(genData.temperature, 1.5) / ( genData.temperature + 0.40417);
+                sutherland_factor = pow(genData.temperature/0.85,0.7);//1.402*pow(genData.temperature, 1.5) / ( genData.temperature + 0.40417);
             }
 
         const double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
