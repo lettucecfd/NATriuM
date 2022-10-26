@@ -68,9 +68,9 @@ public:
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFNEq = {{{0.0}}};
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
 
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(fLocal, heatFluxTensorFNEq, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(fNeq, heatFluxTensorFNEq, genData);
             //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(gLocal, heatFluxTensorGNeq, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(gNeq, heatFluxTensorGNeq, genData);
             //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.geq,heatFluxTensorGEq,genData);
 
             calculateFStar<T_D, T_Q>(fStar, heatFluxTensorFNEq, genData);
