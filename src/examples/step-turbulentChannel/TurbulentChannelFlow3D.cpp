@@ -153,10 +153,10 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 				boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<VelocityNeqBounceBack<3> >(2, zeroVector));
+				boost::make_shared<ThermalBounceBack<3> >(2, zeroVector));
 		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<VelocityNeqBounceBack<3> >(3, zeroVector));
+				boost::make_shared<ThermalBounceBack<3> >(3, zeroVector));
 		//cout << " > no-slip: bottom" << endl;
 
 	} else {
