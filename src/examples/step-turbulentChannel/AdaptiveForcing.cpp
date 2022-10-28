@@ -377,7 +377,7 @@ void AdaptiveForcing::apply() {
 
 
                 if (quad_points.at(q)(1) < 0.000001 or
-                        quad_points.at(q)(1) - 2.0 < 0.000001) {
+                        std::abs(quad_points.at(q)(1) - 2.0) < 0.000001) {
 
                     const double scaling = m_solver.getStencil()->getScaling();
                     const double cs2 = m_solver.getStencil()->getSpeedOfSoundSquare() / (scaling * scaling);
