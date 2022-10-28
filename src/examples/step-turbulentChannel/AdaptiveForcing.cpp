@@ -65,7 +65,7 @@ namespace natrium {
 
 
 void AdaptiveForcing::apply() {
-    // setBoundaryTemperature();
+     setBoundaryTemperature();
 
     if (!isMYCoordsUpToDate())
         updateYValues();
@@ -370,6 +370,10 @@ void AdaptiveForcing::apply() {
 
                 for (size_t q = 0; q < fe_values.n_quadrature_points; q++) {
                    size_t dof = local_indices.at(q);
+                    if (not m_solver.getAdvectionOperator()->getLocallyOwnedDofs().is_element(
+                            local_indices.at(q))) {
+                        continue;
+                    }
 
 
                 if (quad_points.at(q)(1) < 0.000001 or
@@ -395,7 +399,7 @@ void AdaptiveForcing::apply() {
                     const double T_local = calculateTemperature<3, 45>(f_destination, g_destination, u_local, rho, e,
                                                                        cs2,
                                                                        gamma);
-                    if (T_local < 1.40) {
+
                         QuarticEquilibrium<3, 45> eq(cs2, e);
                         eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
                         calculateGeqFromFeq<3, 45>(feq, geq, T_local, gamma);
@@ -414,7 +418,7 @@ void AdaptiveForcing::apply() {
                             m_compressibleSolver.getG().at(i)(dof) =
                                     g_destination[i] + geq[i];
                         }
-                    }
+
                 }
             }
         }
