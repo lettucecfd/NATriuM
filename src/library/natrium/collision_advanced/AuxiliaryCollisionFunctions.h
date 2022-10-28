@@ -443,7 +443,7 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
 }
 
     template<size_t T_D, size_t T_Q>
-    inline void calculateCenteredHeatFluxTensor(const std::array<double, T_Q> &f,
+    inline void calculateCenteredHeatFluxTensor(const std::array<double, T_Q> &f, const std::array<double, T_Q> &feq,
                                                 std::array<std::array<std::array<double, T_D>, T_D>, T_D> &heatFluxTensor,
                                                 const GeneralCollisionData<T_D, T_Q> &p) {
         for (size_t i = 0; i < T_Q; i++) {
@@ -452,9 +452,21 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
                     for (size_t c = 0; c < T_D; c++) {
 
                         heatFluxTensor[a][b][c] += ((p.e[i][a] - p.velocity[a]) * (p.e[i][b] - p.velocity[b]) *
-                                                    (p.e[i][c] - p.velocity[c])) * f[i];
+                                                    (p.e[i][c] - p.velocity[c]) * f[i] - p.e[i][a] * p.e[i][b] * p.e[i][c]*feq[i]);
                     }
                 }
+            }
+        }
+    }
+
+    template<size_t T_D, size_t T_Q>
+    inline void calculateCenteredMomentumFlux(const std::array<double, T_Q> &g, const std::array<double, T_Q> &geq,
+                                                std::array<double, T_D> &CentralFlux,
+                                                const GeneralCollisionData<T_D, T_Q> &p) {
+
+        for (size_t i = 0; i < T_Q; i++) {
+            for (size_t a = 0; a < T_D; a++) {
+                CentralFlux[a] += (p.e[i][a] - p.velocity[a]) * g[i] - p.e[i][a]*geq[i];
             }
         }
     }
@@ -487,6 +499,21 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
             }
         }
     }
+
+    template<size_t T_D, size_t T_Q>
+    inline void
+    calculateGStar(std::array<double, T_Q> &gStar, const std::array<double, T_D> &centeredFluxTensorG,
+                   const GeneralCollisionData<T_D, T_Q> &p) {
+        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+        for (size_t a = 0; a < T_D; a++) {
+            for (size_t i = 0; i < T_Q; i++) {
+                gStar[i] += p.weight[i] * (centeredFluxTensorG[a] * p.e[i][a]) /
+                                    p.cs2;
+                    }
+                }
+            }
+
+
 
     template<size_t T_D, size_t T_Q>
     inline std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> calculateH3(const double cs2, std::array<std::array<double,T_D>,T_Q> e) {
