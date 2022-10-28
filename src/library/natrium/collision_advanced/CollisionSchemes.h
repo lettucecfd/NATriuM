@@ -67,14 +67,14 @@ public:
             // 3 staged non-equilibrium heat flux tensors
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFNEq = {{{0.0}}};
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
-            std::array<double, T_D> centeredFluxTensorG = {{{0.0}}};
 
-
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(fLocal, genData.feq,heatFluxTensorFNEq, genData);
-            calculateCenteredMomentumFlux<T_D,T_Q>(gLocal, genData.geq,centeredFluxTensorG, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(fNeq, heatFluxTensorFNEq, genData);
+            //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(gNeq, heatFluxTensorGNeq, genData);
+            //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.geq,heatFluxTensorGEq,genData);
 
             calculateFStar<T_D, T_Q>(fStar, heatFluxTensorFNEq, genData);
-            calculateGStar<T_D, T_Q>(gStar, centeredFluxTensorG, genData);
+            calculateFStar<T_D, T_Q>(gStar, heatFluxTensorGNeq, genData);
         }
 
         const bool isSutherlandLawSet = genData.configuration.isSutherlandLawSet();
