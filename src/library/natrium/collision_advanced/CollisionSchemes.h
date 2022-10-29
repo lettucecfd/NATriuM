@@ -67,14 +67,15 @@ public:
             // 3 staged non-equilibrium heat flux tensors
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFNEq = {{{0.0}}};
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
+            std::array<double, T_D> FluxTensorGNeq = {{{0.0}}};
 
             calculateCenteredHeatFluxTensor<T_D,T_Q>(fNeq, heatFluxTensorFNEq, genData);
             //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(gNeq, heatFluxTensorGNeq, genData);
-            //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.geq,heatFluxTensorGEq,genData);
+            //calculateCenteredHeatFluxTensor<T_D,T_Q>(gNeq, heatFluxTensorGNeq, genData);
+            calculateCenteredMomentumFlux(gNeq,FluxTensorGNeq,genData);
 
             calculateFStar<T_D, T_Q>(fStar, heatFluxTensorFNEq, genData);
-            calculateFStar<T_D, T_Q>(gStar, heatFluxTensorGNeq, genData);
+            calculateGStar<T_D, T_Q>(gStar, FluxTensorGNeq, genData);
         }
 
         const bool isSutherlandLawSet = genData.configuration.isSutherlandLawSet();
@@ -104,7 +105,6 @@ public:
         const double visc_omega = 1./visc_tau;
         const double ener_omega = 1./visc_tau;
         const double prandtl_omega = 1./prandtl_tau;
-
         const double prandtl_diff = visc_omega - prandtl_omega;
 
 

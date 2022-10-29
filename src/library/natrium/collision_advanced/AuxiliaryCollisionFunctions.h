@@ -460,6 +460,18 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
     }
 
     template<size_t T_D, size_t T_Q>
+    inline void calculateCenteredMomentumFlux(const std::array<double, T_Q> &gNeq,
+                                                std::array<double, T_D> &CentralFlux,
+                                                const GeneralCollisionData<T_D, T_Q> &p) {
+
+        for (size_t i = 0; i < T_Q; i++) {
+            for (size_t a = 0; a < T_D; a++) {
+                CentralFlux[a] += (p.e[i][a] - p.velocity[a]) * gNeq[i] ;
+            }
+        }
+    }
+
+    template<size_t T_D, size_t T_Q>
     inline double calculateKnudsenNumberEstimate(const std::array<double, T_Q> &f, const std::array<double, T_Q> &feq, const std::array<double, T_Q> &weight) {
     double estimate = 0.0;
         for (size_t i = 0; i < T_Q; i++) {
@@ -487,6 +499,22 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
             }
         }
     }
+
+    template<size_t T_D, size_t T_Q>
+    inline void
+    calculateGStar(std::array<double, T_Q> &gStar, const std::array<double, T_D> &centeredFluxTensorG,
+                   const GeneralCollisionData<T_D, T_Q> &p) {
+        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+        const double cs6 = 6.0 * p.cs2 * p.cs2 * p.cs2;
+        for (size_t a = 0; a < T_D; a++) {
+            for (size_t i = 0; i < T_Q; i++) {
+                gStar[i] += p.weight[i] * (centeredFluxTensorG[a] * p.e[i][a]) /
+                                    p.temperature;
+                    }
+                }
+            }
+
+
 
     template<size_t T_D, size_t T_Q>
     inline std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> calculateH3(const double cs2, std::array<std::array<double,T_D>,T_Q> e) {
