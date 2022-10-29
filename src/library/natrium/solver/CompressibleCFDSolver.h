@@ -1021,6 +1021,11 @@ void compressibleFilter() {
             this->m_i++;
             this->stream();
             gStream();
+
+                for (size_t i = 0; i < this->m_dataProcessors.size(); i++) {
+                    this->m_dataProcessors.at(i)->apply();
+                }
+
             compressibleFilter();
             if (this->m_configuration->isOutputCompressibleTurbulenceStatistics()) {
                 this->m_compressibleTurbulenceStats->apply();
@@ -1034,9 +1039,7 @@ void compressibleFilter() {
 
             this->collide();
 
-            for (size_t i = 0; i < this->m_dataProcessors.size(); i++) {
-                this->m_dataProcessors.at(i)->apply();
-            }
+
         }
         //this->output(this->m_i, true);
         this->compressibleOutput(this->m_i, true);
