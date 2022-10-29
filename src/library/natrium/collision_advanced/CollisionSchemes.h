@@ -72,7 +72,7 @@ public:
             calculateCenteredHeatFluxTensor<T_D,T_Q>(fNeq, heatFluxTensorFNEq, genData);
             //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
             //calculateCenteredHeatFluxTensor<T_D,T_Q>(gNeq, heatFluxTensorGNeq, genData);
-            calculateCenteredMomentumFlux(gNeq,FluxTensorGNeq,genData);
+            calculateCenteredMomentumFlux<T_D,T_Q>(gNeq,FluxTensorGNeq,genData);
 
             calculateFStar<T_D, T_Q>(fStar, heatFluxTensorFNEq, genData);
             calculateGStar<T_D, T_Q>(gStar, FluxTensorGNeq, genData);
