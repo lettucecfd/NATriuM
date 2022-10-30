@@ -71,28 +71,26 @@ void ThermalBounceBack<dim>::calculateBoundaryValues(
     calculateVelocity<dim,45>(f_destination,u_local,rho,e);
 
     const double T_local = calculateTemperature<dim,45>(f_destination,g_destination,u_local,rho,e,cs2,gamma);
-    if (std::abs(T_local- m_wallTemperature) > 0.001) {
+
         QuarticEquilibrium<dim, 45> eq(cs2, e);
         eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
         calculateGeqFromFeq<dim, 45>(feq, geq, T_local, gamma);
-        for (int i = 0; i < 45; i++) {
-            f_destination[i] -= feq[i];
-            g_destination[i] -= geq[i];
-        }
+
+            f_destination[destination.direction] -= feq[destination.direction];
+            g_destination[destination.direction] -= geq[destination.direction];
+
         eq.polynomial(feq, rho, u_local, m_wallTemperature, e, w, cs2);
         calculateGeqFromFeq<dim, 45>(feq, geq, m_wallTemperature, gamma);
 
-        for (int i = 0; i < 45; i++) {
             //f_destination[i] += feq[i];
-            fe_boundary_values.getData().m_fnew.at(i)(
+            fe_boundary_values.getData().m_fnew.at(destination.direction)(
                     destination.index) =
-                    f_destination[i] + feq[i];
+                    f_destination[destination.direction] + feq[destination.direction];
 
-            fe_boundary_values.getData().m_g.at(i)(
+            fe_boundary_values.getData().m_g.at(destination.direction)(
                     destination.index) =
-                    g_destination[i] + geq[i];
-        }
-    }
+                    g_destination[destination.direction] + geq[destination.direction];
+
 
 
 /*	fe_boundary_values.getData().m_fnew.at(destination.direction)(
