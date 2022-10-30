@@ -2198,6 +2198,36 @@ public:
         leave_subsection();
     }
 
+    double getReferenceTemperature() {
+        enter_subsection("General");
+        double ref;
+        try {
+            ref = get_double("Reference temperature");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Reference temperature' from parameters: "
+                << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return ref;
+    }
+
+    void setReferenceTemperature(double ref) {
+        enter_subsection("General");
+        try {
+            set("Reference temperature", ref);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << ref << " to Reference Temperature: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+
     void setSutherlandLaw() {
         enter_subsection("General");
         try {

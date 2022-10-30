@@ -34,7 +34,7 @@ public:
 	 *  @param[in] boundaryVelocity A dealii::Function<dim> that defines the prescribed velocity at the boundary.
 	 */
 	ThermalBounceBack(size_t boundaryIndicator,
-			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity);
+			boost::shared_ptr<dealii::Function<dim> > boundaryVelocity, double wallTemperature);
 
 	/** @short This constructor assigns the Boundary condition with a constant fixed velocity and \f[ \rho = 1 \f]
 	 *  to the boundary with the given boundary indicator.
@@ -42,10 +42,10 @@ public:
 	 *  @param[in] velocity Constant velocity vector at the boundary.
 	 */
 	ThermalBounceBack(size_t boundaryIndicator,
-			const dealii::Vector<double>& velocity);
+			const dealii::Vector<double>& velocity, double wallTemperature);
 
 	ThermalBounceBack(size_t boundaryIndicator,
-			const dealii::Tensor<1,dim>& velocity);
+			const dealii::Tensor<1,dim>& velocity, double wallTemperature);
 
 	/// destructor
 	virtual ~ThermalBounceBack();
@@ -130,6 +130,9 @@ public:
 						boundary_hit.out.getAlpha()));
 	}
 	*/
+
+private:
+    double m_wallTemperature;
 
 };
 

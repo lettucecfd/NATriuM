@@ -107,6 +107,9 @@ int main(int argc, char** argv) {
 	const double Re_tau = parser.getArgument<double>("Re_tau");
 	assert(Re_tau > 0);
 
+    const double reference_temperature = 0.85;
+
+
 	// Computational domain
 	const double delta = parser.getArgument<double>("delta");
 	const double height = 2.0 * delta;
@@ -168,6 +171,7 @@ int main(int argc, char** argv) {
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
     configuration->setPrandtlNumber(0.7);
+    configuration->setReferenceTemperature(reference_temperature);
     configuration->setOutputCompressibleTurbulenceStatistics(true);
     configuration->setSutherlandLaw();
 	configuration->setOutputTurbulenceStatistics(true);
