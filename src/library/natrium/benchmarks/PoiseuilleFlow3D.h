@@ -36,7 +36,19 @@ public:
 				m_flow(flow) {
 		}
 		virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+
 	};
+
+    class InitialTemperature: public dealii::Function<3> {
+    private:
+        PoiseuilleFlow3D* m_flow;
+    public:
+        InitialTemperature(PoiseuilleFlow3D* flow) :
+                m_flow(flow) {
+        }
+        virtual double value(const dealii::Point<3>& x,
+                             const unsigned int component = 0) const;
+    };
 
 	/// constructor
 	PoiseuilleFlow3D(double viscosity, size_t refinementLevel, double u_bulk = 1.0,

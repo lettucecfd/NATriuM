@@ -13,6 +13,8 @@
 #include "deal.II/base/tensor.h"
 
 #include "../boundaries/VelocityNeqBounceBack.h"
+#include "../boundaries/ThermalBounceBack.h"
+
 #include "../boundaries/PeriodicBoundary.h"
 #include "../problemdescription/ConstantExternalForce.h"
 #include "../utilities/Math.h"
@@ -28,8 +30,10 @@ PoiseuilleFlow3D::PoiseuilleFlow3D(double viscosity, size_t refinementLevel,
 	setBoundaries(makeBoundaries(is_periodic));
 	// apply initial values / analytic solution
 	setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
+    this->setInitialT(boost::make_shared<InitialTemperature>(this));
 
-	if (is_periodic) {
+
+    if (is_periodic) {
 		// add external force
 		double Fx = 8 * m_uMax * viscosity / (height * height);
 		//pout << "F: " << Fx << endl;
@@ -134,6 +138,11 @@ double PoiseuilleFlow3D::AnalyticVelocity::value(const dealii::Point<3>& ,
 	} else {*/
 		return 0.0;
 	//}
+}
+
+    double PoiseuilleFlow3D::InitialTemperature::value(const dealii::Point<3>& x,
+                                                          const unsigned int component) const {
+    return 1.0;
 }
 
 } /* namespace natrium */
