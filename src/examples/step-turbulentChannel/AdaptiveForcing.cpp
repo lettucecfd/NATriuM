@@ -65,7 +65,7 @@ namespace natrium {
 
 
 void AdaptiveForcing::apply() {
-     setBoundaryTemperature();
+     //setBoundaryTemperature();
 
     if (!isMYCoordsUpToDate())
         updateYValues();
