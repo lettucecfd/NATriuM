@@ -86,7 +86,7 @@ public:
 
 
 	virtual BoundaryFlags getUpdateFlags() const {
-		BoundaryFlags flags = only_distributions;
+		BoundaryFlags flags = boundary_rho;
 		return flags;
 	}
 

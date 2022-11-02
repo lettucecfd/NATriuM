@@ -107,8 +107,8 @@ int main(int argc, char** argv) {
 	// make solver object and run simulation
 
 	CompressibleCFDSolver<3> solver(configuration, poiseuille3D);
-    solver.appendDataProcessor(
-            boost::make_shared<BoundaryTemperature>(solver));
+    //solver.appendDataProcessor(
+    //        boost::make_shared<BoundaryTemperature>(solver));
     solver.run();
 
 	pout << "Max Velocity  " <<
