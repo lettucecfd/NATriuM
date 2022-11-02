@@ -60,13 +60,13 @@ void ThermalBounceBack<dim>::calculateBoundaryValues(
     assert(stencil.getQ()==45);
     std::array<double,45> f_destination, g_destination, feq, geq, w;
     for (int i=0; i<45; i++) {
-   //     f_destination[i] = fe_boundary_values.getData().m_fnew.at(i)(destination.index);
+       f_destination[i] = fe_boundary_values.getData().m_fnew.at(i)(destination.index);
      //   g_destination[i] = fe_boundary_values.getData().m_g.at(i)(destination.index);
         w[i]=stencil.getWeight(i);
     }
 
-    //const double rho = calculateDensity<45>(f_destination);
-    const double rho = fe_boundary_values.getRho();
+    const double rho = calculateDensity<45>(f_destination);
+    //const double rho = fe_boundary_values.getRho();
 
     std::array<double,dim> u_local ={0.0};
     std::array<std::array<double,dim>,45> e = getParticleVelocitiesWithoutScaling<dim,45>(stencil);
@@ -94,8 +94,7 @@ void ThermalBounceBack<dim>::calculateBoundaryValues(
 
             fe_boundary_values.getData().m_g.at(destination.direction)(
                     destination.index) =
-                    - fe_boundary_values.getData().m_g.at(destination.direction)(
-                            destination.index) + 2*geq[destination.direction];
+                    geq[destination.direction];
        // }
     //}
 
