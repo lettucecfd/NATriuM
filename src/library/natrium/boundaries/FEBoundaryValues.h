@@ -81,6 +81,7 @@ public:
 					makeQuadratureAtPoints<dim>(cell, hit_points, mapping),
 					getFEValuesFlags(flags)), m_flags(flags), m_data(
 					global_data) {
+        m_feValues.reinit(cell);
 		m_dofsPerCell = fe.n_dofs_per_cell();
 		resize(m_dofsPerCell);
 		setToZero();
