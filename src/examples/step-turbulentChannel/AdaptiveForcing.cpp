@@ -354,6 +354,7 @@ void AdaptiveForcing::apply() {
         const dealii::DoFHandler<3> & dof_handler = *(m_solver.getAdvectionOperator()->getDoFHandler());
         typename dealii::DoFHandler<3>::active_cell_iterator cell =
                 dof_handler.begin_active(), endc = dof_handler.end();
+        std::set<size_t> already_set;
         dealii::FEValues<3> fe_values(m_solver.getAdvectionOperator()->getMapping(),
                                       *(m_solver.getAdvectionOperator()->getFe()), m_solver.getAdvectionOperator()->getSupportPointEvaluation(), update_flags);
         size_t dofs_per_cell = m_solver.getAdvectionOperator()->getFe()->dofs_per_cell;
@@ -374,6 +375,8 @@ void AdaptiveForcing::apply() {
                             local_indices.at(q))) {
                         continue;
                     }
+                    if (already_set.count(dof)>0)
+                        continue;
 
 
                 if (quad_points.at(q)(1) < 0.000001 or
@@ -402,10 +405,11 @@ void AdaptiveForcing::apply() {
 
                         QuarticEquilibrium<3, 45> eq(cs2, e);
                         eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
-                        calculateGeqFromFeq<3, 45>(feq, geq, T_local, gamma);
+                        //calculateGeqFromFeq<3, 45>(feq, geq, T_local, gamma);
                         for (int i = 0; i < 45; i++) {
                             f_destination[i] -= feq[i];
-                            g_destination[i] -= geq[i];
+                            //g_destination[i] -= geq[i];
+
                         }
                         const double T_new = 0.85;
                         eq.polynomial(feq, rho, u_local, T_new, e, w, cs2);
@@ -416,8 +420,9 @@ void AdaptiveForcing::apply() {
                                     f_destination[i] + feq[i];
 
                             m_compressibleSolver.getG().at(i)(dof) =
-                                    g_destination[i] + geq[i];
+                                    geq[i];
                         }
+                    already_set.insert(dof);
 
                 }
             }
