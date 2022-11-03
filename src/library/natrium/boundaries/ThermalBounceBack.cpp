@@ -58,45 +58,44 @@ void ThermalBounceBack<dim>::calculateBoundaryValues(
     const double cs2 = stencil.getSpeedOfSoundSquare() / (scaling * scaling);
     const double gamma = 1.4;
     assert(stencil.getQ()==45);
-    std::array<double,45> f_destination, g_destination, f_old, feq, geq, w;
+
+    std::array<double,45> f_destination, g_destination, feq, geq, w;
     for (int i=0; i<45; i++) {
         f_destination[i] = fe_boundary_values.getData().m_fnew.at(i)(destination.index);
-
-        f_old[i] = fe_boundary_values.getData().m_fold.at(i)(destination.index);
         g_destination[i] = fe_boundary_values.getData().m_g.at(i)(destination.index);
         w[i]=stencil.getWeight(i);
     }
 
-   const double rho = calculateDensity<45>(f_old);
-    //const double rho = fe_boundary_values.getRho();
 
-    std::array<double,dim> u_local ={0.0};
+    const double rho = calculateDensity<45>(f_destination);
+    std::array<double,dim> u_local;
     std::array<std::array<double,dim>,45> e = getParticleVelocitiesWithoutScaling<dim,45>(stencil);
-    calculateVelocity<dim,45>(f_old,u_local,rho,e);
+    calculateVelocity<dim,45>(f_destination,u_local,rho,e);
 
-    const double T_local = calculateTemperature<dim,45>(f_old,g_destination,u_local,rho,e,cs2,gamma);
-    //if (std::abs(T_local- m_wallTemperature) > 0.001) {
-    QuarticEquilibrium<dim, 45> eq(cs2, e);
-    eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
-    //calculateGeqFromFeq<dim, 45>(feq, geq, T_local, gamma);
-
-    f_destination[destination.direction] -= feq[destination.direction];
-
-
-
-    eq.polynomial(feq, rho, u_local, m_wallTemperature, e, w, cs2);
+    const double T_local = calculateTemperature<dim,45>(f_destination,g_destination,u_local,rho,e,cs2,gamma);
+    if (std::abs(T_local- m_wallTemperature) > 0.00001) {
+        QuarticEquilibrium<dim, 45> eq(cs2, e);
+        eq.polynomial(feq, rho, u_local, T_local, e, w, cs2);
+        calculateGeqFromFeq<dim, 45>(feq, geq, T_local, gamma);
+        for (int i = 0; i < 45; i++) {
+            f_destination[i] -= feq[i];
+            g_destination[i] -= geq[i];
+        }
+        eq.polynomial(feq, rho, u_local, m_wallTemperature, e, w, cs2);
         calculateGeqFromFeq<dim, 45>(feq, geq, m_wallTemperature, gamma);
 
-
-            fe_boundary_values.getData().m_fnew.at(destination.direction)(
+        for (int i = 0; i < 45; i++) {
+            //f_destination[i] += feq[i];
+            fe_boundary_values.getData().m_fnew.at(i)(
                     destination.index) =
-                    f_destination[destination.direction] + feq[destination.direction];
+                    f_destination[i] + feq[i];
 
-            fe_boundary_values.getData().m_g.at(destination.direction)(
+            fe_boundary_values.getData().m_g.at(i)(
                     destination.index) =
-                    geq[destination.direction];
-       // }
-    //}
+                    geq[i];
+        }
+        }
+
 
 
 /*	fe_boundary_values.getData().m_fnew.at(destination.direction)(
