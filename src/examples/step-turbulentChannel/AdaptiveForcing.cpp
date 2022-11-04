@@ -26,6 +26,10 @@ namespace natrium {
         m_names.push_back("dT/dx");
         m_names.push_back("dT/dy");
         m_names.push_back("dT/dz");
+        m_names.push_back("Ma_local/Ma_wall");
+        m_names.push_back("rho*ux");
+        m_names.push_back("rho*uy");
+        m_names.push_back("rho*uz");
 
         m_yCoordsUpToDate = false;
 
@@ -294,6 +298,12 @@ void AdaptiveForcing::apply() {
                     l_values.at(17) = T_gradients.at(i)[0];		// dT/dx
                     l_values.at(18) = T_gradients.at(i)[1]; 	// dT/dy
                     l_values.at(19) = T_gradients.at(i)[2];		// dT/dz
+                    l_values.at(20) = sqrt(
+                            m_u.at(0)(dof_ind) * m_u.at(0)(dof_ind) + m_u.at(1)(dof_ind) * m_u.at(1)(dof_ind) +
+                            m_u.at(2)(dof_ind) * m_u.at(2)(dof_ind)) / sqrt(m_T(dof_ind));
+                    l_values.at(21) = m_rho(dof_ind) * m_u.at(0)(dof_ind); // rho*ux
+                    l_values.at(22) = m_rho(dof_ind) * m_u.at(1)(dof_ind); // rho*uy
+                    l_values.at(23) = m_rho(dof_ind) * m_u.at(2)(dof_ind); // rho*uz
 
                     // add to averages:
                     for (size_t j = 0; j < m_nofObservables; j++) {
