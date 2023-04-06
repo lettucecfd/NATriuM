@@ -17,6 +17,7 @@
 
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/VelocityNeqBounceBack.h"
+#include "natrium/boundaries/ThermalBounceBack.h"
 #include "natrium/problemdescription/ConstantExternalForce.h"
 #include "natrium/utilities/Math.h"
 
@@ -25,10 +26,12 @@ namespace natrium {
 TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refinementLevel,
 		std::vector<unsigned int> repetitions, double ReTau, double u_cl,
 		double height, double length, double width, bool is_periodic, double gridDensity) :
-		ProblemDescription<3>(makeGrid(repetitions), viscosity, height),
+		ProblemDescription<3>(makeGrid(repetitions), viscosity, height/2.0),
 		m_refinementLevel(refinementLevel), m_repetitions(repetitions),
 		m_ReTau(ReTau), m_uCl(u_cl), m_height(height), m_length(length), m_width(width),
 		m_maxUtrp(0.0), m_maxIncUtrp(0.0), m_gridDensity(gridDensity) {
+
+
 
 	// **** Recommendations for CPU use ****
 	/*pout << "-------------------------------------------------------------" << endl;
@@ -84,6 +87,9 @@ TurbulentChannelFlow3D::TurbulentChannelFlow3D(double viscosity, size_t refineme
 	setBoundaries(makeBoundaries(is_periodic));
 	// apply initial values / analytic solution
 	setInitialU(boost::make_shared<IncompressibleU>(this));
+    this->setInitialT(boost::make_shared<InitialTemperature>(this));
+    this->setInitialRho(boost::make_shared<InitialDensity>(this));
+
 
 	if (is_periodic) {
 		// add external force
@@ -147,10 +153,10 @@ boost::shared_ptr<BoundaryCollection<3> > TurbulentChannelFlow3D::makeBoundaries
 				boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<VelocityNeqBounceBack<3> >(2, zeroVector));
+				boost::make_shared<ThermalBounceBack<3> >(2, zeroVector, 0.85));
 		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<VelocityNeqBounceBack<3> >(3, zeroVector));
+				boost::make_shared<ThermalBounceBack<3> >(3, zeroVector, 0.85));
 		//cout << " > no-slip: bottom" << endl;
 
 	} else {
@@ -214,109 +220,132 @@ double TurbulentChannelFlow3D::MeanVelocityProfile::value(const dealii::Point<3>
 		}
 		else
 		{// log region
-			uPlus = 1./0.4 * log(yPlus) + 5.2;
+			uPlus = m_flow->m_uCl / ( ReTau * visc / h_half );
 		}
 		break;
-	case 2:
-		// constants
-		double a 		= 0.1;			// constant in adverse pressure gradient correction function uPlusDelta
-										// 		determined from comparison wiht DNS results, Weyburne (2009)
-		double k 		= 0.41;			// von Karman constant for the log region: k*yPlus = nu_t/nu
-		double kPOW3 	= pow(k, 3.);
-		double kPOWF3B2 = pow(k, 3./2);
-		double C 		= 0.001093;		// Musker constant for the near wall region: C*yPlus^3 = nu_t/nu
-		double F1B3 	= 1./3;
-		double F2POWF1B3 = pow(2, F1B3);
-		double CPOWF1B3 = pow(C, F1B3);
-		double F2B3 	= 2./3;
-		double F2POWF2B3 = pow(2, F2B3);
-		double CPOWF2B3 = pow(C, F2B3);
-		double SQRT3 	= sqrt(3);
-		double C1 		= sqrt( 12*C + 81*kPOW3 );
-		double C2 		= pow( 2*C + 27*kPOW3 - 3*kPOWF3B2*C1, F1B3 );
-		double C3 		= pow( 2*C + 27*kPOW3 + 3*kPOWF3B2*C1, F1B3 );
-		double C4 		= pow( 2*C + 27*kPOW3 - 3*kPOWF3B2*C1, F2B3 );
-		double C5 		= pow( 2*C + 27*kPOW3 + 3*kPOWF3B2*C1, F2B3 );
-		double C6 		= 1 + 3*k*yPlus;
-		double C6POW2 	= pow(C6, 2.);
+	case 2: {
+        // constants
+        double a = 0.1;            // constant in adverse pressure gradient correction function uPlusDelta
+        // 		determined from comparison wiht DNS results, Weyburne (2009)
+        double k = 0.41;            // von Karman constant for the log region: k*yPlus = nu_t/nu
+        double kPOW3 = pow(k, 3.);
+        double kPOWF3B2 = pow(k, 3. / 2);
+        double C = 0.001093;        // Musker constant for the near wall region: C*yPlus^3 = nu_t/nu
+        double F1B3 = 1. / 3;
+        double F2POWF1B3 = pow(2, F1B3);
+        double CPOWF1B3 = pow(C, F1B3);
+        double F2B3 = 2. / 3;
+        double F2POWF2B3 = pow(2, F2B3);
+        double CPOWF2B3 = pow(C, F2B3);
+        double SQRT3 = sqrt(3);
+        double C1 = sqrt(12 * C + 81 * kPOW3);
+        double C2 = pow(2 * C + 27 * kPOW3 - 3 * kPOWF3B2 * C1, F1B3);
+        double C3 = pow(2 * C + 27 * kPOW3 + 3 * kPOWF3B2 * C1, F1B3);
+        double C4 = pow(2 * C + 27 * kPOW3 - 3 * kPOWF3B2 * C1, F2B3);
+        double C5 = pow(2 * C + 27 * kPOW3 + 3 * kPOWF3B2 * C1, F2B3);
+        double C6 = 1 + 3 * k * yPlus;
+        double C6POW2 = pow(C6, 2.);
 
-		// Approximate Musker velocity profile due to Weyburne (2009).
-		// Works well for zero pressure gradient boundary layer.
-		uPlus =
-		(
-		- 2*SQRT3*(-(F2POWF2B3*C*(C2 + C3)) - 9*F2POWF2B3*kPOW3*(C2 + C3)
-		  - CPOWF1B3*C2*C3*(C2 + C3) + 2*F2POWF1B3*CPOWF2B3*(C4 + C5))
-			* atan((-2*F2POWF1B3*CPOWF1B3 + C2 + C3)/(SQRT3*sqrt(pow(C2 - C3, 2.))))
-		+ 2*SQRT3*(-(F2POWF2B3*C*(C2 + C3)) - 9*F2POWF2B3*kPOW3*(C2 + C3)
-		  - CPOWF1B3*C2*C3*(C2 + C3) + 2*F2POWF1B3*CPOWF2B3*(C4 + C5))
-		 	 * atan((C2 + C3 - 2*F2POWF1B3*CPOWF1B3*C6)/(SQRT3*sqrt(pow(C2 - C3, 2.))))
-		+ sqrt(pow(C2 - C3, 2)) *
-			(
-			- 2*CPOWF1B3
-				* pow(F2POWF1B3*CPOWF1B3 + C2 + C3, 2)
-		 	 	* log(F2POWF1B3*CPOWF1B3 + C2 + C3)
-		 	+ (F2POWF2B3*C + 9*F2POWF2B3*kPOW3 + 2*F2POWF1B3*CPOWF2B3*(C2 + C3) - CPOWF1B3*(2*C4 + C2*C3 + 2*C5))
-		 		* log(F2POWF2B3*CPOWF2B3 + C4 - F2POWF1B3*CPOWF1B3*C3 + C5 - C2*(F2POWF1B3*CPOWF1B3 + C3))
-		 	+ 2*F2POWF2B3*C
-		 	 	* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
-		 	+ 4*CPOWF2B3
-		 	 	* pow(4*C + 54*kPOW3 - 6*kPOWF3B2*C1, F1B3)
-				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
-			+ 2*CPOWF1B3*C4
-				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
-			+ 4*CPOWF1B3*C2*C3
-				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
-			+ 2*CPOWF1B3*C5
-				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
-			+ 4*CPOWF2B3
-				* pow(4*C + 54*kPOW3 + 6*kPOWF3B2*C1, F1B3)
-				* log(C2 + C3 + F2POWF1B3*CPOWF1B3*C6)
-			- F2POWF2B3*C
-				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
-			- 2*CPOWF2B3
-				* pow(4*C + 54*kPOW3 - 6*kPOWF3B2*C1, F1B3)
-				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
-			+ 2*CPOWF1B3*C4
-				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
-			+ CPOWF1B3*C2*C3
-				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
-			+ 2*CPOWF1B3*C5
-				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
-			- 2*CPOWF2B3
-				* pow(4*C + 54*kPOW3 + 6*kPOWF3B2*C1, F1B3)
-				* log(C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
-			- 9*F2POWF2B3*kPOW3
-				* log(
-						(
-						pow(F2POWF1B3*CPOWF1B3 + C2 + C3, 2.)
-						* (C4 - C2*C3 + C5 - F2POWF1B3*CPOWF1B3*(C2 + C3)*C6 + F2POWF2B3*CPOWF2B3*C6POW2)
-						)
-						/ pow(C2 + C3 + F2POWF1B3*CPOWF1B3*C6, 2.)
-					 )
-			)
-		)
-		/(6.*CPOWF1B3*k*sqrt(pow(C2 - C3, 2.))*(C4 + C2*C3 + C5));
+        // Approximate Musker velocity profile due to Weyburne (2009).
+        // Works well for zero pressure gradient boundary layer.
+        uPlus =
+                (
+                        -2 * SQRT3 * (-(F2POWF2B3 * C * (C2 + C3)) - 9 * F2POWF2B3 * kPOW3 * (C2 + C3)
+                                      - CPOWF1B3 * C2 * C3 * (C2 + C3) + 2 * F2POWF1B3 * CPOWF2B3 * (C4 + C5))
+                        * atan((-2 * F2POWF1B3 * CPOWF1B3 + C2 + C3) / (SQRT3 * sqrt(pow(C2 - C3, 2.))))
+                        + 2 * SQRT3 * (-(F2POWF2B3 * C * (C2 + C3)) - 9 * F2POWF2B3 * kPOW3 * (C2 + C3)
+                                       - CPOWF1B3 * C2 * C3 * (C2 + C3) + 2 * F2POWF1B3 * CPOWF2B3 * (C4 + C5))
+                          * atan((C2 + C3 - 2 * F2POWF1B3 * CPOWF1B3 * C6) / (SQRT3 * sqrt(pow(C2 - C3, 2.))))
+                        + sqrt(pow(C2 - C3, 2)) *
+                          (
+                                  -2 * CPOWF1B3
+                                  * pow(F2POWF1B3 * CPOWF1B3 + C2 + C3, 2)
+                                  * log(F2POWF1B3 * CPOWF1B3 + C2 + C3)
+                                  + (F2POWF2B3 * C + 9 * F2POWF2B3 * kPOW3 + 2 * F2POWF1B3 * CPOWF2B3 * (C2 + C3) -
+                                     CPOWF1B3 * (2 * C4 + C2 * C3 + 2 * C5))
+                                    * log(F2POWF2B3 * CPOWF2B3 + C4 - F2POWF1B3 * CPOWF1B3 * C3 + C5 -
+                                          C2 * (F2POWF1B3 * CPOWF1B3 + C3))
+                                  + 2 * F2POWF2B3 * C
+                                    * log(C2 + C3 + F2POWF1B3 * CPOWF1B3 * C6)
+                                  + 4 * CPOWF2B3
+                                    * pow(4 * C + 54 * kPOW3 - 6 * kPOWF3B2 * C1, F1B3)
+                                    * log(C2 + C3 + F2POWF1B3 * CPOWF1B3 * C6)
+                                  + 2 * CPOWF1B3 * C4
+                                    * log(C2 + C3 + F2POWF1B3 * CPOWF1B3 * C6)
+                                  + 4 * CPOWF1B3 * C2 * C3
+                                    * log(C2 + C3 + F2POWF1B3 * CPOWF1B3 * C6)
+                                  + 2 * CPOWF1B3 * C5
+                                    * log(C2 + C3 + F2POWF1B3 * CPOWF1B3 * C6)
+                                  + 4 * CPOWF2B3
+                                    * pow(4 * C + 54 * kPOW3 + 6 * kPOWF3B2 * C1, F1B3)
+                                    * log(C2 + C3 + F2POWF1B3 * CPOWF1B3 * C6)
+                                  - F2POWF2B3 * C
+                                    * log(C4 - C2 * C3 + C5 - F2POWF1B3 * CPOWF1B3 * (C2 + C3) * C6 +
+                                          F2POWF2B3 * CPOWF2B3 * C6POW2)
+                                  - 2 * CPOWF2B3
+                                    * pow(4 * C + 54 * kPOW3 - 6 * kPOWF3B2 * C1, F1B3)
+                                    * log(C4 - C2 * C3 + C5 - F2POWF1B3 * CPOWF1B3 * (C2 + C3) * C6 +
+                                          F2POWF2B3 * CPOWF2B3 * C6POW2)
+                                  + 2 * CPOWF1B3 * C4
+                                    * log(C4 - C2 * C3 + C5 - F2POWF1B3 * CPOWF1B3 * (C2 + C3) * C6 +
+                                          F2POWF2B3 * CPOWF2B3 * C6POW2)
+                                  + CPOWF1B3 * C2 * C3
+                                    * log(C4 - C2 * C3 + C5 - F2POWF1B3 * CPOWF1B3 * (C2 + C3) * C6 +
+                                          F2POWF2B3 * CPOWF2B3 * C6POW2)
+                                  + 2 * CPOWF1B3 * C5
+                                    * log(C4 - C2 * C3 + C5 - F2POWF1B3 * CPOWF1B3 * (C2 + C3) * C6 +
+                                          F2POWF2B3 * CPOWF2B3 * C6POW2)
+                                  - 2 * CPOWF2B3
+                                    * pow(4 * C + 54 * kPOW3 + 6 * kPOWF3B2 * C1, F1B3)
+                                    * log(C4 - C2 * C3 + C5 - F2POWF1B3 * CPOWF1B3 * (C2 + C3) * C6 +
+                                          F2POWF2B3 * CPOWF2B3 * C6POW2)
+                                  - 9 * F2POWF2B3 * kPOW3
+                                    * log(
+                                          (
+                                                  pow(F2POWF1B3 * CPOWF1B3 + C2 + C3, 2.)
+                                                  * (C4 - C2 * C3 + C5 - F2POWF1B3 * CPOWF1B3 * (C2 + C3) * C6 +
+                                                     F2POWF2B3 * CPOWF2B3 * C6POW2)
+                                          )
+                                          / pow(C2 + C3 + F2POWF1B3 * CPOWF1B3 * C6, 2.)
+                                  )
+                          )
+                )
+                / (6. * CPOWF1B3 * k * sqrt(pow(C2 - C3, 2.)) * (C4 + C2 * C3 + C5));
 
-		// Correction function for adverse pressure gradient boundary layer
-		// due to Weyburne (2009).
-		double uPlusDelta =  p_x * 1/(2*a) * ( 1 - exp(-a * pow(yPlus, 2.)) );
-		//double uPlusDelta = 0;
-		uPlus = uPlus + uPlusDelta;
-		break;
+        // Correction function for adverse pressure gradient boundary layer
+        // due to Weyburne (2009).
+        double uPlusDelta = p_x * 1 / (2 * a) * (1 - exp(-a * pow(yPlus, 2.)));
+        //double uPlusDelta = 0;
+        uPlus = uPlus + uPlusDelta;
+        break;
+    }
+
 	}
 	double U = uPlus * ( ReTau * visc / h_half );
 
     // mean velocities <Vin> & <Win> are assumed to be 0.
 	if (component == 0)
 	{
-		return U;
+		return U+0.06*m_flow->m_uCl*sin(4*x(0))+0.05*cos(x(0))*cos(x(1));
 		//return ( Uin + m_initialIncompressibleU.value(x, component) );
 	}
-	else // component 1, 2
+    if (component == 1)
+    {
+        return 0.02*m_flow->m_uCl*sin(2*x(2))+0.05*cos(x(0))*cos(x(1));
+        //return ( Uin + m_initialIncompressibleU.value(x, component) );
+    }
+    if (component == 2)
+    {
+        return 0.12*m_flow->m_uCl*sin(6*M_PI*x(1))+0.05*cos(x(0))*cos(x(1));
+        //return ( Uin + m_initialIncompressibleU.value(x, component) );
+    }
+
+
+    /*else // component 1, 2
 	{
 		return 0;
 		//return ( m_initialIncompressibleU.value(x, component) );
-	}
+	}*/
 }
 
 
@@ -379,6 +408,35 @@ double TurbulentChannelFlow3D::IncompressibleU::value(const dealii::Point<3>& x,
 	}
 }
 
+    double
+    TurbulentChannelFlow3D::InitialTemperature::value(const dealii::Point<3> &x, const unsigned int component) const {
+        double T = 1.0;
+        const double height = this->m_flow->getHeight();
+        if (x(1) > (height / 2.0))
+            T = 0.85 + 0.39 * tanh((height - x(1)) * 20);
+
+        else
+            T = 0.85 + 0.39 * tanh(x(1) * 20);
+
+        return T;
+    }
+
+    double
+    TurbulentChannelFlow3D::InitialDensity::value(const dealii::Point<3> &x, const unsigned int component) const {
+        double rho = 1.0;
+        const double height = this->m_flow->getHeight();
+        if (x(1) > (height / 2.0))
+            rho = 1.0 - 0.25 * tanh((height - x(1)) * 20);
+
+
+        else
+            rho = 1.0 - 0.25 * tanh(x(1) * 20);
+
+        return 1.0;// rho;
+
+    }
+
+
 double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 		const unsigned int component) const {
 
@@ -397,7 +455,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 	//double	ReTau 				= m_flow->getFrictionReNumber();		// friction Reynolds number
 
 	double	u_cl				= m_flow->getCenterLineVelocity(); 		// mean centerline velocity
-	double  ti					= 0.05;							// turbulence intensity I = u'/U
+	double  ti					= 0.15;							// turbulence intensity I = u'/U
 	double	urms 				= ti * u_cl;					// turbulent velocity scale
 	double	tke 				= 3./2 * pow(urms, 2.);			// turbulent kinetic energy
 	double	delta 				= 5./32 * height;	        	// inlet boundary layer thickness. Only if the boundary layer
@@ -410,7 +468,7 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
 	//int 	nmodes 				= 600;							// number of Fourier modes
 	//changed by Andreas
-	int nmodes = 50;
+	int nmodes = 12;
 	//pout << " >>>> Number of Fourier modes = " << nmodes << endl;
 	
 	//double	wew1fct				= 2;							// ratio of ke and kmin (in wavenumber)
@@ -575,8 +633,8 @@ double TurbulentChannelFlow3D::InitialVelocity::value(const dealii::Point<3>& x,
 
     // Manipulated hyperbolic function, freeStreamTurb prescribes a free-stream turbulence
     //	by preventing the blending function from dropping below the set value
-    fBlend = std::max( 0.5 * ( 1 - tanh( (minDist - delta)/blendDist ) ), freeStreamTurb);
-    //fBlend = 1;
+    //fBlend = std::max( 0.5 * ( 1 - tanh( (minDist - delta)/blendDist ) ), freeStreamTurb);
+    fBlend = 1;
 
     // DEBUG: for mean velocity profile check
     //return 0;

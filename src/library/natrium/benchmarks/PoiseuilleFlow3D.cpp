@@ -13,6 +13,8 @@
 #include "deal.II/base/tensor.h"
 
 #include "../boundaries/VelocityNeqBounceBack.h"
+#include "../boundaries/ThermalBounceBack.h"
+
 #include "../boundaries/PeriodicBoundary.h"
 #include "../problemdescription/ConstantExternalForce.h"
 #include "../utilities/Math.h"
@@ -28,8 +30,10 @@ PoiseuilleFlow3D::PoiseuilleFlow3D(double viscosity, size_t refinementLevel,
 	setBoundaries(makeBoundaries(is_periodic));
 	// apply initial values / analytic solution
 	setAnalyticU(boost::make_shared<AnalyticVelocity>(this));
+    this->setInitialT(boost::make_shared<InitialTemperature>(this));
 
-	if (is_periodic) {
+
+    if (is_periodic) {
 		// add external force
 		double Fx = 8 * m_uMax * viscosity / (height * height);
 		//pout << "F: " << Fx << endl;
@@ -96,10 +100,10 @@ boost::shared_ptr<BoundaryCollection<3> > PoiseuilleFlow3D::makeBoundaries(
 				boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
 		//cout << " > periodic: back/front" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<VelocityNeqBounceBack<3> >(4, zeroVector));
+				boost::make_shared<ThermalBounceBack<3> >(4, zeroVector, 0.8));
 		//cout << " > no-slip: top" << endl;
 		boundaries->addBoundary(
-				boost::make_shared<VelocityNeqBounceBack<3> >(5, zeroVector));
+				boost::make_shared<ThermalBounceBack<3> >(5, zeroVector, 1.2));
 		//cout << " > no-slip: bottom" << endl;
 
 	} else {
@@ -134,6 +138,11 @@ double PoiseuilleFlow3D::AnalyticVelocity::value(const dealii::Point<3>& ,
 	} else {*/
 		return 0.0;
 	//}
+}
+
+    double PoiseuilleFlow3D::InitialTemperature::value(const dealii::Point<3>& x,
+                                                          const unsigned int component) const {
+    return 1.0;
 }
 
 } /* namespace natrium */

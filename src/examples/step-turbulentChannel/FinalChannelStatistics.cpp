@@ -162,7 +162,11 @@ void FinalChannelStatistics::updateYValues() {
 
 }
 
-void FinalChannelStatistics::updateAverages() {
+    bool FinalChannelStatistics::isMYCoordsUpToDate() const {
+        return m_yCoordsUpToDate;
+    }
+
+    void FinalChannelStatistics::updateAverages() {
 	boost::shared_ptr<AdvectionOperator<3> > advection =
 			m_solver.getAdvectionOperator();
 

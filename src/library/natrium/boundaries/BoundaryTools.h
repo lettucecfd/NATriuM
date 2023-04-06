@@ -240,6 +240,9 @@ struct GlobalBoundaryData {
 	/// new distribution functions (at t)
 	DistributionFunctions& m_fnew;
 
+    /// new distribution functions (at t)
+    DistributionFunctions& m_g;
+
 	/// LBM stencil
 	const Stencil& m_stencil;
 
@@ -266,12 +269,25 @@ struct GlobalBoundaryData {
 	GlobalBoundaryData(const DistributionFunctions& f_old,
 			DistributionFunctions& f_new, const Stencil& stencil,
 			double viscosity, double dt) :
-			m_fold(f_old), m_fnew(f_new), m_stencil(stencil) {
+			m_fold(f_old), m_fnew(f_new), m_g(f_new), m_stencil(stencil) {
 		m_viscosity = viscosity;
 		m_dt = dt;
 		m_cs2 = stencil.getSpeedOfSoundSquare();
 		m_Q = stencil.getQ();
+
 	}
+    GlobalBoundaryData(const DistributionFunctions& f_old,
+                       DistributionFunctions& f_new, DistributionFunctions& g, const Stencil& stencil,
+                       double viscosity, double dt) :
+            m_fold(f_old), m_fnew(f_new), m_g(g), m_stencil(stencil) {
+        m_viscosity = viscosity;
+        m_dt = dt;
+        m_cs2 = stencil.getSpeedOfSoundSquare();
+        m_Q = stencil.getQ();
+    }
+
+
+
 	virtual ~GlobalBoundaryData() {
 
 	}

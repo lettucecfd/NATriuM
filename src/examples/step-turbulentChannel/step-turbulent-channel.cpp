@@ -9,11 +9,13 @@
 
 #include "TurbulentChannelFlow3D.h"
 #include "FinalChannelStatistics.h"
+#include "AdaptiveForcing.h"
 
 #include "deal.II/numerics/data_out.h"
 #include "deal.II/grid/grid_out.h"
 
 #include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/CompressibleCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 
 #include "natrium/stencils/D3Q19.h"
@@ -42,6 +44,7 @@ int main(int argc, char** argv) {
 	parser.setPositionalArgument<int>("ref-level",
 			"Global refinement level. Number of total grid points in direction i: 'ref-i' * (2 ^ 'ref-level')");
 	parser.setArgument<int>("restart", "Restart at iteration ...", 0);
+    parser.setArgument<int>("compressible", "Is a thermal/compressible LB model to be used?",0);
 	parser.setArgument<double>("Re_tau",
 			"Wall Reynolds number u_tau * delta / nu", 180.0);
 	parser.setArgument<double>("U_cl", "Centerline velocity for initialization",
@@ -99,10 +102,13 @@ int main(int argc, char** argv) {
 	// ========================================================================
 	// CHANNEL SETUP
 	// ========================================================================
-
+    const double gamma = 1.4;
 	// Reynolds number
 	const double Re_tau = parser.getArgument<double>("Re_tau");
 	assert(Re_tau > 0);
+
+    const double reference_temperature = 0.85;
+
 
 	// Computational domain
 	const double delta = parser.getArgument<double>("delta");
@@ -121,7 +127,8 @@ int main(int argc, char** argv) {
 	const double u_cl = parser.getArgument<double>("U_cl");
 	const double Ma = parser.getArgument<double>("Ma");
 	const double gridDensity = parser.getArgument<double>("grid-density");
-	const double scaling = sqrt(3) * u_cl / Ma;
+	const double scaling = sqrt(3) * u_cl / (Ma*sqrt(gamma*reference_temperature));
+
 	const double viscosity = u_cl * delta / parser.getArgument<double>("Re_cl");
 	const double utau = Re_tau * viscosity / delta;
 
@@ -130,7 +137,7 @@ int main(int argc, char** argv) {
 			TurbulentChannelFlow3D>(viscosity,
                                     (size_t) parser.getArgument<int>("ref-level"), repetitions, Re_tau,
                                     u_cl, height, length, width, gridDensity);
-
+    channel3D->setCharacteristicLength(1.0);
 	// Turbulence statistics
 	// y-coordinates for output of RMS values in table (turbulence monitor)
 	int n_rms_coords = 3;
@@ -160,7 +167,13 @@ int main(int argc, char** argv) {
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
 	configuration->setForcingScheme(EXACT_DIFFERENCE);
-	configuration->setStencil(Stencil_D3Q13);
+    configuration->setStencil(Stencil_D3Q45);
+    configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
+    configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+    configuration->setPrandtlNumber(0.7);
+    configuration->setReferenceTemperature(reference_temperature);
+    configuration->setOutputCompressibleTurbulenceStatistics(true);
+    configuration->setSutherlandLaw();
 	configuration->setOutputTurbulenceStatistics(true);
 	configuration->setWallNormalDirection(1);
 	configuration->setWallNormalCoordinates(rms_coords);
@@ -281,7 +294,7 @@ int main(int argc, char** argv) {
 	// CREATE SOLVER AND RUN SIMULATION
 	// ========================================================================
 	// make solver object and run simulation
-	CFDSolver<3> solver(configuration, channel3D);
+	CompressibleCFDSolver<3> solver(configuration, channel3D);
 
 	if (restart == 0) {
 		double utrp_max = channel3D.get()->getMaxUtrp();
@@ -293,16 +306,18 @@ int main(int argc, char** argv) {
 				<< utrp_inc_max << endl;
 		pout << " >>>> Scaling Factor:  " << scalingFactor << endl;
 
-		solver.scaleVelocity(scalingFactor);
+        solver.scaleVelocity(scalingFactor);
 		solver.addToVelocity(
 				boost::make_shared<TurbulentChannelFlow3D::MeanVelocityProfile>(
 						channel3D.get()));
-	} else {
+	} /* else {
 		// append data processor only in case of restart
 		solver.appendDataProcessor(
 				boost::make_shared<FinalChannelStatistics>(solver,
 						configuration->getOutputDirectory()));
-	}
+	}*/
+    solver.appendDataProcessor(
+            boost::make_shared<AdaptiveForcing>(solver, configuration->getOutputDirectory(), 1.0, static_cast<bool>(restart))); 
 	solver.run();
 
 	pout << "Max Velocity  " << solver.getMaxVelocityNorm() << endl;

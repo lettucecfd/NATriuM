@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 	pout << "Starting NATriuM step-decaying-turbulence..." << endl;
 
 	const double CFL = 0.4;
-	const double Re = 100;
+	const double Re = 10000;
 	const double u_bulk = 0.0001 / 1.5; //1.0;
 	const double orderOfFiniteElement = 2;
 	const double Ma = atof(argv[1]);

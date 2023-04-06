@@ -189,6 +189,26 @@ bool DistributionFunctions::equals(const DistributionFunctions& other,
 
 }
 
+void DistributionFunctions::scaleF(const double scale, const dealii::IndexSet& locally_owned_dofs)
+{
+    std::vector<distributed_vector*> f;
+    for (size_t i = 0; i < m_Q; i++) {
+        distributed_vector* fi = &at(i);
+        f.push_back(fi);
+    }
+
+    dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
+    dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
+    for (; it != end; it++) {
+        size_t i = *it;
+
+        for (size_t j = 0; j < m_Q; j++) {
+            (*f[j])(i) = scale * (*f[j])(i);
+        }
+    }
+    updateGhosted();
+}
+
 void DistributionFunctions::transferFromOtherScaling(const Stencil& old_stencil,
 		const Stencil& new_stencil,
 		const dealii::IndexSet& locally_owned_dofs) {

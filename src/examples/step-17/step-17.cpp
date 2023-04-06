@@ -108,6 +108,7 @@ int main(int argc, char** argv) {
 	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 	configuration->setHeatCapacityRatioGamma(1.4);
 	configuration->setPrandtlNumber(0.71);
+    configuration->setSutherlandLaw();
 
 	parser.applyToSolverConfiguration(*configuration);
 

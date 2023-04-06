@@ -12,6 +12,8 @@
 #include "deal.II/base/utilities.h"
 
 #include "natrium/solver/CFDSolver.h"
+#include "natrium/solver/CompressibleCFDSolver.h"
+
 #include "natrium/solver/SolverConfiguration.h"
 
 #include "natrium/problemdescription/ProblemDescription.h"
@@ -42,6 +44,8 @@ int main(int argc, char** argv) {
 			"2D Kelvin-Helmholtz instability at Re=30'000, as in Boesch (2014)");
 	parser.setPositionalArgument<int>("ref-level",
 			"refinement of the computational grid");
+    parser.setArgument<double>("Ma",
+                               "Mach number", 0.04);
 	parser.setArgument<double>("tx",
 			"transformation of the grid in x-direction (<1)", 0);
 	parser.setArgument<double>("ty",
@@ -62,7 +66,7 @@ int main(int argc, char** argv) {
 
 	double perturbation = 0.05;
 	double kappa = 80;
-	double Ma = 0.04 / (1.0 / sqrt(3));
+	double Ma = parser.getArgument<double>("Ma");// / (1.0 / sqrt(3));
 	double Re;
 	double u0;
 	double t_max;
@@ -147,7 +151,7 @@ int main(int argc, char** argv) {
 	// RUN SOLVER
 	// ========================================================================
 
-	CFDSolver<2> solver(configuration, shear_layer);
+	CompressibleCFDSolver<2> solver(configuration, shear_layer);
 
 	solver.run();
 

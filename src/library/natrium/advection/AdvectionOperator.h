@@ -136,6 +136,12 @@ public:
 	virtual void applyBoundaryConditions(DistributionFunctions& f_old,
 			DistributionFunctions& f, double t) = 0;
 
+        virtual void applyBoundaryConditions(DistributionFunctions& f_old,
+                                             DistributionFunctions& f, DistributionFunctions& g, double t) = 0;
+
+	virtual void applyBoundaryConditionsToG(DistributionFunctions &f, DistributionFunctions &g, double t,
+                                                const double gamma) = 0;
+
 
 	/**
 	 * @short Stream the distribution functions. Purely virtual for this class.

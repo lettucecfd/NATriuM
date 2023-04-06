@@ -174,6 +174,11 @@ public:
 		m_externalForce = force;
 	}
 
+    void setExternalForceTensor(dealii::Tensor<1,dim> tensor)
+    {
+        m_externalForce->setForce(tensor);
+    }
+
 	boost::shared_ptr<ConstantExternalForce<dim> > getExternalForce() const {
 		return m_externalForce;
 	}

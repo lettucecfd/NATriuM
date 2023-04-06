@@ -255,7 +255,11 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 						// add diagonal entry to sparsity pattern
 						m_blockSparsityPattern.block(row_index,el.destination.direction- 1).add(el.destination.index,
 								el.destination.index);
-					} else {
+                        LOG(WARNING)
+                                << " The SemiLagrangian Advection tracker ran into the life time counter limit of 50."
+                                << endl;
+
+                    } else {
 						// insert '1'
 						Base::m_systemMatrix.block(el.destination.direction - 1,
 								el.destination.direction - 1).add(
@@ -305,7 +309,13 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 							typename DoFHandler<dim>::active_cell_iterator,
 							DeparturePointList<dim> >::iterator it =
 							found_in_cell.find(el.currentCell);
+                    if(el.hit_do_nothing == true) {
+                        el.currentDirection =
+                                Base::m_stencil->getIndexOfOppositeDirection(
+                                        el.currentDirection);
+                    }
 					if (it == found_in_cell.end()) {
+
 						DeparturePointList<dim> new_xlist;
 						new_xlist.push_back(el);
 						found_in_cell.insert(
@@ -372,7 +382,24 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 								m_boundaryHandler.addHit(el, bi);
 							}
 
-						} else /* is not LinearFluxBoundary */{
+						}
+                        // ================================================================================================
+                        // ================================= DoNothingBoundaryCondition=== ================================
+                        // ================================================================================================
+                        else if (is_do_nothing_bb(Base::getBoundaries()->getBoundary(bi)->getBoundaryName())) {
+
+                            // Go back to start and follow the opposite direction to find the departure point
+                            el.currentPoint = el.departurePoint - minus_dtealpha.at(el.currentDirection);
+
+                            el.departurePoint = el.currentPoint - minus_dtealpha.at(el.currentDirection);
+                            el.currentDirection =
+                                    Base::m_stencil->getIndexOfOppositeDirection(
+                                            el.currentDirection);
+                            el.hit_do_nothing = true;
+                        }
+
+
+						else /* is not LinearFluxBoundary */{
 
 							// ================================================================================================
 							// ================================= Other Boundaries =============================================

@@ -1600,6 +1600,8 @@ public:
 			return Stencil_D2Q19H;
         } else if ("D2Q19V" == stencil) {
             return Stencil_D2Q19V;
+        } else if ("D2Q777" == stencil) {
+            return Stencil_D2Q777;
 		} else if ("D2Q25H" == stencil) {
 			return Stencil_D2Q25H;
 		} else if ("RD3Q27" == stencil) {
@@ -1652,6 +1654,10 @@ public:
 		}
         case Stencil_D2Q19V: {
             set("Stencil", "D2Q19V");
+            break;
+        }
+        case Stencil_D2Q777: {
+            set("Stencil", "D2Q777");
             break;
         }
 		case Stencil_D2Q25H: {
@@ -2192,6 +2198,49 @@ public:
         leave_subsection();
     }
 
+    double getReferenceTemperature() {
+        enter_subsection("General");
+        double ref;
+        try {
+            ref = get_double("Reference temperature");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Reference temperature' from parameters: "
+                << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return ref;
+    }
+
+    void setReferenceTemperature(double ref) {
+        enter_subsection("General");
+        try {
+            set("Reference temperature", ref);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << ref << " to Reference Temperature: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+
+    void setSutherlandLaw() {
+        enter_subsection("General");
+        try {
+           set("Sutherland law set", true);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign Sutherland Law " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
     bool isPrandtlNumberSet() {
         enter_subsection("General");
         bool isPrandtlSet;
@@ -2207,6 +2256,23 @@ public:
         }
         leave_subsection();
         return isPrandtlSet;
+    }
+
+    bool isSutherlandLawSet() {
+        enter_subsection("General");
+        bool isSutherland;
+        try {
+            isSutherland = get_bool("Sutherland law set");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Sutherland law set' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return isSutherland;
     }
 
 	bool isWriteALogFile() {

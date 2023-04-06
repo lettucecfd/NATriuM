@@ -29,7 +29,7 @@ public:
 			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq;
+		T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
@@ -42,9 +42,8 @@ public:
 
 		void relaxWithG(std::array<double, T_Q>& fLocal, std::array<double, T_Q>& gLocal,
 			GeneralCollisionData<T_D, T_Q>& genData,
-			SpecificCollisionData& specData) {
+			SpecificCollisionData& specData, T_equilibrium<T_D, T_Q> eq) {
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq;
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
@@ -56,46 +55,65 @@ public:
 
         std::array<double, T_Q> fNeq = {0.0};
         std::array<double, T_Q> gNeq = {0.0};
-#pragma omp parallel for
         for (int p = 0; p < T_Q; ++p) {
             fNeq[p] = fLocal[p] - genData.feq[p];
             gNeq[p] = gLocal[p] - genData.geq[p];
         }
 
-        bool isPrandtlNumberSet = genData.configuration.isPrandtlNumberSet();
+        const bool isPrandtlNumberSet = genData.configuration.isPrandtlNumberSet();
 
-        if (isPrandtlNumberSet == true) {
+        if (isPrandtlNumberSet) {
 
             // 3 staged non-equilibrium heat flux tensors
             std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFNEq = {{{0.0}}};
-            std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
+           // std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
+            std::array<double, T_D> FluxTensorGNeq = {0.0};
 
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(fLocal, heatFluxTensorFNEq, genData);
+            calculateCenteredHeatFluxTensor<T_D,T_Q>(fNeq, heatFluxTensorFNEq, genData);
             //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
-            calculateCenteredHeatFluxTensor<T_D,T_Q>(gLocal, heatFluxTensorGNeq, genData);
-            //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.geq,heatFluxTensorGEq,genData);
+            //calculateCenteredHeatFluxTensor<T_D,T_Q>(gNeq, heatFluxTensorGNeq, genData);
+            calculateCenteredMomentumFlux<T_D,T_Q>(gNeq,FluxTensorGNeq,genData);
 
             calculateFStar<T_D, T_Q>(fStar, heatFluxTensorFNEq, genData);
-            calculateFStar<T_D, T_Q>(gStar, heatFluxTensorGNeq, genData);
+            calculateGStar<T_D, T_Q>(gStar, FluxTensorGNeq, genData);
         }
-        double sutherland_factor = 1.402*pow(genData.temperature,1.5) / ( genData.temperature + 0.40417);
-        double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
-        double ener_tau = visc_tau;
 
-        double prandtl = genData.configuration.getPrandtlNumber();
-        double prandtl_tau = (visc_tau - 0.5)/prandtl + 0.5;
+        const bool isSutherlandLawSet = genData.configuration.isSutherlandLawSet();
+        double sutherland_factor = 1.0;
 
-        //if(genData.maskShockSensor>0.5)
-        //{
-            //visc_tau = (1.0+sqrt(genData.maskShockSensor)*10.0)*visc_tau;
-            //ener_tau=visc_tau;
-        //}
+        if (isSutherlandLawSet){
+                sutherland_factor = pow(genData.temperature/0.85,0.7);//1.402*pow(genData.temperature, 1.5) / ( genData.temperature + 0.40417);
+            }
+
+        const double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
+
+        const double knudsen_estimate = calculateKnudsenNumberEstimate<T_D, T_Q>(fLocal, genData.feq, genData.weight);
+        double tau_factor = 1.0;
+            if(knudsen_estimate >= 0.01)
+                tau_factor = 1.05;
+            if(knudsen_estimate >= 0.05)
+                tau_factor = 1.35;
+            if(knudsen_estimate >= 0.1)
+                tau_factor = 1/visc_tau;
+        //visc_tau *=tau_factor;
+
+        genData.maskShockSensor = knudsen_estimate;
+
+        const double prandtl = genData.configuration.getPrandtlNumber();
+        const double prandtl_tau = (visc_tau - 0.5) / prandtl + 0.5;
+
+        const double visc_omega = 1./visc_tau;
+        const double ener_omega = 1./visc_tau;
+        const double prandtl_omega = 1./prandtl_tau;
+        const double prandtl_diff = visc_omega - prandtl_omega;
+
+
 
 		//Relax every direction towards the equilibrium
-#pragma omp parallel for
+#pragma GCC unroll 190
             for (int p = 0; p < T_Q; ++p) {
-            fLocal[p] -= 1. / visc_tau * (fNeq[p]) + (1. / visc_tau - 1. / prandtl_tau) * fStar[p]; // -genData.feq[p]);
-            gLocal[p] -= 1. / ener_tau * (gNeq[p]) + (1. / visc_tau - 1. / prandtl_tau) * gStar[p];
+            fLocal[p] -= visc_omega * fNeq[p] - prandtl_diff * fStar[p];
+            gLocal[p] -= visc_omega * gNeq[p] - prandtl_diff * gStar[p];
 		}
 	}
 };
@@ -138,7 +156,7 @@ public:
 			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq;
+		T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);
@@ -221,7 +239,7 @@ public:
 			SpecificCollisionData& specData) {
 
 		//Initialize the corresponding Equilibrium Distribution Function
-		T_equilibrium<T_D, T_Q> eq;
+		T_equilibrium<T_D, T_Q> eq(genData.cs2,genData.e);
 
 		//Calculate the equilibrium and write the result to feq
 		eq.calc(genData.feq, genData);

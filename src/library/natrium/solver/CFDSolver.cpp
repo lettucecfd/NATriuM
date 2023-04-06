@@ -32,6 +32,7 @@
 #include "../stencils/RD3Q27.h"
 #include "../stencils/D2Q25H.h"
 #include "../stencils/D2Q19V.h"
+#include "../stencils/D2Q777.h"
 #include "../stencils/D2Q19H.h"
 #include "../stencils/D3Q45.h"
 #include "../stencils/D3Q77.h"
@@ -155,6 +156,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 					configuration->getStencilScaling());
     } else if (Stencil_D2Q19V == configuration->getStencil()) {
         m_stencil = boost::make_shared<D2Q19V>(
+                configuration->getStencilScaling());
+    } else if (Stencil_D2Q777 == configuration->getStencil()) {
+        m_stencil = boost::make_shared<D2Q777>(
                 configuration->getStencilScaling());
 	} else if (Stencil_D2Q25H == configuration->getStencil()) {
 			m_stencil = boost::make_shared<D2Q25H>(
@@ -522,6 +526,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLISION ==           " << endl;
 	LOG(WELCOME) << "tau:                      " << tau << endl;
+    LOG(WELCOME) << "Is Sutherland law set?    " << configuration->isSutherlandLawSet() << endl;
     LOG(WELCOME) << "Is Prandtl number set?    " << configuration->isPrandtlNumberSet() << endl;
     LOG(WELCOME) << "Prandtl number Pr:        " << configuration->getPrandtlNumber() << endl;
     LOG(WELCOME) << "Heat capacity ratio:      " << configuration->getHeatCapacityRatioGamma() << endl;
@@ -1248,7 +1253,6 @@ void CFDSolver<dim>::initializeDistributions() {
                         for (int a = 0; a < dim; a++) {
                             for (int b = 0; b < dim; b++) {
                                 fneq.at(i) += Q[i][a][b]*Pi_1[a][b];
-                                cout << a << " " << b << "  " << Pi_1[a][b] << endl;
                             }
                         }
                         fneq.at(i)*=m_stencil->getWeight(i);
@@ -1435,10 +1439,13 @@ void CFDSolver<dim>::addToVelocity(
 	typename dealii::DoFHandler<dim>::active_cell_iterator cell =
 			m_advectionOperator->getDoFHandler()->begin_active(), endc =
 			m_advectionOperator->getDoFHandler()->end();
+    std::set<int> already_set;
 	for (; cell != endc; ++cell) {
 		if (cell->is_locally_owned()) {
 			cell->get_dof_indices(local_dof_indices);
 			for (size_t i = 0; i < dofs_per_cell; i++) {
+                if (already_set.count(local_dof_indices.at(i))>0)
+                    continue;
 				assert(
 						m_velocity.at(0).in_local_range(
 								local_dof_indices.at(i)));
@@ -1456,6 +1463,7 @@ void CFDSolver<dim>::addToVelocity(
 													local_dof_indices.at(i)),
 											component);
 				}
+                already_set.insert(local_dof_indices.at(i));
 			}
 		} /* if is locally owned */
 	} /* for all cells */

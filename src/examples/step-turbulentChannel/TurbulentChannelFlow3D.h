@@ -22,6 +22,10 @@ namespace natrium {
 class TurbulentChannelFlow3D: public ProblemDescription<3> {
 public:
 
+    double getCharacteristicVelocity() const {
+        return m_uCl;
+    }
+
 	/**
 	 * TODO: edit description
 	 * @short class to describe the x-component of the analytic solution
@@ -44,6 +48,28 @@ public:
 		virtual double value(const dealii::Point<3>& x,
 				const unsigned int component = 0) const;
 	};
+
+    class InitialDensity: public dealii::Function<3> {
+    private:
+        TurbulentChannelFlow3D* m_flow;
+    public:
+        InitialDensity(TurbulentChannelFlow3D* flow) :
+                m_flow(flow) {
+        }
+        virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+
+
+    };
+
+    class InitialTemperature: public dealii::Function<3> {
+    private:
+        TurbulentChannelFlow3D* m_flow;
+    public:
+        InitialTemperature(TurbulentChannelFlow3D* flow) :
+                m_flow(flow) {
+        }
+        virtual double value(const dealii::Point<3>& x, const unsigned int component=0) const;
+    };
 
 	class IncompressibleU: public dealii::Function<3> {
 	private:
