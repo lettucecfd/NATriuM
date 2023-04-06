@@ -79,6 +79,10 @@ public:
 	void addHit(const LagrangianPathTracker<dim>& tracker, size_t boundary_id);
 
 	void apply(DistributionFunctions& f_new, const DistributionFunctions& f_old, double t);
+    void apply(DistributionFunctions& f_new, const DistributionFunctions& f_old, DistributionFunctions& g, double t);
+    void operate(GlobalBoundaryData g_data, double t);
+
+    void applyToG(DistributionFunctions& f, DistributionFunctions& g, double t, const double gamma);
 
 	/*void print_out(){
 	 pout << "Semi Lagrangian Boundary Handler Object:" << endl;

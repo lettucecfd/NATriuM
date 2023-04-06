@@ -37,14 +37,21 @@ enum BoundaryName {
 	//
 	FIRST_ORDER_BB,
 	PRESSURE_EQUILIBRIUM_BOUNDARY,
-	VELOCITY_EQUILIBRIUM_BOUNDARY
+	VELOCITY_EQUILIBRIUM_BOUNDARY,
+	DO_NOTHING_BC,
+    THERMAL_BB
 };
 
 inline bool is_velocity_neq_bb(BoundaryName bn){
 	return ( (bn == ZERO_VELOCITY_NEQ_BB)
 			or (bn == CONSTANT_VELOCITY_NEQ_BB)
-			or (bn == NONCONSTANT_VELOCITY_NEQ_BB) );
+			or (bn == NONCONSTANT_VELOCITY_NEQ_BB)
+            or (bn == THERMAL_BB) );
 }
+
+    inline bool is_do_nothing_bb(BoundaryName bn){
+        return bn == DO_NOTHING_BC;
+    }
 
 /**
  * @short  Abstract class for the description of boundaries.

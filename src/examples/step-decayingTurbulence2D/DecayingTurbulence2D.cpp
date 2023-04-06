@@ -109,14 +109,14 @@ double DecayingTurbulence2D::InitialVelocity::value(const dealii::Point<2>& x,
 		k = std::sqrt(n*n + m*m);
 		// sample random au_nm
 		E = C0 * std::pow(k,A) / (1.0 + std::pow(k/k0,B+1) );
-		pout << n << " " << m << " " << E << endl;
+		//pout << n << " " << m << " " << E << endl;
 		psi = E / (k*k); // (spectral density of the stream function
 		sine = std::sin(2*PI*n* x(0) + 2*PI*m* x(1) );
 		// only sinus part
 		u += (-psi * 2 * PI * m * sine);
 		v += (psi * 2 * PI * n * sine);
 	}
-	pout << "u " << u << ", v " << v << endl;
+	//pout << "u " << u << ", v " << v << endl;
 	// return result;
 	if (component == 0)
 		return u;

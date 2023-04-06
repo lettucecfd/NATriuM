@@ -239,6 +239,10 @@ public:
 		return m_f;
 	}
 
+    DistributionFunctions& getF() {
+        return m_f;
+    }
+
 	const vector<distributed_vector>& getVelocity() const {
 		return m_velocity;
 	}
@@ -340,6 +344,11 @@ public:
 
 	void scaleVelocity(double scaling_factor);
 
+    void scaleF(double scale)
+    {
+        m_f.scaleF(scale,m_advectionOperator->getLocallyOwnedDofs());
+    }
+
 	const map<dealii::types::global_dof_index, dealii::Point<dim> >& getSupportPoints() const {
 		return m_supportPoints;
 	}
@@ -359,6 +368,8 @@ public:
 	void updateGhosted()
 	{m_f.updateGhosted();
 	}
+
+    void additionalStreamingSteps();
 }
 ;
 

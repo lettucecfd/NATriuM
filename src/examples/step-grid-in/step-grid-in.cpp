@@ -84,12 +84,15 @@
 //! [Includes]
 #include <stdlib.h>
 #include <sstream>
+#include <ctime>
 
 #include "natrium/stencils/D2Q9.h"
 #include "natrium/stencils/D2Q25H.h"
 #include "natrium/solver/CFDSolver.h"
 #include "natrium/solver/CompressibleCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
+#include "natrium/utilities/CommandLineParser.h"
+
 
 #include "natrium/problemdescription/ProblemDescription.h"
 
@@ -106,77 +109,74 @@ using namespace natrium;
 //! [Main function]
 int main(int argc, char** argv) {
 
-	MPIGuard::getInstance(argc, argv);
-
-	pout << "Starting NATriuM step-grid-in..." << endl;
-
-	pout << "Usage: ./step-grid-in <ref_level> <order_fe>  <Re=100> <integrator_id=1> <CFL=1.0>" << endl;
-	assert(argc >= 2);
-	size_t refinementLevel = std::atoi(argv[1]);
-	size_t orderOfFiniteElement = std::atoi(argv[2]);
-	pout << "Flow around obstacle with N=" << refinementLevel << " and p="
-			<< orderOfFiniteElement << endl;
-	double Re = 100;
-	if (argc >= 3){
-		Re = std::atof(argv[3]);
-	}
-	pout << "Re: " << Re << endl;
-	size_t integrator_id  = 1;
-	if (argc >= 4){
-		integrator_id = std::atoi(argv[4]);
-	}
-	double CFL = 1.0;
-	if (argc >= 5 ){
-		CFL = std::atof(argv[5]);
-	}
-	pout << "CFL: " << CFL << endl;
-
-	// get integrator
-	TimeIntegratorName time_integrator;
-	DealIntegratorName deal_integrator;
-	string integrator_name;
-	CFDSolverUtilities::get_integrator_by_id(integrator_id, time_integrator,
-			deal_integrator, integrator_name);
-	pout << "Integrator: " << integrator_name << endl;
-
-	//const double Ma = 1.2;
-	//! [Main function]
+    MPIGuard::getInstance();
+    CommandLineParser parser(argc, argv);
+    parser.setArgument<double>("Ma", "Mach number", 0.1);
+    parser.setArgument<int>("Re", "Reynolds number", 100);
+    parser.setArgument<int>("ref-level", "Refinement level", 1);
+    parser.setArgument<int>("compressible", "Compressible CFD solver needed?", 0);
 
 
-	//! [Problem]
-	// set Problem so that the right Re and Ma are achieved
-	const double U = 0.7;
-	const double scaling = 1.0;//U * sqrt(3) / Ma;
-	const double viscosity = U / Re; // (because L = 1)
+    try {
+        parser.importOptions();
+    } catch (HelpMessageStop&){
+        return 0;
+    }
 
-	// make problem and solver objects
+    pout << "Starting NATriuM step-grid-in..." << endl;
+    const int refLevel = parser.getArgument<int>("ref-level");
+
+    // set Reynolds and Mach number
+    const double Ma = parser.getArgument<double>("Ma");
+    const double gamma = 1.4;
+    // increase velocity to gain correct speed
+
+    const double Re = parser.getArgument<int>("Re");;
+
+    // set Problem so that the right Re and Ma are achieved
+    double U = 1;
+    double scaling = 1;
+    if(static_cast<bool>(parser.getArgument<int>("compressible"))==true) {
+        scaling /= sqrt(gamma);
+    }
+    scaling*=sqrt(3)/Ma;
+    const double viscosity = U / Re; // (because L = 1)
+
+    // make problem and solver objects
 	boost::shared_ptr<ProblemDescription<2> >  obstacle_flow = boost::make_shared<
-			DiamondObstacle2D>(U, viscosity, refinementLevel);
+			DiamondObstacle2D>(U, viscosity, refLevel);
 	//! [Problem]
 
 	//! [Configuration]
 	std::stringstream dirname;
-	dirname << getenv("NATRIUM_HOME") << "/step-grid-in";
+    dirname << getenv("NATRIUM_HOME") << "/step-grid-in/Re" << Re << "-Ma" << Ma << "-reflevel" << refLevel << "-time"
+            << std::time(0);
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
 	configuration->setOutputDirectory(dirname.str());
-	configuration->setOutputCheckpointInterval(10000);
+    configuration->setUserInteraction(false);
+    configuration->setOutputCheckpointInterval(10000);
 	configuration->setOutputSolutionInterval(100);
-	configuration->setTimeIntegrator(time_integrator);
-	configuration->setDealIntegrator(deal_integrator);
-	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
-	configuration->setStencilScaling(scaling);
-	configuration->setCFL(CFL);
+    configuration->setStencilScaling(scaling);
 	configuration->setNumberOfTimeSteps(200000);
 	//configuration->setTimeIntegrator(EXPONENTIAL);
 	configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
 	configuration->setForcingScheme(NO_FORCING);
-	configuration->setStencil(Stencil_D2Q25H);
-	//! [Solver]
-	CompressibleCFDSolver<2> solver(configuration, obstacle_flow);
-	solver.run();
+	configuration->setStencil(Stencil_D2Q9);
 
-	pout << "NATriuM step-0 terminated." << endl;
+    parser.applyToSolverConfiguration(*configuration);
+
+    if(static_cast<bool>(parser.getArgument<int>("compressible"))!=true) {
+        CFDSolver<2> solver(configuration, obstacle_flow);
+        solver.run();
+    }
+    else
+    {
+        CompressibleCFDSolver<2> solver(configuration, obstacle_flow);
+        solver.run();
+    }
+
+	pout << "NATriuM step-grid-in terminated." << endl;
 
 	return 0;
 }

@@ -24,7 +24,7 @@ class Cylinder2D: public ProblemDescription<2> {
 public:
 
 	/// constructor
-	Cylinder2D(double viscosity, double inletVelocity);
+	Cylinder2D(double viscosity, double inletVelocity,size_t refinementLevel);
 
 	/// destructor
 	virtual ~Cylinder2D();
@@ -36,11 +36,12 @@ public:
 	virtual void refine(Mesh<2>& mesh) {
 		// remember to make_inner_manifold when implementing global refinement
 		const dealii::SphericalManifold<2> manifold(dealii::Point<2>(0, 0));
-		make_inner_manifold(mesh, manifold);
-		mesh.refine_global(1);
-		// free the manifold
-		mesh.set_manifold(1);
-
+		for(size_t i = 0; i<m_refinementLevel;i++) {
+            make_inner_manifold(mesh, manifold);
+            mesh.refine_global(1);
+            // free the manifold
+            mesh.set_manifold(1, manifold);
+        }
 	}
 
 	virtual void transform(Mesh<2>& ) {
@@ -64,8 +65,30 @@ public:
 		virtual double value(const dealii::Point<2>& x, const unsigned int component=0) const;
 	};
 
-private:
+    class InitialT: public dealii::Function<2> {
+    private:
+        Cylinder2D* m_flow;
+    public:
+        InitialT(Cylinder2D* flow) :
+                m_flow(flow) {
+        }
+        virtual double value(const dealii::Point<2>& x,
+                             const unsigned int component = 0) const;
+    };
 
+    class InitialRho: public dealii::Function<2> {
+    private:
+        Cylinder2D* m_flow;
+    public:
+        InitialRho(Cylinder2D* flow) :
+                m_flow(flow) {
+        }
+        virtual double value(const dealii::Point<2>& x,
+                             const unsigned int component = 0) const;
+    };
+
+private:
+    const size_t m_refinementLevel;
 
 	const double m_inletVelocity;
 

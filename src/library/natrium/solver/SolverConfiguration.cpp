@@ -20,13 +20,18 @@ SolverConfiguration::SolverConfiguration() {
 				"CFL number. Determines the size of the (initial) time step. The CFL number is defined as stencil_scaling/(dx*(p+1)^2).");
         declare_entry("Prandtl", "1.0", dealii::Patterns::Double(1e-10),
                       "Prandtl number. Determines ratio of viscosity and heat conduction. Set to Pr=0.7 for air. Default Pr=1.0 (BGK)");
+        declare_entry("Reference temperature", "1.0", dealii::Patterns::Double(1e-10),
+                      "Reference temperature of the simulation.");
         declare_entry("Gamma", "1.4", dealii::Patterns::Double(1e-10),
                       "Heat capacity ratio . Set to gamma=1.4 for air (Default)");
         declare_entry("Prandtl number set", "false",
                       dealii::Patterns::Bool(),
                       "Indicates if Prandtl number deviates from 1.0");
+        declare_entry("Sutherland law set", "false",
+                      dealii::Patterns::Bool(),
+                      "Enable viscosity depending on temperature");
 		declare_entry("Stencil", "D2Q9",
-				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q19V|D2Q19H|D2Q25H|D3Q45|D3Q77|D3V27"),
+				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q19V|D2Q19H|D2Q777|D2Q25H|D3Q45|D3Q77|D3V27"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
 		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
 				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");

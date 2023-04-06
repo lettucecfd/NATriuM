@@ -21,7 +21,7 @@ namespace natrium {
 
 
 class FinalChannelStatistics: public DataProcessor<3>{
-private:
+protected:
 	boost::shared_ptr<std::fstream> m_tableFile;
 	boost::filesystem::path m_outDir;
 	const vector<distributed_vector>& m_u;
@@ -58,6 +58,8 @@ public:
 	void addToTemporalAverages();
 	void write_to_file();
 	virtual ~FinalChannelStatistics();
+
+    bool isMYCoordsUpToDate() const;
 };
 
 } /* namespace natrium */

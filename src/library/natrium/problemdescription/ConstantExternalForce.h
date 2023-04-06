@@ -30,6 +30,10 @@ public:
 	void scale(double factor) {
 		m_force *= factor;
 	}
+
+    void setForce(dealii::Tensor<1,dim> forceTensor) {
+        m_force = forceTensor;
+    }
 };
 
 } /* namespace natrium */

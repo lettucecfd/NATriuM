@@ -53,8 +53,10 @@ struct LagrangianPathTracker {
 	dealii::Point<dim> departurePoint; // Lagrangian departure point x^(t-dt)
 	dealii::Point<dim> currentPoint; // Current point x^(t-(dt-timeLeft))
 	typename dealii::DoFHandler<dim>::active_cell_iterator currentCell; // cell of currentPoint
+    bool hit_do_nothing = false;
 
-	LagrangianPathTracker(size_t dof, size_t a, size_t b,
+
+    LagrangianPathTracker(size_t dof, size_t a, size_t b,
 			const dealii::Point<dim>& x,
 			const dealii::Point<dim>& current_point,
 			typename dealii::DoFHandler<dim>::active_cell_iterator current_cell) :

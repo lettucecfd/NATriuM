@@ -62,7 +62,6 @@ double rho = 1.0;
 
 	double velocities[2]={0.1,0.2};
 
-	BGKEquilibrium<2,9> eq;
 	std::array<double,9> feq;
 	D2Q9 d2q9(1.0);
 	double cs2=1./3.;
@@ -76,6 +75,7 @@ double rho = 1.0;
 	TaylorGreenTest2D tgv(0.1,1);
 	GeneralCollisionData<2,9> prams(cfg, tgv, scaling, viscosity, d2q9,
 			cs2 , dt);
+        BGKEquilibrium<2,9> eq(cs2,prams.e);
 
 	prams.velocity[0]=velocities[0];
 	prams.velocity[1]=velocities[1];
@@ -120,7 +120,6 @@ double rho = 1.0;
 
         double velocities[2]={0.1,0.2};
 
-        QuarticEquilibrium<2,19> eq;
 
         std::array<double,19> feq;
         D2Q19V d2q19h(1.0);
@@ -134,13 +133,15 @@ double rho = 1.0;
         TaylorGreenTest2D tgv(0.1,1);
         GeneralCollisionData<2,19> prams(cfg, tgv, scaling, viscosity, d2q19h,
                                         cs2 , dt);
+        QuarticEquilibrium<2,19> eq(cs2,prams.e);
+
 
         prams.velocity[0]=velocities[0];
         prams.velocity[1]=velocities[1];
         prams.density = rho;
         prams.temperature = 1.1;
-        prams.H3 = calculateH3<2,19>(prams);
-        prams.H4 = calculateH4<2,19>(prams);
+        prams.H3 = calculateH3<2,19>(cs2,prams.e);
+        prams.H4 = calculateH4<2,19>(cs2,prams.e);
 
         eq.calc(feq,prams);
 
@@ -169,7 +170,6 @@ BOOST_AUTO_TEST_SUITE(Equilibrium_test_suite2)
 
         double velocities[3]={0.1,0.2,0.3};
 
-        QuarticEquilibrium<3,45> eq;
         std::array<double,45> feq;
         D3Q45 d3q45(1.0);
         double cs2=1./3.;
@@ -183,14 +183,15 @@ BOOST_AUTO_TEST_SUITE(Equilibrium_test_suite2)
         TaylorGreenVortex3D tgv(1.0,2);
         GeneralCollisionData<3,45> prams(cfg, tgv, scaling, viscosity, d3q45,
                                          cs2 , dt);
+        QuarticEquilibrium<3,45> eq(cs2,prams.e);
 
         prams.velocity[0]=velocities[0];
         prams.velocity[1]=velocities[1];
         prams.velocity[2]=velocities[2];
         prams.density = rho;
         prams.temperature = 1.2;
-        prams.H3 = calculateH3<3,45>(prams);
-        prams.H4 = calculateH4<3,45>(prams);
+        prams.H3 = calculateH3<3,45>(cs2,prams.e);
+        prams.H4 = calculateH4<3,45>(cs2,prams.e);
 
         eq.calc(feq,prams);
 

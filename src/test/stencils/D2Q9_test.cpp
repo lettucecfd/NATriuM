@@ -28,8 +28,8 @@ BOOST_AUTO_TEST_SUITE(D2Q9_test)
         // SANITY TEST //
         /////////////////
         D2Q9 dqmodel;
-        BOOST_CHECK_EQUAL(dqmodel.D, size_t(2));
-        BOOST_CHECK_EQUAL(dqmodel.Q, size_t(9));
+        BOOST_CHECK_EQUAL(dqmodel.getD(), size_t(2));
+        BOOST_CHECK_EQUAL(dqmodel.getQ(), size_t(9));
         BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSound(), sqrt(1./3.));
         BOOST_CHECK_EQUAL(dqmodel.getSpeedOfSoundSquare(), 1./3.);
 
