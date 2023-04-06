@@ -5,7 +5,7 @@
 NATriuM is a high-order finite element lattice Boltzmann solver based on deal.ii
 ----------------------------------------------------------------------
 
-
+**This code is the result of two subsequent PhD projects, but the authors are not within academia any more. Therefore, is it most likely that we will not answer your questions.**
 
 It features 2D and 3D unstructured grids and provides two streaming techniques:
 
