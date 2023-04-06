@@ -5,7 +5,9 @@
 NATriuM is a high-order finite element lattice Boltzmann solver based on deal.ii
 ----------------------------------------------------------------------
 
-**This code is the result of two subsequent PhD projects, but the authors are not within academia any more. Therefore, is it most likely that we will not answer your questions.**
+**This code is the result of two subsequent PhD projects, but the authors are no longer in academia. Therefore, it is very likely that we will not answer your questions, but you are still welcome to do so. Keep in mind that the code is still in a rather early stage.**
+
+
 
 It features 2D and 3D unstructured grids and provides two streaming techniques:
 
@@ -23,5 +25,6 @@ Test cases:
 * Shock tube 1D
 * Riemann problem 2D
 * Shock-vortex interaction 2D
+* 3D Supersonic Channel Flow
 
 
