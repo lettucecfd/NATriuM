@@ -12,37 +12,29 @@ The following configuration works fine:
 ================================================================================================
    INSTALL REQUIRED RESSOURCES
 ================================================================================================
-Prerequisites: CMake, GCC (Version 9 or higher recommended)
+Prerequisites: CMake, GCC (Version 9 or higher recommended). If not installed, install blas/lapack. And others.
 
-If not installed, install blas/lapack (e.g. sudo apt-get install libblas-dev liblapack-dev)
-If not installed, install gfortran (e.g. sudo apt-get install gfortran)
-
-When using conda:
-
-    conda install -c conda-forge gcc
-    conda install -c conda-forge openmpi
-    conda install -c conda-forge g++
-    conda install -c conda-forge gxx
-    conda install -c conda-forge cmake
-    conda install -c conda-forge gfortran
-    conda install -c conda-forge blas
-    conda install -c conda-forge zlib
-
+```
+conda install -c conda-forge gcc openmpi cxx-compiler cmake gfortran blas zlib libevent libblas liblapack
+```
  
 #### Set enviromental variables
 # Go to the desired install folder and set environment:
 NATRIUM_BASE_DIR=$(pwd)
 
 # Environment
+```
 export BOOST_ROOT=$NATRIUM_BASE_DIR/libs/boost
 export TRILINOS_DIR=$NATRIUM_BASE_DIR/libs/trilinos
 export P4EST_DIR=$NATRIUM_BASE_DIR/libs/p4est
 export DEAL_II_DIR=$NATRIUM_BASE_DIR/libs/deal.II
 export NATRIUM_DIR=$NATRIUM_BASE_DIR/NATriuM
 export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
+```
 
 Write your environmental variables into a file "natriumrc" to reload them later:
 
+```
 cat > $NATRIUM_BASE_DIR/natriumrc <<EOF
 export BOOST_ROOT=$BOOST_ROOT
 export TRILINOS_DIR=$TRILINOS_DIR
@@ -53,6 +45,7 @@ export NATRIUM_HOME=$NATRIUM_HOME
 export LD_LIBRARY_PATH=$BOOST_ROOT/lib:$LD_LIBRARY_PATH
 export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
 EOF
+```
 
 0) Install resources (via apt-get, synaptic, or manually)
     0.0 Install Boost from https://www.boost.org/
@@ -61,9 +54,11 @@ EOF
 	Go to folder
 	Execute:
     	
-	./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
-	./b2
-	./b2 install
+	```
+./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
+./b2
+./b2 install
+	```
     
     0.1) p4est
     	0.5.1) download tarball from p4est homepage (here: version 2.2; no need to untar)
