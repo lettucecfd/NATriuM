@@ -14,13 +14,38 @@ The following configuration works fine:
 ================================================================================================
 Prerequisites: CMake, GCC (Version 9 or higher recommended). If not installed, install blas/lapack. And others.
 
+**If you already installed openLB, you already have g++, openmpi-bin, openmpi-doc, libopenmpi-dev**, so just do
 ```
-conda install -c conda-forge gcc openmpi cxx-compiler cmake gfortran blas zlib libevent libblas liblapack
+sudo apt-get install libblas-dev liblapack-dev
+sudo apt-get install gfortran
+conda install -c conda-forge openmpi cmake blas zlib libevent libblas liblapack
 ```
- 
+
+**Conda-forge's cxx-compiler automatically installs the correct c++ compiler (gcc for linux)**
+```
+conda install -c conda-forge libblas-dev liblapack-dev gfortran openmpi cxx-compiler cmake gfortran blas zlib libevent libblas liblapack
+```
+
+**From scratch, conda only**
+For boost b2: C++11 compiler
+```
+conda install -c conda-forge cxx-compiler
+```
+
+For p4est: fortran77 compiler
+```
+conda install -c conda-forge fortran-compiler
+```
+
+
+
 #### Set enviromental variables
 # Go to the desired install folder and set environment:
-NATRIUM_BASE_DIR=$(pwd)
+```
+mkdir .natrium
+cd .natrium
+export NATRIUM_BASE_DIR=$(pwd)
+```
 
 # Environment
 ```
@@ -48,7 +73,14 @@ EOF
 ```
 
 0) Install resources (via apt-get, synaptic, or manually)
-    0.0 Install Boost from https://www.boost.org/
+    0.0 Install Boost from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**	
+
+**maybe cxx/cpp is not the best option. However, gcc is not compatible with C++11**
+Supported toolsets: acc, clang, como, gcc, intel-darwin, intel-linux, kcc, kylix, mipspro, pathscale, pgi, qcc, sun, sunpro, tru64cxx, vacpp
+
+**cpp does not handle compilation of multiple files. Somehow, this is invoked even when running without the --with-libraries option**
+
+**SOLUTION: Go with boost 1.76.0!**
     	Download boost tar-file from www.boost.org:
     	Extract file
 	Go to folder
@@ -61,34 +93,44 @@ EOF
 	```
     
     0.1) p4est
-    	0.5.1) download tarball from p4est homepage (here: version 2.2; no need to untar)
+    	0.5.1) download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
 	0.5.2) get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
-	0.5.3) export CC=mpicc && export CXX=mpicxx (somehow the configuration script does not detect the right compilers, otherwise)
-    	0.5.4) ./p4est-setup.sh <p4est tarball> $P4EST_DIR
+	0.5.3) 
+		```
+export CC=mpicc && export CXX=mpicxx
+		```
+		(somehow the configuration script does not detect the right compilers, otherwise)
+		
+    	0.5.4) 
+		```
+./p4est-setup.sh <p4est tarball> $P4EST_DIR
+		```
 
     0.2) Trilinos
-	git clone https://github.com/trilinos/Trilinos.git
 	
-	mkdir build_trilinos
-	cd build_trilinos
-	cmake 	-D Trilinos_ENABLE_Sacado=ON \
-	-D Trilinos_ENABLE_Stratimikos=ON \
-    	-D Trilinos_ENABLE_MueLu=ON \
-	-D CMAKE_BUILD_TYPE=RELEASE \
-	-D CMAKE_CXX_FLAGS="-g -O3" \
-	-D CMAKE_C_FLAGS="-g -O3" \
-	-D CMAKE_FORTRAN_FLAGS="-g -O5" \
-	-D Trilinos_EXTRA_LINK_FLAGS="-lgfortran" \
-	-D CMAKE_VERBOSE_MAKEFILE=FALSE \
-	-D Trilinos_VERBOSE_CONFIGURE=FALSE \
-	-D TPL_ENABLE_MPI=ON \
-	-D TPL_ENABLE_Pthread=OFF \
-	-D BUILD_SHARED_LIBS=ON \
-	-D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
-	../Trilinos*/
+git clone https://github.com/trilinos/Trilinos.git
+
+mkdir build_trilinos
+cd build_trilinos
+cmake 	-D Trilinos_ENABLE_Sacado=ON \
+-D Trilinos_ENABLE_Stratimikos=ON \
+-D Trilinos_ENABLE_MueLu=ON \
+-D CMAKE_BUILD_TYPE=RELEASE \
+-D CMAKE_CXX_FLAGS="-g -O3" \
+-D CMAKE_C_FLAGS="-g -O3" \
+-D CMAKE_FORTRAN_FLAGS="-g -O5" \
+-D Trilinos_EXTRA_LINK_FLAGS="-lgfortran" \
+-D CMAKE_VERBOSE_MAKEFILE=FALSE \
+-D Trilinos_VERBOSE_CONFIGURE=FALSE \
+-D TPL_ENABLE_MPI=ON \
+-D TPL_ENABLE_Pthread=OFF \
+-D BUILD_SHARED_LIBS=ON \
+-D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
+../Trilinos*/
+
+make -j8
+make install
 	
-	make -j8
-	make install
 
     0.3) deal.ii
         0.3.1) download and untar tarball from deal.ii homepage
