@@ -143,7 +143,16 @@ make -j8
 ```
 
 2. Load project via IDE (e.g., Eclipse or CLion (recommended))
-3. Repeat (1.) for `bin_release` instead of `bin_debug` and `-DCMAKE_BUILD_TYPE=Release` instead of `-DCMAKE_BUILD_TYPE=Debug` to get a fast version of the program
+3. Rebuild for for `bin_release` instead of `bin_debug` and `-DCMAKE_BUILD_TYPE=Release` instead of `-DCMAKE_BUILD_TYPE=Debug` to get a fast version of the program
+
+```
+cd $NATRIUM_BASE_DIR/NATriuM
+mkdir bin_release
+cd bin_release
+cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/ -B.
+make -j8
+```
+
 4. Check that the CMakeCache.txt contains `CMAKE_BUILD_TYPE:STRING=RELEASE`! Otherwise the program will be really slow
 
 # Test the Code
