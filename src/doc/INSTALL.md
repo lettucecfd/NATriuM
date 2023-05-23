@@ -2,45 +2,19 @@
 If you have trouble during the installation (which is not unlikely), contact the developers via the Google group natrium-lbm
 or via email: kraemer.research@gmail.com or wilde.aerospace@gmail.com .
 
-The following configuration works fine:
-- Boost 1.76
-- Trilinos 13.0.1
-- P4est 2.2
-- Deal 9.3.3
+# Install Required Resources
 
+1. For boost b2: C++11 compiler `cxx-compiler`
+2. For p4est: fortran77 compiler `fortran-compiler`
+3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`
+4. For dealII: `zlib`
 
-# INSTALL REQUIRED RESSOURCES
-
-**If you already installed openLB, you already have g++, openmpi-bin, openmpi-doc, libopenmpi-dev**, so just do
 ```
-sudo apt-get install libblas-dev liblapack-dev
-sudo apt-get install gfortran
-conda install -c conda-forge openmpi cmake blas zlib libevent libblas liblapack
-```
-
-**Conda-forge's cxx-compiler automatically installs the correct c++ compiler (gcc for linux)**
-```
-conda install -c conda-forge libblas-dev liblapack-dev gfortran openmpi cxx-compiler cmake gfortran blas zlib libevent libblas liblapack
-```
-
-**From scratch, conda only**
-For boost b2: C++11 compiler
-```
-conda install -c conda-forge cxx-compiler
-```
-
-For p4est: fortran77 compiler
-```
-conda install -c conda-forge fortran-compiler
-```
-
-For trilinos: latest `cmake` (>=3.23), openmpi, libhwloc, libevent, blas
-```
-conda install -c conda-forge cmake openmpi libhwloc libevent blas
+conda install -c conda-forge cxx-compiler fortran-compiler cmake openmpi libhwloc libevent blas zlib
 ```
 
 # Set enviromental variables
-## Go to the desired install folder and set environment:
+Go to the desired install folder and set environment:
 ```
 mkdir .natrium
 cd .natrium
@@ -72,20 +46,16 @@ EOF
 ```
 
 # Install resources
-## via apt-get
 
-## OR synaptic
+Alternatively, via apt-get or synaptic
 
-## OR Manually)
-1. Install Boost from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**  
+### boost
+from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**  
 
-	1.1 Download boost tar-file from www.boost.org.
-
-	1.2 Extract file
-
-	1.3 Go to folder
-
-	1.4 Execute:
+1. Download boost tar-file from www.boost.org.
+2. Extract file
+3. Go to folder
+4. Execute:
 
 ```
 ./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
@@ -93,30 +63,28 @@ EOF
 ./b2 install
 ```
 
-2. p4est  
-
-	2.1 download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
-
-	2.2 get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
-
-	2.3 Set C and C++ compilers
+### p4est  
+1. download version 2.2 tarball from p4est homepage (https://www.p4est.org/; **no need to untar**)
+*Later version had conflict with `cpp too many files`*
+2. get setup script from deal.II homepage
+	   cf. documentation on installing deal.II with p4est
+3. Set C and C++ compilers (somehow the configuration script does not detect the right compilers, otherwise)
 
 ```
 export CC=mpicc && export CXX=mpicxx
 ```
 
-	    (somehow the configuration script does not detect the right compilers, otherwise)
-	
-	2.4 Execute Setup
-```
-./p4est-setup.sh <p4est tarball> $P4EST_DIR
-```
-
-3. Trilinos  
+4. Execute Setup 
 
 ```
-git clone https://github.com/trilinos/Trilinos.git
+./p4est-setup.sh <p4est tarball> $P4EST_DIR`
+```
 
+### Trilinos
+
+Download from https://github.com/trilinos/Trilinos/releases/tag/trilinos-release-13-0-1
+
+```
 mkdir build_trilinos
 cd build_trilinos
 cmake -D Trilinos_ENABLE_Sacado=ON \
@@ -139,62 +107,64 @@ make -j8
 make install
 ```
 
-4. deal.ii  
- 	4.1 download and untar tarball from deal.ii homepage
-		(rename directory if it has the name of your target directory)
-        	(to get newest dealii version: git clone git://git@github.org/dealii/dealii.git dealii-git)
-	4.2 Execute
+### deal.ii  
+1. download and untar tarball from deal.ii homepage https://github.com/dealii/dealii/releases
+	(rename directory if it has the name of your target directory)
+	*Did not work with latest Trilinos, so I downgraded to Trilinos 13.0.1*
+2. Setup installation (replace version of dealii!)
 
 ```
-mkdir build_deal; 
-cd build_deal; 
+mkdir build_deal
+cd build_deal
 cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=OFF -DDEAL_II_WITH_BOOST=ON -DDEAL_II_ALLOW_BUNDLED=OFF -DBOOST_DIR=$BOOST_ROOT -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON -DDEAL_II_FORCE_BUNDLED_UMFPACK=ON -DDEAL_II_FORCE_BUNDLED_MUPARSER=ON -DDEAL_II_WITH_ZLIB=OFF ../dealii-9.3.3
 ```
 
-        4.3 Execute
+3. Install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
 
 ```
 make -j 8 install
 ```
-
-	 (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
  
-5. Check: Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and Trilinos libraries! 
+### Check: Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and Trilinos libraries! 
 
-================================================================================================
-   GET AND COMPILE NATRIUM CODE
-================================================================================================
-	0) cd $NATRIUM_BASE_DIR
-	1) clone https://github.com/lettucecfd/NATriuM.git
-	2) cd NATriuM; mkdir bin_debug; cd bin_debug
-	3) cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
-	3) make -j8
-	5) Load project via IDE (e.g., Eclipse or CLion (recommended))
-	6) Repeat steps 1-5) for "bin_release" instead of "bin_debug" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
-	7) Check that the CMakeCache.txt: CMAKE_BUILD_TYPE:STRING= must be set to RELEASE! Otherwise the program will be really slow
+# Get and compile NATriuM Code
+
+1. Get repo and compile
+
+```
+cd $NATRIUM_BASE_DIR
+git clone https://github.com/lettucecfd/NATriuM.git
+cd NATriuM
+mkdir bin_debug
+cd bin_debug
+cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
+make -j8
+```
+
+2. Load project via IDE (e.g., Eclipse or CLion (recommended))
+3. Repeat (1.) for "bin_release" instead of "bin_debug" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
+4. Check that the CMakeCache.txt: CMAKE_BUILD_TYPE:STRING= must be set to RELEASE! Otherwise the program will be really slow
 CMAKE_BUILD_TYPE:STRING=Release
 
+# Test the Code
 
+## Run unit tests:
 
-        
-================================================================================================
-   TEST THE CODE 
-================================================================================================
+```
+cd $NATRIUM_BASE_DIR/bin_release
+./test/NATriuM_UnitTest_exe
+```
 
-Run unit tests:
-   - go to NATriuM's bin directory
-   - type ./test/NATriuM_UnitTest_exe
+## Run integration tests (takes a few minutes)
+```
+cd $NATRIUM_BASE_DIR/bin_release
+./test/NATriuM_Test
+```
 
-Run integration tests (takes a few minutes)
-   - go to NATriuM's bin directory
-   - type ./test/NATriuM_Test
-   - The results will be written to natrium.html (in the bin directory)
+The results will be written to natrium.html (in the bin directory)
 
+# Getting started
 
-================================================================================================
-  GETTING STARTED
-================================================================================================
-To get started, take a look at the Mainpage of the technical Documentation (doc/html/index.html)
-and navigate to the Examples section.
+To get started, take a look at the Mainpage of the technical Documentation (doc/html/index.html) and navigate to the Examples section.
         
 
