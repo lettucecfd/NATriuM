@@ -9,10 +9,7 @@ The following configuration works fine:
 - Deal 9.3.3
 
 
-================================================================================================
-   INSTALL REQUIRED RESSOURCES
-================================================================================================
-Prerequisites: CMake, GCC (Version 9 or higher recommended). If not installed, install blas/lapack. And others.
+# INSTALL REQUIRED RESSOURCES
 
 **If you already installed openLB, you already have g++, openmpi-bin, openmpi-doc, libopenmpi-dev**, so just do
 ```
@@ -37,17 +34,15 @@ For p4est: fortran77 compiler
 conda install -c conda-forge fortran-compiler
 ```
 
-
-
-#### Set enviromental variables
-# Go to the desired install folder and set environment:
+# Set enviromental variables
+## Go to the desired install folder and set environment:
 ```
 mkdir .natrium
 cd .natrium
 export NATRIUM_BASE_DIR=$(pwd)
 ```
 
-# Environment
+Environment
 ```
 export BOOST_ROOT=$NATRIUM_BASE_DIR/libs/boost
 export TRILINOS_DIR=$NATRIUM_BASE_DIR/libs/trilinos
@@ -58,7 +53,6 @@ export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
 ```
 
 Write your environmental variables into a file "natriumrc" to reload them later:
-
 ```
 cat > $NATRIUM_BASE_DIR/natriumrc <<EOF
 export BOOST_ROOT=$BOOST_ROOT
@@ -72,42 +66,36 @@ export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
 EOF
 ```
 
-0) Install resources (via apt-get, synaptic, or manually)
-    0.0 Install Boost from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**	
+# Install resources
+## via apt-get
 
-**maybe cxx/cpp is not the best option. However, gcc is not compatible with C++11**
-Supported toolsets: acc, clang, como, gcc, intel-darwin, intel-linux, kcc, kylix, mipspro, pathscale, pgi, qcc, sun, sunpro, tru64cxx, vacpp
+## OR synaptic
 
-**cpp does not handle compilation of multiple files. Somehow, this is invoked even when running without the --with-libraries option**
-
-**SOLUTION: Go with boost 1.76.0!**
-    	Download boost tar-file from www.boost.org:
-    	Extract file
-	Go to folder
-	Execute:
-    	
+## OR Manually)
+1. Install Boost from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**	
+    1.1 Download boost tar-file from www.boost.org.
+    1.2 Extract file
+    1.3 Go to folder
+    1.4 Execute:
 	```
 ./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
 ./b2
 ./b2 install
 	```
-    
-    0.1) p4est
-    	0.5.1) download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
-	0.5.2) get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
-	0.5.3) 
-		```
+2. p4est
+    2.1 download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
+    2.2 get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
+    2.3 Set C and C++ compilers
+	```
 export CC=mpicc && export CXX=mpicxx
-		```
-		(somehow the configuration script does not detect the right compilers, otherwise)
-		
-    	0.5.4) 
-		```
+	```
+	(somehow the configuration script does not detect the right compilers, otherwise)
+    2.4 Execute Setup
+    	```
 ./p4est-setup.sh <p4est tarball> $P4EST_DIR
-		```
-
-    0.2) Trilinos
-	
+	```
+3. Trilinos
+```
 git clone https://github.com/trilinos/Trilinos.git
 
 mkdir build_trilinos
@@ -130,23 +118,25 @@ cmake 	-D Trilinos_ENABLE_Sacado=ON \
 
 make -j8
 make install
-	
+```
 
-    0.3) deal.ii
-        0.3.1) download and untar tarball from deal.ii homepage
-        	   (rename directory if it has the name of your target directory)
-        	   (to get newest dealii version: git clone git://git@github.org/dealii/dealii.git dealii-git)
-        
-	0.3.2) mkdir build_deal; 
-		cd build_deal; 
-		cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON 						-DDEAL_II_COMPONENT_PARAMETER_GUI=OFF -DDEAL_II_WITH_BOOST=ON -DDEAL_II_ALLOW_BUNDLED=OFF -DBOOST_DIR=$BOOST_ROOT -DDEAL_II_WITH_THREADS=OFF 			-DBOOST_ROOT=$BOOST_ROOT -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON -DDEAL_II_FORCE_BUNDLED_UMFPACK=ON -DDEAL_II_FORCE_BUNDLED_MUPARSER=ON 			-DDEAL_II_WITH_ZLIB=OFF ../dealii-9.3.3
-	
-        0.7.5) make -j 8 install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
-
+4. deal.ii
+ 	4.1 download and untar tarball from deal.ii homepage
+		(rename directory if it has the name of your target directory)
+        	(to get newest dealii version: git clone git://git@github.org/dealii/dealii.git dealii-git)
+	4.2 Execute
+	```
+mkdir build_deal; 
+cd build_deal; 
+cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=OFF -DDEAL_II_WITH_BOOST=ON -DDEAL_II_ALLOW_BUNDLED=OFF -DBOOST_DIR=$BOOST_ROOT -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON -DDEAL_II_FORCE_BUNDLED_UMFPACK=ON -DDEAL_II_FORCE_BUNDLED_MUPARSER=ON -DDEAL_II_WITH_ZLIB=OFF ../dealii-9.3.3
+	```
+        4.3 Execute
+	```
+make -j 8 install
+	```
+	 (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
  
- 	0.8) Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and Trilinos libraries! 
-        
-
+5. Check: Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and Trilinos libraries! 
 
 ================================================================================================
    GET AND COMPILE NATRIUM CODE
