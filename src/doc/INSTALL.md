@@ -64,8 +64,7 @@ from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**
 ```
 
 ### p4est  
-1. download version 2.2 tarball from p4est homepage (https://www.p4est.org/; **no need to untar**)
-*Later version had conflict with `cpp too many files`*
+1. download **version 2.2** tarball from p4est homepage (https://www.p4est.org/; **no need to untar**) Later version had conflict with `cpp too many files`.
 2. get setup script from deal.II homepage
 	   cf. documentation on installing deal.II with p4est
 3. Set C and C++ compilers (somehow the configuration script does not detect the right compilers, otherwise)
@@ -125,7 +124,9 @@ cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WIT
 make -j 8 install
 ```
  
-### Check: Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and Trilinos libraries! 
+### Check libraries
+
+Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and Trilinos libraries! 
 
 # Get and compile NATriuM Code
 
