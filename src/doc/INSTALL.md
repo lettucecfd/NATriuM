@@ -77,11 +77,16 @@ EOF
 ## OR synaptic
 
 ## OR Manually)
-1. Install Boost from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**	
-    1.1 Download boost tar-file from www.boost.org.
-    1.2 Extract file
-    1.3 Go to folder
-    1.4 Execute:
+1. Install Boost from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**  
+
+1.1 Download boost tar-file from www.boost.org.
+
+1.2 Extract file
+
+1.3 Go to folder
+
+1.4 Execute:
+
 ```
 ./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
 ./b2
