@@ -89,7 +89,7 @@ EOF
 ```
 export CC=mpicc && export CXX=mpicxx
 ```
-	(somehow the configuration script does not detect the right compilers, otherwise)
+    (somehow the configuration script does not detect the right compilers, otherwise)
     2.4 Execute Setup
 ```
 ./p4est-setup.sh <p4est tarball> $P4EST_DIR
