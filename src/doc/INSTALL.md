@@ -142,7 +142,7 @@ cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
 make -j8
 ```
 
-2. Load project via IDE (e.g., Eclipse for Embedded C/C++ Developers or CLion (recommended)) 
+2. Load project via IDE (e.g., CLion (recommended) or Eclipse for Embedded C/C++ Developers) 
 3. Rebuild for for `bin_release` instead of `bin_debug` and `-DCMAKE_BUILD_TYPE=Release` instead of `-DCMAKE_BUILD_TYPE=Debug` to get a fast version of the program
 
 ```
