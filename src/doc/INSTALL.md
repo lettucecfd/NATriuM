@@ -79,13 +79,13 @@ EOF
 ## OR Manually)
 1. Install Boost from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**  
 
-1.1 Download boost tar-file from www.boost.org.
+	1.1 Download boost tar-file from www.boost.org.
 
-1.2 Extract file
+	1.2 Extract file
 
-1.3 Go to folder
+	1.3 Go to folder
 
-1.4 Execute:
+	1.4 Execute:
 
 ```
 ./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
@@ -93,25 +93,27 @@ EOF
 ./b2 install
 ```
 
-2. p4est
+2. p4est  
 
-2.1 download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
+	2.1 download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
 
-2.2 get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
+	2.2 get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
 
-2.3 Set C and C++ compilers
+	2.3 Set C and C++ compilers
 
 ```
 export CC=mpicc && export CXX=mpicxx
 ```
 
-    (somehow the configuration script does not detect the right compilers, otherwise)
-    2.4 Execute Setup
+	    (somehow the configuration script does not detect the right compilers, otherwise)
+	
+	2.4 Execute Setup
 ```
 ./p4est-setup.sh <p4est tarball> $P4EST_DIR
 ```
 
-3. Trilinos
+3. Trilinos  
+
 ```
 git clone https://github.com/trilinos/Trilinos.git
 
@@ -137,7 +139,7 @@ make -j8
 make install
 ```
 
-4. deal.ii
+4. deal.ii  
  	4.1 download and untar tarball from deal.ii homepage
 		(rename directory if it has the name of your target directory)
         	(to get newest dealii version: git clone git://git@github.org/dealii/dealii.git dealii-git)
