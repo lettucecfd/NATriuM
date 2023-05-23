@@ -143,9 +143,8 @@ make -j8
 ```
 
 2. Load project via IDE (e.g., Eclipse or CLion (recommended))
-3. Repeat (1.) for "bin_release" instead of "bin_debug" and "-DCMAKE_BUILD_TYPE=Release" instead of "-DCMAKE_BUILD_TYPE=Debug" to get a fast version of the program
-4. Check that the CMakeCache.txt: CMAKE_BUILD_TYPE:STRING= must be set to RELEASE! Otherwise the program will be really slow
-CMAKE_BUILD_TYPE:STRING=Release
+3. Repeat (1.) for `bin_release` instead of `bin_debug` and `-DCMAKE_BUILD_TYPE=Release` instead of `-DCMAKE_BUILD_TYPE=Debug` to get a fast version of the program
+4. Check that the CMakeCache.txt contains `CMAKE_BUILD_TYPE:STRING=RELEASE`! Otherwise the program will be really slow
 
 # Test the Code
 
