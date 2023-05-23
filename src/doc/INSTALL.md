@@ -89,9 +89,13 @@ EOF
 ```
 
 2. p4est
-    2.1 download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
-    2.2 get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
-    2.3 Set C and C++ compilers
+
+2.1 download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
+
+2.2 get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
+
+2.3 Set C and C++ compilers
+
 ```
 export CC=mpicc && export CXX=mpicxx
 ```
