@@ -34,6 +34,11 @@ For p4est: fortran77 compiler
 conda install -c conda-forge fortran-compiler
 ```
 
+For trilinos: latest `cmake` (>=3.23), openmpi, libhwloc, libevent, blas
+```
+conda install -c conda-forge cmake openmpi libhwloc libevent blas
+```
+
 # Set enviromental variables
 ## Go to the desired install folder and set environment:
 ```
@@ -82,6 +87,7 @@ EOF
 ./b2
 ./b2 install
 ```
+
 2. p4est
     2.1 download tarball from p4est homepage (https://www.p4est.org/ here: version 2.2; **no need to untar**)
     2.2 get setup script from deal.II homepage (cf. documentation on installing deal.II with p4est)
@@ -89,18 +95,20 @@ EOF
 ```
 export CC=mpicc && export CXX=mpicxx
 ```
+
     (somehow the configuration script does not detect the right compilers, otherwise)
     2.4 Execute Setup
 ```
 ./p4est-setup.sh <p4est tarball> $P4EST_DIR
 ```
+
 3. Trilinos
 ```
 git clone https://github.com/trilinos/Trilinos.git
 
 mkdir build_trilinos
 cd build_trilinos
-cmake 	-D Trilinos_ENABLE_Sacado=ON \
+cmake -D Trilinos_ENABLE_Sacado=ON \
 -D Trilinos_ENABLE_Stratimikos=ON \
 -D Trilinos_ENABLE_MueLu=ON \
 -D CMAKE_BUILD_TYPE=RELEASE \
@@ -125,15 +133,19 @@ make install
 		(rename directory if it has the name of your target directory)
         	(to get newest dealii version: git clone git://git@github.org/dealii/dealii.git dealii-git)
 	4.2 Execute
+
 ```
 mkdir build_deal; 
 cd build_deal; 
 cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=OFF -DDEAL_II_WITH_BOOST=ON -DDEAL_II_ALLOW_BUNDLED=OFF -DBOOST_DIR=$BOOST_ROOT -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON -DDEAL_II_FORCE_BUNDLED_UMFPACK=ON -DDEAL_II_FORCE_BUNDLED_MUPARSER=ON -DDEAL_II_WITH_ZLIB=OFF ../dealii-9.3.3
 ```
+
         4.3 Execute
+
 ```
 make -j 8 install
 ```
+
 	 (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
  
 5. Check: Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and Trilinos libraries! 
