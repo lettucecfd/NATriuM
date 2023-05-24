@@ -110,12 +110,28 @@ make install
 1. download and untar tarball from deal.ii homepage https://github.com/dealii/dealii/releases
 	(rename directory if it has the name of your target directory)
 	*Did not work with latest Trilinos, so I downgraded to Trilinos 13.0.1*
+	**Version 9.3.3 works**
 2. Setup installation (replace version of dealii!)
 
 ```
 mkdir build_deal
 cd build_deal
-cmake -DCMAKE_INSTALL_PREFIX=$DEAL_II_DIR -DDEAL_II_WITH_PETSC=OFF -DDEAL_II_WITH_TRILINOS=ON -DDEAL_II_WITH_MPI=ON -DDEAL_II_COMPONENT_PARAMETER_GUI=OFF -DDEAL_II_WITH_BOOST=ON -DDEAL_II_ALLOW_BUNDLED=OFF -DBOOST_DIR=$BOOST_ROOT -DDEAL_II_WITH_THREADS=OFF -DBOOST_ROOT=$BOOST_ROOT -DP4EST_DIR=$P4EST_DIR -DDEAL_II_WITH_P4EST=ON -DDEAL_II_FORCE_BUNDLED_UMFPACK=ON -DDEAL_II_FORCE_BUNDLED_MUPARSER=ON -DDEAL_II_WITH_ZLIB=OFF ../dealii-9.3.3
+cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
+-D DEAL_II_WITH_PETSC=OFF \
+-D DEAL_II_WITH_TRILINOS=ON \
+-D DEAL_II_WITH_MPI=ON \
+-D DEAL_II_COMPONENT_PARAMETER_GUI=OFF \
+-D DEAL_II_WITH_BOOST=ON \
+-D DEAL_II_ALLOW_BUNDLED=OFF \
+-D BOOST_DIR=$BOOST_ROOT \
+-D DEAL_II_WITH_THREADS=OFF \
+-D BOOST_ROOT=$BOOST_ROOT \
+-D P4EST_DIR=$P4EST_DIR \
+-D DEAL_II_WITH_P4EST=ON \
+-D DEAL_II_FORCE_BUNDLED_UMFPACK=ON \
+-D DEAL_II_FORCE_BUNDLED_MUPARSER=ON \
+-D DEAL_II_WITH_ZLIB=OFF \
+../dealii-*
 ```
 
 3. Install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
