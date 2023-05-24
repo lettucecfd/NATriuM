@@ -6,11 +6,11 @@ or via email: kraemer.research@gmail.com or wilde.aerospace@gmail.com .
 
 1. For boost b2: C++11 compiler `cxx-compiler`
 2. For p4est: fortran77 compiler `fortran-compiler`
-3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`
+3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`, `liblapack`
 4. For dealII: `zlib`
 
 ```
-conda install -c conda-forge cxx-compiler fortran-compiler cmake openmpi libhwloc libevent blas zlib
+conda install -c conda-forge cxx-compiler fortran-compiler cmake openmpi libhwloc libevent blas liblapack zlib
 ```
 
 # Set enviromental variables
