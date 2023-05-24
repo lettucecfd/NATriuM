@@ -110,7 +110,7 @@ make install
 1. download and untar tarball from deal.ii homepage https://github.com/dealii/dealii/releases
 	(rename directory if it has the name of your target directory)
 	*Did not work with latest Trilinos, so I downgraded to Trilinos 13.0.1*
-	**Version 9.3.3 works**
+	**deal.ii version 9.3.3 works**
 2. Setup installation (replace version of dealii!)
 
 ```
