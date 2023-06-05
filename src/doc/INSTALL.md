@@ -28,6 +28,7 @@ export TRILINOS_DIR=$NATRIUM_BASE_DIR/libs/trilinos
 export P4EST_DIR=$NATRIUM_BASE_DIR/libs/p4est
 export DEAL_II_DIR=$NATRIUM_BASE_DIR/libs/deal.II
 export NATRIUM_DIR=$NATRIUM_BASE_DIR/NATriuM
+mdirk $NATRIUM_BASE_DIR/output
 export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
 ```
 
