@@ -146,12 +146,13 @@ Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and 
 
 # Get and compile NATriuM Code
 
-1. Get repo and compile
+1. Get repo and compile (compressible branch is more recent)
 
 ```
 cd $NATRIUM_BASE_DIR
 git clone https://github.com/lettucecfd/NATriuM.git
 cd NATriuM
+git checkout compressible
 mkdir bin_debug
 cd bin_debug
 cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
