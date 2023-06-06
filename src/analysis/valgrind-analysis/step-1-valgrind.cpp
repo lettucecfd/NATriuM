@@ -1,5 +1,5 @@
 /**
- * @file step-1.cpp
+ * @file step-1-variousRe.cpp
  * @short Taylor-Green vortex in 2D (only periodic walls)
  * @date 05.06.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
@@ -27,7 +27,7 @@ int main() {
 
 	MPIGuard::getInstance();
 
-	pout << "Starting NATriuM step-1 ..." << endl;
+	pout << "Starting NATriuM step-1-variousRe ..." << endl;
 
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
@@ -59,7 +59,7 @@ int main() {
 
 		// setup configuration
 		std::stringstream dirName;
-		dirName << getenv("NATRIUM_HOME") << "/step-1";
+		dirName << getenv("NATRIUM_HOME") << "/step-1-variousRe";
 		boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 				SolverConfiguration>();
 		configuration->setSwitchOutputOff(true);
@@ -93,7 +93,7 @@ int main() {
 			pout << " Error" << endl;
 		}
 
-	pout << "step-1 terminated." << endl;
+	pout << "step-1-variousRe terminated." << endl;
 
 	return 0;
 }

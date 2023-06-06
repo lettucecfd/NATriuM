@@ -1,5 +1,5 @@
 /**
- * @file step-1.cpp
+ * @file step-1-variousRe.cpp
  * @short Simulation of the Taylor-Green decaying vortex in 2D (only periodic walls).
  * @date 05.06.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin

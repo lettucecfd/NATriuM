@@ -4,17 +4,15 @@
 # set variable TARGET
 #
 set(    TARGET 
-stability_shocktube
+        step-2-couette2D     
         )
 
 
 #
 # Specify a target:
 #
-ADD_EXECUTABLE( ${TARGET} 
-                stability_shocktube.cpp
-        ../../examples/archive/step-10/SodShockTube.h
-        ../../examples/archive/step-10/SodShockTube.cpp
+ADD_EXECUTABLE( ${TARGET}
+        step-2.cpp
                )
 #
 # link natrium library to executable

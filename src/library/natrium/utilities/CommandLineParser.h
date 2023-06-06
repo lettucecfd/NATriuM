@@ -55,7 +55,7 @@ public:
  *
  * It overwrites default arguments or arguments specified in a configuration file.
  * It also supports user-defined arguments.
- * The usage of this class in a program is demonstrated in step-1. It is used as follows:
+ * The usage of this class in a program is demonstrated in step-1-variousRe. It is used as follows:
  * -# In the beginning of the script, an instance is created: CommandLineParser parse(argc, argv);
  * 	 This has to happen after the call to MPIGuard::getInstance(argc, argv), as the MPIGuard removes the mpirun arguments
  * 	 from argv and argc.

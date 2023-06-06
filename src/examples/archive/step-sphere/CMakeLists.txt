@@ -4,22 +4,22 @@
 # set variable TARGET
 #
 set(    TARGET 
-stability_shocktube
+        step-sphere
         )
 
 
 #
 # Specify a target:
 #
-ADD_EXECUTABLE( ${TARGET} 
-                stability_shocktube.cpp
-        ../../examples/archive/step-10/SodShockTube.h
-        ../../examples/archive/step-10/SodShockTube.cpp
+ADD_EXECUTABLE( ${TARGET}
+        step-sphere.cpp
+        Sphere.h
+        Sphere.cpp
                )
 #
 # link natrium library to executable
 #           
-include_directories( /usr/include/boost  ${PROJECT_SOURCE_DIR}/library) 
+include_directories( /usr/include/boost  ${PROJECT_SOURCE_DIR}/library)
 
 target_link_libraries(  ${TARGET}
                         natrium

@@ -4,17 +4,15 @@
 # set variable TARGET
 #
 set(    TARGET 
-stability_shocktube
+        step-1-taylorGreenVortex
         )
 
 
 #
 # Specify a target:
 #
-ADD_EXECUTABLE( ${TARGET} 
-                stability_shocktube.cpp
-        ../../examples/archive/step-10/SodShockTube.h
-        ../../examples/archive/step-10/SodShockTube.cpp
+ADD_EXECUTABLE( ${TARGET}
+        step-1.cpp
                )
 #
 # link natrium library to executable

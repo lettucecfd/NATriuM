@@ -11,7 +11,7 @@
 
 #include "deal.II/numerics/data_out.h"
 
-#include "natrium/solver/BenchmarkCFDSolver.h"
+#include "natrium/solver/BenchmarkCompressibleCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/stencils/D2Q9.h"
 
@@ -21,7 +21,7 @@
 #include "natrium/utilities/CFDSolverUtilities.h"
 #include "natrium/utilities/CommandLineParser.h"
 
-#include "natrium/benchmarks/TaylorGreenVortex2D.h"
+#include "SmoothDensityPropagation.h"
 
 using namespace natrium;
 
@@ -39,7 +39,6 @@ int main(int argc, char** argv) {
 	parser.setFlag("no_init_rho_analytically",
 			"Initialize with constant density (1)");
 	parser.setFlag("limiter", "Use a limiter in the advection step");
-    parser.setFlag("fneq", "Initialize fneq by gradients");
 	parser.setArgument<double>("refine-tol",
 			"Refinement tolerance for step size control (only for adaptive time integrators)",
 			1e-7);
@@ -48,6 +47,7 @@ int main(int argc, char** argv) {
 			1e-8);
 	parser.setArgument<double>("Ma", "Mach number", 0.05);
     parser.setArgument<double>("horizontal", "U for the horizontal velocity", 0);
+    parser.setArgument<double>("visc","viscosity of the fluid",0.000001);
 	try {
 		parser.importOptions();
 	} catch (HelpMessageStop&) {
@@ -64,20 +64,19 @@ int main(int argc, char** argv) {
 	double coarsen_tol = parser.getArgument<double>("coarsen-tol");
 	double u_horizontal = parser.getArgument<double>("horizontal");
 
+
 	/////////////////////////////////////////////////
 	// set parameters, set up configuration object
 	//////////////////////////////////////////////////
-	const double L = 2 * M_PI;
-	const double U = 1;
-	const double scaling = sqrt(3) * U / Ma;
-	const double viscosity = (L * U) / Re;
+	const double L = 1.0;//;2* M_PI;
+	const double U = u_horizontal*sqrt(1.4)/sqrt(3.0);
+	const double scaling = 1.0;//sqrt(3) * (U)/ Ma;
+    double viscosity = parser.getArgument<double>("visc");
 
-
-
-    boost::shared_ptr<TaylorGreenVortex2D > tgv_tmp = boost::make_shared<
-            TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
-    tgv_tmp->setHorizontalVelocity(u_horizontal);
-    boost::shared_ptr<Benchmark<2> > tgv = tgv_tmp;
+    boost::shared_ptr<SmoothDensityPropagation > sdp_tmp = boost::make_shared<
+            SmoothDensityPropagation>(viscosity, N, sqrt(1.4)/sqrt(3.0), init_rho_analytically, L, u_horizontal);
+    sdp_tmp->setHorizontalVelocity(U);
+    boost::shared_ptr<CompressibleBenchmark<2> > sdp = sdp_tmp;
 
 	//boost::shared_ptr<Benchmark<2> > tgv = boost::make_shared<
 	//		TaylorGreenVortex2D>(viscosity, N, U / Ma, init_rho_analytically);
@@ -91,24 +90,22 @@ int main(int argc, char** argv) {
 	configuration->setUserInteraction(false);
 	configuration->setStencilScaling(scaling);
 	configuration->setCommandLineVerbosity(ALL);
-	//configuration->setStencil(Stencil_D2Q25H);
-	configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+	configuration->setStencil(Stencil_D2Q25H);
+	//configuration->setOutputSolutionInterval(10);
+	configuration->setOutputDirectory("/home/dwilde3m/tmp/sdp");
+	//configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
 
 	if (limiter) {
 		configuration->setVmultLimiter(true);
 	}
-    if(parser.hasArgument("fneq")){
-        configuration->setInitializationScheme(GRADIENTS);
-    }
 
-
-        configuration->setSimulationEndTime(-1.0 / (2.0 * viscosity) * log(0.1));
+	configuration->setSimulationEndTime((1.0/u_horizontal)/(sqrt(1.4)/sqrt(3.0)));
 
 	parser.applyToSolverConfiguration(*configuration);
 	configuration->setEmbeddedDealIntegratorParameters(1.2, 0.8, 0.05,
 			configuration->getCFL(), refine_tol, coarsen_tol);
 
-	BenchmarkCFDSolver<2> solver(configuration, tgv);
+	BenchmarkCompressibleCFDSolver<2> solver(configuration, sdp);
 	double delta_t = solver.getTimeStepSize();
 
 	try {
@@ -117,17 +114,18 @@ int main(int argc, char** argv) {
 		solver.run();
 		double runtime = clock() - timestart;
 		runtime /= CLOCKS_PER_SEC;
-		solver.getErrorStats()->update();
+		solver.getCompressibleErrorStats()->update();
 		solver.getSolverStats()->update();
 		double kinE_num = solver.getSolverStats()->getKinE();
 		//double kinE_ana = M_PI*M_PI*exp(-4*viscosity*solver.getTime());
 		double simulated_viscosity = -1.0 / (4 * solver.getTime())
 				* log(kinE_num / (M_PI * M_PI));
 		double numerical_viscosity = simulated_viscosity - viscosity;
-		double u_error = solver.getErrorStats()->getL2VelocityError();
-		double rho_error = solver.getErrorStats()->getL2DensityError();
+		double u_error = solver.getCompressibleErrorStats()->getL2VelocityError();
+		double rho_error = solver.getCompressibleErrorStats()->getL2DensityError();
+		double rho_max = solver.getCompressibleErrorStats()->getMaxDensityError();
 		pout
-				<< "N p Ma Re horizontal_u CFL stencil init_rho_analytically  #steps Mean_CFL ||p-p_ana||_inf ||u-u_ana||_2  nu_numerical/nu  runtime"
+				<< "N p Ma Re horizontal_u CFL stencil init_rho_analytically  #steps Mean_CFL ||p-p_ana||_2 ||p-p_ana||_inf  nu_numerical/nu  runtime"
 				<< endl;
 		pout << N << " " << configuration->getSedgOrderOfFiniteElement() << " " << Ma << " " << Re << " "
 		<< configuration->getTimeIntegrator()
@@ -138,7 +136,7 @@ int main(int argc, char** argv) {
 				<< " "
 				<< solver.getTime() / solver.getIteration() / delta_t
 						* solver.getConfiguration()->getCFL() << " "
-				<< rho_error * (U / Ma) * (U / Ma) << " " << u_error << " "
+				<< rho_error<< " " << rho_max << " "
 				<< numerical_viscosity / viscosity << " " << runtime << endl;
 
 	} catch (std::exception& e) {

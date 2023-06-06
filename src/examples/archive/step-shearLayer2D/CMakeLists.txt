@@ -4,17 +4,18 @@
 # set variable TARGET
 #
 set(    TARGET 
-stability_shocktube
+	shear-layer    
+	#shear-layer-MinionBrown
         )
-
+ 
 
 #
 # Specify a target:
 #
-ADD_EXECUTABLE( ${TARGET} 
-                stability_shocktube.cpp
-        ../../examples/archive/step-10/SodShockTube.h
-        ../../examples/archive/step-10/SodShockTube.cpp
+ADD_EXECUTABLE( ${TARGET}
+        shear_layer.cpp
+		#                shear_layer_MinionBrown.cpp
+        EnstrophySubdomain.h
                )
 #
 # link natrium library to executable

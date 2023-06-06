@@ -4,22 +4,22 @@
 # set variable TARGET
 #
 set(    TARGET 
-stability_shocktube
+        step-6-complex-wall-1     
         )
 
 
 #
 # Specify a target:
 #
-ADD_EXECUTABLE( ${TARGET} 
-                stability_shocktube.cpp
-        ../../examples/archive/step-10/SodShockTube.h
-        ../../examples/archive/step-10/SodShockTube.cpp
+ADD_EXECUTABLE( ${TARGET}
+        step-6.cpp
+        ComplexWall1.h
+        ComplexWall1.cpp
                )
 #
 # link natrium library to executable
 #           
-include_directories( /usr/include/boost  ${PROJECT_SOURCE_DIR}/library) 
+include_directories( /usr/include/boost  ${PROJECT_SOURCE_DIR}/library)
 
 target_link_libraries(  ${TARGET}
                         natrium
