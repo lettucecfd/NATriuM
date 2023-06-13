@@ -10,7 +10,7 @@ or via email: kraemer.research@gmail.com or wilde.aerospace@gmail.com .
 4. For dealII: `zlib`
 
 ```
-conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler cmake>= openmpi libhwloc libevent blas liblapack zlib
+conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler cmake>=3.23 openmpi libhwloc libevent blas liblapack zlib
 ```
 
 **Note: On a server, you may need to specify the version of gfortran to 11.3**
