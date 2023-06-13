@@ -5,13 +5,15 @@ or via email: kraemer.research@gmail.com or wilde.aerospace@gmail.com .
 # Install Required Resources
 
 1. For boost b2: C++11 compiler `cxx-compiler`
-2. For p4est: fortran77 compiler with compatible glibc `fortran-compiler`, `libgfortran`
+2. For p4est: fortran77 compiler with compatible glibc `fortran-compiler`, `libgfortran5`
 3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`, `liblapack`
 4. For dealII: `zlib`
 
 ```
-conda install -c conda-forge cxx-compiler libgfortran fortran-compiler cmake openmpi libhwloc libevent blas liblapack zlib
+conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler cmake openmpi libhwloc libevent blas liblapack zlib
 ```
+
+**Note: On a server, you may need to specify the version of gfortran to 11.3**
 
 # Set enviromental variables
 Go to the desired install folder and set environment:
