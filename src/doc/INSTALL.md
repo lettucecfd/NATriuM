@@ -54,10 +54,17 @@ Alternatively, via apt-get or synaptic
 from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**  
 
 1. Download boost tar-file from www.boost.org.
-2. Extract file
-3. Go to folder
-4. Execute:
-
+```
+mkdir .boost
+cd .boost
+wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
+```
+2. Extract file and go to folder
+```
+tar -xf boost_1_76_0.tar.gz
+cd boost_1_76_0
+```
+3. Install using the bootstrap shell:
 ```
 ./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
 ./b2
@@ -66,18 +73,23 @@ from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**
 
 ### p4est  
 1. download **version 2.2** tarball from p4est homepage (https://www.p4est.org/; **no need to untar**) Later version had conflict with `cpp too many files`.
+```
+mkdir .p4est
+cd .p4est
+wget https://github.com/p4est/p4est.github.io/raw/master/release/p4est-2.2.tar.gz
+```
 2. get setup script from deal.II homepage
 	   cf. documentation on installing deal.II with p4est
+```
+wget https://www.dealii.org/current/external-libs/p4est-setup.sh
+```
 3. Set C and C++ compilers (somehow the configuration script does not detect the right compilers, otherwise)
-
 ```
 export CC=mpicc && export CXX=mpicxx
 ```
-
 4. Execute Setup 
-
 ```
-./p4est-setup.sh <p4est tarball> $P4EST_DIR`
+./p4est-setup.sh p4est-2.2.tar.gz $P4EST_DIR
 ```
 
 ### Trilinos
