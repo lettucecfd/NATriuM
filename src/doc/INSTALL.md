@@ -96,8 +96,14 @@ export CC=mpicc && export CXX=mpicxx
 
 ### Trilinos
 
-Download from https://github.com/trilinos/Trilinos/releases/tag/trilinos-release-13-0-1
-
+Download and extraxt from https://github.com/trilinos/Trilinos/releases/tag/trilinos-release-13-0-1
+```
+cd ..
+wget https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-0-1.tar.gz
+tar -xf trilinos-release-13-0-1.tar.gz
+cd Trilinos-trilinos-release-13-0-1/
+```
+Then install trilinos.
 ```
 mkdir build_trilinos
 cd build_trilinos
