@@ -18,8 +18,6 @@ conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler cmake>=3
 # Set enviromental variables
 Go to the desired install folder and set environment:
 ```
-mkdir .natrium
-cd .natrium
 export NATRIUM_BASE_DIR=$(pwd)
 ```
 
@@ -57,6 +55,7 @@ from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**
 
 1. Download boost tar-file from www.boost.org.
 ```
+cd $NATRIUM_BASE_DIR
 mkdir .boost
 cd .boost
 wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
@@ -76,6 +75,7 @@ cd boost_1_76_0
 ### p4est  
 1. download **version 2.2** tarball from p4est homepage (https://www.p4est.org/; **no need to untar**) Later version had conflict with `cpp too many files`.
 ```
+cd $NATRIUM_BASE_DIR
 mkdir .p4est
 cd .p4est
 wget https://github.com/p4est/p4est.github.io/raw/master/release/p4est-2.2.tar.gz
@@ -98,7 +98,7 @@ export CC=mpicc && export CXX=mpicxx
 
 Download and extraxt from https://github.com/trilinos/Trilinos/releases/tag/trilinos-release-13-0-1
 ```
-cd ..
+cd $NATRIUM_BASE_DIR
 wget https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-0-1.tar.gz
 tar -xf trilinos-release-13-0-1.tar.gz
 ```
@@ -134,6 +134,7 @@ make install
 2. Setup installation (replace version of dealii!)
 
 ```
+cd $NATRIUM_BASE_DIR
 mkdir build_deal
 cd build_deal
 cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
