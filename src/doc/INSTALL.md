@@ -101,7 +101,6 @@ Download and extraxt from https://github.com/trilinos/Trilinos/releases/tag/tril
 cd ..
 wget https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-0-1.tar.gz
 tar -xf trilinos-release-13-0-1.tar.gz
-cd Trilinos-trilinos-release-13-0-1/
 ```
 Then install trilinos.
 ```
