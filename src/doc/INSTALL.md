@@ -53,10 +53,16 @@ wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.
 bash Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
 ```
 
-Install required packages
+Update Conda
 ```
 conda update conda
+```
+Create a dedicated environment
+```
 conda create -n "natrium"
+```
+Install required packages
+```
 conda activate natrium
 conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler openmpi libhwloc libevent blas liblapack zlib gsl lapack
 ```
