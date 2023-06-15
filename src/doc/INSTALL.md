@@ -64,7 +64,8 @@ conda create -n "natrium"
 Install required packages
 ```
 conda activate natrium
-conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler openmpi libhwloc libevent blas liblapack zlib gsl lapack
+conda install -c conda-forge cxx-compiler cmake libgfortran5 fortran-compiler openmpi libhwloc libevent blas liblapack zlib gsl lapack
+conda update --all
 ```
 
 **Note: On a server, you may need to specify the version of gfortran to 11.3**
