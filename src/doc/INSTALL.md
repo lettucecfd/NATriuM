@@ -2,19 +2,6 @@
 If you have trouble during the installation (which is not unlikely), contact the developers via the Google group natrium-lbm
 or via email: kraemer.research@gmail.com or wilde.aerospace@gmail.com .
 
-# Install Required Resources
-
-1. For boost b2: C++11 compiler `cxx-compiler`
-2. For p4est: fortran77 compiler with compatible glibc `fortran-compiler`, `libgfortran5`
-3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`, `liblapack`
-4. For dealII: `zlib` (and `gsl` and `lapack` for Cluster)
-
-```
-conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler cmake openmpi libhwloc libevent blas liblapack zlib gsl lapack
-```
-
-**Note: On a server, you may need to specify the version of gfortran to 11.3**
-
 # Set enviromental variables
 Go to the desired install folder and set environment:
 ```
@@ -51,6 +38,41 @@ If you have to interrupt your installation, make sure to reload the environment 
 ```
 source <your natrium base dir>/natriumrc
 ```
+
+# Install Required Resources
+
+1. For boost b2: C++11 compiler `cxx-compiler`
+2. For p4est: fortran77 compiler with compatible glibc `fortran-compiler`, `libgfortran5`
+3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`, `liblapack`
+4. For dealII: `zlib` (and `gsl` and `lapack` for Cluster)
+
+Conda has only `cmake` 3.22 as of 2023/06/15, so install directly:
+```
+cd $NATRIUM_BASE_DIR
+wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
+tar -xf cmake-3.25.3.tar.gz
+cd cmake-3.25.3
+./bootstrap
+make
+make install
+```
+
+Install Anaconda, if not already installed
+```
+cd $NATRIUM_BASE_DIR
+wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
+bash Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
+```
+
+Install required packages
+```
+conda update conda
+conda create -n "natrium"
+conda activate natrium
+conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler openmpi libhwloc libevent blas liblapack zlib gsl lapack
+```
+
+**Note: On a server, you may need to specify the version of gfortran to 11.3**
 
 # Install resources
 
