@@ -35,6 +35,7 @@ export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
 Write your environmental variables into a file "natriumrc" to reload them later:
 ```
 cat > $NATRIUM_BASE_DIR/natriumrc <<EOF
+export NATRIUM_BASE_DIR=$NATRIUM_BASE_DIR
 export BOOST_ROOT=$BOOST_ROOT
 export TRILINOS_DIR=$TRILINOS_DIR
 export P4EST_DIR=$P4EST_DIR
@@ -44,6 +45,11 @@ export NATRIUM_HOME=$NATRIUM_HOME
 export LD_LIBRARY_PATH=$BOOST_ROOT/lib:$LD_LIBRARY_PATH
 export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
 EOF
+```
+
+If you have to interrupt your installation, make sure to reload the environment variables:
+```
+source <your natrium base dir>/natriumrc
 ```
 
 # Install resources
