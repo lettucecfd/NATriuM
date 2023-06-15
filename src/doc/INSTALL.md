@@ -75,7 +75,7 @@ cd $NATRIUM_BASE_DIR
 wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
 tar -xf cmake-3.25.3.tar.gz
 cd cmake-3.25.3
-./bootstrap
+./bootstrap --prefix=$NATRIUM_BASE_DIR
 make
 make install
 ```
