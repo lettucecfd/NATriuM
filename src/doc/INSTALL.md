@@ -137,10 +137,14 @@ make install
 	(rename directory if it has the name of your target directory)
 	*Did not work with latest Trilinos, so I downgraded to Trilinos 13.0.1*
 	**deal.ii version 9.3.3 works**
-2. Setup installation (replace version of dealii!)
-
 ```
 cd $NATRIUM_BASE_DIR
+wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
+tar -xf dealii-9.3.3.tar.gz
+```
+
+2. Setup installation (replace version of dealii!)
+```
 mkdir build_deal
 cd build_deal
 cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
@@ -162,7 +166,6 @@ cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 ```
 
 3. Install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
-
 ```
 make -j 8 install
 ```
