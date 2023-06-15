@@ -123,8 +123,9 @@ wget https://www.dealii.org/current/external-libs/p4est-setup.sh
 ```
 export CC=mpicc && export CXX=mpicxx
 ```
-4. Execute Setup 
+4. Make shell file executable and execute Setup 
 ```
+chmod u+x p4est-setup.sh
 ./p4est-setup.sh p4est-2.2.tar.gz $P4EST_DIR
 ```
 
