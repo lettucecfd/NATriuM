@@ -46,17 +46,6 @@ source <your natrium base dir>/natriumrc
 3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`, `liblapack`
 4. For dealII: `zlib` (and `gsl` and `lapack` for Cluster)
 
-Conda has only `cmake` 3.22 as of 2023/06/15, so install directly:
-```
-cd $NATRIUM_BASE_DIR
-wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
-tar -xf cmake-3.25.3.tar.gz
-cd cmake-3.25.3
-./bootstrap
-make
-make install
-```
-
 Install Anaconda, if not already installed
 ```
 cd $NATRIUM_BASE_DIR
@@ -73,6 +62,17 @@ conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler openmpi 
 ```
 
 **Note: On a server, you may need to specify the version of gfortran to 11.3**
+
+Conda has only `cmake` 3.22 as of 2023/06/15, so install directly:
+```
+cd $NATRIUM_BASE_DIR
+wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
+tar -xf cmake-3.25.3.tar.gz
+cd cmake-3.25.3
+./bootstrap
+make
+make install
+```
 
 # Install resources
 
