@@ -16,7 +16,7 @@
 #include "natrium/stencils/Stencil.h"
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/CommandLineParser.h"
-#include "MixingLayer3D.h"
+#include "MixingLayer3D_solenoidal.h"
 
 
 using namespace natrium;
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
     CommandLineParser parser(argc, argv);
     parser.setArgument<int>("Re", "Reynolds number 1/nu", 800);
     parser.setArgument<double>("Ma", "Mach number", 0.3); // TODO: .1, .4, .8, 1.2
-    parser.setArgument<double>("time", "simulation time (s)", 15);
+    parser.setArgument<double>("time", "simulation time (s)", 5);
     parser.setPositionalArgument<int>("ref-level",
                                       "Refinement level of the computation grid.");
     parser.setArgument<int>("grid-repetitions",
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
             SolverConfiguration>();
     configuration->setUserInteraction(false);
     configuration->setOutputCheckpointInterval(1e9);
-    configuration->setOutputSolutionInterval(500); // TODO
+    configuration->setOutputSolutionInterval(100); // TODO
     configuration->setSimulationEndTime(time);
     configuration->setOutputGlobalTurbulenceStatistics(false);
     configuration->setOutputCompressibleTurbulenceStatistics(true);
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
     // standard output dir
     if (not parser.hasArgument("output-dir")){
         std::stringstream dirName;
-        dirName << getenv("NATRIUM_HOME") << "/step-mixingLayer/Re" << Re
+        dirName << getenv("NATRIUM_HOME") << "/step-mixingLayer_solenoidal/Re" << Re
                 << "-Ma" << Ma
                 << "-ref" << refinement_level
                 << "-p" << configuration->getSedgOrderOfFiniteElement()

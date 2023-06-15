@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
 			SolverConfiguration>();
 	configuration->setUserInteraction(false);
 	configuration->setOutputCheckpointInterval(1e9);
-	configuration->setOutputSolutionInterval(10000);
+	configuration->setOutputSolutionInterval(100);
 	configuration->setSimulationEndTime(10.0);
 	configuration->setOutputGlobalTurbulenceStatistics(false);
     configuration->setOutputCompressibleTurbulenceStatistics(true);
@@ -115,56 +115,38 @@ int main(int argc, char** argv) {
 	// standard output dir
 	if (not parser.hasArgument("output-dir")){
 		std::stringstream dirName;
-		dirName << getenv("NATRIUM_HOME") << "/taylorGreenVortex3D-compressible/Re" << Re << "-ref"
-				<< refinement_level << "-p"
-				<< configuration->getSedgOrderOfFiniteElement() << "-coll"
-				<< static_cast<int>(configuration->getCollisionScheme()) << "-sl"
-				<< static_cast<int>(configuration->getAdvectionScheme());
+		dirName << getenv("NATRIUM_HOME") << "/taylorGreenVortex3D-example/Re" << Re
+                << "-ref" << refinement_level
+                << "-p" << configuration->getSedgOrderOfFiniteElement()
+                << "-coll" << static_cast<int>(configuration->getCollisionScheme())
+                << "-sl" << static_cast<int>(configuration->getAdvectionScheme());
 		if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
-			dirName << "-int"
-					<< static_cast<int>(configuration->getTimeIntegrator()) << "_"
+			dirName << "-int" << static_cast<int>(configuration->getTimeIntegrator()) << "_"
 					<< static_cast<int>(configuration->getDealIntegrator());
 		dirName << "-CFL" << configuration->getCFL();
 		dirName << "-sten" << static_cast<int>(configuration->getStencil());
         dirName << "-num" << static_cast<double>(densityNumerator);
-		if (Ma!=0.1)
-		    dirName << "-Ma" << Ma;
+		if (Ma!=0.1) dirName << "-Ma" << Ma;
 		if (configuration->isFiltering())
-			dirName << "-filt"
-					<< static_cast<int>(configuration->getFilteringScheme())
-					<< "by_max_degree";
+			dirName << "-filt" << static_cast<int>(configuration->getFilteringScheme()) << "by_max_degree";
 		if (configuration->getRegularizationScheme() != NO_REGULARIZATION)
-			dirName << "-reg"
-					<< static_cast<int>(configuration->getRegularizationScheme());
+			dirName << "-reg" << static_cast<int>(configuration->getRegularizationScheme());
         if (configuration->getEquilibriumScheme()!= BGK_EQUILIBRIUM)
-            dirName << "-equili"
-                    << static_cast<int>(configuration->getEquilibriumScheme());
+            dirName << "-equili" << static_cast<int>(configuration->getEquilibriumScheme());
 		if (configuration->getCollisionScheme() == MRT_STANDARD) {
-			dirName << "-mrt" << static_cast<int>(configuration->getMRTBasis());
-		}
+			dirName << "-mrt" << static_cast<int>(configuration->getMRTBasis()); }
 		if (configuration->getCollisionScheme() == MRT_STANDARD) {
-			dirName << "-relax"
-					<< static_cast<int>(configuration->getMRTRelaxationTimes());
-		}
-		if (repetitions != 1) {
-					dirName << "-rep" << repetitions;
-				}
+			dirName << "-relax" << static_cast<int>(configuration->getMRTRelaxationTimes()); }
+		if (repetitions != 1) dirName << "-rep" << repetitions;
 		configuration->setOutputDirectory(dirName.str());
 	}
 	/////////////////////////////////////////////////
 	// run solver
 	//////////////////////////////////////////////////
-
 	CompressibleCFDSolver<3> solver(configuration, taylorGreen);
-
 	const size_t table_output_lines_per_10s = 300;
-	configuration->setOutputTableInterval(
-			1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
-
+	configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
 	solver.run();
-
 	pout << "taylorGreenVortex3D terminated." << endl;
-
 	return 0;
-
 }

@@ -21,7 +21,7 @@
 #include "natrium/utilities/BasicNames.h"
 
 #include "natrium/benchmarks/ShearLayer2D.h"
-#include "../../examples/step-10/SodShockTube.h"
+#include "../../examples/archive/step-10/SodShockTube.h"
 
 #include "natrium/utilities/Info.h"
 #include "natrium/utilities/CommandLineParser.h"

@@ -1,10 +1,10 @@
 # set variable TARGET
-set(TARGET step-mixingLayer)
+set(TARGET step-mixingLayer_solenoidal)
 # Specify a target:
 ADD_EXECUTABLE( ${TARGET}
-        step-mixingLayer.cpp
-        MixingLayer3D.h
-        MixingLayer3D.cpp
+        step-mixingLayer_solenoidal.cpp
+        MixingLayer3D_solenoidal.h
+        MixingLayer3D_solenoidal.cpp
         )
 # link natrium library to executable
 include_directories( /usr/include/boost ${PROJECT_SOURCE_DIR}/library)

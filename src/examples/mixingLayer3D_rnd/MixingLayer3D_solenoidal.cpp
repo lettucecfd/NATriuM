@@ -5,45 +5,76 @@
  *      Author: dominik
  */
 
-#include "MixingLayer3D.h"
-
+#include "MixingLayer3D_solenoidal.h"
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/grid/grid_out.h"
-
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
 
-float shearlayerthickness = 0.093;
+float shearlayerthickness = 0.093; // TODO
 
 namespace natrium {
 
-    MixingLayer3D::MixingLayer3D(double viscosity,
-                                             size_t refinementLevel, double cs) :
+    MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, double cs) :
             ProblemDescription<3>(makeGrid(), viscosity, 1), m_cs(cs), m_refinementLevel(refinementLevel) {
-
-
         /// apply boundary values
         setBoundaries(makeBoundaries());
         // apply analytic solution
         this->setInitialU(boost::make_shared<InitialVelocity>(this));
         this->setInitialRho(boost::make_shared<InitialDensity>(this));
         this->setInitialT(boost::make_shared<InitialTemperature>(this));
-
-
     }
 
-    MixingLayer3D::~MixingLayer3D() {
-    }
+    MixingLayer3D::~MixingLayer3D() { }
 
     double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
-
         assert(component < 3);
+        // double sines = sin(40*x(0)) + sin(40*x(1)) + sin(40*x(2)) + sin(55*x(0)) + sin(55*x(1)) + sin(55*x(2));
+        // double peak = 0.5 * exp(-pow(2*(x(1)-0.3),2));
+//        int period = 100;
+        // double amplitude = 0.5;
+        double k = 1; // waveVectorMagnitude
+        double kZero = 23.66 * shearlayerthickness;
+        double random_field = rand() / (RAND_MAX) * exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2)); // Holger: exp(−2(k/k0))
+        // double rd_sin = (rand() / (RAND_MAX)); // + sin(period*x(0)) + sin(period*x(1)) + sin(period*x(2))) * exp(-pow((x(1)+0.3)/(2*shearLayerThickness),2)) * amplitude;
+        double du = 2;
+
+        // setup randomized vector potential field
+        vector<int> psi (3);
+        // psi = {rand() / (RAND_MAX), rand() / (RAND_MAX), rand() / (RAND_MAX)};
+        for (int & i : psi) {
+            psi[i] = ((double) rand() / (RAND_MAX)) * exp(-2*k/kZero) * exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2));
+        }
+
+//         x = x(0), y = x(1), z = x(2)
+//         psi_x = psi[0] // R^3
+//        for (int dim=0; 3; dim++) {
+//
+//        }
+//        // dpsix_dy = { psi[0][:,i,:]-psi[0][:,i+1,:] for i in psi[0].shape(1) }
+//        std::vector<std::vector<double>>> dpsi (3);
+//        dpsi[0] = {dpsix_dx, dpsix_dy, dpsix_dz};
+//        dpsi[1] = {dpsiy_dx, dpsiy_dy, dpsiy_dz};
+//        dpsi[2] = {dpsiz_dx, dpsiz_dy, dpsiz_dz};
+//        // calculate rotation of vector potentail field
+//        vector<int> u_rand (3);
+//        for (int & i : u_rand) {
+//            u_rand[i] = dpsi[i-1,i+1] - dpsi[i+1,i-1];
+//        }
+        vector<int> u_rand (3);
+        for (int & i : u_rand) {
+            ((double) rand() / (RAND_MAX)) * exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2));
+        }
+
+        // initialize velocities
         if (component == 0) {
-            return tanh(-x(1)/(2*shearlayerthickness));
+            return du / 2 * tanh(-x(1)/(2*shearlayerthickness)) + u_rand[0]; // holger: u1 = ("U/2) tanh(−x2/δθ (0))
+        } else if (component == 1) {
+            return u_rand[1];
         } else {
-            return 0.0;
+            return u_rand[2];
         }
     }
 
@@ -64,7 +95,7 @@ namespace natrium {
     boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     //Creation of the principal domain
 
-    boost::shared_ptr<Mesh<3> > cube = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+    boost::shared_ptr<Mesh<3> > domain = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
     double lx = 1720 * shearlayerthickness / 2;
     double ly = 387 * shearlayerthickness / 2;
     double lz = 172 * shearlayerthickness / 2;
@@ -74,7 +105,7 @@ namespace natrium {
     rep.push_back(1);
     rep.push_back(1);
     rep.push_back(1);
-    dealii::GridGenerator::subdivided_hyper_rectangle(*cube, rep, corner1, corner2, true);
+    dealii::GridGenerator::subdivided_hyper_rectangle(*domain, rep, corner1, corner2, true);
 
     // Assign boundary indicators to the faces of the "parent cell"
     /*Mesh<3>::active_cell_iterator cell = cube->begin_active();
@@ -85,7 +116,7 @@ namespace natrium {
     cell->face(4)->set_all_boundary_ids(4);  //
     cell->face(5)->set_all_boundary_ids(5);  //
 */
-    return cube;
+    return domain;
 }
 
 /**

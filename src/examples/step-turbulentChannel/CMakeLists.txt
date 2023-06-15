@@ -37,7 +37,7 @@ ADD_EXECUTABLE( ${RESTART_TARGET}
 
 # link natrium library to executable
 #           
-include_directories( /usr/include/boost ${PROJECT_SOURCE_DIR}/library) 
+include_directories( /usr/include/boost ../../library)
 
 target_link_libraries(  ${TARGET}
                         natrium

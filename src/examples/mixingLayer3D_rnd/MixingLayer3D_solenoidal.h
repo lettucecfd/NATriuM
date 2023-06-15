@@ -5,11 +5,11 @@
  *      Author: dominik
  */
 
-#ifndef MixingLayer3D_H_
-#define MixingLayer3D_H_
+#ifndef MixingLayer3D_solenoidal_H_
+#define MixingLayer3D_solenoidal_H_
 
 /**
- * @file MixingLayer3D.h
+ * @file MixingLayer3D_solenoidal.h
  * @short Description of a simple Periodic Flow (in cubic domain).
  */
 
@@ -44,44 +44,33 @@ namespace natrium {
             InitialDensity(MixingLayer3D* flow) : m_flow(flow) { }
             virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
-
         class InitialTemperature: public dealii::Function<3> {
         private:
             MixingLayer3D* m_flow;
         public:
-            InitialTemperature(MixingLayer3D* flow) :
-                    m_flow(flow) { }
+            InitialTemperature(MixingLayer3D* flow) : m_flow(flow) { }
             virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
-
         /// constructor
         MixingLayer3D(double viscosity, size_t refinementLevel, double cs = 0.57735026919);
-
         /// destructor
         virtual ~MixingLayer3D();
-
         virtual void refine(Mesh<3>& mesh) {
             // Refine grid
             mesh.refine_global(m_refinementLevel);
         }
-        virtual void transform(Mesh<3>&) {
+        virtual void transform(Mesh<3>&) { }
+        virtual bool isCartesian() { return true; }
 
-        }
-        virtual bool isCartesian() {
-            return true;
-        }
     private:
         /// speed of sound
         double m_cs;
-
         size_t m_refinementLevel;
-
         /**
          * @short create triangulation for couette flow
          * @return shared pointer to a triangulation instance
          */
         boost::shared_ptr<Mesh<3> > makeGrid();
-
         /**
          * @short create boundaries for couette flow
          * @return shared pointer to a vector of boundaries
@@ -90,7 +79,6 @@ namespace natrium {
         boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
     };
-
 } /* namespace natrium */
 
 #endif /* MixingLayer3D_H_ */
