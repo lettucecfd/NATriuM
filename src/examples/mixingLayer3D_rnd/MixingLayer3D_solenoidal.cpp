@@ -63,9 +63,10 @@ namespace natrium {
 //        for (int & i : u_rand) {
 //            u_rand[i] = dpsi[i-1,i+1] - dpsi[i+1,i-1];
 //        }
+        double centering = exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2));
         vector<int> u_rand (3);
         for (int & i : u_rand) {
-            ((double) rand() / (RAND_MAX)) * exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2));
+            u_rand[i] = ((double) rand() / (RAND_MAX)) * centering;
         }
 
         // initialize velocities
