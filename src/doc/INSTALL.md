@@ -211,7 +211,7 @@ Your $NATRIUM_BASE_DIR/libs folder should now contain Boost, Dealii, p4est, and 
 ```
 cd $NATRIUM_BASE_DIR
 git clone https://github.com/lettucecfd/NATriuM.git
-cd NATriuM
+cd $NATRIUM_DIR
 git checkout compressible
 mkdir bin_debug
 cd bin_debug
@@ -223,7 +223,7 @@ make -j8
 3. Rebuild for for `bin_release` instead of `bin_debug` and `-DCMAKE_BUILD_TYPE=Release` instead of `-DCMAKE_BUILD_TYPE=Debug` to get a fast version of the program
 
 ```
-cd $NATRIUM_BASE_DIR/NATriuM
+cd $NATRIUM_DIR
 mkdir bin_release
 cd bin_release
 cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/ -B.
@@ -237,13 +237,13 @@ make -j8
 ## Run unit tests:
 
 ```
-cd $NATRIUM_BASE_DIR/bin_release
+cd $NATRIUM_DIR/bin_release
 ./test/NATriuM_UnitTest_exe
 ```
 
 ## Run integration tests (takes a few minutes)
 ```
-cd $NATRIUM_BASE_DIR/bin_release
+cd $NATRIUM_DIR/bin_release
 ./test/NATriuM_Test
 ```
 
