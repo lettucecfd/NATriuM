@@ -68,7 +68,7 @@ namespace natrium {
 //            u_rand[i] = ((double) rand() / (RAND_MAX)) * centering;
 //        }
 
-        double rd_sin = 0
+        double rd_sin = 0;
         vector<int> u_rand (3);
         for (int & i : u_rand) {
             u_rand[i] = 0;
