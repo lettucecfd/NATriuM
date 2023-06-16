@@ -72,12 +72,12 @@ namespace natrium {
         vector<int> u_rand (3);
         for (int & i : u_rand) {
             u_rand[i] = 0;
-            for (int j=0, j<=5, j++) {
+            for (int j=0; j<=5; j++) {
                 double component;
-                for (int k=0, k<=2, k++){
-                    component += sin((100*rand() / (RAND_MAX))*x(k);
+                for (int k=0; k<=2; k++){
+                    component += sin((100*rand() / (RAND_MAX))*x(k));
                 }
-                component *= exp(-pow((x(1)+0.3)/(2*shearLayerThickness),2)) * ((double) rand() / (RAND_MAX));
+                component *= exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2)) * ((double) rand() / (RAND_MAX));
                 u_rand[i] += component;
             }
         }

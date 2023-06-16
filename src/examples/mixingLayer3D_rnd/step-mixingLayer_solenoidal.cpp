@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("Ma", "Mach number", 0.3); // TODO: .1, .4, .8, 1.2
     parser.setArgument<double>("time", "simulation time (s)", 5);
     parser.setArgument<int>("nout", "output vtk every nout steps", 500);
-    parser.setPositionalArgument<int>("ref-level", "Refinement level of the computation grid.", 3);
+    parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 3);
     parser.setArgument<int>("grid-repetitions", "Number of grid cells along each axis before global refinement; "
                             "to produce grids with refinements that are not powers of two.", 1); // TODO 1,2,4
     try { parser.importOptions();
