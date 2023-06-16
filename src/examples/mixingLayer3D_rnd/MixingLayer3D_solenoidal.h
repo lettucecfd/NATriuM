@@ -78,6 +78,7 @@ namespace natrium {
          */
         boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
+        void randf_2(int idum, int &iy, vector<int> &iv, double &ran1, int &iseed);
     };
 } /* namespace natrium */
 

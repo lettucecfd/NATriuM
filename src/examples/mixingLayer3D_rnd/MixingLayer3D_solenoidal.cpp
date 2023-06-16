@@ -155,5 +155,49 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
     boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();
     return boundaries;
 }
-} /* namespace natrium */
 
+inline void MixingLayer3D::randf_2(int idum, int &iy, vector<int> &iv, double &ran1, int &iseed){
+
+    int			ia		= 16807;
+    double		im 		= 2147483647;
+    double		am		= 1/im;
+    int 		iq		= 127773;
+    int 		ir		= 2836;
+    int 		ntab	= 32;
+    double 		ndiv	= 1+(im-1)/ntab;
+    double 		eps		= 1.2e-7;
+    double		rnmx	= 1-eps;
+
+    int 			j, k;
+
+//initial iseed (idum) is negative
+    if (idum <= 0 || iy == 0){
+        idum = std::max(-idum, 1);
+        for (int j = ntab+8; j >=1; --j){
+            k = floor(idum/iq);
+            idum = ia*(idum-k*iq)-ir*k;
+            if (idum < 0){
+                idum = idum+im;
+            }
+            if (j <= ntab){
+                iv[j-1] = idum;
+            }
+        }
+        iy = iv[0];
+    }
+
+    k 		= floor(idum/iq);
+    idum 	= ia*(idum-k*iq)-ir*k;
+
+    if  (idum <= 0){
+        idum = idum+im;
+    }
+
+    j 		= floor(iy/ndiv);
+    iy 		= iv[j];
+    iv[j]	= idum;
+    iseed	= idum;
+    ran1	= std::min(am*iy,rnmx);
+}
+
+} /* namespace natrium */
