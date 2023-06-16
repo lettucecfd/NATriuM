@@ -37,7 +37,7 @@ namespace natrium {
         // double amplitude = 0.5;
         double k = 1; // waveVectorMagnitude
         double kZero = 23.66 * shearlayerthickness;
-        double random_field = rand() / (RAND_MAX) * exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2)); // Holger: exp(−2(k/k0))
+//        double random_field = rand() / (RAND_MAX) * exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2)); // Holger: exp(−2(k/k0))
         double du = 2;
 
         // setup randomized vector potential field
@@ -72,8 +72,11 @@ namespace natrium {
         vector<int> u_rand (3);
         for (int & i : u_rand) {
             u_rand[i] = 0;
-            for (int j, j<=5, j++) {
-                double component = sin((rand() / (RAND_MAX))*x(0)) + sin((rand() / (RAND_MAX))*x(1)) + sin((rand() / (RAND_MAX))*x(2)));
+            for (int j=0, j<=5, j++) {
+                double component;
+                for (int k=0, k<=2, k++){
+                    component += sin((100*rand() / (RAND_MAX))*x(k);
+                }
                 component *= exp(-pow((x(1)+0.3)/(2*shearLayerThickness),2)) * ((double) rand() / (RAND_MAX));
                 u_rand[i] += component;
             }
