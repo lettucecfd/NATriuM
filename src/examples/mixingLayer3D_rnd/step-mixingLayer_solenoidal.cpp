@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     //////////////////////////////////////////////////
     CommandLineParser parser(argc, argv);
     parser.setArgument<int>("Re", "Reynolds number 1/nu", 1600);
-    parser.setArgument<double>("Ma", "Mach number", 0.3); // TODO: .1, .4, .8, 1.2
+    parser.setArgument<double>("Ma", "Mach number", 0.8); // TODO: .1, .4, .8, 1.2
     parser.setArgument<double>("time", "simulation time (s)", 5);
     parser.setArgument<int>("nout", "output vtk every nout steps", 500);
     parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 3);
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     }
     double Re = parser.getArgument<int>("Re");
     double refinement_level = parser.getArgument<int>("ref-level");
-    double nout = parser.getArgument<int>("nout");
+    long nout = parser.getArgument<int>("nout");
     double repetitions = parser.getArgument<int>("grid-repetitions");
     double time = parser.getArgument<double>("time");
 

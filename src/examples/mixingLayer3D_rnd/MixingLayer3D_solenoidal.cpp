@@ -12,6 +12,7 @@
 #include "deal.II/grid/grid_out.h"
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
+#include <random>
 
 float shearlayerthickness = 0.093; // TODO
 
@@ -37,15 +38,15 @@ namespace natrium {
         // double amplitude = 0.5;
         double k = 1; // waveVectorMagnitude
         double kZero = 23.66 * shearlayerthickness;
-//        double random_field = rand() / (RAND_MAX) * exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2)); // Holger: exp(−2(k/k0))
-        double du = 2;
+//        double random_field = rand() / (RAND_MAX) * exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2)); // Holger: exp(−2(k/k0));
 
-        // setup randomized vector potential field
-        vector<int> psi (3);
-        // psi = {rand() / (RAND_MAX), rand() / (RAND_MAX), rand() / (RAND_MAX)};
-        for (int & i : psi) {
-            psi[i] = ((double) rand() / (RAND_MAX)) * exp(-2*k/kZero) * exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2));
-        }
+        double du = 2;
+//        // setup randomized vector potential field
+//        vector<int> psi (3);
+//        // psi = {rand() / (RAND_MAX), rand() / (RAND_MAX), rand() / (RAND_MAX)};
+//        for (int & i : psi) {
+//            psi[i] = ((double) rand() / (RAND_MAX)) * exp(-2*k/kZero) * exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2));
+//        }
 
 //         x = x(0), y = x(1), z = x(2)
 //         psi_x = psi[0] // R^3
@@ -67,28 +68,47 @@ namespace natrium {
 //        for (int & i : u_rand) {
 //            u_rand[i] = ((double) rand() / (RAND_MAX)) * centering;
 //        }
-
-        double rd_sin = 0;
-        vector<int> u_rand (3);
-        for (int & i : u_rand) {
-            u_rand[i] = 0;
-            for (int j=0; j<=5; j++) {
-                double component;
-                for (int k=0; k<=2; k++){
-                    component += sin((100*rand() / (RAND_MAX))*x(k));
-                }
-                component *= exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2)) * ((double) rand() / (RAND_MAX));
-                u_rand[i] += component;
-            }
-        }
+//        std::random_device rd;  // Will be used to obtain a seed for the random number engine
+//        std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+//        std::uniform_real_distribution<> amp(-1.0, 1.0);
+//        std::uniform_real_distribution<> freq(0., 100.0);
+//        std::uniform_real_distribution<> phase(-1.0, 1.0);
+//
+//        vector<int> u_rand (3);
+//        for (int & i : u_rand) {
+//            u_rand[i] = 0.;
+//            for (int j=0; j<=10; j++) {
+//                double sine;
+//                for (int h=0; h<=2; h++){
+//                    sine += sin(freq(gen)*x(h) + phase(gen));
+//                }
+//                sine *= exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2)) * amp(gen);
+//                u_rand[i] += sine;
+//            }
+//        }
 
         // initialize velocities
         if (component == 0) {
-            return du / 2 * tanh(-x(1)/(2*shearlayerthickness)) + u_rand[0]; // holger: u1 = ("U/2) tanh(−x2/δθ (0))
-        } else if (component == 1) {
-            return u_rand[1];
+            return du / 2 * tanh(-x(1)/(2*shearlayerthickness)); // + u_rand[0]; // holger: u1 = ("U/2) tanh(−x2/δθ (0))
+//        } else if (component == 1) {
+//            return u_rand[1];
         } else {
-            return u_rand[2];
+            std::random_device rd;  // Will be used to obtain a seed for the random number engine
+            std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+            std::uniform_real_distribution<> amp(-0.5, 0.5);
+            std::uniform_real_distribution<> freq(0., 100.0);
+            std::uniform_real_distribution<> phase(-1.0, 1.0);
+            double u_rand = 0;
+            for (int j=0; j<=20; j++) {
+                double sine;
+                for (int h=0; h<=2; h++){
+                    sine += sin(freq(gen)*x(h) + phase(gen));
+                }
+                sine *= exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2)) * amp(gen);
+                u_rand += sine;
+            }
+            return u_rand;
+//            return u_rand[2];
         }
     }
 
