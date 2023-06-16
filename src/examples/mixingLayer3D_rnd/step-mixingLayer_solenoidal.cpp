@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("Re", "Reynolds number 1/nu", 1600);
     parser.setArgument<double>("Ma", "Mach number", 0.3); // TODO: .1, .4, .8, 1.2
     parser.setArgument<double>("time", "simulation time (s)", 5);
+    parser.setArgument<int>("nout", "output vtk every nout steps", 500);
     parser.setPositionalArgument<int>("ref-level", "Refinement level of the computation grid.", 3);
     parser.setArgument<int>("grid-repetitions", "Number of grid cells along each axis before global refinement; "
                             "to produce grids with refinements that are not powers of two.", 1); // TODO 1,2,4
@@ -40,6 +41,7 @@ int main(int argc, char** argv) {
     }
     double Re = parser.getArgument<int>("Re");
     double refinement_level = parser.getArgument<int>("ref-level");
+    double nout = parser.getArgument<int>("nout");
     double repetitions = parser.getArgument<int>("grid-repetitions");
     double time = parser.getArgument<double>("time");
 
@@ -71,7 +73,7 @@ int main(int argc, char** argv) {
             SolverConfiguration>();
     configuration->setUserInteraction(false);
     configuration->setOutputCheckpointInterval(1e9);
-    configuration->setOutputSolutionInterval(100); // TODO
+    configuration->setOutputSolutionInterval(nout);
     configuration->setSimulationEndTime(time);
     configuration->setOutputGlobalTurbulenceStatistics(false);
     configuration->setOutputCompressibleTurbulenceStatistics(true);
