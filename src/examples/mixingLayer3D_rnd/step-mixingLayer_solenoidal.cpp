@@ -29,13 +29,11 @@ int main(int argc, char** argv) {
     // read from command line
     //////////////////////////////////////////////////
     CommandLineParser parser(argc, argv);
-    parser.setArgument<int>("Re", "Reynolds number 1/nu", 800);
+    parser.setArgument<int>("Re", "Reynolds number 1/nu", 1600);
     parser.setArgument<double>("Ma", "Mach number", 0.3); // TODO: .1, .4, .8, 1.2
     parser.setArgument<double>("time", "simulation time (s)", 5);
-    parser.setPositionalArgument<int>("ref-level",
-                                      "Refinement level of the computation grid.");
-    parser.setArgument<int>("grid-repetitions",
-                            "Number of grid cells along each axis before global refinement; "
+    parser.setPositionalArgument<int>("ref-level", "Refinement level of the computation grid.", 3);
+    parser.setArgument<int>("grid-repetitions", "Number of grid cells along each axis before global refinement; "
                             "to produce grids with refinements that are not powers of two.", 1); // TODO 1,2,4
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
