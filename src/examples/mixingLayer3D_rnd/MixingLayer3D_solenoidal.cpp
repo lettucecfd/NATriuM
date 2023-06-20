@@ -89,7 +89,21 @@ namespace natrium {
 
         // initialize velocities
         if (component == 0) {
-            return du / 2 * tanh(-x(1)/(2*shearlayerthickness)); // + u_rand[0]; // holger: u1 = ("U/2) tanh(−x2/δθ (0))
+            std::random_device rd;  // Will be used to obtain a seed for the random number engine
+            std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+            std::uniform_real_distribution<> amp(-0.5, 0.5);
+            std::uniform_real_distribution<> freq(0., 100.0);
+            std::uniform_real_distribution<> phase(-1.0, 1.0);
+            double u_rand = 0;
+            for (int j=0; j<=20; j++) {
+                double sine;
+                for (int h=0; h<=2; h++){
+                    sine += sin(freq(gen)*x(h) + phase(gen));
+                }
+                sine *= exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2)) * amp(gen);
+                u_rand += sine;
+            }
+            return du / 2 * tanh(-x(1)/(2*shearlayerthickness)) + u_rand; // + u_rand[0]; // holger: u1 = ("U/2) tanh(−x2/δθ (0))
 //        } else if (component == 1) {
 //            return u_rand[1];
         } else {
