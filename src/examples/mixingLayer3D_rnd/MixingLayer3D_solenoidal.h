@@ -35,32 +35,53 @@ namespace natrium {
         private:
             MixingLayer3D* m_flow;
         public:
-            InitialVelocity(MixingLayer3D* flow) : m_flow(flow) { }
-            virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
+            explicit InitialVelocity(MixingLayer3D* flow) : m_flow(flow) { }
+            double value(const dealii::Point<3>& x, unsigned int component) const override;
         };
+        void setInitialPsi(boost::shared_ptr<dealii::Function<dim> > ini_psi) {
+            m_initialPsi = ini_psi;
+        }
+        class InitialPsi: public dealii::Tensor<1,3> {
+        private:
+            MixingLayer3D* m_initialPsi;
+        };
+        class get_rotation_matrix: public dealii::Tensor<1,3> {
+        private:
+            MixingLayer3D* m_flow;
+        public:
+            explicit get_rotation_matrix(MixingLayer3D* flow) : m_flow(flow) { }
+            static double value(const dealii::Point<3>& x, unsigned int component) ;
+        };
+//        dealii::Tensor<1, 3> get_rotation_matrix(const vector <dealii::Tensor<1, 3>> &grad_u);
         class InitialDensity: public dealii::Function<3> {
         private: MixingLayer3D* m_flow;
         public:
-            InitialDensity(MixingLayer3D* flow) : m_flow(flow) { }
-            virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
+            explicit InitialDensity(MixingLayer3D* flow) : m_flow(flow) { }
+            double value(const dealii::Point<3>& x, unsigned int component) const override;
         };
         class InitialTemperature: public dealii::Function<3> {
         private:
             MixingLayer3D* m_flow;
         public:
-            InitialTemperature(MixingLayer3D* flow) : m_flow(flow) { }
-            virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
+            explicit InitialTemperature(MixingLayer3D* flow) : m_flow(flow) { }
+            double value(const dealii::Point<3>& x, unsigned int component) const override;
         };
+
         /// constructor
         MixingLayer3D(double viscosity, size_t refinementLevel, double cs = 0.57735026919);
+
         /// destructor
-        virtual ~MixingLayer3D();
-        virtual void refine(Mesh<3>& mesh) {
+        ~MixingLayer3D() override;
+
+    private:
+//            double RandomVelocity(const dealii::Point<3>& x, unsigned int component);
+
+        void refine(Mesh<3>& mesh) override {
             // Refine grid
             mesh.refine_global(m_refinementLevel);
         }
-        virtual void transform(Mesh<3>&) { }
-        virtual bool isCartesian() { return true; }
+        void transform(Mesh<3>&) override { }
+        bool isCartesian() override { return true; }
 
     private:
         /// speed of sound
@@ -78,8 +99,10 @@ namespace natrium {
          */
         boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
-        void randf_2(int idum, int &iy, vector<int> &iv, double &ran1, int &iseed);
+//        void randf_2(int idum, int &iy, vector<int> &iv, double &ran1, int &iseed);
+
+//        void setInitialSines(vector<float> sines);
     };
 } /* namespace natrium */
 
-#endif /* MixingLayer3D_H_ */
+#endif /* MixingLayer3D_solenoidal_H_ */

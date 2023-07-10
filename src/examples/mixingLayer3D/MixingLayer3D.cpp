@@ -8,9 +8,9 @@
 #include "MixingLayer3D.h"
 
 #include "deal.II/grid/grid_generator.h"
-#include "deal.II/grid/tria_accessor.h"
-#include "deal.II/grid/tria_iterator.h"
-#include "deal.II/grid/grid_out.h"
+//#include "deal.II/grid/tria_accessor.h"
+//#include "deal.II/grid/tria_iterator.h"
+//#include "deal.II/grid/grid_out.h"
 
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
@@ -34,8 +34,7 @@ namespace natrium {
 
     }
 
-    MixingLayer3D::~MixingLayer3D() {
-    }
+    MixingLayer3D::~MixingLayer3D() = default;
 
     double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
 

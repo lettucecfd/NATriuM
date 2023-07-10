@@ -10,27 +10,15 @@
 #include "deal.II/grid/tria_accessor.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/grid/grid_out.h"
+#include <deal.II/physics/transformations.h>
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
 #include <random>
+#include<list>
 
 float shearlayerthickness = 0.093; // TODO
 
-std::random_device rd;  // Will be used to obtain a seed for the random number engine
-std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-std::uniform_real_distribution<> amp(-0.5, 0.5);
-std::uniform_real_distribution<> freq(0., 100.0);
-std::uniform_real_distribution<> phase(-1.0, 1.0);
 
-double u_rand = 0;
-for (int j=0; j<=20; j++) {
-double sine;
-for (int h=0; h<=2; h++){
-sine += sin(freq(gen)*x(h) + phase(gen)) * amp(gen);
-}
-sine *= exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2));
-u_rand += sine;
-}
 
 namespace natrium {
 
@@ -38,13 +26,16 @@ namespace natrium {
             ProblemDescription<3>(makeGrid(), viscosity, 1), m_cs(cs), m_refinementLevel(refinementLevel) {
         /// apply boundary values
         setBoundaries(makeBoundaries());
+        this->setInitialPsi(boost::make_shared<InitialPsi>(this));
+//        setInitialPsi(boost::make_shared<InitialPsi>(this))
+//        this->setInitialSines(boost::make_shared<m_initial_sines>(this));
         // apply analytic solution
         this->setInitialU(boost::make_shared<InitialVelocity>(this));
         this->setInitialRho(boost::make_shared<InitialDensity>(this));
         this->setInitialT(boost::make_shared<InitialTemperature>(this));
     }
 
-    MixingLayer3D::~MixingLayer3D() { }
+    MixingLayer3D::~MixingLayer3D() = default;
 
     double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
         assert(component < 3);
@@ -52,14 +43,40 @@ namespace natrium {
         double kZero = 23.66 * shearlayerthickness;
         double du = 2;
         // initialize velocities
+        double x0 = x(0);
+        double x1 = x(1);
+        double x2 = x(2);
+
         if (component == 0) {
-//            amp = [0., 1.824, ]
-            return du / 2 * tanh(-x(1)/(2*shearlayerthickness)) + u_rand; // + u_rand[0]; // holger: u1 = ("U/2) tanh(−x2/δθ (0))
-//        } else if (component == 1) {
-//            return u_rand[1];
+            return du / 2 * tanh(-x(1)/(2*shearlayerthickness)) + MixingLayer3D::get_rotation_matrix::value(x, component); // + u_rand[0]; // holger: u1 = ("U/2) tanh(−x2/δθ (0))
         } else {
-            return u_rand;
+            return MixingLayer3D::get_rotation_matrix::value(x, component);
         }
+    }
+
+    boost::make_shared< dealii::Tensor<1,3> > MixingLayer3D::InitialPsi(boost::make_shared< Mesh<3> > domain) {
+        return;
+    }
+
+    double MixingLayer3D::get_rotation_matrix::value(const dealii::Point<3> &x, unsigned int component) {
+        return this->m_curl(x(component));
+    }
+
+    boost::make_shared< dealii::Tensor<1,3> > MixingLayer3D::get_rotation_matrix(const std::vector<dealii::Tensor<1, 3>> &grad_u) {
+        const dealii::Tensor<1, 3> curl({
+                                                grad_u[2][1] - grad_u[1][2],
+                                                grad_u[0][2] - grad_u[2][0],
+                                                grad_u[1][0] - grad_u[0][1]});
+        const double tan_angle = std::sqrt(curl * curl);
+        const double angle     = std::atan(tan_angle);
+        if (std::abs(angle) < 1e-9)
+        {
+            static const double rotation[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+            static const dealii::Tensor<2, 3> rot(rotation);
+            return rot;
+        }
+        const dealii::Tensor<1, 3> axis = curl / tan_angle;
+        return curl; //Physics::Transformations::Rotations::rotation_matrix_3d(axis, -angle);
     }
 
     double MixingLayer3D::InitialDensity::value(const dealii::Point<3>& x, const unsigned int component) const {
@@ -79,7 +96,7 @@ namespace natrium {
     boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
         //Creation of the principal domain
 
-        boost::shared_ptr<Mesh<3> > domain = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+        boost::shared_ptr< Mesh<3> > domain = boost::make_shared< Mesh<3> >(MPI_COMM_WORLD);
         double lx = 1720 * shearlayerthickness / 2;
         double ly = 387 * shearlayerthickness / 2;
         double lz = 172 * shearlayerthickness / 2;
@@ -102,6 +119,8 @@ namespace natrium {
     */
         return domain;
     }
+
+
 
 /**
  * @short create boundaries for couette flow
@@ -135,54 +154,85 @@ namespace natrium {
         boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
 
         // Get the triangulation object (which belongs to the parent class).
-        boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();
+//        boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();
         return boundaries;
     }
+//    void MixingLayer3D::InitialVectorPotential()
 
-    inline void MixingLayer3D::randf_2(int idum, int &iy, vector<int> &iv, double &ran1, int &iseed){
+//    inline void MixingLayer3D::setInitialSines(vector<float> sines){
+//        std::random_device rd;  // Will be used to obtain a seed for the random number engine
+//        std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+//        std::uniform_real_distribution<> amp(-0.5, 0.5);
+//        std::uniform_real_distribution<> freq(0., 100.0);
+//        std::uniform_real_distribution<> phase(-1.0, 1.0);
+//
+////        std::list<void> sine(3, 0.0);
+////        for (int h=0; h<=2; h++){
+////            m_initial_sines[h] = 0;
+////        }
+//        vector< vector<int> > amplitudes;
+//        for (int h=0; h<=2; h++){
+//            vector<int> amplitudes[h] = 0.0;
+//        }
+//        for (int j=0; j<=20; j++) {
+//            amplitudes[]
+//            for (int h=0; h<=2; h++){
+//                sine[h] += sin(freq(gen)*sines[h] + phase(gen)) * amp(gen);
+//                sine[h] *= exp(-pow((sines[1]+0.3)/(2*shearlayerthickness),2));
+//            }
+//        }
+//        for (int h=0; h<=2; h++){
+//            m_initial_sines[h] += sine[h];
+//        }
+//    }
 
-        int			ia		= 16807;
-        double		im 		= 2147483647;
-        double		am		= 1/im;
-        int 		iq		= 127773;
-        int 		ir		= 2836;
-        int 		ntab	= 32;
-        double 		ndiv	= 1+(im-1)/ntab;
-        double 		eps		= 1.2e-7;
-        double		rnmx	= 1-eps;
-
-        int 			j, k;
-
-//initial iseed (idum) is negative
-        if (idum <= 0 || iy == 0){
-            idum = std::max(-idum, 1);
-            for (int j = ntab+8; j >=1; --j){
-                k = floor(idum/iq);
-                idum = ia*(idum-k*iq)-ir*k;
-                if (idum < 0){
-                    idum = idum+im;
-                }
-                if (j <= ntab){
-                    iv[j-1] = idum;
-                }
-            }
-            iy = iv[0];
-        }
-
-        k 		= floor(idum/iq);
-        idum 	= ia*(idum-k*iq)-ir*k;
-
-        if  (idum <= 0){
-            idum = idum+im;
-        }
-
-        j 		= floor(iy/ndiv);
-        iy 		= iv[j];
-        iv[j]	= idum;
-        iseed	= idum;
-        ran1	= std::min(am*iy,rnmx);
-    }
-
+//    inline void MixingLayer3D::randf_2(int idum, int &iy, vector<int> &iv, double &ran1, int &iseed){
+//
+//        int			ia		= 16807;
+//        double		im 		= 2147483647;
+//        double		am		= 1/im;
+//        int 		iq		= 127773;
+//        int 		ir		= 2836;
+//        int 		ntab	= 32;
+//        double 		ndiv	= 1+(im-1)/ntab;
+//        double 		eps		= 1.2e-7;
+//        double		rnmx	= 1-eps;
+//
+//        int 			j, k;
+//
+////initial iseed (idum) is negative
+//        if (idum <= 0 || iy == 0){
+//            idum = std::max(-idum, 1);
+//            for (int j = ntab+8; j >=1; --j){
+//                k = floor(idum/iq);
+//                idum = ia*(idum-k*iq)-ir*k;
+//                if (idum < 0){
+//                    idum = idum+im;
+//                }
+//                if (j <= ntab){
+//                    iv[j-1] = idum;
+//                }
+//            }
+//            iy = iv[0];
+//        }
+//
+//        k 		= floor(idum/iq);
+//        idum 	= ia*(idum-k*iq)-ir*k;
+//
+//        if  (idum <= 0){
+//            idum = idum+im;
+//        }
+//
+//        j 		= floor(iy/ndiv);
+//        iy 		= iv[j];
+//        iv[j]	= idum;
+//        iseed	= idum;
+//        ran1	= std::min(am*iy,rnmx);
+//    }
+//
+//    double MixingLayer3D::m_initial_sines::value(const dealii::Point<3> &x, unsigned int component) const {
+//        return Function::value(x, component);
+//    }
 } /* namespace natrium */
 
 
