@@ -53,7 +53,7 @@ namespace natrium {
 //            rand_u = LookupU::Interp(x(0), x(1), x(2), component)
             return tanh(-x(1)/(2*shearlayerthickness)) + rand_u;
         } else {
-            rand_u;
+            return rand_u;
         }
     }
 
