@@ -1,9 +1,10 @@
 # Examples
 add_subdirectory(taylorGreenVortex3D)
 add_subdirectory(lidDrivenCavity2D)
-add_subdirectory(mixingLayer3D)
-add_subdirectory(mixingLayer3D_rnd)
+add_subdirectory(mixingLayer3D_Dominik)
+#add_subdirectory(archive/mixingLayer3D_rnd)
 add_subdirectory(mixingLayer3D_externalU)
+add_subdirectory(mixingLayer3D)
 #add_subdirectory(mixingLayer3D_liketurbulentChannel)
 #add_subdirectory(archive/static-droplet)
 #add_subdirectory(archive/step-couette3D)

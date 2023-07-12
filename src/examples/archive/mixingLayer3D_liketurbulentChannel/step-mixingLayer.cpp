@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
     //////////////////////////////////////////////////
     CompressibleCFDSolver<3> solver(configuration, mixingLayer);
     const size_t table_output_lines_per_10s = 300;
-    configuration->setOutputTableInterval(1 + 1.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
+    configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
     solver.run();
     pout << "step-mixingLayer terminated." << endl;
     return 0;

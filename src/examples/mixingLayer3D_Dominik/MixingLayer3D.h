@@ -14,9 +14,7 @@
  */
 
 #include "deal.II/grid/tria.h"
-#include <vector>
-#include <iostream>
-#include <algorithm>
+
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
@@ -33,45 +31,20 @@ namespace natrium {
          * @short class to describe the x-component of the initial velocity
          * @note other are default (v0=w0=0, rho0=1)
          */
-//        class ThreeDLookup {
-//            public:
-//                ThreeDLookup();
-//                ~ThreeDLookup();
-//                double Interp(double xq, double yq, double zq, int dimension) const;
-//            private:
-//                std::vector<double> xvec;
-//                std::vector<double> yvec;
-//                std::vector<double> zvec;
-//                std::vector< std::vector< std::vector< std::vector<double> > > > randomPsi;
-//                std::vector< std::vector< std::vector< std::vector<double> > > > curlOfPsi;
-//
-//                double minx, miny, minz;
-//                double maxx, maxy, maxz;
-//        };
         class InitialVelocity: public dealii::Function<3> {
-            private:
-                MixingLayer3D* m_flow;
-                std::vector<double> xvec;
-                std::vector<double> yvec;
-                std::vector<double> zvec;
-                std::vector< std::vector< std::vector< std::vector<double> > > > randomPsi;
-                std::vector< std::vector< std::vector< std::vector<double> > > > curlOfPsi;
-                double minx, miny, minz;
-                double maxx, maxy, maxz;
-                int nx, ny, nz;
-                double InterpolateVelocities(double, double, double, const unsigned int) const;
-//                void InitializeVelocities();
-            public:
-                InitialVelocity(MixingLayer3D *flow);
-//                InitialVelocity(MixingLayer3D* flow) : m_flow(flow) { }
-                virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
-            };
+        private:
+            MixingLayer3D* m_flow;
+        public:
+            InitialVelocity(MixingLayer3D* flow) : m_flow(flow) { }
+            virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
+        };
         class InitialDensity: public dealii::Function<3> {
         private: MixingLayer3D* m_flow;
         public:
             InitialDensity(MixingLayer3D* flow) : m_flow(flow) { }
             virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
+
         class InitialTemperature: public dealii::Function<3> {
         private:
             MixingLayer3D* m_flow;
@@ -80,7 +53,6 @@ namespace natrium {
                     m_flow(flow) { }
             virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
-
 
         /// constructor
         MixingLayer3D(double viscosity, size_t refinementLevel, double cs = 0.57735026919);
@@ -98,14 +70,10 @@ namespace natrium {
         virtual bool isCartesian() {
             return true;
         }
-
-//        static MixingLayer3D::ThreeDLookup RandomVelocities;
-//        MixingLayer3D::ThreeDLookup LookupUy = ThreeDLookup(1);
-//        MixingLayer3D::ThreeDLookup LookupUz = ThreeDLookup(2);
-
     private:
         /// speed of sound
         double m_cs;
+
         size_t m_refinementLevel;
 
         /**
@@ -121,9 +89,6 @@ namespace natrium {
          */
         boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
-        void setRandomVelocityPotential() const;
-
-//        double InterpolateVelocities(double, double, double, int);
     };
 
 } /* namespace natrium */
