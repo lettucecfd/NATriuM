@@ -62,19 +62,38 @@ namespace natrium {
 //        cout << "\ninitializing psi";
         std::vector<double> x, y, z;
         double xmin, xmax, ymin, ymax, zmin, zmax, dx, dy, dz;
-//        int nx, ny, nz;
-        xmin = -80.0;
-        xmax = 80.0;
-        ymin = -80.0;
-        ymax = 80.0;
-        zmin = -80.0;
-        zmax = 80.0;
-        dx = 0.91;
-        dy = 0.91;
-        dz = 0.91;
+//        xmin = -80.0;
+//        xmax = 80.0;
+//        ymin = -80.0;
+//        ymax = 80.0;
+//        zmin = -80.0;
+//        zmax = 80.0;
+//        dx = 0.91;
+//        dy = 0.91;
+//        dz = 0.91;
+//        nx = ceil((xmax-xmin)/dx);
+//        ny = ceil((ymax-ymin)/dy);
+//        nz = ceil((zmax-zmin)/dz);
+        float lx, ly, lz;
+        lx = 1720;
+        ly = 387;
+        lz = 172;
+        xmax = lx * shearlayerthickness / 2;
+        xmin = -xmax;
+        ymax = ly * shearlayerthickness / 2;
+        ymin = -ymax;
+        zmax = lz * shearlayerthickness / 2;
+        zmin = -zmax;
+        dx = 0.51;
+        dy = 0.51;
+        dz = 0.51;
         nx = ceil((xmax-xmin)/dx);
         ny = ceil((ymax-ymin)/dy);
         nz = ceil((zmax-zmin)/dz);
+//        double lx = 1720 * shearlayerthickness / 2;
+//        double ly = 387 * shearlayerthickness / 2;
+//        double lz = 172 * shearlayerthickness / 2;
+
 
         // create linspaces x, y, z
 //        cout << "\ninitializing linspaces";

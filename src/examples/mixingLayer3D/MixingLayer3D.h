@@ -33,21 +33,6 @@ namespace natrium {
          * @short class to describe the x-component of the initial velocity
          * @note other are default (v0=w0=0, rho0=1)
          */
-//        class ThreeDLookup {
-//            public:
-//                ThreeDLookup();
-//                ~ThreeDLookup();
-//                double Interp(double xq, double yq, double zq, int dimension) const;
-//            private:
-//                std::vector<double> xvec;
-//                std::vector<double> yvec;
-//                std::vector<double> zvec;
-//                std::vector< std::vector< std::vector< std::vector<double> > > > randomPsi;
-//                std::vector< std::vector< std::vector< std::vector<double> > > > curlOfPsi;
-//
-//                double minx, miny, minz;
-//                double maxx, maxy, maxz;
-//        };
         class InitialVelocity: public dealii::Function<3> {
             private:
                 MixingLayer3D* m_flow;
