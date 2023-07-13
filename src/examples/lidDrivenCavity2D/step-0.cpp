@@ -94,7 +94,6 @@
 #include "natrium/utilities/BasicNames.h"
 
 #include "LidDrivenCavity2D.h"
-#include "natrium/utilities/CommandLineParser.h"
 //! [Includes]
 
 //! [Namespace]
@@ -104,24 +103,13 @@ using namespace natrium;
 
 
 //! [Main function]
-int main(int argc, char** argv) {
+int main() {
 	// TODO Documentation
-    MPIGuard::getInstance(argc, argv);
+	MPIGuard::getInstance();
 
 	// TODO Documentation
 	pout << "Starting NATriuM lidDrivenCavity2D..." << endl;
-    /////////////////////////////////////////////////
-    // read from command line
-    //////////////////////////////////////////////////
-    CommandLineParser parser(argc, argv);
-    std::string dirname;
-    dirname = getenv("NATRIUM_HOME");
-    dirname += "/lidDrivenCavity2D";
-    parser.setArgument<std::string>("output-dir", "Output directory", dirname);
-    try { parser.importOptions();
-    } catch (HelpMessageStop&) { return 0;
-    }
-    dirname = parser.getArgument<std::string>("output-dir");
+
 	// set Reynolds and Mach number
 	const double Re = 1000;
 	const double Ma = 0.1;
@@ -141,13 +129,14 @@ int main(int argc, char** argv) {
 	const double U = 1 / sqrt(3) * Ma;
 	const double viscosity = U / Re; // (because L = 1)
 
-
+	std::stringstream dirname;
+	dirname << getenv("NATRIUM_HOME") << "/lidDrivenCavity2D";
 	//! [Definition]
 
 	//! [Configuration]
 	boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
 			SolverConfiguration>();
-	configuration->setOutputDirectory(dirname);
+	configuration->setOutputDirectory(dirname.str());
 	configuration->setOutputCheckpointInterval(1000);
 	configuration->setOutputSolutionInterval(100);
 	configuration->setSedgOrderOfFiniteElement(orderOfFiniteElement);
