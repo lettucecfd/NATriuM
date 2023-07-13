@@ -45,7 +45,8 @@ namespace natrium {
 //        cout << "\n\nx = " << x;
         double k = 1; // waveVectorMagnitude
         double kZero = 23.66 * shearlayerthickness;
-        double rand_u = InterpolateVelocities(x(0), x(1), x(2), component)* exp(-2*k/kZero) * exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2));;
+        double rand_u = InterpolateVelocities(x(0), x(1), x(2), component);
+        rand_u *= exp(-2*k/kZero) * exp(-pow((x(1)+0.3)/(2*shearlayerthickness),2));
 //        cout << "\nu = " << rand_u;
 //        m_curl_x
 //        MixingLayer3D::ThreeDLookup::Interp(x(0), x(1), x(2)) interp(double, double, double);

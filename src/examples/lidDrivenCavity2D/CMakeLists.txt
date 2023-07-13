@@ -4,7 +4,7 @@
 # set variable TARGET
 #
 set(    TARGET 
-        step-0-LidDrivenCavity2D
+        step-LidDrivenCavity2D
         )
 
 
