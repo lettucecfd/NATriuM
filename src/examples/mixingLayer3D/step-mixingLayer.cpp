@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("Re", "Reynolds number 1/nu", 800);
     parser.setArgument<double>("Ma", "Mach number", 0.3); // TODO: .1, .4, .8, 1.2
     parser.setArgument<double>("time", "simulation time (s)", 15);
-    parser.setArgument<int>("nout", "output vtk every nout steps", 500);
+    parser.setArgument<int>("nout", "output vtk every nout steps", 200);
     parser.setPositionalArgument<int>("ref-level",
                                       "Refinement level of the computation grid.");
     parser.setArgument<int>("grid-repetitions",
@@ -44,7 +44,6 @@ int main(int argc, char** argv) {
     double Re = parser.getArgument<int>("Re");
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
-    double repetitions = parser.getArgument<int>("grid-repetitions");
     double time = parser.getArgument<double>("time");
 
     /////////////////////////////////////////////////
@@ -74,7 +73,7 @@ int main(int argc, char** argv) {
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
             SolverConfiguration>();
     configuration->setUserInteraction(false);
-    configuration->setOutputCheckpointInterval(1e9);
+    configuration->setOutputCheckpointInterval(nout*10);
     configuration->setOutputSolutionInterval(nout);
     configuration->setSimulationEndTime(time);
     configuration->setOutputGlobalTurbulenceStatistics(true);
@@ -122,7 +121,7 @@ int main(int argc, char** argv) {
     //////////////////////////////////////////////////
     CompressibleCFDSolver<3> solver(configuration, mixingLayer);
     const size_t table_output_lines_per_10s = 300;
-    configuration->setOutputTableInterval(1 + 1.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
+    configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
     solver.run();
     pout << "step-mixingLayer terminated." << endl;
     return 0;
