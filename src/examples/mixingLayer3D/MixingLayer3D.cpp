@@ -23,7 +23,9 @@
 //#include <iomanip>
 using namespace std;
 
-float shearlayerthickness = 0.093;
+double shearlayerthickness = 0.093;
+int kmax = 48; // [1] C. Pantano and S. Sarkar, “A study of compressibility effects in the high-speed turbulent shear layer using direct simulation,” J. Fluid Mech., vol. 451, pp. 329–371, Jan. 2002, doi: 10.1017/S0022112001006978.
+
 
 namespace natrium {
 
@@ -42,10 +44,8 @@ namespace natrium {
 
     double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
         assert(component < 3);
-        double k = 1; // waveVectorMagnitude
-        double kZero = 23.66 * shearlayerthickness;
         double rand_u = InterpolateVelocities(x(0), x(1), x(2), component);
-        rand_u *= exp(-2*k/kZero) * exp(-pow((x(1))/(2*shearlayerthickness),2));
+        rand_u *= exp(-pow((x(1))/(2*shearlayerthickness),2));
         if (component == 0) {
             return tanh(-x(1)/(2*shearlayerthickness)) + rand_u;
         } else {
@@ -99,13 +99,23 @@ namespace natrium {
         // random generator in [-1,1]
         static std::uniform_real_distribution<double> distr( -1.0, 1.0 ) ;
 
+        // TODO: implement exp(-2*k/kZero)
+        // TODO: implement k (wave vector magnitude)
+        double waveVectorMagnitude = 1; // waveVectorMagnitude
+        // implement k0 (k0/delta_theta_0 = 23.66) (peak wave number)
+        double k0 = 23.66 * shearlayerthickness; // peak wave number
+
         // Fill randomPsi with random values
         randomPsi.reserve(3);
         for (int dir = 0; dir < 3; dir++) { std::vector< std::vector< std::vector<double> > > tmpdir;
-            for (int i = 0; i < nx; i++) { std::vector< std::vector<double> > tmpi;
-                for (int j = 0; j < ny; j++) { std::vector< double > tmpj;
-                    for (int k = 0; k < nz; k++) {
-                        tmpj.push_back(distr(twister));
+            for (int xi = 0; xi < nx; xi++) { std::vector< std::vector<double> > tmpi;
+                for (int yi = 0; yi < ny; yi++) { std::vector< double > tmpj;
+                    for (int zi = 0; zi < nz; zi++) {
+                        double psi_i = 0;
+                        for (int k = 1; k <= kmax; k++) {
+                            psi_i += distr(twister) * exp(-2*k/k0); // * (k/k0)^4 ?
+                        }
+                        tmpj.push_back(psi_i);
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             } randomPsi.push_back(tmpdir);
