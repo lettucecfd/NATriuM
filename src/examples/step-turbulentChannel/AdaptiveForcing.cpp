@@ -108,8 +108,7 @@ void AdaptiveForcing::apply() {
         vector<size_t> number;
         number.resize(m_nofCoordinates);
 
-        boost::shared_ptr<AdvectionOperator<3> > advection =
-                m_solver.getAdvectionOperator();
+        boost::shared_ptr<AdvectionOperator<3> > advection = m_solver.getAdvectionOperator();
         const dealii::UpdateFlags update_flags = dealii::update_quadrature_points
                                                  | dealii::update_gradients;
         const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
@@ -178,14 +177,10 @@ void AdaptiveForcing::apply() {
 
     void AdaptiveForcing::write() {
         if (is_MPI_rank_0()) {
-
-
             *m_tableFile << this->m_solver.getIteration() << " ";
             *m_tableFile << this->m_solver.getTime() << " ";
             *m_tableFile << m_currentRho << " ";
             *m_tableFile << m_targetRhoU << " " << m_currentValueRhoU << " " << m_force << endl;
-
-
         }
     }
 

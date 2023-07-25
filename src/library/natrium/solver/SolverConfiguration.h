@@ -1406,38 +1406,73 @@ public:
 		leave_subsection();
 	}
 
-	size_t getOutputSolutionInterval() {
-		enter_subsection("Output");
-		size_t solutionInterval;
-		try {
-			solutionInterval = get_integer("Output solution interval");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Output solution interval' from parameters: "
-					<< e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		return solutionInterval;
-	}
+    size_t getOutputSolutionInterval() {
+        enter_subsection("Output");
+        size_t solutionInterval;
+        try {
+            solutionInterval = get_integer("Output solution interval");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Output solution interval' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return solutionInterval;
+    }
 
-	void setOutputSolutionInterval(long int outputSolutionInterval) {
-		enter_subsection("Output");
-		try {
-			set("Output solution interval", outputSolutionInterval);
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg << "Could not assign value " << outputSolutionInterval
-					<< " to Output solution interval: " << e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-	}
+    void setOutputSolutionInterval(long int outputSolutionInterval) {
+        enter_subsection("Output");
+        try {
+            set("Output solution interval", outputSolutionInterval);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << outputSolutionInterval
+                << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
 
-	size_t getRestartAtIteration() {
+    size_t getOutputShearLayerInterval() {
+        enter_subsection("Output");
+        enter_subsection("Shear Layer");
+        size_t shearLayerInterval;
+        try {
+            shearLayerInterval = get_integer("Output shear layer interval");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Output shear layer interval' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+        return shearLayerInterval;
+    }
+
+    void setOutputShearLayerInterval(long int outputShearLayerInterval) {
+        enter_subsection("Output");
+        enter_subsection("Shear Layer");
+        try {
+            set("Output shear layer interval", outputShearLayerInterval);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << outputShearLayerInterval
+                << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+    }
+
+    size_t getRestartAtIteration() {
 		enter_subsection("Initialization");
 		size_t restart_it;
 		try {
@@ -2349,42 +2384,67 @@ public:
 		leave_subsection();
 	}
 
-	bool isOutputGlobalTurbulenceStatistics() {
-		enter_subsection("Output");
-		enter_subsection("Turbulence Statistics");
-		bool turbulence_output;
-		try {
-			turbulence_output = get_bool(
-					"Output global turbulence statistics?");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Output global turbulence statistics?' from parameters: "
-					<< e.what();
-			leave_subsection();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		leave_subsection();
-		return turbulence_output;
-	}
+    bool isOutputGlobalTurbulenceStatistics() {
+        enter_subsection("Output");
+        enter_subsection("Turbulence Statistics");
+        bool turbulence_output;
+        try {
+            turbulence_output = get_bool(
+                    "Output global turbulence statistics?");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Output global turbulence statistics?' from parameters: "
+                    << e.what();
+            leave_subsection();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+        return turbulence_output;
+    }
 
-	void setOutputGlobalTurbulenceStatistics(bool output_turbulence) {
-		enter_subsection("Output");
-		enter_subsection("Turbulence Statistics");
-		set("Output global turbulence statistics?", output_turbulence);
-		leave_subsection();
-		leave_subsection();
-	}
+    void setOutputGlobalTurbulenceStatistics(bool output_turbulence) {
+        enter_subsection("Output");
+        enter_subsection("Turbulence Statistics");
+        set("Output global turbulence statistics?", output_turbulence);
+        leave_subsection();
+        leave_subsection();
+    }
+
+    bool isOutputShearLayerStatistics() {
+        enter_subsection("Output");
+        enter_subsection("Shear Layer");
+        bool sl_stats_output;
+        try {
+            sl_stats_output = get_bool("Output shear layer statistics?");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Output shear layer statistics?' from parameters: " << e.what();
+            leave_subsection();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+        return sl_stats_output;
+    }
+
+    void setOutputShearLayerStatistics(bool output_sl_stats) {
+        enter_subsection("Output");
+        enter_subsection("Shear Layer");
+        set("Output shear layer statistics?", output_sl_stats);
+        leave_subsection();
+        leave_subsection();
+    }
 
     bool isOutputCompressibleTurbulenceStatistics() {
         enter_subsection("Output");
         enter_subsection("Turbulence Statistics");
         bool turbulence_output;
         try {
-            turbulence_output = get_bool(
-                    "Output compressible turbulence statistics?");
+            turbulence_output = get_bool("Output compressible turbulence statistics?");
         } catch (std::exception& e) {
             std::stringstream msg;
             msg

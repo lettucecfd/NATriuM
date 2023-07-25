@@ -76,8 +76,10 @@ int main(int argc, char** argv) {
     configuration->setOutputCheckpointInterval(nout*10);
     configuration->setOutputSolutionInterval(nout);
     configuration->setSimulationEndTime(time);
-    configuration->setOutputGlobalTurbulenceStatistics(true);
-    configuration->setOutputCompressibleTurbulenceStatistics(true);
+    configuration->setOutputGlobalTurbulenceStatistics(false);
+    configuration->setOutputCompressibleTurbulenceStatistics(false);
+    configuration->setOutputShearLayerStatistics(true);
+    configuration->setOutputShearLayerInterval(10);
     configuration->setStencilScaling(scaling);
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
@@ -85,6 +87,7 @@ int main(int argc, char** argv) {
     configuration->setHeatCapacityRatioGamma(1.4);
     configuration->setPrandtlNumber(0.71);
     configuration->setSedgOrderOfFiniteElement(3); // TODO: default, 2, 3
+//    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
 

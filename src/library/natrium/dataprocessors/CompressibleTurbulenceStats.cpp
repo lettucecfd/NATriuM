@@ -216,7 +216,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             }
         }
 
-    template class CompressibleTurbulenceStats<2> ;
+//    template class CompressibleTurbulenceStats<2> ;
     template class CompressibleTurbulenceStats<3> ;
 
 }

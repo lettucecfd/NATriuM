@@ -9,6 +9,7 @@
 #include "../utilities/BasicNames.h"
 #include "../dataprocessors/DataProcessor.h"
 #include "boost/filesystem.hpp"
+//#include "../solver/CFDSolver.h"
 
 namespace natrium{
 // forward declaration

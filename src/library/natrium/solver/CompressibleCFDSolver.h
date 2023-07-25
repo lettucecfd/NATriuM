@@ -108,7 +108,7 @@ public:
 
         // Restart from checkpoint?
         boost::shared_ptr<Checkpoint<dim> > checkpoint;
-        CheckpointStatus checkpoint_status;
+//        CheckpointStatus checkpoint_status;
         size_t restart_i = this->m_configuration->getRestartAtIteration();
         if (0 != restart_i) {
             checkpoint = boost::make_shared<Checkpoint<dim> >(restart_i,
@@ -465,7 +465,10 @@ void compressibleFilter() {
              }*/
             if (this->m_configuration->isOutputTurbulenceStatistics())
                 this->m_turbulenceStats->addToReynoldsStatistics(this->m_velocity);
-
+            if (this->m_configuration->isOutputShearLayerStatistics() & (iteration % this->m_configuration->getOutputShearLayerInterval() == 0))
+                this->m_shearLayerStats->addToReynoldsAveragesXZ(
+                        this->m_velocity,
+                        this->m_density);
             // no output if solution interval > 10^8
             if (((iteration % this->m_configuration->getOutputSolutionInterval() == 0)
                  and this->m_configuration->getOutputSolutionInterval() <= 1e8)
@@ -496,6 +499,10 @@ void compressibleFilter() {
                 /// For turbulent flows: add turbulent statistics
                 if (this->m_configuration->isOutputTurbulenceStatistics()) {
                     this->m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
+                }
+                /// For turbulent flows: add turbulent statistics
+                if (this->m_configuration->isOutputShearLayerStatistics() & (iteration % this->m_configuration->getOutputShearLayerInterval() == 0)) {
+                    this->m_shearLayerStats->addReynoldsAveragesXZToOutput(data_out);
                 }
 
                 // tell the data processor the locally owned cells
@@ -546,6 +553,10 @@ void compressibleFilter() {
                 if (this->m_configuration->isOutputTurbulenceStatistics()) {
                     assert(this->m_turbulenceStats);
                     this->m_turbulenceStats->printNewLine();
+                }
+                if (this->m_configuration->isOutputShearLayerStatistics()) {
+                    assert(this->m_shearLayerStats);
+                    this->m_shearLayerStats->printNewLine();
                 }
             }
         }
@@ -711,8 +722,6 @@ void compressibleFilter() {
                     if(supportPoints.at(i)(0)<27.90) {
                             u[0] = -0.611022;
                             u[1] = -0.0;
-
-
 
                         GeneralCollisionData<2,25> data(*(this->m_configuration), *(this->m_problemDescription), this->m_stencil->getScaling(), this->m_problemDescription->getViscosity(), *(this->m_stencil), this->m_stencil->getSpeedOfSoundSquare(), 0.0);
                         //this->m_density(i) = 1.34206;

@@ -7,10 +7,10 @@
 namespace natrium {
     template<size_t dim>
     BenchmarkCompressibleCFDSolver<dim>::BenchmarkCompressibleCFDSolver(
-           boost::shared_ptr<SolverConfiguration> configuration,
-            boost::shared_ptr<CompressibleBenchmark<dim> > problemDescription) :
-            CompressibleCFDSolver<dim>(configuration, problemDescription), m_benchmark(
-            problemDescription) {
+            boost::shared_ptr<SolverConfiguration> configuration,
+            boost::shared_ptr<CompressibleBenchmark<dim> > problemDescription)
+            : CompressibleCFDSolver<dim>(configuration, problemDescription),
+            m_benchmark(problemDescription) {
         // initialize macroscopic variables
 #ifdef WITH_TRILINOS_MPI
         m_analyticDensity.reinit(this->getDensity());

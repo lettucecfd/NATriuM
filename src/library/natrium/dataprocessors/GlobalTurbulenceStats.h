@@ -28,8 +28,7 @@ private:
 	size_t m_nofObservables;
 	vector<string> m_names;
 	vector<size_t> m_number;
-	size_t m_nofCoordinates;
-	vector<double> m_averages;
+    vector<double> m_averages;
 	vector<vector<double> > m_correlations;
 	vector<double> m_EX3; // for skewness
 	vector<double> m_EX4; // for kurtosis

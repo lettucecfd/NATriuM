@@ -269,26 +269,35 @@ SolverConfiguration::SolverConfiguration() {
 				"The amount of command line output.");
 		declare_entry("Write a log file?", "true", dealii::Patterns::Bool(),
 				"Specifies if log is written to a file.");
-		enter_subsection("Turbulence Statistics");
-		{
-			declare_entry("Output global turbulence statistics?", "false",
-					dealii::Patterns::Bool(),
-					"Specifies if global turbulence statistics should be monitored.");
+        enter_subsection("Turbulence Statistics");
+        {
+            declare_entry("Output global turbulence statistics?", "false",
+                          dealii::Patterns::Bool(),
+                          "Specifies if global turbulence statistics should be monitored.");
             declare_entry("Output compressible turbulence statistics?", "false",
                           dealii::Patterns::Bool(),
                           "Specifies if compressible turbulence statistics should be monitored.");
-			declare_entry("Output turbulence statistics?", "false",
-					dealii::Patterns::Bool(),
-					"Specifies if turbulence statistics in slices should be monitored.");
-			declare_entry("Wall normal direction", "1",
-					dealii::Patterns::Integer(0, 3),
-					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");
-			declare_entry("Wall normal coordinates", "1e-1, 2e-1, 5e-1",
-					dealii::Patterns::List(
-							dealii::Patterns::Double(-1e10, 1e10)),
-					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. This comma-separated list of decimal numbers specifies their wall-normal coordinates.");
-		}
-		leave_subsection();
+            declare_entry("Output turbulence statistics?", "false",
+                          dealii::Patterns::Bool(),
+                          "Specifies if turbulence statistics in slices should be monitored.");
+            declare_entry("Wall normal direction", "1",
+                          dealii::Patterns::Integer(0, 3),
+                          "Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");
+            declare_entry("Wall normal coordinates", "1e-1, 2e-1, 5e-1",
+                          dealii::Patterns::List(dealii::Patterns::Double(-1e10, 1e10)),
+                          "Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. This comma-separated list of decimal numbers specifies their wall-normal coordinates.");
+        }
+        leave_subsection();
+        enter_subsection("Shear Layer");
+        {
+            declare_entry("Output shear layer statistics?", "false",
+                          dealii::Patterns::Bool(),
+                          "Specifies if shear layer statistics should be monitored.");
+            declare_entry("Output shear layer interval", "100",
+                          dealii::Patterns::Integer(1),
+                          "Write out shear layer statistics every ... step.");
+        }
+        leave_subsection();
 	}
 	leave_subsection();
 

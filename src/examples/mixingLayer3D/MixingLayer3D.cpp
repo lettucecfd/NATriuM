@@ -100,10 +100,8 @@ namespace natrium {
         static std::uniform_real_distribution<double> distr( -1.0, 1.0 ) ;
 
         // TODO: implement exp(-2*k/kZero)
-        // TODO: implement k (wave vector magnitude)
-        double waveVectorMagnitude = 1; // waveVectorMagnitude
-        // implement k0 (k0/delta_theta_0 = 23.66) (peak wave number)
         double k0 = 23.66 * shearlayerthickness; // peak wave number
+        double k; // waveVectorMagnitude
 
         // Fill randomPsi with random values
         randomPsi.reserve(3);
@@ -112,10 +110,8 @@ namespace natrium {
                 for (int yi = 0; yi < ny; yi++) { std::vector< double > tmpj;
                     for (int zi = 0; zi < nz; zi++) {
                         double psi_i = 0;
-                        for (int k = 1; k <= kmax; k++) {
-                            psi_i += distr(twister) * exp(-2*k/k0); // * (k/k0)^4 ?
-                        }
-                        tmpj.push_back(psi_i);
+                        k = sqrt(x.at(xi)*x.at(xi) + y.at(yi)*y.at(yi) + z.at(zi)*z.at(zi));// * (k/k0)^4 ?
+                        tmpj.push_back(distr(twister) * exp(-2*k/k0));
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             } randomPsi.push_back(tmpdir);

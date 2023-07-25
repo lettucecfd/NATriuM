@@ -587,20 +587,25 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this, s.str());
 		//create the TurbulenceStats object which is responsible for the turbulence table
 		if (configuration->isOutputTurbulenceStatistics()) {
-			std::stringstream s2;
-			s2 << configuration->getOutputDirectory().c_str()
-					<< "/turbulence_table.txt";
-			m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this,
-					m_configuration->getWallNormalDirection(),
-					m_configuration->getWallNormalCoordinates(), s2.str());
-		}
-		if (configuration->isOutputGlobalTurbulenceStatistics()) {
-			appendDataProcessor(
-					boost::make_shared<GlobalTurbulenceStats<dim> >(*this));
+            std::stringstream s2;
+            s2 << configuration->getOutputDirectory().c_str() << "/turbulence_table.txt";
+            m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(
+                    this, m_configuration->getWallNormalDirection(),
+                    m_configuration->getWallNormalCoordinates(), s2.str());
+        }
+        if (configuration->isOutputShearLayerStatistics()) {
+            std::stringstream s2;
+            s2 << configuration->getOutputDirectory().c_str() << "/shearlayer_table.txt";
+            m_shearLayerStats = boost::make_shared<ShearLayerStats<dim>>(this, s2.str());
+        }
+        if (configuration->isOutputGlobalTurbulenceStatistics()) {
+            appendDataProcessor(boost::make_shared<GlobalTurbulenceStats<dim> >(*this));
 		}
 	} else {
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this);
-		//m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this);
+//		m_turbulenceStats = boost::make_shared<TurbulenceStats<dim> >(this,
+//					m_configuration->getWallNormalDirection(),
+//					m_configuration->getWallNormalCoordinates(), s2.str());
 	}
 
 	// Data processors for regularization
@@ -997,6 +1002,8 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		 }*/
 		if (m_configuration->isOutputTurbulenceStatistics())
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
+        if (m_configuration->isOutputShearLayerStatistics())
+            m_shearLayerStats->addToReynoldsAveragesXZ(m_velocity, m_density);
 		// no output if solution interval > 10^8
 		if (((iteration % m_configuration->getOutputSolutionInterval() == 0)
 				and m_configuration->getOutputSolutionInterval() <= 1e8)
@@ -1022,10 +1029,14 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 			/// For Benchmarks: add analytic solution
 			addAnalyticSolutionToOutput(data_out);
-			/// For turbulent flows: add turbulent statistics
-			if (m_configuration->isOutputTurbulenceStatistics()) {
-				m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
-			}
+            /// For turbulent flows: add turbulent statistics
+            if (m_configuration->isOutputTurbulenceStatistics()) {
+                m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
+            }
+            /// For mixing layer flows: add shear layer statistics
+            if (m_configuration->isOutputShearLayerStatistics()) {
+                m_shearLayerStats->addReynoldsAveragesXZToOutput(data_out);
+            }
 
 			// tell the data processor the locally owned cells
 			dealii::Vector<float> subdomain(
@@ -1069,14 +1080,18 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		}
 
 		// output: table
-		// calculate information + physical properties
-		if (iteration % m_configuration->getOutputTableInterval() == 0) {
-			m_solverStats->printNewLine();
-			if (m_configuration->isOutputTurbulenceStatistics()) {
-				assert(m_turbulenceStats);
-				m_turbulenceStats->printNewLine();
-			}
-		}
+        // calculate information + physical properties
+        if (iteration % m_configuration->getOutputTableInterval() == 0) {
+            m_solverStats->printNewLine();
+            if (m_configuration->isOutputTurbulenceStatistics()) {
+                assert(m_turbulenceStats);
+                m_turbulenceStats->printNewLine();
+            }
+            if (m_configuration->isOutputShearLayerStatistics()) {
+                assert(m_shearLayerStats);
+                m_shearLayerStats->printNewLine();
+            }
+        }
 
 		// output: checkpoint
 		// no output if checkpoint interval > 10^8
@@ -1540,7 +1555,7 @@ void CFDSolver<dim>::convertDeprecatedCheckpoint() {
 			*m_advectionOperator->getDoFHandler(), checkpoint_status);
 }
 
-template class CFDSolver<2> ;
+//template class CFDSolver<2> ;
 template class CFDSolver<3> ;
 
 } /* namespace natrium */

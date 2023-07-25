@@ -19,10 +19,11 @@ namespace natrium {
 
 template<size_t dim>
 GlobalTurbulenceStats<dim>::GlobalTurbulenceStats(CFDSolver<dim> & solver) :
-		DataProcessor<dim>(solver), m_filename(
-				outfile(solver.getConfiguration()->getOutputDirectory())), m_legendFilename(
-				legendfile(solver.getConfiguration()->getOutputDirectory())), m_outputOff(
-				solver.getConfiguration()->isSwitchOutputOff()) {
+                DataProcessor<dim>(solver),
+		        m_filename(outfile(solver.getConfiguration()->getOutputDirectory())),
+                m_legendFilename(legendfile(solver.getConfiguration()->getOutputDirectory())),
+                m_outputOff(solver.getConfiguration()->isSwitchOutputOff())
+                {
 
 	// assign names
 	m_names.push_back("rho");
@@ -116,8 +117,8 @@ void GlobalTurbulenceStats<dim>::printHeaderLine() {
 		legend_file << k << "  <enstrophy>" << endl;
 		k++;
 		legend_file << k << "  <energy^2>" << endl;
-		k++;
-		legend_file << k << "  <enstrophy^2>" << endl;
+        k++;
+        legend_file << k << "  <enstrophy^2>" << endl;
 		legend_file.close();
 
 	} /* is_MPI_rank 0 */
@@ -149,7 +150,7 @@ void GlobalTurbulenceStats<dim>::writeToFile() {
 		*m_tableFile << m_energy << " ";
 		*m_tableFile << m_enstrophy << " ";
 		*m_tableFile << m_energySquared << " ";
-		*m_tableFile << m_enstrophySquared << " ";
+        *m_tableFile << m_enstrophySquared << " ";
 		*m_tableFile << endl;
 
 	} /* is mpi rank 0 */
@@ -203,6 +204,7 @@ void GlobalTurbulenceStats<dim>::calculate() {
 	double enst = 0.0;
 	double ener_sq = 0.0;
 	double enst_sq = 0.0;
+    double DelThe = 0.0;
 	uxs.resize(n_q_points);
 	uys.resize(n_q_points);
 	uzs.resize(n_q_points);
@@ -332,7 +334,7 @@ void GlobalTurbulenceStats<dim>::calculate() {
 	m_energy = dealii::Utilities::MPI::sum(ener, MPI_COMM_WORLD);
 	m_enstrophy = dealii::Utilities::MPI::sum(enst, MPI_COMM_WORLD);
 	m_energySquared = dealii::Utilities::MPI::sum(ener_sq, MPI_COMM_WORLD);
-	m_enstrophySquared = dealii::Utilities::MPI::sum(enst_sq, MPI_COMM_WORLD);
+    m_enstrophySquared = dealii::Utilities::MPI::sum(enst_sq, MPI_COMM_WORLD);
 	//}
 }
 
