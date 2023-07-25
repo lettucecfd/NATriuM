@@ -593,11 +593,6 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
                     this, m_configuration->getWallNormalDirection(),
                     m_configuration->getWallNormalCoordinates(), s2.str());
         }
-        if (configuration->isOutputShearLayerStatistics()) {
-            std::stringstream s2;
-            s2 << configuration->getOutputDirectory().c_str() << "/shearlayer_table.txt";
-            m_shearLayerStats = boost::make_shared<ShearLayerStats<dim>>(this, s2.str());
-        }
         if (configuration->isOutputGlobalTurbulenceStatistics()) {
             appendDataProcessor(boost::make_shared<GlobalTurbulenceStats<dim> >(*this));
 		}
@@ -987,23 +982,17 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 			Timing::getTimer().print_summary();
 		}
 		// output estimated runtime after iterations 1, 10, 100, 1000, ...
-		/*if (iteration > m_iterationStart) {
-		 if (int(log10(iteration - m_iterationStart))
-		 == log10(iteration - m_iterationStart)) {
-		 time_t estimated_end = m_tstart
-		 + (m_configuration->getNumberOfTimeSteps()
-		 - m_iterationStart)
-		 / (iteration - m_iterationStart)
-		 * (time(0) - m_tstart);
-		 struct tm * ltm = localtime(&estimated_end);
-		 LOG(BASIC) << "i = " << iteration << "; Estimated end: "
-		 << string(asctime(ltm)) << endl;
-		 }
-		 }*/
+		if (iteration > m_iterationStart) {
+             if (int(log10(iteration - m_iterationStart)) == log10(iteration - m_iterationStart)) {
+                 time_t estimated_end = m_tstart + (m_configuration->getNumberOfTimeSteps() - m_iterationStart)
+                 / (iteration - m_iterationStart) * (time(0) - m_tstart);
+                 struct tm * ltm = localtime(&estimated_end);
+                 LOG(BASIC) << "i = " << iteration << "; Estimated end: " << string(asctime(ltm)) << endl;
+             }
+        }
+        // add turbulence statistics to output
 		if (m_configuration->isOutputTurbulenceStatistics())
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
-        if (m_configuration->isOutputShearLayerStatistics())
-            m_shearLayerStats->addToReynoldsAveragesXZ(m_velocity, m_density);
 		// no output if solution interval > 10^8
 		if (((iteration % m_configuration->getOutputSolutionInterval() == 0)
 				and m_configuration->getOutputSolutionInterval() <= 1e8)
@@ -1032,10 +1021,6 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
             /// For turbulent flows: add turbulent statistics
             if (m_configuration->isOutputTurbulenceStatistics()) {
                 m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
-            }
-            /// For mixing layer flows: add shear layer statistics
-            if (m_configuration->isOutputShearLayerStatistics()) {
-                m_shearLayerStats->addReynoldsAveragesXZToOutput(data_out);
             }
 
 			// tell the data processor the locally owned cells
@@ -1086,10 +1071,6 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
             if (m_configuration->isOutputTurbulenceStatistics()) {
                 assert(m_turbulenceStats);
                 m_turbulenceStats->printNewLine();
-            }
-            if (m_configuration->isOutputShearLayerStatistics()) {
-                assert(m_shearLayerStats);
-                m_shearLayerStats->printNewLine();
             }
         }
 

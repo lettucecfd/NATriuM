@@ -8,18 +8,21 @@
  *      Author: dominik
  */
 #include <fstream>
-#include <time.h>
+//#include <time.h>
 #include <stdlib.h>
-#include "deal.II/numerics/data_out.h"
+//#include "deal.II/numerics/data_out.h"
 #include "natrium/solver/CompressibleCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 #include "natrium/stencils/Stencil.h"
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/CommandLineParser.h"
 #include "MixingLayer3D.h"
+#include "ShearLayerStats.h"
 
 
 using namespace natrium;
+
+double shearLayerThickness = 0.093;
 
 // Main function
 int main(int argc, char** argv) {
@@ -44,7 +47,7 @@ int main(int argc, char** argv) {
     double Re = parser.getArgument<int>("Re");
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
-    double time = parser.getArgument<double>("time");
+    auto time = parser.getArgument<double>("time");
 
     /////////////////////////////////////////////////
     // set parameters, set up configuration object
@@ -78,8 +81,8 @@ int main(int argc, char** argv) {
     configuration->setSimulationEndTime(time);
     configuration->setOutputGlobalTurbulenceStatistics(false);
     configuration->setOutputCompressibleTurbulenceStatistics(false);
-    configuration->setOutputShearLayerStatistics(true);
-    configuration->setOutputShearLayerInterval(10);
+    configuration->setOutputShearLayerStatistics(false);
+    configuration->setOutputShearLayerInterval(5);
     configuration->setStencilScaling(scaling);
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
@@ -125,6 +128,7 @@ int main(int argc, char** argv) {
     CompressibleCFDSolver<3> solver(configuration, mixingLayer);
     const size_t table_output_lines_per_10s = 300;
     configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
+    solver.appendDataProcessor(boost::make_shared<ShearLayerStats>(solver, configuration->getOutputDirectory(), shearLayerThickness));
     solver.run();
     pout << "step-mixingLayer terminated." << endl;
     return 0;

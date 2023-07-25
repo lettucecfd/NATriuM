@@ -69,7 +69,7 @@ public:
 template<size_t dim> class CFDSolver {
 	template<size_t dim2> friend class SolverStats;
     template<size_t dim3> friend class TurbulenceStats;
-    template<size_t dim3> friend class ShearLayerStats;
+//    template<size_t dim3> friend class ShearLayerStats;
 	template<size_t dim3> friend class GridInterpolation;
 	template<size_t dim4> friend class DataProcessor;
 	template<size_t dim3> friend class PseudoEntropicStabilizer;
@@ -129,7 +129,6 @@ protected:
 	/// table out
 	boost::shared_ptr<SolverStats<dim> > m_solverStats;
     boost::shared_ptr<TurbulenceStats<dim> > m_turbulenceStats;
-    boost::shared_ptr<ShearLayerStats<dim> > m_shearLayerStats;
 
 	// vector of data processors
 	vector<boost::shared_ptr<DataProcessor<dim> > > m_dataProcessors;

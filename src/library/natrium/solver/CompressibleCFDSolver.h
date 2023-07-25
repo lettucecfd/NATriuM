@@ -465,10 +465,6 @@ void compressibleFilter() {
              }*/
             if (this->m_configuration->isOutputTurbulenceStatistics())
                 this->m_turbulenceStats->addToReynoldsStatistics(this->m_velocity);
-            if (this->m_configuration->isOutputShearLayerStatistics() & (iteration % this->m_configuration->getOutputShearLayerInterval() == 0))
-                this->m_shearLayerStats->addToReynoldsAveragesXZ(
-                        this->m_velocity,
-                        this->m_density);
             // no output if solution interval > 10^8
             if (((iteration % this->m_configuration->getOutputSolutionInterval() == 0)
                  and this->m_configuration->getOutputSolutionInterval() <= 1e8)
@@ -499,10 +495,6 @@ void compressibleFilter() {
                 /// For turbulent flows: add turbulent statistics
                 if (this->m_configuration->isOutputTurbulenceStatistics()) {
                     this->m_turbulenceStats->addReynoldsStatisticsToOutput(data_out);
-                }
-                /// For turbulent flows: add turbulent statistics
-                if (this->m_configuration->isOutputShearLayerStatistics() & (iteration % this->m_configuration->getOutputShearLayerInterval() == 0)) {
-                    this->m_shearLayerStats->addReynoldsAveragesXZToOutput(data_out);
                 }
 
                 // tell the data processor the locally owned cells
@@ -553,10 +545,6 @@ void compressibleFilter() {
                 if (this->m_configuration->isOutputTurbulenceStatistics()) {
                     assert(this->m_turbulenceStats);
                     this->m_turbulenceStats->printNewLine();
-                }
-                if (this->m_configuration->isOutputShearLayerStatistics()) {
-                    assert(this->m_shearLayerStats);
-                    this->m_shearLayerStats->printNewLine();
                 }
             }
         }

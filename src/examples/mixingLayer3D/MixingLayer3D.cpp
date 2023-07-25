@@ -101,7 +101,7 @@ namespace natrium {
 
         // TODO: implement exp(-2*k/kZero)
         double k0 = 23.66 * shearlayerthickness; // peak wave number
-        double k; // waveVectorMagnitude
+//        double k; // waveVectorMagnitude
 
         // Fill randomPsi with random values
         randomPsi.reserve(3);
@@ -109,9 +109,18 @@ namespace natrium {
             for (int xi = 0; xi < nx; xi++) { std::vector< std::vector<double> > tmpi;
                 for (int yi = 0; yi < ny; yi++) { std::vector< double > tmpj;
                     for (int zi = 0; zi < nz; zi++) {
-                        double psi_i = 0;
-                        k = sqrt(x.at(xi)*x.at(xi) + y.at(yi)*y.at(yi) + z.at(zi)*z.at(zi));// * (k/k0)^4 ?
-                        tmpj.push_back(distr(twister) * exp(-2*k/k0));
+//                        vector<double> k(3);
+//                        for (int ki = 0; ki < 3; ki++) {
+//                            k.at(ki) = distr(twister);
+//                        }
+//                        double k_abs = 0;
+//                        for (int ki = 0; ki < 3; ki++) {
+//                            k_abs += k.at(ki);
+//                        }
+//                        k_abs = sqrt(k_abs);
+//                        k = sqrt(x.at(xi)*x.at(xi) + y.at(yi)*y.at(yi) + z.at(zi)*z.at(zi));// * (k/k0)^4 ?
+                        double psi_i = distr(twister); //exp(-2*k_abs/k0); // * distr(twister);
+                        tmpj.push_back(psi_i);
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             } randomPsi.push_back(tmpdir);
