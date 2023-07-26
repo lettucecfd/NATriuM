@@ -97,7 +97,7 @@ namespace natrium {
         static std::seed_seq seed_seq( std::begin(sseq), std::end(sseq) ) ;
         static std::mt19937 twister(seed_seq) ;
         // random generator in [-1,1]
-        static std::uniform_real_distribution<double> distr( -1.0, 1.0 ) ;
+        static std::uniform_real_distribution<double> distr(-m_dU, m_dU) ;
 
         // TODO: implement exp(-2*k/kZero)
         double k0 = 23.66 * shearlayerthickness; // peak wave number
@@ -119,8 +119,8 @@ namespace natrium {
 //                        }
 //                        k_abs = sqrt(k_abs);
 //                        k = sqrt(x.at(xi)*x.at(xi) + y.at(yi)*y.at(yi) + z.at(zi)*z.at(zi));// * (k/k0)^4 ?
-                        double psi_i = distr(twister); //exp(-2*k_abs/k0); // * distr(twister);
-                        tmpj.push_back(psi_i);
+//                        double psi_i = distr(twister); //exp(-2*k_abs/k0); // * distr(twister);
+                        tmpj.push_back(distr(twister));
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             } randomPsi.push_back(tmpdir);

@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     configuration->setOutputGlobalTurbulenceStatistics(false);
     configuration->setOutputCompressibleTurbulenceStatistics(false);
     configuration->setOutputShearLayerStatistics(false);
-    configuration->setOutputShearLayerInterval(5);
+    configuration->setOutputShearLayerInterval(50);
     configuration->setStencilScaling(scaling);
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
