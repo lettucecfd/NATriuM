@@ -29,11 +29,11 @@ private:
     // Output parameters
 	boost::filesystem::path m_outDir;
 //    vector<string> m_names;
-    std::string m_filename;
+    string m_filename;
     boost::shared_ptr<std::fstream> m_tableFile;
 
     // Y Coordinates
-    std::vector<double> m_yCoordinates;
+    vector<double> m_yCoordinates;
     std::map<double, size_t, own_double_less> m_yCoordinateToIndex;
     size_t m_nofCoordinates;
     bool m_yCoordsUpToDate;
@@ -52,14 +52,14 @@ private:
     void calculateRhoU();
     void rescaleDensity();
 
-    static std::string outfile(std::string dir) {
+    static string outfile(string dir) {
         boost::filesystem::path out_dir(dir);
         boost::filesystem::path out_file = out_dir / "shearlayer.txt";
         return out_file.string();
     }
 
 public:
-	ShearLayerStats(CompressibleCFDSolver<3> & solver, std::string outdir, double target);
+	ShearLayerStats(CompressibleCFDSolver<3> & solver, string outdir, double target);
 	void apply() override;
 	~ShearLayerStats() override;
     bool isMYCoordsUpToDate() const;

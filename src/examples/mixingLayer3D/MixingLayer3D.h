@@ -45,12 +45,15 @@ namespace natrium {
                 double minx, miny, minz;
                 double maxx, maxy, maxz;
                 int nx, ny, nz;
+                int k1max, k2max, k3max;
                 double InterpolateVelocities(double, double, double, const unsigned int) const;
             public:
                 InitialVelocity(MixingLayer3D *flow);
                 double value(const dealii::Point<3>& x, const unsigned int component = 0) const override;
-            vector<std::complex<double>> Fourier1D(const vector<double> &in);
-            vector<double> InverseFourier1D(const vector<std::complex<double>> &in);
+                vector<vector<vector<std::complex<double>>>> Fourier3D(const vector<vector<vector<double>>> &in);
+                vector<vector<vector<double>>> InverseFourier3D(const vector<vector<vector<std::complex<double>>>> &in);
+                vector<std::complex<double>> Fourier1D(const vector<double> &in, const int kmax);
+                vector<double> InverseFourier1D(const vector<std::complex<double>> &in);
         };
         class InitialDensity: public dealii::Function<3> {
         private: MixingLayer3D* m_flow;

@@ -125,9 +125,8 @@ void ShearLayerStats::apply() {
     if (!isMYCoordsUpToDate()) {
         updateYValues();
     }
+    calculateRhoU();
 	if (m_solver.getIteration() % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0) {
-        calculateRhoU();
-//        rescaleDensity();
         write();
 	}
 }
@@ -152,8 +151,7 @@ void ShearLayerStats::calculateRhoU() {
 
     // don't know what I do here, but it worked for turbulent channel
     boost::shared_ptr<AdvectionOperator<3> > advection = m_solver.getAdvectionOperator();
-    const dealii::UpdateFlags update_flags = dealii::update_quadrature_points
-                                             | dealii::update_gradients;
+    const dealii::UpdateFlags update_flags = dealii::update_quadrature_points | dealii::update_gradients;
     const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
     dealii::FEValues<3> fe_values(advection->getMapping(),
                                   *(advection->getFe()), advection->getSupportPointEvaluation(), update_flags);
@@ -161,8 +159,7 @@ void ShearLayerStats::calculateRhoU() {
     vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
 
     // loop
-    typename dealii::DoFHandler<3>::active_cell_iterator cell =
-            dof_handler.begin_active(), endc = dof_handler.end();
+    typename dealii::DoFHandler<3>::active_cell_iterator cell = dof_handler.begin_active(), endc = dof_handler.end();
     double y;
     size_t y_ind;
     size_t dof_ind;
@@ -172,8 +169,7 @@ void ShearLayerStats::calculateRhoU() {
             cell->get_dof_indices(local_indices);
             // get averages
             fe_values.reinit(cell);
-            const std::vector<dealii::Point<3> >& quad_points =
-                    fe_values.get_quadrature_points();
+            const std::vector<dealii::Point<3> >& quad_points = fe_values.get_quadrature_points();
             for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
                 y = quad_points.at(i)(1);
                 assert(m_yCoordinateToIndex.find(y) != m_yCoordinateToIndex.end());
@@ -186,41 +182,57 @@ void ShearLayerStats::calculateRhoU() {
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
+    for (; cell != endc; ++cell) {
+        if (cell->is_locally_owned()) {
+            const std::vector<dealii::Point<3> > &quad_points = fe_values.get_quadrature_points();
+            for (size_t i = 0; i < m_nofCoordinates; i++) {
+                y = quad_points.at(i)(1);
+                y_ind = m_yCoordinateToIndex.at(y);
+                rhoux_average.at(y_ind) /= number.at(y_ind);
+                rhoux_average.at(y_ind) /= number.at(y_ind);
+            }
+        }
+    }
 
     // communicate
     for (size_t i = 0; i < m_nofCoordinates; i++) {
-        number.at(i) = dealii::Utilities::MPI::sum(number.at(i), MPI_COMM_WORLD);
+//        number.at(i) = dealii::Utilities::MPI::sum(number.at(i), MPI_COMM_WORLD);
         ux_favre.at(i) = rhoux_average.at(i) / rho_average.at(i);
         integrand.at(i) = rho_average.at(i) * (1 /* dU / 2 */ - ux_favre.at(i) * (1 /* dU / 2 */ + ux_favre.at(i)));
-        ux_favre.at(i) = dealii::Utilities::MPI::sum(ux_favre.at(i), MPI_COMM_WORLD);
-        rhoux_average.at(i) = dealii::Utilities::MPI::sum(rhoux_average.at(i), MPI_COMM_WORLD);
-        rho_average.at(i) = dealii::Utilities::MPI::sum(rho_average.at(i), MPI_COMM_WORLD);
-        ux_favre.at(i) /= number.at(i);
-        rhoux_average.at(i) /= number.at(i);
-        rho_average.at(i) /= number.at(i);
+//        ux_favre.at(i) = dealii::Utilities::MPI::sum(ux_favre.at(i), MPI_COMM_WORLD);
+//        rhoux_average.at(i) = dealii::Utilities::MPI::sum(rhoux_average.at(i), MPI_COMM_WORLD);
+//        rho_average.at(i) = dealii::Utilities::MPI::sum(rho_average.at(i), MPI_COMM_WORLD);
+//        ux_favre.at(i) /= number.at(i);
+//        rhoux_average.at(i) /= number.at(i);
+//        rho_average.at(i) /= number.at(i);
     }
     // integrate along y
     double integral = 0;
     double rho_int = 0;
     double rhoux_int = 0;
     double ux_favre_int = 0;
-    double interval_length = 0;
+//    double interval_length = 0;
     for (size_t i = 0; i < m_nofCoordinates-1; i++) {
         double window_size = std::abs( m_yCoordinates.at(i+1) -m_yCoordinates.at(i));
         integral += window_size*0.5*(integrand.at(i)+integrand.at(i+1));
         rho_int += window_size*0.5*(rho_average.at(i)+rho_average.at(i+1));
         rhoux_int += window_size*0.5*(rhoux_average.at(i)+rhoux_average.at(i+1));
         ux_favre_int += window_size*0.5*(ux_favre.at(i)+ux_favre.at(i+1));
-        interval_length += window_size;
+//        interval_length += window_size;
     }
-    m_currentRho = rho_int / interval_length;
-    m_currentRhoUx = rhoux_int / interval_length;
-    m_currentUxFavre = ux_favre_int / interval_length;
+    integral /= m_nofCoordinates;
+    rho_int /= m_nofCoordinates;
+    rhoux_int /= m_nofCoordinates;
+    ux_favre_int /= m_nofCoordinates;
+    m_currentRho = rho_int;
+    m_currentRhoUx = rhoux_int;
+    m_currentUxFavre = ux_favre_int;
 //    double lastDeltaTheta = m_DeltaTheta.back();
 //    double lastTime = m_Time.back();
     double currentTime = m_solver.getTime();
 //    m_Time.push_back(currentTime);
     m_currentDeltaTheta = integral * (1. / 4. /* rho0 * dU^2 = 1 * 2*2 */);
+    cout << "t: " << currentTime << ", delta_Theta: " << m_currentDeltaTheta << endl;
 //    m_DeltaTheta_diff = m_currentDeltaTheta - lastDeltaTheta;
 //    m_DeltaTheta.push_back(m_currentDeltaTheta);
 }
@@ -235,10 +247,6 @@ void ShearLayerStats::write() {
         *m_tableFile << m_currentUxFavre << " ";
         *m_tableFile << endl;
     }
-}
-
-void ShearLayerStats::rescaleDensity() {
-    m_solver.scaleF(1.0/m_currentRho);
 }
 
 ShearLayerStats::~ShearLayerStats() = default;
