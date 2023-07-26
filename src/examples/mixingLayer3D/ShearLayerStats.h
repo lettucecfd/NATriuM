@@ -28,7 +28,7 @@ private:
 
     // Output parameters
 	boost::filesystem::path m_outDir;
-    vector<string> m_names;
+//    vector<string> m_names;
     std::string m_filename;
     boost::shared_ptr<std::fstream> m_tableFile;
 

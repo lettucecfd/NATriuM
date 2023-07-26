@@ -21,19 +21,6 @@ m_currentRho(1.0), m_currentDeltaTheta(starting_delta_theta), m_currentRhoUx(1.0
 
 //    m_DeltaTheta.push_back(m_currentDeltaTheta);
 
-    m_names.emplace_back("deltaTheta");
-    m_names.emplace_back("Rho");
-    m_names.emplace_back("RhoUx");
-    m_names.emplace_back("UxFavre");
-    m_names.emplace_back("T");
-    m_names.emplace_back("dT/dx");
-    m_names.emplace_back("dT/dy");
-    m_names.emplace_back("dT/dz");
-    m_names.emplace_back("Ma_local/Ma_wall");
-    m_names.emplace_back("rho*ux");
-    m_names.emplace_back("rho*uy");
-    m_names.emplace_back("rho*uz");
-
     m_yCoordsUpToDate = false;
     m_nofCoordinates = 0;
 
@@ -47,13 +34,13 @@ m_currentRho(1.0), m_currentDeltaTheta(starting_delta_theta), m_currentRhoUx(1.0
         }
     }
 
-    *m_tableFile << "it ";
-    *m_tableFile << "t    ";
-    *m_tableFile << "deltaTheta ";
-    *m_tableFile << "rho    ";
-    *m_tableFile << "rhoUx  ";
-    *m_tableFile << "UxFavre ";
-    *m_tableFile << endl;
+//    *m_tableFile << "it ";
+//    *m_tableFile << "t    ";
+//    *m_tableFile << "deltaTheta ";
+//    *m_tableFile << "rho    ";
+//    *m_tableFile << "rhoUx  ";
+//    *m_tableFile << "UxFavre ";
+//    *m_tableFile << endl;
 }
 
 bool ShearLayerStats::isMYCoordsUpToDate() const {
@@ -61,9 +48,7 @@ bool ShearLayerStats::isMYCoordsUpToDate() const {
 }
 
 void ShearLayerStats::updateYValues() {
-    boost::shared_ptr<AdvectionOperator<3> > advection =
-            m_solver.getAdvectionOperator();
-    m_yCoordsUpToDate = true;
+    boost::shared_ptr<AdvectionOperator<3> > advection = m_solver.getAdvectionOperator();
 
     //////////////////////////
     // Calculate y values ////
@@ -132,6 +117,8 @@ void ShearLayerStats::updateYValues() {
     // free
     free(sendbuf);
     free(recvbuf);
+    // finished
+    m_yCoordsUpToDate = true;
 }
 
 void ShearLayerStats::apply() {
