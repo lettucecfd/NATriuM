@@ -15,6 +15,7 @@
 
 #include "deal.II/grid/tria.h"
 #include <vector>
+#include <complex>
 #include <iostream>
 #include <algorithm>
 #include "natrium/problemdescription/ProblemDescription.h"
@@ -45,12 +46,12 @@ namespace natrium {
                 double maxx, maxy, maxz;
                 int nx, ny, nz;
                 double InterpolateVelocities(double, double, double, const unsigned int) const;
-//                void InitializeVelocities();
             public:
                 InitialVelocity(MixingLayer3D *flow);
-//                InitialVelocity(MixingLayer3D* flow) : m_flow(flow) { }
-                virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
-            };
+                double value(const dealii::Point<3>& x, const unsigned int component = 0) const override;
+            vector<std::complex<double>> Fourier1D(const vector<double> &in);
+            vector<double> InverseFourier1D(const vector<std::complex<double>> &in);
+        };
         class InitialDensity: public dealii::Function<3> {
         private: MixingLayer3D* m_flow;
         public:
@@ -84,13 +85,9 @@ namespace natrium {
             return true;
         }
 
-//        static MixingLayer3D::ThreeDLookup RandomVelocities;
-//        MixingLayer3D::ThreeDLookup LookupUy = ThreeDLookup(1);
-//        MixingLayer3D::ThreeDLookup LookupUz = ThreeDLookup(2);
-
     private:
         /// speed of sound
-        double m_cs;
+        double m_U;
         size_t m_refinementLevel;
 
         /**
@@ -106,9 +103,6 @@ namespace natrium {
          */
         boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
 
-        void setRandomVelocityPotential() const;
-
-//        double InterpolateVelocities(double, double, double, int);
     };
 
 } /* namespace natrium */

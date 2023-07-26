@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
     const double scaling = sqrt(3) * cs;
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer = boost::make_shared<
-            MixingLayer3D>(viscosity, refinement_level, cs);
+            MixingLayer3D>(viscosity, refinement_level, U);
 
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
