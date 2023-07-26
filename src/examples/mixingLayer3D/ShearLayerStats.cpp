@@ -127,7 +127,7 @@ void ShearLayerStats::apply() {
     }
 	if (m_solver.getIteration() % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0) {
         calculateRhoU();
-        rescaleDensity();
+//        rescaleDensity();
         write();
 	}
 }
@@ -158,7 +158,7 @@ void ShearLayerStats::calculateRhoU() {
     dealii::FEValues<3> fe_values(advection->getMapping(),
                                   *(advection->getFe()), advection->getSupportPointEvaluation(), update_flags);
     size_t dofs_per_cell = advection->getFe()->dofs_per_cell;
-    std::vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
+    vector<dealii::types::global_dof_index> local_indices(dofs_per_cell);
 
     // loop
     typename dealii::DoFHandler<3>::active_cell_iterator cell =
@@ -181,7 +181,6 @@ void ShearLayerStats::calculateRhoU() {
                 dof_ind = local_indices.at(i);
                 number.at(y_ind) += 1;
                 // fill value vector
-                // add to averages:
                 rhoux_average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind);				// rho u
                 rho_average.at(y_ind) += m_rho(dof_ind);
             } /* for all quadrature points */
