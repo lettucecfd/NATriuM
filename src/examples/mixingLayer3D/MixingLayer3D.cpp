@@ -58,6 +58,9 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 }
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : m_flow(flow) {
+    k1max = kmax;
+    k2max = kmax;
+    k3max = kmax;
     vector<double> x, y, z;
     double xmin, xmax, ymin, ymax, zmin, zmax, dx, dy, dz;
     float lx, ly, lz;
