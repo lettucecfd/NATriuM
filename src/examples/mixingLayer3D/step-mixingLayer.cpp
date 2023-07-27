@@ -23,6 +23,7 @@
 using namespace natrium;
 
 double shearLayerThickness = 0.093;
+int dft_points = 20;
 
 // Main function
 int main(int argc, char** argv) {
@@ -69,12 +70,11 @@ int main(int argc, char** argv) {
     // chose scaling so that the right Ma-number is achieved
     const double scaling = sqrt(3) * cs;
 
-    boost::shared_ptr<ProblemDescription<3> > mixingLayer = boost::make_shared<
-            MixingLayer3D>(viscosity, refinement_level, U);
+    boost::shared_ptr<ProblemDescription<3> > mixingLayer =
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, U);
 
     // setup configuration
-    boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<
-            SolverConfiguration>();
+    boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
     configuration->setUserInteraction(false);
     configuration->setOutputCheckpointInterval(nout*10);
     configuration->setOutputSolutionInterval(nout);
@@ -132,5 +132,4 @@ int main(int argc, char** argv) {
     solver.run();
     pout << "step-mixingLayer terminated." << endl;
     return 0;
-
 }

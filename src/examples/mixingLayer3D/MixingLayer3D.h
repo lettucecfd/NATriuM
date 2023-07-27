@@ -29,7 +29,6 @@ namespace natrium {
  */
     class MixingLayer3D: public ProblemDescription<3> {
     public:
-
         /**
          * @short class to describe the x-component of the initial velocity
          * @note other are default (v0=w0=0, rho0=1)
@@ -37,11 +36,11 @@ namespace natrium {
         class InitialVelocity: public dealii::Function<3> {
             private:
                 MixingLayer3D* m_flow;
-                std::vector<double> xvec;
-                std::vector<double> yvec;
-                std::vector<double> zvec;
-                std::vector< std::vector< std::vector< std::vector<double> > > > randomPsi;
-                std::vector< std::vector< std::vector< std::vector<double> > > > curlOfPsi;
+                vector<double> xvec;
+                vector<double> yvec;
+                vector<double> zvec;
+                vector< vector< vector< vector<double> > > > randomPsi;
+                vector< vector< vector< vector<double> > > > curlOfPsi;
                 double minx, miny, minz;
                 double maxx, maxy, maxz;
                 int nx, ny, nz;
@@ -52,8 +51,6 @@ namespace natrium {
                 double value(const dealii::Point<3>& x, const unsigned int component = 0) const override;
                 vector<vector<vector<std::complex<double>>>> Fourier3D(const vector<vector<vector<double>>> &in);
                 vector<vector<vector<double>>> InverseFourier3D(const vector<vector<vector<std::complex<double>>>> &in);
-                vector<std::complex<double>> Fourier1D(const vector<double> &in, const int kmax);
-                vector<double> InverseFourier1D(const vector<std::complex<double>> &in);
         };
         class InitialDensity: public dealii::Function<3> {
         private: MixingLayer3D* m_flow;
@@ -65,28 +62,18 @@ namespace natrium {
         private:
             MixingLayer3D* m_flow;
         public:
-            InitialTemperature(MixingLayer3D* flow) :
-                    m_flow(flow) { }
+            InitialTemperature(MixingLayer3D* flow) : m_flow(flow) { }
             virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
 
-
         /// constructor
-        MixingLayer3D(double viscosity, size_t refinementLevel, double cs = 0.57735026919);
-
+        MixingLayer3D(double viscosity, size_t refinementLevel, double U = 1);
         /// destructor
         virtual ~MixingLayer3D();
 
-        virtual void refine(Mesh<3>& mesh) {
-            // Refine grid
-            mesh.refine_global(m_refinementLevel);
-        }
-        virtual void transform(Mesh<3>&) {
-
-        }
-        virtual bool isCartesian() {
-            return true;
-        }
+        virtual void refine(Mesh<3>& mesh) {mesh.refine_global(m_refinementLevel);}
+        virtual void transform(Mesh<3>&) {}
+        virtual bool isCartesian() {return true;}
 
     private:
         /// speed of sound
@@ -105,7 +92,7 @@ namespace natrium {
          * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
          */
         boost::shared_ptr<BoundaryCollection<3> > makeBoundaries();
-
+//    protected:
     };
 
 } /* namespace natrium */

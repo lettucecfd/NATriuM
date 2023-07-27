@@ -24,10 +24,6 @@
 #include <tuple>
 #include <vector>
 #include <iostream>
-//#include <complex>
-//#include <vector>
-//#include <iomanip>
-
 using namespace std;
 
 double shearlayerthickness = 0.093;
@@ -53,9 +49,9 @@ MixingLayer3D::~MixingLayer3D() = default;
 double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component < 3);
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component);
-    rand_u *= exp(-pow((x(1))/(2*shearlayerthickness),2));
+    rand_u *= exp(-pow((x(1))/(2 * shearlayerthickness), 2));
     if (component == 0) {
-        return tanh(-x(1)/(2*shearlayerthickness)) + rand_u;
+        return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
         return rand_u;
     }
@@ -100,8 +96,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     // warm up randomness
     static int sseq[ std::mt19937::state_size ] ;
     const static bool once = ( std::srand( std::time(nullptr)), // for true randomness: std::time(nullptr)
-            std::generate( std::begin(sseq), std::end(sseq), std::rand ),
-            true ) ;
+            std::generate( std::begin(sseq), std::end(sseq), std::rand ), true ) ;
     static std::seed_seq seed_seq( std::begin(sseq), std::end(sseq) ) ;
     static std::mt19937 twister(seed_seq) ;
     // random generator in [-1,1]
@@ -163,18 +158,9 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     double tmp;
     for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
         vector<vector<vector<double> > > tmpdir;
-        if (dir_curl == 0) {
-            m = 2;
-            n = 1;
-        }
-        else if (dir_curl == 2) {
-            m = 1;
-            n = 0;
-        }
-        else {
-            m = dir_curl - 1;
-            n = dir_curl + 1;
-        }
+        if (dir_curl == 0) { m = 2; n = 1; }
+        else if (dir_curl == 2) { m = 1; n = 0; }
+        else { m = dir_curl - 1; n = dir_curl + 1; }
         for (int i = 0; i < nx; i++) {
             vector<vector<double> > tmpi;
             for (int j = 0; j < ny; j++) {
@@ -182,12 +168,9 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                 for (int k = 0; k < nz; k++) {
                     tmp = (gradient[m][n][i][j][k] - gradient[n][m][i][j][k]) / 4;
                     tmpj.push_back(tmp);
-                }
-                tmpi.push_back(tmpj);
-            }
-            tmpdir.push_back(tmpi);
-        }
-        curlOfPsi.push_back(tmpdir);
+                } tmpi.push_back(tmpj);
+            } tmpdir.push_back(tmpi);
+        } curlOfPsi.push_back(tmpdir);
     } // so: curlOfPsi = {ux, uy, uz}
 }
 
@@ -223,35 +206,6 @@ vector<vector<vector<double>>> MixingLayer3D::InitialVelocity::InverseFourier3D(
                             complex<double> tmp = in[K1][K2][K3]*exp(omeg1+omeg2+omeg3);
                             out[xi][yi][zi] += real(tmp);
     }}}}}}
-    return out;
-}
-
-vector<complex<double>> MixingLayer3D::InitialVelocity::Fourier1D(const vector<double> &in, const int kmax) {
-    vector<complex<double>> out(n);
-    for (int k = 0; k < kmax; ++k) {
-        out[k] = {0.0, 0.0}; // Initialize each component to zero
-        for (int t = 0; t < n; ++t) {
-            double angle = 2.0 * M_PI * k * t / n;
-            complex<double> exp_term(std::cos(angle), std::sin(angle));
-            out[k] += in[t] * exp_term; //std::real(in[k] * exp_term);
-        }
-        out[k] /= n;
-    }
-    return out;
-}
-
-vector<double> MixingLayer3D::InitialVelocity::InverseFourier1D(const vector<complex<double>> &in) {
-    int n = in.size();
-    vector<double> out(n);
-    for (int t = 0; t < n; ++t) {
-        out[t] = 0.0; // Initialize each component to zero
-        for (int k = 0; k < kmax; ++k) {
-            double angle = 2.0 * M_PI * k * t / n;
-            complex<double> exp_term(std::cos(angle), std::sin(angle));
-            out[t] += std::real(in[k] * exp_term);
-        }
-        out[t] /= n; // Scale the result
-    }
     return out;
 }
 

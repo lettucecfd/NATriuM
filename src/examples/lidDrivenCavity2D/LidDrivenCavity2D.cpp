@@ -56,8 +56,6 @@ boost::shared_ptr<Mesh<2> > LidDrivenCavity2D::makeGrid() {
 	cell->face(2)->set_all_boundary_ids(2);  // bottom
 	cell->face(3)->set_all_boundary_ids(3);  // top
 
-
-
 	return square;
 }
 

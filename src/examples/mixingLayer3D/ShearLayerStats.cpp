@@ -177,62 +177,119 @@ void ShearLayerStats::calculateRhoU() {
                 dof_ind = local_indices.at(i);
                 number.at(y_ind) += 1;
                 // fill value vector
-                rhoux_average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind);				// rho u
+                rhoux_average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind); // rho u
                 rho_average.at(y_ind) += m_rho(dof_ind);
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
-    for (; cell != endc; ++cell) {
-        if (cell->is_locally_owned()) {
-            const std::vector<dealii::Point<3> > &quad_points = fe_values.get_quadrature_points();
-            for (size_t i = 0; i < m_nofCoordinates; i++) {
-                y = quad_points.at(i)(1);
-                y_ind = m_yCoordinateToIndex.at(y);
-                rhoux_average.at(y_ind) /= number.at(y_ind);
-                rhoux_average.at(y_ind) /= number.at(y_ind);
-            }
-        }
-    }
+//    for (; cell != endc; ++cell) {
+//        if (cell->is_locally_owned()) {
+//            const std::vector<dealii::Point<3> > &quad_points = fe_values.get_quadrature_points();
+//            for (size_t i = 0; i < m_nofCoordinates; i++) {
+//                y = quad_points.at(i)(1);
+//                y_ind = m_yCoordinateToIndex.at(y);
+//                rho_average.at(y_ind) /= number.at(y_ind);
+//                rhoux_average.at(y_ind) /= number.at(y_ind);
+//            }
+//        }
+//    }
 
     // communicate
-    for (size_t i = 0; i < m_nofCoordinates; i++) {
-//        number.at(i) = dealii::Utilities::MPI::sum(number.at(i), MPI_COMM_WORLD);
-        ux_favre.at(i) = rhoux_average.at(i) / rho_average.at(i);
-        integrand.at(i) = rho_average.at(i) * (1 /* dU / 2 */ - ux_favre.at(i) * (1 /* dU / 2 */ + ux_favre.at(i)));
-//        ux_favre.at(i) = dealii::Utilities::MPI::sum(ux_favre.at(i), MPI_COMM_WORLD);
-//        rhoux_average.at(i) = dealii::Utilities::MPI::sum(rhoux_average.at(i), MPI_COMM_WORLD);
-//        rho_average.at(i) = dealii::Utilities::MPI::sum(rho_average.at(i), MPI_COMM_WORLD);
-//        ux_favre.at(i) /= number.at(i);
-//        rhoux_average.at(i) /= number.at(i);
-//        rho_average.at(i) /= number.at(i);
+    cout << "number: ";
+    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+        // add n_points(yi), integrand(yi), ux_favre(yi), rho*ux(yi), and rho(yi) from different MPI processes
+        number.at(yi) = dealii::Utilities::MPI::sum(number.at(yi), MPI_COMM_WORLD);
+        // average over number of points at yi
+        rhoux_average.at(yi) = dealii::Utilities::MPI::sum(rhoux_average.at(yi), MPI_COMM_WORLD);
+        rho_average.at(yi) = dealii::Utilities::MPI::sum(rho_average.at(yi), MPI_COMM_WORLD);
+        rhoux_average.at(yi) /= number.at(yi);
+        rho_average.at(yi) /= number.at(yi);
+        cout << number.at(yi) << ",";
+    } cout << endl;
+
+    cout << "rho_average: ";
+    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+        cout << rho_average.at(yi) << ",";
+    } cout << endl;
+    cout << "rhoux_average: ";
+    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+        cout << rhoux_average.at(yi) << ",";
+    } cout << endl;
+
+    // calculate ux_favre and integrand
+    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+        // average rhoux and rho if its 0
+        if (number.at(yi) == 0) {
+            rhoux_average.at(yi) = 0.5*(rhoux_average.at(yi-1)+rhoux_average.at(yi+1));
+            rho_average.at(yi) = 0.5*(rho_average.at(yi-1)+rho_average.at(yi+1));
+        }
+        ux_favre.at(yi) = rhoux_average.at(yi) / rho_average.at(yi);
+        integrand.at(yi) = rho_average.at(yi) * (1 /* dU 2 */ - ux_favre.at(yi) * (1 /* dU/2 */ + ux_favre.at(yi)));
     }
+
+    cout << "ux_favre: ";
+    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+        cout << ux_favre.at(yi) << ",";
+    } cout << endl;
+
+    cout << "integrand: ";
+    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+        cout << integrand.at(yi) << ",";
+    } cout << endl;
+
+//    // communicate again
+//    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+//        if (number.at(yi) != 0) {
+//            integrand.at(yi) = dealii::Utilities::MPI::sum(integrand.at(yi), MPI_COMM_WORLD);
+//            ux_favre.at(yi) = dealii::Utilities::MPI::sum(ux_favre.at(yi), MPI_COMM_WORLD);
+//            // average over number of points at yi
+//            integrand.at(yi) /= number.at(yi);
+//            ux_favre.at(yi) /= number.at(yi);
+//        }
+//    }
+
     // integrate along y
     double integral = 0;
-    double rho_int = 0;
-    double rhoux_int = 0;
-    double ux_favre_int = 0;
-//    double interval_length = 0;
-    for (size_t i = 0; i < m_nofCoordinates-1; i++) {
-        double window_size = std::abs( m_yCoordinates.at(i+1) -m_yCoordinates.at(i));
-        integral += window_size*0.5*(integrand.at(i)+integrand.at(i+1));
-        rho_int += window_size*0.5*(rho_average.at(i)+rho_average.at(i+1));
-        rhoux_int += window_size*0.5*(rhoux_average.at(i)+rhoux_average.at(i+1));
-        ux_favre_int += window_size*0.5*(ux_favre.at(i)+ux_favre.at(i+1));
-//        interval_length += window_size;
-    }
-    integral /= m_nofCoordinates;
-    rho_int /= m_nofCoordinates;
-    rhoux_int /= m_nofCoordinates;
-    ux_favre_int /= m_nofCoordinates;
-    m_currentRho = rho_int;
-    m_currentRhoUx = rhoux_int;
-    m_currentUxFavre = ux_favre_int;
+    double rho_avg = 0;
+    double rhoux_avg = 0;
+    double ux_favre_avg = 0;
+    double interval_length = 0;
+    cout << "windowsize: ";
+    for (size_t yi = 0; yi < m_nofCoordinates - 1; yi++) {
+        double window_size = abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi));
+        integral += window_size*0.5*(integrand.at(yi) + integrand.at(yi + 1));
+        rho_avg += rho_average.at(yi);
+        rhoux_avg += rhoux_average.at(yi);
+        ux_favre_avg += ux_favre.at(yi);
+        interval_length += window_size;
+        cout << window_size << ",";
+    } cout << endl;
+    integral /= interval_length;
+    rho_avg /= m_nofCoordinates-1;
+    rhoux_avg /= m_nofCoordinates-1;
+    ux_favre_avg /= m_nofCoordinates-1;
+
+    // communicate AGAIN
+//    rho_avg = dealii::Utilities::MPI::sum(rho_avg, MPI_COMM_WORLD);
+//    rhoux_avg = dealii::Utilities::MPI::sum(rhoux_avg, MPI_COMM_WORLD);
+//    ux_favre_avg = dealii::Utilities::MPI::sum(ux_favre_avg, MPI_COMM_WORLD);
+//    integral = dealii::Utilities::MPI::sum(integral, MPI_COMM_WORLD);
+
+    double currentTime = m_solver.getTime();
+    m_currentRho = rho_avg;
+    m_currentRhoUx = rhoux_avg;
+    m_currentUxFavre = ux_favre_avg;
 //    double lastDeltaTheta = m_DeltaTheta.back();
 //    double lastTime = m_Time.back();
-    double currentTime = m_solver.getTime();
 //    m_Time.push_back(currentTime);
     m_currentDeltaTheta = integral * (1. / 4. /* rho0 * dU^2 = 1 * 2*2 */);
-    cout << "t: " << currentTime << ", delta_Theta: " << m_currentDeltaTheta << endl;
+    cout << "t: " << currentTime
+         << ", delta_Theta: " << m_currentDeltaTheta
+         << ", Rho_avg: " << m_currentRho
+         << ", RhoUx_avg: " << m_currentRhoUx
+         << ", UxFavre_avg: " << m_currentUxFavre
+         << ", ny: " << m_nofCoordinates
+         << endl;
 //    m_DeltaTheta_diff = m_currentDeltaTheta - lastDeltaTheta;
 //    m_DeltaTheta.push_back(m_currentDeltaTheta);
 }
