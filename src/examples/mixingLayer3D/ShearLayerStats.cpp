@@ -239,12 +239,16 @@ void ShearLayerStats::calculateRhoU() {
     double rhoux_avg = 0;
     double ux_favre_avg = 0;
     double interval_length = 0;
-    for (size_t yi = 0; yi < m_nofCoordinates - 1; yi++) {
-        double window_size = abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi));
-        // left side: trapezoidal rule
-        if (yi == 0) {
+    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+        double window_size;
+        if (yi == 0) { // left side: trapezoidal rule
+            window_size = abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi));
             integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi + 1));
+        } else if (yi == m_nofCoordinates) { // right side: trapezoidal rule
+            window_size = abs(m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1));
+            integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi - 1));
         } else {
+            window_size = 0.5*abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi-1)); // other: simpson rule
             integral += window_size * (integrand.at(yi - 1) + 4 * integrand.at(yi) + integrand.at(yi + 1)) / 6;
         }
         rho_avg += rho_average.at(yi);
@@ -252,9 +256,9 @@ void ShearLayerStats::calculateRhoU() {
         ux_favre_avg += ux_favre.at(yi);
         interval_length += window_size;
     }
-    rho_avg /= m_nofCoordinates-1;
-    rhoux_avg /= m_nofCoordinates-1;
-    ux_favre_avg /= m_nofCoordinates-1;
+    rho_avg /= m_nofCoordinates;
+    rhoux_avg /= m_nofCoordinates;
+    ux_favre_avg /= m_nofCoordinates;
 
     m_currentRho = rho_avg;
     m_currentRhoUx = rhoux_avg;
