@@ -43,7 +43,7 @@ MixingLayer3D::~MixingLayer3D() = default;
 double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component < 3);
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component);
-    rand_u *= exp(-pow((x(1))/(2 * shearlayerthickness), 2)) * 5;
+    rand_u *= exp(-pow((x(1))/(2 * shearlayerthickness), 2));
     if (component == 0) {
         return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
@@ -103,12 +103,10 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     // Fill randomPsi with random values
     randomPsi.reserve(3);
     for (int dir = 0; dir < 3; dir++) { vector< vector< vector<double> > > tmpdir;
-        for (int xi = 0; xi < nx; xi++) {
-            vector<vector<double> > tmpi;
-            for (int yi = 0; yi < ny; yi++) {
-                vector<double> tmpj;
-                for (int zi = 0; zi < nz; zi++) {
-                    double tmpk = distr(twister); // * shearlayerthickness;
+        for (int xi = 0; xi < nx; xi++) { vector<vector<double> > tmpi;
+            for (int yi = 0; yi < ny; yi++) { vector<double> tmpj;
+                for (int zi = 0; zi < nz; zi++) { double tmpk;
+                    tmpk = distr(twister); // * shearlayerthickness;
                     tmpj.push_back(tmpk);
                 } tmpi.push_back(tmpj);
             } tmpdir.push_back(tmpi);
@@ -123,9 +121,19 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                     psi_hat[k1][k2][k3] *= exp(-2*k_abs/k0);
         } } }
         // perform inverse dft on psi_hat (directionally)
-        tmpdir = InverseFourier3D(psi_hat);
+        vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
+//        // report if they are not the same
+//        for (int xi = 0; xi < nx; xi++) {
+//            for (int yi = 0; yi < ny; yi++) {
+//                for (int zi = 0; zi < nz; zi++) {
+//                    if (abs(psi_i[xi][yi][zi] - tmpdir[xi][yi][zi]) > 1e-10) {
+//                        cout << "ups! tmpdi["<<xi<<"]["<<yi<<"]["<<zi<<"]="<<tmpdir[xi][yi][zi];
+//                        cout << " psi_i["<<xi<<"]["<<yi<<"]["<<zi<<"]="<<psi_i[xi][yi][zi];
+//                    }
+//        } } }
+
         // add tmpdir (psix, psiy, or psiz) to randomPsi
-        randomPsi.push_back(tmpdir);
+        randomPsi.push_back(psi_i);
     } // so: randomPsi = {psix, psiy, psiz} ;
 
     // calculate gradient using central difference scheme
@@ -152,17 +160,14 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
 
     // calculate curl using gradient values
     int m, n; // for indices of cross-product
-    double tmp;
     for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
         vector<vector<vector<double> > > tmpdir;
         if (dir_curl == 0) { m = 2; n = 1; }
         else if (dir_curl == 2) { m = 1; n = 0; }
         else { m = dir_curl - 1; n = dir_curl + 1; }
-        for (int i = 0; i < nx; i++) {
-            vector<vector<double> > tmpi;
-            for (int j = 0; j < ny; j++) {
-                vector<double> tmpj;
-                for (int k = 0; k < nz; k++) {
+        for (int i = 0; i < nx; i++) { vector<vector<double> > tmpi;
+            for (int j = 0; j < ny; j++) { vector<double> tmpj;
+                for (int k = 0; k < nz; k++) { double tmp;
                     tmp = (gradient[m][n][i][j][k] - gradient[n][m][i][j][k]) / 4;
                     tmpj.push_back(tmp);
                 } tmpi.push_back(tmpj);
@@ -176,15 +181,19 @@ vector<vector<vector<std::complex<double>>>> MixingLayer3D::InitialVelocity::Fou
     vector<vector<vector<complex<double>>>> out(k1max,
         vector<vector<complex<double>>>(k2max,
         vector<complex<double>>(k3max, {0.0, 0.0}))); // coordinates are on last three dimensions
-    double n1, n2, n3;
+    double xi, yi, zi;
+    double dx, dy, dz;
     complex<double> omeg1, omeg2, omeg3;
-    for (int xi = 0; xi < nx; xi++) { n1 = xvec[xi];
-        for (int yi = 0; yi < ny; yi++) { n2 = yvec[yi];
-            for (int zi = 0; zi < nz; zi++) { n3 = zvec[zi];
-                for (int K1 = 0; K1 < k1max; K1++) { omeg1 = {0.0, -2 * M_PI / k1max * n1 * K1};
-                    for (int K2 = 0; K2 < k2max; K2++) { omeg2 = {0.0, -2 * M_PI / k2max * n2 * K2};
-                        for (int K3 = 0; K3 < k3max; K3++) { omeg3 = {0.0, -2 * M_PI / k3max * n3 * K3};
-                            out[K1][K2][K3] += in[xi][yi][zi]*exp(omeg1+omeg2+omeg3);
+    for (int ix = 0; ix < nx-1; ix++) { xi = xvec[ix+1]; dx = xi - xvec[ix];
+        for (int iy = 0; iy < ny-1; iy++) { yi = yvec[iy+1]; dy = yi - yvec[iy];
+            for (int iz = 0; iz < nz-1; iz++) { zi = zvec[iz+1]; dz = zi - zvec[iz];
+                for (int kx = 0; kx < k1max; kx++) { omeg1 = {0.0, -2 * M_PI * xi / nx * (kx + 0.5)};
+                    for (int ky = 0; ky < k2max; ky++) { omeg2 = {0.0, -2 * M_PI * yi / ny * (ky + 0.5)};
+                        for (int kz = 0; kz < k3max; kz++) { omeg3 = {0.0, -2 * M_PI * zi / nz * (kz + 0.5)};
+                            out[kx][ky][kz] += in[ix][iy][iz] * exp(omeg1 + omeg2 + omeg3) * dx * dy * dz;
+//                            if (abs(out[kx][ky][kz]) == 0.0) {
+//                                cout << "DFT["<<kx<<"]["<<ky<<"]["<<kz<<"]="<<out[kx][ky][kz]<<endl;
+//                            }
     }}}}}}
     return out;
 }
@@ -193,15 +202,19 @@ vector<vector<vector<double>>> MixingLayer3D::InitialVelocity::InverseFourier3D(
         const vector<vector<vector<std::complex<double>>>> &in) {
     vector<vector<vector<double>>> out(nx, vector<vector<double>>(ny, vector<double>(nz, 0.0)));
     double n1, n2, n3;
-    complex<double> omeg1, omeg2, omeg3;
-    for (int xi = 0; xi < nx; xi++) { n1 = xvec[xi];
-        for (int yi = 0; yi < ny; yi++) { n2 = yvec[yi];
-            for (int zi = 0; zi < nz; zi++) { n3 = zvec[zi];
-                for (int K1 = 0; K1 < k1max; K1++) { omeg1 = {0.0, 2*M_PI/k1max*n1*K1};
-                    for (int K2 = 0; K2 < k2max; K2++) { omeg2 = {0.0, 2*M_PI/k2max*n2*K2};
-                        for (int K3 = 0; K3 < k3max; K3++) { omeg3 = {0.0, 2*M_PI/k3max*n3*K3};
-                            complex<double> tmp = in[K1][K2][K3]*exp(omeg1+omeg2+omeg3);
-                            out[xi][yi][zi] += real(tmp);
+    double xi, yi, zi;
+    complex<double> omeg1, omeg2, omeg3, tmp;
+    for (int ix = 0; ix < nx-1; ix++) { xi = xvec[ix+1];
+        for (int iy = 0; iy < ny-1; iy++) { yi = yvec[iy+1];
+            for (int iz = 0; iz < nz-1; iz++) { zi = zvec[iz+1];
+                for (int kx = 0; kx < k1max; kx++) { omeg1 = {0.0, 2*M_PI * xi / nx * (kx+0.5)};
+                    for (int ky = 0; ky < k2max; ky++) { omeg2 = {0.0, 2 * M_PI * yi / ny * (ky+0.5)};
+                        for (int kz = 0; kz < k3max; kz++) { omeg3 = {0.0, 2 * M_PI * zi / nz * (kz+0.5)};
+                            tmp = in[kx][ky][kz] * exp(omeg1 + omeg2 + omeg3); // dkx, dky, dkz = 1
+                            out[xi][yi][zi] += real(tmp) / (nx * ny * nz);
+//                            if (out[xi][yi][zi] == 0.0) {
+//                                cout << "DFT["<<xi<<"]["<<yi<<"]["<<zi<<"]="<<out[xi][yi][zi]<<endl;
+//                            }
     }}}}}}
     return out;
 }
