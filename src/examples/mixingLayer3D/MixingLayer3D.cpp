@@ -8,13 +8,6 @@
 #include "MixingLayer3D.h"
 
 #include "deal.II/grid/grid_generator.h"
-//#include "deal.II/grid/tria_accessor.h"
-//#include "deal.II/grid/tria_iterator.h"
-//#include "deal.II/grid/grid_out.h"
-//#include "deal.II/fe/fe_series.h"
-//#include "../postprocessing/FFT.cpp"
-//#include "../postprocessing/fftw3.h"
-
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
 #include <random>

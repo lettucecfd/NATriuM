@@ -278,7 +278,6 @@ void ShearLayerStats::calculateRhoU() {
 void ShearLayerStats::write() {
     if (is_MPI_rank_0()) {
         *m_tableFile << this->m_solver.getIteration() << " ";
-        *m_tableFile << this->m_solver.getTime() << " ";
         *m_tableFile << m_lastTime << " ";
         *m_tableFile << m_currentTime << " ";
         *m_tableFile << m_lastDeltaTheta << " ";
