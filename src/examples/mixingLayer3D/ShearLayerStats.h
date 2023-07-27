@@ -44,7 +44,10 @@ private:
     double m_currentUxFavre;
     double m_currentDeltaTheta;
 //    // Data stored across output steps
-//    double m_DeltaTheta_diff;
+    double m_lastDeltaTheta;
+    double m_lastTime;
+    double m_currentTime;
+    double m_DeltaTheta_diff;
 //    vector<double> m_DeltaTheta;
 //    vector<double> m_Time;
 
