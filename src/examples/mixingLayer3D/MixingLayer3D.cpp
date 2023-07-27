@@ -27,10 +27,11 @@
 using namespace std;
 
 double shearlayerthickness = 0.093;
-int n = 3;
+double k0 = 23.66 * shearlayerthickness; // peak wave number
+int n = 5;
 int kmax = pow(2, n); // [1] C. Pantano and S. Sarkar, “A study of compressibility effects in the high-speed turbulent shear layer using direct simulation,” J. Fluid Mech., vol. 451, pp. 329–371, Jan. 2002, doi: 10.1017/S0022112001006978.
 // kmax = 32
-int npoints = 5; // number of points in shortest axis of velocity field
+//int npoints = 32; // number of points in shortest axis of velocity field (lz, presumably)
 
 namespace natrium {
 
@@ -58,6 +59,7 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 }
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : m_flow(flow) {
+    int npoints = pow(2, flow->m_refinementLevel);
     k1max = kmax;
     k2max = kmax;
     k3max = kmax;
@@ -105,8 +107,6 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     // random generator in [-1,1]
     static uniform_real_distribution<double> distr(-1.0, 1.0) ; // +- Velocity
 
-    double k0 = 23.66 * shearlayerthickness; // peak wave number
-
     // Fill randomPsi with random values
     randomPsi.reserve(3);
     for (int dir = 0; dir < 3; dir++) { vector< vector< vector<double> > > tmpdir;
@@ -122,15 +122,15 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
         }
         // perform dft on randomPsi
         vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
-//        // multiply in fourier space
-//        for (int k1 = 0; k1 < k1max; k1++) {
-//            for (int k2 = 0; k2 < k1max; k2++) {
-//                for (int k3 = 0; k3 < k1max; k3++) { double k_abs;
-//                    k_abs = sqrt(k1*k1 + k2*k2 + k3*k3);
-//                    psi_hat[k1][k2][k3] *= exp(-2*k_abs/k0);
-//        } } }
-//        // perform inverse dft on psi_hat (directionally)
-//        tmpdir = InverseFourier3D(psi_hat);
+        // multiply in fourier space
+        for (int k1 = 0; k1 < k1max; k1++) {
+            for (int k2 = 0; k2 < k1max; k2++) {
+                for (int k3 = 0; k3 < k1max; k3++) { double k_abs;
+                    k_abs = sqrt(k1*k1 + k2*k2 + k3*k3);
+                    psi_hat[k1][k2][k3] *= exp(-2*k_abs/k0);
+        } } }
+        // perform inverse dft on psi_hat (directionally)
+        tmpdir = InverseFourier3D(psi_hat);
         // add tmpdir (psix, psiy, or psiz) to randomPsi
         randomPsi.push_back(tmpdir);
     } // so: randomPsi = {psix, psiy, psiz} ;

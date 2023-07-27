@@ -17,7 +17,8 @@ namespace natrium {
 ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string outdir, double starting_delta_theta) :
 DataProcessor<3>(solver), m_u(solver.getVelocity()), m_rho(solver.getDensity()),
 m_outDir(outdir), m_filename(outfile(solver.getConfiguration()->getOutputDirectory())),
-m_currentRho(1.0), m_currentDeltaTheta(starting_delta_theta), m_currentRhoUx(1.0), m_currentUxFavre(1.0) {
+m_currentRho(1.0), m_currentDeltaTheta(starting_delta_theta), m_currentRhoUx(1.0), m_currentUxFavre(1.0),
+m_currentTime(0.0) {
 
 //    m_DeltaTheta.push_back(m_currentDeltaTheta);
 
@@ -125,8 +126,8 @@ void ShearLayerStats::apply() {
     if (!isMYCoordsUpToDate()) {
         updateYValues();
     }
-    calculateRhoU();
 	if (m_solver.getIteration() % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0) {
+        calculateRhoU();
         write();
 	}
 }
@@ -267,26 +268,22 @@ void ShearLayerStats::calculateRhoU() {
     double dt = m_currentTime - m_lastTime;
     // calculate difference
     m_DeltaTheta_diff = (m_currentDeltaTheta - m_lastDeltaTheta) / (dt * (1 /*dU*/ / 0.093 /*DT0*/));
-    cout << "t: " << m_currentTime
-        << ", delta_Theta: " << m_currentDeltaTheta
-        << ", DeltaTheta_diff / dU*DT0: " << m_DeltaTheta_diff
-//        << ", RhoUx_avg: " << m_currentRhoUx
-//        << ", UxFavre_avg: " << m_currentUxFavre
-//        << ", ny: " << m_nofCoordinates
-//        << ", interval: " << interval_length
-        << ", dt: " << dt
-        << endl;
-//    m_DeltaTheta.push_back(m_currentDeltaTheta);
+//    cout << "t: " << m_currentTime
+//        << ", delta_Theta: " << m_currentDeltaTheta
+//        << ", DeltaTheta_diff / dU*DT0: " << m_DeltaTheta_diff
+//        << ", dt: " << dt
+//        << endl;
 }
 
 void ShearLayerStats::write() {
     if (is_MPI_rank_0()) {
         *m_tableFile << this->m_solver.getIteration() << " ";
         *m_tableFile << this->m_solver.getTime() << " ";
+        *m_tableFile << m_lastTime << " ";
+        *m_tableFile << m_currentTime << " ";
+        *m_tableFile << m_lastDeltaTheta << " ";
         *m_tableFile << m_currentDeltaTheta << " ";
-        *m_tableFile << m_currentRho << " ";
-        *m_tableFile << m_currentRhoUx << " ";
-        *m_tableFile << m_currentUxFavre << " ";
+        *m_tableFile << m_DeltaTheta_diff << " ";
         *m_tableFile << endl;
     }
 }
