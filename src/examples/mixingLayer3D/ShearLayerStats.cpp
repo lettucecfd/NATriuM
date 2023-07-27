@@ -244,7 +244,7 @@ void ShearLayerStats::calculateRhoU() {
         if (yi == 0) { // left side: trapezoidal rule
             window_size = abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi));
             integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi + 1));
-        } else if (yi == m_nofCoordinates) { // right side: trapezoidal rule
+        } else if (yi == m_nofCoordinates-1) { // right side: trapezoidal rule
             window_size = abs(m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1));
             integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi - 1));
         } else {

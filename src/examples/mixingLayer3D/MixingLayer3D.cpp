@@ -114,14 +114,18 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
         // perform dft on randomPsi
         vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
         // multiply in fourier space
-        for (int k1 = 0; k1 < k1max; k1++) {
-            for (int k2 = 0; k2 < k1max; k2++) {
-                for (int k3 = 0; k3 < k1max; k3++) { double k_abs;
-                    k_abs = sqrt(k1*k1 + k2*k2 + k3*k3);
-                    psi_hat[k1][k2][k3] *= exp(-2*k_abs/k0);
+        for (int kx = 0; kx < k1max; kx++) {
+            for (int ky = 0; ky < k1max; ky++) {
+                for (int kz = 0; kz < k1max; kz++) { double k_abs;
+                    k_abs = sqrt(kx * kx + ky * ky + kz * kz);
+                    psi_hat[kx][ky][kz] *= exp(-2 * k_abs / k0);
+                    if (kx == 0 | ky == 0 | kz == 0) {
+                        psi_hat[kx][ky][kz] = 0;
+                    }
         } } }
         // perform inverse dft on psi_hat (directionally)
         vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
+//        psi_i = tmpdir;
 //        // report if they are not the same
 //        for (int xi = 0; xi < nx; xi++) {
 //            for (int yi = 0; yi < ny; yi++) {
@@ -184,16 +188,25 @@ vector<vector<vector<std::complex<double>>>> MixingLayer3D::InitialVelocity::Fou
     double xi, yi, zi;
     double dx, dy, dz;
     complex<double> omeg1, omeg2, omeg3;
-    for (int ix = 0; ix < nx-1; ix++) { xi = xvec[ix+1]; dx = xi - xvec[ix];
-        for (int iy = 0; iy < ny-1; iy++) { yi = yvec[iy+1]; dy = yi - yvec[iy];
-            for (int iz = 0; iz < nz-1; iz++) { zi = zvec[iz+1]; dz = zi - zvec[iz];
+    for (int ix = 0; ix < nx; ix++) {
+        if (ix == 0) { dx = xvec[ix+1]-xvec[ix];
+        } else if (ix == nx-1) { dx = xvec[ix]-xvec[ix-1];
+        } else {  dx = (xvec[ix+1]-xvec[ix-1]) * 0.5; }
+        xi = xvec[ix];
+        for (int iy = 0; iy < ny; iy++) {
+            if (iy == 0) { dy = yvec[iy+1]-yvec[iy];
+            } else if (iy == ny-1) { dy = yvec[iy]-yvec[iy-1];
+            } else {  dy = (yvec[iy+1]-yvec[iy-1]) * 0.5; }
+            yi = yvec[iy];
+            for (int iz = 0; iz < nz; iz++) {
+                if (iz == 0) { dz = zvec[iz+1]-zvec[iz];
+                } else if (iz == nz-1) { dz = zvec[iz]-zvec[iz-1];
+                } else {  dz = (zvec[iz+1]-zvec[iz-1]) * 0.5; }
+                zi = zvec[iz];
                 for (int kx = 0; kx < k1max; kx++) { omeg1 = {0.0, -2 * M_PI * xi / nx * (kx + 0.5)};
                     for (int ky = 0; ky < k2max; ky++) { omeg2 = {0.0, -2 * M_PI * yi / ny * (ky + 0.5)};
                         for (int kz = 0; kz < k3max; kz++) { omeg3 = {0.0, -2 * M_PI * zi / nz * (kz + 0.5)};
                             out[kx][ky][kz] += in[ix][iy][iz] * exp(omeg1 + omeg2 + omeg3) * dx * dy * dz;
-//                            if (abs(out[kx][ky][kz]) == 0.0) {
-//                                cout << "DFT["<<kx<<"]["<<ky<<"]["<<kz<<"]="<<out[kx][ky][kz]<<endl;
-//                            }
     }}}}}}
     return out;
 }
@@ -204,17 +217,14 @@ vector<vector<vector<double>>> MixingLayer3D::InitialVelocity::InverseFourier3D(
     double n1, n2, n3;
     double xi, yi, zi;
     complex<double> omeg1, omeg2, omeg3, tmp;
-    for (int ix = 0; ix < nx-1; ix++) { xi = xvec[ix+1];
-        for (int iy = 0; iy < ny-1; iy++) { yi = yvec[iy+1];
-            for (int iz = 0; iz < nz-1; iz++) { zi = zvec[iz+1];
-                for (int kx = 0; kx < k1max; kx++) { omeg1 = {0.0, 2*M_PI * xi / nx * (kx+0.5)};
-                    for (int ky = 0; ky < k2max; ky++) { omeg2 = {0.0, 2 * M_PI * yi / ny * (ky+0.5)};
-                        for (int kz = 0; kz < k3max; kz++) { omeg3 = {0.0, 2 * M_PI * zi / nz * (kz+0.5)};
+    for (int ix = 0; ix < nx; ix++) { //xi = xvec[ix];
+        for (int iy = 0; iy < ny; iy++) { //yi = yvec[iy];
+            for (int iz = 0; iz < nz; iz++) { //zi = zvec[iz];
+                for (int kx = 0; kx < k1max; kx++) { omeg1 = {0.0, 2*M_PI * xi / nx * kx};
+                    for (int ky = 0; ky < k2max; ky++) { omeg2 = {0.0, 2 * M_PI * yi / ny * ky};
+                        for (int kz = 0; kz < k3max; kz++) { omeg3 = {0.0, 2 * M_PI * zi / nz * kz};
                             tmp = in[kx][ky][kz] * exp(omeg1 + omeg2 + omeg3); // dkx, dky, dkz = 1
-                            out[xi][yi][zi] += real(tmp) / (nx * ny * nz);
-//                            if (out[xi][yi][zi] == 0.0) {
-//                                cout << "DFT["<<xi<<"]["<<yi<<"]["<<zi<<"]="<<out[xi][yi][zi]<<endl;
-//                            }
+                            out[ix][iy][iz] += real(tmp) / (nx * ny * nz);
     }}}}}}
     return out;
 }
