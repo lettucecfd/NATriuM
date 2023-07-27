@@ -117,17 +117,18 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                 } tmpi.push_back(tmpj);
             } tmpdir.push_back(tmpi);
         }
-        // perform dft on randomPsi
-        vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
-        // multiply in fourier space
-        for (int k1 = 0; k1 < k1max; k1++) {
-            for (int k2 = 0; k2 < k1max; k2++) {
-                for (int k3 = 0; k3 < k1max; k3++) { double k_abs;
-                    k_abs = sqrt(k1*k1 + k2*k2 + k3*k3);
-                    psi_hat[k1][k2][k3] *= exp(-2*k_abs/k0);
-        } } }
-        // perform inverse dft on psi_hat (directionally)
-        tmpdir = InverseFourier3D(psi_hat);
+//        // perform dft on randomPsi
+//        vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
+//        // multiply in fourier space
+//        for (int k1 = 0; k1 < k1max; k1++) {
+//            for (int k2 = 0; k2 < k1max; k2++) {
+//                for (int k3 = 0; k3 < k1max; k3++) { double k_abs;
+//                    k_abs = sqrt(k1*k1 + k2*k2 + k3*k3);
+//                    psi_hat[k1][k2][k3] *= exp(-2*k_abs/k0);
+//        } } }
+//        // perform inverse dft on psi_hat (directionally)
+//        tmpdir = InverseFourier3D(psi_hat);
+        // add tmpdir (psix, psiy, or psiz) to randomPsi
         randomPsi.push_back(tmpdir);
     } // so: randomPsi = {psix, psiy, psiz} ;
 
