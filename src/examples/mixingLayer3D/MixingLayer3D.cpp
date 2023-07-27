@@ -117,8 +117,8 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                 } tmpi.push_back(tmpj);
             } tmpdir.push_back(tmpi);
         }
-//        // perform dft on randomPsi
-//        vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
+        // perform dft on randomPsi
+        vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
 //        // multiply in fourier space
 //        for (int k1 = 0; k1 < k1max; k1++) {
 //            for (int k2 = 0; k2 < k1max; k2++) {
