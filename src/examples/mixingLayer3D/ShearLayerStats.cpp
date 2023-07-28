@@ -17,7 +17,7 @@ namespace natrium {
 ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string outdir, double starting_delta_theta) :
 DataProcessor<3>(solver), m_u(solver.getVelocity()), m_rho(solver.getDensity()),
 m_outDir(outdir), m_filename(outfile(solver.getConfiguration()->getOutputDirectory())),
-m_currentRho(1.0), m_currentDeltaTheta(starting_delta_theta), m_currentRhoUx(1.0), m_currentUxFavre(1.0),
+m_currentRho(1.0), m_currentDeltaTheta(starting_delta_theta), m_currentDeltaOmega(0.41), m_currentRhoUx(1.0), m_currentUxFavre(1.0),
 m_currentTime(0.0) {
 
 //    m_DeltaTheta.push_back(m_currentDeltaTheta);
@@ -144,14 +144,19 @@ void ShearLayerStats::calculateRhoU() {
     vector<double> rho_average;
     vector<double> ux_favre;
     vector<double> integrand;
+    vector<double> umag_average;
+    vector<double> dUdy_abs;
     // resize to fit length of y
     rhoux_average.resize(m_nofCoordinates);
     rho_average.resize(m_nofCoordinates);
     ux_favre.resize(m_nofCoordinates);
     integrand.resize(m_nofCoordinates);
+    umag_average.resize(m_nofCoordinates);
+    dUdy_abs.resize(m_nofCoordinates);
 
     vector<size_t> number;
     number.resize(m_nofCoordinates);
+    vector<size_t> nonumbers;
 
     // don't know what I do here, but it worked for turbulent channel
     boost::shared_ptr<AdvectionOperator<3> > advection = m_solver.getAdvectionOperator();
@@ -182,59 +187,76 @@ void ShearLayerStats::calculateRhoU() {
                 number.at(y_ind) += 1;
                 // fill value vector
                 rhoux_average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind); // rho ux
+                umag_average.at(y_ind) += sqrt(pow(m_u.at(0)(dof_ind), 2) + pow(m_u.at(1)(dof_ind), 2) + pow(m_u.at(2)(dof_ind), 2));
                 rho_average.at(y_ind) += m_rho(dof_ind);
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
 
     // communicate
-    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-        // add n_points(yi), integrand(yi), ux_favre(yi), rho*ux(yi), and rho(yi) from different MPI processes
-        number.at(yi) = dealii::Utilities::MPI::sum(number.at(yi), MPI_COMM_WORLD);
-        // average over number of points at yi
-        rhoux_average.at(yi) = dealii::Utilities::MPI::sum(rhoux_average.at(yi), MPI_COMM_WORLD);
-        rho_average.at(yi) = dealii::Utilities::MPI::sum(rho_average.at(yi), MPI_COMM_WORLD);
-        rhoux_average.at(yi) /= number.at(yi);
-        rho_average.at(yi) /= number.at(yi);
+    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+        // add n_points(iy), integrand(iy), ux_favre(iy), rho*ux(iy), and rho(iy) from different MPI processes
+        number.at(iy) = dealii::Utilities::MPI::sum(number.at(iy), MPI_COMM_WORLD);
+        // average over number of points at iy
+        rhoux_average.at(iy) = dealii::Utilities::MPI::sum(rhoux_average.at(iy), MPI_COMM_WORLD);
+        rho_average.at(iy) = dealii::Utilities::MPI::sum(rho_average.at(iy), MPI_COMM_WORLD);
+        umag_average.at(iy) = dealii::Utilities::MPI::sum(umag_average.at(iy), MPI_COMM_WORLD);
+        // average over number of points at y
+        if (number.at(iy) != 0) {
+            rhoux_average.at(iy) /= number.at(iy);
+            rho_average.at(iy) /= number.at(iy);
+            umag_average.at(iy) /= number.at(iy);
+        } else {
+            nonumbers.push_back(iy);
+        }
     }
-
-//    cout << "number: ";
-//    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//          cout << number.at(yi) << ",";
-//    } cout << endl;
-//    cout << "rho_average: ";
-//    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//        cout << rho_average.at(yi) << ",";
-//    } cout << endl;
-//    cout << "rhoux_average: ";
-//    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//        cout << rhoux_average.at(yi) << ",";
-//    } cout << endl;
+    // average of neighboring points if there were no points
+    size_t iy;
+    for (size_t i = 0; i < nonumbers.size(); i++) {
+        iy = nonumbers.at(i);
+        rhoux_average.at(iy) = 0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
+        rho_average.at(iy) = 0.5 * (rho_average.at(iy + 1) + rho_average.at(iy - 1));
+        umag_average.at(iy) = 0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
+    }
 
     // calculate ux_favre and integrand
     for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-        // average rhoux and rho if its 0
-        if (number.at(yi) == 0) {
-            rhoux_average.at(yi) = 0.5*(rhoux_average.at(yi-1)+rhoux_average.at(yi+1));
-            rho_average.at(yi) = 0.5*(rho_average.at(yi-1)+rho_average.at(yi+1));
-        }
         ux_favre.at(yi) = rhoux_average.at(yi) / rho_average.at(yi);
         integrand.at(yi) = rho_average.at(yi) * (1 /* dU 2 */ - ux_favre.at(yi) * (1 /* dU/2 */ + ux_favre.at(yi)));
+//        // ignore row with 0 nodes
+//        if (number.at(yi) == 0) {
+//            integrand.at(yi) = 0;
+//        }
+    }
+    // calculate dU/dy
+    double dy, dy2;
+    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+        if (yi == 0) { // left hand
+            dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi);
+            dUdy_abs.at(yi) = abs(umag_average.at(yi + 1) - umag_average.at(yi)) / dy;
+        } else if (yi == m_nofCoordinates-1) { // right hand
+            dy = m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1);
+            dUdy_abs.at(yi) = abs(umag_average.at(yi) - umag_average.at(yi - 1)) / dy;
+        } else { // other: central
+            dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi - 1);
+            dUdy_abs.at(yi) = abs(umag_average.at(yi - 1) - 2 * umag_average.at(yi) + umag_average.at(yi + 1)) / (dy * dy);
+        }
+//        // ignore row with 0 nodes
+//        if (number.at(yi) == 0) {
+//            dUdy_abs.at(yi) = 0;
+//        }
     }
 
-//    cout << "ux_favre: ";
-//    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//        cout << ux_favre.at(yi) << ",";
-//    } cout << endl;
-//    cout << "integrand: ";
-//    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//        cout << integrand.at(yi) << ",";
-//    } cout << endl;
-//    cout << "windowsize: ";
-//    for (size_t yi = 0; yi < m_nofCoordinates - 1; yi++) {
-//        double window_size = abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi));
-//        cout << window_size << ",";
-//    } cout << endl;
+//    if (is_MPI_rank_0()) {
+//        cout << "y: ";
+//        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+//            cout << m_yCoordinates.at(yi) << ",";
+//        } cout << endl;
+//        cout << "n: ";
+//        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+//            cout << number.at(yi) << ",";
+//        } cout << endl;
+//    }
 
     // integrate along y
     double integral = 0;
@@ -247,9 +269,6 @@ void ShearLayerStats::calculateRhoU() {
         if (yi == 0) { // left side: trapezoidal rule
             window_size = abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi));
             integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi + 1));
-//        } else if (yi == m_nofCoordinates-1) { // right side: trapezoidal rule
-//            window_size = abs(m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1));
-//            integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi - 1));
         } else {
             window_size = 0.5*abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi-1)); // other: simpson rule
             integral += window_size * (integrand.at(yi - 1) + 4 * integrand.at(yi) + integrand.at(yi + 1)) / 6;
@@ -262,6 +281,8 @@ void ShearLayerStats::calculateRhoU() {
     rho_avg /= m_nofCoordinates-1;
     rhoux_avg /= m_nofCoordinates-1;
     ux_favre_avg /= m_nofCoordinates-1;
+    // calculate vorticity thickness
+    m_currentDeltaOmega = 2 /*dU*/ / *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));;
 
     m_currentRho = rho_avg;
     m_currentRhoUx = rhoux_avg;
@@ -276,9 +297,14 @@ void ShearLayerStats::calculateRhoU() {
     // calculate difference
     m_DeltaTheta_diff = (m_currentDeltaTheta - m_lastDeltaTheta) / (dt * (2 /*dU*/ / 0.093 /*DT0*/));
     if (is_MPI_rank_0()) {
+//        cout << "dUdy_abs: ";
+//        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+//            cout << dUdy_abs.at(yi) << ",";
+//        } cout << endl;
         cout << "IT: " << m_solver.getIteration()
             << ", t: " << m_currentTime
             << ", delta_Theta: " << m_currentDeltaTheta
+            << ", delta_Omega: " << m_currentDeltaOmega
             << ", t*dU/DT0: " << m_currentTime*2/0.093
             << ", delta_Theta/DT0: " << m_currentDeltaTheta/0.093
             << endl;

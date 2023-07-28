@@ -43,6 +43,7 @@ private:
     double m_currentRhoUx;
     double m_currentUxFavre;
     double m_currentDeltaTheta;
+    double m_currentDeltaOmega;
 //    // Data stored across output steps
     double m_lastDeltaTheta;
     double m_lastTime;
