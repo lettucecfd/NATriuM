@@ -34,14 +34,17 @@ m_currentTime(0.0) {
             m_tableFile = boost::make_shared<std::fstream>(m_filename, std::fstream::out);
         }
     }
-
-//    *m_tableFile << "it ";
-//    *m_tableFile << "t    ";
-//    *m_tableFile << "deltaTheta ";
+    if (is_MPI_rank_0()) {
+        *m_tableFile << "it ";
+        *m_tableFile << "t     ";
+        *m_tableFile << "deltaTheta ";
+        *m_tableFile << "t*dU/DT0  ";
+        *m_tableFile << "DT/DT0 ";
 //    *m_tableFile << "rho    ";
 //    *m_tableFile << "rhoUx  ";
 //    *m_tableFile << "UxFavre ";
-//    *m_tableFile << endl;
+        *m_tableFile << endl;
+    }
 }
 
 bool ShearLayerStats::isMYCoordsUpToDate() const {
@@ -239,14 +242,14 @@ void ShearLayerStats::calculateRhoU() {
     double rhoux_avg = 0;
     double ux_favre_avg = 0;
     double interval_length = 0;
-    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+    for (size_t yi = 0; yi < m_nofCoordinates-1; yi++) {
         double window_size;
         if (yi == 0) { // left side: trapezoidal rule
             window_size = abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi));
             integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi + 1));
-        } else if (yi == m_nofCoordinates-1) { // right side: trapezoidal rule
-            window_size = abs(m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1));
-            integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi - 1));
+//        } else if (yi == m_nofCoordinates-1) { // right side: trapezoidal rule
+//            window_size = abs(m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1));
+//            integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi - 1));
         } else {
             window_size = 0.5*abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi-1)); // other: simpson rule
             integral += window_size * (integrand.at(yi - 1) + 4 * integrand.at(yi) + integrand.at(yi + 1)) / 6;
@@ -256,9 +259,9 @@ void ShearLayerStats::calculateRhoU() {
         ux_favre_avg += ux_favre.at(yi);
         interval_length += window_size;
     }
-    rho_avg /= m_nofCoordinates;
-    rhoux_avg /= m_nofCoordinates;
-    ux_favre_avg /= m_nofCoordinates;
+    rho_avg /= m_nofCoordinates-1;
+    rhoux_avg /= m_nofCoordinates-1;
+    ux_favre_avg /= m_nofCoordinates-1;
 
     m_currentRho = rho_avg;
     m_currentRhoUx = rhoux_avg;
@@ -271,22 +274,23 @@ void ShearLayerStats::calculateRhoU() {
     m_currentTime = m_solver.getTime();
     double dt = m_currentTime - m_lastTime;
     // calculate difference
-    m_DeltaTheta_diff = (m_currentDeltaTheta - m_lastDeltaTheta) / (dt * (1 /*dU*/ / 0.093 /*DT0*/));
-//    cout << "t: " << m_currentTime
-//        << ", delta_Theta: " << m_currentDeltaTheta
-//        << ", DeltaTheta_diff / dU*DT0: " << m_DeltaTheta_diff
-//        << ", dt: " << dt
-//        << endl;
+    m_DeltaTheta_diff = (m_currentDeltaTheta - m_lastDeltaTheta) / (dt * (2 /*dU*/ / 0.093 /*DT0*/));
+    cout << "IT: " << m_solver.getIteration()
+        << "t: " << m_currentTime
+        << ", delta_Theta: " << m_currentDeltaTheta
+        << endl;
 }
 
 void ShearLayerStats::write() {
     if (is_MPI_rank_0()) {
         *m_tableFile << this->m_solver.getIteration() << " ";
-        *m_tableFile << m_lastTime << " ";
         *m_tableFile << m_currentTime << " ";
-        *m_tableFile << m_lastDeltaTheta << " ";
         *m_tableFile << m_currentDeltaTheta << " ";
-        *m_tableFile << m_DeltaTheta_diff << " ";
+        *m_tableFile << m_currentTime*2/*dU*//0.093 << " ";
+        *m_tableFile << m_currentDeltaTheta/0.093 << " ";
+//        *m_tableFile << m_DeltaTheta_diff << " ";
+//        *m_tableFile << m_lastTime << " ";
+//        *m_tableFile << m_lastDeltaTheta << " ";
         *m_tableFile << endl;
     }
 }
