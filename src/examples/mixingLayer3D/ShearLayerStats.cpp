@@ -16,11 +16,9 @@ namespace natrium {
 
 ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string outdir, double starting_delta_theta) :
 DataProcessor<3>(solver), m_u(solver.getVelocity()), m_rho(solver.getDensity()),
-m_outDir(outdir), m_filename(outfile(solver.getConfiguration()->getOutputDirectory())),
-m_currentRho(1.0), m_currentDeltaTheta(starting_delta_theta), m_currentDeltaOmega(0.41), m_currentRhoUx(1.0), m_currentUxFavre(1.0),
-m_currentTime(0.0) {
-
-//    m_DeltaTheta.push_back(m_currentDeltaTheta);
+m_outDir(outdir), m_filename(scalaroutfile(solver.getConfiguration()->getOutputDirectory())),
+m_vectorfilename(vectoroutfile(solver.getConfiguration()->getOutputDirectory())),
+m_currentDeltaTheta(starting_delta_theta), m_currentDeltaOmega(0.41), b11(0), b22(0), b12(0) {
 
     m_yCoordsUpToDate = false;
     m_nofCoordinates = 0;
@@ -28,22 +26,22 @@ m_currentTime(0.0) {
     if (solver.getIterationStart() > 0) {
         if (is_MPI_rank_0()) {
             m_tableFile = boost::make_shared<std::fstream>(m_filename, std::fstream::out | std::fstream::app);
+            m_vectorFile = boost::make_shared<std::fstream>(m_vectorfilename, std::fstream::out | std::fstream::app);
         }
     } else {
         if (is_MPI_rank_0()) {
             m_tableFile = boost::make_shared<std::fstream>(m_filename, std::fstream::out);
+            m_vectorFile = boost::make_shared<std::fstream>(m_vectorfilename, std::fstream::out);
         }
     }
     if (is_MPI_rank_0()) {
         *m_tableFile << "it ";
-        *m_tableFile << "t     ";
+        *m_tableFile << "t ";
         *m_tableFile << "deltaTheta ";
         *m_tableFile << "deltaOmega ";
-        *m_tableFile << "t*dU/DT0  ";
-        *m_tableFile << "DT/DT0 ";
-//    *m_tableFile << "rho    ";
-//    *m_tableFile << "rhoUx  ";
-//    *m_tableFile << "UxFavre ";
+        *m_tableFile << "b11 ";
+        *m_tableFile << "b22 ";
+        *m_tableFile << "b12 ";
         *m_tableFile << endl;
     }
 }
@@ -71,8 +69,7 @@ void ShearLayerStats::updateYValues() {
         if (cell->is_locally_owned()) {
             // get y coordinates
             fe_values.reinit(cell);
-            const std::vector<dealii::Point<3> >& quad_points =
-                    fe_values.get_quadrature_points();
+            const std::vector<dealii::Point<3> >& quad_points = fe_values.get_quadrature_points();
             for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
                 y_coords.insert(quad_points.at(i)(1));
             }
@@ -87,7 +84,7 @@ void ShearLayerStats::updateYValues() {
 
     // fill send buffer with y coordinates
     size_t i = 0;
-    size_t j;
+//    size_t j;
     for (double y_coord : y_coords) {
         sendbuf[i] = y_coord;
         i++;
@@ -133,7 +130,7 @@ void ShearLayerStats::apply() {
 	if (m_solver.getIteration() % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0) {
         calculateRhoU();
         write();
-	}
+    }
 }
 
 void ShearLayerStats::calculateRhoU() {
@@ -141,7 +138,14 @@ void ShearLayerStats::calculateRhoU() {
     // Calculate averages ////
     //////////////////////////
     // initialize vectors for averages along x and z
+    vector<double> ux_average;
+    vector<double> uy_average;
+    vector<double> uz_average;
     vector<double> rhoux_average;
+    vector<double> rhou11_average;
+    vector<double> rhou22_average;
+    vector<double> rhou33_average;
+    vector<double> rhou12_average;
     vector<double> rho_average;
     vector<double> ux_favre;
     vector<double> integrand;
@@ -154,6 +158,17 @@ void ShearLayerStats::calculateRhoU() {
     integrand.resize(m_nofCoordinates);
     umag_average.resize(m_nofCoordinates);
     dUdy_abs.resize(m_nofCoordinates);
+    m_R11.resize(m_nofCoordinates);
+    m_R22.resize(m_nofCoordinates);
+    m_R33.resize(m_nofCoordinates);
+    m_R12.resize(m_nofCoordinates);
+    rhou11_average.resize(m_nofCoordinates);
+    rhou22_average.resize(m_nofCoordinates);
+    rhou33_average.resize(m_nofCoordinates);
+    rhou12_average.resize(m_nofCoordinates);
+    ux_average.resize(m_nofCoordinates);
+    uy_average.resize(m_nofCoordinates);
+    uz_average.resize(m_nofCoordinates);
 
     vector<size_t> number;
     number.resize(m_nofCoordinates);
@@ -190,6 +205,9 @@ void ShearLayerStats::calculateRhoU() {
                 rhoux_average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind); // rho ux
                 rho_average.at(y_ind) += m_rho(dof_ind);
                 umag_average.at(y_ind) += sqrt(pow(m_u.at(0)(dof_ind), 2) + pow(m_u.at(1)(dof_ind), 2) + pow(m_u.at(2)(dof_ind), 2));
+                ux_average.at(y_ind) += m_u.at(0)(dof_ind);
+                uy_average.at(y_ind) += m_u.at(1)(dof_ind);
+                uz_average.at(y_ind) += m_u.at(2)(dof_ind);
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
@@ -206,112 +224,167 @@ void ShearLayerStats::calculateRhoU() {
             rhoux_average.at(iy) /= number.at(iy);
             rho_average.at(iy) /= number.at(iy);
             umag_average.at(iy) /= number.at(iy);
+            ux_average.at(iy) /= number.at(iy);
+            uy_average.at(iy) /= number.at(iy);
+            uz_average.at(iy) /= number.at(iy);
         } else { nonumbers.push_back(iy); }
     }
     // average of neighboring points if there were no points
-    size_t iy;
-    for (size_t i = 0; i < nonumbers.size(); i++) {
-        iy = nonumbers.at(i);
+    for (unsigned long nonumber : nonumbers) {
+        size_t iy = nonumber;
         rhoux_average.at(iy) = 0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
         rho_average.at(iy) = 0.5 * (rho_average.at(iy + 1) + rho_average.at(iy - 1));
         umag_average.at(iy) = 0;//0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
+        ux_average.at(iy) = 0;
+        uy_average.at(iy) = 0;
+        uz_average.at(iy) = 0;
     }
 
-    // calculate ux_favre and integrand
-    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-        ux_favre.at(yi) = rhoux_average.at(yi) / rho_average.at(yi);
-        integrand.at(yi) = rho_average.at(yi) * (1 /* dU 2 */ - ux_favre.at(yi) * (1 /* dU/2 */ + ux_favre.at(yi)));
-//        // ignore row with 0 nodes
-//        if (number.at(yi) == 0) {
-//            integrand.at(yi) = 0;
-//        }
+    // calculate flux of ux, uy, uz at all points
+    double uxflux, uyflux, uzflux;// loop
+    for (cell = dof_handler.begin_active(); cell != endc; ++cell) {
+        if (cell->is_locally_owned()) {
+            cell->get_dof_indices(local_indices);
+            // get averages
+            fe_values.reinit(cell);
+            const std::vector<dealii::Point<3> > &quad_points = fe_values.get_quadrature_points();
+            for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
+                y = quad_points.at(i)(1);
+                assert(m_yCoordinateToIndex.find(y) != m_yCoordinateToIndex.end());
+                y_ind = m_yCoordinateToIndex.at(y);
+                dof_ind = local_indices.at(i);
+                // calculate fluxes
+                uxflux = m_u.at(0)(dof_ind) - ux_average.at(y_ind);
+                uyflux = m_u.at(1)(dof_ind) - uy_average.at(y_ind);
+                uzflux = m_u.at(2)(dof_ind) - uz_average.at(y_ind);
+                // fill value vector
+                rhou11_average.at(y_ind) += m_rho(dof_ind)*uxflux*uxflux;
+                rhou22_average.at(y_ind) += m_rho(dof_ind)*uyflux*uyflux;
+                rhou33_average.at(y_ind) += m_rho(dof_ind)*uzflux*uzflux;
+                rhou12_average.at(y_ind) += m_rho(dof_ind)*uxflux*uyflux;
+            } /* for all quadrature points */
+        } /* if locally owned */
+    } /* for all cells */
+
+    // communicate
+    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+        // average over number of points at y
+        if (number.at(iy) != 0) {
+            rhou11_average.at(iy) = dealii::Utilities::MPI::sum(rhou11_average.at(iy), MPI_COMM_WORLD);
+            rhou22_average.at(iy) = dealii::Utilities::MPI::sum(rhou22_average.at(iy), MPI_COMM_WORLD);
+            rhou33_average.at(iy) = dealii::Utilities::MPI::sum(rhou33_average.at(iy), MPI_COMM_WORLD);
+            rhou12_average.at(iy) = dealii::Utilities::MPI::sum(rhou12_average.at(iy), MPI_COMM_WORLD);
+            rhou11_average.at(iy) /= number.at(iy);
+            rhou22_average.at(iy) /= number.at(iy);
+            rhou33_average.at(iy) /= number.at(iy);
+            rhou12_average.at(iy) /= number.at(iy);
+        } else {
+            rhou11_average.at(iy) = rhou11_average.at(iy-1);
+            rhou22_average.at(iy) = rhou22_average.at(iy-1);
+            rhou33_average.at(iy) = rhou33_average.at(iy-1);
+            rhou12_average.at(iy) = rhou12_average.at(iy-1);
+        }
     }
+
+    // calculate ux_favre, Rij and integrand
+    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+        ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
+        ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
+        ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
+        integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
+        m_R11.at(iy) = rhou11_average.at(iy) / rho_average.at(iy);
+        m_R22.at(iy) = rhou22_average.at(iy) / rho_average.at(iy);
+        m_R33.at(iy) = rhou33_average.at(iy) / rho_average.at(iy);
+        m_R12.at(iy) = rhou12_average.at(iy) / rho_average.at(iy);
+    }
+
     // calculate dU/dy
     double dy;
-    for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//        if (yi == 0) { // forward
-//            dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi);
-//            dUdy_abs.at(yi) = abs(umag_average.at(yi + 1) - umag_average.at(yi)) / dy;
-//        } else if (yi == m_nofCoordinates-1) { // backward
-//            dy = m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1);
-//            dUdy_abs.at(yi) = abs(umag_average.at(yi) - umag_average.at(yi - 1)) / dy;
+    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+//        if (iy == 0) { // forward
+//            dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy);
+//            dUdy_abs.at(iy) = abs(umag_average.at(iy + 1) - umag_average.at(iy)) / dy;
+//        } else if (iy == m_nofCoordinates-1) { // backward
+//            dy = m_yCoordinates.at(iy) - m_yCoordinates.at(iy-1);
+//            dUdy_abs.at(iy) = abs(umag_average.at(iy) - umag_average.at(iy - 1)) / dy;
 //        } else { // other: central
-//            dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi - 1);
-//            dUdy_abs.at(yi) = abs(umag_average.at(yi - 1) - 2 * umag_average.at(yi) + umag_average.at(yi + 1)) / (dy * dy);
+//            dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1);
+//            dUdy_abs.at(iy) = abs(umag_average.at(iy - 1) - 2 * umag_average.at(iy) + umag_average.at(iy + 1)) / (dy * dy);
 //        }
-        if (yi == m_nofCoordinates-1) { // right hand
-            dy = m_yCoordinates.at(yi) - m_yCoordinates.at(yi - 1);
-            dUdy_abs.at(yi) = abs(umag_average.at(yi) - umag_average.at(yi - 1)) / dy;
+        if (iy == m_nofCoordinates - 1) { // right hand
+            dy = m_yCoordinates.at(iy) - m_yCoordinates.at(iy - 1);
+            dUdy_abs.at(iy) = abs(umag_average.at(iy) - umag_average.at(iy - 1)) / dy;
         } else { // forward
-            dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi);
-            dUdy_abs.at(yi) = abs(umag_average.at(yi + 1) - umag_average.at(yi)) / dy;
+            dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy);
+            dUdy_abs.at(iy) = abs(umag_average.at(iy + 1) - umag_average.at(iy)) / dy;
         }
     }
 
     // integrate along y
     double integral = 0;
-    double rho_avg = 0;
-    double rhoux_avg = 0;
-    double ux_favre_avg = 0;
-    for (size_t yi = 0; yi < m_nofCoordinates-1; yi++) {
+    for (size_t iy = 0; iy < m_nofCoordinates - 1; iy++) {
         double window_size;
-        if (yi == 0) { // left side: trapezoidal rule
-            window_size = abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi));
-            integral += window_size * 0.5 * (integrand.at(yi) + integrand.at(yi + 1));
+        if (iy == 0) { // left side: trapezoidal rule
+            window_size = abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy));
+            integral += window_size * 0.5 * (integrand.at(iy) + integrand.at(iy + 1));
         } else {
-            window_size = 0.5*abs(m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi-1)); // other: simpson rule
-            integral += window_size * (integrand.at(yi - 1) + 4 * integrand.at(yi) + integrand.at(yi + 1)) / 6;
+            window_size = 0.5*abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1)); // other: simpson rule
+            integral += window_size * (integrand.at(iy - 1) + 4 * integrand.at(iy) + integrand.at(iy + 1)) / 6;
         }
-        rho_avg += rho_average.at(yi);
-        rhoux_avg += rhoux_average.at(yi);
-        ux_favre_avg += ux_favre.at(yi);
     }
-    rho_avg /= m_nofCoordinates-1;
-    rhoux_avg /= m_nofCoordinates-1;
-    ux_favre_avg /= m_nofCoordinates-1;
-    // calculate vorticity thickness
-//    dUdy_max = *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));
+    // calculate momentum thickness
     m_currentDeltaOmega = 2 /*dU*/ / *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));
 
-    m_currentRho = rho_avg;
-    m_currentRhoUx = rhoux_avg;
-    m_currentUxFavre = ux_favre_avg;
-    // update deltaTheta
-    m_lastDeltaTheta = m_currentDeltaTheta;
+    // calculate vorticity thickness
     m_currentDeltaTheta = integral * (1. / 4. /* rho0 * dU^2 = 1 * 2*2 */);
-    // update time
-    m_lastTime = m_currentTime;
-    m_currentTime = m_solver.getTime();
-    double dt = m_currentTime - m_lastTime;
-    // calculate difference
-    m_DeltaTheta_diff = (m_currentDeltaTheta - m_lastDeltaTheta) / (dt * (2 /*dU*/ / 0.093 /*DT0*/));
+
+    // output to console
     if (is_MPI_rank_0()) {
 //        cout << "dUdy_abs: ";
 //        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
 //            cout << dUdy_abs.at(yi) << ",";
 //        } cout << endl;
         cout << "IT: " << m_solver.getIteration()
-            << ", t: " << m_currentTime
+            << ", t: " << m_solver.getTime()
             << ", delta_Theta: " << m_currentDeltaTheta
             << ", delta_Omega: " << m_currentDeltaOmega
-            << ", t*dU/DT0: " << m_currentTime*2/0.093
-            << ", delta_Theta/DT0: " << m_currentDeltaTheta/0.093
+            << ", R11_max: " << *max_element(std::begin(m_R11), std::end(m_R11))
+            << ", R22_max: " << *max_element(std::begin(m_R22), std::end(m_R22))
+            << ", R33_max: " << *max_element(std::begin(m_R33), std::end(m_R33))
+            << ", R12_max: " << *max_element(std::begin(m_R12), std::end(m_R12))
             << endl;
     }
 }
 
 void ShearLayerStats::write() {
     if (is_MPI_rank_0()) {
-        *m_tableFile << this->m_solver.getIteration() << " ";
-        *m_tableFile << m_currentTime << " ";
-        *m_tableFile << m_currentDeltaTheta << " ";
-        *m_tableFile << m_currentDeltaOmega << " ";
-        *m_tableFile << m_currentTime*2/*dU*//0.093 << " ";
-        *m_tableFile << m_currentDeltaTheta/0.093 << " ";
-//        *m_tableFile << m_DeltaTheta_diff << " ";
-//        *m_tableFile << m_lastTime << " ";
-//        *m_tableFile << m_lastDeltaTheta << " ";
-        *m_tableFile << endl;
+        *m_tableFile << this->m_solver.getIteration() << " "
+        << m_solver.getTime() << " "
+        << m_currentDeltaTheta << " "
+        << m_currentDeltaOmega << " "
+        << endl;
+
+        *m_vectorFile << "IT:" << this->m_solver.getIteration();
+        *m_vectorFile << "y: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *m_vectorFile << m_yCoordinates.at(iy) << " ";
+        } *m_vectorFile << endl;
+        *m_vectorFile << "R11: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *m_vectorFile << m_R11.at(iy) << " ";
+        } *m_vectorFile << endl;
+        *m_vectorFile << "R22: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *m_vectorFile << m_R22.at(iy) << " ";
+        } *m_vectorFile << endl;
+        *m_vectorFile << "R33: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *m_vectorFile << m_R33.at(iy) << " ";
+        } *m_vectorFile << endl;
+        *m_vectorFile << "R12: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *m_vectorFile << m_R12.at(iy) << " ";
+        } *m_vectorFile << endl;
     }
 }
 

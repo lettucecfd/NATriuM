@@ -36,13 +36,13 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("Re", "Reynolds number 1/nu", 800);
     parser.setArgument<double>("Ma", "Mach number", 0.3); // TODO: .1, .4, .8, 1.2
     parser.setArgument<double>("time", "simulation time (s)", 15);
-    parser.setArgument<int>("nout", "output vtk every nout steps", 200);
+    parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 50);
     parser.setPositionalArgument<int>("ref-level",
                                       "Refinement level of the computation grid.");
     parser.setArgument<int>("grid-repetitions",
                             "Number of grid cells along each axis before global refinement; "
-                            "to produce grids with refinements that are not powers of two.", 1); // TODO 1,2,4
+                            "to produce grids with refinements that are not powers of two.", 3); // TODO 1,2,3
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
     }

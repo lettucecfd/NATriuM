@@ -31,6 +31,8 @@ private:
 //    vector<string> m_names;
     string m_filename;
     boost::shared_ptr<std::fstream> m_tableFile;
+    string m_vectorfilename;
+    boost::shared_ptr<std::fstream> m_vectorFile;
 
     // Y Coordinates
     vector<double> m_yCoordinates;
@@ -39,26 +41,30 @@ private:
     bool m_yCoordsUpToDate;
 
     // Data
-    double m_currentRho;
-    double m_currentRhoUx;
-    double m_currentUxFavre;
     double m_currentDeltaTheta;
     double m_currentDeltaOmega;
+    double b11;
+    double b22;
+    double b12;
 //    // Data stored across output steps
-    double m_lastDeltaTheta;
-    double m_lastTime;
-    double m_currentTime;
-    double m_DeltaTheta_diff;
-//    vector<double> m_DeltaTheta;
-//    vector<double> m_Time;
+//    double m_currentTime;
+    // Data stored across y
+    vector<double> m_R11;
+    vector<double> m_R22;
+    vector<double> m_R33;
+    vector<double> m_R12;
 
     void write();
     void calculateRhoU();
-    void rescaleDensity();
 
-    static string outfile(string dir) {
+    static string scalaroutfile(string dir) {
         boost::filesystem::path out_dir(dir);
-        boost::filesystem::path out_file = out_dir / "shearlayer.txt";
+        boost::filesystem::path out_file = out_dir / "shearlayer_scalars.txt";
+        return out_file.string();
+    }
+    static string vectoroutfile(string dir) {
+        boost::filesystem::path out_dir(dir);
+        boost::filesystem::path out_file = out_dir / "shearlayer_vectors.txt";
         return out_file.string();
     }
 
@@ -68,7 +74,7 @@ public:
 	~ShearLayerStats() override;
     bool isMYCoordsUpToDate() const;
     void updateYValues();
-};
+    };
 
 } /* namespace natrium */
 
