@@ -214,7 +214,7 @@ void ShearLayerStats::calculateRhoU() {
         iy = nonumbers.at(i);
         rhoux_average.at(iy) = 0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
         rho_average.at(iy) = 0.5 * (rho_average.at(iy + 1) + rho_average.at(iy - 1));
-        umag_average.at(iy) = 0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
+        umag_average.at(iy) = 0;//0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
     }
 
     // calculate ux_favre and integrand
@@ -228,23 +228,24 @@ void ShearLayerStats::calculateRhoU() {
     }
     // calculate dU/dy
     double dy;
-    double dUdy_max = 0;
     for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-        if (yi == 0) { // left hand
+//        if (yi == 0) { // forward
+//            dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi);
+//            dUdy_abs.at(yi) = abs(umag_average.at(yi + 1) - umag_average.at(yi)) / dy;
+//        } else if (yi == m_nofCoordinates-1) { // backward
+//            dy = m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1);
+//            dUdy_abs.at(yi) = abs(umag_average.at(yi) - umag_average.at(yi - 1)) / dy;
+//        } else { // other: central
+//            dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi - 1);
+//            dUdy_abs.at(yi) = abs(umag_average.at(yi - 1) - 2 * umag_average.at(yi) + umag_average.at(yi + 1)) / (dy * dy);
+//        }
+        if (yi == m_nofCoordinates-1) { // right hand
+            dy = m_yCoordinates.at(yi) - m_yCoordinates.at(yi - 1);
+            dUdy_abs.at(yi) = abs(umag_average.at(yi) - umag_average.at(yi - 1)) / dy;
+        } else { // forward
             dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi);
             dUdy_abs.at(yi) = abs(umag_average.at(yi + 1) - umag_average.at(yi)) / dy;
-        } else if (yi == m_nofCoordinates-1) { // right hand
-            dy = m_yCoordinates.at(yi) - m_yCoordinates.at(yi-1);
-            dUdy_abs.at(yi) = abs(umag_average.at(yi) - umag_average.at(yi - 1)) / dy;
-        } else { // other: central
-            dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi - 1);
-            if (dy < 1e-10) {
-                dUdy_abs.at(yi) = dUdy_abs.at(yi-1);
-            } else {
-                dUdy_abs.at(yi) = abs(umag_average.at(yi - 1) - 2 * umag_average.at(yi) + umag_average.at(yi + 1)) / (dy * dy);
-            }
         }
-        if (dUdy_abs.at(yi) > dUdy_max) { dUdy_max = dUdy_abs.at(yi); }
     }
 
     // integrate along y
@@ -270,7 +271,7 @@ void ShearLayerStats::calculateRhoU() {
     ux_favre_avg /= m_nofCoordinates-1;
     // calculate vorticity thickness
 //    dUdy_max = *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));
-    m_currentDeltaOmega = 2 /*dU*/ / dUdy_max;
+    m_currentDeltaOmega = 2 /*dU*/ / *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));
 
     m_currentRho = rho_avg;
     m_currentRhoUx = rhoux_avg;
