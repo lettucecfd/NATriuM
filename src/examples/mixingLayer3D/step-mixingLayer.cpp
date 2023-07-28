@@ -37,6 +37,7 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("Ma", "Mach number", 0.3); // TODO: .1, .4, .8, 1.2
     parser.setArgument<double>("time", "simulation time (s)", 15);
     parser.setArgument<int>("nout", "output vtk every nout steps", 200);
+    parser.setArgument<int>("nstats", "output stats every nstats steps", 50);
     parser.setPositionalArgument<int>("ref-level",
                                       "Refinement level of the computation grid.");
     parser.setArgument<int>("grid-repetitions",

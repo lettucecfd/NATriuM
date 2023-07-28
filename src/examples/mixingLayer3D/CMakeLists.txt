@@ -7,8 +7,8 @@ ADD_EXECUTABLE( ${TARGET}
         MixingLayer3D.cpp
         ShearLayerStats.h
         ShearLayerStats.cpp
-#        MixingLayerStatistics.h
-#        MixingLayerStatistics.cpp
+#        TurbulentIntensitiesStats.h
+#        TurbulentIntensitiesStats.cpp
         )
 # link natrium library to executable
 include_directories( /usr/include/boost ${PROJECT_SOURCE_DIR}/library)

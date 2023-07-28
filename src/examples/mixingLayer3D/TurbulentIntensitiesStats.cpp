@@ -275,14 +275,10 @@ void ShearLayerStats::calculateRhoU() {
     double dt = m_currentTime - m_lastTime;
     // calculate difference
     m_DeltaTheta_diff = (m_currentDeltaTheta - m_lastDeltaTheta) / (dt * (2 /*dU*/ / 0.093 /*DT0*/));
-    if (is_MPI_rank_0()) {
-        cout << "IT: " << m_solver.getIteration()
-            << ", t: " << m_currentTime
-            << ", delta_Theta: " << m_currentDeltaTheta
-            << ", t*dU/DT0: " << m_currentTime*2/0.093
-            << ", delta_Theta/DT0: " << m_currentDeltaTheta/0.093
-            << endl;
-    }
+    cout << "IT: " << m_solver.getIteration()
+        << "t: " << m_currentTime
+        << ", delta_Theta: " << m_currentDeltaTheta
+        << endl;
 }
 
 void ShearLayerStats::write() {
