@@ -52,10 +52,10 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 }
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : m_flow(flow) {
-    int npoints = pow(2, flow->m_refinementLevel);
-    k1max = npoints;
-    k2max = npoints;
-    k3max = npoints;
+    int kmax = pow(2, flow->m_refinementLevel);
+    k1max = kmax;
+    k2max = kmax;
+    k3max = kmax;
     vector<double> x, y, z;
     double xmin, xmax, ymin, ymax, zmin, zmax, dx, dy, dz;
     float lx, ly, lz;
@@ -68,7 +68,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     ymin = -ymax;
     zmax = lz * shearlayerthickness / 2;
     zmin = -zmax;
-    dx = min({lx/npoints, ly/npoints, lz/npoints});
+    dx = min({lx / kmax, ly / kmax, lz / kmax});
     dy = dx;
     dz = dx;
     nx = ceil((xmax-xmin)/dx);

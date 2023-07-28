@@ -38,6 +38,7 @@ m_currentTime(0.0) {
         *m_tableFile << "it ";
         *m_tableFile << "t     ";
         *m_tableFile << "deltaTheta ";
+        *m_tableFile << "deltaOmega ";
         *m_tableFile << "t*dU/DT0  ";
         *m_tableFile << "DT/DT0 ";
 //    *m_tableFile << "rho    ";
@@ -187,8 +188,8 @@ void ShearLayerStats::calculateRhoU() {
                 number.at(y_ind) += 1;
                 // fill value vector
                 rhoux_average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind); // rho ux
-                umag_average.at(y_ind) += sqrt(pow(m_u.at(0)(dof_ind), 2) + pow(m_u.at(1)(dof_ind), 2) + pow(m_u.at(2)(dof_ind), 2));
                 rho_average.at(y_ind) += m_rho(dof_ind);
+                umag_average.at(y_ind) += sqrt(pow(m_u.at(0)(dof_ind), 2) + pow(m_u.at(1)(dof_ind), 2) + pow(m_u.at(2)(dof_ind), 2));
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
@@ -197,26 +198,23 @@ void ShearLayerStats::calculateRhoU() {
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         // add n_points(iy), integrand(iy), ux_favre(iy), rho*ux(iy), and rho(iy) from different MPI processes
         number.at(iy) = dealii::Utilities::MPI::sum(number.at(iy), MPI_COMM_WORLD);
-        // average over number of points at iy
-        rhoux_average.at(iy) = dealii::Utilities::MPI::sum(rhoux_average.at(iy), MPI_COMM_WORLD);
-        rho_average.at(iy) = dealii::Utilities::MPI::sum(rho_average.at(iy), MPI_COMM_WORLD);
-        umag_average.at(iy) = dealii::Utilities::MPI::sum(umag_average.at(iy), MPI_COMM_WORLD);
         // average over number of points at y
         if (number.at(iy) != 0) {
+            rhoux_average.at(iy) = dealii::Utilities::MPI::sum(rhoux_average.at(iy), MPI_COMM_WORLD);
+            rho_average.at(iy) = dealii::Utilities::MPI::sum(rho_average.at(iy), MPI_COMM_WORLD);
+            umag_average.at(iy) = dealii::Utilities::MPI::sum(umag_average.at(iy), MPI_COMM_WORLD);
             rhoux_average.at(iy) /= number.at(iy);
             rho_average.at(iy) /= number.at(iy);
             umag_average.at(iy) /= number.at(iy);
-        } else {
-            nonumbers.push_back(iy);
-        }
+        } else { nonumbers.push_back(iy); }
     }
     // average of neighboring points if there were no points
     size_t iy;
     for (size_t i = 0; i < nonumbers.size(); i++) {
         iy = nonumbers.at(i);
-        rhoux_average.at(iy) = 0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
-        rho_average.at(iy) = 0.5 * (rho_average.at(iy + 1) + rho_average.at(iy - 1));
-        umag_average.at(iy) = 0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
+        rhoux_average.at(iy) = 0;//0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
+        rho_average.at(iy) = 1;//0.5 * (rho_average.at(iy + 1) + rho_average.at(iy - 1));
+        umag_average.at(iy) = 0;//0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
     }
 
     // calculate ux_favre and integrand
@@ -229,7 +227,7 @@ void ShearLayerStats::calculateRhoU() {
 //        }
     }
     // calculate dU/dy
-    double dy, dy2;
+    double dy;
     for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
         if (yi == 0) { // left hand
             dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi);
@@ -239,24 +237,17 @@ void ShearLayerStats::calculateRhoU() {
             dUdy_abs.at(yi) = abs(umag_average.at(yi) - umag_average.at(yi - 1)) / dy;
         } else { // other: central
             dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi - 1);
-            dUdy_abs.at(yi) = abs(umag_average.at(yi - 1) - 2 * umag_average.at(yi) + umag_average.at(yi + 1)) / (dy * dy);
+            if (dy < 1e-10) {
+                dUdy_abs.at(yi) = dUdy_abs.at(yi-1);
+            } else {
+                dUdy_abs.at(yi) = abs(umag_average.at(yi - 1) - 2 * umag_average.at(yi) + umag_average.at(yi + 1)) / (dy * dy);
+            }
         }
 //        // ignore row with 0 nodes
 //        if (number.at(yi) == 0) {
 //            dUdy_abs.at(yi) = 0;
 //        }
     }
-
-//    if (is_MPI_rank_0()) {
-//        cout << "y: ";
-//        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//            cout << m_yCoordinates.at(yi) << ",";
-//        } cout << endl;
-//        cout << "n: ";
-//        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//            cout << number.at(yi) << ",";
-//        } cout << endl;
-//    }
 
     // integrate along y
     double integral = 0;
@@ -316,6 +307,7 @@ void ShearLayerStats::write() {
         *m_tableFile << this->m_solver.getIteration() << " ";
         *m_tableFile << m_currentTime << " ";
         *m_tableFile << m_currentDeltaTheta << " ";
+        *m_tableFile << m_currentDeltaOmega << " ";
         *m_tableFile << m_currentTime*2/*dU*//0.093 << " ";
         *m_tableFile << m_currentDeltaTheta/0.093 << " ";
 //        *m_tableFile << m_DeltaTheta_diff << " ";
