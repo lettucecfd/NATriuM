@@ -18,6 +18,8 @@
 #include "natrium/utilities/CommandLineParser.h"
 #include "MixingLayer3D.h"
 #include "ShearLayerStats.h"
+#include <unistd.h>
+#include <mpi.h>
 
 
 using namespace natrium;
@@ -90,7 +92,7 @@ int main(int argc, char** argv) {
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
     configuration->setHeatCapacityRatioGamma(1.4);
     configuration->setPrandtlNumber(0.71);
-    configuration->setSedgOrderOfFiniteElement(3); // TODO: default, 2, 3
+    configuration->setSedgOrderOfFiniteElement(2); // TODO: default, 2, 3
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
