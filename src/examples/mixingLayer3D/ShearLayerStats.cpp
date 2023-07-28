@@ -212,9 +212,9 @@ void ShearLayerStats::calculateRhoU() {
     size_t iy;
     for (size_t i = 0; i < nonumbers.size(); i++) {
         iy = nonumbers.at(i);
-        rhoux_average.at(iy) = 0;//0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
-        rho_average.at(iy) = 1;//0.5 * (rho_average.at(iy + 1) + rho_average.at(iy - 1));
-        umag_average.at(iy) = 0;//0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
+        rhoux_average.at(iy) = 0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
+        rho_average.at(iy) = 0.5 * (rho_average.at(iy + 1) + rho_average.at(iy - 1));
+        umag_average.at(iy) = 0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
     }
 
     // calculate ux_favre and integrand
@@ -254,7 +254,6 @@ void ShearLayerStats::calculateRhoU() {
     double rho_avg = 0;
     double rhoux_avg = 0;
     double ux_favre_avg = 0;
-    double interval_length = 0;
     for (size_t yi = 0; yi < m_nofCoordinates-1; yi++) {
         double window_size;
         if (yi == 0) { // left side: trapezoidal rule
@@ -267,7 +266,6 @@ void ShearLayerStats::calculateRhoU() {
         rho_avg += rho_average.at(yi);
         rhoux_avg += rhoux_average.at(yi);
         ux_favre_avg += ux_favre.at(yi);
-        interval_length += window_size;
     }
     rho_avg /= m_nofCoordinates-1;
     rhoux_avg /= m_nofCoordinates-1;
