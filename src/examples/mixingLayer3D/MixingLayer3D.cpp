@@ -52,7 +52,7 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 }
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : m_flow(flow) {
-    int kmax = pow(2, flow->m_refinementLevel);
+    int kmax = pow(2, 5);//flow->m_refinementLevel);
     k1max = kmax;
     k2max = kmax;
     k3max = kmax;
