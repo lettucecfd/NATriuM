@@ -228,6 +228,7 @@ void ShearLayerStats::calculateRhoU() {
     }
     // calculate dU/dy
     double dy;
+    double dUdy_max = 0;
     for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
         if (yi == 0) { // left hand
             dy = m_yCoordinates.at(yi + 1) - m_yCoordinates.at(yi);
@@ -243,10 +244,7 @@ void ShearLayerStats::calculateRhoU() {
                 dUdy_abs.at(yi) = abs(umag_average.at(yi - 1) - 2 * umag_average.at(yi) + umag_average.at(yi + 1)) / (dy * dy);
             }
         }
-//        // ignore row with 0 nodes
-//        if (number.at(yi) == 0) {
-//            dUdy_abs.at(yi) = 0;
-//        }
+        if (dUdy_abs.at(yi) > dUdy_max) { dUdy_max = dUdy_abs.at(yi); }
     }
 
     // integrate along y
@@ -271,7 +269,8 @@ void ShearLayerStats::calculateRhoU() {
     rhoux_avg /= m_nofCoordinates-1;
     ux_favre_avg /= m_nofCoordinates-1;
     // calculate vorticity thickness
-    m_currentDeltaOmega = 2 /*dU*/ / *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));;
+//    dUdy_max = *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));
+    m_currentDeltaOmega = 2 /*dU*/ / dUdy_max;
 
     m_currentRho = rho_avg;
     m_currentRhoUx = rhoux_avg;
