@@ -52,10 +52,10 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 }
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : m_flow(flow) {
-    int kmax = pow(2, flow->m_refinementLevel);
-    k1max = kmax;
+    int kmax = 48;//pow(2, flow->m_refinementLevel);
+    k1max = int(kmax/2);
     k2max = kmax;
-    k3max = kmax;
+    k3max = int(kmax/2);
     vector<double> x, y, z;
     double xmin, xmax, ymin, ymax, zmin, zmax, dx, dy, dz;
     float lx, ly, lz;
@@ -91,93 +91,99 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     auto zbounds = std::minmax_element(z.begin(), z.end());
     minz = *zbounds.first; maxz = *zbounds.second;
 
-    // warm up randomness
-    static int sseq[ std::mt19937::state_size ] ;
-    const static bool once = ( std::srand( std::time(nullptr)), // for true randomness: std::time(nullptr)
-            std::generate( std::begin(sseq), std::end(sseq), std::rand ), true ) ;
-    static std::seed_seq seed_seq( std::begin(sseq), std::end(sseq) ) ;
-    static std::mt19937 twister(seed_seq) ;
-    // random generator in [-1,1]
-    static uniform_real_distribution<double> distr(-1.0, 1.0) ; // +- Velocity
+//    if (recalculate_psi) {
+        // warm up randomness
+        static int sseq[ std::mt19937::state_size ] ;
+        const static bool once = ( std::srand( std::time(nullptr)), // for true randomness: std::time(nullptr)
+                std::generate( std::begin(sseq), std::end(sseq), std::rand ), true ) ;
+        static std::seed_seq seed_seq( std::begin(sseq), std::end(sseq) ) ;
+        static std::mt19937 twister(seed_seq) ;
+        // random generator in [-1,1]
+        static uniform_real_distribution<double> distr(-1.0, 1.0) ; // +- Velocity
 
-    // Fill randomPsi with random values
-    randomPsi.reserve(3);
-    for (int dir = 0; dir < 3; dir++) { vector< vector< vector<double> > > tmpdir;
-        for (int xi = 0; xi < nx; xi++) { vector<vector<double> > tmpi;
-            for (int yi = 0; yi < ny; yi++) { vector<double> tmpj;
-                for (int zi = 0; zi < nz; zi++) { double tmpk;
-                    tmpk = distr(twister);
-                    tmpj.push_back(tmpk);
-                } tmpi.push_back(tmpj);
-            } tmpdir.push_back(tmpi);
+        // Fill randomPsi with random values
+        randomPsi.reserve(3);
+        for (int dir = 0; dir < 3; dir++) { vector< vector< vector<double> > > tmpdir;
+            for (int xi = 0; xi < nx; xi++) { vector<vector<double> > tmpi;
+                for (int yi = 0; yi < ny; yi++) { vector<double> tmpj;
+                    for (int zi = 0; zi < nz; zi++) { double tmpk;
+                        tmpk = distr(twister);
+                        tmpj.push_back(tmpk);
+                    } tmpi.push_back(tmpj);
+                } tmpdir.push_back(tmpi);
+            }
+            // perform dft on randomPsi
+            vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
+            // multiply in fourier space
+            for (int kx = 0; kx < int(k1max/2); kx++) {
+                for (int ky = 0; ky < int(k2max/2); ky++) {
+                    for (int kz = 0; kz < int(k3max/2); kz++) {
+                        double k_abs;
+                        k_abs = sqrt(kx * kx + ky * ky + kz * kz);
+                        psi_hat[kx][ky][kz] *= (k_abs/k0)*(k_abs/k0)*(k_abs/k0)*(k_abs/k0)*exp(-2 * k_abs / k0); // holger: exp(-2 * k_abs / k0);
+                        psi_hat[k1max-1 - kx][k2max-1 - ky][k3max-1 - kz] *= exp(-2 * k_abs / k0);
+                    } } }
+            psi_hat[0][0][0] = 0;
+            // perform inverse dft on psi_hat (directionally)
+            vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
+            // add tmpdir (psix, psiy, or psiz) to randomPsi
+            randomPsi.push_back(psi_i);
+        } // so: randomPsi = {psix, psiy, psiz} ;
+
+        // calculate gradient using central difference scheme
+        vector<vector<vector<vector<vector<double>>>>> gradient(3,
+                                                                vector<vector<vector<vector<double>>>>(3,
+                                                                                                       vector<vector<vector<double>>>(nx,
+                                                                                                                                      vector<vector<double>>(ny,
+                                                                                                                                                             vector<double>(nz))))); // coordinates are on last three dimensions
+        int il, jl, kl, iu, ju, ku;
+        for (int dir_psi = 0; dir_psi < 3; dir_psi++) {
+            for (int i = 0; i < nx; i++) {
+                for (int j = 0; j < ny; j++) {
+                    for (int k = 0; k < nz; k++) {
+                        if (i==0) {il = 1;} else il = i;
+                        if (j==0) {jl = 1;} else jl = j;
+                        if (k==0) {kl = 1;} else kl = k;
+                        if (i==nx-1) {iu = nx-2;} else iu = i;
+                        if (j==ny-1) {ju = ny-2;} else ju = j;
+                        if (k==nz-1) {ku = nz-2;} else ku = k;
+                        gradient[dir_psi][0][i][j][k] = (randomPsi[dir_psi][iu+1][j][k] - randomPsi[dir_psi][il-1][j][k]) / dx;
+                        gradient[dir_psi][1][i][j][k] = (randomPsi[dir_psi][i][ju+1][k] - randomPsi[dir_psi][i][jl-1][k]) / dy;
+                        gradient[dir_psi][2][i][j][k] = (randomPsi[dir_psi][i][j][ku+1] - randomPsi[dir_psi][i][j][kl-1]) / dz;
+                    }}}} // so: gradient = {gradient_psix, gradient_psiy, gradient_psiz} and gradient_psin = { dpsin/dx, dpsin/dy, dpsin/dz }
+
+        // calculate curl using gradient values
+        int m, n; // for indices of cross-product
+        for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
+            vector<vector<vector<double> > > tmpdir;
+            if (dir_curl == 0) { m = 2; n = 1; }
+            else if (dir_curl == 2) { m = 1; n = 0; }
+            else { m = dir_curl - 1; n = dir_curl + 1; }
+            for (int i = 0; i < nx; i++) { vector<vector<double> > tmpi;
+                for (int j = 0; j < ny; j++) { vector<double> tmpj;
+                    for (int k = 0; k < nz; k++) { double tmp;
+                        tmp = (gradient[m][n][i][j][k] - gradient[n][m][i][j][k]) / 4;
+                        tmpj.push_back(tmp);
+                    } tmpi.push_back(tmpj);
+                } tmpdir.push_back(tmpi);
+            } curlOfPsi.push_back(tmpdir);
+        } // so: curlOfPsi = {ux, uy, uz}
+        ofstream file("random_psi.txt");
+        for (int dir_psi = 0; dir_psi < 3; dir_psi++) { file << "[";
+            for (int i = 0; i < nx; i++) { file << "[";
+                for (int j = 0; j < ny; j++) { file << "[";
+                    for (int k = 0; k < nz; k++) {
+                        file << curlOfPsi[dir_psi][i][j][k] << ",";
+                    } file << "]";
+                } file << "]";
+            } file << "]";
         }
-        // perform dft on randomPsi
-        vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
-        // multiply in fourier space
-        for (int kx = 0; kx < int(k1max/2); kx++) {
-            for (int ky = 0; ky < int(k2max/2); ky++) {
-                for (int kz = 0; kz < int(k3max/2); kz++) {
-                    double k_abs;
-                    k_abs = sqrt(kx * kx + ky * ky + kz * kz);
-                    psi_hat[kx][ky][kz] *= exp(-2 * k_abs / k0);
-                    psi_hat[k1max-1 - kx][k2max-1 - ky][k3max-1 - kz] *= exp(-2 * k_abs / k0);
-        } } }
-//        psi_hat[0][0][0] = 0;
-        // perform inverse dft on psi_hat (directionally)
-        vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
-//        psi_i = tmpdir;
-//        // report if they are not the same
-//        for (int xi = 0; xi < nx; xi++) {
-//            for (int yi = 0; yi < ny; yi++) {
-//                for (int zi = 0; zi < nz; zi++) {
-//                    if (abs(psi_i[xi][yi][zi] - tmpdir[xi][yi][zi]) > 1e-10) {
-//                        cout << "ups! tmpdi["<<xi<<"]["<<yi<<"]["<<zi<<"]="<<tmpdir[xi][yi][zi];
-//                        cout << " psi_i["<<xi<<"]["<<yi<<"]["<<zi<<"]="<<psi_i[xi][yi][zi];
-//                    }
-//        } } }
-
-        // add tmpdir (psix, psiy, or psiz) to randomPsi
-        randomPsi.push_back(psi_i);
-    } // so: randomPsi = {psix, psiy, psiz} ;
-
-    // calculate gradient using central difference scheme
-    vector<vector<vector<vector<vector<double>>>>> gradient(3,
-        vector<vector<vector<vector<double>>>>(3,
-        vector<vector<vector<double>>>(nx,
-        vector<vector<double>>(ny,
-        vector<double>(nz))))); // coordinates are on last three dimensions
-    int il, jl, kl, iu, ju, ku;
-    for (int dir_psi = 0; dir_psi < 3; dir_psi++) {
-        for (int i = 0; i < nx; i++) {
-            for (int j = 0; j < ny; j++) {
-                for (int k = 0; k < nz; k++) {
-                    if (i==0) {il = 1;} else il = i;
-                    if (j==0) {jl = 1;} else jl = j;
-                    if (k==0) {kl = 1;} else kl = k;
-                    if (i==nx-1) {iu = nx-2;} else iu = i;
-                    if (j==ny-1) {ju = ny-2;} else ju = j;
-                    if (k==nz-1) {ku = nz-2;} else ku = k;
-                    gradient[dir_psi][0][i][j][k] = (randomPsi[dir_psi][iu+1][j][k] - randomPsi[dir_psi][il-1][j][k]) / dx;
-                    gradient[dir_psi][1][i][j][k] = (randomPsi[dir_psi][i][ju+1][k] - randomPsi[dir_psi][i][jl-1][k]) / dy;
-                    gradient[dir_psi][2][i][j][k] = (randomPsi[dir_psi][i][j][ku+1] - randomPsi[dir_psi][i][j][kl-1]) / dz;
-    }}}} // so: gradient = {gradient_psix, gradient_psiy, gradient_psiz} and gradient_psin = { dpsin/dx, dpsin/dy, dpsin/dz }
-
-    // calculate curl using gradient values
-    int m, n; // for indices of cross-product
-    for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
-        vector<vector<vector<double> > > tmpdir;
-        if (dir_curl == 0) { m = 2; n = 1; }
-        else if (dir_curl == 2) { m = 1; n = 0; }
-        else { m = dir_curl - 1; n = dir_curl + 1; }
-        for (int i = 0; i < nx; i++) { vector<vector<double> > tmpi;
-            for (int j = 0; j < ny; j++) { vector<double> tmpj;
-                for (int k = 0; k < nz; k++) { double tmp;
-                    tmp = (gradient[m][n][i][j][k] - gradient[n][m][i][j][k]) / 4;
-                    tmpj.push_back(tmp);
-                } tmpi.push_back(tmpj);
-            } tmpdir.push_back(tmpi);
-        } curlOfPsi.push_back(tmpdir);
-    } // so: curlOfPsi = {ux, uy, uz}
+//    } else {
+//        ifstream file("random_psi.txt");
+//        while ("]") {
+//
+//        }
+//    }
 }
 
 vector<vector<vector<std::complex<double>>>>
@@ -303,6 +309,13 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     rep.push_back(1);
     rep.push_back(1);
     dealii::GridGenerator::subdivided_hyper_rectangle(*cube, rep, corner1, corner2, true);
+    //// TODO: generate using step_sizes
+//    vector<vector<double>> step_sizes(3, vector<double>(9));
+//    step_sizes.resize(3);
+//    step_sizes[0] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
+//    step_sizes[1] = {10, 5, 2, 1, 0.1, 1, 2, 5, 10};
+//    step_sizes[2] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
+//    dealii::GridGenerator::subdivided_hyper_rectangle(*cube, step_sizes, corner1, corner2, true);
     return cube;
 }
 

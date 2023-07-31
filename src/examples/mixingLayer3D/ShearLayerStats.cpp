@@ -14,11 +14,12 @@
 
 namespace natrium {
 
-ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string outdir, double starting_delta_theta) :
-DataProcessor<3>(solver), m_u(solver.getVelocity()), m_rho(solver.getDensity()),
-m_outDir(outdir), m_filename(scalaroutfile(solver.getConfiguration()->getOutputDirectory())),
-m_vectorfilename(vectoroutfile(solver.getConfiguration()->getOutputDirectory())),
-m_currentDeltaTheta(starting_delta_theta), m_currentDeltaOmega(0.41), b11(0), b22(0), b12(0) {
+ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string outdir, double starting_delta_theta, double starting_Re) :
+        DataProcessor<3>(solver),
+        m_Re0(starting_Re), m_u(solver.getVelocity()), m_rho(solver.getDensity()),
+        m_outDir(outdir), m_filename(scalaroutfile(solver.getConfiguration()->getOutputDirectory())),
+        m_vectorfilename(vectoroutfile(solver.getConfiguration()->getOutputDirectory())),
+        m_currentDeltaTheta(starting_delta_theta), m_currentDeltaOmega(0.41), m_b11(0), m_b22(0), m_b12(0) {
 
     m_yCoordsUpToDate = false;
     m_nofCoordinates = 0;
@@ -39,9 +40,10 @@ m_currentDeltaTheta(starting_delta_theta), m_currentDeltaOmega(0.41), b11(0), b2
         *m_tableFile << "t ";
         *m_tableFile << "deltaTheta ";
         *m_tableFile << "deltaOmega ";
-        *m_tableFile << "b11 ";
-        *m_tableFile << "b22 ";
-        *m_tableFile << "b12 ";
+        *m_tableFile << "deltaOmegaDot ";
+        *m_tableFile << "m_b11 ";
+        *m_tableFile << "m_b22 ";
+        *m_tableFile << "m_b12 ";
         *m_tableFile << endl;
     }
 }
@@ -148,14 +150,14 @@ void ShearLayerStats::calculateRhoU() {
     vector<double> rhou12_average;
     vector<double> rho_average;
     vector<double> ux_favre;
-    vector<double> integrand;
+    vector<double> momentumthickness_integrand;
     vector<double> umag_average;
     vector<double> dUdy_abs;
     // resize to fit length of y
     rhoux_average.resize(m_nofCoordinates);
     rho_average.resize(m_nofCoordinates);
     ux_favre.resize(m_nofCoordinates);
-    integrand.resize(m_nofCoordinates);
+    momentumthickness_integrand.resize(m_nofCoordinates);
     umag_average.resize(m_nofCoordinates);
     dUdy_abs.resize(m_nofCoordinates);
     m_R11.resize(m_nofCoordinates);
@@ -214,7 +216,7 @@ void ShearLayerStats::calculateRhoU() {
 
     // communicate
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-        // add n_points(iy), integrand(iy), ux_favre(iy), rho*ux(iy), and rho(iy) from different MPI processes
+        // add n_points(iy), momentumthickness_integrand(iy), ux_favre(iy), rho*ux(iy), and rho(iy) from different MPI processes
         number.at(iy) = dealii::Utilities::MPI::sum(number.at(iy), MPI_COMM_WORLD);
         // average over number of points at y
         if (number.at(iy) != 0) {
@@ -286,12 +288,12 @@ void ShearLayerStats::calculateRhoU() {
         }
     }
 
-    // calculate ux_favre, Rij and integrand
+    // calculate ux_favre, Rij and momentumthickness_integrand
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
         ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
         ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
-        integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
+        momentumthickness_integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
         m_R11.at(iy) = rhou11_average.at(iy) / rho_average.at(iy);
         m_R22.at(iy) = rhou22_average.at(iy) / rho_average.at(iy);
         m_R33.at(iy) = rhou33_average.at(iy) / rho_average.at(iy);
@@ -311,7 +313,7 @@ void ShearLayerStats::calculateRhoU() {
 //            dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1);
 //            dUdy_abs.at(iy) = abs(umag_average.at(iy - 1) - 2 * umag_average.at(iy) + umag_average.at(iy + 1)) / (dy * dy);
 //        }
-        if (iy == m_nofCoordinates - 1) { // right hand
+        if (iy == m_nofCoordinates - 1) { // backward
             dy = m_yCoordinates.at(iy) - m_yCoordinates.at(iy - 1);
             dUdy_abs.at(iy) = abs(umag_average.at(iy) - umag_average.at(iy - 1)) / dy;
         } else { // forward
@@ -321,22 +323,24 @@ void ShearLayerStats::calculateRhoU() {
     }
 
     // integrate along y
-    double integral = 0;
+    double momentumthickness_integral = 0;
     for (size_t iy = 0; iy < m_nofCoordinates - 1; iy++) {
         double window_size;
         if (iy == 0) { // left side: trapezoidal rule
             window_size = abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy));
-            integral += window_size * 0.5 * (integrand.at(iy) + integrand.at(iy + 1));
+            momentumthickness_integral += window_size * 0.5 * (momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy + 1));
         } else {
             window_size = 0.5*abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1)); // other: simpson rule
-            integral += window_size * (integrand.at(iy - 1) + 4 * integrand.at(iy) + integrand.at(iy + 1)) / 6;
+            momentumthickness_integral += window_size * (momentumthickness_integrand.at(iy - 1) + 4 * momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy + 1)) / 6;
         }
     }
+
     // calculate momentum thickness
     m_currentDeltaOmega = 2 /*dU*/ / *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));
+    m_ReOmega = 1 /*rho0*/ * m_Re0 * 2 /*dU*/ * m_currentDeltaOmega;
 
     // calculate vorticity thickness
-    m_currentDeltaTheta = integral * (1. / 4. /* rho0 * dU^2 = 1 * 2*2 */);
+    m_currentDeltaTheta = momentumthickness_integral * (1. / 4. /* rho0 * dU^2 = 1 * 2*2 */);
 
     // output to console
     if (is_MPI_rank_0()) {
@@ -348,10 +352,10 @@ void ShearLayerStats::calculateRhoU() {
             << ", t: " << m_solver.getTime()
             << ", delta_Theta: " << m_currentDeltaTheta
             << ", delta_Omega: " << m_currentDeltaOmega
-            << ", R11_max: " << *max_element(std::begin(m_R11), std::end(m_R11))
-            << ", R22_max: " << *max_element(std::begin(m_R22), std::end(m_R22))
-            << ", R33_max: " << *max_element(std::begin(m_R33), std::end(m_R33))
-            << ", R12_max: " << *max_element(std::begin(m_R12), std::end(m_R12))
+            << ", delta_Omega: " << m_ReOmega
+            << ", b11: " << m_b11
+            << ", b22: " << m_b22
+            << ", b12: " << m_b12
             << endl;
     }
 }
@@ -359,9 +363,13 @@ void ShearLayerStats::calculateRhoU() {
 void ShearLayerStats::write() {
     if (is_MPI_rank_0()) {
         *m_tableFile << this->m_solver.getIteration() << " "
-        << m_solver.getTime() << " "
-        << m_currentDeltaTheta << " "
-        << m_currentDeltaOmega << " "
+                     << m_solver.getTime() << " "
+                     << m_currentDeltaTheta << " "
+                     << m_currentDeltaOmega << " "
+                     << m_deltaThetaGrowth << " "
+                     << m_b11 << " "
+                     << m_b22 << " "
+                     << m_b12 << " "
         << endl;
 
         *m_vectorFile << "IT:" << this->m_solver.getIteration();

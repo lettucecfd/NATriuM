@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
     CompressibleCFDSolver<3> solver(configuration, mixingLayer);
     const size_t table_output_lines_per_10s = 300;
     configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
-    solver.appendDataProcessor(boost::make_shared<ShearLayerStats>(solver, configuration->getOutputDirectory(), shearLayerThickness));
+    solver.appendDataProcessor(boost::make_shared<ShearLayerStats>(solver, configuration->getOutputDirectory(), shearLayerThickness, Re));
     solver.run();
     pout << "step-mixingLayer terminated." << endl;
     return 0;

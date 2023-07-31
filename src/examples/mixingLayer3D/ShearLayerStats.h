@@ -23,6 +23,7 @@ class ShearLayerStats: public DataProcessor<3>{
 private:
 
     // Input parameters
+    double m_Re0;
     const vector<distributed_vector>& m_u;
     const distributed_vector& m_rho;
 
@@ -43,9 +44,11 @@ private:
     // Data
     double m_currentDeltaTheta;
     double m_currentDeltaOmega;
-    double b11;
-    double b22;
-    double b12;
+    double m_ReOmega;
+    double m_deltaThetaGrowth;
+    double m_b11;
+    double m_b22;
+    double m_b12;
 //    // Data stored across output steps
 //    double m_currentTime;
     // Data stored across y
@@ -69,7 +72,7 @@ private:
     }
 
 public:
-	ShearLayerStats(CompressibleCFDSolver<3> & solver, string outdir, double target);
+	ShearLayerStats(CompressibleCFDSolver<3> & solver, string outdir, double starting_delta_theta, double starting_Re);
 	void apply() override;
 	~ShearLayerStats() override;
     bool isMYCoordsUpToDate() const;
