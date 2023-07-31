@@ -52,10 +52,8 @@ private:
 //    // Data stored across output steps
 //    double m_currentTime;
     // Data stored across y
-    vector<double> m_R11;
-    vector<double> m_R22;
-    vector<double> m_R33;
-    vector<double> m_R12;
+    vector<double> m_R11, m_R22, m_R33, m_R12;
+    vector<double> m_K;
 
     void write();
     void calculateRhoU();
