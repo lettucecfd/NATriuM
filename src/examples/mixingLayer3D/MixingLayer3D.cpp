@@ -30,6 +30,9 @@ namespace natrium {
 
 MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, double U) :
     ProblemDescription<3>(makeGrid(), viscosity, 1), m_U(U), m_refinementLevel(refinementLevel) {
+    lx = 1720 * shearlayerthickness / 2;
+    ly = 387 * shearlayerthickness / 2;
+    lz = 172 * shearlayerthickness / 2;
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
@@ -52,28 +55,33 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 }
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : m_flow(flow) {
-    int kmax = pow(2, flow->m_refinementLevel);
-    k1max = kmax;
-    k2max = kmax;
-    k3max = kmax;
     vector<double> x, y, z;
     double xmin, xmax, ymin, ymax, zmin, zmax, dx, dy, dz;
-    float lx, ly, lz;
-    lx = 1720;
-    ly = 387;
-    lz = 172;
+    lx = 1720;// m_flow->lx;
+    ly = 387; // m_flow->ly;
+    lz = 172; // m_flow->lz;
     xmax = lx * shearlayerthickness / 2;
     xmin = -xmax;
     ymax = ly * shearlayerthickness / 2;
     ymin = -ymax;
     zmax = lz * shearlayerthickness / 2;
     zmin = -zmax;
-    dx = min({lx / kmax, ly / kmax, lz / kmax});
-    dy = dx;
-    dz = dx;
-    nx = ceil((xmax-xmin)/dx);
-    ny = ceil((ymax-ymin)/dy);
-    nz = ceil((zmax-zmin)/dz);
+    nx = pow(2, 4); // m_flow->m_refinementLevel-1
+    ny = nx; nz = nx;
+//    nx = 768; // ceil((xmax-xmin)/dx);
+//    ny = 193; // ceil((ymax-ymin)/dy);
+//    nz = 64; // ceil((zmax-zmin)/dz);
+//    int parts = 4;
+//    nx = ceil(nx/parts);
+//    nx = ceil(ny/parts);
+//    nx = ceil(nz/parts);
+    int kmax = min(nx, min(ny, nz)); // pow(2, flow->m_refinementLevel);
+    k1max = kmax;
+    k2max = kmax;
+    k3max = kmax;
+    dx = lx / nx;
+    dy = ly / ny;
+    dz = lz / nz;
 
     // create linspaces x, y, z
     double linvalue;
@@ -112,35 +120,27 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
             } tmpdir.push_back(tmpi);
         }
         // perform dft on randomPsi
-        vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
+        cout << "Doing DFT..." << endl;
+        vector< vector< vector<complex<double>>>> psi_i_hat = Fourier3D(tmpdir);
         // multiply in fourier space
         for (int kx = 0; kx < int(k1max/2); kx++) {
             for (int ky = 0; ky < int(k2max/2); ky++) {
                 for (int kz = 0; kz < int(k3max/2); kz++) {
                     double k_abs;
                     k_abs = sqrt(kx * kx + ky * ky + kz * kz);
-                    psi_hat[kx][ky][kz] *= exp(-2 * k_abs / k0);
-                    psi_hat[k1max-1 - kx][k2max-1 - ky][k3max-1 - kz] *= exp(-2 * k_abs / k0);
+                    psi_i_hat[kx][ky][kz] *= exp(-2 * k_abs / k0);
+                    psi_i_hat[(k1max-1) - kx][(k2max-1) - ky][(k3max-1) - kz] *= exp(-2 * k_abs / k0);
         } } }
-//        psi_hat[0][0][0] = 0;
-        // perform inverse dft on psi_hat (directionally)
-        vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
-//        psi_i = tmpdir;
-//        // report if they are not the same
-//        for (int xi = 0; xi < nx; xi++) {
-//            for (int yi = 0; yi < ny; yi++) {
-//                for (int zi = 0; zi < nz; zi++) {
-//                    if (abs(psi_i[xi][yi][zi] - tmpdir[xi][yi][zi]) > 1e-10) {
-//                        cout << "ups! tmpdi["<<xi<<"]["<<yi<<"]["<<zi<<"]="<<tmpdir[xi][yi][zi];
-//                        cout << " psi_i["<<xi<<"]["<<yi<<"]["<<zi<<"]="<<psi_i[xi][yi][zi];
-//                    }
-//        } } }
-
+        psi_i_hat[0][0][0] = 0;
+        // perform inverse dft on psi_i_hat
+        cout << "Doing inverse DFT..." << endl;
+        vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_i_hat);
         // add tmpdir (psix, psiy, or psiz) to randomPsi
         randomPsi.push_back(psi_i);
     } // so: randomPsi = {psix, psiy, psiz} ;
 
     // calculate gradient using central difference scheme
+    cout << "Calculating gradient..." << endl;
     vector<vector<vector<vector<vector<double>>>>> gradient(3,
         vector<vector<vector<vector<double>>>>(3,
         vector<vector<vector<double>>>(nx,
@@ -163,6 +163,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     }}}} // so: gradient = {gradient_psix, gradient_psiy, gradient_psiz} and gradient_psin = { dpsin/dx, dpsin/dy, dpsin/dz }
 
     // calculate curl using gradient values
+    cout << "Calculating curl..." << endl;
     int m, n; // for indices of cross-product
     for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
         vector<vector<vector<double> > > tmpdir;
@@ -178,6 +179,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
             } tmpdir.push_back(tmpi);
         } curlOfPsi.push_back(tmpdir);
     } // so: curlOfPsi = {ux, uy, uz}
+    cout << "Finished setting up inital velocity field..." << endl;
 }
 
 vector<vector<vector<std::complex<double>>>>
@@ -293,9 +295,6 @@ double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const
 boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     //Creation of the principal domain
     boost::shared_ptr<Mesh<3> > cube = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-    double lx = 1720 * shearlayerthickness / 2;
-    double ly = 387 * shearlayerthickness / 2;
-    double lz = 172 * shearlayerthickness / 2;
     dealii::Point<3> corner1(-lx, -ly, -lz);
     dealii::Point<3> corner2(lx, ly, lz);
     vector<unsigned int> rep;
@@ -305,33 +304,6 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     dealii::GridGenerator::subdivided_hyper_rectangle(*cube, rep, corner1, corner2, true);
     return cube;
 }
-
-//boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(size_t L) {
-//    //Creation of the principal domain
-//#ifdef WITH_TRILINOS_MPI
-//    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-//#else
-//    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >();
-//#endif
-//
-//    dealii::Point<3> x1(0,0,0);
-//    dealii::Point<3> x2(L, 1, 1);
-//    std::vector<std::vector<double> > step_sizes;
-//    step_sizes.push_back(std::vector<double>());
-//    step_sizes.push_back(std::vector<double>());
-//    step_sizes.push_back(std::vector<double>());
-//    step_sizes.at(1).push_back( 1 );
-//    step_sizes.at(2).push_back( 1 );
-//    for (size_t i = 0; i < L; i++){
-//        step_sizes.at(0).push_back( 1 );
-//    }
-//
-//    bool colorize = true; 	// set boundary ids automatically to
-//    // 0:left; 1:right; 2:bottom; 3:top
-//    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, step_sizes, x1, x2, colorize);
-//
-//    return rect;
-//}
 
 /**
  * @short create boundaries for couette flow

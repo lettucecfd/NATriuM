@@ -43,6 +43,7 @@ namespace natrium {
                 vector< vector< vector< vector<double> > > > curlOfPsi;
                 double minx, miny, minz;
                 double maxx, maxy, maxz;
+                double lx, ly, lz;
                 int nx, ny, nz;
                 int k1max, k2max, k3max;
                 double InterpolateVelocities(double, double, double, const unsigned int) const;
@@ -78,6 +79,7 @@ namespace natrium {
     private:
         /// speed of sound
         double m_U;
+        double lx, ly, lz;
         size_t m_refinementLevel;
 
         /**
