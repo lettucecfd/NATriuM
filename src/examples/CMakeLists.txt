@@ -1,6 +1,6 @@
 # Examples
-#add_subdirectory(taylorGreenVortex3D)
-#add_subdirectory(lidDrivenCavity2D)
+add_subdirectory(taylorGreenVortex3D)
+add_subdirectory(lidDrivenCavity2D)
 add_subdirectory(mixingLayer3D)
 add_subdirectory(step-turbulentChannel)
 #add_subdirectory(mixingLayer3D_Dominik)
