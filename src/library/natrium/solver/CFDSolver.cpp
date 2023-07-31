@@ -1536,7 +1536,7 @@ void CFDSolver<dim>::convertDeprecatedCheckpoint() {
 			*m_advectionOperator->getDoFHandler(), checkpoint_status);
 }
 
-//template class CFDSolver<2> ;
+template class CFDSolver<2> ;
 template class CFDSolver<3> ;
 
 } /* namespace natrium */

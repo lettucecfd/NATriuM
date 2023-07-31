@@ -306,6 +306,33 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     return cube;
 }
 
+//boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(size_t L) {
+//    //Creation of the principal domain
+//#ifdef WITH_TRILINOS_MPI
+//    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+//#else
+//    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >();
+//#endif
+//
+//    dealii::Point<3> x1(0,0,0);
+//    dealii::Point<3> x2(L, 1, 1);
+//    std::vector<std::vector<double> > step_sizes;
+//    step_sizes.push_back(std::vector<double>());
+//    step_sizes.push_back(std::vector<double>());
+//    step_sizes.push_back(std::vector<double>());
+//    step_sizes.at(1).push_back( 1 );
+//    step_sizes.at(2).push_back( 1 );
+//    for (size_t i = 0; i < L; i++){
+//        step_sizes.at(0).push_back( 1 );
+//    }
+//
+//    bool colorize = true; 	// set boundary ids automatically to
+//    // 0:left; 1:right; 2:bottom; 3:top
+//    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, step_sizes, x1, x2, colorize);
+//
+//    return rect;
+//}
+
 /**
  * @short create boundaries for couette flow
  * @return shared pointer to a vector of boundaries

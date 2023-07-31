@@ -87,6 +87,7 @@
 #include <sstream>
 
 #include "natrium/solver/CFDSolver.h"
+//#include "natrium/solver/CompressibleCFDSolver.h"
 #include "natrium/solver/SolverConfiguration.h"
 
 #include "natrium/problemdescription/ProblemDescription.h"

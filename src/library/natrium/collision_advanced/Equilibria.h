@@ -96,7 +96,7 @@ class QuarticEquilibrium
                         std::array<std::array<double, T_D>, T_Q> e, std::array<double, T_Q> w,
                         double cs2);
     const std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> H3;
-    const std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> H4;;
+    const std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> H4;
 
     QuarticEquilibrium(double cs2, std::array<std::array<double, T_D>, T_Q> e) : H3(calculateH3(cs2,e)), H4(calculateH4(cs2,e))
     {
