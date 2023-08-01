@@ -233,6 +233,9 @@ void ShearLayerStats::calculateRhoU() {
             rhouz_average.at(iy) = dealii::Utilities::MPI::sum(rhouz_average.at(iy), MPI_COMM_WORLD);
             rho_average.at(iy) = dealii::Utilities::MPI::sum(rho_average.at(iy), MPI_COMM_WORLD);
             umag_average.at(iy) = dealii::Utilities::MPI::sum(umag_average.at(iy), MPI_COMM_WORLD);
+            ux_ReAverage.at(iy) = dealii::Utilities::MPI::sum(ux_ReAverage.at(iy), MPI_COMM_WORLD);
+            uy_ReAverage.at(iy) = dealii::Utilities::MPI::sum(uy_ReAverage.at(iy), MPI_COMM_WORLD);
+            uz_ReAverage.at(iy) = dealii::Utilities::MPI::sum(uz_ReAverage.at(iy), MPI_COMM_WORLD);
             rhoux_average.at(iy) /= number.at(iy);
             rhouy_average.at(iy) /= number.at(iy);
             rhouz_average.at(iy) /= number.at(iy);
@@ -331,14 +334,10 @@ void ShearLayerStats::calculateRhoU() {
             dUdy_abs.at(iy) = (umag_average.at(iy) - umag_average.at(iy - 1)) / dy;
         } else { // other: central
             dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1);
-            dUdy_abs.at(iy) = (umag_average.at(iy - 1) - 2 * umag_average.at(iy) + umag_average.at(iy + 1)) / (dy * dy);
+            dUdy_abs.at(iy) = (umag_average.at(iy + 1) -  umag_average.at(iy - 1)) / dy;
         }
         dUdy_abs.at(iy) = abs(dUdy_abs.at(iy));
     }
-//    for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) { // forward
-//        dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy);
-//        dUdy_abs.at(iy) = abs((umag_average.at(iy + 1) - umag_average.at(iy)) / dy);
-//    }
 
     // integrate along y
     double momentumthickness_integral = 0, growthrate_integral = 0;
@@ -358,13 +357,12 @@ void ShearLayerStats::calculateRhoU() {
     for (size_t iy = 0; iy < m_nofCoordinates - 1; iy++) {
         // TODO calculate m_bij using integral over shear layer (2 vorticity thicknesses)
         // calculate anisotropy tensor elements
-        if (iy == 0) { // left side: trapezoidal rule
-            window_size = abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy));
-        } else { // other: simpson rule
+        y = m_yCoordinates.at(iy);
+        if (y > -0.093 && y < 0.093) { // simpson rule
             window_size = 0.5 * abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1));
             m_b11 += window_size * (b11vec.at(iy - 1) + 4 * b11vec.at(iy) + b11vec.at(iy + 1)) / 6;
             m_b22 += window_size * (b22vec.at(iy - 1) + 4 * b22vec.at(iy) + b22vec.at(iy + 1)) / 6;
-            m_b11 += window_size * (b12vec.at(iy - 1) + 4 * b12vec.at(iy) + b12vec.at(iy + 1)) / 6;
+            m_b12 += window_size * (b12vec.at(iy - 1) + 4 * b12vec.at(iy) + b12vec.at(iy + 1)) / 6;
         }
     }
 
