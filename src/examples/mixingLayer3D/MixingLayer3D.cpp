@@ -101,7 +101,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
         static std::seed_seq seed_seq( std::begin(sseq), std::end(sseq) ) ;
         static std::mt19937 twister(seed_seq) ;
         // random generator in [-1,1]
-        static uniform_real_distribution<double> distr(-1.0, 1.0) ; // +- Velocity
+        static uniform_real_distribution<double> distr(-1., 1.) ; // +- Velocity
 
         ofstream rand_file("random_psi.txt");
         ofstream dft_file("psi_hat.txt");

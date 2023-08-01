@@ -73,9 +73,6 @@ int main(int argc, char** argv) {
     // chose scaling so that the right Ma-number is achieved
     const double scaling = sqrt(3) * cs;
 
-    boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, U);
-
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
     configuration->setUserInteraction(false);
@@ -125,6 +122,9 @@ int main(int argc, char** argv) {
         }
         configuration->setOutputDirectory(dirName.str());
     }
+
+    boost::shared_ptr<ProblemDescription<3> > mixingLayer =
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, U);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////
