@@ -53,31 +53,26 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : m_flow(flow) {
     int kmax = 48;//pow(2, flow->m_refinementLevel);
-    k1max = int(kmax/2);
-    k2max = kmax;
-    k3max = int(kmax/2);
+    kxmax = kmax; // maybe lower kxmax and k3 max?
+    kymax = kmax;
+    kzmax = kmax;
     vector<double> x, y, z;
-    double xmin, xmax, ymin, ymax, zmin, zmax, dx, dy, dz;
-    float lx, ly, lz;
+    double xmin, xmax, ymin, ymax, zmin, zmax;
     lx = 1720 * shearlayerthickness;
     ly = 387 * shearlayerthickness;
     lz = 172 * shearlayerthickness;
-    xmax = lx / 2;
+    xmax = lx / 2;// * 1.1;
     xmin = -xmax;
-    ymax = ly / 2;
+    ymax = ly / 2;// * 1.1;
     ymin = -ymax;
-    zmax = lz / 2;
+    zmax = lz / 2;// * 1.1;
     zmin = -zmax;
-//    double nmax = pow(2, flow->m_refinementLevel);
-//    dx = min({lx / nmax, ly / nmax, lz / nmax});
-//    dy = dx;
-//    dz = dx;
-//    nx = ceil((xmax-xmin)/dx);
-//    ny = ceil((ymax-ymin)/dy);
-//    nz = ceil((zmax-zmin)/dz);
     nx = pow(2, flow->m_refinementLevel);
     ny = nx;
     nz = nx;
+    kxmax = min(nx, kxmax);
+    kymax = min(ny, kymax);
+    kzmax = min(nz, kzmax);
     dx = lx / nx;
     dy = ly / ny;
     dz = lz / nz;
@@ -99,7 +94,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     minz = *zbounds.first; maxz = *zbounds.second;
 
 //    if (recalculate_psi) {
-        // warm up randomness
+        //// warm up randomness
         static int sseq[ std::mt19937::state_size ] ;
         const static bool once = ( std::srand( std::time(nullptr)), // for true randomness: std::time(nullptr)
                 std::generate( std::begin(sseq), std::end(sseq), std::rand ), true ) ;
@@ -108,9 +103,13 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
         // random generator in [-1,1]
         static uniform_real_distribution<double> distr(-1.0, 1.0) ; // +- Velocity
 
-        // Fill randomPsi with random values
+        ofstream rand_file("random_psi.txt");
+        ofstream dft_file("psi_hat.txt");
+        ofstream scaling_file("psi_hat_scaled.txt");
+        ofstream idft_file("psi_idft.txt");
         randomPsi.reserve(3);
         for (int dir = 0; dir < 3; dir++) { vector< vector< vector<double> > > tmpdir;
+            //// Fill randomPsi with random values
             for (int xi = 0; xi < nx; xi++) { vector<vector<double> > tmpi;
                 for (int yi = 0; yi < ny; yi++) { vector<double> tmpj;
                     for (int zi = 0; zi < nz; zi++) { double tmpk;
@@ -119,30 +118,62 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             }
-            // perform dft on randomPsi
+            rand_file << "axis_" << to_string(dir) << endl;
+            for (int i = 0; i < nx; i++) { rand_file << "[";
+                for (int j = 0; j < ny; j++) { rand_file << "[";
+                    for (int k = 0; k < nz; k++) {
+                        rand_file << tmpdir[i][j][k] << " ";
+                    } rand_file << "]";
+                } rand_file << "],";
+            } rand_file << endl;
+            //// perform dft on randomPsi
             vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
-            // multiply in fourier space
-            for (int kx = 0; kx < int(k1max/2); kx++) {
-                for (int ky = 0; ky < int(k2max/2); ky++) {
-                    for (int kz = 0; kz < int(k3max/2); kz++) {
+            dft_file << "axis_" << to_string(dir) << endl;
+            for (int i = 0; i < nx; i++) { dft_file << "[";
+                for (int j = 0; j < ny; j++) { dft_file << "[";
+                    for (int k = 0; k < nz; k++) {
+                        dft_file << psi_hat[i][j][k] << " ";
+                    } dft_file << "]";
+                } dft_file << "],";
+            } dft_file << endl;
+            //// multiply in spectral space
+            for (int kx = 0; kx < int(kxmax/2); kx++) {
+                for (int ky = 0; ky < int(kymax/2); ky++) {
+                    for (int kz = 0; kz < int(kzmax/2); kz++) {
                         double k_abs;
                         k_abs = sqrt(kx * kx + ky * ky + kz * kz);
-                        psi_hat[kx][ky][kz] *= (k_abs/k0)*(k_abs/k0)*(k_abs/k0)*(k_abs/k0)*exp(-2 * k_abs / k0); // holger: exp(-2 * k_abs / k0);
-                        psi_hat[k1max-1 - kx][k2max-1 - ky][k3max-1 - kz] *= exp(-2 * k_abs / k0);
+                        psi_hat[kx][ky][kz] *= exp(-2 * k_abs / k0); // Sarkar:  (k_abs/k0)*(k_abs/k0)*(k_abs/k0)*(k_abs/k0)*exp(-2 * k_abs / k0); // holger:
+                        psi_hat[kxmax-1 - kx][kymax-1 - ky][kzmax-1 - kz] *= exp(-2 * k_abs / k0);
                     } } }
             psi_hat[0][0][0] = 0;
-            // perform inverse dft on psi_hat (directionally)
+            scaling_file << "axis_" << to_string(dir) << endl;
+            for (int i = 0; i < nx; i++) { scaling_file << "[";
+                for (int j = 0; j < ny; j++) { scaling_file << "[";
+                    for (int k = 0; k < nz; k++) {
+                        scaling_file << psi_hat[i][j][k] << " ";
+                    } scaling_file << "]";
+                } scaling_file << "],";
+            } scaling_file << endl;
+            //// perform inverse dft on psi_hat (directionally)
             vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
+            idft_file << "axis_" << to_string(dir) << endl;
+            for (int i = 0; i < nx; i++) { idft_file << "[";
+                for (int j = 0; j < ny; j++) { idft_file << "[";
+                    for (int k = 0; k < nz; k++) {
+                        idft_file << psi_i[i][j][k] << " ";
+                    } idft_file << "]";
+                } idft_file << "],";
+            } idft_file << endl;
             // add tmpdir (psix, psiy, or psiz) to randomPsi
             randomPsi.push_back(psi_i);
         } // so: randomPsi = {psix, psiy, psiz} ;
 
         // calculate gradient using central difference scheme
         vector<vector<vector<vector<vector<double>>>>> gradient(3,
-                                                                vector<vector<vector<vector<double>>>>(3,
-                                                                                                       vector<vector<vector<double>>>(nx,
-                                                                                                                                      vector<vector<double>>(ny,
-                                                                                                                                                             vector<double>(nz))))); // coordinates are on last three dimensions
+            vector<vector<vector<vector<double>>>>(3,
+                vector<vector<vector<double>>>(nx,
+                    vector<vector<double>>(ny,
+                        vector<double>(nz))))); // coordinates are on last three dimensions
         int il, jl, kl, iu, ju, ku;
         for (int dir_psi = 0; dir_psi < 3; dir_psi++) {
             for (int i = 0; i < nx; i++) {
@@ -158,6 +189,18 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                         gradient[dir_psi][1][i][j][k] = (randomPsi[dir_psi][i][ju+1][k] - randomPsi[dir_psi][i][jl-1][k]) / dy;
                         gradient[dir_psi][2][i][j][k] = (randomPsi[dir_psi][i][j][ku+1] - randomPsi[dir_psi][i][j][kl-1]) / dz;
                     }}}} // so: gradient = {gradient_psix, gradient_psiy, gradient_psiz} and gradient_psin = { dpsin/dx, dpsin/dy, dpsin/dz }
+        ofstream grad_file("psi_grad.txt");
+        for (int dir_psi = 0; dir_psi < 3; dir_psi++) { grad_file << "direction: " << to_string(dir_psi) << endl << "[";
+            for (int dir_grad = 0; dir_grad < 3; dir_grad++) { grad_file << "[";
+                for (int i = 0; i < nx; i++) { grad_file << "[";
+                    for (int j = 0; j < ny; j++) { grad_file << "[";
+                        for (int k = 0; k < nz; k++) {
+                            grad_file << gradient[dir_psi][dir_grad][i][j][k] << " ";
+                        } grad_file << "]";
+                    } grad_file << "],";
+                } grad_file << "];" << endl;
+            } grad_file << "];" << endl;
+        }
 
         // calculate curl using gradient values
         int m, n; // for indices of cross-product
@@ -175,15 +218,16 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                 } tmpdir.push_back(tmpi);
             } curlOfPsi.push_back(tmpdir);
         } // so: curlOfPsi = {ux, uy, uz}
-        ofstream file("random_psi.txt");
-        for (int dir_psi = 0; dir_psi < 3; dir_psi++) { file << "[";
-            for (int i = 0; i < nx; i++) { file << "[";
-                for (int j = 0; j < ny; j++) { file << "[";
+
+        ofstream u_file("random_u.txt");
+        for (int dir_psi = 0; dir_psi < 3; dir_psi++) { u_file << "[";
+            for (int i = 0; i < nx; i++) { u_file << "[";
+                for (int j = 0; j < ny; j++) { u_file << "[";
                     for (int k = 0; k < nz; k++) {
-                        file << curlOfPsi[dir_psi][i][j][k] << ",";
-                    } file << "]";
-                } file << "]";
-            } file << "]";
+                        u_file << curlOfPsi[dir_psi][i][j][k] << " ";
+                    } u_file << "]";
+                } u_file << "],";
+            } u_file << "];";
         }
 //    } else {
 //        ifstream file("random_psi.txt");
@@ -196,49 +240,39 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
 vector<vector<vector<std::complex<double>>>>
 MixingLayer3D::InitialVelocity::Fourier3D(const vector<vector<vector<double>>> &in) {
     vector<vector<vector<complex<double>>>> out(
-            k1max, vector<vector<complex<double>>>(
-                    k2max, vector<complex<double>>(
-                            k3max, {0.0, 0.0}))); // coordinates are on last three dimensions
+            kxmax, vector<vector<complex<double>>>(
+                    kymax, vector<complex<double>>(
+                            kzmax, {0.0, 0.0}))); // coordinates are on last three dimensions
     double xi, yi, zi;
-    double dx, dy, dz;
     complex<double> omeg1, omeg2, omeg3;
-    for (int ix = 0; ix < nx-1; ix++) {
-        if (ix == 0) { dx = xvec[ix+1]-xvec[ix];
-//        } else if (ix == nx-1) { dx = xvec[ix]-xvec[ix-1];
-        } else {  dx = (xvec[ix+1]-xvec[ix-1]) * 0.5; }
+    for (int ix = 0; ix < nx; ix++) { // if (ix == 0) { dx = xvec[ix+1]-xvec[ix]; } else { dx = xvec[ix] - xvec[ix - 1]; }
         xi = xvec[ix];
-        for (int iy = 0; iy < ny-1; iy++) {
-            if (iy == 0) { dy = yvec[iy+1]-yvec[iy];
-//            } else if (iy == ny-1) { dy = yvec[iy]-yvec[iy-1];
-            } else {  dy = (yvec[iy+1]-yvec[iy-1]) * 0.5; }
-            yi = yvec[iy];
-            for (int iz = 0; iz < nz-1; iz++) {
-                if (iz == 0) { dz = zvec[iz+1]-zvec[iz];
-//                } else if (iz == nz-1) { dz = zvec[iz]-zvec[iz-1];
-                } else {  dz = (zvec[iz+1]-zvec[iz-1]) * 0.5; }
-                zi = zvec[iz];
-                for (int kx = 0; kx < k1max; kx++) { omeg1 = {0.0, -2 * M_PI * xi / nx * kx};
-                    for (int ky = 0; ky < k2max; ky++) { omeg2 = {0.0, -2 * M_PI * yi / ny * ky};
-                        for (int kz = 0; kz < k3max; kz++) { omeg3 = {0.0, -2 * M_PI * zi / nz * kz};
-                            out[kx][ky][kz] += in[ix][iy][iz] * exp(omeg1 + omeg2 + omeg3) * dx * dy * dz;
+        for (int iy = 0; iy < ny; iy++) { yi = yvec[iy];
+            for (int iz = 0; iz < nz; iz++) { zi = zvec[iz];
+                for (int kx = 0; kx < kxmax; kx++) { omeg1 = {0.0, -2 * M_PI * xi * kx/nx}; // {0.0, -2 * M_PI * xi / nx * kx};
+                    for (int ky = 0; ky < kymax; ky++) { omeg2 = {0.0, -2 * M_PI * yi * ky/ny};
+                        for (int kz = 0; kz < kzmax; kz++) { omeg3 = {0.0, -2 * M_PI * zi * kz/nz};
+                            out[kx][ky][kz] += in[ix][iy][iz] * exp(omeg1 + omeg2 + omeg3);
     }}}}}}
     return out;
 }
 
 vector<vector<vector<double>>> MixingLayer3D::InitialVelocity::InverseFourier3D(
         const vector<vector<vector<std::complex<double>>>> &in) {
-    vector<vector<vector<double>>> out(nx, vector<vector<double>>(ny, vector<double>(nz, 0.0)));
-    double n1, n2, n3;
+    vector<vector<vector<double>>> out(nx,
+        vector<vector<double>>(ny,
+            vector<double>(nz, 0.0)));
     double xi, yi, zi;
     complex<double> omeg1, omeg2, omeg3, tmp;
-    for (int ix = 0; ix < nx; ix++) { //xi = xvec[ix];
-        for (int iy = 0; iy < ny; iy++) { //yi = yvec[iy];
-            for (int iz = 0; iz < nz; iz++) { //zi = zvec[iz];
-                for (int kx = 0; kx < k1max; kx++) { omeg1 = {0.0, 2*M_PI * xi / nx * kx};
-                    for (int ky = 0; ky < k2max; ky++) { omeg2 = {0.0, 2 * M_PI * yi / ny * ky};
-                        for (int kz = 0; kz < k3max; kz++) { omeg3 = {0.0, 2 * M_PI * zi / nz * kz};
-                            tmp = in[kx][ky][kz] * exp(omeg1 + omeg2 + omeg3); // dkx, dky, dkz = 1
-                            out[ix][iy][iz] += real(tmp) / (nx * ny * nz);
+    double N = (nx * ny * nz);
+    for (int ix = 0; ix < nx; ix++) { xi = xvec[ix];
+        for (int iy = 0; iy < ny; iy++) { yi = yvec[iy];
+            for (int iz = 0; iz < nz; iz++) { zi = zvec[iz];
+                for (int kx = 0; kx < kxmax; kx++) { omeg1 = {0.0, 2 * M_PI * xi/nx * kx}; //{0.0, 2 * M_PI * xi / nx * kx};
+                    for (int ky = 0; ky < kymax; ky++) { omeg2 = {0.0, 2 * M_PI * yi/ny * ky};
+                        for (int kz = 0; kz < kzmax; kz++) { omeg3 = {0.0, 2 * M_PI * zi/nz * kz};
+                            tmp = in[kx][ky][kz] * exp(omeg1 + omeg2 + omeg3); // * dkx, dky, dkz = 1
+                            out[ix][iy][iz] += real(tmp) / N;
     }}}}}}
     return out;
 }

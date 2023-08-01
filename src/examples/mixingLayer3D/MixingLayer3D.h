@@ -43,9 +43,10 @@ namespace natrium {
                 vector< vector< vector< vector<double> > > > curlOfPsi;
                 double minx, miny, minz;
                 double maxx, maxy, maxz;
+                double dx, dy, dz;
                 double lx, ly, lz;
                 int nx, ny, nz;
-                int k1max, k2max, k3max;
+                int kxmax, kymax, kzmax;
                 double InterpolateVelocities(double, double, double, const unsigned int) const;
             public:
                 InitialVelocity(MixingLayer3D *flow);
