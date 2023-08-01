@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     configuration->setOutputGlobalTurbulenceStatistics(false);
     configuration->setOutputCompressibleTurbulenceStatistics(false);
     configuration->setOutputShearLayerStatistics(false);
-    configuration->setOutputShearLayerInterval(20);
+    configuration->setOutputShearLayerInterval(parser.getArgument<int>("nstats"));
     configuration->setStencilScaling(scaling);
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);

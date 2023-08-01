@@ -25,6 +25,8 @@ double k0 = 23.66 * shearlayerthickness; // peak wave number
 //int kmax = pow(2, n); // [1] C. Pantano and S. Sarkar, “A study of compressibility effects in the high-speed turbulent shear layer using direct simulation,” J. Fluid Mech., vol. 451, pp. 329–371, Jan. 2002, doi: 10.1017/S0022112001006978.
 // kmax = 32
 //int npoints = 32; // number of points in shortest axis of velocity field (lz, presumably)
+bool print = true;
+bool recalculate_psi = true;
 
 namespace natrium {
 
@@ -93,7 +95,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     auto zbounds = std::minmax_element(z.begin(), z.end());
     minz = *zbounds.first; maxz = *zbounds.second;
 
-//    if (recalculate_psi) {
+    if (recalculate_psi) {
         //// warm up randomness
         static int sseq[ std::mt19937::state_size ] ;
         const static bool once = ( std::srand( std::time(nullptr)), // for true randomness: std::time(nullptr)
@@ -103,10 +105,6 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
         // random generator in [-1,1]
         static uniform_real_distribution<double> distr(-1., 1.) ; // +- Velocity
 
-        ofstream rand_file("random_psi.txt");
-        ofstream dft_file("psi_hat.txt");
-        ofstream scaling_file("psi_hat_scaled.txt");
-        ofstream idft_file("psi_idft.txt");
         randomPsi.reserve(3);
         for (int dir = 0; dir < 3; dir++) { vector< vector< vector<double> > > tmpdir;
             //// Fill randomPsi with random values
@@ -118,25 +116,32 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             }
-            rand_file << "axis_" << to_string(dir) << endl;
-            for (int i = 0; i < nx; i++) { rand_file << "[";
-                for (int j = 0; j < ny; j++) { rand_file << "[";
-                    for (int k = 0; k < nz; k++) {
-                        rand_file << tmpdir[i][j][k] << " ";
-                    } rand_file << "]";
-                } rand_file << "],";
-            } rand_file << endl;
+            if (print) {
+                ofstream rand_file("random_psi.txt");
+                rand_file << "axis_" << to_string(dir) << endl;
+                for (int i = 0; i < nx; i++) { rand_file << "[";
+                    for (int j = 0; j < ny; j++) { rand_file << "[";
+                        for (int k = 0; k < nz; k++) {
+                            rand_file << tmpdir[i][j][k] << " ";
+                        } rand_file << "]";
+                    } rand_file << "],";
+                } rand_file << endl;
+            }
             //// perform dft on randomPsi
             vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
-            dft_file << "axis_" << to_string(dir) << endl;
-            for (int i = 0; i < nx; i++) { dft_file << "[";
-                for (int j = 0; j < ny; j++) { dft_file << "[";
-                    for (int k = 0; k < nz; k++) {
-                        dft_file << psi_hat[i][j][k] << " ";
-                    } dft_file << "]";
-                } dft_file << "],";
-            } dft_file << endl;
+            if (print) {
+                ofstream dft_file("psi_hat.txt");
+                dft_file << "axis_" << to_string(dir) << endl;
+                for (int i = 0; i < nx; i++) { dft_file << "[";
+                    for (int j = 0; j < ny; j++) { dft_file << "[";
+                        for (int k = 0; k < nz; k++) {
+                            dft_file << psi_hat[i][j][k] << " ";
+                        } dft_file << "]";
+                    } dft_file << "],";
+                } dft_file << endl;
+            }
             //// multiply in spectral space
+            double k0 = sqrt(kxmax*kxmax+kymax*kymax+kzmax*kzmax);
             for (int kx = 0; kx < int(kxmax/2); kx++) {
                 for (int ky = 0; ky < int(kymax/2); ky++) {
                     for (int kz = 0; kz < int(kzmax/2); kz++) {
@@ -146,24 +151,30 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                         psi_hat[kxmax-1 - kx][kymax-1 - ky][kzmax-1 - kz] *= exp(-2 * k_abs / k0);
                     } } }
             psi_hat[0][0][0] = 0;
-            scaling_file << "axis_" << to_string(dir) << endl;
-            for (int i = 0; i < nx; i++) { scaling_file << "[";
-                for (int j = 0; j < ny; j++) { scaling_file << "[";
-                    for (int k = 0; k < nz; k++) {
-                        scaling_file << psi_hat[i][j][k] << " ";
-                    } scaling_file << "]";
-                } scaling_file << "],";
-            } scaling_file << endl;
+            if (print) {
+                ofstream scaling_file("psi_hat_scaled.txt");
+                scaling_file << "axis_" << to_string(dir) << endl;
+                for (int i = 0; i < nx; i++) { scaling_file << "[";
+                    for (int j = 0; j < ny; j++) { scaling_file << "[";
+                        for (int k = 0; k < nz; k++) {
+                            scaling_file << psi_hat[i][j][k] << " ";
+                        } scaling_file << "]";
+                    } scaling_file << "],";
+                } scaling_file << endl;
+            }
             //// perform inverse dft on psi_hat (directionally)
             vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
-            idft_file << "axis_" << to_string(dir) << endl;
-            for (int i = 0; i < nx; i++) { idft_file << "[";
-                for (int j = 0; j < ny; j++) { idft_file << "[";
-                    for (int k = 0; k < nz; k++) {
-                        idft_file << psi_i[i][j][k] << " ";
-                    } idft_file << "]";
-                } idft_file << "],";
-            } idft_file << endl;
+            if (print) {
+                ofstream idft_file("psi_idft.txt");
+                idft_file << "axis_" << to_string(dir) << endl;
+                for (int i = 0; i < nx; i++) { idft_file << "[";
+                    for (int j = 0; j < ny; j++) { idft_file << "[";
+                        for (int k = 0; k < nz; k++) {
+                            idft_file << psi_i[i][j][k] << " ";
+                        } idft_file << "]";
+                    } idft_file << "],";
+                } idft_file << endl;
+            }
             // add tmpdir (psix, psiy, or psiz) to randomPsi
             randomPsi.push_back(psi_i);
         } // so: randomPsi = {psix, psiy, psiz} ;
@@ -189,19 +200,20 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                         gradient[dir_psi][1][i][j][k] = (randomPsi[dir_psi][i][ju+1][k] - randomPsi[dir_psi][i][jl-1][k]) / dy;
                         gradient[dir_psi][2][i][j][k] = (randomPsi[dir_psi][i][j][ku+1] - randomPsi[dir_psi][i][j][kl-1]) / dz;
                     }}}} // so: gradient = {gradient_psix, gradient_psiy, gradient_psiz} and gradient_psin = { dpsin/dx, dpsin/dy, dpsin/dz }
-        ofstream grad_file("psi_grad.txt");
-        for (int dir_psi = 0; dir_psi < 3; dir_psi++) { grad_file << "direction: " << to_string(dir_psi) << endl << "[";
-            for (int dir_grad = 0; dir_grad < 3; dir_grad++) { grad_file << "[";
-                for (int i = 0; i < nx; i++) { grad_file << "[";
-                    for (int j = 0; j < ny; j++) { grad_file << "[";
-                        for (int k = 0; k < nz; k++) {
-                            grad_file << gradient[dir_psi][dir_grad][i][j][k] << " ";
-                        } grad_file << "]";
-                    } grad_file << "],";
+        if (print) {
+            ofstream grad_file("psi_grad.txt");
+            for (int dir_psi = 0; dir_psi < 3; dir_psi++) { grad_file << "direction: " << to_string(dir_psi) << endl << "[";
+                for (int dir_grad = 0; dir_grad < 3; dir_grad++) { grad_file << "[";
+                    for (int i = 0; i < nx; i++) { grad_file << "[";
+                        for (int j = 0; j < ny; j++) { grad_file << "[";
+                            for (int k = 0; k < nz; k++) {
+                                grad_file << gradient[dir_psi][dir_grad][i][j][k] << " ";
+                            } grad_file << "]";
+                        } grad_file << "],";
+                    } grad_file << "];" << endl;
                 } grad_file << "];" << endl;
-            } grad_file << "];" << endl;
+            }
         }
-
         // calculate curl using gradient values
         int m, n; // for indices of cross-product
         for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
@@ -211,30 +223,49 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
             else { m = dir_curl - 1; n = dir_curl + 1; }
             for (int i = 0; i < nx; i++) { vector<vector<double> > tmpi;
                 for (int j = 0; j < ny; j++) { vector<double> tmpj;
-                    for (int k = 0; k < nz; k++) { double tmp;
-                        tmp = (gradient[m][n][i][j][k] - gradient[n][m][i][j][k]) / 4;
-                        tmpj.push_back(tmp);
+                    for (int k = 0; k < nz; k++) { double tmpk;
+                        tmpk = (gradient[m][n][i][j][k] - gradient[n][m][i][j][k]) / 4;
+                        tmpj.push_back(tmpk);
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             } curlOfPsi.push_back(tmpdir);
         } // so: curlOfPsi = {ux, uy, uz}
-
-        ofstream u_file("random_u.txt");
-        for (int dir_psi = 0; dir_psi < 3; dir_psi++) { u_file << "[";
-            for (int i = 0; i < nx; i++) { u_file << "[";
-                for (int j = 0; j < ny; j++) { u_file << "[";
-                    for (int k = 0; k < nz; k++) {
-                        u_file << curlOfPsi[dir_psi][i][j][k] << " ";
-                    } u_file << "]";
-                } u_file << "],";
-            } u_file << "];";
+        if (print) {
+            ofstream u_file("random_u.txt");
+            for (int dir_psi = 0; dir_psi < 3; dir_psi++) { //u_file << "[";
+                for (int i = 0; i < nx; i++) { //u_file << "[";
+                    for (int j = 0; j < ny; j++) { //u_file << "[";
+                        for (int k = 0; k < nz; k++) {
+                            u_file << ' ' << curlOfPsi[dir_psi][i][j][k];
+                        } if (j<nz-1) { u_file << ','; }
+                    } if (i<nz-1) { u_file << ';'; }
+                } u_file << endl;
+            }
         }
-//    } else {
-//        ifstream file("random_psi.txt");
-//        while ("]") {
-//
-//        }
-//    }
+    }
+    else { // TODO: Read data from random file
+//        int dir_psi = 0, i = 0, j = 0, k = 0;
+        ifstream file("random_u.txt");
+        string line_dir;
+        while (getline(file, line_dir)) {
+            stringstream linestream(line_dir);
+            string cell_dir;
+            vector<vector<std::vector<double>>> tmpdir;
+            while(std::getline(linestream, cell_dir, ';')) {
+                string cell_i;
+                vector<vector<double>> tmpi;
+                while(getline(linestream,cell_i,',')) {
+                    string cell_j;
+                    vector<double> tmpj;
+                    while(getline(linestream, cell_j, ' ')) {
+                        string cell_k;
+                        double tmpk = stod(cell_k);
+                        tmpj.push_back(tmpk);
+                    } tmpi.push_back(tmpj);
+                } tmpdir.push_back(tmpi);
+            } curlOfPsi.push_back(tmpdir);
+        }
+    }
 }
 
 vector<vector<vector<std::complex<double>>>>
@@ -243,15 +274,14 @@ MixingLayer3D::InitialVelocity::Fourier3D(const vector<vector<vector<double>>> &
             kxmax, vector<vector<complex<double>>>(
                     kymax, vector<complex<double>>(
                             kzmax, {0.0, 0.0}))); // coordinates are on last three dimensions
-    double xi, yi, zi;
+    //double xi, yi, zi;
     complex<double> omeg1, omeg2, omeg3;
-    for (int ix = 0; ix < nx; ix++) { // if (ix == 0) { dx = xvec[ix+1]-xvec[ix]; } else { dx = xvec[ix] - xvec[ix - 1]; }
-        xi = xvec[ix];
-        for (int iy = 0; iy < ny; iy++) { yi = yvec[iy];
-            for (int iz = 0; iz < nz; iz++) { zi = zvec[iz];
-                for (int kx = 0; kx < kxmax; kx++) { omeg1 = {0.0, -2 * M_PI * xi * kx/nx}; // {0.0, -2 * M_PI * xi / nx * kx};
-                    for (int ky = 0; ky < kymax; ky++) { omeg2 = {0.0, -2 * M_PI * yi * ky/ny};
-                        for (int kz = 0; kz < kzmax; kz++) { omeg3 = {0.0, -2 * M_PI * zi * kz/nz};
+    for (int ix = 0; ix < nx; ix++) {
+        for (int iy = 0; iy < ny; iy++) {
+            for (int iz = 0; iz < nz; iz++) {
+                for (int kx = 0; kx < kxmax; kx++) { omeg1 = {0.0, -2 * M_PI * ix/nx * kx};
+                    for (int ky = 0; ky < kymax; ky++) { omeg2 = {0.0, -2 * M_PI * iy/ny * ky};
+                        for (int kz = 0; kz < kzmax; kz++) { omeg3 = {0.0, -2 * M_PI * iz/nz * kz};
                             out[kx][ky][kz] += in[ix][iy][iz] * exp(omeg1 + omeg2 + omeg3);
     }}}}}}
     return out;
@@ -262,16 +292,16 @@ vector<vector<vector<double>>> MixingLayer3D::InitialVelocity::InverseFourier3D(
     vector<vector<vector<double>>> out(nx,
         vector<vector<double>>(ny,
             vector<double>(nz, 0.0)));
-    double xi, yi, zi;
+    //double xi, yi, zi;
     complex<double> omeg1, omeg2, omeg3, tmp;
     double N = (nx * ny * nz);
-    for (int ix = 0; ix < nx; ix++) { xi = xvec[ix];
-        for (int iy = 0; iy < ny; iy++) { yi = yvec[iy];
-            for (int iz = 0; iz < nz; iz++) { zi = zvec[iz];
-                for (int kx = 0; kx < kxmax; kx++) { omeg1 = {0.0, 2 * M_PI * xi/nx * kx}; //{0.0, 2 * M_PI * xi / nx * kx};
-                    for (int ky = 0; ky < kymax; ky++) { omeg2 = {0.0, 2 * M_PI * yi/ny * ky};
-                        for (int kz = 0; kz < kzmax; kz++) { omeg3 = {0.0, 2 * M_PI * zi/nz * kz};
-                            tmp = in[kx][ky][kz] * exp(omeg1 + omeg2 + omeg3); // * dkx, dky, dkz = 1
+    for (int ix = 0; ix < nx; ix++) {
+        for (int iy = 0; iy < ny; iy++) {
+            for (int iz = 0; iz < nz; iz++) {
+                for (int kx = 0; kx < kxmax; kx++) { omeg1 = {0.0, 2 * M_PI * ix/nx * kx};
+                    for (int ky = 0; ky < kymax; ky++) { omeg2 = {0.0, 2 * M_PI * iy/ny * ky};
+                        for (int kz = 0; kz < kzmax; kz++) { omeg3 = {0.0, 2 * M_PI * iz/nz * kz};
+                            tmp = in[kx][ky][kz] * exp(omeg1 + omeg2 + omeg3);
                             out[ix][iy][iz] += real(tmp) / N;
     }}}}}}
     return out;

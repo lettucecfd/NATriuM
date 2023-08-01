@@ -21,6 +21,8 @@
 #include "natrium/problemdescription/ProblemDescription.h"
 #include "natrium/utilities/BasicNames.h"
 
+#include <deal.II/lac/la_parallel_vector.h>
+
 namespace natrium {
 
 /** @short Description of a simple Periodic Flow (flow in square domain).
@@ -39,6 +41,8 @@ namespace natrium {
                 vector<double> xvec;
                 vector<double> yvec;
                 vector<double> zvec;
+//                DealIIExtensions::LinearAlgebra::distributed::Vector<
+//                    DealIIExtensions::LinearAlgebra::distributed::Vector<double>> randomPsi;
                 vector< vector< vector< vector<double> > > > randomPsi;
                 vector< vector< vector< vector<double> > > > curlOfPsi;
                 double minx, miny, minz;
