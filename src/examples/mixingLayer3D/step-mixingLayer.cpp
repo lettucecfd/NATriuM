@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
-    parser.setArgument<int>("nstats", "output stats every nstats steps", 100);
+    parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setPositionalArgument<int>("ref-level",
                                       "Refinement level of the computation grid.");
     parser.setArgument<int>("grid-repetitions",
@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
     configuration->setUserInteraction(false);
-    configuration->setOutputCheckpointInterval(nout*10);
+    configuration->setOutputCheckpointInterval(nout*100);
     configuration->setOutputSolutionInterval(nout);
     configuration->setSimulationEndTime(time);
     configuration->setOutputGlobalTurbulenceStatistics(false);
@@ -112,13 +112,13 @@ int main(int argc, char** argv) {
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
             dirName << "-int" << static_cast<int>(configuration->getTimeIntegrator()) << "_" << static_cast<int>(configuration->getDealIntegrator());
 //        dirName << "-CFL" << configuration->getCFL();
-        dirName << "-sten" << static_cast<int>(configuration->getStencil());
-        if (configuration->isFiltering())
-            dirName << "-filt" << static_cast<int>(configuration->getFilteringScheme()) << "by_max_degree";
+//        dirName << "-sten" << static_cast<int>(configuration->getStencil());
+//        if (configuration->isFiltering())
+//            dirName << "-filt" << static_cast<int>(configuration->getFilteringScheme()) << "by_max_degree";
         if (configuration->getRegularizationScheme() != NO_REGULARIZATION)
             dirName << "-reg" << static_cast<int>(configuration->getRegularizationScheme());
-        if (configuration->getEquilibriumScheme()!= BGK_EQUILIBRIUM)
-            dirName << "-equili" << static_cast<int>(configuration->getEquilibriumScheme());
+//        if (configuration->getEquilibriumScheme()!= BGK_EQUILIBRIUM)
+//            dirName << "-equili" << static_cast<int>(configuration->getEquilibriumScheme());
         if (configuration->getCollisionScheme() == MRT_STANDARD) {
             dirName << "-mrt" << static_cast<int>(configuration->getMRTBasis());
         }

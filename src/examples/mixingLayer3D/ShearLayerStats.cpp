@@ -116,7 +116,8 @@ void ShearLayerStats::updateYValues() {
         m_yCoordinates.push_back(it);
         m_yCoordinateToIndex.insert(std::make_pair(it, i));
         i++;
-    }
+//        cout << it << ",";
+    } // cout << endl;
     m_nofCoordinates = i;
     // free
     free(sendbuf);
@@ -140,47 +141,23 @@ void ShearLayerStats::calculateRhoU() {
     // Calculate averages ////
     //////////////////////////
     // initialize vectors for averages along x and z
-    vector<double> ux_ReAverage, uy_ReAverage, uz_ReAverage, umag_average;
-    vector<double> rhoux_average, rhouy_average, rhouz_average;
-    vector<double> rho_average;
+    vector<double> ux_ReAverage(m_nofCoordinates,0), uy_ReAverage(m_nofCoordinates,0),
+    uz_ReAverage(m_nofCoordinates,0), umag_average(m_nofCoordinates,0), rho_average(m_nofCoordinates,0),
+    rhoux_average(m_nofCoordinates,0), rhouy_average(m_nofCoordinates,0), rhouz_average(m_nofCoordinates,0);
     // initialize vectors for combined sizes
-    vector<double> rhou11, rhou22, rhou33, rhou12;
-    vector<double> b11vec, b22vec, b12vec;
-    vector<double> ux_favre, uy_favre, uz_favre;
-    vector<double> momentumthickness_integrand, growthrate_integrand;
-    vector<double> dUdy_abs;
+    vector<double> rhou11(m_nofCoordinates,0), rhou22(m_nofCoordinates,0), rhou33(m_nofCoordinates,0), rhou12(m_nofCoordinates,0),
+    b11vec(m_nofCoordinates,0), b22vec(m_nofCoordinates,0), b12vec(m_nofCoordinates,0),
+    ux_favre(m_nofCoordinates,0), uy_favre(m_nofCoordinates,0), uz_favre(m_nofCoordinates,0),
+    momentumthickness_integrand(m_nofCoordinates,0), growthrate_integrand(m_nofCoordinates,0),
+    dUdy_abs(m_nofCoordinates,0);
     // resize to fit length of y
-    rhoux_average.resize(m_nofCoordinates);
-    rhouy_average.resize(m_nofCoordinates);
-    rhouz_average.resize(m_nofCoordinates);
-    rho_average.resize(m_nofCoordinates);
-    ux_favre.resize(m_nofCoordinates);
-    uy_favre.resize(m_nofCoordinates);
-    uz_favre.resize(m_nofCoordinates);
-    momentumthickness_integrand.resize(m_nofCoordinates);
-    umag_average.resize(m_nofCoordinates);
     m_R11.resize(m_nofCoordinates);
     m_R22.resize(m_nofCoordinates);
     m_R33.resize(m_nofCoordinates);
     m_R12.resize(m_nofCoordinates);
     m_K.resize(m_nofCoordinates);
-    b11vec.resize(m_nofCoordinates);
-    b22vec.resize(m_nofCoordinates);
-    b12vec.resize(m_nofCoordinates);
-    rhou11.resize(m_nofCoordinates);
-    rhou22.resize(m_nofCoordinates);
-    rhou33.resize(m_nofCoordinates);
-    rhou12.resize(m_nofCoordinates);
-    ux_ReAverage.resize(m_nofCoordinates);
-    uy_ReAverage.resize(m_nofCoordinates);
-    uz_ReAverage.resize(m_nofCoordinates);
-    growthrate_integrand.resize(m_nofCoordinates);
-    // finite differences are one smaller (?)
-    dUdy_abs.resize(m_nofCoordinates);
-
-    vector<size_t> number;
-    number.resize(m_nofCoordinates);
-    vector<size_t> nonumbers;
+    vector<size_t> number(m_nofCoordinates,0);
+    vector<size_t> nonumbers(0);
 
     // don't know what I do here, but it worked for turbulent channel
     boost::shared_ptr<AdvectionOperator<3> > advection = m_solver.getAdvectionOperator();
@@ -224,7 +201,7 @@ void ShearLayerStats::calculateRhoU() {
 
     // communicate
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-        // add n_points(iy), momentumthickness_integrand(iy), ux_favre(iy), rho*ux(iy), and rho(iy) from different MPI processes
+        // add n_points(iy), rho*ux(iy), rho(iy), etc. from different MPI processes
         number.at(iy) = dealii::Utilities::MPI::sum(number.at(iy), MPI_COMM_WORLD);
         // average over number of points at y
         if (number.at(iy) != 0) {
@@ -247,16 +224,15 @@ void ShearLayerStats::calculateRhoU() {
         } else { nonumbers.push_back(iy); }
     }
     // average of neighboring points if there were no points
-    for (unsigned long nonumber : nonumbers) {
-        size_t iy = nonumber;
+    for (size_t iy : nonumbers) {
         rhoux_average.at(iy) = 0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
         rhouy_average.at(iy) = 0.5 * (rhouy_average.at(iy + 1) + rhouy_average.at(iy - 1));
         rhouz_average.at(iy) = 0.5 * (rhouz_average.at(iy + 1) + rhouz_average.at(iy - 1));
         rho_average.at(iy) = 0.5 * (rho_average.at(iy + 1) + rho_average.at(iy - 1));
         umag_average.at(iy) = 0.5 * (umag_average.at(iy + 1) + umag_average.at(iy - 1));
-        ux_ReAverage.at(iy) = 0;
-        uy_ReAverage.at(iy) = 0;
-        uz_ReAverage.at(iy) = 0;
+        ux_ReAverage.at(iy) = 0.5 * (ux_ReAverage.at(iy + 1) + ux_ReAverage.at(iy - 1));
+        uy_ReAverage.at(iy) = 0.5 * (uy_ReAverage.at(iy + 1) + uy_ReAverage.at(iy - 1));
+        uz_ReAverage.at(iy) = 0.5 * (uz_ReAverage.at(iy + 1) + uz_ReAverage.at(iy - 1));
     }
 
     // calculate flux of ux, uy, uz at all points
@@ -284,7 +260,6 @@ void ShearLayerStats::calculateRhoU() {
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
-
     // communicate
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         // average over number of points at y
@@ -297,83 +272,97 @@ void ShearLayerStats::calculateRhoU() {
             rhou22.at(iy) /= number.at(iy);
             rhou33.at(iy) /= number.at(iy);
             rhou12.at(iy) /= number.at(iy);
-        } else {
-            rhou11.at(iy) = rhou11.at(iy - 1);
-            rhou22.at(iy) = rhou22.at(iy - 1);
-            rhou33.at(iy) = rhou33.at(iy - 1);
-            rhou12.at(iy) = rhou12.at(iy - 1);
+//        } else {
+//            rhou11.at(iy) = rhou11.at(iy - 1);
+//            rhou22.at(iy) = rhou22.at(iy - 1);
+//            rhou33.at(iy) = rhou33.at(iy - 1);
+//            rhou12.at(iy) = rhou12.at(iy - 1);
         }
     }
-
-    // calculate ui_favre, Rij and momentumthickness_integrand
-    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-        ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
-        uy_favre.at(iy) = rhouy_average.at(iy) / rho_average.at(iy);
-        uz_favre.at(iy) = rhouz_average.at(iy) / rho_average.at(iy);
-        momentumthickness_integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
-        m_R11.at(iy) = rhou11.at(iy) / rho_average.at(iy);
-        m_R22.at(iy) = rhou22.at(iy) / rho_average.at(iy);
-        m_R33.at(iy) = rhou33.at(iy) / rho_average.at(iy);
-        m_R12.at(iy) = rhou12.at(iy) / rho_average.at(iy);
-        // calculate turbulent kinetic energy
-        m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy))/2;
-        // calculate anisotropy tensor along y
-        b11vec.at(iy) = (m_R11.at(iy) - 2./3*m_K.at(iy)*1)/(2*m_K.at(iy));
-        b22vec.at(iy) = (m_R22.at(iy) - 2./3*m_K.at(iy)*1)/(2*m_K.at(iy));
-        b12vec.at(iy) = (m_R12.at(iy) - 2./3*m_K.at(iy)*0)/(2*m_K.at(iy));
+    // average of neighboring points if there were no points
+    for (size_t iy : nonumbers) {
+        rhou11.at(iy) = 0.5 * (rhou11.at(iy + 1) + rhou11.at(iy - 1));
+        rhou22.at(iy) = 0.5 * (rhou22.at(iy + 1) + rhou22.at(iy - 1));
+        rhou33.at(iy) = 0.5 * (rhou33.at(iy + 1) + rhou33.at(iy - 1));
+        rhou12.at(iy) = 0.5 * (rhou12.at(iy + 1) + rhou12.at(iy - 1));
     }
 
-    // calculate dU/dy
-    double dy;
-    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-        if (iy == 0) { // forward
-            dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy);
-            dUdy_abs.at(iy) = (umag_average.at(iy + 1) - umag_average.at(iy)) / dy;
-        } else if (iy == m_nofCoordinates-1) { // backward
-            dy = m_yCoordinates.at(iy) - m_yCoordinates.at(iy-1);
-            dUdy_abs.at(iy) = (umag_average.at(iy) - umag_average.at(iy - 1)) / dy;
-        } else { // other: central
-            dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1);
-            dUdy_abs.at(iy) = (umag_average.at(iy + 1) -  umag_average.at(iy - 1)) / dy;
-        }
-        dUdy_abs.at(iy) = abs(dUdy_abs.at(iy));
-    }
-
-    // integrate along y
-    double momentumthickness_integral = 0, growthrate_integral = 0;
-    double window_size;
-    for (size_t iy = 0; iy < m_nofCoordinates - 1; iy++) {
-        if (iy == 0) { // left side: trapezoidal rule
-            window_size = abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy));
-            momentumthickness_integral += window_size * 0.5 * (momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy + 1));
-            growthrate_integral += window_size * 0.5 * (growthrate_integrand.at(iy) + growthrate_integrand.at(iy + 1));
-        } else { // other: simpson rule
-            window_size = 0.5*abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1));
-            momentumthickness_integral += window_size * (momentumthickness_integrand.at(iy - 1) + 4 * momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy + 1)) / 6;
-            growthrate_integral += window_size * (growthrate_integrand.at(iy - 1) + 4 * growthrate_integrand.at(iy) + growthrate_integrand.at(iy + 1)) / 6;
-        }
-    }
-
-    for (size_t iy = 0; iy < m_nofCoordinates - 1; iy++) {
-        // calculate anisotropy tensor elements
-        y = m_yCoordinates.at(iy);
-        if (y > -0.093 && y < 0.093) { // simpson rule
-            window_size = 0.5 * abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1));
-            m_b11 += window_size * (b11vec.at(iy - 1) + 4 * b11vec.at(iy) + b11vec.at(iy + 1)) / 6;
-            m_b22 += window_size * (b22vec.at(iy - 1) + 4 * b22vec.at(iy) + b22vec.at(iy + 1)) / 6;
-            m_b12 += window_size * (b12vec.at(iy - 1) + 4 * b12vec.at(iy) + b12vec.at(iy + 1)) / 6;
-        }
-    }
-
-    // calculate vorticity thickness
-    m_currentDeltaOmega = 2 /*dU*/ / *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));
-    m_ReOmega = 1 /*rho0*/ * 2 /*dU*/ * m_Re0 * m_currentDeltaOmega;
-
-    // calculate momentum thickness
-    m_currentDeltaTheta = momentumthickness_integral * (1. / 4. /* rho0 * dU^2 = 1 * 2*2 */);
-
-    // output to console
     if (is_MPI_rank_0()) {
+        // calculate ui_favre, Rij and momentumthickness_integrand
+        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+            ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
+            uy_favre.at(iy) = rhouy_average.at(iy) / rho_average.at(iy);
+            uz_favre.at(iy) = rhouz_average.at(iy) / rho_average.at(iy);
+            momentumthickness_integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
+            m_R11.at(iy) = rhou11.at(iy) / rho_average.at(iy);
+            m_R22.at(iy) = rhou22.at(iy) / rho_average.at(iy);
+            m_R33.at(iy) = rhou33.at(iy) / rho_average.at(iy);
+            m_R12.at(iy) = rhou12.at(iy) / rho_average.at(iy);
+            // calculate turbulent kinetic energy
+            m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy))/2;
+            // calculate anisotropy tensor along y
+            b11vec.at(iy) = (m_R11.at(iy) - 2./3*m_K.at(iy)*1)/(2*m_K.at(iy));
+            b22vec.at(iy) = (m_R22.at(iy) - 2./3*m_K.at(iy)*1)/(2*m_K.at(iy));
+            b12vec.at(iy) = (m_R12.at(iy) - 2./3*m_K.at(iy)*0)/(2*m_K.at(iy));
+        }
+
+        // calculate dU/dy
+        double dy;
+        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+            if (iy == 0) { // forward
+                dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy);
+                dUdy_abs.at(iy) = (umag_average.at(iy + 1) - umag_average.at(iy)) / dy;
+            } else if (iy == m_nofCoordinates-1) { // backward
+                dy = m_yCoordinates.at(iy) - m_yCoordinates.at(iy-1);
+                dUdy_abs.at(iy) = (umag_average.at(iy) - umag_average.at(iy - 1)) / dy;
+            } else { // other: central
+                dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1);
+                dUdy_abs.at(iy) = (umag_average.at(iy + 1) -  umag_average.at(iy - 1)) / dy;
+            }
+            dUdy_abs.at(iy) = abs(dUdy_abs.at(iy));
+        }
+
+        // integrate along y
+        double momentumthickness_integral = 0, growthrate_integral = 0;
+        double window_size;
+        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+            if (iy == 0) { // left side: trapezoidal rule
+                window_size = (m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy));
+                momentumthickness_integral += window_size * 0.5 * (momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy + 1));
+                cout << momentumthickness_integral << " ";
+                growthrate_integral += window_size * 0.5 * (growthrate_integrand.at(iy) + growthrate_integrand.at(iy + 1));
+                cout << growthrate_integral << endl;
+            } else if (iy == m_nofCoordinates - 1) {
+                window_size = (m_yCoordinates.at(iy) - m_yCoordinates.at(iy-1));
+                momentumthickness_integral += window_size * 0.5 * (momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy -1));
+                growthrate_integral += window_size * 0.5 * (growthrate_integrand.at(iy) + growthrate_integrand.at(iy - 1));
+            } else { // other: simpson rule
+                window_size = 0.5*(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1));
+                momentumthickness_integral += window_size * (momentumthickness_integrand.at(iy - 1) + 4 * momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy + 1)) / 6;
+                growthrate_integral += window_size * (growthrate_integrand.at(iy - 1) + 4 * growthrate_integrand.at(iy) + growthrate_integrand.at(iy + 1)) / 6;
+            }
+        }
+
+        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+            // calculate anisotropy tensor elements
+            y = m_yCoordinates.at(iy);
+            if (y > -0.093 && y < 0.093) { // simpson rule
+                window_size = 0.5 * abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1));
+                m_b11 += window_size * (b11vec.at(iy - 1) + 4 * b11vec.at(iy) + b11vec.at(iy + 1)) / 6;
+                m_b22 += window_size * (b22vec.at(iy - 1) + 4 * b22vec.at(iy) + b22vec.at(iy + 1)) / 6;
+                m_b12 += window_size * (b12vec.at(iy - 1) + 4 * b12vec.at(iy) + b12vec.at(iy + 1)) / 6;
+            }
+        }
+
+        // calculate vorticity thickness
+        m_currentDeltaOmega = 2 /*dU*/ / *max_element(std::begin(dUdy_abs), std::end(dUdy_abs));
+        m_ReOmega = 1 /*rho0*/ * 2 /*dU*/ * m_Re0 * m_currentDeltaOmega;
+
+        // calculate momentum thickness
+        m_currentDeltaTheta = momentumthickness_integral * (1. / 4. /* rho0 * dU^2 = 1 * 2*2 */);
+        m_deltaThetaGrowth = growthrate_integral * (-2) / (8 /* rh0*dU^3 = 1 * 2*2*2 */);
+
+        // output to console
 //        cout << "dUdy_abs: ";
 //        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
 //            cout << dUdy_abs.at(yi) << ",";
