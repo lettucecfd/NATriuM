@@ -381,7 +381,6 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     rep.push_back(1);
     dealii::GridGenerator::subdivided_hyper_rectangle(*rect, rep, corner1, corner2, true);
     //// TODO: generate using step_sizes
-
     return rect;
 }
 
