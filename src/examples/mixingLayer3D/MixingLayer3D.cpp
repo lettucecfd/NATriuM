@@ -369,7 +369,7 @@ double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const
  */
 boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     //Creation of the principal domain
-    boost::shared_ptr<Mesh<3> > cube = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
     double lx = 1720 * shearlayerthickness / 2;
     double ly = 387 * shearlayerthickness / 2;
     double lz = 172 * shearlayerthickness / 2;
@@ -377,42 +377,45 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     dealii::Point<3> corner2(lx, ly, lz);
     vector<unsigned int> rep;
     rep.push_back(1);
+    rep.push_back(2);
     rep.push_back(1);
-    rep.push_back(1);
-    dealii::GridGenerator::subdivided_hyper_rectangle(*cube, rep, corner1, corner2, true);
+    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, rep, corner1, corner2, true);
     //// TODO: generate using step_sizes
-//    vector<vector<double>> step_sizes(3, vector<double>(9));
-//    step_sizes.resize(3);
-//    step_sizes[0] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
-//    step_sizes[1] = {10, 5, 2, 1, 0.1, 1, 2, 5, 10};
-//    step_sizes[2] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
-//    dealii::GridGenerator::subdivided_hyper_rectangle(*cube, step_sizes, corner1, corner2, true);
-    return cube;
+
+    return rect;
 }
 
-//boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(size_t L) {
+//boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 //    //Creation of the principal domain
-//#ifdef WITH_TRILINOS_MPI
 //    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-//#else
-//    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >();
-//#endif
-//
-//    dealii::Point<3> x1(0,0,0);
-//    dealii::Point<3> x2(L, 1, 1);
-//    std::vector<std::vector<double> > step_sizes;
-//    step_sizes.push_back(std::vector<double>());
-//    step_sizes.push_back(std::vector<double>());
-//    step_sizes.push_back(std::vector<double>());
-//    step_sizes.at(1).push_back( 1 );
-//    step_sizes.at(2).push_back( 1 );
-//    for (size_t i = 0; i < L; i++){
-//        step_sizes.at(0).push_back( 1 );
-//    }
+//    dealii::Point<3> corner1(-lx/2, -ly/2, -lz/2);
+//    dealii::Point<3> corner2(lx/2, ly/2, lz/2);
+//    int n_cells_x = 10;
+//    int n_cells_y = 10;
+//    int n_cells_z = 10;
+//    double l_cells_x = lx/n_cells_x;
+//    double l_cells_y = ly/n_cells_y;
+//    double l_cells_z = lz/n_cells_z;
+//    vector<vector<double>> step_sizes;
+//    step_sizes.resize(3);
+////    for (int ix = 0; ix < n_cells_x; ix++) {
+////        step_sizes.at(0).push_back(l_cells_x);
+////    }
+////    for (int iy = 0; iy < n_cells_y; iy++) {
+////        step_sizes.at(1).push_back(l_cells_y);
+////    }
+////    for (int iz = 0; iz < n_cells_z; iz++) {
+////        step_sizes.at(2).push_back(l_cells_z);
+////    }
+//    step_sizes.at(0) = {lx};
+//    step_sizes.at(1) = {ly};
+//    step_sizes.at(1) = {ly/2, ly/2};
+////    step_sizes.at(1) = {ly/4, ly/8, ly/16, ly/16, ly/16, ly/16, ly/8, ly/4};
+//    step_sizes.at(2) = {lz};
 //
 //    bool colorize = true; 	// set boundary ids automatically to
-//    // 0:left; 1:right; 2:bottom; 3:top
-//    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, step_sizes, x1, x2, colorize);
+//    // 0:front; 1:back; 2:bottom; 3:top; 4:left; 5:right;
+//    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, step_sizes, corner1, corner2, colorize);
 //
 //    return rect;
 //}
@@ -424,18 +427,17 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
  */
 boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
     // make boundary description
-    boost::shared_ptr<BoundaryCollection<3> > boundaries = boost::make_shared<
-            BoundaryCollection<3> >();
+    boost::shared_ptr<BoundaryCollection<3>> boundaries = boost::make_shared<BoundaryCollection<3>>();
 
     // velocity vector moving forward
     dealii::Vector<double> plusVector(3);
-    plusVector[0]=1.0;
+    plusVector[0]=m_U;
     plusVector[1]=0.0;
     plusVector[2]=0.0;
 
     // velocity vector moving backward
     dealii::Vector<double> minusVector(3);
-    minusVector[0]=-1.0;
+    minusVector[0]=-m_U;
     minusVector[1]=0.0;
     minusVector[2]=0.0;
 

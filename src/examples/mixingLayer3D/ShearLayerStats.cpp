@@ -355,7 +355,6 @@ void ShearLayerStats::calculateRhoU() {
     }
 
     for (size_t iy = 0; iy < m_nofCoordinates - 1; iy++) {
-        // TODO calculate m_bij using integral over shear layer (2 vorticity thicknesses)
         // calculate anisotropy tensor elements
         y = m_yCoordinates.at(iy);
         if (y > -0.093 && y < 0.093) { // simpson rule
