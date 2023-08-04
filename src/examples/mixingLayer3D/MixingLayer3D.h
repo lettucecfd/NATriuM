@@ -94,7 +94,7 @@ namespace natrium {
 //                return y * erf((y-ymax)/sqrt(2*sigma*sigma));
 //                return yrel*sqrt(1-k/1.05)
                 double yrel = y/ymax;
-                return pow(yrel, 3) * ymax;
+                return pow(yrel, 7) * ymax;
 //                return y;
             }
             dealii::Point<3> operator() (const dealii::Point<3> &in) const {
