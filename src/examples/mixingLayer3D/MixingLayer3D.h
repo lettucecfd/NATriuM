@@ -82,10 +82,12 @@ namespace natrium {
 
         virtual void refine(Mesh<3>& mesh) {
             mesh.refine_global(m_refinementLevel);
-            dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
-            std::ofstream out("grid-mixinglayer.eps");
-            dealii::GridOut grid_out;
-            grid_out.write_eps(mesh, out);
+            if (m_squash) {
+                dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
+                std::ofstream out("grid-mixinglayer.eps");
+                dealii::GridOut grid_out;
+                grid_out.write_eps(mesh, out);
+            }
         }
         struct UnstructuredGridFunc {
 //            double sigma = 0.1;
