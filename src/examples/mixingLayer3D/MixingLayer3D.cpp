@@ -34,7 +34,7 @@ MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squa
                              string dirName, double U) :
 ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash),
 m_U(U), m_refinementLevel(refinementLevel) {
-    if (m_refinementLevel > 4) { print = false; }
+//    if (m_refinementLevel > 4) { print = false; }
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
@@ -260,7 +260,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
             }
         }
     }
-    else { // TODO: Read data from random file
+    else {
 //        int dir_psi = 0, i = 0, j = 0, k = 0;
         ifstream file(dirName + "/random_u.txt");
         string line;
