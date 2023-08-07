@@ -264,6 +264,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
         }
     }
     else {
+        cout << "Reading from " << dirName << "/random_u.txt, to generate basis for initial velocity." << endl;
 //        int dir_psi = 0, i = 0, j = 0, k = 0;
         ifstream file(dirName + "/random_u.txt");
         string line;
