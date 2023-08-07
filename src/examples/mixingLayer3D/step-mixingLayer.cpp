@@ -46,6 +46,8 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setArgument<int>("squash", "squash grid towards centre", 0);
+    parser.setArgument<int>("print", "print calculations of initial velocity", 0);
+    parser.setArgument<int>("recalculate", "recalculate initial velocity", 1);
     parser.setPositionalArgument<int>("ref-level",
                                       "Refinement level of the computation grid.");
     parser.setArgument<int>("grid-repetitions",
@@ -59,6 +61,8 @@ int main(int argc, char** argv) {
     long nout = parser.getArgument<int>("nout");
     auto time = parser.getArgument<double>("time");
     bool squash = parser.getArgument<int>("squash");
+    bool print = parser.getArgument<int>("print");
+    bool recalculate = parser.getArgument<int>("recalculate");
 
     /////////////////////////////////////////////////
     // set parameters, set up configuration object
@@ -131,7 +135,7 @@ int main(int argc, char** argv) {
     }
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, U, squash);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, U, squash, print, recalculate);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////

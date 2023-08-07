@@ -53,9 +53,10 @@ namespace natrium {
                 double lx, ly, lz;
                 int nx, ny, nz;
                 int kxmax, kymax, kzmax;
+                bool m_print, m_recalculate;
                 double InterpolateVelocities(double, double, double, const unsigned int) const;
             public:
-                InitialVelocity(MixingLayer3D *flow);
+                InitialVelocity(MixingLayer3D *flow, bool print, bool recalculate);
                 double value(const dealii::Point<3>& x, const unsigned int component = 0) const override;
                 vector<vector<vector<std::complex<double>>>> Fourier3D(const vector<vector<vector<double>>> &in);
                 vector<vector<vector<double>>> InverseFourier3D(const vector<vector<vector<std::complex<double>>>> &in);
@@ -74,9 +75,10 @@ namespace natrium {
             virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
         bool m_squash;
+        bool m_print=true;
 
         /// constructor
-        MixingLayer3D(double viscosity, size_t refinementLevel, double U = 1, bool squash = true);
+        MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate, double U = 1);
         /// destructor
         virtual ~MixingLayer3D();
 

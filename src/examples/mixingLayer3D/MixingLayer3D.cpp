@@ -25,18 +25,19 @@ double k0 = 23.66 * shearlayerthickness; // peak wave number
 //int kmax = pow(2, n); // [1] C. Pantano and S. Sarkar, “A study of compressibility effects in the high-speed turbulent shear layer using direct simulation,” J. Fluid Mech., vol. 451, pp. 329–371, Jan. 2002, doi: 10.1017/S0022112001006978.
 // kmax = 32
 //int npoints = 32; // number of points in shortest axis of velocity field (lz, presumably)
-bool print = false;
-bool recalculate_psi = true;
+//bool print = false;
+//bool recalculate_psi = true;
 
 namespace natrium {
 
-MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, double U, bool squash) :
-    ProblemDescription<3>(makeGrid(), viscosity, 1), m_U(U),
-    m_refinementLevel(refinementLevel), m_squash(squash) {
+MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate, double U) :
+    ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash),
+    m_U(U), m_refinementLevel(refinementLevel) {
+    if (m_refinementLevel > 4) { m_print = false; }
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
-    this->setInitialU(boost::make_shared<InitialVelocity>(this));
+    this->setInitialU(boost::make_shared<InitialVelocity>(this, print, recalculate));
     this->setInitialRho(boost::make_shared<InitialDensity>(this));
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
 }
@@ -54,7 +55,8 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     }
 }
 
-MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : m_flow(flow) {
+MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate) :
+m_flow(flow), m_print(print), m_recalculate(recalculate) {
     int kmax = 48;//pow(2, flow->m_refinementLevel);
     kxmax = kmax; // maybe lower kxmax and k3 max?
     kymax = kmax;
@@ -96,7 +98,8 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
     auto zbounds = std::minmax_element(z.begin(), z.end());
     minz = *zbounds.first; maxz = *zbounds.second;
 
-    if (recalculate_psi) {
+    if (m_recalculate) {
+        cout << "Recalculating random velocity." << endl;
         //// warm up randomness
         static int sseq[ std::mt19937::state_size ] ;
         const static bool once = ( std::srand( std::time(nullptr)), // for true randomness: std::time(nullptr)
@@ -109,6 +112,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
         randomPsi.reserve(3);
         for (int dir = 0; dir < 3; dir++) { vector< vector< vector<double> > > tmpdir;
             //// Fill randomPsi with random values
+            cout << "Creating random velocity vector potential in direction " << dir << "." << endl;
             for (int xi = 0; xi < nx; xi++) { vector<vector<double> > tmpi;
                 for (int yi = 0; yi < ny; yi++) { vector<double> tmpj;
                     for (int zi = 0; zi < nz; zi++) { double tmpk;
@@ -117,7 +121,8 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             }
-            if (print) {
+            if (m_print) {
+                cout << "Printing random velocity vector potential in direction " << dir << "." << endl;
                 ofstream rand_file("random_psi.txt");
                 rand_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { rand_file << "[";
@@ -128,9 +133,11 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                     } rand_file << "],";
                 } rand_file << endl;
             }
+            cout << "Fourier transforming random velocity vector potential in direction " << dir << "." << endl;
             //// perform dft on randomPsi
             vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
-            if (print) {
+            if (m_print) {
+                cout << "Printing Fourier transform of random velocity vector potential in direction " << dir << "." << endl;
                 ofstream dft_file("psi_hat.txt");
                 dft_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { dft_file << "[";
@@ -142,6 +149,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                 } dft_file << endl;
             }
             //// multiply in spectral space
+            cout << "Scaling Fourier transformed velocity vector potential in direction " << dir << "." << endl;
             double k0 = sqrt(kxmax*kxmax+kymax*kymax+kzmax*kzmax);
             for (int kx = 0; kx < int(kxmax/2); kx++) {
                 for (int ky = 0; ky < int(kymax/2); ky++) {
@@ -152,7 +160,8 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                         psi_hat[kxmax-1 - kx][kymax-1 - ky][kzmax-1 - kz] *= exp(-2 * k_abs / k0);
                     } } }
             psi_hat[0][0][0] = 0;
-            if (print) {
+            if (m_print) {
+                cout << "Printing scaled Fourier transformed velocity vector potential in direction " << dir << "." << endl;
                 ofstream scaling_file("psi_hat_scaled.txt");
                 scaling_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { scaling_file << "[";
@@ -164,8 +173,10 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                 } scaling_file << endl;
             }
             //// perform inverse dft on psi_hat (directionally)
+            cout << "Inversely Fourier transforming velocity vector potential in direction " << dir << "." << endl;
             vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
-            if (print) {
+            if (m_print) {
+                cout << "Printing inverse Fourier transform in direction " << dir << "." << endl;
                 ofstream idft_file("psi_idft.txt");
                 idft_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { idft_file << "[";
@@ -181,6 +192,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
         } // so: randomPsi = {psix, psiy, psiz} ;
 
         // calculate gradient using central difference scheme
+        cout << "Calculating gradients of velocity vector potential." << endl;
         vector<vector<vector<vector<vector<double>>>>> gradient(3,
             vector<vector<vector<vector<double>>>>(3,
                 vector<vector<vector<double>>>(nx,
@@ -201,7 +213,8 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                         gradient[dir_psi][1][i][j][k] = (randomPsi[dir_psi][i][ju+1][k] - randomPsi[dir_psi][i][jl-1][k]) / dy;
                         gradient[dir_psi][2][i][j][k] = (randomPsi[dir_psi][i][j][ku+1] - randomPsi[dir_psi][i][j][kl-1]) / dz;
                     }}}} // so: gradient = {gradient_psix, gradient_psiy, gradient_psiz} and gradient_psin = { dpsin/dx, dpsin/dy, dpsin/dz }
-        if (print) {
+        if (m_print) {
+            cout << "Printing gradients of velocity vector potential." << endl;
             ofstream grad_file("psi_grad.txt");
             for (int dir_psi = 0; dir_psi < 3; dir_psi++) { grad_file << "direction: " << to_string(dir_psi) << endl << "[";
                 for (int dir_grad = 0; dir_grad < 3; dir_grad++) { grad_file << "[";
@@ -216,6 +229,7 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
             }
         }
         // calculate curl using gradient values
+        cout << "Calculating curl of velocity vector potential." << endl;
         int m, n; // for indices of cross-product
         for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
             vector<vector<vector<double> > > tmpdir;
@@ -231,7 +245,8 @@ MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow) : 
                 } tmpdir.push_back(tmpi);
             } curlOfPsi.push_back(tmpdir);
         } // so: curlOfPsi = {ux, uy, uz}
-        if (print) {
+        if (m_print) {
+            cout << "Printing curl of velocity vector potential." << endl;
             ofstream u_file("random_u.txt");
             for (int dir_psi = 0; dir_psi < 3; dir_psi++) { //u_file << "[";
                 for (int i = 0; i < nx; i++) { //u_file << "[";
