@@ -101,6 +101,9 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
 
     if (m_recalculate) {
         cout << "Recalculating random velocity." << endl;
+        if (m_print) {
+            cout << "Prints are in " << dirName << "." << endl;
+        }
         //// warm up randomness
         static int sseq[ std::mt19937::state_size ] ;
         const static bool once = ( std::srand( std::time(nullptr)), // for true randomness: std::time(nullptr)
