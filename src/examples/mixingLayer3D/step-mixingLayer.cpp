@@ -43,7 +43,6 @@ int main(int argc, char** argv) {
     // Set to 0.3, 0.7, 0.9, 1.0, 1.2
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
-    parser.setArgument<double>("cfl", "CFL number", 0.4);
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setPositionalArgument<int>("ref-level",
@@ -58,7 +57,6 @@ int main(int argc, char** argv) {
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
     auto time = parser.getArgument<double>("time");
-    auto cfl = parser.getArgument<double>("cfl");
 
     /////////////////////////////////////////////////
     // set parameters, set up configuration object
@@ -97,7 +95,6 @@ int main(int argc, char** argv) {
     configuration->setHeatCapacityRatioGamma(1.4);
     configuration->setPrandtlNumber(0.71);
     configuration->setSedgOrderOfFiniteElement(3); // TODO: default, 2, 3
-    configuration->setCFL(cfl);
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
