@@ -25,7 +25,7 @@
 using namespace natrium;
 
 double shearLayerThickness = 0.093;
-int dft_points = 20;
+//int dft_points = 20;
 
 // Main function
 int main(int argc, char** argv) {
@@ -38,11 +38,12 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("Re", "Reynolds number 1/nu", 800);
     // TODO: Convective Mach number Mc=(U1-Uc)/c1, Uc=(U1c2+U2c1)/(c1+c2)
     //  Uc is the convective velocity of the large structures, U\
-    //and U2 are the freestream velocities, and c{ and c2 are the
-    //freestream sound speeds.
+    //  and U2 are the freestream velocities, and c{ and c2 are the
+    //  freestream sound speeds.
     // Set to 0.3, 0.7, 0.9, 1.0, 1.2
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
+    parser.setArgument<double>("cfl", "CFL number", 0.4);
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setPositionalArgument<int>("ref-level",
@@ -57,6 +58,7 @@ int main(int argc, char** argv) {
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
     auto time = parser.getArgument<double>("time");
+    auto cfl = parser.getArgument<double>("cfl");
 
     /////////////////////////////////////////////////
     // set parameters, set up configuration object
@@ -95,6 +97,7 @@ int main(int argc, char** argv) {
     configuration->setHeatCapacityRatioGamma(1.4);
     configuration->setPrandtlNumber(0.71);
     configuration->setSedgOrderOfFiniteElement(3); // TODO: default, 2, 3
+    configuration->setCFL(cfl);
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
@@ -105,13 +108,13 @@ int main(int argc, char** argv) {
         dirName << getenv("NATRIUM_HOME") << "/step-mixingLayer/Re" << Re
                 << "-Ma" << Ma
                 << "-ref" << refinement_level
-                << "-p" << configuration->getSedgOrderOfFiniteElement()
-//                << "-coll" << static_cast<int>(configuration->getCollisionScheme())
+                << "-p" << configuration->getSedgOrderOfFiniteElement();
+//        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
-                << "-";
+//                << "-";
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
             dirName << "-int" << static_cast<int>(configuration->getTimeIntegrator()) << "_" << static_cast<int>(configuration->getDealIntegrator());
-//        dirName << "-CFL" << configuration->getCFL();
+        dirName << "-CFL" << configuration->getCFL();
 //        dirName << "-sten" << static_cast<int>(configuration->getStencil());
 //        if (configuration->isFiltering())
 //            dirName << "-filt" << static_cast<int>(configuration->getFilteringScheme()) << "by_max_degree";
