@@ -149,7 +149,7 @@ void ShearLayerStats::calculateRhoU() {
     b11vec(m_nofCoordinates,0), b22vec(m_nofCoordinates,0), b12vec(m_nofCoordinates,0),
     ux_favre(m_nofCoordinates,0), uy_favre(m_nofCoordinates,0), uz_favre(m_nofCoordinates,0),
     momentumthickness_integrand(m_nofCoordinates,0), growthrate_integrand(m_nofCoordinates,0),
-    dUdy_abs(m_nofCoordinates,0);
+    dUdy_abs(m_nofCoordinates,0), uxFavreDy(m_nofCoordinates, 0);
     // resize to fit length of y
     m_R11.resize(m_nofCoordinates);
     m_R22.resize(m_nofCoordinates);
@@ -188,8 +188,8 @@ void ShearLayerStats::calculateRhoU() {
                 number.at(y_ind) += 1;
                 // fill value vector
                 rhoux_average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind); // rho ux
-                rhouy_average.at(y_ind) += m_rho(dof_ind) * m_u.at(1)(dof_ind); // rho ux
-                rhouz_average.at(y_ind) += m_rho(dof_ind) * m_u.at(2)(dof_ind); // rho ux
+                rhouy_average.at(y_ind) += m_rho(dof_ind) * m_u.at(1)(dof_ind); // rho uy
+                rhouz_average.at(y_ind) += m_rho(dof_ind) * m_u.at(2)(dof_ind); // rho uz
                 rho_average.at(y_ind) += m_rho(dof_ind);
                 umag_average.at(y_ind) += sqrt(pow(m_u.at(0)(dof_ind), 2) + pow(m_u.at(1)(dof_ind), 2) + pow(m_u.at(2)(dof_ind), 2));
                 ux_ReAverage.at(y_ind) += m_u.at(0)(dof_ind);
@@ -293,11 +293,11 @@ void ShearLayerStats::calculateRhoU() {
             ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
             uy_favre.at(iy) = rhouy_average.at(iy) / rho_average.at(iy);
             uz_favre.at(iy) = rhouz_average.at(iy) / rho_average.at(iy);
-            momentumthickness_integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
             m_R11.at(iy) = rhou11.at(iy) / rho_average.at(iy);
             m_R22.at(iy) = rhou22.at(iy) / rho_average.at(iy);
             m_R33.at(iy) = rhou33.at(iy) / rho_average.at(iy);
             m_R12.at(iy) = rhou12.at(iy) / rho_average.at(iy);
+            momentumthickness_integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
             // calculate turbulent kinetic energy
             m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy))/2;
             // calculate anisotropy tensor along y
@@ -312,14 +312,18 @@ void ShearLayerStats::calculateRhoU() {
             if (iy == 0) { // forward
                 dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy);
                 dUdy_abs.at(iy) = (umag_average.at(iy + 1) - umag_average.at(iy)) / dy;
+                uxFavreDy.at(iy) = (ux_favre.at(iy + 1) - ux_favre.at(iy)) / dy;
             } else if (iy == m_nofCoordinates-1) { // backward
                 dy = m_yCoordinates.at(iy) - m_yCoordinates.at(iy-1);
                 dUdy_abs.at(iy) = (umag_average.at(iy) - umag_average.at(iy - 1)) / dy;
+                uxFavreDy.at(iy) = (ux_favre.at(iy) - ux_favre.at(iy - 1)) / dy;
             } else { // other: central
                 dy = m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1);
                 dUdy_abs.at(iy) = (umag_average.at(iy + 1) -  umag_average.at(iy - 1)) / dy;
+                uxFavreDy.at(iy) = (ux_favre.at(iy + 1) - ux_favre.at(iy - 1)) / dy;
             }
             dUdy_abs.at(iy) = abs(dUdy_abs.at(iy));
+            growthrate_integrand.at(iy) = rho_average.at(iy) * m_R12.at(iy) * uxFavreDy.at(iy);
         }
 
         // integrate along y
@@ -329,9 +333,9 @@ void ShearLayerStats::calculateRhoU() {
             if (iy == 0) { // left side: trapezoidal rule
                 window_size = (m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy));
                 momentumthickness_integral += window_size * 0.5 * (momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy + 1));
-                cout << momentumthickness_integral << " ";
+//                cout << momentumthickness_integral << " ";
                 growthrate_integral += window_size * 0.5 * (growthrate_integrand.at(iy) + growthrate_integrand.at(iy + 1));
-                cout << growthrate_integral << endl;
+//                cout << growthrate_integral << endl;
             } else if (iy == m_nofCoordinates - 1) {
                 window_size = (m_yCoordinates.at(iy) - m_yCoordinates.at(iy-1));
                 momentumthickness_integral += window_size * 0.5 * (momentumthickness_integrand.at(iy) + momentumthickness_integrand.at(iy -1));
