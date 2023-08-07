@@ -73,9 +73,10 @@ namespace natrium {
             InitialTemperature(MixingLayer3D* flow) : m_flow(flow) { }
             virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
+        bool m_squash;
 
         /// constructor
-        MixingLayer3D(double viscosity, size_t refinementLevel, double U = 1);
+        MixingLayer3D(double viscosity, size_t refinementLevel, double U = 1, bool squash = true);
         /// destructor
         virtual ~MixingLayer3D();
 

@@ -30,8 +30,9 @@ bool recalculate_psi = true;
 
 namespace natrium {
 
-MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, double U) :
-    ProblemDescription<3>(makeGrid(), viscosity, 1), m_U(U), m_refinementLevel(refinementLevel) {
+MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, double U, bool squash) :
+    ProblemDescription<3>(makeGrid(), viscosity, 1), m_U(U),
+    m_refinementLevel(refinementLevel), m_squash(squash) {
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
