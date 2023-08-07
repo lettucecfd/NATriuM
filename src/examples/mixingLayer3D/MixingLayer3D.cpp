@@ -30,14 +30,15 @@ double k0 = 23.66 * shearlayerthickness; // peak wave number
 
 namespace natrium {
 
-MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate, double U) :
-    ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash),
-    m_U(U), m_refinementLevel(refinementLevel) {
-    if (m_refinementLevel > 4) { m_print = false; }
+MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
+                             string dirName, double U) :
+ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash),
+m_U(U), m_refinementLevel(refinementLevel) {
+    if (m_refinementLevel > 4) { print = false; }
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
-    this->setInitialU(boost::make_shared<InitialVelocity>(this, print, recalculate));
+    this->setInitialU(boost::make_shared<InitialVelocity>(this, print, recalculate, dirName));
     this->setInitialRho(boost::make_shared<InitialDensity>(this));
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
 }
@@ -55,7 +56,7 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     }
 }
 
-MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate) :
+MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate, string dirName) :
 m_flow(flow), m_print(print), m_recalculate(recalculate) {
     int kmax = 48;//pow(2, flow->m_refinementLevel);
     kxmax = kmax; // maybe lower kxmax and k3 max?
@@ -123,7 +124,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
             }
             if (m_print) {
                 cout << "Printing random velocity vector potential in direction " << dir << "." << endl;
-                ofstream rand_file("random_psi.txt");
+                ofstream rand_file(dirName + "/random_psi.txt");
                 rand_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { rand_file << "[";
                     for (int j = 0; j < ny; j++) { rand_file << "[";
@@ -138,7 +139,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
             vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
             if (m_print) {
                 cout << "Printing Fourier transform of random velocity vector potential in direction " << dir << "." << endl;
-                ofstream dft_file("psi_hat.txt");
+                ofstream dft_file(dirName + "/psi_hat.txt");
                 dft_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { dft_file << "[";
                     for (int j = 0; j < ny; j++) { dft_file << "[";
@@ -162,7 +163,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
             psi_hat[0][0][0] = 0;
             if (m_print) {
                 cout << "Printing scaled Fourier transformed velocity vector potential in direction " << dir << "." << endl;
-                ofstream scaling_file("psi_hat_scaled.txt");
+                ofstream scaling_file(dirName + "/psi_hat_scaled.txt");
                 scaling_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { scaling_file << "[";
                     for (int j = 0; j < ny; j++) { scaling_file << "[";
@@ -177,7 +178,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
             vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
             if (m_print) {
                 cout << "Printing inverse Fourier transform in direction " << dir << "." << endl;
-                ofstream idft_file("psi_idft.txt");
+                ofstream idft_file(dirName + "/psi_idft.txt");
                 idft_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { idft_file << "[";
                     for (int j = 0; j < ny; j++) { idft_file << "[";
@@ -215,7 +216,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
                     }}}} // so: gradient = {gradient_psix, gradient_psiy, gradient_psiz} and gradient_psin = { dpsin/dx, dpsin/dy, dpsin/dz }
         if (m_print) {
             cout << "Printing gradients of velocity vector potential." << endl;
-            ofstream grad_file("psi_grad.txt");
+            ofstream grad_file(dirName + "/psi_grad.txt");
             for (int dir_psi = 0; dir_psi < 3; dir_psi++) { grad_file << "direction: " << to_string(dir_psi) << endl << "[";
                 for (int dir_grad = 0; dir_grad < 3; dir_grad++) { grad_file << "[";
                     for (int i = 0; i < nx; i++) { grad_file << "[";
@@ -247,7 +248,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
         } // so: curlOfPsi = {ux, uy, uz}
         if (m_print) {
             cout << "Printing curl of velocity vector potential." << endl;
-            ofstream u_file("random_u.txt");
+            ofstream u_file(dirName + "/random_u.txt");
             for (int dir_psi = 0; dir_psi < 3; dir_psi++) { //u_file << "[";
                 for (int i = 0; i < nx; i++) { //u_file << "[";
                     for (int j = 0; j < ny; j++) { //u_file << "[";
@@ -261,22 +262,29 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
     }
     else { // TODO: Read data from random file
 //        int dir_psi = 0, i = 0, j = 0, k = 0;
-        ifstream file("random_u.txt");
-        string line_dir;
-        while (getline(file, line_dir)) {
-            stringstream linestream(line_dir);
-            string cell_dir;
+        ifstream file(dirName + "/random_u.txt");
+        string line;
+        while (getline(file, line)) {
+            stringstream linestream(line);
+//            cout << "linestream: " << linestream.str() << endl;
+            string cell_i;
             vector<vector<std::vector<double>>> tmpdir;
-            while(std::getline(linestream, cell_dir, ';')) {
-                string cell_i;
+            while(getline(linestream, cell_i, ';')) {
+                stringstream cell_i_stream(cell_i);
+//                cout << "cell_i_stream: " << cell_i_stream.str() << endl;
+                string cell_j;
                 vector<vector<double>> tmpi;
-                while(getline(linestream,cell_i,',')) {
-                    string cell_j;
+                while(getline(cell_i_stream,cell_j,',')) {
+                    stringstream cell_j_stream(cell_j);
+//                    cout << "cell_j_stream: " << cell_j_stream.str() << endl;
+                    string cell_k;
                     vector<double> tmpj;
-                    while(getline(linestream, cell_j, ' ')) {
-                        string cell_k;
-                        double tmpk = stod(cell_k);
-                        tmpj.push_back(tmpk);
+                    while(getline(cell_j_stream, cell_k, ' ')) {
+                        if (!cell_k.empty()) {
+//                            cout << "cell_k: " << cell_k << ", ";
+                            double tmpk = stod(cell_k);
+                            tmpj.push_back(tmpk);
+                        }
                     } tmpi.push_back(tmpj);
                 } tmpdir.push_back(tmpi);
             } curlOfPsi.push_back(tmpdir);

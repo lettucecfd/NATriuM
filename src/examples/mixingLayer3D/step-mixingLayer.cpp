@@ -106,6 +106,7 @@ int main(int argc, char** argv) {
     parser.applyToSolverConfiguration(*configuration);
 
     // standard output dir
+    string m_dirname;
     if (not parser.hasArgument("output-dir")){
         std::stringstream dirName;
         dirName << getenv("NATRIUM_HOME") << "/step-mixingLayer/Re" << Re
@@ -132,10 +133,13 @@ int main(int argc, char** argv) {
             dirName << "-relax" << static_cast<int>(configuration->getMRTRelaxationTimes());
         }
         configuration->setOutputDirectory(dirName.str());
+        m_dirname = dirName.str();
+    } else {
+        m_dirname = configuration->getOutputDirectory();
     }
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, U, squash, print, recalculate);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, squash, print, recalculate, m_dirname, U);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////
