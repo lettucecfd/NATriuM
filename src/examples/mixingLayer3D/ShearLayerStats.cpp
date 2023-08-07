@@ -39,8 +39,8 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
         *m_tableFile << "it ";
         *m_tableFile << "t ";
         *m_tableFile << "deltaTheta ";
+        *m_tableFile << "deltaThetaDot ";
         *m_tableFile << "deltaOmega ";
-        *m_tableFile << "deltaOmegaDot ";
         *m_tableFile << "m_b11 ";
         *m_tableFile << "m_b22 ";
         *m_tableFile << "m_b12 ";
@@ -370,6 +370,7 @@ void ShearLayerStats::calculateRhoU() {
         cout << "IT: " << m_solver.getIteration()
             << ", t: " << m_solver.getTime()
             << ", delta_Theta: " << m_currentDeltaTheta
+            << ", growth_rate: " << m_deltaThetaGrowth
             << ", delta_Omega: " << m_currentDeltaOmega
             << ", Re_Omega: " << m_ReOmega
             << ", b11: " << m_b11
@@ -384,8 +385,8 @@ void ShearLayerStats::write() {
         *m_tableFile << this->m_solver.getIteration() << " "
                      << m_solver.getTime() << " "
                      << m_currentDeltaTheta << " "
-                     << m_currentDeltaOmega << " "
                      << m_deltaThetaGrowth << " "
+                     << m_currentDeltaOmega << " "
                      << m_b11 << " "
                      << m_b22 << " "
                      << m_b12 << " "
