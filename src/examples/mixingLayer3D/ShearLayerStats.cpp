@@ -299,7 +299,7 @@ void ShearLayerStats::calculateRhoU() {
             m_R12.at(iy) = rhou12.at(iy) / rho_average.at(iy);
             momentumthickness_integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
             // calculate turbulent kinetic energy
-            m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy))/2;
+            m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy))/2; // https://www.osti.gov/pages/servlets/purl/1580489
             // calculate anisotropy tensor along y
             b11vec.at(iy) = (m_R11.at(iy) - 2./3*m_K.at(iy)*1)/(2*m_K.at(iy));
             b22vec.at(iy) = (m_R22.at(iy) - 2./3*m_K.at(iy)*1)/(2*m_K.at(iy));
