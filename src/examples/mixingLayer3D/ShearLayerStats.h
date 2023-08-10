@@ -37,6 +37,7 @@ private:
 
     // Y Coordinates
     vector<double> m_yCoordinates;
+    int nround;
     std::map<double, size_t, own_double_less> m_yCoordinateToIndex;
     size_t m_nofCoordinates;
     bool m_yCoordsUpToDate;

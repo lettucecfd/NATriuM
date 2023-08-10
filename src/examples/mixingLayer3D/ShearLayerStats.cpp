@@ -20,7 +20,7 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
         m_outDir(outdir), m_filename(scalaroutfile(solver.getConfiguration()->getOutputDirectory())),
         m_vectorfilename(vectoroutfile(solver.getConfiguration()->getOutputDirectory())),
         m_currentDeltaTheta(starting_delta_theta), m_currentDeltaOmega(0.41), m_b11(0), m_b22(0), m_b12(0) {
-
+    nround = 10000;
     m_yCoordsUpToDate = false;
     m_nofCoordinates = 0;
 
@@ -73,7 +73,7 @@ void ShearLayerStats::updateYValues() {
             fe_values.reinit(cell);
             const std::vector<dealii::Point<3> >& quad_points = fe_values.get_quadrature_points();
             for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
-                y_coords.insert(quad_points.at(i)(1));
+                y_coords.insert(floor(quad_points.at(i)(1)*nround)/nround);
             }
         }
     }
@@ -86,7 +86,6 @@ void ShearLayerStats::updateYValues() {
 
     // fill send buffer with y coordinates
     size_t i = 0;
-//    size_t j;
     for (double y_coord : y_coords) {
         sendbuf[i] = y_coord;
         i++;
@@ -116,7 +115,6 @@ void ShearLayerStats::updateYValues() {
         m_yCoordinates.push_back(it);
         m_yCoordinateToIndex.insert(std::make_pair(it, i));
         i++;
-//        cout << it << ",";
     } // cout << endl;
     m_nofCoordinates = i;
     // free
@@ -181,7 +179,7 @@ void ShearLayerStats::calculateRhoU() {
             fe_values.reinit(cell);
             const std::vector<dealii::Point<3> >& quad_points = fe_values.get_quadrature_points();
             for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
-                y = quad_points.at(i)(1);
+                y = floor(quad_points.at(i)(1)*nround)/nround;
                 assert(m_yCoordinateToIndex.find(y) != m_yCoordinateToIndex.end());
                 y_ind = m_yCoordinateToIndex.at(y);
                 dof_ind = local_indices.at(i);
@@ -244,7 +242,7 @@ void ShearLayerStats::calculateRhoU() {
             fe_values.reinit(cell);
             const std::vector<dealii::Point<3> > &quad_points = fe_values.get_quadrature_points();
             for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
-                y = quad_points.at(i)(1);
+                y = floor(quad_points.at(i)(1)*nround)/nround;
                 assert(m_yCoordinateToIndex.find(y) != m_yCoordinateToIndex.end());
                 y_ind = m_yCoordinateToIndex.at(y);
                 dof_ind = local_indices.at(i);
