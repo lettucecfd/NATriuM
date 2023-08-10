@@ -7,7 +7,6 @@
 
 #include "MixingLayer3D.h"
 
-#include "deal.II/grid/grid_generator.h"
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
 #include <random>
@@ -17,7 +16,11 @@
 #include <tuple>
 #include <vector>
 #include <iostream>
+#include "deal.II/grid/grid_in.h"
+#include "deal.II/grid/tria.h"
+#include "deal.II/grid/grid_tools.h"
 using namespace std;
+using namespace natrium::DealIIExtensions;
 
 double shearlayerthickness = 0.093;
 double k0 = 23.66 * shearlayerthickness; // peak wave number
@@ -47,8 +50,8 @@ MixingLayer3D::~MixingLayer3D() = default;
 
 double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component < 3);
-    double rand_u = InterpolateVelocities(x(0), x(1), x(2), component);
-    rand_u *= exp(-pow((x(1))/(2 * shearlayerthickness), 2));
+    double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
+//    double rand_u = 0;
     if (component == 0) {
         return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
@@ -57,33 +60,32 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 }
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate, string dirName) :
-m_flow(flow), m_print(print), m_recalculate(recalculate) {
+m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalculate(recalculate) {
     int kmax = 48;//pow(2, flow->m_refinementLevel);
-    kxmax = kmax; // maybe lower kxmax and k3 max?
-    kymax = kmax;
-    kzmax = kmax;
     vector<double> x, y, z;
-    double xmin, xmax, ymin, ymax, zmin, zmax;
-    lx = 1720 * shearlayerthickness;
-    ly = 387 * shearlayerthickness;
-    lz = 172 * shearlayerthickness;
-    xmax = lx / 2;// * 1.1;
-    xmin = -xmax;
-    ymax = ly / 2;// * 1.1;
-    ymin = -ymax;
-    zmax = lz / 2;// * 1.1;
-    zmin = -zmax;
-    nx = pow(2, flow->m_refinementLevel);
-    ny = nx;
-    nz = nx;
-    kxmax = min(nx, kxmax);
-    kymax = min(ny, kymax);
-    kzmax = min(nz, kzmax);
+    double dx, dy, dz;
+    double xmin, ymin, zmin;
+    xmin = -lx / 2;
+    ymin = -ly / 2;
+    zmin = -lz / 2;
+    nx = 1720/2; // pow(2, 5);
+    ny = 387/2; //ny;
+    nz = 172/2; //nz;
+    kxmax = nx / 5;
+    kymax = ny / 5;
+    kzmax = nz / 5;
+
+    nx = pow(2, 6);
+    ny = pow(2, 5);
+    nz = pow(2, 4);
+    kxmax = nx; // maybe lower kxmax and k3 max?
+    kymax = ny;
+    kzmax = nz;
+
+    cout << "Creating linspaces x, y, z." << endl;
     dx = lx / nx;
     dy = ly / ny;
     dz = lz / nz;
-
-    // create linspaces x, y, z
     double linvalue;
     linvalue = xmin; for (int i = 0; i < nx; i++) { x.push_back(linvalue); linvalue += dx; }
     linvalue = ymin; for (int i = 0; i < ny; i++) { y.push_back(linvalue); linvalue += dy; }
@@ -92,24 +94,27 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
     yvec.insert(yvec.end(), y.begin(), y.end());
     zvec.insert(zvec.end(), z.begin(), z.end());
 
-    auto xbounds = std::minmax_element(x.begin(), x.end());
+    auto xbounds = minmax_element(x.begin(), x.end());
     minx = *xbounds.first; maxx = *xbounds.second;
-    auto ybounds = std::minmax_element(y.begin(), y.end());
+    auto ybounds = minmax_element(y.begin(), y.end());
     miny = *ybounds.first; maxy = *ybounds.second;
-    auto zbounds = std::minmax_element(z.begin(), z.end());
+    auto zbounds = minmax_element(z.begin(), z.end());
     minz = *zbounds.first; maxz = *zbounds.second;
 
     if (m_recalculate) {
+
         cout << "Recalculating random velocity." << endl;
         if (m_print) {
             cout << "Prints are in " << dirName << "." << endl;
         }
+//        cout << "Printing linspaces x, y, z." << endl;
+
         //// warm up randomness
-        static int sseq[ std::mt19937::state_size ] ;
-        const static bool once = ( std::srand( std::time(nullptr)), // for true randomness: std::time(nullptr)
-                std::generate( std::begin(sseq), std::end(sseq), std::rand ), true ) ;
-        static std::seed_seq seed_seq( std::begin(sseq), std::end(sseq) ) ;
-        static std::mt19937 twister(seed_seq) ;
+        static int sseq[ mt19937::state_size ] ;
+        const static bool once = ( srand( std::time(nullptr)), // for true randomness: time(nullptr)
+                generate( begin(sseq), end(sseq), rand ), true ) ;
+        static seed_seq seed_seq( begin(sseq), end(sseq) ) ;
+        static mt19937 twister(seed_seq) ;
         // random generator in [-1,1]
         static uniform_real_distribution<double> distr(-1., 1.) ; // +- Velocity
 
@@ -144,9 +149,9 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
                 cout << "Printing Fourier transform of random velocity vector potential in direction " << dir << "." << endl;
                 ofstream dft_file(dirName + "/psi_hat.txt");
                 dft_file << "axis_" << to_string(dir) << endl;
-                for (int i = 0; i < nx; i++) { dft_file << "[";
-                    for (int j = 0; j < ny; j++) { dft_file << "[";
-                        for (int k = 0; k < nz; k++) {
+                for (int i = 0; i < kxmax; i++) { dft_file << "[";
+                    for (int j = 0; j < kymax; j++) { dft_file << "[";
+                        for (int k = 0; k < kzmax; k++) {
                             dft_file << psi_hat[i][j][k] << " ";
                         } dft_file << "]";
                     } dft_file << "],";
@@ -168,9 +173,9 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
                 cout << "Printing scaled Fourier transformed velocity vector potential in direction " << dir << "." << endl;
                 ofstream scaling_file(dirName + "/psi_hat_scaled.txt");
                 scaling_file << "axis_" << to_string(dir) << endl;
-                for (int i = 0; i < nx; i++) { scaling_file << "[";
-                    for (int j = 0; j < ny; j++) { scaling_file << "[";
-                        for (int k = 0; k < nz; k++) {
+                for (int i = 0; i < kxmax; i++) { scaling_file << "[";
+                    for (int j = 0; j < kymax; j++) { scaling_file << "[";
+                        for (int k = 0; k < kzmax; k++) {
                             scaling_file << psi_hat[i][j][k] << " ";
                         } scaling_file << "]";
                     } scaling_file << "],";
@@ -191,11 +196,11 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
                     } idft_file << "],";
                 } idft_file << endl;
             }
-            // add tmpdir (psix, psiy, or psiz) to randomPsi
+            //// add tmpdir (psix, psiy, or psiz) to randomPsi
             randomPsi.push_back(psi_i);
         } // so: randomPsi = {psix, psiy, psiz} ;
 
-        // calculate gradient using central difference scheme
+        //// calculate gradient using central difference scheme
         cout << "Calculating gradients of velocity vector potential." << endl;
         vector<vector<vector<vector<vector<double>>>>> gradient(3,
             vector<vector<vector<vector<double>>>>(3,
@@ -232,7 +237,7 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
                 } grad_file << "];" << endl;
             }
         }
-        // calculate curl using gradient values
+        //// calculate curl using gradient values
         cout << "Calculating curl of velocity vector potential." << endl;
         int m, n; // for indices of cross-product
         for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
@@ -264,15 +269,17 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
         }
     }
     else {
-        cout << "Reading from " << dirName << "/random_u.txt, to generate basis for initial velocity." << endl;
-//        int dir_psi = 0, i = 0, j = 0, k = 0;
-        ifstream file(dirName + "/random_u.txt");
+        stringstream filename;
+        filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u.txt";
+        string filestring = filename.str();
+        ifstream file(filestring);
+        cout << "Reading initial velocities from " << filestring << endl;
         string line;
         while (getline(file, line)) {
             stringstream linestream(line);
 //            cout << "linestream: " << linestream.str() << endl;
             string cell_i;
-            vector<vector<std::vector<double>>> tmpdir;
+            vector<vector<vector<double>>> tmpdir;
             while(getline(linestream, cell_i, ';')) {
                 stringstream cell_i_stream(cell_i);
 //                cout << "cell_i_stream: " << cell_i_stream.str() << endl;
@@ -296,12 +303,12 @@ m_flow(flow), m_print(print), m_recalculate(recalculate) {
     }
 }
 
-vector<vector<vector<std::complex<double>>>>
-MixingLayer3D::InitialVelocity::Fourier3D(const vector<vector<vector<double>>> &in) {
+vector<vector<vector<complex<double>>>>
+MixingLayer3D::InitialVelocity::Fourier3D(const vector<vector<vector<double>>> &in) const {
     vector<vector<vector<complex<double>>>> out(
             kxmax, vector<vector<complex<double>>>(
                     kymax, vector<complex<double>>(
-                            kzmax, {0.0, 0.0}))); // coordinates are on last three dimensions
+                            kzmax, {0.0, 0.0})));
     //double xi, yi, zi;
     complex<double> omeg1, omeg2, omeg3;
     for (int ix = 0; ix < nx; ix++) {
@@ -315,12 +322,11 @@ MixingLayer3D::InitialVelocity::Fourier3D(const vector<vector<vector<double>>> &
     return out;
 }
 
-vector<vector<vector<double>>> MixingLayer3D::InitialVelocity::InverseFourier3D(
-        const vector<vector<vector<std::complex<double>>>> &in) {
+vector<vector<vector<double>>>
+MixingLayer3D::InitialVelocity::InverseFourier3D(const vector<vector<vector<complex<double>>>> &in) const {
     vector<vector<vector<double>>> out(nx,
         vector<vector<double>>(ny,
             vector<double>(nz, 0.0)));
-    //double xi, yi, zi;
     complex<double> omeg1, omeg2, omeg3, tmp;
     double N = (nx * ny * nz);
     for (int ix = 0; ix < nx; ix++) {
@@ -340,19 +346,19 @@ double MixingLayer3D::InitialVelocity::InterpolateVelocities(double xq, double y
     /*
      * Assumes that all abscissa are monotonically increasing values
      */
-    xq = std::max(minx, std::min(xq, maxx));
-    yq = std::max(miny, std::min(yq, maxy));
-    zq = std::max(minz, std::min(zq, maxz));
+    xq = max(minx, min(xq, maxx));
+    yq = max(miny, min(yq, maxy));
+    zq = max(minz, min(zq, maxz));
 
-    auto xupper = std::upper_bound(xvec.cbegin(), xvec.cend(), xq);
+    auto xupper = upper_bound(xvec.cbegin(), xvec.cend(), xq);
     int x1 = (xupper == xvec.cend()) ? xupper - xvec.cbegin() - 1 : xupper - xvec.cbegin();
     int x0 = x1 - 1;
 
-    auto yupper = std::upper_bound(yvec.cbegin(), yvec.cend(), yq);
+    auto yupper = upper_bound(yvec.cbegin(), yvec.cend(), yq);
     int y1 = (yupper == yvec.cend()) ? yupper - yvec.cbegin() - 1 : yupper - yvec.cbegin();
     auto y0 = y1 - 1;
 
-    auto zupper = std::upper_bound(zvec.cbegin(), zvec.cend(), zq);
+    auto zupper = upper_bound(zvec.cbegin(), zvec.cend(), zq);
     int z1 = (zupper == zvec.cend()) ? zupper - zvec.cbegin() - 1 : zupper - zvec.cbegin();
     auto z0 = z1 - 1;
 
@@ -396,56 +402,71 @@ double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const
  * @return shared pointer to a triangulation instance
  */
 boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
-    //Creation of the principal domain
-    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-    double lx = 1720 * shearlayerthickness / 2;
-    double ly = 387 * shearlayerthickness / 2;
-    double lz = 172 * shearlayerthickness / 2;
-    dealii::Point<3> corner1(-lx, -ly, -lz);
-    dealii::Point<3> corner2(lx, ly, lz);
-    vector<unsigned int> rep;
-    rep.push_back(1);
-    rep.push_back(2);
-    rep.push_back(1);
-    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, rep, corner1, corner2, true);
-    //// TODO: generate using step_sizes
-    return rect;
-}
 
-//boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
-//    //Creation of the principal domain
-//    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-//    dealii::Point<3> corner1(-lx/2, -ly/2, -lz/2);
-//    dealii::Point<3> corner2(lx/2, ly/2, lz/2);
-//    int n_cells_x = 10;
-//    int n_cells_y = 10;
-//    int n_cells_z = 10;
-//    double l_cells_x = lx/n_cells_x;
-//    double l_cells_y = ly/n_cells_y;
-//    double l_cells_z = lz/n_cells_z;
-//    vector<vector<double>> step_sizes;
-//    step_sizes.resize(3);
-////    for (int ix = 0; ix < n_cells_x; ix++) {
-////        step_sizes.at(0).push_back(l_cells_x);
-////    }
-////    for (int iy = 0; iy < n_cells_y; iy++) {
-////        step_sizes.at(1).push_back(l_cells_y);
-////    }
-////    for (int iz = 0; iz < n_cells_z; iz++) {
-////        step_sizes.at(2).push_back(l_cells_z);
-////    }
-//    step_sizes.at(0) = {lx};
-//    step_sizes.at(1) = {ly};
-//    step_sizes.at(1) = {ly/2, ly/2};
-////    step_sizes.at(1) = {ly/4, ly/8, ly/16, ly/16, ly/16, ly/16, ly/8, ly/4};
-//    step_sizes.at(2) = {lz};
-//
-//    bool colorize = true; 	// set boundary ids automatically to
-//    // 0:front; 1:back; 2:bottom; 3:top; 4:left; 5:right;
-//    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, step_sizes, corner1, corner2, colorize);
-//
-//    return rect;
-//}
+    lx = 1720*shearlayerthickness;
+    ly = 387*shearlayerthickness;
+    lz = 172*shearlayerthickness;
+
+    //Taken from DiamondObstacle2D in step-gridin
+    dealii::GridIn<3> grid_in;
+    boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+    grid_in.attach_triangulation(*mesh);
+
+    //// Read mesh data from file
+    stringstream filename;
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/untitled.msh";
+    ifstream file(filename.str().c_str());
+    assert(file);
+    grid_in.read_msh(file);
+    if (is_MPI_rank_0()) {
+        cout << "Imported mesh info:" << endl << " dimension: " << 3 << endl << " no. of cells: " << mesh->n_active_cells() << endl;
+    }
+
+    //// set boundary indicators
+    for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell)
+        for (unsigned int f=0; f<GeometryInfo<3>::faces_per_cell; ++f) {
+            if (cell->face(f)->at_boundary()) {
+                cell->face(f)->set_all_boundary_ids(42);
+                Point<3> x = cell->face(f)->center();
+                // front (x)
+                if (abs(x[0] - lx/2)<0.00001)
+                    cell->face(f)->set_all_boundary_ids(0);
+                // back (x)
+                if (abs(x[0] - (-lx/2))<0.00001)
+                    cell->face(f)->set_all_boundary_ids(1);
+                // left (z)
+                if (abs(x[2] - lz/2)<0.00001)
+                    cell->face(f)->set_all_boundary_ids(4);
+                // right (z)
+                if (abs(x[2] - (-lz/2))<0.00001)
+                    cell->face(f)->set_all_boundary_ids(5);
+                // top (y)
+                if (abs(x[1] - ly/2)<0.00001)
+                    cell->face(f)->set_all_boundary_ids(2);
+                // bottom (y)
+                if (abs(x[1] - (-ly/2))<0.00001)
+                    cell->face(f)->set_all_boundary_ids(3);
+            }
+        }
+
+    if (is_MPI_rank_0()) {
+        //// Print boundary indicators
+        map<types::boundary_id, unsigned int> boundary_count;
+        for (auto cell: mesh->active_cell_iterators()) {
+            for (unsigned int face = 0; face < GeometryInfo<3>::faces_per_cell; ++face) {
+                if (cell->face(face)->at_boundary())
+                    boundary_count[cell->face(face)->boundary_id()]++;
+            }
+        }
+        cout << " boundary indicators: ";
+        for (const pair<const types::boundary_id, unsigned int> &pair: boundary_count) {
+            cout << pair.first << "(" << pair.second << " times) ";
+        }
+        cout << endl;
+    }
+//    mesh->get_boundary_ids();
+    return mesh;
+}
 
 /**
  * @short create boundaries for couette flow
@@ -482,3 +503,66 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
 }
 
 } /* namespace natrium */
+
+//boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
+//    //Creation of the principal domain
+//    boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+//    double lx = 1720 * shearlayerthickness / 2; // 1720*0.093/2 +-80(160) // dx 2.24 -> nx 70; 64; 2^6 //
+//    double ly = 387 * shearlayerthickness / 2; // 387*0.093/2 +-18(36)// dy 1.73..5.32 -> ny 21..7; 16; 2^4 //
+//    double lz = 172 * shearlayerthickness / 2; // 172*0.093/2 +-8(16) // dz 1.08..2.69 -> nz 14.8..6; 16; 2^4 //
+//    dealii::Point<3> corner1(-lx, -ly, -lz);
+//    dealii::Point<3> corner2(lx, ly, lz);
+//    vector<unsigned int> rep;
+//    rep.push_back(1);
+//    rep.push_back(2);
+//    rep.push_back(1);
+//    dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, rep, corner1, corner2, true);
+
+//    //// add periodicity
+//    vector<GridTools::PeriodicFacePair<Mesh<3>::cell_iterator >> periodicity_vector;
+//    //    Tensor<1, 3> offset = dealii::Tensor<1, 3 >();
+//    //    FullMatrix<double> matrix;
+//    const types::boundary_id b_id1=0, b_id2=1;
+//    const unsigned int direction = 1;
+//    //    GridTools::collect_periodic_faces(*mesh, b_id1, b_id2, direction, periodicity_vector, offset, matrix);
+//    GridTools::collect_periodic_faces(*mesh, b_id1, b_id2, direction, periodicity_vector);
+//    for (const auto & pair : periodicity_vector) {
+//        cout << pair.face_idx << endl;
+//    }
+//    mesh->add_periodicity(periodicity_vector);
+
+// mesh->refine_global (refinementLevel);
+
+//    //Creation of the principal domain
+//    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+//    dealii::Point<3> corner1(-lx/2, -ly/2, -lz/2);
+//    dealii::Point<3> corner2(lx/2, ly/2, lz/2);
+//    int n_cells_x = 10;
+//    int n_cells_y = 10;
+//    int n_cells_z = 10;
+//    double l_cells_x = lx/n_cells_x;
+//    double l_cells_y = ly/n_cells_y;
+//    double l_cells_z = lz/n_cells_z;
+//    vector<vector<double>> step_sizes;
+//    step_sizes.resize(3);
+////    for (int ix = 0; ix < n_cells_x; ix++) {
+////        step_sizes.at(0).push_back(l_cells_x);
+////    }
+////    for (int iy = 0; iy < n_cells_y; iy++) {
+////        step_sizes.at(1).push_back(l_cells_y);
+////    }
+////    for (int iz = 0; iz < n_cells_z; iz++) {
+////        step_sizes.at(2).push_back(l_cells_z);
+////    }
+//    step_sizes.at(0) = {lx};
+//    step_sizes.at(1) = {ly};
+//    step_sizes.at(1) = {ly/2, ly/2};
+////    step_sizes.at(1) = {ly/4, ly/8, ly/16, ly/16, ly/16, ly/16, ly/8, ly/4};
+//    step_sizes.at(2) = {lz};
+//
+//    bool colorize = true; 	// set boundary ids automatically to
+//    // 0:front; 1:back; 2:bottom; 3:top; 4:left; 5:right;
+//    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, step_sizes, corner1, corner2, colorize);
+//
+//    return rect;
+//}

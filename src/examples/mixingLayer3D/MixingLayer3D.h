@@ -49,23 +49,24 @@ namespace natrium {
                 vector< vector< vector< vector<double> > > > curlOfPsi;
                 double minx, miny, minz;
                 double maxx, maxy, maxz;
-                double dx, dy, dz;
+//                double dx, dy, dz;
                 double lx, ly, lz;
                 int nx, ny, nz;
                 int kxmax, kymax, kzmax;
                 bool m_print, m_recalculate;
-                double InterpolateVelocities(double, double, double, const unsigned int) const;
+                double InterpolateVelocities(double xq, double yq, double zq, const unsigned int dim) const;
             public:
                 InitialVelocity(MixingLayer3D *flow, bool print, bool recalculate, string dirName);
                 double value(const dealii::Point<3>& x, const unsigned int component = 0) const override;
-                vector<vector<vector<std::complex<double>>>> Fourier3D(const vector<vector<vector<double>>> &in);
-                vector<vector<vector<double>>> InverseFourier3D(const vector<vector<vector<std::complex<double>>>> &in);
+                vector<vector<vector<std::complex<double>>>> Fourier3D(const vector<vector<vector<double>>> &in) const;
+                vector<vector<vector<double>>> InverseFourier3D(const vector<vector<vector<std::complex<double>>>> &in) const;
         };
         class InitialDensity: public dealii::Function<3> {
-        private: MixingLayer3D* m_flow;
-        public:
-            InitialDensity(MixingLayer3D* flow) : m_flow(flow) { }
-            virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
+            private:
+                MixingLayer3D* m_flow;
+            public:
+                explicit InitialDensity(MixingLayer3D* flow) : m_flow(flow) { }
+                virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
         class InitialTemperature: public dealii::Function<3> {
         private:
@@ -84,12 +85,12 @@ namespace natrium {
 
         virtual void refine(Mesh<3>& mesh) {
             mesh.refine_global(m_refinementLevel);
-            if (m_squash) {
-                dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
-                std::ofstream out("grid-mixinglayer.eps");
-                dealii::GridOut grid_out;
-                grid_out.write_eps(mesh, out);
-            }
+//            if (m_squash) {
+//                dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
+//                std::ofstream out("grid-mixinglayer.eps");
+//                dealii::GridOut grid_out;
+//                grid_out.write_eps(mesh, out);
+//            }
         }
         struct UnstructuredGridFunc {
 //            double sigma = 0.1;
@@ -101,25 +102,19 @@ namespace natrium {
                 double yrel = y/ymax;
                 return pow(yrel, 3) * ymax; // * abs(yrel)
 //                return y;
+//                return tanh((y/ymax)/(2 * 0.093));
             }
             dealii::Point<3> operator() (const dealii::Point<3> &in) const {
                 return dealii::Point<3>(in(0), trans(in(1)), in(2));
             }
         };
-//        void transform(Mesh<3>& mesh){
-//            // transform grid
-//            dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
-//            std::ofstream out("grid-couette.eps");
-//            dealii::GridOut grid_out;
-//            grid_out.write_eps(mesh, out);
-//        }
         virtual void transform(Mesh<3>&) {}
         virtual bool isCartesian() {return true;}
 
     private:
         /// speed of sound
         double m_U;
-//        double lx, ly, lz;
+        double lx, ly, lz;
         size_t m_refinementLevel;
 
         /**
