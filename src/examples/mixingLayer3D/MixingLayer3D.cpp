@@ -19,6 +19,7 @@
 #include "deal.II/grid/grid_in.h"
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_tools.h"
+#include "../../fftw-3.3.10/api/fftw3.h"
 using namespace std;
 using namespace natrium::DealIIExtensions;
 
@@ -35,8 +36,8 @@ namespace natrium {
 
 MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
                              string dirName, double U) :
-ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash),
-m_U(U), m_refinementLevel(refinementLevel) {
+ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash), m_U(U),
+lx(1720*shearlayerthickness), ly(387*shearlayerthickness), lz(172*shearlayerthickness), m_refinementLevel(refinementLevel) {
 //    if (m_refinementLevel > 4) { print = false; }
     /// apply boundary values
     setBoundaries(makeBoundaries());
