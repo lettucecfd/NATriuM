@@ -350,8 +350,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		string dir = getArgument<string>("output-dir");
 		cfg.setOutputDirectory(dir);
 		cfg.setSwitchOutputOff(false);
-		LOG(BASIC) << "Output directory set to " << dir << " via command line"
-				<< endl;
+        if (is_MPI_rank_0()) LOG(BASIC) << "Output directory set to " << dir << " via command line" << endl;
 	}
 
 	// output solution interval
