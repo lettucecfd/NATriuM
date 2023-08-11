@@ -70,9 +70,9 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
 //    kymax = ny / 5;
 //    kzmax = nz / 5;
 
-    nx = pow(2, 6);
-    ny = pow(2, 6);
-    nz = pow(2, 6);
+    nx = 48;//pow(2, 6);
+    ny = 48;//pow(2, 6);
+    nz = 48;//pow(2, 6);
     kxmax = nx;
     kymax = ny;
     kzmax = nz;
