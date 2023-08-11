@@ -23,7 +23,7 @@ using namespace std;
 using namespace natrium::DealIIExtensions;
 
 double shearlayerthickness = 0.093;
-double k0 = 23.66 * shearlayerthickness; // peak wave number
+//double k0 = 23.66 * shearlayerthickness; // peak wave number
 //int n = 5;
 //int kmax = pow(2, n); // [1] C. Pantano and S. Sarkar, “A study of compressibility effects in the high-speed turbulent shear layer using direct simulation,” J. Fluid Mech., vol. 451, pp. 329–371, Jan. 2002, doi: 10.1017/S0022112001006978.
 // kmax = 32
@@ -135,7 +135,7 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
             }
             //// multiply in spectral space
             if (is_MPI_rank_0()) cout << "Scaling Fourier transformed velocity vector potential in direction " << dir << "." << endl;
-            double k0 = sqrt(kxmax*kxmax+kymax*kymax+kzmax*kzmax); //23.66*0.093; //
+            double k0 = 23.66*0.093; //sqrt(kxmax*kxmax+kymax*kymax+kzmax*kzmax); //
             for (int kx = 0; kx < int(kxmax/2); kx++) {
                 for (int ky = 0; ky < int(kymax/2); ky++) {
                     for (int kz = 0; kz < int(kzmax/2); kz++) {
