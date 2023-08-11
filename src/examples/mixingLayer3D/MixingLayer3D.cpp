@@ -70,9 +70,9 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
 //    kymax = ny / 5;
 //    kzmax = nz / 5;
 
-    nx = 48;//pow(2, 6);
-    ny = 48;//pow(2, 6);
-    nz = 48;//pow(2, 6);
+    nx = 48; //pow(2, 6);
+    ny = 48; //pow(2, 6);
+    nz = 48; //pow(2, 6);
     kxmax = nx;
     kymax = ny;
     kzmax = nz;
@@ -135,7 +135,7 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
             }
             //// multiply in spectral space
             if (is_MPI_rank_0()) cout << "Scaling Fourier transformed velocity vector potential in direction " << dir << "." << endl;
-            double k0 = 23.66*0.093; //sqrt(kxmax*kxmax+kymax*kymax+kzmax*kzmax);
+            double k0 = sqrt(kxmax*kxmax+kymax*kymax+kzmax*kzmax); //23.66*0.093; //
             for (int kx = 0; kx < int(kxmax/2); kx++) {
                 for (int ky = 0; ky < int(kymax/2); ky++) {
                     for (int kz = 0; kz < int(kzmax/2); kz++) {
