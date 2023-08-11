@@ -70,9 +70,9 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
 //    kymax = ny / 5;
 //    kzmax = nz / 5;
 
-    nx = pow(2, 6); //48; //
-    nx = pow(2, 6); //48; //
-    nx = pow(2, 6); //48; //
+    nx = 48; //pow(2, 6); //
+    ny = 48; //pow(2, 6); //
+    nz = 48; //pow(2, 6); //
     kxmax = nx;
     kymax = ny;
     kzmax = nz;
@@ -412,11 +412,11 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_small.msh";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_small_fine.msh";
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
-    if (is_MPI_rank_0()) cout << "Imported mesh info:" << endl << " dimension: " << 3 << endl << " no. of cells: " << mesh->n_active_cells() << endl;
+    if (is_MPI_rank_0()) cout << "Imported mesh info:" << endl << " dimension: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
 
     double minx, maxx, miny, maxy, minz, maxz;
     //// get minimum and maximum coordinates
