@@ -70,9 +70,9 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
 //    kymax = ny / 5;
 //    kzmax = nz / 5;
 
-    nx = pow(2, 6);
-    ny = pow(2, 5);
-    nz = pow(2, 4);
+    nx = 48; //pow(2, 6);
+    ny = 48; //pow(2, 6);
+    nz = 48; //pow(2, 6);
     kxmax = nx;
     kymax = ny;
     kzmax = nz;
@@ -412,7 +412,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_small.msh";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_small_fine.msh";
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
