@@ -50,10 +50,11 @@ MixingLayer3D::~MixingLayer3D() = default;
 
 double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component < 3);
-    double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
+    double scaling = 0.01 * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
+    double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
 //    double rand_u = 0;
     if (component == 0) {
-        return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u * 0.0001;
+        return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
         return rand_u;
     }

@@ -84,30 +84,31 @@ namespace natrium {
         virtual ~MixingLayer3D();
 
         virtual void refine(Mesh<3>& mesh) {
-//            mesh.refine_global(m_refinementLevel);
-//            if (m_squash) {
-//                dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
-//                std::ofstream out("grid-mixinglayer.eps");
-//                dealii::GridOut grid_out;
-//                grid_out.write_eps(mesh, out);
-//            }
+            mesh.refine_global(m_refinementLevel);
+            if (m_squash) {
+                struct UnstructuredGridFunc {
+                    //            double sigma = 0.1;
+                    double ymax = 387 * 0.093 / 2;
+                    double k = 1;
+
+                    double trans(double y) const {
+                        //                return y * erf((y-ymax)/sqrt(2*sigma*sigma));
+                        //                return yrel*sqrt(1-k/1.05)
+                        double yrel = y / ymax;
+                        return pow(yrel, 3) * ymax; // * abs(yrel)
+                        //                return y;
+                        //                return tanh((y/ymax)/(2 * 0.093));
+                    }
+                    dealii::Point<3> operator()(const dealii::Point<3> &in) const {
+                        return dealii::Point<3>(in(0), trans(in(1)), in(2));
+                    }
+                };
+                dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
+                std::ofstream out("grid-mixinglayer.eps");
+                dealii::GridOut grid_out;
+                grid_out.write_eps(mesh, out);
+            }
         }
-        struct UnstructuredGridFunc {
-//            double sigma = 0.1;
-            double ymax = 387 * 0.093 / 2;
-            double k = 1;
-            double trans(double y) const {
-//                return y * erf((y-ymax)/sqrt(2*sigma*sigma));
-//                return yrel*sqrt(1-k/1.05)
-                double yrel = y/ymax;
-                return pow(yrel, 3) * ymax; // * abs(yrel)
-//                return y;
-//                return tanh((y/ymax)/(2 * 0.093));
-            }
-            dealii::Point<3> operator() (const dealii::Point<3> &in) const {
-                return dealii::Point<3>(in(0), trans(in(1)), in(2));
-            }
-        };
         virtual void transform(Mesh<3>&) {}
         virtual bool isCartesian() {return true;}
 
