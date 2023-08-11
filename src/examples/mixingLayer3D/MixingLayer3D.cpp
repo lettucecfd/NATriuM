@@ -70,19 +70,17 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
 //    kymax = ny / 5;
 //    kzmax = nz / 5;
 
-    nx = pow(2, 6); //48; //
-    ny = pow(2, 6); //48; //
-    nz = pow(2, 6); //48; //
-    kxmax = nx;
-    kymax = ny;
-    kzmax = nz;
-
     if (m_recalculate) {
+        nx = pow(2, 6); //48; //
+        ny = pow(2, 6); //48; //
+        nz = pow(2, 6); //48; //
+        kxmax = nx;
+        kymax = ny;
+        kzmax = nz;
+
         if (is_MPI_rank_0()) {
             cout << "Recalculating random velocity." << endl;
-            if (m_print) {
-                cout << "Prints are in " << dirName << "." << endl;
-            }
+            if (m_print) cout << "Prints are in " << dirName << "." << endl;
         }
 
         //// warm up randomness
@@ -109,14 +107,17 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
             if (m_print & is_MPI_rank_0()) {
                 cout << "Printing random velocity vector potential in direction " << dir << "." << endl;
                 ofstream rand_file(dirName + "/random_psi.txt");
-                rand_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { rand_file << "[";
                     for (int j = 0; j < ny; j++) { rand_file << "[";
                         for (int k = 0; k < nz; k++) {
-                            rand_file << tmpdir[i][j][k] << " ";
-                        } rand_file << "]";
-                    } rand_file << "],";
-                } rand_file << endl;
+                            if (k > 0) rand_file << ' ';
+                            rand_file << tmpdir[i][j][k];
+                        } // for all elements in z direction
+                        if (j<ny-1) rand_file << ',';
+                    } // for all elements in y direction
+                    if (i<nx-1) rand_file << ';';
+                } // for all elements in x direction
+                rand_file << endl;
             }
             if (is_MPI_rank_0()) cout << "Fourier transforming random velocity vector potential in direction " << dir << "." << endl;
             //// perform dft on randomPsi
@@ -124,14 +125,17 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
             if (m_print & is_MPI_rank_0()) {
                 cout << "Printing Fourier transform of random velocity vector potential in direction " << dir << "." << endl;
                 ofstream dft_file(dirName + "/psi_hat.txt");
-                dft_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < kxmax; i++) { dft_file << "[";
                     for (int j = 0; j < kymax; j++) { dft_file << "[";
                         for (int k = 0; k < kzmax; k++) {
-                            dft_file << psi_hat[i][j][k] << " ";
-                        } dft_file << "]";
-                    } dft_file << "],";
-                } dft_file << endl;
+                            if (k > 0) dft_file << ' ';
+                            dft_file << psi_hat[i][j][k];
+                        } // for all elements in z direction
+                        if (j<ny-1) dft_file << ',';
+                    } // for all elements in y direction
+                    if (i<nx-1) dft_file << ';';
+                } // for all elements in x direction
+                dft_file << endl;
             }
             //// multiply in spectral space
             if (is_MPI_rank_0()) cout << "Scaling Fourier transformed velocity vector potential in direction " << dir << "." << endl;
@@ -148,14 +152,17 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
             if (m_print & is_MPI_rank_0()) {
                 cout << "Printing scaled Fourier transformed velocity vector potential in direction " << dir << "." << endl;
                 ofstream scaling_file(dirName + "/psi_hat_scaled.txt");
-                scaling_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < kxmax; i++) { scaling_file << "[";
                     for (int j = 0; j < kymax; j++) { scaling_file << "[";
                         for (int k = 0; k < kzmax; k++) {
-                            scaling_file << psi_hat[i][j][k] << " ";
-                        } scaling_file << "]";
-                    } scaling_file << "],";
-                } scaling_file << endl;
+                            if (k > 0) scaling_file << ' ';
+                            scaling_file << psi_hat[i][j][k];
+                        } // for all elements in z direction
+                        if (j<ny-1) scaling_file << ',';
+                    } // for all elements in y direction
+                    if (i<nx-1) scaling_file << ';';
+                } // for all elements in x direction
+                scaling_file << endl;
             }
             //// perform inverse dft on psi_hat (directionally)
             if (is_MPI_rank_0()) cout << "Inversely Fourier transforming velocity vector potential in direction " << dir << "." << endl;
@@ -163,14 +170,17 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
             if (m_print & is_MPI_rank_0()) {
                 cout << "Printing inverse Fourier transform in direction " << dir << "." << endl;
                 ofstream idft_file(dirName + "/psi_idft.txt");
-                idft_file << "axis_" << to_string(dir) << endl;
                 for (int i = 0; i < nx; i++) { idft_file << "[";
                     for (int j = 0; j < ny; j++) { idft_file << "[";
                         for (int k = 0; k < nz; k++) {
-                            idft_file << psi_i[i][j][k] << " ";
-                        } idft_file << "]";
-                    } idft_file << "],";
-                } idft_file << endl;
+                            if (k > 0) idft_file << ' ';
+                            idft_file << psi_i[i][j][k];
+                        } // for all elements in z direction
+                        if (j<ny-1) idft_file << ',';
+                    } // for all elements in y direction
+                    if (i<nx-1) idft_file << ';';
+                } // for all elements in x direction
+                idft_file << endl;
             }
             //// add tmpdir (psix, psiy, or psiz) to randomPsi
             randomPsi.push_back(psi_i);
@@ -206,11 +216,15 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
                     for (int i = 0; i < nx; i++) { grad_file << "[";
                         for (int j = 0; j < ny; j++) { grad_file << "[";
                             for (int k = 0; k < nz; k++) {
-                                grad_file << gradient[dir_psi][dir_grad][i][j][k] << " ";
-                            } grad_file << "]";
-                        } grad_file << "],";
-                    } grad_file << "];" << endl;
-                } grad_file << "];" << endl;
+                                if (k > 0) grad_file << ' ';
+                                grad_file << gradient[dir_psi][dir_grad][i][j][k];
+                            } // for all elements in z direction
+                            if (j<ny-1) grad_file << ',';
+                        } // for all elements in y direction
+                        if (i<nx-1) grad_file << ';';
+                    } // for all elements in x direction
+                    if (dir_grad<2) grad_file << "]";
+                } grad_file << endl;
             }
         }
         //// calculate curl using gradient values
