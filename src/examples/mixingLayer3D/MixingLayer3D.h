@@ -84,7 +84,7 @@ namespace natrium {
         virtual ~MixingLayer3D();
 
         virtual void refine(Mesh<3>& mesh) {
-            mesh.refine_global(m_refinementLevel);
+//            mesh.refine_global(m_refinementLevel);
 //            if (m_squash) {
 //                dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
 //                std::ofstream out("grid-mixinglayer.eps");

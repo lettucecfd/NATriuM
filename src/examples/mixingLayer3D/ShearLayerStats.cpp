@@ -60,16 +60,13 @@ void ShearLayerStats::updateYValues() {
     //////////////////////////
     std::set<double, own_double_less> y_coords;
 
+    // get y coordinates
     const dealii::UpdateFlags update_flags = dealii::update_quadrature_points;
     const dealii::DoFHandler<3> & dof_handler = *(advection->getDoFHandler());
-    dealii::FEValues<3> fe_values(advection->getMapping(),
-                                  *(advection->getFe()), advection->getSupportPointEvaluation(), update_flags);
-    // loop
-    typename dealii::DoFHandler<3>::active_cell_iterator cell =
-            dof_handler.begin_active(), endc = dof_handler.end();
+    dealii::FEValues<3> fe_values(advection->getMapping(), *(advection->getFe()), advection->getSupportPointEvaluation(), update_flags);
+    typename dealii::DoFHandler<3>::active_cell_iterator cell = dof_handler.begin_active(), endc = dof_handler.end();
     for (; cell != endc; ++cell) {
         if (cell->is_locally_owned()) {
-            // get y coordinates
             fe_values.reinit(cell);
             const std::vector<dealii::Point<3> >& quad_points = fe_values.get_quadrature_points();
             for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
@@ -80,8 +77,7 @@ void ShearLayerStats::updateYValues() {
 
     //communicate list of y values
     size_t n_ycoords = y_coords.size();
-    size_t max_nycoords = dealii::Utilities::MPI::min_max_avg(n_ycoords,
-                                                              MPI_COMM_WORLD).max;
+    size_t max_nycoords = dealii::Utilities::MPI::min_max_avg(n_ycoords, MPI_COMM_WORLD).max;
     auto *sendbuf = (double*) malloc(max_nycoords * sizeof(double));
 
     // fill send buffer with y coordinates
@@ -94,19 +90,14 @@ void ShearLayerStats::updateYValues() {
         sendbuf[i] = *y_coords.begin();
     }
     // allocate read buffer
-    double *recvbuf = (double*) malloc(dealii::Utilities::MPI::n_mpi_processes(
-            MPI_COMM_WORLD) * max_nycoords * sizeof(double));
+    double *recvbuf = (double*) malloc(dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD) * max_nycoords * sizeof(double));
     // allgather: distribute all ycoords to all processors
-    MPI_Allgather(sendbuf, max_nycoords,
-                  MPI_DOUBLE, recvbuf, max_nycoords,
-                  MPI_DOUBLE,
-                  MPI_COMM_WORLD);
+    MPI_Allgather(sendbuf, max_nycoords, MPI_DOUBLE, recvbuf, max_nycoords, MPI_DOUBLE, MPI_COMM_WORLD);
 
     // remove double entries
     std::set<double> y_coords_gathered;
     for (i = 0;
-         i < max_nycoords * dealii::Utilities::MPI::n_mpi_processes(
-                 MPI_COMM_WORLD); i++) {
+         i < max_nycoords * dealii::Utilities::MPI::n_mpi_processes( MPI_COMM_WORLD); i++) {
         y_coords_gathered.insert(recvbuf[i]);
     }
     // fill member variables
@@ -219,10 +210,10 @@ void ShearLayerStats::calculateRhoU() {
             ux_ReAverage.at(iy) /= number.at(iy);
             uy_ReAverage.at(iy) /= number.at(iy);
             uz_ReAverage.at(iy) /= number.at(iy);
-        } else { nonumbers.push_back(iy); }
+        } else nonumbers.push_back(iy);
     }
     // average of neighboring points if there were no points
-    for (size_t iy : nonumbers) {
+    for (auto iy : nonumbers) {
         rhoux_average.at(iy) = 0.5 * (rhoux_average.at(iy + 1) + rhoux_average.at(iy - 1));
         rhouy_average.at(iy) = 0.5 * (rhouy_average.at(iy + 1) + rhouy_average.at(iy - 1));
         rhouz_average.at(iy) = 0.5 * (rhouz_average.at(iy + 1) + rhouz_average.at(iy - 1));
@@ -233,8 +224,63 @@ void ShearLayerStats::calculateRhoU() {
         uz_ReAverage.at(iy) = 0.5 * (uz_ReAverage.at(iy + 1) + uz_ReAverage.at(iy - 1));
     }
 
+//    // calculate flux of ux, uy, uz at all points
+//    double uxflux_Re, uyflux_Re, uzflux_Re;// loop
+//    for (cell = dof_handler.begin_active(); cell != endc; ++cell) {
+//        if (cell->is_locally_owned()) {
+//            cell->get_dof_indices(local_indices);
+//            // get averages
+//            fe_values.reinit(cell);
+//            const std::vector<dealii::Point<3> > &quad_points = fe_values.get_quadrature_points();
+//            for (size_t i = 0; i < fe_values.n_quadrature_points; i++) {
+//                y = floor(quad_points.at(i)(1)*nround)/nround;
+//                assert(m_yCoordinateToIndex.find(y) != m_yCoordinateToIndex.end());
+//                y_ind = m_yCoordinateToIndex.at(y);
+//                dof_ind = local_indices.at(i);
+//                // calculate fluxes
+//                uxflux_Re = m_u.at(0)(dof_ind) - ux_ReAverage.at(y_ind);
+//                uyflux_Re = m_u.at(1)(dof_ind) - uy_ReAverage.at(y_ind);
+//                uzflux_Re = m_u.at(2)(dof_ind) - uz_ReAverage.at(y_ind);
+//                // fill value vector
+//                rhou11.at(y_ind) += m_rho(dof_ind) * uxflux_Re * uxflux_Re;
+//                rhou22.at(y_ind) += m_rho(dof_ind) * uyflux_Re * uyflux_Re;
+//                rhou33.at(y_ind) += m_rho(dof_ind) * uzflux_Re * uzflux_Re;
+//                rhou12.at(y_ind) += m_rho(dof_ind) * uxflux_Re * uyflux_Re;
+//            } /* for all quadrature points */
+//        } /* if locally owned */
+//    } /* for all cells */
+//    // communicate
+//    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+//        // average over number of points at y
+//        if (number.at(iy) != 0) {
+//            rhou11.at(iy) = dealii::Utilities::MPI::sum(rhou11.at(iy), MPI_COMM_WORLD);
+//            rhou22.at(iy) = dealii::Utilities::MPI::sum(rhou22.at(iy), MPI_COMM_WORLD);
+//            rhou33.at(iy) = dealii::Utilities::MPI::sum(rhou33.at(iy), MPI_COMM_WORLD);
+//            rhou12.at(iy) = dealii::Utilities::MPI::sum(rhou12.at(iy), MPI_COMM_WORLD);
+//            rhou11.at(iy) /= number.at(iy);
+//            rhou22.at(iy) /= number.at(iy);
+//            rhou33.at(iy) /= number.at(iy);
+//            rhou12.at(iy) /= number.at(iy);
+//        }
+//    }
+//    // average of neighboring points if there were no points
+//    for (auto iy : nonumbers) {
+//        rhou11.at(iy) = 0.5 * (rhou11.at(iy + 1) + rhou11.at(iy - 1));
+//        rhou22.at(iy) = 0.5 * (rhou22.at(iy + 1) + rhou22.at(iy - 1));
+//        rhou33.at(iy) = 0.5 * (rhou33.at(iy + 1) + rhou33.at(iy - 1));
+//        rhou12.at(iy) = 0.5 * (rhou12.at(iy + 1) + rhou12.at(iy - 1));
+//    }
+
+    // ui_favre and momentumthickness_integrand
+    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+        ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
+        uy_favre.at(iy) = rhouy_average.at(iy) / rho_average.at(iy);
+        uz_favre.at(iy) = rhouz_average.at(iy) / rho_average.at(iy);
+        momentumthickness_integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
+    }
+
     // calculate flux of ux, uy, uz at all points
-    double uxflux_Re, uyflux_Re, uzflux_Re;// loop
+    double uxflux_Fa, uyflux_Fa, uzflux_Fa;// loop
     for (cell = dof_handler.begin_active(); cell != endc; ++cell) {
         if (cell->is_locally_owned()) {
             cell->get_dof_indices(local_indices);
@@ -247,14 +293,14 @@ void ShearLayerStats::calculateRhoU() {
                 y_ind = m_yCoordinateToIndex.at(y);
                 dof_ind = local_indices.at(i);
                 // calculate fluxes
-                uxflux_Re = m_u.at(0)(dof_ind) - ux_ReAverage.at(y_ind);
-                uyflux_Re = m_u.at(1)(dof_ind) - uy_ReAverage.at(y_ind);
-                uzflux_Re = m_u.at(2)(dof_ind) - uz_ReAverage.at(y_ind);
+                uxflux_Fa = m_u.at(0)(dof_ind) - ux_favre.at(y_ind);
+                uyflux_Fa = m_u.at(1)(dof_ind) - uy_favre.at(y_ind);
+                uzflux_Fa = m_u.at(2)(dof_ind) - uz_favre.at(y_ind);
                 // fill value vector
-                rhou11.at(y_ind) += m_rho(dof_ind) * uxflux_Re * uxflux_Re;
-                rhou22.at(y_ind) += m_rho(dof_ind) * uyflux_Re * uyflux_Re;
-                rhou33.at(y_ind) += m_rho(dof_ind) * uzflux_Re * uzflux_Re;
-                rhou12.at(y_ind) += m_rho(dof_ind) * uxflux_Re * uyflux_Re;
+                rhou11.at(y_ind) += m_rho(dof_ind) * uxflux_Fa * uxflux_Fa;
+                rhou22.at(y_ind) += m_rho(dof_ind) * uyflux_Fa * uyflux_Fa;
+                rhou33.at(y_ind) += m_rho(dof_ind) * uzflux_Fa * uzflux_Fa;
+                rhou12.at(y_ind) += m_rho(dof_ind) * uxflux_Fa * uyflux_Fa;
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
@@ -270,41 +316,32 @@ void ShearLayerStats::calculateRhoU() {
             rhou22.at(iy) /= number.at(iy);
             rhou33.at(iy) /= number.at(iy);
             rhou12.at(iy) /= number.at(iy);
-//        } else {
-//            rhou11.at(iy) = rhou11.at(iy - 1);
-//            rhou22.at(iy) = rhou22.at(iy - 1);
-//            rhou33.at(iy) = rhou33.at(iy - 1);
-//            rhou12.at(iy) = rhou12.at(iy - 1);
         }
     }
     // average of neighboring points if there were no points
-    for (size_t iy : nonumbers) {
+    for (auto iy : nonumbers) {
         rhou11.at(iy) = 0.5 * (rhou11.at(iy + 1) + rhou11.at(iy - 1));
         rhou22.at(iy) = 0.5 * (rhou22.at(iy + 1) + rhou22.at(iy - 1));
         rhou33.at(iy) = 0.5 * (rhou33.at(iy + 1) + rhou33.at(iy - 1));
         rhou12.at(iy) = 0.5 * (rhou12.at(iy + 1) + rhou12.at(iy - 1));
     }
 
-    if (is_MPI_rank_0()) {
-        // calculate ui_favre, Rij and momentumthickness_integrand
-        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-            ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
-            uy_favre.at(iy) = rhouy_average.at(iy) / rho_average.at(iy);
-            uz_favre.at(iy) = rhouz_average.at(iy) / rho_average.at(iy);
-            m_R11.at(iy) = rhou11.at(iy) / rho_average.at(iy);
-            m_R22.at(iy) = rhou22.at(iy) / rho_average.at(iy);
-            m_R33.at(iy) = rhou33.at(iy) / rho_average.at(iy);
-            m_R12.at(iy) = rhou12.at(iy) / rho_average.at(iy);
-            momentumthickness_integrand.at(iy) = rho_average.at(iy) * (1 /* dU/2 */ - ux_favre.at(iy) * (1 /* dU/2 */ + ux_favre.at(iy)));
-            // calculate turbulent kinetic energy
-            m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy))/2; // https://www.osti.gov/pages/servlets/purl/1580489
-            // calculate anisotropy tensor along y
-            b11vec.at(iy) = (m_R11.at(iy) - 2./3*m_K.at(iy)*1)/(2*m_K.at(iy));
-            b22vec.at(iy) = (m_R22.at(iy) - 2./3*m_K.at(iy)*1)/(2*m_K.at(iy));
-            b12vec.at(iy) = (m_R12.at(iy) - 2./3*m_K.at(iy)*0)/(2*m_K.at(iy));
-        }
+    // calculate Rij
+    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+        m_R11.at(iy) = rhou11.at(iy) / rho_average.at(iy);
+        m_R22.at(iy) = rhou22.at(iy) / rho_average.at(iy);
+        m_R33.at(iy) = rhou33.at(iy) / rho_average.at(iy);
+        m_R12.at(iy) = rhou12.at(iy) / rho_average.at(iy);
+        // calculate turbulent kinetic energy
+        m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy)) / 2; // https://www.osti.gov/pages/servlets/purl/1580489
+        // calculate anisotropy tensor along y
+        b11vec.at(iy) = (m_R11.at(iy) - 2. / 3 * m_K.at(iy) * 1) / (2 * m_K.at(iy));
+        b22vec.at(iy) = (m_R22.at(iy) - 2. / 3 * m_K.at(iy) * 1) / (2 * m_K.at(iy));
+        b12vec.at(iy) = (m_R12.at(iy) - 2. / 3 * m_K.at(iy) * 0) / (2 * m_K.at(iy));
+    }
 
-        // calculate dU/dy
+    if (is_MPI_rank_0()) {
+        // calculate y-derivatives
         double dy;
         for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
             if (iy == 0) { // forward
@@ -324,7 +361,7 @@ void ShearLayerStats::calculateRhoU() {
             growthrate_integrand.at(iy) = rho_average.at(iy) * m_R12.at(iy) * uxFavreDy.at(iy);
         }
 
-        // integrate along y
+        // calculate y-integrals
         double momentumthickness_integral = 0, growthrate_integral = 0;
         double window_size;
         for (size_t iy = 0; iy < m_nofCoordinates; iy++) {

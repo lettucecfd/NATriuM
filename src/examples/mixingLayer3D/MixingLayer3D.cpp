@@ -53,7 +53,7 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
 //    double rand_u = 0;
     if (component == 0) {
-        return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
+        return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u * 0.0001;
     } else {
         return rand_u;
     }
@@ -404,10 +404,6 @@ double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const
  */
 boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
-    lx = 1720*shearlayerthickness;
-    ly = 387*shearlayerthickness;
-    lz = 172*shearlayerthickness;
-
     //Taken from DiamondObstacle2D in step-gridin
     dealii::GridIn<3> grid_in;
     boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
@@ -415,38 +411,48 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/untitled.msh";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_small.msh";
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
     if (is_MPI_rank_0()) cout << "Imported mesh info:" << endl << " dimension: " << 3 << endl << " no. of cells: " << mesh->n_active_cells() << endl;
 
-    //// set boundary indicators
-    for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell)
-        for (unsigned int f=0; f<GeometryInfo<3>::faces_per_cell; ++f) {
+    double minx, maxx, miny, maxy, minz, maxz;
+    //// get minimum and maximum coordinates
+    for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {
+        for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f) {
             if (cell->face(f)->at_boundary()) {
-                cell->face(f)->set_all_boundary_ids(42);
                 Point<3> x = cell->face(f)->center();
-                // front (x)
-                if (abs(x[0] - lx/2)<0.00001)
+                minx = min(minx, x[0]);
+                maxx = max(maxx, x[0]);
+                miny = min(miny, x[1]);
+                maxy = max(maxy, x[1]);
+                minz = min(minz, x[2]);
+                maxz = max(maxz, x[2]);
+            }
+        }
+    }
+    //// set boundary indicators (set top and bottom last to include them in moving bc)
+    for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {
+        for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f) {
+            if (cell->face(f)->at_boundary()) {
+                cell->face(f)->set_all_boundary_ids(42); // just to see after, if any boundaries were unassigned
+                Point<3> x = cell->face(f)->center();
+                if (abs(x[0] - maxx) < 0.00001) // front (x)
                     cell->face(f)->set_all_boundary_ids(0);
-                // back (x)
-                if (abs(x[0] - (-lx/2))<0.00001)
+                if (abs(x[0] - minx) < 0.00001) // back (x)
                     cell->face(f)->set_all_boundary_ids(1);
-                // left (z)
-                if (abs(x[2] - lz/2)<0.00001)
+                if (abs(x[2] - maxz) < 0.00001) // left (z)
                     cell->face(f)->set_all_boundary_ids(4);
-                // right (z)
-                if (abs(x[2] - (-lz/2))<0.00001)
+                if (abs(x[2] - minz) < 0.00001) // right (z)
                     cell->face(f)->set_all_boundary_ids(5);
-                // top (y)
-                if (abs(x[1] - ly/2)<0.00001)
+                if (abs(x[1] - maxy) < 0.00001) // top (y)
                     cell->face(f)->set_all_boundary_ids(2);
-                // bottom (y)
-                if (abs(x[1] - (-ly/2))<0.00001)
+                if (abs(x[1] - miny) < 0.00001) // bottom (y)
                     cell->face(f)->set_all_boundary_ids(3);
             }
         }
+    }
 
     if (is_MPI_rank_0()) {
         //// Print boundary indicators
@@ -457,13 +463,11 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
                     boundary_count[cell->face(face)->boundary_id()]++;
             }
         }
-        if (is_MPI_rank_0()) {
-            cout << " boundary indicators: ";
-            for (const pair<const types::boundary_id, unsigned int> &pair: boundary_count) {
-                cout << pair.first << "(" << pair.second << " times) ";
-            }
-            cout << endl;
+        cout << " boundary indicators: ";
+        for (const pair<const types::boundary_id, unsigned int> &pair: boundary_count) {
+            cout << pair.first << "(" << pair.second << " times) ";
         }
+        cout << endl;
     }
 //    mesh->get_boundary_ids();
     return mesh;
