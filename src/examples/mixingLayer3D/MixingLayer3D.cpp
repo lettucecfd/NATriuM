@@ -426,7 +426,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_small_fine.msh";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer.msh";
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
