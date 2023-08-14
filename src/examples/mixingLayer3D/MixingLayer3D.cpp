@@ -52,7 +52,7 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     assert(component < 3);
     double scaling = 0.0001 * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
-//    rand_u = 0;
+    rand_u = 0;
     if (component == 0) {
         return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
@@ -359,47 +359,40 @@ MixingLayer3D::InitialVelocity::InverseFourier3D(const vector<vector<vector<comp
 
 double MixingLayer3D::InitialVelocity::InterpolateVelocities(double xq, double yq, double zq, const unsigned int dim) const
 {
-    /*
-     * Assumes that all abscissa are monotonically increasing values
-     */
+    // set coordinates to boundaries, if point is outside
     xq = max(minx, min(xq, maxx));
     yq = max(miny, min(yq, maxy));
     zq = max(minz, min(zq, maxz));
-
+    // find upper and lower bound for interpolation
     auto xupper = upper_bound(xvec.cbegin(), xvec.cend(), xq);
     int x1 = (xupper == xvec.cend()) ? xupper - xvec.cbegin() - 1 : xupper - xvec.cbegin();
     int x0 = x1 - 1;
-
     auto yupper = upper_bound(yvec.cbegin(), yvec.cend(), yq);
     int y1 = (yupper == yvec.cend()) ? yupper - yvec.cbegin() - 1 : yupper - yvec.cbegin();
     auto y0 = y1 - 1;
-
     auto zupper = upper_bound(zvec.cbegin(), zvec.cend(), zq);
     int z1 = (zupper == zvec.cend()) ? zupper - zvec.cbegin() - 1 : zupper - zvec.cbegin();
     auto z0 = z1 - 1;
-
+    // get relative distances for weighting
     double xd = (xq - xvec[x0])/(xvec[x1] - xvec[x0]);
     double yd = (yq - yvec[y0])/(yvec[y1] - yvec[y0]);
     double zd = (zq - zvec[z0])/(zvec[z1] - zvec[z0]);
-
+    // get surrounding values
     double c000 = curlOfPsi[dim][x0][y0][z0];
     double c010 = curlOfPsi[dim][x0][y1][z0];
     double c100 = curlOfPsi[dim][x1][y0][z0];
     double c110 = curlOfPsi[dim][x1][y1][z0];
-
     double c001 = curlOfPsi[dim][x0][y0][z1];
     double c011 = curlOfPsi[dim][x0][y1][z1];
     double c101 = curlOfPsi[dim][x1][y0][z1];
     double c111 = curlOfPsi[dim][x1][y1][z1];
-
+    // calculate interpolations stepwise (x, then y, then z)
     double c00 = c000*(1 - xd) + c100*xd;
     double c01 = c001*(1 - xd) + c101*xd;
     double c10 = c010*(1 - xd) + c110*xd;
     double c11 = c011*(1 - xd) + c111*xd;
-
     double c0 = c00*(1 - yd) + c10*yd;
     double c1 = c01*(1 - yd) + c11*yd;
-
     double c = c0*(1 - zd) + c1*zd;
     return c;
 }
