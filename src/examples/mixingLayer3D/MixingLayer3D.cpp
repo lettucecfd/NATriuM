@@ -50,9 +50,9 @@ MixingLayer3D::~MixingLayer3D() = default;
 
 double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component < 3);
-    double scaling = 0.01 * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
+    double scaling = 0.0001 * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
-//    double rand_u = 0;
+//    rand_u = 0;
     if (component == 0) {
         return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
@@ -448,22 +448,35 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
         }
     }
     //// set boundary indicators (set top and bottom last to include them in moving bc)
+    double rtol = 1e-14;
     for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {
         for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f) {
             if (cell->face(f)->at_boundary()) {
                 cell->face(f)->set_all_boundary_ids(42); // just to see after, if any boundaries were unassigned
                 Point<3> x = cell->face(f)->center();
-                if (abs(x[0] - maxx) < 0.000001) // front (x)
+//                if (x[0] == maxx) // front (x)
+//                    cell->face(f)->set_all_boundary_ids(0);
+//                if (x[0] == minx) // back (x)
+//                    cell->face(f)->set_all_boundary_ids(1);
+//                if (x[2] == maxz) // left (z)
+//                    cell->face(f)->set_all_boundary_ids(4);
+//                if (x[2] == minz) // right (z)
+//                    cell->face(f)->set_all_boundary_ids(5);
+//                if (x[1] == maxy) // top (y)
+//                    cell->face(f)->set_all_boundary_ids(2);
+//                if (x[1] == miny) // bottom (y)
+//                    cell->face(f)->set_all_boundary_ids(3);
+                if (abs(x[0] - maxx)/abs(maxx) < rtol) // front (x)
                     cell->face(f)->set_all_boundary_ids(0);
-                if (abs(x[0] - minx) < 0.000001) // back (x)
+                if (abs(x[0] - minx)/abs(minx) < rtol) // back (x)
                     cell->face(f)->set_all_boundary_ids(1);
-                if (abs(x[2] - maxz) < 0.000001) // left (z)
+                if (abs(x[2] - maxz)/abs(maxz) < rtol) // left (z)
                     cell->face(f)->set_all_boundary_ids(4);
-                if (abs(x[2] - minz) < 0.000001) // right (z)
+                if (abs(x[2] - minz)/abs(minz) < rtol) // right (z)
                     cell->face(f)->set_all_boundary_ids(5);
-                if (abs(x[1] - maxy) < 0.000001) // top (y)
+                if (abs(x[1] - miny)/abs(miny) < rtol) // bottom (y)
                     cell->face(f)->set_all_boundary_ids(2);
-                if (abs(x[1] - miny) < 0.000001) // bottom (y)
+                if (abs(x[1] - maxy)/abs(maxy) < rtol) // top (y)
                     cell->face(f)->set_all_boundary_ids(3);
             }
         }
@@ -484,7 +497,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
         }
         cout << endl;
     }
-//    mesh->get_boundary_ids();
+    mesh->get_boundary_ids();
     return mesh;
 }
 
