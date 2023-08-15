@@ -50,7 +50,7 @@ MixingLayer3D::~MixingLayer3D() = default;
 
 double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component < 3);
-    double scaling = 0.1 * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
+    double scaling = 0.01 * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
 //    rand_u = 0;
     if (component == 0) {
@@ -419,7 +419,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_small_fine.msh";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_wideCentre.msh";
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
