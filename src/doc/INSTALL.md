@@ -170,6 +170,8 @@ make install
 	(rename directory if it has the name of your target directory)
 	*Did not work with latest Trilinos, so I downgraded to Trilinos 13.0.1*
 	**deal.ii version 9.3.3 works**
+
+**deal II is compiled without zlib, but runs a test compilation on mpicxx and mpicc, which fails in Siegen. You may need ot manually install/link it.**
 ```
 cd $NATRIUM_BASE_DIR
 wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
