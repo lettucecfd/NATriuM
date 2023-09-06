@@ -73,7 +73,7 @@ conda update --all
 
 **Note: On a server, you may need to specify the version of gfortran to 11.3**
 
-Conda has only `cmake` 3.22 as of 2023/06/15, so install directly:
+Check version of cmake and, if below 3.23, install directly:
 ```
 cd $NATRIUM_BASE_DIR
 wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
