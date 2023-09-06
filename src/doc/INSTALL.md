@@ -195,7 +195,7 @@ cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_FORCE_BUNDLED_UMFPACK=ON \
 -D DEAL_II_FORCE_BUNDLED_MUPARSER=ON \
 -D DEAL_II_WITH_ZLIB=OFF \
-../dealii-*
+../dealii-*/
 ```
 
 3. Install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
