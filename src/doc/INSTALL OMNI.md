@@ -84,20 +84,6 @@ cd boost_1_66_0
 ./b2 install
 ```
 
-[//]: #(Instead:
-```
-cd $NATRIUM_INSTALLATION_DIR
-mkdir .boost
-cd .boost
-wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
-tar -xf boost_1_76_0.tar.gz
-cd boost_1_76_0
-./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
-./b2
-./b2 install
-```
-)
-
 ### p4est  
 
 ```
