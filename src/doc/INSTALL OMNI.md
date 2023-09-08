@@ -71,7 +71,20 @@ conda update --all
 ### Boost
 Boost is available and may be loaded with `module load boost`, but this has not been tested.
 
-Instead:
+Also, boost installation is not recognized by deal.ii, so it uses it's bundeld version 1.66. So, install 1.66 instead of 1.76:
+```
+cd $NATRIUM_INSTALLATION_DIR
+mkdir .boost
+cd .boost
+wget https://boostorg.jfrog.io/artifactory/main/release/1.66.0/source/boost_1_66_0.tar.gz
+tar -xf boost_1_66_0.tar.gz
+cd boost_1_66_0
+./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
+./b2
+./b2 install
+```
+
+[//]: # (Instead:
 ```
 cd $NATRIUM_INSTALLATION_DIR
 mkdir .boost
@@ -82,7 +95,7 @@ cd boost_1_76_0
 ./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
 ./b2
 ./b2 install
-```
+```)
 
 ### p4est  
 
