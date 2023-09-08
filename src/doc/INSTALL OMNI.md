@@ -54,31 +54,26 @@ bash Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
 Update Conda
 ```
 conda update conda
-```
-
-Create a dedicated environment
-```
 conda create -n "natrium"
-```
 
-Install required packages
+```
 ```
 conda activate natrium
-conda install -c conda-forge blas libgfortran5 liblapack mkl
-```
+conda install -c conda-forge cmake blas libgfortran5 liblapack mkl
 
-Update all packages
+```
 ```
 conda update --all
 ```
 
 # Install cmake
+**Last tried installing it with conda**
 ```
 module load cmake
 ```
 Check version of cmake and, if below 3.23, install directly: (**Tried with module 3.19**)
 ```
-cd $NATRIUM_BASE_DIR
+cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
 tar -xf cmake-3.25.3.tar.gz
 cd cmake-3.25.3
@@ -181,6 +176,7 @@ cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_FORCE_BUNDLED_UMFPACK=ON \
 -D DEAL_II_FORCE_BUNDLED_MUPARSER=ON \
 -D DEAL_II_WITH_ZLIB=OFF \
+-D TPL_ENABLE_BLAS=ON \
 -D TRILINOS_DIR= \
 ../dealii-*/
 ```
