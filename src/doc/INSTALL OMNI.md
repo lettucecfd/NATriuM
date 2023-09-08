@@ -61,24 +61,9 @@ conda activate natrium
 conda install -c conda-forge cmake blas libgfortran5 liblapack mkl
 
 ```
+*In my case, zlib is also included in `conda list`. DealII is installed without, but the test program required it for testing the cxx compiler (mpicxx).*
 ```
 conda update --all
-```
-
-# Install cmake
-**Last tried installing it with conda**
-```
-module load cmake
-```
-Check version of cmake and, if below 3.23, install directly: (**Tried with module 3.19**)
-```
-cd $NATRIUM_INSTALLATION_DIR
-wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
-tar -xf cmake-3.25.3.tar.gz
-cd cmake-3.25.3
-./bootstrap --prefix=$NATRIUM_BASE_DIR
-make
-make install
 ```
 
 # Install libraries
@@ -144,8 +129,8 @@ make install
 
 ### deal.ii
 
-**deal II is compiled without zlib, but runs a test compilation on mpicxx and mpicc, which fails in Siegen. You may need ot manually install/link it.**
-In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`.
+[//]: # (**deal II is compiled without zlib, but runs a test compilation on mpicxx and mpicc, which fails in Siegen. You may need ot manually install/link it.**
+In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`.)
 ```
 cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
@@ -168,32 +153,6 @@ cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_FORCE_BUNDLED_MUPARSER=ON \
 -D DEAL_II_WITH_ZLIB=OFF \
 ../dealii-*/
-```
-
-*old try:*
-```
-cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
--D DEAL_II_WITH_PETSC=OFF \
--D DEAL_II_WITH_TRILINOS=ON \
--D DEAL_II_WITH_MPI=ON \
--D DEAL_II_COMPONENT_PARAMETER_GUI=OFF \
--D DEAL_II_WITH_BOOST=ON \
--D DEAL_II_ALLOW_BUNDLED=OFF \
--D BOOST_DIR=$BOOST_ROOT \
--D DEAL_II_WITH_THREADS=OFF \
--D BOOST_ROOT=$BOOST_ROOT \
--D P4EST_DIR=$P4EST_DIR \
--D DEAL_II_WITH_P4EST=ON \
--D DEAL_II_FORCE_BUNDLED_UMFPACK=ON \
--D DEAL_II_FORCE_BUNDLED_MUPARSER=ON \
--D DEAL_II_WITH_ZLIB=OFF \
--D TPL_ENABLE_BLAS=ON \
--D TRILINOS_DIR= \
-../dealii-*/
-```
-
-3. Install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
-```
 make -j 8 install
 ```
  
