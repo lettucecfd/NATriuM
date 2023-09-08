@@ -2,14 +2,13 @@
 If you have trouble during the installation (which is not unlikely), contact the developers via the Google group natrium-lbm
 or via email: kraemer.research@gmail.com or wilde.aerospace@gmail.com .
 
+**Full description in [INSTALL HS](https://github.com/PhiSpel/NATriuM/blob/patch-1/src/doc/INSTALL_HS.md)**
+
 # Set enviromental variables
-Go to the desired install folder and set environment:
+Go to the desired install folder and set:
+
 ```
 export NATRIUM_BASE_DIR=$(pwd)
-```
-
-Environment
-```
 export BOOST_ROOT=$NATRIUM_BASE_DIR/libs/boost
 export TRILINOS_DIR=$NATRIUM_BASE_DIR/libs/trilinos
 export P4EST_DIR=$NATRIUM_BASE_DIR/libs/p4est
@@ -101,7 +100,7 @@ cd boost_1_76_0
 ```
 
 ### p4est  
-1. download **version 2.2** tarball from p4est homepage (https://www.p4est.org/; **no need to untar**) Later version had conflict with `cpp too many files`.
+
 ```
 cd $NATRIUM_INSTALLATION_DIR
 mkdir .p4est
