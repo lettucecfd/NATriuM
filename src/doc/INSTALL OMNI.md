@@ -84,7 +84,7 @@ cd boost_1_66_0
 ./b2 install
 ```
 
-[//]: # (Instead:
+[//]: #(Instead:
 ```
 cd $NATRIUM_INSTALLATION_DIR
 mkdir .boost
