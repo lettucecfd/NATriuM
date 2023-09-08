@@ -142,11 +142,7 @@ make -j8
 make install
 ```
 
-### deal.ii  
-1. download and untar tarball from deal.ii homepage https://github.com/dealii/dealii/releases
-	(rename directory if it has the name of your target directory)
-	*Did not work with latest Trilinos, so I downgraded to Trilinos 13.0.1*
-	**deal.ii version 9.3.3 works**
+### deal.ii
 
 **deal II is compiled without zlib, but runs a test compilation on mpicxx and mpicc, which fails in Siegen. You may need ot manually install/link it.**
 In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`.
@@ -154,12 +150,28 @@ In this case, search for the conda location and add this to options, e.g., `-D Z
 cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
 tar -xf dealii-9.3.3.tar.gz
-```
-
-2. Setup installation (replace version of dealii!)
-```
 mkdir build_deal
 cd build_deal
+cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
+-D DEAL_II_WITH_PETSC=OFF \
+-D DEAL_II_WITH_TRILINOS=ON \
+-D DEAL_II_WITH_MPI=ON \
+-D DEAL_II_COMPONENT_PARAMETER_GUI=OFF \
+-D DEAL_II_WITH_BOOST=ON \
+-D DEAL_II_ALLOW_BUNDLED=OFF \
+-D BOOST_DIR=$BOOST_ROOT \
+-D DEAL_II_WITH_THREADS=OFF \
+-D BOOST_ROOT=$BOOST_ROOT \
+-D P4EST_DIR=$P4EST_DIR \
+-D DEAL_II_WITH_P4EST=ON \
+-D DEAL_II_FORCE_BUNDLED_UMFPACK=ON \
+-D DEAL_II_FORCE_BUNDLED_MUPARSER=ON \
+-D DEAL_II_WITH_ZLIB=OFF \
+../dealii-*/
+```
+
+*old try:*
+```
 cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_WITH_PETSC=OFF \
 -D DEAL_II_WITH_TRILINOS=ON \
