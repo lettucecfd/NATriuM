@@ -139,6 +139,8 @@ make install
 [//]: # (**deal II is compiled without zlib, but runs a test compilation on mpicxx and mpicc, which fails in Siegen. You may need ot manually install/link it.**
 In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`. **make sure `$BOOST_ROOT` is still set correctly**)
 
+BOOST_ROOT is not set as a cmake variable, as it will otherwise conflict with the environment variable.
+
 ```
 cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
