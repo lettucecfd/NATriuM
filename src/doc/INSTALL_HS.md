@@ -44,7 +44,7 @@ source <your natrium base dir>/natriumrc
 1. For boost b2: C++11 compiler `cxx-compiler`
 2. For p4est: fortran77 compiler with compatible glibc `fortran-compiler`, `libgfortran5`
 3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`, `liblapack`
-4. For dealII: `zlib` (and `gsl` and `lapack` for Cluster)
+4. For dealII: `zlib` (and `gsl` and `lapack` for Cluster) (and `cxx-compiler=1.5.2`)
 
 Install Anaconda, if not already installed
 ```
@@ -65,12 +65,15 @@ Install required packages
 ```
 conda activate natrium
 conda install -c conda-forge cxx-compiler cmake libgfortran5 fortran-compiler openmpi libhwloc libevent blas liblapack zlib gsl lapack
+```
+Update all packages
+```
 conda update --all
 ```
 
 **Note: On a server, you may need to specify the version of gfortran to 11.3**
 
-Conda has only `cmake` 3.22 as of 2023/06/15, so install directly:
+Check version of cmake and, if below 3.23, install directly:
 ```
 cd $NATRIUM_BASE_DIR
 wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
@@ -167,6 +170,9 @@ make install
 	(rename directory if it has the name of your target directory)
 	*Did not work with latest Trilinos, so I downgraded to Trilinos 13.0.1*
 	**deal.ii version 9.3.3 works**
+
+**deal II is compiled without zlib, but runs a test compilation on mpicxx and mpicc, which fails in Siegen. You may need ot manually install/link it.**
+In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`.
 ```
 cd $NATRIUM_BASE_DIR
 wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
@@ -192,7 +198,7 @@ cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_FORCE_BUNDLED_UMFPACK=ON \
 -D DEAL_II_FORCE_BUNDLED_MUPARSER=ON \
 -D DEAL_II_WITH_ZLIB=OFF \
-../dealii-*
+../dealii-*/
 ```
 
 3. Install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
