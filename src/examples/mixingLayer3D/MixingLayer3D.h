@@ -79,7 +79,7 @@ namespace natrium {
 
         /// constructor
         MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
-                      string dirName, double U = 1.);
+                      string dirName, string meshname, double U = 1.);
         /// destructor
         virtual ~MixingLayer3D();
 
@@ -122,7 +122,7 @@ namespace natrium {
          * @short create triangulation for couette flow
          * @return shared pointer to a triangulation instance
          */
-        boost::shared_ptr<Mesh<3> > makeGrid();
+        boost::shared_ptr<Mesh<3> > makeGrid(string meshname);
 
         /**
          * @short create boundaries for couette flow
