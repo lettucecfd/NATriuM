@@ -34,8 +34,8 @@ double shearlayerthickness = 0.093;
 namespace natrium {
 
 MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
-                             string dirName, string meshname, double U) :
-ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_squash(squash), m_U(U),
+                             string dirName, double U) :
+ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash), m_U(U),
 lx(1720*shearlayerthickness), ly(387*shearlayerthickness), lz(172*shearlayerthickness), m_refinementLevel(refinementLevel) {
 //    if (m_refinementLevel > 4) { print = false; }
     /// apply boundary values
@@ -410,7 +410,7 @@ double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const
  * @short create triangulation for Compressible Mixing Layer flow
  * @return shared pointer to a triangulation instance
  */
-boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(string meshname) {
+boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
     //Taken from DiamondObstacle2D in step-gridin
     dealii::GridIn<3> grid_in;
@@ -419,7 +419,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(string meshname) {
 
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/" << meshname;
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_verysmall.msh";
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);

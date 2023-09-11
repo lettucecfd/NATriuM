@@ -41,7 +41,6 @@ int main(int argc, char** argv) {
     //  and U2 are the freestream velocities, and c{ and c2 are the
     //  freestream sound speeds.
     // Set to 0.3, 0.7, 0.9, 1.0, 1.2
-    parser.setArgument<string>("meshname", "name of Mesh to be used", "shearlayer_small.msh");
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
@@ -64,7 +63,6 @@ int main(int argc, char** argv) {
     bool squash = parser.getArgument<int>("squash");
     bool print = parser.getArgument<int>("print");
     bool recalculate = parser.getArgument<int>("recalculate");
-    string meshname = parser.getArgument<string>("meshname");
 
     /////////////////////////////////////////////////
     // set parameters, set up configuration object
@@ -139,7 +137,7 @@ int main(int argc, char** argv) {
     }
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, squash, print, recalculate, m_dirname, meshname, U);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, squash, print, recalculate, m_dirname, U);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////
