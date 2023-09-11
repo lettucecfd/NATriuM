@@ -18,6 +18,7 @@ mkdir $NATRIUM_BASE_DIR/output
 export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
 mkdir $NATRIUM_BASE_DIR/installation
 export NATRIUM_INSTALLATION_DIR=$NATRIUM_BASE_DIR/installation
+
 ```
 
 Write your environmental variables into a file "natriumrc" to reload them later:
@@ -34,11 +35,13 @@ export LD_LIBRARY_PATH=$BOOST_ROOT/lib:$LD_LIBRARY_PATH
 export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
 export NATRIUM_INSTALLATION_DIR=$NATRIUM_INSTALLATION_DIR
 EOF
+
 ```
 
 If you have to interrupt your installation, make sure to reload the environment variables:
 ```
 source <your natrium base dir>/natriumrc
+
 ```
 
 # Install Conda Resources
@@ -48,6 +51,7 @@ Install Anaconda, if not already installed
 cd $NATRIUM_INSTALLATION_DIR
 wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
 bash Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
+
 ```
 
 Update Conda
@@ -64,6 +68,7 @@ conda install -c conda-forge cmake blas libgfortran5 liblapack mkl
 *In my case, zlib is also included in `conda list`. DealII is installed without, but the test program required it for testing the cxx compiler (mpicxx).*
 ```
 conda update --all
+
 ```
 
 # Install libraries
@@ -71,17 +76,17 @@ conda update --all
 ### Boost
 Boost is available and may be loaded with `module load boost`, but this has not been tested.
 
-Also, boost installation is not recognized by deal.ii, so it uses it's bundeld version 1.66. So, install 1.66 instead of 1.76:
 ```
 cd $NATRIUM_INSTALLATION_DIR
 mkdir .boost
 cd .boost
-wget https://boostorg.jfrog.io/artifactory/main/release/1.66.0/source/boost_1_66_0.tar.gz
-tar -xf boost_1_66_0.tar.gz
-cd boost_1_66_0
+wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
+tar -xf boost_1_76_0.tar.gz
+cd boost_1_76_0
 ./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
 ./b2
 ./b2 install
+
 ```
 
 ### p4est  
@@ -95,6 +100,7 @@ wget https://www.dealii.org/current/external-libs/p4est-setup.sh
 export CC=mpicc && export CXX=mpicxx
 chmod u+x p4est-setup.sh
 ./p4est-setup.sh p4est-2.2.tar.gz $P4EST_DIR
+
 ```
 
 ### Trilinos
@@ -125,13 +131,13 @@ cmake -D Trilinos_ENABLE_Sacado=ON \
 ../Trilinos*/
 make -j8
 make install
+
 ```
 
 ### deal.ii
 
 [//]: # (**deal II is compiled without zlib, but runs a test compilation on mpicxx and mpicc, which fails in Siegen. You may need ot manually install/link it.**
-In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`.)
-**make sure `$BOOST_ROOT` is still set correctly**
+In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`. **make sure `$BOOST_ROOT` is still set correctly**)
 
 ```
 cd $NATRIUM_INSTALLATION_DIR
@@ -148,7 +154,6 @@ cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_ALLOW_BUNDLED=OFF \
 -D BOOST_DIR=$BOOST_ROOT \
 -D DEAL_II_WITH_THREADS=OFF \
--D BOOST_ROOT=$BOOST_ROOT \
 -D P4EST_DIR=$P4EST_DIR \
 -D DEAL_II_WITH_P4EST=ON \
 -D DEAL_II_FORCE_BUNDLED_UMFPACK=ON \
@@ -156,6 +161,7 @@ cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_WITH_ZLIB=OFF \
 ../dealii-*/
 make -j 8 install
+
 ```
  
 ### Check libraries
@@ -182,6 +188,7 @@ mkdir bin_release
 cd bin_release
 cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/ -B.
 make -j8
+
 ```
 
 4. Check that the CMakeCache.txt contains `CMAKE_BUILD_TYPE:STRING=RELEASE`! Otherwise the program will be really slow
@@ -193,12 +200,14 @@ make -j8
 ```
 cd $NATRIUM_DIR/bin_release
 ./test/NATriuM_UnitTest_exe
+
 ```
 
 ## Run integration tests (takes a few minutes)
 ```
 cd $NATRIUM_DIR/bin_release
 ./test/NATriuM_Test
+
 ```
 
 The results will be written to natrium.html (in the bin directory)
