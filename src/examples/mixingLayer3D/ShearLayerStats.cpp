@@ -356,26 +356,9 @@ void ShearLayerStats::calculateRhoU() {
         // calculate y-integrals
         double momentumthickness_integral = integrate(momentumthickness_integrand);
         double growthrate_integral = integrate(growthrate_integrand);
-
-        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-            // calculate anisotropy tensor elements
-            if (iy == 0) { // left side: trapezoidal rule
-                window_size = (m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy));
-                m_b11 += window_size * 0.5 * (b11vec.at(iy) + b11vec.at(iy + 1));
-                m_b22 += window_size * 0.5 * (b22vec.at(iy) + b22vec.at(iy + 1));
-                m_b12 += window_size * 0.5 * (b12vec.at(iy) + b12vec.at(iy + 1));
-            } else if (iy == m_nofCoordinates - 1) {
-                window_size = (m_yCoordinates.at(iy) - m_yCoordinates.at(iy-1));
-                m_b11 += window_size * 0.5 * (b11vec.at(iy) + b11vec.at(iy -1));
-                m_b22 += window_size * 0.5 * (b22vec.at(iy) + b22vec.at(iy -1));
-                m_b12 += window_size * 0.5 * (b12vec.at(iy) + b12vec.at(iy -1));
-            } else { // other: simpson rule
-                window_size = 0.5 * abs(m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1));
-                m_b11 += window_size * (b11vec.at(iy - 1) + 4 * b11vec.at(iy) + b11vec.at(iy + 1)) / 6;
-                m_b22 += window_size * (b22vec.at(iy - 1) + 4 * b22vec.at(iy) + b22vec.at(iy + 1)) / 6;
-                m_b12 += window_size * (b12vec.at(iy - 1) + 4 * b12vec.at(iy) + b12vec.at(iy + 1)) / 6;
-            }
-        }
+        m_b11 = integrate(b11vec);
+        m_b12 = integrate(b12vec);
+        m_b22 = integrate(b22vec);
 
         // calculate vorticity thickness
         m_currentDeltaOmega = 2 /*dU*/ / *max_element(begin(dUdy_abs), end(dUdy_abs));
