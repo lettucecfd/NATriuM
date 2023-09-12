@@ -425,7 +425,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     grid_in.read_msh(file);
     if (is_MPI_rank_0()) cout << "Imported mesh info:" << endl << " dimension: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
 
-    double minx, maxx, miny, maxy, minz, maxz;
+    double minx=0, maxx=0, miny=0, maxy=0, minz=0, maxz=0;
     //// get minimum and maximum coordinates
     for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {
         for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f) {
