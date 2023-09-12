@@ -34,6 +34,8 @@ private:
     boost::shared_ptr<std::fstream> m_tableFile;
     string m_vectorfilename;
     boost::shared_ptr<std::fstream> m_vectorFile;
+    string m_initializationfilename;
+    boost::shared_ptr<std::fstream> m_initializationFile;
 
     // Y Coordinates
     vector<double> m_yCoordinates;
@@ -43,17 +45,19 @@ private:
     bool m_yCoordsUpToDate;
 
     // Data
+    double rho0 = 1;
     double m_currentDeltaTheta;
     double m_currentDeltaOmega;
     double m_ReOmega;
     double m_deltaThetaGrowth;
-    double m_b11;
-    double m_b22;
-    double m_b12;
+    double m_b11, m_b22, m_b12;
 //    // Data stored across output steps
 //    double m_currentTime;
     // Data stored across y
     vector<double> m_R11, m_R22, m_R33, m_R12;
+    vector<double> ux_favre, uy_favre, uz_favre;
+    vector<double> ux_Re, uy_Re, uz_Re;
+    vector<double> umag_average, rho_average, momentumthickness_integrand;
     vector<double> m_K;
 
     void write();
@@ -69,6 +73,11 @@ private:
         boost::filesystem::path out_file = out_dir / "shearlayer_vectors.txt";
         return out_file.string();
     }
+    static string initializationoutfile(string dir) {
+        boost::filesystem::path out_dir(dir);
+        boost::filesystem::path out_file = out_dir / "shearlayer_initialization.txt";
+        return out_file.string();
+    }
 
 public:
 	ShearLayerStats(CompressibleCFDSolver<3> & solver, string outdir, double starting_delta_theta, double starting_Re);
@@ -76,7 +85,10 @@ public:
 	~ShearLayerStats() override;
     bool isMYCoordsUpToDate() const;
     void updateYValues();
-    };
+    double integrate(vector<double> integrand);
+
+    vector<double> derivative(vector<double> values);
+};
 
 } /* namespace natrium */
 

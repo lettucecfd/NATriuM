@@ -447,18 +447,6 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
             if (cell->face(f)->at_boundary()) {
                 cell->face(f)->set_all_boundary_ids(42); // just to see after, if any boundaries were unassigned
                 Point<3> x = cell->face(f)->center();
-//                if (x[0] == maxx) // front (x)
-//                    cell->face(f)->set_all_boundary_ids(0);
-//                if (x[0] == minx) // back (x)
-//                    cell->face(f)->set_all_boundary_ids(1);
-//                if (x[2] == maxz) // left (z)
-//                    cell->face(f)->set_all_boundary_ids(4);
-//                if (x[2] == minz) // right (z)
-//                    cell->face(f)->set_all_boundary_ids(5);
-//                if (x[1] == maxy) // top (y)
-//                    cell->face(f)->set_all_boundary_ids(2);
-//                if (x[1] == miny) // bottom (y)
-//                    cell->face(f)->set_all_boundary_ids(3);
                 if (abs(x[0] - maxx)/abs(maxx) < rtol) // front (x)
                     cell->face(f)->set_all_boundary_ids(0);
                 if (abs(x[0] - minx)/abs(minx) < rtol) // back (x)
