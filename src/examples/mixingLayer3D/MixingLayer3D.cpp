@@ -440,6 +440,13 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
             }
         }
     }
+    // communicate
+    minx = dealii::Utilities::MPI::min_max_avg(minx, MPI_COMM_WORLD).min;
+    miny = dealii::Utilities::MPI::min_max_avg(miny, MPI_COMM_WORLD).min;
+    minz = dealii::Utilities::MPI::min_max_avg(minz, MPI_COMM_WORLD).min;
+    maxx = dealii::Utilities::MPI::min_max_avg(maxx, MPI_COMM_WORLD).max;
+    maxy = dealii::Utilities::MPI::min_max_avg(maxy, MPI_COMM_WORLD).max;
+    maxz = dealii::Utilities::MPI::min_max_avg(maxz, MPI_COMM_WORLD).max;
     //// set boundary indicators (set top and bottom last to include them in moving bc)
     double rtol = 1e-14;
     for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {
