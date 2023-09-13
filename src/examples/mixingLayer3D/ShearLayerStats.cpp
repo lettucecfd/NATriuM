@@ -58,9 +58,9 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
         for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
             *m_initializationFile << m_yCoordinates.at(iy) << ", ";
         } *m_initializationFile << endl;
-        *m_initializationFile << "ux_favre: ";
+        *m_initializationFile << "ux_Fa: ";
         for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-            *m_initializationFile << ux_favre.at(iy) << ", ";
+            *m_initializationFile << ux_Fa.at(iy) << ", ";
         } *m_initializationFile << endl;
         *m_initializationFile << "ux_ReAvg: ";
         for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
@@ -161,20 +161,35 @@ void ShearLayerStats::calculateRhoU() {
     //////////////////////////
     // initialize vectors for averages along x and z
 //    vector<double> ux_Re(m_nofCoordinates, 0), uy_Re(m_nofCoordinates, 0), uz_Re(m_nofCoordinates, 0);
-//    vector<double> umag_average(m_nofCoordinates, 0), rho_average(m_nofCoordinates, 0);
-    vector<double> rhoux_average(m_nofCoordinates,0), rhouy_average(m_nofCoordinates,0), rhouz_average(m_nofCoordinates,0);
+//    vector<double> umag_Re(m_nofCoordinates, 0), rho_average(m_nofCoordinates, 0);
+    vector<double> rhoux_Re(m_nofCoordinates, 0), rhouy_Re(m_nofCoordinates, 0), rhouz_Re(m_nofCoordinates, 0);
     // initialize vectors for combined sizes
     vector<double> rhou11(m_nofCoordinates,0), rhou22(m_nofCoordinates,0), rhou33(m_nofCoordinates,0), rhou12(m_nofCoordinates,0),
-    b11vec(m_nofCoordinates,0), b22vec(m_nofCoordinates,0), b12vec(m_nofCoordinates,0),
-//    ux_favre(m_nofCoordinates,0), uy_favre(m_nofCoordinates,0), uz_favre(m_nofCoordinates,0),
+    b11vec(m_nofCoordinates,0), b22vec(m_nofCoordinates,0), b33vec(m_nofCoordinates,0), b12vec(m_nofCoordinates,0),
+//    ux_Fa(m_nofCoordinates,0), uy_Fa(m_nofCoordinates,0), uz_Fa(m_nofCoordinates,0),
 //    momentumthickness_integrand(m_nofCoordinates,0),
     growthrate_integrand(m_nofCoordinates,0);
+    vector<vector<double>*> rhouij_set, bijvec_set, Rij_set;
+    rhouij_set.push_back(&rhou11); rhouij_set.push_back(&rhou22); rhouij_set.push_back(&rhou33); rhouij_set.push_back(&rhou12);
+    bijvec_set.push_back(&b11vec); bijvec_set.push_back(&b22vec); bijvec_set.push_back(&b33vec); bijvec_set.push_back(&b12vec);
+    Rij_set.push_back(&m_R11); Rij_set.push_back(&m_R22); Rij_set.push_back(&m_R33); Rij_set.push_back(&m_R12);
+    vector<double*> bij_set;
+    bij_set.push_back(&m_b11); bij_set.push_back(&m_b22); bij_set.push_back(&m_b33); bij_set.push_back(&m_b12);
+    vector<vector<double>*> u_Re_set, u_Fa_set, rhou_Re_set;
+    u_Re_set.push_back(&ux_Re); u_Re_set.push_back(&uy_Re); u_Re_set.push_back(&uz_Re);
+    u_Fa_set.push_back(&ux_Fa); u_Fa_set.push_back(&uy_Fa); u_Fa_set.push_back(&uz_Fa);
+    rhou_Re_set.push_back(&rhoux_Re); rhou_Re_set.push_back(&rhouy_Re); rhou_Re_set.push_back(&rhouz_Re);
     // resize to fit length of y
-    ux_Re.resize(m_nofCoordinates); uy_Re.resize(m_nofCoordinates); uz_Re.resize(m_nofCoordinates);
-    umag_average.resize(m_nofCoordinates); rho_average.resize(m_nofCoordinates);
-    ux_favre.resize(m_nofCoordinates); uy_favre.resize(m_nofCoordinates); uz_favre.resize(m_nofCoordinates);
-    m_R11.resize(m_nofCoordinates); m_R22.resize(m_nofCoordinates); m_R33.resize(m_nofCoordinates);
-    m_R12.resize(m_nofCoordinates);
+    for (size_t dim = 0; dim < 3; dim++) {
+        u_Re_set.at(dim)->resize(m_nofCoordinates);
+        u_Fa_set.at(dim)->resize(m_nofCoordinates);
+        rhou_Re_set.at(dim)->resize(m_nofCoordinates);
+    }
+    umag_Re.resize(m_nofCoordinates); rho_average.resize(m_nofCoordinates);
+
+    for (size_t ij = 0; ij < 4; ij++) {
+        Rij_set.at(ij)->resize(m_nofCoordinates);
+    }
     m_K.resize(m_nofCoordinates);
     momentumthickness_integrand.resize(m_nofCoordinates);
     vector<size_t> number(m_nofCoordinates,0);
@@ -209,14 +224,12 @@ void ShearLayerStats::calculateRhoU() {
                 dof_ind = local_indices.at(i);
                 number.at(y_ind) += 1;
                 // fill value vector
-                rhoux_average.at(y_ind) += m_rho(dof_ind) * m_u.at(0)(dof_ind); // rho ux
-                rhouy_average.at(y_ind) += m_rho(dof_ind) * m_u.at(1)(dof_ind); // rho uy
-                rhouz_average.at(y_ind) += m_rho(dof_ind) * m_u.at(2)(dof_ind); // rho uz
+                for (size_t dim = 0; dim < 3; dim++) {
+                    rhou_Re_set.at(dim)->at(y_ind) += m_rho(dof_ind) * m_u.at(dim)(dof_ind);
+                    u_Re_set.at(dim)->at(y_ind) += m_u.at(dim)(dof_ind);
+                }
                 rho_average.at(y_ind) += m_rho(dof_ind);
-                umag_average.at(y_ind) += sqrt(pow(m_u.at(0)(dof_ind), 2) + pow(m_u.at(1)(dof_ind), 2) + pow(m_u.at(2)(dof_ind), 2));
-                ux_Re.at(y_ind) += m_u.at(0)(dof_ind);
-                uy_Re.at(y_ind) += m_u.at(1)(dof_ind);
-                uz_Re.at(y_ind) += m_u.at(2)(dof_ind);
+                umag_Re.at(y_ind) += sqrt(pow(m_u.at(0)(dof_ind), 2) + pow(m_u.at(1)(dof_ind), 2) + pow(m_u.at(2)(dof_ind), 2));
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
@@ -227,22 +240,16 @@ void ShearLayerStats::calculateRhoU() {
         number.at(iy) = dealii::Utilities::MPI::sum(number.at(iy), MPI_COMM_WORLD);
         // average over number of points at y
         if (number.at(iy) != 0) {
-            rhoux_average.at(iy) = dealii::Utilities::MPI::sum(rhoux_average.at(iy), MPI_COMM_WORLD);
-            rhouy_average.at(iy) = dealii::Utilities::MPI::sum(rhouy_average.at(iy), MPI_COMM_WORLD);
-            rhouz_average.at(iy) = dealii::Utilities::MPI::sum(rhouz_average.at(iy), MPI_COMM_WORLD);
+            for (size_t dim = 0; dim < 3; dim++) {
+                rhou_Re_set.at(dim)->at(iy) = dealii::Utilities::MPI::sum(rhou_Re_set.at(dim)->at(iy), MPI_COMM_WORLD);
+                rhou_Re_set.at(dim)->at(iy) /= number.at(iy);
+                u_Re_set.at(dim)->at(iy) = dealii::Utilities::MPI::sum(u_Re_set.at(dim)->at(iy), MPI_COMM_WORLD);
+                u_Re_set.at(dim)->at(iy) /= number.at(iy);
+            }
             rho_average.at(iy) = dealii::Utilities::MPI::sum(rho_average.at(iy), MPI_COMM_WORLD);
-            umag_average.at(iy) = dealii::Utilities::MPI::sum(umag_average.at(iy), MPI_COMM_WORLD);
-            ux_Re.at(iy) = dealii::Utilities::MPI::sum(ux_Re.at(iy), MPI_COMM_WORLD);
-            uy_Re.at(iy) = dealii::Utilities::MPI::sum(uy_Re.at(iy), MPI_COMM_WORLD);
-            uz_Re.at(iy) = dealii::Utilities::MPI::sum(uz_Re.at(iy), MPI_COMM_WORLD);
-            rhoux_average.at(iy) /= number.at(iy);
-            rhouy_average.at(iy) /= number.at(iy);
-            rhouz_average.at(iy) /= number.at(iy);
+            umag_Re.at(iy) = dealii::Utilities::MPI::sum(umag_Re.at(iy), MPI_COMM_WORLD);
             rho_average.at(iy) /= number.at(iy);
-            umag_average.at(iy) /= number.at(iy);
-            ux_Re.at(iy) /= number.at(iy);
-            uy_Re.at(iy) /= number.at(iy);
-            uz_Re.at(iy) /= number.at(iy);
+            umag_Re.at(iy) /= number.at(iy);
         } else nonumbers.push_back(iy);
     }
     // average of neighboring points if there were no points
@@ -256,11 +263,11 @@ void ShearLayerStats::calculateRhoU() {
         dy_u = m_yCoordinates.at(iy_u) - m_yCoordinates.at(iy);
         dy_l = m_yCoordinates.at(iy) - m_yCoordinates.at(iy_l);
         window_size = dy_u + dy_l;
-        rhoux_average.at(iy) = 1 / window_size * (rhoux_average.at(iy_u) * dy_u + rhoux_average.at(iy_l) * dy_l);
-        rhouy_average.at(iy) = 1 / window_size * (rhouy_average.at(iy_u) * dy_u + rhouy_average.at(iy_l) * dy_l);
-        rhouz_average.at(iy) = 1 / window_size * (rhouz_average.at(iy_u) * dy_u + rhouz_average.at(iy_l) * dy_l);
+        rhoux_Re.at(iy) = 1 / window_size * (rhoux_Re.at(iy_u) * dy_u + rhoux_Re.at(iy_l) * dy_l);
+        rhouy_Re.at(iy) = 1 / window_size * (rhouy_Re.at(iy_u) * dy_u + rhouy_Re.at(iy_l) * dy_l);
+        rhouz_Re.at(iy) = 1 / window_size * (rhouz_Re.at(iy_u) * dy_u + rhouz_Re.at(iy_l) * dy_l);
         rho_average.at(iy) = 1 / window_size * (rho_average.at(iy_u) * dy_u + rho_average.at(iy_l) * dy_l);
-        umag_average.at(iy) = 1 / window_size * (umag_average.at(iy_u) * dy_u + umag_average.at(iy_l) * dy_l);
+        umag_Re.at(iy) = 1 / window_size * (umag_Re.at(iy_u) * dy_u + umag_Re.at(iy_l) * dy_l);
         ux_Re.at(iy) = 1 / window_size * (ux_Re.at(iy_u) * dy_u + ux_Re.at(iy_l) * dy_l);
         uy_Re.at(iy) = 1 / window_size * (uy_Re.at(iy_u) * dy_u + uy_Re.at(iy_l) * dy_l);
         uz_Re.at(iy) = 1 / window_size * (uz_Re.at(iy_u) * dy_u + uz_Re.at(iy_l) * dy_l);
@@ -270,10 +277,10 @@ void ShearLayerStats::calculateRhoU() {
 
     // ui_favre and momentumthickness_integrand
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-        ux_favre.at(iy) = rhoux_average.at(iy) / rho_average.at(iy);
-        uy_favre.at(iy) = rhouy_average.at(iy) / rho_average.at(iy);
-        uz_favre.at(iy) = rhouz_average.at(iy) / rho_average.at(iy);
-        momentumthickness_integrand.at(iy) = rho_average.at(iy) * (dU_calculated / 2 - ux_favre.at(iy)) * (dU_calculated / 2 + ux_favre.at(iy));
+        for (size_t dim = 0; dim < 3; dim++) {
+            u_Fa_set.at(dim)->at(iy) = rhouij_set.at(dim)->at(iy) / rho_average.at(iy);
+        }
+        momentumthickness_integrand.at(iy) = rho_average.at(iy) * (dU_calculated / 2 - ux_Fa.at(iy)) * (dU_calculated / 2 + ux_Fa.at(iy));
     }
 
     // calculate flux of ux, uy, uz at all points
@@ -291,9 +298,9 @@ void ShearLayerStats::calculateRhoU() {
                 y_ind = m_yCoordinateToIndex.at(y);
                 dof_ind = local_indices.at(i);
                 // calculate fluxes
-                uxflux_Fa = m_u.at(0)(dof_ind) - ux_favre.at(y_ind);
-                uyflux_Fa = m_u.at(1)(dof_ind) - uy_favre.at(y_ind);
-                uzflux_Fa = m_u.at(2)(dof_ind) - uz_favre.at(y_ind);
+                uxflux_Fa = m_u.at(0)(dof_ind) - ux_Fa.at(y_ind);
+                uyflux_Fa = m_u.at(1)(dof_ind) - uy_Fa.at(y_ind);
+                uzflux_Fa = m_u.at(2)(dof_ind) - uz_Fa.at(y_ind);
                 // fill value vector
                 rhou11.at(y_ind) += m_rho(dof_ind) * uxflux_Fa * uxflux_Fa;
                 rhou22.at(y_ind) += m_rho(dof_ind) * uyflux_Fa * uyflux_Fa;
@@ -332,33 +339,32 @@ void ShearLayerStats::calculateRhoU() {
 
     // calculate Rij
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-        m_R11.at(iy) = rhou11.at(iy) / rho_average.at(iy);
-        m_R22.at(iy) = rhou22.at(iy) / rho_average.at(iy);
-        m_R33.at(iy) = rhou33.at(iy) / rho_average.at(iy);
-        m_R12.at(iy) = rhou12.at(iy) / rho_average.at(iy);
+        for (size_t ij = 0; ij < 4; ij++) {
+            Rij_set.at(ij)->at(iy) = rhouij_set.at(ij)->at(iy) / rho_average.at(iy);
+        }
         // calculate turbulent kinetic energy
         m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy)) / 2; // https://www.osti.gov/pages/servlets/purl/1580489
         // calculate anisotropy tensor along y
-        b11vec.at(iy) = (m_R11.at(iy) - 2. / 3 * m_K.at(iy) * 1) / (2 * m_K.at(iy));
-        b22vec.at(iy) = (m_R22.at(iy) - 2. / 3 * m_K.at(iy) * 1) / (2 * m_K.at(iy));
-        b12vec.at(iy) = (m_R12.at(iy) - 2. / 3 * m_K.at(iy) * 0) / (2 * m_K.at(iy));
+        for (size_t ij = 0; ij < 4; ij++) {
+            bijvec_set.at(ij)->at(iy) = (Rij_set.at(ij)->at(iy) - 2. / 3 * m_K.at(iy) * 1) / (2 * m_K.at(iy));
+        }
     }
 
     if (is_MPI_rank_0()) {
         // calculate y-derivatives
-        vector<double> dUdy_abs = derivative(umag_average);
-        vector<double> uxFavreDy = derivative(ux_favre);
+        vector<double> dUdy_abs = derivative(umag_Re);
+        vector<double> ux_Fa_dy = derivative(ux_Fa);
         for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
             dUdy_abs.at(iy) = abs(dUdy_abs.at(iy));
-            growthrate_integrand.at(iy) = rho_average.at(iy) * m_R12.at(iy) * uxFavreDy.at(iy);
+            growthrate_integrand.at(iy) = rho_average.at(iy) * m_R12.at(iy) * ux_Fa_dy.at(iy);
         }
 
         // calculate y-integrals
         double momentumthickness_integral = integrate(momentumthickness_integrand);
         double growthrate_integral = integrate(growthrate_integrand);
-        m_b11 = integrate(b11vec);
-        m_b12 = integrate(b12vec);
-        m_b22 = integrate(b22vec);
+        for (size_t ij = 0; ij < 4; ij++) {
+            *bij_set.at(ij) = integrate(*bijvec_set.at(ij));
+        }
 
         // calculate vorticity thickness
         m_currentDeltaOmega = 2 /*dU*/ / *max_element(begin(dUdy_abs), end(dUdy_abs));
