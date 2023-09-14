@@ -126,8 +126,7 @@ void ShearLayerStats::updateYValues() {
 
     // remove double entries
     std::set<double> y_coords_gathered;
-    for (i = 0;
-         i < max_nycoords * dealii::Utilities::MPI::n_mpi_processes( MPI_COMM_WORLD); i++) {
+    for (i = 0; i < max_nycoords * dealii::Utilities::MPI::n_mpi_processes( MPI_COMM_WORLD); i++) {
         y_coords_gathered.insert(recvbuf[i]);
     }
     // fill member variables
@@ -263,14 +262,12 @@ void ShearLayerStats::calculateRhoU() {
         dy_u = m_yCoordinates.at(iy_u) - m_yCoordinates.at(iy);
         dy_l = m_yCoordinates.at(iy) - m_yCoordinates.at(iy_l);
         window_size = dy_u + dy_l;
-        rhoux_Re.at(iy) = 1 / window_size * (rhoux_Re.at(iy_u) * dy_u + rhoux_Re.at(iy_l) * dy_l);
-        rhouy_Re.at(iy) = 1 / window_size * (rhouy_Re.at(iy_u) * dy_u + rhouy_Re.at(iy_l) * dy_l);
-        rhouz_Re.at(iy) = 1 / window_size * (rhouz_Re.at(iy_u) * dy_u + rhouz_Re.at(iy_l) * dy_l);
+        for (size_t dim = 0; dim < 3; dim++) {
+            rhou_Re_set.at(dim)->at(iy) = 1 / window_size * (rhou_Re_set.at(dim)->at(iy_u) * dy_u + rhou_Re_set.at(dim)->at(iy_l) * dy_l);
+            u_Re_set.at(dim)->at(iy) = 1 / window_size * (u_Re_set.at(dim)->at(iy_u) * dy_u + u_Re_set.at(dim)->at(iy_l) * dy_l);
+        }
         rho_average.at(iy) = 1 / window_size * (rho_average.at(iy_u) * dy_u + rho_average.at(iy_l) * dy_l);
         umag_Re.at(iy) = 1 / window_size * (umag_Re.at(iy_u) * dy_u + umag_Re.at(iy_l) * dy_l);
-        ux_Re.at(iy) = 1 / window_size * (ux_Re.at(iy_u) * dy_u + ux_Re.at(iy_l) * dy_l);
-        uy_Re.at(iy) = 1 / window_size * (uy_Re.at(iy_u) * dy_u + uy_Re.at(iy_l) * dy_l);
-        uz_Re.at(iy) = 1 / window_size * (uz_Re.at(iy_u) * dy_u + uz_Re.at(iy_l) * dy_l);
     }
     auto [minU, maxU] = std::minmax_element(begin(ux_Re), end(ux_Re));
     auto dU_calculated = *maxU - *minU;
@@ -313,14 +310,10 @@ void ShearLayerStats::calculateRhoU() {
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         // average over number of points at y
         if (number.at(iy) != 0) {
-            rhou11.at(iy) = dealii::Utilities::MPI::sum(rhou11.at(iy), MPI_COMM_WORLD);
-            rhou22.at(iy) = dealii::Utilities::MPI::sum(rhou22.at(iy), MPI_COMM_WORLD);
-            rhou33.at(iy) = dealii::Utilities::MPI::sum(rhou33.at(iy), MPI_COMM_WORLD);
-            rhou12.at(iy) = dealii::Utilities::MPI::sum(rhou12.at(iy), MPI_COMM_WORLD);
-            rhou11.at(iy) /= number.at(iy);
-            rhou22.at(iy) /= number.at(iy);
-            rhou33.at(iy) /= number.at(iy);
-            rhou12.at(iy) /= number.at(iy);
+            for (size_t ij = 0; ij < 4; ij++) {
+                rhouij_set.at(ij)->at(iy) = dealii::Utilities::MPI::sum(rhouij_set.at(ij)->at(iy), MPI_COMM_WORLD);
+                rhouij_set.at(ij)->at(iy) /= number.at(iy);
+            }
         }
     }
     // average of neighboring points if there were no points

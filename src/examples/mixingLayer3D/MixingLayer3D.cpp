@@ -264,7 +264,7 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
     }
     else {
         stringstream filename;
-        filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_kmax64.txt";
+        filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_test.txt";
         string filestring = filename.str();
         ifstream file(filestring);
         if (is_MPI_rank_0()) cout << "Reading initial velocities from " << filestring << endl;
