@@ -62,236 +62,35 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate, string dirName) :
 m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalculate(recalculate) {
-//    int kmax = 48;//pow(2, flow->m_refinementLevel);
-//    nx = 1720/2; // pow(2, 5);
-//    ny = 387/2; //ny;
-//    nz = 172/2; //nz;
-//    kxmax = nx / 5;
-//    kymax = ny / 5;
-//    kzmax = nz / 5;
 
-    if (m_recalculate) {
-        nx = pow(2, 6); //48; //
-        ny = pow(2, 6); //48; //
-        nz = pow(2, 6); //48; //
-        kxmax = nx;
-        kymax = ny;
-        kzmax = nz;
-
-        if (is_MPI_rank_0()) {
-            cout << "Recalculating random velocity." << endl;
-            if (m_print) cout << "Prints are in " << dirName << "." << endl;
-        }
-
-        //// warm up randomness
-        static int sseq[ mt19937::state_size ] ;
-        const static bool once = ( srand( std::time(nullptr)), // for true randomness: time(nullptr)
-                generate( begin(sseq), end(sseq), rand ), true ) ;
-        static seed_seq seed_seq( begin(sseq), end(sseq) ) ;
-        static mt19937 twister(seed_seq) ;
-        // random generator in [-1,1]
-        static uniform_real_distribution<double> distr(-1., 1.) ; // +- Velocity
-
-        randomPsi.reserve(3);
-        for (int dir = 0; dir < 3; dir++) { vector< vector< vector<double> > > tmpdir;
-            //// Fill randomPsi with random values
-            if (is_MPI_rank_0()) cout << "Creating random velocity vector potential in direction " << dir << "." << endl;
-            for (int xi = 0; xi < nx; xi++) { vector<vector<double> > tmpi;
-                for (int yi = 0; yi < ny; yi++) { vector<double> tmpj;
-                    for (int zi = 0; zi < nz; zi++) { double tmpk;
-                        tmpk = distr(twister);
-                        tmpj.push_back(tmpk);
-                    } tmpi.push_back(tmpj);
-                } tmpdir.push_back(tmpi);
-            }
-            if (m_print & is_MPI_rank_0()) {
-                cout << "Printing random velocity vector potential in direction " << dir << "." << endl;
-                ofstream rand_file(dirName + "/random_psi.txt");
-                for (int i = 0; i < nx; i++) { rand_file << "[";
-                    for (int j = 0; j < ny; j++) { rand_file << "[";
-                        for (int k = 0; k < nz; k++) {
-                            if (k > 0) rand_file << ' ';
-                            rand_file << tmpdir[i][j][k];
-                        } // for all elements in z direction
-                        if (j<ny-1) rand_file << ',';
-                    } // for all elements in y direction
-                    if (i<nx-1) rand_file << ';';
-                } // for all elements in x direction
-                rand_file << endl;
-            }
-            if (is_MPI_rank_0()) cout << "Fourier transforming random velocity vector potential in direction " << dir << "." << endl;
-            //// perform dft on randomPsi
-            vector< vector< vector<complex<double>>>> psi_hat = Fourier3D(tmpdir);
-            if (m_print & is_MPI_rank_0()) {
-                cout << "Printing Fourier transform of random velocity vector potential in direction " << dir << "." << endl;
-                ofstream dft_file(dirName + "/psi_hat.txt");
-                for (int i = 0; i < kxmax; i++) { dft_file << "[";
-                    for (int j = 0; j < kymax; j++) { dft_file << "[";
-                        for (int k = 0; k < kzmax; k++) {
-                            if (k > 0) dft_file << ' ';
-                            dft_file << psi_hat[i][j][k];
-                        } // for all elements in z direction
-                        if (j<ny-1) dft_file << ',';
-                    } // for all elements in y direction
-                    if (i<nx-1) dft_file << ';';
-                } // for all elements in x direction
-                dft_file << endl;
-            }
-            //// multiply in spectral space
-            if (is_MPI_rank_0()) cout << "Scaling Fourier transformed velocity vector potential in direction " << dir << "." << endl;
-            double k0 = 23.66*0.093; //sqrt(kxmax*kxmax+kymax*kymax+kzmax*kzmax); //
-            for (int kx = 0; kx < int(kxmax/2); kx++) {
-                for (int ky = 0; ky < int(kymax/2); ky++) {
-                    for (int kz = 0; kz < int(kzmax/2); kz++) {
-                        double k_abs;
-                        k_abs = sqrt(kx * kx + ky * ky + kz * kz);
-                        psi_hat[kx][ky][kz] *= exp(-2 * k_abs / k0); // Sarkar: pow(k_abs/k0, 4) * exp(-2 * pow(k_abs / k0, 2)); k0 = 48; // holger: exp(-2 * k_abs / k0); k0 = 23.66*0.093;
-                        psi_hat[kxmax-1 - kx][kymax-1 - ky][kzmax-1 - kz] *= exp(-2 * k_abs / k0);
-                    } } }
-            psi_hat[0][0][0] = 0;
-            if (m_print & is_MPI_rank_0()) {
-                cout << "Printing scaled Fourier transformed velocity vector potential in direction " << dir << "." << endl;
-                ofstream scaling_file(dirName + "/psi_hat_scaled.txt");
-                for (int i = 0; i < kxmax; i++) { scaling_file << "[";
-                    for (int j = 0; j < kymax; j++) { scaling_file << "[";
-                        for (int k = 0; k < kzmax; k++) {
-                            if (k > 0) scaling_file << ' ';
-                            scaling_file << psi_hat[i][j][k];
-                        } // for all elements in z direction
-                        if (j<ny-1) scaling_file << ',';
-                    } // for all elements in y direction
-                    if (i<nx-1) scaling_file << ';';
-                } // for all elements in x direction
-                scaling_file << endl;
-            }
-            //// perform inverse dft on psi_hat (directionally)
-            if (is_MPI_rank_0()) cout << "Inversely Fourier transforming velocity vector potential in direction " << dir << "." << endl;
-            vector<vector<vector<double>>> psi_i = InverseFourier3D(psi_hat);
-            if (m_print & is_MPI_rank_0()) {
-                cout << "Printing inverse Fourier transform in direction " << dir << "." << endl;
-                ofstream idft_file(dirName + "/psi_idft.txt");
-                for (int i = 0; i < nx; i++) { idft_file << "[";
-                    for (int j = 0; j < ny; j++) { idft_file << "[";
-                        for (int k = 0; k < nz; k++) {
-                            if (k > 0) idft_file << ' ';
-                            idft_file << psi_i[i][j][k];
-                        } // for all elements in z direction
-                        if (j<ny-1) idft_file << ',';
-                    } // for all elements in y direction
-                    if (i<nx-1) idft_file << ';';
-                } // for all elements in x direction
-                idft_file << endl;
-            }
-            //// add tmpdir (psix, psiy, or psiz) to randomPsi
-            randomPsi.push_back(psi_i);
-        } // so: randomPsi = {psix, psiy, psiz} ;
-
-        //// calculate gradient using central difference scheme
-        if (is_MPI_rank_0()) cout << "Calculating gradients of velocity vector potential." << endl;
-        vector<vector<vector<vector<vector<double>>>>> gradient(3,
-            vector<vector<vector<vector<double>>>>(3,
-                vector<vector<vector<double>>>(nx,
-                    vector<vector<double>>(ny,
-                        vector<double>(nz))))); // coordinates are on last three dimensions
-        int il, jl, kl, iu, ju, ku;
-        for (int dir_psi = 0; dir_psi < 3; dir_psi++) {
-            for (int i = 0; i < nx; i++) {
-                for (int j = 0; j < ny; j++) {
-                    for (int k = 0; k < nz; k++) {
-                        if (i==0) {il = 1;} else il = i;
-                        if (j==0) {jl = 1;} else jl = j;
-                        if (k==0) {kl = 1;} else kl = k;
-                        if (i==nx-1) {iu = nx-2;} else iu = i;
-                        if (j==ny-1) {ju = ny-2;} else ju = j;
-                        if (k==nz-1) {ku = nz-2;} else ku = k;
-                        gradient[dir_psi][0][i][j][k] = (randomPsi[dir_psi][iu+1][j][k] - randomPsi[dir_psi][il-1][j][k]) / (lx/nx);
-                        gradient[dir_psi][1][i][j][k] = (randomPsi[dir_psi][i][ju+1][k] - randomPsi[dir_psi][i][jl-1][k]) / (ly/ny);
-                        gradient[dir_psi][2][i][j][k] = (randomPsi[dir_psi][i][j][ku+1] - randomPsi[dir_psi][i][j][kl-1]) / (lz/nz);
-                    }}}} // so: gradient = {gradient_psix, gradient_psiy, gradient_psiz} and gradient_psin = { dpsin/dx, dpsin/dy, dpsin/dz }
-        if (m_print & is_MPI_rank_0()) {
-            cout << "Printing gradients of velocity vector potential." << endl;
-            ofstream grad_file(dirName + "/psi_grad.txt");
-            for (int dir_psi = 0; dir_psi < 3; dir_psi++) { grad_file << "direction: " << to_string(dir_psi) << endl << "[";
-                for (int dir_grad = 0; dir_grad < 3; dir_grad++) { grad_file << "[";
-                    for (int i = 0; i < nx; i++) { grad_file << "[";
-                        for (int j = 0; j < ny; j++) { grad_file << "[";
-                            for (int k = 0; k < nz; k++) {
-                                if (k > 0) grad_file << ' ';
-                                grad_file << gradient[dir_psi][dir_grad][i][j][k];
-                            } // for all elements in z direction
-                            if (j<ny-1) grad_file << ',';
-                        } // for all elements in y direction
-                        if (i<nx-1) grad_file << ';';
-                    } // for all elements in x direction
-                    if (dir_grad<2) grad_file << "]";
-                } grad_file << endl;
-            }
-        }
-        //// calculate curl using gradient values
-        if (is_MPI_rank_0()) cout << "Calculating curl of velocity vector potential." << endl;
-        int m, n; // for indices of cross-product
-        for (int dir_curl = 0; dir_curl < 3; dir_curl++) {
-            vector<vector<vector<double> > > tmpdir;
-            if (dir_curl == 0) { m = 2; n = 1; }
-            else if (dir_curl == 2) { m = 1; n = 0; }
-            else { m = dir_curl - 1; n = dir_curl + 1; }
-            for (int i = 0; i < nx; i++) { vector<vector<double> > tmpi;
-                for (int j = 0; j < ny; j++) { vector<double> tmpj;
-                    for (int k = 0; k < nz; k++) { double tmpk;
-                        tmpk = (gradient[m][n][i][j][k] - gradient[n][m][i][j][k]) / 4;
-                        tmpj.push_back(tmpk);
-                    } tmpi.push_back(tmpj);
-                } tmpdir.push_back(tmpi);
-            } curlOfPsi.push_back(tmpdir);
-        } // so: curlOfPsi = {ux, uy, uz}
-        if (m_print & is_MPI_rank_0()) {
-            cout << "Printing velocity vector matrix." << endl;
-            ofstream u_file(dirName + "/random_u.txt");
-            for (int dir_psi = 0; dir_psi < 3; dir_psi++) {
-                for (int i = 0; i < nx; i++) {
-                    for (int j = 0; j < ny; j++) {
-                        for (int k = 0; k < nz; k++) {
-                            if (k > 0) u_file << ' ';
-                            u_file << curlOfPsi[dir_psi][i][j][k];
-                        } // for all elements in z direction
-                        if (j<ny-1) u_file << ',';
-                    } // for all elements in y direction
-                    if (i<nx-1) u_file << ';';
-                } // for all elements in x direction
-                u_file << endl;
-            }
-        }
-    }
-    else {
-        stringstream filename;
-        filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_test.txt";
-        string filestring = filename.str();
-        ifstream file(filestring);
-        if (is_MPI_rank_0()) cout << "Reading initial velocities from " << filestring << endl;
-        string line;
-        while (getline(file, line)) {
-            stringstream linestream(line);
-            string cell_i;
-            vector<vector<vector<double>>> tmpdir;
-            while(getline(linestream, cell_i, ';')) {
-                stringstream cell_i_stream(cell_i);
-                string cell_j;
-                vector<vector<double>> tmpi;
-                while(getline(cell_i_stream,cell_j,',')) {
-                    stringstream cell_j_stream(cell_j);
-                    string cell_k;
-                    vector<double> tmpj;
-                    while(getline(cell_j_stream, cell_k, ' ')) {
+    stringstream filename;
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_test.txt";
+    string filestring = filename.str();
+    ifstream file(filestring);
+    if (is_MPI_rank_0()) cout << "Reading initial velocities from " << filestring << endl;
+    string line;
+    while (getline(file, line)) {
+        stringstream linestream(line);
+        string cell_i;
+        vector<vector<vector<double>>> tmpdir;
+        while(getline(linestream, cell_i, ';')) {
+            stringstream cell_i_stream(cell_i);
+            string cell_j;
+            vector<vector<double>> tmpi;
+            while(getline(cell_i_stream,cell_j,',')) {
+                stringstream cell_j_stream(cell_j);
+                string cell_k;
+                vector<double> tmpj;
+                while(getline(cell_j_stream, cell_k, ' ')) {
 //                        if (!cell_k.empty()) {
-                            double tmpk = stod(cell_k);
-                            tmpj.push_back(tmpk);
+                        double tmpk = stod(cell_k);
+                        tmpj.push_back(tmpk);
 //                        }
-                    } tmpi.push_back(tmpj); nz = tmpj.size();
-                } tmpdir.push_back(tmpi); ny = tmpi.size();
-            } curlOfPsi.push_back(tmpdir); nx = tmpdir.size();
-        }
-        if (is_MPI_rank_0()) cout << "nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl;
+                } tmpi.push_back(tmpj); nz = tmpj.size();
+            } tmpdir.push_back(tmpi); ny = tmpi.size();
+        } curlOfPsi.push_back(tmpdir); nx = tmpdir.size();
     }
+    if (is_MPI_rank_0()) cout << "nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl;
 
     if (is_MPI_rank_0()) cout << "Creating linspaces x, y, z." << endl;
     vector<double> x, y, z;
