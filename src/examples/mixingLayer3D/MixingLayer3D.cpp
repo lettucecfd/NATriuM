@@ -35,8 +35,7 @@ namespace natrium {
 
 MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
                              string dirName, double U) :
-ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash), m_U(U),
-lx(1720*shearlayerthickness), ly(387*shearlayerthickness), lz(172*shearlayerthickness), m_refinementLevel(refinementLevel) {
+ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash), m_U(U), m_refinementLevel(refinementLevel) {
 //    if (m_refinementLevel > 4) { print = false; }
     /// apply boundary values
     setBoundaries(makeBoundaries());
@@ -52,7 +51,6 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     assert(component < 3);
     double scaling = 0.01 * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
-//    rand_u = 0;
     if (component == 0) {
         return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
@@ -62,9 +60,8 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate, string dirName) :
 m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalculate(recalculate) {
-
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_test.txt";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_test_full.txt";
     string filestring = filename.str();
     ifstream file(filestring);
     if (is_MPI_rank_0()) cout << "Reading initial velocities from " << filestring << endl;
@@ -82,17 +79,19 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
                 string cell_k;
                 vector<double> tmpj;
                 while(getline(cell_j_stream, cell_k, ' ')) {
-//                        if (!cell_k.empty()) {
                         double tmpk = stod(cell_k);
                         tmpj.push_back(tmpk);
-//                        }
                 } tmpi.push_back(tmpj); nz = tmpj.size();
             } tmpdir.push_back(tmpi); ny = tmpi.size();
         } curlOfPsi.push_back(tmpdir); nx = tmpdir.size();
     }
-    if (is_MPI_rank_0()) cout << "nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl;
 
-    if (is_MPI_rank_0()) cout << "Creating linspaces x, y, z." << endl;
+    if (is_MPI_rank_0()) {
+        cout << " Creating linspaces x, y, z for interpolation." << endl;
+        cout << "  nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl;
+        cout << "  lx: " << lx << ", ly: " << ly << ", lz: " << lz << endl;
+        cout << "  lx/dTh0: " << lx / 0.093 << ", ly/dTh0: " << ly / 0.093 << ", lz/dTh0: " << lz / 0.093 << endl;
+    }
     vector<double> x, y, z;
     double dx, dy, dz;
     double xmin, ymin, zmin;
@@ -116,44 +115,6 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalc
     miny = *ybounds.first; maxy = *ybounds.second;
     auto zbounds = minmax_element(z.begin(), z.end());
     minz = *zbounds.first; maxz = *zbounds.second;
-}
-
-vector<vector<vector<complex<double>>>>
-MixingLayer3D::InitialVelocity::Fourier3D(const vector<vector<vector<double>>> &in) const {
-    vector<vector<vector<complex<double>>>> out(
-            kxmax, vector<vector<complex<double>>>(
-                    kymax, vector<complex<double>>(
-                            kzmax, {0.0, 0.0})));
-    //double xi, yi, zi;
-    complex<double> omeg1, omeg2, omeg3;
-    for (int ix = 0; ix < nx; ix++) {
-        for (int iy = 0; iy < ny; iy++) {
-            for (int iz = 0; iz < nz; iz++) {
-                for (int kx = 0; kx < kxmax; kx++) { omeg1 = {0.0, -2 * M_PI * ix/nx * kx};
-                    for (int ky = 0; ky < kymax; ky++) { omeg2 = {0.0, -2 * M_PI * iy/ny * ky};
-                        for (int kz = 0; kz < kzmax; kz++) { omeg3 = {0.0, -2 * M_PI * iz/nz * kz};
-                            out[kx][ky][kz] += in[ix][iy][iz] * exp(omeg1 + omeg2 + omeg3);
-    }}}}}}
-    return out;
-}
-
-vector<vector<vector<double>>>
-MixingLayer3D::InitialVelocity::InverseFourier3D(const vector<vector<vector<complex<double>>>> &in) const {
-    vector<vector<vector<double>>> out(nx,
-        vector<vector<double>>(ny,
-            vector<double>(nz, 0.0)));
-    complex<double> omeg1, omeg2, omeg3, tmp;
-    double N = (nx * ny * nz);
-    for (int ix = 0; ix < nx; ix++) {
-        for (int iy = 0; iy < ny; iy++) {
-            for (int iz = 0; iz < nz; iz++) {
-                for (int kx = 0; kx < kxmax; kx++) { omeg1 = {0.0, 2 * M_PI * ix/nx * kx};
-                    for (int ky = 0; ky < kymax; ky++) { omeg2 = {0.0, 2 * M_PI * iy/ny * ky};
-                        for (int kz = 0; kz < kzmax; kz++) { omeg3 = {0.0, 2 * M_PI * iz/nz * kz};
-                            tmp = in[kx][ky][kz] * exp(omeg1 + omeg2 + omeg3);
-                            out[ix][iy][iz] += real(tmp) / N;
-    }}}}}}
-    return out;
 }
 
 double MixingLayer3D::InitialVelocity::InterpolateVelocities(double xq, double yq, double zq, const unsigned int dim) const
@@ -218,7 +179,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_verysmall.msh";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_final.msh";
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
@@ -246,6 +207,10 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
     maxx = dealii::Utilities::MPI::min_max_avg(maxx, MPI_COMM_WORLD).max;
     maxy = dealii::Utilities::MPI::min_max_avg(maxy, MPI_COMM_WORLD).max;
     maxz = dealii::Utilities::MPI::min_max_avg(maxz, MPI_COMM_WORLD).max;
+
+    lx = maxx-minx;
+    ly = maxy-miny;
+    lz = maxz-minz;
     //// set boundary indicators (set top and bottom last to include them in moving bc)
     double rtol = 1e-14;
     for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {

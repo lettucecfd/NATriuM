@@ -36,6 +36,8 @@ private:
     boost::shared_ptr<std::fstream> m_vectorFile;
     string m_initializationfilename;
     boost::shared_ptr<std::fstream> m_initializationFile;
+    string m_t1filename;
+    boost::shared_ptr<std::fstream> m_t1File;
 
     // Y Coordinates
     vector<double> m_yCoordinates;
@@ -57,7 +59,7 @@ private:
     vector<double> m_R11, m_R22, m_R33, m_R12;
     vector<double> ux_Fa, uy_Fa, uz_Fa;
     vector<double> ux_Re, uy_Re, uz_Re;
-    vector<double> umag_Re, rho_average, momentumthickness_integrand;
+    vector<double> umag_Re, rho_Re, momentumthickness_integrand;
     vector<double> m_K;
 
     void write();
@@ -66,16 +68,33 @@ private:
     static string scalaroutfile(string dir) {
         boost::filesystem::path out_dir(dir);
         boost::filesystem::path out_file = out_dir / "shearlayer_scalars.txt";
+        std::ofstream ofs;
+        ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
         return out_file.string();
     }
     static string vectoroutfile(string dir) {
         boost::filesystem::path out_dir(dir);
         boost::filesystem::path out_file = out_dir / "shearlayer_vectors.txt";
+        std::ofstream ofs;
+        ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
         return out_file.string();
     }
     static string initializationoutfile(string dir) {
         boost::filesystem::path out_dir(dir);
         boost::filesystem::path out_file = out_dir / "shearlayer_initialization.txt";
+        std::ofstream ofs;
+        ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
+        return out_file.string();
+    }
+    static string t1outfile(string dir) {
+        boost::filesystem::path out_dir(dir);
+        boost::filesystem::path out_file = out_dir / "shearlayer_t1.txt";
+        std::ofstream ofs;
+        ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
         return out_file.string();
     }
 
@@ -88,6 +107,8 @@ public:
     double integrate(vector<double> integrand);
 
     vector<double> derivative(vector<double> values);
+
+    void write_t1();
 };
 
 } /* namespace natrium */
