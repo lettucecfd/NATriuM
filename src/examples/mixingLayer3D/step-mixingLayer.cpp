@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
                                       "Refinement level of the computation grid.");
     parser.setArgument<int>("grid-repetitions",
                             "Number of grid cells along each axis before global refinement; "
-                            "to produce grids with refinements that are not powers of two.", 3); // TODO 1,2,3
+                            "to produce grids with refinements that are not powers of two.", 3);
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
     }
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
     configuration->setHeatCapacityRatioGamma(1.4);
     configuration->setPrandtlNumber(0.71);
-    configuration->setSedgOrderOfFiniteElement(3); // TODO: default, 2, 3
+    configuration->setSedgOrderOfFiniteElement(3);
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
