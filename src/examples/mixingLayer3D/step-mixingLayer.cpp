@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     const double cs = U / Ma;
 
     // chose scaling so that the right Ma-number is achieved
-    const double scaling = sqrt(3) * cs;
+    const double scaling = sqrt(3) * cs; // TODO: choose different? -> stencil larger/smaller -> from turb. channel
 
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
