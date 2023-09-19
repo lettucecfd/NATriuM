@@ -62,6 +62,7 @@ int main(int argc, char** argv) {
     }
     string meshname = parser.getArgument<string>("meshname");
     string randuname = parser.getArgument<string>("randuname");
+    double randuscaling = parser.getArgument<double>("randuscaling");
     double Re = parser.getArgument<int>("Re");
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
@@ -144,7 +145,7 @@ int main(int argc, char** argv) {
     }
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, squash, print, recalculate, m_dirname, meshname, randuname, U);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, squash, print, recalculate, m_dirname, meshname, randuscaling, randuname, U);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////

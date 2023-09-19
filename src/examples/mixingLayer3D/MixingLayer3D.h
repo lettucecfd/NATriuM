@@ -78,7 +78,7 @@ namespace natrium {
 
         /// constructor
         MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
-                      string dirName, string meshname, double randu_scaling, double U = 1.);
+                      string dirName, string meshname, double randu_scaling, string randuname, double U = 1.);
         /// destructor
         virtual ~MixingLayer3D();
 

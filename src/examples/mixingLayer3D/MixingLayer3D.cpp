@@ -35,13 +35,13 @@ double shearlayerthickness = 0.093;
 namespace natrium {
 
 MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
-                             string dirName, string meshname, double randu_scaling, double U) :
+                             string dirName, string meshname, double randu_scaling, string randuname, double U) :
 ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_squash(squash), m_U(U), m_refinementLevel(refinementLevel) {
 //    if (m_refinementLevel > 4) { print = false; }
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
-    this->setInitialU(boost::make_shared<InitialVelocity>(this, print, recalculate, randu_scaling, dirName));
+    this->setInitialU(boost::make_shared<InitialVelocity>(this, print, recalculate, randu_scaling, randuname, dirName));
     this->setInitialRho(boost::make_shared<InitialDensity>(this));
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
 }
