@@ -43,11 +43,15 @@ int main(int argc, char** argv) {
     // Set to 0.3, 0.7, 0.9, 1.0, 1.2
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
+    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 0.01);
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setArgument<int>("squash", "squash grid towards centre", 0);
     parser.setArgument<int>("print", "print calculations of initial velocity", 0);
     parser.setArgument<int>("recalculate", "recalculate initial velocity", 0);
+    parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_xxx)", "final_small");
+    parser.setArgument<string>("randuname", "name of the mesh file (random_u_xxx)", "test2");
+    parser.setArgument<int>("order", "order of finite elements", 3);
     parser.setPositionalArgument<int>("ref-level",
                                       "Refinement level of the computation grid.");
     parser.setArgument<int>("grid-repetitions",
@@ -56,6 +60,8 @@ int main(int argc, char** argv) {
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
     }
+    string meshname = parser.getArgument<string>("meshname");
+    string randuname = parser.getArgument<string>("randuname");
     double Re = parser.getArgument<int>("Re");
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
@@ -100,7 +106,8 @@ int main(int argc, char** argv) {
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
     configuration->setHeatCapacityRatioGamma(1.4);
     configuration->setPrandtlNumber(0.71);
-    configuration->setSedgOrderOfFiniteElement(4); // TODO: set to 4
+    configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order")); // TODO: set to 4
+    configuration->setCFL(1.5); // TODO: should be 0.4<CFL<2
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
@@ -137,7 +144,7 @@ int main(int argc, char** argv) {
     }
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, squash, print, recalculate, m_dirname, U);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, squash, print, recalculate, m_dirname, meshname, randuname, U);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////

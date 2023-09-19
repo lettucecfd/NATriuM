@@ -49,6 +49,7 @@ namespace natrium {
                 vector< vector< vector< vector<double> > > > curlOfPsi;
                 double minx, miny, minz;
                 double maxx, maxy, maxz;
+                double m_randu_scaling;
 //                double dx, dy, dz;
                 double lx, ly, lz;
                 int nx, ny, nz;
@@ -56,10 +57,8 @@ namespace natrium {
                 bool m_print, m_recalculate;
                 double InterpolateVelocities(double xq, double yq, double zq, const unsigned int dim) const;
             public:
-                InitialVelocity(MixingLayer3D *flow, bool print, bool recalculate, string dirName);
+                InitialVelocity(MixingLayer3D *flow, bool print, bool recalculate, double scaling, string randuname, string dirName);
                 double value(const dealii::Point<3>& x, const unsigned int component = 0) const override;
-                vector<vector<vector<std::complex<double>>>> Fourier3D(const vector<vector<vector<double>>> &in) const;
-                vector<vector<vector<double>>> InverseFourier3D(const vector<vector<vector<std::complex<double>>>> &in) const;
         };
         class InitialDensity: public dealii::Function<3> {
             private:
@@ -79,7 +78,7 @@ namespace natrium {
 
         /// constructor
         MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
-                      string dirName, double U = 1.);
+                      string dirName, string meshname, double randu_scaling, double U = 1.);
         /// destructor
         virtual ~MixingLayer3D();
 
@@ -122,7 +121,7 @@ namespace natrium {
          * @short create triangulation for couette flow
          * @return shared pointer to a triangulation instance
          */
-        boost::shared_ptr<Mesh<3> > makeGrid();
+        boost::shared_ptr<Mesh<3> > makeGrid(string meshname);
 
         /**
          * @short create boundaries for couette flow

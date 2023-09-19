@@ -19,6 +19,7 @@
 #include "deal.II/grid/grid_in.h"
 #include "deal.II/grid/tria.h"
 #include "deal.II/grid/grid_tools.h"
+#include "deal.II/grid/grid_generator.h"
 using namespace std;
 using namespace natrium::DealIIExtensions;
 
@@ -34,13 +35,13 @@ double shearlayerthickness = 0.093;
 namespace natrium {
 
 MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
-                             string dirName, double U) :
-ProblemDescription<3>(makeGrid(), viscosity, 1), m_squash(squash), m_U(U), m_refinementLevel(refinementLevel) {
+                             string dirName, string meshname, double randu_scaling, double U) :
+ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_squash(squash), m_U(U), m_refinementLevel(refinementLevel) {
 //    if (m_refinementLevel > 4) { print = false; }
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
-    this->setInitialU(boost::make_shared<InitialVelocity>(this, print, recalculate, dirName));
+    this->setInitialU(boost::make_shared<InitialVelocity>(this, print, recalculate, randu_scaling, dirName));
     this->setInitialRho(boost::make_shared<InitialDensity>(this));
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
 }
@@ -49,8 +50,9 @@ MixingLayer3D::~MixingLayer3D() = default;
 
 double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component < 3);
-    double scaling = 0.01 * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
+    double scaling = m_randu_scaling * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
+    rand_u = 0;
     if (component == 0) {
         return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
@@ -58,10 +60,10 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     }
 }
 
-MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate, string dirName) :
-m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalculate(recalculate) {
+MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate, double randu_scaling, string randuname, string dirName) :
+m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalculate(recalculate), m_randu_scaling(randu_scaling) {
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_test.txt";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_" << randuname << ".txt";
     string filestring = filename.str();
     ifstream file(filestring);
     if (is_MPI_rank_0()) cout << "Reading initial velocities from " << filestring << endl;
@@ -170,7 +172,7 @@ double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const
  * @short create triangulation for Compressible Mixing Layer flow
  * @return shared pointer to a triangulation instance
  */
-boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
+boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(string meshname) {
 
     //Taken from DiamondObstacle2D in step-gridin
     dealii::GridIn<3> grid_in;
@@ -179,11 +181,20 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
 
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_final.msh";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_" << meshname << ".msh"; // TODO: set to final
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
     if (is_MPI_rank_0()) cout << "Imported mesh info:" << endl << " dimension: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
+
+//    // TODO: generate using step_sizes
+//    boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+//    dealii::Point<3> corner1(-lx/20, -ly/2, -lz/2);
+//    dealii::Point<3> corner2(lx/20, ly/2, lz/2);
+//    vector<vector<double>> step_sizes(3, vector<double>(20, 1)); // domain is 387 slt, but we need only 20 slt very fine -> divide into 20 areas with decreasing step size
+//    step_sizes.resize(3);
+//    step_sizes[1] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0.1, 0.001, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; // only central 2 areas are fine
+//    dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, step_sizes, corner1, corner2, true);
 
     double minx=0, maxx=0, miny=0, maxy=0, minz=0, maxz=0;
     //// get minimum and maximum coordinates
@@ -290,65 +301,3 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
 
 } /* namespace natrium */
 
-//boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid() {
-//    //Creation of the principal domain
-//    boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-//    double lx = 1720 * shearlayerthickness / 2; // 1720*0.093/2 +-80(160) // dx 2.24 -> nx 70; 64; 2^6 //
-//    double ly = 387 * shearlayerthickness / 2; // 387*0.093/2 +-18(36)// dy 1.73..5.32 -> ny 21..7; 16; 2^4 //
-//    double lz = 172 * shearlayerthickness / 2; // 172*0.093/2 +-8(16) // dz 1.08..2.69 -> nz 14.8..6; 16; 2^4 //
-//    dealii::Point<3> corner1(-lx, -ly, -lz);
-//    dealii::Point<3> corner2(lx, ly, lz);
-//    vector<unsigned int> rep;
-//    rep.push_back(1);
-//    rep.push_back(2);
-//    rep.push_back(1);
-//    dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, rep, corner1, corner2, true);
-
-//    //// add periodicity
-//    vector<GridTools::PeriodicFacePair<Mesh<3>::cell_iterator >> periodicity_vector;
-//    //    Tensor<1, 3> offset = dealii::Tensor<1, 3 >();
-//    //    FullMatrix<double> matrix;
-//    const types::boundary_id b_id1=0, b_id2=1;
-//    const unsigned int direction = 1;
-//    //    GridTools::collect_periodic_faces(*mesh, b_id1, b_id2, direction, periodicity_vector, offset, matrix);
-//    GridTools::collect_periodic_faces(*mesh, b_id1, b_id2, direction, periodicity_vector);
-//    for (const auto & pair : periodicity_vector) {
-//        cout << pair.face_idx << endl;
-//    }
-//    mesh->add_periodicity(periodicity_vector);
-
-// mesh->refine_global (refinementLevel);
-
-//    //Creation of the principal domain
-//    boost::shared_ptr<Mesh<3> > rect = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-//    dealii::Point<3> corner1(-lx/2, -ly/2, -lz/2);
-//    dealii::Point<3> corner2(lx/2, ly/2, lz/2);
-//    int n_cells_x = 10;
-//    int n_cells_y = 10;
-//    int n_cells_z = 10;
-//    double l_cells_x = lx/n_cells_x;
-//    double l_cells_y = ly/n_cells_y;
-//    double l_cells_z = lz/n_cells_z;
-//    vector<vector<double>> step_sizes;
-//    step_sizes.resize(3);
-////    for (int ix = 0; ix < n_cells_x; ix++) {
-////        step_sizes.at(0).push_back(l_cells_x);
-////    }
-////    for (int iy = 0; iy < n_cells_y; iy++) {
-////        step_sizes.at(1).push_back(l_cells_y);
-////    }
-////    for (int iz = 0; iz < n_cells_z; iz++) {
-////        step_sizes.at(2).push_back(l_cells_z);
-////    }
-//    step_sizes.at(0) = {lx};
-//    step_sizes.at(1) = {ly};
-//    step_sizes.at(1) = {ly/2, ly/2};
-////    step_sizes.at(1) = {ly/4, ly/8, ly/16, ly/16, ly/16, ly/16, ly/8, ly/4};
-//    step_sizes.at(2) = {lz};
-//
-//    bool colorize = true; 	// set boundary ids automatically to
-//    // 0:front; 1:back; 2:bottom; 3:top; 4:left; 5:right;
-//    dealii::GridGenerator::subdivided_hyper_rectangle(*rect, step_sizes, corner1, corner2, colorize);
-//
-//    return rect;
-//}
