@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
     configuration->setHeatCapacityRatioGamma(1.4);
     configuration->setPrandtlNumber(0.71);
-    configuration->setSedgOrderOfFiniteElement(3);
+    configuration->setSedgOrderOfFiniteElement(4); // TODO: set to 4
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
