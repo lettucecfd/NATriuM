@@ -163,7 +163,9 @@ void ShearLayerStats::calculateRhoU() {
     m_K.resize(m_nofCoordinates);
     momentumthickness_integrand_Re.resize(m_nofCoordinates);
     momentumthickness_integrand_Fa.resize(m_nofCoordinates);
-    vector<size_t> number(m_nofCoordinates,0);
+    m_number.resize(m_nofCoordinates);
+    std::fill(m_number.begin(), m_number.end(), 0);
+//    vector<size_t> number(m_nofCoordinates,0);
     vector<size_t> nonumbers(0);
 
     // don't know what I do here, but it worked for turbulent channel
@@ -193,7 +195,7 @@ void ShearLayerStats::calculateRhoU() {
                 assert(m_yCoordinateToIndex.find(y) != m_yCoordinateToIndex.end());
                 y_ind = m_yCoordinateToIndex.at(y);
                 dof_ind = local_indices.at(i);
-                number.at(y_ind) += 1;
+                m_number.at(y_ind) += 1;
                 // fill value vector
                 for (size_t dim = 0; dim < 3; dim++) {
                     rhou_Re_set.at(dim)->at(y_ind) += m_rho(dof_ind) * m_u.at(dim)(dof_ind);
@@ -208,19 +210,19 @@ void ShearLayerStats::calculateRhoU() {
     // communicate
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         // add n_points(iy), rho*ux(iy), rho(iy), etc. from different MPI processes
-        number.at(iy) = dealii::Utilities::MPI::sum(number.at(iy), MPI_COMM_WORLD);
+        m_number.at(iy) = dealii::Utilities::MPI::sum(m_number.at(iy), MPI_COMM_WORLD);
         // average over number of points at y
-        if (number.at(iy) != 0) {
+        if (m_number.at(iy) != 0) {
             for (size_t dim = 0; dim < 3; dim++) {
                 rhou_Re_set.at(dim)->at(iy) = dealii::Utilities::MPI::sum(rhou_Re_set.at(dim)->at(iy), MPI_COMM_WORLD);
-                rhou_Re_set.at(dim)->at(iy) /= number.at(iy);
+                rhou_Re_set.at(dim)->at(iy) /= m_number.at(iy);
                 u_Re_set.at(dim)->at(iy) = dealii::Utilities::MPI::sum(u_Re_set.at(dim)->at(iy), MPI_COMM_WORLD);
-                u_Re_set.at(dim)->at(iy) /= number.at(iy);
+                u_Re_set.at(dim)->at(iy) /= m_number.at(iy);
             }
             rho_Re.at(iy) = dealii::Utilities::MPI::sum(rho_Re.at(iy), MPI_COMM_WORLD);
             umag_Re.at(iy) = dealii::Utilities::MPI::sum(umag_Re.at(iy), MPI_COMM_WORLD);
-            rho_Re.at(iy) /= number.at(iy);
-            umag_Re.at(iy) /= number.at(iy);
+            rho_Re.at(iy) /= m_number.at(iy);
+            umag_Re.at(iy) /= m_number.at(iy);
         } else nonumbers.push_back(iy);
     }
     // average of neighboring points if there were no points
@@ -286,10 +288,10 @@ void ShearLayerStats::calculateRhoU() {
     // communicate
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         // average over number of points at y
-        if (number.at(iy) != 0) {
+        if (m_number.at(iy) != 0) {
             for (size_t ij = 0; ij < 4; ij++) {
                 rhouij_set.at(ij)->at(iy) = dealii::Utilities::MPI::sum(rhouij_set.at(ij)->at(iy), MPI_COMM_WORLD);
-                rhouij_set.at(ij)->at(iy) /= number.at(iy);
+                rhouij_set.at(ij)->at(iy) /= m_number.at(iy);
             }
         }
     }
@@ -329,8 +331,8 @@ void ShearLayerStats::calculateRhoU() {
         }
 
         // calculate y-integrals
-        double momentumthickness_integral_Fa = integrate(momentumthickness_integrand_Fa);
         double momentumthickness_integral_Re = integrate(momentumthickness_integrand_Re);
+        double momentumthickness_integral_Fa = integrate(momentumthickness_integrand_Fa);
         double growthrate_integral = integrate(growthrate_integrand);
         for (size_t ij = 0; ij < 4; ij++) {
             *bij_set.at(ij) = integrate(*bijvec_set.at(ij));
@@ -351,9 +353,9 @@ void ShearLayerStats::calculateRhoU() {
 //            cout << dUdy_abs.at(yi) << ",";
 //        } cout << endl;
         cout << "IT: " << m_solver.getIteration()
-             << ", t: " << m_solver.getTime()
-            << ", dU_Fa: " << dU_Fa
+            << ", t: " << m_solver.getTime()
             << ", dU_Re: " << dU_Re
+            << ", dU_Fa: " << dU_Fa
             << ", delta_Theta_Re: " << m_currentDeltaTheta_Re
             << ", delta_Theta_Fa: " << m_currentDeltaTheta_Fa
             << ", growth_rate: " << m_deltaThetaGrowth
@@ -471,7 +473,7 @@ void ShearLayerStats::write_tn() {
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << rho_Re.at(iy) << " ";
         } *tnFile << endl;
-        *tnFile << "umag: ";
+        *tnFile << "umag_Re: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << umag_Re.at(iy) << " ";
         } *tnFile << endl;
@@ -498,6 +500,26 @@ void ShearLayerStats::write_tn() {
         *tnFile << "momentumthickness_integrand_Fa: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << momentumthickness_integrand_Fa.at(iy) << " ";
+        } *tnFile << endl;
+        *tnFile << "number: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *tnFile << m_number.at(iy) << " ";
+        } *tnFile << endl;
+        *tnFile << "uy_Re: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *tnFile << uy_Re.at(iy) << " ";
+        } *tnFile << endl;
+        *tnFile << "uz_Re: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *tnFile << uz_Re.at(iy) << " ";
+        } *tnFile << endl;
+        *tnFile << "uy_Fa: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *tnFile << uy_Fa.at(iy) << " ";
+        } *tnFile << endl;
+        *tnFile << "uz_Fa: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *tnFile << uz_Fa.at(iy) << " ";
         } *tnFile << endl;
     }
 }
