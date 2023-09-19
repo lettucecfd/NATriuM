@@ -82,22 +82,6 @@ private:
         ofs.close();
         return out_file.string();
     }
-    static string initializationoutfile(string dir) {
-        boost::filesystem::path out_dir(dir);
-        boost::filesystem::path out_file = out_dir / "shearlayer_initialization.txt";
-        std::ofstream ofs;
-        ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);
-        ofs.close();
-        return out_file.string();
-    }
-    static string t1outfile(string dir) {
-        boost::filesystem::path out_dir(dir);
-        boost::filesystem::path out_file = out_dir / "shearlayer_t1.txt";
-        std::ofstream ofs;
-        ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);
-        ofs.close();
-        return out_file.string();
-    }
 
 public:
 	ShearLayerStats(CompressibleCFDSolver<3> & solver, string outdir, double starting_delta_theta, double starting_Re);
@@ -109,7 +93,6 @@ public:
 
     vector<double> derivative(vector<double> values);
 
-    void write_t1();
     void write_tn();
 };
 

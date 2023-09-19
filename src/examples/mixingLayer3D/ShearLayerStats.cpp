@@ -19,8 +19,6 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
         m_Re0(starting_Re), m_u(solver.getVelocity()), m_rho(solver.getDensity()),
         m_outDir(outdir), m_filename(scalaroutfile(solver.getConfiguration()->getOutputDirectory())),
         m_vectorfilename(vectoroutfile(solver.getConfiguration()->getOutputDirectory())),
-        m_t1filename(t1outfile(solver.getConfiguration()->getOutputDirectory())),
-        m_initializationfilename(initializationoutfile(solver.getConfiguration()->getOutputDirectory())),
         m_currentDeltaTheta_Re(starting_delta_theta), m_currentDeltaTheta_Fa(starting_delta_theta), m_currentDeltaOmega(0.41), m_b11(0), m_b22(0), m_b12(0) {
     nround = pow(10,12); // round coordinates to this magnitude
     m_yCoordsUpToDate = false;
@@ -37,52 +35,10 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
             m_vectorFile = boost::make_shared<std::fstream>(m_vectorfilename, std::fstream::out);
         }
     }
-    if (is_MPI_rank_0()) {
-        *m_tableFile << "it ";
-        *m_tableFile << "t ";
-        *m_tableFile << "deltaTheta ";
-        *m_tableFile << "deltaThetaDot ";
-        *m_tableFile << "deltaOmega ";
-        *m_tableFile << "m_b11 ";
-        *m_tableFile << "m_b22 ";
-        *m_tableFile << "m_b12 ";
-        *m_tableFile << endl;
-    }
     updateYValues();
     calculateRhoU();
+    write();
     write_tn();
-
-//    // run checks for initialization
-//    if (is_MPI_rank_0()) {
-//        m_initializationFile = boost::make_shared<std::fstream>(m_initializationfilename, std::fstream::out | std::fstream::app);
-//        *m_initializationFile << "it t deltaTheta_Re deltaTheta_Fa deltaThetaDot deltaOmega m_b11 m_b22 m_b12" << endl;
-//        *m_initializationFile << this->m_solver.getIteration() << " " << m_solver.getTime() << " " << m_currentDeltaTheta_Re << " " << m_currentDeltaTheta_Fa << " "
-//                  << m_deltaThetaGrowth << " " << m_currentDeltaOmega << " " << m_b11 << " " << m_b22 << " " << m_b12 << " " << endl;
-//        *m_initializationFile << "y: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-//            *m_initializationFile << m_yCoordinates.at(iy) << " ";
-//        } *m_initializationFile << endl;
-//        *m_initializationFile << "ux_Fa: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-//            *m_initializationFile << ux_Fa.at(iy) << " ";
-//        } *m_initializationFile << endl;
-//        *m_initializationFile << "ux_ReAvg: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-//            *m_initializationFile << ux_Re.at(iy) << " ";
-//        } *m_initializationFile << endl;
-//        *m_initializationFile << "rho_ReAvg: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-//            *m_initializationFile << rho_Re.at(iy) << " ";
-//        } *m_initializationFile << endl;
-//        *m_initializationFile << "momentumthickness_integrand_Re: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-//            *m_initializationFile << momentumthickness_integrand_Re.at(iy) << " ";
-//        } *m_initializationFile << endl;
-//        *m_initializationFile << "momentumthickness_integrand_Fa: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-//            *m_initializationFile << momentumthickness_integrand_Fa.at(iy) << " ";
-//        } *m_initializationFile << endl;
-//    }
 }
 
 bool ShearLayerStats::isMYCoordsUpToDate() const {
@@ -153,14 +109,17 @@ void ShearLayerStats::updateYValues() {
 }
 
 void ShearLayerStats::apply() {
-    if (!isMYCoordsUpToDate()) {
-        updateYValues();
-    }
 	if (m_solver.getIteration() % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0) {
+        if (!isMYCoordsUpToDate()) {
+            updateYValues();
+        }
         calculateRhoU();
         write();
     }
     if (m_solver.getIteration() == 1 or m_solver.getIteration() == 100 or m_solver.getIteration() == 1000) {
+        if (!isMYCoordsUpToDate()) {
+            updateYValues();
+        }
         calculateRhoU();
         write_tn();
     }
@@ -478,62 +437,6 @@ void ShearLayerStats::write() {
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *m_vectorFile << m_R12.at(iy) << " ";
         } *m_vectorFile << endl;
-    }
-}
-
-void ShearLayerStats::write_t1() {
-    if (is_MPI_rank_0()) {
-        m_t1File = boost::make_shared<std::fstream>(m_t1filename, std::fstream::out | std::fstream::app);
-        if (is_MPI_rank_0()) {
-            *m_t1File << "it t deltaTheta_Re deltaTheta_Fa deltaThetaDot deltaOmega m_b11 m_b22 m_b12" << endl;
-        }
-        *m_t1File << this->m_solver.getIteration() << " " << m_solver.getTime() << " " << m_currentDeltaTheta_Re << " " << m_currentDeltaTheta_Fa << " "
-                     << m_deltaThetaGrowth << " " << m_currentDeltaOmega << " " << m_b11 << " " << m_b22 << " "
-                     << m_b12 << " " << endl;
-        *m_t1File << "y: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << m_yCoordinates.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "ux_Re: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << ux_Re.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "ux_Fa: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << ux_Fa.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "rho_Re: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << rho_Re.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "umag: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << umag_Re.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "R11: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << m_R11.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "R22: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << m_R22.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "R33: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << m_R33.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "R12: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << m_R12.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "momentumthickness_integrand_Re: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << momentumthickness_integrand_Re.at(iy) << " ";
-        } *m_t1File << endl;
-        *m_t1File << "momentumthickness_integrand_Fa: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_t1File << momentumthickness_integrand_Fa.at(iy) << " ";
-        } *m_t1File << endl;
     }
 }
 
