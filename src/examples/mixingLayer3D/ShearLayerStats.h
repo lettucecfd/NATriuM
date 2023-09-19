@@ -110,6 +110,7 @@ public:
     vector<double> derivative(vector<double> values);
 
     void write_t1();
+    void write_tn();
 };
 
 } /* namespace natrium */
