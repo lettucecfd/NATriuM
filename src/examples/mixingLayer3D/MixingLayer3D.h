@@ -57,7 +57,7 @@ namespace natrium {
                 bool m_print, m_recalculate;
                 double InterpolateVelocities(double xq, double yq, double zq, const unsigned int dim) const;
             public:
-                InitialVelocity(MixingLayer3D *flow, bool print, bool recalculate, double scaling, string randuname, string dirName);
+                InitialVelocity(MixingLayer3D *flow, double randuscaling, string randuname);
                 double value(const dealii::Point<3>& x, const unsigned int component = 0) const override;
         };
         class InitialDensity: public dealii::Function<3> {
@@ -77,36 +77,12 @@ namespace natrium {
         bool m_squash;
 
         /// constructor
-        MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
-                      string dirName, string meshname, double randu_scaling, string randuname, double U = 1.);
+        MixingLayer3D(double viscosity, size_t refinementLevel, string meshname, double randu_scaling, string randuname, double U = 1.);
         /// destructor
         virtual ~MixingLayer3D();
 
         virtual void refine(Mesh<3>& mesh) {
             mesh.refine_global(m_refinementLevel);
-            if (m_squash) {
-                struct UnstructuredGridFunc {
-                    //            double sigma = 0.1;
-                    double ymax = 387 * 0.093 / 2;
-                    double k = 1;
-
-                    double trans(double y) const {
-                        //                return y * erf((y-ymax)/sqrt(2*sigma*sigma));
-                        //                return yrel*sqrt(1-k/1.05)
-                        double yrel = y / ymax;
-                        return pow(yrel, 3) * ymax; // * abs(yrel)
-                        //                return y;
-                        //                return tanh((y/ymax)/(2 * 0.093));
-                    }
-                    dealii::Point<3> operator()(const dealii::Point<3> &in) const {
-                        return dealii::Point<3>(in(0), trans(in(1)), in(2));
-                    }
-                };
-                dealii::GridTools::transform(UnstructuredGridFunc(), mesh);
-                std::ofstream out("grid-mixinglayer.eps");
-                dealii::GridOut grid_out;
-                grid_out.write_eps(mesh, out);
-            }
         }
         virtual void transform(Mesh<3>&) {}
         virtual bool isCartesian() {return true;}
@@ -121,7 +97,7 @@ namespace natrium {
          * @short create triangulation for couette flow
          * @return shared pointer to a triangulation instance
          */
-        boost::shared_ptr<Mesh<3> > makeGrid(string meshname);
+        boost::shared_ptr<Mesh<3> > makeGrid(const string& meshname);
 
         /**
          * @short create boundaries for couette flow

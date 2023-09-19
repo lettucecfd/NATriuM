@@ -34,14 +34,12 @@ double shearlayerthickness = 0.093;
 
 namespace natrium {
 
-MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, bool squash, bool print, bool recalculate,
-                             string dirName, string meshname, double randu_scaling, string randuname, double U) :
-ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_squash(squash), m_U(U), m_refinementLevel(refinementLevel) {
-//    if (m_refinementLevel > 4) { print = false; }
+MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, string meshname, double randu_scaling, string randuname, double U) :
+ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_U(U), m_refinementLevel(refinementLevel) {
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
-    this->setInitialU(boost::make_shared<InitialVelocity>(this, print, recalculate, randu_scaling, randuname, dirName));
+    this->setInitialU(boost::make_shared<InitialVelocity>(this, randu_scaling, randuname));
     this->setInitialRho(boost::make_shared<InitialDensity>(this));
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
 }
@@ -52,7 +50,7 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     assert(component < 3);
     double scaling = m_randu_scaling * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
-    rand_u = 0;
+//    rand_u = 0;
     if (component == 0) {
         return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
@@ -60,8 +58,8 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     }
 }
 
-MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, bool print, bool recalculate, double randu_scaling, string randuname, string dirName) :
-m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_print(print), m_recalculate(recalculate), m_randu_scaling(randu_scaling) {
+MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, double randu_scaling, string randuname) :
+m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_randu_scaling(randu_scaling) {
     stringstream filename;
     filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_" << randuname << ".txt";
     string filestring = filename.str();
@@ -172,30 +170,29 @@ double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const
  * @short create triangulation for Compressible Mixing Layer flow
  * @return shared pointer to a triangulation instance
  */
-boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(string meshname) {
+boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
+    boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+
+//    // TODO: generate using step_sizes
+//    dealii::Point<3> corner1(-lx/20, -ly/2, -lz/2);
+//    dealii::Point<3> corner2(lx/20, ly/2, lz/2);
+//    vector<vector<double>> step_sizes(3, vector<double>(20, 10)); // domain is 387 slt, but we need only 20 slt very fine -> divide into 20 areas with decreasing step size
+////    step_sizes[0] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
+//    step_sizes[1] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0.1, 0.001, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; // only central 2 areas are fine
+////    step_sizes[2] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
+//    dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, step_sizes, corner1, corner2);
 
     //Taken from DiamondObstacle2D in step-gridin
     dealii::GridIn<3> grid_in;
-    boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
     grid_in.attach_triangulation(*mesh);
-
     //// Read mesh data from file
     stringstream filename;
     filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_" << meshname << ".msh"; // TODO: set to final
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
-    if (is_MPI_rank_0()) cout << "Imported mesh info:" << endl << " dimension: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
 
-//    // TODO: generate using step_sizes
-//    boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-//    dealii::Point<3> corner1(-lx/20, -ly/2, -lz/2);
-//    dealii::Point<3> corner2(lx/20, ly/2, lz/2);
-//    vector<vector<double>> step_sizes(3, vector<double>(20, 1)); // domain is 387 slt, but we need only 20 slt very fine -> divide into 20 areas with decreasing step size
-//    step_sizes.resize(3);
-//    step_sizes[1] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0.1, 0.001, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; // only central 2 areas are fine
-//    dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, step_sizes, corner1, corner2, true);
-
+    if (is_MPI_rank_0()) cout << "Mesh info:" << endl << " dimension: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
     double minx=0, maxx=0, miny=0, maxy=0, minz=0, maxz=0;
     //// get minimum and maximum coordinates
     for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {

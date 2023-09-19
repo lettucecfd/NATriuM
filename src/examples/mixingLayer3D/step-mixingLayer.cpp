@@ -52,8 +52,7 @@ int main(int argc, char** argv) {
     parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_xxx)", "final_small");
     parser.setArgument<string>("randuname", "name of the mesh file (random_u_xxx)", "test2");
     parser.setArgument<int>("order", "order of finite elements", 3);
-    parser.setPositionalArgument<int>("ref-level",
-                                      "Refinement level of the computation grid.");
+    parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 0);
     parser.setArgument<int>("grid-repetitions",
                             "Number of grid cells along each axis before global refinement; "
                             "to produce grids with refinements that are not powers of two.", 3);
@@ -145,7 +144,7 @@ int main(int argc, char** argv) {
     }
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, squash, print, recalculate, m_dirname, meshname, randuscaling, randuname, U);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////
