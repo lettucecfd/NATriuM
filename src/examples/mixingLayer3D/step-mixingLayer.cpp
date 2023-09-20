@@ -66,9 +66,6 @@ int main(int argc, char** argv) {
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
     auto time = parser.getArgument<double>("time");
-    bool squash = parser.getArgument<int>("squash");
-    bool print = parser.getArgument<int>("print");
-    bool recalculate = parser.getArgument<int>("recalculate");
 
     /////////////////////////////////////////////////
     // set parameters, set up configuration object
