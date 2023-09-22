@@ -182,12 +182,27 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
 ////    step_sizes[2] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
 //    dealii::GridGenerator::subdivided_hyper_rectangle(*mesh, step_sizes, corner1, corner2);
 
+    if (meshname == "cube") {
+        boost::shared_ptr<Mesh<3> > cube = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
+        double lx = 1720 * shearlayerthickness / 2;
+        double ly = 387 * shearlayerthickness / 2;
+        double lz = 172 * shearlayerthickness / 2;
+        dealii::Point<3> corner1(-lx, -ly, -lz);
+        dealii::Point<3> corner2(lx, ly, lz);
+        std::vector<unsigned int> rep;
+        rep.push_back(1);
+        rep.push_back(1);
+        rep.push_back(1);
+        dealii::GridGenerator::subdivided_hyper_rectangle(*cube, rep, corner1, corner2, true);
+        return cube;
+    }
+
     //Taken from DiamondObstacle2D in step-gridin
     dealii::GridIn<3> grid_in;
     grid_in.attach_triangulation(*mesh);
     //// Read mesh data from file
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_" << meshname << ".msh"; // TODO: set to final
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/shearlayer_" << meshname << ".msh";
     ifstream file(filename.str().c_str());
     assert(file);
     grid_in.read_msh(file);
@@ -259,6 +274,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
         cout << endl;
     }
     mesh->get_boundary_ids();
+
     return mesh;
 }
 
