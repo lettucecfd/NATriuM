@@ -184,9 +184,9 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
 
     if (meshname == "cube") {
         boost::shared_ptr<Mesh<3> > cube = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-        double lx = 1720 * shearlayerthickness / 2;
-        double ly = 387 * shearlayerthickness / 2;
-        double lz = 172 * shearlayerthickness / 2;
+        double lx = 172 * shearlayerthickness / 2;
+        double ly = 38.7 * shearlayerthickness / 2;
+        double lz = 17.2 * shearlayerthickness / 2;
         dealii::Point<3> corner1(-lx, -ly, -lz);
         dealii::Point<3> corner2(lx, ly, lz);
         std::vector<unsigned int> rep;
