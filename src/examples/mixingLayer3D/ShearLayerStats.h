@@ -93,6 +93,7 @@ public:
     bool isMYCoordsUpToDate() const;
     void updateYValues();
     double integrate(vector<double> integrand);
+    double integrate(vector<double> integrand, double xmin, double xmax);
 
     vector<double> derivative(vector<double> values);
 

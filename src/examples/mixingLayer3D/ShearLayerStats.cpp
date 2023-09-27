@@ -344,9 +344,6 @@ void ShearLayerStats::calculateRhoU() {
         double momentumthickness_integral_Re = integrate(momentumthickness_integrand_Re);
         double momentumthickness_integral_Fa = integrate(momentumthickness_integrand_Fa);
         double growthrate_integral = integrate(growthrate_integrand);
-        for (size_t ij = 0; ij < 4; ij++) {
-            *bij_set.at(ij) = integrate(*bijvec_set.at(ij));
-        }
 
         // calculate vorticity thickness
         m_currentDeltaOmega = 2 /*dU*/ / *max_element(begin(dUdy_abs), end(dUdy_abs));
@@ -356,6 +353,11 @@ void ShearLayerStats::calculateRhoU() {
         m_currentDeltaTheta_Re = momentumthickness_integral_Re / (rho0 * pow(dU_Re, 2));
         m_currentDeltaTheta_Fa = momentumthickness_integral_Fa / (rho0 * pow(dU_Fa, 2));
         m_deltaThetaGrowth = growthrate_integral * (-2) / (rho0 * pow(dU_Fa, 3));
+
+        // integrate bij over momentum thickness
+        for (size_t ij = 0; ij < 4; ij++) {
+            *bij_set.at(ij) = integrate(*bijvec_set.at(ij), -m_currentDeltaTheta_Fa, m_currentDeltaTheta_Fa);
+        }
     }
 }
 
@@ -375,6 +377,28 @@ double ShearLayerStats::integrate(vector<double> integrand) {
             fi = (integrand.at(iy - 1) + 4 * integrand.at(iy) + integrand.at(iy + 1)) / 6;
         }
         integral += window_size * fi;
+    }
+    return integral;
+}
+
+double ShearLayerStats::integrate(vector<double> integrand, double ymin, double ymax) {
+    double integral = 0;
+    double window_size, fi, yi;
+    for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
+        yi = m_yCoordinates.at(iy);
+        if ((ymin < yi) and (yi < ymax)) {
+            if (iy == 0) { // left side: trapezoidal rule
+                window_size = (m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy));
+                fi = (integrand.at(iy) + integrand.at(iy + 1)) / 2;
+            } else if (iy == m_nofCoordinates - 1) {
+                window_size = (m_yCoordinates.at(iy) - m_yCoordinates.at(iy-1));
+                fi = (integrand.at(iy) + integrand.at(iy - 1)) / 2;
+            } else { // other: simpson rule
+                window_size = 0.5 * (m_yCoordinates.at(iy + 1) - m_yCoordinates.at(iy - 1));
+                fi = (integrand.at(iy - 1) + 4 * integrand.at(iy) + integrand.at(iy + 1)) / 6;
+            }
+            integral += window_size * fi;
+        }
     }
     return integral;
 }

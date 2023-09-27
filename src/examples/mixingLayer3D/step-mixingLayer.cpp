@@ -115,9 +115,11 @@ int main(int argc, char** argv) {
         std::stringstream dirName;
         dirName << getenv("NATRIUM_HOME");
         dirName << "/step-mixingLayer/Re" << Re
-                << "-Ma" << Ma
+                << "-Ma" << int(Ma*1000)/1000
                 << "-ref" << refinement_level
-                << "-p" << configuration->getSedgOrderOfFiniteElement();
+                << "-p" << configuration->getSedgOrderOfFiniteElement()
+                << "-mesh" << meshname
+                << "-randu" << int(randuscaling*1000)/1000;
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
