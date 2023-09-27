@@ -56,6 +56,11 @@ FinalChannelStatistics::FinalChannelStatistics(CFDSolver<3> & solver,
 	}
 	n_steps = 0;
 	m_nofCoordinates = 0;
+
+    // Do initial calculations
+    update();
+    addToTemporalAverages();
+    write_to_file();
 }
 
 void FinalChannelStatistics::update() {
