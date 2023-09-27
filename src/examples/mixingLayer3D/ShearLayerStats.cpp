@@ -116,16 +116,14 @@ void ShearLayerStats::apply() {
         }
         calculateRhoU();
         write();
-    }
-    else if ((iteration == 1)
-     or (iteration == 10)
-     or (iteration == 100)
-     or (iteration == 1000)) {
-        if (!isMYCoordsUpToDate()) {
-            updateYValues();
+    } else {
+        if ((iteration == 1) or (iteration == 10) or (iteration == 100) or (iteration == 1000)) {
+            if (!isMYCoordsUpToDate()) {
+                updateYValues();
+            }
+            calculateRhoU();
+            write_tn();
         }
-        calculateRhoU();
-        write_tn();
     }
 }
 
