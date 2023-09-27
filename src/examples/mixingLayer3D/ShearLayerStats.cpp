@@ -109,14 +109,18 @@ void ShearLayerStats::updateYValues() {
 }
 
 void ShearLayerStats::apply() {
-	if (m_solver.getIteration() % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0) {
+    size_t iteration = m_solver.getIteration();
+	if (iteration % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0) {
         if (!isMYCoordsUpToDate()) {
             updateYValues();
         }
         calculateRhoU();
         write();
     }
-    if (m_solver.getIteration() == 1 or m_solver.getIteration() == 100 or m_solver.getIteration() == 1000) {
+    else if ((iteration == 1)
+     or (iteration == 10)
+     or (iteration == 100)
+     or (iteration == 1000)) {
         if (!isMYCoordsUpToDate()) {
             updateYValues();
         }
@@ -149,22 +153,29 @@ void ShearLayerStats::calculateRhoU() {
     u_Re_set.push_back(&ux_Re); u_Re_set.push_back(&uy_Re); u_Re_set.push_back(&uz_Re);
     u_Fa_set.push_back(&ux_Fa); u_Fa_set.push_back(&uy_Fa); u_Fa_set.push_back(&uz_Fa);
     rhou_Re_set.push_back(&rhoux_Re); rhou_Re_set.push_back(&rhouy_Re); rhou_Re_set.push_back(&rhouz_Re);
-    // resize to fit length of y
+
+    // resize to fit length of y and set elements to 0
     for (size_t dim = 0; dim < 3; dim++) {
         u_Re_set.at(dim)->resize(m_nofCoordinates);
         u_Fa_set.at(dim)->resize(m_nofCoordinates);
         rhou_Re_set.at(dim)->resize(m_nofCoordinates);
+        std::fill(u_Re_set.at(dim)->begin(), u_Re_set.at(dim)->end(), 0);
+        std::fill(u_Fa_set.at(dim)->begin(), u_Fa_set.at(dim)->end(), 0);
+        std::fill(rhou_Re_set.at(dim)->begin(), rhou_Re_set.at(dim)->end(), 0);
     }
+    m_number.resize(m_nofCoordinates);
     umag_Re.resize(m_nofCoordinates); rho_Re.resize(m_nofCoordinates);
-
+    std::fill(m_number.begin(), m_number.end(), 0);
+    std::fill(umag_Re.begin(), umag_Re.end(), 0);
+    std::fill(rho_Re.begin(), rho_Re.end(), 0);
     for (size_t ij = 0; ij < 4; ij++) {
         Rij_set.at(ij)->resize(m_nofCoordinates);
+        std::fill(Rij_set.at(ij)->begin(), Rij_set.at(ij)->end(), 0);
     }
+
     m_K.resize(m_nofCoordinates);
     momentumthickness_integrand_Re.resize(m_nofCoordinates);
     momentumthickness_integrand_Fa.resize(m_nofCoordinates);
-    m_number.resize(m_nofCoordinates);
-    std::fill(m_number.begin(), m_number.end(), 0);
 //    vector<size_t> number(m_nofCoordinates,0);
     vector<size_t> nonumbers(0);
 
