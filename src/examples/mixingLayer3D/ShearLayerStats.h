@@ -54,6 +54,7 @@ private:
     double m_ReOmega;
     double m_deltaThetaGrowth;
     double m_b11, m_b22, m_b33, m_b12;
+    double dU_Re, dU_Fa;
 //    // Data stored across output steps
 //    double m_currentTime;
     // Data stored across y
@@ -64,6 +65,8 @@ private:
     vector<double> m_K;
 
     void write();
+    void write_tn();
+    void write_console();
     void calculateRhoU();
 
     static string scalaroutfile(string dir) {
@@ -93,7 +96,6 @@ public:
 
     vector<double> derivative(vector<double> values);
 
-    void write_tn();
 };
 
 } /* namespace natrium */

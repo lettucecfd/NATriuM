@@ -99,7 +99,7 @@ void ShearLayerStats::updateYValues() {
         m_yCoordinates.push_back(it);
         m_yCoordinateToIndex.insert(std::make_pair(it, i));
         i++;
-    } // cout << endl;
+    }
     m_nofCoordinates = i;
     // free
     free(sendbuf);
@@ -116,14 +116,15 @@ void ShearLayerStats::apply() {
         }
         calculateRhoU();
         write();
-    } else {
-        if ((iteration == 1) or (iteration == 10) or (iteration == 100) or (iteration == 1000)) {
-            if (!isMYCoordsUpToDate()) {
-                updateYValues();
-            }
-            calculateRhoU();
-            write_tn();
+        write_console();
+    }
+    if ((iteration == 1) or (iteration == 10) or (iteration == 100) or (iteration == 1000)) {
+        if (!isMYCoordsUpToDate()) {
+            updateYValues();
         }
+        calculateRhoU();
+        write_tn();
+        write_console();
     }
 }
 
@@ -260,9 +261,9 @@ void ShearLayerStats::calculateRhoU() {
         }
     }
     auto [minURe, maxURe] = std::minmax_element(begin(ux_Re), end(ux_Re));
-    auto dU_Re = *maxURe - *minURe;
+    dU_Re = *maxURe - *minURe;
     auto [minUFa, maxUFa] = std::minmax_element(begin(ux_Fa), end(ux_Fa));
-    auto dU_Fa = *maxUFa - *minUFa;
+    dU_Fa = *maxUFa - *minUFa;
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         momentumthickness_integrand_Re.at(iy) = rho_Re.at(iy) * (dU_Re / 2 - ux_Re.at(iy)) * (dU_Re / 2 + ux_Re.at(iy));
         momentumthickness_integrand_Fa.at(iy) = rho_Re.at(iy) * (dU_Fa / 2 - ux_Fa.at(iy)) * (dU_Fa / 2 + ux_Fa.at(iy));
@@ -355,25 +356,6 @@ void ShearLayerStats::calculateRhoU() {
         m_currentDeltaTheta_Re = momentumthickness_integral_Re / (rho0 * pow(dU_Re, 2));
         m_currentDeltaTheta_Fa = momentumthickness_integral_Fa / (rho0 * pow(dU_Fa, 2));
         m_deltaThetaGrowth = growthrate_integral * (-2) / (rho0 * pow(dU_Fa, 3));
-
-        // output to console
-//        cout << "dUdy_abs: ";
-//        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//            cout << dUdy_abs.at(yi) << ",";
-//        } cout << endl;
-        cout << "IT: " << m_solver.getIteration()
-            << ", t: " << m_solver.getTime()
-            << ", dU_Re: " << dU_Re
-            << ", dU_Fa: " << dU_Fa
-            << ", delta_Theta_Re: " << m_currentDeltaTheta_Re
-            << ", delta_Theta_Fa: " << m_currentDeltaTheta_Fa
-            << ", growth_rate: " << m_deltaThetaGrowth
-            << ", delta_Omega: " << m_currentDeltaOmega
-            << ", Re_Omega: " << m_ReOmega
-            << ", b11: " << m_b11
-            << ", b22: " << m_b22
-            << ", b12: " << m_b12
-            << endl;
     }
 }
 
@@ -414,6 +396,29 @@ vector<double> ShearLayerStats::derivative(vector<double> values) {
     }
 
     return derivat;
+}
+
+void ShearLayerStats::write_console() {
+    if (is_MPI_rank_0()) {
+        // output to console
+//        cout << "dUdy_abs: ";
+//        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
+//            cout << dUdy_abs.at(yi) << ",";
+//        } cout << endl;
+        cout << "IT: " << m_solver.getIteration()
+             << ", t: " << m_solver.getTime()
+             << ", dU_Re: " << dU_Re
+             << ", dU_Fa: " << dU_Fa
+             << ", delta_Theta_Re: " << m_currentDeltaTheta_Re
+             << ", delta_Theta_Fa: " << m_currentDeltaTheta_Fa
+             << ", growth_rate: " << m_deltaThetaGrowth
+             << ", delta_Omega: " << m_currentDeltaOmega
+             << ", Re_Omega: " << m_ReOmega
+             << ", b11: " << m_b11
+             << ", b22: " << m_b22
+             << ", b12: " << m_b12
+             << endl;
+    }
 }
 
 void ShearLayerStats::write() {
