@@ -468,7 +468,8 @@ void compressibleFilter() {
             // no output if solution interval > 10^8
             if (((iteration % this->m_configuration->getOutputSolutionInterval() == 0)
                  and this->m_configuration->getOutputSolutionInterval() <= 1e8)
-                or (is_final)) {
+                 or (iteration == 1)
+                 or (is_final)) {
                 // save local part of the solution
                 std::stringstream str;
                 str << this->m_configuration->getOutputDirectory().c_str() << "/t_"
