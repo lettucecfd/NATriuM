@@ -48,23 +48,27 @@ private:
 
     // Data
     double rho0 = 1;
-    double m_currentDeltaTheta_Re;
+//    double m_currentDeltaTheta_Re;
     double m_currentDeltaTheta_Fa;
     double m_currentDeltaOmega;
     double m_ReOmega;
     double m_deltaThetaGrowth;
     double m_b11, m_b22, m_b33, m_b12;
-    double dU_Re, dU_Fa;
+//    double dU_Re;
+    double dU_Fa;
 //    // Data stored across output steps
 //    double m_currentTime;
     // Data stored across y
     vector<double> m_R11, m_R22, m_R33, m_R12;
     vector<double> ux_Fa, uy_Fa, uz_Fa;
-    vector<double> ux_Re, uy_Re, uz_Re;
-    vector<double> umag_Re, rho_Re, momentumthickness_integrand_Fa, momentumthickness_integrand_Re, m_number;
+//    vector<double> ux_Re, uy_Re, uz_Re;
+    vector<double> umag_Re, rho_Re, momentumthickness_integrand_Fa;
+//    vector<double> momentumthickness_integrand_Fa, momentumthickness_integrand_Re;
+    vector<double> m_number;
     vector<double> m_K;
 
-    void write();
+    void write_scalars();
+    void write_vectors();
     void write_tn();
     void write_console();
     void calculateRhoU();
