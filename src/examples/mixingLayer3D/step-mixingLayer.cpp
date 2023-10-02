@@ -93,9 +93,9 @@ int main(int argc, char** argv) {
     configuration->setOutputCheckpointInterval(nout*100);
     configuration->setOutputSolutionInterval(nout);
     configuration->setSimulationEndTime(time);
-    configuration->setOutputGlobalTurbulenceStatistics(false);
-    configuration->setOutputCompressibleTurbulenceStatistics(false);
-    configuration->setOutputShearLayerStatistics(false);
+    configuration->setOutputGlobalTurbulenceStatistics(true);
+    configuration->setOutputCompressibleTurbulenceStatistics(true);
+    configuration->setOutputShearLayerStatistics(true);
     configuration->setOutputShearLayerInterval(parser.getArgument<int>("nstats"));
     configuration->setStencilScaling(scaling);
     configuration->setStencil(Stencil_D3Q45);
