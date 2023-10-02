@@ -333,9 +333,10 @@ void ShearLayerStats::calculateRhoU() {
         // calculate turbulent kinetic energy
         m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy)) / 2; // https://www.osti.gov/pages/servlets/purl/1580489
         // calculate anisotropy tensor along y
-        for (size_t ij = 0; ij < 4; ij++) {
+        for (size_t ij = 0; ij < 3; ij++) {
             bijvec_set.at(ij)->at(iy) = (Rij_set.at(ij)->at(iy) - 2. / 3 * m_K.at(iy) * 1) / (2 * m_K.at(iy));
         }
+        bijvec_set.at(3)->at(iy) = (Rij_set.at(3)->at(iy) - 2. / 3 * m_K.at(iy) * 0) / (2 * m_K.at(iy));
     }
 
     if (is_MPI_rank_0()) {
@@ -366,6 +367,14 @@ void ShearLayerStats::calculateRhoU() {
             *bij_set.at(ij) = integrate(*bijvec_set.at(ij), -m_currentDeltaTheta_Fa, m_currentDeltaTheta_Fa);
         }
     }
+    auto [minR11_pos, maxR11_pos] = std::minmax_element(begin(m_R11), end(m_R11));
+    min_R11 = *minR11_pos; max_R11 = *maxR11_pos;
+    auto [minR22_pos, maxR22_pos] = std::minmax_element(begin(m_R22), end(m_R22));
+    min_R22 = *minR22_pos; max_R22 = *maxR22_pos;
+    auto [minR33_pos, maxR33_pos] = std::minmax_element(begin(m_R33), end(m_R33));
+    min_R33 = *minR33_pos; max_R33 = *maxR33_pos;
+    auto [minR12_pos, maxR12_pos] = std::minmax_element(begin(m_R12), end(m_R12));
+    min_R12 = *minR12_pos; max_R12 = *maxR12_pos;
 }
 
 double ShearLayerStats::integrate(vector<double> integrand) {
@@ -462,6 +471,7 @@ void ShearLayerStats::write_scalars() {
                      << m_currentDeltaOmega << " "
                      << m_b11 << " "
                      << m_b22 << " "
+                     << m_b33 << " "
                      << m_b12 << " "
                      << endl;
     }
@@ -503,18 +513,17 @@ void ShearLayerStats::write_tn() {
         ofs.close();
         const string& tnFilename = out_file.string();
         boost::shared_ptr<std::fstream> tnFile = boost::make_shared<std::fstream>(tnFilename, std::fstream::out | std::fstream::app);
-        *tnFile << "it t deltaTheta_Fa deltaThetaDot deltaOmega b11 b22 b12" << endl;
-        *tnFile << this->m_solver.getIteration() << " " << m_solver.getTime() << " " << m_currentDeltaTheta_Fa << " "
-                  << m_deltaThetaGrowth << " " << m_currentDeltaOmega << " " << m_b11 << " " << m_b22 << " "
-                  << m_b12 << " " << endl;
+        *tnFile << "it t deltaTheta_Fa deltaThetaDot deltaOmega b11 b22 b33 b12 R11min R11max R22min R22max R33min R33max R12min R12max" << endl;
+        *tnFile << this->m_solver.getIteration() << " " << m_solver.getTime() << " "
+                << m_currentDeltaTheta_Fa << " " << m_deltaThetaGrowth << " " << m_currentDeltaOmega
+                << " " << m_b11 << " " << m_b22 << " " << m_b33 << " " << m_b12
+                << " " << min_R11 << " " << max_R11 << " " << min_R22 << " " << max_R22
+                << " " << min_R33 << " " << max_R33 << " " << min_R12 << " " << max_R12
+                << endl;
         *tnFile << "y: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << m_yCoordinates.at(iy) << " ";
         } *tnFile << endl;
-//        *tnFile << "ux_Re: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-//            *tnFile << ux_Re.at(iy) << " ";
-//        } *tnFile << endl;
         *tnFile << "ux_Fa: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << ux_Fa.at(iy) << " ";
@@ -543,26 +552,6 @@ void ShearLayerStats::write_tn() {
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << m_R12.at(iy) << " ";
         } *tnFile << endl;
-//        *tnFile << "momentumthickness_integrand_Re: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-//            *tnFile << momentumthickness_integrand_Re.at(iy) << " ";
-//        } *tnFile << endl;
-//        *tnFile << "momentumthickness_integrand_Fa: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-//            *tnFile << momentumthickness_integrand_Fa.at(iy) << " ";
-//        } *tnFile << endl;
-//        *tnFile << "number: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-//            *tnFile << m_number.at(iy) << " ";
-//        } *tnFile << endl;
-//        *tnFile << "uy_Re: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-//            *tnFile << uy_Re.at(iy) << " ";
-//        } *tnFile << endl;
-//        *tnFile << "uz_Re: ";
-//        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-//            *tnFile << uz_Re.at(iy) << " ";
-//        } *tnFile << endl;
         *tnFile << "uy_Fa: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << uy_Fa.at(iy) << " ";
@@ -570,6 +559,10 @@ void ShearLayerStats::write_tn() {
         *tnFile << "uz_Fa: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << uz_Fa.at(iy) << " ";
+        } *tnFile << endl;
+        *tnFile << "K: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *tnFile << m_K.at(iy) << " ";
         } *tnFile << endl;
     }
 }

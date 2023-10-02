@@ -54,6 +54,7 @@ private:
     double m_ReOmega;
     double m_deltaThetaGrowth;
     double m_b11, m_b22, m_b33, m_b12;
+    double min_R11, max_R11, min_R22, max_R22, min_R33, max_R33, min_R12, max_R12;
 //    double dU_Re;
     double dU_Fa;
 //    // Data stored across output steps
