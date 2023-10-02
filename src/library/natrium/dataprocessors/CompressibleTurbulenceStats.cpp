@@ -54,14 +54,9 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
                            << m_legendFilename << endl;
             std::ofstream legend_file(m_legendFilename, std::fstream::out);
 
-            int k = 0;
-            legend_file << k << "  <dilatation>" << endl;
-            k++;
-            legend_file << k << "  <solenoidal>" << endl;
-            k++;
-            legend_file << k << "  maxMach" << endl;
-            legend_file.close();
-
+            for (size_t k = 0; k < m_names.size(); k++) {
+                legend_file << k << "  <" << m_names.at(k) << ">" << endl;
+            }
         } /* is_MPI_rank 0 */
     }
 
