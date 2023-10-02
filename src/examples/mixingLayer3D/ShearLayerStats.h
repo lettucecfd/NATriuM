@@ -56,15 +56,15 @@ private:
     double m_b11, m_b22, m_b33, m_b12;
     double min_R11, max_R11, min_R22, max_R22, min_R33, max_R33, min_R12, max_R12;
 //    double dU_Re;
-    double dU_Fa;
+    double m_dUx;
 //    // Data stored across output steps
 //    double m_currentTime;
     // Data stored across y
     vector<double> m_R11, m_R22, m_R33, m_R12;
     vector<double> ux_Fa, uy_Fa, uz_Fa;
 //    vector<double> ux_Re, uy_Re, uz_Re;
-    vector<double> umag_Re, rho_Re, momentumthickness_integrand_Fa;
-//    vector<double> momentumthickness_integrand_Fa, momentumthickness_integrand_Re;
+    vector<double> umag_Re, rho_Re, momentumthickness_integrand;
+//    vector<double> momentumthickness_integrand, momentumthickness_integrand_Re;
     vector<double> m_number;
     vector<double> m_K;
 

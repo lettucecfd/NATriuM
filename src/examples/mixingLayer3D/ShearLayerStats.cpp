@@ -156,33 +156,24 @@ void ShearLayerStats::calculateRhoU() {
     bij_set.push_back(&m_b11); bij_set.push_back(&m_b22); bij_set.push_back(&m_b33); bij_set.push_back(&m_b12);
 //    vector<vector<double>*> u_Re_set;
     vector<vector<double>*> u_Fa_set, rhou_Re_set;
-//    u_Re_set.push_back(&ux_Re); u_Re_set.push_back(&uy_Re); u_Re_set.push_back(&uz_Re);
     u_Fa_set.push_back(&ux_Fa); u_Fa_set.push_back(&uy_Fa); u_Fa_set.push_back(&uz_Fa);
     rhou_Re_set.push_back(&rhoux_Re); rhou_Re_set.push_back(&rhouy_Re); rhou_Re_set.push_back(&rhouz_Re);
 
     // resize to fit length of y and set elements to 0
     for (size_t dim = 0; dim < 3; dim++) {
-//        u_Re_set.at(dim)->resize(m_nofCoordinates);
-        u_Fa_set.at(dim)->resize(m_nofCoordinates);
-        rhou_Re_set.at(dim)->resize(m_nofCoordinates);
-//        std::fill(u_Re_set.at(dim)->begin(), u_Re_set.at(dim)->end(), 0);
-        std::fill(u_Fa_set.at(dim)->begin(), u_Fa_set.at(dim)->end(), 0);
-        std::fill(rhou_Re_set.at(dim)->begin(), rhou_Re_set.at(dim)->end(), 0);
+        u_Fa_set.at(dim)->resize(m_nofCoordinates); std::fill(u_Fa_set.at(dim)->begin(), u_Fa_set.at(dim)->end(), 0);
+        rhou_Re_set.at(dim)->resize(m_nofCoordinates); std::fill(rhou_Re_set.at(dim)->begin(), rhou_Re_set.at(dim)->end(), 0);
     }
-    m_number.resize(m_nofCoordinates);
-    umag_Re.resize(m_nofCoordinates); rho_Re.resize(m_nofCoordinates);
-    std::fill(m_number.begin(), m_number.end(), 0);
-    std::fill(umag_Re.begin(), umag_Re.end(), 0);
-    std::fill(rho_Re.begin(), rho_Re.end(), 0);
+    m_number.resize(m_nofCoordinates); std::fill(m_number.begin(), m_number.end(), 0);
+    umag_Re.resize(m_nofCoordinates); std::fill(umag_Re.begin(), umag_Re.end(), 0);
+    rho_Re.resize(m_nofCoordinates); std::fill(rho_Re.begin(), rho_Re.end(), 0);
     for (size_t ij = 0; ij < 4; ij++) {
         Rij_set.at(ij)->resize(m_nofCoordinates);
         std::fill(Rij_set.at(ij)->begin(), Rij_set.at(ij)->end(), 0);
     }
 
     m_K.resize(m_nofCoordinates);
-//    momentumthickness_integrand_Re.resize(m_nofCoordinates);
-    momentumthickness_integrand_Fa.resize(m_nofCoordinates);
-//    vector<size_t> number(m_nofCoordinates,0);
+    momentumthickness_integrand.resize(m_nofCoordinates);
     vector<size_t> nonumbers(0);
 
     // don't know what I do here, but it worked for turbulent channel
@@ -216,7 +207,6 @@ void ShearLayerStats::calculateRhoU() {
                 // fill value vector
                 for (size_t dim = 0; dim < 3; dim++) {
                     rhou_Re_set.at(dim)->at(y_ind) += m_rho(dof_ind) * m_u.at(dim)(dof_ind);
-//                    u_Re_set.at(dim)->at(y_ind) += m_u.at(dim)(dof_ind);
                 }
                 rho_Re.at(y_ind) += m_rho(dof_ind);
                 umag_Re.at(y_ind) += sqrt(pow(m_u.at(0)(dof_ind), 2) + pow(m_u.at(1)(dof_ind), 2) + pow(m_u.at(2)(dof_ind), 2));
@@ -233,8 +223,6 @@ void ShearLayerStats::calculateRhoU() {
             for (size_t dim = 0; dim < 3; dim++) {
                 rhou_Re_set.at(dim)->at(iy) = dealii::Utilities::MPI::sum(rhou_Re_set.at(dim)->at(iy), MPI_COMM_WORLD);
                 rhou_Re_set.at(dim)->at(iy) /= m_number.at(iy);
-//                u_Re_set.at(dim)->at(iy) = dealii::Utilities::MPI::sum(u_Re_set.at(dim)->at(iy), MPI_COMM_WORLD);
-//                u_Re_set.at(dim)->at(iy) /= m_number.at(iy);
             }
             rho_Re.at(iy) = dealii::Utilities::MPI::sum(rho_Re.at(iy), MPI_COMM_WORLD);
             umag_Re.at(iy) = dealii::Utilities::MPI::sum(umag_Re.at(iy), MPI_COMM_WORLD);
@@ -255,7 +243,6 @@ void ShearLayerStats::calculateRhoU() {
         window_size = dy_u + dy_l;
         for (size_t dim = 0; dim < 3; dim++) {
             rhou_Re_set.at(dim)->at(iy) = 1 / window_size * (rhou_Re_set.at(dim)->at(iy_u) * dy_u + rhou_Re_set.at(dim)->at(iy_l) * dy_l);
-//            u_Re_set.at(dim)->at(iy) = 1 / window_size * (u_Re_set.at(dim)->at(iy_u) * dy_u + u_Re_set.at(dim)->at(iy_l) * dy_l);
         }
         rho_Re.at(iy) = 1 / window_size * (rho_Re.at(iy_u) * dy_u + rho_Re.at(iy_l) * dy_l);
         umag_Re.at(iy) = 1 / window_size * (umag_Re.at(iy_u) * dy_u + umag_Re.at(iy_l) * dy_l);
@@ -267,13 +254,11 @@ void ShearLayerStats::calculateRhoU() {
             u_Fa_set.at(dim)->at(iy) = rhou_Re_set.at(dim)->at(iy) / rho_Re.at(iy);
         }
     }
-//    auto [minURe, maxURe] = std::minmax_element(begin(ux_Re), end(ux_Re));
-//    dU_Re = *maxURe - *minURe;
-    auto [minUFa, maxUFa] = std::minmax_element(begin(ux_Fa), end(ux_Fa));
-    dU_Fa = *maxUFa - *minUFa;
+    auto [minUx, maxUx] = std::minmax_element(begin(ux_Fa), end(ux_Fa));
+    m_dUx = *maxUx - *minUx;
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
 //        momentumthickness_integrand_Re.at(iy) = rho_Re.at(iy) * (dU_Re / 2 - ux_Re.at(iy)) * (dU_Re / 2 + ux_Re.at(iy));
-        momentumthickness_integrand_Fa.at(iy) = rho_Re.at(iy) * (dU_Fa / 2 - ux_Fa.at(iy)) * (dU_Fa / 2 + ux_Fa.at(iy));
+        momentumthickness_integrand.at(iy) = rho_Re.at(iy) * (m_dUx / 2 - ux_Fa.at(iy)) * (m_dUx / 2 + ux_Fa.at(iy));
     }
 
     // calculate flux of ux, uy, uz at all points
@@ -349,22 +334,20 @@ void ShearLayerStats::calculateRhoU() {
         }
 
         // calculate y-integrals
-//        double momentumthickness_integral_Re = integrate(momentumthickness_integrand_Re);
-        double momentumthickness_integral_Fa = integrate(momentumthickness_integrand_Fa);
+        double momentumthickness_integral_Fa = integrate(momentumthickness_integrand);
         double growthrate_integral = integrate(growthrate_integrand);
 
         // calculate vorticity thickness
-        m_currentDeltaOmega = dU_Fa /*dU*/ / *max_element(begin(dUdy_abs), end(dUdy_abs));
-        m_ReOmega = rho0 /*rho0*/ * dU_Fa /*dU*/ * m_Re0 * m_currentDeltaOmega;
+        m_currentDeltaOmega = m_dUx /*dU*/ / *max_element(begin(dUdy_abs), end(dUdy_abs));
+        m_ReOmega = rho0 /*rho0*/ * m_dUx /*dU*/ * m_Re0 * m_currentDeltaOmega;
 
         // calculate momentum thickness
-//        m_currentDeltaTheta_Re = momentumthickness_integral_Re / (rho0 * pow(dU_Re, 2));
-        m_currentDeltaTheta_Fa = momentumthickness_integral_Fa / (rho0 * pow(dU_Fa, 2));
-        m_deltaThetaGrowth = growthrate_integral * (-2) / (rho0 * pow(dU_Fa, 3));
+        m_currentDeltaTheta_Fa = momentumthickness_integral_Fa / (rho0 * pow(m_dUx, 2));
+        m_deltaThetaGrowth = growthrate_integral * (-2) / (rho0 * pow(m_dUx, 3));
 
         // integrate bij over momentum thickness
         for (size_t ij = 0; ij < 4; ij++) {
-            *bij_set.at(ij) = integrate(*bijvec_set.at(ij), -m_currentDeltaTheta_Fa, m_currentDeltaTheta_Fa);
+            *bij_set.at(ij) = integrate(*bijvec_set.at(ij), -m_currentDeltaOmega, m_currentDeltaOmega);
         }
     }
     auto [minR11_pos, maxR11_pos] = std::minmax_element(begin(m_R11), end(m_R11));
@@ -448,7 +431,7 @@ void ShearLayerStats::write_console() {
         cout << "IT: " << m_solver.getIteration()
              << ", t: " << m_solver.getTime()
 //             << ", dU_Re: " << dU_Re
-             << ", dU: " << dU_Fa
+             << ", dU: " << m_dUx
 //             << ", delta_Theta_Re: " << m_currentDeltaTheta_Re
              << ", delta_Theta: " << m_currentDeltaTheta_Fa
              << ", growth_rate: " << m_deltaThetaGrowth
