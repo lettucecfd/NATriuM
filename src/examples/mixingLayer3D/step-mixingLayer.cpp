@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     // Set to 0.3, 0.7, 0.9, 1.0, 1.2
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
-    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 0.01);
+    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 1);
     parser.setArgument<double>("CFL", "CFL number", 0.4);
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);

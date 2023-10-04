@@ -38,6 +38,7 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
     updateYValues();
     calculateRhoU();
     write_tn();
+    write_console();
 }
 
 bool ShearLayerStats::isMYCoordsUpToDate() const {
@@ -403,7 +404,7 @@ vector<double> ShearLayerStats::derivative(vector<double> values) {
 
 void ShearLayerStats::write_console() {
     if (is_MPI_rank_0()) {
-        cout << "IT: " << m_solver.getIteration()
+        LOG(DETAILED) << "IT: " << m_solver.getIteration()
              << ", t: " << m_solver.getTime()
              << ", dU: " << m_dUx
              << ", delta_Theta: " << m_currentDeltaTheta_Fa
