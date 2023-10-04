@@ -44,6 +44,7 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
     parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 0.01);
+    parser.setArgument<double>("CFL", "CFL number", 0.4);
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setArgument<int>("squash", "squash grid towards centre", 0);
@@ -82,10 +83,14 @@ int main(int argc, char** argv) {
     //const double L = 2 * M_PI;
     const double viscosity = 1.0 / Re;
     const double Ma = parser.getArgument<double>("Ma")*sqrt(1.4);
+    const double cfl = parser.getArgument<double>("CFL");
     const double cs = U / Ma;
 
     // chose scaling so that the right Ma-number is achieved
-    const double scaling = sqrt(3) * cs; // TODO: choose different? -> stencil larger/smaller -> from turb. channel
+    const double reference_temperature = 1; //0.85;
+    const double gamma = 1;//1.4;
+    const double scaling = sqrt(3) * U / (Ma*sqrt(gamma*reference_temperature));
+//    const double scaling = sqrt(3) * cs; // TODO: choose different? -> stencil larger/smaller -> from turb. channel
 
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
@@ -104,7 +109,7 @@ int main(int argc, char** argv) {
     configuration->setHeatCapacityRatioGamma(1.4);
     configuration->setPrandtlNumber(0.71);
     configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order")); // TODO: set to 4
-    configuration->setCFL(1.5); // TODO: should be 0.4<CFL<2
+    configuration->setCFL(cfl); // TODO: should be 0.4<CFL<2
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
@@ -141,6 +146,55 @@ int main(int argc, char** argv) {
     } else {
         m_dirname = configuration->getOutputDirectory();
     }
+
+    // ========================================================================
+    // COMMAND LINE OUTPUT
+    // ========================================================================
+//    const double p = configuration->getSedgOrderOfFiniteElement();
+//    const double dt = configuration->getCFL() / (p * p) / (sqrt(2) * scaling) * ymin;
+//    const double dxplus = length / repetitions.at(0) / pow(2, ref_level)
+//                          / (viscosity / utau);
+//    const double dzplus = width / repetitions.at(2) / pow(2, ref_level)
+//                          / (viscosity / utau);
+//    LOG(WELCOME) << "          -----         " << endl
+//                    << "          -----         " << endl << "FLOW SETUP: " << endl
+//                    << "===================================================" << endl
+//                    << "Re_cl = u_cl * delta / nu   = " << u_cl << " * " << delta
+//                    << " / " << viscosity << " = " << u_cl * delta / viscosity << endl
+//                    << "u_tau = Re_tau * nu / delta = " << Re_tau << " * " << viscosity
+//                    << " / " << delta << " = " << Re_tau * viscosity / delta << endl
+//                    << "F     = rho * utau^2 / delta = 1.0 * " << utau << "^2" << " / "
+//                    << delta << " = " << utau * utau / delta << endl
+//                    << "          -----         " << endl << "          -----        "
+//                    << endl
+//                    << "CHANNEL SETUP: " << endl
+//                    << "===================================================" << endl
+//                    << "Dimensions:    " << lx << " x " << height << " x " << width
+//                    << endl << "Grid:          " << repetitions.at(0) << " x "
+//                    << repetitions.at(1) << " x " << repetitions.at(2)
+//                    << " blocks with 8^" << ref_level << " cells each " << endl
+//                    << "#Cells:        " << int(repetitions.at(0) * pow(2, ref_level))
+//                    << " x " << int(repetitions.at(1) * pow(2, ref_level)) << " x "
+//                    << int(repetitions.at(2) * pow(2, ref_level)) << " = "
+//                    << int(
+//                         repetitions.at(0) * repetitions.at(1) * repetitions.at(2)
+//                         * pow(2, 3 * ref_level)) << endl << "#Points:       "
+//                    << int(repetitions.at(0) * pow(2, ref_level) * p) << " x "
+//                    << int(repetitions.at(1) * pow(2, ref_level) * p) << " x "
+//                    << int(repetitions.at(2) * pow(2, ref_level) * p) << " = "
+//                    << int(
+//                         repetitions.at(0) * repetitions.at(1) * repetitions.at(2)
+//                         * pow(2, 3 * ref_level) * p * p * p) << endl
+//                    << "y+ (wrt. cells): "  << yplus << "   dx+ = " << dxplus << ", "
+//                    << "dz+ = " << dzplus << endl << "          -----         " << endl
+//                    << "          -----         " << endl;
+//                    << "==================================================="
+//                        << endl << "               dt  = " << dt << endl << "               dt+ = "
+//                        << dt/(viscosity/utau/utau) << endl << "    u_tau cross time = "
+//                        << length / utau << " = "
+//                        << int(length / utau / dt) << " steps" << endl
+//                        << "===================================================" << endl
+//                        << endl
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
             boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U);
