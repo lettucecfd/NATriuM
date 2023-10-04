@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("print", "print calculations of initial velocity", 0);
     parser.setArgument<int>("recalculate", "recalculate initial velocity", 0);
     parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final_small");
-    parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "test2");
+    parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "one-2th_886");
     parser.setArgument<int>("order", "order of finite elements", 3);
     parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 0);
     parser.setArgument<int>("grid-repetitions",
@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
     }
-    string meshname = parser.getArgument<string>("meshname");
-    string randuname = parser.getArgument<string>("randuname");
+    auto meshname = parser.getArgument<string>("meshname");
+    auto randuname = parser.getArgument<string>("randuname");
     double randuscaling = parser.getArgument<double>("randuscaling");
     double Re = parser.getArgument<int>("Re");
     double refinement_level = parser.getArgument<int>("ref-level");
@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     //const double L = 2 * M_PI;
     const double viscosity = 1.0 / Re;
     const double Ma = parser.getArgument<double>("Ma")*sqrt(1.4);
-    const double cfl = parser.getArgument<double>("CFL");
+    const auto cfl = parser.getArgument<double>("CFL");
     const double cs = U / Ma;
 
     // chose scaling so that the right Ma-number is achieved
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
                 << "-ref" << refinement_level
                 << "-p" << configuration->getSedgOrderOfFiniteElement()
                 << "-mesh" << meshname
-                << "-randu" << floor(randuscaling*1000)/1000;
+                << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000;
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)

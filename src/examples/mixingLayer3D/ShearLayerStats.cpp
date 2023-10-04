@@ -19,7 +19,6 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
         m_Re0(starting_Re), m_u(solver.getVelocity()), m_rho(solver.getDensity()),
         m_outDir(outdir), m_filename(scalaroutfile(solver.getConfiguration()->getOutputDirectory())),
         m_vectorfilename(vectoroutfile(solver.getConfiguration()->getOutputDirectory())),
-//        m_currentDeltaTheta_Re(starting_delta_theta),
         m_currentDeltaTheta_Fa(starting_delta_theta), m_currentDeltaOmega(0.41), m_b11(0), m_b22(0), m_b12(0) {
     nround = pow(10,12); // round coordinates to this magnitude
     m_yCoordsUpToDate = false;
