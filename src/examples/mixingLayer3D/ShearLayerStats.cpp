@@ -38,8 +38,6 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
     }
     updateYValues();
     calculateRhoU();
-//    write_scalars();
-//    write_vectors();
     write_tn();
 }
 
@@ -112,17 +110,6 @@ void ShearLayerStats::updateYValues() {
 
 void ShearLayerStats::apply() {
     size_t iteration = m_solver.getIteration();
-//	if (iteration % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0) {
-//        if (!isMYCoordsUpToDate()) {
-//            updateYValues();
-//        }
-//        calculateRhoU();
-//        write_scalars();
-//        if (iteration % (m_solver.getConfiguration()->getOutputShearLayerInterval() * 10) == 0) {
-//            write_vectors();
-//        }
-//        write_console();
-//    }
     if ((iteration == 1) or (iteration == 10) or (iteration == 50) or (iteration == 100) or (iteration == 500)
         or (iteration % 1000 == 0) or (iteration % m_solver.getConfiguration()->getOutputShearLayerInterval() == 0)) {
         if (!isMYCoordsUpToDate()) {
@@ -139,22 +126,17 @@ void ShearLayerStats::calculateRhoU() {
     // Calculate averages ////
     //////////////////////////
     // initialize vectors for averages along x and z
-//    vector<double> ux_Re(m_nofCoordinates, 0), uy_Re(m_nofCoordinates, 0), uz_Re(m_nofCoordinates, 0);
-//    vector<double> umag_Re(m_nofCoordinates, 0), rho_Re(m_nofCoordinates, 0);
     vector<double> rhoux_Re(m_nofCoordinates, 0), rhouy_Re(m_nofCoordinates, 0), rhouz_Re(m_nofCoordinates, 0);
     // initialize vectors for combined sizes
-    vector<double> rhou11(m_nofCoordinates,0), rhou22(m_nofCoordinates,0), rhou33(m_nofCoordinates,0), rhou12(m_nofCoordinates,0),
+    vector<double> rhoU11Flux(m_nofCoordinates, 0), rhoU22Flux(m_nofCoordinates, 0), rhoU33Flux(m_nofCoordinates, 0), rhoU12Flux(m_nofCoordinates, 0),
     b11vec(m_nofCoordinates,0), b22vec(m_nofCoordinates,0), b33vec(m_nofCoordinates,0), b12vec(m_nofCoordinates,0),
-//    ux_Fa(m_nofCoordinates,0), uy_Fa(m_nofCoordinates,0), uz_Fa(m_nofCoordinates,0),
-//    momentumthickness_integrand(m_nofCoordinates,0),
     growthrate_integrand(m_nofCoordinates,0);
-    vector<vector<double>*> rhouij_set, bijvec_set, Rij_set;
-    rhouij_set.push_back(&rhou11); rhouij_set.push_back(&rhou22); rhouij_set.push_back(&rhou33); rhouij_set.push_back(&rhou12);
+    vector<vector<double>*> rhoUijFlux_set, bijvec_set, Rij_set;
+    rhoUijFlux_set.push_back(&rhoU11Flux); rhoUijFlux_set.push_back(&rhoU22Flux); rhoUijFlux_set.push_back(&rhoU33Flux); rhoUijFlux_set.push_back(&rhoU12Flux);
     bijvec_set.push_back(&b11vec); bijvec_set.push_back(&b22vec); bijvec_set.push_back(&b33vec); bijvec_set.push_back(&b12vec);
     Rij_set.push_back(&m_R11); Rij_set.push_back(&m_R22); Rij_set.push_back(&m_R33); Rij_set.push_back(&m_R12);
     vector<double*> bij_set;
     bij_set.push_back(&m_b11); bij_set.push_back(&m_b22); bij_set.push_back(&m_b33); bij_set.push_back(&m_b12);
-//    vector<vector<double>*> u_Re_set;
     vector<vector<double>*> u_Fa_set, rhou_Re_set;
     u_Fa_set.push_back(&ux_Fa); u_Fa_set.push_back(&uy_Fa); u_Fa_set.push_back(&uz_Fa);
     rhou_Re_set.push_back(&rhoux_Re); rhou_Re_set.push_back(&rhouy_Re); rhou_Re_set.push_back(&rhouz_Re);
@@ -231,7 +213,7 @@ void ShearLayerStats::calculateRhoU() {
         } else nonumbers.push_back(iy);
     }
     // average of neighboring points if there were no points
-    int iy_u, iy_l;
+    size_t iy_u, iy_l;
     float dy_u, dy_l;
     float window_size;
     for (auto iy : nonumbers) {
@@ -257,12 +239,11 @@ void ShearLayerStats::calculateRhoU() {
     auto [minUx, maxUx] = std::minmax_element(begin(ux_Fa), end(ux_Fa));
     m_dUx = *maxUx - *minUx;
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-//        momentumthickness_integrand_Re.at(iy) = rho_Re.at(iy) * (dU_Re / 2 - ux_Re.at(iy)) * (dU_Re / 2 + ux_Re.at(iy));
         momentumthickness_integrand.at(iy) = rho_Re.at(iy) * (m_dUx / 2 - ux_Fa.at(iy)) * (m_dUx / 2 + ux_Fa.at(iy));
     }
 
     // calculate flux of ux, uy, uz at all points
-    double uxflux_Fa, uyflux_Fa, uzflux_Fa;// loop
+    vector<double> uflux_Fa_set(4, 0);
     for (cell = dof_handler.begin_active(); cell != endc; ++cell) {
         if (cell->is_locally_owned()) {
             cell->get_dof_indices(local_indices);
@@ -276,14 +257,14 @@ void ShearLayerStats::calculateRhoU() {
                 y_ind = m_yCoordinateToIndex.at(y);
                 dof_ind = local_indices.at(i);
                 // calculate fluxes
-                uxflux_Fa = m_u.at(0)(dof_ind) - ux_Fa.at(y_ind);
-                uyflux_Fa = m_u.at(1)(dof_ind) - uy_Fa.at(y_ind);
-                uzflux_Fa = m_u.at(2)(dof_ind) - uz_Fa.at(y_ind);
+                for (size_t dim = 0; dim < 3; dim++) {
+                    uflux_Fa_set.at(dim) = m_u.at(dim)(dof_ind) - u_Fa_set.at(dim)->at(y_ind);
+                }
                 // fill value vector
-                rhou11.at(y_ind) += m_rho(dof_ind) * uxflux_Fa * uxflux_Fa;
-                rhou22.at(y_ind) += m_rho(dof_ind) * uyflux_Fa * uyflux_Fa;
-                rhou33.at(y_ind) += m_rho(dof_ind) * uzflux_Fa * uzflux_Fa;
-                rhou12.at(y_ind) += m_rho(dof_ind) * uxflux_Fa * uyflux_Fa;
+                for (size_t ij = 0; ij < 3; ij++) {
+                    rhoUijFlux_set.at(ij)->at(y_ind) += m_rho(dof_ind) * uflux_Fa_set.at(ij) * uflux_Fa_set.at(ij);
+                }
+                rhoUijFlux_set.at(3)->at(y_ind) += m_rho(dof_ind) * uflux_Fa_set.at(0) * uflux_Fa_set.at(1);
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
@@ -292,8 +273,8 @@ void ShearLayerStats::calculateRhoU() {
         // average over number of points at y
         if (m_number.at(iy) != 0) {
             for (size_t ij = 0; ij < 4; ij++) {
-                rhouij_set.at(ij)->at(iy) = dealii::Utilities::MPI::sum(rhouij_set.at(ij)->at(iy), MPI_COMM_WORLD);
-                rhouij_set.at(ij)->at(iy) /= m_number.at(iy);
+                rhoUijFlux_set.at(ij)->at(iy) = dealii::Utilities::MPI::sum(rhoUijFlux_set.at(ij)->at(iy), MPI_COMM_WORLD);
+                rhoUijFlux_set.at(ij)->at(iy) /= m_number.at(iy);
             }
         }
     }
@@ -306,14 +287,14 @@ void ShearLayerStats::calculateRhoU() {
         dy_l = m_yCoordinates.at(iy) - m_yCoordinates.at(iy_l);
         window_size = dy_u + dy_l;
         for (size_t ij = 0; ij < 4; ij++) {
-            rhouij_set.at(ij)->at(iy) = 1 / window_size * (rhouij_set.at(ij)->at(iy_u) * dy_u + rhouij_set.at(ij)->at(iy_l) * dy_l);
+            rhoUijFlux_set.at(ij)->at(iy) = 1 / window_size * (rhoUijFlux_set.at(ij)->at(iy_u) * dy_u + rhoUijFlux_set.at(ij)->at(iy_l) * dy_l);
         }
     }
 
     // calculate Rij
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         for (size_t ij = 0; ij < 4; ij++) {
-            Rij_set.at(ij)->at(iy) = rhouij_set.at(ij)->at(iy) / rho_Re.at(iy);
+            Rij_set.at(ij)->at(iy) = rhoUijFlux_set.at(ij)->at(iy) / rho_Re.at(iy);
         }
         // calculate turbulent kinetic energy
         m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy)) / 2; // https://www.osti.gov/pages/servlets/purl/1580489
@@ -321,7 +302,7 @@ void ShearLayerStats::calculateRhoU() {
         for (size_t ij = 0; ij < 3; ij++) {
             bijvec_set.at(ij)->at(iy) = (Rij_set.at(ij)->at(iy) - 2. / 3 * m_K.at(iy) * 1) / (2 * m_K.at(iy));
         }
-        bijvec_set.at(3)->at(iy) = (Rij_set.at(3)->at(iy) - 2. / 3 * m_K.at(iy) * 0) / (2 * m_K.at(iy));
+        bijvec_set.at(3)->at(iy) = Rij_set.at(3)->at(iy) / (2 * m_K.at(iy));
     }
 
     if (is_MPI_rank_0()) {
@@ -339,13 +320,13 @@ void ShearLayerStats::calculateRhoU() {
 
         // calculate vorticity thickness
         m_currentDeltaOmega = m_dUx /*dU*/ / *max_element(begin(dUdy_abs), end(dUdy_abs));
-        m_ReOmega = rho0 /*rho0*/ * m_dUx /*dU*/ * m_Re0 * m_currentDeltaOmega;
+        m_ReOmega = rho0 * m_Re0 * m_dU0 * m_currentDeltaOmega;
 
         // calculate momentum thickness
         m_currentDeltaTheta_Fa = momentumthickness_integral_Fa / (rho0 * pow(m_dUx, 2));
         m_deltaThetaGrowth = growthrate_integral * (-2) / (rho0 * pow(m_dUx, 3));
 
-        // integrate bij over momentum thickness
+        // integrate bij over vorticity thickness
         for (size_t ij = 0; ij < 4; ij++) {
             *bij_set.at(ij) = integrate(*bijvec_set.at(ij), -m_currentDeltaOmega, m_currentDeltaOmega);
         }
@@ -423,16 +404,9 @@ vector<double> ShearLayerStats::derivative(vector<double> values) {
 
 void ShearLayerStats::write_console() {
     if (is_MPI_rank_0()) {
-        // output to console
-//        cout << "dUdy_abs: ";
-//        for (size_t yi = 0; yi < m_nofCoordinates; yi++) {
-//            cout << dUdy_abs.at(yi) << ",";
-//        } cout << endl;
         cout << "IT: " << m_solver.getIteration()
              << ", t: " << m_solver.getTime()
-//             << ", dU_Re: " << dU_Re
              << ", dU: " << m_dUx
-//             << ", delta_Theta_Re: " << m_currentDeltaTheta_Re
              << ", delta_Theta: " << m_currentDeltaTheta_Fa
              << ", growth_rate: " << m_deltaThetaGrowth
              << ", delta_Omega: " << m_currentDeltaOmega
@@ -441,47 +415,6 @@ void ShearLayerStats::write_console() {
              << ", b22: " << m_b22
              << ", b12: " << m_b12
              << endl;
-    }
-}
-
-void ShearLayerStats::write_scalars() {
-    if (is_MPI_rank_0()) {
-        *m_tableFile << this->m_solver.getIteration() << " "
-                     << m_solver.getTime() << " "
-//                     << m_currentDeltaTheta_Re << " "
-                     << m_currentDeltaTheta_Fa << " "
-                     << m_deltaThetaGrowth << " "
-                     << m_currentDeltaOmega << " "
-                     << m_b11 << " "
-                     << m_b22 << " "
-                     << m_b33 << " "
-                     << m_b12 << " "
-                     << endl;
-    }
-}
-
-void ShearLayerStats::write_vectors() {
-    if (is_MPI_rank_0()) {
-        *m_vectorFile << "y: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_vectorFile << m_yCoordinates.at(iy) << " ";
-        } *m_vectorFile << endl;
-        *m_vectorFile << "R11: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_vectorFile << m_R11.at(iy) << " ";
-        } *m_vectorFile << endl;
-        *m_vectorFile << "R22: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_vectorFile << m_R22.at(iy) << " ";
-        } *m_vectorFile << endl;
-        *m_vectorFile << "R33: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_vectorFile << m_R33.at(iy) << " ";
-        } *m_vectorFile << endl;
-        *m_vectorFile << "R12: ";
-        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
-            *m_vectorFile << m_R12.at(iy) << " ";
-        } *m_vectorFile << endl;
     }
 }
 
