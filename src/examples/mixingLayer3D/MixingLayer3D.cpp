@@ -87,10 +87,10 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_randu_scaling(randu_sc
     }
 
     if (is_MPI_rank_0()) {
-        LOG(WELCOME) << " Creating linspaces x, y, z for interpolation." << endl
-            << "  nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl
-            << "  lx: " << lx << ", ly: " << ly << ", lz: " << lz << endl
-            << "  lx/dTh0: " << lx / 0.093 << ", ly/dTh0: " << ly / 0.093 << ", lz/dTh0: " << lz / 0.093 << endl;
+        LOG(WELCOME) << "Creating linspaces x, y, z for interpolation." << endl;
+        LOG(DETAILED) << "nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl
+            << "lx: " << lx << ", ly: " << ly << ", lz: " << lz << endl
+            << "lx/dTh0: " << lx / 0.093 << ", ly/dTh0: " << ly / 0.093 << ", lz/dTh0: " << lz / 0.093 << endl;
     }
     vector<double> x, y, z;
     double dx, dy, dz;
@@ -210,7 +210,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
     assert(file);
     grid_in.read_msh(file);
 
-    if (is_MPI_rank_0()) LOG(WELCOME) << "Mesh info:" << endl << " dimensions: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
+    if (is_MPI_rank_0()) LOG(DETAILED) << " dimensions: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
     double minx=0, maxx=0, miny=0, maxy=0, minz=0, maxz=0;
     //// get minimum and maximum coordinates
     for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {
