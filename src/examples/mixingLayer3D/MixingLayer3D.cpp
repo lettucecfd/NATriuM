@@ -64,7 +64,7 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_randu_scaling(randu_sc
     filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_" << randuname << ".txt";
     string filestring = filename.str();
     ifstream file(filestring);
-    if (is_MPI_rank_0()) cout << "Reading initial velocities from " << filestring << endl;
+    if (is_MPI_rank_0()) LOG(WELCOME) << "Reading initial velocities from " << filestring << endl;
     string line;
     while (getline(file, line)) {
         stringstream linestream(line);
@@ -87,10 +87,10 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_randu_scaling(randu_sc
     }
 
     if (is_MPI_rank_0()) {
-        cout << " Creating linspaces x, y, z for interpolation." << endl;
-        cout << "  nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl;
-        cout << "  lx: " << lx << ", ly: " << ly << ", lz: " << lz << endl;
-        cout << "  lx/dTh0: " << lx / 0.093 << ", ly/dTh0: " << ly / 0.093 << ", lz/dTh0: " << lz / 0.093 << endl;
+        LOG(WELCOME) << " Creating linspaces x, y, z for interpolation." << endl
+            << "  nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl
+            << "  lx: " << lx << ", ly: " << ly << ", lz: " << lz << endl
+            << "  lx/dTh0: " << lx / 0.093 << ", ly/dTh0: " << ly / 0.093 << ", lz/dTh0: " << lz / 0.093 << endl;
     }
     vector<double> x, y, z;
     double dx, dy, dz;
@@ -200,7 +200,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
 
     //Taken from DiamondObstacle2D in step-gridin
     string mesh_filename = "/src/examples/mixingLayer3D/shearlayer_" + meshname + ".msh";
-    if (is_MPI_rank_0()) cout << "Reading mesh from " << meshname << endl;
+    if (is_MPI_rank_0()) LOG(WELCOME) << "Reading mesh from shearlayer_" << meshname << ".msh" << endl;
     dealii::GridIn<3> grid_in;
     grid_in.attach_triangulation(*mesh);
     //// Read mesh data from file
@@ -210,7 +210,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
     assert(file);
     grid_in.read_msh(file);
 
-    if (is_MPI_rank_0()) cout << "Mesh info:" << endl << " dimension: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
+    if (is_MPI_rank_0()) LOG(WELCOME) << "Mesh info:" << endl << " dimensions: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
     double minx=0, maxx=0, miny=0, maxy=0, minz=0, maxz=0;
     //// get minimum and maximum coordinates
     for (typename Triangulation<3>::active_cell_iterator cell = mesh->begin_active(); cell != mesh->end(); ++cell) {
@@ -269,12 +269,12 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
                     boundary_count[cell->face(face)->boundary_id()]++;
             }
         }
-        cout << " domain limits: x in[" << minx << "," << maxx << "], y in [" << miny << "," << maxy << "], z in [" << minz << "," << maxz << "]" << endl;
-        cout << " boundary indicators: ";
+        LOG(WELCOME) << " domain limits: x in[" << minx << "," << maxx << "], y in [" << miny << "," << maxy << "], z in [" << minz << "," << maxz << "]" << endl;
+        LOG(WELCOME) << " boundary indicators: ";
         for (const pair<const types::boundary_id, unsigned int> &pair: boundary_count) {
-            cout << pair.first << "(" << pair.second << " times) ";
+            LOG(WELCOME) << pair.first << "(" << pair.second << " times) ";
         }
-        cout << endl;
+        LOG(WELCOME) << endl;
     }
     mesh->get_boundary_ids();
 
