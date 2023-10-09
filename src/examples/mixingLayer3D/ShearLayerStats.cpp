@@ -453,7 +453,7 @@ void ShearLayerStats::write_tn() {
                    "R12min R12max R13min R13max R23min R23max k_integrated" << endl;
         *tnFile << this->m_solver.getIteration() << " " << m_solver.getTime() << " "
                 << m_currentDeltaTheta_Fa << " " << m_deltaThetaGrowth << " " << m_currentDeltaOmega
-                << " " << m_b11 << " " << m_b22 << " " << m_b33 << " " << m_b12
+                << " " << m_b11 << " " << m_b22 << " " << m_b33 << " " << m_b12 << " " << m_b13 << " " << m_b23
                 << " " << min_R11 << " " << max_R11 << " " << min_R22 << " " << max_R22
                 << " " << min_R33 << " " << max_R33 << " " << min_R12 << " " << max_R12
                 << " " << min_R13 << " " << max_R13 << " " << min_R23 << " " << max_R23 << " " << m_K_integrated
