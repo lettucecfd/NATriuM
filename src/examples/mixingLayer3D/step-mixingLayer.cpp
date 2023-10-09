@@ -57,6 +57,8 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("grid-repetitions",
                             "Number of grid cells along each axis before global refinement; "
                             "to produce grids with refinements that are not powers of two.", 3);
+    parser.setArgument<int>("restart", "Restart at iteration ...", 0);
+
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
     }
@@ -67,6 +69,13 @@ int main(int argc, char** argv) {
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
     auto time = parser.getArgument<double>("time");
+    const int restart = parser.getArgument<int>("restart");
+    if (restart > 0) {
+        LOG(WELCOME) << "==================================================="
+                     << endl << "=== Starting NATriuM step-mixingLayer... ===="
+                     << endl << "=== Restart iteration: " << restart << endl
+                     << "===================================================" << endl;
+    }
 
     /////////////////////////////////////////////////
     // set parameters, set up configuration object
@@ -94,6 +103,7 @@ int main(int argc, char** argv) {
 
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
+    if (restart > 0) configuration->setRestartAtIteration(restart);
     configuration->setUserInteraction(false);
     configuration->setOutputCheckpointInterval(nout*100);
     configuration->setOutputSolutionInterval(nout);
