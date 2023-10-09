@@ -52,6 +52,7 @@ namespace natrium {
                 double m_randu_scaling;
 //                double dx, dy, dz;
                 double lx, ly, lz;
+//                double m_Ux;
                 int nx, ny, nz;
                 int kxmax, kymax, kzmax;
                 bool m_print, m_recalculate;

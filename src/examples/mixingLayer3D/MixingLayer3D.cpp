@@ -52,7 +52,7 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
 //    rand_u = 0;
     if (component == 0) {
-        return tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
+        return m_flow->m_U * tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
     } else {
         return rand_u;
     }

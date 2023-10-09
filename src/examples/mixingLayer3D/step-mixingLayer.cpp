@@ -44,6 +44,7 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
     parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 1);
+    parser.setArgument<double>("uscaling", "factor to scale U1, i.e. deltaUx", 1);
     parser.setArgument<double>("CFL", "CFL number", 0.4);
     parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
@@ -65,6 +66,7 @@ int main(int argc, char** argv) {
     auto meshname = parser.getArgument<string>("meshname");
     auto randuname = parser.getArgument<string>("randuname");
     double randuscaling = parser.getArgument<double>("randuscaling");
+    double uscaling = parser.getArgument<double>("uscaling");
     double Re = parser.getArgument<int>("Re");
     double refinement_level = parser.getArgument<int>("ref-level");
     long nout = parser.getArgument<int>("nout");
@@ -207,7 +209,7 @@ int main(int argc, char** argv) {
 //                        << endl
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U * uscaling);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////
