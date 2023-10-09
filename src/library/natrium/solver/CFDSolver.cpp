@@ -917,12 +917,20 @@ bool CFDSolver<dim>::stopConditionMet() {
 		return true;
 	}
 // End time
-	const double end_time = m_configuration->getSimulationEndTime();
-	if (m_time >= end_time) {
-		LOG(BASIC) << "Stop condition: Simulation end time t_max=" << end_time
-				<< " reached in iteration " << m_i << "." << endl;
-		return true;
-	}
+    const double end_time = m_configuration->getSimulationEndTime();
+    if (m_time >= end_time) {
+        LOG(BASIC) << "Stop condition: Simulation end time t_max=" << end_time
+                   << " reached in iteration " << m_i << "." << endl;
+        return true;
+    }
+// End time
+    const double server_end_time = 82800; // maximum of 23 hours = 23*60*60 seconds
+    double secs = (clock() - m_tstart) / CLOCKS_PER_SEC;;
+    if (secs >= server_end_time) {
+        LOG(BASIC) << "Stop condition: Server end time t_max=" << server_end_time
+                   << " reached in iteration " << m_i << " after " << secs << "." << endl;
+        return true;
+    }
 // Converged
 	const size_t check_interval = 100;
 	const double convergence_threshold =
