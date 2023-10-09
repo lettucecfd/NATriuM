@@ -19,7 +19,8 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
         m_Re0(starting_Re), m_u(solver.getVelocity()), m_rho(solver.getDensity()),
         m_outDir(outdir), m_filename(scalaroutfile(solver.getConfiguration()->getOutputDirectory())),
         m_vectorfilename(vectoroutfile(solver.getConfiguration()->getOutputDirectory())),
-        m_currentDeltaTheta_Fa(starting_delta_theta), m_currentDeltaOmega(0.41), m_b11(0), m_b22(0), m_b12(0) {
+        m_currentDeltaTheta_Fa(starting_delta_theta), m_currentDeltaOmega(0.41),
+        m_b11(0), m_b22(0), m_b33(0), m_b12(0), m_b13(0), m_b23(0), m_K_integrated(0) {
     nround = pow(10,12); // round coordinates to this magnitude
     m_yCoordsUpToDate = false;
     m_nofCoordinates = 0;
@@ -128,15 +129,21 @@ void ShearLayerStats::calculateRhoU() {
     // initialize vectors for averages along x and z
     vector<double> rhoux_Re(m_nofCoordinates, 0), rhouy_Re(m_nofCoordinates, 0), rhouz_Re(m_nofCoordinates, 0);
     // initialize vectors for combined sizes
-    vector<double> rhoU11Flux(m_nofCoordinates, 0), rhoU22Flux(m_nofCoordinates, 0), rhoU33Flux(m_nofCoordinates, 0), rhoU12Flux(m_nofCoordinates, 0),
-    b11vec(m_nofCoordinates,0), b22vec(m_nofCoordinates,0), b33vec(m_nofCoordinates,0), b12vec(m_nofCoordinates,0),
+    vector<double> rhoU11Flux(m_nofCoordinates, 0), rhoU22Flux(m_nofCoordinates, 0), rhoU33Flux(m_nofCoordinates, 0),
+    rhoU12Flux(m_nofCoordinates, 0), rhoU13Flux(m_nofCoordinates, 0), rhoU23Flux(m_nofCoordinates, 0),
+    b11vec(m_nofCoordinates,0), b22vec(m_nofCoordinates,0), b33vec(m_nofCoordinates,0),
+    b12vec(m_nofCoordinates,0), b13vec(m_nofCoordinates,0), b23vec(m_nofCoordinates,0),
     growthrate_integrand(m_nofCoordinates,0);
     vector<vector<double>*> rhoUijFlux_set, bijvec_set, Rij_set;
-    rhoUijFlux_set.push_back(&rhoU11Flux); rhoUijFlux_set.push_back(&rhoU22Flux); rhoUijFlux_set.push_back(&rhoU33Flux); rhoUijFlux_set.push_back(&rhoU12Flux);
-    bijvec_set.push_back(&b11vec); bijvec_set.push_back(&b22vec); bijvec_set.push_back(&b33vec); bijvec_set.push_back(&b12vec);
-    Rij_set.push_back(&m_R11); Rij_set.push_back(&m_R22); Rij_set.push_back(&m_R33); Rij_set.push_back(&m_R12);
+    rhoUijFlux_set.push_back(&rhoU11Flux); rhoUijFlux_set.push_back(&rhoU22Flux); rhoUijFlux_set.push_back(&rhoU33Flux);
+    rhoUijFlux_set.push_back(&rhoU12Flux); rhoUijFlux_set.push_back(&rhoU13Flux); rhoUijFlux_set.push_back(&rhoU23Flux);
+    bijvec_set.push_back(&b11vec); bijvec_set.push_back(&b22vec); bijvec_set.push_back(&b33vec);
+    bijvec_set.push_back(&b12vec); bijvec_set.push_back(&b13vec); bijvec_set.push_back(&b23vec);
+    Rij_set.push_back(&m_R11); Rij_set.push_back(&m_R22); Rij_set.push_back(&m_R33);
+    Rij_set.push_back(&m_R12); Rij_set.push_back(&m_R13); Rij_set.push_back(&m_R23);
     vector<double*> bij_set;
-    bij_set.push_back(&m_b11); bij_set.push_back(&m_b22); bij_set.push_back(&m_b33); bij_set.push_back(&m_b12);
+    bij_set.push_back(&m_b11); bij_set.push_back(&m_b22); bij_set.push_back(&m_b33);
+    bij_set.push_back(&m_b12); bij_set.push_back(&m_b13); bij_set.push_back(&m_b23);
     vector<vector<double>*> u_Fa_set, rhou_Re_set;
     u_Fa_set.push_back(&ux_Fa); u_Fa_set.push_back(&uy_Fa); u_Fa_set.push_back(&uz_Fa);
     rhou_Re_set.push_back(&rhoux_Re); rhou_Re_set.push_back(&rhouy_Re); rhou_Re_set.push_back(&rhouz_Re);
@@ -149,7 +156,7 @@ void ShearLayerStats::calculateRhoU() {
     m_number.resize(m_nofCoordinates); std::fill(m_number.begin(), m_number.end(), 0);
     umag_Re.resize(m_nofCoordinates); std::fill(umag_Re.begin(), umag_Re.end(), 0);
     rho_Re.resize(m_nofCoordinates); std::fill(rho_Re.begin(), rho_Re.end(), 0);
-    for (size_t ij = 0; ij < 4; ij++) {
+    for (size_t ij = 0; ij < 6; ij++) {
         Rij_set.at(ij)->resize(m_nofCoordinates);
         std::fill(Rij_set.at(ij)->begin(), Rij_set.at(ij)->end(), 0);
     }
@@ -264,7 +271,9 @@ void ShearLayerStats::calculateRhoU() {
                 for (size_t ij = 0; ij < 3; ij++) {
                     rhoUijFlux_set.at(ij)->at(y_ind) += m_rho(dof_ind) * uflux_Fa_set.at(ij) * uflux_Fa_set.at(ij);
                 }
-                rhoUijFlux_set.at(3)->at(y_ind) += m_rho(dof_ind) * uflux_Fa_set.at(0) * uflux_Fa_set.at(1);
+                rhoUijFlux_set.at(3)->at(y_ind) += m_rho(dof_ind) * uflux_Fa_set.at(0) * uflux_Fa_set.at(1); // rhou1'u2'
+                rhoUijFlux_set.at(4)->at(y_ind) += m_rho(dof_ind) * uflux_Fa_set.at(0) * uflux_Fa_set.at(2); // rhou1'u3'
+                rhoUijFlux_set.at(5)->at(y_ind) += m_rho(dof_ind) * uflux_Fa_set.at(1) * uflux_Fa_set.at(2); // rhou2'u3'
             } /* for all quadrature points */
         } /* if locally owned */
     } /* for all cells */
@@ -272,7 +281,7 @@ void ShearLayerStats::calculateRhoU() {
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
         // average over number of points at y
         if (m_number.at(iy) != 0) {
-            for (size_t ij = 0; ij < 4; ij++) {
+            for (size_t ij = 0; ij < 6; ij++) {
                 rhoUijFlux_set.at(ij)->at(iy) = dealii::Utilities::MPI::sum(rhoUijFlux_set.at(ij)->at(iy), MPI_COMM_WORLD);
                 rhoUijFlux_set.at(ij)->at(iy) /= m_number.at(iy);
             }
@@ -286,23 +295,25 @@ void ShearLayerStats::calculateRhoU() {
         dy_u = m_yCoordinates.at(iy_u) - m_yCoordinates.at(iy);
         dy_l = m_yCoordinates.at(iy) - m_yCoordinates.at(iy_l);
         window_size = dy_u + dy_l;
-        for (size_t ij = 0; ij < 4; ij++) {
+        for (size_t ij = 0; ij < 6; ij++) {
             rhoUijFlux_set.at(ij)->at(iy) = 1 / window_size * (rhoUijFlux_set.at(ij)->at(iy_u) * dy_u + rhoUijFlux_set.at(ij)->at(iy_l) * dy_l);
         }
     }
 
     // calculate Rij
     for (size_t iy = 0; iy < m_nofCoordinates; iy++) {
-        for (size_t ij = 0; ij < 4; ij++) {
+        for (size_t ij = 0; ij < 6; ij++) {
             Rij_set.at(ij)->at(iy) = rhoUijFlux_set.at(ij)->at(iy) / rho_Re.at(iy);
         }
         // calculate turbulent kinetic energy
         m_K.at(iy) = (m_R11.at(iy) + m_R22.at(iy) + m_R33.at(iy)) / 2; // https://www.osti.gov/pages/servlets/purl/1580489
         // calculate anisotropy tensor along y
         for (size_t ij = 0; ij < 3; ij++) {
-            bijvec_set.at(ij)->at(iy) = (Rij_set.at(ij)->at(iy) - 2. / 3 * m_K.at(iy) * 1) / (2 * m_K.at(iy));
+            bijvec_set.at(ij)->at(iy) = (Rij_set.at(ij)->at(iy) - 2. / 3 * m_K.at(iy)) / (2 * m_K.at(iy));
         }
         bijvec_set.at(3)->at(iy) = Rij_set.at(3)->at(iy) / (2 * m_K.at(iy));
+        bijvec_set.at(4)->at(iy) = Rij_set.at(4)->at(iy) / (2 * m_K.at(iy));
+        bijvec_set.at(5)->at(iy) = Rij_set.at(5)->at(iy) / (2 * m_K.at(iy));
     }
 
     if (is_MPI_rank_0()) {
@@ -327,9 +338,10 @@ void ShearLayerStats::calculateRhoU() {
         m_deltaThetaGrowth = growthrate_integral * (-2) / (rho0 * pow(m_dUx, 3));
 
         // integrate bij over vorticity thickness
-        for (size_t ij = 0; ij < 4; ij++) {
+        for (size_t ij = 0; ij < 6; ij++) {
             *bij_set.at(ij) = integrate(*bijvec_set.at(ij), -m_currentDeltaOmega, m_currentDeltaOmega);
         }
+        m_K_integrated = integrate(m_K, -m_currentDeltaOmega, m_currentDeltaOmega);
     }
     auto [minR11_pos, maxR11_pos] = std::minmax_element(begin(m_R11), end(m_R11));
     min_R11 = *minR11_pos; max_R11 = *maxR11_pos;
@@ -339,6 +351,10 @@ void ShearLayerStats::calculateRhoU() {
     min_R33 = *minR33_pos; max_R33 = *maxR33_pos;
     auto [minR12_pos, maxR12_pos] = std::minmax_element(begin(m_R12), end(m_R12));
     min_R12 = *minR12_pos; max_R12 = *maxR12_pos;
+    auto [minR13_pos, maxR13_pos] = std::minmax_element(begin(m_R13), end(m_R13));
+    min_R13 = *minR13_pos; max_R13 = *maxR13_pos;
+    auto [minR23_pos, maxR23_pos] = std::minmax_element(begin(m_R23), end(m_R23));
+    min_R23 = *minR23_pos; max_R23 = *maxR23_pos;
 }
 
 double ShearLayerStats::integrate(vector<double> integrand) {
@@ -405,16 +421,19 @@ vector<double> ShearLayerStats::derivative(vector<double> values) {
 void ShearLayerStats::write_console() {
     if (is_MPI_rank_0()) {
         LOG(DETAILED) << "IT: " << m_solver.getIteration()
-             << ", t: " << m_solver.getTime()
-             << ", dU: " << m_dUx
-             << ", delta_Theta: " << m_currentDeltaTheta_Fa
-             << ", growth_rate: " << m_deltaThetaGrowth
-             << ", delta_Omega: " << m_currentDeltaOmega
-             << ", Re_Omega: " << m_ReOmega
-             << ", b11: " << m_b11
-             << ", b22: " << m_b22
-             << ", b12: " << m_b12
-             << endl;
+            << ", t: " << m_solver.getTime()
+            << ", dU: " << m_dUx
+            << ", delta_Theta: " << m_currentDeltaTheta_Fa
+            << ", growth_rate: " << m_deltaThetaGrowth
+            << ", delta_Omega: " << m_currentDeltaOmega
+            << ", Re_Omega: " << m_ReOmega
+            << ", b11: " << m_b11
+            << ", b22: " << m_b22
+            << ", b33: " << m_b33
+            << ", b12: " << m_b12
+            << ", b13: " << m_b13
+            << ", b23: " << m_b23
+            << endl;
     }
 }
 
@@ -429,12 +448,15 @@ void ShearLayerStats::write_tn() {
         ofs.close();
         const string& tnFilename = out_file.string();
         boost::shared_ptr<std::fstream> tnFile = boost::make_shared<std::fstream>(tnFilename, std::fstream::out | std::fstream::app);
-        *tnFile << "it t deltaTheta_Fa deltaThetaDot deltaOmega b11 b22 b33 b12 R11min R11max R22min R22max R33min R33max R12min R12max" << endl;
+        *tnFile << "it t deltaTheta_Fa deltaThetaDot deltaOmega b11 b22 b33 b12 b13 b23 "
+                   "R11min R11max R22min R22max R33min R33max "
+                   "R12min R12max R13min R13max R23min R23max k_integrated" << endl;
         *tnFile << this->m_solver.getIteration() << " " << m_solver.getTime() << " "
                 << m_currentDeltaTheta_Fa << " " << m_deltaThetaGrowth << " " << m_currentDeltaOmega
                 << " " << m_b11 << " " << m_b22 << " " << m_b33 << " " << m_b12
                 << " " << min_R11 << " " << max_R11 << " " << min_R22 << " " << max_R22
                 << " " << min_R33 << " " << max_R33 << " " << min_R12 << " " << max_R12
+                << " " << min_R13 << " " << max_R13 << " " << min_R23 << " " << max_R23 << " " << m_K_integrated
                 << endl;
         *tnFile << "y: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
@@ -467,6 +489,14 @@ void ShearLayerStats::write_tn() {
         *tnFile << "R12: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
             *tnFile << m_R12.at(iy) << " ";
+        } *tnFile << endl;
+        *tnFile << "R13: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *tnFile << m_R13.at(iy) << " ";
+        } *tnFile << endl;
+        *tnFile << "R23: ";
+        for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {
+            *tnFile << m_R23.at(iy) << " ";
         } *tnFile << endl;
         *tnFile << "uy_Fa: ";
         for (size_t iy = 0; iy < m_nofCoordinates-1; iy++) {

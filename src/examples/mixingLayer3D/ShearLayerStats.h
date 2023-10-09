@@ -53,11 +53,12 @@ private:
     double m_ReOmega;
     double m_deltaThetaGrowth;
     double m_dU0 = 2;
-    double m_b11, m_b22, m_b33, m_b12;
-    double min_R11, max_R11, min_R22, max_R22, min_R33, max_R33, min_R12, max_R12;
+    double m_b11, m_b22, m_b33, m_b12, m_b13, m_b23;
+    double min_R11, max_R11, min_R22, max_R22, min_R33, max_R33, min_R12, max_R12, min_R13, max_R13, min_R23, max_R23;
     double m_dUx;
+    double m_K_integrated;
     // Data stored across y
-    vector<double> m_R11, m_R22, m_R33, m_R12;
+    vector<double> m_R11, m_R22, m_R33, m_R12, m_R13, m_R23;
     vector<double> ux_Fa, uy_Fa, uz_Fa;
     vector<double> umag_Re, rho_Re, momentumthickness_integrand;
     vector<double> m_number;
