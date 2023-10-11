@@ -303,7 +303,7 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
     minusVector[2]=0.0;
 
     // set boundaries on top and bottom to move forward / backward
-    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(2, plusVector));
+    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(2, plusVector));  // or DO_NOTHING_BC
     boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(3, minusVector));
 
     // set a boundary between 0 and 1, and 4 and 5, with direction 0 (x) and 2 (z), respectively

@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
     const double reference_temperature = 1; //0.85;
     const double gamma = 1;//1.4;
     const double scaling = sqrt(3) * U / (Ma*sqrt(gamma*reference_temperature));
-//    const double scaling = sqrt(3) * cs; // TODO: choose different? -> stencil larger/smaller -> from turb. channel
+//    const double scaling = sqrt(3) * cs; // choose different? -> stencil larger/smaller -> from turb. channel
 
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();

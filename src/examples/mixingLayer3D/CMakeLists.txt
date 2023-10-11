@@ -7,7 +7,6 @@ ADD_EXECUTABLE( ${TARGET}
         MixingLayer3D.cpp
         ShearLayerStats.h
         ShearLayerStats.cpp
-        shearlayer.msh
 #        TurbulentIntensitiesStats.h
 #        TurbulentIntensitiesStats.cpp
         )
