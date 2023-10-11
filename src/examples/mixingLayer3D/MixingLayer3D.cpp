@@ -200,7 +200,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
 
     //Taken from DiamondObstacle2D in step-gridin
     string mesh_filename = "/src/examples/mixingLayer3D/shearlayer_" + meshname + ".msh";
-    if (is_MPI_rank_0()) LOG(WELCOME) << "Reading mesh from shearlayer_" << meshname << ".msh" << endl;
+    if (is_MPI_rank_0()) LOG(WELCOME) << "Reading mesh from " << mesh_filename << endl;
     dealii::GridIn<3> grid_in;
     grid_in.attach_triangulation(*mesh);
     //// Read mesh data from file
