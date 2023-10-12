@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("print", "print calculations of initial velocity", 0);
     parser.setArgument<int>("recalculate", "recalculate initial velocity", 0);
     parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final_small");
-    parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "one-2th_886");
+    parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "k048_half");
     parser.setArgument<int>("order", "order of finite elements", 3);
     parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 0);
     parser.setArgument<int>("grid-repetitions",
@@ -136,7 +136,8 @@ int main(int argc, char** argv) {
                 << "-ref" << refinement_level
                 << "-p" << configuration->getSedgOrderOfFiniteElement()
                 << "-mesh" << meshname
-                << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000;
+                << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000
+                << "-uscale" << uscaling;
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
