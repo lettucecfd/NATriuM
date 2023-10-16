@@ -10,6 +10,7 @@ export NATRIUM_BASE_DIR=$(pwd)
 
 Environment
 ```
+export NATRIUM_BASE_DIR=$(pwd)
 export BOOST_ROOT=$NATRIUM_BASE_DIR/libs/boost
 export TRILINOS_DIR=$NATRIUM_BASE_DIR/libs/trilinos
 export P4EST_DIR=$NATRIUM_BASE_DIR/libs/p4est
@@ -17,7 +18,9 @@ export DEAL_II_DIR=$NATRIUM_BASE_DIR/libs/deal.II
 export NATRIUM_DIR=$NATRIUM_BASE_DIR/NATriuM
 mkdir $NATRIUM_BASE_DIR/output
 export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
-module load openmpi/gnu cmake
+mkdir $NATRIUM_BASE_DIR/installation
+export NATRIUM_INSTALLATION_DIR=$NATRIUM_BASE_DIR/installation
+
 ```
 
 Write your environmental variables into a file "natriumrc" to reload them later:
@@ -32,8 +35,9 @@ export NATRIUM_DIR=$NATRIUM_DIR
 export NATRIUM_HOME=$NATRIUM_HOME
 export LD_LIBRARY_PATH=$BOOST_ROOT/lib:$LD_LIBRARY_PATH
 export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
-module load openmpi/gnu
+export NATRIUM_INSTALLATION_DIR=$NATRIUM_INSTALLATION_DIR
 EOF
+
 ```
 
 If you have to interrupt your installation, make sure to reload the environment variables:
@@ -53,25 +57,30 @@ Install Anaconda, if not already installed
 cd $NATRIUM_INSTALLATION_DIR
 wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
 bash Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
+
 ```
 
 Update Conda
 ```
 conda update conda
+
 ```
 Create a dedicated environment
 ```
 conda create -n "natrium"
+
 ```
 Install required packages
 
 ```
 conda activate natrium
 conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler libhwloc libevent blas liblapack zlib gsl lapack
+
 ```
 Update all packages
 ```
 conda update --all
+
 ```
 
 **Note: On a server, you may need to specify the version of gfortran to 11.3**
@@ -85,6 +94,7 @@ cd cmake-3.25.3
 ./bootstrap --prefix=$NATRIUM_BASE_DIR/libs/cmake
 make
 make install
+
 ```
 
 # Install resources
@@ -98,17 +108,20 @@ cd $NATRIUM_INSTALLATION_DIR
 mkdir .boost
 cd .boost
 wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
+
 ```
 2. Extract file and go to folder
 ```
 tar -xf boost_1_76_0.tar.gz
 cd boost_1_76_0
+
 ```
 3. Install using the bootstrap shell:
 ```
 ./bootstrap.sh --prefix=$BOOST_ROOT --with-libraries=filesystem,program_options,graph,graph_parallel,iostreams,serialization,system,test,timer,thread
 ./b2
 ./b2 install
+
 ```
 
 ### p4est  
@@ -118,20 +131,24 @@ cd $NATRIUM_INSTALLATION_DIR
 mkdir .p4est
 cd .p4est
 wget https://github.com/p4est/p4est.github.io/raw/master/release/p4est-2.2.tar.gz
+
 ```
 2. get setup script from deal.II homepage
 	   cf. documentation on installing deal.II with p4est
 ```
 wget https://www.dealii.org/current/external-libs/p4est-setup.sh
+
 ```
 3. Set C and C++ compilers (somehow the configuration script does not detect the right compilers, otherwise)
 ```
 export CC=mpicc && export CXX=mpicxx
+
 ```
 4. Make shell file executable and execute Setup 
 ```
 chmod u+x p4est-setup.sh
 ./p4est-setup.sh p4est-2.2.tar.gz $P4EST_DIR
+
 ```
 
 ### Trilinos
@@ -141,6 +158,7 @@ Download and extraxt from https://github.com/trilinos/Trilinos/releases/tag/tril
 cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-0-1.tar.gz
 tar -xf trilinos-release-13-0-1.tar.gz
+
 ```
 Then install trilinos.
 ```
@@ -164,6 +182,7 @@ cmake -D Trilinos_ENABLE_Sacado=ON \
 
 make -j8
 make install
+
 ```
 
 ### deal.ii  
@@ -177,6 +196,7 @@ In this case, search for the conda location and add this to options, e.g., `-D Z
 cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
 tar -xf dealii-9.3.3.tar.gz
+
 ```
 
 2. Setup installation (replace version of dealii!)
@@ -199,11 +219,13 @@ cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_FORCE_BUNDLED_MUPARSER=ON \
 -D DEAL_II_WITH_ZLIB=OFF \
 ../dealii-*/
+
 ```
 
 3. Install (-j 8 enables parallel compilation on  processors; otherwise installation will take hours)
 ```
 make -j 8 install
+
 ```
  
 ### Check libraries
@@ -223,6 +245,7 @@ mkdir bin_debug
 cd bin_debug
 cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/ -B.
 make -j8
+
 ```
 
 2. Load project via IDE (e.g., CLion (recommended, view as makefile project) or Eclipse for Embedded C/C++ Developers) 
@@ -234,6 +257,7 @@ mkdir bin_release
 cd bin_release
 cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/ -B.
 make -j8
+
 ```
 
 4. Check that the CMakeCache.txt contains `CMAKE_BUILD_TYPE:STRING=RELEASE`! Otherwise the program will be really slow
@@ -245,12 +269,14 @@ make -j8
 ```
 cd $NATRIUM_DIR/bin_release
 ./test/NATriuM_UnitTest_exe
+
 ```
 
 ## Run integration tests (takes a few minutes)
 ```
 cd $NATRIUM_DIR/bin_release
 ./test/NATriuM_Test
+
 ```
 
 The results will be written to natrium.html (in the bin directory)
