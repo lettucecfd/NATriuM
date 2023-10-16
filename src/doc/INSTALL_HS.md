@@ -87,11 +87,12 @@ conda update --all
 
 Check version of cmake (`cmake --version`) and, if below 3.23, install directly:
 ```
-cd $NATRIUM_INSTALLATION_DIR
+mkdir -m 0755 ~/bin/
+cd ~/bin/
 wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
 tar -xf cmake-3.25.3.tar.gz
 cd cmake-3.25.3
-./bootstrap --prefix=$NATRIUM_BASE_DIR/libs/cmake
+./bootstrap --prefix=~/bin/
 make
 make install
 
