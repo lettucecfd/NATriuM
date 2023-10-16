@@ -17,7 +17,7 @@ export DEAL_II_DIR=$NATRIUM_BASE_DIR/libs/deal.II
 export NATRIUM_DIR=$NATRIUM_BASE_DIR/NATriuM
 mkdir $NATRIUM_BASE_DIR/output
 export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
-module load gcc openmpi/gnu cmake
+module load openmpi/gnu cmake
 ```
 
 Write your environmental variables into a file "natriumrc" to reload them later:
@@ -32,7 +32,7 @@ export NATRIUM_DIR=$NATRIUM_DIR
 export NATRIUM_HOME=$NATRIUM_HOME
 export LD_LIBRARY_PATH=$BOOST_ROOT/lib:$LD_LIBRARY_PATH
 export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
-module load gcc openmpi/gnu cmake
+module load openmpi/gnu cmake
 EOF
 ```
 
@@ -67,7 +67,7 @@ Install required packages
 **OpenMPI seems to clash with the one on the server. Try installing without and instead loading the module.**
 ```
 conda activate natrium
-conda install -c conda-forge cxx-compiler cmake libgfortran5 fortran-compiler openmpi libhwloc libevent blas liblapack zlib gsl lapack
+conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler libhwloc libevent blas liblapack zlib gsl lapack
 ```
 Update all packages
 ```
