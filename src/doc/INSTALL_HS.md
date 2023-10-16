@@ -205,7 +205,7 @@ tar -xf dealii-9.3.3.tar.gz
 
 ```
 
-2. Setup installation **dealII does not find mpicxx when compiled with new cmake. Use `module load cmake`**
+2. Setup installation **dealII does not find mpicxx when compiled with new cmake. Use `module load gcc`**
 ```
 mkdir build_deal
 cd build_deal
