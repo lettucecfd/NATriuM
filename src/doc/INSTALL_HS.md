@@ -32,7 +32,7 @@ export NATRIUM_DIR=$NATRIUM_DIR
 export NATRIUM_HOME=$NATRIUM_HOME
 export LD_LIBRARY_PATH=$BOOST_ROOT/lib:$LD_LIBRARY_PATH
 export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
-module load openmpi/gnu cmake
+module load openmpi/gnu
 EOF
 ```
 
@@ -76,7 +76,7 @@ conda update --all
 
 **Note: On a server, you may need to specify the version of gfortran to 11.3**
 
-Check version of cmake and, if below 3.23, install directly:
+Check version of cmake (`cmake --version`) and, if below 3.23, install directly:
 ```
 cd $NATRIUM_BASE_DIR
 wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
