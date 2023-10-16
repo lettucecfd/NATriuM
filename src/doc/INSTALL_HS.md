@@ -85,16 +85,21 @@ conda update --all
 
 **Note: On a server, you may need to specify the version of gfortran to 11.3**
 
-Check version of cmake (`cmake --version`) and, if below 3.23, install directly:
+Check version of cmake (`cmake --version`) and, if below 3.23, install directly :
 ```
 mkdir -m 0755 ~/bin/
-cd ~/bin/
+cd ~
 wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
 tar -xf cmake-3.25.3.tar.gz
 cd cmake-3.25.3
-./bootstrap --prefix=~/bin/
+./bootstrap --prefix=~
 make
 make install
+
+```
+**for me, this did not solve the version for trilinos - the cluster's proprietary version was still first to be used by `cmake` command, so instead use conda:**
+```
+conda install -c conda-forge cmake
 
 ```
 
@@ -200,7 +205,7 @@ tar -xf dealii-9.3.3.tar.gz
 
 ```
 
-2. Setup installation (replace version of dealii!)
+2. Setup installation **dealII does not find mpicxx when compiled with new cmake. Use `module load cmake`**
 ```
 mkdir build_deal
 cd build_deal
