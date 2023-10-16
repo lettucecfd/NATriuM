@@ -62,6 +62,7 @@ Create a dedicated environment
 conda create -n "natrium"
 ```
 Install required packages
+**OpenMPI seems to clash with the one on the server. Try installing without and instead loading the module.**
 ```
 conda activate natrium
 conda install -c conda-forge cxx-compiler cmake libgfortran5 fortran-compiler openmpi libhwloc libevent blas liblapack zlib gsl lapack
