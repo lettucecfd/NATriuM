@@ -45,7 +45,7 @@ source <your natrium base dir>/natriumrc
 
 1. For boost b2: C++11 compiler `cxx-compiler`
 2. For p4est: fortran77 compiler with compatible glibc `fortran-compiler`, `libgfortran5`
-3. For trilinos: latest `cmake` (>=3.23), `openmpi`, `libhwloc`, `libevent`, `blas`, `liblapack`
+3. For trilinos: latest `cmake` (>=3.23, install manually), `openmpi` (load module because otherwise it may clash with OpenMP), `libhwloc`, `libevent`, `blas`, `liblapack`
 4. For dealII: `zlib` (and `gsl` and `lapack` for Cluster) (and `cxx-compiler=1.5.2`)
 
 Install Anaconda, if not already installed
