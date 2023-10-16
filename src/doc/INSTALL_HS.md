@@ -17,6 +17,7 @@ export DEAL_II_DIR=$NATRIUM_BASE_DIR/libs/deal.II
 export NATRIUM_DIR=$NATRIUM_BASE_DIR/NATriuM
 mkdir $NATRIUM_BASE_DIR/output
 export NATRIUM_HOME=$NATRIUM_BASE_DIR/output
+module load gcc openmpi/gnu cmake
 ```
 
 Write your environmental variables into a file "natriumrc" to reload them later:
@@ -31,6 +32,7 @@ export NATRIUM_DIR=$NATRIUM_DIR
 export NATRIUM_HOME=$NATRIUM_HOME
 export LD_LIBRARY_PATH=$BOOST_ROOT/lib:$LD_LIBRARY_PATH
 export INCLUDE_PATH=$BOOST_ROOT:$INCLUDE_PATH
+module load gcc openmpi/gnu cmake
 EOF
 ```
 
