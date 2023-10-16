@@ -50,7 +50,7 @@ source <your natrium base dir>/natriumrc
 
 Install Anaconda, if not already installed
 ```
-cd $NATRIUM_BASE_DIR
+cd $NATRIUM_INSTALLATION_DIR
 wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
 bash Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
 ```
@@ -64,7 +64,7 @@ Create a dedicated environment
 conda create -n "natrium"
 ```
 Install required packages
-**OpenMPI seems to clash with the one on the server. Try installing without and instead loading the module.**
+
 ```
 conda activate natrium
 conda install -c conda-forge cxx-compiler libgfortran5 fortran-compiler libhwloc libevent blas liblapack zlib gsl lapack
@@ -78,25 +78,23 @@ conda update --all
 
 Check version of cmake (`cmake --version`) and, if below 3.23, install directly:
 ```
-cd $NATRIUM_BASE_DIR
+cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3.tar.gz
 tar -xf cmake-3.25.3.tar.gz
 cd cmake-3.25.3
-./bootstrap --prefix=$NATRIUM_BASE_DIR
+./bootstrap --prefix=$NATRIUM_BASE_DIR/libs/cmake
 make
 make install
 ```
 
 # Install resources
 
-Alternatively, via apt-get or synaptic
-
 ### boost
 from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**  
 
 1. Download boost tar-file from www.boost.org.
 ```
-cd $NATRIUM_BASE_DIR
+cd $NATRIUM_INSTALLATION_DIR
 mkdir .boost
 cd .boost
 wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
@@ -116,7 +114,7 @@ cd boost_1_76_0
 ### p4est  
 1. download **version 2.2** tarball from p4est homepage (https://www.p4est.org/; **no need to untar**) Later version had conflict with `cpp too many files`.
 ```
-cd $NATRIUM_BASE_DIR
+cd $NATRIUM_INSTALLATION_DIR
 mkdir .p4est
 cd .p4est
 wget https://github.com/p4est/p4est.github.io/raw/master/release/p4est-2.2.tar.gz
@@ -140,7 +138,7 @@ chmod u+x p4est-setup.sh
 
 Download and extraxt from https://github.com/trilinos/Trilinos/releases/tag/trilinos-release-13-0-1
 ```
-cd $NATRIUM_BASE_DIR
+cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-0-1.tar.gz
 tar -xf trilinos-release-13-0-1.tar.gz
 ```
@@ -174,10 +172,9 @@ make install
 	*Did not work with latest Trilinos, so I downgraded to Trilinos 13.0.1*
 	**deal.ii version 9.3.3 works**
 
-**deal II is compiled without zlib, but runs a test compilation on mpicxx and mpicc, which fails in Siegen. You may need ot manually install/link it.**
 In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`.
 ```
-cd $NATRIUM_BASE_DIR
+cd $NATRIUM_INSTALLATION_DIR
 wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
 tar -xf dealii-9.3.3.tar.gz
 ```
