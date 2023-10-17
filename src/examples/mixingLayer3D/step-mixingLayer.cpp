@@ -43,17 +43,17 @@ int main(int argc, char** argv) {
     // Set to 0.3, 0.7, 0.9, 1.0, 1.2
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
-    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 1);
+    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 10);
     parser.setArgument<double>("uscaling", "factor to scale U1, i.e. deltaUx", 1);
     parser.setArgument<double>("CFL", "CFL number", 0.4);
-    parser.setArgument<int>("nout", "output vtk every nout steps", 1000);
-    parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
+    parser.setArgument<int>("nout", "output vtk every nout steps", 2000);
+    parser.setArgument<int>("nstats", "output stats every nstats steps", 100);
     parser.setArgument<int>("squash", "squash grid towards centre", 0);
     parser.setArgument<int>("print", "print calculations of initial velocity", 0);
     parser.setArgument<int>("recalculate", "recalculate initial velocity", 0);
-    parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final_small");
+    parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final");
     parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "k048_half");
-    parser.setArgument<int>("order", "order of finite elements", 3);
+    parser.setArgument<int>("order", "order of finite elements", 4);
     parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 0);
     parser.setArgument<int>("grid-repetitions",
                             "Number of grid cells along each axis before global refinement; "
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     long nout = parser.getArgument<int>("nout");
     auto time = parser.getArgument<double>("time");
     const int restart = parser.getArgument<int>("restart");
-    if (restart > 0) {
+    if ((restart > 0) and is_MPI_rank_0()) {
         LOG(WELCOME) << "==================================================="
                      << endl << "=== Starting NATriuM step-mixingLayer... ===="
                      << endl << "=== Restart iteration: " << restart << endl
