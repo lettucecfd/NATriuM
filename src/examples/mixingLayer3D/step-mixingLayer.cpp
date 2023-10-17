@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("squash", "squash grid towards centre", 0);
     parser.setArgument<int>("print", "print calculations of initial velocity", 0);
     parser.setArgument<int>("recalculate", "recalculate initial velocity", 0);
-    parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final");
+    parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final_small");
     parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "k048_half");
     parser.setArgument<int>("order", "order of finite elements", 4);
     parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 0);
