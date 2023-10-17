@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("uscaling", "factor to scale U1, i.e. deltaUx", 1);
     parser.setArgument<double>("CFL", "CFL number", 0.4);
     parser.setArgument<int>("nout", "output vtk every nout steps", 2000);
-    parser.setArgument<int>("nstats", "output stats every nstats steps", 100);
+    parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setArgument<int>("squash", "squash grid towards centre", 0);
     parser.setArgument<int>("print", "print calculations of initial velocity", 0);
     parser.setArgument<int>("recalculate", "recalculate initial velocity", 0);
