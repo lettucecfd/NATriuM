@@ -924,7 +924,7 @@ bool CFDSolver<dim>::stopConditionMet() {
         return true;
     }
 // End time
-    const double server_end_time = 82800; // maximum of 23 hours = 23*60*60 seconds
+    const double server_end_time = 300;//82800; // maximum of 23 hours = 23*60*60 seconds
     double secs = (clock() - m_tstart) / CLOCKS_PER_SEC;;
     if (secs >= server_end_time) {
         LOG(BASIC) << "Stop condition: Server end time t_max=" << server_end_time
@@ -932,24 +932,24 @@ bool CFDSolver<dim>::stopConditionMet() {
         return true;
     }
 // Converged
-	const size_t check_interval = 100;
-	const double convergence_threshold =
-			m_configuration->getConvergenceThreshold();
-	if (m_i % check_interval == 0) {
-		m_solverStats->calculateResiduals(m_i);
-		if ((m_residuumVelocity < convergence_threshold)
-		/*and (m_residuumDensity < convergence_threshold)*/) {
-			LOG(BASIC)
-					<< "Stop condition: Simulation converged below threshold "
-					<< convergence_threshold << " in iteration " << m_i << "."
-					<< endl;
-			LOG(BASIC) << "The actual variation was " << m_residuumVelocity
-					<< " on velocity and " << m_residuumDensity
-					<< " on density between iterations " << m_i - check_interval
-					<< " and " << m_i << "." << endl;
-			return true;
-		}
-	}
+//	const size_t check_interval = 100;
+//	const double convergence_threshold =
+//			m_configuration->getConvergenceThreshold();
+//	if (m_i % check_interval == 0) {
+//		m_solverStats->calculateResiduals(m_i);
+//		if ((m_residuumVelocity < convergence_threshold)
+//		/*and (m_residuumDensity < convergence_threshold)*/) {
+//			LOG(BASIC)
+//					<< "Stop condition: Simulation converged below threshold "
+//					<< convergence_threshold << " in iteration " << m_i << "."
+//					<< endl;
+//			LOG(BASIC) << "The actual variation was " << m_residuumVelocity
+//					<< " on velocity and " << m_residuumDensity
+//					<< " on density between iterations " << m_i - check_interval
+//					<< " and " << m_i << "." << endl;
+//			return true;
+//		}
+//	}
 	return false;
 }
 
@@ -994,7 +994,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
              time_t estimated_end = m_tstart + (m_configuration->getNumberOfTimeSteps() - m_iterationStart)
              / (iteration - m_iterationStart) * (time(0) - m_tstart);
              struct tm * ltm = localtime(&estimated_end);
-             LOG(BASIC) << "i = " << iteration << "; Estimated end: " << string(asctime(ltm)) << endl;
+             LOG(DETAILED) << "i = " << iteration << "; Estimated end: " << string(asctime(ltm)) << endl;
         }
         // add turbulence statistics to output
 		if (m_configuration->isOutputTurbulenceStatistics())
