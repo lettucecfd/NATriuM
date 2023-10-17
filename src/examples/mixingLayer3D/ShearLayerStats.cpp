@@ -422,7 +422,6 @@ void ShearLayerStats::write_console() {
     if (is_MPI_rank_0()) {
         LOG(DETAILED) << "IT: " << m_solver.getIteration()
             << ", t: " << m_solver.getTime()
-            << ", dU: " << m_dUx
             << ", delta_Theta: " << m_currentDeltaTheta_Fa
             << ", growth_rate: " << m_deltaThetaGrowth
             << ", delta_Omega: " << m_currentDeltaOmega
