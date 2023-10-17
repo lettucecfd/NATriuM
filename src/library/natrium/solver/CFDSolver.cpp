@@ -924,11 +924,11 @@ bool CFDSolver<dim>::stopConditionMet() {
         return true;
     }
 // End time
-    const double server_end_time = 300;//82800; // maximum of 23 hours = 23*60*60 seconds
-    double secs = (clock() - m_tstart) / CLOCKS_PER_SEC;;
+    const int server_end_time = 300;//82800; // maximum of 23 hours = 23*60*60 seconds
+    double secs = int((clock() - m_tstart) / CLOCKS_PER_SEC);
     if (secs >= server_end_time) {
         LOG(BASIC) << "Stop condition: Server end time t_max=" << server_end_time
-                   << " reached in iteration " << m_i << " after " << secs << "." << endl;
+                   << " s reached in iteration " << m_i << " after " << secs << " s." << endl;
         return true;
     }
 // Converged
