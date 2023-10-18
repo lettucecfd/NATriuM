@@ -14,32 +14,32 @@ from paraview.simple import *
 from math import *
 
 # dimension of flow domain
-dim = 2
+dim = 3
 # spacing between structured grid points
 spacing = 0.1
 # number of grid points in each direction (x,y,z)
-N = [101, 31, 1]
+N = [128, 28, 16]  # all halved
 # origin of structured grid discretization
-origin = [10.0, 1.0, 0.0]
+origin = [0.0, 0.0, 0.0]
 TEST = False 
 #volume of region for which the fft is calculated
 volume_element = pow( spacing, 3)
 PI = 4*atan(1)
 
 if not TEST:
-    print "Usage: pvpython compute_energy_spectrum.py <vtu_file>"
+    print("Usage: pvpython compute_energy_spectrum.py <vtu_file>")
     
     argc = len (sys.argv)
     vtu_file = sys.argv[1]
-    print "VTU file: ", vtu_file
+    print("VTU file: ", vtu_file)
     
     # Read file
     vtu_reader = OpenDataFile(vtu_file)
     vtu_reader.UpdatePipeline()
-    print vtu_reader.PointData[:]
+    print(vtu_reader.PointData[:])
     
     # Definition file for structured grid
-    print "Transfer data to structured grid..."
+    print("Transfer data to structured grid...")
     vtk_filename = "foo.vtk"
     vtk_file = open(vtk_filename,"w+")
     vtk_file.write("# vtk DataFile Version 3.0\n")
@@ -54,13 +54,13 @@ if not TEST:
     vtk_reader.UpdatePipeline()
     
     # Interpolate on structured grid
-    filter = ResampleWithDataset(Source=vtk_reader, Input=vtu_reader)
+    filter = ResampleWithDataset(DestinationMesh=vtk_reader, SourceDataArrays=vtu_reader)
     filter.UpdatePipeline()
-    print "done."
+    print("done.")
     
     # Write to CSV
     writer = CreateWriter("foo.csv", filter)
-    writer.FieldAssociation = "Points"
+    writer.FieldAssociation = "Point Data"
     writer.UpdatePipeline()
     del writer
     
@@ -86,13 +86,13 @@ if TEST:
     numpy.savetxt( "uz.txt", test_array[:,2])
 
 # Fourier transform
-print "Fourier transform of velocity components..."
+print("Fourier transform of velocity components...")
 script = os.path.join(os.getenv("NATRIUM_DIR"),"src/postprocessing/fft")
 os.system("%s %d %d %d %d %s %s" %(script, dim, N[0], N[1], N[2], "ux.txt", "ux_hat.txt"))
 os.system("%s %d %d %d %d %s %s" %(script, dim, N[0], N[1], N[2], "uy.txt", "uy_hat.txt"))
 if (dim == 3):
     os.system("%s %d %d %d %d %s %s" %(script, dim, N[0], N[1], N[2], "uz.txt", "uz_hat.txt"))
-print "done."
+print("done.")
 
 # Load fourier coefficients
 ux_hat = numpy.loadtxt("ux_hat.txt",delimiter=' ',  skiprows=1)
@@ -147,6 +147,9 @@ for i in range(n_tics):
 
 # rescale to physical quantities
 #real_phases
-
-numpy.savetxt("E.txt", [[wave_numbers[i], energies[i]] for i in range(n_tics)])
-print "Calculation finished. Energy spectrum in E.txt"
+if len(sys.argv) > 1:
+    outname = sys.argv[2]
+else:
+    outname = "E.txt"
+numpy.savetxt(outname, [[wave_numbers[i], energies[i]] for i in range(n_tics)])
+print("Calculation finished. Energy spectrum in", outname)
