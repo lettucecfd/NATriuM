@@ -924,7 +924,7 @@ bool CFDSolver<dim>::stopConditionMet() {
         return true;
     }
 // End time
-    const int server_end_time = 82800; // 300;//maximum of 23 hours = 23*60*60 seconds
+    const int server_end_time = m_configuration->getServerEndTime(); //82800; // 300;//maximum of 23 hours = 23*60*60 seconds
     double secs = int((clock() - m_tstart) / CLOCKS_PER_SEC);
     if (secs >= server_end_time) {
         LOG(BASIC) << "Stop condition: Server end time t_max=" << server_end_time

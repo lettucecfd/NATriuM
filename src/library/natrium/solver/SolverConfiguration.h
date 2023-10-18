@@ -1220,36 +1220,67 @@ public:
 		leave_subsection();
 	}
 
-	size_t getNumberOfTimeSteps() {
-		enter_subsection("Stop condition");
-		size_t nofSteps;
-		try {
-			nofSteps = get_integer("Number of time steps");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Number of time steps' from parameters: "
-					<< e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		return nofSteps;
-	}
+    size_t getNumberOfTimeSteps() {
+        enter_subsection("Stop condition");
+        size_t nofSteps;
+        try {
+            nofSteps = get_integer("Number of time steps");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Number of time steps' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return nofSteps;
+    }
 
-	void setNumberOfTimeSteps(long int numberOfTimeSteps) {
-		enter_subsection("Stop condition");
-		try {
-			set("Number of time steps", numberOfTimeSteps);
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg << "Could not assign value " << numberOfTimeSteps
-					<< " to Number of time steps: " << e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-	}
+    void setNumberOfTimeSteps(long int numberOfTimeSteps) {
+        enter_subsection("Stop condition");
+        try {
+            set("Number of time steps", numberOfTimeSteps);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << numberOfTimeSteps
+                << " to Number of time steps: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    size_t getServerEndTime() {
+        enter_subsection("Stop condition");
+        size_t m_ServerEndTime;
+        try {
+            m_ServerEndTime = get_integer("Server end time");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Server end time' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return m_ServerEndTime;
+    }
+
+    void setServerEndTime(long int timeInSeconds) {
+        enter_subsection("Stop condition");
+        try {
+            set("Server end time", timeInSeconds);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << timeInSeconds
+                << " to Server end time: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
 
 	double getSimulationEndTime() {
 		enter_subsection("Stop condition");

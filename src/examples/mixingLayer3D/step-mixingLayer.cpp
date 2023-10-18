@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
                             "Number of grid cells along each axis before global refinement; "
                             "to produce grids with refinements that are not powers of two.", 3);
     parser.setArgument<int>("restart", "Restart at iteration ...", 0);
+    parser.setArgument<int>("server-end", "Maximum server time [s]", 82800);
 
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
@@ -122,6 +123,7 @@ int main(int argc, char** argv) {
     configuration->setPrandtlNumber(0.71);
     configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order")); // TODO: set to 4
     configuration->setCFL(cfl); // TODO: should be 0.4<CFL<2
+    configuration->setServerEndTime(parser.getArgument<int>("server-end"));
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
