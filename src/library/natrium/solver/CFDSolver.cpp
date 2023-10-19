@@ -942,10 +942,11 @@ bool CFDSolver<dim>::stopConditionMet() {
     if (secs >= server_end_time) {
         LOG(BASIC) << "Stop condition: Server end time of " << secs_to_stream(secs) << " reached in iteration " << m_i << "." << endl;
         int startsecs = int(m_tstart / CLOCKS_PER_SEC);
-        struct tm * ltm1 = localtime(&m_tstart2);
+        struct tm * ltm = localtime(&m_tstart2);
+        LOG(BASIC) << "Started at " << string(asctime(ltm));
         time_t t_now = time(nullptr);
-        struct tm * ltm2 = localtime(&t_now);
-        LOG(BASIC) << "Started at " << string(asctime(ltm1)) << "and ended at " << string(asctime(ltm2)) << endl;
+        ltm = localtime(&t_now);
+        LOG(BASIC) << ", and ended at " << string(asctime(ltm)) << endl;
         return true;
     }
 // Converged
