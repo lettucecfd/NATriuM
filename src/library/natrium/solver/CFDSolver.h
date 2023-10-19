@@ -120,8 +120,8 @@ protected:
 	/// the physical time passed (normally initialized with 0.0, except for restart at a checkpoint)
 	double m_time;
 
-    //// real time on server passed
-    double m_ServerEndTime;
+//    //// real time on server passed
+//    double m_ServerEndTime;
 
 	/// a vector that indicates if a dofs is at the boundary (for each dof)
 	vector<bool> m_isDoFAtBoundary;

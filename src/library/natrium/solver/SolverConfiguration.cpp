@@ -236,10 +236,14 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Number of time steps", "100000000",
 				dealii::Patterns::Integer(1),
 				"The maximum number of time steps.");
-		declare_entry("Simulation end time", "100000000.0",
-				dealii::Patterns::Double(0),
-				"The end time of the simulation. "
-						"Especially for adaptive time stepping schemes, number of steps is not an appropriate stop condition");
+        declare_entry("Simulation end time", "100000000.0",
+                      dealii::Patterns::Double(0),
+                      "The end time of the simulation. Especially for adaptive time stepping schemes, "
+                      "number of steps is not an appropriate stop condition.");
+        declare_entry("Server end time", "82800",
+                      dealii::Patterns::Integer(1),
+                      "The end time of the server. "
+                      "On a cluster, the timeout limits must be considered and checkpoints written in time.");
 		declare_entry("Convergence threshold", "1e-30",
 				dealii::Patterns::Double(),
 				"The codes stops when the maximum velocity variation is below this threshold in 10 iterations.");
