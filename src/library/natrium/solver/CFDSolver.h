@@ -137,7 +137,8 @@ protected:
 	vector<boost::shared_ptr<DataProcessor<dim> > > m_dataProcessors;
 
 	// starting time
-	time_t m_tstart;
+    time_t m_tstart;
+    time_t m_tstart2;
 
 
 

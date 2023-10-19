@@ -651,6 +651,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			<< endl;
 
 	m_tstart = clock();
+    m_tstart2 = time(nullptr);
 
 }
 /* Constructor */
@@ -901,6 +902,17 @@ void CFDSolver<dim>::run() {
 	LOG(BASIC) << Timing::getOutStream().str() << endl;
 }
 
+std::string secs_to_stream(int secs) {
+    int h = int(secs/3600);
+    int m = int((secs - h*3600)/60);
+    int s = secs - h*3600 - m*60;
+    std::stringstream result;
+    result << std::setfill('0') << std::setw(3) << h << ":"
+        << std::setfill('0') << std::setw(2) << m << ":"
+        << std::setfill('0') << std::setw(2) << s << " / " << secs << " seconds";
+    return result.str();
+};
+
 template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
 
@@ -925,10 +937,15 @@ bool CFDSolver<dim>::stopConditionMet() {
     }
 // End time
     const int server_end_time = m_configuration->getServerEndTime(); //82800; // 300;//maximum of 23 hours = 23*60*60 seconds
-    double secs = int((clock() - m_tstart) / CLOCKS_PER_SEC);
+    time_t t_tot = clock() - m_tstart;
+    int secs = int(t_tot / CLOCKS_PER_SEC);
     if (secs >= server_end_time) {
-        LOG(BASIC) << "Stop condition: Server end time t_max=" << server_end_time
-                   << " s reached in iteration " << m_i << " after " << secs << " s." << endl;
+        LOG(BASIC) << "Stop condition: Server end time of " << secs_to_stream(secs) << " reached in iteration " << m_i << "." << endl;
+        int startsecs = int(m_tstart / CLOCKS_PER_SEC);
+        struct tm * ltm1 = localtime(&m_tstart2);
+        time_t t_now = time(nullptr);
+        struct tm * ltm2 = localtime(&t_now);
+        LOG(BASIC) << "Started at " << string(asctime(ltm1)) << "and ended at " << string(asctime(ltm2)) << endl;
         return true;
     }
 // Converged
