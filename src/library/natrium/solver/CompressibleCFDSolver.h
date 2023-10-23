@@ -29,7 +29,9 @@ private:
 	distributed_vector m_temperature;
     distributed_vector m_tmpTemperature;
     boost::shared_ptr<CompressibleTurbulenceStats<dim> > m_compressibleTurbulenceStats;
-
+    // starting time
+    time_t m_tstart;
+    time_t m_tstart2;
 
     /// particle distribution functions for internal energy
 	DistributionFunctions m_g;
@@ -313,6 +315,17 @@ void gStream() {
     }
 }
 
+std::string secs_to_stream(int secs) {
+    int h = int(secs/3600);
+    int m = int((secs - h*3600)/60);
+    int s = secs - h*3600 - m*60;
+    std::stringstream result;
+    result << std::setfill('0') << std::setw(3) << h << ":"
+           << std::setfill('0') << std::setw(2) << m << ":"
+           << std::setfill('0') << std::setw(2) << s << " / " << secs << " seconds";
+    return result.str();
+};
+
 void compressibleFilter() {
 
 // start timer
@@ -437,8 +450,13 @@ void compressibleFilter() {
 
             }*/
             if (iteration % 100 == 0) {
-                LOG(DETAILED) << "Iteration " << iteration << ",  t = " << this->m_time
-                              << endl;
+                time_t t_tot = clock() - m_tstart;
+                int secs = int(t_tot / CLOCKS_PER_SEC);
+                struct tm * ltm = localtime(&m_tstart2);
+                time_t t_now = time(nullptr);
+                struct tm * ltm2 = localtime(&t_now);
+                LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = " << secs_to_stream(secs)
+                              << ". Started at " << string(asctime(ltm)) << ". Now, it's " << string(asctime(ltm2)) << endl;
             }
             if ((iteration % 1000 == 0) or (is_final)) {
                 double secs = 1e-10 + (clock() - this->m_tstart) / CLOCKS_PER_SEC;
@@ -1054,6 +1072,10 @@ void compressibleFilter() {
     DistributionFunctions& getG() {
         return m_g;
     }
+
+//protected:
+//    /// the physical time passed (normally initialized with 0.0, except for restart at a checkpoint)
+//    double m_time;
 
 };
 

@@ -999,7 +999,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
             struct tm * ltm = localtime(&m_tstart2);
             time_t t_now = time(nullptr);
             struct tm * ltm2 = localtime(&t_now);
-			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time << ", server-time = " << secs_to_stream(secs)
+			LOG(DETAILED) << "Iteration " << iteration << ", t = " << m_time << ", server-time = " << secs_to_stream(secs)
                     << ". Started at " << string(asctime(ltm)) << ". Now, it's " << string(asctime(ltm2)) << endl;
 		}
 		if ((iteration % 1000 == 0) or (is_final)) {
