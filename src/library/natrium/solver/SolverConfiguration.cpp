@@ -240,7 +240,7 @@ SolverConfiguration::SolverConfiguration() {
                       dealii::Patterns::Double(0),
                       "The end time of the simulation. Especially for adaptive time stepping schemes, "
                       "number of steps is not an appropriate stop condition.");
-        declare_entry("Server end time", "82800",
+        declare_entry("Server end time", "79200",
                       dealii::Patterns::Integer(1),
                       "The end time of the server. "
                       "On a cluster, the timeout limits must be considered and checkpoints written in time.");
