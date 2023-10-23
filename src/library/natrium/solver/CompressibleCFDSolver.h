@@ -96,14 +96,10 @@ public:
             m_g.updateGhosted();
 
             CFDSolverUtilities::applyWriteableDensity(writeable_T, m_temperature);
-
-
-
         }
-
 	}
 
-	    bool applyCheckpointToG() {
+    bool applyCheckpointToG() {
         boost::filesystem::path out_dir(this->m_configuration->getOutputDirectory());
         boost::filesystem::path log_file = out_dir / "natrium.log";
         boost::filesystem::path checkpoint_dir = out_dir / "checkpoint";
@@ -128,7 +124,6 @@ public:
         }
 
         if (checkpoint) {
-
             m_g.reinit(this->m_stencil->getQ(),
                        this->getAdvectionOperator()->getLocallyOwnedDofs(),
                        this->getAdvectionOperator()->getLocallyRelevantDofs(),
@@ -148,8 +143,6 @@ public:
                             vel[a]+=this->m_stencil->getDirection(i)(a)/scaling *this->m_f.at(i)(*it);
                         }
                     }
-
-
                         double temperature = 0.0;
                     for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
                         double sum = 0.0;
@@ -168,20 +161,14 @@ public:
                    m_g.at(i)(*it) = this->m_f.at(i)(*it)*temperature*(2.0*C_v_new-dim);
                 }
             }
-
            // checkpoint->load(m_g, *(this->m_problemDescription), *(this->m_advectionOperator),
             //                 checkpoint_status);
-
         }
         m_g.updateGhosted();
         return 0 != restart_i;
-
-
-
 	}
 
     void stream() {
-
         // start timer
         TimerOutput::Scope timer_section(Timing::getTimer(), "Stream");
 
@@ -225,7 +212,6 @@ public:
                                         this->m_multistepData->getFormerF().getFStream(),
                                         f_tmp.getFStream());
                 }
-
                 //distributed_block_vector& formerFEq =
                 //		m_multistepData->getFormerFEq().getFStream();
                 f_tmp = this->m_multistepData->getFormerFEq();
@@ -241,7 +227,6 @@ public:
                                         f_tmp.getFStream());
                 }
             }
-
             this->m_time += this->getTimeStepSize();
 
         } else {
@@ -264,9 +249,7 @@ public:
 
                 this->m_timeIntegrator->step(formerFEq, systemMatrix, this->m_boundaryVector,
                                        0.0, this->m_timeIntegrator->getTimeStepSize());
-
             }
-
             this->m_timeIntegrator->setTimeStepSize(new_dt);
             this->m_time += new_dt;
             this->m_collisionModel->setTimeStep(this->m_timeIntegrator->getTimeStepSize());
@@ -274,13 +257,9 @@ public:
 
         // communicate
         this->m_f.updateGhosted();
-
     }
 
-
 void gStream() {
-
-
 
 	// no streaming in direction 0; begin with 1
 	distributed_block_vector& g = m_g.getFStream();
@@ -288,7 +267,6 @@ void gStream() {
 		this->getAdvectionOperator()->getSystemMatrix();
 
 	if (SEMI_LAGRANGIAN == this->getConfiguration()->getAdvectionScheme()) {
-
 		DistributionFunctions g_tmp(m_g);
 		systemMatrix.vmult(m_g.getFStream(), g_tmp.getFStream());
 		const double gamma = this->getConfiguration()->getHeatCapacityRatioGamma();
@@ -310,8 +288,6 @@ void gStream() {
         this->m_boundaryVector = this->m_advectionOperator->getSystemVector();
         double new_dt = this->m_timeIntegrator->step(g, systemMatrix,
                                                this->m_boundaryVector, 0.0, this->m_timeIntegrator->getTimeStepSize());
-
-
     }
 }
 
@@ -343,7 +319,6 @@ void compressibleFilter() {
 		this->m_f.updateGhosted();
 		m_g.updateGhosted();
 	}
-
 }
 
 	void applyInitialTemperatures(
@@ -375,8 +350,6 @@ void compressibleFilter() {
 					}
 				} /* if is locally owned */
 			} /* for all cells */
-
-
 		}
 
 	const distributed_vector& getTemperature() const {
@@ -398,16 +371,13 @@ void compressibleFilter() {
 			size_t Q = this->getStencil()->getQ();
 			writeable_T = 0;
 
-
 			for (size_t i = 0; i < Q; i++) {
 					//writeable_T.add(m_f.at(i));
 					for (size_t j = 0; j < dim; j++) {
 						writeable_T.add(this->getStencil()->getDirection(i)(j), this->getStencil()->getDirection(i)(j));
 					}
 				}
-
 		}
-
 
 /*	inline distributed_vector& getWriteableTemperature(distributed_vector& writeable, const distributed_vector& member, const dealii::IndexSet& locally_owned){
 		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
@@ -428,7 +398,6 @@ void compressibleFilter() {
 
 	void compressibleOutput(size_t iteration, bool is_final) {
 
-
 // start timer
         TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
 
@@ -447,7 +416,6 @@ void compressibleFilter() {
                 dealii::GridOut().write_vtk(*(this->m_problemDescription)->getMesh(),
                                             grid_out_file);
                 grid_out_file.close();
-
             }*/
             if (iteration % 100 == 0) {
                 time_t t_tot = clock() - m_tstart;
@@ -456,7 +424,8 @@ void compressibleFilter() {
                 time_t t_now = time(nullptr);
                 struct tm * ltm2 = localtime(&t_now);
                 LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = " << secs_to_stream(secs)
-                              << ". Started at " << string(asctime(ltm)) << ". Now, it's " << string(asctime(ltm2)) << endl;
+                              << ". Started at " << string(asctime(ltm))
+                              << "Now, it's " << string(asctime(ltm2));
             }
             if ((iteration % 1000 == 0) or (is_final)) {
                 double secs = 1e-10 + (clock() - this->m_tstart) / CLOCKS_PER_SEC;
@@ -555,7 +524,6 @@ void compressibleFilter() {
                     data_out.write_pvtu_record(pvtu_output, filenames);
                 }
             }
-
             // output: table
             // calculate information + physical properties
             if (iteration % this->m_configuration->getOutputTableInterval() == 0) {
@@ -588,8 +556,6 @@ void compressibleFilter() {
             checkpointG.write(*(this->m_problemDescription->getMesh()), m_g,
                              *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
         } /*if checkpoint interval*/
-
-
     }
 
     void applyShockSensor() {
@@ -644,11 +610,9 @@ void compressibleFilter() {
         CFDSolverUtilities::getWriteableDensity(writeable_Mask, this->m_maskShockSensor,
                                                 this->getAdvectionOperator()->getLocallyOwnedDofs());
 
-
         for (; cell != endc; ++cell) {
             if (cell->is_locally_owned()) {
                 cell->get_dof_indices(local_dof_indices);
-
 
                 cell->get_dof_indices(local_dof_indices);
 
@@ -682,17 +646,13 @@ void compressibleFilter() {
                     //    u_magnitude+=uzs.at(q)*uzs.at(q);
                     //    u_magnitude=sqrt(u_magnitude);
 
-
                     writeable_Mask(local_dof_indices.at(q)) = dilatation;
-
-
 
                 }
             } /* if is locally owned */
         }/* for all cells */
         CFDSolverUtilities::applyWriteableDensity(writeable_Mask, this->m_maskShockSensor);
     }
-
 
         void smoothDensities(
             const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints)  {
@@ -750,7 +710,6 @@ void compressibleFilter() {
  //       } /* for all cells */
  //   }
 
-
 	void collide()  {
 	// start timer
 		TimerOutput::Scope timer_section(Timing::getTimer(), "Collision");
@@ -770,15 +729,10 @@ void compressibleFilter() {
             CFDSolverUtilities::getWriteableDensity(writeable_mSS, this->m_maskShockSensor,
                     this->getAdvectionOperator()->getLocallyOwnedDofs());
 
-
 			double delta_t = CFDSolverUtilities::calculateTimestep<dim>(
 						*(this->getProblemDescription()->getMesh()),
 						this->getConfiguration()->getSedgOrderOfFiniteElement(), *(this->m_stencil),
 						this->getConfiguration()->getCFL());
-
-
-
-
 
 	// TODO member function collisionModel
             selectCollision(*(this->m_configuration), *(this->m_problemDescription), this->m_f, m_g, writeable_rho, writeable_u, writeable_T, writeable_mSS,
@@ -825,16 +779,10 @@ void compressibleFilter() {
                     for (size_t gam = 0; gam < dim; gam++){
 
                         feq[i] += weight[i] * density / (6. * cs2 * cs2 * cs2) *
-                                  (velocity[alp] * velocity[bet] * velocity[gam]
-                                   + T1 *
-                                     (eye[alp][bet] * velocity[gam] + eye[bet][gam] * velocity[alp] +
-                                      eye[alp][gam] * velocity[bet])) * (e[i][alp] * e[i][bet] * e[i][gam] - cs2 *
-                                                                                                                     (e[i][gam] *
-                                                                                                                      eye[alp][bet] +
-                                                                                                                      e[i][bet] *
-                                                                                                                      eye[alp][gam] +
-                                                                                                                      e[i][alp] *
-                                                                                                                      eye[bet][gam]));
+                                  (velocity[alp] * velocity[bet] * velocity[gam] + T1 *
+                                  (eye[alp][bet] * velocity[gam] + eye[bet][gam] * velocity[alp] + eye[alp][gam] * velocity[bet]))
+                                  * (e[i][alp] * e[i][bet] * e[i][gam] - cs2 *
+                                  (e[i][gam] * eye[alp][bet] + e[i][bet] * eye[alp][gam] + e[i][alp] * eye[bet][gam]));
 
                         for (size_t det = 0; det < dim; det++)
                         {
@@ -851,13 +799,9 @@ void compressibleFilter() {
                             double multieye= eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
 
                             feq[i]+= weight[i] * density /(24.*cs2*cs2*cs2*cs2)*(power4-cs2*power2+cs2*cs2*power0)*(u4+T1*(u2+T1*multieye));
-
-
-                        }
-
+                                                    }
                     }
                 }
-
             }
         }
     }
@@ -880,7 +824,6 @@ void compressibleFilter() {
             weight[j] = this->getStencil()->getWeight(j);
         }
         double descaled_cs2 = this->m_stencil->getSpeedOfSoundSquare() / (this->getStencil()->getScaling()*this->getStencil()->getScaling());
-
 
         // save starting time
 		double t0 = this->m_time;
@@ -967,8 +910,6 @@ void compressibleFilter() {
                                 this->getConfiguration()->getSedgOrderOfFiniteElement(), *(this->m_stencil),
                                 this->getConfiguration()->getCFL());
 
-
-
                         selectCollision(*(this->m_configuration), *(this->m_problemDescription), this->m_f, m_g, rho, u, T, mask,
                                         this->m_advectionOperator->getLocallyOwnedDofs(), this->m_problemDescription->getViscosity(), delta_t, *(this->getStencil()), true);
                         //m_collisionModel->collideAll(m_f, rho, m_velocity, locally_owned_dofs,
@@ -1008,14 +949,9 @@ void compressibleFilter() {
             }
         }
 
-
-
-
-
         this->m_time = t0;
 
 		LOG(BASIC) << "Initialize distribution functions: done." << endl;
-
 	}
 
     void run()
@@ -1023,7 +959,6 @@ void compressibleFilter() {
         this->m_i = this->m_iterationStart;
         if(this->m_i<=1) {
             initializeDistributions();
-
         }
         collide();
             while (true) {
@@ -1041,10 +976,7 @@ void compressibleFilter() {
                 this->m_compressibleTurbulenceStats->apply();
             }
             if(this->m_i==200) {
-
-
                 //smoothDensities(this->m_supportPoints);
-
             }
 
             this->collide();
