@@ -941,7 +941,6 @@ bool CFDSolver<dim>::stopConditionMet() {
     int secs = int(t_tot / CLOCKS_PER_SEC);
     if (secs >= server_end_time) {
         LOG(BASIC) << "Stop condition: Server end time of " << secs_to_stream(secs) << " reached in iteration " << m_i << "." << endl;
-        int startsecs = int(m_tstart / CLOCKS_PER_SEC);
         struct tm * ltm = localtime(&m_tstart2);
         LOG(BASIC) << "Started at " << string(asctime(ltm));
         time_t t_now = time(nullptr);
@@ -995,8 +994,13 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 		}
 		if (iteration % 100 == 0) {
-			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time
-					<< endl;
+            time_t t_tot = clock() - m_tstart;
+            int secs = int(t_tot / CLOCKS_PER_SEC);
+            struct tm * ltm = localtime(&m_tstart2);
+            time_t t_now = time(nullptr);
+            struct tm * ltm2 = localtime(&t_now);
+			LOG(DETAILED) << "Iteration " << iteration << ",  t = " << m_time << ", server-time = " << secs_to_stream(secs)
+                    << ". Started at " << string(asctime(ltm)) << ". Now, it's " << string(asctime(ltm2)) << endl;
 		}
 		if ((iteration % 1000 == 0) or (is_final)) {
 			double secs = 1e-10 + (clock() - m_tstart) / CLOCKS_PER_SEC;
