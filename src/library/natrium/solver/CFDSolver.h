@@ -138,7 +138,7 @@ protected:
 
 	// starting time
     time_t m_tstart;
-    time_t m_tstart2;
+    string m_tstart2;
 
 
 

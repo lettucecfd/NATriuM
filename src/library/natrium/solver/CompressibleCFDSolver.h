@@ -31,7 +31,7 @@ private:
     boost::shared_ptr<CompressibleTurbulenceStats<dim> > m_compressibleTurbulenceStats;
     // starting time
     time_t m_tstart;
-    time_t m_tstart2;
+    string m_tstart2;
 
     /// particle distribution functions for internal energy
 	DistributionFunctions m_g;
@@ -42,7 +42,9 @@ public:
             CFDSolver<dim>(configuration, problemDescription) {
 
         m_tstart = clock();
-        m_tstart2 = time(nullptr);
+        time_t start = time(nullptr);
+        struct tm* ltm = localtime(&start);
+        m_tstart2 = string(asctime(ltm));
 
         bool checkpointExists = applyCheckpointToG();
 
@@ -423,12 +425,11 @@ void compressibleFilter() {
             if (iteration % 100 == 0) {
                 time_t t_tot = clock() - m_tstart;
                 int secs = int(t_tot / CLOCKS_PER_SEC);
-                struct tm * ltm = localtime(&m_tstart2);
                 time_t t_now = time(nullptr);
-                struct tm * ltm2 = localtime(&t_now);
+                struct tm* ltm = localtime(&t_now);
                 LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = " << secs_to_stream(secs)
-                              << ". Started at " << string(asctime(ltm))
-                              << "Now, it's " << string(asctime(ltm2));
+                              << ". Started at " << m_tstart2
+                              << "Now, it's " << string(asctime(ltm));
             }
             if ((iteration % 1000 == 0) or (is_final)) {
                 double secs = 1e-10 + (clock() - this->m_tstart) / CLOCKS_PER_SEC;
