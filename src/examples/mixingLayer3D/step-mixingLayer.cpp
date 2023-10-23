@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
     parser.applyToSolverConfiguration(*configuration);
 
     // standard output dir
-    string m_dirname;
+    string m_dirname = configuration->getOutputDirectory();
     if (not parser.hasArgument("output-dir")){
         std::stringstream dirName;
         dirName << getenv("NATRIUM_HOME");
@@ -158,8 +158,6 @@ int main(int argc, char** argv) {
         }
         configuration->setOutputDirectory(dirName.str());
         m_dirname = dirName.str();
-    } else {
-        m_dirname = configuration->getOutputDirectory();
     }
 
     // ========================================================================

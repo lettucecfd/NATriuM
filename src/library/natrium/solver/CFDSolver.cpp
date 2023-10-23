@@ -945,7 +945,7 @@ bool CFDSolver<dim>::stopConditionMet() {
         LOG(BASIC) << "Started at " << string(asctime(ltm));
         time_t t_now = time(nullptr);
         ltm = localtime(&t_now);
-        LOG(BASIC) << "Ended at " << string(asctime(ltm));
+        LOG(BASIC) << "Stopped at " << string(asctime(ltm));
         return true;
     }
 // Converged
