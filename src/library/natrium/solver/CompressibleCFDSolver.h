@@ -39,7 +39,10 @@ private:
 public:
 	CompressibleCFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 			boost::shared_ptr<ProblemDescription<dim> > problemDescription) :
-			CFDSolver<dim>(configuration, problemDescription) {
+            CFDSolver<dim>(configuration, problemDescription) {
+
+        m_tstart = clock();
+        m_tstart2 = time(nullptr);
 
         bool checkpointExists = applyCheckpointToG();
 
