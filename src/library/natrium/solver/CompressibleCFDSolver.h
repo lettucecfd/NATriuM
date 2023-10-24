@@ -422,13 +422,13 @@ void compressibleFilter() {
                                             grid_out_file);
                 grid_out_file.close();
             }*/
-            if (iteration % 100 == 0) {
+            if ((iteration % 100 == 0) or (is_final)) {
                 time_t t_tot = clock() - m_tstart;
                 int secs = int(t_tot / CLOCKS_PER_SEC);
                 time_t t_now = time(nullptr);
                 struct tm* ltm = localtime(&t_now);
                 LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = " << secs_to_stream(secs)
-                              << ". Started at " << m_tstart2
+                              << "." << endl << "Started at " << m_tstart2
                               << "Now, it's " << string(asctime(ltm));
             }
             if ((iteration % 1000 == 0) or (is_final)) {
@@ -440,20 +440,15 @@ void compressibleFilter() {
                               << " million DoF updates per second" << endl;
                 Timing::getTimer().print_summary();
             }
-            // output estimated runtime after iterations 1, 10, 100, 1000, ...
-            /*if (iteration > m_iterationStart) {
-             if (int(log10(iteration - m_iterationStart))
-             == log10(iteration - m_iterationStart)) {
-             time_t estimated_end = m_tstart
-             + (m_configuration->getNumberOfTimeSteps()
-             - m_iterationStart)
-             / (iteration - m_iterationStart)
-             * (time(0) - m_tstart);
-             struct tm * ltm = localtime(&estimated_end);
-             LOG(BASIC) << "i = " << iteration << "; Estimated end: "
-             << string(asctime(ltm)) << endl;
-             }
-             }*/
+            // output estimated runtime after iterations 1, 10, 100, 1000, ... and after every 1000
+            if ((log10(iteration - this->m_iterationStart) % 1 == 0) or (iteration % 1000 == 0)) {
+                time_t estimated_end = m_tstart
+                        + (this->m_configuration->getNumberOfTimeSteps() - this->m_iterationStart)
+                            / (iteration - this->m_iterationStart) * (time(nullptr) - m_tstart);
+                struct tm * ltm = localtime(&estimated_end);
+                LOG(DETAILED) << "i = " << iteration << "; Estimated end: " << string(asctime(ltm)) << endl;
+            }
+            // add turbulence statistics to output
             if (this->m_configuration->isOutputTurbulenceStatistics())
                 this->m_turbulenceStats->addToReynoldsStatistics(this->m_velocity);
             // no output if solution interval > 10^8
@@ -541,8 +536,9 @@ void compressibleFilter() {
         // output: checkpoint
         // no output if checkpoint interval > 10^8
         if (((iteration % this->m_configuration->getOutputCheckpointInterval() == 0)
-             or is_final)
-            and (this->m_configuration->getOutputCheckpointInterval() <= 1e8) and (this->m_iterationStart != this->m_i)) {
+                and (this->m_configuration->getOutputCheckpointInterval() <= 1e8)
+                and (this->m_iterationStart != this->m_i))
+            or is_final) {
 
             boost::filesystem::path checkpoint_dir(
                     this->m_configuration->getOutputDirectory());
