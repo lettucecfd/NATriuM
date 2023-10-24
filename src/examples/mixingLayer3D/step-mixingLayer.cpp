@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("time", "simulation time (s)", 15);
     parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 10);
     parser.setArgument<double>("uscaling", "factor to scale U1, i.e. deltaUx", 1);
-    parser.setArgument<double>("CFL", "CFL number", 0.4);
+    parser.setArgument<double>("CFL", "CFL number. Should be between 0.4 and 2", 1);
     parser.setArgument<int>("nout", "output vtk every nout steps", 2000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setArgument<int>("squash", "squash grid towards centre", 0);
@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
     if (restart > 0) configuration->setRestartAtIteration(restart);
     configuration->setUserInteraction(false);
-    configuration->setOutputCheckpointInterval(nout*100);
+//    configuration->setOutputCheckpointInterval(nout*100);
     configuration->setOutputSolutionInterval(nout);
     configuration->setSimulationEndTime(time);
     configuration->setOutputGlobalTurbulenceStatistics(true);

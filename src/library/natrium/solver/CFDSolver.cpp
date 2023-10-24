@@ -254,6 +254,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		m_advectionOperator->setDeltaT(delta_t);
 		m_advectionOperator->reassemble();
 	}
+
+    // log physical start time
+    m_tstart_ph = m_time;
 	LOG(WELCOME) << "... done" << endl;
 
 /// Calculate relaxation parameter and build collision model
@@ -910,7 +913,7 @@ std::string secs_to_stream(int secs) {
     std::stringstream result;
     result << std::setfill('0') << std::setw(3) << h << ":"
         << std::setfill('0') << std::setw(2) << m << ":"
-        << std::setfill('0') << std::setw(2) << s << " / " << secs << " seconds";
+        << std::setfill('0') << std::setw(2) << s; // << " / " << secs << " seconds";
     return result.str();
 };
 
@@ -936,15 +939,15 @@ bool CFDSolver<dim>::stopConditionMet() {
                    << " reached in iteration " << m_i << "." << endl;
         return true;
     }
-// End time
-    const int server_end_time = m_configuration->getServerEndTime(); //82800; // 300;//maximum of 23 hours = 23*60*60 seconds
+// Server end time
+    const int server_end_time = m_configuration->getServerEndTime();
     time_t t_tot = clock() - m_tstart;
     int secs = int(t_tot / CLOCKS_PER_SEC);
     if (secs >= server_end_time) {
         if (is_MPI_rank_0()) {
             cout << "Stop condition: Server end time";
             cout << " reached after " << secs_to_stream(secs);
-            cout << " reached in iteration " << m_i << "." << endl;
+            cout << " in iteration " << m_i << "." << endl;
             cout << "Started at " << m_tstart2;
             time_t t_now = time(nullptr);
             struct tm* ltm = localtime(&t_now);

@@ -31,6 +31,7 @@ private:
     boost::shared_ptr<CompressibleTurbulenceStats<dim> > m_compressibleTurbulenceStats;
     // starting time
     time_t m_tstart;
+    time_t m_tstart3;
     string m_tstart2;
 
     /// particle distribution functions for internal energy
@@ -42,9 +43,10 @@ public:
             CFDSolver<dim>(configuration, problemDescription) {
 
         m_tstart = clock();
-        time_t start = time(nullptr);
-        struct tm* ltm = localtime(&start);
+        m_tstart3 = time(nullptr);
+        struct tm* ltm = localtime(&m_tstart3);
         m_tstart2 = string(asctime(ltm));
+
 
         bool checkpointExists = applyCheckpointToG();
 
@@ -402,6 +404,7 @@ void compressibleFilter() {
 	}
 
 	void compressibleOutput(size_t iteration, bool is_final) {
+        if (is_final and is_MPI_rank_0()) cout << "Printing last outputs";
 
 // start timer
         TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
@@ -422,31 +425,64 @@ void compressibleFilter() {
                                             grid_out_file);
                 grid_out_file.close();
             }*/
-            if ((iteration % 100 == 0) or (is_final)) {
-                time_t t_tot = clock() - m_tstart;
-                int secs = int(t_tot / CLOCKS_PER_SEC);
-                time_t t_now = time(nullptr);
-                struct tm* ltm = localtime(&t_now);
-                LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = " << secs_to_stream(secs)
-                              << "." << endl << "Started at " << m_tstart2
-                              << "Now, it's " << string(asctime(ltm));
-            }
             if ((iteration % 1000 == 0) or (is_final)) {
+            }
+            // output elapsed time, server-time, and estimated runtime after iterations 1, 10, 100, 1000, ... and after every 1000
+
+            if ((iteration == 1) or (iteration == 10) or (iteration == 50) or (iteration == 100) or (iteration == 500)
+                    or ((iteration % 1000 == 0) and iteration > 0)) {
+
+                time_t t_tot = clock() - m_tstart;
+                int secs2 = int(t_tot / CLOCKS_PER_SEC);
+                time_t t_now = time(nullptr);
+                struct tm *ltm = localtime(&t_now);
+                LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = "
+                              << secs_to_stream(secs2) << "." << endl;
+                LOG(DETAILED) << "Started at " << m_tstart2;
+                LOG(DETAILED) << "Now, it's " << string(asctime(ltm));
+
                 double secs = 1e-10 + (clock() - this->m_tstart) / CLOCKS_PER_SEC;
-                LOG(DETAILED) << "Time elapsed: " << secs
-                              << "s;    Average Performance: "
+                LOG(DETAILED) << "Average Performance: "
                               << 1.0 * this->m_advectionOperator->getDoFHandler()->n_dofs()
                                  * (iteration - this->m_iterationStart) / secs / 1000000.0
                               << " million DoF updates per second" << endl;
                 Timing::getTimer().print_summary();
-            }
-            // output estimated runtime after iterations 1, 10, 100, 1000, ... and after every 1000
-            if ((log10(iteration - this->m_iterationStart) % 1 == 0) or (iteration % 1000 == 0)) {
-                time_t estimated_end = m_tstart
-                        + (this->m_configuration->getNumberOfTimeSteps() - this->m_iterationStart)
-                            / (iteration - this->m_iterationStart) * (time(nullptr) - m_tstart);
-                struct tm * ltm = localtime(&estimated_end);
-                LOG(DETAILED) << "i = " << iteration << "; Estimated end: " << string(asctime(ltm)) << endl;
+
+                if ((this->m_configuration->getNumberOfTimeSteps() < 1e8) or (this->m_configuration->getSimulationEndTime() < 1e8)) {
+                    double factor;
+                    if (this->m_configuration->getNumberOfTimeSteps() < 1e8) {
+                        //                    if (is_MPI_rank_0()) cout << "Calculating factor from iterations."
+                        //                        << " Started at " << this->m_iterationStart << "."
+                        //                        << " Now, it's " << iteration << ".";
+                        // Calculating done iterations
+                        int done_iterations = iteration - this->m_iterationStart;
+                        // Calculating to-be-done iterations
+                        double tobedone_iterations = this->m_configuration->getNumberOfTimeSteps() - this->m_iterationStart;
+                        // Calculating iterations factor
+                        factor = tobedone_iterations / done_iterations;
+                    }
+                    if (this->m_configuration->getSimulationEndTime() < 1e8) {
+                        //                    if (is_MPI_rank_0()) cout << "Calculating factor from physical time."
+                        //                        << " Started at " << this->m_tstart_ph << " s."
+                        //                        << " Now, it's " << this->getTime() << " s." << endl;
+                        // Calculating done time
+                        double done_time_ph = this->getTime() - this->m_tstart_ph;
+                        // Calculating to-be-done iterations
+                        double tobedone_time_ph = this->m_configuration->getSimulationEndTime() - this->m_tstart_ph;
+                        // Calculating time factor
+                        factor = tobedone_time_ph / done_time_ph;
+                    }
+                    time_t start = m_tstart3;
+                    double done_time = time(nullptr) - m_tstart;
+                    time_t tobedone_time = done_time * factor;
+                    time_t estimated_end = start + tobedone_time;
+                    struct tm * ltm2 = localtime(&estimated_end);
+                    //                struct tm * ltm1 = localtime(&start);
+                    LOG(DETAILED) << "Finished " << 1.0/factor << " percent. Estimated end: " << string(asctime(ltm2));
+                    //                LOG(DETAILED) << "Started at: " << string(asctime(ltm1));
+                    //                LOG(DETAILED) << "Already did: " << done_time << "[time_t]";
+                    //                LOG(DETAILED) << "Overall needs: " << tobedone_time << "[time_t]";
+                }
             }
             // add turbulence statistics to output
             if (this->m_configuration->isOutputTurbulenceStatistics())
@@ -535,10 +571,9 @@ void compressibleFilter() {
         }
         // output: checkpoint
         // no output if checkpoint interval > 10^8
-        if (((iteration % this->m_configuration->getOutputCheckpointInterval() == 0)
+        if (((iteration % this->m_configuration->getOutputCheckpointInterval() == 0) or is_final)
                 and (this->m_configuration->getOutputCheckpointInterval() <= 1e8)
-                and (this->m_iterationStart != this->m_i))
-            or is_final) {
+                and (this->m_iterationStart != this->m_i)) {
 
             boost::filesystem::path checkpoint_dir(
                     this->m_configuration->getOutputDirectory());

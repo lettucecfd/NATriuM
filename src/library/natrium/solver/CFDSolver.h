@@ -119,6 +119,7 @@ protected:
 
 	/// the physical time passed (normally initialized with 0.0, except for restart at a checkpoint)
 	double m_time;
+    double m_tstart_ph;
 
 	/// a vector that indicates if a dofs is at the boundary (for each dof)
 	vector<bool> m_isDoFAtBoundary;
