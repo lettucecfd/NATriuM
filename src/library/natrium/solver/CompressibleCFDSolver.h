@@ -306,7 +306,7 @@ std::string secs_to_stream(int secs) {
     std::stringstream result;
     result << std::setfill('0') << std::setw(3) << h << ":"
            << std::setfill('0') << std::setw(2) << m << ":"
-           << std::setfill('0') << std::setw(2) << s << " / " << secs << " seconds";
+           << std::setfill('0') << std::setw(2) << s; // << " / " << secs << " seconds";
     return result.str();
 };
 
@@ -439,11 +439,11 @@ void compressibleFilter() {
                 struct tm *ltm = localtime(&t_now);
                 LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = "
                               << secs_to_stream(secs2) << "." << endl;
-                LOG(DETAILED) << "Started at " << m_tstart2;
-                LOG(DETAILED) << "Now, it's " << string(asctime(ltm));
+                LOG(DETAILED) << ":Started at " << m_tstart2;
+                LOG(DETAILED) << ":::::::Now, it is " << string(asctime(ltm));
 
                 double secs = 1e-10 + (clock() - this->m_tstart) / CLOCKS_PER_SEC;
-                LOG(DETAILED) << "Average Performance: "
+                LOG(DETAILED) << ":::::::Average Performance: "
                               << 1.0 * this->m_advectionOperator->getDoFHandler()->n_dofs()
                                  * (iteration - this->m_iterationStart) / secs / 1000000.0
                               << " million DoF updates per second" << endl;
@@ -451,10 +451,9 @@ void compressibleFilter() {
 
                 if ((this->m_configuration->getNumberOfTimeSteps() < 1e8) or (this->m_configuration->getSimulationEndTime() < 1e8)) {
                     double factor;
+                    string base;
                     if (this->m_configuration->getNumberOfTimeSteps() < 1e8) {
-                        //                    if (is_MPI_rank_0()) cout << "Calculating factor from iterations."
-                        //                        << " Started at " << this->m_iterationStart << "."
-                        //                        << " Now, it's " << iteration << ".";
+                        base = "max iterations";
                         // Calculating done iterations
                         int done_iterations = iteration - this->m_iterationStart;
                         // Calculating to-be-done iterations
@@ -463,9 +462,7 @@ void compressibleFilter() {
                         factor = tobedone_iterations / done_iterations;
                     }
                     if (this->m_configuration->getSimulationEndTime() < 1e8) {
-                        //                    if (is_MPI_rank_0()) cout << "Calculating factor from physical time."
-                        //                        << " Started at " << this->m_tstart_ph << " s."
-                        //                        << " Now, it's " << this->getTime() << " s." << endl;
+                        base = "physical time";
                         // Calculating done time
                         double done_time_ph = this->getTime() - this->m_tstart_ph;
                         // Calculating to-be-done iterations
@@ -479,7 +476,7 @@ void compressibleFilter() {
                     time_t estimated_end = start + tobedone_time;
                     struct tm * ltm2 = localtime(&estimated_end);
                     //                struct tm * ltm1 = localtime(&start);
-                    LOG(DETAILED) << "Finished " << 1.0/factor << " percent. Estimated end: " << string(asctime(ltm2));
+                    LOG(DETAILED) << "Finished " << 100.0/factor << " percent based on " << base << ". Estimated end: " << string(asctime(ltm2));
                     //                LOG(DETAILED) << "Started at: " << string(asctime(ltm1));
                     //                LOG(DETAILED) << "Already did: " << done_time << "[time_t]";
                     //                LOG(DETAILED) << "Overall needs: " << tobedone_time << "[time_t]";
