@@ -8,6 +8,7 @@
 #ifndef COMPRESSIBLECFDSOLVER_H_
 #define COMPRESSIBLECFDSOLVER_H_
 
+#include <filesystem>
 #include "deal.II/grid/grid_out.h"
 #include "CFDSolver.h"
 #include "../utilities/BasicNames.h"
@@ -487,13 +488,18 @@ void compressibleFilter() {
             // add turbulence statistics to output
             if (this->m_configuration->isOutputTurbulenceStatistics())
                 this->m_turbulenceStats->addToReynoldsStatistics(this->m_velocity);
+            // create vtk-subdirectory
+            if (iteration == 0) {
+                std::filesystem::path out_dir(this->m_configuration->getOutputDirectory() + "/vtk");
+                std::filesystem::create_directory(out_dir);
+            }
             // no output if solution interval > 10^8
             if (((iteration % this->m_configuration->getOutputSolutionInterval() == 0)
                  and this->m_configuration->getOutputSolutionInterval() <= 1e8)
                 or (is_final)) {
                 // save local part of the solution
                 std::stringstream str;
-                str << this->m_configuration->getOutputDirectory().c_str() << "/t_"
+                str << this->m_configuration->getOutputDirectory().c_str() << "/vtk/t_"
                     << this->m_problemDescription->getMesh()->locally_owned_subdomain()
                     << "." << iteration << ".vtu";
                 std::string filename = str.str();
@@ -540,7 +546,7 @@ void compressibleFilter() {
                     // generate .pvtu filename
                     std::stringstream pvtu_filename;
                     pvtu_filename << this->m_configuration->getOutputDirectory().c_str()
-                                  << "/t_"
+                                  << "/vtk/t_"
                                   << this->m_problemDescription->getMesh()->locally_owned_subdomain()
                                   << "." << iteration << ".pvtu";
                     std::ofstream pvtu_output(pvtu_filename.str().c_str());

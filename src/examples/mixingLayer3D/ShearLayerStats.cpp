@@ -9,6 +9,7 @@
 
 #include "mpi.h"
 #include <utility>
+#include <filesystem>
 #include "deal.II/base/mpi.h"
 //#include "natrium/collision_advanced/AuxiliaryCollisionFunctions.h"
 
@@ -32,6 +33,8 @@ ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string o
         }
     } else {
         if (is_MPI_rank_0()) {
+            std::filesystem::path out_dir(solver.getConfiguration()->getOutputDirectory() + "/stats");
+            std::filesystem::create_directory(out_dir);
             m_tableFile = boost::make_shared<std::fstream>(m_filename, std::fstream::out);
             m_vectorFile = boost::make_shared<std::fstream>(m_vectorfilename, std::fstream::out);
         }
@@ -440,7 +443,7 @@ void ShearLayerStats::write_tn() {
     if (is_MPI_rank_0()) {
         string dir = m_solver.getConfiguration()->getOutputDirectory();
         boost::filesystem::path out_dir(dir);
-        string filename = "shearlayer_t" + std::to_string(m_solver.getIteration()) + ".txt";
+        string filename = "stats/shearlayer_t" + std::to_string(m_solver.getIteration()) + ".txt";
         boost::filesystem::path out_file = out_dir / filename;
         std::ofstream ofs;
         ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);

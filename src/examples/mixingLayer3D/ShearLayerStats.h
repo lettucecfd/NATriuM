@@ -70,7 +70,7 @@ private:
 
     static string scalaroutfile(string dir) {
         boost::filesystem::path out_dir(dir);
-        boost::filesystem::path out_file = out_dir / "shearlayer_scalars.txt";
+        boost::filesystem::path out_file = out_dir / "stats/shearlayer_scalars.txt";
         std::ofstream ofs;
         ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);
         ofs.close();
@@ -78,7 +78,7 @@ private:
     }
     static string vectoroutfile(string dir) {
         boost::filesystem::path out_dir(dir);
-        boost::filesystem::path out_file = out_dir / "shearlayer_vectors.txt";
+        boost::filesystem::path out_file = out_dir / "stats/shearlayer_vectors.txt";
         std::ofstream ofs;
         ofs.open(out_file, std::ofstream::out | std::ofstream::trunc);
         ofs.close();

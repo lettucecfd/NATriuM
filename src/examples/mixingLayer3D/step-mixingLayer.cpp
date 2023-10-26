@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
     parser.applyToSolverConfiguration(*configuration);
 
     // standard output dir
-    string m_dirname = configuration->getOutputDirectory();
+    string m_dirname; //configuration->getOutputDirectory();
     if (not parser.hasArgument("output-dir")){
         std::stringstream dirName;
         dirName << getenv("NATRIUM_HOME");
@@ -156,9 +156,11 @@ int main(int argc, char** argv) {
         if (configuration->getCollisionScheme() == MRT_STANDARD) {
             dirName << "-relax" << static_cast<int>(configuration->getMRTRelaxationTimes());
         }
-        configuration->setOutputDirectory(dirName.str());
         m_dirname = dirName.str();
+    } else {
+        m_dirname = parser.getArgument<string>("output-dir");
     }
+    configuration->setOutputDirectory(m_dirname);
 
     // ========================================================================
     // COMMAND LINE OUTPUT
