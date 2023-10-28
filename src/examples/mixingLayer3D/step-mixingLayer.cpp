@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
     const double cs = U / Ma;
 
     // chose scaling so that the right Ma-number is achieved
-    const double reference_temperature = 1; //0.85;
+    const double reference_temperature = 0.85;
     const double gamma = 1.4;
     const double scaling = sqrt(3) * U / (Ma*sqrt(gamma*reference_temperature));
 //    const double scaling = sqrt(3) * cs; // choose different? -> stencil larger/smaller -> from turb. channel
