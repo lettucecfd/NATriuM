@@ -119,7 +119,8 @@ int main(int argc, char** argv) {
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
-    configuration->setHeatCapacityRatioGamma(1.4);
+    configuration->setHeatCapacityRatioGamma(gamma);
+    configuration->setReferenceTemperature(reference_temperature);
     configuration->setPrandtlNumber(0.71);
     configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order")); // TODO: set to 4
     configuration->setCFL(cfl); // TODO: should be 0.4<CFL<2
