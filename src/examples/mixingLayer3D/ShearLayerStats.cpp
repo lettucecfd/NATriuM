@@ -423,7 +423,9 @@ vector<double> ShearLayerStats::derivative(vector<double> values) {
 
 void ShearLayerStats::write_console() {
     if (is_MPI_rank_0()) {
-        LOG(DETAILED) << "IT: " << m_solver.getIteration()
+        std::stringstream log;
+        log.precision(6);
+        log << "IT: " << m_solver.getIteration()
             << ", t: " << m_solver.getTime()
             << ", delta_Theta: " << m_currentDeltaTheta_Fa
             << ", growth_rate: " << m_deltaThetaGrowth
@@ -431,11 +433,12 @@ void ShearLayerStats::write_console() {
             << ", Re_Omega: " << m_ReOmega
             << ", b11: " << m_b11
             << ", b22: " << m_b22
-            << ", b33: " << m_b33
+//            << ", b33: " << m_b33
             << ", b12: " << m_b12
-            << ", b13: " << m_b13
-            << ", b23: " << m_b23
+//            << ", b13: " << m_b13
+//            << ", b23: " << m_b23
             << endl;
+        LOG(DETAILED) << log.str();
     }
 }
 

@@ -432,13 +432,12 @@ void compressibleFilter() {
 
             if ((iteration == 1) or (iteration == 10) or (iteration == 50) or (iteration == 100) or (iteration == 500)
                     or ((iteration % 1000 == 0) and iteration > 0)) {
-
-                time_t t_tot = clock() - m_tstart;
-                int secs2 = int(t_tot / CLOCKS_PER_SEC);
+                int secs2 = int(clock() / CLOCKS_PER_SEC);
                 time_t t_now = time(nullptr);
                 struct tm *ltm = localtime(&t_now);
                 LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = "
                               << secs_to_stream(secs2) << "." << endl;
+//                LOG(DETAILED) << ":Started simulation after " << m_tstart << " seconds." << endl;
                 LOG(DETAILED) << ":Started at " << m_tstart2;
                 LOG(DETAILED) << ":::::::Now, it is " << string(asctime(ltm));
 
@@ -471,12 +470,15 @@ void compressibleFilter() {
                         factor = tobedone_time_ph / done_time_ph;
                     }
                     time_t start = m_tstart3;
-                    double done_time = time(nullptr) - m_tstart;
+                    time_t done_time = clock()/CLOCKS_PER_SEC;
                     time_t tobedone_time = done_time * factor;
                     time_t estimated_end = start + tobedone_time;
                     struct tm * ltm2 = localtime(&estimated_end);
                     //                struct tm * ltm1 = localtime(&start);
-                    LOG(DETAILED) << "Finished " << 100.0/factor << " percent based on " << base << ". Estimated end: " << string(asctime(ltm2));
+                    LOG(DETAILED) << ":Finished " << 100.0/factor << " % based on " << base << ". Estimated end: " << string(asctime(ltm2));
+//                    LOG(DETAILED) << "Server time: " << clock()/CLOCKS_PER_SEC << endl;
+//                    LOG(DETAILED) << "Calculated done_time: " << done_time << endl;
+//                    LOG(DETAILED) << "Calculated tobedone_t " << tobedone_time << endl;
                     //                LOG(DETAILED) << "Started at: " << string(asctime(ltm1));
                     //                LOG(DETAILED) << "Already did: " << done_time << "[time_t]";
                     //                LOG(DETAILED) << "Overall needs: " << tobedone_time << "[time_t]";
