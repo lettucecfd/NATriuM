@@ -424,7 +424,7 @@ vector<double> ShearLayerStats::derivative(vector<double> values) {
 void ShearLayerStats::write_console() {
     if (is_MPI_rank_0()) {
         std::stringstream log;
-        log.precision(6);
+//        log.precision(6);
         log << "IT: " << m_solver.getIteration()
             << ", t: " << m_solver.getTime()
             << ", delta_Theta: " << m_currentDeltaTheta_Fa
