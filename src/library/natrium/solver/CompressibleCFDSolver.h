@@ -475,7 +475,7 @@ void compressibleFilter() {
                     time_t estimated_end = start + tobedone_time;
                     struct tm * ltm2 = localtime(&estimated_end);
                     //                struct tm * ltm1 = localtime(&start);
-                    LOG(DETAILED) << ":Finished " << 100.0/factor << " % based on " << base << ". Estimated end: " << string(asctime(ltm2)) << ":::::::";
+                    LOG(DETAILED) << ":Finished " << 100.0/factor << " % based on " << base << ". Estimated end: " << string(asctime(ltm2));
 //                    LOG(DETAILED) << "Server time: " << clock()/CLOCKS_PER_SEC << endl;
 //                    LOG(DETAILED) << "Calculated done_time: " << done_time << endl;
 //                    LOG(DETAILED) << "Calculated tobedone_t " << tobedone_time << endl;

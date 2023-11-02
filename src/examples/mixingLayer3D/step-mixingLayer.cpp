@@ -46,11 +46,10 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 10);
     parser.setArgument<double>("uscaling", "factor to scale U1, i.e. deltaUx", 1);
     parser.setArgument<double>("CFL", "CFL number. Should be between 0.4 and 2", 1);
+    parser.setArgument<double>("gamma", "Heat capacity ratio. Should be 1.4", 1.4);
+    parser.setArgument<double>("ref-temp", "Reference temperature. Should be between 0.85 and 1 (lower may be more stable).", 1);
     parser.setArgument<int>("nout", "output vtk every nout steps", 2000);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
-    parser.setArgument<int>("squash", "squash grid towards centre", 0);
-    parser.setArgument<int>("print", "print calculations of initial velocity", 0);
-    parser.setArgument<int>("recalculate", "recalculate initial velocity", 0);
     parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final_small");
     parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "k048_half");
     parser.setArgument<int>("order", "order of finite elements", 3);
