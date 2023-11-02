@@ -405,7 +405,7 @@ void compressibleFilter() {
 	}
 
 	void compressibleOutput(size_t iteration, bool is_final) {
-        if (is_final and is_MPI_rank_0()) cout << "Printing last outputs";
+        if (is_final and is_MPI_rank_0()) LOG(DETAILED) << "Printing last outputs." << endl;
 
 // start timer
         TimerOutput::Scope timer_section(Timing::getTimer(), "Output");
@@ -476,6 +476,10 @@ void compressibleFilter() {
                     struct tm * ltm2 = localtime(&estimated_end);
                     //                struct tm * ltm1 = localtime(&start);
                     LOG(DETAILED) << ":Finished " << 100.0/factor << " % based on " << base << ". Estimated end: " << string(asctime(ltm2));
+                    time_t server_max = this->m_configuration->getServerEndTime();
+                    time_t estimated_server_end = start + server_max;
+                    struct tm * ltm3 = localtime(&estimated_server_end);
+                    LOG(DETAILED) << ":::::::Server-time left: " << secs_to_stream(server_max - done_time) << " s. Estimated server-end: " << string(asctime(ltm3));
 //                    LOG(DETAILED) << "Server time: " << clock()/CLOCKS_PER_SEC << endl;
 //                    LOG(DETAILED) << "Calculated done_time: " << done_time << endl;
 //                    LOG(DETAILED) << "Calculated tobedone_t " << tobedone_time << endl;
@@ -596,6 +600,7 @@ void compressibleFilter() {
             checkpointG.write(*(this->m_problemDescription->getMesh()), m_g,
                              *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
         } /*if checkpoint interval*/
+        LOG(DETAILED) << "Total runtime: " << secs_to_stream(int(clock()/CLOCKS_PER_SEC)) << ". Server-end had been set to " << secs_to_stream(this->m_configuration->getServerEndTime()) << endl;
     }
 
     void applyShockSensor() {

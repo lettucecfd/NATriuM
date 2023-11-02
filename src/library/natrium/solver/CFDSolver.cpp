@@ -1127,6 +1127,18 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 			checkpoint.write(*m_problemDescription->getMesh(), m_f,
 					*m_advectionOperator->getDoFHandler(), checkpoint_status);
 		} /*if checkpoint interval*/
+        if (is_final) {
+            time_t t_tot = clock() - m_tstart;
+            int secs = int(t_tot / CLOCKS_PER_SEC);
+            if (is_MPI_rank_0()) {
+                cout << "Stopped after " << secs_to_stream(secs);
+                cout << " at iteration " << m_i << "." << endl;
+                cout << "Started at " << m_tstart2;
+                time_t t_now = time(nullptr);
+                struct tm* ltm = localtime(&t_now);
+                cout << "Stopped at " << string(asctime(ltm));
+            }
+        }
 	} /*if not output off*/
 }
 
