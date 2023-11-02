@@ -36,6 +36,27 @@ namespace natrium {
 
 MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, string meshname, double randu_scaling, string randuname, double U) :
 ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_U(U), m_refinementLevel(refinementLevel) {
+    // **** Recommendations for CPU use ****
+	/*LOG(BASIC) << "-------------------------------------------------------------" << endl;
+	LOG(BASIC) << "**** Recommendations for CPU use ****" << endl;
+	double noRepetitions3D = repetitions.at(0) * repetitions.at(1) * repetitions.at(2);
+	double noGridPoints = pow( orderOfFiniteElement, 3 ) * pow( 8, refinementLevel +1 ) * noRepetitions3D;
+	LOG(BASIC) << "... Computation node details: " << endl;
+	LOG(BASIC) << "    - #CPU per node: 12 " << endl;
+	LOG(BASIC) << "    - memory per node: 4000 MB " << endl;
+	LOG(BASIC) << "... Recommended number of total grid points per node: 10e+6" << endl;
+	LOG(BASIC) << "... Recommended number of nodes: " << ceil(noGridPoints/10e+6) << endl;
+	LOG(BASIC) << "------------------------------------------------------------" << endl;
+
+
+	// **** Grid properties ****
+	LOG(BASIC) << "**** Grid properties ****" << endl;
+	int 	noCellsInXDir	= orderOfFiniteElement * pow( 2, refinementLevel + 1 ) * repetitions.at(0);
+	int 	noCellsInYDir	= orderOfFiniteElement * pow( 2, refinementLevel + 1 ) * repetitions.at(1);
+	int 	noCellsInZDir	= orderOfFiniteElement * pow( 2, refinementLevel + 1 ) * repetitions.at(2);
+	LOG(BASIC) << "... Mesh resolution: " << noCellsInXDir << "x" << noCellsInYDir << "x" << noCellsInZDir << endl;
+	LOG(BASIC) << "... Number of total grid points: " << noGridPoints << endl;
+    */
     /// apply boundary values
     setBoundaries(makeBoundaries());
     // apply analytic solution
