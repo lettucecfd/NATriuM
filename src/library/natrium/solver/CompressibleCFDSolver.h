@@ -479,7 +479,7 @@ void compressibleFilter() {
                     time_t server_max = this->m_configuration->getServerEndTime();
                     time_t estimated_server_end = start + server_max;
                     struct tm * ltm3 = localtime(&estimated_server_end);
-                    LOG(DETAILED) << ":::::::Server-time left: " << secs_to_stream(server_max - done_time) << " s.      Estimated server-end: " << string(asctime(ltm3));
+                    LOG(DETAILED) << ":::::::Server-time left: " << secs_to_stream(server_max - done_time) << ".   Estimated server-end: " << string(asctime(ltm3));
 //                    LOG(DETAILED) << "Server time: " << clock()/CLOCKS_PER_SEC << endl;
 //                    LOG(DETAILED) << "Calculated done_time: " << done_time << endl;
 //                    LOG(DETAILED) << "Calculated tobedone_t " << tobedone_time << endl;
