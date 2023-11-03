@@ -600,7 +600,9 @@ void compressibleFilter() {
             checkpointG.write(*(this->m_problemDescription->getMesh()), m_g,
                              *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
         } /*if checkpoint interval*/
-        LOG(DETAILED) << "Total runtime: " << secs_to_stream(int(clock()/CLOCKS_PER_SEC)) << ". Server-end had been set to " << secs_to_stream(this->m_configuration->getServerEndTime()) << endl;
+        if (is_final) {
+            LOG(DETAILED) << "Total runtime: " << secs_to_stream(int(clock()/CLOCKS_PER_SEC)) << ". Server-end had been set to " << secs_to_stream(this->m_configuration->getServerEndTime()) << endl;
+        }
     }
 
     void applyShockSensor() {
