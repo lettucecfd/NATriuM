@@ -1615,36 +1615,67 @@ public:
 		leave_subsection();
 	}
 
-	double getStencilScaling() {
-		enter_subsection("General");
-		double stencilScaling;
-		try {
-			stencilScaling = get_double("Stencil scaling");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Stencil scaling' from parameters: "
-					<< e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		return stencilScaling;
-	}
+    double getStencilScaling() {
+        enter_subsection("General");
+        double stencilScaling;
+        try {
+            stencilScaling = get_double("Stencil scaling");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Stencil scaling' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return stencilScaling;
+    }
 
-	void setStencilScaling(double stencilScaling) {
-		enter_subsection("General");
-		try {
-			set("Stencil scaling", stencilScaling);
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg << "Could not assign value " << stencilScaling
-					<< " to Stencil scaling: " << e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-	}
+    void setStencilScaling(double stencilScaling) {
+        enter_subsection("General");
+        try {
+            set("Stencil scaling", stencilScaling);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << stencilScaling
+                << " to Stencil scaling: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    double getMachNumber() {
+        enter_subsection("General");
+        double Ma;
+        try {
+            Ma = get_double("Mach number");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Mach number' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return Ma;
+    }
+
+    void setMachNumber(double Ma) {
+        enter_subsection("General");
+        try {
+            set("Mach number", Ma);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << Ma
+                << " to Mach number: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
 
 	StencilType getStencil() {
 		enter_subsection("General");

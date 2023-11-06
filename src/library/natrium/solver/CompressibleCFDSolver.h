@@ -48,28 +48,29 @@ public:
         struct tm* ltm = localtime(&m_tstart3);
         m_tstart2 = string(asctime(ltm));
 
-
         bool checkpointExists = applyCheckpointToG();
 
-            m_temperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
-                                 this->getAdvectionOperator()->getLocallyRelevantDofs(),
-                                 MPI_COMM_WORLD);
-            m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
-                                    MPI_COMM_WORLD);
-            if (configuration->isOutputCompressibleTurbulenceStatistics()) {
-                m_compressibleTurbulenceStats = boost::make_shared<CompressibleTurbulenceStats<dim> >(*this);
-            }
-            this->m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
-                                           this->getAdvectionOperator()->getLocallyRelevantDofs(),
-                                           MPI_COMM_WORLD);
+        m_temperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                             this->getAdvectionOperator()->getLocallyRelevantDofs(),
+                             MPI_COMM_WORLD);
+        m_tmpTemperature.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                                MPI_COMM_WORLD);
+        if (configuration->isOutputCompressibleTurbulenceStatistics()) {
+            m_compressibleTurbulenceStats = boost::make_shared<CompressibleTurbulenceStats<dim> >(*this);
+        }
+        this->m_maskShockSensor.reinit(this->getAdvectionOperator()->getLocallyOwnedDofs(),
+                                       this->getAdvectionOperator()->getLocallyRelevantDofs(),
+                                       MPI_COMM_WORLD);
 
-        if(!checkpointExists) {           distributed_vector writeable_temperature;
+        if(!checkpointExists) {
+            distributed_vector writeable_temperature;
             // In this case, the density function fulfills the same purpose for the temperature
             CFDSolverUtilities::getWriteableDensity(writeable_temperature, m_temperature,
                                                     this->getAdvectionOperator()->getLocallyOwnedDofs());
             this->applyInitialTemperatures(writeable_temperature, this->getSupportPoints());
             CFDSolverUtilities::applyWriteableDensity(writeable_temperature, m_temperature);
             LOG(BASIC) << "Speed of Sound Square: " << this->m_stencil->getSpeedOfSoundSquare() << endl;
+            LOG(BASIC) << "Mach compressible:     " << this->m_configuration->getMachNumber() << endl << endl;
 
             m_g.reinit(this->m_stencil->getQ(),
                        this->getAdvectionOperator()->getLocallyOwnedDofs(),
