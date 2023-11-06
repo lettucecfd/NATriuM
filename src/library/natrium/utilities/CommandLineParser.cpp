@@ -88,7 +88,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		cfg.setCFL(sqrt(2) * 2);
 		cfg.setSedgOrderOfFiniteElement(2);
 		cfg.setAdvectionScheme(SEMI_LAGRANGIAN);
-		LOG(BASIC) << "Scheme set to standard LBM via command line." << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Scheme set to standard LBM via command line." << endl;
 	}
 
 	// standard lbm on regular grids with higher-order differentiation
@@ -116,37 +116,34 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		cfg.setSedgOrderOfFiniteElement(order);
 		cfg.setSupportPoints(EQUIDISTANT_POINTS);
 		cfg.setAdvectionScheme(SEMI_LAGRANGIAN);
-		LOG(BASIC) << "Scheme set to standard LBM with N="
-				<< cfg.getSedgOrderOfFiniteElement() << " via command line."
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Scheme set to standard LBM with N=" << cfg.getSedgOrderOfFiniteElement() << " via command line." << endl;
 	}
 
 	// finite element order
 	if (hasArgument("order-fe")) {
 		int order_fe = getArgument<int>("order-fe");
 		cfg.setSedgOrderOfFiniteElement(order_fe);
-		LOG(BASIC) << "Order set to " << order_fe << " via command line."
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Order set to " << order_fe << " via command line." << endl;
 	}
 
 	// cfl number
 	if (hasArgument("cfl")) {
 		double cfl = getArgument<double>("cfl");
 		cfg.setCFL(cfl);
-		LOG(BASIC) << "CFL set to " << cfl << " via command line." << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "CFL set to " << cfl << " via command line." << endl;
 	}
 
 	// switch output on
 	if (hasArgument("output-on")) {
 		cfg.setSwitchOutputOff(false);
-		LOG(BASIC) << "Output switched on via command line." << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Output switched on via command line." << endl;
 	}
 
 	// command line verbosity
 	if (hasArgument("verbose")) {
 		cfg.setCommandLineVerbosity(static_cast<int>(ALL));
 		cfg.setSwitchOutputOff(false);
-		LOG(BASIC) << "Max verbosity specified via command line." << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Max verbosity specified via command line." << endl;
 	}
 
 	// advection scheme
@@ -160,8 +157,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			throw CommandLineParserException(
 					"--streaming had illegal value (allowed values: sl and sedg)");
 		}
-		LOG(BASIC) << "Advection scheme set to " << streaming
-				<< " via command line." << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Advection scheme set to " << streaming << " via command line." << endl;
 	}
 
 	// collision scheme
@@ -195,8 +191,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			throw CommandLineParserException(
 					"--collision had illegal value (see --help)");
 		}
-		LOG(BASIC) << "Collision set to " << collision << " via command line."
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Collision set to " << collision << " via command line." << endl;
 	}
 
 	// time integrator
@@ -255,8 +250,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			throw CommandLineParserException(
 					"--integrator had illegal value (see --help)");
 		}
-		LOG(BASIC) << "Time integrator set to " << integrator
-				<< " via command line" << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Time integrator set to " << integrator << " via command line" << endl;
 	}
 
 	// integrator-id
@@ -272,16 +266,14 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		CFDSolverUtilities::get_integrator_by_id(id, t, d, s);
 		cfg.setTimeIntegrator(t);
 		cfg.setDealIntegrator(d);
-		LOG(BASIC) << "Time integrator set to " << s << " via command line"
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Time integrator set to " << s << " via command line" << endl;
 	}
 
 	// stencil scaling
 	if (hasArgument("scaling")) {
 		double scaling = getArgument<double>("scaling");
 		cfg.setStencilScaling(scaling);
-		LOG(BASIC) << "Scaling set to " << scaling << " via command line"
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Scaling set to " << scaling << " via command line" << endl;
 	}
 
 	// regularization scheme
@@ -303,8 +295,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			msg << "See --help for allowed options." << endl;
 			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "Regularization set to " << reg << " via command line"
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Regularization set to " << reg << " via command line" << endl;
 	}
 
     // regularization scheme
@@ -320,8 +311,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
             msg << "See --help for allowed options." << endl;
             throw CommandLineParserException(msg.str());
         }
-        LOG(BASIC) << "Equilibrium scheme set to " << reg << " via command line"
-                   << endl;
+        if (is_MPI_rank_0()) LOG(BASIC) << "Equilibrium scheme set to " << reg << " via command line" << endl;
     }
 
 	// support points
@@ -341,8 +331,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			msg << "See --help for allowed options." << endl;
 			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "Support points set to " << sup_p << " via command line"
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Support points set to " << sup_p << " via command line" << endl;
 	}
 
 	// output directory
@@ -358,8 +347,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		int sol = getArgument<int>("output-sol");
 		cfg.setOutputSolutionInterval(sol);
 		cfg.setSwitchOutputOff(false);
-		LOG(BASIC) << "Output solution interval set to " << sol
-				<< " via command line" << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Output solution interval set to " << sol << " via command line" << endl;
 	}
 
 	// output checkpoint interval
@@ -367,8 +355,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		int erval = getArgument<int>("output-chk");
 		cfg.setOutputCheckpointInterval(erval);
 		cfg.setSwitchOutputOff(false);
-		LOG(BASIC) << "Output checkpoint interval set to " << erval
-				<< " via command line" << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Output checkpoint interval set to " << erval << " via command line" << endl;
 	}
 
 	// output solution interval
@@ -376,8 +363,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 		int erval = getArgument<int>("output-tab");
 		cfg.setOutputTableInterval(erval);
 		cfg.setSwitchOutputOff(false);
-		LOG(BASIC) << "Output table interval set to " << erval
-				<< " via command line" << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Output table interval set to " << erval << " via command line" << endl;
 	}
 
 	// stencil
@@ -417,15 +403,14 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			msg << "See --help for allowed options." << endl;
 			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "Stencil set to " << sten << " via command line" << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Stencil set to " << sten << " via command line" << endl;
 	}
 
 	// simulation end time
 	if (hasArgument("tmax")) {
 		double tmax = getArgument<double>("tmax");
 		cfg.setSimulationEndTime(tmax);
-		LOG(BASIC) << "Output simulation end time set to " << tmax
-				<< " via command line" << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Output simulation end time set to " << tmax << " via command line" << endl;
 	}
 
 	// iterative initialization
@@ -441,24 +426,21 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			msg << "See --help for allowed options." << endl;
 			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "Initialization set to " << init << " via command line"
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Initialization set to " << init << " via command line" << endl;
 	}
 
 	// iterative initialization: residual
 	if (hasArgument("init-res")) {
 		const double res = getArgument<double>("init-res");
 		cfg.setIterativeInitializationResidual(res);
-		LOG(BASIC) << "Residual for iterative initialization set to " << res
-				<< " via command line" << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Residual for iterative initialization set to " << res << " via command line" << endl;
 	}
 
 	// iterative initialization: max n. iterations
 	if (hasArgument("init-niter")) {
 		const int niter = getArgument<int>("init-niter");
 		cfg.setIterativeInitializationNumberOfIterations(niter);
-		LOG(BASIC) << "Max. number of iterative initialization steps set to "
-				<< niter << " via command line" << endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "Max. number of iterative initialization steps set to " << niter << " via command line" << endl;
 	}
 
 	if (hasArgument("mrt-basis")) {
@@ -475,8 +457,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			msg << "See --help for allowed options." << endl;
 			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "MRT basis set to " << basis << " via command line"
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "MRT basis set to " << basis << " via command line" << endl;
 	}
 
 	if (hasArgument("mrt-relax")) {
@@ -493,8 +474,7 @@ void CommandLineParser::applyToSolverConfiguration(SolverConfiguration& cfg) {
 			msg << "See --help for allowed options." << endl;
 			throw CommandLineParserException(msg.str());
 		}
-		LOG(BASIC) << "MRT relax set to " << relax << " via command line"
-				<< endl;
+		if (is_MPI_rank_0()) LOG(BASIC)  << "MRT relax set to " << relax << " via command line" << endl;
 	}
 
 }
