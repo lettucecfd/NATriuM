@@ -28,6 +28,9 @@ private:
     double m_maxMach;
     double m_gamma;
     double m_totalEnergy;
+    double m_minT;
+    double m_maxT;
+    double m_avgT;
     vector<string> m_names;
     std::string m_filename;
     std::string m_legendFilename;

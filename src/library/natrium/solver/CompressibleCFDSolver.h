@@ -363,29 +363,28 @@ void compressibleFilter() {
 	const distributed_vector& getTemperature() const {
 		return m_temperature;
 	}
-		void calculateTemperature()
-		{
-			std::vector<distributed_vector> writeable_u;
-			distributed_vector writeable_rho;
-			distributed_vector writeable_T;
-			distributed_vector temporary;
-			CFDSolverUtilities::getWriteableVelocity(writeable_u, this->getVelocity(),
-					this->getAdvectionOperator()->getLocallyOwnedDofs());
-			CFDSolverUtilities::getWriteableDensity(writeable_rho, this->getDensity(),
-					this->getAdvectionOperator()->getLocallyOwnedDofs());
+    void calculateTemperature() {
+        std::vector<distributed_vector> writeable_u;
+        distributed_vector writeable_rho;
+        distributed_vector writeable_T;
+        distributed_vector temporary;
+        CFDSolverUtilities::getWriteableVelocity(writeable_u, this->getVelocity(),
+                this->getAdvectionOperator()->getLocallyOwnedDofs());
+        CFDSolverUtilities::getWriteableDensity(writeable_rho, this->getDensity(),
+                this->getAdvectionOperator()->getLocallyOwnedDofs());
 
-			CFDSolverUtilities::getWriteableDensity(writeable_T, m_temperature,
-					this->getAdvectionOperator()->getLocallyOwnedDofs());
-			size_t Q = this->getStencil()->getQ();
-			writeable_T = 0;
+        CFDSolverUtilities::getWriteableDensity(writeable_T, m_temperature,
+                this->getAdvectionOperator()->getLocallyOwnedDofs());
+        size_t Q = this->getStencil()->getQ();
+        writeable_T = 0;
 
-			for (size_t i = 0; i < Q; i++) {
-					//writeable_T.add(m_f.at(i));
-					for (size_t j = 0; j < dim; j++) {
-						writeable_T.add(this->getStencil()->getDirection(i)(j), this->getStencil()->getDirection(i)(j));
-					}
-				}
-		}
+        for (size_t i = 0; i < Q; i++) {
+            //writeable_T.add(m_f.at(i));
+            for (size_t j = 0; j < dim; j++) {
+                writeable_T.add(this->getStencil()->getDirection(i)(j), this->getStencil()->getDirection(i)(j));
+            }
+        }
+    }
 
 /*	inline distributed_vector& getWriteableTemperature(distributed_vector& writeable, const distributed_vector& member, const dealii::IndexSet& locally_owned){
 		TimerOutput::Scope timer_section(Timing::getTimer(), "Copy vectors");
