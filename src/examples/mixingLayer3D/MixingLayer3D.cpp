@@ -34,8 +34,8 @@ double shearlayerthickness = 0.093;
 
 namespace natrium {
 
-MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, string meshname, double randu_scaling, string randuname, double U) :
-ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_U(U), m_refinementLevel(refinementLevel) {
+MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, string meshname, double randu_scaling, string randuname, double U, double T) :
+ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_U(U), m_refinementLevel(refinementLevel), m_initialT(T) {
     // **** Recommendations for CPU use ****
 	/*LOG(BASIC) << "-------------------------------------------------------------" << endl;
 	LOG(BASIC) << "**** Recommendations for CPU use ****" << endl;
@@ -184,7 +184,7 @@ double MixingLayer3D::InitialDensity::value(const dealii::Point<3>& x, const uns
 }
 double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component == 0);
-    return 1.0;
+    return this->m_flow->m_initialT;
 }
 
 /**
@@ -324,8 +324,8 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
     minusVector[2]=0.0;
 
     // set boundaries on top and bottom to move forward / backward
-    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(2, plusVector));  // or DO_NOTHING_BC
-    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(3, minusVector));
+    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(2, plusVector, m_initialT));  // or DO_NOTHING_BC
+    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(3, minusVector, m_initialT));
 
     // set a boundary between 0 and 1, and 4 and 5, with direction 0 (x) and 2 (z), respectively
     boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));

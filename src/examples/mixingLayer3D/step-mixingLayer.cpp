@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
     const double cs = U / Ma;
 
     // chose scaling so that the right Ma-number is achieved
-    const double reference_temperature = 0.85;
+    const double reference_temperature = parser.getArgument<double>("ref-temp");
     const double gamma = 1.4;
     const double scaling = sqrt(3) * U / (Ma*sqrt(gamma*reference_temperature));
 //    const double scaling = sqrt(3) * cs; // choose different? -> stencil larger/smaller -> from turb. channel
@@ -139,7 +139,8 @@ int main(int argc, char** argv) {
                 << "-p" << configuration->getSedgOrderOfFiniteElement()
                 << "-mesh" << meshname
                 << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000
-                << "-uscale" << uscaling;
+                << "-uscale" << uscaling
+                << "-refT" << reference_temperature;
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
@@ -212,7 +213,7 @@ int main(int argc, char** argv) {
 //                        << endl
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U * uscaling);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U * uscaling, reference_temperature);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////
