@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
     if (restart > 0) configuration->setRestartAtIteration(restart);
     configuration->setUserInteraction(false);
-//    configuration->setOutputCheckpointInterval(nout*100);
+    configuration->setOutputCheckpointInterval(nout*100);
     configuration->setOutputSolutionInterval(nout);
     configuration->setSimulationEndTime(time);
     configuration->setOutputGlobalTurbulenceStatistics(true);
