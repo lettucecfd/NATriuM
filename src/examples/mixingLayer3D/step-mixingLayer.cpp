@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
                 << "-mesh" << meshname
                 << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000
                 << "-uscale" << uscaling
-                << "-refT" << reference_temperature;
+                << "-refT" << reference_temperature << "DN_BC";
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)

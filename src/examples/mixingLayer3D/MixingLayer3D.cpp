@@ -9,6 +9,7 @@
 
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
+#include "natrium/boundaries/DoNothingBoundary.h"
 #include <random>
 #include <ctime>
 #include <algorithm>
@@ -324,8 +325,10 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
     minusVector[2]=0.0;
 
     // set boundaries on top and bottom to move forward / backward
-    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(2, plusVector, m_initialT));  // or DO_NOTHING_BC
-    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(3, minusVector, m_initialT));
+//    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(2, plusVector, m_initialT));  // or DO_NOTHING_BC
+//    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(3, minusVector, m_initialT));
+    boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3> >(2));  // or DO_NOTHING_BC
+    boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3> >(3));
 
     // set a boundary between 0 and 1, and 4 and 5, with direction 0 (x) and 2 (z), respectively
     boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
