@@ -114,6 +114,7 @@ int main(int argc, char** argv) {
     configuration->setOutputCompressibleTurbulenceStatistics(true);
     configuration->setOutputShearLayerStatistics(true);
     configuration->setOutputShearLayerInterval(parser.getArgument<int>("nstats"));
+    configuration->setMachNumber(Ma);
     configuration->setStencilScaling(scaling);
     configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
