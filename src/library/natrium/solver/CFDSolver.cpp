@@ -495,7 +495,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	LOG(WELCOME) << "Reynolds number:          "
 			<< (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
-	double Ma = charU / m_stencil->getSpeedOfSound();
+//    scaling = sqrt(3) * U / (Ma*sqrt(gamma*reference_temperature));
+//    m_speedOfSound(scaling/sqrt(3))
+    double Ma = charU / m_stencil->getSpeedOfSound();
 	LOG(WELCOME) << "Mach number:              " << Ma << endl;
 	LOG(WELCOME) << "Stencil scaling:          "
 			<< configuration->getStencilScaling() << endl;
