@@ -52,6 +52,7 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final_small");
     parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "k048_half");
+    parser.setArgument<string>("bc", "Boundary condition. Choose between 'EQ_BC' (equilibrium) or 'DN_BC' (do nothing)", "EQ_BC");
     parser.setArgument<int>("order", "order of finite elements", 3);
     parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 0);
     parser.setArgument<int>("grid-repetitions",
@@ -65,6 +66,11 @@ int main(int argc, char** argv) {
     }
     auto meshname = parser.getArgument<string>("meshname");
     auto randuname = parser.getArgument<string>("randuname");
+    auto bc = parser.getArgument<string>("bc");
+    if ((bc != "DN_BC") and (bc != "EQ_BC")) {
+        if (is_MPI_rank_0()) LOG(BASIC) << "Invalid boundary condition option! Fallback to default (EQ_BC)." << endl << endl;
+        bc = "EQ_BC";
+    }
     double randuscaling = parser.getArgument<double>("randuscaling");
     double uscaling = parser.getArgument<double>("uscaling");
     double Re = parser.getArgument<int>("Re");
@@ -141,7 +147,7 @@ int main(int argc, char** argv) {
                 << "-mesh" << meshname
                 << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000
                 << "-uscale" << uscaling
-                << "-refT" << reference_temperature << "DN_BC";
+                << "-refT" << reference_temperature << "_" << bc;
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
@@ -214,7 +220,7 @@ int main(int argc, char** argv) {
 //                        << endl
 
     boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U * uscaling, reference_temperature);
+            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U * uscaling, reference_temperature, bc);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////

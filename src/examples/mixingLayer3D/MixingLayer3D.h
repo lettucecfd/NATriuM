@@ -78,7 +78,7 @@ namespace natrium {
         double m_initialT;
 
         /// constructor
-        MixingLayer3D(double viscosity, size_t refinementLevel, string meshname, double randu_scaling, string randuname, double U = 1., double T = 1.);
+        MixingLayer3D(double viscosity, size_t refinementLevel, string meshname, double randu_scaling, string randuname, double U = 1., double T = 1., string bc = "EQ_BC");
         /// destructor
         virtual ~MixingLayer3D();
 
@@ -91,6 +91,7 @@ namespace natrium {
     private:
         /// speed of sound
         double m_U;
+        string m_bc;
         double lx, ly, lz;
         size_t m_refinementLevel;
 
