@@ -52,7 +52,9 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final_small");
     parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "k048_half");
-    parser.setArgument<string>("bc", "Boundary condition. Choose between 'EQ_BC' (equilibrium) or 'DN_BC' (do nothing)", "EQ_BC");
+    parser.setArgument<string>("bc", "Boundary condition. Choose between 'EQ_BC' (equilibrium), 'DN_BC' (do nothing),"
+                                     "'FOBB_BC' (First Order Bounce Back),'ThBB_BC' (Thermal Bounce Back), 'UNeq_BC' (Velocity Non-Equilibrium Bounce Back),"
+                                     "'PP_BC' (Periodic - meh)", "EQ_BC");
     parser.setArgument<int>("order", "order of finite elements", 3);
     parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 0);
     parser.setArgument<int>("grid-repetitions",
@@ -67,7 +69,7 @@ int main(int argc, char** argv) {
     auto meshname = parser.getArgument<string>("meshname");
     auto randuname = parser.getArgument<string>("randuname");
     auto bc = parser.getArgument<string>("bc");
-    if ((bc != "DN_BC") and (bc != "EQ_BC")) {
+    if ((bc != "DN_BC") and (bc != "EQ_BC") and (bc != "FOBB_BC") and (bc != "ThBB_BC") and (bc != "UNeq_BC") and (bc != "PP_BC")) {
         if (is_MPI_rank_0()) LOG(BASIC) << "Invalid boundary condition option! Fallback to default (EQ_BC)." << endl << endl;
         bc = "EQ_BC";
     }

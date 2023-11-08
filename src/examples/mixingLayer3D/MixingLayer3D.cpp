@@ -10,6 +10,9 @@
 #include "natrium/boundaries/PeriodicBoundary.h"
 #include "natrium/boundaries/SLEquilibriumBoundary.h"
 #include "natrium/boundaries/DoNothingBoundary.h"
+#include "natrium/boundaries/SLFirstOrderBounceBack.h"
+#include "natrium/boundaries/ThermalBounceBack.h"
+#include "natrium/boundaries/VelocityNeqBounceBack.h"
 #include <random>
 #include <ctime>
 #include <algorithm>
@@ -332,6 +335,21 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
     else if (m_bc == "DN_BC") {
         boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3> >(2));
         boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3> >(3));
+    }
+    else if (m_bc == "FOBB_BC") {
+        boundaries->addBoundary(boost::make_shared<SLFirstOrderBounceBack<3> >(2));
+        boundaries->addBoundary(boost::make_shared<SLFirstOrderBounceBack<3> >(3));
+    }
+    else if (m_bc == "ThBB_BC") {
+        boundaries->addBoundary(boost::make_shared<ThermalBounceBack<3> >(2, plusVector, m_initialT));
+        boundaries->addBoundary(boost::make_shared<ThermalBounceBack<3> >(3, minusVector, m_initialT));
+    }
+    else if (m_bc == "UNeq_BC") {
+        boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3> >(2, plusVector));
+        boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3> >(3, minusVector));
+    }
+    else if (m_bc == "PP_BC") {
+        boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
     }
 
     // set a boundary between 0 and 1, and 4 and 5, with direction 0 (x) and 2 (z), respectively
