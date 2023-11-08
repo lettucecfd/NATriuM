@@ -344,7 +344,7 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
         boundaries->addBoundary(boost::make_shared<ThermalBounceBack<3> >(2, plusVector, m_initialT));
         boundaries->addBoundary(boost::make_shared<ThermalBounceBack<3> >(3, minusVector, m_initialT));
     }
-    else if (m_bc == "UNeq_BC") {
+    else if (m_bc == "VNeq_BC") {
         boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3> >(2, plusVector));
         boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3> >(3, minusVector));
     }
