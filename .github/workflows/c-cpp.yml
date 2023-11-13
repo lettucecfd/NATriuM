@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "compressible", "mixing-layer" ]
 
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+  
 jobs:
   build:
 
@@ -14,9 +18,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: configure
-      run: cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/ -B.
-    - name: make
-      run: make
+      run: cmake -G "Eclipse CDT4 - Unix Makefiles" ../src/ -B ${{github.workspace}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest -C ${{env.BUILD_TYPE}}
+
     - name: make check
       run: make check
     - name: make distcheck
