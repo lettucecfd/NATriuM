@@ -492,7 +492,7 @@ void compressibleFilter() {
 
             // create vtk-subdirectory
             // no output if solution interval > 10^8
-            double maxP = this->m_solverStats->getMaxP();
+//            double maxP = this->m_solverStats->getMaxP();
             if (((iteration % this->m_configuration->getOutputSolutionInterval() == 0)
                  and (this->m_configuration->getOutputSolutionInterval() <= 1e8))
                 or (is_final)
