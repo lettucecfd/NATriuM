@@ -997,8 +997,8 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 					<< " million DoF updates per second" << endl;
 			Timing::getTimer().print_summary();
 		}
-		// output estimated runtime after iterations 1, 10, 100, 1000, ...
-		if ((iteration == 1) or (iteration == 10) or (iteration == 100) or (iteration % 1000 == 0 and iteration > 0)) {
+		// output estimated runtime after iterations 10, 100, 1000, ...
+		if ((iteration == 10) or (iteration == 100) or (iteration % 1000 == 0 and iteration > 0)) {
              time_t estimated_end = m_tstart + (m_configuration->getNumberOfTimeSteps() - m_iterationStart)
              / (iteration - m_iterationStart) * (time(0) - m_tstart);
              struct tm * ltm = localtime(&estimated_end);
