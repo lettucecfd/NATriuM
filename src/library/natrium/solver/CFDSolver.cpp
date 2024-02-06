@@ -975,6 +975,8 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 					<< "/grid.vtk";
 			std::string grid_file = str0.str();
 			std::ofstream grid_out_file(grid_file);
+            std::filesystem::path out_dir(this->m_configuration->getOutputDirectory() + "/vtk");
+            std::filesystem::create_directory(out_dir);
 			dealii::GridOut().write_vtk(*m_problemDescription->getMesh(),
 					grid_out_file);
 			grid_out_file.close();
