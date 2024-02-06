@@ -145,11 +145,11 @@ public:
             const double scaling = this->m_stencil->getScaling();
                 for (; it != end; it++) {
                     double density = 0.0;
-                    std::array<double,dim> vel={0.0};
+                    std::array<double,dim> vel;
                     for (size_t i = 0; i < this->m_stencil->getQ(); i++) {
                         density +=  this->m_f.at(i)(*it);
                         for (size_t a = 0; a < dim; a++) {
-                            vel[a]+=this->m_stencil->getDirection(i)(a)/scaling *this->m_f.at(i)(*it);
+                            vel[a] += this->m_stencil->getDirection(i)(a)/scaling *this->m_f.at(i)(*it);
                         }
                     }
                         double temperature = 0.0;
@@ -271,7 +271,7 @@ public:
 void gStream() {
 
 	// no streaming in direction 0; begin with 1
-	distributed_block_vector& g = m_g.getFStream();
+//	distributed_block_vector& g = m_g.getFStream();
 	const distributed_sparse_block_matrix& systemMatrix =
 		this->getAdvectionOperator()->getSystemMatrix();
 
@@ -295,8 +295,8 @@ void gStream() {
 	else
     {
         this->m_boundaryVector = this->m_advectionOperator->getSystemVector();
-        double new_dt = this->m_timeIntegrator->step(g, systemMatrix,
-                                               this->m_boundaryVector, 0.0, this->m_timeIntegrator->getTimeStepSize());
+//        double new_dt = this->m_timeIntegrator->step(g, systemMatrix,
+//                                               this->m_boundaryVector, 0.0, this->m_timeIntegrator->getTimeStepSize());
     }
 }
 
@@ -413,93 +413,95 @@ void compressibleFilter() {
 // sync MPI processes
         MPI_sync();
 
-// output: vector fields as .vtu files
-        if (not this->m_configuration->isSwitchOutputOff()) {
-            /*if (iteration - this->m_iterationStart == 0) {
-                // first iteration: put out mesh
-                std::stringstream str0;
-                str0 << this->m_configuration->getOutputDirectory().c_str()
-                     << "/grid.vtk";
-                std::string grid_file = str0.str();
-                std::ofstream grid_out_file(grid_file);
-                dealii::GridOut().write_vtk(*(this->m_problemDescription)->getMesh(),
-                                            grid_out_file);
-                grid_out_file.close();
-            }*/
-            if ((iteration % 1000 == 0) or (is_final)) {
-            }
-            // output elapsed time, server-time, and estimated runtime after iterations 1, 10, 100, 1000, ... and after every 1000
+// output time estimates
 
-            if ((iteration == 1) or (iteration == 10) or (iteration == 50) or (iteration == 100) or (iteration == 500)
-                    or ((iteration % 1000 == 0) and iteration > 0)) {
-                int secs2 = int(clock() / CLOCKS_PER_SEC);
-                time_t t_now = time(nullptr);
-                struct tm *ltm = localtime(&t_now);
-                LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = "
-                              << secs_to_stream(secs2) << "." << endl;
+        if ((iteration == 1) or (iteration == 10) or (iteration == 50) or (iteration == 100) or (iteration == 500)
+            or ((iteration % 1000 == 0) and iteration > 0)) {
+            int secs2 = int(clock() / CLOCKS_PER_SEC);
+            time_t t_now = time(nullptr);
+            struct tm *ltm = localtime(&t_now);
+            LOG(DETAILED) << "Iteration " << iteration << ", t = " << this->m_time << ", server-time = "
+                          << secs_to_stream(secs2) << "." << endl;
 //                LOG(DETAILED) << ":Started simulation after " << m_tstart << " seconds." << endl;
-                LOG(DETAILED) << ":Started at " << m_tstart2;
-                LOG(DETAILED) << ":::::::Now, it is " << string(asctime(ltm));
+            LOG(DETAILED) << ":Started at " << m_tstart2;
+            LOG(DETAILED) << ":::::::Now, it is " << string(asctime(ltm));
 
-                double secs = 1e-10 + (clock() - this->m_tstart) / CLOCKS_PER_SEC;
-                LOG(DETAILED) << ":::::::Average Performance: "
-                              << 1.0 * this->m_advectionOperator->getDoFHandler()->n_dofs()
-                                 * (iteration - this->m_iterationStart) / secs / 1000000.0
-                              << " million DoF updates per second" << endl;
-                Timing::getTimer().print_summary();
+            double secs = 1e-10 + (clock() - this->m_tstart) / CLOCKS_PER_SEC;
+            LOG(DETAILED) << ":::::::Average Performance: "
+                          << 1.0 * this->m_advectionOperator->getDoFHandler()->n_dofs()
+                             * (iteration - this->m_iterationStart) / secs / 1000000.0
+                          << " million DoF updates per second" << endl;
+            Timing::getTimer().print_summary();
 
-                if ((this->m_configuration->getNumberOfTimeSteps() < 1e8) or (this->m_configuration->getSimulationEndTime() < 1e8)) {
-                    double factor;
-                    string base;
-                    if (this->m_configuration->getNumberOfTimeSteps() < 1e8) {
-                        base = "max iterations";
-                        // Calculating done iterations
-                        int done_iterations = iteration - this->m_iterationStart;
-                        // Calculating to-be-done iterations
-                        double tobedone_iterations = this->m_configuration->getNumberOfTimeSteps() - this->m_iterationStart;
-                        // Calculating iterations factor
-                        factor = tobedone_iterations / done_iterations;
-                    }
-                    if (this->m_configuration->getSimulationEndTime() < 1e8) {
-                        base = "physical time";
-                        // Calculating done time
-                        double done_time_ph = this->getTime() - this->m_tstart_ph;
-                        // Calculating to-be-done iterations
-                        double tobedone_time_ph = this->m_configuration->getSimulationEndTime() - this->m_tstart_ph;
-                        // Calculating time factor
-                        factor = tobedone_time_ph / done_time_ph;
-                    }
-                    time_t start = m_tstart3;
-                    time_t done_time = clock()/CLOCKS_PER_SEC;
-                    time_t tobedone_time = done_time * factor;
-                    time_t estimated_end = start + tobedone_time;
-                    struct tm * ltm2 = localtime(&estimated_end);
-                    //                struct tm * ltm1 = localtime(&start);
-                    LOG(DETAILED) << ":Finished " << int(100.0/factor * 10000) / 10000 << " % based on " << base << ". Estimated end: " << string(asctime(ltm2));
-                    time_t server_max = this->m_configuration->getServerEndTime();
-                    time_t estimated_server_end = start + server_max;
-                    struct tm * ltm3 = localtime(&estimated_server_end);
-                    LOG(DETAILED) << ":::::::Server-time left: " << secs_to_stream(server_max - done_time) << ".   Estimated server-end: " << string(asctime(ltm3));
+            if ((this->m_configuration->getNumberOfTimeSteps() < 1e8) or (this->m_configuration->getSimulationEndTime() < 1e8)) {
+                double factor;
+                string base;
+                if (this->m_configuration->getNumberOfTimeSteps() < 1e8) {
+                    base = "max iterations";
+                    // Calculating done iterations
+                    int done_iterations = iteration - this->m_iterationStart;
+                    // Calculating to-be-done iterations
+                    double tobedone_iterations = this->m_configuration->getNumberOfTimeSteps() - this->m_iterationStart;
+                    // Calculating iterations factor
+                    factor = tobedone_iterations / done_iterations;
+                }
+                else if (this->m_configuration->getSimulationEndTime() < 1e8) {
+                    base = "physical time";
+                    // Calculating done time
+                    double done_time_ph = this->getTime() - this->m_tstart_ph;
+                    // Calculating to-be-done iterations
+                    double tobedone_time_ph = this->m_configuration->getSimulationEndTime() - this->m_tstart_ph;
+                    // Calculating time factor
+                    factor = tobedone_time_ph / done_time_ph;
+                }
+                else {
+                    factor = 1;
+                }
+                time_t start = m_tstart3;
+                time_t done_time = clock()/CLOCKS_PER_SEC;
+                time_t tobedone_time = done_time * factor;
+                time_t estimated_end = start + tobedone_time;
+                struct tm * ltm2 = localtime(&estimated_end);
+                //                struct tm * ltm1 = localtime(&start);
+                LOG(DETAILED) << ":Finished " << int(100.0/factor * 10000) / 10000 << " % based on " << base << ". Estimated end: " << string(asctime(ltm2));
+                time_t server_max = this->m_configuration->getServerEndTime();
+                time_t estimated_server_end = start + server_max;
+                struct tm * ltm3 = localtime(&estimated_server_end);
+                LOG(DETAILED) << ":::::::Server-time left: " << secs_to_stream(server_max - done_time) << ".   Estimated server-end: " << string(asctime(ltm3));
 //                    LOG(DETAILED) << "Server time: " << clock()/CLOCKS_PER_SEC << endl;
 //                    LOG(DETAILED) << "Calculated done_time: " << done_time << endl;
 //                    LOG(DETAILED) << "Calculated tobedone_t " << tobedone_time << endl;
-                    //                LOG(DETAILED) << "Started at: " << string(asctime(ltm1));
-                    //                LOG(DETAILED) << "Already did: " << done_time << "[time_t]";
-                    //                LOG(DETAILED) << "Overall needs: " << tobedone_time << "[time_t]";
-                }
+                //                LOG(DETAILED) << "Started at: " << string(asctime(ltm1));
+                //                LOG(DETAILED) << "Already did: " << done_time << "[time_t]";
+                //                LOG(DETAILED) << "Overall needs: " << tobedone_time << "[time_t]";
             }
+        }
+
+// output: vector fields as .vtu files
+        if ((iteration == 0) and (not this->m_configuration->isSwitchOutputOff())) {
+            std::filesystem::path out_dir(this->m_configuration->getOutputDirectory() + "/vtk");
+            std::filesystem::create_directory(out_dir);
+        }
+        int no_out = this->m_configuration->getNoOutputInterval();
+        if ((not this->m_configuration->isSwitchOutputOff())
+            and (no_out < int(iteration))) {
+            // output elapsed time, server-time, and estimated runtime after iterations 1, 10, 100, 1000, ... and after every 1000
             // add turbulence statistics to output
             if (this->m_configuration->isOutputTurbulenceStatistics())
                 this->m_turbulenceStats->addToReynoldsStatistics(this->m_velocity);
+
             // create vtk-subdirectory
-            if (iteration == 0) {
-                std::filesystem::path out_dir(this->m_configuration->getOutputDirectory() + "/vtk");
-                std::filesystem::create_directory(out_dir);
-            }
             // no output if solution interval > 10^8
+            double maxP = this->m_solverStats->getMaxP();
             if (((iteration % this->m_configuration->getOutputSolutionInterval() == 0)
-                 and this->m_configuration->getOutputSolutionInterval() <= 1e8)
-                or (is_final)) {
+                 and (this->m_configuration->getOutputSolutionInterval() <= 1e8))
+                or (is_final)
+//                or (maxP > 0.6)) {
+//                if (maxP > 0.6) {
+//                    LOG(DETAILED) << "Doing VTK output at " << iteration << " because MaxP = " << maxP
+//                                  << "; MinP = " << this->m_solverStats->getMinP() << endl;
+//                }
+                    ){
                 // save local part of the solution
                 std::stringstream str;
                 str << this->m_configuration->getOutputDirectory().c_str() << "/vtk/t_"
@@ -582,23 +584,28 @@ void compressibleFilter() {
         // no output if checkpoint interval > 10^8
         if (((iteration % this->m_configuration->getOutputCheckpointInterval() == 0) or is_final)
                 and (this->m_configuration->getOutputCheckpointInterval() <= 1e8)
+                and (no_out < int(iteration))
                 and (this->m_iterationStart != this->m_i)) {
 
-            boost::filesystem::path checkpoint_dir(
-                    this->m_configuration->getOutputDirectory());
-            checkpoint_dir /= "checkpoint";
-            Checkpoint<dim> checkpoint(this->m_i, checkpoint_dir, false);
-            Checkpoint<dim> checkpointG(this->m_i, checkpoint_dir, true);
-            CheckpointStatus checkpoint_status;
-            checkpoint_status.iterationNumber = this->m_i;
-            checkpoint_status.stencilScaling = this->m_stencil->getScaling();
-            checkpoint_status.time = this->m_time;
-            checkpoint_status.feOrder =
-                    this->m_configuration->getSedgOrderOfFiniteElement();
-            checkpoint.write(*(this->m_problemDescription->getMesh()), this->m_f,
-                              *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
-            checkpointG.write(*(this->m_problemDescription->getMesh()), m_g,
-                             *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
+            if (int(iteration) < no_out) {
+                if (is_MPI_rank_0()) LOG(DETAILED) << "No output at " << iteration << ". Only after " << no_out << endl;
+            } else {
+                boost::filesystem::path checkpoint_dir(
+                        this->m_configuration->getOutputDirectory());
+                checkpoint_dir /= "checkpoint";
+                Checkpoint<dim> checkpoint(this->m_i, checkpoint_dir, false);
+                Checkpoint<dim> checkpointG(this->m_i, checkpoint_dir, true);
+                CheckpointStatus checkpoint_status;
+                checkpoint_status.iterationNumber = this->m_i;
+                checkpoint_status.stencilScaling = this->m_stencil->getScaling();
+                checkpoint_status.time = this->m_time;
+                checkpoint_status.feOrder =
+                        this->m_configuration->getSedgOrderOfFiniteElement();
+                checkpoint.write(*(this->m_problemDescription->getMesh()), this->m_f,
+                                 *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
+                checkpointG.write(*(this->m_problemDescription->getMesh()), m_g,
+                                  *(this->m_advectionOperator->getDoFHandler()), checkpoint_status);
+            }
         } /*if checkpoint interval*/
         if (is_final) {
             LOG(DETAILED) << "Total runtime: " << secs_to_stream(int(clock()/CLOCKS_PER_SEC)) << ". Server-end had been set to " << secs_to_stream(this->m_configuration->getServerEndTime()) << endl;
@@ -861,13 +868,13 @@ void compressibleFilter() {
         std::vector<double> feq(T_Q);
 		std::array<double,dim> u;
         std::vector<std::array<double,dim>> e(T_Q);
-        for (int i = 0; i < dim; ++i) {
-            for (int j = 0; j < this->getStencil()->getQ(); ++j) {
+        for (size_t i = 0; i < dim; ++i) {
+            for (size_t j = 0; j < this->getStencil()->getQ(); ++j) {
                 e[j][i] = this->getStencil()->getDirections().at(j)(i) / this->getStencil()->getScaling();
             }
         }
         std::vector<double> weight(T_Q);
-        for (int j = 0; j < this->getStencil()->getQ(); ++j) {
+        for (size_t j = 0; j < this->getStencil()->getQ(); ++j) {
             weight[j] = this->getStencil()->getWeight(j);
         }
         double descaled_cs2 = this->m_stencil->getSpeedOfSoundSquare() / (this->getStencil()->getScaling()*this->getStencil()->getScaling());
@@ -924,7 +931,7 @@ void compressibleFilter() {
                 // Iterative procedure; leading to consistent initial values
                 size_t loopCount = 0;
                 double residual = 1000000000;
-                const bool inInitializationProcedure = true;
+//                const bool inInitializationProcedure = true;
                 distributed_vector oldDensities;
                 while (loopCount
                        < this->m_configuration->getIterativeInitializationNumberOfIterations()) {

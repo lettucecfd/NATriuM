@@ -15,7 +15,7 @@
 #include "deal.II/fe/fe_dgp.h"
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/numerics/vector_tools.h"
-#include "deal.II/lac/constraint_matrix.h"
+#include "deal.II/lac/affine_constraints.h"
 #include "deal.II/numerics/data_out.h"
 
 #include "natrium/utilities/BasicNames.h"

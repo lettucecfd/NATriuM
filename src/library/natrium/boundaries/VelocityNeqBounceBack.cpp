@@ -168,7 +168,7 @@ void VelocityNeqBounceBack<dim>::calculateBoundaryValues(
 	// calculate vector entry
 	double exu = 0.0;
 	double uxu = 0.0;
-	double cs2 = stencil.getSpeedOfSoundSquare();
+//	double cs2 = stencil.getSpeedOfSoundSquare();
 
 	// calculate scalar product
 	for (size_t i = 0; i < dim; i++) {	// TODO efficient multiplication

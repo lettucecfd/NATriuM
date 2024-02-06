@@ -12,7 +12,11 @@ namespace natrium {
 
 void VmultLimiter::apply(const dealii::TrilinosWrappers::BlockSparseMatrix& matrix,
 		dealii::TrilinosWrappers::MPI::BlockVector& target,
-		const dealii::TrilinosWrappers::MPI::BlockVector& source){ /*
+		const dealii::TrilinosWrappers::MPI::BlockVector& source){
+    (void)matrix;
+    (void)target;
+    (void)source;
+    /*
 	// iterate over all blocks
 	for (size_t i = 0; i < matrix.n_block_rows(); i++){
 		dealii::TrilinosWrappers::MPI::Vector & t = target.block(i);
@@ -27,7 +31,10 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::BlockSparseMatrix& matr
 
 void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 		dealii::TrilinosWrappers::MPI::Vector& target,
-		const dealii::TrilinosWrappers::MPI::Vector& source){ /*
+		const dealii::TrilinosWrappers::MPI::Vector& source){
+    (void)matrix;
+    (void)target;
+    (void)source; /*
 	// Trilinos matrix format, iteration copied from dealii::TrilinosWrappers::SparseMatrix::print()
 	const Epetra_CrsMatrix& M = matrix.trilinos_matrix();
 	double *values;
@@ -38,8 +45,6 @@ void VmultLimiter::apply(const dealii::TrilinosWrappers::SparseMatrix& matrix,
 	double target_i;
 	double max;
 	double min;
-
-
 
 	dealii::TrilinosWrappers::MPI::Vector non_local_source;
 	non_local_source.import_nonlocal_data_for_fe(matrix,source);

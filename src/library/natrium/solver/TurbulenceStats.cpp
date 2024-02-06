@@ -121,15 +121,12 @@ TurbulenceStats<dim>::TurbulenceStats(CFDSolver<dim> * solver,
 		}
 	}
 
-	double tol = 0.5 * CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(
-					*m_solver->m_problemDescription->getMesh(),
+	double tol = 0.5 * CFDSolverUtilities::getMinimumDoFDistanceGLC<dim>(*m_solver->m_problemDescription->getMesh(),
 					m_solver->m_configuration->getSedgOrderOfFiniteElement());
 	size_t n_planes = wall_normal_coordinates.size();
 	for (size_t i = 0; i < n_planes; i++) {
-		StatsInPlane<dim> plane(wall_normal_direction,
-				wall_normal_coordinates.at(i), solver->m_velocity);
-		plane.updatePlaneIndices(solver->m_supportPoints,
-				m_solver->m_advectionOperator->getLocallyOwnedDofs(), tol);
+		StatsInPlane<dim> plane(wall_normal_direction, wall_normal_coordinates.at(i), solver->m_velocity);
+		plane.updatePlaneIndices(solver->m_supportPoints, m_solver->m_advectionOperator->getLocallyOwnedDofs(), tol);
 		m_planes.push_back(plane);
 	}
 	m_iterationNumber = -1000;

@@ -24,7 +24,7 @@
 
 using namespace natrium;
 
-double shearLayerThickness = 0.093;
+//double shearLayerThickness = 0.093;
 //int dft_points = 20;
 
 // Main function
@@ -36,32 +36,47 @@ int main(int argc, char** argv) {
     //////////////////////////////////////////////////
     CommandLineParser parser(argc, argv);
     parser.setArgument<int>("Re", "Reynolds number 1/nu", 800);
-    // TODO: Convective Mach number Mc=(U1-Uc)/c1, Uc=(U1c2+U2c1)/(c1+c2)
-    //  Uc is the convective velocity of the large structures, U\
-    //  and U2 are the freestream velocities, and c{ and c2 are the
-    //  freestream sound speeds.
-    // Set to 0.3, 0.7, 0.9, 1.0, 1.2
+    /* TODO: Convective Mach number Mc=(U1-Uc)/c1, Uc=(U1c2+U2c1)/(c1+c2)
+    Uc is the convective velocity of the large structures, U\
+    and U2 are the freestream velocities, and c{ and c2 are the
+    freestream sound speeds.
+    Set to 0.3, 0.7, 0.9, 1.0, 1.2
+    */
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
-    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 10);
     parser.setArgument<double>("uscaling", "factor to scale U1, i.e. deltaUx", 1);
-    parser.setArgument<double>("CFL", "CFL number. Should be between 0.4 and 2", 1);
+//    parser.setArgument<double>("CFL", "CFL number. Should be between 0.4 and 2", 1);
     parser.setArgument<double>("gamma", "Heat capacity ratio. Should be 1.4", 1.4);
     parser.setArgument<double>("ref-temp", "Reference temperature. Should be between 0.85 and 1 (lower may be more stable).", 1);
-    parser.setArgument<int>("nout", "output vtk every nout steps", 2000);
+    parser.setArgument<double>("lx", "Half length in x-direction (multiples of deltaTheta0)", 160);
+    parser.setArgument<double>("ly", "Half length in y-direction (multiples of deltaTheta0)", 80);
+    parser.setArgument<double>("lz", "Half length in z-direction (multiples of deltaTheta0)", 40);
+//    parser.setArgument<int>("nout", "output vtk every nout steps", 2000);
+    parser.setArgument<int>("ncheckpoint", "output checkpoint every ncheckpoint steps", 20000);
+    parser.setArgument<int>("n-no-out", "do not output vtk before iteration n-no-out", -1);
+    parser.setArgument<int>("n-no-stats", "do not output stats before iteration n-no-stats", -1);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
-    parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "final_small");
-    parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "k048_half");
+    parser.setArgument<int>("ncoordsround", "round coordinates to this degree for statistics", 10);
+    parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "cube");
+    parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "cube_k048_half");
+    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 1);
     parser.setArgument<string>("bc", "Boundary condition. Choose between 'EQ_BC' (equilibrium), 'DN_BC' (do nothing),"
                                      "'FOBB_BC' (First Order Bounce Back),'ThBB_BC' (Thermal Bounce Back), 'VNeq_BC' (Velocity Non-Equilibrium Bounce Back),"
                                      "'PP_BC' (Periodic - meh)", "EQ_BC");
-    parser.setArgument<int>("order", "order of finite elements", 3);
-    parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 0);
+    parser.setArgument<string>("support", "support points", "glc");
+    parser.setArgument<int>("order", "order of finite elements", 4);
+    parser.setArgument<int>("ref-level", "Refinement level of the computation grid.", 1);
     parser.setArgument<int>("grid-repetitions",
                             "Number of grid cells along each axis before global refinement; "
-                            "to produce grids with refinements that are not powers of two.", 3);
+                            "to produce grids with refinements that are not powers of two.", 1);
     parser.setArgument<int>("restart", "Restart at iteration ...", 0);
     parser.setArgument<int>("server-end", "Maximum server time [s]", 82800);
+    parser.setArgument<int>("rep-x", "Number of repetitions in x-direction (to refine the grid in steps that are not 2^N).", 4);
+    parser.setArgument<int>("rep-y", "cf. rep-x", 2);
+    parser.setArgument<int>("rep-z", "cf. rep-x", 1);
+    parser.setArgument<double>("center", "Central part with high-res grid, choose between 0.1 and 1", 0.8);
+    parser.setArgument<double>("dy-scaling", "scale dy to dy-scaling-times the element size (<1 to refine boundaries, >1 to loosen, 1 for equidistant mesh)", 2);
+    parser.setArgument<double>("dT0", "deltaTheta0", 0.093);
 
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
@@ -70,14 +85,29 @@ int main(int argc, char** argv) {
     auto randuname = parser.getArgument<string>("randuname");
     auto bc = parser.getArgument<string>("bc");
     if ((bc != "DN_BC") and (bc != "EQ_BC") and (bc != "FOBB_BC") and (bc != "ThBB_BC") and (bc != "VNeq_BC") and (bc != "PP_BC")) {
-        if (is_MPI_rank_0()) LOG(BASIC) << "Invalid boundary condition option! Fallback to default (EQ_BC)." << endl << endl;
+        if (is_MPI_rank_0()) {
+            LOG(WELCOME) << "Invalid boundary condition option! Fallback to default (EQ_BC)." << endl << endl;
+        }
         bc = "EQ_BC";
+    }
+    auto sup = parser.getArgument<string>("support");
+    if ((sup != "glc") and (sup != "equi")) {
+        if (is_MPI_rank_0()) {
+            LOG(WELCOME) << "Invalid support points! Fallback to 'glc' (GAUSS_LOBATTO_CHEBYCHEF)." << endl << endl;
+        }
+        sup = "glc";
     }
     double randuscaling = parser.getArgument<double>("randuscaling");
     double uscaling = parser.getArgument<double>("uscaling");
     double Re = parser.getArgument<int>("Re");
-    double refinement_level = parser.getArgument<int>("ref-level");
-    long nout = parser.getArgument<int>("nout");
+    // Grid resolution
+    const int ref_level = parser.getArgument<int>("ref-level");
+    std::vector<unsigned int> repetitions(3);
+    repetitions.at(0) = parser.getArgument<int>("rep-x");
+    repetitions.at(1) = parser.getArgument<int>("rep-y");
+    repetitions.at(2) = parser.getArgument<int>("rep-z");
+
+//    long nout = parser.getArgument<int>("nout");
     auto time = parser.getArgument<double>("time");
     const int restart = parser.getArgument<int>("restart");
     if ((restart > 0) and is_MPI_rank_0()) {
@@ -98,12 +128,12 @@ int main(int argc, char** argv) {
     // Nach einem Blick in van Rees et.al. (2011) und einer erfolgreichen Simulation in Palabos:
     // (Hier war tau = 3*nu_LB + 0.5, nu_LB = U_lattice * (N/2pi) / Re, dt = 2pi/N* U_lattice
     // Re = 1/nu,L=2pi, U = 1 und D = [0,2pi*L]^3
-    const double U = 1;
+    const double U = 1 * uscaling;
     //const double L = 2 * M_PI;
     const double viscosity = 1.0 / Re;
     const double Ma = parser.getArgument<double>("Ma")*sqrt(1.4);
-    const auto cfl = parser.getArgument<double>("CFL");
-    const double cs = U / Ma;
+//    const auto cfl = parser.getArgument<double>("CFL");
+//    const double cs = U / Ma;
 
     // chose scaling so that the right Ma-number is achieved
     const double reference_temperature = parser.getArgument<double>("ref-temp");
@@ -114,13 +144,21 @@ int main(int argc, char** argv) {
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
     if (restart > 0) configuration->setRestartAtIteration(restart);
+    if (sup == "equi") configuration->setSupportPoints(EQUIDISTANT_POINTS);
+    else configuration->setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
+    if (is_MPI_rank_0()) {
+        LOG(WELCOME) << "Support points set to " << configuration->getSupportPoints() << endl;
+    }
     configuration->setUserInteraction(false);
-    configuration->setOutputCheckpointInterval(nout*100);
-    configuration->setOutputSolutionInterval(nout);
+    configuration->setOutputCheckpointInterval(parser.getArgument<int>("ncheckpoint"));
+//    configuration->setOutputSolutionInterval(nout);
+    configuration->setNoOutputInterval(parser.getArgument<int>("n-no-out"));
+    configuration->setNoStatsInterval(parser.getArgument<int>("n-no-stats"));
     configuration->setSimulationEndTime(time);
     configuration->setOutputGlobalTurbulenceStatistics(true);
     configuration->setOutputCompressibleTurbulenceStatistics(true);
     configuration->setOutputShearLayerStatistics(true);
+    configuration->setCoordsRound(parser.getArgument<int>("ncoordsround"));
     configuration->setOutputShearLayerInterval(parser.getArgument<int>("nstats"));
     configuration->setMachNumber(Ma);
     configuration->setStencilScaling(scaling);
@@ -131,7 +169,7 @@ int main(int argc, char** argv) {
     configuration->setReferenceTemperature(reference_temperature);
     configuration->setPrandtlNumber(0.71);
     configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order")); // TODO: set to 4
-    configuration->setCFL(cfl); // TODO: should be 0.4<CFL<2
+//    configuration->setCFL(cfl); // TODO: should be 0.4<CFL<2
     configuration->setServerEndTime(parser.getArgument<int>("server-end"));
 //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
@@ -144,11 +182,11 @@ int main(int argc, char** argv) {
         dirName << getenv("NATRIUM_HOME");
         dirName << "/step-mixingLayer/Re" << Re
                 << "-Ma" << floor(Ma*1000)/1000
-                << "-ref" << refinement_level
+                << "-ref" << ref_level
                 << "-p" << configuration->getSedgOrderOfFiniteElement()
-                << "-mesh" << meshname
+                << "-" << meshname
                 << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000
-                << "-uscale" << uscaling
+//                << "-uscale" << uscaling
                 << "-refT" << reference_temperature << "_" << bc;
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
@@ -167,69 +205,57 @@ int main(int argc, char** argv) {
             dirName << "-relax" << static_cast<int>(configuration->getMRTRelaxationTimes());
         }
         m_dirname = dirName.str();
-    } else {
-        m_dirname = parser.getArgument<string>("output-dir");
+        configuration->setOutputDirectory(m_dirname);
+    } //else {
+//        m_dirname = parser.getArgument<string>("output-dir");
+//    }
+
+    double deltaTheta0 = parser.getArgument<double>("dT0");
+    // Grid resolution
+    double len_x = parser.getArgument<double>("lx") * deltaTheta0;
+    double len_y = parser.getArgument<double>("ly") * deltaTheta0;
+    double len_z = parser.getArgument<double>("lz") * deltaTheta0;
+    double center = parser.getArgument<double>("center");
+    double dy_scaling = parser.getArgument<double>("dy-scaling");
+    boost::shared_ptr<MixingLayer3D> mixingLayer = boost::make_shared<MixingLayer3D>
+            (viscosity, ref_level, repetitions, randuscaling, randuname, len_x, len_y, len_z, meshname, center, dy_scaling, deltaTheta0, U * uscaling, reference_temperature, bc);
+    if (is_MPI_rank_0()) LOG(DETAILED) << "Calculating unstructured grid." << endl;
+    MixingLayer3D::UnstructuredGridFunc trafo(len_y, center, dy_scaling);
+
+    if (is_MPI_rank_0()) LOG(DETAILED) << "Preparing initialization summary." << endl;
+    double ymin = trafo.trans(len_y / repetitions.at(1) / pow(2, ref_level));
+    const double p = configuration->getSedgOrderOfFiniteElement();
+    const double dt = configuration->getCFL() / (p * p) / (sqrt(2) * scaling) * ymin;
+
+    if (is_MPI_rank_0()) {
+        LOG(WELCOME) << "MIXING LAYER SETUP: " << endl
+                     << "===================================================" << endl
+                     << "Dimensions:    " << len_x << " x " << len_y << " x " << len_z
+                     << endl << "Grid:          " << repetitions.at(0) << " x "
+                     << repetitions.at(1) << " x " << repetitions.at(2)
+                     << " blocks with 8^" << ref_level << " cells each " << endl
+                     << "#Cells:        " << int(repetitions.at(0) * pow(2, ref_level))
+                     << " x " << int(repetitions.at(1) * pow(2, ref_level)) << " x "
+                     << int(repetitions.at(2) * pow(2, ref_level)) << " = "
+                     << int(repetitions.at(0) * repetitions.at(1) * repetitions.at(2) * pow(2, 3 * ref_level)) << endl
+                     << "#Points:       "
+                     << int(repetitions.at(0) * pow(2, ref_level) * p) << " x "
+                     << int(repetitions.at(1) * pow(2, ref_level) * p) << " x "
+                     << int(repetitions.at(2) * pow(2, ref_level) * p) << " = "
+                     << int(repetitions.at(0)*repetitions.at(1)*repetitions.at(2) * pow(2,3*ref_level) * p*p*p) << endl
+                     << "               dt  = " << dt << endl
+                     << "===================================================" << endl
+                     << "Output is in " << m_dirname
+                     << endl;
     }
-    configuration->setOutputDirectory(m_dirname);
-
-    // ========================================================================
-    // COMMAND LINE OUTPUT
-    // ========================================================================
-//    const double p = configuration->getSedgOrderOfFiniteElement();
-//    const double dt = configuration->getCFL() / (p * p) / (sqrt(2) * scaling) * ymin;
-//    const double dxplus = length / repetitions.at(0) / pow(2, ref_level)
-//                          / (viscosity / utau);
-//    const double dzplus = width / repetitions.at(2) / pow(2, ref_level)
-//                          / (viscosity / utau);
-//    LOG(WELCOME) << "          -----         " << endl
-//                    << "          -----         " << endl << "FLOW SETUP: " << endl
-//                    << "===================================================" << endl
-//                    << "Re_cl = u_cl * delta / nu   = " << u_cl << " * " << delta
-//                    << " / " << viscosity << " = " << u_cl * delta / viscosity << endl
-//                    << "u_tau = Re_tau * nu / delta = " << Re_tau << " * " << viscosity
-//                    << " / " << delta << " = " << Re_tau * viscosity / delta << endl
-//                    << "F     = rho * utau^2 / delta = 1.0 * " << utau << "^2" << " / "
-//                    << delta << " = " << utau * utau / delta << endl
-//                    << "          -----         " << endl << "          -----        "
-//                    << endl
-//                    << "CHANNEL SETUP: " << endl
-//                    << "===================================================" << endl
-//                    << "Dimensions:    " << lx << " x " << height << " x " << width
-//                    << endl << "Grid:          " << repetitions.at(0) << " x "
-//                    << repetitions.at(1) << " x " << repetitions.at(2)
-//                    << " blocks with 8^" << ref_level << " cells each " << endl
-//                    << "#Cells:        " << int(repetitions.at(0) * pow(2, ref_level))
-//                    << " x " << int(repetitions.at(1) * pow(2, ref_level)) << " x "
-//                    << int(repetitions.at(2) * pow(2, ref_level)) << " = "
-//                    << int(
-//                         repetitions.at(0) * repetitions.at(1) * repetitions.at(2)
-//                         * pow(2, 3 * ref_level)) << endl << "#Points:       "
-//                    << int(repetitions.at(0) * pow(2, ref_level) * p) << " x "
-//                    << int(repetitions.at(1) * pow(2, ref_level) * p) << " x "
-//                    << int(repetitions.at(2) * pow(2, ref_level) * p) << " = "
-//                    << int(
-//                         repetitions.at(0) * repetitions.at(1) * repetitions.at(2)
-//                         * pow(2, 3 * ref_level) * p * p * p) << endl
-//                    << "y+ (wrt. cells): "  << yplus << "   dx+ = " << dxplus << ", "
-//                    << "dz+ = " << dzplus << endl << "          -----         " << endl
-//                    << "          -----         " << endl;
-//                    << "==================================================="
-//                        << endl << "               dt  = " << dt << endl << "               dt+ = "
-//                        << dt/(viscosity/utau/utau) << endl << "    u_tau cross time = "
-//                        << length / utau << " = "
-//                        << int(length / utau / dt) << " steps" << endl
-//                        << "===================================================" << endl
-//                        << endl
-
-    boost::shared_ptr<ProblemDescription<3> > mixingLayer =
-            boost::make_shared<MixingLayer3D>(viscosity, refinement_level, meshname, randuscaling, randuname, U * uscaling, reference_temperature, bc);
+//    MixingLayer3D::UnstructuredGridFunc trafo(mixingLayer->lx, mixingLayer->lx, mixingLayer->lx);
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////
     CompressibleCFDSolver<3> solver(configuration, mixingLayer);
     const size_t table_output_lines_per_10s = 300;
     configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
-    solver.appendDataProcessor(boost::make_shared<ShearLayerStats>(solver, configuration->getOutputDirectory(), shearLayerThickness, Re));
+    solver.appendDataProcessor(boost::make_shared<ShearLayerStats>(solver, configuration->getOutputDirectory(), deltaTheta0, Re, ref_level, repetitions));
     solver.run();
     pout << "step-mixingLayer terminated." << endl;
     return 0;

@@ -52,20 +52,29 @@ public:
  * @short
  */
 template<size_t dim>
-double getMinimumDoFDistanceGLL(const Mesh<dim>& tria,
-		const size_t orderOfFiniteElement);
+double getMinimumDoFDistanceGLL(const Mesh<dim>& tria, const size_t orderOfFiniteElement);
+template<size_t dim>
+double getMinimumDoFDistanceGLC(const Mesh<dim>& tria, const size_t orderOfFiniteElement);
+template<size_t dim>
+double getMaximumDoFDistanceGLC(const Mesh<dim>& tria, const size_t orderOfFiniteElement);
 
 template<size_t dim>
-double getMinimumDoFDistance(const Mesh<dim>& tria,
-		const dealii::FiniteElement<dim,dim>& fe);
+double getMinimumDoFDistance(const Mesh<dim>& tria, const dealii::FiniteElement<dim,dim>& fe);
 
 template<size_t dim>
 double getMinimumVertexDistance(const Mesh<dim>& tria);
 
 template<size_t dim>
-double calculateTimestep(const Mesh<dim>& tria,
-		const size_t orderOfFiniteElement, const Stencil& stencil, double cFL =
-				0.4);
+double getMaximumVertexDistance(const Mesh<dim>& tria);
+
+template<size_t dim>
+vector<double> getMinimumVertexDistanceDirs(const Mesh<dim>& tria);
+template<size_t dim>
+vector<double> getMaximumVertexDistanceDirs(const Mesh<dim>& tria);
+
+template<size_t dim>
+double calculateTimestep(const Mesh<dim>& tria, const size_t orderOfFiniteElement, const Stencil& stencil,
+                         double cFL = 0.4);
 
 /**
  * @short stolen from Deal.II's step 49 tutorial

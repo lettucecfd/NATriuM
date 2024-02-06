@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_SUITE(D2Q19H_test)
         BOOST_CHECK_CLOSE(dqmodel.getSpeedOfSoundSquare(), 1./3.,0.000001);
         std::vector<double> weights = dqmodel.getWeights();
         double sum =0.0;
-        for(int i = 0; i < dqmodel.getQ(); i++)
+        for(size_t i = 0; i < dqmodel.getQ(); i++)
             sum+=weights[i];
         BOOST_CHECK_CLOSE(sum,1.0,0.0000001);
 

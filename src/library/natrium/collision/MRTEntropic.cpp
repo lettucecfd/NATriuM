@@ -44,7 +44,7 @@ void MRTEntropic::collideAllD2Q9(DistributionFunctions& f,
 	size_t Q = getQ();
 
 	double scaling = getStencil()->getScaling();
-	double cs2 = getStencil()->getSpeedOfSoundSquare() / scaling / scaling;
+//	double cs2 = getStencil()->getSpeedOfSoundSquare() / scaling / scaling;
 	vector<double> meq(Q); 	// moment equilibrium distribution functions
 	vector<double> m(Q);   	// moment distribution
 
@@ -223,7 +223,7 @@ double invm[19][19]= {{1. / 19.,-5. / 399.,1. / 21.,0. / 1.,0. / 1.,0. / 1.,0. /
 size_t Q = getQ();
 
 double scaling = getStencil()->getScaling();
-double cs2 = getStencil()->getSpeedOfSoundSquare() / scaling / scaling;
+//double cs2 = getStencil()->getSpeedOfSoundSquare() / scaling / scaling;
 vector<double> meq(Q); 	// moment equilibrium distribution functions
 vector<double> m(Q);   	// moment distribution
 

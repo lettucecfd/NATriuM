@@ -255,9 +255,7 @@ void SemiLagrangian<dim>::fillSparseObject(bool sparsity_pattern, size_t row_ind
 						// add diagonal entry to sparsity pattern
 						m_blockSparsityPattern.block(row_index,el.destination.direction- 1).add(el.destination.index,
 								el.destination.index);
-                        LOG(WARNING)
-                                << " The SemiLagrangian Advection tracker ran into the life time counter limit of 50."
-                                << endl;
+                        LOG(WARNING) << " The SemiLagrangian Advection tracker ran into the life time counter limit of 50." << endl;
 
                     } else {
 						// insert '1'
@@ -815,7 +813,7 @@ void SemiLagrangian<dim>::getNeighborhood(
 				continue;
 			} else if (isCellInNeighborhood(*n, neighborhood)) {
 				continue;
-			} else if (n->active() or n->is_ghost()) {
+			} else if (n->is_active() or n->is_ghost()) {
 				std::array < size_t, faces_per_cell > v(visited_faces.at(c));
 				v[i]++;
 				visited_faces.push_back(v);
@@ -825,7 +823,7 @@ void SemiLagrangian<dim>::getNeighborhood(
 				continue;
 			} else if (n->has_children()) {
 				for (size_t j = 0; j < n->n_children(); j++) {
-					assert(n->child(j)->active());
+					assert(n->child(j)->is_active());
 					if (isCellInNeighborhood(*(n->child(j)), neighborhood)) {
 						continue;
 					}
@@ -868,14 +866,14 @@ typename dealii::DoFHandler<dim>::active_cell_iterator SemiLagrangian<dim>::recu
 				continue;
 			} else if (isCellInNeighborhood(*n, neighborhood)) {
 				continue;
-			} else if (n->active() or n->is_ghost()) {
+			} else if (n->is_active() or n->is_ghost()) {
 				neighborhood.push_back(
 						typename dealii::DoFHandler<dim>::active_cell_iterator(
 								n));
 				continue;
 			} else if (n->has_children()) {
 				for (size_t j = 0; j < n->n_children(); j++) {
-					assert(n->child(j)->active());
+					assert(n->child(j)->is_active());
 					if (isCellInNeighborhood(*(n->child(j)), neighborhood)) {
 						continue;
 					}

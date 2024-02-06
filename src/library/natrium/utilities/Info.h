@@ -26,7 +26,10 @@ boost::filesystem::path get_natrium_dir();
 /**
  * @short Return identifier for the current git commit.
  */
+
 std::string getGitSha() ;
+
+std::string getGitBranch() ;
 
 std::string getUserName();
 

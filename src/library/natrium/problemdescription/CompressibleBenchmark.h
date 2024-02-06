@@ -40,7 +40,7 @@ public:
     Benchmark<dim>(triangulation, viscosity, characteristicLength
     ) {
 
-        m_analyticT = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
+        m_analyticT = boost::make_shared<DealIIExtensions::Functions::ConstantFunction<dim> >(1.0, 1);
 
     }
 

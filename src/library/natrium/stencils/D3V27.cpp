@@ -120,9 +120,10 @@ vector<numeric_vector> D3V27::makeDirections(double scaling) {
 /// make directions
 
 numeric_matrix D3V27::makeMomentBasis(vector<numeric_vector> e) {
+    (void)e;
     numeric_matrix m(Q);
-    for (int i = 0;i<Q;i++){
-        for (int j = 0;j<Q;j++){
+    for (size_t i = 0;i<Q;i++){
+        for (size_t j = 0;j<Q;j++){
             if(i==j)
             {
                 m(i,j) =1.0;

@@ -152,6 +152,8 @@ public:
 			dealii::TrilinosWrappers::SparsityPattern& cSparse,
 			const dealii::DoFHandler<dim>& doFHandler) const {
 		throw NotImplementedException("To work with SEDG, this boundary must override addToSparsityPattern(...).");
+        (void) cSparse;
+        (void) doFHandler;
 	}
 
 	/**
@@ -171,15 +173,22 @@ public:
 	 * @param[in] useCentralFlux indicates whether to use a central instead of a Lax-Friedrichs flux. Should not be used,
 	 *            has not been tested thoroughly and yields bad results, usually.
 	 */
-	virtual void assembleBoundary(size_t alpha,
-			const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
-			size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues,
-			const Stencil& stencil,
-			const std::map<size_t, size_t>& q_index_to_facedof,
-			const vector<double> & inverseLocalMassMatrix,
-			distributed_sparse_block_matrix& systemMatrix,
-			distributed_block_vector& systemVector,
-			bool useCentralFlux = false) {
+	virtual void assembleBoundary(size_t alpha, const typename dealii::DoFHandler<dim>::active_cell_iterator& cell,
+                                  size_t faceNumber, dealii::FEFaceValues<dim>& feFaceValues, const Stencil& stencil,
+                                  const std::map<size_t,  size_t>& q_index_to_facedof,
+                                  const vector<double> & inverseLocalMassMatrix,
+                                  distributed_sparse_block_matrix& systemMatrix, distributed_block_vector& systemVector,
+                                  bool useCentralFlux = false) {
+        (void) alpha;
+        (void) cell;
+        (void) faceNumber;
+        (void) feFaceValues;
+        (void) stencil;
+        (void) q_index_to_facedof;
+        (void) inverseLocalMassMatrix;
+        (void) systemMatrix;
+        (void) systemVector;
+        (void) useCentralFlux;
 		std::stringstream err;
 		err << " The assembleBoundary() function is not implemented for this type of boundary "
 				"but is required if you want to use the boundary with an SEDG solver (boundary id:"
@@ -225,6 +234,11 @@ public:
 				double eps, double t) {
 		throw NATriuMException("SL streaming can only be used when calculateBoundaryValues is "
 						"overriden in Boundary definition.");
+        (void) fe_boundary_values;
+        (void) q_point;
+        (void) destination;
+        (void) eps;
+        (void) t;
 	}
 
 

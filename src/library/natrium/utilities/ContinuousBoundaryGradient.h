@@ -121,7 +121,7 @@ public:
 	 * 		 increment it in line with your other cell iterator. The cells will come in the same order.
 	 */
 	void face_reinit(
-			const typename dealii::hp::DoFHandler<dim>::active_cell_iterator& cell,
+			const typename DealIIExtensions::DoFHandler<dim>::active_cell_iterator& cell,
 			size_t face_id) {
 		assert(cell->is_locally_owned());
 		assert(face_id < dealii::GeometryInfo<dim>::faces_per_cell);

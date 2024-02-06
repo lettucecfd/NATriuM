@@ -22,14 +22,14 @@ template<size_t dim>
 class SLEquilibriumBoundary: public Boundary<dim> {
 
 public:
-	SLEquilibriumBoundary(size_t boundary_id, dealii::Tensor<1, dim>& velocity, double temperature = 1.0) : m_temperature(temperature),
-			Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY,
-					PrescribedBoundaryValues<dim>(velocity)) {
+	SLEquilibriumBoundary(size_t boundary_id, dealii::Tensor<1, dim>& velocity, double temperature = 1.0) :
+			Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY, PrescribedBoundaryValues<dim>(velocity)),
+			        m_temperature(temperature) {
 	}
 
-    SLEquilibriumBoundary(size_t boundary_id, const dealii::Vector<double>& velocity, double temperature = 1.0) : m_temperature(temperature),
-            Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY,
-                          PrescribedBoundaryValues<dim>(velocity)) {
+    SLEquilibriumBoundary(size_t boundary_id, const dealii::Vector<double>& velocity, double temperature = 1.0) :
+            Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY, PrescribedBoundaryValues<dim>(velocity)),
+                    m_temperature(temperature) {
     }
 
 	//virtual ~SLEquilibriumBoundary();
@@ -99,7 +99,7 @@ public:
         const double density = rho;
         double feq;
         const double weight =  stencil.getWeight(destination.direction);
-        std::array<double,dim> e_vel ={0.0};
+        std::array<double,dim> e_vel ={};
         for (size_t i = 0; i < dim; i++) {
             e_vel[i] = stencil.getDirection(destination.direction)(i);
         }
@@ -115,10 +115,7 @@ public:
             uxu += u[i] * u[i];
         }
 
-
-        double to_add = 2 * stencil.getWeight(destination.direction)
-                        * rho * exu / stencil.getSpeedOfSoundSquare();
-
+//        double to_add = 2 * stencil.getWeight(destination.direction) * rho * exu / stencil.getSpeedOfSoundSquare();
 
         const std::array<std::array<size_t,dim>, dim> eye = unity_matrix<dim>();
         double uu_term = 0.0;
@@ -126,8 +123,6 @@ public:
             uu_term += -(u[j] * u[j])
                        / (2.0 * cs2);
         }
-
-
 
         double T1 = cs2*(temperature-1);
 

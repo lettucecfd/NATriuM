@@ -77,7 +77,11 @@ public:
 			FEBoundaryValues<dim>& fe_boundary_values, size_t q_point,
 			const LagrangianPathDestination& destination, double eps,
 			double t) {
-
+        (void) t;
+        (void) eps;
+        (void) destination;
+        (void) q_point;
+        (void) fe_boundary_values;
 	}
 
 };

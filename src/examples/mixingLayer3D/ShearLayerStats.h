@@ -40,11 +40,16 @@ private:
     boost::shared_ptr<std::fstream> m_t1File;
 
     // Y Coordinates
-    vector<double> m_yCoordinates;
-    int nround;
-    std::map<double, size_t, own_double_less> m_yCoordinateToIndex;
+    vector<double> m_xCoordinates, m_yCoordinates, m_zCoordinates;
+//    size_t tol;
+    double roundtol;
+//    unsigned long nround; // round coordinates to this magnitude
+    std::map<double, size_t, own_double_less> m_xCoordinateToIndex, m_yCoordinateToIndex, m_zCoordinateToIndex;
     size_t m_nofCoordinates;
+    vector<size_t> m_nofCoordinates_all = {0,0,0};
     bool m_yCoordsUpToDate;
+    size_t m_reflevel;
+    double m_lx, m_ly, m_lz;
 
     // Data
     double rho0 = 1;
@@ -59,14 +64,20 @@ private:
     double m_K_integrated;
     // Data stored across y
     vector<double> m_R11, m_R22, m_R33, m_R12, m_R13, m_R23;
-    vector<double> ux_Fa, uy_Fa, uz_Fa;
+    vector<double> ux_Fa, uy_Fa, uz_Fa, ux_Re;
     vector<double> umag_Re, rho_Re, momentumthickness_integrand;
     vector<double> m_number;
     vector<double> m_K;
+    vector<unsigned int> m_reps;
+
+    int m_no_stats;
 
     void write_tn();
     void write_console();
     void calculateRhoU();
+    void calculateDeltas(double dT0);
+    void testIntegration();
+    void testDerivate();
 
     static string scalaroutfile(string dir) {
         boost::filesystem::path out_dir(dir);
@@ -86,7 +97,8 @@ private:
     }
 
 public:
-	ShearLayerStats(CompressibleCFDSolver<3> & solver, string outdir, double starting_delta_theta, double starting_Re);
+	ShearLayerStats(CompressibleCFDSolver<3> & solver, string outdir, double starting_delta_theta, double starting_Re,
+                    size_t reflevel, vector<unsigned int> repetitions);
 	void apply() override;
 	~ShearLayerStats() override;
     bool isMYCoordsUpToDate() const;

@@ -93,9 +93,10 @@ namespace natrium {
         void applyInitialVelocities(vector<distributed_vector>& initialVelocities,
                                     const map<dealii::types::global_dof_index, dealii::Point<dim> >& supportPoints) const;
 
-        const boost::shared_ptr<Benchmark<dim> >& getBenchmark() const {
-            return m_benchmark;
-        }
+//        const boost::shared_ptr<Benchmark<dim> > &getBenchmark() const {
+//            const boost::shared_ptr<Benchmark<dim>> bench = ;
+//            return m_benchmark;
+//        }
 
         const map<dealii::types::global_dof_index, dealii::Point<dim> >& getSupportPoints() const {
             return m_supportPoints;

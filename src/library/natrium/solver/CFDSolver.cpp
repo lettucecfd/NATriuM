@@ -106,7 +106,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 	// welcome message
 	LOG(WELCOME) << "------ NATriuM solver ------" << endl;
-	LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
+    LOG(WELCOME) << "------ branch " << Info::getGitBranch() << " ------" << endl;
+    LOG(WELCOME) << "------ commit " << Info::getGitSha() << " ------" << endl;
 	LOG(WELCOME) << "------ " << currentDateTime() << " ------" << endl;
 	LOG(WELCOME) << "------ " << Info::getUserName() << " on "
 			<< Info::getHostName() << " ------" << endl;
@@ -232,10 +233,9 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	} else {
 		m_problemDescription->refineAndTransform();
 		m_advectionOperator->setupDoFs();
-		m_f.reinit(m_stencil->getQ(),
-				m_advectionOperator->getLocallyOwnedDofs(),
-				m_advectionOperator->getLocallyRelevantDofs(),
-				MPI_COMM_WORLD, (SEDG == configuration->getAdvectionScheme()));
+		m_f.reinit(m_stencil->getQ(), m_advectionOperator->getLocallyOwnedDofs(),
+                   m_advectionOperator->getLocallyRelevantDofs(), MPI_COMM_WORLD,
+                   (SEDG == configuration->getAdvectionScheme()));
 		m_iterationStart = 0;
 		m_time = 0;
 	}
@@ -262,7 +262,6 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 /// Calculate relaxation parameter and build collision model
 	double tau = 0.0;
 	double gamma = -1.0;
-	double G = -5;
 
 	if (BGK_STANDARD == configuration->getCollisionScheme()) {
 		tau = BGKStandard::calculateRelaxationParameter(
@@ -289,13 +288,14 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 				m_stencil);
 
 	} else if (BGK_MULTIPHASE == configuration->getCollisionScheme()) {
+//        double G = -5;
 		tau = BGKStandardTransformed::calculateRelaxationParameter(
 				m_problemDescription->getViscosity(), delta_t, *m_stencil);
 		PseudopotentialParameters pp_para(
 				m_configuration->getPseudopotentialType(),
 				m_configuration->getBGKPseudopotentialG(),
 				m_configuration->getBGKPseudopotentialT());
-		G = m_configuration->getBGKPseudopotentialG();
+//		G = m_configuration->getBGKPseudopotentialG();
 		boost::shared_ptr<BGKPseudopotential<dim> > coll_tmp =
 				boost::make_shared<BGKPseudopotential<dim> >(tau, delta_t,
 						m_stencil, pp_para);
@@ -364,18 +364,13 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 
 // initialize macroscopic variables
 	m_advectionOperator->mapDoFsToSupportPoints(m_supportPoints);
-	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-			m_advectionOperator->getLocallyRelevantDofs(),
-			MPI_COMM_WORLD);
-	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(),
-	MPI_COMM_WORLD);
+	m_density.reinit(m_advectionOperator->getLocallyOwnedDofs(), m_advectionOperator->getLocallyRelevantDofs(),
+                     MPI_COMM_WORLD);
+	m_tmpDensity.reinit(m_advectionOperator->getLocallyOwnedDofs(), MPI_COMM_WORLD);
 	for (size_t i = 0; i < dim; i++) {
-		distributed_vector vi_ghosted(
-				m_advectionOperator->getLocallyOwnedDofs(),
-				m_advectionOperator->getLocallyRelevantDofs(),
-				MPI_COMM_WORLD);
-		distributed_vector vi(m_advectionOperator->getLocallyOwnedDofs(),
-		MPI_COMM_WORLD);
+		distributed_vector vi_ghosted(m_advectionOperator->getLocallyOwnedDofs(),
+                                      m_advectionOperator->getLocallyRelevantDofs(), MPI_COMM_WORLD);
+		distributed_vector vi(m_advectionOperator->getLocallyOwnedDofs(), MPI_COMM_WORLD);
 		m_velocity.push_back(vi_ghosted);
 		m_tmpVelocity.push_back(vi);
 	}
@@ -383,10 +378,8 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 		// get writeable copies of density and velocity
 		std::vector<distributed_vector> writeable_u;
 		distributed_vector writeable_rho;
-		CFDSolverUtilities::getWriteableDensity(writeable_rho, m_density,
-				m_advectionOperator->getLocallyOwnedDofs());
-		CFDSolverUtilities::getWriteableVelocity(writeable_u, m_velocity,
-				m_advectionOperator->getLocallyOwnedDofs());
+		CFDSolverUtilities::getWriteableDensity(writeable_rho, m_density, m_advectionOperator->getLocallyOwnedDofs());
+		CFDSolverUtilities::getWriteableVelocity(writeable_u, m_velocity, m_advectionOperator->getLocallyOwnedDofs());
 
 		// set writeable copies
 		applyInitialDensities(writeable_rho, m_supportPoints);
@@ -483,26 +476,20 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	if (charU == 0.0) {
 		charU = maxU;
 	}
-	double dx = CFDSolverUtilities::getMinimumVertexDistance<dim>(
-			*problemDescription->getMesh());
-	LOG(WELCOME) << "viscosity:                "
-			<< problemDescription->getViscosity() << " m^2/s" << endl;
-	LOG(WELCOME) << "char. length:             "
-			<< problemDescription->getCharacteristicLength() << " m" << endl;
-	LOG(WELCOME) << "max |u_0|:                "
-			<< maxU * problemDescription->getCharacteristicLength() << " m/s"
+    double dxmin = CFDSolverUtilities::getMinimumVertexDistance<dim>(*problemDescription->getMesh());
+    double dxmax = CFDSolverUtilities::getMaximumVertexDistance<dim>(*problemDescription->getMesh());
+	LOG(WELCOME) << "viscosity:                " << problemDescription->getViscosity() << " m^2/s" << endl;
+	LOG(WELCOME) << "char. length:             " << problemDescription->getCharacteristicLength() << " m" << endl;
+	LOG(WELCOME) << "max |u_0|:                " << maxU * problemDescription->getCharacteristicLength() << " m/s"
 			<< endl;
-	LOG(WELCOME) << "Reynolds number:          "
-			<< (charU * problemDescription->getCharacteristicLength())
+	LOG(WELCOME) << "Reynolds number:          " << (charU * problemDescription->getCharacteristicLength())
 					/ problemDescription->getViscosity() << endl;
 //    scaling = sqrt(3) * U / (Ma*sqrt(gamma*reference_temperature));
 //    m_speedOfSound(scaling/sqrt(3))
     double Ma = charU / m_stencil->getSpeedOfSound();
 	LOG(WELCOME) << "Mach number:              " << Ma << endl;
-	LOG(WELCOME) << "Stencil scaling:          "
-			<< configuration->getStencilScaling() << endl;
-	LOG(WELCOME) << "Sound speed:              " << m_stencil->getSpeedOfSound()
-			<< endl;
+	LOG(WELCOME) << "Stencil scaling:          " << configuration->getStencilScaling() << endl;
+	LOG(WELCOME) << "Sound speed:              " << m_stencil->getSpeedOfSound() << endl;
 //TODO propose optimal cfl based on time integrator
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== ADVECTION ==          " << endl;
@@ -523,11 +510,10 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 						*m_stencil, std_cfl) << " s" << endl;
 	}
 	LOG(WELCOME) << "Actual dt:                " << delta_t << " s" << endl;
-	LOG(WELCOME) << "CFL number:               " << configuration->getCFL()
-			<< endl;
-	LOG(WELCOME) << "dx:                       " << dx << endl;
-	LOG(WELCOME) << "Order of finite element:  "
-			<< configuration->getSedgOrderOfFiniteElement() << endl;
+	LOG(WELCOME) << "CFL number:               " << configuration->getCFL() << endl;
+    LOG(WELCOME) << "dx_min:                   " << dxmin << endl;
+    LOG(WELCOME) << "dx_max:                   " << dxmax << endl;
+	LOG(WELCOME) << "Order of finite element:  " << configuration->getSedgOrderOfFiniteElement() << endl;
 	LOG(WELCOME) << "----------------------------" << endl;
 	LOG(WELCOME) << "== COLLISION ==           " << endl;
 	LOG(WELCOME) << "tau:                      " << tau << endl;
@@ -535,7 +521,6 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
     LOG(WELCOME) << "Is Prandtl number set?    " << configuration->isPrandtlNumberSet() << endl;
     LOG(WELCOME) << "Prandtl number Pr:        " << configuration->getPrandtlNumber() << endl;
     LOG(WELCOME) << "Heat capacity ratio:      " << configuration->getHeatCapacityRatioGamma() << endl;
-
     LOG(WELCOME) << "----------------------------" << endl;
 
 // initialize boundary dof indicator
@@ -550,25 +535,21 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	}
 	m_isDoFAtBoundary.resize(getNumberOfDoFs());
 	DealIIExtensions::extract_dofs_with_support_on_boundary(
-			*(m_advectionOperator->getDoFHandler()), dealii::ComponentMask(),
-			m_isDoFAtBoundary, boundaryIndicators);
+			*(m_advectionOperator->getDoFHandler()), dealii::ComponentMask(), m_isDoFAtBoundary, boundaryIndicators);
 	size_t nofBoundaryNodes = 0;
 	for (size_t i = 0; i < m_isDoFAtBoundary.size(); i++) {
 		if (m_isDoFAtBoundary.at(i)) {
 			nofBoundaryNodes += 1;
 		}
 	}
-	LOG(DETAILED) << "Number of non-periodic boundary grid points: "
-			<< nofBoundaryNodes << endl;
-	LOG(DETAILED) << "Number of total grid points: " << getNumberOfDoFs()
-			<< endl;
-	const vector<dealii::types::global_dof_index>& dofs_per_proc =
-			m_advectionOperator->getDoFHandler()->n_locally_owned_dofs_per_processor();
-	for (size_t i = 0;
-			i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); i++) {
-		LOG(DETAILED) << "Process " << i << " has " << dofs_per_proc.at(i)
-				<< " grid points." << endl;
-	}
+	LOG(DETAILED) << "Number of non-periodic boundary grid points: " << nofBoundaryNodes << endl
+	              << "Number of total grid points: " << getNumberOfDoFs() << endl;
+
+    const vector<dealii::types::global_dof_index>& dofs_per_proc =
+    Utilities::MPI::all_gather(MPI_COMM_WORLD, m_advectionOperator->getDoFHandler()->n_locally_owned_dofs());
+    for (size_t i = 0; i < dealii::Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD); i++) {
+        LOG(DETAILED) << "Process " << i << " has " << dofs_per_proc.at(i) << " grid points." << endl;
+    }
 
 // Initialize distribution functions
 	if (not checkpoint) {
@@ -586,8 +567,7 @@ CFDSolver<dim>::CFDSolver(boost::shared_ptr<SolverConfiguration> configuration,
 	/*and (configuration->getOutputTableInterval()
 	 < configuration->getNumberOfTimeSteps())*/) {
 		std::stringstream s;
-		s << configuration->getOutputDirectory().c_str()
-				<< "/results_table.txt";
+		s << configuration->getOutputDirectory().c_str() << "/results_table.txt";
 		//create the SolverStats object which is responsible for the results table
 		m_solverStats = boost::make_shared<SolverStats<dim> >(this, s.str());
 		//create the TurbulenceStats object which is responsible for the turbulence table
@@ -917,21 +897,19 @@ std::string secs_to_stream(int secs) {
         << std::setfill('0') << std::setw(2) << m << ":"
         << std::setfill('0') << std::setw(2) << s; // << " / " << secs << " seconds";
     return result.str();
-};
+}
 
 template<size_t dim>
 bool CFDSolver<dim>::stopConditionMet() {
 
 // start timer
-	TimerOutput::Scope timer_section(Timing::getTimer(),
-			"Check stop condition");
+	TimerOutput::Scope timer_section(Timing::getTimer(), "Check stop condition");
 
 // Maximum number of iterations
 	size_t N = m_configuration->getNumberOfTimeSteps();
 	if (m_i >= N) {
-		LOG(BASIC)
-				<< "Stop condition: Maximum number of iterations reached in iteration "
-				<< m_i << "." << endl;
+		LOG(BASIC) << "Stop condition: Maximum number of iterations reached in iteration "
+				   << m_i << "." << endl;
 		return true;
 	}
 // End time
@@ -947,13 +925,13 @@ bool CFDSolver<dim>::stopConditionMet() {
     int secs = int(t_tot / CLOCKS_PER_SEC);
     if (secs >= server_end_time) {
         if (is_MPI_rank_0()) {
-            cout << "Stop condition: Server end time";
-            cout << " reached after " << secs_to_stream(secs);
-            cout << " in iteration " << m_i << "." << endl;
-            cout << "Started at " << m_tstart2;
             time_t t_now = time(nullptr);
             struct tm* ltm = localtime(&t_now);
-            cout << "Stopped at " << string(asctime(ltm));
+            cout << "Stop condition: Server end time"
+                 << " reached after " << secs_to_stream(secs)
+                 << " in iteration " << m_i << "." << endl
+                 << "Started at " << m_tstart2
+                 << "Stopped at " << string(asctime(ltm));
         }
         return true;
     }
@@ -1087,13 +1065,11 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 				// generate all other filenames
 				std::vector<std::string> filenames;
-				for (unsigned int i = 0;
-						i < dealii::Utilities::MPI::n_mpi_processes(
-						MPI_COMM_WORLD); ++i) {
+				for (unsigned int i = 0; i < dealii::Utilities::MPI::n_mpi_processes( MPI_COMM_WORLD); ++i) {
 					std::stringstream vtu_filename_i;
 					vtu_filename_i
-					//<< m_configuration->getOutputDirectory().c_str() << "/"
-					<< "t_" << i << "." << iteration << ".vtu";
+					    //<< m_configuration->getOutputDirectory().c_str() << "/"
+					    << "t_" << i << "." << iteration << ".vtu";
 					filenames.push_back(vtu_filename_i.str());
 				}
 				data_out.write_pvtu_record(pvtu_output, filenames);
@@ -1218,8 +1194,8 @@ void CFDSolver<dim>::initializeDistributions() {
         const distributed_vector & rho_local(getDensity());
 
         int eye [dim][dim] ={{0}};
-        for (int a = 0; a<dim; a++)  {
-            for (int b = 0; b < dim; b++) {
+        for (size_t a = 0; a<dim; a++)  {
+            for (size_t b = 0; b < dim; b++) {
                 if (a==b){
                     eye[a][b] = 1;
                 }
@@ -1228,9 +1204,9 @@ void CFDSolver<dim>::initializeDistributions() {
 
         std::vector<std::array<std::array<double, dim>, dim>> Q(m_stencil->getQ());
 
-        for (int i = 0; i < m_stencil->getQ(); i++) {
-            for (int a = 0; a < dim; a++) {
-                for (int b = 0; b < dim; b++) {
+        for (size_t i = 0; i < m_stencil->getQ(); i++) {
+            for (size_t a = 0; a < dim; a++) {
+                for (size_t b = 0; b < dim; b++) {
                     Q[i][a][b] = m_stencil->getDirection(i)[a] * m_stencil->getDirection(i)[b] -
                                  eye[a][b] * m_stencil->getSpeedOfSoundSquare();
                 }
@@ -1246,7 +1222,7 @@ void CFDSolver<dim>::initializeDistributions() {
 
                 // get averages
                 fe_values.reinit(cell);
-                const std::vector<double> &weights = fe_values.get_JxW_values();
+//                const std::vector<double> &weights = fe_values.get_JxW_values();
 
                 // calculate gradients (for w and strain rate)
                 fe_values.get_function_gradients(u_local.at(0), ux_gradients);
@@ -1263,8 +1239,8 @@ void CFDSolver<dim>::initializeDistributions() {
                     double dx = 1.0; //cell->minimum_vertex_distance()/ m_configuration->getSedgOrderOfFiniteElement();
                     double tau = getTau() + 0.5;
                     double Pi_1[dim][dim] = {{0.0}};
-                    for (int a = 0; a < dim; a++) {
-                        for (int b = 0; b < dim; b++) {
+                    for (size_t a = 0; a < dim; a++) {
+                        for (size_t b = 0; b < dim; b++) {
                             Pi_1[a][b] = -1.0 * tau * rhos.at(q) / m_stencil->getSpeedOfSoundSquare() * dx;
                         }
                     }
@@ -1293,9 +1269,9 @@ void CFDSolver<dim>::initializeDistributions() {
                     }
 
                     std::vector<double> fneq(m_stencil->getQ(),0.0);
-                    for (int i = 0; i < m_stencil->getQ(); i++) {
-                        for (int a = 0; a < dim; a++) {
-                            for (int b = 0; b < dim; b++) {
+                    for (size_t i = 0; i < m_stencil->getQ(); i++) {
+                        for (size_t a = 0; a < dim; a++) {
+                            for (size_t b = 0; b < dim; b++) {
                                 fneq.at(i) += Q[i][a][b]*Pi_1[a][b];
                             }
                         }

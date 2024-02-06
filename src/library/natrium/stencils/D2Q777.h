@@ -2402,6 +2402,7 @@ public:
 
 
 		}
+        return 0;
 	}
 
 	virtual double getMaxParticleVelocityMagnitude() const {

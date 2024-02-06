@@ -66,7 +66,7 @@ void BGKIncompressible::collideAllD2Q9(DistributionFunctions& f,
 
 
 		// Efficient collision for D2Q9
-		size_t n_dofs = f.at(0).size();
+//		size_t n_dofs = f.at(0).size();
 		size_t Q = 9;
 		size_t D = 2;
 		double scaling = getStencil()->getScaling();

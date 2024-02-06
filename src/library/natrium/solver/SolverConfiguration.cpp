@@ -48,7 +48,7 @@ SolverConfiguration::SolverConfiguration() {
 				dealii::Patterns::Selection("SEDG|Semi-Lagrangian"),
 				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme. SEDG stands for spectral element discontinuous Galerkin. Note that the Semi-Lagrangian streaming does not require a time integrator.");
 
-		declare_entry("Support points", "Gauss-Lobatto",
+		declare_entry("Support points", "Gauss-Lobatto-Chebyshev",
 				dealii::Patterns::Selection(
 						"Gauss-Lobatto|Gauss-Lobatto-Chebyshev|Gauss-Chebyshev|Equidistant"),
 				"The support points of the finite elements. For the SEDG streaming, "
@@ -267,9 +267,18 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Output table interval", "1000",
 				dealii::Patterns::Integer(1),
 				"Write out a line to the result table every ... step.");
-		declare_entry("Output solution interval", "1000",
-				dealii::Patterns::Integer(1),
-				"Write out solution every ... step.");
+        declare_entry("Output solution interval", "1000",
+                      dealii::Patterns::Integer(1),
+                      "Write out solution every ... step.");
+        declare_entry("No output interval", "-1",
+                      dealii::Patterns::Integer(-1),
+                      "No not output solution before ... steps.");
+        declare_entry("No stats interval", "-1",
+                      dealii::Patterns::Integer(-1),
+                      "No not reporter stats before ... steps.");
+        declare_entry("Coordinates round degree", "8",
+                      dealii::Patterns::Integer(0, 20),
+                      "Round coordinates to this degree, related to integration point distance.");
 		declare_entry("Command line verbosity", "5",
 				dealii::Patterns::Integer(0, 8),
 				"The amount of command line output.");
@@ -319,7 +328,8 @@ SolverConfiguration::SolverConfiguration(const std::string& XMLfilename) {
  **/
 void SolverConfiguration::readFromTextFile(const std::string & filename,
 		const bool optional, const bool write_stripped_file) {
-
+    (void)optional;
+    (void)write_stripped_file;
 	ParameterHandler::parse_input(filename);
 
 } /* readFromTextFile */

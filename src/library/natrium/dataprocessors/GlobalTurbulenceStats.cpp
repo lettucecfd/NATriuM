@@ -204,7 +204,7 @@ void GlobalTurbulenceStats<dim>::calculate() {
 	double enst = 0.0;
 	double ener_sq = 0.0;
 	double enst_sq = 0.0;
-    double DelThe = 0.0;
+//    double DelThe = 0.0;
 	uxs.resize(n_q_points);
 	uys.resize(n_q_points);
 	uzs.resize(n_q_points);

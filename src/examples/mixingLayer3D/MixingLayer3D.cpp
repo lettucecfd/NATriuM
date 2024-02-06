@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cmath>
 #include <tuple>
+#include <utility>
 #include <vector>
 #include <iostream>
 #include "deal.II/grid/grid_in.h"
@@ -28,18 +29,15 @@ using namespace std;
 using namespace natrium::DealIIExtensions;
 
 double shearlayerthickness = 0.093;
-//double k0 = 23.66 * shearlayerthickness; // peak wave number
-//int n = 5;
-//int kmax = pow(2, n); // [1] C. Pantano and S. Sarkar, “A study of compressibility effects in the high-speed turbulent shear layer using direct simulation,” J. Fluid Mech., vol. 451, pp. 329–371, Jan. 2002, doi: 10.1017/S0022112001006978.
-// kmax = 32
-//int npoints = 32; // number of points in shortest axis of velocity field (lz, presumably)
-//bool print = false;
-//bool recalculate_psi = true;
 
 namespace natrium {
 
-MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, string meshname, double randu_scaling, string randuname, double U, double T, string bc) :
-ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_U(U), m_refinementLevel(refinementLevel), m_initialT(T), m_bc(bc) {
+MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, vector<unsigned int> repetitions, double randu_scaling, string randuname,
+                             double len_x, double len_y, double len_z, string meshname, double center, double scaling,
+                             double dT0, double U, double T, string bc) :
+        ProblemDescription<3>(makeGrid(meshname, len_x, len_y, len_z, std::move(repetitions)), viscosity, 1),
+                m_initialT(T), lx(len_x), ly(len_y), lz(len_z), m_center(center), m_scaling(scaling), deltaTheta0(dT0),
+                m_U(U), m_bc(bc), m_refinementLevel(refinementLevel) {
     // **** Recommendations for CPU use ****
 	/*LOG(BASIC) << "-------------------------------------------------------------" << endl;
 	LOG(BASIC) << "**** Recommendations for CPU use ****" << endl;
@@ -62,10 +60,14 @@ ProblemDescription<3>(makeGrid(meshname), viscosity, 1), m_U(U), m_refinementLev
 	LOG(BASIC) << "... Number of total grid points: " << noGridPoints << endl;
     */
     /// apply boundary values
+    if (is_MPI_rank_0()) LOG(DETAILED) << "Setting boundaries." << endl;
     setBoundaries(makeBoundaries());
     // apply analytic solution
+    if (is_MPI_rank_0()) LOG(DETAILED) << "Setting initial velocity." << endl;
     this->setInitialU(boost::make_shared<InitialVelocity>(this, randu_scaling, randuname));
+    if (is_MPI_rank_0()) LOG(DETAILED) << "Setting initial density." << endl;
     this->setInitialRho(boost::make_shared<InitialDensity>(this));
+    if (is_MPI_rank_0()) LOG(DETAILED) << "Setting initial temperature." << endl;
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
 }
 
@@ -84,12 +86,12 @@ double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const un
 }
 
 MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, double randu_scaling, string randuname) :
-m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_randu_scaling(randu_scaling) {
+m_flow(flow), m_randu_scaling(randu_scaling) {
     stringstream filename;
-    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u_" << randuname << ".txt";
+    filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u/random_u_" << randuname << ".txt";
     string filestring = filename.str();
     ifstream file(filestring);
-    if (is_MPI_rank_0()) LOG(WELCOME) << "Reading initial velocities from " << filestring << endl;
+    if (is_MPI_rank_0()) LOG(WELCOME) << "Reading random velocity field from " << filestring << endl;
     string line;
     while (getline(file, line)) {
         stringstream linestream(line);
@@ -110,22 +112,28 @@ m_flow(flow), lx(flow->lx), ly(flow->ly), lz(flow->lz), m_randu_scaling(randu_sc
             } tmpdir.push_back(tmpi); ny = tmpi.size();
         } curlOfPsi.push_back(tmpdir); nx = tmpdir.size();
     }
+    double lx_u = m_flow->lx;
+    double ly_u = m_flow->ly;
+    double lz_u = m_flow->lz;
+    double dT0  = m_flow->deltaTheta0;
 
     if (is_MPI_rank_0()) {
-        LOG(WELCOME) << "Creating linspaces x, y, z for interpolation." << endl;
-        LOG(DETAILED) << "nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl
-            << "lx: " << lx << ", ly: " << ly << ", lz: " << lz << endl
-            << "lx/dTh0: " << lx / 0.093 << ", ly/dTh0: " << ly / 0.093 << ", lz/dTh0: " << lz / 0.093 << endl;
+        LOG(DETAILED) << "Creating linspaces x, y, z for interpolation from random_u." << endl
+                     << "nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl
+                     << "lx: " << lx_u << ", ly: " << ly_u << ", lz: " << lz_u << endl
+                     << "lx/dTh0: " << lx_u / dT0 << ", ly/dTh0: " << ly_u / dT0 << ", lz/dTh0: " << lz_u / dT0 << endl;
     }
+
+    //// velocity field is scaled to domain
     vector<double> x, y, z;
     double dx, dy, dz;
     double xmin, ymin, zmin;
-    xmin = -lx / 2;
-    ymin = -ly / 2;
-    zmin = -lz / 2;
-    dx = lx / nx;
-    dy = ly / ny;
-    dz = lz / nz;
+    xmin = -lx_u / 2;
+    ymin = -ly_u / 2;
+    zmin = -lz_u / 2;
+    dx = lx_u / nx;
+    dy = ly_u / ny;
+    dz = lz_u / nz;
     double linvalue;
     linvalue = xmin; for (int i = 0; i < nx; i++) { x.push_back(linvalue); linvalue += dx; }
     linvalue = ymin; for (int i = 0; i < ny; i++) { y.push_back(linvalue); linvalue += dy; }
@@ -184,10 +192,12 @@ double MixingLayer3D::InitialVelocity::InterpolateVelocities(double xq, double y
 
 double MixingLayer3D::InitialDensity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component == 0);
+    (void) x;
     return 1.0;// + p / (m_flow->m_cs * m_flow->m_cs);
 }
 double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component == 0);
+    (void) x;
     return this->m_flow->m_initialT;
 }
 
@@ -195,7 +205,7 @@ double MixingLayer3D::InitialTemperature::value(const dealii::Point<3>& x, const
  * @short create triangulation for Compressible Mixing Layer flow
  * @return shared pointer to a triangulation instance
  */
-boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
+boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname, double len_x, double len_y, double len_z, std::vector<unsigned int> repetitions) {
     boost::shared_ptr<Mesh<3> > mesh = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
 
 //    // TODO: generate using step_sizes
@@ -210,31 +220,28 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname) {
     if (meshname == "cube") {
         if (is_MPI_rank_0()) cout << "doing cube with global refinement" << endl;
         boost::shared_ptr<Mesh<3> > cube = boost::make_shared<Mesh<3> >(MPI_COMM_WORLD);
-        double lx = 172 * shearlayerthickness / 2;
-        double ly = 38.7 * shearlayerthickness / 2;
-        double lz = 17.2 * shearlayerthickness / 2;
-        dealii::Point<3> corner1(-lx, -ly, -lz);
-        dealii::Point<3> corner2(lx, ly, lz);
-        std::vector<unsigned int> rep;
-        rep.push_back(1);
-        rep.push_back(1);
-        rep.push_back(1);
-        dealii::GridGenerator::subdivided_hyper_rectangle(*cube, rep, corner1, corner2, true);
+        double lx2, ly2, lz2;
+        lx2 = len_x / 2;
+        ly2 = len_y / 2;
+        lz2 = len_z / 2;
+        dealii::Point<3> corner1(-lx2, -ly2, -lz2);
+        dealii::Point<3> corner2(lx2, ly2, lz2);
+        dealii::GridGenerator::subdivided_hyper_rectangle(*cube, repetitions, corner1, corner2, true);
         return cube;
+    } else {
+        //Taken from DiamondObstacle2D in step-gridin
+        string mesh_filename = "/src/examples/mixingLayer3D/mesh/shearlayer_" + meshname + ".msh";
+        if (is_MPI_rank_0()) LOG(WELCOME) << "Reading mesh from " << mesh_filename << endl;
+        dealii::GridIn<3> grid_in;
+        grid_in.attach_triangulation(*mesh);
+        //// Read mesh data from file
+        stringstream filename;
+        filename << getenv("NATRIUM_DIR") << mesh_filename;
+        ifstream file(filename.str().c_str());
+        assert(file);
+        grid_in.read_msh(file);
     }
-
-    //Taken from DiamondObstacle2D in step-gridin
-    string mesh_filename = "/src/examples/mixingLayer3D/shearlayer_" + meshname + ".msh";
-    if (is_MPI_rank_0()) LOG(WELCOME) << "Reading mesh from " << mesh_filename << endl;
-    dealii::GridIn<3> grid_in;
-    grid_in.attach_triangulation(*mesh);
-    //// Read mesh data from file
-    stringstream filename;
-    filename << getenv("NATRIUM_DIR") << mesh_filename;
-    ifstream file(filename.str().c_str());
-    assert(file);
-    grid_in.read_msh(file);
-
+    //// calculate boundaries and set boundary ids
     if (is_MPI_rank_0()) LOG(DETAILED) << " dimensions: 3" << endl << " no. of cells: " << mesh->n_active_cells() << endl;
     double minx=0, maxx=0, miny=0, maxy=0, minz=0, maxz=0;
     //// get minimum and maximum coordinates
@@ -351,6 +358,7 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
     else if (m_bc == "PP_BC") {
         boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
     }
+    if (is_MPI_rank_0()) LOG(DETAILED) << "Boundary condition: " << m_bc << endl;
 
     // set a boundary between 0 and 1, and 4 and 5, with direction 0 (x) and 2 (z), respectively
     boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));

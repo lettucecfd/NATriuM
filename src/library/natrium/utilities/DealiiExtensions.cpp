@@ -335,7 +335,7 @@ void make_sparser_flux_sparsity_pattern(const DH &dof,
 					// is not locally owned - otherwise, we touch each
 					// face twice and hence put the indices the other way
 					// around
-					if (!(neighbor->active())
+					if (!(neighbor->is_active())
 							|| (neighbor->subdomain_id() != cell->subdomain_id())) {
 						if (!pairwise_coupling_valid) {
 							constraints.add_entries_local_to_global(

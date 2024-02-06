@@ -22,10 +22,13 @@ namespace natrium {
         void calc(std::array<double, T_Q> &feq, const GeneralCollisionData<T_D, T_Q> &params);
         BGKEquilibrium(double cs2, std::array<std::array<double, T_D>, T_Q> e)
         {
+            (void) cs2;
+            (void) e;
         }
 
         BGKEquilibrium(const GeneralCollisionData<T_D, T_Q> &params)
         {
+            (void) params;
         }
     };
 

@@ -29,6 +29,7 @@ public:
 			const bool inInitializationProcedure,
 			GeneralCollisionData<T_D, T_Q>& genData,
 			typename T_collision<T_D, T_Q, T_equilibrium>::SpecificCollisionData& specData) const {
+        (void)locally_owned_dofs;
 		//for all degrees of freedom on current processor
 		//dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 		//dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
@@ -116,6 +117,7 @@ public:
 			const bool inInitializationProcedure,
 			GeneralCollisionData<T_D, T_Q>& genData,
 			typename T_collision<T_D, T_Q, T_equilibrium>::SpecificCollisionData& specData) const {
+        (void)locally_owned_dofs;
 		//for all degrees of freedom on current processor
 		//dealii::IndexSet::ElementIterator it(locally_owned_dofs.begin());
 		//dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());

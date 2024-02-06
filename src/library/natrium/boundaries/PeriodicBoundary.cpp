@@ -138,8 +138,8 @@ template<size_t dim> void PeriodicBoundary<dim>::checkCellMap() {
 						or (boundary_id_2 == m_boundaryIndicator2));
 		assert(not it->second.cell[0]->is_artificial());
 		assert(not it->second.cell[1]->is_artificial());
-		assert(it->second.cell[0]->active());
-		assert(it->second.cell[1]->active());
+		assert(it->second.cell[0]->is_active());
+		assert(it->second.cell[1]->is_active());
 		assert(
 				(it->first == it->second.cell[0])
 						or (it->first == it->second.cell[1]));

@@ -17,9 +17,9 @@ namespace natrium {
     AdaptiveForcing::AdaptiveForcing(CompressibleCFDSolver<3> &solver,
                                      std::string outdir, double target, bool restart) :
             FinalChannelStatistics(solver, outdir), m_outDir(outdir), m_T(solver.getTemperature()), m_targetRhoU(target),
-            m_lastRhoU(target), m_starting_force(this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0]),
-            m_restart(restart), m_compressibleSolver(solver),
-            m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_currentRho(1.0), m_coolingFactor(1.005), m_integral(0.0) {
+            m_lastRhoU(target), m_currentRho(1.0),
+            m_starting_force(this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0]), m_restart(restart),
+            m_compressibleSolver(solver), m_filename(outfile(solver.getConfiguration()->getOutputDirectory())), m_coolingFactor(1.005), m_integral(0.0) {
 
 
         m_names.push_back("T");
@@ -71,8 +71,9 @@ namespace natrium {
 void AdaptiveForcing::apply() {
      //setBoundaryTemperature();
 
-    if (!isMYCoordsUpToDate())
+    if (!isMYCoordsUpToDate()) {
         updateYValues();
+    }
 
 	if (m_solver.getIteration() % 10 == 0) {
         calculateRhoU();
@@ -349,7 +350,6 @@ void AdaptiveForcing::apply() {
     void AdaptiveForcing::setBoundaryTemperature() {
 
         std::array<double,45> w;
-        int length;
         for (size_t i = 0; i < 45; i++){
             w[i]=m_solver.getStencil()->getWeight(i);
         }
@@ -444,14 +444,14 @@ AdaptiveForcing::~AdaptiveForcing() {
 }
 
     void AdaptiveForcing::calculateForce() {
-        const double currentForce = this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0];
-        const double timeStepSize = this->m_solver.getTimeStepSize();
-        double newForce = m_force; //currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
-        bool forceChanged = false;
+//        const double currentForce = this->m_solver.getProblemDescription()->getExternalForce()->getForce()[0];
+//        const double timeStepSize = this->m_solver.getTimeStepSize();
+//        double newForce = m_force; //currentForce + 1./timeStepSize*(m_targetRhoU-2*m_currentValue+m_lastRhoU);
+//        bool forceChanged = false;
 
         const double kp = 50;
         const double ki = 0.05;
-        const double kd = 0.01;
+//        const double kd = 0.01;
         const double error = m_targetRhoU - m_currentValueRhoU;
         double P = kp * error;
         m_integral += error;
@@ -462,7 +462,7 @@ AdaptiveForcing::~AdaptiveForcing() {
 
         m_lastRhoU = error;
 
-        newForce = output;
+        double newForce = output;
 
         if ( newForce > 5.0*m_starting_force)
             newForce =  5.0*m_starting_force;

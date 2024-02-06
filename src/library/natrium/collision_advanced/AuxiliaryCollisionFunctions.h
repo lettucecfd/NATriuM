@@ -217,7 +217,7 @@ struct GeneralCollisionData {
 template <size_t T_D>
 constexpr std::array<std::array<size_t,T_D>, T_D> unity_matrix()
 {
-    std::array<std::array<size_t,T_D>, T_D> eye ={{0}};
+    std::array<std::array<size_t,T_D>, T_D> eye = {};
     for (size_t a = 0; a<T_D; a++)  {
         for (size_t b = 0; b < T_D; b++) {
             if (a==b){
@@ -259,6 +259,7 @@ template<>
 inline void calculateVelocity<2, 9>(const std::array<double, 9>& fLocal,
 		std::array<double, 2>& velocity, double density,
 		GeneralCollisionData<2, 9>& params) {
+    (void)params;
 	velocity[0] = 1.0 / density
 			* (fLocal[1] + fLocal[5] + fLocal[8] - fLocal[3] - fLocal[6]
 					- fLocal[7]);
@@ -271,7 +272,7 @@ template<>
 inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 		std::array<double, 3>& velocity, double density,
 		GeneralCollisionData<3, 19>& params) {
-
+    (void)params;
 	velocity[0] = 1.0 / density
 			* (fLocal[1] - fLocal[3] + fLocal[7] - fLocal[8] - fLocal[9]
 					+ fLocal[10] + fLocal[11] + fLocal[12] - fLocal[13]
@@ -290,6 +291,7 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
     inline double calculateTemperature(const std::array<double, T_Q> &fLocal, const std::array<double, T_Q> &gLocal,
                                        std::array<double, T_D> &velocity, double density, double temperature,
                                        GeneralCollisionData <T_D, T_Q> &params, double d) {
+        (void) d;
         //T0[i,j]+=((c[k,0]-u[0,i,j])**2+(c[k,1]-u[1,i,j])**2)*fin[k,i,j]*0.5/rho[i,j]
         temperature = 0.0;
         for (size_t i = 0; i < T_Q; i++) {
@@ -504,8 +506,8 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
     inline void
     calculateGStar(std::array<double, T_Q> &gStar, const std::array<double, T_D> &centeredFluxTensorG,
                    const GeneralCollisionData<T_D, T_Q> &p) {
-        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
-        const double cs6 = 6.0 * p.cs2 * p.cs2 * p.cs2;
+//        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+//        const double cs6 = 6.0 * p.cs2 * p.cs2 * p.cs2;
         for (size_t a = 0; a < T_D; a++) {
             for (size_t i = 0; i < T_Q; i++) {
                 gStar[i] += p.weight[i] * (centeredFluxTensorG[a] * p.e[i][a]) /

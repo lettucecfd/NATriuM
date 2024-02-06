@@ -1344,9 +1344,9 @@ public:
 		leave_subsection();
 	}
 
-	size_t getOutputCheckpointInterval() {
+	int getOutputCheckpointInterval() {
 		enter_subsection("Output");
-		size_t checkpointInterval;
+        int checkpointInterval;
 		try {
 			checkpointInterval = get_integer("Output checkpoint interval");
 		} catch (std::exception& e) {
@@ -1462,6 +1462,96 @@ public:
             std::stringstream msg;
             msg << "Could not assign value " << outputSolutionInterval
                 << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    int getNoOutputInterval() {
+        enter_subsection("Output");
+        int solutionInterval;
+        try {
+            solutionInterval = get_integer("No output interval");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'No output interval' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return solutionInterval;
+    }
+
+    void setNoOutputInterval(long int noOutputInterval) {
+        enter_subsection("Output");
+        try {
+            set("No output interval", noOutputInterval);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << noOutputInterval
+                << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    int getNoStatsInterval() {
+        enter_subsection("Output");
+        int solutionInterval;
+        try {
+            solutionInterval = get_integer("No stats interval");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'No output interval' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return solutionInterval;
+    }
+
+    void setNoStatsInterval(long int NoStatsInterval) {
+        enter_subsection("Output");
+        try {
+            set("No stats interval", NoStatsInterval);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << NoStatsInterval
+                << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    int getCoordsRound() {
+        enter_subsection("Output");
+        int CoordsRound;
+        try {
+            CoordsRound = get_integer("Coordinates round degree");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Coordinates round degree' from parameters: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return CoordsRound;
+    }
+
+    void setCoordsRound(long int CoordsRound) {
+        enter_subsection("Output");
+        try {
+            set("Coordinates round degree", CoordsRound);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << CoordsRound << " to Output solution interval: " << e.what();
             leave_subsection();
             throw ConfigurationException(msg.str());
         }

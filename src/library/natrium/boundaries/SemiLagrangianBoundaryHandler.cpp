@@ -110,7 +110,7 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 
     template<size_t dim>
     void SemiLagrangianBoundaryHandler<dim>::applyToG(DistributionFunctions &f, DistributionFunctions &g, double t, const double gamma) {
-
+        (void)t;
         const double C_v = 1. / (gamma - 1.0);
         const double temperature = 1.0;
 
@@ -120,15 +120,14 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
         for (; cell_it != cell_end; ++cell_it) {
             // i.e., FOR ALL CELLS
 
-            const typename dealii::DoFHandler<dim>::active_cell_iterator &cell =
-                    cell_it->first;
+//            const typename dealii::DoFHandler<dim>::active_cell_iterator &cell = cell_it->first;
             const HitListAtCell<dim> &cell_hits = cell_it->second;
 
 // get hit points
             local_hit_points.clear();
-            typename HitListAtCell<dim>::const_iterator point_it =
+            auto point_it =
                     cell_hits.begin();
-            typename HitListAtCell<dim>::const_iterator point_end =
+            auto point_end =
                     cell_hits.end();
             for (; point_it != point_end; ++point_it) {
                 local_hit_points.push_back(point_it->first);

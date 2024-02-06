@@ -8,7 +8,7 @@
 #ifndef NATRIUM_BOUNDARIES_BOUNDARYCOLLECTION_H_
 #define NATRIUM_BOUNDARIES_BOUNDARYCOLLECTION_H_
 
-#include "deal.II/lac/constraint_matrix.h"
+#include "deal.II/lac/affine_constraints.h"
 
 #include "../boundaries/Boundary.h"
 #include "../boundaries/PeriodicBoundary.h"

@@ -315,7 +315,8 @@ template<> void applyStabilizer<19>(const array<double,19>& in, array<double,19>
 
 template<> void applyStabilizer<27>(const array<double,27>& in, array<double,27>& out){
 //    assert( dim == 3);
-
+    (void)in;
+    (void)out;
     cout << "template<> void applyStabilizer<27> NOT IMPLEMENTED, YET." << endl;
     assert (false);
 }

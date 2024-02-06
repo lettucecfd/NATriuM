@@ -15,9 +15,9 @@ namespace natrium {
 
 template<size_t dim>
 ThermalBounceBack<dim>::ThermalBounceBack(size_t boundaryIndicator,
-		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity, double wallTemperature) : m_wallTemperature(wallTemperature),
-		Boundary<dim>(boundaryIndicator, THERMAL_BB,
-				PrescribedBoundaryValues<dim>(boundaryVelocity) ) {
+		boost::shared_ptr<dealii::Function<dim> > boundaryVelocity, double wallTemperature) :
+        Boundary<dim>(boundaryIndicator, THERMAL_BB, PrescribedBoundaryValues<dim>(boundaryVelocity) ),
+		m_wallTemperature(wallTemperature) {
 
 	//assert(not Boundary<dim>::getBoundaryValues().getPressure());
 	assert(Boundary<dim>::getBoundaryValues().getVelocity());
@@ -28,16 +28,14 @@ ThermalBounceBack<dim>::ThermalBounceBack(size_t boundaryIndicator,
 template<size_t dim>
 ThermalBounceBack<dim>::ThermalBounceBack(size_t boundaryIndicator,
 		const dealii::Vector<double>& velocity, double wallTemperature) :
-		ThermalBounceBack<dim>(boundaryIndicator,
-				boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(velocity), wallTemperature){
+		ThermalBounceBack<dim>(boundaryIndicator, boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(velocity), wallTemperature){
 
 }
 
 template<size_t dim>
 ThermalBounceBack<dim>::ThermalBounceBack(size_t boundaryIndicator,
 		const dealii::Tensor<1,dim>& velocity, double wallTemperature):
-    ThermalBounceBack<dim>(boundaryIndicator,
-					boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(velocity), wallTemperature)  {
+    ThermalBounceBack<dim>(boundaryIndicator, boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(velocity), wallTemperature)  {
 }
 
 
@@ -51,6 +49,9 @@ void ThermalBounceBack<dim>::calculateBoundaryValues(
 		FEBoundaryValues<dim>& fe_boundary_values, size_t q_point,
 		const LagrangianPathDestination& destination, double eps,
 		double t) {
+    (void)q_point;
+    (void)t;
+    (void)eps;
 
 	const GlobalBoundaryData& data = fe_boundary_values.getData();
 	const Stencil& stencil = data.m_stencil;
