@@ -1327,8 +1327,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			// collide without recalculating velocities
 			try {
 				// collide
-				m_collisionModel->collideAll(m_f, rho, m_velocity, locally_owned_dofs,
-						inInitializationProcedure);
+				m_collisionModel->collideAll(m_f, rho, m_velocity, locally_owned_dofs, inInitializationProcedure);
 				// copy back
 			} catch (CollisionException& e) {
 				natrium_errorexit(e.what());
