@@ -78,6 +78,7 @@ int main(int argc, char** argv) {
     parser.setArgument<double>("dy-scaling", "scale dy to dy-scaling-times the element size (<1 to refine boundaries, >1 to loosen, 1 for equidistant mesh)", 1);
     parser.setArgument<double>("dT0", "deltaTheta0", 0.093);
     parser.setArgument<int>("incomp", "set incompressible", 0);
+    parser.setArgument<int>("Q_incomp", "set incompressible stencil; options: 13, 15, 19, 21, 27", 27);
 
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
@@ -161,9 +162,23 @@ int main(int argc, char** argv) {
     if (parser.getArgument<int>("incomp") == 1) {
         configuration->setStencilScaling(1/sqrt(3));
         configuration->setSupportPoints(EQUIDISTANT_POINTS);
-        configuration->setStencil(Stencil_D3Q13);
-        configuration->setCollisionScheme(BGK_STANDARD);  // todo: BGK_REGULARIZED, MRT_STANDARD
-        configuration->setEquilibriumScheme(BGK_EQUILIBRIUM);  // todo: INCOMPRESSIBLE_EQUILIBRIUM
+        int Q_incomp  = parser.getArgument<int>("Q_incomp");
+        if (Q_incomp == 13) {  // 13, 15, 19, 21, 27
+            configuration->setStencil(Stencil_D3Q13);
+        } else if (Q_incomp == 15) {
+            configuration->setStencil(Stencil_D3Q15);
+        } else if (Q_incomp == 19) {
+            configuration->setStencil(Stencil_D3Q19);
+        } else if (Q_incomp == 21) {
+            configuration->setStencil(Stencil_D3Q21);
+        } else if (Q_incomp == 27) {
+            configuration->setStencil(Stencil_D3Q27);
+        } else {
+            LOG(WELCOME) << "Support points set to " << Q_incomp << ", which is not implemented. Falling back to D3Q27" << endl;
+            configuration->setStencil(Stencil_D3Q27);
+        }
+        configuration->setCollisionScheme(BGK_STANDARD);  // BGK_REGULARIZED, MRT_STANDARD
+        configuration->setEquilibriumScheme(BGK_EQUILIBRIUM);  // INCOMPRESSIBLE_EQUILIBRIUM
         configuration->setInitializationScheme(EQUILIBRIUM);
     } else {
         configuration->setStencilScaling(scaling);
@@ -176,7 +191,7 @@ int main(int argc, char** argv) {
         configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
     //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
     }
-    configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order")); // TODO: set to 4
+    configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order"));
     configuration->setHeatCapacityRatioGamma(gamma);
     configuration->setReferenceTemperature(reference_temperature);
     configuration->setPrandtlNumber(0.71);
