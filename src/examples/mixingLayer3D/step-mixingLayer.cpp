@@ -42,24 +42,43 @@ int main(int argc, char** argv) {
     freestream sound speeds.
     Set to 0.3, 0.7, 0.9, 1.0, 1.2
     */
+//            --output-sol
+//    100
+//    --randuscaling
+//    1
+//            --nstats
+//    1
+//            --output-chk
+//    20000
+//            --ref-level
+//    0
+//            --Ma
+//    0.3
+//            --time
+//    5
+//            --dy-scaling
+//    1
+//            --server-end
+//    360
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
     parser.setArgument<double>("uscaling", "factor to scale U1, i.e. deltaUx", 1);
-//    parser.setArgument<double>("CFL", "CFL number. Should be between 0.4 and 2", 1);
+//    parser.setArgument<double>("cfl", "CFL number. Should be between 0.4 and 2", 1);
+//    parser.setArgument<double>("order-fe", "order of finite elements. should be 4", 2);
     parser.setArgument<double>("gamma", "Heat capacity ratio. Should be 1.4", 1.4);
     parser.setArgument<double>("ref-temp", "Reference temperature. Should be between 0.85 and 1 (lower may be more stable).", 1);
-    parser.setArgument<double>("lx", "Half length in x-direction (multiples of deltaTheta0)", 160);
-    parser.setArgument<double>("ly", "Half length in y-direction (multiples of deltaTheta0)", 80);
-    parser.setArgument<double>("lz", "Half length in z-direction (multiples of deltaTheta0)", 40);
+    parser.setArgument<double>("lx", "length in x-direction (multiples of deltaTheta0)", 160);
+    parser.setArgument<double>("ly", "length in y-direction (multiples of deltaTheta0)", 160);
+    parser.setArgument<double>("lz", "length in z-direction (multiples of deltaTheta0)", 98);
 //    parser.setArgument<int>("nout", "output vtk every nout steps", 2000);
-    parser.setArgument<int>("ncheckpoint", "output checkpoint every ncheckpoint steps", 20000);
+//    parser.setArgument<int>("ncheckpoint", "output checkpoint every ncheckpoint steps", 20000);
     parser.setArgument<int>("n-no-out", "do not output vtk before iteration n-no-out", -1);
     parser.setArgument<int>("n-no-stats", "do not output stats before iteration n-no-stats", -1);
     parser.setArgument<int>("nstats", "output stats every nstats steps", 20);
     parser.setArgument<int>("ncoordsround", "round coordinates to this degree for statistics", 10);
     parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "cube");
     parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "cube_k048_half");
-    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 1);
+    parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 15);
     parser.setArgument<string>("bc", "Boundary condition. Choose between 'EQ_BC' (equilibrium), 'DN_BC' (do nothing),"
                                      "'FOBB_BC' (First Order Bounce Back),'ThBB_BC' (Thermal Bounce Back), 'VNeq_BC' (Velocity Non-Equilibrium Bounce Back),"
                                      "'PP_BC' (Periodic - meh)", "EQ_BC");
@@ -71,9 +90,9 @@ int main(int argc, char** argv) {
                             "to produce grids with refinements that are not powers of two.", 1);
     parser.setArgument<int>("restart", "Restart at iteration ...", 0);
     parser.setArgument<int>("server-end", "Maximum server time [s]", 82800);
-    parser.setArgument<int>("rep-x", "Number of repetitions in x-direction (to refine the grid in steps that are not 2^N).", 4);
-    parser.setArgument<int>("rep-y", "cf. rep-x", 2);
-    parser.setArgument<int>("rep-z", "cf. rep-x", 1);
+    parser.setArgument<int>("rep-x", "Number of repetitions in x-direction (to refine the grid in steps that are not 2^N).", 36);
+    parser.setArgument<int>("rep-y", "cf. rep-x", 36);
+    parser.setArgument<int>("rep-z", "cf. rep-x", 22);
     parser.setArgument<double>("center", "Central part with high-res grid, choose between 0.1 and 1", 0.8);
     parser.setArgument<double>("dy-scaling", "scale dy to dy-scaling-times the element size (<1 to refine boundaries, >1 to loosen, 1 for equidistant mesh)", 2);
     parser.setArgument<double>("dT0", "deltaTheta0", 0.093);
@@ -150,7 +169,7 @@ int main(int argc, char** argv) {
         LOG(WELCOME) << "Support points set to " << configuration->getSupportPoints() << endl;
     }
     configuration->setUserInteraction(false);
-    configuration->setOutputCheckpointInterval(parser.getArgument<int>("ncheckpoint"));
+//    configuration->setOutputCheckpointInterval(parser.getArgument<int>("ncheckpoint"));
 //    configuration->setOutputSolutionInterval(nout);
     configuration->setNoOutputInterval(parser.getArgument<int>("n-no-out"));
     configuration->setNoStatsInterval(parser.getArgument<int>("n-no-stats"));
