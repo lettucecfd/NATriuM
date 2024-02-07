@@ -166,21 +166,24 @@ void ShearLayerStats::testDerivate() {
                       << "RMS diff to  f'(x) = " << fac << "*-sin(" << fac << "*x) : "
                       << accumulate(diff.begin(), diff.end(), 0.) << ", expected 0." << endl;
     }
-    LOG(DETAILED) << "y:" << endl << "[";
-    for (iy = 0; iy < m_nofCoordinates-1; iy++) {
-        LOG(DETAILED) << m_yCoordinates.at(iy) << ", ";
+    bool debug = false;
+    if (debug) {
+        LOG(DETAILED) << "y:" << endl << "[";
+        for (iy = 0; iy < m_nofCoordinates-1; iy++) {
+            LOG(DETAILED) << m_yCoordinates.at(iy) << ", ";
+        }
+        LOG(DETAILED) << m_yCoordinates.at(m_nofCoordinates-1) << "]" << endl;
+        LOG(DETAILED) << "cos(y):" << endl << "[";
+        for (iy = 0; iy < m_nofCoordinates-1; iy++) {
+            LOG(DETAILED) << f.at(iy) << ", ";
+        }
+        LOG(DETAILED) << f.at(m_nofCoordinates-1) << "]" << endl;
+        LOG(DETAILED) << "(cos(y))':" << endl << "[";
+        for (iy = 0; iy < m_nofCoordinates-1; iy++) {
+            LOG(DETAILED) << deri.at(iy) << ", ";
+        }
+        LOG(DETAILED) << deri.at(m_nofCoordinates-1) << "]" << endl;
     }
-    LOG(DETAILED) << m_yCoordinates.at(m_nofCoordinates-1) << "]" << endl;
-    LOG(DETAILED) << "cos(y):" << endl << "[";
-    for (iy = 0; iy < m_nofCoordinates-1; iy++) {
-        LOG(DETAILED) << f.at(iy) << ", ";
-    }
-    LOG(DETAILED) << f.at(m_nofCoordinates-1) << "]" << endl;
-    LOG(DETAILED) << "(cos(y))':" << endl << "[";
-    for (iy = 0; iy < m_nofCoordinates-1; iy++) {
-        LOG(DETAILED) << deri.at(iy) << ", ";
-    }
-    LOG(DETAILED) << deri.at(m_nofCoordinates-1) << "]" << endl;
 }
 
 void ShearLayerStats::calculateDeltas(double dT0) {
@@ -337,7 +340,8 @@ void ShearLayerStats::calculateDeltas(double dT0) {
                           << " lx = " << m_lx / dT0 << ", ly = " << m_ly / dT0 << ", lz = " << m_lz / dT0 << endl
                       << "---------------------------------------" << endl;
     }
-    if (is_MPI_rank_0()) {
+    bool debug = false;
+    if (is_MPI_rank_0() and debug) {
         for (int scaleto = 2; scaleto < 7; scaleto ++) {
             double fac = pow(2., int(m_reflevel) - scaleto);
             LOG(DETAILED) << "::::::---------------------------------------" << endl
