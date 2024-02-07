@@ -253,8 +253,11 @@ int main(int argc, char** argv) {
 
     if (is_MPI_rank_0()) {
         LOG(WELCOME) << "MIXING LAYER SETUP: " << endl
-                     << "===================================================" << endl
-                     << "Dimensions:    " << len_x << " x " << len_y << " x " << len_z
+                     << "===================================================" << endl;
+        if (parser.getArgument<int>("incomp") == 1) {
+            LOG(WELCOME) << "Calculating with incompressible setup. Using stencil " << StencilType(configuration->getStencil()) << endl;
+        }
+        LOG(WELCOME) << "Dimensions:    " << len_x << " x " << len_y << " x " << len_z
                      << endl << "Grid:          " << repetitions.at(0) << " x "
                      << repetitions.at(1) << " x " << repetitions.at(2)
                      << " blocks with 8^" << ref_level << " cells each " << endl
