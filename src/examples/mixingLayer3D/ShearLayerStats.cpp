@@ -15,7 +15,9 @@
 
 namespace natrium {
 
-ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string outdir, double starting_delta_theta,
+//ShearLayerStats::ShearLayerStats(CompressibleCFDSolver<3> &solver, std::string outdir, double starting_delta_theta,
+//                                 double starting_Re, size_t reflevel, vector<unsigned int> repetitions) :
+ShearLayerStats::ShearLayerStats(CFDSolver<3> &solver, std::string outdir, double starting_delta_theta,
                                  double starting_Re, size_t reflevel, vector<unsigned int> repetitions) :
         DataProcessor<3>(solver),
         m_Re0(starting_Re), m_u(solver.getVelocity()), m_rho(solver.getDensity()),

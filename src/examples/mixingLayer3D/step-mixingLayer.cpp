@@ -94,8 +94,10 @@ int main(int argc, char** argv) {
     parser.setArgument<int>("rep-y", "cf. rep-x", 36);
     parser.setArgument<int>("rep-z", "cf. rep-x", 22);
     parser.setArgument<double>("center", "Central part with high-res grid, choose between 0.1 and 1", 0.8);
-    parser.setArgument<double>("dy-scaling", "scale dy to dy-scaling-times the element size (<1 to refine boundaries, >1 to loosen, 1 for equidistant mesh)", 2);
+    parser.setArgument<double>("dy-scaling", "scale dy to dy-scaling-times the element size (<1 to refine boundaries, >1 to loosen, 1 for equidistant mesh)", 1);
     parser.setArgument<double>("dT0", "deltaTheta0", 0.093);
+    parser.setArgument<int>("incomp", "set incompressible", 0);
+    parser.setArgument<int>("Q_incomp", "set incompressible stencil; options: 13, 15, 19, 21, 27", 27);
 
     try { parser.importOptions();
     } catch (HelpMessageStop&) { return 0;
@@ -163,11 +165,6 @@ int main(int argc, char** argv) {
     // setup configuration
     boost::shared_ptr<SolverConfiguration> configuration = boost::make_shared<SolverConfiguration>();
     if (restart > 0) configuration->setRestartAtIteration(restart);
-    if (sup == "equi") configuration->setSupportPoints(EQUIDISTANT_POINTS);
-    else configuration->setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
-    if (is_MPI_rank_0()) {
-        LOG(WELCOME) << "Support points set to " << configuration->getSupportPoints() << endl;
-    }
     configuration->setUserInteraction(false);
 //    configuration->setOutputCheckpointInterval(parser.getArgument<int>("ncheckpoint"));
 //    configuration->setOutputSolutionInterval(nout);
@@ -180,17 +177,44 @@ int main(int argc, char** argv) {
     configuration->setCoordsRound(parser.getArgument<int>("ncoordsround"));
     configuration->setOutputShearLayerInterval(parser.getArgument<int>("nstats"));
     configuration->setMachNumber(Ma);
-    configuration->setStencilScaling(scaling);
-    configuration->setStencil(Stencil_D3Q45);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
-    configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+    if (parser.getArgument<int>("incomp") == 1) {
+        configuration->setStencilScaling(1/sqrt(3));
+        configuration->setSupportPoints(EQUIDISTANT_POINTS);
+        int Q_incomp  = parser.getArgument<int>("Q_incomp");
+        if (Q_incomp == 13) {  // 13, 15, 19, 21, 27
+            configuration->setStencil(Stencil_D3Q13);
+        } else if (Q_incomp == 15) {
+            configuration->setStencil(Stencil_D3Q15);
+        } else if (Q_incomp == 19) {
+            configuration->setStencil(Stencil_D3Q19);
+        } else if (Q_incomp == 21) {
+            configuration->setStencil(Stencil_D3Q21);
+        } else if (Q_incomp == 27) {
+            configuration->setStencil(Stencil_D3Q27);
+        } else {
+            LOG(WELCOME) << "Support points set to " << Q_incomp << ", which is not implemented. Falling back to D3Q27" << endl;
+            configuration->setStencil(Stencil_D3Q27);
+        }
+        configuration->setCollisionScheme(BGK_STANDARD);  // BGK_REGULARIZED, MRT_STANDARD
+        configuration->setEquilibriumScheme(BGK_EQUILIBRIUM);  // INCOMPRESSIBLE_EQUILIBRIUM
+        configuration->setInitializationScheme(EQUILIBRIUM);
+    } else {
+        configuration->setStencilScaling(scaling);
+        if (sup == "equi") configuration->setSupportPoints(EQUIDISTANT_POINTS);
+        else configuration->setSupportPoints(GAUSS_LOBATTO_CHEBYSHEV_POINTS);
+        if (is_MPI_rank_0()) {
+            LOG(WELCOME) << "Support points set to " << configuration->getSupportPoints() << endl;
+        }
+        configuration->setStencil(Stencil_D3Q45);
+        configuration->setEquilibriumScheme(QUARTIC_EQUILIBRIUM);
+    //    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
+    }
+    configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order"));
     configuration->setHeatCapacityRatioGamma(gamma);
     configuration->setReferenceTemperature(reference_temperature);
     configuration->setPrandtlNumber(0.71);
-    configuration->setSedgOrderOfFiniteElement(parser.getArgument<int>("order")); // TODO: set to 4
-//    configuration->setCFL(cfl); // TODO: should be 0.4<CFL<2
     configuration->setServerEndTime(parser.getArgument<int>("server-end"));
-//    configuration->setInitializationScheme(COMPRESSIBLE_ITERATIVE);
 
     parser.applyToSolverConfiguration(*configuration);
 
@@ -248,8 +272,11 @@ int main(int argc, char** argv) {
 
     if (is_MPI_rank_0()) {
         LOG(WELCOME) << "MIXING LAYER SETUP: " << endl
-                     << "===================================================" << endl
-                     << "Dimensions:    " << len_x << " x " << len_y << " x " << len_z
+                     << "===================================================" << endl;
+        if (parser.getArgument<int>("incomp") == 1) {
+            LOG(WELCOME) << "Calculating with incompressible setup. Using stencil " << StencilType(configuration->getStencil()) << endl;
+        }
+        LOG(WELCOME) << "Dimensions:    " << len_x << " x " << len_y << " x " << len_z
                      << endl << "Grid:          " << repetitions.at(0) << " x "
                      << repetitions.at(1) << " x " << repetitions.at(2)
                      << " blocks with 8^" << ref_level << " cells each " << endl
@@ -271,11 +298,18 @@ int main(int argc, char** argv) {
     /////////////////////////////////////////////////
     // run solver
     //////////////////////////////////////////////////
-    CompressibleCFDSolver<3> solver(configuration, mixingLayer);
     const size_t table_output_lines_per_10s = 300;
-    configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
-    solver.appendDataProcessor(boost::make_shared<ShearLayerStats>(solver, configuration->getOutputDirectory(), deltaTheta0, Re, ref_level, repetitions));
-    solver.run();
+    if (parser.getArgument<int>("incomp") == 1) {
+        CFDSolver<3> solver(configuration, mixingLayer);
+        configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
+        solver.appendDataProcessor(boost::make_shared<ShearLayerStats>(solver, configuration->getOutputDirectory(), deltaTheta0, Re, ref_level, repetitions));
+        solver.run();
+    } else {
+        CompressibleCFDSolver<3> solver(configuration, mixingLayer);
+        configuration->setOutputTableInterval(1 + 10.0 / solver.getTimeStepSize() / table_output_lines_per_10s);
+        solver.appendDataProcessor(boost::make_shared<ShearLayerStats>(solver, configuration->getOutputDirectory(), deltaTheta0, Re, ref_level, repetitions));
+        solver.run();
+    }
     pout << "step-mixingLayer terminated." << endl;
     return 0;
 }

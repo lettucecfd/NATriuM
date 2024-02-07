@@ -975,6 +975,8 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 					<< "/grid.vtk";
 			std::string grid_file = str0.str();
 			std::ofstream grid_out_file(grid_file);
+            std::filesystem::path out_dir(this->m_configuration->getOutputDirectory() + "/vtk");
+            std::filesystem::create_directory(out_dir);
 			dealii::GridOut().write_vtk(*m_problemDescription->getMesh(),
 					grid_out_file);
 			grid_out_file.close();
@@ -997,8 +999,8 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 					<< " million DoF updates per second" << endl;
 			Timing::getTimer().print_summary();
 		}
-		// output estimated runtime after iterations 1, 10, 100, 1000, ...
-		if (iteration % 1000 == 0) {
+		// output estimated runtime after iterations 10, 100, 1000, ...
+		if ((iteration == 10) or (iteration == 100) or (iteration % 1000 == 0 and iteration > 0)) {
              time_t estimated_end = m_tstart + (m_configuration->getNumberOfTimeSteps() - m_iterationStart)
              / (iteration - m_iterationStart) * (time(0) - m_tstart);
              struct tm * ltm = localtime(&estimated_end);
@@ -1327,8 +1329,7 @@ void CFDSolver<dim>::initializeDistributions() {
 			// collide without recalculating velocities
 			try {
 				// collide
-				m_collisionModel->collideAll(m_f, rho, m_velocity, locally_owned_dofs,
-						inInitializationProcedure);
+				m_collisionModel->collideAll(m_f, rho, m_velocity, locally_owned_dofs, inInitializationProcedure);
 				// copy back
 			} catch (CollisionException& e) {
 				natrium_errorexit(e.what());
