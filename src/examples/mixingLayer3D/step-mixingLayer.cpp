@@ -231,7 +231,7 @@ int main(int argc, char** argv) {
                 << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000
 //                << "-uscale" << uscaling
                 << "-dyscale" << parser.getArgument<double>("dy-scaling")
-                << "-refT" << reference_temperature << "_" << bc;
+                << "-refT" << reference_temperature << "-" << bc;
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
