@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
     configuration->setMachNumber(Ma);
     configuration->setAdvectionScheme(SEMI_LAGRANGIAN);
     if (parser.getArgument<int>("incomp") == 1) {
-        configuration->setStencilScaling(1/sqrt(3));
+//        configuration->setStencilScaling(1./sqrt(3));
         configuration->setSupportPoints(EQUIDISTANT_POINTS);
         int Q_incomp  = parser.getArgument<int>("Q_incomp");
         if (Q_incomp == 13) {  // 13, 15, 19, 21, 27
