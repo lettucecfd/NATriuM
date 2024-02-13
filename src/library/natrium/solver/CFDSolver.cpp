@@ -972,15 +972,13 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 			// first iteration: put out mesh
 			std::stringstream str0;
 			str0 << m_configuration->getOutputDirectory().c_str()
-					<< "/grid.vtk";
+					<< "/vtk/grid.vtk";
 			std::string grid_file = str0.str();
 			std::ofstream grid_out_file(grid_file);
             std::filesystem::path out_dir(this->m_configuration->getOutputDirectory() + "/vtk");
             std::filesystem::create_directory(out_dir);
-			dealii::GridOut().write_vtk(*m_problemDescription->getMesh(),
-					grid_out_file);
+			dealii::GridOut().write_vtk(*m_problemDescription->getMesh(), grid_out_file);
 			grid_out_file.close();
-
 		}
 		if (iteration % 100 == 0) {
             time_t t_tot = clock() - m_tstart;
@@ -1015,7 +1013,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 				or (is_final)) {
 			// save local part of the solution
 			std::stringstream str;
-			str << m_configuration->getOutputDirectory().c_str() << "/t_"
+			str << m_configuration->getOutputDirectory().c_str() << "/vtk/t_"
 					<< m_problemDescription->getMesh()->locally_owned_subdomain()
 					<< "." << iteration << ".vtu";
 			std::string filename = str.str();
@@ -1060,7 +1058,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 				// generate .pvtu filename
 				std::stringstream pvtu_filename;
 				pvtu_filename << m_configuration->getOutputDirectory().c_str()
-						<< "/t_"
+						<< "/vtk/t_"
 						<< m_problemDescription->getMesh()->locally_owned_subdomain()
 						<< "." << iteration << ".pvtu";
 				std::ofstream pvtu_output(pvtu_filename.str().c_str());
