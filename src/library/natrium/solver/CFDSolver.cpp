@@ -1005,11 +1005,13 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
              LOG(DETAILED) << "i = " << iteration << "; Estimated end: " << string(asctime(ltm)) << endl;
         }
         // add turbulence statistics to output
-		if (m_configuration->isOutputTurbulenceStatistics())
+        int no_out = this->m_configuration->getNoOutputInterval();
+		if ((m_configuration->isOutputTurbulenceStatistics()) and (no_out < int(iteration)))
 			m_turbulenceStats->addToReynoldsStatistics(m_velocity);
 		// no output if solution interval > 10^8
 		if (((iteration % m_configuration->getOutputSolutionInterval() == 0)
-				and m_configuration->getOutputSolutionInterval() <= 1e8)
+				and (m_configuration->getOutputSolutionInterval() <= 1e8)
+                and (no_out < int(iteration)))
 				or (is_final)) {
 			// save local part of the solution
 			std::stringstream str;
@@ -1078,7 +1080,7 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 
 		// output: table
         // calculate information + physical properties
-        if (iteration % m_configuration->getOutputTableInterval() == 0) {
+        if ((iteration % m_configuration->getOutputTableInterval() == 0) and (no_out < int(iteration))) {
             m_solverStats->printNewLine();
             if (m_configuration->isOutputTurbulenceStatistics()) {
                 assert(m_turbulenceStats);
@@ -1090,10 +1092,10 @@ void CFDSolver<dim>::output(size_t iteration, bool is_final) {
 		// no output if checkpoint interval > 10^8
 		if (((iteration % m_configuration->getOutputCheckpointInterval() == 0)
 				or is_final)
-				and (m_configuration->getOutputCheckpointInterval() <= 1e8) and (m_iterationStart != m_i)) {
+				and (m_configuration->getOutputCheckpointInterval() <= 1e8) and (m_iterationStart != m_i)
+                                                                            and (no_out < int(iteration))) {
 
-			boost::filesystem::path checkpoint_dir(
-					m_configuration->getOutputDirectory());
+			boost::filesystem::path checkpoint_dir(m_configuration->getOutputDirectory());
 			checkpoint_dir /= "checkpoint";
 			Checkpoint<dim> checkpoint(m_i, checkpoint_dir);
 			CheckpointStatus checkpoint_status;

@@ -124,10 +124,6 @@ private:
                                                double rho, std::array<double, T_D> u, double T,
                                                std::array<std::array<double, T_D>, T_Q> e, std::array<double, T_Q> w,
                                                double cs2) {
-
-
-     
-    
     
         const std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
 
