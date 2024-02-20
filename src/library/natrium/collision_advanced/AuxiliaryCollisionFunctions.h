@@ -49,10 +49,8 @@ inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
 	for (size_t p = 0; p < T_Q; ++p)
 		density += fLocal[p];
 
-
 	if (density < 1e-10) {
-		throw CollisionException(
-				"Densities too small (< 1e-10) for collisions. Decrease time step size.");
+		throw DensityZeroException("Densities too small (< 1e-10) for collisions. Decrease time step size.");
 	}
 
 	return density;
@@ -516,8 +514,6 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
                 }
             }
 
-
-
     template<size_t T_D, size_t T_Q>
     inline std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> calculateH3(const double cs2, std::array<std::array<double,T_D>,T_Q> e) {
         std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> H3;
@@ -527,7 +523,8 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
                     for (size_t c = 0; c < T_D; c++) {
-                        H3[i][a][b][c] = e[i][a] * e[i][b] * e[i][c] - cs2 * (e[i][a]*eye[b][c] + e[i][b]*eye[a][c] + e[i][c]*eye[a][b]);
+                        H3[i][a][b][c] = e[i][a] * e[i][b] * e[i][c]
+                                            - cs2 * (e[i][a]*eye[b][c] + e[i][b]*eye[a][c] + e[i][c]*eye[a][b]);
                     }
                 }
             }

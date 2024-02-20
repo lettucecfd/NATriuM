@@ -91,7 +91,6 @@ namespace natrium{
 template <int T_D,int T_Q>
 class QuarticEquilibrium
 {
-
     public:
         void calc(std::array<double, T_Q> &feq, const GeneralCollisionData<T_D, T_Q> &params);
         void polynomial(std::array<double, T_Q> &feq,
@@ -102,16 +101,12 @@ class QuarticEquilibrium
     const std::array<std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_D>,T_Q> H4;
 
     QuarticEquilibrium(double cs2, std::array<std::array<double, T_D>, T_Q> e) : H3(calculateH3(cs2,e)), H4(calculateH4(cs2,e))
-    {
-    }
+    { }
 
-    QuarticEquilibrium(const GeneralCollisionData<T_D, T_Q> &params) :H3(params.H3), H4(params.H4)
-    {
-    }
+    QuarticEquilibrium(const GeneralCollisionData<T_D, T_Q> &params) : H3(params.H3), H4(params.H4)
+    { }
 private:
-
     };
-
 
     template<int T_D, int T_Q>
     inline void QuarticEquilibrium<T_D, T_Q>::calc(std::array<double, T_Q> &feq,
@@ -124,7 +119,7 @@ private:
                                                double rho, std::array<double, T_D> u, double T,
                                                std::array<std::array<double, T_D>, T_Q> e, std::array<double, T_Q> w,
                                                double cs2) {
-    
+
         const std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
 
         double uu_term = 0.0;
@@ -191,7 +186,6 @@ private:
                             T1 * (u[0] * u[2]);
             a_xxyz = u[0] * u[0] * u[1] * u[2] +
                             T1 * (u[1] * u[2]);
-
         }
         for (size_t i = 0; i < T_Q; i++) {
 
@@ -209,7 +203,6 @@ private:
                 }
             }
 
-
             const double H_xxx = H3[i][0][0][0];
             const double H_xxy = H3[i][0][0][1];
             const double H_xyy = H3[i][0][1][1];
@@ -226,9 +219,6 @@ private:
                 const double H_yyz = H3[i][1][1][2];
                 const double H_xyz = H3[i][0][1][2];
 
-
-
-
                 feq[i] += w[i] * rho / (6. * cs2 * cs2 * cs2) *
                           (a_zzz * H_zzz + 3 * (a_xxz * H_xxz + a_xzz * H_xzz + a_yzz * H_yzz + a_yyz * H_yyz) +
                            6.0*a_xyz * H_xyz);
@@ -242,8 +232,11 @@ private:
 
 
             feq[i] += w[i] * rho / (24. * cs2 * cs2 * cs2 * cs2) *
-                     (H_xxxx * a_xxxx + H_yyyy * a_yyyy + 6.0 * H_xxyy * a_xxyy + 4.0 * H_xyyy * a_xyyy +
-                       4.0 * H_xxxy * a_xxxy);
+                            (H_xxxx * a_xxxx
+                           + H_yyyy * a_yyyy
+                     + 6.0 * H_xxyy * a_xxyy
+                     + 4.0 * H_xyyy * a_xyyy
+                     + 4.0 * H_xxxy * a_xxxy);
 
             if(T_D==3){
                 const double H_zzzz = H4[i][2][2][2][2];
@@ -260,18 +253,11 @@ private:
                 feq[i] += w[i] * rho / (24. * cs2 * cs2 * cs2 * cs2) *
                           (H_zzzz * a_zzzz + 4.0 * (H_xzzz * a_xzzz + H_yzzz * a_yzzz+ H_xxxz * a_xxxz + H_yyyz * a_yyyz) + 6.0 * (H_xxzz * a_xxzz + H_yyzz * a_yyzz)
                           + 12.0 * (H_xxyz*a_xxyz + H_xyyz*a_xyyz+H_xyzz*a_xyzz));
-
             }
         }
     }
 
 }
-
-
-
-
-
-
 
 // ==========================================================================================
 

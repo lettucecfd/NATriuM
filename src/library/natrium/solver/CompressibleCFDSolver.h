@@ -810,8 +810,10 @@ void compressibleFilter() {
 		}
 	}
 
-    inline void calcQuarticEquilibrium(std::vector<double>& feq, size_t T_Q, double density, std::array<double,dim> velocity, double temperature, double cs2, std::vector<std::array<double,dim>> e, std::vector<double> weight) {
-        const std::array<std::array<size_t,dim>, dim> eye = unity_matrix<dim>();
+    inline void calcQuarticEquilibrium(vector<double>& feq, size_t T_Q, double density, array<double,dim> velocity,
+                                       double temperature, double cs2, vector<array<double,dim>> e,
+                                       vector<double> weight) {
+        const array<array<size_t,dim>, dim> eye = unity_matrix<dim>();
         double uu_term = 0.0;
         for (size_t j = 0; j < dim; j++) {
             uu_term += -(velocity[j] * velocity[j])
@@ -829,14 +831,19 @@ void compressibleFilter() {
             feq[i] = weight[i] * density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
             for (size_t alp = 0; alp < dim; alp++){
                 for (size_t bet = 0; bet < dim; bet++){
-                    feq[i]+=density*weight[i]/(2.0*cs2)*((temperature-1)*eye[alp][bet]*e[i][alp]*e[i][bet]-cs2*eye[alp][bet]*(temperature-1));
+                    feq[i] += density * weight[i] / (2.0*cs2) * (temperature - 1) *
+                            (eye[alp][bet] * e[i][alp] * e[i][bet] - cs2 * eye[alp][bet]);
                     for (size_t gam = 0; gam < dim; gam++){
-
                         feq[i] += weight[i] * density / (6. * cs2 * cs2 * cs2) *
-                                  (velocity[alp] * velocity[bet] * velocity[gam] + T1 *
-                                  (eye[alp][bet] * velocity[gam] + eye[bet][gam] * velocity[alp] + eye[alp][gam] * velocity[bet]))
-                                  * (e[i][alp] * e[i][bet] * e[i][gam] - cs2 *
-                                  (e[i][gam] * eye[alp][bet] + e[i][bet] * eye[alp][gam] + e[i][alp] * eye[bet][gam]));
+                                   (velocity[alp] * velocity[bet] * velocity[gam]
+                                    + T1 * (eye[alp][bet] * velocity[gam]
+                                          + eye[bet][gam] * velocity[alp]
+                                          + eye[alp][gam] * velocity[bet])) *
+                                          // Hermite-3
+                                    (e[i][alp] * e[i][bet] * e[i][gam]
+                                        - cs2 * (e[i][gam] * eye[alp][bet]
+                                               + e[i][bet] * eye[alp][gam]
+                                               + e[i][alp] * eye[bet][gam]));
 
                         for (size_t det = 0; det < dim; det++)
                         {
@@ -847,13 +854,23 @@ void compressibleFilter() {
                                             +e[i][bet]*e[i][gam]*eye[alp][det]
                                             +e[i][bet]*e[i][det]*eye[alp][gam]
                                             +e[i][gam]*e[i][det]*eye[alp][bet];
-                            double power0 = eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
+                            double power0 = eye[alp][bet]*eye[gam][det]
+                                           +eye[alp][gam]*eye[bet][det]
+                                           +eye[alp][det]*eye[bet][gam];
                             double u4    = velocity[alp]*velocity[bet]*velocity[gam]*velocity[det];
-                            double u2 = velocity[alp]*velocity[bet]*eye[gam][det]+velocity[alp]*velocity[gam]*eye[bet][det]+velocity[alp]*velocity[det]*eye[bet][gam]+velocity[bet]*velocity[gam]*eye[alp][det]+velocity[bet]*velocity[det]*eye[alp][gam]+velocity[gam]*velocity[det]*eye[alp][bet];
-                            double multieye= eye[alp][bet]*eye[gam][det]+eye[alp][gam]*eye[bet][det]+eye[alp][det]*eye[bet][gam];
+                            double u2 = velocity[alp]*velocity[bet]*eye[gam][det]
+                                       +velocity[alp]*velocity[gam]*eye[bet][det]
+                                       +velocity[alp]*velocity[det]*eye[bet][gam]
+                                       +velocity[bet]*velocity[gam]*eye[alp][det]
+                                       +velocity[bet]*velocity[det]*eye[alp][gam]
+                                       +velocity[gam]*velocity[det]*eye[alp][bet];
+                            double multieye= eye[alp][bet]*eye[gam][det]
+                                            +eye[alp][gam]*eye[bet][det]
+                                            +eye[alp][det]*eye[bet][gam];
 
-                            feq[i]+= weight[i] * density /(24.*cs2*cs2*cs2*cs2)*(power4-cs2*power2+cs2*cs2*power0)*(u4+T1*(u2+T1*multieye));
-                                                    }
+                            feq[i]+= weight[i] * density / (24.*cs2*cs2*cs2*cs2) *
+                                    (power4 - cs2 * power2 + cs2 * cs2 * power0) * (u4 + T1 * (u2 + T1 * multieye));
+                        }
                     }
                 }
             }
@@ -890,10 +907,10 @@ void compressibleFilter() {
 		dealii::IndexSet::ElementIterator end(locally_owned_dofs.end());
 
 		for (; it != end; it++) {
-                size_t i = *it;
-                for (size_t j = 0; j < dim; j++) {
-                    u[j] = this->m_velocity.at(j)(i)/this->m_stencil->getScaling();
-                }
+            size_t i = *it;
+            for (size_t j = 0; j < dim; j++) {
+                u[j] = this->m_velocity.at(j)(i)/this->m_stencil->getScaling();
+            }
             //GeneralCollisionData<2,25> data(*(this->m_configuration), *(this->m_problemDescription), this->m_stencil->getScaling(), this->m_problemDescription->getViscosity(), *(this->m_stencil), this->m_stencil->getSpeedOfSoundSquare(), 0.0);
 
             double density = this->m_density[i];
