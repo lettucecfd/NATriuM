@@ -42,24 +42,6 @@ int main(int argc, char** argv) {
     freestream sound speeds.
     Set to 0.3, 0.7, 0.9, 1.0, 1.2
     */
-//            --output-sol
-//    100
-//    --randuscaling
-//    1
-//            --nstats
-//    1
-//            --output-chk
-//    20000
-//            --ref-level
-//    0
-//            --Ma
-//    0.3
-//            --time
-//    5
-//            --dy-scaling
-//    1
-//            --server-end
-//    360
     parser.setArgument<double>("Ma", "Mach number", 0.3);
     parser.setArgument<double>("time", "simulation time (s)", 15);
     parser.setArgument<double>("uscaling", "factor to scale U1, i.e. deltaUx", 1);
@@ -67,6 +49,7 @@ int main(int argc, char** argv) {
 //    parser.setArgument<double>("order-fe", "order of finite elements. should be 4", 2);
     parser.setArgument<double>("gamma", "Heat capacity ratio. Should be 1.4", 1.4);
     parser.setArgument<double>("ref-temp", "Reference temperature. Should be between 0.85 and 1 (lower may be more stable).", 1);
+    parser.setArgument<double>("bc-temp", "Boundary temperature. Should be between 0.85 and 1 (default 0 -> same as ref).", 0);
     parser.setArgument<double>("lx", "length in x-direction (multiples of deltaTheta0)", 160);
     parser.setArgument<double>("ly", "length in y-direction (multiples of deltaTheta0)", 160);
     parser.setArgument<double>("lz", "length in z-direction (multiples of deltaTheta0)", 98);
@@ -149,7 +132,8 @@ int main(int argc, char** argv) {
     // Nach einem Blick in van Rees et.al. (2011) und einer erfolgreichen Simulation in Palabos:
     // (Hier war tau = 3*nu_LB + 0.5, nu_LB = U_lattice * (N/2pi) / Re, dt = 2pi/N* U_lattice
     // Re = 1/nu,L=2pi, U = 1 und D = [0,2pi*L]^3
-    const double U = 1 * uscaling;
+    const double U0 = 1;
+    const double U = U0 * uscaling;
     //const double L = 2 * M_PI;
     const double viscosity = 1.0 / Re;
     const double Ma = parser.getArgument<double>("Ma")*sqrt(1.4);
@@ -157,9 +141,12 @@ int main(int argc, char** argv) {
 //    const double cs = U / Ma;
 
     // chose scaling so that the right Ma-number is achieved
-    const double reference_temperature = parser.getArgument<double>("ref-temp");
+    const auto reference_temperature = parser.getArgument<double>("ref-temp");
+    double bc_t;
+    if (parser.getArgument<double>("bc-temp") == 0) bc_t = reference_temperature;
+    else                                            bc_t = parser.getArgument<double>("bc-temp");
     const double gamma = 1.4;
-    const double scaling = sqrt(3) * U / (Ma*sqrt(gamma*reference_temperature));
+    const double scaling = sqrt(3) * U0 / (Ma*sqrt(gamma*reference_temperature));
 //    const double scaling = sqrt(3) * cs; // choose different? -> stencil larger/smaller -> from turb. channel
 
     // setup configuration
@@ -193,7 +180,7 @@ int main(int argc, char** argv) {
         } else if (Q_incomp == 27) {
             configuration->setStencil(Stencil_D3Q27);
         } else {
-            LOG(WELCOME) << "Support points set to " << Q_incomp << ", which is not implemented. Falling back to D3Q27" << endl;
+            LOG(WELCOME) << "Stencil points set to " << Q_incomp << ", which is not implemented. Falling back to D3Q27" << endl;
             configuration->setStencil(Stencil_D3Q27);
         }
         configuration->setCollisionScheme(BGK_STANDARD);  // BGK_REGULARIZED, MRT_STANDARD
@@ -223,20 +210,23 @@ int main(int argc, char** argv) {
     if (not parser.hasArgument("output-dir")){
         std::stringstream dirName;
         dirName << getenv("NATRIUM_HOME");
-        dirName << "/step-mixingLayer/Re" << Re
-                << "-Ma" << floor(Ma*1000)/1000
+        dirName << "/step-mixingLayer/"
+//                << "Re" << Re
+                << "Ma" << floor(Ma*1000)/1000
                 << "-ref" << ref_level
                 << "-p" << configuration->getSedgOrderOfFiniteElement()
-                << "-" << meshname
-                << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000
+//                << "-" << meshname
+//                << "-randu" << randuname << "x" << floor(randuscaling*1000)/1000
 //                << "-uscale" << uscaling
-                << "-dyscale" << parser.getArgument<double>("dy-scaling")
-                << "-refT" << reference_temperature << "-" << bc;
+//                << "-dyscale" << parser.getArgument<double>("dy-scaling")
+                << "-refT" << reference_temperature << "-" << bc << "T" << bc_t
+                << "-t" << time;
 //        dirName << "-coll" << static_cast<int>(configuration->getCollisionScheme())
 //                << "-sl" << static_cast<int>(configuration->getAdvectionScheme())
         if (configuration->getAdvectionScheme() != SEMI_LAGRANGIAN)
             dirName << "-int" << static_cast<int>(configuration->getTimeIntegrator()) << "_" << static_cast<int>(configuration->getDealIntegrator());
         dirName << "-CFL" << configuration->getCFL();
+        dirName << "-sup" << configuration->getSupportPoints();
 //        dirName << "-sten" << static_cast<int>(configuration->getStencil());
 //        if (configuration->isFiltering()) (dirName << "-filt" << static_cast<int>(configuration->getFilteringScheme()) << "by_max_degree");
         if (configuration->getRegularizationScheme() != NO_REGULARIZATION)
@@ -262,7 +252,7 @@ int main(int argc, char** argv) {
     double center = parser.getArgument<double>("center");
     double dy_scaling = parser.getArgument<double>("dy-scaling");
     boost::shared_ptr<MixingLayer3D> mixingLayer = boost::make_shared<MixingLayer3D>
-            (viscosity, ref_level, repetitions, randuscaling, randuname, len_x, len_y, len_z, meshname, center, dy_scaling, deltaTheta0, U * uscaling, reference_temperature, bc);
+            (viscosity, ref_level, repetitions, randuscaling, randuname, len_x, len_y, len_z, meshname, center, dy_scaling, deltaTheta0, U * uscaling, reference_temperature, bc_t, bc);
     if (is_MPI_rank_0()) LOG(DETAILED) << "Calculating unstructured grid." << endl;
     MixingLayer3D::UnstructuredGridFunc trafo(len_y, center, dy_scaling);
 

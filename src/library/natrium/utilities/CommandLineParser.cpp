@@ -11,8 +11,7 @@
 namespace natrium {
 
 CommandLineParser::CommandLineParser(int argc, char** argv) :
-		m_argc(argc), m_argv(argv), m_description("Allowed options"), m_isImported(
-				false) {
+		m_argc(argc), m_argv(argv), m_description("Allowed options"), m_isImported(false) {
 	m_description.add_options()("help,h", "produce help message");
 
 	// define standard arguments that can be used in all scripts to change the solver configuration

@@ -77,11 +77,12 @@ namespace natrium {
             virtual double value(const dealii::Point<3>& x, const unsigned int component = 0) const;
         };
         double m_initialT;
+        double m_BCT;
 
         /// constructor
         MixingLayer3D(double viscosity, size_t refinementLevel, vector<unsigned int> repetitions, double randu_scaling, string randuname,
                       double len_x, double len_y, double len_z, string meshname, double center, double scaling,
-                      double deltaTheta0, double U = 1., double T = 1., string bc = "EQ_BC");
+                      double deltaTheta0, double U = 1., double T = 1., double bcT = 1., string bc = "EQ_BC");
         /// destructor
         virtual ~MixingLayer3D();
 

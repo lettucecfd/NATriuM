@@ -56,8 +56,6 @@ public:
 		return true;
 	}
 
-
-
     virtual BoundaryFlags getUpdateFlags() const {
         BoundaryFlags flags = only_distributions;
         return flags;
@@ -65,11 +63,8 @@ public:
 
 	virtual void calculateBoundaryValues(FEBoundaryValues<dim>& fe_boundary_values, size_t q_point,
                                          const LagrangianPathDestination& destination, double eps, double t) {
-
         const GlobalBoundaryData& data = fe_boundary_values.getData();
         const Stencil& stencil = data.m_stencil;
-
-        const double scaling = stencil.getScaling();
 
         // get velocity
         dealii::Tensor<1, dim> u;
@@ -94,66 +89,68 @@ public:
             e_vel[i] = stencil.getDirection(destination.direction)(i);
         }
         double cs2 = stencil.getSpeedOfSoundSquare();
+        const array<array<size_t, dim>, dim> eye = unity_matrix<dim>();
+        const double T1 = cs2 * (temperature - 1);
 
-            const array<array<size_t, dim>, dim> eye = unity_matrix<dim>();
-            double uu_term = 0.0;
-            for (size_t j = 0; j < dim; j++) {
-                uu_term += -(u[j] * u[j]) / (2.0 * cs2);
-            }
+//        double uu_term = 0.0;
+//        double ue_term = 0.0;
+//        for (size_t j = 0; j < dim; j++) {
+//        }
+//        for (size_t j = 0; j < dim; j++) {
+//            uu_term += -(u[j] * u[j]) / (2.0 * cs2);
+//            ue_term += (u[j] * e_vel[j]) / cs2;
+//        }
+//        feq = 1 + ue_term * (1 + 0.5 * ue_term) + uu_term;  // = 1 + ue_term + 0.5 * ue_term * ue_term + uu_term;
+        feq = 1; // order 0
+        for (size_t alp = 0; alp < dim; alp++) {
+            // TODO: die drei Komponenten nachvollziehen
+            feq += 1 / (1.0 * cs2) * (u[alp] * e_vel[alp]); // order 1 // ue_term
+            feq += 1 / (1.0 * cs2 * cs2) * 0.5 * (u[alp] * u[alp] * e_vel[alp] * e_vel[alp]); // order 1 // 0.5 * ue_term * ue_term
+            for (size_t bet = 0; bet < dim; bet++) {
+                feq += 1 / (2.0 * cs2) * (- u[alp] * u[bet]); // order 2
+                feq += 1 / (2.0 * cs2) * (temperature - 1)
+                        * (eye[alp][bet] * e_vel[alp] * e_vel[bet] - cs2 * eye[alp][bet]); // order 2
+                for (size_t gam = 0; gam < dim; gam++) {
+                    feq += 1 / (6. * cs2 * cs2 * cs2) *
+                            (u[alp] * u[bet] * u[gam]  // a^(3)
+                                + T1 * (eye[alp][bet] * u[gam]
+                                      + eye[bet][gam] * u[alp]
+                                      + eye[alp][gam] * u[bet])) *
+                            (e_vel[alp] * e_vel[bet] * e_vel[gam]  // H_alpbetgam^(3)
+                                - cs2 * (e_vel[gam] * eye[alp][bet]
+                                       + e_vel[bet] * eye[alp][gam]
+                                       + e_vel[alp] * eye[bet][gam])); // order 3
+                    for (size_t det = 0; det < dim; det++) {
+                        double power4 = e_vel[alp] * e_vel[bet] * e_vel[gam] * e_vel[det];
+                        double power2 = e_vel[alp] * e_vel[bet] * eye[gam][det]
+                                        + e_vel[alp] * e_vel[gam] * eye[bet][det]
+                                        + e_vel[alp] * e_vel[det] * eye[bet][gam]
+                                        + e_vel[bet] * e_vel[gam] * eye[alp][det]
+                                        + e_vel[bet] * e_vel[det] * eye[alp][gam]
+                                        + e_vel[gam] * e_vel[det] * eye[alp][bet];
+                        double power0 = eye[alp][bet] * eye[gam][det]
+                                      + eye[alp][gam] * eye[bet][det]
+                                      + eye[alp][det] * eye[bet][gam];
+                        double u4 = u[alp] * u[bet] * u[gam] * u[det];
+                        double u2 = u[alp] * u[bet] * eye[gam][det] + u[alp] * u[gam] * eye[bet][det] +
+                                    u[alp] * u[det] * eye[bet][gam] + u[bet] * u[gam] * eye[alp][det] +
+                                    u[bet] * u[det] * eye[alp][gam] + u[gam] * u[det] * eye[alp][bet];
+                        double multieye = eye[alp][bet] * eye[gam][det]
+                                        + eye[alp][gam] * eye[bet][det]
+                                        + eye[alp][det] * eye[bet][gam];
 
-            double T1 = cs2 * (temperature - 1);
-
-            double ue_term = 0.0;
-            for (size_t j = 0; j < dim; j++) {
-                ue_term += (u[j] * e_vel[j]) / cs2;
-            }
-            feq = weight * density * (1 + ue_term * (1 + 0.5 * (ue_term)) + uu_term);
-            for (size_t alp = 0; alp < dim; alp++) {
-                for (size_t bet = 0; bet < dim; bet++) {
-                    feq += density * weight / (2.0 * cs2) * (temperature - 1)
-                            * (eye[alp][bet] * e_vel[alp] * e_vel[bet] - cs2 * eye[alp][bet]);
-                    for (size_t gam = 0; gam < dim; gam++) {
-                        feq += weight * density / (6. * cs2 * cs2 * cs2) *
-                                (u[alp] * u[bet] * u[gam]
-                                    + T1 * (eye[alp][bet] * u[gam]
-                                          + eye[bet][gam] * u[alp]
-                                          + eye[alp][gam] * u[bet])) *
-                                (e_vel[alp] * e_vel[bet] * e_vel[gam]
-                                    - cs2 * (e_vel[gam] * eye[alp][bet]
-                                           + e_vel[bet] * eye[alp][gam]
-                                           + e_vel[alp] * eye[bet][gam]));
-
-                        for (size_t det = 0; det < dim; det++) {
-                            double power4 = e_vel[alp] * e_vel[bet] * e_vel[gam] * e_vel[det];
-                            double power2 = e_vel[alp] * e_vel[bet] * eye[gam][det]
-                                            + e_vel[alp] * e_vel[gam] * eye[bet][det]
-                                            + e_vel[alp] * e_vel[det] * eye[bet][gam]
-                                            + e_vel[bet] * e_vel[gam] * eye[alp][det]
-                                            + e_vel[bet] * e_vel[det] * eye[alp][gam]
-                                            + e_vel[gam] * e_vel[det] * eye[alp][bet];
-                            double power0 = eye[alp][bet] * eye[gam][det]
-                                          + eye[alp][gam] * eye[bet][det]
-                                          + eye[alp][det] * eye[bet][gam];
-                            double u4 = u[alp] * u[bet] * u[gam] * u[det];
-                            double u2 = u[alp] * u[bet] * eye[gam][det] + u[alp] * u[gam] * eye[bet][det] +
-                                        u[alp] * u[det] * eye[bet][gam] + u[bet] * u[gam] * eye[alp][det] +
-                                        u[bet] * u[det] * eye[alp][gam] + u[gam] * u[det] * eye[alp][bet];
-                            double multieye = eye[alp][bet] * eye[gam][det]
-                                            + eye[alp][gam] * eye[bet][det]
-                                            + eye[alp][det] * eye[bet][gam];
-
-                            feq += weight * density / (24. * cs2 * cs2 * cs2 * cs2) *
-                                   (power4 - cs2 * power2 + cs2 * cs2 * power0) * (u4 + T1 * (u2 + T1 * multieye));
-                        }
+                        feq += 1 / (24. * cs2 * cs2 * cs2 * cs2) *
+                               (power4 - cs2 * power2 + cs2 * cs2 * power0) * (u4 + T1 * (u2 + T1 * multieye)); // order 4
                     }
                 }
             }
-            fe_boundary_values.getData().m_fnew.at(destination.direction)(destination.index) = feq;
-            //// NEW: calculate geq
-            const double gamma = 1.4;
-            const double C_v = 1. / (gamma - 1.0);
-            fe_boundary_values.getData().m_g.at(destination.direction)(destination.index) =
-                    feq * temperature * (2.0 * C_v - dim);
+        }
+        fe_boundary_values.getData().m_fnew.at(destination.direction)(destination.index) = weight * density * feq;
+// geq is calculated in SemiLagrangianBoundaryHandler<dim>::applyToG
+//        const double gamma = 1.4;
+//        const double C_v = 1. / (gamma - 1.0);
+//        fe_boundary_values.getData().m_g.at(destination.direction)(destination.index) =
+//                feq * temperature * (2.0 * C_v - dim);
     }
 private:
     double m_temperature;

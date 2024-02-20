@@ -139,7 +139,6 @@ public:
 	}
 };
 
-
 /**
  * @short function to compare points as map keys;
  *        the points with smaller x components fall before others. in case of equal x,
@@ -208,8 +207,6 @@ bool getInterfacialLinesByBoundaryIndicator(size_t boundaryIndicator1,
 		dealii::Point<2>& beginLine2, dealii::Point<2>& endLine2,
 		std::string& errorMessage);
 
-
-
 /**
  * @short This functions adds elements to the sparsity pattern to couple different distribution functions
  * at the boundary.
@@ -225,7 +222,6 @@ template<size_t dim>
 void CoupleDoFsAtBoundary(
 		dealii::TrilinosWrappers::SparsityPattern& cSparse,
 		const dealii::DoFHandler<dim>& doFHandler, size_t boundary_id, PointCouplingAtBoundary coupling);
-
 
 } /* namespace BoundaryTools */
 
@@ -255,7 +251,7 @@ struct GlobalBoundaryData {
 	/// number of discrete particle velocities in stencil
 	size_t m_Q;
 
-	/// speed of sound
+	/// speed of sound squared
 	double m_cs2;
 
 	/***
@@ -266,19 +262,16 @@ struct GlobalBoundaryData {
 	 * @param viscosity kinematic viscosity of the fluid
 	 * @param dt time step
 	 */
-	GlobalBoundaryData(const DistributionFunctions& f_old,
-			DistributionFunctions& f_new, const Stencil& stencil,
+	GlobalBoundaryData(const DistributionFunctions& f_old, DistributionFunctions& f_new, const Stencil& stencil,
 			double viscosity, double dt) :
-			m_fold(f_old), m_fnew(f_new), m_g(f_new), m_stencil(stencil) {
+            m_fold(f_old), m_fnew(f_new), m_g(f_new), m_stencil(stencil) {
 		m_viscosity = viscosity;
 		m_dt = dt;
 		m_cs2 = stencil.getSpeedOfSoundSquare();
 		m_Q = stencil.getQ();
-
 	}
-    GlobalBoundaryData(const DistributionFunctions& f_old,
-                       DistributionFunctions& f_new, DistributionFunctions& g, const Stencil& stencil,
-                       double viscosity, double dt) :
+    GlobalBoundaryData(const DistributionFunctions& f_old, DistributionFunctions& f_new, DistributionFunctions& g,
+                       const Stencil& stencil, double viscosity, double dt) :
             m_fold(f_old), m_fnew(f_new), m_g(g), m_stencil(stencil) {
         m_viscosity = viscosity;
         m_dt = dt;
@@ -286,10 +279,7 @@ struct GlobalBoundaryData {
         m_Q = stencil.getQ();
     }
 
-
-
 	virtual ~GlobalBoundaryData() {
-
 	}
 };
 

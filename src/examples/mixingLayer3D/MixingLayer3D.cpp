@@ -32,12 +32,13 @@ double shearlayerthickness = 0.093;
 
 namespace natrium {
 
-MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, vector<unsigned int> repetitions, double randu_scaling, string randuname,
-                             double len_x, double len_y, double len_z, string meshname, double center, double scaling,
-                             double dT0, double U, double T, string bc) :
+MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, vector<unsigned int> repetitions,
+                             double randu_scaling, string randuname, double len_x, double len_y, double len_z,
+                             string meshname, double center, double scaling, double dT0, double U, double T,
+                             double bc_T, string bc) :
         ProblemDescription<3>(makeGrid(meshname, len_x, len_y, len_z, std::move(repetitions)), viscosity, 1),
-                m_initialT(T), lx(len_x), ly(len_y), lz(len_z), m_center(center), m_scaling(scaling), deltaTheta0(dT0),
-                m_U(U), m_bc(bc), m_refinementLevel(refinementLevel) {
+                m_initialT(T), m_BCT(bc_T), lx(len_x), ly(len_y), lz(len_z), m_center(center), m_scaling(scaling),
+                deltaTheta0(dT0), m_U(U), m_bc(std::move(bc)), m_refinementLevel(refinementLevel) {
     // **** Recommendations for CPU use ****
 	/*LOG(BASIC) << "-------------------------------------------------------------" << endl;
 	LOG(BASIC) << "**** Recommendations for CPU use ****" << endl;
@@ -318,7 +319,7 @@ boost::shared_ptr<Mesh<3> > MixingLayer3D::makeGrid(const string& meshname, doub
  * @return shared pointer to a vector of boundaries
  * @note All boundary types are inherited of BoundaryDescription; e.g. PeriodicBoundary
  */
-boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
+boost::shared_ptr<BoundaryCollection<3>> MixingLayer3D::makeBoundaries() {
     // make boundary description
     boost::shared_ptr<BoundaryCollection<3>> boundaries = boost::make_shared<BoundaryCollection<3>>();
 
@@ -336,33 +337,33 @@ boost::shared_ptr<BoundaryCollection<3> > MixingLayer3D::makeBoundaries() {
 
     // set boundaries on top and bottom to move forward / backward
     if (m_bc == "EQ_BC") {
-        boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(2, plusVector, m_initialT));
-        boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3> >(3, minusVector, m_initialT));
+        boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3>>(2, plusVector, m_BCT));
+        boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3>>(3, minusVector, m_BCT));
     }
     else if (m_bc == "DN_BC") {
-        boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3> >(2));
-        boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3> >(3));
+        boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3>>(2));
+        boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3>>(3));
     }
     else if (m_bc == "FOBB_BC") {
-        boundaries->addBoundary(boost::make_shared<SLFirstOrderBounceBack<3> >(2));
-        boundaries->addBoundary(boost::make_shared<SLFirstOrderBounceBack<3> >(3));
+        boundaries->addBoundary(boost::make_shared<SLFirstOrderBounceBack<3>>(2));
+        boundaries->addBoundary(boost::make_shared<SLFirstOrderBounceBack<3>>(3));
     }
     else if (m_bc == "ThBB_BC") {
-        boundaries->addBoundary(boost::make_shared<ThermalBounceBack<3> >(2, plusVector, m_initialT));
-        boundaries->addBoundary(boost::make_shared<ThermalBounceBack<3> >(3, minusVector, m_initialT));
+        boundaries->addBoundary(boost::make_shared<ThermalBounceBack<3>>(2, plusVector, m_initialT));
+        boundaries->addBoundary(boost::make_shared<ThermalBounceBack<3>>(3, minusVector, m_initialT));
     }
     else if (m_bc == "VNeq_BC") {
-        boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3> >(2, plusVector));
-        boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3> >(3, minusVector));
+        boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3>>(2, plusVector));
+        boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<3>>(3, minusVector));
     }
     else if (m_bc == "PP_BC") {
-        boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(2, 3, 1, getMesh()));
+        boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3>>(2, 3, 1, getMesh()));
     }
     if (is_MPI_rank_0()) LOG(DETAILED) << "Boundary condition: " << m_bc << endl;
 
     // set a boundary between 0 and 1, and 4 and 5, with direction 0 (x) and 2 (z), respectively
-    boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(0, 1, 0, getMesh()));
-    boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3> >(4, 5, 2, getMesh()));
+    boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3>>(0, 1, 0, getMesh()));
+    boundaries->addBoundary(boost::make_shared<PeriodicBoundary<3>>(4, 5, 2, getMesh()));
 
     // Get the triangulation object (which belongs to the parent class).
     boost::shared_ptr<Mesh<3> > tria_pointer = getMesh();

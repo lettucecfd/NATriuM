@@ -91,8 +91,7 @@ vector<double> D3Q45::makeWeights() {
 
 /// make directions
 vector<numeric_vector> D3Q45::makeDirections(double scaling) {
-
-        vector<numeric_vector> result;
+    vector<numeric_vector> result;
 	for (size_t i = 0; i < Q; i++) {
 		numeric_vector direction(3);
 
@@ -144,7 +143,6 @@ vector<numeric_vector> D3Q45::makeDirections(double scaling) {
                 {-2.7367507163016924 ,  -2.7367507163016924 ,  0.14279717659756475}
         };
 
-
         direction(0) = scaling * m_directionsArray[i][0] / sqrt(3);
 		direction(1) = scaling * m_directionsArray[i][1] / sqrt(3);
         direction(2) = scaling * m_directionsArray[i][2] / sqrt(3);
@@ -166,7 +164,6 @@ numeric_matrix D3Q45::makeMomentBasis(vector<numeric_vector> e) {
                 m(i,j) =0.0;
             }
         }
-
     }
     return m;
 }
