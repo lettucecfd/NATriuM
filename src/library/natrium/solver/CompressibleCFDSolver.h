@@ -418,7 +418,7 @@ inline void applyWriteableMember(const vector<distributed_vector>& writeable, ve
     }
 }
 
-void compressibleOutput(size_t iteration, bool is_final, string pos = "") {
+void compressibleOutput(size_t iteration, bool is_final) {
     if (is_final and is_MPI_rank_0()) LOG(DETAILED) << "Printing last outputs." << endl;
 
 // start timer
@@ -512,7 +512,7 @@ void compressibleOutput(size_t iteration, bool is_final, string pos = "") {
             or (is_final)){
             // save local part of the solution
             std::stringstream str;
-            str << this->m_configuration->getOutputDirectory().c_str() << "/vtk/t_" << pos
+            str << this->m_configuration->getOutputDirectory().c_str() << "/vtk/t_"
                 << this->m_problemDescription->getMesh()->locally_owned_subdomain()
                 << "." << iteration << ".vtu";
             std::string filename = str.str();
@@ -558,7 +558,7 @@ void compressibleOutput(size_t iteration, bool is_final, string pos = "") {
                 // generate .pvtu filename
                 std::stringstream pvtu_filename;
                 pvtu_filename << this->m_configuration->getOutputDirectory().c_str()
-                              << "/vtk/t_" << pos
+                              << "/vtk/t_"
                               << this->m_problemDescription->getMesh()->locally_owned_subdomain()
                               << "." << iteration << ".pvtu";
                 std::ofstream pvtu_output(pvtu_filename.str().c_str());
@@ -571,7 +571,7 @@ void compressibleOutput(size_t iteration, bool is_final, string pos = "") {
                     std::stringstream vtu_filename_i;
                     vtu_filename_i
                             //<< m_configuration->getOutputDirectory().c_str() << "/"
-                            << "t_" << pos << i << "." << iteration << ".vtu";
+                            << "t_" << i << "." << iteration << ".vtu";
                     filenames.push_back(vtu_filename_i.str());
                 }
                 data_out.write_pvtu_record(pvtu_output, filenames);

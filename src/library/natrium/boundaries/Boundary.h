@@ -49,9 +49,12 @@ inline bool is_velocity_neq_bb(BoundaryName bn){
             or (bn == THERMAL_BB) );
 }
 
-    inline bool is_do_nothing_bb(BoundaryName bn){
-        return bn == DO_NOTHING_BC;
-    }
+inline bool is_do_nothing_bb(BoundaryName bn){
+    return bn == DO_NOTHING_BC;
+}
+inline bool is_velocity_eq(BoundaryName bn){
+    return bn == VELOCITY_EQUILIBRIUM_BOUNDARY;
+}
 
 /**
  * @short  Abstract class for the description of boundaries.
@@ -73,7 +76,6 @@ private:
 	size_t m_boundaryIndicator;
 	BoundaryName m_boundaryName;
 	PrescribedBoundaryValues<dim> m_boundaryValues;
-
 protected:
 	/** @short subclasses can change their boundary name
 	 */
@@ -82,14 +84,18 @@ protected:
 	}
 
 public:
+    double m_boundaryTemperature = 1;
 
 	/// constructor
-	Boundary(size_t boundary_indicator, BoundaryName boundary_name,
-			const PrescribedBoundaryValues<dim>& values):
-		m_boundaryIndicator(boundary_indicator),
-		m_boundaryName(boundary_name),
-		m_boundaryValues(values){
-	};
+    Boundary(size_t boundary_indicator, BoundaryName boundary_name, const PrescribedBoundaryValues<dim>& values,
+             double temperature):
+            m_boundaryIndicator(boundary_indicator), m_boundaryName(boundary_name), m_boundaryValues(values),
+            m_boundaryTemperature(temperature)
+            {};
+    Boundary(size_t boundary_indicator, BoundaryName boundary_name,
+             const PrescribedBoundaryValues<dim>& values):
+            m_boundaryIndicator(boundary_indicator), m_boundaryName(boundary_name), m_boundaryValues(values)
+            {};
 
 	/// destructor
 	virtual ~Boundary(){};
@@ -102,9 +108,12 @@ public:
 
 	/** @short get the boundary name
 	 */
-	BoundaryName getBoundaryName() const {
-		return m_boundaryName;
-	}
+    BoundaryName getBoundaryName() const {
+        return m_boundaryName;
+    }
+    double getTemperature() {
+        return m_boundaryTemperature;
+    }
 
 	PrescribedBoundaryValues<dim>& getBoundaryValues()  {
 		return m_boundaryValues;

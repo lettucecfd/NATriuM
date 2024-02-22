@@ -23,14 +23,12 @@ class SLEquilibriumBoundary: public Boundary<dim> {
 
 public:
 	SLEquilibriumBoundary(size_t boundary_id, dealii::Tensor<1, dim>& velocity, double temperature = 1.0) :
-			Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY, PrescribedBoundaryValues<dim>(velocity)),
-			        m_temperature(temperature) {
-	}
+        Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY, PrescribedBoundaryValues<dim>(velocity), temperature)
+		{ }
 
     SLEquilibriumBoundary(size_t boundary_id, const dealii::Vector<double>& velocity, double temperature = 1.0) :
-            Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY, PrescribedBoundaryValues<dim>(velocity)),
-                    m_temperature(temperature) {
-    }
+        Boundary<dim>(boundary_id, VELOCITY_EQUILIBRIUM_BOUNDARY, PrescribedBoundaryValues<dim>(velocity), temperature)
+        { }
 
 	//virtual ~SLEquilibriumBoundary();
 
@@ -72,15 +70,15 @@ public:
         // set time of this function object for time-dependent boundary conditions
         Boundary<dim>::getBoundaryValues().getVelocity()->set_time(t - eps);
         // evaluate boundary conditions
-        dealii::Vector<double> tmp(dim);
-        Boundary<dim>::getBoundaryValues().getVelocity()->vector_value(fe_boundary_values.getPoint(q_point), tmp);
+        dealii::Vector<double> u_tmp(dim);
+        Boundary<dim>::getBoundaryValues().getVelocity()->vector_value(fe_boundary_values.getPoint(q_point), u_tmp);
         // vector to tensor
         for (size_t i = 0; i < dim; i++) {
-            u[i] = tmp(i);
+            u[i] = u_tmp(i);
         }
         // density unity
         double rho = 1;
-        const double temperature = m_temperature;
+        const double temperature = this->m_boundaryTemperature;
         const double density = rho;
         double feq;
         const double weight = stencil.getWeight(destination.direction);
@@ -89,7 +87,7 @@ public:
             e_vel[i] = stencil.getDirection(destination.direction)(i);
         }
         double cs2 = stencil.getSpeedOfSoundSquare();
-        const array<array<size_t, dim>, dim> eye = unity_matrix<dim>();
+        const std::array<std::array<size_t, dim>, dim> eye = unity_matrix<dim>();
         const double T1 = cs2 * (temperature - 1);
 
 //        double uu_term = 0.0;
@@ -101,9 +99,8 @@ public:
 //            ue_term += (u[j] * e_vel[j]) / cs2;
 //        }
 //        feq = 1 + ue_term * (1 + 0.5 * ue_term) + uu_term;  // = 1 + ue_term + 0.5 * ue_term * ue_term + uu_term;
-        feq = 1; // order 0
+        feq = 1; // order 0; multiplication with weight*denstiy comes later
         for (size_t alp = 0; alp < dim; alp++) {
-            // TODO: die drei Komponenten nachvollziehen
             feq += 1 / (1.0 * cs2) * (u[alp] * e_vel[alp]); // order 1 // ue_term
             feq += 1 / (1.0 * cs2 * cs2) * 0.5 * (u[alp] * u[alp] * e_vel[alp] * e_vel[alp]); // order 1 // 0.5 * ue_term * ue_term
             for (size_t bet = 0; bet < dim; bet++) {
@@ -147,13 +144,9 @@ public:
         }
         fe_boundary_values.getData().m_fnew.at(destination.direction)(destination.index) = weight * density * feq;
 // geq is calculated in SemiLagrangianBoundaryHandler<dim>::applyToG
-//        const double gamma = 1.4;
-//        const double C_v = 1. / (gamma - 1.0);
-//        fe_boundary_values.getData().m_g.at(destination.direction)(destination.index) =
-//                feq * temperature * (2.0 * C_v - dim);
     }
-private:
-    double m_temperature;
+//private:
+//    double m_temperature;
 };
 
 } /* namespace natrium */

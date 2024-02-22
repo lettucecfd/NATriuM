@@ -18,11 +18,9 @@ namespace natrium {
 
 
 template<int T_D, int T_Q, template<int, int> class T_equilibrium,
-		template<int, int,
-				template<int, int> class > class T_collision>
+         template<int, int, template<int, int> class > class T_collision>
 class CollisionOperator {
 public:
-
 	void collideAll(DistributionFunctions& f, distributed_vector& densities,
 			vector<distributed_vector>& velocities,
 			const dealii::IndexSet& locally_owned_dofs,

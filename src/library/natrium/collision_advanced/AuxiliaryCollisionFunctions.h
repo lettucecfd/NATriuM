@@ -21,22 +21,6 @@ namespace natrium {
 
 // forward declaration
 class CollisionException;
-//class CollisionException: public NATriuMException {
-//private:
-//    std::string message;
-//public:
-//    CollisionException(const char *msg) :
-//            NATriuMException(msg), message(msg) {
-//    }
-//    CollisionException(const string& msg) :
-//            NATriuMException(msg), message(msg) {
-//    }
-//    ~CollisionException() noexcept {
-//    }
-//    const char *what() const noexcept {
-//        return this->message.c_str();
-//    }
-//};
 
 /**
  * @short Exception class for Unstable Collision

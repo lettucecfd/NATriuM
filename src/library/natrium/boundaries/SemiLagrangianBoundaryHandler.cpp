@@ -7,6 +7,7 @@
 
 #include "SemiLagrangianBoundaryHandler.h"
 #include "BoundaryFlags.h"
+#include "SLEquilibriumBoundary.h"
 
 namespace natrium {
 
@@ -112,7 +113,7 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
     void SemiLagrangianBoundaryHandler<dim>::applyToG(DistributionFunctions &f, DistributionFunctions &g, double t, const double gamma) {
         (void)t;
         const double C_v = 1. / (gamma - 1.0);
-        const double temperature = 1.0;
+//        const double temperature = 1.0; // temperature is now stored in Boundary class
 
         std::vector<dealii::Point<dim> > local_hit_points;
         typename HitList<dim>::iterator cell_it = m_hitList.begin();
@@ -138,10 +139,12 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
                 // apply boundaries at hits
                 for (size_t i = 0; i < point_hits.n_hits(); i++) {
                     const BoundaryHit<dim> &hit = point_hits.at(i);
-                    if (m_boundaries.getBoundary(hit.getBoundaryId())->getBoundaryName() == VELOCITY_EQUILIBRIUM_BOUNDARY)
+                    if (is_velocity_eq(m_boundaries.getBoundary(hit.getBoundaryId())->getBoundaryName())) {
                         g.at(hit.getDestination().direction)(hit.getDestination().index) =
                             f.at(hit.getDestination().direction)(hit.getDestination().index)
-                            * (temperature) * (2.0 * C_v - dim);
+                                * (m_boundaries.getBoundary(hit.getBoundaryId())->m_boundaryTemperature)
+                                * (2.0 * C_v - dim);
+                    }
                     // calculate new g distribution functions at hits
                 } /* for all hits */
                 q_point++;

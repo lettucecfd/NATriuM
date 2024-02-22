@@ -16,7 +16,6 @@ namespace natrium {
 template<int T_D, int T_Q, template<int, int> class T_equilibrium>
 class BGKCollision {
 public:
-
 	struct SpecificCollisionData {
 		GeneralCollisionData<T_D, T_Q>& genData;
 		SpecificCollisionData(GeneralCollisionData<T_D, T_Q>& parameters) :
@@ -25,7 +24,7 @@ public:
 		}
 	};
 
-	void relax(std::array<double, T_Q>& fLocal,
+	void relax(array<double, T_Q>& fLocal,
 			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
         (void) specData;
@@ -41,7 +40,7 @@ public:
 		}
 	}
 
-    void relaxWithG(std::array<double, T_Q>& fLocal, std::array<double, T_Q>& gLocal,
+    void relaxWithG(array<double, T_Q>& fLocal, array<double, T_Q>& gLocal,
                     GeneralCollisionData<T_D, T_Q>& genData, SpecificCollisionData& specData,
                     T_equilibrium<T_D, T_Q> eq) {
         (void) specData;
@@ -52,11 +51,11 @@ public:
 		calculateGeqFromFeq<T_D,T_Q>(genData.feq,genData.geq,genData);
 
 		//Distribution functions for variable Prandtl number (cf. Frapolli 2019)
-		std::array<double, T_Q> fStar = {};//genData.feq;
-        std::array<double, T_Q> gStar = {};//genData.geq;
+		array<double, T_Q> fStar = {};//genData.feq;
+        array<double, T_Q> gStar = {};//genData.geq;
 
-        std::array<double, T_Q> fNeq = {};
-        std::array<double, T_Q> gNeq = {};
+        array<double, T_Q> fNeq = {};
+        array<double, T_Q> gNeq = {};
         for (int p = 0; p < T_Q; ++p) {
             fNeq[p] = fLocal[p] - genData.feq[p];
             gNeq[p] = gLocal[p] - genData.geq[p];
@@ -65,11 +64,10 @@ public:
         const bool isPrandtlNumberSet = genData.configuration.isPrandtlNumberSet();
 
         if (isPrandtlNumberSet) {
-
             // 3 staged non-equilibrium heat flux tensors
-            std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorFNEq = {};
-           // std::array<std::array<std::array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
-            std::array<double, T_D> FluxTensorGNeq = {};
+            array<array<array<double, T_D>, T_D>, T_D> heatFluxTensorFNEq = {};
+           // array<array<array<double, T_D>, T_D>, T_D> heatFluxTensorGNeq = {{{0.0}}};
+            array<double, T_D> FluxTensorGNeq = {};
 
             calculateCenteredHeatFluxTensor<T_D,T_Q>(fNeq, heatFluxTensorFNEq, genData);
             //calculateCenteredHeatFluxTensor<T_D,T_Q>(genData.feq, heatFluxTensorFEq, genData);
@@ -84,8 +82,8 @@ public:
         double sutherland_factor = 1.0;
 
         if (isSutherlandLawSet){
-                sutherland_factor = pow(genData.temperature/0.85,0.7);//1.402*pow(genData.temperature, 1.5) / ( genData.temperature + 0.40417);
-            }
+            sutherland_factor = pow(genData.temperature/0.85,0.7);//1.402*pow(genData.temperature, 1.5) / ( genData.temperature + 0.40417);
+        }
 
         const double visc_tau = (genData.tau-0.5)*sutherland_factor/(genData.temperature*genData.density)+0.5;
 
@@ -108,12 +106,10 @@ public:
 //        const double ener_omega = 1./visc_tau;
         const double prandtl_omega = 1./prandtl_tau;
         const double prandtl_diff = visc_omega - prandtl_omega;
-
-
-
+        
 		//Relax every direction towards the equilibrium
 #pragma GCC unroll 190
-            for (int p = 0; p < T_Q; ++p) {
+        for (int p = 0; p < T_Q; ++p) {
             fLocal[p] -= visc_omega * fNeq[p] - prandtl_diff * fStar[p];
             gLocal[p] -= visc_omega * gNeq[p] - prandtl_diff * gStar[p];
 		}
@@ -126,10 +122,10 @@ class Regularized {
 public:
 
 	struct SpecificCollisionData {
-		std::array<std::array<std::array<double, T_D>, T_D>, T_Q> Q =
+		array<array<array<double, T_D>, T_D>, T_Q> Q =
 				{ { { } } };
-		std::array<std::array<double, T_Q>, T_Q> pi = { { } };
-		std::array<std::array<double, T_Q>, T_Q> pieq = { { } };
+		array<array<double, T_Q>, T_Q> pi = { { } };
+		array<array<double, T_Q>, T_Q> pieq = { { } };
 
 		GeneralCollisionData<T_D, T_Q>& genData;
 
@@ -154,7 +150,7 @@ public:
 
 	};
 
-	void relax(std::array<double, T_Q>& fLocal,
+	void relax(array<double, T_Q>& fLocal,
 			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
 		//Initialize the corresponding Equilibrium Distribution Function
@@ -187,7 +183,7 @@ public:
 			}
 		}
 
-		std::array<double, T_Q> fi1 = {{ 0.0 }};
+		array<double, T_Q> fi1 = {{ 0.0 }};
 
 		for (int a = 0; a < T_Q; a++) {
 			for (int b = 0; b < T_D; b++) {
@@ -218,11 +214,11 @@ public:
 
 	struct SpecificCollisionData {
 		GeneralCollisionData<T_D, T_Q>& genData;
-		const std::array<std::array<double, T_Q>, T_Q> M;
-		const std::array<std::array<double, T_Q>, T_Q> T;
-		const std::array<double, T_Q> omega;
-		std::array<double, T_Q> m = { { } };
-		std::array<double, T_Q> meq = { { } };
+		const array<array<double, T_Q>, T_Q> M;
+		const array<array<double, T_Q>, T_Q> T;
+		const array<double, T_Q> omega;
+		array<double, T_Q> m = { { } };
+		array<double, T_Q> meq = { { } };
 
 		SpecificCollisionData(GeneralCollisionData<T_D, T_Q>& genData) :
 				genData(genData), M(
@@ -236,7 +232,7 @@ public:
 		}
 	}; /* SpecificCollisionData */
 
-	void relax(std::array<double, T_Q>& fLocal,
+	void relax(array<double, T_Q>& fLocal,
 			GeneralCollisionData<T_D, T_Q>& genData,
 			SpecificCollisionData& specData) {
 
