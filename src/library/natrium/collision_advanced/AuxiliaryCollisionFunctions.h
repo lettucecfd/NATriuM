@@ -21,6 +21,22 @@ namespace natrium {
 
 // forward declaration
 class CollisionException;
+//class CollisionException: public NATriuMException {
+//private:
+//    std::string message;
+//public:
+//    CollisionException(const char *msg) :
+//            NATriuMException(msg), message(msg) {
+//    }
+//    CollisionException(const string& msg) :
+//            NATriuMException(msg), message(msg) {
+//    }
+//    ~CollisionException() noexcept {
+//    }
+//    const char *what() const noexcept {
+//        return this->message.c_str();
+//    }
+//};
 
 /**
  * @short Exception class for Unstable Collision
@@ -29,15 +45,15 @@ class DensityZeroException: public NATriuMException {
 private:
 	std::string message;
 public:
-	DensityZeroException(const char *msg) :
-			NATriuMException(msg), message(msg) {
+	explicit DensityZeroException(const char *msg) :
+        NATriuMException(msg), message(msg) {
 	}
-	DensityZeroException(const string& msg) :
-			NATriuMException(msg), message(msg) {
+    explicit DensityZeroException(const string& msg) :
+	    NATriuMException(msg), message(msg) {
 	}
-	~DensityZeroException() throw () {
+	~DensityZeroException() noexcept {
 	}
-	const char *what() const throw () {
+	const char *what() const noexcept {
 		return this->message.c_str();
 	}
 };
@@ -45,18 +61,14 @@ public:
 template<int T_Q>
 inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
 	double density = 0.0;
-
-	for (size_t p = 0; p < T_Q; ++p)
-		density += fLocal[p];
-
+	for (size_t p = 0; p < T_Q; ++p) {
+        density += fLocal[p];
+    }
 	if (density < 1e-10) {
-		throw DensityZeroException("Densities too small (< 1e-10) for collisions. Decrease time step size.");
+		throw CollisionException("Densities too small (< 1e-10) for collisions. Decrease time step size.");
 	}
-
 	return density;
 }
-
-
 
 inline double calculateTauFromNu(double viscosity, double cs2,
 		double timeStepSize) {
@@ -423,11 +435,8 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
     const double gamma = genData.configuration.getHeatCapacityRatioGamma();
     const double C_v = 1. / (gamma - 1.0);
     for (size_t i = 0; i < T_Q; i++) {
-
         geq[i]=feq[i]*(genData.temperature)*(2.0*C_v-T_D);
-
     }
-
 }
 
 template<size_t T_D, size_t T_Q>

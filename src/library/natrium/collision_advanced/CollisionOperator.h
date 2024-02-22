@@ -101,14 +101,10 @@ public:
 			for (int p = 0; p < T_Q; ++p) {
 				 f_raw[p][ii] = genData.fLocal[p];
 			}
-
 		}
-
         if (1e-10 >= genData.density) {
-            throw DensityZeroException(
-                    "Density too small in collision. Decrease time step size.");
+            throw DensityZeroException("Density too small in collision. Decrease time step size.");
         }
-
 	}
 
 	void collideAll(DistributionFunctions& f, DistributionFunctions& g, distributed_vector& densities,
@@ -142,10 +138,10 @@ public:
 		}
 
 		double* T_raw;
-				temperature.trilinos_vector().ExtractView(&T_raw, &length);
+        temperature.trilinos_vector().ExtractView(&T_raw, &length);
 
         double* mSS_raw;
-                maskShockSensor.trilinos_vector().ExtractView(&mSS_raw, &length);
+        maskShockSensor.trilinos_vector().ExtractView(&mSS_raw, &length);
 
 		genData.H3 = calculateH3<T_D,T_Q>(genData.cs2,genData.e);
 		genData.H4 = calculateH4<T_D,T_Q>(genData.cs2,genData.e);
@@ -214,15 +210,10 @@ public:
 				 f_raw[p][ii] = genData.fLocal[p];
 				 g_raw[p][ii] = genData.gLocal[p];
 			}
-
 		}
-
         if (1e-10 >= genData.density) {
-            throw DensityZeroException(
-                    "Density too small in collision. Decrease time step size.");
+            throw DensityZeroException("Density too small in collision. Decrease time step size.");
         }
-
-
     }
 
 };
