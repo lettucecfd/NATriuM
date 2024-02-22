@@ -57,9 +57,10 @@ namespace natrium {
                 int nx, ny, nz;
                 int kxmax, kymax, kzmax;
                 bool m_print, m_recalculate;
+                double m_dT0;
                 double InterpolateVelocities(double xq, double yq, double zq, const unsigned int dim) const;
             public:
-                InitialVelocity(MixingLayer3D *flow, double randuscaling, string randuname);
+                InitialVelocity(MixingLayer3D *flow, double randuscaling, string randuname, double dT0);
                 double value(const dealii::Point<3>& x, const unsigned int component = 0) const override;
         };
         class InitialDensity: public dealii::Function<3> {

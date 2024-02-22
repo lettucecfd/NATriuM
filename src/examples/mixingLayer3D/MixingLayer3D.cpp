@@ -65,7 +65,7 @@ MixingLayer3D::MixingLayer3D(double viscosity, size_t refinementLevel, vector<un
     setBoundaries(makeBoundaries());
     // apply analytic solution
     if (is_MPI_rank_0()) LOG(DETAILED) << "Setting initial velocity." << endl;
-    this->setInitialU(boost::make_shared<InitialVelocity>(this, randu_scaling, randuname));
+    this->setInitialU(boost::make_shared<InitialVelocity>(this, randu_scaling, randuname, dT0));
     if (is_MPI_rank_0()) LOG(DETAILED) << "Setting initial density." << endl;
     this->setInitialRho(boost::make_shared<InitialDensity>(this));
     if (is_MPI_rank_0()) LOG(DETAILED) << "Setting initial temperature." << endl;
@@ -76,18 +76,26 @@ MixingLayer3D::~MixingLayer3D() = default;
 
 double MixingLayer3D::InitialVelocity::value(const dealii::Point<3>& x, const unsigned int component) const {
     assert(component < 3);
-    double scaling = m_randu_scaling * exp(-pow((x(1))/(2 * shearlayerthickness), 2));
+    if (m_dT0 == 0) {
+        if (component == 0) {
+            return 1.;
+        } else {
+            return 0.;
+        }
+    }
+    double scaling = m_randu_scaling * exp(-pow((x(1))/(2 * m_dT0), 2));
     double rand_u = InterpolateVelocities(x(0), x(1), x(2), component) * scaling;
 //    rand_u = 0;
     if (component == 0) {
-        return m_flow->m_U * tanh(-x(1)/(2 * shearlayerthickness)) + rand_u;
+        return m_flow->m_U * tanh(-x(1)/(2 * m_dT0)) + rand_u;
     } else {
         return rand_u;
     }
 }
 
-MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, double randu_scaling, string randuname) :
-m_flow(flow), m_randu_scaling(randu_scaling) {
+MixingLayer3D::InitialVelocity::InitialVelocity(natrium::MixingLayer3D *flow, double randu_scaling, string randuname,
+                                                double dT0) :
+m_flow(flow), m_randu_scaling(randu_scaling), m_dT0(dT0) {
     stringstream filename;
     filename << getenv("NATRIUM_DIR") << "/src/examples/mixingLayer3D/random_u/random_u_" << randuname << ".txt";
     string filestring = filename.str();
@@ -116,13 +124,14 @@ m_flow(flow), m_randu_scaling(randu_scaling) {
     double lx_u = m_flow->lx;
     double ly_u = m_flow->ly;
     double lz_u = m_flow->lz;
-    double dT0  = m_flow->deltaTheta0;
+//    double dT0  = m_flow->deltaTheta0;
 
     if (is_MPI_rank_0()) {
         LOG(DETAILED) << "Creating linspaces x, y, z for interpolation from random_u." << endl
                      << "nx: " << nx << ", ny: " << ny << ", nz: " << nz << endl
                      << "lx: " << lx_u << ", ly: " << ly_u << ", lz: " << lz_u << endl
-                     << "lx/dTh0: " << lx_u / dT0 << ", ly/dTh0: " << ly_u / dT0 << ", lz/dTh0: " << lz_u / dT0 << endl;
+                     << "lx/dTh0: " << lx_u / m_dT0 << ", ly/dTh0: " << ly_u / m_dT0 << ", lz/dTh0: " << lz_u / m_dT0
+                     << endl;
     }
 
     //// velocity field is scaled to domain
@@ -335,11 +344,17 @@ boost::shared_ptr<BoundaryCollection<3>> MixingLayer3D::makeBoundaries() {
     minusVector[1]=0.0;
     minusVector[2]=0.0;
 
+    if (deltaTheta0 == 0) minusVector[0]=m_U;
+
     // set boundaries on top and bottom to move forward / backward
-    if (m_bc == "EQ_BC") {
-        boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3>>(2, plusVector, m_BCT));
-        boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3>>(3, minusVector, m_BCT));
-    }
+        if (m_bc == "EQ_BC") {
+            boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3>>(2, plusVector, m_BCT));
+            boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3>>(3, minusVector, m_BCT));
+        }
+        if (m_bc == "EQ_DN") {
+            boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<3>>(2, plusVector, m_BCT));
+            boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3>>(3));
+        }
     else if (m_bc == "DN_BC") {
         boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3>>(2));
         boundaries->addBoundary(boost::make_shared<DoNothingBoundary<3>>(3));

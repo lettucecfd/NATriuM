@@ -62,8 +62,13 @@ int main(int argc, char** argv) {
     parser.setArgument<string>("meshname", "name of the mesh file (shearlayer_*.txt)", "cube");
     parser.setArgument<string>("randuname", "name of the initial velocity file (random_u_*.txt)", "cube_k048_half");
     parser.setArgument<double>("randuscaling", "factor to scale random velocity field", 15);
-    parser.setArgument<string>("bc", "Boundary condition. Choose between 'EQ_BC' (equilibrium), 'DN_BC' (do nothing),"
-                                     "'FOBB_BC' (First Order Bounce Back),'ThBB_BC' (Thermal Bounce Back), 'VNeq_BC' (Velocity Non-Equilibrium Bounce Back),"
+    parser.setArgument<string>("bc", "Boundary condition. Choose between "
+                                     "'EQ_BC' (equilibrium), "
+                                     "'DN_BC' (do nothing),"
+                                     "'EQ_DN (top DN, bottom EQ),"
+                                     "'FOBB_BC' (First Order Bounce Back),"
+                                     "'ThBB_BC' (Thermal Bounce Back), "
+                                     "'VNeq_BC' (Velocity Non-Equilibrium Bounce Back),"
                                      "'PP_BC' (Periodic - meh)", "EQ_BC");
     parser.setArgument<string>("support", "support points", "glc");
     parser.setArgument<int>("order", "order of finite elements", 4);
@@ -88,7 +93,8 @@ int main(int argc, char** argv) {
     auto meshname = parser.getArgument<string>("meshname");
     auto randuname = parser.getArgument<string>("randuname");
     auto bc = parser.getArgument<string>("bc");
-    if ((bc != "DN_BC") and (bc != "EQ_BC") and (bc != "FOBB_BC") and (bc != "ThBB_BC") and (bc != "VNeq_BC") and (bc != "PP_BC")) {
+    if ((bc != "DN_BC") and (bc != "EQ_BC") and (bc != "FOBB_BC") and (bc != "ThBB_BC") and (bc != "VNeq_BC")
+                        and (bc != "PP_BC") and (bc != "EQ_DN")) {
         if (is_MPI_rank_0()) {
             LOG(WELCOME) << "Invalid boundary condition option! Fallback to default (EQ_BC)." << endl << endl;
         }
@@ -249,10 +255,16 @@ int main(int argc, char** argv) {
     double len_x = parser.getArgument<double>("lx") * deltaTheta0;
     double len_y = parser.getArgument<double>("ly") * deltaTheta0;
     double len_z = parser.getArgument<double>("lz") * deltaTheta0;
+    if (deltaTheta0 == 0) {
+        len_x = 1;
+        len_y = 1;
+        len_z = 1;
+    }
     double center = parser.getArgument<double>("center");
     double dy_scaling = parser.getArgument<double>("dy-scaling");
     boost::shared_ptr<MixingLayer3D> mixingLayer = boost::make_shared<MixingLayer3D>
-            (viscosity, ref_level, repetitions, randuscaling, randuname, len_x, len_y, len_z, meshname, center, dy_scaling, deltaTheta0, U * uscaling, reference_temperature, bc_t, bc);
+            (viscosity, ref_level, repetitions, randuscaling, randuname, len_x, len_y, len_z, meshname, center,
+             dy_scaling, deltaTheta0, U * uscaling, reference_temperature, bc_t, bc);
     if (is_MPI_rank_0()) LOG(DETAILED) << "Calculating unstructured grid." << endl;
     MixingLayer3D::UnstructuredGridFunc trafo(len_y, center, dy_scaling);
 
