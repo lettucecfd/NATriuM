@@ -15,8 +15,8 @@ ADD_EXECUTABLE( ${TARGET}
                 cavity-benchmark.cpp 
                 CompareToBotella.h
                 CompareToBotella.cpp
-        ../../examples/lidDrivenCavity2D/LidDrivenCavity2D.h
-        ../../examples/lidDrivenCavity2D/LidDrivenCavity2D.cpp
+        ../../examples/LidDrivenCavity2D/LidDrivenCavity2D.h
+        ../../examples/LidDrivenCavity2D/LidDrivenCavity2D.cpp
                )
 #
 # link natrium library to executable
