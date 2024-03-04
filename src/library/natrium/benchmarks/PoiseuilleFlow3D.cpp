@@ -128,20 +128,21 @@ boost::shared_ptr<BoundaryCollection<3> > PoiseuilleFlow3D::makeBoundaries(
 	return boundaries;
 }
 
-double PoiseuilleFlow3D::AnalyticVelocity::value(const dealii::Point<3>& ,
-		const unsigned int component) const {
+double PoiseuilleFlow3D::AnalyticVelocity::value(const dealii::Point<3> &x, const unsigned int component) const {
+    (void)x;
 	assert(component < 3);
 	/*double h = m_flow->getCharacteristicLength();
 	if (component == 0) {
 		return (- 4 * m_flow->m_uMax *
 				(x(2) - h) * x(2) / (h*h) );
 	} else {*/
-		return 0.0;
+    return 0.0;
 	//}
 }
 
-    double PoiseuilleFlow3D::InitialTemperature::value(const dealii::Point<3>& x,
-                                                          const unsigned int component) const {
+double PoiseuilleFlow3D::InitialTemperature::value(const dealii::Point<3>& x, const unsigned int component) const {
+    (void)x;
+    (void)component;
     return 1.0;
 }
 

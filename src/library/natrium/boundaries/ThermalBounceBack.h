@@ -132,7 +132,7 @@ public:
 	*/
 
 private:
-    double m_wallTemperature;
+    double m_boundaryTemperature;
 
 };
 

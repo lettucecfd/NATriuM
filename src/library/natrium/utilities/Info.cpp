@@ -41,6 +41,15 @@ std::string getGitSha() {
 		return result;
 }
 
+// code has to be called from a git directory to make this function work
+std::string getGitBranch() {
+    boost::filesystem::path working_dir( boost::filesystem::current_path() );
+    boost::filesystem::current_path( get_natrium_dir() );
+    std::string result = exec("git branch | grep '*' | sed 's/^..//'");
+    boost::filesystem::current_path ( working_dir );
+    return result;
+}  //  GIT_BRANCH=`git branch | grep "^\*" | sed 's/^..//'`
+
 std::string getUserName() {
 	return exec("whoami");
 }

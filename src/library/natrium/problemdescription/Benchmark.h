@@ -41,8 +41,8 @@ public:
 	Benchmark(boost::shared_ptr<Mesh<dim> > triangulation,
 			double viscosity, double characteristicLength):
 				ProblemDescription<dim>(triangulation, viscosity, characteristicLength){
-			m_analyticRho = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
-			m_analyticU = boost::make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
+			m_analyticRho = boost::make_shared<DealIIExtensions::Functions::ConstantFunction<dim> >(1.0, 1);
+			m_analyticU = boost::make_shared<DealIIExtensions::Functions::ConstantFunction<dim> >(0.0, dim);
 	}
 
 	/// Destructor

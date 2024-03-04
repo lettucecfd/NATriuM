@@ -75,9 +75,7 @@ private:
 
 	// Reynolds statistics
 	size_t m_statSize;
-	vector<distributed_vector> m_uAverage;
-
-	//vector<distributed_vector> u_;
+    vector<distributed_vector> m_uAverage;
 
 	// Convergence statistics
 	size_t m_wallNormalDirection;
@@ -103,9 +101,8 @@ public:
 		return (m_iterationNumber == m_solver->getIteration());
 	}
 
-
-	void addToReynoldsStatistics(const vector<distributed_vector>& u);
-	void addReynoldsStatisticsToOutput(dealii::DataOut<dim>& data_out);
+    void addToReynoldsStatistics(const vector<distributed_vector>& u);
+    void addReynoldsStatisticsToOutput(dealii::DataOut<dim>& data_out);
 };
 
 } /* namespace natrium */

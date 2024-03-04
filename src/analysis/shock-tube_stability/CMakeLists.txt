@@ -13,8 +13,8 @@ stability_shocktube
 #
 ADD_EXECUTABLE( ${TARGET} 
                 stability_shocktube.cpp
-                ../../examples/step-10/SodShockTube.h
-                ../../examples/step-10/SodShockTube.cpp
+        ../../examples/archive/step-10/SodShockTube.h
+        ../../examples/archive/step-10/SodShockTube.cpp
                )
 #
 # link natrium library to executable

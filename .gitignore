@@ -7,3 +7,8 @@ bin/.cproject
 bin/.project
 bin_release
 bin_debug
+.metadata
+*.cproject
+*.project
+*.gitignore
+*.idea

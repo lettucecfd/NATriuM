@@ -89,16 +89,13 @@ public:
 	 * @param dg Flag that indicates whether the finite element is of discontinuous Galerkin type (FE_DGQArbitraryNodes),
 	 * 			 otherwise it is a standard Lagrangian finite element (FE_Q)
 	 */
-	AdvectionOperator(ProblemDescription<dim>& problem,
-			size_t fe_order, QuadratureName quad_name,
-			SupportPointsName points_name, boost::shared_ptr<Stencil> stencil,
-			double delta_t, bool dg);
+	AdvectionOperator(ProblemDescription<dim>& problem, size_t fe_order, QuadratureName quad_name,
+                      SupportPointsName points_name, boost::shared_ptr<Stencil> stencil, double delta_t, bool dg);
 
 	/// destructor
 	virtual ~AdvectionOperator() {
 		m_doFHandler->clear();
-	}
-	;
+	};
 
 	/***
 	 * @short Distributes degrees of freedom on the computational grid and extracts locally owned and locally relevant dofs.
@@ -107,8 +104,7 @@ public:
 		m_doFHandler->distribute_dofs(*m_fe);
 		//get locally owned and locally relevant dofs
 		m_locallyOwnedDoFs = m_doFHandler->locally_owned_dofs();
-		dealii::DoFTools::extract_locally_relevant_dofs(*m_doFHandler,
-				m_locallyRelevantDoFs);
+		dealii::DoFTools::extract_locally_relevant_dofs(*m_doFHandler, m_locallyRelevantDoFs);
 	}
 
 	/**
@@ -134,14 +130,14 @@ public:
 	virtual void setupDoFs() = 0;
 
 	virtual void applyBoundaryConditions(DistributionFunctions& f_old,
-			DistributionFunctions& f, double t) = 0;
+			                             DistributionFunctions& f, double t) = 0;
 
-        virtual void applyBoundaryConditions(DistributionFunctions& f_old,
-                                             DistributionFunctions& f, DistributionFunctions& g, double t) = 0;
+    virtual void applyBoundaryConditions(DistributionFunctions& f_old,
+                                         DistributionFunctions& f,
+                                         DistributionFunctions& g, double t) = 0;
 
-	virtual void applyBoundaryConditionsToG(DistributionFunctions &f, DistributionFunctions &g, double t,
-                                                const double gamma) = 0;
-
+	virtual void applyBoundaryConditionsToG(DistributionFunctions &f,
+                                            DistributionFunctions &g, double t, const double gamma) = 0;
 
 	/**
 	 * @short Stream the distribution functions. Purely virtual for this class.
@@ -149,7 +145,7 @@ public:
 	 * @param f distribution functsion at t+delta_t
 	 */
 	virtual double stream(DistributionFunctions& f_old,
-			DistributionFunctions& f, double t) = 0;
+			              DistributionFunctions& f, double t) = 0;
 
 	/**
 	 * @short Apply boundary conditions. Purely virtual for this class.
@@ -162,17 +158,13 @@ public:
      * @short set the time integrator for the SEDG streaming step.  Purely virtual for this class.
      * @note This function is empty for the semi-Lagrangian streaming, which does not require time integrators.
     */
-	virtual void setTimeIntegrator(
-			boost::shared_ptr<
-					TimeIntegrator<distributed_sparse_block_matrix,
-							distributed_block_vector> > timeIntegrator) = 0;
+	virtual void setTimeIntegrator(boost::shared_ptr<TimeIntegrator<distributed_sparse_block_matrix,
+                                   distributed_block_vector>> timeIntegrator) = 0;
 
 	/**
 	 * @short get system vector. To be removed.
 	 */
 	virtual const distributed_block_vector& getSystemVector() const = 0;
-
-
 
 	/////////////////
 	// GETTER ///////
@@ -209,10 +201,9 @@ public:
 	 * 			you can specify which quantities are updated at the cell (gradients, shape
 	 * 			function values, normal vectors, ...)
 	 */
-	boost::shared_ptr<dealii::FEValues<dim> > getFEValues(
-			const dealii::UpdateFlags & flags) const {
-		return boost::make_shared<dealii::FEValues<dim> >(*m_mapping, *m_fe,
-				*m_quadrature, flags);
+	boost::shared_ptr<dealii::FEValues<dim> > getFEValues(const dealii::UpdateFlags & flags)
+        const {
+		    return boost::make_shared<dealii::FEValues<dim> >(*m_mapping, *m_fe, *m_quadrature, flags);
 	}
 
 	/**
@@ -227,14 +218,14 @@ public:
 	/**
 	 * @short return the quadrature object to integrate over faces.
 	 */
-	const boost::shared_ptr<dealii::Quadrature<dim - 1> >& getFaceQuadrature() const {
+	const boost::shared_ptr<dealii::Quadrature<dim - 1>>& getFaceQuadrature() const {
 		return m_faceQuadrature;
 	}
 
 	/***
 	 * @short return the finite element object
 	 */
-	const boost::shared_ptr<dealii::FiniteElement<dim> >& getFe() const {
+	const boost::shared_ptr<dealii::FiniteElement<dim>>& getFe() const {
 		return m_fe;
 	}
 
@@ -245,7 +236,6 @@ public:
 	size_t getNumberOfDoFsPerCell() const {
 		return m_fe->dofs_per_cell;
 	}
-
 
 	/**
 	 * @short return the quadrature object to integrate over cells.

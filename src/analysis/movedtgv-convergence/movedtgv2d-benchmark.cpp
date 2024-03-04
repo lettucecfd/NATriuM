@@ -1,5 +1,5 @@
 /**
- * @file step-1.cpp
+ * @file step-1-variousRe.cpp
  * @short Simulation of the Taylor-Green decaying vortex in 2D (only periodic walls).
  * @date 05.06.2014
  * @author Andreas Kraemer, Bonn-Rhein-Sieg University of Applied Sciences, Sankt Augustin
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
 	MPIGuard::getInstance(argc, argv);
 
-	//pout << "Starting NATriuM step-1 ..." << endl;
+	//pout << "Starting NATriuM step-1-variousRe ..." << endl;
 
 	const double N = atoi(argv[1]);
 	const double p = atoi(argv[2]);
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
 
 	LOG(BASIC) << "NATriuM run complete." << endl;
 
-	pout << "step-1 terminated." << endl;
+	pout << "step-1-variousRe terminated." << endl;
 
 	return 0;
 }

@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(Relaxation_Regularized_test) {
 	// initialize distributions with arbitrary components
 	std::array<double, 9> test_f;
 
-	double rho = 1.0;
+//	double rho = 1.0;
 	for (size_t i = 0; i < 9; i++) {
 		test_f[i] = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
 				+ pow((0.5 * cos(0.5)), 2);
@@ -206,8 +206,8 @@ BOOST_AUTO_TEST_CASE(Relaxation_Equiv_MRT_Reg_test) {
 	// initialize distributions with arbitrary components
 	std::array<double, 9> test_f;
 	std::array<double, 9> test_f2;
-	double rho = 1.0;
-	std::array<double, 2> u = { };
+//	double rho = 1.0;
+//	std::array<double, 2> u = { };
 	for (size_t i = 0; i < 9; i++) {
 		test_f[i] = 1.5 + sin(1.5 * i) + 0.001 + i / (i + 1)
 				+ pow((0.5 * cos(0.5)), 2);

@@ -29,15 +29,15 @@ class DensityZeroException: public NATriuMException {
 private:
 	std::string message;
 public:
-	DensityZeroException(const char *msg) :
-			NATriuMException(msg), message(msg) {
+	explicit DensityZeroException(const char *msg) :
+        NATriuMException(msg), message(msg) {
 	}
-	DensityZeroException(const string& msg) :
-			NATriuMException(msg), message(msg) {
+    explicit DensityZeroException(const string& msg) :
+	    NATriuMException(msg), message(msg) {
 	}
-	~DensityZeroException() throw () {
+	~DensityZeroException() noexcept {
 	}
-	const char *what() const throw () {
+	const char *what() const noexcept {
 		return this->message.c_str();
 	}
 };
@@ -45,20 +45,14 @@ public:
 template<int T_Q>
 inline double calculateDensity(const std::array<double, T_Q>& fLocal) {
 	double density = 0.0;
-
-	for (size_t p = 0; p < T_Q; ++p)
-		density += fLocal[p];
-
-
+	for (size_t p = 0; p < T_Q; ++p) {
+        density += fLocal[p];
+    }
 	if (density < 1e-10) {
-		throw CollisionException(
-				"Densities too small (< 1e-10) for collisions. Decrease time step size.");
+		throw CollisionException("Densities too small (< 1e-10) for collisions. Decrease time step size.");
 	}
-
 	return density;
 }
-
-
 
 inline double calculateTauFromNu(double viscosity, double cs2,
 		double timeStepSize) {
@@ -217,7 +211,7 @@ struct GeneralCollisionData {
 template <size_t T_D>
 constexpr std::array<std::array<size_t,T_D>, T_D> unity_matrix()
 {
-    std::array<std::array<size_t,T_D>, T_D> eye ={{0}};
+    std::array<std::array<size_t,T_D>, T_D> eye = {};
     for (size_t a = 0; a<T_D; a++)  {
         for (size_t b = 0; b < T_D; b++) {
             if (a==b){
@@ -259,6 +253,7 @@ template<>
 inline void calculateVelocity<2, 9>(const std::array<double, 9>& fLocal,
 		std::array<double, 2>& velocity, double density,
 		GeneralCollisionData<2, 9>& params) {
+    (void)params;
 	velocity[0] = 1.0 / density
 			* (fLocal[1] + fLocal[5] + fLocal[8] - fLocal[3] - fLocal[6]
 					- fLocal[7]);
@@ -271,7 +266,7 @@ template<>
 inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
 		std::array<double, 3>& velocity, double density,
 		GeneralCollisionData<3, 19>& params) {
-
+    (void)params;
 	velocity[0] = 1.0 / density
 			* (fLocal[1] - fLocal[3] + fLocal[7] - fLocal[8] - fLocal[9]
 					+ fLocal[10] + fLocal[11] + fLocal[12] - fLocal[13]
@@ -290,6 +285,7 @@ inline void calculateVelocity<3, 19>(const std::array<double, 19>& fLocal,
     inline double calculateTemperature(const std::array<double, T_Q> &fLocal, const std::array<double, T_Q> &gLocal,
                                        std::array<double, T_D> &velocity, double density, double temperature,
                                        GeneralCollisionData <T_D, T_Q> &params, double d) {
+        (void) d;
         //T0[i,j]+=((c[k,0]-u[0,i,j])**2+(c[k,1]-u[1,i,j])**2)*fin[k,i,j]*0.5/rho[i,j]
         temperature = 0.0;
         for (size_t i = 0; i < T_Q; i++) {
@@ -423,11 +419,8 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
     const double gamma = genData.configuration.getHeatCapacityRatioGamma();
     const double C_v = 1. / (gamma - 1.0);
     for (size_t i = 0; i < T_Q; i++) {
-
         geq[i]=feq[i]*(genData.temperature)*(2.0*C_v-T_D);
-
     }
-
 }
 
 template<size_t T_D, size_t T_Q>
@@ -504,8 +497,8 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
     inline void
     calculateGStar(std::array<double, T_Q> &gStar, const std::array<double, T_D> &centeredFluxTensorG,
                    const GeneralCollisionData<T_D, T_Q> &p) {
-        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
-        const double cs6 = 6.0 * p.cs2 * p.cs2 * p.cs2;
+//        std::array<std::array<size_t,T_D>, T_D> eye = unity_matrix<T_D>();
+//        const double cs6 = 6.0 * p.cs2 * p.cs2 * p.cs2;
         for (size_t a = 0; a < T_D; a++) {
             for (size_t i = 0; i < T_Q; i++) {
                 gStar[i] += p.weight[i] * (centeredFluxTensorG[a] * p.e[i][a]) /
@@ -513,8 +506,6 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
                     }
                 }
             }
-
-
 
     template<size_t T_D, size_t T_Q>
     inline std::array<std::array<std::array<std::array<double, T_D>, T_D>, T_D>,T_Q> calculateH3(const double cs2, std::array<std::array<double,T_D>,T_Q> e) {
@@ -525,7 +516,8 @@ inline void calculateGeqFromFeq(const std::array<double, T_Q>& feq,std::array<do
             for (size_t a = 0; a < T_D; a++) {
                 for (size_t b = 0; b < T_D; b++) {
                     for (size_t c = 0; c < T_D; c++) {
-                        H3[i][a][b][c] = e[i][a] * e[i][b] * e[i][c] - cs2 * (e[i][a]*eye[b][c] + e[i][b]*eye[a][c] + e[i][c]*eye[a][b]);
+                        H3[i][a][b][c] = e[i][a] * e[i][b] * e[i][c]
+                                            - cs2 * (e[i][a]*eye[b][c] + e[i][b]*eye[a][c] + e[i][c]*eye[a][b]);
                     }
                 }
             }

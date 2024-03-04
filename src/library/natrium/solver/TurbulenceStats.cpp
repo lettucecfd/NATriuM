@@ -16,7 +16,8 @@ namespace natrium {
 template<size_t dim>
 void StatsInPlane<dim>::updatePlaneIndices(
 		const map<dealii::types::global_dof_index, dealii::Point<dim> >& support_points,
-		const dealii::IndexSet& locally_owned, double tolerance) {
+		const dealii::IndexSet& locally_owned,
+        double tolerance) {
 	m_planeIndices.clear();
 	// the size of the set of which this index set is a subset
 	// has to be specified before adding indices
@@ -97,10 +98,12 @@ TurbulenceStats<dim>::TurbulenceStats(CFDSolver<dim> * solver,
 		size_t wall_normal_direction,
 		const vector<double>& wall_normal_coordinates,
 		const std::string table_file_name) :
-		m_solver(solver), m_filename(table_file_name), m_outputOff(
-				table_file_name == ""), m_statSize(0) , m_wallNormalDirection(
-				wall_normal_direction), m_wallNormalCoordinates(
-				wall_normal_coordinates){
+        m_solver(solver),
+        m_filename(table_file_name),
+        m_outputOff(table_file_name == ""),
+        m_statSize(0),
+        m_wallNormalDirection(wall_normal_direction),
+        m_wallNormalCoordinates(wall_normal_coordinates) {
 
 	if (not m_outputOff) {
 		// create file (if necessary)
@@ -118,27 +121,25 @@ TurbulenceStats<dim>::TurbulenceStats(CFDSolver<dim> * solver,
 		}
 	}
 
-	double tol = 0.5
-			* CFDSolverUtilities::getMinimumDoFDistanceGLL<dim>(
-					*m_solver->m_problemDescription->getMesh(),
+	double tol = 0.5 * CFDSolverUtilities::getMinimumDoFDistanceGLC<dim>(*m_solver->m_problemDescription->getMesh(),
 					m_solver->m_configuration->getSedgOrderOfFiniteElement());
 	size_t n_planes = wall_normal_coordinates.size();
 	for (size_t i = 0; i < n_planes; i++) {
-		StatsInPlane<dim> plane(wall_normal_direction,
-				wall_normal_coordinates.at(i), solver->m_velocity);
-		plane.updatePlaneIndices(solver->m_supportPoints,
-				m_solver->m_advectionOperator->getLocallyOwnedDofs(), tol);
+		StatsInPlane<dim> plane(wall_normal_direction, wall_normal_coordinates.at(i), solver->m_velocity);
+		plane.updatePlaneIndices(solver->m_supportPoints, m_solver->m_advectionOperator->getLocallyOwnedDofs(), tol);
 		m_planes.push_back(plane);
 	}
 	m_iterationNumber = -1000;
 
-	// create average vector
-	m_uAverage.clear();
-	for (size_t i = 0; i < dim; i++) {
-		distributed_vector ux_av;
-		ux_av.reinit(m_solver->m_velocity.at(0));
-		m_uAverage.push_back(ux_av);
-	}
+    // create average vector
+    m_uAverage.clear();
+    for (size_t i = 0; i < dim; i++) {
+        distributed_vector ux_av;
+        ux_av.reinit(m_solver->m_velocity.at(i));
+        m_uAverage.push_back(ux_av);
+    }
+
+
 
 	// sync all MPI processes (barrier)
 	MPI_sync();
@@ -220,28 +221,29 @@ void TurbulenceStats<dim>::update() {
 
 template<size_t dim>
 void TurbulenceStats<dim>::addToReynoldsStatistics(
-		const vector<distributed_vector>& u) {
-	m_uAverage.at(0) *= m_statSize;
-	m_uAverage.at(1) *= m_statSize;
-	if (3 == dim)
-		m_uAverage.at(2) *= m_statSize;
-	m_uAverage.at(0).add(u.at(0));
-	m_uAverage.at(1).add(u.at(1));
-	if (3 == dim)
-		m_uAverage.at(2).add(u.at(2));
-	m_statSize++;
-	m_uAverage.at(0) *= (1.0/m_statSize);
-	m_uAverage.at(1) *= (1.0/m_statSize);
-	if (3 == dim)
-		m_uAverage.at(2) *= (1.0/m_statSize);
+        const vector<distributed_vector>& u) {
+    m_uAverage.at(0) *= m_statSize;
+    m_uAverage.at(1) *= m_statSize;
+    if (3 == dim)
+        m_uAverage.at(2) *= m_statSize;
+    m_uAverage.at(0).add(u.at(0));
+    m_uAverage.at(1).add(u.at(1));
+    if (3 == dim)
+        m_uAverage.at(2).add(u.at(2));
+    m_statSize++;
+    m_uAverage.at(0) *= (1.0/m_statSize);
+    m_uAverage.at(1) *= (1.0/m_statSize);
+    if (3 == dim)
+        m_uAverage.at(2) *= (1.0/m_statSize);
 }
 
 template<size_t dim>
 void TurbulenceStats<dim>::addReynoldsStatisticsToOutput(dealii::DataOut<dim>& data_out) {
-	data_out.add_data_vector(m_uAverage.at(0), "ux_average");
-	data_out.add_data_vector(m_uAverage.at(1), "uy_average");
-	if (3 == dim)
-		data_out.add_data_vector(m_uAverage.at(2), "uz_average");
+    data_out.add_data_vector(m_uAverage.at(0), "ux_average");
+    data_out.add_data_vector(m_uAverage.at(1), "uy_average");
+    if (3 == dim)
+        data_out.add_data_vector(m_uAverage.at(2), "uz_average");
+
 }
 
 // explicit instantiations

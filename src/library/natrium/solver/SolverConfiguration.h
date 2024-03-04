@@ -1220,36 +1220,67 @@ public:
 		leave_subsection();
 	}
 
-	size_t getNumberOfTimeSteps() {
-		enter_subsection("Stop condition");
-		size_t nofSteps;
-		try {
-			nofSteps = get_integer("Number of time steps");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Number of time steps' from parameters: "
-					<< e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		return nofSteps;
-	}
+    size_t getNumberOfTimeSteps() {
+        enter_subsection("Stop condition");
+        size_t nofSteps;
+        try {
+            nofSteps = get_integer("Number of time steps");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Number of time steps' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return nofSteps;
+    }
 
-	void setNumberOfTimeSteps(long int numberOfTimeSteps) {
-		enter_subsection("Stop condition");
-		try {
-			set("Number of time steps", numberOfTimeSteps);
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg << "Could not assign value " << numberOfTimeSteps
-					<< " to Number of time steps: " << e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-	}
+    void setNumberOfTimeSteps(long int numberOfTimeSteps) {
+        enter_subsection("Stop condition");
+        try {
+            set("Number of time steps", numberOfTimeSteps);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << numberOfTimeSteps
+                << " to Number of time steps: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    size_t getServerEndTime() {
+        enter_subsection("Stop condition");
+        size_t m_ServerEndTime;
+        try {
+            m_ServerEndTime = get_integer("Server end time");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Server end time' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return m_ServerEndTime;
+    }
+
+    void setServerEndTime(long int timeInSeconds) {
+        enter_subsection("Stop condition");
+        try {
+            set("Server end time", timeInSeconds);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << timeInSeconds
+                << " to Server end time: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
 
 	double getSimulationEndTime() {
 		enter_subsection("Stop condition");
@@ -1313,9 +1344,9 @@ public:
 		leave_subsection();
 	}
 
-	size_t getOutputCheckpointInterval() {
+	int getOutputCheckpointInterval() {
 		enter_subsection("Output");
-		size_t checkpointInterval;
+        int checkpointInterval;
 		try {
 			checkpointInterval = get_integer("Output checkpoint interval");
 		} catch (std::exception& e) {
@@ -1406,38 +1437,163 @@ public:
 		leave_subsection();
 	}
 
-	size_t getOutputSolutionInterval() {
-		enter_subsection("Output");
-		size_t solutionInterval;
-		try {
-			solutionInterval = get_integer("Output solution interval");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Output solution interval' from parameters: "
-					<< e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		return solutionInterval;
-	}
+    size_t getOutputSolutionInterval() {
+        enter_subsection("Output");
+        size_t solutionInterval;
+        try {
+            solutionInterval = get_integer("Output solution interval");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Output solution interval' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return solutionInterval;
+    }
 
-	void setOutputSolutionInterval(long int outputSolutionInterval) {
-		enter_subsection("Output");
-		try {
-			set("Output solution interval", outputSolutionInterval);
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg << "Could not assign value " << outputSolutionInterval
-					<< " to Output solution interval: " << e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-	}
+    void setOutputSolutionInterval(long int outputSolutionInterval) {
+        enter_subsection("Output");
+        try {
+            set("Output solution interval", outputSolutionInterval);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << outputSolutionInterval
+                << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
 
-	size_t getRestartAtIteration() {
+    int getNoOutputInterval() {
+        enter_subsection("Output");
+        int solutionInterval;
+        try {
+            solutionInterval = get_integer("No output interval");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'No output interval' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return solutionInterval;
+    }
+
+    void setNoOutputInterval(long int noOutputInterval) {
+        enter_subsection("Output");
+        try {
+            set("No output interval", noOutputInterval);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << noOutputInterval
+                << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    int getNoStatsInterval() {
+        enter_subsection("Output");
+        int solutionInterval;
+        try {
+            solutionInterval = get_integer("No stats interval");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'No output interval' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return solutionInterval;
+    }
+
+    void setNoStatsInterval(long int NoStatsInterval) {
+        enter_subsection("Output");
+        try {
+            set("No stats interval", NoStatsInterval);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << NoStatsInterval
+                << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    int getCoordsRound() {
+        enter_subsection("Output");
+        int CoordsRound;
+        try {
+            CoordsRound = get_integer("Coordinates round degree");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Coordinates round degree' from parameters: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return CoordsRound;
+    }
+
+    void setCoordsRound(long int CoordsRound) {
+        enter_subsection("Output");
+        try {
+            set("Coordinates round degree", CoordsRound);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << CoordsRound << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    size_t getOutputShearLayerInterval() {
+        enter_subsection("Output");
+        enter_subsection("Shear Layer");
+        size_t shearLayerInterval;
+        try {
+            shearLayerInterval = get_integer("Output shear layer interval");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Output shear layer interval' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+        return shearLayerInterval;
+    }
+
+    void setOutputShearLayerInterval(long int outputShearLayerInterval) {
+        enter_subsection("Output");
+        enter_subsection("Shear Layer");
+        try {
+            set("Output shear layer interval", outputShearLayerInterval);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << outputShearLayerInterval
+                << " to Output solution interval: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+    }
+
+    size_t getRestartAtIteration() {
 		enter_subsection("Initialization");
 		size_t restart_it;
 		try {
@@ -1549,36 +1705,67 @@ public:
 		leave_subsection();
 	}
 
-	double getStencilScaling() {
-		enter_subsection("General");
-		double stencilScaling;
-		try {
-			stencilScaling = get_double("Stencil scaling");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Stencil scaling' from parameters: "
-					<< e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		return stencilScaling;
-	}
+    double getStencilScaling() {
+        enter_subsection("General");
+        double stencilScaling;
+        try {
+            stencilScaling = get_double("Stencil scaling");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Stencil scaling' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return stencilScaling;
+    }
 
-	void setStencilScaling(double stencilScaling) {
-		enter_subsection("General");
-		try {
-			set("Stencil scaling", stencilScaling);
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg << "Could not assign value " << stencilScaling
-					<< " to Stencil scaling: " << e.what();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-	}
+    void setStencilScaling(double stencilScaling) {
+        enter_subsection("General");
+        try {
+            set("Stencil scaling", stencilScaling);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << stencilScaling
+                << " to Stencil scaling: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
+
+    double getMachNumber() {
+        enter_subsection("General");
+        double Ma;
+        try {
+            Ma = get_double("Mach number");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Mach number' from parameters: "
+                    << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        return Ma;
+    }
+
+    void setMachNumber(double Ma) {
+        enter_subsection("General");
+        try {
+            set("Mach number", Ma);
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not assign value " << Ma
+                << " to Mach number: " << e.what();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+    }
 
 	StencilType getStencil() {
 		enter_subsection("General");
@@ -2349,42 +2536,67 @@ public:
 		leave_subsection();
 	}
 
-	bool isOutputGlobalTurbulenceStatistics() {
-		enter_subsection("Output");
-		enter_subsection("Turbulence Statistics");
-		bool turbulence_output;
-		try {
-			turbulence_output = get_bool(
-					"Output global turbulence statistics?");
-		} catch (std::exception& e) {
-			std::stringstream msg;
-			msg
-					<< "Could not read parameter 'Output global turbulence statistics?' from parameters: "
-					<< e.what();
-			leave_subsection();
-			leave_subsection();
-			throw ConfigurationException(msg.str());
-		}
-		leave_subsection();
-		leave_subsection();
-		return turbulence_output;
-	}
+    bool isOutputGlobalTurbulenceStatistics() {
+        enter_subsection("Output");
+        enter_subsection("Turbulence Statistics");
+        bool turbulence_output;
+        try {
+            turbulence_output = get_bool(
+                    "Output global turbulence statistics?");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg
+                    << "Could not read parameter 'Output global turbulence statistics?' from parameters: "
+                    << e.what();
+            leave_subsection();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+        return turbulence_output;
+    }
 
-	void setOutputGlobalTurbulenceStatistics(bool output_turbulence) {
-		enter_subsection("Output");
-		enter_subsection("Turbulence Statistics");
-		set("Output global turbulence statistics?", output_turbulence);
-		leave_subsection();
-		leave_subsection();
-	}
+    void setOutputGlobalTurbulenceStatistics(bool output_turbulence) {
+        enter_subsection("Output");
+        enter_subsection("Turbulence Statistics");
+        set("Output global turbulence statistics?", output_turbulence);
+        leave_subsection();
+        leave_subsection();
+    }
+
+    bool isOutputShearLayerStatistics() {
+        enter_subsection("Output");
+        enter_subsection("Shear Layer");
+        bool sl_stats_output;
+        try {
+            sl_stats_output = get_bool("Output shear layer statistics?");
+        } catch (std::exception& e) {
+            std::stringstream msg;
+            msg << "Could not read parameter 'Output shear layer statistics?' from parameters: " << e.what();
+            leave_subsection();
+            leave_subsection();
+            throw ConfigurationException(msg.str());
+        }
+        leave_subsection();
+        leave_subsection();
+        return sl_stats_output;
+    }
+
+    void setOutputShearLayerStatistics(bool output_sl_stats) {
+        enter_subsection("Output");
+        enter_subsection("Shear Layer");
+        set("Output shear layer statistics?", output_sl_stats);
+        leave_subsection();
+        leave_subsection();
+    }
 
     bool isOutputCompressibleTurbulenceStatistics() {
         enter_subsection("Output");
         enter_subsection("Turbulence Statistics");
         bool turbulence_output;
         try {
-            turbulence_output = get_bool(
-                    "Output compressible turbulence statistics?");
+            turbulence_output = get_bool("Output compressible turbulence statistics?");
         } catch (std::exception& e) {
             std::stringstream msg;
             msg

@@ -80,22 +80,23 @@ namespace natrium {
         return result;
     } /// make directions
 
-    numeric_matrix D3Q13::makeMomentBasis(vector<numeric_vector> e) {
-        numeric_matrix m(Q);
-        for (int i = 0;i<Q;i++){
-            for (int j = 0;j<Q;j++){
-                if(i==j)
-                {
-                    m(i,j) =1.0;
-                } else
-                {
-                    m(i,j) =0.0;
-                }
+numeric_matrix D3Q13::makeMomentBasis(vector<numeric_vector> e) {
+    (void)e;
+    numeric_matrix m(Q);
+    for (size_t i = 0;i<Q;i++){
+        for (size_t j = 0;j<Q;j++){
+            if(i==j)
+            {
+                m(i,j) =1.0;
+            } else
+            {
+                m(i,j) =0.0;
             }
-
         }
-        return m;
+
     }
+    return m;
+}
 
 }/* namespace natrium */
 

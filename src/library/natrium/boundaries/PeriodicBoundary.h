@@ -57,7 +57,7 @@ public:
 
 /**
  * @short  A periodic boundary condition. Periodic boundaries have to be set before the grid is refined!
- * @note   First use in step-1 tutorial.
+ * @note   First use in step-1-variousRe tutorial.
  */
 template<size_t dim>
 class PeriodicBoundary: public Boundary<dim> {

@@ -77,13 +77,11 @@ public:
 			FEBoundaryValues<dim>& fe_boundary_values, size_t q_point,
 			const LagrangianPathDestination& destination, double eps,
 			double t) {
+        (void) t;
 		// get opposite direction
-		size_t opposite_i =
-				fe_boundary_values.getData().m_stencil.getIndexOfOppositeDirection(
-						destination.direction);
+		size_t opposite_i = fe_boundary_values.getData().m_stencil.getIndexOfOppositeDirection(destination.direction);
 		// get opposite distribution
-		double opposite_fi = fe_boundary_values.getDistribution(opposite_i,
-				q_point);
+//		double opposite_fi = fe_boundary_values.getDistribution(opposite_i, q_point);
 		// assign opposite distribution to destination dof
 
 		// does only work for points with support on boundary, thus:

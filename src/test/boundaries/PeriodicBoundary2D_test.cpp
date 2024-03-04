@@ -15,7 +15,7 @@
 #include "deal.II/grid/grid_generator.h"
 #include "deal.II/grid/tria_iterator.h"
 #include "deal.II/grid/tria_accessor.h"
-#include "deal.II/lac/constraint_matrix.h"
+#include "deal.II/lac/affine_constraints.h"
 #include "deal.II/fe/fe_q.h"
 #include "deal.II/fe/fe_dgq.h"
 #include "deal.II/base/quadrature_lib.h"

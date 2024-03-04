@@ -7,6 +7,7 @@
 
 #include "SemiLagrangianBoundaryHandler.h"
 #include "BoundaryFlags.h"
+#include "SLEquilibriumBoundary.h"
 
 namespace natrium {
 
@@ -110,53 +111,46 @@ void SemiLagrangianBoundaryHandler<dim>::apply(DistributionFunctions& f_new,
 
     template<size_t dim>
     void SemiLagrangianBoundaryHandler<dim>::applyToG(DistributionFunctions &f, DistributionFunctions &g, double t, const double gamma) {
-
+        (void)t;
         const double C_v = 1. / (gamma - 1.0);
-        const double temperature = 1.0;
+//        const double temperature = 1.0; // temperature is now stored in Boundary class
 
         std::vector<dealii::Point<dim> > local_hit_points;
         typename HitList<dim>::iterator cell_it = m_hitList.begin();
         typename HitList<dim>::iterator cell_end = m_hitList.end();
         for (; cell_it != cell_end; ++cell_it) {
             // i.e., FOR ALL CELLS
-
-            const typename dealii::DoFHandler<dim>::active_cell_iterator &cell =
-                    cell_it->first;
+//            const typename dealii::DoFHandler<dim>::active_cell_iterator &cell = cell_it->first;
             const HitListAtCell<dim> &cell_hits = cell_it->second;
-
-// get hit points
+            // get hit points
             local_hit_points.clear();
-            typename HitListAtCell<dim>::const_iterator point_it =
+            auto point_it =
                     cell_hits.begin();
-            typename HitListAtCell<dim>::const_iterator point_end =
+            auto point_end =
                     cell_hits.end();
             for (; point_it != point_end; ++point_it) {
                 local_hit_points.push_back(point_it->first);
             }
 
-// apply boundaries at boundaries
+            // apply boundaries at boundaries
             size_t q_point = 0;
-            for (point_it = cell_hits.begin(); point_it != point_end;
-                 ++point_it) {
+            for (point_it = cell_hits.begin(); point_it != point_end; ++point_it) {
                 const HitListAtPoint<dim> &point_hits = point_it->second;
-
-// apply boundaries at hits
+                // apply boundaries at hits
                 for (size_t i = 0; i < point_hits.n_hits(); i++) {
                     const BoundaryHit<dim> &hit = point_hits.at(i);
-                    if (m_boundaries.getBoundary(hit.getBoundaryId())->getBoundaryName() ==
-                        VELOCITY_EQUILIBRIUM_BOUNDARY)
+                    if (is_velocity_eq(m_boundaries.getBoundary(hit.getBoundaryId())->getBoundaryName())) {
                         g.at(hit.getDestination().direction)(hit.getDestination().index) =
-                                f.at(hit.getDestination().direction)(hit.getDestination().index) * (temperature) *
-                                (2.0 * C_v - dim);
-// calculate new g distribution functions at hits
-
+                            f.at(hit.getDestination().direction)(hit.getDestination().index)
+                                * (m_boundaries.getBoundary(hit.getBoundaryId())->m_boundaryTemperature)
+                                * (2.0 * C_v - dim);
+                    }
+                    // calculate new g distribution functions at hits
                 } /* for all hits */
                 q_point++;
             } /* for all points */
         } /* for all cells */
-
     }
-
 
 template class SemiLagrangianBoundaryHandler<2> ;
 template class SemiLagrangianBoundaryHandler<3> ;

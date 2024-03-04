@@ -33,9 +33,11 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Stencil", "D2Q9",
 				dealii::Patterns::Selection("D2Q9|D3Q13|D3Q19|D3Q15|D3Q21|D3Q27|RD3Q27|D2Q19V|D2Q19H|D2Q777|D2Q25H|D3Q45|D3Q77|D3V27"),
 				"The discrete velocity stencil. The number behind D denotes the dimension (2 or 3). The number behind Q denotes the number of particle directions in the discrete velocity model.");
-		declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
-				"The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
-		declare_entry("Has analytic solution?", "false",
+        declare_entry("Stencil scaling", "1.0", dealii::Patterns::Double(1e-10),
+                      "The scaling of the discrete velocities. Whereas in the standard LBM the magnitude of the particle velocities is set to 1.0 due to the uniform mesh grid, the SEDG-LBM features scaled particle velocities. As the scaling factor is proportional to the speed of sound, it strongly impacts the relaxation time.");
+        declare_entry("Mach number", "0.0", dealii::Patterns::Double(-1e-10),
+                      ".");
+        declare_entry("Has analytic solution?", "false",
 				dealii::Patterns::Bool(),
 				"Indicates whether the given flow problem is inherited of BenchmarkProblem, which means that it has an analytic solution with which the numerical solution can be compared.");
 	}
@@ -46,7 +48,7 @@ SolverConfiguration::SolverConfiguration() {
 				dealii::Patterns::Selection("SEDG|Semi-Lagrangian"),
 				"The algorithm which is used for the advection (=streaming) step. While the LBM on a uniform mesh facilitates streaming towards a simple index shift, non-uniform meshes need a more sophisticated advection scheme. SEDG stands for spectral element discontinuous Galerkin. Note that the Semi-Lagrangian streaming does not require a time integrator.");
 
-		declare_entry("Support points", "Gauss-Lobatto",
+		declare_entry("Support points", "Gauss-Lobatto-Chebyshev",
 				dealii::Patterns::Selection(
 						"Gauss-Lobatto|Gauss-Lobatto-Chebyshev|Gauss-Chebyshev|Equidistant"),
 				"The support points of the finite elements. For the SEDG streaming, "
@@ -236,10 +238,14 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Number of time steps", "100000000",
 				dealii::Patterns::Integer(1),
 				"The maximum number of time steps.");
-		declare_entry("Simulation end time", "100000000.0",
-				dealii::Patterns::Double(0),
-				"The end time of the simulation. "
-						"Especially for adaptive time stepping schemes, number of steps is not an appropriate stop condition");
+        declare_entry("Simulation end time", "100000000.0",
+                      dealii::Patterns::Double(0),
+                      "The end time of the simulation. Especially for adaptive time stepping schemes, "
+                      "number of steps is not an appropriate stop condition.");
+        declare_entry("Server end time", "79200",
+                      dealii::Patterns::Integer(1),
+                      "The end time of the server. "
+                      "On a cluster, the timeout limits must be considered and checkpoints written in time.");
 		declare_entry("Convergence threshold", "1e-30",
 				dealii::Patterns::Double(),
 				"The codes stops when the maximum velocity variation is below this threshold in 10 iterations.");
@@ -255,40 +261,58 @@ SolverConfiguration::SolverConfiguration() {
 		declare_entry("Output directory", "/tmp/NATriuM",
 				dealii::Patterns::DirectoryName(),
 				"The name of the directory to which the output is written.");
-		declare_entry("Output checkpoint interval", "1000000000",
-				dealii::Patterns::Integer(1),
-				"Write out checkpoint files every ... step.");
+		declare_entry("Output checkpoint interval", "-1",
+				dealii::Patterns::Integer(-1),
+				"Write out checkpoint files every ... steps. Set this value to > 1e8 to turn off final checkpoint.");
 		declare_entry("Output table interval", "1000",
 				dealii::Patterns::Integer(1),
 				"Write out a line to the result table every ... step.");
-		declare_entry("Output solution interval", "1000",
-				dealii::Patterns::Integer(1),
-				"Write out solution every ... step.");
+        declare_entry("Output solution interval", "1000",
+                      dealii::Patterns::Integer(1),
+                      "Write out solution every ... step.");
+        declare_entry("No output interval", "-1",
+                      dealii::Patterns::Integer(-1),
+                      "No not output solution before ... steps.");
+        declare_entry("No stats interval", "-1",
+                      dealii::Patterns::Integer(-1),
+                      "No not reporter stats before ... steps.");
+        declare_entry("Coordinates round degree", "8",
+                      dealii::Patterns::Integer(0, 20),
+                      "Round coordinates to this degree, related to integration point distance.");
 		declare_entry("Command line verbosity", "5",
 				dealii::Patterns::Integer(0, 8),
 				"The amount of command line output.");
 		declare_entry("Write a log file?", "true", dealii::Patterns::Bool(),
 				"Specifies if log is written to a file.");
-		enter_subsection("Turbulence Statistics");
-		{
-			declare_entry("Output global turbulence statistics?", "false",
-					dealii::Patterns::Bool(),
-					"Specifies if global turbulence statistics should be monitored.");
+        enter_subsection("Turbulence Statistics");
+        {
+            declare_entry("Output global turbulence statistics?", "false",
+                          dealii::Patterns::Bool(),
+                          "Specifies if global turbulence statistics should be monitored.");
             declare_entry("Output compressible turbulence statistics?", "false",
                           dealii::Patterns::Bool(),
                           "Specifies if compressible turbulence statistics should be monitored.");
-			declare_entry("Output turbulence statistics?", "false",
-					dealii::Patterns::Bool(),
-					"Specifies if turbulence statistics in slices should be monitored.");
-			declare_entry("Wall normal direction", "1",
-					dealii::Patterns::Integer(0, 3),
-					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");
-			declare_entry("Wall normal coordinates", "1e-1, 2e-1, 5e-1",
-					dealii::Patterns::List(
-							dealii::Patterns::Double(-1e10, 1e10)),
-					"Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. This comma-separated list of decimal numbers specifies their wall-normal coordinates.");
-		}
-		leave_subsection();
+            declare_entry("Output turbulence statistics?", "false",
+                          dealii::Patterns::Bool(),
+                          "Specifies if turbulence statistics in slices should be monitored.");
+            declare_entry("Wall normal direction", "1",
+                          dealii::Patterns::Integer(0, 3),
+                          "Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. The wall normal direction can be 0,1,2 for x,y,z, respectively.");
+            declare_entry("Wall normal coordinates", "1e-1, 2e-1, 5e-1",
+                          dealii::Patterns::List(dealii::Patterns::Double(-1e10, 1e10)),
+                          "Convergence is monitored by putting out the turbulence statistics over planes that are parallel to the wall. This comma-separated list of decimal numbers specifies their wall-normal coordinates.");
+        }
+        leave_subsection();
+        enter_subsection("Shear Layer");
+        {
+            declare_entry("Output shear layer statistics?", "false",
+                          dealii::Patterns::Bool(),
+                          "Specifies if shear layer statistics should be monitored.");
+            declare_entry("Output shear layer interval", "100",
+                          dealii::Patterns::Integer(1),
+                          "Write out shear layer statistics every ... step.");
+        }
+        leave_subsection();
 	}
 	leave_subsection();
 
@@ -304,7 +328,8 @@ SolverConfiguration::SolverConfiguration(const std::string& XMLfilename) {
  **/
 void SolverConfiguration::readFromTextFile(const std::string & filename,
 		const bool optional, const bool write_stripped_file) {
-
+    (void)optional;
+    (void)write_stripped_file;
 	ParameterHandler::parse_input(filename);
 
 } /* readFromTextFile */

@@ -9,6 +9,7 @@
 #include "../utilities/BasicNames.h"
 #include "../dataprocessors/DataProcessor.h"
 #include "boost/filesystem.hpp"
+//#include "../solver/CFDSolver.h"
 
 namespace natrium{
 // forward declaration
@@ -27,6 +28,9 @@ private:
     double m_maxMach;
     double m_gamma;
     double m_totalEnergy;
+    double m_minT;
+    double m_maxT;
+    double m_avgT;
     vector<string> m_names;
     std::string m_filename;
     std::string m_legendFilename;
@@ -37,15 +41,13 @@ private:
 
 std::string outfile(std::string dir) {
     boost::filesystem::path out_dir(dir);
-    boost::filesystem::path out_file = out_dir
-                                       / "compressible_turbulence_table.txt";
+    boost::filesystem::path out_file = out_dir / "compressible_turbulence_table.txt";
     return out_file.string();
 }
 
 std::string legendfile(std::string dir) {
     boost::filesystem::path out_dir(dir);
-    boost::filesystem::path out_file = out_dir
-                                       / "compressible_turbulence_table.legend";
+    boost::filesystem::path out_file = out_dir / "compressible_turbulence_table.legend";
     return out_file.string();
 }
 

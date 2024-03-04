@@ -16,20 +16,18 @@
 
 namespace natrium {
 
-TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity,
-                                         size_t refinementLevel, double cs, bool init_rho_analytically, size_t repetitions, double densityNumerator, bool compressible_case) :
-        ProblemDescription<3>(makeGrid(repetitions), viscosity, 1), m_cs(cs), m_analyticInit(
-				init_rho_analytically), m_refinementLevel(refinementLevel), m_densityNumerator(densityNumerator), m_compressibleCase(compressible_case) {
-
-
+TaylorGreenVortex3D::TaylorGreenVortex3D(double viscosity, size_t refinementLevel, double cs,
+                                         bool init_rho_analytically, size_t repetitions, double densityNumerator,
+                                         bool compressible_case) :
+        ProblemDescription<3>(makeGrid(repetitions), viscosity, 1), m_cs(cs), m_densityNumerator(densityNumerator),
+        m_analyticInit(init_rho_analytically), m_compressibleCase(compressible_case), m_refinementLevel(refinementLevel)
+{
 	/// apply boundary values
 	setBoundaries(makeBoundaries());
 	// apply analytic solution
 	this->setInitialU(boost::make_shared<InitialVelocity>(this));
 	this->setInitialRho(boost::make_shared<InitialDensity>(this));
     this->setInitialT(boost::make_shared<InitialTemperature>(this));
-
-
 }
 
 TaylorGreenVortex3D::~TaylorGreenVortex3D() {
@@ -61,8 +59,8 @@ double TaylorGreenVortex3D::InitialDensity::value(const dealii::Point<3>& x,
 	}
 }
 
-    double TaylorGreenVortex3D::InitialTemperature::value(const dealii::Point<3>& x,
-                                                      const unsigned int component) const {
+    double TaylorGreenVortex3D::InitialTemperature::value(const dealii::Point<3>& x, const unsigned int component) const {
+        (void)x;
         assert(component == 0);
         if (m_flow->m_analyticInit) {
             return 1.0;

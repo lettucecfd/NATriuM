@@ -17,40 +17,70 @@
 namespace natrium {
 
 template<size_t dim>
-double CFDSolverUtilities::getMinimumDoFDistanceGLL(const Mesh<dim>& tria,
-		const size_t orderOfFiniteElement) {
-	assert(orderOfFiniteElement >= 1);
-	// calculate minimal distance between vertices of the triangulation
-	double min_vertex_distance = CFDSolverUtilities::getMinimumVertexDistance<
-			dim>(tria);
+double CFDSolverUtilities::getMinimumDoFDistanceGLL(const Mesh<dim>& tria, const size_t orderOfFiniteElement) {
+    assert(orderOfFiniteElement >= 1);
+    // calculate minimal distance between vertices of the triangulation
+    double min_vertex_distance = CFDSolverUtilities::getMinimumVertexDistance<dim>(tria);
 
-	// calculate distance between closest quadrature nodes on a line
-	dealii::QGaussLobatto<1> quadrature(orderOfFiniteElement + 1);
-	double min_dof_distance = 10000;
-	for (size_t i = 0; i < orderOfFiniteElement + 1; i++) {
-		for (size_t j = i + 1; j < orderOfFiniteElement + 1; j++) {
-			double pointDist = quadrature.get_points().at(i).distance(
-					quadrature.get_points().at(j));
-			if (pointDist < min_dof_distance) {
-				min_dof_distance = pointDist;
-			}
-		}
-	}
-	return min_vertex_distance * min_dof_distance;
+    // calculate distance between closest quadrature nodes on a line
+    dealii::QGaussLobatto<1> quadrature(orderOfFiniteElement + 1);
+    double min_dof_distance = 10000;
+    for (size_t i = 0; i < orderOfFiniteElement + 1; i++) {
+        for (size_t j = i + 1; j < orderOfFiniteElement + 1; j++) {
+            double pointDist = quadrature.get_points().at(i).distance(quadrature.get_points().at(j));
+            min_dof_distance = std::min(pointDist, min_dof_distance);
+        }
+    }
+    return min_vertex_distance * min_dof_distance;
 }
-template double CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(
-		const Mesh<2>& tria, const size_t orderOfFiniteElement);
-template double CFDSolverUtilities::getMinimumDoFDistanceGLL<3>(
-		const Mesh<3>& tria, const size_t orderOfFiniteElement);
+template double CFDSolverUtilities::getMinimumDoFDistanceGLL<2>(const Mesh<2>& tria, const size_t orderOfFiniteElement);
+template double CFDSolverUtilities::getMinimumDoFDistanceGLL<3>(const Mesh<3>& tria, const size_t orderOfFiniteElement);
 
 template<size_t dim>
-double CFDSolverUtilities::getMinimumDoFDistance(const Mesh<dim>& tria,
-		const dealii::FiniteElement<dim,dim>& fe){
+double CFDSolverUtilities::getMinimumDoFDistanceGLC(const Mesh<dim>& tria, const size_t orderOfFiniteElement) {
+    assert(orderOfFiniteElement >= 1);
+    // calculate minimal distance between vertices of the triangulation
+    double min_vertex_distance = CFDSolverUtilities::getMinimumVertexDistance<dim>(tria);
+
+    // calculate distance between closest quadrature nodes on a line
+    dealii::QGaussLobattoChebyshev<1> quadrature(orderOfFiniteElement + 1);
+    double min_dof_distance = 10000;
+    for (size_t i = 0; i < orderOfFiniteElement + 1; i++) {
+        for (size_t j = i + 1; j < orderOfFiniteElement + 1; j++) {
+            double pointDist = quadrature.get_points().at(i).distance(quadrature.get_points().at(j));
+            min_dof_distance = std::min(pointDist, min_dof_distance);
+        }
+    }
+    return min_vertex_distance * min_dof_distance;
+}
+template double CFDSolverUtilities::getMinimumDoFDistanceGLC<2>(const Mesh<2>& tria, const size_t orderOfFiniteElement);
+template double CFDSolverUtilities::getMinimumDoFDistanceGLC<3>(const Mesh<3>& tria, const size_t orderOfFiniteElement);
+
+template<size_t dim>
+double CFDSolverUtilities::getMaximumDoFDistanceGLC(const Mesh<dim>& tria, const size_t orderOfFiniteElement) {
+    assert(orderOfFiniteElement >= 1);
+    double max_vertex_distance = CFDSolverUtilities::getMaximumVertexDistance<dim>(tria);
+
+    // calculate distance between closest quadrature nodes on a line
+    dealii::QGaussLobattoChebyshev<1> quadrature(orderOfFiniteElement + 1);
+    double max_dof_distance = 0.0;
+    for (size_t i = 0; i < orderOfFiniteElement + 1; i++) {
+        for (size_t j = i + 1; j < orderOfFiniteElement + 1; j++) {
+            double pointDist = quadrature.get_points().at(i).distance(quadrature.get_points().at(j));
+            max_dof_distance = std::max(pointDist, max_dof_distance);
+        }
+    }
+    return max_vertex_distance * max_dof_distance;
+}
+template double CFDSolverUtilities::getMaximumDoFDistanceGLC<2>(const Mesh<2>& tria, const size_t orderOfFiniteElement);
+template double CFDSolverUtilities::getMaximumDoFDistanceGLC<3>(const Mesh<3>& tria, const size_t orderOfFiniteElement);
+
+template<size_t dim>
+double CFDSolverUtilities::getMinimumDoFDistance(const Mesh<dim>& tria, const dealii::FiniteElement<dim,dim>& fe){
 	assert (fe.has_support_points());
 
 	// calculate minimal distance between vertices of the triangulation
-	double min_vertex_distance = CFDSolverUtilities::getMinimumVertexDistance<
-			dim>(tria);
+	double min_vertex_distance = CFDSolverUtilities::getMinimumVertexDistance<dim>(tria);
 	double unit_min = 100.0;
 	const std::vector< dealii::Point< dim > > & support_points = fe.get_unit_support_points ();
 	for (size_t i = 0; i < support_points.size(); i++){
@@ -61,7 +91,6 @@ double CFDSolverUtilities::getMinimumDoFDistance(const Mesh<dim>& tria,
 			}
 		}
 	}
-
 	return min_vertex_distance * unit_min;
 }
 
@@ -69,26 +98,75 @@ template<size_t dim>
 double CFDSolverUtilities::getMinimumVertexDistance(const Mesh<dim>& tria) {
 	// calculate minimal distance between vertices of the triangulation
 	double min_vertex_distance = 100000000000.0;
-	double distance = 0.0;
-	for (typename Mesh<dim>::active_cell_iterator cell = tria.begin_active();
-			cell != tria.end(); ++cell) {
+	double distance;
+	for (typename Mesh<dim>::active_cell_iterator cell = tria.begin_active(); cell != tria.end(); ++cell) {
 		if (cell->is_locally_owned()) {
 			distance = cell->minimum_vertex_distance();
-			if (distance < min_vertex_distance) {
-				min_vertex_distance = distance;
-			}
+            min_vertex_distance = std::min(min_vertex_distance, distance);
 		}
-	}
-	// sync over all MPI processes
-	return dealii::Utilities::MPI::min_max_avg(min_vertex_distance,
-	MPI_COMM_WORLD).min;
+	} // sync over all MPI processes
+	return dealii::Utilities::MPI::min_max_avg(min_vertex_distance, MPI_COMM_WORLD).min;
 }
-template double CFDSolverUtilities::getMinimumVertexDistance<2>(
-		const Mesh<2>& tria);
-template double CFDSolverUtilities::getMinimumVertexDistance<3>(
-		const Mesh<3>& tria);
+template double CFDSolverUtilities::getMinimumVertexDistance<2>(const Mesh<2>& tria);
+template double CFDSolverUtilities::getMinimumVertexDistance<3>(const Mesh<3>& tria);
 
 template<size_t dim>
+vector<double> CFDSolverUtilities::getMinimumVertexDistanceDirs(const Mesh<dim>& tria) {
+    // calculate minimal distance between vertices of the triangulation
+    vector<double> min_vertex_distance(dim, 100000.0);
+    for (typename Mesh<3>::active_cell_iterator cell = tria.begin_active(); cell != tria.end(); ++cell) {
+        if (cell->is_locally_owned()) {
+            BoundingBox<3> box = cell->bounding_box();
+            for (size_t dir = 0; dir < dim; ++dir) {
+                min_vertex_distance.at(dir) = std::min(min_vertex_distance.at(dir), box.side_length(dir));
+            }
+        }
+    } // sync over all MPI processes
+    for (size_t dir = 0; dir < dim; ++dir) {
+        min_vertex_distance.at(dir) = dealii::Utilities::MPI::min_max_avg(min_vertex_distance.at(dir), MPI_COMM_WORLD).min;
+    }
+    return min_vertex_distance;
+}
+template vector<double> CFDSolverUtilities::getMinimumVertexDistanceDirs<2>(const Mesh<2>& tria);
+template vector<double> CFDSolverUtilities::getMinimumVertexDistanceDirs<3>(const Mesh<3>& tria);
+
+template<size_t dim>
+vector<double> CFDSolverUtilities::getMaximumVertexDistanceDirs(const Mesh<dim>& tria) {
+    // calculate maximal distance between vertices of the triangulation
+    vector<double> max_vertex_distance(dim, 0.0);
+    for (typename Mesh<3>::active_cell_iterator cell = tria.begin_active(); cell != tria.end(); ++cell) {
+        if (cell->is_locally_owned()) {
+            BoundingBox<3> box = cell->bounding_box();
+            for (size_t dir = 0; dir < dim; ++dir) {
+                max_vertex_distance.at(dir) = std::max(max_vertex_distance.at(dir), box.side_length(dir));
+            }
+        }
+    } // sync over all MPI processes
+    for (size_t dir = 0; dir < dim; ++dir) {
+        max_vertex_distance.at(dir) = dealii::Utilities::MPI::min_max_avg(max_vertex_distance.at(dir), MPI_COMM_WORLD).max;
+    }
+    return max_vertex_distance;
+}
+template vector<double> CFDSolverUtilities::getMaximumVertexDistanceDirs<2>(const Mesh<2>& tria);
+template vector<double> CFDSolverUtilities::getMaximumVertexDistanceDirs<3>(const Mesh<3>& tria);
+
+template<size_t dim>
+double CFDSolverUtilities::getMaximumVertexDistance(const Mesh<dim>& tria) {
+    double max_vertex_distance = 0.0;
+    double distance;
+    for (typename Mesh<dim>::active_cell_iterator cell = tria.begin_active(); cell != tria.end(); ++cell) {
+        if (cell->is_locally_owned()) {
+            distance = cell->minimum_vertex_distance(); // minimum is equivalent to edge distance for cuboids
+            max_vertex_distance = std::max(distance, max_vertex_distance);
+        }
+    } // sync over all MPI processes
+    return dealii::Utilities::MPI::min_max_avg(max_vertex_distance, MPI_COMM_WORLD).max;
+}
+template double CFDSolverUtilities::getMaximumVertexDistance<2>(const Mesh<2>& tria);
+template double CFDSolverUtilities::getMaximumVertexDistance<3>(const Mesh<3>& tria);
+
+
+    template<size_t dim>
 double CFDSolverUtilities::calculateTimestep(const Mesh<dim>& tria,
 		const size_t orderOfFiniteElement, const Stencil& stencil, double cFL) {
 	assert(orderOfFiniteElement >= 1);

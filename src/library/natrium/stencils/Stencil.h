@@ -73,7 +73,6 @@ private:
 	numeric_matrix m_momentBasis;
 	numeric_matrix m_inverseMomentBasis;
 
-
 public:
 
 //////////////////////////////////
@@ -151,7 +150,6 @@ public:
 	}
 
 	virtual size_t getIndexOfOppositeDirection(size_t index) const = 0;
-
 
 	virtual double getSpeedOfSound() const = 0;
 	virtual double getSpeedOfSoundSquare() const = 0;

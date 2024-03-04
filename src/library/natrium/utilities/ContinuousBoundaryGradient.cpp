@@ -242,7 +242,7 @@ void ContinuousBoundaryGradient<dim>::calculateGradients(
 
 
 	m_dofIndizes.clear();
-	m_dofIndizes.resize(m_continuousBoundaryDoF->get_fe()[1].dofs_per_cell);
+	m_dofIndizes.resize(m_continuousBoundaryDoF->get_fe(1).dofs_per_cell);
 }
 
 template<size_t dim>

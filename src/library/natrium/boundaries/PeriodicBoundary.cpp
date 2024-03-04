@@ -23,12 +23,11 @@
 namespace natrium {
 
 // The template Parameter has to be made explicit in order for the code to compile
-template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(
-		size_t boundaryIndicator1, size_t boundaryIndicator2, size_t direction,
-		boost::shared_ptr<Mesh<dim> > triangulation) :
-				Boundary<dim>(999, PERIODIC_BOUNDARY, PrescribedBoundaryValues<dim>()),
-		m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(
-				boundaryIndicator2), m_direction(direction) {
+template<size_t dim> PeriodicBoundary<dim>::PeriodicBoundary(size_t boundaryIndicator1, size_t boundaryIndicator2,
+        size_t direction, boost::shared_ptr<Mesh<dim>> triangulation) :
+                Boundary<dim>(999, PERIODIC_BOUNDARY, PrescribedBoundaryValues<dim>()),
+                        m_boundaryIndicator1(boundaryIndicator1), m_boundaryIndicator2(boundaryIndicator2),
+                        m_direction(direction) {
 
 	// check if boundary indcators are different
 	if (boundaryIndicator1 == boundaryIndicator2) {
@@ -138,8 +137,8 @@ template<size_t dim> void PeriodicBoundary<dim>::checkCellMap() {
 						or (boundary_id_2 == m_boundaryIndicator2));
 		assert(not it->second.cell[0]->is_artificial());
 		assert(not it->second.cell[1]->is_artificial());
-		assert(it->second.cell[0]->active());
-		assert(it->second.cell[1]->active());
+		assert(it->second.cell[0]->is_active());
+		assert(it->second.cell[1]->is_active());
 		assert(
 				(it->first == it->second.cell[0])
 						or (it->first == it->second.cell[1]));

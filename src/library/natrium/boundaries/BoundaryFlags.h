@@ -152,8 +152,7 @@ public:
 	 */
 	PrescribedBoundaryValues(const dealii::Vector<double>& u) {
 		m_prescribedValues = boundary_u;
-		m_velocity = boost::make_shared<BoundaryTools::BoundaryVelocity<dim> >(
-				u);
+		m_velocity = boost::make_shared<BoundaryTools::BoundaryVelocity<dim>>(u);
 	}
 
 	/**

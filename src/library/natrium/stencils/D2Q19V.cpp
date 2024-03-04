@@ -38,19 +38,15 @@ D2Q19V::~D2Q19V() {
 
 // make weights
 vector<double> D2Q19V::makeWeights() {
-    double r = (sqrt(5.)-sqrt(2.))/sqrt(3.);
-
-	double w_0 = (-3-3*r*r*r*r+54*r*r)/(75*r*r);
-
-	double w_m = (9*r*r*r*r-6-27*r*r)/(300*r*r*(r*r-1));
-	double w_n = (9-6*r*r*r*r-27*r*r)/(300*(1-r*r));
-
-
-	double w_0n = w_0*w_n;
-	double w_0m = w_0*w_m;
-	double w_mm = w_m*w_m;
-	double w_mn = w_m*w_n;
-	double w_nn = w_n*w_n;
+//    double r = (sqrt(5.)-sqrt(2.))/sqrt(3.);
+//    double w_0 = (-3-3*r*r*r*r+54*r*r)/(75*r*r);
+//    double w_m = (9*r*r*r*r-6-27*r*r)/(300*r*r*(r*r-1));
+//    double w_n = (9-6*r*r*r*r-27*r*r)/(300*(1-r*r));
+//    double w_0n = w_0*w_n;
+//    double w_0m = w_0*w_m;
+//    double w_mm = w_m*w_m;
+//    double w_mn = w_m*w_n;
+//    double w_nn = w_n*w_n;
 	vector<double> result { 0.3168437267921905 , 0.1024247123210936 ,
                            0.1024247123210936 ,
                            0.1024247123210936 ,
@@ -107,22 +103,23 @@ vector<numeric_vector> D2Q19V::makeDirections(double scaling) {
 	return result;
 } /// make directions
 
-    numeric_matrix D2Q19V::makeMomentBasis(vector<numeric_vector> e) {
-        numeric_matrix m(Q);
-        for (int i = 0;i<Q;i++){
-            for (int j = 0;j<Q;j++){
-                if(i==j)
-                {
-                    m(i,j) =1.0;
-                } else
-                {
-                    m(i,j) =0.0;
-                }
+numeric_matrix D2Q19V::makeMomentBasis(vector<numeric_vector> e) {
+    (void)e;
+    numeric_matrix m(Q);
+    for (size_t i = 0;i<Q;i++){
+        for (size_t j = 0;j<Q;j++){
+            if(i==j)
+            {
+                m(i,j) =1.0;
+            } else
+            {
+                m(i,j) =0.0;
             }
-
         }
-        return m;
+
     }
+    return m;
+}
 
 
 } /* namespace natrium */

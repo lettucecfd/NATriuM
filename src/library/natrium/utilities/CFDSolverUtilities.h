@@ -52,20 +52,29 @@ public:
  * @short
  */
 template<size_t dim>
-double getMinimumDoFDistanceGLL(const Mesh<dim>& tria,
-		const size_t orderOfFiniteElement);
+double getMinimumDoFDistanceGLL(const Mesh<dim>& tria, const size_t orderOfFiniteElement);
+template<size_t dim>
+double getMinimumDoFDistanceGLC(const Mesh<dim>& tria, const size_t orderOfFiniteElement);
+template<size_t dim>
+double getMaximumDoFDistanceGLC(const Mesh<dim>& tria, const size_t orderOfFiniteElement);
 
 template<size_t dim>
-double getMinimumDoFDistance(const Mesh<dim>& tria,
-		const dealii::FiniteElement<dim,dim>& fe);
+double getMinimumDoFDistance(const Mesh<dim>& tria, const dealii::FiniteElement<dim,dim>& fe);
 
 template<size_t dim>
 double getMinimumVertexDistance(const Mesh<dim>& tria);
 
 template<size_t dim>
-double calculateTimestep(const Mesh<dim>& tria,
-		const size_t orderOfFiniteElement, const Stencil& stencil, double cFL =
-				0.4);
+double getMaximumVertexDistance(const Mesh<dim>& tria);
+
+template<size_t dim>
+vector<double> getMinimumVertexDistanceDirs(const Mesh<dim>& tria);
+template<size_t dim>
+vector<double> getMaximumVertexDistanceDirs(const Mesh<dim>& tria);
+
+template<size_t dim>
+double calculateTimestep(const Mesh<dim>& tria, const size_t orderOfFiniteElement, const Stencil& stencil,
+                         double cFL = 0.4);
 
 /**
  * @short stolen from Deal.II's step 49 tutorial
@@ -99,14 +108,9 @@ void mesh_info(const Mesh<dim> &tria, const std::string &filename);
 void get_integrator_by_id(size_t id, TimeIntegratorName& time_integrator,
 		DealIntegratorName& deal_integrator, std::string& integrator_name);
 
-std::string get_integrator_name(
-		const TimeIntegratorName& time_integrator,
-		const DealIntegratorName& deal_integrator) ;
-
+std::string get_integrator_name(const TimeIntegratorName& time_integrator, const DealIntegratorName& deal_integrator) ;
 
 boost::shared_ptr<Stencil> make_stencil(size_t d, size_t q, size_t scaling);
-
-
 
 /**
  * @short get a writeable copy of the velocity

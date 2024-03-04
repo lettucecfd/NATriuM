@@ -232,9 +232,9 @@ inline ProblemDescription<dim>::ProblemDescription(
 		m_triangulation(triangulation), m_viscosity(viscosity), m_characteristicLength(
 				characteristicLength) {
 	// make default initial conditions (rho = 1, u = v = 0)
-	m_initialRho = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
-	m_initialT = boost::make_shared<dealii::ConstantFunction<dim> >(1.0, 1);
-	m_initialU = boost::make_shared<dealii::ConstantFunction<dim> >(0.0, dim);
+	m_initialRho = boost::make_shared<DealIIExtensions::Functions::ConstantFunction<dim> >(1.0, 1);
+	m_initialT = boost::make_shared<DealIIExtensions::Functions::ConstantFunction<dim> >(1.0, 1);
+	m_initialU = boost::make_shared<DealIIExtensions::Functions::ConstantFunction<dim> >(0.0, dim);
 	/// Create MPI (if not done yet);
 	MPIGuard::getInstance();
 }

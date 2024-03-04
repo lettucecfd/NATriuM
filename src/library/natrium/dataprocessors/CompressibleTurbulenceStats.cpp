@@ -24,6 +24,9 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
     m_names.push_back("solenoidal");
     m_names.push_back("maxMach");
     m_names.push_back("totalEnergy");
+    m_names.push_back("minTemperature");
+    m_names.push_back("maxTemperature");
+    m_names.push_back("avgTemperature");
 
     // make table file
     if (not m_outputOff) {
@@ -54,14 +57,9 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
                            << m_legendFilename << endl;
             std::ofstream legend_file(m_legendFilename, std::fstream::out);
 
-            int k = 0;
-            legend_file << k << "  <dilatation>" << endl;
-            k++;
-            legend_file << k << "  <solenoidal>" << endl;
-            k++;
-            legend_file << k << "  maxMach" << endl;
-            legend_file.close();
-
+            for (size_t k = 0; k < m_names.size(); k++) {
+                legend_file << k << "  <" << m_names.at(k) << ">" << endl;
+            }
         } /* is_MPI_rank 0 */
     }
 
@@ -76,6 +74,9 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             *m_tableFile << m_solenoidal<< " ";
             *m_tableFile << m_maxMach << " ";
             *m_tableFile << m_totalEnergy << " ";
+            *m_tableFile << m_minT << " ";
+            *m_tableFile << m_maxT << " ";
+            *m_tableFile << m_avgT << " ";
             *m_tableFile << endl;
 
         } /* is mpi rank 0 */
@@ -201,7 +202,18 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             m_solenoidal = dealii::Utilities::MPI::sum(solenoidal, MPI_COMM_WORLD);
             m_maxMach = dealii::Utilities::MPI::max(globalMach,MPI_COMM_WORLD);
             m_totalEnergy = dealii::Utilities::MPI::sum(totalEnergy, MPI_COMM_WORLD);
-            //}
+            auto minMaxAvgT = dealii::Utilities::MPI::min_max_avg(Ts, MPI_COMM_WORLD);
+            vector<double> minT, maxT, avgT;
+            for (auto iminMaxAvgT : minMaxAvgT) {
+                minT.push_back(iminMaxAvgT.min);
+                maxT.push_back(iminMaxAvgT.max);
+                avgT.push_back(iminMaxAvgT.avg);
+            }
+            m_minT = *std::min_element(minT.begin(), minT.end());
+            m_maxT = *std::max_element(maxT.begin(), maxT.end());
+            m_avgT = std::reduce(avgT.begin(), avgT.end()) / avgT.size();
+
+        //}
         }
 
         template<size_t dim>
@@ -216,7 +228,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             }
         }
 
-    template class CompressibleTurbulenceStats<2> ;
+//    template class CompressibleTurbulenceStats<2> ;
     template class CompressibleTurbulenceStats<3> ;
 
 }

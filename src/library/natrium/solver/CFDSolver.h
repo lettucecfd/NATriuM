@@ -68,7 +68,8 @@ public:
  */
 template<size_t dim> class CFDSolver {
 	template<size_t dim2> friend class SolverStats;
-	template<size_t dim3> friend class TurbulenceStats;
+    template<size_t dim3> friend class TurbulenceStats;
+//    template<size_t dim3> friend class ShearLayerStats;
 	template<size_t dim3> friend class GridInterpolation;
 	template<size_t dim4> friend class DataProcessor;
 	template<size_t dim3> friend class PseudoEntropicStabilizer;
@@ -118,6 +119,7 @@ protected:
 
 	/// the physical time passed (normally initialized with 0.0, except for restart at a checkpoint)
 	double m_time;
+    double m_tstart_ph;
 
 	/// a vector that indicates if a dofs is at the boundary (for each dof)
 	vector<bool> m_isDoFAtBoundary;
@@ -127,13 +129,14 @@ protected:
 
 	/// table out
 	boost::shared_ptr<SolverStats<dim> > m_solverStats;
-	boost::shared_ptr<TurbulenceStats<dim> > m_turbulenceStats;
+    boost::shared_ptr<TurbulenceStats<dim> > m_turbulenceStats;
 
 	// vector of data processors
 	vector<boost::shared_ptr<DataProcessor<dim> > > m_dataProcessors;
 
 	// starting time
-	time_t m_tstart;
+    time_t m_tstart;
+    string m_tstart2;
 
 
 

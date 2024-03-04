@@ -64,29 +64,25 @@ double Riemann2D::InitialVelocity::value(const dealii::Point<2>& x,
 }
 
 double Riemann2D::InitialDensity::value(const dealii::Point<2>& x, const unsigned int component) const {
-
-			if (x(0) <= 1.0 && x(1)<=1.0) {
-				return 0.8;
-			}
-			if (x(0) > 1.0 && x(1)<=1.0) {
-				return 1.0;
-			}
-			if (x(0) <= 1.0 && x(1) > 1.0) {
-				return 1.0;
-			}
-			if (x(0) > 1.0&& x(1) > 1.0) {
-				return 0.5313;
-			}
-
-			else
-				return 0;
-
-
-
+    (void)component;
+    if (x(0) <= 1.0 && x(1)<=1.0) {
+        return 0.8;
+    }
+    if (x(0) > 1.0 && x(1)<=1.0) {
+        return 1.0;
+    }
+    if (x(0) <= 1.0 && x(1) > 1.0) {
+        return 1.0;
+    }
+    if (x(0) > 1.0&& x(1) > 1.0) {
+        return 0.5313;
+    }
+    else
+        return 0;
 }
 
 double Riemann2D::InitialTemperature::value(const dealii::Point<2>& x, const unsigned int component) const {
-
+    (void)component;
 	if (x(0) <= 1.0 && x(1)<= 1.0) {
         return 1.25;
 	}
@@ -99,13 +95,9 @@ double Riemann2D::InitialTemperature::value(const dealii::Point<2>& x, const uns
 	if (x(0) > 1.0 && x(1) > 1.0) {
         return 0.7532956685;
 	}
-
 	else
 		return 0;
-
 }
-
-
 
 /**
  * @short create triangulation for couette flow
