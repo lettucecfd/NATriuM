@@ -44,10 +44,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             printHeaderLine();
         }
     }
-
-
 }
-
 
     template<size_t dim>
     void CompressibleTurbulenceStats<dim>::printHeaderLine() {
@@ -66,10 +63,8 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
     template<size_t dim>
     void CompressibleTurbulenceStats<dim>::writeToFile() {
         if ((is_MPI_rank_0()) and (not m_outputOff)) {
-
             *m_tableFile << this->m_solver.getIteration() << " ";
             *m_tableFile << this->m_solver.getTime() << " ";
-
             *m_tableFile << m_dilatation << " ";
             *m_tableFile << m_solenoidal<< " ";
             *m_tableFile << m_maxMach << " ";
@@ -78,7 +73,6 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             *m_tableFile << m_maxT << " ";
             *m_tableFile << m_avgT << " ";
             *m_tableFile << endl;
-
         } /* is mpi rank 0 */
     }
 
@@ -131,7 +125,6 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
         rho_gradients.resize(n_q_points);
         Ts.resize(n_q_points);
         T_gradients.resize(n_q_points);
-
 
         // loop
             typename dealii::DoFHandler<dim>::active_cell_iterator cell =
@@ -196,8 +189,6 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
 
             // communicate
             //for (size_t i = 0; i < m_nofObservables; i++) {
-
-
             m_dilatation = dealii::Utilities::MPI::sum(dilatation, MPI_COMM_WORLD);
             m_solenoidal = dealii::Utilities::MPI::sum(solenoidal, MPI_COMM_WORLD);
             m_maxMach = dealii::Utilities::MPI::max(globalMach,MPI_COMM_WORLD);
@@ -212,10 +203,7 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
             m_minT = *std::min_element(minT.begin(), minT.end());
             m_maxT = *std::max_element(maxT.begin(), maxT.end());
             m_avgT = std::reduce(avgT.begin(), avgT.end()) / avgT.size();
-
-        //}
         }
-
         template<size_t dim>
         void CompressibleTurbulenceStats<dim>::apply() {
             {
@@ -227,8 +215,6 @@ CompressibleTurbulenceStats<dim>::CompressibleTurbulenceStats(CompressibleCFDSol
                 }
             }
         }
-
-//    template class CompressibleTurbulenceStats<2> ;
+    template class CompressibleTurbulenceStats<2> ;
     template class CompressibleTurbulenceStats<3> ;
-
 }

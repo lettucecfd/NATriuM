@@ -19,8 +19,6 @@ class CompressibleCFDSolver;
 template<size_t dim>
 class CompressibleTurbulenceStats {
 
-
-
 private:
     CompressibleCFDSolver<dim> & m_solver;
     double m_dilatation;
@@ -37,39 +35,28 @@ private:
     boost::shared_ptr<std::fstream> m_tableFile;
     bool m_outputOff;
 
-
-
-std::string outfile(std::string dir) {
-    boost::filesystem::path out_dir(dir);
-    boost::filesystem::path out_file = out_dir / "compressible_turbulence_table.txt";
-    return out_file.string();
-}
-
-std::string legendfile(std::string dir) {
-    boost::filesystem::path out_dir(dir);
-    boost::filesystem::path out_file = out_dir / "compressible_turbulence_table.legend";
-    return out_file.string();
-}
-
+    std::string outfile(std::string dir) {
+        boost::filesystem::path out_dir(dir);
+        boost::filesystem::path out_file = out_dir / "compressible_turbulence_table.txt";
+        return out_file.string();
+    }
+    std::string legendfile(std::string dir) {
+        boost::filesystem::path out_dir(dir);
+        boost::filesystem::path out_file = out_dir / "compressible_turbulence_table.legend";
+        return out_file.string();
+    }
     void printHeaderLine();
-
     void writeToFile();
-
-
 
 public:
     /// constructor
     CompressibleTurbulenceStats(CompressibleCFDSolver<dim> & solver);
 
     /// destructor
-    virtual ~CompressibleTurbulenceStats() {
-
-    }
-
+    virtual ~CompressibleTurbulenceStats() {}
     void apply();
-
     void calculate();
-
 };
+
 }
 #endif //NATRIUM_COMPRESSIBLETURBULENCESTATS_H
