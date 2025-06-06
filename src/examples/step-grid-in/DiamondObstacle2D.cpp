@@ -116,7 +116,7 @@ boost::shared_ptr<BoundaryCollection<2> > DiamondObstacle2D::makeBoundaries() {
     boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<2>>(300, inflow));
 //    boundaries->addBoundary(boost::make_shared<SLEquilibriumBoundary<2>>(302, inflow)); // outflow
 	boundaries->addBoundary(boost::make_shared<DoNothingBoundary<2>>(302)); // outflow
-	boundaries->addBoundary(boost::make_shared<DoNothingBoundary<2>>(301)); // sponge
+//	boundaries->addBoundary(boost::make_shared<DoNothingBoundary<2>>(301)); // sponge
     boundaries->addBoundary(boost::make_shared<VelocityNeqBounceBack<2>>(303, profile));
 
 	// Get the triangulation object (which belongs to the parent class).
