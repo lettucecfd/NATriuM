@@ -241,103 +241,55 @@ mesh = meshio.read(tmp_msh)
 foil_points = [(x[i], y[i]) for i in range(len(x))]
 foil_polygon = shapely.geometry.Polygon(foil_points)
 
-# 5. Filter elements inside the circle
-verteces = mesh.cells_dict.get("vertex")
-lines = mesh.cells_dict.get("line")
-quads = mesh.cells_dict.get("quad")
+
+# Extract points and cells
 points = mesh.points
+cells = mesh.cells_dict
 
-def cell_center(cell):
-    coords = points[cell]
-    return np.mean(coords[:, :2], axis=0)  # 2D center (x, y)
+# Filter points with x >= 0 and y >= 0
+valid_indices = np.all(points[:, :2] >= 0, axis=1)
+valid_points = points[valid_indices]
 
-filtered_entities = []
-filtered_quads = []
-filtered_lines = []
-filtered_verts = []
+# Create a mapping from old point indices to new point indices
+old_to_new_indices = np.full(len(points), -1, dtype=int)
+old_to_new_indices[valid_indices] = np.arange(np.sum(valid_indices))
 
-cells = []
-cell_data = {}
-for cell_type, cell_nodes in mesh.cells_dict.items():
-    filtered_cells = []
-    for i, cell_node in enumerate(cell_nodes):
-        node_ids = cell_node
-        node_coords = mesh.points[node_ids]
-        p = shapely.geometry.Point(np.mean(node_coords[:, 0]), np.mean(node_coords[:, 1]))
-        if not foil_polygon.contains(p):# and domain_polygon.contains(p):
-            filtered_cells.append(cell_node)
-    cells.append((cell_type, np.array(filtered_cells)))
-    
-# Filter the points
-filtered_points = []
-point_ids = []
-for i, point in enumerate(mesh.points):
-    p = shapely.geometry.Point(point[0], point[1])
-    if not foil_polygon.contains(p):# and domain_polygon.contains(p):
-        filtered_points.append(point)
-        point_ids.append(i)
+# Filter cells based on the valid points
+filtered_cells = {}
+for cell_type, cell_array in cells.items():
+    valid_cells = np.all(np.isin(cell_array, np.nonzero(valid_indices)[0]), axis=1)
+    filtered_cells[cell_type] = old_to_new_indices[cell_array[valid_cells]]
 
-# # Update the cell data
-# for cell_type, cell_data_values in mesh.cell_data.items():
-#     cell_data[cell_type] = cell_data_values[np.array([i for i, cell in enumerate(mesh.cells_dict[cell_type]) if cell in [tuple(c) for c in cells[0][1]]])]
-# Update the cell data
-cell_data['gmsh:physical'] = mesh.cell_data['gmsh:physical'][0][np.array([i for i, cell in enumerate(mesh.cells_dict[list(mesh.cells_dict.keys())[0]]) if cell in [tuple(c) for c in cells[0][1]]])]
-cell_data['gmsh:geometrical'] = mesh.cell_data['gmsh:geometrical'][0][np.array([i for i, cell in enumerate(mesh.cells_dict[list(mesh.cells_dict.keys())[0]]) if cell in [tuple(c) for c in cells[0][1]]])]
+# Filter point_data
+filtered_point_data = {}
+for key, data in mesh.point_data.items():
+    filtered_point_data[key] = data[valid_indices]
 
+# Filter cell_data
+filtered_cell_data = {}
+for key, data_dict in mesh.cell_data.items():
+    if isinstance(data_dict, dict):
+        filtered_cell_data[key] = {}
+        for cell_type, data in data_dict.items():
+            if cell_type in filtered_cells:
+                valid_cells = np.all(np.isin(cells[cell_type], np.nonzero(valid_indices)[0]), axis=1)
+                filtered_cell_data[key][cell_type] = data[valid_cells]
+    elif isinstance(data_dict, list):
+        filtered_cell_data[key] = []
+        for data in data_dict:
+            filtered_data = {}
+            for cell_type, cell_data in data:
+                if cell_type in filtered_cells:
+                    valid_cells = np.all(np.isin(cells[cell_type], np.nonzero(valid_indices)[0]), axis=1)
+                    filtered_data[cell_type] = cell_data[valid_cells]
+            filtered_cell_data[key].append(filtered_data)
 
-# Write the filtered mesh
-meshio.write_points_cells(
-    "output.msh",
-    np.array(filtered_points),
-    cells,
-    cell_data=cell_data,
-)
+# Create a new mesh with the filtered points and cells
 filtered_mesh = meshio.Mesh(
-    np.array(filtered_points),
-    cells=cells,
-    cell_data=cell_data,
-    point_data=None,
+    points=valid_points,
+    cells=filtered_cells,
+    point_data=filtered_point_data,
+    cell_data=filtered_cell_data,
+    field_data=mesh.field_data
 )
-# 7. Save result
 filtered_mesh.write("output2.msh", file_format="gmsh22")
-
-# for vertex in verteces:
-#     coords = points[vertex]
-#     center = np.mean(coords[:, :2], axis=0)  # 2D center (x, y)
-#     p = shapely.geometry.Point(center[0], center[1])
-#     if not foil_polygon.contains(p):
-#         filtered_verts.append(meshio.CellBlock("vertex", vertex))
-#     else:
-#         mesh.delete_vertex(vertex, False)
-
-# for line in lines:
-#     coords = points[line]
-#     center = np.mean(coords[:, :2], axis=0)  # 2D center (x, y)
-#     p = shapely.geometry.Point(center[0], center[1])
-#     if not foil_polygon.contains(p):# and domain_polygon.contains(p):
-#         filtered_lines.append(meshio.CellBlock("line", line))
-#     # if min(points[cell][0]) <= xmin:
-
-# for quad in quads:
-#     coords = points[quad]
-#     center = np.mean(coords[:, :2], axis=0)  # 2D center (x, y)
-#     p = shapely.geometry.Point(center[0], center[1])
-#     if not foil_polygon.contains(p):
-#         filtered_quads.append(meshio.CellBlock("quad", quad))
-
-# filtered_entities = filtered_quads + filtered_lines + filtered_entities
-# # 6. overwrite mesh.cells
-# mesh.cells = filtered_entities
-# filtered_mesh = meshio.Mesh(
-#     points=points,
-#     cells=[("quad", np.array(filtered_quads))],#,("line", np.array(filtered_lines)),("vertex", np.array(filtered_verts))],
-#     cell_data=None,
-#     point_data=None,
-# )
-
-# 7. Save result
-filtered_mesh.write("clipped_cartesian_by_type.msh", file_format="gmsh22")
-# mesh.write("clipped_cartesian_all.msh", file_format="gmsh22")
-
-# Clean up temp
-#   os.remove(tmp_msh)
