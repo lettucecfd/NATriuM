@@ -1,4 +1,4 @@
-SetFactory("OpenCascade");
+SetFactory("OpenCASCADE");
 
 inlet_r      = 4;
 inlet_front  = 3;
@@ -24,6 +24,28 @@ progression_sponge_front = 1.05;
 progression_sponge_back = 1.05;
 n_sponge_front= 57;
 n_sponge_back= 50;
+
+
+// Create Cartesian grid of boxes using loops
+Point(500) = {-inlet_front, -(sponge_h + 0.1), 0, 1};
+Point(501) = {-inlet_front, sponge_h + 0.1, 0, 1};
+Point(502) = {outlet_c+inlet_c, sponge_h + 0.1, 0, 1};
+Point(503) = {outlet_c+inlet_c, -(sponge_h + 0.1), 0, 1};
+Line(500) = {500, 501};
+Line(501) = {501, 502};
+Line(502) = {502, 503};
+Line(503) = {503, 500};
+Transfinite Curve {500:503} = 100 Using Progression 1;
+Curve Loop(500) = {500:503};
+//Rectangle(10) = {-inlet_front+inlet_c, -inlet_r, 0, inlet_r-inlet_c+outlet_c, 2*inlet_r};
+Plane Surface(500) = {500};
+Transfinite Surface {500};
+
+Mesh.Algorithm = 2;
+Mesh.RecombinationAlgorithm = 3;
+Mesh.RecombineAll = 1;
+Mesh 2;
+
     
 Point(1) = {1.0, -1.66533e-17, 0, 1};
 //Point(2) = {0.999748, 3.65828e-05, 0, 1};
@@ -422,6 +444,7 @@ Line(196) = {196, 197};
 Line(197) = {197, 1};//198};
 //Line(198) = {198, 1};
 
+//Transfinite Curve {1:197} = n_foil Using Progression 1; // inlet foil points top
 
 /// INLET
 Point(200) = {0, inlet_r, 0, size_in_out};       // inlet top
@@ -431,18 +454,17 @@ Point(203) = {inlet_c, 0, 0};                          // inlet center
 Line(200)  = {100, 202};                               // inlet front line
 Line(201)  = {200, point_id_top};                      // inlet top line
 Line(202)  = {201, point_id_bot};                      // inlet bottom line
-Ellipse(203) = {200, 203, 203, 202};                   // inlet circle line top
-Ellipse(204) = {202, 203, 203, 201};                   // inlet circle line bottom
+Ellipse(203) = {200, 203, 200, 202};                   // inlet circle line top
+Ellipse(204) = {202, 203, 202, 201};                   // inlet circle line bottom
 Transfinite Curve {200, -201, -202} = n_around Using Progression progression_around;  // inlet lines points
 Transfinite Curve {203, 204} = n_inlet Using Progression 1;        // inlet circle points
-Transfinite Curve {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99} = n_foil Using Progression 1; // inlet foil points top
-Transfinite Curve {100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129} = n_foil Using Progression 1; // inlet foil points bottom
+//Transfinite Curve {100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129} = n_foil Using Progression 1; // inlet foil points bottom
 Curve Loop (200) = {-203, 201, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 200}; // inlet loop top
 Curve Loop (201) = {-200, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, -202, -204}; // inlet loop bottom
 Plane Surface(1) = {200};                                // inlet surface top
 Plane Surface(2) = {201};                                // inlet surface bottom
-Transfinite Surface {1} = {202, 100, 70, 200};           // inlet surface top
-Transfinite Surface {2} = {202, 201, 130, 100};          // inlet surface bottom
+//Transfinite Surface {1} = {202, 100, 70, 200};           // inlet surface top
+//Transfinite Surface {2} = {202, 201, 130, 100};          // inlet surface bottom
 
 /// OUTLET
 Point(210) = {outlet_c, outlet_h, 0, size_in_out};     // outlet top
@@ -451,16 +473,16 @@ Point(212) = {outlet_c, 0, 0, size_foil};              // outlet center
 Line(210)  = {1, 212};                                 // outlet center line
 Line(211)  = {210, 212};                               // outlet end top line
 Line(212)  = {211, 212};                               // outlet end bottom line
-Transfinite Curve {210, 213, 214} = n_outlet_center Using Progression 1;  // outlet center lines points
-Transfinite Curve {-211, -212} = n_around Using Progression progression_around;              // outlet end lines points
+//Transfinite Curve {210, 213, 214} = n_outlet_center Using Progression 1;  // outlet center lines points
+//Transfinite Curve {-211, -212} = n_around Using Progression progression_around;              // outlet end lines points
 
 /// CHANNEL
 Line(220)  = {200, 210};                               // channel top line
 Line(221)  = {201, 211};                               // channel bottom line
-Transfinite Curve {220} = n_channel Using Progression 1;      // channel top points
-Transfinite Curve {221} = n_channel Using Progression 1;      // channel bottom points
-Transfinite Curve {1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69} = n_foil Using Progression 1; // channel foil points top
-Transfinite Curve {130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197} = n_foil Using Progression 1; // channel foil points bottom
+//Transfinite Curve {220} = n_channel Using Progression 1;      // channel top points
+//Transfinite Curve {221} = n_channel Using Progression 1;      // channel bottom points
+//Transfinite Curve {1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69} = n_foil Using Progression 1; // channel foil points top
+//Transfinite Curve {130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197} = n_foil Using Progression 1; // channel foil points bottom
 //Transfinite Curve {1, 198} = n_foil-2 Using Progression 1;  // last segment is too short, otherwise
 
 /// OUTLET / CHANNEL SURFACES
@@ -468,8 +490,8 @@ Curve Loop(222) = {-201, 220, 211, -210, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
 Curve Loop(223) = {202, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 210, -212, -221}; // channel bottom
 Plane Surface(5) = {222};                               // channel top
 Plane Surface(6) = {223};                               // channel bottom
-Transfinite Surface {5} = {point_id_top, 212, 210, 200}; // channel surface top
-Transfinite Surface {6} = {point_id_bot, 201, 211, 212}; // channel surface bottom
+//Transfinite Surface {5} = {point_id_top, 212, 210, 200}; // channel surface top
+//Transfinite Surface {6} = {point_id_bot, 201, 211, 212}; // channel surface bottom
 
 /// SPONGE
 Point(230) = {outlet_c, sponge_h, 0, size_sponge};      // sponge top back
@@ -484,22 +506,32 @@ Line(233)  = {201, 231};                                // sponge bottom line
 //Line(235)  = {233, 231};                                // sponge front bottom line
 Curve Loop(230) = {232, -230, -220};               // sponge surface top
 Curve Loop(231) = {221, 231, -233};               // sponge surface top
-Transfinite Curve {232, 233} = n_sponge_front Using Progression progression_sponge_front;  // sponge front/diagonal lines
-Transfinite Curve {230, 231} = n_sponge_back Using Progression progression_sponge_back;  // sponge back lines
+//Transfinite Curve {232, 233} = n_sponge_front Using Progression progression_sponge_front;  // sponge front/diagonal lines
+//Transfinite Curve {230, 231} = n_sponge_back Using Progression progression_sponge_back;  // sponge back lines
 //Transfinite Curve {234, 235} = n_sponge_top Using Progression 1; // sponge top lines
 Plane Surface(7) = {230};                               // sponge top
 Plane Surface(8) = {231};                               // sponge bottom
 
-//Transfinite Surface{7};
+//Structured Surface{1,2,5,6,7,8};
 //Recombine Surface{1,2,5,6,7};
 
-/// MESH SIZES
-//Mesh.ElementOrder = 1;
-//Mesh.Algorithm = 6;
-//Mesh.SubdivisionAlgorithm = 1;  // 1 to subdivide as quadrangles
+
+//BooleanFragments{ Surface{500}; Delete; }{ Surface{1,2,5,6,7,8}; Delete; }
+//BooleanIntersection{ Surface{500}; Delete; }{ Surface{1,2,5,6,7,8}; Delete; }
+BooleanFragments{ Surface{1}; Delete; }{ Surface{500}; Delete; }
+
+
+
+Mesh.Algorithm = 2;
+Mesh.RecombinationAlgorithm = 3;
 Mesh.RecombineAll = 1;
-Mesh.SubdivisionAlgorithm = -1;
-Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
+Mesh 2;
+
+/// MESH SIZES
+//Mesh.SubdivisionAlgorithm = 1;  // 1 to subdivide as quadrangles
+
+//Mesh.SubdivisionAlgorithm = 0;
+//Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
 
 /// BOUNDARIES
 Physical Curve(300) = {233, 204, 203, 232};  // "Inlet", 
@@ -509,6 +541,8 @@ Physical Curve(302) = {231, 212, 211, 230};  // "Outlet",
 Physical Curve(303) = {1, 3:197};  // "BB_BC", 
 Physical Surface(236) = {1, 2, 6, 5, 7, 8};
 
-Mesh 2;
+//Mesh 1;
 
-Save "NACA0012_0deg.msh";
+RecombineMesh;
+
+Save "NACA0012_0deg_smooth.msh";

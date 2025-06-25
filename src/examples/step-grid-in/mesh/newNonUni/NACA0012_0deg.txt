@@ -494,12 +494,12 @@ Plane Surface(8) = {231};                               // sponge bottom
 //Recombine Surface{1,2,5,6,7};
 
 /// MESH SIZES
-//Mesh.ElementOrder = 1;
+Mesh.ElementOrder = 1;
 //Mesh.Algorithm = 6;
 //Mesh.SubdivisionAlgorithm = 1;  // 1 to subdivide as quadrangles
-Mesh.RecombineAll = 1;
-Mesh.SubdivisionAlgorithm = -1;
-Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
+//Mesh.RecombineAll = 1;
+//Mesh.SubdivisionAlgorithm = 0;
+//Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
 
 /// BOUNDARIES
 Physical Curve(300) = {233, 204, 203, 232};  // "Inlet", 
@@ -510,5 +510,8 @@ Physical Curve(303) = {1, 3:197};  // "BB_BC",
 Physical Surface(236) = {1, 2, 6, 5, 7, 8};
 
 Mesh 2;
+RecombineMesh;
+RecombineMesh;
+RecombineMesh;
 
 Save "NACA0012_0deg.msh";
