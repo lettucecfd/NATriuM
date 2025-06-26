@@ -3,6 +3,8 @@ import numpy as np
 import meshio
 import os
 import shapely
+from collections import defaultdict
+
 
 gmsh.initialize()
 gmsh.model.add("clipped_cartesian")
@@ -273,12 +275,72 @@ for cell_block_index, cell_block in enumerate(cells):
         new_cell_data[key].append(cell_data[key][cell_block_index][valid_cell_indices])
 
 # Convert back to meshio format
-filtered_mesh = meshio.Mesh(
+mesh = meshio.Mesh(
     points=points,  # Retain all points, or optionally remove unused ones
     cells=[meshio.CellBlock(cell_type, data) for cell_type, data in valid_cells],
     point_data=mesh.point_data,
     cell_data=new_cell_data,
     field_data=mesh.field_data,
 )
-# filtered_mesh.write("output.msh")
-filtered_mesh.write("output2.msh", file_format="gmsh22")
+mesh.write("output.msh", file_format="gmsh22")
+
+
+
+# Extract all elements
+points = mesh.points
+cells = mesh.cells
+
+edge_dict = defaultdict(list)
+
+def sorted_edge(a, b):
+    return tuple(sorted((a, b)))
+
+# Step 1: Build edge-to-cell map
+for block_idx, cell_block in enumerate(cells):
+    if cell_block.type not in ("triangle", "quad"):
+        continue
+    for elem_idx, elem in enumerate(cell_block.data):
+        if cell_block.type == "triangle":
+            edges = [sorted_edge(elem[0], elem[1]),
+                     sorted_edge(elem[1], elem[2]),
+                     sorted_edge(elem[2], elem[0])]
+        elif cell_block.type == "quad":
+            edges = [sorted_edge(elem[0], elem[1]),
+                     sorted_edge(elem[1], elem[2]),
+                     sorted_edge(elem[2], elem[3]),
+                     sorted_edge(elem[3], elem[0])]
+        for edge in edges:
+            edge_dict[edge].append((block_idx, elem_idx))
+
+# Step 2: Find free edges
+free_edges = [edge for edge, refs in edge_dict.items() if len(refs) == 1]
+
+# Step 3: Identify edges within fines area
+tolerance = 1e-6
+center_edges = []
+for edge in free_edges:
+    p0, p1 = points[edge[0]], points[edge[1]]
+    edge_center = 0.5 * (p0 + p1)
+    if (foil_bottom < edge_center[1] < foil_top) & (foil_front < edge_center[0] < foil_back):
+        center_edges.append(edge)
+
+# Step 4: Add new line elements for these edges
+line_cells = np.array(center_edges, dtype=int)
+new_cells = mesh.cells + [meshio.CellBlock("line", line_cells)]
+
+# Step 5: Add new physical tag
+new_physical_tag = 303  # BB BC
+new_cell_data = {}
+for key in mesh.cell_data:
+    new_cell_data[key] = mesh.cell_data[key] + [[new_physical_tag] * len(line_cells)]
+mesh.field_data["BB BC"] = np.array([new_physical_tag, 1])
+
+# Step 6: Save updated mesh
+mesh = meshio.Mesh(
+    points=points,
+    cells=new_cells,
+    point_data=mesh.point_data,
+    cell_data=new_cell_data,
+    field_data=mesh.field_data,
+)
+mesh.write("NACA0012_0deg.msh", file_format="gmsh22")
