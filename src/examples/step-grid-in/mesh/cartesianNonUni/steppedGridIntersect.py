@@ -5,6 +5,9 @@ import os
 import shapely
 from collections import defaultdict
 
+print(os.getcwd())
+
+path="/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/mesh/cartesianNonUni/"
 
 gmsh.initialize()
 gmsh.model.add("clipped_cartesian")
@@ -233,7 +236,7 @@ gmsh.model.mesh.generate(2)
 
 
 # 3. Export to MSH file (temporary)
-tmp_msh = "full_mesh.msh"
+tmp_msh = path+"full_mesh.msh"
 gmsh.write(tmp_msh)
 gmsh.finalize()
 
@@ -282,7 +285,7 @@ mesh = meshio.Mesh(
     cell_data=new_cell_data,
     field_data=mesh.field_data,
 )
-mesh.write("output.msh", file_format="gmsh22")
+mesh.write(path+"filtered.msh", file_format="gmsh22")
 
 
 
@@ -343,4 +346,9 @@ mesh = meshio.Mesh(
     cell_data=new_cell_data,
     field_data=mesh.field_data,
 )
-mesh.write("NACA0012_0deg.msh", file_format="gmsh22")
+mesh.write(path+"filteredWithPhysical.msh", file_format="gmsh22")
+
+## NOTE: This creates a binary .msh file. You may want to convert it to ASCII for dealII.
+# Do NOT convert to ASCII using `meshio ascii filteredWithPhysical.msh`, b/c this will create an ANSYS ASCII file
+# Instead, open `filteredWithPhysical.msh` in gmsh GUI and save to `NACA0012_0deg.msh` 
+# (should be ASCII by default)

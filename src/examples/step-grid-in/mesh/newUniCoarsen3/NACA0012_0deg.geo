@@ -1,3 +1,4 @@
+//FILE newUniCoarsen3 0deg
 //SetFactory("OpenCASCADE");
 
 inlet_r      = 4;
@@ -44,7 +45,7 @@ For i In {1: nx}
 EndFor
 Line(nx+1) = {nx+1, 1};
 
-Transfinite Curve {0:nx+1} = n_foil;
+Transfinite Curve {1:nx+1} = n_foil;
 
 
 /// INLET
@@ -55,13 +56,13 @@ Point(203) = {inlet_c, 0, 0};                          // inlet center
 Line(200)  = {point_id_front, 202};                               // inlet front line
 Line(201)  = {200, point_id_top};                      // inlet top line
 Line(202)  = {201, point_id_bot};                      // inlet bottom line
-Ellipse(203) = {200, 203, 203, 202};                   // inlet circle line top
-Ellipse(204) = {202, 203, 203, 201};                   // inlet circle line bottom
+Ellipse(203) = {200, 203, 200, 202};                   // inlet circle line top
+Ellipse(204) = {201, 203, 201, 202};                   // inlet circle line bottom
 Transfinite Curve {200, -201, -202} = n_around Using Progression progression_around;  // inlet lines points
 Transfinite Curve {203, 204} = n_inlet Using Progression 1;        // inlet circle points
 
 Curve Loop (200) = {-203, 201, point_id_top:point_id_front-1/n_coarsen, 200}; // inlet loop top
-Curve Loop (201) = {-200, point_id_front:point_id_bot-1, -202, -204}; // inlet loop bottom
+Curve Loop (201) = {-200, point_id_front:point_id_bot-1, -202, 204}; // inlet loop bottom
 Plane Surface(1) = {200};                                // inlet surface top
 Plane Surface(2) = {201};                                // inlet surface bottom
 Transfinite Surface {1} = {202, point_id_front, point_id_top, 200};           // inlet surface top
@@ -123,11 +124,11 @@ Mesh.RecombineAll = 1;
 Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
 
 /// BOUNDARIES
-Physical Curve(300) = {233, 204, 203, 232};  // "Inlet", 
-// TODO: only inlet in channel, not sponge Physical Curve(300) = {204, 203};  // "Inlet", 
+Physical Curve("Inlet", 300) = {233, 204, 203, 232};  // "Inlet", 
+// TODO: only inlet in channel, not sponge Physical Curve(300) = {204, 203};  // 
 //Physical Curve("Sponge", 301) = {234, 235};
-Physical Curve(302) = {231, 212, 211, 230};  // "Outlet", 
-Physical Curve(303) = {1:nx};  // "BB_BC", 
+Physical Curve("Outlet", 302) = {231, 212, 211, 230};  // 
+Physical Curve("BB_BC", 303) = {1:nx+1};  // 
 Physical Surface(236) = {1, 2, 6, 5, 7, 8};
 
 Mesh 2;

@@ -1,4 +1,4 @@
-//FILE newNonUni 0deg
+SetFactory("OpenCascade");
 
 inlet_r      = 4;
 inlet_front  = 3;
@@ -494,21 +494,24 @@ Plane Surface(8) = {231};                               // sponge bottom
 //Recombine Surface{1,2,5,6,7};
 
 /// MESH SIZES
-//Mesh.ElementOrder = 1;
+Mesh.ElementOrder = 1;
 //Mesh.Algorithm = 6;
 //Mesh.SubdivisionAlgorithm = 1;  // 1 to subdivide as quadrangles
-Mesh.RecombineAll = 1;
-Mesh.SubdivisionAlgorithm = -1;
-Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
+//Mesh.RecombineAll = 1;
+//Mesh.SubdivisionAlgorithm = 0;
+//Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
 
 /// BOUNDARIES
 Physical Curve(300) = {233, 204, 203, 232};  // "Inlet", 
-// TODO: only inlet in channel, not sponge Physical Curve(300) = {204, 203};  // "Inlet", 
 //Physical Curve("Sponge", 301) = {234, 235};
 Physical Curve(302) = {231, 212, 211, 230};  // "Outlet", 
 Physical Curve(303) = {1, 3:197};  // "BB_BC", 
 Physical Surface(236) = {1, 2, 6, 5, 7, 8};
 
 Mesh 2;
+RecombineMesh;
+RecombineMesh;
+RecombineMesh;
+RecombineMesh;
 
 Save "NACA0012_0deg.msh";

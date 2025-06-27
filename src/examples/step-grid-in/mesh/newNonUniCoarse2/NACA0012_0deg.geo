@@ -1,4 +1,4 @@
-//FILE newNonUniCoarsen4
+//FILE newNonUniCoarsen2
 //SetFactory("OpenCASCADE");
 
 inlet_r      = 4;
@@ -10,23 +10,24 @@ sponge_h     = inlet_r * 3;
 size_foil    = 0.1;
 size_in_out  = 1;
 size_sponge  = 1;
-n_coarsen    = 4;
-n_points     = 195/n_coarsen;
-point_id_top = 68/n_coarsen;
-point_id_bot = (n_points+1) - (point_id_top-2) - 1;
-point_id_front = 98/n_coarsen + 1;
-n_around     = 100/n_coarsen; // 50/n_coarsen for plot
+n_coarsen    = 2;
+n_points_orig = 197;
+n_points     = 99;
+point_id_top = 34;  // 68
+point_id_bot = 116;  // (n_points_orig+1) - (point_id_top-2) - 1;
+point_id_front = 100;
+n_around     = 50; // 50/n_coarsen for plot
 n_foil       = 2;
-n_inlet      = point_id_front - point_id_top + 1;
+n_inlet      = 51 - point_id_top;
 channel_l    = 1.5;
 channel_h    = inlet_r;
-n_channel    = 400/n_coarsen;  // 300/n_coarsen for plot
+n_channel    = 200;  // 300/n_coarsen for plot
 n_outlet_center = n_channel - point_id_top + 1;
 progression_around = 1.05;
-progression_sponge_front = 1.05;
-progression_sponge_back = 1.05;
-n_sponge_front= 27;
-n_sponge_back= 24;
+progression_sponge_front = 1.11;
+progression_sponge_back = 1.1;
+n_sponge_front= 29;
+n_sponge_back= 26;
 
 
 /// FOIL
@@ -36,22 +37,29 @@ y = {-1.66533e-17, 3.65828e-05, 0.000146223, 0.000328595, 0.00058316, 0.00090917
 nx = n_points;//#x[]/n_coarsen-1;
 
 
-For i In {1:(nx+1)/2}
+For i In {1:nx/2}
   Point(i) = {x[n_coarsen*(i-1)], y[n_coarsen*(i-1)], 0, 1};
 EndFor
-Point(nx/2) =  {x[99], y[99], 0, 1};
-For i In {(nx+1)/2:nx+2}
-  Point(i) = {x[n_coarsen*(i-1)], y[n_coarsen*(i-1)], 0, 1};
+Point(point_id_front) =  {x[98], y[98], 0, 1};
+For i In {101:99+nx/2}
+  Point(i) = {x[n_coarsen*(i-51)], y[n_coarsen*(i-51)], 0, 1};
 EndFor
 
 
-For i In {1: nx-1}
+
+For i In {1:48}
   Line(i) = {i, i+1};
 EndFor
-Line(nx) = {nx, 1};
-Line(nx+1) = {nx, 1};
+Line(49) = {49, point_id_front};
+For i In {50:nx-2}
+  iPoint = 100+ i-50;
+  Line(i) = {iPoint, iPoint+1};
+EndFor
+Line(nx-1) = {148, 1};
 
-Transfinite Curve {0:nx+1} = n_foil;
+
+
+Transfinite Curve {1:nx-1} = n_foil;
 
 
 /// INLET
@@ -67,8 +75,8 @@ Ellipse(204) = {202, 203, 203, 201};                   // inlet circle line bott
 Transfinite Curve {200, -201, -202} = n_around Using Progression progression_around;  // inlet lines points
 Transfinite Curve {203, 204} = n_inlet Using Progression 1;        // inlet circle points
 
-Curve Loop (200) = {-203, 201, point_id_top:point_id_front-1, 200}; // inlet loop top
-Curve Loop (201) = {-200, point_id_front:point_id_bot-1, -202, -204}; // inlet loop bottom
+Curve Loop (200) = {-203, 201, point_id_top:49, 200}; // inlet loop top
+Curve Loop (201) = {-200, 50:65, -202, -204}; // inlet loop bottom
 Plane Surface(1) = {200};                                // inlet surface top
 Plane Surface(2) = {201};                                // inlet surface bottom
 Transfinite Surface {1} = {202, point_id_front, point_id_top, 200};           // inlet surface top
@@ -95,7 +103,7 @@ Transfinite Curve {221} = n_channel Using Progression 1;      // channel bottom 
 
 /// OUTLET / CHANNEL SURFACES
 Curve Loop(222) = {-201, 220, 211, -210, 1:(point_id_top-1)}; // channel top
-Curve Loop(223) = {202, point_id_bot:nx+1, 210, -212, -221}; // channel bottom
+Curve Loop(223) = {202, 66:98, 210, -212, -221}; // channel bottom
 Plane Surface(5) = {222};                               // channel top
 Plane Surface(6) = {223};                               // channel bottom
 Transfinite Surface {5} = {200, point_id_top, 212, 210}; // channel surface top
@@ -123,10 +131,10 @@ Plane Surface(8) = {231};                               // sponge bottom
 
 /// MESH SIZES
 //Mesh.ElementOrder = 1;
-//Mesh.Algorithm = 6;
+Mesh.Algorithm = 6;
 //Mesh.SubdivisionAlgorithm = 1;  // 1 to subdivide as quadrangles
 Mesh.RecombineAll = 1;
-Mesh.SubdivisionAlgorithm = -1;
+//Mesh.SubdivisionAlgorithm = -1;
 Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
 
 /// BOUNDARIES
@@ -134,9 +142,9 @@ Physical Curve(300) = {233, 204, 203, 232};  // "Inlet",
 // TODO: only inlet in channel, not sponge Physical Curve(300) = {204, 203};  // "Inlet", 
 //Physical Curve("Sponge", 301) = {234, 235};
 Physical Curve(302) = {231, 212, 211, 230};  // "Outlet", 
-Physical Curve(303) = {1:nx+1};  // "BB_BC", 
+Physical Curve(303) = {1:nx-1};  // "BB_BC", 
 Physical Surface(236) = {1, 2, 6, 5, 7, 8};
 
 Mesh 2;
-
-//Save "NACA0012_0deg.msh";
+//RecombineMesh;
+Save "NACA0012_0deg.msh";
