@@ -13,14 +13,15 @@ gmsh.initialize()
 gmsh.model.add("clipped_cartesian")
 
 # Parameters
+debug = False
 Lx = 7
 Ly = 4
 xmin = -1.5
 ymin = -Ly/2
 xmax = xmin + Lx
 ymax = ymin + Ly
-dx_foil = 0.002
-dx_around = 0.05
+dx_foil = 0.01 if debug else 0.002
+dx_around = 0.1 if debug else 0.05
 prog_y = 1.05
 prog_x_in = 1.2
 prog_x_out = 1.03
@@ -215,13 +216,12 @@ gmsh.model.geo.synchronize()
 gmsh.model.geo.synchronize()
 
 inletPointIDs = [p[label] for label in ["x0_y0", "x0_y1", "x0_y2", "x0_y3"]]
-gmsh.model.addPhysicalGroup(0, inletPointIDs, tag=300, name="Inlet")
+gmsh.model.addPhysicalGroup(0, inletPointIDs, tag=400, name="Inlet")
 inletLineIDs = [l[label] for label in ["l20", "l13", "l4", "l1", "l5", "l8", "l9", "l16", "l23"]]
-print(inletLineIDs)
 gmsh.model.addPhysicalGroup(1, inletLineIDs, tag=300, name="Inlet")
 
 outletPointIDs = [p[label] for label in ["x3_y3", "x3_y2", "x3_y1", "x3_y0"]]
-gmsh.model.addPhysicalGroup(0, outletPointIDs, tag=302, name="Outlet")
+gmsh.model.addPhysicalGroup(0, outletPointIDs, tag=402, name="Outlet")
 outletLineIDs = [l[label] for label in ["l24", "l22", "l19"]]
 gmsh.model.addPhysicalGroup(1, outletLineIDs, tag=302, name="Outlet")
 
@@ -303,40 +303,38 @@ for block_idx, cell_block in enumerate(cells):
     if cell_block.type not in ("triangle", "quad"):
         continue
     for elem_idx, elem in enumerate(cell_block.data):
-        if cell_block.type == "triangle":
-            edges = [sorted_edge(elem[0], elem[1]),
-                     sorted_edge(elem[1], elem[2]),
-                     sorted_edge(elem[2], elem[0])]
-        elif cell_block.type == "quad":
-            edges = [sorted_edge(elem[0], elem[1]),
-                     sorted_edge(elem[1], elem[2]),
-                     sorted_edge(elem[2], elem[3]),
-                     sorted_edge(elem[3], elem[0])]
+        edges = [sorted_edge(elem[0], elem[1]),
+                 sorted_edge(elem[1], elem[2]),
+                 sorted_edge(elem[2], elem[3]),
+                 sorted_edge(elem[3], elem[0])]
         for edge in edges:
             edge_dict[edge].append((block_idx, elem_idx))
 
-# Step 2: Find free edges
+# Step 2: Find free edges (edges which appear only once in edge_dict)
 free_edges = [edge for edge, refs in edge_dict.items() if len(refs) == 1]
 
-# Step 3: Identify edges within fines area
-tolerance = 1e-6
+# Step 3: Identify edges within foil area
 center_edges = []
 for edge in free_edges:
     p0, p1 = points[edge[0]], points[edge[1]]
     edge_center = 0.5 * (p0 + p1)
     if (foil_bottom < edge_center[1] < foil_top) & (foil_front < edge_center[0] < foil_back):
         center_edges.append(edge)
+print(f"{len(center_edges)} center edges")
 
 # Step 4: Add new line elements for these edges
 line_cells = np.array(center_edges, dtype=int)
 new_cells = mesh.cells + [meshio.CellBlock("line", line_cells)]
 
 # Step 5: Add new physical tag
+# print(f"Old mesh.cell_data: {[tag + str(len(items[0])) for tag, items in zip(mesh.cell_data.keys(), mesh.cell_data.items())]}")
 new_physical_tag = 303  # BB BC
 new_cell_data = {}
 for key in mesh.cell_data:
     new_cell_data[key] = mesh.cell_data[key] + [[new_physical_tag] * len(line_cells)]
+# print(f"new_cell_data: {[tag + " containing " + str(sum([int(item) for item in items])) + " items" for tag, items in zip(new_cell_data.keys(), new_cell_data.items())]}")
 mesh.field_data["BB BC"] = np.array([new_physical_tag, 1])
+print(f"New mesh.field_data: {mesh.field_data}")
 
 # Step 6: Save updated mesh
 mesh = meshio.Mesh(
