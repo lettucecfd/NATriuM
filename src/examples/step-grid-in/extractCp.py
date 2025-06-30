@@ -78,8 +78,12 @@ dataFoil = np.array(dataFoil)
 results = np.concat((dataAxis, dataFoil))
 x1 = results[:,0]
 rhoLU = results[:,2]
-Cp = (rhoLU-.9)/(0.5*1.4*1.5*1.5)*2
+rho0 = 1
+Cp = (rhoLU-rho0)/(0.5*1.4*1.5*1.5)
 results = np.hstack((results,np.expand_dims(Cp,1)))
+results = results[np.argsort(results[:,0])]
 np.savetxt(jobid + "/Cp.txt", results)
-plt.scatter(results[:,0], results[:,3])
+plt.plot(results[:,0], results[:,3])
+plt.ylim((1.5,-0.1))
+plt.xlim((-1, 1.5))
 plt.show()
