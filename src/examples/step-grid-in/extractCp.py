@@ -7,20 +7,8 @@ from scipy.spatial import KDTree
 # Example Usage:
 jobid = "9682930"
 pvtu_file_path = jobid + "/output/t_0.200000.pvtu"  # Replace with the actual path to your .pvtu file
+# Dominik: pvtu_file_path = "NACA/dw872713-natrium/step-grid-in-old/Re10000-Ma1.5-reflevel0-time1695800330/t_0.200000.pvtu"  # Replace with the actual path to your .pvtu file
 
-"""
-Reads a .pvtu file and extracts values along the x-axis.
-
-If no points lie exactly on the x-axis (y=0, z=0), it finds the point with the lowest x-coordinate
-and uses that point's data for the x-axis value.
-
-Args:
-    pvtu_file (str): Path to the .pvtu file.
-
-Returns:
-    list: A list of values extracted along the x-axis.  Returns an empty list if the file
-            cannot be read or if no data is found.
-"""
 
 reader = vtk.vtkXMLPUnstructuredGridReader()
 reader.SetFileName(pvtu_file_path)
