@@ -31,7 +31,7 @@ for i in range(len(x)):
     point_id_top = i+2
   if abs(float(x[i])) < tol:
     point_id_front = i+1  # TODO: may need to adapt depending on resolution
-n_channel = int(res/100*400)
+n_channel = 500
 point_id_bot = int(2*point_id_front - point_id_top)
 aoa_pi = aoa_deg/360*np.pi
 x = np.array(x)
@@ -47,7 +47,7 @@ variables = f"""
 
 inlet_r      = 4;
 inlet_front  = 3;
-inlet_c      = 0.3;
+inlet_c      = 0;
 outlet_c     = 6;
 outlet_h     = inlet_r;
 sponge_h     = inlet_r * 3;
@@ -64,7 +64,7 @@ channel_l    = 1.5;
 channel_h    = inlet_r;
 n_channel    = {n_channel};  // number of points on top and bottom
 n_outlet_center = n_channel - point_id_top + 1;
-progression_around = 1;
+progression_around = 1.05;
 
 """
 domain = """
