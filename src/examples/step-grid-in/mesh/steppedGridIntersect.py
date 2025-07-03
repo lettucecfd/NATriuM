@@ -5,10 +5,14 @@ import os
 import shapely
 from collections import defaultdict
 
-print(os.getcwd())
+path="/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/mesh/"
+for folder in ["00_fullCartesian", "01_filteredCartesian", "02_filteredCartesianWithPhysical", "03_newCartesian"]:
+    if not os.path.exists(path+folder):
+        os.mkdir(path+folder)
 
-path="/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/mesh/cartesianNonUni/"
-
+##############################
+# CARTESIAN TRANSFINITE GRID #
+##############################
 gmsh.initialize()
 gmsh.model.add("clipped_cartesian")
 
@@ -29,12 +33,10 @@ prog_x_out = 1.03
 # foil coordinates
 x = [1.0, 0.999748, 0.998993, 0.997736, 0.995977, 0.993719, 0.990964, 0.987715, 0.983974, 0.979746, 0.975036, 0.969846, 0.964184, 0.958054, 0.951463, 0.944418, 0.936925, 0.928992, 0.920627, 0.911838, 0.902635, 0.893027, 0.883022, 0.872632, 0.861867, 0.850737, 0.839255, 0.82743, 0.815276, 0.802805, 0.790028, 0.77696, 0.763613, 0.75, 0.736136, 0.722033, 0.707708, 0.693173, 0.678443, 0.663534, 0.64846, 0.633237, 0.617879, 0.602403, 0.586824, 0.571157, 0.555419, 0.539625, 0.523791, 0.507933, 0.492067, 0.476209, 0.460375, 0.444581, 0.428843, 0.413176, 0.397597, 0.382121, 0.366763, 0.35154, 0.336466, 0.321557, 0.292292, 0.277967, 0.263864, 0.25, 0.236387, 0.22304, 0.209972, 0.197195, 0.184724, 0.17257, 0.160745, 0.149263, 0.138133, 0.127368, 0.116978, 0.106973, 0.0973649, 0.0881617, 0.0793732, 0.0710083, 0.0630753, 0.0555823, 0.0485367, 0.0419458, 0.035816, 0.0301537, 0.0249644, 0.0202535, 0.0160256, 0.0122851, 0.00903565, 0.00628056, 0.00402259, 0.00226404, 0.00100666, 0.000251729, 0.0, 0.000251729, 0.00100666, 0.00226404, 0.00402259, 0.00628056, 0.00903565, 0.0122851, 0.0160256, 0.0202535, 0.0249644, 0.0301537, 0.035816, 0.0419458, 0.0485367, 0.0555823, 0.0630753, 0.0710083, 0.0793732, 0.0881617, 0.0973649, 0.106973, 0.116978, 0.127368, 0.138133, 0.149263, 0.160745, 0.17257, 0.184724, 0.197195, 0.209972, 0.22304, 0.236387, 0.25, 0.263864, 0.277967, 0.306827, 0.321557, 0.336466, 0.35154, 0.366763, 0.382121, 0.397597, 0.413176, 0.428843, 0.444581, 0.460375, 0.476209, 0.492067, 0.507933, 0.523791, 0.539625, 0.555419, 0.571157, 0.586824, 0.602403, 0.617879, 0.633237, 0.64846, 0.663534, 0.678443, 0.693173, 0.707708, 0.722033, 0.736136, 0.75, 0.763613, 0.77696, 0.790028, 0.802805, 0.815276, 0.82743, 0.839255, 0.850737, 0.861867, 0.872632, 0.883022, 0.893027, 0.902635, 0.911838, 0.920627, 0.928992, 0.936925, 0.944418, 0.951463, 0.958054, 0.964184, 0.969846, 0.975036, 0.979746, 0.983974, 0.987715, 0.990964, 0.993719, 0.995977, 0.997736, 0.998993, 0.999748];
 y = [-1.66533e-17, 3.65828e-05, 0.000146223, 0.000328595, 0.00058316, 0.00090917, 0.00130567, 0.00177151, 0.00230534, 0.00290565, 0.00357073, 0.00429874, 0.00508767, 0.00593537, 0.00683958, 0.00779793, 0.00880793, 0.00986703, 0.0109726, 0.0121219, 0.0133121, 0.0145406, 0.0158044, 0.0171006, 0.0184265, 0.0197789, 0.0211551, 0.0225521, 0.0239669, 0.0253966, 0.0268382, 0.0282887, 0.0297451, 0.0312044, 0.0326635, 0.0341194, 0.035569, 0.0370091, 0.0384366, 0.0398482, 0.0412407, 0.0426107, 0.0439549, 0.0452698, 0.0465521, 0.0477982, 0.0490045, 0.0501675, 0.0512835, 0.0523489, 0.0533601, 0.0543134, 0.0552053, 0.0560321, 0.0567903, 0.0574765, 0.0580873, 0.0586193, 0.0590696, 0.059435, 0.0597128, 0.0599003, 0.0599951, 0.0598982, 0.0597028, 0.0594075, 0.0590111, 0.0585128, 0.0579121, 0.0572087, 0.0564028, 0.0554948, 0.0544854, 0.0533756, 0.0521668, 0.0508605, 0.0494586, 0.0479633, 0.0463768, 0.0447018, 0.042941, 0.0410972, 0.0391735, 0.037173, 0.0350989, 0.0329544, 0.0307426, 0.0284669, 0.0261302, 0.0237357, 0.0212862, 0.0187844, 0.0162331, 0.0136345, 0.0109908, 0.008304, 0.0055757, 0.00280732, 0.0, -0.00280732, -0.0055757, -0.008304, -0.0109908, -0.0136345, -0.0162331, -0.0187844, -0.0212862, -0.0237357, -0.0261302, -0.0284669, -0.0307426, -0.0329544, -0.0350989, -0.037173, -0.0391735, -0.0410972, -0.042941, -0.0447018, -0.0463768, -0.0479633, -0.0494586, -0.0508605, -0.0521668, -0.0533756, -0.0544854, -0.0554948, -0.0564028, -0.0572087, -0.0579121, -0.0585128, -0.0590111, -0.0594075, -0.0597028, -0.0598982, -0.0599951, -0.0599003, -0.0597128, -0.059435, -0.0590696, -0.0586193, -0.0580873, -0.0574765, -0.0567903, -0.0560321, -0.0552053, -0.0543134, -0.0533601, -0.0523489, -0.0512835, -0.0501675, -0.0490045, -0.0477982, -0.0465521, -0.0452698, -0.0439549, -0.0426107, -0.0412407, -0.0398482, -0.0384366, -0.0370091, -0.035569, -0.0341194, -0.0326635, -0.0312044, -0.0297451, -0.0282887, -0.0268382, -0.0253966, -0.0239669, -0.0225521, -0.0211551, -0.0197789, -0.0184265, -0.0171006, -0.0158044, -0.0145406, -0.0133121, -0.0121219, -0.0109726, -0.00986703, -0.00880793, -0.00779793, -0.00683958, -0.00593537, -0.00508767, -0.00429874, -0.00357073, -0.00290565, -0.00230534, -0.00177151, -0.00130567, -0.00090917, -0.00058316, -0.000328595, -0.000146223, -3.65828e-05];
-
 foil_top = max(y)+8*dx_foil
 foil_bottom = min(y)-8*dx_foil
 foil_front = min(x)-8*dx_foil
 foil_back = max(x)+8*dx_foil
-
 # Transfinite (structured) meshing
 nx_foil = int((max(x)-min(x)) / dx_foil) + 1
 ny_foil = int((max(y)-min(y)) / dx_foil) + 1
@@ -43,13 +45,10 @@ nx_out  = int((xmax-foil_back) / dx_around) + 1
 ny_around = int((Ly-(foil_top-foil_bottom)) / dx_around / 2) + 1
 
 
-# Geometry points (as in your original setup)
-p = {}  # map labels to point tags for reuse
-
+# POINTS
+p = {}
 def addp(label, x, y, dx, i):
     p[label] = gmsh.model.geo.addPoint(x, y, 0, meshSize=dx, tag=i)
-
-# Corner + intermediate points
 
 xcorners = [xmin, foil_front, foil_back, xmax]
 ycorners = [ymin, foil_bottom, foil_top, ymax]
@@ -62,60 +61,52 @@ for xi, ix in zip(xcorners, xlabels):
         addp(f"x{ix}_y{iy}", xi, yi, size[ix]*size[iy], i)
         i += 1
 
-l = {}
 
+# LINES
+l = {}
 # Lines (in counter-clockwise loops)
 def add_line(label, start, end, n, prog=False):
     l[label] = gmsh.model.geo.addLine(p[start], p[end])
-
 # bottom left
 add_line("l1", "x0_y0", "x0_y1", ny_around, True)
 add_line("l2", "x0_y1", "x1_y1", nx_in, True)
 add_line("l3", "x1_y1", "x1_y0", ny_around, True)
 add_line("l4", "x1_y0", "x0_y0", nx_in, True)
-
 # mid left
 add_line("l5", "x0_y1", "x0_y2", ny_foil)
 add_line("l6", "x0_y2", "x1_y2", nx_in, True)
 add_line("l7", "x1_y2", "x1_y1", ny_foil)
 # reuse l2 instead of add_line("l8", "x1_y1", "x0_y1", nx_in, True)
-
 # top left
 add_line("l8", "x0_y2", "x0_y3", ny_around, True)
 add_line("l9", "x0_y3", "x1_y3", nx_in, True)
 add_line("l10", "x1_y3", "x1_y2", ny_around, True)
 # reuse l6 instead of re-adding "x1_y2" to "x0_y2"
-
 # bottom mid
 # reuse l3: "x1_y0" to "x1_y1"
 add_line("l11", "x1_y1", "x2_y1", nx_foil)
 add_line("l12", "x2_y1", "x2_y0", ny_around, True)
 add_line("l13", "x2_y0", "x1_y0", nx_foil)
-
 # mid mid
 add_line("l14", "x1_y2", "x2_y2", nx_foil)
 add_line("l15", "x2_y2", "x2_y1", ny_foil)
 # reuse l11: "x1_y1" to "x2_y1"
 # reuse l7:  "x1_y2" to "x1_y1"
-
 # top mid
 add_line("l16", "x1_y3", "x2_y3", nx_foil)
 add_line("l17", "x2_y3", "x2_y2", ny_around, True)
 # reuse l10: "x1_y3" to "x1_y2"
 # reuse l14: "x1_y2" to "x2_y2"
-
 # bottom right
 add_line("l18", "x2_y1", "x3_y1", nx_out, True)
 add_line("l19", "x3_y1", "x3_y0", ny_around, True)
 add_line("l20", "x3_y0", "x2_y0", nx_out, True)
 # reuse l12: "x2_y1" to "x2_y0"
-
 # mid right
 add_line("l21", "x2_y2", "x3_y2", nx_out, True)
 add_line("l22", "x3_y2", "x3_y1", ny_foil)
 # reuse l18: "x2_y1" to "x3_y1"
 # reuse l15: "x2_y2" to "x2_y1"
-
 # top right
 add_line("l23", "x2_y3", "x3_y3", nx_out, True)
 add_line("l24", "x3_y3", "x3_y2", ny_around, True)
@@ -123,7 +114,7 @@ add_line("l24", "x3_y3", "x3_y2", ny_around, True)
 # reuse l17: "x2_y3" to "x2_y2"
 
 
-
+# SURFACES
 s = {}
 # Now define 9 transfinite 4-line surfaces
 def make_rect(label, linelabels):
@@ -132,9 +123,15 @@ def make_rect(label, linelabels):
     s[label] = gmsh.model.geo.addPlaneSurface([loop])
 
 # left column
-make_rect("s1", ["l1", "l2", "l3", "l4"])
-make_rect("s2", ["l5", "l6", "l7", "l2"])
-make_rect("s3", ["l8", "l9", "l10", "l6"])
+# make_rect("s1", ["l1", "l2", "l3", "l4"])
+loop = gmsh.model.geo.addCurveLoop([-l["l1"], -l["l2"], -l["l3"], -l["l4"]])
+s["s1"] = gmsh.model.geo.addPlaneSurface([loop])
+# make_rect("s2", ["l5", "l6", "l7", "l2"])
+loop = gmsh.model.geo.addCurveLoop([-l["l5"], -l["l6"], -l["l7"], l["l2"]])
+s["s2"] = gmsh.model.geo.addPlaneSurface([loop])
+# make_rect("s3", ["l8", "l9", "l10", "l6"])
+loop = gmsh.model.geo.addCurveLoop([-l["l8"], -l["l9"], -l["l10"], l["l6"]])
+s["s3"] = gmsh.model.geo.addPlaneSurface([loop])
 # middle column
 make_rect("s4", ["l3", "l11", "l12", "l13"])
 make_rect("s5", ["l7", "l14", "l15", "l11"])
@@ -149,7 +146,7 @@ make_rect("s9", ["l17", "l23", "l24", "l21"])
 # Bot: s1 s4 s7
 
 
-
+# TRANSFINITE CURVES
 gmsh.model.geo.synchronize()
 def makeTransfiniteCurve(label, start, end, n, prog=0):
     if prog != 0:
@@ -162,57 +159,46 @@ makeTransfiniteCurve("l1", "x0_y0", "x0_y1", ny_around, prog_y)
 makeTransfiniteCurve("l2", "x0_y1", "x1_y1", nx_in, prog_x_in)
 makeTransfiniteCurve("l3", "x1_y1", "x1_y0", ny_around, -prog_y)
 makeTransfiniteCurve("l4", "x1_y0", "x0_y0", nx_in, -prog_x_in)
-
 # mid left
 makeTransfiniteCurve("l5", "x0_y1", "x0_y2", ny_foil)
 makeTransfiniteCurve("l6", "x0_y2", "x1_y2", nx_in, prog_x_in)
 makeTransfiniteCurve("l7", "x1_y2", "x1_y1", ny_foil)
-
 # top left
 makeTransfiniteCurve("l8", "x0_y2", "x0_y3", ny_around, -prog_y)
 makeTransfiniteCurve("l9", "x0_y3", "x1_y3", nx_in, prog_x_in)
 makeTransfiniteCurve("l10", "x1_y3", "x1_y2", ny_around, prog_y)
-
 # bottom mid
 makeTransfiniteCurve("l11", "x1_y1", "x2_y1", nx_foil)
 makeTransfiniteCurve("l12", "x2_y1", "x2_y0", ny_around, -prog_y)
 makeTransfiniteCurve("l13", "x2_y0", "x1_y0", nx_foil)
-
 # mid mid
 makeTransfiniteCurve("l14", "x1_y2", "x2_y2", nx_foil)
 makeTransfiniteCurve("l15", "x2_y2", "x2_y1", ny_foil)
-
 # top mid
 makeTransfiniteCurve("l16", "x1_y3", "x2_y3", nx_foil)
 makeTransfiniteCurve("l17", "x2_y3", "x2_y2", ny_around, prog_y)
-
 # bottom right
 makeTransfiniteCurve("l18", "x2_y1", "x3_y1", nx_out, -prog_x_out)
 makeTransfiniteCurve("l19", "x3_y1", "x3_y0", ny_around, -prog_y)
 makeTransfiniteCurve("l20", "x3_y0", "x2_y0", nx_out, prog_x_out)
-
 # mid right
 makeTransfiniteCurve("l21", "x2_y2", "x3_y2", nx_out, -prog_x_out)
 makeTransfiniteCurve("l22", "x3_y2", "x3_y1", ny_foil)
-
 # top right
 makeTransfiniteCurve("l23", "x2_y3", "x3_y3", nx_out, -prog_x_out)
 makeTransfiniteCurve("l24", "x3_y3", "x3_y2", ny_around, prog_y)
 
 
-
+# TRANSFINITE SURFACES
 gmsh.model.geo.synchronize()
 for label in s.keys():
     # gmsh.model.mesh.setTransfiniteSurface(s[label], n)
     gmsh.model.geo.mesh.setTransfiniteSurface(s[label])
+    gmsh.model.geo.mesh.setRecombine(2, s[label])
 
-
-
-gmsh.model.geo.synchronize()
-
-
-
-# 2. Generate mesh
+### 
+# PHYSICAL GROUPS
+###
 gmsh.model.geo.synchronize()
 
 inletPointIDs = [p[label] for label in ["x0_y0", "x0_y1", "x0_y2", "x0_y3"]]
@@ -227,23 +213,80 @@ gmsh.model.addPhysicalGroup(1, outletLineIDs, tag=302, name="Outlet")
 
 gmsh.model.addPhysicalGroup(2, [s[label] for label in s.keys()], tag=500)
 
-
-
-gmsh.model.geo.synchronize()
-[gmsh.model.mesh.setRecombine(2, s[label]) for label in s.keys()]
+# CREATE MESH
+gmsh.option.setNumber("Mesh.Optimize", 1)
+gmsh.option.setNumber("Mesh.OptimizeNetgen", 1)
 gmsh.model.mesh.generate(2)
 
-
-
-# 3. Export to MSH file (temporary)
-tmp_msh = path+"full_mesh.msh"
+# Export to MSH file
+tmp_msh = path+"00_fullCartesian/NACA0012_0deg.msh"
 gmsh.write(tmp_msh)
 gmsh.finalize()
 
 
 
-# 4. Load with meshio
+def area(pts):
+    # Compute signed area for 2D quad (or signed volume if 3D)
+    # Here, use simple cross product for 2D signed area
+    return 0.5 * ((pts[0][0]*pts[1][1] + pts[1][0]*pts[2][1] +
+                   pts[2][0]*pts[3][1] + pts[3][0]*pts[0][1])
+                  - (pts[1][0]*pts[0][1] + pts[2][0]*pts[1][1] +
+                     pts[3][0]*pts[2][1] + pts[0][0]*pts[3][1]))
+# #############################################
+# # RELAOD TO MESHIO TO REMOVE NEGATIVE CELLS #
+# #############################################
+# mesh = meshio.read(tmp_msh)
+# cells = mesh.cells_dict["quad"]
+# points = mesh.points
+# # check element volumes
+# negativeVolumes = []
+# negativeCoords = []
+# negativeIds = []
+# positiveCells = []
+# volumes = []
+# for cell in cells:
+#     pts = points[cell]
+#     a = area(pts)
+#     volumes.append(a)
+#     if a < 0:
+#         negativeVolumes.append(a)
+#         negativeCoords.append(pts[0][:2])
+#         negativeIds.append(cell)
+#     else:
+#         positiveCells.append(cell)
+# negativeVolumes = np.array(negativeVolumes)
+# negativeCoords = np.array(negativeCoords)
+# negativeIds = np.array(negativeIds)
+# volumes = np.array(volumes)
+# print(f"{len(negativeVolumes)} negative cells out of {len(volumes)} found -> {len(volumes)-len(negativeVolumes)} positive cells.")
+# print(f"Cell coordinates: {negativeCoords}")
+# print(f"Cell edge point ids: {negativeIds}")
+# print(volumes[volumes<0], volumes[volumes<0].shape)
+
+# flipped_cells = np.array([
+#     cell if volume > 0 else cell[[0, 3, 2, 1]]
+#     for cell, volume in zip(cells, volumes)
+# ])
+# # flipped_cells = cells[volumes > 0]
+# print(f"flipped_cells = {flipped_cells}", flipped_cells.shape)
+
+# mesh.cells_dict["quad"] = flipped_cells  # cells[volumes>0]
+# meshio.write(tmp_msh, mesh, file_format="gmsh22")
+
+
+#####################################################
+# RELAOD TO MESHIO TO REMOVE CELLS WITHIN FOIL AREA #
+#####################################################
 mesh = meshio.read(tmp_msh)
+cells = mesh.cells_dict["quad"]
+points = mesh.points
+# check element volumes
+negativeVolumes = 0
+for cell in cells:
+    pts = points[cell]
+    if area(pts) < 0:
+        negativeVolumes += 1
+print(f"{negativeVolumes} negative cells remained.")
 
 foil_points = [(x[i], y[i]) for i in range(len(x))]
 foil_polygon = shapely.geometry.Polygon(foil_points)
@@ -252,7 +295,7 @@ points = mesh.points
 cells = mesh.cells
 cell_data = mesh.cell_data
 
-# Determine valid point indices (you may still keep all points if needed)
+# Determine valid point indices
 valid_cells = []
 new_cell_data = {}
 
@@ -285,7 +328,7 @@ mesh = meshio.Mesh(
     cell_data=new_cell_data,
     field_data=mesh.field_data,
 )
-mesh.write(path+"filtered.msh", file_format="gmsh22")
+mesh.write(path+"01_filteredCartesian/NACA0012_0deg.msh", file_format="gmsh22")
 
 
 
@@ -344,9 +387,9 @@ mesh = meshio.Mesh(
     cell_data=new_cell_data,
     field_data=mesh.field_data,
 )
-mesh.write(path+"filteredWithPhysical.msh", file_format="gmsh22")
+mesh.write(path+"02_filteredCartesianWithPhysical/NACA0012_0deg.msh", file_format="gmsh22")
 
 ## NOTE: This creates a binary .msh file. You may want to convert it to ASCII for dealII.
 # Do NOT convert to ASCII using `meshio ascii filteredWithPhysical.msh`, b/c this will create an ANSYS ASCII file
-# Instead, open `filteredWithPhysical.msh` in gmsh GUI and save to `NACA0012_0deg.msh` 
+# Instead, open `filteredWithPhysical.msh` in gmsh GUI and save to `03_newCartesian/NACA0012_0deg.msh` 
 # (should be ASCII by default)
