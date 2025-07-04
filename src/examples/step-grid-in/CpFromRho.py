@@ -20,7 +20,6 @@ Ma = 1.5#*np.sqrt(1.4)
 dx = 0.000508780
 dt = 9.21616e-05
 L = 1
-a = 343
 Tref = 1
 RLU = 1
 
@@ -32,8 +31,6 @@ for jobid, vtupath in zip(jobids, vtupaths):
     results = np.loadtxt(imgpath + "rhoUxUy_" + jobid + ".txt")
 
     rhoLU = results[:,2]
-    pLU = rhoLU*cs*cs
-    p0LU = rho0LU*cs*cs
     uxLU = results[:,3]
     uyLU = results[:,4]
     TLU = results[:,5]
@@ -45,31 +42,10 @@ for jobid, vtupath in zip(jobids, vtupaths):
     ax.plot(results[:,0], MaLocal)
     fig.savefig(imgpath + "MaLocal_" + jobid + ".png")
 
-    # V1
-    CpLU = (pLU-p0LU)/(0.5*gamma*p0LU*Ma*Ma)
-
-    # V2
-    pPU = pLU / ((dx*dx)/(L*L)) * (cs*cs)/(a*a) * rhoLU/rho0LU
-    p0PU = p0LU / ((dx*dx)/(L*L)) * (cs*cs)/(a*a) * rho0LU/rho0LU
-    CpPU = (pPU-p0PU)/(0.5*gamma*p0PU*Ma*Ma)
-
-    # V3
-    pPU = pLU * (dx*dx)/(dt*dt) / rho0LU
-    p0PU = p0LU * (dx*dx)/(dt*dt) / rho0LU
-    CpPU = (pPU-p0PU)/(0.5*gamma*p0PU*Ma*Ma)
-
-    # V4
-    CrhoLU = (rhoLU-rho0LU)/(0.5*gamma*rho0LU*Ma*Ma)
-
-    # V5
-    CpLocalLU = (rhoLU-rho0LU)/(0.5*gamma*rho0LU*MaLocal*MaLocal)
-
-    # V6
     pLU = rhoLU*RLU*TLU
     p0LU = rho0LU*RLU*Tref
-    CpTLU = (pLU-p0LU)/(0.5*gamma*p0LU*Ma*Ma)
+    Cp = (pLU-p0LU)/(0.5*gamma*p0LU*Ma*Ma)
 
-    Cp = CpPU
     results = np.hstack((results,np.expand_dims(Cp,1)))
     np.savetxt(imgpath + "Cp_" + jobid + ".txt", results)
 
@@ -80,12 +56,7 @@ for jobid, vtupath in zip(jobids, vtupaths):
     ax.set_xlim(-1,1.5)
     ax.set_xlabel('x/C')
     ax.set_ylabel(r'$C_P$')
-    # ax.plot(results[:,0], CpLU,     label='SLLBM LU')
-    # ax.plot(results[:,0], CpPU,     label='SLLBM PU')
-    # ax.plot(results[:,0], CrhoLU,   label='SLLBM CpRhoLU')
-    # ax.plot(results[:,0], CpLocalLU,label='SLLBM Cp from MaLocal')
-    # ax.plot(results[:,0], CpTLU,    label='SLLBM CpTLU')
-    ax.plot(results[:,0], CpTLU,    color='black',    label='SLLBM')
+    ax.plot(results[:,0], Cp,    color='black',    label='SLLBM')
     ax.legend(frameon=False, loc='lower right')
     fig.savefig(imgpath + "Cp_" + jobid + ".png")
 
