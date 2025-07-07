@@ -78,7 +78,7 @@ for jobid, jobpath, vtupath, imgpath in zip(jobids, jobpaths, vtupaths, imgpaths
             if jobid == "dw872713":
                 xi += 0.5
             outletCentreI = (y2-y1)/(x2-x1)*(xi-x1)+y1
-            if ((-1 <= xi < 0) and (abs(yi) < 1e-8)) or ((1 < xi <= 1.5) and (abs(yi-outletCentreI) < 1e-4)):# or 0 < x < 1:
+            if ((-1 <= xi < 0) and (abs(yi) < 1e-8)) or ((1 < xi <= 1.5) and (abs(yi-outletCentreI) < 1e-5)):# or 0 < x < 1:
                 xListAxis.append(xi)
                 yListAxis.append(yi)
                 rhoListAxis.append(point_rho.GetValue(i))

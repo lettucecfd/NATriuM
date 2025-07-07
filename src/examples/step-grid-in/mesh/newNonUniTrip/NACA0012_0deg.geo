@@ -69,7 +69,7 @@ Point(212) = {outlet_c, 0, 0, size_foil};              // outlet center
 Line(210)  = {1, 212};                                 // outlet center line
 Line(211)  = {210, 212};                               // outlet end top line
 Line(212)  = {211, 212};                               // outlet end bottom line
-Transfinite Curve {210, 213, 214} = n_outlet_center Using Progression 1;    // outlet center lines points
+Transfinite Curve {210} = n_outlet_center Using Progression 1;    // outlet center lines points
 Transfinite Curve {-212} = n_around-2 Using Progression progression_around; // outlet end lines points bottom
 Transfinite Curve {-211} = n_around+1 Using Progression progression_around;   // outlet end lines points top
 
