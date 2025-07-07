@@ -14,13 +14,13 @@ n_points     = 286;  // 197/n_coarsen;
 point_id_top = 105;  // 76/n_coarsen;
 point_id_bot = 185;  // (n_points+1) - (point_id_top-2);
 point_id_front = 145;  // 99/n_coarsen + 1;
-n_around     = 70;  // 100/n_coarsen; // 50/n_coarsen for plot
+n_around     = 71;  // 100/n_coarsen; // 50/n_coarsen for plot
 n_foil       = 2;
 n_inlet      = point_id_front - point_id_top + 1;  // (n_coarsen+1)/2;  // +1 @1; +2 @3
 channel_l    = 1.5;
 channel_h    = inlet_r;
 n_channel    = 80;  // 400/n_coarsen;  // 300/n_coarsen for plot
-n_outlet_center = 600 - point_id_top + 1;  // (n_coarsen+1)/2;  // +1 @1; +2 @3
+n_outlet_center = 901 - point_id_top + 1;  // (n_coarsen+1)/2;  // +1 @1; +2 @3
 progression_around = 1.05;
 progression_sponge = 1.05;
 n_sponge_front= 30;
@@ -33,7 +33,7 @@ y={-0.0, 0.001444, 0.001444, 0.00287, 0.00287, 0.004277, 0.004277, 0.005667, 0.0
 nx = n_points;//#x[]/n_coarsen-1;
 
 For i In {0: nx}
-  Point(i+1) = {x[n_coarsen*i], y[n_coarsen*i], 0, 0.1};  // 0.1 not necessary!
+  Point(i+1) = {x[n_coarsen*i], y[n_coarsen*i], 0, 0.004};
 EndFor
 
 For i In {1: nx}
@@ -41,7 +41,18 @@ For i In {1: nx}
 EndFor
 Line(nx+1) = {nx+1, 1};
 
-Transfinite Curve {1:nx+1} = n_foil Using Progression 1;  // `Using Progression 1` not necessary!
+For i In {1:57:2}
+  Transfinite Curve {i} = 2 Using Progression 1;
+EndFor
+For i In {115:137:2}
+  Transfinite Curve {i} = 2 Using Progression 1;
+EndFor
+For i In {153:173:2}
+  Transfinite Curve {i} = 2 Using Progression 1;
+EndFor
+For i In {231:285:2}
+  Transfinite Curve {i} = 2 Using Progression 1;
+EndFor
 
 
 /// INLET
@@ -54,11 +65,12 @@ Line(501)  = {400, point_id_top};                      // inlet top line
 Line(502)  = {401, point_id_bot};                      // inlet bottom line
 Ellipse(503) = {400, 403, 400, 402};                   // inlet circle line top
 Ellipse(504) = {401, 403, 401, 402};                   // inlet circle line bottom
-Transfinite Curve {500, -501, -502} = n_around Using Progression progression_around;  // inlet lines points
+Transfinite Curve {500, -501} = n_around Using Progression progression_around;  // inlet lines points
+Transfinite Curve {-502} = n_around-1 Using Progression progression_around;  // inlet lines points
 Transfinite Curve {503, 504} = n_inlet Using Progression 1;        // inlet circle points
 
-Curve Loop (600) = {-503, 501, point_id_top:(point_id_front-1), 500}; // inlet loop top
-Curve Loop (601) = {-500, point_id_front:(point_id_bot-1), -502, 504}; // inlet loop bottom
+Curve Loop (600) = {-503, 501, point_id_top:(point_id_front-1), 500};   // inlet loop top
+Curve Loop (601) = {-500, point_id_front:(point_id_bot-1), -502, 504};  // inlet loop bottom
 Plane Surface(1) = {600};                                // inlet surface top
 Plane Surface(2) = {601};                                // inlet surface bottom
 //Transfinite Surface {1} = {402, point_id_front, point_id_top, 400};           // inlet surface top
@@ -72,25 +84,25 @@ Point(412) = {outlet_c, 0, 0, size_foil};              // outlet center
 Line(510)  = {1, 412};                                 // outlet center line
 Line(511)  = {410, 412};                               // outlet end top line
 Line(512)  = {411, 412};                               // outlet end bottom line
-Transfinite Curve {510} = n_outlet_center Using Progression 1;  // outlet center lines points
-Transfinite Curve {-511} = n_around Using Progression progression_around;  // outlet end lines points top
-Transfinite Curve {-512} = n_around+1 Using Progression progression_around;  // outlet end lines points bottom
+Transfinite Curve {510} = n_outlet_center Using Progression 1;                // outlet center lines points
+Transfinite Curve {-511} = n_around+0 Using Progression progression_around;   // outlet end lines points top
+Transfinite Curve {-512} = n_around+0 Using Progression progression_around;   // outlet end lines points bottom
 
 
 /// CHANNEL
-Line(520)  = {400, 410};                               // channel top line
-Line(521)  = {401, 411};                               // channel bottom line
-Transfinite Curve {520} = n_channel Using Progression 1;      // channel top points
-Transfinite Curve {521} = n_channel Using Progression 1;      // channel bottom points
+Line(520)  = {400, 410};                                  // channel top line
+Line(521)  = {401, 411};                                  // channel bottom line
+Transfinite Curve {520} = n_channel Using Progression 1;  // channel top points
+Transfinite Curve {521} = n_channel Using Progression 1;  // channel bottom points
 
 
 /// OUTLET / CHANNEL SURFACES
-Curve Loop(622) = {-501, 520, 511, -510, 1:(point_id_top-1)}; // channel top
-Curve Loop(623) = {502, point_id_bot:(nx+1), 510, -512, -521}; // channel bottom
-Plane Surface(5) = {622};                               // channel top
-Plane Surface(6) = {623};                               // channel bottom
-//Transfinite Surface {5} = {400, point_id_top, 412, 410}; // channel surface top
-//Transfinite Surface {6} = {point_id_bot, 401, 411, 412}; // channel surface bottom
+Curve Loop(622) = {-501, 520, 511, -510, 1:(point_id_top-1)};   // channel top
+Curve Loop(623) = {502, point_id_bot:(nx+1), 510, -512, -521};  // channel bottom
+Plane Surface(5) = {622};                                       // channel top
+Plane Surface(6) = {623};                                       // channel bottom
+//Transfinite Surface {5} = {400, point_id_top, 412, 410};      // channel surface top
+//Transfinite Surface {6} = {point_id_bot, 401, 411, 412};      // channel surface bottom
 
 
 /// SPONGE
@@ -100,10 +112,10 @@ Line(530)  = {410, 430};                                // sponge outlet top lin
 Line(531)  = {411, 431};                                // sponge outlet bottom line
 Line(532)  = {400, 430};                                // sponge top line
 Line(533)  = {401, 431};                                // sponge bottom line
-Curve Loop(630) = {532, -530, -520};               // sponge surface top
-Curve Loop(631) = {521, 531, -533};               // sponge surface bottom
-Transfinite Curve {532, 533} = n_sponge_front Using Progression progression_sponge;  // sponge front/diagonal lines
-Transfinite Curve {530, 531} = n_sponge_back Using Progression progression_sponge;  // sponge back lines
+Curve Loop(630) = {532, -530, -520};                    // sponge surface top
+Curve Loop(631) = {521, 531, -533};                     // sponge surface bottom
+Transfinite Curve {532, 533} = n_sponge_front Using Progression progression_sponge;   // sponge front/diagonal lines
+Transfinite Curve {530, 531} = n_sponge_back Using Progression progression_sponge;    // sponge back lines
 Plane Surface(7) = {630};                               // sponge top
 Plane Surface(8) = {631};                               // sponge bottom
 
