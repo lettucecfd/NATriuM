@@ -14,20 +14,21 @@ point_id_top = 2;
 point_id_back = 3;
 point_id_bot = 4;
 n_around     = 100;  // 100/n_coarsen; // 50/n_coarsen for plot
-n_sphere       = 20;
+n_sphere     = 40;
 n_inlet      = n_sphere;  // (n_coarsen+1)/2;  // +1 @1; +2 @3
 channel_l    = 1.5;
 channel_h    = inlet_r;
-n_channel    = 200;
-n_outlet_center = n_channel - n_around + 81;
+n_channel    = 98;
+n_outlet_center = n_channel - n_around + 61;
 progression_around = 1.05;
-progression_sponge = 1.05;
-n_sponge_front= 57;
-n_sponge_back= 50;
+progression_sponge = 1.06;
+progression_back = 1.02;
+n_sponge_front= 27;
+n_sponge_back= 26;
 
 
 /// SPHERE
-r = 0.2;
+r = 0.1;
 Point(1) = {0, 0, 0, size_foil};  // front
 Point(2) = {r, r, 0, size_foil};  // top
 Point(3) = {2*r, 0, 0, size_foil};  // back
@@ -69,7 +70,7 @@ Point(212) = {outlet_c, 0, 0, size_foil};              // outlet center
 Line(210)  = {point_id_back, 212};                                 // outlet center line
 Line(211)  = {210, 212};                               // outlet end top line
 Line(212)  = {211, 212};                               // outlet end bottom line
-Transfinite Curve {210} = n_outlet_center Using Progression 1;  // outlet center lines points
+Transfinite Curve {210} = n_outlet_center Using Progression progression_back;  // outlet center lines points
 Transfinite Curve {-211, -212} = n_around Using Progression progression_around;              // outlet end lines points
 
 
