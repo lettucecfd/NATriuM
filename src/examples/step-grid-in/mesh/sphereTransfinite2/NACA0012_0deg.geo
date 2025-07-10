@@ -13,17 +13,20 @@ point_id_front = 1;
 point_id_top = 2;
 point_id_back = 3;
 point_id_bot = 4;
-n_around     = 100;
+n_around_in  = 60;
+n_around_out = 50;
+n_around     = n_around_in + n_around_out - 1;
 n_sphere_q   = 20;
 n_sphere     = 2*n_sphere_q;
+n_sphere_b   = n_sphere;
 n_inlet      = n_sphere;
 channel_l    = 1.5;
 channel_h    = inlet_r;
 progression_around = 1.05;
-progression_sponge = 1.06;
+progression_sponge = 1.035;
 progression_back = 1.02;
-n_sponge_front= 27;
-n_sponge_back= 26;
+n_sponge_front= 25;
+n_sponge_back= 22;
 
 
 /// SPHERE
@@ -45,16 +48,37 @@ Circle(6) = {7, 5, 4};
 
 Point(11) = {0, 1, 0, sf};   // top
 Point(12) = {1, 1, 0, sf};   // back top
-Point(13) = {1, -1, 0, sf};  // back bottom
-Point(14) = {0, -1, 0, sf};  // bottom
+Point(13) = {1, 0, 0, sf};   // back
+Point(14) = {1, -1, 0, sf};  // back bottom
+Point(15) = {0, -1, 0, sf};  // bottom
 
 Line(11) = {11,12};
 Line(12) = {12,13};
 Line(13) = {13,14};
+Line(14) = {14,15};
+
+Line(21) = {2,11};
+Line(22) = {6,12};
+Line(23) = {3,13};
+Line(24) = {7,14};
+Line(25) = {4,15};
 
 Transfinite Curve {1,4} = n_sphere;
-Transfinite Curve {2,3,5,6} = n_sphere_q;
-Transfinite Curve {2,3,5,6} = n_sphere_q;
+Transfinite Curve {2,6} = n_sphere_q;
+Transfinite Curve {3,5} = n_sphere_b;
+Transfinite Curve {11:14} = n_sphere_q;
+Transfinite Curve {11,14} = n_sphere_q;
+Transfinite Curve {12,13} = n_sphere_b;
+Transfinite Curve {21:25} = n_around_in Using Progression progression_around;
+
+Curve Loop (21) = {2, 22, -11, -21};
+Curve Loop (22) = {5, 23, -12, -22};
+Curve Loop (23) = {3, 24, -13, -23};
+Curve Loop (24) = {6, 25, -14, -24};
+Plane Surface(21) = {21};
+Plane Surface(22) = {22};
+Plane Surface(23) = {23};
+Plane Surface(24) = {24};
 
 
 /// INLET
@@ -63,54 +87,59 @@ Point(201) = {0, -inlet_r, 0, size_in_out};      // inlet bottom
 Point(202) = {inlet_c-inlet_front, 0, 0, size_in_out};     // inlet front
 Point(203) = {inlet_c, 0, 0};                          // inlet center
 Line(200)  = {point_id_front, 202};                               // inlet front line
-Line(201)  = {200, point_id_top};                      // inlet top line
-Line(202)  = {201, point_id_bot};                      // inlet bottom line
+Line(201)  = {200, 11};                      // inlet top line
+Line(202)  = {201, 15};                      // inlet bottom line
 Ellipse(203) = {200, 203, 200, 202};                   // inlet circle line top
 Ellipse(204) = {201, 203, 201, 202};                   // inlet circle line bottom
-Transfinite Curve {200, -201, -202} = n_around Using Progression progression_around;  // inlet lines points
+Transfinite Curve {200} = n_around Using Progression progression_around;
+Transfinite Curve {-201, -202} = n_around_out Using Progression progression_around;  // inlet lines points
 Transfinite Curve {203, 204} = n_inlet Using Progression 1;        // inlet circle points
 
-Curve Loop (200) = {-203, 201, -1, 200}; // inlet loop top
-Curve Loop (201) = {-200, -4, -202, 204}; // inlet loop bottom
+Curve Loop (200) = {-203, 201, -21, -1, 200}; // inlet loop top
+Curve Loop (201) = {-200, -4, 25, -202, 204}; // inlet loop bottom
 Plane Surface(1) = {200};                                // inlet surface top
 Plane Surface(2) = {201};                                // inlet surface bottom
-Transfinite Surface {1} = {202, point_id_front, point_id_top, 200};           // inlet surface top
-Transfinite Surface {2} = {202, 201, point_id_bot, point_id_front};          // inlet surface bottom
+Transfinite Surface {1} = {202, 1, 2, 200};           // inlet surface top
+Transfinite Surface {2} = {202, 201, 4, 1};          // inlet surface bottom
 
 
 /// OUTLET
 Point(210) = {outlet_c, outlet_h, 0, size_in_out};     // outlet top
 Point(211) = {outlet_c, -outlet_h, 0, size_in_out};    // outlet bottom
 Point(212) = {outlet_c, 0, 0, sf};              // outlet center
-Line(210)  = {point_id_back, 212};                                 // outlet center line
+Line(210)  = {13, 212};                                 // outlet center line
 Line(211)  = {210, 212};                               // outlet end top line
 Line(212)  = {211, 212};                               // outlet end bottom line
-Line(213)  = {6, 210};                               // outlet diagonal top line
-Line(214)  = {7, 211};                               // outlet diagonal bottom line
-Transfinite Curve {210} = n_around Using Progression progression_back;     // outlet center lines points
-Transfinite Curve {-211, -212} = n_sphere_q Using Progression progression_around;  // outlet end lines points
-Transfinite Curve {213, 214} = n_around Using Progression progression_around;  // outlet end lines points
+Line(213)  = {12, 210};                               // outlet diagonal top line
+Line(214)  = {14, 211};                               // outlet diagonal bottom line
+Transfinite Curve {210} = n_around_out Using Progression progression_back;     // outlet center lines points
+Transfinite Curve {-211, -212} = n_sphere_b Using Progression progression_around;  // outlet end lines points
+Transfinite Curve {213, 214} = n_around_out Using Progression progression_around;  // outlet end lines points
 
 
 /// CHANNEL
 Line(220)  = {200, 210};                    // channel top line
 Line(221)  = {201, 211};                    // channel bottom line
-Transfinite Curve {220, 221} = n_sphere_q;  // channel outlet points
+Transfinite Curve {220, 221} = n_sphere_q;  // channel to sponge points
 
 
 /// OUTLET / CHANNEL SURFACES
-Curve Loop(222) = {-201, 220, -213, -2};      // channel top
-Curve Loop(223) = {202, -6, 214, -221};       // channel bottom
-Curve Loop(224) = {-213, 5, 210, -211};       // channel top back
-Curve Loop(225) = {214, 212, -210, 3};        // channel bottom back
+Curve Loop(222) = {-201, 220, -213, -11};     // channel top
+Curve Loop(223) = {202, -14, 214, -221};      // channel bottom
+Curve Loop(224) = {-213, 12, 210, -211};       // channel top back
+Curve Loop(225) = {214, 212, -210, 13};        // channel bottom back
 Plane Surface(3) = {222};                     // channel top
 Plane Surface(4) = {223};                     // channel bottom
 Plane Surface(5) = {224};                     // channel top back
 Plane Surface(6) = {225};                     // channel bottom back
-Transfinite Surface {3} = {200, 2, 6, 210};   // channel surface top
-Transfinite Surface {4} = {4, 7, 211, 201};   // channel surface bottom
-Transfinite Surface {5} = {3, 6, 210, 212};   // channel surface top back
-Transfinite Surface {6} = {7, 3, 212, 211};   // channel surface bottom back
+Transfinite Surface {3} = {200, 11, 12, 210};   // channel surface top
+Transfinite Surface {4} = {15, 14, 211, 201};   // channel surface bottom
+Transfinite Surface {5} = {13, 12, 210, 212};   // channel surface top back
+Transfinite Surface {6} = {14, 13, 212, 211};   // channel surface bottom back
+Transfinite Surface {21} = {6, 12, 11, 2};
+Transfinite Surface {22} = {6, 12, 13, 3};
+Transfinite Surface {23} = {3, 13, 14, 7};
+Transfinite Surface {24} = {4, 7, 14, 15};
 
 
 /// SPONGE
@@ -129,14 +158,14 @@ Plane Surface(8) = {231};                               // sponge bottom
 
 /// MESH SIZES
 Mesh.Algorithm = 6;
-//Mesh.RecombineAll = 1;
-//Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
+Mesh.RecombineAll = 1;
+Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
 
 /// BOUNDARIES
 Physical Curve("Inlet", 300) = {233, 204, 203, 232};
 Physical Curve("Outlet", 302) = {231, 212, 211, 230};
 Physical Curve("BB_BC", 303) = {1:4};
-Physical Surface(236) = {1, 2, 6, 5, 7, 8};
+Physical Surface(236) = {1, 2, 3, 4, 5, 6, 7, 8};
 
-//Mesh 2;
+Mesh 2;
 //Save "NACA0012_0deg.msh";
