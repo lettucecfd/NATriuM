@@ -2,11 +2,11 @@
 
 inlet_r      = 4;
 inlet_front  = 3;
-inlet_c      = .3;
+inlet_c      = 0;//.3;
 outlet_c     = 6;
 outlet_h     = inlet_r;
 sponge_h     = inlet_r * 3;
-sf    = 0.1;
+sf           = 0.1;
 size_in_out  = 1;
 size_sponge  = 1;
 point_id_front = 1;
@@ -16,13 +16,14 @@ point_id_bot = 4;
 n_around_in  = 60;
 n_around_out = 50;
 n_around     = n_around_in + n_around_out - 1;
-n_sphere_q   = 20;
-n_sphere     = 2*n_sphere_q;
-n_sphere_b   = n_sphere;
+n_sphere_q   = 20;            // quarter
+n_sphere     = 2*n_sphere_q;  // half
+n_sphere_b   = n_sphere;      // back
 n_inlet      = n_sphere;
 channel_l    = 1.5;
 channel_h    = inlet_r;
 progression_around = 1.05;
+progression_around_out = 1.035;
 progression_sponge = 1.035;
 progression_back = 1.02;
 n_sponge_front= 25;
@@ -46,11 +47,12 @@ Circle(4) = {4, 5, 1};
 Circle(5) = {6, 5, 3};
 Circle(6) = {7, 5, 4};
 
-Point(11) = {0, 1, 0, sf};   // top
-Point(12) = {1, 1, 0, sf};   // back top
-Point(13) = {1, 0, 0, sf};   // back
-Point(14) = {1, -1, 0, sf};  // back bottom
-Point(15) = {0, -1, 0, sf};  // bottom
+rb = 1; // radius box
+Point(11) = {0, rb, 0, sf};   // top
+Point(12) = {rb, rb, 0, sf};  // back top
+Point(13) = {rb, 0, 0, sf};   // back
+Point(14) = {rb, -rb, 0, sf}; // back bottom
+Point(15) = {0, -rb, 0, sf};  // bottom
 
 Line(11) = {11,12};
 Line(12) = {12,13};
@@ -85,36 +87,39 @@ Plane Surface(24) = {24};
 Point(200) = {0, inlet_r, 0, size_in_out};       // inlet top
 Point(201) = {0, -inlet_r, 0, size_in_out};      // inlet bottom
 Point(202) = {inlet_c-inlet_front, 0, 0, size_in_out};     // inlet front
-Point(203) = {inlet_c, 0, 0};                          // inlet center
-Line(200)  = {point_id_front, 202};                               // inlet front line
-Line(201)  = {200, 11};                      // inlet top line
-Line(202)  = {201, 15};                      // inlet bottom line
-Ellipse(203) = {200, 203, 200, 202};                   // inlet circle line top
-Ellipse(204) = {201, 203, 201, 202};                   // inlet circle line bottom
-Transfinite Curve {200} = n_around Using Progression progression_around;
-Transfinite Curve {-201, -202} = n_around_out Using Progression progression_around;  // inlet lines points
+Point(204) = {inlet_c-.8*rb, 0, 0, size_in_out};    // inlet mid
+Point(203) = {inlet_c, 0, 0};                    // inlet center
+Line(200)  = {point_id_front, 204};              // inlet front line inside
+Line(205)  = {204, 202};                         // inlet front line outside
+Line(201)  = {200, 11};                          // inlet top line
+Line(202)  = {201, 15};                          // inlet bottom line
+Ellipse(203) = {200, 203, 200, 202};             // inlet circle line top
+Ellipse(204) = {201, 203, 201, 202};             // inlet circle line bottom
+Transfinite Curve {200} = n_around_in Using Progression progression_around;
+Transfinite Curve {205} = n_around_out Using Progression 1;
+Transfinite Curve {-201, -202} = n_around_out Using Progression progression_around_out;  // inlet lines points
 Transfinite Curve {203, 204} = n_inlet Using Progression 1;        // inlet circle points
 
 Curve Loop (200) = {-203, 201, -21, -1, 200, 205}; // inlet loop top
 Curve Loop (201) = {-205, -200, -4, 25, -202, 204}; // inlet loop bottom
-Plane Surface(1) = {200};                                // inlet surface top
-Plane Surface(2) = {201};                                // inlet surface bottom
-Transfinite Surface {1} = {202, 1, 2, 200};           // inlet surface top
-Transfinite Surface {2} = {202, 201, 4, 1};          // inlet surface bottom
+Plane Surface(1) = {200};                     // inlet surface top
+Plane Surface(2) = {201};                     // inlet surface bottom
+Transfinite Surface {1} = {202, 1, 2, 200};   // inlet surface top
+Transfinite Surface {2} = {202, 201, 4, 1};   // inlet surface bottom
 
 
 /// OUTLET
-Point(210) = {outlet_c, outlet_h, 0, size_in_out};     // outlet top
-Point(211) = {outlet_c, -outlet_h, 0, size_in_out};    // outlet bottom
-Point(212) = {outlet_c, 0, 0, sf};              // outlet center
-Line(210)  = {13, 212};                                 // outlet center line
-Line(211)  = {210, 212};                               // outlet end top line
-Line(212)  = {211, 212};                               // outlet end bottom line
+Point(210) = {outlet_c, outlet_h, 0, size_in_out};    // outlet top
+Point(211) = {outlet_c, -outlet_h, 0, size_in_out};   // outlet bottom
+Point(212) = {outlet_c, 0, 0, sf};                    // outlet center
+Line(210)  = {13, 212};                               // outlet center line
+Line(211)  = {210, 212};                              // outlet end top line
+Line(212)  = {211, 212};                              // outlet end bottom line
 Line(213)  = {12, 210};                               // outlet diagonal top line
 Line(214)  = {14, 211};                               // outlet diagonal bottom line
 Transfinite Curve {210} = n_around_out Using Progression progression_back;     // outlet center lines points
 Transfinite Curve {-211, -212} = n_sphere_b Using Progression progression_around;  // outlet end lines points
-Transfinite Curve {213, 214} = n_around_out Using Progression progression_around;  // outlet end lines points
+Transfinite Curve {213, 214} = n_around_out Using Progression progression_around_out;  // outlet end lines points
 
 
 /// CHANNEL
@@ -158,14 +163,14 @@ Plane Surface(8) = {231};                               // sponge bottom
 
 /// MESH SIZES
 Mesh.Algorithm = 6;
-Mesh.RecombineAll = 1;
-Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
+//Mesh.RecombineAll = 1;
+//Mesh.RecombinationAlgorithm = 1; // or 3; to leave no triangles
 
 /// BOUNDARIES
 Physical Curve("Inlet", 300) = {233, 204, 203, 232};
 Physical Curve("Outlet", 302) = {231, 212, 211, 230};
-Physical Curve("BB_BC", 303) = {1:4};
-Physical Surface(236) = {1, 2, 3, 4, 5, 6, 7, 8};
+Physical Curve("BB_BC", 303) = {1,2,5,3,6,4};
+Physical Surface(236) = {1, 2, 3, 4, 5, 6, 7, 8, 21, 22, 23, 24};
 
 Mesh 2;
-//Save "NACA0012_0deg.msh";
+Save "NACA0012_0deg.msh";
