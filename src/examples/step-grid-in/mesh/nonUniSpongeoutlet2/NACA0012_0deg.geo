@@ -10,6 +10,14 @@ size_foil    = 0.005;
 size_in  = 0.05;
 size_out  = 0.15;
 size_sponge  = 0.5;
+
+// ONLY FOR IMAGE
+fac = 4;
+size_foil = fac*size_foil;
+size_in = fac*size_in;
+size_out = fac*size_out;
+size_sponce = fac*size_sponge;
+
 point_id_top = 64;
 point_id_front = 100;
 point_id_bot = 136;
