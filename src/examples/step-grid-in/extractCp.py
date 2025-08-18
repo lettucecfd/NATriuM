@@ -1,7 +1,19 @@
 import numpy as np
 import vtk
 import matplotlib.pyplot as plt
+from matplotlib import rc
 import os
+import itertools
+
+rc('font', **{'size': 9, 'family': 'serif', 'serif': ['Charis SIL']})
+plt.rcParams['text.usetex'] = True
+plt.rcParams["savefig.dpi"] = 600
+plt.rcParams['markers.fillstyle'] = 'none'
+plt.rcParams['figure.constrained_layout.use'] = True
+
+sllbm_marker = 'x'
+sllbm_color = 'red'
+sllbm_size = 1.5*plt.rcParams['lines.markersize']
 
 Tref = 1  # TODO: may differ
 rho0LU = 1
@@ -18,7 +30,7 @@ basepath = "/mnt/c/Users/phili/Desktop/"
 # coordsfile = "/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/mesh/varyRefinement/naca0012_res100.txt"
     # jobids = ["9687726"]
     # coordsfile = "/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/mesh/varyRefinement/naca0012_res60.txt"
-jobids = ["9682930"]#["9796896"]
+jobids = ["9829458_final"]#["9796896"]
 jobpaths = [basepath + jobid + "/" for jobid in jobids]
 vtupaths = [jobpath + "output/" for jobpath in jobpaths]
 imgpaths = [jobpath + "images/" for jobpath in jobpaths]
@@ -41,8 +53,8 @@ foilCoords = np.array([xFoil,yFoil])
 foilCoords = foilCoords[:,foilCoords[1,:] >= 0]
 foilCoords = foilCoords[:,:-2]
 
-xListAxis = [xi for xi in np.linspace(-1,0,50)]
-[xListAxis.append(xi) for xi in np.linspace(1,1.5,50)]
+xListAxis = [xi for xi in np.linspace(-1,0,200)]
+[xListAxis.append(xi) for xi in np.linspace(1,1.5,100)]
 yListAxis = [0 for _ in xListAxis]
 axisCoords = np.array([xListAxis,yListAxis])
 
@@ -57,6 +69,8 @@ for jobid, jobpath, vtupath, imgpath in zip(jobids, jobpaths, vtupaths, imgpaths
     iTlist = [iT.removeprefix("t_0.").removesuffix(".pvtu") for iT in os.listdir(vtupath) if iT.endswith(".pvtu")]
     for iT in iTlist:#["100000","200000"]:
     # for iT in ["94000"]:
+        ref_m = itertools.cycle(('o', 'v', '^', 's', 'p', 'h', 'D'))
+        ref_c = itertools.cycle(('royalblue', 'green', 'grey', 'black', 'cyan', 'magenta'))
     
         if jobid != "dw872713":
             file = open(jobpath + "/slurm_natrium_naca.out", "r")
@@ -236,14 +250,17 @@ for jobid, jobpath, vtupath, imgpath in zip(jobids, jobpaths, vtupaths, imgpaths
         ax.plot(results[:,0], MaLocal)
         fig.savefig(imgpath + "MaLocal_" + jobid + ".png")
 
-        fig, ax = plt.subplots()
-        ax.plot(ref[:,0],ref[:,1],'o',label='Latt et al.',color='royalblue')
-        ax.plot(frap[:,0],frap[:,1],'*',label='Frapolli et al.',color='green')
-        ax.plot(hafez[:,0],hafez[:,1],label=r'Hafez & Wahba',color='black')
-        # ax.plot(hafezOld[:,0],hafezOld[:,1],'x',label=r'Hafez \& Wahba old',color='gray')
+        fig, ax = plt.subplots(figsize=[5.8, 2.3])
+        ax.plot(ref[:,0],ref[:,1],
+                linewidth=0, color=next(ref_c), marker=next(ref_m),
+                label='Latt et al.')
+        ax.plot(frap[:,0],frap[:,1],
+                linewidth=0, color=next(ref_c), marker=next(ref_m),
+                label='Frapolli et al.')
+        # ax.plot(hafez[:,0],hafez[:,1],label=r'Hafez & Wahba',color='black')
         ax.set_ylim(1.8,-0.3)
         ax.set_xlim(-1,1.5)
-        ax.set_xlabel('x/C')
+        ax.set_xlabel(r'$x/C$')
         ax.set_ylabel(r'$C_P$')
         ax.plot(results[:,0], Cp,    color='red',    label='SLLBM')
         ax.legend(frameon=False, loc='lower right')
