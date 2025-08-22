@@ -30,7 +30,7 @@ basepath = "/mnt/c/Users/phili/Desktop/"
 # coordsfile = "/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/mesh/varyRefinement/naca0012_res100.txt"
     # jobids = ["9687726"]
     # coordsfile = "/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/mesh/varyRefinement/naca0012_res60.txt"
-jobids = ["9829458_final"]#["9796896"]
+jobids = ["9836194_final_final"]#["9796896"]
 jobpaths = [basepath + jobid + "/" for jobid in jobids]
 vtupaths = [jobpath + "output/" for jobpath in jobpaths]
 imgpaths = [jobpath + "images/" for jobpath in jobpaths]
@@ -265,6 +265,7 @@ for jobid, jobpath, vtupath, imgpath in zip(jobids, jobpaths, vtupaths, imgpaths
         ax.plot(results[:,0], Cp,    color='red',    label='SLLBM')
         ax.legend(frameon=False, loc='lower right')
         fig.savefig(imgpath + "Cp_" + jobid + "_iT" + iT + ".png")
+        fig.savefig(imgpath + "Cp_" + jobid + "_iT" + iT + ".pdf")
 
         plt.close("all")
     print(f"Finished jobid {jobid}")
