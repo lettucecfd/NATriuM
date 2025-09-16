@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 import os
 import itertools
+import matplotlib.image as mpimg
 
-rc('font', **{'size': 9, 'family': 'serif', 'serif': ['Charis SIL']})
+rc('font', **{'size': 11, 'family': 'sans-serif', 'sans-serif': ['Myriad Pro', 'Arial', 'Tahoma']})
 plt.rcParams['text.usetex'] = True
 plt.rcParams["savefig.dpi"] = 600
 plt.rcParams['markers.fillstyle'] = 'none'
@@ -58,19 +59,33 @@ xListAxis = [xi for xi in np.linspace(-1,0,200)]
 yListAxis = [0 for _ in xListAxis]
 axisCoords = np.array([xListAxis,yListAxis])
 
-ref = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/reference.txt',delimiter=';',skiprows=0)
-frap = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/frapolli.txt',delimiter=';',skiprows=0)
 # hafezOld = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/reference_hafez_from_frapolli.txt',delimiter=';',skiprows=0)
 hafez = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/wpd_datasets.csv',delimiter=';',skiprows=1)
 hafez = hafez[hafez[:,0].argsort()]
-# hafez = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/wpd_datasets(1).csv',delimiter=',',skiprows=2)
+latt = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/reference.txt',delimiter=';',skiprows=0)
+latt = latt[latt[:,0].argsort()]
+frap = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/frapolli.txt',delimiter=';',skiprows=0)
+frap = frap[frap[:,0].argsort()]
+dorschner = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/wpd_datasets_dorschner.csv',delimiter=',',skiprows=2)
+dorschner = dorschner[dorschner[:,0].argsort()]
+saadat = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/wpd_datasets_saadat.csv',delimiter=',',skiprows=2)
+saadat = saadat[saadat[:,0].argsort()]
+tran = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/wpd_datasets_tran2.csv',delimiter=',',skiprows=2)
+tran = tran[tran[:,0].argsort()]
+hafez_from_dorschner = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/wpd_datasets_hafez_from_dorschner2.csv',delimiter=',',skiprows=2)
+hafez_from_dorschner = hafez_from_dorschner[hafez_from_dorschner[:,0].argsort()]
+thyagarajan = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/wpd_datasets_thyagarajan.csv',delimiter=',',skiprows=2)
+thyagarajan = thyagarajan[thyagarajan[:,0].argsort()]
+noh = np.loadtxt('/home/philipp/NATriuM/NATriuM/src/examples/step-grid-in/refs/wpd_datasets_noh.csv',delimiter=',',skiprows=2)
+noh = noh[noh[:,0].argsort()]
+
 
 for jobid, jobpath, vtupath, imgpath in zip(jobids, jobpaths, vtupaths, imgpaths):
     iTlist = [iT.removeprefix("t_0.").removesuffix(".pvtu") for iT in os.listdir(vtupath) if iT.endswith(".pvtu")]
     for iT in iTlist:#["100000","200000"]:
     # for iT in ["94000"]:
         ref_m = itertools.cycle(('o', 'v', '^', 's', 'p', 'h', 'D'))
-        ref_c = itertools.cycle(('royalblue', 'green', 'grey', 'black', 'cyan', 'magenta'))
+        ref_c = itertools.cycle(('royalblue', 'green', 'cyan', 'magenta', 'grey', 'black'))
     
         if jobid != "dw872713":
             file = open(jobpath + "/slurm_natrium_naca.out", "r")
@@ -122,44 +137,7 @@ for jobid, jobpath, vtupath, imgpath in zip(jobids, jobpaths, vtupaths, imgpaths
             locator.SetDataSet(data)
             locator.BuildLocator()
 
-            ### X-AXIS SOLUTION 1
-            ### get lowest y-coordinate points
-            # dataAroundFoil = np.unique(np.array([xListFoil, yListFoil, rhoListFoil]), axis=1)
-            # rhoFoil = []
-            # n = 1000
-            # dx = 1/n
-            # for xi in np.linspace(0,1,n):
-            #     dataAtX = dataAroundFoil[:,np.isclose(xi, dataAroundFoil[0,:], atol=dx)]
-            #     # dataAtX = dataAtX[:,dataAtX[1]>np.min(dataAtX[1])+1e-10]
-            #     rhoFoil.append(dataAtX[:,np.argmin(dataAtX[1])])
-            # rhoFoil = np.array(rhoFoil)
-
-            ### X-AXIS SOLUTION 2
-            # getting points on x-axis
-            # # If no points on the x-axis, find the point with the lowest x-coordinate
-            # for i in range(points.GetNumberOfPoints()):
-            #     xi, yi, _ = points.GetPoint(i)
-            #     if jobid == "dw872713":
-            #         xi += 0.5
-            #     outletCentreI = (y2-y1)/(x2-x1)*(xi-x1)+y1
-            #     if ((-1 <= xi < 0) and (abs(yi) < 1e-10)) or ((1 < xi <= 1.5) and (abs(yi-outletCentreI) < 1e-5)):# or 0 < x < 1:
-            #         xListAxis.append(xi)
-            #         yListAxis.append(yi)
-            #         rhoListAxis.append(point_rho.GetValue(i))
-            #         uxListAxis.append(point_ux.GetValue(i))
-            #         uyListAxis.append(point_uy.GetValue(i))
-            #         TListAxis.append(point_T.GetValue(i))
-
-            # valuesAxis = np.array([xListAxis,yListAxis,rhoListAxis,uxListAxis,uyListAxis,TListAxis])
-            # uniqueCoords, uniqueCounts = np.unique(np.array([xListAxis,yListAxis]), axis=1, return_counts=True)
-            # dataAxis = []
-            # for i in range(len(uniqueCoords[0,:])):
-            #     x, y = uniqueCoords[:,i]
-            #     valuesAtI = valuesAxis[:,np.isclose(x, valuesAxis[0,:]) * np.isclose(y, valuesAxis[1,:])]
-            #     dataAxis.append([x,y,np.mean(valuesAtI[2,:]),np.mean(valuesAtI[3,:]),np.mean(valuesAtI[4,:]),np.mean(valuesAtI[5,:])])
-            # dataAxis = np.array(dataAxis)
-
-            ### X-AXIS SOLUTION 3
+            ### X-AXIS
             # getting points closest to samples on x-axis
             coordsList = axisCoords.T
             for coord in coordsList:
@@ -224,48 +202,69 @@ for jobid, jobpath, vtupath, imgpath in zip(jobids, jobpaths, vtupaths, imgpaths
         UmagLU = np.sqrt(uxLU*uxLU+uyLU*uyLU)
         MaLocal = UmagLU*1.5*1.5*1.5*gamma*Tref/3
 
-        fig, ax = plt.subplots()
-        ax.plot(results[:,0], results[:,1])
-        # ax.set_ylim((-.5,.5))
-        # ax.set_xlim((-1, 1.5))
-        fig.savefig(imgpath + "coords_" + iT + ".png")
+        # fig, ax = plt.subplots()
+        # ax.plot(results[:,0], results[:,1])
+        # fig.savefig(imgpath + "coords_" + iT + ".png")
 
-        fig, ax = plt.subplots()
-        ax.plot(results[:,0], results[:,2])
-        fig.savefig(imgpath + "rho_" + iT + ".png")
+        # fig, ax = plt.subplots()
+        # ax.plot(results[:,0], results[:,2])
+        # fig.savefig(imgpath + "rho_" + iT + ".png")
 
-        fig, ax = plt.subplots()
-        ax.plot(results[:,0], results[:,3])
-        fig.savefig(imgpath + "ux_" + iT + ".png")
+        # fig, ax = plt.subplots()
+        # ax.plot(results[:,0], results[:,3])
+        # fig.savefig(imgpath + "ux_" + iT + ".png")
 
-        fig, ax = plt.subplots()
-        ax.plot(results[:,0], results[:,4])
-        fig.savefig(imgpath + "uy_" + iT + ".png")
+        # fig, ax = plt.subplots()
+        # ax.plot(results[:,0], results[:,4])
+        # fig.savefig(imgpath + "uy_" + iT + ".png")
 
-        fig, ax = plt.subplots()
-        ax.plot(results[:,0], results[:,5])
-        fig.savefig(imgpath + "T_" + iT + ".png")
+        # fig, ax = plt.subplots()
+        # ax.plot(results[:,0], results[:,5])
+        # fig.savefig(imgpath + "T_" + iT + ".png")
 
-        fig, ax = plt.subplots()
-        ax.plot(results[:,0], MaLocal)
-        fig.savefig(imgpath + "MaLocal_" + jobid + ".png")
+        # fig, ax = plt.subplots()
+        # ax.plot(results[:,0], MaLocal)
+        # fig.savefig(imgpath + "MaLocal_" + jobid + ".png")
 
-        fig, ax = plt.subplots(figsize=[5.8, 2.3])
-        ax.plot(ref[:,0],ref[:,1],
-                linewidth=0, color=next(ref_c), marker=next(ref_m),
-                label='Latt et al.')
-        ax.plot(frap[:,0],frap[:,1],
-                linewidth=0, color=next(ref_c), marker=next(ref_m),
-                label='Frapolli et al.')
-        # ax.plot(hafez[:,0],hafez[:,1],label=r'Hafez & Wahba',color='black')
-        ax.set_ylim(1.8,-0.3)
+        # img = mpimg.imread(imgpath + 'CpField_9836194_final_final_iT50000.png')
+        fig, ax = plt.subplots(figsize=[7, 3.5])
+        ax.plot(hafez[::2,0],hafez[::2,1],
+                color='black', linestyle='-', linewidth=1.5,
+                label=r'Hafez \& Wahba [1]')
+        clbm = ('green', .7)
+        mlbm = '.'#next(ref_m)
+        mslbm = 2
+        lw = 1.2
+        ax.plot(latt[:,0],latt[:,1],
+                # color=next(ref_c), marker=next(ref_m), linewidth=0, markersize=2,
+                # color=clbm, marker=mlbm, linewidth=0, markersize=mslbm,
+                color=clbm, linewidth=lw,
+                label='LBM results [2-5,7,8,10,12]'
+                )
+        ax.plot(frap[:,0],frap[:,1],color=clbm, linewidth=lw)
+        ax.plot(dorschner[:,0],dorschner[:,1],color=clbm,linewidth=lw)
+        ax.plot(saadat[:,0],saadat[:,1],color=clbm,linewidth=lw)
+        ax.plot(tran[:,0],tran[:,1],color=clbm,linewidth=lw)
+        ax.plot(thyagarajan[:,0],thyagarajan[:,1],color=clbm,linewidth=lw)
+        ax.plot(noh[:,0],noh[:,1],color=clbm,linewidth=lw)
+        ax.plot(results[:,0], Cp[:],color=clbm, linewidth=lw)
+        ax.plot(hafez_from_dorschner[:,0],hafez_from_dorschner[:,1],
+                # color=next(ref_c), linestyle='-.',
+                # color=next(ref_c), marker=next(ref_m), linewidth=0,
+                color='red', linewidth=1.5,
+                label='[1] as displayed in [2-5]')
+        ax.set_ylim(-0.25,1.8)
         ax.set_xlim(-1,1.5)
-        ax.set_xlabel(r'$x/C$')
-        ax.set_ylabel(r'$C_P$')
-        ax.plot(results[:,0], Cp,    color='red',    label='SLLBM')
-        ax.legend(frameon=False, loc='lower right')
-        fig.savefig(imgpath + "Cp_" + jobid + "_iT" + iT + ".png")
-        fig.savefig(imgpath + "Cp_" + jobid + "_iT" + iT + ".pdf")
+        # ax.set_xticks([-.75, -0.5, -.25, 0, .25, 0.5, .75, 1])
+        ax.set_xticks([-1, -0.5, 0, .5, 1, 1.5])
+        ax.set_yticks([0, .5, 1, 1.5])
+        ax.set_xlabel(r'$\mathbf{x/C}$', fontdict={'size': 14})
+        ax.set_ylabel(r'$\mathbf{C_P}$', fontdict={'size': 14})
+        ax.legend(frameon=False, loc='upper left')
+        # ax.imshow(img, extent=(-1.7, 3.8, -1.5, 1.5))
+        # plt.show()
+        fig.savefig(imgpath + "Cp_" + jobid + "_iT" + iT + "_high.png", transparent=True, dpi=300)
+        fig.savefig(imgpath + "Cp_" + jobid + "_iT" + iT + "_high.pdf", transparent=True)
 
         plt.close("all")
     print(f"Finished jobid {jobid}")
