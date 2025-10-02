@@ -1,10 +1,10 @@
 # Examples
-add_subdirectory(Airfoil2D)
-add_subdirectory(LidDrivenCavity2D)
-add_subdirectory(MixingLayer3D)
-add_subdirectory(Sphere)
-add_subdirectory(TaylorGreenVortex3D)
-add_subdirectory(TurbulentChannel)
+add_subdirectory(step-grid-in)
+#add_subdirectory(LidDrivenCavity2D)
+#add_subdirectory(MixingLayer3D)
+#add_subdirectory(Sphere)
+#add_subdirectory(TaylorGreenVortex3D)
+#add_subdirectory(TurbulentChannel)
 
 #add_subdirectory(archive/static-droplet)
 #add_subdirectory(archive/step-couette3D)
