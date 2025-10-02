@@ -47,8 +47,10 @@ source <your natrium base dir>/natriumrc
 
 # Install Required Resources
 
-1. For boost b2: C++11 compiler `cxx-compiler`
-2. For p4est: fortran77 compiler with compatible glibc `fortran-compiler`, `libgfortran5`
+This instruction uses Conda to install compiler resources. You may choose otherwise.
+
+1. For boost b2: C++11 compiler -> `cxx-compiler`
+2. For p4est: fortran77 compiler with compatible glibc `fortran-compiler` -> `libgfortran5`
 3. For trilinos: latest `cmake` (>=3.23, install manually), `openmpi` (load module because otherwise it may clash with OpenMP), `libhwloc`, `libevent`, `blas`, `liblapack`
 4. For dealII: `zlib` (and `gsl` and `lapack` for Cluster) (and `cxx-compiler=1.5.2`)
 
@@ -113,7 +115,7 @@ from https://www.boost.org/ **Go with boost 1.76.0, not 1.82.0!**
 cd $NATRIUM_INSTALLATION_DIR
 mkdir .boost
 cd .boost
-wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
+wget https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz
 
 ```
 2. Extract file and go to folder
@@ -159,37 +161,58 @@ chmod u+x p4est-setup.sh
 
 ### Trilinos
 
-Download and extraxt from https://github.com/trilinos/Trilinos/releases/tag/trilinos-release-13-0-1
+Download and extraxt from https://github.com/trilinos/Trilinos/releases/
 ```
 cd $NATRIUM_INSTALLATION_DIR
-wget https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-0-1.tar.gz
-tar -xf trilinos-release-13-0-1.tar.gz
+wget https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-4-0.tar.gz
+https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-16-1-0.tar.gz
+tar -xf trilinos-*.tar.gz
 
 ```
+old: https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-0-1.tar.gz
+
 Then install trilinos.
 ```
 mkdir build_trilinos
 cd build_trilinos
-cmake -D Trilinos_ENABLE_Sacado=ON \
+cmake \
+-D Trilinos_ENABLE_Sacado=ON \
 -D Trilinos_ENABLE_Stratimikos=ON \
--D Trilinos_ENABLE_MueLu=ON \
+-D Trilinos_ENABLE_Amesos=ON                      \
+-D Trilinos_ENABLE_Epetra=ON                      \
+-D Trilinos_ENABLE_EpetraExt=ON                   \
+-D Trilinos_ENABLE_Ifpack=ON                      \
+-D Trilinos_ENABLE_AztecOO=ON                     \
+-D Trilinos_ENABLE_SEACAS=OFF                      \
+-D Trilinos_ENABLE_Teuchos=ON                     \
+-D Trilinos_ENABLE_MueLu=ON                       \
+-D Trilinos_ENABLE_ML=ON                          \
+-D Trilinos_ENABLE_NOX=ON                         \
+-D Trilinos_ENABLE_ROL=ON                         \
+-D Trilinos_ENABLE_Tpetra=ON                      \
+-D Trilinos_ENABLE_COMPLEX=ON                     \
+-D Trilinos_ENABLE_FLOAT=ON                       \
+-D Trilinos_ENABLE_Zoltan=ON                      \
+-D TPL_ENABLE_Netcdf=OFF \
+-D Trilinos_VERBOSE_CONFIGURE=OFF \
+-D TPL_ENABLE_MPI=ON \
+-D TPL_ENABLE_Pthread=OFF \
+-D BUILD_SHARED_LIBS=ON \
+-D CMAKE_VERBOSE_MAKEFILE=OFF \
 -D CMAKE_BUILD_TYPE=RELEASE \
 -D CMAKE_CXX_FLAGS="-g -O3" \
 -D CMAKE_C_FLAGS="-g -O3" \
 -D CMAKE_FORTRAN_FLAGS="-g -O5" \
 -D Trilinos_EXTRA_LINK_FLAGS="-lgfortran" \
--D CMAKE_VERBOSE_MAKEFILE=FALSE \
--D Trilinos_VERBOSE_CONFIGURE=FALSE \
--D TPL_ENABLE_MPI=ON \
--D TPL_ENABLE_Pthread=OFF \
--D BUILD_SHARED_LIBS=ON \
 -D CMAKE_INSTALL_PREFIX:PATH=$TRILINOS_DIR \
-../Trilinos*/
+../Trilinos-trilinos-release-16*/ \
+2>&1 | tee trilinos_buildlog.txt
 
-make -j8
-make install
+make -j8 2>&1 | tee trilinos_buildlog_makej8.txt
+make install 2>&1 | tee trilinos_buildlog_install.txt
 
 ```
+-D Trilinos_ENABLE_Sacado=ON                      \ --> issue with Netcdf not found
 
 ### deal.ii  
 1. download and untar tarball from deal.ii homepage https://github.com/dealii/dealii/releases
@@ -200,10 +223,11 @@ make install
 In this case, search for the conda location and add this to options, e.g., `-D ZLIB_LIBRARY=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/lib/libz.so -D ZLIB_INCLUDE_DIR=~/miniconda3/pkgs/zlib-1.2.13-hd590300_5/include`.
 ```
 cd $NATRIUM_INSTALLATION_DIR
-wget https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
-tar -xf dealii-9.3.3.tar.gz
+wget https://github.com/dealii/dealii/releases/download/v9.6.2/dealii-9.6.2.tar.gz
+tar -xf dealii-*.tar.gz
 
 ```
+old: https://github.com/dealii/dealii/releases/download/v9.3.3/dealii-9.3.3.tar.gz
 
 2. Setup installation **dealII does not find mpicxx when compiled with new cmake. Use `module load gcc`**
 ```
@@ -212,6 +236,7 @@ cd build_deal
 cmake -D CMAKE_INSTALL_PREFIX=$DEAL_II_DIR \
 -D DEAL_II_WITH_PETSC=OFF \
 -D DEAL_II_WITH_TRILINOS=ON \
+-D TRILINOS_DIR=$TRILINOS_DIR \
 -D DEAL_II_WITH_MPI=ON \
 -D DEAL_II_COMPONENT_PARAMETER_GUI=OFF \
 -D DEAL_II_WITH_BOOST=ON \
